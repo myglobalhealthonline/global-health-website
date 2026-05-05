@@ -1,9 +1,21 @@
-﻿import { PrismaClient, LocaleCode } from "@prisma/client";
+﻿import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient, LocaleCode } from "@prisma/client";
+import { Pool } from "pg";
 
-const prisma = new PrismaClient();
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+const adapter = new PrismaPg(pool);
+
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  await prisma.currency.upsert({ where: { code: "EUR" }, update: {}, create: { code: "EUR", symbol: "EUR" } });
+  await prisma.currency.upsert({
+    where: { code: "EUR" },
+    update: {},
+    create: { code: "EUR", symbol: "EUR" },
+  });
 
   const countrySeeds = [
     {
@@ -21,6 +33,7 @@ async function main() {
       specialty: { slug: "cardiology", name: "Cardiology" },
       service: { slug: "medical-consultation", name: "Medical Consultation", legacyPath: "/ireland/medical-consultation" },
       plan: { slug: "starter", name: "Starter Plan", priceCents: 4900 },
+      heroPath: "/images/hero/ireland-hero-ai.svg",
     },
     {
       code: "pt",
@@ -37,6 +50,7 @@ async function main() {
       specialty: { slug: "nutrition", name: "Nutrition" },
       service: { slug: "medical-consultation", name: "Consulta Medica", legacyPath: "/general-consultation-pt" },
       plan: { slug: "starter", name: "Plano Inicial", priceCents: 4500 },
+      heroPath: "/images/hero/country-home-hero-ai.svg",
     },
     {
       code: "sp",
@@ -53,6 +67,7 @@ async function main() {
       specialty: { slug: "dermatology", name: "Dermatology" },
       service: { slug: "medical-consultation", name: "Consulta Medica", legacyPath: "/general-consultation-sp" },
       plan: { slug: "starter", name: "Plan Inicial", priceCents: 4700 },
+      heroPath: "/images/hero/country-home-hero-ai.svg",
     },
     {
       code: "cz",
@@ -67,8 +82,9 @@ async function main() {
       domain: "cz.myglobalhealth.online",
       doctor: { slug: "dr-emmanuel-dabup", fullName: "Dr Emmanuel Dabup", title: "General Practitioner" },
       specialty: { slug: "urology", name: "Urology" },
-      service: { slug: "medical-consultation", name: "Lékarská Konzultace", legacyPath: "/general-consultation-cz" },
+      service: { slug: "medical-consultation", name: "Lekarska Konzultace", legacyPath: "/general-consultation-cz" },
       plan: { slug: "starter", name: "Zakladni Plan", priceCents: 4300 },
+      heroPath: "/images/hero/country-home-hero-ai.svg",
     },
     {
       code: "rm",
@@ -85,6 +101,7 @@ async function main() {
       specialty: { slug: "neurology", name: "Neurology" },
       service: { slug: "medical-consultation", name: "Consultatie Medicala", legacyPath: "/general-consultation-rm" },
       plan: { slug: "starter", name: "Plan Initial", priceCents: 4200 },
+      heroPath: "/images/hero/country-home-hero-ai.svg",
     },
   ] as const;
 
@@ -175,6 +192,54 @@ async function main() {
       create: { kind: "LOGO", key: `${seed.code}-primary-logo`, path: `/public/logos/${seed.code}-primary-logo.svg`, countryId: country.id, altText: `${seed.name} logo` },
     });
 
+    await prisma.asset.upsert({
+      where: { kind_key: { kind: "IMAGE", key: `${seed.code}-hero` } },
+      update: {
+        path: seed.heroPath,
+        altText: `${seed.name} online clinic hero illustration`,
+        countryId: country.id,
+      },
+      create: {
+        kind: "IMAGE",
+        key: `${seed.code}-hero`,
+        path: seed.heroPath,
+        countryId: country.id,
+        altText: `${seed.name} online clinic hero illustration`,
+      },
+    });
+
+    await prisma.asset.upsert({
+      where: { kind_key: { kind: "IMAGE", key: `${seed.code}-doctor-${seed.doctor.slug}` } },
+      update: {
+        path: "/images/ireland/doctor-spotlight-ai.svg",
+        altText: `Illustrative doctor portrait for ${seed.doctor.fullName}`,
+        doctorId: doctor.id,
+      },
+      create: {
+        kind: "IMAGE",
+        key: `${seed.code}-doctor-${seed.doctor.slug}`,
+        path: "/images/ireland/doctor-spotlight-ai.svg",
+        doctorId: doctor.id,
+        altText: `Illustrative doctor portrait for ${seed.doctor.fullName}`,
+      },
+    });
+
+    await prisma.asset.upsert({
+      where: { kind_key: { kind: "ICON", key: `${seed.code}-secure-care-icon` } },
+      update: {
+        path: "/icons/trust/secure-confidential-ai.svg",
+        altText: `${seed.name} secure care icon`,
+        countryId: country.id,
+      },
+      create: {
+        kind: "ICON",
+        key: `${seed.code}-secure-care-icon`,
+        path: "/icons/trust/secure-confidential-ai.svg",
+        altText: `${seed.name} secure care icon`,
+        countryId: country.id,
+      },
+    });
+
     await prisma.badge.upsert({
       where: { id: `${seed.code}-secure-care-badge` },
       update: {},
@@ -190,5 +255,5 @@ async function main() {
 }
 
 main()
-  .then(async () => { await prisma.$disconnect(); })
-  .catch(async (e) => { console.error(e); await prisma.$disconnect(); process.exit(1); });
+  .then(async () => { await prisma.$disconnect(); await pool.end(); })
+  .catch(async (e) => { console.error(e); await prisma.$disconnect(); await pool.end(); process.exit(1); });

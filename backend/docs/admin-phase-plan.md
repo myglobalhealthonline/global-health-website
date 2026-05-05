@@ -14,6 +14,7 @@ Implemented in this phase:
 - Zod validation for booking/contact/shared field rules
 - Prisma-backed service modules
 - safe `503` responses when database access is unavailable
+- migration and seed workflow for Phase 1 setup
 
 ## Explicitly Deferred
 
@@ -35,3 +36,9 @@ Implemented in this phase:
 3. add appointment-review queue for staff
 4. add email/event workflow for request follow-up
 5. add asset-management workflow with approval states
+
+## Setup Notes
+
+- run `pnpm --filter backend db:migrate` to apply schema changes
+- run `pnpm --filter backend db:seed` to load starter Phase 1 content
+- if local development cannot reach a private/internal database host, run migration and seed with the public DB URL exported as `DATABASE_URL`
