@@ -219,8 +219,8 @@ function buildCountryHomeData(
         secondaryCta: { label: "Schedule with a Specialist", href: paths.specialist },
         trustBadges: ["Irish Medical Council", "Same-day consultation", "Multilingual care"],
         heroImage: {
-          src: "/images/hero/ireland-home-hero-placeholder.svg",
-          alt: "Ireland clinic homepage hero placeholder",
+          src: "/images/hero/ireland-hero-ai.svg",
+          alt: "Illustration of an online doctor consultation for the Ireland clinic",
         },
       },
       quickActions: [
@@ -244,8 +244,8 @@ function buildCountryHomeData(
         highlight: "Excellent medical care, without leaving home.",
         cta: { label: "Schedule an Appointment", href: paths.general },
         image: {
-          src: "/images/ireland/about-placeholder.svg",
-          alt: "Ireland clinic about section placeholder",
+          src: "/images/ireland/about-clinic-ai.svg",
+          alt: "Illustration of a collaborative online healthcare team",
         },
       },
       specialties: {
@@ -278,8 +278,8 @@ function buildCountryHomeData(
           "Prescription delivery is available across Dublin through partner pharmacies, handled safely and discreetly after your online consultation.",
         cta: { label: "Get Prescription Delivered", href: "/home-delivery" },
         image: {
-          src: "/images/ireland/home-delivery-placeholder.svg",
-          alt: "Home delivery service placeholder",
+          src: "/images/ireland/home-delivery-ai.svg",
+          alt: "Illustration of secure healthcare home delivery service",
         },
       },
       doctorSpotlight: {
@@ -288,8 +288,8 @@ function buildCountryHomeData(
         title: "Doctor in Medicine",
         credential: "IMC 542074",
         image: {
-          src: "/images/ireland/doctor-spotlight-placeholder.svg",
-          alt: "Doctor spotlight placeholder",
+          src: "/images/ireland/doctor-spotlight-ai.svg",
+          alt: "Illustrative doctor portrait used for clinic spotlight",
         },
       },
       trust: {
@@ -315,7 +315,6 @@ function buildCountryHomeData(
 
   const countryLabel = countryLabels[countryCode];
   const genericServiceCards = buildGenericServiceCards(countryCode, paths);
-  const heroAssetBase = countryCode === "pt" ? "portugal" : countryCode === "sp" ? "spain" : countryCode === "cz" ? "czechia" : "romania";
   const localeTag = countryCode === "pt" ? "Portugal" : countryCode === "sp" ? "Spain" : countryCode === "cz" ? "Czechia" : "Romania";
 
   return {
@@ -327,8 +326,8 @@ function buildCountryHomeData(
       secondaryCta: { label: "Schedule with a Specialist", href: paths.specialist },
       trustBadges: ["Licensed clinicians", "Secure consultations", `${countryLabel} clinic hub`],
       heroImage: {
-        src: `/images/hero/${heroAssetBase}-home-hero-placeholder.svg`,
-        alt: `${countryLabel} clinic homepage hero placeholder`,
+        src: "/images/hero/country-home-hero-ai.svg",
+        alt: `Illustration of an online medical consultation for the ${countryLabel} clinic`,
       },
     },
     quickActions: [
@@ -352,8 +351,8 @@ function buildCountryHomeData(
       highlight: "Secure online care with local route coverage.",
       cta: { label: "Schedule an Appointment", href: paths.general },
       image: {
-        src: `/images/${heroAssetBase}/about-placeholder.svg`,
-        alt: `${countryLabel} clinic about section placeholder`,
+        src: "/images/about/about-clinic-ai.svg",
+        alt: `Illustration of clinicians collaborating for ${countryLabel} clinic care`,
       },
     },
     specialties: {
@@ -385,8 +384,8 @@ function buildCountryHomeData(
       description: `Prescription and follow-up support for ${countryLabel} will continue to be refined as final clinic-specific artwork is approved.`,
       cta: { label: "Explore GP consultations", href: paths.general },
       image: {
-        src: `/images/${heroAssetBase}/home-delivery-placeholder.svg`,
-        alt: `${countryLabel} prescription support placeholder`,
+        src: "/images/services/home-delivery-ai.svg",
+        alt: `Illustration of prescription support and safe home delivery for ${countryLabel}`,
       },
     },
     doctorSpotlight: {
@@ -395,8 +394,8 @@ function buildCountryHomeData(
       title: "Licensed clinicians",
       credential: "Team profile migration pending",
       image: {
-        src: `/images/${heroAssetBase}/doctor-spotlight-placeholder.svg`,
-        alt: `${countryLabel} doctor spotlight placeholder`,
+        src: "/images/ireland/doctor-spotlight-ai.svg",
+        alt: `Illustrative clinician portrait for the ${countryLabel} clinic team`,
       },
     },
     trust: {

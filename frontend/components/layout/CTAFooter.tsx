@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Check } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import type { NavLink } from "@/data/navigation";
@@ -24,6 +25,15 @@ export function CTAFooter({
             <p className="gh-body max-w-xl text-white/82">{trustLine}</p>
           </div>
           <div className="flex flex-col gap-5 lg:items-end">
+            <div className="hidden overflow-hidden rounded-[24px] border border-white/10 bg-white/5 p-2 lg:block">
+              <Image
+                src="/images/footer/footer-cta-ai.svg"
+                alt="Illustration of a patient booking an online consultation on a phone"
+                width={480}
+                height={304}
+                className="h-auto w-[280px] rounded-[18px]"
+              />
+            </div>
             <Link href={cta.href} className="gh-btn min-w-[220px] bg-[var(--color-brand-secondary)] text-[var(--color-brand-primary)] hover:bg-white">
               {cta.label}
             </Link>

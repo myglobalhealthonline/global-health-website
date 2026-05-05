@@ -134,3 +134,28 @@ Audit date: 2026-05-05
 ### Remaining Frontend Gaps
 - Launch readiness is still blocked by final approved brand assets, especially the logo and footer CTA art.
 - Core page UX, responsiveness, navigation, and template structure are ready for backend/admin integration.
+
+## AI-Generated Asset Replacement Summary
+
+- Replaced visible placeholder logo with temporary wordmark asset.
+- Replaced visible homepage and country-home illustration placeholders with branded healthcare illustration assets.
+- Replaced visible Ireland about, delivery, doctor spotlight, and footer CTA placeholder artwork.
+- Removed visible “image placeholder” treatment from shared doctor cards and doctor profile pages.
+
+### Pages Checked After Asset Swap
+- `/`
+- `/home`
+- `/book-online`
+- `/general-consultation-ie`
+- `/specialty-ie`
+- `/ireland/medical-consultation`
+- `/ireland-team`
+- `/home-delivery`
+- `/home-health-test`
+- `/blog`
+
+### Remaining Asset Gaps
+- official final logo
+- officially approved footer CTA art
+- approved real doctor/team imagery if desired
+- optional branded icon pack rollout into more components

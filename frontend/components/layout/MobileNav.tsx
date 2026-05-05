@@ -37,8 +37,8 @@ export function MobileNav({
           <div className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] px-4 py-4">
             <Link href="/" className="flex items-center">
               <Image
-                src="/logos/global-health-logo-placeholder.svg"
-                alt={`${siteName} logo placeholder`}
+                src="/logos/global-health-wordmark-temp.svg"
+                alt={`${siteName} temporary wordmark`}
                 width={200}
                 height={48}
                 className="h-10 w-auto"

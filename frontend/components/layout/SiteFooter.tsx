@@ -18,8 +18,8 @@ export function SiteFooter({
           <div className="grid gap-10 lg:grid-cols-[1.2fr_0.9fr_0.9fr_0.9fr]">
             <div>
               <Image
-                src="/logos/global-health-logo-placeholder.svg"
-                alt={`${siteName} logo placeholder`}
+                src="/logos/global-health-wordmark-temp.svg"
+                alt={`${siteName} temporary wordmark`}
                 width={220}
                 height={54}
                 className="h-11 w-auto sm:h-12"

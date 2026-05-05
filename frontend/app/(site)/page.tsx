@@ -25,7 +25,10 @@ export default async function HomePage() {
         primaryCta={{ label: common.cta.primaryBooking, href: navigation.headerPrimaryCta.href }}
         secondaryCta={{ label: "Select your country", href: "#countries" }}
         trustBadges={defaultClinic.countryHome.hero.trustBadges}
-        heroImage={defaultClinic.countryHome.hero.heroImage}
+        heroImage={{
+          src: "/images/hero/homepage-hero-ai.svg",
+          alt: "Illustration of patients and clinicians using secure online healthcare tools",
+        }}
       />
 
       <CountrySelector

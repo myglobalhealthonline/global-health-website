@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { BookingCTA } from "@/components/sections/BookingCTA";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { Container } from "@/components/layout/Container";
@@ -38,8 +39,14 @@ export function DoctorProfileTemplate({ hero, profile, bottomCta }: DoctorProfil
         <Container>
           <article className="gh-card mx-auto max-w-4xl p-7 sm:p-8">
             <div className="grid gap-6 md:grid-cols-[0.8fr_1.2fr]">
-              <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-background-soft),#eef6e2)] px-4 py-10 text-center text-sm text-[var(--color-text-muted)]">
-                {profile.imageLabel} image placeholder
+              <div className="overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-background-soft),#eef6e2)] p-2">
+                <Image
+                  src="/images/ireland/doctor-spotlight-ai.svg"
+                  alt={`Illustrative clinician portrait for ${profile.name}`}
+                  width={540}
+                  height={620}
+                  className="h-auto w-full rounded-[14px] object-cover"
+                />
               </div>
               <div>
                 <h2 className="gh-h2 text-[var(--color-text-primary)]">{profile.name}</h2>
