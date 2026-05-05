@@ -1,5 +1,9 @@
 # Admin API (Phase 2 + 2.1)
 
+## Account scope
+
+Admin HTTP APIs are called **only by trusted server-side code** today (`ADMIN_API_TOKEN`). Future **human `ADMIN` users** of this website belong here — **not** doctors (`Doctor` rows are public content, separate doctor portal deferred). Website **`PATIENT`** APIs will be a different surface when auth ships. **Payments:** deferred; when present, booking + payment state may be reviewable together without treating payment as automatic clinical confirmation.
+
 Base URL examples:
 
 - local: `http://localhost:4000`

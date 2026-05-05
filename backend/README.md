@@ -6,20 +6,30 @@ Stack:
 - Prisma
 - Zod
 
-## Identity and roles (product intent)
+## Account Scope
 
-Authenticated users of **this** backend/site are modeled as **`PATIENT`** (website user) and **`ADMIN`** (staff). **Doctors do not authenticate here** for clinical workflows — a **separate doctor portal** is deferred outside this repository.
+- **`PATIENT`** — future website user: booking-request visibility, profile, payments/receipts later (**payments not implemented**).
+- **`ADMIN`** — future staff user for this site: content CRUD (countries, services, **doctor profiles as public records**, pricing, assets), booking-queue ops, country-specific content as scoped.
+- **`Doctor` model** — **public directory / CMS data only** (profiles on marketing pages). Not a login principal here.
+- **Doctor portal** — clinical login and doctor-side workflows **deferred**; separate system outside this app.
+- **Payments** — **deferred**; planned flow: optional patient pay after request → payment status → admin sees booking+payment → **pay does not auto-confirm** clinically.
 
-Public endpoints (`/api/countries`, `/api/services`, `/api/doctors`, etc.) expose **marketing directory data** (e.g. doctor profiles on the public site), not a doctor dashboard API.
+There is **no `User` / `UserRole` enum in Prisma yet**; when introduced for this app, roles should remain **`PATIENT` | `ADMIN`** only for website accounts. Any legacy or alternate schema that adds **`DOCTOR` as a user role** should be treated as **deferred / wrong portal** — simplify toward PATIENT+ADMIN for **this** codebase when safe migration-wise.
+
+## Identity and roles (implementation note)
+
+Authenticated users of **this** backend/site will be **`PATIENT`** and **`ADMIN`** only. **Doctors do not authenticate here** for clinical work — **separate doctor portal**.
+
+Public endpoints (`/api/countries`, `/api/services`, `/api/doctors`, etc.) expose **marketing directory data** (including doctor profiles), not doctor-portal APIs.
 
 ## Future booking + payment (design only)
 
-Not implemented yet, but planned alignment:
+Not implemented yet:
 
-1. Patient submits booking **request** (current `POST /api/appointments` remains intake-oriented).
+1. Patient submits booking **request** (`POST /api/appointments` stays intake-oriented).
 2. Patient may pay online later; persist **payment status** when introduced.
 3. **Admin** can review booking together with payment state.
-4. **Successful payment must not imply medical confirmation** — admin/clinic confirmation stays explicit.
+4. **Successful payment must not imply medical confirmation** — clinic/admin confirmation stays explicit.
 
 ## Phase 1 Scope
 

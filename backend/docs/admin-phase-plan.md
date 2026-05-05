@@ -1,27 +1,55 @@
 # Admin Phase Plan
 
-## Product and auth context (this repository)
+## Account Scope
 
-**Who logs into this website (planned):**
+Canonical account model for **this** website and backend (before Admin Phase 3 CRUD).
 
-1. **Patients / users** (`USER` / `PATIENT`) — register, account area, booking history, payments (later), appointment-request status (later).
-2. **Admins** (`ADMIN`) — manage public-site content (countries, services, doctors **as displayed on the marketing site**, pricing, assets, blog/FAQ/legal), and review **booking / appointment requests** (current Phase 2.x queue).
+### Patient / User
 
-**Who does not use this app’s dashboard:**
+Website accounts (future): role **`PATIENT`** — end users of this marketing/booking site.
 
-- **Doctors / clinical staff** — deferred to a **separate doctor portal** (future, **outside this repo and outside `/admin`**). Do **not** implement doctor login, doctor routes, or doctor-facing appointment management UI here.
+Planned capabilities (not fully implemented):
 
-**Roles in scope for this codebase:** `PATIENT`, `ADMIN` only for authenticated areas of this site. Public visitors browse without logging in.
+- Register / login
+- Manage profile and contact details
+- View **booking request** status
+- View payment history, pay online, invoices/receipts (**payments deferred** — see below)
 
-### Future booking and payment (design intent — not implemented yet)
+### Admin
 
-End state this documentation assumes:
+Website accounts (future): role **`ADMIN`** — staff who operate **this** site.
 
-1. Patient submits a booking **request** (already: intake only; not medical confirmation).
-2. Patient may **pay online later** (not built yet).
-3. **Payment status** is tracked when payments exist.
-4. **Admin** can review combined **booking + payment** state.
-5. **No payment does not imply medical confirmation** — clinical/admin confirmation remains explicit and separate from “checkout succeeded.”
+Planned capabilities:
+
+- Manage countries, services, **pricing**, **assets/images**
+- Manage **`Doctor` rows as public profile/content** (what appears on marketing pages — **not** “doctor admins” logging into `/admin` as clinicians)
+- Manage blog / FAQ / legal / country-specific content (may trail core CRUD)
+- Review booking requests and update appointment-request statuses (Phase 2.x queue today)
+
+### Doctor public profiles
+
+In data and product language, **Doctor** here means **public directory content**:
+
+- Profiles shown on the website (name, title, specialties, bio, imagery, country association, linked services/specialties as surfaced publicly)
+- **`Doctor` Prisma model = CMS-style record**, not a login identity
+
+### Doctor portal (deferred)
+
+**Do not** implement in this repo:
+
+- Doctor login, doctor dashboard, doctor portal routes, doctor-facing appointment management
+
+Clinical workflows and doctor identities for **practice use** belong to a **separate doctor portal** (future, outside this application scope).
+
+### Payments (deferred)
+
+**Do not** build payment flows yet. Planned alignment when implemented:
+
+1. Patient submits booking **request**
+2. Patient may be asked to **pay online** later
+3. **Payment status** is tracked
+4. **Admin** can review **booking + payment** state together
+5. **Payment does not automatically confirm an appointment** — clinic/admin confirmation remains explicit and separate
 
 ---
 
@@ -45,7 +73,7 @@ Implemented:
 - thin route handlers with Zod param/body checks
 - internal frontend scaffold + server-only admin client (`frontend/lib/admin/admin-api.ts`)
 
-## Phase 2.1 (this hardening pass)
+## Phase 2.1 (done)
 
 Goal: safer queue operations before broader admin CRUD.
 
@@ -58,6 +86,34 @@ Implemented:
 - **Frontend detail**: only valid next statuses; closed message for terminal; server action re-checks rules
 - **Tests**: `pnpm --filter backend test` runs transition unit tests
 
+## Phase 3 (planned): content + ops CRUD (before patient dashboard depth)
+
+Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, and ship **protected admin APIs + UI** for database-backed **marketing content** this site already reads publicly.
+
+**In scope for Phase 3 CRUD (subject to sequencing):**
+
+1. **Countries** — operational/marketing country records used by public routes
+2. **Services** — service catalog per country
+3. **Doctors** — **public profile records only** (same semantics as `Doctor` model: directory/CMS rows admins edit; **never** described as “admin users” or clinical login)
+4. **Pricing** — pricing plans / price-backed content as modeled in DB
+5. **Assets** — images and related asset rows tied to country/doctor content
+
+**Explicitly later or parallel tracks (still no doctor portal here):**
+
+- **Blog / FAQ / Legal** content management — plan after or alongside core entities depending on where copy lives (DB vs files)
+- **Payment status** fields and admin views — design hooks only until payments are scheduled; **do not** ship payment processing as part of “Phase 3 CRUD” unless explicitly scoped
+
+**Still deferred:**
+
+- Full **patient** dashboard (profile, payments UX, receipts) — separate milestones after Phase 3 content CRUD unless minimally overlapping
+- **Doctor portal** — unchanged; separate product
+- **Payments** — integration deferred; documentation-only expectations above
+
+**Auth:**
+
+- Phase 3 introduces real **`ADMIN`** identity for `/admin` (sessions/JWT per stack choice); **`PATIENT`** auth remains its own track
+- Role checks: **`ADMIN`** vs **`PATIENT`** on this site only — **no `DOCTOR` website role**
+
 ## Security Model (Phase 2 / 2.1)
 
 - backend admin endpoints require header: `Authorization: Bearer <ADMIN_API_TOKEN>`
@@ -67,16 +123,13 @@ Implemented:
 - token is not exposed through `NEXT_PUBLIC_*` vars
 - list endpoint supports search: treat admin token as sensitive; do not log full URLs with tokens
 
-## Explicitly Deferred
+## Explicitly Deferred (cross-phase)
 
-- full user login/session auth (JWT, RBAC, refresh flow) for **PATIENT** and **ADMIN** only (this site)
-- admin user table + role management
-- audit logs and immutable history
-- **patient** dashboard features (profile, history, payments, request status) — later on this site
-- **doctor portal** (login, schedules, clinical workflows) — **separate product/repo**, not `/admin` here
-- payment gateway, payment status persistence, and patient payment UX
+- **Patient** login/session UX and full account dashboard
+- **Payment** gateway, persistence, and patient pay flows
+- **Doctor portal** (any clinical login or appointment management for doctors)
+- audit logs and immutable history (optional incremental adds)
 - email/calendar workflows
-- broad content CRUD admin (beyond current appointment queue hardening)
 
 ## Local Setup / Test
 
@@ -91,14 +144,4 @@ Implemented:
 5. Verify API: `GET /api/admin/appointments?page=1&pageSize=20&search=test` with bearer token.
 6. Verify UI: `/admin/appointments` filters/pagination; detail transitions respect terminal rules.
 
-## Next Phase Recommendation
-
-Phase 3 should replace env-token gate with real **ADMIN** identity on this site:
-
-- admin login with hashed password/session
-- role checks per action (`ADMIN` vs `PATIENT` — still no doctor role in this app)
-- audit trail for status changes
-- optional: richer queue UX (saved views, exports) on top of existing pagination/filters
-- prepare data model hooks for **payment status** on booking requests (when payments ship)
-
-Doctor-facing features belong in the **separate doctor portal**, not in this phase plan.
+Doctor-facing features belong only in the **separate doctor portal**, not in subsequent phases of this plan unless product scope changes.

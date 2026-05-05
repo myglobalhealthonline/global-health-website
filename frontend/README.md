@@ -1,5 +1,19 @@
 ﻿# Frontend
 
+## Account Scope
+
+This Next.js app serves **public marketing pages** and **internal `/admin` tools** (token-auth today).
+
+| Concept | In this app |
+| --- | --- |
+| **Patient / user** | Future **`PATIENT`** login: profile, booking-request status, payments/receipts (**payments deferred**). |
+| **Admin** | Future **`ADMIN`** login: manage countries, services, **doctor public profiles** (content records), pricing, assets, blog/FAQ/legal as planned; booking queue (today partial). |
+| **Doctor** | **Public profile pages only** (`Doctor` data from API/CMS). **Not** a dashboard user here. |
+| **Doctor portal** | **Deferred** — separate product; no doctor routes or clinical UI in this repo. |
+| **Payments** | **Deferred** — design: optional pay after request, tracked status, admin visibility; **pay ≠ confirmed appointment**. |
+
+Do **not** remove or reroute existing **public doctor profile / team** pages — they remain SEO/marketing surfaces.
+
 ## Public Frontend Runtime
 
 The public website remains fallback-safe.

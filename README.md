@@ -96,6 +96,36 @@ The platform must scale toward admin tooling, patient accounts, payments, bookin
 
 ---
 
+## Account Scope
+
+Single reference for **this repository** (marketing site + `/admin` operations tooling).
+
+### Patient / User
+
+- Future authenticated role: **`PATIENT`**
+- Planned: register/login, profile, **booking request** status, payment history, online payments, invoices/receipts (**payment integration deferred**)
+
+### Admin
+
+- Future authenticated role: **`ADMIN`**
+- Planned: countries, services, **doctors as editable public-profile records** (not doctor login accounts), pricing, assets/images, blog/FAQ/legal/country content, booking-request review and status updates
+
+### Doctor public profiles
+
+- **`Doctor`** in the database = **marketing/directory content** (name, title, specialties, bio, imagery, country, public service links)
+- **Not** a website login, dashboard, appointment-management account, or portal user inside this app
+
+### Doctor portal (deferred)
+
+- Clinical staff tools and doctor authentication → **separate portal**, outside this repo — **no doctor login, dashboard, or portal routes** here
+
+### Payments (deferred)
+
+- Money flows are **patient/user** concerns later — **not implemented now**
+- Intended flow: request → optional online pay → **payment status** tracked → **admin** sees booking + payment picture → **payment does not automatically mean appointment confirmed**; explicit clinic/admin confirmation remains required
+
+---
+
 ## Product Principles
 
 1. **Patient-first UX**

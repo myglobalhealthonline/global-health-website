@@ -1,3 +1,7 @@
+// Account model (planning): there is no User/UserRole in this schema yet.
+// Future auth on THIS website should be PATIENT | ADMIN only.
+// The Doctor model below is public marketing/directory data — not a login identity.
+// Clinical doctor accounts belong to a separate doctor portal (deferred, out of scope).
 generator client {
   provider = "prisma-client-js"
 }
@@ -95,6 +99,8 @@ model Clinic {
   @@unique([countryId, slug])
 }
 
+/// Public website profile (directory/CMS). Admins may edit these rows as content.
+/// Not an authenticated user: no doctor dashboard or portal login in this application.
 model Doctor {
   id         String           @id @default(cuid())
   countryId  String

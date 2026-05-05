@@ -1,26 +1,39 @@
 # Admin UI Plan (Phase 2 + 2.1)
 
-## Product / auth boundary
+## Account Scope
+
+Aligned with backend admin/product docs — **this** frontend application only.
+
+### Patient / User
+
+Future **`PATIENT`** accounts on this site (not built yet): register/login, profile, booking-request status, payment history, online pay, invoices/receipts later.
+
+### Admin
+
+Future **`ADMIN`** accounts: manage countries, services, **doctor profiles as public content**, pricing, assets, blog/FAQ/legal (timeline TBD), review booking requests and statuses — surfaced starting under `/admin`.
+
+### Doctor public profiles
+
+Public routes such as doctor/team pages render **`Doctor` database rows as marketing content**. Editing those rows is **admin CMS work**, not “giving doctors an account” on this website.
+
+### Doctor portal (deferred)
+
+No doctor login, doctor dashboard, or doctor portal routes in this repo — **separate portal** later.
+
+### Payments (deferred)
+
+Patient-facing payments and receipts are **not** implemented yet. When added: track payment status; admin can see booking + payment context; **payment ≠ appointment confirmed**.
+
+---
+
+## Product / auth boundary (UI)
 
 This frontend hosts:
 
 - **Public marketing site** (no login): browse, country selection, services, doctor **profile pages as content**, pricing, blog, legal, **booking request** form.
-- **Internal admin UI** (`/admin/...`): staff who manage the site and review booking requests (today: env token; later: real **ADMIN** login).
+- **Internal admin UI** (`/admin/...`): staff (**ADMIN** role when auth lands); today env-token server fetch only.
 
-**Main website login (future) is only for:**
-
-1. **Patients / users** — accounts, profile, booking/payment history, appointment-request status, payments (when built).
-2. **Admins** — content management and operational queues for **this** site.
-
-**Not in this app:**
-
-- **Doctor portal** (clinical dashboard, doctor login, doctor-side appointment management) — separate product later; **no doctor routes or dashboards** in this repo.
-
-**Roles:** `PATIENT` | `ADMIN` for authenticated UX here. No `DOCTOR` web-app role in scope.
-
-### Booking vs payment (future documentation alignment)
-
-When payments exist: patient may pay after requesting a booking; **payment alone must not imply medical confirmation**; admins review booking + payment state; clinic/admin confirmation stays explicit.
+**Roles for authenticated UX on this site:** `PATIENT` | `ADMIN` only.
 
 ---
 

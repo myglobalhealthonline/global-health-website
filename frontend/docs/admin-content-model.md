@@ -1,12 +1,17 @@
 ﻿# Admin Content Model
 
+## Account Scope (editing vs login)
+
+- **`Doctor`** in this model means **public profile records** (marketing pages). Staff **`ADMIN`** users edit them like CMS rows — doctors themselves **do not log into this site**.
+- **Doctor portal** (clinical tooling) is **deferred** and separate from this content model.
+
 ## Core entities
 - Country
 - CountryDomain
 - CountryLocale
 - Currency
 - Clinic
-- Doctor
+- Doctor (public directory only — not a User account)
 - Specialty
 - Service
 - PricingPlan
