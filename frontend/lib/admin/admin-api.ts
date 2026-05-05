@@ -209,3 +209,97 @@ export async function deleteAdminCountry(id: string) {
     method: "DELETE",
   });
 }
+
+export type AdminSpecialtyOptionDto = {
+  id: string;
+  slug: string;
+  name: string;
+  active: boolean;
+};
+
+export type AdminServiceDto = {
+  id: string;
+  countryId: string;
+  specialtyId: string | null;
+  slug: string;
+  name: string;
+  summary: string | null;
+  legacyPath: string | null;
+  durationMinutes: number | null;
+  basePriceCents: number | null;
+  currencyCode: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  country: { id: string; code: string; name: string };
+  specialty: {
+    id: string;
+    countryId: string;
+    slug: string;
+    name: string;
+    active: boolean;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+};
+
+type AdminServicesListPayload = {
+  items: AdminServiceDto[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+type AdminServiceDetailPayload = {
+  service: AdminServiceDto;
+};
+
+type AdminSpecialtiesPayload = {
+  specialties: AdminSpecialtyOptionDto[];
+};
+
+export async function fetchAdminServices(query?: Record<string, string | undefined>) {
+  const params = new URLSearchParams();
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") {
+        params.set(key, value);
+      }
+    }
+  }
+  const qs = params.toString();
+  const path = qs ? `/api/admin/services?${qs}` : "/api/admin/services";
+  return adminRequest<AdminServicesListPayload>(path);
+}
+
+export async function fetchAdminServiceById(id: string) {
+  return adminRequest<AdminServiceDetailPayload>(`/api/admin/services/${id}`);
+}
+
+export async function fetchAdminSpecialties(countryId: string) {
+  const params = new URLSearchParams({ countryId });
+  return adminRequest<AdminSpecialtiesPayload>(`/api/admin/specialties?${params.toString()}`);
+}
+
+export async function postAdminService(body: unknown) {
+  return adminRequest<AdminServiceDetailPayload>("/api/admin/services", {
+    method: "POST",
+    body,
+  });
+}
+
+export async function patchAdminService(id: string, body: unknown) {
+  return adminRequest<AdminServiceDetailPayload>(`/api/admin/services/${id}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export async function deleteAdminService(id: string) {
+  return adminRequest<AdminServiceDetailPayload>(`/api/admin/services/${id}`, {
+    method: "DELETE",
+  });
+}

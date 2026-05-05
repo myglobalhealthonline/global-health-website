@@ -1,4 +1,4 @@
-# Admin API (Phase 2 + 2.1 + 3.1 countries)
+# Admin API (Phase 2 + 2.1 + 3.1 countries + 3.2 services)
 
 ## Account scope
 
@@ -229,6 +229,83 @@ Same `409` on unique violations.
 
 Re-enable via `PATCH` with `"isActive": true`.
 
+---
+
+## Services (Phase 3.2)
+
+Same bearer auth as other admin routes.
+
+Prisma `Service` model fields used by admin APIs (no invented columns):
+
+| Field | Notes |
+| --- | --- |
+| `countryId` | Required on create; FK to `Country` |
+| `specialtyId` | Optional; **category/type** is modeled here (`Specialty`), must belong to the effective country |
+| `slug` | Required on create; URL-safe segment; **`@@unique([countryId, slug])`** |
+| `name` | Required on create (display title) |
+| `summary` | Optional text |
+| `legacyPath` | Optional; when set must start with `/` |
+| `durationMinutes` | Optional; if present must be a **positive** integer |
+| `basePriceCents` | Optional; if present must be **≥ 0** |
+| `currencyCode` | Optional string (max 8 chars) |
+| `isActive` | Boolean; default `true` on create |
+| `consultationSetting`, `bookingSetting` | JSON — **not** editable via Phase 3.2 admin payloads (schema follow-up if needed) |
+
+**Schema gaps (follow-up migrations / admin UX):** no separate long **`description`** column; no **`sortOrder`**; no direct **`Asset`** relation on `Service`; JSON booking/consultation settings not exposed in admin UI yet.
+
+### Helper: `GET /api/admin/specialties`
+
+Query: **`countryId`** (required) — internal country id.
+
+Returns `{ specialties }` for specialties scoped to that country (for create/edit dropdowns). Invalid/missing country → `400`.
+
+### `GET /api/admin/services`
+
+Paginated list with filters.
+
+**Query parameters:**
+
+| Param | Default | Max | Description |
+| --- | --- | --- | --- |
+| `page` | `1` | — | 1-based page index |
+| `pageSize` | `20` | `100` | Rows per page |
+| `countryId` | — | — | Filter by internal country id |
+| `countryCode` | — | 8 chars | Filter by country `code` (e.g. `ie`) |
+| `specialtyId` | — | — | Filter by specialty (category/type) |
+| `isActive` | — | — | `true` / `false` (string or boolean coerced) |
+| `search` | — | 120 chars | Case-insensitive substring on `name`, `slug`, `summary` |
+
+Invalid query → `400` with Zod `details`.
+
+Response shape includes `items`, `pagination` (`page`, `pageSize`, `total`, `totalPages`). When `page` is beyond the last page and `total > 0`, the service clamps to the last page (same pattern as appointments list).
+
+### `GET /api/admin/services/:id`
+
+Param `id`: Prisma `Service` id (`cuid`).
+
+Returns `{ service }` with `country` and `specialty` includes, or `404`.
+
+### `POST /api/admin/services`
+
+Creates a service. Body validated by `adminServiceCreateBodySchema`:
+
+- **`countryId`** required (country must exist — otherwise `400`).
+- **`slug`** required; lowercase URL-safe (`a-z`, `0-9`, hyphens; no leading/trailing hyphen).
+- **`name`** required (maps to marketing “title”).
+- **`specialtyId`** optional; if set, must reference a specialty for the **same** country (`400` if invalid).
+- **`durationMinutes`** / **`basePriceCents`** optional with positivity / non-negativity rules above.
+- Duplicate **`countryId` + `slug`** → **`409`** (`P2002`).
+
+### `PATCH /api/admin/services/:id`
+
+Partial update; empty body → `400`. Changing `countryId` and/or `specialtyId` re-validates specialty against effective country. Same **`409`** on unique violation.
+
+### `DELETE /api/admin/services/:id`
+
+**Soft-disable only:** sets **`isActive: false`**. Does not remove the row. Re-enable via **`PATCH`** with `"isActive": true`.
+
+**Public behavior unchanged:** public `GET /api/services` continues to list **`isActive: true`** only — marketing pages keep using existing adapters/fallbacks when the backend is unavailable; Phase 3.2 does **not** force public pages to depend on admin-managed rows exclusively.
+
 ## Security Limits (Phase 2 / 2.1)
 
 - auth is env-token gate, not per-user identity
@@ -243,3 +320,4 @@ Re-enable via `PATCH` with `"isActive": true`.
 
 - `appointment-status-transitions.test.ts`
 - `admin-countries.schema.test.ts` (Zod rules for countries)
+- `admin-services.schema.test.ts` (service slug, price/duration, query filters)

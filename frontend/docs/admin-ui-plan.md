@@ -1,4 +1,4 @@
-# Admin UI Plan (Phase 2 + 2.1)
+# Admin UI Plan (Phase 2 + 2.1 + 3.1 + 3.2)
 
 ## Account Scope
 
@@ -48,8 +48,20 @@ Internal-only admin scaffold routes:
 - `/admin/countries/new` — create form + server action (`POST /api/admin/countries`)
 - `/admin/countries/[id]` — read-only detail + soft-deactivate (`DELETE` → `isActive: false`)
 - `/admin/countries/[id]/edit` — full edit form (`PATCH /api/admin/countries/:id`)
+- `/admin/services` — list with filters (country, specialty when country chosen, active, search), pagination, view/edit links
+- `/admin/services/new` — pick country then create form (`POST /api/admin/services`); specialties loaded from `GET /api/admin/specialties?countryId=`
+- `/admin/services/[id]` — detail + soft-deactivate (`DELETE` → `isActive: false`)
+- `/admin/services/[id]/edit` — edit (`PATCH`); country locked to preserve **`countryId + slug`** uniqueness semantics
 
 No public nav links point to these routes.
+
+### Phase 3.2 notes (services)
+
+- **Title** field in the UI maps to Prisma **`Service.name`**.
+- **Category/type** is **`Specialty`** (`specialtyId`); required for validation when the product treats services as categorized — form encourages selection after country is chosen.
+- No separate **description** field in schema — UI shows summary only until a migration adds `description`.
+- **`consultationSetting` / `bookingSetting`** JSON are not edited in admin UI in this phase.
+- Public marketing pages **continue** to use existing **fallback adapters** if the API is down; admin CRUD does not switch public routes to hard-require CMS data.
 
 ## Data Flow / Security
 
@@ -97,6 +109,7 @@ Status updates submit through a server action that calls `PATCH /api/admin/appoi
 4. Open `/admin/appointments`, apply filters, paginate, open a row.
 5. On detail, confirm only valid next statuses appear; terminal rows show closed state only.
 6. Open `/admin/countries`: create a row, view detail, edit, deactivate; confirm inactive row disappears from public `GET /api/countries` only after backend refresh (public adapter fallback unchanged).
+7. Open `/admin/services`: filter list, create a service (country → slug/title/specialty/summary/pricing), view detail, edit, deactivate; confirm public site still works via adapters without requiring these rows for every page load.
 
 ## Deferred UI Work
 

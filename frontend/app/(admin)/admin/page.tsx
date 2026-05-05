@@ -14,6 +14,9 @@ export default function AdminHomePage() {
         <Link href="/admin/countries" className="gh-btn gh-btn-primary">
           Countries
         </Link>
+        <Link href="/admin/services" className="gh-btn gh-btn-primary">
+          Services
+        </Link>
       </div>
     </section>
   );

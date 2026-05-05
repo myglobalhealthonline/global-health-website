@@ -96,6 +96,19 @@ Delivered:
 - **Tests:** `admin-countries.schema.test.ts` (defaultLocale vs locales, paths, duplicate locales, domains primary, PATCH alignment)
 - **Public safety:** public read APIs and adapters unchanged; inactive countries hidden from existing `GET /api/countries` (`isActive: true` filter preserved)
 
+## Phase 3.2 — Services CRUD (done)
+
+Delivered:
+
+- **Backend:** `GET/POST/PATCH/DELETE /api/admin/services`, `GET /api/admin/services/:id`, helper `GET /api/admin/specialties?countryId=` for specialty (category) dropdowns; Zod `admin-services.schema.ts`; `services.service.ts` admin methods (`listAdminServices`, `getAdminServiceById`, `createAdminService`, `updateAdminService`, `disableAdminService`, `listSpecialtiesForAdminCountry`); thin `admin-services.route.ts`; duplicate **`countryId + slug`** → `409` (`P2002`).
+- **Soft-disable:** `DELETE` sets `isActive: false` only.
+- **Filters/pagination:** `countryId`, `countryCode`, `specialtyId`, `isActive`, `search`, `page`, `pageSize` on list.
+- **Frontend:** `/admin/services`, `/admin/services/new`, `/admin/services/[id]`, `/admin/services/[id]/edit` — server-only `admin-api.ts`; country select + specialty select; form maps **title** UI label to Prisma **`name`**; summary/duration/price/currency/active; no JSON `consultationSetting`/`bookingSetting` editing.
+- **Tests:** `admin-services.schema.test.ts` (slug, negative price, duration, valid payload, query parsing).
+- **Public safety:** public routes and fallback adapters unchanged; `GET /api/services` still filters `isActive: true` only — no requirement that public pages load admin data first.
+
+**Schema follow-ups documented** in `admin-api.md`: optional `description`, `sortOrder`, asset linkage, admin editing of JSON settings.
+
 ## Phase 3 (planned): remaining content + ops CRUD (before patient dashboard depth)
 
 Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, and ship **protected admin APIs + UI** for database-backed **marketing content** this site already reads publicly.
@@ -103,7 +116,7 @@ Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, a
 **In scope for Phase 3 CRUD (subject to sequencing):**
 
 1. ~~**Countries**~~ — **done (Phase 3.1)**
-2. **Services** — service catalog per country
+2. ~~**Services**~~ — **done (Phase 3.2)**
 3. **Doctors** — **public profile records only** (same semantics as `Doctor` model: directory/CMS rows admins edit; **never** described as “admin users” or clinical login)
 4. **Pricing** — pricing plans / price-backed content as modeled in DB
 5. **Assets** — images and related asset rows tied to country/doctor content

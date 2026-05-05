@@ -14,6 +14,7 @@ import contactRoute from "./routes/contact.route.js";
 import newsletterRoute from "./routes/newsletter.route.js";
 import adminAppointmentsRoute from "./routes/admin-appointments.route.js";
 import adminCountriesRoute from "./routes/admin-countries.route.js";
+import adminServicesRoute from "./routes/admin-services.route.js";
 
 export async function buildApp() {
   const app = Fastify({ logger: true });
@@ -36,6 +37,7 @@ export async function buildApp() {
   await app.register(newsletterRoute);
   await app.register(adminAppointmentsRoute);
   await app.register(adminCountriesRoute);
+  await app.register(adminServicesRoute);
 
   return app;
 }
