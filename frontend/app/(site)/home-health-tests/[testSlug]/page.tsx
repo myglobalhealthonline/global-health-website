@@ -1,12 +1,24 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { ServiceDetailTemplate } from "@/components/templates/ServiceDetailTemplate";
+import { buildServiceDetailCopy } from "@/lib/content/template-page-data";
 
 type Params = { testSlug: string };
 
-export const metadata: Metadata = { title: "Home Health Test", description: "Home health test placeholder page." };
+export const metadata: Metadata = {
+  title: "Home Health Test",
+  description: "Health test detail template route.",
+};
 
 export default async function HomeHealthTestPage({ params }: { params: Promise<Params> }) {
   const { testSlug } = await params;
-  return <PageShell title={`Home Health Test: ${testSlug}`} message="TODO: Add test detail content and ordering workflow." ctaHref="/home-health-test" ctaLabel="Back to Health Tests" />;
+  const copy = buildServiceDetailCopy(testSlug);
+  return (
+    <ServiceDetailTemplate
+      title={copy.title}
+      description={copy.description}
+      body={copy.body}
+      bookingHref="/book-online"
+      bookingLabel="Book Online"
+    />
+  );
 }
-

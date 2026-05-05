@@ -1,19 +1,20 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { DoctorTeamTemplate } from "@/components/templates/DoctorTeamTemplate";
+import { getTemplatePageData } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Ireland Team",
-  description: "TODO: Add Ireland clinicians and credentials.",
+  description: "Doctor/team listing template for Ireland.",
 };
 
-export default function Page() {
+export default async function Page() {
+  const data = await getTemplatePageData("/ireland-team", "ie");
   return (
-    <PageShell
-      title="Ireland Team"
-      message="TODO: Add Ireland clinicians and credentials."
-      ctaHref="/book-online"
-      ctaLabel="Book Online"
+    <DoctorTeamTemplate
+      countryName={data.country.name}
+      doctors={data.doctors}
+      bookingHref={data.paths.general}
+      bookingLabel={data.site.common.cta.primaryBooking}
     />
   );
 }
-

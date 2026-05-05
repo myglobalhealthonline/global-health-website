@@ -1,19 +1,13 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { LegalPageTemplate } from "@/components/templates/LegalPageTemplate";
+import { buildLegalCopy } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Legal Notices",
-  description: "TODO: Add legal notices content from verified policy source.",
+  description: "Legal/static template page.",
 };
 
 export default function Page() {
-  return (
-    <PageShell
-      title="Legal Notices"
-      message="TODO: Add legal notices content from verified policy source."
-      ctaHref="/privacy"
-      ctaLabel="Book Online"
-    />
-  );
+  const copy = buildLegalCopy("Legal Notices");
+  return <LegalPageTemplate title="Legal Notices" description={copy.description} sections={copy.sections} />;
 }
-

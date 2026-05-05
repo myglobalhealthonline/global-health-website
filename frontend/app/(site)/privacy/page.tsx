@@ -1,19 +1,13 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { LegalPageTemplate } from "@/components/templates/LegalPageTemplate";
+import { buildLegalCopy } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "TODO: Add privacy and GDPR policy content.",
+  description: "Legal/static template page.",
 };
 
 export default function Page() {
-  return (
-    <PageShell
-      title="Privacy Policy"
-      message="TODO: Add privacy and GDPR policy content."
-      ctaHref="/privacy"
-      ctaLabel="Book Online"
-    />
-  );
+  const copy = buildLegalCopy("Privacy Policy");
+  return <LegalPageTemplate title="Privacy Policy" description={copy.description} sections={copy.sections} />;
 }
-

@@ -1,19 +1,27 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { CountryHomeTemplate } from "@/components/templates/CountryHomeTemplate";
+import { getTemplatePageData } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Ireland Home",
-  description: "TODO: Add Ireland landing page content blocks and localized clinic messaging.",
+  description: "Country homepage template for Ireland.",
 };
 
-export default function Page() {
+export default async function Page() {
+  const data = await getTemplatePageData("/home", "ie");
+
   return (
-    <PageShell
-      title="Ireland Home"
-      message="TODO: Add Ireland landing page content blocks and localized clinic messaging."
-      ctaHref="/book-online"
-      ctaLabel="Book Online"
+    <CountryHomeTemplate
+      countryName={data.country.name}
+      hero={{
+        eyebrow: data.site.localeBundle.home.hero.eyebrow,
+        title: data.site.localeBundle.home.hero.title,
+        description: data.site.localeBundle.home.hero.description,
+      }}
+      primaryBooking={{ href: data.paths.general, label: data.site.common.cta.primaryBooking }}
+      services={data.generalListing.slice(0, 6)}
+      doctors={data.doctors}
+      faqs={data.faqItems}
     />
   );
 }
-

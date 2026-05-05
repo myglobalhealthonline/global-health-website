@@ -1,19 +1,13 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { LegalPageTemplate } from "@/components/templates/LegalPageTemplate";
+import { buildLegalCopy } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Cookies Policy",
-  description: "TODO: Add cookies policy content and consent references.",
+  description: "Legal/static template page.",
 };
 
 export default function Page() {
-  return (
-    <PageShell
-      title="Cookies Policy"
-      message="TODO: Add cookies policy content and consent references."
-      ctaHref="/privacy"
-      ctaLabel="Book Online"
-    />
-  );
+  const copy = buildLegalCopy("Cookies Policy");
+  return <LegalPageTemplate title="Cookies Policy" description={copy.description} sections={copy.sections} />;
 }
-

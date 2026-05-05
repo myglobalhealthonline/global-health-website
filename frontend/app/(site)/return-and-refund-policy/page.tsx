@@ -1,19 +1,13 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { LegalPageTemplate } from "@/components/templates/LegalPageTemplate";
+import { buildLegalCopy } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Refund and Return Policy",
-  description: "TODO: Add refund and return policy content.",
+  description: "Legal/static template page.",
 };
 
 export default function Page() {
-  return (
-    <PageShell
-      title="Refund and Return Policy"
-      message="TODO: Add refund and return policy content."
-      ctaHref="/privacy"
-      ctaLabel="Book Online"
-    />
-  );
+  const copy = buildLegalCopy("Refund and Return Policy");
+  return <LegalPageTemplate title="Refund and Return Policy" description={copy.description} sections={copy.sections} />;
 }
-

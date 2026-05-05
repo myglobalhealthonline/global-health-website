@@ -1,19 +1,13 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { LegalPageTemplate } from "@/components/templates/LegalPageTemplate";
+import { buildLegalCopy } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Terms and Conditions",
-  description: "TODO: Add full terms and conditions content.",
+  description: "Legal/static template page.",
 };
 
 export default function Page() {
-  return (
-    <PageShell
-      title="Terms and Conditions"
-      message="TODO: Add full terms and conditions content."
-      ctaHref="/privacy"
-      ctaLabel="Book Online"
-    />
-  );
+  const copy = buildLegalCopy("Terms and Conditions");
+  return <LegalPageTemplate title="Terms and Conditions" description={copy.description} sections={copy.sections} />;
 }
-

@@ -1,12 +1,24 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { ServiceDetailTemplate } from "@/components/templates/ServiceDetailTemplate";
+import { buildServiceDetailCopy } from "@/lib/content/template-page-data";
 
 type Params = { serviceSlug: string };
 
-export const metadata: Metadata = { title: "Service", description: "Service placeholder page." };
+export const metadata: Metadata = {
+  title: "Service Details",
+  description: "Service detail template route.",
+};
 
-export default async function ServicesPage({ params }: { params: Promise<Params> }) {
+export default async function ServicesDetailPage({ params }: { params: Promise<Params> }) {
   const { serviceSlug } = await params;
-  return <PageShell title={`Service: ${serviceSlug}`} message="TODO: Add modern services catalog content." ctaHref="/book-online" ctaLabel="Book Online" />;
+  const copy = buildServiceDetailCopy(serviceSlug);
+  return (
+    <ServiceDetailTemplate
+      title={copy.title}
+      description={copy.description}
+      body={copy.body}
+      bookingHref="/book-online"
+      bookingLabel="Book Online"
+    />
+  );
 }
-

@@ -1,17 +1,35 @@
 ﻿import type { Metadata } from "next";
-import { routeInventory } from "@/data/routes";
-import { PageShell } from "@/components/layout/PageShell";
 import { notFound } from "next/navigation";
+import { ServiceDetailTemplate } from "@/components/templates/ServiceDetailTemplate";
+import { routeInventory } from "@/data/routes";
+import { buildServiceDetailCopy } from "@/lib/content/template-page-data";
 
 type Params = { serviceSlug: string };
-const known = routeInventory.irelandSpecialistConsultation.map((p) => p.replace("/ireland-specialist-consultations/", ""));
+const known = routeInventory.irelandSpecialistConsultation.map((p) =>
+  p.replace("/ireland-specialist-consultations/", ""),
+);
 
-export const metadata: Metadata = { title: "Ireland Specialist Consultation", description: "Ireland specialist consultation placeholder." };
-export function generateStaticParams() { return known.map((serviceSlug) => ({ serviceSlug })); }
+export const metadata: Metadata = {
+  title: "Ireland Specialist Consultation",
+  description: "Service detail template for Ireland specialist pages.",
+};
 
-export default async function IrelandSpecialistPage({ params }: { params: Promise<Params> }) {
-  const { serviceSlug } = await params;
-  if (!known.includes(serviceSlug)) notFound();
-  return <PageShell title={`Ireland Specialist: ${serviceSlug}`} message="TODO: Add specialist consultation service content." ctaHref="/specialty-ie" ctaLabel="Back to Specialist Consultations" />;
+export function generateStaticParams() {
+  return known.map((serviceSlug) => ({ serviceSlug }));
 }
 
+export default async function IrelandSpecialistServicePage({ params }: { params: Promise<Params> }) {
+  const { serviceSlug } = await params;
+  if (!known.includes(serviceSlug)) notFound();
+
+  const copy = buildServiceDetailCopy(serviceSlug);
+  return (
+    <ServiceDetailTemplate
+      title={copy.title}
+      description={copy.description}
+      body={copy.body}
+      bookingHref="/specialty-ie"
+      bookingLabel="Book Online"
+    />
+  );
+}

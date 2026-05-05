@@ -1,19 +1,19 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { BlogIndexTemplate } from "@/components/templates/BlogIndexTemplate";
+import { getTemplatePageData } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "TODO: Add blog listing with categories and search.",
+  description: "Blog listing template.",
 };
 
-export default function Page() {
+export default async function Page() {
+  const data = await getTemplatePageData("/blog", "ie");
   return (
-    <PageShell
+    <BlogIndexTemplate
       title="Blog"
-      message="TODO: Add blog listing with categories and search."
-      ctaHref="/book-online"
-      ctaLabel="Book Online"
+      description="Insights and educational updates from the Global Health team."
+      posts={data.blogPosts}
     />
   );
 }
-

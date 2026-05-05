@@ -1,19 +1,22 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { ConsultationListingTemplate } from "@/components/templates/ConsultationListingTemplate";
+import { getTemplatePageData } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Specialist Consultation - Portugal",
-  description: "TODO: Add Portugal specialist consultation content.",
+  description: "Consultation listing template.",
 };
 
-export default function Page() {
+export default async function Page() {
+  const data = await getTemplatePageData("specialty-pt", "pt");
   return (
-    <PageShell
+    <ConsultationListingTemplate
       title="Specialist Consultation - Portugal"
-      message="TODO: Add Portugal specialist consultation content."
-      ctaHref="/book-online"
-      ctaLabel="Book Online"
+      description="Browse specialist online consultation options."
+      mode="specialist"
+      listing={data.specialistListing}
+      bookingHref={data.paths.general}
+      bookingLabel={data.site.common.cta.primaryBooking}
     />
   );
 }
-
