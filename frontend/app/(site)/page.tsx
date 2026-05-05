@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const { common, countries, navigation } = await getSiteContext("en");
+  const { common, activeCountries, navigation } = await getSiteContext("en");
 
   return (
     <>
@@ -46,7 +46,7 @@ export default async function HomePage() {
         </Container>
       </Section>
 
-      <CountrySelector countries={countries} copy={common.countrySelector} />
+      <CountrySelector countries={activeCountries} copy={common.countrySelector} />
 
       <PageShell
         title="Homepage shell status"
@@ -55,3 +55,4 @@ export default async function HomePage() {
     </>
   );
 }
+

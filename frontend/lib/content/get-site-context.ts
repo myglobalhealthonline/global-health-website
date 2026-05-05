@@ -1,22 +1,28 @@
-﻿import { countries } from "@/data/countries";
-import { buildSiteNavigationData } from "@/data/navigation";
-import { getCommonLocale } from "@/lib/i18n/get-common-locale";
-import type { LocaleCode } from "@/lib/i18n/types";
+﻿import { getFallbackSiteContext } from "@/lib/content/fallback-site-context";
+import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { resolveCountry } from "@/lib/routing/resolve-country";
+import type { SiteContextInput } from "@/lib/routing/types";
 
 /**
- * Transitional content source.
- * Phase 0: uses seed files.
- * Phase 1+: replace with backend API/domain-aware runtime adapters.
+ * Phase 1 runtime adapter.
+ * Frontend remains self-contained when backend is offline.
  */
-export async function getSiteContext(locale: LocaleCode = "en") {
-  // TODO: switch to backend API data fetches via NEXT_PUBLIC_API_URL.
-  const common = getCommonLocale(locale);
-  const navigation = buildSiteNavigationData(common, countries);
+export async function getSiteContext(input: SiteContextInput | string = {}) {
+  const normalizedInput: SiteContextInput =
+    typeof input === "string" ? { explicitLocale: input } : input;
 
-  return {
-    locale,
-    common,
-    navigation,
-    countries,
-  };
+  const countryContext = resolveCountry({
+    host: normalizedInput.host,
+    pathname: normalizedInput.pathname,
+  });
+
+  const locale = resolveLocale({
+    explicitLocale: normalizedInput.explicitLocale,
+    countryDefaultLocale: "en",
+    acceptLanguageHeader: normalizedInput.acceptLanguageHeader,
+  });
+
+  // TODO(phase 2): optionally fetch country content from `${NEXT_PUBLIC_API_URL}`.
+  // Keep fallback static path as source of truth while backend business APIs are scaffold-only.
+  return getFallbackSiteContext(countryContext, locale);
 }
