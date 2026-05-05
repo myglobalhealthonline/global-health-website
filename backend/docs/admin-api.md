@@ -1,4 +1,4 @@
-# Admin API (Phase 2 + 2.1 + 3.1 countries + 3.2 services + 3.3 doctors)
+# Admin API (Phase 2 + 2.1 + 3.1 countries + 3.2 services + 3.3 doctors + 3.4 pricing)
 
 ## Account scope
 
@@ -365,6 +365,53 @@ Partial update; empty body → **`400`**. **`countryId`** change → **`400`** (
 
 **Public safety:** marketing pages are **not** switched to hard-require these rows; existing **fallback adapters** remain when the API is unavailable.
 
+---
+
+## Pricing plans — display only (Phase 3.4)
+
+Same bearer auth as other admin routes.
+
+**Pricing vs payments:** these endpoints manage **`PricingPlan`** rows for **public marketing pricing**. They do **not** create payment sessions, collect cards, integrate Stripe (or any provider), confirm paid appointments, or process money. Future payment flows may **reference** this data later; this phase does not.
+
+Prisma **`PricingPlan`** fields:
+
+| Field | Notes |
+| --- | --- |
+| `countryId` | Required on **create**; **cannot be changed** via **`PATCH`** |
+| `slug` | Required; URL-safe; **`@@unique([countryId, slug])`** |
+| `name` | Required |
+| `description` | Optional |
+| `priceCents` | Non-negative integer (minor units) |
+| `currencyCode` | Required; must exist on **`Currency`** table (validated case-insensitively, stored uppercase) |
+| `interval` | Required string (e.g. `month`, `year`, `once`) — product-defined; max length in Zod |
+| `isActive` | Boolean (default `true` on create) |
+
+**Schema gaps:** no **`serviceId`** link to **`Service`**; no **`features`** list; no **`sortOrder`**. Filter **`serviceId`** on list is **not** supported until the schema gains a relation.
+
+### `GET /api/admin/pricing`
+
+Paginated list.
+
+**Query:** `page`, `pageSize`, `countryId`, `countryCode`, `isActive`, `search` (matches **`name`**, **`slug`**, **`description`**).
+
+### `GET /api/admin/pricing/:id`
+
+Returns **`plan`** with **`country`**, or **`404`**.
+
+### `POST /api/admin/pricing`
+
+Validated by **`adminPricingCreateBodySchema`**. Duplicate **`countryId + slug`** → **`409`**.
+
+### `PATCH /api/admin/pricing/:id`
+
+Partial update; empty body → **`400`**. **`countryId`** change → **`400`**. Unknown **`currencyCode`** → **`400`**.
+
+### `DELETE /api/admin/pricing/:id`
+
+**Soft-disable:** sets **`isActive: false`**. Public **`GET /api/pricing`** continues **`isActive: true`** only — unchanged.
+
+**Public safety:** fallback adapters remain; pages are not forced to depend on CMS pricing rows exclusively.
+
 ## Security Limits (Phase 2 / 2.1)
 
 - auth is env-token gate, not per-user identity
@@ -381,3 +428,4 @@ Partial update; empty body → **`400`**. **`countryId`** change → **`400`** (
 - `admin-countries.schema.test.ts` (Zod rules for countries)
 - `admin-services.schema.test.ts` (service slug, price/duration, query filters)
 - `admin-doctors.schema.test.ts` (doctor slug, name/title, profile image ref, query filters)
+- `admin-pricing.schema.test.ts` (pricing slug, negative price, query filters)

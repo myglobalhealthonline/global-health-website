@@ -20,6 +20,9 @@ export default function AdminHomePage() {
         <Link href="/admin/doctors" className="gh-btn gh-btn-primary">
           Doctor profiles
         </Link>
+        <Link href="/admin/pricing" className="gh-btn gh-btn-primary">
+          Pricing
+        </Link>
       </div>
     </section>
   );

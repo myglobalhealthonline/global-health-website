@@ -6,7 +6,7 @@
         "build": "tsc",
         "start": "node dist/server.js",
         "typecheck": "tsc --noEmit",
-        "test": "node --import tsx --test src/modules/appointments/appointment-status-transitions.test.ts src/modules/countries/admin-countries.schema.test.ts src/modules/services/admin-services.schema.test.ts src/modules/doctors/admin-doctors.schema.test.ts",
+        "test": "node --import tsx --test src/modules/appointments/appointment-status-transitions.test.ts src/modules/countries/admin-countries.schema.test.ts src/modules/services/admin-services.schema.test.ts src/modules/doctors/admin-doctors.schema.test.ts src/modules/pricing/admin-pricing.schema.test.ts",
         "db:generate": "prisma generate",
         "db:migrate": "prisma migrate dev",
         "db:seed": "tsx prisma/seed.ts"

@@ -123,6 +123,20 @@ Delivered:
 
 **Schema gaps documented** in `admin-api.md`: languages, qualifications, no `imageUrl` on `Doctor` (use `Asset`).
 
+## Phase 3.4 — Pricing CRUD (done)
+
+Delivered:
+
+- **Backend:** `GET/POST/PATCH/DELETE /api/admin/pricing`, `GET /api/admin/pricing/:id`; Zod `admin-pricing.schema.ts`; `pricing.service.ts` admin methods alongside public `listPricing`; `admin-pricing.route.ts`; **`countryId + slug`** duplicate → **`409`**; **`currencyCode`** must exist in **`Currency`**; **`PATCH`** rejects **`countryId`** changes.
+- **Soft-disable:** `DELETE` sets **`isActive: false`** only.
+- **Filters/pagination:** `countryId`, `countryCode`, `isActive`, `search`, `page`, `pageSize` (no **`serviceId`** filter until schema links plans to services).
+- **Payments boundary:** no Stripe/sessions/card/checkout — **displayed pricing rows only**; documented for future payment awareness.
+- **Frontend:** `/admin/pricing`, `/admin/pricing/new`, `/admin/pricing/[id]`, `/admin/pricing/[id]/edit`; currencies from `GET /api/admin/currencies`; UI disclaimer about payments not implemented.
+- **Tests:** `admin-pricing.schema.test.ts`.
+- **Public safety:** `GET /api/pricing` unchanged (`isActive: true`); fallback adapters preserved.
+
+**Schema gaps:** no **`serviceId`**, **`features`**, **`sortOrder`** on **`PricingPlan`**.
+
 ## Phase 3 (planned): remaining content + ops CRUD (before patient dashboard depth)
 
 Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, and ship **protected admin APIs + UI** for database-backed **marketing content** this site already reads publicly.
@@ -132,7 +146,7 @@ Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, a
 1. ~~**Countries**~~ — **done (Phase 3.1)**
 2. ~~**Services**~~ — **done (Phase 3.2)**
 3. ~~**Doctors**~~ — **done (Phase 3.3)** — public profile records only (directory/CMS; **not** login identities)
-4. **Pricing** — pricing plans / price-backed content as modeled in DB
+4. ~~**Pricing**~~ — **done (Phase 3.4)** — plans as **`PricingPlan`** rows (display-only admin; payments still deferred)
 5. **Assets** — images and related asset rows tied to country/doctor content
 
 **Explicitly later or parallel tracks (still no doctor portal here):**

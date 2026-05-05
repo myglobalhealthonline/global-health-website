@@ -389,3 +389,70 @@ export async function deleteAdminDoctor(id: string) {
     method: "DELETE",
   });
 }
+
+export type AdminPricingPlanDto = {
+  id: string;
+  countryId: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  priceCents: number;
+  currencyCode: string;
+  interval: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  country: { id: string; code: string; name: string };
+};
+
+type AdminPricingListPayload = {
+  items: AdminPricingPlanDto[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+type AdminPricingDetailPayload = {
+  plan: AdminPricingPlanDto;
+};
+
+export async function fetchAdminPricingPlans(query?: Record<string, string | undefined>) {
+  const params = new URLSearchParams();
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") {
+        params.set(key, value);
+      }
+    }
+  }
+  const qs = params.toString();
+  const path = qs ? `/api/admin/pricing?${qs}` : "/api/admin/pricing";
+  return adminRequest<AdminPricingListPayload>(path);
+}
+
+export async function fetchAdminPricingPlanById(id: string) {
+  return adminRequest<AdminPricingDetailPayload>(`/api/admin/pricing/${id}`);
+}
+
+export async function postAdminPricingPlan(body: unknown) {
+  return adminRequest<AdminPricingDetailPayload>("/api/admin/pricing", {
+    method: "POST",
+    body,
+  });
+}
+
+export async function patchAdminPricingPlan(id: string, body: unknown) {
+  return adminRequest<AdminPricingDetailPayload>(`/api/admin/pricing/${id}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export async function deleteAdminPricingPlan(id: string) {
+  return adminRequest<AdminPricingDetailPayload>(`/api/admin/pricing/${id}`, {
+    method: "DELETE",
+  });
+}

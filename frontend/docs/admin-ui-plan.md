@@ -1,4 +1,4 @@
-# Admin UI Plan (Phase 2 + 2.1 + 3.1 + 3.2 + 3.3)
+# Admin UI Plan (Phase 2 + 2.1 + 3.1 + 3.2 + 3.3 + 3.4)
 
 ## Account Scope
 
@@ -75,6 +75,13 @@ No public nav links point to these routes.
 - **Specialties**: multi-select via **`DoctorSpecialty`** / **`Specialty`** for the chosen country.
 - **Profile image**: optional https or `/` path; backend syncs an **`Asset`** row — not a free-form “doctor login email” or credential field.
 
+### Phase 3.4 notes (pricing)
+
+- Copy clarifies **displayed pricing only** — no checkout, Stripe, or patient payments in this phase.
+- **Price** is edited as **minor units (cents)** to match **`priceCents`**.
+- **Interval** is free text aligned with Prisma **`interval`** string (not an enum in schema).
+- Feature lists / service linkage UI deferred until migrations add those fields.
+
 ## Data Flow / Security
 
 - Admin UI uses server components + server actions only.
@@ -123,6 +130,7 @@ Status updates submit through a server action that calls `PATCH /api/admin/appoi
 6. Open `/admin/countries`: create a row, view detail, edit, deactivate; confirm inactive row disappears from public `GET /api/countries` only after backend refresh (public adapter fallback unchanged).
 7. Open `/admin/services`: filter list, create a service (country → slug/title/specialty/summary/pricing), view detail, edit, deactivate; confirm public site still works via adapters without requiring these rows for every page load.
 8. Open `/admin/doctors`: create a profile (country → slug, name, title, specialties, optional image URL/path), view, edit, deactivate; confirm UI messaging distinguishes **public profiles** from any future doctor portal.
+9. Open `/admin/pricing`: create a plan (country → slug, name, cents, currency, interval), view, edit, deactivate; confirm disclaimer that **payments are not implemented**.
 
 ## Deferred UI Work
 
