@@ -1,19 +1,13 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { StaticMarketingTemplate } from "@/components/templates/StaticMarketingTemplate";
+import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
   title: "Corporate Plans",
-  description: "TODO: Add corporate plans and enterprise workflow content.",
+  description: "Template-driven marketing page.",
 };
 
 export default function Page() {
-  return (
-    <PageShell
-      title="Corporate Plans"
-      message="TODO: Add corporate plans and enterprise workflow content."
-      ctaHref="/book-online"
-      ctaLabel="Book Online"
-    />
-  );
+  const data = getMarketingPageData("/corporate-plans");
+  return <StaticMarketingTemplate {...data} />;
 }
-

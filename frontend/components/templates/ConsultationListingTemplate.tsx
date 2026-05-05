@@ -13,8 +13,18 @@ type ConsultationListingTemplateProps = {
   title: string;
   description: string;
   mode: "general" | "specialist";
+  primaryCtaLabel?: string;
+  secondaryCta?: { label: string; href: string };
   explanation?: { title: string; body: string };
-  listing: Array<{ title: string; description: string; href: string }>;
+  listing: Array<{
+    title: string;
+    description: string;
+    href: string;
+    serviceType?: "general" | "specialist";
+    audience?: string;
+    duration?: string;
+    startingPrice?: string;
+  }>;
   pricing?: {
     title: string;
     description?: string;
@@ -39,6 +49,8 @@ export function ConsultationListingTemplate({
   title,
   description,
   mode,
+  primaryCtaLabel,
+  secondaryCta,
   explanation,
   listing,
   pricing,
@@ -55,7 +67,8 @@ export function ConsultationListingTemplate({
       <HeroSection
         title={title}
         description={description}
-        primaryCta={{ href: bookingHref, label: bookingLabel }}
+        primaryCta={{ href: bookingHref, label: primaryCtaLabel ?? bookingLabel }}
+        secondaryCta={secondaryCta}
       />
       {explanation ? (
         <Section className="bg-[var(--color-brand-secondary)] py-[var(--section-padding-y-xs)]">
@@ -91,8 +104,8 @@ export function ConsultationListingTemplate({
       {trust ? <TrustSignals title={trust.title} subtitle={trust.subtitle} items={trust.items} /> : null}
       {faq?.items.length ? <FAQSection title={faq.title} items={faq.items} /> : null}
       <BookingCTA
-        title="Need help choosing?"
-        description="Book first and your clinician can guide you to the right care path."
+        title="Need help choosing the right consultation?"
+        description="Start with booking and your clinician will guide you to the most suitable next step."
         ctaLabel={bookingLabel}
         ctaHref={bookingHref}
       />

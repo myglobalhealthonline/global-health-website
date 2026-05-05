@@ -3,7 +3,16 @@ import { HeroSection } from "@/components/sections/HeroSection";
 
 type DoctorTeamTemplateProps = {
   countryName: string;
-  doctors: Array<{ name: string; title: string; bio: string; href?: string }>;
+  doctors: Array<{
+    name: string;
+    title: string;
+    country?: string;
+    languages?: string[];
+    bio: string;
+    imageLabel?: string;
+    href?: string;
+    ctaLabel?: string;
+  }>;
   bookingHref: string;
   bookingLabel: string;
 };
@@ -13,8 +22,9 @@ export function DoctorTeamTemplate({ countryName, doctors, bookingHref, bookingL
     <>
       <HeroSection
         title={`${countryName} medical team`}
-        description="Meet clinicians supporting online consultations for this clinic hub."
+        description="Meet the clinicians supporting patient consultations and follow-up care in this clinic hub."
         primaryCta={{ href: bookingHref, label: bookingLabel }}
+        secondaryCta={{ href: "/book-online", label: "Contact clinic" }}
       />
       <DoctorsSection
         title={`${countryName} medical team`}

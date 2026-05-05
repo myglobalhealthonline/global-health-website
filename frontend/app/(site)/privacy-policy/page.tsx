@@ -1,19 +1,13 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { StaticMarketingTemplate } from "@/components/templates/StaticMarketingTemplate";
+import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy Alias",
-  description: "TODO: Add redirect to /privacy in middleware/proxy.",
+  title: "Privacy Policy (Legacy)",
+  description: "Template-driven marketing page.",
 };
 
 export default function Page() {
-  return (
-    <PageShell
-      title="Privacy Policy Alias"
-      message="TODO: Add redirect to /privacy in middleware/proxy."
-      ctaHref="/privacy"
-      ctaLabel="Book Online"
-    />
-  );
+  const data = getMarketingPageData("/privacy-policy");
+  return <StaticMarketingTemplate {...data} />;
 }
-

@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { DoctorTeamTemplate } from "@/components/templates/DoctorTeamTemplate";
 import { getTemplatePageData } from "@/lib/content/template-page-data";
 
@@ -14,7 +14,7 @@ export default async function Page() {
       countryName={data.country.name}
       doctors={data.doctors}
       bookingHref={data.paths.general}
-      bookingLabel={data.site.common.cta.primaryBooking}
+      bookingLabel="Book consultation"
     />
   );
 }

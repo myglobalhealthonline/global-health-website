@@ -1,19 +1,13 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { StaticMarketingTemplate } from "@/components/templates/StaticMarketingTemplate";
+import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
   title: "Partner Clinics",
-  description: "TODO: Add partner network and referral details.",
+  description: "Template-driven marketing page.",
 };
 
 export default function Page() {
-  return (
-    <PageShell
-      title="Partner Clinics"
-      message="TODO: Add partner network and referral details."
-      ctaHref="/book-online"
-      ctaLabel="Book Online"
-    />
-  );
+  const data = getMarketingPageData("/partner-clinics");
+  return <StaticMarketingTemplate {...data} />;
 }
-

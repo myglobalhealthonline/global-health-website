@@ -1,19 +1,13 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { StaticMarketingTemplate } from "@/components/templates/StaticMarketingTemplate";
+import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
-  title: "Refund Policy Alias",
-  description: "TODO: Add redirect to /return-and-refund-policy in middleware/proxy.",
+  title: "Refund Policy (Legacy)",
+  description: "Template-driven marketing page.",
 };
 
 export default function Page() {
-  return (
-    <PageShell
-      title="Refund Policy Alias"
-      message="TODO: Add redirect to /return-and-refund-policy in middleware/proxy."
-      ctaHref="/return-and-refund-policy"
-      ctaLabel="Book Online"
-    />
-  );
+  const data = getMarketingPageData("/refund-policy");
+  return <StaticMarketingTemplate {...data} />;
 }
-

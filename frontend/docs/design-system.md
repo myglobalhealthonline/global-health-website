@@ -98,6 +98,47 @@ This pattern is used across home, listing, blog, legal, FAQ, trust, and doctors 
   - At `320px` on `/`, trust-signal card text could overlap/wrap poorly.
 - Fix applied:
   - `TrustSignals` grid explicitly uses `grid-cols-1` baseline.
-  - Trust cards use `min-w-0` and `break-words` for title/description.
+  - Trust cards were updated to maintain readable wrapping at narrow widths.
 - Remaining concerns:
   - None critical from this pass; continue checking copy length growth as locale content expands.
+
+## Healthcare UX Pass 1 Notes
+- **Booking CTA rules**
+  - Every key page should expose one obvious primary action (book/start consultation).
+  - Secondary actions should reduce anxiety and support orientation (`Meet doctors`, `Contact clinic`, `View services`).
+  - CTA labels should be patient-friendly and avoid technical wording.
+
+- **Service card rules**
+  - Each service card should help quick comparison with:
+    - what it is (title + plain-language description)
+    - type (`general` / `specialist`)
+    - who it is for
+    - estimated duration (placeholder-safe when needed)
+    - starting price (placeholder-safe when needed)
+    - clear next action
+  - No medical claims beyond approved/source-backed content.
+
+- **Doctor credibility rules**
+  - Doctor cards should support:
+    - name
+    - title/specialty
+    - country
+    - languages
+    - short bio
+    - image placeholder
+    - profile/contact CTA (when available)
+  - Keep scanability high and text plain.
+
+- **Mobile usability rules**
+  - Validate at `320`, `390`, `768`, `1024`, `1280`, `1440`.
+  - Must maintain:
+    - no horizontal scrolling
+    - tap-friendly CTA buttons
+    - readable card content
+    - stable header/footer
+    - consistent section spacing
+
+- **Data-driven country behavior reminder**
+  - Shared components remain country-agnostic.
+  - Country differences (services, doctors, prices, imagery, CTAs, availability) come from content adapters now and backend/admin data later.
+  - Locale/static copy continues through locale files.

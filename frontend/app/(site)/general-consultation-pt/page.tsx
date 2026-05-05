@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { ConsultationListingTemplate } from "@/components/templates/ConsultationListingTemplate";
 import { getTemplatePageData } from "@/lib/content/template-page-data";
 
@@ -15,6 +15,8 @@ export default async function Page() {
       title={data.generalConsultation.heroTitle}
       description={data.generalConsultation.heroDescription}
       mode="general"
+      primaryCtaLabel={data.generalConsultation.primaryCtaLabel}
+      secondaryCta={data.generalConsultation.secondaryCta}
       explanation={data.generalConsultation.explanation}
       listing={data.generalConsultation.serviceCards}
       pricing={data.generalConsultation.pricing}
@@ -22,7 +24,7 @@ export default async function Page() {
       trust={data.generalConsultation.trust}
       faq={data.generalConsultation.faq}
       bookingHref={data.paths.general}
-      bookingLabel={data.site.common.cta.primaryBooking}
+      bookingLabel={data.generalConsultation.primaryCtaLabel}
     />
   );
 }

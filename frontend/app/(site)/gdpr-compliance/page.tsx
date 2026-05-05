@@ -1,19 +1,13 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { StaticMarketingTemplate } from "@/components/templates/StaticMarketingTemplate";
+import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
-  title: "GDPR Compliance",
-  description: "TODO: Add GDPR compliance details and data rights process.",
+  title: "GDPR Compliance (Legacy)",
+  description: "Template-driven marketing page.",
 };
 
 export default function Page() {
-  return (
-    <PageShell
-      title="GDPR Compliance"
-      message="TODO: Add GDPR compliance details and data rights process."
-      ctaHref="/privacy"
-      ctaLabel="Book Online"
-    />
-  );
+  const data = getMarketingPageData("/gdpr-compliance");
+  return <StaticMarketingTemplate {...data} />;
 }
-

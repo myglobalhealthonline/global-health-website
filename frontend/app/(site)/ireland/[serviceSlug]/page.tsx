@@ -26,8 +26,14 @@ export default async function IrelandServicePage({ params }: { params: Promise<P
       title={copy.title}
       description={copy.description}
       body={copy.body}
+      keyFacts={[
+        { label: "Service type", value: "General consultation" },
+        { label: "Country", value: "Ireland" },
+        { label: "Est. duration", value: "20-30 min (placeholder)" },
+        { label: "Starting price", value: "From EUR 45 (placeholder)" },
+      ]}
       bookingHref="/general-consultation-ie"
-      bookingLabel="Book Online"
+      bookingLabel="Book consultation"
     />
   );
 }

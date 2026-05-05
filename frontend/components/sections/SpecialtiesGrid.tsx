@@ -2,7 +2,15 @@
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 
-type Item = { title: string; description: string; href: string };
+type Item = {
+  title: string;
+  description: string;
+  href: string;
+  serviceType?: "general" | "specialist";
+  audience?: string;
+  duration?: string;
+  startingPrice?: string;
+};
 
 type SpecialtiesGridProps = {
   title?: string;

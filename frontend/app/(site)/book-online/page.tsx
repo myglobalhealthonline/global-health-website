@@ -1,19 +1,13 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { BookingFormTemplate } from "@/components/templates/BookingFormTemplate";
+import { getBookingPageData } from "@/lib/content/booking-page-data";
 
 export const metadata: Metadata = {
   title: "Book Online",
-  description: "TODO: Implement booking flow form, validation, and success states.",
+  description: "Frontend booking placeholder form template.",
 };
 
 export default function Page() {
-  return (
-    <PageShell
-      title="Book Online"
-      message="TODO: Implement booking flow form, validation, and success states."
-      ctaHref="/book-online"
-      ctaLabel="Book Online"
-    />
-  );
+  const data = getBookingPageData("en");
+  return <BookingFormTemplate {...data} />;
 }
-

@@ -1,19 +1,13 @@
 ﻿import type { Metadata } from "next";
-import { PageShell } from "@/components/layout/PageShell";
+import { StaticMarketingTemplate } from "@/components/templates/StaticMarketingTemplate";
+import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
   title: "Online Prescription",
-  description: "TODO: Add eligibility, workflow, and compliance copy.",
+  description: "Template-driven marketing page.",
 };
 
 export default function Page() {
-  return (
-    <PageShell
-      title="Online Prescription"
-      message="TODO: Add eligibility, workflow, and compliance copy."
-      ctaHref="/book-online"
-      ctaLabel="Book Online"
-    />
-  );
+  const data = getMarketingPageData("/online-prescription");
+  return <StaticMarketingTemplate {...data} />;
 }
-

@@ -17,7 +17,7 @@ export function DesktopNav({
   return (
     <nav
       className={cn(
-        "hidden items-center gap-1.5 md:flex md:flex-1 md:justify-end",
+        "hidden items-center gap-1.5 lg:flex lg:flex-1 lg:justify-end",
         className,
       )}
     >

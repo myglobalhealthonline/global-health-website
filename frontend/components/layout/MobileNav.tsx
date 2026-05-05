@@ -19,7 +19,7 @@ export function MobileNav({
       <Dialog.Trigger asChild>
         <button
           type="button"
-          className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2.5 shadow-[var(--shadow-card)] md:hidden"
+          className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2.5 shadow-[var(--shadow-card)] lg:hidden"
           aria-label="Open menu"
         >
           <Menu className="size-5 text-[var(--color-text-primary)]" aria-hidden />
@@ -28,7 +28,7 @@ export function MobileNav({
 
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
-        <Dialog.Content className="fixed inset-x-0 top-0 z-50 flex max-h-[100dvh] flex-col bg-[var(--color-brand-secondary)] shadow-[var(--shadow-elevated)] md:hidden">
+        <Dialog.Content className="fixed inset-x-0 top-0 z-50 flex max-h-[100dvh] flex-col bg-[var(--color-brand-secondary)] shadow-[var(--shadow-elevated)] lg:hidden">
           <Dialog.Title className="sr-only">Main navigation</Dialog.Title>
           <Dialog.Description className="sr-only">
             Explore clinics, services, and book online.

@@ -2,7 +2,16 @@ import { DoctorCard } from "@/components/cards/DoctorCard";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 
-type DoctorItem = { name: string; title: string; bio: string; href?: string };
+type DoctorItem = {
+  name: string;
+  title: string;
+  country?: string;
+  languages?: string[];
+  bio: string;
+  imageLabel?: string;
+  href?: string;
+  ctaLabel?: string;
+};
 
 type DoctorsSectionProps = {
   title?: string;

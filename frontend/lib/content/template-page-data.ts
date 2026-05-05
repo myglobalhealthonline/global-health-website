@@ -16,6 +16,10 @@ type ServiceCardData = {
   title: string;
   description: string;
   href: string;
+  serviceType?: "general" | "specialist";
+  audience?: string;
+  duration?: string;
+  startingPrice?: string;
 };
 
 type HomeTemplateData = {
@@ -80,6 +84,8 @@ type HomeTemplateData = {
 type GeneralConsultationTemplateData = {
   heroTitle: string;
   heroDescription: string;
+  primaryCtaLabel: string;
+  secondaryCta?: { label: string; href: string };
   explanation: { title: string; body: string };
   serviceCards: ServiceCardData[];
   pricing: {
@@ -98,6 +104,17 @@ type GeneralConsultationTemplateData = {
     items: Array<{ title: string; description: string }>;
   };
   faq: { title: string; items: Array<{ question: string; answer: string }> };
+};
+
+type DoctorProfileData = {
+  name: string;
+  title: string;
+  country: string;
+  languages: string[];
+  bio: string;
+  imageLabel: string;
+  href?: string;
+  ctaLabel?: string;
 };
 
 const pathByCountry: Record<CountryCode, CountryPaths> = {
@@ -427,6 +444,10 @@ function buildGeneralConsultationCards(countryCode: CountryCode): ServiceCardDat
         title: slugToLabel(slug),
         description: "TODO: Replace with reviewed summary for this consultation type.",
         href: route,
+        serviceType: "general",
+        audience: "Adults and families",
+        duration: "20-30 min",
+        startingPrice: "From EUR 45",
       };
     });
   }
@@ -436,6 +457,10 @@ function buildGeneralConsultationCards(countryCode: CountryCode): ServiceCardDat
     title: item.title,
     description: "TODO: Replace with country-specific general consultation summary from content source.",
     href: `/service-page/${item.title.toLowerCase().replaceAll(" ", "-").replaceAll("’", "").replaceAll("'", "")}`,
+    serviceType: "general",
+    audience: "Adults and families",
+    duration: "20-30 min",
+    startingPrice: "From EUR 35",
   }));
 }
 
@@ -447,6 +472,8 @@ function buildGeneralConsultationTemplateData(
   return {
     heroTitle: `General Consultation - ${countryName}`,
     heroDescription: `Book online first-contact medical consultations for ${countryName}. Services and final localized copy are managed via content adapters.`,
+    primaryCtaLabel: "Book consultation",
+    secondaryCta: { label: "Meet doctors", href: paths.team },
     explanation: {
       title: `What general consultations include in ${countryName}`,
       body: "General consultations cover common health concerns, first assessments, and guidance on next steps. TODO: Replace this with reviewed clinical scope copy for this country.",
@@ -505,6 +532,64 @@ function buildGeneralConsultationTemplateData(
   };
 }
 
+function buildDoctorProfiles(countryCode: CountryCode, countryName: string, paths: CountryPaths): DoctorProfileData[] {
+  const defaultLanguages: Record<CountryCode, string[]> = {
+    ie: ["English"],
+    pt: ["Portuguese", "English"],
+    sp: ["Spanish", "English"],
+    cz: ["Czech", "English"],
+    rm: ["Romanian", "English"],
+  };
+
+  if (countryCode === "ie") {
+    return [
+      {
+        name: "Dr. Khoiamul Islam",
+        title: "General Medicine",
+        country: "Ireland",
+        languages: ["English"],
+        bio: "Provides first-contact online consultations and continuity care pathways. TODO: replace with approved profile biography.",
+        imageLabel: "Dr. Khoiamul Islam",
+        href: paths.team,
+        ctaLabel: "Meet doctor",
+      },
+      {
+        name: "Ireland Clinic Team",
+        title: "Primary Care Network",
+        country: "Ireland",
+        languages: ["English"],
+        bio: "Supports triage, follow-up, and referral coordination for online consultations. TODO: replace with final team profile content.",
+        imageLabel: "Ireland clinical team",
+        href: paths.team,
+        ctaLabel: "Meet doctors",
+      },
+    ];
+  }
+
+  return [
+    {
+      name: `${countryName} Clinic Team`,
+      title: "General Medicine",
+      country: countryName,
+      languages: defaultLanguages[countryCode],
+      bio: `First-contact online consultation support for ${countryName}. TODO: replace with approved clinician profile data.`,
+      imageLabel: `${countryName} doctor profile`,
+      href: paths.team,
+      ctaLabel: "Meet doctors",
+    },
+    {
+      name: `${countryName} Care Team`,
+      title: "Patient Support",
+      country: countryName,
+      languages: defaultLanguages[countryCode],
+      bio: "Coordinates booking, follow-up pathways, and clear next-step guidance for patients. TODO: replace with approved team data.",
+      imageLabel: `${countryName} care team`,
+      href: paths.team,
+      ctaLabel: "Contact clinic",
+    },
+  ];
+}
+
 export async function getTemplatePageData(pathname: string, countryHint: CountryHint = "auto") {
   const site = await getSiteContext({ pathname });
   const countryCode = countryHint === "auto" ? fallbackByPath(pathname) : countryHint;
@@ -531,17 +616,7 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
 
   const countryHome = buildCountryHomeData(country.code, country.name, paths, specialistListing);
 
-  const doctors = [
-    {
-      name: country.code === "ie" ? "Dr. Khoiamul Islam" : `${country.name} Clinic Team`,
-      title: country.code === "ie" ? "Doctor in Medicine" : "Licensed clinicians",
-      bio:
-        country.code === "ie"
-          ? "Irish clinic doctor spotlight placeholder while team records are migrated into structured content."
-          : `Team preview placeholder for ${country.name} while clinician records are migrated into structured content.`,
-      href: country.code === "ie" ? "/ireland-team" : paths.team,
-    },
-  ];
+  const doctors = buildDoctorProfiles(country.code, country.name, paths);
 
   const faqItems = buildFaqItems(country.code, country.name);
 

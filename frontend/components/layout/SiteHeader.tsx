@@ -25,7 +25,7 @@ export function SiteHeader({
           />
         </Link>
         <DesktopNav navigation={navigation} />
-        <div className="flex items-center md:hidden">
+        <div className="flex items-center lg:hidden">
           <MobileNav siteName={siteName} navigation={navigation} />
         </div>
       </div>
