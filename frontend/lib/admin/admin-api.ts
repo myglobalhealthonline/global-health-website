@@ -30,6 +30,12 @@ type AdminAppointmentsListPayload = {
     status: string;
     createdAt: string;
   }>;
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
 };
 
 type AdminAppointmentDetailPayload = {
@@ -97,8 +103,18 @@ async function adminRequest<T>(
   }
 }
 
-export async function fetchAdminAppointments() {
-  return adminRequest<AdminAppointmentsListPayload>("/api/admin/appointments");
+export async function fetchAdminAppointments(query?: Record<string, string | undefined>) {
+  const params = new URLSearchParams();
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") {
+        params.set(key, value);
+      }
+    }
+  }
+  const qs = params.toString();
+  const path = qs ? `/api/admin/appointments?${qs}` : "/api/admin/appointments";
+  return adminRequest<AdminAppointmentsListPayload>(path);
 }
 
 export async function fetchAdminAppointmentById(id: string) {

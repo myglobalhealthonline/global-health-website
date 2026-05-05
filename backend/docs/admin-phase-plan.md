@@ -7,41 +7,40 @@
 - Zod validation + Prisma-backed data layer
 - safe `503` behavior when database unavailable
 
-## Phase 2 (this pass)
+## Phase 2 (done)
 
 Goal: minimum safe admin foundation for appointment review.
 
 Implemented:
 
 - env-based admin guardrail via `ADMIN_API_TOKEN`
-- protected admin backend routes:
-  - `GET /api/admin/appointments`
-  - `GET /api/admin/appointments/:id`
-  - `PATCH /api/admin/appointments/:id/status`
-- status workflow allowed in Phase 2:
-  - `REQUEST_RECEIVED`
-  - `UNDER_REVIEW`
-  - `CONTACTED`
-  - `CANCELLED`
-  - `COMPLETED`
-- appointment service functions:
-  - `listAppointments`
-  - `getAppointmentById`
-  - `updateAppointmentStatus`
+- protected admin backend routes (list, detail, patch status)
+- status labels: `REQUEST_RECEIVED` … `COMPLETED`
+- appointment service: list, get by id, update status
 - thin route handlers with Zod param/body checks
-- internal frontend scaffold:
-  - `/admin`
-  - `/admin/appointments`
-  - `/admin/appointments/[id]`
-- server-only frontend admin fetch layer (`frontend/lib/admin/admin-api.ts`) that never exposes token to browser JavaScript
+- internal frontend scaffold + server-only admin client (`frontend/lib/admin/admin-api.ts`)
 
-## Security Model (Phase 2)
+## Phase 2.1 (this hardening pass)
+
+Goal: safer queue operations before broader admin CRUD.
+
+Implemented:
+
+- **Status transition rules** in `appointment-status-transitions.ts` + service enforcement; `400` on invalid move; terminal: `CANCELLED`, `COMPLETED`
+- **Pagination** on `GET /api/admin/appointments`: `page` (default 1), `pageSize` (default 20, max 100), response includes `pagination`
+- **Filters**: `status`, `countryCode`, `consultationType`, `search` (substring on name, email, phone)
+- **Frontend queue**: filters + pagination + empty state; token remains server-only
+- **Frontend detail**: only valid next statuses; closed message for terminal; server action re-checks rules
+- **Tests**: `pnpm --filter backend test` runs transition unit tests
+
+## Security Model (Phase 2 / 2.1)
 
 - backend admin endpoints require header: `Authorization: Bearer <ADMIN_API_TOKEN>`
 - if `ADMIN_API_TOKEN` not configured, admin API returns `503` (`Admin auth is not configured`)
 - invalid/missing bearer token returns `401`
 - token stays in server env only (`backend/.env`, server runtime env for Next admin pages)
 - token is not exposed through `NEXT_PUBLIC_*` vars
+- list endpoint supports search: treat admin token as sensitive; do not log full URLs with tokens
 
 ## Explicitly Deferred
 
@@ -61,12 +60,9 @@ Implemented:
    - `ADMIN_API_TOKEN=<same-token>`
    - optional `ADMIN_API_BASE_URL=http://localhost:4000`
 3. Start backend and frontend dev servers.
-4. Verify API directly:
-   - `GET /api/admin/appointments` with bearer token.
-5. Verify UI:
-   - open `/admin/appointments`
-   - open detail page
-   - update status
+4. Run `pnpm --filter backend test` (transition rules).
+5. Verify API: `GET /api/admin/appointments?page=1&pageSize=20&search=test` with bearer token.
+6. Verify UI: `/admin/appointments` filters/pagination; detail transitions respect terminal rules.
 
 ## Next Phase Recommendation
 
@@ -75,4 +71,4 @@ Phase 3 should replace env-token gate with real admin identity:
 - admin login with hashed password/session
 - role checks per action
 - audit trail for status changes
-- pagination/filtering/search for queue
+- optional: richer queue UX (saved views, exports) on top of existing pagination/filters

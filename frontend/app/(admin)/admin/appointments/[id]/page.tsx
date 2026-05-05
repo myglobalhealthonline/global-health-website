@@ -5,16 +5,12 @@ import {
   fetchAdminAppointmentById,
   patchAdminAppointmentStatus,
 } from "@/lib/admin/admin-api";
+import {
+  getAllowedNextStatuses,
+  isTerminalAppointmentStatus,
+} from "@/lib/admin/appointment-status";
 
 export const dynamic = "force-dynamic";
-
-const statusOptions = [
-  "REQUEST_RECEIVED",
-  "UNDER_REVIEW",
-  "CONTACTED",
-  "CANCELLED",
-  "COMPLETED",
-] as const;
 
 function formatDate(dateIso: string) {
   const date = new Date(dateIso);
@@ -44,9 +40,27 @@ export default async function AdminAppointmentDetailPage({
   async function updateStatusAction(formData: FormData) {
     "use server";
 
-    const nextStatus = String(formData.get("status") ?? "");
-    if (!statusOptions.includes(nextStatus as (typeof statusOptions)[number])) {
-      redirect(`/admin/appointments/${id}?error=Invalid status`);
+    const nextStatus = String(formData.get("status") ?? "").trim();
+    if (!nextStatus) {
+      redirect(`/admin/appointments/${id}?error=${encodeURIComponent("Choose a status")}`);
+    }
+
+    const latest = await fetchAdminAppointmentById(id);
+    if (!latest.ok) {
+      redirect(`/admin/appointments/${id}?error=${encodeURIComponent(latest.message)}`);
+    }
+
+    const currentStatus = latest.data.appointment.status;
+    if (isTerminalAppointmentStatus(currentStatus)) {
+      redirect(`/admin/appointments/${id}?error=${encodeURIComponent("This request is closed and cannot be updated")}`);
+    }
+
+    const allowed = getAllowedNextStatuses(currentStatus);
+    if (allowed.length === 0) {
+      redirect(`/admin/appointments/${id}?error=${encodeURIComponent("No status updates are available for this record")}`);
+    }
+    if (!allowed.includes(nextStatus)) {
+      redirect(`/admin/appointments/${id}?error=${encodeURIComponent("That status change is not allowed from the current state")}`);
     }
 
     const updateResult = await patchAdminAppointmentStatus(id, nextStatus);
@@ -76,6 +90,9 @@ export default async function AdminAppointmentDetailPage({
   }
 
   const appointment = result.data.appointment;
+  const terminal = isTerminalAppointmentStatus(appointment.status);
+  const allowedNext = getAllowedNextStatuses(appointment.status);
+  const canUpdate = !terminal && allowedNext.length > 0;
 
   return (
     <section className="gh-card p-6 sm:p-8">
@@ -94,6 +111,18 @@ export default async function AdminAppointmentDetailPage({
       {messages.success ? (
         <p className="mt-4 rounded-[var(--radius-card-sm)] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
           {messages.success}
+        </p>
+      ) : null}
+
+      {terminal ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-sm text-[var(--color-text-primary)]">
+          This booking request is closed ({appointment.status}). Status updates are disabled.
+        </p>
+      ) : null}
+
+      {!terminal && allowedNext.length === 0 ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          This record has a status that cannot be updated from this screen. If this looks wrong, check data in the database.
         </p>
       ) : null}
 
@@ -139,21 +168,23 @@ export default async function AdminAppointmentDetailPage({
         </p>
       </div>
 
-      <form action={updateStatusAction} className="mt-6 flex flex-wrap items-end gap-3">
-        <label className="flex min-w-[220px] flex-col gap-2">
-          <span className="gh-field-label">Update status</span>
-          <select name="status" className="gh-select" defaultValue={appointment.status}>
-            {statusOptions.map((status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button type="submit" className="gh-btn gh-btn-primary">
-          Save status
-        </button>
-      </form>
+      {canUpdate ? (
+        <form action={updateStatusAction} className="mt-6 flex flex-wrap items-end gap-3">
+          <label className="flex min-w-[220px] flex-col gap-2">
+            <span className="gh-field-label">Move status to</span>
+            <select name="status" className="gh-select" defaultValue={allowedNext[0]} required>
+              {allowedNext.map((status) => (
+                <option key={status} value={status}>
+                  {status}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button type="submit" className="gh-btn gh-btn-primary">
+            Save status
+          </button>
+        </form>
+      ) : null}
     </section>
   );
 }

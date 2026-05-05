@@ -1,12 +1,15 @@
 import type { FastifyPluginAsync } from "fastify";
 import {
   getAppointmentById,
+  InvalidAppointmentStatusTransitionError,
   listAppointments,
+  UnrecognizedAppointmentStatusError,
   updateAppointmentStatus,
 } from "../modules/appointments/appointments.service.js";
 import { env } from "../config/env.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
+  adminAppointmentsQuerySchema,
   appointmentIdParamsSchema,
   updateAppointmentStatusBodySchema,
 } from "../validations/admin-appointments.schema.js";
@@ -38,10 +41,22 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.get("/api/admin/appointments", async (_request, reply) => {
+  app.get("/api/admin/appointments", async (request, reply) => {
+    const query = adminAppointmentsQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid admin appointments query", query.error.flatten()));
+    }
+
     try {
-      const items = await listAppointments();
-      return okResponse({ items });
+      const data = await listAppointments({
+        page: query.data.page,
+        pageSize: query.data.pageSize,
+        status: query.data.status,
+        countryCode: query.data.countryCode,
+        consultationType: query.data.consultationType,
+        search: query.data.search,
+      });
+      return okResponse(data);
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
@@ -90,6 +105,12 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       }
       return okResponse({ appointment }, "Appointment status updated");
     } catch (error) {
+      if (error instanceof InvalidAppointmentStatusTransitionError) {
+        return reply.status(400).send(errorResponse(error.message));
+      }
+      if (error instanceof UnrecognizedAppointmentStatusError) {
+        return reply.status(400).send(errorResponse(error.message));
+      }
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
       }
