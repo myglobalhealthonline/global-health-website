@@ -96,3 +96,41 @@ Audit date: 2026-05-05
   - footer CTA art
 - Some service, doctor, blog, and legal pages still use safe generalized content rather than final editorial or clinical copy.
 - Country-specific pages inherit the improved system correctly, but final parity still depends on approved local assets and content review.
+
+## Final Frontend Polish Pass
+
+### Representative Pages Checked
+- `/`
+- `/home`
+- `/book-online`
+- `/general-consultation-ie`
+- `/specialty-ie`
+- `/ireland/medical-consultation`
+- `/ireland-team`
+- `/plans-pricing`
+- `/blog`
+- `/privacy`
+
+### Viewports Checked
+- `320`
+- `390`
+- `768`
+- `1024`
+- `1280`
+- `1440`
+
+### Final Polish Fixes Applied
+- Footer legal row encoding issue corrected and footer spacing tightened.
+- Header/footer shell kept intact while improving production polish:
+  - steadier logo sizing
+  - clear CTA emphasis
+  - calmer footer panel treatment
+- Booking page UX clarified:
+  - required field indicators added
+  - frontend-preview notice added
+  - helper text and consent block kept visible
+  - submit action now returns an honest preview-only status instead of implying a live booking
+
+### Remaining Frontend Gaps
+- Launch readiness is still blocked by final approved brand assets, especially the logo and footer CTA art.
+- Core page UX, responsiveness, navigation, and template structure are ready for backend/admin integration.

@@ -1,60 +1,50 @@
 # Asset Inventory
 
-Scope for current parity work:
+Scope for final public frontend polish:
+- shared public shell
 - `/`
 - `/home`
-- `/general-consultation-ie`
-- `/general-consultation-pt`
-- `/general-consultation-sp`
-- `/general-consultation-cz`
-- `/general-consultation-rm`
+- representative public templates and cards
 
-## Blocking Exact Parity
+## Blocking Launch
 
-| Asset | Route | Current Path | Why It Blocks Exact Parity | Status |
-| --- | --- | --- | --- | --- |
-| Shared site logo | `/`, `/home` | `frontend/public/logos/global-health-logo-placeholder.svg` | Header and footer cannot match the Wix branding exactly without the real logo artwork | needs approval |
-| Root homepage hero image | `/` | `frontend/public/images/hero/homepage-hero-placeholder.svg` | Hero crop/composition cannot match exactly | needs replacement |
-| Ireland homepage hero image | `/home` | `frontend/public/images/hero/ireland-home-hero-placeholder.svg` | Ireland hero cannot match exact Wix composition | needs replacement |
-| Ireland about image | `/home` | `frontend/public/images/ireland/about-placeholder.svg` | About split section cannot match exact visual balance | needs replacement |
-| Ireland doctor portrait | `/home` | `frontend/public/images/ireland/doctor-spotlight-placeholder.svg` | Testimonial/doctor spotlight cannot match exact Wix section | needs approval |
-| Ireland home-delivery artwork | `/home` | `frontend/public/images/ireland/home-delivery-placeholder.svg` | Delivery section cannot match exact composition | needs replacement |
-| Footer CTA artwork | `/`, `/home` | `frontend/public/images/footer/cta-footer-placeholder.svg` | Bottom CTA/footer transition cannot fully match the live site | needs replacement |
-
-## Already Migrated
-
-| Asset | Route | Current Path | Notes | Status |
-| --- | --- | --- | --- | --- |
-| Placeholder country labels | `/` | inline labels in country cards | Functional and sized to current layout | migrated |
-| Shared service icon set | `/`, `/home` | `frontend/public/icons/services/*` | Generic but reusable placeholder icon set exists | migrated |
-| Shared trust icon set | `/`, `/home` | `frontend/public/icons/trust/*` | Generic trust icon set exists | migrated |
-
-## Needs Approval
-
-| Asset | Route | Current Path | Notes | Status |
-| --- | --- | --- | --- | --- |
-| Final logo pack | `/`, `/home` | `frontend/public/logos/global-health-logo-placeholder.svg` | Shared logo should be approved before replacement | needs approval |
-| Ireland doctor/testimonial image | `/home` | `frontend/public/images/ireland/doctor-spotlight-placeholder.svg` | Live portrait should not be treated as final without approval | needs approval |
-| Branded service icons | `/`, `/home` | `frontend/public/icons/services/*` | Current icons are generic placeholders | needs approval |
-| Branded trust badges | `/`, `/home` | `frontend/public/icons/trust/*` | Current badges are generic placeholders | needs approval |
+| Asset | Type | Current Path | Used In | Why It Blocks Launch | Status |
+| --- | --- | --- | --- | --- | --- |
+| Shared site logo | logo | `frontend/public/logos/global-health-logo-placeholder.svg` | Header, mobile nav, footer | Brand-ready launch should not ship with a placeholder logo | needs business approval |
+| Footer CTA artwork | footer / CTA artwork | `frontend/public/images/footer/cta-footer-placeholder.svg` | Footer transition and CTA parity work | If final launch requires branded footer artwork, current placeholder is not ready | needs business approval |
 
 ## Nice-to-Have
 
-| Asset | Route | Current Path | Why Nice-to-Have | Status |
-| --- | --- | --- | --- | --- |
-| Country flag/graphic set | `/` | `frontend/public/icons/countries/*` | Improves country selector fidelity but does not block structure | needs replacement |
-| Additional footer decorative graphics | `/`, `/home` | `frontend/public/images/footer/cta-footer-placeholder.svg` | Improves exact footer feel after core parity is approved | needs replacement |
-| Consultation category icons pack | `/general-consultation-*` | `frontend/public/icons/consultations/*` | Current pages rely on generic Lucide icons; a branded icon pack would improve visual consistency | needs replacement |
+| Asset | Type | Current Path | Used In | Why It Is Nice-to-Have | Status |
+| --- | --- | --- | --- | --- | --- |
+| Root homepage hero image | hero | `frontend/public/images/hero/homepage-hero-placeholder.svg` | `/` hero | Current text-first structure works; real art improves polish and trust | needs replacement |
+| Ireland homepage hero image | hero | `frontend/public/images/hero/ireland-home-hero-placeholder.svg` | `/home` hero | Improves parity and production finish | needs replacement |
+| Ireland about image | country graphic | `frontend/public/images/ireland/about-placeholder.svg` | `/home` about section | Improves realism and split-section balance | needs replacement |
+| Ireland home-delivery artwork | country graphic | `frontend/public/images/ireland/home-delivery-placeholder.svg` | `/home` delivery section | Improves section polish | needs replacement |
+| Branded service icon pack | service icons | `frontend/public/icons/services/*` | service cards across public pages | Generic icons are usable; branded set would improve consistency | needs business approval |
+| Branded trust badges | trust icons | `frontend/public/icons/trust/*` | trust sections and related cards | Generic icons are usable; final set would improve trust signaling | needs business approval |
+| Country graphics / flags | country graphics | `frontend/public/icons/countries/*` | country selector and future country accents | Current simple labels work; visuals would improve recognition | needs replacement |
 
-## General Consultation Pages (Design System Pass)
+## Can Stay Temporary
 
-| Asset | Route | Current Path | Notes | Status |
-| --- | --- | --- | --- | --- |
-| Consultation hero visual per country | `/general-consultation-*` | none (text-first hero) | Optional enhancement; no blocking regression for responsive or content flow | needs audit |
-| Country-specific service illustration set | `/general-consultation-*` | none (icon cards only) | Add only when approved assets exist; do not hotlink Wix | needs audit |
+| Asset | Type | Current Path | Used In | Why It Can Stay Temporary | Status |
+| --- | --- | --- | --- | --- | --- |
+| Doctor card placeholder panels | doctor image placeholder | inline placeholder panel in shared card/template components | team pages and doctor profiles | Clean, neutral placeholder treatment does not break usability before final portraits arrive | can stay temporary |
+| Ireland doctor spotlight image | doctor image | `frontend/public/images/ireland/doctor-spotlight-placeholder.svg` | `/home` testimonial / doctor spotlight | Usable for pre-integration frontend review if the business has not approved final portrait yet | needs business approval |
+| Text-first consultation listing pages | hero/illustration optional | none | `/general-consultation-*`, `/specialty-*` | These pages remain credible without hero art as long as hierarchy and CTA clarity stay strong | can stay temporary |
+
+## Needs Business Approval
+
+| Asset | Type | Current Path | Used In | Approval Need | Status |
+| --- | --- | --- | --- | --- | --- |
+| Final shared logo pack | logo | `frontend/public/logos/global-health-logo-placeholder.svg` | sitewide | Brand approval required before replacing placeholder | needs business approval |
+| Doctor portraits / testimonial photos | doctor image | placeholder panels and `/images/ireland/doctor-spotlight-placeholder.svg` | `/home`, team/profile pages | People imagery should not be swapped without approval | needs business approval |
+| Trust badge artwork | trust icons | `frontend/public/icons/trust/*` | trust sections | Must match legal/brand language and visual style | needs business approval |
+| Final service icon set | service icons | `frontend/public/icons/services/*` | service cards | Must match brand system and information architecture | needs business approval |
+| Footer CTA decorative art | footer / CTA artwork | `frontend/public/images/footer/cta-footer-placeholder.svg` | shared footer CTA | Requires brand review before final use | needs business approval |
 
 ## Notes
 
 - Do not hotlink Wix CDN assets in production.
 - Do not use random stock imagery.
-- Placeholder assets should be sized and cropped to mimic the Wix layout, but not represented as final artwork.
+- Placeholder assets should keep correct dimensions and crop behavior, but should never be presented as final approved brand assets.

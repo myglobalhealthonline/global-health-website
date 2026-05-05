@@ -116,3 +116,15 @@ Applied to:
 - less visual clutter
 - more consistent card and template hierarchy
 - better mobile tap/readability on high-intent pages
+
+## Final Frontend Polish Notes
+- Shared navigation stays unchanged in structure; polish is limited to spacing, contrast, CTA visibility, and dropdown/menu readability.
+- Public pages should feel production-ready even while backend/admin integration is still pending.
+- Booking forms must be honest about current capability:
+  - frontend preview only
+  - no silent fake success
+  - clear consent and helper text
+- Placeholder imagery is acceptable only when:
+  - dimensions are stable
+  - layout remains professional
+  - docs clearly mark the asset as temporary or approval-blocked

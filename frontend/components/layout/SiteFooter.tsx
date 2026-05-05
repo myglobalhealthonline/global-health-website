@@ -22,7 +22,7 @@ export function SiteFooter({
                 alt={`${siteName} logo placeholder`}
                 width={220}
                 height={54}
-                className="h-12 w-auto"
+                className="h-11 w-auto sm:h-12"
               />
               <p className="gh-body mt-5 max-w-sm text-[var(--color-text-muted)]">
                 Online medical consultations with licensed clinicians across Ireland, Portugal, Spain, Czechia, and Romania.
