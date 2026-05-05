@@ -35,7 +35,7 @@ export function TrustSignals({ title = "Why patients choose us", subtitle, items
                 key={`${normalized.title}-${index}`}
                 className="gh-card p-6"
               >
-                <span className="flex size-11 items-center justify-center rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
+                <span className="flex size-12 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-[var(--color-brand-primary)]">
                   <Icon className="size-5" aria-hidden />
                 </span>
                 <p className="gh-h3 mt-4 text-[var(--color-text-primary)]">{normalized.title}</p>

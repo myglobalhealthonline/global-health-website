@@ -17,7 +17,7 @@ export function DesktopNav({
   return (
     <nav
       className={cn(
-        "hidden items-center gap-1.5 lg:flex lg:flex-1 lg:justify-end",
+        "hidden items-center gap-1 lg:flex lg:flex-1 lg:justify-end",
         className,
       )}
     >
@@ -30,7 +30,7 @@ export function DesktopNav({
         <DropdownMenu.Trigger asChild>
           <button
             type="button"
-            className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-[15px] font-medium text-[var(--color-text-primary)] outline-none transition-colors hover:text-[var(--color-brand-primary-hover)] focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2"
+            className="inline-flex min-h-11 items-center gap-1 rounded-full px-3.5 py-2 text-[15px] font-medium text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)] hover:text-[var(--color-brand-primary-hover)] focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2"
           >
             {navigation.aboutLabel}
             <ChevronDown className="size-4 shrink-0 opacity-70" aria-hidden />
@@ -38,7 +38,7 @@ export function DesktopNav({
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
           <DropdownMenu.Content
-            className="z-50 min-w-[220px] rounded-[20px] border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-card)]"
+            className="z-50 min-w-[240px] rounded-[20px] border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-card)]"
             sideOffset={10}
             align="start"
           >
@@ -60,7 +60,7 @@ export function DesktopNav({
         <Link
           key={item.href}
           href={item.href}
-          className="rounded-full px-3 py-2 text-[15px] font-medium text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
+          className="inline-flex min-h-11 items-center rounded-full px-3.5 py-2 text-[15px] font-medium text-[var(--color-text-primary)] transition-colors hover:bg-[var(--color-background-soft)] hover:text-[var(--color-brand-primary-hover)]"
         >
           {item.label}
         </Link>
@@ -68,14 +68,14 @@ export function DesktopNav({
 
       <Link
         href={navigation.headerAuthLink.href}
-        className="rounded-full px-3 py-2 text-[15px] font-medium text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
+        className="inline-flex min-h-11 items-center rounded-full px-3.5 py-2 text-[15px] font-medium text-[var(--color-text-primary)] transition-colors hover:bg-[var(--color-background-soft)] hover:text-[var(--color-brand-primary-hover)]"
       >
         {navigation.headerAuthLink.label}
       </Link>
 
       <Link
         href={navigation.headerPrimaryCta.href}
-        className="gh-btn gh-btn-primary px-5"
+        className="gh-btn gh-btn-primary min-w-[158px] px-6"
       >
         {navigation.headerPrimaryCta.label}
       </Link>

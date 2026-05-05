@@ -3,7 +3,7 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import type { SiteNavigationData } from "@/data/navigation";
 
@@ -19,7 +19,7 @@ export function MobileNav({
       <Dialog.Trigger asChild>
         <button
           type="button"
-          className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2.5 shadow-[var(--shadow-card)] lg:hidden"
+          className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2.5 shadow-[var(--shadow-soft)] lg:hidden"
           aria-label="Open menu"
         >
           <Menu className="size-5 text-[var(--color-text-primary)]" aria-hidden />
@@ -44,13 +44,13 @@ export function MobileNav({
                 className="h-10 w-auto"
               />
             </Link>
-            <Dialog.Close className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2">
+            <Dialog.Close className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-soft)]">
               <span className="sr-only">Close menu</span>
               <X className="size-5 text-[var(--color-text-primary)]" aria-hidden />
             </Dialog.Close>
           </div>
 
-          <div className="grow overflow-y-auto px-4 py-6 pb-28">
+          <div className="grow overflow-y-auto px-4 py-5 pb-28">
             <AccordionSection title={navigation.clinicsLabel}>
               <div className="space-y-6 pt-2">
                 {navigation.clinicsMenuByCountry.map(({ country, links }) => (
@@ -116,12 +116,9 @@ export function MobileNav({
             </div>
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 border-t border-[var(--color-border)] bg-[rgba(255,253,253,0.94)] p-4 backdrop-blur-md">
+          <div className="fixed bottom-0 left-0 right-0 border-t border-[var(--color-border)] bg-[rgba(255,255,255,0.96)] p-4 backdrop-blur-md">
             <Dialog.Close asChild>
-              <Link
-                href={navigation.headerPrimaryCta.href}
-                className="gh-btn gh-btn-primary flex w-full text-base"
-              >
+              <Link href={navigation.headerPrimaryCta.href} className="gh-btn gh-btn-primary flex w-full text-base">
                 {navigation.headerPrimaryCta.label}
               </Link>
             </Dialog.Close>
@@ -143,9 +140,10 @@ function AccordionSection({
     <details className="group border-b border-[var(--color-border)] pb-4 last:border-b-0">
       <summary className="marker:hidden flex cursor-pointer list-none items-center justify-between gap-4 py-2 [&::-webkit-details-marker]:hidden">
         <span className="text-lg font-semibold text-[var(--color-text-primary)]">{title}</span>
-        <span className="inline-block rotate-0 text-[var(--color-text-muted)] transition-transform group-open:-rotate-180">
-          ⌄
-        </span>
+        <ChevronDown
+          className="size-5 shrink-0 text-[var(--color-text-muted)] transition-transform group-open:rotate-180"
+          aria-hidden
+        />
       </summary>
       <div>{children}</div>
     </details>

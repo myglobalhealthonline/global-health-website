@@ -36,7 +36,7 @@ export function DoctorCard({
           {languages.length > 0 ? `Languages: ${languages.join(", ")}` : ""}
         </p>
       ) : null}
-      <div className="mt-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-xs font-medium text-[var(--color-text-muted)]">
+      <div className="mt-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-background-soft),#eef6e2)] px-4 py-8 text-center text-xs font-medium text-[var(--color-text-muted)]">
         {imageLabel} image placeholder
       </div>
       <p className="gh-body-sm mt-4 flex-1 text-[var(--color-text-muted)]">{bio}</p>

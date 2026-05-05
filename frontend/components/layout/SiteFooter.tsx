@@ -13,9 +13,9 @@ export function SiteFooter({
 }) {
   return (
     <footer className="mt-auto">
-      <div className="border-t border-[var(--color-border)] bg-[var(--color-brand-secondary)]">
+      <div className="border-t border-[var(--color-border)] bg-[var(--color-background-panel)]">
         <Container className="py-[var(--section-padding-y-sm)]">
-          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr_0.9fr_0.9fr]">
+          <div className="grid gap-10 lg:grid-cols-[1.2fr_0.9fr_0.9fr_0.9fr]">
             <div>
               <Image
                 src="/logos/global-health-logo-placeholder.svg"
@@ -24,12 +24,12 @@ export function SiteFooter({
                 height={54}
                 className="h-12 w-auto"
               />
-              <p className="gh-body-sm mt-5 max-w-xs text-[var(--color-text-muted)]">
+              <p className="gh-body mt-5 max-w-sm text-[var(--color-text-muted)]">
                 Online medical consultations with licensed clinicians across Ireland, Portugal, Spain, Czechia, and Romania.
               </p>
               <a
                 href={`mailto:${navigation.siteContactEmail}`}
-                className="mt-5 inline-flex text-sm font-medium text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
+                className="mt-5 inline-flex text-sm font-semibold text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
               >
                 {navigation.siteContactEmail}
               </a>
@@ -70,7 +70,7 @@ export function SiteFooter({
             ))}
           </div>
 
-          <div className="mt-12 flex flex-col gap-4 border-t border-[var(--color-border)] pt-8 text-sm sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-12 flex flex-col gap-3 border-t border-[var(--color-border)] pt-8 text-sm sm:flex-row sm:items-center sm:justify-between">
             <p className="text-[var(--color-text-muted)]">
               © {new Date().getFullYear()} {siteName}. All rights reserved.
             </p>

@@ -30,10 +30,12 @@ export function StaticMarketingTemplate({
   return (
     <>
       <HeroSection
+        eyebrow="Online care made simple"
         title={hero.title}
         description={hero.description}
         primaryCta={hero.primaryCta}
         secondaryCta={hero.secondaryCta}
+        trustBadges={["Licensed clinicians", "Secure consultations", "Patient-first support"]}
       />
       {intro ? (
         <Section className="bg-[var(--color-brand-secondary)] py-[var(--section-padding-y-xs)]">

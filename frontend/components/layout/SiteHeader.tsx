@@ -12,15 +12,15 @@ export function SiteHeader({
   navigation: SiteNavigationData;
 }) {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[var(--color-border)] bg-[rgba(255,253,253,0.94)] backdrop-blur-md">
-      <div className="mx-auto flex h-[var(--header-height)] max-w-[var(--container-width)] items-center justify-between gap-2 px-4 sm:gap-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 w-full border-b border-[var(--color-border)] bg-[rgba(255,255,255,0.96)] backdrop-blur-md">
+      <div className="mx-auto flex h-[var(--header-height)] max-w-[var(--container-width)] items-center justify-between gap-3 px-4 sm:gap-5 sm:px-6 lg:px-8">
         <Link href="/" className="flex min-w-0 shrink items-center">
           <Image
             src="/logos/global-health-logo-placeholder.svg"
             alt={`${siteName} logo placeholder`}
             width={220}
             height={54}
-            className="h-10 w-auto max-w-[170px] sm:h-11 sm:max-w-[220px] md:h-12"
+            className="h-10 w-auto max-w-[168px] sm:h-11 sm:max-w-[210px] md:h-[46px]"
             priority
           />
         </Link>

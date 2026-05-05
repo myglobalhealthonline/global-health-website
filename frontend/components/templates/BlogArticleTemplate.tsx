@@ -10,9 +10,9 @@ type BlogArticleTemplateProps = {
 
 export function BlogArticleTemplate({ title, lead, body }: BlogArticleTemplateProps) {
   return (
-    <Section>
+    <Section className="bg-[var(--color-brand-secondary)]">
       <Container>
-        <article className="mx-auto max-w-3xl">
+        <article className="gh-card mx-auto max-w-3xl p-7 sm:p-8">
           <h1 className="gh-h1 text-[var(--color-text-primary)]">{title}</h1>
           <p className="gh-body-lg mt-4 text-[var(--color-text-muted)]">{lead}</p>
           <div className="gh-body mt-8 space-y-4 text-[var(--color-text-muted)]">

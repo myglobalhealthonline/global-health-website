@@ -21,7 +21,7 @@ export function ClinicsDropdown({
         <button
           type="button"
           className={cn(
-            "inline-flex items-center gap-1 rounded-full px-3 py-2 text-[15px] font-medium text-[var(--color-text-primary)] outline-none transition-colors hover:text-[var(--color-brand-primary-hover)] focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2",
+            "inline-flex min-h-11 items-center gap-1 rounded-full px-3.5 py-2 text-[15px] font-medium text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)] hover:text-[var(--color-brand-primary-hover)] focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2",
             className,
           )}
         >
@@ -31,7 +31,7 @@ export function ClinicsDropdown({
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="z-50 max-h-[min(70vh,520px)] w-[min(100vw-2rem,560px)] overflow-y-auto rounded-[24px] border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-4 shadow-[var(--shadow-elevated)]"
+          className="z-50 max-h-[min(70vh,520px)] w-[min(100vw-2rem,600px)] overflow-y-auto rounded-[24px] border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-5 shadow-[var(--shadow-elevated)]"
           sideOffset={10}
           align="start"
         >
@@ -46,7 +46,7 @@ export function ClinicsDropdown({
                     <li key={item.href + item.label}>
                       <DropdownMenu.Item asChild>
                         <Link
-                          className="block rounded-[16px] px-2 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
+                          className="block rounded-[16px] px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
                           href={item.href}
                         >
                           {item.label}

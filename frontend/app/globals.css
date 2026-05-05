@@ -1,25 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  --color-brand-primary: #1d4b36;
-  --color-brand-primary-hover: #153b2a;
-  --color-brand-secondary: #fffdfd;
-  --color-brand-accent: #d5dff0;
-  --color-background-page: #ededed;
-  --color-background-soft: #fbf9f9;
-  --color-background-panel: #f6f5f5;
-  --color-text-primary: #1d4b36;
-  --color-text-muted: #4f5d54;
-  --color-border: #d5dff0;
-  --radius-card: 24px;
+  --color-brand-primary: #1b4d3e;
+  --color-brand-primary-hover: #143b30;
+  --color-brand-secondary: #ffffff;
+  --color-brand-accent: #c8e6a0;
+  --color-background-page: #ffffff;
+  --color-background-soft: #f7fbf4;
+  --color-background-panel: #f9faf8;
+  --color-text-primary: #1b4d3e;
+  --color-text-body: #333333;
+  --color-text-muted: #666666;
+  --color-border: #e5e5e5;
+  --color-hero-overlay: rgba(27, 77, 62, 0.65);
+  --radius-card: 22px;
   --radius-button: 999px;
-  --shadow-card: 0 18px 40px rgba(29, 75, 54, 0.08);
-  --shadow-elevated: 0 24px 60px rgba(29, 75, 54, 0.12);
-  --shadow-soft: 0 10px 26px rgba(29, 75, 54, 0.06);
+  --shadow-card: 0 18px 40px rgba(27, 77, 62, 0.08);
+  --shadow-elevated: 0 24px 60px rgba(27, 77, 62, 0.12);
+  --shadow-soft: 0 10px 26px rgba(27, 77, 62, 0.06);
   --container-width: 1180px;
-  --section-padding-y: 88px;
-  --section-padding-y-sm: 64px;
-  --section-padding-y-xs: 48px;
+  --section-padding-y: 96px;
+  --section-padding-y-sm: 68px;
+  --section-padding-y-xs: 52px;
   --space-1: 8px;
   --space-2: 12px;
   --space-3: 16px;
@@ -37,7 +39,7 @@
   --text-body: 1rem;
   --text-body-sm: 0.92rem;
   --radius-card-sm: 18px;
-  --header-height: 88px;
+  --header-height: 84px;
 }
 
 @theme inline {
@@ -64,9 +66,22 @@ html {
 
 body {
   background: var(--color-background-page);
-  color: var(--color-text-primary);
+  color: var(--color-text-body);
   font-family: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
   text-rendering: optimizeLegibility;
+}
+
+button,
+a,
+input,
+select,
+textarea,
+summary {
+  outline-offset: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
 }
 
 a,
@@ -111,16 +126,19 @@ img {
 .gh-body-lg {
   font-size: var(--text-body-lg);
   line-height: 1.7;
+  color: var(--color-text-body);
 }
 
 .gh-body {
   font-size: var(--text-body);
   line-height: 1.65;
+  color: var(--color-text-body);
 }
 
 .gh-body-sm {
   font-size: var(--text-body-sm);
   line-height: 1.6;
+  color: var(--color-text-muted);
 }
 
 .gh-card {
@@ -131,16 +149,17 @@ img {
 }
 
 .gh-btn {
-  min-height: 46px;
+  min-height: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   border-radius: var(--radius-button);
   padding: 0 24px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   white-space: nowrap;
+  box-shadow: var(--shadow-soft);
 }
 
 .gh-btn-primary {
@@ -182,4 +201,54 @@ img {
 
 .gh-link-arrow:hover {
   color: var(--color-brand-primary-hover);
+}
+
+.gh-input,
+.gh-select,
+.gh-textarea {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card-sm);
+  background: var(--color-brand-secondary);
+  color: var(--color-text-body);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.gh-input,
+.gh-select {
+  min-height: 48px;
+  padding: 0 14px;
+}
+
+.gh-textarea {
+  min-height: 132px;
+  padding: 12px 14px;
+  resize: vertical;
+}
+
+.gh-input::placeholder,
+.gh-textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+.gh-field-label {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.gh-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  background: var(--color-brand-secondary);
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-brand-primary);
+  box-shadow: var(--shadow-soft);
 }

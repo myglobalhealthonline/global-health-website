@@ -65,10 +65,12 @@ export function ConsultationListingTemplate({
   return (
     <>
       <HeroSection
+        eyebrow={isSpecialist ? "Specialist consultations" : "General consultations"}
         title={title}
         description={description}
         primaryCta={{ href: bookingHref, label: primaryCtaLabel ?? bookingLabel }}
         secondaryCta={secondaryCta}
+        trustBadges={["Licensed clinicians", "Confidential care", "Simple online booking"]}
       />
       {explanation ? (
         <Section className="bg-[var(--color-brand-secondary)] py-[var(--section-padding-y-xs)]">

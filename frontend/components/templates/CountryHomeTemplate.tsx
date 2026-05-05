@@ -110,7 +110,7 @@ export function CountryHomeTemplate({
                 <Link
                   key={action.href + action.title}
                   href={action.href}
-                  className="rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-4 py-2.5 text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-brand-secondary)]"
+                  className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-2.5 text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-brand-secondary)]"
                 >
                   {action.title}
                 </Link>
@@ -164,7 +164,7 @@ export function CountryHomeTemplate({
             <div className="grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
               <div>
                 {about.eyebrow ? (
-                  <p className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
+                  <p className="gh-kicker">
                     {about.eyebrow}
                   </p>
                 ) : null}
@@ -252,7 +252,7 @@ export function CountryHomeTemplate({
                 </div>
               ) : null}
               <div>
-                <p className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
+                <p className="gh-kicker">
                   Testimonials
                 </p>
                 <blockquote className="mt-4 text-[var(--text-h2)] font-extrabold tracking-tight text-[var(--color-text-primary)]">

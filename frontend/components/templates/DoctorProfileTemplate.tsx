@@ -27,16 +27,18 @@ export function DoctorProfileTemplate({ hero, profile, bottomCta }: DoctorProfil
   return (
     <>
       <HeroSection
+        eyebrow="Doctor profile"
         title={hero.title}
         description={hero.description}
         primaryCta={hero.primaryCta}
         secondaryCta={hero.secondaryCta}
+        trustBadges={["Licensed clinician", "Secure consultations", "Country-supported care"]}
       />
       <Section className="bg-[var(--color-brand-secondary)]">
         <Container>
           <article className="gh-card mx-auto max-w-4xl p-7 sm:p-8">
             <div className="grid gap-6 md:grid-cols-[0.8fr_1.2fr]">
-              <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-5 text-sm text-[var(--color-text-muted)]">
+              <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-background-soft),#eef6e2)] px-4 py-10 text-center text-sm text-[var(--color-text-muted)]">
                 {profile.imageLabel} image placeholder
               </div>
               <div>

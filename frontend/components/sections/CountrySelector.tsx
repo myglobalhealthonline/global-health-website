@@ -32,17 +32,17 @@ export function CountrySelector({
             <li key={country.code}>
               <Link
                 href={country.legacyHomePath}
-                className="gh-card group flex min-h-[132px] flex-col justify-between p-5"
+                className="gh-card group flex min-h-[148px] flex-col justify-between p-5 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)]"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
-                      Medical Clinic
+                      Choose your clinic
                     </p>
                     <p className="gh-h3 mt-2 text-[var(--color-text-primary)]">{country.name}</p>
                   </div>
                   <span
-                    className="flex size-10 items-center justify-center rounded-full bg-[var(--color-brand-primary)] text-xs font-bold text-[var(--color-brand-secondary)]"
+                    className="flex size-11 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-xs font-bold text-[var(--color-brand-primary)]"
                     aria-hidden
                   >
                     {country.label}

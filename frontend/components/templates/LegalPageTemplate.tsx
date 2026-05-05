@@ -11,7 +11,12 @@ type LegalPageTemplateProps = {
 export function LegalPageTemplate({ title, description, sections }: LegalPageTemplateProps) {
   return (
     <>
-      <HeroSection title={title} description={description} primaryCta={{ href: "/book-online", label: "Book Online" }} />
+      <HeroSection
+        eyebrow="Legal information"
+        title={title}
+        description={description}
+        primaryCta={{ href: "/book-online", label: "Book Online" }}
+      />
       <Section>
         <Container>
           <article className="gh-card mx-auto max-w-3xl space-y-7 p-7 sm:p-8">

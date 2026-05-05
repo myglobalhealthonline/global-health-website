@@ -34,7 +34,7 @@ export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWor
 
             return (
               <li key={`${normalized.title}-${index}`} className="gh-card p-6">
-                <p className="inline-flex size-10 items-center justify-center rounded-full bg-[var(--color-brand-primary)] text-sm font-semibold text-[var(--color-brand-secondary)]">
+                <p className="inline-flex size-11 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-sm font-bold text-[var(--color-brand-primary)]">
                   {index + 1}
                 </p>
                 <h3 className="gh-h3 mt-4 text-[var(--color-text-primary)]">{normalized.title}</h3>

@@ -40,7 +40,7 @@ export function ServiceCard({
 }: ServiceCardProps) {
   return (
     <article className="gh-card flex h-full flex-col p-6">
-      <span className="flex size-11 items-center justify-center rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
+      <span className="flex size-12 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-[var(--color-brand-primary)]">
         {renderServiceIcon(title)}
       </span>
       <h3 className="gh-h3 mt-5 text-[var(--color-text-primary)]">{title}</h3>
@@ -48,25 +48,25 @@ export function ServiceCard({
       {(serviceType || audience || duration || startingPrice) ? (
         <dl className="mt-4 grid gap-2 text-xs text-[var(--color-text-muted)] sm:grid-cols-2">
           {serviceType ? (
-            <div className="rounded-full bg-[var(--color-background-soft)] px-3 py-1.5">
+            <div className="rounded-full border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-1.5">
               <dt className="inline font-semibold text-[var(--color-text-primary)]">Type: </dt>
               <dd className="inline">{serviceType}</dd>
             </div>
           ) : null}
           {audience ? (
-            <div className="rounded-full bg-[var(--color-background-soft)] px-3 py-1.5">
+            <div className="rounded-full border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-1.5">
               <dt className="inline font-semibold text-[var(--color-text-primary)]">For: </dt>
               <dd className="inline">{audience}</dd>
             </div>
           ) : null}
           {duration ? (
-            <div className="rounded-full bg-[var(--color-background-soft)] px-3 py-1.5">
+            <div className="rounded-full border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-1.5">
               <dt className="inline font-semibold text-[var(--color-text-primary)]">Est. duration: </dt>
               <dd className="inline">{duration}</dd>
             </div>
           ) : null}
           {startingPrice ? (
-            <div className="rounded-full bg-[var(--color-background-soft)] px-3 py-1.5">
+            <div className="rounded-full border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-1.5">
               <dt className="inline font-semibold text-[var(--color-text-primary)]">From: </dt>
               <dd className="inline">{startingPrice}</dd>
             </div>

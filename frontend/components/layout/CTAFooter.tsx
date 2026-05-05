@@ -15,13 +15,13 @@ export function CTAFooter({
   return (
     <div className="bg-[var(--color-brand-primary)] py-[var(--section-padding-y-sm)] text-[var(--color-brand-secondary)]">
       <Container>
-        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
+        <div className="grid gap-8 rounded-[30px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-end lg:p-10">
           <div className="space-y-4">
             <p className="gh-heading-eyebrow text-white/72">Start Your Online Consultation</p>
             <h2 className="gh-h2 max-w-lg text-[var(--color-brand-secondary)]">
               Choose your country and connect with a licensed doctor in minutes
             </h2>
-            <p className="gh-body-sm max-w-xl text-white/82">{trustLine}</p>
+            <p className="gh-body max-w-xl text-white/82">{trustLine}</p>
           </div>
           <div className="flex flex-col gap-5 lg:items-end">
             <Link href={cta.href} className="gh-btn min-w-[220px] bg-[var(--color-brand-secondary)] text-[var(--color-brand-primary)] hover:bg-white">

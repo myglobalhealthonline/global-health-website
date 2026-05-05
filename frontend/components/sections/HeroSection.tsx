@@ -31,7 +31,7 @@ export function HeroSection({
           <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-12">
             <div className="max-w-xl">
               {eyebrow ? (
-                <p className="gh-heading-eyebrow inline-flex rounded-full bg-[var(--color-brand-secondary)] px-4 py-1.5 text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)]">
+                <p className="gh-kicker">
                   {eyebrow}
                 </p>
               ) : null}
@@ -56,7 +56,7 @@ export function HeroSection({
                   {trustBadges.map((badge) => (
                     <li
                       key={badge}
-                      className="rounded-full bg-[var(--color-brand-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)]"
+                      className="rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)]"
                     >
                       {badge}
                     </li>
@@ -72,7 +72,7 @@ export function HeroSection({
                   alt={heroImage.alt}
                   width={1600}
                   height={900}
-                  className="h-auto w-full rounded-[24px] object-cover"
+                  className="h-auto min-h-[320px] w-full rounded-[24px] object-cover lg:min-h-[540px]"
                   priority
                 />
               </div>
@@ -88,7 +88,7 @@ export function HeroSection({
       <Container>
         <div className="mx-auto max-w-4xl text-center">
           {eyebrow ? (
-            <p className="gh-heading-eyebrow inline-flex rounded-full bg-[var(--color-brand-secondary)] px-4 py-1.5 text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)]">
+            <p className="gh-kicker">
               {eyebrow}
             </p>
           ) : null}
@@ -113,7 +113,7 @@ export function HeroSection({
               {trustBadges.map((badge) => (
                 <li
                   key={badge}
-                  className="rounded-full bg-[var(--color-brand-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)]"
+                  className="rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)]"
                 >
                   {badge}
                 </li>
@@ -128,7 +128,7 @@ export function HeroSection({
                 alt={heroImage.alt}
                 width={1600}
                 height={700}
-                className="h-auto w-full rounded-[24px] object-cover"
+                className="h-auto min-h-[280px] w-full rounded-[24px] object-cover lg:min-h-[520px]"
                 priority
               />
             </div>

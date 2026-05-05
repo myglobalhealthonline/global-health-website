@@ -12,7 +12,13 @@ type BlogIndexTemplateProps = {
 export function BlogIndexTemplate({ title, description, posts }: BlogIndexTemplateProps) {
   return (
     <>
-      <HeroSection title={title} description={description} primaryCta={{ href: "/book-online", label: "Book Online" }} />
+      <HeroSection
+        eyebrow="Patient education"
+        title={title}
+        description={description}
+        primaryCta={{ href: "/book-online", label: "Book Online" }}
+        trustBadges={["Plain-language guidance", "Professional review flow", "Patient-first topics"]}
+      />
       <Section>
         <Container>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">

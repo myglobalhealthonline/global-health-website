@@ -22,7 +22,13 @@ export function ServiceDetailTemplate({
 }: ServiceDetailTemplateProps) {
   return (
     <>
-      <HeroSection title={title} description={description} primaryCta={{ href: bookingHref, label: bookingLabel }} />
+      <HeroSection
+        eyebrow="Consultation details"
+        title={title}
+        description={description}
+        primaryCta={{ href: bookingHref, label: bookingLabel }}
+        trustBadges={["Online assessment", "Private and secure", "Clear follow-up guidance"]}
+      />
       <Section>
         <Container>
           <article className="gh-card mx-auto max-w-3xl p-7 sm:p-8">
