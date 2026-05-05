@@ -111,6 +111,47 @@ Cross-reference: `backend/docs/booking-persistence-qa.md` (API matrix, CORS, DB 
 - Execute **Scenario A** against a backend returning **200** for all public list endpoints with seeded Ireland rows (services with `legacyPath` / slug alignment, doctors, pricing plans, assets).
 - Optional: screenshot archive under `frontend/docs/qa-screenshots/` for 3.6.1 viewports (not captured in this pass).
 
+## Phase 3.6.2 — Backend API availability + Scenario A prep (2026-05-05)
+
+### Root cause of `/api/countries` **503**
+
+Prisma queries failed because **`DATABASE_URL`** did not resolve to a reachable Postgres instance (or migrations were missing). The route handler maps DB connectivity/schema errors to **`503`** via **`DatabaseUnavailableError`**.
+
+### Backend fixes / tooling
+
+| Item | Notes |
+|------|--------|
+| **`docker-compose.yml`** (repo root) | Postgres 16 + `global_health` DB + documented URL |
+| **`GET /health?db=1`** | Optional DB probe; returns **`database.connected`** and **`database.code`** (`UNREACHABLE`, `ECONNREFUSED`, …) — no secrets |
+| **Seed (Ireland)** | **`dr-mirza-aun-mohammad`**: `bio`; **`medical-consultation`**: `summary`, **`durationMinutes: 25`** (aligned with `/ireland/medical-consultation`) |
+| **`backend/README.md`**, **`backend/.env.example`** | Troubleshooting for **503**, Docker URL |
+
+### Public APIs — expected after DB up + migrate + seed
+
+| Endpoint | Expected |
+|----------|----------|
+| `GET /health` | **200** `{ ok: true }` |
+| `GET /health?db=1` | **200** with **`database.connected: true`** when Postgres is reachable |
+| `GET /api/countries` … **`/api/assets`** | **200** with seeded rows |
+
+**Automated session:** Docker Desktop was **not** running here → Postgres could not be started → **`GET /health?db=1`** returned **`503`** with **`database.code: UNREACHABLE`** — Scenario **A** browser QA **still pending** until migrate/seed runs against a live DB.
+
+### Hydration warnings
+
+**Status:** Still classified as **dev noise** (Strict Mode, extensions, hero wrappers already use **`suppressHydrationWarning`**). **Production smoke:** run **`pnpm --filter frontend build`** then **`pnpm --filter frontend start`** and spot-check navigation once if warnings must be eliminated.
+
+### Validation (Phase 3.6.2 workspace run)
+
+- `pnpm lint` — pass  
+- `pnpm typecheck` — pass  
+- `pnpm build` — pass  
+- `pnpm --filter backend db:generate` — pass  
+- `pnpm --filter backend test` — pass (**49** tests, incl. DB error classifier)
+
+### Scenario A browser QA (CMS overlays)
+
+**Pending** until local Postgres is running (`docker compose up -d`), **`pnpm --filter backend db:migrate`**, **`pnpm --filter backend db:seed`**, backend restarted, then repeat Phase 3.6.1 route matrix — expect Ireland **Medical Consultation** summary/duration/price, doctor **bio**, pricing cards on **`/plans-pricing`**, team listing from **`GET /api/doctors`**.
+
 ## Pages Reviewed
 - `/`
 - `/home`

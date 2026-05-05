@@ -34,7 +34,7 @@ Not implemented yet:
 ## Phase 1 Scope
 
 Implemented:
-- `GET /health`
+- `GET /health` — optional **`?db=1`** runs a trivial Prisma query and reports **`database.connected`** (safe codes only; use for local diagnostics).
 - `GET /api/countries`
 - `GET /api/services`
 - `GET /api/doctors`
@@ -126,6 +126,9 @@ Optional **`DATABASE_PUBLIC_URL`** in comments in `.env.example`: some platforms
 
 | Issue | What to do |
 | --- | --- |
+| **`GET /api/countries` (or other public reads) returns `503`** | The handler catches Prisma/database errors and maps them to **`DatabaseUnavailableError`**. Typical causes: **`DATABASE_URL` points at an unreachable host** (e.g. cloud internal hostname from your laptop), Postgres not running, wrong password, database name missing, or **migrations not applied** (`relation ... does not exist`). Fix connectivity, then **`pnpm --filter backend db:migrate`** (or **`db:deploy`**) and **`pnpm --filter backend db:seed`**. |
+| **`GET /health?db=1` shows `database.connected: false`** | Same as above — use the returned **`database.code`** (`ECONNREFUSED`, `ENOTFOUND`, `AUTH_FAILED`, `SCHEMA_NOT_MIGRATED`, etc.) as a hint. No secrets are returned. |
+| Local Postgres quickly | From **repository root**: **`docker compose up -d`** (see root **`docker-compose.yml`**), then set **`DATABASE_URL=postgresql://postgres:postgres@localhost:5432/global_health`** in **`backend/.env`**, migrate, and seed. |
 | `Cannot resolve environment variable: DATABASE_URL` | Ensure **`backend/.env`** exists (copy from **`.env.example`**) **or** export **`DATABASE_URL`** in the shell (see PowerShell above). |
 | Internal vs public DB host | Hosted DBs often give a private URL for the app and a public URL for developers — use the URL your environment can reach for **`pnpm db:migrate`** / **`db:seed`**. |
 | Ran Prisma from wrong directory | Prefer **`pnpm --filter backend db:*`** from repo root, or **`cd backend`** then **`pnpm db:*`**. |

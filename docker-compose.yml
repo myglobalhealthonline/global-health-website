@@ -1,0 +1,28 @@
+# Local PostgreSQL for backend API + Prisma (Phase 3.6.2).
+# Usage from repo root:
+#   docker compose up -d
+# Then set backend/.env DATABASE_URL to:
+#   postgresql://postgres:postgres@localhost:5432/global_health
+# Run: pnpm --filter backend db:migrate && pnpm --filter backend db:seed
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: global-health-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: global_health
+    ports:
+      - "5432:5432"
+    volumes:
+      - global_health_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d global_health"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  global_health_pg:

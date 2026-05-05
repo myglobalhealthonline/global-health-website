@@ -43,3 +43,38 @@ Manual verification used the embedded browser against **`http://localhost:3000`*
 **Viewports:** `320×568`, `390×844`, `768×1024`, `1024×768`, `1440×900` — primary headings, country selector, listings, footers, and booking form remained present; no blank shells.
 
 **Follow-up for Scenario A:** Run the same route matrix with backend **`GET /api/*` returning 200** and seeded rows to confirm CMS titles/summaries/prices appear on Ireland listings, service detail, team, doctor profile, and pricing pages.
+
+## Phase 3.6.2 — Backend availability / Scenario A enablement (2026-05-05)
+
+### Root cause of `503` on `GET /api/countries`
+
+Public routes catch Prisma failures and return **`503`** when the database is unavailable (`DatabaseUnavailableError`). In typical local setups this happens because:
+
+1. **`DATABASE_URL` is unreachable** — e.g. cloud **internal** hostname used from a laptop, Postgres not running, wrong port/credentials, or DB name missing.
+2. **Schema not migrated** — errors such as “relation does not exist” are mapped to the same safe failure path.
+
+This is **not** a frontend integration defect; the API process can still return **`GET /health`** `200` while **`GET /api/countries`** returns `503` if Prisma cannot query.
+
+### Fixes applied (backend / tooling)
+
+- **`docker-compose.yml`** (repo root): Postgres 16 with **`global_health`** database and documented URL matching **`backend/.env.example`**.
+- **`GET /health?db=1`**: runs **`SELECT 1`** via Prisma and returns **`database.connected`** plus a **safe `code`** (`ECONNREFUSED`, `UNREACHABLE`, `AUTH_FAILED`, `SCHEMA_NOT_MIGRATED`, etc.) — **no secrets**.
+- **`classifyDatabaseConnectivityError`** in `backend/src/modules/shared/db-errors.ts` for stable diagnostics.
+- **Seed alignment (Ireland):** **`dr-mirza-aun-mohammad`** now gets a **`bio`**; **`medical-consultation`** gets **`summary`** and **`durationMinutes`** for richer Scenario A checks against `/ireland/medical-consultation`, `/general-consultation-ie`, and `/ireland-doctors/dr-mirza-aun-mohammad`.
+
+### Verification checklist (Scenario A)
+
+After **`docker compose up -d`** (or any reachable Postgres), **`pnpm --filter backend db:migrate`** and **`pnpm --filter backend db:seed`**:
+
+1. `GET /health?db=1` → **`database.connected: true`**
+2. `GET /api/countries` … **`200`**
+3. Same for **`/api/services`**, **`/api/doctors`**, **`/api/pricing`**, **`/api/assets`**
+4. Re-run the browser matrix from Phase 3.6.1 — Ireland merges should show seeded names, summaries, bios, and pricing cards where mapped.
+
+**This CI/workspace session:** Docker daemon was not running (`dockerDesktopLinuxEngine` pipe missing); Scenario A browser QA could not be completed against live `200` APIs. Follow the checklist locally once Docker Desktop / Postgres is up.
+
+**Validation (workspace):** `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm --filter backend db:generate`, `pnpm --filter backend test` — pass (**49** tests).
+
+### Hydration warnings (navigation / hero)
+
+Repeated React **hydration mismatch** warnings in **development** often come from **Strict Mode**, **browser extensions** altering the DOM, or **already-suppressed** hero wrappers (`HeroSection` uses **`suppressHydrationWarning`** on copy wrappers). **Production `next build` + `next start`** should be used to confirm whether mismatches persist without the dev overlay. Treat lingering dev-only warnings as **noise** unless they reproduce in production.

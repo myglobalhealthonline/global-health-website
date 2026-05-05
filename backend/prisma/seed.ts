@@ -16,6 +16,15 @@ const adapter = new PrismaPg(pool);
 
 const prisma = new PrismaClient({ adapter });
 
+type SeedDoctor = { slug: string; fullName: string; title: string; bio?: string };
+type SeedService = {
+  slug: string;
+  name: string;
+  legacyPath: string;
+  summary?: string;
+  durationMinutes?: number;
+};
+
 async function main() {
   await prisma.currency.upsert({
     where: { code: "EUR" },
@@ -35,9 +44,21 @@ async function main() {
       defaultLocale: LocaleCode.EN,
       locales: [LocaleCode.EN, LocaleCode.PT, LocaleCode.ES],
       domain: "ie.myglobalhealth.online",
-      doctor: { slug: "dr-mirza-aun-mohammad", fullName: "Dr Mirza Aun Mohammad", title: "General Practitioner" },
+      doctor: {
+        slug: "dr-mirza-aun-mohammad",
+        fullName: "Dr Mirza Aun Mohammad",
+        title: "General Practitioner",
+        bio: "Ireland-based GP supporting first-contact online consultations, continuity of care, and clear next-step guidance.",
+      },
       specialty: { slug: "cardiology", name: "Cardiology" },
-      service: { slug: "medical-consultation", name: "Medical Consultation", legacyPath: "/ireland/medical-consultation" },
+      service: {
+        slug: "medical-consultation",
+        name: "Medical Consultation",
+        legacyPath: "/ireland/medical-consultation",
+        summary:
+          "First-contact medical consultation for common symptoms, assessments, and referral or follow-up planning after intake review.",
+        durationMinutes: 25,
+      },
       plan: { slug: "starter", name: "Starter Plan", priceCents: 4900 },
       heroPath: "/images/hero/ireland-hero-ai.svg",
     },
@@ -109,7 +130,7 @@ async function main() {
       plan: { slug: "starter", name: "Plan Initial", priceCents: 4200 },
       heroPath: "/images/hero/country-home-hero-ai.svg",
     },
-  ] as const;
+  ];
 
   for (const seed of countrySeeds) {
     const country = await prisma.country.upsert({
@@ -168,10 +189,22 @@ async function main() {
       create: { countryId: country.id, slug: seed.specialty.slug, name: seed.specialty.name },
     });
 
+    const doctorPayload: SeedDoctor = seed.doctor;
+
     const doctor = await prisma.doctor.upsert({
-      where: { countryId_slug: { countryId: country.id, slug: seed.doctor.slug } },
-      update: { fullName: seed.doctor.fullName, title: seed.doctor.title },
-      create: { countryId: country.id, slug: seed.doctor.slug, fullName: seed.doctor.fullName, title: seed.doctor.title },
+      where: { countryId_slug: { countryId: country.id, slug: doctorPayload.slug } },
+      update: {
+        fullName: doctorPayload.fullName,
+        title: doctorPayload.title,
+        ...(doctorPayload.bio !== undefined ? { bio: doctorPayload.bio } : {}),
+      },
+      create: {
+        countryId: country.id,
+        slug: doctorPayload.slug,
+        fullName: doctorPayload.fullName,
+        title: doctorPayload.title,
+        ...(doctorPayload.bio !== undefined ? { bio: doctorPayload.bio } : {}),
+      },
     });
 
     await prisma.doctorSpecialty.upsert({
@@ -180,10 +213,28 @@ async function main() {
       create: { doctorId: doctor.id, specialtyId: specialty.id },
     });
 
+    const svc: SeedService = seed.service;
+
     await prisma.service.upsert({
-      where: { countryId_slug: { countryId: country.id, slug: seed.service.slug } },
-      update: { name: seed.service.name, legacyPath: seed.service.legacyPath, specialtyId: specialty.id },
-      create: { countryId: country.id, slug: seed.service.slug, name: seed.service.name, legacyPath: seed.service.legacyPath, specialtyId: specialty.id, currencyCode: "EUR", basePriceCents: 3900 },
+      where: { countryId_slug: { countryId: country.id, slug: svc.slug } },
+      update: {
+        name: svc.name,
+        legacyPath: svc.legacyPath,
+        specialtyId: specialty.id,
+        ...(svc.summary !== undefined ? { summary: svc.summary } : {}),
+        ...(svc.durationMinutes !== undefined ? { durationMinutes: svc.durationMinutes } : {}),
+      },
+      create: {
+        countryId: country.id,
+        slug: svc.slug,
+        name: svc.name,
+        legacyPath: svc.legacyPath,
+        specialtyId: specialty.id,
+        currencyCode: "EUR",
+        basePriceCents: 3900,
+        ...(svc.summary !== undefined ? { summary: svc.summary } : {}),
+        ...(svc.durationMinutes !== undefined ? { durationMinutes: svc.durationMinutes } : {}),
+      },
     });
 
     await prisma.pricingPlan.upsert({
