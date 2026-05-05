@@ -14,6 +14,7 @@ export type ResolveCountryInput = {
 
 export type LocaleResolutionInput = {
   explicitLocale?: string | null;
+  headerLocale?: string | null;
   cookieLocale?: string | null;
   countryDefaultLocale?: LocaleCode;
   acceptLanguageHeader?: string | null;
@@ -22,7 +23,9 @@ export type LocaleResolutionInput = {
 export type SiteContextInput = {
   host?: string | null;
   pathname?: string | null;
+  explicitCountryCode?: CountryCode;
   explicitLocale?: string | null;
+  headerLocale?: string | null;
   acceptLanguageHeader?: string | null;
   cookieLocale?: string | null;
 };

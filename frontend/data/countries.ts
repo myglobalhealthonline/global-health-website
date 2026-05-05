@@ -1,4 +1,6 @@
-﻿export type CountryCode = "ie" | "pt" | "sp" | "cz" | "rm";
+﻿import type { LocaleCode } from "@/lib/i18n/types";
+
+export type CountryCode = "ie" | "pt" | "sp" | "cz" | "rm";
 
 export type CountryConfig = {
   code: CountryCode;
@@ -9,6 +11,8 @@ export type CountryConfig = {
   specialistPath: string;
   /** Short label for cards and compact UI */
   label: string;
+  defaultLocale: LocaleCode;
+  supportedLocales: LocaleCode[];
 };
 
 /**
@@ -20,6 +24,8 @@ export const countries: CountryConfig[] = [
     code: "ie",
     name: "Ireland",
     label: "IE",
+    defaultLocale: "en",
+    supportedLocales: ["en", "pt", "es"],
     legacyHomePath: "/home",
     teamPath: "/ireland-team",
     generalConsultationPath: "/general-consultation-ie",
@@ -29,6 +35,8 @@ export const countries: CountryConfig[] = [
     code: "cz",
     name: "Czechia",
     label: "CZ",
+    defaultLocale: "cs",
+    supportedLocales: ["cs", "en"],
     legacyHomePath: "/home-cz",
     teamPath: "/czechia-team",
     generalConsultationPath: "/general-consultation-cz",
@@ -38,6 +46,8 @@ export const countries: CountryConfig[] = [
     code: "pt",
     name: "Portugal",
     label: "PT",
+    defaultLocale: "pt",
+    supportedLocales: ["pt", "en"],
     legacyHomePath: "/home-pt",
     teamPath: "/portugal-team",
     generalConsultationPath: "/general-consultation-pt",
@@ -47,6 +57,8 @@ export const countries: CountryConfig[] = [
     code: "sp",
     name: "Spain",
     label: "ES",
+    defaultLocale: "es",
+    supportedLocales: ["es", "en"],
     legacyHomePath: "/home-sp",
     teamPath: "/spain-team",
     generalConsultationPath: "/general-consultation-sp",
@@ -56,6 +68,8 @@ export const countries: CountryConfig[] = [
     code: "rm",
     name: "Romania",
     label: "RO",
+    defaultLocale: "ro",
+    supportedLocales: ["ro", "en"],
     legacyHomePath: "/home-rm",
     teamPath: "/romania-team",
     generalConsultationPath: "/general-consultation-rm",

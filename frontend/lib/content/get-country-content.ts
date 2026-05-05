@@ -24,7 +24,7 @@ export async function getCountryContent(country: CountryConfig): Promise<Country
   return {
     country,
     activeCountries: countries,
-    supportedLocales: ["en", "pt", "es", "cs", "ro", "de"],
+    supportedLocales: country.supportedLocales,
     services,
     doctors,
     pricingPlans,

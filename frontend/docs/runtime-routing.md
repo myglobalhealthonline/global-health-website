@@ -6,8 +6,9 @@ Next.js 16 deprecates middleware convention in favor of `proxy.ts`. This project
 ## Country resolution
 Frontend resolves country context at runtime in this order:
 1. enabled domain map (`lib/routing/domain-map.ts`)
-2. legacy route prefix map (`lib/routing/legacy-route-map.ts`)
-3. fallback country (Ireland)
+2. runtime header country (`x-gh-country`) when provided by `proxy.ts`
+3. legacy route prefix map (`lib/routing/legacy-route-map.ts`)
+4. fallback country (Ireland)
 
 Examples:
 - global/default host + `/home` -> Ireland
@@ -19,10 +20,11 @@ Examples:
 ## Locale resolution
 Locale negotiation order:
 1. explicit locale in route segment (if present)
-2. locale cookie (`gh_locale`)
-3. `Accept-Language` best supported match
-4. country/domain default locale
-5. fallback `en`
+2. runtime header locale (`x-gh-locale`) when present
+3. locale cookie (`gh_locale`)
+4. `Accept-Language` best supported match
+5. selected country default locale
+6. fallback `en`
 
 Supported: `en`, `pt`, `es`, `cs`, `ro`, `de`.
 
@@ -44,8 +46,11 @@ Supported: `en`, `pt`, `es`, `cs`, `ro`, `de`.
 Only explicit aliases are redirected:
 - `/terms-and-conditions` -> `/term-and-conditions`
 - `/privacy-policy` -> `/privacy`
+- `/copy-of-privacy-policy` -> `/privacy`
 - `/refund-policy` -> `/return-and-refund-policy`
 - `/gdpr-compliance` -> `/privacy`
+
+No country home routes, service routes, or dynamic consultation routes are auto-redirected in this phase.
 
 ## Custom domains (future)
 Domain mapping is centralized in `domain-map.ts` with `enabled` flags.

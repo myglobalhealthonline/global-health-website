@@ -6,6 +6,7 @@ export type PublicTemplateType =
   | "ConsultationListingTemplate"
   | "ServiceDetailTemplate"
   | "DoctorTeamTemplate"
+  | "DoctorProfileTemplate"
   | "BlogIndexTemplate"
   | "BlogArticleTemplate"
   | "LegalPageTemplate"
@@ -32,6 +33,13 @@ export type PublicRouteRegistryEntry = {
 };
 
 const allLocales: LocaleCode[] = ["en", "pt", "es", "cs", "ro", "de"];
+const countryLocales: Record<NonNullable<PublicRouteRegistryEntry["countryCode"]>, LocaleCode[]> = {
+  ie: ["en", "pt", "es"],
+  pt: ["pt", "en"],
+  sp: ["es", "en"],
+  cz: ["cs", "en"],
+  rm: ["ro", "en"],
+};
 
 function toSlugLabel(value: string) {
   return value
@@ -68,7 +76,9 @@ function baseEntry(
     showInNavigation: overrides.showInNavigation ?? false,
     showInLanguageSwitcher: overrides.showInLanguageSwitcher ?? true,
     legacy: overrides.legacy ?? false,
-    availableLocales: overrides.availableLocales ?? allLocales,
+    availableLocales:
+      overrides.availableLocales ??
+      (overrides.countryCode ? countryLocales[overrides.countryCode] : allLocales),
     fallbackLocale: overrides.fallbackLocale ?? "en",
     labels,
     ...(overrides.countryCode ? { countryCode: overrides.countryCode } : {}),
@@ -247,12 +257,12 @@ export const publicRouteRegistry: PublicRouteRegistryEntry[] = [
     "/ireland/[serviceSlug]",
     "/ireland-specialist-consultations/[serviceSlug]",
   ].map((path) =>
-    baseEntry(path, path.includes("doctor") ? "StaticMarketingTemplate" : path.includes("post") ? "BlogArticleTemplate" : path.includes("category") ? "StaticMarketingTemplate" : "ServiceDetailTemplate", {
+    baseEntry(path, path.includes("doctor") ? "DoctorProfileTemplate" : path.includes("post") ? "BlogArticleTemplate" : path.includes("category") ? "StaticMarketingTemplate" : "ServiceDetailTemplate", {
       pageLabel: toSlugLabel(path),
       navigationLabel: toSlugLabel(path),
       pageTitle: toSlugLabel(path),
       shortDescription: "Dynamic route family definition.",
-    }, { showInNavigation: false }),
+    }, { showInNavigation: false, countryCode: path.includes("/ireland") || path.includes("doctor") ? "ie" : undefined }),
   ),
 ];
 

@@ -5,6 +5,7 @@ import { getRequestContext } from "@/lib/routing/get-request-context";
 const redirectMap: Record<string, string> = {
   "/terms-and-conditions": "/term-and-conditions",
   "/privacy-policy": "/privacy",
+  "/copy-of-privacy-policy": "/privacy",
   "/refund-policy": "/return-and-refund-policy",
   "/gdpr-compliance": "/privacy",
 };
@@ -44,6 +45,7 @@ export const config = {
   matcher: [
     "/terms-and-conditions",
     "/privacy-policy",
+    "/copy-of-privacy-policy",
     "/refund-policy",
     "/gdpr-compliance",
     "/((?!_next/static|_next/image|favicon.ico).*)",

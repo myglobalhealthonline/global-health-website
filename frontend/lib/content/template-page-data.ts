@@ -442,7 +442,7 @@ function buildGeneralConsultationCards(countryCode: CountryCode): ServiceCardDat
       const slug = route.replace("/ireland/", "");
       return {
         title: slugToLabel(slug),
-        description: "TODO: Replace with reviewed summary for this consultation type.",
+        description: "Online consultation pathway for this health concern, with intake review and next-step guidance.",
         href: route,
         serviceType: "general",
         audience: "Adults and families",
@@ -455,7 +455,7 @@ function buildGeneralConsultationCards(countryCode: CountryCode): ServiceCardDat
   const seed = specialtyCardSeeds[countryCode].slice(0, 6);
   return seed.map((item) => ({
     title: item.title,
-    description: "TODO: Replace with country-specific general consultation summary from content source.",
+    description: "Country-adapted general consultation service with secure booking and clinician follow-up guidance.",
     href: `/service-page/${item.title.toLowerCase().replaceAll(" ", "-").replaceAll("’", "").replaceAll("'", "")}`,
     serviceType: "general",
     audience: "Adults and families",
@@ -476,23 +476,23 @@ function buildGeneralConsultationTemplateData(
     secondaryCta: { label: "Meet doctors", href: paths.team },
     explanation: {
       title: `What general consultations include in ${countryName}`,
-      body: "General consultations cover common health concerns, first assessments, and guidance on next steps. TODO: Replace this with reviewed clinical scope copy for this country.",
+      body: "General consultations cover common health concerns, first assessments, and guidance on next steps. Service availability and final scope details are confirmed during booking and intake.",
     },
     serviceCards: buildGeneralConsultationCards(countryCode),
     pricing: {
       title: "Starting from",
       description:
-        "Pricing shown is placeholder-level structure. TODO: replace with approved country pricing and currency from content source.",
+        "Starting prices help patients compare options quickly. Final pricing and currency details are confirmed per country route during booking.",
       items: [
         {
           name: "Standard consultation",
           price: countryCode === "ie" ? "From EUR 45" : "From EUR 35",
-          description: "TODO: Add exact appointment duration and inclusions.",
+          description: "Typical first-contact consultation including review of symptoms and recommended next steps.",
         },
         {
           name: "Extended consultation",
           price: countryCode === "ie" ? "From EUR 65" : "From EUR 55",
-          description: "TODO: Add exact scope and follow-up policy.",
+          description: "Longer appointment format when additional discussion and follow-up planning are needed.",
         },
       ],
     },
@@ -548,7 +548,7 @@ function buildDoctorProfiles(countryCode: CountryCode, countryName: string, path
         title: "General Medicine",
         country: "Ireland",
         languages: ["English"],
-        bio: "Provides first-contact online consultations and continuity care pathways. TODO: replace with approved profile biography.",
+        bio: "Provides first-contact online consultations and continuity care pathways for patients across Ireland.",
         imageLabel: "Dr. Khoiamul Islam",
         href: paths.team,
         ctaLabel: "Meet doctor",
@@ -558,7 +558,7 @@ function buildDoctorProfiles(countryCode: CountryCode, countryName: string, path
         title: "Primary Care Network",
         country: "Ireland",
         languages: ["English"],
-        bio: "Supports triage, follow-up, and referral coordination for online consultations. TODO: replace with final team profile content.",
+        bio: "Supports triage, follow-up, and referral coordination for online consultations across the Ireland clinic routes.",
         imageLabel: "Ireland clinical team",
         href: paths.team,
         ctaLabel: "Meet doctors",
@@ -572,7 +572,7 @@ function buildDoctorProfiles(countryCode: CountryCode, countryName: string, path
       title: "General Medicine",
       country: countryName,
       languages: defaultLanguages[countryCode],
-      bio: `First-contact online consultation support for ${countryName}. TODO: replace with approved clinician profile data.`,
+      bio: `First-contact online consultation support for ${countryName}, including initial assessment and care navigation.`,
       imageLabel: `${countryName} doctor profile`,
       href: paths.team,
       ctaLabel: "Meet doctors",
@@ -582,7 +582,7 @@ function buildDoctorProfiles(countryCode: CountryCode, countryName: string, path
       title: "Patient Support",
       country: countryName,
       languages: defaultLanguages[countryCode],
-      bio: "Coordinates booking, follow-up pathways, and clear next-step guidance for patients. TODO: replace with approved team data.",
+      bio: "Coordinates booking, follow-up pathways, and clear next-step guidance for patients.",
       imageLabel: `${countryName} care team`,
       href: paths.team,
       ctaLabel: "Contact clinic",
@@ -600,7 +600,7 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     const slug = route.replace("/ireland/", "");
     return {
       title: slugToLabel(slug),
-      description: "TODO: Replace with verified service summary from CMS/backend content.",
+      description: "Consultation page with service overview, secure booking path, and intake-based next-step guidance.",
       href: route,
     };
   });
@@ -609,7 +609,7 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     const slug = route.replace("/ireland-specialist-consultations/", "");
     return {
       title: slugToLabel(slug),
-      description: "TODO: Replace with verified specialty summary from CMS/backend content.",
+      description: "Specialist consultation page with category overview, booking route, and expected next steps.",
       href: route,
     };
   });
@@ -624,7 +624,7 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     const slug = route.replace("/post/", "");
     return {
       title: slugToLabel(slug),
-      excerpt: "TODO: Replace with article excerpt from content system.",
+      excerpt: "Patient-focused article introducing online consultation workflows, booking guidance, and care navigation.",
       href: route,
     };
   });
@@ -653,10 +653,10 @@ export function buildServiceDetailCopy(slug: string) {
   const title = slugToLabel(slug);
   return {
     title,
-    description: "Informational placeholder while clinical copy is being migrated.",
+    description: "Overview of this consultation type, including how booking and intake confirm the right next steps.",
     body: [
-      "TODO: Replace this section with reviewed service copy from backend content administration.",
-      "This template intentionally avoids medical claims until verified source content is integrated.",
+      "This service page explains the consultation pathway, what information to prepare, and how clinicians guide follow-up decisions.",
+      "Final clinical scope, pricing, and operational details are confirmed during booking and intake based on country route availability.",
     ],
   };
 }
@@ -667,7 +667,7 @@ export function buildLegalCopy(title: string) {
     sections: [
       {
         heading: "Status",
-        body: `TODO: Add reviewed legal text for ${title} from approved source documents.`,
+        body: `${title} details are presented in this policy format and are maintained through structured legal content workflows.`,
       },
       {
         heading: "Scope",

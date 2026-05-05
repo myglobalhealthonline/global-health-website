@@ -18,12 +18,16 @@ function toSupportedLocale(value?: string | null): LocaleCode | null {
 
 export function resolveLocale({
   explicitLocale,
+  headerLocale,
   cookieLocale,
   countryDefaultLocale = "en",
   acceptLanguageHeader,
 }: LocaleResolutionInput): LocaleCode {
   const explicit = toSupportedLocale(explicitLocale);
   if (explicit) return explicit;
+
+  const header = toSupportedLocale(headerLocale);
+  if (header) return header;
 
   const cookie = toSupportedLocale(cookieLocale);
   if (cookie) return cookie;

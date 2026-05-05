@@ -8,32 +8,38 @@
     "route.root": {
       "pageLabel": "Acasa global",
       "navigationLabel": "Acasa",
-      "pageTitle": "Global Health"
+      "pageTitle": "Global Health",
+      "shortDescription": "Route label for Acasa global."
     },
     "route.home": {
       "pageLabel": "Ireland home",
       "navigationLabel": "Ireland",
-      "pageTitle": "Ireland Clinic Home"
+      "pageTitle": "Ireland Clinic Home",
+      "shortDescription": "Route label for Acasa Irlanda."
     },
     "route.home_pt": {
       "pageLabel": "Portugal home",
       "navigationLabel": "Portugal",
-      "pageTitle": "Portugal Clinic Home"
+      "pageTitle": "Portugal Clinic Home",
+      "shortDescription": "Route label for Acasa Portugalia."
     },
     "route.home_sp": {
       "pageLabel": "Spain home",
       "navigationLabel": "Spain",
-      "pageTitle": "Spain Clinic Home"
+      "pageTitle": "Spain Clinic Home",
+      "shortDescription": "Route label for Acasa Spania."
     },
     "route.home_cz": {
       "pageLabel": "Czechia home",
       "navigationLabel": "Czechia",
-      "pageTitle": "Czechia Clinic Home"
+      "pageTitle": "Czechia Clinic Home",
+      "shortDescription": "Route label for Acasa Cehia."
     },
     "route.home_rm": {
       "pageLabel": "Acasa Romania",
       "navigationLabel": "Romania",
-      "pageTitle": "Clinica Romania"
+      "pageTitle": "Clinica Romania",
+      "shortDescription": "Route label for Acasa Romania."
     },
     "route.book_online": {
       "pageLabel": "Programeaza consultatia",
@@ -56,7 +62,8 @@
     "route.blog": {
       "pageLabel": "Blog",
       "navigationLabel": "Blog",
-      "pageTitle": "Health Blog"
+      "pageTitle": "Health Blog",
+      "shortDescription": "Route label for Blog."
     },
     "route.frequent_asked_questions": {
       "pageLabel": "FAQ",
@@ -102,17 +109,20 @@
     "route.term_and_conditions": {
       "pageLabel": "Terms and conditions",
       "navigationLabel": "Terms",
-      "pageTitle": "Terms and Conditions"
+      "pageTitle": "Terms and Conditions",
+      "shortDescription": "Route label for Termeni si conditii."
     },
     "route.privacy": {
       "pageLabel": "Privacy policy",
       "navigationLabel": "Privacy",
-      "pageTitle": "Privacy Policy"
+      "pageTitle": "Privacy Policy",
+      "shortDescription": "Route label for Politica de confidentialitate."
     },
     "route.return_and_refund_policy": {
       "pageLabel": "Refund policy",
       "navigationLabel": "Refund",
-      "pageTitle": "Refund and Return Policy"
+      "pageTitle": "Refund and Return Policy",
+      "shortDescription": "Route label for Politica de retur si rambursare."
     },
     "route.pricing_plans.list": {
       "pageLabel": "Pricing plans list",
@@ -155,6 +165,96 @@
       "navigationLabel": "Categories",
       "pageTitle": "Telemedicine Devices Category",
       "shortDescription": "Device-supported telemedicine support pathways."
+    },
+    "route.general_consultation_ie": {
+      "pageLabel": "Consultatie generala Irlanda",
+      "navigationLabel": "Consultatie generala Irlanda",
+      "pageTitle": "Consultatie generala Irlanda",
+      "shortDescription": "Route label for Consultatie generala Irlanda."
+    },
+    "route.general_consultation_pt": {
+      "pageLabel": "Consultatie generala Portugalia",
+      "navigationLabel": "Consultatie generala Portugalia",
+      "pageTitle": "Consultatie generala Portugalia",
+      "shortDescription": "Route label for Consultatie generala Portugalia."
+    },
+    "route.general_consultation_sp": {
+      "pageLabel": "Consultatie generala Spania",
+      "navigationLabel": "Consultatie generala Spania",
+      "pageTitle": "Consultatie generala Spania",
+      "shortDescription": "Route label for Consultatie generala Spania."
+    },
+    "route.general_consultation_cz": {
+      "pageLabel": "Consultatie generala Cehia",
+      "navigationLabel": "Consultatie generala Cehia",
+      "pageTitle": "Consultatie generala Cehia",
+      "shortDescription": "Route label for Consultatie generala Cehia."
+    },
+    "route.general_consultation_rm": {
+      "pageLabel": "Consultatie generala Romania",
+      "navigationLabel": "Consultatie generala Romania",
+      "pageTitle": "Consultatie generala Romania",
+      "shortDescription": "Route label for Consultatie generala Romania."
+    },
+    "route.specialty_ie": {
+      "pageLabel": "Consultatie specialist Irlanda",
+      "navigationLabel": "Consultatie specialist Irlanda",
+      "pageTitle": "Consultatie specialist Irlanda",
+      "shortDescription": "Route label for Consultatie specialist Irlanda."
+    },
+    "route.specialty_pt": {
+      "pageLabel": "Consultatie specialist Portugalia",
+      "navigationLabel": "Consultatie specialist Portugalia",
+      "pageTitle": "Consultatie specialist Portugalia",
+      "shortDescription": "Route label for Consultatie specialist Portugalia."
+    },
+    "route.specialty_sp": {
+      "pageLabel": "Consultatie specialist Spania",
+      "navigationLabel": "Consultatie specialist Spania",
+      "pageTitle": "Consultatie specialist Spania",
+      "shortDescription": "Route label for Consultatie specialist Spania."
+    },
+    "route.specialty_cz": {
+      "pageLabel": "Consultatie specialist Cehia",
+      "navigationLabel": "Consultatie specialist Cehia",
+      "pageTitle": "Consultatie specialist Cehia",
+      "shortDescription": "Route label for Consultatie specialist Cehia."
+    },
+    "route.specialty_rm": {
+      "pageLabel": "Consultatie specialist Romania",
+      "navigationLabel": "Consultatie specialist Romania",
+      "pageTitle": "Consultatie specialist Romania",
+      "shortDescription": "Route label for Consultatie specialist Romania."
+    },
+    "route.ireland_team": {
+      "pageLabel": "Echipa Irlanda",
+      "navigationLabel": "Echipa Irlanda",
+      "pageTitle": "Echipa Irlanda",
+      "shortDescription": "Route label for Echipa Irlanda."
+    },
+    "route.portugal_team": {
+      "pageLabel": "Echipa Portugalia",
+      "navigationLabel": "Echipa Portugalia",
+      "pageTitle": "Echipa Portugalia",
+      "shortDescription": "Route label for Echipa Portugalia."
+    },
+    "route.spain_team": {
+      "pageLabel": "Echipa Spania",
+      "navigationLabel": "Echipa Spania",
+      "pageTitle": "Echipa Spania",
+      "shortDescription": "Route label for Echipa Spania."
+    },
+    "route.czechia_team": {
+      "pageLabel": "Echipa Cehia",
+      "navigationLabel": "Echipa Cehia",
+      "pageTitle": "Echipa Cehia",
+      "shortDescription": "Route label for Echipa Cehia."
+    },
+    "route.romania_team": {
+      "pageLabel": "Echipa Romania",
+      "navigationLabel": "Echipa Romania",
+      "pageTitle": "Echipa Romania",
+      "shortDescription": "Route label for Echipa Romania."
     }
   }
 }

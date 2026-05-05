@@ -8,32 +8,38 @@
     "route.root": {
       "pageLabel": "Casa global",
       "navigationLabel": "Inicio",
-      "pageTitle": "Global Health"
+      "pageTitle": "Global Health",
+      "shortDescription": "Route label for Inicio global."
     },
     "route.home": {
       "pageLabel": "Inicio Irlanda",
       "navigationLabel": "Irlanda",
-      "pageTitle": "Clinica Irlanda"
+      "pageTitle": "Clinica Irlanda",
+      "shortDescription": "Route label for Inicio Irlanda."
     },
     "route.home_pt": {
       "pageLabel": "Inicio Portugal",
       "navigationLabel": "Portugal",
-      "pageTitle": "Clinica Portugal"
+      "pageTitle": "Clinica Portugal",
+      "shortDescription": "Route label for Inicio Portugal."
     },
     "route.home_sp": {
       "pageLabel": "Spain home",
       "navigationLabel": "Spain",
-      "pageTitle": "Spain Clinic Home"
+      "pageTitle": "Spain Clinic Home",
+      "shortDescription": "Route label for Inicio Espanha."
     },
     "route.home_cz": {
       "pageLabel": "Czechia home",
       "navigationLabel": "Czechia",
-      "pageTitle": "Czechia Clinic Home"
+      "pageTitle": "Czechia Clinic Home",
+      "shortDescription": "Route label for Inicio Chequia."
     },
     "route.home_rm": {
       "pageLabel": "Romania home",
       "navigationLabel": "Romania",
-      "pageTitle": "Romania Clinic Home"
+      "pageTitle": "Romania Clinic Home",
+      "shortDescription": "Route label for Inicio Romenia."
     },
     "route.book_online": {
       "pageLabel": "Marcar consulta",
@@ -56,7 +62,8 @@
     "route.blog": {
       "pageLabel": "Blog",
       "navigationLabel": "Blog",
-      "pageTitle": "Blog de Saude"
+      "pageTitle": "Blog de Saude",
+      "shortDescription": "Route label for Blog."
     },
     "route.frequent_asked_questions": {
       "pageLabel": "FAQ",
@@ -102,17 +109,20 @@
     "route.term_and_conditions": {
       "pageLabel": "Terms and conditions",
       "navigationLabel": "Terms",
-      "pageTitle": "Terms and Conditions"
+      "pageTitle": "Terms and Conditions",
+      "shortDescription": "Route label for Termos e condicoes."
     },
     "route.privacy": {
       "pageLabel": "Privacy policy",
       "navigationLabel": "Privacy",
-      "pageTitle": "Privacy Policy"
+      "pageTitle": "Privacy Policy",
+      "shortDescription": "Route label for Politica de privacidade."
     },
     "route.return_and_refund_policy": {
       "pageLabel": "Refund policy",
       "navigationLabel": "Refund",
-      "pageTitle": "Refund and Return Policy"
+      "pageTitle": "Refund and Return Policy",
+      "shortDescription": "Route label for Politica de reembolso e devolucao."
     },
     "route.pricing_plans.list": {
       "pageLabel": "Pricing plans list",
@@ -155,6 +165,96 @@
       "navigationLabel": "Categories",
       "pageTitle": "Telemedicine Devices Category",
       "shortDescription": "Device-supported telemedicine support pathways."
+    },
+    "route.general_consultation_ie": {
+      "pageLabel": "Consulta geral Irlanda",
+      "navigationLabel": "Consulta geral Irlanda",
+      "pageTitle": "Consulta geral Irlanda",
+      "shortDescription": "Route label for Consulta geral Irlanda."
+    },
+    "route.general_consultation_pt": {
+      "pageLabel": "Consulta geral Portugal",
+      "navigationLabel": "Consulta geral Portugal",
+      "pageTitle": "Consulta geral Portugal",
+      "shortDescription": "Route label for Consulta geral Portugal."
+    },
+    "route.general_consultation_sp": {
+      "pageLabel": "Consulta geral Espanha",
+      "navigationLabel": "Consulta geral Espanha",
+      "pageTitle": "Consulta geral Espanha",
+      "shortDescription": "Route label for Consulta geral Espanha."
+    },
+    "route.general_consultation_cz": {
+      "pageLabel": "Consulta geral Chequia",
+      "navigationLabel": "Consulta geral Chequia",
+      "pageTitle": "Consulta geral Chequia",
+      "shortDescription": "Route label for Consulta geral Chequia."
+    },
+    "route.general_consultation_rm": {
+      "pageLabel": "Consulta geral Romenia",
+      "navigationLabel": "Consulta geral Romenia",
+      "pageTitle": "Consulta geral Romenia",
+      "shortDescription": "Route label for Consulta geral Romenia."
+    },
+    "route.specialty_ie": {
+      "pageLabel": "Consulta especialista Irlanda",
+      "navigationLabel": "Consulta especialista Irlanda",
+      "pageTitle": "Consulta especialista Irlanda",
+      "shortDescription": "Route label for Consulta especialista Irlanda."
+    },
+    "route.specialty_pt": {
+      "pageLabel": "Consulta especialista Portugal",
+      "navigationLabel": "Consulta especialista Portugal",
+      "pageTitle": "Consulta especialista Portugal",
+      "shortDescription": "Route label for Consulta especialista Portugal."
+    },
+    "route.specialty_sp": {
+      "pageLabel": "Consulta especialista Espanha",
+      "navigationLabel": "Consulta especialista Espanha",
+      "pageTitle": "Consulta especialista Espanha",
+      "shortDescription": "Route label for Consulta especialista Espanha."
+    },
+    "route.specialty_cz": {
+      "pageLabel": "Consulta especialista Chequia",
+      "navigationLabel": "Consulta especialista Chequia",
+      "pageTitle": "Consulta especialista Chequia",
+      "shortDescription": "Route label for Consulta especialista Chequia."
+    },
+    "route.specialty_rm": {
+      "pageLabel": "Consulta especialista Romenia",
+      "navigationLabel": "Consulta especialista Romenia",
+      "pageTitle": "Consulta especialista Romenia",
+      "shortDescription": "Route label for Consulta especialista Romenia."
+    },
+    "route.ireland_team": {
+      "pageLabel": "Equipa Irlanda",
+      "navigationLabel": "Equipa Irlanda",
+      "pageTitle": "Equipa Irlanda",
+      "shortDescription": "Route label for Equipa Irlanda."
+    },
+    "route.portugal_team": {
+      "pageLabel": "Equipa Portugal",
+      "navigationLabel": "Equipa Portugal",
+      "pageTitle": "Equipa Portugal",
+      "shortDescription": "Route label for Equipa Portugal."
+    },
+    "route.spain_team": {
+      "pageLabel": "Equipa Espanha",
+      "navigationLabel": "Equipa Espanha",
+      "pageTitle": "Equipa Espanha",
+      "shortDescription": "Route label for Equipa Espanha."
+    },
+    "route.czechia_team": {
+      "pageLabel": "Equipa Chequia",
+      "navigationLabel": "Equipa Chequia",
+      "pageTitle": "Equipa Chequia",
+      "shortDescription": "Route label for Equipa Chequia."
+    },
+    "route.romania_team": {
+      "pageLabel": "Equipa Romenia",
+      "navigationLabel": "Equipa Romenia",
+      "pageTitle": "Equipa Romenia",
+      "shortDescription": "Route label for Equipa Romenia."
     }
   }
 }

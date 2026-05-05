@@ -14,11 +14,14 @@ export async function getSiteContext(input: SiteContextInput | string = {}) {
   const countryContext = resolveCountry({
     host: normalizedInput.host,
     pathname: normalizedInput.pathname,
+    defaultCountryCode: normalizedInput.explicitCountryCode,
   });
 
   const locale = resolveLocale({
     explicitLocale: normalizedInput.explicitLocale,
-    countryDefaultLocale: "en",
+    headerLocale: normalizedInput.headerLocale,
+    countryDefaultLocale: countryContext.country.defaultLocale,
+    cookieLocale: normalizedInput.cookieLocale,
     acceptLanguageHeader: normalizedInput.acceptLanguageHeader,
   });
 

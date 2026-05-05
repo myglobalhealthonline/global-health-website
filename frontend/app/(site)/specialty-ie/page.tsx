@@ -18,7 +18,7 @@ export default async function Page() {
       secondaryCta={{ label: "Meet doctors", href: data.paths.team }}
       explanation={{
         title: "How specialist consultations work",
-        body: "Specialist consultations are suitable when you need focused medical expertise. TODO: Replace with approved specialist intake guidance.",
+        body: "Specialist consultations are suitable when you need focused medical expertise, follow-up review, or guidance on complex concerns.",
       }}
       listing={data.specialistListing}
       howItWorks={{

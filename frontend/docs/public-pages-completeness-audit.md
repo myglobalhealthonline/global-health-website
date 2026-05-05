@@ -153,3 +153,4 @@ Audit date: 2026-05-05
 - All audited routes are template-driven and keep thin-adapter architecture.
 - No backend/admin coupling introduced in public routes.
 - Locale route text now has registry + locale label fallback infrastructure; missing locale labels fall back to English safely.
+- Runtime country/locale selection now follows proxy headers, cookie, `Accept-Language`, and country defaults without forcing English in site layout.

@@ -5,6 +5,7 @@
 - Public routes stay stable (no locale prefixes in URL yet).
 - Language switching updates locale context/cookie and text labels, not route path.
 - Route resolution remains path-based with safe fallback behavior.
+- Country default locale is derived from runtime country context (`data/countries.ts`).
 
 ## Route Label Translation
 
@@ -23,10 +24,21 @@
 - Selector keeps the current route path unchanged.
 - Selector changes locale context only.
 - UI route labels/titles are resolved via `getRouteLabels(route, locale)`.
+- If a route has limited locale support in registry, selector keeps route path and applies fallback label strategy without 404/redirect.
 - If a locale key is missing, fallback order is:
   1. selected locale entry
   2. English route label entry
   3. route registry default label
+
+## Runtime Locale Resolution
+
+Runtime locale resolution order is:
+1. explicit locale (when present in route context)
+2. proxy header locale (`x-gh-locale`)
+3. locale cookie (`gh_locale`)
+4. `Accept-Language` best supported match
+5. selected country `defaultLocale`
+6. English fallback (`en`)
 
 ## Aliases and Canonical Paths
 
@@ -45,6 +57,7 @@
 - Future option: locale-prefixed paths like `/pt/home` or locale-country domains.
 - Route registry can support this by adding localized `pathVariants` while keeping one canonical route key.
 - Existing canonical/alias logic remains valid during migration.
+- Localized URL routing is intentionally deferred to avoid broken paths while content/admin APIs are not yet integrated.
 
 ## Why Legacy URLs Are Preserved
 

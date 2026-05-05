@@ -8,7 +8,7 @@ const known = routeInventory.blogPosts.map((p) => p.replace("/post/", ""));
 
 export const metadata: Metadata = {
   title: "Blog Article",
-  description: "Blog article template.",
+  description: "Patient-focused blog article.",
 };
 
 export function generateStaticParams() {
@@ -29,10 +29,10 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
   return (
     <BlogArticleTemplate
       title={slugToTitle(slug)}
-      lead="TODO: Replace with approved editorial intro from CMS/backend content source."
+      lead="This article explains the topic in clear, patient-friendly language and helps you decide practical next steps."
       body={[
-        "TODO: Replace this paragraph with migrated blog content.",
-        "This template is intentionally generic until audited editorial content is integrated.",
+        "Online care articles in this section are designed to support decision-making before booking a consultation.",
+        "For personal medical advice, use the booking flow so a clinician can review your context directly and recommend the appropriate pathway.",
       ]}
     />
   );

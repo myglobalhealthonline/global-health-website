@@ -40,7 +40,7 @@ export function getRequestContext(input: {
     explicitLocale,
     cookieLocale: input.localeCookie,
     acceptLanguageHeader: input.acceptLanguageHeader,
-    countryDefaultLocale: domainConfig?.defaultLocale ?? "en",
+    countryDefaultLocale: countryResolution.country.defaultLocale ?? domainConfig?.defaultLocale ?? "en",
   });
 
   const matchedLegacyRoute = matchLegacyRoute(pathname);

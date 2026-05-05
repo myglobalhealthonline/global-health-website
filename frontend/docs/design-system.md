@@ -142,3 +142,8 @@ This pattern is used across home, listing, blog, legal, FAQ, trust, and doctors 
   - Shared components remain country-agnostic.
   - Country differences (services, doctors, prices, imagery, CTAs, availability) come from content adapters now and backend/admin data later.
   - Locale/static copy continues through locale files.
+
+## Public Website QA Pass 1 Clarifications
+- Avoid rendering `TODO` text in patient-facing route content.
+- If final approved copy is not available, use safe neutral guidance and keep policy-sensitive details as adapter-managed pending copy.
+- Keep one clear page-level primary CTA for booking or next-step action on all high-intent pages.

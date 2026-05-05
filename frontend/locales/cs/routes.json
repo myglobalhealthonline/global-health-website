@@ -8,32 +8,38 @@
     "route.root": {
       "pageLabel": "Globalni domov",
       "navigationLabel": "Domov",
-      "pageTitle": "Global Health"
+      "pageTitle": "Global Health",
+      "shortDescription": "Route label for Globalni domov."
     },
     "route.home": {
       "pageLabel": "Ireland home",
       "navigationLabel": "Ireland",
-      "pageTitle": "Ireland Clinic Home"
+      "pageTitle": "Ireland Clinic Home",
+      "shortDescription": "Route label for Irsko domov."
     },
     "route.home_pt": {
       "pageLabel": "Portugal home",
       "navigationLabel": "Portugal",
-      "pageTitle": "Portugal Clinic Home"
+      "pageTitle": "Portugal Clinic Home",
+      "shortDescription": "Route label for Portugalsko domov."
     },
     "route.home_sp": {
       "pageLabel": "Spain home",
       "navigationLabel": "Spain",
-      "pageTitle": "Spain Clinic Home"
+      "pageTitle": "Spain Clinic Home",
+      "shortDescription": "Route label for Spanelsko domov."
     },
     "route.home_cz": {
       "pageLabel": "Domov Cesko",
       "navigationLabel": "Cesko",
-      "pageTitle": "Klinika Cesko"
+      "pageTitle": "Klinika Cesko",
+      "shortDescription": "Route label for Cesko domov."
     },
     "route.home_rm": {
       "pageLabel": "Romania home",
       "navigationLabel": "Romania",
-      "pageTitle": "Romania Clinic Home"
+      "pageTitle": "Romania Clinic Home",
+      "shortDescription": "Route label for Rumunsko domov."
     },
     "route.book_online": {
       "pageLabel": "Rezervovat konzultaci",
@@ -56,7 +62,8 @@
     "route.blog": {
       "pageLabel": "Blog",
       "navigationLabel": "Blog",
-      "pageTitle": "Health Blog"
+      "pageTitle": "Health Blog",
+      "shortDescription": "Route label for Blog."
     },
     "route.frequent_asked_questions": {
       "pageLabel": "FAQ",
@@ -102,17 +109,20 @@
     "route.term_and_conditions": {
       "pageLabel": "Terms and conditions",
       "navigationLabel": "Terms",
-      "pageTitle": "Terms and Conditions"
+      "pageTitle": "Terms and Conditions",
+      "shortDescription": "Route label for Podminky."
     },
     "route.privacy": {
       "pageLabel": "Privacy policy",
       "navigationLabel": "Privacy",
-      "pageTitle": "Privacy Policy"
+      "pageTitle": "Privacy Policy",
+      "shortDescription": "Route label for Zasady ochrany soukromi."
     },
     "route.return_and_refund_policy": {
       "pageLabel": "Refund policy",
       "navigationLabel": "Refund",
-      "pageTitle": "Refund and Return Policy"
+      "pageTitle": "Refund and Return Policy",
+      "shortDescription": "Route label for Zasady vraceni a refundace."
     },
     "route.pricing_plans.list": {
       "pageLabel": "Pricing plans list",
@@ -155,6 +165,96 @@
       "navigationLabel": "Categories",
       "pageTitle": "Telemedicine Devices Category",
       "shortDescription": "Device-supported telemedicine support pathways."
+    },
+    "route.general_consultation_ie": {
+      "pageLabel": "Obecna konzultace Irsko",
+      "navigationLabel": "Obecna konzultace Irsko",
+      "pageTitle": "Obecna konzultace Irsko",
+      "shortDescription": "Route label for Obecna konzultace Irsko."
+    },
+    "route.general_consultation_pt": {
+      "pageLabel": "Obecna konzultace Portugalsko",
+      "navigationLabel": "Obecna konzultace Portugalsko",
+      "pageTitle": "Obecna konzultace Portugalsko",
+      "shortDescription": "Route label for Obecna konzultace Portugalsko."
+    },
+    "route.general_consultation_sp": {
+      "pageLabel": "Obecna konzultace Spanelsko",
+      "navigationLabel": "Obecna konzultace Spanelsko",
+      "pageTitle": "Obecna konzultace Spanelsko",
+      "shortDescription": "Route label for Obecna konzultace Spanelsko."
+    },
+    "route.general_consultation_cz": {
+      "pageLabel": "Obecna konzultace Cesko",
+      "navigationLabel": "Obecna konzultace Cesko",
+      "pageTitle": "Obecna konzultace Cesko",
+      "shortDescription": "Route label for Obecna konzultace Cesko."
+    },
+    "route.general_consultation_rm": {
+      "pageLabel": "Obecna konzultace Rumunsko",
+      "navigationLabel": "Obecna konzultace Rumunsko",
+      "pageTitle": "Obecna konzultace Rumunsko",
+      "shortDescription": "Route label for Obecna konzultace Rumunsko."
+    },
+    "route.specialty_ie": {
+      "pageLabel": "Specialisticka konzultace Irsko",
+      "navigationLabel": "Specialisticka konzultace Irsko",
+      "pageTitle": "Specialisticka konzultace Irsko",
+      "shortDescription": "Route label for Specialisticka konzultace Irsko."
+    },
+    "route.specialty_pt": {
+      "pageLabel": "Specialisticka konzultace Portugalsko",
+      "navigationLabel": "Specialisticka konzultace Portugalsko",
+      "pageTitle": "Specialisticka konzultace Portugalsko",
+      "shortDescription": "Route label for Specialisticka konzultace Portugalsko."
+    },
+    "route.specialty_sp": {
+      "pageLabel": "Specialisticka konzultace Spanelsko",
+      "navigationLabel": "Specialisticka konzultace Spanelsko",
+      "pageTitle": "Specialisticka konzultace Spanelsko",
+      "shortDescription": "Route label for Specialisticka konzultace Spanelsko."
+    },
+    "route.specialty_cz": {
+      "pageLabel": "Specialisticka konzultace Cesko",
+      "navigationLabel": "Specialisticka konzultace Cesko",
+      "pageTitle": "Specialisticka konzultace Cesko",
+      "shortDescription": "Route label for Specialisticka konzultace Cesko."
+    },
+    "route.specialty_rm": {
+      "pageLabel": "Specialisticka konzultace Rumunsko",
+      "navigationLabel": "Specialisticka konzultace Rumunsko",
+      "pageTitle": "Specialisticka konzultace Rumunsko",
+      "shortDescription": "Route label for Specialisticka konzultace Rumunsko."
+    },
+    "route.ireland_team": {
+      "pageLabel": "Tym Irsko",
+      "navigationLabel": "Tym Irsko",
+      "pageTitle": "Tym Irsko",
+      "shortDescription": "Route label for Tym Irsko."
+    },
+    "route.portugal_team": {
+      "pageLabel": "Tym Portugalsko",
+      "navigationLabel": "Tym Portugalsko",
+      "pageTitle": "Tym Portugalsko",
+      "shortDescription": "Route label for Tym Portugalsko."
+    },
+    "route.spain_team": {
+      "pageLabel": "Tym Spanelsko",
+      "navigationLabel": "Tym Spanelsko",
+      "pageTitle": "Tym Spanelsko",
+      "shortDescription": "Route label for Tym Spanelsko."
+    },
+    "route.czechia_team": {
+      "pageLabel": "Tym Cesko",
+      "navigationLabel": "Tym Cesko",
+      "pageTitle": "Tym Cesko",
+      "shortDescription": "Route label for Tym Cesko."
+    },
+    "route.romania_team": {
+      "pageLabel": "Tym Rumunsko",
+      "navigationLabel": "Tym Rumunsko",
+      "pageTitle": "Tym Rumunsko",
+      "shortDescription": "Route label for Tym Rumunsko."
     }
   }
 }
