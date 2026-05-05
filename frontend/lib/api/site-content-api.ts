@@ -1,33 +1,22 @@
+import { PUBLIC_CONTENT_FETCH_TIMEOUT_MS } from "@/lib/content/public-content-source";
 import { apiRequest } from "./client";
 
-export type CountryApiRecord = {
-  code: string;
-  name: string;
-  slug: string;
-  legacyHomePath: string;
-  teamPath: string;
-  generalConsultationPath: string;
-  specialistConsultationPath: string;
-  defaultLocale: string;
-  isActive: boolean;
-};
-
-export async function fetchCountries() {
-  return apiRequest<CountryApiRecord[]>("/api/countries");
+export async function fetchCountries(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
+  return apiRequest<unknown[]>("/api/countries", { timeoutMs });
 }
 
-export async function fetchServices() {
-  return apiRequest<unknown[]>("/api/services");
+export async function fetchServices(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
+  return apiRequest<unknown[]>("/api/services", { timeoutMs });
 }
 
-export async function fetchDoctors() {
-  return apiRequest<unknown[]>("/api/doctors");
+export async function fetchDoctors(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
+  return apiRequest<unknown[]>("/api/doctors", { timeoutMs });
 }
 
-export async function fetchPricing() {
-  return apiRequest<unknown[]>("/api/pricing");
+export async function fetchPricing(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
+  return apiRequest<unknown[]>("/api/pricing", { timeoutMs });
 }
 
-export async function fetchAssets() {
-  return apiRequest<unknown[]>("/api/assets");
+export async function fetchAssets(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
+  return apiRequest<unknown[]>("/api/assets", { timeoutMs });
 }

@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation";
 import { ServiceDetailTemplate } from "@/components/templates/ServiceDetailTemplate";
 import { routeInventory } from "@/data/routes";
-import { buildServiceDetailCopy } from "@/lib/content/template-page-data";
+import { buildServiceDetailCopyAsync } from "@/lib/content/template-page-data";
 
 type Params = { serviceSlug: string };
 const known = routeInventory.irelandSpecialistConsultation.map((p) =>
@@ -22,12 +22,13 @@ export default async function IrelandSpecialistServicePage({ params }: { params:
   const { serviceSlug } = await params;
   if (!known.includes(serviceSlug)) notFound();
 
-  const copy = buildServiceDetailCopy(serviceSlug);
+  const copy = await buildServiceDetailCopyAsync(serviceSlug, "specialist");
   return (
     <ServiceDetailTemplate
       title={copy.title}
       description={copy.description}
       body={copy.body}
+      keyFacts={copy.keyFacts}
       bookingHref="/specialty-ie"
       bookingLabel="Book Online"
     />

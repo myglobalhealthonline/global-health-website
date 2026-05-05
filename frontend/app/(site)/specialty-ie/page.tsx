@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const data = await getTemplatePageData("specialty-ie", "ie");
+  const data = await getTemplatePageData("/specialty-ie", "ie");
   return (
     <ConsultationListingTemplate
       title="Specialist Consultation - Ireland"

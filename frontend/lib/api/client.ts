@@ -4,6 +4,8 @@ type ApiClientOptions = {
   method?: "GET" | "POST";
   body?: unknown;
   cache?: RequestCache;
+  /** Abort the request after this many milliseconds (public content reads). */
+  timeoutMs?: number;
 };
 
 export type ApiResult<T> =
@@ -25,6 +27,12 @@ export async function apiRequest<T>(
     };
   }
 
+  const controller = options.timeoutMs ? new AbortController() : undefined;
+  const timeout =
+    controller && options.timeoutMs
+      ? setTimeout(() => controller.abort(), options.timeoutMs)
+      : undefined;
+
   try {
     const response = await fetch(`${API_URL}${path}`, {
       method: options.method ?? "GET",
@@ -33,6 +41,7 @@ export async function apiRequest<T>(
       },
       body: options.body ? JSON.stringify(options.body) : undefined,
       cache: options.cache ?? "no-store",
+      signal: controller?.signal,
     });
 
     const json = (await response.json()) as {
@@ -70,5 +79,7 @@ export async function apiRequest<T>(
       ok: false,
       message: "Backend is unavailable",
     };
+  } finally {
+    if (timeout) clearTimeout(timeout);
   }
 }

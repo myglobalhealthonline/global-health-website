@@ -22,9 +22,11 @@ type DoctorProfileTemplateProps = {
     imageLabel: string;
   };
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
+  /** Safe site-relative image path from CMS (e.g. `/uploads/...`). Falls back to placeholder illustration. */
+  profileImageSrc?: string;
 };
 
-export function DoctorProfileTemplate({ hero, profile, bottomCta }: DoctorProfileTemplateProps) {
+export function DoctorProfileTemplate({ hero, profile, bottomCta, profileImageSrc }: DoctorProfileTemplateProps) {
   return (
     <>
       <HeroSection
@@ -41,7 +43,7 @@ export function DoctorProfileTemplate({ hero, profile, bottomCta }: DoctorProfil
             <div className="grid gap-6 md:grid-cols-[0.8fr_1.2fr]">
               <div className="overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-background-soft),#eef6e2)] p-2">
                 <Image
-                  src="/images/ireland/doctor-spotlight-ai.svg"
+                  src={profileImageSrc ?? "/images/ireland/doctor-spotlight-ai.svg"}
                   alt={`Illustrative clinician portrait for ${profile.name}`}
                   width={540}
                   height={620}

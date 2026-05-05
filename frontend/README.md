@@ -23,6 +23,8 @@ Phase 1 behavior:
 - `NEXT_PUBLIC_API_URL` enables gradual backend reads
 - booking form can submit booking requests to backend when configured
 
+Phase 3.6 (gradual read integration): public navigation, country hubs, Ireland consultation listings/details, team/doctor profiles, pricing marketing pages, and optional doctor profile images prefer normalized data from `GET /api/*` when available; seeds and template builders fill gaps. See `frontend/docs/public-content-integration.md`.
+
 ## Required Environment
 
 Optional for local fallback-only mode:

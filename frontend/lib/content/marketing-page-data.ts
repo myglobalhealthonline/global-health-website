@@ -1,4 +1,4 @@
-type MarketingPageData = {
+export type MarketingPageData = {
   hero: {
     title: string;
     description: string;

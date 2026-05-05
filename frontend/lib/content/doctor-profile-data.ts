@@ -1,4 +1,7 @@
-type DoctorProfilePageData = {
+import { getPublicDoctorBySlug } from "@/lib/content/get-public-doctors";
+import { resolveDoctorProfileImageUrl } from "@/lib/content/get-public-assets";
+
+export type DoctorProfilePageData = {
   hero: {
     title: string;
     description: string;
@@ -16,6 +19,8 @@ type DoctorProfilePageData = {
     imageLabel: string;
   };
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
+  /** Local public-folder path from CMS asset when safe (same-origin relative path). */
+  profileImageSrc?: string;
 };
 
 function toLabel(slug: string) {
@@ -81,6 +86,41 @@ export function getDoctorProfileData(doctorSlug: string): DoctorProfilePageData 
         "Book your consultation and the clinic team will confirm the right appointment route based on availability.",
       ctaLabel: "Start booking",
       ctaHref: "/book-online",
+    },
+  };
+}
+
+export async function resolveDoctorProfilePageData(doctorSlug: string): Promise<DoctorProfilePageData> {
+  const base = getDoctorProfileData(doctorSlug);
+  const [backend, profileImageSrc] = await Promise.all([
+    getPublicDoctorBySlug(doctorSlug),
+    resolveDoctorProfileImageUrl(doctorSlug),
+  ]);
+
+  if (!backend) {
+    return profileImageSrc ? { ...base, profileImageSrc } : base;
+  }
+
+  return {
+    ...base,
+    ...(profileImageSrc ? { profileImageSrc } : {}),
+    hero: {
+      ...base.hero,
+      title: backend.fullName,
+      secondaryCta: {
+        label: `Back to ${backend.countryName} team`,
+        href: backend.teamPath,
+      },
+    },
+    profile: {
+      ...base.profile,
+      name: backend.fullName,
+      title: backend.title,
+      country: backend.countryName,
+      bio: backend.bio ?? base.profile.bio,
+      specialties:
+        backend.specialties.length > 0 ? backend.specialties : base.profile.specialties,
+      imageLabel: backend.fullName,
     },
   };
 }

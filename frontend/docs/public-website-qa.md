@@ -32,6 +32,22 @@ Cross-reference: `backend/docs/booking-persistence-qa.md` (API matrix, CORS, DB 
 - `BookingFormTemplate.tsx`: `min-w-0` / `overflow-x-hidden` layout hardening; unavailable mapping covers DB-down and network paths.
 - `HeroSection.tsx`: `suppressHydrationWarning` on hero content wrappers.
 
+## Phase 3.6 — public content read integration (2026-05-05)
+
+**Merge strategy:** Prefer backend `GET /api/*` when `NEXT_PUBLIC_API_URL` is set and the response succeeds within ~4s; otherwise keep static seeds and template builders. Country routing paths use DB values only when all four legacy paths are present (see `frontend/docs/public-content-integration.md`).
+
+**Automated validation (this workspace):** `pnpm lint`, `pnpm typecheck`, `pnpm build` (frontend root); `pnpm --filter backend typecheck`, `pnpm --filter backend build`, `pnpm --filter backend test` — all passing after integration.
+
+**Manual spot-check (recommended)**
+
+| Scenario | Expectation |
+| -------- | ----------- |
+| A — Backend up, seeded DB | Ireland listings/details, team pages, pricing pages, and doctor profile show merged CMS names/copy where rows exist; static inventory routes unchanged. |
+| B — Backend offline / no `NEXT_PUBLIC_API_URL` | Same URLs render fallback-only content; no crashes; optional dev console fallback warnings only in development. |
+| C — Incomplete rows | Missing summaries/bios fall back to template defaults; legacy URLs preserved when paths incomplete in DB. |
+
+**Backend-offline smoke:** With `NEXT_PUBLIC_API_URL` unset or backend stopped, loading `/`, `/home`, `/home-pt`, `/book-online`, `/general-consultation-ie`, `/specialty-ie`, `/ireland/medical-consultation`, `/ireland-team`, `/ireland-doctors/dr-mirza-aun-mohammad`, `/plans-pricing` should return **200** with fallback content (verified via code paths + build; live browser optional).
+
 ## Pages Reviewed
 - `/`
 - `/home`

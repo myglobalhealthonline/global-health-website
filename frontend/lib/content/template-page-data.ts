@@ -2,6 +2,14 @@
 import { countries, getCountryByCode } from "@/data/countries";
 import { routeInventory } from "@/data/routes";
 import { getSiteContext } from "@/lib/content/get-site-context";
+import type { PublicDoctorRecord } from "@/lib/content/get-public-doctors";
+import { getPublicDoctorsForCountry } from "@/lib/content/get-public-doctors";
+import type { PublicServiceRecord } from "@/lib/content/get-public-services";
+import {
+  formatOptionalPrice,
+  getPublicServicesForCountry,
+  getPublicServicesNormalized,
+} from "@/lib/content/get-public-services";
 
 type CountryHint = CountryCode | "auto";
 
@@ -531,14 +539,80 @@ function buildGeneralConsultationTemplateData(
   };
 }
 
-function buildDoctorProfiles(countryCode: CountryCode, countryName: string, paths: CountryPaths): DoctorProfileData[] {
-  const defaultLanguages: Record<CountryCode, string[]> = {
-    ie: ["English"],
-    pt: ["Portuguese", "English"],
-    sp: ["Spanish", "English"],
-    cz: ["Czech", "English"],
-    rm: ["Romanian", "English"],
+const defaultDoctorLanguages: Record<CountryCode, string[]> = {
+  ie: ["English"],
+  pt: ["Portuguese", "English"],
+  sp: ["Spanish", "English"],
+  cz: ["Czech", "English"],
+  rm: ["Romanian", "English"],
+};
+
+function mapPublicDoctorToCard(
+  d: PublicDoctorRecord,
+  countryCode: CountryCode,
+  paths: CountryPaths,
+): DoctorProfileData {
+  const href = countryCode === "ie" ? `/ireland-doctors/${d.slug}` : paths.team;
+  return {
+    name: d.fullName,
+    title: d.title,
+    country: d.countryName,
+    languages: defaultDoctorLanguages[countryCode],
+    bio:
+      d.bio ??
+      `Supports patient consultations and follow-up care through ${d.countryName} clinic routes.`,
+    imageLabel: d.fullName,
+    href,
+    ctaLabel: countryCode === "ie" ? "View profile" : "Meet doctors",
   };
+}
+
+function mergeServiceCardsWithBackend(
+  cards: ServiceCardData[],
+  services: PublicServiceRecord[],
+  countryCode: CountryCode,
+): ServiceCardData[] {
+  if (countryCode !== "ie") return cards;
+  return cards.map((card) => {
+    const match = services.find((s) => {
+      if (s.countryCode !== "ie") return false;
+      if (s.legacyPath && s.legacyPath === card.href) return true;
+      return `/ireland/${s.slug}` === card.href;
+    });
+    if (!match) return card;
+    return {
+      ...card,
+      title: match.name,
+      description: match.summary ?? card.description,
+      startingPrice: formatOptionalPrice(match) ?? card.startingPrice,
+      duration:
+        match.durationMinutes != null ? `${match.durationMinutes} min` : card.duration,
+    };
+  });
+}
+
+function mergeSpecialistListingCopy(
+  listing: Array<{ title: string; description: string; href: string }>,
+  services: PublicServiceRecord[],
+): Array<{ title: string; description: string; href: string }> {
+  return listing.map((item) => {
+    const match = services.find((s) => {
+      if (s.countryCode !== "ie") return false;
+      if (s.legacyPath && s.legacyPath === item.href) return true;
+      const slug = item.href.replace("/ireland-specialist-consultations/", "");
+      return s.slug === slug;
+    });
+    if (!match) return item;
+    return {
+      ...item,
+      title: match.name,
+      description: match.summary ?? item.description,
+    };
+  });
+}
+
+function buildDoctorProfiles(countryCode: CountryCode, countryName: string, paths: CountryPaths): DoctorProfileData[] {
+  const defaultLanguages = defaultDoctorLanguages;
 
   if (countryCode === "ie") {
     return [
@@ -595,16 +669,28 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
   const country = getCountryByCode(countryCode) ?? site.country;
   const paths = pathByCountry[country.code];
 
+  const [publicDoctors, publicServices] = await Promise.all([
+    getPublicDoctorsForCountry(country.code),
+    getPublicServicesForCountry(country.code),
+  ]);
+
   const generalListing = routeInventory.irelandGeneralConsultation.map((route) => {
     const slug = route.replace("/ireland/", "");
+    const match = publicServices.find((s) => {
+      if (s.countryCode !== "ie") return false;
+      if (s.legacyPath && s.legacyPath === route) return true;
+      return `/ireland/${s.slug}` === route;
+    });
     return {
-      title: slugToLabel(slug),
-      description: "Consultation page with service overview, secure booking path, and intake-based next-step guidance.",
+      title: match?.name ?? slugToLabel(slug),
+      description:
+        match?.summary ??
+        "Consultation page with service overview, secure booking path, and intake-based next-step guidance.",
       href: route,
     };
   });
 
-  const specialistListing = routeInventory.irelandSpecialistConsultation.map((route) => {
+  const specialistListingRaw = routeInventory.irelandSpecialistConsultation.map((route) => {
     const slug = route.replace("/ireland-specialist-consultations/", "");
     return {
       title: slugToLabel(slug),
@@ -613,9 +699,15 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     };
   });
 
+  const specialistListing = mergeSpecialistListingCopy(specialistListingRaw, publicServices);
+
   const countryHome = buildCountryHomeData(country.code, country.name, paths, specialistListing);
 
-  const doctors = buildDoctorProfiles(country.code, country.name, paths);
+  const fallbackDoctors = buildDoctorProfiles(country.code, country.name, paths);
+  const doctors =
+    publicDoctors.length > 0
+      ? publicDoctors.map((d) => mapPublicDoctorToCard(d, country.code, paths))
+      : fallbackDoctors;
 
   const faqItems = buildFaqItems(country.code, country.name);
 
@@ -628,11 +720,20 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     };
   });
 
-  const generalConsultation = buildGeneralConsultationTemplateData(
+  const generalConsultationRaw = buildGeneralConsultationTemplateData(
     country.code,
     country.name,
     paths,
   );
+
+  const generalConsultation = {
+    ...generalConsultationRaw,
+    serviceCards: mergeServiceCardsWithBackend(
+      generalConsultationRaw.serviceCards,
+      publicServices,
+      country.code,
+    ),
+  };
 
   return {
     site,
@@ -656,6 +757,57 @@ export function buildServiceDetailCopy(slug: string) {
     body: [
       "This service page explains the consultation pathway, what information to prepare, and how clinicians guide follow-up decisions.",
       "Final clinical scope, pricing, and operational details are confirmed during booking and intake based on country route availability.",
+    ],
+  };
+}
+
+export async function buildServiceDetailCopyAsync(slug: string, mode: "general" | "specialist") {
+  const fallback = buildServiceDetailCopy(slug);
+  const defaultFacts = [
+    {
+      label: "Service type",
+      value: mode === "general" ? "General consultation" : "Specialist consultation",
+    },
+    { label: "Country", value: "Ireland" },
+    { label: "Est. duration", value: "20-30 min (placeholder)" },
+    { label: "Starting price", value: "From EUR 45 (placeholder)" },
+  ];
+
+  const services = await getPublicServicesNormalized();
+  const canonicalHref =
+    mode === "general" ? `/ireland/${slug}` : `/ireland-specialist-consultations/${slug}`;
+  const match = services.find((s) => {
+    if (s.countryCode !== "ie") return false;
+    if (s.slug === slug) return true;
+    if (s.legacyPath && (s.legacyPath === canonicalHref || s.legacyPath.endsWith(slug))) return true;
+    return false;
+  });
+  if (!match) {
+    return { ...fallback, keyFacts: defaultFacts };
+  }
+
+  const secondParagraph =
+    "Final clinical scope, pricing, and operational details are confirmed during booking and intake based on country route availability.";
+
+  return {
+    title: match.name,
+    description: match.summary ?? fallback.description,
+    body: match.summary ? [match.summary, secondParagraph] : fallback.body,
+    keyFacts: [
+      {
+        label: "Service type",
+        value: mode === "general" ? "General consultation" : "Specialist consultation",
+      },
+      { label: "Country", value: "Ireland" },
+      {
+        label: "Est. duration",
+        value:
+          match.durationMinutes != null ? `${match.durationMinutes} min (estimate)` : "20-30 min (placeholder)",
+      },
+      {
+        label: "Starting price",
+        value: formatOptionalPrice(match) ?? "From EUR 45 (placeholder)",
+      },
     ],
   };
 }

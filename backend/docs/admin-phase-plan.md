@@ -148,6 +148,15 @@ Delivered:
 - **Tests:** `admin-assets.schema.test.ts`.
 - **Public safety:** **`GET /api/assets`** active-only; fallback local assets unchanged.
 
+## Phase 3.6 — Public frontend read integration (done)
+
+Delivered:
+
+- **Frontend:** `frontend/lib/content/public-content-source.ts` (timeouts, dev-only fallback logs), `merge-public-content.ts`, `get-public-{countries,services,doctors,pricing,assets}.ts`; React `cache()` dedupes reads per request; `apiRequest` supports `timeoutMs`.
+- **Wiring:** `get-site-context.ts` refreshes navigation after merging `/api/countries`; context lists prefer API rows when non-empty; `template-page-data.ts` overlays Ireland services/doctors on static route inventory; `buildServiceDetailCopyAsync` for Ireland service detail routes; `resolveDoctorProfilePageData` + safe doctor `IMAGE` paths; `mergePricingPlansIntoMarketingPage` for `/plans-pricing` and `/pricing-plans/list`.
+- **Safety:** legacy country paths use backend values only when all four routing fields are complete and valid; assets require safe relative `/` paths; no payments/patient/doctor-portal scope expansion.
+- **Docs:** `frontend/docs/public-content-integration.md`.
+
 ## Phase 3 (planned): remaining content + ops CRUD (before patient dashboard depth)
 
 Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, and ship **protected admin APIs + UI** for database-backed **marketing content** this site already reads publicly.
