@@ -1,4 +1,4 @@
-# Admin UI Plan (Phase 2 + 2.1 + 3.1 + 3.2)
+# Admin UI Plan (Phase 2 + 2.1 + 3.1 + 3.2 + 3.3)
 
 ## Account Scope
 
@@ -52,6 +52,10 @@ Internal-only admin scaffold routes:
 - `/admin/services/new` — pick country then create form (`POST /api/admin/services`); specialties loaded from `GET /api/admin/specialties?countryId=`
 - `/admin/services/[id]` — detail + soft-deactivate (`DELETE` → `isActive: false`)
 - `/admin/services/[id]/edit` — edit (`PATCH`); country locked to preserve **`countryId + slug`** uniqueness semantics
+- `/admin/doctors` — list (filters, pagination, public path column, inactive styling)
+- `/admin/doctors/new` — country picker then create (`POST /api/admin/doctors`)
+- `/admin/doctors/[id]` — detail + deactivate (`DELETE` → **`active: false`**)
+- `/admin/doctors/[id]/edit` — edit (`PATCH`); **country locked** (backend also rejects `countryId` change)
 
 No public nav links point to these routes.
 
@@ -62,6 +66,14 @@ No public nav links point to these routes.
 - No separate **description** field in schema — UI shows summary only until a migration adds `description`.
 - **`consultationSetting` / `bookingSetting`** JSON are not edited in admin UI in this phase.
 - Public marketing pages **continue** to use existing **fallback adapters** if the API is down; admin CRUD does not switch public routes to hard-require CMS data.
+
+### Phase 3.3 notes (doctor profiles)
+
+- Routes: **`/admin/doctors`**, **`/admin/doctors/new`**, **`/admin/doctors/[id]`**, **`/admin/doctors/[id]/edit`** — server-only API client; banner copy explains **public directory content only** (no doctor login or portal in this repo).
+- List shows derived **public path** as **`{country.teamPath}/{slug}`** (same-origin marketing URL segment — not a new public route).
+- **Languages** column shows **—** until a schema migration adds languages.
+- **Specialties**: multi-select via **`DoctorSpecialty`** / **`Specialty`** for the chosen country.
+- **Profile image**: optional https or `/` path; backend syncs an **`Asset`** row — not a free-form “doctor login email” or credential field.
 
 ## Data Flow / Security
 
@@ -110,6 +122,7 @@ Status updates submit through a server action that calls `PATCH /api/admin/appoi
 5. On detail, confirm only valid next statuses appear; terminal rows show closed state only.
 6. Open `/admin/countries`: create a row, view detail, edit, deactivate; confirm inactive row disappears from public `GET /api/countries` only after backend refresh (public adapter fallback unchanged).
 7. Open `/admin/services`: filter list, create a service (country → slug/title/specialty/summary/pricing), view detail, edit, deactivate; confirm public site still works via adapters without requiring these rows for every page load.
+8. Open `/admin/doctors`: create a profile (country → slug, name, title, specialties, optional image URL/path), view, edit, deactivate; confirm UI messaging distinguishes **public profiles** from any future doctor portal.
 
 ## Deferred UI Work
 

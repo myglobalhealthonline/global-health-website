@@ -1,4 +1,4 @@
-# Admin API (Phase 2 + 2.1 + 3.1 countries + 3.2 services)
+# Admin API (Phase 2 + 2.1 + 3.1 countries + 3.2 services + 3.3 doctors)
 
 ## Account scope
 
@@ -306,6 +306,65 @@ Partial update; empty body → `400`. Changing `countryId` and/or `specialtyId` 
 
 **Public behavior unchanged:** public `GET /api/services` continues to list **`isActive: true`** only — marketing pages keep using existing adapters/fallbacks when the backend is unavailable; Phase 3.2 does **not** force public pages to depend on admin-managed rows exclusively.
 
+---
+
+## Doctors — public profiles only (Phase 3.3)
+
+Same bearer auth as other admin routes.
+
+**Product rule:** `Doctor` rows are **public directory / CMS content** for this website. They are **not** login identities. **No doctor dashboard, doctor portal, or credentials** are part of this API — deferred elsewhere.
+
+Prisma `Doctor` fields exposed via admin (aligned with schema):
+
+| Field | Notes |
+| --- | --- |
+| `countryId` | Required on **create**; **cannot be changed** via `PATCH` (use deactivate + new profile for another country) |
+| `slug` | Required on create; URL-safe; **`@@unique([countryId, slug])`** |
+| `fullName` | Required on create |
+| `title` | Required on create |
+| `bio` | Optional; max length enforced in Zod |
+| `active` | Boolean (`true` / `false` in JSON); maps to Prisma `active` |
+| Specialties | Many-to-many via **`DoctorSpecialty`** → **`Specialty`**; create/update send **`specialtyIds`**: string[]. Each specialty must belong to the doctor’s country |
+| Profile image | Optional **`profileImagePath`**: `https://…` or site path starting with **`/`**. Persisted as one **`Asset`** row (`kind` **`IMAGE`**, stable key `doctor-{doctorId}-profile`) |
+
+**Schema gaps (follow-ups):** no **`languages`** column; no **`qualifications`** array; no **`imageUrl`** on `Doctor` (image uses **`Asset`** link); no separate **visibility** flag beyond **`active`**.
+
+### `GET /api/admin/doctors`
+
+Paginated list.
+
+**Query parameters:**
+
+| Param | Default | Max | Description |
+| --- | --- | --- | --- |
+| `page` | `1` | — | 1-based |
+| `pageSize` | `20` | `100` | Rows per page |
+| `countryId` | — | — | Internal country id |
+| `countryCode` | — | 8 chars | Country code filter |
+| `specialtyId` | — | — | Doctors with this specialty (junction match) |
+| `isActive` | — | — | Maps to Prisma **`active`** (`true`/`false` coerced from query string) |
+| `search` | — | 120 chars | Substring on **`fullName`**, **`title`**, **`bio`** (case-insensitive) |
+
+Response: **`items`**, **`pagination`** (with page clamping when `page` exceeds last page).
+
+### `GET /api/admin/doctors/:id`
+
+Returns **`doctor`** with **`country`** (includes **`teamPath`**), **`specialties`** (with **`specialty`**), **`assets`** (IMAGE rows for this doctor).
+
+### `POST /api/admin/doctors`
+
+Validated by **`adminDoctorCreateBodySchema`**. Duplicate **`countryId + slug`** → **`409`** (`P2002`).
+
+### `PATCH /api/admin/doctors/:id`
+
+Partial update; empty body → **`400`**. **`countryId`** change → **`400`** (specialties are country-scoped). Clearing **`profileImagePath`** with **`null`** removes the profile **`Asset`** when provided.
+
+### `DELETE /api/admin/doctors/:id`
+
+**Soft-disable:** sets **`active: false`**. Public **`GET /api/doctors`** continues to filter **`active: true`** only — unchanged.
+
+**Public safety:** marketing pages are **not** switched to hard-require these rows; existing **fallback adapters** remain when the API is unavailable.
+
 ## Security Limits (Phase 2 / 2.1)
 
 - auth is env-token gate, not per-user identity
@@ -321,3 +380,4 @@ Partial update; empty body → `400`. Changing `countryId` and/or `specialtyId` 
 - `appointment-status-transitions.test.ts`
 - `admin-countries.schema.test.ts` (Zod rules for countries)
 - `admin-services.schema.test.ts` (service slug, price/duration, query filters)
+- `admin-doctors.schema.test.ts` (doctor slug, name/title, profile image ref, query filters)

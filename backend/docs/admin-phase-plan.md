@@ -109,6 +109,20 @@ Delivered:
 
 **Schema follow-ups documented** in `admin-api.md`: optional `description`, `sortOrder`, asset linkage, admin editing of JSON settings.
 
+## Phase 3.3 — Doctor public profiles CRUD (done)
+
+Delivered:
+
+- **Backend:** `GET/POST/PATCH/DELETE /api/admin/doctors`, `GET /api/admin/doctors/:id`; Zod `admin-doctors.schema.ts`; `doctors.service.ts` admin methods alongside existing public `listDoctors`; thin `admin-doctors.route.ts`; **`countryId + slug`** duplicate → **`409`** (`P2002`); **`PATCH`** rejects **`countryId`** changes (specialties are country-scoped — create a new profile for another country).
+- **Soft-disable:** `DELETE` sets **`active: false`** only (Prisma field name **`active`** — not a user account).
+- **Filters/pagination:** `countryId`, `countryCode`, `specialtyId`, `isActive` (maps to **`active`**), `search`, `page`, `pageSize`.
+- **Profile image:** optional **`profileImagePath`** stored as one **`Asset`** (`IMAGE`, key `doctor-{id}-profile`); validated https or `/` path.
+- **Frontend:** `/admin/doctors`, `/admin/doctors/new`, `/admin/doctors/[id]`, `/admin/doctors/[id]/edit` — copy states **public profiles only**, **no doctor login** in this app.
+- **Tests:** `admin-doctors.schema.test.ts`.
+- **Public safety:** `GET /api/doctors` still **`active: true`** only; marketing pages keep fallback adapters — not forced to CMS data.
+
+**Schema gaps documented** in `admin-api.md`: languages, qualifications, no `imageUrl` on `Doctor` (use `Asset`).
+
 ## Phase 3 (planned): remaining content + ops CRUD (before patient dashboard depth)
 
 Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, and ship **protected admin APIs + UI** for database-backed **marketing content** this site already reads publicly.
@@ -117,7 +131,7 @@ Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, a
 
 1. ~~**Countries**~~ — **done (Phase 3.1)**
 2. ~~**Services**~~ — **done (Phase 3.2)**
-3. **Doctors** — **public profile records only** (same semantics as `Doctor` model: directory/CMS rows admins edit; **never** described as “admin users” or clinical login)
+3. ~~**Doctors**~~ — **done (Phase 3.3)** — public profile records only (directory/CMS; **not** login identities)
 4. **Pricing** — pricing plans / price-backed content as modeled in DB
 5. **Assets** — images and related asset rows tied to country/doctor content
 

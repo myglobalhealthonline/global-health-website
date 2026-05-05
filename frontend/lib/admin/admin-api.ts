@@ -303,3 +303,89 @@ export async function deleteAdminService(id: string) {
     method: "DELETE",
   });
 }
+
+export type AdminDoctorSpecialtyLinkDto = {
+  id: string;
+  doctorId: string;
+  specialtyId: string;
+  specialty: AdminSpecialtyOptionDto;
+};
+
+export type AdminDoctorAssetDto = {
+  id: string;
+  kind: string;
+  key: string;
+  path: string;
+};
+
+export type AdminDoctorDto = {
+  id: string;
+  countryId: string;
+  slug: string;
+  fullName: string;
+  title: string;
+  bio: string | null;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  country: { id: string; code: string; name: string; teamPath: string };
+  specialties: AdminDoctorSpecialtyLinkDto[];
+  assets: AdminDoctorAssetDto[];
+};
+
+type AdminDoctorsListPayload = {
+  items: AdminDoctorDto[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+type AdminDoctorDetailPayload = {
+  doctor: AdminDoctorDto;
+};
+
+export function doctorPublicProfilePath(teamPath: string, slug: string): string {
+  const base = teamPath.replace(/\/$/, "");
+  return `${base}/${slug}`;
+}
+
+export async function fetchAdminDoctors(query?: Record<string, string | undefined>) {
+  const params = new URLSearchParams();
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") {
+        params.set(key, value);
+      }
+    }
+  }
+  const qs = params.toString();
+  const path = qs ? `/api/admin/doctors?${qs}` : "/api/admin/doctors";
+  return adminRequest<AdminDoctorsListPayload>(path);
+}
+
+export async function fetchAdminDoctorById(id: string) {
+  return adminRequest<AdminDoctorDetailPayload>(`/api/admin/doctors/${id}`);
+}
+
+export async function postAdminDoctor(body: unknown) {
+  return adminRequest<AdminDoctorDetailPayload>("/api/admin/doctors", {
+    method: "POST",
+    body,
+  });
+}
+
+export async function patchAdminDoctor(id: string, body: unknown) {
+  return adminRequest<AdminDoctorDetailPayload>(`/api/admin/doctors/${id}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export async function deleteAdminDoctor(id: string) {
+  return adminRequest<AdminDoctorDetailPayload>(`/api/admin/doctors/${id}`, {
+    method: "DELETE",
+  });
+}
