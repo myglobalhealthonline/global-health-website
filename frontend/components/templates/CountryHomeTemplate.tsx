@@ -100,14 +100,17 @@ export function CountryHomeTemplate({
   return (
     <>
       {quickActions.length > 0 ? (
-        <Section className="bg-white py-6">
+        <Section className="border-b border-slate-100 bg-white py-5">
           <Container>
-            <nav aria-label={`${countryName} quick links`} className="flex flex-wrap gap-3 text-sm font-medium">
+            <nav
+              aria-label={`${countryName} quick links`}
+              className="flex flex-wrap gap-2 text-sm font-medium sm:gap-3"
+            >
               {quickActions.map((action) => (
                 <Link
                   key={action.href + action.title}
                   href={action.href}
-                  className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-slate-700 transition-colors hover:border-cyan-300 hover:text-cyan-700"
+                  className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-700 shadow-sm transition-colors hover:border-cyan-300 hover:bg-white hover:text-cyan-700"
                 >
                   {action.title}
                 </Link>
@@ -125,27 +128,32 @@ export function CountryHomeTemplate({
         secondaryCta={hero.secondaryCta}
         trustBadges={hero.trustBadges}
         heroImage={hero.heroImage}
+        variant="split"
       />
 
       {availability ? (
         <Section className="bg-slate-50 py-10">
           <Container>
-            <div className="rounded-3xl border border-cyan-100 bg-white p-8 shadow-sm sm:p-10">
-              {availability.eyebrow ? (
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-700">
-                  {availability.eyebrow}
-                </p>
-              ) : null}
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-                {availability.title}
-              </h2>
-              <p className="mt-3 max-w-2xl text-base text-slate-600 sm:text-lg">{availability.description}</p>
-              <Link
-                href={availability.cta.href}
-                className="mt-6 inline-flex min-h-12 items-center rounded-full bg-cyan-700 px-7 text-sm font-semibold text-white transition-colors hover:bg-cyan-800"
-              >
-                {availability.cta.label}
-              </Link>
+            <div className="rounded-[2rem] bg-gradient-to-r from-cyan-700 to-sky-700 p-8 text-white shadow-lg sm:p-10">
+              <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                <div className="max-w-2xl">
+                  {availability.eyebrow ? (
+                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-100">
+                      {availability.eyebrow}
+                    </p>
+                  ) : null}
+                  <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+                    {availability.title}
+                  </h2>
+                  <p className="mt-3 max-w-2xl text-base text-cyan-50 sm:text-lg">{availability.description}</p>
+                </div>
+                <Link
+                  href={availability.cta.href}
+                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-7 text-sm font-semibold text-cyan-800 transition-colors hover:bg-cyan-50"
+                >
+                  {availability.cta.label}
+                </Link>
+              </div>
             </div>
           </Container>
         </Section>
@@ -154,7 +162,7 @@ export function CountryHomeTemplate({
       {about ? (
         <Section>
           <Container>
-            <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
               <div>
                 {about.eyebrow ? (
                   <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-700">{about.eyebrow}</p>
@@ -180,13 +188,13 @@ export function CountryHomeTemplate({
                 ) : null}
               </div>
               {about.image ? (
-                <div className="overflow-hidden rounded-3xl border border-cyan-100 bg-cyan-50 p-2 shadow-sm">
+                <div className="overflow-hidden rounded-[2rem] border border-cyan-100 bg-cyan-50 p-2 shadow-[0_24px_64px_rgba(8,145,178,0.12)]">
                   <Image
                     src={about.image.src}
                     alt={about.image.alt}
                     width={1200}
                     height={900}
-                    className="h-auto w-full rounded-2xl object-cover"
+                    className="h-auto w-full rounded-[1.5rem] object-cover"
                   />
                 </div>
               ) : null}
@@ -197,12 +205,14 @@ export function CountryHomeTemplate({
 
       <ServicesGrid title={servicesTitle} intro={servicesIntro} cta={servicesCta} items={services} />
 
-      {steps?.length ? <HowItWorks title="How does it work?" subtitle="Simple Scheduling in 3 Steps" steps={steps} /> : null}
+      {steps?.length ? (
+        <HowItWorks title="How does it work?" subtitle="Simple Scheduling in 3 Steps" steps={steps} />
+      ) : null}
 
       {homeDelivery ? (
         <Section>
           <Container>
-            <div className="grid gap-8 rounded-3xl bg-slate-50 p-6 sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="grid gap-8 rounded-[2rem] bg-slate-50 p-6 sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
               <div>
                 <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
                   {homeDelivery.title}
@@ -216,13 +226,13 @@ export function CountryHomeTemplate({
                 </Link>
               </div>
               {homeDelivery.image ? (
-                <div className="overflow-hidden rounded-3xl border border-cyan-100 bg-white p-2 shadow-sm">
+                <div className="overflow-hidden rounded-[2rem] border border-cyan-100 bg-white p-2 shadow-sm">
                   <Image
                     src={homeDelivery.image.src}
                     alt={homeDelivery.image.alt}
                     width={1200}
                     height={900}
-                    className="h-auto w-full rounded-2xl object-cover"
+                    className="h-auto w-full rounded-[1.5rem] object-cover"
                   />
                 </div>
               ) : null}
@@ -236,20 +246,22 @@ export function CountryHomeTemplate({
           <Container>
             <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
               {doctorSpotlight.image ? (
-                <div className="overflow-hidden rounded-3xl border border-cyan-100 bg-white p-2 shadow-sm">
+                <div className="overflow-hidden rounded-[2rem] border border-cyan-100 bg-white p-2 shadow-sm">
                   <Image
                     src={doctorSpotlight.image.src}
                     alt={doctorSpotlight.image.alt}
                     width={900}
                     height={1100}
-                    className="h-auto w-full rounded-2xl object-cover"
+                    className="h-auto w-full rounded-[1.5rem] object-cover"
                   />
                 </div>
               ) : null}
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-700">Doctor spotlight</p>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-700">
+                  Doctor spotlight
+                </p>
                 <blockquote className="mt-4 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
-                  “{doctorSpotlight.quote}”
+                  &ldquo;{doctorSpotlight.quote}&rdquo;
                 </blockquote>
                 <p className="mt-5 text-lg font-semibold text-slate-900">{doctorSpotlight.name}</p>
                 <p className="mt-1 text-sm font-medium text-cyan-700">{doctorSpotlight.title}</p>
@@ -261,7 +273,11 @@ export function CountryHomeTemplate({
       ) : null}
 
       <section id="team">
-        <DoctorsSection title={doctorsTitle} intro={`Meet clinicians connected to the ${countryName} clinic routes.`} doctors={doctors} />
+        <DoctorsSection
+          title={doctorsTitle}
+          intro={`Meet clinicians connected to the ${countryName} clinic routes.`}
+          doctors={doctors}
+        />
       </section>
 
       <TrustSignals title={trustTitle} subtitle={trustSubtitle} items={trustItems} />

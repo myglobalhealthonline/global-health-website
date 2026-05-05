@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" fill="none">
+  <rect width="1200" height="900" rx="36" fill="#f8fafc"/>
+  <rect x="170" y="250" width="760" height="350" rx="28" fill="#fff" stroke="#bae6fd" stroke-width="4"/>
+  <text x="600" y="445" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#0f172a">Portugal Delivery Placeholder</text>
+</svg>

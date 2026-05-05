@@ -12,6 +12,12 @@ type CountryPaths = {
   specialist: string;
 };
 
+type ServiceCardData = {
+  title: string;
+  description: string;
+  href: string;
+};
+
 type HomeTemplateData = {
   hero: {
     eyebrow: string;
@@ -42,6 +48,7 @@ type HomeTemplateData = {
     subtitle: string;
     cta: { label: string; href: string };
   };
+  serviceCards: ServiceCardData[];
   steps: Array<{ title: string; description: string; ctaLabel?: string; ctaHref?: string }>;
   homeDelivery: {
     title: string;
@@ -78,6 +85,57 @@ const pathByCountry: Record<CountryCode, CountryPaths> = {
   rm: { home: "/home-rm", team: "/romania-team", general: "/general-consultation-rm", specialist: "/specialty-rm" },
 };
 
+const countryLabels: Record<CountryCode, string> = {
+  ie: "Ireland",
+  pt: "Portugal",
+  sp: "Spain",
+  cz: "Czechia",
+  rm: "Romania",
+};
+
+const specialtyCardSeeds: Record<CountryCode, Array<{ title: string; description: string }>> = {
+  ie: [
+    { title: "Cardiology Consultation", description: "Focused online support for heart-health concerns and follow-up planning." },
+    { title: "Pediatric Consultation", description: "Specialist guidance for children and family care concerns." },
+    { title: "Dermatology Consultation", description: "Specialist advice for skin conditions through secure online review." },
+    { title: "Psychiatry Consultation", description: "Confidential mental health support with specialist review." },
+    { title: "Nutrition Consultation", description: "Personalized nutrition planning and ongoing care discussions." },
+    { title: "Physiotherapy Consultation", description: "Movement, rehabilitation, and pain-support planning online." },
+  ],
+  pt: [
+    { title: "General Medicine", description: "Online consultations for common health questions and day-to-day medical needs." },
+    { title: "Pediatrics", description: "Family-focused care support for children, parents, and guardians." },
+    { title: "Dermatology", description: "Specialist-led review for skin concerns and treatment planning." },
+    { title: "Psychology", description: "Private, structured support for emotional wellbeing and mental health." },
+    { title: "Nutrition", description: "Dietary guidance and practical health planning through online care." },
+    { title: "Women’s Health", description: "Supportive consultations for routine women’s health concerns." },
+  ],
+  sp: [
+    { title: "General Medicine", description: "Accessible online appointments for everyday medical questions and follow-up." },
+    { title: "Cardiology", description: "Heart-health advice, review, and referral planning where needed." },
+    { title: "Dermatology", description: "Skin-health consultations with secure online intake and follow-up." },
+    { title: "Psychology", description: "Private online support for mental health and emotional wellbeing." },
+    { title: "Nutrition", description: "Nutrition-focused consultations that support long-term health goals." },
+    { title: "Orthopedics", description: "Guidance for joint, bone, and movement-related concerns." },
+  ],
+  cz: [
+    { title: "General Medicine", description: "Online first-contact care for common symptoms and ongoing support." },
+    { title: "Pediatrics", description: "Child and family consultations with safe online access." },
+    { title: "Neurology", description: "Specialist support for neurological concerns and next-step planning." },
+    { title: "Psychiatry", description: "Confidential mental health review in a secure online setting." },
+    { title: "Endocrinology", description: "Support for hormonal, thyroid, and metabolic health concerns." },
+    { title: "Dermatology", description: "Remote review for skin concerns and treatment guidance." },
+  ],
+  rm: [
+    { title: "General Medicine", description: "Flexible online consultations for common health concerns and advice." },
+    { title: "Cardiology", description: "Specialist review for heart-health questions and follow-up needs." },
+    { title: "Pediatrics", description: "Convenient online care for children and family-focused concerns." },
+    { title: "Nutrition", description: "Guidance for healthy routines, dietary planning, and support." },
+    { title: "Psychology", description: "Private consultations for mental health and emotional support." },
+    { title: "Women’s Health", description: "Online consultations for routine women’s health needs." },
+  ],
+};
+
 function fallbackByPath(pathname: string): CountryCode {
   const exact = countries.find(
     (country) =>
@@ -97,10 +155,18 @@ function slugToLabel(slug: string) {
     .join(" ");
 }
 
+function buildGenericServiceCards(countryCode: CountryCode, paths: CountryPaths): ServiceCardData[] {
+  return specialtyCardSeeds[countryCode].map((item) => ({
+    ...item,
+    href: paths.specialist,
+  }));
+}
+
 function buildCountryHomeData(
   countryCode: CountryCode,
   countryName: string,
   paths: CountryPaths,
+  irelandSpecialistCards: ServiceCardData[],
 ): HomeTemplateData {
   if (countryCode === "ie") {
     return {
@@ -147,11 +213,11 @@ function buildCountryHomeData(
         subtitle: "Wide range of medical specialties available online.",
         cta: { label: "View All Our Areas", href: paths.specialist },
       },
+      serviceCards: irelandSpecialistCards.slice(0, 6),
       steps: [
         {
           title: "Choose Your Location and Specialty",
-          description:
-            "Select the country where you are located and the service that best fits your needs.",
+          description: "Select the country where you are located and the service that best fits your needs.",
         },
         {
           title: "Choose the Type of Consultation",
@@ -190,52 +256,39 @@ function buildCountryHomeData(
         title: "Trusted by thousands of patients across Europe",
         subtitle: "We follow strict European standards for your safety",
         items: [
-          {
-            title: "4.9/5 average rating",
-            description: "Based on 2,000+ reviews across supported countries.",
-          },
-          {
-            title: "Licensed Doctors",
-            description:
-              "All consultations are provided by qualified and registered doctors in your country.",
-          },
-          {
-            title: "Secure & Confidential",
-            description: "Your personal data is protected under strict GDPR standards.",
-          },
-          {
-            title: "Fast Access",
-            description: "Book in minutes and get the care you need, when you need it.",
-          },
-          {
-            title: "Available across Europe",
-            description:
-              "Proudly serving patients in multiple EU countries with trusted healthcare.",
-          },
+          { title: "4.9/5 average rating", description: "Based on 2,000+ reviews across supported countries." },
+          { title: "Licensed Doctors", description: "All consultations are provided by qualified and registered doctors in your country." },
+          { title: "Secure & Confidential", description: "Your personal data is protected under strict GDPR standards." },
+          { title: "Fast Access", description: "Book in minutes and get the care you need, when you need it." },
+          { title: "Available across Europe", description: "Proudly serving patients in multiple EU countries with trusted healthcare." },
         ],
       },
       faqTitle: "Ireland clinic FAQs",
       booking: {
         title: "Start Your Online Consultation",
-        description:
-          "Choose your country and connect with a licensed doctor in minutes. 100% online, no waiting rooms, confidential.",
+        description: "Choose your country and connect with a licensed doctor in minutes. 100% online, no waiting rooms, confidential.",
         ctaLabel: "Start Consultation",
         ctaHref: paths.general,
       },
     };
   }
 
+  const countryLabel = countryLabels[countryCode];
+  const genericServiceCards = buildGenericServiceCards(countryCode, paths);
+  const heroAssetBase = countryCode === "pt" ? "portugal" : countryCode === "sp" ? "spain" : countryCode === "cz" ? "czechia" : "romania";
+  const localeTag = countryCode === "pt" ? "Portugal" : countryCode === "sp" ? "Spain" : countryCode === "cz" ? "Czechia" : "Romania";
+
   return {
     hero: {
-      eyebrow: `${countryName} Online Medical Clinic`,
+      eyebrow: `${countryLabel} Online Medical Clinic`,
       title: "Medical Consultations Wherever You Are",
-      description: `Connect with licensed clinicians in ${countryName} through secure online consultations.`,
+      description: `Connect with licensed clinicians in ${countryLabel} through secure online consultations, with local booking routes and specialist access.`,
       primaryCta: { label: "Schedule with a GP", href: paths.general },
       secondaryCta: { label: "Schedule with a Specialist", href: paths.specialist },
-      trustBadges: ["Licensed clinicians", "Secure consultations", `${countryName} clinic hub`],
+      trustBadges: ["Licensed clinicians", "Secure consultations", `${countryLabel} clinic hub`],
       heroImage: {
-        src: "/images/hero/homepage-hero-placeholder.svg",
-        alt: `${countryName} clinic homepage placeholder`,
+        src: `/images/hero/${heroAssetBase}-home-hero-placeholder.svg`,
+        alt: `${countryLabel} clinic homepage hero placeholder`,
       },
     },
     quickActions: [
@@ -246,78 +299,101 @@ function buildCountryHomeData(
     availability: {
       eyebrow: "Need Help?",
       title: "Book Your Consultation",
-      description: "Choose a service and schedule your online consultation.",
-      cta: { label: "Book now", href: paths.general },
+      description: `Choose a service and schedule your online consultation in ${countryLabel}.`,
+      cta: { label: "Book Your Consultation", href: paths.general },
     },
     about: {
       eyebrow: "About us",
-      title: `Healthcare, without leaving home in ${countryName}`,
+      title: `Quality Healthcare, Without Leaving Home in ${countryLabel}`,
       description: [
-        `Our ${countryName} clinic hub is being migrated into the new frontend.`,
-        "You can already browse routes and book consultations through the existing public flows.",
+        `Global Health connects patients in ${countryLabel} with licensed clinicians through secure online consultations.`,
+        "Use the existing booking routes to access general consultations, specialist support, and clinic information while visual asset migration continues.",
       ],
       highlight: "Secure online care with local route coverage.",
       cta: { label: "Schedule an Appointment", href: paths.general },
       image: {
-        src: "/images/hero/homepage-hero-placeholder.svg",
-        alt: `${countryName} about section placeholder`,
+        src: `/images/${heroAssetBase}/about-placeholder.svg`,
+        alt: `${countryLabel} clinic about section placeholder`,
       },
     },
     specialties: {
-      title: "Consultations",
-      subtitle: "Browse general and specialist services available online.",
-      cta: { label: "View services", href: paths.specialist },
+      title: "Specialist Consultations",
+      subtitle: `Explore specialist care categories currently promoted for ${countryLabel}.`,
+      cta: { label: "View All Our Areas", href: paths.specialist },
     },
+    serviceCards: genericServiceCards,
     steps: [
       {
-        title: "Choose your location and specialty",
-        description: "Select your country and the consultation you need.",
+        title: "Choose Your Location and Specialty",
+        description: `Select ${countryLabel} and choose the consultation or specialty that fits your needs.`,
       },
       {
-        title: "Book the consultation",
-        description: "Choose the service and complete the intake form.",
+        title: "Choose the Type of Consultation",
+        description: "Review the service details and complete the booking form with your information.",
+        ctaLabel: "Schedule a consultation",
+        ctaHref: paths.specialist,
       },
       {
-        title: "Check your email",
-        description: "Receive the consultation confirmation and access details.",
+        title: "Sent to Your Email",
+        description: "Receive your booking confirmation with consultation timing and next-step details.",
+        ctaLabel: "Schedule a consultation",
+        ctaHref: paths.general,
       },
     ],
     homeDelivery: {
-      title: "Prescription support",
-      description: "Delivery and pharmacy details will be confirmed per country as assets and copy are migrated.",
-      cta: { label: "Explore services", href: paths.general },
+      title: "Prescription Support",
+      description: `Prescription and follow-up support for ${countryLabel} will continue to be refined as final clinic-specific artwork is approved.`,
+      cta: { label: "Explore GP consultations", href: paths.general },
       image: {
-        src: "/images/hero/homepage-hero-placeholder.svg",
-        alt: `${countryName} prescription support placeholder`,
+        src: `/images/${heroAssetBase}/home-delivery-placeholder.svg`,
+        alt: `${countryLabel} prescription support placeholder`,
       },
     },
     doctorSpotlight: {
-      quote: "Online care should feel accessible, safe, and straightforward.",
-      name: `${countryName} Clinic Team`,
+      quote: `Online care in ${countryLabel} should feel accessible, safe, and straightforward.`,
+      name: `${localeTag} Clinic Team`,
       title: "Licensed clinicians",
-      credential: "Profile migration pending",
+      credential: "Team profile migration pending",
       image: {
-        src: "/images/hero/homepage-hero-placeholder.svg",
-        alt: `${countryName} doctor spotlight placeholder`,
+        src: `/images/${heroAssetBase}/doctor-spotlight-placeholder.svg`,
+        alt: `${countryLabel} doctor spotlight placeholder`,
       },
     },
     trust: {
-      title: "Why patients choose us",
+      title: `Why patients in ${countryLabel} choose us`,
       subtitle: "Secure healthcare access built around local route coverage",
       items: [
-        { title: "Licensed clinicians", description: `Local clinic routes are available for ${countryName}.` },
+        { title: "Licensed clinicians", description: `Local clinic routes are available for ${countryLabel}.` },
         { title: "Secure consultations", description: "Digital consultations are designed for privacy and convenience." },
-        { title: "Fast booking", description: "Public booking flows remain available during migration." },
+        { title: "Flexible booking", description: "General and specialist booking routes remain available during migration." },
+        { title: "Country-specific hub", description: `This page is configured as the dedicated ${countryLabel} homepage variant.` },
       ],
     },
-    faqTitle: "FAQs",
+    faqTitle: `${countryLabel} clinic FAQs`,
     booking: {
-      title: "Ready to get started?",
-      description: "Book an online consultation with your local clinic team.",
-      ctaLabel: "Book consultation",
+      title: "Start Your Online Consultation",
+      description: `Choose your consultation type and connect with a licensed doctor in ${countryLabel} through our online clinic routes.`,
+      ctaLabel: "Start Consultation",
       ctaHref: paths.general,
     },
   };
+}
+
+function buildFaqItems(countryCode: CountryCode, countryName: string) {
+  return [
+    {
+      question: `How do online consultations work in ${countryName}?`,
+      answer: "Book online, complete intake, and connect securely with a licensed clinician.",
+    },
+    {
+      question: "Can I book a same-day consultation?",
+      answer: "Availability depends on the clinician schedule and service type shown during booking.",
+    },
+    {
+      question: countryCode === "pt" ? "Can I book in Portuguese?" : countryCode === "sp" ? "Can I book in Spanish?" : countryCode === "cz" ? "Can I book for care in Czechia?" : "Can I book for care in Romania?",
+      answer: `Language and country-specific availability will depend on the clinic schedule shown for ${countryName}.`,
+    },
+  ];
 }
 
 export async function getTemplatePageData(pathname: string, countryHint: CountryHint = "auto") {
@@ -344,6 +420,8 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     };
   });
 
+  const countryHome = buildCountryHomeData(country.code, country.name, paths, specialistListing);
+
   const doctors = [
     {
       name: country.code === "ie" ? "Dr. Khoiamul Islam" : `${country.name} Clinic Team`,
@@ -351,25 +429,12 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
       bio:
         country.code === "ie"
           ? "Irish clinic doctor spotlight placeholder while team records are migrated into structured content."
-          : "TODO: Replace with doctor records from backend-admin managed profiles.",
-      href: country.code === "ie" ? "/ireland-team" : undefined,
+          : `Team preview placeholder for ${country.name} while clinician records are migrated into structured content.`,
+      href: country.code === "ie" ? "/ireland-team" : paths.team,
     },
   ];
 
-  const faqItems = [
-    {
-      question: "How do online consultations work?",
-      answer: "Book online, complete intake, and connect securely with a licensed clinician.",
-    },
-    {
-      question: "Can I book a same-day consultation?",
-      answer: "Availability depends on the clinician schedule and service type shown during booking.",
-    },
-    {
-      question: "Can I choose my clinician?",
-      answer: "Availability depends on clinic schedule and service type.",
-    },
-  ];
+  const faqItems = buildFaqItems(country.code, country.name);
 
   const blogPosts = routeInventory.blogPosts.slice(0, 9).map((route) => {
     const slug = route.replace("/post/", "");
@@ -389,7 +454,7 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     doctors,
     faqItems,
     blogPosts,
-    countryHome: buildCountryHomeData(country.code, country.name, paths),
+    countryHome,
   };
 }
 

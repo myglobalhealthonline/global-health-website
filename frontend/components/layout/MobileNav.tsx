@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import type { ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -18,10 +18,10 @@ export function MobileNav({
       <Dialog.Trigger asChild>
         <button
           type="button"
-          className="hover:bg-muted inline-flex rounded-md p-2 md:hidden"
+          className="hover:bg-muted inline-flex rounded-full border border-slate-200 bg-white p-2.5 shadow-sm md:hidden"
           aria-label="Open menu"
         >
-          <Menu className="size-6" aria-hidden />
+          <Menu className="size-5" aria-hidden />
         </button>
       </Dialog.Trigger>
 
@@ -34,12 +34,18 @@ export function MobileNav({
           </Dialog.Description>
 
           <div className="flex items-center justify-between gap-4 border-b px-4 py-4">
-            <Link href="/" className="text-lg font-semibold tracking-tight">
-              {siteName}
+            <Link href="/" className="flex items-center gap-3">
+              <span
+                aria-hidden
+                className="flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-600 to-sky-700 text-sm font-bold text-white shadow-sm"
+              >
+                GH
+              </span>
+              <span className="text-lg font-semibold tracking-tight">{siteName}</span>
             </Link>
-            <Dialog.Close className="hover:bg-muted inline-flex rounded-md p-2">
+            <Dialog.Close className="hover:bg-muted inline-flex rounded-full border border-slate-200 bg-white p-2">
               <span className="sr-only">Close menu</span>
-              <X className="size-6" aria-hidden />
+              <X className="size-5" aria-hidden />
             </Dialog.Close>
           </div>
 
@@ -57,7 +63,7 @@ export function MobileNav({
                           <Dialog.Close asChild>
                             <Link
                               href={item.href}
-                              className="hover:bg-muted active:bg-muted block rounded-lg px-3 py-3 text-[17px] font-medium leading-snug"
+                              className="hover:bg-muted active:bg-muted block rounded-xl px-3 py-3 text-[17px] font-medium leading-snug"
                             >
                               {item.label}
                             </Link>
@@ -77,7 +83,7 @@ export function MobileNav({
                     <Dialog.Close asChild>
                       <Link
                         href={item.href}
-                        className="hover:bg-muted active:bg-muted block rounded-lg px-3 py-3 text-[17px] font-medium"
+                        className="hover:bg-muted active:bg-muted block rounded-xl px-3 py-3 text-[17px] font-medium"
                       >
                         {item.label}
                       </Link>
@@ -92,7 +98,7 @@ export function MobileNav({
                 <Dialog.Close key={item.href} asChild>
                   <Link
                     href={item.href}
-                    className="hover:bg-muted active:bg-muted rounded-lg px-3 py-3 text-[17px] font-medium"
+                    className="hover:bg-muted active:bg-muted rounded-xl px-3 py-3 text-[17px] font-medium"
                   >
                     {item.label}
                   </Link>
@@ -101,7 +107,7 @@ export function MobileNav({
               <Dialog.Close asChild>
                 <Link
                   href={navigation.headerAuthLink.href}
-                  className="hover:bg-muted active:bg-muted rounded-lg px-3 py-3 text-[17px] font-medium"
+                  className="hover:bg-muted active:bg-muted rounded-xl px-3 py-3 text-[17px] font-medium"
                 >
                   {navigation.headerAuthLink.label}
                 </Link>
@@ -144,4 +150,3 @@ function AccordionSection({
     </details>
   );
 }
-
