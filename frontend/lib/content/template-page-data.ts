@@ -1,4 +1,4 @@
-import type { CountryCode } from "@/data/countries";
+﻿import type { CountryCode } from "@/data/countries";
 import { countries, getCountryByCode } from "@/data/countries";
 import { routeInventory } from "@/data/routes";
 import { getSiteContext } from "@/lib/content/get-site-context";
@@ -75,6 +75,29 @@ type HomeTemplateData = {
     ctaLabel: string;
     ctaHref: string;
   };
+};
+
+type GeneralConsultationTemplateData = {
+  heroTitle: string;
+  heroDescription: string;
+  explanation: { title: string; body: string };
+  serviceCards: ServiceCardData[];
+  pricing: {
+    title: string;
+    description: string;
+    items: Array<{ name: string; price: string; description: string }>;
+  };
+  howItWorks: {
+    title: string;
+    subtitle: string;
+    steps: Array<{ title: string; description: string; ctaLabel?: string; ctaHref?: string }>;
+  };
+  trust: {
+    title: string;
+    subtitle: string;
+    items: Array<{ title: string; description: string }>;
+  };
+  faq: { title: string; items: Array<{ question: string; answer: string }> };
 };
 
 const pathByCountry: Record<CountryCode, CountryPaths> = {
@@ -396,6 +419,92 @@ function buildFaqItems(countryCode: CountryCode, countryName: string) {
   ];
 }
 
+function buildGeneralConsultationCards(countryCode: CountryCode): ServiceCardData[] {
+  if (countryCode === "ie") {
+    return routeInventory.irelandGeneralConsultation.map((route) => {
+      const slug = route.replace("/ireland/", "");
+      return {
+        title: slugToLabel(slug),
+        description: "TODO: Replace with reviewed summary for this consultation type.",
+        href: route,
+      };
+    });
+  }
+
+  const seed = specialtyCardSeeds[countryCode].slice(0, 6);
+  return seed.map((item) => ({
+    title: item.title,
+    description: "TODO: Replace with country-specific general consultation summary from content source.",
+    href: `/service-page/${item.title.toLowerCase().replaceAll(" ", "-").replaceAll("’", "").replaceAll("'", "")}`,
+  }));
+}
+
+function buildGeneralConsultationTemplateData(
+  countryCode: CountryCode,
+  countryName: string,
+  paths: CountryPaths,
+): GeneralConsultationTemplateData {
+  return {
+    heroTitle: `General Consultation - ${countryName}`,
+    heroDescription: `Book online first-contact medical consultations for ${countryName}. Services and final localized copy are managed via content adapters.`,
+    explanation: {
+      title: `What general consultations include in ${countryName}`,
+      body: "General consultations cover common health concerns, first assessments, and guidance on next steps. TODO: Replace this with reviewed clinical scope copy for this country.",
+    },
+    serviceCards: buildGeneralConsultationCards(countryCode),
+    pricing: {
+      title: "Starting from",
+      description:
+        "Pricing shown is placeholder-level structure. TODO: replace with approved country pricing and currency from content source.",
+      items: [
+        {
+          name: "Standard consultation",
+          price: countryCode === "ie" ? "From EUR 45" : "From EUR 35",
+          description: "TODO: Add exact appointment duration and inclusions.",
+        },
+        {
+          name: "Extended consultation",
+          price: countryCode === "ie" ? "From EUR 65" : "From EUR 55",
+          description: "TODO: Add exact scope and follow-up policy.",
+        },
+      ],
+    },
+    howItWorks: {
+      title: "How booking works",
+      subtitle: "Simple flow designed for mobile and desktop",
+      steps: [
+        {
+          title: "Choose consultation type",
+          description: "Select the service that best matches your current concern.",
+        },
+        {
+          title: "Book online",
+          description: "Pick your preferred time and complete the intake form.",
+          ctaLabel: "Book now",
+          ctaHref: paths.general,
+        },
+        {
+          title: "Attend secure consultation",
+          description: "Join your appointment and receive guidance on next steps.",
+        },
+      ],
+    },
+    trust: {
+      title: `Why patients trust consultations in ${countryName}`,
+      subtitle: "Healthcare-focused, privacy-first, and country-ready",
+      items: [
+        { title: "Licensed clinicians", description: "Consultations are delivered by qualified medical professionals." },
+        { title: "Secure booking journey", description: "Online booking and appointment flow is built with privacy in mind." },
+        { title: "Country-specific routes", description: "This page is configured for dedicated country consultation routing." },
+      ],
+    },
+    faq: {
+      title: `${countryName} general consultation FAQs`,
+      items: buildFaqItems(countryCode, countryName),
+    },
+  };
+}
+
 export async function getTemplatePageData(pathname: string, countryHint: CountryHint = "auto") {
   const site = await getSiteContext({ pathname });
   const countryCode = countryHint === "auto" ? fallbackByPath(pathname) : countryHint;
@@ -445,6 +554,12 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     };
   });
 
+  const generalConsultation = buildGeneralConsultationTemplateData(
+    country.code,
+    country.name,
+    paths,
+  );
+
   return {
     site,
     country,
@@ -455,6 +570,7 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     faqItems,
     blogPosts,
     countryHome,
+    generalConsultation,
   };
 }
 

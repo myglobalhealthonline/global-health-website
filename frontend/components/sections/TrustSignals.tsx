@@ -25,7 +25,7 @@ export function TrustSignals({ title = "Why patients choose us", subtitle, items
           <h2 className="gh-h2 text-[var(--color-text-primary)]">{title}</h2>
           {subtitle ? <p className="gh-body-lg mt-3 text-[var(--color-text-muted)]">{subtitle}</p> : null}
         </div>
-        <ul className="mx-auto mt-10 grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+        <ul className="mx-auto mt-10 grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
           {items.map((item, index) => {
             const normalized = typeof item === "string" ? { title: item } : item;
             const Icon = icons[index % icons.length];
@@ -39,7 +39,11 @@ export function TrustSignals({ title = "Why patients choose us", subtitle, items
                   <Icon className="size-5" aria-hidden />
                 </span>
                 <p className="gh-h3 mt-4 text-[var(--color-text-primary)]">{normalized.title}</p>
-                {normalized.description ? <p className="gh-body-sm mt-2 text-[var(--color-text-muted)]">{normalized.description}</p> : null}
+                {normalized.description ? (
+                  <p className="gh-body-sm mt-2 text-[var(--color-text-muted)]">
+                    {normalized.description}
+                  </p>
+                ) : null}
               </li>
             );
           })}

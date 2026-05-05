@@ -89,3 +89,15 @@ This pattern is used across home, listing, blog, legal, FAQ, trust, and doctors 
   - locale files (`locales/*`)
   - future backend/admin APIs
 - New country onboarding should reuse existing templates and pass localized props, not fork UI components.
+
+## Browser QA Notes
+- Pass date: 2026-05-05
+- Routes inspected: `/`, `/home`, `/home-pt`, `/general-consultation-ie`, `/specialty-ie`, `/ireland/medical-consultation`, `/ireland-team`, `/blog`, `/post/how-online-medical-consultations-work`, `/privacy`
+- Viewports checked: `320`, `390`, `768`, `1024`, `1280`, `1440`
+- Regression found:
+  - At `320px` on `/`, trust-signal card text could overlap/wrap poorly.
+- Fix applied:
+  - `TrustSignals` grid explicitly uses `grid-cols-1` baseline.
+  - Trust cards use `min-w-0` and `break-words` for title/description.
+- Remaining concerns:
+  - None critical from this pass; continue checking copy length growth as locale content expands.

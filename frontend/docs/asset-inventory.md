@@ -3,6 +3,11 @@
 Scope for current parity work:
 - `/`
 - `/home`
+- `/general-consultation-ie`
+- `/general-consultation-pt`
+- `/general-consultation-sp`
+- `/general-consultation-cz`
+- `/general-consultation-rm`
 
 ## Blocking Exact Parity
 
@@ -39,6 +44,14 @@ Scope for current parity work:
 | --- | --- | --- | --- | --- |
 | Country flag/graphic set | `/` | `frontend/public/icons/countries/*` | Improves country selector fidelity but does not block structure | needs replacement |
 | Additional footer decorative graphics | `/`, `/home` | `frontend/public/images/footer/cta-footer-placeholder.svg` | Improves exact footer feel after core parity is approved | needs replacement |
+| Consultation category icons pack | `/general-consultation-*` | `frontend/public/icons/consultations/*` | Current pages rely on generic Lucide icons; a branded icon pack would improve visual consistency | needs replacement |
+
+## General Consultation Pages (Design System Pass)
+
+| Asset | Route | Current Path | Notes | Status |
+| --- | --- | --- | --- | --- |
+| Consultation hero visual per country | `/general-consultation-*` | none (text-first hero) | Optional enhancement; no blocking regression for responsive or content flow | needs audit |
+| Country-specific service illustration set | `/general-consultation-*` | none (icon cards only) | Add only when approved assets exist; do not hotlink Wix | needs audit |
 
 ## Notes
 
