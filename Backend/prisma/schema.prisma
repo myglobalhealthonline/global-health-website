@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum LocaleCode {
+  EN
+  PT
+  ES
+  CS
+  RO
+  DE
+}
+
+enum AssetKind {
+  IMAGE
+  ICON
+  LOGO
+  BADGE
+  SOCIAL
+}
+
+model Currency {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  symbol    String
+  decimals  Int      @default(2)
+  countries Country[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Country {
+  id                        String                @id @default(cuid())
+  code                      String                @unique
+  name                      String
+  slug                      String                @unique
+  legacyHomePath            String                @unique
+  teamPath                  String                @unique
+  generalConsultationPath   String                @unique
+  specialistConsultationPath String               @unique
+  defaultLocale             LocaleCode            @default(EN)
+  currencyId                String
+  currency                  Currency              @relation(fields: [currencyId], references: [id])
+  isActive                  Boolean               @default(true)
+  countryLocales            CountryLocale[]
+  domains                   CountryDomain[]
+  clinics                   Clinic[]
+  doctors                   Doctor[]
+  specialties               Specialty[]
+  services                  Service[]
+  pricingPlans              PricingPlan[]
+  assets                    Asset[]
+  badges                    Badge[]
+  consultationSetting       ConsultationSetting?
+  bookingSetting            BookingSetting?
+  createdAt                 DateTime              @default(now())
+  updatedAt                 DateTime              @updatedAt
+}
+
+model CountryLocale {
+  id        String     @id @default(cuid())
+  countryId String
+  locale    LocaleCode
+  isDefault Boolean    @default(false)
+  country   Country    @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@unique([countryId, locale])
+}
+
+model CountryDomain {
+  id        String   @id @default(cuid())
+  countryId String
+  domain    String   @unique
+  isPrimary Boolean  @default(false)
+  country   Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@unique([countryId, isPrimary])
+}
+
+model Clinic {
+  id        String   @id @default(cuid())
+  countryId String
+  name      String
+  slug      String
+  city      String?
+  active    Boolean  @default(true)
+  country   Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([countryId, slug])
+}
+
+model Doctor {
+  id         String           @id @default(cuid())
+  countryId  String
+  slug       String
+  fullName   String
+  title      String
+  bio        String?
+  active     Boolean          @default(true)
+  country    Country          @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  specialties DoctorSpecialty[]
+  assets     Asset[]
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@unique([countryId, slug])
+}
+
+model Specialty {
+  id        String           @id @default(cuid())
+  countryId String
+  slug      String
+  name      String
+  active    Boolean          @default(true)
+  country   Country          @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  doctors   DoctorSpecialty[]
+  services  Service[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([countryId, slug])
+}
+
+model DoctorSpecialty {
+  id          String    @id @default(cuid())
+  doctorId    String
+  specialtyId String
+  doctor      Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  specialty   Specialty @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, specialtyId])
+}
+
+model Service {
+  id                  String     @id @default(cuid())
+  countryId           String
+  specialtyId         String?
+  slug                String
+  name                String
+  summary             String?
+  legacyPath          String?
+  durationMinutes     Int?
+  basePriceCents      Int?
+  currencyCode        String?
+  isActive            Boolean    @default(true)
+  consultationSetting Json?
+  bookingSetting      Json?
+  country             Country    @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  specialty           Specialty? @relation(fields: [specialtyId], references: [id])
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  @@unique([countryId, slug])
+}
+
+model PricingPlan {
+  id          String   @id @default(cuid())
+  countryId   String
+  slug        String
+  name        String
+  description String?
+  priceCents  Int
+  currencyCode String
+  interval    String
+  isActive    Boolean  @default(true)
+  country     Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([countryId, slug])
+}
+
+model Asset {
+  id         String    @id @default(cuid())
+  countryId  String?
+  doctorId   String?
+  kind       AssetKind
+  key        String
+  path       String
+  altText    String?
+  country    Country?  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  doctor     Doctor?   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  badges     Badge[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([kind, key])
+}
+
+model Badge {
+  id         String   @id @default(cuid())
+  countryId  String
+  assetId    String?
+  label      String
+  sortOrder  Int      @default(0)
+  active     Boolean  @default(true)
+  country    Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  asset      Asset?   @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ConsultationSetting {
+  id                     String   @id @default(cuid())
+  countryId              String   @unique
+  enableGeneral          Boolean  @default(true)
+  enableSpecialist       Boolean  @default(true)
+  defaultDurationMinutes Int      @default(20)
+  leadTimeMinutes        Int      @default(60)
+  country                Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model BookingSetting {
+  id                  String   @id @default(cuid())
+  countryId           String   @unique
+  bookingEnabled      Boolean  @default(true)
+  requirePhone        Boolean  @default(true)
+  requireDateOfBirth  Boolean  @default(true)
+  timezone            String   @default("UTC")
+  country             Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}

@@ -1,0 +1,47 @@
+{
+  "site": {
+    "name": "Global Health"
+  },
+  "navigation": {
+    "clinics": "Clinics",
+    "about": "About",
+    "blog": "Blog",
+    "faq": "FAQ",
+    "egiftCard": "eGift Card",
+    "login": "Log In",
+    "bookOnline": "Book Online",
+    "generalConsultation": "General Consultation",
+    "specialistConsultation": "Specialist Consultation",
+    "onlinePrescription": "Online Prescriptions",
+    "homeDelivery": "Home Delivery",
+    "plansPricing": "Plans & Pricing",
+    "healthTests": "Health Tests",
+    "partnerClinics": "Partner Clinics"
+  },
+  "footer": {
+    "company": "Company",
+    "clinics": "Clinics",
+    "legal": "Legal",
+    "information": "Information",
+    "careers": "Careers",
+    "contactUs": "Contact us",
+    "aboutUs": "About us",
+    "howItWorks": "How it works",
+    "legalNotices": "Legal Notices",
+    "terms": "Terms and Conditions",
+    "cookies": "Cookies Policy",
+    "refund": "Refund and Return Policy",
+    "privacy": "Privacy Policy",
+    "copyright": "All rights reserved.",
+    "cta": "Start Your Online Consultation",
+    "trustLine": "Licensed care · Privacy-first · Europe-wide clinics"
+  },
+  "countrySelector": {
+    "title": "Choose your country",
+    "description": "Access your local clinic hub, team profiles, and consultations.",
+    "enterClinic": "Enter clinic"
+  },
+  "cta": {
+    "primaryBooking": "Book Online"
+  }
+}

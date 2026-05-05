@@ -1,0 +1,194 @@
+﻿import { PrismaClient, LocaleCode } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+async function main() {
+  await prisma.currency.upsert({ where: { code: "EUR" }, update: {}, create: { code: "EUR", symbol: "EUR" } });
+
+  const countrySeeds = [
+    {
+      code: "ie",
+      name: "Ireland",
+      slug: "ireland",
+      legacyHomePath: "/home",
+      teamPath: "/ireland-team",
+      generalConsultationPath: "/general-consultation-ie",
+      specialistConsultationPath: "/specialty-ie",
+      defaultLocale: LocaleCode.EN,
+      locales: [LocaleCode.EN, LocaleCode.PT, LocaleCode.ES],
+      domain: "ie.myglobalhealth.online",
+      doctor: { slug: "dr-mirza-aun-mohammad", fullName: "Dr Mirza Aun Mohammad", title: "General Practitioner" },
+      specialty: { slug: "cardiology", name: "Cardiology" },
+      service: { slug: "medical-consultation", name: "Medical Consultation", legacyPath: "/ireland/medical-consultation" },
+      plan: { slug: "starter", name: "Starter Plan", priceCents: 4900 },
+    },
+    {
+      code: "pt",
+      name: "Portugal",
+      slug: "portugal",
+      legacyHomePath: "/home-pt",
+      teamPath: "/portugal-team",
+      generalConsultationPath: "/general-consultation-pt",
+      specialistConsultationPath: "/specialty-pt",
+      defaultLocale: LocaleCode.PT,
+      locales: [LocaleCode.PT, LocaleCode.EN],
+      domain: "pt.myglobalhealth.online",
+      doctor: { slug: "dr-tiago-miguel-figueira", fullName: "Dr Tiago Miguel Figueira", title: "General Practitioner" },
+      specialty: { slug: "nutrition", name: "Nutrition" },
+      service: { slug: "medical-consultation", name: "Consulta Medica", legacyPath: "/general-consultation-pt" },
+      plan: { slug: "starter", name: "Plano Inicial", priceCents: 4500 },
+    },
+    {
+      code: "sp",
+      name: "Spain",
+      slug: "spain",
+      legacyHomePath: "/home-sp",
+      teamPath: "/spain-team",
+      generalConsultationPath: "/general-consultation-sp",
+      specialistConsultationPath: "/specialty-sp",
+      defaultLocale: LocaleCode.ES,
+      locales: [LocaleCode.ES, LocaleCode.EN],
+      domain: "es.myglobalhealth.online",
+      doctor: { slug: "dr-fatima-ali", fullName: "Dr Fatima Ali", title: "General Practitioner" },
+      specialty: { slug: "dermatology", name: "Dermatology" },
+      service: { slug: "medical-consultation", name: "Consulta Medica", legacyPath: "/general-consultation-sp" },
+      plan: { slug: "starter", name: "Plan Inicial", priceCents: 4700 },
+    },
+    {
+      code: "cz",
+      name: "Czechia",
+      slug: "czechia",
+      legacyHomePath: "/home-cz",
+      teamPath: "/czechia-team",
+      generalConsultationPath: "/general-consultation-cz",
+      specialistConsultationPath: "/specialty-cz",
+      defaultLocale: LocaleCode.CS,
+      locales: [LocaleCode.CS, LocaleCode.EN],
+      domain: "cz.myglobalhealth.online",
+      doctor: { slug: "dr-emmanuel-dabup", fullName: "Dr Emmanuel Dabup", title: "General Practitioner" },
+      specialty: { slug: "urology", name: "Urology" },
+      service: { slug: "medical-consultation", name: "Lékarská Konzultace", legacyPath: "/general-consultation-cz" },
+      plan: { slug: "starter", name: "Zakladni Plan", priceCents: 4300 },
+    },
+    {
+      code: "rm",
+      name: "Romania",
+      slug: "romania",
+      legacyHomePath: "/home-rm",
+      teamPath: "/romania-team",
+      generalConsultationPath: "/general-consultation-rm",
+      specialistConsultationPath: "/specialty-rm",
+      defaultLocale: LocaleCode.RO,
+      locales: [LocaleCode.RO, LocaleCode.EN],
+      domain: "ro.myglobalhealth.online",
+      doctor: { slug: "dr-maristela-ferro-nepomuceno", fullName: "Dr Maristela Ferro Nepomuceno", title: "General Practitioner" },
+      specialty: { slug: "neurology", name: "Neurology" },
+      service: { slug: "medical-consultation", name: "Consultatie Medicala", legacyPath: "/general-consultation-rm" },
+      plan: { slug: "starter", name: "Plan Initial", priceCents: 4200 },
+    },
+  ] as const;
+
+  for (const seed of countrySeeds) {
+    const country = await prisma.country.upsert({
+      where: { code: seed.code },
+      update: {
+        name: seed.name,
+        slug: seed.slug,
+        legacyHomePath: seed.legacyHomePath,
+        teamPath: seed.teamPath,
+        generalConsultationPath: seed.generalConsultationPath,
+        specialistConsultationPath: seed.specialistConsultationPath,
+        defaultLocale: seed.defaultLocale,
+      },
+      create: {
+        code: seed.code,
+        name: seed.name,
+        slug: seed.slug,
+        legacyHomePath: seed.legacyHomePath,
+        teamPath: seed.teamPath,
+        generalConsultationPath: seed.generalConsultationPath,
+        specialistConsultationPath: seed.specialistConsultationPath,
+        defaultLocale: seed.defaultLocale,
+        currency: { connect: { code: "EUR" } },
+      },
+    });
+
+    await prisma.countryDomain.upsert({
+      where: { domain: seed.domain },
+      update: { isPrimary: true, countryId: country.id },
+      create: { domain: seed.domain, isPrimary: true, countryId: country.id },
+    });
+
+    await prisma.consultationSetting.upsert({
+      where: { countryId: country.id },
+      update: {},
+      create: { countryId: country.id, enableGeneral: true, enableSpecialist: true },
+    });
+
+    await prisma.bookingSetting.upsert({
+      where: { countryId: country.id },
+      update: {},
+      create: { countryId: country.id, bookingEnabled: true, timezone: "Europe/Dublin" },
+    });
+
+    for (const locale of seed.locales) {
+      await prisma.countryLocale.upsert({
+        where: { countryId_locale: { countryId: country.id, locale } },
+        update: { isDefault: locale === seed.defaultLocale },
+        create: { countryId: country.id, locale, isDefault: locale === seed.defaultLocale },
+      });
+    }
+
+    const specialty = await prisma.specialty.upsert({
+      where: { countryId_slug: { countryId: country.id, slug: seed.specialty.slug } },
+      update: { name: seed.specialty.name },
+      create: { countryId: country.id, slug: seed.specialty.slug, name: seed.specialty.name },
+    });
+
+    const doctor = await prisma.doctor.upsert({
+      where: { countryId_slug: { countryId: country.id, slug: seed.doctor.slug } },
+      update: { fullName: seed.doctor.fullName, title: seed.doctor.title },
+      create: { countryId: country.id, slug: seed.doctor.slug, fullName: seed.doctor.fullName, title: seed.doctor.title },
+    });
+
+    await prisma.doctorSpecialty.upsert({
+      where: { doctorId_specialtyId: { doctorId: doctor.id, specialtyId: specialty.id } },
+      update: {},
+      create: { doctorId: doctor.id, specialtyId: specialty.id },
+    });
+
+    await prisma.service.upsert({
+      where: { countryId_slug: { countryId: country.id, slug: seed.service.slug } },
+      update: { name: seed.service.name, legacyPath: seed.service.legacyPath, specialtyId: specialty.id },
+      create: { countryId: country.id, slug: seed.service.slug, name: seed.service.name, legacyPath: seed.service.legacyPath, specialtyId: specialty.id, currencyCode: "EUR", basePriceCents: 3900 },
+    });
+
+    await prisma.pricingPlan.upsert({
+      where: { countryId_slug: { countryId: country.id, slug: seed.plan.slug } },
+      update: { name: seed.plan.name, priceCents: seed.plan.priceCents },
+      create: { countryId: country.id, slug: seed.plan.slug, name: seed.plan.name, priceCents: seed.plan.priceCents, currencyCode: "EUR", interval: "month" },
+    });
+
+    const logoAsset = await prisma.asset.upsert({
+      where: { kind_key: { kind: "LOGO", key: `${seed.code}-primary-logo` } },
+      update: { path: `/public/logos/${seed.code}-primary-logo.svg` },
+      create: { kind: "LOGO", key: `${seed.code}-primary-logo`, path: `/public/logos/${seed.code}-primary-logo.svg`, countryId: country.id, altText: `${seed.name} logo` },
+    });
+
+    await prisma.badge.upsert({
+      where: { id: `${seed.code}-secure-care-badge` },
+      update: {},
+      create: { id: `${seed.code}-secure-care-badge`, countryId: country.id, assetId: logoAsset.id, label: "Secure Care", sortOrder: 1 },
+    });
+
+    await prisma.clinic.upsert({
+      where: { countryId_slug: { countryId: country.id, slug: `${seed.code}-main-clinic` } },
+      update: { name: `${seed.name} Main Clinic` },
+      create: { countryId: country.id, slug: `${seed.code}-main-clinic`, name: `${seed.name} Main Clinic` },
+    });
+  }
+}
+
+main()
+  .then(async () => { await prisma.$disconnect(); })
+  .catch(async (e) => { console.error(e); await prisma.$disconnect(); process.exit(1); });
