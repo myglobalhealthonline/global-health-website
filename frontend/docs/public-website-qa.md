@@ -1,47 +1,49 @@
 # Public Website QA - Pass 1
 
-Audit date: 2026-05-05
+Audit date: 2026-05-05 (rerun after runtime country/locale cleanup)
 
-| Route | Desktop Status | Mobile Status | CTA Status | Content Status | Language Label Status | Issues | Fix Needed |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| `/` | pass | pass | clear | good | ready | None observed in QA pass. | no |
-| `/home` | pass | pass | clear | improved | ready | Service and doctor cards previously showed TODO text. | fixed |
-| `/book-online` | pass | pass | clear | good | ready | Needed clearer post-submit expectation copy. | fixed |
-| `/general-consultation-ie` | pass | pass | clear | good | ready | None blocking after adapter copy cleanup. | no |
-| `/specialty-ie` | pass | pass | clear | good | ready | Explanation text contained TODO. | fixed |
-| `/ireland/medical-consultation` | pass | pass | clear | improved | ready | Service detail body showed placeholder/TODO text. | fixed |
-| `/ireland-team` | pass | pass | clear | good | ready | None blocking. | no |
-| `/plans-pricing` | pass | pass | clear | improved | ready | Needed stronger practical patient guidance and feature content. | fixed |
-| `/online-prescription` | pass | pass | clear | improved | ready | Needed non-placeholder process explanation. | fixed |
-| `/home-delivery` | pass | pass | clear | improved | ready | Needed non-placeholder logistics guidance copy. | fixed |
-| `/home-health-test` | pass | pass | clear | improved | ready | Needed non-placeholder testing-pathway copy. | fixed |
-| `/frequent-asked-questions` | pass | pass | clear | improved | ready | Needed clearer intro context for patient intent. | fixed |
-| `/privacy` | pass | pass | clear | acceptable | ready | Legal structure is in place; still generic legal prose pending legal source import. | later |
-| `/home-pt` | pass | pass | clear | improved | ready | Visible TODO copy in country template cards. | fixed |
-| `/home-sp` | pass | pass | clear | improved | ready | Visible TODO copy in country template cards. | fixed |
-| `/home-cz` | pass | pass | clear | improved | ready | Visible TODO copy in country template cards. | fixed |
-| `/home-rm` | pass | pass | clear | improved | ready | Visible TODO copy in country template cards. | fixed |
-| `/general-consultation-pt` | pass | pass | clear | improved | ready | Multiple TODO strings in explanations/pricing/services. | fixed |
-| `/general-consultation-sp` | pass | pass | clear | improved | ready | Multiple TODO strings in explanations/pricing/services. | fixed |
-| `/general-consultation-cz` | pass | pass | clear | improved | ready | Multiple TODO strings in explanations/pricing/services. | fixed |
-| `/general-consultation-rm` | pass | pass | clear | improved | ready | Multiple TODO strings in explanations/pricing/services. | fixed |
-| `/ireland/diabetes-consultation` | pass | pass | clear | improved | ready | Used generic service placeholder text previously. | fixed |
-| `/ireland/weight-loss-consultation` | pass | pass | clear | improved | ready | Used generic service placeholder text previously. | fixed |
-| `/ireland-specialist-consultations/cardiology-consultation` | pass | pass | clear | improved | ready | Used generic service placeholder text previously. | fixed |
-| `/ireland-specialist-consultations/dermatology-consultation` | pass | pass | clear | improved | ready | Used generic service placeholder text previously. | fixed |
-| `/ireland-doctors/dr-mirza-aun-mohammad` | pass | pass | clear | improved | ready | Route previously placeholder-only with static marketing template. | fixed |
-| `/category/all-products` | pass | pass | clear | improved | ready | Category route lacked meaningful adapter content. | fixed |
-| `/blog` | pass | pass | clear | acceptable | ready | Listing works; excerpts remain generic but usable. | later |
-| `/post/how-online-medical-consultations-work` | pass | pass | clear | improved | ready | Article lead/body showed TODO placeholders. | fixed |
+| Route | Desktop Status | Mobile Status | CTA Status | Content Status | Country/Locale Status | Language Label Status | Issues | Fix Needed |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `/` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/home` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/book-online` | pass | pass | clear | meaningful | pass | ready | Backend submit is intentionally deferred (frontend-safe flow). | no |
+| `/general-consultation-ie` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/specialty-ie` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/ireland/medical-consultation` | pass | pass | clear | meaningful | pass | ready | Generic service detail copy (safe but not service-specific depth). | no |
+| `/ireland-team` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/plans-pricing` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/online-prescription` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/home-delivery` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/home-health-test` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/frequent-asked-questions` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/privacy` | pass | pass | clear | acceptable | pass | ready | Legal prose still generalized pending approved legal source text. | later |
+| `/home-pt` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/home-sp` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/home-cz` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/home-rm` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/general-consultation-pt` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/general-consultation-sp` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/general-consultation-cz` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/general-consultation-rm` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/ireland/diabetes-consultation` | pass | pass | clear | meaningful | pass | ready | Generic service detail copy (safe placeholder depth). | no |
+| `/ireland/weight-loss-consultation` | pass | pass | clear | meaningful | pass | ready | Generic service detail copy (safe placeholder depth). | no |
+| `/ireland-specialist-consultations/cardiology-consultation` | pass | pass | clear | meaningful | pass | ready | Generic specialist detail copy (safe placeholder depth). | no |
+| `/ireland-specialist-consultations/dermatology-consultation` | pass | pass | clear | meaningful | pass | ready | Generic specialist detail copy (safe placeholder depth). | no |
+| `/ireland-doctors/dr-mirza-aun-mohammad` | pass | pass | clear | meaningful | pass | ready | Profile is adapter-driven with safe generic credential placeholders. | no |
+| `/category/all-products` | pass | pass | clear | meaningful | pass | ready | None observed. | no |
+| `/blog` | pass | pass | clear | acceptable | pass | ready | Blog cards are usable but excerpt copy remains generic. | later |
+| `/post/how-online-medical-consultations-work` | pass | pass | clear | meaningful | pass | ready | Article is readable; still not final editorial copy. | later |
 
 ## QA Findings Summary
 
-- Most issues were **content-quality regressions** (visible TODO text), not layout breakages.
-- Header/footer/navigation remained structurally consistent on tested pages.
-- No route-level architecture regressions detected; thin-adapter/template pattern preserved.
-- Language route labels remain fallback-safe (locale -> English -> registry default) without localized URL breakage.
+- Priority routes load correctly with one clear H1 and consistent CTA hierarchy.
+- No horizontal-scroll or overflow regressions were observed in spot checks at `320`, `390`, and `1024`/`1440`.
+- Country/locale runtime plumbing now behaves as intended in code path:
+  - layout no longer forces `en`
+  - locale resolution follows explicit -> header -> cookie -> accept-language -> country default -> `en`.
+- Route-label coverage for key public routes is present across all locale label files.
 
 ## Remaining Gaps
 
-- Legal pages still use generalized placeholder legal prose until approved legal content is integrated.
-- Blog listing/article content is now non-placeholder, but editorial depth remains limited pending CMS-backed copy.
+- Legal pages remain structurally correct but still use generalized legal text until approved legal content is imported.
+- Service-detail and blog routes are usable, but content depth is still intentionally generic pending editorial/admin data.
