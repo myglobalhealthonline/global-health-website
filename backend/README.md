@@ -51,32 +51,91 @@ The API does **not**:
 
 Doctor-facing APIs and **`DOCTOR` auth role** are **out of scope** for this service until/unless product explicitly merges portals (not current plan).
 
-## Environment
+## Database setup
 
-Required:
+Prisma 7 reads `DATABASE_URL` from **`prisma.config.ts`** via `env("DATABASE_URL")`. That file **loads `backend/.env` automatically** (paths are resolved from the config file location), so `pnpm prisma …` works whether your shell cwd is the **repo root**, **`backend/`**, or you use **`pnpm --filter backend`** — as long as **`backend/.env`** exists with a valid `DATABASE_URL`.
 
-```env
-DATABASE_URL=postgresql://...
-PORT=4000
-```
+### Local development
 
-Optional when local development cannot reach the platform internal host:
-
-```env
-DATABASE_PUBLIC_URL=postgresql://...
-```
-
-If your platform provides both an internal and public database URL:
-- keep the internal URL for in-platform runtime
-- use the public URL as `DATABASE_URL` for local migration and seed commands
-
-## Local Commands
+From **`backend/`**:
 
 ```bash
-pnpm --filter backend dev
+cp .env.example .env
+# Edit .env: set DATABASE_URL, ADMIN_API_TOKEN, PORT as needed
+pnpm db:generate
+pnpm db:migrate
+pnpm db:seed
+```
+
+From **repository root**:
+
+```bash
 pnpm --filter backend db:generate
 pnpm --filter backend db:migrate
 pnpm --filter backend db:seed
+```
+
+Or use the root shortcuts (same as above):
+
+```bash
+pnpm db:generate
+pnpm db:migrate
+pnpm db:seed
+```
+
+### Production / CI deploy
+
+Apply migrations without prompts:
+
+```bash
+pnpm --filter backend db:deploy
+```
+
+(Run with `DATABASE_URL` pointing at the production database — typically via CI secrets, not committed `.env`.)
+
+### Scripts reference (`backend/package.json`)
+
+| Script | Purpose |
+| --- | --- |
+| `db:generate` | `prisma generate` — refreshes the Prisma Client after schema changes |
+| `db:migrate` | `prisma migrate dev` — creates/applies migrations in development |
+| `db:deploy` | `prisma migrate deploy` — applies pending migrations in staging/production |
+| `db:seed` | Runs `prisma/seed.ts` |
+| `db:studio` | Opens Prisma Studio (needs `DATABASE_URL`) |
+
+### Windows PowerShell (no `.env` file yet)
+
+You can pass the URL for a single command:
+
+```powershell
+$env:DATABASE_URL="postgresql://postgres:postgres@localhost:5432/global_health"
+pnpm --filter backend db:generate
+```
+
+### Environment variables
+
+See **`backend/.env.example`**. Summary:
+
+- **`DATABASE_URL`** — required for API runtime, Prisma CLI, and seed.
+- **`ADMIN_API_TOKEN`** — optional for server start in some setups; required to call **`/api/admin/*`** (including Assets admin after Phase 3.5).
+- **`PORT`** — defaults to `4000` in **`src/config/env.ts`** if unset.
+
+Optional **`DATABASE_PUBLIC_URL`** in comments in `.env.example`: some platforms use an internal URL for the deployed app and a **public** URL for tools running on your laptop; use whichever host your machine can reach as **`DATABASE_URL`** when running migrations/seeds locally.
+
+### Troubleshooting
+
+| Issue | What to do |
+| --- | --- |
+| `Cannot resolve environment variable: DATABASE_URL` | Ensure **`backend/.env`** exists (copy from **`.env.example`**) **or** export **`DATABASE_URL`** in the shell (see PowerShell above). |
+| Internal vs public DB host | Hosted DBs often give a private URL for the app and a public URL for developers — use the URL your environment can reach for **`pnpm db:migrate`** / **`db:seed`**. |
+| Ran Prisma from wrong directory | Prefer **`pnpm --filter backend db:*`** from repo root, or **`cd backend`** then **`pnpm db:*`**. |
+| Assets admin errors before migration | Apply migrations so **`Asset.usageNote`** and **`Asset.isActive`** exist — run **`db:migrate`** or **`db:deploy`**. |
+| `migrate dev` asks for shadow DB | PostgreSQL + `migrate dev` may require a shadow database URL for drift detection; ensure your user can create DBs or set **`shadowDatabaseUrl`** in Prisma if your provider documents it. |
+
+### API dev server
+
+```bash
+pnpm --filter backend dev
 ```
 
 ## Safety

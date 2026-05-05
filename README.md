@@ -1427,13 +1427,34 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 docker compose up -d
 ```
 
-### Prisma Setup
+### Backend database (Prisma)
+
+The backend owns the schema and migrations under **`backend/prisma/`**. Use workspace scripts so **`DATABASE_URL`** is read from **`backend/.env`** (see **`backend/README.md`** → Database setup).
+
+From repository root:
 
 ```bash
-pnpm prisma generate
-pnpm prisma migrate dev
-pnpm prisma db seed
+pnpm db:generate
+pnpm db:migrate
+pnpm db:seed
 ```
+
+Production-style migration apply (no dev prompts):
+
+```bash
+pnpm db:deploy
+```
+
+Equivalent:
+
+```bash
+pnpm --filter backend db:generate
+pnpm --filter backend db:migrate
+pnpm --filter backend db:seed
+pnpm --filter backend db:deploy
+```
+
+Copy **`backend/.env.example`** to **`backend/.env`** and set **`DATABASE_URL`** (and **`ADMIN_API_TOKEN`** if you use admin APIs).
 
 ### Run Development Server
 

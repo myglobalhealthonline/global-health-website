@@ -1,6 +1,12 @@
-﻿import { PrismaPg } from "@prisma/adapter-pg";
+﻿import { config as loadEnv } from "dotenv";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, LocaleCode } from "@prisma/client";
 import { Pool } from "pg";
+
+const prismaDir = dirname(fileURLToPath(import.meta.url));
+loadEnv({ path: join(prismaDir, "..", ".env") });
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,

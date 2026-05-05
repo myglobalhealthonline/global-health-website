@@ -9,7 +9,9 @@
         "test": "node --import tsx --test src/modules/appointments/appointment-status-transitions.test.ts src/modules/countries/admin-countries.schema.test.ts src/modules/services/admin-services.schema.test.ts src/modules/doctors/admin-doctors.schema.test.ts src/modules/pricing/admin-pricing.schema.test.ts src/modules/assets/admin-assets.schema.test.ts",
         "db:generate": "prisma generate",
         "db:migrate": "prisma migrate dev",
-        "db:seed": "tsx prisma/seed.ts"
+        "db:deploy": "prisma migrate deploy",
+        "db:seed": "tsx prisma/seed.ts",
+        "db:studio": "prisma studio"
     },
     "dependencies": {
         "@fastify/cors": "^11.2.0",
