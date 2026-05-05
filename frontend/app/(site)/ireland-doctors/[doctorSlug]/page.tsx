@@ -1,41 +1,24 @@
 ﻿import type { Metadata } from "next";
-import { StaticMarketingTemplate } from "@/components/templates/StaticMarketingTemplate";
+import { DoctorProfileTemplate } from "@/components/templates/DoctorProfileTemplate";
+import { getDoctorProfileData } from "@/lib/content/doctor-profile-data";
 
 type Params = { doctorSlug: string };
 
-export const metadata: Metadata = {
-  title: "Doctor Profile",
-  description: "Template-driven doctor profile placeholder.",
-};
-
-function toLabel(slug: string) {
-  return slug
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<Params>;
+}): Promise<Metadata> {
+  const { doctorSlug } = await params;
+  const data = getDoctorProfileData(doctorSlug);
+  return {
+    title: `${data.profile.name} | Ireland Team`,
+    description: `Doctor profile for ${data.profile.name} including specialties, languages, and booking options.`,
+  };
 }
 
 export default async function DoctorPage({ params }: { params: Promise<Params> }) {
   const { doctorSlug } = await params;
-
-  return (
-    <StaticMarketingTemplate
-      hero={{
-        title: `Doctor: ${toLabel(doctorSlug)}`,
-        description: "Doctor profile placeholder powered by shared static marketing template.",
-        primaryCta: { label: "Back to team", href: "/ireland-team" },
-        secondaryCta: { label: "Book consultation", href: "/book-online" },
-      }}
-      intro={{
-        title: "Profile content pending",
-        body: "TODO: Replace with doctor-specific data from structured adapters/backend.",
-      }}
-      bottomCta={{
-        title: "Need an appointment?",
-        description: "Book a consultation and our team will coordinate the right clinician.",
-        ctaLabel: "Book consultation",
-        ctaHref: "/book-online",
-      }}
-    />
-  );
+  const data = getDoctorProfileData(doctorSlug);
+  return <DoctorProfileTemplate {...data} />;
 }

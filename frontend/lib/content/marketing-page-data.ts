@@ -30,8 +30,31 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Healthcare designed for clarity",
-      body: "TODO: Replace with approved mission and clinic overview copy from content source.",
+      body: "Global Health is built to make online care easier to understand and easier to access. Patients can compare services, choose their country route, and book consultations without navigating complex medical language.",
     },
+    features: [
+      {
+        title: "Simple booking journey",
+        description: "Choose country, consultation type, and preferred contact details in a few steps.",
+        href: "/book-online",
+        ctaLabel: "Book consultation",
+      },
+      {
+        title: "Country-aware care routes",
+        description: "Each country hub has route-specific teams, services, and consultation listings.",
+        href: "/home",
+        ctaLabel: "View country hubs",
+      },
+      {
+        title: "Patient-first communication",
+        description: "Content is written to be clear for non-technical users and mobile-friendly.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Book online", href: "/book-online" },
+      { label: "Ireland team", href: "/ireland-team" },
+      { label: "General consultation", href: "/general-consultation-ie" },
+    ],
     bottomCta: defaultBottomCta,
   },
   "/careers": {
@@ -42,8 +65,22 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Join the team",
-      body: "TODO: Replace with approved open roles and hiring process details.",
+      body: "We are building patient-friendly digital care pathways across countries. Role-specific hiring details will be managed in future content workflows.",
     },
+    features: [
+      {
+        title: "Patient impact",
+        description: "Work on services that help patients access care quickly and clearly.",
+      },
+      {
+        title: "Remote-first workflows",
+        description: "Support clinical and operations teams with scalable digital processes.",
+      },
+      {
+        title: "Growing country coverage",
+        description: "Contribute to reusable systems that support more countries over time.",
+      },
+    ],
     bottomCta: defaultBottomCta,
   },
   "/gift-card": {
@@ -54,8 +91,22 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "How gift cards work",
-      body: "TODO: Replace with approved gift card usage and redemption details.",
+      body: "Gift cards can be used toward eligible consultation bookings. Final redemption and policy details will be confirmed in approved legal and billing content.",
     },
+    features: [
+      {
+        title: "Simple to share",
+        description: "Send support to a family member or friend who needs care access.",
+      },
+      {
+        title: "Applied at booking",
+        description: "Gift card usage is validated during the booking and payment workflow.",
+      },
+      {
+        title: "Country policy aware",
+        description: "Availability can vary by country route and local clinic policy.",
+      },
+    ],
     bottomCta: defaultBottomCta,
   },
   "/plans-pricing": {
@@ -67,8 +118,26 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Pricing transparency",
-      body: "TODO: Replace with approved per-country pricing and eligibility logic.",
+      body: "Consultation pricing is presented by service type so patients can compare options before booking. Exact per-country values and policy notes are maintained in structured pricing adapters.",
     },
+    features: [
+      {
+        title: "Compare consultation types",
+        description: "Review general and specialist consultation pathways side by side.",
+        href: "/general-consultation-ie",
+        ctaLabel: "View consultations",
+      },
+      {
+        title: "Country-aware pricing",
+        description: "Final prices are validated by country and service availability.",
+      },
+      {
+        title: "Clear next action",
+        description: "Every pricing block links directly to booking or service selection.",
+        href: "/book-online",
+        ctaLabel: "Start booking",
+      },
+    ],
     bottomCta: defaultBottomCta,
   },
   "/pricing-plans/list": {
@@ -79,8 +148,28 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Current pricing data",
-      body: "TODO: Replace with country-aware pricing matrix from structured content.",
+      body: "This page summarizes starting-price ranges and consultation categories to help patients decide the next step quickly.",
     },
+    features: [
+      {
+        title: "General consultation",
+        description: "Entry-point appointments for common concerns, first assessment, and follow-up direction.",
+        href: "/general-consultation-ie",
+        ctaLabel: "See general consultations",
+      },
+      {
+        title: "Specialist consultation",
+        description: "Specialist-focused appointments available based on country route and service type.",
+        href: "/specialty-ie",
+        ctaLabel: "See specialist consultations",
+      },
+      {
+        title: "Booking support",
+        description: "If you are unsure which option fits, start booking and the clinic team can guide you.",
+        href: "/book-online",
+        ctaLabel: "Book consultation",
+      },
+    ],
     bottomCta: defaultBottomCta,
   },
   "/online-prescription": {
@@ -91,8 +180,27 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Prescription pathway",
-      body: "TODO: Replace with approved prescription handling guidance by country.",
+      body: "Prescription-related requests are reviewed during consultation to determine the appropriate next step. Final prescribing guidance and eligibility text are managed per country.",
     },
+    features: [
+      {
+        title: "Start with consultation",
+        description: "A clinician reviews your request and medical context before confirming options.",
+      },
+      {
+        title: "Country-specific process",
+        description: "Prescription workflows depend on route, clinician availability, and local policy.",
+      },
+      {
+        title: "Follow-up support",
+        description: "Patients receive clear next-step communication after review.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Book consultation", href: "/book-online" },
+      { label: "Home delivery", href: "/home-delivery" },
+      { label: "FAQ", href: "/frequent-asked-questions" },
+    ],
     bottomCta: defaultBottomCta,
   },
   "/home-delivery": {
@@ -103,8 +211,22 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Delivery flow",
-      body: "TODO: Replace with country-specific availability and logistics copy.",
+      body: "Home-delivery support is coordinated after clinical review where available. Delivery options depend on country route and partner coverage.",
     },
+    features: [
+      {
+        title: "Consultation-first process",
+        description: "Delivery requests are processed after your consultation and eligibility checks.",
+      },
+      {
+        title: "Coverage by country",
+        description: "Availability can vary by city and country route configuration.",
+      },
+      {
+        title: "Clear communication",
+        description: "Patients receive practical next steps for pickup or delivery where supported.",
+      },
+    ],
     bottomCta: defaultBottomCta,
   },
   "/home-health-test": {
@@ -115,8 +237,26 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Testing overview",
-      body: "TODO: Replace with approved home-testing information by country.",
+      body: "Home health testing routes help patients understand available testing pathways and when consultation review is recommended.",
     },
+    features: [
+      {
+        title: "Understand test options",
+        description: "See what test categories are available in the current route setup.",
+      },
+      {
+        title: "Clinical interpretation",
+        description: "Results interpretation and follow-up decisions are discussed during consultation.",
+      },
+      {
+        title: "Mobile-friendly workflow",
+        description: "Patients can move from test interest to consultation booking without route changes.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Health test details", href: "/home-health-tests/default-test" },
+      { label: "Book consultation", href: "/book-online" },
+    ],
     bottomCta: defaultBottomCta,
   },
   "/partner-clinics": {
@@ -127,8 +267,22 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Clinic network",
-      body: "TODO: Replace with approved partner clinic listing and coverage details.",
+      body: "Partner clinics help extend local support and continuity of care. Detailed partner listings will be managed through structured content and compliance review.",
     },
+    features: [
+      {
+        title: "Local healthcare continuity",
+        description: "Partner pathways help coordinate patient next steps when local follow-up is needed.",
+      },
+      {
+        title: "Country route integration",
+        description: "Partnership visibility can differ by country based on active local agreements.",
+      },
+      {
+        title: "Patient guidance",
+        description: "Patients receive clear guidance on whether to continue online or use local support options.",
+      },
+    ],
     bottomCta: defaultBottomCta,
   },
   "/corporate-plans": {
@@ -139,8 +293,26 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Business healthcare support",
-      body: "TODO: Replace with approved corporate plan details and onboarding flow.",
+      body: "Corporate plans support employers with structured consultation access for teams. Final plan details and onboarding terms are managed in future pricing/content administration.",
     },
+    features: [
+      {
+        title: "Team access pathways",
+        description: "Employees can follow a clear booking journey with country-aware routing.",
+      },
+      {
+        title: "Scalable rollout",
+        description: "Corporate support is designed to expand with additional countries over time.",
+      },
+      {
+        title: "Central coordination",
+        description: "Employer and patient communication stays consistent with public route templates.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Plans and pricing", href: "/plans-pricing" },
+      { label: "Contact clinic", href: "/book-online" },
+    ],
     bottomCta: defaultBottomCta,
   },
   "/frequent-asked-questions": {
@@ -150,6 +322,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
       primaryCta: { label: "Book consultation", href: "/book-online" },
     },
     faqs: {
+      title: "Common patient questions",
       items: [
         {
           question: "How quickly can I get an appointment?",
@@ -160,6 +333,10 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
           answer: "Yes, you can select consultation type during booking based on available options.",
         },
       ],
+    },
+    intro: {
+      title: "Quick answers before you book",
+      body: "These FAQs are designed to help patients understand booking flow, consultation types, and next steps before submitting a request.",
     },
     bottomCta: defaultBottomCta,
   },

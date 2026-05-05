@@ -15,13 +15,13 @@ export function getBookingPageData(locale: LocaleCode = "en") {
     hero: {
       title: "Book an online consultation",
       description:
-        "Choose your country, select a consultation type, and share your details so the clinic team can schedule your appointment.",
+        "Choose your country, select the consultation type you need, and share your details so the clinic team can confirm your appointment quickly.",
       primaryCtaLabel: "Start consultation",
     },
     form: {
       title: "Booking request",
       description:
-        "This is a frontend placeholder flow. TODO: Connect this form to backend booking APIs in a later phase.",
+        "Complete this short form and our team will follow up with your final appointment confirmation by email or phone.",
       fields: {
         country: {
           label: "Country",
@@ -48,16 +48,24 @@ export function getBookingPageData(locale: LocaleCode = "en") {
           placeholder: "Share any important context for the clinic team",
         },
         consent:
-          "By submitting, you confirm that the information provided is accurate and agree to be contacted for booking follow-up. TODO: replace with approved legal copy.",
+          "By submitting, you confirm the information is accurate and agree to be contacted for booking follow-up and scheduling. Final legal wording will be replaced with approved compliance copy.",
       },
       submitLabel: common.cta.primaryBooking,
       helperMessage:
-        "Placeholder behavior: this form does not submit to backend yet. Final confirmation and intake flow will be connected in a later phase.",
+        "Current release note: this form is a frontend-safe placeholder and does not yet create a live booking record. The clinic team confirmation step remains part of the final backend workflow.",
       countryOptions: countries.map((country) => ({
         value: country.code,
         label: country.name,
       })),
       consultationTypeOptions,
+      nextSteps: {
+        title: "What happens after you submit",
+        items: [
+          "The clinic team reviews your selected country and consultation type.",
+          "You receive confirmation with next steps and appointment timing details.",
+          "If needed, the team will contact you to clarify intake information.",
+        ],
+      },
     },
   };
 }

@@ -27,6 +27,7 @@ type BookingFormTemplateProps = {
     helperMessage: string;
     countryOptions: BookingOption[];
     consultationTypeOptions: BookingOption[];
+    nextSteps?: { title: string; items: string[] };
   };
 };
 
@@ -41,7 +42,7 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
       <Section id="booking-form" className="bg-[var(--color-brand-secondary)]">
         <Container>
           <article className="gh-card mx-auto max-w-3xl p-6 sm:p-8">
-            <h1 className="gh-h2 text-[var(--color-text-primary)]">{form.title}</h1>
+            <h2 className="gh-h2 text-[var(--color-text-primary)]">{form.title}</h2>
             <p className="gh-body mt-3 text-[var(--color-text-muted)]">{form.description}</p>
             <form className="mt-6 space-y-4" action="#" method="post">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -120,6 +121,18 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
               </button>
               <p className="gh-body-sm text-[var(--color-text-muted)]">{form.helperMessage}</p>
             </form>
+            {form.nextSteps ? (
+              <section className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+                <h3 className="gh-h3 text-[var(--color-text-primary)]">{form.nextSteps.title}</h3>
+                <ul className="mt-3 space-y-2">
+                  {form.nextSteps.items.map((item) => (
+                    <li key={item} className="gh-body-sm text-[var(--color-text-muted)]">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
           </article>
         </Container>
       </Section>
