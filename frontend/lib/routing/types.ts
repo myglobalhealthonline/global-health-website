@@ -14,6 +14,7 @@ export type ResolveCountryInput = {
 
 export type LocaleResolutionInput = {
   explicitLocale?: string | null;
+  cookieLocale?: string | null;
   countryDefaultLocale?: LocaleCode;
   acceptLanguageHeader?: string | null;
 };
@@ -23,4 +24,14 @@ export type SiteContextInput = {
   pathname?: string | null;
   explicitLocale?: string | null;
   acceptLanguageHeader?: string | null;
+  cookieLocale?: string | null;
+};
+
+export type RequestRoutingContext = {
+  host: string | null;
+  pathname: string;
+  countryCode: CountryCode;
+  locale: LocaleCode;
+  isLegacyRoute: boolean;
+  matchedLegacyRoute: string | null;
 };

@@ -1,13 +1,9 @@
 ﻿import { countries, getCountryByCode, type CountryCode } from "@/data/countries";
-import { domainToCountry, legacyPrefixToCountry } from "@/lib/routing/legacy-route-map";
+import { getEnabledDomainConfig } from "@/lib/routing/domain-map";
+import { legacyPrefixToCountry } from "@/lib/routing/legacy-route-map";
 import type { CountryRuntimeContext, ResolveCountryInput } from "@/lib/routing/types";
 
 const DEFAULT_COUNTRY_CODE: CountryCode = "ie";
-
-function normalizeHost(host?: string | null): string | null {
-  if (!host) return null;
-  return host.toLowerCase().replace(/:\d+$/, "");
-}
 
 function normalizePathname(pathname?: string | null): string {
   if (!pathname) return "/";
@@ -16,10 +12,10 @@ function normalizePathname(pathname?: string | null): string {
 
 export function resolveCountry(input: ResolveCountryInput = {}): CountryRuntimeContext {
   const pathname = normalizePathname(input.pathname);
-  const normalizedHost = normalizeHost(input.host);
 
-  if (normalizedHost && domainToCountry[normalizedHost]) {
-    const byDomain = getCountryByCode(domainToCountry[normalizedHost]);
+  const domainConfig = getEnabledDomainConfig(input.host);
+  if (domainConfig) {
+    const byDomain = getCountryByCode(domainConfig.countryCode);
     if (byDomain) return { country: byDomain, reason: "domain" };
   }
 

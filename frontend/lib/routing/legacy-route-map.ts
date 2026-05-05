@@ -30,21 +30,10 @@ export const legacyPrefixToCountry: Array<{ prefix: string; countryCode: Country
   { prefix: "/ireland-doctors", countryCode: "ie" },
 ];
 
-/**
- * Future domain to country mapping (seed-level adapter).
- * Will eventually be loaded from backend CountryDomain table.
- */
-export const domainToCountry: Record<string, CountryCode> = {
-  "ireland.example.com": "ie",
-  "portugal.example.com": "pt",
-  "spain.example.com": "sp",
-  "czechia.example.com": "cz",
-  "romania.example.com": "rm",
-  "globalhealth.ie": "ie",
-  "globalhealth.pt": "pt",
-  "ie.myglobalhealth.online": "ie",
-  "pt.myglobalhealth.online": "pt",
-  "es.myglobalhealth.online": "sp",
-  "cz.myglobalhealth.online": "cz",
-  "ro.myglobalhealth.online": "rm",
-};
+export function matchLegacyRoute(pathname?: string | null): string | null {
+  const safePath = (pathname ?? "/").toLowerCase();
+  const match = legacyPrefixToCountry.find(
+    ({ prefix }) => safePath === prefix || safePath.startsWith(`${prefix}/`),
+  );
+  return match?.prefix ?? null;
+}
