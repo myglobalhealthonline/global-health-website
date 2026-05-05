@@ -75,7 +75,7 @@ export function DesktopNav({
 
       <Link
         href={navigation.headerPrimaryCta.href}
-        className="rounded-full bg-[var(--color-brand-primary)] px-5 py-3 text-sm font-semibold text-[var(--color-brand-secondary)] shadow-[var(--shadow-card)] transition-colors hover:bg-[var(--color-brand-primary-hover)]"
+        className="gh-btn gh-btn-primary px-5"
       >
         {navigation.headerPrimaryCta.label}
       </Link>

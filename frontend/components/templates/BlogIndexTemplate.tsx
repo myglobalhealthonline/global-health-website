@@ -15,7 +15,7 @@ export function BlogIndexTemplate({ title, description, posts }: BlogIndexTempla
       <HeroSection title={title} description={description} primaryCta={{ href: "/book-online", label: "Book Online" }} />
       <Section>
         <Container>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
             {posts.map((post) => (
               <BlogCard key={post.href} {...post} />
             ))}

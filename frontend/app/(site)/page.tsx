@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { CountrySelector } from "@/components/sections/CountrySelector";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { TrustSignals } from "@/components/sections/TrustSignals";
 import { BookingCTA } from "@/components/sections/BookingCTA";
 import { getSiteContext } from "@/lib/content/get-site-context";
+import { getTemplatePageData } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Global Health | Medical Clinic | Online Doctor",
@@ -13,20 +14,18 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   const { common, activeCountries, navigation } = await getSiteContext("en");
+  const defaultClinic = await getTemplatePageData("/home", "ie");
 
   return (
     <>
       <HeroSection
-        eyebrow="Online Medical Clinic"
-        title="Medical Consultations Wherever You Are"
-        description="Choose your country and connect with specialized doctors in minutes, fully online and confidential."
+        eyebrow="Global Health Platform"
+        title={defaultClinic.countryHome.hero.title}
+        description="Choose your country clinic to access local doctors, consultation types, and secure booking routes."
         primaryCta={{ label: common.cta.primaryBooking, href: navigation.headerPrimaryCta.href }}
         secondaryCta={{ label: "Select your country", href: "#countries" }}
-        trustBadges={["Licensed Doctors", "Secure & Confidential", "Available Across Europe"]}
-        heroImage={{
-          src: "/images/hero/homepage-hero-placeholder.svg",
-          alt: "Global Health homepage hero visual placeholder",
-        }}
+        trustBadges={defaultClinic.countryHome.hero.trustBadges}
+        heroImage={defaultClinic.countryHome.hero.heroImage}
       />
 
       <CountrySelector
@@ -40,49 +39,19 @@ export default async function HomePage() {
 
       <HowItWorks
         title="How does it work?"
-        subtitle="Simple scheduling in 3 steps"
-        steps={[
-          {
-            title: "Choose your location and specialty",
-            description: "Select the country where you are located and pick the right medical specialty.",
-          },
-          {
-            title: "Choose the type of consultation",
-            description: "Browse consultation options and complete the booking form with your details.",
-          },
-          {
-            title: "Get your confirmation by email",
-            description: "Receive your consultation day, time, and access details directly in your inbox.",
-          },
-        ]}
+        subtitle="Same booking journey across all countries"
+        steps={defaultClinic.countryHome.steps}
       />
 
       <TrustSignals
-        title="Trusted by thousands of patients across Europe"
-        subtitle="We follow strict European standards for your safety"
-        items={[
-          {
-            title: "4.9/5 average rating",
-            description: "Based on 2,000+ patient reviews across supported countries.",
-          },
-          {
-            title: "Licensed doctors",
-            description: "All consultations are provided by qualified and registered clinicians.",
-          },
-          {
-            title: "Secure and confidential",
-            description: "Your personal data is protected under strict GDPR standards.",
-          },
-          {
-            title: "Fast access",
-            description: "Book in minutes and get the care you need without waiting rooms.",
-          },
-        ]}
+        title="Trusted digital care, country by country"
+        subtitle="Healthcare-focused, secure, and structured for local compliance expansion"
+        items={defaultClinic.countryHome.trust.items}
       />
       <BookingCTA
-        title="Start Your Online Consultation"
-        description="Choose your country and connect with a licensed doctor in minutes. 100% online, confidential, and secure."
-        ctaLabel="Start consultation"
+        title={defaultClinic.countryHome.booking.title}
+        description={defaultClinic.countryHome.booking.description}
+        ctaLabel={defaultClinic.countryHome.booking.ctaLabel}
         ctaHref={navigation.footerCta.href}
       />
     </>

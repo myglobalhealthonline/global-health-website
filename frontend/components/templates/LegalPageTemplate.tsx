@@ -14,11 +14,11 @@ export function LegalPageTemplate({ title, description, sections }: LegalPageTem
       <HeroSection title={title} description={description} primaryCta={{ href: "/book-online", label: "Book Online" }} />
       <Section>
         <Container>
-          <article className="mx-auto max-w-3xl space-y-6">
+          <article className="gh-card mx-auto max-w-3xl space-y-7 p-7 sm:p-8">
             {sections.map((section) => (
               <section key={section.heading}>
-                <h2 className="text-xl font-semibold text-slate-900">{section.heading}</h2>
-                <p className="mt-2 text-sm leading-6 text-slate-700">{section.body}</p>
+                <h2 className="gh-h3 text-[var(--color-text-primary)]">{section.heading}</h2>
+                <p className="gh-body-sm mt-2 text-[var(--color-text-muted)]">{section.body}</p>
               </section>
             ))}
           </article>

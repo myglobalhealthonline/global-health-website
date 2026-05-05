@@ -11,10 +11,10 @@ type SpecialtiesGridProps = {
 
 export function SpecialtiesGrid({ title = "Specialist consultations", items }: SpecialtiesGridProps) {
   return (
-    <Section>
+    <Section className="bg-[var(--color-background-soft)]">
       <Container>
-        <h2 className="text-2xl font-semibold text-slate-900">{title}</h2>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <h2 className="gh-h2 text-[var(--color-text-primary)]">{title}</h2>
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:gap-6">
           {items.map((item) => (
             <ServiceCard key={item.href} {...item} ctaLabel="See specialty" />
           ))}

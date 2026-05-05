@@ -23,9 +23,11 @@ export function ServiceDetailTemplate({
       <HeroSection title={title} description={description} primaryCta={{ href: bookingHref, label: bookingLabel }} />
       <Section>
         <Container>
-          <article className="prose prose-slate max-w-3xl">
+          <article className="gh-card mx-auto max-w-3xl p-7 sm:p-8">
             {body.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+              <p key={paragraph} className="gh-body text-[var(--color-text-muted)] not-first:mt-4">
+                {paragraph}
+              </p>
             ))}
           </article>
         </Container>

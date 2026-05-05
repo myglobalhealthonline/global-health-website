@@ -120,7 +120,7 @@ export function MobileNav({
             <Dialog.Close asChild>
               <Link
                 href={navigation.headerPrimaryCta.href}
-                className="flex w-full items-center justify-center rounded-full bg-[var(--color-brand-primary)] px-4 py-3.5 text-center text-base font-semibold text-[var(--color-brand-secondary)] shadow-[var(--shadow-card)]"
+                className="gh-btn gh-btn-primary flex w-full text-base"
               >
                 {navigation.headerPrimaryCta.label}
               </Link>

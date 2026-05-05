@@ -15,8 +15,28 @@
   --radius-button: 999px;
   --shadow-card: 0 18px 40px rgba(29, 75, 54, 0.08);
   --shadow-elevated: 0 24px 60px rgba(29, 75, 54, 0.12);
+  --shadow-soft: 0 10px 26px rgba(29, 75, 54, 0.06);
   --container-width: 1180px;
   --section-padding-y: 88px;
+  --section-padding-y-sm: 64px;
+  --section-padding-y-xs: 48px;
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 16px;
+  --space-4: 20px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+  --space-8: 48px;
+  --space-9: 64px;
+  --text-display: clamp(2.05rem, 4.5vw, 3.75rem);
+  --text-h1: clamp(1.9rem, 3.7vw, 3.1rem);
+  --text-h2: clamp(1.5rem, 2.8vw, 2.35rem);
+  --text-h3: clamp(1.13rem, 1.6vw, 1.35rem);
+  --text-body-lg: clamp(1rem, 1.15vw, 1.12rem);
+  --text-body: 1rem;
+  --text-body-sm: 0.92rem;
+  --radius-card-sm: 18px;
   --header-height: 88px;
 }
 
@@ -59,4 +79,107 @@ summary {
 img {
   display: block;
   max-width: 100%;
+}
+
+.gh-heading-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.gh-h1 {
+  font-size: var(--text-h1);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.gh-h2 {
+  font-size: var(--text-h2);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.gh-h3 {
+  font-size: var(--text-h3);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.gh-body-lg {
+  font-size: var(--text-body-lg);
+  line-height: 1.7;
+}
+
+.gh-body {
+  font-size: var(--text-body);
+  line-height: 1.65;
+}
+
+.gh-body-sm {
+  font-size: var(--text-body-sm);
+  line-height: 1.6;
+}
+
+.gh-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-brand-secondary);
+  box-shadow: var(--shadow-soft);
+}
+
+.gh-btn {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--radius-button);
+  padding: 0 24px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.gh-btn-primary {
+  background: var(--color-brand-primary);
+  color: var(--color-brand-secondary);
+}
+
+.gh-btn-primary:hover {
+  background: var(--color-brand-primary-hover);
+}
+
+.gh-btn-outline {
+  border: 1px solid var(--color-brand-primary);
+  background: var(--color-brand-secondary);
+  color: var(--color-brand-primary);
+}
+
+.gh-btn-outline:hover {
+  background: var(--color-background-soft);
+}
+
+.gh-btn-soft {
+  background: var(--color-background-soft);
+  color: var(--color-brand-primary);
+}
+
+.gh-btn-soft:hover {
+  background: var(--color-background-panel);
+}
+
+.gh-link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-brand-primary);
+}
+
+.gh-link-arrow:hover {
+  color: var(--color-brand-primary-hover);
 }

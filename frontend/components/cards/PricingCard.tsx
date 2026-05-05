@@ -6,10 +6,10 @@
 
 export function PricingCard({ name, price, description }: PricingCardProps) {
   return (
-    <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h3 className="text-lg font-semibold text-slate-900">{name}</h3>
-      <p className="mt-2 text-2xl font-bold text-teal-700">{price}</p>
-      <p className="mt-2 text-sm text-slate-600">{description}</p>
+    <article className="gh-card h-full p-6">
+      <h3 className="gh-h3 text-[var(--color-text-primary)]">{name}</h3>
+      <p className="mt-3 text-2xl font-extrabold text-[var(--color-brand-primary)]">{price}</p>
+      <p className="gh-body-sm mt-3 text-[var(--color-text-muted)]">{description}</p>
     </article>
   );
 }

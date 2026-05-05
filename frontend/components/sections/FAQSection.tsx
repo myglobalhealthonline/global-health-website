@@ -14,16 +14,16 @@ export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
     <Section className="bg-[var(--color-brand-secondary)]">
       <Container>
         <div className="mx-auto max-w-3xl">
-          <h2 className="text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)]">{title}</h2>
+          <h2 className="gh-h2 text-[var(--color-text-primary)]">{title}</h2>
         </div>
-        <div className="mx-auto mt-6 max-w-4xl space-y-3">
+        <div className="mx-auto mt-8 max-w-4xl space-y-4">
           {items.map((item) => (
-            <details key={item.question} className="group rounded-[24px] bg-[var(--color-background-soft)] p-5 shadow-[var(--shadow-card)]">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium text-[var(--color-text-primary)]">
+            <details key={item.question} className="gh-card group p-5">
+              <summary className="gh-h3 flex cursor-pointer list-none items-center justify-between gap-4 text-[var(--color-text-primary)]">
                 <span>{item.question}</span>
                 <ChevronDown className="size-5 shrink-0 text-[var(--color-text-muted)] transition-transform group-open:rotate-180" aria-hidden />
               </summary>
-              <p className="mt-4 max-w-3xl text-sm leading-6 text-[var(--color-text-muted)]">{item.answer}</p>
+              <p className="gh-body-sm mt-4 max-w-3xl text-[var(--color-text-muted)]">{item.answer}</p>
             </details>
           ))}
         </div>

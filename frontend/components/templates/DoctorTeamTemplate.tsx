@@ -16,7 +16,11 @@ export function DoctorTeamTemplate({ countryName, doctors, bookingHref, bookingL
         description="Meet clinicians supporting online consultations for this clinic hub."
         primaryCta={{ href: bookingHref, label: bookingLabel }}
       />
-      <DoctorsSection doctors={doctors} />
+      <DoctorsSection
+        title={`${countryName} medical team`}
+        intro="Clinician profiles and specialties are country-managed through content adapters and future admin data."
+        doctors={doctors}
+      />
     </>
   );
 }

@@ -14,7 +14,7 @@ export function SiteFooter({
   return (
     <footer className="mt-auto">
       <div className="border-t border-[var(--color-border)] bg-[var(--color-brand-secondary)]">
-        <Container className="py-14">
+        <Container className="py-[var(--section-padding-y-sm)]">
           <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr_0.9fr_0.9fr]">
             <div>
               <Image
@@ -24,7 +24,7 @@ export function SiteFooter({
                 height={54}
                 className="h-12 w-auto"
               />
-              <p className="mt-5 max-w-xs text-sm leading-6 text-[var(--color-text-muted)]">
+              <p className="gh-body-sm mt-5 max-w-xs text-[var(--color-text-muted)]">
                 Online medical consultations with licensed clinicians across Ireland, Portugal, Spain, Czechia, and Romania.
               </p>
               <a
@@ -37,7 +37,7 @@ export function SiteFooter({
 
             {navigation.footerColumns.map((column) => (
               <div key={column.heading}>
-                <p className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-text-primary)]">
+                <p className="gh-heading-eyebrow mb-4 text-[var(--color-text-primary)]">
                   {column.heading}
                 </p>
                 <ul className="flex flex-col gap-3">

@@ -26,33 +26,27 @@ export function HeroSection({
 }: HeroSectionProps) {
   if (variant === "split") {
     return (
-      <Section className="overflow-hidden bg-[var(--color-background-soft)] pb-16 pt-10 lg:pb-20">
+      <Section className="overflow-hidden bg-[var(--color-background-soft)] pb-[var(--section-padding-y-sm)] pt-10">
         <Container>
           <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-12">
             <div className="max-w-xl">
               {eyebrow ? (
-                <p className="inline-flex rounded-full bg-[var(--color-brand-secondary)] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--color-brand-primary)] shadow-[var(--shadow-card)]">
+                <p className="gh-heading-eyebrow inline-flex rounded-full bg-[var(--color-brand-secondary)] px-4 py-1.5 text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)]">
                   {eyebrow}
                 </p>
               ) : null}
-              <h1 className="mt-5 max-w-[12ch] text-4xl font-extrabold tracking-tight text-[var(--color-text-primary)] sm:text-5xl lg:text-[3.75rem] lg:leading-[1.04]">
+              <h1 className="mt-5 max-w-[12ch] text-[var(--text-display)] font-extrabold tracking-tight leading-[1.04] text-[var(--color-text-primary)]">
                 {title}
               </h1>
-              <p className="mt-5 max-w-[36rem] text-base leading-7 text-[var(--color-text-muted)] sm:text-lg">
+              <p className="gh-body-lg mt-5 max-w-[36rem] text-[var(--color-text-muted)]">
                 {description}
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <Link
-                  href={primaryCta.href}
-                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-brand-primary)] px-7 text-sm font-semibold text-[var(--color-brand-secondary)] shadow-[var(--shadow-card)] transition-colors hover:bg-[var(--color-brand-primary-hover)]"
-                >
+                <Link href={primaryCta.href} className="gh-btn gh-btn-primary">
                   {primaryCta.label}
                 </Link>
                 {secondaryCta ? (
-                  <Link
-                    href={secondaryCta.href}
-                    className="inline-flex min-h-12 items-center justify-center rounded-full border border-[var(--color-brand-primary)] bg-[var(--color-brand-secondary)] px-7 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-panel)]"
-                  >
+                  <Link href={secondaryCta.href} className="gh-btn gh-btn-outline">
                     {secondaryCta.label}
                   </Link>
                 ) : null}
@@ -62,7 +56,7 @@ export function HeroSection({
                   {trustBadges.map((badge) => (
                     <li
                       key={badge}
-                      className="rounded-full bg-[var(--color-brand-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--color-brand-primary)] shadow-[var(--shadow-card)]"
+                      className="rounded-full bg-[var(--color-brand-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)]"
                     >
                       {badge}
                     </li>
@@ -90,32 +84,26 @@ export function HeroSection({
   }
 
   return (
-    <Section className="overflow-hidden bg-[var(--color-background-soft)] pb-16 pt-12 lg:pb-20">
+    <Section className="overflow-hidden bg-[var(--color-background-soft)] pb-[var(--section-padding-y-sm)] pt-12">
       <Container>
         <div className="mx-auto max-w-4xl text-center">
           {eyebrow ? (
-            <p className="inline-flex rounded-full bg-[var(--color-brand-secondary)] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--color-brand-primary)] shadow-[var(--shadow-card)]">
+            <p className="gh-heading-eyebrow inline-flex rounded-full bg-[var(--color-brand-secondary)] px-4 py-1.5 text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)]">
               {eyebrow}
             </p>
           ) : null}
-          <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-[var(--color-text-primary)] sm:text-5xl lg:text-[3.75rem] lg:leading-[1.05]">
+          <h1 className="mt-5 text-[var(--text-display)] font-extrabold tracking-tight leading-[1.05] text-[var(--color-text-primary)]">
             {title}
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-[var(--color-text-muted)] sm:text-lg">
+          <p className="gh-body-lg mx-auto mt-5 max-w-2xl text-[var(--color-text-muted)]">
             {description}
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
-            <Link
-              href={primaryCta.href}
-              className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-brand-primary)] px-7 text-sm font-semibold text-[var(--color-brand-secondary)] shadow-[var(--shadow-card)] transition-colors hover:bg-[var(--color-brand-primary-hover)]"
-            >
+            <Link href={primaryCta.href} className="gh-btn gh-btn-primary">
               {primaryCta.label}
             </Link>
             {secondaryCta ? (
-              <Link
-                href={secondaryCta.href}
-                className="inline-flex min-h-12 items-center justify-center rounded-full border border-[var(--color-brand-primary)] bg-[var(--color-brand-secondary)] px-7 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-panel)]"
-              >
+              <Link href={secondaryCta.href} className="gh-btn gh-btn-outline">
                 {secondaryCta.label}
               </Link>
             ) : null}
@@ -125,7 +113,7 @@ export function HeroSection({
               {trustBadges.map((badge) => (
                 <li
                   key={badge}
-                  className="rounded-full bg-[var(--color-brand-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--color-brand-primary)] shadow-[var(--shadow-card)]"
+                  className="rounded-full bg-[var(--color-brand-secondary)] px-3 py-1.5 text-xs font-medium text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)]"
                 >
                   {badge}
                 </li>

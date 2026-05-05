@@ -10,7 +10,7 @@ import { TrustSignals } from "@/components/sections/TrustSignals";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 
-type CountryHomeTemplateProps = {
+export type CountryHomeTemplateProps = {
   countryName: string;
   hero: {
     eyebrow?: string;
@@ -110,7 +110,7 @@ export function CountryHomeTemplate({
                 <Link
                   key={action.href + action.title}
                   href={action.href}
-                  className="rounded-[18px] bg-[var(--color-background-soft)] px-4 py-2.5 text-[var(--color-brand-primary)] shadow-[var(--shadow-card)] transition-colors hover:bg-[var(--color-brand-secondary)]"
+                  className="rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-4 py-2.5 text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-brand-secondary)]"
                 >
                   {action.title}
                 </Link>
@@ -138,21 +138,18 @@ export function CountryHomeTemplate({
               <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                 <div className="max-w-2xl">
                   {availability.eyebrow ? (
-                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/70">
+                    <p className="gh-heading-eyebrow text-white/72">
                       {availability.eyebrow}
                     </p>
                   ) : null}
-                  <h2 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">
+                  <h2 className="gh-h2 mt-3 text-[var(--color-brand-secondary)]">
                     {availability.title}
                   </h2>
-                  <p className="mt-3 max-w-2xl text-base leading-7 text-white/80 sm:text-lg">
+                  <p className="gh-body-lg mt-3 max-w-2xl text-white/82">
                     {availability.description}
                   </p>
                 </div>
-                <Link
-                  href={availability.cta.href}
-                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-brand-secondary)] px-7 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-white"
-                >
+                <Link href={availability.cta.href} className="gh-btn bg-[var(--color-brand-secondary)] text-[var(--color-brand-primary)] hover:bg-white">
                   {availability.cta.label}
                 </Link>
               </div>
@@ -167,26 +164,23 @@ export function CountryHomeTemplate({
             <div className="grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
               <div>
                 {about.eyebrow ? (
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+                  <p className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
                     {about.eyebrow}
                   </p>
                 ) : null}
-                <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)] sm:text-4xl">
+                <h2 className="gh-h2 mt-3 text-[var(--color-text-primary)]">
                   {about.title}
                 </h2>
-                <div className="mt-4 space-y-4 text-base leading-7 text-[var(--color-text-muted)]">
+                <div className="gh-body mt-4 space-y-4 text-[var(--color-text-muted)]">
                   {about.description.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
                 </div>
                 {about.highlight ? (
-                  <p className="mt-5 text-lg font-semibold text-[var(--color-text-primary)]">{about.highlight}</p>
+                  <p className="gh-body-lg mt-5 font-semibold text-[var(--color-text-primary)]">{about.highlight}</p>
                 ) : null}
                 {about.cta ? (
-                  <Link
-                    href={about.cta.href}
-                    className="mt-6 inline-flex min-h-12 items-center rounded-full border border-[var(--color-brand-primary)] bg-[var(--color-brand-secondary)] px-7 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
-                  >
+                  <Link href={about.cta.href} className="gh-btn gh-btn-outline mt-6">
                     {about.cta.label}
                   </Link>
                 ) : null}
@@ -216,16 +210,13 @@ export function CountryHomeTemplate({
       {homeDelivery ? (
         <Section className="bg-[var(--color-brand-secondary)]">
           <Container>
-            <div className="grid gap-8 rounded-[30px] bg-[var(--color-background-soft)] p-6 shadow-[var(--shadow-card)] sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="grid gap-8 rounded-[30px] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-6 shadow-[var(--shadow-soft)] sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
               <div>
-                <h2 className="text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)] sm:text-4xl">
+                <h2 className="gh-h2 text-[var(--color-text-primary)]">
                   {homeDelivery.title}
                 </h2>
-                <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-muted)]">{homeDelivery.description}</p>
-                <Link
-                  href={homeDelivery.cta.href}
-                  className="mt-6 inline-flex min-h-12 items-center rounded-full bg-[var(--color-brand-primary)] px-7 text-sm font-semibold text-[var(--color-brand-secondary)] transition-colors hover:bg-[var(--color-brand-primary-hover)]"
-                >
+                <p className="gh-body mt-4 max-w-2xl text-[var(--color-text-muted)]">{homeDelivery.description}</p>
+                <Link href={homeDelivery.cta.href} className="gh-btn gh-btn-primary mt-6">
                   {homeDelivery.cta.label}
                 </Link>
               </div>
@@ -261,10 +252,10 @@ export function CountryHomeTemplate({
                 </div>
               ) : null}
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+                <p className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
                   Testimonials
                 </p>
-                <blockquote className="mt-4 text-2xl font-extrabold tracking-tight text-[var(--color-text-primary)] sm:text-3xl">
+                <blockquote className="mt-4 text-[var(--text-h2)] font-extrabold tracking-tight text-[var(--color-text-primary)]">
                   &ldquo;{doctorSpotlight.quote}&rdquo;
                 </blockquote>
                 <p className="mt-5 text-lg font-semibold text-[var(--color-text-primary)]">{doctorSpotlight.name}</p>

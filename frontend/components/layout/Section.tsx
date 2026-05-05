@@ -6,7 +6,10 @@ type SectionProps = ComponentPropsWithoutRef<"section">;
 export function Section({ className, ...props }: SectionProps) {
   return (
     <section
-      className={cn("py-16 sm:py-20 lg:py-[var(--section-padding-y)]", className)}
+      className={cn(
+        "py-[var(--section-padding-y-xs)] sm:py-[var(--section-padding-y-sm)] lg:py-[var(--section-padding-y)]",
+        className,
+      )}
       {...props}
     />
   );

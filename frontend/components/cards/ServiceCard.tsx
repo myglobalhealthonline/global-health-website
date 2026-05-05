@@ -31,16 +31,13 @@ export function ServiceCard({
   ctaLabel = "View details",
 }: ServiceCardProps) {
   return (
-    <article className="flex h-full flex-col rounded-[24px] bg-[var(--color-brand-secondary)] p-6 shadow-[var(--shadow-card)] transition-transform hover:-translate-y-1">
-      <span className="flex size-12 items-center justify-center rounded-[18px] bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
+    <article className="gh-card flex h-full flex-col p-6">
+      <span className="flex size-11 items-center justify-center rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
         {renderServiceIcon(title)}
       </span>
-      <h3 className="mt-5 text-xl font-semibold text-[var(--color-text-primary)]">{title}</h3>
-      <p className="mt-3 flex-1 text-sm leading-6 text-[var(--color-text-muted)]">{description}</p>
-      <Link
-        href={href}
-        className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
-      >
+      <h3 className="gh-h3 mt-5 text-[var(--color-text-primary)]">{title}</h3>
+      <p className="gh-body-sm mt-3 flex-1 text-[var(--color-text-muted)]">{description}</p>
+      <Link href={href} className="gh-link-arrow mt-5">
         {ctaLabel}
         <ArrowRight className="size-4" aria-hidden />
       </Link>
