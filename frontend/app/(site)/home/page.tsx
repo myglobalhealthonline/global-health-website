@@ -24,14 +24,12 @@ export default async function Page() {
       services={data.specialistListing.slice(0, 6)}
       steps={data.countryHome.steps}
       homeDelivery={data.countryHome.homeDelivery}
-      doctorsTitle="Ireland medical team"
       doctorSpotlight={data.countryHome.doctorSpotlight}
-      doctors={data.doctors}
+      doctors={[]}
       trustTitle={data.countryHome.trust.title}
       trustSubtitle={data.countryHome.trust.subtitle}
       trustItems={data.countryHome.trust.items}
-      faqTitle={data.countryHome.faqTitle}
-      faqs={data.faqItems}
+      faqs={[]}
       bookingCta={data.countryHome.booking}
     />
   );

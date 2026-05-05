@@ -276,17 +276,19 @@ export function CountryHomeTemplate({
         </Section>
       ) : null}
 
-      <section id="team">
-        <DoctorsSection
-          title={doctorsTitle}
-          intro={`Meet clinicians connected to the ${countryName} clinic routes.`}
-          doctors={doctors}
-        />
-      </section>
+      {doctors.length > 0 ? (
+        <section id="team">
+          <DoctorsSection
+            title={doctorsTitle}
+            intro={`Meet clinicians connected to the ${countryName} clinic routes.`}
+            doctors={doctors}
+          />
+        </section>
+      ) : null}
 
       <TrustSignals title={trustTitle} subtitle={trustSubtitle} items={trustItems} />
 
-      <FAQSection title={faqTitle} items={faqs} />
+      {faqs.length > 0 ? <FAQSection title={faqTitle} items={faqs} /> : null}
 
       <BookingCTA
         title={bookingCta?.title ?? "Ready to get started?"}

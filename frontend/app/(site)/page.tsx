@@ -3,7 +3,6 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { CountrySelector } from "@/components/sections/CountrySelector";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { TrustSignals } from "@/components/sections/TrustSignals";
-import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { BookingCTA } from "@/components/sections/BookingCTA";
 import { getSiteContext } from "@/lib/content/get-site-context";
 
@@ -80,43 +79,6 @@ export default async function HomePage() {
           },
         ]}
       />
-
-      <ServicesGrid
-        title="Popular consultations"
-        items={[
-          {
-            title: "General Consultation",
-            description: "Speak with a licensed doctor for everyday health concerns and guidance.",
-            href: "/general-consultation-ie",
-          },
-          {
-            title: "Specialist Consultation",
-            description: "Access specialist doctors for focused evaluation and treatment planning.",
-            href: "/specialty-ie",
-          },
-          {
-            title: "Online Prescription",
-            description: "Request prescription support quickly through secure online assessment.",
-            href: "/online-prescription",
-          },
-          {
-            title: "Home Delivery",
-            description: "Get approved medications delivered safely and conveniently to your home.",
-            href: "/home-delivery",
-          },
-          {
-            title: "Health Tests",
-            description: "Book home health test options and receive guided next steps from doctors.",
-            href: "/home-health-test",
-          },
-          {
-            title: "Partner Clinics",
-            description: "Explore trusted local clinic partners for additional in-person services.",
-            href: "/partner-clinics",
-          },
-        ]}
-      />
-
       <BookingCTA
         title="Start Your Online Consultation"
         description="Choose your country and connect with a licensed doctor in minutes. 100% online, confidential, and secure."

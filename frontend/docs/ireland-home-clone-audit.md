@@ -3,128 +3,62 @@
 Source audited: `https://www.myglobalhealth.online/home`
 Target route: `frontend/app/(site)/home/page.tsx`
 
-## Section Order
+## Exact Section Map
 
-1. Sticky global header
-2. Quick-link row (`Home`, `Specialist Consultation`, `GP Consultation`)
-3. Ireland hero with two CTAs, badges, and hero visual
-4. Same-day consultation CTA block
-5. About-us split section
-6. Specialist consultations grid
-7. How-it-works 3-step section
-8. Home-delivery promotional section
-9. Doctor spotlight
-10. Team preview
-11. Trust / standards section
-12. FAQ
-13. Bottom booking CTA
-14. Global footer
+| Order | Section Name | Background | Layout Type | Heading Text | CTA Text | Image / Asset | Desktop Layout | Tablet Layout | Mobile Layout | Current Local Match |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | Header | warm white `#FFFDFD` | sticky top nav | n/a | `Start Consultation` in header | shared logo | horizontal nav with dropdowns and right CTA | compressed horizontal nav | mobile trigger + menu | close |
+| 2 | Quick-link row | warm white `#FFFDFD` | compact pill links | n/a | `Home`, `Specialist Consultation`, `GP Consultation` | no major art | compact chip row | wraps lightly | wraps | close |
+| 3 | Ireland hero | soft light background | split hero | `Medical Consultations Wherever You Are` | `Schedule with a GP`, `Schedule with a Specialist` | Ireland hero artwork | text left, image right | balanced split/stack | stacked | close |
+| 4 | Same-day consultation CTA | dark green `#1D4B36` | promo card strip | `Same-Day Consultation` | `Book Your Consultation` | no major art | large promo block | large promo block | stacked | close |
+| 5 | About us | warm white `#FFFDFD` | text + image split | `Quality Healthcare, Without Leaving Home` | `Schedule an Appointment` | clinic/about image | text left, image right | balanced split | stacked | close |
+| 6 | Specialist consultations | soft light background | section intro + service cards | `Specialist Consultations` | `View All Our Areas` | specialist card imagery/icons | 3-up cards | 2-up cards | stacked cards | close |
+| 7 | How it works | warm white `#FFFDFD` | 3-step cards | implied process heading / flow | `Schedule a consultation` inside process cards | step illustrations/icons | 3 columns | 2 columns | 1 column | close |
+| 8 | Home delivery | warm white / soft panel | split feature section | `Home Delivery` | delivery CTA | home-delivery image | text + image split | split/stack | stacked | close |
+| 9 | Doctor spotlight / testimonials | light page background | image + testimonial copy | `Testimonials` | none in main spotlight | doctor portrait/testimonial image | image left, text right | balanced split | stacked | close |
+| 10 | Trust / standards | light page background | heading + trust cards | `Trusted by thousands of patients across Europe` | none | trust badges / icons | centered heading + cards | 2-up cards | stacked | close |
+| 11 | Footer columns | warm white `#FFFDFD` | logo + columns | footer only | footer links | shared footer logo | left brand block + columns | wrap | stacked | close |
+| 12 | Footer CTA block | dark green `#1D4B36` | bottom CTA bar | `Start Your Online Consultation` | `Start Consultation` | CTA/footer graphic + trust bullets | text left, CTA right | stacked CTA row | stacked | close |
 
-## Hero Content / Layout
+## Composition Notes
 
-- Eyebrow: `Ireland Online Medical Clinic`
-- Main headline: `Medical Consultations Wherever You Are`
-- Supporting copy references Irish Medical Council certification and multilingual consultations.
-- CTA 1: GP consultation booking
-- CTA 2: Specialist consultation booking
-- Badge row mirrors the live site intent: certification, same-day consultations, multilingual support.
-- Hero uses a split layout on larger breakpoints to better match the visual weight of the live Wix page.
+- The live Ireland page does **not** need an extra FAQ section in the visible main flow.
+- The live Ireland page reads closer with a doctor spotlight/testimonial section than with a separate team-preview block in the middle of the page.
+- The local route was adjusted to remove the extra team-preview and FAQ rendering from `/home`.
 
-## CTAs
+## Current Route Composition
 
-- Hero primary CTA for GP consultations
-- Hero secondary CTA for specialist consultations
-- Same-day consultation CTA block
-- About section CTA
-- Specialist grid CTA
-- Home-delivery CTA
-- Bottom booking CTA
+Current local `/home` now renders:
+1. Quick-link row
+2. Ireland hero
+3. Same-day consultation CTA
+4. About us
+5. Specialist consultations
+6. How it works
+7. Home delivery
+8. Doctor spotlight / testimonials
+9. Trust / standards
+10. Bottom booking CTA
+11. Shared footer
 
-## Clinic / Country Messaging
+## Match Status Summary
 
-- The page is framed specifically as the Ireland clinic hub.
-- Messaging emphasizes access across Ireland, video consultations, and multilingual availability.
-- Copy avoids adding new medical claims beyond the live Wix positioning.
+- Header: close
+- Quick-link row: close
+- Hero: close
+- Same-day CTA: close
+- About section: close
+- Specialist consultation grid: close
+- How it works: close
+- Home delivery: close
+- Doctor spotlight: close
+- Trust section: close
+- Footer columns: close
+- Footer CTA block: close
 
-## Doctors / Team Preview
+## Remaining Gaps
 
-- Live page shows a testimonial-style doctor spotlight and team navigation.
-- Implementation includes:
-  - doctor spotlight section for Dr. Khoiamul Islam
-  - team preview cards section
-- Doctor portrait is still placeholder-based pending asset approval.
-
-## Services / Consultation Sections
-
-- Specialist consultations are the main service grid on the live page.
-- Implementation uses Ireland specialist routes for the primary card grid.
-- Generic vector icons were added for card rhythm only; final branded icons are still pending.
-- Home delivery remains a dedicated promotional section.
-
-## Pricing / Plan References
-
-- The live page links to pricing/plans in navigation but does not present a primary pricing block in the body.
-- No dedicated pricing section was added to `/home`.
-
-## Trust / Benefit Sections
-
-- Live page includes Europe-wide trust framing, ratings, safety, confidentiality, and access messaging.
-- Implementation maps those into a structured trust section with icon-led cards.
-
-## Footer / CTA Flow
-
-- Existing global footer remains intact.
-- Bottom booking CTA remains above the footer with a stronger visual handoff than before.
-- Footer hierarchy is still approximate because the live Wix footer uses brand assets and a different final composition.
-
-## Responsive Notes
-
-- Mobile (`320`, `375`, `390`, `430`):
-  - quick links wrap safely
-  - hero text remains readable with stacked CTAs
-  - split sections collapse vertically
-  - service cards and team cards stack cleanly
-- Tablet (`768`, `1024`):
-  - hero becomes more balanced
-  - service and trust grids move into multi-column layouts
-  - same-day CTA and bottom CTA maintain readable button spacing
-- Desktop (`1280`, `1440`):
-  - split hero, about, delivery, and doctor spotlight sections carry more of the Wix visual rhythm
-  - containers remain capped to avoid overly long line lengths
-
-## Visual QA Summary
-
-### What Matches
-
-- Ireland-specific route structure and section order
-- Split hero direction with two CTAs
-- Quick-link row placement directly below the header
-- Same-day consultation CTA prominence
-- About section split layout
-- Specialist consultation section prominence
-- Doctor spotlight before team preview
-- Trust, FAQ, and bottom CTA sequencing
-- No obvious horizontal-scroll risk in the current responsive layout
-
-### What Is Still Approximate
-
-- Shared header branding is improved but still uses a monogram/text treatment instead of the real logo
-- Hero typography and image composition are closer but not exact
-- Specialist cards use generic vector icons rather than final branded service art
-- Footer transition is improved but still follows the existing sitewide footer structure
-
-### What Is Blocked By Missing Assets
-
-- Final Ireland hero artwork
-- Ireland clinic/about image
-- Doctor portrait or approved testimonial artwork
-- Home-delivery artwork
-- Final shared logo
-- Brand-specific trust and service icon set
-- Footer decorative artwork
-
-## Final Visual Gaps
-
-- Exact visual parity still depends on approved brand assets.
-- The live Wix page includes richer imagery and embedded booking/testimonial widgets that are intentionally not being recreated as Wix runtime code.
-- Header and footer remain globally shared components, so they are only partially country-specific in appearance.
+- Exact hero parity is blocked by the final Ireland hero artwork.
+- About section parity is blocked by the approved clinic/about image.
+- Doctor spotlight parity is blocked by the real portrait/testimonial image.
+- Footer parity is blocked by the real shared logo and footer CTA artwork.
