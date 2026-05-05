@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Menu, X } from "lucide-react";
@@ -18,34 +19,34 @@ export function MobileNav({
       <Dialog.Trigger asChild>
         <button
           type="button"
-          className="hover:bg-muted inline-flex rounded-full border border-slate-200 bg-white p-2.5 shadow-sm md:hidden"
+          className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2.5 shadow-[var(--shadow-card)] md:hidden"
           aria-label="Open menu"
         >
-          <Menu className="size-5" aria-hidden />
+          <Menu className="size-5 text-[var(--color-text-primary)]" aria-hidden />
         </button>
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
-        <Dialog.Content className="bg-background fixed inset-x-0 top-0 z-50 flex max-h-[100dvh] flex-col shadow-xl md:hidden">
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
+        <Dialog.Content className="fixed inset-x-0 top-0 z-50 flex max-h-[100dvh] flex-col bg-[var(--color-brand-secondary)] shadow-[var(--shadow-elevated)] md:hidden">
           <Dialog.Title className="sr-only">Main navigation</Dialog.Title>
           <Dialog.Description className="sr-only">
             Explore clinics, services, and book online.
           </Dialog.Description>
 
-          <div className="flex items-center justify-between gap-4 border-b px-4 py-4">
-            <Link href="/" className="flex items-center gap-3">
-              <span
-                aria-hidden
-                className="flex size-10 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-600 to-sky-700 text-sm font-bold text-white shadow-sm"
-              >
-                GH
-              </span>
-              <span className="text-lg font-semibold tracking-tight">{siteName}</span>
+          <div className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] px-4 py-4">
+            <Link href="/" className="flex items-center">
+              <Image
+                src="/logos/global-health-logo-placeholder.svg"
+                alt={`${siteName} logo placeholder`}
+                width={200}
+                height={48}
+                className="h-10 w-auto"
+              />
             </Link>
-            <Dialog.Close className="hover:bg-muted inline-flex rounded-full border border-slate-200 bg-white p-2">
+            <Dialog.Close className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2">
               <span className="sr-only">Close menu</span>
-              <X className="size-5" aria-hidden />
+              <X className="size-5 text-[var(--color-text-primary)]" aria-hidden />
             </Dialog.Close>
           </div>
 
@@ -54,7 +55,7 @@ export function MobileNav({
               <div className="space-y-6 pt-2">
                 {navigation.clinicsMenuByCountry.map(({ country, links }) => (
                   <div key={country.code}>
-                    <p className="text-primary mb-2 text-xs font-semibold uppercase tracking-wide">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
                       {country.name}
                     </p>
                     <ul className="flex flex-col gap-1">
@@ -63,7 +64,7 @@ export function MobileNav({
                           <Dialog.Close asChild>
                             <Link
                               href={item.href}
-                              className="hover:bg-muted active:bg-muted block rounded-xl px-3 py-3 text-[17px] font-medium leading-snug"
+                              className="block rounded-[16px] px-3 py-3 text-[17px] font-medium leading-snug text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                             >
                               {item.label}
                             </Link>
@@ -83,7 +84,7 @@ export function MobileNav({
                     <Dialog.Close asChild>
                       <Link
                         href={item.href}
-                        className="hover:bg-muted active:bg-muted block rounded-xl px-3 py-3 text-[17px] font-medium"
+                        className="block rounded-[16px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                       >
                         {item.label}
                       </Link>
@@ -93,12 +94,12 @@ export function MobileNav({
               </ul>
             </AccordionSection>
 
-            <div className="border-border mt-8 flex flex-col gap-2 border-t pt-6">
+            <div className="mt-8 flex flex-col gap-2 border-t border-[var(--color-border)] pt-6">
               {navigation.headerUtilityLinks.map((item) => (
                 <Dialog.Close key={item.href} asChild>
                   <Link
                     href={item.href}
-                    className="hover:bg-muted active:bg-muted rounded-xl px-3 py-3 text-[17px] font-medium"
+                    className="rounded-[16px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                   >
                     {item.label}
                   </Link>
@@ -107,7 +108,7 @@ export function MobileNav({
               <Dialog.Close asChild>
                 <Link
                   href={navigation.headerAuthLink.href}
-                  className="hover:bg-muted active:bg-muted rounded-xl px-3 py-3 text-[17px] font-medium"
+                  className="rounded-[16px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                 >
                   {navigation.headerAuthLink.label}
                 </Link>
@@ -115,11 +116,11 @@ export function MobileNav({
             </div>
           </div>
 
-          <div className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/80 fixed bottom-0 left-0 right-0 border-t p-4 backdrop-blur-md">
+          <div className="fixed bottom-0 left-0 right-0 border-t border-[var(--color-border)] bg-[rgba(255,253,253,0.94)] p-4 backdrop-blur-md">
             <Dialog.Close asChild>
               <Link
                 href={navigation.headerPrimaryCta.href}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 flex w-full items-center justify-center rounded-full px-4 py-3.5 text-center text-base font-semibold shadow-sm"
+                className="flex w-full items-center justify-center rounded-full bg-[var(--color-brand-primary)] px-4 py-3.5 text-center text-base font-semibold text-[var(--color-brand-secondary)] shadow-[var(--shadow-card)]"
               >
                 {navigation.headerPrimaryCta.label}
               </Link>
@@ -139,10 +140,10 @@ function AccordionSection({
   children: ReactNode;
 }) {
   return (
-    <details className="border-border group border-b pb-4 last:border-b-0">
+    <details className="group border-b border-[var(--color-border)] pb-4 last:border-b-0">
       <summary className="marker:hidden flex cursor-pointer list-none items-center justify-between gap-4 py-2 [&::-webkit-details-marker]:hidden">
-        <span className="text-lg font-semibold">{title}</span>
-        <span className="text-muted-foreground inline-block rotate-0 transition-transform group-open:-rotate-180">
+        <span className="text-lg font-semibold text-[var(--color-text-primary)]">{title}</span>
+        <span className="inline-block rotate-0 text-[var(--color-text-muted)] transition-transform group-open:-rotate-180">
           ⌄
         </span>
       </summary>

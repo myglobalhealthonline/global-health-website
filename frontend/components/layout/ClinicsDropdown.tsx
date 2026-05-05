@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown } from "lucide-react";
@@ -21,7 +21,7 @@ export function ClinicsDropdown({
         <button
           type="button"
           className={cn(
-            "hover:text-primary inline-flex items-center gap-1 rounded-md px-2 py-1.5 text-sm font-medium outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2",
+            "inline-flex items-center gap-1 rounded-full px-3 py-2 text-[15px] font-medium text-[var(--color-text-primary)] outline-none transition-colors hover:text-[var(--color-brand-primary-hover)] focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2",
             className,
           )}
         >
@@ -31,14 +31,14 @@ export function ClinicsDropdown({
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="animate-in fade-in-0 zoom-in-95 border-border bg-card text-card-foreground data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 z-50 max-h-[min(70vh,520px)] w-[min(100vw-2rem,560px)] overflow-y-auto rounded-lg border p-4 shadow-xl"
-          sideOffset={8}
+          className="z-50 max-h-[min(70vh,520px)] w-[min(100vw-2rem,560px)] overflow-y-auto rounded-[24px] border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-4 shadow-[var(--shadow-elevated)]"
+          sideOffset={10}
           align="start"
         >
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {clinicsMenuByCountry.map(({ country, links }) => (
               <div key={country.code}>
-                <p className="text-primary mb-2 text-xs font-semibold uppercase tracking-wide">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
                   {country.name}
                 </p>
                 <ul className="space-y-1">
@@ -46,7 +46,7 @@ export function ClinicsDropdown({
                     <li key={item.href + item.label}>
                       <DropdownMenu.Item asChild>
                         <Link
-                          className="hover:bg-muted focus:bg-muted block rounded-md px-2 py-2 text-sm outline-none"
+                          className="block rounded-[16px] px-2 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
                           href={item.href}
                         >
                           {item.label}

@@ -30,7 +30,7 @@ export function DesktopNav({
         <DropdownMenu.Trigger asChild>
           <button
             type="button"
-            className="hover:text-primary inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium outline-none ring-offset-background transition-colors focus-visible:ring-2 focus-visible:ring-cyan-600 focus-visible:ring-offset-2"
+            className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-[15px] font-medium text-[var(--color-text-primary)] outline-none transition-colors hover:text-[var(--color-brand-primary-hover)] focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2"
           >
             {navigation.aboutLabel}
             <ChevronDown className="size-4 shrink-0 opacity-70" aria-hidden />
@@ -38,14 +38,14 @@ export function DesktopNav({
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
           <DropdownMenu.Content
-            className="border-border bg-card text-card-foreground animate-in fade-in-0 zoom-in-95 z-50 min-w-[220px] rounded-2xl border p-2 shadow-xl"
+            className="z-50 min-w-[220px] rounded-[20px] border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-card)]"
             sideOffset={10}
             align="start"
           >
             {navigation.aboutMenuLinks.map((item) => (
               <DropdownMenu.Item key={item.href + item.label} asChild>
                 <Link
-                  className="hover:bg-muted focus:bg-muted block rounded-xl px-3 py-2.5 text-sm outline-none"
+                  className="block rounded-[16px] px-3 py-2.5 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
                   href={item.href}
                 >
                   {item.label}
@@ -60,7 +60,7 @@ export function DesktopNav({
         <Link
           key={item.href}
           href={item.href}
-          className="hover:text-primary rounded-full px-3 py-2 text-sm font-medium transition-colors"
+          className="rounded-full px-3 py-2 text-[15px] font-medium text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
         >
           {item.label}
         </Link>
@@ -68,14 +68,14 @@ export function DesktopNav({
 
       <Link
         href={navigation.headerAuthLink.href}
-        className="text-muted-foreground hover:text-primary rounded-full px-3 py-2 text-sm font-medium transition-colors"
+        className="rounded-full px-3 py-2 text-[15px] font-medium text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
       >
         {navigation.headerAuthLink.label}
       </Link>
 
       <Link
         href={navigation.headerPrimaryCta.href}
-        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-5 py-2.5 text-sm font-semibold shadow-sm transition-colors"
+        className="rounded-full bg-[var(--color-brand-primary)] px-5 py-3 text-sm font-semibold text-[var(--color-brand-secondary)] shadow-[var(--shadow-card)] transition-colors hover:bg-[var(--color-brand-primary-hover)]"
       >
         {navigation.headerPrimaryCta.label}
       </Link>

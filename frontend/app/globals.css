@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fafbfc;
-  --foreground: #0f172a;
+  --color-brand-primary: #1d4b36;
+  --color-brand-primary-hover: #153b2a;
+  --color-brand-secondary: #fffdfd;
+  --color-brand-accent: #d5dff0;
+  --color-background-page: #ededed;
+  --color-background-soft: #fbf9f9;
+  --color-background-panel: #f6f5f5;
+  --color-text-primary: #1d4b36;
+  --color-text-muted: #4f5d54;
+  --color-border: #d5dff0;
+  --radius-card: 24px;
+  --radius-button: 999px;
+  --shadow-card: 0 18px 40px rgba(29, 75, 54, 0.08);
+  --shadow-elevated: 0 24px 60px rgba(29, 75, 54, 0.12);
+  --container-width: 1180px;
+  --section-padding-y: 88px;
+  --header-height: 88px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: oklch(0.52 0.09 182);
-  --color-primary-foreground: #ffffff;
-  --color-muted: #64748b;
-  --color-muted-foreground: #64748b;
-  --color-border: #e2e8f0;
-  --color-card: #ffffff;
-  --color-card-foreground: #0f172a;
-  --font-sans: var(--font-geist-sans);
+  --color-background: var(--color-background-page);
+  --color-foreground: var(--color-text-primary);
+  --color-primary: var(--color-brand-primary);
+  --color-primary-foreground: var(--color-brand-secondary);
+  --color-muted: var(--color-background-panel);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --color-card: var(--color-brand-secondary);
+  --color-card-foreground: var(--color-text-primary);
+  --font-sans: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  background: var(--color-background-page);
+  color: var(--color-text-primary);
+  font-family: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+a,
+button,
+summary {
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: 180ms;
+}
+
+img {
+  display: block;
+  max-width: 100%;
 }

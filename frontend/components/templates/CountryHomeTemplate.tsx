@@ -100,7 +100,7 @@ export function CountryHomeTemplate({
   return (
     <>
       {quickActions.length > 0 ? (
-        <Section className="border-b border-slate-100 bg-white py-5">
+        <Section className="border-b border-[var(--color-border)] bg-[var(--color-brand-secondary)] py-5">
           <Container>
             <nav
               aria-label={`${countryName} quick links`}
@@ -110,7 +110,7 @@ export function CountryHomeTemplate({
                 <Link
                   key={action.href + action.title}
                   href={action.href}
-                  className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-slate-700 shadow-sm transition-colors hover:border-cyan-300 hover:bg-white hover:text-cyan-700"
+                  className="rounded-[18px] bg-[var(--color-background-soft)] px-4 py-2.5 text-[var(--color-brand-primary)] shadow-[var(--shadow-card)] transition-colors hover:bg-[var(--color-brand-secondary)]"
                 >
                   {action.title}
                 </Link>
@@ -132,24 +132,26 @@ export function CountryHomeTemplate({
       />
 
       {availability ? (
-        <Section className="bg-slate-50 py-10">
+        <Section className="bg-[var(--color-background-page)] py-10">
           <Container>
-            <div className="rounded-[2rem] bg-gradient-to-r from-cyan-700 to-sky-700 p-8 text-white shadow-lg sm:p-10">
+            <div className="rounded-[30px] bg-[var(--color-brand-primary)] p-8 text-[var(--color-brand-secondary)] shadow-[var(--shadow-elevated)] sm:p-10">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                 <div className="max-w-2xl">
                   {availability.eyebrow ? (
-                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-100">
+                    <p className="text-sm font-semibold uppercase tracking-[0.18em] text-white/70">
                       {availability.eyebrow}
                     </p>
                   ) : null}
-                  <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+                  <h2 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">
                     {availability.title}
                   </h2>
-                  <p className="mt-3 max-w-2xl text-base text-cyan-50 sm:text-lg">{availability.description}</p>
+                  <p className="mt-3 max-w-2xl text-base leading-7 text-white/80 sm:text-lg">
+                    {availability.description}
+                  </p>
                 </div>
                 <Link
                   href={availability.cta.href}
-                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-7 text-sm font-semibold text-cyan-800 transition-colors hover:bg-cyan-50"
+                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--color-brand-secondary)] px-7 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-white"
                 >
                   {availability.cta.label}
                 </Link>
@@ -160,41 +162,43 @@ export function CountryHomeTemplate({
       ) : null}
 
       {about ? (
-        <Section>
+        <Section className="bg-[var(--color-brand-secondary)]">
           <Container>
             <div className="grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
               <div>
                 {about.eyebrow ? (
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-700">{about.eyebrow}</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+                    {about.eyebrow}
+                  </p>
                 ) : null}
-                <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)] sm:text-4xl">
                   {about.title}
                 </h2>
-                <div className="mt-4 space-y-4 text-base leading-7 text-slate-600">
+                <div className="mt-4 space-y-4 text-base leading-7 text-[var(--color-text-muted)]">
                   {about.description.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
                 </div>
                 {about.highlight ? (
-                  <p className="mt-5 text-lg font-semibold text-slate-900">{about.highlight}</p>
+                  <p className="mt-5 text-lg font-semibold text-[var(--color-text-primary)]">{about.highlight}</p>
                 ) : null}
                 {about.cta ? (
                   <Link
                     href={about.cta.href}
-                    className="mt-6 inline-flex min-h-12 items-center rounded-full border border-cyan-700 px-7 text-sm font-semibold text-cyan-700 transition-colors hover:bg-cyan-50"
+                    className="mt-6 inline-flex min-h-12 items-center rounded-full border border-[var(--color-brand-primary)] bg-[var(--color-brand-secondary)] px-7 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
                   >
                     {about.cta.label}
                   </Link>
                 ) : null}
               </div>
               {about.image ? (
-                <div className="overflow-hidden rounded-[2rem] border border-cyan-100 bg-cyan-50 p-2 shadow-[0_24px_64px_rgba(8,145,178,0.12)]">
+                <div className="overflow-hidden rounded-[30px] bg-[var(--color-background-soft)] p-2 shadow-[var(--shadow-elevated)]">
                   <Image
                     src={about.image.src}
                     alt={about.image.alt}
                     width={1200}
                     height={900}
-                    className="h-auto w-full rounded-[1.5rem] object-cover"
+                    className="h-auto w-full rounded-[24px] object-cover"
                   />
                 </div>
               ) : null}
@@ -210,29 +214,29 @@ export function CountryHomeTemplate({
       ) : null}
 
       {homeDelivery ? (
-        <Section>
+        <Section className="bg-[var(--color-brand-secondary)]">
           <Container>
-            <div className="grid gap-8 rounded-[2rem] bg-slate-50 p-6 sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="grid gap-8 rounded-[30px] bg-[var(--color-background-soft)] p-6 shadow-[var(--shadow-card)] sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
               <div>
-                <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+                <h2 className="text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)] sm:text-4xl">
                   {homeDelivery.title}
                 </h2>
-                <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">{homeDelivery.description}</p>
+                <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--color-text-muted)]">{homeDelivery.description}</p>
                 <Link
                   href={homeDelivery.cta.href}
-                  className="mt-6 inline-flex min-h-12 items-center rounded-full bg-cyan-700 px-7 text-sm font-semibold text-white transition-colors hover:bg-cyan-800"
+                  className="mt-6 inline-flex min-h-12 items-center rounded-full bg-[var(--color-brand-primary)] px-7 text-sm font-semibold text-[var(--color-brand-secondary)] transition-colors hover:bg-[var(--color-brand-primary-hover)]"
                 >
                   {homeDelivery.cta.label}
                 </Link>
               </div>
               {homeDelivery.image ? (
-                <div className="overflow-hidden rounded-[2rem] border border-cyan-100 bg-white p-2 shadow-sm">
+                <div className="overflow-hidden rounded-[30px] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-card)]">
                   <Image
                     src={homeDelivery.image.src}
                     alt={homeDelivery.image.alt}
                     width={1200}
                     height={900}
-                    className="h-auto w-full rounded-[1.5rem] object-cover"
+                    className="h-auto w-full rounded-[24px] object-cover"
                   />
                 </div>
               ) : null}
@@ -242,30 +246,30 @@ export function CountryHomeTemplate({
       ) : null}
 
       {doctorSpotlight ? (
-        <Section className="bg-slate-50">
+        <Section className="bg-[var(--color-background-page)]">
           <Container>
             <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
               {doctorSpotlight.image ? (
-                <div className="overflow-hidden rounded-[2rem] border border-cyan-100 bg-white p-2 shadow-sm">
+                <div className="overflow-hidden rounded-[30px] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-elevated)]">
                   <Image
                     src={doctorSpotlight.image.src}
                     alt={doctorSpotlight.image.alt}
                     width={900}
                     height={1100}
-                    className="h-auto w-full rounded-[1.5rem] object-cover"
+                    className="h-auto w-full rounded-[24px] object-cover"
                   />
                 </div>
               ) : null}
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-700">
-                  Doctor spotlight
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+                  Testimonials
                 </p>
-                <blockquote className="mt-4 text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+                <blockquote className="mt-4 text-2xl font-extrabold tracking-tight text-[var(--color-text-primary)] sm:text-3xl">
                   &ldquo;{doctorSpotlight.quote}&rdquo;
                 </blockquote>
-                <p className="mt-5 text-lg font-semibold text-slate-900">{doctorSpotlight.name}</p>
-                <p className="mt-1 text-sm font-medium text-cyan-700">{doctorSpotlight.title}</p>
-                <p className="mt-1 text-sm text-slate-600">{doctorSpotlight.credential}</p>
+                <p className="mt-5 text-lg font-semibold text-[var(--color-text-primary)]">{doctorSpotlight.name}</p>
+                <p className="mt-1 text-sm font-medium text-[var(--color-brand-primary)]">{doctorSpotlight.title}</p>
+                <p className="mt-1 text-sm text-[var(--color-text-muted)]">{doctorSpotlight.credential}</p>
               </div>
             </div>
           </Container>

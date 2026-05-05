@@ -1,4 +1,5 @@
-﻿import Link from "next/link";
+import Image from "next/image";
+import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { CTAFooter } from "@/components/layout/CTAFooter";
 import type { SiteNavigationData } from "@/data/navigation";
@@ -11,55 +12,75 @@ export function SiteFooter({
   navigation: SiteNavigationData;
 }) {
   return (
-    <footer className="border-border bg-muted/40 border-t">
-      <CTAFooter cta={navigation.footerCta} trustLine={navigation.trustLine} />
-      <Container className="py-14">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {navigation.footerColumns.map((column) => (
-            <div key={column.heading}>
-              <p className="text-foreground mb-4 font-semibold">{column.heading}</p>
-              <ul className="flex flex-col gap-3">
-                {column.links.map((link) => {
-                  const isMail =
-                    link.label.toLowerCase().includes("contact") ||
-                    link.href.startsWith("mailto:");
-                  return (
-                    <li key={link.label + link.href}>
-                      {isMail ? (
-                        <a
-                          href={`mailto:${navigation.siteContactEmail}`}
-                          className="text-muted-foreground hover:text-primary text-sm transition-colors"
-                        >
-                          {link.label}
-                        </a>
-                      ) : (
-                        <Link
-                          href={link.href}
-                          className="text-muted-foreground hover:text-primary text-sm transition-colors"
-                        >
-                          {link.label}
-                        </Link>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
+    <footer className="mt-auto">
+      <div className="border-t border-[var(--color-border)] bg-[var(--color-brand-secondary)]">
+        <Container className="py-14">
+          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr_0.9fr_0.9fr]">
+            <div>
+              <Image
+                src="/logos/global-health-logo-placeholder.svg"
+                alt={`${siteName} logo placeholder`}
+                width={220}
+                height={54}
+                className="h-12 w-auto"
+              />
+              <p className="mt-5 max-w-xs text-sm leading-6 text-[var(--color-text-muted)]">
+                Online medical consultations with licensed clinicians across Ireland, Portugal, Spain, Czechia, and Romania.
+              </p>
+              <a
+                href={`mailto:${navigation.siteContactEmail}`}
+                className="mt-5 inline-flex text-sm font-medium text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
+              >
+                {navigation.siteContactEmail}
+              </a>
             </div>
-          ))}
-        </div>
 
-        <div className="border-border mt-12 flex flex-col gap-4 border-t pt-8 text-sm sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-muted-foreground">
-            © {new Date().getFullYear()} {siteName}. All rights reserved.
-          </p>
-          <a
-            href={`mailto:${navigation.siteContactEmail}`}
-            className="text-muted-foreground hover:text-primary font-medium transition-colors"
-          >
-            {navigation.siteContactEmail}
-          </a>
-        </div>
-      </Container>
+            {navigation.footerColumns.map((column) => (
+              <div key={column.heading}>
+                <p className="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-text-primary)]">
+                  {column.heading}
+                </p>
+                <ul className="flex flex-col gap-3">
+                  {column.links.map((link) => {
+                    const isMail =
+                      link.label.toLowerCase().includes("contact") ||
+                      link.href.startsWith("mailto:");
+                    return (
+                      <li key={link.label + link.href}>
+                        {isMail ? (
+                          <a
+                            href={`mailto:${navigation.siteContactEmail}`}
+                            className="text-sm text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text-primary)]"
+                          >
+                            {link.label}
+                          </a>
+                        ) : (
+                          <Link
+                            href={link.href}
+                            className="text-sm text-[var(--color-text-muted)] transition-colors hover:text-[var(--color-text-primary)]"
+                          >
+                            {link.label}
+                          </Link>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 flex flex-col gap-4 border-t border-[var(--color-border)] pt-8 text-sm sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[var(--color-text-muted)]">
+              © {new Date().getFullYear()} {siteName}. All rights reserved.
+            </p>
+            <p className="text-[var(--color-text-muted)]">
+              Global Health is a brand of Global Guest s.r.o
+            </p>
+          </div>
+        </Container>
+      </div>
+      <CTAFooter cta={navigation.footerCta} trustLine={navigation.trustLine} />
     </footer>
   );
 }
