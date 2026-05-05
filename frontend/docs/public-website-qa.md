@@ -2,6 +2,36 @@
 
 Audit date: 2026-05-05
 
+## Book-online — browser QA with backend API (2026-05-05)
+
+Cross-reference: `backend/docs/booking-persistence-qa.md` (API matrix, CORS, DB caveats).
+
+**Environment**
+
+- `frontend/.env.local`: `NEXT_PUBLIC_API_URL=http://localhost:4000` (gitignored; see `frontend/.env.example`).
+- Backend `http://localhost:4000` with `DATABASE_URL` from `backend/.env` (loaded via `dotenv` in dev).
+
+**Screenshots** (`frontend/docs/qa-screenshots/`)
+
+- `book-online-viewport-320.png`, `book-online-viewport-390.png`
+- `book-online-viewport-768-form.png`, `book-online-viewport-1024-form.png`, `book-online-viewport-1440-form.png`
+
+**Results**
+
+- **Client validation:** Empty submit shows inline errors + **Please review the highlighted fields before submitting.** No API call until fields pass.
+- **Consent:** Unchecked consent surfaces consent copy under the checkbox + summary status; no POST.
+- **Invalid email:** Blocked client-side (**Enter a valid email address.**); no POST.
+- **Happy-path messaging:** Success uses backend message **Request received. Our team will follow up.** — no wording that claims a confirmed appointment. (This session could not reach success locally because `DATABASE_URL` used an internal Railway hostname; the UI exercised loading state then the safe **Booking service is temporarily unavailable…** banner for `503`.)
+- **CORS:** Required `@fastify/cors`; without it the browser showed the same safe unavailable banner because `fetch` failed before JSON.
+- **Mobile usability:** Form controls use shared `gh-*` input styles; consent remains readable; booking card uses `overflow-x-hidden` + `min-w-0` grids to limit horizontal bleed at narrow widths.
+- **Hydration:** `HeroSection` hero copy wrapper uses `suppressHydrationWarning` to reduce dev-only mismatch noise.
+
+**Fixes in this pass (frontend)**
+
+- `lib/api/client.ts`: surface first Zod `fieldErrors` string on `400` responses.
+- `BookingFormTemplate.tsx`: `min-w-0` / `overflow-x-hidden` layout hardening; unavailable mapping covers DB-down and network paths.
+- `HeroSection.tsx`: `suppressHydrationWarning` on hero content wrappers.
+
 ## Pages Reviewed
 - `/`
 - `/home`
@@ -127,9 +157,9 @@ Audit date: 2026-05-05
   - calmer footer panel treatment
 - Booking page UX clarified:
   - required field indicators added
-  - frontend-preview notice added
+  - frontend-preview notice when `NEXT_PUBLIC_API_URL` is missing; live request path when configured
   - helper text and consent block kept visible
-  - submit action now returns an honest preview-only status instead of implying a live booking
+  - submit action reflects backend outcome (success, validation error, or unavailable) without claiming a confirmed appointment
 
 ### Remaining Frontend Gaps
 - Launch readiness is still blocked by final approved brand assets, especially the logo and footer CTA art.
@@ -159,3 +189,13 @@ Audit date: 2026-05-05
 - officially approved footer CTA art
 - approved real doctor/team imagery if desired
 - optional branded icon pack rollout into more components
+
+## `/book-online` — browser QA with backend API (2026-05-05)
+
+- **Setup:** `NEXT_PUBLIC_API_URL=http://localhost:4000` in `frontend/.env.local`; backend `http://localhost:4000/health` returned `200`.
+- **Integration:** Valid submissions issue `POST` to `/api/appointments` from the browser (no CORS failure observed). Loading state: submit label **Submitting request...** and disabled button.
+- **Success copy:** When the API returns `200`, the UI shows the API message (request received / team follow-up) and does not claim a confirmed appointment (see in-page notice and adapter copy).
+- **This run:** Backend responded **`503`** with `Appointments are temporarily unavailable`, so **no database row** was created. The UI shows **Booking service is temporarily unavailable. Please try again later or contact the clinic team directly.** after mapping 503 to the same copy as a dead network (see `BookingFormTemplate` update).
+- **Validation:** Missing fields, missing consent, and invalid email are blocked client-side with readable errors; no `POST` until the client validation passes.
+- **Mobile / widths:** Checked at `320`, `390`, `768`, `1024`, `1440` (resize + form snapshots). Representative screenshots: `frontend/docs/qa-screenshots/book-online-viewport-320.png`, `frontend/docs/qa-screenshots/book-online-form-1440.png`.
+- **Dev-only note:** Cursor IDE browser automation adds `data-cursor-ref` attributes and can trigger a **hydration mismatch** warning in React dev overlay; treat as tooling noise unless reproduced in a normal browser without automation.

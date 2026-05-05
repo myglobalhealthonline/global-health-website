@@ -39,13 +39,24 @@ export async function apiRequest<T>(
       ok?: boolean;
       data?: T;
       message?: string;
+      details?: { fieldErrors?: Record<string, string[]>; formErrors?: string[] };
     };
 
     if (!response.ok || !json.ok) {
+      let message = json.message ?? "API request failed";
+      const fieldErrors = json.details?.fieldErrors;
+      if (fieldErrors && typeof fieldErrors === "object") {
+        const firstFieldMessage = Object.values(fieldErrors)
+          .flat()
+          .find((entry): entry is string => typeof entry === "string" && entry.length > 0);
+        if (firstFieldMessage) {
+          message = firstFieldMessage;
+        }
+      }
       return {
         ok: false,
         status: response.status,
-        message: json.message ?? "API request failed",
+        message,
       };
     }
 

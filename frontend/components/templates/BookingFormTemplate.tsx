@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { submitBookingRequest } from "@/lib/api/booking-api";
 import { hasPublicApiBaseUrl } from "@/lib/api/client";
 import { BookingCTA } from "@/components/sections/BookingCTA";
@@ -52,7 +52,7 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
   const notesId = "booking-notes";
   const consentId = "booking-consent";
 
-  const backendEnabled = useMemo(() => hasPublicApiBaseUrl(), []);
+  const [backendEnabled] = useState(() => hasPublicApiBaseUrl());
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -102,8 +102,11 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
 
     if (!result.ok) {
       setStatusType("error");
+      const unavailable =
+        result.message === "Backend is unavailable" ||
+        result.message === "Appointments are temporarily unavailable";
       setStatusMessage(
-        result.message === "Backend is unavailable"
+        unavailable
           ? "Booking service is temporarily unavailable. Please try again later or contact the clinic team directly."
           : result.message,
       );
@@ -127,7 +130,7 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
       />
       <Section id="booking-form" className="bg-[var(--color-brand-secondary)]">
         <Container>
-          <article className="gh-card mx-auto max-w-3xl p-6 sm:p-8">
+          <article className="gh-card mx-auto max-w-3xl overflow-x-hidden p-6 sm:p-8">
             <h2 className="gh-h2 text-[var(--color-text-primary)]">{form.title}</h2>
             <p className="gh-body mt-3 text-[var(--color-text-muted)]">{form.description}</p>
             <div className="mt-5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3">
@@ -140,8 +143,8 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
               </p>
             </div>
             <form className="mt-6 space-y-4" action="#" method="post" onSubmit={handleSubmit} noValidate>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="flex flex-col gap-2">
+              <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+                <label className="flex min-w-0 flex-col gap-2">
                   <span className="gh-field-label">
                     {form.fields.country.label} <span className="text-[var(--color-brand-primary)]">*</span>
                   </span>
@@ -155,7 +158,7 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
                   </select>
                   {errors.country ? <span className="text-sm text-red-700">{errors.country}</span> : null}
                 </label>
-                <label className="flex flex-col gap-2">
+                <label className="flex min-w-0 flex-col gap-2">
                   <span className="gh-field-label">
                     {form.fields.consultationType.label} <span className="text-[var(--color-brand-primary)]">*</span>
                   </span>
@@ -172,27 +175,27 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
                   ) : null}
                 </label>
               </div>
-              <label className="flex flex-col gap-2">
+              <label className="flex min-w-0 flex-col gap-2">
                 <span className="gh-field-label">
                   {form.fields.fullName.label} <span className="text-[var(--color-brand-primary)]">*</span>
                 </span>
                 <input id={fullNameId} name="fullName" type="text" placeholder={form.fields.fullName.placeholder} className="gh-input" />
                 {errors.fullName ? <span className="text-sm text-red-700">{errors.fullName}</span> : null}
               </label>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="flex flex-col gap-2">
+              <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+                <label className="flex min-w-0 flex-col gap-2">
                   <span className="gh-field-label">
                     {form.fields.email.label} <span className="text-[var(--color-brand-primary)]">*</span>
                   </span>
                   <input id={emailId} name="email" type="email" placeholder={form.fields.email.placeholder} className="gh-input" />
                   {errors.email ? <span className="text-sm text-red-700">{errors.email}</span> : null}
                 </label>
-                <label className="flex flex-col gap-2">
+                <label className="flex min-w-0 flex-col gap-2">
                   <span className="gh-field-label">{form.fields.phone.label}</span>
                   <input id={phoneId} name="phone" type="tel" placeholder={form.fields.phone.placeholder} className="gh-input" />
                 </label>
               </div>
-              <label className="flex flex-col gap-2">
+              <label className="flex min-w-0 flex-col gap-2">
                 <span className="gh-field-label">{form.fields.notes.label}</span>
                 <textarea id={notesId} name="notes" rows={4} placeholder={form.fields.notes.placeholder} className="gh-textarea" />
               </label>

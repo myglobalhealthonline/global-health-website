@@ -1,4 +1,7 @@
-﻿import Fastify from "fastify";
+﻿import "dotenv/config";
+
+import cors from "@fastify/cors";
+import Fastify from "fastify";
 import healthRoute from "./routes/health.route.js";
 import authRoute from "./routes/auth.route.js";
 import appointmentsRoute from "./routes/appointments.route.js";
@@ -9,20 +12,28 @@ import pricingRoute from "./routes/pricing.route.js";
 import assetsRoute from "./routes/assets.route.js";
 import contactRoute from "./routes/contact.route.js";
 import newsletterRoute from "./routes/newsletter.route.js";
+import adminAppointmentsRoute from "./routes/admin-appointments.route.js";
 
-export function buildApp() {
+export async function buildApp() {
   const app = Fastify({ logger: true });
 
-  app.register(healthRoute);
-  app.register(authRoute);
-  app.register(appointmentsRoute);
-  app.register(countriesRoute);
-  app.register(doctorsRoute);
-  app.register(servicesRoute);
-  app.register(pricingRoute);
-  app.register(assetsRoute);
-  app.register(contactRoute);
-  app.register(newsletterRoute);
+  await app.register(cors, {
+    origin: true,
+    methods: ["GET", "POST", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  });
+
+  await app.register(healthRoute);
+  await app.register(authRoute);
+  await app.register(appointmentsRoute);
+  await app.register(countriesRoute);
+  await app.register(doctorsRoute);
+  await app.register(servicesRoute);
+  await app.register(pricingRoute);
+  await app.register(assetsRoute);
+  await app.register(contactRoute);
+  await app.register(newsletterRoute);
+  await app.register(adminAppointmentsRoute);
 
   return app;
 }

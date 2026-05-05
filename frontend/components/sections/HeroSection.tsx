@@ -29,7 +29,7 @@ export function HeroSection({
       <Section className="overflow-hidden bg-[var(--color-background-soft)] pb-[var(--section-padding-y-sm)] pt-10">
         <Container>
           <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-12">
-            <div className="max-w-xl">
+            <div className="max-w-xl" suppressHydrationWarning>
               {eyebrow ? (
                 <p className="gh-kicker">
                   {eyebrow}
@@ -86,7 +86,7 @@ export function HeroSection({
   return (
     <Section className="overflow-hidden bg-[var(--color-background-soft)] pb-[var(--section-padding-y-sm)] pt-12">
       <Container>
-        <div className="mx-auto max-w-4xl text-center">
+        <div className="mx-auto max-w-4xl text-center" suppressHydrationWarning>
           {eyebrow ? (
             <p className="gh-kicker">
               {eyebrow}
