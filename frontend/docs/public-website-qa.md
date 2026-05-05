@@ -48,6 +48,69 @@ Cross-reference: `backend/docs/booking-persistence-qa.md` (API matrix, CORS, DB 
 
 **Backend-offline smoke:** With `NEXT_PUBLIC_API_URL` unset or backend stopped, loading `/`, `/home`, `/home-pt`, `/book-online`, `/general-consultation-ie`, `/specialty-ie`, `/ireland/medical-consultation`, `/ireland-team`, `/ireland-doctors/dr-mirza-aun-mohammad`, `/plans-pricing` should return **200** with fallback content (verified via code paths + build; live browser optional).
 
+## Phase 3.6.1 — Public content integration QA (browser, 2026-05-05)
+
+**Environment**
+
+- Dev server: `http://localhost:3000`
+- `NEXT_PUBLIC_API_URL` pointed at `http://localhost:4000` (see `frontend/.env.example`)
+- **`GET /api/countries` on port 4000 returned HTTP 503** during this session (DB/service unavailable). Public reads therefore behaved like **failed/unavailable API** — suitable for **B** and **incomplete-data** style checks, not for confirming live CMS field overlays (**A** needs `200` JSON from seeded DB).
+
+### A — Backend available + seeded DB (CMS merges)
+
+| Check | Result |
+| ----- | ------ |
+| Country-driven nav / hub | **Not verified** — API did not return `200`; pages used seed/fallback labels (e.g. Ireland/Czechia/Portugal/Spain/Romania on `/`). |
+| `/general-consultation-ie` service cards from DB | **Not verified** — cards showed static inventory titles/descriptions (generic pathway copy when no merge). |
+| `/ireland/medical-consultation` title/summary/key facts from DB | **Not verified** — hero showed slug-derived **Medical Consultation** + fallback description body. |
+| `/ireland-team` doctors from DB | **Not verified** — Ireland team showed **seed** profiles (Dr. Khoiamul Islam, Ireland Clinic Team). |
+| `/ireland-doctors/dr-mirza-aun-mohammad` CMS profile | **Not verified** — template fallback bio/title (**Clinic Doctor Profile**) when no matching doctor row. |
+| `/plans-pricing` backend plan cards | **Not verified** — only static marketing feature blocks visible (no extra pricing rows prepended). |
+| Broken images | No broken-image indicators in accessibility snapshot; doctor profile uses illustration path when no asset. |
+| Route breakage | **Pass** — all representative URLs loaded with expected headings and footer chrome. |
+
+**Retry A when:** PostgreSQL reachable from backend, migrations applied, seed data loaded, `GET /api/countries` returns **200**.
+
+### B — Backend offline / no public API
+
+| Check | Result |
+| ----- | ------ |
+| Representative pages render | **Pass** — same session effectively matched degraded API (`503`); pages rendered full sections (hero, listings, FAQ/footer). |
+| Fallback content | **Pass** — seeded copy and builders used where merges unavailable. |
+| Crashes / blank regions | **Pass** — no empty document shell on tested routes. |
+| Navigation | **Pass** — footer country links and CTAs present in snapshots. |
+
+**Note:** A dedicated run with **`NEXT_PUBLIC_API_URL` removed** (restart dev after env change) was **not** executed — Next inlines `NEXT_PUBLIC_*` at dev compile; parity with **503** read failure was assumed for content reads.
+
+### C — Incomplete backend data
+
+| Case | Observed |
+| ---- | -------- |
+| Country paths incomplete | Merge logic keeps seed paths when all four DB paths are not valid — **not separately simulated**; documented behavior only. |
+| Service missing price/duration | Listing cards keep template duration/price lines (e.g. **20-30 min**, **From EUR 45**) when merge fields absent. |
+| Doctor missing image | Profile uses default **`/images/ireland/doctor-spotlight-ai.svg`** when no safe CMS asset. |
+| Pricing empty | `/plans-pricing` showed static intro + three feature cards only (no duplicate blank grid). |
+
+### Console / hygiene
+
+- **React hydration mismatch** warnings appeared in dev console on several navigations (known Next/React dev noise; often extensions or benign SSR/client attribute drift). **Not treated as Phase 3.6 integration defects** without a reproducible production-only failure.
+
+### Validation (2026-05-05)
+
+- `pnpm lint` — pass  
+- `pnpm typecheck` — pass (frontend + backend)  
+- `pnpm build` — pass (root: frontend + backend build)  
+- `pnpm --filter backend test` — pass (45 tests)
+
+### Issues fixed this QA pass
+
+- **None** — no integration regressions requiring code changes.
+
+### Remaining gaps
+
+- Execute **Scenario A** against a backend returning **200** for all public list endpoints with seeded Ireland rows (services with `legacyPath` / slug alignment, doctors, pricing plans, assets).
+- Optional: screenshot archive under `frontend/docs/qa-screenshots/` for 3.6.1 viewports (not captured in this pass).
+
 ## Pages Reviewed
 - `/`
 - `/home`

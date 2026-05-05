@@ -31,3 +31,15 @@ Per-request caching uses React `cache()` on normalized getters so `getSiteContex
 
 - `frontend/README.md` — env and integration overview  
 - `frontend/docs/public-website-qa.md` — manual QA scenarios  
+
+## Phase 3.6.1 QA notes (browser, 2026-05-05)
+
+Manual verification used the embedded browser against **`http://localhost:3000`** (Next dev) with **`NEXT_PUBLIC_API_URL=http://localhost:4000`** per `frontend/.env.example`.
+
+**API health during QA:** `GET http://localhost:4000/api/countries` returned **503** (database unavailable in this environment). That means **Scenario A** (live JSON merges from a seeded DB) was **not exercised** here; observed UI matched **fallback / degraded API** behavior (same merge paths as Scenario B/C).
+
+**Routes exercised (accessibility snapshot):** `/`, `/home`, `/home-pt`, `/book-online`, `/general-consultation-ie`, `/specialty-ie`, `/ireland/medical-consultation`, `/ireland-team`, `/ireland-doctors/dr-mirza-aun-mohammad`, `/plans-pricing`.
+
+**Viewports:** `320×568`, `390×844`, `768×1024`, `1024×768`, `1440×900` — primary headings, country selector, listings, footers, and booking form remained present; no blank shells.
+
+**Follow-up for Scenario A:** Run the same route matrix with backend **`GET /api/*` returning 200** and seeded rows to confirm CMS titles/summaries/prices appear on Ireland listings, service detail, team, doctor profile, and pricing pages.
