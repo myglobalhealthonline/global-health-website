@@ -1,5 +1,29 @@
 # Admin UI Plan (Phase 2 + 2.1)
 
+## Product / auth boundary
+
+This frontend hosts:
+
+- **Public marketing site** (no login): browse, country selection, services, doctor **profile pages as content**, pricing, blog, legal, **booking request** form.
+- **Internal admin UI** (`/admin/...`): staff who manage the site and review booking requests (today: env token; later: real **ADMIN** login).
+
+**Main website login (future) is only for:**
+
+1. **Patients / users** — accounts, profile, booking/payment history, appointment-request status, payments (when built).
+2. **Admins** — content management and operational queues for **this** site.
+
+**Not in this app:**
+
+- **Doctor portal** (clinical dashboard, doctor login, doctor-side appointment management) — separate product later; **no doctor routes or dashboards** in this repo.
+
+**Roles:** `PATIENT` | `ADMIN` for authenticated UX here. No `DOCTOR` web-app role in scope.
+
+### Booking vs payment (future documentation alignment)
+
+When payments exist: patient may pay after requesting a booking; **payment alone must not imply medical confirmation**; admins review booking + payment state; clinic/admin confirmation stays explicit.
+
+---
+
 ## Scope Delivered
 
 Internal-only admin scaffold routes:
@@ -58,7 +82,8 @@ Status updates submit through a server action that calls `PATCH /api/admin/appoi
 
 ## Deferred UI Work
 
-- login screen/session UX for admins
+- login screen/session UX for **admins** (and separately **patients** — not doctor)
+- **Doctor portal UI** — out of scope for this repository
 - bulk actions
 - optimistic updates/toasts
 - audit timeline / status-change history

@@ -1,5 +1,30 @@
 # Admin Phase Plan
 
+## Product and auth context (this repository)
+
+**Who logs into this website (planned):**
+
+1. **Patients / users** (`USER` / `PATIENT`) — register, account area, booking history, payments (later), appointment-request status (later).
+2. **Admins** (`ADMIN`) — manage public-site content (countries, services, doctors **as displayed on the marketing site**, pricing, assets, blog/FAQ/legal), and review **booking / appointment requests** (current Phase 2.x queue).
+
+**Who does not use this app’s dashboard:**
+
+- **Doctors / clinical staff** — deferred to a **separate doctor portal** (future, **outside this repo and outside `/admin`**). Do **not** implement doctor login, doctor routes, or doctor-facing appointment management UI here.
+
+**Roles in scope for this codebase:** `PATIENT`, `ADMIN` only for authenticated areas of this site. Public visitors browse without logging in.
+
+### Future booking and payment (design intent — not implemented yet)
+
+End state this documentation assumes:
+
+1. Patient submits a booking **request** (already: intake only; not medical confirmation).
+2. Patient may **pay online later** (not built yet).
+3. **Payment status** is tracked when payments exist.
+4. **Admin** can review combined **booking + payment** state.
+5. **No payment does not imply medical confirmation** — clinical/admin confirmation remains explicit and separate from “checkout succeeded.”
+
+---
+
 ## Phase 1 (done)
 
 - public content APIs (`/api/countries`, `/api/services`, `/api/doctors`, `/api/pricing`, `/api/assets`)
@@ -44,12 +69,14 @@ Implemented:
 
 ## Explicitly Deferred
 
-- full user login/session auth (JWT, RBAC, refresh flow)
+- full user login/session auth (JWT, RBAC, refresh flow) for **PATIENT** and **ADMIN** only (this site)
 - admin user table + role management
 - audit logs and immutable history
-- patient dashboard / doctor dashboard
-- payment/email/calendar workflows
-- broad content CRUD admin
+- **patient** dashboard features (profile, history, payments, request status) — later on this site
+- **doctor portal** (login, schedules, clinical workflows) — **separate product/repo**, not `/admin` here
+- payment gateway, payment status persistence, and patient payment UX
+- email/calendar workflows
+- broad content CRUD admin (beyond current appointment queue hardening)
 
 ## Local Setup / Test
 
@@ -66,9 +93,12 @@ Implemented:
 
 ## Next Phase Recommendation
 
-Phase 3 should replace env-token gate with real admin identity:
+Phase 3 should replace env-token gate with real **ADMIN** identity on this site:
 
 - admin login with hashed password/session
-- role checks per action
+- role checks per action (`ADMIN` vs `PATIENT` — still no doctor role in this app)
 - audit trail for status changes
 - optional: richer queue UX (saved views, exports) on top of existing pagination/filters
+- prepare data model hooks for **payment status** on booking requests (when payments ship)
+
+Doctor-facing features belong in the **separate doctor portal**, not in this phase plan.

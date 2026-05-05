@@ -5,7 +5,8 @@ A scalable healthcare platform rebuilt from the existing Wix website into a clea
 Current implementation status:
 - public frontend is stable and fallback-safe
 - backend/admin phase 1 introduces read APIs and booking request intake
-- admin CRUD, payments, and dashboards remain deferred
+- admin CRUD, payments, and full dashboards remain deferred
+- **doctor portal** is explicitly **out of scope** for this repo (separate product later)
 
 The goal of this project is to recreate the Global Health online clinic website in code while preserving the current public page structure, user journeys, brand experience, consultation booking flow, country-specific clinic pages, service pages, legal pages, blog content, and navigation patterns.
 
@@ -32,7 +33,7 @@ The implementation must support:
 - SEO-friendly route structure
 - Maintainable page/content data
 - Scalable backend architecture
-- Secure patient, doctor, and admin workflows
+- Secure **patient** and **admin** workflows on this site (doctor workflows live in a **separate portal**, not here)
 - Future migration away from Wix without breaking existing URLs
 
 ---
@@ -70,20 +71,28 @@ Use the current site content, page structure, visual hierarchy, and user journey
 
 The Global Health Platform connects patients with healthcare professionals across Europe through a fast, secure, and user-friendly web application.
 
-It enables users to:
+**Public visitors** (no login) can:
 
-- Choose their country
-- Select a general or specialist consultation
-- Book an online appointment
-- View doctors and clinic teams
-- Read healthcare articles
-- Explore pricing plans
-- Access home delivery and home health test services
-- Contact the clinic
-- Manage account/login flows
-- Receive care remotely
+- Browse the site and choose a country
+- View services, **doctor/team marketing pages**, pricing, blog, legal content
+- Submit a **booking request** (intake only today)
 
-The platform must be designed for long-term scalability, including future admin dashboards, patient dashboards, doctor dashboards, payments, appointment management, and notification workflows.
+**Patients / users** (future login on this site) will be able to:
+
+- Register and sign in
+- Manage profile and contact details
+- View booking / payment history and appointment-request status
+- Make payments when that flow ships
+
+**Admins** (future login on this site) will manage:
+
+- Countries, services, **doctors displayed on the public site**, pricing, assets
+- Blog / FAQ / legal content and country-specific marketing content
+- Review booking requests and update statuses (today partially covered by env-token `/admin`)
+
+**Doctors** do **not** get a dashboard or login in this application. A **separate doctor portal** (outside this repo) is deferred for clinical workflows.
+
+The platform must scale toward admin tooling, patient accounts, payments, booking/payment state for staff review, and notifications — **without** folding doctor-facing clinical tools into this codebase.
 
 ---
 
@@ -227,30 +236,34 @@ Minimum version:
 Future version:
 
 - Appointment availability
-- Doctor selection
-- Patient account
-- Payment
+- Optional patient choices during booking (not a **doctor portal** — doctors do not manage appointments in this app)
+- Patient account (this website)
+- Payment (patient-facing); **payment status** visible to patient and admin; **payment ≠ medical confirmation**
 - Email confirmation
-- Admin booking management
-- Doctor dashboard
+- Admin booking / payment state review
+
+**Deferred elsewhere:** doctor-facing scheduling/clinical UI → **separate doctor portal**, not this repo.
 
 ### Authentication
 
+Scoped to **this website**: future real accounts are **`PATIENT`** and **`ADMIN`** only — **no doctor login** in this repo.
+
 Minimum version:
 
-- Login page
-- Register page
-- Forgot password page
+- Login page (placeholder)
+- Register page (placeholder)
+- Forgot password page (placeholder)
 - Protected account area placeholder
 
-Future version:
+Future version (this site):
 
-- Patient dashboard
-- Doctor dashboard
-- Admin dashboard
-- Appointment history
-- Secure messaging
-- Document upload
+- Patient dashboard (history, payments, request status, profile)
+- Admin dashboard (content + operational queues)
+- Appointment history for patients
+- Secure messaging (if product requires)
+- Document upload (if product requires)
+
+**Not planned in this app:** doctor login, doctor dashboard, or doctor-side appointment management — those belong in a **separate doctor portal**.
 
 ---
 
@@ -1108,6 +1121,8 @@ export const mainNavigation = [
 
 Use Prisma for backend data.
 
+**Auth roles on this website:** `PATIENT` and `ADMIN` only. There is **no** `DOCTOR` **user role** in this application — doctors are **directory/marketing records** (`Doctor` model) for public pages, not logged-in app users here. Clinical staff accounts belong to the **separate doctor portal** (future).
+
 Minimum suggested models:
 
 ```prisma
@@ -1124,9 +1139,9 @@ model User {
 }
 
 enum UserRole {
-  PATIENT
-  DOCTOR
-  ADMIN
+  PATIENT  // website user / patient account (this repo)
+  ADMIN    // staff managing site content + operational queues (this repo)
+  // DOCTOR login / UserRole: intentionally omitted — use separate doctor portal (not this app)
 }
 
 model Doctor {
