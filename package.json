@@ -1,0 +1,11 @@
+﻿{
+  "name": "global-health-platform",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "build": "pnpm --filter frontend build && pnpm --filter backend build",
+    "typecheck": "pnpm --filter frontend typecheck && pnpm --filter backend typecheck",
+    "lint": "pnpm --filter frontend lint"
+  }
+}

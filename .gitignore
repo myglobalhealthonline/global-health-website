@@ -2,13 +2,18 @@
 /node_modules
 
 # frontend
-/Frontend/.next
-/Frontend/node_modules
-/Frontend/out
-/Frontend/coverage
-/Frontend/*.tsbuildinfo
-/Frontend/.env*
+/frontend/.next
+/frontend/node_modules
+/frontend/out
+/frontend/coverage
+/frontend/*.tsbuildinfo
+/frontend/.env*
 
 # backend
-/Backend/node_modules
-/Backend/.env*
+/backend/node_modules
+/backend/.env*
+
+# editor
+.vscode
+
+/backend/dist
