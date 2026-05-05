@@ -85,3 +85,9 @@ These files remain in the repo but are no longer used by the main public routes 
 - No Wix assets were hotlinked.
 - No stock photography was introduced.
 - All people visuals are illustrative and should not be interpreted as real doctors or patients.
+
+## Admin CMS — Phase 3.5 (asset metadata)
+
+Long-lived **`Asset`** rows can be managed under **`/admin/assets`** (server-only admin API). This phase stores **metadata only** (`path` / URL, **`AssetKind`**, **`key`**, **`altText`**, optional **`countryId`** / **`doctorId`**, **`usageNote`**, **`isActive`**). It does **not** upload files or configure cloud storage (S3, Cloudflare R2, Vercel Blob, etc.) — document approved provider when implementing uploads.
+
+Public **`GET /api/assets`** lists **active** assets only; the marketing site continues to work with **local/fallback** files when the API is unavailable. Apply DB migration **`20260505203000_asset_usage_note_and_active`** (or run **`pnpm --filter backend exec prisma migrate deploy`**) before relying on **`usageNote`** / **`isActive`** in production.

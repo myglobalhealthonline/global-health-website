@@ -1,4 +1,4 @@
-# Admin API (Phase 2 + 2.1 + 3.1 countries + 3.2 services + 3.3 doctors + 3.4 pricing)
+# Admin API (Phase 2 + 2.1 + 3.1 countries + 3.2 services + 3.3 doctors + 3.4 pricing + 3.5 assets)
 
 ## Account scope
 
@@ -412,6 +412,47 @@ Partial update; empty body → **`400`**. **`countryId`** change → **`400`**. 
 
 **Public safety:** fallback adapters remain; pages are not forced to depend on CMS pricing rows exclusively.
 
+---
+
+## Assets — metadata only (Phase 3.5)
+
+Same bearer auth as other admin routes.
+
+**Upload/storage boundary:** admin APIs manage **`Asset`** **rows** (kind, key, path/URL, alt text, optional country/doctor link, **`usageNote`**). They do **not** upload bytes, store BLOBs in Postgres, or integrate S3 / Cloudflare R2 / Vercel Blob / other providers in this phase. Paths may point at **`/public`** files or future CDN URLs.
+
+Prisma **`Asset`** fields (after Phase 3.5 migration):
+
+| Field | Notes |
+| --- | --- |
+| `countryId` | Optional (`null` = global) |
+| `doctorId` | Optional; if set, doctor must exist and **`countryId`** is aligned (auto-filled from doctor when omitted) |
+| `kind` | **`AssetKind`** enum: `IMAGE`, `ICON`, `LOGO`, `BADGE`, `SOCIAL` |
+| `key` | Required; unique together with **`kind`** (`@@unique([kind, key])`) |
+| `path` | Required; **`https://`** or absolute **`/`** path; rejects `javascript:`, `data:`, plain `http:` |
+| `altText` | Required for **`IMAGE`**, **`ICON`**, **`LOGO`**, **`BADGE`**; optional for **`SOCIAL`** |
+| `usageNote` | Optional internal note (usage location / inventory) |
+| `isActive` | Boolean (**soft-disable**); public API lists **`isActive: true`** only |
+
+**Schema gaps:** no arbitrary JSON **metadata** column; no binary storage.
+
+### `GET /api/admin/assets`
+
+Paginated list. **Query:** `page`, `pageSize`, `countryId`, `countryCode`, `kind`, `isActive`, `search` (matches **`key`**, **`path`**, **`altText`**, **`usageNote`**).
+
+### `GET /api/admin/assets/:id`
+
+Returns **`asset`** with **`country`** and **`doctor`** summaries.
+
+### `POST /api/admin/assets` / `PATCH /api/admin/assets/:id`
+
+Validated by **`adminAssetCreateBodySchema`** / **`adminAssetUpdateBodySchema`**. **`PATCH`** merges doctor/country rules in the service. Duplicate **`kind + key`** → **`409`**.
+
+### `DELETE /api/admin/assets/:id`
+
+**Soft-disable:** sets **`isActive: false`**.
+
+**Public behavior:** **`GET /api/assets`** returns only **`isActive: true`** — marketing pages keep fallback/temporary local assets when the API is unavailable.
+
 ## Security Limits (Phase 2 / 2.1)
 
 - auth is env-token gate, not per-user identity
@@ -429,3 +470,4 @@ Partial update; empty body → **`400`**. **`countryId`** change → **`400`**. 
 - `admin-services.schema.test.ts` (service slug, price/duration, query filters)
 - `admin-doctors.schema.test.ts` (doctor slug, name/title, profile image ref, query filters)
 - `admin-pricing.schema.test.ts` (pricing slug, negative price, query filters)
+- `admin-assets.schema.test.ts` (safe path/URL, alt rules, query filters)

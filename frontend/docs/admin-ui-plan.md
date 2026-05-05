@@ -1,4 +1,4 @@
-# Admin UI Plan (Phase 2 + 2.1 + 3.1 + 3.2 + 3.3 + 3.4)
+# Admin UI Plan (Phase 2 + 2.1 + 3.1 + 3.2 + 3.3 + 3.4 + 3.5)
 
 ## Account Scope
 
@@ -56,6 +56,8 @@ Internal-only admin scaffold routes:
 - `/admin/doctors/new` — country picker then create (`POST /api/admin/doctors`)
 - `/admin/doctors/[id]` — detail + deactivate (`DELETE` → **`active: false`**)
 - `/admin/doctors/[id]/edit` — edit (`PATCH`); **country locked** (backend also rejects `countryId` change)
+- `/admin/pricing` … `/admin/pricing/[id]/edit` — pricing plans (Phase 3.4)
+- `/admin/assets` … `/admin/assets/[id]/edit` — asset metadata (Phase 3.5); uploads deferred
 
 No public nav links point to these routes.
 
@@ -74,6 +76,12 @@ No public nav links point to these routes.
 - **Languages** column shows **—** until a schema migration adds languages.
 - **Specialties**: multi-select via **`DoctorSpecialty`** / **`Specialty`** for the chosen country.
 - **Profile image**: optional https or `/` path; backend syncs an **`Asset`** row — not a free-form “doctor login email” or credential field.
+
+### Phase 3.5 notes (assets)
+
+- Routes: **`/admin/assets`**, **`/admin/assets/new`** (country scope vs **global**), **`/admin/assets/[id]`**, **`/admin/assets/[id]/edit`**.
+- **Preview** thumbnails only for **`IMAGE`** / **`LOGO`** with **`/`** or **`https://`** paths (same-origin or CDN URLs).
+- Copy states **metadata only** — no file picker/upload; future storage may use S3, R2, Vercel Blob, etc.
 
 ### Phase 3.4 notes (pricing)
 
@@ -131,6 +139,7 @@ Status updates submit through a server action that calls `PATCH /api/admin/appoi
 7. Open `/admin/services`: filter list, create a service (country → slug/title/specialty/summary/pricing), view detail, edit, deactivate; confirm public site still works via adapters without requiring these rows for every page load.
 8. Open `/admin/doctors`: create a profile (country → slug, name, title, specialties, optional image URL/path), view, edit, deactivate; confirm UI messaging distinguishes **public profiles** from any future doctor portal.
 9. Open `/admin/pricing`: create a plan (country → slug, name, cents, currency, interval), view, edit, deactivate; confirm disclaimer that **payments are not implemented**.
+10. Open `/admin/assets`: create metadata (path/URL, kind, key, alt, usage note), confirm **no upload** and optional preview for raster-capable kinds.
 
 ## Deferred UI Work
 

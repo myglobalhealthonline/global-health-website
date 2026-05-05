@@ -137,6 +137,17 @@ Delivered:
 
 **Schema gaps:** no **`serviceId`**, **`features`**, **`sortOrder`** on **`PricingPlan`**.
 
+## Phase 3.5 — Assets CRUD (done)
+
+Delivered:
+
+- **Migration:** `backend/prisma/migrations/20260505203000_asset_usage_note_and_active` — adds **`usageNote`**, **`isActive`** (default **`true`**).
+- **Backend:** `GET/POST/PATCH/DELETE /api/admin/assets`, `GET /api/admin/assets/:id`; Zod **`admin-assets.schema.ts`** (safe **`path`**, **`altText`** rules by kind); **`assets.service.ts`** admin helpers + public **`listAssets`** filters **`isActive: true`**; **`admin-assets.route.ts`**; duplicate **`kind + key`** → **`409`**.
+- **Doctor/country:** optional **`doctorId`**; service resolves **`countryId`** from doctor when needed and validates consistency.
+- **Frontend:** `/admin/assets`, `/admin/assets/new` (country vs global scope), `/admin/assets/[id]`, `/admin/assets/[id]/edit`; disclaimer about **metadata only** / uploads deferred (S3, R2, Vercel Blob, etc. documented as future).
+- **Tests:** `admin-assets.schema.test.ts`.
+- **Public safety:** **`GET /api/assets`** active-only; fallback local assets unchanged.
+
 ## Phase 3 (planned): remaining content + ops CRUD (before patient dashboard depth)
 
 Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, and ship **protected admin APIs + UI** for database-backed **marketing content** this site already reads publicly.
@@ -147,7 +158,7 @@ Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, a
 2. ~~**Services**~~ — **done (Phase 3.2)**
 3. ~~**Doctors**~~ — **done (Phase 3.3)** — public profile records only (directory/CMS; **not** login identities)
 4. ~~**Pricing**~~ — **done (Phase 3.4)** — plans as **`PricingPlan`** rows (display-only admin; payments still deferred)
-5. **Assets** — images and related asset rows tied to country/doctor content
+5. ~~**Assets**~~ — **done (Phase 3.5)** — metadata rows (`path`/URL pointers; uploads deferred)
 
 **Explicitly later or parallel tracks (still no doctor portal here):**
 

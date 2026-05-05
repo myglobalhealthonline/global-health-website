@@ -190,6 +190,8 @@ model Asset {
   key        String
   path       String
   altText    String?
+  usageNote  String?
+  isActive   Boolean   @default(true)
   country    Country?  @relation(fields: [countryId], references: [id], onDelete: Cascade)
   doctor     Doctor?   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   badges     Badge[]

@@ -23,6 +23,9 @@ export default function AdminHomePage() {
         <Link href="/admin/pricing" className="gh-btn gh-btn-primary">
           Pricing
         </Link>
+        <Link href="/admin/assets" className="gh-btn gh-btn-primary">
+          Assets
+        </Link>
       </div>
     </section>
   );
