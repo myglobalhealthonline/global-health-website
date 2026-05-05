@@ -2,6 +2,11 @@
 
 A scalable healthcare platform rebuilt from the existing Wix website into a clean, maintainable, responsive full-stack web application.
 
+Current implementation status:
+- public frontend is stable and fallback-safe
+- backend/admin phase 1 introduces read APIs and booking request intake
+- admin CRUD, payments, and dashboards remain deferred
+
 The goal of this project is to recreate the Global Health online clinic website in code while preserving the current public page structure, user journeys, brand experience, consultation booking flow, country-specific clinic pages, service pages, legal pages, blog content, and navigation patterns.
 
 ---

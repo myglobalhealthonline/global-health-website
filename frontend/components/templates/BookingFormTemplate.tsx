@@ -1,6 +1,8 @@
- "use client";
+"use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { submitBookingRequest } from "@/lib/api/booking-api";
+import { hasPublicApiBaseUrl } from "@/lib/api/client";
 import { BookingCTA } from "@/components/sections/BookingCTA";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { Container } from "@/components/layout/Container";
@@ -34,20 +36,84 @@ type BookingFormTemplateProps = {
   };
 };
 
+type FieldErrors = Partial<Record<"country" | "consultationType" | "fullName" | "email" | "consentAccepted", string>>;
+
 export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
+  const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [statusType, setStatusType] = useState<"success" | "error" | null>(null);
+  const [errors, setErrors] = useState<FieldErrors>({});
+
   const countryId = "booking-country";
   const consultationId = "booking-consultation-type";
   const fullNameId = "booking-full-name";
   const emailId = "booking-email";
   const phoneId = "booking-phone";
   const notesId = "booking-notes";
+  const consentId = "booking-consent";
 
-  function handlePreviewSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const backendEnabled = useMemo(() => hasPublicApiBaseUrl(), []);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setStatusMessage(
-      "Frontend preview only. Live booking submission will be connected during backend integration.",
-    );
+    setStatusMessage(null);
+    setStatusType(null);
+
+    const formData = new FormData(event.currentTarget);
+    const payload = {
+      country: String(formData.get("country") ?? "").trim(),
+      consultationType: String(formData.get("consultationType") ?? "").trim(),
+      fullName: String(formData.get("fullName") ?? "").trim(),
+      email: String(formData.get("email") ?? "").trim(),
+      phone: String(formData.get("phone") ?? "").trim(),
+      notes: String(formData.get("notes") ?? "").trim(),
+      consentAccepted: formData.get("consentAccepted") === "on",
+    };
+
+    const nextErrors: FieldErrors = {};
+
+    if (!payload.country) nextErrors.country = "Select your country.";
+    if (!payload.consultationType) nextErrors.consultationType = "Select a consultation type.";
+    if (payload.fullName.length < 2) nextErrors.fullName = "Enter the patient full name.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) nextErrors.email = "Enter a valid email address.";
+    if (!payload.consentAccepted) nextErrors.consentAccepted = "Consent is required before submitting.";
+
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) {
+      setStatusType("error");
+      setStatusMessage("Please review the highlighted fields before submitting.");
+      return;
+    }
+
+    if (!backendEnabled) {
+      setStatusType("error");
+      setStatusMessage(
+        "Backend booking is not configured yet. Your request was not sent. The public form preview remains available while backend integration is completed.",
+      );
+      return;
+    }
+
+    setLoading(true);
+
+    const result = await submitBookingRequest(payload);
+
+    setLoading(false);
+
+    if (!result.ok) {
+      setStatusType("error");
+      setStatusMessage(
+        result.message === "Backend is unavailable"
+          ? "Booking service is temporarily unavailable. Please try again later or contact the clinic team directly."
+          : result.message,
+      );
+      return;
+    }
+
+    event.currentTarget.reset();
+    setErrors({});
+    setStatusType("success");
+    setStatusMessage(result.message ?? "Request received. Our team will follow up.");
   }
 
   return (
@@ -66,16 +132,20 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
             <p className="gh-body mt-3 text-[var(--color-text-muted)]">{form.description}</p>
             <div className="mt-5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3">
               <p className="gh-body-sm text-[var(--color-text-muted)]">
-                Fields marked <span className="font-semibold text-[var(--color-brand-primary)]">*</span> are required. This form is a frontend preview and will not create a live booking yet.
+                Fields marked <span className="font-semibold text-[var(--color-brand-primary)]">*</span> are required.
+                {" "}
+                {backendEnabled
+                  ? "Submitting sends a booking request only. This is not a confirmed medical appointment."
+                  : "Backend booking is not configured yet, so this form remains in frontend-safe preview mode."}
               </p>
             </div>
-            <form className="mt-6 space-y-4" action="#" method="post" onSubmit={handlePreviewSubmit} noValidate>
+            <form className="mt-6 space-y-4" action="#" method="post" onSubmit={handleSubmit} noValidate>
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="flex flex-col gap-2">
                   <span className="gh-field-label">
                     {form.fields.country.label} <span className="text-[var(--color-brand-primary)]">*</span>
                   </span>
-                  <select id={countryId} name={countryId} className="gh-select" defaultValue="" required aria-required="true">
+                  <select id={countryId} name="country" className="gh-select" defaultValue="">
                     <option value="">{form.fields.country.placeholder}</option>
                     {form.countryOptions.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -83,12 +153,13 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
                       </option>
                     ))}
                   </select>
+                  {errors.country ? <span className="text-sm text-red-700">{errors.country}</span> : null}
                 </label>
                 <label className="flex flex-col gap-2">
                   <span className="gh-field-label">
                     {form.fields.consultationType.label} <span className="text-[var(--color-brand-primary)]">*</span>
                   </span>
-                  <select id={consultationId} name={consultationId} className="gh-select" defaultValue="" required aria-required="true">
+                  <select id={consultationId} name="consultationType" className="gh-select" defaultValue="">
                     <option value="">{form.fields.consultationType.placeholder}</option>
                     {form.consultationTypeOptions.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -96,68 +167,62 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
                       </option>
                     ))}
                   </select>
+                  {errors.consultationType ? (
+                    <span className="text-sm text-red-700">{errors.consultationType}</span>
+                  ) : null}
                 </label>
               </div>
               <label className="flex flex-col gap-2">
                 <span className="gh-field-label">
                   {form.fields.fullName.label} <span className="text-[var(--color-brand-primary)]">*</span>
                 </span>
-                <input
-                  id={fullNameId}
-                  name={fullNameId}
-                  type="text"
-                  placeholder={form.fields.fullName.placeholder}
-                  className="gh-input"
-                  required
-                  aria-required="true"
-                />
+                <input id={fullNameId} name="fullName" type="text" placeholder={form.fields.fullName.placeholder} className="gh-input" />
+                {errors.fullName ? <span className="text-sm text-red-700">{errors.fullName}</span> : null}
               </label>
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="flex flex-col gap-2">
                   <span className="gh-field-label">
                     {form.fields.email.label} <span className="text-[var(--color-brand-primary)]">*</span>
                   </span>
-                  <input
-                    id={emailId}
-                    name={emailId}
-                    type="email"
-                    placeholder={form.fields.email.placeholder}
-                    className="gh-input"
-                    required
-                    aria-required="true"
-                  />
+                  <input id={emailId} name="email" type="email" placeholder={form.fields.email.placeholder} className="gh-input" />
+                  {errors.email ? <span className="text-sm text-red-700">{errors.email}</span> : null}
                 </label>
                 <label className="flex flex-col gap-2">
                   <span className="gh-field-label">{form.fields.phone.label}</span>
-                  <input
-                    id={phoneId}
-                    name={phoneId}
-                    type="tel"
-                    placeholder={form.fields.phone.placeholder}
-                    className="gh-input"
-                  />
+                  <input id={phoneId} name="phone" type="tel" placeholder={form.fields.phone.placeholder} className="gh-input" />
                 </label>
               </div>
               <label className="flex flex-col gap-2">
                 <span className="gh-field-label">{form.fields.notes.label}</span>
-                <textarea
-                  id={notesId}
-                  name={notesId}
-                  rows={4}
-                  placeholder={form.fields.notes.placeholder}
-                  className="gh-textarea"
-                />
+                <textarea id={notesId} name="notes" rows={4} placeholder={form.fields.notes.placeholder} className="gh-textarea" />
               </label>
-              <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
-                <p className="gh-body-sm text-[var(--color-text-muted)]">{form.fields.consent}</p>
-              </div>
-              <button type="submit" className="gh-btn gh-btn-primary min-w-[180px]">
-                {form.submitLabel}
+              <label htmlFor={consentId} className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+                <div className="flex items-start gap-3">
+                  <input
+                    id={consentId}
+                    name="consentAccepted"
+                    type="checkbox"
+                    className="mt-1 size-4 accent-[var(--color-brand-primary)]"
+                  />
+                  <div>
+                    <p className="gh-body-sm text-[var(--color-text-muted)]">{form.fields.consent}</p>
+                    {errors.consentAccepted ? (
+                      <span className="mt-2 block text-sm text-red-700">{errors.consentAccepted}</span>
+                    ) : null}
+                  </div>
+                </div>
+              </label>
+              <button type="submit" className="gh-btn gh-btn-primary min-w-[180px]" disabled={loading}>
+                {loading ? "Submitting request..." : form.submitLabel}
               </button>
               <p className="gh-body-sm text-[var(--color-text-muted)]">{form.helperMessage}</p>
               {statusMessage ? (
                 <p
-                  className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-sm text-[var(--color-text-muted)]"
+                  className={`rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm ${
+                    statusType === "success"
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                      : "border-amber-200 bg-amber-50 text-amber-900"
+                  }`}
                   role="status"
                 >
                   {statusMessage}

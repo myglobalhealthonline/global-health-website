@@ -4,7 +4,7 @@ import { getBookingPageData } from "@/lib/content/booking-page-data";
 
 export const metadata: Metadata = {
   title: "Book Online",
-  description: "Frontend booking placeholder form template.",
+  description: "Submit an online consultation request and our clinic team will follow up.",
 };
 
 export default function Page() {

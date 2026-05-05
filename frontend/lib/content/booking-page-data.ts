@@ -52,7 +52,7 @@ export function getBookingPageData(locale: LocaleCode = "en") {
       },
       submitLabel: common.cta.primaryBooking,
       helperMessage:
-        "Current release note: this form is a frontend-safe placeholder and does not yet create a live booking record. The clinic team confirmation step remains part of the final backend workflow.",
+        "Submitting creates a booking request only when backend integration is available. Final appointment confirmation remains a manual clinic follow-up step.",
       countryOptions: countries.map((country) => ({
         value: country.code,
         label: country.name,
