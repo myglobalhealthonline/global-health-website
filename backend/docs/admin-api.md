@@ -1,4 +1,4 @@
-# Admin API (Phase 2 + 2.1)
+# Admin API (Phase 2 + 2.1 + 3.1 countries)
 
 ## Account scope
 
@@ -159,6 +159,76 @@ Invalid transition or unrecognized stored status:
 
 - `400` + `{"ok":false,"message":"Invalid status transition: ..."}` or unrecognized status message
 
+---
+
+## Countries (Phase 3.1)
+
+Same bearer auth as other admin routes.
+
+### `GET /api/admin/currencies`
+
+Read-only helper for **country create/edit forms** (currency dropdown). Returns all rows from `Currency`.
+
+Response:
+
+```json
+{
+  "ok": true,
+  "data": {
+    "currencies": [{ "id": "cuid", "code": "EUR", "symbol": "EUR", "decimals": 2 }]
+  }
+}
+```
+
+### `GET /api/admin/countries`
+
+Lists **all** countries (including `isActive: false`). Includes `currency`, `countryLocales`, `domains`.
+
+### `GET /api/admin/countries/:id`
+
+Param `id`: internal country id (Prisma `cuid`).
+
+Returns `{ country }` or `404`.
+
+### `POST /api/admin/countries`
+
+Creates a country and related `CountryLocale` rows. Optional `CountryDomain` rows.
+
+**Body fields** (Zod `adminCountryCreateBodySchema`):
+
+| Field | Rules |
+| --- | --- |
+| `code` | Required, trimmed, max 32; **unique** (DB) |
+| `name` | Required, max 200 |
+| `slug` | Required, max 120; **unique** |
+| `legacyHomePath`, `teamPath`, `generalConsultationPath`, `specialistConsultationPath` | Required; must start with `/`; no spaces |
+| `defaultLocale` | `LocaleCode` enum (`EN`, `PT`, `ES`, `CS`, `RO`, `DE`) |
+| `supportedLocales` | Non-empty array of locales; **no duplicates**; **must include `defaultLocale`** |
+| `currencyId` | Required; must reference existing `Currency` |
+| `isActive` | Optional boolean (default `true`) |
+| `domains` | Optional `{ domain, isPrimary? }[]`; **at most one** `isPrimary: true`; if none primary, first domain becomes primary |
+
+**Errors:**
+
+- `400` invalid payload / unknown currency / locale merge failure
+- `409` unique constraint (`P2002`) on code, slug, path fields, or domain
+
+### `PATCH /api/admin/countries/:id`
+
+Partial update. Empty body rejected (`400`).
+
+- Scalar fields optional.
+- If **`supportedLocales`** and/or **`defaultLocale`** present: locales table is rebuilt; effective default after merge must appear in effective locale list (`400` otherwise).
+- If **`domains`** key is present (including `[]`): replaces all domains for the country.
+
+Same `409` on unique violations.
+
+### `DELETE /api/admin/countries/:id`
+
+**Soft-disable only:** sets `isActive` to `false`. Does **not** delete the row (FK-safe). Public `GET /api/countries` continues to filter `isActive: true` only — unchanged behavior.
+
+Re-enable via `PATCH` with `"isActive": true`.
+
 ## Security Limits (Phase 2 / 2.1)
 
 - auth is env-token gate, not per-user identity
@@ -169,4 +239,7 @@ Invalid transition or unrecognized stored status:
 
 ## Local tests
 
-Transition rules are covered by `pnpm --filter backend test` (Node test runner + `appointment-status-transitions.test.ts`).
+`pnpm --filter backend test` runs:
+
+- `appointment-status-transitions.test.ts`
+- `admin-countries.schema.test.ts` (Zod rules for countries)

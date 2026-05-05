@@ -53,10 +53,60 @@ type AdminAppointmentDetailPayload = {
   };
 };
 
+export type AdminCurrencyDto = {
+  id: string;
+  code: string;
+  symbol: string;
+  decimals: number;
+};
+
+export type AdminCountryLocaleDto = {
+  id: string;
+  locale: string;
+  isDefault: boolean;
+};
+
+export type AdminCountryDomainDto = {
+  id: string;
+  domain: string;
+  isPrimary: boolean;
+};
+
+export type AdminCountryDto = {
+  id: string;
+  code: string;
+  name: string;
+  slug: string;
+  legacyHomePath: string;
+  teamPath: string;
+  generalConsultationPath: string;
+  specialistConsultationPath: string;
+  defaultLocale: string;
+  currencyId: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  currency: AdminCurrencyDto;
+  countryLocales: AdminCountryLocaleDto[];
+  domains: AdminCountryDomainDto[];
+};
+
+type AdminCountriesListPayload = {
+  countries: AdminCountryDto[];
+};
+
+type AdminCountryDetailPayload = {
+  country: AdminCountryDto;
+};
+
+type AdminCurrenciesListPayload = {
+  currencies: AdminCurrencyDto[];
+};
+
 async function adminRequest<T>(
   path: string,
   init?: {
-    method?: "GET" | "PATCH";
+    method?: "GET" | "POST" | "PATCH" | "DELETE";
     body?: unknown;
   },
 ): Promise<AdminApiResponse<T>> {
@@ -125,5 +175,37 @@ export async function patchAdminAppointmentStatus(id: string, status: string) {
   return adminRequest<AdminAppointmentDetailPayload>(`/api/admin/appointments/${id}/status`, {
     method: "PATCH",
     body: { status },
+  });
+}
+
+export async function fetchAdminCountries() {
+  return adminRequest<AdminCountriesListPayload>("/api/admin/countries");
+}
+
+export async function fetchAdminCountryById(id: string) {
+  return adminRequest<AdminCountryDetailPayload>(`/api/admin/countries/${id}`);
+}
+
+export async function fetchAdminCurrencies() {
+  return adminRequest<AdminCurrenciesListPayload>("/api/admin/currencies");
+}
+
+export async function postAdminCountry(body: unknown) {
+  return adminRequest<AdminCountryDetailPayload>("/api/admin/countries", {
+    method: "POST",
+    body,
+  });
+}
+
+export async function patchAdminCountry(id: string, body: unknown) {
+  return adminRequest<AdminCountryDetailPayload>(`/api/admin/countries/${id}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export async function deleteAdminCountry(id: string) {
+  return adminRequest<AdminCountryDetailPayload>(`/api/admin/countries/${id}`, {
+    method: "DELETE",
   });
 }

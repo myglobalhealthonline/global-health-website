@@ -1,4 +1,4 @@
-import "dotenv/config";
+﻿import "dotenv/config";
 
 import cors from "@fastify/cors";
 import Fastify from "fastify";
@@ -13,13 +13,14 @@ import assetsRoute from "./routes/assets.route.js";
 import contactRoute from "./routes/contact.route.js";
 import newsletterRoute from "./routes/newsletter.route.js";
 import adminAppointmentsRoute from "./routes/admin-appointments.route.js";
+import adminCountriesRoute from "./routes/admin-countries.route.js";
 
 export async function buildApp() {
   const app = Fastify({ logger: true });
 
   await app.register(cors, {
     origin: true,
-    methods: ["GET", "POST", "PATCH", "OPTIONS"],
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   });
 
@@ -34,6 +35,7 @@ export async function buildApp() {
   await app.register(contactRoute);
   await app.register(newsletterRoute);
   await app.register(adminAppointmentsRoute);
+  await app.register(adminCountriesRoute);
 
   return app;
 }

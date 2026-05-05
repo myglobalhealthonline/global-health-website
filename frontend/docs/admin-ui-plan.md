@@ -44,6 +44,10 @@ Internal-only admin scaffold routes:
 - `/admin`
 - `/admin/appointments`
 - `/admin/appointments/[id]`
+- `/admin/countries` — list (name, code, default locale, supported locales, currency, active, key routes, view/edit)
+- `/admin/countries/new` — create form + server action (`POST /api/admin/countries`)
+- `/admin/countries/[id]` — read-only detail + soft-deactivate (`DELETE` → `isActive: false`)
+- `/admin/countries/[id]/edit` — full edit form (`PATCH /api/admin/countries/:id`)
 
 No public nav links point to these routes.
 
@@ -92,6 +96,7 @@ Status updates submit through a server action that calls `PATCH /api/admin/appoi
 3. Run backend + frontend.
 4. Open `/admin/appointments`, apply filters, paginate, open a row.
 5. On detail, confirm only valid next statuses appear; terminal rows show closed state only.
+6. Open `/admin/countries`: create a row, view detail, edit, deactivate; confirm inactive row disappears from public `GET /api/countries` only after backend refresh (public adapter fallback unchanged).
 
 ## Deferred UI Work
 

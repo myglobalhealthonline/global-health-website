@@ -86,13 +86,23 @@ Implemented:
 - **Frontend detail**: only valid next statuses; closed message for terminal; server action re-checks rules
 - **Tests**: `pnpm --filter backend test` runs transition unit tests
 
-## Phase 3 (planned): content + ops CRUD (before patient dashboard depth)
+## Phase 3.1 — Countries CRUD (done)
+
+Delivered:
+
+- **Backend:** `GET/POST/PATCH/DELETE /api/admin/countries`, `GET /api/admin/currencies` (form helper), shared `verifyAdminToken` (`backend/src/utils/admin-auth.ts`), Zod `admin-countries.schema.ts`, Prisma-backed `countries.service.ts` (`listAdminCountries`, `getAdminCountryById`, `createAdminCountry`, `updateAdminCountry`, `disableAdminCountry`, `listAdminCurrencies`)
+- **Soft-disable:** `DELETE /api/admin/countries/:id` sets `isActive: false` only (no row hard-delete)
+- **Frontend:** `/admin/countries`, `/admin/countries/new`, `/admin/countries/[id]`, `/admin/countries/[id]/edit` using server-only `admin-api.ts` + server actions
+- **Tests:** `admin-countries.schema.test.ts` (defaultLocale vs locales, paths, duplicate locales, domains primary, PATCH alignment)
+- **Public safety:** public read APIs and adapters unchanged; inactive countries hidden from existing `GET /api/countries` (`isActive: true` filter preserved)
+
+## Phase 3 (planned): remaining content + ops CRUD (before patient dashboard depth)
 
 Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, and ship **protected admin APIs + UI** for database-backed **marketing content** this site already reads publicly.
 
 **In scope for Phase 3 CRUD (subject to sequencing):**
 
-1. **Countries** — operational/marketing country records used by public routes
+1. ~~**Countries**~~ — **done (Phase 3.1)**
 2. **Services** — service catalog per country
 3. **Doctors** — **public profile records only** (same semantics as `Doctor` model: directory/CMS rows admins edit; **never** described as “admin users” or clinical login)
 4. **Pricing** — pricing plans / price-backed content as modeled in DB

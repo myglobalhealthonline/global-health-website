@@ -6,32 +6,14 @@ import {
   UnrecognizedAppointmentStatusError,
   updateAppointmentStatus,
 } from "../modules/appointments/appointments.service.js";
-import { env } from "../config/env.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { verifyAdminToken } from "../utils/admin-auth.js";
 import {
   adminAppointmentsQuerySchema,
   appointmentIdParamsSchema,
   updateAppointmentStatusBodySchema,
 } from "../validations/admin-appointments.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
-
-function verifyAdminToken(authorizationHeader: string | undefined) {
-  const expectedToken = env.ADMIN_API_TOKEN;
-  if (!expectedToken) {
-    return { ok: false as const, status: 503, message: "Admin auth is not configured" };
-  }
-
-  if (!authorizationHeader?.startsWith("Bearer ")) {
-    return { ok: false as const, status: 401, message: "Missing bearer token" };
-  }
-
-  const providedToken = authorizationHeader.slice("Bearer ".length).trim();
-  if (providedToken.length === 0 || providedToken !== expectedToken) {
-    return { ok: false as const, status: 401, message: "Invalid admin token" };
-  }
-
-  return { ok: true as const };
-}
 
 const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
