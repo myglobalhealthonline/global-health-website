@@ -1,11 +1,8 @@
 ﻿import type { Metadata } from "next";
-import { HeroSection } from "@/components/sections/HeroSection";
-import { CountrySelector } from "@/components/sections/CountrySelector";
+import { HomeHero } from "@/components/sections/HomeHero";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { TrustSignals } from "@/components/sections/TrustSignals";
 import { BookingCTA } from "@/components/sections/BookingCTA";
-import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
-import { resolveHomepageHeroAsset } from "@/lib/content/merge-ireland-home-media";
 import { getSiteContext } from "@/lib/content/get-site-context";
 import { getTemplatePageData } from "@/lib/content/template-page-data";
 
@@ -15,42 +12,18 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [{ common, activeCountries, navigation }, defaultClinic, assets] = await Promise.all([
+  const [{ activeCountries }, defaultClinic] = await Promise.all([
     getSiteContext("en"),
     getTemplatePageData("/home", "ie"),
-    getPublicAssetsNormalized(),
   ]);
-  const homepageHero = resolveHomepageHeroAsset(assets);
 
   return (
     <>
-      <HeroSection
-        eyebrow="Global Health Platform"
-        title="Online Medical Clinic"
-        description="Connect with licensed doctors across Europe through secure video consultations. Choose your country and book online in minutes."
-        primaryCta={{ label: common.cta.primaryBooking, href: navigation.headerPrimaryCta.href }}
-        secondaryCta={{ label: "Select your country", href: "#countries" }}
-        trustBadges={["Licensed clinicians", "Secure & confidential", "Same-day availability"]}
-        heroImage={
-          homepageHero ?? {
-            src: "/images/hero/homepage-hero-ai.svg",
-            alt: "Illustration of patients and clinicians using secure online healthcare tools",
-          }
-        }
-      />
-
-      <CountrySelector
-        countries={activeCountries}
-        copy={{
-          title: "Select Your Country",
-          description: "Choose your location to access local doctors, consultations, and services.",
-          enterClinic: "Enter clinic",
-        }}
-      />
+      <HomeHero countries={activeCountries} />
 
       <HowItWorks
         title="How does it work?"
-        subtitle="Same booking journey across all countries"
+        subtitle="Simple Scheduling in 3 Steps"
         steps={defaultClinic.countryHome.steps}
       />
 
@@ -63,7 +36,8 @@ export default async function HomePage() {
         title={defaultClinic.countryHome.booking.title}
         description={defaultClinic.countryHome.booking.description}
         ctaLabel={defaultClinic.countryHome.booking.ctaLabel}
-        ctaHref={navigation.footerCta.href}
+        ctaHref={defaultClinic.countryHome.booking.ctaHref}
+        asideImage={defaultClinic.countryHome.booking.asideImage}
       />
     </>
   );

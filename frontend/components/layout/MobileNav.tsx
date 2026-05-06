@@ -6,13 +6,16 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import type { SiteNavigationData } from "@/data/navigation";
+import { DEFAULT_BRAND_LOGO } from "@/lib/content/brand-logo";
 
 export function MobileNav({
   siteName,
   navigation,
+  brandLogo = DEFAULT_BRAND_LOGO,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
+  brandLogo?: { src: string; alt: string };
 }) {
   return (
     <Dialog.Root>
@@ -37,11 +40,11 @@ export function MobileNav({
           <div className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] px-4 py-4">
             <Link href="/" className="flex items-center">
               <Image
-                src="/logos/global-health-wordmark-temp.svg"
-                alt={`${siteName} temporary wordmark`}
-                width={200}
-                height={48}
-                className="h-10 w-auto"
+                src={brandLogo.src}
+                alt={brandLogo.alt}
+                width={280}
+                height={120}
+                className="h-11 w-auto max-w-[220px]"
               />
             </Link>
             <Dialog.Close className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2">

@@ -35,9 +35,9 @@ export function SiteFooter({
                 <Image
                   src={brandLogo!.src}
                   alt={brandLogo!.alt}
-                  width={220}
-                  height={54}
-                  className="h-11 w-auto sm:h-12"
+                  width={280}
+                  height={120}
+                  className="h-12 w-auto max-w-[240px] sm:h-[3.25rem] sm:max-w-[260px]"
                 />
               ) : (
                 <div className="flex items-center gap-2.5">

@@ -3,6 +3,7 @@ import { cookies, headers } from "next/headers";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
+import { DEFAULT_BRAND_LOGO } from "@/lib/content/brand-logo";
 import {
   resolveFooterCtaDecorAsset,
   resolveSiteLogoAsset,
@@ -29,7 +30,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     getPublicAssetsNormalized(),
   ]);
 
-  const brandLogo = resolveSiteLogoAsset(assets);
+  const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO;
   const footerDecorImage = resolveFooterCtaDecorAsset(assets);
 
   return (
