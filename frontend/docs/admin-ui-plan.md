@@ -104,6 +104,15 @@ No public nav links point to these routes.
 - Doctor login/dashboard/portal remains explicitly out of scope.
 - Admin pages remain protected by server-side `ADMIN_API_TOKEN` workflow until role-based admin session migration is completed.
 
+### Phase 6 notes (admin session guard migration)
+
+- `/admin/*` now requires authenticated `ADMIN` role session.
+- Unauthenticated users are redirected to `/login?next=/admin`.
+- Authenticated `PATIENT` users are redirected to `/account`.
+- Admin layout now shows current admin identity and a logout action.
+- Admin API client stays `server-only` and forwards cookie/session to backend admin endpoints.
+- Token fallback (`ADMIN_API_TOKEN`) may remain as temporary server-side escape hatch only when backend fallback is enabled.
+
 ### Phase 3.4 notes (pricing)
 
 - Copy clarifies **displayed pricing only** — no checkout, Stripe, or patient payments in this phase.

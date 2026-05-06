@@ -1,4 +1,5 @@
 import "server-only";
+import { cookies } from "next/headers";
 
 const DEFAULT_ADMIN_API_BASE_URL = "http://localhost:4000";
 
@@ -12,6 +13,12 @@ function getAdminApiBaseUrl() {
 
 function getAdminApiToken() {
   return process.env.ADMIN_API_TOKEN ?? "";
+}
+
+function isAdminTokenFallbackEnabled() {
+  const raw = process.env.ADMIN_TOKEN_FALLBACK_ENABLED;
+  if (raw === undefined) return process.env.NODE_ENV !== "production";
+  return raw === "true";
 }
 
 type AdminApiResponse<T> =
@@ -110,21 +117,27 @@ async function adminRequest<T>(
     body?: unknown;
   },
 ): Promise<AdminApiResponse<T>> {
+  const cookieHeader = (await cookies())
+    .getAll()
+    .map((entry) => `${entry.name}=${entry.value}`)
+    .join("; ");
   const token = getAdminApiToken();
-  if (!token) {
-    return {
-      ok: false,
-      message: "ADMIN_API_TOKEN is missing in frontend runtime env",
-    };
-  }
+  const tokenFallbackEnabled = isAdminTokenFallbackEnabled();
 
   try {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (cookieHeader) {
+      headers.cookie = cookieHeader;
+    }
+    if (!cookieHeader && tokenFallbackEnabled && token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${getAdminApiBaseUrl()}${path}`, {
       method: init?.method ?? "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
       body: init?.body ? JSON.stringify(init.body) : undefined,
       cache: "no-store",
     });

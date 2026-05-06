@@ -26,6 +26,13 @@ function normalizeNextPath(pathname: string) {
 }
 
 async function hasAllowedAccountSession(request: NextRequest) {
+  const auth = await resolveSessionUser(request);
+  return auth.role === "PATIENT" || auth.role === "ADMIN";
+}
+
+async function resolveSessionUser(request: NextRequest): Promise<{
+  role: "PATIENT" | "ADMIN" | null;
+}> {
   try {
     const response = await fetch(`${getApiBaseUrl()}/api/auth/me`, {
       method: "GET",
@@ -34,15 +41,18 @@ async function hasAllowedAccountSession(request: NextRequest) {
       },
       cache: "no-store",
     });
-    if (!response.ok) return false;
+    if (!response.ok) return { role: null };
     const json = (await response.json()) as {
       ok?: boolean;
       data?: { user?: { role?: string } };
     };
     const role = json.data?.user?.role;
-    return json.ok === true && (role === "PATIENT" || role === "ADMIN");
+    if (json.ok === true && (role === "PATIENT" || role === "ADMIN")) {
+      return { role };
+    }
+    return { role: null };
   } catch {
-    return false;
+    return { role: null };
   }
 }
 
@@ -61,6 +71,24 @@ export async function proxy(request: NextRequest) {
   if (pathname === "/account" || pathname.startsWith("/account/")) {
     const allowed = await hasAllowedAccountSession(request);
     if (!allowed) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/login";
+      loginUrl.search = "";
+      loginUrl.searchParams.set("next", normalizeNextPath(pathname));
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    const session = await resolveSessionUser(request);
+    if (session.role === "ADMIN") {
+      // continue
+    } else if (session.role === "PATIENT") {
+      const accountUrl = request.nextUrl.clone();
+      accountUrl.pathname = "/account";
+      accountUrl.search = "";
+      return NextResponse.redirect(accountUrl);
+    } else {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
       loginUrl.search = "";

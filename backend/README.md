@@ -118,6 +118,7 @@ See **`backend/.env.example`**. Summary:
 
 - **`DATABASE_URL`** — required for API runtime, Prisma CLI, and seed.
 - **`ADMIN_API_TOKEN`** — optional for server start in some setups; required to call **`/api/admin/*`** (including Assets admin after Phase 3.5).
+- **`ADMIN_TOKEN_FALLBACK_ENABLED`** — optional toggle (`true`/`false`) for bearer token fallback on `/api/admin/*`; default is enabled in development and disabled in production.
 - **`PORT`** — defaults to `4000` in **`src/config/env.ts`** if unset.
 
 Optional **`DATABASE_PUBLIC_URL`** in comments in `.env.example`: some platforms use an internal URL for the deployed app and a **public** URL for tools running on your laptop; use whichever host your machine can reach as **`DATABASE_URL`** when running migrations/seeds locally.
@@ -208,6 +209,25 @@ Deferred behavior (intentional for this phase):
 - Password reset email delivery and token lifecycle are placeholders only.
 - No doctor login role/portal is introduced.
 - Payments are not implemented.
+
+## Phase 6 admin session guard
+
+Admin API authorization (`/api/admin/*`) now uses:
+
+- primary: authenticated `ADMIN` role session (auth cookie + JWT verification + user lookup)
+- optional fallback: `Authorization: Bearer <ADMIN_API_TOKEN>` when `ADMIN_TOKEN_FALLBACK_ENABLED=true`
+
+`PATIENT` sessions are rejected with `403` on admin APIs.
+
+### Admin seed env (optional)
+
+`pnpm --filter backend db:seed` will upsert a default admin user only when all of these are present:
+
+- `SEED_ADMIN_EMAIL`
+- `SEED_ADMIN_PASSWORD`
+- `SEED_ADMIN_FULL_NAME`
+
+If any are missing, admin seed is skipped safely. Passwords are hashed with bcrypt.
 
 ### Phase 4.2 booking ownership + patient history
 

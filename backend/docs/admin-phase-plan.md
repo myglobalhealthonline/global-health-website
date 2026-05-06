@@ -248,6 +248,21 @@ Still unchanged by design:
 - No doctor portal or doctor role additions.
 - No payments implementation.
 
+## Phase 6 — Admin session guard migration (done)
+
+Delivered:
+
+- `/api/admin/*` guard now supports real `ADMIN` session auth as the primary path.
+- Optional token fallback remains available via `ADMIN_API_TOKEN` when `ADMIN_TOKEN_FALLBACK_ENABLED=true`.
+- `PATIENT` sessions are rejected for admin APIs.
+- Added guard evaluation tests for no auth, patient/admin session role outcomes, valid/invalid token fallback, and fallback-disabled behavior.
+- Seed flow supports optional admin bootstrap through `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD`, `SEED_ADMIN_FULL_NAME`.
+
+Production recommendation:
+
+- Use real admin session auth for `/api/admin/*`.
+- Disable token fallback (`ADMIN_TOKEN_FALLBACK_ENABLED=false`) unless a temporary break-glass path is required.
+
 ## Phase 3 (planned): remaining content + ops CRUD (before patient dashboard depth)
 
 Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, and ship **protected admin APIs + UI** for database-backed **marketing content** this site already reads publicly.

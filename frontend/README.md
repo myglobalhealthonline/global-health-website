@@ -104,3 +104,18 @@ Security constraints preserved:
 - No auth tokens are exposed in client-side code.
 - Admin queue and operational tooling remain separate under `/api/admin/*`.
 - No doctor portal/dashboard work and no `DOCTOR` role additions.
+
+## Phase 6 Admin Session Guard
+
+Admin UX now uses standard auth session role checks:
+
+- `/admin/*` requires authenticated `ADMIN` role.
+- unauthenticated access redirects to `/login?next=/admin`.
+- authenticated `PATIENT` access is redirected to `/account`.
+
+Admin API calls from frontend remain server-only:
+
+- server code forwards request cookie/session to backend admin endpoints
+- optional `ADMIN_API_TOKEN` fallback is server-side only and never exposed to browser code
+
+No changes were made to public navigation/routes, patient account behavior, or guest booking flow.

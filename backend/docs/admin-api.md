@@ -1,24 +1,25 @@
-# Admin API (Phase 2 + 2.1 + 3.1 countries + 3.2 services + 3.3 doctors + 3.4 pricing + 3.5 assets)
+# Admin API (Phase 2 + 2.1 + 3.1 countries + 3.2 services + 3.3 doctors + 3.4 pricing + 3.5 assets + 6 session guard)
 
 ## Account scope
 
-Admin HTTP APIs are called **only by trusted server-side code** today (`ADMIN_API_TOKEN`). Future **human `ADMIN` users** of this website belong here — **not** doctors (`Doctor` rows are public content, separate doctor portal deferred). Website **`PATIENT`** APIs will be a different surface when auth ships. **Payments:** deferred; when present, booking + payment state may be reviewable together without treating payment as automatic clinical confirmation.
+Admin HTTP APIs are now protected by **ADMIN session auth** as the primary path. `ADMIN_API_TOKEN` can remain as an optional server-side fallback path during migration. Human `ADMIN` users of this website belong here — **not** doctors (`Doctor` rows are public content, separate doctor portal deferred). Website `PATIENT` APIs remain a separate surface. **Payments:** deferred.
 
 Base URL examples:
 
 - local: `http://localhost:4000`
 
-All admin endpoints require:
+All admin endpoints now allow:
 
-- header `Authorization: Bearer <ADMIN_API_TOKEN>`
+1. valid auth cookie/session for a user with role `ADMIN` (primary), or
+2. `Authorization: Bearer <ADMIN_API_TOKEN>` fallback when `ADMIN_TOKEN_FALLBACK_ENABLED=true`.
 
-If token missing in backend runtime env, API returns:
+Fallback behavior:
 
-- `503` + `{"ok":false,"message":"Admin auth is not configured"}`
+- if fallback is disabled and no valid admin session exists: `401`
+- if fallback is enabled but `ADMIN_API_TOKEN` is not configured: `503`
+- invalid fallback token: `401`
 
-If token missing/invalid in request:
-
-- `401` + `{"ok":false,"message":"Missing bearer token"}` or `Invalid admin token`
+`PATIENT` session access to `/api/admin/*` is rejected with `403`.
 
 ## Status workflow (Phase 2.1)
 
@@ -524,12 +525,12 @@ Validation notes:
 - Legal/static page editing is enabled in admin, but production legal copy should remain business/legal-approved before switching public reads.
 - Payments, patient dashboard, and doctor portal remain out of scope.
 
-## Security Limits (Phase 2 / 2.1)
+## Security Limits
 
-- auth is env-token gate, not per-user identity
+- admin API guard now supports real `ADMIN` session auth (primary path)
+- token fallback can be disabled with `ADMIN_TOKEN_FALLBACK_ENABLED=false`
 - no per-admin audit trail yet
-- no route-level RBAC beyond shared admin token
-- token rotation is manual via env update and restart
+- token fallback rotation (if enabled) is manual via env update and restart
 - list `search` is bounded (length, parameterized SQL) to reduce abuse surface
 
 ## Local tests
@@ -545,3 +546,4 @@ Validation notes:
 - `admin-blog-posts.schema.test.ts` (slug safety, locale, published body rules, query filters)
 - `admin-faqs.schema.test.ts` (required fields, locale, numeric sort order, query filters)
 - `admin-content-pages.schema.test.ts` (pageKey safety, locale, published body rules, query filters)
+- `admin-auth.test.ts` (session role + token fallback guard behavior)

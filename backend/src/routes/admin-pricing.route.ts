@@ -17,7 +17,7 @@ import {
   adminPricingUpdateBodySchema,
   pricingPlanIdParamsSchema,
 } from "../validations/admin-pricing.schema.js";
-import { verifyAdminToken } from "../utils/admin-auth.js";
+import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 function handlePricingWriteError(
@@ -46,7 +46,7 @@ function handlePricingWriteError(
 
 const adminPricingRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
-    const auth = verifyAdminToken(request.headers.authorization);
+    const auth = await verifyAdminAccess(request);
     if (!auth.ok) {
       return reply.status(auth.status).send(errorResponse(auth.message));
     }

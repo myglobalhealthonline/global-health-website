@@ -7,7 +7,7 @@ import {
   updateAppointmentStatus,
 } from "../modules/appointments/appointments.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyAdminToken } from "../utils/admin-auth.js";
+import { verifyAdminAccess } from "../utils/admin-auth.js";
 import {
   adminAppointmentsQuerySchema,
   appointmentIdParamsSchema,
@@ -17,7 +17,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 
 const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
-    const auth = verifyAdminToken(request.headers.authorization);
+    const auth = await verifyAdminAccess(request);
     if (!auth.ok) {
       return reply.status(auth.status).send(errorResponse(auth.message));
     }

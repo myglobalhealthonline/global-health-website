@@ -2,7 +2,8 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, LocaleCode } from "@prisma/client";
+import { PrismaClient, LocaleCode, UserRole } from "@prisma/client";
+import bcrypt from "bcryptjs";
 import { Pool } from "pg";
 
 const prismaDir = dirname(fileURLToPath(import.meta.url));
@@ -308,6 +309,40 @@ async function main() {
       update: { name: `${seed.name} Main Clinic` },
       create: { countryId: country.id, slug: `${seed.code}-main-clinic`, name: `${seed.name} Main Clinic` },
     });
+  }
+
+  const seedAdminEmail = process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase();
+  const seedAdminPassword = process.env.SEED_ADMIN_PASSWORD?.trim();
+  const seedAdminFullName = process.env.SEED_ADMIN_FULL_NAME?.trim();
+
+  const hasAnyAdminSeedEnv = Boolean(seedAdminEmail || seedAdminPassword || seedAdminFullName);
+  const hasAllAdminSeedEnv = Boolean(seedAdminEmail && seedAdminPassword && seedAdminFullName);
+
+  if (hasAnyAdminSeedEnv && !hasAllAdminSeedEnv) {
+    console.warn(
+      "[seed] Skipping admin user seed: set SEED_ADMIN_EMAIL, SEED_ADMIN_PASSWORD, and SEED_ADMIN_FULL_NAME together.",
+    );
+  }
+
+  if (hasAllAdminSeedEnv) {
+    const passwordHash = await bcrypt.hash(seedAdminPassword as string, 12);
+    await prisma.user.upsert({
+      where: { email: seedAdminEmail as string },
+      update: {
+        fullName: seedAdminFullName as string,
+        passwordHash,
+        role: UserRole.ADMIN,
+        isActive: true,
+      },
+      create: {
+        email: seedAdminEmail as string,
+        fullName: seedAdminFullName as string,
+        passwordHash,
+        role: UserRole.ADMIN,
+        isActive: true,
+      },
+    });
+    console.log(`[seed] Admin user ensured for ${seedAdminEmail}`);
   }
 }
 
