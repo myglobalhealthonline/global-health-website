@@ -1,5 +1,6 @@
 ﻿import type { ReactNode } from "react";
 import { cookies, headers } from "next/headers";
+import "flag-icons/css/flag-icons.min.css";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";

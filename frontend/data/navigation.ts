@@ -14,6 +14,7 @@ export type FooterColumn = { heading: string; links: NavLink[] };
 
 export type SiteNavigationData = {
   clinicsMenuByCountry: CountryClinicLinks[];
+  clinicsOverviewLink: NavLink;
   aboutMenuLinks: NavLink[];
   headerUtilityLinks: NavLink[];
   headerAuthLink: NavLink;
@@ -24,6 +25,9 @@ export type SiteNavigationData = {
   trustLine: string;
   clinicsLabel: string;
   aboutLabel: string;
+  searchCountryOrServiceLabel: string;
+  viewAllClinicsLabel: string;
+  trustedCareAcrossEuropeLabel: string;
 };
 
 function clinicLinksForCountry(c: CountryConfig, copy: CommonLocale): NavLink[] {
@@ -114,6 +118,7 @@ export function buildSiteNavigationData(
 
   return {
     clinicsMenuByCountry,
+    clinicsOverviewLink: { label: copy.navigation.viewAllClinics, href: "/#countries" },
     aboutMenuLinks,
     headerUtilityLinks,
     headerAuthLink,
@@ -124,6 +129,9 @@ export function buildSiteNavigationData(
     trustLine: copy.footer.trustLine,
     clinicsLabel: copy.navigation.clinics,
     aboutLabel: copy.navigation.about,
+    searchCountryOrServiceLabel: copy.navigation.searchCountryOrService,
+    viewAllClinicsLabel: copy.navigation.viewAllClinics,
+    trustedCareAcrossEuropeLabel: copy.navigation.trustedCareAcrossEurope,
   };
 }
 

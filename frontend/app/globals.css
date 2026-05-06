@@ -57,7 +57,7 @@
   --text-body-lg: clamp(1rem, 1.15vw, 1.12rem);
   --text-body: 1rem;
   --text-body-sm: 0.92rem;
-  --header-height: 84px;
+  --header-height: 100px;
 }
 
 @theme inline {

@@ -19,6 +19,9 @@ export type CommonLocale = {
     plansPricing: string;
     healthTests: string;
     partnerClinics: string;
+    searchCountryOrService: string;
+    viewAllClinics: string;
+    trustedCareAcrossEurope: string;
   };
   footer: {
     company: string;

@@ -17,13 +17,17 @@ export function DesktopNav({
   return (
     <nav
       className={cn(
-        "hidden items-center gap-1 lg:flex lg:flex-1 lg:justify-end",
+        "hidden items-center gap-1 lg:flex",
         className,
       )}
     >
       <ClinicsDropdown
         label={navigation.clinicsLabel}
         clinicsMenuByCountry={navigation.clinicsMenuByCountry}
+        clinicsOverviewLink={navigation.clinicsOverviewLink}
+        searchPlaceholder={navigation.searchCountryOrServiceLabel}
+        viewAllLabel={navigation.viewAllClinicsLabel}
+        trustLabel={navigation.trustedCareAcrossEuropeLabel}
       />
 
       <DropdownMenu.Root>

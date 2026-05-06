@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
-import type { CountryConfig } from "@/data/countries";
+import type { CountryCode, CountryConfig } from "@/data/countries";
 
 const localeNames: Record<string, string> = {
   en: "English",
@@ -13,21 +13,38 @@ const localeNames: Record<string, string> = {
   ro: "Română",
 };
 
-const localeCodes: Record<string, string> = {
-  en: "EN",
-  cs: "CS",
-  es: "ES",
-  pt: "PT",
-  ro: "RO",
+/** ISO 3166-1 alpha-2 for `flag-icons` (`fi fi-xx`). Internal `sp`/`rm` map to Spain/Romania. */
+const countryToFlagCode: Record<CountryCode, string> = {
+  ie: "ie",
+  pt: "pt",
+  sp: "es",
+  cz: "cz",
+  rm: "ro",
 };
 
-const countryFlags: Record<string, { code: string; color: string }> = {
-  ie: { code: "IE", color: "#009A49" },
-  pt: { code: "PT", color: "#006600" },
-  sp: { code: "ES", color: "#AA151B" },
-  cz: { code: "CZ", color: "#11457E" },
-  rm: { code: "RO", color: "#002B7F" },
+/** Locale → flag (English shown as GB). */
+const localeToFlagCode: Record<string, string> = {
+  en: "gb",
+  cs: "cz",
+  es: "es",
+  pt: "pt",
+  ro: "ro",
 };
+
+function FlagBadge({ alpha2, title, size = "md" }: { alpha2: string; title: string; size?: "sm" | "md" }) {
+  const box = size === "sm" ? "h-5 min-w-[28px] max-w-[28px]" : "h-7 min-w-10 max-w-10";
+  return (
+    <span
+      className={`relative inline-flex shrink-0 ${box} overflow-hidden rounded-sm shadow-md ring-1 ring-black/15`}
+      title={title}
+      aria-hidden
+    >
+      <span
+        className={`fi fi-${alpha2} pointer-events-none absolute inset-0 block !m-0 !h-full !w-full !min-h-0 !min-w-0 bg-cover bg-center bg-no-repeat leading-none`}
+      />
+    </span>
+  );
+}
 
 type HomeHeroProps = {
   countries: CountryConfig[];
@@ -86,21 +103,20 @@ export function HomeHero({ countries }: HomeHeroProps) {
 
           {/* RIGHT: Language + Country buttons */}
           <div className="flex flex-col items-start lg:items-end">
-            {/* Language Selector */}
-            <div className="relative mb-6">
+            {/* Language Selector — keep menu above country links (hover scale creates stacking contexts) */}
+            <div className="relative z-50 mb-6 w-full max-w-sm lg:w-auto">
               <button
+                type="button"
                 onClick={() => setLangOpen(!langOpen)}
-                className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2.5 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20"
+                className="flex w-full items-center gap-2 rounded-lg bg-white/10 px-4 py-2.5 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20 lg:w-auto"
               >
-                <span className="flex h-5 w-7 items-center justify-center rounded-sm bg-white/20 text-xs font-bold">
-                  {localeCodes[selectedLang]}
-                </span>
+                <FlagBadge alpha2={localeToFlagCode[selectedLang] ?? "gb"} title={localeNames[selectedLang]} size="sm" />
                 <span>{localeNames[selectedLang]}</span>
-                <ChevronDown className={`h-4 w-4 transition-transform ${langOpen ? "rotate-180" : ""}`} />
+                <ChevronDown className={`ml-auto h-4 w-4 shrink-0 transition-transform lg:ml-0 ${langOpen ? "rotate-180" : ""}`} />
               </button>
 
-              {langOpen && (
-                <div className="absolute right-0 top-full mt-2 w-48 overflow-hidden rounded-xl border border-white/10 bg-[#1B4D3E] shadow-2xl">
+              {langOpen ? (
+                <div className="absolute right-0 top-full z-50 mt-2 w-48 overflow-hidden rounded-xl border border-white/10 bg-[#1B4D3E] shadow-2xl">
                   {availableLangs.map((lang) => (
                     <button
                       key={lang}
@@ -112,35 +128,28 @@ export function HomeHero({ countries }: HomeHeroProps) {
                         selectedLang === lang ? "bg-white/10 font-semibold" : ""
                       }`}
                     >
-                      <span className="flex h-5 w-7 items-center justify-center rounded-sm bg-white/20 text-xs font-bold">
-                        {localeCodes[lang]}
-                      </span>
+                      <FlagBadge alpha2={localeToFlagCode[lang] ?? "gb"} title={localeNames[lang]} size="sm" />
                       <span className="text-white">{localeNames[lang]}</span>
                     </button>
                   ))}
                 </div>
-              )}
+              ) : null}
             </div>
 
             {/* Country Buttons */}
-            <div className="flex w-full max-w-sm flex-col gap-3">
+            <div className="relative z-0 flex w-full max-w-sm flex-col gap-3">
               {countries.map((country) => {
-                const flag = countryFlags[country.code];
+                const alpha2 = countryToFlagCode[country.code];
                 return (
                   <Link
                     key={country.code}
                     href={country.legacyHomePath}
-                    className="group flex items-center justify-between rounded-xl bg-white px-5 py-4 text-[#1B4D3E] shadow-lg transition hover:scale-[1.02] hover:shadow-xl"
+                    className="group relative isolate flex items-center justify-between gap-4 rounded-xl bg-white px-5 py-4 text-[#1B4D3E] shadow-lg transition-[transform,box-shadow] hover:shadow-xl active:scale-[0.99]"
                   >
                     <span className="font-semibold">
                       Medical Clinic {country.name}
                     </span>
-                    <span 
-                      className="flex h-7 w-10 items-center justify-center rounded text-xs font-bold text-white"
-                      style={{ backgroundColor: flag?.color || "#1B4D3E" }}
-                    >
-                      {flag?.code}
-                    </span>
+                    <FlagBadge alpha2={alpha2} title={country.name} size="md" />
                   </Link>
                 );
               })}

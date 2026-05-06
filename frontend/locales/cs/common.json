@@ -16,7 +16,10 @@
     "homeDelivery": "Home Delivery",
     "plansPricing": "Plans & Pricing",
     "healthTests": "Health Tests",
-    "partnerClinics": "Partner Clinics"
+    "partnerClinics": "Partner Clinics",
+    "searchCountryOrService": "Search country or service",
+    "viewAllClinics": "View All Clinics",
+    "trustedCareAcrossEurope": "Trusted care across Europe"
   },
   "footer": {
     "company": "Company",
