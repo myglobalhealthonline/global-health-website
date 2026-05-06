@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MapPin, Languages } from "lucide-react";
 import Link from "next/link";
 
 type DoctorCardProps = {
@@ -24,35 +24,41 @@ export function DoctorCard({
   ctaLabel = "Meet doctor",
 }: DoctorCardProps) {
   return (
-    <article className="gh-card flex h-full flex-col p-6">
-      <span className="gh-heading-eyebrow inline-flex w-fit rounded-full bg-[var(--color-background-soft)] px-3 py-1 text-[var(--color-brand-primary)]">
-        Medical team
-      </span>
-      <h3 className="gh-h3 mt-4 text-[var(--color-text-primary)]">{name}</h3>
-      <p className="gh-body-sm mt-1 font-semibold text-[var(--color-brand-primary)]">{title}</p>
-      {(country || languages.length > 0) ? (
-        <p className="gh-body-sm mt-2 text-[var(--color-text-muted)]">
-          {country ? `${country}` : ""}
-          {country && languages.length > 0 ? " · " : ""}
-          {languages.length > 0 ? `Languages: ${languages.join(", ")}` : ""}
-        </p>
-      ) : null}
-      <div className="mt-4 overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-2">
+    <article className="gh-card gh-card-hover flex h-full flex-col overflow-hidden">
+      <div className="overflow-hidden">
         <Image
           src={imageLabel ? `/uploads/${imageLabel}` : "/images/ireland/doctor-spotlight-ai.svg"}
           alt={`Illustrative clinician portrait for ${name}`}
           width={360}
           height={420}
-          className="h-44 w-full rounded-[14px] object-cover"
+          className="h-52 w-full object-cover sm:h-56"
         />
       </div>
-      <p className="gh-body-sm mt-4 flex-1 text-[var(--color-text-muted)]">{bio}</p>
-      {href ? (
-        <Link href={href} className="gh-link-arrow mt-5">
-          {ctaLabel}
-          <ArrowRight className="size-4" aria-hidden />
-        </Link>
-      ) : null}
+      <div className="flex flex-1 flex-col p-6">
+        <h3 className="gh-h3 text-[var(--color-text-primary)]">{name}</h3>
+        <p className="gh-body-sm mt-1 font-semibold text-[var(--color-brand-primary)]">{title}</p>
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--color-text-muted)]">
+          {country ? (
+            <span className="inline-flex items-center gap-1">
+              <MapPin className="size-3.5" aria-hidden />
+              {country}
+            </span>
+          ) : null}
+          {languages.length > 0 ? (
+            <span className="inline-flex items-center gap-1">
+              <Languages className="size-3.5" aria-hidden />
+              {languages.join(", ")}
+            </span>
+          ) : null}
+        </div>
+        <p className="gh-body-sm mt-4 flex-1 text-[var(--color-text-muted)] line-clamp-3">{bio}</p>
+        {href ? (
+          <Link href={href} className="gh-link-arrow mt-5">
+            {ctaLabel}
+            <ArrowRight className="size-4" aria-hidden />
+          </Link>
+        ) : null}
+      </div>
     </article>
   );
 }

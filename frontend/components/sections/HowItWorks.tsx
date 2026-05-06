@@ -19,13 +19,15 @@ type HowItWorksProps = {
 
 export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWorksProps) {
   return (
-    <Section className="bg-[var(--color-brand-secondary)]">
+    <Section className="bg-[var(--color-background-soft)]">
       <Container>
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="gh-h2 text-[var(--color-text-primary)]">{title}</h2>
-          {subtitle ? <p className="gh-body-lg mt-3 text-[var(--color-text-muted)]">{subtitle}</p> : null}
+          {subtitle ? (
+            <p className="gh-body-lg mt-3 text-[var(--color-text-muted)]">{subtitle}</p>
+          ) : null}
         </div>
-        <ol className="mx-auto mt-10 grid max-w-6xl gap-5 sm:grid-cols-2 lg:gap-6">
+        <ol className="mx-auto mt-10 grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
           {steps.map((step, index) => {
             const normalized =
               typeof step === "string"
@@ -34,13 +36,18 @@ export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWor
 
             return (
               <li key={`${normalized.title}-${index}`} className="gh-card p-6">
-                <p className="inline-flex size-11 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-sm font-bold text-[var(--color-brand-primary)]">
-                  {index + 1}
-                </p>
+                <div className="flex items-center gap-3">
+                  <p className="inline-flex size-10 items-center justify-center rounded-xl bg-[var(--color-brand-primary)] text-sm font-bold text-white">
+                    {index + 1}
+                  </p>
+                  <div className="h-px flex-1 bg-[var(--color-border)]" />
+                </div>
                 <h3 className="gh-h3 mt-4 text-[var(--color-text-primary)]">{normalized.title}</h3>
-                <p className="gh-body-sm mt-2 text-[var(--color-text-muted)]">{normalized.description}</p>
+                <p className="gh-body-sm mt-2 text-[var(--color-text-muted)]">
+                  {normalized.description}
+                </p>
                 {normalized.ctaLabel && normalized.ctaHref ? (
-                  <Link href={normalized.ctaHref} className="gh-btn gh-btn-outline mt-4 min-h-10 px-4">
+                  <Link href={normalized.ctaHref} className="gh-btn gh-btn-outline mt-4 min-h-10 px-4 text-sm">
                     {normalized.ctaLabel}
                   </Link>
                 ) : null}

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Clock, Users } from "lucide-react";
 import { BookingCTA } from "@/components/sections/BookingCTA";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { FAQSection } from "@/components/sections/FAQSection";
@@ -102,20 +103,22 @@ export function CountryHomeTemplate({
       {quickActions.length > 0 ? (
         <Section className="border-b border-[var(--color-border)] bg-[var(--color-brand-secondary)] py-5">
           <Container>
-            <nav
-              aria-label={`${countryName} quick links`}
-              className="flex flex-wrap gap-2 text-sm font-medium sm:gap-3"
-            >
-              {quickActions.map((action) => (
-                <Link
-                  key={action.href + action.title}
-                  href={action.href}
-                  className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-2.5 text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-brand-secondary)]"
-                >
-                  {action.title}
-                </Link>
-              ))}
-            </nav>
+            <div className="flex flex-wrap items-center gap-3 text-sm">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+                Quick links
+              </span>
+              <nav aria-label={`${countryName} quick links`} className="flex flex-wrap gap-2">
+                {quickActions.map((action) => (
+                  <Link
+                    key={action.href + action.title}
+                    href={action.href}
+                    className="gh-btn gh-btn-soft min-h-[36px] px-4 py-1.5 text-sm font-medium"
+                  >
+                    {action.title}
+                  </Link>
+                ))}
+              </nav>
+            </div>
           </Container>
         </Section>
       ) : null}
@@ -134,22 +137,22 @@ export function CountryHomeTemplate({
       {availability ? (
         <Section className="bg-[var(--color-background-page)] py-10">
           <Container>
-            <div className="rounded-[30px] bg-[var(--color-brand-primary)] p-8 text-[var(--color-brand-secondary)] shadow-[var(--shadow-elevated)] sm:p-10">
+            <div className="rounded-[var(--radius-card)] bg-[var(--color-brand-primary)] p-8 text-[var(--color-brand-secondary)] shadow-[var(--shadow-elevated)] sm:p-10">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                 <div className="max-w-2xl">
-                  {availability.eyebrow ? (
-                    <p className="gh-heading-eyebrow text-white/90">
-                      {availability.eyebrow}
-                    </p>
-                  ) : null}
-                  <h2 className="gh-h2 mt-3 text-[var(--color-brand-secondary)]">
-                    {availability.title}
-                  </h2>
-                  <p className="gh-body-lg mt-3 max-w-2xl text-white/90">
-                    {availability.description}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <Clock className="size-5 text-white/80" aria-hidden />
+                    {availability.eyebrow ? (
+                      <p className="gh-heading-eyebrow text-white/90">{availability.eyebrow}</p>
+                    ) : null}
+                  </div>
+                  <h2 className="gh-h2 mt-3 text-[var(--color-brand-secondary)]">{availability.title}</h2>
+                  <p className="gh-body-lg mt-3 max-w-2xl text-white/90">{availability.description}</p>
                 </div>
-                <Link href={availability.cta.href} className="gh-btn bg-[var(--color-brand-secondary)] text-[var(--color-brand-primary)] hover:bg-white">
+                <Link
+                  href={availability.cta.href}
+                  className="gh-btn bg-[var(--color-brand-secondary)] text-[var(--color-brand-primary)] hover:bg-white"
+                >
                   {availability.cta.label}
                 </Link>
               </div>
@@ -163,14 +166,8 @@ export function CountryHomeTemplate({
           <Container>
             <div className="grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
               <div>
-                {about.eyebrow ? (
-                  <p className="gh-kicker">
-                    {about.eyebrow}
-                  </p>
-                ) : null}
-                <h2 className="gh-h2 mt-3 text-[var(--color-text-primary)]">
-                  {about.title}
-                </h2>
+                {about.eyebrow ? <p className="gh-kicker">{about.eyebrow}</p> : null}
+                <h2 className="gh-h2 mt-3 text-[var(--color-text-primary)]">{about.title}</h2>
                 <div className="gh-body mt-4 space-y-4 text-[var(--color-text-muted)]">
                   {about.description.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
@@ -186,13 +183,13 @@ export function CountryHomeTemplate({
                 ) : null}
               </div>
               {about.image ? (
-                <div className="overflow-hidden rounded-[30px] bg-[var(--color-background-soft)] p-2 shadow-[var(--shadow-elevated)]">
+                <div className="overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-background-soft)] p-2 shadow-[var(--shadow-elevated)]">
                   <Image
                     src={about.image.src}
                     alt={about.image.alt}
                     width={1200}
                     height={900}
-                    className="h-auto w-full rounded-[24px] object-cover"
+                    className="h-auto w-full rounded-[20px] object-cover"
                   />
                 </div>
               ) : null}
@@ -210,24 +207,22 @@ export function CountryHomeTemplate({
       {homeDelivery ? (
         <Section className="bg-[var(--color-brand-secondary)]">
           <Container>
-            <div className="grid gap-8 rounded-[30px] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-6 shadow-[var(--shadow-soft)] sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="grid gap-8 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-6 shadow-[var(--shadow-soft)] sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
               <div>
-                <h2 className="gh-h2 text-[var(--color-text-primary)]">
-                  {homeDelivery.title}
-                </h2>
+                <h2 className="gh-h2 text-[var(--color-text-primary)]">{homeDelivery.title}</h2>
                 <p className="gh-body mt-4 max-w-2xl text-[var(--color-text-muted)]">{homeDelivery.description}</p>
                 <Link href={homeDelivery.cta.href} className="gh-btn gh-btn-primary mt-6">
                   {homeDelivery.cta.label}
                 </Link>
               </div>
               {homeDelivery.image ? (
-                <div className="overflow-hidden rounded-[30px] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-card)]">
+                <div className="overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-card)]">
                   <Image
                     src={homeDelivery.image.src}
                     alt={homeDelivery.image.alt}
                     width={1200}
                     height={900}
-                    className="h-auto w-full rounded-[24px] object-cover"
+                    className="h-auto w-full rounded-[20px] object-cover"
                   />
                 </div>
               ) : null}
@@ -241,26 +236,29 @@ export function CountryHomeTemplate({
           <Container>
             <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
               {doctorSpotlight.image ? (
-                <div className="overflow-hidden rounded-[30px] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-elevated)]">
+                <div className="overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-elevated)]">
                   <Image
                     src={doctorSpotlight.image.src}
                     alt={doctorSpotlight.image.alt}
                     width={900}
                     height={1100}
-                    className="h-auto w-full rounded-[24px] object-cover"
+                    className="h-auto w-full rounded-[20px] object-cover"
                   />
                 </div>
               ) : null}
               <div>
-                <p className="gh-kicker">
-                  Testimonials
-                </p>
-                <blockquote className="mt-4 text-[var(--text-h2)] font-extrabold tracking-tight text-[var(--color-text-primary)]">
+                <div className="flex items-center gap-2">
+                  <Users className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
+                  <p className="gh-heading-eyebrow text-[var(--color-brand-primary)]">Doctor profile</p>
+                </div>
+                <blockquote className="mt-4 text-[var(--text-h2)] font-extrabold tracking-tight leading-[1.15] text-[var(--color-text-primary)]">
                   &ldquo;{doctorSpotlight.quote}&rdquo;
                 </blockquote>
-                <p className="mt-5 text-lg font-semibold text-[var(--color-text-primary)]">{doctorSpotlight.name}</p>
-                <p className="mt-1 text-sm font-medium text-[var(--color-brand-primary)]">{doctorSpotlight.title}</p>
-                <p className="mt-1 text-sm text-[var(--color-text-muted)]">{doctorSpotlight.credential}</p>
+                <div className="mt-5 border-t border-[var(--color-border)] pt-5">
+                  <p className="text-lg font-semibold text-[var(--color-text-primary)]">{doctorSpotlight.name}</p>
+                  <p className="mt-1 text-sm font-medium text-[var(--color-brand-primary)]">{doctorSpotlight.title}</p>
+                  <p className="mt-1 text-sm text-[var(--color-text-muted)]">{doctorSpotlight.credential}</p>
+                </div>
               </div>
             </div>
           </Container>

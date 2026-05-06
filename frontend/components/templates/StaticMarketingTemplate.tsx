@@ -52,7 +52,7 @@ export function StaticMarketingTemplate({
           <Container>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
               {features.map((feature) => (
-                <article key={feature.title} className="gh-card flex h-full flex-col p-6">
+                <article key={feature.title} className="gh-card gh-card-hover flex h-full flex-col p-6">
                   <h3 className="gh-h3 text-[var(--color-text-primary)]">{feature.title}</h3>
                   <p className="gh-body-sm mt-3 flex-1 text-[var(--color-text-muted)]">
                     {feature.description}
