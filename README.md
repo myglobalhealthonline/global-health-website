@@ -1,4 +1,4 @@
-# Global Health Platform
+# Global Health Platform 
 
 A scalable healthcare platform rebuilt from the existing Wix website into a clean, maintainable, responsive full-stack web application.
 
