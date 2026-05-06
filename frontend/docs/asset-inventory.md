@@ -1,93 +1,106 @@
 # Asset Inventory
 
-Audit date: 2026-05-05
+Audit date: 2026-05-06
 
-## Replaced With AI-Generated Temporary Asset
+## Asset Replacement Plan — /home (Ireland)
 
-| Old Placeholder Path | New Asset Path | Usage Location | Alt Text | Status | Final Business Approval Required |
-| --- | --- | --- | --- | --- | --- |
-| `frontend/public/logos/global-health-logo-placeholder.svg` | `frontend/public/logos/global-health-wordmark-temp.svg` | shared header, mobile nav, footer | Temporary Global Health wordmark | AI-generated temporary asset | yes |
-| `frontend/public/images/hero/homepage-hero-placeholder.svg` | `frontend/public/images/hero/homepage-hero-ai.svg` | `/` hero | Illustration of patients and clinicians using secure online healthcare tools | AI-generated temporary asset | no |
-| `frontend/public/images/hero/ireland-home-hero-placeholder.svg` | `frontend/public/images/hero/ireland-hero-ai.svg` | `/home` hero | Illustration of an online doctor consultation for the Ireland clinic | AI-generated temporary asset | no |
-| `frontend/public/images/ireland/about-placeholder.svg` | `frontend/public/images/ireland/about-clinic-ai.svg` | `/home` about section | Illustration of a collaborative online healthcare team | AI-generated temporary asset | no |
-| `frontend/public/images/ireland/home-delivery-placeholder.svg` | `frontend/public/images/ireland/home-delivery-ai.svg` | `/home` delivery section | Illustration of secure healthcare home delivery service | AI-generated temporary asset | no |
-| `frontend/public/images/ireland/doctor-spotlight-placeholder.svg` | `frontend/public/images/ireland/doctor-spotlight-ai.svg` | `/home` doctor spotlight, doctor cards, doctor profile template | Illustrative clinician portrait used for clinic spotlight | AI-generated temporary asset | yes |
-| `frontend/public/images/footer/cta-footer-placeholder.svg` | `frontend/public/images/footer/footer-cta-ai.svg` | shared footer CTA artwork | Illustration of a patient booking an online consultation on a phone | AI-generated temporary asset | yes |
-| `frontend/public/images/hero/portugal-home-hero-placeholder.svg` | `frontend/public/images/hero/country-home-hero-ai.svg` | `/home-pt` hero | Illustration of an online medical consultation for the Portugal clinic | AI-generated temporary asset | no |
-| `frontend/public/images/hero/spain-home-hero-placeholder.svg` | `frontend/public/images/hero/country-home-hero-ai.svg` | `/home-sp` hero | Illustration of an online medical consultation for the Spain clinic | AI-generated temporary asset | no |
-| `frontend/public/images/hero/czechia-home-hero-placeholder.svg` | `frontend/public/images/hero/country-home-hero-ai.svg` | `/home-cz` hero | Illustration of an online medical consultation for the Czechia clinic | AI-generated temporary asset | no |
-| `frontend/public/images/hero/romania-home-hero-placeholder.svg` | `frontend/public/images/hero/country-home-hero-ai.svg` | `/home-rm` hero | Illustration of an online medical consultation for the Romania clinic | AI-generated temporary asset | no |
-| `frontend/public/images/portugal/about-placeholder.svg` | `frontend/public/images/about/about-clinic-ai.svg` | `/home-pt` about section | Illustration of clinicians collaborating for Portugal clinic care | AI-generated temporary asset | no |
-| `frontend/public/images/spain/about-placeholder.svg` | `frontend/public/images/about/about-clinic-ai.svg` | `/home-sp` about section | Illustration of clinicians collaborating for Spain clinic care | AI-generated temporary asset | no |
-| `frontend/public/images/czechia/about-placeholder.svg` | `frontend/public/images/about/about-clinic-ai.svg` | `/home-cz` about section | Illustration of clinicians collaborating for Czechia clinic care | AI-generated temporary asset | no |
-| `frontend/public/images/romania/about-placeholder.svg` | `frontend/public/images/about/about-clinic-ai.svg` | `/home-rm` about section | Illustration of clinicians collaborating for Romania clinic care | AI-generated temporary asset | no |
-| `frontend/public/images/portugal/home-delivery-placeholder.svg` | `frontend/public/images/services/home-delivery-ai.svg` | `/home-pt` delivery section | Illustration of prescription support and safe home delivery for Portugal | AI-generated temporary asset | no |
-| `frontend/public/images/spain/home-delivery-placeholder.svg` | `frontend/public/images/services/home-delivery-ai.svg` | `/home-sp` delivery section | Illustration of prescription support and safe home delivery for Spain | AI-generated temporary asset | no |
-| `frontend/public/images/czechia/home-delivery-placeholder.svg` | `frontend/public/images/services/home-delivery-ai.svg` | `/home-cz` delivery section | Illustration of prescription support and safe home delivery for Czechia | AI-generated temporary asset | no |
-| `frontend/public/images/romania/home-delivery-placeholder.svg` | `frontend/public/images/services/home-delivery-ai.svg` | `/home-rm` delivery section | Illustration of prescription support and safe home delivery for Romania | AI-generated temporary asset | no |
-| `frontend/public/images/portugal/doctor-spotlight-placeholder.svg` | `frontend/public/images/ireland/doctor-spotlight-ai.svg` | `/home-pt` spotlight and shared doctor surfaces | Illustrative clinician portrait for the Portugal clinic team | AI-generated temporary asset | yes |
-| `frontend/public/images/spain/doctor-spotlight-placeholder.svg` | `frontend/public/images/ireland/doctor-spotlight-ai.svg` | `/home-sp` spotlight and shared doctor surfaces | Illustrative clinician portrait for the Spain clinic team | AI-generated temporary asset | yes |
-| `frontend/public/images/czechia/doctor-spotlight-placeholder.svg` | `frontend/public/images/ireland/doctor-spotlight-ai.svg` | `/home-cz` spotlight and shared doctor surfaces | Illustrative clinician portrait for the Czechia clinic team | AI-generated temporary asset | yes |
-| `frontend/public/images/romania/doctor-spotlight-placeholder.svg` | `frontend/public/images/ireland/doctor-spotlight-ai.svg` | `/home-rm` spotlight and shared doctor surfaces | Illustrative clinician portrait for the Romania clinic team | AI-generated temporary asset | yes |
+### How Assets Flow Through the System
 
-## Can Remain As Illustration
+1. **Upload**: Admin navigates to `/admin/assets/new` → clicks "Upload image to bucket" → file goes to `POST /api/admin/media/upload` → stored in Railway Bucket (S3-compatible) → returns public URL like `https://<backend>/api/media/media/<uuid>-<filename>`
+2. **Store metadata**: Admin fills `kind`, `key`, `path` (the public URL), `altText`, `usageNote`, `countryId` (Ireland) → saved to Prisma `Asset` table via `POST /api/admin/assets`
+3. **Serve**: Public pages request `GET /api/media/<key>` → backend streams from S3 with `Cache-Control: public, max-age=31536000, immutable`
+4. **Frontend render**: Components use `<Image src={asset.path} alt={asset.altText} />` where `asset.path` is the bucket URL
 
-| Asset Path | Usage Location | Notes | Status | Final Business Approval Required |
-| --- | --- | --- | --- | --- |
-| `frontend/public/icons/trust/licensed-doctors-ai.svg` | trust icon library | Safe abstract illustration asset | can remain as illustration | no |
-| `frontend/public/icons/trust/secure-confidential-ai.svg` | trust icon library | Safe abstract illustration asset | can remain as illustration | no |
-| `frontend/public/icons/trust/fast-access-ai.svg` | trust icon library | Safe abstract illustration asset | can remain as illustration | no |
-| `frontend/public/icons/trust/online-consultation-ai.svg` | trust icon library | Safe abstract illustration asset | can remain as illustration | no |
-| `frontend/public/icons/trust/home-delivery-ai.svg` | trust icon library | Safe abstract illustration asset | can remain as illustration | no |
-| `frontend/public/icons/trust/health-tests-ai.svg` | trust icon library | Safe abstract illustration asset | can remain as illustration | no |
-| `frontend/public/icons/services/*.svg` with `-ai` suffix | service icon library | Consistent line icons suitable for production until a branded icon set is approved | can remain as illustration | no |
+### Required Environment Variables
 
-## Still Needs Real Brand Asset
+| Variable | Location | Purpose | Status |
+|----------|----------|---------|--------|
+| `NEXT_PUBLIC_API_URL` | Frontend `.env.local` | Points to backend for upload API | ✅ Set to `http://localhost:4000` locally |
+| `S3_BUCKET` / `BUCKET` | Backend `.env` | Railway bucket name | ⚠️ Must be set in Railway dashboard |
+| `S3_ENDPOINT` / `ENDPOINT` | Backend `.env` | S3-compatible endpoint | ⚠️ Must be set in Railway dashboard |
+| `S3_REGION` / `REGION` | Backend `.env` | Bucket region | ⚠️ Must be set in Railway dashboard |
+| `S3_ACCESS_KEY_ID` / `ACCESS_KEY_ID` | Backend `.env` | Bucket access key | ⚠️ Must be set in Railway dashboard |
+| `S3_SECRET_ACCESS_KEY` / `SECRET_ACCESS_KEY` | Backend `.env` | Bucket secret | ⚠️ Must be set in Railway dashboard |
+| `PUBLIC_MEDIA_ORIGIN` | Backend `.env` | Public origin for media URLs (optional) | ⚠️ Set if backend is behind proxy |
 
-| Asset Path | Usage Location | Reason | Status | Final Business Approval Required |
-| --- | --- | --- | --- | --- |
-| `frontend/public/logos/global-health-wordmark-temp.svg` | shared shell | Temporary brand-safe wordmark, not confirmed as official identity | still needs real brand asset | yes |
-| `frontend/public/images/footer/footer-cta-ai.svg` | shared footer CTA | Usable, but final launch may want approved brand illustration direction | still needs real brand asset | yes |
-| `frontend/public/images/ireland/doctor-spotlight-ai.svg` | `/home`, doctor cards, doctor profile | Fictional illustration, not a real doctor identity asset | still needs real brand asset | yes |
+### Asset Replacement Checklist
 
-## Blocked / Old Placeholder Files Still On Disk
+| # | Asset Key | Desired File Type | Recommended Dimensions | Where It Appears | Current Fallback | Launch Priority | Business Approval Required |
+|---|-----------|-------------------|------------------------|------------------|------------------|-----------------|---------------------------|
+| 1 | `site-logo` | SVG or PNG with transparency | 220×54px (header), 400×100px (footer) | Header, mobile nav, footer | `global-health-wordmark-temp.svg` + stethoscope icon | **BLOCKER** | ✅ Yes — final brand identity |
+| 2 | `ireland-hero` | JPG or WebP (photo) | 1600×900px (desktop), 800×600px (mobile crop) | `/home` hero right panel | `ireland-hero-ai.svg` (abstract green blobs) | **BLOCKER** | ✅ Yes — Wix export or commission |
+| 3 | `ireland-doctor-spotlight` | JPG or WebP (photo) | 900×1100px (portrait) | `/home` doctor profile section | `doctor-spotlight-ai.svg` (abstract arch) | **BLOCKER** | ✅ Yes — Dr. Khoiamul Islam headshot |
+| 4 | `ireland-home-delivery` | JPG or WebP (photo) | 1200×900px | `/home` home delivery section | `home-delivery-ai.svg` (abstract shapes) | **BLOCKER** | ✅ Yes — Wix export or commission |
+| 5 | `ireland-cta` | JPG or WebP (photo) | 480×304px (footer CTA) | Shared footer CTA | `footer-cta-ai.svg` (abstract phone) | **BLOCKER** | ✅ Yes — Wix export or commission |
+| 6 | `partner-logo-level-health` | SVG or PNG | 160×64px | `/home` partner band | Dashed placeholder slot | **PENDING** | ✅ Yes — business must provide file |
+| 7 | `partner-logo-ip` | SVG or PNG | 160×64px | `/home` partner band | Dashed placeholder slot | **PENDING** | ✅ Yes — business must provide file |
+| 8 | `partner-logo-coombe-pharmacy` | SVG or PNG | 160×64px | `/home` partner band | Dashed placeholder slot | **PENDING** | ✅ Yes — business must provide file |
+| 9 | `partner-logo-doctify` | SVG or PNG | 160×64px | `/home` partner band | Dashed placeholder slot | **PENDING** | ✅ Yes — business must provide file |
 
-These files remain in the repo but are no longer used by the main public routes after this pass.
+### Upload Steps (When Assets Are Available)
 
-| Placeholder File | Current State |
-| --- | --- |
-| `frontend/public/images/hero/homepage-hero-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/hero/ireland-home-hero-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/hero/portugal-home-hero-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/hero/spain-home-hero-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/hero/czechia-home-hero-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/hero/romania-home-hero-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/ireland/about-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/ireland/home-delivery-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/ireland/doctor-spotlight-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/portugal/about-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/portugal/home-delivery-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/portugal/doctor-spotlight-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/spain/about-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/spain/home-delivery-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/spain/doctor-spotlight-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/czechia/about-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/czechia/home-delivery-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/czechia/doctor-spotlight-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/romania/about-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/romania/home-delivery-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/romania/doctor-spotlight-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/images/footer/cta-footer-placeholder.svg` | old placeholder, no longer referenced |
-| `frontend/public/logos/global-health-logo-placeholder.svg` | old placeholder, no longer referenced |
+```
+1. Log in as admin → /admin/assets/new
+2. Select Country: Ireland
+3. Select Kind:
+   - site-logo → LOGO
+   - ireland-hero → IMAGE
+   - ireland-doctor-spotlight → IMAGE
+   - ireland-home-delivery → IMAGE
+   - ireland-cta → IMAGE
+   - partner-* → LOGO
+4. Enter Key: e.g. "ireland-hero"
+5. Click "Upload image to bucket" → select file → wait for URL
+6. Fill Alt text: e.g. "Doctor consulting with patient via video call"
+7. Fill Usage note: e.g. "Ireland /home hero section — replaces AI illustration"
+8. Save
+9. Update frontend code to reference the new asset path (or wire CMS lookup)
+```
 
-## Notes
+### Current CMS Asset Table Status
 
-- No Wix assets were hotlinked.
-- No stock photography was introduced.
-- All people visuals are illustrative and should not be interpreted as real doctors or patients.
+| Check | Result |
+|-------|--------|
+| `Asset` model in Prisma schema | ✅ Exists with `kind`, `key`, `path`, `altText`, `countryId`, `isActive` |
+| `AssetKind` enum | ✅ IMAGE, ICON, LOGO, BADGE, SOCIAL |
+| Admin assets API (`/api/admin/assets`) | ✅ CRUD endpoints exist |
+| Admin media upload (`/api/admin/media/upload`) | ✅ POST endpoint exists (requires S3 env vars) |
+| Public media serve (`/api/media/*`) | ✅ GET endpoint exists (requires S3 env vars) |
+| Admin UI (`/admin/assets`) | ✅ List, create, edit, upload UI exists |
+| Upload component (`AssetPathWithUpload`) | ✅ Integrates with `NEXT_PUBLIC_API_URL` |
 
-## Admin CMS — Phase 3.5 (asset metadata)
+### Bucket/Media System Verification
 
-Long-lived **`Asset`** rows can be managed under **`/admin/assets`** (server-only admin API). This phase stores **metadata only** (`path` / URL, **`AssetKind`**, **`key`**, **`altText`**, optional **`countryId`** / **`doctorId`**, **`usageNote`**, **`isActive`**). It does **not** upload files or configure cloud storage (S3, Cloudflare R2, Vercel Blob, etc.) — document approved provider when implementing uploads.
+| Check | How to Verify | Expected Result |
+|-------|---------------|-----------------|
+| Backend has S3 env vars | `echo $S3_BUCKET $S3_ENDPOINT` in Railway shell | All 5 vars set |
+| Upload endpoint reachable | `POST /api/admin/media/upload` with auth cookie | Returns `{ok:true, data:{key, publicUrl}}` |
+| Public media reachable | `GET /api/media/media/<uuid>-<filename>` | Returns image with `Cache-Control` header |
+| Frontend can upload | Admin clicks "Upload image to bucket" | File uploads, path field populated |
 
-Public **`GET /api/assets`** lists **active** assets only; the marketing site continues to work with **local/fallback** files when the API is unavailable. Apply DB migration **`20260505203000_asset_usage_note_and_active`** (or run **`pnpm --filter backend exec prisma migrate deploy`**) before relying on **`usageNote`** / **`isActive`** in production.
+### Notes
+
+- **No Wix assets were hotlinked.**
+- **No stock photography was introduced.**
+- **All people visuals are illustrative** and should not be interpreted as real doctors or patients.
+- Partner logo slots are rendered with dashed-border placeholders until approved assets are provided.
+- The `@@unique([kind, key])` constraint means each `kind + key` pair can only exist once. Use country-scoped keys like `ireland-hero` rather than generic `hero`.
+
+## Can Remain As Illustration (Non-Blocking)
+
+| Asset Path | Usage Location | Notes | Status |
+|------------|---------------|-------|--------|
+| `frontend/public/images/hero/homepage-hero-ai.svg` | `/` global landing hero | Abstract illustration acceptable for global landing | Temporary acceptable |
+| `frontend/public/images/hero/country-home-hero-ai.svg` | `/home-pt`, `/home-sp`, `/home-cz`, `/home-rm` | Shared across non-Ireland country pages | Temporary acceptable |
+| `frontend/public/images/about/about-clinic-ai.svg` | Country about sections (if used) | Shared fallback | Temporary acceptable |
+| `frontend/public/images/services/home-delivery-ai.svg` | Non-IE delivery sections | Shared fallback | Temporary acceptable |
+| `frontend/public/icons/trust/*.svg` | Trust icon library | Safe abstract illustration assets | Can remain |
+| `frontend/public/icons/services/*.svg` | Service icon library | Consistent line icons suitable for production | Can remain |
+
+## Nice-to-Have (Post-Launch)
+
+| Asset | Impact | Priority |
+|-------|--------|----------|
+| Custom branded icon set (replace Lucide in trust section) | Stronger brand identity | Low |
+| Country flag SVGs for footer selector | Visual polish | Low |
+| Animated hero illustration (Lottie) | Engagement | Low |

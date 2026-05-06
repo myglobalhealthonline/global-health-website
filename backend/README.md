@@ -124,6 +124,7 @@ See **`backend/.env.example`**. Summary:
 - **`AUTH_JWT_EXPIRES_IN`** — JWT lifetime (default `7d`).
 - **`CORS_ALLOWED_ORIGINS`** — comma-separated browser origins allowed in production.
 - **`PORT`** — defaults to `4000` in **`src/config/env.ts`** if unset.
+- **Railway Bucket / S3** — optional image storage. Set **`S3_ENDPOINT`**, **`S3_REGION`**, **`S3_BUCKET`**, **`S3_ACCESS_KEY_ID`**, **`S3_SECRET_ACCESS_KEY`** (Railway’s bucket credential preset maps **`ENDPOINT`**, **`BUCKET`**, **`ACCESS_KEY_ID`**, **`SECRET_ACCESS_KEY`**, **`REGION`** into these — see **`src/config/env.ts`**). Enables **`POST /api/admin/media/upload`** (admin session) and public **`GET /api/media/*`** streaming from the bucket. Use **`PUBLIC_MEDIA_ORIGIN`** (HTTPS origin of this API, no trailing slash) so upload responses return stable URLs behind reverse proxies.
 
 Optional **`DATABASE_PUBLIC_URL`** in comments in `.env.example`: some platforms use an internal URL for the deployed app and a **public** URL for tools running on your laptop; use whichever host your machine can reach as **`DATABASE_URL`** when running migrations/seeds locally.
 

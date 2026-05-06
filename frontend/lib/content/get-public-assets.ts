@@ -1,6 +1,7 @@
 import { fetchAssets } from "@/lib/api/site-content-api";
 import { cache } from "react";
-import { isKnownCountryCode, isSafePublicAssetPath } from "@/lib/content/merge-public-content";
+import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
+import { isKnownCountryCode } from "@/lib/content/merge-public-content";
 import { logPublicContentFallback } from "@/lib/content/public-content-source";
 import type { CountryCode } from "@/data/countries";
 
@@ -71,9 +72,29 @@ export const getPublicAssetsNormalized = cache(async (): Promise<PublicAssetReco
 });
 
 export function pickSafeAssetPath(path: string): string | undefined {
-  const t = path.trim();
-  if (!isSafePublicAssetPath(t)) return undefined;
-  return t;
+  return resolveTrustedAssetUrl(path);
+}
+
+const IMAGE_OR_LOGO_KINDS = new Set(["IMAGE", "LOGO"]);
+
+export function findAssetByKey(
+  assets: PublicAssetRecord[],
+  key: string,
+  kinds: Set<string> = IMAGE_OR_LOGO_KINDS,
+): PublicAssetRecord | undefined {
+  return assets.find((a) => a.key === key && kinds.has(a.kind) && pickSafeAssetPath(a.path) !== undefined);
+}
+
+export function pickFirstAssetByKeys(
+  assets: PublicAssetRecord[],
+  keys: readonly string[],
+  kinds: Set<string> = IMAGE_OR_LOGO_KINDS,
+): PublicAssetRecord | undefined {
+  for (const key of keys) {
+    const hit = findAssetByKey(assets, key, kinds);
+    if (hit) return hit;
+  }
+  return undefined;
 }
 
 /** Prefer doctor-linked IMAGE asset; safe local paths only. */

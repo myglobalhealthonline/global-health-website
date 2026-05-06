@@ -93,7 +93,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
         <div>
           <h1 className="gh-h2 text-[var(--color-text-primary)]">Assets</h1>
           <p className="mt-2 max-w-3xl text-sm text-[var(--color-text-muted)]">
-            Metadata and URLs only — uploads and cloud buckets are not wired yet.
+            Paths and URLs — connect backend S3/Railway Bucket env vars for uploads (admin asset form).
           </p>
         </div>
         <div className="flex flex-wrap gap-3">

@@ -584,3 +584,38 @@ Polish-only pass: no route changes, no backend changes, no feature additions.
 - `pnpm typecheck` — pass
 - `pnpm build` — pass (113 pages)
 - `pnpm --filter backend test` — pass (79 tests)
+
+## Railway bucket / CMS media wiring (2026-05-06)
+
+### Automated verification (this pass)
+
+- `pnpm --filter frontend typecheck` — pass
+- `pnpm lint` — run at repo root (see validation block below)
+- `pnpm build` — run at repo root
+- `pnpm --filter backend test` — pass (includes media key helpers)
+
+### Implementation checks
+
+- Backend: `admin-media-upload.route.ts`, `media-public.route.ts`, `object-storage.ts`, Railway env aliases in `env.ts` — present locally (**commit before relying on GitHub `main`**; see `git status`).
+- Frontend: `asset-media-url.ts`, `merge-ireland-home-media.ts`, `public-asset-slots.ts`, admin upload control (`asset-path-with-upload.tsx`), `next.config.ts` `remotePatterns` — present.
+
+### Manual media QA (requires Railway bucket env on backend)
+
+1. Admin upload JPEG/PNG/WebP/SVG → copy **`publicUrl`** → **`GET`** URL returns image bytes (`200`).
+2. Create **`IMAGE`**/`LOGO` asset with canonical **key** (see `public-asset-slots.ts`) → `/home` or `/` updates; deactivate asset → **fallback** SVG returns.
+3. Partner band: no logos uploaded → **section absent**; upload one `partner-logo-*` → band appears with real image(s).
+
+### Wix vs hosted visual QA (manual — browser)
+
+Compare [Wix `/home`](https://www.myglobalhealth.online/home) vs hosted `/home` at **390 / 768 / 1440**:
+
+| Check | Notes |
+|-------|--------|
+| Hero image quality | CMS `ireland-hero` vs fallback SVG |
+| Logo | CMS `site-logo` vs temp wordmark |
+| Doctor spotlight | `ireland-doctor-spotlight` / doctor key vs AI SVG |
+| Home delivery | `ireland-home-delivery` vs SVG |
+| Partner / trust | Partner band only with uploads; trust icons vs `trust-*` images |
+| Footer CTA | Optional `footer-cta` decor image |
+
+**Result:** Not re-run in Cursor against live Railway in this session — execute after deploy with bucket credentials applied.

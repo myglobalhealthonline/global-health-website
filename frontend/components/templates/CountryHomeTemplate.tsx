@@ -2,11 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Clock, Users } from "lucide-react";
 import { BookingCTA } from "@/components/sections/BookingCTA";
-import { DoctorsSection } from "@/components/sections/DoctorsSection";
-import { FAQSection } from "@/components/sections/FAQSection";
 import { HeroSection } from "@/components/sections/HeroSection";
-import { HowItWorks } from "@/components/sections/HowItWorks";
-import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { TrustSignals } from "@/components/sections/TrustSignals";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
@@ -30,26 +26,12 @@ export type CountryHomeTemplateProps = {
     description: string;
     cta: { label: string; href: string };
   };
-  about?: {
-    eyebrow?: string;
-    title: string;
-    description: string[];
-    highlight?: string;
-    cta?: { label: string; href: string };
-    image?: { src: string; alt: string };
-  };
-  servicesTitle?: string;
-  servicesIntro?: string;
-  servicesCta?: { label: string; href: string };
-  services: Array<{ title: string; description: string; href: string }>;
-  steps?: Array<{ title: string; description: string; ctaLabel?: string; ctaHref?: string }>;
   homeDelivery?: {
     title: string;
     description: string;
     cta: { label: string; href: string };
     image?: { src: string; alt: string };
   };
-  doctorsTitle?: string;
   doctorSpotlight?: {
     quote: string;
     name: string;
@@ -57,13 +39,18 @@ export type CountryHomeTemplateProps = {
     credential: string;
     image?: { src: string; alt: string };
   };
-  doctors: Array<{ name: string; title: string; bio: string; href?: string }>;
   trustTitle?: string;
   trustSubtitle?: string;
   trustItems?: Array<{ title: string; description: string }>;
-  faqTitle?: string;
-  faqs: Array<{ question: string; answer: string }>;
-  bookingCta?: { title: string; description: string; ctaLabel: string; ctaHref: string };
+  bookingCta?: {
+    title: string;
+    description: string;
+    ctaLabel: string;
+    ctaHref: string;
+    asideImage?: { src: string; alt: string };
+  };
+  /** Approved partner logos only (uploaded assets). Section hidden when empty. */
+  partnerLogos?: Array<{ src: string; alt: string }>;
 };
 
 export function CountryHomeTemplate({
@@ -72,16 +59,8 @@ export function CountryHomeTemplate({
   primaryBooking,
   quickActions = [],
   availability,
-  about,
-  servicesTitle = "Services",
-  servicesIntro,
-  servicesCta,
-  services,
-  steps,
   homeDelivery,
-  doctorsTitle = "Medical team",
   doctorSpotlight,
-  doctors,
   trustTitle = "Why patients choose us",
   trustSubtitle,
   trustItems = [
@@ -94,31 +73,28 @@ export function CountryHomeTemplate({
       description: "Private online care with clear booking routes.",
     },
   ],
-  faqTitle = "FAQs",
-  faqs,
   bookingCta,
+  partnerLogos = [],
 }: CountryHomeTemplateProps) {
   return (
     <>
       {quickActions.length > 0 ? (
-        <Section className="border-b border-[var(--color-border)] bg-[var(--color-brand-secondary)] py-5">
+        <Section className="border-b border-[var(--color-border)] bg-[var(--color-brand-secondary)] py-4">
           <Container>
-            <div className="flex flex-wrap items-center gap-3 text-sm">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
-                Quick links
-              </span>
-              <nav aria-label={`${countryName} quick links`} className="flex flex-wrap gap-2">
-                {quickActions.map((action) => (
-                  <Link
-                    key={action.href + action.title}
-                    href={action.href}
-                    className="gh-btn gh-btn-soft min-h-[36px] px-4 py-1.5 text-sm font-medium"
-                  >
-                    {action.title}
-                  </Link>
-                ))}
-              </nav>
-            </div>
+            <nav
+              aria-label={`${countryName} quick links`}
+              className="flex flex-wrap gap-2 text-sm font-medium"
+            >
+              {quickActions.map((action) => (
+                <Link
+                  key={action.href + action.title}
+                  href={action.href}
+                  className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-2 text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-brand-secondary)]"
+                >
+                  {action.title}
+                </Link>
+              ))}
+            </nav>
           </Container>
         </Section>
       ) : null}
@@ -161,49 +137,6 @@ export function CountryHomeTemplate({
         </Section>
       ) : null}
 
-      {about ? (
-        <Section className="bg-[var(--color-brand-secondary)]">
-          <Container>
-            <div className="grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
-              <div>
-                {about.eyebrow ? <p className="gh-kicker">{about.eyebrow}</p> : null}
-                <h2 className="gh-h2 mt-3 text-[var(--color-text-primary)]">{about.title}</h2>
-                <div className="gh-body mt-4 space-y-4 text-[var(--color-text-muted)]">
-                  {about.description.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </div>
-                {about.highlight ? (
-                  <p className="gh-body-lg mt-5 font-semibold text-[var(--color-text-primary)]">{about.highlight}</p>
-                ) : null}
-                {about.cta ? (
-                  <Link href={about.cta.href} className="gh-btn gh-btn-outline mt-6">
-                    {about.cta.label}
-                  </Link>
-                ) : null}
-              </div>
-              {about.image ? (
-                <div className="overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-background-soft)] p-2 shadow-[var(--shadow-elevated)]">
-                  <Image
-                    src={about.image.src}
-                    alt={about.image.alt}
-                    width={1200}
-                    height={900}
-                    className="h-auto w-full rounded-[20px] object-cover"
-                  />
-                </div>
-              ) : null}
-            </div>
-          </Container>
-        </Section>
-      ) : null}
-
-      <ServicesGrid title={servicesTitle} intro={servicesIntro} cta={servicesCta} items={services} />
-
-      {steps?.length ? (
-        <HowItWorks title="How does it work?" subtitle="Simple Scheduling in 3 Steps" steps={steps} />
-      ) : null}
-
       {homeDelivery ? (
         <Section className="bg-[var(--color-brand-secondary)]">
           <Container>
@@ -226,6 +159,32 @@ export function CountryHomeTemplate({
                   />
                 </div>
               ) : null}
+            </div>
+          </Container>
+        </Section>
+      ) : null}
+
+      {partnerLogos.length > 0 ? (
+        <Section className="border-y border-[var(--color-border)] bg-[var(--color-brand-secondary)] py-[var(--section-padding-y-xs)]">
+          <Container>
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="gh-heading-eyebrow text-[var(--color-text-muted)]">Trusted healthcare partners</p>
+            </div>
+            <div className="mx-auto mt-6 flex max-w-5xl flex-wrap items-center justify-center gap-8 sm:gap-12">
+              {partnerLogos.map((logo) => (
+                <div
+                  key={logo.src}
+                  className="flex h-14 w-36 items-center justify-center sm:h-16 sm:w-44"
+                >
+                  <Image
+                    src={logo.src}
+                    alt={logo.alt}
+                    width={200}
+                    height={80}
+                    className="max-h-14 w-auto max-w-[11rem] object-contain sm:max-h-16"
+                  />
+                </div>
+              ))}
             </div>
           </Container>
         </Section>
@@ -265,25 +224,14 @@ export function CountryHomeTemplate({
         </Section>
       ) : null}
 
-      {doctors.length > 0 ? (
-        <section id="team">
-          <DoctorsSection
-            title={doctorsTitle}
-            intro={`Meet clinicians connected to the ${countryName} clinic routes.`}
-            doctors={doctors}
-          />
-        </section>
-      ) : null}
-
       <TrustSignals title={trustTitle} subtitle={trustSubtitle} items={trustItems} />
-
-      {faqs.length > 0 ? <FAQSection title={faqTitle} items={faqs} /> : null}
 
       <BookingCTA
         title={bookingCta?.title ?? "Ready to get started?"}
         description={bookingCta?.description ?? "Book an online consultation with your local clinic team."}
         ctaLabel={bookingCta?.ctaLabel ?? primaryBooking.label}
         ctaHref={bookingCta?.ctaHref ?? primaryBooking.href}
+        asideImage={bookingCta?.asideImage}
       />
     </>
   );

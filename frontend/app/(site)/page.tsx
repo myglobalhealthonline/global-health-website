@@ -4,6 +4,8 @@ import { CountrySelector } from "@/components/sections/CountrySelector";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { TrustSignals } from "@/components/sections/TrustSignals";
 import { BookingCTA } from "@/components/sections/BookingCTA";
+import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
+import { resolveHomepageHeroAsset } from "@/lib/content/merge-ireland-home-media";
 import { getSiteContext } from "@/lib/content/get-site-context";
 import { getTemplatePageData } from "@/lib/content/template-page-data";
 
@@ -13,8 +15,12 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const { common, activeCountries, navigation } = await getSiteContext("en");
-  const defaultClinic = await getTemplatePageData("/home", "ie");
+  const [{ common, activeCountries, navigation }, defaultClinic, assets] = await Promise.all([
+    getSiteContext("en"),
+    getTemplatePageData("/home", "ie"),
+    getPublicAssetsNormalized(),
+  ]);
+  const homepageHero = resolveHomepageHeroAsset(assets);
 
   return (
     <>
@@ -25,10 +31,12 @@ export default async function HomePage() {
         primaryCta={{ label: common.cta.primaryBooking, href: navigation.headerPrimaryCta.href }}
         secondaryCta={{ label: "Select your country", href: "#countries" }}
         trustBadges={defaultClinic.countryHome.hero.trustBadges}
-        heroImage={{
-          src: "/images/hero/homepage-hero-ai.svg",
-          alt: "Illustration of patients and clinicians using secure online healthcare tools",
-        }}
+        heroImage={
+          homepageHero ?? {
+            src: "/images/hero/homepage-hero-ai.svg",
+            alt: "Illustration of patients and clinicians using secure online healthcare tools",
+          }
+        }
       />
 
       <CountrySelector

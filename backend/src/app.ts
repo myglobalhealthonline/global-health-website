@@ -2,6 +2,7 @@
 
 import cors from "@fastify/cors";
 import cookie from "@fastify/cookie";
+import multipart from "@fastify/multipart";
 import Fastify from "fastify";
 import healthRoute from "./routes/health.route.js";
 import authRoute from "./routes/auth.route.js";
@@ -23,10 +24,12 @@ import adminBlogPostsRoute from "./routes/admin-blog-posts.route.js";
 import adminFaqsRoute from "./routes/admin-faqs.route.js";
 import adminContentPagesRoute from "./routes/admin-content-pages.route.js";
 import accountAppointmentsRoute from "./routes/account-appointments.route.js";
+import mediaPublicRoute from "./routes/media-public.route.js";
+import adminMediaUploadRoute from "./routes/admin-media-upload.route.js";
 import { env } from "./config/env.js";
 
 export async function buildApp() {
-  const app = Fastify({ logger: true, bodyLimit: 1_048_576 });
+  const app = Fastify({ logger: true, bodyLimit: 1_048_576, trustProxy: true });
 
   const allowedOrigins = (env.CORS_ALLOWED_ORIGINS ?? "")
     .split(",")
@@ -55,6 +58,12 @@ export async function buildApp() {
     allowedHeaders: ["Content-Type", "Authorization"],
   });
   await app.register(cookie);
+  await app.register(multipart, {
+    limits: {
+      fileSize: 5 * 1024 * 1024,
+      files: 1,
+    },
+  });
 
   await app.register(healthRoute);
   await app.register(authRoute);
@@ -73,6 +82,8 @@ export async function buildApp() {
   await app.register(adminDoctorsRoute);
   await app.register(adminPricingRoute);
   await app.register(adminAssetsRoute);
+  await app.register(mediaPublicRoute);
+  await app.register(adminMediaUploadRoute);
   await app.register(adminBlogPostsRoute);
   await app.register(adminFaqsRoute);
   await app.register(adminContentPagesRoute);

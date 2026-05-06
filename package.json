@@ -12,5 +12,8 @@
     "db:deploy": "pnpm --filter backend db:deploy",
     "db:seed": "pnpm --filter backend db:seed",
     "db:studio": "pnpm --filter backend db:studio"
+  },
+  "devDependencies": {
+    "playwright": "^1.59.1"
   }
 }

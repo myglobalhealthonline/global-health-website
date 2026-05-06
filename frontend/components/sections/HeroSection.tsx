@@ -30,9 +30,7 @@ export function HeroSection({
         <Container>
           <div className="grid gap-8 lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-14">
             <div className="max-w-xl" suppressHydrationWarning>
-              {eyebrow ? (
-                <p className="gh-kicker">{eyebrow}</p>
-              ) : null}
+              {eyebrow ? <p className="gh-kicker">{eyebrow}</p> : null}
               <h1 className="mt-5 text-[var(--text-display)] font-extrabold tracking-tight leading-[1.04] text-[var(--color-text-primary)]">
                 {title}
               </h1>
@@ -64,15 +62,18 @@ export function HeroSection({
             </div>
 
             {heroImage ? (
-              <div className="overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-elevated)]">
-                <Image
-                  src={heroImage.src}
-                  alt={heroImage.alt}
-                  width={1600}
-                  height={900}
-                  className="h-auto min-h-[300px] w-full rounded-[20px] object-cover lg:min-h-[520px]"
-                  priority
-                />
+              <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-brand-primary)] p-1 shadow-[var(--shadow-elevated)]">
+                <div className="absolute inset-0 bg-[var(--color-brand-primary)]" />
+                <div className="relative overflow-hidden rounded-[20px]">
+                  <Image
+                    src={heroImage.src}
+                    alt={heroImage.alt}
+                    width={1600}
+                    height={900}
+                    className="h-auto min-h-[300px] w-full object-cover opacity-95 lg:min-h-[520px]"
+                    priority
+                  />
+                </div>
               </div>
             ) : null}
           </div>
@@ -116,15 +117,17 @@ export function HeroSection({
           ) : null}
 
           {heroImage ? (
-            <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-elevated)]">
-              <Image
-                src={heroImage.src}
-                alt={heroImage.alt}
-                width={1600}
-                height={700}
-                className="h-auto min-h-[280px] w-full rounded-[20px] object-cover lg:min-h-[480px]"
-                priority
-              />
+            <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-brand-primary)] p-1 shadow-[var(--shadow-elevated)]">
+              <div className="overflow-hidden rounded-[20px]">
+                <Image
+                  src={heroImage.src}
+                  alt={heroImage.alt}
+                  width={1600}
+                  height={700}
+                  className="h-auto min-h-[280px] w-full object-cover opacity-95 lg:min-h-[480px]"
+                  priority
+                />
+              </div>
             </div>
           ) : null}
         </div>

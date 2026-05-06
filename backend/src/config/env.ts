@@ -1,5 +1,16 @@
 import { z } from "zod";
 
+/** Railway bucket presets expose ENDPOINT, BUCKET, ACCESS_KEY_ID, SECRET_ACCESS_KEY, REGION — alias into S3_* names. */
+function mergeRailwayBucketAliases(): NodeJS.ProcessEnv {
+  const out = { ...process.env };
+  if (!out.S3_BUCKET?.trim() && out.BUCKET?.trim()) out.S3_BUCKET = out.BUCKET;
+  if (!out.S3_ENDPOINT?.trim() && out.ENDPOINT?.trim()) out.S3_ENDPOINT = out.ENDPOINT;
+  if (!out.S3_ACCESS_KEY_ID?.trim() && out.ACCESS_KEY_ID?.trim()) out.S3_ACCESS_KEY_ID = out.ACCESS_KEY_ID;
+  if (!out.S3_SECRET_ACCESS_KEY?.trim() && out.SECRET_ACCESS_KEY?.trim()) out.S3_SECRET_ACCESS_KEY = out.SECRET_ACCESS_KEY;
+  if (!out.S3_REGION?.trim() && out.REGION?.trim()) out.S3_REGION = out.REGION;
+  return out;
+}
+
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().default(4000),
@@ -13,9 +24,17 @@ const envSchema = z.object({
   AUTH_COOKIE_DOMAIN: z.string().trim().optional(),
   AUTH_JWT_EXPIRES_IN: z.string().trim().min(2).default("7d"),
   CORS_ALLOWED_ORIGINS: z.string().trim().optional(),
+  /** Railway bucket / S3-compatible storage (all optional; upload + GET /api/media require full set). */
+  S3_BUCKET: z.string().trim().min(1).optional(),
+  S3_ENDPOINT: z.string().trim().url().optional(),
+  S3_REGION: z.string().trim().min(1).optional(),
+  S3_ACCESS_KEY_ID: z.string().trim().min(1).optional(),
+  S3_SECRET_ACCESS_KEY: z.string().trim().min(1).optional(),
+  /** HTTPS origin of this API for stable URLs in upload responses behind proxies (no trailing slash). */
+  PUBLIC_MEDIA_ORIGIN: z.string().trim().url().optional(),
 });
 
-const parsed = envSchema.parse(process.env);
+const parsed = envSchema.parse(mergeRailwayBucketAliases());
 
 const adminTokenFallbackEnabled =
   parsed.ADMIN_TOKEN_FALLBACK_ENABLED === undefined

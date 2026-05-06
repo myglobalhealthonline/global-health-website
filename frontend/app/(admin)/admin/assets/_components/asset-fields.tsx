@@ -1,4 +1,5 @@
 import type { AdminAssetDto, AdminAssetKind, AdminCountryDto } from "@/lib/admin/admin-api";
+import { AssetPathWithUpload } from "./asset-path-with-upload";
 
 type DoctorOption = { id: string; fullName: string; slug: string };
 
@@ -20,9 +21,13 @@ export function AssetFields({ countries, doctorOptions, initial }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-sm text-[var(--color-text-muted)]">
-        <p className="font-medium text-[var(--color-text-primary)]">Metadata only</p>
+        <p className="font-medium text-[var(--color-text-primary)]">Paths & uploads</p>
         <p className="mt-1">
-          This manages asset records (path/URL pointers). File upload and cloud storage (S3, R2, Vercel Blob, etc.) are deferred — point to existing public paths or future CDN URLs.
+          Asset rows store a path or URL. When the API is connected to Railway Bucket (S3), use{" "}
+          <span className="font-medium text-[var(--color-text-primary)]">Upload image to bucket</span> to store the file
+          and fill a stable <code className="font-mono text-xs">https://</code> URL served via{" "}
+          <code className="font-mono text-xs">GET /api/media/…</code>. You can still paste local paths such as{" "}
+          <code className="font-mono text-xs">/images/…</code>.
         </p>
       </div>
 
@@ -81,19 +86,7 @@ export function AssetFields({ countries, doctorOptions, initial }: Props) {
         </label>
       </div>
 
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Path or URL</span>
-        <input
-          name="path"
-          className="gh-input min-w-0 font-mono text-sm"
-          required
-          defaultValue={initial?.path}
-          placeholder="/images/... or https://..."
-        />
-        <span className="text-xs text-[var(--color-text-muted)]">
-          Use absolute paths starting with / or https:// URLs only (no uploads in this phase).
-        </span>
-      </label>
+      <AssetPathWithUpload initialPath={initial?.path} />
 
       <label className="flex flex-col gap-2">
         <span className="gh-field-label">Alt text</span>

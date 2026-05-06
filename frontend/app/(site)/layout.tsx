@@ -2,6 +2,11 @@
 import { cookies, headers } from "next/headers";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
+import {
+  resolveFooterCtaDecorAsset,
+  resolveSiteLogoAsset,
+} from "@/lib/content/merge-ireland-home-media";
 import { getSiteContext } from "@/lib/content/get-site-context";
 import { getCountryByCode, type CountryCode } from "@/data/countries";
 
@@ -14,20 +19,31 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     ? (headerCountry as CountryCode)
     : undefined;
 
-  const { common, navigation } = await getSiteContext({
-    explicitCountryCode: runtimeCountry,
-    headerLocale: requestHeaders.get("x-gh-locale"),
-    acceptLanguageHeader: requestHeaders.get("accept-language"),
-    cookieLocale: cookieStore.get("gh_locale")?.value ?? null,
-  });
+  const [{ common, navigation }, assets] = await Promise.all([
+    getSiteContext({
+      explicitCountryCode: runtimeCountry,
+      headerLocale: requestHeaders.get("x-gh-locale"),
+      acceptLanguageHeader: requestHeaders.get("accept-language"),
+      cookieLocale: cookieStore.get("gh_locale")?.value ?? null,
+    }),
+    getPublicAssetsNormalized(),
+  ]);
+
+  const brandLogo = resolveSiteLogoAsset(assets);
+  const footerDecorImage = resolveFooterCtaDecorAsset(assets);
 
   return (
     <>
-      <SiteHeader siteName={common.site.name} navigation={navigation} />
+      <SiteHeader siteName={common.site.name} navigation={navigation} brandLogo={brandLogo} />
       <main id="main-content" className="grow">
         {children}
       </main>
-      <SiteFooter siteName={common.site.name} navigation={navigation} />
+      <SiteFooter
+        siteName={common.site.name}
+        navigation={navigation}
+        brandLogo={brandLogo}
+        footerDecorImage={footerDecorImage}
+      />
     </>
   );
 }

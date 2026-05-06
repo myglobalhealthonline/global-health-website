@@ -30,9 +30,9 @@ type ServiceCardData = {
   startingPrice?: string;
 };
 
-type HomeTemplateData = {
+export type HomeTemplateData = {
   hero: {
-    eyebrow: string;
+    eyebrow: string | undefined;
     title: string;
     description: string;
     primaryCta: { label: string; href: string };
@@ -78,7 +78,7 @@ type HomeTemplateData = {
   trust: {
     title: string;
     subtitle: string;
-    items: Array<{ title: string; description: string }>;
+    items: Array<{ title: string; description: string; image?: { src: string; alt: string } }>;
   };
   faqTitle: string;
   booking: {
@@ -86,7 +86,11 @@ type HomeTemplateData = {
     description: string;
     ctaLabel: string;
     ctaHref: string;
+    /** Optional editorial photo beside final CTA (e.g. ireland-cta or footer-cta asset). */
+    asideImage?: { src: string; alt: string };
   };
+  /** Populated when partner logo assets exist — never synthetic placeholders. */
+  partnerLogos?: Array<{ src: string; alt: string }>;
 };
 
 type GeneralConsultationTemplateData = {
@@ -219,8 +223,8 @@ function buildCountryHomeData(
   if (countryCode === "ie") {
     return {
       hero: {
-        eyebrow: "Ireland Online Medical Clinic",
-        title: "Medical Consultations Wherever You Are",
+        eyebrow: undefined,
+        title: "Ireland Online Medical Clinic",
         description:
           "Irish Medical Council certified and specialized doctors available across Ireland, with multilingual consultations when you need them.",
         primaryCta: { label: "Schedule with a GP", href: paths.general },
@@ -301,10 +305,9 @@ function buildCountryHomeData(
         },
       },
       trust: {
-        title: "Trusted by thousands of patients across Europe",
+        title: "Trusted healthcare standards",
         subtitle: "We follow strict European standards for your safety",
         items: [
-          { title: "4.9/5 average rating", description: "Based on 2,000+ reviews across supported countries." },
           { title: "Licensed Doctors", description: "All consultations are provided by qualified and registered doctors in your country." },
           { title: "Secure & Confidential", description: "Your personal data is protected under strict GDPR standards." },
           { title: "Fast Access", description: "Book in minutes and get the care you need, when you need it." },
@@ -685,16 +688,21 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
       title: match?.name ?? slugToLabel(slug),
       description:
         match?.summary ??
-        "Consultation page with service overview, secure booking path, and intake-based next-step guidance.",
+        "Online consultation with secure intake, clinician review, and clear follow-up guidance.",
       href: route,
     };
   });
 
   const specialistListingRaw = routeInventory.irelandSpecialistConsultation.map((route) => {
     const slug = route.replace("/ireland-specialist-consultations/", "");
+    const seed = specialtyCardSeeds.ie.find((s) =>
+      s.title.toLowerCase().includes(slug.replace(/-/g, " ").toLowerCase())
+    );
     return {
       title: slugToLabel(slug),
-      description: "Specialist consultation page with category overview, booking route, and expected next steps.",
+      description:
+        seed?.description ??
+        "Specialist consultation with secure online booking and clinician follow-up guidance.",
       href: route,
     };
   });
@@ -753,10 +761,10 @@ export function buildServiceDetailCopy(slug: string) {
   const title = slugToLabel(slug);
   return {
     title,
-    description: "Overview of this consultation type, including how booking and intake confirm the right next steps.",
+    description: "Secure online consultation with licensed clinicians. Booking confirms the right next steps for your care.",
     body: [
-      "This service page explains the consultation pathway, what information to prepare, and how clinicians guide follow-up decisions.",
-      "Final clinical scope, pricing, and operational details are confirmed during booking and intake based on country route availability.",
+      "This consultation connects you with a licensed clinician through a secure online session. Prepare your symptoms, history, and any questions ahead of time.",
+      "The clinician will review your intake, discuss your concerns, and provide guidance on follow-up care, prescriptions, or referrals as appropriate.",
     ],
   };
 }

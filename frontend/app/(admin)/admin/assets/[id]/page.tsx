@@ -63,7 +63,7 @@ export default async function AdminAssetDetailPage({ params, searchParams }: Pag
       </div>
 
       <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-        Metadata record — file bytes are not stored; uploads deferred.
+        Metadata record — optional uploads via Railway Bucket use POST /api/admin/media/upload; files are served from GET /api/media/… when storage env vars are set.
       </p>
 
       {messages.error ? (

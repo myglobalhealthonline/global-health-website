@@ -7,9 +7,14 @@ import type { SiteNavigationData } from "@/data/navigation";
 export function SiteFooter({
   siteName,
   navigation,
+  brandLogo,
+  footerDecorImage,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
+  brandLogo?: { src: string; alt: string };
+  /** Optional editorial visual for the primary footer CTA strip (e.g. footer-cta asset). */
+  footerDecorImage?: { src: string; alt: string };
 }) {
   return (
     <footer className="mt-auto">
@@ -18,8 +23,8 @@ export function SiteFooter({
           <div className="grid gap-10 lg:grid-cols-[1.2fr_0.9fr_0.9fr_0.9fr]">
             <div>
               <Image
-                src="/logos/global-health-wordmark-temp.svg"
-                alt={`${siteName} temporary wordmark`}
+                src={brandLogo?.src ?? "/logos/global-health-wordmark-temp.svg"}
+                alt={brandLogo?.alt ?? `${siteName} wordmark`}
                 width={220}
                 height={54}
                 className="h-11 w-auto sm:h-12"
@@ -80,7 +85,7 @@ export function SiteFooter({
           </div>
         </Container>
       </div>
-      <CTAFooter cta={navigation.footerCta} trustLine={navigation.trustLine} />
+      <CTAFooter cta={navigation.footerCta} trustLine={navigation.trustLine} decorImage={footerDecorImage} />
     </footer>
   );
 }
