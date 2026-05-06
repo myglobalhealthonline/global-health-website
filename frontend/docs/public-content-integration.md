@@ -32,6 +32,35 @@ Per-request caching uses React `cache()` on normalized getters so `getSiteContex
 - `frontend/README.md` — env and integration overview  
 - `frontend/docs/public-website-qa.md` — manual QA scenarios  
 
+## Final local Scenario A verification (2026-05-06)
+
+Scenario A was re-run locally with both dev servers reachable:
+
+- Backend: `http://localhost:4000`
+- Frontend: `http://localhost:3000`
+
+API and health checks:
+
+1. `GET /health?db=1` returned `200` with `database.connected: true`.
+2. Public reads returned `200`: `/api/countries`, `/api/services`, `/api/doctors`, `/api/pricing`, `/api/assets`.
+
+Representative page checks (`http://localhost:3000`) returned `200`:
+
+- `/`
+- `/general-consultation-ie`
+- `/ireland/medical-consultation`
+- `/ireland-team`
+- `/ireland-doctors/dr-mirza-aun-mohammad`
+- `/plans-pricing`
+
+Backend-data mapping checks (Scenario A overlays):
+
+- `/ireland/medical-consultation` contains the backend service name for `medical-consultation` (Ireland row).
+- `/ireland-doctors/dr-mirza-aun-mohammad` contains backend `fullName`.
+- `/plans-pricing` contains backend pricing plan `name`.
+
+Fallback behavior remains documented and unchanged: when public API reads fail or are unavailable, static seeds/template defaults are still used and routes render without backend dependency.
+
 ## Phase 3.6.1 QA notes (browser, 2026-05-05)
 
 Manual verification used the embedded browser against **`http://localhost:3000`** (Next dev) with **`NEXT_PUBLIC_API_URL=http://localhost:4000`** per `frontend/.env.example`.

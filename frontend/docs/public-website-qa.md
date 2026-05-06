@@ -2,6 +2,48 @@
 
 Audit date: 2026-05-05
 
+## Phase 3.6.1 / 3.6.2 final local Scenario A verification (2026-05-06)
+
+**Local runtime**
+
+- Backend running at `http://localhost:4000`
+- Frontend running at `http://localhost:3000`
+
+**API verification**
+
+- `GET /health?db=1` → `200` with `database.connected: true`
+- `GET /api/countries` → `200`
+- `GET /api/services` → `200`
+- `GET /api/doctors` → `200`
+- `GET /api/pricing` → `200`
+- `GET /api/assets` → `200`
+
+**Representative public pages checked (`200`)**
+
+- `/`
+- `/general-consultation-ie`
+- `/ireland/medical-consultation`
+- `/ireland-team`
+- `/ireland-doctors/dr-mirza-aun-mohammad`
+- `/plans-pricing`
+
+**Backend-data mapping spot checks**
+
+- `/ireland/medical-consultation` contains backend service `name` for the Ireland `medical-consultation` row.
+- `/ireland-doctors/dr-mirza-aun-mohammad` contains backend doctor `fullName`.
+- `/plans-pricing` contains backend pricing plan `name`.
+
+**Fallback mode (backend offline)**
+
+Fallback behavior remains documented and expected: when backend reads are unavailable, public pages still render from static/template sources with no hard backend dependency.
+
+**Validation run (2026-05-06)**
+
+- `pnpm lint` — pass
+- `pnpm typecheck` — pass
+- `pnpm build` — pass
+- `pnpm --filter backend test` — pass (`49` tests)
+
 ## Book-online — browser QA with backend API (2026-05-05)
 
 Cross-reference: `backend/docs/booking-persistence-qa.md` (API matrix, CORS, DB caveats).
