@@ -18,7 +18,7 @@ export default async function AdminNewCountryPage({ searchParams }: PageProps) {
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">New country</h1>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           Could not load currencies: {currenciesResult.message}
         </p>
         <Link href="/admin/countries" className="mt-6 inline-block gh-link text-[var(--color-brand-primary)]">
@@ -67,7 +67,7 @@ export default async function AdminNewCountryPage({ searchParams }: PageProps) {
       </div>
 
       {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           {messages.error}
         </p>
       ) : null}

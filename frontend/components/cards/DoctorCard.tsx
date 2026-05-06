@@ -19,6 +19,7 @@ export function DoctorCard({
   country,
   languages = [],
   bio,
+  imageLabel,
   href,
   ctaLabel = "Meet doctor",
 }: DoctorCardProps) {
@@ -36,9 +37,9 @@ export function DoctorCard({
           {languages.length > 0 ? `Languages: ${languages.join(", ")}` : ""}
         </p>
       ) : null}
-      <div className="mt-4 overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-background-soft),#eef6e2)] p-2">
+      <div className="mt-4 overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-2">
         <Image
-          src="/images/ireland/doctor-spotlight-ai.svg"
+          src={imageLabel ? `/uploads/${imageLabel}` : "/images/ireland/doctor-spotlight-ai.svg"}
           alt={`Illustrative clinician portrait for ${name}`}
           width={360}
           height={420}

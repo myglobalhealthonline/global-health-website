@@ -31,7 +31,7 @@ export default async function AdminNewBlogPostPage({ searchParams }: PageProps) 
   return (
     <section className="gh-card p-6 sm:p-8">
       <h1 className="gh-h2 text-[var(--color-text-primary)]">New blog post</h1>
-      {createError ? <p className="mt-4 text-amber-900">{createError}</p> : null}
+      {createError ? <p className="mt-4 text-[var(--color-status-warning-text)]">{createError}</p> : null}
       <form action={createAction} className="mt-6 grid gap-4">
         <input aria-label="Post title" name="title" className="gh-input" placeholder="Title" required />
         <input aria-label="Post slug" name="slug" className="gh-input" placeholder="slug-like-this" required />

@@ -41,10 +41,10 @@ export default async function AdminEditContentPage({ params, searchParams }: Pag
   return (
     <section className="gh-card p-6 sm:p-8">
       <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit content page</h1>
-      <p className="mt-3 text-sm text-amber-900">
+      <p className="mt-3 text-sm text-[var(--color-status-warning-text)]">
         Legal/static content may need external approval. Keep public legal pages fallback-safe unless approved content is confirmed.
       </p>
-      {sp.error ? <p className="mt-3 text-amber-900">{sp.error}</p> : null}
+      {sp.error ? <p className="mt-3 text-[var(--color-status-warning-text)]">{sp.error}</p> : null}
       <form action={updateAction} className="mt-6 grid gap-4">
         <input aria-label="Content page key" className="gh-input" name="pageKey" defaultValue={page.pageKey} required />
         <input aria-label="Content page title" className="gh-input" name="title" defaultValue={page.title} required />

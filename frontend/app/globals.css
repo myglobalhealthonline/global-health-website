@@ -12,7 +12,20 @@
   --color-text-body: #333333;
   --color-text-muted: #666666;
   --color-border: #e5e5e5;
-  --color-hero-overlay: rgba(27, 77, 62, 0.65);
+  --color-hero-overlay: rgba(27, 77, 62, 0.55);
+  --color-status-error: #dc2626;
+  --color-status-error-bg: #fef2f2;
+  --color-status-error-text: #991b1b;
+  --color-status-error-border: #fecaca;
+  --color-status-success-bg: #f0fdf4;
+  --color-status-success-text: #166534;
+  --color-status-success-border: #bbf7d0;
+  --color-status-warning-bg: #fffbeb;
+  --color-status-warning-text: #78350f;
+  --color-status-warning-border: #fde68a;
+  --color-status-info-bg: #f0f9ff;
+  --color-status-info-text: #075985;
+  --color-status-info-border: #bae6fd;
   --radius-card: 22px;
   --radius-button: 999px;
   --shadow-card: 0 18px 40px rgba(27, 77, 62, 0.08);
@@ -190,6 +203,15 @@ img {
   background: var(--color-background-panel);
 }
 
+.gh-btn-danger {
+  border: 1px solid var(--color-status-error-border);
+  background: var(--color-status-error-bg);
+  color: var(--color-status-error-text);
+}
+.gh-btn-danger:hover {
+  background: var(--color-status-error-border);
+}
+
 .gh-link-arrow {
   display: inline-flex;
   align-items: center;
@@ -259,7 +281,7 @@ img {
 
 .gh-admin-nav-link:hover {
   color: var(--color-text-primary);
-  background: #ffffff;
+  background: var(--color-brand-secondary);
 }
 
 .gh-admin-main table {
@@ -300,4 +322,76 @@ img {
   text-transform: uppercase;
   color: var(--color-brand-primary);
   box-shadow: var(--shadow-soft);
+}
+
+/* Status utilities */
+.gh-status-error {
+  border: 1px solid var(--color-status-error-border);
+  background: var(--color-status-error-bg);
+  color: var(--color-status-error-text);
+}
+.gh-status-success {
+  border: 1px solid var(--color-status-success-border);
+  background: var(--color-status-success-bg);
+  color: var(--color-status-success-text);
+}
+.gh-status-warning {
+  border: 1px solid var(--color-status-warning-border);
+  background: var(--color-status-warning-bg);
+  color: var(--color-status-warning-text);
+}
+.gh-status-info {
+  border: 1px solid var(--color-status-info-border);
+  background: var(--color-status-info-bg);
+  color: var(--color-status-info-text);
+}
+
+/* Badges */
+.gh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.gh-badge-error {
+  border: 1px solid var(--color-status-error-border);
+  background: var(--color-status-error-bg);
+  color: var(--color-status-error-text);
+}
+.gh-badge-success {
+  border: 1px solid var(--color-status-success-border);
+  background: var(--color-status-success-bg);
+  color: var(--color-status-success-text);
+}
+.gh-badge-warning {
+  border: 1px solid var(--color-status-warning-border);
+  background: var(--color-status-warning-bg);
+  color: var(--color-status-warning-text);
+}
+.gh-badge-info {
+  border: 1px solid var(--color-status-info-border);
+  background: var(--color-status-info-bg);
+  color: var(--color-status-info-text);
+}
+.gh-badge-neutral {
+  border: 1px solid var(--color-border);
+  background: var(--color-background-soft);
+  color: var(--color-text-primary);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

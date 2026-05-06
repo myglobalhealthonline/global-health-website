@@ -30,10 +30,10 @@ export default async function AdminNewContentPagePage({ searchParams }: PageProp
   return (
     <section className="gh-card p-6 sm:p-8">
       <h1 className="gh-h2 text-[var(--color-text-primary)]">New content page</h1>
-      <p className="mt-3 text-sm text-amber-900">
+      <p className="mt-3 text-sm text-[var(--color-status-warning-text)]">
         Legal/static pages should stay fallback-safe in public routes until approved copy exists.
       </p>
-      {sp.error ? <p className="mt-3 text-amber-900">{sp.error}</p> : null}
+      {sp.error ? <p className="mt-3 text-[var(--color-status-warning-text)]">{sp.error}</p> : null}
       <form action={createAction} className="mt-6 grid gap-4">
         <input aria-label="Content page key" className="gh-input" name="pageKey" placeholder="privacy-policy" required />
         <input aria-label="Content page title" className="gh-input" name="title" placeholder="Title" required />

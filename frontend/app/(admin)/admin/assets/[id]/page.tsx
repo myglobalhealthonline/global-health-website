@@ -37,7 +37,7 @@ export default async function AdminAssetDetailPage({ params, searchParams }: Pag
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Asset</h1>
-        <p className="mt-4 text-amber-900">Could not load asset: {result.message}</p>
+        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load asset: {result.message}</p>
         <Link href="/admin/assets" className="mt-6 inline-block gh-link text-[var(--color-brand-primary)]">
           Back to assets
         </Link>
@@ -67,19 +67,19 @@ export default async function AdminAssetDetailPage({ params, searchParams }: Pag
       </p>
 
       {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           {messages.error}
         </p>
       ) : null}
       {messages.success ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">
           {messages.success}
         </p>
       ) : null}
 
       <p className="mt-4 text-sm text-[var(--color-text-muted)]">
         Status:{" "}
-        <span className={a.isActive ? "text-emerald-700" : "text-amber-800"}>{a.isActive ? "Active" : "Inactive"}</span>
+        <span className={a.isActive ? "text-[var(--color-status-success-text)]" : "text-[var(--color-status-warning-text)]"}>{a.isActive ? "Active" : "Inactive"}</span>
         {" — inactive assets are omitted from the public assets API."}
       </p>
 
@@ -131,7 +131,7 @@ export default async function AdminAssetDetailPage({ params, searchParams }: Pag
       {a.isActive ? (
         <form action={deactivateAssetAction} className="mt-10 border-t border-[var(--color-border)] pt-8">
           <p className="text-sm text-[var(--color-text-muted)]">Deactivate hides this asset from the public listing API.</p>
-          <button type="submit" className="mt-4 gh-btn border border-amber-300 bg-amber-50 text-amber-950 hover:bg-amber-100">
+          <button type="submit" className="mt-4 gh-btn gh-btn-danger">
             Deactivate asset
           </button>
         </form>

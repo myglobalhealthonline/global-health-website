@@ -41,8 +41,8 @@ export default async function AdminContentPageDetailPage({ params, searchParams 
         </div>
       </div>
       {sp.success ? <p className="mt-3 text-green-700">{sp.success}</p> : null}
-      {sp.error ? <p className="mt-3 text-amber-900">{sp.error}</p> : null}
-      <p className="mt-3 text-sm text-amber-900">
+      {sp.error ? <p className="mt-3 text-[var(--color-status-warning-text)]">{sp.error}</p> : null}
+      <p className="mt-3 text-sm text-[var(--color-status-warning-text)]">
         Legal copy edits may require external approval. Public routes remain fallback-safe until approved.
       </p>
       <dl className="mt-6 grid gap-2 text-sm">

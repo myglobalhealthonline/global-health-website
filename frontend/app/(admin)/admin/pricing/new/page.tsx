@@ -28,7 +28,7 @@ export default async function AdminNewPricingPage({ searchParams }: PageProps) {
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">New pricing plan</h1>
-        <p className="mt-4 text-amber-900">Could not load countries: {countriesResult.message}</p>
+        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load countries: {countriesResult.message}</p>
       </section>
     );
   }
@@ -37,7 +37,7 @@ export default async function AdminNewPricingPage({ searchParams }: PageProps) {
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">New pricing plan</h1>
-        <p className="mt-4 text-amber-900">Could not load currencies: {currenciesResult.message}</p>
+        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load currencies: {currenciesResult.message}</p>
       </section>
     );
   }
@@ -111,7 +111,7 @@ export default async function AdminNewPricingPage({ searchParams }: PageProps) {
       </div>
 
       {createError ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           {createError}
         </p>
       ) : null}

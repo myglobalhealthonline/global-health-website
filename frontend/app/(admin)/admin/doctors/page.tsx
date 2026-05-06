@@ -50,7 +50,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Doctor profiles</h1>
-        <p className="mt-4 text-amber-900">Could not load countries: {countriesResult.message}</p>
+        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load countries: {countriesResult.message}</p>
       </section>
     );
   }
@@ -59,7 +59,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Doctor profiles</h1>
-        <p className="mt-4 text-amber-900">Could not load doctors: {listResult.message}</p>
+        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load doctors: {listResult.message}</p>
       </section>
     );
   }

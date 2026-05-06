@@ -41,7 +41,7 @@ export function DoctorProfileTemplate({ hero, profile, bottomCta, profileImageSr
         <Container>
           <article className="gh-card mx-auto max-w-4xl p-7 sm:p-8">
             <div className="grid gap-6 md:grid-cols-[0.8fr_1.2fr]">
-              <div className="overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[linear-gradient(135deg,var(--color-background-soft),#eef6e2)] p-2">
+              <div className="overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-2">
                 <Image
                   src={profileImageSrc ?? "/images/ireland/doctor-spotlight-ai.svg"}
                   alt={`Illustrative clinician portrait for ${profile.name}`}

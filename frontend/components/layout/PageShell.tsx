@@ -21,15 +21,15 @@ export function PageShell({
   return (
     <Section className="scroll-mt-24">
       <Container>
-        <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+        <div className="gh-card mx-auto max-w-3xl p-6 sm:p-10">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">
             {title}
           </h1>
-          <p className="mt-4 text-base text-slate-600">{message}</p>
+          <p className="gh-body mt-4 text-[var(--color-text-muted)]">{message}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href={ctaHref}
-              className="inline-flex min-h-11 items-center justify-center rounded-full bg-teal-700 px-6 py-2 text-sm font-semibold text-white transition hover:bg-teal-800"
+              className="gh-btn gh-btn-primary"
             >
               {ctaLabel}
             </Link>

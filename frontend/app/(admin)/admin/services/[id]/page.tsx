@@ -32,7 +32,7 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Service</h1>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           Could not load service: {result.message}
         </p>
         <Link href="/admin/services" className="mt-6 inline-block gh-link text-[var(--color-brand-primary)]">
@@ -59,19 +59,19 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
       </div>
 
       {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           {messages.error}
         </p>
       ) : null}
       {messages.success ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">
           {messages.success}
         </p>
       ) : null}
 
       <p className="mt-4 text-sm text-[var(--color-text-muted)]">
         Status:{" "}
-        <span className={s.isActive ? "text-emerald-700" : "text-amber-800"}>{s.isActive ? "Active" : "Inactive"}</span>
+        <span className={s.isActive ? "text-[var(--color-status-success-text)]" : "text-[var(--color-status-warning-text)]"}>{s.isActive ? "Active" : "Inactive"}</span>
         {" — inactive services are omitted from the public services API."}
       </p>
 
@@ -117,7 +117,7 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
           <p className="text-sm text-[var(--color-text-muted)]">
             Soft-deactivate hides this service from the public services API. Re-enable from Edit.
           </p>
-          <button type="submit" className="gh-btn mt-3 border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100">
+          <button type="submit" className="gh-btn gh-btn-danger mt-3">
             Deactivate service
           </button>
         </form>

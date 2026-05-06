@@ -21,17 +21,17 @@ function formatDate(dateLike: string) {
 }
 
 function statusBadgeClass(status: string) {
-  if (status === "COMPLETED") return "bg-emerald-50 text-emerald-700 border-emerald-200";
-  if (status === "CANCELLED") return "bg-rose-50 text-rose-700 border-rose-200";
-  if (status === "CONTACTED") return "bg-sky-50 text-sky-700 border-sky-200";
-  if (status === "UNDER_REVIEW") return "bg-amber-50 text-amber-700 border-amber-200";
-  return "bg-[var(--color-background-soft)] text-[var(--color-text-primary)] border-[var(--color-border)]";
+  if (status === "COMPLETED") return "gh-badge-success";
+  if (status === "CANCELLED") return "gh-badge-error";
+  if (status === "CONTACTED") return "gh-badge-info";
+  if (status === "UNDER_REVIEW") return "gh-badge-warning";
+  return "gh-badge-neutral";
 }
 
 export function BookingsShell({ items, unavailableMessage }: BookingsShellProps) {
   if (unavailableMessage) {
     return (
-      <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+      <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
         {unavailableMessage}
       </p>
     );

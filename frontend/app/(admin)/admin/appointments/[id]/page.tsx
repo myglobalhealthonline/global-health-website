@@ -77,7 +77,7 @@ export default async function AdminAppointmentDetailPage({
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Appointment Detail</h1>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           Could not load appointment: {result.message}
         </p>
         <div className="mt-6">
@@ -104,12 +104,12 @@ export default async function AdminAppointmentDetailPage({
       </div>
 
       {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           {messages.error}
         </p>
       ) : null}
       {messages.success ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">
           {messages.success}
         </p>
       ) : null}
@@ -121,7 +121,7 @@ export default async function AdminAppointmentDetailPage({
       ) : null}
 
       {!terminal && allowedNext.length === 0 ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           This record has a status that cannot be updated from this screen. If this looks wrong, check data in the database.
         </p>
       ) : null}

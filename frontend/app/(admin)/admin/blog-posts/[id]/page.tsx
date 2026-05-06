@@ -42,7 +42,7 @@ export default async function AdminBlogPostDetailPage({ params, searchParams }: 
         </div>
       </div>
       {sp.success ? <p className="mt-3 text-green-700">{sp.success}</p> : null}
-      {sp.error ? <p className="mt-3 text-amber-900">{sp.error}</p> : null}
+      {sp.error ? <p className="mt-3 text-[var(--color-status-warning-text)]">{sp.error}</p> : null}
       <dl className="mt-6 grid gap-2 text-sm">
         <div><dt className="font-semibold">Slug</dt><dd>{post.slug}</dd></div>
         <div><dt className="font-semibold">Status</dt><dd>{post.status}</dd></div>

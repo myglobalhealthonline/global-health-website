@@ -153,3 +153,55 @@ Applied to:
   - white/soft background cards
   - neutral borders
   - muted body copy for secondary guidance
+
+## UI/UX Polish Pass (2026-05-06)
+
+### Status tokens added
+
+To eliminate hardcoded Tailwind semantic colors (red, emerald, amber, rose, sky), the following tokens were added to `globals.css`:
+
+- `--color-status-error`: #dc2626
+- `--color-status-error-bg`: #fef2f2
+- `--color-status-error-text`: #991b1b
+- `--color-status-error-border`: #fecaca
+- `--color-status-success-bg`: #f0fdf4
+- `--color-status-success-text`: #166534
+- `--color-status-success-border`: #bbf7d0
+- `--color-status-warning-bg`: #fffbeb
+- `--color-status-warning-text`: #78350f
+- `--color-status-warning-border`: #fde68a
+- `--color-status-info-bg`: #f0f9ff
+- `--color-status-info-text`: #075985
+- `--color-status-info-border`: #bae6fd
+
+### Utility classes added
+
+- `.gh-status-error` — bordered error alert block
+- `.gh-status-success` — bordered success alert block
+- `.gh-status-warning` — bordered warning alert block
+- `.gh-status-info` — bordered info alert block
+- `.gh-badge` — pill badge base
+- `.gh-badge-error` — error badge
+- `.gh-badge-success` — success badge
+- `.gh-badge-warning` — warning badge
+- `.gh-badge-info` — info badge
+- `.gh-badge-neutral` — neutral badge
+- `.gh-btn-danger` — destructive action button
+
+### Reduced motion
+
+Added `prefers-reduced-motion` media query to disable animations for users who need it.
+
+### Token compliance fixes applied
+
+- Replaced all `bg-white` hardcodes in admin dashboard with `var(--color-brand-secondary)`.
+- Replaced all `text-white/72` and `text-white/82` with `text-white/90` for better contrast on dark green backgrounds.
+- Removed decorative linear gradients from `DoctorCard` and `DoctorProfileTemplate`.
+- Replaced hardcoded `slate-*`, `teal-*`, `white` in `PageShell` with design tokens.
+- Replaced hardcoded `red-*` / `emerald-*` status colors in auth forms with token utilities.
+- Replaced hardcoded `amber-*` / `emerald-*` / `rose-*` / `sky-*` in admin pages with token utilities.
+- Fixed BookingForm `aria-invalid` and `aria-describedby` linking for validation errors.
+- Fixed admin pagination disabled links with `tabIndex={-1}`.
+- Fixed mobile nav close button focus ring.
+- Fixed account page "Account settings (coming soon)" from `<Link>` to `<button disabled>`.
+- Fixed `BlogCard` spacing between eyebrow and heading.

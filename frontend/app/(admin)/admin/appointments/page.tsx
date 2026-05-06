@@ -70,11 +70,11 @@ function formatDate(dateIso: string) {
 }
 
 function statusBadgeClass(status: string) {
-  if (status === "COMPLETED") return "bg-emerald-50 text-emerald-700 border-emerald-200";
-  if (status === "CANCELLED") return "bg-rose-50 text-rose-700 border-rose-200";
-  if (status === "CONTACTED") return "bg-sky-50 text-sky-700 border-sky-200";
-  if (status === "UNDER_REVIEW") return "bg-amber-50 text-amber-700 border-amber-200";
-  return "bg-[var(--color-background-soft)] text-[var(--color-text-primary)] border-[var(--color-border)]";
+  if (status === "COMPLETED") return "gh-badge-success";
+  if (status === "CANCELLED") return "gh-badge-error";
+  if (status === "CONTACTED") return "gh-badge-info";
+  if (status === "UNDER_REVIEW") return "gh-badge-warning";
+  return "gh-badge-neutral";
 }
 
 type PageProps = {
@@ -90,7 +90,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Appointment Queue</h1>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           Could not load appointments: {result.message}
         </p>
       </section>
@@ -234,6 +234,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
               href={buildQueueHref(filters, { page: String(Math.max(1, page - 1)) })}
               className={`gh-btn ${page <= 1 ? "pointer-events-none opacity-50" : ""}`}
               aria-disabled={page <= 1}
+              tabIndex={page <= 1 ? -1 : undefined}
             >
               Previous
             </Link>
@@ -241,6 +242,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
               href={buildQueueHref(filters, { page: String(Math.min(totalPages, page + 1)) })}
               className={`gh-btn ${page >= totalPages ? "pointer-events-none opacity-50" : ""}`}
               aria-disabled={page >= totalPages}
+              tabIndex={page >= totalPages ? -1 : undefined}
             >
               Next
             </Link>

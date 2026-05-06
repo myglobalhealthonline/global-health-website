@@ -72,8 +72,8 @@ export function RegisterForm() {
         <p
           className={
             isError
-              ? "rounded-[var(--radius-card-sm)] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
-              : "rounded-[var(--radius-card-sm)] border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
+              ? "rounded-[var(--radius-card-sm)] border px-3 py-2 text-sm gh-status-error"
+              : "rounded-[var(--radius-card-sm)] border px-3 py-2 text-sm gh-status-success"
           }
           role="status"
         >

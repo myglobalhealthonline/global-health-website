@@ -20,9 +20,9 @@ export default function AccountPage() {
           <Link href="/book-online" className="gh-btn gh-btn-outline">
             Book consultation
           </Link>
-          <Link href="/account" className="gh-btn gh-btn-soft">
+          <button type="button" className="gh-btn gh-btn-soft cursor-not-allowed" disabled aria-disabled="true">
             Account settings (coming soon)
-          </Link>
+          </button>
         </div>
       </article>
     </section>

@@ -32,7 +32,7 @@ export default async function AdminPricingDetailPage({ params, searchParams }: P
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Pricing plan</h1>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           Could not load plan: {result.message}
         </p>
         <Link href="/admin/pricing" className="mt-6 inline-block gh-link text-[var(--color-brand-primary)]">
@@ -63,19 +63,19 @@ export default async function AdminPricingDetailPage({ params, searchParams }: P
       </p>
 
       {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           {messages.error}
         </p>
       ) : null}
       {messages.success ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">
           {messages.success}
         </p>
       ) : null}
 
       <p className="mt-4 text-sm text-[var(--color-text-muted)]">
         Status:{" "}
-        <span className={p.isActive ? "text-emerald-700" : "text-amber-800"}>{p.isActive ? "Active" : "Inactive"}</span>
+        <span className={p.isActive ? "text-[var(--color-status-success-text)]" : "text-[var(--color-status-warning-text)]"}>{p.isActive ? "Active" : "Inactive"}</span>
         {" — inactive plans are omitted from the public pricing API."}
       </p>
 
@@ -105,7 +105,7 @@ export default async function AdminPricingDetailPage({ params, searchParams }: P
       {p.isActive ? (
         <form action={deactivatePricingAction} className="mt-10 border-t border-[var(--color-border)] pt-8">
           <p className="text-sm text-[var(--color-text-muted)]">Deactivate hides this plan from the public pricing API.</p>
-          <button type="submit" className="mt-4 gh-btn border border-amber-300 bg-amber-50 text-amber-950 hover:bg-amber-100">
+          <button type="submit" className="mt-4 gh-btn gh-btn-danger">
             Deactivate plan
           </button>
         </form>

@@ -29,7 +29,7 @@ export default async function AdminEditAssetPage({ params, searchParams }: PageP
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit asset</h1>
-        <p className="mt-4 text-amber-900">Could not load countries: {countriesResult.message}</p>
+        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load countries: {countriesResult.message}</p>
       </section>
     );
   }
@@ -38,7 +38,7 @@ export default async function AdminEditAssetPage({ params, searchParams }: PageP
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit asset</h1>
-        <p className="mt-4 text-amber-900">Could not load asset: {assetResult.message}</p>
+        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load asset: {assetResult.message}</p>
         <Link href="/admin/assets" className="mt-6 inline-block gh-link">
           Back to assets
         </Link>
@@ -102,7 +102,7 @@ export default async function AdminEditAssetPage({ params, searchParams }: PageP
       </div>
 
       {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           {messages.error}
         </p>
       ) : null}

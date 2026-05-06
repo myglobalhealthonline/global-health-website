@@ -477,3 +477,48 @@ Prisma queries failed because **`DATABASE_URL`** did not resolve to a reachable 
 - Doctors are explicitly framed as public profiles only.
 - Payments explicitly marked as not enabled yet.
 - No admin secrets surfaced in client UI.
+
+## UI/UX Polish Pass — Token Compliance + Accessibility (2026-05-06)
+
+### Scope
+Polish-only pass: no route changes, no backend changes, no feature additions.
+
+### Components updated
+- `frontend/app/globals.css` — added status tokens, badge utilities, danger button, reduced motion support
+- `frontend/components/layout/PageShell.tsx` — replaced hardcoded slate/teal/white with design tokens
+- `frontend/components/layout/CTAFooter.tsx` — removed gradient, improved text contrast
+- `frontend/components/layout/MobileNav.tsx` — added focus-visible ring to close button
+- `frontend/components/sections/BookingCTA.tsx` — improved text contrast on dark background
+- `frontend/components/sections/CountryHomeTemplate.tsx` — improved text contrast on dark background
+- `frontend/components/cards/DoctorCard.tsx` — removed gradient, enabled `imageLabel` prop support
+- `frontend/components/cards/BlogCard.tsx` — added spacing between eyebrow and heading
+- `frontend/components/templates/DoctorProfileTemplate.tsx` — removed gradient
+- `frontend/components/templates/BookingFormTemplate.tsx` — tokenized status colors, added `aria-invalid`/`aria-describedby`
+- `frontend/app/(auth)/login/ui.tsx` — tokenized status colors
+- `frontend/app/(auth)/register/ui.tsx` — tokenized status colors
+- `frontend/app/(auth)/account/page.tsx` — changed disabled link to `<button disabled>`
+- `frontend/app/(auth)/account/bookings/ui.tsx` — tokenized status badges
+- `frontend/app/(admin)/admin/page.tsx` — replaced hardcoded `bg-white`
+- `frontend/app/(admin)/admin/appointments/page.tsx` — tokenized badges, added `tabIndex={-1}` on disabled pagination
+- `frontend/app/(admin)/admin/countries/page.tsx` — tokenized warning banner
+- 17 additional admin pages — bulk-replaced hardcoded amber/emerald/rose/sky colors with token utilities
+
+### Accessibility improvements
+- All form inputs with validation errors now use `aria-invalid` and `aria-describedby`
+- Disabled pagination links removed from tab order
+- Mobile nav close button has visible focus ring
+- Account "coming soon" control is a proper disabled button
+- Added `prefers-reduced-motion` support in globals.css
+- Improved text contrast on dark green backgrounds (white/90 instead of white/72)
+
+### Validation results
+- `pnpm lint` — pass
+- `pnpm typecheck` — pass
+- `pnpm build` — pass (113 pages)
+- `pnpm --filter backend test` — pass (79 tests)
+
+### Remaining visual gaps
+- Official final logo still pending approval
+- Approved footer CTA art still pending
+- Real doctor/team imagery optional pending approval
+- Some service/doctor/blog pages use safe generalized fallback copy until CMS content is finalized

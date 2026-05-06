@@ -38,7 +38,7 @@ export default async function AdminFaqDetailPage({ params, searchParams }: PageP
         </div>
       </div>
       {sp.success ? <p className="mt-3 text-green-700">{sp.success}</p> : null}
-      {sp.error ? <p className="mt-3 text-amber-900">{sp.error}</p> : null}
+      {sp.error ? <p className="mt-3 text-[var(--color-status-warning-text)]">{sp.error}</p> : null}
       <h2 className="mt-6 text-lg font-semibold">{faq.question}</h2>
       <p className="mt-3 whitespace-pre-wrap">{faq.answer}</p>
       <p className="mt-4 text-sm text-[var(--color-text-muted)]">

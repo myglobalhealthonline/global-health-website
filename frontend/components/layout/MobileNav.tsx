@@ -44,7 +44,7 @@ export function MobileNav({
                 className="h-10 w-auto"
               />
             </Link>
-            <Dialog.Close className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-soft)]">
+            <Dialog.Close className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2">
               <span className="sr-only">Close menu</span>
               <X className="size-5 text-[var(--color-text-primary)]" aria-hidden />
             </Dialog.Close>

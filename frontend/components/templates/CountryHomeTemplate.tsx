@@ -138,14 +138,14 @@ export function CountryHomeTemplate({
               <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                 <div className="max-w-2xl">
                   {availability.eyebrow ? (
-                    <p className="gh-heading-eyebrow text-white/72">
+                    <p className="gh-heading-eyebrow text-white/90">
                       {availability.eyebrow}
                     </p>
                   ) : null}
                   <h2 className="gh-h2 mt-3 text-[var(--color-brand-secondary)]">
                     {availability.title}
                   </h2>
-                  <p className="gh-body-lg mt-3 max-w-2xl text-white/82">
+                  <p className="gh-body-lg mt-3 max-w-2xl text-white/90">
                     {availability.description}
                   </p>
                 </div>

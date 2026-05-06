@@ -85,7 +85,7 @@ export default function AdminHomePage() {
               href={card.href}
               className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4 transition hover:-translate-y-[1px] hover:shadow-[var(--shadow-soft)]"
             >
-              <div className="mb-3 inline-flex rounded-full bg-white p-2 text-[var(--color-brand-primary)]">
+              <div className="mb-3 inline-flex rounded-full bg-[var(--color-brand-secondary)] p-2 text-[var(--color-brand-primary)]">
                 <Icon size={18} />
               </div>
               <p className="text-base font-semibold text-[var(--color-text-primary)]">{card.title}</p>

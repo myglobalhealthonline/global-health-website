@@ -68,7 +68,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Assets</h1>
-        <p className="mt-4 text-amber-900">Could not load countries: {countriesResult.message}</p>
+        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load countries: {countriesResult.message}</p>
       </section>
     );
   }
@@ -77,7 +77,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Assets</h1>
-        <p className="mt-4 text-amber-900">Could not load assets: {listResult.message}</p>
+        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load assets: {listResult.message}</p>
       </section>
     );
   }

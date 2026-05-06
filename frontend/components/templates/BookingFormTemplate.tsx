@@ -157,7 +157,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                   <span className="gh-field-label">
                     {form.fields.country.label} <span className="text-[var(--color-brand-primary)]">*</span>
                   </span>
-                  <select id={countryId} name="country" className="gh-select" defaultValue="">
+                  <select id={countryId} name="country" className="gh-select" defaultValue="" aria-invalid={errors.country ? "true" : undefined} aria-describedby={errors.country ? "booking-country-error" : undefined}>
                     <option value="">{form.fields.country.placeholder}</option>
                     {form.countryOptions.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -165,13 +165,13 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                       </option>
                     ))}
                   </select>
-                  {errors.country ? <span className="text-sm text-red-700">{errors.country}</span> : null}
+                  {errors.country ? <span id="booking-country-error" className="text-sm text-[var(--color-status-error)]">{errors.country}</span> : null}
                 </label>
                 <label className="flex min-w-0 flex-col gap-2">
                   <span className="gh-field-label">
                     {form.fields.consultationType.label} <span className="text-[var(--color-brand-primary)]">*</span>
                   </span>
-                  <select id={consultationId} name="consultationType" className="gh-select" defaultValue="">
+                  <select id={consultationId} name="consultationType" className="gh-select" defaultValue="" aria-invalid={errors.consultationType ? "true" : undefined} aria-describedby={errors.consultationType ? "booking-consultation-error" : undefined}>
                     <option value="">{form.fields.consultationType.placeholder}</option>
                     {form.consultationTypeOptions.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -180,7 +180,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                     ))}
                   </select>
                   {errors.consultationType ? (
-                    <span className="text-sm text-red-700">{errors.consultationType}</span>
+                    <span id="booking-consultation-error" className="text-sm text-[var(--color-status-error)]">{errors.consultationType}</span>
                   ) : null}
                 </label>
               </div>
@@ -196,7 +196,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                   className="gh-input"
                   defaultValue={signedInPatient?.fullName ?? ""}
                 />
-                {errors.fullName ? <span className="text-sm text-red-700">{errors.fullName}</span> : null}
+                {errors.fullName ? <span id="booking-fullname-error" className="text-sm text-[var(--color-status-error)]">{errors.fullName}</span> : null}
               </label>
               <div className="grid min-w-0 gap-4 sm:grid-cols-2">
                 <label className="flex min-w-0 flex-col gap-2">
@@ -210,8 +210,10 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                     placeholder={form.fields.email.placeholder}
                     className="gh-input"
                     defaultValue={signedInPatient?.email ?? ""}
+                    aria-invalid={errors.email ? "true" : undefined}
+                    aria-describedby={errors.email ? "booking-email-error" : undefined}
                   />
-                  {errors.email ? <span className="text-sm text-red-700">{errors.email}</span> : null}
+                  {errors.email ? <span id="booking-email-error" className="text-sm text-[var(--color-status-error)]">{errors.email}</span> : null}
                 </label>
                 <label className="flex min-w-0 flex-col gap-2">
                   <span className="gh-field-label">{form.fields.phone.label}</span>
@@ -236,11 +238,13 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                     name="consentAccepted"
                     type="checkbox"
                     className="mt-1 size-4 accent-[var(--color-brand-primary)]"
+                    aria-invalid={errors.consentAccepted ? "true" : undefined}
+                    aria-describedby={errors.consentAccepted ? "booking-consent-error" : undefined}
                   />
                   <div>
                     <p className="gh-body-sm text-[var(--color-text-muted)]">{form.fields.consent}</p>
                     {errors.consentAccepted ? (
-                      <span className="mt-2 block text-sm text-red-700">{errors.consentAccepted}</span>
+                      <span id="booking-consent-error" className="mt-2 block text-sm text-[var(--color-status-error)]">{errors.consentAccepted}</span>
                     ) : null}
                   </div>
                 </div>
@@ -253,8 +257,8 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                 <p
                   className={`rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm ${
                     statusType === "success"
-                      ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                      : "border-amber-200 bg-amber-50 text-amber-900"
+                      ? "gh-status-success"
+                      : "gh-status-warning"
                   }`}
                   role="status"
                 >

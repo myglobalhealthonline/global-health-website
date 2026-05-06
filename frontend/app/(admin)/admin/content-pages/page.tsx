@@ -47,7 +47,7 @@ export default async function AdminContentPagesPage({ searchParams }: PageProps)
           New content page
         </Link>
       </div>
-      <p className="mt-3 text-sm text-amber-900">
+      <p className="mt-3 text-sm text-[var(--color-status-warning-text)]">
         Legal/static pages may require approved business/legal copy. Keep public legal routes fallback-safe until approved content is confirmed.
       </p>
 
