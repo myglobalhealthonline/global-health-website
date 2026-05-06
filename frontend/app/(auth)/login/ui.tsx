@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 import { loginUser } from "@/lib/api/auth-api";
 
 export function LoginForm() {
@@ -11,6 +12,7 @@ export function LoginForm() {
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   function getNextPath() {
     const next = searchParams.get("next");
@@ -40,28 +42,61 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-6 grid gap-4">
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Email</span>
-        <input name="email" type="email" className="gh-input" placeholder="you@example.com" required />
-      </label>
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Password</span>
-        <input name="password" type="password" className="gh-input" placeholder="Your password" required />
-      </label>
-      <p className="text-sm text-[var(--color-text-muted)]">
-        Forgot your password? <Link href="/forgot-password" className="gh-link">Request a reset</Link>
-      </p>
-      <button type="submit" className="gh-btn gh-btn-primary" disabled={loading}>
+    <form onSubmit={onSubmit} className="mt-7 grid gap-5">
+      <div className="grid gap-2">
+        <label htmlFor="login-email" className="gh-field-label">
+          Email address
+        </label>
+        <input
+          id="login-email"
+          name="email"
+          type="email"
+          className="gh-input"
+          placeholder="you@example.com"
+          required
+          autoComplete="email"
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <div className="flex items-center justify-between">
+          <label htmlFor="login-password" className="gh-field-label">
+            Password
+          </label>
+          <Link href="/forgot-password" className="text-xs font-semibold text-[var(--color-brand-primary)] hover:underline">
+            Forgot password?
+          </Link>
+        </div>
+        <div className="relative">
+          <input
+            id="login-password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            className="gh-input pr-12"
+            placeholder="Your password"
+            required
+            autoComplete="current-password"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" className="gh-btn gh-btn-primary mt-1" disabled={loading}>
         {loading ? "Signing in..." : "Sign in"}
       </button>
+
       {message ? (
         <p
-          className={
-            isError
-              ? "rounded-[var(--radius-card-sm)] border px-3 py-2 text-sm gh-status-error"
-              : "rounded-[var(--radius-card-sm)] border px-3 py-2 text-sm gh-status-success"
-          }
+          className={`rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm ${
+            isError ? "gh-status-error" : "gh-status-success"
+          }`}
           role="status"
         >
           {message}

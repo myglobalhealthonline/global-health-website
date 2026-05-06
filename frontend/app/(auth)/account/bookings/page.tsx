@@ -1,6 +1,7 @@
+import Link from "next/link";
+import { CalendarDays, Stethoscope } from "lucide-react";
 import { BookingsShell } from "./ui";
 import { fetchAccountAppointments } from "@/lib/api/account-appointments-api";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -8,25 +9,38 @@ export default async function AccountBookingsPage() {
   const history = await fetchAccountAppointments();
 
   return (
-    <section className="mx-auto max-w-4xl px-4 py-8 sm:py-12">
-      <article className="gh-card p-6 sm:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="gh-kicker">Patient account</p>
-            <h1 className="gh-h2 mt-4 text-[var(--color-text-primary)]">My bookings</h1>
+    <div className="min-h-screen bg-[var(--color-background-soft)] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl">
+        {/* Header */}
+        <header className="mb-6 flex items-center gap-2 text-[var(--color-brand-primary)]">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-brand-primary)] text-white">
+            <Stethoscope className="size-4" aria-hidden />
+          </span>
+          <span className="text-lg font-bold tracking-tight">Global Health</span>
+        </header>
+
+        <div className="gh-card p-6 sm:p-8">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <CalendarDays className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
+                <h1 className="gh-h2 text-[var(--color-text-primary)]">My bookings</h1>
+              </div>
+              <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+                Your consultation request history and status updates.
+              </p>
+            </div>
+            <Link href="/book-online" className="gh-btn gh-btn-primary text-sm">
+              Book consultation
+            </Link>
           </div>
-          <Link href="/book-online" className="gh-btn gh-btn-outline">
-            Book consultation
-          </Link>
+
+          <BookingsShell
+            items={history.ok ? history.data.items : []}
+            unavailableMessage={history.ok ? null : "Booking history is temporarily unavailable. Please try again soon."}
+          />
         </div>
-        <p className="gh-body mt-3 text-[var(--color-text-muted)]">
-          Your booking request history is shown here. Payments and receipts remain coming soon.
-        </p>
-        <BookingsShell
-          items={history.ok ? history.data.items : []}
-          unavailableMessage={history.ok ? null : "Booking history is temporarily unavailable. Please try again soon."}
-        />
-      </article>
-    </section>
+      </div>
+    </div>
   );
 }

@@ -2,9 +2,10 @@ import type { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Stethoscope } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "http://localhost:4000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "") ?? "http://localhost:4000";
 
 async function logoutAdminAction() {
   "use server";
@@ -46,42 +47,51 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   ];
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-6">
-      <header className="mb-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-              Admin area
-            </p>
-            <p className="text-sm font-semibold text-[var(--color-text-primary)]">Manage website content</p>
-            <p className="text-xs text-[var(--color-text-muted)] mt-1">
-              {user.fullName} ({user.email})
-            </p>
+    <div className="min-h-screen bg-[var(--color-background-soft)]">
+      {/* Top header */}
+      <header className="border-b border-[var(--color-border)] bg-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+          <Link href="/admin" className="inline-flex items-center gap-2 text-[var(--color-brand-primary)]">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-brand-primary)] text-white">
+              <Stethoscope className="size-4" aria-hidden />
+            </span>
+            <span className="text-lg font-bold tracking-tight">Global Health</span>
+            <span className="hidden text-sm font-medium text-[var(--color-text-muted)] sm:inline">· Admin</span>
+          </Link>
+
+          <div className="flex items-center gap-4">
+            <div className="hidden text-right sm:block">
+              <p className="text-sm font-semibold text-[var(--color-text-primary)]">{user.fullName}</p>
+              <p className="text-xs text-[var(--color-text-muted)]">{user.email}</p>
+            </div>
+            <form action={logoutAdminAction}>
+              <button type="submit" className="gh-btn gh-btn-soft text-sm">
+                Log out
+              </button>
+            </form>
           </div>
-          <form action={logoutAdminAction}>
-            <button type="submit" className="gh-btn">
-              Log out
-            </button>
-          </form>
         </div>
       </header>
-      <p className="mb-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-sm text-[var(--color-text-muted)]">
-        Doctors are public profiles only. Doctor portal is separate. Payments are not enabled yet.
-      </p>
 
-      <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
-        <aside className="gh-card h-fit p-4">
-          <nav className="grid gap-2">
+      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[220px_1fr]">
+        {/* Sidebar */}
+        <aside className="lg:self-start">
+          <nav className="sticky top-6 grid gap-1.5">
             {sections.map((section) => (
-              <Link key={section.href} href={section.href} className="gh-admin-nav-link">
+              <Link
+                key={section.href}
+                href={section.href}
+                className="gh-admin-nav-link"
+              >
                 {section.label}
               </Link>
             ))}
           </nav>
         </aside>
+
+        {/* Main content */}
         <main className="gh-admin-main min-w-0">{children}</main>
       </div>
     </div>
   );
 }
-

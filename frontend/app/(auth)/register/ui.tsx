@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 import { registerUser } from "@/lib/api/auth-api";
 
 export function RegisterForm() {
@@ -10,6 +11,7 @@ export function RegisterForm() {
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   function getNextPath() {
     const next = searchParams.get("next");
@@ -41,40 +43,93 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-6 grid gap-4">
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Full name</span>
-        <input name="fullName" type="text" className="gh-input" placeholder="Your full name" required />
-      </label>
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Email</span>
-        <input name="email" type="email" className="gh-input" placeholder="you@example.com" required />
-      </label>
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Phone (optional)</span>
-        <input name="phone" type="tel" className="gh-input" placeholder="+353..." />
-      </label>
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Password</span>
-        <input name="password" type="password" className="gh-input" placeholder="At least 8 characters" required />
-      </label>
+    <form onSubmit={onSubmit} className="mt-7 grid gap-5">
+      <div className="grid gap-2">
+        <label htmlFor="register-name" className="gh-field-label">
+          Full name
+        </label>
+        <input
+          id="register-name"
+          name="fullName"
+          type="text"
+          className="gh-input"
+          placeholder="Your full name"
+          required
+          autoComplete="name"
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <label htmlFor="register-email" className="gh-field-label">
+          Email address
+        </label>
+        <input
+          id="register-email"
+          name="email"
+          type="email"
+          className="gh-input"
+          placeholder="you@example.com"
+          required
+          autoComplete="email"
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <label htmlFor="register-phone" className="gh-field-label">
+          Phone <span className="text-[var(--color-text-muted)]">(optional)</span>
+        </label>
+        <input
+          id="register-phone"
+          name="phone"
+          type="tel"
+          className="gh-input"
+          placeholder="+353..."
+          autoComplete="tel"
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <label htmlFor="register-password" className="gh-field-label">
+          Password
+        </label>
+        <div className="relative">
+          <input
+            id="register-password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            className="gh-input pr-12"
+            placeholder="At least 8 characters"
+            required
+            minLength={8}
+            autoComplete="new-password"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((v) => !v)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+          </button>
+        </div>
+        <p className="text-xs text-[var(--color-text-muted)]">
+          Use at least 8 characters with a mix of letters and numbers.
+        </p>
+      </div>
+
       <p className="text-sm text-[var(--color-text-muted)]">
-        Use at least 8 characters and avoid reusing passwords from other sites.
+        By creating an account, you agree to use this platform for patient booking and consultation management.
       </p>
-      <p className="text-sm text-[var(--color-text-muted)]">
-        By creating an account, you agree to use this platform for patient booking and account
-        management workflows.
-      </p>
-      <button type="submit" className="gh-btn gh-btn-primary" disabled={loading}>
+
+      <button type="submit" className="gh-btn gh-btn-primary mt-1" disabled={loading}>
         {loading ? "Creating account..." : "Create account"}
       </button>
+
       {message ? (
         <p
-          className={
-            isError
-              ? "rounded-[var(--radius-card-sm)] border px-3 py-2 text-sm gh-status-error"
-              : "rounded-[var(--radius-card-sm)] border px-3 py-2 text-sm gh-status-success"
-          }
+          className={`rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm ${
+            isError ? "gh-status-error" : "gh-status-success"
+          }`}
           role="status"
         >
           {message}

@@ -205,3 +205,77 @@ Added `prefers-reduced-motion` media query to disable animations for users who n
 - Fixed mobile nav close button focus ring.
 - Fixed account page "Account settings (coming soon)" from `<Link>` to `<button disabled>`.
 - Fixed `BlogCard` spacing between eyebrow and heading.
+
+
+## UI/UX Pro Max Visual Rescue Pass (2026-05-06)
+
+### Scope
+Complete visual redesign of auth, admin dashboard, patient account, and design foundation. No route changes, no backend changes, no feature additions.
+
+See also: `frontend/docs/ui-ux-pro-max-design-system.md` for the full design system specification.
+
+### Design direction
+- **Category:** Medical Clinic / Healthcare SaaS
+- **Pattern:** Trust & Authority + Conversion
+- **Style:** Accessible & Ethical + Minimalism with Soft UI touches
+
+### Foundation redesigned
+- `frontend/app/globals.css` completely rewritten:
+  - Premium card shadows with hover lift
+  - Improved button system (primary, outline, soft, danger, ghost-dark)
+  - Form focus rings with brand color
+  - Error focus rings with red
+  - Admin table hover highlighting
+  - Status badge utilities
+  - Icon circle utilities
+  - Dark panel utilities
+  - Reduced motion support
+
+### Auth pages completely redesigned
+- **Login:** True two-column layout with dark green trust panel (secure, licensed, clear next steps) and white form card with password visibility toggle
+- **Register:** Two-column with strong headline, clean form, trust panel
+- **Forgot-password:** Centered card with back navigation, calm reassuring copy
+- All auth pages have branded header, soft background, premium spacing
+
+### Admin dashboard completely redesigned
+- `frontend/app/(admin)/admin/page.tsx` — no longer a button list
+- Dashboard hero with dark green background, admin session badge, scope disclaimers
+- 9 large action cards with icon circles, titles, descriptions, hover states
+- Clear scope messaging: doctors are public profiles, payments not enabled
+
+### Admin layout redesigned
+- `frontend/app/(admin)/admin/layout.tsx` — clean white header with brand + admin label
+- User name/email visible
+- Sticky sidebar navigation
+- `gh-admin-main` restored for table styling
+
+### Patient account redesigned
+- **Account page:** Profile summary card with avatar placeholder, name, email, role badge
+- Action grid: My bookings, Book consultation, Settings (disabled)
+- **Bookings page:** Booking history cards with status badges, country, consultation type, notes
+- Empty state with icon and CTA
+- Soft background throughout
+
+### Public pages
+- Shared components (HeroSection, CountrySelector, BookingCTA) benefit from improved globals.css
+- No public page routes changed
+
+### Accessibility improvements
+- `aria-invalid` + `aria-describedby` on booking form fields
+- Disabled pagination links removed from tab order
+- Mobile nav close button has focus ring
+- Account "coming soon" is semantic disabled button
+- `prefers-reduced-motion` support
+- Improved contrast on dark green text overlays
+
+### Validation results
+- `pnpm lint` — pass
+- `pnpm typecheck` — pass
+- `pnpm build` — pass (113 pages)
+- `pnpm --filter backend test` — pass (79 tests)
+
+### Remaining visual gaps
+- Official final logo still pending approval
+- Approved footer CTA art still pending
+- Real doctor/team imagery optional pending approval
+- Some service/doctor/blog pages use safe generalized fallback copy until CMS content is finalized

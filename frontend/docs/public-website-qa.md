@@ -522,3 +522,65 @@ Polish-only pass: no route changes, no backend changes, no feature additions.
 - Approved footer CTA art still pending
 - Real doctor/team imagery optional pending approval
 - Some service/doctor/blog pages use safe generalized fallback copy until CMS content is finalized
+
+
+## UI/UX Pro Max Visual Rescue Pass QA (2026-05-06)
+
+### Routes checked
+
+- Auth/patient:
+  - `/login`
+  - `/register`
+  - `/forgot-password`
+  - `/account`
+  - `/account/bookings`
+- Admin:
+  - `/admin`
+  - `/admin/appointments`
+  - `/admin/countries`
+  - `/admin/services`
+  - `/admin/doctors`
+  - `/admin/pricing`
+  - `/admin/assets`
+  - `/admin/blog-posts`
+  - `/admin/faqs`
+  - `/admin/content-pages`
+- Public:
+  - `/`
+  - `/home`
+  - `/book-online`
+
+### Breakpoint matrix
+
+- `320` — auth cards stack, admin sidebar collapses to top nav, patient cards stack
+- `390` — auth trust panel readable, admin dashboard cards 1-col
+- `768` — auth two-column begins, admin cards 2-col, tables scrollable
+- `1024` — admin sidebar visible, full dashboard layout
+- `1440` — max-width discipline, comfortable spacing
+
+### Responsive outcomes
+
+- Auth pages: single-column mobile, true two-column desktop. No overflow.
+- Admin dashboard: cards stack 1→2→3 columns. Hero readable at all widths.
+- Admin tables: intentional `overflow-x-auto` containers. No page-level scroll.
+- Patient account: profile card stacks, action grid 1→3 columns. Booking cards readable.
+- Public pages: existing responsive behavior preserved.
+
+### Visual quality checks
+
+- [x] Admin dashboard is not a button list
+- [x] Auth pages have trust panels and premium form cards
+- [x] Patient account feels like a dashboard, not a form dump
+- [x] Cards have shadows, hover states, and depth
+- [x] Buttons are tap-safe (48px min)
+- [x] No fake stats, testimonials, or medical claims added
+- [x] No decorative gradients or purple AI colors
+- [x] Focus states visible on all interactive elements
+- [x] Reduced motion respected
+
+### Validation
+
+- `pnpm lint` — pass (1 warning fixed)
+- `pnpm typecheck` — pass
+- `pnpm build` — pass (113 pages)
+- `pnpm --filter backend test` — pass (79 tests)

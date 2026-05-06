@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { User, Mail, Phone, Shield, Loader2 } from "lucide-react";
 import { fetchCurrentUser, logoutUser, type AuthUser } from "@/lib/api/auth-api";
 
 export function AccountSummary() {
@@ -39,40 +40,61 @@ export function AccountSummary() {
   }
 
   if (loading) {
-    return <p className="mt-4 text-sm text-[var(--color-text-muted)]">Loading account...</p>;
+    return (
+      <div className="gh-card flex items-center justify-center p-10">
+        <Loader2 className="size-6 animate-spin text-[var(--color-brand-primary)]" aria-hidden />
+        <span className="ml-3 text-sm text-[var(--color-text-muted)]">Loading account...</span>
+      </div>
+    );
   }
 
   if (!user) {
     return (
-      <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-        {message ?? "You are not logged in yet. Log in to view full account details."}
-      </p>
+      <div className="gh-card p-6">
+        <p className="text-sm text-[var(--color-text-muted)]">
+          {message ?? "You are not logged in yet. Log in to view full account details."}
+        </p>
+      </div>
     );
   }
 
   return (
-    <div className="mt-5 grid gap-4">
-      <div className="grid gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4 sm:grid-cols-2">
-        <p className="text-sm text-[var(--color-text-muted)]">
-          <span className="font-semibold text-[var(--color-text-primary)]">Full name:</span> {user.fullName}
-        </p>
-        <p className="text-sm text-[var(--color-text-muted)]">
-          <span className="font-semibold text-[var(--color-text-primary)]">Email:</span> {user.email}
-        </p>
-        <p className="text-sm text-[var(--color-text-muted)]">
-          <span className="font-semibold text-[var(--color-text-primary)]">Phone:</span> {user.phone ?? "Not set"}
-        </p>
-        <p className="text-sm text-[var(--color-text-muted)]">
-          <span className="font-semibold text-[var(--color-text-primary)]">Role:</span> {user.role}
-        </p>
+    <div className="gh-card p-6 sm:p-8">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
+            <User className="size-7" aria-hidden />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-[var(--color-text-primary)]">{user.fullName}</h2>
+            <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-[var(--color-text-muted)]">
+              <span className="inline-flex items-center gap-1.5">
+                <Mail className="size-3.5" aria-hidden />
+                {user.email}
+              </span>
+              {user.phone ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <Phone className="size-3.5" aria-hidden />
+                  {user.phone}
+                </span>
+              ) : null}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--color-background-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--color-brand-primary)]">
+            <Shield className="size-3.5" aria-hidden />
+            {user.role}
+          </span>
+          <button type="button" className="gh-btn gh-btn-soft text-sm" onClick={handleLogout}>
+            Log out
+          </button>
+        </div>
       </div>
-      <div>
-        <button type="button" className="gh-btn" onClick={handleLogout}>
-          Log out
-        </button>
-      </div>
+
       {message ? (
-        <p className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2 text-sm text-[var(--color-text-muted)]">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-sm text-[var(--color-text-muted)]">
           {message}
         </p>
       ) : null}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CalendarDays, ArrowRight, ClipboardList } from "lucide-react";
 import type { AccountAppointment } from "@/lib/api/account-appointments-api";
 
 type BookingsShellProps = {
@@ -31,52 +32,61 @@ function statusBadgeClass(status: string) {
 export function BookingsShell({ items, unavailableMessage }: BookingsShellProps) {
   if (unavailableMessage) {
     return (
-      <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-        {unavailableMessage}
-      </p>
+      <div className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-panel)] px-5 py-4">
+        <p className="text-sm text-[var(--color-text-muted)]">{unavailableMessage}</p>
+      </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="mt-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
-        <p className="text-sm text-[var(--color-text-muted)]">
-          You do not have any account-linked booking requests yet.
+      <div className="mt-8 flex flex-col items-center rounded-[var(--radius-card-sm)] border border-dashed border-[var(--color-border)] bg-[var(--color-background-panel)] px-6 py-12 text-center">
+        <ClipboardList className="size-10 text-[var(--color-border-strong)]" aria-hidden />
+        <p className="mt-4 text-base font-semibold text-[var(--color-text-primary)]">No bookings yet</p>
+        <p className="mt-1 max-w-xs text-sm text-[var(--color-text-muted)]">
+          You have not made any booking requests. Start by booking your first consultation.
         </p>
-        <Link href="/book-online" className="gh-btn gh-btn-primary mt-4 inline-flex">
+        <Link href="/book-online" className="gh-btn gh-btn-primary mt-5 text-sm">
           Book online
+          <ArrowRight className="size-4" aria-hidden />
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="mt-4 space-y-3">
+    <div className="mt-6 space-y-4">
       {items.map((item) => (
         <article
           key={item.id}
-          className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
+          className="gh-card p-5 transition hover:shadow-[var(--shadow-card-hover)]"
         >
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span
-              className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${statusBadgeClass(
-                item.status,
-              )}`}
-            >
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <CalendarDays className="size-4 text-[var(--color-text-muted)]" aria-hidden />
+              <span className="text-sm text-[var(--color-text-muted)]">{formatDate(item.createdAt)}</span>
+            </div>
+            <span className={`gh-badge ${statusBadgeClass(item.status)}`}>
               {formatStatus(item.status)}
             </span>
-            <p className="text-xs text-[var(--color-text-muted)]">Created: {formatDate(item.createdAt)}</p>
           </div>
-          <div className="mt-3 grid gap-2 text-sm text-[var(--color-text-muted)] sm:grid-cols-2">
-            <p>
-              <span className="font-semibold text-[var(--color-text-primary)]">Country:</span> {item.countryCode}
-            </p>
-            <p>
-              <span className="font-semibold text-[var(--color-text-primary)]">Consultation:</span> {item.consultationType}
-            </p>
+
+          <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Country</p>
+              <p className="mt-0.5 font-medium text-[var(--color-text-primary)]">{item.countryCode.toUpperCase()}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Consultation</p>
+              <p className="mt-0.5 font-medium text-[var(--color-text-primary)]">{item.consultationType}</p>
+            </div>
           </div>
+
           {item.notesPreview ? (
-            <p className="mt-2 text-sm text-[var(--color-text-muted)]">Notes: {item.notesPreview}</p>
+            <div className="mt-3 rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-3 py-2">
+              <p className="text-xs font-semibold text-[var(--color-text-muted)]">Notes</p>
+              <p className="mt-0.5 text-sm text-[var(--color-text-body)]">{item.notesPreview}</p>
+            </div>
           ) : null}
         </article>
       ))}
