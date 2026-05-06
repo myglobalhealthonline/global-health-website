@@ -36,11 +36,13 @@ export function verifyAuthToken(token: string): AuthTokenPayload | null {
 
 export function authCookieOptions() {
   const secure = env.NODE_ENV === "production";
+  const domain = env.AUTH_COOKIE_DOMAIN?.trim();
   return {
     httpOnly: true,
     sameSite: "lax" as const,
     secure,
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
+    ...(domain ? { domain } : {}),
   };
 }
