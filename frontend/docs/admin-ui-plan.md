@@ -53,7 +53,7 @@ Internal-only admin scaffold routes:
 - `/admin/services/[id]` — detail + soft-deactivate (`DELETE` → `isActive: false`)
 - `/admin/services/[id]/edit` — edit (`PATCH`); country locked to preserve **`countryId + slug`** uniqueness semantics
 - `/admin/doctors` — list (filters, pagination, public path column, inactive styling)
-- `/admin/doctors/new` — country picker then create (`POST /api/admin/doctors`)
+- `/admin/doctors/create` — country picker then create (`POST /api/admin/doctors`); `/admin/doctors/new` rewrites here
 - `/admin/doctors/[id]` — detail + deactivate (`DELETE` → **`active: false`**)
 - `/admin/doctors/[id]/edit` — edit (`PATCH`); **country locked** (backend also rejects `countryId` change)
 - `/admin/pricing` … `/admin/pricing/[id]/edit` — pricing plans (Phase 3.4)
@@ -74,7 +74,7 @@ No public nav links point to these routes.
 
 ### Phase 3.3 notes (doctor profiles)
 
-- Routes: **`/admin/doctors`**, **`/admin/doctors/new`**, **`/admin/doctors/[id]`**, **`/admin/doctors/[id]/edit`** — server-only API client; banner copy explains **public directory content only** (no doctor login or portal in this repo).
+- Routes: **`/admin/doctors`**, **`/admin/doctors/create`** (legacy **`/admin/doctors/new`** → rewrite), **`/admin/doctors/[id]`**, **`/admin/doctors/[id]/edit`** — server-only API client; banner copy explains **public directory content only** (no doctor login or portal in this repo).
 - List shows derived **public path** as **`{country.teamPath}/{slug}`** (same-origin marketing URL segment — not a new public route).
 - **Languages** column shows **—** until a schema migration adds languages.
 - **Specialties**: multi-select via **`DoctorSpecialty`** / **`Specialty`** for the chosen country.

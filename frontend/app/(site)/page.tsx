@@ -26,11 +26,11 @@ export default async function HomePage() {
     <>
       <HeroSection
         eyebrow="Global Health Platform"
-        title={defaultClinic.countryHome.hero.title}
-        description="Choose your country clinic to access local doctors, consultation types, and secure booking routes."
+        title="Online Medical Clinic"
+        description="Connect with licensed doctors across Europe through secure video consultations. Choose your country and book online in minutes."
         primaryCta={{ label: common.cta.primaryBooking, href: navigation.headerPrimaryCta.href }}
         secondaryCta={{ label: "Select your country", href: "#countries" }}
-        trustBadges={defaultClinic.countryHome.hero.trustBadges}
+        trustBadges={["Licensed clinicians", "Secure & confidential", "Same-day availability"]}
         heroImage={
           homepageHero ?? {
             src: "/images/hero/homepage-hero-ai.svg",

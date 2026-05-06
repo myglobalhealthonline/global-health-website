@@ -216,7 +216,7 @@ Cross-reference: `backend/docs/booking-persistence-qa.md` (API matrix, CORS, DB 
 
 - `pnpm lint` — pass  
 - `pnpm typecheck` — pass (frontend + backend)  
-- `pnpm build` — pass (root: frontend + backend build)  
+- `pnpm build` — pass (113 pages)  
 - `pnpm --filter backend test` — pass (45 tests)
 
 ### Issues fixed this QA pass
@@ -237,7 +237,7 @@ Prisma queries failed because **`DATABASE_URL`** did not resolve to a reachable 
 ### Backend fixes / tooling
 
 | Item | Notes |
-|------|--------|
+|------|-------|
 | **`docker-compose.yml`** (repo root) | Postgres 16 + `global_health` DB + documented URL |
 | **`GET /health?db=1`** | Optional DB probe; returns **`database.connected`** and **`database.code`** (`UNREACHABLE`, `ECONNREFUSED`, …) — no secrets |
 | **Seed (Ireland)** | **`dr-mirza-aun-mohammad`**: `bio`; **`medical-consultation`**: `summary`, **`durationMinutes: 25`** (aligned with `/ireland/medical-consultation`) |
@@ -407,7 +407,7 @@ Prisma queries failed because **`DATABASE_URL`** did not resolve to a reachable 
 - Replaced visible placeholder logo with temporary wordmark asset.
 - Replaced visible homepage and country-home illustration placeholders with branded healthcare illustration assets.
 - Replaced visible Ireland about, delivery, doctor spotlight, and footer CTA placeholder artwork.
-- Removed visible “image placeholder” treatment from shared doctor cards and doctor profile pages.
+- Removed visible "image placeholder" treatment from shared doctor cards and doctor profile pages.
 
 ### Pages Checked After Asset Swap
 - `/`
@@ -579,11 +579,81 @@ Polish-only pass: no route changes, no backend changes, no feature additions.
 - [x] Reduced motion respected
 
 ### Validation
-
 - `pnpm lint` — pass (1 warning fixed)
 - `pnpm typecheck` — pass
 - `pnpm build` — pass (113 pages)
 - `pnpm --filter backend test` — pass (79 tests)
+
+## Visual Rescue v2 — No-Real-Assets Fallback Upgrade (2026-05-06)
+
+### Goal
+Make the public website look professionally acceptable even before final brand assets are uploaded. No visible "placeholder" boxes. No dashed empty partner slots.
+
+### Changes Made
+
+1. **HealthcareMediaFrame component** (`frontend/components/media/HealthcareMediaFrame.tsx`)
+   - Reusable fallback media component with variants: hero, doctor, delivery, cta, generic
+   - Premium CSS-based layered shapes (circles, dot patterns) instead of cheap SVG blobs
+   - Icon + label overlay for each variant
+   - Auto-detects fallback paths (`.svg`, `-ai.`, `-placeholder.`, `/images/placeholder`)
+   - Renders real `<Image>` when a non-fallback asset is provided
+
+2. **HeroSection** — fallback detection + HealthcareMediaFrame integration
+   - Split and stacked variants both use HealthcareMediaFrame
+   - No more raw SVG blobs in hero right panel
+
+3. **CountryHomeTemplate** — delivery + doctor sections upgraded
+   - Home delivery: dark green section background, stronger CTA, HealthcareMediaFrame variant="delivery"
+   - Doctor spotlight: profile card with border/shadow, HealthcareMediaFrame variant="doctor"
+   - Partner band: when no logos uploaded, shows text-only trust strip instead of hiding completely
+
+4. **Root homepage /** — stronger copy and trust badges
+   - Title: "Online Medical Clinic"
+   - Description emphasizes secure video consultations across Europe
+   - Trust badges: Licensed clinicians, Secure & confidential, Same-day availability
+
+5. **Booking page /book-online** — stronger trust and polish
+   - Form card: stronger border treatment (brand-primary/10), elevated shadow
+   - Icon circle: filled brand-primary background
+   - Signed-in badge: brand accent border
+   - Consent block: brand accent background
+   - Submit button: wider (200px), larger text
+   - Next steps: white card with brand-primary numbered circles
+   - Trust sidebar: icon circles in accent background + subtitle text per item
+
+6. **Header** — cleaner text-based brand lockup
+   - When no real logo: shows "Global Health" + "ONLINE CLINIC" text lockup instead of temp SVG wordmark
+   - Logo icon: added subtle shadow
+
+7. **Footer** — cohesive brand lockup
+   - Same text-based brand lockup when no real logo
+   - Better visual hierarchy with icon + stacked text
+
+### Validation
+
+- `pnpm lint` — pass (0 errors, 0 warnings)
+- `pnpm typecheck` — pass (frontend + backend)
+- `pnpm build` — pass (113 pages)
+- `pnpm --filter backend test` — pass (82 tests)
+
+### Screenshot QA Checklist
+
+| Page | 390px | 768px | 1440px | Status |
+|------|-------|-------|--------|--------|
+| / | Hero + country cards + trust | Two-col layout | Max-width discipline | Pending browser |
+| /home | Split hero + delivery + doctor | Section stacking | Full layout | Pending browser |
+| /book-online | Form card + trust sidebar | Two-col trust | Full layout | Pending browser |
+
+### Remaining Blockers After This Pass
+
+- Real logo asset still needed for final brand identity
+- Real hero photo still needed for maximum impact
+- Real doctor headshot still needed for credibility
+- Real delivery photo still needed for lifestyle context
+- Partner logos still needed for social proof band
+- S3/Railway bucket env vars must be configured for upload pipeline
+
+---
 
 ## Railway bucket / CMS media wiring (2026-05-06)
 
@@ -602,20 +672,20 @@ Polish-only pass: no route changes, no backend changes, no feature additions.
 ### Manual media QA (requires Railway bucket env on backend)
 
 1. Admin upload JPEG/PNG/WebP/SVG → copy **`publicUrl`** → **`GET`** URL returns image bytes (`200`).
-2. Create **`IMAGE`**/`LOGO` asset with canonical **key** (see `public-asset-slots.ts`) → `/home` or `/` updates; deactivate asset → **fallback** SVG returns.
-3. Partner band: no logos uploaded → **section absent**; upload one `partner-logo-*` → band appears with real image(s).
+2. Create **`IMAGE`**/`LOGO` asset with canonical **key** (see `public-asset-slots.ts`) → `/home` or `/` updates; deactivate asset → **fallback** HealthcareMediaFrame returns (no cheap SVG).
+3. Partner band: no logos uploaded → **text trust strip**; upload one `partner-logo-*` → band appears with real image(s).
 
 ### Wix vs hosted visual QA (manual — browser)
 
 Compare [Wix `/home`](https://www.myglobalhealth.online/home) vs hosted `/home` at **390 / 768 / 1440**:
 
 | Check | Notes |
-|-------|--------|
-| Hero image quality | CMS `ireland-hero` vs fallback SVG |
-| Logo | CMS `site-logo` vs temp wordmark |
-| Doctor spotlight | `ireland-doctor-spotlight` / doctor key vs AI SVG |
-| Home delivery | `ireland-home-delivery` vs SVG |
-| Partner / trust | Partner band only with uploads; trust icons vs `trust-*` images |
+|-------|-------|
+| Hero image quality | CMS `ireland-hero` vs HealthcareMediaFrame fallback |
+| Logo | CMS `site-logo` vs text lockup |
+| Doctor spotlight | `ireland-doctor-spotlight` / doctor key vs HealthcareMediaFrame fallback |
+| Home delivery | `ireland-home-delivery` vs HealthcareMediaFrame fallback |
+| Partner / trust | Text trust strip when no uploads; logo row when uploaded |
 | Footer CTA | Optional `footer-cta` decor image |
 
 **Result:** Not re-run in Cursor against live Railway in this session — execute after deploy with bucket credentials applied.

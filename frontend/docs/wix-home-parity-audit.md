@@ -24,17 +24,17 @@ Screenshots captured 2026-05-06 from Railway show the OLD build. All sections th
 
 | Order | Wix Section | Hosted Before (Old Deploy) | Hosted After (Code) | Status |
 |-------|-------------|---------------------------|---------------------|--------|
-| 1 | Header (dark green bg, real logo) | White blurred header + temp wordmark | Same | ⚠️ PARTIAL |
+| 1 | Header (dark green bg, real logo) | White blurred header + temp wordmark | Text lockup "Global Health / ONLINE CLINIC" | ⚠️ PARTIAL |
 | 2 | Quick tab row | Chip links | Same | ✅ CLOSE |
-| 3 | Hero: "Ireland Online Medical Clinic" | Split hero with abstract SVG | Dark-framed SVG, "Ireland Online Medical Clinic" as H1 | ⚠️ PARTIAL |
+| 3 | Hero: "Ireland Online Medical Clinic" | Split hero with abstract SVG | Split hero with HealthcareMediaFrame fallback | ✅ CLOSE |
 | 4 | Same-Day Consultation CTA | Dark green banner | Same | ✅ CLOSE |
 | 5 | (Wix: large green decorative section) | About us section | **REMOVED** | ✅ MATCH |
 | 6 | (Wix: tab nav, not homepage cards) | Specialist Consultations grid | **REMOVED** | ✅ MATCH |
 | 7 | (Wix: not on homepage) | How it works | **REMOVED** | ✅ MATCH |
-| 8 | Home Delivery | Bordered card | Same | ✅ CLOSE |
-| 9 | Partner logos (Level, IP, Pharmacy, Doctify) | Missing | **ADDED** placeholder band | ⚠️ PARTIAL |
-| 10 | Doctor spotlight | Image + quote + "Doctor profile" | Same | ✅ CLOSE |
-| 11 | Trust signals (4 icons) | 5 cards with fake rating | **4 cards**, no fake rating | ✅ CLOSE |
+| 8 | Home Delivery | Bordered card | Dark green section + HealthcareMediaFrame fallback | ✅ IMPROVED |
+| 9 | Partner logos (Level, IP, Pharmacy, Doctify) | Missing | Text trust strip when no logos uploaded | ⚠️ PARTIAL |
+| 10 | Doctor spotlight | Image + quote + "Doctor profile" | HealthcareMediaFrame fallback + profile card | ✅ CLOSE |
+| 11 | Trust signals (4 icons) | 5 cards with fake rating | 4 cards, no fake rating | ✅ CLOSE |
 | 12 | Social proof (avatars, 4.9/5) | Combined into trust | **REMOVED** | ✅ SAFE |
 | 13 | Country selector | Missing | Missing (acceptable) | ⚠️ PARTIAL |
 | 14 | Footer CTA + footer | Booking CTA + footer + CTA footer | Same | ⚠️ PARTIAL |
@@ -50,8 +50,9 @@ Screenshots captured 2026-05-06 from Railway show the OLD build. All sections th
 ### Desktop (1440px) — Expected After Deploy
 - Estimated page height: ~5,500px (removed About, Specialist, How it works, Medical team, FAQ)
 - Trust section shows 4 cards (Licensed Doctors, Secure & Confidential, Fast Access, Available across Europe)
-- Partner logo band with 4 dashed placeholder slots
+- Partner text trust strip: "Trusted by healthcare partners across Ireland"
 - Hero H1: "Ireland Online Medical Clinic"
+- Home delivery: dark green background with framed fallback visual
 
 ### Mobile (390px) — Current Deploy (Old Build)
 - Full page height: ~11,794px
@@ -101,26 +102,29 @@ See `frontend/docs/asset-inventory.md` for full details.
 | Blocker | Impact | Resolution Path |
 |---------|--------|-----------------|
 | Railway not deployed | Cannot verify parity pass visually | Trigger Railway deployment |
-| No real hero photo | Hero feels generic | Request Wix export or commission photography |
-| No real doctor headshot | Doctor spotlight lacks credibility | Request clinic-approved headshot |
-| No real delivery photo | Delivery section feels abstract | Request Wix export or commission |
-| No real CTA photo | Footer CTA less compelling | Request Wix export or commission |
-| No final logo | Header looks temporary | Request final brand asset |
-| No partner logos | Partner band is placeholder only | Request logo files from business |
+| No real hero photo | Hero feels generic | Upload via admin when approved |
+| No real doctor headshot | Doctor spotlight lacks credibility | Upload via admin when approved |
+| No real delivery photo | Delivery section feels abstract | Upload via admin when approved |
+| No real CTA photo | Footer CTA less compelling | Upload via admin when approved |
+| No final logo | Header looks temporary | Upload via admin when approved |
+| No partner logos | Partner band is text-only | Upload via admin when approved |
 | S3 env vars not confirmed | Cannot test upload pipeline | Verify Railway dashboard env vars |
 
 ## 6. Files Changed (Parity Pass)
 
 | File | Change |
 |------|--------|
-| `frontend/components/templates/CountryHomeTemplate.tsx` | Removed about/services/steps/doctors/faqs. Added partner band. |
-| `frontend/lib/content/home-page-presenters.ts` | Simplified presenter. Added `showPartnerBand` + `partnerNames`. |
-| `frontend/lib/content/template-page-data.ts` | Removed fake rating from trust items. Changed trust title. |
-| `frontend/components/sections/HeroSection.tsx` | Dark green frame behind hero image, 95% opacity on SVG. |
-| `frontend/components/sections/BookingCTA.tsx` | Uses CSS radius token. |
-| `frontend/components/layout/CTAFooter.tsx` | Simplified layout, removed inner panel. |
-| `frontend/docs/asset-inventory.md` | Full asset replacement plan with upload pipeline. |
-| `frontend/docs/wix-home-parity-audit.md` | This file. |
+| `frontend/components/media/HealthcareMediaFrame.tsx` | **NEW** Premium fallback media component |
+| `frontend/components/sections/HeroSection.tsx` | Integrated HealthcareMediaFrame for fallback detection |
+| `frontend/components/templates/CountryHomeTemplate.tsx` | Delivery dark section, doctor profile card, partner trust strip |
+| `frontend/lib/content/home-page-presenters.ts` | Added `partnerTrustLine` propagation |
+| `frontend/lib/content/template-page-data.ts` | Added `partnerTrustLine` to all countries |
+| `frontend/app/(site)/page.tsx` | Stronger root homepage copy and trust badges |
+| `frontend/components/templates/BookingFormTemplate.tsx` | Stronger form card, trust sidebar, next steps styling |
+| `frontend/components/layout/SiteHeader.tsx` | Text-based brand lockup when no real logo |
+| `frontend/components/layout/SiteFooter.tsx` | Text-based brand lockup when no real logo |
+| `frontend/docs/public-website-qa.md` | Added Visual Rescue v2 section |
+| `frontend/docs/wix-home-parity-audit.md` | This file |
 
 ## 7. Validation Results
 

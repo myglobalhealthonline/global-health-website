@@ -1,8 +1,21 @@
 import type { CountryCode } from "@/data/countries";
 import { fetchDoctors } from "@/lib/api/site-content-api";
 import { cache } from "react";
+import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 import { isKnownCountryCode } from "@/lib/content/merge-public-content";
 import { logPublicContentFallback } from "@/lib/content/public-content-source";
+
+/** Parses `Languages: a, b.` from seeded/CMS bio lines. Returns null if not present. */
+export function parseLanguagesFromDoctorBio(bio: string | null | undefined): string[] | null {
+  if (!bio) return null;
+  const m = bio.match(/Languages:\s*([^.]*?)(?:\.|$)/i);
+  if (!m) return null;
+  const parts = m[1]
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return parts.length > 0 ? parts : null;
+}
 
 export type PublicDoctorRecord = {
   id: string;
@@ -14,6 +27,8 @@ export type PublicDoctorRecord = {
   countryName: string;
   teamPath: string;
   specialties: string[];
+  /** Resolved safe URL/path for Next/Image when the API returns a profile asset. */
+  profileImageSrc?: string;
 };
 
 function readCountry(row: unknown): { code: CountryCode; name: string; teamPath: string } | undefined {
@@ -24,6 +39,19 @@ function readCountry(row: unknown): { code: CountryCode; name: string; teamPath:
   const teamPath = typeof r.teamPath === "string" ? r.teamPath : "";
   if (!isKnownCountryCode(code) || !name || !teamPath) return undefined;
   return { code, name, teamPath };
+}
+
+function profileImageFromRow(row: unknown): string | undefined {
+  const assets = (row as { assets?: unknown }).assets;
+  if (!Array.isArray(assets)) return undefined;
+  for (const a of assets) {
+    if (!a || typeof a !== "object") continue;
+    const rec = a as { kind?: unknown; path?: unknown };
+    if (rec.kind !== "IMAGE" || typeof rec.path !== "string") continue;
+    const url = resolveTrustedAssetUrl(rec.path);
+    if (url) return url;
+  }
+  return undefined;
 }
 
 function specialtyNames(row: unknown): string[] {
@@ -55,6 +83,7 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
   if (!country) return null;
 
   const bio = typeof r.bio === "string" ? r.bio : null;
+  const profileImageSrc = profileImageFromRow(row);
 
   return {
     id,
@@ -66,6 +95,7 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
     countryName: country.name,
     teamPath: country.teamPath,
     specialties: specialtyNames(row),
+    ...(profileImageSrc ? { profileImageSrc } : {}),
   };
 }
 

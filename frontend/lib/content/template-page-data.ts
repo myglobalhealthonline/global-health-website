@@ -2,8 +2,11 @@
 import { countries, getCountryByCode } from "@/data/countries";
 import { routeInventory } from "@/data/routes";
 import { getSiteContext } from "@/lib/content/get-site-context";
-import type { PublicDoctorRecord } from "@/lib/content/get-public-doctors";
-import { getPublicDoctorsForCountry } from "@/lib/content/get-public-doctors";
+import {
+  getPublicDoctorsForCountry,
+  parseLanguagesFromDoctorBio,
+  type PublicDoctorRecord,
+} from "@/lib/content/get-public-doctors";
 import type { PublicServiceRecord } from "@/lib/content/get-public-services";
 import {
   formatOptionalPrice,
@@ -91,6 +94,8 @@ export type HomeTemplateData = {
   };
   /** Populated when partner logo assets exist — never synthetic placeholders. */
   partnerLogos?: Array<{ src: string; alt: string }>;
+  /** Optional trust line shown when partner logos are empty. */
+  partnerTrustLine?: string;
 };
 
 type GeneralConsultationTemplateData = {
@@ -124,7 +129,7 @@ type DoctorProfileData = {
   country: string;
   languages: string[];
   bio: string;
-  imageLabel: string;
+  imageSrc?: string;
   href?: string;
   ctaLabel?: string;
 };
@@ -321,6 +326,7 @@ function buildCountryHomeData(
         ctaLabel: "Start Consultation",
         ctaHref: paths.general,
       },
+      partnerTrustLine: "Trusted by healthcare partners across Ireland",
     };
   }
 
@@ -426,6 +432,7 @@ function buildCountryHomeData(
       ctaLabel: "Start Consultation",
       ctaHref: paths.general,
     },
+    partnerTrustLine: `Trusted healthcare standards in ${countryLabel}`,
   };
 }
 
@@ -550,6 +557,10 @@ const defaultDoctorLanguages: Record<CountryCode, string[]> = {
   rm: ["Romanian", "English"],
 };
 
+function languagesForDoctorCard(bio: string | null | undefined, countryCode: CountryCode): string[] {
+  return parseLanguagesFromDoctorBio(bio) ?? defaultDoctorLanguages[countryCode];
+}
+
 function mapPublicDoctorToCard(
   d: PublicDoctorRecord,
   countryCode: CountryCode,
@@ -560,11 +571,11 @@ function mapPublicDoctorToCard(
     name: d.fullName,
     title: d.title,
     country: d.countryName,
-    languages: defaultDoctorLanguages[countryCode],
+    languages: languagesForDoctorCard(d.bio, countryCode),
     bio:
       d.bio ??
       `Supports patient consultations and follow-up care through ${d.countryName} clinic routes.`,
-    imageLabel: d.fullName,
+    ...(d.profileImageSrc ? { imageSrc: d.profileImageSrc } : {}),
     href,
     ctaLabel: countryCode === "ie" ? "View profile" : "Meet doctors",
   };
@@ -625,7 +636,6 @@ function buildDoctorProfiles(countryCode: CountryCode, countryName: string, path
         country: "Ireland",
         languages: ["English"],
         bio: "Provides first-contact online consultations and continuity care pathways for patients across Ireland.",
-        imageLabel: "Dr. Khoiamul Islam",
         href: paths.team,
         ctaLabel: "Meet doctor",
       },
@@ -635,7 +645,6 @@ function buildDoctorProfiles(countryCode: CountryCode, countryName: string, path
         country: "Ireland",
         languages: ["English"],
         bio: "Supports triage, follow-up, and referral coordination for online consultations across the Ireland clinic routes.",
-        imageLabel: "Ireland clinical team",
         href: paths.team,
         ctaLabel: "Meet doctors",
       },
@@ -649,7 +658,6 @@ function buildDoctorProfiles(countryCode: CountryCode, countryName: string, path
       country: countryName,
       languages: defaultLanguages[countryCode],
       bio: `First-contact online consultation support for ${countryName}, including initial assessment and care navigation.`,
-      imageLabel: `${countryName} doctor profile`,
       href: paths.team,
       ctaLabel: "Meet doctors",
     },
@@ -659,7 +667,6 @@ function buildDoctorProfiles(countryCode: CountryCode, countryName: string, path
       country: countryName,
       languages: defaultLanguages[countryCode],
       bio: "Coordinates booking, follow-up pathways, and clear next-step guidance for patients.",
-      imageLabel: `${countryName} care team`,
       href: paths.team,
       ctaLabel: "Contact clinic",
     },

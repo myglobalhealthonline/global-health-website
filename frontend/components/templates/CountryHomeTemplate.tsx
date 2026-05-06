@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, Users } from "lucide-react";
+import { Clock, Users, ShieldCheck } from "lucide-react";
 import { BookingCTA } from "@/components/sections/BookingCTA";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { TrustSignals } from "@/components/sections/TrustSignals";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
+import { HealthcareMediaFrame } from "@/components/media/HealthcareMediaFrame";
 
 export type CountryHomeTemplateProps = {
   countryName: string;
@@ -51,6 +52,8 @@ export type CountryHomeTemplateProps = {
   };
   /** Approved partner logos only (uploaded assets). Section hidden when empty. */
   partnerLogos?: Array<{ src: string; alt: string }>;
+  /** Optional trust line shown when partner logos are empty */
+  partnerTrustLine?: string;
 };
 
 export function CountryHomeTemplate({
@@ -75,6 +78,7 @@ export function CountryHomeTemplate({
   ],
   bookingCta,
   partnerLogos = [],
+  partnerTrustLine,
 }: CountryHomeTemplateProps) {
   return (
     <>
@@ -138,27 +142,28 @@ export function CountryHomeTemplate({
       ) : null}
 
       {homeDelivery ? (
-        <Section className="bg-[var(--color-brand-secondary)]">
+        <Section className="bg-[var(--color-brand-primary)]">
           <Container>
-            <div className="grid gap-8 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-6 shadow-[var(--shadow-soft)] sm:p-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-              <div>
-                <h2 className="gh-h2 text-[var(--color-text-primary)]">{homeDelivery.title}</h2>
-                <p className="gh-body mt-4 max-w-2xl text-[var(--color-text-muted)]">{homeDelivery.description}</p>
-                <Link href={homeDelivery.cta.href} className="gh-btn gh-btn-primary mt-6">
+            <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-center lg:gap-14">
+              <div className="max-w-xl">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="size-5 text-[#C8E6A0]" aria-hidden />
+                  <p className="gh-heading-eyebrow text-[#C8E6A0]/90">Prescription service</p>
+                </div>
+                <h2 className="gh-h2 mt-3 text-white">{homeDelivery.title}</h2>
+                <p className="gh-body-lg mt-4 max-w-2xl text-white/85">{homeDelivery.description}</p>
+                <Link
+                  href={homeDelivery.cta.href}
+                  className="gh-btn mt-8 bg-[var(--color-brand-secondary)] text-[var(--color-brand-primary)] hover:bg-white"
+                >
                   {homeDelivery.cta.label}
                 </Link>
               </div>
-              {homeDelivery.image ? (
-                <div className="overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-card)]">
-                  <Image
-                    src={homeDelivery.image.src}
-                    alt={homeDelivery.image.alt}
-                    width={1200}
-                    height={900}
-                    className="h-auto w-full rounded-[20px] object-cover"
-                  />
-                </div>
-              ) : null}
+              <HealthcareMediaFrame
+                src={homeDelivery.image?.src}
+                alt={homeDelivery.image?.alt}
+                variant="delivery"
+              />
             </div>
           </Container>
         </Section>
@@ -188,23 +193,27 @@ export function CountryHomeTemplate({
             </div>
           </Container>
         </Section>
+      ) : partnerTrustLine ? (
+        <Section className="border-y border-[var(--color-border)] bg-[var(--color-brand-secondary)] py-[var(--section-padding-y-xs)]">
+          <Container>
+            <div className="mx-auto flex max-w-3xl items-center justify-center gap-3 text-center">
+              <ShieldCheck className="size-5 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
+              <p className="text-sm font-medium text-[var(--color-text-primary)]">{partnerTrustLine}</p>
+            </div>
+          </Container>
+        </Section>
       ) : null}
 
       {doctorSpotlight ? (
-        <Section className="bg-[var(--color-background-page)]">
+        <Section className="bg-[var(--color-background-soft)]">
           <Container>
-            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-              {doctorSpotlight.image ? (
-                <div className="overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-elevated)]">
-                  <Image
-                    src={doctorSpotlight.image.src}
-                    alt={doctorSpotlight.image.alt}
-                    width={900}
-                    height={1100}
-                    className="h-auto w-full rounded-[20px] object-cover"
-                  />
-                </div>
-              ) : null}
+            <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-14">
+              <HealthcareMediaFrame
+                src={doctorSpotlight.image?.src}
+                alt={doctorSpotlight.image?.alt}
+                variant="doctor"
+                label={doctorSpotlight.name}
+              />
               <div>
                 <div className="flex items-center gap-2">
                   <Users className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
@@ -213,7 +222,7 @@ export function CountryHomeTemplate({
                 <blockquote className="mt-4 text-[var(--text-h2)] font-extrabold tracking-tight leading-[1.15] text-[var(--color-text-primary)]">
                   &ldquo;{doctorSpotlight.quote}&rdquo;
                 </blockquote>
-                <div className="mt-5 border-t border-[var(--color-border)] pt-5">
+                <div className="mt-6 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)]">
                   <p className="text-lg font-semibold text-[var(--color-text-primary)]">{doctorSpotlight.name}</p>
                   <p className="mt-1 text-sm font-medium text-[var(--color-brand-primary)]">{doctorSpotlight.title}</p>
                   <p className="mt-1 text-sm text-[var(--color-text-muted)]">{doctorSpotlight.credential}</p>

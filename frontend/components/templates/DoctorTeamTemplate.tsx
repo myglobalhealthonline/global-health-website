@@ -9,7 +9,7 @@ type DoctorTeamTemplateProps = {
     country?: string;
     languages?: string[];
     bio: string;
-    imageLabel?: string;
+    imageSrc?: string | null;
     href?: string;
     ctaLabel?: string;
   }>;

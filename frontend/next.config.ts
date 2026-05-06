@@ -26,6 +26,16 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname, ".."),
   },
   ...(remotePatterns ? { images: { remotePatterns } } : {}),
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: "/admin/doctors/new",
+          destination: "/admin/doctors/create",
+        },
+      ],
+    };
+  },
 };
 
 export default nextConfig;

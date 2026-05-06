@@ -89,7 +89,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Link href="/admin/doctors/new" className="gh-btn gh-btn-primary">
+          <Link href="/admin/doctors/create" className="gh-btn gh-btn-primary">
             Add doctor profile
           </Link>
           <Link href="/admin" className="gh-link text-sm text-[var(--color-text-muted)]">

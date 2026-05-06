@@ -1,4 +1,4 @@
-import { getPublicDoctorBySlug } from "@/lib/content/get-public-doctors";
+import { getPublicDoctorBySlug, parseLanguagesFromDoctorBio } from "@/lib/content/get-public-doctors";
 import { resolveDoctorProfileImageUrl } from "@/lib/content/get-public-assets";
 
 export type DoctorProfilePageData = {
@@ -118,6 +118,7 @@ export async function resolveDoctorProfilePageData(doctorSlug: string): Promise<
       title: backend.title,
       country: backend.countryName,
       bio: backend.bio ?? base.profile.bio,
+      languages: parseLanguagesFromDoctorBio(backend.bio) ?? base.profile.languages,
       specialties:
         backend.specialties.length > 0 ? backend.specialties : base.profile.specialties,
       imageLabel: backend.fullName,

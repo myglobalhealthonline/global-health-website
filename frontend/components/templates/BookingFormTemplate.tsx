@@ -141,9 +141,9 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
       <Section id="booking-form" className="bg-[var(--color-background-soft)]">
         <Container>
           <div className="mx-auto max-w-3xl">
-            <div className="gh-card overflow-x-hidden p-6 sm:p-10">
+            <div className="gh-card overflow-x-hidden border-2 border-[var(--color-brand-primary)]/10 p-6 shadow-[var(--shadow-elevated)] sm:p-10">
               <div className="flex items-center gap-3">
-                <span className="gh-icon-circle">
+                <span className="gh-icon-circle bg-[var(--color-brand-primary)] text-white">
                   <Stethoscope className="size-5" aria-hidden />
                 </span>
                 <div>
@@ -153,10 +153,10 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
               </div>
 
               {signedInPatient ? (
-                <div className="mt-5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3">
+                <div className="mt-5 rounded-[var(--radius-card-sm)] border border-[var(--color-brand-primary)]/20 bg-[var(--color-brand-secondary)] px-4 py-3">
                   <p className="text-sm text-[var(--color-text-muted)]">
                     Signed in as{" "}
-                    <span className="font-semibold text-[var(--color-text-primary)]">{signedInPatient.fullName}</span>.
+                    <span className="font-semibold text-[var(--color-brand-primary)]">{signedInPatient.fullName}</span>.
                     Your details are pre-filled.
                   </p>
                 </div>
@@ -297,7 +297,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                   />
                 </div>
 
-                <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+                <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-brand-primary)]/15 bg-[var(--color-brand-secondary)]/60 p-4">
                   <div className="flex items-start gap-3">
                     <input
                       id={consentId}
@@ -321,7 +321,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                 </div>
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <button type="submit" className="gh-btn gh-btn-primary min-w-[180px]" disabled={loading}>
+                  <button type="submit" className="gh-btn gh-btn-primary min-w-[200px] text-base" disabled={loading}>
                     {loading ? "Submitting request..." : form.submitLabel}
                   </button>
                   <p className="gh-body-sm text-[var(--color-text-muted)]">{form.helperMessage}</p>
@@ -340,12 +340,12 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
               </form>
 
               {form.nextSteps ? (
-                <section className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-5">
+                <section className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-brand-primary)]/10 bg-white p-5 shadow-[var(--shadow-card)]">
                   <h3 className="gh-h3 text-[var(--color-text-primary)]">{form.nextSteps.title}</h3>
                   <ul className="mt-3 space-y-3">
                     {form.nextSteps.items.map((item, i) => (
                       <li key={item} className="flex items-start gap-3 gh-body-sm text-[var(--color-text-muted)]">
-                        <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-[10px] font-bold text-[var(--color-brand-primary)]">
+                        <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-primary)] text-[11px] font-bold text-white">
                           {i + 1}
                         </span>
                         {item}
@@ -356,19 +356,34 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
               ) : null}
             </div>
 
-            {/* Trust sidebar on desktop */}
-            <div className="mt-6 grid gap-4 sm:grid-cols-3">
-              <div className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-4 py-3">
-                <ShieldCheck className="size-5 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
-                <p className="text-sm font-medium text-[var(--color-text-primary)]">Private & confidential</p>
+            {/* Trust sidebar */}
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              <div className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-4 py-4 shadow-[var(--shadow-soft)]">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-secondary)]">
+                  <ShieldCheck className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-[var(--color-text-primary)]">Private & confidential</p>
+                  <p className="text-xs text-[var(--color-text-muted)]">GDPR protected</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-4 py-3">
-                <Clock className="size-5 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
-                <p className="text-sm font-medium text-[var(--color-text-primary)]">Fast team response</p>
+              <div className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-4 py-4 shadow-[var(--shadow-soft)]">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-secondary)]">
+                  <Clock className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-[var(--color-text-primary)]">Fast team response</p>
+                  <p className="text-xs text-[var(--color-text-muted)]">Usually within 24h</p>
+                </div>
               </div>
-              <div className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-4 py-3">
-                <Check className="size-5 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
-                <p className="text-sm font-medium text-[var(--color-text-primary)]">Licensed clinicians</p>
+              <div className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-4 py-4 shadow-[var(--shadow-soft)]">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-secondary)]">
+                  <Check className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-[var(--color-text-primary)]">Licensed clinicians</p>
+                  <p className="text-xs text-[var(--color-text-muted)]">Verified credentials</p>
+                </div>
               </div>
             </div>
           </div>

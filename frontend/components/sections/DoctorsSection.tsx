@@ -8,7 +8,7 @@ type DoctorItem = {
   country?: string;
   languages?: string[];
   bio: string;
-  imageLabel?: string;
+  imageSrc?: string | null;
   href?: string;
   ctaLabel?: string;
 };
@@ -29,7 +29,7 @@ export function DoctorsSection({ title = "Medical team", intro, doctors }: Docto
         </div>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:gap-6">
           {doctors.map((doctor) => (
-            <DoctorCard key={`${doctor.name}-${doctor.title}`} {...doctor} />
+            <DoctorCard key={doctor.href ?? `${doctor.name}-${doctor.title}`} {...doctor} />
           ))}
         </div>
       </Container>

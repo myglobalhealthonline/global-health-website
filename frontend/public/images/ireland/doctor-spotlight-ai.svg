@@ -1,1 +1,18 @@
-﻿<svg width="1200" height="1400" viewBox="0 0 1200 1400" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="1200" height="1400" rx="40" fill="#F7FBF4"/><circle cx="876" cy="236" r="158" fill="#C8E6A0" fill-opacity="0.5"/><rect x="158" y="158" width="884" height="1084" rx="38" fill="#FFFFFF" stroke="#E5E5E5" stroke-width="4"/><circle cx="600" cy="492" r="154" fill="#1B4D3E" fill-opacity="0.08"/><circle cx="600" cy="474" r="120" fill="#1B4D3E"/><path d="M420 920C458 782 544 728 600 728C660 728 746 784 780 920" stroke="#1B4D3E" stroke-width="38" stroke-linecap="round"/><rect x="368" y="1016" width="464" height="18" rx="9" fill="#1B4D3E" fill-opacity="0.16"/><rect x="438" y="1058" width="324" height="14" rx="7" fill="#1B4D3E" fill-opacity="0.12"/></svg>
+<svg width="1200" height="1400" viewBox="0 0 1200 1400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1400" rx="40" fill="#F5FAF3"/>
+  <circle cx="878" cy="234" r="158" fill="#D7ECC9"/>
+  <rect x="126" y="124" width="948" height="1152" rx="42" fill="#FFFFFF" stroke="#DCE7D8" stroke-width="4"/>
+  <rect x="204" y="200" width="792" height="998" rx="36" fill="#F2F8EE"/>
+  <rect x="296" y="236" width="608" height="228" rx="32" fill="#1B4D3E"/>
+  <rect x="344" y="282" width="512" height="132" rx="26" fill="#D7EBC8"/>
+  <path d="M600 302V394M554 348H646" stroke="#1B4D3E" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="600" cy="600" r="168" fill="#E5F2D8"/>
+  <circle cx="600" cy="572" r="126" fill="#EFC6A8"/>
+  <path d="M506 566C516 488 566 430 632 430C698 430 748 488 758 566C708 524 656 504 624 504C590 504 544 522 506 566Z" fill="#173B31"/>
+  <path d="M398 970C430 828 516 744 602 744C692 744 774 830 804 970" fill="#1B4D3E"/>
+  <path d="M448 982C486 868 550 810 604 810C660 810 722 872 754 982" stroke="#D5EAC6" stroke-width="36" stroke-linecap="round"/>
+  <rect x="398" y="1046" width="404" height="74" rx="26" fill="#FFFFFF"/>
+  <circle cx="454" cy="1083" r="22" fill="#C8E6A0"/>
+  <path d="M454 1071V1095M442 1083H466" stroke="#1B4D3E" stroke-width="6" stroke-linecap="round"/>
+  <rect x="498" y="1074" width="210" height="12" rx="6" fill="#1B4D3E" fill-opacity="0.14"/>
+</svg>

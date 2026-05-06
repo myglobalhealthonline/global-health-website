@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
+import { HealthcareMediaFrame } from "@/components/media/HealthcareMediaFrame";
 
 type HeroSectionProps = {
   eyebrow?: string;
@@ -62,20 +62,16 @@ export function HeroSection({
             </div>
 
             {heroImage ? (
-              <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-brand-primary)] p-1 shadow-[var(--shadow-elevated)]">
-                <div className="absolute inset-0 bg-[var(--color-brand-primary)]" />
-                <div className="relative overflow-hidden rounded-[20px]">
-                  <Image
-                    src={heroImage.src}
-                    alt={heroImage.alt}
-                    width={1600}
-                    height={900}
-                    className="h-auto min-h-[300px] w-full object-cover opacity-95 lg:min-h-[520px]"
-                    priority
-                  />
-                </div>
-              </div>
-            ) : null}
+              <HealthcareMediaFrame
+                src={heroImage.src}
+                alt={heroImage.alt}
+                variant="hero"
+                className="lg:min-h-[520px]"
+                priority
+              />
+            ) : (
+              <HealthcareMediaFrame variant="hero" className="lg:min-h-[520px]" priority />
+            )}
           </div>
         </Container>
       </Section>
@@ -117,19 +113,19 @@ export function HeroSection({
           ) : null}
 
           {heroImage ? (
-            <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-brand-primary)] p-1 shadow-[var(--shadow-elevated)]">
-              <div className="overflow-hidden rounded-[20px]">
-                <Image
-                  src={heroImage.src}
-                  alt={heroImage.alt}
-                  width={1600}
-                  height={700}
-                  className="h-auto min-h-[280px] w-full object-cover opacity-95 lg:min-h-[480px]"
-                  priority
-                />
-              </div>
+            <div className="mx-auto mt-10 max-w-5xl">
+              <HealthcareMediaFrame
+                src={heroImage.src}
+                alt={heroImage.alt}
+                variant="hero"
+                priority
+              />
             </div>
-          ) : null}
+          ) : (
+            <div className="mx-auto mt-10 max-w-5xl">
+              <HealthcareMediaFrame variant="hero" priority />
+            </div>
+          )}
         </div>
       </Container>
     </Section>

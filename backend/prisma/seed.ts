@@ -5,6 +5,12 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient, LocaleCode, UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { Pool } from "pg";
+import {
+  IRELAND_DOCTOR_ROSTER,
+  IRELAND_ROSTER_SPECIALTIES,
+  buildIrelandDoctorBio,
+  specialtySlugForIrelandDoctor,
+} from "./ireland-doctors-seed-data.js";
 
 const prismaDir = dirname(fileURLToPath(import.meta.url));
 loadEnv({ path: join(prismaDir, "..", ".env") });
@@ -309,6 +315,52 @@ async function main() {
       update: { name: `${seed.name} Main Clinic` },
       create: { countryId: country.id, slug: `${seed.code}-main-clinic`, name: `${seed.name} Main Clinic` },
     });
+  }
+
+  const ieCountry = await prisma.country.findUnique({ where: { code: "ie" } });
+  if (ieCountry) {
+    for (const s of IRELAND_ROSTER_SPECIALTIES) {
+      await prisma.specialty.upsert({
+        where: { countryId_slug: { countryId: ieCountry.id, slug: s.slug } },
+        update: { name: s.name },
+        create: { countryId: ieCountry.id, slug: s.slug, name: s.name },
+      });
+    }
+    for (const row of IRELAND_DOCTOR_ROSTER) {
+      const specSlug = specialtySlugForIrelandDoctor(row);
+      const specialty = await prisma.specialty.findUnique({
+        where: { countryId_slug: { countryId: ieCountry.id, slug: specSlug } },
+      });
+      if (!specialty) {
+        console.warn(`[seed] Ireland specialty missing for ${row.slug}: ${specSlug}`);
+        continue;
+      }
+      const doctor = await prisma.doctor.upsert({
+        where: { countryId_slug: { countryId: ieCountry.id, slug: row.slug } },
+        update: {
+          fullName: row.fullName,
+          title: row.title,
+          bio: buildIrelandDoctorBio(row),
+          active: true,
+        },
+        create: {
+          countryId: ieCountry.id,
+          slug: row.slug,
+          fullName: row.fullName,
+          title: row.title,
+          bio: buildIrelandDoctorBio(row),
+          active: true,
+        },
+      });
+      await prisma.doctorSpecialty.upsert({
+        where: { doctorId_specialtyId: { doctorId: doctor.id, specialtyId: specialty.id } },
+        update: {},
+        create: { doctorId: doctor.id, specialtyId: specialty.id },
+      });
+    }
+    console.log(`[seed] Ireland doctor roster: ${IRELAND_DOCTOR_ROSTER.length} profiles ensured.`);
+  } else {
+    console.warn("[seed] Ireland country not found; skipped Ireland doctor roster.");
   }
 
   const seedAdminEmail = process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase();

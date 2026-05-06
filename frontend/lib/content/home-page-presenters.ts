@@ -23,6 +23,7 @@ export function toCountryHomeTemplateProps(
     trustItems: data.countryHome.trust.items,
     bookingCta: data.countryHome.booking,
     partnerLogos: data.countryHome.partnerLogos ?? [],
+    partnerTrustLine: data.countryHome.partnerTrustLine,
   };
 }
 

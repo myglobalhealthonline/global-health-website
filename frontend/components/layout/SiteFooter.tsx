@@ -1,8 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Stethoscope } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { CTAFooter } from "@/components/layout/CTAFooter";
 import type { SiteNavigationData } from "@/data/navigation";
+
+function isRealLogo(src?: string): boolean {
+  if (!src) return false;
+  if (src.includes("temp") || src.includes("placeholder")) return false;
+  return true;
+}
 
 export function SiteFooter({
   siteName,
@@ -16,25 +23,43 @@ export function SiteFooter({
   /** Optional editorial visual for the primary footer CTA strip (e.g. footer-cta asset). */
   footerDecorImage?: { src: string; alt: string };
 }) {
+  const hasRealLogo = isRealLogo(brandLogo?.src);
+
   return (
     <footer className="mt-auto">
       <div className="border-t border-[var(--color-border)] bg-[var(--color-background-panel)]">
         <Container className="py-[var(--section-padding-y-sm)]">
           <div className="grid gap-10 lg:grid-cols-[1.2fr_0.9fr_0.9fr_0.9fr]">
             <div>
-              <Image
-                src={brandLogo?.src ?? "/logos/global-health-wordmark-temp.svg"}
-                alt={brandLogo?.alt ?? `${siteName} wordmark`}
-                width={220}
-                height={54}
-                className="h-11 w-auto sm:h-12"
-              />
+              {hasRealLogo ? (
+                <Image
+                  src={brandLogo!.src}
+                  alt={brandLogo!.alt}
+                  width={220}
+                  height={54}
+                  className="h-11 w-auto sm:h-12"
+                />
+              ) : (
+                <div className="flex items-center gap-2.5">
+                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-primary)] text-white">
+                    <Stethoscope className="size-5" aria-hidden />
+                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-base font-bold leading-tight tracking-tight text-[var(--color-text-primary)]">
+                      Global Health
+                    </span>
+                    <span className="text-[10px] font-medium uppercase tracking-widest text-[var(--color-brand-primary)]">
+                      Online Clinic
+                    </span>
+                  </div>
+                </div>
+              )}
               <p className="gh-body mt-5 max-w-sm text-[var(--color-text-muted)]">
                 Online medical consultations with licensed clinicians across Ireland, Portugal, Spain, Czechia, and Romania.
               </p>
               <a
                 href={`mailto:${navigation.siteContactEmail}`}
-                className="mt-5 inline-flex text-sm font-semibold text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
+                className="mt-5 inline-flex text-sm font-semibold text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-brand-primary)]"
               >
                 {navigation.siteContactEmail}
               </a>

@@ -2,13 +2,16 @@ import Image from "next/image";
 import { ArrowRight, MapPin, Languages } from "lucide-react";
 import Link from "next/link";
 
+const PLACEHOLDER_PORTRAIT = "/images/ireland/doctor-spotlight-ai.svg";
+
 type DoctorCardProps = {
   name: string;
   title: string;
   country?: string;
   languages?: string[];
   bio: string;
-  imageLabel?: string;
+  /** Trusted CMS image URL or same-origin path (see `resolveTrustedAssetUrl`). When absent, a neutral placeholder is shown. */
+  imageSrc?: string | null;
   href?: string;
   ctaLabel?: string;
 };
@@ -19,15 +22,17 @@ export function DoctorCard({
   country,
   languages = [],
   bio,
-  imageLabel,
+  imageSrc,
   href,
   ctaLabel = "Meet doctor",
 }: DoctorCardProps) {
+  const src = imageSrc?.trim() ? imageSrc.trim() : PLACEHOLDER_PORTRAIT;
+
   return (
     <article className="gh-card gh-card-hover flex h-full flex-col overflow-hidden">
       <div className="overflow-hidden">
         <Image
-          src={imageLabel ? `/uploads/${imageLabel}` : "/images/ireland/doctor-spotlight-ai.svg"}
+          src={src}
           alt={`Illustrative clinician portrait for ${name}`}
           width={360}
           height={420}

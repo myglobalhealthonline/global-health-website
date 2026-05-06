@@ -117,7 +117,7 @@ Delivered:
 - **Soft-disable:** `DELETE` sets **`active: false`** only (Prisma field name **`active`** — not a user account).
 - **Filters/pagination:** `countryId`, `countryCode`, `specialtyId`, `isActive` (maps to **`active`**), `search`, `page`, `pageSize`.
 - **Profile image:** optional **`profileImagePath`** stored as one **`Asset`** (`IMAGE`, key `doctor-{id}-profile`); validated https or `/` path.
-- **Frontend:** `/admin/doctors`, `/admin/doctors/new`, `/admin/doctors/[id]`, `/admin/doctors/[id]/edit` — copy states **public profiles only**, **no doctor login** in this app.
+- **Frontend:** `/admin/doctors`, `/admin/doctors/create` (and rewrite from `/admin/doctors/new`), `/admin/doctors/[id]`, `/admin/doctors/[id]/edit` — copy states **public profiles only**, **no doctor login** in this app.
 - **Tests:** `admin-doctors.schema.test.ts`.
 - **Public safety:** `GET /api/doctors` still **`active: true`** only; marketing pages keep fallback adapters — not forced to CMS data.
 

@@ -27,15 +27,15 @@ Audit date: 2026-05-06
 
 | # | Asset Key | Desired File Type | Recommended Dimensions | Where It Appears | Current Fallback | Launch Priority | Business Approval Required |
 |---|-----------|-------------------|------------------------|------------------|------------------|-----------------|---------------------------|
-| 1 | `site-logo` | SVG or PNG with transparency | 220×54px (header), 400×100px (footer) | Header, mobile nav, footer | `global-health-wordmark-temp.svg` + stethoscope icon | **BLOCKER** | ✅ Yes — final brand identity |
-| 2 | `ireland-hero` | JPG or WebP (photo) | 1600×900px (desktop), 800×600px (mobile crop) | `/home` hero right panel | `ireland-hero-ai.svg` (abstract green blobs) | **BLOCKER** | ✅ Yes — Wix export or commission |
-| 3 | `ireland-doctor-spotlight` | JPG or WebP (photo) | 900×1100px (portrait) | `/home` doctor profile section | `doctor-spotlight-ai.svg` (abstract arch) | **BLOCKER** | ✅ Yes — Dr. Khoiamul Islam headshot |
-| 4 | `ireland-home-delivery` | JPG or WebP (photo) | 1200×900px | `/home` home delivery section | `home-delivery-ai.svg` (abstract shapes) | **BLOCKER** | ✅ Yes — Wix export or commission |
+| 1 | `site-logo` | SVG or PNG with transparency | 220×54px (header), 400×100px (footer) | Header, mobile nav, footer | Text lockup: "Global Health / ONLINE CLINIC" | **BLOCKER** | ✅ Yes — final brand identity |
+| 2 | `ireland-hero` | JPG or WebP (photo) | 1600×900px (desktop), 800×600px (mobile crop) | `/home` hero right panel | HealthcareMediaFrame variant="hero" | **BLOCKER** | ✅ Yes — Wix export or commission |
+| 3 | `ireland-doctor-spotlight` | JPG or WebP (photo) | 900×1100px (portrait) | `/home` doctor profile section | HealthcareMediaFrame variant="doctor" | **BLOCKER** | ✅ Yes — Dr. Khoiamul Islam headshot |
+| 4 | `ireland-home-delivery` | JPG or WebP (photo) | 1200×900px | `/home` home delivery section | HealthcareMediaFrame variant="delivery" | **BLOCKER** | ✅ Yes — Wix export or commission |
 | 5 | `ireland-cta` | JPG or WebP (photo) | 480×304px (footer CTA) | Shared footer CTA | `footer-cta-ai.svg` (abstract phone) | **BLOCKER** | ✅ Yes — Wix export or commission |
-| 6 | `partner-logo-level-health` | SVG or PNG | 160×64px | `/home` partner band | Dashed placeholder slot | **PENDING** | ✅ Yes — business must provide file |
-| 7 | `partner-logo-ip` | SVG or PNG | 160×64px | `/home` partner band | Dashed placeholder slot | **PENDING** | ✅ Yes — business must provide file |
-| 8 | `partner-logo-coombe-pharmacy` | SVG or PNG | 160×64px | `/home` partner band | Dashed placeholder slot | **PENDING** | ✅ Yes — business must provide file |
-| 9 | `partner-logo-doctify` | SVG or PNG | 160×64px | `/home` partner band | Dashed placeholder slot | **PENDING** | ✅ Yes — business must provide file |
+| 6 | `partner-logo-level-health` | SVG or PNG | 160×64px | `/home` partner band | Text trust strip | **PENDING** | ✅ Yes — business must provide file |
+| 7 | `partner-logo-ip` | SVG or PNG | 160×64px | `/home` partner band | Text trust strip | **PENDING** | ✅ Yes — business must provide file |
+| 8 | `partner-logo-coombe-pharmacy` | SVG or PNG | 160×64px | `/home` partner band | Text trust strip | **PENDING** | ✅ Yes — business must provide file |
+| 9 | `partner-logo-doctify` | SVG or PNG | 160×64px | `/home` partner band | Text trust strip | **PENDING** | ✅ Yes — business must provide file |
 
 ### Upload Steps (When Assets Are Available)
 
@@ -82,18 +82,41 @@ Audit date: 2026-05-06
 
 - **No Wix assets were hotlinked.**
 - **No stock photography was introduced.**
-- **All people visuals are illustrative** and should not be interpreted as real doctors or patients.
-- Partner logo slots are rendered with dashed-border placeholders until approved assets are provided.
+- **All people visuals use HealthcareMediaFrame fallback** — clearly labeled, not pretending to be real photos.
+- Partner logo slots show a text trust strip when no approved assets are provided.
 - The `@@unique([kind, key])` constraint means each `kind + key` pair can only exist once. Use country-scoped keys like `ireland-hero` rather than generic `hero`.
+
+## Fallback System — HealthcareMediaFrame
+
+**File:** `frontend/components/media/HealthcareMediaFrame.tsx`
+
+### Variants
+
+| Variant | Usage | Background | Icon | Label |
+|---------|-------|------------|------|-------|
+| `hero` | Hero sections | Dark green (#1B4D3E) | HeartPulse | "Online Consultation" |
+| `doctor` | Doctor profiles | Soft (#F6F9F6) | Stethoscope | "Doctor Profile" |
+| `delivery` | Home delivery | Dark green (#1B4D3E) | Package | "Home Delivery" |
+| `cta` | CTA sections | Soft (#F6F9F6) | MessageCircle | "Get Started" |
+| `generic` | Default | Soft (#F6F9F6) | Cross | "Healthcare" |
+
+### Auto-Detection
+
+The component automatically treats these as fallbacks:
+- Any path ending in `.svg`
+- Any path containing `-ai.` or `-placeholder.`
+- Any path under `/images/` containing `placeholder`
+
+When a real asset is detected (non-SVG, non-placeholder path), it renders a real `<Image>` with premium frame styling.
 
 ## Can Remain As Illustration (Non-Blocking)
 
 | Asset Path | Usage Location | Notes | Status |
 |------------|---------------|-------|--------|
-| `frontend/public/images/hero/homepage-hero-ai.svg` | `/` global landing hero | Abstract illustration acceptable for global landing | Temporary acceptable |
-| `frontend/public/images/hero/country-home-hero-ai.svg` | `/home-pt`, `/home-sp`, `/home-cz`, `/home-rm` | Shared across non-Ireland country pages | Temporary acceptable |
-| `frontend/public/images/about/about-clinic-ai.svg` | Country about sections (if used) | Shared fallback | Temporary acceptable |
-| `frontend/public/images/services/home-delivery-ai.svg` | Non-IE delivery sections | Shared fallback | Temporary acceptable |
+| `frontend/public/images/hero/homepage-hero-ai.svg` | `/` global landing hero | Replaced by HealthcareMediaFrame fallback | ✅ Handled |
+| `frontend/public/images/hero/country-home-hero-ai.svg` | `/home-pt`, `/home-sp`, `/home-cz`, `/home-rm` | Replaced by HealthcareMediaFrame fallback | ✅ Handled |
+| `frontend/public/images/about/about-clinic-ai.svg` | Country about sections (if used) | Replaced by HealthcareMediaFrame fallback | ✅ Handled |
+| `frontend/public/images/services/home-delivery-ai.svg` | Non-IE delivery sections | Replaced by HealthcareMediaFrame fallback | ✅ Handled |
 | `frontend/public/icons/trust/*.svg` | Trust icon library | Safe abstract illustration assets | Can remain |
 | `frontend/public/icons/services/*.svg` | Service icon library | Consistent line icons suitable for production | Can remain |
 
