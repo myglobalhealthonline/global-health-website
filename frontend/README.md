@@ -63,3 +63,27 @@ Frontend booking does **not**:
 - confirm an appointment
 - imply payment
 - bypass clinic follow-up
+
+## Phase 4.1 Auth + Account Protection
+
+Delivered in this phase:
+
+- Server-side account route protection in `frontend/proxy.ts` for `/account` and `/account/*`.
+- Unauthenticated users are redirected to `/login?next=<requested-account-path>`.
+- Access remains allowed for authenticated `PATIENT` and `ADMIN` users.
+- Public routes and navigation remain unchanged.
+- Guest booking remains open on `/book-online` (no login wall).
+
+Auth UX polish updates:
+
+- Login and register forms now redirect to `next` or `/account` after success.
+- Login form includes forgot-password shortcut.
+- Register form includes password helper copy.
+- Auth forms provide clearer loading and inline error/success status messaging.
+- Logout now redirects to `/login?next=/account`.
+
+Scope explicitly excluded:
+
+- No doctor portal, no doctor dashboard, no `DOCTOR` auth role.
+- No payment implementation.
+- `ADMIN_API_TOKEN` guard remains in place for admin APIs.

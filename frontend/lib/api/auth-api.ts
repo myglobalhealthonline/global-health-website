@@ -12,11 +12,12 @@ async function authRequest<T>(
     return { ok: false, message: "Public API URL is not configured" };
   }
   try {
+    const hasBody = options.body !== undefined;
     const response = await fetch(`${API_URL}${path}`, {
       method: options.method ?? "GET",
       credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: options.body ? JSON.stringify(options.body) : undefined,
+      headers: hasBody ? { "Content-Type": "application/json" } : undefined,
+      body: hasBody ? JSON.stringify(options.body) : undefined,
     });
     const json = (await response.json()) as { ok?: boolean; data?: T; message?: string };
     if (!response.ok || !json.ok) {

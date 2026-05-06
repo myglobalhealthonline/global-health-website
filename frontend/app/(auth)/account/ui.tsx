@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { fetchCurrentUser, logoutUser, type AuthUser } from "@/lib/api/auth-api";
 
 export function AccountSummary() {
+  const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,11 @@ export function AccountSummary() {
   async function handleLogout() {
     const result = await logoutUser();
     setUser(null);
-    setMessage(result.ok ? "Logged out." : result.message);
+    setMessage(result.ok ? "Logged out. Redirecting..." : result.message);
+    if (result.ok) {
+      router.replace("/login?next=/account");
+      router.refresh();
+    }
   }
 
   if (loading) {

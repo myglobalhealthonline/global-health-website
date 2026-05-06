@@ -210,6 +210,24 @@ Planned migration path:
 3. Migrate `/admin` pages and `/api/admin/*` authorization to role session checks.
 4. Remove env-token-only guard after role-session parity and rollout validation.
 
+## Phase 4.1 — Auth QA + account protection (done)
+
+Delivered:
+
+- Backend auth endpoints exercised for register/login/me/logout/forgot-password/reset-password placeholder behavior.
+- Frontend account protection moved to server-side guard in `frontend/proxy.ts` for `/account/*`.
+- Unauthenticated account requests now redirect to `/login?next=<path>`.
+- Authenticated `PATIENT` and `ADMIN` sessions can access account routes.
+- Guest booking flow on `/book-online` remains open without login requirements.
+- Auth UI polish: clearer error/loading states and success redirects after login/register/logout.
+
+Still intentionally excluded:
+
+- No doctor portal/login/dashboard work.
+- No `DOCTOR` role addition.
+- No payment flow implementation.
+- No removal of `ADMIN_API_TOKEN` guard yet.
+
 ## Phase 3 (planned): remaining content + ops CRUD (before patient dashboard depth)
 
 Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, and ship **protected admin APIs + UI** for database-backed **marketing content** this site already reads publicly.

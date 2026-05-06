@@ -183,3 +183,28 @@ Admin auth migration note:
 
 - `/api/admin/*` continues to use `ADMIN_API_TOKEN` in this phase.
 - Future migration should replace env-token-only authorization with `ADMIN` role session checks.
+
+### Phase 4.1 QA notes (Auth + account protection)
+
+Backend auth QA run against `http://localhost:4000` with DB migrated:
+
+- `POST /api/auth/register`:
+  - valid patient registration: `200` + auth cookie set
+  - duplicate email: `409`
+  - weak/invalid password: `400`
+- `POST /api/auth/login`:
+  - valid credentials: `200` + auth cookie set
+  - wrong password: `401`
+  - inactive-user path: not currently modeled in service logic
+- `GET /api/auth/me`:
+  - authenticated session returns user payload (`200`)
+  - logged-out session returns `401`
+- `POST /api/auth/logout`: returns `200` and clears session cookie
+- `POST /api/auth/forgot-password`: placeholder-safe accepted response (`200`, no user enumeration)
+- `POST /api/auth/reset-password`: placeholder-safe accepted response (`200`, delivery/consumption deferred)
+
+Deferred behavior (intentional for this phase):
+
+- Password reset email delivery and token lifecycle are placeholders only.
+- No doctor login role/portal is introduced.
+- Payments are not implemented.

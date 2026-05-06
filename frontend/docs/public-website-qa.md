@@ -2,6 +2,51 @@
 
 Audit date: 2026-05-05
 
+## Phase 4.1 — Auth QA + account protection (2026-05-06)
+
+**Local runtime**
+
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:4000`
+
+**Backend auth endpoint QA**
+
+- `POST /api/auth/register`:
+  - valid register -> `200`
+  - duplicate email -> `409`
+  - weak password -> `400`
+- `POST /api/auth/login`:
+  - valid login -> `200`
+  - wrong password -> `401`
+- `GET /api/auth/me`:
+  - logged in -> `200` with user
+  - logged out -> `401`
+- `POST /api/auth/logout` -> `200` and subsequent `/api/auth/me` -> `401`
+- `POST /api/auth/forgot-password` -> `200` placeholder-safe accepted
+- `POST /api/auth/reset-password` -> `200` placeholder-safe accepted
+
+**Browser QA**
+
+- `/register`: account creation succeeds and routes to account context.
+- `/login`: successful login redirects to `next` (or `/account`) and keeps session via httpOnly cookie.
+- `/forgot-password`: accepted response shown with non-enumerating placeholder copy.
+- `/account`: authenticated patient summary renders (name/email/role).
+- `/account` and `/account/bookings`: unauthenticated access redirects server-side to `/login?next=...`.
+- `/account/bookings`: authenticated access allowed; page remains booking-history shell.
+- No doctor portal/dashboard links were introduced.
+
+**Guest booking preservation**
+
+- `/book-online` remains accessible while logged out.
+- No login wall is introduced before booking request input.
+- Guest-first booking behavior remains unchanged; future `userId` linkage is optional.
+
+**Deferred behavior (intentional)**
+
+- Password reset email delivery and reset-token lifecycle remain placeholder-safe.
+- Payments remain deferred.
+- Doctor portal and doctor dashboard remain excluded.
+
 ## Phase 3.6.1 / 3.6.2 final local Scenario A verification (2026-05-06)
 
 **Local runtime**
