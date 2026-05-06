@@ -17,6 +17,20 @@ export function parseLanguagesFromDoctorBio(bio: string | null | undefined): str
   return parts.length > 0 ? parts : null;
 }
 
+/** Parses `IMC: value` from bio. Returns null if not present. */
+export function parseImcFromDoctorBio(bio: string | null | undefined): string | null {
+  if (!bio) return null;
+  const m = bio.match(/IMC:\s*([^\n.]+)/i);
+  return m?.[1]?.trim() || null;
+}
+
+/** Parses `WhatsApp: value` from bio. Returns null if not present. */
+export function parseWhatsappFromDoctorBio(bio: string | null | undefined): string | null {
+  if (!bio) return null;
+  const m = bio.match(/WhatsApp:\s*([^\n.]+)/i);
+  return m?.[1]?.trim() || null;
+}
+
 export type PublicDoctorRecord = {
   id: string;
   slug: string;
