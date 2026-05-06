@@ -1,4 +1,4 @@
-# Admin UI Plan (Phase 2 + 2.1 + 3.1 + 3.2 + 3.3 + 3.4 + 3.5)
+# Admin UI Plan (Phase 2 + 2.1 + 3.1 + 3.2 + 3.3 + 3.4 + 3.5 + 3.7)
 
 ## Account Scope
 
@@ -58,6 +58,9 @@ Internal-only admin scaffold routes:
 - `/admin/doctors/[id]/edit` — edit (`PATCH`); **country locked** (backend also rejects `countryId` change)
 - `/admin/pricing` … `/admin/pricing/[id]/edit` — pricing plans (Phase 3.4)
 - `/admin/assets` … `/admin/assets/[id]/edit` — asset metadata (Phase 3.5); uploads deferred
+- `/admin/blog-posts`, `/admin/blog-posts/new`, `/admin/blog-posts/[id]`, `/admin/blog-posts/[id]/edit` — blog CMS foundation (Phase 3.7)
+- `/admin/faqs`, `/admin/faqs/new`, `/admin/faqs/[id]`, `/admin/faqs/[id]/edit` — FAQ CMS foundation (Phase 3.7)
+- `/admin/content-pages`, `/admin/content-pages/new`, `/admin/content-pages/[id]`, `/admin/content-pages/[id]/edit` — legal/static page CMS foundation (Phase 3.7)
 
 No public nav links point to these routes.
 
@@ -82,6 +85,15 @@ No public nav links point to these routes.
 - Routes: **`/admin/assets`**, **`/admin/assets/new`** (country scope vs **global**), **`/admin/assets/[id]`**, **`/admin/assets/[id]/edit`**.
 - **Preview** thumbnails only for **`IMAGE`** / **`LOGO`** with **`/`** or **`https://`** paths (same-origin or CDN URLs).
 - Copy states **metadata only** — no file picker/upload; future storage may use S3, R2, Vercel Blob, etc.
+
+### Phase 3.7 notes (blog / FAQ / legal)
+
+- Admin pages are intentionally simple CRUD scaffolds (server components + server actions) to establish workflow and validation before richer editor UX.
+- **Blog posts:** slug/title/excerpt/body/status/locale with optional country/category/author/cover asset/SEO/publish date.
+- **FAQs:** question/answer/locale with optional country/category/placement and sort order.
+- **Content pages:** page key/title/body/status/locale with optional country/SEO/last reviewed date.
+- **Legal warning:** UI allows edits, but public legal pages should remain fallback-safe until approved business/legal copy exists.
+- No public navigation changes, no forced backend dependency for public pages, and no replacement of fallback adapters in this phase.
 
 ### Phase 3.4 notes (pricing)
 
@@ -145,6 +157,7 @@ Status updates submit through a server action that calls `PATCH /api/admin/appoi
 
 - login screen/session UX for **admins** (and separately **patients** — not doctor)
 - **Doctor portal UI** — out of scope for this repository
+- rich text editor workflows (markdown/WYSIWYG), version history, approval workflow for legal content
 - bulk actions
 - optimistic updates/toasts
 - audit timeline / status-change history

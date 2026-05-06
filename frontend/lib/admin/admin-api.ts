@@ -531,3 +531,197 @@ export function adminAssetPreviewable(kind: AdminAssetKind, path: string): boole
   if (kind !== "IMAGE" && kind !== "LOGO") return false;
   return path.startsWith("/") || path.startsWith("https://");
 }
+
+export type AdminPublishStatus = "DRAFT" | "PUBLISHED";
+
+export type AdminBlogPostDto = {
+  id: string;
+  countryId: string | null;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  body: string;
+  status: AdminPublishStatus;
+  locale: string;
+  category: string | null;
+  authorDisplayName: string | null;
+  coverAssetId: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  publishedAt: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  country: { id: string; code: string; name: string } | null;
+  coverAsset: { id: string; kind: string; key: string; path: string } | null;
+};
+
+type AdminBlogPostsListPayload = {
+  items: AdminBlogPostDto[];
+  pagination: { page: number; pageSize: number; total: number; totalPages: number };
+};
+
+type AdminBlogPostDetailPayload = {
+  post: AdminBlogPostDto;
+};
+
+export async function fetchAdminBlogPosts(query?: Record<string, string | undefined>) {
+  const params = new URLSearchParams();
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") {
+        params.set(key, value);
+      }
+    }
+  }
+  const qs = params.toString();
+  const path = qs ? `/api/admin/blog-posts?${qs}` : "/api/admin/blog-posts";
+  return adminRequest<AdminBlogPostsListPayload>(path);
+}
+
+export async function fetchAdminBlogPostById(id: string) {
+  return adminRequest<AdminBlogPostDetailPayload>(`/api/admin/blog-posts/${id}`);
+}
+
+export async function postAdminBlogPost(body: unknown) {
+  return adminRequest<AdminBlogPostDetailPayload>("/api/admin/blog-posts", {
+    method: "POST",
+    body,
+  });
+}
+
+export async function patchAdminBlogPost(id: string, body: unknown) {
+  return adminRequest<AdminBlogPostDetailPayload>(`/api/admin/blog-posts/${id}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export async function deleteAdminBlogPost(id: string) {
+  return adminRequest<AdminBlogPostDetailPayload>(`/api/admin/blog-posts/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export type AdminFaqDto = {
+  id: string;
+  countryId: string | null;
+  question: string;
+  answer: string;
+  locale: string;
+  category: string | null;
+  placementKey: string | null;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  country: { id: string; code: string; name: string } | null;
+};
+
+type AdminFaqsListPayload = {
+  items: AdminFaqDto[];
+  pagination: { page: number; pageSize: number; total: number; totalPages: number };
+};
+
+type AdminFaqDetailPayload = {
+  faq: AdminFaqDto;
+};
+
+export async function fetchAdminFaqs(query?: Record<string, string | undefined>) {
+  const params = new URLSearchParams();
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") {
+        params.set(key, value);
+      }
+    }
+  }
+  const qs = params.toString();
+  const path = qs ? `/api/admin/faqs?${qs}` : "/api/admin/faqs";
+  return adminRequest<AdminFaqsListPayload>(path);
+}
+
+export async function fetchAdminFaqById(id: string) {
+  return adminRequest<AdminFaqDetailPayload>(`/api/admin/faqs/${id}`);
+}
+
+export async function postAdminFaq(body: unknown) {
+  return adminRequest<AdminFaqDetailPayload>("/api/admin/faqs", { method: "POST", body });
+}
+
+export async function patchAdminFaq(id: string, body: unknown) {
+  return adminRequest<AdminFaqDetailPayload>(`/api/admin/faqs/${id}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export async function deleteAdminFaq(id: string) {
+  return adminRequest<AdminFaqDetailPayload>(`/api/admin/faqs/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export type AdminContentPageDto = {
+  id: string;
+  countryId: string | null;
+  pageKey: string;
+  title: string;
+  body: string;
+  locale: string;
+  status: AdminPublishStatus;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  lastReviewedAt: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  country: { id: string; code: string; name: string } | null;
+};
+
+type AdminContentPagesListPayload = {
+  items: AdminContentPageDto[];
+  pagination: { page: number; pageSize: number; total: number; totalPages: number };
+};
+
+type AdminContentPageDetailPayload = {
+  page: AdminContentPageDto;
+};
+
+export async function fetchAdminContentPages(query?: Record<string, string | undefined>) {
+  const params = new URLSearchParams();
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") {
+        params.set(key, value);
+      }
+    }
+  }
+  const qs = params.toString();
+  const path = qs ? `/api/admin/content-pages?${qs}` : "/api/admin/content-pages";
+  return adminRequest<AdminContentPagesListPayload>(path);
+}
+
+export async function fetchAdminContentPageById(id: string) {
+  return adminRequest<AdminContentPageDetailPayload>(`/api/admin/content-pages/${id}`);
+}
+
+export async function postAdminContentPage(body: unknown) {
+  return adminRequest<AdminContentPageDetailPayload>("/api/admin/content-pages", {
+    method: "POST",
+    body,
+  });
+}
+
+export async function patchAdminContentPage(id: string, body: unknown) {
+  return adminRequest<AdminContentPageDetailPayload>(`/api/admin/content-pages/${id}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export async function deleteAdminContentPage(id: string) {
+  return adminRequest<AdminContentPageDetailPayload>(`/api/admin/content-pages/${id}`, {
+    method: "DELETE",
+  });
+}

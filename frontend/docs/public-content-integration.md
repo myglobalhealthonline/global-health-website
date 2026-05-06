@@ -61,6 +61,16 @@ Backend-data mapping checks (Scenario A overlays):
 
 Fallback behavior remains documented and unchanged: when public API reads fail or are unavailable, static seeds/template defaults are still used and routes render without backend dependency.
 
+## Phase 3.7 safety note (Blog / FAQ / Legal admin CRUD foundation)
+
+Phase 3.7 adds **admin-side** CRUD foundations for blog posts, FAQs, and content pages. Public safety constraints remain:
+
+- Public routes/navigation are unchanged.
+- Existing fallback adapters remain intact.
+- Public pages are not switched to require backend data.
+- Legal/static page editing is available in admin, but public legal copy should remain fallback-safe until approved business/legal content exists.
+- No payments, patient dashboard, or doctor portal scope was introduced.
+
 ## Phase 3.6.1 QA notes (browser, 2026-05-05)
 
 Manual verification used the embedded browser against **`http://localhost:3000`** (Next dev) with **`NEXT_PUBLIC_API_URL=http://localhost:4000`** per `frontend/.env.example`.

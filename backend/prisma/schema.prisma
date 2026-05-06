@@ -27,6 +27,11 @@ enum AssetKind {
   SOCIAL
 }
 
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+}
+
 model Currency {
   id        String   @id @default(cuid())
   code      String   @unique
@@ -58,6 +63,9 @@ model Country {
   services                  Service[]
   pricingPlans              PricingPlan[]
   assets                    Asset[]
+  blogPosts                 BlogPost[]
+  faqs                      Faq[]
+  contentPages              ContentPage[]
   badges                    Badge[]
   consultationSetting       ConsultationSetting?
   bookingSetting            BookingSetting?
@@ -195,6 +203,7 @@ model Asset {
   country    Country?  @relation(fields: [countryId], references: [id], onDelete: Cascade)
   doctor     Doctor?   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   badges     Badge[]
+  blogPostCovers BlogPost[] @relation("BlogPostCover")
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
@@ -250,4 +259,62 @@ model Appointment {
   status             String   @default("REQUEST_RECEIVED")
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+}
+
+model BlogPost {
+  id                String       @id @default(cuid())
+  countryId         String?
+  slug              String
+  title             String
+  excerpt           String?
+  body              String
+  status            PublishStatus @default(DRAFT)
+  locale            LocaleCode
+  category          String?
+  authorDisplayName String?
+  coverAssetId      String?
+  seoTitle          String?
+  seoDescription    String?
+  publishedAt       DateTime?
+  isActive          Boolean      @default(true)
+  country           Country?     @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  coverAsset        Asset?       @relation("BlogPostCover", fields: [coverAssetId], references: [id], onDelete: SetNull)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@unique([slug, locale, countryId])
+}
+
+model Faq {
+  id           String     @id @default(cuid())
+  countryId    String?
+  question     String
+  answer       String
+  locale       LocaleCode
+  category     String?
+  placementKey String?
+  sortOrder    Int        @default(0)
+  isActive     Boolean    @default(true)
+  country      Country?   @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model ContentPage {
+  id             String        @id @default(cuid())
+  countryId      String?
+  pageKey        String
+  title          String
+  body           String
+  locale         LocaleCode
+  status         PublishStatus @default(DRAFT)
+  seoTitle       String?
+  seoDescription String?
+  lastReviewedAt DateTime?
+  isActive       Boolean       @default(true)
+  country        Country?      @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@unique([pageKey, locale, countryId])
 }

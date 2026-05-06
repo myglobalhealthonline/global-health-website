@@ -18,6 +18,9 @@ import adminServicesRoute from "./routes/admin-services.route.js";
 import adminDoctorsRoute from "./routes/admin-doctors.route.js";
 import adminPricingRoute from "./routes/admin-pricing.route.js";
 import adminAssetsRoute from "./routes/admin-assets.route.js";
+import adminBlogPostsRoute from "./routes/admin-blog-posts.route.js";
+import adminFaqsRoute from "./routes/admin-faqs.route.js";
+import adminContentPagesRoute from "./routes/admin-content-pages.route.js";
 
 export async function buildApp() {
   const app = Fastify({ logger: true });
@@ -44,6 +47,9 @@ export async function buildApp() {
   await app.register(adminDoctorsRoute);
   await app.register(adminPricingRoute);
   await app.register(adminAssetsRoute);
+  await app.register(adminBlogPostsRoute);
+  await app.register(adminFaqsRoute);
+  await app.register(adminContentPagesRoute);
 
   return app;
 }

@@ -157,6 +157,29 @@ Delivered:
 - **Safety:** legacy country paths use backend values only when all four routing fields are complete and valid; assets require safe relative `/` paths; no payments/patient/doctor-portal scope expansion.
 - **Docs:** `frontend/docs/public-content-integration.md`.
 
+## Phase 3.7 — Blog / FAQ / Legal content CRUD foundation (done)
+
+Delivered:
+
+- **Schema + migration:** added `PublishStatus` enum and models `BlogPost`, `Faq`, `ContentPage` with optional country scoping and active flags.
+- **Backend admin endpoints:** protected (`ADMIN_API_TOKEN`) CRUD routes for:
+  - `/api/admin/blog-posts`
+  - `/api/admin/faqs`
+  - `/api/admin/content-pages`
+- **Soft-disable behavior:** `DELETE` deactivates rows (`isActive: false`) rather than hard-deleting.
+- **Validation:** dedicated Zod schemas enforce safe slug/page keys, locale enum, published body requirement, SEO bounds, and numeric FAQ sort order.
+- **Service layer:** `modules/blog`, `modules/faqs`, `modules/content-pages` keep route handlers thin and enforce country/asset FK checks.
+- **Tests:** added schema tests for blog, FAQ, content-page validation and draft/published rules.
+
+Safety constraints preserved:
+
+- No payment processing changes.
+- No patient dashboard work.
+- No doctor portal work.
+- Public routes/navigation unchanged.
+- Public fallback adapters remain in place.
+- Legal copy warning documented: editing is supported, but public legal content should stay fallback-safe until approved copy is available.
+
 ## Phase 3 (planned): remaining content + ops CRUD (before patient dashboard depth)
 
 Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, and ship **protected admin APIs + UI** for database-backed **marketing content** this site already reads publicly.
@@ -172,6 +195,7 @@ Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, a
 **Explicitly later or parallel tracks (still no doctor portal here):**
 
 - **Blog / FAQ / Legal** content management — plan after or alongside core entities depending on where copy lives (DB vs files)
+- ~~**Blog / FAQ / Legal** content management~~ — **done (Phase 3.7 foundation)** with fallback-safe public behavior retained
 - **Payment status** fields and admin views — design hooks only until payments are scheduled; **do not** ship payment processing as part of “Phase 3 CRUD” unless explicitly scoped
 
 **Still deferred:**

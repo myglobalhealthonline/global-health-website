@@ -453,6 +453,77 @@ Validated by **`adminAssetCreateBodySchema`** / **`adminAssetUpdateBodySchema`**
 
 **Public behavior:** **`GET /api/assets`** returns only **`isActive: true`** — marketing pages keep fallback/temporary local assets when the API is unavailable.
 
+---
+
+## Blog / FAQ / Content Pages (Phase 3.7)
+
+Same bearer auth as other admin routes.
+
+### Blog posts (`BlogPost`)
+
+Endpoints:
+
+- `GET /api/admin/blog-posts`
+- `GET /api/admin/blog-posts/:id`
+- `POST /api/admin/blog-posts`
+- `PATCH /api/admin/blog-posts/:id`
+- `DELETE /api/admin/blog-posts/:id` (soft-disable `isActive: false`)
+
+Managed fields: `slug`, `title`, `excerpt`, `body`, `status` (`DRAFT`/`PUBLISHED`), `locale`, optional `countryId`, optional `category`, optional `authorDisplayName`, optional `coverAssetId`, optional SEO fields, optional `publishedAt`, `isActive`.
+
+Validation notes:
+
+- `slug` must be lowercase URL-safe.
+- `locale` must be a supported `LocaleCode`.
+- `countryId` / `coverAssetId` must exist when provided.
+- `body` is required when creating/updating published content.
+
+### FAQs (`Faq`)
+
+Endpoints:
+
+- `GET /api/admin/faqs`
+- `GET /api/admin/faqs/:id`
+- `POST /api/admin/faqs`
+- `PATCH /api/admin/faqs/:id`
+- `DELETE /api/admin/faqs/:id` (soft-disable `isActive: false`)
+
+Managed fields: `question`, `answer`, `locale`, optional `countryId`, optional `category`, optional `placementKey` (page placement), `sortOrder`, `isActive`.
+
+Validation notes:
+
+- `question` and `answer` are required.
+- `locale` must be supported.
+- `sortOrder` is integer.
+- `countryId` must exist when provided.
+
+### Legal/static content pages (`ContentPage`)
+
+Endpoints:
+
+- `GET /api/admin/content-pages`
+- `GET /api/admin/content-pages/:id`
+- `POST /api/admin/content-pages`
+- `PATCH /api/admin/content-pages/:id`
+- `DELETE /api/admin/content-pages/:id` (soft-disable `isActive: false`)
+
+Managed fields: `pageKey`, `title`, `body`, `locale`, optional `countryId`, `status` (`DRAFT`/`PUBLISHED`), optional SEO fields, optional `lastReviewedAt`, `isActive`.
+
+Validation notes:
+
+- `pageKey` must be key-safe.
+- `title` required.
+- published pages require non-empty body.
+- `locale` must be supported.
+- `countryId` must exist when provided.
+
+### Public safety / legal warning
+
+- Public routes/navigation are unchanged in Phase 3.7.
+- Fallback adapters remain in place; no public page now hard-requires backend content.
+- Legal/static page editing is enabled in admin, but production legal copy should remain business/legal-approved before switching public reads.
+- Payments, patient dashboard, and doctor portal remain out of scope.
+
 ## Security Limits (Phase 2 / 2.1)
 
 - auth is env-token gate, not per-user identity
@@ -471,3 +542,6 @@ Validated by **`adminAssetCreateBodySchema`** / **`adminAssetUpdateBodySchema`**
 - `admin-doctors.schema.test.ts` (doctor slug, name/title, profile image ref, query filters)
 - `admin-pricing.schema.test.ts` (pricing slug, negative price, query filters)
 - `admin-assets.schema.test.ts` (safe path/URL, alt rules, query filters)
+- `admin-blog-posts.schema.test.ts` (slug safety, locale, published body rules, query filters)
+- `admin-faqs.schema.test.ts` (required fields, locale, numeric sort order, query filters)
+- `admin-content-pages.schema.test.ts` (pageKey safety, locale, published body rules, query filters)
