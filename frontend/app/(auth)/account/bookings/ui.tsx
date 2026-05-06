@@ -1,28 +1,66 @@
-"use client";
+import Link from "next/link";
+import type { AccountAppointment } from "@/lib/api/account-appointments-api";
 
-import { useEffect, useState } from "react";
-import { fetchCurrentUser } from "@/lib/api/auth-api";
+type BookingsShellProps = {
+  items: AccountAppointment[];
+  unavailableMessage?: string | null;
+};
 
-export function BookingsShell() {
-  const [message, setMessage] = useState<string>("Loading...");
+function formatStatus(status: string) {
+  return status
+    .toLowerCase()
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
 
-  useEffect(() => {
-    let mounted = true;
-    void (async () => {
-      const me = await fetchCurrentUser();
-      if (!mounted) return;
-      if (!me.ok) {
-        setMessage("Log in to view account-linked booking history. Guest booking remains available on /book-online.");
-        return;
-      }
-      setMessage(
-        "Booking history integration is coming soon. Current guest booking flow remains unchanged and available.",
-      );
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+function formatDate(dateLike: string) {
+  const value = new Date(dateLike);
+  if (Number.isNaN(value.getTime())) return dateLike;
+  return new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short" }).format(value);
+}
 
-  return <p className="mt-4 text-sm text-[var(--color-text-muted)]">{message}</p>;
+export function BookingsShell({ items, unavailableMessage }: BookingsShellProps) {
+  if (unavailableMessage) {
+    return (
+      <p className="mt-4 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+        {unavailableMessage}
+      </p>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="mt-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+        <p className="text-sm text-[var(--color-text-muted)]">
+          You do not have any account-linked booking requests yet.
+        </p>
+        <Link href="/book-online" className="gh-btn gh-btn-primary mt-4 inline-flex">
+          Book online
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-4 space-y-3">
+      {items.map((item) => (
+        <article
+          key={item.id}
+          className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm font-semibold text-[var(--color-text-primary)]">{formatStatus(item.status)}</p>
+            <p className="text-xs text-[var(--color-text-muted)]">Created: {formatDate(item.createdAt)}</p>
+          </div>
+          <p className="mt-2 text-sm text-[var(--color-text-muted)]">
+            {item.consultationType} consultation - {item.countryCode}
+          </p>
+          {item.notesPreview ? (
+            <p className="mt-2 text-sm text-[var(--color-text-muted)]">Notes: {item.notesPreview}</p>
+          ) : null}
+        </article>
+      ))}
+    </div>
+  );
 }

@@ -17,6 +17,7 @@ export type BookingApiSuccess = {
 export async function submitBookingRequest(payload: BookingPayload) {
   return apiRequest<BookingApiSuccess>("/api/appointments", {
     method: "POST",
+    credentials: "include",
     body: payload,
   });
 }

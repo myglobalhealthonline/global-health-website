@@ -13,17 +13,29 @@ import { normalizeDbError } from "../shared/db-errors.js";
 export { InvalidAppointmentStatusTransitionError, UnrecognizedAppointmentStatusError };
 
 export async function createAppointmentRequest(input: BookingInput) {
+  return createAppointmentWithOptionalOwner(input);
+}
+
+type CreateAppointmentOptions = {
+  userId?: string | null;
+};
+
+export async function createAppointmentWithOptionalOwner(
+  input: BookingInput,
+  options: CreateAppointmentOptions = {},
+) {
   try {
     const id = randomUUID();
 
     await prisma.$executeRawUnsafe(
       `
         INSERT INTO "Appointment"
-          ("id", "countryCode", "consultationType", "fullName", "email", "phone", "notes", "consentAccepted", "status", "createdAt", "updatedAt")
+          ("id", "userId", "countryCode", "consultationType", "fullName", "email", "phone", "notes", "consentAccepted", "status", "createdAt", "updatedAt")
         VALUES
-          ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
+          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())
       `,
       id,
+      options.userId ?? null,
       input.country,
       input.consultationType,
       input.fullName,
@@ -76,6 +88,32 @@ export type AdminAppointmentDetail = {
   status: string;
   createdAt: string;
   updatedAt: string;
+};
+
+export type AccountAppointmentListItem = {
+  id: string;
+  countryCode: string;
+  consultationType: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  fullName: string;
+  email: string;
+  phone: string | null;
+  notesPreview: string | null;
+};
+
+export type AccountAppointmentDetail = {
+  id: string;
+  countryCode: string;
+  consultationType: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  fullName: string;
+  email: string;
+  phone: string | null;
+  notes: string | null;
 };
 
 export type ListAppointmentsOptions = {
@@ -295,6 +333,89 @@ export async function updateAppointmentStatus(
     ) {
       throw error;
     }
+    throw normalizeDbError(error, "Appointments are temporarily unavailable");
+  }
+}
+
+export async function listAppointmentsForUser(userId: string): Promise<AccountAppointmentListItem[]> {
+  try {
+    const rows = await prisma.$queryRawUnsafe<AppointmentRecord[]>(
+      `
+        SELECT
+          "id",
+          "countryCode",
+          "consultationType",
+          "fullName",
+          "email",
+          "phone",
+          "notes",
+          "status",
+          "createdAt",
+          "updatedAt"
+        FROM "Appointment"
+        WHERE "userId" = $1
+        ORDER BY "createdAt" DESC
+      `,
+      userId,
+    );
+
+    return rows.map((row) => ({
+      id: row.id,
+      countryCode: row.countryCode,
+      consultationType: row.consultationType,
+      status: row.status,
+      createdAt: row.createdAt.toISOString(),
+      updatedAt: row.updatedAt.toISOString(),
+      fullName: row.fullName,
+      email: row.email,
+      phone: row.phone,
+      notesPreview: row.notes ? row.notes.slice(0, 140) : null,
+    }));
+  } catch (error) {
+    throw normalizeDbError(error, "Appointments are temporarily unavailable");
+  }
+}
+
+export async function getAppointmentForUser(
+  id: string,
+  userId: string,
+): Promise<AccountAppointmentDetail | null> {
+  try {
+    const rows = await prisma.$queryRawUnsafe<AppointmentRecord[]>(
+      `
+        SELECT
+          "id",
+          "countryCode",
+          "consultationType",
+          "fullName",
+          "email",
+          "phone",
+          "notes",
+          "status",
+          "createdAt",
+          "updatedAt"
+        FROM "Appointment"
+        WHERE "id" = $1 AND "userId" = $2
+        LIMIT 1
+      `,
+      id,
+      userId,
+    );
+    if (rows.length === 0) return null;
+    const row = rows[0];
+    return {
+      id: row.id,
+      countryCode: row.countryCode,
+      consultationType: row.consultationType,
+      status: row.status,
+      createdAt: row.createdAt.toISOString(),
+      updatedAt: row.updatedAt.toISOString(),
+      fullName: row.fullName,
+      email: row.email,
+      phone: row.phone,
+      notes: row.notes,
+    };
+  } catch (error) {
     throw normalizeDbError(error, "Appointments are temporarily unavailable");
   }
 }

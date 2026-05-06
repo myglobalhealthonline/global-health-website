@@ -4,6 +4,7 @@ type ApiClientOptions = {
   method?: "GET" | "POST";
   body?: unknown;
   cache?: RequestCache;
+  credentials?: RequestCredentials;
   /** Abort the request after this many milliseconds (public content reads). */
   timeoutMs?: number;
 };
@@ -36,6 +37,7 @@ export async function apiRequest<T>(
   try {
     const response = await fetch(`${API_URL}${path}`, {
       method: options.method ?? "GET",
+      credentials: options.credentials,
       headers: {
         "Content-Type": "application/json",
       },

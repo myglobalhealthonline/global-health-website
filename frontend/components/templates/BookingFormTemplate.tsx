@@ -34,11 +34,16 @@ type BookingFormTemplateProps = {
     consultationTypeOptions: BookingOption[];
     nextSteps?: { title: string; items: string[] };
   };
+  signedInPatient?: {
+    fullName: string;
+    email: string;
+    phone: string | null;
+  } | null;
 };
 
 type FieldErrors = Partial<Record<"country" | "consultationType" | "fullName" | "email" | "consentAccepted", string>>;
 
-export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
+export function BookingFormTemplate({ hero, form, signedInPatient }: BookingFormTemplateProps) {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [statusType, setStatusType] = useState<"success" | "error" | null>(null);
@@ -116,7 +121,11 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
     event.currentTarget.reset();
     setErrors({});
     setStatusType("success");
-    setStatusMessage(result.message ?? "Request received. Our team will follow up.");
+    setStatusMessage(
+      signedInPatient
+        ? "Request received. Our team will follow up. You can track this request in your account booking history."
+        : (result.message ?? "Request received. Our team will follow up."),
+    );
   }
 
   return (
@@ -179,7 +188,14 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
                 <span className="gh-field-label">
                   {form.fields.fullName.label} <span className="text-[var(--color-brand-primary)]">*</span>
                 </span>
-                <input id={fullNameId} name="fullName" type="text" placeholder={form.fields.fullName.placeholder} className="gh-input" />
+                <input
+                  id={fullNameId}
+                  name="fullName"
+                  type="text"
+                  placeholder={form.fields.fullName.placeholder}
+                  className="gh-input"
+                  defaultValue={signedInPatient?.fullName ?? ""}
+                />
                 {errors.fullName ? <span className="text-sm text-red-700">{errors.fullName}</span> : null}
               </label>
               <div className="grid min-w-0 gap-4 sm:grid-cols-2">
@@ -187,12 +203,26 @@ export function BookingFormTemplate({ hero, form }: BookingFormTemplateProps) {
                   <span className="gh-field-label">
                     {form.fields.email.label} <span className="text-[var(--color-brand-primary)]">*</span>
                   </span>
-                  <input id={emailId} name="email" type="email" placeholder={form.fields.email.placeholder} className="gh-input" />
+                  <input
+                    id={emailId}
+                    name="email"
+                    type="email"
+                    placeholder={form.fields.email.placeholder}
+                    className="gh-input"
+                    defaultValue={signedInPatient?.email ?? ""}
+                  />
                   {errors.email ? <span className="text-sm text-red-700">{errors.email}</span> : null}
                 </label>
                 <label className="flex min-w-0 flex-col gap-2">
                   <span className="gh-field-label">{form.fields.phone.label}</span>
-                  <input id={phoneId} name="phone" type="tel" placeholder={form.fields.phone.placeholder} className="gh-input" />
+                  <input
+                    id={phoneId}
+                    name="phone"
+                    type="tel"
+                    placeholder={form.fields.phone.placeholder}
+                    className="gh-input"
+                    defaultValue={signedInPatient?.phone ?? ""}
+                  />
                 </label>
               </div>
               <label className="flex min-w-0 flex-col gap-2">

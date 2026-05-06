@@ -47,6 +47,36 @@ Audit date: 2026-05-05
 - Payments remain deferred.
 - Doctor portal and doctor dashboard remain excluded.
 
+## Phase 4.2 — Booking ownership + patient booking history (2026-05-06)
+
+**Backend behavior verified**
+
+- `POST /api/appointments` keeps guest booking supported.
+- Valid auth session on booking request links `Appointment.userId`.
+- Missing/invalid auth does not block booking request intake.
+- Success copy remains safe: `Request received. Our team will follow up.`
+
+**Patient account APIs**
+
+- `GET /api/account/appointments` returns account-linked request history for authenticated users.
+- `GET /api/account/appointments/:id` returns only appointments owned by the requesting patient (or support-targeted admin view).
+- Unauthenticated requests return `401`.
+- Data returned is account-safe (status/timestamps/consultation/country/contact fields).
+
+**Frontend QA**
+
+- `/account/bookings` now renders server-fetched booking history cards.
+- Empty history shows CTA to `/book-online`.
+- API-unavailable state shows safe fallback messaging.
+- `/book-online` remains accessible while logged out (no login wall).
+- Logged-in booking flow supports editable prefilled identity fields and success hint to check account history.
+
+**Scope kept out**
+
+- No payments implementation.
+- No doctor portal/dashboard work.
+- No public-route or navigation changes.
+
 ## Phase 3.6.1 / 3.6.2 final local Scenario A verification (2026-05-06)
 
 **Local runtime**

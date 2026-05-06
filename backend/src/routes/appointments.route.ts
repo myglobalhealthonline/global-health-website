@@ -1,8 +1,9 @@
 import type { FastifyPluginAsync } from "fastify";
-import { createAppointmentRequest } from "../modules/appointments/appointments.service.js";
+import { createAppointmentWithOptionalOwner } from "../modules/appointments/appointments.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { bookingSchema } from "../validations/booking.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 
 const appointmentsRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/appointments", async (request, reply) => {
@@ -15,7 +16,15 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
-      await createAppointmentRequest(parsed.data);
+      let authUserId: string | null = null;
+      try {
+        const authUser = await resolveOptionalAuthUser(request);
+        authUserId = authUser?.id ?? null;
+      } catch (error) {
+        app.log.warn(error, "Unable to resolve booking owner from auth cookie; proceeding as guest booking");
+      }
+
+      await createAppointmentWithOptionalOwner(parsed.data, { userId: authUserId });
 
       return okResponse(
         {

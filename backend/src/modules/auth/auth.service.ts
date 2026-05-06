@@ -4,7 +4,7 @@ import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import type { LoginBody, RegisterBody } from "../../validations/auth.schema.js";
 
-type SafeUser = {
+export type SafeUser = {
   id: string;
   email: string;
   fullName: string;

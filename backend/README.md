@@ -208,3 +208,24 @@ Deferred behavior (intentional for this phase):
 - Password reset email delivery and token lifecycle are placeholders only.
 - No doctor login role/portal is introduced.
 - Payments are not implemented.
+
+### Phase 4.2 booking ownership + patient history
+
+Booking creation (`POST /api/appointments`) remains guest-safe:
+
+- If a valid auth cookie exists, the created appointment is linked to `Appointment.userId`.
+- If auth is missing/invalid, booking still succeeds as guest (`userId = null`).
+- Login is not required to submit booking requests.
+- Success response remains safe: `Request received. Our team will follow up.`
+
+Patient account appointment APIs:
+
+- `GET /api/account/appointments`
+- `GET /api/account/appointments/:id`
+
+Access rules:
+
+- Requires authenticated `PATIENT` or `ADMIN` session.
+- `PATIENT` can only read their own account-linked appointments.
+- `ADMIN` may read account-linked appointments for support/debug (admin operational queue still lives under `/api/admin/*`).
+- Routes return safe account-facing fields only (no internal admin metadata).

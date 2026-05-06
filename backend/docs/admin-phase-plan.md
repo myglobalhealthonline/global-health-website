@@ -228,6 +228,26 @@ Still intentionally excluded:
 - No payment flow implementation.
 - No removal of `ADMIN_API_TOKEN` guard yet.
 
+## Phase 4.2 — Booking ownership + patient booking history (done)
+
+Delivered:
+
+- `POST /api/appointments` now attaches `userId` when a valid patient/admin auth cookie is present.
+- Guest booking remains fully supported when auth is missing or invalid.
+- Added account-protected patient endpoints:
+  - `GET /api/account/appointments`
+  - `GET /api/account/appointments/:id`
+- Ownership boundaries enforced:
+  - `PATIENT` reads only their own account-linked appointments.
+  - `ADMIN` support/debug access is allowed without replacing admin queue endpoints.
+- Frontend `/account/bookings` now shows server-fetched booking/request history.
+
+Still unchanged by design:
+
+- Admin queue remains under `/api/admin/*` with `ADMIN_API_TOKEN` guard.
+- No doctor portal or doctor role additions.
+- No payments implementation.
+
 ## Phase 3 (planned): remaining content + ops CRUD (before patient dashboard depth)
 
 Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, and ship **protected admin APIs + UI** for database-backed **marketing content** this site already reads publicly.

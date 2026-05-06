@@ -87,3 +87,20 @@ Scope explicitly excluded:
 - No doctor portal, no doctor dashboard, no `DOCTOR` auth role.
 - No payment implementation.
 - `ADMIN_API_TOKEN` guard remains in place for admin APIs.
+
+## Phase 4.2 Booking Ownership + History
+
+Delivered behavior:
+
+- `/book-online` remains available to guests and does not require login.
+- Booking submission now includes auth cookies (`credentials: "include"`), so logged-in users are linked server-side when possible.
+- Logged-in bookings appear in account history; guest bookings continue to work unchanged.
+- `/account/bookings` now fetches booking history server-side from `/api/account/appointments`.
+- Booking history page includes status, created date, consultation type, and country code; plus empty-state CTA back to `/book-online`.
+- API unavailable state on `/account/bookings` is handled gracefully with a safe fallback message.
+
+Security constraints preserved:
+
+- No auth tokens are exposed in client-side code.
+- Admin queue and operational tooling remain separate under `/api/admin/*`.
+- No doctor portal/dashboard work and no `DOCTOR` role additions.
