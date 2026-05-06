@@ -15,6 +15,8 @@ import { getCountryByCode, type CountryCode } from "@/data/countries";
 export default async function SiteLayout({ children }: { children: ReactNode }) {
   const requestHeaders = await headers();
   const cookieStore = await cookies();
+  const pathname = requestHeaders.get("x-gh-pathname") ?? "";
+  const isHomeGateway = pathname === "/";
 
   const headerCountry = requestHeaders.get("x-gh-country");
   const runtimeCountry = headerCountry && getCountryByCode(headerCountry as CountryCode)
@@ -36,16 +38,20 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
 
   return (
     <>
-      <SiteHeader siteName={common.site.name} navigation={navigation} brandLogo={brandLogo} />
+      {isHomeGateway ? null : (
+        <SiteHeader siteName={common.site.name} navigation={navigation} brandLogo={brandLogo} />
+      )}
       <main id="main-content" className="grow">
         {children}
       </main>
-      <SiteFooter
-        siteName={common.site.name}
-        navigation={navigation}
-        brandLogo={brandLogo}
-        footerDecorImage={footerDecorImage}
-      />
+      {isHomeGateway ? null : (
+        <SiteFooter
+          siteName={common.site.name}
+          navigation={navigation}
+          brandLogo={brandLogo}
+          footerDecorImage={footerDecorImage}
+        />
+      )}
     </>
   );
 }

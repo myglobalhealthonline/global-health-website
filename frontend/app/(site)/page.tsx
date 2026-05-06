@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { HomeHero } from "@/components/sections/HomeHero";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { TrustSignals } from "@/components/sections/TrustSignals";
@@ -8,7 +8,7 @@ import { getTemplatePageData } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Global Health | Medical Clinic | Online Doctor",
-  description: "Medical consultations wherever you are. Choose your country and connect with licensed doctors.",
+  description: "Choose your country and language to continue to your local Global Health clinic.",
 };
 
 export default async function HomePage() {
@@ -20,13 +20,11 @@ export default async function HomePage() {
   return (
     <>
       <HomeHero countries={activeCountries} />
-
       <HowItWorks
         title="How does it work?"
         subtitle="Simple Scheduling in 3 Steps"
         steps={defaultClinic.countryHome.steps}
       />
-
       <TrustSignals
         title="Trusted digital care, country by country"
         subtitle="Healthcare-focused, secure, and structured for local compliance expansion"

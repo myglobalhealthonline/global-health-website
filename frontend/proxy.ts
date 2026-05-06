@@ -115,6 +115,7 @@ export async function proxy(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-gh-country", context.countryCode);
   requestHeaders.set("x-gh-locale", context.locale);
+  requestHeaders.set("x-gh-pathname", pathname);
   if (context.matchedLegacyRoute) {
     requestHeaders.set("x-gh-legacy-route", context.matchedLegacyRoute);
   }
