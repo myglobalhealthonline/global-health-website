@@ -180,3 +180,48 @@ Status updates submit through a server action that calls `PATCH /api/admin/appoi
 - optimistic updates/toasts
 - audit timeline / status-change history
 - page size selector (backend already supports `pageSize`)
+
+## Auth + Admin UI Polish Pass (2026-05-06)
+
+### Auth surface updates
+
+- `/login` upgraded to a production-style two-column layout:
+  - trust/brand panel
+  - clear "Welcome back" headline
+  - patient/admin-safe helper copy
+  - polished success/error state blocks
+- `/register` upgraded with patient-focused messaging, stronger helper copy, and consent-style guidance.
+- `/forgot-password` upgraded with clear non-enumerating reset explanation and placeholder-safe messaging.
+- `/account` upgraded to profile-summary cards with direct actions for bookings and booking CTA.
+- `/account/bookings` upgraded with status badges, country/consultation metadata rows, and stronger empty-state CTA.
+
+### Admin dashboard and shell updates
+
+- `/admin` now presents section cards for:
+  - Appointments
+  - Countries
+  - Services
+  - Doctors
+  - Pricing
+  - Assets
+  - Blog Posts
+  - FAQs
+  - Content Pages
+- Each card includes icon, title, concise management scope copy, and direct action link.
+- Admin shell now includes:
+  - clear "Admin area" framing
+  - logged-in admin identity
+  - persistent logout action
+  - left-side admin navigation links
+  - scope-safe copy:
+    - doctors are public profiles only
+    - doctor portal is separate
+    - payments not enabled yet
+
+### CRUD visual consistency
+
+- Shared admin table polish improved through shell-level styling:
+  - clearer headers, spacing, and row rhythm
+  - safer mobile/tablet overflow container behavior
+  - consistent typography/readability in dense tables
+- Appointment queue now displays clearer status badges for quick triage scanning.

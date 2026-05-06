@@ -128,3 +128,28 @@ Applied to:
   - dimensions are stable
   - layout remains professional
   - docs clearly mark the asset as temporary or approval-blocked
+
+## Auth + Admin UI tokens (2026-05-06)
+
+### Auth shell guidance
+
+- Login uses two-column desktop structure and single-column mobile stack.
+- Register/forgot/account keep card-first composition with calm healthcare tone.
+- Success/error system uses bordered status blocks for better readability and trust.
+
+### Admin shell guidance
+
+- Admin UI is visually distinct from public site while staying on the same token system.
+- Added admin-specific utility classes:
+  - `gh-admin-nav-link`
+  - `gh-admin-main` table typography/spacing rules
+- Goal: improve table readability and quick scanning without rewriting CRUD logic.
+
+### Palette compliance
+
+- Maintained approved palette intent:
+  - dark green primary action focus
+  - light green soft contexts
+  - white/soft background cards
+  - neutral borders
+  - muted body copy for secondary guidance

@@ -51,13 +51,31 @@ export function AccountSummary() {
   }
 
   return (
-    <div className="mt-4 space-y-2">
-      <p className="text-sm text-[var(--color-text-muted)]">Name: {user.fullName}</p>
-      <p className="text-sm text-[var(--color-text-muted)]">Email: {user.email}</p>
-      <p className="text-sm text-[var(--color-text-muted)]">Role: {user.role}</p>
-      <button type="button" className="gh-btn mt-2" onClick={handleLogout}>
-        Log out
-      </button>
+    <div className="mt-5 grid gap-4">
+      <div className="grid gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4 sm:grid-cols-2">
+        <p className="text-sm text-[var(--color-text-muted)]">
+          <span className="font-semibold text-[var(--color-text-primary)]">Full name:</span> {user.fullName}
+        </p>
+        <p className="text-sm text-[var(--color-text-muted)]">
+          <span className="font-semibold text-[var(--color-text-primary)]">Email:</span> {user.email}
+        </p>
+        <p className="text-sm text-[var(--color-text-muted)]">
+          <span className="font-semibold text-[var(--color-text-primary)]">Phone:</span> {user.phone ?? "Not set"}
+        </p>
+        <p className="text-sm text-[var(--color-text-muted)]">
+          <span className="font-semibold text-[var(--color-text-primary)]">Role:</span> {user.role}
+        </p>
+      </div>
+      <div>
+        <button type="button" className="gh-btn" onClick={handleLogout}>
+          Log out
+        </button>
+      </div>
+      {message ? (
+        <p className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2 text-sm text-[var(--color-text-muted)]">
+          {message}
+        </p>
+      ) : null}
     </div>
   );
 }

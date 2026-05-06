@@ -29,7 +29,14 @@ export function ForgotPasswordForm() {
       <button type="submit" className="gh-btn gh-btn-primary" disabled={loading}>
         {loading ? "Submitting..." : "Request reset"}
       </button>
-      {message ? <p className="text-sm text-[var(--color-text-muted)]">{message}</p> : null}
+      <p className="text-sm text-[var(--color-text-muted)]">
+        For security, we never confirm whether an email is registered.
+      </p>
+      {message ? (
+        <p className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2 text-sm text-[var(--color-text-muted)]">
+          {message}
+        </p>
+      ) : null}
     </form>
   );
 }

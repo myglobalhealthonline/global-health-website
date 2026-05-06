@@ -61,13 +61,19 @@ export function RegisterForm() {
       <p className="text-sm text-[var(--color-text-muted)]">
         Use at least 8 characters and avoid reusing passwords from other sites.
       </p>
+      <p className="text-sm text-[var(--color-text-muted)]">
+        By creating an account, you agree to use this platform for patient booking and account
+        management workflows.
+      </p>
       <button type="submit" className="gh-btn gh-btn-primary" disabled={loading}>
         {loading ? "Creating account..." : "Create account"}
       </button>
       {message ? (
         <p
           className={
-            isError ? "text-sm text-red-600 dark:text-red-400" : "text-sm text-[var(--color-text-muted)]"
+            isError
+              ? "rounded-[var(--radius-card-sm)] border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+              : "rounded-[var(--radius-card-sm)] border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
           }
           role="status"
         >

@@ -20,6 +20,14 @@ function formatDate(dateLike: string) {
   return new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short" }).format(value);
 }
 
+function statusBadgeClass(status: string) {
+  if (status === "COMPLETED") return "bg-emerald-50 text-emerald-700 border-emerald-200";
+  if (status === "CANCELLED") return "bg-rose-50 text-rose-700 border-rose-200";
+  if (status === "CONTACTED") return "bg-sky-50 text-sky-700 border-sky-200";
+  if (status === "UNDER_REVIEW") return "bg-amber-50 text-amber-700 border-amber-200";
+  return "bg-[var(--color-background-soft)] text-[var(--color-text-primary)] border-[var(--color-border)]";
+}
+
 export function BookingsShell({ items, unavailableMessage }: BookingsShellProps) {
   if (unavailableMessage) {
     return (
@@ -50,12 +58,23 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
           className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm font-semibold text-[var(--color-text-primary)]">{formatStatus(item.status)}</p>
+            <span
+              className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${statusBadgeClass(
+                item.status,
+              )}`}
+            >
+              {formatStatus(item.status)}
+            </span>
             <p className="text-xs text-[var(--color-text-muted)]">Created: {formatDate(item.createdAt)}</p>
           </div>
-          <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-            {item.consultationType} consultation - {item.countryCode}
-          </p>
+          <div className="mt-3 grid gap-2 text-sm text-[var(--color-text-muted)] sm:grid-cols-2">
+            <p>
+              <span className="font-semibold text-[var(--color-text-primary)]">Country:</span> {item.countryCode}
+            </p>
+            <p>
+              <span className="font-semibold text-[var(--color-text-primary)]">Consultation:</span> {item.consultationType}
+            </p>
+          </div>
           {item.notesPreview ? (
             <p className="mt-2 text-sm text-[var(--color-text-muted)]">Notes: {item.notesPreview}</p>
           ) : null}

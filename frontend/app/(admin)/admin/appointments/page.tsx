@@ -69,6 +69,14 @@ function formatDate(dateIso: string) {
   });
 }
 
+function statusBadgeClass(status: string) {
+  if (status === "COMPLETED") return "bg-emerald-50 text-emerald-700 border-emerald-200";
+  if (status === "CANCELLED") return "bg-rose-50 text-rose-700 border-rose-200";
+  if (status === "CONTACTED") return "bg-sky-50 text-sky-700 border-sky-200";
+  if (status === "UNDER_REVIEW") return "bg-amber-50 text-amber-700 border-amber-200";
+  return "bg-[var(--color-background-soft)] text-[var(--color-text-primary)] border-[var(--color-border)]";
+}
+
 type PageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
@@ -167,7 +175,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
           </p>
         </div>
       ) : (
-        <div className="mt-6 overflow-x-auto">
+      <div className="mt-6 overflow-x-auto rounded-[var(--radius-card-sm)] border border-[var(--color-border)]">
           <table className="min-w-full border-collapse text-left text-sm">
             <thead>
               <tr className="border-b border-[var(--color-border)] text-[var(--color-text-muted)]">
@@ -191,7 +199,15 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                   </td>
                   <td className="px-3 py-3 uppercase text-[var(--color-text-muted)]">{appointment.country}</td>
                   <td className="px-3 py-3 text-[var(--color-text-muted)]">{appointment.consultationType}</td>
-                  <td className="px-3 py-3 text-[var(--color-text-primary)]">{appointment.status}</td>
+                  <td className="px-3 py-3">
+                    <span
+                      className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${statusBadgeClass(
+                        appointment.status,
+                      )}`}
+                    >
+                      {appointment.status}
+                    </span>
+                  </td>
                   <td className="px-3 py-3 text-[var(--color-text-muted)]">{formatDate(appointment.createdAt)}</td>
                   <td className="max-w-[20rem] px-3 py-3 text-[var(--color-text-muted)]">
                     {appointment.notesPreview ?? "No notes"}

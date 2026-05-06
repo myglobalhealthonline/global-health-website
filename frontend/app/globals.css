@@ -238,6 +238,55 @@ img {
   color: var(--color-text-primary);
 }
 
+.gh-link {
+  color: var(--color-brand-primary);
+  font-weight: 600;
+}
+
+.gh-link:hover {
+  color: var(--color-brand-primary-hover);
+}
+
+.gh-admin-nav-link {
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: var(--color-background-soft);
+}
+
+.gh-admin-nav-link:hover {
+  color: var(--color-text-primary);
+  background: #ffffff;
+}
+
+.gh-admin-main table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.gh-admin-main thead tr {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.gh-admin-main th {
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.gh-admin-main th,
+.gh-admin-main td {
+  padding: 10px 12px;
+  vertical-align: top;
+}
+
+.gh-admin-main tbody tr {
+  border-bottom: 1px solid var(--color-border);
+}
+
 .gh-kicker {
   display: inline-flex;
   align-items: center;

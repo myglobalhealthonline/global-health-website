@@ -436,3 +436,44 @@ Prisma queries failed because **`DATABASE_URL`** did not resolve to a reachable 
 - **Validation:** Missing fields, missing consent, and invalid email are blocked client-side with readable errors; no `POST` until the client validation passes.
 - **Mobile / widths:** Checked at `320`, `390`, `768`, `1024`, `1440` (resize + form snapshots). Representative screenshots: `frontend/docs/qa-screenshots/book-online-viewport-320.png`, `frontend/docs/qa-screenshots/book-online-form-1440.png`.
 - **Dev-only note:** Cursor IDE browser automation adds `data-cursor-ref` attributes and can trigger a **hydration mismatch** warning in React dev overlay; treat as tooling noise unless reproduced in a normal browser without automation.
+
+## Auth + Admin UI polish QA (2026-05-06)
+
+### Routes checked
+
+- Auth/patient:
+  - `/login`
+  - `/register`
+  - `/forgot-password`
+  - `/account`
+  - `/account/bookings`
+- Admin:
+  - `/admin`
+  - `/admin/appointments`
+  - `/admin/countries`
+  - `/admin/services`
+  - `/admin/doctors`
+  - `/admin/pricing`
+  - `/admin/assets`
+  - `/admin/blog-posts`
+  - `/admin/faqs`
+  - `/admin/content-pages`
+
+### Responsive results
+
+- Breakpoint matrix targeted:
+  - `320`, `390`, `768`, `1024`, `1440`
+- Outcomes:
+  - auth forms remain single-column and readable on small screens
+  - CTA buttons remain tap-safe
+  - account and booking cards stack safely without layout breaks
+  - admin dashboard cards stack cleanly at narrow widths
+  - admin tables preserve usability via intended horizontal scroll containers
+  - no route-level layout crash observed in this pass
+
+### Copy/security checks
+
+- Admin framing now clearly states website-content management scope.
+- Doctors are explicitly framed as public profiles only.
+- Payments explicitly marked as not enabled yet.
+- No admin secrets surfaced in client UI.
