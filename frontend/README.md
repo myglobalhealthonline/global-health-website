@@ -2,7 +2,7 @@
 
 ## Account Scope
 
-This Next.js app serves **public marketing pages** and **internal `/admin` tools** (token-auth today).
+This Next.js app serves **public marketing pages** and **internal `/admin` tools**.
 
 | Concept | In this app |
 | --- | --- |
@@ -31,11 +31,18 @@ Optional for local fallback-only mode:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:4000
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+# Optional server-side overrides
+# API_BASE_URL=http://localhost:4000
+# ADMIN_API_BASE_URL=http://localhost:4000
 ```
 
 If `NEXT_PUBLIC_API_URL` is missing:
 - public pages continue rendering from fallback content
 - booking form stays usable but does not send a live request
+
+If `NEXT_PUBLIC_SITE_URL` is missing:
+- metadata/canonical defaults fall back to `http://localhost:3000`
 
 ## Booking Integration
 
@@ -119,3 +126,16 @@ Admin API calls from frontend remain server-only:
 - optional `ADMIN_API_TOKEN` fallback is server-side only and never exposed to browser code
 
 No changes were made to public navigation/routes, patient account behavior, or guest booking flow.
+
+## Phase 7 launch hardening
+
+Implemented:
+
+- `app/sitemap.ts` added for canonical sitemap generation from public route registry.
+- `app/robots.ts` added with disallow rules for auth/account/admin surfaces.
+- `app/layout.tsx` now sets `metadataBase` and Open Graph defaults from `NEXT_PUBLIC_SITE_URL`.
+- Security behavior preserved: no admin/public secrets exposed in browser bundles; admin API client remains server-only.
+
+Launch QA:
+
+- Use `frontend/docs/launch-readiness-checklist.md` to validate public/patient/admin flows and responsive breakpoints before release.

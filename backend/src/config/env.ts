@@ -11,6 +11,7 @@ const envSchema = z.object({
   AUTH_JWT_SECRET: z.string().trim().min(32, "AUTH_JWT_SECRET must be at least 32 characters").default("dev-only-change-this-auth-jwt-secret-min-32"),
   AUTH_COOKIE_NAME: z.string().trim().min(1).default("gh_auth"),
   AUTH_JWT_EXPIRES_IN: z.string().trim().min(2).default("7d"),
+  CORS_ALLOWED_ORIGINS: z.string().trim().optional(),
 });
 
 const parsed = envSchema.parse(process.env);

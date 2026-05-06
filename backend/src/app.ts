@@ -23,12 +23,33 @@ import adminBlogPostsRoute from "./routes/admin-blog-posts.route.js";
 import adminFaqsRoute from "./routes/admin-faqs.route.js";
 import adminContentPagesRoute from "./routes/admin-content-pages.route.js";
 import accountAppointmentsRoute from "./routes/account-appointments.route.js";
+import { env } from "./config/env.js";
 
 export async function buildApp() {
-  const app = Fastify({ logger: true });
+  const app = Fastify({ logger: true, bodyLimit: 1_048_576 });
+
+  const allowedOrigins = (env.CORS_ALLOWED_ORIGINS ?? "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+  const isProd = env.NODE_ENV === "production";
 
   await app.register(cors, {
-    origin: true,
+    origin: (origin, callback) => {
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+      if (!isProd) {
+        callback(null, true);
+        return;
+      }
+      if (allowedOrigins.length === 0) {
+        callback(new Error("CORS origin denied"), false);
+        return;
+      }
+      callback(null, allowedOrigins.includes(origin));
+    },
     credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],

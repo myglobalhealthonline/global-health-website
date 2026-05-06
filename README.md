@@ -1682,3 +1682,25 @@ Before switching from Wix:
 - Check search console
 - Run final form tests
 - Confirm legal page content
+
+---
+
+## Phase 7 Production Readiness
+
+This phase focuses on launch hardening and deployment QA (no payment build, no doctor portal, no `DOCTOR` role, no public route redesign).
+
+### Environment baseline
+
+- Backend: `DATABASE_URL`, `PORT`, `AUTH_JWT_SECRET`, `AUTH_COOKIE_NAME`, `AUTH_JWT_EXPIRES_IN`, `ADMIN_TOKEN_FALLBACK_ENABLED`, optional `ADMIN_API_TOKEN`, optional seed admin vars, `CORS_ALLOWED_ORIGINS`.
+- Frontend: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SITE_URL`, optional server-only `API_BASE_URL` and `ADMIN_API_BASE_URL`.
+
+### Launch docs
+
+- Frontend QA matrix: `frontend/docs/launch-readiness-checklist.md`
+- Backend deployment/security checks: `backend/docs/deployment-checklist.md`
+
+### Deferred items (explicit)
+
+- Payment implementation is intentionally skipped.
+- Doctor portal is intentionally excluded from this repository.
+- Password reset email delivery remains placeholder-safe.

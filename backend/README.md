@@ -119,6 +119,10 @@ See **`backend/.env.example`**. Summary:
 - **`DATABASE_URL`** — required for API runtime, Prisma CLI, and seed.
 - **`ADMIN_API_TOKEN`** — optional for server start in some setups; required to call **`/api/admin/*`** (including Assets admin after Phase 3.5).
 - **`ADMIN_TOKEN_FALLBACK_ENABLED`** — optional toggle (`true`/`false`) for bearer token fallback on `/api/admin/*`; default is enabled in development and disabled in production.
+- **`AUTH_JWT_SECRET`** — required JWT signing secret (use a strong production secret).
+- **`AUTH_COOKIE_NAME`** — auth cookie key (default `gh_auth`).
+- **`AUTH_JWT_EXPIRES_IN`** — JWT lifetime (default `7d`).
+- **`CORS_ALLOWED_ORIGINS`** — comma-separated browser origins allowed in production.
 - **`PORT`** — defaults to `4000` in **`src/config/env.ts`** if unset.
 
 Optional **`DATABASE_PUBLIC_URL`** in comments in `.env.example`: some platforms use an internal URL for the deployed app and a **public** URL for tools running on your laptop; use whichever host your machine can reach as **`DATABASE_URL`** when running migrations/seeds locally.
@@ -179,11 +183,6 @@ Role model for this website:
 - `ADMIN`
 
 No `DOCTOR` auth role is introduced here. Doctors remain public profile/content records in this codebase; doctor portal auth is separate/deferred.
-
-Admin auth migration note:
-
-- `/api/admin/*` continues to use `ADMIN_API_TOKEN` in this phase.
-- Future migration should replace env-token-only authorization with `ADMIN` role session checks.
 
 ### Phase 4.1 QA notes (Auth + account protection)
 
@@ -249,3 +248,21 @@ Access rules:
 - `PATIENT` can only read their own account-linked appointments.
 - `ADMIN` may read account-linked appointments for support/debug (admin operational queue still lives under `/api/admin/*`).
 - Routes return safe account-facing fields only (no internal admin metadata).
+
+## Phase 7 production hardening notes
+
+Implemented in this phase:
+
+- Production CORS allow-list support via `CORS_ALLOWED_ORIGINS`.
+- Request `bodyLimit` set to `1MB` in Fastify app bootstrap.
+- Existing secure session cookie behavior kept (`httpOnly`, `sameSite=lax`, `secure` in production).
+- Admin token fallback remains available, but production default is still disabled (`ADMIN_TOKEN_FALLBACK_ENABLED=false`).
+
+Deployment checklist:
+
+- See `backend/docs/deployment-checklist.md` for env setup, migrations, auth/admin verification, and security checks.
+
+Deferred hardening (documented, not overbuilt in this phase):
+
+- Route-level rate limiting for auth, booking, and admin endpoints.
+- WAF / abuse-prevention rules and bot controls at edge/CDN layer.
