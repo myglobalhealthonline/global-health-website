@@ -33,16 +33,16 @@ export default async function AdminNewBlogPostPage({ searchParams }: PageProps) 
       <h1 className="gh-h2 text-[var(--color-text-primary)]">New blog post</h1>
       {createError ? <p className="mt-4 text-amber-900">{createError}</p> : null}
       <form action={createAction} className="mt-6 grid gap-4">
-        <input name="title" className="gh-input" placeholder="Title" required />
-        <input name="slug" className="gh-input" placeholder="slug-like-this" required />
-        <textarea name="excerpt" className="gh-textarea" placeholder="Excerpt (optional)" rows={2} />
-        <textarea name="body" className="gh-textarea" placeholder="Body/content" rows={10} required />
+        <input aria-label="Post title" name="title" className="gh-input" placeholder="Title" required />
+        <input aria-label="Post slug" name="slug" className="gh-input" placeholder="slug-like-this" required />
+        <textarea aria-label="Post excerpt" name="excerpt" className="gh-textarea" placeholder="Excerpt (optional)" rows={2} />
+        <textarea aria-label="Post body content" name="body" className="gh-textarea" placeholder="Body/content" rows={10} required />
         <div className="grid gap-3 sm:grid-cols-2">
-          <select name="status" className="gh-select" defaultValue="DRAFT">
+          <select aria-label="Post status" name="status" className="gh-select" defaultValue="DRAFT">
             <option value="DRAFT">Draft</option>
             <option value="PUBLISHED">Published</option>
           </select>
-          <select name="locale" className="gh-select" defaultValue="EN">
+          <select aria-label="Post locale" name="locale" className="gh-select" defaultValue="EN">
             {["EN", "PT", "ES", "CS", "RO", "DE"].map((locale) => (
               <option key={locale} value={locale}>
                 {locale}
@@ -51,7 +51,7 @@ export default async function AdminNewBlogPostPage({ searchParams }: PageProps) 
           </select>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          <select name="countryId" className="gh-select" defaultValue="">
+          <select aria-label="Post country" name="countryId" className="gh-select" defaultValue="">
             <option value="">Global (no country)</option>
             {countriesResult.data.countries.map((country) => (
               <option key={country.id} value={country.id}>
@@ -59,13 +59,13 @@ export default async function AdminNewBlogPostPage({ searchParams }: PageProps) 
               </option>
             ))}
           </select>
-          <input name="publishedAt" className="gh-input" type="datetime-local" />
+          <input aria-label="Publish date and time" name="publishedAt" className="gh-input" type="datetime-local" />
         </div>
-        <input name="category" className="gh-input" placeholder="Category (optional)" />
-        <input name="authorDisplayName" className="gh-input" placeholder="Author display name (optional)" />
-        <input name="coverAssetId" className="gh-input" placeholder="Cover asset ID (optional)" />
-        <input name="seoTitle" className="gh-input" placeholder="SEO title (optional)" />
-        <textarea name="seoDescription" className="gh-textarea" placeholder="SEO description (optional)" rows={2} />
+        <input aria-label="Post category" name="category" className="gh-input" placeholder="Category (optional)" />
+        <input aria-label="Author display name" name="authorDisplayName" className="gh-input" placeholder="Author display name (optional)" />
+        <input aria-label="Cover asset ID" name="coverAssetId" className="gh-input" placeholder="Cover asset ID (optional)" />
+        <input aria-label="SEO title" name="seoTitle" className="gh-input" placeholder="SEO title (optional)" />
+        <textarea aria-label="SEO description" name="seoDescription" className="gh-textarea" placeholder="SEO description (optional)" rows={2} />
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" name="isActive" defaultChecked />
           Active

@@ -45,8 +45,8 @@ export default async function AdminFaqsPage({ searchParams }: PageProps) {
       </div>
 
       <form method="get" className="mt-6 grid gap-3 sm:grid-cols-5">
-        <input className="gh-input" name="search" defaultValue={filters.search ?? ""} placeholder="Search question/answer" />
-        <select className="gh-select" name="countryId" defaultValue={filters.countryId ?? ""}>
+        <input aria-label="Search FAQs" className="gh-input" name="search" defaultValue={filters.search ?? ""} placeholder="Search question/answer" />
+        <select aria-label="Filter FAQs by country" className="gh-select" name="countryId" defaultValue={filters.countryId ?? ""}>
           <option value="">All countries</option>
           {countriesResult.data.countries.map((country) => (
             <option key={country.id} value={country.id}>
@@ -54,7 +54,7 @@ export default async function AdminFaqsPage({ searchParams }: PageProps) {
             </option>
           ))}
         </select>
-        <select className="gh-select" name="locale" defaultValue={filters.locale ?? ""}>
+        <select aria-label="Filter FAQs by locale" className="gh-select" name="locale" defaultValue={filters.locale ?? ""}>
           <option value="">All locales</option>
           {["EN", "PT", "ES", "CS", "RO", "DE"].map((locale) => (
             <option key={locale} value={locale}>
@@ -62,7 +62,7 @@ export default async function AdminFaqsPage({ searchParams }: PageProps) {
             </option>
           ))}
         </select>
-        <select className="gh-select" name="isActive" defaultValue={filters.isActive ?? ""}>
+        <select aria-label="Filter FAQs by activity" className="gh-select" name="isActive" defaultValue={filters.isActive ?? ""}>
           <option value="">All activity</option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>

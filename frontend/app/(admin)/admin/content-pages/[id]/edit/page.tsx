@@ -46,29 +46,30 @@ export default async function AdminEditContentPage({ params, searchParams }: Pag
       </p>
       {sp.error ? <p className="mt-3 text-amber-900">{sp.error}</p> : null}
       <form action={updateAction} className="mt-6 grid gap-4">
-        <input className="gh-input" name="pageKey" defaultValue={page.pageKey} required />
-        <input className="gh-input" name="title" defaultValue={page.title} required />
-        <textarea className="gh-textarea" name="body" defaultValue={page.body} rows={12} required />
+        <input aria-label="Content page key" className="gh-input" name="pageKey" defaultValue={page.pageKey} required />
+        <input aria-label="Content page title" className="gh-input" name="title" defaultValue={page.title} required />
+        <textarea aria-label="Content page body" className="gh-textarea" name="body" defaultValue={page.body} rows={12} required />
         <div className="grid gap-3 sm:grid-cols-2">
-          <select className="gh-select" name="status" defaultValue={page.status}>
+          <select aria-label="Content page status" className="gh-select" name="status" defaultValue={page.status}>
             <option value="DRAFT">Draft</option>
             <option value="PUBLISHED">Published</option>
           </select>
-          <select className="gh-select" name="locale" defaultValue={page.locale}>
+          <select aria-label="Content page locale" className="gh-select" name="locale" defaultValue={page.locale}>
             {["EN", "PT", "ES", "CS", "RO", "DE"].map((locale) => (
               <option key={locale} value={locale}>{locale}</option>
             ))}
           </select>
         </div>
-        <select className="gh-select" name="countryId" defaultValue={page.countryId ?? ""}>
+        <select aria-label="Content page country" className="gh-select" name="countryId" defaultValue={page.countryId ?? ""}>
           <option value="">Global (no country)</option>
           {countriesResult.data.countries.map((country) => (
             <option key={country.id} value={country.id}>{country.name}</option>
           ))}
         </select>
-        <input className="gh-input" name="seoTitle" defaultValue={page.seoTitle ?? ""} />
-        <textarea className="gh-textarea" name="seoDescription" defaultValue={page.seoDescription ?? ""} rows={2} />
+        <input aria-label="SEO title" className="gh-input" name="seoTitle" defaultValue={page.seoTitle ?? ""} />
+        <textarea aria-label="SEO description" className="gh-textarea" name="seoDescription" defaultValue={page.seoDescription ?? ""} rows={2} />
         <input
+          aria-label="Last reviewed date and time"
           className="gh-input"
           name="lastReviewedAt"
           type="datetime-local"

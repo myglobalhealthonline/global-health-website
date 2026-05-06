@@ -43,24 +43,24 @@ export default async function AdminEditFaqPage({ params, searchParams }: PagePro
       <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit FAQ</h1>
       {sp.error ? <p className="mt-3 text-amber-900">{sp.error}</p> : null}
       <form action={updateAction} className="mt-6 grid gap-4">
-        <input className="gh-input" name="question" defaultValue={faq.question} required />
-        <textarea className="gh-textarea" name="answer" defaultValue={faq.answer} rows={8} required />
+        <input aria-label="FAQ question" className="gh-input" name="question" defaultValue={faq.question} required />
+        <textarea aria-label="FAQ answer" className="gh-textarea" name="answer" defaultValue={faq.answer} rows={8} required />
         <div className="grid gap-3 sm:grid-cols-2">
-          <select className="gh-select" name="locale" defaultValue={faq.locale}>
+          <select aria-label="FAQ locale" className="gh-select" name="locale" defaultValue={faq.locale}>
             {["EN", "PT", "ES", "CS", "RO", "DE"].map((locale) => (
               <option key={locale} value={locale}>{locale}</option>
             ))}
           </select>
-          <select className="gh-select" name="countryId" defaultValue={faq.countryId ?? ""}>
+          <select aria-label="FAQ country" className="gh-select" name="countryId" defaultValue={faq.countryId ?? ""}>
             <option value="">Global (no country)</option>
             {countriesResult.data.countries.map((country) => (
               <option key={country.id} value={country.id}>{country.name}</option>
             ))}
           </select>
         </div>
-        <input className="gh-input" name="category" defaultValue={faq.category ?? ""} />
-        <input className="gh-input" name="placementKey" defaultValue={faq.placementKey ?? ""} />
-        <input className="gh-input" name="sortOrder" type="number" defaultValue={faq.sortOrder} />
+        <input aria-label="FAQ category" className="gh-input" name="category" defaultValue={faq.category ?? ""} />
+        <input aria-label="FAQ placement key" className="gh-input" name="placementKey" defaultValue={faq.placementKey ?? ""} />
+        <input aria-label="FAQ sort order" className="gh-input" name="sortOrder" type="number" defaultValue={faq.sortOrder} />
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" name="isActive" defaultChecked={faq.isActive} />
           Active

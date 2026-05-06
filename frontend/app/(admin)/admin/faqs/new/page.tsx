@@ -29,24 +29,24 @@ export default async function AdminNewFaqPage({ searchParams }: PageProps) {
       <h1 className="gh-h2 text-[var(--color-text-primary)]">New FAQ</h1>
       {sp.error ? <p className="mt-3 text-amber-900">{sp.error}</p> : null}
       <form action={createAction} className="mt-6 grid gap-4">
-        <input className="gh-input" name="question" placeholder="Question" required />
-        <textarea className="gh-textarea" name="answer" placeholder="Answer" rows={8} required />
+        <input aria-label="FAQ question" className="gh-input" name="question" placeholder="Question" required />
+        <textarea aria-label="FAQ answer" className="gh-textarea" name="answer" placeholder="Answer" rows={8} required />
         <div className="grid gap-3 sm:grid-cols-2">
-          <select className="gh-select" name="locale" defaultValue="EN">
+          <select aria-label="FAQ locale" className="gh-select" name="locale" defaultValue="EN">
             {["EN", "PT", "ES", "CS", "RO", "DE"].map((locale) => (
               <option key={locale} value={locale}>{locale}</option>
             ))}
           </select>
-          <select className="gh-select" name="countryId" defaultValue="">
+          <select aria-label="FAQ country" className="gh-select" name="countryId" defaultValue="">
             <option value="">Global (no country)</option>
             {countriesResult.data.countries.map((country) => (
               <option key={country.id} value={country.id}>{country.name}</option>
             ))}
           </select>
         </div>
-        <input className="gh-input" name="category" placeholder="Category (optional)" />
-        <input className="gh-input" name="placementKey" placeholder="Placement key / page (optional)" />
-        <input className="gh-input" name="sortOrder" type="number" defaultValue={0} />
+        <input aria-label="FAQ category" className="gh-input" name="category" placeholder="Category (optional)" />
+        <input aria-label="FAQ placement key" className="gh-input" name="placementKey" placeholder="Placement key / page (optional)" />
+        <input aria-label="FAQ sort order" className="gh-input" name="sortOrder" type="number" defaultValue={0} />
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" name="isActive" defaultChecked />
           Active

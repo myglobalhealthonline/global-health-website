@@ -58,8 +58,8 @@ export default async function AdminBlogPostsPage({ searchParams }: PageProps) {
       </div>
 
       <form method="get" className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-        <input className="gh-input" name="search" defaultValue={filters.search ?? ""} placeholder="Search title/slug" />
-        <select className="gh-select" name="countryId" defaultValue={filters.countryId ?? ""}>
+        <input aria-label="Search blog posts" className="gh-input" name="search" defaultValue={filters.search ?? ""} placeholder="Search title/slug" />
+        <select aria-label="Filter by country" className="gh-select" name="countryId" defaultValue={filters.countryId ?? ""}>
           <option value="">All countries</option>
           {countries.map((country) => (
             <option key={country.id} value={country.id}>
@@ -67,7 +67,7 @@ export default async function AdminBlogPostsPage({ searchParams }: PageProps) {
             </option>
           ))}
         </select>
-        <select className="gh-select" name="locale" defaultValue={filters.locale ?? ""}>
+        <select aria-label="Filter by locale" className="gh-select" name="locale" defaultValue={filters.locale ?? ""}>
           <option value="">All locales</option>
           {["EN", "PT", "ES", "CS", "RO", "DE"].map((locale) => (
             <option key={locale} value={locale}>
@@ -75,12 +75,12 @@ export default async function AdminBlogPostsPage({ searchParams }: PageProps) {
             </option>
           ))}
         </select>
-        <select className="gh-select" name="status" defaultValue={filters.status ?? ""}>
+        <select aria-label="Filter by status" className="gh-select" name="status" defaultValue={filters.status ?? ""}>
           <option value="">All statuses</option>
           <option value="DRAFT">Draft</option>
           <option value="PUBLISHED">Published</option>
         </select>
-        <select className="gh-select" name="isActive" defaultValue={filters.isActive ?? ""}>
+        <select aria-label="Filter by activity" className="gh-select" name="isActive" defaultValue={filters.isActive ?? ""}>
           <option value="">All activity</option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>

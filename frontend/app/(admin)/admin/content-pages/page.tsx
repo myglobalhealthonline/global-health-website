@@ -52,25 +52,25 @@ export default async function AdminContentPagesPage({ searchParams }: PageProps)
       </p>
 
       <form method="get" className="mt-6 grid gap-3 sm:grid-cols-6">
-        <input className="gh-input" name="search" defaultValue={filters.search ?? ""} placeholder="Search key/title" />
-        <select className="gh-select" name="countryId" defaultValue={filters.countryId ?? ""}>
+        <input aria-label="Search content pages" className="gh-input" name="search" defaultValue={filters.search ?? ""} placeholder="Search key/title" />
+        <select aria-label="Filter content pages by country" className="gh-select" name="countryId" defaultValue={filters.countryId ?? ""}>
           <option value="">All countries</option>
           {countriesResult.data.countries.map((country) => (
             <option key={country.id} value={country.id}>{country.name}</option>
           ))}
         </select>
-        <select className="gh-select" name="locale" defaultValue={filters.locale ?? ""}>
+        <select aria-label="Filter content pages by locale" className="gh-select" name="locale" defaultValue={filters.locale ?? ""}>
           <option value="">All locales</option>
           {["EN", "PT", "ES", "CS", "RO", "DE"].map((locale) => (
             <option key={locale} value={locale}>{locale}</option>
           ))}
         </select>
-        <select className="gh-select" name="status" defaultValue={filters.status ?? ""}>
+        <select aria-label="Filter content pages by status" className="gh-select" name="status" defaultValue={filters.status ?? ""}>
           <option value="">All statuses</option>
           <option value="DRAFT">Draft</option>
           <option value="PUBLISHED">Published</option>
         </select>
-        <select className="gh-select" name="isActive" defaultValue={filters.isActive ?? ""}>
+        <select aria-label="Filter content pages by activity" className="gh-select" name="isActive" defaultValue={filters.isActive ?? ""}>
           <option value="">All activity</option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>
