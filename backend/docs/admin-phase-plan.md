@@ -180,6 +180,36 @@ Safety constraints preserved:
 - Public fallback adapters remain in place.
 - Legal copy warning documented: editing is supported, but public legal content should stay fallback-safe until approved copy is available.
 
+## Phase 4 — Patient/User auth foundation + account shell (foundation)
+
+Delivered foundation:
+
+- Added `UserRole` enum with **`PATIENT`** and **`ADMIN`** only (no `DOCTOR` role).
+- Added `User` model and `PasswordResetToken` model.
+- Added optional `Appointment.userId` for future account-linked bookings, while preserving current guest booking flow.
+- Auth endpoints:
+  - `POST /api/auth/register`
+  - `POST /api/auth/login`
+  - `POST /api/auth/logout`
+  - `GET /api/auth/me`
+  - `POST /api/auth/forgot-password` (placeholder-safe)
+  - `POST /api/auth/reset-password` (placeholder-safe)
+- Session strategy: httpOnly cookie with JWT token, signed with `AUTH_JWT_SECRET`.
+
+Scope constraints retained:
+
+- No doctor login/dashboard/portal in this app.
+- Doctors remain public profile/content records only.
+- No payment implementation in this phase.
+- `ADMIN_API_TOKEN` guard remains for `/api/admin/*` as temporary control until full admin session migration.
+
+Planned migration path:
+
+1. Keep `ADMIN_API_TOKEN` for current internal admin surface.
+2. Add admin session guards based on `User.role === ADMIN`.
+3. Migrate `/admin` pages and `/api/admin/*` authorization to role session checks.
+4. Remove env-token-only guard after role-session parity and rollout validation.
+
 ## Phase 3 (planned): remaining content + ops CRUD (before patient dashboard depth)
 
 Goal: replace env-token gate with real **`ADMIN`** sessions where appropriate, and ship **protected admin APIs + UI** for database-backed **marketing content** this site already reads publicly.

@@ -1,6 +1,7 @@
 ﻿import "dotenv/config";
 
 import cors from "@fastify/cors";
+import cookie from "@fastify/cookie";
 import Fastify from "fastify";
 import healthRoute from "./routes/health.route.js";
 import authRoute from "./routes/auth.route.js";
@@ -27,9 +28,11 @@ export async function buildApp() {
 
   await app.register(cors, {
     origin: true,
+    credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   });
+  await app.register(cookie);
 
   await app.register(healthRoute);
   await app.register(authRoute);

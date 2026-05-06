@@ -32,6 +32,11 @@ enum PublishStatus {
   PUBLISHED
 }
 
+enum UserRole {
+  PATIENT
+  ADMIN
+}
+
 model Currency {
   id        String   @id @default(cuid())
   code      String   @unique
@@ -249,6 +254,7 @@ model BookingSetting {
 
 model Appointment {
   id                 String   @id @default(cuid())
+  userId             String?
   countryCode        String
   consultationType   String
   fullName           String
@@ -257,8 +263,34 @@ model Appointment {
   notes              String?
   consentAccepted    Boolean
   status             String   @default("REQUEST_RECEIVED")
+  user               User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
+}
+
+model User {
+  id                String               @id @default(cuid())
+  email             String               @unique
+  passwordHash      String
+  fullName          String
+  phone             String?
+  role              UserRole             @default(PATIENT)
+  emailVerifiedAt   DateTime?
+  isActive          Boolean              @default(true)
+  appointments      Appointment[]
+  resetTokens       PasswordResetToken[]
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+}
+
+model PasswordResetToken {
+  id         String   @id @default(cuid())
+  userId     String
+  tokenHash  String   @unique
+  expiresAt  DateTime
+  usedAt     DateTime?
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
 }
 
 model BlogPost {

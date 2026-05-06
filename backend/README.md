@@ -147,3 +147,39 @@ pnpm --filter backend dev
 - Booking submission returns a request-intake response only after validation and persistence succeed.
 - Successful booking means request received only. It does **not** confirm an appointment.
 - Frontend is expected to keep static fallback content when this API is unavailable.
+
+## Auth foundation (Phase 4)
+
+Auth endpoints:
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
+- `POST /api/auth/forgot-password` (placeholder-safe)
+- `POST /api/auth/reset-password` (placeholder-safe)
+
+Session strategy:
+
+- Signed JWT stored in an **httpOnly** cookie (`AUTH_COOKIE_NAME`, default `gh_auth`)
+- Cookie settings:
+  - `httpOnly: true`
+  - `sameSite: "lax"`
+  - `secure: true` in production, `false` in local dev
+  - `maxAge`: 7 days (default)
+- JWT settings:
+  - secret from `AUTH_JWT_SECRET`
+  - expiry from `AUTH_JWT_EXPIRES_IN` (default `7d`)
+  - issuer/audience checks enabled
+
+Role model for this website:
+
+- `PATIENT`
+- `ADMIN`
+
+No `DOCTOR` auth role is introduced here. Doctors remain public profile/content records in this codebase; doctor portal auth is separate/deferred.
+
+Admin auth migration note:
+
+- `/api/admin/*` continues to use `ADMIN_API_TOKEN` in this phase.
+- Future migration should replace env-token-only authorization with `ADMIN` role session checks.

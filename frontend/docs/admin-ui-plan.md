@@ -1,4 +1,4 @@
-# Admin UI Plan (Phase 2 + 2.1 + 3.1 + 3.2 + 3.3 + 3.4 + 3.5 + 3.7)
+# Admin UI Plan (Phase 2 + 2.1 + 3.1 + 3.2 + 3.3 + 3.4 + 3.5 + 3.7 + 4)
 
 ## Account Scope
 
@@ -94,6 +94,15 @@ No public nav links point to these routes.
 - **Content pages:** page key/title/body/status/locale with optional country/SEO/last reviewed date.
 - **Legal warning:** UI allows edits, but public legal pages should remain fallback-safe until approved business/legal copy exists.
 - No public navigation changes, no forced backend dependency for public pages, and no replacement of fallback adapters in this phase.
+
+### Phase 4 notes (patient auth/account foundation)
+
+- Added auth pages: `/login`, `/register`, `/forgot-password`, `/account`, `/account/bookings`.
+- Session foundation uses backend httpOnly cookie JWT; frontend calls auth endpoints with `credentials: include`.
+- `/account` and `/account/bookings` are shell pages for patient profile/booking history progression.
+- Guest booking flow remains available on `/book-online`; login is not forced for booking in this phase.
+- Doctor login/dashboard/portal remains explicitly out of scope.
+- Admin pages remain protected by server-side `ADMIN_API_TOKEN` workflow until role-based admin session migration is completed.
 
 ### Phase 3.4 notes (pricing)
 
