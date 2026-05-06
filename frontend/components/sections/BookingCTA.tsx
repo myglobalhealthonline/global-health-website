@@ -18,7 +18,7 @@ export function BookingCTA({ title, description, ctaLabel, ctaHref, asideImage }
   return (
     <Section className="pb-[var(--section-padding-y-sm)]">
       <Container>
-        <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-[var(--color-brand-primary)] to-[var(--color-brand-primary-hover)] p-8 text-[var(--color-brand-secondary)] shadow-[var(--shadow-elevated)] sm:p-10 lg:p-14">
+        <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-gradient-to-br from-[var(--color-brand-primary)] to-[var(--color-brand-primary-hover)] p-8 text-white shadow-[var(--shadow-elevated)] sm:p-10 lg:p-14">
           {/* Animated shine effect */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute -inset-[100%] animate-[spin_8s_linear_infinite] opacity-10">
@@ -32,17 +32,17 @@ export function BookingCTA({ title, description, ctaLabel, ctaHref, asideImage }
           
           <div className="relative flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
             <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm px-4 py-1.5 mb-5">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm px-4 py-1.5 mb-5 border border-white/20">
                 <Sparkles className="size-4 text-[var(--color-brand-accent)]" />
-                <span className="text-sm font-medium text-white/90">Start Your Consultation Today</span>
+                <span className="text-sm font-medium text-white">Start Your Consultation Today</span>
               </div>
               
-              <h2 className="gh-h2 text-[var(--color-brand-secondary)]">{title}</h2>
-              <p className="gh-body-lg mt-3 max-w-2xl text-white/90">{description}</p>
+              <h2 className="gh-h2 text-white">{title}</h2>
+              <p className="text-lg mt-3 max-w-2xl text-white/95 leading-relaxed">{description}</p>
               
               <ul className="mt-6 flex flex-wrap gap-3">
                 {points.map((point) => (
-                  <li key={point} className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm px-4 py-2 text-sm font-medium border border-white/10 transition-all hover:bg-white/20">
+                  <li key={point} className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm px-4 py-2 text-sm font-medium border border-white/20 text-white">
                     <Check className="size-4 text-[var(--color-brand-accent)]" aria-hidden />
                     {point}
                   </li>
@@ -64,7 +64,7 @@ export function BookingCTA({ title, description, ctaLabel, ctaHref, asideImage }
               ) : null}
               <Link
                 href={ctaHref}
-                className="gh-btn w-full bg-[var(--color-brand-secondary)] text-[var(--color-brand-primary)] hover:bg-white sm:w-auto group shadow-xl"
+                className="gh-btn w-full bg-white text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-accent)] sm:w-auto group shadow-xl"
               >
                 {ctaLabel}
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />

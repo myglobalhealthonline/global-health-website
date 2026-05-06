@@ -61,7 +61,7 @@ export default async function AdminDoctorDetailPage({ params, searchParams }: Pa
       </div>
 
       <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-        Public marketing profile only — not a login account. Doctor portal is a separate product.
+        Public marketing profile only, not a login account. Doctor portal is a separate product.
       </p>
 
       {messages.error ? (
@@ -77,8 +77,10 @@ export default async function AdminDoctorDetailPage({ params, searchParams }: Pa
 
       <p className="mt-4 text-sm text-[var(--color-text-muted)]">
         Status:{" "}
-        <span className={d.active ? "text-[var(--color-status-success-text)]" : "text-[var(--color-status-warning-text)]"}>{d.active ? "Active" : "Inactive"}</span>
-        {" — inactive profiles are omitted from the public doctors API."}
+        <span className={d.active ? "text-[var(--color-status-success-text)]" : "text-[var(--color-status-warning-text)]"}>
+          {d.active ? "Active" : "Inactive"}
+        </span>
+        {" - inactive profiles are omitted from the public doctors API."}
       </p>
 
       <dl className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -103,16 +105,30 @@ export default async function AdminDoctorDetailPage({ params, searchParams }: Pa
         <div className="sm:col-span-2">
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Specialties</dt>
           <dd className="mt-1 text-sm text-[var(--color-text-primary)]">
-            {d.specialties.length > 0 ? d.specialties.map((s) => s.specialty.name).join(", ") : "—"}
+            {d.specialties.length > 0 ? d.specialties.map((s) => s.specialty.name).join(", ") : "-"}
           </dd>
         </div>
         <div className="sm:col-span-2">
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Bio</dt>
-          <dd className="mt-1 whitespace-pre-wrap text-sm text-[var(--color-text-primary)]">{d.bio ?? "—"}</dd>
+          <dd className="mt-1 whitespace-pre-wrap text-sm text-[var(--color-text-primary)]">{d.bio ?? "-"}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">IMC registration</dt>
+          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{d.imcRegistration ?? "-"}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">WhatsApp</dt>
+          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{d.whatsappNumber ?? "-"}</dd>
+        </div>
+        <div className="sm:col-span-2">
+          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Languages</dt>
+          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">
+            {d.languages.length > 0 ? d.languages.join(", ") : "-"}
+          </dd>
         </div>
         <div className="sm:col-span-2">
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Profile image</dt>
-          <dd className="mt-1 font-mono text-xs text-[var(--color-text-primary)]">{profileImage ?? "—"}</dd>
+          <dd className="mt-1 font-mono text-xs text-[var(--color-text-primary)]">{profileImage ?? "-"}</dd>
         </div>
       </dl>
 

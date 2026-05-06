@@ -6,8 +6,10 @@ type DoctorTeamTemplateProps = {
   doctors: Array<{
     name: string;
     title: string;
+    imcRegistration?: string;
     country?: string;
     languages?: string[];
+    whatsappNumber?: string;
     bio: string;
     imageSrc?: string | null;
     href?: string;

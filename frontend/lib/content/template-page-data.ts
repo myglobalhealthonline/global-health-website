@@ -4,7 +4,9 @@ import { routeInventory } from "@/data/routes";
 import { getSiteContext } from "@/lib/content/get-site-context";
 import {
   getPublicDoctorsForCountry,
+  parseImcFromDoctorBio,
   parseLanguagesFromDoctorBio,
+  parseWhatsappFromDoctorBio,
   type PublicDoctorRecord,
 } from "@/lib/content/get-public-doctors";
 import type { PublicServiceRecord } from "@/lib/content/get-public-services";
@@ -126,8 +128,10 @@ type GeneralConsultationTemplateData = {
 type DoctorProfileData = {
   name: string;
   title: string;
+  imcRegistration?: string;
   country: string;
   languages: string[];
+  whatsappNumber?: string;
   bio: string;
   imageSrc?: string;
   href?: string;
@@ -570,8 +574,21 @@ function mapPublicDoctorToCard(
   return {
     name: d.fullName,
     title: d.title,
+    ...(d.imcRegistration
+      ? { imcRegistration: d.imcRegistration }
+      : parseImcFromDoctorBio(d.bio)
+        ? { imcRegistration: parseImcFromDoctorBio(d.bio)! }
+        : {}),
     country: d.countryName,
-    languages: languagesForDoctorCard(d.bio, countryCode),
+    languages:
+      d.languages && d.languages.length > 0
+        ? d.languages
+        : languagesForDoctorCard(d.bio, countryCode),
+    ...(d.whatsappNumber
+      ? { whatsappNumber: d.whatsappNumber }
+      : parseWhatsappFromDoctorBio(d.bio)
+        ? { whatsappNumber: parseWhatsappFromDoctorBio(d.bio)! }
+        : {}),
     bio:
       d.bio ??
       `Supports patient consultations and follow-up care through ${d.countryName} clinic routes.`,

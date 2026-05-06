@@ -33,11 +33,11 @@ export function TrustSignals({ title = "Why patients choose us", subtitle, items
       
       <Container className="relative">
         <div className="mx-auto max-w-3xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-accent)] border border-white/10">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-white border border-white/20">
             Why Us
           </span>
           <h2 className="gh-h2 mt-4 text-white">{title}</h2>
-          {subtitle ? <p className="gh-body-lg mt-3 text-white/85 max-w-2xl mx-auto">{subtitle}</p> : null}
+          {subtitle ? <p className="text-lg mt-3 text-white/95 max-w-2xl mx-auto leading-relaxed">{subtitle}</p> : null}
         </div>
         
         <ul className={`mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 ${items.length >= 5 ? 'lg:grid-cols-3' : items.length === 4 ? 'lg:grid-cols-4' : items.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'}`}>
@@ -48,14 +48,14 @@ export function TrustSignals({ title = "Why patients choose us", subtitle, items
             return (
               <li
                 key={`${normalized.title}-${index}`}
-                className="group relative rounded-[var(--radius-card)] border border-white/10 bg-white/[0.06] backdrop-blur-sm p-6 transition-all duration-300 hover:bg-white/[0.12] hover:border-white/20 hover:-translate-y-1 overflow-hidden"
+                className="group relative rounded-[var(--radius-card)] border border-white/15 bg-white/10 backdrop-blur-sm p-6 transition-all duration-300 hover:bg-white/15 hover:border-white/25 hover:-translate-y-1 overflow-hidden"
               >
                 {/* Top accent line */}
-                <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[var(--color-brand-accent)]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[var(--color-brand-accent)]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 
                 <div className="relative">
                   {normalized.image ? (
-                    <div className="relative mb-4 h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white/10 ring-1 ring-white/10">
+                    <div className="relative mb-4 h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white/10 ring-1 ring-white/15">
                       <Image
                         src={normalized.image.src}
                         alt={normalized.image.alt}
@@ -65,17 +65,17 @@ export function TrustSignals({ title = "Why patients choose us", subtitle, items
                       />
                     </div>
                   ) : (
-                    <span className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-[var(--color-brand-accent)]/20 text-[var(--color-brand-accent)] ring-1 ring-[var(--color-brand-accent)]/20 transition-all duration-300 group-hover:scale-110 group-hover:bg-[var(--color-brand-accent)]/30">
+                    <span className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-[var(--color-brand-accent)]/25 text-[var(--color-brand-accent)] ring-1 ring-[var(--color-brand-accent)]/30 transition-all duration-300 group-hover:scale-110 group-hover:bg-[var(--color-brand-accent)]/35">
                       <Icon className="size-5" aria-hidden />
                     </span>
                   )}
                   
-                  <p className="gh-h3 mt-4 text-white group-hover:text-[var(--color-brand-accent)] transition-colors duration-300">
+                  <p className="gh-h3 mt-4 text-white">
                     {normalized.title}
                   </p>
                   
                   {normalized.description ? (
-                    <p className="gh-body-sm mt-2 text-white/80 leading-relaxed">
+                    <p className="text-sm mt-2 text-white/90 leading-relaxed">
                       {normalized.description}
                     </p>
                   ) : null}

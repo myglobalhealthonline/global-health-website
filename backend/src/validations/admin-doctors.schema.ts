@@ -68,6 +68,24 @@ export const adminDoctorCreateBodySchema = z.object({
     .optional()
     .nullable()
     .transform((v) => (v === "" || v === undefined ? null : v)),
+  imcRegistration: z
+    .string()
+    .trim()
+    .max(120)
+    .optional()
+    .nullable()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
+  whatsappNumber: z
+    .string()
+    .trim()
+    .max(32)
+    .optional()
+    .nullable()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
+  languages: z
+    .array(z.string().trim().min(1).max(64))
+    .max(20)
+    .default([]),
   specialtyIds: z.array(z.string().trim().min(1)).default([]),
   profileImagePath: profileImageRefSchema.optional(),
   active: z.boolean().optional(),

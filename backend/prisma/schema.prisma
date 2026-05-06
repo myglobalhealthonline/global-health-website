@@ -121,6 +121,9 @@ model Doctor {
   fullName   String
   title      String
   bio        String?
+  imcRegistration String?
+  whatsappNumber  String?
+  languages       String[]
   active     Boolean          @default(true)
   country    Country          @relation(fields: [countryId], references: [id], onDelete: Cascade)
   specialties DoctorSpecialty[]

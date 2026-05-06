@@ -338,6 +338,9 @@ export type AdminDoctorDto = {
   fullName: string;
   title: string;
   bio: string | null;
+  imcRegistration: string | null;
+  whatsappNumber: string | null;
+  languages: string[];
   active: boolean;
   createdAt: string;
   updatedAt: string;

@@ -226,6 +226,9 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
           fullName: input.fullName,
           title: input.title,
           bio: input.bio ?? null,
+          imcRegistration: input.imcRegistration ?? null,
+          whatsappNumber: input.whatsappNumber ?? null,
+          languages: input.languages ?? [],
           active: input.active ?? true,
           specialties: {
             create: input.specialtyIds.map((specialtyId) => ({
@@ -305,6 +308,9 @@ export async function updateAdminDoctor(
           ...(body.fullName !== undefined && { fullName: body.fullName }),
           ...(body.title !== undefined && { title: body.title }),
           ...(body.bio !== undefined && { bio: body.bio }),
+          ...(body.imcRegistration !== undefined && { imcRegistration: body.imcRegistration }),
+          ...(body.whatsappNumber !== undefined && { whatsappNumber: body.whatsappNumber }),
+          ...(body.languages !== undefined && { languages: body.languages }),
           ...(body.active !== undefined && { active: body.active }),
         },
         include: adminDoctorInclude,

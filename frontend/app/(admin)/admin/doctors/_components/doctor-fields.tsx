@@ -1,4 +1,5 @@
 import type { AdminCountryDto, AdminDoctorDto, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
+import { DoctorProfileImageField } from "./doctor-profile-image-field";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
@@ -98,22 +99,41 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
         />
       </label>
 
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">IMC registration</span>
+          <input
+            name="imcRegistration"
+            className="gh-input min-w-0"
+            defaultValue={initial?.imcRegistration ?? ""}
+            placeholder="e.g. IMC 542074"
+          />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">WhatsApp number</span>
+          <input
+            name="whatsappNumber"
+            className="gh-input min-w-0"
+            defaultValue={initial?.whatsappNumber ?? ""}
+            placeholder="e.g. +353871234567"
+          />
+        </label>
+      </div>
+
       <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Profile image (https URL or site path)</span>
+        <span className="gh-field-label">Languages</span>
         <input
-          name="profileImagePath"
-          className="gh-input min-w-0 font-mono text-sm"
-          defaultValue={initial?.assets[0]?.path ?? ""}
-          placeholder="https://… or /media/…"
+          name="languagesCsv"
+          className="gh-input min-w-0"
+          defaultValue={(initial?.languages ?? []).join(", ")}
+          placeholder="English, Portuguese"
         />
         <span className="text-xs text-[var(--color-text-muted)]">
-          Saved as an IMAGE asset for this doctor. On edit, leave blank and save to remove the image.
+          Comma-separated list used on public doctor cards.
         </span>
       </label>
 
-      <p className="text-xs text-[var(--color-text-muted)]">
-        Languages and structured qualifications are not on the Doctor model yet — add via a future migration if needed.
-      </p>
+      <DoctorProfileImageField initialPath={initial?.assets[0]?.path ?? ""} />
 
       <label className="flex cursor-pointer items-center gap-2">
         <input type="checkbox" name="active" defaultChecked={initial?.active ?? true} className="h-4 w-4 rounded border-[var(--color-border)]" />
