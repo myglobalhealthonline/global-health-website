@@ -14,9 +14,11 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  function getNextPath() {
+  function getNextPath(role: "PATIENT" | "ADMIN") {
     const next = searchParams.get("next");
-    if (!next || !next.startsWith("/")) return "/account";
+    if (!next || !next.startsWith("/")) {
+      return role === "ADMIN" ? "/admin" : "/account";
+    }
     return next;
   }
 
@@ -32,7 +34,7 @@ export function LoginForm() {
     if (result.ok) {
       setMessage(`Logged in as ${result.data.user.fullName}. Redirecting...`);
       setLoading(false);
-      router.replace(getNextPath());
+      router.replace(getNextPath(result.data.user.role));
       router.refresh();
       return;
     }

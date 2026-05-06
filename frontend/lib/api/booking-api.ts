@@ -19,5 +19,6 @@ export async function submitBookingRequest(payload: BookingPayload) {
     method: "POST",
     credentials: "include",
     body: payload,
+    sameOrigin: true,
   });
 }

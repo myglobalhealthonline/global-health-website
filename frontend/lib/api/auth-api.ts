@@ -1,5 +1,13 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 
+function resolveAuthFetchUrl(path: string): string | null {
+  if (!path.startsWith("/api/auth")) return null;
+  // Browser: same-origin Route Handler proxies to Fastify so the session cookie is scoped to the site host.
+  if (typeof window !== "undefined") return path;
+  if (!API_URL) return null;
+  return `${API_URL}${path}`;
+}
+
 type AuthResult<T> =
   | { ok: true; data: T; message?: string }
   | { ok: false; message: string; status?: number };
@@ -8,12 +16,13 @@ async function authRequest<T>(
   path: string,
   options: { method?: "GET" | "POST"; body?: unknown } = {},
 ): Promise<AuthResult<T>> {
-  if (!API_URL) {
+  const url = resolveAuthFetchUrl(path);
+  if (!url) {
     return { ok: false, message: "Public API URL is not configured" };
   }
   try {
     const hasBody = options.body !== undefined;
-    const response = await fetch(`${API_URL}${path}`, {
+    const response = await fetch(url, {
       method: options.method ?? "GET",
       credentials: "include",
       headers: hasBody ? { "Content-Type": "application/json" } : undefined,

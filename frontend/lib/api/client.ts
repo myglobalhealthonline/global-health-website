@@ -7,6 +7,8 @@ type ApiClientOptions = {
   credentials?: RequestCredentials;
   /** Abort the request after this many milliseconds (public content reads). */
   timeoutMs?: number;
+  /** Call a Next.js Route Handler on the current origin (keeps httpOnly cookies on the site host). */
+  sameOrigin?: boolean;
 };
 
 export type ApiResult<T> =
@@ -21,11 +23,24 @@ export async function apiRequest<T>(
   path: string,
   options: ApiClientOptions = {},
 ): Promise<ApiResult<T>> {
-  if (!API_URL) {
+  const sameOrigin = Boolean(options.sameOrigin);
+  let url: string;
+
+  if (sameOrigin) {
+    if (typeof window === "undefined") {
+      return {
+        ok: false,
+        message: "Same-origin API calls must run in the browser",
+      };
+    }
+    url = path.startsWith("/") ? path : `/${path}`;
+  } else if (!API_URL) {
     return {
       ok: false,
       message: "Public API URL is not configured",
     };
+  } else {
+    url = `${API_URL}${path}`;
   }
 
   const controller = options.timeoutMs ? new AbortController() : undefined;
@@ -35,7 +50,7 @@ export async function apiRequest<T>(
       : undefined;
 
   try {
-    const response = await fetch(`${API_URL}${path}`, {
+    const response = await fetch(url, {
       method: options.method ?? "GET",
       credentials: options.credentials,
       headers: {

@@ -5,23 +5,13 @@ import Link from "next/link";
 import { Stethoscope } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "") ?? "http://localhost:4000";
+const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME?.trim() || "gh_auth";
 
 async function logoutAdminAction() {
   "use server";
-  const cookieHeader = (await cookies())
-    .getAll()
-    .map((entry) => `${entry.name}=${entry.value}`)
-    .join("; ");
-  try {
-    await fetch(`${API_URL}/api/auth/logout`, {
-      method: "POST",
-      headers: cookieHeader ? { cookie: cookieHeader } : undefined,
-      cache: "no-store",
-    });
-  } finally {
-    redirect("/login?next=/admin");
-  }
+  const jar = await cookies();
+  jar.delete(AUTH_COOKIE_NAME);
+  redirect("/login?next=/admin");
 }
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
