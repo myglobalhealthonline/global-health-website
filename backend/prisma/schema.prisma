@@ -129,11 +129,14 @@ model Doctor {
   fullName   String
   title      String
   bio        String?
+  seoTitle   String?
+  seoDescription String?
   imcRegistration String?
   medicalRegistrationUrl String?
   qualifications  String[]
   whatsappNumber  String?
   languages       String[]
+  editorialChecklist Json?
   active     Boolean          @default(true)
   country    Country          @relation(fields: [countryId], references: [id], onDelete: Cascade)
   specialties DoctorSpecialty[]
@@ -183,6 +186,8 @@ model Service {
   slug                String
   name                String
   summary             String?
+  seoTitle            String?
+  seoDescription      String?
   heroTitle           String?
   heroDescription     String?
   detailBody          String?
@@ -192,6 +197,7 @@ model Service {
   durationMinutes     Int?
   basePriceCents      Int?
   currencyCode        String?
+  editorialChecklist  Json?
   isActive            Boolean     @default(true)
   consultationSetting Json?
   bookingSetting      Json?
@@ -335,10 +341,13 @@ model BlogPost {
   locale            LocaleCode
   category          String?
   authorDisplayName String?
+  reviewerDisplayName String?
   coverAssetId      String?
   seoTitle          String?
   seoDescription    String?
   publishedAt       DateTime?
+  lastReviewedAt    DateTime?
+  editorialChecklist Json?
   isActive          Boolean      @default(true)
   country           Country?     @relation(fields: [countryId], references: [id], onDelete: SetNull)
   coverAsset        Asset?       @relation("BlogPostCover", fields: [coverAssetId], references: [id], onDelete: SetNull)
@@ -374,6 +383,7 @@ model ContentPage {
   seoTitle       String?
   seoDescription String?
   lastReviewedAt DateTime?
+  editorialChecklist Json?
   isActive       Boolean       @default(true)
   country        Country?      @relation(fields: [countryId], references: [id], onDelete: SetNull)
   createdAt      DateTime      @default(now())

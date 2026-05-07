@@ -181,6 +181,89 @@ const countryLabels: Record<CountryCode, string> = {
   rm: "Romania",
 };
 
+const countryHubDrafts: Record<
+  Exclude<CountryCode, "ie">,
+  {
+    title: string;
+    description: string;
+    availability: string;
+    supported: string;
+    language: string;
+    pricing: string;
+    limitations: string;
+    booking: string;
+  }
+> = {
+  pt: {
+    title: "Online Medical Consultations in Portugal",
+    description:
+      "Use the Portugal clinic hub to review current online consultation availability, language expectations, pricing notes, and booking guidance before choosing a route.",
+    availability:
+      "This page should act as a Portugal access hub, not a promise of full local coverage. Only routes with confirmed staffing and workflow should be treated as fully live.",
+    supported:
+      "Portugal should lead with active general consultations, selected specialist appointments, medication follow-up where permitted, and referral guidance where clinically appropriate.",
+    language:
+      "Portuguese or English support depends on the clinician schedule shown during booking. Do not assume every slot is bilingual.",
+    pricing:
+      "Prices should be shown in euro when configured. If a route is still being confirmed, the final cost should be described as visible before payment.",
+    limitations:
+      "Prescriptions, referrals, and certificates depend on clinical review and local workflow. Online care cannot replace urgent in-person assessment.",
+    booking:
+      "Choose Portugal, select the consultation type, complete intake, review the price and appointment details, then confirm the booking.",
+  },
+  sp: {
+    title: "Online Medical Consultations in Spain",
+    description:
+      "Review current online doctor access in Spain, language expectations, booking flow, and country-specific limits on prescriptions and referrals.",
+    availability:
+      "The Spain page should explain what is currently available rather than implying a fully mature local service where operations are still being confirmed.",
+    supported:
+      "Feature only active pathways such as general consultation, selected specialist appointments, and follow-up review where online care is suitable.",
+    language:
+      "Spanish and English support should only be promised where clinician coverage exists.",
+    pricing:
+      "Display euro pricing when configured. If the route is not fully operational, the page should explain that pricing is shown before booking.",
+    limitations:
+      "Online care in Spain should clearly state that emergencies, severe symptoms, and problems needing examination or urgent tests must be redirected to in-person care.",
+    booking:
+      "Select Spain, choose the relevant service, complete intake, review availability and pricing, then confirm the appointment.",
+  },
+  cz: {
+    title: "Online Medical Consultations in Czechia",
+    description:
+      "Visit the Czechia clinic hub for consultation availability, booking guidance, language notes, and clear online-care limits.",
+    availability:
+      "Czechia should be presented as a country-specific access hub with current availability, not as a fully mature local service unless operations support that claim.",
+    supported:
+      "Lead with first-contact consultations and any genuinely staffed specialist routes. Avoid a broad directory if only a few pathways are active.",
+    language:
+      "Czech and English support should be shown at booking stage based on the clinician rota.",
+    pricing:
+      "Use the configured currency shown in the booking flow. If pricing is incomplete, explain that the final cost is visible before payment.",
+    limitations:
+      "Explain that online care can help with many non-emergency concerns, but some prescriptions, referrals, and certificates may require a different route or in-person care.",
+    booking:
+      "Choose Czechia, select the consultation type, complete the intake, review price and timing, and then confirm the booking.",
+  },
+  rm: {
+    title: "Online Medical Consultations in Romania",
+    description:
+      "Explore the Romania clinic hub for online consultation booking, language guidance, pricing notes, and country-specific limits on online care.",
+    availability:
+      "Romania should be positioned as a practical route overview with clear scope and limitations rather than a cloned marketing page.",
+    supported:
+      "Highlight the service categories that are genuinely available for Romania, starting with general consultations and any active specialist pathways.",
+    language:
+      "Romanian and English support should only be promised if supported by the live rota.",
+    pricing:
+      "Display the final appointment cost before payment. If structured pricing is not complete, the page should explain that the final price appears during booking.",
+    limitations:
+      "Medication requests, referrals, and supporting documents depend on clinician review and service-specific workflow.",
+    booking:
+      "Select Romania, choose the most suitable consultation type, complete intake, review timing and price, then confirm the appointment.",
+  },
+};
+
 const specialtyCardSeeds: Record<CountryCode, Array<{ title: string; description: string }>> = {
   ie: [
     { title: "Cardiology Consultation", description: "Focused online support for heart-health concerns and follow-up planning." },
@@ -364,15 +447,16 @@ function buildCountryHomeData(
   const countryLabel = countryLabels[countryCode];
   const genericServiceCards = buildGenericServiceCards(countryCode, paths);
   const localeTag = countryCode === "pt" ? "Portugal" : countryCode === "sp" ? "Spain" : countryCode === "cz" ? "Czechia" : "Romania";
+  const hubDraft = countryHubDrafts[countryCode];
 
   return {
     hero: {
-      eyebrow: `${countryLabel} Online Medical Clinic`,
-      title: "Medical Consultations Wherever You Are",
-      description: `Connect with licensed clinicians in ${countryLabel} through secure online consultations, with local booking routes and specialist access.`,
+      eyebrow: `${countryLabel} clinic hub`,
+      title: hubDraft.title,
+      description: hubDraft.description,
       primaryCta: { label: "Schedule with a GP", href: paths.general },
       secondaryCta: { label: "Schedule with a Specialist", href: paths.specialist },
-      trustBadges: ["Country booking route", "Private intake", `${countryLabel} clinic hub`],
+      trustBadges: ["Country-specific route", "Private intake", "Booking shown before payment"],
       heroImage: {
         src: "/images/hero/country-home-hero-ai.svg",
         alt: `Illustration of an online medical consultation for the ${countryLabel} clinic`,
@@ -384,19 +468,19 @@ function buildCountryHomeData(
       { title: "GP Consultation", href: paths.general },
     ],
     availability: {
-      eyebrow: "Need Help?",
-      title: "Book Your Consultation",
-      description: `Choose a service and schedule your online consultation in ${countryLabel}.`,
+      eyebrow: "Availability",
+      title: `What to expect in ${countryLabel}`,
+      description: hubDraft.availability,
       cta: { label: "Book Your Consultation", href: paths.general },
     },
     about: {
-      eyebrow: "About us",
-      title: `Quality Healthcare, Without Leaving Home in ${countryLabel}`,
+      eyebrow: "Supported services",
+      title: `How the ${countryLabel} route should be used`,
       description: [
-        `Global Health connects patients in ${countryLabel} with online consultation routes for general medical questions, specialist review, and follow-up support.`,
-        "Use the country hub to compare available consultation types, review what can be handled online, and start booking when the service fits your needs.",
+        hubDraft.supported,
+        hubDraft.limitations,
       ],
-      highlight: "Online healthcare access with country-specific booking information.",
+      highlight: hubDraft.booking,
       cta: { label: "Schedule an Appointment", href: paths.general },
       image: {
         src: "/images/about/about-clinic-ai.svg",
@@ -405,31 +489,31 @@ function buildCountryHomeData(
     },
     specialties: {
       title: "Specialist Consultations",
-      subtitle: `Explore specialist care categories currently promoted for ${countryLabel}.`,
+      subtitle: `Explore the specialist routes currently promoted for ${countryLabel}, then confirm live availability during booking.`,
       cta: { label: "View All Our Areas", href: paths.specialist },
     },
     serviceCards: genericServiceCards,
     steps: [
       {
         title: "Choose Your Location and Specialty",
-        description: `Select ${countryLabel} and choose the consultation or specialty that fits your needs.`,
+        description: `Select ${countryLabel} and choose the consultation or specialty that best matches your concern.`,
       },
       {
         title: "Choose the Type of Consultation",
-        description: "Review the service details and complete the booking form with your information.",
+        description: hubDraft.pricing,
         ctaLabel: "Schedule a consultation",
         ctaHref: paths.specialist,
       },
       {
         title: "Sent to Your Email",
-        description: "Receive your booking confirmation with consultation timing and next-step details.",
+        description: hubDraft.booking,
         ctaLabel: "Schedule a consultation",
         ctaHref: paths.general,
       },
     ],
     homeDelivery: {
       title: "Prescription Support",
-      description: `Prescription and follow-up support for ${countryLabel} depends on clinician review, local rules, and service availability shown during booking.`,
+      description: hubDraft.limitations,
       cta: { label: "Explore GP consultations", href: paths.general },
       image: {
         src: "/images/services/home-delivery-ai.svg",
@@ -437,25 +521,25 @@ function buildCountryHomeData(
       },
     },
     doctorSpotlight: {
-      quote: `Online care in ${countryLabel} should feel accessible, safe, and straightforward.`,
-      name: `${localeTag} Clinic Team`,
-      title: "Country care team",
-      credential: "Credential details shown on clinician profiles where available",
+        quote: `${countryLabel} patients should be able to see what is available, what is not, and what the next step is before they book.`,
+        name: `${localeTag} Clinic Team`,
+        title: "Country care team",
+        credential: "Credential details shown on clinician profiles where available",
       image: {
         src: "/images/ireland/doctor-spotlight-ai.svg",
         alt: `Illustrative clinician portrait for the ${countryLabel} clinic team`,
       },
     },
     trust: {
-      title: `Why patients in ${countryLabel} choose us`,
-      subtitle: "Country-specific booking information and privacy-aware consultation flow",
-      items: [
-        { title: "Country availability", description: `Consultation options are shown for ${countryLabel} before booking.` },
-        { title: "Private intake", description: "Patients share medical context through a privacy-aware booking flow." },
-        { title: "Flexible booking", description: "General and specialist routes help patients choose the most suitable appointment type." },
-        { title: "Local expectations", description: `Pricing, language, and follow-up options are presented for ${countryLabel} where available.` },
-      ],
-    },
+        title: `Country-specific booking guidance for ${countryLabel}`,
+        subtitle: "Use the hub to understand availability, language expectations, and online-care limits before you choose a route.",
+        items: [
+          { title: "Language expectations", description: hubDraft.language },
+          { title: "Pricing notes", description: hubDraft.pricing },
+          { title: "Prescription and referral limits", description: hubDraft.limitations },
+          { title: "Booking flow", description: hubDraft.booking },
+        ],
+      },
     faqTitle: `${countryLabel} clinic FAQs`,
     booking: {
       title: "Start Your Online Consultation",
@@ -694,14 +778,17 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
                       kind: "SPECIALIST",
                       sortOrder: specialty.sortOrder,
                       countryCode: country.code,
-                      heroTitle: null,
-                      heroDescription: null,
-                      detailBody: null,
-                      ctaLabel: null,
-                      specialtyId: specialty.id,
-                      imagePath: null,
-                    })
-                  : null,
+                    heroTitle: null,
+                    heroDescription: null,
+                    detailBody: null,
+                    seoTitle: null,
+                    seoDescription: null,
+                    ctaLabel: null,
+                    specialtyId: specialty.id,
+                    imagePath: null,
+                    editorialChecklist: null,
+                  })
+                : null,
               ]
                 .filter(Boolean)
                 .join(" • "),
@@ -829,14 +916,22 @@ export async function buildServiceDetailCopyAsync(
 
 export function buildLegalCopy(title: string) {
   return sanitizePublicContent({
-    description: "Official policy information for Global Health patients and website visitors.",
+    description: "Plain-language legal and policy information for Global Health patients and website visitors.",
     sections: [
       {
-        heading: "Status",
-        body: `${title} explains the terms that apply to this website and related Global Health services.`,
+        heading: "Plain-language summary",
+        body: `${title} explains the rules, rights, and limits that apply to this website and related Global Health services.`,
       },
       {
-        heading: "Scope",
+        heading: "Legal review status",
+        body: "This page is pending final legal approval. Entity details, effective date, and any jurisdiction-specific wording must be confirmed by the legal team before indexing.",
+      },
+      {
+        heading: "Required legal details",
+        body: "Last updated date, legal entity name, company details, and any statutory references must be added by the legal team rather than inferred from marketing copy.",
+      },
+      {
+        heading: "Contact route",
         body: "For questions about this policy, contact the clinic team before booking or using the relevant service.",
       },
     ],

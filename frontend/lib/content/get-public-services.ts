@@ -10,6 +10,8 @@ export type PublicServiceRecord = {
   kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY";
   name: string;
   summary: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
   heroTitle: string | null;
   heroDescription: string | null;
   detailBody: string | null;
@@ -22,6 +24,7 @@ export type PublicServiceRecord = {
   currencyCode: string | null;
   specialtyId: string | null;
   imagePath: string | null;
+  editorialChecklist: Record<string, unknown> | null;
 };
 
 function readCountryCode(row: unknown): CountryCode | undefined {
@@ -50,6 +53,8 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
   if (!countryCode) return null;
 
   const summary = typeof r.summary === "string" ? r.summary : null;
+  const seoTitle = typeof r.seoTitle === "string" ? r.seoTitle : null;
+  const seoDescription = typeof r.seoDescription === "string" ? r.seoDescription : null;
   const heroTitle = typeof r.heroTitle === "string" ? r.heroTitle : null;
   const heroDescription = typeof r.heroDescription === "string" ? r.heroDescription : null;
   const detailBody = typeof r.detailBody === "string" ? r.detailBody : null;
@@ -72,6 +77,10 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
   const currencyCode =
     typeof r.currencyCode === "string" && r.currencyCode.length > 0 ? r.currencyCode : null;
   const specialtyId = typeof r.specialtyId === "string" ? r.specialtyId : null;
+  const editorialChecklist =
+    r.editorialChecklist && typeof r.editorialChecklist === "object"
+      ? (r.editorialChecklist as Record<string, unknown>)
+      : null;
   const assets = Array.isArray(r.assets) ? r.assets : [];
   const imagePath = (() => {
     const first = assets[0];
@@ -85,6 +94,8 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
     kind,
     name,
     summary,
+    seoTitle,
+    seoDescription,
     heroTitle,
     heroDescription,
     detailBody,
@@ -97,6 +108,7 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
     currencyCode,
     specialtyId,
     imagePath,
+    editorialChecklist,
   };
 }
 

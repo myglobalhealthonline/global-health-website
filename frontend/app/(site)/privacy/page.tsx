@@ -4,7 +4,8 @@ import { buildLegalCopy } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Legal/static template page.",
+  description: "Privacy policy page pending final legal approval.",
+  robots: { index: false, follow: true },
 };
 
 export default function Page() {

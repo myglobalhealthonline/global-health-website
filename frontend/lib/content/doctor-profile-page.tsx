@@ -21,12 +21,17 @@ export async function buildDoctorProfileMetadata(
     qualifications: data.profile.qualifications,
   });
   return {
-    title: `${data.profile.name} | ${data.profile.country} Team`,
-    description: `Doctor profile for ${data.profile.name} including specialties, languages, and booking options.`,
+    title: data.profile.seoTitle ?? `${data.profile.name} | ${data.profile.country} Team`,
+    description:
+      data.profile.seoDescription ??
+      `Doctor profile for ${data.profile.name} including specialties, languages, and booking options.`,
     alternates: {
       canonical: `${data.hero.secondaryCta?.href ?? "/ireland-team"}/${doctorSlug}`.replace(/([^:]\/)\/+/g, "$1"),
     },
-    robots: validation.shouldNoindex ? { index: false, follow: true } : undefined,
+    robots:
+      validation.shouldNoindex || data.profile.editorialChecklist?.readyToIndex !== true
+        ? { index: false, follow: true }
+        : undefined,
   };
 }
 

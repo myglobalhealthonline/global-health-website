@@ -17,13 +17,18 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     };
   }
   const validation = validatePublicServiceRecord(service);
+  const readyToIndex = service.editorialChecklist?.readyToIndex === true;
   return {
-    title: service.heroTitle ?? service.name,
-    description: service.heroDescription ?? service.summary ?? "Ireland specialist consultation service details.",
+    title: service.seoTitle ?? service.heroTitle ?? service.name,
+    description:
+      service.seoDescription ??
+      service.heroDescription ??
+      service.summary ??
+      "Ireland specialist consultation service details.",
     alternates: {
       canonical: `/ireland-specialist-consultations/${serviceSlug}`,
     },
-    robots: validation.shouldNoindex ? { index: false, follow: true } : undefined,
+    robots: validation.shouldNoindex || !readyToIndex ? { index: false, follow: true } : undefined,
   };
 }
 
@@ -34,6 +39,7 @@ export default async function IrelandSpecialistServicePage({ params }: { params:
 
   const copy = await buildServiceDetailCopyAsync(serviceSlug, "specialist", "ie");
   const validation = validatePublicServiceRecord(service);
+  const readyToIndex = service.editorialChecklist?.readyToIndex === true;
   return (
     <ServiceDetailTemplate
       title={copy.title}
@@ -45,8 +51,8 @@ export default async function IrelandSpecialistServicePage({ params }: { params:
       bookingLabel={copy.bookingLabel ?? "Book Online"}
       imageSrc={copy.imageSrc}
       editorialNotice={
-        validation.requiresEditorialReview
-          ? "This specialist page is under clinical editorial review. Booking remains available, but public indexing is disabled until the specialty copy is fully reviewed."
+        validation.requiresEditorialReview || !readyToIndex
+          ? "This specialist page is under clinical and operational review. Booking remains available, but public indexing stays disabled until scope, pricing, duration, and publication checks are confirmed."
           : null
       }
     />

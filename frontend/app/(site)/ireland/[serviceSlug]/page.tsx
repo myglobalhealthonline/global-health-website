@@ -17,13 +17,18 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
     };
   }
   const validation = validatePublicServiceRecord(service);
+  const readyToIndex = service.editorialChecklist?.readyToIndex === true;
   return {
-    title: service.heroTitle ?? service.name,
-    description: service.heroDescription ?? service.summary ?? "Ireland online consultation service details.",
+    title: service.seoTitle ?? service.heroTitle ?? service.name,
+    description:
+      service.seoDescription ??
+      service.heroDescription ??
+      service.summary ??
+      "Ireland online consultation service details.",
     alternates: {
       canonical: `/ireland/${serviceSlug}`,
     },
-    robots: validation.shouldNoindex ? { index: false, follow: true } : undefined,
+    robots: validation.shouldNoindex || !readyToIndex ? { index: false, follow: true } : undefined,
   };
 }
 
@@ -34,6 +39,7 @@ export default async function IrelandServicePage({ params }: { params: Promise<P
 
   const copy = await buildServiceDetailCopyAsync(serviceSlug, "general", "ie");
   const validation = validatePublicServiceRecord(service);
+  const readyToIndex = service.editorialChecklist?.readyToIndex === true;
   return (
     <ServiceDetailTemplate
       title={copy.title}
@@ -45,8 +51,8 @@ export default async function IrelandServicePage({ params }: { params: Promise<P
       bookingLabel={copy.bookingLabel ?? "Book consultation"}
       imageSrc={copy.imageSrc}
       editorialNotice={
-        validation.requiresEditorialReview
-          ? "This service page is under clinical editorial review. Booking remains available, but public indexing is disabled until the service copy is fully reviewed."
+        validation.requiresEditorialReview || !readyToIndex
+          ? "This service page is under clinical and operational review. Booking remains available, but public indexing stays disabled until scope, pricing, duration, and publication checks are confirmed."
           : null
       }
     />

@@ -4,7 +4,8 @@ import { buildLegalCopy } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Terms and Conditions",
-  description: "Legal/static template page.",
+  description: "Terms and conditions page pending final legal approval.",
+  robots: { index: false, follow: true },
 };
 
 export default function Page() {

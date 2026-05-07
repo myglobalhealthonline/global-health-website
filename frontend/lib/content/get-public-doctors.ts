@@ -37,6 +37,8 @@ export type PublicDoctorRecord = {
   fullName: string;
   title: string;
   bio: string | null;
+  seoTitle?: string;
+  seoDescription?: string;
   imcRegistration?: string;
   medicalRegistrationUrl?: string;
   qualifications?: string[];
@@ -48,6 +50,7 @@ export type PublicDoctorRecord = {
   specialties: string[];
   /** Resolved safe URL/path for Next/Image when the API returns a profile asset. */
   profileImageSrc?: string;
+  editorialChecklist?: Record<string, unknown>;
 };
 
 function readCountry(row: unknown): { code: CountryCode; name: string; teamPath: string } | undefined {
@@ -102,6 +105,12 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
   if (!country) return null;
 
   const bio = typeof r.bio === "string" ? r.bio : null;
+  const seoTitle =
+    typeof r.seoTitle === "string" && r.seoTitle.trim() !== "" ? r.seoTitle.trim() : undefined;
+  const seoDescription =
+    typeof r.seoDescription === "string" && r.seoDescription.trim() !== ""
+      ? r.seoDescription.trim()
+      : undefined;
   const imcRegistration =
     typeof r.imcRegistration === "string" && r.imcRegistration.trim() !== ""
       ? r.imcRegistration.trim()
@@ -127,6 +136,10 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
         .filter(Boolean)
     : undefined;
   const profileImageSrc = profileImageFromRow(row);
+  const editorialChecklist =
+    r.editorialChecklist && typeof r.editorialChecklist === "object"
+      ? (r.editorialChecklist as Record<string, unknown>)
+      : undefined;
 
   return {
     id,
@@ -134,6 +147,8 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
     fullName,
     title,
     bio,
+    ...(seoTitle ? { seoTitle } : {}),
+    ...(seoDescription ? { seoDescription } : {}),
     ...(imcRegistration ? { imcRegistration } : {}),
     ...(medicalRegistrationUrl ? { medicalRegistrationUrl } : {}),
     ...(qualifications && qualifications.length > 0 ? { qualifications } : {}),
@@ -144,6 +159,7 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
     teamPath: country.teamPath,
     specialties: specialtyNames(row),
     ...(profileImageSrc ? { profileImageSrc } : {}),
+    ...(editorialChecklist ? { editorialChecklist } : {}),
   };
 }
 

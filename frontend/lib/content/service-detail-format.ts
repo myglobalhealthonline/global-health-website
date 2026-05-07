@@ -8,9 +8,15 @@ export function sanitizeServiceDetailHtml(raw: string): string {
   html = html.replace(/\son\w+='[^']*'/gi, "");
   html = html.replace(/<(\/?)([^>\s]+)([^>]*)>/g, (_, slash: string, tagName: string, attrs: string) => {
     const tag = tagName.toLowerCase();
-    const allowed = new Set(["p", "br", "ul", "ol", "li", "strong", "b", "em", "i", "u", "span", "font", "h2", "h3"]);
+    const allowed = new Set(["p", "br", "ul", "ol", "li", "strong", "b", "em", "i", "u", "span", "font", "h2", "h3", "a"]);
     if (!allowed.has(tag)) return "";
     if (slash) return `</${tag}>`;
+    if (tag === "a") {
+      const hrefMatch = attrs.match(/href\s*=\s*["']([^"']+)["']/i);
+      const href = hrefMatch?.[1]?.trim() ?? "";
+      if (!href.startsWith("/")) return "<span>";
+      return `<a href="${href}">`;
+    }
     if (tag === "font") {
       const colorMatch = attrs.match(/color\s*=\s*["']?([^"'>\s]+)["']?/i);
       if (!colorMatch) return "<span>";

@@ -113,34 +113,64 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
   },
   "/plans-pricing": {
     hero: {
-      title: "Plans and pricing",
-      description: "Review consultation pricing structure and choose what fits your needs.",
+      title: "Consultation Pricing and What to Expect",
+      description:
+        "Review how consultation pricing is shown before booking, what is included in the appointment, and when a follow-up or in-person route may still be needed.",
       primaryCta: { label: "Compare consultation options", href: "/plans-pricing" },
       secondaryCta: { label: "Book consultation", href: "/book-online" },
     },
     intro: {
-      title: "Pricing transparency",
-      body: "Consultation pricing is presented by service type so patients can compare options before booking. Country, currency, and service-specific details are confirmed before payment.",
+      title: "Pricing transparency before you book",
+      body: "Use this page to understand how consultation pricing is presented before you book. The booking flow should show the appointment type, estimated consultation length, and starting price before payment. If a route needs a longer review, extra follow-up, or external testing, that should be explained before checkout.",
     },
     features: [
       {
-        title: "Compare consultation types",
-        description: "Review general and specialist consultation pathways side by side.",
+        title: "GP and first-contact consultations",
+        description:
+          "These routes are designed for common non-emergency symptoms, routine questions, medication review, referral discussion, and follow-up planning.",
         href: "/general-consultation-ie",
         ctaLabel: "View consultations",
       },
       {
-        title: "Country-aware pricing",
-        description: "Final prices are validated by country and service availability.",
+        title: "Specialist consultation pricing",
+        description:
+          "Specialist appointments may differ in price because they can involve a longer history review, focused document review, or more detailed follow-up planning.",
       },
       {
-        title: "Clear next action",
-        description: "Every pricing block links directly to booking or service selection.",
+        title: "What consultation pricing does not include",
+        description:
+          "External tests, imaging, pharmacy costs, and guaranteed prescriptions, referrals, or certificates are not included in the consultation price.",
         href: "/book-online",
-        ctaLabel: "Start booking",
+        ctaLabel: "Book the right appointment",
       },
     ],
-    bottomCta: defaultBottomCta,
+    faqs: {
+      title: "Pricing questions",
+      items: [
+        {
+          question: "Why do some consultation prices differ?",
+          answer:
+            "Some appointments involve a more focused specialist review, longer consultation time, or more detailed follow-up planning.",
+        },
+        {
+          question: "Does the listed price include tests or medication?",
+          answer:
+            "No. The consultation price covers the appointment itself. External tests, pharmacy costs, and third-party provider fees are separate.",
+        },
+        {
+          question: "Will I see the final cost before I pay?",
+          answer:
+            "Yes. The booking flow should show the final appointment details before payment.",
+        },
+      ],
+    },
+    bottomCta: {
+      title: "Choose the appointment that fits your concern",
+      description:
+        "If you are unsure which route is most suitable, compare the consultation types first and then continue to booking.",
+      ctaLabel: "Compare consultation options",
+      ctaHref: "/general-consultation-ie",
+    },
   },
   "/pricing-plans/list": {
     hero: {

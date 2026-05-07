@@ -77,47 +77,49 @@ export function ServiceDetailTemplate({
                 </p>
               ))
             )}
-            <div className="mt-8 grid gap-4 md:grid-cols-2">
-              {[
-                {
-                  heading: "Who this service is for",
-                  body: "People with non-emergency symptoms or follow-up questions who want a clinician to review their situation online.",
-                },
-                {
-                  heading: "Common symptoms or issues",
-                  body: "Use this appointment for concerns that can be safely discussed online. Share symptoms, history, medication, and recent changes during intake.",
-                },
-                {
-                  heading: "What the clinician can help with",
-                  body: "The clinician can assess your information, explain likely next steps, and advise whether treatment, prescription review, referral, testing, or in-person care is appropriate.",
-                },
-                {
-                  heading: "What cannot be handled online",
-                  body: "Emergency symptoms, severe pain, breathing difficulty, chest pain, major injury, or rapidly worsening symptoms need urgent or emergency care.",
-                },
-                {
-                  heading: "Consultation format",
-                  body: "Appointments are handled through an online intake and remote consultation. The exact format is confirmed during booking.",
-                },
-                {
-                  heading: "Prescription and referral rules",
-                  body: "Prescriptions, referrals, or certificates are provided only when clinically appropriate and legally permitted for your country.",
-                },
-                {
-                  heading: "What to prepare",
-                  body: "Prepare your symptoms, current medicines, allergies, relevant photos or documents, and the outcome you need from the appointment.",
-                },
-                {
-                  heading: "Follow-up process",
-                  body: "After review, you receive practical guidance on treatment, monitoring, referral, testing, or when to seek in-person care.",
-                },
-              ].map((section) => (
-                <section key={section.heading} className="rounded-2xl bg-[var(--color-background-soft)] p-5">
-                  <h2 className="text-lg font-bold text-[var(--color-text-primary)]">{section.heading}</h2>
-                  <p className="mt-2 text-sm leading-6 text-[var(--color-text-muted)]">{section.body}</p>
-                </section>
-              ))}
-            </div>
+            {!bodyHtml ? (
+              <div className="mt-8 grid gap-4 md:grid-cols-2">
+                {[
+                  {
+                    heading: "Who this service is for",
+                    body: "People with non-emergency symptoms or follow-up questions who want a clinician to review their situation online.",
+                  },
+                  {
+                    heading: "Common symptoms or issues",
+                    body: "Use this appointment for concerns that can be safely discussed online. Share symptoms, history, medication, and recent changes during intake.",
+                  },
+                  {
+                    heading: "What the clinician can help with",
+                    body: "The clinician can assess your information, explain likely next steps, and advise whether treatment, prescription review, referral, testing, or in-person care is appropriate.",
+                  },
+                  {
+                    heading: "What cannot be handled online",
+                    body: "Emergency symptoms, severe pain, breathing difficulty, chest pain, major injury, or rapidly worsening symptoms need urgent or emergency care.",
+                  },
+                  {
+                    heading: "Consultation format",
+                    body: "Appointments are handled through an online intake and remote consultation. The exact format is confirmed during booking.",
+                  },
+                  {
+                    heading: "Prescription and referral rules",
+                    body: "Prescriptions, referrals, or certificates are provided only when clinically appropriate and legally permitted for your country.",
+                  },
+                  {
+                    heading: "What to prepare",
+                    body: "Prepare your symptoms, current medicines, allergies, relevant photos or documents, and the outcome you need from the appointment.",
+                  },
+                  {
+                    heading: "Follow-up process",
+                    body: "After review, you receive practical guidance on treatment, monitoring, referral, testing, or when to seek in-person care.",
+                  },
+                ].map((section) => (
+                  <section key={section.heading} className="rounded-2xl bg-[var(--color-background-soft)] p-5">
+                    <h2 className="text-lg font-bold text-[var(--color-text-primary)]">{section.heading}</h2>
+                    <p className="mt-2 text-sm leading-6 text-[var(--color-text-muted)]">{section.body}</p>
+                  </section>
+                ))}
+              </div>
+            ) : null}
             </div>
             <aside className="gh-card h-fit p-6 lg:sticky lg:top-24">
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
