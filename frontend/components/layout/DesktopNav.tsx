@@ -18,25 +18,31 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { logoutUser } from "@/lib/api/auth-api";
 import type { SiteNavigationData } from "@/data/navigation";
+import type { AuthUser } from "@/lib/api/auth-api";
 import { cn } from "@/lib/utils/cn";
 import { ClinicsDropdown } from "./ClinicsDropdown";
 
 export function DesktopNav({
   className,
   navigation,
+  authUser,
 }: {
   className?: string;
   navigation: SiteNavigationData;
+  authUser?: AuthUser | null;
 }) {
   return (
     <nav
       className={cn(
-        "hidden items-center justify-between lg:flex",
+        "relative hidden w-full items-center justify-end lg:flex",
         className,
       )}
     >
-      <div className="flex items-center gap-1">
+      <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-1">
         <ClinicsDropdown
           label={navigation.clinicsLabel}
           clinicsMenuByCountry={navigation.clinicsMenuByCountry}
@@ -62,20 +68,22 @@ export function DesktopNav({
         ))}
       </div>
 
-      <div className="flex items-center gap-2">
-        <Link
-          href={navigation.headerAuthLink.href}
-          className="inline-flex min-h-9 items-center whitespace-nowrap rounded-full border border-white/30 bg-transparent px-4 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-[var(--color-brand-primary)]"
-        >
-          {navigation.headerAuthLink.label}
-        </Link>
+      <div className="ml-auto flex items-center gap-2">
+        {!authUser ? (
+          <Link
+            href={navigation.headerAuthLink.href}
+            className="inline-flex min-h-9 items-center whitespace-nowrap rounded-full border border-white/30 bg-transparent px-4 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-[var(--color-brand-primary)]"
+          >
+            {navigation.headerAuthLink.label}
+          </Link>
+        ) : null}
         <Link
           href={navigation.headerPrimaryCta.href}
           className="inline-flex min-h-9 items-center whitespace-nowrap rounded-full bg-white px-4 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-white/90 shadow-[var(--shadow-soft)]"
         >
           {navigation.headerPrimaryCta.label}
         </Link>
-        <AvatarDropdown />
+        {authUser ? <AvatarDropdown authUser={authUser} /> : null}
       </div>
     </nav>
   );
@@ -298,7 +306,18 @@ function iconForAboutLink(label: string) {
 /* Avatar dropdown                                                     */
 /* ------------------------------------------------------------------ */
 
-function AvatarDropdown() {
+function AvatarDropdown({ authUser }: { authUser: AuthUser }) {
+  const router = useRouter();
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  async function handleLogout() {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    await logoutUser();
+    router.refresh();
+    router.push("/");
+  }
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -317,25 +336,36 @@ function AvatarDropdown() {
           align="end"
         >
           <div className="px-3 py-2">
-            <p className="text-sm font-semibold text-[var(--color-text-primary)]">My Account</p>
-            <p className="text-xs text-[var(--color-text-muted)]">Patient Portal</p>
+            <p className="text-sm font-semibold text-[var(--color-text-primary)]">{authUser.fullName}</p>
+            <p className="text-xs text-[var(--color-text-muted)]">{authUser.email}</p>
           </div>
           <DropdownMenu.Separator className="my-1 h-px bg-[var(--color-border)]" />
           <DropdownMenu.Item asChild>
             <Link
-              href="/dashboard"
+              href="/account"
               className="flex items-center gap-2 rounded-[12px] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
             >
-              Dashboard
+              Account
             </Link>
           </DropdownMenu.Item>
-          <DropdownMenu.Item asChild>
-            <Link
-              href="/login"
-              className="flex items-center gap-2 rounded-[12px] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
-            >
-              Login
-            </Link>
+          {authUser.role === "ADMIN" ? (
+            <DropdownMenu.Item asChild>
+              <Link
+                href="/admin"
+                className="flex items-center gap-2 rounded-[12px] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
+              >
+                Admin Portal
+              </Link>
+            </DropdownMenu.Item>
+          ) : null}
+          <DropdownMenu.Item
+            onSelect={(event) => {
+              event.preventDefault();
+              void handleLogout();
+            }}
+            className="flex cursor-pointer items-center gap-2 rounded-[12px] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
+          >
+            {loggingOut ? "Logging out..." : "Log out"}
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>

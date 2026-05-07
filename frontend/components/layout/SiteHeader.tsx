@@ -48,7 +48,7 @@ export function SiteHeader({
           : "border-b border-transparent",
       )}
     >
-      <div className="mx-auto flex h-[var(--header-height)] max-w-[var(--container-width)] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto grid h-[var(--header-height)] max-w-[var(--container-width)] grid-cols-[auto_1fr_auto] items-center gap-4 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
           className="flex min-w-0 shrink-0 items-center gap-2.5"
@@ -63,11 +63,11 @@ export function SiteHeader({
           />
         </Link>
 
-        <div className="hidden flex-1 items-center pl-6 lg:flex">
-          <DesktopNav navigation={navigation} />
+        <div className="hidden min-w-0 items-center px-4 lg:flex">
+          <DesktopNav navigation={navigation} authUser={authUser} />
         </div>
 
-        <div className="flex items-center lg:hidden">
+        <div className="flex items-center justify-self-end lg:hidden">
           <MobileNav
             siteName={siteName}
             navigation={navigation}
