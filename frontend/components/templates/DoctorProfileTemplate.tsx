@@ -3,6 +3,7 @@ import { BookingCTA } from "@/components/sections/BookingCTA";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
+import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 
 type DoctorProfileTemplateProps = {
   hero: {
@@ -27,6 +28,8 @@ type DoctorProfileTemplateProps = {
 };
 
 export function DoctorProfileTemplate({ hero, profile, bottomCta, profileImageSrc }: DoctorProfileTemplateProps) {
+  const src = profileImageSrc ?? "/images/ireland/doctor-spotlight-ai.svg";
+  const unoptimized = /^https?:\/\//i.test(src);
   return (
     <>
       <HeroSection
@@ -43,10 +46,11 @@ export function DoctorProfileTemplate({ hero, profile, bottomCta, profileImageSr
             <div className="grid gap-6 md:grid-cols-[0.8fr_1.2fr]">
               <div className="overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-2">
                 <Image
-                  src={profileImageSrc ?? "/images/ireland/doctor-spotlight-ai.svg"}
+                  src={src}
                   alt={`Illustrative clinician portrait for ${profile.name}`}
                   width={540}
                   height={620}
+                  unoptimized={unoptimized}
                   className="h-auto w-full rounded-[14px] object-cover"
                 />
               </div>
@@ -58,7 +62,10 @@ export function DoctorProfileTemplate({ hero, profile, bottomCta, profileImageSr
                 <p className="gh-body-sm mt-2 text-[var(--color-text-muted)]">
                   {profile.country} · Languages: {profile.languages.join(", ")}
                 </p>
-                <p className="gh-body mt-4 text-[var(--color-text-muted)]">{profile.bio}</p>
+                <div
+                  className="gh-body mt-4 space-y-3 text-[var(--color-text-muted)]"
+                  dangerouslySetInnerHTML={{ __html: sanitizeDoctorBioHtml(profile.bio) }}
+                />
               </div>
             </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">

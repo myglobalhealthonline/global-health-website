@@ -570,7 +570,7 @@ function mapPublicDoctorToCard(
   countryCode: CountryCode,
   paths: CountryPaths,
 ): DoctorProfileData {
-  const href = countryCode === "ie" ? `/ireland-doctors/${d.slug}` : paths.team;
+  const href = `${d.teamPath.replace(/\/$/, "")}/${d.slug}`;
   return {
     name: d.fullName,
     title: d.title,
@@ -594,7 +594,7 @@ function mapPublicDoctorToCard(
       `Supports patient consultations and follow-up care through ${d.countryName} clinic routes.`,
     ...(d.profileImageSrc ? { imageSrc: d.profileImageSrc } : {}),
     href,
-    ctaLabel: countryCode === "ie" ? "View profile" : "Meet doctors",
+    ctaLabel: "View profile",
   };
 }
 
@@ -642,54 +642,6 @@ function mergeSpecialistListingCopy(
   });
 }
 
-function buildDoctorProfiles(countryCode: CountryCode, countryName: string, paths: CountryPaths): DoctorProfileData[] {
-  const defaultLanguages = defaultDoctorLanguages;
-
-  if (countryCode === "ie") {
-    return [
-      {
-        name: "Dr. Khoiamul Islam",
-        title: "General Medicine",
-        country: "Ireland",
-        languages: ["English"],
-        bio: "Provides first-contact online consultations and continuity care pathways for patients across Ireland.",
-        href: paths.team,
-        ctaLabel: "Meet doctor",
-      },
-      {
-        name: "Ireland Clinic Team",
-        title: "Primary Care Network",
-        country: "Ireland",
-        languages: ["English"],
-        bio: "Supports triage, follow-up, and referral coordination for online consultations across the Ireland clinic routes.",
-        href: paths.team,
-        ctaLabel: "Meet doctors",
-      },
-    ];
-  }
-
-  return [
-    {
-      name: `${countryName} Clinic Team`,
-      title: "General Medicine",
-      country: countryName,
-      languages: defaultLanguages[countryCode],
-      bio: `First-contact online consultation support for ${countryName}, including initial assessment and care navigation.`,
-      href: paths.team,
-      ctaLabel: "Meet doctors",
-    },
-    {
-      name: `${countryName} Care Team`,
-      title: "Patient Support",
-      country: countryName,
-      languages: defaultLanguages[countryCode],
-      bio: "Coordinates booking, follow-up pathways, and clear next-step guidance for patients.",
-      href: paths.team,
-      ctaLabel: "Contact clinic",
-    },
-  ];
-}
-
 export async function getTemplatePageData(pathname: string, countryHint: CountryHint = "auto") {
   const site = await getSiteContext({ pathname });
   const countryCode = countryHint === "auto" ? fallbackByPath(pathname) : countryHint;
@@ -735,11 +687,7 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
 
   const countryHome = buildCountryHomeData(country.code, country.name, paths, specialistListing);
 
-  const fallbackDoctors = buildDoctorProfiles(country.code, country.name, paths);
-  const doctors =
-    publicDoctors.length > 0
-      ? publicDoctors.map((d) => mapPublicDoctorToCard(d, country.code, paths))
-      : fallbackDoctors;
+  const doctors = publicDoctors.map((d) => mapPublicDoctorToCard(d, country.code, paths));
 
   const faqItems = buildFaqItems(country.code, country.name);
 

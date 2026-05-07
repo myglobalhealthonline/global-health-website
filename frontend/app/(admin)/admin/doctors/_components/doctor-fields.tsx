@@ -1,5 +1,6 @@
 import type { AdminCountryDto, AdminDoctorDto, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
 import { DoctorProfileImageField } from "./doctor-profile-image-field";
+import { DoctorBioRichTextField } from "./doctor-bio-rich-text-field";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
@@ -89,15 +90,7 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
         <span className="text-xs text-[var(--color-text-muted)]">Hold Ctrl/Cmd to select multiple. Must match the chosen country.</span>
       </label>
 
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Bio</span>
-        <textarea
-          name="bio"
-          rows={6}
-          className="gh-input min-h-[8rem] min-w-0 resize-y"
-          defaultValue={initial?.bio ?? ""}
-        />
-      </label>
+      <DoctorBioRichTextField initialValue={initial?.bio} />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-2">

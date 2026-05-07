@@ -14,6 +14,21 @@ export function DoctorProfileImageField({ initialPath }: Props) {
 
   const apiBase = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
 
+  function toPersistedPath(data?: { key?: string; publicUrl?: string }): string | null {
+    if (data?.key) {
+      return `/api/media/${data.key.split("/").map(encodeURIComponent).join("/")}`;
+    }
+    if (data?.publicUrl) {
+      if (data.publicUrl.startsWith("/")) return data.publicUrl;
+      try {
+        return new URL(data.publicUrl).pathname;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+
   async function onFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
     const input = event.target;
     const file = input.files?.[0];
@@ -36,13 +51,14 @@ export function DoctorProfileImageField({ initialPath }: Props) {
       });
       const json = (await res.json()) as {
         ok?: boolean;
-        data?: { publicUrl?: string };
+        data?: { key?: string; publicUrl?: string };
         message?: string;
       };
-      if (!res.ok || !json.ok || !json.data?.publicUrl) {
+      const persistedPath = toPersistedPath(json.data);
+      if (!res.ok || !json.ok || !persistedPath) {
         throw new Error(json.message ?? "Upload failed");
       }
-      setPath(json.data.publicUrl);
+      setPath(persistedPath);
     } catch (e) {
       setMsg(e instanceof Error ? e.message : "Upload failed");
     } finally {

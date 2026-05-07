@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ArrowRight, Globe, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
+import { toDoctorBioPlainText } from "@/lib/content/doctor-bio-format";
 
 export function FeaturedDoctor({ doctor }: {
   doctor: {
@@ -17,9 +18,11 @@ export function FeaturedDoctor({ doctor }: {
   };
 }) {
   const src = doctor.imageSrc?.trim() ? doctor.imageSrc.trim() : "/images/ireland/doctor-spotlight-ai.svg";
+  const unoptimized = /^https?:\/\//i.test(src);
   const languageList = doctor.languages && doctor.languages.length > 0 
     ? doctor.languages.join(", ") 
     : "English";
+  const bioPreview = toDoctorBioPlainText(doctor.bio);
 
   return (
     <section className="bg-[var(--color-background-soft)] pb-8 pt-4">
@@ -34,6 +37,7 @@ export function FeaturedDoctor({ doctor }: {
                   alt={doctor.name}
                   width={224}
                   height={280}
+                  unoptimized={unoptimized}
                   className="h-64 sm:h-full w-full object-cover object-top"
                 />
               </div>
@@ -67,7 +71,7 @@ export function FeaturedDoctor({ doctor }: {
                 </div>
                 
                 <p className="mt-4 text-sm text-[var(--color-text-muted)] leading-relaxed line-clamp-2">
-                  {doctor.bio}
+                  {bioPreview}
                 </p>
                 
                 {doctor.href && (

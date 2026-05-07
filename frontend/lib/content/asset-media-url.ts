@@ -21,10 +21,27 @@ function parseAllowedHosts(): string[] {
 }
 
 let cachedHosts: string[] | null = null;
+let cachedApiOrigin: string | null | undefined;
 
 export function getTrustedMediaHosts(): string[] {
   if (!cachedHosts) cachedHosts = parseAllowedHosts();
   return cachedHosts;
+}
+
+function getApiOrigin(): string | undefined {
+  if (cachedApiOrigin !== undefined) return cachedApiOrigin ?? undefined;
+  const raw = process.env.NEXT_PUBLIC_API_URL?.trim();
+  if (!raw) {
+    cachedApiOrigin = null;
+    return undefined;
+  }
+  try {
+    cachedApiOrigin = new URL(raw).origin;
+    return cachedApiOrigin;
+  } catch {
+    cachedApiOrigin = null;
+    return undefined;
+  }
 }
 
 export function isSafeLocalAssetPath(path: string): boolean {
@@ -57,7 +74,13 @@ export function resolveTrustedAssetUrl(path: string): string | undefined {
   const t = path.trim();
   if (!t) return undefined;
 
-  if (isSafeLocalAssetPath(t)) return t;
+  if (isSafeLocalAssetPath(t)) {
+    if (t.startsWith("/api/media/")) {
+      const apiOrigin = getApiOrigin();
+      return apiOrigin ? `${apiOrigin}${t}` : undefined;
+    }
+    return t;
+  }
 
   if (!/^https:\/\//i.test(t)) return undefined;
   if (/^https:\/\/[^/]*\.wixstatic\.com/i.test(t)) return undefined;

@@ -28,6 +28,7 @@ export function DoctorCard({
   ctaLabel = "View Profile",
 }: DoctorCardProps) {
   const src = imageSrc?.trim() ? imageSrc.trim() : PLACEHOLDER_PORTRAIT;
+  const unoptimized = /^https?:\/\//i.test(src);
   const languageList = languages.length > 0 ? languages.join(", ") : "Not listed";
   const whatsappDigits = whatsappNumber?.replace(/[^\d+]/g, "");
   const whatsappHref = whatsappDigits ? `https://wa.me/${whatsappDigits.replace("+", "")}` : null;
@@ -41,6 +42,7 @@ export function DoctorCard({
           alt={`Dr. ${name}`}
           width={400}
           height={480}
+          unoptimized={unoptimized}
           className="h-64 w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
         />
         {/* Gradient overlay at bottom */}

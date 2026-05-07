@@ -1,6 +1,3 @@
-"use client";
-
-import Image from "next/image";
 import { Star, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 
@@ -19,15 +16,6 @@ export function SocialProof() {
                       key={i}
                       className="relative h-10 w-10 rounded-full border-2 border-white overflow-hidden bg-[var(--color-background-soft)]"
                     >
-                      <Image
-                        src={`/images/avatars/avatar-${i}.png`}
-                        alt="Patient"
-                        fill
-                        className="object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
-                        }}
-                      />
                       <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-[var(--color-text-muted)] bg-[var(--color-background-soft)]">
                         {String.fromCharCode(64 + i)}
                       </div>
