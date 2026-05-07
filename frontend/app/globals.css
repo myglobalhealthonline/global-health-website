@@ -541,6 +541,25 @@ img {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+/* Rich-text editor list styles */
+[contenteditable="true"] ul,
+[contenteditable="true"] ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+[contenteditable="true"] ul {
+  list-style-type: disc;
+}
+
+[contenteditable="true"] ol {
+  list-style-type: decimal;
+}
+
+[contenteditable="true"] li {
+  margin: 0.25rem 0;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
