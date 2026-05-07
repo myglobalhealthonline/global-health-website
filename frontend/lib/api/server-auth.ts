@@ -1,12 +1,12 @@
 import "server-only";
 
 import { cookies } from "next/headers";
+import { getBackendOrigin } from "@/lib/server/backend-origin";
 import type { AuthUser } from "./auth-api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
-
 export async function getServerAuthUser(): Promise<AuthUser | null> {
-  if (!API_URL) return null;
+  const backend = getBackendOrigin();
+  if (!backend) return null;
   const cookieHeader = (await cookies())
     .getAll()
     .map((entry) => `${entry.name}=${entry.value}`)
@@ -14,7 +14,7 @@ export async function getServerAuthUser(): Promise<AuthUser | null> {
   if (!cookieHeader) return null;
 
   try {
-    const response = await fetch(`${API_URL}/api/auth/me`, {
+    const response = await fetch(`${backend}/api/auth/me`, {
       method: "GET",
       headers: {
         cookie: cookieHeader,

@@ -12,12 +12,14 @@ const redirectMap: Record<string, string> = {
 
 const PUBLIC_FILE = /\.(.*)$/;
 
+/** Same resolution as `getBackendOrigin()` (API_BASE_URL first). Avoids localhost in production. */
 function getApiBaseUrl() {
-  return (
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-    process.env.API_BASE_URL?.replace(/\/$/, "") ??
-    "http://localhost:4000"
-  );
+  const raw =
+    process.env.API_BASE_URL?.trim() ?? process.env.NEXT_PUBLIC_API_URL?.trim() ?? "";
+  const origin = raw.replace(/\/+$/, "");
+  if (origin) return origin;
+  if (process.env.NODE_ENV === "development") return "http://localhost:4000";
+  return "";
 }
 
 function normalizeNextPath(pathname: string) {
@@ -33,8 +35,10 @@ async function hasAllowedAccountSession(request: NextRequest) {
 async function resolveSessionUser(request: NextRequest): Promise<{
   role: "PATIENT" | "ADMIN" | null;
 }> {
+  const apiBase = getApiBaseUrl();
+  if (!apiBase) return { role: null };
   try {
-    const response = await fetch(`${getApiBaseUrl()}/api/auth/me`, {
+    const response = await fetch(`${apiBase}/api/auth/me`, {
       method: "GET",
       headers: {
         cookie: request.headers.get("cookie") ?? "",
