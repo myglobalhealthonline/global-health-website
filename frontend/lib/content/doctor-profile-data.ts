@@ -44,7 +44,7 @@ const doctorSeed: Record<string, Omit<DoctorProfilePageData, "hero" | "bottomCta
       bio: "Supports first-contact online consultations and follow-up care planning for common health concerns.",
       qualifications: [
         "IMC registration details available in clinic onboarding records.",
-        "Profile credentials and timeline will be expanded through content administration.",
+        "Additional credentials are added when verified profile details are available.",
       ],
       specialties: [
         "General consultation",
@@ -66,10 +66,10 @@ export function getDoctorProfileData(doctorSlug: string): DoctorProfilePageData 
       title: "Clinic Doctor Profile",
       country: "Ireland",
       languages: ["English"],
-      bio: "This doctor profile is available through the shared doctor template and will be synced with final admin-managed profile details.",
+      bio: "This clinician supports online consultations and follow-up guidance through Global Health.",
       qualifications: [
-        "Qualifications and registration details are pending final content migration.",
-        "All public profile fields are mapped for future backend/admin replacement.",
+        "Qualifications and registration details are shown when verified by the clinic team.",
+        "Patients can confirm clinician fit during the booking intake.",
       ],
       specialties: ["General consultation", "Specialist referral guidance", "Follow-up support"],
       imageLabel: fallbackName,

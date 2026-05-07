@@ -4,7 +4,7 @@ import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
   title: "Corporate Plans",
-  description: "Template-driven marketing page.",
+  description: "Corporate online healthcare access options for teams and organizations.",
 };
 
 export default function Page() {

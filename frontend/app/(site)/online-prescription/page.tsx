@@ -6,7 +6,7 @@ import { getTemplatePageData } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Online Prescriptions - Ireland",
-  description: "Admin-managed online prescription services for Ireland.",
+  description: "Online prescription request support for Ireland.",
 };
 
 export default async function Page() {
@@ -59,11 +59,11 @@ export default async function Page() {
       }}
       trust={{
         title: "Prescription support you can trust",
-        subtitle: "Licensed clinicians, secure booking, clear follow-up",
+        subtitle: "Clinician review, private intake, and prescription boundaries",
         items: [
           { title: "Clinician-reviewed", description: "All requests are reviewed by qualified medical professionals." },
           { title: "Secure handling", description: "Personal and medical details are processed through secure flows." },
-          { title: "Transparent pricing", description: "Price and duration come from admin-managed service records." },
+          { title: "Transparent pricing", description: "Price and duration are shown before booking where available." },
         ],
       }}
       faq={{ title: "Online prescription FAQs", items: templateData.faqItems }}

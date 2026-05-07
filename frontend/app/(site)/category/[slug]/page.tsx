@@ -9,7 +9,11 @@ const known = routeInventory.categories.map((p) => p.replace("/category/", ""));
 
 export const metadata: Metadata = {
   title: "Category",
-  description: "Template-driven category page placeholder.",
+  description: "Category overview for Global Health services.",
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export function generateStaticParams() {

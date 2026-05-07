@@ -17,6 +17,7 @@ import {
 } from "@/lib/content/get-public-services";
 import { getPublicSpecialtiesForCountry } from "@/lib/content/get-public-specialties";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
+import { sanitizePublicContent } from "@/lib/content/publication-guard";
 
 type CountryHint = CountryCode | "auto";
 
@@ -371,7 +372,7 @@ function buildCountryHomeData(
       description: `Connect with licensed clinicians in ${countryLabel} through secure online consultations, with local booking routes and specialist access.`,
       primaryCta: { label: "Schedule with a GP", href: paths.general },
       secondaryCta: { label: "Schedule with a Specialist", href: paths.specialist },
-      trustBadges: ["Licensed clinicians", "Secure consultations", `${countryLabel} clinic hub`],
+      trustBadges: ["Country booking route", "Private intake", `${countryLabel} clinic hub`],
       heroImage: {
         src: "/images/hero/country-home-hero-ai.svg",
         alt: `Illustration of an online medical consultation for the ${countryLabel} clinic`,
@@ -392,10 +393,10 @@ function buildCountryHomeData(
       eyebrow: "About us",
       title: `Quality Healthcare, Without Leaving Home in ${countryLabel}`,
       description: [
-        `Global Health connects patients in ${countryLabel} with licensed clinicians through secure online consultations.`,
-        "Use the existing booking routes to access general consultations, specialist support, and clinic information while visual asset migration continues.",
+        `Global Health connects patients in ${countryLabel} with online consultation routes for general medical questions, specialist review, and follow-up support.`,
+        "Use the country hub to compare available consultation types, review what can be handled online, and start booking when the service fits your needs.",
       ],
-      highlight: "Secure online care with local route coverage.",
+      highlight: "Online healthcare access with country-specific booking information.",
       cta: { label: "Schedule an Appointment", href: paths.general },
       image: {
         src: "/images/about/about-clinic-ai.svg",
@@ -428,7 +429,7 @@ function buildCountryHomeData(
     ],
     homeDelivery: {
       title: "Prescription Support",
-      description: `Prescription and follow-up support for ${countryLabel} will continue to be refined as final clinic-specific artwork is approved.`,
+      description: `Prescription and follow-up support for ${countryLabel} depends on clinician review, local rules, and service availability shown during booking.`,
       cta: { label: "Explore GP consultations", href: paths.general },
       image: {
         src: "/images/services/home-delivery-ai.svg",
@@ -438,8 +439,8 @@ function buildCountryHomeData(
     doctorSpotlight: {
       quote: `Online care in ${countryLabel} should feel accessible, safe, and straightforward.`,
       name: `${localeTag} Clinic Team`,
-      title: "Licensed clinicians",
-      credential: "Team profile migration pending",
+      title: "Country care team",
+      credential: "Credential details shown on clinician profiles where available",
       image: {
         src: "/images/ireland/doctor-spotlight-ai.svg",
         alt: `Illustrative clinician portrait for the ${countryLabel} clinic team`,
@@ -447,12 +448,12 @@ function buildCountryHomeData(
     },
     trust: {
       title: `Why patients in ${countryLabel} choose us`,
-      subtitle: "Secure healthcare access built around local route coverage",
+      subtitle: "Country-specific booking information and privacy-aware consultation flow",
       items: [
-        { title: "Licensed clinicians", description: `Local clinic routes are available for ${countryLabel}.` },
-        { title: "Secure consultations", description: "Digital consultations are designed for privacy and convenience." },
-        { title: "Flexible booking", description: "General and specialist booking routes remain available during migration." },
-        { title: "Country-specific hub", description: `This page is configured as the dedicated ${countryLabel} homepage variant.` },
+        { title: "Country availability", description: `Consultation options are shown for ${countryLabel} before booking.` },
+        { title: "Private intake", description: "Patients share medical context through a privacy-aware booking flow." },
+        { title: "Flexible booking", description: "General and specialist routes help patients choose the most suitable appointment type." },
+        { title: "Local expectations", description: `Pricing, language, and follow-up options are presented for ${countryLabel} where available.` },
       ],
     },
     faqTitle: `${countryLabel} clinic FAQs`,
@@ -515,7 +516,7 @@ function buildGeneralConsultationTemplateData(
 ): GeneralConsultationTemplateData {
   return {
     heroTitle: `General Consultation - ${countryName}`,
-    heroDescription: `Book online first-contact medical consultations for ${countryName}. Services and final localized copy are managed via content adapters.`,
+    heroDescription: `Book online first-contact medical consultations for ${countryName}. Compare available GP-style consultation options before choosing a booking route.`,
     primaryCtaLabel: "Book consultation",
     secondaryCta: { label: "Meet doctors", href: paths.team },
     explanation: {
@@ -564,9 +565,9 @@ function buildGeneralConsultationTemplateData(
       title: `Why patients trust consultations in ${countryName}`,
       subtitle: "Healthcare-focused, privacy-first, and country-ready",
       items: [
-        { title: "Licensed clinicians", description: "Consultations are delivered by qualified medical professionals." },
-        { title: "Secure booking journey", description: "Online booking and appointment flow is built with privacy in mind." },
-        { title: "Country-specific routes", description: "This page is configured for dedicated country consultation routing." },
+        { title: "Clinical review", description: "Consultations are handled by qualified medical professionals where service availability is confirmed." },
+        { title: "Private booking journey", description: "Online booking and appointment flow is built with privacy in mind." },
+        { title: "Country-specific options", description: "Consultation choices reflect the selected country route." },
       ],
     },
     faq: {
@@ -720,7 +721,7 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     const slug = route.replace("/post/", "");
     return {
       title: slugToLabel(slug),
-      excerpt: "Patient-focused article introducing online consultation workflows, booking guidance, and care navigation.",
+      excerpt: "Health education article from Global Health.",
       href: route,
     };
   });
@@ -734,7 +735,7 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
 
   const generalConsultation = generalConsultationRaw;
 
-  return {
+  return sanitizePublicContent({
     site,
     country,
     paths,
@@ -745,14 +746,14 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     blogPosts,
     countryHome,
     generalConsultation,
-  };
+  });
 }
 
 export function buildServiceDetailCopy(slug: string) {
   const title = slugToLabel(slug);
   return {
     title,
-    description: "Secure online consultation with licensed clinicians. Booking confirms the right next steps for your care.",
+    description: "Online consultation for non-emergency health concerns with clinician review and practical follow-up guidance.",
     body: [
       "This consultation connects you with a licensed clinician through a secure online session. Prepare your symptoms, history, and any questions ahead of time.",
       "The clinician will review your intake, discuss your concerns, and provide guidance on follow-up care, prescriptions, or referrals as appropriate.",
@@ -760,11 +761,21 @@ export function buildServiceDetailCopy(slug: string) {
   };
 }
 
+export type ServiceDetailCopyData = {
+  title: string;
+  description: string;
+  body: string[];
+  bodyHtml?: string | null;
+  imageSrc?: string;
+  bookingLabel?: string;
+  keyFacts: Array<{ label: string; value: string }>;
+};
+
 export async function buildServiceDetailCopyAsync(
   slug: string,
   mode: "general" | "specialist",
   countryCode?: CountryCode,
-) {
+): Promise<ServiceDetailCopyData> {
   const fallback = buildServiceDetailCopy(slug);
   const expectedKind = mode === "general" ? "GENERAL" : "SPECIALIST";
   const defaultFacts = [
@@ -773,8 +784,8 @@ export async function buildServiceDetailCopyAsync(
       value: mode === "general" ? "General consultation" : "Specialist consultation",
     },
     { label: "Country", value: "Ireland" },
-    { label: "Est. duration", value: "20-30 min (placeholder)" },
-    { label: "Starting price", value: "From EUR 45 (placeholder)" },
+    { label: "Est. duration", value: "Confirmed during booking" },
+    { label: "Starting price", value: "Shown before booking" },
   ];
 
   const services = await getPublicServicesNormalized();
@@ -785,12 +796,12 @@ export async function buildServiceDetailCopyAsync(
     return Boolean(service.legacyPath && service.legacyPath.endsWith(slug));
   });
   if (!match) {
-    return { ...fallback, keyFacts: defaultFacts };
+    return sanitizePublicContent({ ...fallback, keyFacts: defaultFacts });
   }
 
   const countryLabel = countryLabels[match.countryCode] ?? "Ireland";
 
-  return {
+  return sanitizePublicContent({
     title: match.heroTitle ?? match.name,
     description: match.heroDescription ?? match.summary ?? fallback.description,
     body: match.detailBody ? [match.detailBody] : match.summary ? [match.summary] : fallback.body,
@@ -806,28 +817,28 @@ export async function buildServiceDetailCopyAsync(
       {
         label: "Est. duration",
         value:
-          match.durationMinutes != null ? `${match.durationMinutes} min (estimate)` : "20-30 min (placeholder)",
+          match.durationMinutes != null ? `${match.durationMinutes} min (estimate)` : "Confirmed during booking",
       },
       {
         label: "Starting price",
-        value: formatOptionalPrice(match) ?? "From EUR 45 (placeholder)",
+        value: formatOptionalPrice(match) ?? "Shown before booking",
       },
     ],
-  };
+  });
 }
 
 export function buildLegalCopy(title: string) {
-  return {
-    description: "Policy placeholder content pending legal copy migration and compliance review.",
+  return sanitizePublicContent({
+    description: "Official policy information for Global Health patients and website visitors.",
     sections: [
       {
         heading: "Status",
-        body: `${title} details are presented in this policy format and are maintained through structured legal content workflows.`,
+        body: `${title} explains the terms that apply to this website and related Global Health services.`,
       },
       {
         heading: "Scope",
-        body: "This page template is wired and production-safe, but legal body copy remains pending migration.",
+        body: "For questions about this policy, contact the clinic team before booking or using the relevant service.",
       },
     ],
-  };
+  });
 }

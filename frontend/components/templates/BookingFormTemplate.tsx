@@ -381,7 +381,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                   <Check className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-[var(--color-text-primary)]">Licensed clinicians</p>
+                  <p className="text-sm font-semibold text-[var(--color-text-primary)]">Credential-checked clinicians</p>
                   <p className="text-xs text-[var(--color-text-muted)]">Verified credentials</p>
                 </div>
               </div>
@@ -390,6 +390,8 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
         </Container>
       </Section>
       <BookingCTA
+        variant="support"
+        eyebrow="Booking support"
         title="Need urgent support?"
         description="If you are unsure which consultation to choose, start here and our team will guide you."
         ctaLabel={hero.primaryCtaLabel}

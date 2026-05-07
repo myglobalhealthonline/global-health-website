@@ -1,39 +1,37 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BlogArticleTemplate } from "@/components/templates/BlogArticleTemplate";
-import { routeInventory } from "@/data/routes";
+import { blogPosts } from "@/data/blog-posts";
 
 type Params = { slug: string };
-const known = routeInventory.blogPosts.map((p) => p.replace("/post/", ""));
 
 export const metadata: Metadata = {
   title: "Blog Article",
-  description: "Patient-focused blog article.",
+  description: "Health article from Global Health.",
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export function generateStaticParams() {
-  return known.map((slug) => ({ slug }));
-}
-
-function slugToTitle(slug: string) {
-  return slug
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
+  return blogPosts.map((post) => ({ slug: post.slug }));
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
-  if (!known.includes(slug)) notFound();
+  const post = blogPosts.find((item) => item.slug === slug);
+  if (!post) notFound();
 
   return (
     <BlogArticleTemplate
-      title={slugToTitle(slug)}
-      lead="This article explains the topic in clear, patient-friendly language and helps you decide practical next steps."
-      body={[
-        "Online care articles in this section are designed to support decision-making before booking a consultation.",
-        "For personal medical advice, use the booking flow so a clinician can review your context directly and recommend the appropriate pathway.",
-      ]}
+      title={post.title}
+      lead={post.excerpt}
+      body={post.body}
+      author={post.author}
+      reviewer={post.reviewer}
+      category={post.category}
+      updatedAt={post.updatedAt}
     />
   );
 }

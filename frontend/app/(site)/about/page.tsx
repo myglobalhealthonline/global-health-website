@@ -4,7 +4,7 @@ import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
   title: "About Global Health",
-  description: "Template-driven marketing page.",
+  description: "How Global Health helps patients access online consultations across supported countries.",
 };
 
 export default function Page() {

@@ -4,7 +4,7 @@ import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
   title: "Careers",
-  description: "Template-driven marketing page.",
+  description: "Career opportunities supporting online healthcare access at Global Health.",
 };
 
 export default function Page() {

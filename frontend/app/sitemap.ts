@@ -6,12 +6,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const base = getSiteUrl();
   const seen = new Set<string>();
   const urls: MetadataRoute.Sitemap = [];
+  const noindexStatic = new Set([
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/account",
+    "/pricing-plans/list",
+    "/terms-and-conditions",
+    "/privacy-policy",
+    "/copy-of-privacy-policy",
+    "/refund-policy",
+    "/gdpr-compliance",
+  ]);
 
   for (const route of publicRouteRegistry) {
     if (route.path !== route.canonicalPath) continue;
     if (route.path.includes("[")) continue;
     if (route.path.startsWith("/admin") || route.path.startsWith("/account")) continue;
-    if (route.path === "/login" || route.path === "/register" || route.path === "/forgot-password") continue;
+    if (noindexStatic.has(route.path)) continue;
+    if (route.path.startsWith("/category/") || route.path.startsWith("/post/")) continue;
     if (seen.has(route.path)) continue;
     seen.add(route.path);
     urls.push({
@@ -23,4 +36,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return urls;
 }
-

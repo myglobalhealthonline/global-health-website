@@ -4,7 +4,7 @@ import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions",
-  description: "Template-driven marketing page.",
+  description: "Answers about booking, consultation types, privacy, and follow-up.",
 };
 
 export default function Page() {

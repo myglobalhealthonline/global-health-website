@@ -4,7 +4,7 @@ import { getTemplatePageData } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Specialist Consultation - Ireland",
-  description: "Consultation listing template.",
+  description: "Find specialist consultation options in Ireland.",
 };
 
 export default async function Page() {
@@ -35,8 +35,8 @@ export default async function Page() {
         subtitle: "Secure, structured, and patient-focused",
         items: [
           { title: "Licensed specialists", description: "Consultations are delivered by qualified medical professionals." },
-          { title: "Secure consultations", description: "Privacy-first online consultation flow from booking to follow-up." },
-          { title: "Clear next steps", description: "Each consultation ends with actionable guidance." },
+          { title: "Private intake", description: "Privacy-first online consultation flow from booking to follow-up." },
+          { title: "Actionable guidance", description: "Each consultation ends with practical follow-up information." },
         ],
       }}
       bookingHref={data.paths.specialist}

@@ -1,3 +1,5 @@
+import { sanitizePublicContent } from "@/lib/content/publication-guard";
+
 type CategoryPageData = {
   hero: {
     title: string;
@@ -37,7 +39,7 @@ const categoryCopy: Record<string, CategoryPageData> = {
   "health-education": {
     hero: {
       title: "Health education",
-      description: "Find patient-friendly educational content and care navigation support.",
+      description: "Find patient-friendly educational content and consultation guidance.",
       primaryCta: { label: "Read blog", href: "/blog" },
       secondaryCta: { label: "Book consultation", href: "/book-online" },
     },
@@ -83,7 +85,7 @@ const categoryCopy: Record<string, CategoryPageData> = {
 };
 
 export function getCategoryPageData(slug: string): CategoryPageData {
-  return (
+  return sanitizePublicContent(
     categoryCopy[slug] ?? {
       hero: {
         title: "Category",
@@ -92,15 +94,15 @@ export function getCategoryPageData(slug: string): CategoryPageData {
       },
       intro: {
         title: "Category content",
-        body: "Category-specific content is managed through adapters and can be replaced by admin data later.",
+        body: "Use category pages to compare related services and educational resources when enough reviewed content is available.",
       },
       features: [],
       bottomCta: {
         title: "Need support now?",
-        description: "Book online and the clinic team will help guide your next step.",
+        description: "Choose a consultation route and share the context needed for clinical review.",
         ctaLabel: "Book consultation",
         ctaHref: "/book-online",
       },
-    }
+    },
   );
 }

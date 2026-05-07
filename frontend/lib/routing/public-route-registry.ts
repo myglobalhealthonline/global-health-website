@@ -126,7 +126,7 @@ export const publicRouteRegistry: PublicRouteRegistryEntry[] = [
     pageLabel: "Book online",
     navigationLabel: "Book online",
     pageTitle: "Book Online Consultation",
-    shortDescription: "Booking form and intake placeholder.",
+    shortDescription: "Focused booking form and intake flow.",
   }, { showInNavigation: true }),
   ...[
     "/about",
@@ -145,7 +145,7 @@ export const publicRouteRegistry: PublicRouteRegistryEntry[] = [
       pageLabel: toSlugLabel(path),
       navigationLabel: toSlugLabel(path),
       pageTitle: toSlugLabel(path),
-      shortDescription: "Static marketing page driven by adapter data.",
+      shortDescription: "Static patient information page.",
     }, { showInNavigation: ["/about", "/careers"].includes(path) }),
   ),
   ...[
@@ -220,7 +220,7 @@ export const publicRouteRegistry: PublicRouteRegistryEntry[] = [
       pageLabel: toSlugLabel(path),
       navigationLabel: toSlugLabel(canonicalPath),
       pageTitle: toSlugLabel(path),
-      shortDescription: "Legacy alias route preserved for compatibility.",
+      shortDescription: "Redirects to canonical policy page.",
     }, { showInNavigation: false, legacy: true, canonicalPath }),
   ),
   ...routeInventory.categories.map((path) =>
@@ -228,7 +228,7 @@ export const publicRouteRegistry: PublicRouteRegistryEntry[] = [
       pageLabel: toSlugLabel(path),
       navigationLabel: "Categories",
       pageTitle: toSlugLabel(path),
-      shortDescription: "Category page placeholder mapped to shared template.",
+      shortDescription: "Category overview page.",
     }),
   ),
   ...routeInventory.irelandGeneralConsultation.map((path) =>

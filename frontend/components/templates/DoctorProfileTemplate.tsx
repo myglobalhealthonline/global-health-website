@@ -1,9 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BookingCTA } from "@/components/sections/BookingCTA";
-import { TrustBar } from "@/components/sections/TrustBar";
-import { SocialProof } from "@/components/sections/SocialProof";
-import { CountryLinks } from "@/components/sections/CountryLinks";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
@@ -262,6 +259,8 @@ export function DoctorProfileTemplate({ hero, profile, bottomCta, profileImageSr
 
       {/* ── Booking CTA ── */}
       <BookingCTA
+        variant="doctor"
+        eyebrow="Clinician booking"
         title={bottomCta.title}
         description={bottomCta.description}
         ctaLabel={bottomCta.ctaLabel}
@@ -270,13 +269,10 @@ export function DoctorProfileTemplate({ hero, profile, bottomCta, profileImageSr
       />
 
       {/* ── Trust bar ── */}
-      <TrustBar />
 
       {/* ── Social proof ── */}
-      <SocialProof />
 
       {/* ── Country links ── */}
-      <CountryLinks />
     </>
   );
 }

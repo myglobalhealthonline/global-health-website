@@ -16,16 +16,25 @@ export function BlogIndexTemplate({ title, description, posts }: BlogIndexTempla
         eyebrow="Patient education"
         title={title}
         description={description}
-        primaryCta={{ href: "/book-online", label: "Book Online" }}
-        trustBadges={["Plain-language guidance", "Professional review flow", "Patient-first topics"]}
+        primaryCta={{ href: "/general-consultation-ie", label: "Explore consultations" }}
+        trustBadges={["Author required", "Medical review required", "Updated before publication"]}
       />
       <Section>
         <Container>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-            {posts.map((post) => (
-              <BlogCard key={post.href} {...post} />
-            ))}
-          </div>
+          {posts.length > 0 ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+              {posts.map((post) => (
+                <BlogCard key={post.href} {...post} />
+              ))}
+            </div>
+          ) : (
+            <div className="mx-auto max-w-3xl rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-8 text-center shadow-[var(--shadow-card)]">
+              <h2 className="gh-h3 text-[var(--color-text-primary)]">Editorial articles are being prepared</h2>
+              <p className="gh-body mt-3 text-[var(--color-text-muted)]">
+                We publish healthcare articles only when author, review, and update details are ready. For personal advice, start with the consultation pages.
+              </p>
+            </div>
+          )}
         </Container>
       </Section>
     </>

@@ -1,9 +1,6 @@
 ﻿import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { TeamHero } from "@/components/sections/TeamHero";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
-import { TrustBar } from "@/components/sections/TrustBar";
-import { SocialProof } from "@/components/sections/SocialProof";
-import { CountryLinks } from "@/components/sections/CountryLinks";
 import { BookingCTA } from "@/components/sections/BookingCTA";
 
 type DoctorTeamTemplateProps = {
@@ -40,22 +37,18 @@ export function DoctorTeamTemplate({ countryName, doctors, bookingHref, bookingL
       
       <DoctorsSection
         title={`${countryName} medical team`}
-        intro="Clinician profiles and specialties are country-managed through content adapters and future admin data."
+        intro="Review clinician specialties, languages, and registration details before choosing a booking route."
         doctors={remainingDoctors}
       />
-      
-      <TrustBar />
-      
+
       <BookingCTA
-        title="Start Your Online Consultation"
-        description="Choose your country and connect with a licensed doctor in minutes. 100% online, no waiting rooms, confidential."
+        variant="doctor"
+        eyebrow={`${countryName} clinician access`}
+        title="Book with the right clinician"
+        description="Choose a consultation route after reviewing clinician fit, specialty, and availability."
         ctaLabel={bookingLabel}
         ctaHref={bookingHref}
       />
-      
-      <SocialProof />
-      
-      <CountryLinks />
     </>
   );
 }

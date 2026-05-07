@@ -6,7 +6,7 @@ import { getTemplatePageData } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Home Delivery - Ireland",
-  description: "Admin-managed home delivery services for Ireland.",
+  description: "Home delivery support after clinical review in Ireland.",
 };
 
 export default async function Page() {
@@ -45,7 +45,7 @@ export default async function Page() {
   return (
     <ConsultationListingTemplate
       title="Home Delivery - Ireland"
-      description="Browse delivery-related services with admin-managed pricing, timing, and service details."
+      description="Browse delivery-related services with pricing, timing, coverage, and service details."
       mode="general"
       listing={listing}
       howItWorks={{
@@ -63,7 +63,7 @@ export default async function Page() {
         items: [
           { title: "Clear delivery details", description: "Service records include delivery-specific guidance." },
           { title: "Secure workflow", description: "Patient and delivery details are handled safely." },
-          { title: "Admin-controlled availability", description: "Only active services appear on this page." },
+          { title: "Availability shown before booking", description: "Only currently available delivery services appear on this page." },
         ],
       }}
       faq={{ title: "Home delivery FAQs", items: templateData.faqItems }}

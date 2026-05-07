@@ -8,7 +8,11 @@ type Params = { testSlug: string };
 
 export const metadata: Metadata = {
   title: "Home Health Test",
-  description: "Health test detail route backed by admin services.",
+  description: "Home health test detail and follow-up guidance.",
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 export default async function HomeHealthTestPage({ params }: { params: Promise<Params> }) {
@@ -23,11 +27,11 @@ export default async function HomeHealthTestPage({ params }: { params: Promise<P
       title={copy.title}
       description={copy.description}
       body={copy.body}
-      bodyHtml={"bodyHtml" in copy ? copy.bodyHtml : null}
-      keyFacts={"keyFacts" in copy ? copy.keyFacts : undefined}
+      bodyHtml={copy.bodyHtml ?? null}
+      keyFacts={copy.keyFacts}
       bookingHref="/book-online"
-      bookingLabel={"bookingLabel" in copy && copy.bookingLabel ? copy.bookingLabel : "Book Online"}
-      imageSrc={"imageSrc" in copy ? copy.imageSrc : undefined}
+      bookingLabel={copy.bookingLabel ?? "Book Online"}
+      imageSrc={copy.imageSrc}
     />
   );
 }

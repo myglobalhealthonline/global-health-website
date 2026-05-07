@@ -4,7 +4,7 @@ import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
   title: "Partner Clinics",
-  description: "Template-driven marketing page.",
+  description: "Partner clinic information for local healthcare continuity.",
 };
 
 export default function Page() {

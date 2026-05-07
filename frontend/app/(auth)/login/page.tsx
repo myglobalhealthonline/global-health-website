@@ -56,7 +56,7 @@ export default async function Page() {
                   <Stethoscope className="size-5 text-white" aria-hidden />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold">Licensed clinicians</p>
+                  <p className="text-sm font-semibold">Credential-checked clinicians</p>
                   <p className="text-sm text-white/70">Connect with qualified medical professionals.</p>
                 </div>
               </div>
@@ -65,7 +65,7 @@ export default async function Page() {
                   <Clock className="size-5 text-white" aria-hidden />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold">Clear next steps</p>
+                  <p className="text-sm font-semibold">Practical follow-up</p>
                   <p className="text-sm text-white/70">We follow up on every booking request promptly.</p>
                 </div>
               </div>

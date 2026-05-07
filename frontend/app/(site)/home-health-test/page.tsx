@@ -6,7 +6,7 @@ import { getTemplatePageData } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
   title: "Home Health Tests - Ireland",
-  description: "Admin-managed home health test services for Ireland.",
+  description: "Home health test services and clinical follow-up for Ireland.",
 };
 
 export default async function Page() {
@@ -45,7 +45,7 @@ export default async function Page() {
   return (
     <ConsultationListingTemplate
       title="Home Health Tests - Ireland"
-      description="Browse admin-managed health tests with pricing, timing, and clear next-step guidance."
+      description="Browse home health tests with pricing, timing, sample workflow, and clinical follow-up guidance."
       mode="general"
       listing={listing}
       howItWorks={{
@@ -61,7 +61,7 @@ export default async function Page() {
         title: "Health test support you can trust",
         subtitle: "Clear process, secure handling, clinician-backed follow-up",
         items: [
-          { title: "Structured testing flow", description: "Service details and instructions are managed in admin." },
+          { title: "Structured testing flow", description: "Service details explain preparation, sample handling, and follow-up expectations." },
           { title: "Secure records", description: "Sensitive details are handled through secure channels." },
           { title: "Practical follow-up", description: "Results include next-step care guidance when needed." },
         ],

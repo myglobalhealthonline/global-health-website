@@ -8,7 +8,7 @@ type Params = { serviceSlug: string };
 
 export const metadata: Metadata = {
   title: "Ireland Specialist Consultation",
-  description: "Service detail template for Ireland specialist pages.",
+  description: "Ireland specialist consultation service details.",
 };
 
 export default async function IrelandSpecialistServicePage({ params }: { params: Promise<Params> }) {
@@ -22,11 +22,11 @@ export default async function IrelandSpecialistServicePage({ params }: { params:
       title={copy.title}
       description={copy.description}
       body={copy.body}
-      bodyHtml={"bodyHtml" in copy ? copy.bodyHtml : null}
+      bodyHtml={copy.bodyHtml ?? null}
       keyFacts={copy.keyFacts}
       bookingHref="/specialty-ie"
-      bookingLabel={"bookingLabel" in copy && copy.bookingLabel ? copy.bookingLabel : "Book Online"}
-      imageSrc={"imageSrc" in copy ? copy.imageSrc : undefined}
+      bookingLabel={copy.bookingLabel ?? "Book Online"}
+      imageSrc={copy.imageSrc}
     />
   );
 }

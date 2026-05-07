@@ -1,3 +1,5 @@
+import { sanitizePublicContent } from "@/lib/content/publication-guard";
+
 export type MarketingPageData = {
   hero: {
     title: string;
@@ -14,7 +16,7 @@ export type MarketingPageData = {
 
 const defaultBottomCta = {
   title: "Ready to start?",
-  description: "Book online and the clinic team will guide you to the right next step.",
+  description: "Choose the consultation route that matches your concern and complete the booking form.",
   ctaLabel: "Book consultation",
   ctaHref: "/book-online",
 };
@@ -46,8 +48,8 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
         ctaLabel: "View country hubs",
       },
       {
-        title: "Patient-first communication",
-        description: "Content is written to be clear for non-technical users and mobile-friendly.",
+        title: "Clear patient communication",
+        description: "Pages explain service fit, booking steps, and follow-up expectations in plain language.",
       },
     ],
     relatedLinks: [
@@ -65,7 +67,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Join the team",
-      body: "We are building patient-friendly digital care pathways across countries. Role-specific hiring details will be managed in future content workflows.",
+      body: "We support clinical and operations teams who help patients access online care across selected countries.",
     },
     features: [
       {
@@ -91,7 +93,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "How gift cards work",
-      body: "Gift cards can be used toward eligible consultation bookings. Final redemption and policy details will be confirmed in approved legal and billing content.",
+      body: "Gift cards can be used toward eligible consultation bookings. Redemption rules, country availability, and expiry terms are explained before purchase.",
     },
     features: [
       {
@@ -113,12 +115,12 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     hero: {
       title: "Plans and pricing",
       description: "Review consultation pricing structure and choose what fits your needs.",
-      primaryCta: { label: "View pricing list", href: "/pricing-plans/list" },
+      primaryCta: { label: "Compare consultation options", href: "/plans-pricing" },
       secondaryCta: { label: "Book consultation", href: "/book-online" },
     },
     intro: {
       title: "Pricing transparency",
-      body: "Consultation pricing is presented by service type so patients can compare options before booking. Exact per-country values and policy notes are maintained in structured pricing adapters.",
+      body: "Consultation pricing is presented by service type so patients can compare options before booking. Country, currency, and service-specific details are confirmed before payment.",
     },
     features: [
       {
@@ -180,7 +182,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Prescription pathway",
-      body: "Prescription-related requests are reviewed during consultation to determine the appropriate next step. Final prescribing guidance and eligibility text are managed per country.",
+      body: "Prescription-related requests are reviewed during consultation to determine whether treatment, prescription review, referral, or in-person care is appropriate.",
     },
     features: [
       {
@@ -267,7 +269,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Clinic network",
-      body: "Partner clinics help extend local support and continuity of care. Detailed partner listings will be managed through structured content and compliance review.",
+      body: "Partner clinics help extend local support and continuity of care when online review needs local follow-up.",
     },
     features: [
       {
@@ -293,7 +295,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     intro: {
       title: "Business healthcare support",
-      body: "Corporate plans support employers with structured consultation access for teams. Final plan details and onboarding terms are managed in future pricing/content administration.",
+      body: "Corporate plans support employers with structured consultation access for teams, with onboarding terms agreed before rollout.",
     },
     features: [
       {
@@ -340,76 +342,21 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
     bottomCta: defaultBottomCta,
   },
-  "/terms-and-conditions": {
-    hero: {
-      title: "Terms and Conditions (Legacy URL)",
-      description: "This legacy route is preserved for compatibility.",
-      primaryCta: { label: "View canonical page", href: "/term-and-conditions" },
-    },
-    intro: {
-      title: "Legacy compatibility route",
-      body: "TODO: Replace with canonical-link notice or dedicated redirect policy if needed.",
-    },
-  },
-  "/privacy-policy": {
-    hero: {
-      title: "Privacy Policy (Legacy URL)",
-      description: "This legacy route is preserved for compatibility.",
-      primaryCta: { label: "View canonical page", href: "/privacy" },
-    },
-    intro: {
-      title: "Legacy compatibility route",
-      body: "TODO: Replace with canonical-link notice or dedicated redirect policy if needed.",
-    },
-  },
-  "/refund-policy": {
-    hero: {
-      title: "Refund Policy (Legacy URL)",
-      description: "This legacy route is preserved for compatibility.",
-      primaryCta: { label: "View canonical page", href: "/return-and-refund-policy" },
-    },
-    intro: {
-      title: "Legacy compatibility route",
-      body: "TODO: Replace with canonical-link notice or dedicated redirect policy if needed.",
-    },
-  },
-  "/gdpr-compliance": {
-    hero: {
-      title: "GDPR Compliance (Legacy URL)",
-      description: "This legacy route is preserved for compatibility.",
-      primaryCta: { label: "View privacy policy", href: "/privacy" },
-    },
-    intro: {
-      title: "Legacy compatibility route",
-      body: "TODO: Replace with canonical-link notice or dedicated redirect policy if needed.",
-    },
-  },
-  "/copy-of-privacy-policy": {
-    hero: {
-      title: "Privacy Policy Copy (Legacy URL)",
-      description: "This legacy route is preserved for compatibility.",
-      primaryCta: { label: "View canonical page", href: "/privacy" },
-    },
-    intro: {
-      title: "Legacy compatibility route",
-      body: "TODO: Replace with canonical-link notice or dedicated redirect policy if needed.",
-    },
-  },
 };
 
 export function getMarketingPageData(routePath: string): MarketingPageData {
-  return (
+  return sanitizePublicContent(
     marketingDataByRoute[routePath] ?? {
       hero: {
-        title: "Page placeholder",
-        description: "TODO: Replace with approved marketing content.",
+        title: "Global Health",
+        description: "Find online consultation information and choose the route that fits your country and care need.",
         primaryCta: { label: "Book consultation", href: "/book-online" },
       },
       intro: {
-        title: "Content pending",
-        body: "TODO: Replace with route-specific approved content.",
+        title: "Choose a consultation route",
+        body: "Use the available country, service, and booking pages to compare care options before making an appointment.",
       },
       bottomCta: defaultBottomCta,
-    }
+    },
   );
 }

@@ -4,7 +4,7 @@ import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
   title: "Gift Card",
-  description: "Template-driven marketing page.",
+  description: "Gift card information for eligible Global Health consultation bookings.",
 };
 
 export default function Page() {

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { ArrowRight, Clock, Star, ChevronRight, Play } from "lucide-react";
 import { BookingCTA } from "@/components/sections/BookingCTA";
 import { HowItWorks } from "@/components/sections/HowItWorks";
-import { TrustSignals } from "@/components/sections/TrustSignals";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { HealthcareMediaFrame } from "@/components/media/HealthcareMediaFrame";
@@ -491,11 +490,35 @@ export function CountryHomeTemplate({
         </Section>
       )}
 
-      {/* Trust Signals */}
-      <TrustSignals title={trustTitle} subtitle={trustSubtitle} items={trustItems} />
+      {/* Country Trust Proof */}
+      {trustItems.length > 0 ? (
+        <Section className="bg-white py-10">
+          <Container>
+            <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+              <div>
+                <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-primary)]">
+                  Local access
+                </span>
+                <h2 className="gh-h2 mt-4 text-[var(--color-text-primary)]">{trustTitle}</h2>
+                {trustSubtitle ? <p className="gh-body mt-3 text-[var(--color-text-muted)]">{trustSubtitle}</p> : null}
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {trustItems.map((item) => (
+                  <article key={item.title} className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-soft)] p-5">
+                    <h3 className="font-bold text-[var(--color-text-primary)]">{item.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-[var(--color-text-muted)]">{item.description}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </Container>
+        </Section>
+      ) : null}
 
       {/* Booking CTA */}
       <BookingCTA
+        variant="compact"
+        eyebrow={`${countryName} booking`}
         title={bookingCta?.title ?? "Ready to get started?"}
         description={bookingCta?.description ?? "Book an online consultation with your local clinic team."}
         ctaLabel={bookingCta?.ctaLabel ?? primaryBooking.label}

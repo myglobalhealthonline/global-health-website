@@ -5,7 +5,7 @@ import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
   title: "Plans and Pricing",
-  description: "Template-driven marketing page.",
+  description: "Compare Global Health consultation pricing and service options.",
 };
 
 export default async function Page() {
