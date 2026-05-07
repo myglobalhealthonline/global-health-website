@@ -98,7 +98,7 @@ export default async function AdminSpecialtiesPage({ searchParams }: PageProps) 
       <p className="gh-body mt-3 text-[var(--color-text-muted)]">
         Manage one specialty card per listing tile. Each specialty can control its own image,
         summary, theme color, and sort order. Consultation time and price come from the service
-        assigned to that specialty in the Services section.
+        assigned to that specialty in the specialist consultations section.
       </p>
 
       {sp.error ? (
@@ -143,7 +143,7 @@ export default async function AdminSpecialtiesPage({ searchParams }: PageProps) 
           </div>
           <p className="text-xs text-[var(--color-text-muted)]">
             The card links automatically to the first active service under this specialty. Edit
-            consultation time and price in <Link href="/admin/services" className="gh-link">Services</Link>.
+            consultation time and price in <Link href="/admin/specialist-consultations" className="gh-link">Specialist Consultations</Link>.
           </p>
           <label className="flex items-center gap-2 text-sm text-[var(--color-text-primary)]">
             <input type="checkbox" name="active" defaultChecked className="h-4 w-4" />
@@ -209,8 +209,8 @@ export default async function AdminSpecialtiesPage({ searchParams }: PageProps) 
         )}
       </div>
 
-      <Link href="/admin/services" className="mt-6 inline-block gh-link text-[var(--color-brand-primary)]">
-        Go to services
+      <Link href="/admin/specialist-consultations" className="mt-6 inline-block gh-link text-[var(--color-brand-primary)]">
+        Go to specialist consultations
       </Link>
     </section>
   );

@@ -1,13 +1,74 @@
 ﻿import type { Metadata } from "next";
-import { StaticMarketingTemplate } from "@/components/templates/StaticMarketingTemplate";
-import { getMarketingPageData } from "@/lib/content/marketing-page-data";
+import { ConsultationListingTemplate } from "@/components/templates/ConsultationListingTemplate";
+import { formatOptionalPrice, getPublicServicesForCountry } from "@/lib/content/get-public-services";
+import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
+import { getTemplatePageData } from "@/lib/content/template-page-data";
 
 export const metadata: Metadata = {
-  title: "Home Delivery",
-  description: "Template-driven marketing page.",
+  title: "Home Delivery - Ireland",
+  description: "Admin-managed home delivery services for Ireland.",
 };
 
-export default function Page() {
-  const data = getMarketingPageData("/home-delivery");
-  return <StaticMarketingTemplate {...data} />;
+export default async function Page() {
+  const [services, templateData] = await Promise.all([
+    getPublicServicesForCountry("ie"),
+    getTemplatePageData("/home-delivery", "ie"),
+  ]);
+
+  const listing = services
+    .filter((service) => service.kind === "HOME_DELIVERY")
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name))
+    .map((service) => {
+      const href =
+        service.legacyPath && service.legacyPath !== "/home-delivery"
+          ? service.legacyPath
+          : `/services/ie-${service.slug}`;
+      return {
+        title: service.name,
+        description:
+          service.summary ??
+          "Home delivery service with clear delivery notes, timing guidance, and secure handling.",
+        href,
+        serviceType: "general" as const,
+        duration: service.durationMinutes != null ? `${service.durationMinutes} min` : undefined,
+        startingPrice: formatOptionalPrice(service),
+        imageSrc: service.imagePath ? (resolveTrustedAssetUrl(service.imagePath) ?? service.imagePath) : undefined,
+        stats: [
+          service.durationMinutes != null ? `${service.durationMinutes} min` : null,
+          formatOptionalPrice(service) ?? null,
+        ]
+          .filter(Boolean)
+          .join(" • "),
+      };
+    });
+
+  return (
+    <ConsultationListingTemplate
+      title="Home Delivery - Ireland"
+      description="Browse delivery-related services with admin-managed pricing, timing, and service details."
+      mode="general"
+      listing={listing}
+      howItWorks={{
+        title: "How home delivery works",
+        subtitle: "Simple delivery flow after consultation",
+        steps: [
+          { title: "Choose delivery service", description: "Select the delivery option that fits your route." },
+          { title: "Confirm details", description: "Provide required delivery and contact details." },
+          { title: "Receive delivery update", description: "Get delivery status and follow-up guidance." },
+        ],
+      }}
+      trust={{
+        title: "Delivery support you can trust",
+        subtitle: "Reliable process with secure handling",
+        items: [
+          { title: "Clear delivery details", description: "Service records include delivery-specific guidance." },
+          { title: "Secure workflow", description: "Patient and delivery details are handled safely." },
+          { title: "Admin-controlled availability", description: "Only active services appear on this page." },
+        ],
+      }}
+      faq={{ title: "Home delivery FAQs", items: templateData.faqItems }}
+      bookingHref={templateData.paths.general}
+      bookingLabel="Book consultation"
+    />
+  );
 }

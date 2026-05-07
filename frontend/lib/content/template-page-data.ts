@@ -12,7 +12,6 @@ import {
 import type { PublicServiceRecord } from "@/lib/content/get-public-services";
 import {
   formatOptionalPrice,
-  getPublicServiceBySlug,
   getPublicServicesForCountry,
   getPublicServicesNormalized,
 } from "@/lib/content/get-public-services";
@@ -40,6 +39,26 @@ type ServiceCardData = {
   themeColor?: string;
   stats?: string;
 };
+
+function buildPublicServiceHref(service: PublicServiceRecord, countryCode: CountryCode): string {
+  const countryPaths = pathByCountry[countryCode];
+  if (service.legacyPath) {
+    if (service.kind === "GENERAL" && service.legacyPath === countryPaths.general) {
+      return countryCode === "ie" ? `/ireland/${service.slug}` : `/service-page/${service.slug}`;
+    }
+    if (service.kind === "SPECIALIST" && service.legacyPath === countryPaths.specialist) {
+      return countryCode === "ie" ? `/ireland-specialist-consultations/${service.slug}` : `/service-page/${service.slug}`;
+    }
+    return service.legacyPath;
+  }
+  if (service.kind === "SPECIALIST" && countryCode === "ie") {
+    return `/ireland-specialist-consultations/${service.slug}`;
+  }
+  if (service.kind === "GENERAL" && countryCode === "ie") {
+    return `/ireland/${service.slug}`;
+  }
+  return `/services/${countryCode}-${service.slug}`;
+}
 
 export type HomeTemplateData = {
   hero: {
@@ -464,38 +483,35 @@ function buildFaqItems(countryCode: CountryCode, countryName: string) {
   ];
 }
 
-function buildGeneralConsultationCards(countryCode: CountryCode): ServiceCardData[] {
-  if (countryCode === "ie") {
-    return routeInventory.irelandGeneralConsultation.map((route) => {
-      const slug = route.replace("/ireland/", "");
-      return {
-        title: slugToLabel(slug),
-        description: "Online consultation pathway for this health concern, with intake review and next-step guidance.",
-        href: route,
-        serviceType: "general",
-        audience: "Adults and families",
-        duration: "20-30 min",
-        startingPrice: "From EUR 45",
-      };
-    });
-  }
-
-  const seed = specialtyCardSeeds[countryCode].slice(0, 6);
-  return seed.map((item) => ({
-    title: item.title,
-    description: "Country-adapted general consultation service with secure booking and clinician follow-up guidance.",
-    href: `/service-page/${item.title.toLowerCase().replaceAll(" ", "-").replaceAll("’", "").replaceAll("'", "")}`,
-    serviceType: "general",
-    audience: "Adults and families",
-    duration: "20-30 min",
-    startingPrice: "From EUR 35",
-  }));
+function buildGeneralConsultationCards(countryCode: CountryCode, services: PublicServiceRecord[]): ServiceCardData[] {
+  return services
+    .filter((service) => service.kind === "GENERAL")
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name))
+    .map((service) => ({
+      title: service.name,
+      description:
+        service.summary ??
+        "Online consultation pathway for this health concern, with intake review and next-step guidance.",
+      href: buildPublicServiceHref(service, countryCode),
+      serviceType: "general",
+      audience: "Adults and families",
+      duration: service.durationMinutes != null ? `${service.durationMinutes} min` : undefined,
+      startingPrice: formatOptionalPrice(service),
+      imageSrc: service.imagePath ? (resolveTrustedAssetUrl(service.imagePath) ?? service.imagePath) : undefined,
+      stats: [
+        service.durationMinutes != null ? `${service.durationMinutes} min` : null,
+        formatOptionalPrice(service) ?? null,
+      ]
+        .filter(Boolean)
+        .join(" • "),
+    }));
 }
 
 function buildGeneralConsultationTemplateData(
   countryCode: CountryCode,
   countryName: string,
   paths: CountryPaths,
+  services: PublicServiceRecord[],
 ): GeneralConsultationTemplateData {
   return {
     heroTitle: `General Consultation - ${countryName}`,
@@ -506,7 +522,7 @@ function buildGeneralConsultationTemplateData(
       title: `What general consultations include in ${countryName}`,
       body: "General consultations cover common health concerns, first assessments, and guidance on next steps. Service availability and final scope details are confirmed during booking and intake.",
     },
-    serviceCards: buildGeneralConsultationCards(countryCode),
+    serviceCards: buildGeneralConsultationCards(countryCode, services),
     pricing: {
       title: "Starting from",
       description:
@@ -606,30 +622,6 @@ function mapPublicDoctorToCard(
   };
 }
 
-function mergeServiceCardsWithBackend(
-  cards: ServiceCardData[],
-  services: PublicServiceRecord[],
-  countryCode: CountryCode,
-): ServiceCardData[] {
-  if (countryCode !== "ie") return cards;
-  return cards.map((card) => {
-    const match = services.find((s) => {
-      if (s.countryCode !== "ie") return false;
-      if (s.legacyPath && s.legacyPath === card.href) return true;
-      return `/ireland/${s.slug}` === card.href;
-    });
-    if (!match) return card;
-    return {
-      ...card,
-      title: match.name,
-      description: match.summary ?? card.description,
-      startingPrice: formatOptionalPrice(match) ?? card.startingPrice,
-      duration:
-        match.durationMinutes != null ? `${match.durationMinutes} min` : card.duration,
-    };
-  });
-}
-
 function mergeSpecialistListingCopy(
   listing: Array<ServiceCardData>,
   services: PublicServiceRecord[],
@@ -662,21 +654,16 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
   ]);
   const publicSpecialties = await getPublicSpecialtiesForCountry(country.code);
 
-  const generalListing = routeInventory.irelandGeneralConsultation.map((route) => {
-    const slug = route.replace("/ireland/", "");
-    const match = publicServices.find((s) => {
-      if (s.countryCode !== "ie") return false;
-      if (s.legacyPath && s.legacyPath === route) return true;
-      return `/ireland/${s.slug}` === route;
-    });
-    return {
-      title: match?.name ?? slugToLabel(slug),
+  const generalListing = publicServices
+    .filter((service) => service.kind === "GENERAL")
+    .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name))
+    .map((service) => ({
+      title: service.name,
       description:
-        match?.summary ??
+        service.summary ??
         "Online consultation with secure intake, clinician review, and clear follow-up guidance.",
-      href: route,
-    };
-  });
+      href: buildPublicServiceHref(service, country.code),
+    }));
 
   const specialistListingRaw =
     publicSpecialties.length > 0
@@ -701,8 +688,10 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
               stats: [
                 primaryService.durationMinutes != null ? `${primaryService.durationMinutes} min` : null,
                 primaryService.basePriceCents != null && primaryService.currencyCode
-                  ? formatOptionalPrice({
+                    ? formatOptionalPrice({
                       ...primaryService,
+                      kind: "SPECIALIST",
+                      sortOrder: specialty.sortOrder,
                       countryCode: country.code,
                       heroTitle: null,
                       heroDescription: null,
@@ -717,19 +706,7 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
                 .join(" • "),
             };
           })
-      : routeInventory.irelandSpecialistConsultation.map((route) => {
-          const slug = route.replace("/ireland-specialist-consultations/", "");
-          const seed = specialtyCardSeeds.ie.find((s) =>
-            s.title.toLowerCase().includes(slug.replace(/-/g, " ").toLowerCase())
-          );
-          return {
-            title: slugToLabel(slug),
-            description:
-              seed?.description ??
-              "Specialist consultation with secure online booking and clinician follow-up guidance.",
-            href: route,
-          };
-        });
+      : [];
 
   const specialistListing = mergeSpecialistListingCopy(specialistListingRaw, publicServices);
 
@@ -752,16 +729,10 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     country.code,
     country.name,
     paths,
+    publicServices,
   );
 
-  const generalConsultation = {
-    ...generalConsultationRaw,
-    serviceCards: mergeServiceCardsWithBackend(
-      generalConsultationRaw.serviceCards,
-      publicServices,
-      country.code,
-    ),
-  };
+  const generalConsultation = generalConsultationRaw;
 
   return {
     site,
@@ -789,8 +760,13 @@ export function buildServiceDetailCopy(slug: string) {
   };
 }
 
-export async function buildServiceDetailCopyAsync(slug: string, mode: "general" | "specialist") {
+export async function buildServiceDetailCopyAsync(
+  slug: string,
+  mode: "general" | "specialist",
+  countryCode?: CountryCode,
+) {
   const fallback = buildServiceDetailCopy(slug);
+  const expectedKind = mode === "general" ? "GENERAL" : "SPECIALIST";
   const defaultFacts = [
     {
       label: "Service type",
@@ -802,17 +778,17 @@ export async function buildServiceDetailCopyAsync(slug: string, mode: "general" 
   ];
 
   const services = await getPublicServicesNormalized();
-  const canonicalHref = mode === "general" ? `/ireland/${slug}` : `/ireland-specialist-consultations/${slug}`;
-  const direct = await getPublicServiceBySlug("ie", slug);
-  const match = direct ?? services.find((s) => {
-    if (s.countryCode !== "ie") return false;
-    if (s.slug === slug) return true;
-    if (s.legacyPath && (s.legacyPath === canonicalHref || s.legacyPath.endsWith(slug))) return true;
-    return false;
+  const match = services.find((service) => {
+    if (countryCode && service.countryCode !== countryCode) return false;
+    if (service.kind !== expectedKind) return false;
+    if (service.slug === slug) return true;
+    return Boolean(service.legacyPath && service.legacyPath.endsWith(slug));
   });
   if (!match) {
     return { ...fallback, keyFacts: defaultFacts };
   }
+
+  const countryLabel = countryLabels[match.countryCode] ?? "Ireland";
 
   return {
     title: match.heroTitle ?? match.name,
@@ -826,7 +802,7 @@ export async function buildServiceDetailCopyAsync(slug: string, mode: "general" 
         label: "Service type",
         value: mode === "general" ? "General consultation" : "Specialist consultation",
       },
-      { label: "Country", value: "Ireland" },
+      { label: "Country", value: countryLabel },
       {
         label: "Est. duration",
         value:

@@ -2,7 +2,7 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, LocaleCode, UserRole } from "@prisma/client";
+import { PrismaClient, LocaleCode, ServiceKind, UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { Pool } from "pg";
 import {
@@ -25,6 +25,7 @@ const prisma = new PrismaClient({ adapter });
 
 type SeedDoctor = { slug: string; fullName: string; title: string; bio?: string };
 type SeedService = {
+  kind: ServiceKind;
   slug: string;
   name: string;
   legacyPath: string;
@@ -59,6 +60,7 @@ async function main() {
       },
       specialty: { slug: "cardiology", name: "Cardiology" },
       service: {
+        kind: ServiceKind.GENERAL,
         slug: "medical-consultation",
         name: "Medical Consultation",
         legacyPath: "/ireland/medical-consultation",
@@ -82,7 +84,7 @@ async function main() {
       domain: "pt.myglobalhealth.online",
       doctor: { slug: "dr-tiago-miguel-figueira", fullName: "Dr Tiago Miguel Figueira", title: "General Practitioner" },
       specialty: { slug: "nutrition", name: "Nutrition" },
-      service: { slug: "medical-consultation", name: "Consulta Medica", legacyPath: "/general-consultation-pt" },
+      service: { kind: ServiceKind.GENERAL, slug: "medical-consultation", name: "Consulta Medica", legacyPath: "/general-consultation-pt" },
       plan: { slug: "starter", name: "Plano Inicial", priceCents: 4500 },
       heroPath: "/images/hero/country-home-hero-ai.svg",
     },
@@ -99,7 +101,7 @@ async function main() {
       domain: "es.myglobalhealth.online",
       doctor: { slug: "dr-fatima-ali", fullName: "Dr Fatima Ali", title: "General Practitioner" },
       specialty: { slug: "dermatology", name: "Dermatology" },
-      service: { slug: "medical-consultation", name: "Consulta Medica", legacyPath: "/general-consultation-sp" },
+      service: { kind: ServiceKind.GENERAL, slug: "medical-consultation", name: "Consulta Medica", legacyPath: "/general-consultation-sp" },
       plan: { slug: "starter", name: "Plan Inicial", priceCents: 4700 },
       heroPath: "/images/hero/country-home-hero-ai.svg",
     },
@@ -116,7 +118,7 @@ async function main() {
       domain: "cz.myglobalhealth.online",
       doctor: { slug: "dr-emmanuel-dabup", fullName: "Dr Emmanuel Dabup", title: "General Practitioner" },
       specialty: { slug: "urology", name: "Urology" },
-      service: { slug: "medical-consultation", name: "Lekarska Konzultace", legacyPath: "/general-consultation-cz" },
+      service: { kind: ServiceKind.GENERAL, slug: "medical-consultation", name: "Lekarska Konzultace", legacyPath: "/general-consultation-cz" },
       plan: { slug: "starter", name: "Zakladni Plan", priceCents: 4300 },
       heroPath: "/images/hero/country-home-hero-ai.svg",
     },
@@ -133,7 +135,7 @@ async function main() {
       domain: "ro.myglobalhealth.online",
       doctor: { slug: "dr-maristela-ferro-nepomuceno", fullName: "Dr Maristela Ferro Nepomuceno", title: "General Practitioner" },
       specialty: { slug: "neurology", name: "Neurology" },
-      service: { slug: "medical-consultation", name: "Consultatie Medicala", legacyPath: "/general-consultation-rm" },
+      service: { kind: ServiceKind.GENERAL, slug: "medical-consultation", name: "Consultatie Medicala", legacyPath: "/general-consultation-rm" },
       plan: { slug: "starter", name: "Plan Initial", priceCents: 4200 },
       heroPath: "/images/hero/country-home-hero-ai.svg",
     },
@@ -225,18 +227,20 @@ async function main() {
     await prisma.service.upsert({
       where: { countryId_slug: { countryId: country.id, slug: svc.slug } },
       update: {
+        kind: svc.kind,
         name: svc.name,
         legacyPath: svc.legacyPath,
-        specialtyId: specialty.id,
+        specialtyId: svc.kind === ServiceKind.SPECIALIST ? specialty.id : null,
         ...(svc.summary !== undefined ? { summary: svc.summary } : {}),
         ...(svc.durationMinutes !== undefined ? { durationMinutes: svc.durationMinutes } : {}),
       },
       create: {
         countryId: country.id,
+        kind: svc.kind,
         slug: svc.slug,
         name: svc.name,
         legacyPath: svc.legacyPath,
-        specialtyId: specialty.id,
+        specialtyId: svc.kind === ServiceKind.SPECIALIST ? specialty.id : null,
         currencyCode: "EUR",
         basePriceCents: 3900,
         ...(svc.summary !== undefined ? { summary: svc.summary } : {}),

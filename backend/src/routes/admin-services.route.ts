@@ -9,6 +9,7 @@ import {
   listAdminServices,
   listSpecialtiesForAdminCountry,
   ServiceCountryNotFoundError,
+  ServiceKindInvalidError,
   ServiceSpecialtyInvalidError,
   updateAdminSpecialty,
   updateAdminService,
@@ -33,7 +34,11 @@ function handleServiceWriteError(
   },
   error: unknown,
 ) {
-  if (error instanceof ServiceCountryNotFoundError || error instanceof ServiceSpecialtyInvalidError) {
+  if (
+    error instanceof ServiceCountryNotFoundError ||
+    error instanceof ServiceSpecialtyInvalidError ||
+    error instanceof ServiceKindInvalidError
+  ) {
     return reply.status(400).send(errorResponse(error.message));
   }
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {

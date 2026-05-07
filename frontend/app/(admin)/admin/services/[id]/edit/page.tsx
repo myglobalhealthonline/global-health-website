@@ -8,12 +8,13 @@ import {
   fetchAdminSpecialties,
   patchAdminService,
 } from "@/lib/admin/admin-api";
+import { readServiceKind, SERVICE_KIND_META } from "@/lib/admin/service-kind";
 
 export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ error?: string }>;
+  searchParams?: Promise<{ error?: string; kind?: string }>;
 };
 
 export default async function AdminEditServicePage({ params, searchParams }: PageProps) {
@@ -39,20 +40,22 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit service</h1>
         <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load service: {serviceResult.message}</p>
-        <Link href="/admin/services" className="mt-6 inline-block gh-link">
-          Back to services
+        <Link href="/admin/general-consultations" className="mt-6 inline-block gh-link">
+          Back to consultations
         </Link>
       </section>
     );
   }
 
   const service = serviceResult.data.service;
+  const kind = readServiceKind(messages.kind, service.kind);
+  const meta = SERVICE_KIND_META[kind];
   const specialtiesResult = await fetchAdminSpecialties(service.countryId);
 
   if (!specialtiesResult.ok) {
     return (
       <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit service</h1>
+        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit {meta.singularLabel.toLowerCase()}</h1>
         <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load specialties: {specialtiesResult.message}</p>
       </section>
     );
@@ -70,6 +73,7 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
     const raw = parseServiceBodyFromForm(formData);
     const body = {
       countryId: raw.countryId,
+      kind: raw.kind,
       slug: raw.slug,
       name: raw.name,
       summary: raw.summary.trim() === "" ? null : raw.summary.trim(),
@@ -78,6 +82,7 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
       detailBody: raw.detailBody.trim() === "" ? null : raw.detailBody.trim(),
       ctaLabel: raw.ctaLabel.trim() === "" ? null : raw.ctaLabel.trim(),
       legacyPath: raw.legacyPath.trim() === "" ? null : raw.legacyPath.trim(),
+      sortOrder: raw.sortOrder,
       specialtyId: raw.specialtyId,
       durationMinutes: raw.durationMinutes,
       basePriceCents: raw.basePriceCents,
@@ -88,17 +93,17 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
 
     const result = await patchAdminService(id, body);
     if (!result.ok) {
-      redirect(`/admin/services/${id}/edit?error=${encodeURIComponent(result.message)}`);
+      redirect(`/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(result.message)}`);
     }
 
-    redirect(`/admin/services/${id}?success=${encodeURIComponent("Service updated")}`);
+    redirect(`/admin/services/${id}?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent(`${meta.singularLabel} updated`)}`);
   }
 
   return (
     <section className="gh-card p-6 sm:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit service</h1>
-        <Link href={`/admin/services/${id}`} className="gh-link text-[var(--color-brand-primary)]">
+        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit {meta.singularLabel.toLowerCase()}</h1>
+        <Link href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`} className="gh-link text-[var(--color-brand-primary)]">
           Cancel
         </Link>
       </div>
@@ -113,6 +118,7 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
         <ServiceFields
           countries={countries}
           specialties={specialtiesResult.data.specialties}
+          kind={kind}
           initial={service}
           countryLocked
         />

@@ -16,6 +16,7 @@ describe("admin services validation", () => {
   it("create rejects negative basePriceCents", () => {
     const result = adminServiceCreateBodySchema.safeParse({
       countryId: "c1",
+      kind: "GENERAL",
       slug: "test-service",
       name: "Test",
       basePriceCents: -100,
@@ -26,6 +27,7 @@ describe("admin services validation", () => {
   it("create rejects non-positive durationMinutes when provided", () => {
     const noDuration = adminServiceCreateBodySchema.safeParse({
       countryId: "c1",
+      kind: "GENERAL",
       slug: "test-service",
       name: "Test",
       durationMinutes: 0,
@@ -34,6 +36,7 @@ describe("admin services validation", () => {
 
     const neg = adminServiceCreateBodySchema.safeParse({
       countryId: "c1",
+      kind: "GENERAL",
       slug: "test-service",
       name: "Test",
       durationMinutes: -5,
@@ -44,6 +47,7 @@ describe("admin services validation", () => {
   it("create accepts valid payload", () => {
     const result = adminServiceCreateBodySchema.safeParse({
       countryId: "c1",
+      kind: "GENERAL",
       slug: "medical-consultation",
       name: "Consultation",
       durationMinutes: 20,
@@ -52,10 +56,32 @@ describe("admin services validation", () => {
     assert.equal(result.success, true);
   });
 
+  it("requires specialty for specialist services", () => {
+    const result = adminServiceCreateBodySchema.safeParse({
+      countryId: "c1",
+      kind: "SPECIALIST",
+      slug: "cardiology-consultation",
+      name: "Cardiology Consultation",
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("rejects specialty for non-specialist services", () => {
+    const result = adminServiceCreateBodySchema.safeParse({
+      countryId: "c1",
+      kind: "GENERAL",
+      slug: "medical-consultation",
+      name: "Consultation",
+      specialtyId: "sp1",
+    });
+    assert.equal(result.success, false);
+  });
+
   it("query schema parses filters and pagination", () => {
     const result = adminServicesQuerySchema.safeParse({
       page: "2",
       pageSize: "10",
+      kind: "GENERAL",
       countryCode: "ie",
       isActive: "true",
       search: "medical",
@@ -64,6 +90,7 @@ describe("admin services validation", () => {
     if (result.success) {
       assert.equal(result.data.page, 2);
       assert.equal(result.data.pageSize, 10);
+      assert.equal(result.data.kind, "GENERAL");
       assert.equal(result.data.countryCode, "ie");
       assert.equal(result.data.isActive, true);
       assert.equal(result.data.search, "medical");

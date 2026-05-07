@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 export default async function IrelandSpecialistServicePage({ params }: { params: Promise<Params> }) {
   const { serviceSlug } = await params;
   const service = await getPublicServiceBySlug("ie", serviceSlug);
-  if (!service) notFound();
+  if (!service || service.kind !== "SPECIALIST") notFound();
 
-  const copy = await buildServiceDetailCopyAsync(serviceSlug, "specialist");
+  const copy = await buildServiceDetailCopyAsync(serviceSlug, "specialist", "ie");
   return (
     <ServiceDetailTemplate
       title={copy.title}

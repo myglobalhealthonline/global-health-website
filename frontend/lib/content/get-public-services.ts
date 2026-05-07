@@ -7,6 +7,7 @@ import { logPublicContentFallback } from "@/lib/content/public-content-source";
 export type PublicServiceRecord = {
   id: string;
   slug: string;
+  kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY";
   name: string;
   summary: string | null;
   heroTitle: string | null;
@@ -15,6 +16,7 @@ export type PublicServiceRecord = {
   ctaLabel: string | null;
   legacyPath: string | null;
   countryCode: CountryCode;
+  sortOrder: number;
   durationMinutes: number | null;
   basePriceCents: number | null;
   currencyCode: string | null;
@@ -33,8 +35,16 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
   const r = row as Record<string, unknown>;
   const id = typeof r.id === "string" ? r.id : null;
   const slug = typeof r.slug === "string" ? r.slug : null;
+  const kind =
+    r.kind === "GENERAL" ||
+    r.kind === "SPECIALIST" ||
+    r.kind === "PRESCRIPTION" ||
+    r.kind === "HEALTH_TEST" ||
+    r.kind === "HOME_DELIVERY"
+      ? r.kind
+      : null;
   const name = typeof r.name === "string" ? r.name : null;
-  if (!id || !slug || !name) return null;
+  if (!id || !slug || !name || !kind) return null;
 
   const countryCode = readCountryCode(r.country);
   if (!countryCode) return null;
@@ -54,6 +64,7 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
     typeof r.durationMinutes === "number" && Number.isFinite(r.durationMinutes)
       ? r.durationMinutes
       : null;
+  const sortOrder = typeof r.sortOrder === "number" && Number.isFinite(r.sortOrder) ? r.sortOrder : 0;
   const basePriceCents =
     typeof r.basePriceCents === "number" && Number.isFinite(r.basePriceCents)
       ? r.basePriceCents
@@ -71,6 +82,7 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
   return {
     id,
     slug,
+    kind,
     name,
     summary,
     heroTitle,
@@ -79,6 +91,7 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
     ctaLabel,
     legacyPath,
     countryCode,
+    sortOrder,
     durationMinutes,
     basePriceCents,
     currencyCode,

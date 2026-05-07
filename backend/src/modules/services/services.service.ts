@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, ServiceKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import type {
   AdminSpecialtyCreateBody,
@@ -20,6 +20,13 @@ export class ServiceSpecialtyInvalidError extends Error {
   constructor(message = "Specialty not found or does not belong to this country") {
     super(message);
     this.name = "ServiceSpecialtyInvalidError";
+  }
+}
+
+export class ServiceKindInvalidError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ServiceKindInvalidError";
   }
 }
 
@@ -56,7 +63,7 @@ export async function listServices() {
   try {
     return await prisma.service.findMany({
       where: { isActive: true },
-      orderBy: [{ country: { name: "asc" } }, { name: "asc" }],
+      orderBy: [{ country: { name: "asc" } }, { kind: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
       include: {
         country: true,
         specialty: true,
@@ -85,6 +92,7 @@ export async function listSpecialties() {
             slug: true,
             name: true,
             summary: true,
+            kind: true,
             durationMinutes: true,
             basePriceCents: true,
             currencyCode: true,
@@ -93,13 +101,14 @@ export async function listSpecialties() {
           },
         },
         services: {
-          where: { isActive: true },
-          orderBy: [{ name: "asc" }, { createdAt: "asc" }],
+          where: { isActive: true, kind: ServiceKind.SPECIALIST },
+          orderBy: [{ sortOrder: "asc" }, { name: "asc" }, { createdAt: "asc" }],
           select: {
             id: true,
             slug: true,
             name: true,
             summary: true,
+            kind: true,
             durationMinutes: true,
             basePriceCents: true,
             currencyCode: true,
@@ -130,6 +139,7 @@ const adminSpecialtyInclude = {
       slug: true,
       name: true,
       summary: true,
+      kind: true,
       durationMinutes: true,
       basePriceCents: true,
       currencyCode: true,
@@ -138,13 +148,14 @@ const adminSpecialtyInclude = {
     },
   },
   services: {
-    where: { isActive: true },
-    orderBy: [{ name: "asc" }, { createdAt: "asc" }],
+    where: { isActive: true, kind: ServiceKind.SPECIALIST },
+    orderBy: [{ sortOrder: "asc" }, { name: "asc" }, { createdAt: "asc" }],
     select: {
       id: true,
       slug: true,
       name: true,
       summary: true,
+      kind: true,
       durationMinutes: true,
       basePriceCents: true,
       currencyCode: true,
@@ -217,6 +228,15 @@ async function assertSpecialtyForCountry(specialtyId: string, countryId: string)
   }
   if (row.countryId !== countryId) {
     throw new ServiceSpecialtyInvalidError();
+  }
+}
+
+function assertServiceKindForSpecialty(kind: ServiceKind, specialtyId: string | null | undefined): void {
+  if (kind === ServiceKind.SPECIALIST && !specialtyId) {
+    throw new ServiceKindInvalidError("Specialist services require a specialty");
+  }
+  if (kind !== ServiceKind.SPECIALIST && specialtyId) {
+    throw new ServiceKindInvalidError("Only specialist services can be linked to a specialty");
   }
 }
 
@@ -333,6 +353,9 @@ export async function disableAdminSpecialty(id: string) {
 function buildAdminServiceWhere(query: AdminServicesQuery): Prisma.ServiceWhereInput {
   const where: Prisma.ServiceWhereInput = {};
 
+  if (query.kind) {
+    where.kind = query.kind;
+  }
   if (query.countryId) {
     where.countryId = query.countryId;
   }
@@ -373,7 +396,7 @@ export async function listAdminServices(query: AdminServicesQuery): Promise<List
       where,
       skip,
       take: pageSize,
-      orderBy: [{ country: { name: "asc" } }, { name: "asc" }],
+      orderBy: [{ country: { name: "asc" } }, { sortOrder: "asc" }, { name: "asc" }],
       include: adminServiceInclude,
     });
 
@@ -404,6 +427,7 @@ export async function getAdminServiceById(id: string): Promise<AdminServiceRecor
 
 export async function createAdminService(input: AdminServiceCreateBody): Promise<AdminServiceRecord> {
   await assertCountryExists(input.countryId);
+  assertServiceKindForSpecialty(input.kind, input.specialtyId);
   if (input.specialtyId) {
     await assertSpecialtyForCountry(input.specialtyId, input.countryId);
   }
@@ -412,6 +436,7 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
     const service = await prisma.service.create({
       data: {
         countryId: input.countryId,
+        kind: input.kind,
         slug: input.slug,
         name: input.name,
         ...(input.summary !== undefined && { summary: input.summary }),
@@ -420,6 +445,7 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
         ...(input.detailBody !== undefined && { detailBody: input.detailBody }),
         ...(input.ctaLabel !== undefined && { ctaLabel: input.ctaLabel }),
         ...(input.legacyPath !== undefined && { legacyPath: input.legacyPath }),
+        ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
         ...(input.specialtyId !== undefined && { specialtyId: input.specialtyId }),
         ...(input.durationMinutes !== undefined && { durationMinutes: input.durationMinutes }),
         ...(input.basePriceCents !== undefined && { basePriceCents: input.basePriceCents }),
@@ -449,11 +475,12 @@ export async function updateAdminService(
 ): Promise<AdminServiceRecord | null> {
   const existing = await prisma.service.findUnique({
     where: { id },
-    select: { countryId: true, specialtyId: true },
+    select: { countryId: true, specialtyId: true, kind: true },
   });
   if (!existing) return null;
 
   const nextCountryId = body.countryId ?? existing.countryId;
+  const nextKind = body.kind ?? existing.kind;
   if (body.countryId !== undefined) {
     await assertCountryExists(body.countryId);
   }
@@ -461,6 +488,7 @@ export async function updateAdminService(
   const effectiveSpecialtyId =
     body.specialtyId !== undefined ? body.specialtyId : existing.specialtyId;
 
+  assertServiceKindForSpecialty(nextKind, effectiveSpecialtyId);
   if (effectiveSpecialtyId) {
     await assertSpecialtyForCountry(effectiveSpecialtyId, nextCountryId);
   }
@@ -470,6 +498,7 @@ export async function updateAdminService(
       where: { id },
       data: {
         ...(body.countryId !== undefined && { countryId: body.countryId }),
+        ...(body.kind !== undefined && { kind: body.kind }),
         ...(body.slug !== undefined && { slug: body.slug }),
         ...(body.name !== undefined && { name: body.name }),
         ...(body.summary !== undefined && { summary: body.summary }),
@@ -478,6 +507,7 @@ export async function updateAdminService(
         ...(body.detailBody !== undefined && { detailBody: body.detailBody }),
         ...(body.ctaLabel !== undefined && { ctaLabel: body.ctaLabel }),
         ...(body.legacyPath !== undefined && { legacyPath: body.legacyPath }),
+        ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
         ...(body.specialtyId !== undefined && { specialtyId: body.specialtyId }),
         ...(body.durationMinutes !== undefined && { durationMinutes: body.durationMinutes }),
         ...(body.basePriceCents !== undefined && { basePriceCents: body.basePriceCents }),

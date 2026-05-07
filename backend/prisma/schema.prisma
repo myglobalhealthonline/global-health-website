@@ -32,6 +32,14 @@ enum PublishStatus {
   PUBLISHED
 }
 
+enum ServiceKind {
+  GENERAL
+  SPECIALIST
+  PRESCRIPTION
+  HEALTH_TEST
+  HOME_DELIVERY
+}
+
 enum UserRole {
   PATIENT
   ADMIN
@@ -171,6 +179,7 @@ model Service {
   id                  String      @id @default(cuid())
   countryId           String
   specialtyId         String?
+  kind                ServiceKind @default(GENERAL)
   slug                String
   name                String
   summary             String?
@@ -179,6 +188,7 @@ model Service {
   detailBody          String?
   ctaLabel            String?
   legacyPath          String?
+  sortOrder           Int         @default(0)
   durationMinutes     Int?
   basePriceCents      Int?
   currencyCode        String?

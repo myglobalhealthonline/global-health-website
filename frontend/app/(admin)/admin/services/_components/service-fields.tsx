@@ -1,21 +1,27 @@
-import type { AdminCountryDto, AdminServiceDto, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
+import type { AdminCountryDto, AdminServiceDto, AdminServiceKind, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
 import { ManagedImageField } from "../../_components/managed-image-field";
 import { RichTextHtmlField } from "../../_components/rich-text-html-field";
+import { SERVICE_KIND_META } from "@/lib/admin/service-kind";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
   specialties: AdminSpecialtyOptionDto[];
+  kind: AdminServiceKind;
   initial?: AdminServiceDto | null;
   pinnedCountryId?: string;
   countryLocked?: boolean;
 };
 
-export function ServiceFields({ countries, specialties, initial, pinnedCountryId, countryLocked }: Props) {
+export function ServiceFields({ countries, specialties, kind, initial, pinnedCountryId, countryLocked }: Props) {
   const pinId = pinnedCountryId ?? (countryLocked ? initial?.countryId : undefined);
   const pinnedMeta = pinId ? countries.find((c) => c.id === pinId) : undefined;
+  const meta = SERVICE_KIND_META[kind];
+  const usesSpecialty = kind === "SPECIALIST";
 
   return (
     <div className="flex flex-col gap-6">
+      <input type="hidden" name="kind" value={kind} />
+
       {pinId && pinnedMeta ? (
         <div>
           <span className="gh-field-label">Country</span>
@@ -43,6 +49,10 @@ export function ServiceFields({ countries, specialties, initial, pinnedCountryId
         </label>
       )}
 
+      <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-sm text-[var(--color-text-muted)]">
+        This record will publish under <span className="font-semibold text-[var(--color-text-primary)]">{meta.label}</span>.
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Slug</span>
@@ -60,17 +70,21 @@ export function ServiceFields({ countries, specialties, initial, pinnedCountryId
         </label>
       </div>
 
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Specialty / category</span>
-        <select name="specialtyId" className="gh-select min-w-0" defaultValue={initial?.specialtyId ?? ""}>
-          <option value="">None</option>
-          {specialties.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name} ({s.slug}){!s.active ? " - inactive" : ""}
-            </option>
-          ))}
-        </select>
-      </label>
+      {usesSpecialty ? (
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Specialty</span>
+          <select name="specialtyId" className="gh-select min-w-0" defaultValue={initial?.specialtyId ?? ""} required>
+            <option value="">Select specialty</option>
+            {specialties.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name} ({s.slug}){!s.active ? " - inactive" : ""}
+              </option>
+            ))}
+          </select>
+        </label>
+      ) : (
+        <input type="hidden" name="specialtyId" value="" />
+      )}
 
       <label className="flex flex-col gap-2">
         <span className="gh-field-label">Summary</span>
@@ -82,11 +96,58 @@ export function ServiceFields({ countries, specialties, initial, pinnedCountryId
         />
       </label>
 
+      <div className="grid gap-4 sm:grid-cols-3">
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Sort order</span>
+          <input
+            type="number"
+            name="sortOrder"
+            min={0}
+            step={1}
+            className="gh-input min-w-0"
+            defaultValue={initial?.sortOrder ?? 0}
+          />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Duration (minutes)</span>
+          <input
+            type="number"
+            name="durationMinutes"
+            min={1}
+            step={1}
+            className="gh-input min-w-0"
+            defaultValue={initial?.durationMinutes ?? ""}
+          />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Starting price (cents)</span>
+          <input
+            type="number"
+            name="basePriceCents"
+            min={0}
+            step={1}
+            className="gh-input min-w-0"
+            defaultValue={initial?.basePriceCents ?? ""}
+          />
+        </label>
+      </div>
+
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Currency code</span>
+        <input
+          name="currencyCode"
+          className="gh-input min-w-0 uppercase"
+          placeholder="EUR"
+          maxLength={8}
+          defaultValue={initial?.currencyCode ?? ""}
+        />
+      </label>
+
       <ManagedImageField
         name="imagePath"
         label="Hero image"
         initialPath={initial?.assets[0]?.path ?? ""}
-        helperText="Shown on the public specialist detail page."
+        helperText={`Shown on the public ${meta.singularLabel.toLowerCase()} card and detail page.`}
       />
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -136,41 +197,6 @@ export function ServiceFields({ countries, specialties, initial, pinnedCountryId
           placeholder="/path-if-used"
         />
       </label>
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Duration (minutes)</span>
-          <input
-            type="number"
-            name="durationMinutes"
-            min={1}
-            step={1}
-            className="gh-input min-w-0"
-            defaultValue={initial?.durationMinutes ?? ""}
-          />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Base price (cents)</span>
-          <input
-            type="number"
-            name="basePriceCents"
-            min={0}
-            step={1}
-            className="gh-input min-w-0"
-            defaultValue={initial?.basePriceCents ?? ""}
-          />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Currency code</span>
-          <input
-            name="currencyCode"
-            className="gh-input min-w-0 uppercase"
-            placeholder="EUR"
-            maxLength={8}
-            defaultValue={initial?.currencyCode ?? ""}
-          />
-        </label>
-      </div>
 
       <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
         <input

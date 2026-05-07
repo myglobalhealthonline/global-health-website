@@ -13,6 +13,9 @@ import {
   ArrowRight,
   ShieldCheck,
   AlertCircle,
+  Pill,
+  TestTube2,
+  Truck,
 } from "lucide-react";
 
 const cards = [
@@ -29,9 +32,9 @@ const cards = [
     icon: Globe2,
   },
   {
-    href: "/admin/services",
-    title: "Services",
-    description: "Manage general and specialist consultation services",
+    href: "/admin/general-consultations",
+    title: "General Consultations",
+    description: "Manage GP consultation cards, pricing, duration, and detail pages",
     icon: Stethoscope,
   },
   {
@@ -39,6 +42,30 @@ const cards = [
     title: "Specialties",
     description: "Add and manage specialty categories per country",
     icon: Tags,
+  },
+  {
+    href: "/admin/specialist-consultations",
+    title: "Specialist Consultations",
+    description: "Manage specialist consultation detail pages linked from specialties",
+    icon: Stethoscope,
+  },
+  {
+    href: "/admin/online-prescriptions",
+    title: "Online Prescriptions",
+    description: "Manage prescription service records, pricing, and public content",
+    icon: Pill,
+  },
+  {
+    href: "/admin/health-tests",
+    title: "Health Tests",
+    description: "Manage health test cards, pricing, and detail pages",
+    icon: TestTube2,
+  },
+  {
+    href: "/admin/home-delivery",
+    title: "Home Delivery",
+    description: "Manage delivery-related cards, pricing, and public copy",
+    icon: Truck,
   },
   {
     href: "/admin/doctors",

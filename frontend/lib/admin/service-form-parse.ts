@@ -12,6 +12,7 @@ export function parseServiceBodyFromForm(formData: FormData) {
 
   return {
     countryId: String(formData.get("countryId") ?? "").trim(),
+    kind: String(formData.get("kind") ?? "").trim(),
     slug: String(formData.get("slug") ?? "").trim(),
     name: String(formData.get("name") ?? "").trim(),
     summary: String(formData.get("summary") ?? "").trim(),
@@ -20,6 +21,7 @@ export function parseServiceBodyFromForm(formData: FormData) {
     detailBody: String(formData.get("detailBody") ?? "").trim(),
     ctaLabel: String(formData.get("ctaLabel") ?? "").trim(),
     legacyPath: String(formData.get("legacyPath") ?? "").trim(),
+    sortOrder: optionalNumber(formData, "sortOrder"),
     specialtyId: specialtyRaw === "" ? null : specialtyRaw,
     durationMinutes: optionalNumber(formData, "durationMinutes"),
     basePriceCents: optionalNumber(formData, "basePriceCents"),

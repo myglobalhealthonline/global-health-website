@@ -251,10 +251,18 @@ export type AdminSpecialtyOptionDto = {
   }>;
 };
 
+export type AdminServiceKind =
+  | "GENERAL"
+  | "SPECIALIST"
+  | "PRESCRIPTION"
+  | "HEALTH_TEST"
+  | "HOME_DELIVERY";
+
 export type AdminServiceDto = {
   id: string;
   countryId: string;
   specialtyId: string | null;
+  kind: AdminServiceKind;
   slug: string;
   name: string;
   summary: string | null;
@@ -263,6 +271,7 @@ export type AdminServiceDto = {
   detailBody: string | null;
   ctaLabel: string | null;
   legacyPath: string | null;
+  sortOrder: number;
   durationMinutes: number | null;
   basePriceCents: number | null;
   currencyCode: string | null;
