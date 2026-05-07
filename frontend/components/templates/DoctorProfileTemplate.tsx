@@ -4,6 +4,7 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
+import { ExternalLink } from "lucide-react";
 
 type DoctorProfileTemplateProps = {
   hero: {
@@ -21,6 +22,8 @@ type DoctorProfileTemplateProps = {
     qualifications: string[];
     specialties: string[];
     imageLabel: string;
+    imcRegistration?: string;
+    medicalRegistrationUrl?: string;
   };
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
   /** Safe site-relative image path from CMS (e.g. `/uploads/...`). Falls back to placeholder illustration. */
@@ -66,6 +69,18 @@ export function DoctorProfileTemplate({ hero, profile, bottomCta, profileImageSr
                   className="gh-body mt-4 space-y-3 text-[var(--color-text-muted)]"
                   dangerouslySetInnerHTML={{ __html: sanitizeDoctorBioHtml(profile.bio) }}
                 />
+                {profile.medicalRegistrationUrl ? (
+                  <a
+                    href={profile.medicalRegistrationUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[var(--color-brand-primary)]/10 px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)]/20 transition-colors"
+                  >
+                    <ExternalLink className="size-4" />
+                    Verify medical registration
+                    {profile.imcRegistration ? ` (${profile.imcRegistration})` : ""}
+                  </a>
+                ) : null}
               </div>
             </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">

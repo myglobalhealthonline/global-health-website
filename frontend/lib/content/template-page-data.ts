@@ -129,6 +129,7 @@ type DoctorProfileData = {
   name: string;
   title: string;
   imcRegistration?: string;
+  medicalRegistrationUrl?: string;
   country: string;
   languages: string[];
   whatsappNumber?: string;
@@ -579,6 +580,7 @@ function mapPublicDoctorToCard(
       : parseImcFromDoctorBio(d.bio)
         ? { imcRegistration: parseImcFromDoctorBio(d.bio)! }
         : {}),
+    ...(d.medicalRegistrationUrl ? { medicalRegistrationUrl: d.medicalRegistrationUrl } : {}),
     country: d.countryName,
     languages:
       d.languages && d.languages.length > 0

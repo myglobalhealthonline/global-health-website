@@ -92,6 +92,17 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
 
       <DoctorBioRichTextField initialValue={initial?.bio} />
 
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Qualifications</span>
+        <textarea
+          name="qualifications"
+          className="gh-input min-w-0 min-h-[6rem] resize-y"
+          defaultValue={(initial?.qualifications ?? []).join("\n")}
+          placeholder="MB BCh BAO\nMRCPI\nFellowship in Cardiology"
+        />
+        <span className="text-xs text-[var(--color-text-muted)]">One qualification per line. Shown on the public profile.</span>
+      </label>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">IMC registration</span>
@@ -103,6 +114,19 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
           />
         </label>
         <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Medical registration URL</span>
+          <input
+            name="medicalRegistrationUrl"
+            className="gh-input min-w-0"
+            defaultValue={initial?.medicalRegistrationUrl ?? ""}
+            placeholder="https://www.medicalcouncil.ie/..."
+          />
+          <span className="text-xs text-[var(--color-text-muted)]">External link to verify registration. Shown on public profile.</span>
+        </label>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="flex flex-col gap-2">
           <span className="gh-field-label">WhatsApp number</span>
           <input
             name="whatsappNumber"
@@ -111,20 +135,19 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
             placeholder="e.g. +353871234567"
           />
         </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Languages</span>
+          <input
+            name="languagesCsv"
+            className="gh-input min-w-0"
+            defaultValue={(initial?.languages ?? []).join(", ")}
+            placeholder="English, Portuguese"
+          />
+          <span className="text-xs text-[var(--color-text-muted)]">
+            Comma-separated list used on public doctor cards.
+          </span>
+        </label>
       </div>
-
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Languages</span>
-        <input
-          name="languagesCsv"
-          className="gh-input min-w-0"
-          defaultValue={(initial?.languages ?? []).join(", ")}
-          placeholder="English, Portuguese"
-        />
-        <span className="text-xs text-[var(--color-text-muted)]">
-          Comma-separated list used on public doctor cards.
-        </span>
-      </label>
 
       <DoctorProfileImageField initialPath={initial?.assets[0]?.path ?? ""} />
 

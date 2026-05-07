@@ -122,6 +122,8 @@ model Doctor {
   title      String
   bio        String?
   imcRegistration String?
+  medicalRegistrationUrl String?
+  qualifications  String[]
   whatsappNumber  String?
   languages       String[]
   active     Boolean          @default(true)

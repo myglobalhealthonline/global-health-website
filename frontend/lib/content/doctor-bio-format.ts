@@ -22,9 +22,16 @@ export function sanitizeDoctorBioHtml(raw: string): string {
 
   html = html.replace(/<(\/?)([^>\s]+)([^>]*)>/g, (_, slash: string, tagName: string, attrs: string) => {
     const tag = tagName.toLowerCase();
-    const allowed = new Set(["p", "br", "ul", "ol", "li", "strong", "b", "em", "i", "u", "span", "h2", "h3"]);
+    const allowed = new Set(["p", "br", "ul", "ol", "li", "strong", "b", "em", "i", "u", "span", "font", "h2", "h3"]);
     if (!allowed.has(tag)) return "";
     if (slash) return `</${tag}>`;
+    if (tag === "font") {
+      const colorMatch = attrs.match(/color\s*=\s*["']?([^"'>\s]+)["']?/i);
+      if (!colorMatch) return "<span>";
+      const color = colorMatch[1].trim();
+      if (!ALLOWED_COLOR.test(color)) return "<span>";
+      return `<span style="color:${color}">`;
+    }
     if (tag !== "span") return `<${tag}>`;
 
     const styleMatch = attrs.match(/style\s*=\s*["']([^"']*)["']/i);

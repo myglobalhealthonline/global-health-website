@@ -93,6 +93,8 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
       title: raw.title,
       bio: raw.bio.trim() === "" ? null : raw.bio.trim(),
       imcRegistration: raw.imcRegistration === "" ? null : raw.imcRegistration,
+      medicalRegistrationUrl: raw.medicalRegistrationUrl === "" ? null : raw.medicalRegistrationUrl,
+      qualifications: raw.qualifications,
       whatsappNumber: raw.whatsappNumber === "" ? null : raw.whatsappNumber,
       languages: raw.languages,
       specialtyIds: raw.specialtyIds,

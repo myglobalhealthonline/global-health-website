@@ -38,6 +38,8 @@ export type PublicDoctorRecord = {
   title: string;
   bio: string | null;
   imcRegistration?: string;
+  medicalRegistrationUrl?: string;
+  qualifications?: string[];
   whatsappNumber?: string;
   languages?: string[];
   countryCode: CountryCode;
@@ -104,6 +106,16 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
     typeof r.imcRegistration === "string" && r.imcRegistration.trim() !== ""
       ? r.imcRegistration.trim()
       : undefined;
+  const medicalRegistrationUrl =
+    typeof r.medicalRegistrationUrl === "string" && r.medicalRegistrationUrl.trim() !== ""
+      ? r.medicalRegistrationUrl.trim()
+      : undefined;
+  const qualifications = Array.isArray(r.qualifications)
+    ? r.qualifications
+        .filter((v): v is string => typeof v === "string")
+        .map((v) => v.trim())
+        .filter(Boolean)
+    : undefined;
   const whatsappNumber =
     typeof r.whatsappNumber === "string" && r.whatsappNumber.trim() !== ""
       ? r.whatsappNumber.trim()
@@ -123,6 +135,8 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
     title,
     bio,
     ...(imcRegistration ? { imcRegistration } : {}),
+    ...(medicalRegistrationUrl ? { medicalRegistrationUrl } : {}),
+    ...(qualifications && qualifications.length > 0 ? { qualifications } : {}),
     ...(whatsappNumber ? { whatsappNumber } : {}),
     ...(languages && languages.length > 0 ? { languages } : {}),
     countryCode: country.code,

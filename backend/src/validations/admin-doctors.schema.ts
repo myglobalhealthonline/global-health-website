@@ -82,6 +82,17 @@ export const adminDoctorCreateBodySchema = z.object({
     .optional()
     .nullable()
     .transform((v) => (v === "" || v === undefined ? null : v)),
+  medicalRegistrationUrl: z
+    .string()
+    .trim()
+    .max(500)
+    .optional()
+    .nullable()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
+  qualifications: z
+    .array(z.string().trim().min(1).max(200))
+    .max(20)
+    .default([]),
   languages: z
     .array(z.string().trim().min(1).max(64))
     .max(20)

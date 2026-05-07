@@ -11,6 +11,7 @@ export function FeaturedDoctor({ doctor }: {
     name: string;
     title: string;
     imcRegistration?: string;
+    medicalRegistrationUrl?: string;
     languages?: string[];
     bio: string;
     imageSrc?: string | null;
@@ -57,9 +58,20 @@ export function FeaturedDoctor({ doctor }: {
                   {doctor.imcRegistration && (
                     <div className="flex items-center gap-2">
                       <ShieldCheck className="size-4 text-[var(--color-brand-primary)]" />
-                      <span className="text-[var(--color-text-muted)]">
-                        IMC <span className="text-[var(--color-border-strong)] mx-1">|</span> <span className="font-semibold text-[var(--color-text-primary)]">{doctor.imcRegistration}</span>
-                      </span>
+                      {doctor.medicalRegistrationUrl ? (
+                        <a
+                          href={doctor.medicalRegistrationUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[var(--color-text-muted)] hover:text-[var(--color-brand-primary)] transition-colors"
+                        >
+                          IMC <span className="text-[var(--color-border-strong)] mx-1">|</span> <span className="font-semibold text-[var(--color-text-primary)]">{doctor.imcRegistration}</span>
+                        </a>
+                      ) : (
+                        <span className="text-[var(--color-text-muted)]">
+                          IMC <span className="text-[var(--color-border-strong)] mx-1">|</span> <span className="font-semibold text-[var(--color-text-primary)]">{doctor.imcRegistration}</span>
+                        </span>
+                      )}
                     </div>
                   )}
                   <div className="flex items-center gap-2">

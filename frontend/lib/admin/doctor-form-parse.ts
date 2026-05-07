@@ -11,6 +11,11 @@ export function parseDoctorBodyFromForm(formData: FormData) {
     .map((v) => v.trim())
     .filter(Boolean);
 
+  const qualifications = String(formData.get("qualifications") ?? "")
+    .split("\n")
+    .map((v) => v.trim())
+    .filter(Boolean);
+
   return {
     countryId: String(formData.get("countryId") ?? "").trim(),
     slug: String(formData.get("slug") ?? "").trim(),
@@ -18,6 +23,8 @@ export function parseDoctorBodyFromForm(formData: FormData) {
     title: String(formData.get("title") ?? "").trim(),
     bio: String(formData.get("bio") ?? "").trim(),
     imcRegistration: String(formData.get("imcRegistration") ?? "").trim(),
+    medicalRegistrationUrl: String(formData.get("medicalRegistrationUrl") ?? "").trim(),
+    qualifications,
     whatsappNumber: String(formData.get("whatsappNumber") ?? "").trim(),
     languages,
     specialtyIds,

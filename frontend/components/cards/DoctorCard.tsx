@@ -8,6 +8,7 @@ type DoctorCardProps = {
   name: string;
   title: string;
   imcRegistration?: string;
+  medicalRegistrationUrl?: string;
   country?: string;
   languages?: string[];
   whatsappNumber?: string;
@@ -21,6 +22,7 @@ export function DoctorCard({
   name,
   title,
   imcRegistration,
+  medicalRegistrationUrl,
   languages = [],
   whatsappNumber,
   imageSrc,
@@ -73,9 +75,21 @@ export function DoctorCard({
               <p className="text-xs text-[var(--color-text-muted)]">Registration</p>
               <p className="text-sm font-bold text-[var(--color-text-primary)]">
                 {imcRegistration ? (
-                  <>
-                    IMC <span className="text-[var(--color-text-muted)] font-normal mx-1">|</span> {imcRegistration}
-                  </>
+                  medicalRegistrationUrl ? (
+                    <a
+                      href={medicalRegistrationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 hover:text-[var(--color-brand-primary)] transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      IMC <span className="text-[var(--color-text-muted)] font-normal mx-1">|</span> {imcRegistration}
+                    </a>
+                  ) : (
+                    <>
+                      IMC <span className="text-[var(--color-text-muted)] font-normal mx-1">|</span> {imcRegistration}
+                    </>
+                  )
                 ) : (
                   "N/A"
                 )}

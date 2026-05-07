@@ -12,6 +12,7 @@ type DoctorTeamTemplateProps = {
     name: string;
     title: string;
     imcRegistration?: string;
+    medicalRegistrationUrl?: string;
     country?: string;
     languages?: string[];
     whatsappNumber?: string;

@@ -16,6 +16,8 @@ import {
   ExternalLink,
   AlertCircle,
   CheckCircle2,
+  Award,
+  Link as LinkIcon,
 } from "lucide-react";
 import { deleteAdminDoctor, doctorPublicProfilePath, fetchAdminDoctorById } from "@/lib/admin/admin-api";
 
@@ -183,6 +185,26 @@ export default async function AdminDoctorDetailPage({ params, searchParams }: Pa
               </div>
 
               <div className="flex items-start gap-3">
+                <LinkIcon className="mt-0.5 size-4 shrink-0 text-[var(--color-text-muted)]" />
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Medical registration URL</p>
+                  {d.medicalRegistrationUrl ? (
+                    <a
+                      href={d.medicalRegistrationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-0.5 inline-flex items-center gap-1 text-sm text-[var(--color-brand-primary)] hover:underline"
+                    >
+                      {d.medicalRegistrationUrl}
+                      <ExternalLink className="size-3" />
+                    </a>
+                  ) : (
+                    <p className="mt-0.5 text-sm text-[var(--color-text-primary)]">—</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
                 <Phone className="mt-0.5 size-4 shrink-0 text-[var(--color-text-muted)]" />
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">WhatsApp</p>
@@ -222,6 +244,25 @@ export default async function AdminDoctorDetailPage({ params, searchParams }: Pa
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Qualifications section */}
+      <div className="mt-6">
+        <div className="flex items-center gap-2">
+          <Award className="size-4 text-[var(--color-text-muted)]" />
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">Qualifications</h2>
+        </div>
+        <div className="mt-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white p-5">
+          {d.qualifications.length > 0 ? (
+            <ul className="list-disc pl-5 space-y-1">
+              {d.qualifications.map((q, i) => (
+                <li key={i} className="text-sm text-[var(--color-text-body)]">{q}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm italic text-[var(--color-text-muted)]">No qualifications provided.</p>
+          )}
         </div>
       </div>
 

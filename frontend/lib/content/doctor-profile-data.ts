@@ -17,6 +17,8 @@ export type DoctorProfilePageData = {
     qualifications: string[];
     specialties: string[];
     imageLabel: string;
+    imcRegistration?: string;
+    medicalRegistrationUrl?: string;
   };
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
   /** Local public-folder path from CMS asset when safe (same-origin relative path). */
@@ -118,10 +120,17 @@ export async function resolveDoctorProfilePageData(doctorSlug: string): Promise<
       title: backend.title,
       country: backend.countryName,
       bio: backend.bio ?? base.profile.bio,
-      languages: parseLanguagesFromDoctorBio(backend.bio) ?? base.profile.languages,
+      languages: backend.languages && backend.languages.length > 0
+        ? backend.languages
+        : (parseLanguagesFromDoctorBio(backend.bio) ?? base.profile.languages),
+      qualifications: backend.qualifications && backend.qualifications.length > 0
+        ? backend.qualifications
+        : base.profile.qualifications,
       specialties:
         backend.specialties.length > 0 ? backend.specialties : base.profile.specialties,
       imageLabel: backend.fullName,
+      ...(backend.imcRegistration ? { imcRegistration: backend.imcRegistration } : {}),
+      ...(backend.medicalRegistrationUrl ? { medicalRegistrationUrl: backend.medicalRegistrationUrl } : {}),
     },
   };
 }
