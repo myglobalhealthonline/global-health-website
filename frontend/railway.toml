@@ -1,8 +1,9 @@
-# Railway — for services with Root Directory = `frontend` (isolated deploy).
-# Full repo is cloned, but only this folder is the build context: no ../pnpm-lock.yaml.
-# CI=true makes pnpm treat the lockfile as frozen; unset for this install.
-[build]
-buildCommand = "sh -c 'unset CI; pnpm install && pnpm run build'"
-
-[deploy]
-startCommand = "pnpm run start"
+# Frontend service — Root Directory must be `frontend`.
+#
+# A Dockerfile in this folder is the source of truth for build + start so the
+# runtime image always contains `.next/` (Railpack alone can run `next start`
+# without shipping the production build).
+#
+# Optional: pin the Dockerfile explicitly
+# [build]
+# dockerfilePath = "Dockerfile"
