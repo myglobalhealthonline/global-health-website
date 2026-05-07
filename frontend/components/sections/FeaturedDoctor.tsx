@@ -19,7 +19,7 @@ export function FeaturedDoctor({ doctor }: {
   };
 }) {
   const src = doctor.imageSrc?.trim() ? doctor.imageSrc.trim() : "/images/ireland/doctor-spotlight-ai.svg";
-  const unoptimized = /^https?:\/\//i.test(src);
+  const unoptimized = /^https?:\/\//i.test(src) || src.startsWith("/api/media/");
   const languageList = doctor.languages && doctor.languages.length > 0 
     ? doctor.languages.join(", ") 
     : "English";

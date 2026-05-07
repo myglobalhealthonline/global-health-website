@@ -25,7 +25,7 @@ type HowItWorksProps = {
 
 export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWorksProps) {
   const displaySteps = steps.slice(0, 3);
-  const [imageSrc, setImageSrc] = useState("/images/how-it-works/steps-hero.avif");
+  const [imageSrc, setImageSrc] = useState("/images/how-it-works/steps-hero.png");
   const [activeStep, setActiveStep] = useState(0);
 
   return (
@@ -44,13 +44,14 @@ export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWor
             <div className="relative">
               <div className="absolute -bottom-4 -left-4 h-[92%] w-[92%] rounded-[2rem] bg-[var(--color-brand-accent)]/60" />
               
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] shadow-2xl ring-1 ring-black/5">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-[var(--color-background-soft)] shadow-2xl ring-1 ring-black/5">
                 <Image
                   src={imageSrc}
-                  alt="Online consultation on a laptop"
+                  alt="Simple scheduling flow illustration"
                   fill
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
+                  className="object-contain"
+                  unoptimized
                   onError={() => setImageSrc("/images/hero/homehero.png")}
                 />
                 <div className="absolute bottom-4 left-4 rounded-xl bg-white/95 backdrop-blur-sm px-4 py-2 shadow-lg">

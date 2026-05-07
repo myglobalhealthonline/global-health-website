@@ -23,6 +23,8 @@ export type DoctorProfilePageData = {
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
   /** Local public-folder path from CMS asset when safe (same-origin relative path). */
   profileImageSrc?: string;
+  /** Optional image shown inside the booking CTA banner. */
+  bookingCtaImage?: { src: string; alt: string };
 };
 
 function toLabel(slug: string) {
@@ -100,10 +102,14 @@ export async function resolveDoctorProfilePageData(doctorSlug: string): Promise<
   ]);
 
   if (!backend) {
-    return profileImageSrc ? { ...base, profileImageSrc } : base;
+    const out: DoctorProfilePageData = profileImageSrc ? { ...base, profileImageSrc } : { ...base };
+    if (profileImageSrc) {
+      out.bookingCtaImage = { src: profileImageSrc, alt: base.profile.name };
+    }
+    return out;
   }
 
-  return {
+  const out: DoctorProfilePageData = {
     ...base,
     ...(profileImageSrc ? { profileImageSrc } : {}),
     hero: {
@@ -133,4 +139,10 @@ export async function resolveDoctorProfilePageData(doctorSlug: string): Promise<
       ...(backend.medicalRegistrationUrl ? { medicalRegistrationUrl: backend.medicalRegistrationUrl } : {}),
     },
   };
+
+  if (profileImageSrc) {
+    out.bookingCtaImage = { src: profileImageSrc, alt: backend.fullName };
+  }
+
+  return out;
 }

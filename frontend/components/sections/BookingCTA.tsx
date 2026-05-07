@@ -14,6 +14,9 @@ type BookingCTAProps = {
 
 export function BookingCTA({ title, description, ctaLabel, ctaHref, asideImage }: BookingCTAProps) {
   const points = ["100% online", "No waiting rooms", "Confidential"];
+  const asideUnoptimized = asideImage
+    ? /^https?:\/\//i.test(asideImage.src) || asideImage.src.startsWith("/api/media/")
+    : false;
 
   return (
     <Section className="bg-[var(--color-background-soft)] pb-[var(--section-padding-y-sm)]">
@@ -79,6 +82,7 @@ export function BookingCTA({ title, description, ctaLabel, ctaHref, asideImage }
                   alt={asideImage.alt}
                   width={560}
                   height={420}
+                  unoptimized={asideUnoptimized}
                   className="h-auto w-full object-cover"
                 />
               </div>

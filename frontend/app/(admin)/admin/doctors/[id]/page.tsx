@@ -63,6 +63,8 @@ export default async function AdminDoctorDetailPage({ params, searchParams }: Pa
   const d = result.data.doctor;
   const publicPath = doctorPublicProfilePath(d.country.teamPath, d.slug);
   const profileImage = d.assets[0]?.path ?? null;
+  const profileImageUnoptimized =
+    profileImage ? /^https?:\/\//i.test(profileImage) || profileImage.startsWith("/api/media/") : false;
   const publicUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}${publicPath}`;
 
   return (
@@ -131,6 +133,7 @@ export default async function AdminDoctorDetailPage({ params, searchParams }: Pa
                   src={profileImage}
                   alt={d.fullName}
                   fill
+                  unoptimized={profileImageUnoptimized}
                   className="object-cover"
                   sizes="112px"
                 />

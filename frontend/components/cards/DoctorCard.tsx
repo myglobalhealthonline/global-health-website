@@ -30,7 +30,7 @@ export function DoctorCard({
   ctaLabel = "View Profile",
 }: DoctorCardProps) {
   const src = imageSrc?.trim() ? imageSrc.trim() : PLACEHOLDER_PORTRAIT;
-  const unoptimized = /^https?:\/\//i.test(src);
+  const unoptimized = /^https?:\/\//i.test(src) || src.startsWith("/api/media/");
   const languageList = languages.length > 0 ? languages.join(", ") : "Not listed";
   const whatsappDigits = whatsappNumber?.replace(/[^\d+]/g, "");
   const whatsappHref = whatsappDigits ? `https://wa.me/${whatsappDigits.replace("+", "")}` : null;
