@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Star } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 
@@ -25,7 +24,7 @@ export function TeamHero({ countryName }: { countryName: string }) {
             Meet our doctors
           </h1>
           <p className="mt-4 text-lg text-white/85 max-w-xl mx-auto leading-relaxed">
-            Certified and experienced professionals ready to take care of your health.
+            Certified and experienced professionals in {countryName} ready to take care of your health.
           </p>
           
           {/* Rating badge */}

@@ -1,6 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import type {
+  AdminSpecialtyCreateBody,
+  AdminSpecialtyUpdateBody,
   AdminServiceCreateBody,
   AdminServiceUpdateBody,
   AdminServicesQuery,
@@ -18,6 +20,13 @@ export class ServiceSpecialtyInvalidError extends Error {
   constructor(message = "Specialty not found or does not belong to this country") {
     super(message);
     this.name = "ServiceSpecialtyInvalidError";
+  }
+}
+
+export class SpecialtyNotFoundError extends Error {
+  constructor() {
+    super("Specialty not found");
+    this.name = "SpecialtyNotFoundError";
   }
 }
 
@@ -78,6 +87,63 @@ export async function listSpecialtiesForAdminCountry(countryId: string) {
       where: { countryId },
       orderBy: { name: "asc" },
       select: { id: true, slug: true, name: true, active: true },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Specialties data is unavailable");
+  }
+}
+
+export async function createAdminSpecialty(input: AdminSpecialtyCreateBody) {
+  await assertCountryExists(input.countryId);
+  try {
+    return await prisma.specialty.create({
+      data: {
+        countryId: input.countryId,
+        slug: input.slug,
+        name: input.name,
+        active: input.active ?? true,
+      },
+      select: { id: true, countryId: true, slug: true, name: true, active: true },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Specialties data is unavailable");
+  }
+}
+
+export async function updateAdminSpecialty(id: string, body: AdminSpecialtyUpdateBody) {
+  const existing = await prisma.specialty.findUnique({
+    where: { id },
+    select: { id: true },
+  });
+  if (!existing) return null;
+
+  try {
+    return await prisma.specialty.update({
+      where: { id },
+      data: {
+        ...(body.slug !== undefined && { slug: body.slug }),
+        ...(body.name !== undefined && { name: body.name }),
+        ...(body.active !== undefined && { active: body.active }),
+      },
+      select: { id: true, countryId: true, slug: true, name: true, active: true },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Specialties data is unavailable");
+  }
+}
+
+export async function disableAdminSpecialty(id: string) {
+  const existing = await prisma.specialty.findUnique({
+    where: { id },
+    select: { id: true },
+  });
+  if (!existing) return null;
+
+  try {
+    return await prisma.specialty.update({
+      where: { id },
+      data: { active: false },
+      select: { id: true, countryId: true, slug: true, name: true, active: true },
     });
   } catch (error) {
     throw normalizeDbError(error, "Specialties data is unavailable");

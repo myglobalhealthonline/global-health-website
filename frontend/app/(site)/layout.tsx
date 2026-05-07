@@ -1,8 +1,7 @@
-﻿import type { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { cookies, headers } from "next/headers";
 import "flag-icons/css/flag-icons.min.css";
-import { SiteFooter } from "@/components/layout/SiteFooter";
-import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
 import { DEFAULT_BRAND_LOGO } from "@/lib/content/brand-logo";
 import {
@@ -15,13 +14,12 @@ import { getCountryByCode, type CountryCode } from "@/data/countries";
 export default async function SiteLayout({ children }: { children: ReactNode }) {
   const requestHeaders = await headers();
   const cookieStore = await cookies();
-  const pathname = requestHeaders.get("x-gh-pathname") ?? "";
-  const isHomeGateway = pathname === "/";
 
   const headerCountry = requestHeaders.get("x-gh-country");
-  const runtimeCountry = headerCountry && getCountryByCode(headerCountry as CountryCode)
-    ? (headerCountry as CountryCode)
-    : undefined;
+  const runtimeCountry =
+    headerCountry && getCountryByCode(headerCountry as CountryCode)
+      ? (headerCountry as CountryCode)
+      : undefined;
 
   const [{ common, navigation }, assets] = await Promise.all([
     getSiteContext({
@@ -37,21 +35,13 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   const footerDecorImage = resolveFooterCtaDecorAsset(assets);
 
   return (
-    <>
-      {isHomeGateway ? null : (
-        <SiteHeader siteName={common.site.name} navigation={navigation} brandLogo={brandLogo} />
-      )}
-      <main id="main-content" className="grow">
-        {children}
-      </main>
-      {isHomeGateway ? null : (
-        <SiteFooter
-          siteName={common.site.name}
-          navigation={navigation}
-          brandLogo={brandLogo}
-          footerDecorImage={footerDecorImage}
-        />
-      )}
-    </>
+    <SiteChrome
+      siteName={common.site.name}
+      navigation={navigation}
+      brandLogo={brandLogo}
+      footerDecorImage={footerDecorImage}
+    >
+      {children}
+    </SiteChrome>
   );
 }

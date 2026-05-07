@@ -66,6 +66,25 @@ export const adminSpecialtiesQuerySchema = z.object({
   countryId: z.string().trim().min(1, "countryId is required"),
 });
 
+export const adminSpecialtyCreateBodySchema = z.object({
+  countryId: z.string().trim().min(1),
+  slug: serviceSlugSchema,
+  name: z.string().trim().min(1).max(200),
+  active: z.boolean().optional(),
+});
+
+export type AdminSpecialtyCreateBody = z.infer<typeof adminSpecialtyCreateBodySchema>;
+
+export const adminSpecialtyUpdateBodySchema = z
+  .object({
+    slug: serviceSlugSchema.optional(),
+    name: z.string().trim().min(1).max(200).optional(),
+    active: z.boolean().optional(),
+  })
+  .refine((v) => Object.keys(v).length > 0, "No fields to update");
+
+export type AdminSpecialtyUpdateBody = z.infer<typeof adminSpecialtyUpdateBodySchema>;
+
 export const adminServiceCreateBodySchema = z.object({
   countryId: z.string().trim().min(1),
   slug: serviceSlugSchema,

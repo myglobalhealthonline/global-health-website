@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { randomUUID } from "node:crypto";
 import { env } from "../config/env.js";
-import { putObject, isObjectStorageConfigured } from "../services/object-storage.js";
+import { putObject, isMediaStorageConfigured } from "../services/object-storage.js";
 import { sanitizeOriginalFilename } from "../utils/media-key.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -12,6 +12,7 @@ const ALLOWED_MIME = new Set([
   "image/webp",
   "image/gif",
   "image/svg+xml",
+  "image/avif",
 ]);
 
 function buildPublicMediaUrl(request: { protocol: string; hostname: string }, key: string): string {
@@ -32,7 +33,7 @@ const adminMediaUploadRoute: FastifyPluginAsync = async (app) => {
       return reply.status(auth.status).send(errorResponse(auth.message));
     }
 
-    if (!isObjectStorageConfigured()) {
+    if (!isMediaStorageConfigured()) {
       return reply.status(503).send(errorResponse("Object storage is not configured"));
     }
 

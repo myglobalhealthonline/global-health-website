@@ -32,6 +32,11 @@ const envSchema = z.object({
   S3_SECRET_ACCESS_KEY: z.string().trim().min(1).optional(),
   /** HTTPS origin of this API for stable URLs in upload responses behind proxies (no trailing slash). */
   PUBLIC_MEDIA_ORIGIN: z.string().trim().url().optional(),
+  /**
+   * Development only: directory for uploads when S3 is not configured (relative to backend cwd or absolute).
+   * Defaults to `.data/local-media` when NODE_ENV is not production.
+   */
+  LOCAL_MEDIA_ROOT: z.string().trim().min(1).optional(),
 });
 
 const parsed = envSchema.parse(mergeRailwayBucketAliases());

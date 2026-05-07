@@ -297,6 +297,30 @@ export async function fetchAdminSpecialties(countryId: string) {
   return adminRequest<AdminSpecialtiesPayload>(`/api/admin/specialties?${params.toString()}`);
 }
 
+type AdminSpecialtyDetailPayload = {
+  specialty: AdminSpecialtyOptionDto & { countryId: string };
+};
+
+export async function postAdminSpecialty(body: unknown) {
+  return adminRequest<AdminSpecialtyDetailPayload>("/api/admin/specialties", {
+    method: "POST",
+    body,
+  });
+}
+
+export async function patchAdminSpecialty(id: string, body: unknown) {
+  return adminRequest<AdminSpecialtyDetailPayload>(`/api/admin/specialties/${id}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export async function deleteAdminSpecialty(id: string) {
+  return adminRequest<AdminSpecialtyDetailPayload>(`/api/admin/specialties/${id}`, {
+    method: "DELETE",
+  });
+}
+
 export async function postAdminService(body: unknown) {
   return adminRequest<AdminServiceDetailPayload>("/api/admin/services", {
     method: "POST",

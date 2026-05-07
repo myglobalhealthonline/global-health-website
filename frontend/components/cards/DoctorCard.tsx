@@ -23,7 +23,6 @@ export function DoctorCard({
   imcRegistration,
   languages = [],
   whatsappNumber,
-  bio,
   imageSrc,
   href,
   ctaLabel = "View Profile",

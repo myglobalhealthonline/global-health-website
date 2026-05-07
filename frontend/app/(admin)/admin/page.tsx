@@ -8,6 +8,7 @@ import {
   Images,
   FilePenLine,
   CircleHelp,
+  Tags,
   FileText,
   ArrowRight,
   ShieldCheck,
@@ -32,6 +33,12 @@ const cards = [
     title: "Services",
     description: "Manage general and specialist consultation services",
     icon: Stethoscope,
+  },
+  {
+    href: "/admin/specialties",
+    title: "Specialties",
+    description: "Add and manage specialty categories per country",
+    icon: Tags,
   },
   {
     href: "/admin/doctors",

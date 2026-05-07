@@ -1,4 +1,4 @@
-import { DoctorsSection } from "@/components/sections/DoctorsSection";
+﻿import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { TeamHero } from "@/components/sections/TeamHero";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { TrustBar } from "@/components/sections/TrustBar";
@@ -48,7 +48,7 @@ export function DoctorTeamTemplate({ countryName, doctors, bookingHref, bookingL
       <BookingCTA
         title="Start Your Online Consultation"
         description="Choose your country and connect with a licensed doctor in minutes. 100% online, no waiting rooms, confidential."
-        ctaLabel="Start Consultation"
+        ctaLabel={bookingLabel}
         ctaHref={bookingHref}
       />
       

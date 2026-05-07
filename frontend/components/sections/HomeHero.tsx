@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Globe } from "lucide-react";
 import type { CountryCode, CountryConfig } from "@/data/countries";
@@ -66,15 +66,10 @@ type HomeHeroProps = {
 export function HomeHero({ countries }: HomeHeroProps) {
   const [langOpen, setLangOpen] = useState(false);
   const [selectedLang, setSelectedLang] = useState("en");
-  const [mounted, setMounted] = useState(false);
   const countriesSorted = useMemo(
     () => [...countries].sort((a, b) => a.name.localeCompare(b.name)),
     [countries],
   );
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <section className="relative isolate min-h-screen overflow-hidden">
@@ -96,9 +91,7 @@ export function HomeHero({ countries }: HomeHeroProps) {
 
       <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[var(--container-width)] gap-14 px-4 py-12 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:px-8">
         {/* LEFT: Text content */}
-        <div
-          className={`text-white transition-all duration-1000 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-        >
+        <div className="text-white motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-700">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 mb-8">
             <Globe className="size-4 text-[#c8e6a0]" />
             <span className="text-sm font-medium text-white/90">5 Countries • Online Care</span>
@@ -147,9 +140,7 @@ export function HomeHero({ countries }: HomeHeroProps) {
         </div>
 
         {/* RIGHT: Language + Country selector */}
-        <div
-          className={`w-full max-w-[520px] justify-self-end transition-all duration-1000 delay-300 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-        >
+        <div className="w-full max-w-[520px] justify-self-end motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-700 motion-safe:delay-150">
           {/* Glass card container */}
           <div className="rounded-[var(--radius-card)] border border-white/20 bg-white/10 backdrop-blur-xl p-6 sm:p-8 shadow-2xl">
             <p className="mb-4 text-xl font-semibold text-white flex items-center gap-2">

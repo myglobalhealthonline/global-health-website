@@ -1,12 +1,17 @@
 import { NoSuchKey } from "@aws-sdk/client-s3";
 import type { FastifyPluginAsync } from "fastify";
-import { getObject, isObjectStorageConfigured, streamToNodeReadable } from "../services/object-storage.js";
+import {
+  getObject,
+  isMediaStorageConfigured,
+  MediaObjectNotFoundError,
+  streamToNodeReadable,
+} from "../services/object-storage.js";
 import { isSafeMediaKey } from "../utils/media-key.js";
 import { errorResponse } from "../utils/response.js";
 
 const mediaPublicRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/media/*", async (request, reply) => {
-    if (!isObjectStorageConfigured()) {
+    if (!isMediaStorageConfigured()) {
       return reply.status(503).send(errorResponse("Media storage is not configured"));
     }
 
@@ -28,7 +33,7 @@ const mediaPublicRoute: FastifyPluginAsync = async (app) => {
       reply.header("Cache-Control", "public, max-age=31536000, immutable");
       return reply.send(stream);
     } catch (error: unknown) {
-      if (error instanceof NoSuchKey) {
+      if (error instanceof NoSuchKey || error instanceof MediaObjectNotFoundError) {
         return reply.status(404).send(errorResponse("Not found"));
       }
       app.log.error(error);

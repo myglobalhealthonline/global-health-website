@@ -124,7 +124,8 @@ See **`backend/.env.example`**. Summary:
 - **`AUTH_JWT_EXPIRES_IN`** — JWT lifetime (default `7d`).
 - **`CORS_ALLOWED_ORIGINS`** — comma-separated browser origins allowed in production.
 - **`PORT`** — defaults to `4000` in **`src/config/env.ts`** if unset.
-- **Railway Bucket / S3** — optional image storage. Set **`S3_ENDPOINT`**, **`S3_REGION`**, **`S3_BUCKET`**, **`S3_ACCESS_KEY_ID`**, **`S3_SECRET_ACCESS_KEY`** (Railway’s bucket credential preset maps **`ENDPOINT`**, **`BUCKET`**, **`ACCESS_KEY_ID`**, **`SECRET_ACCESS_KEY`**, **`REGION`** into these — see **`src/config/env.ts`**). Enables **`POST /api/admin/media/upload`** (admin session) and public **`GET /api/media/*`** streaming from the bucket. Use **`PUBLIC_MEDIA_ORIGIN`** (HTTPS origin of this API, no trailing slash) so upload responses return stable URLs behind reverse proxies.
+- **Railway Bucket / S3** — required in **`NODE_ENV=production`** for uploads. Set **`S3_ENDPOINT`**, **`S3_REGION`**, **`S3_BUCKET`**, **`S3_ACCESS_KEY_ID`**, **`S3_SECRET_ACCESS_KEY`** (Railway’s bucket credential preset maps **`ENDPOINT`**, **`BUCKET`**, **`ACCESS_KEY_ID`**, **`SECRET_ACCESS_KEY`**, **`REGION`** into these — see **`src/config/env.ts`**). Enables **`POST /api/admin/media/upload`** (admin session) and public **`GET /api/media/*`**. Use **`PUBLIC_MEDIA_ORIGIN`** (HTTPS origin of this API, no trailing slash) so upload responses return stable URLs behind reverse proxies.
+- **Local development without S3** — when **`NODE_ENV`** is not **`production`**, uploads and **`GET /api/media/*`** use **`backend/.data/local-media`** by default (override with **`LOCAL_MEDIA_ROOT`**). This folder is gitignored.
 
 Optional **`DATABASE_PUBLIC_URL`** in comments in `.env.example`: some platforms use an internal URL for the deployed app and a **public** URL for tools running on your laptop; use whichever host your machine can reach as **`DATABASE_URL`** when running migrations/seeds locally.
 
@@ -138,6 +139,7 @@ Optional **`DATABASE_PUBLIC_URL`** in comments in `.env.example`: some platforms
 | `Cannot resolve environment variable: DATABASE_URL` | Ensure **`backend/.env`** exists (copy from **`.env.example`**) **or** export **`DATABASE_URL`** in the shell (see PowerShell above). |
 | Internal vs public DB host | Hosted DBs often give a private URL for the app and a public URL for developers — use the URL your environment can reach for **`pnpm db:migrate`** / **`db:seed`**. |
 | Ran Prisma from wrong directory | Prefer **`pnpm --filter backend db:*`** from repo root, or **`cd backend`** then **`pnpm db:*`**. |
+| **`POST /api/admin/media/upload` returns `503`** | In **production**, set all **S3_*** variables (or Railway bucket preset). In **development**, uploads use **`.data/local-media`** automatically when S3 is unset — ensure the backend process cwd is **`backend/`** (normal for **`pnpm --filter backend dev`**). |
 | Assets admin errors before migration | Apply migrations so **`Asset.usageNote`** and **`Asset.isActive`** exist — run **`db:migrate`** or **`db:deploy`**. |
 | `migrate dev` asks for shadow DB | PostgreSQL + `migrate dev` may require a shadow database URL for drift detection; ensure your user can create DBs or set **`shadowDatabaseUrl`** in Prisma if your provider documents it. |
 

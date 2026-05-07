@@ -38,7 +38,7 @@ export function MobileNav({
           </Dialog.Description>
 
           <div className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] px-4 py-4">
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center" aria-label={`${siteName} home`}>
               <Image
                 src={brandLogo.src}
                 alt={brandLogo.alt}

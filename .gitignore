@@ -17,5 +17,6 @@
 .vscode
 
 /backend/dist
+/backend/.data
 /.cursor
 /.codex

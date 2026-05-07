@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { MapPin, UserRound, Mail, ArrowRight } from "lucide-react";
@@ -44,11 +45,12 @@ export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWor
               <div className="absolute -bottom-4 -left-4 h-[92%] w-[92%] rounded-[2rem] bg-[var(--color-brand-accent)]/60" />
               
               <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] shadow-2xl ring-1 ring-black/5">
-                <img
+                <Image
                   src={imageSrc}
                   alt="Online consultation on a laptop"
-                  className="h-full w-full object-cover"
-                  loading="lazy"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
                   onError={() => setImageSrc("/images/hero/homehero.png")}
                 />
                 <div className="absolute bottom-4 left-4 rounded-xl bg-white/95 backdrop-blur-sm px-4 py-2 shadow-lg">

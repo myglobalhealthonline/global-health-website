@@ -1,6 +1,8 @@
 import type { FastifyPluginAsync } from "fastify";
 import { Prisma } from "@prisma/client";
 import {
+  createAdminSpecialty,
+  disableAdminSpecialty,
   createAdminService,
   disableAdminService,
   getAdminServiceById,
@@ -8,6 +10,7 @@ import {
   listSpecialtiesForAdminCountry,
   ServiceCountryNotFoundError,
   ServiceSpecialtyInvalidError,
+  updateAdminSpecialty,
   updateAdminService,
 } from "../modules/services/services.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -15,7 +18,9 @@ import {
   adminServiceCreateBodySchema,
   adminServicesQuerySchema,
   adminServiceUpdateBodySchema,
+  adminSpecialtyCreateBodySchema,
   adminSpecialtiesQuerySchema,
+  adminSpecialtyUpdateBodySchema,
   serviceIdParamsSchema,
 } from "../validations/admin-services.schema.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
@@ -67,6 +72,55 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected admin specialties error"));
+    }
+  });
+
+  app.post("/api/admin/specialties", async (request, reply) => {
+    const body = adminSpecialtyCreateBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid specialty payload", body.error.flatten()));
+    }
+    try {
+      const specialty = await createAdminSpecialty(body.data);
+      return okResponse({ specialty }, "Specialty created");
+    } catch (error) {
+      return handleServiceWriteError(app, reply, error);
+    }
+  });
+
+  app.patch("/api/admin/specialties/:id", async (request, reply) => {
+    const params = serviceIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid specialty id", params.error.flatten()));
+    }
+    const body = adminSpecialtyUpdateBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid specialty update", body.error.flatten()));
+    }
+    try {
+      const specialty = await updateAdminSpecialty(params.data.id, body.data);
+      if (!specialty) {
+        return reply.status(404).send(errorResponse("Specialty not found"));
+      }
+      return okResponse({ specialty }, "Specialty updated");
+    } catch (error) {
+      return handleServiceWriteError(app, reply, error);
+    }
+  });
+
+  app.delete("/api/admin/specialties/:id", async (request, reply) => {
+    const params = serviceIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid specialty id", params.error.flatten()));
+    }
+    try {
+      const specialty = await disableAdminSpecialty(params.data.id);
+      if (!specialty) {
+        return reply.status(404).send(errorResponse("Specialty not found"));
+      }
+      return okResponse({ specialty }, "Specialty deactivated");
+    } catch (error) {
+      return handleServiceWriteError(app, reply, error);
     }
   });
 

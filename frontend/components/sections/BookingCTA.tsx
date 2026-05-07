@@ -40,8 +40,10 @@ export function BookingCTA({ title, description, ctaLabel, ctaHref, asideImage }
           <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-white/5 -translate-y-1/2 translate-x-1/4" />
           <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white/5 translate-y-1/2 -translate-x-1/4" />
           
-          <div className="relative flex flex-col items-center gap-8 text-center">
-            <div className="max-w-2xl">
+          <div
+            className={`relative flex flex-col gap-8 ${asideImage ? "lg:flex-row lg:items-center lg:justify-between lg:text-left" : "items-center text-center"}`}
+          >
+            <div className={`max-w-2xl ${asideImage ? "lg:flex-1" : ""}`}>
               <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur-sm px-4 py-1.5 mb-5 border border-white/20">
                 <Sparkles className="size-4 text-[var(--color-brand-accent)]" />
                 <span className="text-sm font-medium text-white">Start Your Consultation Today</span>
@@ -69,6 +71,18 @@ export function BookingCTA({ title, description, ctaLabel, ctaHref, asideImage }
                 </Link>
               </div>
             </div>
+
+            {asideImage ? (
+              <div className="relative mx-auto w-full max-w-[320px] shrink-0 overflow-hidden rounded-2xl border border-white/20 bg-white/10 sm:mx-0 lg:max-w-[280px]">
+                <Image
+                  src={asideImage.src}
+                  alt={asideImage.alt}
+                  width={560}
+                  height={420}
+                  className="h-auto w-full object-cover"
+                />
+              </div>
+            ) : null}
           </div>
         </div>
       </Container>
