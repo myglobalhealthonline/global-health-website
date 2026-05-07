@@ -59,7 +59,7 @@ export default async function AdminEditDoctorPage({ params, searchParams }: Page
           <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit doctor profile</h1>
           <Link href="/admin/doctors" className="gh-link text-sm text-[var(--color-text-muted)]">Cancel</Link>
         </div>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">Could not load specialties: {specialtiesResult.message}</p>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">Could not load categories: {specialtiesResult.message}</p>
       </section>
     );
   }

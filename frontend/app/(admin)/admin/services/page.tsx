@@ -168,7 +168,7 @@ export default async function AdminServicesPage({
           </label>
           {kind === "SPECIALIST" ? (
             <label className="flex min-w-0 flex-col gap-2">
-              <span className="gh-field-label">Specialty</span>
+              <span className="gh-field-label">Category</span>
               <select
                 name="specialtyId"
                 defaultValue={filters.specialtyId ?? ""}
@@ -226,7 +226,7 @@ export default async function AdminServicesPage({
               <th className="px-3 py-2 font-semibold">Title</th>
               <th className="px-3 py-2 font-semibold">Slug</th>
               <th className="px-3 py-2 font-semibold">Country</th>
-              <th className="px-3 py-2 font-semibold">Specialty</th>
+              <th className="px-3 py-2 font-semibold">Category</th>
               <th className="px-3 py-2 font-semibold">Sort</th>
               <th className="px-3 py-2 font-semibold">Price / duration</th>
               <th className="px-3 py-2 font-semibold">Active</th>

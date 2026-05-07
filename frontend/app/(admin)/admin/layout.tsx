@@ -29,7 +29,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/countries", label: "Countries" },
     { href: "/admin/general-consultations", label: "General Consultations" },
     { href: "/admin/specialist-consultations", label: "Specialist Consultations" },
-    { href: "/admin/specialties", label: "Specialties" },
+    { href: "/admin/specialties", label: "Category" },
     { href: "/admin/online-prescriptions", label: "Online Prescriptions" },
     { href: "/admin/health-tests", label: "Health Tests" },
     { href: "/admin/home-delivery", label: "Home Delivery" },

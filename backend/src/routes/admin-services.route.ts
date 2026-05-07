@@ -6,6 +6,7 @@ import {
   createAdminService,
   disableAdminService,
   getAdminServiceById,
+  getAdminSpecialtyById,
   listAdminServices,
   listSpecialtiesForAdminCountry,
   ServiceCountryNotFoundError,
@@ -77,6 +78,26 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected admin specialties error"));
+    }
+  });
+
+  app.get("/api/admin/specialties/:id", async (request, reply) => {
+    const params = serviceIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid specialty id", params.error.flatten()));
+    }
+    try {
+      const specialty = await getAdminSpecialtyById(params.data.id);
+      if (!specialty) {
+        return reply.status(404).send(errorResponse("Specialty not found"));
+      }
+      return okResponse({ specialty });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected admin specialty error"));
     }
   });
 

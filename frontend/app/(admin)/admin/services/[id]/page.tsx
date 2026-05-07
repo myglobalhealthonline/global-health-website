@@ -113,7 +113,7 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
           <dd className="mt-1 text-[var(--color-text-primary)]">{meta.singularLabel}</dd>
         </div>
         <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Specialty</dt>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Category</dt>
           <dd className="mt-1 text-[var(--color-text-primary)]">{service.specialty?.name ?? meta.emptySpecialtyLabel}</dd>
         </div>
         <div>

@@ -39,14 +39,14 @@ const cards = [
   },
   {
     href: "/admin/specialties",
-    title: "Specialties",
-    description: "Add and manage specialty categories per country",
+    title: "Category",
+    description: "Add and manage service categories per country",
     icon: Tags,
   },
   {
     href: "/admin/specialist-consultations",
     title: "Specialist Consultations",
-    description: "Manage specialist consultation detail pages linked from specialties",
+    description: "Manage specialist consultation detail pages linked from categories",
     icon: Stethoscope,
   },
   {

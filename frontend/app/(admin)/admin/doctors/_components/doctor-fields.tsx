@@ -74,7 +74,7 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
       </label>
 
       <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Specialties</span>
+        <span className="gh-field-label">Categories</span>
         <select
           name="specialtyIds"
           multiple
@@ -87,7 +87,7 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
             </option>
           ))}
         </select>
-        <span className="text-xs text-[var(--color-text-muted)]">Hold Ctrl/Cmd to select multiple. Must match the chosen country.</span>
+        <span className="text-xs text-[var(--color-text-muted)]">Hold Ctrl/Cmd to select multiple categories. Must match chosen country.</span>
       </label>
 
       <DoctorBioRichTextField initialValue={initial?.bio} />

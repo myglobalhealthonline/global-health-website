@@ -120,7 +120,7 @@ export default async function AdminDoctorDetailPage({ params, searchParams }: Pa
           <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{d.languages.length > 0 ? d.languages.join(", ") : "—"}</dd>
         </div>
         <div className="sm:col-span-2">
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Specialties</dt>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Categories</dt>
           <dd className="mt-1 text-sm text-[var(--color-text-primary)]">
             {d.specialties.length > 0 ? d.specialties.map((s) => s.specialty.name).join(", ") : "—"}
           </dd>

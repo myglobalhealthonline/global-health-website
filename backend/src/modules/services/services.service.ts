@@ -257,6 +257,22 @@ export async function listSpecialtiesForAdminCountry(countryId: string) {
   }
 }
 
+export async function getAdminSpecialtyById(id: string) {
+  try {
+    const record = await prisma.specialty.findUnique({
+      where: { id },
+      include: adminSpecialtyInclude,
+    });
+    if (!record) return null;
+    return {
+      ...record,
+      primaryService: record.primaryService?.isActive ? record.primaryService : record.services[0] ?? null,
+    };
+  } catch (error) {
+    throw normalizeDbError(error, "Specialty data is unavailable");
+  }
+}
+
 export async function createAdminSpecialty(input: AdminSpecialtyCreateBody) {
   await assertCountryExists(input.countryId);
   try {

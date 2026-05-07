@@ -113,7 +113,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
             </select>
           </label>
           <label className="flex min-w-0 flex-col gap-2">
-            <span className="gh-field-label">Specialty</span>
+            <span className="gh-field-label">Category</span>
             <select
               name="specialtyId"
               defaultValue={filters.specialtyId ?? ""}
@@ -170,7 +170,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
               <th className="px-3 py-2 font-semibold">Name</th>
               <th className="px-3 py-2 font-semibold">Title</th>
               <th className="px-3 py-2 font-semibold">Country</th>
-              <th className="px-3 py-2 font-semibold">Specialties</th>
+              <th className="px-3 py-2 font-semibold">Categories</th>
               <th className="px-3 py-2 font-semibold">Languages</th>
               <th className="px-3 py-2 font-semibold">Active</th>
               <th className="px-3 py-2 font-semibold">Public path</th>

@@ -343,6 +343,10 @@ export async function fetchAdminSpecialties(countryId: string) {
   return adminRequest<AdminSpecialtiesPayload>(`/api/admin/specialties?${params.toString()}`);
 }
 
+export async function fetchAdminSpecialtyById(id: string) {
+  return adminRequest<AdminSpecialtyDetailPayload>(`/api/admin/specialties/${id}`);
+}
+
 type AdminSpecialtyDetailPayload = {
   specialty: AdminSpecialtyOptionDto;
 };

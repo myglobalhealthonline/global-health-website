@@ -92,7 +92,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
           </Link>
         </div>
         <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load specialties: {specialtiesResult.message}
+          Could not load categories: {specialtiesResult.message}
         </p>
         <Link
           href={`${meta.newHref}?kind=${encodeURIComponent(kind)}`}

@@ -72,9 +72,9 @@ export function ServiceFields({ countries, specialties, kind, initial, pinnedCou
 
       {usesSpecialty ? (
         <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Specialty</span>
+          <span className="gh-field-label">Category</span>
           <select name="specialtyId" className="gh-select min-w-0" defaultValue={initial?.specialtyId ?? ""} required>
-            <option value="">Select specialty</option>
+            <option value="">Select category</option>
             {specialties.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name} ({s.slug}){!s.active ? " - inactive" : ""}
