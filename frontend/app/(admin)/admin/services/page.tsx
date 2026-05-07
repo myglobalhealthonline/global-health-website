@@ -83,7 +83,7 @@ export default async function AdminServicesPage({
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">{meta.pageTitle}</h1>
-        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load countries: {countriesResult.message}</p>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">Could not load countries: {countriesResult.message}</p>
       </section>
     );
   }
@@ -92,7 +92,7 @@ export default async function AdminServicesPage({
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">{meta.pageTitle}</h1>
-        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load records: {listResult.message}</p>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">Could not load records: {listResult.message}</p>
       </section>
     );
   }
@@ -114,20 +114,18 @@ export default async function AdminServicesPage({
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="gh-h2 text-[var(--color-text-primary)]">{meta.pageTitle}</h1>
-          <p className="mt-2 text-sm text-[var(--color-text-muted)]">
+          <p className="mt-2 max-w-3xl text-sm text-[var(--color-text-muted)]">
             Manage image, title, price, duration, sort order, and detail content for this page family.
           </p>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Link href={meta.newHref} className="gh-btn gh-btn-primary">
             {meta.addLabel}
           </Link>
-          <Link href="/admin" className="gh-link text-sm text-[var(--color-text-muted)]">
-            Admin home
-          </Link>
+
         </div>
       </div>
 

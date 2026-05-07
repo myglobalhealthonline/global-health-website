@@ -23,7 +23,19 @@ export default async function AdminEditContentPage({ params, searchParams }: Pag
   ]);
   if (!pageResult.ok) notFound();
   if (!countriesResult.ok) {
-    return <section className="gh-card p-6 sm:p-8">Could not load countries: {countriesResult.message}</section>;
+    return (
+      <section className="gh-card p-6 sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit content page</h1>
+          <Link href={`/admin/content-pages/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
+        </div>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          Could not load countries: {countriesResult.message}
+        </p>
+      </section>
+    );
   }
 
   async function updateAction(formData: FormData) {
@@ -40,12 +52,24 @@ export default async function AdminEditContentPage({ params, searchParams }: Pag
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit content page</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit content page</h1>
+        <Link href={`/admin/content-pages/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">
+          Cancel
+        </Link>
+      </div>
+
       <p className="mt-3 text-sm text-[var(--color-status-warning-text)]">
         Legal/static content may need external approval. Keep public legal pages fallback-safe unless approved content is confirmed.
       </p>
-      {sp.error ? <p className="mt-3 text-[var(--color-status-warning-text)]">{sp.error}</p> : null}
-      <form action={updateAction} className="mt-6 grid gap-4">
+
+      {sp.error ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          {sp.error}
+        </p>
+      ) : null}
+
+      <form action={updateAction} className="mt-8 flex flex-col gap-8">
         <input aria-label="Content page key" className="gh-input" name="pageKey" defaultValue={page.pageKey} required />
         <input aria-label="Content page title" className="gh-input" name="title" defaultValue={page.title} required />
         <textarea aria-label="Content page body" className="gh-textarea" name="body" defaultValue={page.body} rows={12} required />
@@ -79,9 +103,9 @@ export default async function AdminEditContentPage({ params, searchParams }: Pag
           <input type="checkbox" name="isActive" defaultChecked={page.isActive} />
           Active
         </label>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button className="gh-btn gh-btn-primary" type="submit">Save</button>
-          <Link href={`/admin/content-pages/${id}`} className="gh-link">Cancel</Link>
+          <Link href={`/admin/content-pages/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">Cancel</Link>
         </div>
       </form>
     </section>

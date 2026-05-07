@@ -17,13 +17,15 @@ export default async function AdminNewCountryPage({ searchParams }: PageProps) {
   if (!currenciesResult.ok) {
     return (
       <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">New country</h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">New country</h1>
+          <Link href="/admin/countries" className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
+        </div>
         <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           Could not load currencies: {currenciesResult.message}
         </p>
-        <Link href="/admin/countries" className="mt-6 inline-block gh-link text-[var(--color-brand-primary)]">
-          Back to countries
-        </Link>
       </section>
     );
   }
@@ -61,8 +63,8 @@ export default async function AdminNewCountryPage({ searchParams }: PageProps) {
     <section className="gh-card p-6 sm:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">New country</h1>
-        <Link href="/admin/countries" className="gh-link text-[var(--color-brand-primary)]">
-          Back to list
+        <Link href="/admin/countries" className="gh-link text-sm text-[var(--color-text-muted)]">
+          Cancel
         </Link>
       </div>
 
@@ -74,10 +76,13 @@ export default async function AdminNewCountryPage({ searchParams }: PageProps) {
 
       <form action={createCountryAction} className="mt-8 flex flex-col gap-8">
         <CountryFields currencies={currenciesResult.data.currencies} />
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button type="submit" className="gh-btn gh-btn-primary">
             Create country
           </button>
+          <Link href="/admin/countries" className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
         </div>
       </form>
     </section>

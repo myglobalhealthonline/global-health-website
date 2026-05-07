@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 import { deleteAdminService, fetchAdminServiceById } from "@/lib/admin/admin-api";
 import { readServiceKind, SERVICE_KIND_META } from "@/lib/admin/service-kind";
 
@@ -64,18 +65,14 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="gh-h2 text-[var(--color-text-primary)]">{service.name}</h1>
-          <p className="mt-2 text-sm text-[var(--color-text-muted)]">{meta.label}</p>
+          <p className="mt-1 text-sm text-[var(--color-text-muted)]">{meta.label}</p>
         </div>
-        <div className="flex flex-wrap gap-4">
-          <Link href={`/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}`} className="gh-btn gh-btn-primary">
-            Edit
-          </Link>
-          <Link href={meta.listHref} className="gh-link text-[var(--color-text-muted)]">
-            Back to list
-          </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href={`/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}`} className="gh-btn gh-btn-primary">Edit</Link>
+          <Link href={meta.listHref} className="gh-link text-sm text-[var(--color-text-muted)]">Back to list</Link>
         </div>
       </div>
 
@@ -90,12 +87,17 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
         </p>
       ) : null}
 
-      <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-        Status:{" "}
-        <span className={service.isActive ? "text-[var(--color-status-success-text)]" : "text-[var(--color-status-warning-text)]"}>
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border ${
+          service.isActive
+            ? "bg-[var(--color-status-success-bg)] text-[var(--color-status-success-text)] border-[var(--color-status-success-border)]"
+            : "bg-[var(--color-status-warning-bg)] text-[var(--color-status-warning-text)] border-[var(--color-status-warning-border)]"
+        }`}>
+          {service.isActive ? <CheckCircle2 className="size-3.5" /> : <AlertCircle className="size-3.5" />}
           {service.isActive ? "Active" : "Inactive"}
         </span>
-      </p>
+        <span className="text-xs text-[var(--color-text-muted)]">Inactive services are omitted from the public services API.</span>
+      </div>
 
       <dl className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
@@ -164,14 +166,20 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
 
       {service.isActive ? (
         <form action={deactivateServiceAction} className="mt-8 border-t border-[var(--color-border)] pt-6">
-          <p className="text-sm text-[var(--color-text-muted)]">
-            Soft-deactivate hides this record from the public services API and card listings.
-          </p>
-          <button type="submit" className="gh-btn gh-btn-danger mt-3">
-            Deactivate {meta.singularLabel.toLowerCase()}
-          </button>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-[var(--color-text-muted)]">
+              Soft-deactivate hides this record from the public services API and card listings.
+            </p>
+            <button type="submit" className="gh-btn gh-btn-danger shrink-0">
+              Deactivate {meta.singularLabel.toLowerCase()}
+            </button>
+          </div>
         </form>
-      ) : null}
+      ) : (
+        <p className="mt-8 border-t border-[var(--color-border)] pt-6 text-sm text-[var(--color-text-muted)]">
+          This {meta.singularLabel.toLowerCase()} is inactive. Re-enable from edit.
+        </p>
+      )}
     </section>
   );
 }

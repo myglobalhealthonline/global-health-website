@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 import { deleteAdminPricingPlan, fetchAdminPricingPlanById } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
@@ -35,54 +36,48 @@ export default async function AdminPricingDetailPage({ params, searchParams }: P
         <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           Could not load plan: {result.message}
         </p>
-        <Link href="/admin/pricing" className="mt-6 inline-block gh-link text-[var(--color-brand-primary)]">
-          Back to pricing
+        <Link href="/admin/pricing" className="mt-6 inline-block gh-link text-sm text-[var(--color-text-muted)]">
+          Back to list
         </Link>
       </section>
     );
   }
 
   const p = result.data.plan;
+  const isActive = p.isActive;
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">{p.name}</h1>
-        <div className="flex flex-wrap gap-4">
-          <Link href={`/admin/pricing/${id}/edit`} className="gh-btn gh-btn-primary">
-            Edit
-          </Link>
-          <Link href="/admin/pricing" className="gh-link text-[var(--color-text-muted)]">
-            Back to list
-          </Link>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">{p.name}</h1>
+          <p className="mt-1 text-sm text-[var(--color-text-muted)]">Marketing pricing row — not a payment or Stripe record.</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href={`/admin/pricing/${id}/edit`} className="gh-btn gh-btn-primary">Edit</Link>
+          <Link href="/admin/pricing" className="gh-link text-sm text-[var(--color-text-muted)]">Back to list</Link>
         </div>
       </div>
 
-      <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-        Marketing pricing row — not a payment or Stripe record.
-      </p>
+      {messages.error ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{messages.error}</p> : null}
+      {messages.success ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{messages.success}</p> : null}
 
-      {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          {messages.error}
-        </p>
-      ) : null}
-      {messages.success ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">
-          {messages.success}
-        </p>
-      ) : null}
-
-      <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-        Status:{" "}
-        <span className={p.isActive ? "text-[var(--color-status-success-text)]" : "text-[var(--color-status-warning-text)]"}>{p.isActive ? "Active" : "Inactive"}</span>
-        {" — inactive plans are omitted from the public pricing API."}
-      </p>
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border ${
+          isActive
+            ? "bg-[var(--color-status-success-bg)] text-[var(--color-status-success-text)] border-[var(--color-status-success-border)]"
+            : "bg-[var(--color-status-warning-bg)] text-[var(--color-status-warning-text)] border-[var(--color-status-warning-border)]"
+        }`}>
+          {isActive ? <CheckCircle2 className="size-3.5" /> : <AlertCircle className="size-3.5" />}
+          {isActive ? "Active" : "Inactive"}
+        </span>
+        <span className="text-xs text-[var(--color-text-muted)]">Inactive plans are omitted from the public pricing API.</span>
+      </div>
 
       <dl className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Slug</dt>
-          <dd className="mt-1 font-mono text-sm text-[var(--color-text-primary)]">{p.slug}</dd>
+          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{p.slug}</dd>
         </div>
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Country</dt>
@@ -92,7 +87,7 @@ export default async function AdminPricingDetailPage({ params, searchParams }: P
         </div>
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Price</dt>
-          <dd className="mt-1 font-mono text-sm text-[var(--color-text-primary)]">
+          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">
             {p.priceCents} {p.currencyCode} ({p.interval})
           </dd>
         </div>
@@ -102,16 +97,16 @@ export default async function AdminPricingDetailPage({ params, searchParams }: P
         </div>
       </dl>
 
-      {p.isActive ? (
-        <form action={deactivatePricingAction} className="mt-10 border-t border-[var(--color-border)] pt-8">
-          <p className="text-sm text-[var(--color-text-muted)]">Deactivate hides this plan from the public pricing API.</p>
-          <button type="submit" className="mt-4 gh-btn gh-btn-danger">
-            Deactivate plan
-          </button>
+      {isActive ? (
+        <form action={deactivatePricingAction} className="mt-8 border-t border-[var(--color-border)] pt-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-[var(--color-text-muted)]">Deactivate hides this plan from the public pricing API.</p>
+            <button type="submit" className="gh-btn gh-btn-danger shrink-0">Deactivate plan</button>
+          </div>
         </form>
       ) : (
-        <p className="mt-10 border-t border-[var(--color-border)] pt-8 text-sm text-[var(--color-text-muted)]">
-          Plan is inactive. Re-enable from edit.
+        <p className="mt-8 border-t border-[var(--color-border)] pt-6 text-sm text-[var(--color-text-muted)]">
+          This plan is inactive. Re-enable from edit.
         </p>
       )}
     </section>

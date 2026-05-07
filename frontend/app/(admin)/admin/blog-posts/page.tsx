@@ -33,7 +33,7 @@ export default async function AdminBlogPostsPage({ searchParams }: PageProps) {
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Blog posts</h1>
-        <p className="mt-4 text-[var(--color-status-warning-text)]">
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           Could not load admin blog data: {postsResult.ok ? countriesResult.message : postsResult.message}
         </p>
       </section>
@@ -45,15 +45,16 @@ export default async function AdminBlogPostsPage({ searchParams }: PageProps) {
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Blog posts</h1>
-        <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">Blog posts</h1>
+          <p className="mt-2 max-w-3xl text-sm text-[var(--color-text-muted)]">Manage blog posts by country, locale, and status.</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
           <Link href="/admin/blog-posts/new" className="gh-btn gh-btn-primary">
             New post
           </Link>
-          <Link href="/admin" className="gh-link text-sm text-[var(--color-text-muted)]">
-            Admin home
-          </Link>
+
         </div>
       </div>
 

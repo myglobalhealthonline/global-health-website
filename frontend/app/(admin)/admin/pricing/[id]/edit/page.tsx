@@ -29,8 +29,15 @@ export default async function AdminEditPricingPage({ params, searchParams }: Pag
   if (!countriesResult.ok) {
     return (
       <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit pricing plan</h1>
-        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load countries: {countriesResult.message}</p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit pricing plan</h1>
+          <Link href="/admin/pricing" className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
+        </div>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          Could not load countries: {countriesResult.message}
+        </p>
       </section>
     );
   }
@@ -38,8 +45,15 @@ export default async function AdminEditPricingPage({ params, searchParams }: Pag
   if (!currenciesResult.ok) {
     return (
       <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit pricing plan</h1>
-        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load currencies: {currenciesResult.message}</p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit pricing plan</h1>
+          <Link href="/admin/pricing" className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
+        </div>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          Could not load currencies: {currenciesResult.message}
+        </p>
       </section>
     );
   }
@@ -47,11 +61,15 @@ export default async function AdminEditPricingPage({ params, searchParams }: Pag
   if (!planResult.ok) {
     return (
       <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit pricing plan</h1>
-        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load plan: {planResult.message}</p>
-        <Link href="/admin/pricing" className="mt-6 inline-block gh-link">
-          Back to pricing
-        </Link>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit pricing plan</h1>
+          <Link href="/admin/pricing" className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
+        </div>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          Could not load plan: {planResult.message}
+        </p>
       </section>
     );
   }
@@ -90,7 +108,7 @@ export default async function AdminEditPricingPage({ params, searchParams }: Pag
     <section className="gh-card p-6 sm:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit pricing plan</h1>
-        <Link href={`/admin/pricing/${id}`} className="gh-link text-[var(--color-brand-primary)]">
+        <Link href={`/admin/pricing/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">
           Cancel
         </Link>
       </div>
@@ -103,10 +121,13 @@ export default async function AdminEditPricingPage({ params, searchParams }: Pag
 
       <form action={updatePricingAction} className="mt-8 flex flex-col gap-8">
         <PricingFields countries={countries} currencies={currencies} initial={plan} countryLocked />
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button type="submit" className="gh-btn gh-btn-primary">
             Save changes
           </button>
+          <Link href="/admin/pricing" className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
         </div>
       </form>
     </section>

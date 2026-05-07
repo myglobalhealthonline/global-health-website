@@ -11,7 +11,19 @@ export default async function AdminNewFaqPage({ searchParams }: PageProps) {
   const sp = searchParams ? await searchParams : {};
   const countriesResult = await fetchAdminCountries();
   if (!countriesResult.ok) {
-    return <section className="gh-card p-6 sm:p-8">Could not load countries: {countriesResult.message}</section>;
+    return (
+      <section className="gh-card p-6 sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">New FAQ</h1>
+          <Link href="/admin/faqs" className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
+        </div>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          Could not load countries: {countriesResult.message}
+        </p>
+      </section>
+    );
   }
 
   async function createAction(formData: FormData) {
@@ -26,9 +38,20 @@ export default async function AdminNewFaqPage({ searchParams }: PageProps) {
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <h1 className="gh-h2 text-[var(--color-text-primary)]">New FAQ</h1>
-      {sp.error ? <p className="mt-3 text-[var(--color-status-warning-text)]">{sp.error}</p> : null}
-      <form action={createAction} className="mt-6 grid gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="gh-h2 text-[var(--color-text-primary)]">New FAQ</h1>
+        <Link href="/admin/faqs" className="gh-link text-sm text-[var(--color-text-muted)]">
+          Cancel
+        </Link>
+      </div>
+
+      {sp.error ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          {sp.error}
+        </p>
+      ) : null}
+
+      <form action={createAction} className="mt-8 flex flex-col gap-8">
         <input aria-label="FAQ question" className="gh-input" name="question" placeholder="Question" required />
         <textarea aria-label="FAQ answer" className="gh-textarea" name="answer" placeholder="Answer" rows={8} required />
         <div className="grid gap-3 sm:grid-cols-2">
@@ -51,9 +74,9 @@ export default async function AdminNewFaqPage({ searchParams }: PageProps) {
           <input type="checkbox" name="isActive" defaultChecked />
           Active
         </label>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button className="gh-btn gh-btn-primary" type="submit">Create FAQ</button>
-          <Link href="/admin/faqs" className="gh-link">Cancel</Link>
+          <Link href="/admin/faqs" className="gh-link text-sm text-[var(--color-text-muted)]">Cancel</Link>
         </div>
       </form>
     </section>

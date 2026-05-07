@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ServiceDetailTemplate } from "@/components/templates/ServiceDetailTemplate";
 import { buildServiceDetailCopyAsync } from "@/lib/content/template-page-data";

@@ -96,9 +96,9 @@ export default async function AdminAppointmentDetailPage({
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Appointment Detail</h1>
-        <Link href="/admin/appointments" className="gh-link text-[var(--color-brand-primary)]">
+        <Link href="/admin/appointments" className="gh-link text-sm text-[var(--color-text-muted)]">
           Back to queue
         </Link>
       </div>

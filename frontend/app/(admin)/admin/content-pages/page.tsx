@@ -34,22 +34,30 @@ export default async function AdminContentPagesPage({ searchParams }: PageProps)
   if (!pagesResult.ok || !countriesResult.ok) {
     return (
       <section className="gh-card p-6 sm:p-8">
-        Could not load content pages: {pagesResult.ok ? countriesResult.message : pagesResult.message}
+        <h1 className="gh-h2 text-[var(--color-text-primary)]">Content pages</h1>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          Could not load content pages: {pagesResult.ok ? countriesResult.message : pagesResult.message}
+        </p>
       </section>
     );
   }
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <div className="flex items-center justify-between gap-3">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Content pages</h1>
-        <Link href="/admin/content-pages/new" className="gh-btn gh-btn-primary">
-          New content page
-        </Link>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">Content pages</h1>
+          <p className="mt-2 max-w-3xl text-sm text-[var(--color-text-muted)]">
+            Legal/static pages may require approved business/legal copy. Keep public legal routes fallback-safe until approved content is confirmed.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href="/admin/content-pages/new" className="gh-btn gh-btn-primary">
+            New content page
+          </Link>
+
+        </div>
       </div>
-      <p className="mt-3 text-sm text-[var(--color-status-warning-text)]">
-        Legal/static pages may require approved business/legal copy. Keep public legal routes fallback-safe until approved content is confirmed.
-      </p>
 
       <form method="get" className="mt-6 grid gap-3 sm:grid-cols-6">
         <input aria-label="Search content pages" className="gh-input" name="search" defaultValue={filters.search ?? ""} placeholder="Search key/title" />

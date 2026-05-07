@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 import { deleteAdminCountry, fetchAdminCountryById } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
@@ -35,66 +36,63 @@ export default async function AdminCountryDetailPage({ params, searchParams }: P
         <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
           Could not load country: {result.message}
         </p>
-        <Link href="/admin/countries" className="mt-6 inline-block gh-link text-[var(--color-brand-primary)]">
-          Back to countries
+        <Link href="/admin/countries" className="mt-6 inline-block gh-link text-sm text-[var(--color-text-muted)]">
+          Back to list
         </Link>
       </section>
     );
   }
 
   const c = result.data.country;
+  const isActive = c.isActive;
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">{c.name}</h1>
-        <div className="flex flex-wrap gap-4">
-          <Link href={`/admin/countries/${id}/edit`} className="gh-btn gh-btn-primary">
-            Edit
-          </Link>
-          <Link href="/admin/countries" className="gh-link text-[var(--color-text-muted)]">
-            Back to list
-          </Link>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">{c.name}</h1>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href={`/admin/countries/${id}/edit`} className="gh-btn gh-btn-primary">Edit</Link>
+          <Link href="/admin/countries" className="gh-link text-sm text-[var(--color-text-muted)]">Back to list</Link>
         </div>
       </div>
 
-      {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          {messages.error}
-        </p>
-      ) : null}
-      {messages.success ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">
-          {messages.success}
-        </p>
-      ) : null}
+      {messages.error ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{messages.error}</p> : null}
+      {messages.success ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{messages.success}</p> : null}
 
-      <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-        Status:{" "}
-        <span className={c.isActive ? "text-[var(--color-status-success-text)]" : "text-[var(--color-status-warning-text)]"}>{c.isActive ? "Active" : "Inactive"}</span>
-        {" — inactive countries are omitted from the public countries API."}
-      </p>
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border ${
+          isActive
+            ? "bg-[var(--color-status-success-bg)] text-[var(--color-status-success-text)] border-[var(--color-status-success-border)]"
+            : "bg-[var(--color-status-warning-bg)] text-[var(--color-status-warning-text)] border-[var(--color-status-warning-border)]"
+        }`}>
+          {isActive ? <CheckCircle2 className="size-3.5" /> : <AlertCircle className="size-3.5" />}
+          {isActive ? "Active" : "Inactive"}
+        </span>
+        <span className="text-xs text-[var(--color-text-muted)]">Inactive countries are omitted from the public countries API.</span>
+      </div>
 
       <dl className="mt-6 grid gap-4 sm:grid-cols-2">
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Code</dt>
-          <dd className="mt-1 uppercase text-[var(--color-text-primary)]">{c.code}</dd>
+          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{c.code}</dd>
         </div>
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Slug</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">{c.slug}</dd>
+          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{c.slug}</dd>
         </div>
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Default locale</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">{c.defaultLocale}</dd>
+          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{c.defaultLocale}</dd>
         </div>
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Supported locales</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">{c.countryLocales.map((l) => l.locale).join(", ")}</dd>
+          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{c.countryLocales.map((l) => l.locale).join(", ")}</dd>
         </div>
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Currency</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">
+          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">
             {c.currency.code} ({c.currency.symbol})
           </dd>
         </div>
@@ -126,16 +124,20 @@ export default async function AdminCountryDetailPage({ params, searchParams }: P
         )}
       </div>
 
-      {c.isActive ? (
+      {isActive ? (
         <form action={deactivateCountryAction} className="mt-8 border-t border-[var(--color-border)] pt-6">
-          <p className="text-sm text-[var(--color-text-muted)]">
-            Soft-deactivate hides this country from the public countries API. You can re-enable from Edit.
-          </p>
-          <button type="submit" className="gh-btn gh-btn-danger mt-3">
-            Deactivate country
-          </button>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-[var(--color-text-muted)]">
+              Soft-deactivate hides this country from the public countries API. You can re-enable from Edit.
+            </p>
+            <button type="submit" className="gh-btn gh-btn-danger shrink-0">Deactivate country</button>
+          </div>
         </form>
-      ) : null}
+      ) : (
+        <p className="mt-8 border-t border-[var(--color-border)] pt-6 text-sm text-[var(--color-text-muted)]">
+          This country is inactive. Re-enable from edit.
+        </p>
+      )}
     </section>
   );
 }

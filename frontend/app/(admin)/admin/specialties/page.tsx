@@ -94,12 +94,17 @@ export default async function AdminSpecialtiesPage({ searchParams }: PageProps) 
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <h1 className="gh-h2 text-[var(--color-text-primary)]">Specialties</h1>
-      <p className="gh-body mt-3 text-[var(--color-text-muted)]">
-        Manage one specialty card per listing tile. Each specialty can control its own image,
-        summary, theme color, and sort order. Consultation time and price come from the service
-        assigned to that specialty in the specialist consultations section.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">Specialties</h1>
+          <p className="mt-2 max-w-3xl text-sm text-[var(--color-text-muted)]">
+            Manage one specialty card per listing tile. Each specialty can control its own image,
+            summary, theme color, and sort order. Consultation time and price come from the service
+            assigned to that specialty in the specialist consultations section.
+          </p>
+        </div>
+
+      </div>
 
       {sp.error ? (
         <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{sp.error}</p>

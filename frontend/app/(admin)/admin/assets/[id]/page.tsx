@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 import {
   adminAssetPreviewable,
   deleteAdminAsset,
@@ -37,55 +38,53 @@ export default async function AdminAssetDetailPage({ params, searchParams }: Pag
     return (
       <section className="gh-card p-6 sm:p-8">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Asset</h1>
-        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load asset: {result.message}</p>
-        <Link href="/admin/assets" className="mt-6 inline-block gh-link text-[var(--color-brand-primary)]">
-          Back to assets
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          Could not load asset: {result.message}
+        </p>
+        <Link href="/admin/assets" className="mt-6 inline-block gh-link text-sm text-[var(--color-text-muted)]">
+          Back to list
         </Link>
       </section>
     );
   }
 
   const a = result.data.asset;
+  const isActive = a.isActive;
   const showPreview = adminAssetPreviewable(a.kind as AdminAssetKind, a.path);
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">{a.key}</h1>
-        <div className="flex flex-wrap gap-4">
-          <Link href={`/admin/assets/${id}/edit`} className="gh-btn gh-btn-primary">
-            Edit
-          </Link>
-          <Link href="/admin/assets" className="gh-link text-[var(--color-text-muted)]">
-            Back to list
-          </Link>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">{a.key}</h1>
+          <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+            Metadata record — optional uploads via Railway Bucket use POST /api/admin/media/upload; files are served from GET /api/media/… when storage env vars are set.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href={`/admin/assets/${id}/edit`} className="gh-btn gh-btn-primary">Edit</Link>
+          <Link href="/admin/assets" className="gh-link text-sm text-[var(--color-text-muted)]">Back to list</Link>
         </div>
       </div>
 
-      <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-        Metadata record — optional uploads via Railway Bucket use POST /api/admin/media/upload; files are served from GET /api/media/… when storage env vars are set.
-      </p>
+      {messages.error ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{messages.error}</p> : null}
+      {messages.success ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{messages.success}</p> : null}
 
-      {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          {messages.error}
-        </p>
-      ) : null}
-      {messages.success ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">
-          {messages.success}
-        </p>
-      ) : null}
-
-      <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-        Status:{" "}
-        <span className={a.isActive ? "text-[var(--color-status-success-text)]" : "text-[var(--color-status-warning-text)]"}>{a.isActive ? "Active" : "Inactive"}</span>
-        {" — inactive assets are omitted from the public assets API."}
-      </p>
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border ${
+          isActive
+            ? "bg-[var(--color-status-success-bg)] text-[var(--color-status-success-text)] border-[var(--color-status-success-border)]"
+            : "bg-[var(--color-status-warning-bg)] text-[var(--color-status-warning-text)] border-[var(--color-status-warning-border)]"
+        }`}>
+          {isActive ? <CheckCircle2 className="size-3.5" /> : <AlertCircle className="size-3.5" />}
+          {isActive ? "Active" : "Inactive"}
+        </span>
+        <span className="text-xs text-[var(--color-text-muted)]">Inactive assets are omitted from the public assets API.</span>
+      </div>
 
       {showPreview ? (
-        <div className="mt-6">
-          <span className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Preview</span>
+        <div className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+          <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">Preview</h2>
           <div className="mt-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -108,7 +107,7 @@ export default async function AdminAssetDetailPage({ params, searchParams }: Pag
         </div>
         <div className="sm:col-span-2">
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Path</dt>
-          <dd className="mt-1 break-all font-mono text-xs text-[var(--color-text-primary)]">{a.path}</dd>
+          <dd className="mt-1 break-all text-sm text-[var(--color-text-primary)]">{a.path}</dd>
         </div>
         <div className="sm:col-span-2">
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Alt text</dt>
@@ -128,16 +127,16 @@ export default async function AdminAssetDetailPage({ params, searchParams }: Pag
         ) : null}
       </dl>
 
-      {a.isActive ? (
-        <form action={deactivateAssetAction} className="mt-10 border-t border-[var(--color-border)] pt-8">
-          <p className="text-sm text-[var(--color-text-muted)]">Deactivate hides this asset from the public listing API.</p>
-          <button type="submit" className="mt-4 gh-btn gh-btn-danger">
-            Deactivate asset
-          </button>
+      {isActive ? (
+        <form action={deactivateAssetAction} className="mt-8 border-t border-[var(--color-border)] pt-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-[var(--color-text-muted)]">Deactivate hides this asset from the public listing API.</p>
+            <button type="submit" className="gh-btn gh-btn-danger shrink-0">Deactivate asset</button>
+          </div>
         </form>
       ) : (
-        <p className="mt-10 border-t border-[var(--color-border)] pt-8 text-sm text-[var(--color-text-muted)]">
-          Asset is inactive. Re-enable from edit.
+        <p className="mt-8 border-t border-[var(--color-border)] pt-6 text-sm text-[var(--color-text-muted)]">
+          This asset is inactive. Re-enable from edit.
         </p>
       )}
     </section>

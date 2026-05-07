@@ -24,8 +24,15 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
   if (!countriesResult.ok) {
     return (
       <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">New asset</h1>
-        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load countries: {countriesResult.message}</p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">New asset</h1>
+          <Link href="/admin/assets" className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
+        </div>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          Could not load countries: {countriesResult.message}
+        </p>
       </section>
     );
   }
@@ -39,7 +46,12 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
   if (!countryId && !scopeGlobal) {
     return (
       <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">New asset</h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">New asset</h1>
+          <Link href="/admin/assets" className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
+        </div>
         <p className="gh-body mt-3 text-[var(--color-text-muted)]">
           Choose a country to load doctor profiles for optional linking, or create a global asset without a country.
         </p>
@@ -65,11 +77,9 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
         >
           Global asset (no country)
         </Link>
-        <div className="mt-6">
-          <Link href="/admin/assets" className="gh-link text-sm text-[var(--color-text-muted)]">
-            Back to assets
-          </Link>
-        </div>
+        <Link href="/admin/assets" className="mt-6 inline-block gh-link text-sm text-[var(--color-text-muted)]">
+          Back to list
+        </Link>
       </section>
     );
   }
@@ -120,8 +130,8 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
     <section className="gh-card p-6 sm:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">New asset</h1>
-        <Link href="/admin/assets/new" className="gh-link text-sm text-[var(--color-text-muted)]">
-          Change scope
+        <Link href="/admin/assets" className="gh-link text-sm text-[var(--color-text-muted)]">
+          Cancel
         </Link>
       </div>
 
@@ -133,7 +143,7 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
 
       <form action={createAssetAction} className="mt-8 flex flex-col gap-8">
         <AssetFields countries={countries} doctorOptions={doctorOptions} />
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button type="submit" className="gh-btn gh-btn-primary">
             Create asset
           </button>

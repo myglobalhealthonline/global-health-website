@@ -14,7 +14,19 @@ export default async function AdminNewContentPagePage({ searchParams }: PageProp
   const sp = searchParams ? await searchParams : {};
   const countriesResult = await fetchAdminCountries();
   if (!countriesResult.ok) {
-    return <section className="gh-card p-6 sm:p-8">Could not load countries: {countriesResult.message}</section>;
+    return (
+      <section className="gh-card p-6 sm:p-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">New content page</h1>
+          <Link href="/admin/content-pages" className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
+        </div>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          Could not load countries: {countriesResult.message}
+        </p>
+      </section>
+    );
   }
 
   async function createAction(formData: FormData) {
@@ -29,12 +41,24 @@ export default async function AdminNewContentPagePage({ searchParams }: PageProp
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <h1 className="gh-h2 text-[var(--color-text-primary)]">New content page</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="gh-h2 text-[var(--color-text-primary)]">New content page</h1>
+        <Link href="/admin/content-pages" className="gh-link text-sm text-[var(--color-text-muted)]">
+          Cancel
+        </Link>
+      </div>
+
       <p className="mt-3 text-sm text-[var(--color-status-warning-text)]">
         Legal/static pages should stay fallback-safe in public routes until approved copy exists.
       </p>
-      {sp.error ? <p className="mt-3 text-[var(--color-status-warning-text)]">{sp.error}</p> : null}
-      <form action={createAction} className="mt-6 grid gap-4">
+
+      {sp.error ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          {sp.error}
+        </p>
+      ) : null}
+
+      <form action={createAction} className="mt-8 flex flex-col gap-8">
         <input aria-label="Content page key" className="gh-input" name="pageKey" placeholder="privacy-policy" required />
         <input aria-label="Content page title" className="gh-input" name="title" placeholder="Title" required />
         <textarea aria-label="Content page body" className="gh-textarea" name="body" placeholder="Body/content" rows={12} required />
@@ -62,9 +86,9 @@ export default async function AdminNewContentPagePage({ searchParams }: PageProp
           <input type="checkbox" name="isActive" defaultChecked />
           Active
         </label>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button className="gh-btn gh-btn-primary" type="submit">Create page</button>
-          <Link href="/admin/content-pages" className="gh-link">Cancel</Link>
+          <Link href="/admin/content-pages" className="gh-link text-sm text-[var(--color-text-muted)]">Cancel</Link>
         </div>
       </form>
     </section>

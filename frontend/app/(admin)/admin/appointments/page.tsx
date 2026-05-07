@@ -103,10 +103,15 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <h1 className="gh-h2 text-[var(--color-text-primary)]">Appointment Queue</h1>
-      <p className="gh-body mt-3 text-[var(--color-text-muted)]">
-        Internal review queue. Filters and pagination run on the server; status moves follow rules on the detail page.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">Appointment Queue</h1>
+          <p className="mt-2 max-w-3xl text-sm text-[var(--color-text-muted)]">
+            Internal review queue. Filters and pagination run on the server; status moves follow rules on the detail page.
+          </p>
+        </div>
+
+      </div>
 
       <form method="get" className="mt-6 flex flex-col gap-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

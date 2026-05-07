@@ -21,15 +21,16 @@ export default async function AdminCountriesPage() {
 
   return (
     <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Countries</h1>
-        <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">Countries</h1>
+          <p className="mt-2 max-w-3xl text-sm text-[var(--color-text-muted)]">Manage countries, locales, currencies, and key routes.</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
           <Link href="/admin/countries/new" className="gh-btn gh-btn-primary">
             Add country
           </Link>
-          <Link href="/admin" className="gh-link text-sm text-[var(--color-text-muted)]">
-            Admin home
-          </Link>
+
         </div>
       </div>
 

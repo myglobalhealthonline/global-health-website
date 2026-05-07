@@ -29,8 +29,15 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
   if (!countriesResult.ok) {
     return (
       <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit service</h1>
-        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load countries: {countriesResult.message}</p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit service</h1>
+          <Link href="/admin/general-consultations" className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
+        </div>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          Could not load countries: {countriesResult.message}
+        </p>
       </section>
     );
   }
@@ -38,11 +45,15 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
   if (!serviceResult.ok) {
     return (
       <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit service</h1>
-        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load service: {serviceResult.message}</p>
-        <Link href="/admin/general-consultations" className="mt-6 inline-block gh-link">
-          Back to consultations
-        </Link>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit service</h1>
+          <Link href="/admin/general-consultations" className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
+        </div>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          Could not load service: {serviceResult.message}
+        </p>
       </section>
     );
   }
@@ -55,8 +66,15 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
   if (!specialtiesResult.ok) {
     return (
       <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit {meta.singularLabel.toLowerCase()}</h1>
-        <p className="mt-4 text-[var(--color-status-warning-text)]">Could not load specialties: {specialtiesResult.message}</p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit {meta.singularLabel.toLowerCase()}</h1>
+          <Link href={meta.listHref} className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
+        </div>
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+          Could not load specialties: {specialtiesResult.message}
+        </p>
       </section>
     );
   }
@@ -103,7 +121,7 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
     <section className="gh-card p-6 sm:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit {meta.singularLabel.toLowerCase()}</h1>
-        <Link href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`} className="gh-link text-[var(--color-brand-primary)]">
+        <Link href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`} className="gh-link text-sm text-[var(--color-text-muted)]">
           Cancel
         </Link>
       </div>
@@ -122,10 +140,13 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
           initial={service}
           countryLocked
         />
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button type="submit" className="gh-btn gh-btn-primary">
             Save changes
           </button>
+          <Link href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`} className="gh-link text-sm text-[var(--color-text-muted)]">
+            Cancel
+          </Link>
         </div>
       </form>
     </section>

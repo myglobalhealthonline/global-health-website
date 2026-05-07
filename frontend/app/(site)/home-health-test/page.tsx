@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { ConsultationListingTemplate } from "@/components/templates/ConsultationListingTemplate";
 import { formatOptionalPrice, getPublicServicesForCountry } from "@/lib/content/get-public-services";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
