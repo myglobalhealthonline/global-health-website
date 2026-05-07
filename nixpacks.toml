@@ -1,12 +1,12 @@
-# Railway / Nixpacks (monorepo): workspace install + Next.js frontend build.
-# Use repo root as the service **Root Directory** so this file is picked up.
-# Set **Start Command** in Railway to: `pnpm --filter frontend start` (Next listens on `$PORT` when set).
+# Railway / Nixpacks — monorepo root. Set service Root Directory to repo root (empty / `/`).
+# Railway sets CI=true; pnpm then defaults to frozen lockfile. Unset CI so a present lockfile still works
+# if it was briefly out of sync, and isolated-package edge cases don’t hard-fail.
+# Frontend-only services should use Root Directory = `frontend` + `frontend/railway.toml` instead.
 [phases.setup]
 nixPkgs = ["nodejs_22", "pnpm"]
 
 [phases.install]
-# Avoid ERR_PNPM_OUTDATED_LOCKFILE when dashboard Root Directory is `frontend` (no workspace lockfile in context).
-cmds = ["pnpm install --no-frozen-lockfile"]
+cmds = ["sh -c 'unset CI; pnpm install'"]
 
 [phases.build]
 cmds = ["pnpm --filter frontend build"]
