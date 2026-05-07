@@ -20,6 +20,7 @@ function mediaRemotePatterns(): NonNullable<NonNullable<NextConfig["images"]>["r
 }
 
 const remotePatterns = mediaRemotePatterns();
+const apiOrigin = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/+$/, "");
 
 const nextConfig: NextConfig = {
   turbopack: {
@@ -27,8 +28,18 @@ const nextConfig: NextConfig = {
   },
   ...(remotePatterns ? { images: { remotePatterns } } : {}),
   async rewrites() {
+    const dynamicRewrites = apiOrigin
+      ? [
+          {
+            source: "/api/media/:path*",
+            destination: `${apiOrigin}/api/media/:path*`,
+          },
+        ]
+      : [];
+
     return {
       beforeFiles: [
+        ...dynamicRewrites,
         {
           source: "/admin/doctors/new",
           destination: "/admin/doctors/create",

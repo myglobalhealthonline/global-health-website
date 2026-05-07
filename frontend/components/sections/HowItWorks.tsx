@@ -4,9 +4,14 @@ import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { MapPin, UserRound, Mail, ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const stepIcons = [MapPin, UserRound, Mail];
+const stepImages = [
+  "/images/how-it-works/step-1.png",
+  "/images/how-it-works/step-2.png",
+  "/images/how-it-works/step-3.png",
+];
 
 type HowItWorksStep =
   | string
@@ -25,8 +30,66 @@ type HowItWorksProps = {
 
 export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWorksProps) {
   const displaySteps = steps.slice(0, 3);
-  const [imageSrc, setImageSrc] = useState("/images/how-it-works/steps-hero.png");
   const [activeStep, setActiveStep] = useState(0);
+  const [imageLoadError, setImageLoadError] = useState(false);
+  const stepRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const activeStepRef = useRef(0);
+  const imageSrc = imageLoadError
+    ? "/images/hero/homehero.png"
+    : stepImages[Math.min(activeStep, stepImages.length - 1)] ?? stepImages[0];
+
+  useEffect(() => {
+    activeStepRef.current = activeStep;
+  }, [activeStep]);
+
+  useEffect(() => {
+    setImageLoadError(false);
+  }, [activeStep]);
+
+  useEffect(() => {
+    const validSteps = stepRefs.current.filter((el): el is HTMLDivElement => Boolean(el));
+    if (validSteps.length === 0) return;
+
+    let rafId = 0;
+    const measure = () => {
+      const viewportCenter = window.innerHeight * 0.45;
+      let nearestIndex = activeStepRef.current;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
+      for (let index = 0; index < validSteps.length; index += 1) {
+        const stepEl = validSteps[index];
+        const rect = stepEl.getBoundingClientRect();
+        const stepCenter = rect.top + rect.height / 2;
+        const distance = Math.abs(stepCenter - viewportCenter);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestIndex = index;
+        }
+      }
+
+      if (nearestIndex !== activeStepRef.current) {
+        setActiveStep(nearestIndex);
+      }
+      rafId = 0;
+    };
+
+    const requestMeasure = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(measure);
+    };
+
+    requestMeasure();
+    window.addEventListener("scroll", requestMeasure, { passive: true });
+    window.addEventListener("resize", requestMeasure);
+
+    return () => {
+      window.removeEventListener("scroll", requestMeasure);
+      window.removeEventListener("resize", requestMeasure);
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
+  }, []);
 
   return (
     <Section className="bg-white relative overflow-hidden">
@@ -52,7 +115,7 @@ export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWor
                   height={900}
                   className="h-auto w-full object-contain"
                   unoptimized
-                  onError={() => setImageSrc("/images/hero/homehero.png")}
+                  onError={() => setImageLoadError(true)}
                 />
                 <div className="absolute bottom-4 left-4 rounded-xl bg-white/95 backdrop-blur-sm px-4 py-2 shadow-lg">
                   <p className="text-sm font-bold text-[var(--color-brand-primary)]">Step {activeStep + 1} of 3</p>
@@ -75,6 +138,10 @@ export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWor
               return (
                 <div
                   key={`${normalized.title}-${index}`}
+                  ref={(element) => {
+                    stepRefs.current[index] = element;
+                  }}
+                  data-step-index={index}
                   className={`group relative flex gap-5 p-4 rounded-2xl transition-all duration-300 cursor-pointer ${isActive ? "bg-[var(--color-background-soft)] shadow-lg ring-1 ring-[var(--color-brand-primary)]/10" : "hover:bg-[var(--color-background-soft)]/50"}`}
                   onMouseEnter={() => setActiveStep(index)}
                 >
