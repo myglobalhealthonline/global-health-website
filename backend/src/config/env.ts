@@ -8,6 +8,14 @@ function mergeRailwayBucketAliases(): NodeJS.ProcessEnv {
   if (!out.S3_ACCESS_KEY_ID?.trim() && out.ACCESS_KEY_ID?.trim()) out.S3_ACCESS_KEY_ID = out.ACCESS_KEY_ID;
   if (!out.S3_SECRET_ACCESS_KEY?.trim() && out.SECRET_ACCESS_KEY?.trim()) out.S3_SECRET_ACCESS_KEY = out.SECRET_ACCESS_KEY;
   if (!out.S3_REGION?.trim() && out.REGION?.trim()) out.S3_REGION = out.REGION;
+  // Railway bucket credentials CLI currently prints AWS_* names. Accept both shapes.
+  if (!out.S3_BUCKET?.trim() && out.AWS_S3_BUCKET_NAME?.trim()) out.S3_BUCKET = out.AWS_S3_BUCKET_NAME;
+  if (!out.S3_ENDPOINT?.trim() && out.AWS_ENDPOINT_URL?.trim()) out.S3_ENDPOINT = out.AWS_ENDPOINT_URL;
+  if (!out.S3_ACCESS_KEY_ID?.trim() && out.AWS_ACCESS_KEY_ID?.trim()) out.S3_ACCESS_KEY_ID = out.AWS_ACCESS_KEY_ID;
+  if (!out.S3_SECRET_ACCESS_KEY?.trim() && out.AWS_SECRET_ACCESS_KEY?.trim()) {
+    out.S3_SECRET_ACCESS_KEY = out.AWS_SECRET_ACCESS_KEY;
+  }
+  if (!out.S3_REGION?.trim() && out.AWS_DEFAULT_REGION?.trim()) out.S3_REGION = out.AWS_DEFAULT_REGION;
   return out;
 }
 
