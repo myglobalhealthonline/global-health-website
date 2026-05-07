@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Stethoscope } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { CTAFooter } from "@/components/layout/CTAFooter";
+import FooterColumn from "@/components/ui/footer-column";
 import type { SiteNavigationData } from "@/data/navigation";
 
 function isRealLogo(src?: string): boolean {
@@ -24,6 +25,16 @@ export function SiteFooter({
   footerDecorImage?: { src: string; alt: string };
 }) {
   const hasRealLogo = isRealLogo(brandLogo?.src);
+  const useGreenFooter = true;
+
+  if (useGreenFooter) {
+    return (
+      <footer className="mt-auto">
+        <FooterColumn siteName={siteName} navigation={navigation} brandLogo={brandLogo} />
+        <CTAFooter cta={navigation.footerCta} trustLine={navigation.trustLine} decorImage={footerDecorImage} />
+      </footer>
+    );
+  }
 
   return (
     <footer className="mt-auto">

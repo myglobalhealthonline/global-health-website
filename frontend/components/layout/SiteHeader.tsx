@@ -1,9 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-
+import { useEffect, useState } from "react";
 import { DesktopNav } from "@/components/layout/DesktopNav";
 import { MobileNav } from "@/components/layout/MobileNav";
 import type { SiteNavigationData } from "@/data/navigation";
+import type { AuthUser } from "@/lib/api/auth-api";
+import { cn } from "@/lib/utils/cn";
 
 const DEFAULT_LOGO = "/logos/global-health-official.png";
 
@@ -17,33 +21,59 @@ export function SiteHeader({
   siteName,
   navigation,
   brandLogo,
+  authUser,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
-  /** CMS logo when uploaded (Railway /api/media or safe local path). */
   brandLogo?: { src: string; alt: string };
+  authUser?: AuthUser | null;
 }) {
+  const [scrolled, setScrolled] = useState(false);
   const hasRealLogo = isRealLogo(brandLogo?.src);
   const logoSrc = hasRealLogo ? brandLogo!.src : DEFAULT_LOGO;
   const logoAlt = hasRealLogo ? brandLogo!.alt : `${siteName} logo`;
 
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 0);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[var(--color-border)] bg-[rgba(255,255,255,0.96)] backdrop-blur-md">
-      <div className="mx-auto flex h-[var(--header-height)] max-w-[var(--container-width)] items-center justify-between gap-3 px-4 sm:gap-5 sm:px-6 lg:grid lg:grid-cols-[320px_1fr_320px] lg:items-center lg:gap-0 lg:px-8">
-        <Link href="/" className="flex min-w-0 shrink items-center gap-2.5 lg:w-[320px]">
+    <header
+      className={cn(
+        "sticky top-0 z-40 w-full bg-[var(--color-brand-primary)] transition-[border-color] duration-300",
+        scrolled
+          ? "border-b border-white/20"
+          : "border-b border-transparent",
+      )}
+    >
+      <div className="mx-auto flex h-[var(--header-height)] max-w-[var(--container-width)] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <Link
+          href="/"
+          className="flex min-w-0 shrink-0 items-center gap-2.5"
+        >
           <Image
             src={logoSrc}
             alt={logoAlt}
             width={280}
             height={120}
-            className="h-14 w-auto max-w-[240px] sm:h-16 sm:max-w-[280px] md:h-[4.5rem] md:max-w-[320px]"
+            className="h-12 w-auto max-w-[200px] sm:h-14 sm:max-w-[240px] md:h-16 md:max-w-[260px]"
             priority
           />
         </Link>
-        <DesktopNav className="lg:justify-center" navigation={navigation} />
-        <div className="hidden lg:block" aria-hidden />
+
+        <div className="hidden flex-1 items-center pl-6 lg:flex">
+          <DesktopNav navigation={navigation} />
+        </div>
+
         <div className="flex items-center lg:hidden">
-          <MobileNav siteName={siteName} navigation={navigation} brandLogo={brandLogo} />
+          <MobileNav
+            siteName={siteName}
+            navigation={navigation}
+            brandLogo={brandLogo}
+            authUser={authUser}
+          />
         </div>
       </div>
     </header>

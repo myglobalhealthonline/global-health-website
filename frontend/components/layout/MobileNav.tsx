@@ -3,29 +3,35 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, User, X } from "lucide-react";
 import Link from "next/link";
 import type { SiteNavigationData } from "@/data/navigation";
+import type { AuthUser } from "@/lib/api/auth-api";
 import { DEFAULT_BRAND_LOGO } from "@/lib/content/brand-logo";
 
 export function MobileNav({
   siteName,
   navigation,
   brandLogo = DEFAULT_BRAND_LOGO,
+  authUser,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
+  authUser?: AuthUser | null;
 }) {
+  const portalHref = authUser?.role === "ADMIN" ? "/admin" : "/account";
+  const portalLabel = authUser?.role === "ADMIN" ? "Admin Portal" : "User Portal";
+
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
         <button
           type="button"
-          className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2.5 shadow-[var(--shadow-soft)] lg:hidden"
+          className="inline-flex rounded-full border border-white/30 bg-white/10 p-2.5 text-white lg:hidden"
           aria-label="Open menu"
         >
-          <Menu className="size-5 text-[var(--color-text-primary)]" aria-hidden />
+          <Menu className="size-5" aria-hidden />
         </button>
       </Dialog.Trigger>
 
@@ -108,14 +114,26 @@ export function MobileNav({
                   </Link>
                 </Dialog.Close>
               ))}
-              <Dialog.Close asChild>
-                <Link
-                  href={navigation.headerAuthLink.href}
-                  className="rounded-[16px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
-                >
-                  {navigation.headerAuthLink.label}
-                </Link>
-              </Dialog.Close>
+              {authUser ? (
+                <Dialog.Close asChild>
+                  <Link
+                    href={portalHref}
+                    className="flex items-center gap-3 rounded-[16px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                  >
+                    <User className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
+                    {portalLabel}
+                  </Link>
+                </Dialog.Close>
+              ) : (
+                <Dialog.Close asChild>
+                  <Link
+                    href={navigation.headerAuthLink.href}
+                    className="rounded-[16px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                  >
+                    {navigation.headerAuthLink.label}
+                  </Link>
+                </Dialog.Close>
+              )}
             </div>
           </div>
 
@@ -140,15 +158,12 @@ function AccordionSection({
   children: ReactNode;
 }) {
   return (
-    <details className="group border-b border-[var(--color-border)] pb-4 last:border-b-0">
-      <summary className="marker:hidden flex cursor-pointer list-none items-center justify-between gap-4 py-2 [&::-webkit-details-marker]:hidden">
-        <span className="text-lg font-semibold text-[var(--color-text-primary)]">{title}</span>
-        <ChevronDown
-          className="size-5 shrink-0 text-[var(--color-text-muted)] transition-transform group-open:rotate-180"
-          aria-hidden
-        />
+    <details className="group border-b border-[var(--color-border)]">
+      <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-[17px] font-semibold text-[var(--color-text-primary)]">
+        {title}
+        <ChevronDown className="size-5 shrink-0 transition-transform group-open:rotate-180" aria-hidden />
       </summary>
-      <div>{children}</div>
+      <div className="pb-4">{children}</div>
     </details>
   );
 }

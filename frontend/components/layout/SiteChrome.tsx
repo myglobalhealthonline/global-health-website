@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import type { SiteNavigationData } from "@/data/navigation";
+import type { AuthUser } from "@/lib/api/auth-api";
 
 type Props = {
   children: ReactNode;
@@ -12,6 +13,7 @@ type Props = {
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
   footerDecorImage?: { src: string; alt: string };
+  authUser?: AuthUser | null;
 };
 
 export function SiteChrome({
@@ -20,6 +22,7 @@ export function SiteChrome({
   navigation,
   brandLogo,
   footerDecorImage,
+  authUser,
 }: Props) {
   const pathname = usePathname();
   const isGatewayHome = pathname === "/";
@@ -27,7 +30,7 @@ export function SiteChrome({
   return (
     <>
       {isGatewayHome ? null : (
-        <SiteHeader siteName={siteName} navigation={navigation} brandLogo={brandLogo} />
+        <SiteHeader siteName={siteName} navigation={navigation} brandLogo={brandLogo} authUser={authUser} />
       )}
       <main id="main-content" className="grow">
         {children}

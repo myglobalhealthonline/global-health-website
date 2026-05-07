@@ -16,7 +16,7 @@ export function CTAFooter({
   const points = ["100% online", "No waiting rooms", "Confidential"];
 
   return (
-    <div className="bg-[var(--color-brand-primary)] py-[var(--section-padding-y-sm)] text-[var(--color-brand-secondary)]">
+    <div className="border-t border-white/10 bg-[var(--color-brand-primary)] py-[var(--section-padding-y-sm)] text-[var(--color-brand-secondary)]">
       <Container>
         <div className="flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
           <div className="max-w-xl space-y-4">

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ShieldCheck, Stethoscope, Clock } from "lucide-react";
+import { getServerAuthUser } from "@/lib/api/server-auth";
 import { LoginForm } from "./ui";
 
 export const metadata: Metadata = {
@@ -8,7 +10,12 @@ export const metadata: Metadata = {
   description: "Patient and admin login for Global Health.",
 };
 
-export default function Page() {
+export default async function Page() {
+  const user = await getServerAuthUser();
+  if (user) {
+    redirect(user.role === "ADMIN" ? "/admin" : "/account");
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-[var(--color-background-soft)]">
       <header className="px-6 py-5">
