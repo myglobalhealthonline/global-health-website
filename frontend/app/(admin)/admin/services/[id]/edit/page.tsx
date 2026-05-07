@@ -5,10 +5,12 @@ import { parseServiceBodyFromForm } from "@/lib/admin/service-form-parse";
 import {
   fetchAdminCountries,
   fetchAdminServiceById,
+  fetchAdminServices,
   fetchAdminSpecialties,
   patchAdminService,
 } from "@/lib/admin/admin-api";
 import { readServiceKind, SERVICE_KIND_META } from "@/lib/admin/service-kind";
+import { detectDuplicateTextIssues, validateAdminServicePayload } from "@/lib/content/publication-validation";
 
 export const dynamic = "force-dynamic";
 
@@ -109,12 +111,52 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
       isActive: raw.isActive,
     };
 
+    const [existingServices, validation] = await Promise.all([
+      fetchAdminServices({ countryId: raw.countryId, pageSize: "250" }),
+      Promise.resolve(validateAdminServicePayload({
+        kind: body.kind as "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY",
+        name: body.name,
+        summary: body.summary,
+        heroTitle: body.heroTitle,
+        heroDescription: body.heroDescription,
+        detailBody: body.detailBody,
+        durationMinutes: body.durationMinutes ?? null,
+        basePriceCents: body.basePriceCents ?? null,
+        currencyCode: body.currencyCode,
+        isActive: body.isActive,
+      })),
+    ]);
+    const duplicateIssues = existingServices.ok
+      ? detectDuplicateTextIssues(
+          {
+            id,
+            title: body.heroTitle ?? body.name,
+            description: body.heroDescription ?? body.summary,
+          },
+          existingServices.data.items.map((item) => ({
+            id: item.id,
+            title: item.heroTitle ?? item.name,
+            description: item.heroDescription ?? item.summary,
+          })),
+        )
+      : [];
+    const issues = [...validation.issues, ...duplicateIssues];
+    if (issues.length > 0) {
+      body.isActive = false;
+    }
+
     const result = await patchAdminService(id, body);
     if (!result.ok) {
       redirect(`/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(result.message)}`);
     }
 
-    redirect(`/admin/services/${id}?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent(`${meta.singularLabel} updated`)}`);
+    redirect(
+      `/admin/services/${id}?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent(
+        issues.length > 0
+          ? `${meta.singularLabel} saved as inactive for editorial review`
+          : `${meta.singularLabel} updated`,
+      )}`,
+    );
   }
 
   return (

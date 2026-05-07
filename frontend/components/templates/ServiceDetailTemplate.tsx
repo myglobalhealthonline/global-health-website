@@ -14,6 +14,7 @@ type ServiceDetailTemplateProps = {
   bookingHref: string;
   bookingLabel: string;
   imageSrc?: string;
+  editorialNotice?: string | null;
 };
 
 export function ServiceDetailTemplate({
@@ -25,6 +26,7 @@ export function ServiceDetailTemplate({
   bookingHref,
   bookingLabel,
   imageSrc,
+  editorialNotice,
 }: ServiceDetailTemplateProps) {
   const unoptimized = !!imageSrc && (/^https?:\/\//i.test(imageSrc) || imageSrc.startsWith("/api/media/"));
   const duration = keyFacts.find((fact) => /duration/i.test(fact.label))?.value ?? "Confirmed during booking";
@@ -46,6 +48,11 @@ export function ServiceDetailTemplate({
             {imageSrc ? (
               <div className="relative mb-6 aspect-[16/8] overflow-hidden rounded-[var(--radius-card)]">
                 <Image src={imageSrc} alt={title} fill className="object-cover" unoptimized={unoptimized} />
+              </div>
+            ) : null}
+            {editorialNotice ? (
+              <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-900">
+                {editorialNotice}
               </div>
             ) : null}
             {keyFacts.length > 0 ? (

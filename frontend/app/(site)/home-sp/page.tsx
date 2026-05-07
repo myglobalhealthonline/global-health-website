@@ -6,6 +6,7 @@ import { getTemplatePageData } from "@/lib/content/template-page-data";
 export const metadata: Metadata = {
   title: "Clinic Spain | Global Health",
   description: "Spain online medical clinic with GP and specialist consultation booking.",
+  robots: { index: false, follow: true },
 };
 
 export default async function Page() {

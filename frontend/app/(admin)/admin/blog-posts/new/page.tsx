@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { fetchAdminCountries, postAdminBlogPost } from "@/lib/admin/admin-api";
+import { fetchAdminBlogPosts, fetchAdminCountries, postAdminBlogPost } from "@/lib/admin/admin-api";
 import { parseBlogPostBodyFromForm } from "@/lib/admin/blog-form-parse";
+import { detectDuplicateTextIssues, validateAdminBlogPayload } from "@/lib/content/publication-validation";
 
 export const dynamic = "force-dynamic";
 
@@ -33,11 +34,49 @@ export default async function AdminNewBlogPostPage({ searchParams }: PageProps) 
   async function createAction(formData: FormData) {
     "use server";
     const body = parseBlogPostBodyFromForm(formData);
+    const [existingPosts, validation] = await Promise.all([
+      fetchAdminBlogPosts({ pageSize: "250" }),
+      Promise.resolve(
+        validateAdminBlogPayload({
+          title: body.title,
+          excerpt: body.excerpt,
+          body: body.body,
+          seoTitle: body.seoTitle,
+          seoDescription: body.seoDescription,
+          authorDisplayName: body.authorDisplayName,
+          updatedAt: body.publishedAt,
+          category: body.category,
+          status: body.status as "DRAFT" | "PUBLISHED",
+        }),
+      ),
+    ]);
+    const duplicateIssues = existingPosts.ok
+      ? detectDuplicateTextIssues(
+          {
+            title: body.seoTitle ?? body.title,
+            description: body.seoDescription ?? body.excerpt,
+          },
+          existingPosts.data.items.map((item) => ({
+            id: item.id,
+            title: item.seoTitle ?? item.title,
+            description: item.seoDescription ?? item.excerpt,
+          })),
+        )
+      : [];
+    const issues = [...validation.issues, ...duplicateIssues];
+    if (issues.length > 0) {
+      body.status = "DRAFT";
+      body.isActive = false;
+    }
     const result = await postAdminBlogPost(body);
     if (!result.ok) {
       redirect(`/admin/blog-posts/new?error=${encodeURIComponent(result.message)}`);
     }
-    redirect(`/admin/blog-posts/${result.data.post.id}?success=${encodeURIComponent("Blog post created")}`);
+    redirect(
+      `/admin/blog-posts/${result.data.post.id}?success=${encodeURIComponent(
+        issues.length > 0 ? "Blog post saved as draft for editorial review" : "Blog post created",
+      )}`,
+    );
   }
 
   return (

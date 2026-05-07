@@ -5,9 +5,11 @@ import { parseDoctorBodyFromForm } from "@/lib/admin/doctor-form-parse";
 import {
   fetchAdminCountries,
   fetchAdminDoctorById,
+  fetchAdminDoctors,
   fetchAdminSpecialties,
   patchAdminDoctor,
 } from "@/lib/admin/admin-api";
+import { detectDuplicateTextIssues, validateAdminDoctorPayload } from "@/lib/content/publication-validation";
 
 export const dynamic = "force-dynamic";
 
@@ -89,12 +91,48 @@ export default async function AdminEditDoctorPage({ params, searchParams }: Page
       active: raw.active,
     };
 
+    const [existingDoctors, validation] = await Promise.all([
+      fetchAdminDoctors({ countryId: doctor.countryId, pageSize: "250" }),
+      Promise.resolve(validateAdminDoctorPayload({
+        fullName: body.fullName,
+        title: body.title,
+        bio: body.bio,
+        languages: body.languages,
+        imcRegistration: body.imcRegistration,
+        medicalRegistrationUrl: body.medicalRegistrationUrl,
+        qualifications: body.qualifications,
+        specialties: body.specialtyIds,
+      })),
+    ]);
+    const duplicateIssues = existingDoctors.ok
+      ? detectDuplicateTextIssues(
+          {
+            id,
+            title: body.fullName,
+            description: body.bio,
+          },
+          existingDoctors.data.items.map((item) => ({
+            id: item.id,
+            title: item.fullName,
+            description: item.bio,
+          })),
+        )
+      : [];
+    const issues = [...validation.issues, ...duplicateIssues];
+    if (issues.length > 0) {
+      body.active = false;
+    }
+
     const result = await patchAdminDoctor(id, body);
     if (!result.ok) {
       redirect(`/admin/doctors/${id}/edit?error=${encodeURIComponent(result.message)}`);
     }
 
-    redirect(`/admin/doctors/${id}?success=${encodeURIComponent("Doctor profile updated")}`);
+    redirect(
+      `/admin/doctors/${id}?success=${encodeURIComponent(
+        issues.length > 0 ? "Doctor profile saved as inactive for editorial review" : "Doctor profile updated",
+      )}`,
+    );
   }
 
   return (

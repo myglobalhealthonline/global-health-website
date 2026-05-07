@@ -5,6 +5,7 @@ import { getTemplatePageData } from "@/lib/content/template-page-data";
 export const metadata: Metadata = {
   title: "Specialist Consultation - Spain",
   description: "Find specialist consultation options in Spain.",
+  robots: { index: false, follow: true },
 };
 
 export default async function Page() {

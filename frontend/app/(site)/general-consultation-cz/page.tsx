@@ -5,6 +5,7 @@ import { getTemplatePageData } from "@/lib/content/template-page-data";
 export const metadata: Metadata = {
   title: "General Consultation - Czechia",
   description: "Country-specific general consultation listings for Czechia.",
+  robots: { index: false, follow: true },
 };
 
 export default async function Page() {

@@ -5,6 +5,7 @@ import { blogPosts } from "@/data/blog-posts";
 export const metadata: Metadata = {
   title: "Blog",
   description: "Health education articles from Global Health.",
+  robots: blogPosts.length === 0 ? { index: false, follow: true } : undefined,
 };
 
 export default function Page() {

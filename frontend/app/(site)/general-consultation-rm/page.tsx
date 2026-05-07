@@ -5,6 +5,7 @@ import { getTemplatePageData } from "@/lib/content/template-page-data";
 export const metadata: Metadata = {
   title: "General Consultation - Romania",
   description: "Country-specific general consultation listings for Romania.",
+  robots: { index: false, follow: true },
 };
 
 export default async function Page() {

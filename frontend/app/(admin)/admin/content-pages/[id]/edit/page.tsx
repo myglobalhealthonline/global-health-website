@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import {
+  fetchAdminContentPages,
   fetchAdminContentPageById,
   fetchAdminCountries,
   patchAdminContentPage,
 } from "@/lib/admin/admin-api";
 import { parseContentPageBodyFromForm } from "@/lib/admin/content-page-form-parse";
+import { detectDuplicateTextIssues, validateAdminContentPagePayload } from "@/lib/content/publication-validation";
 
 export const dynamic = "force-dynamic";
 
@@ -41,11 +43,47 @@ export default async function AdminEditContentPage({ params, searchParams }: Pag
   async function updateAction(formData: FormData) {
     "use server";
     const body = parseContentPageBodyFromForm(formData);
+    const [existingPages, validation] = await Promise.all([
+      fetchAdminContentPages({ pageSize: "250" }),
+      Promise.resolve(
+        validateAdminContentPagePayload({
+          title: body.title,
+          body: body.body,
+          seoTitle: body.seoTitle,
+          seoDescription: body.seoDescription,
+          lastReviewedAt: body.lastReviewedAt,
+          status: body.status as "DRAFT" | "PUBLISHED",
+        }),
+      ),
+    ]);
+    const duplicateIssues = existingPages.ok
+      ? detectDuplicateTextIssues(
+          {
+            id,
+            title: body.seoTitle ?? body.title,
+            description: body.seoDescription,
+          },
+          existingPages.data.items.map((item) => ({
+            id: item.id,
+            title: item.seoTitle ?? item.title,
+            description: item.seoDescription,
+          })),
+        )
+      : [];
+    const issues = [...validation.issues, ...duplicateIssues];
+    if (issues.length > 0) {
+      body.status = "DRAFT";
+      body.isActive = false;
+    }
     const result = await patchAdminContentPage(id, body);
     if (!result.ok) {
       redirect(`/admin/content-pages/${id}/edit?error=${encodeURIComponent(result.message)}`);
     }
-    redirect(`/admin/content-pages/${id}?success=${encodeURIComponent("Content page updated")}`);
+    redirect(
+      `/admin/content-pages/${id}?success=${encodeURIComponent(
+        issues.length > 0 ? "Content page saved as draft for editorial review" : "Content page updated",
+      )}`,
+    );
   }
 
   const page = pageResult.data.page;

@@ -4,10 +4,12 @@ import { ServiceFields } from "../_components/service-fields";
 import { parseServiceBodyFromForm } from "@/lib/admin/service-form-parse";
 import {
   fetchAdminCountries,
+  fetchAdminServices,
   fetchAdminSpecialties,
   postAdminService,
 } from "@/lib/admin/admin-api";
 import { readServiceKind, SERVICE_KIND_META } from "@/lib/admin/service-kind";
+import { detectDuplicateTextIssues, validateAdminServicePayload } from "@/lib/content/publication-validation";
 
 export const dynamic = "force-dynamic";
 
@@ -128,6 +130,39 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
       isActive: raw.isActive,
     };
 
+    const [existingServices, validation] = await Promise.all([
+      fetchAdminServices({ countryId: raw.countryId, pageSize: "250" }),
+      Promise.resolve(validateAdminServicePayload({
+        kind: body.kind as "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY",
+        name: body.name,
+        summary: body.summary,
+        heroTitle: body.heroTitle,
+        heroDescription: body.heroDescription,
+        detailBody: body.detailBody,
+        durationMinutes: body.durationMinutes ?? null,
+        basePriceCents: body.basePriceCents ?? null,
+        currencyCode: body.currencyCode,
+        isActive: body.isActive,
+      })),
+    ]);
+    const duplicateIssues = existingServices.ok
+      ? detectDuplicateTextIssues(
+          {
+            title: body.heroTitle ?? body.name,
+            description: body.heroDescription ?? body.summary,
+          },
+          existingServices.data.items.map((item) => ({
+            id: item.id,
+            title: item.heroTitle ?? item.name,
+            description: item.heroDescription ?? item.summary,
+          })),
+        )
+      : [];
+    const issues = [...validation.issues, ...duplicateIssues];
+    if (issues.length > 0) {
+      body.isActive = false;
+    }
+
     const result = await postAdminService(body);
     if (!result.ok) {
       redirect(
@@ -136,7 +171,11 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
     }
 
     redirect(
-      `/admin/services/${result.data.service.id}?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent(`${meta.singularLabel} created`)}`,
+      `/admin/services/${result.data.service.id}?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent(
+        issues.length > 0
+          ? `${meta.singularLabel} saved as inactive for editorial review`
+          : `${meta.singularLabel} created`,
+      )}`,
     );
   }
 

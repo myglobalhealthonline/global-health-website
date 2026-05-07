@@ -2,9 +2,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   fetchAdminCountries,
+  fetchAdminContentPages,
   postAdminContentPage,
 } from "@/lib/admin/admin-api";
 import { parseContentPageBodyFromForm } from "@/lib/admin/content-page-form-parse";
+import { detectDuplicateTextIssues, validateAdminContentPagePayload } from "@/lib/content/publication-validation";
 
 export const dynamic = "force-dynamic";
 
@@ -32,11 +34,46 @@ export default async function AdminNewContentPagePage({ searchParams }: PageProp
   async function createAction(formData: FormData) {
     "use server";
     const body = parseContentPageBodyFromForm(formData);
+    const [existingPages, validation] = await Promise.all([
+      fetchAdminContentPages({ pageSize: "250" }),
+      Promise.resolve(
+        validateAdminContentPagePayload({
+          title: body.title,
+          body: body.body,
+          seoTitle: body.seoTitle,
+          seoDescription: body.seoDescription,
+          lastReviewedAt: body.lastReviewedAt,
+          status: body.status as "DRAFT" | "PUBLISHED",
+        }),
+      ),
+    ]);
+    const duplicateIssues = existingPages.ok
+      ? detectDuplicateTextIssues(
+          {
+            title: body.seoTitle ?? body.title,
+            description: body.seoDescription,
+          },
+          existingPages.data.items.map((item) => ({
+            id: item.id,
+            title: item.seoTitle ?? item.title,
+            description: item.seoDescription,
+          })),
+        )
+      : [];
+    const issues = [...validation.issues, ...duplicateIssues];
+    if (issues.length > 0) {
+      body.status = "DRAFT";
+      body.isActive = false;
+    }
     const result = await postAdminContentPage(body);
     if (!result.ok) {
       redirect(`/admin/content-pages/new?error=${encodeURIComponent(result.message)}`);
     }
-    redirect(`/admin/content-pages/${result.data.page.id}?success=${encodeURIComponent("Content page created")}`);
+    redirect(
+      `/admin/content-pages/${result.data.page.id}?success=${encodeURIComponent(
+        issues.length > 0 ? "Content page saved as draft for editorial review" : "Content page created",
+      )}`,
+    );
   }
 
   return (

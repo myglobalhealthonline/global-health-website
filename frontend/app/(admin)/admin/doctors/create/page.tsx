@@ -4,9 +4,11 @@ import { DoctorFields } from "../_components/doctor-fields";
 import { parseDoctorBodyFromForm } from "@/lib/admin/doctor-form-parse";
 import {
   fetchAdminCountries,
+  fetchAdminDoctors,
   fetchAdminSpecialties,
   postAdminDoctor,
 } from "@/lib/admin/admin-api";
+import { detectDuplicateTextIssues, validateAdminDoctorPayload } from "@/lib/content/publication-validation";
 
 export const dynamic = "force-dynamic";
 
@@ -111,6 +113,37 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
       active: raw.active,
     };
 
+    const [existingDoctors, validation] = await Promise.all([
+      fetchAdminDoctors({ countryId: raw.countryId, pageSize: "250" }),
+      Promise.resolve(validateAdminDoctorPayload({
+        fullName: body.fullName,
+        title: body.title,
+        bio: body.bio,
+        languages: body.languages,
+        imcRegistration: body.imcRegistration,
+        medicalRegistrationUrl: body.medicalRegistrationUrl,
+        qualifications: body.qualifications,
+        specialties: body.specialtyIds,
+      })),
+    ]);
+    const duplicateIssues = existingDoctors.ok
+      ? detectDuplicateTextIssues(
+          {
+            title: body.fullName,
+            description: body.bio,
+          },
+          existingDoctors.data.items.map((item) => ({
+            id: item.id,
+            title: item.fullName,
+            description: item.bio,
+          })),
+        )
+      : [];
+    const issues = [...validation.issues, ...duplicateIssues];
+    if (issues.length > 0) {
+      body.active = false;
+    }
+
     const result = await postAdminDoctor(body);
     if (!result.ok) {
       redirect(
@@ -118,7 +151,11 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
       );
     }
 
-    redirect(`/admin/doctors/${result.data.doctor.id}?success=${encodeURIComponent("Doctor profile created")}`);
+    redirect(
+      `/admin/doctors/${result.data.doctor.id}?success=${encodeURIComponent(
+        issues.length > 0 ? "Doctor profile saved as inactive for editorial review" : "Doctor profile created",
+      )}`,
+    );
   }
 
   return (
