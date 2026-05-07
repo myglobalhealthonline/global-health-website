@@ -73,11 +73,16 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
       slug: raw.slug,
       name: raw.name,
       summary: raw.summary.trim() === "" ? null : raw.summary.trim(),
+      heroTitle: raw.heroTitle.trim() === "" ? null : raw.heroTitle.trim(),
+      heroDescription: raw.heroDescription.trim() === "" ? null : raw.heroDescription.trim(),
+      detailBody: raw.detailBody.trim() === "" ? null : raw.detailBody.trim(),
+      ctaLabel: raw.ctaLabel.trim() === "" ? null : raw.ctaLabel.trim(),
       legacyPath: raw.legacyPath.trim() === "" ? null : raw.legacyPath.trim(),
       specialtyId: raw.specialtyId,
       durationMinutes: raw.durationMinutes,
       basePriceCents: raw.basePriceCents,
       currencyCode: raw.currencyCode.trim() === "" ? null : raw.currencyCode.trim(),
+      imagePath: raw.imagePath.trim() === "" ? null : raw.imagePath.trim(),
       isActive: raw.isActive,
     };
 

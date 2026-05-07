@@ -33,6 +33,11 @@ export class SpecialtyNotFoundError extends Error {
 const adminServiceInclude = {
   country: { select: { id: true, code: true, name: true } },
   specialty: true,
+  assets: {
+    where: { isActive: true, kind: "IMAGE" },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
+  },
 } satisfies Prisma.ServiceInclude;
 
 export type AdminServiceRecord = Prisma.ServiceGetPayload<{ include: typeof adminServiceInclude }>;
@@ -55,11 +60,146 @@ export async function listServices() {
       include: {
         country: true,
         specialty: true,
+        assets: {
+          where: { isActive: true, kind: "IMAGE" },
+          orderBy: { createdAt: "asc" },
+          select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
+        },
       },
     });
   } catch (error) {
     throw normalizeDbError(error, "Services data is unavailable");
   }
+}
+
+export async function listSpecialties() {
+  try {
+    const items = await prisma.specialty.findMany({
+      where: { active: true },
+      orderBy: [{ country: { name: "asc" } }, { sortOrder: "asc" }, { name: "asc" }],
+      include: {
+        country: true,
+        primaryService: {
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            summary: true,
+            durationMinutes: true,
+            basePriceCents: true,
+            currencyCode: true,
+            legacyPath: true,
+            isActive: true,
+          },
+        },
+        services: {
+          where: { isActive: true },
+          orderBy: [{ name: "asc" }, { createdAt: "asc" }],
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            summary: true,
+            durationMinutes: true,
+            basePriceCents: true,
+            currencyCode: true,
+            legacyPath: true,
+            isActive: true,
+          },
+        },
+        assets: {
+          where: { isActive: true, kind: "IMAGE" },
+          orderBy: { createdAt: "asc" },
+          select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
+        },
+      },
+    });
+    return items.map((item) => ({
+      ...item,
+      primaryService: item.primaryService?.isActive ? item.primaryService : item.services[0] ?? null,
+    }));
+  } catch (error) {
+    throw normalizeDbError(error, "Specialties data is unavailable");
+  }
+}
+
+const adminSpecialtyInclude = {
+  primaryService: {
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      summary: true,
+      durationMinutes: true,
+      basePriceCents: true,
+      currencyCode: true,
+      legacyPath: true,
+      isActive: true,
+    },
+  },
+  services: {
+    where: { isActive: true },
+    orderBy: [{ name: "asc" }, { createdAt: "asc" }],
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      summary: true,
+      durationMinutes: true,
+      basePriceCents: true,
+      currencyCode: true,
+      legacyPath: true,
+      isActive: true,
+    },
+  },
+  assets: {
+    where: { isActive: true, kind: "IMAGE" },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
+  },
+} satisfies Prisma.SpecialtyInclude;
+
+async function syncOwnedImageAsset(input: {
+  owner: { countryId: string; specialtyId?: string; serviceId?: string };
+  path: string | null | undefined;
+  key: string;
+  usageNote: string;
+}) {
+  const where: Prisma.AssetWhereInput = input.owner.specialtyId
+    ? { specialtyId: input.owner.specialtyId, kind: "IMAGE" }
+    : { serviceId: input.owner.serviceId, kind: "IMAGE" };
+
+  if (!input.path) {
+    await prisma.asset.deleteMany({ where });
+    return;
+  }
+
+  const existing = await prisma.asset.findFirst({
+    where,
+    select: { id: true },
+  });
+
+  const data = {
+    countryId: input.owner.countryId,
+    specialtyId: input.owner.specialtyId ?? null,
+    serviceId: input.owner.serviceId ?? null,
+    doctorId: null,
+    kind: "IMAGE" as const,
+    key: input.key,
+    path: input.path,
+    usageNote: input.usageNote,
+    isActive: true,
+  };
+
+  if (existing) {
+    await prisma.asset.update({
+      where: { id: existing.id },
+      data,
+    });
+    return;
+  }
+
+  await prisma.asset.create({ data });
 }
 
 async function assertCountryExists(countryId: string): Promise<void> {
@@ -83,11 +223,15 @@ async function assertSpecialtyForCountry(specialtyId: string, countryId: string)
 export async function listSpecialtiesForAdminCountry(countryId: string) {
   await assertCountryExists(countryId);
   try {
-    return await prisma.specialty.findMany({
+    const items = await prisma.specialty.findMany({
       where: { countryId },
-      orderBy: { name: "asc" },
-      select: { id: true, slug: true, name: true, active: true },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      include: adminSpecialtyInclude,
     });
+    return items.map((item) => ({
+      ...item,
+      primaryService: item.primaryService?.isActive ? item.primaryService : item.services[0] ?? null,
+    }));
   } catch (error) {
     throw normalizeDbError(error, "Specialties data is unavailable");
   }
@@ -96,15 +240,32 @@ export async function listSpecialtiesForAdminCountry(countryId: string) {
 export async function createAdminSpecialty(input: AdminSpecialtyCreateBody) {
   await assertCountryExists(input.countryId);
   try {
-    return await prisma.specialty.create({
+    const specialty = await prisma.specialty.create({
       data: {
         countryId: input.countryId,
         slug: input.slug,
         name: input.name,
+        ...(input.cardSummary !== undefined && { cardSummary: input.cardSummary }),
+        ...(input.cardThemeColor !== undefined && { cardThemeColor: input.cardThemeColor }),
+        ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
         active: input.active ?? true,
       },
-      select: { id: true, countryId: true, slug: true, name: true, active: true },
+      include: adminSpecialtyInclude,
     });
+    await syncOwnedImageAsset({
+      owner: { countryId: specialty.countryId, specialtyId: specialty.id },
+      path: input.imagePath,
+      key: `specialty-card:${specialty.id}`,
+      usageNote: "Specialty listing card image",
+    });
+    const record = await prisma.specialty.findUniqueOrThrow({
+      where: { id: specialty.id },
+      include: adminSpecialtyInclude,
+    });
+    return {
+      ...record,
+      primaryService: record.primaryService?.isActive ? record.primaryService : record.services[0] ?? null,
+    };
   } catch (error) {
     throw normalizeDbError(error, "Specialties data is unavailable");
   }
@@ -113,20 +274,39 @@ export async function createAdminSpecialty(input: AdminSpecialtyCreateBody) {
 export async function updateAdminSpecialty(id: string, body: AdminSpecialtyUpdateBody) {
   const existing = await prisma.specialty.findUnique({
     where: { id },
-    select: { id: true },
+    select: { id: true, countryId: true },
   });
   if (!existing) return null;
 
   try {
-    return await prisma.specialty.update({
+    const specialty = await prisma.specialty.update({
       where: { id },
       data: {
         ...(body.slug !== undefined && { slug: body.slug }),
         ...(body.name !== undefined && { name: body.name }),
+        ...(body.cardSummary !== undefined && { cardSummary: body.cardSummary }),
+        ...(body.cardThemeColor !== undefined && { cardThemeColor: body.cardThemeColor }),
+        ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
         ...(body.active !== undefined && { active: body.active }),
       },
-      select: { id: true, countryId: true, slug: true, name: true, active: true },
+      include: adminSpecialtyInclude,
     });
+    if (body.imagePath !== undefined) {
+      await syncOwnedImageAsset({
+        owner: { countryId: existing.countryId, specialtyId: id },
+        path: body.imagePath,
+        key: `specialty-card:${id}`,
+        usageNote: "Specialty listing card image",
+      });
+    }
+    const record = await prisma.specialty.findUniqueOrThrow({
+      where: { id: specialty.id },
+      include: adminSpecialtyInclude,
+    });
+    return {
+      ...record,
+      primaryService: record.primaryService?.isActive ? record.primaryService : record.services[0] ?? null,
+    };
   } catch (error) {
     throw normalizeDbError(error, "Specialties data is unavailable");
   }
@@ -143,7 +323,7 @@ export async function disableAdminSpecialty(id: string) {
     return await prisma.specialty.update({
       where: { id },
       data: { active: false },
-      select: { id: true, countryId: true, slug: true, name: true, active: true },
+      include: adminSpecialtyInclude,
     });
   } catch (error) {
     throw normalizeDbError(error, "Specialties data is unavailable");
@@ -229,12 +409,16 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
   }
 
   try {
-    return await prisma.service.create({
+    const service = await prisma.service.create({
       data: {
         countryId: input.countryId,
         slug: input.slug,
         name: input.name,
         ...(input.summary !== undefined && { summary: input.summary }),
+        ...(input.heroTitle !== undefined && { heroTitle: input.heroTitle }),
+        ...(input.heroDescription !== undefined && { heroDescription: input.heroDescription }),
+        ...(input.detailBody !== undefined && { detailBody: input.detailBody }),
+        ...(input.ctaLabel !== undefined && { ctaLabel: input.ctaLabel }),
         ...(input.legacyPath !== undefined && { legacyPath: input.legacyPath }),
         ...(input.specialtyId !== undefined && { specialtyId: input.specialtyId }),
         ...(input.durationMinutes !== undefined && { durationMinutes: input.durationMinutes }),
@@ -242,6 +426,16 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
         ...(input.currencyCode !== undefined && { currencyCode: input.currencyCode }),
         isActive: input.isActive ?? true,
       },
+      include: adminServiceInclude,
+    });
+    await syncOwnedImageAsset({
+      owner: { countryId: input.countryId, serviceId: service.id },
+      path: input.imagePath,
+      key: `service-hero:${service.id}`,
+      usageNote: "Service detail hero image",
+    });
+    return prisma.service.findUniqueOrThrow({
+      where: { id: service.id },
       include: adminServiceInclude,
     });
   } catch (error) {
@@ -272,13 +466,17 @@ export async function updateAdminService(
   }
 
   try {
-    return await prisma.service.update({
+    const service = await prisma.service.update({
       where: { id },
       data: {
         ...(body.countryId !== undefined && { countryId: body.countryId }),
         ...(body.slug !== undefined && { slug: body.slug }),
         ...(body.name !== undefined && { name: body.name }),
         ...(body.summary !== undefined && { summary: body.summary }),
+        ...(body.heroTitle !== undefined && { heroTitle: body.heroTitle }),
+        ...(body.heroDescription !== undefined && { heroDescription: body.heroDescription }),
+        ...(body.detailBody !== undefined && { detailBody: body.detailBody }),
+        ...(body.ctaLabel !== undefined && { ctaLabel: body.ctaLabel }),
         ...(body.legacyPath !== undefined && { legacyPath: body.legacyPath }),
         ...(body.specialtyId !== undefined && { specialtyId: body.specialtyId }),
         ...(body.durationMinutes !== undefined && { durationMinutes: body.durationMinutes }),
@@ -286,6 +484,18 @@ export async function updateAdminService(
         ...(body.currencyCode !== undefined && { currencyCode: body.currencyCode }),
         ...(body.isActive !== undefined && { isActive: body.isActive }),
       },
+      include: adminServiceInclude,
+    });
+    if (body.imagePath !== undefined) {
+      await syncOwnedImageAsset({
+        owner: { countryId: nextCountryId, serviceId: id },
+        path: body.imagePath,
+        key: `service-hero:${id}`,
+        usageNote: "Service detail hero image",
+      });
+    }
+    return prisma.service.findUniqueOrThrow({
+      where: { id: service.id },
       include: adminServiceInclude,
     });
   } catch (error) {

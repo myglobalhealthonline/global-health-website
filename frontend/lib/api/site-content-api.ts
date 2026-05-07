@@ -9,6 +9,10 @@ export async function fetchServices(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS)
   return apiRequest<unknown[]>("/api/services", { timeoutMs });
 }
 
+export async function fetchSpecialties(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
+  return apiRequest<unknown[]>("/api/specialties", { timeoutMs });
+}
+
 export async function fetchDoctors(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
   return apiRequest<unknown[]>("/api/doctors", { timeoutMs });
 }

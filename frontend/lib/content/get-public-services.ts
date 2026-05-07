@@ -9,11 +9,17 @@ export type PublicServiceRecord = {
   slug: string;
   name: string;
   summary: string | null;
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  ctaLabel: string | null;
   legacyPath: string | null;
   countryCode: CountryCode;
   durationMinutes: number | null;
   basePriceCents: number | null;
   currencyCode: string | null;
+  specialtyId: string | null;
+  imagePath: string | null;
 };
 
 function readCountryCode(row: unknown): CountryCode | undefined {
@@ -34,6 +40,10 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
   if (!countryCode) return null;
 
   const summary = typeof r.summary === "string" ? r.summary : null;
+  const heroTitle = typeof r.heroTitle === "string" ? r.heroTitle : null;
+  const heroDescription = typeof r.heroDescription === "string" ? r.heroDescription : null;
+  const detailBody = typeof r.detailBody === "string" ? r.detailBody : null;
+  const ctaLabel = typeof r.ctaLabel === "string" ? r.ctaLabel : null;
   const legacyPath =
     r.legacyPath === null || r.legacyPath === undefined
       ? null
@@ -50,17 +60,30 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
       : null;
   const currencyCode =
     typeof r.currencyCode === "string" && r.currencyCode.length > 0 ? r.currencyCode : null;
+  const specialtyId = typeof r.specialtyId === "string" ? r.specialtyId : null;
+  const assets = Array.isArray(r.assets) ? r.assets : [];
+  const imagePath = (() => {
+    const first = assets[0];
+    if (!first || typeof first !== "object") return null;
+    return typeof (first as { path?: unknown }).path === "string" ? (first as { path: string }).path : null;
+  })();
 
   return {
     id,
     slug,
     name,
     summary,
+    heroTitle,
+    heroDescription,
+    detailBody,
+    ctaLabel,
     legacyPath,
     countryCode,
     durationMinutes,
     basePriceCents,
     currencyCode,
+    specialtyId,
+    imagePath,
   };
 }
 
@@ -82,6 +105,11 @@ export const getPublicServicesNormalized = cache(async (): Promise<PublicService
 export async function getPublicServicesForCountry(countryCode: CountryCode): Promise<PublicServiceRecord[]> {
   const all = await getPublicServicesNormalized();
   return all.filter((s) => s.countryCode === countryCode);
+}
+
+export async function getPublicServiceBySlug(countryCode: CountryCode, slug: string): Promise<PublicServiceRecord | null> {
+  const all = await getPublicServicesForCountry(countryCode);
+  return all.find((s) => s.slug === slug || s.legacyPath?.endsWith(`/${slug}`)) ?? null;
 }
 
 export function formatOptionalPrice(service: PublicServiceRecord): string | undefined {

@@ -15,11 +15,16 @@ export function parseServiceBodyFromForm(formData: FormData) {
     slug: String(formData.get("slug") ?? "").trim(),
     name: String(formData.get("name") ?? "").trim(),
     summary: String(formData.get("summary") ?? "").trim(),
+    heroTitle: String(formData.get("heroTitle") ?? "").trim(),
+    heroDescription: String(formData.get("heroDescription") ?? "").trim(),
+    detailBody: String(formData.get("detailBody") ?? "").trim(),
+    ctaLabel: String(formData.get("ctaLabel") ?? "").trim(),
     legacyPath: String(formData.get("legacyPath") ?? "").trim(),
     specialtyId: specialtyRaw === "" ? null : specialtyRaw,
     durationMinutes: optionalNumber(formData, "durationMinutes"),
     basePriceCents: optionalNumber(formData, "basePriceCents"),
     currencyCode: String(formData.get("currencyCode") ?? "").trim(),
+    imagePath: String(formData.get("imagePath") ?? "").trim(),
     isActive: formData.get("isActive") === "on",
   };
 }

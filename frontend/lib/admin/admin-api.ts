@@ -225,9 +225,30 @@ export async function deleteAdminCountry(id: string) {
 
 export type AdminSpecialtyOptionDto = {
   id: string;
+  countryId: string;
   slug: string;
   name: string;
+  cardSummary: string | null;
+  cardThemeColor: string | null;
+  sortOrder: number;
+  primaryServiceId: string | null;
   active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  primaryService: {
+    id: string;
+    slug: string;
+    name: string;
+    isActive: boolean;
+  } | null;
+  assets: Array<{
+    id: string;
+    kind: string;
+    key: string;
+    path: string;
+    altText: string | null;
+    usageNote: string | null;
+  }>;
 };
 
 export type AdminServiceDto = {
@@ -237,6 +258,10 @@ export type AdminServiceDto = {
   slug: string;
   name: string;
   summary: string | null;
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  ctaLabel: string | null;
   legacyPath: string | null;
   durationMinutes: number | null;
   basePriceCents: number | null;
@@ -250,10 +275,22 @@ export type AdminServiceDto = {
     countryId: string;
     slug: string;
     name: string;
+    cardSummary: string | null;
+    cardThemeColor: string | null;
+    sortOrder: number;
+    primaryServiceId: string | null;
     active: boolean;
     createdAt: string;
     updatedAt: string;
   } | null;
+  assets: Array<{
+    id: string;
+    kind: string;
+    key: string;
+    path: string;
+    altText: string | null;
+    usageNote: string | null;
+  }>;
 };
 
 type AdminServicesListPayload = {
@@ -298,7 +335,7 @@ export async function fetchAdminSpecialties(countryId: string) {
 }
 
 type AdminSpecialtyDetailPayload = {
-  specialty: AdminSpecialtyOptionDto & { countryId: string };
+  specialty: AdminSpecialtyOptionDto;
 };
 
 export async function postAdminSpecialty(body: unknown) {

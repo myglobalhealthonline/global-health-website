@@ -12,9 +12,12 @@ import {
 import type { PublicServiceRecord } from "@/lib/content/get-public-services";
 import {
   formatOptionalPrice,
+  getPublicServiceBySlug,
   getPublicServicesForCountry,
   getPublicServicesNormalized,
 } from "@/lib/content/get-public-services";
+import { getPublicSpecialtiesForCountry } from "@/lib/content/get-public-specialties";
+import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 
 type CountryHint = CountryCode | "auto";
 
@@ -33,6 +36,9 @@ type ServiceCardData = {
   audience?: string;
   duration?: string;
   startingPrice?: string;
+  imageSrc?: string;
+  themeColor?: string;
+  stats?: string;
 };
 
 export type HomeTemplateData = {
@@ -625,9 +631,9 @@ function mergeServiceCardsWithBackend(
 }
 
 function mergeSpecialistListingCopy(
-  listing: Array<{ title: string; description: string; href: string }>,
+  listing: Array<ServiceCardData>,
   services: PublicServiceRecord[],
-): Array<{ title: string; description: string; href: string }> {
+): Array<ServiceCardData> {
   return listing.map((item) => {
     const match = services.find((s) => {
       if (s.countryCode !== "ie") return false;
@@ -654,6 +660,7 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     getPublicDoctorsForCountry(country.code),
     getPublicServicesForCountry(country.code),
   ]);
+  const publicSpecialties = await getPublicSpecialtiesForCountry(country.code);
 
   const generalListing = routeInventory.irelandGeneralConsultation.map((route) => {
     const slug = route.replace("/ireland/", "");
@@ -671,19 +678,58 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     };
   });
 
-  const specialistListingRaw = routeInventory.irelandSpecialistConsultation.map((route) => {
-    const slug = route.replace("/ireland-specialist-consultations/", "");
-    const seed = specialtyCardSeeds.ie.find((s) =>
-      s.title.toLowerCase().includes(slug.replace(/-/g, " ").toLowerCase())
-    );
-    return {
-      title: slugToLabel(slug),
-      description:
-        seed?.description ??
-        "Specialist consultation with secure online booking and clinician follow-up guidance.",
-      href: route,
-    };
-  });
+  const specialistListingRaw =
+    publicSpecialties.length > 0
+      ? publicSpecialties
+          .filter((specialty) => specialty.primaryService)
+          .map((specialty) => {
+            const primaryService = specialty.primaryService!;
+            const href =
+              primaryService.legacyPath ||
+              `/ireland-specialist-consultations/${primaryService.slug}`;
+            return {
+              title: specialty.name,
+              description:
+                specialty.cardSummary ||
+                primaryService.summary ||
+                "Specialist consultation with secure online booking and clinician follow-up guidance.",
+              href,
+              imageSrc: specialty.imagePath
+                ? (resolveTrustedAssetUrl(specialty.imagePath) ?? specialty.imagePath)
+                : undefined,
+              themeColor: specialty.cardThemeColor ?? undefined,
+              stats: [
+                primaryService.durationMinutes != null ? `${primaryService.durationMinutes} min` : null,
+                primaryService.basePriceCents != null && primaryService.currencyCode
+                  ? formatOptionalPrice({
+                      ...primaryService,
+                      countryCode: country.code,
+                      heroTitle: null,
+                      heroDescription: null,
+                      detailBody: null,
+                      ctaLabel: null,
+                      specialtyId: specialty.id,
+                      imagePath: null,
+                    })
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(" • "),
+            };
+          })
+      : routeInventory.irelandSpecialistConsultation.map((route) => {
+          const slug = route.replace("/ireland-specialist-consultations/", "");
+          const seed = specialtyCardSeeds.ie.find((s) =>
+            s.title.toLowerCase().includes(slug.replace(/-/g, " ").toLowerCase())
+          );
+          return {
+            title: slugToLabel(slug),
+            description:
+              seed?.description ??
+              "Specialist consultation with secure online booking and clinician follow-up guidance.",
+            href: route,
+          };
+        });
 
   const specialistListing = mergeSpecialistListingCopy(specialistListingRaw, publicServices);
 
@@ -756,9 +802,9 @@ export async function buildServiceDetailCopyAsync(slug: string, mode: "general" 
   ];
 
   const services = await getPublicServicesNormalized();
-  const canonicalHref =
-    mode === "general" ? `/ireland/${slug}` : `/ireland-specialist-consultations/${slug}`;
-  const match = services.find((s) => {
+  const canonicalHref = mode === "general" ? `/ireland/${slug}` : `/ireland-specialist-consultations/${slug}`;
+  const direct = await getPublicServiceBySlug("ie", slug);
+  const match = direct ?? services.find((s) => {
     if (s.countryCode !== "ie") return false;
     if (s.slug === slug) return true;
     if (s.legacyPath && (s.legacyPath === canonicalHref || s.legacyPath.endsWith(slug))) return true;
@@ -768,13 +814,13 @@ export async function buildServiceDetailCopyAsync(slug: string, mode: "general" 
     return { ...fallback, keyFacts: defaultFacts };
   }
 
-  const secondParagraph =
-    "Final clinical scope, pricing, and operational details are confirmed during booking and intake based on country route availability.";
-
   return {
-    title: match.name,
-    description: match.summary ?? fallback.description,
-    body: match.summary ? [match.summary, secondParagraph] : fallback.body,
+    title: match.heroTitle ?? match.name,
+    description: match.heroDescription ?? match.summary ?? fallback.description,
+    body: match.detailBody ? [match.detailBody] : match.summary ? [match.summary] : fallback.body,
+    bodyHtml: match.detailBody ?? null,
+    imageSrc: match.imagePath ? (resolveTrustedAssetUrl(match.imagePath) ?? match.imagePath) : undefined,
+    bookingLabel: match.ctaLabel ?? "Book Online",
     keyFacts: [
       {
         label: "Service type",

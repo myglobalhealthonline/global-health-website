@@ -137,16 +137,22 @@ model Doctor {
 }
 
 model Specialty {
-  id        String           @id @default(cuid())
-  countryId String
-  slug      String
-  name      String
-  active    Boolean          @default(true)
-  country   Country          @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  doctors   DoctorSpecialty[]
-  services  Service[]
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
+  id               String           @id @default(cuid())
+  countryId        String
+  slug             String
+  name             String
+  cardSummary      String?
+  cardThemeColor   String?
+  sortOrder        Int              @default(0)
+  primaryServiceId String?
+  active           Boolean          @default(true)
+  country          Country          @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  doctors          DoctorSpecialty[]
+  services         Service[]        @relation("ServiceSpecialty")
+  primaryService   Service?         @relation("SpecialtyPrimaryService", fields: [primaryServiceId], references: [id], onDelete: SetNull)
+  assets           Asset[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
 
   @@unique([countryId, slug])
 }
@@ -162,23 +168,29 @@ model DoctorSpecialty {
 }
 
 model Service {
-  id                  String     @id @default(cuid())
+  id                  String      @id @default(cuid())
   countryId           String
   specialtyId         String?
   slug                String
   name                String
   summary             String?
+  heroTitle           String?
+  heroDescription     String?
+  detailBody          String?
+  ctaLabel            String?
   legacyPath          String?
   durationMinutes     Int?
   basePriceCents      Int?
   currencyCode        String?
-  isActive            Boolean    @default(true)
+  isActive            Boolean     @default(true)
   consultationSetting Json?
   bookingSetting      Json?
-  country             Country    @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  specialty           Specialty? @relation(fields: [specialtyId], references: [id])
-  createdAt           DateTime   @default(now())
-  updatedAt           DateTime   @updatedAt
+  country             Country     @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  specialty           Specialty?  @relation("ServiceSpecialty", fields: [specialtyId], references: [id])
+  primaryForSpecialties Specialty[] @relation("SpecialtyPrimaryService")
+  assets              Asset[]
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
 
   @@unique([countryId, slug])
 }
@@ -201,21 +213,25 @@ model PricingPlan {
 }
 
 model Asset {
-  id         String    @id @default(cuid())
-  countryId  String?
-  doctorId   String?
-  kind       AssetKind
-  key        String
-  path       String
-  altText    String?
-  usageNote  String?
-  isActive   Boolean   @default(true)
-  country    Country?  @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  doctor     Doctor?   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  badges     Badge[]
+  id            String      @id @default(cuid())
+  countryId     String?
+  doctorId      String?
+  specialtyId   String?
+  serviceId     String?
+  kind          AssetKind
+  key           String
+  path          String
+  altText       String?
+  usageNote     String?
+  isActive      Boolean     @default(true)
+  country       Country?    @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  doctor        Doctor?     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  specialty     Specialty?  @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+  service       Service?    @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  badges        Badge[]
   blogPostCovers BlogPost[] @relation("BlogPostCover")
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
   @@unique([kind, key])
 }

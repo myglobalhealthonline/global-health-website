@@ -7,6 +7,7 @@ import {
   patchAdminSpecialty,
   postAdminSpecialty,
 } from "@/lib/admin/admin-api";
+import { ManagedImageField } from "../_components/managed-image-field";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,10 @@ export default async function AdminSpecialtiesPage({ searchParams }: PageProps) 
       countryId: String(formData.get("countryId") ?? "").trim(),
       slug: String(formData.get("slug") ?? "").trim(),
       name: String(formData.get("name") ?? "").trim(),
+      cardSummary: String(formData.get("cardSummary") ?? "").trim() || null,
+      cardThemeColor: String(formData.get("cardThemeColor") ?? "").trim() || null,
+      sortOrder: Number(String(formData.get("sortOrder") ?? "0").trim() || "0"),
+      imagePath: String(formData.get("imagePath") ?? "").trim() || null,
       active: formData.get("active") === "on",
     };
     const result = await postAdminSpecialty(body);
@@ -63,6 +68,10 @@ export default async function AdminSpecialtiesPage({ searchParams }: PageProps) 
     const body = {
       slug: String(formData.get("slug") ?? "").trim(),
       name: String(formData.get("name") ?? "").trim(),
+      cardSummary: String(formData.get("cardSummary") ?? "").trim() || null,
+      cardThemeColor: String(formData.get("cardThemeColor") ?? "").trim() || null,
+      sortOrder: Number(String(formData.get("sortOrder") ?? "0").trim() || "0"),
+      imagePath: String(formData.get("imagePath") ?? "").trim() || null,
       active: formData.get("active") === "on",
     };
     const result = await patchAdminSpecialty(id, body);
@@ -87,7 +96,9 @@ export default async function AdminSpecialtiesPage({ searchParams }: PageProps) 
     <section className="gh-card p-6 sm:p-8">
       <h1 className="gh-h2 text-[var(--color-text-primary)]">Specialties</h1>
       <p className="gh-body mt-3 text-[var(--color-text-muted)]">
-        Add and edit specialty categories by country.
+        Manage one specialty card per listing tile. Each specialty can control its own image,
+        summary, theme color, and sort order. Consultation time and price come from the service
+        assigned to that specialty in the Services section.
       </p>
 
       {sp.error ? (
@@ -111,12 +122,29 @@ export default async function AdminSpecialtiesPage({ searchParams }: PageProps) 
         <button type="submit" className="gh-btn gh-btn-primary">Load</button>
       </form>
 
-      <div className="mt-8 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
-        <h2 className="text-base font-semibold text-[var(--color-text-primary)]">Add specialty</h2>
-        <form action={createSpecialtyAction} className="mt-4 grid gap-3 sm:grid-cols-4">
+      <div className="mt-8 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
+        <h2 className="text-base font-semibold text-[var(--color-text-primary)]">Add specialty card</h2>
+        <form action={createSpecialtyAction} className="mt-4 grid gap-4">
           <input type="hidden" name="countryId" value={selectedCountryId} />
-          <input name="name" className="gh-input min-w-0" placeholder="Name" required />
-          <input name="slug" className="gh-input min-w-0 font-mono text-sm" placeholder="slug" required />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <input name="name" className="gh-input min-w-0" placeholder="Name" required />
+            <input name="slug" className="gh-input min-w-0 font-mono text-sm" placeholder="e.g. cardiology" required />
+          </div>
+          <p className="text-xs text-[var(--color-text-muted)]">Slug must be lowercase and use hyphens only.</p>
+          <textarea name="cardSummary" className="gh-input min-h-[5rem] min-w-0 resize-y" placeholder="Card summary" />
+          <ManagedImageField
+            name="imagePath"
+            label="Card image"
+            helperText="Shown on the public specialty cards."
+          />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <input name="cardThemeColor" className="gh-input min-w-0 font-mono text-sm" placeholder="#1b4d3e" />
+            <input name="sortOrder" type="number" min="0" step="1" defaultValue="0" className="gh-input min-w-0" />
+          </div>
+          <p className="text-xs text-[var(--color-text-muted)]">
+            The card links automatically to the first active service under this specialty. Edit
+            consultation time and price in <Link href="/admin/services" className="gh-link">Services</Link>.
+          </p>
           <label className="flex items-center gap-2 text-sm text-[var(--color-text-primary)]">
             <input type="checkbox" name="active" defaultChecked className="h-4 w-4" />
             Active
@@ -125,59 +153,60 @@ export default async function AdminSpecialtiesPage({ searchParams }: PageProps) 
         </form>
       </div>
 
-      <div className="mt-8 overflow-x-auto">
-        <table className="gh-table min-w-[760px]">
-          <thead>
-            <tr>
-              <th className="px-3 py-2 font-semibold">Name</th>
-              <th className="px-3 py-2 font-semibold">Slug</th>
-              <th className="px-3 py-2 font-semibold">Status</th>
-              <th className="px-3 py-2 font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {!specialtiesResult.ok ? (
-              <tr>
-                <td colSpan={4} className="px-3 py-4 text-sm text-[var(--color-status-warning-text)]">
-                  Could not load specialties: {specialtiesResult.message}
-                </td>
-              </tr>
-            ) : specialtiesResult.data.specialties.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-3 py-4 text-sm text-[var(--color-text-muted)]">
-                  No specialties for this country yet.
-                </td>
-              </tr>
-            ) : (
-              specialtiesResult.data.specialties.map((s) => (
-                <tr key={s.id}>
-                  <td className="px-3 py-2">
-                    <form action={updateSpecialtyAction} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto_auto]">
-                      <input type="hidden" name="id" value={s.id} />
-                      <input type="hidden" name="countryId" value={selectedCountryId} />
-                      <input name="name" defaultValue={s.name} className="gh-input min-w-0" required />
-                      <input name="slug" defaultValue={s.slug} className="gh-input min-w-0 font-mono text-sm" required />
-                      <label className="flex items-center gap-2 text-sm text-[var(--color-text-primary)]">
-                        <input type="checkbox" name="active" defaultChecked={s.active} className="h-4 w-4" />
-                        Active
-                      </label>
-                      <button type="submit" className="gh-btn gh-btn-soft text-xs">Save</button>
-                    </form>
-                  </td>
-                  <td className="px-3 py-2 font-mono text-xs text-[var(--color-text-muted)]">{s.slug}</td>
-                  <td className="px-3 py-2 text-sm">{s.active ? "Active" : "Inactive"}</td>
-                  <td className="px-3 py-2">
-                    <form action={deactivateSpecialtyAction}>
-                      <input type="hidden" name="id" value={s.id} />
-                      <input type="hidden" name="countryId" value={selectedCountryId} />
-                      <button type="submit" className="gh-btn gh-btn-danger text-xs">Deactivate</button>
-                    </form>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="mt-8 space-y-5">
+        {!specialtiesResult.ok ? (
+          <p className="rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm text-[var(--color-status-warning-text)]">
+            Could not load specialties: {specialtiesResult.message}
+          </p>
+        ) : specialtiesResult.data.specialties.length === 0 ? (
+          <p className="rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm text-[var(--color-text-muted)]">
+            No specialties for this country yet.
+          </p>
+        ) : (
+          specialtiesResult.data.specialties.map((s) => (
+            <div key={s.id} className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
+              <form action={updateSpecialtyAction} className="grid gap-4">
+                <input type="hidden" name="id" value={s.id} />
+                <input type="hidden" name="countryId" value={selectedCountryId} />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <input name="name" defaultValue={s.name} className="gh-input min-w-0" required />
+                  <input name="slug" defaultValue={s.slug} className="gh-input min-w-0 font-mono text-sm" required />
+                </div>
+                <p className="text-xs text-[var(--color-text-muted)]">Slug must be lowercase and use hyphens only.</p>
+                <textarea name="cardSummary" defaultValue={s.cardSummary ?? ""} className="gh-input min-h-[5rem] min-w-0 resize-y" />
+                <ManagedImageField
+                  name="imagePath"
+                  label="Card image"
+                  initialPath={s.assets[0]?.path ?? ""}
+                  helperText="Shown on the public specialty cards."
+                />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <input name="cardThemeColor" defaultValue={s.cardThemeColor ?? ""} className="gh-input min-w-0 font-mono text-sm" />
+                  <input name="sortOrder" type="number" min="0" step="1" defaultValue={s.sortOrder} className="gh-input min-w-0" />
+                </div>
+                <p className="text-xs text-[var(--color-text-muted)]">
+                  Card target resolves automatically from this specialty&apos;s active services.
+                </p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <label className="flex items-center gap-2 text-sm text-[var(--color-text-primary)]">
+                    <input type="checkbox" name="active" defaultChecked={s.active} className="h-4 w-4" />
+                    Active
+                  </label>
+                  <button type="submit" className="gh-btn gh-btn-soft text-xs">Save</button>
+                </div>
+                <div className="text-xs text-[var(--color-text-muted)]">
+                  Resolved service: {s.primaryService?.name ?? "None yet"} | Theme: {s.cardThemeColor ?? "Default"}
+                </div>
+              </form>
+
+              <form action={deactivateSpecialtyAction} className="mt-4">
+                <input type="hidden" name="id" value={s.id} />
+                <input type="hidden" name="countryId" value={selectedCountryId} />
+                <button type="submit" className="gh-btn gh-btn-danger text-xs">Deactivate</button>
+              </form>
+            </div>
+          ))
+        )}
       </div>
 
       <Link href="/admin/services" className="mt-6 inline-block gh-link text-[var(--color-brand-primary)]">

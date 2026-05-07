@@ -4,6 +4,7 @@ import { HowItWorks } from "@/components/sections/HowItWorks";
 import { TrustSignals } from "@/components/sections/TrustSignals";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { PricingCard } from "@/components/cards/PricingCard";
+import { SpecialtyDestinationCard } from "@/components/cards/SpecialtyDestinationCard";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Star, Play } from "lucide-react";
@@ -25,6 +26,9 @@ type ConsultationListingTemplateProps = {
     audience?: string;
     duration?: string;
     startingPrice?: string;
+    imageSrc?: string;
+    themeColor?: string;
+    stats?: string;
   }>;
   pricing?: {
     title: string;
@@ -110,12 +114,31 @@ export function ConsultationListingTemplate({
         </Container>
       </section>
 
-      {/* Services Grid */}
-      <ServicesGrid
-        eyebrow={isSpecialist ? "Specialist Consultations" : "General Consultations"}
-        items={listing}
-        showRating={false}
-      />
+      {isSpecialist ? (
+        <Section className="bg-white py-12">
+          <Container>
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {listing.map((item) => (
+                <SpecialtyDestinationCard
+                  key={item.href}
+                  href={item.href}
+                  title={item.title}
+                  description={item.description}
+                  stats={item.stats ?? [item.duration, item.startingPrice].filter(Boolean).join(" • ")}
+                  imageSrc={item.imageSrc}
+                  themeColor={item.themeColor ?? "150 50% 25%"}
+                />
+              ))}
+            </div>
+          </Container>
+        </Section>
+      ) : (
+        <ServicesGrid
+          eyebrow="General Consultations"
+          items={listing}
+          showRating={false}
+        />
+      )}
 
       {/* Doctify Badge */}
       <Section className="bg-white py-8">

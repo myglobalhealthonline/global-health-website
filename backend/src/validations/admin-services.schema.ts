@@ -27,6 +27,22 @@ const nonNegativeIntOrNull = z.preprocess(
   z.coerce.number().int().min(0).optional(),
 );
 
+const nullableTrimmedString = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .optional()
+    .nullable()
+    .transform((v) => (v === "" || v === undefined ? null : v));
+
+const imagePathFieldSchema = z.preprocess(
+  (val) => (val === "" || val === undefined ? null : val),
+  z.union([z.null(), z.string().trim().max(500)]),
+).refine((v) => v === null || (typeof v === "string" && (v.startsWith("/") || /^https?:\/\//i.test(v))), {
+  message: "Image path must start with / or http(s):// when provided",
+});
+
 export const adminServicesQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(100).default(20),
@@ -70,6 +86,14 @@ export const adminSpecialtyCreateBodySchema = z.object({
   countryId: z.string().trim().min(1),
   slug: serviceSlugSchema,
   name: z.string().trim().min(1).max(200),
+  cardSummary: nullableTrimmedString(1000),
+  cardThemeColor: nullableTrimmedString(40),
+  sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
+  primaryServiceId: z.preprocess(
+    (v) => (v === "" || v === undefined || v === null ? null : v),
+    z.string().trim().min(1).nullable(),
+  ),
+  imagePath: imagePathFieldSchema.optional(),
   active: z.boolean().optional(),
 });
 
@@ -79,6 +103,14 @@ export const adminSpecialtyUpdateBodySchema = z
   .object({
     slug: serviceSlugSchema.optional(),
     name: z.string().trim().min(1).max(200).optional(),
+    cardSummary: nullableTrimmedString(1000),
+    cardThemeColor: nullableTrimmedString(40),
+    sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
+    primaryServiceId: z.preprocess(
+      (v) => (v === "" || v === undefined || v === null ? null : v),
+      z.string().trim().min(1).nullable(),
+    ).optional(),
+    imagePath: imagePathFieldSchema.optional(),
     active: z.boolean().optional(),
   })
   .refine((v) => Object.keys(v).length > 0, "No fields to update");
@@ -89,13 +121,11 @@ export const adminServiceCreateBodySchema = z.object({
   countryId: z.string().trim().min(1),
   slug: serviceSlugSchema,
   name: z.string().trim().min(1).max(200),
-  summary: z
-    .string()
-    .trim()
-    .max(4000)
-    .optional()
-    .nullable()
-    .transform((v) => (v === "" || v === undefined ? null : v)),
+  summary: nullableTrimmedString(4000),
+  heroTitle: nullableTrimmedString(200),
+  heroDescription: nullableTrimmedString(2000),
+  detailBody: nullableTrimmedString(20000),
+  ctaLabel: nullableTrimmedString(120),
   legacyPath: legacyPathFieldSchema.optional(),
   specialtyId: z.preprocess(
     (v) => (v === "" || v === undefined || v === null ? null : v),
@@ -107,6 +137,7 @@ export const adminServiceCreateBodySchema = z.object({
     (v) => (v === "" || v === undefined || v === null ? null : v),
     z.string().trim().max(8).nullable(),
   ),
+  imagePath: imagePathFieldSchema.optional(),
   isActive: z.boolean().optional(),
 });
 

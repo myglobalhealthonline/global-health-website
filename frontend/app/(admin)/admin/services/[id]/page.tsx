@@ -71,8 +71,9 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
 
       <p className="mt-4 text-sm text-[var(--color-text-muted)]">
         Status:{" "}
-        <span className={s.isActive ? "text-[var(--color-status-success-text)]" : "text-[var(--color-status-warning-text)]"}>{s.isActive ? "Active" : "Inactive"}</span>
-        {" — inactive services are omitted from the public services API."}
+        <span className={s.isActive ? "text-[var(--color-status-success-text)]" : "text-[var(--color-status-warning-text)]"}>
+          {s.isActive ? "Active" : "Inactive"}
+        </span>
       </p>
 
       <dl className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -82,9 +83,7 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
         </div>
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Country</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">
-            {s.country.name} ({s.country.code})
-          </dd>
+          <dd className="mt-1 text-[var(--color-text-primary)]">{s.country.name} ({s.country.code})</dd>
         </div>
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Specialty</dt>
@@ -100,11 +99,35 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
             {s.basePriceCents != null ? `${s.basePriceCents}¢` : "—"} {s.currencyCode ?? ""}
           </dd>
         </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Hero title</dt>
+          <dd className="mt-1 text-[var(--color-text-primary)]">{s.heroTitle ?? "—"}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">CTA label</dt>
+          <dd className="mt-1 text-[var(--color-text-primary)]">{s.ctaLabel ?? "—"}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Hero image</dt>
+          <dd className="mt-1 font-mono text-sm text-[var(--color-text-primary)]">{s.assets[0]?.path ?? "—"}</dd>
+        </div>
       </dl>
 
       <div className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
         <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">Summary</h2>
         <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--color-text-muted)]">{s.summary ?? "—"}</p>
+      </div>
+
+      <div className="mt-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+        <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">Hero description</h2>
+        <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--color-text-muted)]">{s.heroDescription ?? "—"}</p>
+      </div>
+
+      <div className="mt-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+        <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">Detail body</h2>
+        <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--color-text-muted)]">
+          {s.detailBody ? s.detailBody.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : "—"}
+        </p>
       </div>
 
       <div className="mt-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
@@ -115,7 +138,7 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
       {s.isActive ? (
         <form action={deactivateServiceAction} className="mt-8 border-t border-[var(--color-border)] pt-6">
           <p className="text-sm text-[var(--color-text-muted)]">
-            Soft-deactivate hides this service from the public services API. Re-enable from Edit.
+            Soft-deactivate hides this service from the public services API.
           </p>
           <button type="submit" className="gh-btn gh-btn-danger mt-3">
             Deactivate service

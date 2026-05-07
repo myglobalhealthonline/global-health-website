@@ -1,12 +1,12 @@
 import type { AdminCountryDto, AdminServiceDto, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
+import { ManagedImageField } from "../../_components/managed-image-field";
+import { RichTextHtmlField } from "../../_components/rich-text-html-field";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
   specialties: AdminSpecialtyOptionDto[];
   initial?: AdminServiceDto | null;
-  /** After choosing country on /new — lock selection (hidden input). */
   pinnedCountryId?: string;
-  /** Edit flow — show country label from loaded service. */
   countryLocked?: boolean;
 };
 
@@ -51,7 +51,7 @@ export function ServiceFields({ countries, specialties, initial, pinnedCountryId
             className="gh-input min-w-0 font-mono text-sm"
             required
             defaultValue={initial?.slug}
-            placeholder="e.g. medical-consultation"
+            placeholder="e.g. cardiology-consultation"
           />
         </label>
         <label className="flex flex-col gap-2 sm:col-span-2">
@@ -66,13 +66,10 @@ export function ServiceFields({ countries, specialties, initial, pinnedCountryId
           <option value="">None</option>
           {specialties.map((s) => (
             <option key={s.id} value={s.id}>
-              {s.name} ({s.slug}){!s.active ? " — inactive" : ""}
+              {s.name} ({s.slug}){!s.active ? " - inactive" : ""}
             </option>
           ))}
         </select>
-        <span className="text-xs text-[var(--color-text-muted)]">
-          Uses the Specialty model for the country (no separate service category enum in schema).
-        </span>
       </label>
 
       <label className="flex flex-col gap-2">
@@ -83,10 +80,52 @@ export function ServiceFields({ countries, specialties, initial, pinnedCountryId
           className="gh-input min-h-[6rem] min-w-0 resize-y"
           defaultValue={initial?.summary ?? ""}
         />
-        <span className="text-xs text-[var(--color-text-muted)]">
-          Long description column not in schema yet — use summary until a follow-up migration adds one.
-        </span>
       </label>
+
+      <ManagedImageField
+        name="imagePath"
+        label="Hero image"
+        initialPath={initial?.assets[0]?.path ?? ""}
+        helperText="Shown on the public specialist detail page."
+      />
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Hero title</span>
+          <input
+            name="heroTitle"
+            className="gh-input min-w-0"
+            defaultValue={initial?.heroTitle ?? ""}
+            placeholder="Optional heading override"
+          />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">CTA label</span>
+          <input
+            name="ctaLabel"
+            className="gh-input min-w-0"
+            defaultValue={initial?.ctaLabel ?? ""}
+            placeholder="Book Online"
+          />
+        </label>
+      </div>
+
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Hero description</span>
+        <textarea
+          name="heroDescription"
+          rows={3}
+          className="gh-input min-h-[5rem] min-w-0 resize-y"
+          defaultValue={initial?.heroDescription ?? ""}
+        />
+      </label>
+
+      <RichTextHtmlField
+        name="detailBody"
+        label="Detail body"
+        initialValue={initial?.detailBody ?? ""}
+        helperText="Supports the same Word-style formatting used for doctor bios."
+      />
 
       <label className="flex flex-col gap-2">
         <span className="gh-field-label">Legacy path</span>
@@ -140,7 +179,7 @@ export function ServiceFields({ countries, specialties, initial, pinnedCountryId
           defaultChecked={initial?.isActive ?? true}
           className="h-4 w-4 rounded border-[var(--color-border)]"
         />
-        Service active (inactive rows are omitted from the public services API)
+        Service active
       </label>
     </div>
   );
