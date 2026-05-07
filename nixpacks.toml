@@ -5,7 +5,8 @@
 nixPkgs = ["nodejs_22", "pnpm"]
 
 [phases.install]
-cmds = ["pnpm install --frozen-lockfile"]
+# Avoid ERR_PNPM_OUTDATED_LOCKFILE when dashboard Root Directory is `frontend` (no workspace lockfile in context).
+cmds = ["pnpm install --no-frozen-lockfile"]
 
 [phases.build]
 cmds = ["pnpm --filter frontend build"]

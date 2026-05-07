@@ -1,0 +1,8 @@
+# Railway — use this service with Root Directory = `frontend`.
+# Isolated deploys do not include the repo-root pnpm-lock.yaml, so frozen install always fails.
+# Recommended: clear Root Directory (repo root) and build with `pnpm --filter frontend build` instead.
+[build]
+buildCommand = "pnpm install --no-frozen-lockfile && pnpm run build"
+
+[deploy]
+startCommand = "pnpm run start"
