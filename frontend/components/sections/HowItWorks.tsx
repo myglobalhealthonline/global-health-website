@@ -44,13 +44,13 @@ export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWor
             <div className="relative">
               <div className="absolute -bottom-4 -left-4 h-[92%] w-[92%] rounded-[2rem] bg-[var(--color-brand-accent)]/60" />
               
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-[var(--color-background-soft)] shadow-2xl ring-1 ring-black/5">
+              <div className="relative overflow-hidden rounded-[2rem] bg-[var(--color-background-soft)] shadow-2xl ring-1 ring-black/5">
                 <Image
                   src={imageSrc}
                   alt="Simple scheduling flow illustration"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-contain"
+                  width={1200}
+                  height={900}
+                  className="h-auto w-full object-contain"
                   unoptimized
                   onError={() => setImageSrc("/images/hero/homehero.png")}
                 />
