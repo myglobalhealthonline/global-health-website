@@ -4,7 +4,6 @@ import {
   Globe2,
   Stethoscope,
   UserRound,
-  BadgeDollarSign,
   Images,
   FilePenLine,
   CircleHelp,
@@ -15,7 +14,6 @@ import {
   AlertCircle,
   Pill,
   TestTube2,
-  Truck,
 } from "lucide-react";
 
 const cards = [
@@ -62,22 +60,10 @@ const cards = [
     icon: TestTube2,
   },
   {
-    href: "/admin/home-delivery",
-    title: "Home Delivery",
-    description: "Manage delivery-related cards, pricing, and public copy",
-    icon: Truck,
-  },
-  {
     href: "/admin/doctors",
     title: "Doctors",
     description: "Edit public doctor profiles shown on the website",
     icon: UserRound,
-  },
-  {
-    href: "/admin/pricing",
-    title: "Pricing",
-    description: "Manage displayed pricing plans and currencies",
-    icon: BadgeDollarSign,
   },
   {
     href: "/admin/assets",

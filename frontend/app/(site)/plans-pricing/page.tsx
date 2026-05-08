@@ -1,6 +1,5 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { StaticMarketingTemplate } from "@/components/templates/StaticMarketingTemplate";
-import { mergePricingPlansIntoMarketingPage } from "@/lib/content/get-public-pricing";
 import { getMarketingPageData } from "@/lib/content/marketing-page-data";
 
 export const metadata: Metadata = {
@@ -8,8 +7,7 @@ export const metadata: Metadata = {
   description: "Compare Global Health consultation pricing and service options.",
 };
 
-export default async function Page() {
-  const base = getMarketingPageData("/plans-pricing");
-  const data = await mergePricingPlansIntoMarketingPage(base);
+export default function Page() {
+  const data = getMarketingPageData("/plans-pricing");
   return <StaticMarketingTemplate {...data} />;
 }

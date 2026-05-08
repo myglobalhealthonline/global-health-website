@@ -21,6 +21,10 @@ export async function fetchPricing(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) 
   return apiRequest<unknown[]>("/api/pricing", { timeoutMs });
 }
 
+export async function fetchHealthTests(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
+  return apiRequest<unknown[]>("/api/health-tests", { timeoutMs });
+}
+
 export async function fetchBlogPosts(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
   return apiRequest<unknown[]>("/api/blog-posts", { timeoutMs });
 }

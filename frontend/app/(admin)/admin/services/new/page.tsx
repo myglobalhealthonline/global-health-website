@@ -22,6 +22,12 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
   const createError = sp.error;
   const countryId = sp.countryId?.trim();
   const kind = readServiceKind(sp.kind, "GENERAL");
+  if (kind === "HEALTH_TEST") {
+    redirect(`/admin/health-tests/new${countryId ? `?countryId=${encodeURIComponent(countryId)}` : ""}`);
+  }
+  if (kind === "HOME_DELIVERY") {
+    redirect("/admin");
+  }
   const meta = SERVICE_KIND_META[kind];
 
   const countriesResult = await fetchAdminCountries();

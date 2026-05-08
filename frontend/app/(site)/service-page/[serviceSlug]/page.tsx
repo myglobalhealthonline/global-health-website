@@ -21,6 +21,12 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
   if (service.countryCode === "ie" && service.kind === "SPECIALIST") {
     redirect(`/ireland-specialist-consultations/${service.slug}`);
   }
+  if (service.countryCode === "ie" && service.kind === "HEALTH_TEST") {
+    redirect(`/home-health-tests/${service.slug}`);
+  }
+  if (service.countryCode === "ie" && service.kind === "HOME_DELIVERY") {
+    redirect("/home-delivery");
+  }
   if (service.countryCode === "ie") {
     redirect(`/ireland/${service.slug}`);
   }

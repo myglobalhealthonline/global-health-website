@@ -1,17 +1,17 @@
 ALTER TABLE "Doctor"
-ADD COLUMN "seoTitle" TEXT,
-ADD COLUMN "seoDescription" TEXT,
-ADD COLUMN "editorialChecklist" JSONB;
+ADD COLUMN IF NOT EXISTS "seoTitle" TEXT,
+ADD COLUMN IF NOT EXISTS "seoDescription" TEXT,
+ADD COLUMN IF NOT EXISTS "editorialChecklist" JSONB;
 
 ALTER TABLE "Service"
-ADD COLUMN "seoTitle" TEXT,
-ADD COLUMN "seoDescription" TEXT,
-ADD COLUMN "editorialChecklist" JSONB;
+ADD COLUMN IF NOT EXISTS "seoTitle" TEXT,
+ADD COLUMN IF NOT EXISTS "seoDescription" TEXT,
+ADD COLUMN IF NOT EXISTS "editorialChecklist" JSONB;
 
 ALTER TABLE "BlogPost"
-ADD COLUMN "reviewerDisplayName" TEXT,
-ADD COLUMN "lastReviewedAt" TIMESTAMP(3),
-ADD COLUMN "editorialChecklist" JSONB;
+ADD COLUMN IF NOT EXISTS "reviewerDisplayName" TEXT,
+ADD COLUMN IF NOT EXISTS "lastReviewedAt" TIMESTAMP(3),
+ADD COLUMN IF NOT EXISTS "editorialChecklist" JSONB;
 
 ALTER TABLE "ContentPage"
-ADD COLUMN "editorialChecklist" JSONB;
+ADD COLUMN IF NOT EXISTS "editorialChecklist" JSONB;

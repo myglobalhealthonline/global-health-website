@@ -46,6 +46,12 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
   }
 
   const service = result.data.service;
+  if (service.kind === "HEALTH_TEST") {
+    redirect(`/admin/health-tests/${id}`);
+  }
+  if (service.kind === "HOME_DELIVERY") {
+    redirect("/admin");
+  }
   const kind = readServiceKind(messages.kind, service.kind);
   const meta = SERVICE_KIND_META[kind];
   const showsCategory = kind === "SPECIALIST";

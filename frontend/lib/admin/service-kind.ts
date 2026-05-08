@@ -4,8 +4,6 @@ export const SERVICE_KIND_ORDER: AdminServiceKind[] = [
   "GENERAL",
   "SPECIALIST",
   "PRESCRIPTION",
-  "HEALTH_TEST",
-  "HOME_DELIVERY",
 ];
 
 type ServiceKindMeta = {

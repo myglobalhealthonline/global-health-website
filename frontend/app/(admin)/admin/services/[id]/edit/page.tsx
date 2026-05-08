@@ -61,6 +61,12 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
   }
 
   const service = serviceResult.data.service;
+  if (service.kind === "HEALTH_TEST") {
+    redirect(`/admin/health-tests/${id}/edit`);
+  }
+  if (service.kind === "HOME_DELIVERY") {
+    redirect("/admin");
+  }
   const kind = readServiceKind(messages.kind, service.kind);
   const meta = SERVICE_KIND_META[kind];
   const specialtiesResult = await fetchAdminSpecialties(service.countryId);

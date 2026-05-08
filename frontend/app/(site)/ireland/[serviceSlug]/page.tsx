@@ -9,7 +9,7 @@ type Params = { serviceSlug: string };
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { serviceSlug } = await params;
   const service = await getPublicServiceBySlug("ie", serviceSlug);
-  if (!service || service.kind === "SPECIALIST") {
+  if (!service || service.kind === "SPECIALIST" || service.kind === "HEALTH_TEST" || service.kind === "HOME_DELIVERY") {
     return {
       title: "Ireland Consultation",
       robots: { index: false, follow: true },
@@ -33,24 +33,13 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 export default async function IrelandServicePage({ params }: { params: Promise<Params> }) {
   const { serviceSlug } = await params;
   const service = await getPublicServiceBySlug("ie", serviceSlug);
-  if (!service || service.kind === "SPECIALIST") notFound();
+  if (!service || service.kind === "SPECIALIST" || service.kind === "HEALTH_TEST" || service.kind === "HOME_DELIVERY") notFound();
 
-  const mode =
-    service.kind === "PRESCRIPTION"
-      ? "prescription"
-      : service.kind === "HEALTH_TEST"
-        ? "health-test"
-        : service.kind === "HOME_DELIVERY"
-          ? "home-delivery"
-          : "general";
+  const mode = service.kind === "PRESCRIPTION" ? "prescription" : "general";
   const bookingHref =
     service.kind === "PRESCRIPTION"
       ? "/online-prescription"
-      : service.kind === "HEALTH_TEST"
-        ? "/home-health-test"
-        : service.kind === "HOME_DELIVERY"
-          ? "/home-delivery"
-          : "/general-consultation-ie";
+      : "/general-consultation-ie";
   const bookingLabel = service.ctaLabel ?? (service.kind === "GENERAL" ? "Book consultation" : "Book Online");
 
   const copy = await buildServiceDetailCopyAsync(serviceSlug, mode, "ie");

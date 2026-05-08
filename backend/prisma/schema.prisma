@@ -74,6 +74,7 @@ model Country {
   doctors                   Doctor[]
   specialties               Specialty[]
   services                  Service[]
+  healthTests               HealthTest[]
   pricingPlans              PricingPlan[]
   assets                    Asset[]
   blogPosts                 BlogPost[]
@@ -224,6 +225,35 @@ model PricingPlan {
   country     Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@unique([countryId, slug])
+}
+
+model HealthTest {
+  id                  String   @id @default(cuid())
+  countryId           String
+  slug                String
+  title               String
+  shortDescription    String?
+  priceCents          Int
+  currencyCode        String
+  productImagePath    String
+  galleryImagePaths   String[]
+  sampleType          String?
+  resultsTimeline     String?
+  heroButtonLabel     String?
+  detailIntro         String?
+  whatThisTestCovers  String[]
+  whyGetTested        String[]
+  extraSections       Json?
+  sortOrder           Int      @default(0)
+  isActive            Boolean  @default(true)
+  seoTitle            String?
+  seoDescription      String?
+  legacyPath          String?
+  country             Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   @@unique([countryId, slug])
 }

@@ -1,9 +1,5 @@
-import AdminServicesPage, {
-  type AdminServicesPageProps,
-} from "@/app/(admin)/admin/services/page";
+import { redirect } from "next/navigation";
 
-export default function AdminHomeDeliveryPage({
-  searchParams,
-}: Pick<AdminServicesPageProps, "searchParams">) {
-  return <AdminServicesPage searchParams={searchParams} forcedKind="HOME_DELIVERY" showKindTabs={false} />;
+export default function Page() {
+  redirect("/admin");
 }
