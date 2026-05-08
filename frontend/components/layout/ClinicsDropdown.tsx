@@ -2,20 +2,18 @@
 
 import Image from "next/image";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useState } from "react";
 import {
   BadgePercent,
   Building2,
   ChevronDown,
   ChevronRight,
   FlaskConical,
-  Search,
   ShieldCheck,
   Stethoscope,
   Truck,
   UserRound,
   Users,
-  X,
 } from "lucide-react";
 import Link from "next/link";
 import type { CountryClinicLinks, NavLink } from "@/data/navigation";
@@ -25,7 +23,6 @@ export function ClinicsDropdown({
   label,
   clinicsMenuByCountry,
   clinicsOverviewLink,
-  searchPlaceholder,
   viewAllLabel,
   trustLabel,
   className,
@@ -33,25 +30,13 @@ export function ClinicsDropdown({
   label: string;
   clinicsMenuByCountry: CountryClinicLinks[];
   clinicsOverviewLink: NavLink;
-  searchPlaceholder: string;
   viewAllLabel: string;
   trustLabel: string;
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const deferredQuery = useDeferredValue(query);
-  const normalizedQuery = deferredQuery.trim().toLowerCase();
   const defaultCountryCode = clinicsMenuByCountry[0]?.country.code;
-
-  const filteredCountries = useMemo(() => {
-    if (!normalizedQuery) return clinicsMenuByCountry;
-
-    return clinicsMenuByCountry.filter(({ country, links }) => {
-      if (country.name.toLowerCase().includes(normalizedQuery)) return true;
-      return links.some((item) => item.label.toLowerCase().includes(normalizedQuery));
-    });
-  }, [clinicsMenuByCountry, normalizedQuery]);
+  const filteredCountries = clinicsMenuByCountry;
 
   const [activeCountryCode, setActiveCountryCode] = useState(defaultCountryCode);
   const resolvedActiveCountryCode =
@@ -74,7 +59,6 @@ export function ClinicsDropdown({
       onOpenChange={(nextOpen) => {
         setOpen(nextOpen);
         if (!nextOpen) {
-          setQuery("");
           setActiveCountryCode(defaultCountryCode);
         }
       }}
@@ -94,45 +78,18 @@ export function ClinicsDropdown({
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="z-50 w-[min(100vw-2rem,960px)] overflow-hidden rounded-[28px] border border-[var(--color-border)] bg-[var(--color-brand-secondary)] shadow-[var(--shadow-elevated)]"
+          className="z-50 w-[min(100vw-2rem,940px)] overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-white shadow-[var(--shadow-elevated)]"
           sideOffset={10}
           align="start"
           onCloseAutoFocus={(event) => event.preventDefault()}
         >
           <div className="flex max-h-[min(78vh,720px)] flex-col overflow-hidden">
-            <div className="flex items-center justify-between border-b border-[var(--color-border)] px-6 py-5">
-              <h2 className="text-[2rem] font-semibold tracking-[-0.03em] text-[var(--color-text-primary)]">
-                {label}
-              </h2>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="inline-flex size-11 items-center justify-center rounded-full border border-transparent text-[var(--color-text-muted)] transition-colors hover:border-[var(--color-border)] hover:bg-[var(--color-background-soft)] hover:text-[var(--color-text-primary)]"
-              >
-                <X className="size-5" aria-hidden />
-                <span className="sr-only">Close clinics menu</span>
-              </button>
-            </div>
-
-            <div className="px-6 py-5">
-              <label className="relative block">
-                <Search
-                  className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-[var(--color-text-muted)]"
-                  aria-hidden
-                />
-                <input
-                  type="search"
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={searchPlaceholder}
-                  className="gh-input rounded-[16px] pl-11 pr-4"
-                />
-              </label>
-            </div>
-
-            <div className="grid min-h-0 flex-1 grid-cols-[260px_minmax(0,1fr)] overflow-hidden border-t border-[var(--color-border)]">
-              <div className="overflow-y-auto border-r border-[var(--color-border)] bg-[linear-gradient(180deg,#fbfdfb_0%,#f6f9f6_100%)] px-4 py-5">
-                <ul className="space-y-1.5">
+            <div className="grid min-h-0 flex-1 grid-cols-[260px_minmax(0,1fr)] overflow-hidden">
+              <div className="overflow-y-auto border-r border-[var(--color-border)] bg-[var(--color-background-soft)] p-3">
+                <p className="mb-2 px-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
+                  Country
+                </p>
+                <ul className="space-y-1">
                   {filteredCountries.map(({ country }) => {
                     const isActive = country.code === activeCountryEntry?.country.code;
                     return (
@@ -141,10 +98,10 @@ export function ClinicsDropdown({
                           type="button"
                           onClick={() => setActiveCountryCode(country.code)}
                           className={cn(
-                            "flex w-full items-center justify-between rounded-[16px] px-4 py-3 text-left text-[15px] font-medium transition-colors",
+                            "flex w-full items-center justify-between rounded-[12px] px-3 py-2.5 text-left text-[15px] font-medium transition-colors",
                             isActive
-                              ? "bg-[var(--color-brand-secondary)] text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)]"
-                              : "text-[var(--color-text-body)] hover:bg-[rgba(255,255,255,0.75)] hover:text-[var(--color-brand-primary)]",
+                              ? "border border-[var(--color-border)] bg-white text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)]"
+                              : "border border-transparent text-[var(--color-text-body)] hover:bg-white hover:text-[var(--color-brand-primary)]",
                           )}
                         >
                           <span>{country.name}</span>
@@ -159,12 +116,12 @@ export function ClinicsDropdown({
                 </ul>
               </div>
 
-              <div className="min-h-0 overflow-y-auto px-6 py-5">
+              <div className="min-h-0 overflow-y-auto px-4 py-4">
                 {activeCountryEntry ? (
                   <div className="flex min-h-full flex-col">
                     <Link
                       href={homeLink?.href ?? activeCountryEntry.country.legacyHomePath}
-                      className="mb-5 inline-flex items-center gap-3 rounded-[18px] px-1 py-1 text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
+                      className="mb-4 inline-flex items-center gap-3 rounded-[14px] border border-transparent px-2 py-2 text-[var(--color-text-primary)] transition-colors hover:border-[var(--color-border)] hover:bg-[var(--color-background-soft)] hover:text-[var(--color-brand-primary-hover)]"
                     >
                       <Image
                         src={countryIconByCode[activeCountryEntry.country.code]}
@@ -181,17 +138,17 @@ export function ClinicsDropdown({
                       </div>
                     </Link>
 
-                    <ul className="space-y-1.5">
+                    <ul className="space-y-1">
                       {serviceLinks.map((item) => {
                         const Icon = iconForClinicLink(item, activeCountryEntry.country.name);
                         return (
                           <li key={item.href + item.label}>
                             <DropdownMenu.Item asChild>
                               <Link
-                                className="flex items-center gap-3 rounded-[16px] px-3 py-3 text-[15px] font-medium text-[var(--color-text-body)] outline-none transition-colors hover:bg-[var(--color-background-soft)] hover:text-[var(--color-brand-primary)]"
+                                className="group flex items-center gap-3 rounded-[12px] p-2.5 text-[15px] font-medium text-[var(--color-text-body)] outline-none transition-colors hover:bg-[var(--color-background-soft)] hover:text-[var(--color-brand-primary)]"
                                 href={item.href}
                               >
-                                <span className="inline-flex size-9 items-center justify-center rounded-[12px] bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
+                                <span className="inline-flex size-9 items-center justify-center rounded-[10px] border border-[var(--color-border)] bg-[var(--color-background-soft)] text-[var(--color-brand-primary)] transition-all group-hover:scale-105 group-hover:border-[var(--color-brand-primary)] group-hover:bg-[var(--color-brand-primary)] group-hover:text-white">
                                   <Icon className="size-[18px]" aria-hidden />
                                 </span>
                                 <span>{item.label.replace(`${activeCountryEntry.country.name} `, "")}</span>
@@ -202,8 +159,8 @@ export function ClinicsDropdown({
                       })}
                     </ul>
 
-                    <div className="mt-auto pt-8">
-                      <div className="flex items-center justify-between gap-4 rounded-[22px] border border-[var(--color-border)] bg-[linear-gradient(90deg,#f7fbf8_0%,#fdfefe_100%)] px-4 py-3">
+                    <div className="mt-auto pt-5">
+                      <div className="flex items-center justify-between gap-4 rounded-[16px] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3">
                         <div className="flex items-center gap-3 text-sm font-medium text-[var(--color-brand-primary)]">
                           <span className="inline-flex size-9 items-center justify-center rounded-full bg-[rgba(27,77,62,0.08)]">
                             <ShieldCheck className="size-[18px]" aria-hidden />
@@ -213,7 +170,7 @@ export function ClinicsDropdown({
                         <DropdownMenu.Item asChild>
                           <Link
                             href={clinicsOverviewLink.href}
-                            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--color-border)] bg-white px-4 text-sm font-semibold text-[var(--color-brand-primary)] shadow-[var(--shadow-soft)] transition-colors hover:bg-[var(--color-background-soft)]"
+                            className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-white px-4 text-xs font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-panel)]"
                           >
                             {viewAllLabel}
                             <ChevronRight className="size-4" aria-hidden />

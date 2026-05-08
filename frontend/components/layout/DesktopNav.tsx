@@ -47,7 +47,6 @@ export function DesktopNav({
           label={navigation.clinicsLabel}
           clinicsMenuByCountry={navigation.clinicsMenuByCountry}
           clinicsOverviewLink={navigation.clinicsOverviewLink}
-          searchPlaceholder={navigation.searchCountryOrServiceLabel}
           viewAllLabel={navigation.viewAllClinicsLabel}
           trustLabel={navigation.trustedCareAcrossEuropeLabel}
           className="min-h-9 text-white/90 hover:bg-white/10 hover:text-white focus-visible:ring-white/50"
