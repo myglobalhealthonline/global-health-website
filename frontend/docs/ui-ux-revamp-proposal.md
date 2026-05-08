@@ -342,15 +342,15 @@ Pattern C (Split Hero):  [Soft] → [White] → [Soft] → [White] → [Dark CTA
 - Trust badges: Simpler pills, no shadow
 
 #### `HowItWorks.tsx`
-**Current:** Split layout with scroll-driven image change, step cards with connectors.
+**Current:** Split layout with one visible image, step cards with connectors.
 **New:**
-- Simpler, cleaner layout
-- Remove scroll-driven image switching (can be janky, adds complexity)
-- Use a static 3-column grid on desktop, single column on mobile
-- Each step: Large number (01, 02, 03), icon, title, description
-- Numbers: Very large, muted color (`#E0E8E0`), behind the content
-- No connecting lines — cleaner
-- Image: Single representative image, larger, better quality
+- Keep the premium split layout, but restore the three-step visual interaction
+- Use the existing three assets: `/images/how-it-works/step-1.png`, `step-2.png`, and `step-3.png`
+- Switch the main illustration on step hover/focus and when each step enters the viewport during scroll
+- Keep the connector flow so the process still feels guided
+- Add a subtle medical cross background pattern to bring back the hospital/clinical feel
+- Avoid janky motion: use opacity/scale transitions only, and respect `prefers-reduced-motion`
+- On mobile, keep the image visible near the steps and ensure the active state still updates cleanly
 
 #### `TrustSignals.tsx`
 **Current:** Dark green background, 2–4 column grid of glass cards.
@@ -740,7 +740,7 @@ Pattern C (Split Hero):  [Soft] → [White] → [Soft] → [White] → [Dark CTA
 |--------|---------|-----|-----|
 | **Section rhythm** | Inconsistent padding, random backgrounds | Systematic alternation: dark → white → soft → white → dark | Creates visual breathing, guides eye, feels intentional |
 | **Hero impact** | Soft background, safe | Dark green or white, bold | Heroes must grab attention; soft backgrounds waste the most valuable screen real estate |
-| **Decorations** | Circles, patterns, glass effects everywhere | Removed | Decoration without purpose is noise; healthcare needs calm |
+| **Decorations** | Circles, patterns, glass effects everywhere | Purposeful clinical texture only | Healthcare can feel premium and medical without becoming flat; decoration must support trust, not distract |
 | **Typography** | Functional, moderate contrast | Bolder headlines, tighter line-height, better hierarchy | Premium feel comes from confident typography |
 | **Cards** | Subtle shadow, hover lift | Stronger shadow, cleaner hover | Cards need to feel tangible; hover should be subtle |
 | **Spacing** | Tight, cramped | Generous, airy | Premium = space; cramped = cheap |

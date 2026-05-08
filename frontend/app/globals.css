@@ -38,6 +38,13 @@
   --shadow-soft: 0 1px 3px rgba(15, 46, 37, 0.06);
   --shadow-focus: 0 0 0 3px rgba(27, 77, 62, 0.15);
   --shadow-focus-error: 0 0 0 3px rgba(185, 28, 28, 0.15);
+
+  /* Medical pattern tokens */
+  --medical-pattern-size: 72px;
+  --medical-pattern-color: var(--color-brand-primary);
+  --medical-pattern-opacity: 0.08;
+  --medical-pattern-dark-opacity: 0.14;
+  --medical-pattern-soft-opacity: 0.055;
   --container-width: 1280px;
   --section-padding-y: 112px;
   --section-padding-y-sm: 80px;
