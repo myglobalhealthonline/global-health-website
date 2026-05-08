@@ -346,6 +346,7 @@ export function CountryHomeTemplate({
           title="How does it work?"
           subtitle="Simple Scheduling in 3 Steps"
           steps={steps}
+          variant="white"
         />
       )}
 

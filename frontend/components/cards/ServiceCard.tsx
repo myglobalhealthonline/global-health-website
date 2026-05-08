@@ -30,7 +30,7 @@ function getServiceImage(title: string): string {
   for (const [key, src] of Object.entries(serviceImages)) {
     if (lower.includes(key)) return src;
   }
-  return "/images/services/default-medical.jpg";
+  return "/images/services/default-medical.svg";
 }
 
 type ServiceCardProps = {

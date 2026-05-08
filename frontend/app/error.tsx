@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useEffect } from "react";
@@ -15,22 +15,21 @@ export default function ErrorBoundary({
   }, [error]);
 
   return (
-    <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4 px-6 text-center">
-      <h2 className="text-xl font-semibold">Something went wrong</h2>
-      <p className="text-muted-foreground max-w-md text-sm">{error.message}</p>
-      <div className="flex gap-4">
+    <div className="flex min-h-[50vh] flex-col items-center justify-center gap-5 px-6 text-center">
+      <h2 className="text-2xl font-bold text-[var(--color-text-primary)]">Something went wrong</h2>
+      <p className="max-w-md text-sm text-[var(--color-text-muted)]">{error.message}</p>
+      <div className="flex gap-3">
         <button
           type="button"
           onClick={() => reset()}
-          className="border-border rounded-full border px-4 py-2 text-sm font-medium"
+          className="gh-btn gh-btn-primary"
         >
           Try again
         </button>
-        <Link href="/" className="text-primary hover:underline sm:self-center">
-          Home
+        <Link href="/" className="gh-btn gh-btn-outline">
+          Back to home
         </Link>
       </div>
     </div>
   );
 }
-

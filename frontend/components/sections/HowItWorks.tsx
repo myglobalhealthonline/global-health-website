@@ -25,13 +25,14 @@ type HowItWorksProps = {
   title?: string;
   subtitle?: string;
   steps: HowItWorksStep[];
+  variant?: "white" | "soft";
 };
 
-export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWorksProps) {
+export function HowItWorks({ title = "How it works", subtitle, steps, variant = "soft" }: HowItWorksProps) {
   const displaySteps = steps.slice(0, 3);
 
   return (
-    <Section variant="soft">
+    <Section variant={variant}>
       <Container>
         <div className="mx-auto max-w-3xl text-center mb-14">
           <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
