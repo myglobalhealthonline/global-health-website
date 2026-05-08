@@ -2,7 +2,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import { deleteAdminService, fetchAdminServiceById } from "@/lib/admin/admin-api";
+import { deleteAdminService, fetchAdminServiceById, purgeAdminService } from "@/lib/admin/admin-api";
 import { readServiceKind, SERVICE_KIND_META } from "@/lib/admin/service-kind";
 
 export const dynamic = "force-dynamic";
@@ -61,6 +61,19 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
     revalidatePath(meta.listHref);
     revalidatePath(`/admin/services/${id}`);
     redirect(`/admin/services/${id}?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent(`${meta.singularLabel} deactivated`)}`);
+  }
+
+  async function deleteServiceAction() {
+    "use server";
+
+    const deleteResult = await purgeAdminService(id);
+    if (!deleteResult.ok) {
+      redirect(`/admin/services/${id}?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(deleteResult.message)}`);
+    }
+
+    revalidatePath("/admin/services");
+    revalidatePath(meta.listHref);
+    redirect(meta.listHref);
   }
 
   return (
@@ -180,6 +193,12 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
           This {meta.singularLabel.toLowerCase()} is inactive. Re-enable from edit.
         </p>
       )}
+      <form action={deleteServiceAction} className="mt-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--color-text-muted)]">Permanent delete removes this record instead of just hiding it.</p>
+          <button type="submit" className="gh-btn gh-btn-danger shrink-0">Delete permanently</button>
+        </div>
+      </form>
     </section>
   );
 }

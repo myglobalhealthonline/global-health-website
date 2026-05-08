@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { fetchAdminBlogPosts, fetchAdminCountries } from "@/lib/admin/admin-api";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { fetchAdminBlogPosts, fetchAdminCountries, purgeAdminBlogPost } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
 
@@ -42,6 +44,19 @@ export default async function AdminBlogPostsPage({ searchParams }: PageProps) {
 
   const { items } = postsResult.data;
   const countries = countriesResult.data.countries;
+  const successMessage = spRead(sp, "success");
+  const errorMessage = spRead(sp, "error");
+
+  async function deleteBlogPostAction(formData: FormData) {
+    "use server";
+    const id = String(formData.get("id") ?? "").trim();
+    const result = await purgeAdminBlogPost(id);
+    if (!result.ok) {
+      redirect(`/admin/blog-posts?error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath("/admin/blog-posts");
+    redirect("/admin/blog-posts?success=Blog%20post%20deleted");
+  }
 
   return (
     <section className="gh-card p-6 sm:p-8">
@@ -57,6 +72,13 @@ export default async function AdminBlogPostsPage({ searchParams }: PageProps) {
 
         </div>
       </div>
+
+      {errorMessage ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{errorMessage}</p>
+      ) : null}
+      {successMessage ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{successMessage}</p>
+      ) : null}
 
       <form method="get" className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
         <input aria-label="Search blog posts" className="gh-input" name="search" defaultValue={filters.search ?? ""} placeholder="Search title/slug" />
@@ -114,12 +136,20 @@ export default async function AdminBlogPostsPage({ searchParams }: PageProps) {
                 <td className="px-3 py-2">{post.country?.code ?? "GLOBAL"}</td>
                 <td className="px-3 py-2">{post.isActive ? "Yes" : "No"}</td>
                 <td className="px-3 py-2">
-                  <Link className="gh-link mr-3" href={`/admin/blog-posts/${post.id}`}>
-                    View
-                  </Link>
-                  <Link className="gh-link" href={`/admin/blog-posts/${post.id}/edit`}>
-                    Edit
-                  </Link>
+                  <div className="flex flex-col gap-1">
+                    <Link className="gh-link" href={`/admin/blog-posts/${post.id}`}>
+                      View
+                    </Link>
+                    <Link className="gh-link" href={`/admin/blog-posts/${post.id}/edit`}>
+                      Edit
+                    </Link>
+                    <form action={deleteBlogPostAction}>
+                      <input type="hidden" name="id" value={post.id} />
+                      <button type="submit" className="gh-link text-left text-[var(--color-status-danger-text)]">
+                        Delete
+                      </button>
+                    </form>
+                  </div>
                 </td>
               </tr>
             ))}

@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import { deleteAdminBlogPost, fetchAdminBlogPostById } from "@/lib/admin/admin-api";
+import { deleteAdminBlogPost, fetchAdminBlogPostById, purgeAdminBlogPost } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,16 @@ export default async function AdminBlogPostDetailPage({ params, searchParams }: 
       redirect(`/admin/blog-posts/${id}?error=${encodeURIComponent(deleted.message)}`);
     }
     redirect(`/admin/blog-posts/${id}?success=${encodeURIComponent("Blog post deactivated")}`);
+  }
+
+  async function deleteAction() {
+    "use server";
+    const deleted = await purgeAdminBlogPost(id);
+    if (!deleted.ok) {
+      redirect(`/admin/blog-posts/${id}?error=${encodeURIComponent(deleted.message)}`);
+    }
+    revalidatePath("/admin/blog-posts");
+    redirect("/admin/blog-posts");
   }
 
   const { post } = result.data;
@@ -103,6 +114,12 @@ export default async function AdminBlogPostDetailPage({ params, searchParams }: 
           This post is inactive. Re-enable from edit.
         </p>
       )}
+      <form action={deleteAction} className="mt-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--color-text-muted)]">Permanent delete removes this post instead of just deactivating it.</p>
+          <button type="submit" className="gh-btn gh-btn-danger shrink-0">Delete permanently</button>
+        </div>
+      </form>
     </section>
   );
 }

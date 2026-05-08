@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import { deleteAdminFaq, fetchAdminFaqById } from "@/lib/admin/admin-api";
+import { deleteAdminFaq, fetchAdminFaqById, purgeAdminFaq } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,16 @@ export default async function AdminFaqDetailPage({ params, searchParams }: PageP
       redirect(`/admin/faqs/${id}?error=${encodeURIComponent(result.message)}`);
     }
     redirect(`/admin/faqs/${id}?success=${encodeURIComponent("FAQ deactivated")}`);
+  }
+
+  async function deleteAction() {
+    "use server";
+    const result = await purgeAdminFaq(id);
+    if (!result.ok) {
+      redirect(`/admin/faqs/${id}?error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath("/admin/faqs");
+    redirect("/admin/faqs");
   }
 
   const faq = faqResult.data.faq;
@@ -84,6 +95,12 @@ export default async function AdminFaqDetailPage({ params, searchParams }: PageP
           This FAQ is inactive. Re-enable from edit.
         </p>
       )}
+      <form action={deleteAction} className="mt-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--color-text-muted)]">Permanent delete removes this FAQ record from admin and public responses.</p>
+          <button type="submit" className="gh-btn gh-btn-danger shrink-0">Delete permanently</button>
+        </div>
+      </form>
     </section>
   );
 }

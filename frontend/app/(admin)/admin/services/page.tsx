@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import {
   fetchAdminCountries,
   fetchAdminServices,
   fetchAdminSpecialties,
+  purgeAdminService,
 } from "@/lib/admin/admin-api";
 import {
   adminHrefForService,
@@ -111,6 +114,20 @@ export default async function AdminServicesPage({
   }
 
   const statusFilter = filters.isActive ?? "";
+  const successMessage = spRead(sp, "success");
+  const errorMessage = spRead(sp, "error");
+
+  async function deleteServiceAction(formData: FormData) {
+    "use server";
+    const id = String(formData.get("id") ?? "").trim();
+    const result = await purgeAdminService(id);
+    if (!result.ok) {
+      redirect(`${basePath}?error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath("/admin/services");
+    revalidatePath(basePath);
+    redirect(`${basePath}?success=Record%20deleted`);
+  }
 
   return (
     <section className="gh-card p-6 sm:p-8">
@@ -128,6 +145,13 @@ export default async function AdminServicesPage({
 
         </div>
       </div>
+
+      {errorMessage ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{errorMessage}</p>
+      ) : null}
+      {successMessage ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{successMessage}</p>
+      ) : null}
 
       {showKindTabs ? (
         <div className="mt-6 flex flex-wrap gap-2">
@@ -260,6 +284,12 @@ export default async function AdminServicesPage({
                     <Link href={adminHrefForService(service, "edit")} className="gh-link text-[var(--color-brand-primary)]">
                       Edit
                     </Link>
+                    <form action={deleteServiceAction}>
+                      <input type="hidden" name="id" value={service.id} />
+                      <button type="submit" className="gh-link text-left text-[var(--color-status-danger-text)]">
+                        Delete
+                      </button>
+                    </form>
                   </div>
                 </td>
               </tr>

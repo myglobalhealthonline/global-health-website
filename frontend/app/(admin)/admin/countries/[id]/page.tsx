@@ -2,7 +2,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import { deleteAdminCountry, fetchAdminCountryById } from "@/lib/admin/admin-api";
+import { deleteAdminCountry, fetchAdminCountryById, purgeAdminCountry } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +27,18 @@ export default async function AdminCountryDetailPage({ params, searchParams }: P
     revalidatePath("/admin/countries");
     revalidatePath(`/admin/countries/${id}`);
     redirect(`/admin/countries/${id}?success=${encodeURIComponent("Country deactivated")}`);
+  }
+
+  async function deleteCountryAction() {
+    "use server";
+
+    const deleteResult = await purgeAdminCountry(id);
+    if (!deleteResult.ok) {
+      redirect(`/admin/countries/${id}?error=${encodeURIComponent(deleteResult.message)}`);
+    }
+
+    revalidatePath("/admin/countries");
+    redirect(`/admin/countries?success=${encodeURIComponent("Country deleted")}`);
   }
 
   if (!result.ok) {
@@ -138,6 +150,12 @@ export default async function AdminCountryDetailPage({ params, searchParams }: P
           This country is inactive. Re-enable from edit.
         </p>
       )}
+      <form action={deleteCountryAction} className="mt-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--color-text-muted)]">Permanent delete removes this country and its dependent admin content.</p>
+          <button type="submit" className="gh-btn gh-btn-danger shrink-0">Delete permanently</button>
+        </div>
+      </form>
     </section>
   );
 }

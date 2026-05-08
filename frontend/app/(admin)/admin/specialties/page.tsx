@@ -4,6 +4,7 @@ import {
   deleteAdminSpecialty,
   fetchAdminCountries,
   fetchAdminSpecialties,
+  purgeAdminSpecialty,
 } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
@@ -48,6 +49,17 @@ export default async function AdminSpecialtiesPage({ searchParams }: PageProps) 
       redirect(`/admin/specialties?countryId=${encodeURIComponent(countryIdRaw)}&error=${encodeURIComponent(result.message)}`);
     }
     redirect(`/admin/specialties?countryId=${encodeURIComponent(countryIdRaw)}&success=${encodeURIComponent("Category deactivated")}`);
+  }
+
+  async function deleteSpecialtyAction(formData: FormData) {
+    "use server";
+    const id = String(formData.get("id") ?? "").trim();
+    const countryIdRaw = String(formData.get("countryId") ?? "").trim();
+    const result = await purgeAdminSpecialty(id);
+    if (!result.ok) {
+      redirect(`/admin/specialties?countryId=${encodeURIComponent(countryIdRaw)}&error=${encodeURIComponent(result.message)}`);
+    }
+    redirect(`/admin/specialties?countryId=${encodeURIComponent(countryIdRaw)}&success=${encodeURIComponent("Category deleted")}`);
   }
 
   return (
@@ -141,6 +153,13 @@ export default async function AdminSpecialtiesPage({ searchParams }: PageProps) 
                           </button>
                         </form>
                       ) : null}
+                      <form action={deleteSpecialtyAction}>
+                        <input type="hidden" name="id" value={s.id} />
+                        <input type="hidden" name="countryId" value={selectedCountryId} />
+                        <button type="submit" className="gh-link text-left text-[var(--color-status-danger-text)]">
+                          Delete
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>

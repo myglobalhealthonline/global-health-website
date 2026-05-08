@@ -7,6 +7,7 @@ import {
   DoctorSpecialtyInvalidError,
   getAdminDoctorById,
   listAdminDoctors,
+  purgeAdminDoctor,
   updateAdminDoctor,
 } from "../modules/doctors/doctors.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -138,6 +139,23 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
       return okResponse({ doctor }, "Doctor profile deactivated");
+    } catch (error) {
+      return handleDoctorWriteError(app, reply, error);
+    }
+  });
+
+  app.delete("/api/admin/doctors/:id/purge", async (request, reply) => {
+    const params = doctorIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid doctor id", params.error.flatten()));
+    }
+
+    try {
+      const deleted = await purgeAdminDoctor(params.data.id);
+      if (!deleted) {
+        return reply.status(404).send(errorResponse("Doctor profile not found"));
+      }
+      return okResponse({}, "Doctor profile deleted");
     } catch (error) {
       return handleDoctorWriteError(app, reply, error);
     }

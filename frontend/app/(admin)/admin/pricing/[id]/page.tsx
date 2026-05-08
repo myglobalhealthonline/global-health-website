@@ -2,7 +2,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import { deleteAdminPricingPlan, fetchAdminPricingPlanById } from "@/lib/admin/admin-api";
+import { deleteAdminPricingPlan, fetchAdminPricingPlanById, purgeAdminPricingPlan } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +27,18 @@ export default async function AdminPricingDetailPage({ params, searchParams }: P
     revalidatePath("/admin/pricing");
     revalidatePath(`/admin/pricing/${id}`);
     redirect(`/admin/pricing/${id}?success=${encodeURIComponent("Pricing plan deactivated")}`);
+  }
+
+  async function deletePricingAction() {
+    "use server";
+
+    const deleteResult = await purgeAdminPricingPlan(id);
+    if (!deleteResult.ok) {
+      redirect(`/admin/pricing/${id}?error=${encodeURIComponent(deleteResult.message)}`);
+    }
+
+    revalidatePath("/admin/pricing");
+    redirect("/admin/pricing");
   }
 
   if (!result.ok) {
@@ -109,6 +121,12 @@ export default async function AdminPricingDetailPage({ params, searchParams }: P
           This plan is inactive. Re-enable from edit.
         </p>
       )}
+      <form action={deletePricingAction} className="mt-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--color-text-muted)]">Permanent delete removes this pricing row from admin and public data.</p>
+          <button type="submit" className="gh-btn gh-btn-danger shrink-0">Delete permanently</button>
+        </div>
+      </form>
     </section>
   );
 }

@@ -125,9 +125,10 @@ async function adminRequest<T>(
   const tokenFallbackEnabled = isAdminTokenFallbackEnabled();
 
   try {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
+    const headers: Record<string, string> = {};
+    if (init?.body !== undefined) {
+      headers["Content-Type"] = "application/json";
+    }
     if (cookieHeader) {
       headers.cookie = cookieHeader;
     }
@@ -219,6 +220,12 @@ export async function patchAdminCountry(id: string, body: unknown) {
 
 export async function deleteAdminCountry(id: string) {
   return adminRequest<AdminCountryDetailPayload>(`/api/admin/countries/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export async function purgeAdminCountry(id: string) {
+  return adminRequest<Record<string, never>>(`/api/admin/countries/${id}/purge`, {
     method: "DELETE",
   });
 }
@@ -371,6 +378,12 @@ export async function deleteAdminSpecialty(id: string) {
   });
 }
 
+export async function purgeAdminSpecialty(id: string) {
+  return adminRequest<Record<string, never>>(`/api/admin/specialties/${id}/purge`, {
+    method: "DELETE",
+  });
+}
+
 export async function postAdminService(body: unknown) {
   return adminRequest<AdminServiceDetailPayload>("/api/admin/services", {
     method: "POST",
@@ -387,6 +400,12 @@ export async function patchAdminService(id: string, body: unknown) {
 
 export async function deleteAdminService(id: string) {
   return adminRequest<AdminServiceDetailPayload>(`/api/admin/services/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export async function purgeAdminService(id: string) {
+  return adminRequest<Record<string, never>>(`/api/admin/services/${id}/purge`, {
     method: "DELETE",
   });
 }
@@ -482,6 +501,12 @@ export async function deleteAdminDoctor(id: string) {
   });
 }
 
+export async function purgeAdminDoctor(id: string) {
+  return adminRequest<Record<string, never>>(`/api/admin/doctors/${id}/purge`, {
+    method: "DELETE",
+  });
+}
+
 export type AdminPricingPlanDto = {
   id: string;
   countryId: string;
@@ -545,6 +570,12 @@ export async function patchAdminPricingPlan(id: string, body: unknown) {
 
 export async function deleteAdminPricingPlan(id: string) {
   return adminRequest<AdminPricingDetailPayload>(`/api/admin/pricing/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export async function purgeAdminPricingPlan(id: string) {
+  return adminRequest<Record<string, never>>(`/api/admin/pricing/${id}/purge`, {
     method: "DELETE",
   });
 }
@@ -615,6 +646,12 @@ export async function patchAdminAsset(id: string, body: unknown) {
 
 export async function deleteAdminAsset(id: string) {
   return adminRequest<AdminAssetDetailPayload>(`/api/admin/assets/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export async function purgeAdminAsset(id: string) {
+  return adminRequest<Record<string, never>>(`/api/admin/assets/${id}/purge`, {
     method: "DELETE",
   });
 }
@@ -695,6 +732,12 @@ export async function deleteAdminBlogPost(id: string) {
   });
 }
 
+export async function purgeAdminBlogPost(id: string) {
+  return adminRequest<Record<string, never>>(`/api/admin/blog-posts/${id}/purge`, {
+    method: "DELETE",
+  });
+}
+
 export type AdminFaqDto = {
   id: string;
   countryId: string | null;
@@ -750,6 +793,12 @@ export async function patchAdminFaq(id: string, body: unknown) {
 
 export async function deleteAdminFaq(id: string) {
   return adminRequest<AdminFaqDetailPayload>(`/api/admin/faqs/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export async function purgeAdminFaq(id: string) {
+  return adminRequest<Record<string, never>>(`/api/admin/faqs/${id}/purge`, {
     method: "DELETE",
   });
 }
@@ -814,6 +863,12 @@ export async function patchAdminContentPage(id: string, body: unknown) {
 
 export async function deleteAdminContentPage(id: string) {
   return adminRequest<AdminContentPageDetailPayload>(`/api/admin/content-pages/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export async function purgeAdminContentPage(id: string) {
+  return adminRequest<Record<string, never>>(`/api/admin/content-pages/${id}/purge`, {
     method: "DELETE",
   });
 }

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import { deleteAdminDoctor, doctorPublicProfilePath, fetchAdminDoctorById } from "@/lib/admin/admin-api";
+import { deleteAdminDoctor, doctorPublicProfilePath, fetchAdminDoctorById, purgeAdminDoctor } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +27,18 @@ export default async function AdminDoctorDetailPage({ params, searchParams }: Pa
     revalidatePath("/admin/doctors");
     revalidatePath(`/admin/doctors/${id}`);
     redirect(`/admin/doctors/${id}?success=${encodeURIComponent("Doctor profile deactivated")}`);
+  }
+
+  async function deleteDoctorAction() {
+    "use server";
+
+    const deleteResult = await purgeAdminDoctor(id);
+    if (!deleteResult.ok) {
+      redirect(`/admin/doctors/${id}?error=${encodeURIComponent(deleteResult.message)}`);
+    }
+
+    revalidatePath("/admin/doctors");
+    redirect("/admin/doctors");
   }
 
   if (!result.ok) {
@@ -170,6 +182,12 @@ export default async function AdminDoctorDetailPage({ params, searchParams }: Pa
           This profile is inactive. Re-enable from edit.
         </p>
       )}
+      <form action={deleteDoctorAction} className="mt-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--color-text-muted)]">Permanent delete removes this doctor profile and linked assets.</p>
+          <button type="submit" className="gh-btn gh-btn-danger shrink-0">Delete permanently</button>
+        </div>
+      </form>
     </section>
   );
 }

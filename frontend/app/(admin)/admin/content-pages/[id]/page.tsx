@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import {
   deleteAdminContentPage,
   fetchAdminContentPageById,
+  purgeAdminContentPage,
 } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
@@ -38,6 +40,16 @@ export default async function AdminContentPageDetailPage({ params, searchParams 
       redirect(`/admin/content-pages/${id}?error=${encodeURIComponent(result.message)}`);
     }
     redirect(`/admin/content-pages/${id}?success=${encodeURIComponent("Content page deactivated")}`);
+  }
+
+  async function deleteAction() {
+    "use server";
+    const result = await purgeAdminContentPage(id);
+    if (!result.ok) {
+      redirect(`/admin/content-pages/${id}?error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath("/admin/content-pages");
+    redirect("/admin/content-pages");
   }
 
   const page = pageResult.data.page;
@@ -109,6 +121,12 @@ export default async function AdminContentPageDetailPage({ params, searchParams 
           This page is inactive. Re-enable from edit.
         </p>
       )}
+      <form action={deleteAction} className="mt-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--color-text-muted)]">Permanent delete removes this content page instead of just hiding it.</p>
+          <button type="submit" className="gh-btn gh-btn-danger shrink-0">Delete permanently</button>
+        </div>
+      </form>
     </section>
   );
 }

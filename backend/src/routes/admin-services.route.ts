@@ -9,6 +9,8 @@ import {
   getAdminSpecialtyById,
   listAdminServices,
   listSpecialtiesForAdminCountry,
+  purgeAdminService,
+  purgeAdminSpecialty,
   ServiceCountryNotFoundError,
   ServiceKindInvalidError,
   ServiceSpecialtyInvalidError,
@@ -150,6 +152,22 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
+  app.delete("/api/admin/specialties/:id/purge", async (request, reply) => {
+    const params = serviceIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid specialty id", params.error.flatten()));
+    }
+    try {
+      const deleted = await purgeAdminSpecialty(params.data.id);
+      if (!deleted) {
+        return reply.status(404).send(errorResponse("Specialty not found"));
+      }
+      return okResponse({}, "Specialty deleted");
+    } catch (error) {
+      return handleServiceWriteError(app, reply, error);
+    }
+  });
+
   app.get("/api/admin/services", async (request, reply) => {
     const query = adminServicesQuerySchema.safeParse(request.query);
     if (!query.success) {
@@ -241,6 +259,23 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Service not found"));
       }
       return okResponse({ service }, "Service deactivated");
+    } catch (error) {
+      return handleServiceWriteError(app, reply, error);
+    }
+  });
+
+  app.delete("/api/admin/services/:id/purge", async (request, reply) => {
+    const params = serviceIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid service id", params.error.flatten()));
+    }
+
+    try {
+      const deleted = await purgeAdminService(params.data.id);
+      if (!deleted) {
+        return reply.status(404).send(errorResponse("Service not found"));
+      }
+      return okResponse({}, "Service deleted");
     } catch (error) {
       return handleServiceWriteError(app, reply, error);
     }

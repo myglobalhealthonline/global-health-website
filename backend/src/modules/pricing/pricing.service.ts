@@ -223,3 +223,15 @@ export async function disableAdminPricingPlan(id: string): Promise<AdminPricingP
     throw normalizeDbError(error, "Pricing data is unavailable");
   }
 }
+
+export async function purgeAdminPricingPlan(id: string): Promise<boolean> {
+  const existing = await prisma.pricingPlan.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return false;
+
+  try {
+    await prisma.pricingPlan.delete({ where: { id } });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Pricing data is unavailable");
+  }
+}

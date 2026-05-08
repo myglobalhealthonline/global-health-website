@@ -254,3 +254,15 @@ export async function disableAdminCountry(id: string): Promise<AdminCountryRecor
     throw normalizeDbError(error, "Countries data is unavailable");
   }
 }
+
+export async function purgeAdminCountry(id: string): Promise<boolean> {
+  const existing = await prisma.country.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return false;
+
+  try {
+    await prisma.country.delete({ where: { id } });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Countries data is unavailable");
+  }
+}

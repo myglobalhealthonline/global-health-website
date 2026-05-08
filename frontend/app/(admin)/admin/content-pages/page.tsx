@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import {
   fetchAdminContentPages,
   fetchAdminCountries,
+  purgeAdminContentPage,
 } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
@@ -41,6 +44,19 @@ export default async function AdminContentPagesPage({ searchParams }: PageProps)
       </section>
     );
   }
+  const successMessage = spRead(sp, "success");
+  const errorMessage = spRead(sp, "error");
+
+  async function deleteContentPageAction(formData: FormData) {
+    "use server";
+    const id = String(formData.get("id") ?? "").trim();
+    const result = await purgeAdminContentPage(id);
+    if (!result.ok) {
+      redirect(`/admin/content-pages?error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath("/admin/content-pages");
+    redirect("/admin/content-pages?success=Content%20page%20deleted");
+  }
 
   return (
     <section className="gh-card p-6 sm:p-8">
@@ -58,6 +74,13 @@ export default async function AdminContentPagesPage({ searchParams }: PageProps)
 
         </div>
       </div>
+
+      {errorMessage ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{errorMessage}</p>
+      ) : null}
+      {successMessage ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{successMessage}</p>
+      ) : null}
 
       <form method="get" className="mt-6 grid gap-3 sm:grid-cols-6">
         <input aria-label="Search content pages" className="gh-input" name="search" defaultValue={filters.search ?? ""} placeholder="Search key/title" />
@@ -109,8 +132,16 @@ export default async function AdminContentPagesPage({ searchParams }: PageProps)
                 <td className="px-3 py-2">{page.country?.code ?? "GLOBAL"}</td>
                 <td className="px-3 py-2">{page.isActive ? "Yes" : "No"}</td>
                 <td className="px-3 py-2">
-                  <Link href={`/admin/content-pages/${page.id}`} className="gh-link mr-3">View</Link>
-                  <Link href={`/admin/content-pages/${page.id}/edit`} className="gh-link">Edit</Link>
+                  <div className="flex flex-col gap-1">
+                    <Link href={`/admin/content-pages/${page.id}`} className="gh-link">View</Link>
+                    <Link href={`/admin/content-pages/${page.id}/edit`} className="gh-link">Edit</Link>
+                    <form action={deleteContentPageAction}>
+                      <input type="hidden" name="id" value={page.id} />
+                      <button type="submit" className="gh-link text-left text-[var(--color-status-danger-text)]">
+                        Delete
+                      </button>
+                    </form>
+                  </div>
                 </td>
               </tr>
             ))}

@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { fetchAdminCountries, fetchAdminFaqs } from "@/lib/admin/admin-api";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { fetchAdminCountries, fetchAdminFaqs, purgeAdminFaq } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +39,19 @@ export default async function AdminFaqsPage({ searchParams }: PageProps) {
       </section>
     );
   }
+  const successMessage = spRead(sp, "success");
+  const errorMessage = spRead(sp, "error");
+
+  async function deleteFaqAction(formData: FormData) {
+    "use server";
+    const id = String(formData.get("id") ?? "").trim();
+    const result = await purgeAdminFaq(id);
+    if (!result.ok) {
+      redirect(`/admin/faqs?error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath("/admin/faqs");
+    redirect("/admin/faqs?success=FAQ%20deleted");
+  }
 
   return (
     <section className="gh-card p-6 sm:p-8">
@@ -52,6 +67,13 @@ export default async function AdminFaqsPage({ searchParams }: PageProps) {
 
         </div>
       </div>
+
+      {errorMessage ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{errorMessage}</p>
+      ) : null}
+      {successMessage ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{successMessage}</p>
+      ) : null}
 
       <form method="get" className="mt-6 grid gap-3 sm:grid-cols-5">
         <input aria-label="Search FAQs" className="gh-input" name="search" defaultValue={filters.search ?? ""} placeholder="Search question/answer" />
@@ -100,8 +122,16 @@ export default async function AdminFaqsPage({ searchParams }: PageProps) {
                 <td className="px-3 py-2">{faq.sortOrder}</td>
                 <td className="px-3 py-2">{faq.isActive ? "Yes" : "No"}</td>
                 <td className="px-3 py-2">
-                  <Link href={`/admin/faqs/${faq.id}`} className="gh-link mr-3">View</Link>
-                  <Link href={`/admin/faqs/${faq.id}/edit`} className="gh-link">Edit</Link>
+                  <div className="flex flex-col gap-1">
+                    <Link href={`/admin/faqs/${faq.id}`} className="gh-link">View</Link>
+                    <Link href={`/admin/faqs/${faq.id}/edit`} className="gh-link">Edit</Link>
+                    <form action={deleteFaqAction}>
+                      <input type="hidden" name="id" value={faq.id} />
+                      <button type="submit" className="gh-link text-left text-[var(--color-status-danger-text)]">
+                        Delete
+                      </button>
+                    </form>
+                  </div>
                 </td>
               </tr>
             ))}

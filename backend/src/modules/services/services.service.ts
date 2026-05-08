@@ -366,6 +366,24 @@ export async function disableAdminSpecialty(id: string) {
   }
 }
 
+export async function purgeAdminSpecialty(id: string): Promise<boolean> {
+  const existing = await prisma.specialty.findUnique({
+    where: { id },
+    select: { id: true },
+  });
+  if (!existing) return false;
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.service.deleteMany({ where: { specialtyId: id } });
+      await tx.specialty.delete({ where: { id } });
+    });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Specialties data is unavailable");
+  }
+}
+
 function buildAdminServiceWhere(query: AdminServicesQuery): Prisma.ServiceWhereInput {
   const where: Prisma.ServiceWhereInput = {};
 
@@ -559,6 +577,18 @@ export async function disableAdminService(id: string): Promise<AdminServiceRecor
       data: { isActive: false },
       include: adminServiceInclude,
     });
+  } catch (error) {
+    throw normalizeDbError(error, "Services data is unavailable");
+  }
+}
+
+export async function purgeAdminService(id: string): Promise<boolean> {
+  const existing = await prisma.service.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return false;
+
+  try {
+    await prisma.service.delete({ where: { id } });
+    return true;
   } catch (error) {
     throw normalizeDbError(error, "Services data is unavailable");
   }

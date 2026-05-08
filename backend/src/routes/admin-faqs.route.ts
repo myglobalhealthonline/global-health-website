@@ -6,6 +6,7 @@ import {
   FaqCountryNotFoundError,
   getAdminFaqById,
   listAdminFaqs,
+  purgeAdminFaq,
   updateAdminFaq,
 } from "../modules/faqs/faqs.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -128,6 +129,22 @@ const adminFaqsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("FAQ not found"));
       }
       return okResponse({ faq }, "FAQ deactivated");
+    } catch (error) {
+      return handleWriteError(app, reply, error);
+    }
+  });
+
+  app.delete("/api/admin/faqs/:id/purge", async (request, reply) => {
+    const params = faqIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid FAQ id", params.error.flatten()));
+    }
+    try {
+      const deleted = await purgeAdminFaq(params.data.id);
+      if (!deleted) {
+        return reply.status(404).send(errorResponse("FAQ not found"));
+      }
+      return okResponse({}, "FAQ deleted");
     } catch (error) {
       return handleWriteError(app, reply, error);
     }

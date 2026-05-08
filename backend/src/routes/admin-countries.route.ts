@@ -8,6 +8,7 @@ import {
   getAdminCountryById,
   listAdminCountries,
   listAdminCurrencies,
+  purgeAdminCountry,
   updateAdminCountry,
 } from "../modules/countries/countries.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -146,6 +147,23 @@ const adminCountriesRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Country not found"));
       }
       return okResponse({ country }, "Country deactivated");
+    } catch (error) {
+      return handleCountriesWriteError(app, reply, error);
+    }
+  });
+
+  app.delete("/api/admin/countries/:id/purge", async (request, reply) => {
+    const params = countryIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid country id", params.error.flatten()));
+    }
+
+    try {
+      const deleted = await purgeAdminCountry(params.data.id);
+      if (!deleted) {
+        return reply.status(404).send(errorResponse("Country not found"));
+      }
+      return okResponse({}, "Country deleted");
     } catch (error) {
       return handleCountriesWriteError(app, reply, error);
     }

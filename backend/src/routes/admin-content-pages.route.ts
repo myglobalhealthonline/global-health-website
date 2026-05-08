@@ -6,6 +6,7 @@ import {
   disableAdminContentPage,
   getAdminContentPageById,
   listAdminContentPages,
+  purgeAdminContentPage,
   updateAdminContentPage,
 } from "../modules/content-pages/content-pages.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -128,6 +129,22 @@ const adminContentPagesRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Content page not found"));
       }
       return okResponse({ page }, "Content page deactivated");
+    } catch (error) {
+      return handleWriteError(app, reply, error);
+    }
+  });
+
+  app.delete("/api/admin/content-pages/:id/purge", async (request, reply) => {
+    const params = contentPageIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid content page id", params.error.flatten()));
+    }
+    try {
+      const deleted = await purgeAdminContentPage(params.data.id);
+      if (!deleted) {
+        return reply.status(404).send(errorResponse("Content page not found"));
+      }
+      return okResponse({}, "Content page deleted");
     } catch (error) {
       return handleWriteError(app, reply, error);
     }

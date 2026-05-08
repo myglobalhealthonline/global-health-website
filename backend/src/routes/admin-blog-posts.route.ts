@@ -7,6 +7,7 @@ import {
   disableAdminBlogPost,
   getAdminBlogPostById,
   listAdminBlogPosts,
+  purgeAdminBlogPost,
   updateAdminBlogPost,
 } from "../modules/blog/blog.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -129,6 +130,22 @@ const adminBlogPostsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Blog post not found"));
       }
       return okResponse({ post }, "Blog post deactivated");
+    } catch (error) {
+      return handleWriteError(app, reply, error);
+    }
+  });
+
+  app.delete("/api/admin/blog-posts/:id/purge", async (request, reply) => {
+    const params = blogPostIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid blog post id", params.error.flatten()));
+    }
+    try {
+      const deleted = await purgeAdminBlogPost(params.data.id);
+      if (!deleted) {
+        return reply.status(404).send(errorResponse("Blog post not found"));
+      }
+      return okResponse({}, "Blog post deleted");
     } catch (error) {
       return handleWriteError(app, reply, error);
     }

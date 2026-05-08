@@ -6,6 +6,7 @@ import {
   adminAssetPreviewable,
   deleteAdminAsset,
   fetchAdminAssetById,
+  purgeAdminAsset,
   type AdminAssetKind,
 } from "@/lib/admin/admin-api";
 
@@ -32,6 +33,18 @@ export default async function AdminAssetDetailPage({ params, searchParams }: Pag
     revalidatePath("/admin/assets");
     revalidatePath(`/admin/assets/${id}`);
     redirect(`/admin/assets/${id}?success=${encodeURIComponent("Asset deactivated")}`);
+  }
+
+  async function deleteAssetAction() {
+    "use server";
+
+    const deleteResult = await purgeAdminAsset(id);
+    if (!deleteResult.ok) {
+      redirect(`/admin/assets/${id}?error=${encodeURIComponent(deleteResult.message)}`);
+    }
+
+    revalidatePath("/admin/assets");
+    redirect("/admin/assets");
   }
 
   if (!result.ok) {
@@ -139,6 +152,12 @@ export default async function AdminAssetDetailPage({ params, searchParams }: Pag
           This asset is inactive. Re-enable from edit.
         </p>
       )}
+      <form action={deleteAssetAction} className="mt-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[var(--color-text-muted)]">Permanent delete removes this asset record from admin and public responses.</p>
+          <button type="submit" className="gh-btn gh-btn-danger shrink-0">Delete permanently</button>
+        </div>
+      </form>
     </section>
   );
 }

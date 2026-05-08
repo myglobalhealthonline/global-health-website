@@ -1,10 +1,28 @@
 import Link from "next/link";
-import { fetchAdminCountries } from "@/lib/admin/admin-api";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { fetchAdminCountries, purgeAdminCountry } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminCountriesPage() {
+type PageProps = {
+  searchParams?: Promise<{ success?: string; error?: string }>;
+};
+
+export default async function AdminCountriesPage({ searchParams }: PageProps) {
+  const sp = searchParams ? await searchParams : {};
   const result = await fetchAdminCountries();
+
+  async function deleteCountryAction(formData: FormData) {
+    "use server";
+    const id = String(formData.get("id") ?? "").trim();
+    const deleteResult = await purgeAdminCountry(id);
+    if (!deleteResult.ok) {
+      redirect(`/admin/countries?error=${encodeURIComponent(deleteResult.message)}`);
+    }
+    revalidatePath("/admin/countries");
+    redirect("/admin/countries?success=Country%20deleted");
+  }
 
   if (!result.ok) {
     return (
@@ -33,6 +51,13 @@ export default async function AdminCountriesPage() {
 
         </div>
       </div>
+
+      {sp.error ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{sp.error}</p>
+      ) : null}
+      {sp.success ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{sp.success}</p>
+      ) : null}
 
       <div className="mt-6 overflow-x-auto">
         <table className="min-w-full border-collapse text-left text-sm">
@@ -74,6 +99,12 @@ export default async function AdminCountriesPage() {
                     <Link href={`/admin/countries/${c.id}/edit`} className="gh-link text-[var(--color-brand-primary)]">
                       Edit
                     </Link>
+                    <form action={deleteCountryAction}>
+                      <input type="hidden" name="id" value={c.id} />
+                      <button type="submit" className="gh-link text-left text-[var(--color-status-danger-text)]">
+                        Delete
+                      </button>
+                    </form>
                   </div>
                 </td>
               </tr>

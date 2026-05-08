@@ -8,6 +8,7 @@ import {
   disableAdminAsset,
   getAdminAssetById,
   listAdminAssets,
+  purgeAdminAsset,
   updateAdminAsset,
 } from "../modules/assets/assets.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -143,6 +144,22 @@ const adminAssetsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Asset not found"));
       }
       return okResponse({ asset }, "Asset deactivated");
+    } catch (error) {
+      return handleAssetWriteError(app, reply, error);
+    }
+  });
+
+  app.delete("/api/admin/assets/:id/purge", async (request, reply) => {
+    const params = assetIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid asset id", params.error.flatten()));
+    }
+    try {
+      const deleted = await purgeAdminAsset(params.data.id);
+      if (!deleted) {
+        return reply.status(404).send(errorResponse("Asset not found"));
+      }
+      return okResponse({}, "Asset deleted");
     } catch (error) {
       return handleAssetWriteError(app, reply, error);
     }

@@ -356,3 +356,15 @@ export async function disableAdminDoctor(id: string): Promise<AdminDoctorRecord 
     throw normalizeDbError(error, "Doctors data is unavailable");
   }
 }
+
+export async function purgeAdminDoctor(id: string): Promise<boolean> {
+  const existing = await prisma.doctor.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return false;
+
+  try {
+    await prisma.doctor.delete({ where: { id } });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Doctors data is unavailable");
+  }
+}

@@ -256,3 +256,15 @@ export async function disableAdminAsset(id: string): Promise<AdminAssetRecord | 
     throw normalizeDbError(error, "Assets data is unavailable");
   }
 }
+
+export async function purgeAdminAsset(id: string): Promise<boolean> {
+  const existing = await prisma.asset.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return false;
+
+  try {
+    await prisma.asset.delete({ where: { id } });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Assets data is unavailable");
+  }
+}

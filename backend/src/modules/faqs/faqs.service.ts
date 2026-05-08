@@ -140,3 +140,15 @@ export async function disableAdminFaq(id: string): Promise<AdminFaqRecord | null
     throw normalizeDbError(error, "FAQ data is unavailable");
   }
 }
+
+export async function purgeAdminFaq(id: string): Promise<boolean> {
+  const existing = await prisma.faq.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return false;
+
+  try {
+    await prisma.faq.delete({ where: { id } });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "FAQ data is unavailable");
+  }
+}

@@ -152,3 +152,15 @@ export async function disableAdminContentPage(id: string): Promise<AdminContentP
     throw normalizeDbError(error, "Content pages data is unavailable");
   }
 }
+
+export async function purgeAdminContentPage(id: string): Promise<boolean> {
+  const existing = await prisma.contentPage.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return false;
+
+  try {
+    await prisma.contentPage.delete({ where: { id } });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Content pages data is unavailable");
+  }
+}

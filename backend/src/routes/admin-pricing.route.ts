@@ -8,6 +8,7 @@ import {
   PricingCountryChangeNotAllowedError,
   PricingCountryNotFoundError,
   PricingCurrencyNotFoundError,
+  purgeAdminPricingPlan,
   updateAdminPricingPlan,
 } from "../modules/pricing/pricing.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -143,6 +144,23 @@ const adminPricingRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Pricing plan not found"));
       }
       return okResponse({ plan }, "Pricing plan deactivated");
+    } catch (error) {
+      return handlePricingWriteError(app, reply, error);
+    }
+  });
+
+  app.delete("/api/admin/pricing/:id/purge", async (request, reply) => {
+    const params = pricingPlanIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid pricing plan id", params.error.flatten()));
+    }
+
+    try {
+      const deleted = await purgeAdminPricingPlan(params.data.id);
+      if (!deleted) {
+        return reply.status(404).send(errorResponse("Pricing plan not found"));
+      }
+      return okResponse({}, "Pricing plan deleted");
     } catch (error) {
       return handlePricingWriteError(app, reply, error);
     }

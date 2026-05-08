@@ -196,6 +196,18 @@ export async function disableAdminBlogPost(id: string): Promise<AdminBlogPostRec
   }
 }
 
+export async function purgeAdminBlogPost(id: string): Promise<boolean> {
+  const existing = await prisma.blogPost.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return false;
+
+  try {
+    await prisma.blogPost.delete({ where: { id } });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Blog posts data is unavailable");
+  }
+}
+
 export async function listPublicBlogPosts(): Promise<PublicBlogPostRecord[]> {
   try {
     const rows = await prisma.blogPost.findMany({

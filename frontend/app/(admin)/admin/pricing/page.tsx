@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { fetchAdminCountries, fetchAdminPricingPlans } from "@/lib/admin/admin-api";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { fetchAdminCountries, fetchAdminPricingPlans, purgeAdminPricingPlan } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
 
@@ -63,6 +65,19 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
   const { page, pageSize, total, totalPages } = pagination;
   const countries = countriesResult.data.countries;
   const statusFilter = filters.isActive ?? "";
+  const successMessage = spRead(sp, "success");
+  const errorMessage = spRead(sp, "error");
+
+  async function deletePricingAction(formData: FormData) {
+    "use server";
+    const id = String(formData.get("id") ?? "").trim();
+    const result = await purgeAdminPricingPlan(id);
+    if (!result.ok) {
+      redirect(`/admin/pricing?error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath("/admin/pricing");
+    redirect("/admin/pricing?success=Pricing%20plan%20deleted");
+  }
 
   return (
     <section className="gh-card p-6 sm:p-8">
@@ -80,6 +95,13 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
 
         </div>
       </div>
+
+      {errorMessage ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{errorMessage}</p>
+      ) : null}
+      {successMessage ? (
+        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{successMessage}</p>
+      ) : null}
 
       <form
         method="get"
@@ -164,6 +186,12 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
                     <Link href={`/admin/pricing/${p.id}/edit`} className="gh-link text-[var(--color-brand-primary)]">
                       Edit
                     </Link>
+                    <form action={deletePricingAction}>
+                      <input type="hidden" name="id" value={p.id} />
+                      <button type="submit" className="gh-link text-left text-[var(--color-status-danger-text)]">
+                        Delete
+                      </button>
+                    </form>
                   </div>
                 </td>
               </tr>
