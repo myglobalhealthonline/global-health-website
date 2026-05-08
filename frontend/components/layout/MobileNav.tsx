@@ -36,35 +36,35 @@ export function MobileNav({
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm" />
-        <Dialog.Content className="fixed inset-x-0 top-0 z-50 flex max-h-[100dvh] flex-col bg-[var(--color-brand-secondary)] shadow-[var(--shadow-elevated)] lg:hidden">
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
+        <Dialog.Content className="fixed inset-x-0 top-0 z-50 flex max-h-[100dvh] flex-col bg-white shadow-[var(--shadow-elevated)] lg:hidden">
           <Dialog.Title className="sr-only">Main navigation</Dialog.Title>
           <Dialog.Description className="sr-only">
             Explore clinics, services, and book online.
           </Dialog.Description>
 
-          <div className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] px-4 py-4">
+          <div className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] px-5 py-4">
             <Link href="/" className="flex items-center" aria-label={`${siteName} home`}>
               <Image
                 src={brandLogo.src}
                 alt={brandLogo.alt}
                 width={280}
                 height={120}
-                className="h-11 w-auto max-w-[220px]"
+                className="h-10 w-auto max-w-[200px]"
               />
             </Link>
-            <Dialog.Close className="inline-flex rounded-full border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2">
+            <Dialog.Close className="inline-flex rounded-full border border-[var(--color-border)] bg-white p-2 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2">
               <span className="sr-only">Close menu</span>
               <X className="size-5 text-[var(--color-text-primary)]" aria-hidden />
             </Dialog.Close>
           </div>
 
-          <div className="grow overflow-y-auto px-4 py-5 pb-28">
+          <div className="grow overflow-y-auto px-5 py-5 pb-28">
             <AccordionSection title={navigation.clinicsLabel}>
               <div className="space-y-6 pt-2">
                 {navigation.clinicsMenuByCountry.map(({ country, links }) => (
                   <div key={country.code}>
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
                       {country.name}
                     </p>
                     <ul className="flex flex-col gap-1">
@@ -73,7 +73,7 @@ export function MobileNav({
                           <Dialog.Close asChild>
                             <Link
                               href={item.href}
-                              className="block rounded-[16px] px-3 py-3 text-[17px] font-medium leading-snug text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                              className="block rounded-[14px] px-3 py-3 text-[17px] font-medium leading-snug text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                             >
                               {item.label}
                             </Link>
@@ -93,7 +93,7 @@ export function MobileNav({
                     <Dialog.Close asChild>
                       <Link
                         href={item.href}
-                        className="block rounded-[16px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                        className="block rounded-[14px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                       >
                         {item.label}
                       </Link>
@@ -108,7 +108,7 @@ export function MobileNav({
                 <Dialog.Close key={item.href} asChild>
                   <Link
                     href={item.href}
-                    className="rounded-[16px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                    className="rounded-[14px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                   >
                     {item.label}
                   </Link>
@@ -118,7 +118,7 @@ export function MobileNav({
                 <Dialog.Close asChild>
                   <Link
                     href={portalHref}
-                    className="flex items-center gap-3 rounded-[16px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                    className="flex items-center gap-3 rounded-[14px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                   >
                     <User className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
                     {portalLabel}
@@ -128,7 +128,7 @@ export function MobileNav({
                 <Dialog.Close asChild>
                   <Link
                     href={navigation.headerAuthLink.href}
-                    className="rounded-[16px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                    className="rounded-[14px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                   >
                     {navigation.headerAuthLink.label}
                   </Link>
@@ -137,7 +137,7 @@ export function MobileNav({
             </div>
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 border-t border-[var(--color-border)] bg-[rgba(255,255,255,0.96)] p-4 backdrop-blur-md">
+          <div className="fixed bottom-0 left-0 right-0 border-t border-[var(--color-border)] bg-white/95 p-4 backdrop-blur-md">
             <Dialog.Close asChild>
               <Link href={navigation.headerPrimaryCta.href} className="gh-btn gh-btn-primary flex w-full text-base">
                 {navigation.headerPrimaryCta.label}

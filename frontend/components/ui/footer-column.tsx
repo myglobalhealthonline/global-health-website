@@ -45,9 +45,9 @@ export default function FooterColumn({
   ];
 
   return (
-    <footer className="mt-16 w-full bg-[var(--color-brand-primary)]">
-      <div className="mx-auto max-w-[var(--container-width)] px-4 pb-7 pt-14 sm:px-6 lg:px-8 lg:pt-16">
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
+    <footer className="w-full bg-[var(--color-background-dark)]">
+      <div className="mx-auto max-w-[var(--container-width)] px-5 pb-8 pt-16 sm:px-8 lg:px-12 lg:pt-20">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
           <div>
             <div className="flex items-center gap-3">
               {hasRealLogo ? (
@@ -63,22 +63,22 @@ export default function FooterColumn({
                   <ShieldCheck className="size-5" aria-hidden />
                 </span>
               )}
-              <span className="text-2xl font-semibold text-white">
+              <span className="text-xl font-semibold text-white">
                 {siteName}
               </span>
             </div>
 
-            <p className="mt-6 max-w-md text-sm leading-relaxed text-white/70 sm:max-w-xs">
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-white/70 sm:max-w-xs">
               Online clinic services with licensed doctors and secure consultations
               across Europe.
             </p>
 
-            <ul className="mt-8 flex gap-5">
+            <ul className="mt-6 flex gap-4">
               {socialLinks.map(({ icon: Icon, label, href }) => (
                 <li key={label}>
                   <Link
                     href={href}
-                    className="text-white/70 transition hover:text-white"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/70 transition-colors hover:bg-white/20 hover:text-white"
                   >
                     <span className="sr-only">{label}</span>
                     <Icon className="size-5" />
@@ -88,17 +88,17 @@ export default function FooterColumn({
             </ul>
           </div>
 
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:col-span-2">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:col-span-2">
             {navigation.footerColumns.map((column) => (
               <div className="text-left" key={column.heading}>
-                <p className="text-base font-semibold text-white">
+                <p className="text-sm font-semibold uppercase tracking-wider text-white">
                   {column.heading}
                 </p>
-                <ul className="mt-5 space-y-3 text-sm">
+                <ul className="mt-4 space-y-2.5 text-sm">
                   {column.links.map((item) => (
                     <li key={item.label + item.href}>
                       <Link
-                        className="text-white/70 transition hover:text-white"
+                        className="text-white/60 transition-colors hover:text-white"
                         href={item.href}
                       >
                         {item.label}
@@ -110,14 +110,14 @@ export default function FooterColumn({
             ))}
 
             <div className="text-left">
-              <p className="text-base font-semibold text-white">
+              <p className="text-sm font-semibold uppercase tracking-wider text-white">
                 Contact
               </p>
-              <ul className="mt-5 space-y-3 text-sm">
+              <ul className="mt-4 space-y-2.5 text-sm">
                 {contactInfo.map(({ icon: Icon, text }) => (
-                  <li className="flex items-start gap-2" key={text}>
-                    <Icon className="mt-0.5 size-4 shrink-0 text-white/70" />
-                    <span className="text-white/70">{text}</span>
+                  <li className="flex items-start gap-2.5" key={text}>
+                    <Icon className="mt-0.5 size-4 shrink-0 text-white/50" />
+                    <span className="text-white/60">{text}</span>
                   </li>
                 ))}
               </ul>
@@ -125,12 +125,12 @@ export default function FooterColumn({
           </div>
         </div>
 
-        <div className="mt-10 border-t border-white/20 pt-5 text-sm sm:flex sm:items-center sm:justify-between">
-          <p className="text-white/70">
-            <span className="block sm:inline">All rights reserved.</span>
+        <div className="mt-12 border-t border-white/10 pt-6 text-sm sm:flex sm:items-center sm:justify-between">
+          <p className="text-white/50">
+            © {new Date().getFullYear()} {siteName}. All rights reserved.
           </p>
-          <p className="mt-2 text-white/70 sm:mt-0">
-            &copy; {new Date().getFullYear()} {siteName}
+          <p className="mt-2 text-white/50 sm:mt-0">
+            Global Health is a brand of Global Guest s.r.o
           </p>
         </div>
       </div>

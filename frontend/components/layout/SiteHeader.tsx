@@ -34,7 +34,7 @@ export function SiteHeader({
   const logoAlt = hasRealLogo ? brandLogo!.alt : `${siteName} logo`;
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 0);
+    const handleScroll = () => setScrolled(window.scrollY > 8);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -42,13 +42,13 @@ export function SiteHeader({
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full bg-[var(--color-brand-primary)] transition-[border-color] duration-300",
+        "sticky top-0 z-40 w-full transition-all duration-300",
         scrolled
-          ? "border-b border-white/20"
-          : "border-b border-transparent",
+          ? "border-b border-white/15 bg-[var(--color-brand-primary)]/95 backdrop-blur-md shadow-sm"
+          : "border-b border-transparent bg-[var(--color-brand-primary)]",
       )}
     >
-      <div className="mx-auto grid h-[var(--header-height)] max-w-[var(--container-width)] grid-cols-[auto_1fr_auto] items-center gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto grid h-[var(--header-height)] max-w-[var(--container-width)] grid-cols-[auto_1fr_auto] items-center gap-4 px-5 sm:px-8 lg:px-12">
         <Link
           href="/"
           className="flex min-w-0 shrink-0 items-center gap-2.5"
@@ -58,7 +58,7 @@ export function SiteHeader({
             alt={logoAlt}
             width={280}
             height={120}
-            className="h-12 w-auto max-w-[200px] sm:h-14 sm:max-w-[240px] md:h-16 md:max-w-[260px]"
+            className="h-10 w-auto max-w-[180px] sm:h-11 sm:max-w-[220px] md:h-12 md:max-w-[240px]"
             priority
           />
         </Link>

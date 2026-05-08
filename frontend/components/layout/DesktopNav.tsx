@@ -50,7 +50,7 @@ export function DesktopNav({
           searchPlaceholder={navigation.searchCountryOrServiceLabel}
           viewAllLabel={navigation.viewAllClinicsLabel}
           trustLabel={navigation.trustedCareAcrossEuropeLabel}
-          className="min-h-9 text-white hover:bg-white/10 hover:text-white focus-visible:ring-white/50"
+          className="min-h-9 text-white/90 hover:bg-white/10 hover:text-white focus-visible:ring-white/50"
         />
 
         <ServicesDropdown />
@@ -68,7 +68,7 @@ export function DesktopNav({
         ))}
       </div>
 
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-2.5">
         {!authUser ? (
           <Link
             href={navigation.headerAuthLink.href}
@@ -79,7 +79,7 @@ export function DesktopNav({
         ) : null}
         <Link
           href={navigation.headerPrimaryCta.href}
-          className="inline-flex min-h-9 items-center whitespace-nowrap rounded-full bg-white px-4 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-white/90 shadow-[var(--shadow-soft)]"
+          className="inline-flex min-h-9 items-center whitespace-nowrap rounded-full bg-white px-5 text-sm font-bold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-brand-accent)] shadow-sm"
         >
           {navigation.headerPrimaryCta.label}
         </Link>
@@ -107,13 +107,13 @@ function ServicesDropdown() {
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="z-50 w-[min(100vw-2rem,600px)] overflow-hidden rounded-[22px] border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-4 shadow-[var(--shadow-elevated)]"
+          className="z-50 w-[min(100vw-2rem,600px)] overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-white p-4 shadow-[var(--shadow-elevated)]"
           sideOffset={10}
           align="start"
         >
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
+              <p className="mb-2 px-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
                 Care
               </p>
               <ul className="space-y-0.5">
@@ -138,7 +138,7 @@ function ServicesDropdown() {
               </ul>
             </div>
             <div>
-              <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
+              <p className="mb-2 px-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
                 Wellness
               </p>
               <ul className="space-y-0.5">
@@ -185,13 +185,13 @@ function ServiceItem({
       <li>
         <Link
           href={href}
-          className="group flex items-start gap-3 rounded-[14px] p-2 outline-none transition-colors hover:bg-[var(--color-background-soft)]"
+          className="group flex items-start gap-3 rounded-[12px] p-2 outline-none transition-colors hover:bg-[var(--color-background-soft)]"
         >
           <span className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-[var(--color-border)] bg-[var(--color-background-soft)] text-[var(--color-brand-primary)] transition-all group-hover:scale-105 group-hover:border-[var(--color-brand-primary)] group-hover:bg-[var(--color-brand-primary)] group-hover:text-white">
             {icon}
           </span>
           <div className="min-w-0">
-            <div className="text-sm font-medium leading-tight text-[var(--color-text-primary)] transition-colors group-hover:text-[var(--color-brand-primary)]">
+            <div className="text-sm font-semibold leading-tight text-[var(--color-text-primary)] transition-colors group-hover:text-[var(--color-brand-primary)]">
               {title}
             </div>
             <p className="mt-0.5 text-xs leading-snug text-[var(--color-text-muted)] transition-colors group-hover:text-[var(--color-text-body)]">
@@ -222,13 +222,13 @@ function AboutDropdown({ navigation }: { navigation: SiteNavigationData }) {
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="z-50 w-[min(100vw-2rem,560px)] rounded-[22px] border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-3 shadow-[var(--shadow-elevated)]"
+          className="z-50 w-[min(100vw-2rem,560px)] rounded-[20px] border border-[var(--color-border)] bg-white p-3 shadow-[var(--shadow-elevated)]"
           sideOffset={10}
           align="start"
         >
           <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
             <div className="space-y-1.5">
-              <p className="px-2 pb-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
+              <p className="px-2 pb-1 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
                 About
               </p>
               {navigation.aboutMenuLinks.map((item) => {
@@ -236,7 +236,7 @@ function AboutDropdown({ navigation }: { navigation: SiteNavigationData }) {
                 return (
                   <DropdownMenu.Item key={item.href + item.label} asChild>
                     <Link
-                      className="group flex items-start gap-3 rounded-[16px] px-3 py-3 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
+                      className="group flex items-start gap-3 rounded-[14px] px-3 py-3 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
                       href={item.href}
                     >
                       <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-[12px] bg-[var(--color-background-soft)] text-[var(--color-brand-primary)] transition-all group-hover:scale-105 group-hover:bg-[var(--color-brand-primary)] group-hover:text-white">
@@ -254,7 +254,7 @@ function AboutDropdown({ navigation }: { navigation: SiteNavigationData }) {
               })}
             </div>
 
-            <div className="rounded-[18px] border border-[var(--color-border)] bg-[linear-gradient(180deg,#f8fbf8_0%,#ffffff_100%)] p-4">
+            <div className="rounded-[16px] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
               <p className="text-sm font-semibold text-[var(--color-text-primary)]">
                 Trusted care across Europe
               </p>
@@ -263,7 +263,7 @@ function AboutDropdown({ navigation }: { navigation: SiteNavigationData }) {
               </p>
               <Link
                 href={navigation.headerPrimaryCta.href}
-                className="mt-4 inline-flex min-h-10 items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-white px-4 text-xs font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
+                className="mt-4 inline-flex min-h-10 items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-white px-4 text-xs font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-panel)]"
               >
                 {navigation.headerPrimaryCta.label}
                 <ArrowRight className="size-4" aria-hidden />
@@ -331,7 +331,7 @@ function AvatarDropdown({ authUser }: { authUser: AuthUser }) {
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          className="z-50 min-w-[220px] overflow-hidden rounded-[20px] border border-[var(--color-border)] bg-[var(--color-brand-secondary)] p-2 shadow-[var(--shadow-card)]"
+          className="z-50 min-w-[220px] overflow-hidden rounded-[18px] border border-[var(--color-border)] bg-white p-2 shadow-[var(--shadow-card)]"
           sideOffset={8}
           align="end"
         >
@@ -343,7 +343,7 @@ function AvatarDropdown({ authUser }: { authUser: AuthUser }) {
           <DropdownMenu.Item asChild>
             <Link
               href="/account"
-              className="flex items-center gap-2 rounded-[12px] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
+              className="flex items-center gap-2 rounded-[10px] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
             >
               Account
             </Link>
@@ -352,7 +352,7 @@ function AvatarDropdown({ authUser }: { authUser: AuthUser }) {
             <DropdownMenu.Item asChild>
               <Link
                 href="/admin"
-                className="flex items-center gap-2 rounded-[12px] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
+                className="flex items-center gap-2 rounded-[10px] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
               >
                 Admin Portal
               </Link>
@@ -363,7 +363,7 @@ function AvatarDropdown({ authUser }: { authUser: AuthUser }) {
               event.preventDefault();
               void handleLogout();
             }}
-            className="flex cursor-pointer items-center gap-2 rounded-[12px] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
+            className="flex cursor-pointer items-center gap-2 rounded-[10px] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none transition-colors hover:bg-[var(--color-background-soft)]"
           >
             {loggingOut ? "Logging out..." : "Log out"}
           </DropdownMenu.Item>
