@@ -11,7 +11,6 @@ import {
   buildIrelandDoctorBio,
   specialtySlugForIrelandDoctor,
 } from "./ireland-doctors-seed-data.js";
-import { importEditorialPlan } from "./editorial-plan-import.js";
 
 const prismaDir = dirname(fileURLToPath(import.meta.url));
 loadEnv({ path: join(prismaDir, "..", ".env") });
@@ -402,8 +401,6 @@ async function main() {
     console.log(`[seed] Admin user ensured for ${seedAdminEmail}`);
   }
 
-  await importEditorialPlan(prisma);
-  console.log("[seed] Editorial completion plan imported into CMS records.");
 }
 
 main()

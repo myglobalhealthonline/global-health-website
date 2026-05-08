@@ -1,12 +1,14 @@
 import type { MetadataRoute } from "next";
 import { publicRouteRegistry } from "@/lib/routing/public-route-registry";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { blogPosts } from "@/data/blog-posts";
+import { getApprovedPublicBlogPosts } from "@/lib/content/get-public-blog-posts";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
   const seen = new Set<string>();
   const urls: MetadataRoute.Sitemap = [];
+  const approvedBlogPosts = await getApprovedPublicBlogPosts();
+  const approvedBlogPathSet = new Set(approvedBlogPosts.map((post) => `/post/${post.slug}`));
   const noindexStatic = new Set([
     "/login",
     "/register",
@@ -37,8 +39,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     if (route.path.includes("[")) continue;
     if (route.path.startsWith("/admin") || route.path.startsWith("/account")) continue;
     if (noindexStatic.has(route.path)) continue;
-    if (route.path.startsWith("/category/") || route.path.startsWith("/post/")) continue;
-    if (route.path === "/blog" && blogPosts.length === 0) continue;
+    if (route.path.startsWith("/category/")) continue;
+    if (route.path.startsWith("/post/") && !approvedBlogPathSet.has(route.path)) continue;
+    if (route.path === "/blog" && approvedBlogPosts.length === 0) continue;
     if (seen.has(route.path)) continue;
     seen.add(route.path);
     urls.push({

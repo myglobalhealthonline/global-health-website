@@ -40,6 +40,17 @@ export type ListAdminBlogPostsResult = {
   pagination: Pagination;
 };
 
+const publicBlogPostInclude = {
+  country: { select: { id: true, code: true, name: true } },
+} satisfies Prisma.BlogPostInclude;
+
+export type PublicBlogPostRecord = Prisma.BlogPostGetPayload<{ include: typeof publicBlogPostInclude }>;
+
+function readReadyToIndex(editorialChecklist: unknown): boolean {
+  if (!editorialChecklist || typeof editorialChecklist !== "object" || Array.isArray(editorialChecklist)) return false;
+  return (editorialChecklist as { readyToIndex?: unknown }).readyToIndex === true;
+}
+
 async function assertCountryExists(countryId: string): Promise<void> {
   const row = await prisma.country.findUnique({ where: { id: countryId }, select: { id: true } });
   if (!row) throw new BlogCountryNotFoundError();
@@ -182,5 +193,23 @@ export async function disableAdminBlogPost(id: string): Promise<AdminBlogPostRec
     });
   } catch (error) {
     throw normalizeDbError(error, "Blog posts data is unavailable");
+  }
+}
+
+export async function listPublicBlogPosts(): Promise<PublicBlogPostRecord[]> {
+  try {
+    const rows = await prisma.blogPost.findMany({
+      where: {
+        isActive: true,
+        status: "PUBLISHED",
+        reviewerDisplayName: { not: null },
+        lastReviewedAt: { not: null },
+      },
+      orderBy: [{ lastReviewedAt: "desc" }, { updatedAt: "desc" }],
+      include: publicBlogPostInclude,
+    });
+    return rows.filter((row) => readReadyToIndex(row.editorialChecklist));
+  } catch (error) {
+    throw normalizeDbError(error, "Public blog posts data is unavailable");
   }
 }
