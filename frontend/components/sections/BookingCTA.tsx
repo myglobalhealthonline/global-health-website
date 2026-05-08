@@ -64,7 +64,7 @@ export function BookingCTA({
 
   if (isCompact) {
     return (
-      <section className={isMinimal ? "bg-white py-8" : "bg-white py-12 sm:py-16"}>
+      <section className={isMinimal ? "gh-medical-pattern gh-medical-pattern-soft bg-white py-8" : "gh-medical-pattern gh-medical-pattern-soft bg-white py-12 sm:py-16"}>
         <Container>
           <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
             <div className="absolute left-0 top-0 h-full w-1 bg-[var(--color-brand-primary)]" />
@@ -120,7 +120,7 @@ export function BookingCTA({
 
   // Full variant
   return (
-    <section className="bg-[var(--color-brand-primary)] py-16 sm:py-20 lg:py-24">
+    <section className="gh-medical-pattern gh-medical-pattern-dark bg-[var(--color-brand-primary)] py-16 sm:py-20 lg:py-24">
       <Container>
         <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-background-dark)] p-8 text-white shadow-[var(--shadow-elevated)] sm:p-10 lg:p-14">
           <div className="relative flex flex-col gap-8 items-center text-center">

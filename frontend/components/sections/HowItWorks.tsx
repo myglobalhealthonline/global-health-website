@@ -61,20 +61,8 @@ export function HowItWorks({ title = "How it works", subtitle, steps, variant = 
   }, [displaySteps.length]);
 
   return (
-    <Section variant={variant} className="relative overflow-hidden">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.08]"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg width='72' height='72' viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231b4d3e' stroke-width='3' stroke-linecap='round' opacity='0.72'%3E%3Cpath d='M36 23v26M23 36h26'/%3E%3C/g%3E%3C/svg%3E\")",
-          backgroundSize: "72px 72px",
-        }}
-      />
-      <div aria-hidden className="pointer-events-none absolute -left-28 top-16 h-72 w-72 rounded-full bg-[var(--color-brand-accent)]/30 blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute -right-32 bottom-10 h-80 w-80 rounded-full bg-[var(--color-brand-primary)]/10 blur-3xl" />
-
-      <Container className="relative">
+    <Section variant={variant} pattern="soft" className="relative overflow-hidden">
+      <Container className="relative z-10">
         <div className="mx-auto mb-14 max-w-3xl text-center">
           <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
             {title}

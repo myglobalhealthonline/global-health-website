@@ -139,7 +139,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
         trustBadges={["Secure intake", "Private consultation", "Clear next steps"]}
         showMedia={false}
       />
-      <Section id="booking-form" variant="soft">
+      <Section id="booking-form" variant="soft" pattern="soft">
         <Container>
           <div className="mx-auto max-w-3xl">
             <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-[var(--shadow-elevated)] sm:p-10">

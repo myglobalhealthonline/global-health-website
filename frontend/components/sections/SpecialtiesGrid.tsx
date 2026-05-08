@@ -19,7 +19,7 @@ type SpecialtiesGridProps = {
 
 export function SpecialtiesGrid({ title = "Specialist consultations", items }: SpecialtiesGridProps) {
   return (
-    <Section variant="soft">
+    <Section variant="soft" pattern="soft">
       <Container>
         <h2 className="gh-h2 text-[var(--color-text-primary)] mb-10">{title}</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:gap-8">

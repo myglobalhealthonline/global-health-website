@@ -34,7 +34,7 @@ export function HeroSection({
 }: HeroSectionProps) {
   if (variant === "split") {
     return (
-      <section className="relative overflow-hidden bg-[var(--color-brand-primary)]">
+      <section className="gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden bg-[var(--color-brand-primary)]">
         <Container className="relative py-16 sm:py-20 lg:py-24">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-16">
             <div className="max-w-xl" suppressHydrationWarning>

@@ -5,7 +5,7 @@ import { Container } from "@/components/layout/Container";
 
 export function TeamHero({ countryName }: { countryName: string }) {
   return (
-    <section className="relative overflow-hidden bg-[var(--color-brand-primary)]">
+    <section className="gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden bg-[var(--color-brand-primary)]">
       <Container className="relative py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-3xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-accent)] ring-1 ring-white/15">

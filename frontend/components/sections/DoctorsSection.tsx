@@ -24,7 +24,7 @@ type DoctorsSectionProps = {
 
 export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
   return (
-    <Section variant="white">
+    <Section variant="white" pattern="soft">
       <Container>
         {(title || intro) && (
           <div className="mb-12 lg:mb-14">

@@ -19,7 +19,7 @@ const icons = [Star, ShieldCheck, Timer, Users];
 
 export function TrustSignals({ title = "Why patients choose us", subtitle, items }: TrustSignalsProps) {
   return (
-    <section className="bg-[var(--color-brand-primary)] py-16 sm:py-20 lg:py-24">
+    <section className="gh-medical-pattern gh-medical-pattern-dark bg-[var(--color-brand-primary)] py-16 sm:py-20 lg:py-24">
       <Container>
         <div className="mx-auto max-w-3xl text-center mb-12">
           <span className="gh-heading-eyebrow text-[var(--color-brand-accent)]">

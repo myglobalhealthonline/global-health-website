@@ -23,7 +23,7 @@ type ServicesGridProps = {
 
 export function ServicesGrid({ title, intro, eyebrow, items, showRating = false }: ServicesGridProps) {
   return (
-    <Section variant="white">
+    <Section variant="white" pattern="soft">
       <Container>
         {/* Header */}
         <div className="mb-12 lg:mb-14">

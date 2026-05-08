@@ -81,7 +81,9 @@ export function HomeHero({ countries }: HomeHeroProps) {
         priority
         className="object-cover scale-105"
       />
-      <div className="absolute inset-0 bg-[rgba(15,46,37,0.78)]" />
+      <div className="gh-medical-pattern gh-medical-pattern-dark absolute inset-0">
+        <div className="absolute inset-0 bg-[rgba(15,46,37,0.78)]" />
+      </div>
 
       <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[var(--container-width)] gap-14 px-5 py-12 sm:px-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:px-12">
         {/* LEFT: Text content */}

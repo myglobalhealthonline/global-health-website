@@ -44,8 +44,8 @@ export function SiteHeader({
       className={cn(
         "sticky top-0 z-40 w-full transition-all duration-300",
         scrolled
-          ? "border-b border-white/15 bg-[var(--color-brand-primary)]/95 backdrop-blur-md shadow-sm"
-          : "border-b border-transparent bg-[var(--color-brand-primary)]",
+          ? "border-b border-white/15 bg-[var(--color-background-dark)]/95 backdrop-blur-md shadow-sm"
+          : "border-b border-transparent bg-[var(--color-background-dark)]",
       )}
     >
       <div className="mx-auto grid h-[var(--header-height)] max-w-[var(--container-width)] grid-cols-[auto_1fr_auto] items-center gap-4 px-5 sm:px-8 lg:px-12">

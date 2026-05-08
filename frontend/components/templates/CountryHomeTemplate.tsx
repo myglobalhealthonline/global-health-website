@@ -123,7 +123,7 @@ export function CountryHomeTemplate({
       ) : null}
 
       {/* Hero Section - Dark green, text left, image right */}
-      <section className="relative overflow-hidden bg-[var(--color-brand-primary)]">
+      <section className="gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden bg-[var(--color-brand-primary)]">
         <Container className="relative py-16 sm:py-20 lg:py-24">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
             {/* Left: Text */}

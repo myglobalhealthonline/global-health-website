@@ -68,7 +68,7 @@ export function StaticMarketingTemplate({
   /** Shared feature grid section. */
   const featureGrid =
     features.length > 0 ? (
-      <Section variant="soft">
+      <Section variant="soft" pattern="soft">
         <Container>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
@@ -91,7 +91,7 @@ export function StaticMarketingTemplate({
 
   /** Shared intro section. */
   const introSection = intro ? (
-    <Section variant="white">
+    <Section variant="white" pattern="soft">
       <Container>
         <div className="mx-auto max-w-4xl">
           <h2 className="gh-h2 text-[var(--color-text-primary)]">{intro.title}</h2>

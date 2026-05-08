@@ -10,7 +10,7 @@ const items = [
 
 export function TrustBar() {
   return (
-    <section className="bg-[var(--color-brand-primary)] py-14 sm:py-16 lg:py-20">
+    <section className="gh-medical-pattern gh-medical-pattern-dark bg-[var(--color-brand-primary)] py-14 sm:py-16 lg:py-20">
       <Container>
         <div className="mx-auto max-w-5xl">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">

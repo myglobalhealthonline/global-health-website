@@ -118,7 +118,7 @@ export function ConsultationListingTemplate({
         </Container>
       </section>
 
-      <Section variant="white" className="py-10">
+      <Section variant="white" pattern="soft" className="py-10">
         <Container>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {listing.map((item) => (
@@ -138,7 +138,7 @@ export function ConsultationListingTemplate({
       </Section>
 
       {effectiveGuidanceVariant !== "none" ? (
-        <Section variant="soft" className="py-8">
+        <Section variant="soft" pattern="soft" className="py-8">
           <Container>
             <div className="grid gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 md:grid-cols-3">
               {(effectiveGuidanceVariant === "specialist"
