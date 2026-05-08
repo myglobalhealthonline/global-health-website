@@ -75,7 +75,7 @@ export function ConsultationListingTemplate({
   faq,
   bookingHref,
   bookingLabel,
-  showReviewScore = true,
+  showReviewScore = false,
   showFinalCta = true,
   guidanceVariant,
 }: ConsultationListingTemplateProps) {

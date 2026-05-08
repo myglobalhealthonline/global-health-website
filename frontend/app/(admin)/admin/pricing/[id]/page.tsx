@@ -11,6 +11,19 @@ type PageProps = {
   searchParams?: Promise<{ success?: string; error?: string }>;
 };
 
+function formatMoney(cents: number, currency: string) {
+  const code = currency.trim().toUpperCase() || "EUR";
+  try {
+    return new Intl.NumberFormat("en", {
+      style: "currency",
+      currency: code,
+      maximumFractionDigits: 2,
+    }).format(cents / 100);
+  } catch {
+    return `${code} ${(cents / 100).toFixed(2)}`;
+  }
+}
+
 export default async function AdminPricingDetailPage({ params, searchParams }: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
@@ -100,7 +113,7 @@ export default async function AdminPricingDetailPage({ params, searchParams }: P
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Price</dt>
           <dd className="mt-1 text-sm text-[var(--color-text-primary)]">
-            {p.priceCents} {p.currencyCode} ({p.interval})
+            {formatMoney(p.priceCents, p.currencyCode)} ({p.interval})
           </dd>
         </div>
         <div className="sm:col-span-2">

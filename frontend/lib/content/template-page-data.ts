@@ -744,9 +744,7 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
     .sort((a, b) => a.sortOrder - b.sortOrder || a.name.localeCompare(b.name))
     .map((service) => ({
       title: service.name,
-      description:
-        service.summary ??
-        "Online consultation with secure intake, clinician review, and clear follow-up guidance.",
+      description: service.summary ?? "",
       href: buildPublicServiceHref(service, country.code),
     }));
 
@@ -756,19 +754,19 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
           .filter((specialty) => specialty.primaryService)
           .map((specialty) => {
             const primaryService = specialty.primaryService!;
+            const linkedService = publicServices.find((service) => service.id === primaryService.id);
             const href =
               primaryService.legacyPath ||
               `/ireland-specialist-consultations/${primaryService.slug}`;
             return {
               title: specialty.name,
-              description:
-                specialty.cardSummary ||
-                primaryService.summary ||
-                "Specialist consultation with secure online booking and clinician follow-up guidance.",
+              description: specialty.cardSummary || primaryService.summary || "",
               href,
               imageSrc: specialty.imagePath
                 ? (resolveTrustedAssetUrl(specialty.imagePath) ?? specialty.imagePath)
-                : undefined,
+                : linkedService?.imagePath
+                  ? (resolveTrustedAssetUrl(linkedService.imagePath) ?? linkedService.imagePath)
+                  : undefined,
               themeColor: specialty.cardThemeColor ?? undefined,
               stats: [
                 primaryService.durationMinutes != null ? `${primaryService.durationMinutes} min` : null,

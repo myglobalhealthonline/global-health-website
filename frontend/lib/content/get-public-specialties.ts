@@ -1,6 +1,7 @@
 import type { CountryCode } from "@/data/countries";
 import { fetchSpecialties } from "@/lib/api/site-content-api";
 import { cache } from "react";
+import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 import { isKnownCountryCode } from "@/lib/content/merge-public-content";
 import { logPublicContentFallback } from "@/lib/content/public-content-source";
 
@@ -43,9 +44,14 @@ function normalizeSpecialty(row: unknown): PublicSpecialtyRecord | null {
 
   const assets = Array.isArray(r.assets) ? r.assets : [];
   const imagePath = (() => {
-    const first = assets[0];
-    if (!first || typeof first !== "object") return null;
-    return typeof (first as { path?: unknown }).path === "string" ? (first as { path: string }).path : null;
+    for (const asset of assets) {
+      if (!asset || typeof asset !== "object") continue;
+      const kind = (asset as { kind?: unknown }).kind;
+      const path = (asset as { path?: unknown }).path;
+      if (kind !== "IMAGE" || typeof path !== "string") continue;
+      return resolveTrustedAssetUrl(path) ?? path;
+    }
+    return null;
   })();
 
   const primaryServiceRaw = r.primaryService;

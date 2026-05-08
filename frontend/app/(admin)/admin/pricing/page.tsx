@@ -23,6 +23,19 @@ function spRead(sp: Record<string, string | string[] | undefined>, key: string):
   return v;
 }
 
+function formatMoney(cents: number, currency: string) {
+  const code = currency.trim().toUpperCase() || "EUR";
+  try {
+    return new Intl.NumberFormat("en", {
+      style: "currency",
+      currency: code,
+      maximumFractionDigits: 2,
+    }).format(cents / 100);
+  } catch {
+    return `${code} ${(cents / 100).toFixed(2)}`;
+  }
+}
+
 
 type PageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -174,7 +187,7 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
                 <td className="px-3 py-3 font-medium text-[var(--color-text-primary)]">{p.name}</td>
                 <td className="px-3 py-3 text-[var(--color-text-muted)]">{p.country.code}</td>
                 <td className="px-3 py-3 text-[var(--color-text-muted)]">—</td>
-                <td className="px-3 py-3 font-mono text-[var(--color-text-muted)]">{p.priceCents}</td>
+                <td className="px-3 py-3 text-[var(--color-text-muted)]">{formatMoney(p.priceCents, p.currencyCode)}</td>
                 <td className="px-3 py-3 font-mono text-[var(--color-text-muted)]">{p.currencyCode}</td>
                 <td className="px-3 py-3 text-[var(--color-text-muted)]">{p.interval}</td>
                 <td className="px-3 py-3">{p.isActive ? "Yes" : "No"}</td>

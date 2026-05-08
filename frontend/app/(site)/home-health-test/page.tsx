@@ -25,9 +25,7 @@ export default async function Page() {
           : `/services/ie-${service.slug}`;
       return {
         title: service.name,
-        description:
-          service.summary ??
-          "Home test service with sample guidance, timing details, and secure clinical follow-up.",
+        description: service.summary ?? "",
         href,
         serviceType: "general" as const,
         duration: service.durationMinutes != null ? `${service.durationMinutes} min` : undefined,
