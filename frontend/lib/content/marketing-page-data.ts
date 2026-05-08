@@ -1,4 +1,5 @@
 import { sanitizePublicContent } from "@/lib/content/publication-guard";
+import type { StaticMarketingTemplateVariant } from "@/components/templates/StaticMarketingTemplate";
 
 export type MarketingPageData = {
   hero: {
@@ -12,6 +13,8 @@ export type MarketingPageData = {
   faqs?: { title?: string; items: Array<{ question: string; answer: string }> };
   relatedLinks?: Array<{ label: string; href: string }>;
   bottomCta?: { title: string; description: string; ctaLabel: string; ctaHref: string };
+  /** Controls hero presentation and layout behaviour in `StaticMarketingTemplate`. */
+  variant?: StaticMarketingTemplateVariant;
 };
 
 const defaultBottomCta = {
@@ -23,6 +26,7 @@ const defaultBottomCta = {
 
 const marketingDataByRoute: Record<string, MarketingPageData> = {
   "/about": {
+    variant: "light",
     hero: {
       title: "About Global Health",
       description:
@@ -57,9 +61,10 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
       { label: "Ireland team", href: "/ireland-team" },
       { label: "General consultation", href: "/general-consultation-ie" },
     ],
-    bottomCta: defaultBottomCta,
+    // No bottom CTA — About is informational, not a patient conversion page.
   },
   "/careers": {
+    variant: "document",
     hero: {
       title: "Careers",
       description: "Explore opportunities to support patient-focused digital healthcare delivery.",
@@ -83,9 +88,10 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
         description: "Contribute to reusable systems that support more countries over time.",
       },
     ],
-    bottomCta: defaultBottomCta,
+    // No bottom CTA — patient booking CTA is wrong context for a careers page.
   },
   "/gift-card": {
+    variant: "light",
     hero: {
       title: "Gift Card",
       description: "Share access to convenient online healthcare consultations.",
@@ -109,9 +115,10 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
         description: "Availability can vary by country route and local clinic policy.",
       },
     ],
-    bottomCta: defaultBottomCta,
+    // No bottom CTA — page is gift-card informational, not a direct conversion page.
   },
   "/plans-pricing": {
+    variant: "pricing",
     hero: {
       title: "Consultation Pricing and What to Expect",
       description:
@@ -173,6 +180,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     },
   },
   "/pricing-plans/list": {
+    variant: "pricing",
     hero: {
       title: "Pricing plans list",
       description: "Explore current consultation pricing options.",
@@ -202,7 +210,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
         ctaLabel: "Book consultation",
       },
     ],
-    bottomCta: defaultBottomCta,
+    // No generic defaultBottomCta — pricing list page links directly to listings in the feature cards.
   },
   "/online-prescription": {
     hero: {
@@ -292,6 +300,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     bottomCta: defaultBottomCta,
   },
   "/partner-clinics": {
+    variant: "directory",
     hero: {
       title: "Partner clinics",
       description: "Explore clinic partnerships supporting local patient care.",
@@ -315,9 +324,16 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
         description: "Patients receive clear guidance on whether to continue online or use local support options.",
       },
     ],
-    bottomCta: defaultBottomCta,
+    // Partner contact CTA, not a generic patient booking CTA.
+    bottomCta: {
+      title: "Enquire about clinic partnerships",
+      description: "Contact the team to discuss local clinic partnership options and network coverage.",
+      ctaLabel: "Contact us",
+      ctaHref: "/book-online",
+    },
   },
   "/corporate-plans": {
+    variant: "directory",
     hero: {
       title: "Corporate plans",
       description: "Healthcare consultation support for organizations and teams.",
@@ -345,9 +361,16 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
       { label: "Plans and pricing", href: "/plans-pricing" },
       { label: "Contact clinic", href: "/book-online" },
     ],
-    bottomCta: defaultBottomCta,
+    // B2B enquiry CTA, not a patient booking CTA.
+    bottomCta: {
+      title: "Enquire about corporate access",
+      description: "Contact the clinic team to discuss corporate plan terms for your organisation.",
+      ctaLabel: "Contact clinic",
+      ctaHref: "/book-online",
+    },
   },
   "/frequent-asked-questions": {
+    variant: "faq",
     hero: {
       title: "Frequently Asked Questions",
       description: "Find quick answers about consultations, booking, and clinic support.",
@@ -370,7 +393,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
       title: "Quick answers before you book",
       body: "These FAQs are designed to help patients understand booking flow, consultation types, and next steps before submitting a request.",
     },
-    bottomCta: defaultBottomCta,
+    // No bottom CTA — FAQ page is answer-first, not conversion-first.
   },
 };
 

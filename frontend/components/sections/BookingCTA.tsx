@@ -13,6 +13,18 @@ type BookingCTAProps = {
   variant?: "full" | "compact" | "inline" | "service" | "doctor" | "pricing" | "support";
   eyebrow?: string;
   points?: string[];
+  /**
+   * Whether to render the proof-point pill list below the description.
+   * Defaults to `true` for full/compact variants, `false` when `density="minimal"`.
+   */
+  showProofPoints?: boolean;
+  /**
+   * Controls padding and visual weight of the CTA block.
+   * - `"full"`: full gradient block with large padding (maps to variant="full" behaviour).
+   * - `"compact"`: white card with standard padding (default for non-full variants).
+   * - `"minimal"`: white card with reduced padding, no proof pills by default.
+   */
+  density?: "full" | "compact" | "minimal";
 };
 
 export function BookingCTA({
@@ -24,6 +36,8 @@ export function BookingCTA({
   variant = "full",
   eyebrow,
   points,
+  showProofPoints,
+  density,
 }: BookingCTAProps) {
   const proofPoints =
     points ??
@@ -36,19 +50,29 @@ export function BookingCTA({
           : variant === "support"
             ? ["Privacy-aware", "Clear response path", "Booking support"]
             : ["Online appointment", "Private intake", "Clear next steps"]);
+
+  // Proof pills are hidden when explicitly disabled or when density is minimal (no caller override).
+  const renderProofPoints = showProofPoints ?? (density !== "minimal");
+
   const asideUnoptimized = asideImage
     ? /^https?:\/\//i.test(asideImage.src) || asideImage.src.startsWith("/api/media/")
     : false;
-  const isCompact = variant !== "full";
+
+  // Determine visual mode: density prop takes precedence over variant for layout decisions.
+  const effectiveDensity = density ?? (variant === "full" ? "full" : "compact");
+  const isCompact = effectiveDensity !== "full";
+  const isMinimal = effectiveDensity === "minimal";
 
   return (
-    <Section className={isCompact ? "bg-white py-8" : "bg-[var(--color-background-soft)] pb-[var(--section-padding-y-sm)]"}>
+    <Section className={isCompact ? (isMinimal ? "bg-white py-4" : "bg-white py-8") : "bg-[var(--color-background-soft)] pb-[var(--section-padding-y-sm)]"}>
       <Container>
         <div
           className={`relative overflow-hidden rounded-[var(--radius-card)] ${
-            isCompact
-              ? "border border-[var(--color-border)] bg-white p-5 text-[var(--color-text-primary)] shadow-[var(--shadow-card)] sm:p-6"
-              : "bg-gradient-to-br from-[var(--color-brand-primary)] to-[var(--color-brand-primary-hover)] p-8 text-white shadow-[var(--shadow-elevated)] sm:p-10 lg:p-14"
+            isMinimal
+              ? "border border-[var(--color-border)] bg-white p-4 text-[var(--color-text-primary)] shadow-sm sm:p-5"
+              : isCompact
+                ? "border border-[var(--color-border)] bg-white p-5 text-[var(--color-text-primary)] shadow-[var(--shadow-card)] sm:p-6"
+                : "bg-gradient-to-br from-[var(--color-brand-primary)] to-[var(--color-brand-primary-hover)] p-8 text-white shadow-[var(--shadow-elevated)] sm:p-10 lg:p-14"
           }`}
         >
           {/* Background image overlay */}
@@ -99,23 +123,25 @@ export function BookingCTA({
                 {description}
               </p>
               
-              <ul className={`mt-5 flex flex-wrap items-center gap-2 ${isCompact ? "justify-start" : "justify-center"}`}>
-                {proofPoints.map((point) => (
-                  <li
-                    key={point}
-                    className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium ${
-                      isCompact
-                        ? "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
-                        : "border border-white/20 bg-white/15 text-white backdrop-blur-sm"
-                    }`}
-                  >
-                    <Check className={`size-4 ${isCompact ? "text-[var(--color-brand-primary)]" : "text-[var(--color-brand-accent)]"}`} aria-hidden />
-                    {point}
-                  </li>
-                ))}
-              </ul>
-              
-              <div className={isCompact ? "mt-5" : "mt-8"}>
+              {renderProofPoints ? (
+                <ul className={`mt-5 flex flex-wrap items-center gap-2 ${isCompact ? "justify-start" : "justify-center"}`}>
+                  {proofPoints.map((point) => (
+                    <li
+                      key={point}
+                      className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium ${
+                        isCompact
+                          ? "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
+                          : "border border-white/20 bg-white/15 text-white backdrop-blur-sm"
+                      }`}
+                    >
+                      <Check className={`size-4 ${isCompact ? "text-[var(--color-brand-primary)]" : "text-[var(--color-brand-accent)]"}`} aria-hidden />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+
+              <div className={isMinimal ? "mt-3" : isCompact ? "mt-5" : "mt-8"}>
                 <Link
                   href={ctaHref}
                   className={

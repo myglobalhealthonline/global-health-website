@@ -12,6 +12,13 @@ type HeroSectionProps = {
   trustBadges?: string[];
   heroImage?: { src: string; alt: string };
   variant?: "stacked" | "split";
+  /**
+   * Whether to render the `HealthcareMediaFrame` below the copy.
+   * Set to `false` for document/directory/pricing/light pages where the
+   * hero image adds visual weight without improving comprehension.
+   * Defaults to `true`.
+   */
+  showMedia?: boolean;
 };
 
 export function HeroSection({
@@ -23,6 +30,7 @@ export function HeroSection({
   trustBadges = [],
   heroImage,
   variant = "stacked",
+  showMedia = true,
 }: HeroSectionProps) {
   if (variant === "split") {
     return (
@@ -61,17 +69,19 @@ export function HeroSection({
               ) : null}
             </div>
 
-            {heroImage ? (
-              <HealthcareMediaFrame
-                src={heroImage.src}
-                alt={heroImage.alt}
-                variant="hero"
-                className="lg:min-h-[520px]"
-                priority
-              />
-            ) : (
-              <HealthcareMediaFrame variant="hero" className="lg:min-h-[520px]" priority />
-            )}
+            {showMedia ? (
+              heroImage ? (
+                <HealthcareMediaFrame
+                  src={heroImage.src}
+                  alt={heroImage.alt}
+                  variant="hero"
+                  className="lg:min-h-[520px]"
+                  priority
+                />
+              ) : (
+                <HealthcareMediaFrame variant="hero" className="lg:min-h-[520px]" priority />
+              )
+            ) : null}
           </div>
         </Container>
       </Section>
@@ -112,20 +122,22 @@ export function HeroSection({
             </ul>
           ) : null}
 
-          {heroImage ? (
-            <div className="mx-auto mt-10 max-w-5xl">
-              <HealthcareMediaFrame
-                src={heroImage.src}
-                alt={heroImage.alt}
-                variant="hero"
-                priority
-              />
-            </div>
-          ) : (
-            <div className="mx-auto mt-10 max-w-5xl">
-              <HealthcareMediaFrame variant="hero" priority />
-            </div>
-          )}
+          {showMedia ? (
+            heroImage ? (
+              <div className="mx-auto mt-10 max-w-5xl">
+                <HealthcareMediaFrame
+                  src={heroImage.src}
+                  alt={heroImage.alt}
+                  variant="hero"
+                  priority
+                />
+              </div>
+            ) : (
+              <div className="mx-auto mt-10 max-w-5xl">
+                <HealthcareMediaFrame variant="hero" priority />
+              </div>
+            )
+          ) : null}
         </div>
       </Container>
     </Section>

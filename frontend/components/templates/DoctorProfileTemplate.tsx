@@ -38,9 +38,22 @@ type DoctorProfileTemplateProps = {
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
   profileImageSrc?: string;
   bookingCtaImage?: { src: string; alt: string };
+  /**
+   * Whether to render the static star/review score block in the hero section.
+   * Defaults to `false` — the 4.94 score is not per-doctor data and showing it
+   * on every profile implies individual rating data that does not exist.
+   */
+  showReviewScore?: boolean;
 };
 
-export function DoctorProfileTemplate({ hero, profile, bottomCta, profileImageSrc, bookingCtaImage }: DoctorProfileTemplateProps) {
+export function DoctorProfileTemplate({
+  hero,
+  profile,
+  bottomCta,
+  profileImageSrc,
+  bookingCtaImage,
+  showReviewScore = false,
+}: DoctorProfileTemplateProps) {
   const src = profileImageSrc ?? "/images/ireland/doctor-profile-fallback.png";
   const unoptimized = /^https?:\/\//i.test(src) || src.startsWith("/api/media/");
 
@@ -154,16 +167,18 @@ export function DoctorProfileTemplate({ hero, profile, bottomCta, profileImageSr
                 ) : null}
               </div>
 
-              {/* Star rating */}
-              <div className="mt-5 flex items-center gap-2">
-                <div className="flex items-center gap-0.5">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="size-4 fill-amber-400 text-amber-400" />
-                  ))}
+              {/* Static star rating — only shown when real per-doctor score data is available. */}
+              {showReviewScore ? (
+                <div className="mt-5 flex items-center gap-2">
+                  <div className="flex items-center gap-0.5">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star key={star} className="size-4 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <span className="text-sm font-bold text-white">4.94</span>
+                  <span className="text-sm text-white/70">— verified patients</span>
                 </div>
-                <span className="text-sm font-bold text-white">4.94</span>
-                <span className="text-sm text-white/70">— verified patients</span>
-              </div>
+              ) : null}
             </div>
           </div>
         </Container>
@@ -257,7 +272,7 @@ export function DoctorProfileTemplate({ hero, profile, bottomCta, profileImageSr
         </Container>
       </Section>
 
-      {/* ── Booking CTA ── */}
+      {/* Compact inline booking CTA — no proof pills to avoid repetition with the hero CTA. */}
       <BookingCTA
         variant="doctor"
         eyebrow="Clinician booking"
@@ -266,13 +281,9 @@ export function DoctorProfileTemplate({ hero, profile, bottomCta, profileImageSr
         ctaLabel={bottomCta.ctaLabel}
         ctaHref={bottomCta.ctaHref}
         asideImage={bookingCtaImage}
+        density="compact"
+        showProofPoints={false}
       />
-
-      {/* ── Trust bar ── */}
-
-      {/* ── Social proof ── */}
-
-      {/* ── Country links ── */}
     </>
   );
 }

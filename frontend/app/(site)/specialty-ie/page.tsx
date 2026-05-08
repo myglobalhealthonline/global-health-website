@@ -21,6 +21,7 @@ export default async function Page() {
         body: "Specialist consultations are suitable when you need focused medical expertise, follow-up review, or guidance on complex concerns.",
       }}
       listing={data.specialistListing}
+      showReviewScore={false}
       howItWorks={{
         title: "Book in three steps",
         subtitle: "Simple specialist booking flow",

@@ -44,6 +44,25 @@ type ConsultationListingTemplateProps = {
   faq?: { title?: string; items: Array<{ question: string; answer: string }> };
   bookingHref: string;
   bookingLabel: string;
+  /**
+   * Whether to render the static review/star score block in the page header.
+   * Defaults to `true` for general mode; pass `false` for specialist listings
+   * where the score is not mode-specific.
+   */
+  showReviewScore?: boolean;
+  /**
+   * Whether to render the bottom `BookingCTA` section.
+   * Defaults to `true`. Pass `false` when the page already provides sufficient
+   * decision prompts through listing cards or guidance strips.
+   */
+  showFinalCta?: boolean;
+  /**
+   * Controls which guidance strip variant is shown below the listing grid.
+   * - `"general"` — GP-focused tips (default for general mode).
+   * - `"specialist"` — specialty/choice-focused tips (default for specialist mode).
+   * - `"none"` — omit the guidance strip entirely.
+   */
+  guidanceVariant?: "general" | "specialist" | "none";
 };
 
 export function ConsultationListingTemplate({
@@ -56,8 +75,14 @@ export function ConsultationListingTemplate({
   faq,
   bookingHref,
   bookingLabel,
+  showReviewScore = true,
+  showFinalCta = true,
+  guidanceVariant,
 }: ConsultationListingTemplateProps) {
   const isSpecialist = mode === "specialist";
+
+  // Resolve the effective guidance variant: caller can override, otherwise infer from mode.
+  const effectiveGuidanceVariant = guidanceVariant ?? (isSpecialist ? "specialist" : "general");
 
   return (
     <>
@@ -72,15 +97,17 @@ export function ConsultationListingTemplate({
             </h1>
             <p className="mt-3 text-lg text-[var(--color-text-muted)]">{description}</p>
 
-            <div className="mt-5 flex items-center justify-center gap-3">
-              <div className="flex items-center gap-0.5">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star key={star} className="size-5 fill-amber-400 text-amber-400" />
-                ))}
+            {showReviewScore ? (
+              <div className="mt-5 flex items-center justify-center gap-3">
+                <div className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star key={star} className="size-5 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <span className="text-lg font-bold text-[var(--color-text-primary)]">4.94</span>
+                <span className="text-sm text-[var(--color-text-muted)]">Verified review score where available</span>
               </div>
-              <span className="text-lg font-bold text-[var(--color-text-primary)]">4.94</span>
-              <span className="text-sm text-[var(--color-text-muted)]">Verified review score where available</span>
-            </div>
+            ) : null}
 
             <p className="mx-auto mt-4 max-w-2xl text-sm text-[var(--color-text-muted)]">
               {isSpecialist
@@ -110,35 +137,37 @@ export function ConsultationListingTemplate({
         </Container>
       </Section>
 
-      <Section className="bg-white py-8">
-        <Container>
-          <div className="grid gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-6 md:grid-cols-3">
-            {(isSpecialist
-              ? [
-                  ["Choose by symptoms", "Use specialty cards to match the area of concern."],
-                  ["Check suitability", "Some concerns may need GP, urgent, or in-person care first."],
-                  ["Prepare records", "Bring reports, medications, or photos where relevant."],
-                ]
-              : [
-                  ["Start with GP care", "Good for common, non-emergency concerns and follow-up questions."],
-                  ["Know the limits", "Emergency symptoms require urgent or local in-person care."],
-                  ["Prepare context", "Share symptoms, medicines, allergies, and recent changes."],
-                ]).map(([heading, copy]) => (
-              <div key={heading} className="flex gap-3">
-                {isSpecialist ? (
-                  <Search className="mt-1 size-5 shrink-0 text-[var(--color-brand-primary)]" />
-                ) : (
-                  <CheckCircle className="mt-1 size-5 shrink-0 text-[var(--color-brand-primary)]" />
-                )}
-                <div>
-                  <h2 className="font-bold text-[var(--color-text-primary)]">{heading}</h2>
-                  <p className="mt-1 text-sm leading-6 text-[var(--color-text-muted)]">{copy}</p>
+      {effectiveGuidanceVariant !== "none" ? (
+        <Section className="bg-white py-8">
+          <Container>
+            <div className="grid gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-6 md:grid-cols-3">
+              {(effectiveGuidanceVariant === "specialist"
+                ? [
+                    ["Choose by symptoms", "Use specialty cards to match the area of concern."],
+                    ["Check suitability", "Some concerns may need GP, urgent, or in-person care first."],
+                    ["Prepare records", "Bring reports, medications, or photos where relevant."],
+                  ]
+                : [
+                    ["Start with GP care", "Good for common, non-emergency concerns and follow-up questions."],
+                    ["Know the limits", "Emergency symptoms require urgent or local in-person care."],
+                    ["Prepare context", "Share symptoms, medicines, allergies, and recent changes."],
+                  ]).map(([heading, copy]) => (
+                <div key={heading} className="flex gap-3">
+                  {effectiveGuidanceVariant === "specialist" ? (
+                    <Search className="mt-1 size-5 shrink-0 text-[var(--color-brand-primary)]" />
+                  ) : (
+                    <CheckCircle className="mt-1 size-5 shrink-0 text-[var(--color-brand-primary)]" />
+                  )}
+                  <div>
+                    <h2 className="font-bold text-[var(--color-text-primary)]">{heading}</h2>
+                    <p className="mt-1 text-sm leading-6 text-[var(--color-text-muted)]">{copy}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </Section>
+              ))}
+            </div>
+          </Container>
+        </Section>
+      ) : null}
 
       {pricing?.items.length ? (
         <Section className="bg-[var(--color-background-soft)]">
@@ -167,18 +196,21 @@ export function ConsultationListingTemplate({
 
       {faq?.items.length ? <FAQSection title={faq.title} items={faq.items} /> : null}
 
-      <BookingCTA
-        variant={isSpecialist ? "support" : "compact"}
-        eyebrow={isSpecialist ? "Specialist booking" : "GP booking"}
-        title={isSpecialist ? "Find the right specialist" : "Choose a GP consultation"}
-        description={
-          isSpecialist
-            ? "Review the specialty options and book the route that best matches your concern."
-            : "Choose the consultation type that matches your concern and complete the intake form."
-        }
-        ctaLabel={bookingLabel}
-        ctaHref={bookingHref}
-      />
+      {showFinalCta ? (
+        <BookingCTA
+          variant={isSpecialist ? "support" : "compact"}
+          eyebrow={isSpecialist ? "Specialist booking" : "GP booking"}
+          title={isSpecialist ? "Find the right specialist" : "Choose a GP consultation"}
+          description={
+            isSpecialist
+              ? "Review the specialty options and book the route that best matches your concern."
+              : "Choose the consultation type that matches your concern and complete the intake form."
+          }
+          ctaLabel={bookingLabel}
+          ctaHref={bookingHref}
+          showProofPoints={!isSpecialist}
+        />
+      ) : null}
     </>
   );
 }
