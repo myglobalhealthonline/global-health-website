@@ -137,11 +137,12 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
         description={hero.description}
         primaryCta={{ href: "#booking-form", label: hero.primaryCtaLabel }}
         trustBadges={["Secure intake", "Private consultation", "Clear next steps"]}
+        showMedia={false}
       />
-      <Section id="booking-form" className="bg-[var(--color-background-soft)]">
+      <Section id="booking-form" variant="soft">
         <Container>
           <div className="mx-auto max-w-3xl">
-            <div className="gh-card overflow-x-hidden border-2 border-[var(--color-brand-primary)]/10 p-6 shadow-[var(--shadow-elevated)] sm:p-10">
+            <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-[var(--shadow-elevated)] sm:p-10">
               <div className="flex items-center gap-3">
                 <span className="gh-icon-circle bg-[var(--color-brand-primary)] text-white">
                   <Stethoscope className="size-5" aria-hidden />
@@ -153,7 +154,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
               </div>
 
               {signedInPatient ? (
-                <div className="mt-5 rounded-[var(--radius-card-sm)] border border-[var(--color-brand-primary)]/20 bg-[var(--color-brand-secondary)] px-4 py-3">
+                <div className="mt-5 rounded-[var(--radius-card-sm)] border border-[var(--color-brand-primary)]/20 bg-[var(--color-background-soft)] px-4 py-3">
                   <p className="text-sm text-[var(--color-text-muted)]">
                     Signed in as{" "}
                     <span className="font-semibold text-[var(--color-brand-primary)]">{signedInPatient.fullName}</span>.
@@ -297,7 +298,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                   />
                 </div>
 
-                <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-brand-primary)]/15 bg-[var(--color-brand-secondary)]/60 p-4">
+                <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-brand-primary)]/15 bg-[var(--color-background-soft)] p-4">
                   <div className="flex items-start gap-3">
                     <input
                       id={consentId}
@@ -359,7 +360,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
             {/* Trust sidebar */}
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               <div className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-4 py-4 shadow-[var(--shadow-soft)]">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-secondary)]">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-background-soft)]">
                   <ShieldCheck className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
                 </span>
                 <div>
@@ -368,7 +369,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                 </div>
               </div>
               <div className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-4 py-4 shadow-[var(--shadow-soft)]">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-secondary)]">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-background-soft)]">
                   <Clock className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
                 </span>
                 <div>
@@ -377,7 +378,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                 </div>
               </div>
               <div className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-4 py-4 shadow-[var(--shadow-soft)]">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-brand-secondary)]">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-background-soft)]">
                   <Check className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
                 </span>
                 <div>

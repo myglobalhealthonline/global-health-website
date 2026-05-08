@@ -9,22 +9,22 @@ type LegalPageTemplateProps = {
 
 export function LegalPageTemplate({ title, description, sections }: LegalPageTemplateProps) {
   return (
-    <Section className="bg-white">
+    <Section variant="white">
       <Container>
         <article className="mx-auto max-w-4xl">
           <header className="border-b border-[var(--color-border)] pb-8">
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+            <p className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
               Legal documentation
             </p>
             <h1 className="gh-h1 mt-4 text-[var(--color-text-primary)]">{title}</h1>
             <p className="gh-body-lg mt-4 text-[var(--color-text-muted)]">{description}</p>
             <p className="mt-4 text-sm font-semibold text-[var(--color-text-primary)]">Last updated: May 2026</p>
           </header>
-          <div className="mt-8 space-y-8">
+          <div className="mt-10 space-y-10">
             {sections.map((section) => (
               <section key={section.heading}>
                 <h2 className="gh-h3 text-[var(--color-text-primary)]">{section.heading}</h2>
-                <p className="gh-body-sm mt-2 text-[var(--color-text-muted)]">{section.body}</p>
+                <p className="gh-body-sm mt-3 text-[var(--color-text-muted)]">{section.body}</p>
               </section>
             ))}
           </div>

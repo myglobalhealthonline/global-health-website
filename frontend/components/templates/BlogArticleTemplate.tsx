@@ -24,11 +24,11 @@ export function BlogArticleTemplate({
   const headings = body.filter((paragraph) => paragraph.length < 90).slice(0, 5);
 
   return (
-    <Section className="bg-white">
+    <Section variant="white">
       <Container>
-        <article className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[16rem_1fr]">
+        <article className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[14rem_1fr]">
           <aside className="hidden lg:block">
-            <div className="sticky top-24 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-soft)] p-5">
+            <div className="sticky top-24">
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
                 In this article
               </p>
@@ -38,12 +38,12 @@ export function BlogArticleTemplate({
             </div>
           </aside>
           <div>
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
               {category}
             </p>
             <h1 className="gh-h1 mt-4 text-[var(--color-text-primary)]">{title}</h1>
             <p className="gh-body-lg mt-4 text-[var(--color-text-muted)]">{lead}</p>
-            <div className="mt-5 grid gap-2 rounded-2xl bg-[var(--color-background-soft)] p-4 text-sm text-[var(--color-text-muted)] sm:grid-cols-3">
+            <div className="mt-5 grid gap-2 rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] p-4 text-sm text-[var(--color-text-muted)] sm:grid-cols-3">
               <p>
                 <span className="font-semibold text-[var(--color-text-primary)]">Author:</span> {author}
               </p>
@@ -59,10 +59,10 @@ export function BlogArticleTemplate({
                 <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
-            <div className="mt-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-soft)] p-5 text-sm leading-6 text-[var(--color-text-muted)]">
+            <div className="mt-8 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 p-5 text-sm leading-relaxed text-amber-800">
               This article is educational and does not replace personal medical advice. Use emergency services for urgent symptoms.
             </div>
-            <Link href="/blog" className="gh-link-arrow mt-8">
+            <Link href="/blog" className="gh-link-arrow mt-8 inline-flex">
               Back to Blog
             </Link>
           </div>

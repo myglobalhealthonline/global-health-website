@@ -86,13 +86,13 @@ export function ConsultationListingTemplate({
 
   return (
     <>
-      <section className="relative overflow-hidden bg-white pb-8 pt-12">
+      <section className="bg-white pb-8 pt-12 sm:pt-16">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-primary)]">
+            <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
               {isSpecialist ? "Specialist directory" : "GP consultation guide"}
             </span>
-            <h1 className="mt-4 text-4xl font-extrabold leading-[1.1] tracking-tight text-[var(--color-text-primary)] sm:text-5xl">
+            <h1 className="mt-4 text-[var(--text-display)] font-extrabold leading-[1.05] tracking-tight text-[var(--color-text-primary)]">
               {title}
             </h1>
             <p className="mt-3 text-lg text-[var(--color-text-muted)]">{description}</p>
@@ -118,7 +118,7 @@ export function ConsultationListingTemplate({
         </Container>
       </section>
 
-      <Section className="bg-white py-12">
+      <Section variant="white" className="py-10">
         <Container>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {listing.map((item) => (
@@ -138,9 +138,9 @@ export function ConsultationListingTemplate({
       </Section>
 
       {effectiveGuidanceVariant !== "none" ? (
-        <Section className="bg-white py-8">
+        <Section variant="soft" className="py-8">
           <Container>
-            <div className="grid gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-6 md:grid-cols-3">
+            <div className="grid gap-4 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 md:grid-cols-3">
               {(effectiveGuidanceVariant === "specialist"
                 ? [
                     ["Choose by symptoms", "Use specialty cards to match the area of concern."],
@@ -160,7 +160,7 @@ export function ConsultationListingTemplate({
                   )}
                   <div>
                     <h2 className="font-bold text-[var(--color-text-primary)]">{heading}</h2>
-                    <p className="mt-1 text-sm leading-6 text-[var(--color-text-muted)]">{copy}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-[var(--color-text-muted)]">{copy}</p>
                   </div>
                 </div>
               ))}
@@ -170,18 +170,18 @@ export function ConsultationListingTemplate({
       ) : null}
 
       {pricing?.items.length ? (
-        <Section className="bg-[var(--color-background-soft)]">
+        <Section variant="white">
           <Container>
-            <div className="mx-auto max-w-3xl text-center">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-primary)]">
+            <div className="mx-auto max-w-3xl text-center mb-10">
+              <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
                 Pricing
               </span>
-              <h2 className="gh-h2 mt-4 text-[var(--color-text-primary)]">{pricing.title}</h2>
+              <h2 className="gh-h2 mt-3 text-[var(--color-text-primary)]">{pricing.title}</h2>
               {pricing.description ? (
                 <p className="gh-body-lg mt-3 text-[var(--color-text-muted)]">{pricing.description}</p>
               ) : null}
             </div>
-            <div className="mx-auto mt-8 grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {pricing.items.map((item) => (
                 <PricingCard key={item.name} {...item} />
               ))}

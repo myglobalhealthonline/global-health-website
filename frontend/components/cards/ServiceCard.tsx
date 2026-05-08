@@ -57,17 +57,16 @@ export function ServiceCard({
   return (
     <Link
       href={href}
-      className="group flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)] transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-1"
+      className="group flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)] transition-shadow duration-200 hover:shadow-[var(--shadow-card-hover)]"
     >
-      {/* Image */}
-      <div className="relative h-44 overflow-hidden">
+      {/* Image - larger area */}
+      <div className="relative aspect-[16/10] overflow-hidden">
         <Image
           src={imageSrc}
           alt={title}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
       </div>
 
       {/* Content */}
@@ -94,7 +93,7 @@ export function ServiceCard({
           {description}
         </p>
 
-        <div className="mt-4 flex items-center gap-1 text-sm font-bold text-[var(--color-brand-primary)]">
+        <div className="mt-auto pt-4 flex items-center gap-1 text-sm font-bold text-[var(--color-brand-primary)]">
           {ctaLabel}
           <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
         </div>

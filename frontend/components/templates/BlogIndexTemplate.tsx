@@ -1,4 +1,4 @@
-﻿import { BlogCard } from "@/components/cards/BlogCard";
+import { BlogCard } from "@/components/cards/BlogCard";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
@@ -18,11 +18,12 @@ export function BlogIndexTemplate({ title, description, posts }: BlogIndexTempla
         description={description}
         primaryCta={{ href: "/general-consultation-ie", label: "Explore consultations" }}
         trustBadges={["Author required", "Medical review required", "Updated before publication"]}
+        showMedia={false}
       />
-      <Section>
+      <Section variant="white">
         <Container>
           {posts.length > 0 ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {posts.map((post) => (
                 <BlogCard key={post.href} {...post} />
               ))}

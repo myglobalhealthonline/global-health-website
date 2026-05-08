@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, Star, ChevronRight, Play } from "lucide-react";
+import { Clock, Star, ChevronRight } from "lucide-react";
 import { BookingCTA } from "@/components/sections/BookingCTA";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Container } from "@/components/layout/Container";
@@ -110,8 +110,8 @@ export function CountryHomeTemplate({
                 <Link
                   key={action.href + action.title}
                   href={action.href}
-                  className={`px-4 py-2 transition-colors hover:text-[var(--color-brand-primary)] ${
-                    i === 0 ? "text-[var(--color-brand-primary)]" : "text-[var(--color-text-muted)]"
+                  className={`px-4 py-2 rounded-full transition-colors hover:text-[var(--color-brand-primary)] ${
+                    i === 0 ? "text-[var(--color-brand-primary)] bg-[var(--color-background-soft)]" : "text-[var(--color-text-muted)]"
                   }`}
                 >
                   {action.title}
@@ -122,26 +122,21 @@ export function CountryHomeTemplate({
         </div>
       ) : null}
 
-      {/* Hero Section - Green bg with text left, image right */}
+      {/* Hero Section - Dark green, text left, image right */}
       <section className="relative overflow-hidden bg-[var(--color-brand-primary)]">
-        <div className="absolute inset-0 opacity-[0.04]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-white/[0.03] translate-x-1/4 -translate-y-1/4" />
-        
-        <Container className="relative py-12 sm:py-16 lg:py-20">
+        <Container className="relative py-16 sm:py-20 lg:py-24">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
             {/* Left: Text */}
             <div className="text-white">
               {hero.eyebrow && (
-                <p className="text-sm font-bold uppercase tracking-[0.15em] text-[var(--color-brand-accent)]">
+                <p className="gh-heading-eyebrow text-[var(--color-brand-accent)]">
                   {hero.eyebrow}
                 </p>
               )}
-              <h1 className="mt-3 text-3xl font-extrabold tracking-tight leading-[1.1] text-white sm:text-4xl lg:text-[3rem]">
+              <h1 className="mt-4 text-[var(--text-display)] font-extrabold tracking-tight leading-[1.05] text-white">
                 {hero.title}
               </h1>
-              <p className="mt-4 text-lg text-white/90 leading-relaxed max-w-lg">
+              <p className="mt-5 text-lg text-white/85 leading-relaxed max-w-lg">
                 {hero.description}
               </p>
               
@@ -167,7 +162,7 @@ export function CountryHomeTemplate({
                 {hero.secondaryCta && (
                   <Link
                     href={hero.secondaryCta.href}
-                    className="gh-btn border-2 border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
+                    className="gh-btn border-2 border-white/30 bg-white/10 text-white hover:bg-white/20"
                   >
                     {hero.secondaryCta.label}
                   </Link>
@@ -192,7 +187,7 @@ export function CountryHomeTemplate({
             {/* Right: Hero Image */}
             <div className="relative">
               {hero.heroImage ? (
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] shadow-2xl">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] shadow-[var(--shadow-elevated)]">
                   <Image
                     src={hero.heroImage.src}
                     alt={hero.heroImage.alt}
@@ -207,20 +202,13 @@ export function CountryHomeTemplate({
             </div>
           </div>
         </Container>
-        
-        {/* Bottom curve */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 60" fill="none" className="w-full">
-            <path d="M0 60L1440 60L1440 0C1440 0 1140 60 720 60C300 60 0 0 0 0L0 60Z" fill="white" />
-          </svg>
-        </div>
       </section>
 
       {/* Availability Banner */}
       {availability && (
-        <Section className="bg-white py-10">
+        <Section variant="white" className="py-10">
           <Container>
-            <div className="rounded-[var(--radius-card)] bg-gradient-to-br from-[var(--color-brand-primary)] to-[var(--color-brand-primary-hover)] p-8 text-white shadow-[var(--shadow-elevated)] sm:p-10">
+            <div className="rounded-[var(--radius-card)] bg-[var(--color-brand-primary)] p-8 text-white shadow-[var(--shadow-elevated)] sm:p-10">
               <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-start gap-4">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/15">
@@ -248,14 +236,14 @@ export function CountryHomeTemplate({
         </Section>
       )}
 
-      {/* About Section with Stats */}
+      {/* About Section */}
       {about && (
-        <Section className="bg-white">
+        <Section variant="white">
           <Container>
             <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
-              {/* Left: Image with stats overlay */}
+              {/* Left: Image */}
               <div className="relative">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] shadow-xl">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] shadow-[var(--shadow-elevated)]">
                   <Image
                     src={about.image.src}
                     alt={about.image.alt}
@@ -263,33 +251,22 @@ export function CountryHomeTemplate({
                     className="object-cover"
                   />
                 </div>
-                {/* Stats cards */}
-                <div className="absolute -bottom-4 left-4 right-4 flex gap-3 sm:left-6 sm:right-auto">
-                  <div className="rounded-xl bg-white shadow-lg border border-[var(--color-border)] px-4 py-3 text-center">
-                    <p className="text-xl font-extrabold text-[var(--color-brand-primary)]">10K+</p>
-                    <p className="text-xs text-[var(--color-text-muted)]">Satisfied Patients</p>
-                  </div>
-                  <div className="rounded-xl bg-white shadow-lg border border-[var(--color-border)] px-4 py-3 text-center">
-                    <p className="text-xl font-extrabold text-[var(--color-brand-primary)]">500+</p>
-                    <p className="text-xs text-[var(--color-text-muted)]">Positive Reviews</p>
-                  </div>
-                </div>
               </div>
               
               {/* Right: Text */}
               <div>
-                <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-primary)]">
+                <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
                   {about.eyebrow}
                 </span>
-                <h2 className="gh-h2 mt-4 text-[var(--color-text-primary)]">{about.title}</h2>
-                <div className="mt-4 space-y-3">
+                <h2 className="gh-h2 mt-3 text-[var(--color-text-primary)]">{about.title}</h2>
+                <div className="mt-5 space-y-4">
                   {about.description.map((para, i) => (
-                    <p key={i} className="gh-body text-[var(--color-text-muted)] leading-relaxed">
+                    <p key={i} className="gh-body text-[var(--color-text-muted)]">
                       {para}
                     </p>
                   ))}
                 </div>
-                <p className="mt-4 text-sm font-semibold text-[var(--color-brand-primary)] italic">
+                <p className="mt-5 text-sm font-semibold text-[var(--color-brand-primary)] italic">
                   {about.highlight}
                 </p>
                 <Link
@@ -317,11 +294,11 @@ export function CountryHomeTemplate({
 
       {/* Specialties Section */}
       {specialties && serviceCards.length > 0 && (
-        <Section className="bg-[var(--color-background-soft)]">
+        <Section variant="soft">
           <Container>
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-12">
               <div>
-                <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-primary)]">
+                <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
                   Specialties
                 </span>
                 <h2 className="gh-h2 mt-3 text-[var(--color-text-primary)]">{specialties.title}</h2>
@@ -335,27 +312,26 @@ export function CountryHomeTemplate({
               </Link>
             </div>
             
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {serviceCards.map((card) => (
                 <Link
                   key={card.href + card.title}
                   href={card.href}
-                  className="group relative rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-[var(--shadow-card)] transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-1 hover:border-[var(--color-brand-primary)]/20"
+                  className="group relative rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-[var(--shadow-card)] transition-all duration-200 hover:shadow-[var(--shadow-card-hover)]"
                 >
-                  <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[var(--color-brand-accent)]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--color-brand-accent)]/30 text-[var(--color-brand-primary)] mb-4 transition-transform group-hover:scale-110">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--color-brand-primary)]/10 text-[var(--color-brand-primary)] mb-4">
                     <svg className="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-bold text-[var(--color-text-primary)] group-hover:text-[var(--color-brand-primary)] transition-colors">
+                  <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
                     {card.title}
                   </h3>
                   <p className="mt-2 text-sm text-[var(--color-text-muted)] leading-relaxed">
                     {card.description}
                   </p>
-                  <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-[var(--color-brand-primary)] opacity-0 group-hover:opacity-100 transition-opacity">
-                    Learn more <ChevronRight className="size-4" />
+                  <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-[var(--color-brand-primary)]">
+                    Learn more <ChevronRight className="size-4 transition-transform group-hover:translate-x-1" />
                   </div>
                 </Link>
               ))}
@@ -375,16 +351,15 @@ export function CountryHomeTemplate({
 
       {/* Home Delivery */}
       {homeDelivery && (
-        <Section className="bg-[var(--color-brand-primary)] relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-white/[0.03] translate-x-1/4 -translate-y-1/4" />
+        <Section variant="primary">
           <Container>
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-14">
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
               <div className="text-white">
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-accent)] border border-white/10">
+                <span className="gh-heading-eyebrow text-[var(--color-brand-accent)]">
                   Prescription Service
                 </span>
-                <h2 className="gh-h2 mt-4 text-white">{homeDelivery.title}</h2>
-                <p className="text-lg mt-3 text-white/85 leading-relaxed max-w-xl">
+                <h2 className="gh-h2 mt-3 text-white">{homeDelivery.title}</h2>
+                <p className="text-lg mt-4 text-white/85 leading-relaxed max-w-xl">
                   {homeDelivery.description}
                 </p>
                 <Link
@@ -408,10 +383,10 @@ export function CountryHomeTemplate({
 
       {/* Partners */}
       {partnerLogos.length > 0 ? (
-        <Section className="bg-white py-10">
+        <Section variant="white" className="py-10">
           <Container>
             <div className="mx-auto max-w-3xl text-center">
-              <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-primary)]">
+              <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
                 Partners
               </span>
             </div>
@@ -434,7 +409,7 @@ export function CountryHomeTemplate({
           </Container>
         </Section>
       ) : partnerTrustLine ? (
-        <Section className="bg-white py-10">
+        <Section variant="white" className="py-10">
           <Container>
             <div className="mx-auto flex max-w-3xl items-center justify-center gap-3 text-center">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-brand-primary)]/10">
@@ -450,36 +425,27 @@ export function CountryHomeTemplate({
 
       {/* Doctor Spotlight */}
       {doctorSpotlight && (
-        <Section className="bg-[var(--color-brand-primary)] relative overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04]" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }} />
-          <Container className="relative">
-            <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-14">
+        <Section variant="primary">
+          <Container>
+            <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
               <div className="relative mx-auto max-w-sm lg:max-w-none">
-                <div className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)] shadow-2xl">
+                <div className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)] shadow-[var(--shadow-elevated)]">
                   <Image
                     src={doctorSpotlight.image?.src ?? "/images/ireland/doctor-spotlight-ai.svg"}
                     alt={doctorSpotlight.image?.alt ?? doctorSpotlight.name}
                     fill
                     className="object-cover"
                   />
-                  {/* Play button overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/90 shadow-lg cursor-pointer hover:scale-110 transition-transform">
-                      <Play className="size-6 text-[var(--color-brand-primary)] ml-1" fill="currentColor" />
-                    </div>
-                  </div>
                 </div>
               </div>
               <div className="text-white">
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-accent)] border border-white/10">
+                <span className="gh-heading-eyebrow text-[var(--color-brand-accent)]">
                   Doctor Profile
                 </span>
-                <blockquote className="mt-5 text-2xl sm:text-3xl font-extrabold leading-[1.2] text-white">
+                <blockquote className="mt-5 text-2xl sm:text-3xl font-extrabold leading-[1.15] text-white">
                   &ldquo;{doctorSpotlight.quote}&rdquo;
                 </blockquote>
-                <div className="mt-6 rounded-[var(--radius-card)] border border-white/15 bg-white/10 backdrop-blur-sm p-5">
+                <div className="mt-6 rounded-[var(--radius-card)] border border-white/15 bg-white/10 p-5">
                   <p className="text-lg font-bold text-white">{doctorSpotlight.name}</p>
                   <p className="text-sm font-semibold text-[var(--color-brand-accent)]">{doctorSpotlight.title}</p>
                   <p className="text-sm text-white/70">{doctorSpotlight.credential}</p>
@@ -492,21 +458,21 @@ export function CountryHomeTemplate({
 
       {/* Country Trust Proof */}
       {trustItems.length > 0 ? (
-        <Section className="bg-white py-10">
+        <Section variant="white" className="py-10">
           <Container>
-            <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
               <div>
-                <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-primary)]">
+                <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
                   Local access
                 </span>
-                <h2 className="gh-h2 mt-4 text-[var(--color-text-primary)]">{trustTitle}</h2>
+                <h2 className="gh-h2 mt-3 text-[var(--color-text-primary)]">{trustTitle}</h2>
                 {trustSubtitle ? <p className="gh-body mt-3 text-[var(--color-text-muted)]">{trustSubtitle}</p> : null}
               </div>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 {trustItems.map((item) => (
-                  <article key={item.title} className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-soft)] p-5">
+                  <article key={item.title} className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-5">
                     <h3 className="font-bold text-[var(--color-text-primary)]">{item.title}</h3>
-                    <p className="mt-2 text-sm leading-6 text-[var(--color-text-muted)]">{item.description}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-muted)]">{item.description}</p>
                   </article>
                 ))}
               </div>

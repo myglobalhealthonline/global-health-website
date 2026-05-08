@@ -59,24 +59,13 @@ export function DoctorProfileTemplate({
 
   return (
     <>
-      {/* ── Hero: green background with doctor image + info ── */}
+      {/* Hero: dark background with doctor image + info */}
       <section className="relative overflow-hidden bg-[var(--color-brand-primary)]">
-        {/* SVG pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }}
-        />
-        {/* Decorative circles */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-white/[0.03] translate-x-1/4 -translate-y-1/4" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-white/[0.03] -translate-x-1/3 translate-y-1/3" />
-
-        <Container className="relative py-12 sm:py-16 lg:py-20">
+        <Container className="relative py-16 sm:py-20 lg:py-24">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
             {/* Left: portrait */}
             <div className="relative mx-auto w-full max-w-sm lg:max-w-none">
-              <div className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)] shadow-2xl">
+              <div className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)] shadow-[var(--shadow-elevated)]">
                 <Image
                   src={src}
                   alt={`Doctor portrait for ${profile.name}`}
@@ -95,18 +84,18 @@ export function DoctorProfileTemplate({
               {hero.secondaryCta ? (
                 <Link
                   href={hero.secondaryCta.href}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/90 backdrop-blur-sm transition-colors hover:bg-white/20 mb-5"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/90 transition-colors hover:bg-white/20 mb-5"
                 >
                   <ArrowLeft className="size-3.5" />
                   {hero.secondaryCta.label}
                 </Link>
               ) : null}
 
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-accent)] border border-white/10">
+              <span className="gh-heading-eyebrow text-[var(--color-brand-accent)]">
                 Doctor Profile
               </span>
 
-              <h1 className="mt-4 text-3xl font-extrabold tracking-tight leading-[1.1] text-white sm:text-4xl lg:text-[3rem]">
+              <h1 className="mt-4 text-[var(--text-h1)] font-extrabold tracking-tight leading-[1.05] text-white">
                 {profile.name}
               </h1>
               <p className="mt-2 text-lg font-semibold text-[var(--color-brand-accent)]">
@@ -159,7 +148,7 @@ export function DoctorProfileTemplate({
                     href={profile.medicalRegistrationUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="gh-btn border-2 border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
+                    className="gh-btn border-2 border-white/30 bg-white/10 text-white hover:bg-white/20"
                   >
                     <ExternalLink className="size-4" />
                     Medical registration
@@ -167,7 +156,7 @@ export function DoctorProfileTemplate({
                 ) : null}
               </div>
 
-              {/* Static star rating — only shown when real per-doctor score data is available. */}
+              {/* Static star rating */}
               {showReviewScore ? (
                 <div className="mt-5 flex items-center gap-2">
                   <div className="flex items-center gap-0.5">
@@ -182,27 +171,19 @@ export function DoctorProfileTemplate({
             </div>
           </div>
         </Container>
-
-        {/* Bottom curve */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 60" fill="none" className="w-full">
-            <path d="M0 60L1440 60L1440 0C1440 0 1140 60 720 60C300 60 0 0 0 0L0 60Z" fill="white" />
-          </svg>
-        </div>
       </section>
 
-      {/* ── About Doctor ── */}
-      <Section className="bg-white">
+      {/* About Doctor */}
+      <Section variant="white">
         <Container>
           <div className="mx-auto max-w-4xl">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-primary)]">
+            <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
               About Doctor
             </span>
             <h2 className="gh-h2 mt-3 text-[var(--color-text-primary)]">
               Expertise & Background
             </h2>
 
-            {/* Bio */}
             <div className="mt-6">
               {profile.bio ? (
                 <div
@@ -219,8 +200,8 @@ export function DoctorProfileTemplate({
         </Container>
       </Section>
 
-      {/* ── Qualifications & Areas ── */}
-      <Section className="bg-[var(--color-background-soft)]">
+      {/* Qualifications & Areas */}
+      <Section variant="soft">
         <Container>
           <div className="mx-auto max-w-4xl">
             <div className="grid gap-6 sm:grid-cols-2">
@@ -272,7 +253,7 @@ export function DoctorProfileTemplate({
         </Container>
       </Section>
 
-      {/* Compact inline booking CTA — no proof pills to avoid repetition with the hero CTA. */}
+      {/* Compact inline booking CTA */}
       <BookingCTA
         variant="doctor"
         eyebrow="Clinician booking"

@@ -68,17 +68,17 @@ export function StaticMarketingTemplate({
   /** Shared feature grid section. */
   const featureGrid =
     features.length > 0 ? (
-      <Section className="bg-[var(--color-background-soft)]">
+      <Section variant="soft">
         <Container>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
-              <article key={feature.title} className="gh-card gh-card-hover flex h-full flex-col p-6">
+              <article key={feature.title} className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-[var(--shadow-card)] transition-shadow hover:shadow-[var(--shadow-card-hover)]">
                 <h3 className="gh-h3 text-[var(--color-text-primary)]">{feature.title}</h3>
                 <p className="gh-body-sm mt-3 flex-1 text-[var(--color-text-muted)]">
                   {feature.description}
                 </p>
                 {feature.href ? (
-                  <Link href={feature.href} className="gh-link-arrow mt-5">
+                  <Link href={feature.href} className="gh-link-arrow mt-5 inline-flex">
                     {feature.ctaLabel ?? "Learn more"}
                   </Link>
                 ) : null}
@@ -89,14 +89,14 @@ export function StaticMarketingTemplate({
       </Section>
     ) : null;
 
-  /** Shared intro card section. */
-  const introCard = intro ? (
-    <Section className="bg-[var(--color-brand-secondary)] py-[var(--section-padding-y-xs)]">
+  /** Shared intro section. */
+  const introSection = intro ? (
+    <Section variant="white">
       <Container>
-        <article className="gh-card mx-auto max-w-4xl p-7 sm:p-8">
+        <div className="mx-auto max-w-4xl">
           <h2 className="gh-h2 text-[var(--color-text-primary)]">{intro.title}</h2>
-          <p className="gh-body mt-3 text-[var(--color-text-muted)]">{intro.body}</p>
-        </article>
+          <p className="gh-body-lg mt-4 text-[var(--color-text-muted)]">{intro.body}</p>
+        </div>
       </Container>
     </Section>
   ) : null;
@@ -107,11 +107,11 @@ export function StaticMarketingTemplate({
   /** Shared related links section. */
   const relatedLinksSection =
     relatedLinks.length > 0 ? (
-      <Section className="bg-[var(--color-brand-secondary)] py-[var(--section-padding-y-xs)]">
+      <Section variant="white" className="py-10">
         <Container>
-          <div className="gh-card mx-auto max-w-4xl p-6 sm:p-8">
+          <div className="mx-auto max-w-4xl">
             <h2 className="gh-h3 text-[var(--color-text-primary)]">Related pages</h2>
-            <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+            <ul className="mt-4 grid gap-3 sm:grid-cols-2">
               {relatedLinks.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="gh-link-arrow">
@@ -141,12 +141,12 @@ export function StaticMarketingTemplate({
       {faqFirst ? (
         <>
           {faqSection}
-          {introCard}
+          {introSection}
           {featureGrid}
         </>
       ) : (
         <>
-          {introCard}
+          {introSection}
           {featureGrid}
           {faqSection}
         </>

@@ -1,4 +1,4 @@
-﻿type PricingCardProps = {
+type PricingCardProps = {
   name: string;
   price: string;
   description: string;
@@ -6,11 +6,13 @@
 
 export function PricingCard({ name, price, description }: PricingCardProps) {
   return (
-    <article className="gh-card gh-card-hover h-full p-6">
-      <p className="gh-heading-eyebrow text-[var(--color-brand-primary)]">Plan</p>
-      <h3 className="gh-h3 text-[var(--color-text-primary)]">{name}</h3>
-      <p className="mt-3 text-3xl font-extrabold text-[var(--color-brand-primary)]">{price}</p>
-      <p className="gh-body-sm mt-3 text-[var(--color-text-muted)]">{description}</p>
+    <article className="gh-card gh-card-hover flex h-full flex-col p-6">
+      <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
+        Plan
+      </span>
+      <h3 className="mt-2 text-lg font-bold text-[var(--color-text-primary)]">{name}</h3>
+      <p className="mt-4 text-3xl font-extrabold text-[var(--color-brand-primary)]">{price}</p>
+      <p className="mt-4 text-sm leading-relaxed text-[var(--color-text-muted)]">{description}</p>
     </article>
   );
 }
