@@ -858,10 +858,19 @@ export type ServiceDetailCopyData = {
 
 export async function buildServiceDetailCopyAsync(
   slug: string,
-  mode: "general" | "specialist",
+  mode: "general" | "specialist" | "prescription" | "health-test" | "home-delivery",
   countryCode?: CountryCode,
 ): Promise<ServiceDetailCopyData> {
-  const expectedKind = mode === "general" ? "GENERAL" : "SPECIALIST";
+  const expectedKind =
+    mode === "specialist"
+      ? "SPECIALIST"
+      : mode === "prescription"
+        ? "PRESCRIPTION"
+        : mode === "health-test"
+          ? "HEALTH_TEST"
+          : mode === "home-delivery"
+            ? "HOME_DELIVERY"
+            : "GENERAL";
   const defaultFacts = [
     { label: "Est. duration", value: "Confirmed during booking" },
     { label: "Starting price", value: "Shown before booking" },

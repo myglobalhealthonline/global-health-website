@@ -9,7 +9,7 @@ type Params = { serviceSlug: string };
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { serviceSlug } = await params;
   const service = await getPublicServiceBySlug("ie", serviceSlug);
-  if (!service || service.kind !== "GENERAL") {
+  if (!service || service.kind === "SPECIALIST") {
     return {
       title: "Ireland Consultation",
       robots: { index: false, follow: true },
@@ -33,9 +33,27 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 export default async function IrelandServicePage({ params }: { params: Promise<Params> }) {
   const { serviceSlug } = await params;
   const service = await getPublicServiceBySlug("ie", serviceSlug);
-  if (!service || service.kind !== "GENERAL") notFound();
+  if (!service || service.kind === "SPECIALIST") notFound();
 
-  const copy = await buildServiceDetailCopyAsync(serviceSlug, "general", "ie");
+  const mode =
+    service.kind === "PRESCRIPTION"
+      ? "prescription"
+      : service.kind === "HEALTH_TEST"
+        ? "health-test"
+        : service.kind === "HOME_DELIVERY"
+          ? "home-delivery"
+          : "general";
+  const bookingHref =
+    service.kind === "PRESCRIPTION"
+      ? "/online-prescription"
+      : service.kind === "HEALTH_TEST"
+        ? "/home-health-test"
+        : service.kind === "HOME_DELIVERY"
+          ? "/home-delivery"
+          : "/general-consultation-ie";
+  const bookingLabel = service.ctaLabel ?? (service.kind === "GENERAL" ? "Book consultation" : "Book Online");
+
+  const copy = await buildServiceDetailCopyAsync(serviceSlug, mode, "ie");
   return (
     <ServiceDetailTemplate
       title={copy.title}
@@ -43,8 +61,8 @@ export default async function IrelandServicePage({ params }: { params: Promise<P
       body={copy.body}
       bodyHtml={copy.bodyHtml ?? null}
       keyFacts={copy.keyFacts}
-      bookingHref="/general-consultation-ie"
-      bookingLabel={copy.bookingLabel ?? "Book consultation"}
+      bookingHref={bookingHref}
+      bookingLabel={copy.bookingLabel ?? bookingLabel}
       imageSrc={copy.imageSrc}
     />
   );
