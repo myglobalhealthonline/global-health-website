@@ -122,3 +122,35 @@
 
 - frontend typecheck: **pass** (exit 0, 11.9s)
 - frontend build: **pass** (exit 0, 30.5s, 66 pages generated)
+
+---
+
+## Final Visual QA Pass
+
+| Page | Issue Found | Fix Applied | Status |
+|---|---|---|---|
+| `/about` | Hero CTA still conversion-heavy for informational page | Hero primary CTA changed from booking intent to route-exploration intent | Fixed |
+| `/careers` | Hero CTA label still patient/clinic-facing | Hero primary CTA changed to neutral enquiry wording | Fixed |
+| `/gift-card` | Hero CTA still looked like consultation-booking CTA | Hero primary CTA changed to gift-card-specific details action | Fixed |
+| `/corporate-plans` | Hero CTA language still close to patient flow | Hero primary CTA changed to business-enquiry wording | Fixed |
+| `/partner-clinics` | Hero CTA still generic clinic contact language | Hero primary CTA changed to partner-enquiry wording | Fixed |
+| `/plans-pricing` | Pricing-first structure already clear with pricing section + pricing FAQs + pricing CTA | No change needed | No change needed |
+| `/pricing-plans/list` | Route redirects to `/plans-pricing`; no separate duplicate visual to tune | No change needed | No change needed |
+| `/frequent-asked-questions` | Hero CTA was still booking-first on answer-first page | Hero primary CTA changed to consultation-browse intent | Fixed |
+| `/general-consultation-ie` | GP listing already differentiated and appropriate | No change needed | No change needed |
+| `/specialty-ie` | Still felt too similar to GP due repeated ending strip/CTA | Disabled final CTA and guidance strip on specialist page (`showFinalCta={false}`, `guidanceVariant=\"none\"`) | Fixed |
+| `/ireland-team` | Team page already avoided repeated bottom CTA (cards are primary actions) | No change needed | No change needed |
+| Service detail spot-check (`/services/[serviceSlug]`) | Fallback already concise, safe, and non-fabricated | No change needed | No change needed |
+| Doctor profile spot-check (`/ireland-team/[doctorSlug]`) | Profile already avoids forced review stars and uses compact CTA | No change needed | No change needed |
+
+## Remaining Notes
+
+| Area | Note | Action Needed |
+|---|---|---|
+| Static marketing hero behavior | `HeroSection` still requires a primary CTA for all static routes; copy-only hero mode is not yet a first-class option | Optional future enhancement: add `hidePrimaryCta` flag for document/faq variants |
+| Specialist listing guidance | Specialist page now avoids repetitive strip/ending CTA; if users need extra orientation later, add a specialist-specific search/filter aid instead of another full-width CTA block | Monitor via UX feedback; no immediate code change required |
+
+## Validation
+
+- frontend typecheck: **pass** (`npm run typecheck`)
+- frontend build: **pass** (`npm run build`)

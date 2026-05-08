@@ -64,10 +64,10 @@ export function BookingCTA({
 
   if (isCompact) {
     return (
-      <section className={isMinimal ? "gh-medical-pattern gh-medical-pattern-soft bg-white py-8" : "gh-medical-pattern gh-medical-pattern-soft bg-white py-12 sm:py-16"}>
+      <section className={isMinimal ? "gh-medical-pattern gh-medical-pattern-soft bg-white py-4 sm:py-6" : "gh-medical-pattern gh-medical-pattern-soft bg-white py-12 sm:py-16"}>
         <Container>
-          <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
-            <div className="absolute left-0 top-0 h-full w-1 bg-[var(--color-brand-primary)]" />
+          <div className={`relative overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)] ${isMinimal ? "p-4 sm:p-5" : "p-6 sm:p-8"}`}>
+            {!isMinimal ? <div className="absolute left-0 top-0 h-full w-1 bg-[var(--color-brand-primary)]" /> : null}
             <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-2xl">
                 <div className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)]/10 px-4 py-1.5 mb-3 text-sm font-medium text-[var(--color-brand-primary)]">

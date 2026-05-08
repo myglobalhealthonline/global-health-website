@@ -31,7 +31,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
       title: "About Global Health",
       description:
         "Learn how Global Health delivers patient-friendly online consultations across multiple countries.",
-      primaryCta: { label: "Book consultation", href: "/book-online" },
+      primaryCta: { label: "Explore consultation routes", href: "/general-consultation-ie" },
       secondaryCta: { label: "Meet doctors", href: "/ireland-team" },
     },
     intro: {
@@ -68,7 +68,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     hero: {
       title: "Careers",
       description: "Explore opportunities to support patient-focused digital healthcare delivery.",
-      primaryCta: { label: "Contact clinic", href: "/book-online" },
+      primaryCta: { label: "General enquiries", href: "/about" },
     },
     intro: {
       title: "Join the team",
@@ -95,7 +95,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     hero: {
       title: "Gift Card",
       description: "Share access to convenient online healthcare consultations.",
-      primaryCta: { label: "Book consultation", href: "/book-online" },
+      primaryCta: { label: "View gift card details", href: "/gift-card" },
     },
     intro: {
       title: "How gift cards work",
@@ -304,7 +304,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     hero: {
       title: "Partner clinics",
       description: "Explore clinic partnerships supporting local patient care.",
-      primaryCta: { label: "Contact clinic", href: "/book-online" },
+      primaryCta: { label: "Partner enquiry", href: "/book-online" },
     },
     intro: {
       title: "Clinic network",
@@ -337,7 +337,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     hero: {
       title: "Corporate plans",
       description: "Healthcare consultation support for organizations and teams.",
-      primaryCta: { label: "Contact clinic", href: "/book-online" },
+      primaryCta: { label: "Business enquiry", href: "/book-online" },
     },
     intro: {
       title: "Business healthcare support",
@@ -374,7 +374,7 @@ const marketingDataByRoute: Record<string, MarketingPageData> = {
     hero: {
       title: "Frequently Asked Questions",
       description: "Find quick answers about consultations, booking, and clinic support.",
-      primaryCta: { label: "Book consultation", href: "/book-online" },
+      primaryCta: { label: "Browse consultation options", href: "/general-consultation-ie" },
     },
     faqs: {
       title: "Common patient questions",

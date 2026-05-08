@@ -22,6 +22,8 @@ export default async function Page() {
       }}
       listing={data.specialistListing}
       showReviewScore={false}
+      showFinalCta={false}
+      guidanceVariant="none"
       howItWorks={{
         title: "Book in three steps",
         subtitle: "Simple specialist booking flow",

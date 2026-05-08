@@ -89,7 +89,7 @@ export function HomeHero({ countries }: HomeHeroProps) {
       <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[var(--container-width)] gap-14 px-5 py-12 sm:px-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:px-12">
         {/* LEFT: Text content */}
         <div className="text-white">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 mb-8 ring-1 ring-white/15">
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-[rgba(15,46,37,0.72)] px-4 py-2 backdrop-blur-md">
             <Globe className="size-4 text-[var(--color-brand-accent)]" />
             <span className="text-sm font-medium text-white/90">5 Countries • Online Care</span>
           </div>
@@ -114,34 +114,32 @@ export function HomeHero({ countries }: HomeHeroProps) {
           </p>
 
           {/* Quick stats */}
-          <div className="mt-8 flex flex-wrap gap-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
-                <span className="text-base font-bold text-[var(--color-brand-accent)]">50+</span>
+          <div className="mt-8 inline-flex flex-wrap items-center gap-4">
+            {[
+              { value: "50+", label: "Expert Doctors", icon: "👨‍⚕️" },
+              { value: "5", label: "Countries", icon: "🌍" },
+              { value: "24/7", label: "Available", icon: "⚡" },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="flex items-center gap-3 rounded-full border border-white/20 bg-[rgba(15,46,37,0.72)] px-5 py-2.5 backdrop-blur-md"
+              >
+                <span className="text-lg">{stat.icon}</span>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-base font-bold text-white">{stat.value}</span>
+                  <span className="text-xs font-medium text-white/60">{stat.label}</span>
+                </div>
               </div>
-              <span className="text-sm text-white/70">Expert Doctors</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
-                <span className="text-base font-bold text-[var(--color-brand-accent)]">5</span>
-              </div>
-              <span className="text-sm text-white/70">Countries</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
-                <span className="text-base font-bold text-[var(--color-brand-accent)]">24/7</span>
-              </div>
-              <span className="text-sm text-white/70">Available</span>
-            </div>
+            ))}
           </div>
         </div>
 
         {/* RIGHT: Language + Country selector */}
         <div className="w-full max-w-[520px] justify-self-end">
-          {/* White card container */}
-          <div className="rounded-[var(--radius-card)] bg-white p-6 shadow-[var(--shadow-elevated)] sm:p-8">
-            <p className="mb-4 text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
-              <Globe className="size-5 text-[var(--color-brand-primary)]" />
+          {/* Glassmorphic dark-green card container */}
+          <div className="rounded-[var(--radius-card)] border border-white/20 bg-[rgba(15,46,37,0.72)] p-6 text-white shadow-[0_24px_60px_rgba(4,22,17,0.34)] backdrop-blur-lg sm:p-8">
+            <p className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+              <Globe className="size-5 text-[var(--color-brand-accent)]" />
               Select Your Language
             </p>
 
@@ -149,19 +147,19 @@ export function HomeHero({ countries }: HomeHeroProps) {
               <button
                 type="button"
                 onClick={() => setLangOpen((prev) => !prev)}
-                className="flex min-h-12 w-full items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 text-[var(--color-text-primary)] transition-colors hover:border-[var(--color-border-strong)]"
+                className="flex min-h-12 w-full items-center gap-3 rounded-xl border border-white/20 bg-white/10 px-4 text-white transition-colors hover:border-white/35 hover:bg-white/15"
               >
                 <FlagBadge
                   alpha2={localeToFlagCode[selectedLang] ?? "gb"}
                   title={localeNames[selectedLang] ?? "English"}
                 />
                 <span className="text-base font-semibold">{localeNames[selectedLang] ?? "English"}</span>
-                <span className="text-sm text-[var(--color-text-muted)] uppercase tracking-wider">({selectedLang})</span>
-                <ChevronDown className={`ml-auto size-4 text-[var(--color-text-muted)] transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} />
+                <span className="text-sm uppercase tracking-wider text-white/70">({selectedLang})</span>
+                <ChevronDown className={`ml-auto size-4 text-white/70 transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} />
               </button>
 
               {langOpen ? (
-                <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-20 overflow-hidden rounded-xl border border-[var(--color-border)] bg-white shadow-[var(--shadow-elevated)]">
+                <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-20 overflow-hidden rounded-xl border border-white/20 bg-[rgba(15,46,37,0.92)] shadow-[var(--shadow-elevated)] backdrop-blur-md">
                   {localeCodes.map((locale) => (
                     <button
                       key={locale}
@@ -171,13 +169,13 @@ export function HomeHero({ countries }: HomeHeroProps) {
                         setLocaleCookie(locale);
                         setLangOpen(false);
                       }}
-                      className={`flex w-full items-center gap-3 px-4 py-3 text-left text-[var(--color-text-primary)] transition-colors hover:bg-[var(--color-background-soft)] ${selectedLang === locale ? "bg-[var(--color-background-soft)]" : ""}`}
+                      className={`flex w-full items-center gap-3 px-4 py-3 text-left text-white transition-colors hover:bg-white/10 ${selectedLang === locale ? "bg-white/10" : ""}`}
                     >
                       <FlagBadge alpha2={localeToFlagCode[locale] ?? "gb"} title={localeNames[locale] ?? locale} />
                       <span className="text-sm font-medium">{localeNames[locale] ?? locale}</span>
-                      <span className="text-sm text-[var(--color-text-muted)] uppercase">({locale})</span>
+                      <span className="text-sm uppercase text-white/70">({locale})</span>
                       {selectedLang === locale && (
-                        <span className="ml-auto text-[var(--color-brand-primary)] text-xs font-bold">✓</span>
+                        <span className="ml-auto text-xs font-bold text-[var(--color-brand-accent)]">✓</span>
                       )}
                     </button>
                   ))}
@@ -186,13 +184,13 @@ export function HomeHero({ countries }: HomeHeroProps) {
             </div>
 
             <div className="space-y-3">
-              <p className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wider mb-2">Choose Your Clinic</p>
+              <p className="mb-2 text-sm font-medium uppercase tracking-wider text-white/80">Choose Your Clinic</p>
               {countriesSorted.map((country, index) => (
                 <Link
                   key={country.code}
                   href={country.legacyHomePath}
                   onClick={() => setLocaleCookie(selectedLang)}
-                  className="group flex min-h-14 items-center justify-between gap-3 rounded-xl bg-[var(--color-background-soft)] px-5 text-[var(--color-text-primary)] transition-all duration-200 hover:bg-[var(--color-background-panel)] hover:shadow-[var(--shadow-card)]"
+                  className="group flex min-h-14 items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/10 px-5 text-white transition-all duration-200 hover:border-white/30 hover:bg-white/20"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <span className="flex items-center gap-3">
@@ -205,9 +203,9 @@ export function HomeHero({ countries }: HomeHeroProps) {
                       alt={`${country.name} icon`}
                       width={36}
                       height={36}
-                      className="size-9 rounded-full border border-[var(--color-border)] object-cover transition-transform group-hover:scale-110"
+                      className="size-9 rounded-full border border-white/20 object-cover transition-transform group-hover:scale-110"
                     />
-                    <ChevronDown className="size-4 text-[var(--color-brand-primary)] -rotate-90 opacity-0 transition-all group-hover:opacity-100" />
+                    <ChevronDown className="size-4 -rotate-90 text-[var(--color-brand-accent)] opacity-0 transition-all group-hover:opacity-100" />
                   </div>
                 </Link>
               ))}
