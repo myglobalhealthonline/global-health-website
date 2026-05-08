@@ -12,7 +12,8 @@
         "db:migrate": "prisma migrate dev",
         "db:deploy": "prisma migrate deploy",
         "db:seed": "tsx prisma/seed.ts",
-        "db:studio": "prisma studio"
+        "db:studio": "prisma studio",
+        "verify:wix-db": "tsx prisma/verify-live-wix-db.ts"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.1043.0",
