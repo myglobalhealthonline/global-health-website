@@ -1,16 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
-import { Stethoscope } from "lucide-react";
-import { Container } from "@/components/layout/Container";
 import { CTAFooter } from "@/components/layout/CTAFooter";
 import FooterColumn from "@/components/ui/footer-column";
 import type { SiteNavigationData } from "@/data/navigation";
-
-function isRealLogo(src?: string): boolean {
-  if (!src) return false;
-  if (src.includes("temp") || src.includes("placeholder")) return false;
-  return true;
-}
 
 export function SiteFooter({
   siteName,

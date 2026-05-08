@@ -1,4 +1,4 @@
-﻿import { ServiceCard } from "@/components/cards/ServiceCard";
+import { ServiceCard } from "@/components/cards/ServiceCard";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 
@@ -19,10 +19,10 @@ type SpecialtiesGridProps = {
 
 export function SpecialtiesGrid({ title = "Specialist consultations", items }: SpecialtiesGridProps) {
   return (
-    <Section className="bg-[var(--color-background-soft)]">
+    <Section variant="soft">
       <Container>
-        <h2 className="gh-h2 text-[var(--color-text-primary)]">{title}</h2>
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:gap-6">
+        <h2 className="gh-h2 text-[var(--color-text-primary)] mb-10">{title}</h2>
+        <div className="grid gap-6 sm:grid-cols-2 lg:gap-8">
           {items.map((item) => (
             <ServiceCard key={item.href} {...item} ctaLabel="See specialty" />
           ))}

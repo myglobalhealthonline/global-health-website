@@ -32,12 +32,12 @@ export function FeaturedDoctor({ doctor }: {
           <div className="overflow-hidden rounded-[var(--radius-card)] bg-white shadow-[var(--shadow-elevated)] border border-[var(--color-border)]">
             <div className="flex flex-col sm:flex-row">
               {/* Photo */}
-              <div className="relative w-full sm:w-56 shrink-0 overflow-hidden">
+              <div className="relative w-full sm:w-60 shrink-0 overflow-hidden">
                 <Image
                   src={src}
                   alt={doctor.name}
-                  width={224}
-                  height={280}
+                  width={240}
+                  height={300}
                   unoptimized={unoptimized}
                   className="h-64 sm:h-full w-full object-cover object-top"
                 />
@@ -46,7 +46,7 @@ export function FeaturedDoctor({ doctor }: {
               {/* Info */}
               <div className="flex flex-1 flex-col p-6 sm:p-8">
                 <div>
-                  <p className="text-sm font-bold text-[var(--color-brand-primary)] uppercase tracking-wider">
+                  <p className="text-xs font-bold text-[var(--color-brand-primary)] uppercase tracking-wider">
                     {doctor.title}
                   </p>
                   <h2 className="mt-1 text-2xl font-extrabold text-[var(--color-text-primary)]">

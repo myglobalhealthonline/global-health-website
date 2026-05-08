@@ -10,7 +10,6 @@ import {
   Undo,
   Redo,
   Eraser,
-  Type,
   ChevronDown,
 } from "lucide-react";
 

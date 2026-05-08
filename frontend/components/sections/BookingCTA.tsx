@@ -2,7 +2,6 @@ import { Check, ArrowRight, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
-import { Section } from "@/components/layout/Section";
 
 type BookingCTAProps = {
   title: string;
@@ -63,92 +62,94 @@ export function BookingCTA({
   const isCompact = effectiveDensity !== "full";
   const isMinimal = effectiveDensity === "minimal";
 
-  return (
-    <Section className={isCompact ? (isMinimal ? "bg-white py-4" : "bg-white py-8") : "bg-[var(--color-background-soft)] pb-[var(--section-padding-y-sm)]"}>
-      <Container>
-        <div
-          className={`relative overflow-hidden rounded-[var(--radius-card)] ${
-            isMinimal
-              ? "border border-[var(--color-border)] bg-white p-4 text-[var(--color-text-primary)] shadow-sm sm:p-5"
-              : isCompact
-                ? "border border-[var(--color-border)] bg-white p-5 text-[var(--color-text-primary)] shadow-[var(--shadow-card)] sm:p-6"
-                : "bg-gradient-to-br from-[var(--color-brand-primary)] to-[var(--color-brand-primary-hover)] p-8 text-white shadow-[var(--shadow-elevated)] sm:p-10 lg:p-14"
-          }`}
-        >
-          {/* Background image overlay */}
-          {!isCompact ? (
-            <div className="absolute inset-0 opacity-10">
-              <Image src="/images/hero/homehero.png" alt="" fill className="object-cover" />
-            </div>
-          ) : null}
-          
-          {/* Animated shine effect */}
-          {!isCompact ? <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -inset-[100%] animate-[spin_8s_linear_infinite] opacity-10">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-gradient-to-r from-transparent via-white to-transparent rotate-45" />
-            </div>
-          </div> : null}
-          
-          {/* Decorative circles */}
-          {!isCompact ? (
-            <>
-              <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-white/5 -translate-y-1/2 translate-x-1/4" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white/5 translate-y-1/2 -translate-x-1/4" />
-            </>
-          ) : null}
-          
-          <div
-            className={`relative flex flex-col gap-6 ${
-              asideImage || isCompact ? "lg:flex-row lg:items-center lg:justify-between lg:text-left" : "items-center text-center"
-            }`}
-          >
-            <div className={`max-w-2xl ${asideImage ? "lg:flex-1" : ""}`}>
-              <div
-                className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-4 text-sm font-medium ${
-                  isCompact
-                    ? "bg-[var(--color-brand-primary)]/10 text-[var(--color-brand-primary)]"
-                    : "bg-white/15 backdrop-blur-sm border border-white/20 text-white"
-                }`}
-              >
-                <Sparkles className={`size-4 ${isCompact ? "text-[var(--color-brand-primary)]" : "text-[var(--color-brand-accent)]"}`} />
-                <span>{eyebrow ?? (variant === "pricing" ? "Pricing decision" : variant === "doctor" ? "Clinician booking" : variant === "service" ? "Service fit" : "Booking support")}</span>
+  if (isCompact) {
+    return (
+      <section className={isMinimal ? "bg-white py-8" : "bg-white py-12 sm:py-16"}>
+        <Container>
+          <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8">
+            <div className="absolute left-0 top-0 h-full w-1 bg-[var(--color-brand-primary)]" />
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div className="max-w-2xl">
+                <div className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)]/10 px-4 py-1.5 mb-3 text-sm font-medium text-[var(--color-brand-primary)]">
+                  <Sparkles className="size-4" />
+                  <span>{eyebrow ?? (variant === "pricing" ? "Pricing decision" : variant === "doctor" ? "Clinician booking" : variant === "service" ? "Service fit" : "Booking support")}</span>
+                </div>
+                <h2 className="gh-h2 text-[var(--color-text-primary)]">{title}</h2>
+                <p className="mt-3 max-w-2xl text-base text-[var(--color-text-muted)] leading-relaxed">
+                  {description}
+                </p>
+                {renderProofPoints ? (
+                  <ul className="mt-4 flex flex-wrap items-center gap-2">
+                    {proofPoints.map((point) => (
+                      <li
+                        key={point}
+                        className="inline-flex items-center gap-2 rounded-full bg-[var(--color-background-soft)] px-3 py-1.5 text-sm font-medium text-[var(--color-text-muted)]"
+                      >
+                        <Check className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+                <div className={isMinimal ? "mt-3" : "mt-5"}>
+                  <Link href={ctaHref} className="gh-btn gh-btn-primary">
+                    {ctaLabel}
+                    <ArrowRight className="size-4" />
+                  </Link>
+                </div>
               </div>
-              
-              <h2 className={`gh-h2 ${isCompact ? "text-[var(--color-text-primary)]" : "text-white"}`}>{title}</h2>
-              <p
-                className={`mt-3 max-w-2xl leading-relaxed ${
-                  isCompact ? "text-base text-[var(--color-text-muted)]" : "mx-auto text-lg text-white/95"
-                }`}
-              >
+
+              {asideImage ? (
+                <div className="relative mx-auto w-full max-w-[280px] shrink-0 overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-soft)] sm:mx-0">
+                  <Image
+                    src={asideImage.src}
+                    alt={asideImage.alt}
+                    width={560}
+                    height={420}
+                    unoptimized={asideUnoptimized}
+                    className="h-auto w-full object-cover"
+                  />
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </Container>
+      </section>
+    );
+  }
+
+  // Full variant
+  return (
+    <section className="bg-[var(--color-brand-primary)] py-16 sm:py-20 lg:py-24">
+      <Container>
+        <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-background-dark)] p-8 text-white shadow-[var(--shadow-elevated)] sm:p-10 lg:p-14">
+          <div className="relative flex flex-col gap-8 items-center text-center">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 mb-4 text-sm font-medium text-[var(--color-brand-accent)] ring-1 ring-white/15">
+                <Sparkles className="size-4" />
+                <span>{eyebrow ?? "Booking support"}</span>
+              </div>
+              <h2 className="gh-h2 text-white">{title}</h2>
+              <p className="mt-3 max-w-2xl mx-auto text-lg text-white/85 leading-relaxed">
                 {description}
               </p>
-              
               {renderProofPoints ? (
-                <ul className={`mt-5 flex flex-wrap items-center gap-2 ${isCompact ? "justify-start" : "justify-center"}`}>
+                <ul className="mt-5 flex flex-wrap items-center justify-center gap-2">
                   {proofPoints.map((point) => (
                     <li
                       key={point}
-                      className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium ${
-                        isCompact
-                          ? "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
-                          : "border border-white/20 bg-white/15 text-white backdrop-blur-sm"
-                      }`}
+                      className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm font-medium text-white/90"
                     >
-                      <Check className={`size-4 ${isCompact ? "text-[var(--color-brand-primary)]" : "text-[var(--color-brand-accent)]"}`} aria-hidden />
+                      <Check className="size-4 text-[var(--color-brand-accent)]" aria-hidden />
                       {point}
                     </li>
                   ))}
                 </ul>
               ) : null}
-
-              <div className={isMinimal ? "mt-3" : isCompact ? "mt-5" : "mt-8"}>
+              <div className="mt-8">
                 <Link
                   href={ctaHref}
-                  className={
-                    isCompact
-                      ? "gh-btn gh-btn-primary"
-                      : "gh-btn bg-white text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-accent)] shadow-xl"
-                  }
+                  className="gh-btn bg-white text-[var(--color-brand-primary)] hover:bg-[var(--color-brand-accent)] shadow-xl"
                 >
                   {ctaLabel}
                   <ArrowRight className="size-4" />
@@ -157,7 +158,7 @@ export function BookingCTA({
             </div>
 
             {asideImage ? (
-              <div className="relative mx-auto w-full max-w-[320px] shrink-0 overflow-hidden rounded-2xl border border-white/20 bg-white/10 sm:mx-0 lg:max-w-[280px]">
+              <div className="relative mx-auto w-full max-w-[320px] shrink-0 overflow-hidden rounded-2xl border border-white/20 bg-white/10">
                 <Image
                   src={asideImage.src}
                   alt={asideImage.alt}
@@ -171,6 +172,6 @@ export function BookingCTA({
           </div>
         </div>
       </Container>
-    </Section>
+    </section>
   );
 }

@@ -48,7 +48,7 @@ function setLocaleCookie(locale: string) {
 function FlagBadge({ alpha2, title }: { alpha2: string; title: string }) {
   return (
     <span
-      className="relative inline-flex h-5 min-w-[28px] max-w-[28px] shrink-0 overflow-hidden rounded-sm shadow-md ring-1 ring-black/15"
+      className="relative inline-flex h-5 min-w-[28px] max-w-[28px] shrink-0 overflow-hidden rounded-sm shadow-sm ring-1 ring-black/10"
       title={title}
       aria-hidden
     >
@@ -73,7 +73,7 @@ export function HomeHero({ countries }: HomeHeroProps) {
 
   return (
     <section className="relative isolate min-h-screen overflow-hidden">
-      {/* Background with parallax feel */}
+      {/* Background */}
       <Image
         src="/images/hero/homehero.png"
         alt=""
@@ -81,19 +81,13 @@ export function HomeHero({ countries }: HomeHeroProps) {
         priority
         className="object-cover scale-105"
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-[rgba(27,77,62,0.82)] via-[rgba(27,77,62,0.72)] to-[rgba(20,59,48,0.88)]" />
+      <div className="absolute inset-0 bg-[rgba(15,46,37,0.78)]" />
 
-      {/* Animated floating orbs for visual interest */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-20 -right-20 w-96 h-96 rounded-full bg-[#c8e6a0]/8 blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 -left-20 w-80 h-80 rounded-full bg-white/5 blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-      </div>
-
-      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[var(--container-width)] gap-14 px-4 py-12 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:px-8">
+      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[var(--container-width)] gap-14 px-5 py-12 sm:px-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:px-12">
         {/* LEFT: Text content */}
-        <div className="text-white motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-700">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 mb-8">
-            <Globe className="size-4 text-[#c8e6a0]" />
+        <div className="text-white">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 mb-8 ring-1 ring-white/15">
+            <Globe className="size-4 text-[var(--color-brand-accent)]" />
             <span className="text-sm font-medium text-white/90">5 Countries • Online Care</span>
           </div>
 
@@ -102,16 +96,16 @@ export function HomeHero({ countries }: HomeHeroProps) {
             alt="Global Health"
             width={280}
             height={120}
-            className="mb-8 h-16 w-auto brightness-0 invert"
+            className="mb-8 h-14 w-auto brightness-0 invert sm:h-16"
           />
 
-          <h1 className="text-4xl font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-5xl lg:text-[4rem]">
+          <h1 className="text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] sm:text-5xl lg:text-[3.5rem]">
             Medical Consultations
             <br />
-            <span className="text-[#c8e6a0]">Wherever You Are</span>
+            <span className="text-[var(--color-brand-accent)]">Wherever You Are</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-xl leading-relaxed text-white/80">
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/85 sm:text-xl">
             Choose your country and language to enter your local clinic. 
             Expert doctors, online prescriptions, and health tests — all from home.
           </p>
@@ -119,20 +113,20 @@ export function HomeHero({ countries }: HomeHeroProps) {
           {/* Quick stats */}
           <div className="mt-8 flex flex-wrap gap-6">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
-                <span className="text-lg font-bold text-[#c8e6a0]">50+</span>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
+                <span className="text-base font-bold text-[var(--color-brand-accent)]">50+</span>
               </div>
               <span className="text-sm text-white/70">Expert Doctors</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
-                <span className="text-lg font-bold text-[#c8e6a0]">5</span>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
+                <span className="text-base font-bold text-[var(--color-brand-accent)]">5</span>
               </div>
               <span className="text-sm text-white/70">Countries</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
-                <span className="text-lg font-bold text-[#c8e6a0]">24/7</span>
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/15">
+                <span className="text-base font-bold text-[var(--color-brand-accent)]">24/7</span>
               </div>
               <span className="text-sm text-white/70">Available</span>
             </div>
@@ -140,11 +134,11 @@ export function HomeHero({ countries }: HomeHeroProps) {
         </div>
 
         {/* RIGHT: Language + Country selector */}
-        <div className="w-full max-w-[520px] justify-self-end motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-4 motion-safe:duration-700 motion-safe:delay-150">
-          {/* Glass card container */}
-          <div className="rounded-[var(--radius-card)] border border-white/20 bg-white/10 backdrop-blur-xl p-6 sm:p-8 shadow-2xl">
-            <p className="mb-4 text-xl font-semibold text-white flex items-center gap-2">
-              <Globe className="size-5 text-[#c8e6a0]" />
+        <div className="w-full max-w-[520px] justify-self-end">
+          {/* White card container */}
+          <div className="rounded-[var(--radius-card)] bg-white p-6 shadow-[var(--shadow-elevated)] sm:p-8">
+            <p className="mb-4 text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2">
+              <Globe className="size-5 text-[var(--color-brand-primary)]" />
               Select Your Language
             </p>
 
@@ -152,19 +146,19 @@ export function HomeHero({ countries }: HomeHeroProps) {
               <button
                 type="button"
                 onClick={() => setLangOpen((prev) => !prev)}
-                className="flex min-h-12 w-full items-center gap-3 rounded-xl border border-white/30 bg-[rgba(13,66,52,0.6)] px-4 text-white backdrop-blur-sm transition-all hover:bg-[rgba(13,66,52,0.8)] hover:border-white/50"
+                className="flex min-h-12 w-full items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 text-[var(--color-text-primary)] transition-colors hover:border-[var(--color-border-strong)]"
               >
                 <FlagBadge
                   alpha2={localeToFlagCode[selectedLang] ?? "gb"}
                   title={localeNames[selectedLang] ?? "English"}
                 />
                 <span className="text-base font-semibold">{localeNames[selectedLang] ?? "English"}</span>
-                <span className="text-sm text-white/60 uppercase tracking-wider">({selectedLang})</span>
-                <ChevronDown className={`ml-auto size-4 transition-transform duration-300 ${langOpen ? "rotate-180" : ""}`} />
+                <span className="text-sm text-[var(--color-text-muted)] uppercase tracking-wider">({selectedLang})</span>
+                <ChevronDown className={`ml-auto size-4 text-[var(--color-text-muted)] transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} />
               </button>
 
               {langOpen ? (
-                <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-20 overflow-hidden rounded-xl border border-white/30 bg-[rgba(13,66,52,0.95)] shadow-2xl backdrop-blur animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-20 overflow-hidden rounded-xl border border-[var(--color-border)] bg-white shadow-[var(--shadow-elevated)]">
                   {localeCodes.map((locale) => (
                     <button
                       key={locale}
@@ -174,13 +168,13 @@ export function HomeHero({ countries }: HomeHeroProps) {
                         setLocaleCookie(locale);
                         setLangOpen(false);
                       }}
-                      className={`flex w-full items-center gap-3 px-4 py-3 text-left text-white transition-colors hover:bg-white/10 ${selectedLang === locale ? "bg-white/10" : ""}`}
+                      className={`flex w-full items-center gap-3 px-4 py-3 text-left text-[var(--color-text-primary)] transition-colors hover:bg-[var(--color-background-soft)] ${selectedLang === locale ? "bg-[var(--color-background-soft)]" : ""}`}
                     >
                       <FlagBadge alpha2={localeToFlagCode[locale] ?? "gb"} title={localeNames[locale] ?? locale} />
                       <span className="text-sm font-medium">{localeNames[locale] ?? locale}</span>
-                      <span className="text-sm text-white/60 uppercase">({locale})</span>
+                      <span className="text-sm text-[var(--color-text-muted)] uppercase">({locale})</span>
                       {selectedLang === locale && (
-                        <span className="ml-auto text-[#c8e6a0] text-xs font-bold">✓</span>
+                        <span className="ml-auto text-[var(--color-brand-primary)] text-xs font-bold">✓</span>
                       )}
                     </button>
                   ))}
@@ -189,18 +183,18 @@ export function HomeHero({ countries }: HomeHeroProps) {
             </div>
 
             <div className="space-y-3">
-              <p className="text-sm font-medium text-white/60 uppercase tracking-wider mb-2">Choose Your Clinic</p>
+              <p className="text-sm font-medium text-[var(--color-text-muted)] uppercase tracking-wider mb-2">Choose Your Clinic</p>
               {countriesSorted.map((country, index) => (
                 <Link
                   key={country.code}
                   href={country.legacyHomePath}
                   onClick={() => setLocaleCookie(selectedLang)}
-                  className="group flex min-h-14 items-center justify-between gap-3 rounded-xl bg-white px-5 text-[var(--color-brand-primary)] shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:bg-[#f6f9f6]"
+                  className="group flex min-h-14 items-center justify-between gap-3 rounded-xl bg-[var(--color-background-soft)] px-5 text-[var(--color-text-primary)] transition-all duration-200 hover:bg-[var(--color-background-panel)] hover:shadow-[var(--shadow-card)]"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <span className="flex items-center gap-3">
                     <FlagBadge alpha2={countryToFlagCode[country.code]} title={country.name} />
-                    <span className="text-lg font-semibold leading-tight">Medical Clinic {country.name}</span>
+                    <span className="text-base font-semibold leading-tight">Medical Clinic {country.name}</span>
                   </span>
                   <div className="flex items-center gap-2">
                     <Image

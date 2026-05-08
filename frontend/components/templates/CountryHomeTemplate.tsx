@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Clock, Star, ChevronRight, Play } from "lucide-react";
+import { Clock, Star, ChevronRight, Play } from "lucide-react";
 import { BookingCTA } from "@/components/sections/BookingCTA";
 import { HowItWorks } from "@/components/sections/HowItWorks";
 import { Container } from "@/components/layout/Container";

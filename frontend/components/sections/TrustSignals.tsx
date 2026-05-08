@@ -1,7 +1,5 @@
-import Image from "next/image";
 import { ShieldCheck, Star, Timer, Users } from "lucide-react";
 import { Container } from "@/components/layout/Container";
-import { Section } from "@/components/layout/Section";
 
 type TrustSignal =
   | string
@@ -21,26 +19,17 @@ const icons = [Star, ShieldCheck, Timer, Users];
 
 export function TrustSignals({ title = "Why patients choose us", subtitle, items }: TrustSignalsProps) {
   return (
-    <Section className="bg-[var(--color-brand-primary)] relative overflow-hidden">
-      {/* Subtle pattern overlay */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-      }} />
-      
-      {/* Decorative circles */}
-      <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-white/[0.03] -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-white/[0.03] translate-x-1/3 translate-y-1/3" />
-      
-      <Container className="relative">
-        <div className="mx-auto max-w-3xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-white border border-white/20">
+    <section className="bg-[var(--color-brand-primary)] py-16 sm:py-20 lg:py-24">
+      <Container>
+        <div className="mx-auto max-w-3xl text-center mb-12">
+          <span className="gh-heading-eyebrow text-[var(--color-brand-accent)]">
             Why Us
           </span>
-          <h2 className="gh-h2 mt-4 text-white">{title}</h2>
-          {subtitle ? <p className="text-lg mt-3 text-white/95 max-w-2xl mx-auto leading-relaxed">{subtitle}</p> : null}
+          <h2 className="gh-h2 mt-3 text-white">{title}</h2>
+          {subtitle ? <p className="text-lg mt-3 text-white/85 max-w-2xl mx-auto leading-relaxed">{subtitle}</p> : null}
         </div>
         
-        <ul className={`mx-auto mt-12 grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:gap-6 ${items.length >= 5 ? 'lg:grid-cols-3' : items.length === 4 ? 'lg:grid-cols-4' : items.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'}`}>
+        <ul className={`mx-auto max-w-6xl grid grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-8 ${items.length >= 5 ? 'lg:grid-cols-3' : items.length === 4 ? 'lg:grid-cols-4' : items.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'}`}>
           {items.map((item, index) => {
             const normalized = typeof item === "string" ? { title: item } : item;
             const Icon = icons[index % icons.length];
@@ -48,43 +37,26 @@ export function TrustSignals({ title = "Why patients choose us", subtitle, items
             return (
               <li
                 key={`${normalized.title}-${index}`}
-                className="group relative rounded-[var(--radius-card)] border border-white/15 bg-white/10 backdrop-blur-sm p-6 transition-all duration-300 hover:bg-white/15 hover:border-white/25 hover:-translate-y-1 overflow-hidden"
+                className="flex flex-col items-start"
               >
-                {/* Top accent line */}
-                <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[var(--color-brand-accent)]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-brand-accent)]/20 text-[var(--color-brand-accent)]">
+                  <Icon className="size-5" aria-hidden />
+                </span>
                 
-                <div className="relative">
-                  {normalized.image ? (
-                    <div className="relative mb-4 h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white/10 ring-1 ring-white/15">
-                      <Image
-                        src={normalized.image.src}
-                        alt={normalized.image.alt}
-                        fill
-                        sizes="56px"
-                        className="object-contain p-1"
-                      />
-                    </div>
-                  ) : (
-                    <span className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-[var(--color-brand-accent)]/25 text-[var(--color-brand-accent)] ring-1 ring-[var(--color-brand-accent)]/30 transition-all duration-300 group-hover:scale-110 group-hover:bg-[var(--color-brand-accent)]/35">
-                      <Icon className="size-5" aria-hidden />
-                    </span>
-                  )}
-                  
-                  <p className="gh-h3 mt-4 text-white">
-                    {normalized.title}
+                <p className="mt-4 text-lg font-bold text-white">
+                  {normalized.title}
+                </p>
+                
+                {normalized.description ? (
+                  <p className="text-sm mt-2 text-white/80 leading-relaxed">
+                    {normalized.description}
                   </p>
-                  
-                  {normalized.description ? (
-                    <p className="text-sm mt-2 text-white/90 leading-relaxed">
-                      {normalized.description}
-                    </p>
-                  ) : null}
-                </div>
+                ) : null}
               </li>
             );
           })}
         </ul>
       </Container>
-    </Section>
+    </section>
   );
 }

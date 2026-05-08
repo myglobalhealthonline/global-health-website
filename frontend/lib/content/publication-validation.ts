@@ -1,4 +1,4 @@
-import type { AdminDoctorDto, AdminServiceDto, AdminBlogPostDto, AdminContentPageDto } from "@/lib/admin/admin-api";
+import type { AdminDoctorDto, AdminServiceDto } from "@/lib/admin/admin-api";
 import type { PublicDoctorRecord } from "@/lib/content/get-public-doctors";
 import type { PublicServiceRecord } from "@/lib/content/get-public-services";
 

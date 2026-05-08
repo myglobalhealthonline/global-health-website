@@ -3,8 +3,7 @@
 import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
-import { MapPin, UserRound, Mail, ArrowRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { MapPin, UserRound, Mail } from "lucide-react";
 
 const stepIcons = [MapPin, UserRound, Mail];
 const stepImages = [
@@ -30,138 +29,62 @@ type HowItWorksProps = {
 
 export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWorksProps) {
   const displaySteps = steps.slice(0, 3);
-  const [activeStep, setActiveStep] = useState(0);
-  const [imageLoadError, setImageLoadError] = useState(false);
-  const stepRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const activeStepRef = useRef(0);
-  const imageSrc = imageLoadError
-    ? "/images/hero/homehero.png"
-    : stepImages[Math.min(activeStep, stepImages.length - 1)] ?? stepImages[0];
-
-  useEffect(() => {
-    activeStepRef.current = activeStep;
-  }, [activeStep]);
-
-  useEffect(() => {
-    setImageLoadError(false);
-  }, [activeStep]);
-
-  useEffect(() => {
-    const validSteps = stepRefs.current.filter((el): el is HTMLDivElement => Boolean(el));
-    if (validSteps.length === 0) return;
-
-    let rafId = 0;
-    const measure = () => {
-      const viewportCenter = window.innerHeight * 0.45;
-      let nearestIndex = activeStepRef.current;
-      let nearestDistance = Number.POSITIVE_INFINITY;
-
-      for (let index = 0; index < validSteps.length; index += 1) {
-        const stepEl = validSteps[index];
-        const rect = stepEl.getBoundingClientRect();
-        const stepCenter = rect.top + rect.height / 2;
-        const distance = Math.abs(stepCenter - viewportCenter);
-        if (distance < nearestDistance) {
-          nearestDistance = distance;
-          nearestIndex = index;
-        }
-      }
-
-      if (nearestIndex !== activeStepRef.current) {
-        setActiveStep(nearestIndex);
-      }
-      rafId = 0;
-    };
-
-    const requestMeasure = () => {
-      if (rafId) return;
-      rafId = window.requestAnimationFrame(measure);
-    };
-
-    requestMeasure();
-    window.addEventListener("scroll", requestMeasure, { passive: true });
-    window.addEventListener("resize", requestMeasure);
-
-    return () => {
-      window.removeEventListener("scroll", requestMeasure);
-      window.removeEventListener("resize", requestMeasure);
-      if (rafId) {
-        window.cancelAnimationFrame(rafId);
-      }
-    };
-  }, []);
 
   return (
-    <Section className="bg-white relative overflow-hidden">
+    <Section variant="soft">
       <Container>
-        <div className="mx-auto max-w-3xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-primary)]">
+        <div className="mx-auto max-w-3xl text-center mb-14">
+          <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
             {title}
           </span>
-          <h2 className="gh-h2 mt-4 text-[var(--color-text-primary)]">{subtitle}</h2>
+          <h2 className="gh-h2 mt-3 text-[var(--color-text-primary)]">{subtitle}</h2>
         </div>
 
-        <div className="mx-auto mt-14 grid max-w-5xl items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="mx-auto max-w-5xl grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-center">
           {/* LEFT: Illustration */}
-          <div className="relative mx-auto max-w-md lg:max-w-none">
-            <div className="relative">
-              <div className="absolute -bottom-4 -left-4 h-[92%] w-[92%] rounded-[2rem] bg-[var(--color-brand-accent)]/60" />
-              
-              <div className="relative overflow-hidden rounded-[2rem] bg-[var(--color-background-soft)] shadow-2xl ring-1 ring-black/5">
-                <Image
-                  src={imageSrc}
-                  alt="Simple scheduling flow illustration"
-                  width={1200}
-                  height={900}
-                  className="h-auto w-full object-contain"
-                  unoptimized
-                  onError={() => setImageLoadError(true)}
-                />
-                <div className="absolute bottom-4 left-4 rounded-xl bg-white/95 backdrop-blur-sm px-4 py-2 shadow-lg">
-                  <p className="text-sm font-bold text-[var(--color-brand-primary)]">Step {activeStep + 1} of 3</p>
-                </div>
-              </div>
+          <div className="relative mx-auto max-w-md lg:max-w-none order-2 lg:order-1">
+            <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-white shadow-[var(--shadow-elevated)] ring-1 ring-[var(--color-border)]">
+              <Image
+                src={stepImages[0]}
+                alt="Simple scheduling flow illustration"
+                width={1200}
+                height={900}
+                className="h-auto w-full object-contain"
+                unoptimized
+              />
             </div>
           </div>
 
           {/* RIGHT: Steps */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-8 order-1 lg:order-2">
             {displaySteps.map((step, index) => {
               const normalized =
                 typeof step === "string"
                   ? { title: `Step ${index + 1}`, description: step }
                   : step;
-              
+
               const IconComponent = stepIcons[index] || MapPin;
-              const isActive = activeStep === index;
 
               return (
                 <div
                   key={`${normalized.title}-${index}`}
-                  ref={(element) => {
-                    stepRefs.current[index] = element;
-                  }}
-                  data-step-index={index}
-                  className={`group relative flex gap-5 p-4 rounded-2xl transition-all duration-300 cursor-pointer ${isActive ? "bg-[var(--color-background-soft)] shadow-lg ring-1 ring-[var(--color-brand-primary)]/10" : "hover:bg-[var(--color-background-soft)]/50"}`}
-                  onMouseEnter={() => setActiveStep(index)}
+                  className="group relative flex gap-5"
                 >
-                  {index < displaySteps.length - 1 && (
-                    <div className="absolute left-[2.25rem] top-[4.5rem] h-[calc(100%-2rem)] w-px bg-gradient-to-b from-[var(--color-brand-primary)]/20 to-transparent" />
-                  )}
-                  
-                  <div className="relative shrink-0">
-                    <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-brand-accent)]/40 border border-[var(--color-brand-primary)]/15 transition-transform duration-300 group-hover:scale-110`}>
-                      <IconComponent className="h-5 w-5 text-[var(--color-brand-primary)]" />
+                  <div className="relative shrink-0 flex flex-col items-center">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-brand-primary)] text-white shadow-sm">
+                      <IconComponent className="h-5 w-5" />
                     </div>
-                    <div className="absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[var(--color-brand-primary)] text-white text-xs font-bold shadow-md">
-                      {index + 1}
-                    </div>
+                    {index < displaySteps.length - 1 && (
+                      <div className="mt-3 h-full w-px bg-[var(--color-border)]" />
+                    )}
                   </div>
-                  
-                  <div className="flex-1 pt-1">
-                    <h3 className="text-lg font-bold text-[var(--color-text-primary)] flex items-center gap-2">
+
+                  <div className="flex-1 pb-8">
+                    <span className="text-xs font-bold uppercase tracking-[0.15em] text-[var(--color-brand-primary)]">
+                      Step {index + 1}
+                    </span>
+                    <h3 className="mt-1 text-lg font-bold text-[var(--color-text-primary)]">
                       {normalized.title}
-                      <ArrowRight className={`size-4 transition-all duration-300 ${isActive ? "opacity-100 translate-x-0 text-[var(--color-brand-primary)]" : "opacity-0 -translate-x-2"}`} />
                     </h3>
                     <p className="mt-1.5 text-sm leading-relaxed text-[var(--color-text-muted)]">
                       {normalized.description}
@@ -169,10 +92,9 @@ export function HowItWorks({ title = "How it works", subtitle, steps }: HowItWor
                     {normalized.ctaLabel && normalized.ctaHref && (
                       <a
                         href={normalized.ctaHref}
-                        className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-brand-primary)] hover:underline"
+                        className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-brand-primary)] hover:underline"
                       >
                         {normalized.ctaLabel}
-                        <ArrowRight className="size-3.5" />
                       </a>
                     )}
                   </div>

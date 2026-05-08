@@ -678,7 +678,7 @@ function mapPublicDoctorToCard(
   countryCode: CountryCode,
   paths: CountryPaths,
 ): DoctorProfileData {
-  const href = `${d.teamPath.replace(/\/$/, "")}/${d.slug}`;
+  const href = `${paths.team.replace(/\/$/, "")}/${d.slug}`;
   return {
     name: d.fullName,
     title: d.title,
