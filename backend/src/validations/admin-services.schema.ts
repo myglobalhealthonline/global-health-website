@@ -139,7 +139,7 @@ const adminServiceBodyShape = {
   summary: nullableTrimmedString(4000),
   heroTitle: nullableTrimmedString(200),
   heroDescription: nullableTrimmedString(2000),
-  detailBody: nullableTrimmedString(20000),
+  detailBody: nullableTrimmedString(100000),
   ctaLabel: nullableTrimmedString(120),
   legacyPath: legacyPathFieldSchema.optional(),
   sortOrder: z.coerce.number().int().min(0).max(9999).optional(),

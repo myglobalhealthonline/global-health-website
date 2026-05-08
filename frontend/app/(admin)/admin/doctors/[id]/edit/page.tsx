@@ -119,9 +119,6 @@ export default async function AdminEditDoctorPage({ params, searchParams }: Page
         )
       : [];
     const issues = [...validation.issues, ...duplicateIssues];
-    if (issues.length > 0) {
-      body.active = false;
-    }
 
     const result = await patchAdminDoctor(id, body);
     if (!result.ok) {
@@ -130,7 +127,7 @@ export default async function AdminEditDoctorPage({ params, searchParams }: Page
 
     redirect(
       `/admin/doctors/${id}?success=${encodeURIComponent(
-        issues.length > 0 ? "Doctor profile saved as inactive for editorial review" : "Doctor profile updated",
+        issues.length > 0 ? "Doctor profile updated with editorial warnings" : "Doctor profile updated",
       )}`,
     );
   }

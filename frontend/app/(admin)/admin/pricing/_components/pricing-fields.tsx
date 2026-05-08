@@ -1,4 +1,5 @@
 import type { AdminCountryDto, AdminCurrencyDto, AdminPricingPlanDto } from "@/lib/admin/admin-api";
+import { formatPricingPriceInput } from "@/lib/admin/pricing-form-parse";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
@@ -77,15 +78,16 @@ export function PricingFields({ countries, currencies, initial, pinnedCountryId,
 
       <div className="grid gap-4 sm:grid-cols-3">
         <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Price (minor units / cents)</span>
+          <span className="gh-field-label">Price</span>
           <input
-            name="priceCents"
-            type="number"
+            name="price"
+            type="text"
+            inputMode="decimal"
             min={0}
-            step={1}
             className="gh-input min-w-0 font-mono text-sm"
             required
-            defaultValue={initial?.priceCents ?? ""}
+            defaultValue={formatPricingPriceInput(initial?.priceCents)}
+            placeholder="45.00"
           />
         </label>
         <label className="flex flex-col gap-2">
@@ -96,7 +98,7 @@ export function PricingFields({ countries, currencies, initial, pinnedCountryId,
             required
             defaultValue={initial?.currencyCode ?? ""}
           >
-            <option value="">Select…</option>
+            <option value="">Select...</option>
             {currencies.map((cur) => (
               <option key={cur.id} value={cur.code}>
                 {cur.code} ({cur.symbol})
@@ -111,14 +113,14 @@ export function PricingFields({ countries, currencies, initial, pinnedCountryId,
             className="gh-input min-w-0"
             required
             defaultValue={initial?.interval ?? ""}
-            placeholder="month, year, once…"
+            placeholder="month, year, once..."
           />
           <span className="text-xs text-[var(--color-text-muted)]">Stored as free text (see schema).</span>
         </label>
       </div>
 
       <p className="text-xs text-[var(--color-text-muted)]">
-        Feature bullets and service linkage are not on PricingPlan yet — document as follow-up if product needs them.
+        Enter the public plan price in normal currency format such as `45` or `45.00`.
       </p>
 
       <label className="flex cursor-pointer items-center gap-2">

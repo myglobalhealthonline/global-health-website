@@ -14,7 +14,6 @@ type ServiceDetailTemplateProps = {
   bookingHref: string;
   bookingLabel: string;
   imageSrc?: string;
-  editorialNotice?: string | null;
 };
 
 export function ServiceDetailTemplate({
@@ -26,7 +25,6 @@ export function ServiceDetailTemplate({
   bookingHref,
   bookingLabel,
   imageSrc,
-  editorialNotice,
 }: ServiceDetailTemplateProps) {
   const unoptimized = !!imageSrc && (/^https?:\/\//i.test(imageSrc) || imageSrc.startsWith("/api/media/"));
   const duration = keyFacts.find((fact) => /duration/i.test(fact.label))?.value ?? "Confirmed during booking";
@@ -39,77 +37,43 @@ export function ServiceDetailTemplate({
         title={title}
         description={description}
         primaryCta={{ href: bookingHref, label: bookingLabel }}
-        trustBadges={["Eligibility reviewed", "Private intake", "Follow-up explained"]}
         showMedia={false}
       />
       <Section variant="white">
         <Container>
           <article className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1fr_22rem]">
             <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-[var(--shadow-card)] sm:p-8 lg:p-10">
-            {imageSrc ? (
-              <div className="relative mb-8 aspect-[16/8] overflow-hidden rounded-[var(--radius-card)]">
-                <Image src={imageSrc} alt={title} fill className="object-cover" unoptimized={unoptimized} />
-              </div>
-            ) : null}
-            {editorialNotice ? (
-              <div className="mb-8 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-5 py-4 text-sm leading-relaxed text-amber-900">
-                {editorialNotice}
-              </div>
-            ) : null}
-            {keyFacts.length > 0 ? (
-              <dl className="mb-8 grid gap-3 sm:grid-cols-2">
-                {keyFacts.map((fact) => (
-                  <div key={fact.label} className="rounded-full bg-[var(--color-background-soft)] px-4 py-2.5 text-sm">
-                    <dt className="inline font-semibold text-[var(--color-text-primary)]">{fact.label}: </dt>
-                    <dd className="inline text-[var(--color-text-muted)]">{fact.value}</dd>
-                  </div>
-                ))}
-              </dl>
-            ) : null}
-            {bodyHtml ? (
-              <div
-                className="gh-body space-y-4 text-[var(--color-text-muted)] [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-[var(--color-text-primary)] [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-[var(--color-text-primary)] [&_li]:ml-4 [&_li]:list-disc [&_ol_li]:list-decimal"
-                dangerouslySetInnerHTML={{ __html: sanitizeServiceDetailHtml(bodyHtml) }}
-              />
-            ) : (
-              body.map((paragraph) => (
-                <p key={paragraph} className="gh-body text-[var(--color-text-muted)] not-first:mt-4">
-                  {paragraph}
-                </p>
-              ))
-            )}
-            {/* Concise safe fallback rendered only when no rich body content exists yet. */}
-            {!bodyHtml ? (
-              <div className="mt-10 grid gap-4 md:grid-cols-3">
-                <section className="rounded-[var(--radius-card)] bg-[var(--color-background-soft)] p-5">
-                  <h2 className="text-lg font-bold text-[var(--color-text-primary)]">About this service</h2>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-muted)]">
-                    This appointment is for non-emergency concerns that can be safely reviewed online. The
-                    clinician will assess your information and advise on next steps, which may include
-                    treatment, referral, testing, or in-person care.
-                  </p>
-                </section>
+              {imageSrc ? (
+                <div className="relative mb-8 aspect-[16/8] overflow-hidden rounded-[var(--radius-card)]">
+                  <Image src={imageSrc} alt={title} fill className="object-cover" unoptimized={unoptimized} />
+                </div>
+              ) : null}
 
-                <section className="rounded-[var(--radius-card)] bg-[var(--color-background-soft)] p-5">
-                  <h2 className="text-lg font-bold text-[var(--color-text-primary)]">What to prepare</h2>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-muted)]">
-                    Prepare your symptoms, current medications, allergies, relevant documents or photos, and
-                    the outcome you need from the consultation. The more context you provide, the more useful
-                    the review will be.
-                  </p>
-                </section>
+              {keyFacts.length > 0 ? (
+                <dl className="mb-8 grid gap-3 sm:grid-cols-2">
+                  {keyFacts.map((fact) => (
+                    <div key={fact.label} className="rounded-full bg-[var(--color-background-soft)] px-4 py-2.5 text-sm">
+                      <dt className="inline font-semibold text-[var(--color-text-primary)]">{fact.label}: </dt>
+                      <dd className="inline text-[var(--color-text-muted)]">{fact.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : null}
 
-                <section className="rounded-[var(--radius-card)] border border-amber-200 bg-amber-50 p-5">
-                  <h2 className="text-lg font-bold text-amber-900">Urgent symptoms</h2>
-                  <p className="mt-2 text-sm leading-relaxed text-amber-800">
-                    Emergency symptoms — including chest pain, breathing difficulty, severe pain, major
-                    injury, or rapidly worsening conditions — require urgent or in-person emergency care.
-                    Do not wait for an online consultation.
+              {bodyHtml ? (
+                <div
+                  className="gh-body space-y-4 text-[var(--color-text-muted)] [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-[var(--color-text-primary)] [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-[var(--color-text-primary)] [&_li]:ml-4 [&_li]:list-disc [&_ol_li]:list-decimal"
+                  dangerouslySetInnerHTML={{ __html: sanitizeServiceDetailHtml(bodyHtml) }}
+                />
+              ) : (
+                body.map((paragraph) => (
+                  <p key={paragraph} className="gh-body text-[var(--color-text-muted)] not-first:mt-4">
+                    {paragraph}
                   </p>
-                </section>
-              </div>
-            ) : null}
+                ))
+              )}
             </div>
+
             <aside className="h-fit rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-[var(--shadow-card)] lg:sticky lg:top-24">
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
                 Price and duration
@@ -124,9 +88,6 @@ export function ServiceDetailTemplate({
                   <dd className="text-2xl font-extrabold text-[var(--color-text-primary)]">{price}</dd>
                 </div>
               </dl>
-              <p className="mt-5 text-sm leading-relaxed text-[var(--color-text-muted)]">
-                Final suitability is checked during intake. If symptoms suggest urgent risk, use emergency or local in-person care.
-              </p>
               <Link href={bookingHref} className="gh-btn gh-btn-primary mt-6 w-full justify-center">
                 {bookingLabel}
               </Link>

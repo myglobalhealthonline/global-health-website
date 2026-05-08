@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Bold, Italic, Underline, List, ListOrdered, Undo, Redo, Eraser, ChevronDown } from "lucide-react";
 
 type Props = {
@@ -29,9 +29,105 @@ const FONT_SIZES = [
   { label: "24", value: "7" },
 ];
 
+const REMOVABLE_TAGS = new Set(["SCRIPT", "STYLE", "META", "LINK", "OBJECT", "EMBED"]);
+
+function filterInlineStyle(styleText: string) {
+  const allowed = new Map<string, string>();
+  for (const chunk of styleText.split(";")) {
+    const [rawProperty, ...rawValueParts] = chunk.split(":");
+    const property = rawProperty?.trim().toLowerCase();
+    const value = rawValueParts.join(":").trim();
+    if (!property || !value) continue;
+    if (
+      property === "color" ||
+      property === "background-color" ||
+      property === "font-family" ||
+      property === "font-style" ||
+      property === "font-weight" ||
+      property === "text-decoration" ||
+      property === "text-align"
+    ) {
+      allowed.set(property, value);
+    }
+  }
+  return Array.from(allowed.entries())
+    .map(([property, value]) => `${property}: ${value}`)
+    .join("; ");
+}
+
+function unwrapElement(element: HTMLElement) {
+  const parent = element.parentNode;
+  if (!parent) return;
+  while (element.firstChild) {
+    parent.insertBefore(element.firstChild, element);
+  }
+  parent.removeChild(element);
+}
+
+function sanitizeEditorHtml(html: string) {
+  const root = document.createElement("div");
+  root.innerHTML = html;
+
+  const elements = Array.from(root.querySelectorAll("*"));
+  for (const element of elements) {
+    if (!(element instanceof HTMLElement)) continue;
+    const tag = element.tagName.toUpperCase();
+
+    if (REMOVABLE_TAGS.has(tag)) {
+      element.remove();
+      continue;
+    }
+
+    if (tag === "FONT") {
+      const face = element.getAttribute("face")?.trim();
+      const color = element.getAttribute("color")?.trim();
+      const existingStyle = element.getAttribute("style") ?? "";
+      const nextStyle = filterInlineStyle(
+        [
+          existingStyle,
+          face ? `font-family: ${face}` : "",
+          color ? `color: ${color}` : "",
+        ]
+          .filter(Boolean)
+          .join("; "),
+      );
+      if (nextStyle) {
+        element.setAttribute("style", nextStyle);
+      } else {
+        element.removeAttribute("style");
+      }
+      element.removeAttribute("face");
+      element.removeAttribute("color");
+      continue;
+    }
+
+    for (const attribute of Array.from(element.attributes)) {
+      if (attribute.name === "href" && tag === "A") continue;
+      if (attribute.name === "style") {
+        const nextStyle = filterInlineStyle(attribute.value);
+        if (nextStyle) {
+          element.setAttribute("style", nextStyle);
+        } else {
+          element.removeAttribute("style");
+        }
+        continue;
+      }
+      element.removeAttribute(attribute.name);
+    }
+
+    if (tag === "SPAN" && element.attributes.length === 0) {
+      unwrapElement(element);
+    }
+  }
+
+  return root.innerHTML.trim();
+}
+
 export function RichTextHtmlField({ name, label, helperText, initialValue }: Props) {
+  const editorId = useId();
   const editorRef = useRef<HTMLDivElement>(null);
   const hiddenRef = useRef<HTMLInputElement>(null);
+  const selectionRef = useRef<Range | null>(null);
   const [color, setColor] = useState(COLORS[0].value);
   const [block, setBlock] = useState("p");
   const [font, setFont] = useState(FONT_FAMILIES[0]);
@@ -42,11 +138,32 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
     if (!editorRef.current) return;
     const value = initialValue?.trim();
     editorRef.current.innerHTML = value ? value : "<p><br/></p>";
+    syncToHidden({ rewriteEditor: true });
   }, [initialValue]);
 
-  function syncToHidden() {
+  function syncToHidden(options?: { rewriteEditor?: boolean }) {
     if (!editorRef.current || !hiddenRef.current) return;
-    hiddenRef.current.value = editorRef.current.innerHTML.trim();
+    const sanitized = sanitizeEditorHtml(editorRef.current.innerHTML);
+    if (options?.rewriteEditor) {
+      editorRef.current.innerHTML = sanitized || "<p><br/></p>";
+    }
+    hiddenRef.current.value = sanitized;
+  }
+
+  function rememberSelection() {
+    if (!editorRef.current) return;
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    const range = selection.getRangeAt(0);
+    if (!editorRef.current.contains(range.commonAncestorContainer)) return;
+    selectionRef.current = range.cloneRange();
+  }
+
+  function restoreSelection() {
+    const selection = window.getSelection();
+    if (!selection || !selectionRef.current) return;
+    selection.removeAllRanges();
+    selection.addRange(selectionRef.current);
   }
 
   function updateActiveFormats() {
@@ -62,13 +179,16 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
   function exec(command: string, value?: string) {
     if (!editorRef.current) return;
     editorRef.current.focus();
+    restoreSelection();
     document.execCommand(command, false, value);
-    syncToHidden();
+    syncToHidden({ rewriteEditor: true });
     updateActiveFormats();
+    rememberSelection();
   }
 
   function keepEditorSelection(e: React.MouseEvent) {
     e.preventDefault();
+    rememberSelection();
   }
 
   const iconBtn = (active: boolean) =>
@@ -79,14 +199,15 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
     } border border-[var(--color-border)]`;
 
   return (
-    <label className="flex flex-col gap-2">
-      <span className="gh-field-label">{label}</span>
+    <div className="flex flex-col gap-2">
+      <label htmlFor={editorId} className="gh-field-label">{label}</label>
       <div className="overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white">
         <div className="flex flex-wrap items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2">
           <div className="relative">
             <select
               className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
               value={font}
+              onFocus={rememberSelection}
               onChange={(e) => {
                 setFont(e.target.value);
                 exec("fontName", e.target.value);
@@ -102,6 +223,7 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
             <select
               className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
               value={size}
+              onFocus={rememberSelection}
               onChange={(e) => {
                 setSize(e.target.value);
                 exec("fontSize", e.target.value);
@@ -117,6 +239,7 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
             <select
               className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
               value={block}
+              onFocus={rememberSelection}
               onChange={(e) => {
                 setBlock(e.target.value);
                 exec("formatBlock", e.target.value.toUpperCase());
@@ -177,18 +300,39 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
           </button>
         </div>
         <div
+          id={editorId}
           ref={editorRef}
           contentEditable
           suppressContentEditableWarning
           className="gh-input min-h-[14rem] min-w-0 resize-y overflow-auto rounded-none border-0 bg-white p-4 leading-7 outline-none"
           style={{ listStylePosition: "inside" }}
-          onInput={syncToHidden}
-          onKeyUp={updateActiveFormats}
-          onMouseUp={updateActiveFormats}
+          onInput={() => {
+            syncToHidden();
+            rememberSelection();
+          }}
+          onBlur={() => {
+            syncToHidden({ rewriteEditor: true });
+            rememberSelection();
+          }}
+          onPaste={() => {
+            requestAnimationFrame(() => {
+              syncToHidden({ rewriteEditor: true });
+              updateActiveFormats();
+              rememberSelection();
+            });
+          }}
+          onKeyUp={() => {
+            updateActiveFormats();
+            rememberSelection();
+          }}
+          onMouseUp={() => {
+            updateActiveFormats();
+            rememberSelection();
+          }}
         />
       </div>
       <input ref={hiddenRef} type="hidden" name={name} defaultValue={initialValue ?? ""} />
       {helperText ? <span className="text-xs text-[var(--color-text-muted)]">{helperText}</span> : null}
-    </label>
+    </div>
   );
 }

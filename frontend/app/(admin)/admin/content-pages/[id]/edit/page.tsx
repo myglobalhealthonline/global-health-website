@@ -81,7 +81,7 @@ export default async function AdminEditContentPage({ params, searchParams }: Pag
     }
     redirect(
       `/admin/content-pages/${id}?success=${encodeURIComponent(
-        issues.length > 0 ? "Content page saved as draft for editorial review" : "Content page updated",
+        issues.length > 0 ? "Content page saved as draft/inactive due to editorial warnings" : "Content page updated",
       )}`,
     );
   }

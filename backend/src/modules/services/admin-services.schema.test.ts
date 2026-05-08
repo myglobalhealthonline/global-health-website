@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   adminServiceCreateBodySchema,
+  adminServiceUpdateBodySchema,
   adminServicesQuerySchema,
   serviceSlugSchema,
 } from "../../validations/admin-services.schema.js";
@@ -52,6 +53,22 @@ describe("admin services validation", () => {
       name: "Consultation",
       durationMinutes: 20,
       basePriceCents: 0,
+    });
+    assert.equal(result.success, true);
+  });
+
+  it("update accepts rich detailBody HTML", () => {
+    const result = adminServiceUpdateBodySchema.safeParse({
+      kind: "GENERAL",
+      detailBody: "<p><span style=\"font-family: Georgia; color: #1b4d3e;\" class=\"MsoNormal\">Detailed body</span></p>",
+    });
+    assert.equal(result.success, true);
+  });
+
+  it("update accepts large detailBody values", () => {
+    const result = adminServiceUpdateBodySchema.safeParse({
+      kind: "GENERAL",
+      detailBody: `<p>${"a".repeat(50000)}</p>`,
     });
     assert.equal(result.success, true);
   });

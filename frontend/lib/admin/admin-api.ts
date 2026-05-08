@@ -25,6 +25,28 @@ type AdminApiResponse<T> =
   | { ok: true; data: T; message?: string }
   | { ok: false; message: string; status?: number };
 
+type AdminErrorDetails = {
+  formErrors?: string[];
+  fieldErrors?: Record<string, string[] | undefined>;
+};
+
+function formatAdminErrorMessage(message: string | undefined, details: unknown) {
+  const fallback = message ?? "Admin request failed";
+  if (!details || typeof details !== "object") return fallback;
+
+  const typed = details as AdminErrorDetails;
+  const formError = typed.formErrors?.find(Boolean);
+  if (formError) {
+    return `${fallback}: ${formError}`;
+  }
+
+  const fieldEntry = Object.entries(typed.fieldErrors ?? {}).find(([, errors]) => Array.isArray(errors) && errors.length > 0);
+  if (!fieldEntry) return fallback;
+
+  const [field, errors] = fieldEntry;
+  return `${fallback}: ${field} ${errors![0]}`;
+}
+
 type AdminAppointmentsListPayload = {
   items: Array<{
     id: string;
@@ -147,12 +169,13 @@ async function adminRequest<T>(
       ok?: boolean;
       message?: string;
       data?: T;
+      details?: unknown;
     };
 
     if (!response.ok || !json.ok) {
       return {
         ok: false,
-        message: json.message ?? "Admin request failed",
+        message: formatAdminErrorMessage(json.message, json.details),
         status: response.status,
       };
     }

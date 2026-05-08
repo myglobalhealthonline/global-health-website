@@ -1,6 +1,7 @@
 import type { AdminCountryDto, AdminServiceDto, AdminServiceKind, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
 import { ManagedImageField } from "../../_components/managed-image-field";
 import { RichTextHtmlField } from "../../_components/rich-text-html-field";
+import { formatServicePriceInput } from "@/lib/admin/service-form-parse";
 import { SERVICE_KIND_META } from "@/lib/admin/service-kind";
 
 type Props = {
@@ -120,14 +121,14 @@ export function ServiceFields({ countries, specialties, kind, initial, pinnedCou
           />
         </label>
         <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Starting price (cents)</span>
+          <span className="gh-field-label">Starting price</span>
           <input
-            type="number"
-            name="basePriceCents"
-            min={0}
-            step={1}
+            type="text"
+            inputMode="decimal"
+            name="basePrice"
             className="gh-input min-w-0"
-            defaultValue={initial?.basePriceCents ?? ""}
+            defaultValue={formatServicePriceInput(initial?.basePriceCents)}
+            placeholder="45.00"
           />
         </label>
       </div>

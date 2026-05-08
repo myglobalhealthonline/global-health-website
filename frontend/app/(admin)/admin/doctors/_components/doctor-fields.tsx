@@ -1,6 +1,6 @@
 import type { AdminCountryDto, AdminDoctorDto, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
 import { DoctorProfileImageField } from "./doctor-profile-image-field";
-import { DoctorBioRichTextField } from "./doctor-bio-rich-text-field";
+import { RichTextHtmlField } from "../../_components/rich-text-html-field";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
@@ -90,7 +90,12 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
         <span className="text-xs text-[var(--color-text-muted)]">Hold Ctrl/Cmd to select multiple categories. Must match chosen country.</span>
       </label>
 
-      <DoctorBioRichTextField initialValue={initial?.bio} />
+      <RichTextHtmlField
+        name="bio"
+        label="Bio"
+        initialValue={initial?.bio ?? ""}
+        helperText="Supports the same formatting tools used for service detail content."
+      />
 
       <label className="flex flex-col gap-2">
         <span className="gh-field-label">Qualifications</span>

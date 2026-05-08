@@ -90,7 +90,11 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
   async function updateServiceAction(formData: FormData) {
     "use server";
 
-    const raw = parseServiceBodyFromForm(formData);
+    const parsed = parseServiceBodyFromForm(formData);
+    if (!parsed.ok) {
+      redirect(`/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(parsed.error)}`);
+    }
+    const raw = parsed.data;
     const body = {
       countryId: raw.countryId,
       kind: raw.kind,
@@ -141,9 +145,6 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
         )
       : [];
     const issues = [...validation.issues, ...duplicateIssues];
-    if (issues.length > 0) {
-      body.isActive = false;
-    }
 
     const result = await patchAdminService(id, body);
     if (!result.ok) {
@@ -153,7 +154,7 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
     redirect(
       `/admin/services/${id}?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent(
         issues.length > 0
-          ? `${meta.singularLabel} saved as inactive for editorial review`
+          ? `${meta.singularLabel} updated with editorial warnings`
           : `${meta.singularLabel} updated`,
       )}`,
     );

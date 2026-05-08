@@ -74,7 +74,7 @@ export default async function AdminNewBlogPostPage({ searchParams }: PageProps) 
     }
     redirect(
       `/admin/blog-posts/${result.data.post.id}?success=${encodeURIComponent(
-        issues.length > 0 ? "Blog post saved as draft for editorial review" : "Blog post created",
+        issues.length > 0 ? "Blog post saved as draft/inactive due to editorial warnings" : "Blog post created",
       )}`,
     );
   }

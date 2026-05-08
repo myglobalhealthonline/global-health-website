@@ -863,14 +863,8 @@ export async function buildServiceDetailCopyAsync(
   mode: "general" | "specialist",
   countryCode?: CountryCode,
 ): Promise<ServiceDetailCopyData> {
-  const fallback = buildServiceDetailCopy(slug);
   const expectedKind = mode === "general" ? "GENERAL" : "SPECIALIST";
   const defaultFacts = [
-    {
-      label: "Service type",
-      value: mode === "general" ? "General consultation" : "Specialist consultation",
-    },
-    { label: "Country", value: "Ireland" },
     { label: "Est. duration", value: "Confirmed during booking" },
     { label: "Starting price", value: "Shown before booking" },
   ];
@@ -883,24 +877,17 @@ export async function buildServiceDetailCopyAsync(
     return Boolean(service.legacyPath && service.legacyPath.endsWith(slug));
   });
   if (!match) {
-    return sanitizePublicContent({ ...fallback, keyFacts: defaultFacts });
+    return sanitizePublicContent({ ...buildServiceDetailCopy(slug), keyFacts: defaultFacts });
   }
-
-  const countryLabel = countryLabels[match.countryCode] ?? "Ireland";
 
   return sanitizePublicContent({
     title: match.heroTitle ?? match.name,
-    description: match.heroDescription ?? match.summary ?? fallback.description,
-    body: match.detailBody ? [match.detailBody] : match.summary ? [match.summary] : fallback.body,
+    description: match.heroDescription ?? match.summary ?? "",
+    body: match.detailBody ? [match.detailBody] : match.summary ? [match.summary] : [],
     bodyHtml: match.detailBody ?? null,
     imageSrc: match.imagePath ? (resolveTrustedAssetUrl(match.imagePath) ?? match.imagePath) : undefined,
     bookingLabel: match.ctaLabel ?? "Book Online",
     keyFacts: [
-      {
-        label: "Service type",
-        value: mode === "general" ? "General consultation" : "Specialist consultation",
-      },
-      { label: "Country", value: countryLabel },
       {
         label: "Est. duration",
         value:

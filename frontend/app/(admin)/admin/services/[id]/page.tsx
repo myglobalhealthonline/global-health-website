@@ -48,6 +48,7 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
   const service = result.data.service;
   const kind = readServiceKind(messages.kind, service.kind);
   const meta = SERVICE_KIND_META[kind];
+  const showsCategory = kind === "SPECIALIST";
 
   async function deactivateServiceAction() {
     "use server";
@@ -125,10 +126,12 @@ export default async function AdminServiceDetailPage({ params, searchParams }: P
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Type</dt>
           <dd className="mt-1 text-[var(--color-text-primary)]">{meta.singularLabel}</dd>
         </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Category</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">{service.specialty?.name ?? meta.emptySpecialtyLabel}</dd>
-        </div>
+        {showsCategory ? (
+          <div>
+            <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Category</dt>
+            <dd className="mt-1 text-[var(--color-text-primary)]">{service.specialty?.name ?? meta.emptySpecialtyLabel}</dd>
+          </div>
+        ) : null}
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Sort order</dt>
           <dd className="mt-1 text-[var(--color-text-primary)]">{service.sortOrder}</dd>

@@ -100,7 +100,11 @@ export default async function AdminNewPricingPage({ searchParams }: PageProps) {
   async function createPricingAction(formData: FormData) {
     "use server";
 
-    const raw = parsePricingBodyFromForm(formData);
+    const parsed = parsePricingBodyFromForm(formData);
+    if (!parsed.ok) {
+      redirect(`/admin/pricing/new?countryId=${encodeURIComponent(countryId ?? "")}&error=${encodeURIComponent(parsed.error)}`);
+    }
+    const raw = parsed.data;
     const body = {
       countryId: raw.countryId,
       slug: raw.slug,

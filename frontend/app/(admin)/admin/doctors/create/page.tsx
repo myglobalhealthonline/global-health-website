@@ -140,9 +140,6 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
         )
       : [];
     const issues = [...validation.issues, ...duplicateIssues];
-    if (issues.length > 0) {
-      body.active = false;
-    }
 
     const result = await postAdminDoctor(body);
     if (!result.ok) {
@@ -153,7 +150,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
 
     redirect(
       `/admin/doctors/${result.data.doctor.id}?success=${encodeURIComponent(
-        issues.length > 0 ? "Doctor profile saved as inactive for editorial review" : "Doctor profile created",
+        issues.length > 0 ? "Doctor profile created with editorial warnings" : "Doctor profile created",
       )}`,
     );
   }

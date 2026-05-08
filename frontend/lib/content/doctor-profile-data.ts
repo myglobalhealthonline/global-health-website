@@ -128,15 +128,13 @@ export async function resolveDoctorProfilePageData(doctorSlug: string): Promise<
       name: backend.fullName,
       title: backend.title,
       country: backend.countryName,
-      bio: backend.bio ?? base.profile.bio,
-      languages: backend.languages && backend.languages.length > 0
-        ? backend.languages
-        : (parseLanguagesFromDoctorBio(backend.bio) ?? base.profile.languages),
-      qualifications: backend.qualifications && backend.qualifications.length > 0
-        ? backend.qualifications
-        : base.profile.qualifications,
-      specialties:
-        backend.specialties.length > 0 ? backend.specialties : base.profile.specialties,
+      bio: backend.bio ?? "",
+      languages:
+        backend.languages && backend.languages.length > 0
+          ? backend.languages
+          : (parseLanguagesFromDoctorBio(backend.bio) ?? []),
+      qualifications: backend.qualifications ?? [],
+      specialties: backend.specialties,
       imageLabel: backend.fullName,
       ...(backend.imcRegistration ? { imcRegistration: backend.imcRegistration } : {}),
       ...(backend.medicalRegistrationUrl ? { medicalRegistrationUrl: backend.medicalRegistrationUrl } : {}),

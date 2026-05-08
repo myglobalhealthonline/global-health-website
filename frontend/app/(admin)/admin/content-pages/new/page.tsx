@@ -71,7 +71,7 @@ export default async function AdminNewContentPagePage({ searchParams }: PageProp
     }
     redirect(
       `/admin/content-pages/${result.data.page.id}?success=${encodeURIComponent(
-        issues.length > 0 ? "Content page saved as draft for editorial review" : "Content page created",
+        issues.length > 0 ? "Content page saved as draft/inactive due to editorial warnings" : "Content page created",
       )}`,
     );
   }

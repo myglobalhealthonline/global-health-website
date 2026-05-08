@@ -116,6 +116,7 @@ export default async function AdminServicesPage({
   const statusFilter = filters.isActive ?? "";
   const successMessage = spRead(sp, "success");
   const errorMessage = spRead(sp, "error");
+  const showsCategory = kind === "SPECIALIST";
 
   async function deleteServiceAction(formData: FormData) {
     "use server";
@@ -250,7 +251,7 @@ export default async function AdminServicesPage({
               <th className="px-3 py-2 font-semibold">Title</th>
               <th className="px-3 py-2 font-semibold">Slug</th>
               <th className="px-3 py-2 font-semibold">Country</th>
-              <th className="px-3 py-2 font-semibold">Category</th>
+              {showsCategory ? <th className="px-3 py-2 font-semibold">Category</th> : null}
               <th className="px-3 py-2 font-semibold">Sort</th>
               <th className="px-3 py-2 font-semibold">Price / duration</th>
               <th className="px-3 py-2 font-semibold">Active</th>
@@ -266,9 +267,11 @@ export default async function AdminServicesPage({
                 <td className="px-3 py-3 font-medium text-[var(--color-text-primary)]">{service.name}</td>
                 <td className="px-3 py-3 font-mono text-xs text-[var(--color-text-muted)]">{service.slug}</td>
                 <td className="px-3 py-3 text-[var(--color-text-muted)]">{service.country.code}</td>
-                <td className="px-3 py-3 text-[var(--color-text-muted)]">
-                  {service.specialty?.name ?? meta.emptySpecialtyLabel}
-                </td>
+                {showsCategory ? (
+                  <td className="px-3 py-3 text-[var(--color-text-muted)]">
+                    {service.specialty?.name ?? meta.emptySpecialtyLabel}
+                  </td>
+                ) : null}
                 <td className="px-3 py-3 text-[var(--color-text-muted)]">{service.sortOrder}</td>
                 <td className="px-3 py-3 text-[var(--color-text-muted)]">
                   {formatMoney(service.basePriceCents, service.currencyCode)}

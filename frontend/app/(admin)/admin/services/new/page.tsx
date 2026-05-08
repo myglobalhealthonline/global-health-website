@@ -109,7 +109,15 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
   async function createServiceAction(formData: FormData) {
     "use server";
 
-    const raw = parseServiceBodyFromForm(formData);
+    const parsed = parseServiceBodyFromForm(formData);
+    if (!parsed.ok) {
+      redirect(
+        `/admin/services/new?kind=${encodeURIComponent(kind)}&countryId=${encodeURIComponent(
+          countryId ?? "",
+        )}&error=${encodeURIComponent(parsed.error)}`,
+      );
+    }
+    const raw = parsed.data;
     const body = {
       countryId: raw.countryId,
       kind: raw.kind,
@@ -159,9 +167,6 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
         )
       : [];
     const issues = [...validation.issues, ...duplicateIssues];
-    if (issues.length > 0) {
-      body.isActive = false;
-    }
 
     const result = await postAdminService(body);
     if (!result.ok) {
@@ -173,7 +178,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
     redirect(
       `/admin/services/${result.data.service.id}?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent(
         issues.length > 0
-          ? `${meta.singularLabel} saved as inactive for editorial review`
+          ? `${meta.singularLabel} created with editorial warnings`
           : `${meta.singularLabel} created`,
       )}`,
     );
