@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { BlogCoverAssetField } from "@/app/(admin)/admin/blog-posts/_components/blog-cover-asset-field";
 import {
   fetchAdminBlogPosts,
   fetchAdminBlogPostById,
   fetchAdminCountries,
   patchAdminBlogPost,
 } from "@/lib/admin/admin-api";
+import { encodeEditorialIssuesForQuery } from "@/lib/admin/editorial-issues-encoding";
 import { parseBlogPostBodyFromForm } from "@/lib/admin/blog-form-parse";
 import { detectDuplicateTextIssues, validateAdminBlogPayload } from "@/lib/content/publication-validation";
 
@@ -76,16 +78,21 @@ export default async function AdminEditBlogPostPage({ params, searchParams }: Pa
     const issues = [...validation.issues, ...duplicateIssues];
     if (issues.length > 0) {
       body.status = "DRAFT";
-      body.isActive = false;
     }
     const result = await patchAdminBlogPost(id, body);
     if (!result.ok) {
       redirect(`/admin/blog-posts/${id}/edit?error=${encodeURIComponent(result.message)}`);
     }
+    const issuesQuery =
+      issues.length > 0
+        ? `&editorialIssues=${encodeURIComponent(encodeEditorialIssuesForQuery(issues))}`
+        : "";
     redirect(
       `/admin/blog-posts/${id}?success=${encodeURIComponent(
-        issues.length > 0 ? "Blog post saved as draft/inactive due to editorial warnings" : "Blog post updated",
-      )}`,
+        issues.length > 0
+          ? "Saved as draft: editorial checklist must pass before publishing."
+          : "Blog post updated",
+      )}${issuesQuery}`,
     );
   }
 
@@ -109,7 +116,14 @@ export default async function AdminEditBlogPostPage({ params, searchParams }: Pa
       <form action={updateAction} className="mt-8 flex flex-col gap-8">
         <input aria-label="Post title" name="title" className="gh-input" defaultValue={post.title} required />
         <input aria-label="Post slug" name="slug" className="gh-input" defaultValue={post.slug} required />
-        <textarea aria-label="Post excerpt" name="excerpt" className="gh-textarea" defaultValue={post.excerpt ?? ""} rows={2} />
+        <textarea
+          aria-label="Post excerpt"
+          name="excerpt"
+          className="gh-textarea"
+          defaultValue={post.excerpt ?? ""}
+          placeholder="Short summary for blog cards (optional — derived from body on save when published)"
+          rows={2}
+        />
         <textarea aria-label="Post body content" name="body" className="gh-textarea" defaultValue={post.body} rows={10} required />
         <div className="grid gap-3 sm:grid-cols-2">
           <select aria-label="Post status" name="status" className="gh-select" defaultValue={post.status}>
@@ -134,7 +148,18 @@ export default async function AdminEditBlogPostPage({ params, searchParams }: Pa
         </select>
         <input aria-label="Post category" name="category" className="gh-input" defaultValue={post.category ?? ""} />
         <input aria-label="Author display name" name="authorDisplayName" className="gh-input" defaultValue={post.authorDisplayName ?? ""} />
-        <input aria-label="Cover asset ID" name="coverAssetId" className="gh-input" defaultValue={post.coverAssetId ?? ""} />
+        <input
+          aria-label="Medical reviewer display name"
+          name="reviewerDisplayName"
+          className="gh-input"
+          defaultValue={post.reviewerDisplayName ?? ""}
+          placeholder="Medical reviewer (optional)"
+        />
+        <BlogCoverAssetField
+          initialCoverAssetId={post.coverAssetId}
+          initialCoverPath={post.coverAsset?.path ?? null}
+          altSeed={post.title}
+        />
         <input aria-label="Publish date and time" name="publishedAt" className="gh-input" type="datetime-local" defaultValue={post.publishedAt ? post.publishedAt.slice(0, 16) : ""} />
         <input aria-label="SEO title" name="seoTitle" className="gh-input" defaultValue={post.seoTitle ?? ""} />
         <textarea aria-label="SEO description" name="seoDescription" className="gh-textarea" defaultValue={post.seoDescription ?? ""} rows={2} />

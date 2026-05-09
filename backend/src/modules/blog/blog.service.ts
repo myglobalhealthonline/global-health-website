@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, PublishStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import type {
   AdminBlogPostCreateBody,
@@ -6,6 +6,7 @@ import type {
   AdminBlogPostUpdateBody,
 } from "../../validations/admin-blog-posts.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { deriveBlogExcerpt } from "./blog-publication-helpers.js";
 
 export class BlogCountryNotFoundError extends Error {
   constructor() {
@@ -124,7 +125,10 @@ export async function createAdminBlogPost(input: AdminBlogPostCreateBody): Promi
         countryId: input.countryId ?? null,
         slug: input.slug,
         title: input.title,
-        excerpt: input.excerpt ?? null,
+        excerpt:
+          input.status === PublishStatus.PUBLISHED
+            ? deriveBlogExcerpt(input.excerpt, input.body)
+            : input.excerpt ?? null,
         body: input.body,
         status: input.status,
         locale: input.locale,
@@ -135,6 +139,16 @@ export async function createAdminBlogPost(input: AdminBlogPostCreateBody): Promi
         seoDescription: input.seoDescription ?? null,
         publishedAt: input.publishedAt ?? null,
         isActive: input.isActive ?? true,
+        ...(input.status === PublishStatus.PUBLISHED
+          ? {
+              reviewerDisplayName:
+                input.reviewerDisplayName?.trim() ||
+                input.authorDisplayName?.trim() ||
+                "Global Health",
+              lastReviewedAt: input.publishedAt ?? new Date(),
+              editorialChecklist: { readyToIndex: true } as Prisma.InputJsonValue,
+            }
+          : {}),
       },
       include: adminBlogPostInclude,
     });
@@ -149,32 +163,72 @@ export async function updateAdminBlogPost(
 ): Promise<AdminBlogPostRecord | null> {
   const existing = await prisma.blogPost.findUnique({
     where: { id },
-    select: { id: true },
+    select: {
+      id: true,
+      excerpt: true,
+      body: true,
+      authorDisplayName: true,
+      reviewerDisplayName: true,
+      publishedAt: true,
+      lastReviewedAt: true,
+      status: true,
+    },
   });
   if (!existing) return null;
 
   if (body.countryId) await assertCountryExists(body.countryId);
   if (body.coverAssetId) await assertCoverAssetExists(body.coverAssetId);
 
+  const nextStatus = body.status ?? existing.status;
+  const nextBody = body.body !== undefined ? body.body : existing.body;
+  const nextExcerptSource = body.excerpt !== undefined ? body.excerpt : existing.excerpt;
+  const nextAuthor = body.authorDisplayName !== undefined ? body.authorDisplayName : existing.authorDisplayName;
+  const nextPublishedAt = body.publishedAt !== undefined ? body.publishedAt : existing.publishedAt;
+  const nextReviewerSource =
+    body.reviewerDisplayName !== undefined ? body.reviewerDisplayName : existing.reviewerDisplayName;
+
   try {
+    const data: Prisma.BlogPostUpdateInput = {
+      ...(body.countryId !== undefined && { countryId: body.countryId }),
+      ...(body.slug !== undefined && { slug: body.slug }),
+      ...(body.title !== undefined && { title: body.title }),
+      ...(body.body !== undefined && { body: body.body }),
+      ...(body.status !== undefined && { status: body.status }),
+      ...(body.locale !== undefined && { locale: body.locale }),
+      ...(body.category !== undefined && { category: body.category }),
+      ...(body.authorDisplayName !== undefined && { authorDisplayName: body.authorDisplayName }),
+      ...(body.coverAssetId !== undefined && { coverAssetId: body.coverAssetId }),
+      ...(body.seoTitle !== undefined && { seoTitle: body.seoTitle }),
+      ...(body.seoDescription !== undefined && { seoDescription: body.seoDescription }),
+      ...(body.publishedAt !== undefined && { publishedAt: body.publishedAt }),
+      ...(body.isActive !== undefined && { isActive: body.isActive }),
+    };
+
+    if (body.excerpt !== undefined) {
+      data.excerpt = body.excerpt;
+    }
+
+    if (nextStatus === PublishStatus.PUBLISHED) {
+      data.excerpt = deriveBlogExcerpt(
+        nextExcerptSource === null ? undefined : nextExcerptSource,
+        nextBody,
+      );
+      const reviewer =
+        (typeof nextReviewerSource === "string" ? nextReviewerSource.trim() : "") ||
+        (nextAuthor?.trim() ?? "") ||
+        "Global Health";
+      data.reviewerDisplayName = reviewer;
+      data.lastReviewedAt = nextPublishedAt ?? existing.lastReviewedAt ?? new Date();
+      data.editorialChecklist = { readyToIndex: true } as Prisma.InputJsonValue;
+    } else if (body.status === PublishStatus.DRAFT) {
+      data.editorialChecklist = Prisma.JsonNull;
+      data.lastReviewedAt = null;
+      data.reviewerDisplayName = null;
+    }
+
     return await prisma.blogPost.update({
       where: { id },
-      data: {
-        ...(body.countryId !== undefined && { countryId: body.countryId }),
-        ...(body.slug !== undefined && { slug: body.slug }),
-        ...(body.title !== undefined && { title: body.title }),
-        ...(body.excerpt !== undefined && { excerpt: body.excerpt }),
-        ...(body.body !== undefined && { body: body.body }),
-        ...(body.status !== undefined && { status: body.status }),
-        ...(body.locale !== undefined && { locale: body.locale }),
-        ...(body.category !== undefined && { category: body.category }),
-        ...(body.authorDisplayName !== undefined && { authorDisplayName: body.authorDisplayName }),
-        ...(body.coverAssetId !== undefined && { coverAssetId: body.coverAssetId }),
-        ...(body.seoTitle !== undefined && { seoTitle: body.seoTitle }),
-        ...(body.seoDescription !== undefined && { seoDescription: body.seoDescription }),
-        ...(body.publishedAt !== undefined && { publishedAt: body.publishedAt }),
-        ...(body.isActive !== undefined && { isActive: body.isActive }),
-      },
+      data,
       include: adminBlogPostInclude,
     });
   } catch (error) {

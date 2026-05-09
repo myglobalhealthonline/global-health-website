@@ -2,13 +2,14 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { CheckCircle2, AlertCircle } from "lucide-react";
+import { decodeEditorialIssuesFromQuery } from "@/lib/admin/editorial-issues-encoding";
 import { deleteAdminBlogPost, fetchAdminBlogPostById, purgeAdminBlogPost } from "@/lib/admin/admin-api";
 
 export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ success?: string; error?: string }>;
+  searchParams?: Promise<{ success?: string; error?: string; editorialIssues?: string }>;
 };
 
 export default async function AdminBlogPostDetailPage({ params, searchParams }: PageProps) {
@@ -50,6 +51,7 @@ export default async function AdminBlogPostDetailPage({ params, searchParams }: 
 
   const { post } = result.data;
   const isActive = post.isActive;
+  const editorialIssues = decodeEditorialIssuesFromQuery(sp.editorialIssues);
 
   return (
     <section className="gh-card p-6 sm:p-8">
@@ -65,6 +67,25 @@ export default async function AdminBlogPostDetailPage({ params, searchParams }: 
 
       {sp.error ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{sp.error}</p> : null}
       {sp.success ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{sp.success}</p> : null}
+
+      {editorialIssues.length > 0 ? (
+        <div className="mt-4 rounded-[var(--radius-card-sm)] border border-[var(--color-status-warning-border)] bg-[var(--color-status-warning-bg)] px-4 py-3 text-sm text-[var(--color-status-warning-text)]">
+          <p className="font-semibold text-[var(--color-text-primary)]">Editorial checklist</p>
+          <p className="mt-1 text-[var(--color-text-muted)]">
+            Publish status was set to <strong>Draft</strong> until these pass. Your <strong>Active / Inactive</strong> choice was not changed by this check.
+          </p>
+          <ul className="mt-3 list-disc space-y-1 pl-5">
+            {editorialIssues.map((issue, index) => (
+              <li key={`${issue.field}-${index}-${issue.message.slice(0, 24)}`}>
+                <span className="font-medium">{issue.field}:</span> {issue.message}
+              </li>
+            ))}
+          </ul>
+          <Link href={`/admin/blog-posts/${id}/edit`} className="mt-3 inline-block gh-link text-sm">
+            Edit post to fix
+          </Link>
+        </div>
+      ) : null}
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border ${
@@ -94,6 +115,16 @@ export default async function AdminBlogPostDetailPage({ params, searchParams }: 
         <div>
           <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Country</dt>
           <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{post.country?.name ?? "Global"}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Medical reviewer</dt>
+          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{post.reviewerDisplayName ?? "—"}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Last reviewed</dt>
+          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">
+            {post.lastReviewedAt ? post.lastReviewedAt.slice(0, 10) : "—"}
+          </dd>
         </div>
       </dl>
 

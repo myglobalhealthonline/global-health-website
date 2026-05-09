@@ -785,6 +785,8 @@ export type AdminBlogPostDto = {
   locale: string;
   category: string | null;
   authorDisplayName: string | null;
+  reviewerDisplayName: string | null;
+  lastReviewedAt: string | null;
   coverAssetId: string | null;
   seoTitle: string | null;
   seoDescription: string | null;

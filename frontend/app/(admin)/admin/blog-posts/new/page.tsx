@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { BlogCoverAssetField } from "@/app/(admin)/admin/blog-posts/_components/blog-cover-asset-field";
 import { fetchAdminBlogPosts, fetchAdminCountries, postAdminBlogPost } from "@/lib/admin/admin-api";
 import { parseBlogPostBodyFromForm } from "@/lib/admin/blog-form-parse";
+import { encodeEditorialIssuesForQuery } from "@/lib/admin/editorial-issues-encoding";
 import { detectDuplicateTextIssues, validateAdminBlogPayload } from "@/lib/content/publication-validation";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +11,12 @@ export const dynamic = "force-dynamic";
 type PageProps = {
   searchParams?: Promise<{ error?: string }>;
 };
+
+function defaultPublishDatetimeLocal(): string {
+  const d = new Date();
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
 
 export default async function AdminNewBlogPostPage({ searchParams }: PageProps) {
   const sp = searchParams ? await searchParams : {};
@@ -66,16 +74,21 @@ export default async function AdminNewBlogPostPage({ searchParams }: PageProps) 
     const issues = [...validation.issues, ...duplicateIssues];
     if (issues.length > 0) {
       body.status = "DRAFT";
-      body.isActive = false;
     }
     const result = await postAdminBlogPost(body);
     if (!result.ok) {
       redirect(`/admin/blog-posts/new?error=${encodeURIComponent(result.message)}`);
     }
+    const issuesQuery =
+      issues.length > 0
+        ? `&editorialIssues=${encodeURIComponent(encodeEditorialIssuesForQuery(issues))}`
+        : "";
     redirect(
       `/admin/blog-posts/${result.data.post.id}?success=${encodeURIComponent(
-        issues.length > 0 ? "Blog post saved as draft/inactive due to editorial warnings" : "Blog post created",
-      )}`,
+        issues.length > 0
+          ? "Saved as draft: editorial checklist must pass before publishing."
+          : "Blog post created",
+      )}${issuesQuery}`,
     );
   }
 
@@ -97,7 +110,13 @@ export default async function AdminNewBlogPostPage({ searchParams }: PageProps) 
       <form action={createAction} className="mt-8 flex flex-col gap-8">
         <input aria-label="Post title" name="title" className="gh-input" placeholder="Title" required />
         <input aria-label="Post slug" name="slug" className="gh-input" placeholder="slug-like-this" required />
-        <textarea aria-label="Post excerpt" name="excerpt" className="gh-textarea" placeholder="Excerpt (optional)" rows={2} />
+        <textarea
+          aria-label="Post excerpt"
+          name="excerpt"
+          className="gh-textarea"
+          placeholder="Short summary for the blog cards (optional if the body is long — we auto-fill from the article when you publish)"
+          rows={2}
+        />
         <textarea aria-label="Post body content" name="body" className="gh-textarea" placeholder="Body/content" rows={10} required />
         <div className="grid gap-3 sm:grid-cols-2">
           <select aria-label="Post status" name="status" className="gh-select" defaultValue="DRAFT">
@@ -121,11 +140,23 @@ export default async function AdminNewBlogPostPage({ searchParams }: PageProps) 
               </option>
             ))}
           </select>
-          <input aria-label="Publish date and time" name="publishedAt" className="gh-input" type="datetime-local" />
+          <input
+            aria-label="Publish date and time"
+            name="publishedAt"
+            className="gh-input"
+            type="datetime-local"
+            defaultValue={defaultPublishDatetimeLocal()}
+          />
         </div>
         <input aria-label="Post category" name="category" className="gh-input" placeholder="Category (optional)" />
         <input aria-label="Author display name" name="authorDisplayName" className="gh-input" placeholder="Author display name (optional)" />
-        <input aria-label="Cover asset ID" name="coverAssetId" className="gh-input" placeholder="Cover asset ID (optional)" />
+        <input
+          aria-label="Medical reviewer display name"
+          name="reviewerDisplayName"
+          className="gh-input"
+          placeholder="Medical reviewer (optional — defaults to author or Global Health when published)"
+        />
+        <BlogCoverAssetField />
         <input aria-label="SEO title" name="seoTitle" className="gh-input" placeholder="SEO title (optional)" />
         <textarea aria-label="SEO description" name="seoDescription" className="gh-textarea" placeholder="SEO description (optional)" rows={2} />
         <label className="flex items-center gap-2 text-sm">

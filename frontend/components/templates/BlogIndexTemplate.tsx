@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout/Container";
 import {
@@ -11,7 +12,13 @@ import {
 type BlogIndexTemplateProps = {
   title: string;
   description: string;
-  posts: Array<{ title: string; excerpt: string; href: string }>;
+  posts: Array<{
+    title: string;
+    excerpt: string;
+    href: string;
+    coverImageSrc: string | null;
+    coverImageAlt: string | null;
+  }>;
 };
 
 function HeroPlusPattern() {
@@ -47,18 +54,39 @@ function BlogArticleCard({
   title,
   excerpt,
   href,
+  coverImageSrc,
+  coverImageAlt,
 }: {
   title: string;
   excerpt: string;
   href: string;
+  coverImageSrc: string | null;
+  coverImageAlt: string | null;
 }) {
-  return (
-    <article className="group flex h-full flex-col rounded-[2rem] border border-[var(--color-border)] bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
-      <div className="flex size-12 items-center justify-center rounded-2xl bg-[var(--color-brand-primary)]/10">
-        <FileText className="size-6 text-[var(--color-brand-primary)]" />
-      </div>
+  const imageAlt = coverImageAlt?.trim() || `Cover image: ${title}`;
 
-      <Link href={href} className="mt-6 block">
+  return (
+    <article className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-[var(--color-border)] bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
+      {coverImageSrc ? (
+        <Link href={href} className="relative block aspect-[16/10] w-full shrink-0 overflow-hidden bg-[var(--color-background-soft)]">
+          <Image
+            src={coverImageSrc}
+            alt={imageAlt}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
+        </Link>
+      ) : null}
+
+      <div className="flex flex-1 flex-col p-6">
+      {!coverImageSrc ? (
+        <div className="flex size-12 items-center justify-center rounded-2xl bg-[var(--color-brand-primary)]/10">
+          <FileText className="size-6 text-[var(--color-brand-primary)]" />
+        </div>
+      ) : null}
+
+      <Link href={href} className={`block ${coverImageSrc ? "mt-0" : "mt-6"}`}>
         <h2 className="text-2xl font-extrabold tracking-tight text-[var(--color-text-primary)] transition-colors group-hover:text-[var(--color-brand-primary)]">
           {title}
         </h2>
@@ -77,6 +105,7 @@ function BlogArticleCard({
           <ArrowRight className="size-4 transition-transform group-hover/link:translate-x-1" />
         </Link>
       </div>
+      </div>
     </article>
   );
 }
@@ -85,34 +114,62 @@ function FeaturedArticleCard({
   title,
   excerpt,
   href,
+  coverImageSrc,
+  coverImageAlt,
 }: {
   title: string;
   excerpt: string;
   href: string;
+  coverImageSrc: string | null;
+  coverImageAlt: string | null;
 }) {
+  const imageAlt = coverImageAlt?.trim() || `Cover image: ${title}`;
+
   return (
     <article className="group overflow-hidden rounded-[2rem] border border-[var(--color-border)] bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
       <div className="grid lg:grid-cols-[0.8fr_1.2fr]">
-        <div className="relative min-h-[260px] overflow-hidden bg-[var(--color-brand-primary)] p-8 text-white">
-          <div className="gh-medical-pattern gh-medical-pattern-dark absolute inset-0 opacity-20" />
-          <div className="absolute -right-16 -top-16 size-56 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute -bottom-20 left-10 size-52 rounded-full bg-[var(--color-brand-accent)]/20 blur-3xl" />
+        <div className="relative min-h-[260px] overflow-hidden bg-[var(--color-brand-primary)] text-white">
+          {coverImageSrc ? (
+            <Link href={href} className="relative block h-full min-h-[260px] w-full">
+              <Image
+                src={coverImageSrc}
+                alt={imageAlt}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 z-10 p-6 sm:p-8">
+                <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/25 bg-black/25 px-4 py-2 text-sm font-semibold text-[var(--color-brand-accent)] backdrop-blur">
+                  <BookOpen className="size-4" />
+                  Featured article
+                </span>
+              </div>
+            </Link>
+          ) : (
+            <>
+              <div className="gh-medical-pattern gh-medical-pattern-dark absolute inset-0 opacity-20" />
+              <div className="absolute -right-16 -top-16 size-56 rounded-full bg-white/10 blur-3xl" />
+              <div className="absolute -bottom-20 left-10 size-52 rounded-full bg-[var(--color-brand-accent)]/20 blur-3xl" />
 
-          <div className="relative z-10 flex h-full flex-col justify-between">
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-[var(--color-brand-accent)] backdrop-blur">
-              <BookOpen className="size-4" />
-              Featured article
-            </span>
+              <div className="relative z-10 flex h-full min-h-[260px] flex-col justify-between p-8">
+                <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-[var(--color-brand-accent)] backdrop-blur">
+                  <BookOpen className="size-4" />
+                  Featured article
+                </span>
 
-            <div className="mt-12">
-              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-white/50">
-                Patient education
-              </p>
-              <p className="mt-3 max-w-sm text-2xl font-extrabold leading-tight text-white">
-                Healthcare guidance written for easier reading.
-              </p>
-            </div>
-          </div>
+                <div className="mt-12">
+                  <p className="text-sm font-semibold uppercase tracking-[0.16em] text-white/50">
+                    Patient education
+                  </p>
+                  <p className="mt-3 max-w-sm text-2xl font-extrabold leading-tight text-white">
+                    Healthcare guidance written for easier reading.
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="p-7 sm:p-9 lg:p-10">

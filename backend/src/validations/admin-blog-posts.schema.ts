@@ -60,6 +60,7 @@ const adminBlogPostCreateBodyBaseSchema = z.object({
   locale: z.nativeEnum(LocaleCode),
   category: optionalTrimmed(120).optional(),
   authorDisplayName: optionalTrimmed(120).optional(),
+  reviewerDisplayName: optionalTrimmed(120).optional(),
   coverAssetId: optionalCuid.optional(),
   seoTitle: optionalTrimmed(120).optional(),
   seoDescription: optionalTrimmed(320).optional(),

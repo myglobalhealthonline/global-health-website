@@ -9,6 +9,7 @@ export type PublicBlogPostRecord = {
   title: string;
   excerpt: string;
   body: string;
+  contentFormat: "html" | "text";
   category: string;
   authorDisplayName: string;
   reviewerDisplayName: string;
@@ -19,6 +20,14 @@ export type PublicBlogPostRecord = {
   updatedAt: string;
   editorialChecklist: Record<string, unknown> | null;
 };
+
+function detectBlogContentFormat(body: string): "html" | "text" {
+  const trimmedBody = body.trim();
+  if (!trimmedBody) return "text";
+
+  // Detect likely rich HTML content while preserving support for plain text bodies.
+  return /<\/?[a-z][\s\S]*>/i.test(trimmedBody) ? "html" : "text";
+}
 
 function readReadyToIndex(editorialChecklist: unknown): boolean {
   if (!editorialChecklist || typeof editorialChecklist !== "object" || Array.isArray(editorialChecklist)) return false;
@@ -80,6 +89,7 @@ function normalizeBlogPost(row: unknown): PublicBlogPostRecord | null {
     title,
     excerpt,
     body,
+    contentFormat: detectBlogContentFormat(body),
     category,
     authorDisplayName,
     reviewerDisplayName,

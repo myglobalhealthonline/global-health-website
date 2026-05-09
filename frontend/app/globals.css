@@ -616,6 +616,101 @@ img {
   margin: 0.25rem 0;
 }
 
+/* Public blog HTML renderer styles */
+.gh-blog-html-content {
+  color: var(--color-text-muted);
+  font-size: 1.125rem;
+  line-height: 2rem;
+}
+
+.gh-blog-html-content > * + * {
+  margin-top: 1.5rem;
+}
+
+.gh-blog-html-content h1,
+.gh-blog-html-content h2,
+.gh-blog-html-content h3,
+.gh-blog-html-content h4 {
+  color: var(--color-text-primary);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-top: 2rem;
+}
+
+.gh-blog-html-content h1 {
+  font-size: clamp(2rem, 3vw + 0.5rem, 2.75rem);
+}
+
+.gh-blog-html-content h2 {
+  font-size: clamp(1.6rem, 2.3vw + 0.4rem, 2.2rem);
+}
+
+.gh-blog-html-content h3,
+.gh-blog-html-content h4 {
+  font-size: clamp(1.25rem, 1.5vw + 0.4rem, 1.6rem);
+}
+
+.gh-blog-html-content ul,
+.gh-blog-html-content ol {
+  padding-left: 1.5rem;
+}
+
+.gh-blog-html-content ul {
+  list-style: disc;
+}
+
+.gh-blog-html-content ol {
+  list-style: decimal;
+}
+
+.gh-blog-html-content a {
+  color: var(--color-brand-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 600;
+}
+
+.gh-blog-html-content a:hover {
+  color: var(--color-brand-primary-hover);
+}
+
+.gh-blog-html-content blockquote {
+  border-left: 4px solid var(--color-brand-accent);
+  background: var(--color-background-soft);
+  color: var(--color-text-body);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+
+.gh-blog-html-content img {
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  margin-top: 1.25rem;
+}
+
+.gh-blog-html-content table {
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.gh-blog-html-content th,
+.gh-blog-html-content td {
+  border: 1px solid var(--color-border);
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.gh-blog-html-content th {
+  background: var(--color-background-soft);
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

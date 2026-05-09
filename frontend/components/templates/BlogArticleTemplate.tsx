@@ -12,7 +12,8 @@ import {
 type BlogArticleTemplateProps = {
   title: string;
   lead: string;
-  body: string[];
+  bodyHtml: string | null;
+  bodyParagraphs: string[];
   author: string;
   reviewer: string;
   category: string;
@@ -97,13 +98,14 @@ function isLikelyHeading(paragraph: string) {
 export function BlogArticleTemplate({
   title,
   lead,
-  body,
+  bodyHtml,
+  bodyParagraphs,
   author,
   reviewer,
   category,
   updatedAt,
 }: BlogArticleTemplateProps) {
-  const blocks = body.map((paragraph, index) => {
+  const blocks = bodyParagraphs.map((paragraph, index) => {
     const trimmed = paragraph.trim();
     const isHeading = isLikelyHeading(trimmed);
 
@@ -205,32 +207,39 @@ export function BlogArticleTemplate({
 
               {/* Content Card */}
               <div className="mt-8 rounded-[2rem] border border-[var(--color-border)] bg-white p-7 shadow-sm sm:p-9 lg:p-12">
-                <div className="space-y-7">
-                  {blocks.map((block, index) => {
-                    if (!block.text) return null;
+                {bodyHtml ? (
+                  <div
+                    className="gh-blog-html-content"
+                    dangerouslySetInnerHTML={{ __html: bodyHtml }}
+                  />
+                ) : (
+                  <div className="space-y-7">
+                    {blocks.map((block, index) => {
+                      if (!block.text) return null;
 
-                    if (block.isHeading) {
+                      if (block.isHeading) {
+                        return (
+                          <h2
+                            key={`${block.text}-${index}`}
+                            id={block.id}
+                            className="scroll-mt-28 pt-4 text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)]"
+                          >
+                            {block.text}
+                          </h2>
+                        );
+                      }
+
                       return (
-                        <h2
+                        <p
                           key={`${block.text}-${index}`}
-                          id={block.id}
-                          className="scroll-mt-28 pt-4 text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)]"
+                          className="text-lg leading-9 text-[var(--color-text-muted)]"
                         >
                           {block.text}
-                        </h2>
+                        </p>
                       );
-                    }
-
-                    return (
-                      <p
-                        key={`${block.text}-${index}`}
-                        className="text-lg leading-9 text-[var(--color-text-muted)]"
-                      >
-                        {block.text}
-                      </p>
-                    );
-                  })}
-                </div>
+                    })}
+                  </div>
+                )}
 
                 <div className="mt-10 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-5">
                   <div className="flex gap-3">

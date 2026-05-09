@@ -21,6 +21,8 @@ export default async function Page() {
         title: post.title,
         excerpt: post.excerpt,
         href: `/post/${post.slug}`,
+        coverImageSrc: post.coverImageSrc,
+        coverImageAlt: post.coverImageAlt,
       }))}
     />
   );

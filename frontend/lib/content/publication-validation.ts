@@ -26,7 +26,20 @@ function hasAnyBlockedCopy(values: Array<string | null | undefined>) {
   return values.some((value) => hasBlockedCopy(value));
 }
 
-type PublicationIssue = {
+/**
+ * Strips tags/scripts so HTML article bodies can be length-checked and scanned for placeholder language
+ * without matching markup noise.
+ */
+function stripBlogHtmlToPlainText(html: string): string {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export type PublicationIssue = {
   field: string;
   message: string;
   severity: "error" | "warning";
@@ -153,15 +166,18 @@ export function validateAdminBlogPayload(post: {
   status: "DRAFT" | "PUBLISHED";
 }): PublicationValidationResult {
   const issues: PublicationIssue[] = [];
+  const bodyPlain = stripBlogHtmlToPlainText(post.body);
   if (!post.title.trim()) issues.push({ field: "title", message: "Missing title.", severity: "error" });
   if (!post.excerpt || post.excerpt.trim().length < 30) issues.push({ field: "excerpt", message: "Missing excerpt.", severity: "error" });
-  if (!post.body.trim() || post.body.trim().length < 250) issues.push({ field: "body", message: "Missing full article body.", severity: "error" });
+  if (!bodyPlain || bodyPlain.length < 250) issues.push({ field: "body", message: "Missing full article body.", severity: "error" });
   if (!post.authorDisplayName?.trim()) issues.push({ field: "authorDisplayName", message: "Missing author name.", severity: "error" });
   if (!post.category?.trim()) issues.push({ field: "category", message: "Missing category.", severity: "error" });
   if (!post.seoTitle?.trim()) issues.push({ field: "seoTitle", message: "Missing SEO title.", severity: "error" });
   if (!post.seoDescription?.trim()) issues.push({ field: "seoDescription", message: "Missing SEO description.", severity: "error" });
   if (!post.updatedAt?.trim()) issues.push({ field: "updatedAt", message: "Missing review or update date.", severity: "error" });
-  if (hasAnyBlockedCopy([post.title, post.excerpt, post.body, post.seoTitle, post.seoDescription])) {
+  if (
+    hasAnyBlockedCopy([post.title, post.excerpt, post.seoTitle, post.seoDescription, bodyPlain])
+  ) {
     issues.push({ field: "copy", message: "Contains blocked internal or placeholder language.", severity: "error" });
   }
   return buildResult(issues);

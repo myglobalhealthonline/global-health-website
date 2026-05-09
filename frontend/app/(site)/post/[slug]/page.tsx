@@ -5,6 +5,7 @@ import {
   getApprovedPublicBlogPostBySlug,
   splitBlogBodyToParagraphs,
 } from "@/lib/content/get-public-blog-posts";
+import { sanitizeBlogHtml } from "@/lib/content/sanitize-blog-html";
 
 type Params = { slug: string };
 
@@ -32,7 +33,8 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
     <BlogArticleTemplate
       title={post.title}
       lead={post.excerpt}
-      body={splitBlogBodyToParagraphs(post.body)}
+      bodyHtml={post.contentFormat === "html" ? sanitizeBlogHtml(post.body) : null}
+      bodyParagraphs={post.contentFormat === "html" ? [] : splitBlogBodyToParagraphs(post.body)}
       author={post.authorDisplayName}
       reviewer={post.reviewerDisplayName}
       category={post.category}

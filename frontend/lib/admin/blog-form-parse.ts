@@ -21,6 +21,7 @@ export function parseBlogPostBodyFromForm(formData: FormData) {
     locale: String(formData.get("locale") ?? "EN").trim(),
     category: optionalString(formData, "category"),
     authorDisplayName: optionalString(formData, "authorDisplayName"),
+    reviewerDisplayName: optionalString(formData, "reviewerDisplayName"),
     coverAssetId: optionalString(formData, "coverAssetId"),
     seoTitle: optionalString(formData, "seoTitle"),
     seoDescription: optionalString(formData, "seoDescription"),
