@@ -43,6 +43,7 @@ export type ListAdminBlogPostsResult = {
 
 const publicBlogPostInclude = {
   country: { select: { id: true, code: true, name: true } },
+  coverAsset: { select: { path: true, altText: true } },
 } satisfies Prisma.BlogPostInclude;
 
 export type PublicBlogPostRecord = Prisma.BlogPostGetPayload<{ include: typeof publicBlogPostInclude }>;

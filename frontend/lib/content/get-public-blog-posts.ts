@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { fetchBlogPosts } from "@/lib/api/site-content-api";
+import { pickSafeAssetPath } from "@/lib/content/get-public-assets";
 import { validateAdminBlogPayload } from "@/lib/content/publication-validation";
 import { logPublicContentFallback } from "@/lib/content/public-content-source";
 
@@ -19,6 +20,8 @@ export type PublicBlogPostRecord = {
   lastReviewedAt: string;
   updatedAt: string;
   editorialChecklist: Record<string, unknown> | null;
+  coverImageSrc: string | null;
+  coverImageAlt: string | null;
 };
 
 function detectBlogContentFormat(body: string): "html" | "text" {
@@ -83,6 +86,20 @@ function normalizeBlogPost(row: unknown): PublicBlogPostRecord | null {
 
   if (validation.shouldNoindex) return null;
 
+  let coverImageSrc: string | null = null;
+  let coverImageAlt: string | null = null;
+  const coverRaw = r.coverAsset;
+  if (coverRaw && typeof coverRaw === "object" && !Array.isArray(coverRaw)) {
+    const cover = coverRaw as Record<string, unknown>;
+    const coverPath = typeof cover.path === "string" ? cover.path : null;
+    if (coverPath) {
+      const safe = pickSafeAssetPath(coverPath);
+      if (safe) coverImageSrc = safe;
+    }
+    const alt = cover.altText;
+    if (typeof alt === "string" && alt.trim()) coverImageAlt = alt.trim();
+  }
+
   return {
     id,
     slug,
@@ -99,6 +116,8 @@ function normalizeBlogPost(row: unknown): PublicBlogPostRecord | null {
     lastReviewedAt,
     updatedAt,
     editorialChecklist,
+    coverImageSrc,
+    coverImageAlt,
   };
 }
 

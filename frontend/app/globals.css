@@ -74,9 +74,11 @@ html {
   -moz-tab-size: 4;
   tab-size: 4;
   scroll-behavior: smooth;
+  margin: 0;
 }
 
 body {
+  margin: 0;
   font-family: var(--font-plus-jakarta), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: var(--text-body);
   line-height: 1.6;
@@ -554,9 +556,20 @@ img {
   opacity: var(--medical-pattern-opacity);
 }
 
-.gh-medical-pattern > * {
+/*
+ * Stack real content above the ::before grid. Absolute decorative layers must stay
+ * out of flow — otherwise `position: relative` here wins the cascade tie with
+ * Tailwind `absolute` and huge `size-*` blobs reserve space (see home delivery).
+ */
+.gh-medical-pattern > *:not(.gh-medical-pattern-layer) {
   position: relative;
   z-index: 1;
+}
+
+.gh-medical-pattern > .gh-medical-pattern-layer {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .gh-medical-pattern-dark::before {

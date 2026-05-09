@@ -137,6 +137,7 @@ export function BlogCoverAssetField({
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif"
           className="sr-only"
+          aria-label="Upload blog cover image file"
           disabled={busy || !apiBase}
           onChange={onFileSelected}
         />

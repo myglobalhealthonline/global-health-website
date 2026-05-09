@@ -98,6 +98,8 @@ export type HomeTemplateData = {
     description: string;
     cta: { label: string; href: string };
     image: { src: string; alt: string };
+    /** Short trust points shown under the description (optional). */
+    highlights?: string[];
   };
   doctorSpotlight: {
     quote: string;
@@ -350,8 +352,8 @@ function buildCountryHomeData(
         secondaryCta: { label: "Schedule with a Specialist", href: paths.specialist },
         trustBadges: ["Irish Medical Council", "Same-day consultation", "Multilingual care"],
         heroImage: {
-          src: "/images/hero/ireland-hero-ai.svg",
-          alt: "Illustration of an online doctor consultation for the Ireland clinic",
+          src: "/images/hero/ireland-hero-photo.png",
+          alt: "Patient at home on a video call with a licensed doctor for an online medical consultation",
         },
       },
       quickActions: [
@@ -375,8 +377,8 @@ function buildCountryHomeData(
         highlight: "Excellent medical care, without leaving home.",
         cta: { label: "Schedule an Appointment", href: paths.general },
         image: {
-          src: "/images/ireland/about-clinic-ai.svg",
-          alt: "Illustration of a collaborative online healthcare team",
+          src: "/images/ireland/ireland-about-section.png",
+          alt: "Global Health Ireland online clinic: quality healthcare from home",
         },
       },
       specialties: {
@@ -409,9 +411,14 @@ function buildCountryHomeData(
           "Prescription delivery is available across Dublin through partner pharmacies, handled safely and discreetly after your online consultation.",
         cta: { label: "Get Prescription Delivered", href: "/home-delivery" },
         image: {
-          src: "/images/ireland/home-delivery-ai.svg",
-          alt: "Illustration of secure healthcare home delivery service",
+          src: "/images/ireland/ireland-home-delivery.png",
+          alt: "Prescription home delivery: pharmacy packaging, medication box, and delivery tracking on a phone for Dublin patients",
         },
+        highlights: [
+          "Secure & discreet",
+          "Fast delivery across Dublin",
+          "Partner pharmacies",
+        ],
       },
       doctorSpotlight: {
         quote: "Telemedicine is changing the way we do medicine, and we are here for you.",

@@ -86,7 +86,7 @@ export function HomeHero({ countries }: HomeHeroProps) {
       {/* Medical pattern overlay */}
       <div className="gh-medical-pattern gh-medical-pattern-dark absolute inset-0" />
 
-      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[var(--container-width)] gap-14 px-5 py-12 sm:px-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:px-12">
+      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[var(--container-width)] gap-14 px-5 pb-12 pt-6 sm:px-8 sm:pb-14 sm:pt-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:px-12 lg:pb-16 lg:pt-10">
         {/* LEFT: Text content */}
         <div className="text-white">
           <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-[rgba(15,46,37,0.72)] px-4 py-2 backdrop-blur-md">
