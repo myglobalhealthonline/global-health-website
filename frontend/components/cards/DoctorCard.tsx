@@ -81,7 +81,6 @@ export function DoctorCard({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 hover:text-[var(--color-brand-primary)] transition-colors"
-                      onClick={(e) => e.stopPropagation()}
                     >
                       IMC <span className="text-[var(--color-text-muted)] font-normal mx-1">|</span> {imcRegistration}
                     </a>
