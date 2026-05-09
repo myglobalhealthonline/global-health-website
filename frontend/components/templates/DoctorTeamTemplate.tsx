@@ -201,16 +201,6 @@ function FeaturedDoctorCard({
           <div className="grid gap-8 lg:grid-cols-[0.48fr_0.52fr] lg:items-center">
             <div className="relative">
               <DoctorImage doctor={doctor} large />
-
-              <div className="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/15 bg-white/90 p-5 text-[var(--color-text-primary)] shadow-xl backdrop-blur">
-                <p className="text-sm font-semibold text-[var(--color-brand-primary)]">
-                  Featured clinician
-                </p>
-                <p className="mt-1 text-xl font-extrabold leading-6">{doctor.name}</p>
-                <p className="mt-1 text-sm leading-5 text-[var(--color-text-muted)]">
-                  {doctor.title}
-                </p>
-              </div>
             </div>
 
             <div className="p-2 sm:p-4 lg:p-6">
@@ -484,23 +474,6 @@ export function DoctorTeamTemplate({
 
           <section id="medical-team" className="bg-[var(--color-background-soft)] pb-20 sm:pb-28 lg:pb-32">
             <Container>
-              <div className="mb-12 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
-                    Clinician profiles
-                  </span>
-
-                  <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-[var(--color-text-primary)] sm:text-4xl">
-                    {countryName} medical team
-                  </h2>
-                </div>
-
-                <p className="max-w-2xl text-base leading-7 text-[var(--color-text-muted)] sm:text-right">
-                  Review clinician specialties, languages, and registration details before choosing
-                  a booking route.
-                </p>
-              </div>
-
               {remainingDoctors.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                   {remainingDoctors.map((doctor) => (
