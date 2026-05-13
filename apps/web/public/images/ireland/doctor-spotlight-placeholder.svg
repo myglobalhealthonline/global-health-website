@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1100" viewBox="0 0 900 1100" fill="none">
+  <rect width="900" height="1100" rx="36" fill="#f8fafc"/>
+  <circle cx="450" cy="300" r="150" fill="#a5f3fc"/>
+  <rect x="250" y="500" width="400" height="320" rx="120" fill="#22d3ee"/>
+  <rect x="220" y="830" width="460" height="120" rx="24" fill="#fff" stroke="#bae6fd" stroke-width="4"/>
+  <text x="450" y="895" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#0f172a">Doctor Spotlight Placeholder</text>
+</svg>

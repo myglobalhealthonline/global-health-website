@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Form Field</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  body { padding: 24px 28px; background: #fff; }
+  .field { display: flex; flex-direction: column; gap: 6px; max-width: 360px; }
+  .lbl { font-size: 14px; font-weight: 700; color: #0F2E25; }
+  .inp { width: 100%; min-height: 48px; padding: 0 16px; border: 1px solid #D8E0D8; border-radius: 12px; background: #fff; color: #2D3B36; font-size: 15px; line-height: 1.5; outline: none; font-family: inherit; }
+  .inp:focus { border-color: #1B4D3E; box-shadow: 0 0 0 3px rgba(27,77,62,0.15); }
+  .hint { font-size: 12px; color: #5A6B64; }
+  .row2 { display: flex; gap: 18px; align-items: flex-start; }
+  .field.error .inp { border-color: #B91C1C; box-shadow: 0 0 0 3px rgba(185,28,28,0.15); }
+  .field.error .hint { color: #991B1B; }
+</style>
+<div class="row2">
+  <div class="field">
+    <label class="lbl">Email</label>
+    <input class="inp" placeholder="you@example.com" value="rita@globalhealth.io">
+    <span class="hint">We'll send your booking confirmation here.</span>
+  </div>
+  <div class="field error">
+    <label class="lbl">Phone</label>
+    <input class="inp" value="+351 21" aria-invalid="true">
+    <span class="hint">Include country code (e.g. +351).</span>
+  </div>
+</div>
+</body></html>

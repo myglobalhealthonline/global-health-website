@@ -1,0 +1,251 @@
+// =====================================================================
+// Global Health — Prisma schema (Stage 4)
+// Replaces backend/prisma/schema.prisma
+// Run: pnpm db:migrate  (creates a migration named e.g. "country_axis")
+// =====================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ ENUMS ============
+
+enum UserRole {
+  PATIENT
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum CategoryType {
+  GENERAL
+  SPECIALIST
+}
+
+enum ServiceType {
+  GENERAL
+  SPECIALIST
+  PRESCRIPTION
+  HEALTH_TEST
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+// ============ COUNTRIES (the axis) ============
+
+model Country {
+  id             String   @id @default(cuid())
+  code           String   @unique  // "IE","PT","ES","CZ","RO"
+  slug           String   @unique  // "ie","pt","es","cz","rm" — matches existing URLs
+  name           String
+  flagUrl        String?
+  currency       String              // ISO: "EUR","CZK"
+  currencySymbol String?             // "€","Kč"
+  languages      String[]            // ["English","Portuguese"]
+  phone          String?
+  email          String?
+  whatsapp       String?
+
+  // Per-country marketing copy editable from admin (draft-able)
+  heroTitle      String?
+  heroSubtitle   String?
+  ctaLabel       String?
+  status         PublishStatus @default(DRAFT)
+
+  active         Boolean   @default(true)
+  sortOrder      Int       @default(0)
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  doctorLinks    DoctorCountry[]
+  services       Service[]
+  categoryLinks  CategoryCountry[]
+  appointments   Appointment[]
+
+  @@index([active, status])
+}
+
+// ============ CATEGORIES (global, enabled per country) ============
+
+model Category {
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  name        String
+  iconUrl     String?
+  type        CategoryType
+  description String?
+
+  sortOrder   Int         @default(0)
+  active      Boolean     @default(true)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  countries   CategoryCountry[]
+  services    Service[]
+}
+
+model CategoryCountry {
+  id         String   @id @default(cuid())
+  categoryId String
+  countryId  String
+  active     Boolean  @default(true)
+  sortOrder  Int      @default(0)
+
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  country    Country  @relation(fields: [countryId],  references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, countryId])
+  @@index([countryId])
+}
+
+// ============ DOCTORS (M:N with countries) ============
+
+model Doctor {
+  id                 String   @id @default(cuid())
+  slug               String   @unique
+  name               String
+  title              String              // "Dr.","MD","GP"
+  bio                String   @db.Text
+  imageUrl           String?
+  registrationNumber String?
+  yearsExperience    Int?
+  languages          String[]
+
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  countryLinks DoctorCountry[]
+  appointments Appointment[]
+}
+
+model DoctorCountry {
+  id        String   @id @default(cuid())
+  doctorId  String
+  countryId String
+  sortOrder Int      @default(0)   // ordering on /pt/team, /ie/team etc.
+  active    Boolean  @default(true) // suspend in one country only
+
+  doctor    Doctor   @relation(fields: [doctorId],  references: [id], onDelete: Cascade)
+  country   Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, countryId])
+  @@index([countryId])
+}
+
+// ============ SERVICES (one table, four types) ============
+
+model Service {
+  id              String       @id @default(cuid())
+  slug            String                          // unique per country
+  title           String
+  summary         String       @db.Text
+  description     String       @db.Text
+  type            ServiceType
+  status          PublishStatus @default(DRAFT)
+
+  countryId       String
+  categoryId      String?                         // required for GENERAL/SPECIALIST
+
+  priceCents      Int?
+  currency        String?                         // falls back to Country.currency
+  durationMin     Int?
+  imageUrl        String?
+
+  metaTitle       String?
+  metaDescription String?
+
+  active          Boolean  @default(true)
+  featured        Boolean  @default(false)
+  sortOrder       Int      @default(0)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  country         Country       @relation(fields: [countryId],  references: [id])
+  category        Category?     @relation(fields: [categoryId], references: [id])
+  appointments    Appointment[]
+
+  @@unique([countryId, slug])
+  @@index([countryId, type, status])
+  @@index([categoryId])
+}
+
+// ============ USERS / AUTH ============
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         UserRole @default(PATIENT)
+  active       Boolean  @default(true)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  appointments Appointment[]
+  auditLogs    AdminAuditLog[]
+}
+
+// ============ AUDIT LOG ============
+
+model AdminAuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String                // "create","update","delete","login","publish"
+  entity    String                // "Doctor","Service","Country"
+  entityId  String?
+  countryId String?               // context: which country were they in
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
+
+// ============ APPOINTMENT (lean, for future booking flow) ============
+
+model Appointment {
+  id           String            @id @default(cuid())
+  userId       String?
+  doctorId     String?
+  serviceId    String
+  countryId    String
+  status       AppointmentStatus @default(PENDING)
+  patientName  String
+  patientEmail String
+  patientPhone String?
+  startsAt     DateTime?
+  notes        String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user    User?   @relation(fields: [userId],    references: [id])
+  doctor  Doctor? @relation(fields: [doctorId],  references: [id])
+  service Service @relation(fields: [serviceId], references: [id])
+  country Country @relation(fields: [countryId], references: [id])
+
+  @@index([status])
+  @@index([countryId])
+}

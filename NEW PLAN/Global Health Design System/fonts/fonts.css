@@ -1,0 +1,17 @@
+/* Web fonts.
+   The brand manual specifies GILROY (Black + Regular). Gilroy is a
+   commercial typeface and is not currently licensed for web. The
+   production website substitutes Plus Jakarta Sans (Google Fonts),
+   which has very similar metrics: tall x-height, geometric humanist
+   construction, full range of weights (200–800), and a slightly
+   warmer feel than Inter.
+
+   FLAG: replace these @import-ed Google fonts with self-hosted
+   Gilroy WOFF2 files once licensing is sorted.
+
+   For the wordmark / logotype we use Cormorant Garamond as the
+   closest free serif match to the bracketed serif in the official
+   logo (see assets/brand/logo-full-color.png). Reserve the serif
+   for the logotype only — do NOT use it for headings. */
+
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap");

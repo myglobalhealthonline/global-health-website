@@ -1,0 +1,32 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Semantic / Status</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  .pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 1.4; border: 1px solid; }
+  .pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .row2 { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  .status-block { display: flex; flex-direction: column; gap: 8px; flex: 1 1 0; }
+  .status-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg3); }
+</style>
+<div class="row" style="align-items: stretch; gap: 16px;">
+  <div class="status-block">
+    <span class="status-label">Error</span>
+    <span class="pill" style="background:#FEF2F2;color:#991B1B;border-color:#FECACA">Booking failed</span>
+  </div>
+  <div class="status-block">
+    <span class="status-label">Success</span>
+    <span class="pill" style="background:#F0FDF4;color:#15803D;border-color:#BBF7D0">Confirmed</span>
+  </div>
+  <div class="status-block">
+    <span class="status-label">Warning</span>
+    <span class="pill" style="background:#FFFBEB;color:#92400E;border-color:#FDE68A">Pending review</span>
+  </div>
+  <div class="status-block">
+    <span class="status-label">Info</span>
+    <span class="pill" style="background:#F0F9FF;color:#075985;border-color:#BAE6FD">2 doctors online</span>
+  </div>
+</div>
+<div class="row2">
+  <span class="pill" style="background:#EDF2ED;color:#1B4D3E;border-color:#D8E0D8">Neutral chip</span>
+  <span class="pill" style="background:#C8E6A0;color:#143B30;border-color:transparent">Mint chip</span>
+  <span class="pill" style="background:#1B4D3E;color:#fff;border-color:transparent">Brand chip</span>
+</div>
+</body></html>

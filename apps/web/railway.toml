@@ -1,0 +1,9 @@
+# Frontend service — Root Directory must be `frontend`.
+#
+# A Dockerfile in this folder is the source of truth for build + start so the
+# runtime image always contains `.next/` (Railpack alone can run `next start`
+# without shipping the production build).
+#
+# Optional: pin the Dockerfile explicitly
+# [build]
+# dockerfilePath = "Dockerfile"

@@ -1,0 +1,42 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Service Card</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  body { padding: 22px 24px; background: #F4F8F4; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { background: #fff; border: 1px solid #D8E0D8; border-radius: 20px; padding: 22px; box-shadow: 0 1px 3px rgba(15,46,37,0.08), 0 4px 12px rgba(15,46,37,0.04); display: flex; flex-direction: column; transition: all 180ms ease-out; }
+  .card:hover { box-shadow: 0 4px 12px rgba(15,46,37,0.12), 0 8px 24px rgba(15,46,37,0.08); transform: translateY(-1px); border-color: rgba(27,77,62,0.20); }
+  .card .icon-tile { width: 44px; height: 44px; border-radius: 12px; background: rgba(27,77,62,0.10); color: #1B4D3E; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+  .card h3 { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: #0F2E25; margin: 0 0 6px; line-height: 1.25; letter-spacing: -0.01em; }
+  .card p { font-size: 13.5px; line-height: 1.55; color: #5A6B64; margin: 0 0 14px; }
+  .meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .chip-time { background: #F4F8F4; color: #5A6B64; border: 1px solid #D8E0D8; }
+  .chip-price { background: rgba(200,230,160,0.30); color: #1B4D3E; }
+  .link { font-size: 13px; font-weight: 700; color: #1B4D3E; margin-top: auto; display: inline-flex; align-items: center; gap: 6px; }
+</style>
+<div class="grid">
+  <div class="card">
+    <span class="icon-tile">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    </span>
+    <h3>General consultation</h3>
+    <p>Talk to a registered GP — same day appointments, prescriptions issued online when needed.</p>
+    <div class="meta">
+      <span class="chip chip-time">⏱ 30 min</span>
+      <span class="chip chip-price">From €50</span>
+    </div>
+    <span class="link">Learn more →</span>
+  </div>
+  <div class="card">
+    <span class="icon-tile">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+    </span>
+    <h3>Cardiology consultation</h3>
+    <p>Specialist review of heart symptoms, ECG interpretation, and second opinions, online.</p>
+    <div class="meta">
+      <span class="chip chip-time">⏱ 45 min</span>
+      <span class="chip chip-price">From €120</span>
+    </div>
+    <span class="link">Learn more →</span>
+  </div>
+</div>
+</body></html>

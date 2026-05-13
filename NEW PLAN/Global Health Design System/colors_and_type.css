@@ -1,0 +1,229 @@
+/* ──────────────────────────────────────────────────────────────
+   GLOBAL HEALTH — Design Tokens
+   Single source of truth for color + type used across mocks,
+   slides, and UI kits. Derived from the official brand manual
+   ("Manual da Marca") and the production codebase (Next.js
+   site at myglobalhealth.online).
+
+   Two layers:
+     1. Raw tokens    → exact swatches/font stacks from brand
+     2. Semantic vars → role-based aliases (fg1, surface, h1…)
+   Use the SEMANTIC vars in product. Reserve raw tokens for
+   brand surfaces (logo lockups, marketing collateral).
+   ──────────────────────────────────────────────────────────── */
+
+@import url("./fonts/fonts.css");
+
+:root {
+  /* ── 1. RAW BRAND TOKENS ─────────────────────────────────── */
+
+  /* Greens (Manual da Marca — exact specs) */
+  --gh-forest:        #1D4B36;  /* primary — forest green */
+  --gh-olive:         #8FB021;  /* secondary — olive lime */
+  --gh-lime:          #B0F122;  /* accent — bright lime */
+  --gh-white:         #FFFFFF;
+  --gh-gray:          #6D6D6D;  /* manual neutral 57% black */
+
+  /* Production refinements (from globals.css in codebase) —
+     a slightly darker forest + a softer minty accent that
+     proved more legible against light surfaces in product. */
+  --gh-forest-deep:   #1B4D3E;  /* used as production primary */
+  --gh-forest-darker: #143B30;  /* hover / press */
+  --gh-forest-night:  #0F2E25;  /* darkest surface, text */
+  --gh-mint-soft:     #C8E6A0;  /* softened accent for UI */
+  --gh-cream:         #F4F8F4;  /* soft background tint */
+  --gh-panel:         #EDF2ED;  /* panel surface */
+
+  /* Neutrals */
+  --gh-ink:           #0F2E25;
+  --gh-body:          #2D3B36;
+  --gh-muted:         #5A6B64;
+  --gh-placeholder:   #8A9A92;
+  --gh-border:        #D8E0D8;
+  --gh-border-strong: #B8C8B8;
+
+  /* Status — borrowed from product (no manual spec). Hue-shifted
+     toward the same low-saturation palette as the greens. */
+  --gh-status-error:        #B91C1C;
+  --gh-status-error-bg:     #FEF2F2;
+  --gh-status-error-text:   #991B1B;
+  --gh-status-error-border: #FECACA;
+  --gh-status-success-bg:   #F0FDF4;
+  --gh-status-success-text: #15803D;
+  --gh-status-success-border:#BBF7D0;
+  --gh-status-warning-bg:   #FFFBEB;
+  --gh-status-warning-text: #92400E;
+  --gh-status-warning-border:#FDE68A;
+  --gh-status-info-bg:      #F0F9FF;
+  --gh-status-info-text:    #075985;
+  --gh-status-info-border:  #BAE6FD;
+
+  /* ── 2. SEMANTIC ALIASES (use in product) ────────────────── */
+
+  /* Foreground */
+  --fg1: var(--gh-ink);          /* headings, primary text */
+  --fg2: var(--gh-body);         /* body */
+  --fg3: var(--gh-muted);        /* secondary, captions */
+  --fg4: var(--gh-placeholder);  /* placeholder */
+  --fg-on-dark: var(--gh-white);
+
+  /* Brand */
+  --brand:        var(--gh-forest-deep);
+  --brand-hover:  var(--gh-forest-darker);
+  --brand-dark:   var(--gh-forest-night);
+  --accent:       var(--gh-mint-soft);   /* UI-safe accent */
+  --accent-vivid: var(--gh-lime);        /* marketing only */
+
+  /* Surfaces */
+  --surface:        var(--gh-white);
+  --surface-soft:   var(--gh-cream);
+  --surface-panel:  var(--gh-panel);
+  --surface-dark:   var(--gh-forest-night);
+  --hero-overlay:   rgba(15, 46, 37, 0.72);
+
+  /* Borders */
+  --border:        var(--gh-border);
+  --border-strong: var(--gh-border-strong);
+
+  /* Radii */
+  --r-button: 999px;     /* fully pill */
+  --r-card:   20px;
+  --r-card-sm:12px;
+  --r-tile:   16px;
+  --r-chip:   999px;
+
+  /* Shadows — soft, never harsh. Tint shadows with forest. */
+  --shadow-soft:        0 1px 3px rgba(15, 46, 37, 0.06);
+  --shadow-card:        0 1px 3px rgba(15, 46, 37, 0.08),
+                        0 4px 12px rgba(15, 46, 37, 0.04);
+  --shadow-card-hover:  0 4px 12px rgba(15, 46, 37, 0.12),
+                        0 8px 24px rgba(15, 46, 37, 0.08);
+  --shadow-elevated:    0 8px 30px rgba(15, 46, 37, 0.14),
+                        0 2px 8px rgba(15, 46, 37, 0.08);
+  --shadow-focus:       0 0 0 3px rgba(27, 77, 62, 0.15);
+
+  /* Spacing scale (4-pt) */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10:40px;
+  --s-12:48px;
+  --s-16:64px;
+  --s-20:80px;
+  --s-28:112px;
+
+  /* Layout */
+  --container-width: 1280px;
+  --section-pad-y:   112px;
+  --section-pad-y-sm:64px;
+  --header-height:   88px;
+
+  /* ── 3. TYPOGRAPHY ───────────────────────────────────────── */
+
+  /* Font families.
+     Brand manual specifies GILROY (Black + Regular). Production
+     uses Plus Jakarta Sans because Gilroy is a commercial type-
+     face not on Google Fonts and not currently licensed for web.
+     Both stacks ship with this system; flip via --font-display. */
+  --font-display: "Gilroy", "Plus Jakarta Sans", "Inter",
+                  ui-sans-serif, system-ui, -apple-system,
+                  "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-body:    "Plus Jakarta Sans", "Inter",
+                  ui-sans-serif, system-ui, -apple-system,
+                  "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-serif:   "Cormorant Garamond", "Source Serif Pro",
+                  Georgia, "Times New Roman", serif;
+                  /* Reserved for the logotype only. */
+  --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular,
+                  Menlo, Consolas, monospace;
+
+  /* Fluid type scale (matches production clamps) */
+  --text-display: clamp(2.5rem, 5vw + 1rem, 4rem);
+  --text-h1:      clamp(2rem, 4vw + 0.5rem, 3.25rem);
+  --text-h2:      clamp(1.6rem, 3vw + 0.4rem, 2.5rem);
+  --text-h3:      clamp(1.25rem, 2vw + 0.3rem, 1.75rem);
+  --text-body-lg: clamp(1.05rem, 1.2vw + 0.6rem, 1.25rem);
+  --text-body:    clamp(0.95rem, 0.5vw + 0.7rem, 1.05rem);
+  --text-sm:      0.92rem;
+  --text-xs:      0.78rem;
+  --text-eyebrow: 11px;
+
+  /* Weights — display runs HEAVY (800), body sits at 400/500 */
+  --w-regular: 400;
+  --w-medium:  500;
+  --w-semi:    600;
+  --w-bold:    700;
+  --w-black:   800;
+}
+
+/* ── 4. SEMANTIC TYPE STYLES (.gh-h1, .gh-body, …) ─────────── */
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--fg2);
+  background: var(--surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.gh-display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: var(--w-black);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--fg1);
+}
+.gh-h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: var(--w-black);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--fg1);
+}
+.gh-h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--w-black);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--fg1);
+}
+.gh-h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: var(--w-bold);
+  line-height: 1.25;
+  color: var(--fg1);
+}
+.gh-body-lg { font-size: var(--text-body-lg); line-height: 1.6; color: var(--fg2); }
+.gh-body    { font-size: var(--text-body);    line-height: 1.6; color: var(--fg2); }
+.gh-body-sm { font-size: var(--text-sm);      line-height: 1.55; color: var(--fg3); }
+.gh-caption { font-size: var(--text-xs);      line-height: 1.4;  color: var(--fg3); }
+
+/* Eyebrow — the brand's signature label. ALL CAPS, wide tracking,
+   bold. Used above every section heading. */
+.gh-eyebrow {
+  font-size: var(--text-eyebrow);
+  font-weight: var(--w-bold);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+/* Wordmark — only place serif type appears in the system. Used
+   inside the logo lockup; do NOT use elsewhere. */
+.gh-wordmark {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}

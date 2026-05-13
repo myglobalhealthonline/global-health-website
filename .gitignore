@@ -1,22 +1,23 @@
-﻿# root
-/node_modules
+# root
+node_modules
+.tmp-*
+dev-server.log
 
-# frontend
-/frontend/.next
-/frontend/node_modules
-/frontend/out
-/frontend/coverage
-/frontend/*.tsbuildinfo
-/frontend/.env*
+# apps
+/apps/*/.next
+/apps/*/node_modules
+/apps/*/out
+/apps/*/coverage
+/apps/*/*.tsbuildinfo
+/apps/*/.env*
 
-# backend
-/backend/node_modules
-/backend/.env*
+# packages
+/packages/*/node_modules
+/packages/*/dist
+/packages/*/.env*
+/packages/db/.data
 
 # editor
 .vscode
-
-/backend/dist
-/backend/.data
-/.cursor
-/.codex
+.cursor
+.codex

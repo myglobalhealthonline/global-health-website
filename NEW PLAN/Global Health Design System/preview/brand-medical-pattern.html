@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Medical Pattern</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  body { padding: 0; min-height: 280px; display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .swatch { position: relative; padding: 32px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+  .swatch::before { content: ""; position: absolute; inset: 0; pointer-events: none; }
+  .light { background: #fff; }
+  .light::before { background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231b4d3e' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E"); background-size: 28px; opacity: 0.06; }
+  .dark { background: #1B4D3E; color: #fff; }
+  .dark::before { background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E"); background-size: 28px; opacity: 0.08; }
+  .lbl { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+  .light .lbl { color: #1B4D3E; }
+  .dark .lbl { color: #C8E6A0; }
+  .specimen { font-family: var(--font-display); font-size: 28px; font-weight: 800; letter-spacing: -0.015em; line-height: 1.1; margin-top: 6px; }
+  .light .specimen { color: #0F2E25; }
+  .dark .specimen { color: #fff; }
+  .meta { margin-top: 10px; font-family: ui-monospace, monospace; font-size: 10px; }
+  .light .meta { color: var(--fg3); }
+  .dark .meta { color: rgba(255,255,255,0.65); }
+</style>
+<div class="swatch light">
+  <span class="lbl">Soft background</span>
+  <p class="specimen">+ + + + +</p>
+  <p class="meta">28px tile · 2px stroke · 6% forest opacity</p>
+</div>
+<div class="swatch dark">
+  <span class="lbl">Dark background</span>
+  <p class="specimen">+ + + + +</p>
+  <p class="meta">28px tile · 8% white opacity · overlay</p>
+</div>
+</body></html>

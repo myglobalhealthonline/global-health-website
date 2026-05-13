@@ -1,0 +1,260 @@
+{
+  "_meta": {
+    "locale": "es",
+    "coverage": "partial",
+    "note": "Partial translations provided; missing keys fall back to English."
+  },
+  "labels": {
+    "route.root": {
+      "pageLabel": "Inicio global",
+      "navigationLabel": "Inicio",
+      "pageTitle": "Global Health",
+      "shortDescription": "Route label for Inicio global."
+    },
+    "route.home": {
+      "pageLabel": "Ireland home",
+      "navigationLabel": "Ireland",
+      "pageTitle": "Ireland Clinic Home",
+      "shortDescription": "Route label for Inicio Irlanda."
+    },
+    "route.home_pt": {
+      "pageLabel": "Portugal home",
+      "navigationLabel": "Portugal",
+      "pageTitle": "Portugal Clinic Home",
+      "shortDescription": "Route label for Inicio Portugal."
+    },
+    "route.home_sp": {
+      "pageLabel": "Inicio Espana",
+      "navigationLabel": "Espana",
+      "pageTitle": "Clinica Espana",
+      "shortDescription": "Route label for Inicio Espana."
+    },
+    "route.home_cz": {
+      "pageLabel": "Czechia home",
+      "navigationLabel": "Czechia",
+      "pageTitle": "Czechia Clinic Home",
+      "shortDescription": "Route label for Inicio Chequia."
+    },
+    "route.home_rm": {
+      "pageLabel": "Romania home",
+      "navigationLabel": "Romania",
+      "pageTitle": "Romania Clinic Home",
+      "shortDescription": "Route label for Inicio Rumania."
+    },
+    "route.book_online": {
+      "pageLabel": "Reservar consulta",
+      "navigationLabel": "Reservar",
+      "pageTitle": "Reservar Consulta Online",
+      "shortDescription": "Book consultation and share intake details."
+    },
+    "route.about": {
+      "pageLabel": "About",
+      "navigationLabel": "About",
+      "pageTitle": "About Global Health",
+      "shortDescription": "About page for Global Health care model."
+    },
+    "route.careers": {
+      "pageLabel": "Careers",
+      "navigationLabel": "Careers",
+      "pageTitle": "Careers",
+      "shortDescription": "Careers and team growth information."
+    },
+    "route.blog": {
+      "pageLabel": "Blog",
+      "navigationLabel": "Blog",
+      "pageTitle": "Health Blog",
+      "shortDescription": "Route label for Blog."
+    },
+    "route.frequent_asked_questions": {
+      "pageLabel": "FAQ",
+      "navigationLabel": "FAQ",
+      "pageTitle": "Frequently Asked Questions",
+      "shortDescription": "Common patient questions and answers."
+    },
+    "route.gift_card": {
+      "pageLabel": "Gift card",
+      "navigationLabel": "Gift card",
+      "pageTitle": "Gift Card",
+      "shortDescription": "Gift card support for consultation bookings."
+    },
+    "route.plans_pricing": {
+      "pageLabel": "Plans and pricing",
+      "navigationLabel": "Plans and pricing",
+      "pageTitle": "Plans and Pricing",
+      "shortDescription": "Pricing overview and consultation comparison."
+    },
+    "route.online_prescription": {
+      "pageLabel": "Online prescription",
+      "navigationLabel": "Online prescription",
+      "pageTitle": "Online Prescription",
+      "shortDescription": "Prescription support and consultation pathway."
+    },
+    "route.home_delivery": {
+      "pageLabel": "Home delivery",
+      "navigationLabel": "Home delivery",
+      "pageTitle": "Home Delivery",
+      "shortDescription": "Delivery support guidance after consultation."
+    },
+    "route.partner_clinics": {
+      "pageLabel": "Partner clinics",
+      "navigationLabel": "Partner clinics",
+      "pageTitle": "Partner Clinics",
+      "shortDescription": "Partner network and local care continuity."
+    },
+    "route.legal_notices": {
+      "pageLabel": "Legal notices",
+      "navigationLabel": "Legal notices",
+      "pageTitle": "Legal Notices"
+    },
+    "route.term_and_conditions": {
+      "pageLabel": "Terms and conditions",
+      "navigationLabel": "Terms",
+      "pageTitle": "Terms and Conditions",
+      "shortDescription": "Route label for Terminos y condiciones."
+    },
+    "route.privacy": {
+      "pageLabel": "Privacy policy",
+      "navigationLabel": "Privacy",
+      "pageTitle": "Privacy Policy",
+      "shortDescription": "Route label for Politica de privacidad."
+    },
+    "route.return_and_refund_policy": {
+      "pageLabel": "Refund policy",
+      "navigationLabel": "Refund",
+      "pageTitle": "Refund and Return Policy",
+      "shortDescription": "Route label for Politica de devolucion y reembolso."
+    },
+    "route.pricing_plans.list": {
+      "pageLabel": "Pricing plans list",
+      "navigationLabel": "Pricing plans",
+      "pageTitle": "Pricing Plans List",
+      "shortDescription": "Pricing list and consultation categories."
+    },
+    "route.home_health_test": {
+      "pageLabel": "Home health test",
+      "navigationLabel": "Health tests",
+      "pageTitle": "Home Health Test",
+      "shortDescription": "Home health testing guidance and booking route."
+    },
+    "route.corporate_plans": {
+      "pageLabel": "Corporate plans",
+      "navigationLabel": "Corporate plans",
+      "pageTitle": "Corporate Plans",
+      "shortDescription": "Employer-oriented healthcare consultation plans."
+    },
+    "route.ireland_doctors.doctorSlug": {
+      "pageLabel": "Doctor profile",
+      "navigationLabel": "Ireland team",
+      "pageTitle": "Doctor Profile",
+      "shortDescription": "Doctor profile page with specialties and booking CTA."
+    },
+    "route.category.all_products": {
+      "pageLabel": "All products",
+      "navigationLabel": "Categories",
+      "pageTitle": "All Products Category",
+      "shortDescription": "Browse all service and product pathways."
+    },
+    "route.category.health_education": {
+      "pageLabel": "Health education",
+      "navigationLabel": "Categories",
+      "pageTitle": "Health Education Category",
+      "shortDescription": "Health education resources and guidance."
+    },
+    "route.category.telemedicine_devices": {
+      "pageLabel": "Telemedicine devices",
+      "navigationLabel": "Categories",
+      "pageTitle": "Telemedicine Devices Category",
+      "shortDescription": "Device-supported telemedicine support pathways."
+    },
+    "route.general_consultation_ie": {
+      "pageLabel": "Consulta general Irlanda",
+      "navigationLabel": "Consulta general Irlanda",
+      "pageTitle": "Consulta general Irlanda",
+      "shortDescription": "Route label for Consulta general Irlanda."
+    },
+    "route.general_consultation_pt": {
+      "pageLabel": "Consulta general Portugal",
+      "navigationLabel": "Consulta general Portugal",
+      "pageTitle": "Consulta general Portugal",
+      "shortDescription": "Route label for Consulta general Portugal."
+    },
+    "route.general_consultation_sp": {
+      "pageLabel": "Consulta general Espana",
+      "navigationLabel": "Consulta general Espana",
+      "pageTitle": "Consulta general Espana",
+      "shortDescription": "Route label for Consulta general Espana."
+    },
+    "route.general_consultation_cz": {
+      "pageLabel": "Consulta general Chequia",
+      "navigationLabel": "Consulta general Chequia",
+      "pageTitle": "Consulta general Chequia",
+      "shortDescription": "Route label for Consulta general Chequia."
+    },
+    "route.general_consultation_rm": {
+      "pageLabel": "Consulta general Rumania",
+      "navigationLabel": "Consulta general Rumania",
+      "pageTitle": "Consulta general Rumania",
+      "shortDescription": "Route label for Consulta general Rumania."
+    },
+    "route.specialty_ie": {
+      "pageLabel": "Consulta especialista Irlanda",
+      "navigationLabel": "Consulta especialista Irlanda",
+      "pageTitle": "Consulta especialista Irlanda",
+      "shortDescription": "Route label for Consulta especialista Irlanda."
+    },
+    "route.specialty_pt": {
+      "pageLabel": "Consulta especialista Portugal",
+      "navigationLabel": "Consulta especialista Portugal",
+      "pageTitle": "Consulta especialista Portugal",
+      "shortDescription": "Route label for Consulta especialista Portugal."
+    },
+    "route.specialty_sp": {
+      "pageLabel": "Consulta especialista Espana",
+      "navigationLabel": "Consulta especialista Espana",
+      "pageTitle": "Consulta especialista Espana",
+      "shortDescription": "Route label for Consulta especialista Espana."
+    },
+    "route.specialty_cz": {
+      "pageLabel": "Consulta especialista Chequia",
+      "navigationLabel": "Consulta especialista Chequia",
+      "pageTitle": "Consulta especialista Chequia",
+      "shortDescription": "Route label for Consulta especialista Chequia."
+    },
+    "route.specialty_rm": {
+      "pageLabel": "Consulta especialista Rumania",
+      "navigationLabel": "Consulta especialista Rumania",
+      "pageTitle": "Consulta especialista Rumania",
+      "shortDescription": "Route label for Consulta especialista Rumania."
+    },
+    "route.ireland_team": {
+      "pageLabel": "Equipo Irlanda",
+      "navigationLabel": "Equipo Irlanda",
+      "pageTitle": "Equipo Irlanda",
+      "shortDescription": "Route label for Equipo Irlanda."
+    },
+    "route.portugal_team": {
+      "pageLabel": "Equipo Portugal",
+      "navigationLabel": "Equipo Portugal",
+      "pageTitle": "Equipo Portugal",
+      "shortDescription": "Route label for Equipo Portugal."
+    },
+    "route.spain_team": {
+      "pageLabel": "Equipo Espana",
+      "navigationLabel": "Equipo Espana",
+      "pageTitle": "Equipo Espana",
+      "shortDescription": "Route label for Equipo Espana."
+    },
+    "route.czechia_team": {
+      "pageLabel": "Equipo Chequia",
+      "navigationLabel": "Equipo Chequia",
+      "pageTitle": "Equipo Chequia",
+      "shortDescription": "Route label for Equipo Chequia."
+    },
+    "route.romania_team": {
+      "pageLabel": "Equipo Rumania",
+      "navigationLabel": "Equipo Rumania",
+      "pageTitle": "Equipo Rumania",
+      "shortDescription": "Route label for Equipo Rumania."
+    }
+  }
+}

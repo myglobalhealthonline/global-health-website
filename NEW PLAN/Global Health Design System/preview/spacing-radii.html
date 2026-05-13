@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Radii</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  body { padding: 20px 24px; }
+  .row { gap: 18px; }
+  .tile { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .swatch { width: 84px; height: 64px; background: #1B4D3E; }
+  .tile .name { font-size: 11px; font-weight: 700; color: var(--fg2); }
+  .tile .meta { font-family: ui-monospace, monospace; font-size: 10px; color: var(--fg3); }
+</style>
+<div class="row">
+  <div class="tile"><div class="swatch" style="border-radius: 0"></div><div class="name">0</div><div class="meta">never</div></div>
+  <div class="tile"><div class="swatch" style="border-radius: 12px"></div><div class="name">12 — inner</div><div class="meta">--r-card-sm</div></div>
+  <div class="tile"><div class="swatch" style="border-radius: 16px"></div><div class="name">16 — tile</div><div class="meta">--r-tile</div></div>
+  <div class="tile"><div class="swatch" style="border-radius: 20px"></div><div class="name">20 — card</div><div class="meta">--r-card</div></div>
+  <div class="tile"><div class="swatch" style="border-radius: 999px; width: 120px; height: 48px"></div><div class="name">pill — button</div><div class="meta">--r-button</div></div>
+</div>
+</body></html>

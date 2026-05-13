@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Buttons — on dark</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  body { padding: 22px 24px; background: #0F2E25;
+    background-image:
+      radial-gradient(800px 200px at 30% 110%, rgba(176,241,34,0.05), transparent),
+      url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: auto, 28px 28px;
+    background-blend-mode: normal, lighten;
+  }
+  body::before { content: ""; position: fixed; inset: 0; background: rgba(255,255,255,0.04); pointer-events: none; }
+  .row { gap: 12px; align-items: center; position: relative; z-index: 1; }
+  .btn { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 24px; border-radius: 999px; font-size: 14px; font-weight: 700; line-height: 1; border: 2px solid transparent; cursor: pointer; transition: all 180ms ease-out; text-decoration: none; }
+  .btn-accent { background: #C8E6A0; color: #143B30; }
+  .btn-ghost-dark { background: #fff; color: #1B4D3E; }
+  .btn-ghost { background: rgba(255,255,255,0.10); color: #fff; border: 2px solid rgba(255,255,255,0.30); }
+  .label { font-family: ui-monospace, monospace; font-size: 10px; color: rgba(255,255,255,0.65); font-weight: 600; }
+</style>
+<div class="row">
+  <a class="btn btn-accent">Book consultation</a>
+  <a class="btn btn-ghost-dark">See doctors</a>
+  <a class="btn btn-ghost">Skip for now</a>
+</div>
+<div class="row" style="margin-top: 12px; gap: 12px;">
+  <span class="label">mint accent</span>
+  <span class="label" style="margin-left:48px">ghost-on-dark</span>
+  <span class="label" style="margin-left:32px">outlined-on-dark</span>
+</div>
+<div style="margin-top: 14px; font-size: 11px; color: rgba(255,255,255,0.55); font-family: ui-monospace, monospace; line-height: 1.5; position: relative; z-index: 1;">On dark sections, mint or white replaces forest as the filled button color.</div>
+</body></html>
