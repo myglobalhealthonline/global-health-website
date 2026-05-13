@@ -12,6 +12,6 @@
     "declaration": true,
     "noEmit": true
   },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules", "_legacy"]
+  "include": ["src/**/*.ts", "lib/**/*.ts"],
+  "exclude": ["node_modules", "lib/_legacy", "prisma"]
 }

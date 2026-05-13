@@ -3,18 +3,18 @@
   "private": true,
   "packageManager": "pnpm@10.33.2",
   "scripts": {
-    "dev": "pnpm --filter @gh/web dev",
-    "build": "pnpm --filter @gh/web build",
-    "start": "pnpm --filter @gh/web start",
+    "dev": "pnpm --filter frontend dev",
+    "build": "pnpm --filter frontend build",
+    "start": "pnpm --filter frontend start",
     "typecheck": "pnpm -r typecheck",
-    "lint": "pnpm --filter @gh/web lint",
-    "test": "pnpm --filter @gh/lib test",
-    "db:generate": "pnpm --filter @gh/db db:generate",
-    "db:migrate": "pnpm --filter @gh/db db:migrate",
-    "db:deploy": "pnpm --filter @gh/db db:deploy",
-    "db:reset": "pnpm --filter @gh/db db:reset",
-    "db:seed": "pnpm --filter @gh/db db:seed",
-    "db:studio": "pnpm --filter @gh/db db:studio"
+    "lint": "pnpm --filter frontend lint",
+    "test": "pnpm --filter backend test",
+    "db:generate": "pnpm --filter backend db:generate",
+    "db:migrate": "pnpm --filter backend db:migrate",
+    "db:deploy": "pnpm --filter backend db:deploy",
+    "db:reset": "pnpm --filter backend db:reset",
+    "db:seed": "pnpm --filter backend db:seed",
+    "db:studio": "pnpm --filter backend db:studio"
   },
   "devDependencies": {
     "playwright": "^1.59.1"

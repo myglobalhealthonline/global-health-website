@@ -12,17 +12,45 @@ importers:
         specifier: ^1.59.1
         version: 1.59.1
 
-  apps/web:
+  backend:
     dependencies:
-      '@gh/db':
-        specifier: workspace:*
-        version: link:../../packages/db
-      '@gh/design-tokens':
-        specifier: workspace:*
-        version: link:../../packages/design-tokens
-      '@gh/lib':
-        specifier: workspace:*
-        version: link:../../packages/lib
+      '@aws-sdk/client-s3':
+        specifier: ^3.1043.0
+        version: 3.1043.0
+      '@aws-sdk/s3-request-presigner':
+        specifier: ^3.1043.0
+        version: 3.1045.0
+      '@prisma/client':
+        specifier: ^7.8.0
+        version: 7.8.0(prisma@7.8.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(typescript@5.9.3)
+      bcryptjs:
+        specifier: ^3.0.3
+        version: 3.0.3
+      jose:
+        specifier: ^5.9.6
+        version: 5.10.0
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+    devDependencies:
+      '@types/bcryptjs':
+        specifier: ^3.0.0
+        version: 3.0.0
+      '@types/node':
+        specifier: ^20
+        version: 20.19.39
+      prisma:
+        specifier: ^7.8.0
+        version: 7.8.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  frontend:
+    dependencies:
       '@radix-ui/react-dialog':
         specifier: ^1.1.15
         version: 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -32,6 +60,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.2.14)(react@19.2.4)
+      backend:
+        specifier: workspace:*
+        version: link:../backend
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -93,58 +124,6 @@ importers:
       tailwindcss:
         specifier: ^4
         version: 4.2.4
-      typescript:
-        specifier: ^5
-        version: 5.9.3
-
-  packages/db:
-    dependencies:
-      '@prisma/client':
-        specifier: ^7.8.0
-        version: 7.8.0(prisma@7.8.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(typescript@5.9.3)
-      bcryptjs:
-        specifier: ^3.0.3
-        version: 3.0.3
-    devDependencies:
-      '@types/bcryptjs':
-        specifier: ^3.0.0
-        version: 3.0.0
-      prisma:
-        specifier: ^7.8.0
-        version: 7.8.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
-      tsx:
-        specifier: ^4.21.0
-        version: 4.21.0
-      typescript:
-        specifier: ^5
-        version: 5.9.3
-
-  packages/design-tokens: {}
-
-  packages/lib:
-    dependencies:
-      '@aws-sdk/client-s3':
-        specifier: ^3.1043.0
-        version: 3.1043.0
-      '@aws-sdk/s3-request-presigner':
-        specifier: ^3.1043.0
-        version: 3.1045.0
-      '@gh/db':
-        specifier: workspace:*
-        version: link:../db
-      jose:
-        specifier: ^5.9.6
-        version: 5.10.0
-      zod:
-        specifier: ^3.24.1
-        version: 3.25.76
-    devDependencies:
-      '@types/node':
-        specifier: ^20
-        version: 20.19.39
-      tsx:
-        specifier: ^4.21.0
-        version: 4.21.0
       typescript:
         specifier: ^5
         version: 5.9.3

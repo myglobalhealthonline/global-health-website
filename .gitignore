@@ -3,19 +3,18 @@ node_modules
 .tmp-*
 dev-server.log
 
-# apps
-/apps/*/.next
-/apps/*/node_modules
-/apps/*/out
-/apps/*/coverage
-/apps/*/*.tsbuildinfo
-/apps/*/.env*
+# frontend
+/frontend/.next
+/frontend/node_modules
+/frontend/out
+/frontend/coverage
+/frontend/*.tsbuildinfo
+/frontend/.env*
 
-# packages
-/packages/*/node_modules
-/packages/*/dist
-/packages/*/.env*
-/packages/db/.data
+# backend
+/backend/node_modules
+/backend/.env*
+/backend/.data
 
 # editor
 .vscode
