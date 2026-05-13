@@ -1,9 +1,9 @@
-# Local PostgreSQL for backend API + Prisma (Phase 3.6.2).
+# Local PostgreSQL for Next.js Server Actions + Prisma.
 # Usage from repo root:
 #   docker compose up -d
-# Then set backend/.env DATABASE_URL to:
+# Connection string (already set in packages/db/.env and apps/web/.env.local):
 #   postgresql://postgres:postgres@localhost:5432/global_health
-# Run: pnpm --filter backend db:migrate && pnpm --filter backend db:seed
+# Run: pnpm db:migrate && pnpm db:seed
 
 services:
   postgres:

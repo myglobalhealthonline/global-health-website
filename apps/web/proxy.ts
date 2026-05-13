@@ -6,11 +6,14 @@ const PUBLIC_FILE = /\.(.*)$/;
 
 /**
  * Admin gate. Full session verification (JWT signature, expiry, role) runs in
- * `apps/web/app/(admin)/admin/layout.tsx` because middleware on the Edge cannot
- * read the database. Here we only redirect when there is no session cookie at all,
+ * `apps/web/app/(admin)/admin/layout.tsx` because the Edge proxy cannot reach
+ * the database. Here we only redirect when there is no session cookie at all,
  * to avoid a flash of the admin shell for unauthenticated users.
+ *
+ * Next.js 16 renamed `middleware.ts` to `proxy.ts` (and the exported function
+ * from `middleware` to `proxy`). See https://nextjs.org/docs/messages/middleware-to-proxy.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (
