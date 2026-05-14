@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CountryEditorialTemplate } from "@/components/templates/CountryEditorialTemplate";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { HomeHero } from "@/components/sections/HomeHero";
+import { TrustRibbon } from "@/components/sections/TrustRibbon";
+import { ServiceCatalog } from "@/components/sections/ServiceCatalog";
+import { DoctorWall } from "@/components/sections/DoctorWall";
+import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
+import { FinalCTA } from "@/components/sections/FinalCTA";
 import { countries, getCountryByCode } from "@/data/countries";
-import { getTemplatePageData } from "@/lib/content/template-page-data";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
@@ -43,7 +47,6 @@ export default async function CountryHomePage({
   const config = getCountryByCode(code);
   if (!config) notFound();
 
-  const data = await getTemplatePageData(config.legacyHomePath, code);
   const countryUrl = `${getSiteUrl()}/${slug}`;
 
   return (
@@ -57,23 +60,18 @@ export default async function CountryHomePage({
           ]),
         ]}
       />
-      <CountryEditorialTemplate
-        country={config}
-        countrySlug={slug}
-        generalListing={data.generalListing}
-        specialistListing={data.specialistListing}
-        doctors={data.doctors.map((d) => ({
-          name: d.name,
-          title: d.title ?? null,
-          imageSrc: d.imageSrc,
-          href: `/${slug}/team/${(d.href ?? "").split("/").pop() ?? ""}`,
-          languages: d.languages,
-        }))}
-        steps={data.countryHome.steps.map((s) => ({
-          title: s.title,
-          description: s.description,
-        }))}
-        paths={data.paths}
+
+      {/* Country home sequence — matches website UI kit composition:
+          HomeHero → TrustRibbon → ServiceCatalog → DoctorWall →
+          HowItWorks → FinalCTA. */}
+      <HomeHero countryCode={config.code} countryName={config.name} />
+      <TrustRibbon />
+      <ServiceCatalog />
+      <DoctorWall />
+      <HowItWorksNarrative />
+      <FinalCTA
+        primaryHref={`/${slug}/services`}
+        secondaryHref="/plans-pricing"
       />
     </>
   );

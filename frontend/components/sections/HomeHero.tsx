@@ -1,218 +1,409 @@
-"use client";
+/**
+ * Editorial type-first hero — "See a doctor. From anywhere."
+ *
+ * Mirrors `ui_kits/website/HomeHero.jsx` exactly:
+ *   • Faint medical-pattern overlay
+ *   • Tiny eyebrow with hyphen rule
+ *   • Display H1 clamp(48px,9vw,128px) with accent-band on "From anywhere."
+ *   • 22px lede paragraph
+ *   • 2-col hero bottom: country booking card + dark "Right now" feed
+ */
 
-import Image from "next/image";
-import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Globe } from "lucide-react";
-import type { CountryCode, CountryConfig } from "@/data/countries";
+import { ArrowUpRight } from "lucide-react";
+import type { CountryCode } from "@/data/countries";
+import { countrySlug } from "@/lib/routing/country-slug";
 
-const localeNames: Record<string, string> = {
-  en: "English",
-  cs: "Cestina",
-  es: "Espanol",
-  pt: "Portugues",
-  ro: "Romana",
+const PATTERN_LIGHT =
+  "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231B4D3E' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")";
+const PATTERN_DARK =
+  "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")";
+
+const FLAG_CLASS: Record<string, string> = {
+  ie: "fi fi-ie",
+  pt: "fi fi-pt",
+  sp: "fi fi-es",
+  cz: "fi fi-cz",
+  rm: "fi fi-ro",
 };
 
-const localeCodes: string[] = ["en", "cs", "es", "pt", "ro"];
-
-const localeToFlagCode: Record<string, string> = {
-  en: "gb",
-  cs: "cz",
-  es: "es",
-  pt: "pt",
-  ro: "ro",
+const COUNTRY_META: Record<
+  string,
+  { doctors: number; language: string; nextSlot: string }
+> = {
+  ie: { doctors: 14, language: "English", nextSlot: "today 14:30" },
+  pt: { doctors: 11, language: "Portuguese", nextSlot: "today 11:15" },
+  sp: { doctors: 9, language: "Spanish", nextSlot: "today 16:00" },
+  cz: { doctors: 7, language: "Czech", nextSlot: "tomorrow 09:00" },
+  rm: { doctors: 6, language: "Romanian", nextSlot: "today 17:30" },
 };
 
-const countryToFlagCode: Record<CountryCode, string> = {
-  ie: "ie",
-  cz: "cz",
-  pt: "pt",
-  sp: "es",
-  rm: "ro",
-};
+const NOW_FEED = [
+  { name: "Dr. Inês C.", role: "GP, Portugal", waitMin: 9 },
+  { name: "Dr. Siobhán W.", role: "GP, Ireland", waitMin: 16 },
+  { name: "Dr. María R.", role: "Dermatology, Spain", waitMin: 24 },
+];
 
-const countryIconByCode: Record<CountryCode, string> = {
-  ie: "/icons/countries/ie-menu.png",
-  cz: "/icons/countries/cz-menu.png",
-  pt: "/icons/countries/pt-menu.png",
-  sp: "/icons/countries/sp-menu.png",
-  rm: "/icons/countries/rm-menu.png",
-};
+export function HomeHero({
+  countryCode,
+  countryName,
+}: {
+  countryCode: CountryCode;
+  countryName: string;
+}) {
+  const meta = COUNTRY_META[countryCode];
+  const totalOnline = Object.values(COUNTRY_META).reduce(
+    (sum, c) => sum + c.doctors,
+    0,
+  );
+  const bookHref = `/${countrySlug(countryCode)}/services`;
+  const flag = FLAG_CLASS[countryCode] ?? "";
 
-function setLocaleCookie(locale: string) {
-  const maxAge = 60 * 60 * 24 * 365;
-  document.cookie = `gh_locale=${encodeURIComponent(locale)}; path=/; max-age=${maxAge}; samesite=lax`;
-}
-
-function FlagBadge({ alpha2, title }: { alpha2: string; title: string }) {
   return (
-    <span
-      className="relative inline-flex h-5 min-w-[28px] max-w-[28px] shrink-0 overflow-hidden rounded-sm shadow-sm ring-1 ring-black/10"
-      title={title}
-      aria-hidden
+    <section
+      className="relative overflow-hidden"
+      style={{ paddingBottom: 64, paddingTop: 64 }}
     >
-      <span
-        className={`fi fi-${alpha2} pointer-events-none absolute inset-0 block !m-0 !h-full !w-full !min-h-0 !min-w-0 bg-cover bg-center bg-no-repeat leading-none`}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          opacity: 0.04,
+          backgroundImage: PATTERN_LIGHT,
+          backgroundSize: "28px",
+        }}
       />
-    </span>
-  );
-}
 
-type HomeHeroProps = {
-  countries: CountryConfig[];
-};
-
-export function HomeHero({ countries }: HomeHeroProps) {
-  const [langOpen, setLangOpen] = useState(false);
-  const [selectedLang, setSelectedLang] = useState("en");
-  const countriesSorted = useMemo(
-    () => [...countries].sort((a, b) => a.name.localeCompare(b.name)),
-    [countries],
-  );
-
-  return (
-    <section className="relative isolate min-h-screen overflow-hidden">
-      {/* Background */}
-      <Image
-        src="/images/hero/homehero.png"
-        alt=""
-        fill
-        priority
-        className="object-cover scale-105"
-      />
-      {/* Green overlay layer */}
-      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(10,52,42,0.82)_0%,rgba(14,76,60,0.74)_45%,rgba(18,96,76,0.66)_100%)]" />
-      {/* Medical pattern overlay */}
-      <div className="gh-medical-pattern gh-medical-pattern-dark absolute inset-0" />
-
-      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[var(--container-width)] gap-14 px-5 pb-12 pt-6 sm:px-8 sm:pb-14 sm:pt-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:px-12 lg:pb-16 lg:pt-10">
-        {/* LEFT: Text content */}
-        <div className="text-white">
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/20 bg-[rgba(15,46,37,0.72)] px-4 py-2 backdrop-blur-md">
-            <Globe className="size-4 text-[var(--color-brand-accent)]" />
-            <span className="text-sm font-medium text-white/90">5 Countries • Online Care</span>
-          </div>
-
-          <Image
-            src="/logos/global-health-official.png"
-            alt="Global Health"
-            width={280}
-            height={120}
-            className="mb-8 h-14 w-auto brightness-0 invert sm:h-16"
+      <div
+        className="relative z-[1] mx-auto"
+        style={{
+          maxWidth: 1320,
+          padding: "0 clamp(20px, 4vw, 40px)",
+        }}
+      >
+        {/* Eyebrow with hyphen */}
+        <div
+          className="inline-flex items-center gap-3 uppercase"
+          style={{
+            fontSize: 12,
+            fontWeight: 700,
+            color: "var(--color-brand-primary)",
+            letterSpacing: "0.18em",
+          }}
+        >
+          <span
+            aria-hidden
+            style={{
+              display: "inline-block",
+              width: 24,
+              height: 1,
+              background: "var(--color-brand-primary)",
+            }}
           />
-
-          <h1 className="text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] sm:text-5xl lg:text-[3.5rem]">
-            Medical Consultations
-            <br />
-            <span className="text-[var(--color-brand-accent)]">Wherever You Are</span>
-          </h1>
-
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/85 sm:text-xl">
-            Choose your country and language to enter your local clinic. 
-            Expert doctors, online prescriptions, and health tests — all from home.
-          </p>
-
-          {/* Quick stats */}
-          <div className="mt-8 inline-flex flex-wrap items-center gap-4">
-            {[
-              { value: "50+", label: "Expert Doctors", icon: "👨‍⚕️" },
-              { value: "5", label: "Countries", icon: "🌍" },
-              { value: "24/7", label: "Available", icon: "⚡" },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className="flex items-center gap-3 rounded-full border border-white/20 bg-[rgba(15,46,37,0.72)] px-5 py-2.5 backdrop-blur-md"
-              >
-                <span className="text-lg">{stat.icon}</span>
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-base font-bold text-white">{stat.value}</span>
-                  <span className="text-xs font-medium text-white/60">{stat.label}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+          Medicine without borders
         </div>
 
-        {/* RIGHT: Language + Country selector */}
-        <div className="w-full max-w-[520px] justify-self-end">
-          {/* Glassmorphic dark-green card container */}
-          <div className="rounded-[var(--radius-card)] border border-white/20 bg-[rgba(15,46,37,0.72)] p-6 text-white shadow-[0_24px_60px_rgba(4,22,17,0.34)] backdrop-blur-lg sm:p-8">
-            <p className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-              <Globe className="size-5 text-[var(--color-brand-accent)]" />
-              Select Your Language
-            </p>
+        {/* Big headline */}
+        <h1
+          className="m-0 text-[var(--color-text-primary)]"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "clamp(48px, 9vw, 128px)",
+            fontWeight: 800,
+            letterSpacing: "-0.035em",
+            lineHeight: 0.92,
+            marginTop: 20,
+            maxWidth: "14ch",
+          }}
+        >
+          See a doctor.{" "}
+          <span
+            style={{
+              background:
+                "linear-gradient(180deg, transparent 64%, var(--color-accent) 64% 92%, transparent 92%)",
+              paddingInline: "0.05em",
+            }}
+          >
+            From anywhere.
+          </span>
+        </h1>
 
-            <div className="relative mb-6">
-              <button
-                type="button"
-                onClick={() => setLangOpen((prev) => !prev)}
-                className="flex min-h-12 w-full items-center gap-3 rounded-xl border border-white/20 bg-white/10 px-4 text-white transition-colors hover:border-white/35 hover:bg-white/15"
+        <p
+          className="text-[var(--color-text-muted)]"
+          style={{
+            marginTop: 28,
+            fontSize: "clamp(17px, 1.4vw, 22px)",
+            lineHeight: 1.55,
+            maxWidth: "44ch",
+          }}
+        >
+          Online video consultations with locally-registered doctors in
+          Ireland, Portugal, Spain, Czechia, and Romania. Same day, in your
+          language, from your sofa.
+        </p>
+
+        {/* 2-col hero bottom */}
+        <div
+          className="gh-hero-bottom grid gap-4"
+          style={{ marginTop: 48 }}
+        >
+          {/* LEFT — country booking card */}
+          <div
+            className="flex flex-col gap-5"
+            style={{
+              border: "1px solid var(--color-border)",
+              borderRadius: 24,
+              background: "var(--color-background-page)",
+              padding: 28,
+              boxShadow: "var(--shadow-card)",
+            }}
+          >
+            <div className="flex items-center gap-4">
+              <span
+                className="inline-flex shrink-0 items-center justify-center"
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 16,
+                  background: "var(--color-background-soft)",
+                  border: "1px solid var(--color-border)",
+                }}
               >
-                <FlagBadge
-                  alpha2={localeToFlagCode[selectedLang] ?? "gb"}
-                  title={localeNames[selectedLang] ?? "English"}
+                <span
+                  aria-hidden
+                  className={`${flag} inline-block`}
+                  style={{
+                    width: 30,
+                    height: 22,
+                    borderRadius: 3,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
                 />
-                <span className="text-base font-semibold">{localeNames[selectedLang] ?? "English"}</span>
-                <span className="text-sm uppercase tracking-wider text-white/70">({selectedLang})</span>
-                <ChevronDown className={`ml-auto size-4 text-white/70 transition-transform duration-200 ${langOpen ? "rotate-180" : ""}`} />
-              </button>
-
-              {langOpen ? (
-                <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-20 overflow-hidden rounded-xl border border-white/20 bg-[rgba(15,46,37,0.92)] shadow-[var(--shadow-elevated)] backdrop-blur-md">
-                  {localeCodes.map((locale) => (
-                    <button
-                      key={locale}
-                      type="button"
-                      onClick={() => {
-                        setSelectedLang(locale);
-                        setLocaleCookie(locale);
-                        setLangOpen(false);
-                      }}
-                      className={`flex w-full items-center gap-3 px-4 py-3 text-left text-white transition-colors hover:bg-white/10 ${selectedLang === locale ? "bg-white/10" : ""}`}
-                    >
-                      <FlagBadge alpha2={localeToFlagCode[locale] ?? "gb"} title={localeNames[locale] ?? locale} />
-                      <span className="text-sm font-medium">{localeNames[locale] ?? locale}</span>
-                      <span className="text-sm uppercase text-white/70">({locale})</span>
-                      {selectedLang === locale && (
-                        <span className="ml-auto text-xs font-bold text-[var(--color-brand-accent)]">✓</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
+              </span>
+              <div className="flex-1">
+                <p
+                  className="m-0 uppercase"
+                  style={{
+                    fontSize: 12,
+                    color: "var(--color-text-muted)",
+                    letterSpacing: "0.1em",
+                    fontWeight: 700,
+                  }}
+                >
+                  Booking in
+                </p>
+                <p
+                  className="m-0"
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: 28,
+                    fontWeight: 800,
+                    color: "var(--color-text-primary)",
+                    letterSpacing: "-0.015em",
+                    lineHeight: 1.1,
+                  }}
+                >
+                  {countryName}
+                </p>
+              </div>
+              <span
+                aria-hidden
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: 999,
+                  background: "#16A34A",
+                  boxShadow: "0 0 0 4px rgba(22,163,74,0.18)",
+                  animation: "gh-pulse 2s ease-out infinite",
+                }}
+              />
             </div>
 
-            <div className="space-y-3">
-              <p className="mb-2 text-sm font-medium uppercase tracking-wider text-white/80">Choose Your Clinic</p>
-              {countriesSorted.map((country, index) => (
-                <Link
-                  key={country.code}
-                  href={country.legacyHomePath}
-                  onClick={() => setLocaleCookie(selectedLang)}
-                  className="group flex min-h-14 items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/10 px-5 text-white transition-all duration-200 hover:border-white/30 hover:bg-white/20"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <span className="flex items-center gap-3">
-                    <FlagBadge alpha2={countryToFlagCode[country.code]} title={country.name} />
-                    <span className="text-base font-semibold leading-tight">Medical Clinic {country.name}</span>
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <Image
-                      src={countryIconByCode[country.code]}
-                      alt={`${country.name} icon`}
-                      width={36}
-                      height={36}
-                      className="size-9 rounded-full border border-white/20 object-cover transition-transform group-hover:scale-110"
-                    />
-                    <ChevronDown className="size-4 -rotate-90 text-[var(--color-brand-accent)] opacity-0 transition-all group-hover:opacity-100" />
+            <div
+              className="grid grid-cols-3 gap-3"
+              style={{
+                padding: "16px 0",
+                borderTop: "1px solid var(--color-border)",
+                borderBottom: "1px solid var(--color-border)",
+              }}
+            >
+              <Stat label="Doctors" value={String(meta?.doctors ?? "—")} />
+              <Stat label="Language" value={meta?.language ?? "—"} />
+              <Stat label="Next slot" value={meta?.nextSlot ?? "—"} highlight />
+            </div>
+
+            <Link
+              href={bookHref}
+              className="gh-btn gh-btn-primary"
+              style={{ minHeight: 52 }}
+            >
+              Book consultation in {countryName}
+              <ArrowUpRight className="size-4" aria-hidden />
+            </Link>
+          </div>
+
+          {/* RIGHT — dark "Right now" feed */}
+          <div
+            className="relative flex flex-col gap-4 overflow-hidden text-white"
+            style={{
+              borderRadius: 24,
+              background: "var(--color-background-dark)",
+              padding: 28,
+            }}
+          >
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                opacity: 0.06,
+                backgroundImage: PATTERN_DARK,
+                backgroundSize: "28px",
+              }}
+            />
+            <div className="relative">
+              <p
+                className="m-0 uppercase"
+                style={{
+                  fontSize: 11,
+                  color: "var(--color-accent)",
+                  letterSpacing: "0.18em",
+                  fontWeight: 700,
+                }}
+              >
+                Right now
+              </p>
+              <p
+                className="m-0"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: 22,
+                  fontWeight: 800,
+                  letterSpacing: "-0.015em",
+                  lineHeight: 1.2,
+                  marginTop: 4,
+                }}
+              >
+                {totalOnline} doctors online across Europe
+              </p>
+            </div>
+            <div className="relative flex flex-col gap-2.5">
+              {NOW_FEED.map((d) => {
+                const initials = d.name.match(/[A-Z]/g)?.slice(0, 2).join("") ?? "·";
+                return (
+                  <div
+                    key={d.name}
+                    className="flex items-center gap-3"
+                    style={{
+                      background: "rgba(255,255,255,0.06)",
+                      border: "1px solid rgba(255,255,255,0.10)",
+                      borderRadius: 14,
+                      padding: "10px 14px",
+                    }}
+                  >
+                    <span
+                      className="inline-flex items-center justify-center"
+                      style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: 999,
+                        background:
+                          "linear-gradient(135deg, var(--color-accent), var(--color-brand-primary))",
+                        color: "var(--color-background-dark)",
+                        fontWeight: 800,
+                        fontSize: 11,
+                      }}
+                    >
+                      {initials}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p
+                        className="m-0 truncate text-white"
+                        style={{ fontSize: 13, fontWeight: 700 }}
+                      >
+                        {d.name}
+                      </p>
+                      <p
+                        className="m-0"
+                        style={{
+                          fontSize: 11,
+                          color: "rgba(255,255,255,0.65)",
+                        }}
+                      >
+                        {d.role}
+                      </p>
+                    </div>
+                    <span
+                      className="whitespace-nowrap"
+                      style={{
+                        padding: "4px 10px",
+                        borderRadius: 999,
+                        background: "rgba(200,230,160,0.16)",
+                        color: "var(--color-accent)",
+                        fontSize: 11,
+                        fontWeight: 700,
+                      }}
+                    >
+                      in {d.waitMin} min
+                    </span>
                   </div>
-                </Link>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes gh-pulse {
+          0%, 100% { box-shadow: 0 0 0 4px rgba(22,163,74,0.18); }
+          50% { box-shadow: 0 0 0 8px rgba(22,163,74,0.05); }
+        }
+        .gh-hero-bottom { grid-template-columns: 1fr; }
+        @media (min-width: 900px) {
+          .gh-hero-bottom { grid-template-columns: 1.1fr 1fr; gap: 20px; }
+        }
+      `}</style>
     </section>
+  );
+}
+
+function Stat({
+  label,
+  value,
+  highlight = false,
+}: {
+  label: string;
+  value: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div>
+      <p
+        className="m-0 uppercase"
+        style={{
+          fontSize: 11,
+          color: "var(--color-text-muted)",
+          letterSpacing: "0.08em",
+          fontWeight: 700,
+        }}
+      >
+        {label}
+      </p>
+      <p
+        className="m-0"
+        style={{
+          marginTop: 2,
+          fontSize: 14,
+          fontWeight: 700,
+          color: highlight
+            ? "var(--color-brand-primary)"
+            : "var(--color-text-primary)",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
+        {value}
+      </p>
+    </div>
   );
 }
