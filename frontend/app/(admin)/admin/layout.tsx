@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { Stethoscope } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
+import { fetchAdminCountries } from "@/lib/admin/admin-api";
+import { AdminShell } from "./_components/admin-shell";
+import { COUNTRY_PREF_COOKIE, type CountryPickerOption } from "./_components/country-picker";
 
 const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME?.trim() || "gh_auth";
 
@@ -27,64 +28,46 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin", label: "Dashboard" },
     { href: "/admin/appointments", label: "Appointments" },
     { href: "/admin/countries", label: "Countries" },
+    { href: "/admin/specialties", label: "Categories" },
     { href: "/admin/general-consultations", label: "General Consultations" },
     { href: "/admin/specialist-consultations", label: "Specialist Consultations" },
-    { href: "/admin/specialties", label: "Category" },
     { href: "/admin/online-prescriptions", label: "Online Prescriptions" },
     { href: "/admin/health-tests", label: "Health Tests" },
     { href: "/admin/doctors", label: "Doctors" },
     { href: "/admin/assets", label: "Assets" },
-    { href: "/admin/blog-posts", label: "Blog Posts" },
-    { href: "/admin/faqs", label: "FAQs" },
-    { href: "/admin/content-pages", label: "Content Pages" },
   ];
 
+  // Country options for the topbar picker. Pulled best-effort; if backend is
+  // unreachable, render the shell without a picker.
+  let countryOptions: CountryPickerOption[] = [];
+  let activeCountry: CountryPickerOption | null = null;
+  try {
+    const result = await fetchAdminCountries();
+    if (result.ok) {
+      countryOptions = result.data.countries.map((c) => ({
+        id: c.id,
+        slug: c.slug,
+        code: c.code,
+        name: c.name,
+      }));
+      const jar = await cookies();
+      const preferred = jar.get(COUNTRY_PREF_COOKIE)?.value;
+      activeCountry =
+        countryOptions.find((c) => c.slug === preferred) ?? countryOptions[0] ?? null;
+    }
+  } catch {
+    // ignore — shell still renders
+  }
+
   return (
-    <div className="min-h-screen bg-[var(--color-background-soft)]">
-      {/* Top header */}
-      <header className="border-b border-[var(--color-border)] bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
-          <Link href="/admin" className="inline-flex items-center gap-2 text-[var(--color-brand-primary)]">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-brand-primary)] text-white">
-              <Stethoscope className="size-4" aria-hidden />
-            </span>
-            <span className="text-lg font-bold tracking-tight">Global Health</span>
-            <span className="hidden text-sm font-medium text-[var(--color-text-muted)] sm:inline">· Admin</span>
-          </Link>
-
-          <div className="flex items-center gap-4">
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-semibold text-[var(--color-text-primary)]">{user.fullName}</p>
-              <p className="text-xs text-[var(--color-text-muted)]">{user.email}</p>
-            </div>
-            <form action={logoutAdminAction}>
-              <button type="submit" className="gh-btn gh-btn-soft text-sm">
-                Log out
-              </button>
-            </form>
-          </div>
-        </div>
-      </header>
-
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[220px_1fr]">
-        {/* Sidebar */}
-        <aside className="lg:self-start">
-          <nav className="sticky top-6 grid gap-1.5">
-            {sections.map((section) => (
-              <Link
-                key={section.href}
-                href={section.href}
-                className="gh-admin-nav-link"
-              >
-                {section.label}
-              </Link>
-            ))}
-          </nav>
-        </aside>
-
-        {/* Main content */}
-        <main className="gh-admin-main min-w-0">{children}</main>
-      </div>
-    </div>
+    <AdminShell
+      user={{ fullName: user.fullName, email: user.email, role: user.role }}
+      countries={countryOptions}
+      activeCountry={activeCountry}
+      sections={sections}
+      signOutAction={logoutAdminAction}
+    >
+      {children}
+    </AdminShell>
   );
 }

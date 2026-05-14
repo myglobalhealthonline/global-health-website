@@ -131,7 +131,6 @@ export const publicRouteRegistry: PublicRouteRegistryEntry[] = [
   ...[
     "/about",
     "/careers",
-    "/frequent-asked-questions",
     "/gift-card",
     "/plans-pricing",
     "/pricing-plans/list",
@@ -181,48 +180,6 @@ export const publicRouteRegistry: PublicRouteRegistryEntry[] = [
       shortDescription: "Country consultation listing page.",
     }, { countryCode: path.endsWith("-pt") ? "pt" : path.endsWith("-sp") ? "sp" : path.endsWith("-cz") ? "cz" : path.endsWith("-rm") ? "rm" : "ie" }),
   ),
-  baseEntry("/blog", "BlogIndexTemplate", {
-    pageLabel: "Blog",
-    navigationLabel: "Blog",
-    pageTitle: "Health Blog",
-    shortDescription: "Blog listing page.",
-  }, { showInNavigation: true }),
-  ...routeInventory.blogPosts.map((path) =>
-    baseEntry(path, "BlogArticleTemplate", {
-      pageLabel: toSlugLabel(path),
-      navigationLabel: "Blog",
-      pageTitle: toSlugLabel(path),
-      shortDescription: "Blog article page.",
-    }, { showInNavigation: false }),
-  ),
-  ...[
-    "/legal-notices",
-    "/term-and-conditions",
-    "/privacy",
-    "/return-and-refund-policy",
-    "/cookies-policy",
-  ].map((path) =>
-    baseEntry(path, "LegalPageTemplate", {
-      pageLabel: toSlugLabel(path),
-      navigationLabel: toSlugLabel(path),
-      pageTitle: toSlugLabel(path),
-      shortDescription: "Legal policy page.",
-    }, { showInNavigation: false }),
-  ),
-  ...[
-    ["/terms-and-conditions", "/term-and-conditions"],
-    ["/privacy-policy", "/privacy"],
-    ["/copy-of-privacy-policy", "/privacy"],
-    ["/refund-policy", "/return-and-refund-policy"],
-    ["/gdpr-compliance", "/privacy"],
-  ].map(([path, canonicalPath]) =>
-    baseEntry(path, "StaticMarketingTemplate", {
-      pageLabel: toSlugLabel(path),
-      navigationLabel: toSlugLabel(canonicalPath),
-      pageTitle: toSlugLabel(path),
-      shortDescription: "Redirects to canonical policy page.",
-    }, { showInNavigation: false, legacy: true, canonicalPath }),
-  ),
   ...routeInventory.categories.map((path) =>
     baseEntry(path, "StaticMarketingTemplate", {
       pageLabel: toSlugLabel(path),
@@ -252,7 +209,6 @@ export const publicRouteRegistry: PublicRouteRegistryEntry[] = [
     "/services/[serviceSlug]",
     "/home-health-tests/[testSlug]",
     "/ireland-doctors/[doctorSlug]",
-    "/post/[slug]",
     "/category/[slug]",
     "/ireland/[serviceSlug]",
     "/ireland-specialist-consultations/[serviceSlug]",

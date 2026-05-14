@@ -71,8 +71,6 @@ export function buildSiteNavigationData(
   ];
 
   const headerUtilityLinks: NavLink[] = [
-    { label: copy.navigation.blog, href: "/blog" },
-    { label: copy.navigation.faq, href: "/frequent-asked-questions" },
     { label: copy.navigation.egiftCard, href: "/gift-card" },
   ];
 
@@ -99,19 +97,7 @@ export function buildSiteNavigationData(
     {
       heading: copy.footer.legal,
       links: [
-        { label: copy.navigation.blog, href: "/blog" },
-        { label: copy.navigation.faq, href: "/frequent-asked-questions" },
         { label: copy.footer.howItWorks, href: "/#how-it-works" },
-      ],
-    },
-    {
-      heading: copy.footer.information,
-      links: [
-        { label: copy.footer.legalNotices, href: "/legal-notices" },
-        { label: copy.footer.terms, href: "/term-and-conditions" },
-        { label: copy.footer.cookies, href: "/cookies-policy" },
-        { label: copy.footer.refund, href: "/return-and-refund-policy" },
-        { label: copy.footer.privacy, href: "/privacy" },
       ],
     },
   ];

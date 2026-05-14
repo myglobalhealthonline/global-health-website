@@ -7,7 +7,7 @@
         "build": "tsc",
         "start": "node dist/server.js",
         "typecheck": "tsc --noEmit",
-        "test": "node --import tsx --test src/modules/appointments/appointment-status-transitions.test.ts src/routes/account-appointments.route.test.ts src/validations/account-appointments.schema.test.ts src/utils/admin-auth.test.ts src/modules/countries/admin-countries.schema.test.ts src/modules/services/admin-services.schema.test.ts src/modules/doctors/admin-doctors.schema.test.ts src/modules/pricing/admin-pricing.schema.test.ts src/modules/assets/admin-assets.schema.test.ts src/modules/blog/admin-blog-posts.schema.test.ts src/modules/faqs/admin-faqs.schema.test.ts src/modules/content-pages/admin-content-pages.schema.test.ts src/modules/auth/auth.schema.test.ts src/modules/shared/db-errors.classify.test.ts src/utils/media-key.test.ts",
+        "test": "node --import tsx --test src/modules/appointments/appointment-status-transitions.test.ts src/routes/account-appointments.route.test.ts src/validations/account-appointments.schema.test.ts src/utils/admin-auth.test.ts src/modules/countries/admin-countries.schema.test.ts src/modules/services/admin-services.schema.test.ts src/modules/doctors/admin-doctors.schema.test.ts src/modules/pricing/admin-pricing.schema.test.ts src/modules/assets/admin-assets.schema.test.ts src/modules/auth/auth.schema.test.ts src/modules/shared/db-errors.classify.test.ts src/utils/media-key.test.ts",
         "db:generate": "prisma generate",
         "db:migrate": "prisma migrate dev",
         "db:deploy": "prisma migrate deploy",

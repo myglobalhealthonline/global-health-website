@@ -809,14 +809,9 @@ export async function getTemplatePageData(pathname: string, countryHint: Country
 
   const faqItems = buildFaqItems(country.code, country.name);
 
-  const blogPosts = routeInventory.blogPosts.slice(0, 9).map((route) => {
-    const slug = route.replace("/post/", "");
-    return {
-      title: slugToLabel(slug),
-      excerpt: "Health education article from Global Health.",
-      href: route,
-    };
-  });
+  // Blog rebuild is out of scope on this branch — emit an empty list so consumers
+  // that expect a blogPosts field still typecheck without rendering anything.
+  const blogPosts: { title: string; excerpt: string; href: string }[] = [];
 
   const generalConsultationRaw = buildGeneralConsultationTemplateData(
     country.code,

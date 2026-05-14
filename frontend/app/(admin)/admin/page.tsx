@@ -5,10 +5,7 @@ import {
   Stethoscope,
   UserRound,
   Images,
-  FilePenLine,
-  CircleHelp,
   Tags,
-  FileText,
   ArrowRight,
   ShieldCheck,
   AlertCircle,
@@ -70,24 +67,6 @@ const cards = [
     title: "Assets",
     description: "Upload and organize logos, hero images, and illustrations",
     icon: Images,
-  },
-  {
-    href: "/admin/blog-posts",
-    title: "Blog Posts",
-    description: "Create and manage health articles and blog content",
-    icon: FilePenLine,
-  },
-  {
-    href: "/admin/faqs",
-    title: "FAQs",
-    description: "Update frequently asked questions and answers",
-    icon: CircleHelp,
-  },
-  {
-    href: "/admin/content-pages",
-    title: "Content Pages",
-    description: "Manage legal notices, privacy, and static pages",
-    icon: FileText,
   },
 ] as const;
 
