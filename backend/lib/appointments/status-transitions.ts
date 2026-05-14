@@ -1,44 +1,30 @@
-/**
- * Phase 1 will replace this with the Prisma `AppointmentStatus` enum from `@gh/db`
- * (PENDING | CONFIRMED | CANCELLED | COMPLETED). The state machine itself moves to
- * the new enum at that point. For now, keep the legacy values so the existing tests
- * still encode the historical behaviour.
- */
-export type AppointmentStatus =
-  | "REQUEST_RECEIVED"
-  | "UNDER_REVIEW"
-  | "CONTACTED"
-  | "CANCELLED"
-  | "COMPLETED";
+import type { AppointmentStatus } from "@prisma/client";
+
+export type { AppointmentStatus };
 
 /**
- * Allowed status transitions. Keep in sync with `apps/web/lib/admin/appointment-status.ts`.
+ * Allowed status transitions for the new Prisma `AppointmentStatus` enum.
+ * Keep the admin UI in sync.
  *
  * Matrix:
- * - REQUEST_RECEIVED -> UNDER_REVIEW | CONTACTED | CANCELLED
- * - UNDER_REVIEW -> CONTACTED | CANCELLED
- * - CONTACTED -> COMPLETED | CANCELLED
- * Terminal: CANCELLED, COMPLETED (no outgoing transitions)
- * Blocked: any transition from terminal; CONTACTED/UNDER_REVIEW -> REQUEST_RECEIVED
+ *   PENDING   → CONFIRMED | CANCELLED
+ *   CONFIRMED → COMPLETED | CANCELLED
+ * Terminal: CANCELLED, COMPLETED
  */
 const allowedTransitions: Record<AppointmentStatus, AppointmentStatus[]> = {
-  REQUEST_RECEIVED: ["UNDER_REVIEW", "CONTACTED", "CANCELLED"],
-  UNDER_REVIEW: ["CONTACTED", "CANCELLED"],
-  CONTACTED: ["COMPLETED", "CANCELLED"],
+  PENDING: ["CONFIRMED", "CANCELLED"],
+  CONFIRMED: ["COMPLETED", "CANCELLED"],
   CANCELLED: [],
   COMPLETED: [],
 };
 
 export class InvalidAppointmentStatusTransitionError extends Error {
   readonly code = "INVALID_STATUS_TRANSITION";
-
   constructor(
     readonly from: string,
     readonly to: AppointmentStatus,
   ) {
-    super(
-      `Invalid status transition: cannot change from ${from} to ${to}. Only specific moves are allowed.`,
-    );
+    super(`Invalid status transition: ${from} → ${to}.`);
     this.name = "InvalidAppointmentStatusTransitionError";
   }
 }
@@ -58,8 +44,7 @@ export function assertValidStatusTransition(from: string, to: AppointmentStatus)
   if (!isAppointmentStatus(from)) {
     throw new UnrecognizedAppointmentStatusError(from);
   }
-  const next = allowedTransitions[from];
-  if (!next.includes(to)) {
+  if (!allowedTransitions[from].includes(to)) {
     throw new InvalidAppointmentStatusTransitionError(from, to);
   }
 }

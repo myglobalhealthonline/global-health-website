@@ -13,6 +13,7 @@
     "./audit/log": "./lib/audit/log.ts",
     "./appointments/status-transitions": "./lib/appointments/status-transitions.ts",
     "./storage/media-key": "./lib/storage/media-key.ts",
+    "./storage/presign": "./lib/storage/presign.ts",
     "./shared/db-errors": "./lib/shared/db-errors.ts"
   },
   "scripts": {

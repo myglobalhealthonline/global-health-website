@@ -4,9 +4,7 @@ import {
   Globe2,
   Stethoscope,
   UserRound,
-  Images,
   Tags,
-  Coins,
   ArrowRight,
   ShieldCheck,
   AlertCircle,
@@ -42,18 +40,6 @@ const cards = [
     title: "Services",
     description: "Consultations, prescriptions, and health tests per country",
     icon: Stethoscope,
-  },
-  {
-    href: "/admin/pricing",
-    title: "Pricing",
-    description: "Per-country pricing tiers",
-    icon: Coins,
-  },
-  {
-    href: "/admin/assets",
-    title: "Assets",
-    description: "Logos, hero images, and illustrations",
-    icon: Images,
   },
 ] as const;
 

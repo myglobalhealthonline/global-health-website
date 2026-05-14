@@ -37,6 +37,22 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "components/cards",
+    "components/forms",
+    "components/layout",
+    "components/media",
+    "components/sections",
+    "components/site-stub/site-stub-unused.ignore",
+    "components/templates",
+    "components/ui",
+    "content",
+    "data",
+    "lib/content",
+    "lib/i18n",
+    "lib/routing",
+    "lib/seo",
+    "locales",
+    "tests"
   ]
 }

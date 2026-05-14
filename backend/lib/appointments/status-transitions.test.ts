@@ -8,44 +8,41 @@ import {
 } from "./status-transitions.js";
 
 describe("appointment status transitions", () => {
-  it("allows REQUEST_RECEIVED -> UNDER_REVIEW", () => {
-    assert.doesNotThrow(() => assertValidStatusTransition("REQUEST_RECEIVED", "UNDER_REVIEW"));
+  it("allows PENDING -> CONFIRMED", () => {
+    assert.doesNotThrow(() => assertValidStatusTransition("PENDING", "CONFIRMED"));
   });
 
-  it("allows CONTACTED -> COMPLETED", () => {
-    assert.doesNotThrow(() => assertValidStatusTransition("CONTACTED", "COMPLETED"));
+  it("allows PENDING -> CANCELLED", () => {
+    assert.doesNotThrow(() => assertValidStatusTransition("PENDING", "CANCELLED"));
   });
 
-  it("rejects COMPLETED -> UNDER_REVIEW", () => {
+  it("allows CONFIRMED -> COMPLETED", () => {
+    assert.doesNotThrow(() => assertValidStatusTransition("CONFIRMED", "COMPLETED"));
+  });
+
+  it("rejects COMPLETED -> CONFIRMED", () => {
     assert.throws(
-      () => assertValidStatusTransition("COMPLETED", "UNDER_REVIEW"),
+      () => assertValidStatusTransition("COMPLETED", "CONFIRMED"),
       InvalidAppointmentStatusTransitionError,
     );
   });
 
-  it("rejects CANCELLED -> REQUEST_RECEIVED", () => {
+  it("rejects CANCELLED -> PENDING", () => {
     assert.throws(
-      () => assertValidStatusTransition("CANCELLED", "REQUEST_RECEIVED"),
+      () => assertValidStatusTransition("CANCELLED", "PENDING"),
       InvalidAppointmentStatusTransitionError,
     );
   });
 
-  it("rejects CONTACTED -> REQUEST_RECEIVED", () => {
+  it("rejects CONFIRMED -> PENDING", () => {
     assert.throws(
-      () => assertValidStatusTransition("CONTACTED", "REQUEST_RECEIVED"),
+      () => assertValidStatusTransition("CONFIRMED", "PENDING"),
       InvalidAppointmentStatusTransitionError,
     );
   });
 
-  it("rejects UNDER_REVIEW -> REQUEST_RECEIVED", () => {
-    assert.throws(
-      () => assertValidStatusTransition("UNDER_REVIEW", "REQUEST_RECEIVED"),
-      InvalidAppointmentStatusTransitionError,
-    );
-  });
-
-  it("returns expected next statuses for UNDER_REVIEW", () => {
-    assert.deepEqual(getAllowedNextStatuses("UNDER_REVIEW"), ["CONTACTED", "CANCELLED"]);
+  it("returns expected next statuses for PENDING", () => {
+    assert.deepEqual(getAllowedNextStatuses("PENDING"), ["CONFIRMED", "CANCELLED"]);
   });
 
   it("returns no next statuses for terminal states", () => {
@@ -54,6 +51,9 @@ describe("appointment status transitions", () => {
   });
 
   it("rejects unknown stored status", () => {
-    assert.throws(() => assertValidStatusTransition("WEIRD", "CONTACTED"), UnrecognizedAppointmentStatusError);
+    assert.throws(
+      () => assertValidStatusTransition("WEIRD", "CONFIRMED"),
+      UnrecognizedAppointmentStatusError,
+    );
   });
 });

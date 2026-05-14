@@ -18,8 +18,6 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/categories", label: "Categories" },
     { href: "/admin/doctors", label: "Doctors" },
     { href: "/admin/services", label: "Services" },
-    { href: "/admin/pricing", label: "Pricing" },
-    { href: "/admin/assets", label: "Assets" },
     ...(user.role === "SUPER_ADMIN"
       ? [
           { href: "/admin/users", label: "Admin users" },
