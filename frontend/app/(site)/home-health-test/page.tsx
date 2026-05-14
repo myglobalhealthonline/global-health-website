@@ -1,12 +1,9 @@
-import type { Metadata } from "next";
 import { HealthTestListingTemplate } from "@/components/templates/HealthTestListingTemplate";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 import { formatHealthTestPrice, getPublicHealthTestsForCountry } from "@/lib/content/get-public-health-tests";
+import { pageMetadata } from "@/lib/seo/page-seo";
 
-export const metadata: Metadata = {
-  title: "Home Health Tests - Ireland",
-  description: "Home health test services and clinical follow-up for Ireland.",
-};
+export const metadata = pageMetadata("/home-health-test");
 
 export default async function Page() {
   const tests = await getPublicHealthTestsForCountry("ie");

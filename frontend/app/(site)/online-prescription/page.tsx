@@ -1,13 +1,10 @@
-import type { Metadata } from "next";
 import { ConsultationListingTemplate } from "@/components/templates/ConsultationListingTemplate";
 import { formatOptionalPrice, getPublicServicesForCountry } from "@/lib/content/get-public-services";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
 import { getTemplatePageData } from "@/lib/content/template-page-data";
+import { pageMetadata } from "@/lib/seo/page-seo";
 
-export const metadata: Metadata = {
-  title: "Online Prescriptions - Ireland",
-  description: "Online prescription request support for Ireland.",
-};
+export const metadata = pageMetadata("/online-prescription");
 
 export default async function Page() {
   const [services, templateData] = await Promise.all([

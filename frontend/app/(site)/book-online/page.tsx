@@ -1,12 +1,9 @@
-﻿import type { Metadata } from "next";
-import { BookingFormTemplate } from "@/components/templates/BookingFormTemplate";
+﻿import { BookingFormTemplate } from "@/components/templates/BookingFormTemplate";
 import { getBookingPageData } from "@/lib/content/booking-page-data";
 import { getServerAuthUser } from "@/lib/api/server-auth";
+import { pageMetadata } from "@/lib/seo/page-seo";
 
-export const metadata: Metadata = {
-  title: "Book Online",
-  description: "Submit an online consultation request and our clinic team will follow up.",
-};
+export const metadata = pageMetadata("/book-online");
 
 export default async function Page() {
   const data = getBookingPageData("en");

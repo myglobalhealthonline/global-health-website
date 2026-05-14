@@ -1,11 +1,8 @@
-﻿import type { Metadata } from "next";
-import { StaticMarketingTemplate } from "@/components/templates/StaticMarketingTemplate";
+﻿import { StaticMarketingTemplate } from "@/components/templates/StaticMarketingTemplate";
 import { getMarketingPageData } from "@/lib/content/marketing-page-data";
+import { pageMetadata } from "@/lib/seo/page-seo";
 
-export const metadata: Metadata = {
-  title: "About Global Health",
-  description: "How Global Health helps patients access online consultations across supported countries.",
-};
+export const metadata = pageMetadata("/about");
 
 export default function Page() {
   const data = getMarketingPageData("/about");

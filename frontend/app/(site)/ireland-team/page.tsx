@@ -1,11 +1,8 @@
-import type { Metadata } from "next";
 import { DoctorTeamTemplate } from "@/components/templates/DoctorTeamTemplate";
 import { getTemplatePageData } from "@/lib/content/template-page-data";
+import { pageMetadata } from "@/lib/seo/page-seo";
 
-export const metadata: Metadata = {
-  title: "Ireland Team",
-  description: "Doctor/team listing template for Ireland.",
-};
+export const metadata = pageMetadata("/ireland-team");
 
 export default async function Page() {
   const data = await getTemplatePageData("/ireland-team", "ie");

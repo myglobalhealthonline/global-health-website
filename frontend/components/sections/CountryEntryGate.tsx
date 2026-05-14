@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Check, Globe2 } from "lucide-react";
 import type { CountryConfig } from "@/data/countries";
 import type { LocaleCode } from "@/lib/i18n/types";
+import { countrySlug } from "@/lib/routing/country-slug";
 
 const LOCALE_LABELS: Record<LocaleCode, string> = {
   en: "English",
@@ -47,7 +48,7 @@ export function CountryEntryGate({ countries }: Props) {
   }
 
   const continueHref = selected
-    ? `${selected.legacyHomePath}?lang=${selectedLocale ?? selected.defaultLocale}`
+    ? `/${countrySlug(selected.code)}?lang=${selectedLocale ?? selected.defaultLocale}`
     : null;
 
   return (

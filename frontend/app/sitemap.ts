@@ -1,11 +1,25 @@
 import type { MetadataRoute } from "next";
+import { countries } from "@/data/countries";
 import { publicRouteRegistry } from "@/lib/routing/public-route-registry";
+import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
   const seen = new Set<string>();
   const urls: MetadataRoute.Sitemap = [];
+
+  // New country-scoped homes (`/ireland`, `/portugal`, …) — priority 0.9.
+  for (const country of countries) {
+    const path = `/${COUNTRY_CODE_TO_SLUG[country.code]}`;
+    seen.add(path);
+    urls.push({
+      url: `${base}${path}`,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    });
+  }
+
   const noindexStatic = new Set([
     "/login",
     "/register",

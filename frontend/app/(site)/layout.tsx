@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { cookies, headers } from "next/headers";
 import "flag-icons/css/flag-icons.min.css";
 import { SiteChrome } from "@/components/layout/SiteChrome";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
 import { DEFAULT_BRAND_LOGO } from "@/lib/content/brand-logo";
@@ -11,6 +12,10 @@ import {
 } from "@/lib/content/merge-ireland-home-media";
 import { getSiteContext } from "@/lib/content/get-site-context";
 import { getCountryByCode, type CountryCode } from "@/data/countries";
+import {
+  organizationJsonLd,
+  websiteJsonLd,
+} from "@/lib/seo/structured-data";
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
   const requestHeaders = await headers();
@@ -44,6 +49,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
       footerDecorImage={footerDecorImage}
       authUser={authUser}
     >
+      <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
       {children}
     </SiteChrome>
   );

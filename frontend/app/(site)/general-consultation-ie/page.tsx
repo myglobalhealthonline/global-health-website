@@ -1,11 +1,8 @@
-import type { Metadata } from "next";
 import { ConsultationListingTemplate } from "@/components/templates/ConsultationListingTemplate";
 import { getTemplatePageData } from "@/lib/content/template-page-data";
+import { pageMetadata } from "@/lib/seo/page-seo";
 
-export const metadata: Metadata = {
-  title: "General Consultation - Ireland",
-  description: "Country-specific general consultation listings for Ireland.",
-};
+export const metadata = pageMetadata("/general-consultation-ie");
 
 export default async function Page() {
   const data = await getTemplatePageData("/general-consultation-ie", "ie");
