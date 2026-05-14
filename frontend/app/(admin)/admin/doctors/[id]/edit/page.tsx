@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { FlagBadge } from "../../../_components/flag-badge";
 import { DoctorFields } from "../../_components/doctor-fields";
 import { parseDoctorBodyFromForm } from "@/lib/admin/doctor-form-parse";
 import {
@@ -14,7 +15,7 @@ import {
   detectDuplicateTextIssues,
   validateAdminDoctorPayload,
 } from "@/lib/content/publication-validation";
-import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
+import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -177,13 +178,22 @@ export default async function AdminEditDoctorPage({
         <ArrowLeft className="size-3.5" /> Back to {doctor.fullName}
       </Link>
       <PageHeader
-        eyebrow="Global"
-        title={`Edit ${doctor.fullName}`}
-        description="Public marketing profile — not a login account."
+        eyebrow={
+          <span className="inline-flex items-center gap-2">
+            <FlagBadge code={doctor.country.code} size={14} /> Edit doctor
+          </span>
+        }
+        title={doctor.fullName}
+        description="One doctor, multiple countries. Toggle active per-country to suspend in one place without hiding everywhere."
         actions={
-          <Btn href={`/admin/doctors/${id}`} variant="ghost">
-            Cancel
-          </Btn>
+          <>
+            <Pill tone={doctor.active ? "published" : "draft"}>
+              {doctor.active ? "Published" : "Draft"}
+            </Pill>
+            <Btn href={`/admin/doctors/${id}`} variant="ghost">
+              Cancel
+            </Btn>
+          </>
         }
       />
 
@@ -193,27 +203,134 @@ export default async function AdminEditDoctorPage({
         </p>
       ) : null}
 
-      <AdminCard>
-        <form action={updateDoctorAction} className="flex flex-col gap-8">
-          <DoctorFields
-            countries={countries}
-            specialties={specialtiesResult.data.specialties}
-            initial={doctor}
-            countryLocked
-          />
-          <div className="flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
-            <button type="submit" className="gh-btn gh-btn-primary">
-              Save changes
-            </button>
-            <Link
-              href={`/admin/doctors/${id}`}
-              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
+      >
+        {/* Main column — form */}
+        <AdminCard>
+          <h3
+            className="m-0 text-[var(--color-text-primary)]"
+            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+          >
+            Profile
+          </h3>
+          <p className="mb-5 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            Public-facing profile shown on the country team page.
+          </p>
+          <form action={updateDoctorAction} className="flex flex-col gap-8">
+            <DoctorFields
+              countries={countries}
+              specialties={specialtiesResult.data.specialties}
+              initial={doctor}
+              countryLocked
+            />
+            <div className="flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
+              <button type="submit" className="gh-btn gh-btn-primary">
+                Save changes
+              </button>
+              <Link
+                href={`/admin/doctors/${id}`}
+                className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              >
+                Cancel
+              </Link>
+            </div>
+          </form>
+        </AdminCard>
+
+        {/* Right sidebar — visibility + practicing-in */}
+        <div className="grid gap-4 self-start">
+          <AdminCard>
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
             >
-              Cancel
-            </Link>
-          </div>
-        </form>
-      </AdminCard>
+              Profile photo
+            </h3>
+            <p className="mb-3 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              800×800 recommended.
+            </p>
+            <div
+              aria-hidden
+              className="grid place-items-center text-white"
+              style={{
+                aspectRatio: "1 / 1",
+                width: "100%",
+                borderRadius: 16,
+                background:
+                  "linear-gradient(135deg, var(--color-brand-primary), var(--color-accent))",
+                fontFamily: "var(--font-display)",
+                fontSize: 48,
+                fontWeight: 800,
+              }}
+            >
+              {doctor.fullName
+                .replace(/^Dr\.?\s+/i, "")
+                .split(/\s+/)
+                .slice(0, 2)
+                .map((s) => s[0]?.toUpperCase() ?? "")
+                .join("") || "·"}
+            </div>
+          </AdminCard>
+
+          <AdminCard>
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            >
+              Practicing in
+            </h3>
+            <p className="mb-2 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Active controls visibility per country; sort order ranks the doctor on each country team page.
+            </p>
+            <div
+              className="flex items-center gap-2.5 border-t border-[var(--color-border)] py-3"
+              style={{ borderTopStyle: "solid" }}
+            >
+              <FlagBadge code={doctor.country.code} size={16} />
+              <div className="flex-1">
+                <p className="m-0 text-[13px] font-bold text-[var(--color-text-primary)]">
+                  {doctor.country.name}
+                </p>
+                <p className="m-0 text-[12px] text-[var(--color-text-muted)]">
+                  {doctor.active ? "Active" : "Inactive"}
+                </p>
+              </div>
+              <span
+                className="inline-flex items-center"
+                aria-hidden
+                style={{
+                  width: 38,
+                  height: 22,
+                  borderRadius: 999,
+                  background: doctor.active
+                    ? "var(--color-brand-primary)"
+                    : "var(--color-border-strong)",
+                  padding: 2,
+                  position: "relative",
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 2,
+                    left: doctor.active ? "calc(100% - 20px)" : 2,
+                    width: 18,
+                    height: 18,
+                    borderRadius: "50%",
+                    background: "#fff",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.20)",
+                  }}
+                />
+              </span>
+            </div>
+            <p className="mt-3 text-[11px] text-[var(--color-text-muted)]">
+              Multi-country assignments require the v2 schema (Doctor ↔ Country M:N).
+            </p>
+          </AdminCard>
+        </div>
+      </div>
     </>
   );
 }

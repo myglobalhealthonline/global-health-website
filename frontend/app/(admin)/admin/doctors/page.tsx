@@ -3,7 +3,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Edit3, Eye, Plus, Trash2 } from "lucide-react";
 import {
-  doctorPublicProfilePath,
   fetchAdminCountries,
   fetchAdminDoctors,
   fetchAdminSpecialties,
@@ -236,80 +235,120 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
         <div className="overflow-x-auto">
           <AdminTable>
             <Thead>
-              <Th>Name</Th>
+              <Th>Doctor</Th>
               <Th>Title</Th>
-              <Th>Country</Th>
+              <Th>Practicing in</Th>
+              <Th>Languages</Th>
               <Th>Categories</Th>
               <Th>Status</Th>
-              <Th>Public path</Th>
               <Th align="right" style={{ width: 120 }}>
                 Actions
               </Th>
             </Thead>
             <tbody>
-              {items.map((d) => (
-                <Tr key={d.id}>
-                  <Td>
-                    <span className="font-bold text-[var(--color-text-primary)]">
-                      {d.fullName}
-                    </span>
-                  </Td>
-                  <Td>
-                    <span className="text-[var(--color-text-muted)]">{d.title}</span>
-                  </Td>
-                  <Td>
-                    <span className="inline-flex items-center gap-2">
-                      <FlagBadge code={d.country.code} size={14} />
-                      <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                        {d.country.code}
-                      </span>
-                    </span>
-                  </Td>
-                  <Td>
-                    <span className="block max-w-[14rem] truncate text-[13px] text-[var(--color-text-muted)]">
-                      {d.specialties.length > 0
-                        ? d.specialties.map((s) => s.specialty.name).join(", ")
-                        : "—"}
-                    </span>
-                  </Td>
-                  <Td>
-                    <Pill tone={d.active ? "published" : "draft"}>
-                      {d.active ? "Active" : "Inactive"}
-                    </Pill>
-                  </Td>
-                  <Td>
-                    <span className="block max-w-[180px] truncate font-mono text-[11px] text-[var(--color-text-muted)]">
-                      {doctorPublicProfilePath(d.country.teamPath, d.slug)}
-                    </span>
-                  </Td>
-                  <Td align="right">
-                    <div className="flex justify-end gap-1.5">
-                      <IconBtn
-                        ariaLabel={`View ${d.fullName}`}
+              {items.map((d) => {
+                const initials = d.fullName
+                  .replace(/^Dr\.?\s+/i, "")
+                  .split(/\s+/)
+                  .slice(0, 2)
+                  .map((s) => s[0]?.toUpperCase() ?? "")
+                  .join("");
+                return (
+                  <Tr key={d.id}>
+                    <Td>
+                      <Link
                         href={`/admin/doctors/${d.id}`}
+                        className="inline-flex items-center gap-3"
+                        style={{ textDecoration: "none" }}
                       >
-                        <Eye className="size-3.5" aria-hidden />
-                      </IconBtn>
-                      <IconBtn
-                        ariaLabel={`Edit ${d.fullName}`}
-                        href={`/admin/doctors/${d.id}/edit`}
-                      >
-                        <Edit3 className="size-3.5" aria-hidden />
-                      </IconBtn>
-                      <form action={deleteDoctorAction} className="inline-flex">
-                        <input type="hidden" name="id" value={d.id} />
-                        <IconBtn
-                          ariaLabel={`Delete ${d.fullName}`}
-                          type="submit"
-                          style={{ color: "var(--color-status-error-text)" }}
+                        <span
+                          aria-hidden
+                          className="inline-flex shrink-0 items-center justify-center text-white"
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 999,
+                            background:
+                              "linear-gradient(135deg, var(--color-brand-primary), var(--color-accent))",
+                            fontFamily: "var(--font-display)",
+                            fontWeight: 800,
+                            fontSize: 13,
+                          }}
                         >
-                          <Trash2 className="size-3.5" aria-hidden />
+                          {initials || "·"}
+                        </span>
+                        <div className="text-left">
+                          <p className="m-0 text-[14px] font-bold text-[var(--color-text-primary)]">
+                            {d.fullName}
+                          </p>
+                          <p className="m-0 font-mono text-[11px] text-[var(--color-text-muted)]">
+                            /{d.slug}
+                          </p>
+                        </div>
+                      </Link>
+                    </Td>
+                    <Td>
+                      <span className="text-[13px] text-[var(--color-text-body)]">
+                        {d.title}
+                      </span>
+                    </Td>
+                    <Td>
+                      <span
+                        className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-background-soft)] py-1 pl-2 pr-3"
+                        style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-body)" }}
+                      >
+                        <FlagBadge code={d.country.code} size={14} />
+                        {d.country.name}
+                      </span>
+                    </Td>
+                    <Td>
+                      <span className="block max-w-[12rem] truncate text-[13px] text-[var(--color-text-body)]">
+                        {d.languages && d.languages.length > 0
+                          ? d.languages.join(", ")
+                          : "—"}
+                      </span>
+                    </Td>
+                    <Td>
+                      <span className="block max-w-[12rem] truncate text-[13px] text-[var(--color-text-muted)]">
+                        {d.specialties.length > 0
+                          ? d.specialties.map((s) => s.specialty.name).join(", ")
+                          : "—"}
+                      </span>
+                    </Td>
+                    <Td>
+                      <Pill tone={d.active ? "published" : "inactive"}>
+                        {d.active ? "Published" : "Suspended"}
+                      </Pill>
+                    </Td>
+                    <Td align="right">
+                      <div className="flex justify-end gap-1.5">
+                        <IconBtn
+                          ariaLabel={`View ${d.fullName}`}
+                          href={`/admin/doctors/${d.id}`}
+                        >
+                          <Eye className="size-3.5" aria-hidden />
                         </IconBtn>
-                      </form>
-                    </div>
-                  </Td>
-                </Tr>
-              ))}
+                        <IconBtn
+                          ariaLabel={`Edit ${d.fullName}`}
+                          href={`/admin/doctors/${d.id}/edit`}
+                        >
+                          <Edit3 className="size-3.5" aria-hidden />
+                        </IconBtn>
+                        <form action={deleteDoctorAction} className="inline-flex">
+                          <input type="hidden" name="id" value={d.id} />
+                          <IconBtn
+                            ariaLabel={`Delete ${d.fullName}`}
+                            type="submit"
+                            style={{ color: "var(--color-status-error-text)" }}
+                          >
+                            <Trash2 className="size-3.5" aria-hidden />
+                          </IconBtn>
+                        </form>
+                      </div>
+                    </Td>
+                  </Tr>
+                );
+              })}
             </tbody>
           </AdminTable>
         </div>

@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, Plus, Trash2 } from "lucide-react";
+import { Edit3, Eye, GripVertical, Plus, Trash2 } from "lucide-react";
 import { fetchAdminCountries, purgeAdminCountry } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../_components/flag-badge";
 import {
@@ -98,6 +98,7 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
         <div className="overflow-x-auto">
           <AdminTable>
             <Thead>
+              <Th style={{ width: 40 }}> </Th>
               <Th>Country</Th>
               <Th>Code</Th>
               <Th>Locale</Th>
@@ -111,6 +112,13 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
             <tbody>
               {rows.map((c) => (
                 <Tr key={c.id}>
+                  <Td>
+                    <GripVertical
+                      aria-hidden
+                      className="size-3.5"
+                      style={{ color: "var(--color-text-muted)", cursor: "grab" }}
+                    />
+                  </Td>
                   <Td>
                     <span className="inline-flex items-center gap-2.5">
                       <FlagBadge code={c.slug} size={18} />

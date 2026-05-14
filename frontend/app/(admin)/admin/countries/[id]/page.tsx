@@ -5,6 +5,9 @@ import { ArrowLeft } from "lucide-react";
 import {
   deleteAdminCountry,
   fetchAdminCountryById,
+  fetchAdminDoctors,
+  fetchAdminServices,
+  fetchAdminSpecialties,
   purgeAdminCountry,
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../../_components/flag-badge";
@@ -69,6 +72,22 @@ export default async function AdminCountryDetailPage({
 
   const c = result.data.country;
   const isActive = c.isActive;
+
+  // Live stats for the sidebar — match the reference Country edit screen
+  // (Doctors / Services / Categories / Pending bookings counts).
+  const [doctorsRes, servicesRes, specialtiesRes] = await Promise.all([
+    fetchAdminDoctors({ countryId: c.id, pageSize: "1" }),
+    fetchAdminServices({ countryId: c.id, pageSize: "1" }),
+    fetchAdminSpecialties(c.id),
+  ]);
+  const stats = {
+    doctors: doctorsRes.ok ? doctorsRes.data.pagination.total : 0,
+    services: servicesRes.ok ? servicesRes.data.pagination.total : 0,
+    categories: specialtiesRes.ok
+      ? specialtiesRes.data.specialties.filter((s) => s.active).length
+      : 0,
+    totalCategories: specialtiesRes.ok ? specialtiesRes.data.specialties.length : 0,
+  };
 
   return (
     <>
@@ -222,6 +241,44 @@ export default async function AdminCountryDetailPage({
                 This country is inactive. Re-enable from Edit.
               </p>
             )}
+          </AdminCard>
+
+          {/* Stats card — counts of doctors, services, categories */}
+          <AdminCard>
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            >
+              Stats
+            </h3>
+            <div className="mt-3 grid gap-1">
+              {(
+                [
+                  ["Doctors assigned", String(stats.doctors)],
+                  ["Services published", String(stats.services)],
+                  [
+                    "Categories enabled",
+                    `${stats.categories} / ${stats.totalCategories}`,
+                  ],
+                ] as const
+              ).map(([k, v]) => (
+                <div
+                  key={k}
+                  className="flex items-center justify-between"
+                  style={{
+                    padding: "10px 0",
+                    borderTop: "1px solid var(--color-border)",
+                  }}
+                >
+                  <span className="text-[13px] text-[var(--color-text-muted)]">
+                    {k}
+                  </span>
+                  <span className="text-[13px] font-bold text-[var(--color-text-primary)]">
+                    {v}
+                  </span>
+                </div>
+              ))}
+            </div>
           </AdminCard>
 
           <AdminCard>

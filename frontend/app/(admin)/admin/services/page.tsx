@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, Plus, Trash2 } from "lucide-react";
+import { Edit3, Eye, GripVertical, Plus, Trash2 } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminServices,
@@ -142,6 +142,9 @@ export default async function AdminServicesPage({
   const successMessage = spRead(sp, "success");
   const errorMessage = spRead(sp, "error");
   const showsCategory = kind === "SPECIALIST";
+  const filterCountry = filterCountryId
+    ? countries.find((c) => c.id === filterCountryId) ?? null
+    : null;
 
   async function deleteServiceAction(formData: FormData) {
     "use server";
@@ -158,9 +161,22 @@ export default async function AdminServicesPage({
   return (
     <>
       <PageHeader
-        eyebrow="Services"
+        eyebrow={
+          filterCountry ? (
+            <span className="inline-flex items-center gap-2">
+              <FlagBadge code={filterCountry.code} size={14} />
+              {filterCountry.name}
+            </span>
+          ) : (
+            "Services"
+          )
+        }
         title={meta.pageTitle}
-        description="Manage title, price, duration, sort order, and detail content per service."
+        description={
+          filterCountry
+            ? `Manage all ${meta.label.toLowerCase()} in ${filterCountry.name}. One form, conditional category dropdown for general/specialist.`
+            : "Manage title, price, duration, sort order, and detail content per service."
+        }
         actions={
           <Btn
             href={meta.newHref}
@@ -173,29 +189,47 @@ export default async function AdminServicesPage({
         }
       />
 
-      {/* Segmented control */}
-      {showKindTabs ? (
-        <div className="mb-4 flex flex-wrap gap-1.5">
-          {SERVICE_KIND_ORDER.map((option) => {
-            const optionMeta = SERVICE_KIND_META[option];
-            const href = optionMeta.listHref;
-            const active = option === kind;
-            return (
-              <Link
-                key={option}
-                href={href}
-                className={`rounded-[999px] border px-4 py-1.5 text-[12.5px] font-bold transition-all duration-150 ${
-                  active
-                    ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white"
-                    : "border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-muted)] hover:border-[var(--color-brand-primary)] hover:text-[var(--color-brand-primary)]"
-                }`}
-              >
-                {optionMeta.label}
-              </Link>
-            );
-          })}
-        </div>
-      ) : null}
+      {/* Service-type segmented control — always shown so users can flip
+          between general / specialist / prescriptions / health-tests
+          per the reference Screens3.jsx ServicesListScreen. */}
+      <div
+        className="mb-4 inline-flex items-center gap-1 border border-[var(--color-border)]"
+        style={{
+          padding: 4,
+          background: "var(--color-background-soft)",
+          borderRadius: 12,
+        }}
+      >
+        {SERVICE_KIND_ORDER.map((option) => {
+          const optionMeta = SERVICE_KIND_META[option];
+          const href = optionMeta.listHref;
+          const active = option === kind;
+          return (
+            <Link
+              key={option}
+              href={href}
+              className="inline-flex items-center gap-2 transition-all duration-150"
+              style={{
+                padding: "8px 14px",
+                borderRadius: 8,
+                background: active ? "var(--color-background-page)" : "transparent",
+                color: active
+                  ? "var(--color-brand-primary)"
+                  : "var(--color-text-muted)",
+                fontSize: 13,
+                fontWeight: 700,
+                boxShadow: active ? "var(--shadow-soft)" : "none",
+                textDecoration: "none",
+              }}
+            >
+              {optionMeta.label}
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* Hide redundant nav from old wrappers (general-consultations etc.). */}
+      {showKindTabs ? null : null}
 
       {errorMessage ? (
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
@@ -295,6 +329,7 @@ export default async function AdminServicesPage({
         <div className="overflow-x-auto">
           <AdminTable>
             <Thead>
+              <Th style={{ width: 40 }}> </Th>
               <Th>Title</Th>
               <Th>Slug</Th>
               <Th>Country</Th>
@@ -309,6 +344,13 @@ export default async function AdminServicesPage({
             <tbody>
               {items.map((service) => (
                 <Tr key={service.id}>
+                  <Td>
+                    <GripVertical
+                      aria-hidden
+                      className="size-3.5"
+                      style={{ color: "var(--color-text-muted)", cursor: "grab" }}
+                    />
+                  </Td>
                   <Td>
                     <span className="font-bold text-[var(--color-text-primary)]">
                       {service.name}
