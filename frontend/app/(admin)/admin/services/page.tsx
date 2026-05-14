@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Plus } from "lucide-react";
 import { prisma } from "backend";
 import { requireAdminUser } from "@/lib/admin/require-admin";
+import { FlagBadge } from "../_components/flag-badge";
 
 export const dynamic = "force-dynamic";
 
@@ -114,7 +115,12 @@ export default async function AdminServicesPage({
                       <span className="text-xs text-[var(--color-text-muted)]">{s.slug}</span>
                     </div>
                   </td>
-                  <td className="text-sm">{s.country.code}</td>
+                  <td>
+                    <span className="inline-flex items-center gap-1.5 text-sm">
+                      <FlagBadge code={s.country.slug} size={14} />
+                      {s.country.code}
+                    </span>
+                  </td>
                   <td>
                     <span className="gh-badge gh-badge-neutral">{TYPE_LABEL[s.type]}</span>
                   </td>

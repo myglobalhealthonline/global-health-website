@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { prisma } from "backend";
 import { requireAdminUser } from "@/lib/admin/require-admin";
+import { FlagBadge } from "../_components/flag-badge";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,7 @@ export default async function AppointmentsPage() {
   const appointments = await prisma.appointment.findMany({
     orderBy: { createdAt: "desc" },
     include: {
-      country: { select: { code: true } },
+      country: { select: { code: true, slug: true } },
       service: { select: { title: true, slug: true } },
     },
     take: 100,
@@ -62,7 +63,12 @@ export default async function AppointmentsPage() {
                       <span className="text-xs text-[var(--color-text-muted)]">{a.patientEmail}</span>
                     </div>
                   </td>
-                  <td className="text-sm">{a.country.code}</td>
+                  <td>
+                    <span className="inline-flex items-center gap-1.5 text-sm">
+                      <FlagBadge code={a.country.slug} size={14} />
+                      {a.country.code}
+                    </span>
+                  </td>
                   <td className="text-sm">{a.service.title}</td>
                   <td className="text-xs text-[var(--color-text-muted)]">
                     {a.createdAt.toISOString().slice(0, 16).replace("T", " ")}

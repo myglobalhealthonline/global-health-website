@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Plus } from "lucide-react";
 import { prisma } from "backend";
 import { requireAdminUser } from "@/lib/admin/require-admin";
+import { FlagBadge } from "../_components/flag-badge";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export default async function AdminDoctorsPage() {
     orderBy: [{ active: "desc" }, { name: "asc" }],
     include: {
       countryLinks: {
-        include: { country: { select: { code: true, name: true } } },
+        include: { country: { select: { code: true, slug: true, name: true } } },
         orderBy: { sortOrder: "asc" },
       },
     },
@@ -62,12 +63,18 @@ export default async function AdminDoctorsPage() {
                   </td>
                   <td className="text-sm">{d.title}</td>
                   <td>
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap items-center gap-2">
                       {d.countryLinks.map((link) => (
                         <span
                           key={link.id}
-                          className={`gh-badge ${link.active ? "gh-badge-neutral" : "gh-badge-warning"}`}
+                          title={link.country.name}
+                          className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
+                            link.active
+                              ? "border-[var(--color-border)] bg-[var(--color-background-soft)] text-[var(--color-text-primary)]"
+                              : "border-[var(--color-status-warning-border)] bg-[var(--color-status-warning-bg)] text-[var(--color-status-warning-text)]"
+                          }`}
                         >
+                          <FlagBadge code={link.country.slug} size={10} />
                           {link.country.code}
                         </span>
                       ))}

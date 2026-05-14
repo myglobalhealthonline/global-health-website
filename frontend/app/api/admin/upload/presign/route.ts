@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { createPresignedPut } from "backend/storage/presign";
 import { getAdminUser } from "@/lib/auth/server-session";
+import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,8 +42,28 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await createPresignedPut(parsed.data);
-    return NextResponse.json({ ok: true, ...result, expiresIn: 300 });
+    const backendOrigin = getBackendOrigin();
+    if (!backendOrigin) {
+      return NextResponse.json(
+        { ok: false, message: "Backend API is not configured." },
+        { status: 503 },
+      );
+    }
+
+    const upstream = await fetch(`${backendOrigin}/api/admin/media/presign`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(parsed.data),
+      cache: "no-store",
+    });
+    const result = (await upstream.json().catch(() => null)) as Record<string, unknown> | null;
+    if (!upstream.ok) {
+      return NextResponse.json(
+        result ?? { ok: false, message: "Presign failed" },
+        { status: upstream.status },
+      );
+    }
+    return NextResponse.json({ ok: true, ...(result ?? {}), expiresIn: 300 });
   } catch (err) {
     console.error("[presign] failed", err);
     return NextResponse.json(
