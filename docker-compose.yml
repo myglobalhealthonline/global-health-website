@@ -1,8 +1,8 @@
 # Local PostgreSQL for Next.js Server Actions + Prisma.
 # Usage from repo root:
 #   docker compose up -d
-# Connection string (already set in packages/db/.env and apps/web/.env.local):
-#   postgresql://postgres:postgres@localhost:5432/global_health
+# Connection string (already set in backend/.env and frontend/.env.local):
+#   postgresql://postgres:postgres@localhost:5433/global_health
 # Run: pnpm db:migrate && pnpm db:seed
 
 services:
@@ -15,7 +15,8 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: global_health
     ports:
-      - "5432:5432"
+      # Map to 5433 on host because another Postgres is already on 5432.
+      - "5433:5432"
     volumes:
       - global_health_pg:/var/lib/postgresql/data
     healthcheck:
