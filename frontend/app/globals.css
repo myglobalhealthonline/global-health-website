@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "../design-tokens/tokens.css";
+@import "./_tokens.css";
 
 /* Reset & base */
 *,

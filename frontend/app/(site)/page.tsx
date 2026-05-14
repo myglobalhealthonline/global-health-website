@@ -7,10 +7,6 @@ export const metadata: Metadata = {
     "Online medical consultations across Ireland, Portugal, Spain, Czechia, and Romania. New site coming soon.",
 };
 
-/**
- * Catch-all so legacy Wix URLs (e.g. /ireland-team, /home-pt, /post/[slug])
- * render the coming-soon stub instead of 404 during the portal rebuild.
- */
-export default function CatchAllPage() {
+export default function Page() {
   return <ComingSoon />;
 }
