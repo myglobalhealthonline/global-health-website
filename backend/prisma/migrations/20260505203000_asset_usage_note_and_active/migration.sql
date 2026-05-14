@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Asset" ADD COLUMN "usageNote" TEXT;
-ALTER TABLE "Asset" ADD COLUMN "isActive" BOOLEAN NOT NULL DEFAULT true;
