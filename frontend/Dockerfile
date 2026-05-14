@@ -16,7 +16,7 @@ RUN apt-get update \
 COPY package.json pnpm-lock.yaml ./
 
 RUN corepack enable && corepack prepare pnpm@10.33.2 --activate \
-  && pnpm install --frozen-lockfile
+  && pnpm install --no-frozen-lockfile
 
 COPY . .
 
