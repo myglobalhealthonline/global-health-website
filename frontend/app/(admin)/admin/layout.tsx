@@ -3,13 +3,20 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Stethoscope } from "lucide-react";
 import { getAdminUser } from "@/lib/auth/server-session";
-import { signOutAction } from "./login/actions";
+import { listScopeCountries, resolveScopeCountry } from "@/lib/admin/country-scope";
+import { CountryPicker } from "./_components/country-picker";
+import { signOutAction } from "@/app/admin/login/actions";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const user = await getAdminUser();
   if (!user) {
     redirect("/admin/login?next=/admin");
   }
+
+  const [countries, activeCountry] = await Promise.all([
+    listScopeCountries(),
+    resolveScopeCountry(null),
+  ]);
 
   const sections = [
     { href: "/admin", label: "Dashboard" },
@@ -25,6 +32,14 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         ]
       : []),
   ];
+
+  const countrySections = activeCountry
+    ? [
+        { href: `/admin/${activeCountry.slug}/doctors`, label: "Doctors" },
+        { href: `/admin/${activeCountry.slug}/services`, label: "Services" },
+        { href: `/admin/${activeCountry.slug}/appointments`, label: "Appointments" },
+      ]
+    : [];
 
   return (
     <div className="min-h-screen bg-[var(--color-background-soft)]">
@@ -43,7 +58,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             </span>
           </Link>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:block">
+              <CountryPicker countries={countries} current={activeCountry} />
+            </div>
             <div className="hidden text-right sm:block">
               <p className="text-sm font-semibold text-[var(--color-text-primary)]">
                 {user.name ?? user.email}
@@ -64,11 +82,27 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       <div className="mx-auto grid max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[220px_1fr]">
         <aside className="lg:self-start">
           <nav className="sticky top-6 grid gap-1.5">
+            <p className="px-3 pt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+              Global
+            </p>
             {sections.map((section) => (
               <Link key={section.href} href={section.href} className="gh-admin-nav-link">
                 {section.label}
               </Link>
             ))}
+
+            {activeCountry ? (
+              <>
+                <p className="mt-4 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+                  {activeCountry.code} — {activeCountry.name}
+                </p>
+                {countrySections.map((section) => (
+                  <Link key={section.href} href={section.href} className="gh-admin-nav-link">
+                    {section.label}
+                  </Link>
+                ))}
+              </>
+            ) : null}
           </nav>
         </aside>
 
