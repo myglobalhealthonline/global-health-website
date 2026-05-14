@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { ServiceFields } from "../../_components/service-fields";
 import { parseServiceBodyFromForm } from "@/lib/admin/service-form-parse";
 import {
@@ -10,7 +11,11 @@ import {
   patchAdminService,
 } from "@/lib/admin/admin-api";
 import { readServiceKind, SERVICE_KIND_META } from "@/lib/admin/service-kind";
-import { detectDuplicateTextIssues, validateAdminServicePayload } from "@/lib/content/publication-validation";
+import {
+  detectDuplicateTextIssues,
+  validateAdminServicePayload,
+} from "@/lib/content/publication-validation";
+import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +24,10 @@ type PageProps = {
   searchParams?: Promise<{ error?: string; kind?: string }>;
 };
 
-export default async function AdminEditServicePage({ params, searchParams }: PageProps) {
+export default async function AdminEditServicePage({
+  params,
+  searchParams,
+}: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
 
@@ -30,33 +38,43 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
 
   if (!countriesResult.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit service</h1>
-          <Link href="/admin/general-consultations" className="gh-link text-sm text-[var(--color-text-muted)]">
-            Cancel
-          </Link>
-        </div>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load countries: {countriesResult.message}
-        </p>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Services"
+          title="Edit service"
+          actions={
+            <Btn href="/admin/general-consultations" variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load countries: {countriesResult.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
   if (!serviceResult.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit service</h1>
-          <Link href="/admin/general-consultations" className="gh-link text-sm text-[var(--color-text-muted)]">
-            Cancel
-          </Link>
-        </div>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load service: {serviceResult.message}
-        </p>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Services"
+          title="Edit service"
+          actions={
+            <Btn href="/admin/general-consultations" variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load service: {serviceResult.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
@@ -73,17 +91,22 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
 
   if (!specialtiesResult.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit {meta.singularLabel.toLowerCase()}</h1>
-          <Link href={meta.listHref} className="gh-link text-sm text-[var(--color-text-muted)]">
-            Cancel
-          </Link>
-        </div>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load categories: {specialtiesResult.message}
-        </p>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Services"
+          title={`Edit ${meta.singularLabel.toLowerCase()}`}
+          actions={
+            <Btn href={meta.listHref} variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load categories: {specialtiesResult.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
@@ -98,7 +121,9 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
 
     const parsed = parseServiceBodyFromForm(formData);
     if (!parsed.ok) {
-      redirect(`/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(parsed.error)}`);
+      redirect(
+        `/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(parsed.error)}`,
+      );
     }
     const raw = parsed.data;
     const body = {
@@ -108,7 +133,8 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
       name: raw.name,
       summary: raw.summary.trim() === "" ? null : raw.summary.trim(),
       heroTitle: raw.heroTitle.trim() === "" ? null : raw.heroTitle.trim(),
-      heroDescription: raw.heroDescription.trim() === "" ? null : raw.heroDescription.trim(),
+      heroDescription:
+        raw.heroDescription.trim() === "" ? null : raw.heroDescription.trim(),
       detailBody: raw.detailBody.trim() === "" ? null : raw.detailBody.trim(),
       ctaLabel: raw.ctaLabel.trim() === "" ? null : raw.ctaLabel.trim(),
       legacyPath: raw.legacyPath.trim() === "" ? null : raw.legacyPath.trim(),
@@ -123,18 +149,25 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
 
     const [existingServices, validation] = await Promise.all([
       fetchAdminServices({ countryId: raw.countryId, pageSize: "250" }),
-      Promise.resolve(validateAdminServicePayload({
-        kind: body.kind as "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY",
-        name: body.name,
-        summary: body.summary,
-        heroTitle: body.heroTitle,
-        heroDescription: body.heroDescription,
-        detailBody: body.detailBody,
-        durationMinutes: body.durationMinutes ?? null,
-        basePriceCents: body.basePriceCents ?? null,
-        currencyCode: body.currencyCode,
-        isActive: body.isActive,
-      })),
+      Promise.resolve(
+        validateAdminServicePayload({
+          kind: body.kind as
+            | "GENERAL"
+            | "SPECIALIST"
+            | "PRESCRIPTION"
+            | "HEALTH_TEST"
+            | "HOME_DELIVERY",
+          name: body.name,
+          summary: body.summary,
+          heroTitle: body.heroTitle,
+          heroDescription: body.heroDescription,
+          detailBody: body.detailBody,
+          durationMinutes: body.durationMinutes ?? null,
+          basePriceCents: body.basePriceCents ?? null,
+          currencyCode: body.currencyCode,
+          isActive: body.isActive,
+        }),
+      ),
     ]);
     const duplicateIssues = existingServices.ok
       ? detectDuplicateTextIssues(
@@ -154,7 +187,9 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
 
     const result = await patchAdminService(id, body);
     if (!result.ok) {
-      redirect(`/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(result.message)}`);
+      redirect(
+        `/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(result.message)}`,
+      );
     }
 
     redirect(
@@ -167,37 +202,52 @@ export default async function AdminEditServicePage({ params, searchParams }: Pag
   }
 
   return (
-    <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit {meta.singularLabel.toLowerCase()}</h1>
-        <Link href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`} className="gh-link text-sm text-[var(--color-text-muted)]">
-          Cancel
-        </Link>
-      </div>
+    <>
+      <Link
+        href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`}
+        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+      >
+        <ArrowLeft className="size-3.5" /> Back to {service.name}
+      </Link>
+      <PageHeader
+        eyebrow="Services"
+        title={`Edit ${meta.singularLabel.toLowerCase()}`}
+        description={`Update title, pricing, duration, sort order, and detail content.`}
+        actions={
+          <Btn href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`} variant="ghost">
+            Cancel
+          </Btn>
+        }
+      />
 
       {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+        <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
           {messages.error}
         </p>
       ) : null}
 
-      <form action={updateServiceAction} className="mt-8 flex flex-col gap-8">
-        <ServiceFields
-          countries={countries}
-          specialties={specialtiesResult.data.specialties}
-          kind={kind}
-          initial={service}
-          countryLocked
-        />
-        <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" className="gh-btn gh-btn-primary">
-            Save changes
-          </button>
-          <Link href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`} className="gh-link text-sm text-[var(--color-text-muted)]">
-            Cancel
-          </Link>
-        </div>
-      </form>
-    </section>
+      <AdminCard>
+        <form action={updateServiceAction} className="flex flex-col gap-8">
+          <ServiceFields
+            countries={countries}
+            specialties={specialtiesResult.data.specialties}
+            kind={kind}
+            initial={service}
+            countryLocked
+          />
+          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Save changes
+            </button>
+            <Link
+              href={`/admin/services/${id}?kind=${encodeURIComponent(kind)}`}
+              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            >
+              Cancel
+            </Link>
+          </div>
+        </form>
+      </AdminCard>
+    </>
   );
 }

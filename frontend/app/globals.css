@@ -1,54 +1,65 @@
 @import "tailwindcss";
 
 :root {
-  /* Forest stays the anchor, but warmer cream + more confident neutrals. */
-  --color-brand-primary: #143a2e;
-  --color-brand-primary-hover: #0c2820;
-  --color-brand-secondary: #ffffff;
-  /* Lime kept as accent — used sparingly (chips, hover, icons). */
-  --color-brand-accent: #c5f04e;
-  --color-brand-accent-soft: #e9f7c8;
+  /* ── Brand (exact values from Manual da Marca) ───────────── */
+  --color-brand-primary:       #1B4D3E;   /* forest deep */
+  --color-brand-primary-hover: #143B30;   /* forest darker */
+  --color-brand-secondary:     #FFFFFF;
+  /* UI-safe mint (icon tiles, on-dark CTAs) */
+  --color-accent:              #C8E6A0;
+  --color-accent-soft:         rgba(200, 230, 160, 0.30);
+  --color-accent-dim:          rgba(200, 230, 160, 0.16);
+  /* Marketing-only lime (notification dots, hero highlights) */
+  --color-brand-accent:        #B0F122;
+  --color-brand-accent-soft:   #D6F87A;
 
-  /* Backgrounds — warm off-whites, no muddy cream as default. */
-  --color-background-page: #ffffff;
-  --color-background-soft: #faf9f5;  /* warm paper */
-  --color-background-panel: #f3f1ea; /* deeper cream for contrast blocks */
-  --color-background-dark: #0c2820;
+  /* Backgrounds */
+  --color-background-page:  #FFFFFF;
+  --color-background-soft:  #F4F8F4;   /* mint-cream surface */
+  --color-background-panel: #EDF2ED;   /* panel surface */
+  --color-background-dark:  #0F2E25;   /* forest night — sidebar */
 
-  /* Text — higher contrast, sharper hierarchy. */
-  --color-text-primary: #0c2820;
-  --color-text-body: #3a4540;
-  --color-text-muted: #6b756f;
-  --color-text-placeholder: #9aa39e;
+  /* Text */
+  --color-text-primary:     #0F2E25;
+  --color-text-body:        #2D3B36;
+  --color-text-muted:       #5A6B64;
+  --color-text-placeholder: #8A9A92;
 
-  /* Borders — much subtler. Used only when truly needed. */
-  --color-border: #ece9e0;
-  --color-border-strong: #d8d4c6;
-  --color-hero-overlay: rgba(12, 40, 32, 0.78);
-  --color-status-error: #b91c1c;
-  --color-status-error-bg: #fef2f2;
-  --color-status-error-text: #991b1b;
-  --color-status-error-border: #fecaca;
-  --color-status-success-bg: #f0fdf4;
-  --color-status-success-text: #15803d;
-  --color-status-success-border: #bbf7d0;
-  --color-status-warning-bg: #fffbeb;
-  --color-status-warning-text: #92400e;
-  --color-status-warning-border: #fde68a;
-  --color-status-info-bg: #f0f9ff;
-  --color-status-info-text: #075985;
-  --color-status-info-border: #bae6fd;
-  /* Less rounded — clinical, not bubblegum. */
-  --radius-card: 16px;
-  --radius-card-sm: 10px;
-  --radius-button: 999px;
-  /* Shadows: barely-there in rest, generous + colored on hover. */
-  --shadow-card: 0 1px 2px rgba(12, 40, 32, 0.04);
-  --shadow-card-hover: 0 18px 40px -18px rgba(12, 40, 32, 0.25);
-  --shadow-elevated: 0 30px 60px -30px rgba(12, 40, 32, 0.22);
-  --shadow-soft: 0 1px 2px rgba(12, 40, 32, 0.04);
-  --shadow-focus: 0 0 0 3px rgba(20, 58, 46, 0.12);
-  --shadow-focus-error: 0 0 0 3px rgba(185, 28, 28, 0.15);
+  /* Borders */
+  --color-border:        #D8E0D8;
+  --color-border-strong: #B8C8B8;
+
+  --color-hero-overlay: rgba(15, 46, 37, 0.72);
+
+  /* Status */
+  --color-status-error:        #B91C1C;
+  --color-status-error-bg:     #FEF2F2;
+  --color-status-error-text:   #991B1B;
+  --color-status-error-border: #FECACA;
+  --color-status-success-bg:   #F0FDF4;
+  --color-status-success-text: #15803D;
+  --color-status-success-border:#BBF7D0;
+  --color-status-warning-bg:   #FFFBEB;
+  --color-status-warning-text: #92400E;
+  --color-status-warning-border:#FDE68A;
+  --color-status-info-bg:      #F0F9FF;
+  --color-status-info-text:    #075985;
+  --color-status-info-border:  #BAE6FD;
+
+  /* Radius */
+  --radius-card:    20px;
+  --radius-card-sm: 12px;
+  --radius-button:  999px;
+  --radius-tile:    16px;
+  --radius-chip:    999px;
+
+  /* Shadows — forest-tinted, never neutral black */
+  --shadow-soft:       0 1px 3px rgba(15, 46, 37, 0.06);
+  --shadow-card:       0 1px 3px rgba(15, 46, 37, 0.08), 0 4px 12px rgba(15, 46, 37, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(15, 46, 37, 0.12), 0 8px 24px rgba(15, 46, 37, 0.08);
+  --shadow-elevated:   0 8px 30px rgba(15, 46, 37, 0.14), 0 2px 8px rgba(15, 46, 37, 0.08);
+  --shadow-focus:      0 0 0 3px rgba(27, 77, 62, 0.15);
+  --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.15);
 
   /* Medical pattern tokens */
   --medical-pattern-size: 28px;
@@ -127,12 +138,22 @@ img {
 }
 
 /* Typography */
-.gh-heading-eyebrow {
+/* Eyebrow — the brand's signature label. ALL-CAPS, wide tracking, bold, always brand-colored. */
+.gh-heading-eyebrow,
+.gh-eyebrow {
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--color-brand-primary);
+}
+/* Muted variant when eyebrow sits on a dark surface */
+.gh-eyebrow-on-dark {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-accent);
 }
 
 /* Editorial display — paired with Cormorant via inline style. */
@@ -386,14 +407,16 @@ img {
   border-color: var(--color-border-strong);
 }
 
-/* Admin tables */
+/* ── Admin tables ───────────────────────────────────────────── */
 .gh-admin-main table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
 }
 
+/* Header row: soft surface bg, 11px uppercase tracked labels */
 .gh-admin-main thead tr {
+  background: var(--color-background-soft);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -401,16 +424,16 @@ img {
   white-space: nowrap;
   font-weight: 700;
   color: var(--color-text-muted);
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 12px 16px;
+  letter-spacing: 0.12em;
+  padding: 10px 16px;
   text-align: left;
 }
 
 .gh-admin-main td {
   padding: 14px 16px;
-  vertical-align: top;
+  vertical-align: middle;
   color: var(--color-text-body);
   border-bottom: 1px solid var(--color-border);
   transition: background-color 120ms ease-out;
@@ -418,6 +441,41 @@ img {
 
 .gh-admin-main tbody tr:hover td {
   background: var(--color-background-soft);
+}
+
+/* Also style tables outside .gh-admin-main that use the same pattern */
+/* Table — surface-soft header row, 11px/0.08em uppercase labels.
+   Matches ADMIN_DESIGN_BRIEF.md "Table pattern". */
+.gh-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.gh-table thead tr {
+  background: var(--color-background-soft);
+}
+.gh-table th {
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 12px 16px;
+  text-align: left;
+}
+.gh-table td {
+  padding: 14px 16px;
+  vertical-align: middle;
+  color: var(--color-text-body);
+  border-top: 1px solid var(--color-border);
+  transition: background-color 120ms ease-out;
+}
+.gh-table tbody tr:hover td {
+  background: var(--color-background-soft);
+}
+.gh-table tbody tr:first-child td {
+  border-top: 1px solid var(--color-border);
 }
 
 /* Kicker */
@@ -458,6 +516,48 @@ img {
   color: var(--color-status-info-text);
 }
 
+/* ── Admin page header pattern ──────────────────────────────── */
+/* Eyebrow → H1 (28–32px) → description → right-aligned actions */
+.gh-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.gh-page-header-content { min-width: 0; }
+.gh-page-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.gh-page-title {
+  font-size: clamp(1.5rem, 2vw + 0.5rem, 2rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin-top: 4px;
+}
+.gh-page-description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+  max-width: 52ch;
+}
+
+/* ── Admin card section wrapper ─────────────────────────────── */
+.gh-admin-section {
+  padding: 24px;
+}
+@media (min-width: 640px) {
+  .gh-admin-section { padding: 32px; }
+}
+
 /* Badges */
 .gh-badge {
   display: inline-flex;
@@ -496,22 +596,97 @@ img {
   color: var(--color-text-primary);
 }
 
-/* Icon circles */
+/* Icon tiles — Lucide stroke icons inside a rounded-square tile.
+   Background: accent/30 (mint-soft); Icon: brand green. */
+.gh-icon-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-tile);
+  background: var(--color-accent-soft);
+  color: var(--color-brand-primary);
+  flex-shrink: 0;
+}
+.gh-icon-tile-sm {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+}
+.gh-icon-tile-lg {
+  width: 48px;
+  height: 48px;
+  border-radius: 18px;
+}
+
+/* Legacy alias — keep backward compat */
 .gh-icon-circle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: 12px;
-  background: var(--color-brand-accent);
+  border-radius: var(--radius-tile);
+  background: var(--color-accent-soft);
   color: var(--color-brand-primary);
 }
-
 .gh-icon-circle-lg {
   width: 56px;
   height: 56px;
-  border-radius: 16px;
+  border-radius: 18px;
+}
+
+/* ── Status pills (admin lists) ─────────────────────────────── */
+/* Status pills — 11px caps, 0.04em tracking, weight 700.
+   Matches ADMIN_DESIGN_BRIEF.md "Status pills" + Atoms.jsx Pill. */
+.gh-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--radius-chip);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.gh-pill-published {
+  background: rgba(200, 230, 160, 0.30);
+  color: var(--color-brand-primary);
+  border: 1px solid transparent;
+}
+.gh-pill-active {
+  background: var(--color-status-success-bg);
+  color: var(--color-status-success-text);
+  border: 1px solid var(--color-status-success-border);
+}
+.gh-pill-draft {
+  background: var(--color-background-soft);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+.gh-pill-inactive {
+  background: var(--color-status-error-bg);
+  color: var(--color-status-error-text);
+  border: 1px solid var(--color-status-error-border);
+}
+.gh-pill-pending {
+  background: var(--color-status-warning-bg);
+  color: var(--color-status-warning-text);
+  border: 1px solid var(--color-status-warning-border);
+}
+.gh-pill-brand {
+  background: rgba(27,77,62,0.10);
+  color: var(--color-brand-primary);
+  border: 1px solid rgba(27,77,62,0.20);
+}
+.gh-pill-neutral {
+  background: var(--color-background-soft);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
 }
 
 /* Premium editorial section spacing */

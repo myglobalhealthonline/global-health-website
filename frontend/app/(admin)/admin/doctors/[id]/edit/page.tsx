@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { DoctorFields } from "../../_components/doctor-fields";
 import { parseDoctorBodyFromForm } from "@/lib/admin/doctor-form-parse";
 import {
@@ -9,7 +10,11 @@ import {
   fetchAdminSpecialties,
   patchAdminDoctor,
 } from "@/lib/admin/admin-api";
-import { detectDuplicateTextIssues, validateAdminDoctorPayload } from "@/lib/content/publication-validation";
+import {
+  detectDuplicateTextIssues,
+  validateAdminDoctorPayload,
+} from "@/lib/content/publication-validation";
+import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -18,36 +23,57 @@ type PageProps = {
   searchParams?: Promise<{ error?: string }>;
 };
 
-export default async function AdminEditDoctorPage({ params, searchParams }: PageProps) {
+export default async function AdminEditDoctorPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
 
-  const [doctorResult, countriesResult] = await Promise.all([fetchAdminDoctorById(id), fetchAdminCountries()]);
+  const [doctorResult, countriesResult] = await Promise.all([
+    fetchAdminDoctorById(id),
+    fetchAdminCountries(),
+  ]);
 
   if (!countriesResult.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit doctor profile</h1>
-          <Link href="/admin/doctors" className="gh-link text-sm text-[var(--color-text-muted)]">Cancel</Link>
-        </div>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">Could not load countries: {countriesResult.message}</p>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Global"
+          title="Edit doctor profile"
+          actions={
+            <Btn href="/admin/doctors" variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load countries: {countriesResult.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
   if (!doctorResult.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit doctor profile</h1>
-          <Link href="/admin/doctors" className="gh-link text-sm text-[var(--color-text-muted)]">Cancel</Link>
-        </div>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">Could not load doctor: {doctorResult.message}</p>
-        <Link href="/admin/doctors" className="mt-6 inline-block gh-link">
-          Back to doctor profiles
-        </Link>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Global"
+          title="Edit doctor profile"
+          actions={
+            <Btn href="/admin/doctors" variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load doctor: {doctorResult.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
@@ -56,13 +82,22 @@ export default async function AdminEditDoctorPage({ params, searchParams }: Page
 
   if (!specialtiesResult.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit doctor profile</h1>
-          <Link href="/admin/doctors" className="gh-link text-sm text-[var(--color-text-muted)]">Cancel</Link>
-        </div>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">Could not load categories: {specialtiesResult.message}</p>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Global"
+          title={`Edit ${doctor.fullName}`}
+          actions={
+            <Btn href={`/admin/doctors/${id}`} variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load categories: {specialtiesResult.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
@@ -82,7 +117,8 @@ export default async function AdminEditDoctorPage({ params, searchParams }: Page
       title: raw.title,
       bio: raw.bio.trim() === "" ? null : raw.bio.trim(),
       imcRegistration: raw.imcRegistration === "" ? null : raw.imcRegistration,
-      medicalRegistrationUrl: raw.medicalRegistrationUrl === "" ? null : raw.medicalRegistrationUrl,
+      medicalRegistrationUrl:
+        raw.medicalRegistrationUrl === "" ? null : raw.medicalRegistrationUrl,
       qualifications: raw.qualifications,
       whatsappNumber: raw.whatsappNumber === "" ? null : raw.whatsappNumber,
       languages: raw.languages,
@@ -93,24 +129,22 @@ export default async function AdminEditDoctorPage({ params, searchParams }: Page
 
     const [existingDoctors, validation] = await Promise.all([
       fetchAdminDoctors({ countryId: doctor.countryId, pageSize: "250" }),
-      Promise.resolve(validateAdminDoctorPayload({
-        fullName: body.fullName,
-        title: body.title,
-        bio: body.bio,
-        languages: body.languages,
-        imcRegistration: body.imcRegistration,
-        medicalRegistrationUrl: body.medicalRegistrationUrl,
-        qualifications: body.qualifications,
-        specialties: body.specialtyIds,
-      })),
+      Promise.resolve(
+        validateAdminDoctorPayload({
+          fullName: body.fullName,
+          title: body.title,
+          bio: body.bio,
+          languages: body.languages,
+          imcRegistration: body.imcRegistration,
+          medicalRegistrationUrl: body.medicalRegistrationUrl,
+          qualifications: body.qualifications,
+          specialties: body.specialtyIds,
+        }),
+      ),
     ]);
     const duplicateIssues = existingDoctors.ok
       ? detectDuplicateTextIssues(
-          {
-            id,
-            title: body.fullName,
-            description: body.bio,
-          },
+          { id, title: body.fullName, description: body.bio },
           existingDoctors.data.items.map((item) => ({
             id: item.id,
             title: item.fullName,
@@ -127,42 +161,59 @@ export default async function AdminEditDoctorPage({ params, searchParams }: Page
 
     redirect(
       `/admin/doctors/${id}?success=${encodeURIComponent(
-        issues.length > 0 ? "Doctor profile updated with editorial warnings" : "Doctor profile updated",
+        issues.length > 0
+          ? "Doctor profile updated with editorial warnings"
+          : "Doctor profile updated",
       )}`,
     );
   }
 
   return (
-    <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit doctor profile</h1>
-        <Link href={`/admin/doctors/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">
-          Cancel
-        </Link>
-      </div>
+    <>
+      <Link
+        href={`/admin/doctors/${id}`}
+        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+      >
+        <ArrowLeft className="size-3.5" /> Back to {doctor.fullName}
+      </Link>
+      <PageHeader
+        eyebrow="Global"
+        title={`Edit ${doctor.fullName}`}
+        description="Public marketing profile — not a login account."
+        actions={
+          <Btn href={`/admin/doctors/${id}`} variant="ghost">
+            Cancel
+          </Btn>
+        }
+      />
 
       {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+        <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
           {messages.error}
         </p>
       ) : null}
 
-      <form action={updateDoctorAction} className="mt-8 flex flex-col gap-8">
-        <DoctorFields
-          countries={countries}
-          specialties={specialtiesResult.data.specialties}
-          initial={doctor}
-          countryLocked
-        />
-        <div className="flex flex-wrap gap-3">
-          <button type="submit" className="gh-btn gh-btn-primary">
-            Save changes
-          </button>
-          <Link href={`/admin/doctors/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">
-            Cancel
-          </Link>
-        </div>
-      </form>
-    </section>
+      <AdminCard>
+        <form action={updateDoctorAction} className="flex flex-col gap-8">
+          <DoctorFields
+            countries={countries}
+            specialties={specialtiesResult.data.specialties}
+            initial={doctor}
+            countryLocked
+          />
+          <div className="flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Save changes
+            </button>
+            <Link
+              href={`/admin/doctors/${id}`}
+              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            >
+              Cancel
+            </Link>
+          </div>
+        </form>
+      </AdminCard>
+    </>
   );
 }

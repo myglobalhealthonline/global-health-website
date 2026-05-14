@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import {
   fetchAdminAppointmentById,
   patchAdminAppointmentStatus,
@@ -9,6 +10,14 @@ import {
   getAllowedNextStatuses,
   isTerminalAppointmentStatus,
 } from "@/lib/admin/appointment-status";
+import { FlagBadge } from "../../_components/flag-badge";
+import {
+  AdminCard,
+  Btn,
+  PageHeader,
+  Pill,
+  type PillTone,
+} from "../../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +31,41 @@ function formatDate(dateIso: string) {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+function statusToneFor(status: string): PillTone {
+  if (status === "COMPLETED") return "published";
+  if (status === "CANCELLED") return "inactive";
+  if (status === "CONTACTED") return "active";
+  if (status === "UNDER_REVIEW") return "pending";
+  return "neutral";
+}
+
+const cardTitleStyle = {
+  margin: 0,
+  fontFamily: "var(--font-display)",
+  fontSize: 16,
+  fontWeight: 800,
+  color: "var(--color-text-primary)",
+} as const;
+
+function FieldRow({
+  label,
+  value,
+  full = false,
+}: {
+  label: string;
+  value: React.ReactNode;
+  full?: boolean;
+}) {
+  return (
+    <div className={full ? "sm:col-span-2" : ""}>
+      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+        {label}
+      </dt>
+      <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">{value}</dd>
+    </div>
+  );
 }
 
 type PageProps = {
@@ -52,15 +96,21 @@ export default async function AdminAppointmentDetailPage({
 
     const currentStatus = latest.data.appointment.status;
     if (isTerminalAppointmentStatus(currentStatus)) {
-      redirect(`/admin/appointments/${id}?error=${encodeURIComponent("This request is closed and cannot be updated")}`);
+      redirect(
+        `/admin/appointments/${id}?error=${encodeURIComponent("This request is closed and cannot be updated")}`,
+      );
     }
 
     const allowed = getAllowedNextStatuses(currentStatus);
     if (allowed.length === 0) {
-      redirect(`/admin/appointments/${id}?error=${encodeURIComponent("No status updates are available for this record")}`);
+      redirect(
+        `/admin/appointments/${id}?error=${encodeURIComponent("No status updates are available for this record")}`,
+      );
     }
     if (!allowed.includes(nextStatus)) {
-      redirect(`/admin/appointments/${id}?error=${encodeURIComponent("That status change is not allowed from the current state")}`);
+      redirect(
+        `/admin/appointments/${id}?error=${encodeURIComponent("That status change is not allowed from the current state")}`,
+      );
     }
 
     const updateResult = await patchAdminAppointmentStatus(id, nextStatus);
@@ -75,17 +125,22 @@ export default async function AdminAppointmentDetailPage({
 
   if (!result.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Appointment Detail</h1>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load appointment: {result.message}
-        </p>
-        <div className="mt-6">
-          <Link href="/admin/appointments" className="gh-link text-[var(--color-brand-primary)]">
-            Back to queue
-          </Link>
-        </div>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Operations"
+          title="Appointment detail"
+          actions={
+            <Btn href="/admin/appointments" variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Back
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load appointment: {result.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
@@ -95,96 +150,108 @@ export default async function AdminAppointmentDetailPage({
   const canUpdate = !terminal && allowedNext.length > 0;
 
   return (
-    <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Appointment Detail</h1>
-        <Link href="/admin/appointments" className="gh-link text-sm text-[var(--color-text-muted)]">
-          Back to queue
-        </Link>
-      </div>
+    <>
+      <Link
+        href="/admin/appointments"
+        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+      >
+        <ArrowLeft className="size-3.5" /> Back to queue
+      </Link>
+      <PageHeader
+        eyebrow={
+          <span className="inline-flex items-center gap-2">
+            <FlagBadge code={appointment.country} size={14} />
+            {appointment.country.toUpperCase()}
+          </span>
+        }
+        title={appointment.fullName}
+        description={`${appointment.consultationType} · ${formatDate(appointment.createdAt)}`}
+        actions={
+          <Pill tone={statusToneFor(appointment.status)}>
+            {appointment.status.replace(/_/g, " ").toLowerCase()}
+          </Pill>
+        }
+      />
 
       {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+        <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
           {messages.error}
         </p>
       ) : null}
       {messages.success ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">
+        <p className="gh-status-success mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
           {messages.success}
         </p>
       ) : null}
 
-      {terminal ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-sm text-[var(--color-text-primary)]">
-          This booking request is closed ({appointment.status}). Status updates are disabled.
-        </p>
-      ) : null}
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
+      >
+        <div className="grid gap-4">
+          <AdminCard>
+            <h3 style={cardTitleStyle}>Patient details</h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Contact info captured at booking.
+            </p>
+            <dl className="grid gap-4 sm:grid-cols-2">
+              <FieldRow label="Full name" value={appointment.fullName} />
+              <FieldRow label="Email" value={appointment.email} />
+              <FieldRow
+                label="Phone"
+                value={appointment.phone ?? "No phone provided"}
+              />
+              <FieldRow label="Country" value={appointment.country.toUpperCase()} />
+              <FieldRow label="Consultation type" value={appointment.consultationType} />
+              <FieldRow label="Created" value={formatDate(appointment.createdAt)} />
+              <FieldRow label="Updated" value={formatDate(appointment.updatedAt)} full />
+            </dl>
+          </AdminCard>
 
-      {!terminal && allowedNext.length === 0 ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          This record has a status that cannot be updated from this screen. If this looks wrong, check data in the database.
-        </p>
-      ) : null}
+          <AdminCard>
+            <h3 style={cardTitleStyle}>Notes</h3>
+            <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed text-[var(--color-text-body)]">
+              {appointment.notes ?? "No notes provided."}
+            </p>
+          </AdminCard>
+        </div>
 
-      <dl className="mt-6 grid gap-4 sm:grid-cols-2">
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Patient</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">{appointment.fullName}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Email</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">{appointment.email}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Phone</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">{appointment.phone ?? "No phone provided"}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Country</dt>
-          <dd className="mt-1 uppercase text-[var(--color-text-primary)]">{appointment.country}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Consultation type</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">{appointment.consultationType}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Current status</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">{appointment.status}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Created</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">{formatDate(appointment.createdAt)}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Updated</dt>
-          <dd className="mt-1 text-[var(--color-text-primary)]">{formatDate(appointment.updatedAt)}</dd>
-        </div>
-      </dl>
+        <div className="grid gap-4 self-start">
+          <AdminCard>
+            <h3 style={cardTitleStyle}>Status</h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              {terminal
+                ? "This booking request is closed. Status updates are disabled."
+                : canUpdate
+                  ? "Move the request through the queue."
+                  : "No status updates are available for this record."}
+            </p>
 
-      <div className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
-        <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">Notes</h2>
-        <p className="mt-2 whitespace-pre-wrap text-sm text-[var(--color-text-muted)]">
-          {appointment.notes ?? "No notes provided"}
-        </p>
+            {canUpdate ? (
+              <form action={updateStatusAction} className="flex flex-col gap-3">
+                <label className="flex flex-col gap-1.5">
+                  <span className="gh-field-label">Move status to</span>
+                  <select
+                    name="status"
+                    className="gh-select"
+                    defaultValue={allowedNext[0]}
+                    required
+                  >
+                    {allowedNext.map((status) => (
+                      <option key={status} value={status}>
+                        {status.replace(/_/g, " ")}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button type="submit" className="gh-btn gh-btn-primary w-full">
+                  Save status
+                </button>
+              </form>
+            ) : null}
+          </AdminCard>
+        </div>
       </div>
-
-      {canUpdate ? (
-        <form action={updateStatusAction} className="mt-6 flex flex-wrap items-end gap-3">
-          <label className="flex min-w-[220px] flex-col gap-2">
-            <span className="gh-field-label">Move status to</span>
-            <select name="status" className="gh-select" defaultValue={allowedNext[0]} required>
-              {allowedNext.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button type="submit" className="gh-btn gh-btn-primary">
-            Save status
-          </button>
-        </form>
-      ) : null}
-    </section>
+    </>
   );
 }

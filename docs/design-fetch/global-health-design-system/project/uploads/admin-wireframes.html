@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Health — Admin Portal Wireframes</title>
+<style>
+  /* =================================================================
+     THEME TOKENS — swap these for your brand colors
+     ================================================================= */
+  :root {
+    --bg: #f5f5f4;
+    --bg-elevated: #ffffff;
+    --bg-sunken: #fafaf9;
+    --border: #e7e5e4;
+    --border-strong: #d6d3d1;
+    --text: #1c1917;
+    --text-muted: #78716c;
+    --text-subtle: #a8a29e;
+    --accent: #0f172a;
+    --accent-text: #ffffff;
+    --accent-soft: #f1f5f9;
+    --success-bg: #dcfce7;
+    --success-text: #166534;
+    --warning-bg: #fef3c7;
+    --warning-text: #92400e;
+    --danger-bg: #fee2e2;
+    --danger-text: #991b1b;
+    --info-bg: #dbeafe;
+    --info-text: #1e40af;
+    --radius: 6px;
+    --radius-lg: 10px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.04);
+    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+
+  /* =================================================================
+     SCREEN NAVIGATOR (meta nav for flipping through wireframes)
+     ================================================================= */
+  .meta-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--accent); color: var(--accent-text);
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  .meta-nav-title { font-weight: 600; font-size: 15px; margin-right: auto; }
+  .meta-nav-title .pill {
+    display: inline-block; background: rgba(255,255,255,.15); padding: 2px 8px;
+    border-radius: 4px; font-size: 11px; font-weight: 500; margin-left: 8px;
+    text-transform: uppercase; letter-spacing: .04em;
+  }
+  .screen-btn {
+    background: transparent; color: var(--accent-text); border: 1px solid rgba(255,255,255,.2);
+    padding: 6px 12px; border-radius: var(--radius); font-size: 12px; cursor: pointer;
+    font-family: inherit; transition: all .15s;
+  }
+  .screen-btn:hover { background: rgba(255,255,255,.1); }
+  .screen-btn.active { background: var(--accent-text); color: var(--accent); border-color: var(--accent-text); }
+
+  .screen-container { padding: 24px; max-width: 1400px; margin: 0 auto; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .screen-header { margin-bottom: 16px; }
+  .screen-header h1 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-muted); font-weight: 600; }
+  .screen-header p { color: var(--text-muted); margin-top: 4px; font-size: 13px; }
+
+  /* =================================================================
+     ADMIN SHELL — sidebar + topbar + content
+     ================================================================= */
+  .admin-shell {
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); overflow: hidden;
+    display: grid; grid-template-columns: 240px 1fr;
+    min-height: 720px; box-shadow: var(--shadow);
+  }
+
+  .sidebar { background: var(--bg-sunken); border-right: 1px solid var(--border); padding: 20px 0; }
+  .sidebar-brand { padding: 0 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .sidebar-brand .logo { font-weight: 700; font-size: 15px; }
+  .sidebar-brand .logo-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .nav-group { padding: 8px 0; }
+  .nav-group-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--text-subtle); padding: 8px 20px; font-weight: 600; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 8px 20px;
+    color: var(--text); cursor: pointer; font-size: 13px; border-left: 2px solid transparent;
+  }
+  .nav-item:hover { background: var(--accent-soft); }
+  .nav-item.active { background: var(--accent-soft); border-left-color: var(--accent); font-weight: 600; }
+  .nav-item .nav-icon {
+    width: 14px; height: 14px; background: var(--text-muted); border-radius: 2px; flex-shrink: 0; opacity: .5;
+  }
+  .nav-item.active .nav-icon { opacity: 1; background: var(--accent); }
+  .nav-item .badge {
+    margin-left: auto; background: var(--border); color: var(--text-muted);
+    font-size: 10px; padding: 1px 6px; border-radius: 8px; font-weight: 600;
+  }
+
+  .main-area { display: flex; flex-direction: column; }
+
+  .topbar {
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 24px; border-bottom: 1px solid var(--border); background: var(--bg-elevated);
+  }
+  .breadcrumb { color: var(--text-muted); font-size: 13px; flex: 1; }
+  .breadcrumb b { color: var(--text); font-weight: 600; }
+  .country-picker {
+    display: flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border-strong); padding: 6px 12px;
+    border-radius: var(--radius); background: var(--bg-elevated); cursor: pointer;
+    font-size: 13px; font-weight: 500;
+  }
+  .country-picker .flag {
+    width: 18px; height: 12px; background: var(--border); border-radius: 2px;
+  }
+  .country-picker .caret { color: var(--text-muted); font-size: 10px; }
+  .user-menu {
+    display: flex; align-items: center; gap: 8px; padding: 4px 10px 4px 4px;
+    border-radius: 20px; background: var(--bg-sunken); cursor: pointer; font-size: 12px;
+  }
+  .user-menu .avatar {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--accent);
+    color: var(--accent-text); display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600;
+  }
+
+  .content { padding: 24px; flex: 1; background: var(--bg); overflow: auto; }
+  .content-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; gap: 16px; }
+  .content-header h2 { font-size: 20px; font-weight: 700; }
+  .content-header p { color: var(--text-muted); margin-top: 4px; font-size: 13px; }
+
+  /* =================================================================
+     BUTTONS / FORM ELEMENTS
+     ================================================================= */
+  .btn {
+    background: var(--accent); color: var(--accent-text); border: none;
+    padding: 8px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 500;
+    cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-secondary { background: var(--bg-elevated); color: var(--text); border: 1px solid var(--border-strong); }
+  .btn-ghost { background: transparent; color: var(--text-muted); }
+  .btn-danger { background: var(--danger-bg); color: var(--danger-text); }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+  .input, .select, .textarea {
+    width: 100%; padding: 8px 12px; border: 1px solid var(--border-strong);
+    border-radius: var(--radius); font-size: 13px; font-family: inherit; background: var(--bg-elevated);
+  }
+  .textarea { min-height: 90px; resize: vertical; }
+  .label { font-size: 12px; font-weight: 600; color: var(--text); display: block; margin-bottom: 6px; }
+  .help { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+  .form-group { margin-bottom: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* =================================================================
+     CARDS / TABLES
+     ================================================================= */
+  .card {
+    background: var(--bg-elevated); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm);
+  }
+  .card-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+  .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); font-weight: 600; }
+  .stat-value { font-size: 24px; font-weight: 700; margin-top: 6px; }
+  .stat-delta { font-size: 11px; color: var(--success-text); margin-top: 4px; }
+
+  .table { width: 100%; border-collapse: collapse; background: var(--bg-elevated); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); }
+  .table thead th {
+    text-align: left; padding: 10px 14px; font-size: 11px; text-transform: uppercase;
+    letter-spacing: .05em; color: var(--text-muted); background: var(--bg-sunken);
+    border-bottom: 1px solid var(--border); font-weight: 600;
+  }
+  .table tbody td { padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--border); }
+  .table tbody tr:last-child td { border-bottom: none; }
+  .table tbody tr:hover { background: var(--bg-sunken); }
+  .table .row-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* badges + status */
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em;
+  }
+  .badge-success { background: var(--success-bg); color: var(--success-text); }
+  .badge-warning { background: var(--warning-bg); color: var(--warning-text); }
+  .badge-danger { background: var(--danger-bg); color: var(--danger-text); }
+  .badge-info { background: var(--info-bg); color: var(--info-text); }
+  .badge-neutral { background: var(--border); color: var(--text-muted); }
+
+  /* country chips */
+  .country-chip {
+    display: inline-flex; align-items: center; gap: 5px; padding: 2px 8px;
+    background: var(--bg-sunken); border: 1px solid var(--border); border-radius: 10px;
+    font-size: 11px; font-weight: 500;
+  }
+  .country-chip .flag { width: 12px; height: 8px; background: var(--border-strong); border-radius: 1px; }
+
+  /* toolbar above tables */
+  .toolbar { display: flex; gap: 8px; margin-bottom: 16px; align-items: center; }
+  .toolbar .input { max-width: 280px; }
+  .toolbar .filters { display: flex; gap: 6px; margin-left: auto; }
+
+  /* =================================================================
+     ANNOTATIONS — explaining wireframe decisions
+     ================================================================= */
+  .annotation-list {
+    background: var(--bg-elevated); border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-lg); padding: 16px 20px; margin-top: 20px;
+  }
+  .annotation-list h3 {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text-muted); margin-bottom: 10px; font-weight: 600;
+  }
+  .annotation-list ol { padding-left: 20px; }
+  .annotation-list li { margin: 6px 0; font-size: 13px; color: var(--text); }
+  .annotation-list code {
+    font-family: var(--font-mono); font-size: 11.5px; background: var(--bg-sunken);
+    padding: 1px 5px; border-radius: 3px; color: var(--accent);
+  }
+
+  /* =================================================================
+     LOGIN screen
+     ================================================================= */
+  .login-screen { display: flex; align-items: center; justify-content: center; min-height: 720px; background: var(--bg-sunken); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+  .login-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; width: 380px; box-shadow: var(--shadow); }
+  .login-card .brand { text-align: center; margin-bottom: 24px; }
+  .login-card .brand h1 { font-size: 18px; font-weight: 700; }
+  .login-card .brand p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* =================================================================
+     COUNTRY ENABLEMENT MATRIX
+     ================================================================= */
+  .matrix { width: 100%; border-collapse: collapse; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .matrix th, .matrix td { padding: 10px 12px; text-align: center; font-size: 12px; border-right: 1px solid var(--border); }
+  .matrix th:first-child, .matrix td:first-child { text-align: left; font-weight: 500; }
+  .matrix thead th { background: var(--bg-sunken); font-weight: 600; }
+  .matrix tbody tr { border-top: 1px solid var(--border); }
+  .toggle {
+    width: 30px; height: 16px; background: var(--border-strong); border-radius: 10px;
+    position: relative; cursor: pointer; margin: 0 auto;
+  }
+  .toggle::after { content: ''; position: absolute; width: 12px; height: 12px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: left .15s; }
+  .toggle.on { background: var(--accent); }
+  .toggle.on::after { left: 16px; }
+
+  /* =================================================================
+     MULTI-SELECT (for doctor country assignment)
+     ================================================================= */
+  .multi-select { border: 1px solid var(--border-strong); border-radius: var(--radius); padding: 8px; background: var(--bg-elevated); min-height: 42px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .multi-select .tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent); color: var(--accent-text);
+    padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 500;
+  }
+  .multi-select .tag .x { cursor: pointer; opacity: .7; }
+  .multi-select input { border: none; outline: none; flex: 1; min-width: 100px; padding: 4px; font-size: 13px; background: transparent; font-family: inherit; }
+
+  /* =================================================================
+     IMAGE UPLOAD WIDGET
+     ================================================================= */
+  .upload-zone {
+    border: 2px dashed var(--border-strong); border-radius: var(--radius-lg);
+    padding: 24px; text-align: center; background: var(--bg-sunken); cursor: pointer;
+  }
+  .upload-zone p { font-size: 13px; color: var(--text-muted); }
+  .upload-zone .upload-icon {
+    width: 32px; height: 32px; background: var(--border-strong);
+    border-radius: 50%; margin: 0 auto 8px;
+  }
+
+  .image-preview {
+    width: 120px; height: 120px; background: var(--bg-sunken);
+    border: 1px solid var(--border); border-radius: var(--radius); position: relative;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-subtle); font-size: 11px;
+  }
+
+  /* =================================================================
+     SPLIT LAYOUT (form + sidebar)
+     ================================================================= */
+  .split { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+  .split-side .card { margin-bottom: 16px; }
+  .side-list { display: flex; flex-direction: column; gap: 8px; }
+  .side-list-item {
+    padding: 8px 10px; background: var(--bg-sunken); border-radius: var(--radius);
+    font-size: 12px; display: flex; justify-content: space-between; align-items: center;
+  }
+
+  /* DASHBOARD card styling */
+  .dash-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+  .activity { display: flex; flex-direction: column; gap: 10px; }
+  .activity-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .activity-item:last-child { border: none; }
+  .activity-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-top: 6px; flex-shrink: 0; }
+  .activity-meta { font-size: 11px; color: var(--text-muted); }
+
+  /* responsive */
+  @media (max-width: 900px) {
+    .admin-shell { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .split { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="meta-nav">
+  <div class="meta-nav-title">Admin Portal Wireframes <span class="pill">v1 · Stage 4</span></div>
+  <button class="screen-btn active" data-screen="login">Login</button>
+  <button class="screen-btn" data-screen="dashboard">Dashboard</button>
+  <button class="screen-btn" data-screen="countries">Countries</button>
+  <button class="screen-btn" data-screen="country-edit">Country Edit</button>
+  <button class="screen-btn" data-screen="categories">Categories</button>
+  <button class="screen-btn" data-screen="doctors">Doctors</button>
+  <button class="screen-btn" data-screen="doctor-edit">Doctor Edit</button>
+  <button class="screen-btn" data-screen="services">Services</button>
+  <button class="screen-btn" data-screen="service-edit">Service Edit</button>
+</nav>
+
+<div class="screen-container">
+
+<!-- ====================== LOGIN ====================== -->
+<section class="screen active" id="login">
+  <div class="screen-header">
+    <h1>Screen 1 — Login</h1>
+    <p>Entry point. Single form, role checked server-side. SUPER_ADMIN goes to dashboard, plain admins land on country selector.</p>
+  </div>
+  <div class="login-screen">
+    <div class="login-card">
+      <div class="brand">
+        <h1>Global Health Admin</h1>
+        <p>Sign in to manage clinics, doctors &amp; services</p>
+      </div>
+      <div class="form-group">
+        <label class="label">Email</label>
+        <input class="input" placeholder="you@myglobalhealth.online" value="admin@myglobalhealth.online">
+      </div>
+      <div class="form-group">
+        <label class="label">Password</label>
+        <input class="input" type="password" value="••••••••••">
+        <div class="help" style="margin-top:6px;"><a href="#" style="color:var(--accent);">Forgot password?</a></div>
+      </div>
+      <button class="btn" style="width:100%; justify-content:center; margin-top:8px;">Sign in</button>
+      <p style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:16px;">Restricted access. All activity is logged.</p>
+    </div>
+  </div>
+  <div class="annotation-list">
+    <h3>Decisions</h3>
+    <ol>
+      <li>Uses <code>User</code> table with <code>role IN (ADMIN, SUPER_ADMIN)</code>. JWT via <code>jose</code>, secure httpOnly cookie.</li>
+      <li>Middleware in <code>admin/middleware.ts</code> redirects unauthenticated traffic to <code>/login</code>.</li>
+      <li>"Forgot password" goes to a placeholder for v1 (manual reset by SUPER_ADMIN) — full email flow is post-launch.</li>
+      <li>Every successful login writes to <code>AdminAuditLog</code> with action=<code>login</code>.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ====================== DASHBOARD ====================== -->
+<section class="screen" id="dashboard">
+  <div class="screen-header">
+    <h1>Screen 2 — Dashboard</h1>
+    <p>Post-login landing. Quick stats, recent activity, fast actions. Country dropdown filters everything below.</p>
+  </div>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="logo">Global Health</div><div class="logo-sub">Admin Portal</div></div>
+      <div class="nav-group">
+        <div class="nav-group-label">Global</div>
+        <div class="nav-item active"><div class="nav-icon"></div>Dashboard</div>
+        <div class="nav-item"><div class="nav-icon"></div>Countries<span class="badge">5</span></div>
+        <div class="nav-item"><div class="nav-icon"></div>Categories<span class="badge">37</span></div>
+        <div class="nav-item"><div class="nav-icon"></div>Doctors<span class="badge">12</span></div>
+        <div class="nav-item"><div class="nav-icon"></div>Admin Users</div>
+        <div class="nav-item"><div class="nav-icon"></div>Audit Log</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Ireland · Country-scoped</div>
+        <div class="nav-item"><div class="nav-icon"></div>General Consultations<span class="badge">18</span></div>
+        <div class="nav-item"><div class="nav-icon"></div>Specialist<span class="badge">19</span></div>
+        <div class="nav-item"><div class="nav-icon"></div>Prescriptions</div>
+        <div class="nav-item"><div class="nav-icon"></div>Health Tests</div>
+        <div class="nav-item"><div class="nav-icon"></div>Country Content</div>
+        <div class="nav-item"><div class="nav-icon"></div>Appointments<span class="badge">3</span></div>
+      </div>
+    </aside>
+    <div class="main-area">
+      <div class="topbar">
+        <div class="breadcrumb">Admin / <b>Dashboard</b></div>
+        <div class="country-picker"><div class="flag"></div>Ireland<span class="caret">▾</span></div>
+        <div class="user-menu"><div class="avatar">AM</div>Aun M.</div>
+      </div>
+      <div class="content">
+        <div class="content-header">
+          <div>
+            <h2>Welcome back, Aun</h2>
+            <p>Here's what's happening across Global Health today.</p>
+          </div>
+          <button class="btn">+ Quick action</button>
+        </div>
+        <div class="stat-grid">
+          <div class="stat"><div class="stat-label">Active countries</div><div class="stat-value">5</div><div class="stat-delta">All published</div></div>
+          <div class="stat"><div class="stat-label">Total doctors</div><div class="stat-value">12</div><div class="stat-delta">+2 this week</div></div>
+          <div class="stat"><div class="stat-label">Services live</div><div class="stat-value">87</div><div class="stat-delta">3 drafts pending</div></div>
+          <div class="stat"><div class="stat-label">Pending appointments</div><div class="stat-value">3</div><div class="stat-delta">Needs review</div></div>
+        </div>
+        <div class="dash-grid">
+          <div class="card">
+            <div class="card-title">Recent activity</div>
+            <div class="activity">
+              <div class="activity-item"><div class="activity-dot"></div><div><b>Service published</b> — "Mental Health Assessment" went live in Ireland<div class="activity-meta">12 minutes ago · by Aun M.</div></div></div>
+              <div class="activity-item"><div class="activity-dot"></div><div><b>Doctor added</b> — Dr. Fatima Ali assigned to Ireland &amp; Portugal<div class="activity-meta">2 hours ago · by Aun M.</div></div></div>
+              <div class="activity-item"><div class="activity-dot"></div><div><b>Category enabled</b> — "Dermatology" turned on for Portugal<div class="activity-meta">Yesterday · by Sara L.</div></div></div>
+              <div class="activity-item"><div class="activity-dot"></div><div><b>Country content updated</b> — Spain hero subtitle edited<div class="activity-meta">2 days ago · by Aun M.</div></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Quick actions</div>
+            <div class="side-list">
+              <div class="side-list-item">Add a doctor <button class="btn btn-secondary btn-sm">Go</button></div>
+              <div class="side-list-item">Create a service <button class="btn btn-secondary btn-sm">Go</button></div>
+              <div class="side-list-item">Edit country hero <button class="btn btn-secondary btn-sm">Go</button></div>
+              <div class="side-list-item">Review appointments <button class="btn btn-secondary btn-sm">Go</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="annotation-list">
+    <h3>Decisions</h3>
+    <ol>
+      <li>Sidebar splits into <b>Global</b> (entities spanning countries) and <b>Country-scoped</b> (only meaningful with one country active). Country-scoped section's label updates based on the picker.</li>
+      <li><b>Country picker</b> in topbar is the single source of truth. Stored in cookie + URL. Affects every list view below.</li>
+      <li>Stat cards click through to their respective list views with the country filter pre-applied.</li>
+      <li>Recent activity reads from <code>AdminAuditLog</code> — descending chronological, last 10.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ====================== COUNTRIES LIST ====================== -->
+<section class="screen" id="countries">
+  <div class="screen-header">
+    <h1>Screen 3 — Countries (the axis)</h1>
+    <p>Manage the country list itself. Add a new country, toggle active, reorder.</p>
+  </div>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="logo">Global Health</div><div class="logo-sub">Admin Portal</div></div>
+      <div class="nav-group">
+        <div class="nav-group-label">Global</div>
+        <div class="nav-item"><div class="nav-icon"></div>Dashboard</div>
+        <div class="nav-item active"><div class="nav-icon"></div>Countries<span class="badge">5</span></div>
+        <div class="nav-item"><div class="nav-icon"></div>Categories</div>
+        <div class="nav-item"><div class="nav-icon"></div>Doctors</div>
+        <div class="nav-item"><div class="nav-icon"></div>Admin Users</div>
+        <div class="nav-item"><div class="nav-icon"></div>Audit Log</div>
+      </div>
+    </aside>
+    <div class="main-area">
+      <div class="topbar">
+        <div class="breadcrumb">Admin / <b>Countries</b></div>
+        <div class="country-picker"><div class="flag"></div>All countries<span class="caret">▾</span></div>
+        <div class="user-menu"><div class="avatar">AM</div></div>
+      </div>
+      <div class="content">
+        <div class="content-header">
+          <div><h2>Countries</h2><p>The axis of the platform. Each country has its own services, doctors, hero copy &amp; appointments.</p></div>
+          <button class="btn">+ Add country</button>
+        </div>
+        <div class="toolbar">
+          <input class="input" placeholder="Search countries…">
+          <div class="filters">
+            <button class="btn btn-secondary btn-sm">All</button>
+            <button class="btn btn-ghost btn-sm">Active</button>
+            <button class="btn btn-ghost btn-sm">Inactive</button>
+          </div>
+        </div>
+        <table class="table">
+          <thead><tr><th style="width:30px;"></th><th>Name</th><th>Code</th><th>Currency</th><th>Doctors</th><th>Services</th><th>Status</th><th>Active</th><th style="text-align:right;">Actions</th></tr></thead>
+          <tbody>
+            <tr><td>≡</td><td><b>Ireland</b> <span style="color:var(--text-muted);">/ie</span></td><td>IE</td><td>EUR</td><td>8</td><td>37</td><td><span class="badge badge-success">Published</span></td><td><div class="toggle on"></div></td><td><div class="row-actions"><button class="btn btn-ghost btn-sm">Edit</button></div></td></tr>
+            <tr><td>≡</td><td><b>Portugal</b> <span style="color:var(--text-muted);">/pt</span></td><td>PT</td><td>EUR</td><td>4</td><td>12</td><td><span class="badge badge-success">Published</span></td><td><div class="toggle on"></div></td><td><div class="row-actions"><button class="btn btn-ghost btn-sm">Edit</button></div></td></tr>
+            <tr><td>≡</td><td><b>Spain</b> <span style="color:var(--text-muted);">/es</span></td><td>ES</td><td>EUR</td><td>3</td><td>8</td><td><span class="badge badge-success">Published</span></td><td><div class="toggle on"></div></td><td><div class="row-actions"><button class="btn btn-ghost btn-sm">Edit</button></div></td></tr>
+            <tr><td>≡</td><td><b>Czechia</b> <span style="color:var(--text-muted);">/cz</span></td><td>CZ</td><td>CZK</td><td>2</td><td>6</td><td><span class="badge badge-warning">Draft</span></td><td><div class="toggle"></div></td><td><div class="row-actions"><button class="btn btn-ghost btn-sm">Edit</button></div></td></tr>
+            <tr><td>≡</td><td><b>Romania</b> <span style="color:var(--text-muted);">/rm</span></td><td>RO</td><td>RON</td><td>2</td><td>5</td><td><span class="badge badge-success">Published</span></td><td><div class="toggle on"></div></td><td><div class="row-actions"><button class="btn btn-ghost btn-sm">Edit</button></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="annotation-list">
+    <h3>Decisions</h3>
+    <ol>
+      <li><b>≡</b> drag handle reorders countries on the public site (writes <code>sortOrder</code>).</li>
+      <li><b>Active</b> toggle hides the country from the public site instantly. <b>Status</b> (Draft/Published) controls whether new edits to hero copy are visible.</li>
+      <li>Clicking a row opens the Country Edit screen. New countries start in DRAFT status.</li>
+      <li>Doctors / Services counts are computed live and link to filtered list views.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ====================== COUNTRY EDIT ====================== -->
+<section class="screen" id="country-edit">
+  <div class="screen-header">
+    <h1>Screen 4 — Country Edit</h1>
+    <p>Edit one country: metadata, hero content (draft-able), category enablement, contact details.</p>
+  </div>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="logo">Global Health</div><div class="logo-sub">Admin Portal</div></div>
+      <div class="nav-group">
+        <div class="nav-group-label">Global</div>
+        <div class="nav-item"><div class="nav-icon"></div>Dashboard</div>
+        <div class="nav-item active"><div class="nav-icon"></div>Countries</div>
+        <div class="nav-item"><div class="nav-icon"></div>Categories</div>
+        <div class="nav-item"><div class="nav-icon"></div>Doctors</div>
+      </div>
+    </aside>
+    <div class="main-area">
+      <div class="topbar">
+        <div class="breadcrumb">Admin / Countries / <b>Ireland</b></div>
+        <div class="country-picker"><div class="flag"></div>Ireland<span class="caret">▾</span></div>
+        <div class="user-menu"><div class="avatar">AM</div></div>
+      </div>
+      <div class="content">
+        <div class="content-header">
+          <div><h2>Ireland <span class="badge badge-success" style="margin-left:8px;">Published</span></h2><p>Editing — last updated 2 hours ago by Aun M.</p></div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-secondary">Save as draft</button>
+            <button class="btn">Publish changes</button>
+          </div>
+        </div>
+        <div class="split">
+          <div>
+            <div class="card">
+              <div class="card-title">Country details</div>
+              <div class="form-row">
+                <div class="form-group"><label class="label">Display name</label><input class="input" value="Ireland"></div>
+                <div class="form-group"><label class="label">URL slug</label><input class="input" value="ie"><div class="help">Used in URLs like <code>/ie/doctors</code>. Change with care — breaks SEO.</div></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="label">ISO Code</label><input class="input" value="IE"></div>
+                <div class="form-group"><label class="label">Currency</label><select class="select"><option>EUR — €</option></select></div>
+              </div>
+              <div class="form-group">
+                <label class="label">Languages spoken</label>
+                <div class="multi-select"><span class="tag">English <span class="x">×</span></span><span class="tag">Portuguese <span class="x">×</span></span><span class="tag">Spanish <span class="x">×</span></span><span class="tag">Urdu <span class="x">×</span></span><input placeholder="Add a language…"></div>
+              </div>
+            </div>
+            <div class="card" style="margin-top:16px;">
+              <div class="card-title">Hero content <span class="badge badge-warning" style="margin-left:6px;">Has unpublished changes</span></div>
+              <div class="form-group"><label class="label">Hero title</label><input class="input" value="Online Medical Consultations in Ireland"></div>
+              <div class="form-group"><label class="label">Hero subtitle</label><textarea class="textarea">Licensed doctors, secure consultations, no waiting rooms. Choose your specialist and book in minutes.</textarea></div>
+              <div class="form-row">
+                <div class="form-group"><label class="label">CTA button label</label><input class="input" value="Book a Consultation"></div>
+                <div class="form-group"><label class="label">Hero image</label><div class="image-preview">120 × 120</div></div>
+              </div>
+            </div>
+            <div class="card" style="margin-top:16px;">
+              <div class="card-title">Contact information</div>
+              <div class="form-row">
+                <div class="form-group"><label class="label">Phone</label><input class="input" value="+353 89 471 5849"></div>
+                <div class="form-group"><label class="label">WhatsApp</label><input class="input" value="+353 89 471 5849"></div>
+              </div>
+              <div class="form-group"><label class="label">Email</label><input class="input" value="ireland@myglobalhealth.online"></div>
+            </div>
+          </div>
+          <div class="split-side">
+            <div class="card">
+              <div class="card-title">Visibility</div>
+              <div class="side-list-item"><span>Active on public site</span><div class="toggle on"></div></div>
+              <div class="side-list-item" style="margin-top:8px;"><span>Featured (homepage)</span><div class="toggle on"></div></div>
+              <div class="help" style="margin-top:10px;">When inactive, the country disappears from the public site immediately, including all its services.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">At a glance</div>
+              <div class="side-list">
+                <div class="side-list-item"><span>Total doctors</span><b>8</b></div>
+                <div class="side-list-item"><span>General consultations</span><b>18</b></div>
+                <div class="side-list-item"><span>Specialist consultations</span><b>19</b></div>
+                <div class="side-list-item"><span>Pending appointments</span><b>3</b></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Danger zone</div>
+              <button class="btn btn-danger" style="width:100%; justify-content:center;">Deactivate country</button>
+              <div class="help" style="margin-top:8px;">Hides this country from the public site. Data is preserved.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="annotation-list">
+    <h3>Decisions</h3>
+    <ol>
+      <li>"Save as draft" stores changes but keeps the public site showing the last published version. "Publish changes" promotes draft → live.</li>
+      <li>"Has unpublished changes" warning appears next to any section the admin has edited but not published yet.</li>
+      <li>The slug field warns about SEO. Slug changes should ideally auto-create a redirect (future).</li>
+      <li>Deactivating ≠ deleting. Soft toggle so data survives — important for compliance &amp; historical records.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ====================== CATEGORIES ====================== -->
+<section class="screen" id="categories">
+  <div class="screen-header">
+    <h1>Screen 5 — Categories with country enablement matrix</h1>
+    <p>The defining UX for "global categories enabled per country". One row per category, one column per country, toggle to enable.</p>
+  </div>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="logo">Global Health</div><div class="logo-sub">Admin Portal</div></div>
+      <div class="nav-group">
+        <div class="nav-group-label">Global</div>
+        <div class="nav-item"><div class="nav-icon"></div>Dashboard</div>
+        <div class="nav-item"><div class="nav-icon"></div>Countries</div>
+        <div class="nav-item active"><div class="nav-icon"></div>Categories</div>
+        <div class="nav-item"><div class="nav-icon"></div>Doctors</div>
+      </div>
+    </aside>
+    <div class="main-area">
+      <div class="topbar">
+        <div class="breadcrumb">Admin / <b>Categories</b></div>
+        <div class="country-picker"><div class="flag"></div>All countries<span class="caret">▾</span></div>
+        <div class="user-menu"><div class="avatar">AM</div></div>
+      </div>
+      <div class="content">
+        <div class="content-header">
+          <div><h2>Categories</h2><p>Categories are <b>global</b>. Toggle which countries each one is enabled in.</p></div>
+          <button class="btn">+ Add category</button>
+        </div>
+        <div class="toolbar">
+          <input class="input" placeholder="Search categories…">
+          <div class="filters">
+            <button class="btn btn-secondary btn-sm">All</button>
+            <button class="btn btn-ghost btn-sm">General</button>
+            <button class="btn btn-ghost btn-sm">Specialist</button>
+          </div>
+        </div>
+        <table class="matrix">
+          <thead><tr><th>Category</th><th>Type</th><th>IE</th><th>PT</th><th>ES</th><th>CZ</th><th>RM</th><th style="text-align:right; padding-right:14px;">Actions</th></tr></thead>
+          <tbody>
+            <tr><td><b>Cardiology</b></td><td><span class="badge badge-info">Specialist</span></td><td><div class="toggle on"></div></td><td><div class="toggle on"></div></td><td><div class="toggle on"></div></td><td><div class="toggle"></div></td><td><div class="toggle"></div></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><b>Dermatology</b></td><td><span class="badge badge-info">Specialist</span></td><td><div class="toggle on"></div></td><td><div class="toggle on"></div></td><td><div class="toggle"></div></td><td><div class="toggle"></div></td><td><div class="toggle"></div></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><b>Pediatric</b></td><td><span class="badge badge-info">Specialist</span></td><td><div class="toggle on"></div></td><td><div class="toggle on"></div></td><td><div class="toggle on"></div></td><td><div class="toggle on"></div></td><td><div class="toggle on"></div></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><b>Family Medicine</b></td><td><span class="badge badge-neutral">General</span></td><td><div class="toggle on"></div></td><td><div class="toggle on"></div></td><td><div class="toggle on"></div></td><td><div class="toggle on"></div></td><td><div class="toggle on"></div></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><b>Weight Loss</b></td><td><span class="badge badge-neutral">General</span></td><td><div class="toggle on"></div></td><td><div class="toggle"></div></td><td><div class="toggle"></div></td><td><div class="toggle"></div></td><td><div class="toggle"></div></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><b>Mental Health Assessment</b></td><td><span class="badge badge-neutral">General</span></td><td><div class="toggle on"></div></td><td><div class="toggle on"></div></td><td><div class="toggle"></div></td><td><div class="toggle"></div></td><td><div class="toggle"></div></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><b>Aesthetic Medicine</b></td><td><span class="badge badge-neutral">General</span></td><td><div class="toggle on"></div></td><td><div class="toggle"></div></td><td><div class="toggle"></div></td><td><div class="toggle"></div></td><td><div class="toggle"></div></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="annotation-list">
+    <h3>Decisions</h3>
+    <ol>
+      <li>Matrix layout = scannable. You see at a glance which countries are missing a category.</li>
+      <li>Each toggle writes/deletes a <code>CategoryCountry</code> row. Optimistic UI — toggle flips immediately, rolls back on error.</li>
+      <li>Disabling a category in a country also hides any services in that category for that country (but doesn't delete the services).</li>
+      <li>Category edit (the "Edit" button) opens a side drawer with name, icon, slug, description, and quick re-toggle of country enablement.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ====================== DOCTORS LIST ====================== -->
+<section class="screen" id="doctors">
+  <div class="screen-header">
+    <h1>Screen 6 — Doctors (M:N with countries)</h1>
+    <p>Doctors are global. Each has a list of countries they practice in. Filter the list by country dropdown.</p>
+  </div>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="logo">Global Health</div><div class="logo-sub">Admin Portal</div></div>
+      <div class="nav-group">
+        <div class="nav-group-label">Global</div>
+        <div class="nav-item"><div class="nav-icon"></div>Dashboard</div>
+        <div class="nav-item"><div class="nav-icon"></div>Countries</div>
+        <div class="nav-item"><div class="nav-icon"></div>Categories</div>
+        <div class="nav-item active"><div class="nav-icon"></div>Doctors</div>
+      </div>
+    </aside>
+    <div class="main-area">
+      <div class="topbar">
+        <div class="breadcrumb">Admin / <b>Doctors</b></div>
+        <div class="country-picker"><div class="flag"></div>All countries<span class="caret">▾</span></div>
+        <div class="user-menu"><div class="avatar">AM</div></div>
+      </div>
+      <div class="content">
+        <div class="content-header">
+          <div><h2>Doctors</h2><p>Public-facing doctor profiles. Each doctor can practice in multiple countries.</p></div>
+          <button class="btn">+ Add doctor</button>
+        </div>
+        <div class="toolbar">
+          <input class="input" placeholder="Search by name, registration #, slug…">
+          <div class="filters">
+            <button class="btn btn-secondary btn-sm">All</button>
+            <button class="btn btn-ghost btn-sm">Active</button>
+            <button class="btn btn-ghost btn-sm">Suspended</button>
+          </div>
+        </div>
+        <table class="table">
+          <thead><tr><th style="width:50px;"></th><th>Name</th><th>Title</th><th>Countries</th><th>Languages</th><th>Status</th><th style="text-align:right;">Actions</th></tr></thead>
+          <tbody>
+            <tr><td><div class="image-preview" style="width:36px; height:36px;"></div></td><td><b>Dr. Mirza Aun Mohammad</b><div style="color:var(--text-muted); font-size:11px;">/dr-mirza-aun-mohammad</div></td><td>GP</td><td><span class="country-chip"><div class="flag"></div>IE</span></td><td>English, Urdu</td><td><span class="badge badge-success">Active</span></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><div class="image-preview" style="width:36px; height:36px;"></div></td><td><b>Dr. Tiago Miguel Figueira</b><div style="color:var(--text-muted); font-size:11px;">/dr-tiago-miguel-figueira</div></td><td>MD</td><td><span class="country-chip"><div class="flag"></div>IE</span> <span class="country-chip"><div class="flag"></div>PT</span></td><td>Portuguese, English, Spanish</td><td><span class="badge badge-success">Active</span></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><div class="image-preview" style="width:36px; height:36px;"></div></td><td><b>Dr. Fatima Ali</b><div style="color:var(--text-muted); font-size:11px;">/dr-fatima-ali</div></td><td>GP</td><td><span class="country-chip"><div class="flag"></div>IE</span> <span class="country-chip"><div class="flag"></div>PT</span> <span class="country-chip"><div class="flag"></div>ES</span></td><td>English, Urdu, Arabic</td><td><span class="badge badge-success">Active</span></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><div class="image-preview" style="width:36px; height:36px;"></div></td><td><b>Dr. Emmanuel Dabup</b><div style="color:var(--text-muted); font-size:11px;">/dr-emmanuel-dabup</div></td><td>Specialist · Cardiology</td><td><span class="country-chip"><div class="flag"></div>IE</span></td><td>English</td><td><span class="badge badge-warning">Suspended in PT</span></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td><div class="image-preview" style="width:36px; height:36px;"></div></td><td><b>Dr. Maristela Ferro Nepomuceno</b><div style="color:var(--text-muted); font-size:11px;">/dr-maristela-ferro-nepomuceno</div></td><td>MD</td><td><span class="country-chip"><div class="flag"></div>PT</span></td><td>Portuguese, English</td><td><span class="badge badge-success">Active</span></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="annotation-list">
+    <h3>Decisions</h3>
+    <ol>
+      <li>Country chips show all countries the doctor is assigned to — at a glance.</li>
+      <li>Status badge handles the per-country-suspension case (Doctor.active=true, but DoctorCountry.active=false in some countries).</li>
+      <li>When the country dropdown is set to a specific country, this list filters to doctors assigned to that country only.</li>
+      <li>"Add doctor" opens the edit screen pre-populated with the active country selected in countryLinks.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ====================== DOCTOR EDIT ====================== -->
+<section class="screen" id="doctor-edit">
+  <div class="screen-header">
+    <h1>Screen 7 — Doctor Edit</h1>
+    <p>One form. Doctor info on the left, country assignments + image upload on the right.</p>
+  </div>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="logo">Global Health</div><div class="logo-sub">Admin Portal</div></div>
+      <div class="nav-group">
+        <div class="nav-group-label">Global</div>
+        <div class="nav-item active"><div class="nav-icon"></div>Doctors</div>
+      </div>
+    </aside>
+    <div class="main-area">
+      <div class="topbar">
+        <div class="breadcrumb">Admin / Doctors / <b>Dr. Fatima Ali</b></div>
+        <div class="country-picker"><div class="flag"></div>Ireland<span class="caret">▾</span></div>
+        <div class="user-menu"><div class="avatar">AM</div></div>
+      </div>
+      <div class="content">
+        <div class="content-header">
+          <div><h2>Dr. Fatima Ali</h2><p>Practicing in 3 countries · Last updated yesterday</p></div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-secondary">Cancel</button>
+            <button class="btn">Save changes</button>
+          </div>
+        </div>
+        <div class="split">
+          <div>
+            <div class="card">
+              <div class="card-title">Public profile</div>
+              <div class="form-row">
+                <div class="form-group"><label class="label">Full name</label><input class="input" value="Dr. Fatima Ali"></div>
+                <div class="form-group"><label class="label">Title</label><input class="input" value="GP" placeholder="MD, GP, Specialist"></div>
+              </div>
+              <div class="form-group"><label class="label">URL slug</label><input class="input" value="dr-fatima-ali"><div class="help">Public URL: <code>/ie/doctors/dr-fatima-ali</code></div></div>
+              <div class="form-group"><label class="label">Bio</label><textarea class="textarea">Dr. Fatima Ali is a licensed GP with 12 years of experience in family medicine. She specializes in women's health, paediatrics and chronic disease management.</textarea></div>
+              <div class="form-row">
+                <div class="form-group"><label class="label">Years of experience</label><input class="input" value="12"></div>
+                <div class="form-group"><label class="label">Registration #</label><input class="input" value="IMC 123456"></div>
+              </div>
+              <div class="form-group">
+                <label class="label">Languages</label>
+                <div class="multi-select"><span class="tag">English <span class="x">×</span></span><span class="tag">Urdu <span class="x">×</span></span><span class="tag">Arabic <span class="x">×</span></span><input placeholder="Add a language…"></div>
+              </div>
+            </div>
+          </div>
+          <div class="split-side">
+            <div class="card">
+              <div class="card-title">Profile photo</div>
+              <div class="image-preview" style="width:100%; height:180px;">Drag &amp; drop or click to upload</div>
+              <div class="help" style="margin-top:8px;">Uploads to Railway bucket via presigned URL. Recommended 400×400, &lt; 2MB.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Practicing in</div>
+              <div class="side-list">
+                <div class="side-list-item"><span><span class="country-chip"><div class="flag"></div>Ireland</span></span> <div style="display:flex; gap:6px; align-items:center;"><span class="badge badge-success">Active</span><div class="toggle on"></div></div></div>
+                <div class="side-list-item"><span><span class="country-chip"><div class="flag"></div>Portugal</span></span> <div style="display:flex; gap:6px; align-items:center;"><span class="badge badge-success">Active</span><div class="toggle on"></div></div></div>
+                <div class="side-list-item"><span><span class="country-chip"><div class="flag"></div>Spain</span></span> <div style="display:flex; gap:6px; align-items:center;"><span class="badge badge-warning">Suspended</span><div class="toggle"></div></div></div>
+              </div>
+              <button class="btn btn-secondary btn-sm" style="margin-top:10px; width:100%; justify-content:center;">+ Assign to another country</button>
+              <div class="help" style="margin-top:8px;">Each row is a <code>DoctorCountry</code>. Toggle off = doctor hidden on that country's site only.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Sort order per country</div>
+              <div class="help">How the doctor appears on each country's team page.</div>
+              <div class="side-list" style="margin-top:8px;">
+                <div class="side-list-item">Ireland team <input class="input" style="width:60px; padding:3px 8px;" value="2"></div>
+                <div class="side-list-item">Portugal team <input class="input" style="width:60px; padding:3px 8px;" value="1"></div>
+                <div class="side-list-item">Spain team <input class="input" style="width:60px; padding:3px 8px;" value="—" disabled></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="annotation-list">
+    <h3>Decisions</h3>
+    <ol>
+      <li><b>Country assignments</b> sidebar is the heart of M:N. Each row is one <code>DoctorCountry</code> link — toggle suspends in that country only.</li>
+      <li>Image upload uses Railway presigned URL flow — file goes browser → bucket directly, never touches your server.</li>
+      <li>Sort order is per-country because a doctor might be top-of-list in PT but third in IE.</li>
+      <li>Slug is global (one per doctor) since the same person is the same person across countries.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ====================== SERVICES LIST ====================== -->
+<section class="screen" id="services">
+  <div class="screen-header">
+    <h1>Screen 8 — Services list (country-scoped)</h1>
+    <p>Services live under the active country. Same screen used for General, Specialist, Prescriptions, Health Tests — one screen, four sidebar entries that preset the type filter.</p>
+  </div>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="logo">Global Health</div><div class="logo-sub">Admin Portal</div></div>
+      <div class="nav-group">
+        <div class="nav-group-label">Ireland · Country-scoped</div>
+        <div class="nav-item active"><div class="nav-icon"></div>General Consultations<span class="badge">18</span></div>
+        <div class="nav-item"><div class="nav-icon"></div>Specialist<span class="badge">19</span></div>
+        <div class="nav-item"><div class="nav-icon"></div>Prescriptions<span class="badge">4</span></div>
+        <div class="nav-item"><div class="nav-icon"></div>Health Tests<span class="badge">3</span></div>
+        <div class="nav-item"><div class="nav-icon"></div>Country Content</div>
+        <div class="nav-item"><div class="nav-icon"></div>Appointments<span class="badge">3</span></div>
+      </div>
+    </aside>
+    <div class="main-area">
+      <div class="topbar">
+        <div class="breadcrumb">Admin / Ireland / <b>General Consultations</b></div>
+        <div class="country-picker"><div class="flag"></div>Ireland<span class="caret">▾</span></div>
+        <div class="user-menu"><div class="avatar">AM</div></div>
+      </div>
+      <div class="content">
+        <div class="content-header">
+          <div><h2>General Consultations</h2><p>Services of type <code>GENERAL</code> in Ireland. Switch country in the top bar to manage another.</p></div>
+          <button class="btn">+ Add consultation</button>
+        </div>
+        <div class="toolbar">
+          <input class="input" placeholder="Search consultations…">
+          <div class="filters">
+            <button class="btn btn-secondary btn-sm">All</button>
+            <button class="btn btn-ghost btn-sm">Published</button>
+            <button class="btn btn-ghost btn-sm">Draft</button>
+          </div>
+        </div>
+        <table class="table">
+          <thead><tr><th style="width:50px;"></th><th>Title</th><th>Category</th><th>Price</th><th>Duration</th><th>Status</th><th>Active</th><th style="text-align:right;">Actions</th></tr></thead>
+          <tbody>
+            <tr><td>≡</td><td><b>Medical Consultation</b><div style="color:var(--text-muted); font-size:11px;">/ireland/medical-consultation</div></td><td><span class="badge badge-neutral">Family Medicine</span></td><td>€45.00</td><td>20 min</td><td><span class="badge badge-success">Published</span></td><td><div class="toggle on"></div></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td>≡</td><td><b>Mental Health Assessment</b><div style="color:var(--text-muted); font-size:11px;">/ireland/mental-health-assessment-consultation</div></td><td><span class="badge badge-neutral">Mental Health</span></td><td>€75.00</td><td>45 min</td><td><span class="badge badge-warning">Draft</span></td><td><div class="toggle on"></div></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td>≡</td><td><b>Sick Leave</b><div style="color:var(--text-muted); font-size:11px;">/ireland/sick-leave</div></td><td><span class="badge badge-neutral">Family Medicine</span></td><td>€25.00</td><td>10 min</td><td><span class="badge badge-success">Published</span></td><td><div class="toggle on"></div></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td>≡</td><td><b>Weight Loss Consultation</b><div style="color:var(--text-muted); font-size:11px;">/ireland/weight-loss-consultation</div></td><td><span class="badge badge-neutral">Weight Loss</span></td><td>€60.00</td><td>30 min</td><td><span class="badge badge-success">Published</span></td><td><div class="toggle on"></div></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+            <tr><td>≡</td><td><b>Travel Consultation</b><div style="color:var(--text-muted); font-size:11px;">/ireland/travel-consultation</div></td><td><span class="badge badge-neutral">Family Medicine</span></td><td>€40.00</td><td>20 min</td><td><span class="badge badge-success">Published</span></td><td><div class="toggle on"></div></td><td style="text-align:right;"><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="annotation-list">
+    <h3>Decisions</h3>
+    <ol>
+      <li>Same screen + same form component for all 4 service types — only the <code>type</code> filter and category dropdown options change.</li>
+      <li>Reorder by drag — writes <code>sortOrder</code>. Public site lists in this order.</li>
+      <li>Status = Draft hides from public site even if Active toggle is on. Two-layer safety.</li>
+      <li>Title/URL preview shows the public route so the admin knows exactly what URL changes.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ====================== SERVICE EDIT ====================== -->
+<section class="screen" id="service-edit">
+  <div class="screen-header">
+    <h1>Screen 9 — Service Edit (the reusable form)</h1>
+    <p>Single form serves all four service types. Conditional fields based on type. SEO at the bottom.</p>
+  </div>
+  <div class="admin-shell">
+    <aside class="sidebar">
+      <div class="sidebar-brand"><div class="logo">Global Health</div><div class="logo-sub">Admin Portal</div></div>
+      <div class="nav-group">
+        <div class="nav-group-label">Ireland · Country-scoped</div>
+        <div class="nav-item active"><div class="nav-icon"></div>General Consultations</div>
+        <div class="nav-item"><div class="nav-icon"></div>Specialist</div>
+        <div class="nav-item"><div class="nav-icon"></div>Prescriptions</div>
+        <div class="nav-item"><div class="nav-icon"></div>Health Tests</div>
+      </div>
+    </aside>
+    <div class="main-area">
+      <div class="topbar">
+        <div class="breadcrumb">Admin / Ireland / General / <b>Mental Health Assessment</b></div>
+        <div class="country-picker"><div class="flag"></div>Ireland<span class="caret">▾</span></div>
+        <div class="user-menu"><div class="avatar">AM</div></div>
+      </div>
+      <div class="content">
+        <div class="content-header">
+          <div><h2>Mental Health Assessment <span class="badge badge-warning" style="margin-left:8px;">Draft</span></h2><p>Public URL: <code>/ireland/mental-health-assessment-consultation</code></p></div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-secondary">Save as draft</button>
+            <button class="btn">Publish</button>
+          </div>
+        </div>
+        <div class="split">
+          <div>
+            <div class="card">
+              <div class="card-title">Basics</div>
+              <div class="form-row">
+                <div class="form-group"><label class="label">Type</label><select class="select"><option>General Consultation</option><option>Specialist</option><option>Online Prescription</option><option>Health Test</option></select></div>
+                <div class="form-group"><label class="label">Category</label><select class="select"><option>Mental Health</option><option>Family Medicine</option></select><div class="help">Only shows categories enabled in Ireland.</div></div>
+              </div>
+              <div class="form-group"><label class="label">Title</label><input class="input" value="Mental Health Assessment"></div>
+              <div class="form-group"><label class="label">URL slug</label><input class="input" value="mental-health-assessment-consultation"><div class="help">Auto-generated. <code>/ireland/{slug}</code></div></div>
+              <div class="form-group"><label class="label">Short summary</label><textarea class="textarea" style="min-height:60px;">A confidential online assessment with a licensed mental health professional.</textarea><div class="help">Shown on service cards (max ~200 chars).</div></div>
+            </div>
+            <div class="card" style="margin-top:16px;">
+              <div class="card-title">Full description</div>
+              <div class="form-group"><textarea class="textarea" style="min-height:160px;">Our mental health assessment provides a structured, confidential consultation with a licensed professional. The 45-minute session covers symptom history, current stressors, lifestyle factors and any prior treatments. You'll receive a written summary with recommendations.</textarea><div class="help">Rich-text editor in implementation. Markdown supported.</div></div>
+            </div>
+            <div class="card" style="margin-top:16px;">
+              <div class="card-title">Pricing &amp; logistics</div>
+              <div class="form-row">
+                <div class="form-group"><label class="label">Price</label><input class="input" value="75.00"></div>
+                <div class="form-group"><label class="label">Currency</label><select class="select"><option>EUR (€) — country default</option><option>Override…</option></select></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="label">Duration (minutes)</label><input class="input" value="45"></div>
+                <div class="form-group"><label class="label">Featured on country home</label><div class="toggle on"></div></div>
+              </div>
+            </div>
+            <div class="card" style="margin-top:16px;">
+              <div class="card-title">SEO</div>
+              <div class="form-group"><label class="label">Meta title</label><input class="input" placeholder="Defaults to Title"></div>
+              <div class="form-group"><label class="label">Meta description</label><textarea class="textarea" style="min-height:60px;" placeholder="Defaults to summary"></textarea></div>
+            </div>
+          </div>
+          <div class="split-side">
+            <div class="card">
+              <div class="card-title">Cover image</div>
+              <div class="image-preview" style="width:100%; height:140px;">Click to upload</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Visibility</div>
+              <div class="side-list-item"><span>Active on public site</span><div class="toggle on"></div></div>
+              <div class="side-list-item" style="margin-top:8px;"><span>Featured</span><div class="toggle on"></div></div>
+              <div class="help" style="margin-top:8px;">Status (Draft / Published) is separate. Publish to make changes visible.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Audit trail</div>
+              <div class="activity">
+                <div class="activity-item"><div class="activity-dot"></div><div><b>Draft saved</b><div class="activity-meta">2 minutes ago · Aun M.</div></div></div>
+                <div class="activity-item"><div class="activity-dot"></div><div><b>Created</b><div class="activity-meta">Yesterday · Aun M.</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="annotation-list">
+    <h3>Decisions</h3>
+    <ol>
+      <li>One <code>ServiceForm</code> component handles all 4 types. Category dropdown is conditional: required for GENERAL/SPECIALIST, hidden for PRESCRIPTION/HEALTH_TEST.</li>
+      <li>Slug auto-generates from title but is editable. Warns if changing on a published service.</li>
+      <li>Currency defaults to country's currency but can be overridden per service (rare, but handles edge cases).</li>
+      <li>Audit trail sidebar shows the last few changes on this exact service — useful for "who broke it" debugging.</li>
+    </ol>
+  </div>
+</section>
+
+</div>
+
+<script>
+  const buttons = document.querySelectorAll('.screen-btn');
+  const screens = document.querySelectorAll('.screen');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.screen;
+      buttons.forEach(b => b.classList.toggle('active', b === btn));
+      screens.forEach(s => s.classList.toggle('active', s.id === target));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>

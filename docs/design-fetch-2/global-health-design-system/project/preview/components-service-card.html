@@ -1,0 +1,213 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Service Card</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { padding: 24px 24px 22px; background: #F4F8F4; }
+
+  .grid {
+    display: grid; gap: 16px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* ── Card shell ─────────────────────────────────────────── */
+  .card {
+    background: #fff;
+    border: 1px solid #D8E0D8;
+    border-radius: 20px;
+    box-shadow: 0 1px 3px rgba(15,46,37,0.08), 0 4px 12px rgba(15,46,37,0.04);
+    transition: all 180ms ease-out;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    cursor: pointer;
+  }
+  .card:hover {
+    box-shadow: 0 4px 12px rgba(15,46,37,0.12), 0 8px 24px rgba(15,46,37,0.08);
+    transform: translateY(-1px);
+    border-color: rgba(27,77,62,0.20);
+  }
+
+  /* ── Media area ─────────────────────────────────────────── */
+  .media {
+    height: 140px;
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 16px;
+  }
+  .media.dark   { background: linear-gradient(135deg, #1B4D3E 0%, #143B30 100%); }
+  .media.mint   { background: linear-gradient(135deg, #C8E6A0 0%, #A4D177 100%); }
+  /* Faint medical pattern on the media area — adds texture without noise */
+  .media::before {
+    content: "";
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 28px;
+    opacity: 0.10;
+  }
+  .media.dark { color: #fff; }
+  .media.mint { color: #1B4D3E; }
+
+  /* Big decorative icon — anchored to upper-right, soft */
+  .media-icon {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 160px; height: 160px;
+    opacity: 0.18;
+    transition: transform 600ms ease-out;
+  }
+  .card:hover .media-icon { transform: translate(-6px, 4px) rotate(-2deg); }
+  .media.dark .media-icon { color: #C8E6A0; }
+  .media.mint .media-icon { color: #1B4D3E; }
+
+  /* Tag in upper-left of media */
+  .media-tag {
+    position: relative; z-index: 1;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.10em; text-transform: uppercase;
+  }
+  .media.dark .media-tag { background: rgba(255,255,255,0.14); color: #C8E6A0; }
+  .media.mint .media-tag { background: rgba(20,59,48,0.10); color: #1B4D3E; }
+
+  /* Price chip in lower-left of media */
+  .media-price {
+    position: relative; z-index: 1;
+    background: #fff;
+    color: #1B4D3E;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px; font-weight: 800;
+    box-shadow: 0 4px 12px rgba(15,46,37,0.18);
+  }
+  .media-price small { font-size: 10px; font-weight: 600; color: #5A6B64; margin-right: 4px; }
+
+  /* ── Body ───────────────────────────────────────────────── */
+  .body {
+    padding: 20px 22px 18px;
+    display: flex; flex-direction: column; flex: 1;
+  }
+  .body h3 {
+    font-family: var(--font-display);
+    font-size: 18px; font-weight: 800;
+    color: #0F2E25; margin: 0 0 6px;
+    line-height: 1.25; letter-spacing: -0.01em;
+  }
+  .body p {
+    font-size: 13.5px; line-height: 1.55;
+    color: #5A6B64; margin: 0 0 14px; flex: 1;
+  }
+
+  /* Meta row — duration + doctor count */
+  .meta {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #EDF2ED;
+    margin-bottom: 14px;
+  }
+  .meta-item {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: #5A6B64; font-weight: 500;
+  }
+  .meta-item svg { color: #1B4D3E; }
+  .meta-item strong { color: #2D3B36; font-weight: 700; }
+
+  /* CTA row */
+  .cta {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .cta .doctors {
+    display: inline-flex; align-items: center; gap: -4px;
+  }
+  .doctor-pic {
+    width: 26px; height: 26px; border-radius: 999px;
+    background: linear-gradient(135deg, #1B4D3E, #8FB021);
+    color: #fff; font-size: 10px; font-weight: 800;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 2px solid #fff;
+    margin-left: -8px;
+  }
+  .doctor-pic:first-child { margin-left: 0; }
+  .doctors-text { font-size: 12px; color: #5A6B64; margin-left: 8px; }
+
+  .arrow {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 13px; font-weight: 700; color: #1B4D3E;
+  }
+  .arrow span { transition: transform 180ms; }
+  .card:hover .arrow span { transform: translateX(3px); }
+</style>
+
+<div class="grid">
+
+  <!-- Card 1 — DARK media (specialist) -->
+  <div class="card">
+    <div class="media dark">
+      <svg class="media-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+      </svg>
+      <span class="media-tag">Specialist</span>
+      <span class="media-price"><small>FROM</small>€120</span>
+    </div>
+    <div class="body">
+      <h3>Cardiology consultation</h3>
+      <p>Specialist review of heart symptoms, ECG interpretation, and second opinions, online.</p>
+      <div class="meta">
+        <span class="meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <strong>45 min</strong> video
+        </span>
+        <span class="meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Rx included
+        </span>
+      </div>
+      <div class="cta">
+        <span class="doctors">
+          <span class="doctor-pic" style="background:linear-gradient(135deg,#1B4D3E,#8FB021)">TM</span>
+          <span class="doctor-pic" style="background:linear-gradient(135deg,#8FB021,#C8E6A0);color:#143B30">MR</span>
+          <span class="doctors-text">2 doctors</span>
+        </span>
+        <span class="arrow">Learn more <span>→</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2 — MINT media (general) -->
+  <div class="card">
+    <div class="media mint">
+      <svg class="media-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4.8 2.3A.3.3 0 0 0 4.5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-.5a.3.3 0 0 0-.3.3v1.4a.3.3 0 0 0 .3.3H12a.3.3 0 0 1 .3.3V9a4 4 0 0 1-8 0V4.3A.3.3 0 0 1 4.5 4h.1a.3.3 0 0 0 .3-.3z"/>
+        <circle cx="20" cy="10" r="2"/>
+        <path d="M8 15v2a6 6 0 0 0 12 0v-5"/>
+      </svg>
+      <span class="media-tag">General</span>
+      <span class="media-price"><small>FROM</small>€50</span>
+    </div>
+    <div class="body">
+      <h3>General consultation</h3>
+      <p>Talk to a registered GP — same day appointments, prescriptions issued online when needed.</p>
+      <div class="meta">
+        <span class="meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          <strong>30 min</strong> video
+        </span>
+        <span class="meta-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Rx included
+        </span>
+      </div>
+      <div class="cta">
+        <span class="doctors">
+          <span class="doctor-pic" style="background:linear-gradient(135deg,#1B4D3E,#8FB021)">IC</span>
+          <span class="doctor-pic" style="background:linear-gradient(135deg,#8FB021,#C8E6A0);color:#143B30">SW</span>
+          <span class="doctor-pic" style="background:linear-gradient(135deg,#0F2E25,#1B4D3E)">AP</span>
+          <span class="doctors-text">+4 more</span>
+        </span>
+        <span class="arrow">Learn more <span>→</span></span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body></html>

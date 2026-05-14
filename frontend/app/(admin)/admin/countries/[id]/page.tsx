@@ -1,8 +1,14 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { CheckCircle2, AlertCircle } from "lucide-react";
-import { deleteAdminCountry, fetchAdminCountryById, purgeAdminCountry } from "@/lib/admin/admin-api";
+import { ArrowLeft } from "lucide-react";
+import {
+  deleteAdminCountry,
+  fetchAdminCountryById,
+  purgeAdminCountry,
+} from "@/lib/admin/admin-api";
+import { FlagBadge } from "../../_components/flag-badge";
+import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -11,19 +17,20 @@ type PageProps = {
   searchParams?: Promise<{ success?: string; error?: string }>;
 };
 
-export default async function AdminCountryDetailPage({ params, searchParams }: PageProps) {
+export default async function AdminCountryDetailPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
   const result = await fetchAdminCountryById(id);
 
   async function deactivateCountryAction() {
     "use server";
-
     const updateResult = await deleteAdminCountry(id);
     if (!updateResult.ok) {
       redirect(`/admin/countries/${id}?error=${encodeURIComponent(updateResult.message)}`);
     }
-
     revalidatePath("/admin/countries");
     revalidatePath(`/admin/countries/${id}`);
     redirect(`/admin/countries/${id}?success=${encodeURIComponent("Country deactivated")}`);
@@ -31,27 +38,32 @@ export default async function AdminCountryDetailPage({ params, searchParams }: P
 
   async function deleteCountryAction() {
     "use server";
-
     const deleteResult = await purgeAdminCountry(id);
     if (!deleteResult.ok) {
       redirect(`/admin/countries/${id}?error=${encodeURIComponent(deleteResult.message)}`);
     }
-
     revalidatePath("/admin/countries");
     redirect(`/admin/countries?success=${encodeURIComponent("Country deleted")}`);
   }
 
   if (!result.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Country</h1>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load country: {result.message}
-        </p>
-        <Link href="/admin/countries" className="mt-6 inline-block gh-link text-sm text-[var(--color-text-muted)]">
-          Back to list
-        </Link>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Global"
+          title="Country"
+          actions={
+            <Btn href="/admin/countries" variant="ghost" size="md" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Back
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load country: {result.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
@@ -59,103 +71,206 @@ export default async function AdminCountryDetailPage({ params, searchParams }: P
   const isActive = c.isActive;
 
   return (
-    <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">{c.name}</h1>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <Link href={`/admin/countries/${id}/edit`} className="gh-btn gh-btn-primary">Edit</Link>
-          <Link href="/admin/countries" className="gh-link text-sm text-[var(--color-text-muted)]">Back to list</Link>
-        </div>
-      </div>
+    <>
+      <Link
+        href="/admin/countries"
+        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+      >
+        <ArrowLeft className="size-3.5" /> Back to countries
+      </Link>
+      <PageHeader
+        eyebrow={
+          <span className="inline-flex items-center gap-2">
+            <FlagBadge code={c.code} size={14} />
+            Edit country
+          </span>
+        }
+        title={c.name}
+        description="The row everything else hangs off — services, doctors, categories, appointments."
+        actions={
+          <>
+            <Pill tone={isActive ? "published" : "inactive"}>
+              {isActive ? "Active" : "Inactive"}
+            </Pill>
+            <Btn href={`/admin/countries/${id}/edit`} variant="primary" size="md">
+              Edit
+            </Btn>
+          </>
+        }
+      />
 
-      {messages.error ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{messages.error}</p> : null}
-      {messages.success ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{messages.success}</p> : null}
-
-      <div className="mt-5 flex flex-wrap items-center gap-3">
-        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border ${
-          isActive
-            ? "bg-[var(--color-status-success-bg)] text-[var(--color-status-success-text)] border-[var(--color-status-success-border)]"
-            : "bg-[var(--color-status-warning-bg)] text-[var(--color-status-warning-text)] border-[var(--color-status-warning-border)]"
-        }`}>
-          {isActive ? <CheckCircle2 className="size-3.5" /> : <AlertCircle className="size-3.5" />}
-          {isActive ? "Active" : "Inactive"}
-        </span>
-        <span className="text-xs text-[var(--color-text-muted)]">Inactive countries are omitted from the public countries API.</span>
-      </div>
-
-      <dl className="mt-6 grid gap-4 sm:grid-cols-2">
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Code</dt>
-          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{c.code}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Slug</dt>
-          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{c.slug}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Default locale</dt>
-          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{c.defaultLocale}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Supported locales</dt>
-          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{c.countryLocales.map((l) => l.locale).join(", ")}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Currency</dt>
-          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">
-            {c.currency.code} ({c.currency.symbol})
-          </dd>
-        </div>
-      </dl>
-
-      <div className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
-        <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">Public routes</h2>
-        <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-[var(--color-text-muted)]">
-          <li>{c.legacyHomePath}</li>
-          <li>{c.teamPath}</li>
-          <li>{c.generalConsultationPath}</li>
-          <li>{c.specialistConsultationPath}</li>
-        </ul>
-      </div>
-
-      <div className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
-        <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">Domains</h2>
-        {c.domains.length === 0 ? (
-          <p className="mt-2 text-sm text-[var(--color-text-muted)]">None configured.</p>
-        ) : (
-          <ul className="mt-2 space-y-1 text-sm text-[var(--color-text-muted)]">
-            {c.domains.map((d) => (
-              <li key={d.id}>
-                {d.domain}
-                {d.isPrimary ? " (primary)" : ""}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      {isActive ? (
-        <form action={deactivateCountryAction} className="mt-8 border-t border-[var(--color-border)] pt-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-[var(--color-text-muted)]">
-              Soft-deactivate hides this country from the public countries API. You can re-enable from Edit.
-            </p>
-            <button type="submit" className="gh-btn gh-btn-danger shrink-0">Deactivate country</button>
-          </div>
-        </form>
-      ) : (
-        <p className="mt-8 border-t border-[var(--color-border)] pt-6 text-sm text-[var(--color-text-muted)]">
-          This country is inactive. Re-enable from edit.
+      {messages.error ? (
+        <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+          {messages.error}
         </p>
-      )}
-      <form action={deleteCountryAction} className="mt-4">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-[var(--color-text-muted)]">Permanent delete removes this country and its dependent admin content.</p>
-          <button type="submit" className="gh-btn gh-btn-danger shrink-0">Delete permanently</button>
+      ) : null}
+      {messages.success ? (
+        <p className="gh-status-success mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+          {messages.success}
+        </p>
+      ) : null}
+
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
+      >
+        {/* Main column */}
+        <div className="grid gap-4">
+          <AdminCard>
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            >
+              Identifiers
+            </h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Used in URLs, billing, and DB joins.
+            </p>
+            <dl className="grid gap-4 sm:grid-cols-2">
+              <Field label="Country code" value={c.code.toUpperCase()} mono />
+              <Field label="URL slug" value={c.slug} mono />
+              <Field label="Default locale" value={c.defaultLocale} />
+              <Field
+                label="Supported locales"
+                value={c.countryLocales.map((l) => l.locale).join(", ") || "—"}
+              />
+              <Field
+                label="Currency"
+                value={`${c.currency.code} (${c.currency.symbol})`}
+              />
+            </dl>
+          </AdminCard>
+
+          <AdminCard>
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            >
+              Public routes
+            </h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Paths the public site uses to reach this country.
+            </p>
+            <ul className="grid gap-2 font-mono text-[12.5px] text-[var(--color-text-body)]">
+              <li className="rounded-md bg-[var(--color-background-soft)] px-3 py-2">
+                {c.legacyHomePath}
+              </li>
+              <li className="rounded-md bg-[var(--color-background-soft)] px-3 py-2">
+                {c.teamPath}
+              </li>
+              <li className="rounded-md bg-[var(--color-background-soft)] px-3 py-2">
+                {c.generalConsultationPath}
+              </li>
+              <li className="rounded-md bg-[var(--color-background-soft)] px-3 py-2">
+                {c.specialistConsultationPath}
+              </li>
+            </ul>
+          </AdminCard>
+
+          <AdminCard>
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            >
+              Domains
+            </h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Hostnames mapped to this country.
+            </p>
+            {c.domains.length === 0 ? (
+              <p className="text-[13px] text-[var(--color-text-muted)]">None configured.</p>
+            ) : (
+              <ul className="grid gap-2 font-mono text-[12.5px]">
+                {c.domains.map((d) => (
+                  <li
+                    key={d.id}
+                    className="flex items-center justify-between rounded-md bg-[var(--color-background-soft)] px-3 py-2"
+                  >
+                    <span>{d.domain}</span>
+                    {d.isPrimary ? <Pill tone="brand">Primary</Pill> : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </AdminCard>
         </div>
-      </form>
-    </section>
+
+        {/* Sidebar */}
+        <div className="grid gap-4 self-start">
+          <AdminCard>
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            >
+              Visibility
+            </h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Pull this country off the public site without losing data.
+            </p>
+
+            {isActive ? (
+              <form action={deactivateCountryAction}>
+                <p className="mb-3 text-[13px] text-[var(--color-text-muted)]">
+                  Soft-deactivate hides the country from the public countries API. Re-enable from Edit.
+                </p>
+                <button type="submit" className="gh-btn gh-btn-danger w-full">
+                  Deactivate country
+                </button>
+              </form>
+            ) : (
+              <p className="text-[13px] text-[var(--color-text-muted)]">
+                This country is inactive. Re-enable from Edit.
+              </p>
+            )}
+          </AdminCard>
+
+          <AdminCard>
+            <h3
+              className="m-0"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 16,
+                fontWeight: 800,
+                color: "var(--color-status-error-text)",
+              }}
+            >
+              Danger zone
+            </h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Permanent delete removes this country and dependent admin content.
+            </p>
+            <form action={deleteCountryAction}>
+              <button type="submit" className="gh-btn gh-btn-danger w-full">
+                Delete permanently
+              </button>
+            </form>
+          </AdminCard>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function Field({
+  label,
+  value,
+  mono = false,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+}) {
+  return (
+    <div>
+      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+        {label}
+      </dt>
+      <dd
+        className="mt-1 text-[14px] text-[var(--color-text-primary)]"
+        style={mono ? { fontFamily: "ui-monospace, monospace" } : undefined}
+      >
+        {value}
+      </dd>
+    </div>
   );
 }

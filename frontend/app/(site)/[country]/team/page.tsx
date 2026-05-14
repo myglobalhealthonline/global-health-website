@@ -66,7 +66,7 @@ export default async function CountryTeamPage({
         countryName={config.name}
         doctors={data.doctors.map((d) => ({
           ...d,
-          href: `/${slug}/team/${d.href.split("/").pop()}`,
+          href: `/${slug}/team/${(d.href ?? "").split("/").pop() ?? ""}`,
         }))}
         bookingHref={`/${slug}/services`}
         bookingLabel="Book consultation"

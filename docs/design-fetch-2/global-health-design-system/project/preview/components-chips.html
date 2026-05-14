@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Chips & Trust Points</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  body { padding: 22px 24px; background: #fff; }
+  .row { gap: 10px; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 1.4; }
+  .chip svg { width: 14px; height: 14px; flex: 0 0 14px; }
+  .chip-light { background: #F4F8F4; color: #5A6B64; border: 1px solid #D8E0D8; }
+  .chip-brand { background: rgba(200,230,160,0.30); color: #1B4D3E; border: 1px solid transparent; }
+  .chip-trust { background: rgba(255,255,255,0.10); color: #fff; border: 1px solid rgba(255,255,255,0.20); padding: 8px 14px; font-size: 13px; }
+  .dark { background: #1B4D3E; padding: 14px 16px; border-radius: 16px; margin-top: 12px; }
+  .stars { display: inline-flex; align-items: center; gap: 4px; }
+  .stars span { color: #F59E0B; font-size: 14px; }
+  .rating-meta { font-size: 13px; font-weight: 600; color: #1B4D3E; }
+</style>
+<div class="row">
+  <span class="chip chip-light"><svg viewBox="0 0 24 24" fill="none" stroke="#1B4D3E" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 30 min consultation</span>
+  <span class="chip chip-brand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 17l6-6 4 4 8-8"/></svg> From €50</span>
+  <span class="stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></span>
+  <span class="rating-meta">4.94</span>
+  <span style="font-size: 13px; color: #5A6B64">— doctify</span>
+</div>
+<div class="dark">
+  <div class="row">
+    <span class="chip chip-trust">✓ 100% online</span>
+    <span class="chip chip-trust">✓ No waiting rooms</span>
+    <span class="chip chip-trust">✓ Confidential</span>
+  </div>
+</div>
+</body></html>

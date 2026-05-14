@@ -1,8 +1,17 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { CountryFields } from "../../_components/country-fields";
-import { parseDomainsFromForm, parseSupportedLocales } from "@/lib/admin/country-form-parse";
-import { fetchAdminCurrencies, fetchAdminCountryById, patchAdminCountry } from "@/lib/admin/admin-api";
+import {
+  parseDomainsFromForm,
+  parseSupportedLocales,
+} from "@/lib/admin/country-form-parse";
+import {
+  fetchAdminCurrencies,
+  fetchAdminCountryById,
+  patchAdminCountry,
+} from "@/lib/admin/admin-api";
+import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +20,10 @@ type PageProps = {
   searchParams?: Promise<{ error?: string }>;
 };
 
-export default async function AdminEditCountryPage({ params, searchParams }: PageProps) {
+export default async function AdminEditCountryPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
 
@@ -22,33 +34,43 @@ export default async function AdminEditCountryPage({ params, searchParams }: Pag
 
   if (!currenciesResult.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit country</h1>
-          <Link href={`/admin/countries/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">
-            Cancel
-          </Link>
-        </div>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load currencies: {currenciesResult.message}
-        </p>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Global"
+          title="Edit country"
+          actions={
+            <Btn href={`/admin/countries/${id}`} variant="ghost" size="md" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load currencies: {currenciesResult.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
   if (!countryResult.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit country</h1>
-          <Link href={`/admin/countries/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">
-            Cancel
-          </Link>
-        </div>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load country: {countryResult.message}
-        </p>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Global"
+          title="Edit country"
+          actions={
+            <Btn href={`/admin/countries/${id}`} variant="ghost" size="md" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load country: {countryResult.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
@@ -66,8 +88,12 @@ export default async function AdminEditCountryPage({ params, searchParams }: Pag
       slug: String(formData.get("slug") ?? "").trim(),
       legacyHomePath: String(formData.get("legacyHomePath") ?? "").trim(),
       teamPath: String(formData.get("teamPath") ?? "").trim(),
-      generalConsultationPath: String(formData.get("generalConsultationPath") ?? "").trim(),
-      specialistConsultationPath: String(formData.get("specialistConsultationPath") ?? "").trim(),
+      generalConsultationPath: String(
+        formData.get("generalConsultationPath") ?? "",
+      ).trim(),
+      specialistConsultationPath: String(
+        formData.get("specialistConsultationPath") ?? "",
+      ).trim(),
       defaultLocale: String(formData.get("defaultLocale") ?? "").trim(),
       supportedLocales,
       currencyId: String(formData.get("currencyId") ?? "").trim(),
@@ -80,35 +106,55 @@ export default async function AdminEditCountryPage({ params, searchParams }: Pag
       redirect(`/admin/countries/${id}/edit?error=${encodeURIComponent(result.message)}`);
     }
 
-    redirect(`/admin/countries/${id}?success=${encodeURIComponent("Country updated")}`);
+    redirect(
+      `/admin/countries/${id}?success=${encodeURIComponent("Country updated")}`,
+    );
   }
 
   return (
-    <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit country</h1>
-        <Link href={`/admin/countries/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">
-          Cancel
-        </Link>
-      </div>
+    <>
+      <Link
+        href={`/admin/countries/${id}`}
+        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+      >
+        <ArrowLeft className="size-3.5" /> Back to {country.name}
+      </Link>
+      <PageHeader
+        eyebrow="Global"
+        title={`Edit ${country.name}`}
+        description="Identifiers, hero copy, currency, languages, and routes."
+        actions={
+          <Btn href={`/admin/countries/${id}`} variant="ghost" size="md">
+            Cancel
+          </Btn>
+        }
+      />
 
       {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+        <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
           {messages.error}
         </p>
       ) : null}
 
-      <form action={updateCountryAction} className="mt-8 flex flex-col gap-8">
-        <CountryFields currencies={currenciesResult.data.currencies} initial={country} />
-        <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" className="gh-btn gh-btn-primary">
-            Save changes
-          </button>
-          <Link href={`/admin/countries/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">
-            Cancel
-          </Link>
-        </div>
-      </form>
-    </section>
+      <AdminCard>
+        <form action={updateCountryAction} className="flex flex-col gap-8">
+          <CountryFields
+            currencies={currenciesResult.data.currencies}
+            initial={country}
+          />
+          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Save changes
+            </button>
+            <Link
+              href={`/admin/countries/${id}`}
+              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            >
+              Cancel
+            </Link>
+          </div>
+        </form>
+      </AdminCard>
+    </>
   );
 }

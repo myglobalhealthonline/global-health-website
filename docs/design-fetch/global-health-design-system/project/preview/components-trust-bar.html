@@ -1,0 +1,45 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Trust Bar Items</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { background: #1B4D3E; padding: 22px 24px; position: relative; min-height: 200px; }
+  /* Medical pattern as a low-opacity overlay, not blend-mode. */
+  body::before {
+    content: "";
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 28px;
+    opacity: 0.06;
+  }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative; z-index: 1; }
+  .tile { color: #fff; }
+  .icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: rgba(200,230,160,0.20); color: #C8E6A0;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .tile .t { margin: 10px 0 2px; font-size: 13px; font-weight: 700; line-height: 1.25; }
+  .tile .d { margin: 0; font-size: 11.5px; color: rgba(255,255,255,0.72); line-height: 1.45; }
+</style>
+<div class="grid">
+  <div class="tile">
+    <span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+    <p class="t">Licensed Doctors</p>
+    <p class="d">Qualified, registered in your country.</p>
+  </div>
+  <div class="tile">
+    <span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+    <p class="t">Secure &amp; Confidential</p>
+    <p class="d">Protected under GDPR.</p>
+  </div>
+  <div class="tile">
+    <span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+    <p class="t">Fast Access</p>
+    <p class="d">Book in minutes, get care fast.</p>
+  </div>
+  <div class="tile">
+    <span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></span>
+    <p class="t">Across Europe</p>
+    <p class="d">Trusted in 5 EU countries.</p>
+  </div>
+</div>
+</body></html>

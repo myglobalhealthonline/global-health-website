@@ -1,0 +1,78 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Buttons — on dark</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #0F2E25;
+    padding: 28px 28px 22px;
+    color: #fff;
+    position: relative;
+    min-height: 200px;
+  }
+  /* Soft medical pattern, low opacity so it reads as texture */
+  body::before {
+    content: "";
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 28px;
+    opacity: 0.05;
+  }
+  /* Soft mint bloom in the corner — calm, on-brand */
+  body::after {
+    content: "";
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(600px 200px at 90% -10%, rgba(200,230,160,0.10), transparent 60%);
+  }
+
+  .stack { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 14px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+  .btn {
+    min-height: 44px;
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 8px; padding: 0 22px;
+    border-radius: 999px;
+    font-size: 14px; font-weight: 700; line-height: 1;
+    border: 1.5px solid transparent;
+    cursor: pointer; transition: all 180ms ease-out;
+    text-decoration: none; font-family: inherit;
+    white-space: nowrap;
+  }
+  .btn-accent     { background: #C8E6A0; color: #143B30; }
+  .btn-accent-vivid{ background: #B0F122; color: #143B30; }
+  .btn-on-dark    { background: #fff;     color: #1B4D3E; }
+  .btn-outline    { background: rgba(255,255,255,0.04); color: #fff; border-color: rgba(255,255,255,0.30); }
+  .btn-ghost      { background: transparent; color: rgba(255,255,255,0.85); }
+
+  .label-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .label {
+    font-family: ui-monospace, monospace; font-size: 10px; font-weight: 600;
+    color: rgba(255,255,255,0.50); letter-spacing: 0.08em; text-transform: uppercase;
+    text-align: center;
+  }
+
+  .footnote {
+    margin-top: 6px;
+    font-size: 11px; color: rgba(255,255,255,0.55);
+    font-family: ui-monospace, monospace; line-height: 1.5;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 12px;
+  }
+</style>
+<div class="stack">
+  <div class="row">
+    <a class="btn btn-accent">Book consultation</a>
+    <a class="btn btn-accent-vivid">Get started</a>
+    <a class="btn btn-on-dark">See doctors</a>
+    <a class="btn btn-outline">Skip for now</a>
+    <a class="btn btn-ghost">Cancel</a>
+  </div>
+  <div class="label-row">
+    <span class="label">Mint accent</span>
+    <span class="label">Lime · marketing</span>
+    <span class="label">White on dark</span>
+    <span class="label">Outline</span>
+    <span class="label">Ghost</span>
+  </div>
+  <div class="footnote">On dark sections, mint or white replaces forest as the filled button color. The vivid lime is reserved for marketing moments.</div>
+</div>
+</body></html>

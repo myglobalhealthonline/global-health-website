@@ -1,8 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { fetchAdminCountries, fetchAdminHealthTestById, patchAdminHealthTest } from "@/lib/admin/admin-api";
+import { ArrowLeft } from "lucide-react";
+import {
+  fetchAdminCountries,
+  fetchAdminHealthTestById,
+  patchAdminHealthTest,
+} from "@/lib/admin/admin-api";
 import { parseHealthTestBodyFromForm } from "@/lib/admin/health-test-form-parse";
 import { HealthTestFields } from "../../_components/health-test-fields";
+import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +17,10 @@ type PageProps = {
   searchParams?: Promise<{ error?: string }>;
 };
 
-export default async function AdminEditHealthTestPage({ params, searchParams }: PageProps) {
+export default async function AdminEditHealthTestPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
   const [testResult, countriesResult] = await Promise.all([
@@ -20,10 +29,45 @@ export default async function AdminEditHealthTestPage({ params, searchParams }: 
   ]);
 
   if (!countriesResult.ok) {
-    return <section className="gh-card p-6 sm:p-8"><h1 className="gh-h2 text-[var(--color-text-primary)]">Edit health test</h1><p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">Could not load countries: {countriesResult.message}</p></section>;
+    return (
+      <>
+        <PageHeader
+          eyebrow="Services"
+          title="Edit health test"
+          actions={
+            <Btn href="/admin/health-tests" variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load countries: {countriesResult.message}
+          </p>
+        </AdminCard>
+      </>
+    );
   }
+
   if (!testResult.ok) {
-    return <section className="gh-card p-6 sm:p-8"><h1 className="gh-h2 text-[var(--color-text-primary)]">Edit health test</h1><p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">Could not load health test: {testResult.message}</p></section>;
+    return (
+      <>
+        <PageHeader
+          eyebrow="Services"
+          title="Edit health test"
+          actions={
+            <Btn href="/admin/health-tests" variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load health test: {testResult.message}
+          </p>
+        </AdminCard>
+      </>
+    );
   }
 
   const test = testResult.data.healthTest;
@@ -36,7 +80,8 @@ export default async function AdminEditHealthTestPage({ params, searchParams }: 
   async function updateAction(formData: FormData) {
     "use server";
     const parsed = parseHealthTestBodyFromForm(formData);
-    if (!parsed.ok) redirect(`/admin/health-tests/${id}/edit?error=${encodeURIComponent(parsed.error)}`);
+    if (!parsed.ok)
+      redirect(`/admin/health-tests/${id}/edit?error=${encodeURIComponent(parsed.error)}`);
     const raw = parsed.data;
     const body = {
       countryId: raw.countryId,
@@ -61,24 +106,54 @@ export default async function AdminEditHealthTestPage({ params, searchParams }: 
       legacyPath: raw.legacyPath || null,
     };
     const result = await patchAdminHealthTest(id, body);
-    if (!result.ok) redirect(`/admin/health-tests/${id}/edit?error=${encodeURIComponent(result.message)}`);
-    redirect(`/admin/health-tests/${id}?success=${encodeURIComponent("Health test updated")}`);
+    if (!result.ok)
+      redirect(`/admin/health-tests/${id}/edit?error=${encodeURIComponent(result.message)}`);
+    redirect(
+      `/admin/health-tests/${id}?success=${encodeURIComponent("Health test updated")}`,
+    );
   }
 
   return (
-    <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit health test</h1>
-        <Link href={`/admin/health-tests/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">Cancel</Link>
-      </div>
-      {messages.error ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{messages.error}</p> : null}
-      <form action={updateAction} className="mt-8 flex flex-col gap-8">
-        <HealthTestFields countries={countries} initial={test} countryLocked />
-        <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" className="gh-btn gh-btn-primary">Save changes</button>
-          <Link href={`/admin/health-tests/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">Cancel</Link>
-        </div>
-      </form>
-    </section>
+    <>
+      <Link
+        href={`/admin/health-tests/${id}`}
+        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+      >
+        <ArrowLeft className="size-3.5" /> Back to {test.title}
+      </Link>
+      <PageHeader
+        eyebrow="Services"
+        title={`Edit ${test.title}`}
+        description="Update title, pricing, sample/results metadata, and detail content."
+        actions={
+          <Btn href={`/admin/health-tests/${id}`} variant="ghost">
+            Cancel
+          </Btn>
+        }
+      />
+
+      {messages.error ? (
+        <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+          {messages.error}
+        </p>
+      ) : null}
+
+      <AdminCard>
+        <form action={updateAction} className="flex flex-col gap-8">
+          <HealthTestFields countries={countries} initial={test} countryLocked />
+          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Save changes
+            </button>
+            <Link
+              href={`/admin/health-tests/${id}`}
+              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            >
+              Cancel
+            </Link>
+          </div>
+        </form>
+      </AdminCard>
+    </>
   );
 }

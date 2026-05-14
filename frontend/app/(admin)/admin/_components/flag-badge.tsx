@@ -7,10 +7,20 @@ const FLAGS: Record<string, string> = {
   ie: "linear-gradient(to right, #169B62 33%, #fff 33% 66%, #FF883E 66%)",
   pt: "linear-gradient(to right, #046A38 40%, #DA291C 40%)",
   es: "linear-gradient(to bottom, #AA151B 25%, #F1BF00 25% 75%, #AA151B 75%)",
+  sp: "linear-gradient(to bottom, #AA151B 25%, #F1BF00 25% 75%, #AA151B 75%)",
   cz: "linear-gradient(to bottom, #fff 50%, #D7141A 50%)",
   rm: "linear-gradient(to right, #002B7F 33%, #FCD116 33% 66%, #CE1126 66%)",
   ro: "linear-gradient(to right, #002B7F 33%, #FCD116 33% 66%, #CE1126 66%)",
   all: "linear-gradient(135deg, #1B4D3E, #C8E6A0)",
+};
+
+// Accept either a country slug or a 2-letter ISO code.
+const SLUG_TO_CODE: Record<string, string> = {
+  ireland: "ie",
+  portugal: "pt",
+  spain: "es",
+  czechia: "cz",
+  romania: "rm",
 };
 
 export function FlagBadge({
@@ -20,10 +30,11 @@ export function FlagBadge({
   code: string;
   size?: number;
 }) {
-  const key = code.toLowerCase();
+  const lower = code.toLowerCase();
+  const key = SLUG_TO_CODE[lower] ?? lower;
   return (
     <span
-      title={code.toUpperCase()}
+      title={key.toUpperCase()}
       aria-hidden
       style={{
         width: size + 8,

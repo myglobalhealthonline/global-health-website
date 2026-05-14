@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ShieldCheck, Stethoscope, Clock } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { LoginForm } from "./ui";
 
 export const metadata: Metadata = {
-  title: "Log In",
-  description: "Patient and admin login for Global Health.",
+  title: "Sign in · Global Health admin",
+  description: "Admin sign-in for the Global Health super-admin portal.",
 };
+
+// Faint repeating "+" medical pattern, 28×28 tile at 5% opacity.
+// Sourced verbatim from ui_kits/admin/Screens1.jsx LoginScreen.
+const MEDICAL_PATTERN_URL =
+  "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")";
 
 export default async function Page() {
   const user = await getServerAuthUser();
@@ -17,75 +20,115 @@ export default async function Page() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--color-background-soft)]">
-      <header className="px-6 py-5">
-        <Link href="/" className="inline-flex items-center gap-2 text-[var(--color-brand-primary)]">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-brand-primary)] text-white">
-            <Stethoscope className="size-4" aria-hidden />
-          </span>
-          <span className="text-lg font-bold tracking-tight">Global Health</span>
-        </Link>
-      </header>
+    <div
+      className="min-h-screen"
+      style={{
+        display: "grid",
+        gridTemplateColumns: "1.05fr 1fr",
+      }}
+    >
+      {/* ── LEFT — dark brand panel ─────────────────────────── */}
+      <aside
+        className="relative overflow-hidden text-white"
+        style={{
+          background: "var(--color-background-dark)",
+          padding: "48px 64px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            opacity: 0.05,
+            backgroundImage: MEDICAL_PATTERN_URL,
+            backgroundSize: "28px",
+          }}
+        />
 
-      <main className="flex flex-1 items-center px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto grid w-full max-w-5xl gap-6 lg:grid-cols-[1fr_1.05fr] lg:items-stretch">
-          {/* Trust panel */}
-          <div className="flex flex-col justify-between rounded-[var(--radius-card)] bg-[var(--color-brand-primary)] p-8 text-white sm:p-10">
-            <div>
-              <p className="gh-heading-eyebrow text-white/80">Global Health Platform</p>
-              <h1 className="mt-6 text-[var(--text-h1)] font-extrabold leading-[1.08] tracking-tight">
-                Welcome back
-              </h1>
-              <p className="mt-4 max-w-sm text-base leading-relaxed text-white/85">
-                Sign in to manage your consultations, track booking requests, and access your patient records securely.
-              </p>
-            </div>
+        {/* Top — logo */}
+        <div className="relative">
+          <div className="flex items-center gap-2.5">
+            <span
+              className="inline-flex size-10 shrink-0 items-center justify-center rounded-[10px] text-[15px] font-extrabold tracking-[-0.02em]"
+              style={{
+                background: "var(--color-accent)",
+                color: "var(--color-brand-primary)",
+              }}
+            >
+              GH
+            </span>
+            <span className="text-[17px] font-bold leading-tight tracking-[-0.01em] text-white">
+              Global Health
+            </span>
+          </div>
+        </div>
 
-            <div className="mt-10 space-y-5">
-              <div className="flex items-start gap-4">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/10">
-                  <ShieldCheck className="size-5 text-white" aria-hidden />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold">Secure & confidential</p>
-                  <p className="text-sm text-white/70">Your data is protected and never shared.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/10">
-                  <Stethoscope className="size-5 text-white" aria-hidden />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold">Credential-checked clinicians</p>
-                  <p className="text-sm text-white/70">Connect with qualified medical professionals.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/10">
-                  <Clock className="size-5 text-white" aria-hidden />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold">Practical follow-up</p>
-                  <p className="text-sm text-white/70">We follow up on every booking request promptly.</p>
-                </div>
-              </div>
-            </div>
+        {/* Middle — headline */}
+        <div className="relative">
+          <p
+            className="text-[11px] font-bold uppercase"
+            style={{ letterSpacing: "0.22em", color: "var(--color-accent)" }}
+          >
+            Super admin portal
+          </p>
+          <h1
+            className="mt-4 max-w-[480px] text-white"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 48,
+              fontWeight: 800,
+              letterSpacing: "-0.025em",
+              lineHeight: 1.1,
+            }}
+          >
+            Manage every country, doctor, and service from one place.
+          </h1>
+          <p className="mt-4 max-w-[440px] text-[17px] leading-[1.6] text-white/75">
+            Sign in to add countries, publish services, and review patient bookings across the network.
+          </p>
+        </div>
+
+        {/* Footer */}
+        <p className="relative m-0 text-[12px] text-white/45">
+          v1.0 · Medicine without borders
+        </p>
+      </aside>
+
+      {/* ── RIGHT — sign-in form ────────────────────────────── */}
+      <main
+        className="bg-[var(--color-background-page)]"
+        style={{
+          display: "grid",
+          placeItems: "center",
+          padding: 32,
+        }}
+      >
+        <div className="w-full max-w-[400px]">
+          <h2
+            className="m-0 text-[var(--color-text-primary)]"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 28,
+              fontWeight: 800,
+              letterSpacing: "-0.015em",
+            }}
+          >
+            Welcome back
+          </h2>
+          <p className="m-0 mt-1.5 text-[14px] text-[var(--color-text-muted)]">
+            Sign in to the Global Health admin portal.
+          </p>
+
+          <div className="mt-7">
+            <LoginForm />
           </div>
 
-          {/* Form card */}
-          <div className="flex flex-col justify-center">
-            <div className="gh-card p-7 sm:p-10">
-              <h2 className="gh-h3 text-[var(--color-text-primary)]">Sign in to your account</h2>
-              <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-                Enter your email and password to continue.
-              </p>
-              <LoginForm />
-              <p className="mt-6 text-center text-sm text-[var(--color-text-muted)]">
-                New patient?{" "}
-                <Link href="/register" className="gh-link">Create an account</Link>
-              </p>
-            </div>
-          </div>
+          <p className="mt-4 text-center text-[12px] text-[var(--color-text-muted)]">
+            Sessions are JWT, secured with httpOnly cookies. All actions are logged.
+          </p>
         </div>
       </main>
     </div>

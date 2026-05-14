@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Buttons — on light</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  body { padding: 22px 24px; background: #fff; }
+  .row { gap: 12px; align-items: center; }
+  .btn { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 24px; border-radius: 999px; font-size: 14px; font-weight: 700; line-height: 1; border: 2px solid transparent; cursor: pointer; box-shadow: 0 1px 3px rgba(15,46,37,0.06); transition: all 180ms ease-out; text-decoration: none; }
+  .btn-primary { background: #1B4D3E; color: #fff; border-color: #1B4D3E; }
+  .btn-outline { background: #fff; color: #1B4D3E; border-color: #1B4D3E; }
+  .btn-soft { background: #F4F8F4; color: #1B4D3E; border-color: transparent; }
+  .btn-arrow::after { content: "→"; font-weight: 800; }
+  .btn-row2 { margin-top: 12px; gap: 12px; }
+  .label { font-family: ui-monospace, monospace; font-size: 10px; color: var(--fg3); font-weight: 600; }
+</style>
+<div class="row">
+  <a class="btn btn-primary">Book consultation</a>
+  <a class="btn btn-outline">See doctors</a>
+  <a class="btn btn-soft btn-arrow">Learn more</a>
+</div>
+<div class="row btn-row2">
+  <span class="label">.gh-btn-primary</span>
+  <span class="label" style="margin-left:64px">.gh-btn-outline</span>
+  <span class="label" style="margin-left:32px">.gh-btn-soft</span>
+</div>
+<div style="margin-top: 14px; font-size: 11px; color: var(--fg3); font-family: ui-monospace, monospace; line-height: 1.5;">Pill (999px) · 48px tall · sentence case · 700 weight · no terminal punctuation</div>
+</body></html>

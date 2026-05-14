@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { AssetFields } from "../../_components/asset-fields";
 import { parseAssetBodyFromForm } from "@/lib/admin/asset-form-parse";
 import {
@@ -8,6 +9,7 @@ import {
   fetchAdminDoctors,
   patchAdminAsset,
 } from "@/lib/admin/admin-api";
+import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +18,10 @@ type PageProps = {
   searchParams?: Promise<{ error?: string }>;
 };
 
-export default async function AdminEditAssetPage({ params, searchParams }: PageProps) {
+export default async function AdminEditAssetPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
 
@@ -27,33 +32,43 @@ export default async function AdminEditAssetPage({ params, searchParams }: PageP
 
   if (!countriesResult.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit asset</h1>
-          <Link href="/admin/assets" className="gh-link text-sm text-[var(--color-text-muted)]">
-            Cancel
-          </Link>
-        </div>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load countries: {countriesResult.message}
-        </p>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Global"
+          title="Edit asset"
+          actions={
+            <Btn href="/admin/assets" variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load countries: {countriesResult.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
   if (!assetResult.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit asset</h1>
-          <Link href="/admin/assets" className="gh-link text-sm text-[var(--color-text-muted)]">
-            Cancel
-          </Link>
-        </div>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load asset: {assetResult.message}
-        </p>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Global"
+          title="Edit asset"
+          actions={
+            <Btn href="/admin/assets" variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load asset: {assetResult.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
@@ -104,31 +119,50 @@ export default async function AdminEditAssetPage({ params, searchParams }: PageP
   }
 
   return (
-    <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Edit asset</h1>
-        <Link href={`/admin/assets/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">
-          Cancel
-        </Link>
-      </div>
+    <>
+      <Link
+        href={`/admin/assets/${id}`}
+        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+      >
+        <ArrowLeft className="size-3.5" /> Back to {asset.key}
+      </Link>
+      <PageHeader
+        eyebrow="Global"
+        title={`Edit ${asset.key}`}
+        description="Path, kind, alt text, and optional doctor link."
+        actions={
+          <Btn href={`/admin/assets/${id}`} variant="ghost">
+            Cancel
+          </Btn>
+        }
+      />
 
       {messages.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
+        <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
           {messages.error}
         </p>
       ) : null}
 
-      <form action={updateAssetAction} className="mt-8 flex flex-col gap-8">
-        <AssetFields countries={countries} doctorOptions={doctorOptions} initial={asset} />
-        <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" className="gh-btn gh-btn-primary">
-            Save changes
-          </button>
-          <Link href={`/admin/assets/${id}`} className="gh-link text-sm text-[var(--color-text-muted)]">
-            Cancel
-          </Link>
-        </div>
-      </form>
-    </section>
+      <AdminCard>
+        <form action={updateAssetAction} className="flex flex-col gap-8">
+          <AssetFields
+            countries={countries}
+            doctorOptions={doctorOptions}
+            initial={asset}
+          />
+          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Save changes
+            </button>
+            <Link
+              href={`/admin/assets/${id}`}
+              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            >
+              Cancel
+            </Link>
+          </div>
+        </form>
+      </AdminCard>
+    </>
   );
 }

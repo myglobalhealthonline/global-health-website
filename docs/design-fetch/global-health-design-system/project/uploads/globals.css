@@ -1,0 +1,174 @@
+/* =====================================================================
+   Global Health — Design Tokens
+   File: packages/design-tokens/globals.css
+   Imported by: apps/web/app/globals.css and apps/admin/app/globals.css
+   ===================================================================== */
+
+/* -----------------------------------------------------------
+   Gilroy font face declarations
+   Drop the .woff2 files in public/fonts/ of each app
+   ----------------------------------------------------------- */
+@font-face {
+  font-family: "Gilroy";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/Gilroy-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Gilroy";
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/Gilroy-SemiBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Gilroy";
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/Gilroy-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Gilroy";
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("/fonts/Gilroy-Black.woff2") format("woff2");
+}
+
+/* -----------------------------------------------------------
+   Brand tokens — exposed as HSL triplets so Tailwind can
+   apply opacity modifiers like text-gh-forest/50
+   ----------------------------------------------------------- */
+:root {
+  /* GH Forest scale — primary brand color
+     Base: #1D4B36 → HSL(150, 44%, 20%) */
+  --gh-forest-50:  150 30% 94%;   /* #E8F0EC very light tint */
+  --gh-forest-100: 150 25% 82%;   /* #C8DBD0 */
+  --gh-forest-200: 150 22% 63%;   /* #8FB39D */
+  --gh-forest-300: 150 30% 45%;   /* #4F8567 */
+  --gh-forest-400: 150 38% 32%;   /* #336B4D */
+  --gh-forest-500: 150 44% 20%;   /* #1D4B36 BASE */
+  --gh-forest-600: 150 48% 16%;   /* #18402D */
+  --gh-forest-700: 150 52% 12%;   /* #143324 */
+  --gh-forest-800: 150 56% 9%;    /* #0F261B */
+  --gh-forest-900: 150 60% 6%;    /* #0B1F15 deepest */
+
+  /* GH Olive — secondary brand
+     Base: #8FB021 → HSL(72, 68%, 41%) */
+  --gh-olive-100:  72 60% 90%;
+  --gh-olive-300:  72 65% 65%;
+  --gh-olive-500:  72 68% 41%;    /* #8FB021 BASE */
+  --gh-olive-700:  72 72% 30%;
+
+  /* GH Lime — high-energy accent
+     Base: #B0F122 → HSL(74, 88%, 54%) */
+  --gh-lime-100:   74 90% 90%;    /* #F0FCD0 */
+  --gh-lime-300:   74 88% 75%;    /* #D7F87A */
+  --gh-lime-500:   74 88% 54%;    /* #B0F122 BASE */
+  --gh-lime-700:   72 68% 41%;    /* falls back to olive at the dark end */
+
+  /* Neutrals
+     GH Gray base: #6D6D6D → HSL(0, 0%, 43%) */
+  --neutral-0:    0 0% 100%;      /* #FFFFFF */
+  --neutral-50:   60 6% 98%;      /* #FAFAF9 */
+  --neutral-100:  60 5% 95%;      /* #F4F4F3 */
+  --neutral-200:  60 6% 89%;      /* #E5E5E3 */
+  --neutral-300:  60 4% 81%;      /* #D1D1CE */
+  --neutral-400:  0 0% 64%;       /* #A4A4A4 */
+  --neutral-500:  0 0% 43%;       /* #6D6D6D GH Gray base */
+  --neutral-600:  0 0% 32%;       /* #525252 */
+  --neutral-700:  0 0% 25%;       /* #404040 */
+  --neutral-800:  0 0% 15%;       /* #262626 */
+  --neutral-900:  0 0% 9%;        /* #171717 darkest */
+
+  /* Semantic system colors — chosen to harmonize with Forest */
+  --success: 142 71% 36%;         /* #16A34A */
+  --warning: 38 92% 40%;          /* #CA8A04 */
+  --danger:  0 73% 51%;           /* #DC2626 */
+  --info:    199 89% 40%;         /* #0284C7 — use sparingly */
+
+  /* Soft backgrounds for status badges */
+  --success-bg: 138 76% 90%;
+  --warning-bg: 48 96% 89%;
+  --danger-bg:  0 93% 94%;
+  --info-bg:    214 95% 93%;
+
+  /* -----------------------------------------------------------
+     Semantic tokens — referenced by components and Tailwind
+     Components should use these, not the raw brand scale,
+     so future re-theming changes one place.
+     ----------------------------------------------------------- */
+  --background:           var(--neutral-50);
+  --background-elevated:  var(--neutral-0);
+  --background-sunken:    var(--neutral-100);
+  --foreground:           var(--neutral-900);
+  --foreground-muted:     var(--neutral-500);
+  --foreground-subtle:    var(--neutral-400);
+  --border:               var(--neutral-200);
+  --border-strong:        var(--neutral-300);
+  --ring:                 var(--gh-lime-500);
+  --primary:              var(--gh-forest-500);
+  --primary-hover:        var(--gh-forest-600);
+  --primary-foreground:   var(--neutral-0);
+  --accent:               var(--gh-lime-500);
+  --accent-hover:         var(--gh-olive-500);
+  --accent-foreground:    var(--gh-forest-900);
+
+  /* Layout primitives */
+  --radius-sm: 4px;
+  --radius:    6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+
+  /* Shadows tinted with Forest for cohesion */
+  --shadow-sm: 0 1px 2px hsl(var(--gh-forest-900) / 0.04);
+  --shadow:    0 1px 3px hsl(var(--gh-forest-900) / 0.08),
+               0 1px 2px hsl(var(--gh-forest-900) / 0.04);
+  --shadow-md: 0 4px 6px hsl(var(--gh-forest-900) / 0.05),
+               0 2px 4px hsl(var(--gh-forest-900) / 0.04);
+  --shadow-lg: 0 10px 15px hsl(var(--gh-forest-900) / 0.08),
+               0 4px 6px hsl(var(--gh-forest-900) / 0.04);
+}
+
+/* -----------------------------------------------------------
+   Base styles
+   ----------------------------------------------------------- */
+* {
+  box-sizing: border-box;
+  border-color: hsl(var(--border));
+}
+
+html {
+  font-family: "Gilroy", "Avenir Next", "Avenir",
+               -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-feature-settings: "ss01", "cv01";  /* small Gilroy stylistic sets */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  margin: 0;
+}
+
+/* -----------------------------------------------------------
+   Focus ring — uses GH Lime
+   ----------------------------------------------------------- */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* -----------------------------------------------------------
+   Selection — subtle Forest tint
+   ----------------------------------------------------------- */
+::selection {
+  background-color: hsl(var(--gh-forest-100));
+  color: hsl(var(--gh-forest-900));
+}

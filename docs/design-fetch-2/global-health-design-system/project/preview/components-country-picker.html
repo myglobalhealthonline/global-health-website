@@ -1,0 +1,35 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Country Selector</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  body { padding: 20px 24px; background: #0F2E25;
+    background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 28px;
+    background-blend-mode: lighten;
+  }
+  .card { background: rgba(15,46,37,0.72); border: 1px solid rgba(255,255,255,0.20); border-radius: 20px; padding: 18px 18px 16px; backdrop-filter: blur(12px); }
+  .label { display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.80); text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 12px; }
+  .item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px 12px 14px; min-height: 54px; background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; color: #fff; cursor: pointer; transition: background 180ms; margin-bottom: 8px; }
+  .item:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.30); }
+  .item:last-child { margin-bottom: 0; }
+  .flag { width: 28px; height: 20px; border-radius: 3px; background: linear-gradient(to right, #009A44 33%, #fff 33% 66%, #FF7900 66%); flex: 0 0 28px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.10); }
+  .flag.pt { background: linear-gradient(to right, #046A38 40%, #DA291C 40%); }
+  .label2 { font-size: 15px; font-weight: 700; flex: 1; }
+  .icon-circle { width: 36px; height: 36px; border-radius: 999px; background: #8FB021; border: 2px solid rgba(255,255,255,0.20); flex: 0 0 36px; }
+  .arrow { color: #C8E6A0; font-size: 16px; opacity: 0; transition: opacity 180ms; }
+  .item:hover .arrow { opacity: 1; }
+</style>
+<div class="card">
+  <span class="label">Choose your clinic</span>
+  <div class="item">
+    <span class="flag" title="IE"></span>
+    <span class="label2">Medical Clinic Ireland</span>
+    <span class="icon-circle"></span>
+    <span class="arrow">›</span>
+  </div>
+  <div class="item">
+    <span class="flag pt"></span>
+    <span class="label2">Medical Clinic Portugal</span>
+    <span class="icon-circle" style="background: #f59e0b;"></span>
+    <span class="arrow">›</span>
+  </div>
+</div>
+</body></html>

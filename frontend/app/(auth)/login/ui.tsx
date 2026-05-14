@@ -90,8 +90,26 @@ export function LoginForm() {
         </div>
       </div>
 
-      <button type="submit" className="gh-btn gh-btn-primary mt-1" disabled={loading}>
-        {loading ? "Signing in..." : "Sign in"}
+      <label
+        className="flex items-center gap-2 text-[13px] text-[var(--color-text-body)]"
+      >
+        <input
+          type="checkbox"
+          name="remember"
+          defaultChecked
+          style={{ accentColor: "var(--color-brand-primary)" }}
+          className="size-4"
+        />
+        Remember me on this device
+      </label>
+
+      <button
+        type="submit"
+        className="gh-btn gh-btn-primary mt-1"
+        style={{ minHeight: 48 }}
+        disabled={loading}
+      >
+        {loading ? "Signing in…" : "Sign in"}
       </button>
 
       {message ? (

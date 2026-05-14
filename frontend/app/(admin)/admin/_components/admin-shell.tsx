@@ -1,29 +1,25 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Bell,
-  Calendar,
   ChevronDown,
   ChevronRight,
-  Coins,
   Globe2,
-  Home,
-  Images,
-  Layers,
+  ImageIcon,
+  LayoutDashboard,
   Menu,
-  Package,
-  Pill,
-  Stethoscope,
-  TestTube2,
+  Tags,
+  UserRound,
+  Users,
   X,
   type LucideIcon,
 } from "lucide-react";
 import { Toaster } from "sonner";
 import { CountryPicker, type CountryPickerOption } from "./country-picker";
+import { FlagBadge } from "./flag-badge";
 
 export type AdminShellUser = {
   fullName: string;
@@ -35,20 +31,76 @@ type Section = { href: string; label: string };
 
 type SignOutAction = () => Promise<void> | void;
 
-const ICONS: Record<string, LucideIcon> = {
-  "/admin": Home,
-  "/admin/appointments": Calendar,
+// Icons used ONLY in the Global section — country-scoped items use dot bullets
+// per the reference (admin-portal-reference Shell.jsx).
+const GLOBAL_ICONS: Record<string, LucideIcon> = {
+  "/admin": LayoutDashboard,
   "/admin/countries": Globe2,
-  "/admin/specialties": Layers,
-  "/admin/general-consultations": Stethoscope,
-  "/admin/specialist-consultations": Stethoscope,
-  "/admin/online-prescriptions": Pill,
-  "/admin/home-delivery": Package,
-  "/admin/health-tests": TestTube2,
-  "/admin/doctors": Stethoscope,
-  "/admin/pricing": Coins,
-  "/admin/assets": Images,
+  "/admin/specialties": Tags,
+  "/admin/doctors": UserRound,
+  "/admin/assets": ImageIcon,
+  "/admin/users": Users,
 };
+
+// Global = admin-wide ops; Country = items scoped to a single country
+// (dim when "All countries" is selected).
+const GLOBAL_HREFS = new Set([
+  "/admin",
+  "/admin/countries",
+  "/admin/doctors",
+  "/admin/specialties",
+  "/admin/assets",
+]);
+
+const COUNTRY_HREFS = new Set([
+  "/admin/appointments",
+  "/admin/general-consultations",
+  "/admin/specialist-consultations",
+  "/admin/online-prescriptions",
+  "/admin/health-tests",
+  "/admin/pricing",
+]);
+
+const ORDER: Record<string, number> = {
+  "/admin": 0,
+  "/admin/countries": 1,
+  "/admin/doctors": 2,
+  "/admin/specialties": 3,
+  "/admin/assets": 4,
+  "/admin/appointments": 0,
+  "/admin/general-consultations": 1,
+  "/admin/specialist-consultations": 2,
+  "/admin/online-prescriptions": 3,
+  "/admin/health-tests": 4,
+  "/admin/pricing": 5,
+};
+
+// Tighter labels — long phrases overflow the 260px sidebar.
+const LABEL_OVERRIDES: Record<string, string> = {
+  "/admin/general-consultations": "General consultations",
+  "/admin/specialist-consultations": "Specialist consultations",
+  "/admin/online-prescriptions": "Online prescriptions",
+  "/admin/health-tests": "Health tests",
+  "/admin/specialties": "Categories",
+};
+
+function partitionSections(sections: Section[]): {
+  global: Section[];
+  country: Section[];
+} {
+  const global: Section[] = [];
+  const country: Section[] = [];
+  for (const s of sections) {
+    const label = LABEL_OVERRIDES[s.href] ?? s.label;
+    const entry = { href: s.href, label };
+    if (COUNTRY_HREFS.has(s.href)) country.push(entry);
+    else if (GLOBAL_HREFS.has(s.href)) global.push(entry);
+    else global.push(entry);
+  }
+  global.sort((a, b) => (ORDER[a.href] ?? 99) - (ORDER[b.href] ?? 99));
+  country.sort((a, b) => (ORDER[a.href] ?? 99) - (ORDER[b.href] ?? 99));
+  return { global, country };
+}
 
 function initials(name: string, email: string): string {
   if (name?.trim()) {
@@ -108,6 +160,12 @@ export function AdminShell({
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const pathname = usePathname();
   const breadcrumbs = useBreadcrumbs(pathname, countries);
+  const { global: globalSections, country: countrySections } = useMemo(
+    () => partitionSections(sections),
+    [sections],
+  );
+  const countryScopeLabel = activeCountry ? activeCountry.name : "Country";
+  const countryDimmed = !activeCountry;
 
   function isActive(href: string): boolean {
     if (href === "/admin") return pathname === "/admin";
@@ -128,64 +186,113 @@ export function AdminShell({
         ) : null}
 
         <aside
-          className={`fixed inset-y-0 left-0 z-40 flex w-[260px] flex-col text-white shadow-2xl transition-transform duration-200 ease-out lg:static lg:z-auto lg:translate-x-0 ${
+          className={`fixed inset-y-0 left-0 z-40 flex w-[260px] flex-col shadow-2xl transition-transform duration-200 ease-out lg:static lg:z-auto lg:translate-x-0 ${
             navOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           }`}
           style={{
             background: "var(--color-background-dark)",
+            color: "rgba(255,255,255,0.85)",
             borderRight: "1px solid rgba(255,255,255,0.06)",
           }}
         >
-          {/* Logo block */}
-          <div className="border-b border-white/[0.08] px-5 pb-5 pt-6">
+          {/* Logo block — matches reference Shell.jsx exactly:
+              padding 20 20 18, logo image filtered white, SUPER ADMIN eyebrow. */}
+          <div
+            className="px-5 pb-[18px] pt-5"
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+          >
             <Link href="/admin" className="inline-flex items-center gap-2.5">
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src="/logos/global-health-official.png"
                 alt="Global Health"
-                width={140}
-                height={48}
-                priority
-                className="h-9 w-auto"
-                style={{ filter: "brightness(0) invert(1)" }}
+                style={{
+                  height: 36,
+                  width: "auto",
+                  filter: "brightness(0) invert(1)",
+                }}
               />
             </Link>
             <p
               className="mt-2 text-[10px] font-bold uppercase tracking-[0.22em]"
-              style={{ color: "var(--color-brand-accent)" }}
+              style={{ color: "var(--color-accent)" }}
             >
-              Admin portal
+              Super admin
             </p>
           </div>
 
-          <nav className="flex-1 overflow-y-auto px-3 py-4">
-            <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-[0.18em] text-white/50">
-              Global
-            </p>
-            <div className="mt-1 grid gap-0.5">
-              {sections.map((section) => {
-                const Icon = ICONS[section.href] ?? Layers;
-                return (
-                  <SidebarItem
-                    key={section.href}
-                    href={section.href}
-                    icon={<Icon className="size-4" aria-hidden />}
-                    label={section.label}
-                    active={isActive(section.href)}
-                    onNavigate={() => setNavOpen(false)}
-                  />
-                );
-              })}
+          <nav className="flex-1 overflow-y-auto">
+            {/* ── Global section ────────────────────────────────── */}
+            <SidebarSectionLabel label="Global" />
+            <div className="px-3 pt-1">
+              <div className="grid gap-0.5">
+                {globalSections.map((section) => {
+                  const Icon = GLOBAL_ICONS[section.href] ?? LayoutDashboard;
+                  return (
+                    <SidebarItem
+                      key={section.href}
+                      href={section.href}
+                      icon={<Icon className="size-4" aria-hidden />}
+                      label={section.label}
+                      active={isActive(section.href)}
+                      onNavigate={() => setNavOpen(false)}
+                    />
+                  );
+                })}
+              </div>
             </div>
+
+            {/* ── Country-scoped section (dims when no country) ──── */}
+            {countrySections.length > 0 ? (
+              <>
+                <SidebarSectionLabel
+                  label={countryScopeLabel}
+                  trailing={
+                    activeCountry ? (
+                      <FlagBadge code={activeCountry.slug} size={14} />
+                    ) : null
+                  }
+                />
+                <div
+                  className="px-3 pb-6 pt-1"
+                  style={{
+                    opacity: countryDimmed ? 0.45 : 1,
+                    pointerEvents: countryDimmed ? "none" : "auto",
+                    transition: "opacity 180ms ease-out",
+                  }}
+                >
+                  <div className="grid gap-0.5">
+                    {countrySections.map((section) => (
+                      <SidebarItem
+                        key={section.href}
+                        href={section.href}
+                        // Dot bullet for country-scoped items, per reference
+                        icon={<DotBullet />}
+                        label={section.label}
+                        active={isActive(section.href)}
+                        onNavigate={() => setNavOpen(false)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : null}
           </nav>
 
-          <div className="border-t border-white/[0.08] px-5 py-4 text-[11px] text-white/45">
+          <div
+            className="px-5 py-4 text-[11px]"
+            style={{
+              borderTop: "1px solid rgba(255,255,255,0.08)",
+              color: "rgba(255,255,255,0.45)",
+            }}
+          >
             v1.0 · medicine without borders
           </div>
         </aside>
 
         {/* Main column */}
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="flex h-16 items-center justify-between gap-3 border-b border-[var(--color-border)] bg-white px-4 sm:px-7">
+          <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-background-page)] px-4 sm:px-7" style={{ boxShadow: "0 1px 0 var(--color-border)" }}>
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button
                 type="button"
@@ -235,33 +342,37 @@ export function AdminShell({
                 </div>
               ) : null}
 
+              {/* Notification bell */}
               <button
                 type="button"
                 aria-label="Notifications"
-                className="relative inline-flex size-10 items-center justify-center rounded-[10px] border border-[var(--color-border)] bg-white text-[var(--color-text-body)] transition hover:border-[var(--color-border-strong)]"
+                className="relative inline-flex size-9 items-center justify-center rounded-[10px] border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-muted)] transition hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
               >
                 <Bell className="size-4" aria-hidden />
+                {/* Notification dot — vivid lime for marketing-level attention */}
                 <span
-                  className="absolute right-[7px] top-[7px] size-[7px] rounded-full border-2 border-white"
+                  className="absolute right-[6px] top-[6px] size-[6px] rounded-full ring-2 ring-[var(--color-background-page)]"
                   style={{ background: "var(--color-brand-accent)" }}
                 />
               </button>
 
+              {/* User menu */}
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => setUserMenuOpen((v) => !v)}
                   aria-expanded={userMenuOpen}
                   aria-haspopup="menu"
-                  className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-white py-1 pl-1 pr-3 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)]"
+                  className="inline-flex items-center gap-2 rounded-[999px] border border-[var(--color-border)] bg-[var(--color-background-page)] py-1 pl-1 pr-3 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)]"
+                  style={{ boxShadow: "var(--shadow-soft)" }}
                 >
                   <span
-                    className="inline-flex size-8 items-center justify-center rounded-full text-xs font-extrabold text-white"
+                    className="inline-flex size-7 items-center justify-center rounded-full text-[11px] font-extrabold text-white"
                     style={{ background: "var(--color-brand-primary)" }}
                   >
                     {initials(user.fullName, user.email)}
                   </span>
-                  <span className="hidden md:inline">
+                  <span className="hidden max-w-[140px] truncate md:inline">
                     {user.fullName || user.email.split("@")[0]}
                   </span>
                   <ChevronDown className="size-3 text-[var(--color-text-muted)]" aria-hidden />
@@ -274,20 +385,36 @@ export function AdminShell({
                       onClick={() => setUserMenuOpen(false)}
                       className="fixed inset-0 z-30"
                     />
-                    <div className="absolute right-0 top-[calc(100%+6px)] z-40 min-w-[220px] rounded-xl border border-[var(--color-border)] bg-white p-3 shadow-[var(--shadow-elevated)]">
-                      <p className="truncate text-sm font-semibold text-[var(--color-text-primary)]">
-                        {user.fullName || user.email}
-                      </p>
-                      <p className="truncate text-xs text-[var(--color-text-muted)]">{user.email}</p>
-                      <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
+                    <div
+                      className="absolute right-0 top-[calc(100%+8px)] z-40 min-w-[224px] rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-3"
+                      style={{ boxShadow: "var(--shadow-elevated)" }}
+                    >
+                      <div className="flex items-center gap-2.5 pb-3 border-b border-[var(--color-border)]">
+                        <span
+                          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-[11px] font-extrabold text-white"
+                          style={{ background: "var(--color-brand-primary)" }}
+                        >
+                          {initials(user.fullName, user.email)}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-[var(--color-text-primary)]">
+                            {user.fullName || user.email}
+                          </p>
+                          <p className="truncate text-xs text-[var(--color-text-muted)]">{user.email}</p>
+                        </div>
+                      </div>
+                      <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
                         {user.role}
                       </p>
                       <form
                         action={signOutAction}
-                        className="mt-3 border-t border-[var(--color-border)] pt-3"
+                        className="mt-3"
                       >
-                        <button type="submit" className="gh-btn gh-btn-soft w-full text-sm">
-                          Log out
+                        <button
+                          type="submit"
+                          className="w-full rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-background-panel)] hover:border-[var(--color-border-strong)]"
+                        >
+                          Sign out
                         </button>
                       </form>
                     </div>
@@ -323,6 +450,49 @@ export function AdminShell({
   );
 }
 
+/* ─────────────────────────────────────────────────────────────
+   Sidebar atoms — match reference Shell.jsx exactly
+   ───────────────────────────────────────────────────────────── */
+
+function SidebarSectionLabel({
+  label,
+  trailing,
+}: {
+  label: string;
+  trailing?: ReactNode;
+}) {
+  return (
+    <div
+      className="flex items-center gap-2 px-6 pb-1.5 pt-4"
+      style={{
+        fontSize: 10,
+        fontWeight: 700,
+        letterSpacing: "0.18em",
+        textTransform: "uppercase",
+        color: "rgba(255,255,255,0.50)",
+      }}
+    >
+      <span>{label}</span>
+      {trailing}
+    </div>
+  );
+}
+
+function DotBullet() {
+  return (
+    <span
+      aria-hidden
+      className="inline-block"
+      style={{
+        width: 4,
+        height: 4,
+        borderRadius: 999,
+        background: "rgba(255,255,255,0.4)",
+      }}
+    />
+  );
+}
+
 function SidebarItem({
   href,
   icon,
@@ -340,11 +510,15 @@ function SidebarItem({
     <Link
       href={href}
       onClick={onNavigate}
-      className="flex items-center gap-2.5 rounded-[10px] px-3 py-2.5 text-sm transition"
+      className="flex w-full items-center gap-2.5 transition-all duration-150"
       style={{
+        padding: "9px 12px",
+        borderRadius: 10,
         background: active ? "rgba(200,230,160,0.16)" : "transparent",
-        color: active ? "var(--color-brand-accent)" : "rgba(255,255,255,0.80)",
+        color: active ? "var(--color-accent)" : "rgba(255,255,255,0.80)",
+        fontSize: 13,
         fontWeight: active ? 700 : 500,
+        textDecoration: "none",
       }}
       onMouseEnter={(e) => {
         if (!active) e.currentTarget.style.background = "rgba(255,255,255,0.05)";
@@ -353,8 +527,13 @@ function SidebarItem({
         if (!active) e.currentTarget.style.background = "transparent";
       }}
     >
-      <span className="inline-flex w-4 justify-center">{icon}</span>
-      {label}
+      <span
+        className="inline-flex shrink-0 justify-center"
+        style={{ width: 16 }}
+      >
+        {icon}
+      </span>
+      <span className="truncate">{label}</span>
     </Link>
   );
 }

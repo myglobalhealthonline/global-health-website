@@ -1,15 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { fetchAdminCountries, postAdminSpecialty } from "@/lib/admin/admin-api";
 import { ManagedImageField } from "../../_components/managed-image-field";
+import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
 type PageProps = {
-  searchParams?: Promise<{
-    countryId?: string;
-    error?: string;
-  }>;
+  searchParams?: Promise<{ countryId?: string; error?: string }>;
 };
 
 export default async function AdminSpecialtyNewPage({ searchParams }: PageProps) {
@@ -19,19 +18,30 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
   const countriesResult = await fetchAdminCountries();
   if (!countriesResult.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">New category</h1>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load countries: {countriesResult.message}
-        </p>
-        <Link href="/admin/specialties" className="mt-6 inline-block gh-link text-sm text-[var(--color-text-muted)]">
-          Back to categories
-        </Link>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Global"
+          title="New category"
+          actions={
+            <Btn href="/admin/specialties" variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Cancel
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load countries: {countriesResult.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
-  const countries = countriesResult.data.countries.map((c) => ({ id: c.id, code: c.code, name: c.name }));
+  const countries = countriesResult.data.countries.map((c) => ({
+    id: c.id,
+    code: c.code,
+    name: c.name,
+  }));
 
   async function createSpecialtyAction(formData: FormData) {
     "use server";
@@ -47,77 +57,144 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
     };
     const result = await postAdminSpecialty(body);
     if (!result.ok) {
-      redirect(`/admin/specialties/new?countryId=${encodeURIComponent(body.countryId)}&error=${encodeURIComponent(result.message)}`);
+      redirect(
+        `/admin/specialties/new?countryId=${encodeURIComponent(body.countryId)}&error=${encodeURIComponent(result.message)}`,
+      );
     }
-    redirect(`/admin/specialties?countryId=${encodeURIComponent(body.countryId)}&success=${encodeURIComponent("Category created")}`);
+    redirect(
+      `/admin/specialties?countryId=${encodeURIComponent(body.countryId)}&success=${encodeURIComponent("Category created")}`,
+    );
   }
 
   return (
-    <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">New category</h1>
-          <p className="mt-2 max-w-3xl text-sm text-[var(--color-text-muted)]">
-            Create a new category card for the public listing.
-          </p>
-        </div>
-        <Link href="/admin/specialties" className="gh-link text-sm text-[var(--color-text-muted)]">
-          Back to categories
-        </Link>
-      </div>
+    <>
+      <Link
+        href="/admin/specialties"
+        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+      >
+        <ArrowLeft className="size-3.5" /> Back to categories
+      </Link>
+      <PageHeader
+        eyebrow="Global"
+        title="New category"
+        description="Create a new category card for the public listing."
+        actions={
+          <Btn href="/admin/specialties" variant="ghost">
+            Cancel
+          </Btn>
+        }
+      />
 
       {sp.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{sp.error}</p>
+        <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+          {sp.error}
+        </p>
       ) : null}
 
-      <form action={createSpecialtyAction} className="mt-6 grid gap-4">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="flex flex-col gap-2">
+      <AdminCard>
+        <form action={createSpecialtyAction} className="grid gap-4">
+          <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Country</span>
-            <select name="countryId" defaultValue={preselectedCountryId} className="gh-select min-w-0" required>
+            <select
+              name="countryId"
+              defaultValue={preselectedCountryId}
+              className="gh-select min-w-0"
+              required
+            >
               {countries.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name} ({c.code})
+                  {c.name} ({c.code.toUpperCase()})
                 </option>
               ))}
             </select>
           </label>
-        </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <input name="name" className="gh-input min-w-0" placeholder="Name" required />
-          <input name="slug" className="gh-input min-w-0 font-mono text-sm" placeholder="e.g. cardiology" required />
-        </div>
-        <p className="text-xs text-[var(--color-text-muted)]">Slug must be lowercase and use hyphens only.</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="flex flex-col gap-1.5">
+              <span className="gh-field-label">Name</span>
+              <input name="name" className="gh-input min-w-0" placeholder="Cardiology" required />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="gh-field-label">Slug</span>
+              <input
+                name="slug"
+                className="gh-input min-w-0 font-mono text-sm"
+                placeholder="cardiology"
+                required
+              />
+            </label>
+          </div>
+          <p className="-mt-2 text-[12px] text-[var(--color-text-muted)]">
+            Slug must be lowercase and use hyphens only.
+          </p>
 
-        <textarea name="cardSummary" className="gh-input min-h-[5rem] min-w-0 resize-y" placeholder="Card summary" />
+          <label className="flex flex-col gap-1.5">
+            <span className="gh-field-label">Card summary</span>
+            <textarea
+              name="cardSummary"
+              className="gh-input min-h-[5rem] min-w-0 resize-y"
+              placeholder="Short description shown on the public specialty card"
+            />
+          </label>
 
-        <ManagedImageField
-          name="imagePath"
-          label="Card image"
-          helperText="Shown on the public specialty cards."
-        />
+          <ManagedImageField
+            name="imagePath"
+            label="Card image"
+            helperText="Shown on the public specialty cards."
+          />
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <input name="cardThemeColor" className="gh-input min-w-0 font-mono text-sm" placeholder="#1b4d3e" />
-          <input name="sortOrder" type="number" min="0" step="1" defaultValue="0" className="gh-input min-w-0" />
-        </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="flex flex-col gap-1.5">
+              <span className="gh-field-label">Theme color</span>
+              <input
+                name="cardThemeColor"
+                className="gh-input min-w-0 font-mono text-sm"
+                placeholder="#1b4d3e"
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="gh-field-label">Sort order</span>
+              <input
+                name="sortOrder"
+                type="number"
+                min="0"
+                step="1"
+                defaultValue="0"
+                className="gh-input min-w-0"
+              />
+            </label>
+          </div>
 
-        <p className="text-xs text-[var(--color-text-muted)]">
-          The card links automatically to the first active service under this specialty. Edit
-          consultation time and price in <Link href="/admin/specialist-consultations" className="gh-link">Specialist Consultations</Link>.
-        </p>
+          <p className="text-[12px] text-[var(--color-text-muted)]">
+            The card links automatically to the first active service under this category. Edit
+            consultation time and price in{" "}
+            <Link
+              href="/admin/specialist-consultations"
+              className="text-[var(--color-brand-primary)] underline underline-offset-2"
+            >
+              Specialist consultations
+            </Link>
+            .
+          </p>
 
-        <label className="flex items-center gap-2 text-sm text-[var(--color-text-primary)]">
-          <input type="checkbox" name="active" defaultChecked className="h-4 w-4" />
-          Active
-        </label>
+          <label className="flex items-center gap-2 text-[13px] text-[var(--color-text-primary)]">
+            <input type="checkbox" name="active" defaultChecked className="h-4 w-4" />
+            Active
+          </label>
 
-        <div className="flex flex-wrap gap-3">
-          <button type="submit" className="gh-btn gh-btn-primary">Create</button>
-          <Link href="/admin/specialties" className="gh-btn gh-btn-soft">Cancel</Link>
-        </div>
-      </form>
-    </section>
+          <div className="flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
+            <button type="submit" className="gh-btn gh-btn-primary">
+              Create category
+            </button>
+            <Link
+              href="/admin/specialties"
+              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            >
+              Cancel
+            </Link>
+          </div>
+        </form>
+      </AdminCard>
+    </>
   );
 }

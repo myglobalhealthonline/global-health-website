@@ -66,7 +66,7 @@ export default async function CountryHomePage({
           name: d.name,
           title: d.title ?? null,
           imageSrc: d.imageSrc,
-          href: `/${slug}/team/${d.href.split("/").pop()}`,
+          href: `/${slug}/team/${(d.href ?? "").split("/").pop() ?? ""}`,
           languages: d.languages,
         }))}
         steps={data.countryHome.steps.map((s) => ({

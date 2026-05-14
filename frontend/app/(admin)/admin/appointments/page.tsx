@@ -1,40 +1,59 @@
 import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 import { fetchAdminAppointments } from "@/lib/admin/admin-api";
+import { FlagBadge } from "../_components/flag-badge";
+import {
+  AdminCard,
+  AdminTable,
+  IconBtn,
+  PageHeader,
+  Pill,
+  type PillTone,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
 const STATUS_OPTIONS = [
   { value: "", label: "All statuses" },
-  { value: "REQUEST_RECEIVED", label: "REQUEST_RECEIVED" },
-  { value: "UNDER_REVIEW", label: "UNDER_REVIEW" },
-  { value: "CONTACTED", label: "CONTACTED" },
-  { value: "CANCELLED", label: "CANCELLED" },
-  { value: "COMPLETED", label: "COMPLETED" },
+  { value: "REQUEST_RECEIVED", label: "Request received" },
+  { value: "UNDER_REVIEW", label: "Under review" },
+  { value: "CONTACTED", label: "Contacted" },
+  { value: "CANCELLED", label: "Cancelled" },
+  { value: "COMPLETED", label: "Completed" },
 ] as const;
 
 const COUNTRY_OPTIONS = [
   { value: "", label: "All countries" },
-  { value: "ie", label: "Ireland (ie)" },
-  { value: "pt", label: "Portugal (pt)" },
-  { value: "sp", label: "Spain (sp)" },
-  { value: "cz", label: "Czechia (cz)" },
-  { value: "rm", label: "Romania (rm)" },
+  { value: "ie", label: "Ireland" },
+  { value: "pt", label: "Portugal" },
+  { value: "sp", label: "Spain" },
+  { value: "cz", label: "Czechia" },
+  { value: "rm", label: "Romania" },
 ] as const;
 
 const CONSULT_OPTIONS = [
   { value: "", label: "All types" },
-  { value: "general", label: "general" },
-  { value: "specialist", label: "specialist" },
-  { value: "follow-up", label: "follow-up" },
+  { value: "general", label: "General" },
+  { value: "specialist", label: "Specialist" },
+  { value: "follow-up", label: "Follow-up" },
 ] as const;
 
-function spRead(sp: Record<string, string | string[] | undefined>, key: string): string | undefined {
+function spRead(
+  sp: Record<string, string | string[] | undefined>,
+  key: string,
+): string | undefined {
   const v = sp[key];
   if (Array.isArray(v)) return v[0];
   return v;
 }
 
-function buildFilterQuery(sp: Record<string, string | string[] | undefined>): Record<string, string | undefined> {
+function buildFilterQuery(
+  sp: Record<string, string | string[] | undefined>,
+): Record<string, string | undefined> {
   return {
     page: spRead(sp, "page"),
     pageSize: spRead(sp, "pageSize"),
@@ -45,7 +64,10 @@ function buildFilterQuery(sp: Record<string, string | string[] | undefined>): Re
   };
 }
 
-function buildQueueHref(filters: Record<string, string | undefined>, patch: Record<string, string | undefined>) {
+function buildQueueHref(
+  filters: Record<string, string | undefined>,
+  patch: Record<string, string | undefined>,
+) {
   const merged: Record<string, string> = {};
   for (const [k, v] of Object.entries({ ...filters, ...patch })) {
     if (v !== undefined && v !== "") {
@@ -69,12 +91,16 @@ function formatDate(dateIso: string) {
   });
 }
 
-function statusBadgeClass(status: string) {
-  if (status === "COMPLETED") return "gh-badge-success";
-  if (status === "CANCELLED") return "gh-badge-error";
-  if (status === "CONTACTED") return "gh-badge-info";
-  if (status === "UNDER_REVIEW") return "gh-badge-warning";
-  return "gh-badge-neutral";
+function statusToneFor(status: string): PillTone {
+  if (status === "COMPLETED") return "published";
+  if (status === "CANCELLED") return "inactive";
+  if (status === "CONTACTED") return "active";
+  if (status === "UNDER_REVIEW") return "pending";
+  return "neutral";
+}
+
+function statusLabel(status: string) {
+  return status.replace(/_/g, " ").toLowerCase();
 }
 
 type PageProps = {
@@ -88,12 +114,14 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
 
   if (!result.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Appointment Queue</h1>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load appointments: {result.message}
-        </p>
-      </section>
+      <>
+        <PageHeader eyebrow="Operations" title="Appointment queue" />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load appointments: {result.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
@@ -102,158 +130,206 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
   const { page, pageSize, total, totalPages } = pagination;
 
   return (
-    <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Appointment Queue</h1>
-          <p className="mt-2 max-w-3xl text-sm text-[var(--color-text-muted)]">
-            Internal review queue. Filters and pagination run on the server; status moves follow rules on the detail page.
-          </p>
-        </div>
+    <>
+      <PageHeader
+        eyebrow="Operations"
+        title="Appointment queue"
+        description="Internal review queue. Filters and pagination run on the server; status moves follow rules on the detail page."
+      />
 
-      </div>
-
-      <form method="get" className="mt-6 flex flex-col gap-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <label className="flex min-w-0 flex-col gap-2">
-            <span className="gh-field-label">Status</span>
-            <select name="status" defaultValue={filters.status ?? ""} className="gh-select min-w-0">
-              {STATUS_OPTIONS.map((o) => (
-                <option key={o.label} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex min-w-0 flex-col gap-2">
-            <span className="gh-field-label">Country</span>
-            <select name="countryCode" defaultValue={filters.countryCode ?? ""} className="gh-select min-w-0">
-              {COUNTRY_OPTIONS.map((o) => (
-                <option key={o.label} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex min-w-0 flex-col gap-2">
-            <span className="gh-field-label">Consultation type</span>
-            <select name="consultationType" defaultValue={filters.consultationType ?? ""} className="gh-select min-w-0">
-              {CONSULT_OPTIONS.map((o) => (
-                <option key={o.label} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex min-w-0 flex-col gap-2">
-            <span className="gh-field-label">Search</span>
-            <input
-              type="search"
-              name="search"
-              defaultValue={filters.search ?? ""}
-              placeholder="Name, email, or phone"
-              className="gh-input min-w-0"
-              maxLength={120}
-            />
-          </label>
-        </div>
-        <input type="hidden" name="page" value="1" />
-        <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" className="gh-btn gh-btn-primary">
-            Apply filters
-          </button>
-          <Link href="/admin/appointments" className="gh-link text-sm text-[var(--color-text-muted)]">
-            Clear filters
-          </Link>
-        </div>
-      </form>
-
-      <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-        {total === 0 ? "No appointments match the current filters." : `Showing ${items.length} of ${total} appointment${total === 1 ? "" : "s"}.`}
-      </p>
-
-      {!hasRows ? (
-        <div className="mt-8 rounded-[var(--radius-card-sm)] border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] px-6 py-12 text-center">
-          <p className="text-sm font-medium text-[var(--color-text-primary)]">Nothing in this view yet</p>
-          <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-            Try widening filters, clearing search, or check back after new booking requests arrive.
-          </p>
-        </div>
-      ) : (
-      <div className="mt-6 overflow-x-auto rounded-[var(--radius-card-sm)] border border-[var(--color-border)]">
-          <table className="min-w-full border-collapse text-left text-sm">
-            <thead>
-              <tr className="border-b border-[var(--color-border)] text-[var(--color-text-muted)]">
-                <th className="px-3 py-2 font-semibold">Patient</th>
-                <th className="px-3 py-2 font-semibold">Contact</th>
-                <th className="px-3 py-2 font-semibold">Country</th>
-                <th className="px-3 py-2 font-semibold">Consultation</th>
-                <th className="px-3 py-2 font-semibold">Status</th>
-                <th className="px-3 py-2 font-semibold">Created</th>
-                <th className="px-3 py-2 font-semibold">Notes</th>
-                <th className="px-3 py-2 font-semibold">Detail</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((appointment) => (
-                <tr key={appointment.id} className="border-b border-[var(--color-border)] align-top">
-                  <td className="px-3 py-3 font-medium text-[var(--color-text-primary)]">{appointment.fullName}</td>
-                  <td className="px-3 py-3 text-[var(--color-text-muted)]">
-                    <div>{appointment.email}</div>
-                    <div>{appointment.phone ?? "No phone"}</div>
-                  </td>
-                  <td className="px-3 py-3 uppercase text-[var(--color-text-muted)]">{appointment.country}</td>
-                  <td className="px-3 py-3 text-[var(--color-text-muted)]">{appointment.consultationType}</td>
-                  <td className="px-3 py-3">
-                    <span
-                      className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${statusBadgeClass(
-                        appointment.status,
-                      )}`}
-                    >
-                      {appointment.status}
-                    </span>
-                  </td>
-                  <td className="px-3 py-3 text-[var(--color-text-muted)]">{formatDate(appointment.createdAt)}</td>
-                  <td className="max-w-[20rem] px-3 py-3 text-[var(--color-text-muted)]">
-                    {appointment.notesPreview ?? "No notes"}
-                  </td>
-                  <td className="px-3 py-3">
-                    <Link href={`/admin/appointments/${appointment.id}`} className="gh-link text-[var(--color-brand-primary)]">
-                      Open
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {totalPages > 1 ? (
-        <nav className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] pt-6 text-sm">
-          <div className="text-[var(--color-text-muted)]">
-            Page {page} of {totalPages} · {pageSize} per page
+      {/* Filters */}
+      <AdminCard padding={0} className="mb-4 overflow-hidden">
+        <form method="get" className="px-5 py-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <label className="flex min-w-0 flex-col gap-1.5">
+              <span className="gh-field-label">Status</span>
+              <select
+                name="status"
+                defaultValue={filters.status ?? ""}
+                className="gh-select min-w-0"
+              >
+                {STATUS_OPTIONS.map((o) => (
+                  <option key={o.label} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex min-w-0 flex-col gap-1.5">
+              <span className="gh-field-label">Country</span>
+              <select
+                name="countryCode"
+                defaultValue={filters.countryCode ?? ""}
+                className="gh-select min-w-0"
+              >
+                {COUNTRY_OPTIONS.map((o) => (
+                  <option key={o.label} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex min-w-0 flex-col gap-1.5">
+              <span className="gh-field-label">Consultation type</span>
+              <select
+                name="consultationType"
+                defaultValue={filters.consultationType ?? ""}
+                className="gh-select min-w-0"
+              >
+                {CONSULT_OPTIONS.map((o) => (
+                  <option key={o.label} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex min-w-0 flex-col gap-1.5">
+              <span className="gh-field-label">Search</span>
+              <input
+                type="search"
+                name="search"
+                defaultValue={filters.search ?? ""}
+                placeholder="Name, email, phone"
+                className="gh-input min-w-0"
+                maxLength={120}
+              />
+            </label>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <input type="hidden" name="page" value="1" />
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36 }}>
+              Apply filters
+            </button>
             <Link
-              href={buildQueueHref(filters, { page: String(Math.max(1, page - 1)) })}
-              className={`gh-btn ${page <= 1 ? "pointer-events-none opacity-50" : ""}`}
-              aria-disabled={page <= 1}
-              tabIndex={page <= 1 ? -1 : undefined}
+              href="/admin/appointments"
+              className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             >
-              Previous
+              Clear filters
             </Link>
-            <Link
-              href={buildQueueHref(filters, { page: String(Math.min(totalPages, page + 1)) })}
-              className={`gh-btn ${page >= totalPages ? "pointer-events-none opacity-50" : ""}`}
-              aria-disabled={page >= totalPages}
-              tabIndex={page >= totalPages ? -1 : undefined}
-            >
-              Next
-            </Link>
+            <span className="ml-auto text-[12px] text-[var(--color-text-muted)]">
+              {total === 0
+                ? "No appointments match these filters."
+                : `Showing ${items.length} of ${total} appointment${total === 1 ? "" : "s"}.`}
+            </span>
           </div>
-        </nav>
-      ) : null}
-    </section>
+        </form>
+      </AdminCard>
+
+      {/* Table */}
+      <AdminCard padding={0} className="overflow-hidden">
+        {!hasRows ? (
+          <div className="px-5 py-16 text-center">
+            <p className="text-[14px] font-bold text-[var(--color-text-primary)]">
+              Nothing in this view yet
+            </p>
+            <p className="mt-2 text-[13px] text-[var(--color-text-muted)]">
+              Try widening filters or check back after new booking requests arrive.
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <AdminTable>
+              <Thead>
+                <Th>Patient</Th>
+                <Th>Contact</Th>
+                <Th>Country</Th>
+                <Th>Consultation</Th>
+                <Th>Status</Th>
+                <Th>Created</Th>
+                <Th>Notes</Th>
+                <Th align="right" style={{ width: 80 }}>
+                  Detail
+                </Th>
+              </Thead>
+              <tbody>
+                {items.map((appointment) => (
+                  <Tr key={appointment.id}>
+                    <Td>
+                      <span className="font-bold text-[var(--color-text-primary)]">
+                        {appointment.fullName}
+                      </span>
+                    </Td>
+                    <Td>
+                      <div className="text-[13px] text-[var(--color-text-body)]">
+                        {appointment.email}
+                      </div>
+                      <div className="text-[12px] text-[var(--color-text-muted)]">
+                        {appointment.phone ?? "No phone"}
+                      </div>
+                    </Td>
+                    <Td>
+                      <span className="inline-flex items-center gap-2">
+                        <FlagBadge code={appointment.country} size={14} />
+                        <span className="text-[12px] uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                          {appointment.country}
+                        </span>
+                      </span>
+                    </Td>
+                    <Td>
+                      <span className="text-[13px] text-[var(--color-text-muted)]">
+                        {appointment.consultationType}
+                      </span>
+                    </Td>
+                    <Td>
+                      <Pill tone={statusToneFor(appointment.status)}>
+                        {statusLabel(appointment.status)}
+                      </Pill>
+                    </Td>
+                    <Td>
+                      <span className="text-[12px] text-[var(--color-text-muted)]">
+                        {formatDate(appointment.createdAt)}
+                      </span>
+                    </Td>
+                    <Td>
+                      <span className="block max-w-[18rem] truncate text-[13px] text-[var(--color-text-muted)]">
+                        {appointment.notesPreview ?? "—"}
+                      </span>
+                    </Td>
+                    <Td align="right">
+                      <IconBtn
+                        ariaLabel={`Open ${appointment.fullName}`}
+                        href={`/admin/appointments/${appointment.id}`}
+                      >
+                        <ExternalLink className="size-3.5" aria-hidden />
+                      </IconBtn>
+                    </Td>
+                  </Tr>
+                ))}
+              </tbody>
+            </AdminTable>
+          </div>
+        )}
+
+        {totalPages > 1 ? (
+          <nav className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-[13px]">
+            <div className="text-[var(--color-text-muted)]">
+              Page {page} of {totalPages} · {pageSize} per page
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href={buildQueueHref(filters, { page: String(Math.max(1, page - 1)) })}
+                className={`gh-btn gh-btn-soft text-[13px] ${
+                  page <= 1 ? "pointer-events-none opacity-40" : ""
+                }`}
+                style={{ minHeight: 36, padding: "0 14px" }}
+              >
+                Previous
+              </Link>
+              <Link
+                href={buildQueueHref(filters, {
+                  page: String(Math.min(totalPages, page + 1)),
+                })}
+                className={`gh-btn gh-btn-primary text-[13px] ${
+                  page >= totalPages ? "pointer-events-none opacity-40" : ""
+                }`}
+                style={{ minHeight: 36, padding: "0 14px" }}
+              >
+                Next
+              </Link>
+            </div>
+          </nav>
+        ) : null}
+      </AdminCard>
+    </>
   );
 }

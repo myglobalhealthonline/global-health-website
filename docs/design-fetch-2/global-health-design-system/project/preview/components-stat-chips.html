@@ -1,0 +1,26 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Stat Chips — hero</title><link rel="stylesheet" href="_card.css"></head><body>
+<style>
+  body { padding: 28px 28px; background: linear-gradient(120deg, rgba(10,52,42,0.96) 0%, rgba(14,76,60,0.92) 45%, rgba(18,96,76,0.88) 100%), #0F2E25;
+    background-image:
+      url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E"),
+      linear-gradient(120deg, rgba(10,52,42,0.96) 0%, rgba(14,76,60,0.92) 45%, rgba(18,96,76,0.88) 100%);
+    background-size: 28px, auto;
+    background-blend-mode: overlay, normal;
+  }
+  .row { gap: 12px; flex-wrap: wrap; align-items: center; }
+  .stat { display: inline-flex; align-items: center; gap: 12px; background: rgba(15,46,37,0.72); border: 1px solid rgba(255,255,255,0.20); border-radius: 999px; padding: 10px 20px; backdrop-filter: blur(8px); }
+  .stat .emoji { font-size: 18px; }
+  .stat .val { font-size: 16px; font-weight: 800; color: #fff; }
+  .stat .lbl { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.60); margin-left: 4px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; background: rgba(15,46,37,0.72); border: 1px solid rgba(255,255,255,0.20); color: #fff; font-size: 13px; backdrop-filter: blur(8px); }
+  .pill::before { content: ""; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #C8E6A0; }
+</style>
+<div class="row">
+  <span class="pill">5 Countries • Online Care</span>
+</div>
+<div class="row" style="margin-top: 14px;">
+  <div class="stat"><span class="emoji">👨‍⚕️</span><span class="val">50+</span><span class="lbl">Expert Doctors</span></div>
+  <div class="stat"><span class="emoji">🌍</span><span class="val">5</span><span class="lbl">Countries</span></div>
+  <div class="stat"><span class="emoji">⚡</span><span class="val">24/7</span><span class="lbl">Available</span></div>
+</div>
+</body></html>

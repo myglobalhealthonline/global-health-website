@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import {
   adminAssetPreviewable,
   deleteAdminAsset,
@@ -9,6 +9,8 @@ import {
   purgeAdminAsset,
   type AdminAssetKind,
 } from "@/lib/admin/admin-api";
+import { FlagBadge } from "../../_components/flag-badge";
+import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -17,19 +19,54 @@ type PageProps = {
   searchParams?: Promise<{ success?: string; error?: string }>;
 };
 
-export default async function AdminAssetDetailPage({ params, searchParams }: PageProps) {
+const cardTitleStyle = {
+  margin: 0,
+  fontFamily: "var(--font-display)",
+  fontSize: 16,
+  fontWeight: 800,
+  color: "var(--color-text-primary)",
+} as const;
+
+function FieldRow({
+  label,
+  value,
+  mono = false,
+  full = false,
+}: {
+  label: string;
+  value: React.ReactNode;
+  mono?: boolean;
+  full?: boolean;
+}) {
+  return (
+    <div className={full ? "sm:col-span-2" : ""}>
+      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+        {label}
+      </dt>
+      <dd
+        className="mt-1 break-all text-[14px] text-[var(--color-text-primary)]"
+        style={mono ? { fontFamily: "ui-monospace, monospace", fontSize: 12.5 } : undefined}
+      >
+        {value}
+      </dd>
+    </div>
+  );
+}
+
+export default async function AdminAssetDetailPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
   const result = await fetchAdminAssetById(id);
 
   async function deactivateAssetAction() {
     "use server";
-
     const updateResult = await deleteAdminAsset(id);
     if (!updateResult.ok) {
       redirect(`/admin/assets/${id}?error=${encodeURIComponent(updateResult.message)}`);
     }
-
     revalidatePath("/admin/assets");
     revalidatePath(`/admin/assets/${id}`);
     redirect(`/admin/assets/${id}?success=${encodeURIComponent("Asset deactivated")}`);
@@ -37,27 +74,32 @@ export default async function AdminAssetDetailPage({ params, searchParams }: Pag
 
   async function deleteAssetAction() {
     "use server";
-
     const deleteResult = await purgeAdminAsset(id);
     if (!deleteResult.ok) {
       redirect(`/admin/assets/${id}?error=${encodeURIComponent(deleteResult.message)}`);
     }
-
     revalidatePath("/admin/assets");
     redirect("/admin/assets");
   }
 
   if (!result.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Asset</h1>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load asset: {result.message}
-        </p>
-        <Link href="/admin/assets" className="mt-6 inline-block gh-link text-sm text-[var(--color-text-muted)]">
-          Back to list
-        </Link>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Global"
+          title="Asset"
+          actions={
+            <Btn href="/admin/assets" variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
+              Back
+            </Btn>
+          }
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load asset: {result.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
@@ -66,98 +108,134 @@ export default async function AdminAssetDetailPage({ params, searchParams }: Pag
   const showPreview = adminAssetPreviewable(a.kind as AdminAssetKind, a.path);
 
   return (
-    <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">{a.key}</h1>
-          <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-            Metadata record — optional uploads via Railway Bucket use POST /api/admin/media/upload; files are served from GET /api/media/… when storage env vars are set.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <Link href={`/admin/assets/${id}/edit`} className="gh-btn gh-btn-primary">Edit</Link>
-          <Link href="/admin/assets" className="gh-link text-sm text-[var(--color-text-muted)]">Back to list</Link>
-        </div>
-      </div>
+    <>
+      <Link
+        href="/admin/assets"
+        className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+      >
+        <ArrowLeft className="size-3.5" /> Back to assets
+      </Link>
+      <PageHeader
+        eyebrow={
+          a.country ? (
+            <span className="inline-flex items-center gap-2">
+              <FlagBadge code={a.country.code} size={14} />
+              {a.country.name}
+            </span>
+          ) : (
+            "Global asset"
+          )
+        }
+        title={a.key}
+        description={a.kind}
+        actions={
+          <>
+            <Pill tone={isActive ? "published" : "draft"}>
+              {isActive ? "Active" : "Inactive"}
+            </Pill>
+            <Btn href={`/admin/assets/${id}/edit`} variant="primary">
+              Edit
+            </Btn>
+          </>
+        }
+      />
 
-      {messages.error ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{messages.error}</p> : null}
-      {messages.success ? <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{messages.success}</p> : null}
-
-      <div className="mt-5 flex flex-wrap items-center gap-3">
-        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border ${
-          isActive
-            ? "bg-[var(--color-status-success-bg)] text-[var(--color-status-success-text)] border-[var(--color-status-success-border)]"
-            : "bg-[var(--color-status-warning-bg)] text-[var(--color-status-warning-text)] border-[var(--color-status-warning-border)]"
-        }`}>
-          {isActive ? <CheckCircle2 className="size-3.5" /> : <AlertCircle className="size-3.5" />}
-          {isActive ? "Active" : "Inactive"}
-        </span>
-        <span className="text-xs text-[var(--color-text-muted)]">Inactive assets are omitted from the public assets API.</span>
-      </div>
-
-      {showPreview ? (
-        <div className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
-          <h2 className="text-sm font-semibold text-[var(--color-text-primary)]">Preview</h2>
-          <div className="mt-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={a.path}
-              alt={a.altText ?? ""}
-              className="max-h-40 max-w-full rounded border border-[var(--color-border)] object-contain"
-            />
-          </div>
-        </div>
+      {messages.error ? (
+        <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+          {messages.error}
+        </p>
+      ) : null}
+      {messages.success ? (
+        <p className="gh-status-success mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+          {messages.success}
+        </p>
       ) : null}
 
-      <dl className="mt-6 grid gap-4 sm:grid-cols-2">
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Kind</dt>
-          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{a.kind}</dd>
-        </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Country</dt>
-          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{a.country ? `${a.country.name} (${a.country.code})` : "—"}</dd>
-        </div>
-        <div className="sm:col-span-2">
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Path</dt>
-          <dd className="mt-1 break-all text-sm text-[var(--color-text-primary)]">{a.path}</dd>
-        </div>
-        <div className="sm:col-span-2">
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Alt text</dt>
-          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{a.altText ?? "—"}</dd>
-        </div>
-        <div className="sm:col-span-2">
-          <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Usage note</dt>
-          <dd className="mt-1 text-sm text-[var(--color-text-primary)]">{a.usageNote ?? "—"}</dd>
-        </div>
-        {a.doctor ? (
-          <div className="sm:col-span-2">
-            <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Linked doctor</dt>
-            <dd className="mt-1 text-sm text-[var(--color-text-primary)]">
-              {a.doctor.fullName} ({a.doctor.slug})
-            </dd>
-          </div>
-        ) : null}
-      </dl>
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
+      >
+        <div className="grid gap-4">
+          {showPreview ? (
+            <AdminCard>
+              <h3 style={cardTitleStyle}>Preview</h3>
+              <div className="mt-3 rounded-md bg-[var(--color-background-soft)] p-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={a.path}
+                  alt={a.altText ?? ""}
+                  className="mx-auto block max-h-72 max-w-full rounded border border-[var(--color-border)] object-contain"
+                />
+              </div>
+            </AdminCard>
+          ) : null}
 
-      {isActive ? (
-        <form action={deactivateAssetAction} className="mt-8 border-t border-[var(--color-border)] pt-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-[var(--color-text-muted)]">Deactivate hides this asset from the public listing API.</p>
-            <button type="submit" className="gh-btn gh-btn-danger shrink-0">Deactivate asset</button>
-          </div>
-        </form>
-      ) : (
-        <p className="mt-8 border-t border-[var(--color-border)] pt-6 text-sm text-[var(--color-text-muted)]">
-          This asset is inactive. Re-enable from edit.
-        </p>
-      )}
-      <form action={deleteAssetAction} className="mt-4">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-[var(--color-text-muted)]">Permanent delete removes this asset record from admin and public responses.</p>
-          <button type="submit" className="gh-btn gh-btn-danger shrink-0">Delete permanently</button>
+          <AdminCard>
+            <h3 style={cardTitleStyle}>Asset details</h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Path + metadata. Files served via Railway Bucket when storage env vars are configured.
+            </p>
+            <dl className="grid gap-4 sm:grid-cols-2">
+              <FieldRow label="Key" value={a.key} mono />
+              <FieldRow label="Kind" value={a.kind} />
+              <FieldRow
+                label="Country"
+                value={
+                  a.country
+                    ? `${a.country.name} (${a.country.code.toUpperCase()})`
+                    : "—"
+                }
+              />
+              <FieldRow
+                label="Linked doctor"
+                value={a.doctor ? `${a.doctor.fullName} (${a.doctor.slug})` : "—"}
+              />
+              <FieldRow label="Path" value={a.path} mono full />
+              <FieldRow label="Alt text" value={a.altText ?? "—"} full />
+              <FieldRow label="Usage note" value={a.usageNote ?? "—"} full />
+            </dl>
+          </AdminCard>
         </div>
-      </form>
-    </section>
+
+        <div className="grid gap-4 self-start">
+          <AdminCard>
+            <h3 style={cardTitleStyle}>Visibility</h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Deactivate hides this asset from the public listing API.
+            </p>
+            {isActive ? (
+              <form action={deactivateAssetAction}>
+                <button type="submit" className="gh-btn gh-btn-danger w-full">
+                  Deactivate asset
+                </button>
+              </form>
+            ) : (
+              <p className="text-[13px] text-[var(--color-text-muted)]">
+                This asset is inactive. Re-enable from Edit.
+              </p>
+            )}
+          </AdminCard>
+
+          <AdminCard>
+            <h3
+              style={{
+                ...cardTitleStyle,
+                color: "var(--color-status-error-text)",
+              }}
+            >
+              Danger zone
+            </h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Permanent delete removes this asset record entirely.
+            </p>
+            <form action={deleteAssetAction}>
+              <button type="submit" className="gh-btn gh-btn-danger w-full">
+                Delete permanently
+              </button>
+            </form>
+          </AdminCard>
+        </div>
+      </div>
+    </>
   );
 }

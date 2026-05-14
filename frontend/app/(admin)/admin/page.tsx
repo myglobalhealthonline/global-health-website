@@ -1,7 +1,9 @@
 import Link from "next/link";
 import {
-  ArrowRight,
+  Briefcase,
   CalendarClock,
+  ChevronRight,
+  Eye,
   FileText,
   Globe2,
   Layers,
@@ -17,6 +19,13 @@ import {
   fetchAdminServices,
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "./_components/flag-badge";
+import {
+  AdminCard,
+  Btn,
+  PageHeader,
+  SectionHeader,
+  StatCard,
+} from "./_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -38,9 +47,11 @@ function timeAgo(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-function statusLabel(status: string): string {
-  const lower = status.replace(/_/g, " ").toLowerCase();
-  return lower.charAt(0).toUpperCase() + lower.slice(1);
+function greeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 18) return "Good afternoon";
+  return "Good evening";
 }
 
 export default async function AdminDashboardPage() {
@@ -70,235 +81,254 @@ export default async function AdminDashboardPage() {
     NON_TERMINAL_STATUSES.has(a.status),
   ).length;
 
-  // TODO: replace with audit log when available
+  // Sorted most-recent-first. Once an audit log exists, swap this in.
   const recentActivity = [...appointments]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-    .slice(0, 8);
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
+    .slice(0, 6);
 
-  // Country lookup by code (appointment.country is lowercase ISO code or slug).
   const countryByCode = new Map(
     countries.map((c) => [c.code.toLowerCase(), c] as const),
   );
   const countryBySlug = new Map(countries.map((c) => [c.slug, c] as const));
 
-  const stats = [
+  const firstName = (user?.fullName?.trim() || user?.email?.split("@")[0] || "Admin")
+    .split(/\s+/)[0];
+
+  const quickActions = [
     {
-      label: "Active countries",
-      value: activeCountries,
-      hint: `${countries.length} total`,
+      icon: Plus,
+      label: "Add a new doctor",
+      sub: "Assign to one or more countries",
+      href: "/admin/doctors/create",
+    },
+    {
       icon: Globe2,
-      tone: "brand" as const,
-      href: "/admin/countries",
+      label: "Enable a new country",
+      sub: "Hero, currency, languages",
+      href: "/admin/countries/new",
     },
     {
-      label: "Doctors live",
-      value: doctorsActive,
-      hint:
-        doctorsTotal === doctorsActive
-          ? "Public profiles"
-          : `${doctorsTotal - doctorsActive} inactive`,
-      icon: Stethoscope,
-      tone: "neutral" as const,
-      href: "/admin/doctors",
+      icon: Briefcase,
+      label: "Publish a service",
+      sub: "General, specialist, prescription, test",
+      href: "/admin/general-consultations/new",
     },
     {
-      label: "Services published",
-      value: publishedServices,
-      hint: `${draftServices} drafts`,
-      icon: Layers,
-      tone: "neutral" as const,
-      href: "/admin/general-consultations",
-    },
-    {
-      label: "Bookings pending",
-      value: pendingAppointments,
-      hint: "Avg 24h reply",
       icon: CalendarClock,
-      tone: "accent" as const,
+      label: "Review bookings",
+      sub: `${pendingAppointments} pending across countries`,
       href: "/admin/appointments",
     },
   ];
 
-  const quickActions = [
-    { href: "/admin/countries/new", label: "Add country", icon: Globe2 },
-    { href: "/admin/doctors/create", label: "Add doctor", icon: UserRound },
-    { href: "/admin/general-consultations/new", label: "Add service", icon: Stethoscope },
-    { href: "/admin/specialties", label: "Add category", icon: Layers },
-  ];
-
-  const displayName = user?.fullName?.trim() || user?.email?.split("@")[0] || "Admin";
-
   return (
-    <div className="space-y-8">
-      <header>
-        <p className="gh-eyebrow">Welcome back</p>
-        <h1 className="gh-h2 mt-2">{displayName}</h1>
-        <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-          Manage every country, doctor, and service from one place.
-        </p>
-      </header>
-
-      {/* Stat cards */}
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.map((s) => {
-          const Icon = s.icon;
-          return (
-            <Link
-              key={s.label}
-              href={s.href}
-              className="gh-card group flex flex-col gap-3 p-5 transition hover:-translate-y-px hover:shadow-[var(--shadow-card-hover)]"
+    <>
+      <PageHeader
+        eyebrow="Overview"
+        title={`${greeting()}, ${firstName}`}
+        description="Activity across all five countries. Pick a country in the top-right to scope the rest of the portal."
+        actions={
+          <>
+            <Btn
+              href="/"
+              variant="secondary"
+              size="md"
+              iconLeft={<Eye className="size-3.5" aria-hidden />}
             >
-              <div className="flex items-start justify-between">
-                <span
-                  className="inline-flex size-11 items-center justify-center rounded-2xl"
-                  style={{
-                    background:
-                      s.tone === "brand"
-                        ? "var(--color-brand-primary)"
-                        : s.tone === "accent"
-                          ? "var(--color-brand-accent)"
-                          : "var(--color-background-soft)",
-                    color: s.tone === "brand" ? "white" : "var(--color-brand-primary)",
-                  }}
-                >
-                  <Icon className="size-5" aria-hidden />
-                </span>
-                <ArrowRight
-                  className="size-4 text-[var(--color-text-muted)] transition group-hover:translate-x-0.5 group-hover:text-[var(--color-brand-primary)]"
-                  aria-hidden
-                />
-              </div>
-              <div>
-                <p className="text-3xl font-extrabold leading-none tracking-tight text-[var(--color-text-primary)]">
-                  {s.value}
-                </p>
-                <p className="mt-1 text-sm font-semibold text-[var(--color-text-primary)]">
-                  {s.label}
-                </p>
-                <p className="text-xs text-[var(--color-text-muted)]">{s.hint}</p>
-              </div>
-            </Link>
-          );
-        })}
+              View public site
+            </Btn>
+            <Btn
+              href="/admin/general-consultations/new"
+              variant="primary"
+              size="md"
+              iconLeft={<Plus className="size-3.5" aria-hidden />}
+            >
+              New service
+            </Btn>
+          </>
+        }
+      />
+
+      {/* Stat cards — 4-up grid */}
+      <section
+        className="mb-6 grid gap-4"
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}
+      >
+        <StatCard
+          label="Active countries"
+          value={activeCountries}
+          hint={`${countries.length} total`}
+          icon={<Globe2 className="size-[18px]" aria-hidden />}
+          tone="brand"
+          href="/admin/countries"
+        />
+        <StatCard
+          label="Doctors live"
+          value={doctorsActive}
+          hint={
+            doctorsTotal === doctorsActive
+              ? "Public profiles"
+              : `${doctorsTotal - doctorsActive} inactive`
+          }
+          icon={<Stethoscope className="size-[18px]" aria-hidden />}
+          tone="neutral"
+          href="/admin/doctors"
+        />
+        <StatCard
+          label="Services published"
+          value={publishedServices}
+          hint={`${draftServices} drafts`}
+          icon={<Layers className="size-[18px]" aria-hidden />}
+          tone="neutral"
+          href="/admin/general-consultations"
+        />
+        <StatCard
+          label="Bookings pending"
+          value={pendingAppointments}
+          hint="Avg 24h reply"
+          icon={<CalendarClock className="size-[18px]" aria-hidden />}
+          tone="accent"
+          href="/admin/appointments"
+        />
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        {/* Recent activity */}
-        <section className="gh-card p-6">
-          <header className="mb-4 flex items-center justify-between">
-            <div>
-              <p className="gh-eyebrow">Activity</p>
-              <h2 className="gh-h3 mt-1">Recent bookings</h2>
-            </div>
-            <Link
-              href="/admin/appointments"
-              className="inline-flex items-center gap-1 text-xs font-bold text-[var(--color-brand-primary)] hover:underline"
-            >
-              View all <ArrowRight className="size-3" aria-hidden />
-            </Link>
-          </header>
+      {/* Two-column: activity (1.4fr) + quick actions (1fr) */}
+      <div
+        className="grid gap-4"
+        style={{ gridTemplateColumns: "minmax(0, 1.4fr) minmax(0, 1fr)" }}
+      >
+        <AdminCard padding={0} className="overflow-hidden">
+          <SectionHeader
+            title="Recent activity"
+            description="Last 24 hours · across all countries"
+            right={
+              <Btn
+                href="/admin/appointments"
+                variant="ghost"
+                size="sm"
+                iconRight={<ChevronRight className="size-3" aria-hidden />}
+              >
+                View all
+              </Btn>
+            }
+          />
           {recentActivity.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 py-12 text-center">
-              <FileText className="size-8 text-[var(--color-text-muted)]" aria-hidden />
-              <p className="text-sm text-[var(--color-text-muted)]">
-                No admin activity yet. New booking requests will show up here.
+            <div className="flex flex-col items-center gap-2 py-16 text-center">
+              <span className="gh-icon-tile gh-icon-tile-lg mb-2">
+                <FileText className="size-5" aria-hidden />
+              </span>
+              <p className="text-[13px] font-medium text-[var(--color-text-primary)]">
+                No activity yet
+              </p>
+              <p className="max-w-xs text-[12px] text-[var(--color-text-muted)]">
+                New booking requests will appear here.
               </p>
             </div>
           ) : (
-            <ul className="grid gap-3">
-              {recentActivity.map((row) => {
+            <ul className="m-0 list-none p-0">
+              {recentActivity.map((row, i) => {
                 const key = row.country.toLowerCase();
                 const country = countryByCode.get(key) ?? countryBySlug.get(key);
-                const actor = row.fullName || row.email;
-                const initials = (row.fullName || row.email)
-                  .split(/\s+|@/)
-                  .filter(Boolean)
-                  .slice(0, 2)
-                  .map((p) => p[0]?.toUpperCase() ?? "")
-                  .join("");
+                const actor = row.fullName?.trim() || row.email;
+                const verb = "booked";
+                const isLast = i === recentActivity.length - 1;
                 return (
                   <li
                     key={row.id}
-                    className="flex items-start gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page,#fff)] p-3"
+                    className="flex items-center gap-3.5 px-5 py-3.5"
+                    style={{
+                      borderBottom: isLast ? "none" : "1px solid var(--color-border)",
+                    }}
                   >
-                    <span
-                      className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-white"
-                      style={{ background: "var(--color-brand-primary)" }}
-                    >
-                      {initials}
-                    </span>
+                    {country ? (
+                      <FlagBadge code={country.slug} size={14} />
+                    ) : (
+                      <span
+                        aria-hidden
+                        style={{
+                          width: 20,
+                          height: 14,
+                          borderRadius: 3,
+                          background: "var(--color-background-soft)",
+                          border: "1px solid var(--color-border)",
+                        }}
+                      />
+                    )}
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm text-[var(--color-text-primary)]">
-                        <span className="font-semibold">{actor}</span>{" "}
-                        <span className="text-[var(--color-text-muted)]">
-                          booked {row.consultationType}
-                        </span>
-                      </p>
-                      <p className="mt-0.5 truncate text-xs text-[var(--color-text-muted)]">
-                        {statusLabel(row.status)}
-                        {row.email ? ` · ${row.email}` : null}
+                      <p className="m-0 truncate text-[13px] text-[var(--color-text-body)]">
+                        <strong className="font-bold text-[var(--color-text-primary)]">
+                          {actor}
+                        </strong>{" "}
+                        <span className="text-[var(--color-text-muted)]">{verb}</span>{" "}
+                        <strong className="font-bold text-[var(--color-text-primary)]">
+                          {row.consultationType}
+                        </strong>
                       </p>
                     </div>
-                    <div className="flex shrink-0 flex-col items-end gap-1 text-right">
-                      {country ? (
-                        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
-                          <FlagBadge code={country.slug} size={12} />
-                          {country.code}
-                        </span>
-                      ) : (
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
-                          {row.country}
-                        </span>
-                      )}
-                      <span className="text-[10px] text-[var(--color-text-muted)]">
-                        {timeAgo(new Date(row.createdAt))}
-                      </span>
-                    </div>
+                    <span className="shrink-0 whitespace-nowrap text-[12px] text-[var(--color-text-muted)]">
+                      {timeAgo(new Date(row.createdAt))}
+                    </span>
                   </li>
                 );
               })}
             </ul>
           )}
-        </section>
+        </AdminCard>
 
-        {/* Quick actions */}
-        <aside className="gh-card flex flex-col gap-4 p-6">
-          <header>
-            <p className="gh-eyebrow">Shortcuts</p>
-            <h2 className="gh-h3 mt-1">Quick actions</h2>
-          </header>
-          <div className="grid gap-2">
-            {quickActions.map((q) => {
-              const Icon = q.icon;
+        <AdminCard padding={0} className="overflow-hidden">
+          <SectionHeader
+            title="Quick actions"
+            description="Shortcuts to common tasks"
+          />
+          <div className="grid gap-2 p-4">
+            {quickActions.map((a) => {
+              const Icon = a.icon;
               return (
                 <Link
-                  key={q.href}
-                  href={q.href}
-                  className="group flex items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page,#fff)] px-3 py-2.5 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)]"
+                  key={a.label}
+                  href={a.href}
+                  className="group flex items-center gap-3 transition-all duration-150"
+                  style={{
+                    padding: 12,
+                    borderRadius: 10,
+                    border: "1px solid var(--color-border)",
+                    background: "var(--color-background-page)",
+                    textDecoration: "none",
+                  }}
                 >
-                  <span className="flex items-center gap-2">
-                    <Icon className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
-                    {q.label}
+                  <span
+                    className="inline-flex shrink-0 items-center justify-center"
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 10,
+                      background: "rgba(200,230,160,0.30)",
+                      color: "var(--color-brand-primary)",
+                    }}
+                  >
+                    <Icon className="size-4" aria-hidden />
                   </span>
-                  <Plus
-                    className="size-3.5 text-[var(--color-text-muted)] transition group-hover:text-[var(--color-brand-primary)]"
+                  <div className="min-w-0 flex-1">
+                    <p className="m-0 text-[13px] font-bold text-[var(--color-text-primary)]">
+                      {a.label}
+                    </p>
+                    <p className="m-0 mt-0.5 text-[12px] text-[var(--color-text-muted)]">
+                      {a.sub}
+                    </p>
+                  </div>
+                  <ChevronRight
+                    className="size-3.5 shrink-0 text-[var(--color-text-muted)] transition group-hover:translate-x-0.5 group-hover:text-[var(--color-brand-primary)]"
                     aria-hidden
                   />
                 </Link>
               );
             })}
           </div>
-          <div
-            className="mt-2 rounded-[var(--radius-card-sm)] p-4 text-xs leading-relaxed text-[var(--color-text-muted)]"
-            style={{ background: "var(--color-background-soft)" }}
-          >
-            <p className="font-semibold text-[var(--color-text-primary)]">Scope reminder</p>
-            <p className="mt-1">
-              Doctors are public profiles only. Payments are not enabled yet. Patient portal is v2.
-            </p>
-          </div>
-        </aside>
+        </AdminCard>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,7 +1,20 @@
-import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { Edit3, Eye, Plus, Trash2 } from "lucide-react";
 import { fetchAdminCountries, purgeAdminCountry } from "@/lib/admin/admin-api";
+import { FlagBadge } from "../_components/flag-badge";
+import {
+  AdminCard,
+  AdminTable,
+  Btn,
+  IconBtn,
+  PageHeader,
+  Pill,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -26,96 +39,154 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
 
   if (!result.ok) {
     return (
-      <section className="gh-card p-6 sm:p-8">
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Countries</h1>
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">
-          Could not load countries: {result.message}
-        </p>
-      </section>
+      <>
+        <PageHeader
+          eyebrow="Global"
+          title="Countries"
+          description="Manage countries, locales, currencies, and key routes."
+        />
+        <AdminCard>
+          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+            Could not load countries: {result.message}
+          </p>
+        </AdminCard>
+      </>
     );
   }
 
   const rows = result.data.countries;
+  const publishedCount = rows.filter((r) => r.isActive).length;
 
   return (
-    <section className="gh-card p-6 sm:p-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Countries</h1>
-          <p className="mt-2 max-w-3xl text-sm text-[var(--color-text-muted)]">Manage countries, locales, currencies, and key routes.</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <Link href="/admin/countries/new" className="gh-btn gh-btn-primary">
+    <>
+      <PageHeader
+        eyebrow="Global"
+        title="Countries"
+        description="The axis of the platform. Each country has its own hero copy, currency, doctors, and services."
+        actions={
+          <Btn
+            href="/admin/countries/new"
+            variant="primary"
+            size="md"
+            iconLeft={<Plus className="size-3.5" aria-hidden />}
+          >
             Add country
-          </Link>
-
-        </div>
-      </div>
+          </Btn>
+        }
+      />
 
       {sp.error ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-warning">{sp.error}</p>
+        <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+          {sp.error}
+        </p>
       ) : null}
       {sp.success ? (
-        <p className="mt-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm gh-status-success">{sp.success}</p>
+        <p className="gh-status-success mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+          {sp.success}
+        </p>
       ) : null}
 
-      <div className="mt-6 overflow-x-auto">
-        <table className="min-w-full border-collapse text-left text-sm">
-          <thead>
-            <tr className="border-b border-[var(--color-border)] text-[var(--color-text-muted)]">
-              <th className="px-3 py-2 font-semibold">Name</th>
-              <th className="px-3 py-2 font-semibold">Code</th>
-              <th className="px-3 py-2 font-semibold">Default locale</th>
-              <th className="px-3 py-2 font-semibold">Locales</th>
-              <th className="px-3 py-2 font-semibold">Currency</th>
-              <th className="px-3 py-2 font-semibold">Active</th>
-              <th className="px-3 py-2 font-semibold">Key routes</th>
-              <th className="px-3 py-2 font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((c) => (
-              <tr
-                key={c.id}
-                className={`border-b border-[var(--color-border)] align-top ${c.isActive ? "" : "opacity-60"}`}
-              >
-                <td className="px-3 py-3 font-medium text-[var(--color-text-primary)]">{c.name}</td>
-                <td className="px-3 py-3 uppercase text-[var(--color-text-muted)]">{c.code}</td>
-                <td className="px-3 py-3 text-[var(--color-text-primary)]">{c.defaultLocale}</td>
-                <td className="px-3 py-3 text-[var(--color-text-muted)]">
-                  {c.countryLocales.map((l) => l.locale).join(", ")}
-                </td>
-                <td className="px-3 py-3 text-[var(--color-text-muted)]">{c.currency.code}</td>
-                <td className="px-3 py-3 text-[var(--color-text-primary)]">{c.isActive ? "Yes" : "No"}</td>
-                <td className="max-w-[14rem] px-3 py-3 text-xs text-[var(--color-text-muted)]">
-                  <div>{c.legacyHomePath}</div>
-                  <div>{c.teamPath}</div>
-                </td>
-                <td className="px-3 py-3">
-                  <div className="flex flex-col gap-1">
-                    <Link href={`/admin/countries/${c.id}`} className="gh-link text-[var(--color-brand-primary)]">
-                      View
-                    </Link>
-                    <Link href={`/admin/countries/${c.id}/edit`} className="gh-link text-[var(--color-brand-primary)]">
-                      Edit
-                    </Link>
-                    <form action={deleteCountryAction}>
-                      <input type="hidden" name="id" value={c.id} />
-                      <button type="submit" className="gh-link text-left text-[var(--color-status-danger-text)]">
-                        Delete
-                      </button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <AdminCard padding={0} className="overflow-hidden">
+        {/* Toolbar */}
+        <div className="flex items-center gap-3 border-b border-[var(--color-border)] px-5 py-3.5">
+          <span className="text-[13px] text-[var(--color-text-muted)]">
+            {rows.length} countries · {publishedCount} active
+          </span>
+        </div>
 
-      {rows.length === 0 ? (
-        <p className="mt-8 text-sm text-[var(--color-text-muted)]">No countries yet. Create one to get started.</p>
-      ) : null}
-    </section>
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <AdminTable>
+            <Thead>
+              <Th>Country</Th>
+              <Th>Code</Th>
+              <Th>Locale</Th>
+              <Th>Currency</Th>
+              <Th>Status</Th>
+              <Th>Key routes</Th>
+              <Th align="right" style={{ width: 120 }}>
+                Actions
+              </Th>
+            </Thead>
+            <tbody>
+              {rows.map((c) => (
+                <Tr key={c.id}>
+                  <Td>
+                    <span className="inline-flex items-center gap-2.5">
+                      <FlagBadge code={c.slug} size={18} />
+                      <span className="font-bold text-[var(--color-text-primary)]">
+                        {c.name}
+                      </span>
+                    </span>
+                  </Td>
+                  <Td>
+                    <span className="font-mono text-[12px] text-[var(--color-text-body)]">
+                      {c.code.toUpperCase()}
+                    </span>
+                  </Td>
+                  <Td>
+                    <span className="text-[var(--color-text-muted)]">
+                      {c.defaultLocale}
+                    </span>
+                  </Td>
+                  <Td>
+                    <span className="font-mono text-[12px] text-[var(--color-text-body)]">
+                      {c.currency.code}
+                    </span>
+                  </Td>
+                  <Td>
+                    <Pill tone={c.isActive ? "published" : "inactive"}>
+                      {c.isActive ? "Active" : "Inactive"}
+                    </Pill>
+                  </Td>
+                  <Td>
+                    <div className="max-w-[14rem]">
+                      <div className="truncate font-mono text-[11px] text-[var(--color-text-muted)]">
+                        {c.legacyHomePath}
+                      </div>
+                      <div className="truncate font-mono text-[11px] text-[var(--color-text-muted)] opacity-70">
+                        {c.teamPath}
+                      </div>
+                    </div>
+                  </Td>
+                  <Td align="right">
+                    <div className="flex justify-end gap-1.5">
+                      <IconBtn
+                        ariaLabel={`View ${c.name}`}
+                        href={`/admin/countries/${c.id}`}
+                      >
+                        <Eye className="size-3.5" aria-hidden />
+                      </IconBtn>
+                      <IconBtn
+                        ariaLabel={`Edit ${c.name}`}
+                        href={`/admin/countries/${c.id}/edit`}
+                      >
+                        <Edit3 className="size-3.5" aria-hidden />
+                      </IconBtn>
+                      <form action={deleteCountryAction} className="inline-flex">
+                        <input type="hidden" name="id" value={c.id} />
+                        <IconBtn
+                          ariaLabel={`Delete ${c.name}`}
+                          type="submit"
+                          style={{ color: "var(--color-status-error-text)" }}
+                        >
+                          <Trash2 className="size-3.5" aria-hidden />
+                        </IconBtn>
+                      </form>
+                    </div>
+                  </Td>
+                </Tr>
+              ))}
+            </tbody>
+          </AdminTable>
+        </div>
+
+        {rows.length === 0 ? (
+          <p className="px-5 py-8 text-center text-sm text-[var(--color-text-muted)]">
+            No countries yet. Create one to get started.
+          </p>
+        ) : null}
+      </AdminCard>
+    </>
   );
 }

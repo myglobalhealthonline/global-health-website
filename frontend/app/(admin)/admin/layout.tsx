@@ -24,17 +24,24 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     redirect("/account");
   }
 
+  // Sidebar nav. The AdminShell partitions this into:
+  //   Global   — Dashboard, Countries, Categories, Doctors, Assets
+  //   Country  — Appointments + service-type pages + Pricing (dimmed
+  //              when "All countries" is the active scope)
   const sections = [
+    // Global
     { href: "/admin", label: "Dashboard" },
-    { href: "/admin/appointments", label: "Appointments" },
     { href: "/admin/countries", label: "Countries" },
     { href: "/admin/specialties", label: "Categories" },
-    { href: "/admin/general-consultations", label: "General Consultations" },
-    { href: "/admin/specialist-consultations", label: "Specialist Consultations" },
-    { href: "/admin/online-prescriptions", label: "Online Prescriptions" },
-    { href: "/admin/health-tests", label: "Health Tests" },
     { href: "/admin/doctors", label: "Doctors" },
     { href: "/admin/assets", label: "Assets" },
+    // Country-scoped
+    { href: "/admin/appointments", label: "Appointments" },
+    { href: "/admin/general-consultations", label: "General consultations" },
+    { href: "/admin/specialist-consultations", label: "Specialist consultations" },
+    { href: "/admin/online-prescriptions", label: "Online prescriptions" },
+    { href: "/admin/health-tests", label: "Health tests" },
+    { href: "/admin/pricing", label: "Pricing" },
   ];
 
   // Country options for the topbar picker. Pulled best-effort; if backend is
