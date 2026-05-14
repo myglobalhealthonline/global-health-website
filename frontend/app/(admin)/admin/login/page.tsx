@@ -24,7 +24,7 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
     params.next && params.next.startsWith("/") ? params.next : "/admin";
 
   return (
-    <main className="grid min-h-screen grid-cols-1 bg-[#0F2E25] text-white lg:grid-cols-2">
+    <main className="grid min-h-screen grid-cols-1 bg-[var(--color-background-dark)] text-white lg:grid-cols-2">
       <section className="relative hidden flex-col justify-between p-12 lg:flex">
         <div
           aria-hidden
@@ -32,18 +32,24 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
           style={{
             backgroundImage:
               "radial-gradient(circle at 1px 1px, white 1px, transparent 0)",
-            backgroundSize: "28px 28px",
+            backgroundSize: "var(--medical-pattern-size) var(--medical-pattern-size)",
           }}
         />
         <div className="relative inline-flex items-center gap-2 text-white">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[#B0F122] text-[#0F2E25]">
+          <span
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[var(--color-brand-primary-dark)]"
+            style={{ background: "var(--color-brand-accent-vivid)" }}
+          >
             <Stethoscope className="size-5" aria-hidden />
           </span>
           <span className="text-lg font-bold tracking-tight">Global Health</span>
           <span className="text-sm font-medium text-white/70">· Admin</span>
         </div>
         <div className="relative max-w-md">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#B0F122]">
+          <p
+            className="text-xs font-bold uppercase tracking-[0.18em]"
+            style={{ color: "var(--color-brand-accent-vivid)" }}
+          >
             Super admin portal
           </p>
           <h1 className="mt-4 text-balance text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
@@ -59,24 +65,24 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
         </p>
       </section>
 
-      <section className="flex items-center justify-center bg-white p-6 text-[#0F2E25] sm:p-12">
+      <section className="flex items-center justify-center bg-white p-6 text-[var(--color-text-primary)] sm:p-12">
         <div className="w-full max-w-sm">
           <header className="mb-8">
-            <div className="inline-flex items-center gap-2 text-[#1B4D3E] lg:hidden">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#1B4D3E] text-white">
+            <div className="inline-flex items-center gap-2 text-[var(--color-brand-primary)] lg:hidden">
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-brand-primary)] text-white">
                 <Stethoscope className="size-4" aria-hidden />
               </span>
               <span className="text-base font-bold tracking-tight">Global Health</span>
             </div>
-            <h2 className="mt-4 text-2xl font-extrabold tracking-tight">Sign in</h2>
-            <p className="mt-1 text-sm text-[#5A6B64]">
+            <h2 className="gh-h2 mt-4 text-[var(--color-text-primary)]">Sign in</h2>
+            <p className="mt-1 text-sm text-[var(--color-text-muted)]">
               Use your admin credentials.
             </p>
           </header>
 
           <LoginForm next={nextPath} initialError={params.error} />
 
-          <p className="mt-8 text-xs text-[#5A6B64]">
+          <p className="mt-8 text-xs text-[var(--color-text-muted)]">
             Trouble signing in? Contact the super admin to reset your access.
           </p>
         </div>

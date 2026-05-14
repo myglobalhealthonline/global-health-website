@@ -29,36 +29,33 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--color-background-soft,#F4F8F4)]">
-      <header className="border-b border-[#D8E0D8] bg-white">
+    <div className="min-h-screen bg-[var(--color-background-soft)]">
+      <header className="border-b border-[var(--color-border)] bg-[var(--color-background-page)]">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <Link
             href="/admin"
-            className="inline-flex items-center gap-2 text-[#1B4D3E]"
+            className="inline-flex items-center gap-2 text-[var(--color-brand-primary)]"
           >
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#1B4D3E] text-white">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-brand-primary)] text-white">
               <Stethoscope className="size-4" aria-hidden />
             </span>
             <span className="text-lg font-bold tracking-tight">Global Health</span>
-            <span className="hidden text-sm font-medium text-[#5A6B64] sm:inline">
+            <span className="hidden text-sm font-medium text-[var(--color-text-muted)] sm:inline">
               · Admin
             </span>
           </Link>
 
           <div className="flex items-center gap-4">
             <div className="hidden text-right sm:block">
-              <p className="text-sm font-semibold text-[#0F2E25]">
+              <p className="text-sm font-semibold text-[var(--color-text-primary)]">
                 {user.name ?? user.email}
               </p>
-              <p className="text-xs text-[#5A6B64]">
+              <p className="text-xs text-[var(--color-text-muted)]">
                 {user.role === "SUPER_ADMIN" ? "Super admin" : "Admin"}
               </p>
             </div>
             <form action={signOutAction}>
-              <button
-                type="submit"
-                className="inline-flex h-10 items-center justify-center rounded-full border border-[#D8E0D8] bg-white px-4 text-sm font-semibold text-[#0F2E25] transition hover:-translate-y-px hover:shadow-sm"
-              >
+              <button type="submit" className="gh-btn gh-btn-soft text-sm">
                 Log out
               </button>
             </form>
@@ -70,18 +67,14 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         <aside className="lg:self-start">
           <nav className="sticky top-6 grid gap-1.5">
             {sections.map((section) => (
-              <Link
-                key={section.href}
-                href={section.href}
-                className="rounded-md px-3 py-2 text-sm font-semibold text-[#2D3B36] transition hover:bg-white"
-              >
+              <Link key={section.href} href={section.href} className="gh-admin-nav-link">
                 {section.label}
               </Link>
             ))}
           </nav>
         </aside>
 
-        <main className="min-w-0">{children}</main>
+        <main className="gh-admin-main min-w-0">{children}</main>
       </div>
     </div>
   );

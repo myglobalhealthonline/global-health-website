@@ -1,0 +1,169 @@
+/* ──────────────────────────────────────────────────────────────
+   GLOBAL HEALTH — Design Tokens
+   Canonical source: NEW PLAN/Global Health Design System.
+   Two layers:
+     1. Raw brand tokens (exact swatches from the Manual da Marca)
+     2. Semantic aliases (use these in components)
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── 1. RAW BRAND TOKENS ─────────────────────────────────── */
+
+  /* Greens (Manual da Marca) */
+  --gh-forest:        #1D4B36;  /* primary — forest green */
+  --gh-olive:         #8FB021;  /* secondary — olive lime */
+  --gh-lime:          #B0F122;  /* accent — bright lime */
+  --gh-white:         #FFFFFF;
+  --gh-gray:          #6D6D6D;
+
+  /* Production refinements (proven legible in product) */
+  --gh-forest-deep:   #1B4D3E;  /* production primary */
+  --gh-forest-darker: #143B30;  /* hover / press */
+  --gh-forest-night:  #0F2E25;  /* darkest text + surface */
+  --gh-mint-soft:     #C8E6A0;  /* UI-safe accent for icon tiles */
+  --gh-cream:         #F4F8F4;  /* soft section background */
+  --gh-panel:         #EDF2ED;  /* tonal surface */
+
+  /* Neutrals */
+  --gh-ink:           #0F2E25;
+  --gh-body:          #2D3B36;
+  --gh-muted:         #5A6B64;
+  --gh-placeholder:   #8A9A92;
+  --gh-border:        #D8E0D8;
+  --gh-border-strong: #B8C8B8;
+
+  /* Status */
+  --gh-status-error:         #B91C1C;
+  --gh-status-error-bg:      #FEF2F2;
+  --gh-status-error-text:    #991B1B;
+  --gh-status-error-border:  #FECACA;
+  --gh-status-success-bg:    #F0FDF4;
+  --gh-status-success-text:  #15803D;
+  --gh-status-success-border:#BBF7D0;
+  --gh-status-warning-bg:    #FFFBEB;
+  --gh-status-warning-text:  #92400E;
+  --gh-status-warning-border:#FDE68A;
+  --gh-status-info-bg:       #F0F9FF;
+  --gh-status-info-text:     #075985;
+  --gh-status-info-border:   #BAE6FD;
+
+  /* ── 2. SEMANTIC ALIASES (use these in product code) ─────── */
+
+  /* Brand */
+  --color-brand-primary:        var(--gh-forest-deep);
+  --color-brand-primary-hover:  var(--gh-forest-darker);
+  --color-brand-primary-dark:   var(--gh-forest-night);
+  --color-brand-secondary:      var(--gh-white);
+  --color-brand-accent:         var(--gh-mint-soft);   /* UI-safe (icon tiles on light) */
+  --color-brand-accent-vivid:   var(--gh-lime);        /* marketing accent on dark */
+  --color-brand-olive:          var(--gh-olive);
+
+  /* Surfaces */
+  --color-background-page:   var(--gh-white);
+  --color-background-soft:   var(--gh-cream);
+  --color-background-panel:  var(--gh-panel);
+  --color-background-dark:   var(--gh-forest-night);
+  --color-hero-overlay:      rgba(15, 46, 37, 0.72);
+
+  /* Foreground */
+  --color-text-primary:     var(--gh-ink);
+  --color-text-body:        var(--gh-body);
+  --color-text-muted:       var(--gh-muted);
+  --color-text-placeholder: var(--gh-placeholder);
+  --color-text-on-dark:     var(--gh-white);
+
+  /* Borders */
+  --color-border:        var(--gh-border);
+  --color-border-strong: var(--gh-border-strong);
+
+  /* Status — semantic */
+  --color-status-error:         var(--gh-status-error);
+  --color-status-error-bg:      var(--gh-status-error-bg);
+  --color-status-error-text:    var(--gh-status-error-text);
+  --color-status-error-border:  var(--gh-status-error-border);
+  --color-status-success-bg:    var(--gh-status-success-bg);
+  --color-status-success-text:  var(--gh-status-success-text);
+  --color-status-success-border:var(--gh-status-success-border);
+  --color-status-warning-bg:    var(--gh-status-warning-bg);
+  --color-status-warning-text:  var(--gh-status-warning-text);
+  --color-status-warning-border:var(--gh-status-warning-border);
+  --color-status-info-bg:       var(--gh-status-info-bg);
+  --color-status-info-text:     var(--gh-status-info-text);
+  --color-status-info-border:   var(--gh-status-info-border);
+
+  /* Radii */
+  --radius-button:  999px;   /* fully pill */
+  --radius-card:    20px;
+  --radius-card-sm: 12px;
+  --radius-tile:    16px;
+  --radius-chip:    999px;
+
+  /* Shadows — forest-tinted, never neutral black */
+  --shadow-soft:        0 1px 3px rgba(15, 46, 37, 0.06);
+  --shadow-card:        0 1px 3px rgba(15, 46, 37, 0.08),
+                        0 4px 12px rgba(15, 46, 37, 0.04);
+  --shadow-card-hover:  0 4px 12px rgba(15, 46, 37, 0.12),
+                        0 8px 24px rgba(15, 46, 37, 0.08);
+  --shadow-elevated:    0 8px 30px rgba(15, 46, 37, 0.14),
+                        0 2px 8px rgba(15, 46, 37, 0.08);
+  --shadow-focus:       0 0 0 3px rgba(27, 77, 62, 0.15);
+  --shadow-focus-error: 0 0 0 3px rgba(185, 28, 28, 0.15);
+
+  /* Medical pattern (the brand's signature texture) */
+  --medical-pattern-size:         28px;
+  --medical-pattern-color:        var(--color-brand-primary);
+  --medical-pattern-opacity:      0.022;
+  --medical-pattern-dark-opacity: 0.04;
+  --medical-pattern-soft-opacity: 0.016;
+
+  /* Fluid type scale */
+  --text-display: clamp(2.5rem, 5vw + 1rem, 4rem);
+  --text-h1:      clamp(2rem, 4vw + 0.5rem, 3.25rem);
+  --text-h2:      clamp(1.6rem, 3vw + 0.4rem, 2.5rem);
+  --text-h3:      clamp(1.25rem, 2vw + 0.3rem, 1.75rem);
+  --text-body-lg: clamp(1.05rem, 1.2vw + 0.6rem, 1.25rem);
+  --text-body:    clamp(0.95rem, 0.5vw + 0.7rem, 1.05rem);
+  --text-sm:      0.92rem;
+  --text-xs:      0.78rem;
+  --text-eyebrow: 11px;
+
+  /* Weights */
+  --w-regular: 400;
+  --w-medium:  500;
+  --w-semi:    600;
+  --w-bold:    700;
+  --w-black:   800;
+
+  /* Spacing scale (4-pt) */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  20px;
+  --s-6:  24px;
+  --s-8:  32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+  --s-28: 112px;
+
+  /* Layout */
+  --container-width:      1280px;
+  --section-padding-y:    112px;
+  --section-padding-y-sm: 64px;
+  --header-height:        88px;
+
+  /* Font families. Next.js next/font assigns CSS variables in app/layout.tsx;
+     here we provide a sensible default stack for any pre-hydration paint. */
+  --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", "Inter",
+                  ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+                  "Helvetica Neue", sans-serif;
+  --font-body:    var(--font-plus-jakarta), "Plus Jakarta Sans", "Inter",
+                  ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+                  "Helvetica Neue", sans-serif;
+  --font-serif:   var(--font-cormorant), "Cormorant Garamond", Georgia,
+                  "Times New Roman", serif;
+  --font-mono:    var(--font-geist-mono), ui-monospace, SFMono-Regular,
+                  Menlo, Consolas, monospace;
+}

@@ -1,5 +1,5 @@
 import type { Prisma } from "@prisma/client";
-import { prisma } from "../../src/index.js";
+import { prisma } from "backend";
 
 type AuditInput = {
   userId: string;
