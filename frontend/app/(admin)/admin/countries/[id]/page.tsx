@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
-import { prisma } from "backend";
 import { requireAdminUser } from "@/lib/admin/require-admin";
+import { getAdminCountry } from "@/lib/api/admin-countries";
 import { CountryForm } from "../_components/country-form";
 import { updateCountryAction } from "../actions";
 import { LivePreview } from "../../_components/live-preview";
@@ -15,8 +15,16 @@ export default async function EditCountryPage({ params }: PageProps) {
   await requireAdminUser();
   const { id } = await params;
 
-  const country = await prisma.country.findUnique({ where: { id } });
-  if (!country) notFound();
+  const result = await getAdminCountry(id);
+  if (!result.ok) {
+    if (result.error.code === "NOT_FOUND") notFound();
+    return (
+      <p className="gh-status-error rounded-md px-4 py-3 text-sm">
+        Could not load country: {result.error.message}
+      </p>
+    );
+  }
+  const country = result.data;
 
   return (
     <div className="space-y-6">

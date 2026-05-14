@@ -151,29 +151,56 @@ Acceptance:
 
 ### Phase 3 - Move admin reads/writes to backend API
 
-Status: Not started for CRUD routes. Auth slice completed first.
+Status: Countries vertical complete (anchor pattern). Replicate to categories, services, doctors, users, appointments, audit.
 
 - Replace admin `prisma.*` calls in frontend pages/actions with backend fetch calls.
 - Add backend routes for countries, categories, services, doctors, users, appointments, and audit.
 - Preserve existing Zod validation and appointment transition rules.
+- Wrap each admin Server Action as a thin HTTP-fetch call to backend; keep `<form action={...}>` UX intact (no client-side rewrite).
+- Cache invalidation across the boundary: every mutation response includes `revalidate: string[]`; the frontend wrapper calls `revalidatePath` on each entry after a successful response.
+
+#### Mobile-app constraints (locked in to backend design now)
+
+Since a mobile client is in scope, the API contract has to satisfy two clients (web + React Native) from day one:
+
+- All new endpoints under `/api/v1/*` — mobile pins to a server version
+- Resource-style routes: `POST /v1/admin/countries`, `PATCH /v1/admin/countries/:id`, `DELETE /v1/admin/countries/:id`
+- Auth: bearer token (`Authorization: Bearer …`) is the canonical path; cookies are a convenience for web. Same `verifyAdminSession()` validates both.
+- Add `POST /api/v1/auth/refresh` so mobile can do refresh-token rotation (web can stick to single 7-day cookie)
+- Public read endpoints unauthenticated and cacheable; admin endpoints under `/api/v1/admin/*`
+- Pagination: `?page=N&limit=N` (default 25, max 100)
+- Filtering: `?q=text&status=PUBLISHED&country=ie`
+- Error envelope (every error response):
+  ```json
+  { "ok": false, "error": { "code": "VALIDATION_FAILED", "message": "Human-readable", "fieldErrors": { "slug": ["..."] } } }
+  ```
+- Mutation envelope (every successful write):
+  ```json
+  { "ok": true, "data": { ... }, "revalidate": ["/admin/countries", "/admin/countries/abc"] }
+  ```
+- Document contract in `backend/openapi.yaml`; generate types for frontend and (future) mobile from one spec
 
 Acceptance:
 
 - Admin pages work with only `API_BASE_URL` set.
 - Frontend service does not need `DATABASE_URL`.
+- `backend/openapi.yaml` describes every endpoint.
+- Bearer-token auth path tested with `curl -H "Authorization: Bearer …"`.
+- Cache invalidation echo: edit a Country in admin → list page shows new content within 1s without manual reload.
 
 ### Phase 4 - Remove workspace runtime dependency
 
-Status: Not started.
+Status: `packages/shared` exists. Replicate per-entity removal as Phase 3 entities migrate.
 
-- Remove `backend: workspace:*` from `frontend/package.json`.
-- Keep shared types in a small `shared` package or generated API client.
-- Run repo-wide search for `from "backend"` and `from 'backend'`.
+- Remove `backend: workspace:*` from `frontend/package.json` once every entity in Phase 3 is HTTP-only.
+- Shared types live in `packages/shared` (Zod schemas, enums, error envelope types). No Prisma runtime there — just types/schemas both services can import.
+- Run repo-wide search for `from "backend"` and `from 'backend'`. Expected zero results in `frontend/` after migration.
 
 Acceptance:
 
 - No frontend runtime imports from backend.
 - Frontend can build from `frontend` root without backend source as a package dependency.
+- `packages/shared` is the only cross-service code dependency.
 
 ### Phase 5 - Scale safely
 

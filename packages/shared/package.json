@@ -1,0 +1,21 @@
+{
+  "name": "@gh/shared",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schemas/countries": "./src/schemas/countries.ts",
+    "./envelope": "./src/envelope.ts",
+    "./enums": "./src/enums.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  }
+}

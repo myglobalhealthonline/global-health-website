@@ -8,6 +8,14 @@ import {
 } from "../lib/auth/session.js";
 import { writeAudit } from "../lib/audit/log.js";
 import { createPresignedPut } from "../lib/storage/presign.js";
+import {
+  createCountry,
+  deactivateCountry,
+  getCountry,
+  listCountries,
+  updateCountry,
+} from "./routes/admin/countries.js";
+import { sendInternal } from "./http/envelope.js";
 
 const DEFAULT_PORT = 4000;
 const MAX_JSON_BYTES = 128 * 1024;
@@ -49,7 +57,7 @@ function applyCors(req: IncomingMessage, res: ServerResponse) {
     res.setHeader("Vary", "Origin");
     res.setHeader("Access-Control-Allow-Credentials", "true");
   }
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
 }
 
@@ -93,6 +101,54 @@ async function handleRequest(req: IncomingMessage, res: ServerResponse) {
   if (req.method === "GET" && url.pathname === "/health") {
     sendJson(res, 200, { ok: true, service: "global-health-backend" });
     return;
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // v1 API — versioned, mobile-ready. Resource-style routes, error envelope
+  // from packages/shared. See backend/docs/api-pattern.md for the template.
+  // ──────────────────────────────────────────────────────────────────────────
+
+  if (url.pathname.startsWith("/api/v1/admin/countries")) {
+    try {
+      const rest = url.pathname.slice("/api/v1/admin/countries".length);
+      if (rest === "" || rest === "/") {
+        if (req.method === "GET") {
+          await listCountries(req, res, url);
+          return;
+        }
+        if (req.method === "POST") {
+          await createCountry(req, res);
+          return;
+        }
+        res.writeHead(405);
+        res.end();
+        return;
+      }
+      const idMatch = rest.match(/^\/([^/]+)\/?$/);
+      if (idMatch) {
+        const id = idMatch[1];
+        if (req.method === "GET") {
+          await getCountry(req, res, id);
+          return;
+        }
+        if (req.method === "PATCH") {
+          await updateCountry(req, res, id);
+          return;
+        }
+        if (req.method === "DELETE") {
+          await deactivateCountry(req, res, id);
+          return;
+        }
+        res.writeHead(405);
+        res.end();
+        return;
+      }
+      // fallthrough → 404 below
+    } catch (err) {
+      console.error("[/api/v1/admin/countries] error", err);
+      sendInternal(res);
+      return;
+    }
   }
 
   if (req.method === "POST" && url.pathname === "/api/admin/auth/login") {
