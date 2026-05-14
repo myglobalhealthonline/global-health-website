@@ -10,6 +10,7 @@ type SearchParams = {
   entity?: string;
   actor?: string;
   country?: string;
+  q?: string;
   page?: string;
 };
 
@@ -26,6 +27,14 @@ export default async function AuditLogPage({
   if (params.entity) where.entity = params.entity;
   if (params.country) where.countryId = params.country;
   if (params.actor) where.userId = params.actor;
+  const q = params.q?.trim();
+  if (q) {
+    where.OR = [
+      { action: { contains: q, mode: "insensitive" } },
+      { entityId: { contains: q, mode: "insensitive" } },
+      { entity: { contains: q, mode: "insensitive" } },
+    ];
+  }
 
   const [items, total, countries, users] = await Promise.all([
     prisma.adminAuditLog.findMany({
@@ -57,7 +66,14 @@ export default async function AuditLogPage({
         </p>
       </header>
 
-      <form className="gh-card grid gap-3 p-4 sm:grid-cols-[1fr_1fr_1fr_auto]" method="get">
+      <form className="gh-card grid gap-3 p-4 sm:grid-cols-[1.4fr_1fr_1fr_1fr_auto]" method="get">
+        <input
+          name="q"
+          type="search"
+          defaultValue={params.q ?? ""}
+          placeholder="Search action, entity, entity id…"
+          className="gh-input h-10 text-sm"
+        />
         <select name="entity" defaultValue={params.entity ?? ""} className="gh-select h-10 text-sm">
           <option value="">All entities</option>
           {entities.map((e) => (

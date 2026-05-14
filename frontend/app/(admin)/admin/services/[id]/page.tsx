@@ -5,6 +5,7 @@ import { prisma } from "backend";
 import { requireAdminUser } from "@/lib/admin/require-admin";
 import { ServiceForm } from "../_components/service-form";
 import { deleteServiceAction, updateServiceAction } from "../actions";
+import { LivePreview } from "../../_components/live-preview";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,11 @@ export default async function EditServicePage({ params }: PageProps) {
           </button>
         </form>
       </header>
+
+      <LivePreview
+        href={`/${service.country.slug}/services/${service.slug}`}
+        label={`Service detail · ${service.country.code}`}
+      />
 
       <ServiceForm
         mode="edit"

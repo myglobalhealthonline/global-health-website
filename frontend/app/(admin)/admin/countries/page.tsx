@@ -3,13 +3,29 @@ import { ArrowRight, Plus } from "lucide-react";
 import { prisma } from "backend";
 import { requireAdminUser } from "@/lib/admin/require-admin";
 import { FlagBadge } from "../_components/flag-badge";
+import { SearchInput } from "../_components/search-input";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminCountriesPage() {
+export default async function AdminCountriesPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ q?: string }>;
+}) {
   await requireAdminUser();
+  const params = (searchParams ? await searchParams : {}) as { q?: string };
+  const q = params.q?.trim();
 
   const countries = await prisma.country.findMany({
+    where: q
+      ? {
+          OR: [
+            { name: { contains: q, mode: "insensitive" } },
+            { code: { contains: q, mode: "insensitive" } },
+            { slug: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : undefined,
     orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     include: {
       _count: { select: { services: true, doctorLinks: true, categoryLinks: true } },
@@ -30,6 +46,10 @@ export default async function AdminCountriesPage() {
           <Plus className="size-4" aria-hidden /> Add country
         </Link>
       </header>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <SearchInput placeholder="Search by name, code, slug…" />
+      </div>
 
       <section className="gh-card overflow-hidden p-0">
         <table>

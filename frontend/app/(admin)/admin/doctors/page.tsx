@@ -3,13 +3,32 @@ import { ArrowRight, Plus } from "lucide-react";
 import { prisma } from "backend";
 import { requireAdminUser } from "@/lib/admin/require-admin";
 import { FlagBadge } from "../_components/flag-badge";
+import { SearchInput } from "../_components/search-input";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminDoctorsPage() {
+type SearchParams = { q?: string };
+
+export default async function AdminDoctorsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<SearchParams>;
+}) {
   await requireAdminUser();
+  const params = (searchParams ? await searchParams : {}) as SearchParams;
+  const q = params.q?.trim();
 
   const doctors = await prisma.doctor.findMany({
+    where: q
+      ? {
+          OR: [
+            { name: { contains: q, mode: "insensitive" } },
+            { slug: { contains: q, mode: "insensitive" } },
+            { title: { contains: q, mode: "insensitive" } },
+            { registrationNumber: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : undefined,
     orderBy: [{ active: "desc" }, { name: "asc" }],
     include: {
       countryLinks: {
@@ -34,6 +53,15 @@ export default async function AdminDoctorsPage() {
         </Link>
       </header>
 
+      <div className="flex flex-wrap items-center gap-3">
+        <SearchInput placeholder="Search by name, slug, title, registration…" />
+        {q ? (
+          <span className="text-xs text-[var(--color-text-muted)]">
+            {doctors.length} result{doctors.length === 1 ? "" : "s"} for &ldquo;{q}&rdquo;
+          </span>
+        ) : null}
+      </div>
+
       <section className="gh-card overflow-hidden p-0">
         <table>
           <thead>
@@ -49,7 +77,7 @@ export default async function AdminDoctorsPage() {
             {doctors.length === 0 ? (
               <tr>
                 <td colSpan={5} className="py-12 text-center text-sm text-[var(--color-text-muted)]">
-                  No doctors yet. Add your first profile.
+                  {q ? `No doctors match “${q}”.` : "No doctors yet. Add your first profile."}
                 </td>
               </tr>
             ) : (

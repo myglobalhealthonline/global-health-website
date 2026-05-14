@@ -3,6 +3,7 @@ import { ArrowRight, Plus } from "lucide-react";
 import { prisma } from "backend";
 import { requireAdminUser } from "@/lib/admin/require-admin";
 import { FlagBadge } from "../_components/flag-badge";
+import { SearchInput } from "../_components/search-input";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,7 @@ const TYPE_LABEL: Record<string, string> = {
   HEALTH_TEST: "Health test",
 };
 
-type SearchParams = { type?: string; country?: string };
+type SearchParams = { type?: string; country?: string; q?: string };
 
 export default async function AdminServicesPage({
   searchParams,
@@ -26,12 +27,22 @@ export default async function AdminServicesPage({
     ? (params.type as "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST")
     : null;
   const countryFilter = params.country || null;
+  const q = params.q?.trim();
 
   const [services, countries] = await Promise.all([
     prisma.service.findMany({
       where: {
         ...(typeFilter ? { type: typeFilter } : {}),
         ...(countryFilter ? { country: { slug: countryFilter } } : {}),
+        ...(q
+          ? {
+              OR: [
+                { title: { contains: q, mode: "insensitive" } },
+                { slug: { contains: q, mode: "insensitive" } },
+                { summary: { contains: q, mode: "insensitive" } },
+              ],
+            }
+          : {}),
       },
       orderBy: [{ updatedAt: "desc" }],
       include: {
@@ -56,6 +67,10 @@ export default async function AdminServicesPage({
           <Plus className="size-4" aria-hidden /> Add service
         </Link>
       </header>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <SearchInput placeholder="Search by title, slug, summary…" />
+      </div>
 
       <div className="flex flex-wrap gap-3">
         <FilterChip href="/admin/services" current={typeFilter} label="All types" />

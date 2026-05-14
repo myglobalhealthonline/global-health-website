@@ -1,119 +1,275 @@
 import Link from "next/link";
 import {
+  ArrowRight,
   CalendarClock,
+  FileText,
   Globe2,
+  Layers,
+  Plus,
   Stethoscope,
   UserRound,
-  Tags,
-  ArrowRight,
-  ShieldCheck,
-  AlertCircle,
 } from "lucide-react";
+import { prisma } from "backend";
+import { requireAdminUser } from "@/lib/admin/require-admin";
+import { FlagBadge } from "./_components/flag-badge";
 
-const cards = [
-  {
-    href: "/admin/appointments",
-    title: "Appointments",
-    description: "Review booking requests and update statuses",
-    icon: CalendarClock,
-  },
-  {
-    href: "/admin/countries",
-    title: "Countries",
-    description: "Manage country sites, hero copy, currency, and contact",
-    icon: Globe2,
-  },
-  {
-    href: "/admin/categories",
-    title: "Categories",
-    description: "Global category pool with per-country enablement",
-    icon: Tags,
-  },
-  {
-    href: "/admin/doctors",
-    title: "Doctors",
-    description: "Public profiles assigned to one or more countries",
-    icon: UserRound,
-  },
-  {
-    href: "/admin/services",
-    title: "Services",
-    description: "Consultations, prescriptions, and health tests per country",
-    icon: Stethoscope,
-  },
-] as const;
+export const dynamic = "force-dynamic";
 
-export default function AdminHomePage() {
+function timeAgo(date: Date): string {
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 60) return `${seconds}s ago`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return date.toISOString().slice(0, 10);
+}
+
+function actionLabel(action: string): string {
+  return action
+    .replace(/\./g, " · ")
+    .replace(/^./, (c) => c.toUpperCase());
+}
+
+export default async function AdminDashboardPage() {
+  const user = await requireAdminUser();
+
+  const [
+    activeCountries,
+    activeDoctors,
+    publishedServices,
+    draftServices,
+    pendingAppointments,
+    recentActivity,
+    countries,
+  ] = await Promise.all([
+    prisma.country.count({ where: { active: true, status: "PUBLISHED" } }),
+    prisma.doctor.count({ where: { active: true } }),
+    prisma.service.count({ where: { status: "PUBLISHED", active: true } }),
+    prisma.service.count({ where: { status: "DRAFT" } }),
+    prisma.appointment.count({ where: { status: "PENDING" } }),
+    prisma.adminAuditLog.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 8,
+      include: { user: { select: { email: true, name: true } } },
+    }),
+    prisma.country.findMany({ select: { id: true, slug: true, code: true, name: true } }),
+  ]);
+
+  const countryById = new Map(countries.map((c) => [c.id, c]));
+
+  const stats = [
+    {
+      label: "Active countries",
+      value: activeCountries,
+      hint: `${countries.length} total`,
+      icon: Globe2,
+      tone: "brand" as const,
+      href: "/admin/countries",
+    },
+    {
+      label: "Doctors live",
+      value: activeDoctors,
+      hint: "Public profiles",
+      icon: Stethoscope,
+      tone: "neutral" as const,
+      href: "/admin/doctors",
+    },
+    {
+      label: "Services published",
+      value: publishedServices,
+      hint: `${draftServices} drafts`,
+      icon: Layers,
+      tone: "neutral" as const,
+      href: "/admin/services",
+    },
+    {
+      label: "Bookings pending",
+      value: pendingAppointments,
+      hint: "Avg 24h reply",
+      icon: CalendarClock,
+      tone: "accent" as const,
+      href: "/admin/appointments",
+    },
+  ];
+
+  const quickActions = [
+    { href: "/admin/countries/new", label: "Add country", icon: Globe2 },
+    { href: "/admin/doctors/new", label: "Add doctor", icon: UserRound },
+    { href: "/admin/services/new", label: "Add service", icon: Stethoscope },
+    { href: "/admin/categories/new", label: "Add category", icon: Layers },
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Dashboard hero */}
-      <section className="rounded-[var(--radius-card)] bg-[var(--color-brand-primary)] p-7 text-white sm:p-10">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="gh-heading-eyebrow text-white/80">Admin workspace</p>
-            <h1 className="mt-3 text-[var(--text-h1)] font-extrabold leading-[1.08] tracking-tight">
-              Manage your clinic platform
-            </h1>
-            <p className="mt-3 max-w-xl text-base leading-relaxed text-white/85">
-              Update website content, review booking requests, and manage public-facing information across all country clinics.
+    <div className="space-y-8">
+      <header>
+        <p className="gh-eyebrow">Welcome back</p>
+        <h1 className="gh-h2 mt-2">{user.name ?? user.email.split("@")[0]}</h1>
+        <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+          Manage every country, doctor, and service from one place.
+        </p>
+      </header>
+
+      {/* Stat cards */}
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {stats.map((s) => {
+          const Icon = s.icon;
+          return (
+            <Link
+              key={s.label}
+              href={s.href}
+              className="gh-card group flex flex-col gap-3 p-5 transition hover:-translate-y-px hover:shadow-[var(--shadow-card-hover)]"
+            >
+              <div className="flex items-start justify-between">
+                <span
+                  className="inline-flex size-11 items-center justify-center rounded-2xl text-[var(--color-brand-primary)]"
+                  style={{
+                    background:
+                      s.tone === "brand"
+                        ? "var(--color-brand-primary)"
+                        : s.tone === "accent"
+                          ? "var(--color-brand-accent)"
+                          : "var(--color-background-soft)",
+                    color: s.tone === "brand" ? "white" : "var(--color-brand-primary)",
+                  }}
+                >
+                  <Icon className="size-5" aria-hidden />
+                </span>
+                <ArrowRight
+                  className="size-4 text-[var(--color-text-muted)] transition group-hover:translate-x-0.5 group-hover:text-[var(--color-brand-primary)]"
+                  aria-hidden
+                />
+              </div>
+              <div>
+                <p className="text-3xl font-extrabold leading-none tracking-tight text-[var(--color-text-primary)]">
+                  {s.value}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-[var(--color-text-primary)]">
+                  {s.label}
+                </p>
+                <p className="text-xs text-[var(--color-text-muted)]">{s.hint}</p>
+              </div>
+            </Link>
+          );
+        })}
+      </section>
+
+      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+        {/* Recent activity */}
+        <section className="gh-card p-6">
+          <header className="mb-4 flex items-center justify-between">
+            <div>
+              <p className="gh-eyebrow">Activity</p>
+              <h2 className="gh-h3 mt-1">Recent admin actions</h2>
+            </div>
+            {user.role === "SUPER_ADMIN" ? (
+              <Link
+                href="/admin/audit"
+                className="inline-flex items-center gap-1 text-xs font-bold text-[var(--color-brand-primary)] hover:underline"
+              >
+                Full audit log <ArrowRight className="size-3" aria-hidden />
+              </Link>
+            ) : null}
+          </header>
+          {recentActivity.length === 0 ? (
+            <div className="flex flex-col items-center gap-2 py-12 text-center">
+              <FileText className="size-8 text-[var(--color-text-muted)]" aria-hidden />
+              <p className="text-sm text-[var(--color-text-muted)]">
+                No admin activity yet. Edits will show up here.
+              </p>
+            </div>
+          ) : (
+            <ul className="grid gap-3">
+              {recentActivity.map((row) => {
+                const country = row.countryId ? countryById.get(row.countryId) : null;
+                const actor = row.user?.name ?? row.user?.email ?? "Unknown";
+                const initials = (row.user?.name ?? row.user?.email ?? "?")
+                  .split(/\s+|@/)
+                  .filter(Boolean)
+                  .slice(0, 2)
+                  .map((p) => p[0]?.toUpperCase() ?? "")
+                  .join("");
+                return (
+                  <li
+                    key={row.id}
+                    className="flex items-start gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-3"
+                  >
+                    <span
+                      className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-white"
+                      style={{ background: "var(--color-brand-primary)" }}
+                    >
+                      {initials}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm text-[var(--color-text-primary)]">
+                        <span className="font-semibold">{actor}</span>{" "}
+                        <span className="text-[var(--color-text-muted)]">
+                          {actionLabel(row.action)}
+                        </span>
+                      </p>
+                      <p className="mt-0.5 truncate text-xs text-[var(--color-text-muted)]">
+                        {row.entity}
+                        {row.entityId ? ` · ${row.entityId.slice(0, 8)}…` : null}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 flex-col items-end gap-1 text-right">
+                      {country ? (
+                        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
+                          <FlagBadge code={country.slug} size={12} />
+                          {country.code}
+                        </span>
+                      ) : null}
+                      <span className="text-[10px] text-[var(--color-text-muted)]">
+                        {timeAgo(row.createdAt)}
+                      </span>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+
+        {/* Quick actions */}
+        <aside className="gh-card flex flex-col gap-4 p-6">
+          <header>
+            <p className="gh-eyebrow">Shortcuts</p>
+            <h2 className="gh-h3 mt-1">Quick actions</h2>
+          </header>
+          <div className="grid gap-2">
+            {quickActions.map((q) => {
+              const Icon = q.icon;
+              return (
+                <Link
+                  key={q.href}
+                  href={q.href}
+                  className="group flex items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2.5 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)]"
+                >
+                  <span className="flex items-center gap-2">
+                    <Icon className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+                    {q.label}
+                  </span>
+                  <Plus
+                    className="size-3.5 text-[var(--color-text-muted)] transition group-hover:text-[var(--color-brand-primary)]"
+                    aria-hidden
+                  />
+                </Link>
+              );
+            })}
+          </div>
+          <div
+            className="mt-2 rounded-[var(--radius-card-sm)] p-4 text-xs leading-relaxed text-[var(--color-text-muted)]"
+            style={{ background: "var(--color-background-soft)" }}
+          >
+            <p className="font-semibold text-[var(--color-text-primary)]">Scope reminder</p>
+            <p className="mt-1">
+              Doctors are public profiles only. Payments are not enabled yet. Patient portal is v2.
             </p>
           </div>
-          <div className="flex shrink-0 items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium">
-            <ShieldCheck className="size-4" aria-hidden />
-            Admin session
-          </div>
-        </div>
-
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3">
-            <AlertCircle className="size-5 shrink-0 text-white/80" aria-hidden />
-            <p className="text-sm text-white/85">Doctors are public profiles only. Doctor portal is separate.</p>
-          </div>
-          <div className="flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3">
-            <AlertCircle className="size-5 shrink-0 text-white/80" aria-hidden />
-            <p className="text-sm text-white/85">Payments are not enabled yet.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Dashboard cards */}
-      <section>
-        <h2 className="gh-h3 mb-4 text-[var(--color-text-primary)]">Workspace sections</h2>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {cards.map((card) => {
-            const Icon = card.icon;
-            return (
-              <Link
-                key={card.href}
-                href={card.href}
-                className="gh-card gh-card-interactive group flex flex-col p-6"
-              >
-                <div className="mb-4 inline-flex">
-                  <span className="gh-icon-circle gh-icon-circle-lg">
-                    <Icon className="size-6" aria-hidden />
-                  </span>
-                </div>
-                <h3 className="text-base font-bold text-[var(--color-text-primary)]">{card.title}</h3>
-                <p className="mt-1 flex-1 text-sm leading-relaxed text-[var(--color-text-muted)]">
-                  {card.description}
-                </p>
-                <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-[var(--color-brand-primary)]">
-                  Open section
-                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Scope note */}
-      <section className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-panel)] px-5 py-4">
-        <p className="text-sm text-[var(--color-text-muted)]">
-          <strong className="text-[var(--color-text-primary)]">Admin scope:</strong> website content + booking operations.
-          Payments and doctor portal are intentionally excluded from this interface.
-        </p>
-      </section>
+        </aside>
+      </div>
     </div>
   );
 }

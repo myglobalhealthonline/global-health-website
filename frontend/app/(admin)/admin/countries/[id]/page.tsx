@@ -5,6 +5,7 @@ import { prisma } from "backend";
 import { requireAdminUser } from "@/lib/admin/require-admin";
 import { CountryForm } from "../_components/country-form";
 import { updateCountryAction } from "../actions";
+import { LivePreview } from "../../_components/live-preview";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,8 @@ export default async function EditCountryPage({ params }: PageProps) {
           {country.status === "PUBLISHED" ? "Published" : "Draft"}
         </span>
       </header>
+
+      <LivePreview href={`/${country.slug}`} label="Country home page" />
 
       <CountryForm
         mode="edit"

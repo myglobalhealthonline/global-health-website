@@ -2,16 +2,9 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { prisma } from "backend";
-import {
-  AUTH_COOKIE_NAME,
-  cookieOptions,
-  signAdminSession,
-  verifyAdminSession,
-} from "backend/auth/session";
-import { writeAudit } from "backend/audit/log";
+import { ADMIN_AUTH_COOKIE_NAME, adminAuthCookieOptions } from "@/lib/auth/admin-session-cookie";
+import { loginAdminWithBackend, notifyAdminLogout } from "@/lib/server/admin-auth-api";
 
 const loginSchema = z.object({
   email: z.string().trim().email().max(200),
@@ -32,62 +25,26 @@ export async function signInAction(formData: FormData): Promise<LoginActionResul
   }
 
   const email = parsed.data.email.toLowerCase();
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: {
-      id: true,
-      email: true,
-      passwordHash: true,
-      role: true,
-      active: true,
-    },
+  const result = await loginAdminWithBackend({
+    email,
+    password: parsed.data.password,
   });
-  if (!user || !user.active) {
-    return { ok: false, message: "Invalid email or password" };
-  }
-  if (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
-    return { ok: false, message: "Account is not authorised for the admin area" };
+  if (!result.ok) {
+    return { ok: false, message: result.message };
   }
 
-  const ok = await bcrypt.compare(parsed.data.password, user.passwordHash);
-  if (!ok) {
-    return { ok: false, message: "Invalid email or password" };
-  }
-
-  const token = await signAdminSession({
-    sub: user.id,
-    email: user.email,
-    role: user.role,
-  });
   const jar = await cookies();
-  jar.set(AUTH_COOKIE_NAME, token, cookieOptions());
-
-  await writeAudit({
-    userId: user.id,
-    action: "auth.login",
-    entity: "User",
-    entityId: user.id,
-    metadata: { email: user.email, role: user.role },
-  });
+  jar.set(ADMIN_AUTH_COOKIE_NAME, result.token, adminAuthCookieOptions());
 
   redirect(parsed.data.next);
 }
 
 export async function signOutAction(): Promise<void> {
   const jar = await cookies();
-  const token = jar.get(AUTH_COOKIE_NAME)?.value;
+  const token = jar.get(ADMIN_AUTH_COOKIE_NAME)?.value;
   if (token) {
-    const payload = await verifyAdminSession(token);
-    if (payload) {
-      await writeAudit({
-        userId: payload.sub,
-        action: "auth.logout",
-        entity: "User",
-        entityId: payload.sub,
-        metadata: { email: payload.email },
-      });
-    }
+    await notifyAdminLogout(token);
   }
-  jar.delete(AUTH_COOKIE_NAME);
+  jar.delete(ADMIN_AUTH_COOKIE_NAME);
   redirect("/admin/login");
 }

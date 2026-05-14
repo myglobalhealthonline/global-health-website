@@ -111,11 +111,22 @@ Frontend uploads through backend presign endpoint only.
 
 ### Phase 1 - Make backend deployable
 
+Status: In progress.
+
 - Add a backend HTTP server entrypoint.
 - Add `/health`.
 - Add CORS for the frontend Railway domain and local dev.
 - Add build/start scripts for backend.
 - Ensure Prisma migrations deploy from backend service only.
+
+Completed in repo:
+
+- `backend/src/server.ts` added with `GET /health`.
+- backend `build`, `start`, and `dev` scripts added.
+- backend Railway Docker deployment files added.
+- frontend upload presign route now calls backend HTTP instead of importing bucket logic directly.
+- backend admin auth endpoints added for login, session lookup, and logout.
+- frontend admin session helper now verifies session through backend HTTP instead of direct Prisma/JWT imports.
 
 Acceptance:
 
@@ -124,6 +135,8 @@ Acceptance:
 - Railway backend deploy starts without Next.js.
 
 ### Phase 2 - Move upload/media to backend API
+
+Status: Partially complete.
 
 - Move `POST /api/admin/upload/presign` behavior into backend.
 - Keep frontend route temporarily as a proxy only if needed.
@@ -138,6 +151,8 @@ Acceptance:
 
 ### Phase 3 - Move admin reads/writes to backend API
 
+Status: Not started for CRUD routes. Auth slice completed first.
+
 - Replace admin `prisma.*` calls in frontend pages/actions with backend fetch calls.
 - Add backend routes for countries, categories, services, doctors, users, appointments, and audit.
 - Preserve existing Zod validation and appointment transition rules.
@@ -149,6 +164,8 @@ Acceptance:
 
 ### Phase 4 - Remove workspace runtime dependency
 
+Status: Not started.
+
 - Remove `backend: workspace:*` from `frontend/package.json`.
 - Keep shared types in a small `shared` package or generated API client.
 - Run repo-wide search for `from "backend"` and `from 'backend'`.
@@ -159,6 +176,8 @@ Acceptance:
 - Frontend can build from `frontend` root without backend source as a package dependency.
 
 ### Phase 5 - Scale safely
+
+Status: Not started.
 
 - Add DB pooling if connection count becomes a limit.
 - Add background worker service for email, notifications, and future integrations.
@@ -188,3 +207,12 @@ Acceptance:
 5. Set frontend `NEXT_PUBLIC_API_URL` and `API_BASE_URL` to backend service URL.
 6. Set backend `FRONTEND_ORIGIN` to frontend service URL.
 7. Deploy backend first, then frontend.
+
+## Next Code Steps
+
+1. Move admin CRUD write actions from frontend server actions into backend routes.
+2. Move admin read pages from direct Prisma reads to backend fetch clients.
+3. Move shared transition/type logic used by frontend into either:
+   - backend HTTP responses, or
+   - a neutral shared package with no Prisma client/runtime side effects.
+4. Remove `backend: workspace:*` from `frontend/package.json` once frontend no longer imports runtime backend code.

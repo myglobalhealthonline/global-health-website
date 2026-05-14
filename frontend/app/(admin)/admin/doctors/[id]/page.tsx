@@ -5,6 +5,7 @@ import { prisma } from "backend";
 import { requireAdminUser } from "@/lib/admin/require-admin";
 import { DoctorForm } from "../_components/doctor-form";
 import { deleteDoctorAction, updateDoctorAction } from "../actions";
+import { LivePreview } from "../../_components/live-preview";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ export default async function EditDoctorPage({ params }: PageProps) {
   const [doctor, countries] = await Promise.all([
     prisma.doctor.findUnique({
       where: { id },
-      include: { countryLinks: true },
+      include: { countryLinks: { include: { country: { select: { slug: true } } } } },
     }),
     prisma.country.findMany({
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
@@ -46,6 +47,16 @@ export default async function EditDoctorPage({ params }: PageProps) {
           </button>
         </form>
       </header>
+
+      {(() => {
+        const primary = doctor.countryLinks.find((l) => l.active) ?? doctor.countryLinks[0];
+        return primary ? (
+          <LivePreview
+            href={`/${primary.country.slug}/doctors/${doctor.slug}`}
+            label="Doctor profile"
+          />
+        ) : null;
+      })()}
 
       <DoctorForm
         countries={countries}

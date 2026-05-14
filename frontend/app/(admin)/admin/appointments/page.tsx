@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { prisma } from "backend";
 import { requireAdminUser } from "@/lib/admin/require-admin";
 import { FlagBadge } from "../_components/flag-badge";
+import { SearchInput } from "../_components/search-input";
 
 export const dynamic = "force-dynamic";
 
@@ -13,10 +14,33 @@ const STATUS_BADGE: Record<string, string> = {
   CANCELLED: "gh-badge-error",
 };
 
-export default async function AppointmentsPage() {
+export default async function AppointmentsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ q?: string; status?: string }>;
+}) {
   await requireAdminUser();
+  const params = (searchParams ? await searchParams : {}) as { q?: string; status?: string };
+  const q = params.q?.trim();
+  const statusFilter =
+    params.status && ["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"].includes(params.status)
+      ? (params.status as "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED")
+      : null;
 
   const appointments = await prisma.appointment.findMany({
+    where: {
+      ...(statusFilter ? { status: statusFilter } : {}),
+      ...(q
+        ? {
+            OR: [
+              { patientName: { contains: q, mode: "insensitive" } },
+              { patientEmail: { contains: q, mode: "insensitive" } },
+              { patientPhone: { contains: q, mode: "insensitive" } },
+              { notes: { contains: q, mode: "insensitive" } },
+            ],
+          }
+        : {}),
+    },
     orderBy: { createdAt: "desc" },
     include: {
       country: { select: { code: true, slug: true } },
@@ -34,6 +58,32 @@ export default async function AppointmentsPage() {
           Review submitted requests and move them through the status pipeline.
         </p>
       </header>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <SearchInput placeholder="Search by patient name, email, phone, notes…" />
+        <div className="flex flex-wrap gap-2">
+          {(["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"] as const).map((s) => {
+            const href = `/admin/appointments${
+              s === statusFilter ? "" : `?status=${s}${q ? `&q=${encodeURIComponent(q)}` : ""}`
+            }`;
+            const active = s === statusFilter;
+            return (
+              <Link
+                key={s}
+                href={active && !q ? "/admin/appointments" : href}
+                className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                  active
+                    ? "bg-[var(--color-brand-primary)] text-white"
+                    : "bg-[var(--color-background-soft)] text-[var(--color-text-primary)] hover:bg-[var(--color-background-panel)]"
+                }`}
+              >
+                {s.charAt(0) + s.slice(1).toLowerCase()}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
 
       <section className="gh-card overflow-hidden p-0">
         <table>

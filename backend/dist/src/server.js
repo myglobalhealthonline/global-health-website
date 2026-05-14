@@ -1,5 +1,9 @@
 import { createServer } from "node:http";
+import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { prisma } from "./index.js";
+import { signAdminSession, verifyAdminSession, } from "../lib/auth/session.js";
+import { writeAudit } from "../lib/audit/log.js";
 import { createPresignedPut } from "../lib/storage/presign.js";
 const DEFAULT_PORT = 4000;
 const MAX_JSON_BYTES = 128 * 1024;
@@ -15,6 +19,10 @@ const presignSchema = z.object({
     filename: z.string().min(1).max(200),
     contentType: z.enum(allowedContentTypes),
     size: z.number().int().positive().max(5 * 1024 * 1024),
+});
+const loginSchema = z.object({
+    email: z.string().trim().email().max(200),
+    password: z.string().min(1).max(200),
 });
 function allowedOrigins() {
     const configured = [
@@ -38,6 +46,12 @@ function applyCors(req, res) {
 function sendJson(res, status, body) {
     res.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
     res.end(JSON.stringify(body));
+}
+function readBearerToken(req) {
+    const value = req.headers.authorization;
+    if (!value?.startsWith("Bearer "))
+        return null;
+    return value.slice("Bearer ".length).trim() || null;
 }
 async function readJson(req) {
     const chunks = [];
@@ -64,6 +78,106 @@ async function handleRequest(req, res) {
     const url = new URL(req.url ?? "/", `http://${req.headers.host ?? "localhost"}`);
     if (req.method === "GET" && url.pathname === "/health") {
         sendJson(res, 200, { ok: true, service: "global-health-backend" });
+        return;
+    }
+    if (req.method === "POST" && url.pathname === "/api/admin/auth/login") {
+        try {
+            const body = await readJson(req);
+            const parsed = loginSchema.safeParse(body);
+            if (!parsed.success) {
+                sendJson(res, 400, { ok: false, message: "Invalid email or password" });
+                return;
+            }
+            const email = parsed.data.email.toLowerCase();
+            const user = await prisma.user.findUnique({
+                where: { email },
+                select: {
+                    id: true,
+                    email: true,
+                    name: true,
+                    passwordHash: true,
+                    role: true,
+                    active: true,
+                },
+            });
+            if (!user || !user.active) {
+                sendJson(res, 401, { ok: false, message: "Invalid email or password" });
+                return;
+            }
+            if (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN") {
+                sendJson(res, 403, { ok: false, message: "Account is not authorised for the admin area" });
+                return;
+            }
+            const ok = await bcrypt.compare(parsed.data.password, user.passwordHash);
+            if (!ok) {
+                sendJson(res, 401, { ok: false, message: "Invalid email or password" });
+                return;
+            }
+            const token = await signAdminSession({
+                sub: user.id,
+                email: user.email,
+                role: user.role,
+            });
+            await writeAudit({
+                userId: user.id,
+                action: "auth.login",
+                entity: "User",
+                entityId: user.id,
+                metadata: { email: user.email, role: user.role },
+            });
+            sendJson(res, 200, {
+                ok: true,
+                token,
+                user: { id: user.id, email: user.email, name: user.name, role: user.role },
+            });
+            return;
+        }
+        catch (err) {
+            const message = err instanceof Error ? err.message : "Login failed";
+            sendJson(res, 500, { ok: false, message });
+            return;
+        }
+    }
+    if (req.method === "GET" && url.pathname === "/api/admin/auth/session") {
+        const token = readBearerToken(req);
+        if (!token) {
+            sendJson(res, 401, { ok: false, message: "Not authenticated" });
+            return;
+        }
+        const payload = await verifyAdminSession(token);
+        if (!payload) {
+            sendJson(res, 401, { ok: false, message: "Not authenticated" });
+            return;
+        }
+        const user = await prisma.user.findUnique({
+            where: { id: payload.sub },
+            select: { id: true, email: true, name: true, role: true, active: true },
+        });
+        if (!user || !user.active || (user.role !== "ADMIN" && user.role !== "SUPER_ADMIN")) {
+            sendJson(res, 401, { ok: false, message: "Not authenticated" });
+            return;
+        }
+        sendJson(res, 200, {
+            ok: true,
+            user: { id: user.id, email: user.email, name: user.name, role: user.role },
+        });
+        return;
+    }
+    if (req.method === "POST" && url.pathname === "/api/admin/auth/logout") {
+        const token = readBearerToken(req);
+        if (token) {
+            const payload = await verifyAdminSession(token);
+            if (payload) {
+                await writeAudit({
+                    userId: payload.sub,
+                    action: "auth.logout",
+                    entity: "User",
+                    entityId: payload.sub,
+                    metadata: { email: payload.email },
+                });
+            }
+        }
+        sendJson(res, 200, { ok: true });
         return;
     }
     if (req.method === "POST" && url.pathname === "/api/admin/media/presign") {

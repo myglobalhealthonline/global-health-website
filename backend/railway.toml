@@ -1,0 +1,5 @@
+# Backend service. In Railway set Root Directory to `backend`.
+# This Dockerfile runs Prisma migrations before starting the HTTP API.
+
+[build]
+dockerfilePath = "Dockerfile"
