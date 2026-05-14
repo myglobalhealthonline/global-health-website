@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { toggleCategoryCountryAction } from "../actions";
 
 export function CountryEnableMatrix({
@@ -23,7 +24,13 @@ export function CountryEnableMatrix({
     form.set("countryId", countryId);
     form.set("enable", String(next));
     startTransition(async () => {
-      await toggleCategoryCountryAction(form);
+      try {
+        await toggleCategoryCountryAction(form);
+        toast.success(next ? "Category enabled" : "Category disabled");
+      } catch (err) {
+        setOptimistic(!next);
+        toast.error(err instanceof Error ? err.message : "Failed to update category");
+      }
     });
   }
 

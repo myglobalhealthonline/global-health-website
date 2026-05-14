@@ -9,10 +9,22 @@ export type AdminSessionPayload = {
   role: "ADMIN" | "SUPER_ADMIN";
 };
 
+const KNOWN_INSECURE_SECRETS = new Set([
+  "dev-only-change-me-min-32-chars-long-please-rotate",
+  "dev-only-change-this-auth-jwt-secret-min-32",
+  "change-me",
+]);
+
 function getSecret(): Uint8Array {
   const raw = process.env.JWT_SECRET;
   if (!raw || raw.length < 32) {
     throw new Error("JWT_SECRET must be set and at least 32 characters");
+  }
+  if (process.env.NODE_ENV === "production" && KNOWN_INSECURE_SECRETS.has(raw)) {
+    throw new Error(
+      "JWT_SECRET is set to a well-known dev placeholder. Refusing to start in production. " +
+        "Generate a real secret with `openssl rand -base64 48`.",
+    );
   }
   return new TextEncoder().encode(raw);
 }

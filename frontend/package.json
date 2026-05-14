@@ -12,10 +12,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "backend": "workspace:*",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-slot": "^1.2.4",
+    "backend": "workspace:*",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "flag-icons": "^7.5.0",
@@ -25,6 +25,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sanitize-html": "^2.17.3",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "zod": "^3.24.1"
   },

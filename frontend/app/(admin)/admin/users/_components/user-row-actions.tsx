@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   changeUserRoleAction,
   resetUserPasswordAction,
@@ -26,8 +27,13 @@ export function UserRowActions({
     form.set("id", userId);
     form.set("role", next);
     startTransition(async () => {
-      await changeUserRoleAction(form);
-      router.refresh();
+      try {
+        await changeUserRoleAction(form);
+        toast.success(`Role updated to ${next}`);
+        router.refresh();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Failed to change role");
+      }
     });
   }
 
@@ -36,8 +42,13 @@ export function UserRowActions({
     form.set("id", userId);
     form.set("active", String(!active));
     startTransition(async () => {
-      await toggleUserActiveAction(form);
-      router.refresh();
+      try {
+        await toggleUserActiveAction(form);
+        toast.success(active ? "User deactivated" : "User activated");
+        router.refresh();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Failed to update user");
+      }
     });
   }
 
@@ -45,9 +56,18 @@ export function UserRowActions({
     const form = new FormData();
     form.set("id", userId);
     startTransition(async () => {
-      const result = await resetUserPasswordAction(form);
-      if (result.ok) setRevealed(result.data.password);
-      router.refresh();
+      try {
+        const result = await resetUserPasswordAction(form);
+        if (result.ok) {
+          setRevealed(result.data.password);
+          toast.success("Password reset. Share it manually below.");
+        } else {
+          toast.error(result.message);
+        }
+        router.refresh();
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Failed to reset password");
+      }
     });
   }
 
