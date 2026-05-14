@@ -9,15 +9,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const seen = new Set<string>();
   const urls: MetadataRoute.Sitemap = [];
 
-  // New country-scoped homes (`/ireland`, `/portugal`, …) — priority 0.9.
+  // New country-scoped hierarchy: home + team + services + specialists.
+  // Country home is priority 0.9; second-level pages 0.8.
   for (const country of countries) {
-    const path = `/${COUNTRY_CODE_TO_SLUG[country.code]}`;
-    seen.add(path);
-    urls.push({
-      url: `${base}${path}`,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    });
+    const slug = `/${COUNTRY_CODE_TO_SLUG[country.code]}`;
+    const subroutes: Array<{ path: string; priority: number }> = [
+      { path: slug, priority: 0.9 },
+      { path: `${slug}/team`, priority: 0.8 },
+      { path: `${slug}/services`, priority: 0.8 },
+      { path: `${slug}/specialists`, priority: 0.8 },
+    ];
+    for (const sr of subroutes) {
+      if (seen.has(sr.path)) continue;
+      seen.add(sr.path);
+      urls.push({
+        url: `${base}${sr.path}`,
+        changeFrequency: "weekly",
+        priority: sr.priority,
+      });
+    }
   }
 
   const noindexStatic = new Set([
@@ -37,14 +47,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/cookies-policy",
     "/legal-notices",
     "/gdpr-compliance",
+    "/home",
     "/home-pt",
     "/home-sp",
     "/home-cz",
     "/home-rm",
+    "/ireland-team",
+    "/portugal-team",
+    "/spain-team",
+    "/czechia-team",
+    "/romania-team",
+    "/general-consultation-ie",
     "/general-consultation-pt",
     "/general-consultation-sp",
     "/general-consultation-cz",
     "/general-consultation-rm",
+    "/specialty-ie",
     "/specialty-pt",
     "/specialty-sp",
     "/specialty-cz",

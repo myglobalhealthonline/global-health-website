@@ -1,13 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Clock, ShieldCheck, Stethoscope } from "lucide-react";
+import Link from "next/link";
+import {
+  ArrowRight,
+  Check,
+  CalendarClock,
+  Languages,
+  ShieldCheck,
+  Stethoscope,
+} from "lucide-react";
 import { submitBookingRequest } from "@/lib/api/booking-api";
 import { hasPublicApiBaseUrl } from "@/lib/api/client";
-import { BookingCTA } from "@/components/sections/BookingCTA";
-import { HeroSection } from "@/components/sections/HeroSection";
-import { Container } from "@/components/layout/Container";
-import { Section } from "@/components/layout/Section";
 
 type BookingOption = { value: string; label: string };
 
@@ -42,23 +46,26 @@ type BookingFormTemplateProps = {
   } | null;
 };
 
-type FieldErrors = Partial<Record<"country" | "consultationType" | "fullName" | "email" | "consentAccepted", string>>;
+type FieldErrors = Partial<
+  Record<"country" | "consultationType" | "fullName" | "email" | "consentAccepted", string>
+>;
 
 export function BookingFormTemplate({ hero, form, signedInPatient }: BookingFormTemplateProps) {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [statusType, setStatusType] = useState<"success" | "error" | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
-
-  const countryId = "booking-country";
-  const consultationId = "booking-consultation-type";
-  const fullNameId = "booking-full-name";
-  const emailId = "booking-email";
-  const phoneId = "booking-phone";
-  const notesId = "booking-notes";
-  const consentId = "booking-consent";
-
   const [backendEnabled] = useState(() => hasPublicApiBaseUrl());
+
+  const ids = {
+    country: "booking-country",
+    consultation: "booking-consultation-type",
+    fullName: "booking-full-name",
+    email: "booking-email",
+    phone: "booking-phone",
+    notes: "booking-notes",
+    consent: "booking-consent",
+  };
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -77,33 +84,29 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
     };
 
     const nextErrors: FieldErrors = {};
-
     if (!payload.country) nextErrors.country = "Select your country.";
     if (!payload.consultationType) nextErrors.consultationType = "Select a consultation type.";
     if (payload.fullName.length < 2) nextErrors.fullName = "Enter the patient full name.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) nextErrors.email = "Enter a valid email address.";
-    if (!payload.consentAccepted) nextErrors.consentAccepted = "Consent is required before submitting.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email))
+      nextErrors.email = "Enter a valid email address.";
+    if (!payload.consentAccepted) nextErrors.consentAccepted = "Consent is required.";
 
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
       setStatusType("error");
-      setStatusMessage("Please review the highlighted fields before submitting.");
+      setStatusMessage("Please review the highlighted fields.");
       return;
     }
 
     if (!backendEnabled) {
       setStatusType("error");
-      setStatusMessage(
-        "Backend booking is not configured yet. Your request was not sent. The public form preview remains available while backend integration is completed.",
-      );
+      setStatusMessage("Booking service is not configured. Your request was not sent.");
       return;
     }
 
     setLoading(true);
-
     const result = await submitBookingRequest(payload);
-
     setLoading(false);
 
     if (!result.ok) {
@@ -113,7 +116,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
         result.message === "Appointments are temporarily unavailable";
       setStatusMessage(
         unavailable
-          ? "Booking service is temporarily unavailable. Please try again later or contact the clinic team directly."
+          ? "Booking is temporarily unavailable. Please try again later."
           : result.message,
       );
       return;
@@ -124,280 +127,343 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
     setStatusType("success");
     setStatusMessage(
       signedInPatient
-        ? "Request received. Our team will follow up. You can track this request in your account booking history."
-        : (result.message ?? "Request received. Our team will follow up."),
+        ? "Request received. Track it in your account booking history."
+        : (result.message ?? "Request received. Our team will follow up shortly."),
     );
   }
 
   return (
-    <>
-      <HeroSection
-        eyebrow="Book online"
-        title={hero.title}
-        description={hero.description}
-        primaryCta={{ href: "#booking-form", label: hero.primaryCtaLabel }}
-        trustBadges={["Secure intake", "Private consultation", "Clear next steps"]}
-        showMedia={false}
-      />
-      <Section id="booking-form" variant="soft" pattern="soft">
-        <Container>
-          <div className="mx-auto max-w-3xl">
-            <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-[var(--shadow-elevated)] sm:p-10">
-              <div className="flex items-center gap-3">
-                <span className="gh-icon-circle bg-[var(--color-brand-primary)] text-white">
-                  <Stethoscope className="size-5" aria-hidden />
-                </span>
-                <div>
-                  <h2 className="gh-h2 text-[var(--color-text-primary)]">{form.title}</h2>
-                  <p className="text-sm text-[var(--color-text-muted)]">{form.description}</p>
-                </div>
+    <main className="bg-white">
+      {/* HERO */}
+      <section className="relative isolate overflow-hidden bg-[var(--color-background-soft)]">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(900px 480px at 90% -10%, rgba(176, 241, 34, 0.18), transparent 60%), radial-gradient(800px 460px at -10% 110%, rgba(27, 77, 62, 0.08), transparent 60%)",
+          }}
+        />
+        <div className="mx-auto w-full max-w-[1240px] px-6 py-16 lg:px-10 lg:py-20">
+          <span className="gh-heading-eyebrow inline-flex items-center gap-2">
+            <Stethoscope className="h-3.5 w-3.5" />
+            Book online
+          </span>
+          <h1
+            className="mt-5 max-w-3xl text-[clamp(2rem,4.5vw,3.75rem)] leading-[1.05] tracking-[-0.02em] text-[var(--color-text-primary)]"
+            style={{ fontFamily: "var(--font-cormorant)" }}
+          >
+            {hero.title}
+          </h1>
+          {hero.description ? (
+            <p className="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-[var(--color-text-muted)]">
+              {hero.description}
+            </p>
+          ) : null}
+          <a href="#booking-form" className="gh-btn gh-btn-primary mt-8">
+            {hero.primaryCtaLabel}
+            <ArrowRight className="h-4 w-4" />
+          </a>
+        </div>
+      </section>
+
+      {/* FORM + SIDEBAR */}
+      <section id="booking-form" className="bg-white">
+        <div className="mx-auto grid w-full max-w-[1240px] gap-10 px-6 py-16 lg:grid-cols-[1.6fr_1fr] lg:px-10 lg:py-20">
+          {/* Form card */}
+          <div className="rounded-3xl border border-[var(--color-border)] bg-white p-7 shadow-[0_30px_70px_-30px_rgba(15,46,37,0.18)] md:p-10">
+            <span className="gh-heading-eyebrow">Patient details</span>
+            <h2
+              className="mt-3 text-[clamp(1.5rem,2.5vw,2rem)] leading-tight tracking-tight text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-cormorant)" }}
+            >
+              {form.title}
+            </h2>
+            <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--color-text-muted)]">
+              {form.description}
+            </p>
+
+            {signedInPatient ? (
+              <div className="mt-5 rounded-2xl border border-[var(--color-brand-primary)]/20 bg-[var(--color-background-soft)] px-4 py-3 text-[13px] text-[var(--color-text-muted)]">
+                Signed in as{" "}
+                <span className="font-semibold text-[var(--color-brand-primary)]">
+                  {signedInPatient.fullName}
+                </span>{" "}
+                — details pre-filled.
+              </div>
+            ) : null}
+
+            <form
+              onSubmit={handleSubmit}
+              className="mt-7 space-y-5"
+              action="#"
+              method="post"
+              noValidate
+            >
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field
+                  id={ids.country}
+                  label={form.fields.country.label}
+                  required
+                  error={errors.country}
+                >
+                  <select
+                    id={ids.country}
+                    name="country"
+                    defaultValue=""
+                    className="gh-select"
+                  >
+                    <option value="">{form.fields.country.placeholder}</option>
+                    {form.countryOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+
+                <Field
+                  id={ids.consultation}
+                  label={form.fields.consultationType.label}
+                  required
+                  error={errors.consultationType}
+                >
+                  <select
+                    id={ids.consultation}
+                    name="consultationType"
+                    defaultValue=""
+                    className="gh-select"
+                  >
+                    <option value="">{form.fields.consultationType.placeholder}</option>
+                    {form.consultationTypeOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
               </div>
 
-              {signedInPatient ? (
-                <div className="mt-5 rounded-[var(--radius-card-sm)] border border-[var(--color-brand-primary)]/20 bg-[var(--color-background-soft)] px-4 py-3">
-                  <p className="text-sm text-[var(--color-text-muted)]">
-                    Signed in as{" "}
-                    <span className="font-semibold text-[var(--color-brand-primary)]">{signedInPatient.fullName}</span>.
-                    Your details are pre-filled.
-                  </p>
-                </div>
+              <Field
+                id={ids.fullName}
+                label={form.fields.fullName.label}
+                required
+                error={errors.fullName}
+              >
+                <input
+                  id={ids.fullName}
+                  name="fullName"
+                  type="text"
+                  placeholder={form.fields.fullName.placeholder}
+                  defaultValue={signedInPatient?.fullName ?? ""}
+                  className="gh-input"
+                />
+              </Field>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field
+                  id={ids.email}
+                  label={form.fields.email.label}
+                  required
+                  error={errors.email}
+                >
+                  <input
+                    id={ids.email}
+                    name="email"
+                    type="email"
+                    placeholder={form.fields.email.placeholder}
+                    defaultValue={signedInPatient?.email ?? ""}
+                    className="gh-input"
+                  />
+                </Field>
+                <Field id={ids.phone} label={form.fields.phone.label}>
+                  <input
+                    id={ids.phone}
+                    name="phone"
+                    type="tel"
+                    placeholder={form.fields.phone.placeholder}
+                    defaultValue={signedInPatient?.phone ?? ""}
+                    className="gh-input"
+                  />
+                </Field>
+              </div>
+
+              <Field id={ids.notes} label={form.fields.notes.label}>
+                <textarea
+                  id={ids.notes}
+                  name="notes"
+                  rows={4}
+                  placeholder={form.fields.notes.placeholder}
+                  className="gh-textarea"
+                />
+              </Field>
+
+              <label
+                htmlFor={ids.consent}
+                className="flex items-start gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-[13.5px] leading-relaxed text-[var(--color-text-muted)]"
+              >
+                <input
+                  id={ids.consent}
+                  name="consentAccepted"
+                  type="checkbox"
+                  className="mt-0.5 size-4 accent-[var(--color-brand-primary)]"
+                />
+                <span>{form.fields.consent}</span>
+              </label>
+              {errors.consentAccepted ? (
+                <p className="-mt-3 text-[13px] text-[var(--color-status-error)]">
+                  {errors.consentAccepted}
+                </p>
               ) : null}
 
-              <div className="mt-5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3">
-                <p className="gh-body-sm text-[var(--color-text-muted)]">
-                  Fields marked <span className="font-semibold text-[var(--color-brand-primary)]">*</span> are required.{" "}
-                  {backendEnabled
-                    ? "Submitting sends a booking request only. This is not a confirmed medical appointment."
-                    : "Backend booking is not configured yet, so this form remains in frontend-safe preview mode."}
+              <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center">
+                <button
+                  type="submit"
+                  className="gh-btn gh-btn-primary min-w-[220px]"
+                  disabled={loading}
+                >
+                  {loading ? "Submitting…" : form.submitLabel}
+                  {loading ? null : <ArrowRight className="h-4 w-4" />}
+                </button>
+                <p className="text-[12.5px] text-[var(--color-text-muted)]">
+                  {form.helperMessage}
                 </p>
               </div>
 
-              <form className="mt-6 space-y-5" action="#" method="post" onSubmit={handleSubmit} noValidate>
-                <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-                  <div className="flex min-w-0 flex-col gap-2">
-                    <label htmlFor={countryId} className="gh-field-label">
-                      {form.fields.country.label}{" "}
-                      <span className="text-[var(--color-brand-primary)]">*</span>
-                    </label>
-                    <select
-                      id={countryId}
-                      name="country"
-                      className="gh-select"
-                      defaultValue=""
-                      aria-invalid={errors.country ? "true" : undefined}
-                      aria-describedby={errors.country ? "booking-country-error" : undefined}
-                    >
-                      <option value="">{form.fields.country.placeholder}</option>
-                      {form.countryOptions.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.country ? (
-                      <span id="booking-country-error" className="text-sm text-[var(--color-status-error)]">
-                        {errors.country}
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="flex min-w-0 flex-col gap-2">
-                    <label htmlFor={consultationId} className="gh-field-label">
-                      {form.fields.consultationType.label}{" "}
-                      <span className="text-[var(--color-brand-primary)]">*</span>
-                    </label>
-                    <select
-                      id={consultationId}
-                      name="consultationType"
-                      className="gh-select"
-                      defaultValue=""
-                      aria-invalid={errors.consultationType ? "true" : undefined}
-                      aria-describedby={errors.consultationType ? "booking-consultation-error" : undefined}
-                    >
-                      <option value="">{form.fields.consultationType.placeholder}</option>
-                      {form.consultationTypeOptions.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.consultationType ? (
-                      <span id="booking-consultation-error" className="text-sm text-[var(--color-status-error)]">
-                        {errors.consultationType}
-                      </span>
-                    ) : null}
-                  </div>
-                </div>
-
-                <div className="flex min-w-0 flex-col gap-2">
-                  <label htmlFor={fullNameId} className="gh-field-label">
-                    {form.fields.fullName.label} <span className="text-[var(--color-brand-primary)]">*</span>
-                  </label>
-                  <input
-                    id={fullNameId}
-                    name="fullName"
-                    type="text"
-                    placeholder={form.fields.fullName.placeholder}
-                    className="gh-input"
-                    defaultValue={signedInPatient?.fullName ?? ""}
-                    aria-invalid={errors.fullName ? "true" : undefined}
-                    aria-describedby={errors.fullName ? "booking-fullname-error" : undefined}
-                  />
-                  {errors.fullName ? (
-                    <span id="booking-fullname-error" className="text-sm text-[var(--color-status-error)]">
-                      {errors.fullName}
-                    </span>
-                  ) : null}
-                </div>
-
-                <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-                  <div className="flex min-w-0 flex-col gap-2">
-                    <label htmlFor={emailId} className="gh-field-label">
-                      {form.fields.email.label} <span className="text-[var(--color-brand-primary)]">*</span>
-                    </label>
-                    <input
-                      id={emailId}
-                      name="email"
-                      type="email"
-                      placeholder={form.fields.email.placeholder}
-                      className="gh-input"
-                      defaultValue={signedInPatient?.email ?? ""}
-                      aria-invalid={errors.email ? "true" : undefined}
-                      aria-describedby={errors.email ? "booking-email-error" : undefined}
-                    />
-                    {errors.email ? (
-                      <span id="booking-email-error" className="text-sm text-[var(--color-status-error)]">
-                        {errors.email}
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="flex min-w-0 flex-col gap-2">
-                    <label htmlFor={phoneId} className="gh-field-label">
-                      {form.fields.phone.label}
-                    </label>
-                    <input
-                      id={phoneId}
-                      name="phone"
-                      type="tel"
-                      placeholder={form.fields.phone.placeholder}
-                      className="gh-input"
-                      defaultValue={signedInPatient?.phone ?? ""}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex min-w-0 flex-col gap-2">
-                  <label htmlFor={notesId} className="gh-field-label">
-                    {form.fields.notes.label}
-                  </label>
-                  <textarea
-                    id={notesId}
-                    name="notes"
-                    rows={4}
-                    placeholder={form.fields.notes.placeholder}
-                    className="gh-textarea"
-                  />
-                </div>
-
-                <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-brand-primary)]/15 bg-[var(--color-background-soft)] p-4">
-                  <div className="flex items-start gap-3">
-                    <input
-                      id={consentId}
-                      name="consentAccepted"
-                      type="checkbox"
-                      className="mt-1 size-4 accent-[var(--color-brand-primary)]"
-                      aria-invalid={errors.consentAccepted ? "true" : undefined}
-                      aria-describedby={errors.consentAccepted ? "booking-consent-error" : undefined}
-                    />
-                    <div>
-                      <label htmlFor={consentId} className="gh-body-sm text-[var(--color-text-muted)]">
-                        {form.fields.consent}
-                      </label>
-                      {errors.consentAccepted ? (
-                        <span id="booking-consent-error" className="mt-2 block text-sm text-[var(--color-status-error)]">
-                          {errors.consentAccepted}
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <button type="submit" className="gh-btn gh-btn-primary min-w-[200px] text-base" disabled={loading}>
-                    {loading ? "Submitting request..." : form.submitLabel}
-                  </button>
-                  <p className="gh-body-sm text-[var(--color-text-muted)]">{form.helperMessage}</p>
-                </div>
-
-                {statusMessage ? (
-                  <p
-                    className={`rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm ${
-                      statusType === "success" ? "gh-status-success" : "gh-status-warning"
-                    }`}
-                    role="status"
-                  >
-                    {statusMessage}
-                  </p>
-                ) : null}
-              </form>
-
-              {form.nextSteps ? (
-                <section className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-brand-primary)]/10 bg-white p-5 shadow-[var(--shadow-card)]">
-                  <h3 className="gh-h3 text-[var(--color-text-primary)]">{form.nextSteps.title}</h3>
-                  <ul className="mt-3 space-y-3">
-                    {form.nextSteps.items.map((item, i) => (
-                      <li key={item} className="flex items-start gap-3 gh-body-sm text-[var(--color-text-muted)]">
-                        <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-primary)] text-[11px] font-bold text-white">
-                          {i + 1}
-                        </span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
+              {statusMessage ? (
+                <p
+                  role="status"
+                  className={`rounded-2xl border px-4 py-3 text-[14px] ${
+                    statusType === "success"
+                      ? "gh-status-success"
+                      : "gh-status-warning"
+                  }`}
+                >
+                  {statusMessage}
+                </p>
               ) : null}
+            </form>
+          </div>
+
+          {/* Sidebar */}
+          <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
+            <div className="rounded-3xl bg-[var(--color-brand-primary)] p-7 text-white">
+              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
+                What happens next
+              </span>
+              <h3
+                className="mt-3 text-[1.5rem] leading-tight tracking-tight"
+                style={{ fontFamily: "var(--font-cormorant)" }}
+              >
+                A clear, calm booking.
+              </h3>
+              <ol className="mt-5 space-y-4 text-[14px] leading-relaxed text-white/85">
+                {(form.nextSteps?.items ?? DEFAULT_NEXT_STEPS).map((item, i) => (
+                  <li key={item} className="flex gap-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-[12px] font-bold text-[var(--color-brand-primary)]">
+                      {i + 1}
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ol>
             </div>
 
-            {/* Trust sidebar */}
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
-              <div className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-4 py-4 shadow-[var(--shadow-soft)]">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-background-soft)]">
-                  <ShieldCheck className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-[var(--color-text-primary)]">Private & confidential</p>
-                  <p className="text-xs text-[var(--color-text-muted)]">GDPR protected</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-4 py-4 shadow-[var(--shadow-soft)]">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-background-soft)]">
-                  <Clock className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-[var(--color-text-primary)]">Fast team response</p>
-                  <p className="text-xs text-[var(--color-text-muted)]">Usually within 24h</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white px-4 py-4 shadow-[var(--shadow-soft)]">
-                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-background-soft)]">
-                  <Check className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-[var(--color-text-primary)]">Credential-checked clinicians</p>
-                  <p className="text-xs text-[var(--color-text-muted)]">Verified credentials</p>
-                </div>
-              </div>
+            <ul className="grid grid-cols-1 gap-3">
+              <SidebarChip
+                icon={ShieldCheck}
+                title="Private & encrypted"
+                detail="GDPR · ISO 27001 aligned"
+              />
+              <SidebarChip
+                icon={CalendarClock}
+                title="Same-day response"
+                detail="Most requests answered in 60 min"
+              />
+              <SidebarChip
+                icon={Languages}
+                title="In your language"
+                detail="EN · PT · ES · CS · RO"
+              />
+              <SidebarChip
+                icon={Check}
+                title="Credentialed clinicians"
+                detail="Licensed in 5 countries"
+              />
+            </ul>
+
+            <div className="rounded-3xl border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-5 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+              Not sure what to book? Pick "General consultation" — our team will
+              route you to the right clinician.{" "}
+              <Link
+                href="/plans-pricing"
+                className="font-semibold text-[var(--color-brand-primary)] underline-offset-4 hover:underline"
+              >
+                View pricing →
+              </Link>
             </div>
-          </div>
-        </Container>
-      </Section>
-      <BookingCTA
-        variant="support"
-        eyebrow="Booking support"
-        title="Need urgent support?"
-        description="If you are unsure which consultation to choose, start here and our team will guide you."
-        ctaLabel={hero.primaryCtaLabel}
-        ctaHref="#booking-form"
-      />
-    </>
+          </aside>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+const DEFAULT_NEXT_STEPS = [
+  "Submit your request — we confirm receipt instantly.",
+  "Our team matches you to a clinician and proposes a slot.",
+  "Attend the secure video consultation and receive your file.",
+];
+
+function Field({
+  id,
+  label,
+  required,
+  error,
+  children,
+}: {
+  id: string;
+  label: string;
+  required?: boolean;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex min-w-0 flex-col gap-1.5">
+      <label htmlFor={id} className="gh-field-label">
+        {label}
+        {required ? (
+          <span className="ml-1 text-[var(--color-brand-primary)]">*</span>
+        ) : null}
+      </label>
+      {children}
+      {error ? (
+        <span className="text-[12.5px] text-[var(--color-status-error)]">{error}</span>
+      ) : null}
+    </div>
+  );
+}
+
+function SidebarChip({
+  icon: Icon,
+  title,
+  detail,
+}: {
+  icon: typeof ShieldCheck;
+  title: string;
+  detail: string;
+}) {
+  return (
+    <li className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-white px-4 py-3">
+      <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--color-background-soft)]">
+        <Icon className="h-4 w-4 text-[var(--color-brand-primary)]" />
+      </span>
+      <span>
+        <p className="text-[13.5px] font-semibold text-[var(--color-text-primary)]">
+          {title}
+        </p>
+        <p className="text-[12px] text-[var(--color-text-muted)]">{detail}</p>
+      </span>
+    </li>
   );
 }

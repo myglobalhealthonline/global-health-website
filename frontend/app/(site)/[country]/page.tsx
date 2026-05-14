@@ -59,13 +59,14 @@ export default async function CountryHomePage({
       />
       <CountryEditorialTemplate
         country={config}
+        countrySlug={slug}
         generalListing={data.generalListing}
         specialistListing={data.specialistListing}
         doctors={data.doctors.map((d) => ({
           name: d.name,
           title: d.title ?? null,
           imageSrc: d.imageSrc,
-          href: d.href,
+          href: `/${slug}/team/${d.href.split("/").pop()}`,
           languages: d.languages,
         }))}
         steps={data.countryHome.steps.map((s) => ({
