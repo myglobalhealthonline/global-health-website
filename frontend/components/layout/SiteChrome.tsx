@@ -21,7 +21,6 @@ export function SiteChrome({
   siteName,
   navigation,
   brandLogo,
-  footerDecorImage,
   authUser,
 }: Props) {
   const pathname = usePathname();

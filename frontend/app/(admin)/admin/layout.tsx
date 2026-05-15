@@ -15,6 +15,16 @@ async function logoutAdminAction() {
   redirect("/login?next=/admin");
 }
 
+async function setCountryPreferenceAction(slug: string) {
+  "use server";
+  const jar = await cookies();
+  jar.set(COUNTRY_PREF_COOKIE, slug, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "lax",
+  });
+}
+
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   const user = await getServerAuthUser();
   if (!user) {
@@ -73,6 +83,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       activeCountry={activeCountry}
       sections={sections}
       signOutAction={logoutAdminAction}
+      setCountryPreferenceAction={setCountryPreferenceAction}
     >
       {children}
     </AdminShell>

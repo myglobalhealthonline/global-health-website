@@ -9,7 +9,6 @@ import {
   Layers,
   Plus,
   Stethoscope,
-  UserRound,
 } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {

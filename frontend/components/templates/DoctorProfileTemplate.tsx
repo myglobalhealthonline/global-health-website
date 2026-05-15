@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+/* eslint-disable react/no-unescaped-entities */
 import {
   ArrowLeft,
   ArrowUpRight,

@@ -1,6 +1,5 @@
 ﻿import type { CountryCode } from "@/data/countries";
 import { countries, getCountryByCode } from "@/data/countries";
-import { routeInventory } from "@/data/routes";
 import { getSiteContext } from "@/lib/content/get-site-context";
 import {
   getPublicDoctorsForCountry,

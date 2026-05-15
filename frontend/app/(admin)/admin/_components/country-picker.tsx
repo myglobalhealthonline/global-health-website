@@ -15,19 +15,25 @@ export type CountryPickerOption = {
   name: string;
 };
 
+type SetCountryPreferenceAction = (slug: string) => Promise<void>;
+
 export function CountryPicker({
   countries,
   current,
+  setCountryPreferenceAction,
 }: {
   countries: CountryPickerOption[];
   current: CountryPickerOption | null;
+  setCountryPreferenceAction: SetCountryPreferenceAction;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   function select(slug: string) {
-    document.cookie = `${COUNTRY_PREF_COOKIE}=${slug};path=/;max-age=${60 * 60 * 24 * 365};samesite=lax`;
-    startTransition(() => router.refresh());
+    startTransition(async () => {
+      await setCountryPreferenceAction(slug);
+      router.refresh();
+    });
   }
 
   if (countries.length === 0) {

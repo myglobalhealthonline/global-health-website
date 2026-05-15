@@ -30,6 +30,7 @@ export type AdminShellUser = {
 type Section = { href: string; label: string };
 
 type SignOutAction = () => Promise<void> | void;
+type SetCountryPreferenceAction = (slug: string) => Promise<void>;
 
 // Icons used ONLY in the Global section — country-scoped items use dot bullets
 // per the reference (admin-portal-reference Shell.jsx).
@@ -147,6 +148,7 @@ export function AdminShell({
   activeCountry,
   sections,
   signOutAction,
+  setCountryPreferenceAction,
   children,
 }: {
   user: AdminShellUser;
@@ -154,6 +156,7 @@ export function AdminShell({
   activeCountry: CountryPickerOption | null;
   sections: Section[];
   signOutAction: SignOutAction;
+  setCountryPreferenceAction: SetCountryPreferenceAction;
   children: ReactNode;
 }) {
   const [navOpen, setNavOpen] = useState(false);
@@ -336,11 +339,15 @@ export function AdminShell({
             </div>
 
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-              {countries.length > 0 ? (
-                <div className="hidden sm:block">
-                  <CountryPicker countries={countries} current={activeCountry} />
-                </div>
-              ) : null}
+                {countries.length > 0 ? (
+                  <div className="hidden sm:block">
+                    <CountryPicker
+                      countries={countries}
+                      current={activeCountry}
+                      setCountryPreferenceAction={setCountryPreferenceAction}
+                    />
+                  </div>
+                ) : null}
 
               {/* Notification bell */}
               <button
@@ -427,7 +434,11 @@ export function AdminShell({
           {/* Mobile country picker row */}
           {countries.length > 0 ? (
             <div className="border-b border-[var(--color-border)] bg-white px-4 py-3 sm:hidden">
-              <CountryPicker countries={countries} current={activeCountry} />
+              <CountryPicker
+                countries={countries}
+                current={activeCountry}
+                setCountryPreferenceAction={setCountryPreferenceAction}
+              />
             </div>
           ) : null}
 
