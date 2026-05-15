@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { ServiceFields } from "../_components/service-fields";
 import { parseServiceBodyFromForm } from "@/lib/admin/service-form-parse";
@@ -9,6 +10,7 @@ import {
   fetchAdminSpecialties,
   postAdminService,
 } from "@/lib/admin/admin-api";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { readServiceKind, SERVICE_KIND_META } from "@/lib/admin/service-kind";
 import {
   detectDuplicateTextIssues,
@@ -204,6 +206,13 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
         `/admin/services/new?kind=${encodeURIComponent(kind)}&countryId=${encodeURIComponent(raw.countryId)}&error=${encodeURIComponent(result.message)}`,
       );
     }
+
+    // Bust public Data Cache for the new service's country.
+    const created = result.data.service;
+    if (created.country?.code) {
+      revalidateTag(SITE_CACHE_TAGS.countryServices(created.country.code), "max");
+    }
+    revalidateTag(SITE_CACHE_TAGS.globalServices(), "max");
 
     redirect(
       `/admin/services/${result.data.service.id}?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent(

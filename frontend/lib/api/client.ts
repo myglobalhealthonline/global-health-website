@@ -9,6 +9,13 @@ type ApiClientOptions = {
   timeoutMs?: number;
   /** Call a Next.js Route Handler on the current origin (keeps httpOnly cookies on the site host). */
   sameOrigin?: boolean;
+  /**
+   * Next.js Data Cache hints. `revalidate` is seconds-to-stale; `tags` mark
+   * the cache entry so `revalidateTag(tag)` can bust it from a server action
+   * after an admin edit. Public reads should set this; admin reads should not.
+   */
+  revalidate?: number | false;
+  tags?: string[];
 };
 
 export type ApiResult<T> =
@@ -50,16 +57,30 @@ export async function apiRequest<T>(
       : undefined;
 
   try {
-    const response = await fetch(url, {
+    // Wire Next.js Data Cache when the caller passes revalidate/tags. Default
+    // is still `no-store` so anything that doesn't opt in gets fresh data.
+    const usesDataCache =
+      options.revalidate !== undefined || (options.tags && options.tags.length > 0);
+    const fetchInit: RequestInit & {
+      next?: { revalidate?: number | false; tags?: string[] };
+    } = {
       method: options.method ?? "GET",
       credentials: options.credentials,
       headers: {
         "Content-Type": "application/json",
       },
       body: options.body ? JSON.stringify(options.body) : undefined,
-      cache: options.cache ?? "no-store",
       signal: controller?.signal,
-    });
+    };
+    if (usesDataCache) {
+      fetchInit.next = {
+        ...(options.revalidate !== undefined ? { revalidate: options.revalidate } : {}),
+        ...(options.tags && options.tags.length > 0 ? { tags: options.tags } : {}),
+      };
+    } else {
+      fetchInit.cache = options.cache ?? "no-store";
+    }
+    const response = await fetch(url, fetchInit);
 
     const json = (await response.json()) as {
       ok?: boolean;

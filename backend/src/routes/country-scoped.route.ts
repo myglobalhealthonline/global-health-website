@@ -41,8 +41,22 @@ function handleError(
   return reply.status(500).send(errorResponse(fallback));
 }
 
+/**
+ * Cache-Control hint applied to every public country-scoped GET. Edge caches
+ * (Vercel, Cloudflare) and the browser can hold the response for 60s and serve
+ * stale for 5 minutes while revalidating in the background. Admin writes are
+ * not cached (auth-gated routes don't pass through here).
+ */
+function applyPublicCache(reply: { header: (k: string, v: string) => void }) {
+  reply.header(
+    "Cache-Control",
+    "public, max-age=60, s-maxage=60, stale-while-revalidate=300",
+  );
+}
+
 const countryScopedRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/countries/:countryCode/doctors", async (request, reply) => {
+    applyPublicCache(reply);
     const params = countryParamsSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
@@ -56,6 +70,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
   });
 
   app.get("/api/countries/:countryCode/doctors/:slug", async (request, reply) => {
+    applyPublicCache(reply);
     const params = countrySlugParamsSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid doctor lookup", params.error.flatten()));
@@ -72,6 +87,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
   });
 
   app.get("/api/countries/:countryCode/specialties", async (request, reply) => {
+    applyPublicCache(reply);
     const params = countryParamsSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
@@ -85,6 +101,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
   });
 
   app.get("/api/countries/:countryCode/services", async (request, reply) => {
+    applyPublicCache(reply);
     const params = countryParamsSchema.safeParse(request.params);
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));

@@ -10,6 +10,10 @@ import { prisma } from "../db/prisma.js";
 
 const pagesRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/countries/:countryCode/pages/:pageKey", async (request, reply) => {
+    reply.header(
+      "Cache-Control",
+      "public, max-age=60, s-maxage=60, stale-while-revalidate=300",
+    );
     const params = publicPageParamsSchema.safeParse(request.params);
     if (!params.success) {
       return reply

@@ -5,6 +5,10 @@ import { errorResponse, okResponse } from "../utils/response.js";
 
 const doctorsRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/doctors", async (_, reply) => {
+    reply.header(
+      "Cache-Control",
+      "public, max-age=60, s-maxage=60, stale-while-revalidate=300",
+    );
     try {
       const doctors = await listDoctors();
       return okResponse(doctors);

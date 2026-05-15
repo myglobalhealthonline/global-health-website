@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import {
   fetchAdminCountries,
@@ -7,6 +8,7 @@ import {
   patchAdminPage,
   purgeAdminPage,
 } from "@/lib/admin/admin-api";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 import { PageFields } from "../../_components/page-fields";
 import { parsePageBody } from "../../_components/page-form-parse";
@@ -71,14 +73,33 @@ export default async function AdminEditPagePage({ params, searchParams }: PagePr
     if (!result.ok) {
       redirect(`/admin/pages/${id}/edit?error=${encodeURIComponent(result.message)}`);
     }
+    // Bust the public Data Cache for this country/page/locale so the public
+    // site sees the new content on the next render instead of waiting up to
+    // 60 seconds for the timed revalidate.
+    const saved = result.data.page;
+    if (saved.country?.code) {
+      revalidateTag(
+        SITE_CACHE_TAGS.countryPage(saved.country.code, saved.pageKey, saved.locale),
+        "max",
+      );
+    }
     redirect(`/admin/pages/${id}/edit?success=${encodeURIComponent("Page saved")}`);
   }
 
   async function deletePageAction() {
     "use server";
+    // Capture the page details before delete so we can bust the right tag.
+    const before = await fetchAdminPageById(id);
     const result = await purgeAdminPage(id);
     if (!result.ok) {
       redirect(`/admin/pages/${id}/edit?error=${encodeURIComponent(result.message)}`);
+    }
+    if (before.ok && before.data.page.country?.code) {
+      const p = before.data.page;
+      revalidateTag(
+        SITE_CACHE_TAGS.countryPage(p.country!.code, p.pageKey, p.locale),
+        "max",
+      );
     }
     redirect(`/admin/pages?success=${encodeURIComponent("Page deleted")}`);
   }

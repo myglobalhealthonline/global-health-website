@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { FlagBadge } from "../../../_components/flag-badge";
 import { DoctorFields } from "../../_components/doctor-fields";
@@ -11,6 +12,7 @@ import {
   fetchAdminSpecialties,
   patchAdminDoctor,
 } from "@/lib/admin/admin-api";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import {
   detectDuplicateTextIssues,
   validateAdminDoctorPayload,
@@ -159,6 +161,18 @@ export default async function AdminEditDoctorPage({
     if (!result.ok) {
       redirect(`/admin/doctors/${id}/edit?error=${encodeURIComponent(result.message)}`);
     }
+
+    // Bust public Data Cache for this doctor's country roster and slug-specific
+    // page so the public site refreshes immediately.
+    const saved = result.data.doctor;
+    if (saved.country?.code) {
+      revalidateTag(SITE_CACHE_TAGS.countryDoctors(saved.country.code), "max");
+      revalidateTag(
+        SITE_CACHE_TAGS.countryDoctorBySlug(saved.country.code, saved.slug),
+        "max",
+      );
+    }
+    revalidateTag(SITE_CACHE_TAGS.globalDoctors(), "max");
 
     redirect(
       `/admin/doctors/${id}?success=${encodeURIComponent(

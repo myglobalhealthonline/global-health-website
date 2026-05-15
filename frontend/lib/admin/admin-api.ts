@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { cookies } from "next/headers";
 
 const DEFAULT_ADMIN_API_BASE_URL = "http://localhost:4000";
@@ -204,9 +205,9 @@ export async function fetchAdminAppointments(query?: Record<string, string | und
   return adminRequest<AdminAppointmentsListPayload>(path);
 }
 
-export async function fetchAdminAppointmentById(id: string) {
+export const fetchAdminAppointmentById = cache(async (id: string) => {
   return adminRequest<AdminAppointmentDetailPayload>(`/api/admin/appointments/${id}`);
-}
+});
 
 export async function patchAdminAppointmentStatus(id: string, status: string) {
   return adminRequest<AdminAppointmentDetailPayload>(`/api/admin/appointments/${id}/status`, {
@@ -215,17 +216,21 @@ export async function patchAdminAppointmentStatus(id: string, status: string) {
   });
 }
 
-export async function fetchAdminCountries() {
+// `cache()` deduplicates identical reads within a single SSR request.
+// Many admin pages call `fetchAdminCountries()` (layout + page + ScopeBanner
+// resolver), and previously each triggered a fresh round-trip to the backend.
+// The wrapper collapses them to one fetch per request.
+export const fetchAdminCountries = cache(async () => {
   return adminRequest<AdminCountriesListPayload>("/api/admin/countries");
-}
+});
 
-export async function fetchAdminCountryById(id: string) {
+export const fetchAdminCountryById = cache(async (id: string) => {
   return adminRequest<AdminCountryDetailPayload>(`/api/admin/countries/${id}`);
-}
+});
 
-export async function fetchAdminCurrencies() {
+export const fetchAdminCurrencies = cache(async () => {
   return adminRequest<AdminCurrenciesListPayload>("/api/admin/currencies");
-}
+});
 
 export async function postAdminCountry(body: unknown) {
   return adminRequest<AdminCountryDetailPayload>("/api/admin/countries", {
@@ -364,18 +369,18 @@ export async function fetchAdminServices(query?: Record<string, string | undefin
   return adminRequest<AdminServicesListPayload>(path);
 }
 
-export async function fetchAdminServiceById(id: string) {
+export const fetchAdminServiceById = cache(async (id: string) => {
   return adminRequest<AdminServiceDetailPayload>(`/api/admin/services/${id}`);
-}
+});
 
-export async function fetchAdminSpecialties(countryId: string) {
+export const fetchAdminSpecialties = cache(async (countryId: string) => {
   const params = new URLSearchParams({ countryId });
   return adminRequest<AdminSpecialtiesPayload>(`/api/admin/specialties?${params.toString()}`);
-}
+});
 
-export async function fetchAdminSpecialtyById(id: string) {
+export const fetchAdminSpecialtyById = cache(async (id: string) => {
   return adminRequest<AdminSpecialtyDetailPayload>(`/api/admin/specialties/${id}`);
-}
+});
 
 type AdminSpecialtyDetailPayload = {
   specialty: AdminSpecialtyOptionDto;
@@ -500,9 +505,9 @@ export async function fetchAdminDoctors(query?: Record<string, string | undefine
   return adminRequest<AdminDoctorsListPayload>(path);
 }
 
-export async function fetchAdminDoctorById(id: string) {
+export const fetchAdminDoctorById = cache(async (id: string) => {
   return adminRequest<AdminDoctorDetailPayload>(`/api/admin/doctors/${id}`);
-}
+});
 
 export async function postAdminDoctor(body: unknown) {
   return adminRequest<AdminDoctorDetailPayload>("/api/admin/doctors", {
@@ -603,9 +608,9 @@ export async function fetchAdminHealthTests(query?: Record<string, string | unde
   return adminRequest<AdminHealthTestsListPayload>(path);
 }
 
-export async function fetchAdminHealthTestById(id: string) {
+export const fetchAdminHealthTestById = cache(async (id: string) => {
   return adminRequest<AdminHealthTestDetailPayload>(`/api/admin/health-tests/${id}`);
-}
+});
 
 export async function postAdminHealthTest(body: unknown) {
   return adminRequest<AdminHealthTestDetailPayload>("/api/admin/health-tests", {
@@ -737,9 +742,9 @@ export async function fetchAdminAssets(query?: Record<string, string | undefined
   return adminRequest<AdminAssetsListPayload>(path);
 }
 
-export async function fetchAdminAssetById(id: string) {
+export const fetchAdminAssetById = cache(async (id: string) => {
   return adminRequest<AdminAssetDetailPayload>(`/api/admin/assets/${id}`);
-}
+});
 
 export async function postAdminAsset(body: unknown) {
   return adminRequest<AdminAssetDetailPayload>("/api/admin/assets", {
@@ -851,9 +856,9 @@ export async function fetchAdminPages(query?: Record<string, string | undefined>
   return adminRequest<AdminPagesListPayload>(path);
 }
 
-export async function fetchAdminPageById(id: string) {
+export const fetchAdminPageById = cache(async (id: string) => {
   return adminRequest<AdminPageDetailPayload>(`/api/admin/pages/${id}`);
-}
+});
 
 export async function postAdminPage(body: unknown) {
   return adminRequest<AdminPageDetailPayload>("/api/admin/pages", {

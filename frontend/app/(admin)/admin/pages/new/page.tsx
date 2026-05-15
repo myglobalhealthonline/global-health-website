@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import {
   fetchAdminCountries,
   postAdminPage,
 } from "@/lib/admin/admin-api";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
 import { PageFields } from "../_components/page-fields";
 import { parsePageBody } from "../_components/page-form-parse";
@@ -48,6 +50,15 @@ export default async function AdminNewPagePage({ searchParams }: PageProps) {
     const result = await postAdminPage(body);
     if (!result.ok) {
       redirect(`/admin/pages/new?error=${encodeURIComponent(result.message)}`);
+    }
+    // Bust public cache for the new (country, pageKey, locale) tag so the
+    // public site picks up the new page immediately.
+    const created = result.data.page;
+    if (created.country?.code) {
+      revalidateTag(
+        SITE_CACHE_TAGS.countryPage(created.country.code, created.pageKey, created.locale),
+        "max",
+      );
     }
     redirect(`/admin/pages/${result.data.page.id}/edit?success=${encodeURIComponent("Page created")}`);
   }

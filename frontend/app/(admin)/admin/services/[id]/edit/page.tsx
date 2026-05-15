@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { ServiceFields } from "../../_components/service-fields";
 import { parseServiceBodyFromForm } from "@/lib/admin/service-form-parse";
@@ -10,6 +11,7 @@ import {
   fetchAdminSpecialties,
   patchAdminService,
 } from "@/lib/admin/admin-api";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { readServiceKind, SERVICE_KIND_META } from "@/lib/admin/service-kind";
 import {
   detectDuplicateTextIssues,
@@ -193,6 +195,14 @@ export default async function AdminEditServicePage({
         `/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(result.message)}`,
       );
     }
+
+    // Bust public cache for the country's services so the new card appears
+    // on /[country]/[lang]/general-consultation immediately.
+    const saved = result.data.service;
+    if (saved.country?.code) {
+      revalidateTag(SITE_CACHE_TAGS.countryServices(saved.country.code), "max");
+    }
+    revalidateTag(SITE_CACHE_TAGS.globalServices(), "max");
 
     redirect(
       `/admin/services/${id}?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent(

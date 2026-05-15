@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { DoctorFields } from "../_components/doctor-fields";
 import { parseDoctorBodyFromForm } from "@/lib/admin/doctor-form-parse";
@@ -9,6 +10,7 @@ import {
   fetchAdminSpecialties,
   postAdminDoctor,
 } from "@/lib/admin/admin-api";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import {
   detectDuplicateTextIssues,
   validateAdminDoctorPayload,
@@ -170,6 +172,14 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
         `/admin/doctors/create?countryId=${encodeURIComponent(raw.countryId)}&error=${encodeURIComponent(result.message)}`,
       );
     }
+
+    // Bust public Data Cache for the country's doctor roster so the new card
+    // appears on the public site immediately.
+    const created = result.data.doctor;
+    if (created.country?.code) {
+      revalidateTag(SITE_CACHE_TAGS.countryDoctors(created.country.code), "max");
+    }
+    revalidateTag(SITE_CACHE_TAGS.globalDoctors(), "max");
 
     redirect(
       `/admin/doctors/${result.data.doctor.id}?success=${encodeURIComponent(
