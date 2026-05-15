@@ -21,6 +21,12 @@ import { countrySlug } from "@/lib/routing/country-slug";
 
 type Props = {
   countries: CountryConfig[];
+  /**
+   * Per-country live counts from the DB, keyed by country code (e.g. "ie").
+   * Caller computes this server-side. Pass an empty object to suppress the
+   * "N doctors" line on each card.
+   */
+  countryMeta?: Record<string, { doctors?: number }>;
 };
 
 const LANG_NAMES: Record<LocaleCode, string> = {
@@ -41,17 +47,10 @@ const LANG_HELLO: Record<LocaleCode, string> = {
   de: "Hallo.",
 };
 
-// Country-level "live" data the reference bakes into the card.
-const COUNTRY_META: Record<
-  string,
-  { capital: string; doctors: number }
-> = {
-  ie: { capital: "Dublin", doctors: 14 },
-  pt: { capital: "Lisbon", doctors: 11 },
-  sp: { capital: "Madrid", doctors: 9 },
-  cz: { capital: "Prague", doctors: 7 },
-  rm: { capital: "Bucharest", doctors: 6 },
-};
+// Per-country counts are provided by the caller via `countryMeta` — no
+// hardcoded data lives in this file. Earlier versions baked in capitals + a
+// fake doctor count per country; both were removed when this section was
+// converted to be database-driven.
 
 const FLAG_CLASS: Record<string, string> = {
   ie: "fi fi-ie",
@@ -64,7 +63,7 @@ const FLAG_CLASS: Record<string, string> = {
 const PATTERN_WHITE =
   "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")";
 
-export function CountryEntryGate({ countries }: Props) {
+export function CountryEntryGate({ countries, countryMeta }: Props) {
   const router = useRouter();
   const [step, setStep] = useState<0 | 1>(0);
   const [countryCode, setCountryCode] = useState<string | null>(null);
@@ -261,7 +260,7 @@ export function CountryEntryGate({ countries }: Props) {
                 }}
               >
                 {countries.map((c) => {
-                  const meta = COUNTRY_META[c.code];
+                  const meta = countryMeta?.[c.code];
                   const flagCls = FLAG_CLASS[c.code] ?? "";
                   return (
                     <button
@@ -314,15 +313,8 @@ export function CountryEntryGate({ countries }: Props) {
                           >
                             {c.name}
                           </p>
-                          <p
-                            className="m-0"
-                            style={{
-                              fontSize: 12,
-                              color: "rgba(255,255,255,0.55)",
-                            }}
-                          >
-                            {meta?.capital ?? ""}
-                          </p>
+                          {/* Capital label dropped — Country model has no
+                              `capital` field today. Re-add once available. */}
                         </div>
                       </div>
                       <div
@@ -344,7 +336,7 @@ export function CountryEntryGate({ countries }: Props) {
                           >
                             {meta?.doctors ?? "—"}
                           </strong>{" "}
-                          doctors
+                          {meta?.doctors === 1 ? "doctor" : "doctors"}
                         </span>
                         <span
                           className="inline-flex items-center gap-1"

@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { HomeHero } from "@/components/sections/HomeHero";
-import { TrustRibbon } from "@/components/sections/TrustRibbon";
-import { ServiceCatalog } from "@/components/sections/ServiceCatalog";
-import { DoctorWall } from "@/components/sections/DoctorWall";
+import { HomeHero, type LiveDoctorItem } from "@/components/sections/HomeHero";
+import { TrustRibbon, type TrustRibbonItem } from "@/components/sections/TrustRibbon";
+import {
+  ServiceCatalog,
+  type ServiceCatalogItem,
+} from "@/components/sections/ServiceCatalog";
+import { DoctorWall, type DoctorWallItem } from "@/components/sections/DoctorWall";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { countries, getCountryByCode } from "@/data/countries";
@@ -23,9 +26,25 @@ import {
   isSupportedLocale,
   type PublicLocale,
 } from "@/lib/content/get-public-page";
+import {
+  getCountryDoctors,
+  getCountryServices,
+  type CountryDoctorCard,
+  type CountryServiceCard,
+} from "@/lib/content/get-country-collections";
+import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
 import { SITE_NAME } from "@/lib/constants";
 
 type Params = { country: string; lang: string };
+
+const LOCALE_NAMES: Record<string, string> = {
+  en: "English",
+  pt: "Portuguese",
+  es: "Spanish",
+  cs: "Czech",
+  ro: "Romanian",
+  de: "German",
+};
 
 export async function generateStaticParams(): Promise<Params[]> {
   const out: Params[] = [];
@@ -71,6 +90,48 @@ export async function generateMetadata({
   };
 }
 
+function initialsFromName(name: string): string {
+  const parts = name.trim().split(/\s+/).filter((p) => p && !/^Dr\.?$/i.test(p));
+  if (parts.length === 0) return "·";
+  return parts
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? "")
+    .join("") || "·";
+}
+
+function mapDoctorToWallItem(
+  d: CountryDoctorCard,
+  countryCode: string,
+  bookHref: string,
+): DoctorWallItem {
+  const role =
+    d.specialties.length > 0 ? d.specialties[0] : d.title || "Doctor";
+  return {
+    id: d.id,
+    initials: initialsFromName(d.fullName),
+    name: d.fullName,
+    role,
+    country: countryCode,
+    langs: d.languages.join(" · "),
+    href: bookHref,
+  };
+}
+
+function mapServiceToCatalogItem(
+  s: CountryServiceCard,
+  ctaHref: string,
+): ServiceCatalogItem {
+  return {
+    type: s.kind === "GENERAL" ? "general" : "specialist",
+    title: s.name,
+    tag: s.kind === "GENERAL" ? "General" : "Specialist",
+    price: s.basePriceCents == null ? null : Math.round(s.basePriceCents / 100),
+    currency: s.currencyCode ?? "EUR",
+    dur: s.durationMinutes != null ? `${s.durationMinutes} min` : "—",
+    href: ctaHref,
+  };
+}
+
 export default async function CountryLangHomePage({
   params,
 }: {
@@ -82,6 +143,58 @@ export default async function CountryLangHomePage({
   const config = getCountryByCode(code);
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
+
+  const bookHref = `/${slug}/${lang}/book-online`;
+  const generalHref = `/${slug}/${lang}/general-consultation`;
+
+  const [countryDoctors, generalServices, specialistServices, allDoctors] =
+    await Promise.all([
+      getCountryDoctors(code),
+      getCountryServices(code, "GENERAL"),
+      getCountryServices(code, "SPECIALIST"),
+      getPublicDoctorsNormalized(),
+    ]);
+
+  const totalDoctorsAcrossEurope = allDoctors.length;
+
+  const doctorWallItems: DoctorWallItem[] = countryDoctors.map((d) =>
+    mapDoctorToWallItem(d, code, `/${slug}/${lang}/doctors/${d.slug}`),
+  );
+
+  const serviceCatalogItems: ServiceCatalogItem[] = [
+    ...generalServices.map((s) => mapServiceToCatalogItem(s, generalHref)),
+    ...specialistServices.map((s) =>
+      mapServiceToCatalogItem(s, `/${slug}/${lang}/specialist-consultation`),
+    ),
+  ];
+
+  const liveDoctors: LiveDoctorItem[] = countryDoctors
+    .slice(0, 4)
+    .map((d) => ({
+      name: d.fullName,
+      role:
+        d.specialties.length > 0
+          ? `${d.specialties[0]}, ${config.name}`
+          : `${d.title}, ${config.name}`,
+    }));
+
+  const trustItems: TrustRibbonItem[] = [
+    {
+      // Show a rounded "N+" only once the roster is big enough to justify it;
+      // for small counts show the exact number so the ribbon doesn't read as
+      // marketing puffery.
+      v:
+        countryDoctors.length >= 10
+          ? `${Math.floor(countryDoctors.length / 10) * 10}+`
+          : String(countryDoctors.length),
+      l: countryDoctors.length === 1 ? "Licensed doctor" : "Licensed doctors",
+    },
+    { v: String(countries.length), l: "Countries · EU-registered" },
+    { v: "GDPR", l: "Compliant by default" },
+  ];
+
+  const languageLabel =
+    LOCALE_NAMES[(config.defaultLocale ?? "en").toLowerCase()] ?? "Local";
 
   const countryUrl = `${getSiteUrl()}/${slug}/${lang}`;
 
@@ -97,15 +210,20 @@ export default async function CountryLangHomePage({
         ]}
       />
 
-      <HomeHero countryCode={config.code} countryName={config.name} />
-      <TrustRibbon />
-      <ServiceCatalog />
-      <DoctorWall />
-      <HowItWorksNarrative />
-      <FinalCTA
-        primaryHref={`/${slug}/${lang}/general-consultation`}
-        secondaryHref={`/${slug}/${lang}/book-online`}
+      <HomeHero
+        countryCode={config.code}
+        countryName={config.name}
+        doctorCount={countryDoctors.length}
+        languageLabel={languageLabel}
+        bookHref={bookHref}
+        totalDoctorsAcrossEurope={totalDoctorsAcrossEurope}
+        liveDoctors={liveDoctors}
       />
+      <TrustRibbon items={trustItems} />
+      <ServiceCatalog services={serviceCatalogItems} />
+      <DoctorWall doctors={doctorWallItems} bookHref={bookHref} />
+      <HowItWorksNarrative />
+      <FinalCTA primaryHref={generalHref} secondaryHref={bookHref} />
     </>
   );
 }

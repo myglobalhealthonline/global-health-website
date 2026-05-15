@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { SpecialtiesGrid } from "@/components/sections/SpecialtiesGrid";
+import { ServicesGrid } from "@/components/sections/ServicesGrid";
+import { DoctorsSection } from "@/components/sections/DoctorsSection";
+import { TrustRibbon } from "@/components/sections/TrustRibbon";
+import { FinalCTA } from "@/components/sections/FinalCTA";
 import { countries, getCountryByCode } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
@@ -15,6 +20,11 @@ import {
   isSupportedLocale,
   type PublicLocale,
 } from "@/lib/content/get-public-page";
+import {
+  getCountryDoctors,
+  getCountryServices,
+  getCountrySpecialties,
+} from "@/lib/content/get-country-collections";
 import { SITE_NAME } from "@/lib/constants";
 
 type Params = { country: string; lang: string };
@@ -51,6 +61,18 @@ export async function generateMetadata({
   };
 }
 
+function formatPrice(cents: number | null, currency: string | null): string | undefined {
+  if (cents == null) return undefined;
+  const symbol = currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency === "USD" ? "$" : (currency ?? "");
+  const amount = (cents / 100).toLocaleString("en-IE", { maximumFractionDigits: 0 });
+  return `${symbol}${amount}`;
+}
+
+function formatDuration(minutes: number | null): string | undefined {
+  if (minutes == null) return undefined;
+  return `${minutes} min`;
+}
+
 export default async function CountryLangSpecialistConsultationPage({
   params,
 }: {
@@ -63,15 +85,51 @@ export default async function CountryLangSpecialistConsultationPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const page = await getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale);
+  const [page, specialties, services, doctors] = await Promise.all([
+    getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale),
+    getCountrySpecialties(code),
+    getCountryServices(code, "SPECIALIST"),
+    getCountryDoctors(code),
+  ]);
+
   const heroTitle = page?.heroTitle ?? "Specialist consultation";
   const heroSubtitle =
     page?.heroSubtitle ?? `Connect with specialists licensed in ${config.name}.`;
   const ctaLabel = page?.ctaLabel ?? "Book specialist consultation";
   const ctaHref = page?.ctaHref ?? `/${slug}/${lang}/book-online?type=specialist`;
-  const body =
-    page?.body ??
-    `<p>A specialist consultation is for in-depth review by a clinician trained in a specific medical area.</p>`;
+
+  // Specialty cards — auto from Specialty rows for this country.
+  const specialtyItems = specialties.map((s) => ({
+    title: s.name,
+    description: s.cardSummary ?? "",
+    href: ctaHref,
+  }));
+
+  // Specialist service cards — auto from Service rows where kind=SPECIALIST.
+  const serviceItems = services.map((s) => ({
+    title: s.name,
+    description: s.summary,
+    href: ctaHref,
+    serviceType: "specialist" as const,
+    audience: s.specialtyName ?? undefined,
+    duration: formatDuration(s.durationMinutes),
+    startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
+  }));
+
+  // Doctor cards filtered to those with at least one specialty link.
+  const doctorItems = doctors
+    .filter((d) => d.specialties.length > 0)
+    .slice(0, 12)
+    .map((d) => ({
+      name: d.fullName,
+      title: d.title,
+      bio: d.bio ?? "",
+      languages: d.languages,
+      country: config.name,
+      imageSrc: d.imageSrc ?? null,
+      href: `/${slug}/${lang}/doctors/${d.slug}`,
+      ctaLabel: "View profile",
+    }));
 
   return (
     <>
@@ -82,25 +140,51 @@ export default async function CountryLangSpecialistConsultationPage({
           { name: "Specialist consultation", url: `/${slug}/${lang}/specialist-consultation` },
         ])}
       />
-      <section className="mx-auto max-w-3xl px-4 py-16">
+
+      {/* Hero — admin-editable copy from ContentPage */}
+      <section className="mx-auto max-w-5xl px-4 pt-16 pb-10 text-center">
         <p className="text-sm uppercase tracking-wide text-emerald-700">
           {config.name} · Specialist Consultation
         </p>
-        <h1 className="mt-3 text-4xl font-semibold text-slate-900">{heroTitle}</h1>
-        <p className="mt-4 text-lg text-slate-600">{heroSubtitle}</p>
-        <div className="mt-6">
+        <h1 className="mt-3 text-4xl font-semibold text-slate-900 sm:text-5xl">{heroTitle}</h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">{heroSubtitle}</p>
+        <div className="mt-7 flex flex-wrap justify-center gap-3">
           <Link
             href={ctaHref}
-            className="inline-flex items-center rounded-md bg-emerald-700 px-5 py-3 text-white shadow-sm hover:bg-emerald-800"
+            className="inline-flex items-center rounded-md bg-emerald-700 px-6 py-3 text-white shadow-sm hover:bg-emerald-800"
           >
             {ctaLabel}
           </Link>
         </div>
-        <article
-          className="prose prose-slate mt-10 max-w-none"
-          dangerouslySetInnerHTML={{ __html: body }}
-        />
       </section>
+
+      <TrustRibbon />
+
+      {/* Specialty cards — auto from Specialty rows for this country */}
+      {specialtyItems.length > 0 ? (
+        <SpecialtiesGrid title={`Specialties in ${config.name}`} items={specialtyItems} />
+      ) : null}
+
+      {/* Specialist service cards — auto from Service rows kind=SPECIALIST */}
+      {serviceItems.length > 0 ? (
+        <ServicesGrid
+          eyebrow="What you can book"
+          title="Specialist consultations available"
+          intro="Cards update as the team adds or retires specialist services."
+          items={serviceItems}
+        />
+      ) : null}
+
+      {/* Doctor cards — only specialists shown here */}
+      {doctorItems.length > 0 ? (
+        <DoctorsSection
+          title={`Specialist doctors in ${config.name}`}
+          intro="Licensed specialists available for online consultations."
+          doctors={doctorItems}
+        />
+      ) : null}
+
+      <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
     </>
   );
 }

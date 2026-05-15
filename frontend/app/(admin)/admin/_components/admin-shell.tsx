@@ -19,7 +19,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Toaster } from "sonner";
-import { CountryPicker, type CountryPickerOption } from "./country-picker";
+import { CountryPicker } from "./country-picker";
+import type { CountryPickerOption } from "./country-picker-constants";
 import { FlagBadge } from "./flag-badge";
 
 export type AdminShellUser = {
@@ -40,7 +41,6 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/countries": Globe2,
   "/admin/specialties": Tags,
   "/admin/doctors": UserRound,
-  "/admin/pages": FileText,
   "/admin/assets": ImageIcon,
   "/admin/users": Users,
 };
@@ -51,12 +51,13 @@ const GLOBAL_HREFS = new Set([
   "/admin",
   "/admin/countries",
   "/admin/doctors",
-  "/admin/pages",
   "/admin/specialties",
   "/admin/assets",
 ]);
 
 const COUNTRY_HREFS = new Set([
+  "/admin/country-home",
+  "/admin/country-content",
   "/admin/appointments",
   "/admin/general-consultations",
   "/admin/specialist-consultations",
@@ -68,16 +69,17 @@ const COUNTRY_HREFS = new Set([
 const ORDER: Record<string, number> = {
   "/admin": 0,
   "/admin/countries": 1,
-  "/admin/doctors": 2,
-  "/admin/pages": 3,
+  "/admin/specialties": 2,
+  "/admin/doctors": 3,
   "/admin/assets": 4,
-  "/admin/specialties": 5,
-  "/admin/appointments": 0,
-  "/admin/general-consultations": 1,
-  "/admin/specialist-consultations": 2,
-  "/admin/online-prescriptions": 3,
-  "/admin/health-tests": 4,
-  "/admin/pricing": 5,
+  "/admin/country-home": 0,
+  "/admin/country-content": 1,
+  "/admin/general-consultations": 2,
+  "/admin/specialist-consultations": 3,
+  "/admin/online-prescriptions": 4,
+  "/admin/health-tests": 5,
+  "/admin/appointments": 6,
+  "/admin/pricing": 7,
 };
 
 // Tighter labels — long phrases overflow the 260px sidebar.

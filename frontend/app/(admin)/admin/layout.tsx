@@ -4,7 +4,10 @@ import { redirect } from "next/navigation";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { fetchAdminCountries } from "@/lib/admin/admin-api";
 import { AdminShell } from "./_components/admin-shell";
-import { COUNTRY_PREF_COOKIE, type CountryPickerOption } from "./_components/country-picker";
+import {
+  COUNTRY_PREF_COOKIE,
+  type CountryPickerOption,
+} from "./_components/country-picker-constants";
 
 const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME?.trim() || "gh_auth";
 
@@ -34,20 +37,27 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     redirect("/account");
   }
 
-  // Phase 1 sidebar nav.
-  //   Global   — Dashboard, Countries, Doctors, Pages, Assets
-  //   Country  — Appointments (booking inbox)
-  // Deferred (not in nav): Specialties matrix, General/Specialist Consultations,
-  // Online Prescriptions, Health Tests, Pricing. Their routes remain in code
-  // dormant for Phase 2.
+  // Sidebar nav.
+  //   Global  — cross-country admin ops (Dashboard, Countries, Categories,
+  //             Doctors, Assets).
+  //   Country — content + bookings scoped to the active country (Country
+  //             home, Country content, General/Specialist consultations,
+  //             Online prescriptions, Health tests, Appointments). These
+  //             items dim when no country is selected in the topbar picker.
   const sections = [
     // Global
     { href: "/admin", label: "Dashboard" },
     { href: "/admin/countries", label: "Countries" },
+    { href: "/admin/specialties", label: "Categories" },
     { href: "/admin/doctors", label: "Doctors" },
-    { href: "/admin/pages", label: "Pages" },
     { href: "/admin/assets", label: "Assets" },
     // Country-scoped
+    { href: "/admin/country-home", label: "Country home" },
+    { href: "/admin/country-content", label: "Country content" },
+    { href: "/admin/general-consultations", label: "General consultations" },
+    { href: "/admin/specialist-consultations", label: "Specialist consultations" },
+    { href: "/admin/online-prescriptions", label: "Online prescriptions" },
+    { href: "/admin/health-tests", label: "Health tests" },
     { href: "/admin/appointments", label: "Appointments" },
   ];
 

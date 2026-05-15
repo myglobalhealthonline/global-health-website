@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
-import { fetchAdminAppointments } from "@/lib/admin/admin-api";
+import { fetchAdminAppointments, fetchAdminCountries } from "@/lib/admin/admin-api";
+import { getActiveCountry, scopedCountryCode } from "@/lib/admin/admin-scope";
 import { FlagBadge } from "../_components/flag-badge";
+import { ScopeBanner } from "../_components/scope-banner";
 import {
   AdminCard,
   AdminTable,
@@ -109,7 +111,17 @@ type PageProps = {
 
 export default async function AdminAppointmentsPage({ searchParams }: PageProps) {
   const sp = searchParams ? await searchParams : {};
-  const filters = buildFilterQuery(sp);
+
+  // Resolve cookie-scoped country and apply as default countryCode filter.
+  const countriesResult = await fetchAdminCountries();
+  const countriesForScope = countriesResult.ok ? countriesResult.data.countries : [];
+  const activeCountry = await getActiveCountry(countriesForScope);
+
+  const baseFilters = buildFilterQuery(sp);
+  const filters: Record<string, string | undefined> = {
+    ...baseFilters,
+    countryCode: scopedCountryCode(baseFilters.countryCode, activeCountry),
+  };
   const result = await fetchAdminAppointments(filters);
 
   if (!result.ok) {
@@ -136,6 +148,8 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
         title="Appointment queue"
         description="Internal review queue. Filters and pagination run on the server; status moves follow rules on the detail page."
       />
+
+      <ScopeBanner activeCountry={activeCountry} clearHref="/admin/appointments" />
 
       {/* Filters */}
       <AdminCard padding={0} className="mb-4 overflow-hidden">

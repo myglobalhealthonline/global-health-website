@@ -1,6 +1,5 @@
 "use client";
 
-import { Star } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 
 export function TeamHero({ countryName }: { countryName: string }) {
@@ -17,19 +16,9 @@ export function TeamHero({ countryName }: { countryName: string }) {
           <p className="mt-4 text-lg text-white/85 max-w-xl mx-auto leading-relaxed">
             Certified and experienced professionals in {countryName} ready to take care of your health.
           </p>
-          
-          {/* Rating badge */}
-          <div className="mt-6 inline-flex items-center gap-3 rounded-2xl bg-white/10 ring-1 ring-white/15 px-5 py-3">
-            <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star key={star} className="size-4 fill-amber-400 text-amber-400" />
-              ))}
-            </div>
-            <div className="text-left">
-              <p className="text-sm font-bold text-white">4.9/5</p>
-              <p className="text-xs text-white/70">2,000+ reviews</p>
-            </div>
-          </div>
+          {/* Rating badge (4.9/5 · 2,000+ reviews) removed when the public
+              surface was made fully DB-driven. Re-add once a real review
+              source is wired in (Trustpilot / Google). */}
         </div>
       </Container>
     </section>

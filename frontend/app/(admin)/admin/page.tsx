@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import {
-  Briefcase,
   CalendarClock,
   ChevronRight,
   Eye,
@@ -9,21 +9,31 @@ import {
   Layers,
   Plus,
   Stethoscope,
+  UserRound,
 } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
   fetchAdminAppointments,
   fetchAdminCountries,
   fetchAdminDoctors,
+  fetchAdminPages,
   fetchAdminServices,
+  type AdminPageDto,
 } from "@/lib/admin/admin-api";
+import { COUNTRY_PREF_COOKIE } from "./_components/country-picker-constants";
 import { FlagBadge } from "./_components/flag-badge";
 import {
   AdminCard,
+  AdminTable,
   Btn,
   PageHeader,
+  Pill,
   SectionHeader,
   StatCard,
+  Td,
+  Th,
+  Thead,
+  Tr,
 } from "./_components/atoms";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +43,8 @@ const NON_TERMINAL_STATUSES = new Set([
   "UNDER_REVIEW",
   "CONTACTED",
 ]);
+
+const EXPECTED_PAGE_KEYS_PER_COUNTRY = 4; // HOME · DOCTORS_INDEX · GENERAL · SPECIALIST
 
 function timeAgo(date: Date): string {
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -53,18 +65,39 @@ function greeting(): string {
   return "Good evening";
 }
 
+type ActivityItem = {
+  id: string;
+  kind: "booking" | "page";
+  timestamp: Date;
+  countrySlug: string | null;
+  primary: string; // bold lead text
+  verb: string;
+  target: string; // bold trailing text
+};
+
 export default async function AdminDashboardPage() {
   const user = await getServerAuthUser();
+  const jar = await cookies();
+  const activeCountrySlug = jar.get(COUNTRY_PREF_COOKIE)?.value ?? null;
 
-  const [countriesRes, doctorsRes, servicesRes, appointmentsRes] = await Promise.all([
-    fetchAdminCountries(),
-    fetchAdminDoctors(),
-    fetchAdminServices(),
-    fetchAdminAppointments(),
-  ]);
-
+  // Fetch everything in parallel. Country/service/page/doctor/appointment
+  // queries accept a `countryCode` filter on the backend; we pass the active
+  // slug→code so per-country scopes are honored without re-filtering client-side.
+  const countriesRes = await fetchAdminCountries();
   const countries = countriesRes.ok ? countriesRes.data.countries : [];
-  const activeCountries = countries.filter((c) => c.isActive).length;
+  const activeCountry = activeCountrySlug
+    ? countries.find((c) => c.slug === activeCountrySlug) ?? null
+    : null;
+  const scopeQuery: Record<string, string> = activeCountry
+    ? { countryId: activeCountry.id }
+    : {};
+
+  const [doctorsRes, servicesRes, appointmentsRes, pagesRes] = await Promise.all([
+    fetchAdminDoctors(scopeQuery),
+    fetchAdminServices(scopeQuery),
+    fetchAdminAppointments(activeCountry ? { countryCode: activeCountry.code } : undefined),
+    fetchAdminPages({ ...scopeQuery, pageSize: "100" }),
+  ]);
 
   const doctorsTotal = doctorsRes.ok ? doctorsRes.data.pagination.total : 0;
   const doctorsActive = doctorsRes.ok
@@ -72,53 +105,109 @@ export default async function AdminDashboardPage() {
     : 0;
 
   const servicesItems = servicesRes.ok ? servicesRes.data.items : [];
-  const publishedServices = servicesItems.filter((s) => s.isActive).length;
-  const draftServices = servicesItems.filter((s) => !s.isActive).length;
+  // Only count consultation services that map to public pages — Phase 1
+  // surfaces GENERAL + SPECIALIST. Prescriptions / health tests are tracked
+  // in their own sections.
+  const consultationServices = servicesItems.filter(
+    (s) => s.kind === "GENERAL" || s.kind === "SPECIALIST",
+  );
+  const publishedServices = consultationServices.filter((s) => s.isActive).length;
+  const draftServices = consultationServices.filter((s) => !s.isActive).length;
 
   const appointments = appointmentsRes.ok ? appointmentsRes.data.items : [];
   const pendingAppointments = appointments.filter((a) =>
     NON_TERMINAL_STATUSES.has(a.status),
   ).length;
 
-  // Sorted most-recent-first. Once an audit log exists, swap this in.
-  const recentActivity = [...appointments]
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-    )
-    .slice(0, 6);
+  const pages: AdminPageDto[] = pagesRes.ok ? pagesRes.data.items : [];
+  const publishedPages = pages.filter((p) => p.status === "PUBLISHED" && p.isActive);
+  const expectedPages = activeCountry
+    ? EXPECTED_PAGE_KEYS_PER_COUNTRY
+    : countries.length * EXPECTED_PAGE_KEYS_PER_COUNTRY;
 
-  const countryByCode = new Map(
-    countries.map((c) => [c.code.toLowerCase(), c] as const),
-  );
-  const countryBySlug = new Map(countries.map((c) => [c.slug, c] as const));
+  // Per-country aggregation (only used in global scope).
+  const allDoctors = doctorsRes.ok ? doctorsRes.data.items : [];
+  const allServices = servicesItems;
+  const allPages = pages;
+  const countryRows = countries
+    .filter((c) => c.isActive)
+    .map((c) => {
+      const docs = allDoctors.filter((d) => d.country?.id === c.id && d.active).length;
+      const svcs = allServices.filter(
+        (s) =>
+          s.country?.id === c.id &&
+          s.isActive &&
+          (s.kind === "GENERAL" || s.kind === "SPECIALIST"),
+      ).length;
+      const pgs = allPages.filter(
+        (p) => p.countryId === c.id && p.status === "PUBLISHED" && p.isActive,
+      ).length;
+      const pending = appointments.filter(
+        (a) =>
+          a.country?.toLowerCase() === c.code.toLowerCase() &&
+          NON_TERMINAL_STATUSES.has(a.status),
+      ).length;
+      return { country: c, docs, svcs, pgs, pending };
+    });
+
+  // Activity feed — merge appointments + recently-updated pages, sorted desc.
+  const activity: ActivityItem[] = [];
+  for (const a of appointments) {
+    activity.push({
+      id: `appt:${a.id}`,
+      kind: "booking",
+      timestamp: new Date(a.createdAt),
+      countrySlug:
+        countries.find((c) => c.code.toLowerCase() === a.country.toLowerCase())?.slug ?? null,
+      primary: a.fullName?.trim() || a.email,
+      verb: "booked",
+      target: a.consultationType,
+    });
+  }
+  for (const p of pages.slice(0, 12)) {
+    activity.push({
+      id: `page:${p.id}`,
+      kind: "page",
+      timestamp: new Date(p.updatedAt),
+      countrySlug: p.country?.slug ?? null,
+      primary: "Admin",
+      verb: p.status === "PUBLISHED" ? "published" : "edited",
+      target: `${p.pageKey.replace(/_/g, " ").toLowerCase()} · ${p.locale}`,
+    });
+  }
+  activity.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+  const recentActivity = activity.slice(0, 7);
 
   const firstName = (user?.fullName?.trim() || user?.email?.split("@")[0] || "Admin")
     .split(/\s+/)[0];
 
+  const countryHomeHref = activeCountry
+    ? `/admin/pages?countryId=${activeCountry.id}&pageKey=HOME`
+    : "/admin/country-home";
+
   const quickActions = [
     {
-      icon: Plus,
+      icon: FileText,
+      label: activeCountry ? `Edit ${activeCountry.name} home` : "Edit country home",
+      sub: activeCountry ? "Hero, copy, CTA, SEO" : "Pick a country first",
+      href: countryHomeHref,
+    },
+    {
+      icon: UserRound,
       label: "Add a new doctor",
-      sub: "Assign to one or more countries",
+      sub: activeCountry ? `Assign to ${activeCountry.name}` : "Assign to a country",
       href: "/admin/doctors/create",
     },
     {
       icon: Globe2,
       label: "Enable a new country",
-      sub: "Hero, currency, languages",
+      sub: "Locales, currency, default home",
       href: "/admin/countries/new",
-    },
-    {
-      icon: Briefcase,
-      label: "Publish a service",
-      sub: "General, specialist, prescription, test",
-      href: "/admin/general-consultations/new",
     },
     {
       icon: CalendarClock,
       label: "Review bookings",
-      sub: `${pendingAppointments} pending across countries`,
+      sub: `${pendingAppointments} pending${activeCountry ? " in " + activeCountry.name : " across countries"}`,
       href: "/admin/appointments",
     },
   ];
@@ -126,13 +215,17 @@ export default async function AdminDashboardPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Overview"
+        eyebrow={activeCountry ? `Scope · ${activeCountry.name}` : "Scope · All countries"}
         title={`${greeting()}, ${firstName}`}
-        description="Activity across all five countries. Pick a country in the top-right to scope the rest of the portal."
+        description={
+          activeCountry
+            ? `Activity scoped to ${activeCountry.name}. Switch the country in the top-right to change scope.`
+            : "Activity across all countries. Pick a country in the top-right to drill in."
+        }
         actions={
           <>
             <Btn
-              href="/"
+              href={activeCountry ? `/${activeCountry.slug}` : "/"}
               variant="secondary"
               size="md"
               iconLeft={<Eye className="size-3.5" aria-hidden />}
@@ -140,25 +233,25 @@ export default async function AdminDashboardPage() {
               View public site
             </Btn>
             <Btn
-              href="/admin/general-consultations/new"
+              href="/admin/pages/new"
               variant="primary"
               size="md"
               iconLeft={<Plus className="size-3.5" aria-hidden />}
             >
-              New service
+              New page
             </Btn>
           </>
         }
       />
 
-      {/* Stat cards — 4-up grid */}
+      {/* Stat strip — 5 up */}
       <section
         className="mb-6 grid gap-4"
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}
       >
         <StatCard
           label="Active countries"
-          value={activeCountries}
+          value={countries.filter((c) => c.isActive).length}
           hint={`${countries.length} total`}
           icon={<Globe2 className="size-[18px]" aria-hidden />}
           tone="brand"
@@ -177,9 +270,19 @@ export default async function AdminDashboardPage() {
           href="/admin/doctors"
         />
         <StatCard
+          label="Pages published"
+          value={publishedPages.length}
+          hint={`Target ${expectedPages}`}
+          icon={<FileText className="size-[18px]" aria-hidden />}
+          tone={
+            publishedPages.length >= expectedPages ? "brand" : "neutral"
+          }
+          href={activeCountry ? `/admin/pages?countryId=${activeCountry.id}` : "/admin/pages"}
+        />
+        <StatCard
           label="Services published"
           value={publishedServices}
-          hint={`${draftServices} drafts`}
+          hint={`${draftServices} draft${draftServices === 1 ? "" : "s"}`}
           icon={<Layers className="size-[18px]" aria-hidden />}
           tone="neutral"
           href="/admin/general-consultations"
@@ -187,14 +290,14 @@ export default async function AdminDashboardPage() {
         <StatCard
           label="Bookings pending"
           value={pendingAppointments}
-          hint="Avg 24h reply"
+          hint={pendingAppointments > 0 ? "Needs reply" : "All clear"}
           icon={<CalendarClock className="size-[18px]" aria-hidden />}
-          tone="accent"
+          tone={pendingAppointments > 0 ? "accent" : "neutral"}
           href="/admin/appointments"
         />
       </section>
 
-      {/* Two-column: activity (1.4fr) + quick actions (1fr) */}
+      {/* Two-column body: activity + quick actions */}
       <div
         className="grid gap-4"
         style={{ gridTemplateColumns: "minmax(0, 1.4fr) minmax(0, 1fr)" }}
@@ -202,7 +305,11 @@ export default async function AdminDashboardPage() {
         <AdminCard padding={0} className="overflow-hidden">
           <SectionHeader
             title="Recent activity"
-            description="Last 24 hours · across all countries"
+            description={
+              activeCountry
+                ? `Latest bookings and content edits for ${activeCountry.name}`
+                : "Latest bookings and content edits across all countries"
+            }
             right={
               <Btn
                 href="/admin/appointments"
@@ -223,16 +330,12 @@ export default async function AdminDashboardPage() {
                 No activity yet
               </p>
               <p className="max-w-xs text-[12px] text-[var(--color-text-muted)]">
-                New booking requests will appear here.
+                New booking requests and content edits will appear here.
               </p>
             </div>
           ) : (
             <ul className="m-0 list-none p-0">
               {recentActivity.map((row, i) => {
-                const key = row.country.toLowerCase();
-                const country = countryByCode.get(key) ?? countryBySlug.get(key);
-                const actor = row.fullName?.trim() || row.email;
-                const verb = "booked";
                 const isLast = i === recentActivity.length - 1;
                 return (
                   <li
@@ -242,8 +345,8 @@ export default async function AdminDashboardPage() {
                       borderBottom: isLast ? "none" : "1px solid var(--color-border)",
                     }}
                   >
-                    {country ? (
-                      <FlagBadge code={country.slug} size={14} />
+                    {row.countrySlug ? (
+                      <FlagBadge code={row.countrySlug} size={14} />
                     ) : (
                       <span
                         aria-hidden
@@ -259,16 +362,19 @@ export default async function AdminDashboardPage() {
                     <div className="min-w-0 flex-1">
                       <p className="m-0 truncate text-[13px] text-[var(--color-text-body)]">
                         <strong className="font-bold text-[var(--color-text-primary)]">
-                          {actor}
+                          {row.primary}
                         </strong>{" "}
-                        <span className="text-[var(--color-text-muted)]">{verb}</span>{" "}
+                        <span className="text-[var(--color-text-muted)]">{row.verb}</span>{" "}
                         <strong className="font-bold text-[var(--color-text-primary)]">
-                          {row.consultationType}
+                          {row.target}
                         </strong>
                       </p>
                     </div>
-                    <span className="shrink-0 whitespace-nowrap text-[12px] text-[var(--color-text-muted)]">
-                      {timeAgo(new Date(row.createdAt))}
+                    <Pill tone={row.kind === "booking" ? "pending" : "neutral"}>
+                      {row.kind}
+                    </Pill>
+                    <span className="ml-2 shrink-0 whitespace-nowrap text-[12px] text-[var(--color-text-muted)]">
+                      {timeAgo(row.timestamp)}
                     </span>
                   </li>
                 );
@@ -328,6 +434,73 @@ export default async function AdminDashboardPage() {
           </div>
         </AdminCard>
       </div>
+
+      {/* Country health — only shown when no specific country is scoped.
+          One row per active country with at-a-glance counts. Clicking a flag
+          jumps into that country's pages list. */}
+      {!activeCountry && countryRows.length > 0 ? (
+        <AdminCard padding={0} className="mt-4 overflow-hidden">
+          <SectionHeader
+            title="Country health"
+            description="Per-country counts. Click a row to scope the portal to that country."
+          />
+          <AdminTable>
+            <Thead>
+              <Th>Country</Th>
+              <Th align="right">Doctors</Th>
+              <Th align="right">Services</Th>
+              <Th align="right">Pages</Th>
+              <Th align="right">Pending bookings</Th>
+              <Th align="right"></Th>
+            </Thead>
+            <tbody>
+              {countryRows.map((row) => {
+                const pagesOk = row.pgs >= EXPECTED_PAGE_KEYS_PER_COUNTRY;
+                return (
+                  <Tr key={row.country.id}>
+                    <Td>
+                      <span className="inline-flex items-center gap-2.5">
+                        <FlagBadge code={row.country.slug} size={16} />
+                        <span className="font-semibold text-[var(--color-text-primary)]">
+                          {row.country.name}
+                        </span>
+                      </span>
+                    </Td>
+                    <Td align="right">{row.docs}</Td>
+                    <Td align="right">{row.svcs}</Td>
+                    <Td align="right">
+                      <span
+                        className={
+                          pagesOk
+                            ? "font-semibold text-[var(--color-brand-primary)]"
+                            : "font-semibold text-amber-700"
+                        }
+                      >
+                        {row.pgs} / {EXPECTED_PAGE_KEYS_PER_COUNTRY}
+                      </span>
+                    </Td>
+                    <Td align="right">
+                      {row.pending > 0 ? (
+                        <Pill tone="pending">{row.pending}</Pill>
+                      ) : (
+                        <span className="text-[var(--color-text-muted)]">0</span>
+                      )}
+                    </Td>
+                    <Td align="right">
+                      <Link
+                        href={`/admin/pages?countryId=${row.country.id}`}
+                        className="text-[13px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                      >
+                        Open
+                      </Link>
+                    </Td>
+                  </Tr>
+                );
+              })}
+            </tbody>
+          </AdminTable>
+        </AdminCard>
+      ) : null}
     </>
   );
 }

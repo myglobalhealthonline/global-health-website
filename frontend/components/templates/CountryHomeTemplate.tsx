@@ -5,7 +5,6 @@ import {
   Clock,
   Heart,
   Package,
-  Star,
   ChevronRight,
 } from "lucide-react";
 import { BookingCTA } from "@/components/sections/BookingCTA";
@@ -150,19 +149,11 @@ export function CountryHomeTemplate({
                 {hero.description}
               </p>
 
-              {/* Star rating */}
-              <div className="mt-5 flex items-center justify-center gap-2 lg:justify-start">
-                <div className="flex items-center gap-0.5">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      className="size-4 fill-amber-400 text-amber-400"
-                    />
-                  ))}
-                </div>
-                <span className="text-sm font-bold text-white">4.94</span>
-                <span className="text-sm text-white/70">— doctify</span>
-              </div>
+              {/* Star rating (4.94 · doctify) removed when the public surface
+                  was made fully DB-driven. Re-add once a real review source
+                  (Trustpilot / Google) is wired in. This template only renders
+                  for legacy Wix-shape routes that now 308 to /[country]/[lang]/,
+                  so it's effectively dormant. */}
 
               {/* CTAs */}
               <div className="mt-6 flex flex-wrap justify-center gap-3 lg:justify-start">
@@ -312,24 +303,8 @@ export function CountryHomeTemplate({
                   />
                 </Link>
 
-                <div className="mx-auto mt-8 flex max-w-xl flex-col items-center gap-2 rounded-2xl border border-[var(--color-border)] bg-white px-4 py-3.5 text-center shadow-[var(--shadow-soft)] sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-3 lg:mx-0 lg:justify-start lg:text-left">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-0.5">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className="size-4 shrink-0 fill-amber-400 text-amber-400"
-                        />
-                      ))}
-                    </div>
-                    <span className="text-sm font-bold tabular-nums text-[var(--color-text-primary)]">
-                      4.94
-                    </span>
-                  </div>
-                  <p className="text-xs leading-snug text-[var(--color-text-muted)] sm:border-l sm:border-[var(--color-border)] sm:pl-3">
-                    Based on 19 reviews, verified by Doctify
-                  </p>
-                </div>
+                {/* Review badge (4.94 · 19 reviews · Doctify) removed —
+                    unsourced claim. Re-add when wired to a real provider. */}
               </div>
             </div>
           </Container>

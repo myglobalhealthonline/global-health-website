@@ -14,7 +14,7 @@ const STEPS = [
     n: "02",
     title: "Choose what you need",
     lede:
-      "Browse 30+ services across general, specialist, prescriptions, and home tests. Filter by language, urgency, or price.",
+      "Browse general, specialist, prescription, and home-test services. Filter by language, urgency, or price.",
   },
   {
     n: "03",

@@ -8,6 +8,7 @@ import {
   fetchAdminSpecialties,
   purgeAdminService,
 } from "@/lib/admin/admin-api";
+import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
 import {
   adminHrefForService,
   readServiceKind,
@@ -15,6 +16,7 @@ import {
   SERVICE_KIND_ORDER,
 } from "@/lib/admin/service-kind";
 import { FlagBadge } from "../_components/flag-badge";
+import { ScopeBanner } from "../_components/scope-banner";
 import {
   AdminCard,
   AdminTable,
@@ -84,20 +86,26 @@ export default async function AdminServicesPage({
   const kind = forcedKind ?? readServiceKind(spRead(sp, "kind"), "GENERAL");
   const meta = SERVICE_KIND_META[kind];
   const basePath = forcedKind ? meta.listHref : "/admin/services";
+  // Fetch countries first so we can resolve the active-country cookie scope
+  // before issuing the services query. The active country becomes the default
+  // `countryId` filter when the URL doesn't already set one (explicit URL
+  // filters always win — admins can still browse "All countries" by removing
+  // the filter in the UI).
+  const countriesResult = await fetchAdminCountries();
+  const countriesForScope = countriesResult.ok ? countriesResult.data.countries : [];
+  const activeCountry = await getActiveCountry(countriesForScope);
+
   const filters: Record<string, string | undefined> = {
     page: spRead(sp, "page"),
     pageSize: spRead(sp, "pageSize"),
     kind,
-    countryId: spRead(sp, "countryId"),
+    countryId: scopedCountryId(spRead(sp, "countryId"), activeCountry),
     specialtyId: spRead(sp, "specialtyId"),
     isActive: spRead(sp, "isActive"),
     search: spRead(sp, "search"),
   };
 
-  const [listResult, countriesResult] = await Promise.all([
-    fetchAdminServices(filters),
-    fetchAdminCountries(),
-  ]);
+  const listResult = await fetchAdminServices(filters);
 
   if (!countriesResult.ok) {
     return (
@@ -188,6 +196,8 @@ export default async function AdminServicesPage({
           </Btn>
         }
       />
+
+      <ScopeBanner activeCountry={activeCountry} clearHref={basePath} />
 
       {/* Service-type segmented control — always shown so users can flip
           between general / specialist / prescriptions / health-tests

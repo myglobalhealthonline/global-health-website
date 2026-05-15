@@ -1,16 +1,21 @@
 /**
- * One-line trust ribbon — not a 4-card grid.
- * Matches `ui_kits/website/Sections.jsx TrustRibbon`.
+ * One-line trust ribbon.
+ *
+ * Phase 1: data-driven via props. The earlier version hard-coded
+ *   "50+ Licensed doctors · 5 Countries · GDPR · 4.94 Doctify rating · 19 reviews"
+ * which (a) drifts from the real catalogue and (b) made an unsourced rating
+ * claim. Callers should compute the doctor/country counts from the DB and
+ * pass a reviews item only when there's a verified source.
  */
 
-const ITEMS = [
-  { v: "50+", l: "Licensed doctors" },
-  { v: "5", l: "Countries · EU-registered" },
+export type TrustRibbonItem = { v: string; l: string };
+
+const FALLBACK_ITEMS: TrustRibbonItem[] = [
   { v: "GDPR", l: "Compliant by default" },
-  { v: "4.94", l: "Doctify rating · 19 reviews" },
 ];
 
-export function TrustRibbon() {
+export function TrustRibbon({ items }: { items?: TrustRibbonItem[] }) {
+  const list = items && items.length > 0 ? items : FALLBACK_ITEMS;
   return (
     <section
       style={{
@@ -27,7 +32,7 @@ export function TrustRibbon() {
           padding: "0 clamp(20px, 4vw, 40px)",
         }}
       >
-        {ITEMS.map((it) => (
+        {list.map((it) => (
           <div
             key={it.l}
             className="inline-flex items-baseline gap-3"

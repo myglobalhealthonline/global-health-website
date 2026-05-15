@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { ServicesGrid } from "@/components/sections/ServicesGrid";
+import { DoctorsSection } from "@/components/sections/DoctorsSection";
+import { TrustRibbon } from "@/components/sections/TrustRibbon";
+import { FinalCTA } from "@/components/sections/FinalCTA";
 import { countries, getCountryByCode } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
@@ -15,6 +19,10 @@ import {
   isSupportedLocale,
   type PublicLocale,
 } from "@/lib/content/get-public-page";
+import {
+  getCountryDoctors,
+  getCountryServices,
+} from "@/lib/content/get-country-collections";
 import { SITE_NAME } from "@/lib/constants";
 
 type Params = { country: string; lang: string };
@@ -51,6 +59,18 @@ export async function generateMetadata({
   };
 }
 
+function formatPrice(cents: number | null, currency: string | null): string | undefined {
+  if (cents == null) return undefined;
+  const symbol = currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency === "USD" ? "$" : (currency ?? "");
+  const amount = (cents / 100).toLocaleString("en-IE", { maximumFractionDigits: 0 });
+  return `${symbol}${amount}`;
+}
+
+function formatDuration(minutes: number | null): string | undefined {
+  if (minutes == null) return undefined;
+  return `${minutes} min`;
+}
+
 export default async function CountryLangGeneralConsultationPage({
   params,
 }: {
@@ -63,15 +83,40 @@ export default async function CountryLangGeneralConsultationPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const page = await getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale);
+  const [page, services, doctors] = await Promise.all([
+    getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale),
+    getCountryServices(code, "GENERAL"),
+    getCountryDoctors(code),
+  ]);
+
   const heroTitle = page?.heroTitle ?? "General medical consultation";
   const heroSubtitle =
     page?.heroSubtitle ?? `Speak to a licensed doctor in ${config.name} about everyday health concerns.`;
   const ctaLabel = page?.ctaLabel ?? "Book general consultation";
   const ctaHref = page?.ctaHref ?? `/${slug}/${lang}/book-online?type=general`;
-  const body =
-    page?.body ??
-    `<p>A general consultation is for non-specialist medical concerns — coughs, infections, ongoing symptoms, follow-ups, sick notes, and referrals.</p>`;
+
+  // Map Service rows to the ServicesGrid card shape. Cards auto-appear when
+  // admin adds a Service row of kind=GENERAL for this country.
+  const serviceItems = services.map((s) => ({
+    title: s.name,
+    description: s.summary,
+    href: ctaHref,
+    serviceType: "general" as const,
+    duration: formatDuration(s.durationMinutes),
+    startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
+  }));
+
+  // Doctor cards — admin adding a Doctor row for this country adds a card.
+  const doctorItems = doctors.slice(0, 12).map((d) => ({
+    name: d.fullName,
+    title: d.title,
+    bio: d.bio ?? "",
+    languages: d.languages,
+    country: config.name,
+    imageSrc: d.imageSrc ?? null,
+    href: `/${slug}/${lang}/doctors/${d.slug}`,
+    ctaLabel: "View profile",
+  }));
 
   return (
     <>
@@ -82,25 +127,46 @@ export default async function CountryLangGeneralConsultationPage({
           { name: "General consultation", url: `/${slug}/${lang}/general-consultation` },
         ])}
       />
-      <section className="mx-auto max-w-3xl px-4 py-16">
+
+      {/* Hero — admin-editable copy from ContentPage */}
+      <section className="mx-auto max-w-5xl px-4 pt-16 pb-10 text-center">
         <p className="text-sm uppercase tracking-wide text-emerald-700">
           {config.name} · General Consultation
         </p>
-        <h1 className="mt-3 text-4xl font-semibold text-slate-900">{heroTitle}</h1>
-        <p className="mt-4 text-lg text-slate-600">{heroSubtitle}</p>
-        <div className="mt-6">
+        <h1 className="mt-3 text-4xl font-semibold text-slate-900 sm:text-5xl">{heroTitle}</h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">{heroSubtitle}</p>
+        <div className="mt-7 flex flex-wrap justify-center gap-3">
           <Link
             href={ctaHref}
-            className="inline-flex items-center rounded-md bg-emerald-700 px-5 py-3 text-white shadow-sm hover:bg-emerald-800"
+            className="inline-flex items-center rounded-md bg-emerald-700 px-6 py-3 text-white shadow-sm hover:bg-emerald-800"
           >
             {ctaLabel}
           </Link>
         </div>
-        <article
-          className="prose prose-slate mt-10 max-w-none"
-          dangerouslySetInnerHTML={{ __html: body }}
-        />
       </section>
+
+      <TrustRibbon />
+
+      {/* Service cards — auto from Service rows where kind=GENERAL, country=X */}
+      {serviceItems.length > 0 ? (
+        <ServicesGrid
+          eyebrow="What you can book"
+          title="General consultations available"
+          intro={`${serviceItems.length} ${serviceItems.length === 1 ? "service" : "services"} currently offered in ${config.name}. Cards update as the team adds or retires services.`}
+          items={serviceItems}
+        />
+      ) : null}
+
+      {/* Doctor cards — auto from Doctor rows for this country */}
+      {doctorItems.length > 0 ? (
+        <DoctorsSection
+          title={`Doctors in ${config.name}`}
+          intro="Licensed clinicians available for general consultations. Each profile lists qualifications, languages, and registration."
+          doctors={doctorItems}
+        />
+      ) : null}
+
+      <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
     </>
   );
 }

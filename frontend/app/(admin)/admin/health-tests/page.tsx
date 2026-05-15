@@ -7,7 +7,9 @@ import {
   fetchAdminHealthTests,
   purgeAdminHealthTest,
 } from "@/lib/admin/admin-api";
+import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
 import { FlagBadge } from "../_components/flag-badge";
+import { ScopeBanner } from "../_components/scope-banner";
 import {
   AdminCard,
   AdminTable,
@@ -61,18 +63,22 @@ type PageProps = {
 
 export default async function AdminHealthTestsPage({ searchParams }: PageProps) {
   const sp = searchParams ? await searchParams : {};
+
+  // Country scope (cookie) is the default countryId filter when the URL
+  // doesn't already specify one. Explicit URL filters always win.
+  const countriesResult = await fetchAdminCountries();
+  const countriesForScope = countriesResult.ok ? countriesResult.data.countries : [];
+  const activeCountry = await getActiveCountry(countriesForScope);
+
   const filters = {
     page: spRead(sp, "page"),
     pageSize: spRead(sp, "pageSize"),
-    countryId: spRead(sp, "countryId"),
+    countryId: scopedCountryId(spRead(sp, "countryId"), activeCountry),
     isActive: spRead(sp, "isActive"),
     search: spRead(sp, "search"),
   };
 
-  const [listResult, countriesResult] = await Promise.all([
-    fetchAdminHealthTests(filters),
-    fetchAdminCountries(),
-  ]);
+  const listResult = await fetchAdminHealthTests(filters);
 
   if (!countriesResult.ok) {
     return (
@@ -131,6 +137,8 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
           </Btn>
         }
       />
+
+      <ScopeBanner activeCountry={activeCountry} clearHref="/admin/health-tests" />
 
       {errorMessage ? (
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">

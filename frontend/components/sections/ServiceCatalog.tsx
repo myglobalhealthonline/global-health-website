@@ -3,52 +3,40 @@
 /**
  * Filterable service catalogue.
  *
- * Mirrors `ui_kits/website/Sections.jsx ServiceCatalog`:
- *   • Section header — eyebrow + h2 + side description
- *   • Filter pills bordered top/bottom with counts
- *   • Card grid auto-fill minmax(280px, 1fr)
- *   • Each tile: gradient stripe top with icon tile + tag pill,
- *     body with title and Price / Time grid
+ * Data-driven: callers pass the full `services` array. Cards auto-update as
+ * the team adds/retires Service rows in admin. The earlier hard-coded SERVICES
+ * list has been removed so this section only shows what the DB knows.
  */
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   CheckCircle2,
-  Globe,
-  Heart,
   Package,
-  Shield,
   Stethoscope,
   User,
 } from "lucide-react";
 
-type ServiceType = "general" | "specialist" | "prescription" | "test";
+export type ServiceTileType = "general" | "specialist" | "prescription" | "test";
 
-type Service = {
-  type: ServiceType;
+export type ServiceCatalogItem = {
+  type: ServiceTileType;
   title: string;
   tag: string;
-  price: number;
+  /** Price in major-currency units (e.g. 50 for €50). Pass null if unknown. */
+  price: number | null;
+  currency?: string;
+  /** Free-text duration (e.g. "30 min", "Sent home"). */
   dur: string;
-  icon: ReactNode;
   href: string;
 };
 
-const SERVICES: Service[] = [
-  { type: "general", title: "General consultation", tag: "General", price: 50, dur: "30 min", icon: <Stethoscope className="size-[22px]" aria-hidden />, href: "/book-online?type=general" },
-  { type: "general", title: "Travel health", tag: "General", price: 60, dur: "30 min", icon: <Globe className="size-[22px]" aria-hidden />, href: "/book-online?type=general" },
-  { type: "general", title: "Weight loss", tag: "General", price: 80, dur: "45 min", icon: <Heart className="size-[22px]" aria-hidden />, href: "/book-online?type=general" },
-  { type: "specialist", title: "Cardiology", tag: "Specialist", price: 120, dur: "45 min", icon: <Heart className="size-[22px]" aria-hidden />, href: "/book-online?type=specialist" },
-  { type: "specialist", title: "Dermatology", tag: "Specialist", price: 95, dur: "30 min", icon: <Shield className="size-[22px]" aria-hidden />, href: "/book-online?type=specialist" },
-  { type: "specialist", title: "Mental health", tag: "Specialist", price: 110, dur: "50 min", icon: <User className="size-[22px]" aria-hidden />, href: "/book-online?type=specialist" },
-  { type: "prescription", title: "Repeat prescription", tag: "Prescription", price: 25, dur: "15 min", icon: <Package className="size-[22px]" aria-hidden />, href: "/online-prescription" },
-  { type: "prescription", title: "Contraceptive review", tag: "Prescription", price: 35, dur: "20 min", icon: <Package className="size-[22px]" aria-hidden />, href: "/online-prescription" },
-  { type: "test", title: "Full blood panel", tag: "Home test", price: 65, dur: "Sent home", icon: <CheckCircle2 className="size-[22px]" aria-hidden />, href: "/home-health-tests" },
-  { type: "test", title: "Thyroid panel", tag: "Home test", price: 55, dur: "Sent home", icon: <CheckCircle2 className="size-[22px]" aria-hidden />, href: "/home-health-tests" },
-  { type: "test", title: "STI panel · confidential", tag: "Home test", price: 80, dur: "Sent home", icon: <CheckCircle2 className="size-[22px]" aria-hidden />, href: "/home-health-tests" },
-  { type: "specialist", title: "Pediatrics", tag: "Specialist", price: 90, dur: "30 min", icon: <User className="size-[22px]" aria-hidden />, href: "/book-online?type=specialist" },
-];
+const DEFAULT_ICONS: Record<ServiceTileType, ReactNode> = {
+  general: <Stethoscope className="size-[22px]" aria-hidden />,
+  specialist: <User className="size-[22px]" aria-hidden />,
+  prescription: <Package className="size-[22px]" aria-hidden />,
+  test: <CheckCircle2 className="size-[22px]" aria-hidden />,
+};
 
 const FILTERS = [
   { id: "all", label: "All" },
@@ -60,10 +48,29 @@ const FILTERS = [
 
 type FilterId = (typeof FILTERS)[number]["id"];
 
-export function ServiceCatalog() {
+export function ServiceCatalog({
+  services,
+  intro,
+}: {
+  services: ServiceCatalogItem[];
+  /** Optional intro paragraph in the section header. */
+  intro?: string;
+}) {
   const [filter, setFilter] = useState<FilterId>("all");
   const shown =
-    filter === "all" ? SERVICES : SERVICES.filter((s) => s.type === filter);
+    filter === "all" ? services : services.filter((s) => s.type === filter);
+
+  // Only show filter pills for service types that actually exist in the data,
+  // plus the "all" pill. Avoids dead "Home tests (0)" chips in countries
+  // without those services.
+  const availableTypes = new Set(services.map((s) => s.type));
+  const visibleFilters = FILTERS.filter(
+    (f) => f.id === "all" || availableTypes.has(f.id as ServiceTileType),
+  );
+
+  if (services.length === 0) {
+    return null;
+  }
 
   return (
     <section style={{ padding: "96px 0 64px" }}>
@@ -74,7 +81,6 @@ export function ServiceCatalog() {
           padding: "0 clamp(20px, 4vw, 40px)",
         }}
       >
-        {/* Header */}
         <div
           className="flex flex-wrap items-end justify-between gap-6"
           style={{ marginBottom: 36 }}
@@ -103,81 +109,84 @@ export function ServiceCatalog() {
                 maxWidth: "16ch",
               }}
             >
-              Browse {SERVICES.length} services.
+              {services.length === 1
+                ? "Browse 1 service."
+                : `Browse ${services.length} services.`}
             </h2>
           </div>
-          <p
-            className="m-0 text-[var(--color-text-muted)]"
-            style={{ maxWidth: "32ch", fontSize: 16 }}
-          >
-            Every service is delivered by doctors registered in your country,
-            billed in your currency, in your language.
-          </p>
+          {intro ? (
+            <p
+              className="m-0 text-[var(--color-text-muted)]"
+              style={{ maxWidth: "32ch", fontSize: 16 }}
+            >
+              {intro}
+            </p>
+          ) : null}
         </div>
 
-        {/* Filter pills */}
-        <div
-          className="flex flex-wrap gap-2"
-          style={{
-            padding: "16px 0",
-            borderTop: "1px solid var(--color-border)",
-            borderBottom: "1px solid var(--color-border)",
-            marginBottom: 24,
-          }}
-        >
-          {FILTERS.map((f) => {
-            const count =
-              f.id === "all"
-                ? SERVICES.length
-                : SERVICES.filter((s) => s.type === f.id).length;
-            const isActive = filter === f.id;
-            return (
-              <button
-                key={f.id}
-                type="button"
-                onClick={() => setFilter(f.id)}
-                className="inline-flex items-center gap-2 transition-all duration-150"
-                style={{
-                  padding: "10px 18px",
-                  borderRadius: 999,
-                  border:
-                    "1px solid " +
-                    (isActive
-                      ? "var(--color-brand-primary)"
-                      : "var(--color-border)"),
-                  background: isActive
-                    ? "var(--color-brand-primary)"
-                    : "var(--color-background-page)",
-                  color: isActive ? "#fff" : "var(--color-text-body)",
-                  fontFamily: "inherit",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: "pointer",
-                }}
-              >
-                {f.label}
-                <span
-                  className="inline-flex items-center justify-center"
+        {visibleFilters.length > 2 ? (
+          <div
+            className="flex flex-wrap gap-2"
+            style={{
+              padding: "16px 0",
+              borderTop: "1px solid var(--color-border)",
+              borderBottom: "1px solid var(--color-border)",
+              marginBottom: 24,
+            }}
+          >
+            {visibleFilters.map((f) => {
+              const count =
+                f.id === "all"
+                  ? services.length
+                  : services.filter((s) => s.type === f.id).length;
+              const isActive = filter === f.id;
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setFilter(f.id)}
+                  className="inline-flex items-center gap-2 transition-all duration-150"
                   style={{
-                    background: isActive
-                      ? "rgba(255,255,255,0.20)"
-                      : "var(--color-background-soft)",
-                    color: isActive ? "#fff" : "var(--color-text-muted)",
-                    fontSize: 11,
-                    fontWeight: 800,
-                    padding: "2px 6px",
+                    padding: "10px 18px",
                     borderRadius: 999,
-                    minWidth: 20,
+                    border:
+                      "1px solid " +
+                      (isActive
+                        ? "var(--color-brand-primary)"
+                        : "var(--color-border)"),
+                    background: isActive
+                      ? "var(--color-brand-primary)"
+                      : "var(--color-background-page)",
+                    color: isActive ? "#fff" : "var(--color-text-body)",
+                    fontFamily: "inherit",
+                    fontSize: 13,
+                    fontWeight: 700,
+                    cursor: "pointer",
                   }}
                 >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+                  {f.label}
+                  <span
+                    className="inline-flex items-center justify-center"
+                    style={{
+                      background: isActive
+                        ? "rgba(255,255,255,0.20)"
+                        : "var(--color-background-soft)",
+                      color: isActive ? "#fff" : "var(--color-text-muted)",
+                      fontSize: 11,
+                      fontWeight: 800,
+                      padding: "2px 6px",
+                      borderRadius: 999,
+                      minWidth: 20,
+                    }}
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
 
-        {/* Card grid */}
         <div
           className="grid gap-4"
           style={{
@@ -185,7 +194,7 @@ export function ServiceCatalog() {
           }}
         >
           {shown.map((s) => (
-            <ServiceTile key={s.title} service={s} />
+            <ServiceTile key={`${s.type}-${s.title}-${s.href}`} service={s} />
           ))}
         </div>
       </div>
@@ -193,7 +202,7 @@ export function ServiceCatalog() {
   );
 }
 
-function ServiceTile({ service: s }: { service: Service }) {
+function ServiceTile({ service: s }: { service: ServiceCatalogItem }) {
   const stripeBg =
     s.type === "test"
       ? "linear-gradient(135deg, #C8E6A0 0%, #A4D177 100%)"
@@ -205,6 +214,14 @@ function ServiceTile({ service: s }: { service: Service }) {
   const stripeFg = s.type === "test" ? "var(--color-background-dark)" : "#fff";
   const tileBg =
     s.type === "test" ? "rgba(20,59,48,0.10)" : "rgba(255,255,255,0.14)";
+  const currencySymbol =
+    s.currency === "EUR" || !s.currency
+      ? "€"
+      : s.currency === "GBP"
+        ? "£"
+        : s.currency === "USD"
+          ? "$"
+          : `${s.currency} `;
 
   return (
     <Link
@@ -220,7 +237,6 @@ function ServiceTile({ service: s }: { service: Service }) {
         transition: "all 180ms ease-out",
       }}
     >
-      {/* Top stripe with icon + tag */}
       <div
         className="flex items-start justify-between overflow-hidden"
         style={{
@@ -239,7 +255,7 @@ function ServiceTile({ service: s }: { service: Service }) {
             background: tileBg,
           }}
         >
-          {s.icon}
+          {DEFAULT_ICONS[s.type]}
         </span>
         <span
           className="uppercase"
@@ -247,7 +263,9 @@ function ServiceTile({ service: s }: { service: Service }) {
             padding: "4px 10px",
             borderRadius: 999,
             background:
-              s.type === "test" ? "rgba(20,59,48,0.12)" : "rgba(255,255,255,0.16)",
+              s.type === "test"
+                ? "rgba(20,59,48,0.12)"
+                : "rgba(255,255,255,0.16)",
             fontSize: 10,
             fontWeight: 800,
             letterSpacing: "0.08em",
@@ -257,7 +275,6 @@ function ServiceTile({ service: s }: { service: Service }) {
         </span>
       </div>
 
-      {/* Body */}
       <div style={{ padding: "20px 22px 22px" }}>
         <h3
           className="text-[var(--color-text-primary)]"
@@ -298,7 +315,7 @@ function ServiceTile({ service: s }: { service: Service }) {
                 fontVariantNumeric: "tabular-nums",
               }}
             >
-              €{s.price}
+              {s.price == null ? "—" : `${currencySymbol}${s.price}`}
             </p>
           </div>
           <div className="text-right">

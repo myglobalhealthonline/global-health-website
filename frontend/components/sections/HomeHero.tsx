@@ -1,18 +1,15 @@
 /**
  * Editorial type-first hero — "See a doctor. From anywhere."
  *
- * Mirrors `ui_kits/website/HomeHero.jsx` exactly:
- *   • Faint medical-pattern overlay
- *   • Tiny eyebrow with hyphen rule
- *   • Display H1 clamp(48px,9vw,128px) with accent-band on "From anywhere."
- *   • 22px lede paragraph
- *   • 2-col hero bottom: country booking card + dark "Right now" feed
+ * Data-driven. All country-specific values (doctor count, locale, live-doctor
+ * feed) are passed in by the caller. Earlier versions hard-coded a
+ * `COUNTRY_META` table and a fake "NOW_FEED" — both removed so the hero only
+ * shows what the database actually knows.
  */
 
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { CountryCode } from "@/data/countries";
-import { countrySlug } from "@/lib/routing/country-slug";
 
 const PATTERN_LIGHT =
   "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231B4D3E' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")";
@@ -27,36 +24,34 @@ const FLAG_CLASS: Record<string, string> = {
   rm: "fi fi-ro",
 };
 
-const COUNTRY_META: Record<
-  string,
-  { doctors: number; language: string; nextSlot: string }
-> = {
-  ie: { doctors: 14, language: "English", nextSlot: "today 14:30" },
-  pt: { doctors: 11, language: "Portuguese", nextSlot: "today 11:15" },
-  sp: { doctors: 9, language: "Spanish", nextSlot: "today 16:00" },
-  cz: { doctors: 7, language: "Czech", nextSlot: "tomorrow 09:00" },
-  rm: { doctors: 6, language: "Romanian", nextSlot: "today 17:30" },
+export type LiveDoctorItem = {
+  name: string;
+  role: string;
 };
-
-const NOW_FEED = [
-  { name: "Dr. Inês C.", role: "GP, Portugal", waitMin: 9 },
-  { name: "Dr. Siobhán W.", role: "GP, Ireland", waitMin: 16 },
-  { name: "Dr. María R.", role: "Dermatology, Spain", waitMin: 24 },
-];
 
 export function HomeHero({
   countryCode,
   countryName,
+  doctorCount,
+  languageLabel,
+  bookHref,
+  totalDoctorsAcrossEurope,
+  liveDoctors,
 }: {
   countryCode: CountryCode;
   countryName: string;
+  /** Active doctors registered in this country, from the DB. */
+  doctorCount: number;
+  /** Display label for the country's default locale (e.g. "English"). */
+  languageLabel: string;
+  /** Where the primary CTA points. Caller passes the lang-aware path. */
+  bookHref: string;
+  /** Sum of active doctors across all countries. */
+  totalDoctorsAcrossEurope: number;
+  /** Optional spotlight: a handful of doctors to surface in the "Right now" feed.
+   *  Pass undefined or [] to hide the feed entirely (preferred over fake data). */
+  liveDoctors?: LiveDoctorItem[];
 }) {
-  const meta = COUNTRY_META[countryCode];
-  const totalOnline = Object.values(COUNTRY_META).reduce(
-    (sum, c) => sum + c.doctors,
-    0,
-  );
-  const bookHref = `/${countrySlug(countryCode)}/services`;
   const flag = FLAG_CLASS[countryCode] ?? "";
 
   return (
@@ -81,7 +76,6 @@ export function HomeHero({
           padding: "0 clamp(20px, 4vw, 40px)",
         }}
       >
-        {/* Eyebrow with hyphen */}
         <div
           className="inline-flex items-center gap-3 uppercase"
           style={{
@@ -103,7 +97,6 @@ export function HomeHero({
           Medicine without borders
         </div>
 
-        {/* Big headline */}
         <h1
           className="m-0 text-[var(--color-text-primary)]"
           style={{
@@ -137,17 +130,11 @@ export function HomeHero({
             maxWidth: "44ch",
           }}
         >
-          Online video consultations with locally-registered doctors in
-          Ireland, Portugal, Spain, Czechia, and Romania. Same day, in your
-          language, from your sofa.
+          Online video consultations with locally-registered doctors. Same day,
+          in your language, from your sofa.
         </p>
 
-        {/* 2-col hero bottom */}
-        <div
-          className="gh-hero-bottom grid gap-4"
-          style={{ marginTop: 48 }}
-        >
-          {/* LEFT — country booking card */}
+        <div className="gh-hero-bottom grid gap-4" style={{ marginTop: 48 }}>
           <div
             className="flex flex-col gap-5"
             style={{
@@ -221,16 +208,15 @@ export function HomeHero({
             </div>
 
             <div
-              className="grid grid-cols-3 gap-3"
+              className="grid grid-cols-2 gap-3"
               style={{
                 padding: "16px 0",
                 borderTop: "1px solid var(--color-border)",
                 borderBottom: "1px solid var(--color-border)",
               }}
             >
-              <Stat label="Doctors" value={String(meta?.doctors ?? "—")} />
-              <Stat label="Language" value={meta?.language ?? "—"} />
-              <Stat label="Next slot" value={meta?.nextSlot ?? "—"} highlight />
+              <Stat label="Doctors" value={String(doctorCount)} />
+              <Stat label="Language" value={languageLabel} />
             </div>
 
             <Link
@@ -243,114 +229,105 @@ export function HomeHero({
             </Link>
           </div>
 
-          {/* RIGHT — dark "Right now" feed */}
-          <div
-            className="relative flex flex-col gap-4 overflow-hidden text-white"
-            style={{
-              borderRadius: 24,
-              background: "var(--color-background-dark)",
-              padding: 28,
-            }}
-          >
+          {/* "Right now" feed only renders when the caller passed real data.
+              Empty feed → omit the panel entirely. */}
+          {liveDoctors && liveDoctors.length > 0 ? (
             <div
-              aria-hidden
-              className="absolute inset-0"
+              className="relative flex flex-col gap-4 overflow-hidden text-white"
               style={{
-                opacity: 0.06,
-                backgroundImage: PATTERN_DARK,
-                backgroundSize: "28px",
+                borderRadius: 24,
+                background: "var(--color-background-dark)",
+                padding: 28,
               }}
-            />
-            <div className="relative">
-              <p
-                className="m-0 uppercase"
+            >
+              <div
+                aria-hidden
+                className="absolute inset-0"
                 style={{
-                  fontSize: 11,
-                  color: "var(--color-accent)",
-                  letterSpacing: "0.18em",
-                  fontWeight: 700,
+                  opacity: 0.06,
+                  backgroundImage: PATTERN_DARK,
+                  backgroundSize: "28px",
                 }}
-              >
-                Right now
-              </p>
-              <p
-                className="m-0"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: 22,
-                  fontWeight: 800,
-                  letterSpacing: "-0.015em",
-                  lineHeight: 1.2,
-                  marginTop: 4,
-                }}
-              >
-                {totalOnline} doctors online across Europe
-              </p>
-            </div>
-            <div className="relative flex flex-col gap-2.5">
-              {NOW_FEED.map((d) => {
-                const initials = d.name.match(/[A-Z]/g)?.slice(0, 2).join("") ?? "·";
-                return (
-                  <div
-                    key={d.name}
-                    className="flex items-center gap-3"
-                    style={{
-                      background: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.10)",
-                      borderRadius: 14,
-                      padding: "10px 14px",
-                    }}
-                  >
-                    <span
-                      className="inline-flex items-center justify-center"
+              />
+              <div className="relative">
+                <p
+                  className="m-0 uppercase"
+                  style={{
+                    fontSize: 11,
+                    color: "var(--color-accent)",
+                    letterSpacing: "0.18em",
+                    fontWeight: 700,
+                  }}
+                >
+                  Doctors live
+                </p>
+                <p
+                  className="m-0"
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: 22,
+                    fontWeight: 800,
+                    letterSpacing: "-0.015em",
+                    lineHeight: 1.2,
+                    marginTop: 4,
+                  }}
+                >
+                  {totalDoctorsAcrossEurope} active doctors across Europe
+                </p>
+              </div>
+              <div className="relative flex flex-col gap-2.5">
+                {liveDoctors.slice(0, 4).map((d) => {
+                  const initials =
+                    d.name.match(/[A-Z]/g)?.slice(0, 2).join("") ?? "·";
+                  return (
+                    <div
+                      key={d.name}
+                      className="flex items-center gap-3"
                       style={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: 999,
-                        background:
-                          "linear-gradient(135deg, var(--color-accent), var(--color-brand-primary))",
-                        color: "var(--color-background-dark)",
-                        fontWeight: 800,
-                        fontSize: 11,
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.10)",
+                        borderRadius: 14,
+                        padding: "10px 14px",
                       }}
                     >
-                      {initials}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p
-                        className="m-0 truncate text-white"
-                        style={{ fontSize: 13, fontWeight: 700 }}
-                      >
-                        {d.name}
-                      </p>
-                      <p
-                        className="m-0"
+                      <span
+                        className="inline-flex items-center justify-center"
                         style={{
+                          width: 32,
+                          height: 32,
+                          borderRadius: 999,
+                          background:
+                            "linear-gradient(135deg, var(--color-accent), var(--color-brand-primary))",
+                          color: "var(--color-background-dark)",
+                          fontWeight: 800,
                           fontSize: 11,
-                          color: "rgba(255,255,255,0.65)",
                         }}
                       >
-                        {d.role}
-                      </p>
+                        {initials}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className="m-0 truncate text-white"
+                          style={{ fontSize: 13, fontWeight: 700 }}
+                        >
+                          {d.name}
+                        </p>
+                        <p
+                          className="m-0"
+                          style={{
+                            fontSize: 11,
+                            color: "rgba(255,255,255,0.65)",
+                          }}
+                        >
+                          {d.role}
+                        </p>
+                      </div>
                     </div>
-                    <span
-                      className="whitespace-nowrap"
-                      style={{
-                        padding: "4px 10px",
-                        borderRadius: 999,
-                        background: "rgba(200,230,160,0.16)",
-                        color: "var(--color-accent)",
-                        fontSize: 11,
-                        fontWeight: 700,
-                      }}
-                    >
-                      in {d.waitMin} min
-                    </span>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
       </div>
 
@@ -368,15 +345,7 @@ export function HomeHero({
   );
 }
 
-function Stat({
-  label,
-  value,
-  highlight = false,
-}: {
-  label: string;
-  value: string;
-  highlight?: boolean;
-}) {
+function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <p
@@ -396,9 +365,7 @@ function Stat({
           marginTop: 2,
           fontSize: 14,
           fontWeight: 700,
-          color: highlight
-            ? "var(--color-brand-primary)"
-            : "var(--color-text-primary)",
+          color: "var(--color-text-primary)",
           fontVariantNumeric: "tabular-nums",
         }}
       >

@@ -5,15 +5,11 @@ import { useRouter } from "next/navigation";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Check, ChevronDown } from "lucide-react";
 import { FlagBadge } from "./flag-badge";
+import type { CountryPickerOption } from "./country-picker-constants";
 
-export const COUNTRY_PREF_COOKIE = "gh_admin_country";
-
-export type CountryPickerOption = {
-  id: string;
-  slug: string;
-  code: string;
-  name: string;
-};
+// Constants and types live in `./country-picker-constants` so server-side
+// importers (the admin layout, server actions) get the real value instead of
+// the client-reference stub that `"use client"` wraps every export with.
 
 type SetCountryPreferenceAction = (slug: string) => Promise<void>;
 

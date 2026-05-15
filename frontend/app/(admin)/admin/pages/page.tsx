@@ -8,6 +8,7 @@ import {
   type AdminPageDto,
   type AdminPageKey,
 } from "@/lib/admin/admin-api";
+import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
 import {
   AdminCard,
   AdminTable,
@@ -21,6 +22,7 @@ import {
   Tr,
 } from "../_components/atoms";
 import { FlagBadge } from "../_components/flag-badge";
+import { ScopeBanner } from "../_components/scope-banner";
 
 export const dynamic = "force-dynamic";
 
@@ -41,27 +43,29 @@ export default async function AdminPagesListPage({
   searchParams?: Promise<SearchParams>;
 }) {
   const sp = searchParams ? await searchParams : {};
+
+  // Resolve cookie-scoped country first so the page list defaults to that
+  // country when no explicit ?countryId is in the URL.
+  const countriesResult = await fetchAdminCountries();
+  const countries =
+    countriesResult.ok && countriesResult.data?.countries
+      ? countriesResult.data.countries
+      : [];
+  const activeCountry = await getActiveCountry(countries);
+
   const filters = {
-    countryId: spRead(sp, "countryId"),
+    countryId: scopedCountryId(spRead(sp, "countryId"), activeCountry),
     pageKey: spRead(sp, "pageKey"),
     locale: spRead(sp, "locale"),
     status: spRead(sp, "status"),
   };
 
-  const [pagesResult, countriesResult] = await Promise.all([
-    fetchAdminPages(filters),
-    fetchAdminCountries(),
-  ]);
-
-  const countries =
-    countriesResult.ok && countriesResult.data?.countries
-      ? countriesResult.data.countries
-      : [];
+  const pagesResult = await fetchAdminPages(filters);
 
   return (
     <>
       <PageHeader
-        eyebrow="Global"
+        eyebrow={activeCountry ? `Country · ${activeCountry.name}` : "Global"}
         title="Pages"
         description="Manage country-scoped homepage, doctors index, general consultation, and specialist consultation content."
         actions={
@@ -75,6 +79,8 @@ export default async function AdminPagesListPage({
           </Btn>
         }
       />
+
+      <ScopeBanner activeCountry={activeCountry} clearHref="/admin/pages" />
 
       <AdminCard padding={16}>
         <form
