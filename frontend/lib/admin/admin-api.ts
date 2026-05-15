@@ -133,6 +133,14 @@ type AdminCurrenciesListPayload = {
   currencies: AdminCurrencyDto[];
 };
 
+// RFC 6265 token rule for cookie names: no control chars, separators, or
+// whitespace. Earlier we shipped a bug that briefly stored a stub function
+// body as a cookie name (whitespace + braces). If that cookie is still in a
+// user's browser, forwarding it via the `Cookie` header corrupts the request
+// and the backend rejects it. We filter defensively so the bad cookie can't
+// poison any future admin save.
+const VALID_COOKIE_NAME = /^[!#$%&'*+\-.0-9A-Z^_`a-z|~]+$/;
+
 async function adminRequest<T>(
   path: string,
   init?: {
@@ -140,8 +148,19 @@ async function adminRequest<T>(
     body?: unknown;
   },
 ): Promise<AdminApiResponse<T>> {
-  const cookieHeader = (await cookies())
-    .getAll()
+  const allCookies = (await cookies()).getAll();
+  const validCookies = allCookies.filter((entry) => VALID_COOKIE_NAME.test(entry.name));
+  if (validCookies.length !== allCookies.length) {
+    const dropped = allCookies
+      .filter((entry) => !VALID_COOKIE_NAME.test(entry.name))
+      .map((entry) => entry.name.slice(0, 40));
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[admin-api] Dropped ${dropped.length} malformed cookie(s) before forwarding to backend. ` +
+        "Clear localhost cookies in DevTools to remove them from your browser.",
+    );
+  }
+  const cookieHeader = validCookies
     .map((entry) => `${entry.name}=${entry.value}`)
     .join("; ");
   const token = getAdminApiToken();
