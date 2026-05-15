@@ -1,18 +1,37 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Upload, X } from "lucide-react";
+
+const ALLOWED_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/svg+xml",
+  "image/avif",
+]);
 
 type Props = {
   name: string;
   label: string;
   helperText?: string;
   initialPath?: string | null;
+  /** Aspect ratio hint shown in the empty-state (e.g. "1200×800 recommended"). */
+  hint?: string;
 };
 
-export function ManagedImageField({ name, label, helperText, initialPath }: Props) {
+export function ManagedImageField({
+  name,
+  label,
+  helperText,
+  initialPath,
+  hint,
+}: Props) {
   const [path, setPath] = useState(initialPath ?? "");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const apiBase = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
 
@@ -31,13 +50,17 @@ export function ManagedImageField({ name, label, helperText, initialPath }: Prop
     return null;
   }
 
-  async function onFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
-    const input = event.target;
-    const file = input.files?.[0];
-    if (!file) return;
+  async function uploadFile(file: File) {
     if (!apiBase) {
       setMsg("NEXT_PUBLIC_API_URL is not configured.");
-      input.value = "";
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setMsg("File too large. Max 5 MB.");
+      return;
+    }
+    if (!ALLOWED_TYPES.has(file.type)) {
+      setMsg("Unsupported file type. Use JPEG, PNG, WebP, GIF, SVG, or AVIF.");
       return;
     }
 
@@ -65,43 +88,157 @@ export function ManagedImageField({ name, label, helperText, initialPath }: Prop
       setMsg(error instanceof Error ? error.message : "Upload failed");
     } finally {
       setBusy(false);
-      input.value = "";
     }
   }
 
+  async function onFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
+    const input = event.target;
+    const file = input.files?.[0];
+    if (file) await uploadFile(file);
+    input.value = "";
+  }
+
+  function onDrop(event: React.DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    setDragOver(false);
+    const file = event.dataTransfer.files?.[0];
+    if (file) void uploadFile(file);
+  }
+
+  function clearImage() {
+    setPath("");
+    setMsg(null);
+  }
+
+  // Build the preview src — if path is a local /api/media reference, prefix
+  // with the backend origin so the browser fetches from :4000 rather than
+  // the frontend dev origin (which doesn't serve those files).
+  const previewSrc = (() => {
+    if (!path) return null;
+    if (/^https?:\/\//i.test(path)) return path;
+    if (path.startsWith("/api/media/") && apiBase) return `${apiBase}${path}`;
+    return path;
+  })();
+
   return (
-    <label className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <span className="gh-field-label">{label}</span>
-      <input
-        name={name}
-        className="gh-input min-w-0 font-mono text-sm"
-        value={path}
-        onChange={(e) => setPath(e.target.value)}
-        placeholder="https://... or /api/media/..."
-      />
-      <div className="flex flex-wrap items-center gap-3">
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif"
-          className="sr-only"
-          disabled={busy || !apiBase}
-          onChange={onFileSelected}
-        />
-        <button
-          type="button"
-          className="gh-btn gh-btn-soft text-xs"
-          disabled={busy || !apiBase}
-          onClick={() => fileRef.current?.click()}
-        >
-          {busy ? "Uploading..." : "Upload image to bucket"}
-        </button>
-        <span className="text-xs text-[var(--color-text-muted)]">
-          JPEG, PNG, WebP, GIF, SVG, AVIF.
-        </span>
+
+      {/* Hidden text input that participates in the form submission. */}
+      <input type="hidden" name={name} value={path} />
+
+      {/* Drop zone / preview surface */}
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          if (!busy) setDragOver(true);
+        }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={onDrop}
+        onClick={() => {
+          if (!busy && !previewSrc) fileRef.current?.click();
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={previewSrc ? "Image uploaded" : "Drop image here or click to upload"}
+        className="relative overflow-hidden transition-colors"
+        style={{
+          minHeight: 180,
+          borderRadius: 12,
+          border: `1px dashed ${
+            dragOver
+              ? "var(--color-brand-primary)"
+              : "var(--color-border-strong)"
+          }`,
+          background: dragOver
+            ? "rgba(27,77,62,0.06)"
+            : "var(--color-background-soft)",
+          cursor: previewSrc ? "default" : "pointer",
+        }}
+      >
+        {previewSrc ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={previewSrc}
+              alt={label}
+              className="block w-full"
+              style={{ maxHeight: 360, objectFit: "contain", background: "white" }}
+            />
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                clearImage();
+              }}
+              aria-label="Remove image"
+              style={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                width: 28,
+                height: 28,
+                borderRadius: 999,
+                background: "rgba(0,0,0,0.55)",
+                color: "#fff",
+                border: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              }}
+            >
+              <X aria-hidden className="size-3.5" />
+            </button>
+          </>
+        ) : (
+          <div
+            className="grid place-items-center px-4 py-8 text-center"
+            style={{ color: "var(--color-text-muted)", minHeight: 180 }}
+          >
+            <div>
+              <Upload aria-hidden className="mx-auto size-6" />
+              <p
+                className="m-0 mt-2 text-[13px] font-semibold"
+                style={{ color: "var(--color-text-body)" }}
+              >
+                {busy ? "Uploading…" : "Drop image here or click to upload"}
+              </p>
+              <p className="m-0 mt-1 text-[12px]">
+                {hint ?? "JPEG, PNG, WebP, GIF, SVG, AVIF · max 5 MB"}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
-      {msg ? <p className="text-xs text-[var(--color-status-warning-text)]">{msg}</p> : null}
-      {helperText ? <span className="text-xs text-[var(--color-text-muted)]">{helperText}</span> : null}
-    </label>
+
+      {/* Manual URL fallback (advanced — paste a URL or /api/media path) */}
+      <details className="text-[12px] text-[var(--color-text-muted)]">
+        <summary className="cursor-pointer select-none">Use a URL instead</summary>
+        <input
+          type="text"
+          className="gh-input mt-2 min-w-0 font-mono text-sm"
+          value={path}
+          onChange={(e) => setPath(e.target.value)}
+          placeholder="https://… or /api/media/…"
+        />
+      </details>
+
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif"
+        className="sr-only"
+        disabled={busy || !apiBase}
+        onChange={onFileSelected}
+      />
+
+      {msg ? (
+        <p className="text-[12px] text-[var(--color-status-warning-text)]">{msg}</p>
+      ) : null}
+      {helperText ? (
+        <span className="text-[12px] text-[var(--color-text-muted)]">{helperText}</span>
+      ) : null}
+    </div>
   );
 }

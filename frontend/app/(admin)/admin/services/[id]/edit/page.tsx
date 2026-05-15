@@ -287,24 +287,32 @@ export default async function AdminEditServicePage({
 
         {/* Right sidebar — cover image + visibility */}
         <div className="grid gap-4 self-start">
-          {/* Cover image card */}
+          {/* Cover image preview (read-only). Uploads happen via the
+              ManagedImageField labelled "Hero image" inside the form on the
+              left — showing two upload UIs would mean two form inputs with
+              the same name and the data wouldn't round-trip. */}
           <AdminCard>
             <h3
               className="m-0 text-[var(--color-text-primary)]"
               style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
             >
-              Cover image
+              Cover image preview
             </h3>
             {service.assets[0]?.path ? (
-              <div className="mt-3 overflow-hidden rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={service.assets[0].path}
-                  alt={service.name}
-                  className="block w-full"
-                  style={{ aspectRatio: "4 / 3", objectFit: "cover" }}
-                />
-              </div>
+              <>
+                <div className="mt-3 overflow-hidden rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={service.assets[0].path}
+                    alt={service.name}
+                    className="block w-full"
+                    style={{ aspectRatio: "4 / 3", objectFit: "cover" }}
+                  />
+                </div>
+                <p className="mt-2 text-[11px] text-[var(--color-text-muted)]">
+                  Change the image via the “Hero image” field in the form.
+                </p>
+              </>
             ) : (
               <div
                 className="mt-3 grid place-items-center text-center text-[12px] text-[var(--color-text-muted)]"
@@ -319,10 +327,10 @@ export default async function AdminEditServicePage({
                 <div>
                   <Upload className="mx-auto size-6" aria-hidden />
                   <p className="m-0 mt-2 font-semibold text-[var(--color-text-body)]">
-                    Drop image here
+                    No image yet
                   </p>
                   <p className="m-0 text-[var(--color-text-muted)]">
-                    1200×800 recommended · max 4MB
+                    Use the “Hero image” field in the form to upload.
                   </p>
                 </div>
               </div>
