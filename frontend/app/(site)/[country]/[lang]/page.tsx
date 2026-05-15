@@ -33,18 +33,11 @@ import {
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
+import { localeDisplayName } from "@/lib/i18n/locale-display";
+import type { LocaleCode } from "@/lib/i18n/types";
 import { SITE_NAME } from "@/lib/constants";
 
 type Params = { country: string; lang: string };
-
-const LOCALE_NAMES: Record<string, string> = {
-  en: "English",
-  pt: "Portuguese",
-  es: "Spanish",
-  cs: "Czech",
-  ro: "Romanian",
-  de: "German",
-};
 
 export async function generateStaticParams(): Promise<Params[]> {
   const out: Params[] = [];
@@ -193,8 +186,10 @@ export default async function CountryLangHomePage({
     { v: "GDPR", l: "Compliant by default" },
   ];
 
-  const languageLabel =
-    LOCALE_NAMES[(config.defaultLocale ?? "en").toLowerCase()] ?? "Local";
+  const languageLabel = localeDisplayName(
+    (config.defaultLocale ?? "en") as LocaleCode,
+    "english",
+  );
 
   const countryUrl = `${getSiteUrl()}/${slug}/${lang}`;
 

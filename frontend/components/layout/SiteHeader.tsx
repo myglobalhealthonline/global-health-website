@@ -1,42 +1,48 @@
 "use client";
 
 /**
- * Sticky site header.
+ * Sticky public header.
  *
- * Mirrors `ui_kits/website/Header.jsx` from the design bundle:
- *   • Sticky white-92% bg with backdrop-blur(16px), bottom border
- *   • Grid: brand wordmark / centered country tabs pill / right CTA
- *   • Mint "g" mark + "Global Health" wordmark
- *   • Country tabs: pill-shaped segmented control, white active card with shadow
- *   • Right: "Log in" link + primary "Book" button
+ * Layout (single row, desktop):
+ *   • Left:   brand
+ *   • Center: when inside a country, section tabs (Home / Doctors / General /
+ *             Specialist Consultation). At `/`, no center content — the page
+ *             body owns the country picker.
+ *   • Right:  CountrySwitcher (compact dropdown, preserves section on swap)
+ *             · LanguageSwitcher (only when the active country has >1 locale)
+ *             · Log in / Account · Book CTA · mobile drawer trigger.
  *
- * Mobile collapses to: brand + Book + drawer trigger.
+ * Mobile collapses the section tabs + switchers into the MobileNav drawer.
+ *
+ * All locale + country options come from `data/countries.ts` and the active
+ * country's `supportedLocales` — no hardcoded lists. Adding a locale =
+ * extend `LocaleCode` + the country config; this component picks it up.
  */
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import type { SiteNavigationData } from "@/data/navigation";
 import type { AuthUser } from "@/lib/api/auth-api";
-import { countries } from "@/data/countries";
-import { countrySlug } from "@/lib/routing/country-slug";
+import { countries, getCountryByCode, type CountryCode } from "@/data/countries";
+import {
+  COUNTRY_CODE_TO_SLUG,
+  countryCodeFromSlug,
+} from "@/lib/routing/country-slug";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { parseSitePath } from "@/lib/routing/path-rewrites";
+import { CountrySwitcher } from "@/components/layout/CountrySwitcher";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { SectionNav, type SectionNavItem } from "@/components/layout/SectionNav";
 import { MobileNav } from "@/components/layout/MobileNav";
 
-// CSS flag-icons class for each country code.
-const FLAG_CLASS: Record<string, string> = {
-  ie: "fi fi-ie",
-  pt: "fi fi-pt",
-  sp: "fi fi-es",
-  cz: "fi fi-cz",
-  rm: "fi fi-ro",
-};
-
-function activeCountryFromPath(pathname: string): string | null {
-  if (!pathname) return null;
-  const slug = pathname.split("/").filter(Boolean)[0];
-  if (!slug) return null;
-  const match = countries.find((c) => countrySlug(c.code) === slug);
-  return match?.code ?? null;
+function sectionNavForCountryLang(countrySlug: string, lang: string): SectionNavItem[] {
+  const base = `/${countrySlug}/${lang}`;
+  return [
+    { href: base, label: "Home", exact: true },
+    { href: `${base}/doctors`, label: "Doctors" },
+    { href: `${base}/general-consultation`, label: "General" },
+    { href: `${base}/specialist-consultation`, label: "Specialist" },
+  ];
 }
 
 export function SiteHeader({
@@ -50,15 +56,27 @@ export function SiteHeader({
   brandLogo?: { src: string; alt: string };
   authUser?: AuthUser | null;
 }) {
-  const pathname = usePathname();
-  const activeCountry = activeCountryFromPath(pathname);
-  const [, setScrolled] = useState(false);
+  const pathname = usePathname() || "/";
+  const parsed = parseSitePath(pathname);
+  const activeCountryCode: CountryCode | null = parsed.country
+    ? countryCodeFromSlug(parsed.country)
+    : null;
+  const activeCountry = activeCountryCode
+    ? getCountryByCode(activeCountryCode) ?? null
+    : null;
+  const activeLang = (parsed.lang ?? activeCountry?.defaultLocale ?? "en") as LocaleCode;
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const sectionItems: SectionNavItem[] =
+    activeCountry && parsed.country && parsed.lang
+      ? sectionNavForCountryLang(parsed.country, parsed.lang)
+      : [];
+
+  // The Book CTA stays country+lang scoped when inside a country; otherwise
+  // it falls through to the global `/book-online` redirect map.
+  const bookHref =
+    activeCountry && parsed.lang
+      ? `/${COUNTRY_CODE_TO_SLUG[activeCountry.code]}/${parsed.lang}/book-online`
+      : "/book-online";
 
   return (
     <header
@@ -74,14 +92,14 @@ export function SiteHeader({
         className="mx-auto grid items-center"
         style={{
           maxWidth: 1320,
-          padding: "16px clamp(20px, 4vw, 40px)",
+          padding: "14px clamp(20px, 4vw, 40px)",
           gridTemplateColumns: "auto 1fr auto",
-          gap: 32,
+          gap: 24,
         }}
       >
-        {/* Brand wordmark — mint mark + Global Health */}
+        {/* Brand */}
         <Link
-          href="/"
+          href={activeCountry && parsed.lang ? `/${parsed.country}/${parsed.lang}` : "/"}
           className="inline-flex items-center gap-2.5"
           style={{ textDecoration: "none" }}
         >
@@ -112,61 +130,26 @@ export function SiteHeader({
           </span>
         </Link>
 
-        {/* Country tabs — pill segmented control */}
-        <nav
-          className="hidden items-center md:flex"
-          style={{
-            justifySelf: "center",
-            background: "var(--color-background-soft)",
-            padding: 4,
-            borderRadius: 999,
-            border: "1px solid var(--color-border)",
-            width: "fit-content",
-            gap: 4,
-          }}
-          aria-label="Country switcher"
-        >
-          {countries.map((c) => {
-            const isActive = c.code === activeCountry;
-            const href = `/${countrySlug(c.code)}`;
-            return (
-              <Link
-                key={c.code}
-                href={href}
-                className="inline-flex items-center gap-2 transition-all duration-150"
-                style={{
-                  padding: "8px 16px",
-                  borderRadius: 999,
-                  background: isActive ? "var(--color-background-page)" : "transparent",
-                  color: isActive
-                    ? "var(--color-text-primary)"
-                    : "var(--color-text-muted)",
-                  fontFamily: "inherit",
-                  fontSize: 13,
-                  fontWeight: 700,
-                  textDecoration: "none",
-                  boxShadow: isActive ? "var(--shadow-soft)" : "none",
-                }}
-              >
-                <span
-                  aria-hidden
-                  className={`${FLAG_CLASS[c.code] ?? ""} inline-block`}
-                  style={{
-                    width: 20,
-                    height: 14,
-                    borderRadius: 2,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                />
-                {c.name}
-              </Link>
-            );
-          })}
-        </nav>
+        {/* Section tabs — only inside a country */}
+        <div className="hidden md:flex" style={{ justifySelf: "center" }}>
+          {sectionItems.length > 0 ? <SectionNav items={sectionItems} /> : null}
+        </div>
 
-        {/* Right — minimal: Log in + Book */}
-        <div className="flex items-center gap-2.5" style={{ justifySelf: "end" }}>
+        {/* Right — switchers + auth + CTA */}
+        <div
+          className="flex items-center gap-2.5"
+          style={{ justifySelf: "end" }}
+        >
+          <div className="hidden md:flex md:items-center md:gap-2">
+            <CountrySwitcher activeCountryCode={activeCountryCode} />
+            {activeCountry ? (
+              <LanguageSwitcher
+                currentLang={activeLang}
+                availableLocales={activeCountry.supportedLocales}
+              />
+            ) : null}
+          </div>
+
           {!authUser ? (
             <Link
               href="/login"
@@ -192,15 +175,16 @@ export function SiteHeader({
               {authUser.role === "ADMIN" ? "Admin" : "Account"}
             </Link>
           )}
+
           <Link
-            href="/book-online"
+            href={bookHref}
             className="gh-btn gh-btn-primary"
             style={{ minHeight: 44, padding: "0 22px", fontSize: 14 }}
           >
             Book
           </Link>
 
-          {/* Mobile drawer trigger — only on small screens */}
+          {/* Mobile drawer trigger */}
           <div className="md:hidden">
             <MobileNav
               siteName={siteName}
@@ -214,3 +198,7 @@ export function SiteHeader({
     </header>
   );
 }
+
+// `countries` is intentionally imported to keep the country list type-checked
+// against `data/countries.ts` even though the switcher reads it directly.
+void countries;

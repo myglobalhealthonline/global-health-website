@@ -2,6 +2,7 @@ import { cache } from "react";
 import { fetchPublicPage } from "@/lib/api/site-content-api";
 import { logPublicContentFallback } from "@/lib/content/public-content-source";
 import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
+import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
 
 export type PublicPageKey =
   | "HOME"
@@ -9,16 +10,14 @@ export type PublicPageKey =
   | "GENERAL_CONSULTATION"
   | "SPECIALIST_CONSULTATION";
 
-export type PublicLocale = "en" | "pt" | "es" | "cs" | "ro" | "de";
+/**
+ * Public locale alias = the same LocaleCode union from `lib/i18n/types`.
+ * Adding a new locale = add it to `supportedLocaleCodes` (and the Prisma
+ * `LocaleCode` enum) — no edits required here.
+ */
+export type PublicLocale = LocaleCode;
 
-const LOCALE_TO_BACKEND: Record<PublicLocale, string> = {
-  en: "EN",
-  pt: "PT",
-  es: "ES",
-  cs: "CS",
-  ro: "RO",
-  de: "DE",
-};
+const SUPPORTED_LOCALE_SET = new Set<string>(supportedLocaleCodes);
 
 export type PublicPageImage = {
   id: string;
@@ -89,7 +88,7 @@ function normalizePage(raw: unknown): PublicPageRecord | null {
 }
 
 export function isSupportedLocale(value: string): value is PublicLocale {
-  return value in LOCALE_TO_BACKEND;
+  return SUPPORTED_LOCALE_SET.has(value);
 }
 
 export const getPublicPage = cache(async (
@@ -97,7 +96,8 @@ export const getPublicPage = cache(async (
   pageKey: PublicPageKey,
   locale: PublicLocale,
 ): Promise<PublicPageRecord | null> => {
-  const backendLocale = LOCALE_TO_BACKEND[locale];
+  // Backend uses the uppercase Prisma `LocaleCode` enum values.
+  const backendLocale = locale.toUpperCase();
   const res = await fetchPublicPage(countryCode, pageKey, backendLocale);
   if (!res.ok) {
     logPublicContentFallback(`page:${countryCode}:${pageKey}:${locale}`, res.message);
