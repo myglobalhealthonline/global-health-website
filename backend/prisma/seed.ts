@@ -2,7 +2,7 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient, LocaleCode, ServiceKind, UserRole } from "@prisma/client";
+import { PrismaClient, LocaleCode, PageKey, PublishStatus, ServiceKind, UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { Pool } from "pg";
 import {
@@ -319,6 +319,91 @@ async function main() {
       update: { name: `${seed.name} Main Clinic` },
       create: { countryId: country.id, slug: `${seed.code}-main-clinic`, name: `${seed.name} Main Clinic` },
     });
+
+    const phase1Pages: Array<{ pageKey: PageKey; title: string; heroTitle: string; heroSubtitle: string; ctaLabel: string; ctaHref: string; body: string; seoTitle: string; seoDescription: string }> = [
+      {
+        pageKey: PageKey.HOME,
+        title: `${seed.name} clinic home`,
+        heroTitle: `Online medical care in ${seed.name}`,
+        heroSubtitle: `Licensed doctors, no waiting rooms, available across ${seed.name}.`,
+        ctaLabel: "Book a consultation",
+        ctaHref: `/${seed.slug}/${seed.defaultLocale.toLowerCase()}/book-online`,
+        body: `<p>Edit this homepage copy from the admin portal under Pages → ${seed.name} → Home.</p>`,
+        seoTitle: `${seed.name} Online Clinic | Global Health`,
+        seoDescription: `Book a licensed online doctor consultation in ${seed.name}. Trusted European telemedicine, GDPR-protected.`,
+      },
+      {
+        pageKey: PageKey.DOCTORS_INDEX,
+        title: `${seed.name} doctors`,
+        heroTitle: `Meet our ${seed.name} doctors`,
+        heroSubtitle: "All practitioners are licensed and verified.",
+        ctaLabel: "Book a consultation",
+        ctaHref: `/${seed.slug}/${seed.defaultLocale.toLowerCase()}/book-online`,
+        body: `<p>Browse the ${seed.name} clinic team. Each doctor profile lists qualifications, languages, and registration details.</p>`,
+        seoTitle: `${seed.name} Doctors | Global Health`,
+        seoDescription: `Licensed online doctors serving ${seed.name}. View profiles, specialties, and languages.`,
+      },
+      {
+        pageKey: PageKey.GENERAL_CONSULTATION,
+        title: `${seed.name} general consultation`,
+        heroTitle: "General medical consultation",
+        heroSubtitle: "Speak to a licensed doctor about everyday health concerns.",
+        ctaLabel: "Book general consultation",
+        ctaHref: `/${seed.slug}/${seed.defaultLocale.toLowerCase()}/book-online?type=general`,
+        body: `<p>A general consultation is for non-specialist medical concerns — coughs, infections, ongoing symptoms, follow-ups, sick notes, and referrals. Edit this body from the admin portal.</p>`,
+        seoTitle: `General Consultation in ${seed.name} | Global Health`,
+        seoDescription: `Online general consultation with a licensed doctor in ${seed.name}. Same-day bookings available.`,
+      },
+      {
+        pageKey: PageKey.SPECIALIST_CONSULTATION,
+        title: `${seed.name} specialist consultation`,
+        heroTitle: "Specialist consultation",
+        heroSubtitle: "Connect with specialists across cardiology, dermatology, nutrition and more.",
+        ctaLabel: "Book specialist consultation",
+        ctaHref: `/${seed.slug}/${seed.defaultLocale.toLowerCase()}/book-online?type=specialist`,
+        body: `<p>A specialist consultation is for in-depth review by a clinician trained in a specific medical area. Edit this body and the specialties list from the admin portal.</p>`,
+        seoTitle: `Specialist Consultation in ${seed.name} | Global Health`,
+        seoDescription: `Online specialist consultation in ${seed.name}. Cardiology, dermatology, nutrition, and more.`,
+      },
+    ];
+
+    for (const page of phase1Pages) {
+      await prisma.contentPage.upsert({
+        where: {
+          countryId_pageKey_locale: {
+            countryId: country.id,
+            pageKey: page.pageKey,
+            locale: seed.defaultLocale,
+          },
+        },
+        update: {
+          title: page.title,
+          body: page.body,
+          heroTitle: page.heroTitle,
+          heroSubtitle: page.heroSubtitle,
+          ctaLabel: page.ctaLabel,
+          ctaHref: page.ctaHref,
+          seoTitle: page.seoTitle,
+          seoDescription: page.seoDescription,
+          status: PublishStatus.PUBLISHED,
+          isActive: true,
+        },
+        create: {
+          countryId: country.id,
+          pageKey: page.pageKey,
+          locale: seed.defaultLocale,
+          status: PublishStatus.PUBLISHED,
+          title: page.title,
+          body: page.body,
+          heroTitle: page.heroTitle,
+          heroSubtitle: page.heroSubtitle,
+          ctaLabel: page.ctaLabel,
+          ctaHref: page.ctaHref,
+          seoTitle: page.seoTitle,
+          seoDescription: page.seoDescription,
+        },
+      });
+    }
   }
 
   const ieCountry = await prisma.country.findUnique({ where: { code: "ie" } });

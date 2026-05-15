@@ -9,15 +9,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const seen = new Set<string>();
   const urls: MetadataRoute.Sitemap = [];
 
-  // New country-scoped hierarchy: home + team + services + specialists.
-  // Country home is priority 0.9; second-level pages 0.8.
+  // Phase 1 country-first hierarchy: /{country}/{lang}/{...}.
+  // The country root (/{country}) is a 301 to /{country}/{defaultLocale} and is
+  // omitted from the sitemap to avoid redirect chains.
   for (const country of countries) {
     const slug = `/${COUNTRY_CODE_TO_SLUG[country.code]}`;
+    const lang = (country.defaultLocale ?? "en").toLowerCase();
     const subroutes: Array<{ path: string; priority: number }> = [
-      { path: slug, priority: 0.9 },
-      { path: `${slug}/team`, priority: 0.8 },
-      { path: `${slug}/services`, priority: 0.8 },
-      { path: `${slug}/specialists`, priority: 0.8 },
+      { path: `${slug}/${lang}`, priority: 0.9 },
+      { path: `${slug}/${lang}/doctors`, priority: 0.8 },
+      { path: `${slug}/${lang}/general-consultation`, priority: 0.8 },
+      { path: `${slug}/${lang}/specialist-consultation`, priority: 0.8 },
+      { path: `${slug}/${lang}/book-online`, priority: 0.6 },
     ];
     for (const sr of subroutes) {
       if (seen.has(sr.path)) continue;
@@ -67,6 +70,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/specialty-sp",
     "/specialty-cz",
     "/specialty-rm",
+    // Intermediate (pre-[lang]) routes — now 301'd to /{country}/{lang}/...
+    "/ireland",
+    "/portugal",
+    "/spain",
+    "/czechia",
+    "/romania",
+    "/ireland/team",
+    "/portugal/team",
+    "/spain/team",
+    "/czechia/team",
+    "/romania/team",
+    "/ireland/services",
+    "/portugal/services",
+    "/spain/services",
+    "/czechia/services",
+    "/romania/services",
+    "/ireland/specialists",
+    "/portugal/specialists",
+    "/spain/specialists",
+    "/czechia/specialists",
+    "/romania/specialists",
+    // Wix /service-page/* surface — collapsed to country general-consultation
+    "/book-online",
   ]);
 
   for (const route of publicRouteRegistry) {

@@ -3,38 +3,82 @@ import { NextResponse } from "next/server";
 import { getRequestContext } from "@/lib/routing/get-request-context";
 
 /**
+ * Phase 1 country → default locale map. Source of truth lives in the Country
+ * model (`defaultLocale`); this proxy mirror is fine because there are five
+ * countries and changes are rare. Keep this in sync with `data/countries.ts`.
+ */
+const COUNTRY_DEFAULT_LOCALE: Record<string, string> = {
+  ireland: "en",
+  portugal: "pt",
+  spain: "es",
+  czechia: "cs",
+  romania: "ro",
+};
+
+function withLang(countrySlug: string, suffix: string = ""): string {
+  const lang = COUNTRY_DEFAULT_LOCALE[countrySlug] ?? "en";
+  return `/${countrySlug}/${lang}${suffix}`;
+}
+
+/**
  * Legacy → editorial URL map. Old Wix-style country routes are 308'd
- * (permanent, method-preserving) to the new `/{country}/...` hierarchy so
- * existing links and search equity transfer cleanly.
+ * (permanent, method-preserving) to the new `/{country}/{lang}/...` hierarchy.
+ *
+ * Phase 1 target shape:
+ *   Country home      → /{country}/{lang}
+ *   Doctors listing   → /{country}/{lang}/doctors
+ *   Doctor profile    → /{country}/{lang}/doctors/{slug}
+ *   General consult   → /{country}/{lang}/general-consultation
+ *   Specialist        → /{country}/{lang}/specialist-consultation
+ *   Booking           → /{country}/{lang}/book-online
  */
 const redirectMap: Record<string, string> = {
-  // Country homes
-  "/home": "/ireland",
-  "/home-pt": "/portugal",
-  "/home-sp": "/spain",
-  "/home-cz": "/czechia",
-  "/home-rm": "/romania",
+  // Country homes — both Wix legacy and intermediate /{country} root
+  "/home": withLang("ireland"),
+  "/home-pt": withLang("portugal"),
+  "/home-sp": withLang("spain"),
+  "/home-cz": withLang("czechia"),
+  "/home-rm": withLang("romania"),
+  // Intermediate (pre-[lang]) routes — keep redirect for old links cached by Google
+  "/ireland/team": withLang("ireland", "/doctors"),
+  "/portugal/team": withLang("portugal", "/doctors"),
+  "/spain/team": withLang("spain", "/doctors"),
+  "/czechia/team": withLang("czechia", "/doctors"),
+  "/romania/team": withLang("romania", "/doctors"),
+  "/ireland/services": withLang("ireland", "/general-consultation"),
+  "/portugal/services": withLang("portugal", "/general-consultation"),
+  "/spain/services": withLang("spain", "/general-consultation"),
+  "/czechia/services": withLang("czechia", "/general-consultation"),
+  "/romania/services": withLang("romania", "/general-consultation"),
+  "/ireland/specialists": withLang("ireland", "/specialist-consultation"),
+  "/portugal/specialists": withLang("portugal", "/specialist-consultation"),
+  "/spain/specialists": withLang("spain", "/specialist-consultation"),
+  "/czechia/specialists": withLang("czechia", "/specialist-consultation"),
+  "/romania/specialists": withLang("romania", "/specialist-consultation"),
 
-  // Team listings
-  "/ireland-team": "/ireland/team",
-  "/portugal-team": "/portugal/team",
-  "/spain-team": "/spain/team",
-  "/czechia-team": "/czechia/team",
-  "/romania-team": "/romania/team",
+  // Team listings (Wix slugs)
+  "/ireland-team": withLang("ireland", "/doctors"),
+  "/portugal-team": withLang("portugal", "/doctors"),
+  "/spain-team": withLang("spain", "/doctors"),
+  "/czechia-team": withLang("czechia", "/doctors"),
+  "/romania-team": withLang("romania", "/doctors"),
 
-  // General consultation listings
-  "/general-consultation-ie": "/ireland/services",
-  "/general-consultation-pt": "/portugal/services",
-  "/general-consultation-sp": "/spain/services",
-  "/general-consultation-cz": "/czechia/services",
-  "/general-consultation-rm": "/romania/services",
+  // General consultation listings (Wix slugs)
+  "/general-consultation-ie": withLang("ireland", "/general-consultation"),
+  "/general-consultation-pt": withLang("portugal", "/general-consultation"),
+  "/general-consultation-sp": withLang("spain", "/general-consultation"),
+  "/general-consultation-cz": withLang("czechia", "/general-consultation"),
+  "/general-consultation-rm": withLang("romania", "/general-consultation"),
 
-  // Specialist listings
-  "/specialty-ie": "/ireland/specialists",
-  "/specialty-pt": "/portugal/specialists",
-  "/specialty-sp": "/spain/specialists",
-  "/specialty-cz": "/czechia/specialists",
-  "/specialty-rm": "/romania/specialists",
+  // Specialist listings (Wix slugs)
+  "/specialty-ie": withLang("ireland", "/specialist-consultation"),
+  "/specialty-pt": withLang("portugal", "/specialist-consultation"),
+  "/specialty-sp": withLang("spain", "/specialist-consultation"),
+  "/specialty-cz": withLang("czechia", "/specialist-consultation"),
+  "/specialty-rm": withLang("romania", "/specialist-consultation"),
+
+  // Global booking → Ireland default (Phase 1 booking is country+lang scoped)
+  "/book-online": withLang("ireland", "/book-online"),
 };
 
 const PUBLIC_FILE = /\.(.*)$/;
@@ -46,29 +90,52 @@ const PUBLIC_FILE = /\.(.*)$/;
  * or `null` when no match applies.
  */
 function matchLegacyPrefix(pathname: string): string | null {
+  // Wix-shape doctor profile slugs → /{country}/{lang}/doctors/{slug}
   const teamMap: Array<[RegExp, string]> = [
-    [/^\/ireland-team\/(.+)$/, "/ireland/team"],
-    [/^\/portugal-team\/(.+)$/, "/portugal/team"],
-    [/^\/spain-team\/(.+)$/, "/spain/team"],
-    [/^\/czechia-team\/(.+)$/, "/czechia/team"],
-    [/^\/romania-team\/(.+)$/, "/romania/team"],
-    [/^\/ireland-doctors\/(.+)$/, "/ireland/team"],
+    [/^\/ireland-team\/(.+)$/, "ireland"],
+    [/^\/portugal-team\/(.+)$/, "portugal"],
+    [/^\/spain-team\/(.+)$/, "spain"],
+    [/^\/czechia-team\/(.+)$/, "czechia"],
+    [/^\/romania-team\/(.+)$/, "romania"],
+    [/^\/ireland-doctors\/(.+)$/, "ireland"],
   ];
-  for (const [re, prefix] of teamMap) {
+  for (const [re, country] of teamMap) {
     const m = pathname.match(re);
-    if (m) return `${prefix}/${m[1]}`;
+    if (m) return withLang(country, `/doctors/${m[1]}`);
   }
 
-  // Service detail: only redirect when the second segment is NOT a reserved
-  // subpath (team/services/specialists) — those are the new structure itself.
-  const RESERVED = new Set(["team", "services", "specialists"]);
-  const irelandMatch = pathname.match(/^\/ireland\/([^/]+)$/);
-  if (irelandMatch && !RESERVED.has(irelandMatch[1])) {
-    return `/ireland/services/${irelandMatch[1]}`;
+  // Intermediate-shape doctor profile (pre-lang): /{country}/team/{slug}
+  const intermediateTeam = pathname.match(/^\/(ireland|portugal|spain|czechia|romania)\/team\/(.+)$/);
+  if (intermediateTeam) {
+    return withLang(intermediateTeam[1], `/doctors/${intermediateTeam[2]}`);
   }
-  const specialistMatch = pathname.match(/^\/ireland-specialist-consultations\/(.+)$/);
-  if (specialistMatch) {
-    return `/ireland/services/${specialistMatch[1]}`;
+
+  // Intermediate-shape doctors slug (without /team/) for Ireland legacy
+  const intermediateSlug = pathname.match(/^\/(ireland|portugal|spain|czechia|romania)\/doctors\/(.+)$/);
+  if (intermediateSlug) {
+    return withLang(intermediateSlug[1], `/doctors/${intermediateSlug[2]}`);
+  }
+
+  // Country root (without lang) → country home with default locale.
+  // Handled by the [country]/page.tsx redirect, but covered here as a fallback.
+  const justCountry = pathname.match(/^\/(ireland|portugal|spain|czechia|romania)$/);
+  if (justCountry) return withLang(justCountry[1]);
+
+  // Wix /service-page/{slug} → for Phase 1 we redirect to the country's
+  // general-consultation hub (deferred service detail pages stay offline).
+  // The slug prefix tells us the country.
+  const servicePage = pathname.match(/^\/service-page\/([^/]+)$/);
+  if (servicePage) {
+    const slug = servicePage[1];
+    if (slug.startsWith("ie-")) return withLang("ireland", "/general-consultation");
+    if (slug.startsWith("pt-")) return withLang("portugal", "/general-consultation");
+    if (slug.startsWith("sp-")) return withLang("spain", "/general-consultation");
+    if (slug.startsWith("cz-")) return withLang("czechia", "/general-consultation");
+    if (slug.startsWith("ro-") || slug.startsWith("rm-")) {
+      return withLang("romania", "/general-consultation");
+    }
+    // Prescription / generic Wix services without country prefix → Ireland (where they exist today)
+    return withLang("ireland", "/general-consultation");
   }
 
   return null;

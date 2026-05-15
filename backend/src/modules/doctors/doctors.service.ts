@@ -79,6 +79,44 @@ export async function listDoctors() {
   }
 }
 
+export async function listDoctorsByCountry(countryCode: string) {
+  try {
+    return await prisma.doctor.findMany({
+      where: { active: true, country: { code: countryCode, isActive: true } },
+      orderBy: [{ fullName: "asc" }],
+      include: {
+        country: { select: { id: true, code: true, slug: true, name: true } },
+        specialties: { include: { specialty: true } },
+        assets: {
+          where: { isActive: true, kind: AssetKind.IMAGE },
+          select: { id: true, kind: true, key: true, path: true, altText: true },
+        },
+      },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Doctors data is unavailable");
+  }
+}
+
+export async function getDoctorByCountryAndSlug(countryCode: string, slug: string) {
+  try {
+    const doctor = await prisma.doctor.findFirst({
+      where: { slug, active: true, country: { code: countryCode, isActive: true } },
+      include: {
+        country: { select: { id: true, code: true, slug: true, name: true } },
+        specialties: { include: { specialty: true } },
+        assets: {
+          where: { isActive: true, kind: AssetKind.IMAGE },
+          select: { id: true, kind: true, key: true, path: true, altText: true },
+        },
+      },
+    });
+    return doctor;
+  } catch (error) {
+    throw normalizeDbError(error, "Doctors data is unavailable");
+  }
+}
+
 async function assertCountryExists(countryId: string): Promise<void> {
   const row = await prisma.country.findUnique({ where: { id: countryId }, select: { id: true } });
   if (!row) throw new DoctorCountryNotFoundError();

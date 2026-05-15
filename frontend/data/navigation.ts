@@ -61,18 +61,14 @@ export function buildSiteNavigationData(
     links: clinicLinksForCountry(country, copy),
   }));
 
+  // Phase 1: nav is country-first. Country/team links live in the Clinics
+  // dropdown; About menu is intentionally light. Wix legacy items (gift card,
+  // careers detail pages, etc.) are deferred for Phase 2+.
   const aboutMenuLinks: NavLink[] = [
-    { label: "Ireland Team", href: "/ireland-team" },
-    { label: "Portugal Team", href: "/portugal-team" },
-    { label: "Romania Team", href: "/romania-team" },
-    { label: "Czechia Team", href: "/czechia-team" },
-    { label: "Spain Team", href: "/spain-team" },
-    { label: copy.footer.careers, href: "/careers" },
+    { label: copy.footer.aboutUs, href: "/about" },
   ];
 
-  const headerUtilityLinks: NavLink[] = [
-    { label: copy.navigation.egiftCard, href: "/gift-card" },
-  ];
+  const headerUtilityLinks: NavLink[] = [];
 
   const headerAuthLink: NavLink = { label: copy.navigation.login, href: "/login" };
   const headerPrimaryCta: NavLink = {
@@ -84,7 +80,6 @@ export function buildSiteNavigationData(
     {
       heading: copy.footer.company,
       links: [
-        { label: copy.footer.careers, href: "/careers" },
         { label: copy.footer.contactUs, href: "/book-online" },
         { label: copy.footer.clinics, href: "/#countries" },
         { label: copy.footer.aboutUs, href: "/about" },

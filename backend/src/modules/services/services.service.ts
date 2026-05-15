@@ -79,6 +79,58 @@ export async function listServices() {
   }
 }
 
+export async function listServicesByCountry(countryCode: string, kind?: ServiceKind) {
+  try {
+    return await prisma.service.findMany({
+      where: {
+        isActive: true,
+        country: { code: countryCode, isActive: true },
+        ...(kind ? { kind } : {}),
+      },
+      orderBy: [{ kind: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
+      include: {
+        country: { select: { id: true, code: true, slug: true, name: true } },
+        specialty: true,
+        assets: {
+          where: { isActive: true, kind: "IMAGE" },
+          orderBy: { createdAt: "asc" },
+          select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
+        },
+      },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Services data is unavailable");
+  }
+}
+
+export async function listSpecialtiesByCountry(countryCode: string) {
+  try {
+    return await prisma.specialty.findMany({
+      where: { active: true, country: { code: countryCode, isActive: true } },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      include: {
+        country: { select: { id: true, code: true, slug: true, name: true } },
+        primaryService: {
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            summary: true,
+            kind: true,
+            durationMinutes: true,
+            basePriceCents: true,
+            currencyCode: true,
+            legacyPath: true,
+            isActive: true,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Specialties data is unavailable");
+  }
+}
+
 export async function listSpecialties() {
   try {
     const items = await prisma.specialty.findMany({
