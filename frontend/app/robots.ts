@@ -15,6 +15,9 @@ export default function robots(): MetadataRoute.Robots {
           "/login",
           "/register",
           "/forgot-password",
+          "/reset-password",
+          "/verify-email",
+          "/api/",
           // Legacy Wix slugs — now 301'd; keep crawlers from indexing the redirect source
           "/home",
           "/home-pt",

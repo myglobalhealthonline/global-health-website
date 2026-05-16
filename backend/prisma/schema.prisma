@@ -377,6 +377,20 @@ model Appointment {
 }
 
 /// Lightweight chat thread for the patient ↔ admin pre-consult conversation.
+/// Newsletter signups from the footer form. Patient supplies email + the
+/// country/locale context they were on; admin can export the list.
+model NewsletterSubscriber {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  countryCode    String?
+  locale         String?
+  source         String?
+  unsubscribedAt DateTime?
+  createdAt      DateTime  @default(now())
+
+  @@index([createdAt])
+}
+
 /// One thread per Appointment. Polling-based (no WebSocket layer); when
 /// volume justifies it we can swap to Pusher / Soketi without UI changes.
 enum MessageAuthorRole {

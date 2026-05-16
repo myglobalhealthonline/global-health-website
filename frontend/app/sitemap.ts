@@ -39,6 +39,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
   }
 
+  // Static legal / global pages.
+  urls.push(
+    { url: `${base}/privacy`, changeFrequency: "yearly", priority: 0.3 },
+  );
+
   // Doctor profile pages — one per active doctor, in their country/language.
   try {
     const allDoctors = await getPublicDoctorsNormalized();

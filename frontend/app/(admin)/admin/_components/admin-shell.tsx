@@ -11,6 +11,7 @@ import {
   Globe2,
   ImageIcon,
   LayoutDashboard,
+  Mail,
   Menu,
   Settings,
   Tags,
@@ -44,6 +45,7 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/doctors": UserRound,
   "/admin/assets": ImageIcon,
   "/admin/users": Users,
+  "/admin/newsletter": Mail,
   "/admin/settings": Settings,
 };
 
@@ -55,6 +57,7 @@ const GLOBAL_HREFS = new Set([
   "/admin/doctors",
   "/admin/specialties",
   "/admin/assets",
+  "/admin/newsletter",
   "/admin/settings",
 ]);
 
@@ -75,7 +78,8 @@ const ORDER: Record<string, number> = {
   "/admin/specialties": 2,
   "/admin/doctors": 3,
   "/admin/assets": 4,
-  "/admin/settings": 5,
+  "/admin/newsletter": 5,
+  "/admin/settings": 6,
   "/admin/country-home": 0,
   "/admin/country-content": 1,
   "/admin/general-consultations": 2,

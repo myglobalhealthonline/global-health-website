@@ -16,6 +16,7 @@ import { usePathname } from "next/navigation";
 import { countries } from "@/data/countries";
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 import { parseSitePath } from "@/lib/routing/path-rewrites";
+import { NewsletterSignup } from "./NewsletterSignup";
 
 export function SiteFooter({ siteName }: { siteName: string }) {
   const pathname = usePathname() || "/";
@@ -139,6 +140,11 @@ export function SiteFooter({ siteName }: { siteName: string }) {
               </ul>
             </div>
           ))}
+
+          <NewsletterSignup
+            countryCode={parsed.country ?? null}
+            locale={parsed.lang ?? null}
+          />
         </div>
 
         <div
@@ -154,7 +160,13 @@ export function SiteFooter({ siteName }: { siteName: string }) {
           <span>
             © {year} {siteName || "Global Health"} · Medicine without borders
           </span>
-          <span>EU-registered telemedicine provider · GDPR compliant</span>
+          <span className="flex gap-3">
+            <Link href="/privacy" className="hover:text-white" style={{ color: "inherit", textDecoration: "none" }}>
+              Privacy
+            </Link>
+            <span aria-hidden>·</span>
+            <span>EU-registered telemedicine provider · GDPR compliant</span>
+          </span>
         </div>
       </div>
 
