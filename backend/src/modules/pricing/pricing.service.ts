@@ -58,6 +58,18 @@ export async function listPricing() {
   }
 }
 
+export async function listPricingByCountry(countryCode: string) {
+  try {
+    return await prisma.pricingPlan.findMany({
+      where: { isActive: true, country: { code: { equals: countryCode, mode: "insensitive" } } },
+      orderBy: [{ priceCents: "asc" }],
+      include: { country: true },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Pricing data is unavailable");
+  }
+}
+
 async function assertCountryExists(countryId: string): Promise<void> {
   const row = await prisma.country.findUnique({ where: { id: countryId }, select: { id: true } });
   if (!row) throw new PricingCountryNotFoundError();

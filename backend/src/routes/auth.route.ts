@@ -1,9 +1,11 @@
 ﻿import type { FastifyPluginAsync } from "fastify";
+import { z } from "zod";
 import {
   AuthConflictError,
   AuthInvalidCredentialsError,
   getSafeUserById,
   loginUser,
+  patchUserProfile,
   registerPatient,
 } from "../modules/auth/auth.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -65,6 +67,42 @@ const authRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/auth/logout", async (_request, reply) => {
     reply.clearCookie(env.AUTH_COOKIE_NAME, authCookieOptions());
     return okResponse({ loggedOut: true }, "Logged out");
+  });
+
+  const profilePatchSchema = z.object({
+    fullName: z.string().trim().min(1).max(120).optional(),
+    phone: z
+      .string()
+      .trim()
+      .max(40)
+      .nullable()
+      .optional()
+      .transform((v) => (v === "" ? null : v)),
+  });
+
+  app.patch("/api/auth/me", async (request, reply) => {
+    const token = request.cookies[env.AUTH_COOKIE_NAME];
+    if (!token) {
+      return reply.status(401).send(errorResponse("Not authenticated"));
+    }
+    const payload = verifyAuthToken(token);
+    if (!payload) {
+      return reply.status(401).send(errorResponse("Not authenticated"));
+    }
+    const parsed = profilePatchSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.status(400).send(errorResponse("Invalid profile payload", parsed.error.flatten()));
+    }
+    try {
+      const user = await patchUserProfile(payload.sub, parsed.data);
+      return okResponse({ user }, "Profile updated");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not update profile"));
+    }
   });
 
   app.get("/api/auth/me", async (request, reply) => {

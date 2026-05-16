@@ -14,7 +14,7 @@ type AuthResult<T> =
 
 async function authRequest<T>(
   path: string,
-  options: { method?: "GET" | "POST"; body?: unknown } = {},
+  options: { method?: "GET" | "POST" | "PATCH"; body?: unknown } = {},
 ): Promise<AuthResult<T>> {
   const url = resolveAuthFetchUrl(path);
   if (!url) {
@@ -79,6 +79,16 @@ export async function logoutUser() {
 
 export async function fetchCurrentUser() {
   return authRequest<{ user: AuthUser }>("/api/auth/me");
+}
+
+export async function patchCurrentUser(input: {
+  fullName?: string;
+  phone?: string | null;
+}) {
+  return authRequest<{ user: AuthUser }>("/api/auth/me", {
+    method: "PATCH",
+    body: input,
+  });
 }
 
 export async function requestPasswordReset(input: { email: string }) {

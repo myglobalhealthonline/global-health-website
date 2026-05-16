@@ -93,3 +93,23 @@ export async function getSafeUserById(id: string) {
     throw normalizeDbError(error, "Authentication is temporarily unavailable");
   }
 }
+
+export type ProfilePatchInput = {
+  fullName?: string;
+  phone?: string | null;
+};
+
+export async function patchUserProfile(id: string, input: ProfilePatchInput) {
+  try {
+    const user = await prisma.user.update({
+      where: { id },
+      data: {
+        ...(input.fullName !== undefined && { fullName: input.fullName }),
+        ...(input.phone !== undefined && { phone: input.phone }),
+      },
+    });
+    return toSafeUser(user);
+  } catch (error) {
+    throw normalizeDbError(error, "Could not update profile");
+  }
+}

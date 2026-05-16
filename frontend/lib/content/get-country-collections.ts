@@ -1,6 +1,8 @@
 import { cache } from "react";
 import {
   fetchDoctorsByCountry,
+  fetchHealthTestsByCountry,
+  fetchPlansByCountry,
   fetchServicesByCountry,
   fetchSpecialtiesByCountry,
 } from "@/lib/api/site-content-api";
@@ -21,12 +23,34 @@ export type CountryServiceCard = {
   slug: string;
   name: string;
   summary: string;
-  kind: "GENERAL" | "SPECIALIST";
+  kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY";
   durationMinutes: number | null;
   basePriceCents: number | null;
   currencyCode: string | null;
   specialtyName: string | null;
   imageSrc?: string;
+};
+
+export type CountryHealthTestCard = {
+  id: string;
+  slug: string;
+  title: string;
+  shortDescription: string | null;
+  priceCents: number;
+  currencyCode: string;
+  sampleType: string | null;
+  resultsTimeline: string | null;
+  imageSrc: string | null;
+};
+
+export type CountryPricingPlanCard = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  priceCents: number;
+  currencyCode: string;
+  interval: string;
 };
 
 export type CountrySpecialtyCard = {
@@ -67,10 +91,10 @@ function pickImagePath(row: unknown): string | undefined {
   return undefined;
 }
 
-/** General or specialist services for a country. Skips inactive rows. */
+/** Services for a country, filtered by kind. Skips inactive rows. */
 export const getCountryServices = cache(async (
   countryCode: string,
-  kind: "GENERAL" | "SPECIALIST",
+  kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY",
 ): Promise<CountryServiceCard[]> => {
   const res = await fetchServicesByCountry(countryCode, kind);
   if (!res.ok) {
@@ -163,6 +187,67 @@ export const getCountryDoctors = cache(async (
       languages,
       specialties,
       imageSrc: pickImagePath(row),
+    });
+  }
+  return out;
+});
+
+/** Health tests for a country. Maps the HealthTest model to a card shape. */
+export const getCountryHealthTests = cache(async (
+  countryCode: string,
+): Promise<CountryHealthTestCard[]> => {
+  const res = await fetchHealthTestsByCountry(countryCode);
+  if (!res.ok) {
+    logPublicContentFallback(`country-health-tests:${countryCode}`, res.message);
+    return [];
+  }
+  const out: CountryHealthTestCard[] = [];
+  for (const row of res.data) {
+    if (!row || typeof row !== "object") continue;
+    const r = row as Record<string, unknown>;
+    if (typeof r.id !== "string" || typeof r.slug !== "string") continue;
+    if (typeof r.title !== "string") continue;
+    if (r.isActive === false) continue;
+    const imagePath = typeof r.productImagePath === "string" ? r.productImagePath : null;
+    out.push({
+      id: r.id,
+      slug: r.slug,
+      title: r.title,
+      shortDescription: typeof r.shortDescription === "string" ? r.shortDescription : null,
+      priceCents: typeof r.priceCents === "number" ? r.priceCents : 0,
+      currencyCode: typeof r.currencyCode === "string" ? r.currencyCode : "EUR",
+      sampleType: typeof r.sampleType === "string" ? r.sampleType : null,
+      resultsTimeline: typeof r.resultsTimeline === "string" ? r.resultsTimeline : null,
+      imageSrc: imagePath ? resolveTrustedAssetUrl(imagePath) ?? null : null,
+    });
+  }
+  return out;
+});
+
+/** Active pricing plans for a country. Drives /[country]/[lang]/plans. */
+export const getCountryPlans = cache(async (
+  countryCode: string,
+): Promise<CountryPricingPlanCard[]> => {
+  const res = await fetchPlansByCountry(countryCode);
+  if (!res.ok) {
+    logPublicContentFallback(`country-plans:${countryCode}`, res.message);
+    return [];
+  }
+  const out: CountryPricingPlanCard[] = [];
+  for (const row of res.data) {
+    if (!row || typeof row !== "object") continue;
+    const r = row as Record<string, unknown>;
+    if (typeof r.id !== "string" || typeof r.slug !== "string") continue;
+    if (typeof r.name !== "string") continue;
+    if (r.isActive === false) continue;
+    out.push({
+      id: r.id,
+      slug: r.slug,
+      name: r.name,
+      description: typeof r.description === "string" ? r.description : null,
+      priceCents: typeof r.priceCents === "number" ? r.priceCents : 0,
+      currencyCode: typeof r.currencyCode === "string" ? r.currencyCode : "EUR",
+      interval: typeof r.interval === "string" ? r.interval : "month",
     });
   }
   return out;

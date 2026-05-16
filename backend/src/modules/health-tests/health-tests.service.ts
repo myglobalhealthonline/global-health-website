@@ -84,6 +84,18 @@ export async function listHealthTests() {
   }
 }
 
+export async function listHealthTestsByCountry(countryCode: string) {
+  try {
+    return await prisma.healthTest.findMany({
+      where: { isActive: true, country: { code: { equals: countryCode, mode: "insensitive" } } },
+      orderBy: [{ sortOrder: "asc" }, { title: "asc" }],
+      include: { country: true },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Health test data is unavailable");
+  }
+}
+
 export async function listAdminHealthTests(query: AdminHealthTestsQuery): Promise<ListAdminHealthTestsResult> {
   const page = Math.max(1, query.page);
   const pageSize = Math.min(100, Math.max(1, query.pageSize));

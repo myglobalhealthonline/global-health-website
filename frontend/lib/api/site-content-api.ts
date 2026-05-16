@@ -31,6 +31,8 @@ export const SITE_CACHE_TAGS = {
     `country:${code}:doctors:${slug}`,
   countrySpecialties: (code: string) => `country:${code}:specialties`,
   countryServices: (code: string) => `country:${code}:services`,
+  countryHealthTests: (code: string) => `country:${code}:health-tests`,
+  countryPlans: (code: string) => `country:${code}:plans`,
   countryPage: (code: string, pageKey: string, locale: string) =>
     `country:${code}:pages:${pageKey}:${locale}`,
   globalDoctors: () => "global:doctors",
@@ -168,9 +170,37 @@ export async function fetchSpecialtiesByCountry(
   );
 }
 
+export async function fetchHealthTestsByCountry(
+  countryCode: string,
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+) {
+  return apiRequest<unknown[]>(
+    `/api/countries/${encodeURIComponent(countryCode)}/health-tests`,
+    {
+      timeoutMs,
+      revalidate: REVALIDATE_SECONDS,
+      tags: [SITE_CACHE_TAGS.countryHealthTests(countryCode)],
+    },
+  );
+}
+
+export async function fetchPlansByCountry(
+  countryCode: string,
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+) {
+  return apiRequest<unknown[]>(
+    `/api/countries/${encodeURIComponent(countryCode)}/plans`,
+    {
+      timeoutMs,
+      revalidate: REVALIDATE_SECONDS,
+      tags: [SITE_CACHE_TAGS.countryPlans(countryCode)],
+    },
+  );
+}
+
 export async function fetchServicesByCountry(
   countryCode: string,
-  kind: "GENERAL" | "SPECIALIST" | undefined,
+  kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY" | undefined,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
 ) {
   const url = kind

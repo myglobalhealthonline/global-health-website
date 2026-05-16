@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { Stethoscope, CalendarDays, Settings } from "lucide-react";
+import {
+  Stethoscope,
+  CalendarDays,
+  CreditCard,
+  PillBottle,
+  UserRound,
+} from "lucide-react";
 import { AccountSummary } from "./ui";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +31,17 @@ export default function AccountPage() {
         <div className="mt-6 space-y-4">
           <AccountSummary />
 
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Link href="/account/profile" className="gh-card gh-card-interactive flex items-center gap-4 p-5">
+              <span className="gh-icon-circle">
+                <UserRound className="size-5" aria-hidden />
+              </span>
+              <div>
+                <p className="text-sm font-bold text-[var(--color-text-primary)]">Profile</p>
+                <p className="text-xs text-[var(--color-text-muted)]">Name, phone</p>
+              </div>
+            </Link>
+
             <Link href="/account/bookings" className="gh-card gh-card-interactive flex items-center gap-4 p-5">
               <span className="gh-icon-circle">
                 <CalendarDays className="size-5" aria-hidden />
@@ -36,31 +52,39 @@ export default function AccountPage() {
               </div>
             </Link>
 
-            <Link href="/book-online" className="gh-card gh-card-interactive flex items-center gap-4 p-5">
+            <Link href="/account/prescriptions" className="gh-card gh-card-interactive flex items-center gap-4 p-5">
               <span className="gh-icon-circle">
-                <Stethoscope className="size-5" aria-hidden />
+                <PillBottle className="size-5" aria-hidden />
               </span>
               <div>
-                <p className="text-sm font-bold text-[var(--color-text-primary)]">Book consultation</p>
-                <p className="text-xs text-[var(--color-text-muted)]">New request</p>
+                <p className="text-sm font-bold text-[var(--color-text-primary)]">Prescriptions</p>
+                <p className="text-xs text-[var(--color-text-muted)]">Issued meds</p>
               </div>
             </Link>
 
-            <button
-              type="button"
-              className="gh-card flex cursor-not-allowed items-center gap-4 p-5 opacity-60"
-              disabled
-              aria-disabled="true"
-            >
-              <span className="gh-icon-circle opacity-60">
-                <Settings className="size-5" aria-hidden />
+            <Link href="/account/payments" className="gh-card gh-card-interactive flex items-center gap-4 p-5">
+              <span className="gh-icon-circle">
+                <CreditCard className="size-5" aria-hidden />
               </span>
               <div>
-                <p className="text-sm font-bold text-[var(--color-text-muted)]">Settings</p>
-                <p className="text-xs text-[var(--color-text-muted)]">Coming soon</p>
+                <p className="text-sm font-bold text-[var(--color-text-primary)]">Payments</p>
+                <p className="text-xs text-[var(--color-text-muted)]">Receipts</p>
               </div>
-            </button>
+            </Link>
           </div>
+
+          <Link
+            href="/book-online"
+            className="gh-card gh-card-interactive flex items-center gap-4 p-5"
+          >
+            <span className="gh-icon-circle">
+              <Stethoscope className="size-5" aria-hidden />
+            </span>
+            <div>
+              <p className="text-sm font-bold text-[var(--color-text-primary)]">Book a consultation</p>
+              <p className="text-xs text-[var(--color-text-muted)]">Start a new visit</p>
+            </div>
+          </Link>
         </div>
       </div>
     </div>

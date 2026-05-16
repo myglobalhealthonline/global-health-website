@@ -9,6 +9,8 @@ import {
   listServicesByCountry,
   listSpecialtiesByCountry,
 } from "../modules/services/services.service.js";
+import { listHealthTestsByCountry } from "../modules/health-tests/health-tests.service.js";
+import { listPricingByCountry } from "../modules/pricing/pricing.service.js";
 import { getPublicCountryByCode } from "../modules/countries/countries.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -115,6 +117,36 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
       return okResponse(specialties);
     } catch (error) {
       return handleError(app, reply, error, "Unexpected specialties error");
+    }
+  });
+
+  app.get("/api/countries/:countryCode/health-tests", async (request, reply) => {
+    applyPublicCache(reply);
+    const params = countryParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
+    }
+    try {
+      if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
+      const items = await listHealthTestsByCountry(params.data.countryCode);
+      return okResponse(items);
+    } catch (error) {
+      return handleError(app, reply, error, "Unexpected health-tests error");
+    }
+  });
+
+  app.get("/api/countries/:countryCode/plans", async (request, reply) => {
+    applyPublicCache(reply);
+    const params = countryParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
+    }
+    try {
+      if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
+      const items = await listPricingByCountry(params.data.countryCode);
+      return okResponse(items);
+    } catch (error) {
+      return handleError(app, reply, error, "Unexpected plans error");
     }
   });
 
