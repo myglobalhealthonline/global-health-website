@@ -1,61 +1,53 @@
+"use client";
+
 /**
- * Site footer.
+ * Public site footer. Country/lang aware via `usePathname()` — Care links
+ * resolve to the active country/lang scope when the user is inside a country,
+ * else they fall through to the entry gate at `/`.
  *
- * Mirrors `ui_kits/website/Sections.jsx Footer()`:
- *   • Forest-night background, 70% white text
- *   • 1.5fr / 4×1fr columns (mobile collapses to 2-col, then 1-col)
- *   • Mint "g" mark + Global Health wordmark + tagline + email
- *   • 4 link groups: Care · Clinics · Company · Legal
- *   • Bottom bar: copyright + EU-registered note, 10% white top border
+ * Deferred features (online prescriptions, home tests, partner clinics,
+ * pricing plans, blog, careers, gift cards) are intentionally NOT linked
+ * here — those routes don't exist yet and rendering not-found 200s would
+ * mislead users. Re-add them as their pages ship.
  */
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { countries } from "@/data/countries";
-import { countrySlug } from "@/lib/routing/country-slug";
-
-const LINK_GROUPS = [
-  {
-    h: "Care",
-    items: [
-      { label: "General", href: "/book-online?type=general" },
-      { label: "Specialist", href: "/book-online?type=specialist" },
-      { label: "Prescriptions", href: "/online-prescription" },
-      { label: "Home tests", href: "/home-health-tests" },
-    ],
-  },
-  {
-    h: "Clinics",
-    // Populated dynamically from countries data below.
-    items: [] as { label: string; href: string }[],
-  },
-  {
-    h: "Company",
-    items: [
-      { label: "About", href: "/about" },
-      { label: "Doctors", href: "/ireland-doctors" },
-      { label: "Blog", href: "#" },
-      { label: "Careers", href: "/careers" },
-    ],
-  },
-  {
-    h: "Legal",
-    items: [
-      { label: "Privacy", href: "/privacy" },
-      { label: "Cookies", href: "/cookies" },
-      { label: "GDPR", href: "/privacy#gdpr" },
-      { label: "Terms", href: "/terms" },
-    ],
-  },
-];
-
-// Build clinics column from countries data.
-LINK_GROUPS[1].items = countries.map((c) => ({
-  label: c.name,
-  href: `/${countrySlug(c.code)}`,
-}));
+import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
+import { parseSitePath } from "@/lib/routing/path-rewrites";
 
 export function SiteFooter({ siteName }: { siteName: string }) {
+  const pathname = usePathname() || "/";
+  const parsed = parseSitePath(pathname);
   const year = new Date().getFullYear();
+
+  const careBase =
+    parsed.country && parsed.lang ? `/${parsed.country}/${parsed.lang}` : null;
+  const careLinks = [
+    { label: "Book consultation", href: careBase ? `${careBase}/book-online` : "/" },
+    { label: "General consultation", href: careBase ? `${careBase}/general-consultation` : "/" },
+    { label: "Specialist consultation", href: careBase ? `${careBase}/specialist-consultation` : "/" },
+    { label: "Our doctors", href: careBase ? `${careBase}/doctors` : "/" },
+  ];
+
+  const clinicsLinks = countries.map((c) => ({
+    label: c.name,
+    href: `/${COUNTRY_CODE_TO_SLUG[c.code]}`,
+  }));
+
+  const accountLinks = [
+    { label: "Sign in", href: "/login" },
+    { label: "Create account", href: "/register" },
+    { label: "Forgot password?", href: "/forgot-password" },
+    { label: "My account", href: "/account" },
+  ];
+
+  const groups = [
+    { h: "Care", items: careLinks },
+    { h: "Clinics", items: clinicsLinks },
+    { h: "Account", items: accountLinks },
+  ];
 
   return (
     <footer
@@ -67,13 +59,9 @@ export function SiteFooter({ siteName }: { siteName: string }) {
     >
       <div
         className="mx-auto"
-        style={{
-          maxWidth: 1320,
-          padding: "0 clamp(20px, 4vw, 40px)",
-        }}
+        style={{ maxWidth: 1320, padding: "0 clamp(20px, 4vw, 40px)" }}
       >
         <div className="gh-footer-grid grid gap-10">
-          {/* Brand column */}
           <div>
             <div className="inline-flex items-center gap-2.5">
               <span
@@ -105,27 +93,25 @@ export function SiteFooter({ siteName }: { siteName: string }) {
             </div>
             <p
               className="mt-4"
-              style={{
-                fontSize: 14,
-                lineHeight: 1.6,
-                maxWidth: 320,
-              }}
+              style={{ fontSize: 14, lineHeight: 1.6, maxWidth: 320 }}
             >
               Medicine without borders. Online medical consultations with
               locally-registered doctors across Europe.
             </p>
             <p
               className="mt-4"
-              style={{
-                fontSize: 13,
-                color: "rgba(255,255,255,0.50)",
-              }}
+              style={{ fontSize: 13, color: "rgba(255,255,255,0.50)" }}
             >
-              info@myglobalhealth.online
+              <a
+                href="mailto:info@myglobalhealth.online"
+                style={{ color: "inherit", textDecoration: "none" }}
+              >
+                info@myglobalhealth.online
+              </a>
             </p>
           </div>
 
-          {LINK_GROUPS.map((group) => (
+          {groups.map((group) => (
             <div key={group.h}>
               <p
                 className="m-0 uppercase text-white"
@@ -138,9 +124,7 @@ export function SiteFooter({ siteName }: { siteName: string }) {
               >
                 {group.h}
               </p>
-              <ul
-                className="m-0 flex list-none flex-col gap-2.5 p-0"
-              >
+              <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
                 {group.items.map((item) => (
                   <li key={item.label + item.href}>
                     <Link
@@ -167,14 +151,16 @@ export function SiteFooter({ siteName }: { siteName: string }) {
             color: "rgba(255,255,255,0.45)",
           }}
         >
-          <span>© {year} {siteName || "Global Health"} · Medicine without borders</span>
+          <span>
+            © {year} {siteName || "Global Health"} · Medicine without borders
+          </span>
           <span>EU-registered telemedicine provider · GDPR compliant</span>
         </div>
       </div>
 
       <style>{`
         .gh-footer-grid {
-          grid-template-columns: 1.5fr repeat(4, 1fr);
+          grid-template-columns: 1.5fr repeat(3, 1fr);
         }
         @media (max-width: 900px) {
           .gh-footer-grid { grid-template-columns: 1fr 1fr; }
