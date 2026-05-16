@@ -161,6 +161,15 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
     const value = initialValue?.trim();
     editorRef.current.innerHTML = value ? value : "<p><br/></p>";
     syncToHidden({ rewriteEditor: true });
+    // Enable inline-style mode so fontName/foreColor/etc. emit
+    // `<span style="font-family: …">` rather than legacy `<font face>` tags.
+    // The sanitizer still tolerates both, but inline styles render reliably
+    // across every browser and survive the sanitization round-trip.
+    try {
+      document.execCommand("styleWithCSS", false, "true");
+    } catch {
+      // Older browsers / browsers with execCommand stubs will ignore this.
+    }
   }, [initialValue]);
 
   function syncToHidden(options?: { rewriteEditor?: boolean }) {
@@ -233,7 +242,7 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
             <select
               className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
               value={font}
-              onFocus={rememberSelection}
+              onMouseDown={rememberSelection}
               onChange={(e) => {
                 setFont(e.target.value);
                 exec("fontName", e.target.value);
@@ -249,7 +258,7 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
             <select
               className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
               value={size}
-              onFocus={rememberSelection}
+              onMouseDown={rememberSelection}
               onChange={(e) => {
                 setSize(e.target.value);
                 exec("fontSize", e.target.value);
@@ -265,7 +274,7 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
             <select
               className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
               value={block}
-              onFocus={rememberSelection}
+              onMouseDown={rememberSelection}
               onChange={(e) => {
                 setBlock(e.target.value);
                 exec("formatBlock", e.target.value.toUpperCase());
