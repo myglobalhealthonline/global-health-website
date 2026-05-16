@@ -74,7 +74,7 @@ export function MobileNav({
           { href: `/${parsed.country}/${parsed.lang}/doctors`, label: "Doctors" },
           {
             href: `/${parsed.country}/${parsed.lang}/general-consultation`,
-            label: "General consultation",
+            label: "GP consultation",
           },
           {
             href: `/${parsed.country}/${parsed.lang}/specialist-consultation`,

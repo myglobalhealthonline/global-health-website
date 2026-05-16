@@ -40,7 +40,7 @@ function sectionNavForCountryLang(countrySlug: string, lang: string): SectionNav
   return [
     { href: base, label: "Home", exact: true },
     { href: `${base}/doctors`, label: "Doctors" },
-    { href: `${base}/general-consultation`, label: "General" },
+    { href: `${base}/general-consultation`, label: "GP" },
     { href: `${base}/specialist-consultation`, label: "Specialist" },
   ];
 }

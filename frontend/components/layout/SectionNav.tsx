@@ -2,7 +2,7 @@
 
 /**
  * Country-scoped section tabs shown in the public header when the user is
- * inside `/[country]/[lang]/…`. Tabs: Home / Doctors / General Consultation /
+ * inside `/[country]/[lang]/…`. Tabs: Home / Doctors / GP Consultation /
  * Specialist Consultation. Active tab highlights via pathname match.
  *
  * Hidden when not inside a country (the entry page `/` shows the country

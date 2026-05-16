@@ -6,13 +6,18 @@ type Props = {
   initialPath?: string;
 };
 
+/**
+ * Doctor profile-image picker. Posts the file to the same-origin proxy
+ * at `/api/admin/media/upload` which forwards to the backend with the
+ * session cookie attached. That avoids cross-origin cookie loss on
+ * Railway subdomains AND removes the old `NEXT_PUBLIC_API_URL` gate that
+ * was tripping admins with a misleading "not configured" warning.
+ */
 export function DoctorProfileImageField({ initialPath }: Props) {
   const [path, setPath] = useState(initialPath ?? "");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-
-  const apiBase = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
 
   function toPersistedPath(data?: { key?: string; publicUrl?: string }): string | null {
     if (data?.key) {
@@ -33,20 +38,15 @@ export function DoctorProfileImageField({ initialPath }: Props) {
     const input = event.target;
     const file = input.files?.[0];
     if (!file) return;
-    if (!apiBase) {
-      setMsg("NEXT_PUBLIC_API_URL is not configured.");
-      input.value = "";
-      return;
-    }
 
     setBusy(true);
     setMsg(null);
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch(`${apiBase}/api/admin/media/upload`, {
+      const res = await fetch(`/api/admin/media/upload`, {
         method: "POST",
-        credentials: "include",
+        // Same-origin so the auth cookie travels automatically.
         body: fd,
       });
       const json = (await res.json()) as {
@@ -83,22 +83,20 @@ export function DoctorProfileImageField({ initialPath }: Props) {
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif"
           className="sr-only"
-          disabled={busy || !apiBase}
+          disabled={busy}
           onChange={onFileSelected}
         />
         <button
           type="button"
           className="gh-btn gh-btn-soft text-xs"
-          disabled={busy || !apiBase}
+          disabled={busy}
           onClick={() => fileRef.current?.click()}
         >
           {busy ? "Uploading..." : "Upload image to bucket"}
         </button>
-        {!apiBase ? (
-          <span className="text-xs text-[var(--color-status-warning-text)]">Set NEXT_PUBLIC_API_URL to enable upload.</span>
-        ) : (
-          <span className="text-xs text-[var(--color-text-muted)]">JPEG, PNG, WebP, GIF, SVG, AVIF (max 5MB).</span>
-        )}
+        <span className="text-xs text-[var(--color-text-muted)]">
+          JPEG, PNG, WebP, GIF, SVG, AVIF (max 5MB).
+        </span>
       </div>
       {msg ? <p className="text-xs text-[var(--color-status-warning-text)]">{msg}</p> : null}
       <span className="text-xs text-[var(--color-text-muted)]">

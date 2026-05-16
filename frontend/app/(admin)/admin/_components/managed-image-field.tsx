@@ -33,7 +33,6 @@ export function ManagedImageField({
   const [msg, setMsg] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const apiBase = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
 
   function toPersistedPath(data?: { key?: string; publicUrl?: string }): string | null {
     if (data?.key) {
@@ -51,10 +50,6 @@ export function ManagedImageField({
   }
 
   async function uploadFile(file: File) {
-    if (!apiBase) {
-      setMsg("NEXT_PUBLIC_API_URL is not configured.");
-      return;
-    }
     if (file.size > 5 * 1024 * 1024) {
       setMsg("File too large. Max 5 MB.");
       return;
@@ -69,9 +64,9 @@ export function ManagedImageField({
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch(`${apiBase}/api/admin/media/upload`, {
+      // Same-origin proxy → backend with cookie forwarded server-side.
+      const res = await fetch(`/api/admin/media/upload`, {
         method: "POST",
-        credentials: "include",
         body: fd,
       });
       const json = (await res.json()) as {
@@ -113,10 +108,13 @@ export function ManagedImageField({
   // Build the preview src — if path is a local /api/media reference, prefix
   // with the backend origin so the browser fetches from :4000 rather than
   // the frontend dev origin (which doesn't serve those files).
+  const apiBaseForPreview = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
   const previewSrc = (() => {
     if (!path) return null;
     if (/^https?:\/\//i.test(path)) return path;
-    if (path.startsWith("/api/media/") && apiBase) return `${apiBase}${path}`;
+    if (path.startsWith("/api/media/") && apiBaseForPreview) {
+      return `${apiBaseForPreview}${path}`;
+    }
     return path;
   })();
 
@@ -179,10 +177,10 @@ export function ManagedImageField({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (!busy && apiBase) fileRef.current?.click();
+                  if (!busy) fileRef.current?.click();
                 }}
                 aria-label="Replace image"
-                disabled={busy || !apiBase}
+                disabled={busy}
                 style={{
                   height: 30,
                   padding: "0 12px",
@@ -245,9 +243,9 @@ export function ManagedImageField({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (!busy && apiBase) fileRef.current?.click();
+                  if (!busy) fileRef.current?.click();
                 }}
-                disabled={busy || !apiBase}
+                disabled={busy}
                 style={{
                   marginTop: 14,
                   height: 36,
@@ -290,7 +288,7 @@ export function ManagedImageField({
         type="file"
         accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif"
         className="sr-only"
-        disabled={busy || !apiBase}
+        disabled={busy}
         onChange={onFileSelected}
       />
 

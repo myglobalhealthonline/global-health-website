@@ -27,7 +27,7 @@ export function SiteFooter({ siteName }: { siteName: string }) {
     parsed.country && parsed.lang ? `/${parsed.country}/${parsed.lang}` : null;
   const careLinks = [
     { label: "Book consultation", href: careBase ? `${careBase}/book-online` : "/" },
-    { label: "General consultation", href: careBase ? `${careBase}/general-consultation` : "/" },
+    { label: "GP consultation", href: careBase ? `${careBase}/general-consultation` : "/" },
     { label: "Specialist consultation", href: careBase ? `${careBase}/specialist-consultation` : "/" },
     { label: "Our doctors", href: careBase ? `${careBase}/doctors` : "/" },
   ];

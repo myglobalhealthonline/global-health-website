@@ -167,7 +167,7 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
 
   // ── Consultation listings ─────────────────────────────────────────────────
   "/general-consultation-ie": {
-    title: "General consultation · Ireland",
+    title: "GP consultation · Ireland",
     description: "GP video consultations with Irish-registered clinicians — same-day slots, prescriptions and sick notes.",
   },
   "/general-consultation-pt": {

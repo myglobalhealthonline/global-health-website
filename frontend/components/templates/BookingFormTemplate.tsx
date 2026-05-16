@@ -430,7 +430,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
             </ul>
 
             <div className="rounded-3xl border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-5 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
-              Not sure what to book? Pick &ldquo;General consultation&rdquo; —
+              Not sure what to book? Pick &ldquo;GP consultation&rdquo; —
               our team will route you to the right clinician.
             </div>
           </aside>

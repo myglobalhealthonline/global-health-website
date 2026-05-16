@@ -3,7 +3,7 @@ import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 const consultationTypeOptions = [
-  { value: "general", label: "General consultation" },
+  { value: "general", label: "GP consultation" },
   { value: "specialist", label: "Specialist consultation" },
   { value: "follow-up", label: "Follow-up consultation" },
 ];

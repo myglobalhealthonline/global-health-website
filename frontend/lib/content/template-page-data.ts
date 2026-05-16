@@ -605,13 +605,13 @@ function buildGeneralConsultationTemplateData(
   services: PublicServiceRecord[],
 ): GeneralConsultationTemplateData {
   return {
-    heroTitle: `General Consultation - ${countryName}`,
-    heroDescription: `Book online first-contact medical consultations for ${countryName}. Compare available GP-style consultation options before choosing a booking route.`,
+    heroTitle: `GP Consultation - ${countryName}`,
+    heroDescription: `Book online GP consultations for ${countryName}. Talk to a licensed general practitioner from home — same-day slots, prescriptions, and referrals.`,
     primaryCtaLabel: "Book consultation",
     secondaryCta: { label: "Meet doctors", href: paths.team },
     explanation: {
-      title: `What general consultations include in ${countryName}`,
-      body: "General consultations cover common health concerns, first assessments, and guidance on next steps. Service availability and final scope details are confirmed during booking and intake.",
+      title: `What GP consultations include in ${countryName}`,
+      body: "GP consultations cover common health concerns, first assessments, prescriptions and guidance on next steps. Service availability and final scope are confirmed during booking and intake.",
     },
     serviceCards: buildGeneralConsultationCards(countryCode, services),
     pricing: {
@@ -661,7 +661,7 @@ function buildGeneralConsultationTemplateData(
       ],
     },
     faq: {
-      title: `${countryName} general consultation FAQs`,
+      title: `${countryName} GP consultation FAQs`,
       items: buildFaqItems(countryCode, countryName),
     },
   };

@@ -48,10 +48,10 @@ export async function generateMetadata({
 
   const page = await getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/general-consultation`;
-  const title = page?.seoTitle ?? `General consultation in ${config.name} · ${SITE_NAME}`;
+  const title = page?.seoTitle ?? `GP consultation in ${config.name} · ${SITE_NAME}`;
   const description =
     page?.seoDescription ??
-    `Online general medical consultation with a licensed doctor in ${config.name}.`;
+    `Online GP (general practitioner) consultation with a licensed doctor in ${config.name}.`;
   return {
     title,
     description,
@@ -91,10 +91,10 @@ export default async function CountryLangGeneralConsultationPage({
     getCountryDoctors(code),
   ]);
 
-  const heroTitle = page?.heroTitle ?? "General medical consultation";
+  const heroTitle = page?.heroTitle ?? "GP consultation";
   const heroSubtitle =
-    page?.heroSubtitle ?? `Speak to a licensed doctor in ${config.name} about everyday health concerns.`;
-  const ctaLabel = page?.ctaLabel ?? "Book general consultation";
+    page?.heroSubtitle ?? `Speak to a licensed GP in ${config.name} about everyday health concerns.`;
+  const ctaLabel = page?.ctaLabel ?? "Book GP consultation";
   const ctaHref = page?.ctaHref ?? `/${slug}/${lang}/book-online?type=general`;
 
   // Map Service rows to the ServicesGrid card shape. Cards auto-appear when
@@ -127,13 +127,13 @@ export default async function CountryLangGeneralConsultationPage({
         data={breadcrumbJsonLd([
           { name: "Home", url: "/" },
           { name: config.name, url: `/${slug}/${lang}` },
-          { name: "General consultation", url: `/${slug}/${lang}/general-consultation` },
+          { name: "GP consultation", url: `/${slug}/${lang}/general-consultation` },
         ])}
       />
       <JsonLd
         data={medicalProcedureJsonLd({
-          name: `General medical consultation in ${config.name}`,
-          description: `Video consultation with a licensed general-practice doctor in ${config.name}. Covers everyday health concerns, prescriptions, and referrals.`,
+          name: `GP consultation in ${config.name}`,
+          description: `Video consultation with a licensed GP (general practitioner) in ${config.name}. Covers everyday health concerns, prescriptions, and referrals.`,
           countryName: config.name,
           url: `/${slug}/${lang}/general-consultation`,
           bookingUrl: ctaHref,
@@ -143,7 +143,7 @@ export default async function CountryLangGeneralConsultationPage({
       {/* Hero — admin-editable copy + optional uploaded image from ContentPage */}
       <section className="mx-auto max-w-5xl px-4 pt-16 pb-10 text-center">
         <p className="text-sm uppercase tracking-wide text-emerald-700">
-          {config.name} · General Consultation
+          {config.name} · GP Consultation
         </p>
         <h1 className="mt-3 text-4xl font-semibold text-slate-900 sm:text-5xl">{heroTitle}</h1>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">{heroSubtitle}</p>
@@ -178,7 +178,7 @@ export default async function CountryLangGeneralConsultationPage({
       {serviceItems.length > 0 ? (
         <ServicesGrid
           eyebrow="What you can book"
-          title="General consultations available"
+          title="GP consultations available"
           intro={`${serviceItems.length} ${serviceItems.length === 1 ? "service" : "services"} currently offered in ${config.name}. Cards update as the team adds or retires services.`}
           items={serviceItems}
         />
@@ -188,7 +188,7 @@ export default async function CountryLangGeneralConsultationPage({
       {doctorItems.length > 0 ? (
         <DoctorsSection
           title={`Doctors in ${config.name}`}
-          intro="Licensed clinicians available for general consultations. Each profile lists qualifications, languages, and registration."
+          intro="Licensed GPs available for online consultations. Each profile lists qualifications, languages, and registration."
           doctors={doctorItems}
         />
       ) : null}
