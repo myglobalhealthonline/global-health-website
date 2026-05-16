@@ -1,36 +1,44 @@
-import { Resend } from "resend";
+import sgMail from "@sendgrid/mail";
 import { env } from "../../config/env.js";
 
 /**
- * Transactional email adapter. Resend in production; falls back to a console
- * log in dev when RESEND_API_KEY is unset so the rest of the system keeps
- * working (signups, password reset etc. don't block on missing creds).
+ * Transactional email adapter — SendGrid.
  *
- * Usage:
- *   await sendEmail({
- *     to: "user@example.com",
- *     subject: "Verify your email",
- *     html: "<p>Click <a href=…>here</a></p>",
- *     text: "Click here: …",
- *   });
+ * Falls back to a console log in dev when SENDGRID_API_KEY is unset so the
+ * rest of the system keeps working (signups, password reset, booking
+ * confirmation don't block on missing creds).
  *
- * To enable real delivery:
- *   1. Sign up at resend.com, verify your sender domain
- *   2. Set RESEND_API_KEY=re_… in backend/.env
- *   3. Set EMAIL_FROM=noreply@yourdomain.com
- *   4. Set PUBLIC_SITE_URL=https://… (used to build verification links)
- *   Restart the backend dev server.
+ * Setup:
+ *   1. Sign up at https://sendgrid.com (free tier: 100 emails/day forever)
+ *   2. Set up sender authentication:
+ *        Settings → Sender Authentication → Authenticate Your Domain
+ *      Publish the CNAME records they give you at your DNS registrar.
+ *      (Single Sender works for testing but Domain Authentication is needed
+ *      for real production deliverability.)
+ *   3. Create an API key at Settings → API Keys → "Restricted Access" with
+ *      "Mail Send → Full Access". Copy the SG.… string.
+ *   4. Put in backend/.env:
+ *        SENDGRID_API_KEY=SG.…
+ *        EMAIL_FROM=noreply@myglobalhealth.online
+ *        PUBLIC_SITE_URL=https://myglobalhealth.online
+ *   5. Restart the backend.
+ *
+ * Public interface (`sendEmail({ to, subject, html, text })`) is unchanged
+ * from the previous adapter — callers stay portable across providers.
  */
 
-let cachedClient: Resend | null = null;
-function getClient(): Resend | null {
-  if (!env.RESEND_API_KEY) return null;
-  if (!cachedClient) cachedClient = new Resend(env.RESEND_API_KEY);
-  return cachedClient;
+let initialized = false;
+function ensureInitialized() {
+  if (!env.SENDGRID_API_KEY) return false;
+  if (!initialized) {
+    sgMail.setApiKey(env.SENDGRID_API_KEY);
+    initialized = true;
+  }
+  return true;
 }
 
 export function isEmailConfigured(): boolean {
-  return Boolean(env.RESEND_API_KEY && env.EMAIL_FROM);
+  return Boolean(env.SENDGRID_API_KEY && env.EMAIL_FROM);
 }
 
 export type SendEmailInput = {
@@ -43,17 +51,17 @@ export type SendEmailInput = {
 };
 
 export type SendEmailResult =
-  | { ok: true; id: string; mode: "resend" }
+  | { ok: true; id: string | null; mode: "sendgrid" }
   | { ok: true; id: null; mode: "log"; reason: string }
-  | { ok: false; mode: "resend" | "log"; message: string };
+  | { ok: false; mode: "sendgrid" | "log"; message: string };
 
 export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult> {
   const from = env.EMAIL_FROM;
-  const client = getClient();
+  const hasKey = ensureInitialized();
 
-  if (!client || !from) {
+  if (!hasKey || !from) {
     // Dev fallback — log the message so password-reset tokens etc. are still
-    // visible in development. Configure Resend keys for real delivery.
+    // visible in development. Configure SendGrid keys for real delivery.
     // eslint-disable-next-line no-console
     console.log(
       "[email:log]",
@@ -72,14 +80,14 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
       ok: true,
       id: null,
       mode: "log",
-      reason: from
-        ? "RESEND_API_KEY missing — logged instead of sending"
-        : "EMAIL_FROM missing — logged instead of sending",
+      reason: hasKey
+        ? "EMAIL_FROM missing — logged instead of sending"
+        : "SENDGRID_API_KEY missing — logged instead of sending",
     };
   }
 
   try {
-    const result = await client.emails.send({
+    const [response] = await sgMail.send({
       from,
       to: input.to,
       subject: input.subject,
@@ -87,16 +95,21 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
       text: input.text,
       ...(input.replyTo ? { replyTo: input.replyTo } : {}),
     });
-    if (result.error) {
-      return { ok: false, mode: "resend", message: result.error.message };
-    }
-    return { ok: true, id: result.data?.id ?? "unknown", mode: "resend" };
+    // SendGrid returns the message id in the `x-message-id` response header.
+    const headers = response.headers as Record<string, string | undefined> | undefined;
+    const messageId = headers?.["x-message-id"] ?? null;
+    return { ok: true, id: messageId, mode: "sendgrid" };
   } catch (error) {
-    return {
-      ok: false,
-      mode: "resend",
-      message: error instanceof Error ? error.message : "Email send failed",
+    // SendGrid surfaces field-level errors via `error.response.body.errors[]`.
+    const err = error as {
+      message?: string;
+      response?: { body?: { errors?: Array<{ message?: string }> } };
     };
+    const detail =
+      err.response?.body?.errors?.map((e) => e.message).filter(Boolean).join("; ") ||
+      err.message ||
+      "Email send failed";
+    return { ok: false, mode: "sendgrid", message: detail };
   }
 }
 

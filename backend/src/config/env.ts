@@ -46,8 +46,8 @@ const envSchema = z.object({
    */
   LOCAL_MEDIA_ROOT: z.string().trim().min(1).optional(),
 
-  /** Resend (transactional email). All three required to actually send. */
-  RESEND_API_KEY: z.string().trim().min(1).optional(),
+  /** SendGrid (transactional email). All three required to actually send. */
+  SENDGRID_API_KEY: z.string().trim().min(1).optional(),
   EMAIL_FROM: z.string().trim().email().optional(),
   /** Used to build absolute URLs in emails (e.g. https://myglobalhealth.online). No trailing slash. */
   PUBLIC_SITE_URL: z.string().trim().url().optional(),

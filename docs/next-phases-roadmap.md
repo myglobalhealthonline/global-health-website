@@ -1,7 +1,7 @@
 # Global Health · Next-Phases Roadmap
 
 **Roadmap date:** 2026-05-16
-**Status today:** Phase 1 shipped end-to-end. Phase 2 infrastructure (Resend + Stripe scaffolding) merged on `old_website` at commit `d2508ac`, both gated behind env keys so production keeps working without them.
+**Status today:** Phase 1 shipped end-to-end. Phase 2 infrastructure (SendGrid + Stripe scaffolding) merged on `old_website`, both gated behind env keys so production keeps working without them.
 
 This document has two halves. **Part A** is the production-handover checklist — every account, env var, DNS record, and migration you have to set up before flipping the public DNS. **Part B** is the phase plan — what to build next, in priority order, with effort estimates.
 
@@ -15,7 +15,7 @@ Treat this as a literal checklist. Tick each box before announcing the launch.
 
 | Service | Why | Plan |
 |---|---|---|
-| **Resend** | Transactional email (verify / reset / booking confirmation) | Free tier ok for testing; ~$20/mo at scale |
+| **SendGrid** | Transactional email (verify / reset / booking confirmation) | Free tier: 100 emails/day forever. Essentials: $19.95/mo for 50k/mo. |
 | **Stripe** | Payments | No fixed cost; ~1.5% + €0.25 / transaction EU |
 | **Stripe CLI** | Local webhook testing | Free |
 | **Railway** (or Vercel/Render/Fly) | Hosting for backend + Postgres | $5–20/mo for current scale |
@@ -37,8 +37,8 @@ Replace `myglobalhealth.online` with your actual zone if different.
 | A / CNAME | `@` (root) | Vercel-provided IP / `cname.vercel-dns.com` | Frontend |
 | CNAME | `www` | `cname.vercel-dns.com` | Frontend www → root |
 | CNAME | `api` | Railway-provided host (or your backend host) | Backend |
-| TXT | `@` | `v=spf1 include:_spf.resend.com ~all` (Resend will give you the exact value) | Email SPF |
-| CNAME | `resend._domainkey` | (Resend provides) | Email DKIM |
+| CNAME × 3 | `s1._domainkey`, `s2._domainkey`, `em…` | (SendGrid provides exact hosts in **Sender Authentication → Authenticate Your Domain**) | Email DKIM + return-path |
+| TXT | `@` (only if no other SPF) | `v=spf1 include:sendgrid.net ~all` | Email SPF (SendGrid's domain auth flow usually handles this for you via the CNAMEs) |
 | TXT | `_dmarc` | `v=DMARC1; p=quarantine; rua=mailto:dmarc@myglobalhealth.online` | Email DMARC (optional but recommended) |
 | MX | `@` *(if you want inbound email)* | Your inbox provider | Receiving email |
 
@@ -67,8 +67,8 @@ These all go into your hosting provider's environment-variables UI. Never commit
 | `S3_REGION` | `auto` (Railway) or `eu-west-1` (AWS) | |
 | `S3_ACCESS_KEY_ID` | (from bucket creds) | |
 | `S3_SECRET_ACCESS_KEY` | (from bucket creds) | |
-| `RESEND_API_KEY` | `re_...` | Set AFTER you verify the sender domain |
-| `EMAIL_FROM` | `noreply@myglobalhealth.online` | Must match a verified Resend domain |
+| `SENDGRID_API_KEY` | `re_...` | Set AFTER you verify the sender domain |
+| `EMAIL_FROM` | `noreply@myglobalhealth.online` | Must match a verified SendGrid Domain Authentication |
 | `STRIPE_SECRET_KEY` | `sk_live_...` *(or `sk_test_...` during pre-launch)* | Switch to live keys at go-live |
 | `STRIPE_WEBHOOK_SECRET` | `whsec_...` (from Stripe webhook config) | One per webhook endpoint |
 | `ADMIN_API_TOKEN` | unset / empty | Disable the token fallback in prod; rely on session cookies only |
@@ -133,17 +133,27 @@ Switching to **Live Mode**:
 6. Update `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` to live key (frontend)
 7. Redeploy
 
-### A.7 Resend — pre-launch checklist
+### A.7 SendGrid — pre-launch checklist
 
-- [ ] Resend account created
-- [ ] Sender domain added (`myglobalhealth.online`)
-- [ ] SPF + DKIM DNS records published and verified (green checkmarks in Resend UI)
-- [ ] DMARC record set (optional but reduces spoofing)
-- [ ] `RESEND_API_KEY`, `EMAIL_FROM`, `PUBLIC_SITE_URL` set in prod env
-- [ ] Send-test email from Resend dashboard → arrives in inbox (not spam)
+- [ ] SendGrid account created (free tier: 100 emails/day forever)
+- [ ] **Settings → Sender Authentication → Authenticate Your Domain** completed
+      for `myglobalhealth.online`
+- [ ] Three CNAME records published at your DNS registrar (SendGrid shows the
+      exact host + target values during the wizard) and verified green in
+      the SendGrid UI
+- [ ] DMARC record set: `v=DMARC1; p=quarantine; rua=mailto:dmarc@…` (optional
+      but reduces spoofing, lifts deliverability)
+- [ ] API key created at **Settings → API Keys** with `Mail Send → Full Access`
+      (Restricted Access scope — never use Full Access for the live key)
+- [ ] `SENDGRID_API_KEY`, `EMAIL_FROM`, `PUBLIC_SITE_URL` set in prod env
+- [ ] Send-test from SendGrid Email API tester → arrives in inbox (not spam)
 - [ ] Smoke test signup → verification email arrives + link works
 - [ ] Smoke test forgot-password → reset email arrives + link works
 - [ ] Smoke test booking submit → confirmation email arrives
+- [ ] (Optional) Set up **Event Webhook** at Settings → Mail Settings →
+      Event Webhook pointing at `https://api.myglobalhealth.online/api/email/webhook`
+      so we record bounces / spam reports / opens (not yet wired —
+      add when needed)
 
 If emails land in spam, the SPF/DKIM/DMARC trio usually fixes it after 24–48h of warming.
 
@@ -187,7 +197,7 @@ The site's own cookies (`gh_auth`, `gh_admin_country`, `gh_locale`) are **strict
 ### A.11 Post-launch monitoring
 
 - Sentry: spike in error rate?
-- Backend log: `[email:resend]` errors? `Stripe signature verification failed`?
+- Backend log: `[email:sendgrid]` errors? `Stripe signature verification failed`?
 - Stripe dashboard: failed payments / disputes?
 - DB connection pool exhaustion (Railway shows this on the metrics tab)?
 
@@ -200,7 +210,7 @@ The site's own cookies (`gh_auth`, `gh_admin_country`, `gh_locale`) are **strict
 | | Status |
 |---|---|
 | **Phase 1** — country-first marketing site + super-admin portal | ✅ Done. 5 countries × home + doctors + general consult + specialist consult, plus prescriptions / tests / plans public pages. Admin CRUDs every editable surface. Image upload to S3. Rich-text editor with sanitizer + locale extensibility. |
-| **Phase 2 infrastructure** — Resend + Stripe + Payment ledger | ✅ Scaffolded, gated on env keys. Drops in instantly when you set the keys. |
+| **Phase 2 infrastructure** — SendGrid + Stripe + Payment ledger | ✅ Scaffolded, gated on env keys. Drops in instantly when you set the keys. |
 | **Phase 2 completion** — Patient Portal + Stripe flow + email gating | 🟡 Half done. Account dashboard + profile edit + bookings list + verify/reset pages all live. Stripe Checkout redirect from booking form not yet wired. |
 | **Phase 3** — Doctor Dashboard | 🔴 Not started. Schema slot reserved (`Doctor.userId` FK to `User` planned). |
 | **Phase 4** — Reviews + GEO + Conditions library | 🔴 Not started. |
@@ -336,7 +346,7 @@ Stripe + Resend can be configured the same day you create the accounts; everythi
 
 ## When to ping me back
 
-- **As soon as you have Resend keys** → I'll smoke-test the email flow against a real inbox + tighten any spam-trigger language in the templates.
+- **As soon as you have SendGrid keys** → I'll smoke-test the email flow against a real inbox + tighten any spam-trigger language in the templates.
 - **As soon as you have Stripe test keys** → I'll wire the booking form → Checkout redirect + payment-status column on /account/bookings (Phase 2 completion items 1–4 above).
 - **When you're ready for Phase 3 (Doctor Dashboard)** → it's a clean greenfield; the schema slot is already reserved.
 - **When you decide on Trustpilot vs Doctify vs Google** for the review provider → I'll wire the picked one in a single commit.
