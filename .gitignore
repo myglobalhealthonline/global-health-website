@@ -23,3 +23,6 @@
 
 # dev server logs
 *-dev.log
+backend-dev*.log
+frontend-dev*.log
+*.log
