@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import {
   fetchAdminAppointmentById,
+  patchAdminAppointmentSchedule,
   patchAdminAppointmentStatus,
 } from "@/lib/admin/admin-api";
 import {
@@ -20,6 +21,16 @@ import {
 } from "../../_components/atoms";
 
 export const dynamic = "force-dynamic";
+
+/** Convert an ISO timestamp to the "YYYY-MM-DDTHH:mm" format that
+ *  `<input type="datetime-local">` expects (in the server's local TZ).
+ *  Used to prefill the schedule form with the existing slot. */
+function toLocalDateTimeInputValue(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 function formatDate(dateIso: string) {
   const date = new Date(dateIso);
@@ -123,6 +134,46 @@ export default async function AdminAppointmentDetailPage({
     redirect(`/admin/appointments/${id}?success=Status updated`);
   }
 
+  // Set call slot + Meet URL. The browser <input type="datetime-local">
+  // returns a local-timezone string like "2026-05-16T14:30"; we convert
+  // to a proper ISO with offset before sending to the backend.
+  async function scheduleCallAction(formData: FormData) {
+    "use server";
+
+    const rawSlot = String(formData.get("scheduledAt") ?? "").trim();
+    const rawUrl = String(formData.get("meetingUrl") ?? "").trim();
+
+    let scheduledAt: string | null | undefined = undefined;
+    if (rawSlot === "") {
+      scheduledAt = null;
+    } else {
+      const parsed = new Date(rawSlot);
+      if (Number.isNaN(parsed.getTime())) {
+        redirect(
+          `/admin/appointments/${id}?error=${encodeURIComponent("Invalid date/time")}`,
+        );
+      }
+      scheduledAt = parsed.toISOString();
+    }
+    const meetingUrl: string | null = rawUrl === "" ? null : rawUrl;
+
+    const result = await patchAdminAppointmentSchedule(id, {
+      scheduledAt,
+      meetingUrl,
+    });
+    if (!result.ok) {
+      redirect(`/admin/appointments/${id}?error=${encodeURIComponent(result.message)}`);
+    }
+
+    revalidatePath("/admin/appointments");
+    revalidatePath(`/admin/appointments/${id}`);
+    const willEmail = scheduledAt !== null && meetingUrl !== null;
+    const success = willEmail
+      ? "Schedule saved. Email sent to patient with Meet link."
+      : "Schedule saved.";
+    redirect(`/admin/appointments/${id}?success=${encodeURIComponent(success)}`);
+  }
+
   if (!result.ok) {
     return (
       <>
@@ -203,6 +254,31 @@ export default async function AdminAppointmentDetailPage({
               />
               <FieldRow label="Country" value={appointment.country.toUpperCase()} />
               <FieldRow label="Consultation type" value={appointment.consultationType} />
+              <FieldRow
+                label="Scheduled call"
+                value={
+                  appointment.scheduledAt
+                    ? formatDate(appointment.scheduledAt)
+                    : "Not scheduled yet"
+                }
+              />
+              <FieldRow
+                label="Meeting URL"
+                value={
+                  appointment.meetingUrl ? (
+                    <a
+                      href={appointment.meetingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline text-[var(--color-brand-primary)]"
+                    >
+                      {appointment.meetingUrl}
+                    </a>
+                  ) : (
+                    "No link set"
+                  )
+                }
+              />
               <FieldRow label="Created" value={formatDate(appointment.createdAt)} />
               <FieldRow label="Updated" value={formatDate(appointment.updatedAt)} full />
             </dl>
@@ -249,6 +325,55 @@ export default async function AdminAppointmentDetailPage({
                 </button>
               </form>
             ) : null}
+          </AdminCard>
+
+          {/* Schedule the Google Meet call. Filling both fields and saving
+              emails the patient with the link via SendGrid. */}
+          <AdminCard>
+            <h3 style={cardTitleStyle}>Schedule call</h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Set the slot and paste the Google Meet (or Zoom/Teams/Whereby/Daily)
+              link. Saving emails the patient with the link.
+            </p>
+
+            <form action={scheduleCallAction} className="flex flex-col gap-3">
+              <label className="flex flex-col gap-1.5">
+                <span className="gh-field-label">Slot (your local time)</span>
+                <input
+                  type="datetime-local"
+                  name="scheduledAt"
+                  className="gh-input"
+                  defaultValue={
+                    appointment.scheduledAt
+                      ? toLocalDateTimeInputValue(appointment.scheduledAt)
+                      : ""
+                  }
+                />
+                <span className="text-[11px] text-[var(--color-text-muted)]">
+                  Leave blank to clear.
+                </span>
+              </label>
+
+              <label className="flex flex-col gap-1.5">
+                <span className="gh-field-label">Meeting URL</span>
+                <input
+                  type="url"
+                  name="meetingUrl"
+                  className="gh-input"
+                  placeholder="https://meet.google.com/abc-defg-hij"
+                  defaultValue={appointment.meetingUrl ?? ""}
+                  maxLength={500}
+                />
+                <span className="text-[11px] text-[var(--color-text-muted)]">
+                  Allowed hosts: meet.google.com, zoom.us, teams.microsoft.com,
+                  whereby.com, daily.co.
+                </span>
+              </label>
+
+              <button type="submit" className="gh-btn gh-btn-primary w-full">
+                Save schedule
+              </button>
+            </form>
           </AdminCard>
         </div>
       </div>

@@ -61,6 +61,8 @@ type AppointmentRecord = {
   phone: string | null;
   notes: string | null;
   status: string;
+  scheduledAt: Date | null;
+  meetingUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -86,6 +88,8 @@ export type AdminAppointmentDetail = {
   phone: string | null;
   notes: string | null;
   status: string;
+  scheduledAt: string | null;
+  meetingUrl: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -95,6 +99,8 @@ export type AccountAppointmentListItem = {
   countryCode: string;
   consultationType: string;
   status: string;
+  scheduledAt: string | null;
+  meetingUrl: string | null;
   createdAt: string;
   updatedAt: string;
   fullName: string;
@@ -108,6 +114,8 @@ export type AccountAppointmentDetail = {
   countryCode: string;
   consultationType: string;
   status: string;
+  scheduledAt: string | null;
+  meetingUrl: string | null;
   createdAt: string;
   updatedAt: string;
   fullName: string;
@@ -145,10 +153,32 @@ function toAdminAppointment(record: AppointmentRecord): AdminAppointmentDetail {
     phone: record.phone,
     notes: record.notes,
     status: record.status,
+    scheduledAt: record.scheduledAt ? record.scheduledAt.toISOString() : null,
+    meetingUrl: record.meetingUrl,
     createdAt: record.createdAt.toISOString(),
     updatedAt: record.updatedAt.toISOString(),
   };
 }
+
+/**
+ * Standard projection of the Appointment row used by every read in this
+ * file. Keeping the column list centralised means adding a new column
+ * (like `scheduledAt`) only requires a single edit here.
+ */
+const APPOINTMENT_SELECT_COLUMNS = `
+  "id",
+  "countryCode",
+  "consultationType",
+  "fullName",
+  "email",
+  "phone",
+  "notes",
+  "status",
+  "scheduledAt",
+  "meetingUrl",
+  "createdAt",
+  "updatedAt"
+`;
 
 function buildAppointmentWhereClause(options: ListAppointmentsOptions): Prisma.Sql {
   const parts: Prisma.Sql[] = [];
@@ -206,6 +236,8 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
         "phone",
         "notes",
         "status",
+        "scheduledAt",
+        "meetingUrl",
         "createdAt",
         "updatedAt"
       FROM "Appointment"
@@ -253,6 +285,8 @@ export async function getAppointmentById(id: string): Promise<AdminAppointmentDe
           "phone",
           "notes",
           "status",
+          "scheduledAt",
+          "meetingUrl",
           "createdAt",
           "updatedAt"
         FROM "Appointment"
@@ -285,6 +319,8 @@ export async function updateAppointmentStatus(
           "phone",
           "notes",
           "status",
+          "scheduledAt",
+          "meetingUrl",
           "createdAt",
           "updatedAt"
         FROM "Appointment"
@@ -317,6 +353,8 @@ export async function updateAppointmentStatus(
           "phone",
           "notes",
           "status",
+          "scheduledAt",
+          "meetingUrl",
           "createdAt",
           "updatedAt"
       `,
@@ -350,6 +388,8 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
           "phone",
           "notes",
           "status",
+          "scheduledAt",
+          "meetingUrl",
           "createdAt",
           "updatedAt"
         FROM "Appointment"
@@ -364,6 +404,8 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
       countryCode: row.countryCode,
       consultationType: row.consultationType,
       status: row.status,
+      scheduledAt: row.scheduledAt ? row.scheduledAt.toISOString() : null,
+      meetingUrl: row.meetingUrl,
       createdAt: row.createdAt.toISOString(),
       updatedAt: row.updatedAt.toISOString(),
       fullName: row.fullName,
@@ -392,6 +434,8 @@ export async function getAppointmentForUser(
           "phone",
           "notes",
           "status",
+          "scheduledAt",
+          "meetingUrl",
           "createdAt",
           "updatedAt"
         FROM "Appointment"
@@ -408,6 +452,8 @@ export async function getAppointmentForUser(
       countryCode: row.countryCode,
       consultationType: row.consultationType,
       status: row.status,
+      scheduledAt: row.scheduledAt ? row.scheduledAt.toISOString() : null,
+      meetingUrl: row.meetingUrl,
       createdAt: row.createdAt.toISOString(),
       updatedAt: row.updatedAt.toISOString(),
       fullName: row.fullName,
@@ -415,6 +461,64 @@ export async function getAppointmentForUser(
       phone: row.phone,
       notes: row.notes,
     };
+  } catch (error) {
+    throw normalizeDbError(error, "Appointments are temporarily unavailable");
+  }
+}
+
+/**
+ * Admin-only: schedule (or reschedule) the call. `scheduledAt` can be a
+ * Date (set the slot), `null` (clear it), or `undefined` (leave alone).
+ * Same semantics for `meetingUrl`. Returns the updated row, or `null` if
+ * the appointment doesn't exist.
+ *
+ * Side-effects: the caller is expected to fire the schedule-confirmation
+ * email after a successful update.
+ */
+export async function scheduleAppointment(
+  id: string,
+  input: {
+    scheduledAt?: Date | null;
+    meetingUrl?: string | null;
+  },
+): Promise<AdminAppointmentDetail | null> {
+  const sets: string[] = [];
+  const args: unknown[] = [id];
+  if (input.scheduledAt !== undefined) {
+    args.push(input.scheduledAt);
+    sets.push(`"scheduledAt" = $${args.length}`);
+  }
+  if (input.meetingUrl !== undefined) {
+    args.push(input.meetingUrl);
+    sets.push(`"meetingUrl" = $${args.length}`);
+  }
+  if (sets.length === 0) {
+    return getAppointmentById(id);
+  }
+  try {
+    const rows = await prisma.$queryRawUnsafe<AppointmentRecord[]>(
+      `
+        UPDATE "Appointment"
+        SET ${sets.join(", ")}, "updatedAt" = NOW()
+        WHERE "id" = $1
+        RETURNING
+          "id",
+          "countryCode",
+          "consultationType",
+          "fullName",
+          "email",
+          "phone",
+          "notes",
+          "status",
+          "scheduledAt",
+          "meetingUrl",
+          "createdAt",
+          "updatedAt"
+      `,
+      ...args,
+    );
+    if (rows.length === 0) return null;
+    return toAdminAppointment(rows[0]);
   } catch (error) {
     throw normalizeDbError(error, "Appointments are temporarily unavailable");
   }

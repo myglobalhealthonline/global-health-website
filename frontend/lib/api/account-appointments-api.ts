@@ -9,6 +9,8 @@ export type AccountAppointment = {
   countryCode: string;
   consultationType: string;
   status: string;
+  scheduledAt: string | null;
+  meetingUrl: string | null;
   createdAt: string;
   updatedAt: string;
   fullName: string;

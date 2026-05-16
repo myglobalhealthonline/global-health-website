@@ -78,6 +78,8 @@ type AdminAppointmentDetailPayload = {
     phone: string | null;
     notes: string | null;
     status: string;
+    scheduledAt: string | null;
+    meetingUrl: string | null;
     createdAt: string;
     updatedAt: string;
   };
@@ -233,6 +235,18 @@ export async function patchAdminAppointmentStatus(id: string, status: string) {
     method: "PATCH",
     body: { status },
   });
+}
+
+/** Set/clear the call slot + meeting URL. Each field is independently
+ *  optional; omitting one leaves the existing value alone. */
+export async function patchAdminAppointmentSchedule(
+  id: string,
+  input: { scheduledAt?: string | null; meetingUrl?: string | null },
+) {
+  return adminRequest<AdminAppointmentDetailPayload>(
+    `/api/admin/appointments/${id}/schedule`,
+    { method: "PATCH", body: input },
+  );
 }
 
 // `cache()` deduplicates identical reads within a single SSR request.

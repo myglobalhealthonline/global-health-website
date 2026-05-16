@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarDays, ArrowRight, ClipboardList } from "lucide-react";
+import { CalendarDays, ArrowRight, ClipboardList, Video, Clock } from "lucide-react";
 import type { AccountAppointment } from "@/lib/api/account-appointments-api";
 
 type BookingsShellProps = {
@@ -81,6 +81,36 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
               <p className="mt-0.5 font-medium text-[var(--color-text-primary)]">{item.consultationType}</p>
             </div>
           </div>
+
+          {/* Scheduled-call band — appears only once admin sets the slot.
+              The whole row links to the Meet link if present so patients
+              can join with one click. */}
+          {item.scheduledAt || item.meetingUrl ? (
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-emerald-200 bg-emerald-50 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <Clock className="size-4 text-emerald-700" aria-hidden />
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
+                    Scheduled
+                  </p>
+                  <p className="mt-0.5 text-sm font-medium text-emerald-900">
+                    {item.scheduledAt ? formatDate(item.scheduledAt) : "Time to be confirmed"}
+                  </p>
+                </div>
+              </div>
+              {item.meetingUrl ? (
+                <a
+                  href={item.meetingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800"
+                >
+                  <Video className="size-4" aria-hidden />
+                  Join call
+                </a>
+              ) : null}
+            </div>
+          ) : null}
 
           {item.notesPreview ? (
             <div className="mt-3 rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-3 py-2">

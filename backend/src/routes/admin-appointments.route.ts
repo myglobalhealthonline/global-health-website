@@ -3,14 +3,17 @@ import {
   getAppointmentById,
   InvalidAppointmentStatusTransitionError,
   listAppointments,
+  scheduleAppointment,
   UnrecognizedAppointmentStatusError,
   updateAppointmentStatus,
 } from "../modules/appointments/appointments.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { sendAppointmentScheduledEmail } from "../lib/email/templates.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import {
   adminAppointmentsQuerySchema,
   appointmentIdParamsSchema,
+  scheduleAppointmentBodySchema,
   updateAppointmentStatusBodySchema,
 } from "../validations/admin-appointments.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -66,6 +69,69 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected admin appointment error"));
+    }
+  });
+
+  // Schedule (or reschedule) the call. Sets `scheduledAt` + `meetingUrl`,
+  // then fires a SendGrid email with the Meet link if both ended up set.
+  // The email failure is logged but doesn't fail the request — admin can
+  // resend manually if SendGrid is misconfigured.
+  app.patch("/api/admin/appointments/:id/schedule", async (request, reply) => {
+    const params = appointmentIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid admin appointment id", params.error.flatten()));
+    }
+    const body = scheduleAppointmentBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid schedule payload", body.error.flatten()));
+    }
+
+    // Normalise empty-string -> null so admins can clear fields via the
+    // text inputs they'll see in the admin form.
+    const meetingUrlInput =
+      body.data.meetingUrl === undefined
+        ? undefined
+        : body.data.meetingUrl === "" || body.data.meetingUrl === null
+          ? null
+          : body.data.meetingUrl;
+    const scheduledAtInput =
+      body.data.scheduledAt === undefined
+        ? undefined
+        : body.data.scheduledAt === null
+          ? null
+          : new Date(body.data.scheduledAt);
+
+    try {
+      const appointment = await scheduleAppointment(params.data.id, {
+        scheduledAt: scheduledAtInput,
+        meetingUrl: meetingUrlInput,
+      });
+      if (!appointment) {
+        return reply.status(404).send(errorResponse("Appointment not found"));
+      }
+
+      // Fire the schedule email only when both fields are now set on the
+      // record. Clearing one shouldn't email the patient — that's an admin-
+      // internal edit. We swallow email errors to keep the request idempotent.
+      if (appointment.scheduledAt && appointment.meetingUrl) {
+        sendAppointmentScheduledEmail({
+          to: appointment.email,
+          fullName: appointment.fullName,
+          consultationType: appointment.consultationType,
+          scheduledAt: new Date(appointment.scheduledAt),
+          meetingUrl: appointment.meetingUrl,
+        }).catch((emailErr) => {
+          app.log.warn({ err: emailErr }, "Failed to send schedule email — continuing");
+        });
+      }
+
+      return okResponse({ appointment }, "Appointment scheduled");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected admin schedule error"));
     }
   });
 

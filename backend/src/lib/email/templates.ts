@@ -63,6 +63,57 @@ export async function sendEmailVerificationEmail(opts: {
   });
 }
 
+/**
+ * Sent when admin schedules a call slot for the patient. The Meet link is
+ * front-and-center; we also include the slot in the patient's local
+ * timezone hint (the date is formatted in UTC + offset, and clients
+ * render it in local time).
+ */
+export async function sendAppointmentScheduledEmail(opts: {
+  to: string;
+  fullName: string;
+  consultationType: string;
+  scheduledAt: Date;
+  meetingUrl: string;
+}) {
+  const formatted = opts.scheduledAt.toUTCString();
+  const localHint = opts.scheduledAt.toISOString();
+  return sendEmail({
+    to: opts.to,
+    subject: `Your appointment is scheduled — ${opts.consultationType}`,
+    text: `Hi ${opts.fullName},
+
+Your ${opts.consultationType} is scheduled for ${formatted}.
+
+Join the call here when it's time:
+${opts.meetingUrl}
+
+Tip: open the link 5 minutes early to test your camera and mic. If you need to reschedule, reply to this email.
+
+— Global Health`,
+    html: wrapHtml(
+      "Your appointment is scheduled",
+      `<p>Hi ${escapeHtml(opts.fullName)},</p>
+       <p>Your <strong>${escapeHtml(opts.consultationType)}</strong> is scheduled for:</p>
+       <p style="margin:16px 0;font-size:18px;font-weight:700;color:#1B4D3E;">
+         <time datetime="${escapeHtml(localHint)}">${escapeHtml(formatted)}</time>
+       </p>
+       <p style="margin:24px 0;">
+         <a href="${escapeHtml(opts.meetingUrl)}"
+            style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">
+           Join the call
+         </a>
+       </p>
+       <p style="font-size:13px;color:#737373;">
+         Or paste this link into your browser:<br/>
+         <a href="${escapeHtml(opts.meetingUrl)}">${escapeHtml(opts.meetingUrl)}</a>
+       </p>
+       <p>Tip: open the link 5 minutes early to test your camera and mic.
+          If you need to reschedule, just reply to this email.</p>`,
+    ),
+  });
+}
+
 export async function sendBookingConfirmationEmail(opts: {
   to: string;
   fullName: string;

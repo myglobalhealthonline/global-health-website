@@ -361,6 +361,11 @@ model Appointment {
   amountCents           Int?
   currencyCode          String?
   paidAt                DateTime?
+  // Scheduled call time + Google Meet (or any video) URL. Admin sets these
+  // once a slot has been agreed; patient sees them on /account/bookings and
+  // receives a SendGrid email with the link.
+  scheduledAt           DateTime?
+  meetingUrl            String?
   user                  User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
   payments              Payment[]
   createdAt             DateTime       @default(now())
