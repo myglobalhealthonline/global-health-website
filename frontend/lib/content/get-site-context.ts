@@ -1,17 +1,18 @@
 import { buildSiteNavigationData } from "@/data/navigation";
 import { getFallbackSiteContext } from "@/lib/content/fallback-site-context";
-import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
-import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
-import { getPublicPricingPlansNormalized } from "@/lib/content/get-public-pricing";
-import { getPublicServicesNormalized } from "@/lib/content/get-public-services";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { resolveCountry } from "@/lib/routing/resolve-country";
 import type { SiteContextInput } from "@/lib/routing/types";
 
 /**
- * Runtime site context: prefers backend public reads when `NEXT_PUBLIC_API_URL` is set
- * and responses succeed; otherwise falls back to static seed adapters. Never throws on API loss.
+ * Runtime site context. Returns the locale bundle (`common`) and the
+ * navigation tree, both used by `(site)/layout.tsx`. The earlier version
+ * also fetched services/doctors/pricing/assets here but the layout never
+ * consumed those — Phase 1 page-level fetchers (`getCountryDoctors`,
+ * `getCountryServices`, `getPublicPage`, etc.) own those reads now and
+ * they're properly cached with revalidate tags. Dropping the layout-level
+ * waterfall saves three round-trips per public page render.
  */
 export async function getSiteContext(input: SiteContextInput | string = {}) {
   const normalizedInput: SiteContextInput =
@@ -32,24 +33,12 @@ export async function getSiteContext(input: SiteContextInput | string = {}) {
   });
 
   const fallback = await getFallbackSiteContext(countryContext, locale);
-
-  const [activeCountries, apiServices, apiDoctors, apiPricing, apiAssets] = await Promise.all([
-    getPublicCountriesMerged(),
-    getPublicServicesNormalized(),
-    getPublicDoctorsNormalized(),
-    getPublicPricingPlansNormalized(),
-    getPublicAssetsNormalized(),
-  ]);
-
+  const activeCountries = await getPublicCountriesMerged();
   const navigation = buildSiteNavigationData(fallback.common, activeCountries);
 
   return {
     ...fallback,
     activeCountries,
     navigation,
-    services: apiServices.length > 0 ? apiServices : fallback.services,
-    doctors: apiDoctors.length > 0 ? apiDoctors : fallback.doctors,
-    pricingPlans: apiPricing.length > 0 ? apiPricing : fallback.pricingPlans,
-    assets: apiAssets.length > 0 ? apiAssets : fallback.assets,
   };
 }
