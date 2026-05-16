@@ -1,27 +1,34 @@
 /**
- * Country flag badge — CSS-gradient approximation matching the design kit.
- * See: NEW PLAN/Global Health Design System/ui_kits/admin/Atoms.jsx (FlagBadge).
+ * Country flag badge — renders a real SVG via the `flag-icons` package.
+ *
+ * Accepts either an ISO 3166-1 alpha-2 code (`ie`, `pt`, `de`, `us`, …) or
+ * one of our internal country slugs (`ireland`, `portugal`, `spain`,
+ * `czechia`, `romania`). The legacy slug `sp` (Spain shorthand) and `rm`
+ * (Romania) are mapped to the correct ISO codes `es` and `ro`.
+ *
+ * Imports `flag-icons/css/flag-icons.min.css` happen once in
+ * `app/layout.tsx` so this component just emits the right CSS class.
+ *
+ * Gradient fallback kicks in only when an unknown code is passed in —
+ * prevents the badge from collapsing if admin types something weird.
  */
 
-const FLAGS: Record<string, string> = {
-  ie: "linear-gradient(to right, #169B62 33%, #fff 33% 66%, #FF883E 66%)",
-  pt: "linear-gradient(to right, #046A38 40%, #DA291C 40%)",
-  es: "linear-gradient(to bottom, #AA151B 25%, #F1BF00 25% 75%, #AA151B 75%)",
-  sp: "linear-gradient(to bottom, #AA151B 25%, #F1BF00 25% 75%, #AA151B 75%)",
-  cz: "linear-gradient(to bottom, #fff 50%, #D7141A 50%)",
-  rm: "linear-gradient(to right, #002B7F 33%, #FCD116 33% 66%, #CE1126 66%)",
-  ro: "linear-gradient(to right, #002B7F 33%, #FCD116 33% 66%, #CE1126 66%)",
-  all: "linear-gradient(135deg, #1B4D3E, #C8E6A0)",
-};
-
-// Accept either a country slug or a 2-letter ISO code.
-const SLUG_TO_CODE: Record<string, string> = {
+const SLUG_TO_ISO: Record<string, string> = {
   ireland: "ie",
   portugal: "pt",
   spain: "es",
   czechia: "cz",
-  romania: "rm",
+  romania: "ro",
+  // Legacy internal codes from the data layer.
+  sp: "es",
+  rm: "ro",
 };
+
+// Last-resort gradients used only when the ISO code isn't recognised by
+// flag-icons (which covers every country in the world, so this almost
+// never fires).
+const FALLBACK_GRADIENT =
+  "linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-accent))";
 
 export function FlagBadge({
   code,
@@ -30,20 +37,46 @@ export function FlagBadge({
   code: string;
   size?: number;
 }) {
-  const lower = code.toLowerCase();
-  const key = SLUG_TO_CODE[lower] ?? lower;
+  const lower = (code ?? "").toLowerCase().trim();
+  const iso = SLUG_TO_ISO[lower] ?? lower;
+
+  // `fi` is the base class; `fi-{iso}` selects the country.
+  // Setting an inline width keeps the same calling contract as the old
+  // gradient version (callers pass `size`).
+  const aspect = 4 / 3; // flag-icons squared = 4:3 by default
+
+  if (!iso || iso.length !== 2 || !/^[a-z]{2}$/.test(iso)) {
+    return (
+      <span
+        aria-hidden
+        title={lower.toUpperCase()}
+        style={{
+          display: "inline-block",
+          width: Math.round(size * aspect),
+          height: size,
+          borderRadius: 3,
+          background: FALLBACK_GRADIENT,
+          boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.10)",
+          flex: `0 0 ${Math.round(size * aspect)}px`,
+        }}
+      />
+    );
+  }
+
   return (
     <span
-      title={key.toUpperCase()}
+      className={`fi fi-${iso}`}
+      title={iso.toUpperCase()}
       aria-hidden
       style={{
-        width: size + 8,
+        display: "inline-block",
+        width: Math.round(size * aspect),
         height: size,
         borderRadius: 3,
-        background: FLAGS[key] ?? "#e5e7eb",
         boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.10)",
-        flex: `0 0 ${size + 8}px`,
-        display: "inline-block",
+        flex: `0 0 ${Math.round(size * aspect)}px`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     />
   );

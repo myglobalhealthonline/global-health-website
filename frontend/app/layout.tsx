@@ -3,6 +3,9 @@ import { Cormorant_Garamond, Geist_Mono, Plus_Jakarta_Sans } from "next/font/goo
 import { SITE_NAME } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { CookieBanner } from "@/components/compliance/CookieBanner";
+// SVG flags via the `flag-icons` package. Loaded at the root so both
+// public site + admin shell can render `<span class="fi fi-{iso2}">`.
+import "flag-icons/css/flag-icons.min.css";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({

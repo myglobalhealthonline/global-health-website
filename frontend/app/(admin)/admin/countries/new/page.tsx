@@ -45,18 +45,31 @@ export default async function AdminNewCountryPage({ searchParams }: PageProps) {
     const supportedLocales = parseSupportedLocales(formData);
     const domains = parseDomainsFromForm(formData);
 
+    const slug = String(formData.get("slug") ?? "").trim();
+
+    // Legacy Wix-era path fields used by the proxy for 308 redirects. The
+    // visible UI hides them; we derive sensible defaults from the slug
+    // when blank so admin doesn't have to fill four routing fields just
+    // to create a new country.
+    const fallback = (field: string, fallbackValue: string) => {
+      const raw = String(formData.get(field) ?? "").trim();
+      return raw === "" ? fallbackValue : raw;
+    };
+
     const body = {
       code: String(formData.get("code") ?? "").trim(),
       name: String(formData.get("name") ?? "").trim(),
-      slug: String(formData.get("slug") ?? "").trim(),
-      legacyHomePath: String(formData.get("legacyHomePath") ?? "").trim(),
-      teamPath: String(formData.get("teamPath") ?? "").trim(),
-      generalConsultationPath: String(
-        formData.get("generalConsultationPath") ?? "",
-      ).trim(),
-      specialistConsultationPath: String(
-        formData.get("specialistConsultationPath") ?? "",
-      ).trim(),
+      slug,
+      legacyHomePath: fallback("legacyHomePath", `/${slug}`),
+      teamPath: fallback("teamPath", `/${slug}-team`),
+      generalConsultationPath: fallback(
+        "generalConsultationPath",
+        `/${slug}/general-consultation`,
+      ),
+      specialistConsultationPath: fallback(
+        "specialistConsultationPath",
+        `/${slug}/specialist-consultation`,
+      ),
       defaultLocale: String(formData.get("defaultLocale") ?? "").trim(),
       supportedLocales,
       currencyId: String(formData.get("currencyId") ?? "").trim(),

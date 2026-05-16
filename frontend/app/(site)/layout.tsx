@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { cookies, headers } from "next/headers";
-import "flag-icons/css/flag-icons.min.css";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getServerAuthUser } from "@/lib/api/server-auth";
