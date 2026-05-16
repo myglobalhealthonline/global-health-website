@@ -1,5 +1,4 @@
 import type { AdminCountryDto, AdminDoctorDto, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
-import { DoctorProfileImageField } from "./doctor-profile-image-field";
 import { RichTextHtmlField } from "../../_components/rich-text-html-field";
 
 type Props = {
@@ -190,7 +189,11 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
         </label>
       </div>
 
-      <DoctorProfileImageField initialPath={initial?.assets[0]?.path ?? ""} />
+      {/* Profile-photo picker lives outside this component:
+          - on /admin/doctors/[id]/edit it's mounted in the right-sidebar
+            "Profile photo" card and ties back via `form="doctor-edit-form"`;
+          - on /admin/doctors/create it's mounted directly inside the form
+            below this fields block. */}
 
       <label className="flex cursor-pointer items-center gap-2">
         <input type="checkbox" name="active" defaultChecked={initial?.active ?? true} className="h-4 w-4 rounded border-[var(--color-border)]" />

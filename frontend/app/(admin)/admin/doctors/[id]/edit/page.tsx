@@ -4,6 +4,7 @@ import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { FlagBadge } from "../../../_components/flag-badge";
 import { DoctorFields } from "../../_components/doctor-fields";
+import { DoctorProfileImageField } from "../../_components/doctor-profile-image-field";
 import { parseDoctorBodyFromForm } from "@/lib/admin/doctor-form-parse";
 import {
   fetchAdminCountries,
@@ -280,29 +281,17 @@ export default async function AdminEditDoctorPage({
               Profile photo
             </h3>
             <p className="mb-3 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              800×800 recommended.
+              800×800 recommended. Upload or drop an image — saves with the
+              rest of the form.
             </p>
-            <div
-              aria-hidden
-              className="grid place-items-center text-white"
-              style={{
-                aspectRatio: "1 / 1",
-                width: "100%",
-                borderRadius: 16,
-                background:
-                  "linear-gradient(135deg, var(--color-brand-primary), var(--color-accent))",
-                fontFamily: "var(--font-display)",
-                fontSize: 48,
-                fontWeight: 800,
-              }}
-            >
-              {doctor.fullName
-                .replace(/^Dr\.?\s+/i, "")
-                .split(/\s+/)
-                .slice(0, 2)
-                .map((s) => s[0]?.toUpperCase() ?? "")
-                .join("") || "·"}
-            </div>
+            {/* DoctorProfileImageField renders the preview + Replace +
+                Remove overlay. The picker lives in the right sidebar
+                (separate from the <form>), so it ties back to the form
+                via HTML5 form-association on its hidden input. */}
+            <DoctorProfileImageField
+              initialPath={doctor.assets[0]?.path ?? ""}
+              formId="doctor-edit-form"
+            />
           </AdminCard>
 
           <AdminCard>

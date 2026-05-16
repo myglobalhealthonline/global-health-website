@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { DoctorFields } from "../_components/doctor-fields";
+import { DoctorProfileImageField } from "../_components/doctor-profile-image-field";
 import { parseDoctorBodyFromForm } from "@/lib/admin/doctor-form-parse";
 import {
   fetchAdminCountries,
@@ -224,6 +225,10 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
             specialties={specialtiesResult.data.specialties}
             pinnedCountryId={countryId}
           />
+          {/* Create flow has no right sidebar — mount the picker inline.
+              No formId needed; the hidden input is already a child of
+              this <form>. */}
+          <DoctorProfileImageField />
           <div className="flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Create profile

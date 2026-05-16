@@ -5,6 +5,15 @@ import { ImagePlus, Trash2, Upload } from "lucide-react";
 
 type Props = {
   initialPath?: string;
+  /**
+   * Optional id of the parent <form> when this component is rendered
+   * outside the form element (e.g. on the doctor edit page, the picker
+   * lives in the right-sidebar "Profile photo" card while the form
+   * itself is in the left column). HTML5 form-association ties the
+   * hidden `profileImagePath` input to that form so it submits with
+   * the rest of the body.
+   */
+  formId?: string;
 };
 
 /**
@@ -54,7 +63,7 @@ function toPersistedPath(data?: { key?: string; publicUrl?: string }): string | 
   return null;
 }
 
-export function DoctorProfileImageField({ initialPath }: Props) {
+export function DoctorProfileImageField({ initialPath, formId }: Props) {
   const [path, setPath] = useState(initialPath ?? "");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
@@ -214,8 +223,15 @@ export function DoctorProfileImageField({ initialPath }: Props) {
         </div>
       )}
 
-      {/* Hidden form input — what the parent server action reads. */}
-      <input type="hidden" name="profileImagePath" value={path} />
+      {/* Hidden form input — what the parent server action reads. When the
+          picker is rendered outside the <form> (right sidebar layout),
+          `formId` ties this input back to the form via HTML5 form-association. */}
+      <input
+        type="hidden"
+        name="profileImagePath"
+        value={path}
+        {...(formId ? { form: formId } : {})}
+      />
 
       {/* Manual URL input as a small escape hatch. Editable, advanced users
           can paste an external URL or `/media/...` key directly. */}
