@@ -16,6 +16,7 @@ import {
   isSupportedLocale,
   type PublicLocale,
 } from "@/lib/content/get-public-page";
+import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
 
 type Params = { country: string; lang: string };
@@ -64,7 +65,10 @@ export default async function CountryLangDoctorsPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const data = await getTemplatePageData(config.teamPath, code);
+  const [data, page] = await Promise.all([
+    getTemplatePageData(config.teamPath, code),
+    getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale),
+  ]);
 
   return (
     <>
@@ -84,6 +88,7 @@ export default async function CountryLangDoctorsPage({
         bookingHref={`/${slug}/${lang}/book-online`}
         bookingLabel="Book consultation"
       />
+      <RichBodySection html={page?.body} />
     </>
   );
 }

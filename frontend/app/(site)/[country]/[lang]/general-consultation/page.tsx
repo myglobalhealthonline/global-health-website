@@ -6,6 +6,7 @@ import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FinalCTA } from "@/components/sections/FinalCTA";
+import { RichBodySection } from "@/components/sections/RichBodySection";
 import { countries, getCountryByCode } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
@@ -144,6 +145,8 @@ export default async function CountryLangGeneralConsultationPage({
           </Link>
         </div>
       </section>
+
+      <RichBodySection html={page?.body} />
 
       <TrustRibbon />
 

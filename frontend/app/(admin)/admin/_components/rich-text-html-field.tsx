@@ -31,6 +31,17 @@ const FONT_SIZES = [
 
 const REMOVABLE_TAGS = new Set(["SCRIPT", "STYLE", "META", "LINK", "OBJECT", "EMBED"]);
 
+const ALLOWED_STYLE_PROPS = new Set([
+  "color",
+  "background-color",
+  "font-family",
+  "font-size",
+  "font-style",
+  "font-weight",
+  "text-decoration",
+  "text-align",
+]);
+
 function filterInlineStyle(styleText: string) {
   const allowed = new Map<string, string>();
   for (const chunk of styleText.split(";")) {
@@ -38,15 +49,7 @@ function filterInlineStyle(styleText: string) {
     const property = rawProperty?.trim().toLowerCase();
     const value = rawValueParts.join(":").trim();
     if (!property || !value) continue;
-    if (
-      property === "color" ||
-      property === "background-color" ||
-      property === "font-family" ||
-      property === "font-style" ||
-      property === "font-weight" ||
-      property === "text-decoration" ||
-      property === "text-align"
-    ) {
+    if (ALLOWED_STYLE_PROPS.has(property)) {
       allowed.set(property, value);
     }
   }
@@ -54,6 +57,19 @@ function filterInlineStyle(styleText: string) {
     .map(([property, value]) => `${property}: ${value}`)
     .join("; ");
 }
+
+// `<font size="N">` uses HTML4 1–7 sizes. Map to CSS pixel values close to
+// the dropdown's labelled sizes so the saved markup renders identically
+// outside the editor.
+const FONT_SIZE_ATTR_TO_PX: Record<string, string> = {
+  "1": "10px",
+  "2": "12px",
+  "3": "14px",
+  "4": "16px",
+  "5": "18px",
+  "6": "24px",
+  "7": "32px",
+};
 
 function unwrapElement(element: HTMLElement) {
   const parent = element.parentNode;
@@ -79,14 +95,19 @@ function sanitizeEditorHtml(html: string) {
     }
 
     if (tag === "FONT") {
+      // Browsers emit `<font face|color|size>` from execCommand. Convert each
+      // to inline CSS so the markup survives the strict sanitizer below.
       const face = element.getAttribute("face")?.trim();
       const color = element.getAttribute("color")?.trim();
+      const sizeAttr = element.getAttribute("size")?.trim();
+      const fontSizeCss = sizeAttr ? FONT_SIZE_ATTR_TO_PX[sizeAttr] : undefined;
       const existingStyle = element.getAttribute("style") ?? "";
       const nextStyle = filterInlineStyle(
         [
           existingStyle,
           face ? `font-family: ${face}` : "",
           color ? `color: ${color}` : "",
+          fontSizeCss ? `font-size: ${fontSizeCss}` : "",
         ]
           .filter(Boolean)
           .join("; "),
@@ -98,6 +119,7 @@ function sanitizeEditorHtml(html: string) {
       }
       element.removeAttribute("face");
       element.removeAttribute("color");
+      element.removeAttribute("size");
       continue;
     }
 
@@ -181,7 +203,11 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
     editorRef.current.focus();
     restoreSelection();
     document.execCommand(command, false, value);
-    syncToHidden({ rewriteEditor: true });
+    // Only sync the hidden input. Calling `rewriteEditor: true` here would
+    // replace the editor's innerHTML mid-edit and wipe the formatting the
+    // browser just applied (plus collapse the cursor). The sanitizer runs
+    // on blur and on save, which is when it actually matters.
+    syncToHidden();
     updateActiveFormats();
     rememberSelection();
   }

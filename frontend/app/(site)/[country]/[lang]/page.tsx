@@ -10,6 +10,7 @@ import {
 import { DoctorWall, type DoctorWallItem } from "@/components/sections/DoctorWall";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
+import { RichBodySection } from "@/components/sections/RichBodySection";
 import { countries, getCountryByCode } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
@@ -140,8 +141,9 @@ export default async function CountryLangHomePage({
   const bookHref = `/${slug}/${lang}/book-online`;
   const generalHref = `/${slug}/${lang}/general-consultation`;
 
-  const [countryDoctors, generalServices, specialistServices, allDoctors] =
+  const [page, countryDoctors, generalServices, specialistServices, allDoctors] =
     await Promise.all([
+      getPublicPage(code, "HOME", lang as PublicLocale),
       getCountryDoctors(code),
       getCountryServices(code, "GENERAL"),
       getCountryServices(code, "SPECIALIST"),
@@ -214,6 +216,7 @@ export default async function CountryLangHomePage({
         totalDoctorsAcrossEurope={totalDoctorsAcrossEurope}
         liveDoctors={liveDoctors}
       />
+      <RichBodySection html={page?.body} />
       <TrustRibbon items={trustItems} />
       <ServiceCatalog services={serviceCatalogItems} />
       <DoctorWall doctors={doctorWallItems} bookHref={bookHref} />
