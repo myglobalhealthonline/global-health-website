@@ -77,6 +77,27 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
       }
 
       const stripe = getStripeClient();
+
+      // Idempotency — if a Checkout Session already exists for this
+      // appointment and is still openable, reuse its URL instead of
+      // creating a duplicate. Stripe sessions expire 24h after creation;
+      // we also bail out on terminal session statuses (complete/expired).
+      if (appointment.stripeSessionId) {
+        try {
+          const existing = await stripe.checkout.sessions.retrieve(
+            appointment.stripeSessionId,
+          );
+          if (
+            existing.status === "open" &&
+            existing.url &&
+            (!existing.expires_at || existing.expires_at * 1000 > Date.now())
+          ) {
+            return okResponse({ url: existing.url, sessionId: existing.id });
+          }
+        } catch {
+          // Stale or invalid session id — fall through and create a new one.
+        }
+      }
       const baseUrl =
         env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
       const returnBase = body.data.returnTo ?? "/";
@@ -139,8 +160,11 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
    *   - charge.refunded                  → mark REFUNDED
    *
    * Note: the body MUST be the raw bytes (not the JSON-parsed object) for
-   * signature verification. We register a raw-body parser scoped to this
-   * route only via `addContentTypeParser` below.
+   * signature verification. The content-type parser registered in `app.ts`
+   * stashes the raw Buffer on `request.rawBody` whenever the request URL
+   * starts with `/api/payments/webhook`, then runs the normal JSON parse
+   * so other routes are unaffected. Be careful not to drop the rawBody
+   * stash in future refactors — webhook verification depends on it.
    */
   app.post(
     "/api/payments/webhook",

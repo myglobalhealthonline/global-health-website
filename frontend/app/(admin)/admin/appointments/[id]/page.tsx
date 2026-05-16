@@ -169,8 +169,9 @@ export default async function AdminAppointmentDetailPage({
 
     revalidatePath("/admin/appointments");
     revalidatePath(`/admin/appointments/${id}`);
-    const willEmail = scheduledAt !== null && meetingUrl !== null;
-    const success = willEmail
+    // Backend tells us whether the email actually fired (only fires when
+    // both fields are set AND at least one changed value).
+    const success = result.data.emailed
       ? "Schedule saved. Email sent to patient with Meet link."
       : "Schedule saved.";
     redirect(`/admin/appointments/${id}?success=${encodeURIComponent(success)}`);
@@ -256,6 +257,16 @@ export default async function AdminAppointmentDetailPage({
               />
               <FieldRow label="Country" value={appointment.country.toUpperCase()} />
               <FieldRow label="Consultation type" value={appointment.consultationType} />
+              <FieldRow
+                label="Payment"
+                value={
+                  appointment.amountCents
+                    ? `${appointment.paymentStatus} · ${(
+                        appointment.amountCents / 100
+                      ).toFixed(2)} ${appointment.currencyCode ?? ""}`
+                    : "No price configured"
+                }
+              />
               <FieldRow
                 label="Scheduled call"
                 value={

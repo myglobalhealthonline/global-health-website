@@ -80,6 +80,9 @@ type AdminAppointmentDetailPayload = {
     status: string;
     scheduledAt: string | null;
     meetingUrl: string | null;
+    paymentStatus: string;
+    amountCents: number | null;
+    currencyCode: string | null;
     createdAt: string;
     updatedAt: string;
   };
@@ -243,7 +246,10 @@ export async function patchAdminAppointmentSchedule(
   id: string,
   input: { scheduledAt?: string | null; meetingUrl?: string | null },
 ) {
-  return adminRequest<AdminAppointmentDetailPayload>(
+  // Response includes `emailed: boolean` — true when the schedule email
+  // actually fired (changed values + both fields set). Used to tailor the
+  // admin success toast.
+  return adminRequest<AdminAppointmentDetailPayload & { emailed?: boolean }>(
     `/api/admin/appointments/${id}/schedule`,
     { method: "PATCH", body: input },
   );

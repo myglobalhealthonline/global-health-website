@@ -102,6 +102,11 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
           : new Date(body.data.scheduledAt);
 
     try {
+      // Snapshot the pre-update values so we can detect whether the slot or
+      // URL actually changed. Without this guard the email re-fires every
+      // time the admin saves the form, even on unrelated edits.
+      const before = await getAppointmentById(params.data.id);
+
       const appointment = await scheduleAppointment(params.data.id, {
         scheduledAt: scheduledAtInput,
         meetingUrl: meetingUrlInput,
@@ -110,22 +115,28 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(404).send(errorResponse("Appointment not found"));
       }
 
-      // Fire the schedule email only when both fields are now set on the
-      // record. Clearing one shouldn't email the patient — that's an admin-
-      // internal edit. We swallow email errors to keep the request idempotent.
-      if (appointment.scheduledAt && appointment.meetingUrl) {
+      // Fire the schedule email only when:
+      //   - both fields are set on the record after the save AND
+      //   - at least one of them changed value from before.
+      // Clearing or no-op saves shouldn't email the patient.
+      const slotChanged = (before?.scheduledAt ?? null) !== (appointment.scheduledAt ?? null);
+      const urlChanged = (before?.meetingUrl ?? null) !== (appointment.meetingUrl ?? null);
+      const shouldEmail =
+        Boolean(appointment.scheduledAt && appointment.meetingUrl) &&
+        (slotChanged || urlChanged);
+      if (shouldEmail) {
         sendAppointmentScheduledEmail({
           to: appointment.email,
           fullName: appointment.fullName,
           consultationType: appointment.consultationType,
-          scheduledAt: new Date(appointment.scheduledAt),
-          meetingUrl: appointment.meetingUrl,
+          scheduledAt: new Date(appointment.scheduledAt!),
+          meetingUrl: appointment.meetingUrl!,
         }).catch((emailErr) => {
           app.log.warn({ err: emailErr }, "Failed to send schedule email — continuing");
         });
       }
 
-      return okResponse({ appointment }, "Appointment scheduled");
+      return okResponse({ appointment, emailed: shouldEmail }, "Appointment scheduled");
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));

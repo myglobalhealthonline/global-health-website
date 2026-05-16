@@ -65,10 +65,6 @@ const envSchema = z.object({
    *  Required to keep the endpoint behind auth without needing a session.
    *  Generate with: openssl rand -base64 32. */
   CRON_SECRET: z.string().trim().min(16).optional(),
-
-  /** Sentry DSN. When set, the server boots with Sentry's error reporter
-   *  attached. Leave unset in dev. */
-  SENTRY_DSN: z.string().trim().min(1).optional(),
 });
 
 const parsed = envSchema.parse(mergeRailwayBucketAliases());

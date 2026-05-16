@@ -93,6 +93,9 @@ export type AdminAppointmentDetail = {
   status: string;
   scheduledAt: string | null;
   meetingUrl: string | null;
+  paymentStatus: string;
+  amountCents: number | null;
+  currencyCode: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -161,6 +164,9 @@ function toAdminAppointment(record: AppointmentRecord): AdminAppointmentDetail {
     status: record.status,
     scheduledAt: record.scheduledAt ? record.scheduledAt.toISOString() : null,
     meetingUrl: record.meetingUrl,
+    paymentStatus: record.paymentStatus,
+    amountCents: record.amountCents,
+    currencyCode: record.currencyCode,
     createdAt: record.createdAt.toISOString(),
     updatedAt: record.updatedAt.toISOString(),
   };

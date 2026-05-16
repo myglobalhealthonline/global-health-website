@@ -60,13 +60,17 @@ export default async function AdminNewsletterPage() {
 
   return (
     <>
+      {/* Download CSV uses the same-origin Next route handler at
+          /api/admin/newsletter.csv which forwards the session cookie to
+          the backend. A direct cross-origin <a href> would 401 because
+          the browser doesn't send cookies on cross-site navigations. */}
       <PageHeader
         eyebrow="Marketing"
         title="Newsletter subscribers"
         description="People who signed up via the public footer form. Export CSV for your mailer."
         actions={
           <Btn
-            href={`${adminApiBase()}/api/admin/newsletter.csv`}
+            href="/api/admin/newsletter.csv"
             variant="primary"
             size="md"
           >

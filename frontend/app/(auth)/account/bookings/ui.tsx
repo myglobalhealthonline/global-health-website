@@ -77,7 +77,8 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
         <p className="mt-1 max-w-xs text-sm text-[var(--color-text-muted)]">
           You have not made any booking requests. Start by booking your first consultation.
         </p>
-        <Link href="/book-online" className="gh-btn gh-btn-primary mt-5 text-sm">
+        {/* No country/lang context in /account — go through gate. */}
+        <Link href="/" className="gh-btn gh-btn-primary mt-5 text-sm">
           Book online
           <ArrowRight className="size-4" aria-hidden />
         </Link>

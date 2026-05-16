@@ -85,7 +85,7 @@ export default function AccountPage() {
           </div>
 
           <Link
-            href="/book-online"
+            href="/"
             className="gh-card gh-card-interactive flex items-center gap-4 p-5"
           >
             <span className="gh-icon-circle">

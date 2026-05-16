@@ -30,7 +30,9 @@ export default async function AccountBookingsPage() {
                 Your consultation request history and status updates.
               </p>
             </div>
-            <Link href="/book-online" className="gh-btn gh-btn-primary text-sm">
+            {/* /account has no country/lang context; route through the
+                country-entry gate so the visitor picks a country first. */}
+            <Link href="/" className="gh-btn gh-btn-primary text-sm">
               Book consultation
             </Link>
           </div>
