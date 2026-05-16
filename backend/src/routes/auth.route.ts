@@ -6,6 +6,8 @@ import {
   changeUserPassword,
   consumeEmailVerificationToken,
   consumePasswordResetToken,
+  deleteOwnAccount,
+  exportUserData,
   findUserByEmail,
   getSafeUserById,
   issueEmailVerificationToken,
@@ -288,6 +290,53 @@ const authRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not send verification email"));
+    }
+  });
+
+  // GDPR: dump everything we hold about the signed-in user as JSON.
+  // Always served with Content-Disposition so the browser saves it as
+  // a file rather than rendering it.
+  app.get("/api/auth/me/export", async (request, reply) => {
+    const token = request.cookies[env.AUTH_COOKIE_NAME];
+    if (!token) return reply.status(401).send(errorResponse("Not authenticated"));
+    const payload = verifyAuthToken(token);
+    if (!payload) return reply.status(401).send(errorResponse("Not authenticated"));
+    try {
+      const data = await exportUserData(payload.sub);
+      if (!data) return reply.status(404).send(errorResponse("Account not found"));
+      reply.header(
+        "Content-Disposition",
+        `attachment; filename="global-health-data-${payload.sub}.json"`,
+      );
+      reply.header("Content-Type", "application/json");
+      return reply.send(data);
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not export data"));
+    }
+  });
+
+  // GDPR: soft-delete the signed-in user's account. PII is scrubbed but
+  // booking history is preserved (regulatory / Stripe ledger). The
+  // session cookie is cleared on success.
+  app.delete("/api/auth/me", async (request, reply) => {
+    const token = request.cookies[env.AUTH_COOKIE_NAME];
+    if (!token) return reply.status(401).send(errorResponse("Not authenticated"));
+    const payload = verifyAuthToken(token);
+    if (!payload) return reply.status(401).send(errorResponse("Not authenticated"));
+    try {
+      await deleteOwnAccount(payload.sub);
+      reply.clearCookie(env.AUTH_COOKIE_NAME, authCookieOptions());
+      return okResponse({ deleted: true }, "Account deleted");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not delete account"));
     }
   });
 };

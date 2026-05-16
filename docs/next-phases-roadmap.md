@@ -1,7 +1,16 @@
 # Global Health · Next-Phases Roadmap
 
 **Roadmap date:** 2026-05-16
-**Status today:** Phase 1 shipped end-to-end. Phase 2 infrastructure (SendGrid + Stripe scaffolding + 3-provider review badge: Trustpilot / Google / Doctify) merged on `old_website`, all gated behind env keys / admin settings so production keeps working without them.
+**Status today:** Phase 1 + Phase 2 + most of Phase 3 shipped. Live on `sendgrid-verification`:
+- SendGrid + Stripe scaffolding (env-gated)
+- 3-provider review badge (Trustpilot / Google / Doctify) with admin Settings + JSON-LD AggregateRating
+- Patient portal: profile, bookings, payments, security (change pwd + email verify + GDPR controls)
+- Google Meet flow: admin schedules → patient gets email + Join-call button
+- 24h reminder cron endpoint (`POST /api/internal/run-reminders` gated by `CRON_SECRET`)
+- GDPR: cookie banner + analytics gate + privacy notice + account-delete + data-export
+- GEO: `/llms.txt` + `MedicalProcedure` JSON-LD on consultation pages
+
+Owned by another team: doctor dashboard (excluded from this scope).
 **Hosting:** Railway hosts all three services in this project — frontend (Next.js), backend (Fastify), Postgres. No Vercel split; promote each via the Railway dashboard.
 
 This document has two halves. **Part A** is the production-handover checklist — every account, env var, DNS record, and migration you have to set up before flipping the public DNS. **Part B** is the phase plan — what to build next, in priority order, with effort estimates.
@@ -357,3 +366,20 @@ Stripe + Resend can be configured the same day you create the accounts; everythi
 - **When you're ready for Phase 3 (Doctor Dashboard)** → it's a clean greenfield; the schema slot is already reserved.
 - **Reviews:** all three providers (Trustpilot + Google + Doctify) are wired. Paste the IDs at `/admin/settings`.
 - **Production handover day** → I'll run the go-live runbook with you (deploy + smoke + DNS flip).
+
+---
+
+## Phase 3 — what's left after current commits
+
+### Operator handoff (no code; you do these)
+- `pnpm --filter backend prisma db push` against Railway DB — adds `Appointment.scheduledAt`, `Appointment.meetingUrl`, `Appointment.reminderSentAt`. All nullable; no downtime.
+- Set `CRON_SECRET` env on Railway (`openssl rand -base64 32`).
+- Add a cron job (Railway scheduled task / EasyCron / GitHub Actions) hitting `POST https://api.myglobalhealth.online/api/internal/run-reminders` hourly with header `x-cron-secret: <CRON_SECRET>`. The endpoint scans the next 23–25h window and emails the 24h reminder.
+- Optional: set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN=myglobalhealth.online` on the frontend service to enable analytics (cookieless, opt-in via banner).
+- Optional: install + wire Sentry. `pnpm --filter backend add @sentry/node` then add `Sentry.init({ dsn: env.SENTRY_DSN })` at the top of `backend/src/server.ts`. Frontend is `pnpm --filter frontend add @sentry/nextjs` + run `npx @sentry/wizard@latest -i nextjs`.
+
+### Code still pending (lower-priority, not in this commit)
+- **Real-time chat (patient ↔ admin pre-consult)** — deferred. Needs a WebSocket layer (Pusher Channels or Soketi self-hosted ~$10/mo on Railway). Patient inbox panel + admin chat sidebar. Scope: ~1 week. Not blocking launch — patients can email/WhatsApp until chat ships. Recommended only once daily booking volume justifies it (~50+/day).
+- **i18n content translation** — copy in `ContentPage` rows is EN-only today. Operator work: clone HOME / GENERAL_CONSULTATION / SPECIALIST_CONSULTATION rows per `(country, locale)` pair and have a translator fill them. The schema + UI are ready.
+- **Stripe go-live** — currently scaffolded behind `STRIPE_SECRET_KEY`. The booking form does not yet route to Checkout — Phase 2 completion item still on the list.
+- **Rate limiting** — none yet. Easy add: `@fastify/rate-limit` on `/api/auth/login`, `/api/auth/forgot-password`, `/api/appointments`, `/api/payments/checkout-session`. 0.5 day.

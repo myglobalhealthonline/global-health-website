@@ -366,6 +366,9 @@ model Appointment {
   // receives a SendGrid email with the link.
   scheduledAt           DateTime?
   meetingUrl            String?
+  // Reminder job marks this once it has emailed the patient ~24h before
+  // scheduledAt, so re-runs don't double-send. Null means "not sent yet".
+  reminderSentAt        DateTime?
   user                  User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
   payments              Payment[]
   createdAt             DateTime       @default(now())

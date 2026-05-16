@@ -127,6 +127,74 @@ export async function changeUserPassword(
   }
 }
 
+/**
+ * Soft-delete the user's account: scrubs PII and flips `isActive` to false.
+ * We don't hard-delete because Appointments must keep their audit trail
+ * (Stripe ledger, admin records, regulatory). After delete the user can
+ * no longer log in; their booking rows persist with the historic name/
+ * email already on the row.
+ */
+export async function deleteOwnAccount(id: string): Promise<void> {
+  try {
+    const scrubbedEmail = `deleted-${id}@deleted.local`;
+    await prisma.user.update({
+      where: { id },
+      data: {
+        isActive: false,
+        // Replace identifying fields with deterministic placeholders so a
+        // future re-registration with the original email can succeed.
+        email: scrubbedEmail,
+        fullName: "[deleted account]",
+        phone: null,
+        emailVerifiedAt: null,
+        // Re-randomise the password hash so any leaked plaintext is moot.
+        passwordHash: await bcrypt.hash(randomBytes(32).toString("hex"), 12),
+      },
+    });
+    // Detach the user from past Appointment rows — admin still sees the
+    // booking history but the link to the now-deleted user is broken.
+    await prisma.appointment.updateMany({
+      where: { userId: id },
+      data: { userId: null },
+    });
+    // Burn outstanding password-reset and email-verification tokens.
+    await prisma.passwordResetToken.updateMany({
+      where: { userId: id, usedAt: null },
+      data: { usedAt: new Date() },
+    });
+    await prisma.emailVerificationToken.updateMany({
+      where: { userId: id, usedAt: null },
+      data: { usedAt: new Date() },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not delete account");
+  }
+}
+
+/** GDPR data-export: dump everything we hold about a user as JSON. */
+export async function exportUserData(id: string) {
+  try {
+    const user = await prisma.user.findUnique({ where: { id } });
+    if (!user || !user.isActive) return null;
+    const appointments = await prisma.appointment.findMany({
+      where: { userId: id },
+      orderBy: { createdAt: "desc" },
+    });
+    const payments = await prisma.payment.findMany({
+      where: { appointment: { userId: id } },
+      orderBy: { createdAt: "desc" },
+    });
+    return {
+      exportedAt: new Date().toISOString(),
+      user: toSafeUser(user),
+      appointments,
+      payments,
+    };
+  } catch (error) {
+    throw normalizeDbError(error, "Could not export user data");
+  }
+}
+
 export async function patchUserProfile(id: string, input: ProfilePatchInput) {
   try {
     const user = await prisma.user.update({

@@ -114,6 +114,55 @@ Tip: open the link 5 minutes early to test your camera and mic. If you need to r
   });
 }
 
+/**
+ * 24h reminder sent by the cron worker. Sibling of the scheduled-email
+ * but reframed ("Reminder: your call is tomorrow"). Same Meet link + slot
+ * UX so patients only need one mental model.
+ */
+export async function sendAppointmentReminderEmail(opts: {
+  to: string;
+  fullName: string;
+  consultationType: string;
+  scheduledAt: Date;
+  meetingUrl: string;
+}) {
+  const formatted = opts.scheduledAt.toUTCString();
+  const localHint = opts.scheduledAt.toISOString();
+  return sendEmail({
+    to: opts.to,
+    subject: `Reminder: your call tomorrow — ${opts.consultationType}`,
+    text: `Hi ${opts.fullName},
+
+Quick reminder — your ${opts.consultationType} is tomorrow at ${formatted}.
+
+Join the call:
+${opts.meetingUrl}
+
+Open it 5 minutes early to test camera + mic. Reply to this email if you need to reschedule.
+
+— Global Health`,
+    html: wrapHtml(
+      "Your call is tomorrow",
+      `<p>Hi ${escapeHtml(opts.fullName)},</p>
+       <p>Quick reminder — your <strong>${escapeHtml(opts.consultationType)}</strong> is tomorrow at:</p>
+       <p style="margin:16px 0;font-size:18px;font-weight:700;color:#1B4D3E;">
+         <time datetime="${escapeHtml(localHint)}">${escapeHtml(formatted)}</time>
+       </p>
+       <p style="margin:24px 0;">
+         <a href="${escapeHtml(opts.meetingUrl)}"
+            style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">
+           Join the call
+         </a>
+       </p>
+       <p style="font-size:13px;color:#737373;">
+         Or paste this link:<br/>
+         <a href="${escapeHtml(opts.meetingUrl)}">${escapeHtml(opts.meetingUrl)}</a>
+       </p>
+       <p>Open it 5 minutes early to test camera + mic. Reply if you need to reschedule.</p>`,
+    ),
+  });
+}
+
 export async function sendBookingConfirmationEmail(opts: {
   to: string;
   fullName: string;

@@ -96,6 +96,41 @@ export function medicalBusinessJsonLd(country: { name: string; url: string }) {
   };
 }
 
+/**
+ * Schema.org `MedicalProcedure` for a consultation page. Helps AI search
+ * engines (Google AI Overviews, Perplexity) cite the page when a patient
+ * asks about general/specialist consultations in a given country.
+ */
+export function medicalProcedureJsonLd(input: {
+  name: string;
+  description: string;
+  countryName: string;
+  url: string;
+  bookingUrl: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "MedicalProcedure",
+    name: input.name,
+    description: input.description,
+    procedureType: "https://schema.org/TherapeuticProcedure",
+    url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
+    bodyLocation: undefined,
+    preparation: "Have your symptoms, medications list, and ID ready for the video call.",
+    howPerformed: "Video consultation via Google Meet with a licensed clinician.",
+    followup: "Prescriptions and follow-up referrals are issued during or shortly after the call.",
+    potentialAction: {
+      "@type": "ReserveAction",
+      target: input.bookingUrl.startsWith("http") ? input.bookingUrl : `${SITE_URL}${input.bookingUrl}`,
+    },
+    provider: {
+      "@type": "MedicalOrganization",
+      name: SITE_NAME,
+      areaServed: { "@type": "Country", name: input.countryName },
+    },
+  };
+}
+
 type AnyLd = Record<string, unknown>;
 
 /** Serialise one or many JSON-LD payloads safely (escapes `</`). */

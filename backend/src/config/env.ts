@@ -60,6 +60,15 @@ const envSchema = z.object({
    *  refreshes the Google aggregate in the background (24h TTL).
    *  Without it the admin-entered aggregate is used as-is. */
   GOOGLE_PLACES_API_KEY: z.string().trim().min(1).optional(),
+
+  /** Shared secret for the cron worker that calls /api/internal/run-reminders.
+   *  Required to keep the endpoint behind auth without needing a session.
+   *  Generate with: openssl rand -base64 32. */
+  CRON_SECRET: z.string().trim().min(16).optional(),
+
+  /** Sentry DSN. When set, the server boots with Sentry's error reporter
+   *  attached. Leave unset in dev. */
+  SENTRY_DSN: z.string().trim().min(1).optional(),
 });
 
 const parsed = envSchema.parse(mergeRailwayBucketAliases());

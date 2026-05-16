@@ -14,7 +14,7 @@ type AuthResult<T> =
 
 async function authRequest<T>(
   path: string,
-  options: { method?: "GET" | "POST" | "PATCH"; body?: unknown } = {},
+  options: { method?: "GET" | "POST" | "PATCH" | "DELETE"; body?: unknown } = {},
 ): Promise<AuthResult<T>> {
   const url = resolveAuthFetchUrl(path);
   if (!url) {
@@ -120,4 +120,16 @@ export async function confirmEmailWithToken(token: string) {
     method: "POST",
     body: { token },
   });
+}
+
+/** GDPR: soft-delete the signed-in user's account. */
+export async function deleteOwnAccount() {
+  return authRequest<{ deleted: true }>("/api/auth/me", { method: "DELETE" });
+}
+
+/** GDPR: trigger a JSON download of everything we hold on the user. */
+export function downloadOwnDataUrl(): string {
+  // Same-origin Route Handler proxy honours the session cookie so the
+  // browser's native download flow works without extra plumbing.
+  return "/api/auth/me/export";
 }

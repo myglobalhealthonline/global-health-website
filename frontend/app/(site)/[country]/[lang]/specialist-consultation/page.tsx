@@ -15,7 +15,7 @@ import {
   countryCodeFromSlug,
 } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
+import { breadcrumbJsonLd, medicalProcedureJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
   getPublicPage,
@@ -142,6 +142,15 @@ export default async function CountryLangSpecialistConsultationPage({
           { name: config.name, url: `/${slug}/${lang}` },
           { name: "Specialist consultation", url: `/${slug}/${lang}/specialist-consultation` },
         ])}
+      />
+      <JsonLd
+        data={medicalProcedureJsonLd({
+          name: `Specialist medical consultation in ${config.name}`,
+          description: `Online specialist consultation (cardiology, dermatology, psychiatry, nutrition, and more) with clinicians licensed in ${config.name}.`,
+          countryName: config.name,
+          url: `/${slug}/${lang}/specialist-consultation`,
+          bookingUrl: ctaHref,
+        })}
       />
 
       {/* Hero — admin-editable copy + optional uploaded image from ContentPage */}
