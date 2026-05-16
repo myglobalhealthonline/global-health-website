@@ -20,3 +20,6 @@
 /backend/.data
 /.cursor
 /.codex
+
+# dev server logs
+*-dev.log
