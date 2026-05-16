@@ -1,4 +1,4 @@
-import type { FastifyPluginAsync } from "fastify";
+import type { FastifyPluginAsync, FastifyReply } from "fastify";
 import { ServiceKind } from "@prisma/client";
 import { z } from "zod";
 import {
@@ -9,8 +9,23 @@ import {
   listServicesByCountry,
   listSpecialtiesByCountry,
 } from "../modules/services/services.service.js";
+import { getPublicCountryByCode } from "../modules/countries/countries.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+
+/** Returns true if the country exists; otherwise writes a 404 to `reply` and
+ *  returns false so the handler can `return` immediately. */
+async function ensureCountryExists(
+  countryCode: string,
+  reply: FastifyReply,
+): Promise<boolean> {
+  const country = await getPublicCountryByCode(countryCode);
+  if (!country) {
+    reply.status(404).send(errorResponse("Country not found"));
+    return false;
+  }
+  return true;
+}
 
 const countryParamsSchema = z.object({
   countryCode: z.string().trim().min(1).max(8),
@@ -62,6 +77,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
     }
     try {
+      if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
       const doctors = await listDoctorsByCountry(params.data.countryCode);
       return okResponse(doctors);
     } catch (error) {
@@ -76,6 +92,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid doctor lookup", params.error.flatten()));
     }
     try {
+      if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
       const doctor = await getDoctorByCountryAndSlug(params.data.countryCode, params.data.slug);
       if (!doctor) {
         return reply.status(404).send(errorResponse("Doctor not found"));
@@ -93,6 +110,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
     }
     try {
+      if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
       const specialties = await listSpecialtiesByCountry(params.data.countryCode);
       return okResponse(specialties);
     } catch (error) {
@@ -111,6 +129,7 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid services query", query.error.flatten()));
     }
     try {
+      if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
       const services = await listServicesByCountry(params.data.countryCode, query.data.kind);
       return okResponse(services);
     } catch (error) {

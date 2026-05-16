@@ -1,0 +1,32 @@
+
+> backend@ dev C:\Users\kingh\Desktop\NashaaFrontend\global-health-website\backend
+> tsx watch src/server.ts
+
+{"level":30,"time":1778923237558,"pid":16012,"hostname":"HassaaN","msg":"Server listening at http://127.0.0.1:4000"}
+{"level":30,"time":1778923237559,"pid":16012,"hostname":"HassaaN","msg":"Server listening at http://192.168.100.13:4000"}
+{"level":30,"time":1778923240246,"pid":16012,"hostname":"HassaaN","reqId":"req-1","req":{"method":"GET","url":"/health","host":"localhost:4000","remoteAddress":"127.0.0.1","remotePort":63786},"msg":"incoming request"}
+{"level":30,"time":1778923240267,"pid":16012,"hostname":"HassaaN","reqId":"req-1","res":{"statusCode":200},"responseTime":19.94900000002235,"msg":"request completed"}
+{"level":30,"time":1778923253026,"pid":16012,"hostname":"HassaaN","reqId":"req-2","req":{"method":"GET","url":"/health","host":"localhost:4000","remoteAddress":"127.0.0.1","remotePort":50794},"msg":"incoming request"}
+{"level":30,"time":1778923253027,"pid":16012,"hostname":"HassaaN","reqId":"req-2","res":{"statusCode":200},"responseTime":0.8937000000150874,"msg":"request completed"}
+{"level":30,"time":1778923253340,"pid":16012,"hostname":"HassaaN","reqId":"req-3","req":{"method":"GET","url":"/api/countries","host":"localhost:4000","remoteAddress":"127.0.0.1","remotePort":60750},"msg":"incoming request"}
+{"level":30,"time":1778923261510,"pid":16012,"hostname":"HassaaN","reqId":"req-3","res":{"statusCode":200},"responseTime":8169.344799999963,"msg":"request completed"}
+{"level":30,"time":1778923298408,"pid":16012,"hostname":"HassaaN","reqId":"req-4","req":{"method":"GET","url":"/api/countries/xx/doctors","host":"localhost:4000","remoteAddress":"127.0.0.1","remotePort":56798},"msg":"incoming request"}
+{"level":30,"time":1778923301453,"pid":16012,"hostname":"HassaaN","reqId":"req-4","res":{"statusCode":200},"responseTime":3044.5187999999616,"msg":"request completed"}
+{"level":30,"time":1778923301719,"pid":16012,"hostname":"HassaaN","reqId":"req-5","req":{"method":"GET","url":"/api/countries/ie/pages/NOT_A_KEY?locale=EN","host":"localhost:4000","remoteAddress":"127.0.0.1","remotePort":56803},"msg":"incoming request"}
+{"level":30,"time":1778923301721,"pid":16012,"hostname":"HassaaN","reqId":"req-5","res":{"statusCode":400},"responseTime":2.293199999956414,"msg":"request completed"}
+{"level":30,"time":1778923301989,"pid":16012,"hostname":"HassaaN","reqId":"req-6","req":{"method":"GET","url":"/api/countries/ie/pages/HOME?locale=ZZ","host":"localhost:4000","remoteAddress":"127.0.0.1","remotePort":56805},"msg":"incoming request"}
+{"level":30,"time":1778923301990,"pid":16012,"hostname":"HassaaN","reqId":"req-6","res":{"statusCode":400},"responseTime":0.9697000000160187,"msg":"request completed"}
+{"level":30,"time":1778923356844,"pid":16012,"hostname":"HassaaN","reqId":"req-7","req":{"method":"GET","url":"/api/countries/xx/doctors","host":"localhost:4000","remoteAddress":"127.0.0.1","remotePort":49672},"msg":"incoming request"}
+{"level":30,"time":1778923359780,"pid":16012,"hostname":"HassaaN","reqId":"req-7","res":{"statusCode":200},"responseTime":2935.7708000000566,"msg":"request completed"}
+{"level":30,"time":1778923360063,"pid":16012,"hostname":"HassaaN","reqId":"req-8","req":{"method":"GET","url":"/api/countries/xx/specialties","host":"localhost:4000","remoteAddress":"127.0.0.1","remotePort":54545},"msg":"incoming request"}
+{"level":30,"time":1778923360599,"pid":16012,"hostname":"HassaaN","reqId":"req-8","res":{"statusCode":200},"responseTime":536.3648999999277,"msg":"request completed"}
+{"level":30,"time":1778923360873,"pid":16012,"hostname":"HassaaN","reqId":"req-9","req":{"method":"GET","url":"/api/countries/xx/services","host":"localhost:4000","remoteAddress":"127.0.0.1","remotePort":54547},"msg":"incoming request"}
+{"level":30,"time":1778923361406,"pid":16012,"hostname":"HassaaN","reqId":"req-9","res":{"statusCode":200},"responseTime":533.3538999999873,"msg":"request completed"}
+2:23:18 pm [tsx] change in ./src\modules\countries\countries.service.ts Restarting...
+c{"level":30,"time":1778923400090,"pid":19148,"hostname":"HassaaN","msg":"Server listening at http://127.0.0.1:4000"}
+{"level":30,"time":1778923400091,"pid":19148,"hostname":"HassaaN","msg":"Server listening at http://192.168.100.13:4000"}
+2:23:44 pm [tsx] change in ./src\routes\country-scoped.route.ts Restarting...
+c{"level":30,"time":1778923426069,"pid":19048,"hostname":"HassaaN","msg":"Server listening at http://127.0.0.1:4000"}
+{"level":30,"time":1778923426069,"pid":19048,"hostname":"HassaaN","msg":"Server listening at http://192.168.100.13:4000"}
+2:23:56 pm [tsx] change in ./src\routes\country-scoped.route.ts Restarting...
+c

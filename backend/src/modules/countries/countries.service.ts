@@ -33,6 +33,19 @@ export function isUniqueConstraintViolation(error: unknown): boolean {
   return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
 }
 
+/**
+ * Lookup an active country by 2-letter code (`ie`, `pt`, `sp`, `cz`, `rm`).
+ * Used by country-scoped public routes to 404 when an unknown code is
+ * supplied instead of returning a misleading empty list.
+ */
+export async function getPublicCountryByCode(code: string): Promise<{ id: string; code: string } | null> {
+  const country = await prisma.country.findFirst({
+    where: { code: { equals: code, mode: "insensitive" }, isActive: true },
+    select: { id: true, code: true },
+  });
+  return country;
+}
+
 export async function listCountries() {
   try {
     return await prisma.country.findMany({
