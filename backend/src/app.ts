@@ -24,6 +24,7 @@ import adminPricingRoute from "./routes/admin-pricing.route.js";
 import adminHealthTestsRoute from "./routes/admin-health-tests.route.js";
 import adminAssetsRoute from "./routes/admin-assets.route.js";
 import accountAppointmentsRoute from "./routes/account-appointments.route.js";
+import accountPaymentsRoute from "./routes/account-payments.route.js";
 import mediaPublicRoute from "./routes/media-public.route.js";
 import adminMediaUploadRoute from "./routes/admin-media-upload.route.js";
 import pagesRoute from "./routes/pages.route.js";
@@ -82,6 +83,7 @@ export async function buildApp() {
   await app.register(authRoute);
   await app.register(appointmentsRoute);
   await app.register(accountAppointmentsRoute);
+  await app.register(accountPaymentsRoute);
   await app.register(countriesRoute);
   await app.register(doctorsRoute);
   await app.register(servicesRoute);

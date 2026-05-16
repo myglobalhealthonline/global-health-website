@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  changePasswordBodySchema,
   forgotPasswordBodySchema,
   loginBodySchema,
   registerBodySchema,
@@ -42,5 +43,29 @@ describe("auth validation", () => {
       true,
     );
     assert.equal(resetPasswordBodySchema.safeParse({ token: "short", password: "new-password-123" }).success, false);
+  });
+
+  it("change-password accepts a current + strong new password", () => {
+    const r = changePasswordBodySchema.safeParse({
+      currentPassword: "anything-1",
+      newPassword: "new-password-123",
+    });
+    assert.equal(r.success, true);
+  });
+
+  it("change-password rejects a short new password", () => {
+    const r = changePasswordBodySchema.safeParse({
+      currentPassword: "anything",
+      newPassword: "short",
+    });
+    assert.equal(r.success, false);
+  });
+
+  it("change-password requires a non-empty current password", () => {
+    const r = changePasswordBodySchema.safeParse({
+      currentPassword: "",
+      newPassword: "new-password-123",
+    });
+    assert.equal(r.success, false);
   });
 });

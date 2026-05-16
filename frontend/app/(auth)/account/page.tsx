@@ -4,6 +4,7 @@ import {
   CalendarDays,
   CreditCard,
   PillBottle,
+  ShieldCheck,
   UserRound,
 } from "lucide-react";
 import { AccountSummary } from "./ui";
@@ -31,7 +32,7 @@ export default function AccountPage() {
         <div className="mt-6 space-y-4">
           <AccountSummary />
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             <Link href="/account/profile" className="gh-card gh-card-interactive flex items-center gap-4 p-5">
               <span className="gh-icon-circle">
                 <UserRound className="size-5" aria-hidden />
@@ -69,6 +70,16 @@ export default function AccountPage() {
               <div>
                 <p className="text-sm font-bold text-[var(--color-text-primary)]">Payments</p>
                 <p className="text-xs text-[var(--color-text-muted)]">Receipts</p>
+              </div>
+            </Link>
+
+            <Link href="/account/security" className="gh-card gh-card-interactive flex items-center gap-4 p-5">
+              <span className="gh-icon-circle">
+                <ShieldCheck className="size-5" aria-hidden />
+              </span>
+              <div>
+                <p className="text-sm font-bold text-[var(--color-text-primary)]">Security</p>
+                <p className="text-xs text-[var(--color-text-muted)]">Password, email</p>
               </div>
             </Link>
           </div>

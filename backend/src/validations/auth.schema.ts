@@ -31,4 +31,10 @@ export const resetPasswordBodySchema = z.object({
   token: z.string().trim().min(10).max(512),
   password: z.string().min(8, "Password must be at least 8 characters").max(128),
 });
+
+export const changePasswordBodySchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required").max(128),
+  newPassword: z.string().min(8, "Password must be at least 8 characters").max(128),
+});
+export type ChangePasswordBody = z.infer<typeof changePasswordBodySchema>;
 export {};

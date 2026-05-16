@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   AuthConflictError,
   AuthInvalidCredentialsError,
+  changeUserPassword,
   consumeEmailVerificationToken,
   consumePasswordResetToken,
   findUserByEmail,
@@ -19,6 +20,7 @@ import {
 } from "../lib/email/templates.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
+  changePasswordBodySchema,
   forgotPasswordBodySchema,
   loginBodySchema,
   registerBodySchema,
@@ -226,6 +228,38 @@ const authRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not verify email"));
+    }
+  });
+
+  // Authenticated password change — different from /reset-password (which
+  // is for the forgot-flow). Requires the current password as a soft 2FA
+  // step so a stolen cookie alone can't lock the user out.
+  app.post("/api/auth/change-password", async (request, reply) => {
+    const token = request.cookies[env.AUTH_COOKIE_NAME];
+    if (!token) return reply.status(401).send(errorResponse("Not authenticated"));
+    const payload = verifyAuthToken(token);
+    if (!payload) return reply.status(401).send(errorResponse("Not authenticated"));
+
+    const body = changePasswordBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid change-password payload", body.error.flatten()));
+    }
+    try {
+      const updated = await changeUserPassword(
+        payload.sub,
+        body.data.currentPassword,
+        body.data.newPassword,
+      );
+      return okResponse({ user: updated }, "Password updated");
+    } catch (error) {
+      if (error instanceof AuthInvalidCredentialsError) {
+        return reply.status(400).send(errorResponse("Current password is incorrect"));
+      }
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not change password"));
     }
   });
 

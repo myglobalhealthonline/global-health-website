@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, Mail, Phone, Shield, Loader2 } from "lucide-react";
+import { User, Mail, Phone, Shield, Loader2, AlertCircle } from "lucide-react";
 import { fetchCurrentUser, logoutUser, type AuthUser } from "@/lib/api/auth-api";
 
 export function AccountSummary() {
@@ -92,6 +93,21 @@ export function AccountSummary() {
           </button>
         </div>
       </div>
+
+      {!user.emailVerifiedAt ? (
+        <Link
+          href="/account/security"
+          className="mt-4 flex items-start gap-3 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 transition hover:bg-amber-100"
+        >
+          <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
+          <span>
+            <span className="font-semibold">Verify your email.</span>{" "}
+            We sent a link to <span className="font-mono">{user.email}</span> when you
+            signed up — click it to confirm. Need a fresh one? Open Security →
+            Resend.
+          </span>
+        </Link>
+      ) : null}
 
       {message ? (
         <p className="mt-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-sm text-[var(--color-text-muted)]">

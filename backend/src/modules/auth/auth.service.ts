@@ -99,6 +99,34 @@ export type ProfilePatchInput = {
   phone?: string | null;
 };
 
+/**
+ * Change password while logged-in. Requires the user's current password as
+ * a confirmation step — same pattern Stripe, Google etc. use. Throws
+ * `AuthInvalidCredentialsError` when the current password doesn't match so
+ * the route can return 400 without leaking which side failed.
+ */
+export async function changeUserPassword(
+  id: string,
+  currentPassword: string,
+  newPassword: string,
+): Promise<SafeUser> {
+  try {
+    const user = await prisma.user.findUnique({ where: { id } });
+    if (!user || !user.isActive) throw new AuthInvalidCredentialsError();
+    const matches = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!matches) throw new AuthInvalidCredentialsError();
+    const newHash = await bcrypt.hash(newPassword, 12);
+    const updated = await prisma.user.update({
+      where: { id },
+      data: { passwordHash: newHash },
+    });
+    return toSafeUser(updated);
+  } catch (error) {
+    if (error instanceof AuthInvalidCredentialsError) throw error;
+    throw normalizeDbError(error, "Could not change password");
+  }
+}
+
 export async function patchUserProfile(id: string, input: ProfilePatchInput) {
   try {
     const user = await prisma.user.update({

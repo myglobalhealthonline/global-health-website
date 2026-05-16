@@ -97,3 +97,27 @@ export async function requestPasswordReset(input: { email: string }) {
     body: input,
   });
 }
+
+export async function changeCurrentPassword(input: {
+  currentPassword: string;
+  newPassword: string;
+}) {
+  return authRequest<{ user: AuthUser }>("/api/auth/change-password", {
+    method: "POST",
+    body: input,
+  });
+}
+
+export async function resendVerificationEmail() {
+  return authRequest<{ accepted?: true; alreadyVerified?: true }>(
+    "/api/auth/resend-verification",
+    { method: "POST" },
+  );
+}
+
+export async function confirmEmailWithToken(token: string) {
+  return authRequest<{ verified: true }>("/api/auth/verify-email", {
+    method: "POST",
+    body: { token },
+  });
+}
