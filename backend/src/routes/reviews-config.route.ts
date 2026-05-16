@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from "fastify";
 import { getPublicReviewConfig } from "../modules/settings/settings.service.js";
+import { maybeRefreshGoogleAggregate } from "../modules/settings/google-places.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
@@ -18,6 +19,14 @@ const reviewsConfigRoute: FastifyPluginAsync = async (app) => {
     );
     try {
       const config = await getPublicReviewConfig();
+      // Opportunistic Google live refresh — only fires when GOOGLE_PLACES_API_KEY
+      // is set + placeId configured + cached aggregate older than 24h. Failures
+      // here are swallowed so the public endpoint stays fast and resilient.
+      const fresh = await maybeRefreshGoogleAggregate(
+        config.google.placeId,
+        config.google.aggregate,
+      );
+      if (fresh) config.google.aggregate = fresh;
       return okResponse(config);
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {

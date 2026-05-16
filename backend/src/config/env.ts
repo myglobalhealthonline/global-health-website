@@ -55,6 +55,11 @@ const envSchema = z.object({
   /** Stripe — keep test keys in dev. Payments stay disabled when STRIPE_SECRET_KEY is absent. */
   STRIPE_SECRET_KEY: z.string().trim().min(1).optional(),
   STRIPE_WEBHOOK_SECRET: z.string().trim().min(1).optional(),
+
+  /** Google Places API key — when set, the reviews-config endpoint
+   *  refreshes the Google aggregate in the background (24h TTL).
+   *  Without it the admin-entered aggregate is used as-is. */
+  GOOGLE_PLACES_API_KEY: z.string().trim().min(1).optional(),
 });
 
 const parsed = envSchema.parse(mergeRailwayBucketAliases());

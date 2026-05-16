@@ -1,5 +1,4 @@
 import type { FastifyPluginAsync } from "fastify";
-import { z } from "zod";
 import {
   deleteSetting,
   getPublicReviewConfig,
@@ -8,36 +7,7 @@ import {
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
-
-const aggregateSchema = z
-  .object({
-    rating: z.coerce.number().min(0).max(5),
-    count: z.coerce.number().int().min(0),
-    updatedAt: z.string().optional(),
-  })
-  .nullable();
-
-const reviewSettingsSchema = z.object({
-  trustpilot: z
-    .object({
-      businessUnitId: z.string().trim().max(120).nullable().optional(),
-      aggregate: aggregateSchema.optional(),
-    })
-    .optional(),
-  google: z
-    .object({
-      placeId: z.string().trim().max(120).nullable().optional(),
-      aggregate: aggregateSchema.optional(),
-    })
-    .optional(),
-  doctify: z
-    .object({
-      clinicId: z.string().trim().max(120).nullable().optional(),
-      aggregate: aggregateSchema.optional(),
-    })
-    .optional(),
-  primaryProvider: z.enum(["TRUSTPILOT", "GOOGLE", "DOCTIFY"]).nullable().optional(),
-});
+import { reviewSettingsSchema } from "../validations/admin-settings.schema.js";
 
 /**
  * Admin read/write of the review-provider config. The admin UI POSTs the

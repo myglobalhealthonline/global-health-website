@@ -88,6 +88,8 @@ type ProviderEntry = {
   aggregate: AggregateSnapshot;
   // For Trustpilot widget rendering
   trustpilotBusinessUnitId?: string;
+  // For Doctify widget rendering
+  doctifyClinicId?: string;
 };
 
 function pickProvidersWithData(cfg: ReviewConfig): ProviderEntry[] {
@@ -121,12 +123,49 @@ function pickProvidersWithData(cfg: ReviewConfig): ProviderEntry[] {
         ? `https://www.doctify.com/uk/specialist/${cfg.doctify.clinicId}`
         : null,
       aggregate: cfg.doctify.aggregate,
+      doctifyClinicId: cfg.doctify.clinicId ?? undefined,
     });
   }
   return out;
 }
 
 function ProviderBlock({ provider }: { provider: ProviderEntry }) {
+  // Doctify clinic widget — their public embed is an iframe. We size it to
+  // sit cleanly in the review band; admin can swap the URL pattern via the
+  // clinic slug at /admin/settings if Doctify changes their embed format.
+  if (provider.key === "DOCTIFY" && provider.doctifyClinicId) {
+    return (
+      <div style={{ minWidth: 260 }}>
+        <iframe
+          title="Doctify reviews"
+          src={`https://www.doctify.com/embed/clinic/${provider.doctifyClinicId}/widget`}
+          style={{
+            width: 260,
+            height: 88,
+            border: "none",
+            background: "transparent",
+          }}
+          loading="lazy"
+        />
+        <a
+          href={provider.href ?? "#"}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            display: "block",
+            marginTop: 4,
+            fontSize: 12,
+            fontWeight: 600,
+            color: "var(--color-text-muted)",
+            textDecoration: "none",
+            textAlign: "center",
+          }}
+        >
+          {provider.aggregate.rating.toFixed(2)} · {provider.aggregate.count.toLocaleString()} Doctify reviews
+        </a>
+      </div>
+    );
+  }
   // Trustpilot mini widget when the businessUnitId is set — falls back to
   // the static badge when only the aggregate is configured manually.
   if (provider.key === "TRUSTPILOT" && provider.trustpilotBusinessUnitId) {
