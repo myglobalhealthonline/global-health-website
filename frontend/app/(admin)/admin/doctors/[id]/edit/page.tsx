@@ -241,7 +241,15 @@ export default async function AdminEditDoctorPage({
           <p className="mb-5 mt-1 text-[13px] text-[var(--color-text-muted)]">
             Public-facing profile shown on the country team page.
           </p>
-          <form action={updateDoctorAction} className="flex flex-col gap-8">
+          {/* `id` is referenced by the Practicing-in checkboxes in the
+              right sidebar via their `form="doctor-edit-form"` attribute,
+              so toggling a country in that card still submits with this
+              form even though it lives outside the <form> element. */}
+          <form
+            id="doctor-edit-form"
+            action={updateDoctorAction}
+            className="flex flex-col gap-8"
+          >
             <DoctorFields
               countries={countries}
               specialties={specialtiesResult.data.specialties}
@@ -337,11 +345,15 @@ export default async function AdminEditDoctorPage({
                           : "Not listed here"}
                     </p>
                   </div>
-                  {/* Hidden input is what the form submits. The primary
-                      country gets its own `countryId` input from the
-                      DoctorFields component, so we never POST its id here. */}
+                  {/* `form="doctor-edit-form"` ties this input to the
+                      <form> in the left column so it submits with the
+                      rest even though it's physically in the right
+                      sidebar. The primary country has its own `countryId`
+                      input from DoctorFields, so we don't POST its id
+                      here — the disabled primary toggle is visual only. */}
                   <input
                     type="checkbox"
+                    form="doctor-edit-form"
                     name="additionalCountryIds"
                     value={c.id}
                     defaultChecked={checked}
