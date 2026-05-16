@@ -165,48 +165,109 @@ export function ManagedImageField({
               className="block w-full"
               style={{ maxHeight: 360, objectFit: "contain", background: "white" }}
             />
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                clearImage();
-              }}
-              aria-label="Remove image"
+            {/* Top-right action cluster: Replace + Remove */}
+            <div
               style={{
                 position: "absolute",
                 top: 8,
                 right: 8,
-                width: 28,
-                height: 28,
-                borderRadius: 999,
-                background: "rgba(0,0,0,0.55)",
-                color: "#fff",
-                border: "none",
                 display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
+                gap: 6,
               }}
             >
-              <X aria-hidden className="size-3.5" />
-            </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!busy && apiBase) fileRef.current?.click();
+                }}
+                aria-label="Replace image"
+                disabled={busy || !apiBase}
+                style={{
+                  height: 30,
+                  padding: "0 12px",
+                  borderRadius: 999,
+                  background: "rgba(0,0,0,0.65)",
+                  color: "#fff",
+                  border: "none",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: busy ? "wait" : "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                <Upload aria-hidden className="size-3.5" />
+                {busy ? "Uploading…" : "Replace"}
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  clearImage();
+                }}
+                aria-label="Remove image"
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: 999,
+                  background: "rgba(0,0,0,0.65)",
+                  color: "#fff",
+                  border: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                }}
+              >
+                <X aria-hidden className="size-3.5" />
+              </button>
+            </div>
           </>
         ) : (
           <div
             className="grid place-items-center px-4 py-8 text-center"
             style={{ color: "var(--color-text-muted)", minHeight: 180 }}
           >
-            <div>
-              <Upload aria-hidden className="mx-auto size-6" />
+            <div className="flex flex-col items-center">
+              <Upload aria-hidden className="size-6" />
               <p
                 className="m-0 mt-2 text-[13px] font-semibold"
                 style={{ color: "var(--color-text-body)" }}
               >
-                {busy ? "Uploading…" : "Drop image here or click to upload"}
+                {busy ? "Uploading…" : "Drag & drop an image here"}
               </p>
               <p className="m-0 mt-1 text-[12px]">
                 {hint ?? "JPEG, PNG, WebP, GIF, SVG, AVIF · max 5 MB"}
               </p>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!busy && apiBase) fileRef.current?.click();
+                }}
+                disabled={busy || !apiBase}
+                style={{
+                  marginTop: 14,
+                  height: 36,
+                  padding: "0 18px",
+                  borderRadius: 999,
+                  background: "var(--color-brand-primary)",
+                  color: "#fff",
+                  border: "none",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: busy ? "wait" : "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  boxShadow: "var(--shadow-soft)",
+                }}
+              >
+                <Upload aria-hidden className="size-3.5" />
+                Browse files
+              </button>
             </div>
           </div>
         )}
