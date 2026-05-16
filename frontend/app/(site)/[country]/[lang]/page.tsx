@@ -11,6 +11,7 @@ import { DoctorWall, type DoctorWallItem } from "@/components/sections/DoctorWal
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
+import { ReviewBadge } from "@/components/sections/ReviewBadge";
 import { countries, getCountryByCode } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
@@ -223,6 +224,7 @@ export default async function CountryLangHomePage({
       />
       <RichBodySection html={page?.body} />
       <TrustRibbon items={trustItems} />
+      <ReviewBadge countryName={config.name} />
       <ServiceCatalog services={serviceCatalogItems} />
       <DoctorWall doctors={doctorWallItems} bookHref={bookHref} />
       <HowItWorksNarrative />

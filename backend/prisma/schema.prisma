@@ -88,6 +88,7 @@ model Country {
   faqs                       Faq[]
   contentPages               ContentPage[]
   badges                     Badge[]
+  reviews                    Review[]
   consultationSetting        ConsultationSetting?
   bookingSetting             BookingSetting?
   createdAt                  DateTime             @default(now())
@@ -494,4 +495,64 @@ model ContentPage {
   updatedAt          DateTime      @updatedAt
 
   @@unique([countryId, pageKey, locale])
+}
+
+enum ReviewProvider {
+  TRUSTPILOT
+  GOOGLE
+  DOCTIFY
+  INTERNAL
+}
+
+/**
+ * Cached external reviews + aggregate snapshots. The admin Settings page
+ * stores the configuration IDs separately (via `Setting` rows), but the
+ * per-provider aggregate (rating + count) lives here so the public
+ * ReviewBadge and `AggregateRating` JSON-LD can read a single row per
+ * (countryId?, provider) combination.
+ *
+ * When live API integrations land later (Trustpilot Business API,
+ * Google Place Details, Doctify), they'll write to this table.
+ */
+model Review {
+  id            String         @id @default(cuid())
+  countryId     String?
+  provider      ReviewProvider
+  externalId    String?
+  rating        Int
+  title         String?
+  body          String?
+  authorName    String?
+  sourceUrl     String?
+  verifiedAt    DateTime?
+  isApproved    Boolean        @default(true)
+  publishedAt   DateTime?
+  country       Country?       @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([countryId, provider])
+  @@unique([provider, externalId])
+}
+
+/**
+ * Site-wide key/value config the super-admin can edit without a deploy.
+ * Used for review provider IDs, current aggregate ratings, support
+ * contact info, and other settings that don't justify their own table.
+ * Values are JSON so structured data (e.g. aggregate snapshots) fits
+ * alongside plain strings.
+ *
+ * Known keys (Phase 4):
+ *   review.trustpilot.businessUnitId   string
+ *   review.trustpilot.aggregate        { rating: number, count: number, updatedAt: iso8601 }
+ *   review.google.placeId              string
+ *   review.google.aggregate            { rating: number, count: number, updatedAt: iso8601 }
+ *   review.doctify.clinicId            string
+ *   review.doctify.aggregate           { rating: number, count: number, updatedAt: iso8601 }
+ *   review.primaryProvider             "TRUSTPILOT" | "GOOGLE" | "DOCTIFY"
+ */
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
 }

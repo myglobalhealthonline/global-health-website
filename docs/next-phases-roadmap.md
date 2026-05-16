@@ -1,7 +1,8 @@
 # Global Health · Next-Phases Roadmap
 
 **Roadmap date:** 2026-05-16
-**Status today:** Phase 1 shipped end-to-end. Phase 2 infrastructure (SendGrid + Stripe scaffolding) merged on `old_website`, both gated behind env keys so production keeps working without them.
+**Status today:** Phase 1 shipped end-to-end. Phase 2 infrastructure (SendGrid + Stripe scaffolding + 3-provider review badge: Trustpilot / Google / Doctify) merged on `old_website`, all gated behind env keys / admin settings so production keeps working without them.
+**Hosting:** Railway hosts all three services in this project — frontend (Next.js), backend (Fastify), Postgres. No Vercel split; promote each via the Railway dashboard.
 
 This document has two halves. **Part A** is the production-handover checklist — every account, env var, DNS record, and migration you have to set up before flipping the public DNS. **Part B** is the phase plan — what to build next, in priority order, with effort estimates.
 
@@ -18,13 +19,13 @@ Treat this as a literal checklist. Tick each box before announcing the launch.
 | **SendGrid** | Transactional email (verify / reset / booking confirmation) | Free tier: 100 emails/day forever. Essentials: $19.95/mo for 50k/mo. |
 | **Stripe** | Payments | No fixed cost; ~1.5% + €0.25 / transaction EU |
 | **Stripe CLI** | Local webhook testing | Free |
-| **Railway** (or Vercel/Render/Fly) | Hosting for backend + Postgres | $5–20/mo for current scale |
-| **Vercel** | Hosting for frontend (Next.js) | Free hobby tier, $20/mo Pro for production |
+| **Railway** | Hosting for frontend + backend + Postgres (current setup, all three services) | $5–20/mo for current scale, scales linearly |
 | **Domain registrar** | Already own `myglobalhealth.online` | n/a |
 | **Cloudflare** *(optional)* | CDN + WAF + analytics | Free tier covers it |
 | **Sentry** *(strongly recommended)* | Error tracking | Free tier ok |
-| **Trustpilot Business** *(deferred)* | Review badge widget | Free for the basic widget |
-| **Google Business Profile** *(deferred)* | Review badge + maps SEO | Free |
+| **Trustpilot Business** | Review badge + TrustBox widget. Paste the **Business Unit ID** into `/admin/settings`. | Free for the basic widget |
+| **Google Business Profile** | Review badge + maps SEO. Paste the **Place ID** into `/admin/settings`. | Free |
+| **Doctify** | Clinic review badge. Paste the **clinic slug** into `/admin/settings`. | Free for the basic embed |
 | **Plausible / GA4** *(optional)* | Analytics | Plausible €9/mo, GA4 free |
 | **UptimeRobot** *(optional)* | Uptime alerts | Free tier (5 min checks) |
 
@@ -34,9 +35,9 @@ Replace `myglobalhealth.online` with your actual zone if different.
 
 | Type | Host | Value | Purpose |
 |---|---|---|---|
-| A / CNAME | `@` (root) | Vercel-provided IP / `cname.vercel-dns.com` | Frontend |
-| CNAME | `www` | `cname.vercel-dns.com` | Frontend www → root |
-| CNAME | `api` | Railway-provided host (or your backend host) | Backend |
+| CNAME | `@` (root) *(via flattening / ALIAS at registrar)* | Railway-provided host for the frontend service (`*.up.railway.app`) | Frontend |
+| CNAME | `www` | Same Railway frontend host (or alias to `@`) | Frontend www → root |
+| CNAME | `api` | Railway-provided host for the backend service | Backend |
 | CNAME × 3 | `s1._domainkey`, `s2._domainkey`, `em…` | (SendGrid provides exact hosts in **Sender Authentication → Authenticate Your Domain**) | Email DKIM + return-path |
 | TXT | `@` (only if no other SPF) | `v=spf1 include:sendgrid.net ~all` | Email SPF (SendGrid's domain auth flow usually handles this for you via the CNAMEs) |
 | TXT | `_dmarc` | `v=DMARC1; p=quarantine; rua=mailto:dmarc@myglobalhealth.online` | Email DMARC (optional but recommended) |
@@ -74,7 +75,7 @@ These all go into your hosting provider's environment-variables UI. Never commit
 | `ADMIN_API_TOKEN` | unset / empty | Disable the token fallback in prod; rely on session cookies only |
 | `ADMIN_TOKEN_FALLBACK_ENABLED` | `false` | Belt + braces |
 
-**Frontend** (Vercel)
+**Frontend** (Railway — separate service from backend)
 
 | Key | Production value | Notes |
 |---|---|---|
@@ -261,17 +262,22 @@ Goal: doctors log into their own dashboard, manage availability, run consultatio
 
 ### Phase 4 — Reviews + GEO + Conditions library (2–3 weeks)
 
-#### 4a. Reviews integration
+#### 4a. Reviews integration — ✅ scaffold shipped, awaiting provider IDs
 
-| Item | Effort |
+The 3-provider system is wired end-to-end. To go live you just paste the IDs at `/admin/settings` and Save:
+
+| Item | Status |
 |---|---|
-| `Review` + `ReviewProvider` + `AggregateRating` Prisma models | 1 day |
-| Admin Settings page where you paste Trustpilot business unit ID, Google Place ID, Doctify clinic ID | 0.5 day |
-| Trustpilot TrustBox widget embed (per-country) | 0.5 day |
-| Google Places API ratings fetcher with caching | 1 day |
-| Doctify widget embed | 0.5 day |
-| Combined `<ReviewBadge>` component picking best available source | 0.5 day |
-| `AggregateRating` schema.org markup on country home + doctor profile | 0.5 day |
+| `Review` + `Setting` + `ReviewProvider` Prisma models | ✅ shipped |
+| Admin Settings page — Trustpilot business unit ID, Google Place ID, Doctify clinic slug + aggregate per provider | ✅ shipped at `/admin/settings` |
+| `GET /api/public/reviews-config` (5-min revalidate, `reviews-config` tag) + admin invalidation on save | ✅ shipped |
+| `<ReviewBadge>` server component on country home + general-consultation + specialist-consultation | ✅ shipped |
+| `AggregateRating` schema.org JSON-LD using `primaryProvider` (or first available) | ✅ shipped |
+| Trustpilot TrustBox widget loader (auto-injected when `businessUnitId` set) | ✅ shipped |
+| Doctify embed widget when clinic slug set | ⏳ static badge today; widget swap is a 0.5-day follow-up |
+| Google Places API live-rating fetcher (instead of admin-entered aggregate) | ⏳ optional — admin re-enters the count weekly today |
+
+**Operator handoff:** create the three accounts, copy the IDs, paste them at `/admin/settings`. Aggregates can be left blank if you want the badge hidden until you have real data. Setting `primaryProvider` controls which one feeds the `schema.org` `AggregateRating` (Google preferred for SEO).
 
 #### 4b. GEO / AI search
 
@@ -349,5 +355,5 @@ Stripe + Resend can be configured the same day you create the accounts; everythi
 - **As soon as you have SendGrid keys** → I'll smoke-test the email flow against a real inbox + tighten any spam-trigger language in the templates.
 - **As soon as you have Stripe test keys** → I'll wire the booking form → Checkout redirect + payment-status column on /account/bookings (Phase 2 completion items 1–4 above).
 - **When you're ready for Phase 3 (Doctor Dashboard)** → it's a clean greenfield; the schema slot is already reserved.
-- **When you decide on Trustpilot vs Doctify vs Google** for the review provider → I'll wire the picked one in a single commit.
+- **Reviews:** all three providers (Trustpilot + Google + Doctify) are wired. Paste the IDs at `/admin/settings`.
 - **Production handover day** → I'll run the go-live runbook with you (deploy + smoke + DNS flip).

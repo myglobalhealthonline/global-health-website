@@ -12,6 +12,7 @@ import {
   ImageIcon,
   LayoutDashboard,
   Menu,
+  Settings,
   Tags,
   UserRound,
   Users,
@@ -43,6 +44,7 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/doctors": UserRound,
   "/admin/assets": ImageIcon,
   "/admin/users": Users,
+  "/admin/settings": Settings,
 };
 
 // Global = admin-wide ops; Country = items scoped to a single country
@@ -53,6 +55,7 @@ const GLOBAL_HREFS = new Set([
   "/admin/doctors",
   "/admin/specialties",
   "/admin/assets",
+  "/admin/settings",
 ]);
 
 const COUNTRY_HREFS = new Set([
@@ -72,6 +75,7 @@ const ORDER: Record<string, number> = {
   "/admin/specialties": 2,
   "/admin/doctors": 3,
   "/admin/assets": 4,
+  "/admin/settings": 5,
   "/admin/country-home": 0,
   "/admin/country-content": 1,
   "/admin/general-consultations": 2,

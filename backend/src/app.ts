@@ -30,6 +30,8 @@ import pagesRoute from "./routes/pages.route.js";
 import adminPagesRoute from "./routes/admin-pages.route.js";
 import countryScopedRoute from "./routes/country-scoped.route.js";
 import paymentsRoute from "./routes/payments.route.js";
+import reviewsConfigRoute from "./routes/reviews-config.route.js";
+import adminSettingsRoute from "./routes/admin-settings.route.js";
 import { env } from "./config/env.js";
 
 export async function buildApp() {
@@ -123,6 +125,8 @@ export async function buildApp() {
     },
   );
   await app.register(paymentsRoute);
+  await app.register(reviewsConfigRoute);
+  await app.register(adminSettingsRoute);
 
   return app;
 }
