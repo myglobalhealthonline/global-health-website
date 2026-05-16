@@ -135,6 +135,8 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
       whatsappNumber: raw.whatsappNumber === "" ? null : raw.whatsappNumber,
       languages: raw.languages,
       specialtyIds: raw.specialtyIds,
+      // M:N additional country listings (primary stays on Doctor.countryId).
+      additionalCountryIds: raw.additionalCountryIds,
       ...(raw.profileImagePath === "" ? {} : { profileImagePath: raw.profileImagePath }),
       active: raw.active,
     };

@@ -79,6 +79,9 @@ model Country {
   domains                    CountryDomain[]
   clinics                    Clinic[]
   doctors                    Doctor[]
+  /// Doctors with their *primary* country elsewhere who have been linked
+  /// into this country's roster via the `DoctorCountry` M:N join.
+  linkedDoctors              DoctorCountry[]
   specialties                Specialty[]
   services                   Service[]
   healthTests                HealthTest[]
@@ -150,10 +153,32 @@ model Doctor {
   country                Country           @relation(fields: [countryId], references: [id], onDelete: Cascade)
   specialties            DoctorSpecialty[]
   assets                 Asset[]
+  /// Additional country listings (Doctor ↔ Country M:N). The primary
+  /// country still lives on `countryId` above and scopes slug uniqueness;
+  /// each row here adds the doctor to another country's public roster.
+  additionalCountries    DoctorCountry[]
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
 
   @@unique([countryId, slug])
+}
+
+/// Join row letting one Doctor profile appear on multiple country rosters.
+/// The doctor's primary country lives on `Doctor.countryId`; this table is
+/// for *additional* country listings only. We don't duplicate the primary
+/// row here — public list queries UNION the primary + linked sets.
+model DoctorCountry {
+  id        String   @id @default(cuid())
+  doctorId  String
+  countryId String
+  sortOrder Int      @default(0)
+  active    Boolean  @default(true)
+  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  country   Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([doctorId, countryId])
+  @@index([countryId, active])
 }
 
 model Specialty {

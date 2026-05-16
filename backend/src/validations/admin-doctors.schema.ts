@@ -98,6 +98,12 @@ export const adminDoctorCreateBodySchema = z.object({
     .max(20)
     .default([]),
   specialtyIds: z.array(z.string().trim().min(1)).default([]),
+  /**
+   * Additional country listings. The PRIMARY country lives on `countryId`
+   * above; these are extra countries the same doctor profile should appear
+   * in. Empty array clears all extras. `undefined` leaves them untouched.
+   */
+  additionalCountryIds: z.array(z.string().trim().min(1)).optional(),
   profileImagePath: profileImageRefSchema.optional(),
   active: z.boolean().optional(),
 });

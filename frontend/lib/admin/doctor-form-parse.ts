@@ -6,6 +6,15 @@ export function parseDoctorBodyFromForm(formData: FormData) {
     .map((v) => String(v).trim())
     .filter(Boolean);
 
+  // Extra countries beyond the primary `countryId` — drives the Doctor ↔
+  // Country M:N join. Empty array clears all extras. Filtered to drop the
+  // primary country so the join table never tries to dupe it.
+  const primaryCountryId = String(formData.get("countryId") ?? "").trim();
+  const additionalCountryIds = formData
+    .getAll("additionalCountryIds")
+    .map((v) => String(v).trim())
+    .filter((id) => id !== "" && id !== primaryCountryId);
+
   const languages = String(formData.get("languagesCsv") ?? "")
     .split(",")
     .map((v) => v.trim())
@@ -28,6 +37,7 @@ export function parseDoctorBodyFromForm(formData: FormData) {
     whatsappNumber: String(formData.get("whatsappNumber") ?? "").trim(),
     languages,
     specialtyIds,
+    additionalCountryIds,
     profileImagePath: String(formData.get("profileImagePath") ?? "").trim(),
     active: formData.get("active") === "on",
   };

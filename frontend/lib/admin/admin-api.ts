@@ -507,6 +507,15 @@ export type AdminDoctorDto = {
   createdAt: string;
   updatedAt: string;
   country: { id: string; code: string; name: string; slug: string; defaultLocale: string };
+  /** Extra country listings beyond the primary one above. Empty array
+   *  means the doctor is only listed in their primary country. */
+  additionalCountries: Array<{
+    id: string;
+    countryId: string;
+    active: boolean;
+    sortOrder: number;
+    country: { id: string; code: string; name: string; slug: string; defaultLocale: string };
+  }>;
   specialties: AdminDoctorSpecialtyLinkDto[];
   assets: AdminDoctorAssetDto[];
 };

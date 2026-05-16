@@ -31,6 +31,13 @@ const adminDoctorInclude = {
       defaultLocale: true,
     },
   },
+  additionalCountries: {
+    include: {
+      country: {
+        select: { id: true, code: true, name: true, slug: true, defaultLocale: true },
+      },
+    },
+  },
   specialties: {
     include: {
       specialty: {
@@ -80,10 +87,28 @@ export async function listDoctors() {
   }
 }
 
+/**
+ * Public roster for a country. Includes doctors whose *primary* country is
+ * this one PLUS doctors linked in via the DoctorCountry join (active rows
+ * only). Linked rows are deduped if the primary already matches.
+ */
 export async function listDoctorsByCountry(countryCode: string) {
   try {
     return await prisma.doctor.findMany({
-      where: { active: true, country: { code: countryCode, isActive: true } },
+      where: {
+        active: true,
+        OR: [
+          { country: { code: countryCode, isActive: true } },
+          {
+            additionalCountries: {
+              some: {
+                active: true,
+                country: { code: countryCode, isActive: true },
+              },
+            },
+          },
+        ],
+      },
       orderBy: [{ fullName: "asc" }],
       include: {
         country: { select: { id: true, code: true, slug: true, name: true } },
@@ -99,10 +124,31 @@ export async function listDoctorsByCountry(countryCode: string) {
   }
 }
 
+/**
+ * Single-profile lookup by `{ country code, doctor slug }`. Doctor's slug
+ * is globally scoped to its primary country (schema `@@unique([countryId, slug])`),
+ * but multi-country listings mean the URL `/{otherCountry}/{lang}/doctors/{slug}`
+ * is also valid — we accept the match if the doctor is linked into that
+ * country via DoctorCountry.
+ */
 export async function getDoctorByCountryAndSlug(countryCode: string, slug: string) {
   try {
     const doctor = await prisma.doctor.findFirst({
-      where: { slug, active: true, country: { code: countryCode, isActive: true } },
+      where: {
+        slug,
+        active: true,
+        OR: [
+          { country: { code: countryCode, isActive: true } },
+          {
+            additionalCountries: {
+              some: {
+                active: true,
+                country: { code: countryCode, isActive: true },
+              },
+            },
+          },
+        ],
+      },
       include: {
         country: { select: { id: true, code: true, slug: true, name: true } },
         specialties: { include: { specialty: true } },
@@ -252,6 +298,48 @@ async function syncProfileImageAsset(
   });
 }
 
+/**
+ * Sync the additional-country listings for a doctor. The primary country
+ * stays on `Doctor.countryId` and is excluded from this set — only "extra"
+ * countries the doctor practises in get a DoctorCountry row. We delete
+ * rows the admin removed, create rows for new ones, and leave existing
+ * rows untouched (their sortOrder + active flag persist).
+ *
+ * Pass `additionalCountryIds: undefined` to skip the sync entirely.
+ */
+async function syncAdditionalCountries(
+  tx: Prisma.TransactionClient,
+  doctorId: string,
+  primaryCountryId: string,
+  additionalCountryIds: string[] | undefined,
+): Promise<void> {
+  if (additionalCountryIds === undefined) return;
+  // Never insert the primary country into the join table — it's tracked
+  // by Doctor.countryId already.
+  const desired = new Set(
+    additionalCountryIds.filter((id) => id !== primaryCountryId),
+  );
+  const existing = await tx.doctorCountry.findMany({
+    where: { doctorId },
+    select: { id: true, countryId: true },
+  });
+  const existingIds = new Set(existing.map((r) => r.countryId));
+
+  const toDelete = existing.filter((r) => !desired.has(r.countryId));
+  const toCreate = [...desired].filter((id) => !existingIds.has(id));
+
+  if (toDelete.length > 0) {
+    await tx.doctorCountry.deleteMany({
+      where: { id: { in: toDelete.map((r) => r.id) } },
+    });
+  }
+  if (toCreate.length > 0) {
+    await tx.doctorCountry.createMany({
+      data: toCreate.map((countryId) => ({ doctorId, countryId })),
+    });
+  }
+}
+
 export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<AdminDoctorRecord> {
   await assertCountryExists(input.countryId);
   await assertSpecialtiesForCountry(input.specialtyIds, input.countryId);
@@ -303,6 +391,15 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
           },
         });
       }
+
+      // Multi-country listings — the M:N join only carries additional
+      // countries; the primary one lives on Doctor.countryId.
+      await syncAdditionalCountries(
+        tx,
+        created.id,
+        input.countryId,
+        input.additionalCountryIds,
+      );
 
       return tx.doctor.findUniqueOrThrow({
         where: { id: created.id },
@@ -370,6 +467,13 @@ export async function updateAdminDoctor(
 
       const effectiveCountryId = updated.countryId;
       await syncProfileImageAsset(id, effectiveCountryId, body.profileImagePath);
+
+      await syncAdditionalCountries(
+        tx,
+        id,
+        effectiveCountryId,
+        body.additionalCountryIds,
+      );
 
       return tx.doctor.findUniqueOrThrow({
         where: { id },

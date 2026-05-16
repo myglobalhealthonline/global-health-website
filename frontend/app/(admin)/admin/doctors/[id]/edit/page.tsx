@@ -126,6 +126,8 @@ export default async function AdminEditDoctorPage({
       whatsappNumber: raw.whatsappNumber === "" ? null : raw.whatsappNumber,
       languages: raw.languages,
       specialtyIds: raw.specialtyIds,
+      // M:N additional country listings (primary stays on Doctor.countryId).
+      additionalCountryIds: raw.additionalCountryIds,
       profileImagePath: raw.profileImagePath === "" ? null : raw.profileImagePath,
       active: raw.active,
     };
@@ -162,8 +164,9 @@ export default async function AdminEditDoctorPage({
       redirect(`/admin/doctors/${id}/edit?error=${encodeURIComponent(result.message)}`);
     }
 
-    // Bust public Data Cache for this doctor's country roster and slug-specific
-    // page so the public site refreshes immediately.
+    // Bust public Data Cache for this doctor's country roster + slug page
+    // so the public site refreshes immediately. Also bust the rosters for
+    // every linked-country code so the multi-country update surfaces.
     const saved = result.data.doctor;
     if (saved.country?.code) {
       revalidateTag(SITE_CACHE_TAGS.countryDoctors(saved.country.code), "max");
@@ -171,6 +174,12 @@ export default async function AdminEditDoctorPage({
         SITE_CACHE_TAGS.countryDoctorBySlug(saved.country.code, saved.slug),
         "max",
       );
+    }
+    for (const link of saved.additionalCountries ?? []) {
+      const code = link.country?.code;
+      if (code) {
+        revalidateTag(SITE_CACHE_TAGS.countryDoctors(code), "max");
+      }
     }
     revalidateTag(SITE_CACHE_TAGS.globalDoctors(), "max");
 
@@ -296,51 +305,61 @@ export default async function AdminEditDoctorPage({
               Practicing in
             </h3>
             <p className="mb-2 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Active controls visibility per country; sort order ranks the doctor on each country team page.
+              The primary country is fixed and scopes the URL slug. Tick any
+              additional countries you want this profile to appear in — they
+              save as part of the main form submit.
             </p>
-            <div
-              className="flex items-center gap-2.5 border-t border-[var(--color-border)] py-3"
-              style={{ borderTopStyle: "solid" }}
-            >
-              <FlagBadge code={doctor.country.code} size={16} />
-              <div className="flex-1">
-                <p className="m-0 text-[13px] font-bold text-[var(--color-text-primary)]">
-                  {doctor.country.name}
-                </p>
-                <p className="m-0 text-[12px] text-[var(--color-text-muted)]">
-                  {doctor.active ? "Active" : "Inactive"}
-                </p>
-              </div>
-              <span
-                className="inline-flex items-center"
-                aria-hidden
-                style={{
-                  width: 38,
-                  height: 22,
-                  borderRadius: 999,
-                  background: doctor.active
-                    ? "var(--color-brand-primary)"
-                    : "var(--color-border-strong)",
-                  padding: 2,
-                  position: "relative",
-                }}
-              >
-                <span
+            {countriesResult.data.countries.map((c) => {
+              const isPrimary = c.id === doctor.countryId;
+              const isLinked = doctor.additionalCountries.some(
+                (link) => link.countryId === c.id && link.active,
+              );
+              const checked = isPrimary || isLinked;
+              return (
+                <label
+                  key={c.id}
+                  className="flex cursor-pointer items-center gap-2.5 border-t border-[var(--color-border)] py-3"
                   style={{
-                    position: "absolute",
-                    top: 2,
-                    left: doctor.active ? "calc(100% - 20px)" : 2,
-                    width: 18,
-                    height: 18,
-                    borderRadius: "50%",
-                    background: "#fff",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.20)",
+                    cursor: isPrimary ? "default" : "pointer",
+                    opacity: isPrimary ? 1 : 1,
                   }}
-                />
-              </span>
-            </div>
+                >
+                  <FlagBadge code={c.code} size={16} />
+                  <div className="flex-1">
+                    <p className="m-0 text-[13px] font-bold text-[var(--color-text-primary)]">
+                      {c.name}
+                    </p>
+                    <p className="m-0 text-[12px] text-[var(--color-text-muted)]">
+                      {isPrimary
+                        ? "Primary country (locked)"
+                        : checked
+                          ? "Linked listing"
+                          : "Not listed here"}
+                    </p>
+                  </div>
+                  {/* Hidden input is what the form submits. The primary
+                      country gets its own `countryId` input from the
+                      DoctorFields component, so we never POST its id here. */}
+                  <input
+                    type="checkbox"
+                    name="additionalCountryIds"
+                    value={c.id}
+                    defaultChecked={checked}
+                    disabled={isPrimary}
+                    className="h-5 w-5 rounded border-[var(--color-border)] accent-[var(--color-brand-primary)]"
+                    title={
+                      isPrimary
+                        ? "Change the primary country via the Country field above."
+                        : `Toggle ${c.name} listing`
+                    }
+                  />
+                </label>
+              );
+            })}
             <p className="mt-3 text-[11px] text-[var(--color-text-muted)]">
-              Multi-country assignments require the v2 schema (Doctor ↔ Country M:N).
+              Toggling a country off removes this doctor from that country&apos;s
+              public roster (their profile stays intact under the primary
+              country).
             </p>
           </AdminCard>
         </div>
