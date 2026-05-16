@@ -69,6 +69,10 @@ const COUNTRY_HREFS = new Set([
   "/admin/country-content",
   "/admin/pages",
   "/admin/services",
+  "/admin/general-consultations",
+  "/admin/specialist-consultations",
+  "/admin/online-prescriptions",
+  "/admin/health-tests",
   "/admin/appointments",
 ]);
 
@@ -84,11 +88,19 @@ const ORDER: Record<string, number> = {
   "/admin/country-content": 1,
   "/admin/pages": 2,
   "/admin/services": 3,
-  "/admin/appointments": 4,
+  "/admin/general-consultations": 4,
+  "/admin/specialist-consultations": 5,
+  "/admin/online-prescriptions": 6,
+  "/admin/health-tests": 7,
+  "/admin/appointments": 8,
 };
 
 // Tighter labels — long phrases overflow the 260px sidebar.
 const LABEL_OVERRIDES: Record<string, string> = {
+  "/admin/general-consultations": "General consultations",
+  "/admin/specialist-consultations": "Specialist consultations",
+  "/admin/online-prescriptions": "Online prescriptions",
+  "/admin/health-tests": "Health tests",
   "/admin/specialties": "Categories",
 };
 
