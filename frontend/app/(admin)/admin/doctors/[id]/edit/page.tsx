@@ -290,6 +290,7 @@ export default async function AdminEditDoctorPage({
                 via HTML5 form-association on its hidden input. */}
             <DoctorProfileImageField
               initialPath={doctor.assets[0]?.path ?? ""}
+              fullName={doctor.fullName}
               formId="doctor-edit-form"
             />
           </AdminCard>
