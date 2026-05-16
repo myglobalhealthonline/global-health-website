@@ -29,6 +29,7 @@ import adminMediaUploadRoute from "./routes/admin-media-upload.route.js";
 import pagesRoute from "./routes/pages.route.js";
 import adminPagesRoute from "./routes/admin-pages.route.js";
 import countryScopedRoute from "./routes/country-scoped.route.js";
+import paymentsRoute from "./routes/payments.route.js";
 import { env } from "./config/env.js";
 
 export async function buildApp() {
@@ -99,6 +100,29 @@ export async function buildApp() {
   await app.register(pagesRoute);
   await app.register(countryScopedRoute);
   await app.register(adminPagesRoute);
+
+  // Raw-body parser scoped to the Stripe webhook only — signature verification
+  // requires the unmodified request bytes. Registered after JSON content-type
+  // parser so it overrides only when the matcher hits.
+  app.addContentTypeParser(
+    "application/json",
+    { parseAs: "buffer" },
+    function (request, body, done) {
+      // Stash the raw Buffer for Stripe webhook signature verification. We
+      // detect via URL because Fastify hasn't set the route binding at
+      // parser time. JSON parsing still happens so non-webhook routes get
+      // their normal body shape.
+      if (request.url?.startsWith("/api/payments/webhook")) {
+        (request as typeof request & { rawBody: Buffer }).rawBody = body as Buffer;
+      }
+      try {
+        done(null, body.length ? JSON.parse((body as Buffer).toString("utf8")) : {});
+      } catch (err) {
+        done(err as Error);
+      }
+    },
+  );
+  await app.register(paymentsRoute);
 
   return app;
 }

@@ -4,6 +4,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { bookingSchema } from "../validations/booking.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
+import { sendBookingConfirmationEmail } from "../lib/email/templates.js";
 
 const appointmentsRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/appointments", async (request, reply) => {
@@ -25,6 +26,22 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
       }
 
       await createAppointmentWithOptionalOwner(parsed.data, { userId: authUserId });
+
+      // Confirmation email — fire and forget. Email delivery failures must
+      // never block the booking response (admin still sees the inbox row).
+      try {
+        await sendBookingConfirmationEmail({
+          to: parsed.data.email,
+          fullName: parsed.data.fullName,
+          consultationType: parsed.data.consultationType,
+          countryName: parsed.data.country.toUpperCase(),
+        });
+      } catch (emailError) {
+        app.log.warn(
+          { err: emailError, email: parsed.data.email },
+          "Booking confirmation email failed",
+        );
+      }
 
       return okResponse(
         {

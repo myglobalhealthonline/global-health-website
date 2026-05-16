@@ -213,6 +213,7 @@ model Service {
   specialty             Specialty?  @relation("ServiceSpecialty", fields: [specialtyId], references: [id])
   primaryForSpecialties Specialty[] @relation("SpecialtyPrimaryService")
   assets                Asset[]
+  appointments          Appointment[]
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
 
@@ -328,35 +329,77 @@ model BookingSetting {
   updatedAt          DateTime @updatedAt
 }
 
+enum PaymentStatus {
+  UNPAID
+  PENDING
+  PAID
+  REFUNDED
+  FAILED
+}
+
 model Appointment {
-  id               String   @id @default(cuid())
-  userId           String?
-  countryCode      String
-  consultationType String
-  fullName         String
-  email            String
-  phone            String?
-  notes            String?
-  consentAccepted  Boolean
-  status           String   @default("REQUEST_RECEIVED")
-  user             User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                    String         @id @default(cuid())
+  userId                String?
+  countryCode           String
+  consultationType      String
+  fullName              String
+  email                 String
+  phone                 String?
+  notes                 String?
+  consentAccepted       Boolean
+  status                String         @default("REQUEST_RECEIVED")
+  // Optional link to the catalogue Service that was booked. Populated when
+  // the booking form passes ?service=<slug>; null for free-text bookings.
+  serviceId             String?
+  service               Service?       @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  // Payment lifecycle. UNPAID = free or pending-Stripe.
+  paymentStatus         PaymentStatus  @default(UNPAID)
+  // Stripe identifiers. Null until a Checkout Session is created.
+  stripeSessionId       String?        @unique
+  stripePaymentIntentId String?        @unique
+  amountCents           Int?
+  currencyCode          String?
+  paidAt                DateTime?
+  user                  User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  payments              Payment[]
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+}
+
+/// Append-only ledger of Stripe events per Appointment. One row per webhook
+/// `payment_intent.{created,succeeded,failed}` we accept. Makes the audit
+/// trail explicit even when an appointment ends up REFUNDED later.
+model Payment {
+  id                    String        @id @default(cuid())
+  appointmentId         String
+  appointment           Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  stripeEventId         String        @unique
+  stripeSessionId       String?
+  stripePaymentIntentId String?
+  status                PaymentStatus
+  amountCents           Int
+  currencyCode          String
+  rawEventType          String
+  rawPayload            Json
+  createdAt             DateTime      @default(now())
+
+  @@index([appointmentId])
 }
 
 model User {
-  id              String               @id @default(cuid())
-  email           String               @unique
-  passwordHash    String
-  fullName        String
-  phone           String?
-  role            UserRole             @default(PATIENT)
-  emailVerifiedAt DateTime?
-  isActive        Boolean              @default(true)
-  appointments    Appointment[]
-  resetTokens     PasswordResetToken[]
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
+  id                       String                    @id @default(cuid())
+  email                    String                    @unique
+  passwordHash             String
+  fullName                 String
+  phone                    String?
+  role                     UserRole                  @default(PATIENT)
+  emailVerifiedAt          DateTime?
+  isActive                 Boolean                   @default(true)
+  appointments             Appointment[]
+  resetTokens              PasswordResetToken[]
+  emailVerificationTokens  EmailVerificationToken[]
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
 }
 
 model PasswordResetToken {
@@ -367,6 +410,18 @@ model PasswordResetToken {
   usedAt    DateTime?
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
 }
 
 model BlogPost {

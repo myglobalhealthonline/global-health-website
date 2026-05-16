@@ -113,3 +113,111 @@ export async function patchUserProfile(id: string, input: ProfilePatchInput) {
     throw normalizeDbError(error, "Could not update profile");
   }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Token helpers — password reset + email verification.
+   Both tokens are random URL-safe strings sent in the email link;
+   only their SHA-256 hash is stored, so a DB leak doesn't expose
+   usable links. Each token is single-use (usedAt set on consume).
+   ───────────────────────────────────────────────────────────── */
+
+import { createHash, randomBytes } from "node:crypto";
+
+const PASSWORD_RESET_TTL_MINUTES = 60;
+const EMAIL_VERIFICATION_TTL_HOURS = 24;
+
+function hashToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+function generateToken(): string {
+  // 32 bytes → 43-char base64url, plenty of entropy.
+  return randomBytes(32).toString("base64url");
+}
+
+export async function findUserByEmail(email: string): Promise<User | null> {
+  try {
+    return await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+  } catch (error) {
+    throw normalizeDbError(error, "Authentication is temporarily unavailable");
+  }
+}
+
+/** Issue a password-reset token; expires in 1 hour. Returns the plain token
+ *  the caller can email. The DB only stores its SHA-256 hash. */
+export async function issuePasswordResetToken(userId: string): Promise<string> {
+  const token = generateToken();
+  const tokenHash = hashToken(token);
+  const expiresAt = new Date(Date.now() + PASSWORD_RESET_TTL_MINUTES * 60 * 1000);
+  try {
+    await prisma.passwordResetToken.create({
+      data: { userId, tokenHash, expiresAt },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not issue password reset token");
+  }
+  return token;
+}
+
+/** Validate + consume a password-reset token, hash a new password, save. */
+export async function consumePasswordResetToken(token: string, newPassword: string): Promise<boolean> {
+  const tokenHash = hashToken(token);
+  try {
+    const row = await prisma.passwordResetToken.findUnique({ where: { tokenHash } });
+    if (!row) return false;
+    if (row.usedAt) return false;
+    if (row.expiresAt.getTime() < Date.now()) return false;
+
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    await prisma.$transaction([
+      prisma.user.update({ where: { id: row.userId }, data: { passwordHash } }),
+      prisma.passwordResetToken.update({
+        where: { tokenHash },
+        data: { usedAt: new Date() },
+      }),
+    ]);
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Could not reset password");
+  }
+}
+
+/** Issue an email-verification token; expires in 24 hours. */
+export async function issueEmailVerificationToken(userId: string): Promise<string> {
+  const token = generateToken();
+  const tokenHash = hashToken(token);
+  const expiresAt = new Date(Date.now() + EMAIL_VERIFICATION_TTL_HOURS * 60 * 60 * 1000);
+  try {
+    await prisma.emailVerificationToken.create({
+      data: { userId, tokenHash, expiresAt },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not issue verification token");
+  }
+  return token;
+}
+
+/** Validate + consume an email-verification token; sets emailVerifiedAt. */
+export async function consumeEmailVerificationToken(token: string): Promise<boolean> {
+  const tokenHash = hashToken(token);
+  try {
+    const row = await prisma.emailVerificationToken.findUnique({ where: { tokenHash } });
+    if (!row) return false;
+    if (row.usedAt) return false;
+    if (row.expiresAt.getTime() < Date.now()) return false;
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: row.userId },
+        data: { emailVerifiedAt: new Date() },
+      }),
+      prisma.emailVerificationToken.update({
+        where: { tokenHash },
+        data: { usedAt: new Date() },
+      }),
+    ]);
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Could not verify email");
+  }
+}

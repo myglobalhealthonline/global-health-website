@@ -45,6 +45,16 @@ const envSchema = z.object({
    * Defaults to `.data/local-media` when NODE_ENV is not production.
    */
   LOCAL_MEDIA_ROOT: z.string().trim().min(1).optional(),
+
+  /** Resend (transactional email). All three required to actually send. */
+  RESEND_API_KEY: z.string().trim().min(1).optional(),
+  EMAIL_FROM: z.string().trim().email().optional(),
+  /** Used to build absolute URLs in emails (e.g. https://myglobalhealth.online). No trailing slash. */
+  PUBLIC_SITE_URL: z.string().trim().url().optional(),
+
+  /** Stripe — keep test keys in dev. Payments stay disabled when STRIPE_SECRET_KEY is absent. */
+  STRIPE_SECRET_KEY: z.string().trim().min(1).optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().trim().min(1).optional(),
 });
 
 const parsed = envSchema.parse(mergeRailwayBucketAliases());
