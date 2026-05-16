@@ -2,6 +2,7 @@
 
 import cors from "@fastify/cors";
 import cookie from "@fastify/cookie";
+import compress from "@fastify/compress";
 import multipart from "@fastify/multipart";
 import Fastify from "fastify";
 import healthRoute from "./routes/health.route.js";
@@ -60,6 +61,13 @@ export async function buildApp() {
     allowedHeaders: ["Content-Type", "Authorization"],
   });
   await app.register(cookie);
+  // gzip/brotli/deflate on responses ≥ 1 KB. Public reads (doctors list,
+  // services list, countries) shrink ~70% on the wire. Matters most for the
+  // /portugal/pt / /ireland/en SSR fetches which can run 5+ parallel reads.
+  await app.register(compress, {
+    encodings: ["br", "gzip", "deflate"],
+    threshold: 1024,
+  });
   await app.register(multipart, {
     limits: {
       fileSize: 5 * 1024 * 1024,
