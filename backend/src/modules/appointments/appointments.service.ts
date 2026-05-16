@@ -63,6 +63,9 @@ type AppointmentRecord = {
   status: string;
   scheduledAt: Date | null;
   meetingUrl: string | null;
+  paymentStatus: string;
+  amountCents: number | null;
+  currencyCode: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -101,6 +104,9 @@ export type AccountAppointmentListItem = {
   status: string;
   scheduledAt: string | null;
   meetingUrl: string | null;
+  paymentStatus: string;
+  amountCents: number | null;
+  currencyCode: string | null;
   createdAt: string;
   updatedAt: string;
   fullName: string;
@@ -238,6 +244,9 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
         "status",
         "scheduledAt",
         "meetingUrl",
+        "paymentStatus",
+        "amountCents",
+        "currencyCode",
         "createdAt",
         "updatedAt"
       FROM "Appointment"
@@ -287,6 +296,9 @@ export async function getAppointmentById(id: string): Promise<AdminAppointmentDe
           "status",
           "scheduledAt",
           "meetingUrl",
+          "paymentStatus",
+          "amountCents",
+          "currencyCode",
           "createdAt",
           "updatedAt"
         FROM "Appointment"
@@ -321,6 +333,9 @@ export async function updateAppointmentStatus(
           "status",
           "scheduledAt",
           "meetingUrl",
+          "paymentStatus",
+          "amountCents",
+          "currencyCode",
           "createdAt",
           "updatedAt"
         FROM "Appointment"
@@ -355,6 +370,9 @@ export async function updateAppointmentStatus(
           "status",
           "scheduledAt",
           "meetingUrl",
+          "paymentStatus",
+          "amountCents",
+          "currencyCode",
           "createdAt",
           "updatedAt"
       `,
@@ -390,6 +408,9 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
           "status",
           "scheduledAt",
           "meetingUrl",
+          "paymentStatus",
+          "amountCents",
+          "currencyCode",
           "createdAt",
           "updatedAt"
         FROM "Appointment"
@@ -406,6 +427,9 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
       status: row.status,
       scheduledAt: row.scheduledAt ? row.scheduledAt.toISOString() : null,
       meetingUrl: row.meetingUrl,
+      paymentStatus: row.paymentStatus,
+      amountCents: row.amountCents,
+      currencyCode: row.currencyCode,
       createdAt: row.createdAt.toISOString(),
       updatedAt: row.updatedAt.toISOString(),
       fullName: row.fullName,
@@ -436,6 +460,9 @@ export async function getAppointmentForUser(
           "status",
           "scheduledAt",
           "meetingUrl",
+          "paymentStatus",
+          "amountCents",
+          "currencyCode",
           "createdAt",
           "updatedAt"
         FROM "Appointment"
@@ -512,6 +539,9 @@ export async function scheduleAppointment(
           "status",
           "scheduledAt",
           "meetingUrl",
+          "paymentStatus",
+          "amountCents",
+          "currencyCode",
           "createdAt",
           "updatedAt"
       `,

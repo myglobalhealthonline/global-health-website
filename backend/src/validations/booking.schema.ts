@@ -20,6 +20,10 @@ export const bookingSchema = z.object({
       message: "Consent is required before submitting a booking request",
     }),
   }),
+  // Optional Service catalogue link. When set we resolve the slug to the
+  // service row and copy its price/currency onto the appointment so the
+  // Stripe Checkout session has everything it needs without a second look-up.
+  serviceSlug: z.string().trim().max(120).optional(),
 });
 
 export type BookingInput = z.infer<typeof bookingSchema>;

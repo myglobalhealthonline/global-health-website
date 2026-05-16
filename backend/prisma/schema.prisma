@@ -371,8 +371,31 @@ model Appointment {
   reminderSentAt        DateTime?
   user                  User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
   payments              Payment[]
+  messages              Message[]
   createdAt             DateTime       @default(now())
   updatedAt             DateTime       @updatedAt
+}
+
+/// Lightweight chat thread for the patient ↔ admin pre-consult conversation.
+/// One thread per Appointment. Polling-based (no WebSocket layer); when
+/// volume justifies it we can swap to Pusher / Soketi without UI changes.
+enum MessageAuthorRole {
+  PATIENT
+  ADMIN
+}
+
+model Message {
+  id            String            @id @default(cuid())
+  appointmentId String
+  appointment   Appointment       @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  authorRole    MessageAuthorRole
+  authorUserId  String?           // null for the patient guest-booking path
+  body          String
+  readByPatient Boolean           @default(false)
+  readByAdmin   Boolean           @default(false)
+  createdAt     DateTime          @default(now())
+
+  @@index([appointmentId, createdAt])
 }
 
 /// Append-only ledger of Stripe events per Appointment. One row per webhook

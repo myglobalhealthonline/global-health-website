@@ -4,6 +4,7 @@ import cors from "@fastify/cors";
 import cookie from "@fastify/cookie";
 import compress from "@fastify/compress";
 import multipart from "@fastify/multipart";
+import rateLimit from "@fastify/rate-limit";
 import Fastify from "fastify";
 import healthRoute from "./routes/health.route.js";
 import authRoute from "./routes/auth.route.js";
@@ -34,6 +35,7 @@ import paymentsRoute from "./routes/payments.route.js";
 import reviewsConfigRoute from "./routes/reviews-config.route.js";
 import adminSettingsRoute from "./routes/admin-settings.route.js";
 import remindersRoute from "./routes/reminders.route.js";
+import chatRoute from "./routes/chat.route.js";
 import { env } from "./config/env.js";
 
 export async function buildApp() {
@@ -78,6 +80,19 @@ export async function buildApp() {
       fileSize: 5 * 1024 * 1024,
       files: 1,
     },
+  });
+
+  // Global rate limiter. `global: false` means each route is opt-in via
+  // route-level config; routes that don't opt-in are not limited. This
+  // keeps the admin/internal endpoints free of accidental 429s while
+  // capping the public-facing brute-force surface (login, forgot-password,
+  // booking submission, payment intent creation). IP is the default key;
+  // the X-Forwarded-For from Railway is trusted because we set trustProxy.
+  await app.register(rateLimit, {
+    global: false,
+    timeWindow: "15 minutes",
+    max: 100, // default ceiling used by per-route configs
+    skipOnError: true, // never 500 because Redis is down etc.
   });
 
   await app.register(healthRoute);
@@ -131,6 +146,7 @@ export async function buildApp() {
   await app.register(reviewsConfigRoute);
   await app.register(adminSettingsRoute);
   await app.register(remindersRoute);
+  await app.register(chatRoute);
 
   return app;
 }

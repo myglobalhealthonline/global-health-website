@@ -10,7 +10,7 @@ import {
   ShieldCheck,
   Stethoscope,
 } from "lucide-react";
-import { submitBookingRequest } from "@/lib/api/booking-api";
+import { createCheckoutSession, submitBookingRequest } from "@/lib/api/booking-api";
 import { hasPublicApiBaseUrl } from "@/lib/api/client";
 
 type BookingOption = { value: string; label: string };
@@ -73,6 +73,13 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
     setStatusType(null);
 
     const formData = new FormData(event.currentTarget);
+    // ?service=<slug> on the URL hands the form the catalogue link so the
+    // backend can stamp price + currency for Stripe. Free-form bookings
+    // (no slug) skip payment.
+    const serviceSlug =
+      typeof window !== "undefined"
+        ? (new URLSearchParams(window.location.search).get("service") ?? undefined)
+        : undefined;
     const payload = {
       country: String(formData.get("country") ?? "").trim(),
       consultationType: String(formData.get("consultationType") ?? "").trim(),
@@ -81,6 +88,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
       phone: String(formData.get("phone") ?? "").trim(),
       notes: String(formData.get("notes") ?? "").trim(),
       consentAccepted: formData.get("consentAccepted") === "on",
+      serviceSlug: serviceSlug?.trim() || undefined,
     };
 
     const nextErrors: FieldErrors = {};
@@ -119,6 +127,35 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
           ? "Booking is temporarily unavailable. Please try again later."
           : result.message,
       );
+      return;
+    }
+
+    // Stripe handoff: if the backend says payment is required (Stripe
+    // configured + appointment has a price), create a Checkout session
+    // and redirect. The booking is already saved at this point — if
+    // Stripe fails, the appointment still exists; admin can resend the
+    // payment link manually.
+    if (result.data.paymentRequired) {
+      setStatusType("success");
+      setStatusMessage("Request received. Redirecting to secure payment…");
+      const returnTo = typeof window !== "undefined" ? window.location.pathname : "/";
+      const checkout = await createCheckoutSession({
+        appointmentId: result.data.appointmentId,
+        returnTo,
+      });
+      if (checkout.ok && checkout.data.url) {
+        window.location.assign(checkout.data.url);
+        return;
+      }
+      // Checkout failed — fall through to the regular success state. Admin
+      // can pick up the payment side manually.
+      setStatusMessage(
+        signedInPatient
+          ? "Request received. Track it in your account booking history. (Payment link will follow by email.)"
+          : "Request received. Our team will follow up shortly with a payment link.",
+      );
+      event.currentTarget.reset();
+      setErrors({});
       return;
     }
 

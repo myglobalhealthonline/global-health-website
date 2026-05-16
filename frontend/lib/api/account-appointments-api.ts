@@ -11,6 +11,9 @@ export type AccountAppointment = {
   status: string;
   scheduledAt: string | null;
   meetingUrl: string | null;
+  paymentStatus: string;
+  amountCents: number | null;
+  currencyCode: string | null;
   createdAt: string;
   updatedAt: string;
   fullName: string;

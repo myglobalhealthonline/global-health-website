@@ -38,7 +38,11 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
    * Idempotency: if the appointment already has an UNPAID session that isn't
    * expired, we return the existing URL instead of creating a duplicate.
    */
-  app.post("/api/payments/checkout-session", async (request, reply) => {
+  app.post("/api/payments/checkout-session", {
+    // 20/hour/IP — a user might retry a few times if Stripe is flaky,
+    // but bots trying to enumerate appointment IDs hit the cap fast.
+    config: { rateLimit: { max: 20, timeWindow: "1 hour" } },
+  }, async (request, reply) => {
     if (!isStripeConfigured()) return paymentsDisabled(reply);
 
     const body = createCheckoutBodySchema.safeParse(request.body);

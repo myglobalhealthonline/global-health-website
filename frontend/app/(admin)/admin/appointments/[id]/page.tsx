@@ -7,6 +7,8 @@ import {
   patchAdminAppointmentSchedule,
   patchAdminAppointmentStatus,
 } from "@/lib/admin/admin-api";
+import { ChatThread } from "@/components/chat/ChatThread";
+import { fetchAdminMessages, postAdminMessage } from "@/lib/api/chat-api";
 import {
   getAllowedNextStatuses,
   isTerminalAppointmentStatus,
@@ -325,6 +327,21 @@ export default async function AdminAppointmentDetailPage({
                 </button>
               </form>
             ) : null}
+          </AdminCard>
+
+          {/* Patient ↔ admin chat for this appointment. Polling-based;
+              only loads when this page is in view. */}
+          <AdminCard>
+            <h3 style={cardTitleStyle}>Patient chat</h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Pre-consult messages. The patient sees replies on /account/bookings.
+            </p>
+            <ChatThread
+              appointmentId={appointment.id}
+              viewerRole="ADMIN"
+              fetcher={fetchAdminMessages}
+              poster={postAdminMessage}
+            />
           </AdminCard>
 
           {/* Schedule the Google Meet call. Filling both fields and saving

@@ -1,13 +1,19 @@
 import type { FastifyPluginAsync } from "fastify";
+import { prisma } from "../db/prisma.js";
 import { createAppointmentWithOptionalOwner } from "../modules/appointments/appointments.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { bookingSchema } from "../validations/booking.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { sendBookingConfirmationEmail } from "../lib/email/templates.js";
+import { isStripeConfigured } from "../lib/stripe/client.js";
 
 const appointmentsRoute: FastifyPluginAsync = async (app) => {
-  app.post("/api/appointments", async (request, reply) => {
+  app.post("/api/appointments", {
+    // 5 booking requests per hour per IP. Real patients book once; bots
+    // try to flood the admin inbox.
+    config: { rateLimit: { max: 5, timeWindow: "1 hour" } },
+  }, async (request, reply) => {
     const parsed = bookingSchema.safeParse(request.body);
 
     if (!parsed.success) {
@@ -25,7 +31,41 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
         app.log.warn(error, "Unable to resolve booking owner from auth cookie; proceeding as guest booking");
       }
 
-      await createAppointmentWithOptionalOwner(parsed.data, { userId: authUserId });
+      const created = await createAppointmentWithOptionalOwner(parsed.data, { userId: authUserId });
+
+      // Resolve the catalogue Service (if a slug was passed) and copy its
+      // price + currency onto the appointment. This makes Stripe Checkout
+      // a single round-trip later — no second look-up needed.
+      let amountCents: number | null = null;
+      if (parsed.data.serviceSlug) {
+        try {
+          const service = await prisma.service.findFirst({
+            where: {
+              slug: parsed.data.serviceSlug,
+              country: { code: parsed.data.country },
+              isActive: true,
+            },
+            select: {
+              id: true,
+              basePriceCents: true,
+              currencyCode: true,
+            },
+          });
+          if (service) {
+            amountCents = service.basePriceCents;
+            await prisma.appointment.update({
+              where: { id: created.id },
+              data: {
+                serviceId: service.id,
+                amountCents: service.basePriceCents,
+                currencyCode: service.currencyCode,
+              },
+            });
+          }
+        } catch (svcErr) {
+          app.log.warn({ err: svcErr }, "Service slug lookup failed; booking saved without price");
+        }
+      }
 
       // Confirmation email — fire and forget. Email delivery failures must
       // never block the booking response (admin still sees the inbox row).
@@ -43,9 +83,16 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
         );
       }
 
+      // Caller (the booking form) uses `paymentRequired` to decide whether to
+      // route the user to Stripe Checkout vs the thank-you screen.
+      const paymentRequired =
+        isStripeConfigured() && amountCents !== null && amountCents > 0;
+
       return okResponse(
         {
           status: "request_received",
+          appointmentId: created.id,
+          paymentRequired,
         },
         "Request received. Our team will follow up.",
       );

@@ -1,6 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { CalendarDays, ArrowRight, ClipboardList, Video, Clock } from "lucide-react";
+import { CalendarDays, ArrowRight, ClipboardList, Video, Clock, MessageCircle } from "lucide-react";
 import type { AccountAppointment } from "@/lib/api/account-appointments-api";
+import { ChatThread } from "@/components/chat/ChatThread";
+import { fetchPatientMessages, postPatientMessage } from "@/lib/api/chat-api";
 
 type BookingsShellProps = {
   items: AccountAppointment[];
@@ -29,7 +34,33 @@ function statusBadgeClass(status: string) {
   return "gh-badge-neutral";
 }
 
+function paymentBadgeClass(status: string) {
+  if (status === "PAID") return "gh-badge-success";
+  if (status === "FAILED") return "gh-badge-error";
+  if (status === "REFUNDED") return "gh-badge-neutral";
+  if (status === "PROCESSING" || status === "REQUIRES_ACTION") return "gh-badge-warning";
+  return "gh-badge-neutral";
+}
+
+function formatPaymentLabel(status: string, amountCents: number | null, currency: string | null) {
+  if (!amountCents) return null;
+  const symbol = currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency === "USD" ? "$" : `${currency} `;
+  const amt = (amountCents / 100).toFixed(2);
+  if (status === "PAID") return `Paid · ${symbol}${amt}`;
+  if (status === "PROCESSING") return `Processing · ${symbol}${amt}`;
+  if (status === "REQUIRES_ACTION") return `Awaiting payment · ${symbol}${amt}`;
+  if (status === "FAILED") return `Payment failed · ${symbol}${amt}`;
+  if (status === "REFUNDED") return `Refunded · ${symbol}${amt}`;
+  if (status === "CANCELED") return `Cancelled · ${symbol}${amt}`;
+  return `${symbol}${amt} unpaid`;
+}
+
 export function BookingsShell({ items, unavailableMessage }: BookingsShellProps) {
+  // Only one chat thread is open at a time. Keeps polling load to one
+  // background fetch every 10s regardless of how many bookings the
+  // patient has in their history.
+  const [openChatId, setOpenChatId] = useState<string | null>(null);
+
   if (unavailableMessage) {
     return (
       <div className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-panel)] px-5 py-4">
@@ -66,9 +97,16 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
               <CalendarDays className="size-4 text-[var(--color-text-muted)]" aria-hidden />
               <span className="text-sm text-[var(--color-text-muted)]">{formatDate(item.createdAt)}</span>
             </div>
-            <span className={`gh-badge ${statusBadgeClass(item.status)}`}>
-              {formatStatus(item.status)}
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              {formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode) ? (
+                <span className={`gh-badge ${paymentBadgeClass(item.paymentStatus)}`}>
+                  {formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode)}
+                </span>
+              ) : null}
+              <span className={`gh-badge ${statusBadgeClass(item.status)}`}>
+                {formatStatus(item.status)}
+              </span>
+            </div>
           </div>
 
           <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
@@ -118,6 +156,31 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
               <p className="mt-0.5 text-sm text-[var(--color-text-body)]">{item.notesPreview}</p>
             </div>
           ) : null}
+
+          {/* Per-card chat toggle. Only one thread can be open at once. */}
+          <div className="mt-3">
+            <button
+              type="button"
+              onClick={() =>
+                setOpenChatId((current) => (current === item.id ? null : item.id))
+              }
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+            >
+              <MessageCircle className="size-4" aria-hidden />
+              {openChatId === item.id ? "Hide messages" : "Message the clinic"}
+            </button>
+
+            {openChatId === item.id ? (
+              <div className="mt-3">
+                <ChatThread
+                  appointmentId={item.id}
+                  viewerRole="PATIENT"
+                  fetcher={fetchPatientMessages}
+                  poster={postPatientMessage}
+                />
+              </div>
+            ) : null}
+          </div>
         </article>
       ))}
     </div>

@@ -33,7 +33,10 @@ import { authCookieOptions, signAuthToken, verifyAuthToken } from "../utils/auth
 import { errorResponse, okResponse } from "../utils/response.js";
 
 const authRoute: FastifyPluginAsync = async (app) => {
-  app.post("/api/auth/register", async (request, reply) => {
+  app.post("/api/auth/register", {
+    // 5/hour/IP — registration is rare, but bots try.
+    config: { rateLimit: { max: 5, timeWindow: "1 hour" } },
+  }, async (request, reply) => {
     const body = registerBodySchema.safeParse(request.body);
     if (!body.success) {
       return reply.status(400).send(errorResponse("Invalid registration payload", body.error.flatten()));
@@ -72,7 +75,11 @@ const authRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.post("/api/auth/login", async (request, reply) => {
+  app.post("/api/auth/login", {
+    // 10 attempts per 15min per IP. Stops credential-stuffing without
+    // breaking the typo-then-retry path real users hit.
+    config: { rateLimit: { max: 10, timeWindow: "15 minutes" } },
+  }, async (request, reply) => {
     const body = loginBodySchema.safeParse(request.body);
     if (!body.success) {
       return reply.status(400).send(errorResponse("Invalid login payload", body.error.flatten()));
@@ -160,7 +167,11 @@ const authRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.post("/api/auth/forgot-password", async (request, reply) => {
+  app.post("/api/auth/forgot-password", {
+    // 5/hour/IP — same cap as register; we don't want to burn the
+    // SendGrid quota or enumerate emails via timing.
+    config: { rateLimit: { max: 5, timeWindow: "1 hour" } },
+  }, async (request, reply) => {
     const body = forgotPasswordBodySchema.safeParse(request.body);
     if (!body.success) {
       return reply.status(400).send(errorResponse("Invalid forgot-password payload", body.error.flatten()));
@@ -191,7 +202,9 @@ const authRoute: FastifyPluginAsync = async (app) => {
     );
   });
 
-  app.post("/api/auth/reset-password", async (request, reply) => {
+  app.post("/api/auth/reset-password", {
+    config: { rateLimit: { max: 10, timeWindow: "1 hour" } },
+  }, async (request, reply) => {
     const body = resetPasswordBodySchema.safeParse(request.body);
     if (!body.success) {
       return reply.status(400).send(errorResponse("Invalid reset-password payload", body.error.flatten()));
