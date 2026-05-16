@@ -40,8 +40,17 @@ export type PublicPageRecord = {
   ctaHref: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
+  /** Linked Asset (when the admin picked from the asset library). */
   heroImage: PublicPageImage | null;
   ogImage: PublicPageImage | null;
+  /** Inline path stored on the ContentPage row when the admin uploaded
+   *  directly into the page editor (the common path). */
+  heroImagePath: string | null;
+  ogImagePath: string | null;
+  /** Pre-resolved absolute URL for the hero image (asset.src OR resolved path).
+   *  Use this in the renderer. */
+  heroImageSrc: string | null;
+  ogImageSrc: string | null;
 };
 
 function isPageKey(v: unknown): v is PublicPageKey {
@@ -68,6 +77,20 @@ function normalizePage(raw: unknown): PublicPageRecord | null {
   if (typeof r.locale !== "string") return null;
   if (typeof r.title !== "string") return null;
   const status = r.status === "PUBLISHED" || r.status === "DRAFT" ? r.status : "DRAFT";
+
+  const heroImage = readImage(r.heroImage);
+  const ogImage = readImage(r.ogImage);
+  const heroImagePath = typeof r.heroImagePath === "string" ? r.heroImagePath : null;
+  const ogImagePath = typeof r.ogImagePath === "string" ? r.ogImagePath : null;
+
+  // Prefer linked Asset URL when present, otherwise resolve the inline path
+  // saved by the admin form (heroImagePath / ogImagePath). Either path
+  // produces an absolute URL that the renderer can drop into <img src>.
+  const heroImageSrc =
+    heroImage?.src ?? (heroImagePath ? resolveTrustedAssetUrl(heroImagePath) ?? null : null);
+  const ogImageSrc =
+    ogImage?.src ?? (ogImagePath ? resolveTrustedAssetUrl(ogImagePath) ?? null : null);
+
   return {
     id: r.id,
     countryId: r.countryId,
@@ -82,8 +105,12 @@ function normalizePage(raw: unknown): PublicPageRecord | null {
     ctaHref: typeof r.ctaHref === "string" ? r.ctaHref : null,
     seoTitle: typeof r.seoTitle === "string" ? r.seoTitle : null,
     seoDescription: typeof r.seoDescription === "string" ? r.seoDescription : null,
-    heroImage: readImage(r.heroImage),
-    ogImage: readImage(r.ogImage),
+    heroImage,
+    ogImage,
+    heroImagePath,
+    ogImagePath,
+    heroImageSrc,
+    ogImageSrc,
   };
 }
 

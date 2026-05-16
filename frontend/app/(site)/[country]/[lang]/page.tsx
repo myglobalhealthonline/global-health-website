@@ -123,6 +123,7 @@ function mapServiceToCatalogItem(
     currency: s.currencyCode ?? "EUR",
     dur: s.durationMinutes != null ? `${s.durationMinutes} min` : "—",
     href: ctaHref,
+    imageSrc: s.imageSrc ?? null,
   };
 }
 
@@ -212,9 +213,13 @@ export default async function CountryLangHomePage({
         countryName={config.name}
         doctorCount={countryDoctors.length}
         languageLabel={languageLabel}
-        bookHref={bookHref}
+        bookHref={page?.ctaHref ?? bookHref}
         totalDoctorsAcrossEurope={totalDoctorsAcrossEurope}
         liveDoctors={liveDoctors}
+        heroTitle={page?.heroTitle ?? null}
+        heroSubtitle={page?.heroSubtitle ?? null}
+        heroImageSrc={page?.heroImageSrc ?? null}
+        ctaLabel={page?.ctaLabel ?? null}
       />
       <RichBodySection html={page?.body} />
       <TrustRibbon items={trustItems} />

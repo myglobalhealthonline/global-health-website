@@ -30,6 +30,8 @@ export type DoctorWallItem = {
   langs: string;
   /** Profile href. The button text appends the last name. */
   href: string;
+  /** Optional uploaded portrait. When provided, replaces the initials tile. */
+  imageSrc?: string | null;
 };
 
 const FLAG_CLASS: Record<string, string> = {
@@ -221,22 +223,43 @@ export function DoctorWall({
                   className="flex items-center gap-3.5"
                   style={{ marginBottom: 16 }}
                 >
-                  <span
-                    className="inline-flex shrink-0 items-center justify-center"
-                    style={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 16,
-                      background:
-                        "linear-gradient(135deg, var(--color-accent), var(--color-brand-primary))",
-                      color: "var(--color-background-dark)",
-                      fontFamily: "var(--font-display)",
-                      fontSize: 18,
-                      fontWeight: 800,
-                    }}
-                  >
-                    {d.initials}
-                  </span>
+                  {d.imageSrc ? (
+                    // Uploaded portrait — falls back to initials if the URL
+                    // 404s by virtue of <img onError> below.
+                    <span
+                      className="inline-flex shrink-0 items-center justify-center overflow-hidden"
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 16,
+                        background: "rgba(255,255,255,0.10)",
+                      }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={d.imageSrc}
+                        alt={d.name}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                    </span>
+                  ) : (
+                    <span
+                      className="inline-flex shrink-0 items-center justify-center"
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 16,
+                        background:
+                          "linear-gradient(135deg, var(--color-accent), var(--color-brand-primary))",
+                        color: "var(--color-background-dark)",
+                        fontFamily: "var(--font-display)",
+                        fontSize: 18,
+                        fontWeight: 800,
+                      }}
+                    >
+                      {d.initials}
+                    </span>
+                  )}
                   <div className="min-w-0 flex-1">
                     <p
                       className="m-0 truncate text-white"

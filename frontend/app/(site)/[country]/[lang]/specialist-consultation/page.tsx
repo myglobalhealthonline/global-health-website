@@ -115,6 +115,7 @@ export default async function CountryLangSpecialistConsultationPage({
     audience: s.specialtyName ?? undefined,
     duration: formatDuration(s.durationMinutes),
     startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
+    imageSrc: s.imageSrc ?? null,
   }));
 
   // Doctor cards filtered to those with at least one specialty link.
@@ -142,7 +143,7 @@ export default async function CountryLangSpecialistConsultationPage({
         ])}
       />
 
-      {/* Hero — admin-editable copy from ContentPage */}
+      {/* Hero — admin-editable copy + optional uploaded image from ContentPage */}
       <section className="mx-auto max-w-5xl px-4 pt-16 pb-10 text-center">
         <p className="text-sm uppercase tracking-wide text-emerald-700">
           {config.name} · Specialist Consultation
@@ -157,6 +158,17 @@ export default async function CountryLangSpecialistConsultationPage({
             {ctaLabel}
           </Link>
         </div>
+        {page?.heroImageSrc ? (
+          <div className="mx-auto mt-10 overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={page.heroImageSrc}
+              alt={heroTitle}
+              className="block w-full"
+              style={{ maxHeight: 440, objectFit: "cover" }}
+            />
+          </div>
+        ) : null}
       </section>
 
       <RichBodySection html={page?.body} />

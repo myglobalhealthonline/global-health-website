@@ -10,6 +10,7 @@ type Item = {
   audience?: string;
   duration?: string;
   startingPrice?: string;
+  imageSrc?: string | null;
 };
 
 type ServicesGridProps = {

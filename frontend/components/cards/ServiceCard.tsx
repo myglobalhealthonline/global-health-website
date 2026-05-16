@@ -12,6 +12,8 @@ type ServiceCardProps = {
   startingPrice?: string;
   ctaLabel?: string;
   className?: string;
+  /** Optional uploaded hero image. Renders as a 16:9 banner at the top. */
+  imageSrc?: string | null;
 };
 
 export function ServiceCard({
@@ -22,15 +24,30 @@ export function ServiceCard({
   startingPrice,
   ctaLabel,
   className,
+  imageSrc,
 }: ServiceCardProps) {
   return (
     <Link
       href={href}
       className={cn(
-        "group flex h-full flex-col rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 shadow-[var(--shadow-card)] transition-all duration-200 hover:border-[var(--color-brand-primary)]/20 hover:shadow-[var(--shadow-card-hover)] sm:p-7",
+        "group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)] transition-all duration-200 hover:border-[var(--color-brand-primary)]/20 hover:shadow-[var(--shadow-card-hover)]",
         className
       )}
     >
+      {imageSrc ? (
+        <div
+          className="relative w-full overflow-hidden"
+          style={{ aspectRatio: "16 / 9", background: "var(--color-background-soft)" }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageSrc}
+            alt={title}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </div>
+      ) : null}
+      <div className="flex h-full flex-col p-6 sm:p-7">
       <h3 className="text-lg font-bold text-[var(--color-text-primary)] transition-colors group-hover:text-[var(--color-brand-primary)]">
         {title}
       </h3>
@@ -56,6 +73,7 @@ export function ServiceCard({
       <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-[var(--color-brand-primary)]">
         <span>{ctaLabel ?? "Learn More"}</span>
         <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
+      </div>
       </div>
     </Link>
   );

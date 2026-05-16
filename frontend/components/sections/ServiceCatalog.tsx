@@ -29,6 +29,8 @@ export type ServiceCatalogItem = {
   /** Free-text duration (e.g. "30 min", "Sent home"). */
   dur: string;
   href: string;
+  /** Optional uploaded hero image. Renders above the icon/tag stripe. */
+  imageSrc?: string | null;
 };
 
 const DEFAULT_ICONS: Record<ServiceTileType, ReactNode> = {
@@ -237,43 +239,69 @@ function ServiceTile({ service: s }: { service: ServiceCatalogItem }) {
         transition: "all 180ms ease-out",
       }}
     >
-      <div
-        className="flex items-start justify-between overflow-hidden"
-        style={{
-          height: 90,
-          background: stripeBg,
-          color: stripeFg,
-          padding: 16,
-        }}
-      >
-        <span
-          className="inline-flex items-center justify-center"
+      {s.imageSrc ? (
+        // Uploaded hero — pre-empts the icon stripe so the photo dominates.
+        <div className="relative overflow-hidden" style={{ height: 160 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={s.imageSrc}
+            alt={s.title}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+          <span
+            className="uppercase absolute right-3 top-3"
+            style={{
+              padding: "4px 10px",
+              borderRadius: 999,
+              background: "rgba(0,0,0,0.55)",
+              color: "#fff",
+              fontSize: 10,
+              fontWeight: 800,
+              letterSpacing: "0.08em",
+            }}
+          >
+            {s.tag}
+          </span>
+        </div>
+      ) : (
+        <div
+          className="flex items-start justify-between overflow-hidden"
           style={{
-            width: 44,
-            height: 44,
-            borderRadius: 12,
-            background: tileBg,
+            height: 90,
+            background: stripeBg,
+            color: stripeFg,
+            padding: 16,
           }}
         >
-          {DEFAULT_ICONS[s.type]}
-        </span>
-        <span
-          className="uppercase"
-          style={{
-            padding: "4px 10px",
-            borderRadius: 999,
-            background:
-              s.type === "test"
-                ? "rgba(20,59,48,0.12)"
-                : "rgba(255,255,255,0.16)",
-            fontSize: 10,
-            fontWeight: 800,
-            letterSpacing: "0.08em",
-          }}
-        >
-          {s.tag}
-        </span>
-      </div>
+          <span
+            className="inline-flex items-center justify-center"
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 12,
+              background: tileBg,
+            }}
+          >
+            {DEFAULT_ICONS[s.type]}
+          </span>
+          <span
+            className="uppercase"
+            style={{
+              padding: "4px 10px",
+              borderRadius: 999,
+              background:
+                s.type === "test"
+                  ? "rgba(20,59,48,0.12)"
+                  : "rgba(255,255,255,0.16)",
+              fontSize: 10,
+              fontWeight: 800,
+              letterSpacing: "0.08em",
+            }}
+          >
+            {s.tag}
+          </span>
+        </div>
+      )}
 
       <div style={{ padding: "20px 22px 22px" }}>
         <h3

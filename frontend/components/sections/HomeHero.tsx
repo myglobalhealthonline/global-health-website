@@ -37,6 +37,10 @@ export function HomeHero({
   bookHref,
   totalDoctorsAcrossEurope,
   liveDoctors,
+  heroTitle,
+  heroSubtitle,
+  heroImageSrc,
+  ctaLabel,
 }: {
   countryCode: CountryCode;
   countryName: string;
@@ -51,8 +55,16 @@ export function HomeHero({
   /** Optional spotlight: a handful of doctors to surface in the "Right now" feed.
    *  Pass undefined or [] to hide the feed entirely (preferred over fake data). */
   liveDoctors?: LiveDoctorItem[];
+  /** Admin overrides — when set, these replace the default copy/visual. */
+  heroTitle?: string | null;
+  heroSubtitle?: string | null;
+  heroImageSrc?: string | null;
+  ctaLabel?: string | null;
 }) {
   const flag = FLAG_CLASS[countryCode] ?? "";
+  const displayHeroTitle = heroTitle?.trim() || null;
+  const displayHeroSubtitle = heroSubtitle?.trim() || null;
+  const displayCtaLabel = ctaLabel?.trim() || `Book consultation in ${countryName}`;
 
   return (
     <section
@@ -109,16 +121,22 @@ export function HomeHero({
             maxWidth: "14ch",
           }}
         >
-          See a doctor.{" "}
-          <span
-            style={{
-              background:
-                "linear-gradient(180deg, transparent 64%, var(--color-accent) 64% 92%, transparent 92%)",
-              paddingInline: "0.05em",
-            }}
-          >
-            From anywhere.
-          </span>
+          {displayHeroTitle ? (
+            displayHeroTitle
+          ) : (
+            <>
+              See a doctor.{" "}
+              <span
+                style={{
+                  background:
+                    "linear-gradient(180deg, transparent 64%, var(--color-accent) 64% 92%, transparent 92%)",
+                  paddingInline: "0.05em",
+                }}
+              >
+                From anywhere.
+              </span>
+            </>
+          )}
         </h1>
 
         <p
@@ -130,9 +148,33 @@ export function HomeHero({
             maxWidth: "44ch",
           }}
         >
-          Online video consultations with locally-registered doctors. Same day,
-          in your language, from your sofa.
+          {displayHeroSubtitle ??
+            "Online video consultations with locally-registered doctors. Same day, in your language, from your sofa."}
         </p>
+
+        {heroImageSrc ? (
+          // Admin-uploaded hero visual sits between the lede and the booking
+          // panel. Wrapped in a `next/image`-less <img> because the source can
+          // be an arbitrary /api/media path or external HTTPS URL and we don't
+          // pre-register it in next.config remotePatterns.
+          <div
+            className="mt-10 overflow-hidden"
+            style={{
+              borderRadius: 24,
+              border: "1px solid var(--color-border)",
+              boxShadow: "var(--shadow-soft)",
+              background: "var(--color-background-soft)",
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={heroImageSrc}
+              alt={displayHeroTitle ?? `${countryName} clinic`}
+              className="block w-full"
+              style={{ maxHeight: 440, objectFit: "cover" }}
+            />
+          </div>
+        ) : null}
 
         <div className="gh-hero-bottom grid gap-4" style={{ marginTop: 48 }}>
           <div
@@ -224,7 +266,7 @@ export function HomeHero({
               className="gh-btn gh-btn-primary"
               style={{ minHeight: 52 }}
             >
-              Book consultation in {countryName}
+              {displayCtaLabel}
               <ArrowUpRight className="size-4" aria-hidden />
             </Link>
           </div>
