@@ -346,8 +346,14 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
             rememberSelection();
           }}
           onBlur={() => {
-            syncToHidden({ rewriteEditor: true });
-            rememberSelection();
+            // Only update the hidden input on blur — DO NOT rewrite the
+            // editor's innerHTML here. Clicking any toolbar button blurs the
+            // editor; rewriting innerHTML at that moment would invalidate the
+            // Range we captured on mousedown, and the subsequent execCommand
+            // would operate on detached DOM nodes (silently doing nothing).
+            // Final sanitization happens on save (hidden input value already
+            // sanitized) and on paste (next branch).
+            syncToHidden();
           }}
           onPaste={() => {
             requestAnimationFrame(() => {
