@@ -293,13 +293,38 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                       </span>
                     </Td>
                     <Td>
-                      <span
-                        className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-background-soft)] py-1 pl-2 pr-3"
-                        style={{ fontSize: 12, fontWeight: 600, color: "var(--color-text-body)" }}
-                      >
-                        <FlagBadge code={d.country.code} size={14} />
-                        {d.country.name}
-                      </span>
+                      {/* Flag-only column. Primary country first, then any
+                          extra DoctorCountry links (active rows only).
+                          Hover each flag to see the country name. */}
+                      {(() => {
+                        const flags: Array<{ code: string; name: string; isPrimary: boolean }> = [
+                          {
+                            code: d.country.code,
+                            name: d.country.name,
+                            isPrimary: true,
+                          },
+                          ...d.additionalCountries
+                            .filter((link) => link.active)
+                            .map((link) => ({
+                              code: link.country.code,
+                              name: link.country.name,
+                              isPrimary: false,
+                            })),
+                        ];
+                        return (
+                          <span className="inline-flex items-center gap-1.5">
+                            {flags.map((f) => (
+                              <span
+                                key={f.code}
+                                title={f.isPrimary ? `${f.name} · primary` : f.name}
+                                style={{ display: "inline-flex" }}
+                              >
+                                <FlagBadge code={f.code} size={18} />
+                              </span>
+                            ))}
+                          </span>
+                        );
+                      })()}
                     </Td>
                     <Td>
                       <span className="block max-w-[12rem] truncate text-[13px] text-[var(--color-text-body)]">
