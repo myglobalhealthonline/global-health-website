@@ -6,14 +6,14 @@ import Link from "next/link";
 /**
  * Minimal GDPR-friendly cookie banner.
  *
- * The site uses one strictly-necessary cookie (`gh_auth` session) plus an
- * optional analytics layer (Plausible — cookieless) and the language /
- * country prefs cookies. Because nothing is third-party-tracked, we offer
- * an "Accept" + "Decline" pair instead of a full consent matrix.
+ * The site uses one strictly-necessary cookie (`gh_auth` session) plus
+ * country + language preference cookies. No third-party trackers — we
+ * still surface the banner so the consent flow is on record. One button
+ * acknowledges, no decline path needed because there's nothing optional
+ * to opt out of.
  *
- * Decline persists `cookie-consent=declined` so analytics scripts in the
- * root layout can opt-out themselves. Accept persists `cookie-consent=accepted`.
- * Banner is dismissed in either case via localStorage.
+ * Persists `cookie-consent=acknowledged` in localStorage so the banner
+ * stays dismissed on subsequent visits.
  */
 const STORAGE_KEY = "gh-cookie-consent";
 
@@ -29,14 +29,12 @@ export function CookieBanner() {
     }
   }, []);
 
-  function persist(value: "accepted" | "declined") {
+  function acknowledge() {
     try {
-      window.localStorage.setItem(STORAGE_KEY, value);
+      window.localStorage.setItem(STORAGE_KEY, "acknowledged");
     } catch {
       // Same-as-above; user will re-see banner next visit, that's fine.
     }
-    // Surface to anything listening (e.g. analytics-gate component).
-    window.dispatchEvent(new CustomEvent("gh:cookie-consent", { detail: value }));
     setVisible(false);
   }
 
@@ -52,28 +50,20 @@ export function CookieBanner() {
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-slate-700">
-          We use a session cookie to keep you signed in and (with consent) a
-          cookieless analytics script to understand which pages help patients.
-          See our{" "}
+          We use a session cookie to keep you signed in plus country and
+          language preferences. No third-party trackers. See our{" "}
           <Link href="/privacy" className="font-semibold text-emerald-700 underline">
             privacy notice
           </Link>{" "}
           for details.
         </p>
-        <div className="flex shrink-0 gap-2">
+        <div className="shrink-0">
           <button
             type="button"
-            onClick={() => persist("declined")}
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            onClick={acknowledge}
+            className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800"
           >
-            Decline
-          </button>
-          <button
-            type="button"
-            onClick={() => persist("accepted")}
-            className="rounded-md bg-emerald-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800"
-          >
-            Accept
+            Got it
           </button>
         </div>
       </div>

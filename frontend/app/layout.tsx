@@ -3,7 +3,6 @@ import { Cormorant_Garamond, Geist_Mono, Plus_Jakarta_Sans } from "next/font/goo
 import { SITE_NAME } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { CookieBanner } from "@/components/compliance/CookieBanner";
-import { AnalyticsGate } from "@/components/compliance/AnalyticsGate";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -55,7 +54,6 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         {children}
         <CookieBanner />
-        <AnalyticsGate />
       </body>
     </html>
   );

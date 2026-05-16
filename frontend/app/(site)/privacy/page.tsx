@@ -40,10 +40,6 @@ export default function PrivacyPage() {
               Email-delivery metadata: when SendGrid accepted, opened, or
               bounced our messages.
             </li>
-            <li>
-              Optional analytics: aggregate, cookieless page-view counts via
-              Plausible — only loaded after you accept cookies.
-            </li>
           </ul>
         </section>
 
@@ -52,7 +48,7 @@ export default function PrivacyPage() {
           <p className="mt-2">
             We set one strictly-necessary session cookie (<code>gh_auth</code>)
             so you stay logged in. Country and language preferences are also
-            stored as cookies. Analytics is opt-in via the consent banner.
+            stored as cookies. No third-party trackers.
           </p>
         </section>
 
@@ -92,9 +88,9 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-xl font-bold text-slate-900">Sub-processors</h2>
           <p className="mt-2">
-            We use Railway (hosting), Stripe (payments), SendGrid
-            (transactional email), and optionally Plausible (analytics).
-            Each is GDPR-compliant and bound by Data Processing Agreements.
+            We use Railway (hosting), Stripe (payments), and SendGrid
+            (transactional email). Each is GDPR-compliant and bound by
+            Data Processing Agreements.
           </p>
         </section>
       </div>

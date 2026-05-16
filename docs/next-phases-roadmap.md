@@ -7,7 +7,7 @@
 - Patient portal: profile, bookings, payments, security (change pwd + email verify + GDPR controls)
 - Google Meet flow: admin schedules → patient gets email + Join-call button
 - 24h reminder cron endpoint (`POST /api/internal/run-reminders` gated by `CRON_SECRET`)
-- GDPR: cookie banner + analytics gate + privacy notice + account-delete + data-export
+- GDPR: cookie banner + privacy notice + account-delete + data-export
 - GEO: `/llms.txt` + `MedicalProcedure` JSON-LD on consultation pages
 
 Owned by another team: doctor dashboard (excluded from this scope).
@@ -35,7 +35,6 @@ Treat this as a literal checklist. Tick each box before announcing the launch.
 | **Trustpilot Business** | Review badge + TrustBox widget. Paste the **Business Unit ID** into `/admin/settings`. | Free for the basic widget |
 | **Google Business Profile** | Review badge + maps SEO. Paste the **Place ID** into `/admin/settings`. | Free |
 | **Doctify** | Clinic review badge. Paste the **clinic slug** into `/admin/settings`. | Free for the basic embed |
-| **Plausible / GA4** *(optional)* | Analytics | Plausible €9/mo, GA4 free |
 | **UptimeRobot** *(optional)* | Uptime alerts | Free tier (5 min checks) |
 
 ### A.2 DNS records to add at your domain registrar
@@ -321,7 +320,6 @@ The 3-provider system is wired end-to-end. To go live you just paste the IDs at 
 | Rate limiting (`@fastify/rate-limit`) on auth + bookings + media-upload | 0.5 day |
 | Country-domain split: `myglobalhealth.ie` / `.pt` / `.es` / `.cz` / `.ro` *(decision needed)* | 2 days *(once decided)* |
 | Status page (BetterStack / Atlassian Statuspage) | 0.5 day setup |
-| GA4 or Plausible integration (cookie-consent gated) | 0.5 day |
 | Cookie consent banner (CookieYes / Cookiebot embed OR custom) | 0.5–1.5 days |
 | Newsletter capture form on footer + admin export | 0.5 day |
 
@@ -375,7 +373,6 @@ Stripe + Resend can be configured the same day you create the accounts; everythi
 - `pnpm --filter backend prisma db push` against Railway DB — adds `Appointment.scheduledAt`, `Appointment.meetingUrl`, `Appointment.reminderSentAt`. All nullable; no downtime.
 - Set `CRON_SECRET` env on Railway (`openssl rand -base64 32`).
 - Add a cron job (Railway scheduled task / EasyCron / GitHub Actions) hitting `POST https://api.myglobalhealth.online/api/internal/run-reminders` hourly with header `x-cron-secret: <CRON_SECRET>`. The endpoint scans the next 23–25h window and emails the 24h reminder.
-- Optional: set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN=myglobalhealth.online` on the frontend service to enable analytics (cookieless, opt-in via banner).
 - Optional: install + wire Sentry. `pnpm --filter backend add @sentry/node` then add `Sentry.init({ dsn: env.SENTRY_DSN })` at the top of `backend/src/server.ts`. Frontend is `pnpm --filter frontend add @sentry/nextjs` + run `npx @sentry/wizard@latest -i nextjs`.
 
 ### Code still pending (lower-priority, not in this commit)
