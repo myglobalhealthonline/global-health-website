@@ -39,11 +39,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   // Sidebar nav.
   //   Global  — cross-country admin ops (Dashboard, Countries, Categories,
-  //             Doctors, Assets).
+  //             Doctors, Assets, Newsletter, Settings).
   //   Country — content + bookings scoped to the active country (Country
-  //             home, Country content, General/Specialist consultations,
-  //             Online prescriptions, Health tests, Appointments). These
-  //             items dim when no country is selected in the topbar picker.
+  //             home, Country content, Pages, Services, Appointments).
+  //             Items dim when no country is selected in the topbar picker.
   const sections = [
     // Global
     { href: "/admin", label: "Dashboard" },
@@ -56,10 +55,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     // Country-scoped
     { href: "/admin/country-home", label: "Country home" },
     { href: "/admin/country-content", label: "Country content" },
-    { href: "/admin/general-consultations", label: "General consultations" },
-    { href: "/admin/specialist-consultations", label: "Specialist consultations" },
-    { href: "/admin/online-prescriptions", label: "Online prescriptions" },
-    { href: "/admin/health-tests", label: "Health tests" },
+    { href: "/admin/pages", label: "Pages" },
+    { href: "/admin/services", label: "Services" },
     { href: "/admin/appointments", label: "Appointments" },
   ];
 

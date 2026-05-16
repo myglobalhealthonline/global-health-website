@@ -69,7 +69,7 @@ export default async function AdminDoctorDetailPage({
   }
 
   const d = result.data.doctor;
-  const publicPath = doctorPublicProfilePath(d.country.teamPath, d.slug);
+  const publicPath = doctorPublicProfilePath(d.country, d.slug);
   const profileImage = d.assets[0]?.path ?? null;
   const isActive = d.active;
 

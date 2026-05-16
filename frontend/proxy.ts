@@ -1,145 +1,23 @@
-﻿import type { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getRequestContext } from "@/lib/routing/get-request-context";
 
 /**
- * Phase 1 country → default locale map. Source of truth lives in the Country
- * model (`defaultLocale`); this proxy mirror is fine because there are five
- * countries and changes are rare. Keep this in sync with `data/countries.ts`.
- */
-const COUNTRY_DEFAULT_LOCALE: Record<string, string> = {
-  ireland: "en",
-  portugal: "pt",
-  spain: "es",
-  czechia: "cs",
-  romania: "ro",
-};
-
-function withLang(countrySlug: string, suffix: string = ""): string {
-  const lang = COUNTRY_DEFAULT_LOCALE[countrySlug] ?? "en";
-  return `/${countrySlug}/${lang}${suffix}`;
-}
-
-/**
- * Legacy → editorial URL map. Old Wix-style country routes are 308'd
- * (permanent, method-preserving) to the new `/{country}/{lang}/...` hierarchy.
+ * Frontend edge proxy.
  *
- * Phase 1 target shape:
- *   Country home      → /{country}/{lang}
- *   Doctors listing   → /{country}/{lang}/doctors
- *   Doctor profile    → /{country}/{lang}/doctors/{slug}
- *   General consult   → /{country}/{lang}/general-consultation
- *   Specialist        → /{country}/{lang}/specialist-consultation
- *   Booking           → /{country}/{lang}/book-online
+ * Responsibilities (post-legacy cleanup):
+ *   1. Auth-gate `/account/*` and `/admin/*` by calling the backend
+ *      `/api/auth/me` with the request's cookies. Patients hitting
+ *      `/admin/*` get redirected to `/account`. Unauthenticated visitors
+ *      get redirected to `/login?next=…`.
+ *   2. Stamp `x-gh-country`, `x-gh-locale`, `x-gh-pathname` request
+ *      headers so downstream RSCs can read locale context.
+ *
+ * The legacy Wix redirect map (`/home-pt → /portugal/pt`, etc.) was
+ * removed when we deleted the dormant routes. Inbound traffic for those
+ * URLs now just 404s — there's no live Wix audience to preserve.
  */
-const redirectMap: Record<string, string> = {
-  // Country homes — both Wix legacy and intermediate /{country} root
-  "/home": withLang("ireland"),
-  "/home-pt": withLang("portugal"),
-  "/home-sp": withLang("spain"),
-  "/home-cz": withLang("czechia"),
-  "/home-rm": withLang("romania"),
-  // Intermediate (pre-[lang]) routes — keep redirect for old links cached by Google
-  "/ireland/team": withLang("ireland", "/doctors"),
-  "/portugal/team": withLang("portugal", "/doctors"),
-  "/spain/team": withLang("spain", "/doctors"),
-  "/czechia/team": withLang("czechia", "/doctors"),
-  "/romania/team": withLang("romania", "/doctors"),
-  "/ireland/services": withLang("ireland", "/general-consultation"),
-  "/portugal/services": withLang("portugal", "/general-consultation"),
-  "/spain/services": withLang("spain", "/general-consultation"),
-  "/czechia/services": withLang("czechia", "/general-consultation"),
-  "/romania/services": withLang("romania", "/general-consultation"),
-  "/ireland/specialists": withLang("ireland", "/specialist-consultation"),
-  "/portugal/specialists": withLang("portugal", "/specialist-consultation"),
-  "/spain/specialists": withLang("spain", "/specialist-consultation"),
-  "/czechia/specialists": withLang("czechia", "/specialist-consultation"),
-  "/romania/specialists": withLang("romania", "/specialist-consultation"),
-
-  // Team listings (Wix slugs)
-  "/ireland-team": withLang("ireland", "/doctors"),
-  "/portugal-team": withLang("portugal", "/doctors"),
-  "/spain-team": withLang("spain", "/doctors"),
-  "/czechia-team": withLang("czechia", "/doctors"),
-  "/romania-team": withLang("romania", "/doctors"),
-
-  // General consultation listings (Wix slugs)
-  "/general-consultation-ie": withLang("ireland", "/general-consultation"),
-  "/general-consultation-pt": withLang("portugal", "/general-consultation"),
-  "/general-consultation-sp": withLang("spain", "/general-consultation"),
-  "/general-consultation-cz": withLang("czechia", "/general-consultation"),
-  "/general-consultation-rm": withLang("romania", "/general-consultation"),
-
-  // Specialist listings (Wix slugs)
-  "/specialty-ie": withLang("ireland", "/specialist-consultation"),
-  "/specialty-pt": withLang("portugal", "/specialist-consultation"),
-  "/specialty-sp": withLang("spain", "/specialist-consultation"),
-  "/specialty-cz": withLang("czechia", "/specialist-consultation"),
-  "/specialty-rm": withLang("romania", "/specialist-consultation"),
-
-  // Global booking → Ireland default (Phase 1 booking is country+lang scoped)
-  "/book-online": withLang("ireland", "/book-online"),
-};
-
 const PUBLIC_FILE = /\.(.*)$/;
-
-/**
- * Prefix rewrites for dynamic legacy routes — doctor profiles and service
- * detail pages move into `/{country}/team/[doctorSlug]` and
- * `/{country}/services/[serviceSlug]` respectively. Returns the new path
- * or `null` when no match applies.
- */
-function matchLegacyPrefix(pathname: string): string | null {
-  // Wix-shape doctor profile slugs → /{country}/{lang}/doctors/{slug}
-  const teamMap: Array<[RegExp, string]> = [
-    [/^\/ireland-team\/(.+)$/, "ireland"],
-    [/^\/portugal-team\/(.+)$/, "portugal"],
-    [/^\/spain-team\/(.+)$/, "spain"],
-    [/^\/czechia-team\/(.+)$/, "czechia"],
-    [/^\/romania-team\/(.+)$/, "romania"],
-    [/^\/ireland-doctors\/(.+)$/, "ireland"],
-  ];
-  for (const [re, country] of teamMap) {
-    const m = pathname.match(re);
-    if (m) return withLang(country, `/doctors/${m[1]}`);
-  }
-
-  // Intermediate-shape doctor profile (pre-lang): /{country}/team/{slug}
-  const intermediateTeam = pathname.match(/^\/(ireland|portugal|spain|czechia|romania)\/team\/(.+)$/);
-  if (intermediateTeam) {
-    return withLang(intermediateTeam[1], `/doctors/${intermediateTeam[2]}`);
-  }
-
-  // Intermediate-shape doctors slug (without /team/) for Ireland legacy
-  const intermediateSlug = pathname.match(/^\/(ireland|portugal|spain|czechia|romania)\/doctors\/(.+)$/);
-  if (intermediateSlug) {
-    return withLang(intermediateSlug[1], `/doctors/${intermediateSlug[2]}`);
-  }
-
-  // Country root (without lang) → country home with default locale.
-  // Handled by the [country]/page.tsx redirect, but covered here as a fallback.
-  const justCountry = pathname.match(/^\/(ireland|portugal|spain|czechia|romania)$/);
-  if (justCountry) return withLang(justCountry[1]);
-
-  // Wix /service-page/{slug} → for Phase 1 we redirect to the country's
-  // general-consultation hub (deferred service detail pages stay offline).
-  // The slug prefix tells us the country.
-  const servicePage = pathname.match(/^\/service-page\/([^/]+)$/);
-  if (servicePage) {
-    const slug = servicePage[1];
-    if (slug.startsWith("ie-")) return withLang("ireland", "/general-consultation");
-    if (slug.startsWith("pt-")) return withLang("portugal", "/general-consultation");
-    if (slug.startsWith("sp-")) return withLang("spain", "/general-consultation");
-    if (slug.startsWith("cz-")) return withLang("czechia", "/general-consultation");
-    if (slug.startsWith("ro-") || slug.startsWith("rm-")) {
-      return withLang("romania", "/general-consultation");
-    }
-    // Prescription / generic Wix services without country prefix → Ireland (where they exist today)
-    return withLang("ireland", "/general-consultation");
-  }
-
-  return null;
-}
 
 /** Same resolution as `getBackendOrigin()` (API_BASE_URL first). Avoids localhost in production. */
 function getApiBaseUrl() {
@@ -230,24 +108,6 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  const redirectTarget = redirectMap[pathname];
-
-  if (redirectTarget) {
-    const url = request.nextUrl.clone();
-    url.pathname = redirectTarget;
-    // 308 keeps the request method + signals permanent move so search
-    // engines transfer ranking to the new editorial URL.
-    return NextResponse.redirect(url, 308);
-  }
-
-  // Prefix redirects for legacy dynamic routes → new /{country}/... hierarchy.
-  const prefixRedirect = matchLegacyPrefix(pathname);
-  if (prefixRedirect) {
-    const url = request.nextUrl.clone();
-    url.pathname = prefixRedirect;
-    return NextResponse.redirect(url, 308);
-  }
-
   const context = getRequestContext({
     host: request.headers.get("host"),
     pathname,
@@ -259,9 +119,6 @@ export async function proxy(request: NextRequest) {
   requestHeaders.set("x-gh-country", context.countryCode);
   requestHeaders.set("x-gh-locale", context.locale);
   requestHeaders.set("x-gh-pathname", pathname);
-  if (context.matchedLegacyRoute) {
-    requestHeaders.set("x-gh-legacy-route", context.matchedLegacyRoute);
-  }
 
   return NextResponse.next({
     request: {

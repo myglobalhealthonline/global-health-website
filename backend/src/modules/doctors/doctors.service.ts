@@ -27,7 +27,8 @@ const adminDoctorInclude = {
       id: true,
       code: true,
       name: true,
-      teamPath: true,
+      slug: true,
+      defaultLocale: true,
     },
   },
   specialties: {

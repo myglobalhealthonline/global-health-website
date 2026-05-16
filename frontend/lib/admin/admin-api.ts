@@ -506,7 +506,7 @@ export type AdminDoctorDto = {
   active: boolean;
   createdAt: string;
   updatedAt: string;
-  country: { id: string; code: string; name: string; teamPath: string };
+  country: { id: string; code: string; name: string; slug: string; defaultLocale: string };
   specialties: AdminDoctorSpecialtyLinkDto[];
   assets: AdminDoctorAssetDto[];
 };
@@ -525,9 +525,17 @@ type AdminDoctorDetailPayload = {
   doctor: AdminDoctorDto;
 };
 
-export function doctorPublicProfilePath(teamPath: string, slug: string): string {
-  const base = teamPath.replace(/\/$/, "");
-  return `${base}/${slug}`;
+/** Canonical public profile URL for a doctor. The new public route shape
+ *  is `/{countrySlug}/{lang}/doctors/{doctorSlug}`. Caller supplies the
+ *  country (with its admin-edited `slug` + `defaultLocale`) and the doctor
+ *  slug — we build the URL from those alone, ignoring the legacy
+ *  `teamPath` field that pointed at Wix-era redirect targets. */
+export function doctorPublicProfilePath(
+  country: { slug: string; defaultLocale: string },
+  doctorSlug: string,
+): string {
+  const lang = (country.defaultLocale ?? "EN").toLowerCase();
+  return `/${country.slug}/${lang}/doctors/${doctorSlug}`;
 }
 
 export async function fetchAdminDoctors(query?: Record<string, string | undefined>) {
@@ -570,167 +578,6 @@ export async function deleteAdminDoctor(id: string) {
 
 export async function purgeAdminDoctor(id: string) {
   return adminRequest<Record<string, never>>(`/api/admin/doctors/${id}/purge`, {
-    method: "DELETE",
-  });
-}
-
-export type AdminPricingPlanDto = {
-  id: string;
-  countryId: string;
-  slug: string;
-  name: string;
-  description: string | null;
-  priceCents: number;
-  currencyCode: string;
-  interval: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-  country: { id: string; code: string; name: string };
-};
-
-export type AdminHealthTestExtraSectionDto = {
-  heading: string;
-  body: string;
-};
-
-export type AdminHealthTestDto = {
-  id: string;
-  countryId: string;
-  slug: string;
-  title: string;
-  shortDescription: string | null;
-  priceCents: number;
-  currencyCode: string;
-  productImagePath: string;
-  galleryImagePaths: string[];
-  sampleType: string | null;
-  resultsTimeline: string | null;
-  heroButtonLabel: string | null;
-  detailIntro: string | null;
-  whatThisTestCovers: string[];
-  whyGetTested: string[];
-  extraSections: AdminHealthTestExtraSectionDto[] | null;
-  sortOrder: number;
-  isActive: boolean;
-  seoTitle: string | null;
-  seoDescription: string | null;
-  legacyPath: string | null;
-  createdAt: string;
-  updatedAt: string;
-  country: { id: string; code: string; name: string };
-};
-
-type AdminHealthTestsListPayload = {
-  items: AdminHealthTestDto[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
-  };
-};
-
-type AdminHealthTestDetailPayload = {
-  healthTest: AdminHealthTestDto;
-};
-
-export async function fetchAdminHealthTests(query?: Record<string, string | undefined>) {
-  const params = new URLSearchParams();
-  if (query) {
-    for (const [key, value] of Object.entries(query)) {
-      if (value !== undefined && value !== "") params.set(key, value);
-    }
-  }
-  const qs = params.toString();
-  const path = qs ? `/api/admin/health-tests?${qs}` : "/api/admin/health-tests";
-  return adminRequest<AdminHealthTestsListPayload>(path);
-}
-
-export const fetchAdminHealthTestById = cache(async (id: string) => {
-  return adminRequest<AdminHealthTestDetailPayload>(`/api/admin/health-tests/${id}`);
-});
-
-export async function postAdminHealthTest(body: unknown) {
-  return adminRequest<AdminHealthTestDetailPayload>("/api/admin/health-tests", {
-    method: "POST",
-    body,
-  });
-}
-
-export async function patchAdminHealthTest(id: string, body: unknown) {
-  return adminRequest<AdminHealthTestDetailPayload>(`/api/admin/health-tests/${id}`, {
-    method: "PATCH",
-    body,
-  });
-}
-
-export async function deleteAdminHealthTest(id: string) {
-  return adminRequest<AdminHealthTestDetailPayload>(`/api/admin/health-tests/${id}`, {
-    method: "DELETE",
-  });
-}
-
-export async function purgeAdminHealthTest(id: string) {
-  return adminRequest<Record<string, never>>(`/api/admin/health-tests/${id}/purge`, {
-    method: "DELETE",
-  });
-}
-
-type AdminPricingListPayload = {
-  items: AdminPricingPlanDto[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
-  };
-};
-
-type AdminPricingDetailPayload = {
-  plan: AdminPricingPlanDto;
-};
-
-export async function fetchAdminPricingPlans(query?: Record<string, string | undefined>) {
-  const params = new URLSearchParams();
-  if (query) {
-    for (const [key, value] of Object.entries(query)) {
-      if (value !== undefined && value !== "") {
-        params.set(key, value);
-      }
-    }
-  }
-  const qs = params.toString();
-  const path = qs ? `/api/admin/pricing?${qs}` : "/api/admin/pricing";
-  return adminRequest<AdminPricingListPayload>(path);
-}
-
-export async function fetchAdminPricingPlanById(id: string) {
-  return adminRequest<AdminPricingDetailPayload>(`/api/admin/pricing/${id}`);
-}
-
-export async function postAdminPricingPlan(body: unknown) {
-  return adminRequest<AdminPricingDetailPayload>("/api/admin/pricing", {
-    method: "POST",
-    body,
-  });
-}
-
-export async function patchAdminPricingPlan(id: string, body: unknown) {
-  return adminRequest<AdminPricingDetailPayload>(`/api/admin/pricing/${id}`, {
-    method: "PATCH",
-    body,
-  });
-}
-
-export async function deleteAdminPricingPlan(id: string) {
-  return adminRequest<AdminPricingDetailPayload>(`/api/admin/pricing/${id}`, {
-    method: "DELETE",
-  });
-}
-
-export async function purgeAdminPricingPlan(id: string) {
-  return adminRequest<Record<string, never>>(`/api/admin/pricing/${id}/purge`, {
     method: "DELETE",
   });
 }
