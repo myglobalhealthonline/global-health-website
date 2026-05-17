@@ -159,7 +159,7 @@ async function adminRequest<T>(
     const dropped = allCookies
       .filter((entry) => !VALID_COOKIE_NAME.test(entry.name))
       .map((entry) => entry.name.slice(0, 40));
-    // eslint-disable-next-line no-console
+     
     console.warn(
       `[admin-api] Dropped ${dropped.length} malformed cookie(s) before forwarding to backend. ` +
         "Clear localhost cookies in DevTools to remove them from your browser.",

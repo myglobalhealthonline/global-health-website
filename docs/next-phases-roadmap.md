@@ -11,6 +11,33 @@
 - GEO: `/llms.txt` + `MedicalProcedure` JSON-LD on consultation pages
 
 Owned by another team: doctor dashboard (excluded from this scope).
+
+---
+
+## Known gap — patient-picked doctor + time slot
+
+Today's booking flow captures country, consultation type, patient
+contact, optional Service catalogue link → admin then schedules a Google
+Meet manually. The patient cannot pick a specific doctor or an exact
+time slot at booking — that's deferred.
+
+What needs to ship for real slot booking:
+- Schema: `DoctorAvailability` (recurring weekly windows per doctor) +
+  `DoctorTimeSlot` (concrete slots derived/booked); `Appointment.doctorId`
+  + `Appointment.timeSlotId`.
+- Backend: list-availability endpoint per doctor + atomic slot-claim on
+  booking submit (transactional `UPDATE … WHERE status='OPEN'` to avoid
+  double-booking).
+- Booking form: when arriving from a doctor profile / specialist-services
+  card, surface a calendar picker for that doctor's open slots, link the
+  appointment to the chosen slot, charge via Stripe if the service is
+  priced.
+- Admin: schedule action becomes "confirm the patient-picked slot" + add
+  Meet URL, instead of typing both fields from scratch.
+
+Effort estimate: 1 week of focused work. Not blocking the current
+testing phase — admin can keep scheduling manually via the existing
+Practicing-in flow.
 **Hosting:** Railway hosts all three services in this project — frontend (Next.js), backend (Fastify), Postgres. No Vercel split; promote each via the Railway dashboard.
 
 This document has two halves. **Part A** is the production-handover checklist — every account, env var, DNS record, and migration you have to set up before flipping the public DNS. **Part B** is the phase plan — what to build next, in priority order, with effort estimates.

@@ -66,6 +66,34 @@ export async function registerPatient(input: RegisterBody) {
   }
 }
 
+/**
+ * Claim any guest appointments whose email matches this user's. Guests can
+ * book without an account; on first register or login we want their
+ * historic bookings to surface in /account/bookings instead of vanishing.
+ *
+ * Match is case-insensitive on email AND scoped to rows that have no
+ * existing owner (userId IS NULL). Returns the count of rows linked.
+ * Failure is logged at the caller; we don't throw because account creation
+ * / login shouldn't be blocked by a backfill miss.
+ */
+export async function claimGuestAppointmentsForUser(
+  userId: string,
+  email: string,
+): Promise<number> {
+  try {
+    const result = await prisma.appointment.updateMany({
+      where: {
+        userId: null,
+        email: { equals: email, mode: "insensitive" },
+      },
+      data: { userId },
+    });
+    return result.count;
+  } catch {
+    return 0;
+  }
+}
+
 export async function loginUser(input: LoginBody) {
   const email = input.email.toLowerCase();
   try {

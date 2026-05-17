@@ -4,6 +4,7 @@ import {
   AuthConflictError,
   AuthInvalidCredentialsError,
   changeUserPassword,
+  claimGuestAppointmentsForUser,
   consumeEmailVerificationToken,
   consumePasswordResetToken,
   deleteOwnAccount,
@@ -45,6 +46,12 @@ const authRoute: FastifyPluginAsync = async (app) => {
       const user = await registerPatient(body.data);
       const token = signAuthToken({ sub: user.id, role: user.role, email: user.email });
       reply.setCookie(env.AUTH_COOKIE_NAME, token, authCookieOptions());
+
+      // Claim any historic guest bookings made with the same email.
+      const claimed = await claimGuestAppointmentsForUser(user.id, user.email);
+      if (claimed > 0) {
+        app.log.info({ userId: user.id, claimed }, "Linked guest appointments on register");
+      }
 
       // Fire-and-forget verification email. Failures don't block signup —
       // user can request a new verification link later.
@@ -88,6 +95,14 @@ const authRoute: FastifyPluginAsync = async (app) => {
       const user = await loginUser(body.data);
       const token = signAuthToken({ sub: user.id, role: user.role, email: user.email });
       reply.setCookie(env.AUTH_COOKIE_NAME, token, authCookieOptions());
+
+      // First login after a guest booking should attach the historic
+      // appointment(s) to this account.
+      const claimed = await claimGuestAppointmentsForUser(user.id, user.email);
+      if (claimed > 0) {
+        app.log.info({ userId: user.id, claimed }, "Linked guest appointments on login");
+      }
+
       return okResponse({ user }, "Logged in");
     } catch (error) {
       if (error instanceof AuthInvalidCredentialsError) {

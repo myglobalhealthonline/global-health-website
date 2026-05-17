@@ -14,6 +14,7 @@ import {
   isTerminalAppointmentStatus,
 } from "@/lib/admin/appointment-status";
 import { FlagBadge } from "../../_components/flag-badge";
+import { ScheduleTzOffsetInput } from "../_components/schedule-tz-offset";
 import {
   AdminCard,
   Btn,
@@ -144,18 +145,30 @@ export default async function AdminAppointmentDetailPage({
 
     const rawSlot = String(formData.get("scheduledAt") ?? "").trim();
     const rawUrl = String(formData.get("meetingUrl") ?? "").trim();
+    // Browser's `getTimezoneOffset()` in minutes WEST of UTC. Comes from
+    // the ScheduleTzOffsetInput client component. Falls back to 0 (UTC)
+    // if for any reason the value isn't supplied.
+    const rawTzOffset = String(formData.get("scheduledAtTzOffset") ?? "0").trim();
+    const tzOffsetMin = Number.isFinite(Number(rawTzOffset))
+      ? Number(rawTzOffset)
+      : 0;
 
     let scheduledAt: string | null | undefined = undefined;
     if (rawSlot === "") {
       scheduledAt = null;
     } else {
-      const parsed = new Date(rawSlot);
-      if (Number.isNaN(parsed.getTime())) {
+      // The datetime-local input emits "YYYY-MM-DDTHH:mm" with no zone.
+      // Parsing it as UTC ("…Z") gives a stable epoch we can shift by
+      // the admin's actual offset to get the right absolute UTC instant.
+      // This is independent of the Node server's TZ.
+      const asUtcEpoch = Date.parse(`${rawSlot}:00Z`);
+      if (!Number.isFinite(asUtcEpoch)) {
         redirect(
           `/admin/appointments/${id}?error=${encodeURIComponent("Invalid date/time")}`,
         );
       }
-      scheduledAt = parsed.toISOString();
+      const correctedEpoch = asUtcEpoch + tzOffsetMin * 60_000;
+      scheduledAt = new Date(correctedEpoch).toISOString();
     }
     const meetingUrl: string | null = rawUrl === "" ? null : rawUrl;
 
@@ -365,6 +378,11 @@ export default async function AdminAppointmentDetailPage({
             </p>
 
             <form action={scheduleCallAction} className="flex flex-col gap-3">
+              {/* Browser-side TZ offset so the server can convert the
+                  datetime-local string to a UTC ISO that matches the
+                  admin's actual clock — independent of the Node server
+                  timezone. */}
+              <ScheduleTzOffsetInput />
               <label className="flex flex-col gap-1.5">
                 <span className="gh-field-label">Slot (your local time)</span>
                 <input

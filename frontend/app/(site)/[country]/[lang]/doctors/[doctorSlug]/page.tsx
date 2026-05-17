@@ -21,5 +21,7 @@ export default async function CountryLangDoctorProfilePage({
   const code = countryCodeFromSlug(country);
   if (!code) notFound();
   if (!isSupportedLocale(lang)) notFound();
-  return renderDoctorProfilePage(Promise.resolve({ doctorSlug }));
+  return renderDoctorProfilePage(
+    Promise.resolve({ doctorSlug, countrySlug: country, lang }),
+  );
 }

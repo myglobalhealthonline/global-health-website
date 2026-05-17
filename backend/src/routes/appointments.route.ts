@@ -23,6 +23,37 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
+      // Enforce per-country BookingSetting before doing any work. The
+      // setting is admin-controlled at /admin/countries — operators can
+      // disable bookings in a country (maintenance, regulator pause)
+      // and require phone collection where local rules need it.
+      try {
+        const settings = await prisma.bookingSetting.findFirst({
+          where: { country: { code: parsed.data.country } },
+          select: { bookingEnabled: true, requirePhone: true },
+        });
+        if (settings) {
+          if (settings.bookingEnabled === false) {
+            return reply
+              .status(503)
+              .send(
+                errorResponse(
+                  "Online bookings are paused for this country. Please contact us by email.",
+                ),
+              );
+          }
+          if (settings.requirePhone && !parsed.data.phone) {
+            return reply
+              .status(400)
+              .send(errorResponse("A phone number is required for bookings in this country."));
+          }
+        }
+      } catch (settingsErr) {
+        // Settings lookup is best-effort — never block bookings if the
+        // table is empty / lookup fails.
+        app.log.warn({ err: settingsErr }, "BookingSetting lookup failed; allowing booking");
+      }
+
       let authUserId: string | null = null;
       try {
         const authUser = await resolveOptionalAuthUser(request);

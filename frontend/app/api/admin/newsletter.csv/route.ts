@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 
@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
  * forwards the session cookie server-side and streams the CSV back with
  * the `Content-Disposition: attachment` header intact.
  */
-export async function GET(_request: NextRequest) {
+export async function GET() {
   const backend = getBackendOrigin();
   if (!backend) {
     return NextResponse.json(

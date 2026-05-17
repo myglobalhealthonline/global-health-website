@@ -1,5 +1,5 @@
 "use client";
-/* eslint-disable react/no-unescaped-entities */
+ 
 
 import { useState } from "react";
 import {
@@ -11,7 +11,6 @@ import {
   Stethoscope,
 } from "lucide-react";
 import { createCheckoutSession, submitBookingRequest } from "@/lib/api/booking-api";
-import { hasPublicApiBaseUrl } from "@/lib/api/client";
 
 type BookingOption = { value: string; label: string };
 
@@ -55,7 +54,17 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [statusType, setStatusType] = useState<"success" | "error" | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [backendEnabled] = useState(() => hasPublicApiBaseUrl());
+
+  // Preselect the consultation type from `?type=` if it matches one of
+  // the dropdown values. Booking CTAs across the site link with
+  // ?type=general / ?type=specialist / ?type=prescription — preserving
+  // intent across the navigation.
+  const initialType = (() => {
+    if (typeof window === "undefined") return "";
+    const raw = new URLSearchParams(window.location.search).get("type") ?? "";
+    const allowed = new Set(form.consultationTypeOptions.map((o) => o.value));
+    return allowed.has(raw) ? raw : "";
+  })();
 
   const ids = {
     country: "booking-country",
@@ -107,11 +116,11 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
       return;
     }
 
-    if (!backendEnabled) {
-      setStatusType("error");
-      setStatusMessage("Booking service is not configured. Your request was not sent.");
-      return;
-    }
+    // Submission goes through the same-origin /api/appointments proxy
+    // which works as long as the SSR layer can reach the backend.
+    // `NEXT_PUBLIC_API_URL` is no longer required client-side — dropping
+    // the gate that used to block real users when only the private
+    // `API_BASE_URL` was set.
 
     setLoading(true);
     const result = await submitBookingRequest(payload);
@@ -268,7 +277,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                   <select
                     id={ids.consultation}
                     name="consultationType"
-                    defaultValue=""
+                    defaultValue={initialType}
                     className="gh-select"
                   >
                     <option value="">{form.fields.consultationType.placeholder}</option>

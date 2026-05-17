@@ -15,7 +15,17 @@ export function RegisterForm() {
 
   function getNextPath() {
     const next = searchParams.get("next");
-    if (!next || !next.startsWith("/")) return "/account";
+    // Same-origin only. Block protocol-relative `//evil.com` redirects
+    // — browsers resolve those against the current scheme and treat
+    // them as off-site, so a bare startsWith("/") check is insufficient.
+    if (
+      !next ||
+      !next.startsWith("/") ||
+      next.startsWith("//") ||
+      next.startsWith("/\\")
+    ) {
+      return "/account";
+    }
     return next;
   }
 

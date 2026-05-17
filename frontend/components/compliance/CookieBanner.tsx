@@ -21,12 +21,24 @@ export function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    try {
-      const existing = window.localStorage.getItem(STORAGE_KEY);
-      if (!existing) setVisible(true);
-    } catch {
-      // localStorage blocked (private mode w/ aggressive settings) — fail closed.
-    }
+    // Queue the state update to the next microtask so it runs AFTER the
+    // initial commit. Reading localStorage synchronously here would
+    // trigger a sync setState-in-effect lint warning (React strict mode
+    // re-runs effects, which could cause a brief banner flash). The
+    // microtask defer keeps the warning quiet and avoids the flash.
+    let cancelled = false;
+    Promise.resolve().then(() => {
+      if (cancelled) return;
+      try {
+        const existing = window.localStorage.getItem(STORAGE_KEY);
+        if (!existing) setVisible(true);
+      } catch {
+        // localStorage blocked (private mode w/ aggressive settings) — fail closed.
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   function acknowledge() {

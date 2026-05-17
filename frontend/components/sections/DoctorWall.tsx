@@ -208,7 +208,14 @@ export function DoctorWall({
             const lastName = d.name.includes(" ")
               ? d.name.split(" ").slice(-1)[0]
               : d.name;
-            const href = d.href || bookHref || "/book-online";
+            // `d.href` is the per-card link (typically the country-scoped
+            // booking URL injected by the page that renders this wall).
+            // `bookHref` is the wall-level fallback. We never fall through
+            // to a bare `/book-online` because that route doesn't exist —
+            // only `/[country]/[lang]/book-online` does. Render the link
+            // anyway with `/` (sends the visitor through the country gate)
+            // so we don't end up with a 404 button.
+            const href = d.href || bookHref || "/";
             return (
               <div
                 key={d.id}

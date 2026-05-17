@@ -16,7 +16,15 @@ export function LoginForm() {
 
   function getNextPath(role: "PATIENT" | "ADMIN") {
     const next = searchParams.get("next");
-    if (!next || !next.startsWith("/")) {
+    // Must be a same-origin path. Rejects empty, off-site URLs, AND
+    // protocol-relative redirects like `//evil.com/...` which browsers
+    // resolve against the current scheme and treat as off-site.
+    if (
+      !next ||
+      !next.startsWith("/") ||
+      next.startsWith("//") ||
+      next.startsWith("/\\")
+    ) {
       return role === "ADMIN" ? "/admin" : "/account";
     }
     return next;
