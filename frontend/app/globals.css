@@ -572,6 +572,11 @@ img {
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 }
 
+.gh-admin-pager-btn {
+  min-height: 36px;
+  padding: 0 14px;
+}
+
 /* ── Admin card section wrapper ─────────────────────────────── */
 .gh-admin-section {
   padding: 24px;

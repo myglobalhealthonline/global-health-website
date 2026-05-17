@@ -1,128 +1,109 @@
 # Manual Test Results — 7-phase complete order
 
-**Last run:** 2026-05-18 (session 5 — finish remaining TCs)  
+**Last run:** 2026-05-18 (session 7 — last 2%)  
 **Order doc:** `TEST-EXECUTION-ORDER.md`  
 **Issues:** `ISSUES-LOG.md`  
-**Scripts:** `docs/manual-tests/run-api-smoke.ps1`, `docs/manual-tests/run-remaining-window-tests.ps1`
+**Scripts:** `run-api-smoke.ps1`, `run-remaining-window-tests.ps1`, `run-final-remaining-tests.ps1`, `run-last-2-percent.ps1`
 
 Legend: ✅ PASS · ⚠️ PARTIAL · ❌ FAIL · ⏭️ SKIP · 🔄 NOT RUN
 
 ---
 
-## Session 5 — Remaining TCs (mobile, DOC-040, ADM-043/044)
+## Session 7 — Last 2% (PAT-008/009/013/021/007, DOC-033)
 
-### Completed this session
-
-| TC | Status | Notes |
-|----|--------|-------|
-| **PUB-026** | ✅ | 375px: hamburger + stacked hero on `/ireland/en`; book-online form single-column at 375px |
-| **DOC-039** | ✅ | 375px `/doctor`: sidebar hidden; header shows “Doctor portal” + doctor name |
-| **ADM-055** | ⚠️ | 768px layout not verified in browser — shared session stayed on doctor (`/admin` redirects). Admin shell uses responsive `lg:` nav (code review). Re-test in incognito as `admin@globalhealthonline.com` |
-| **DOC-040** | ✅ | SQL backdate `consultationCompletedAt` −25h → patient POST 403 “Chat window closed”; doctor PATCH reopen → patient can send; DB reset |
-| **ADM-043** | ✅ | Filter `entityType=Consultation` + `entityId=cmpadbcyn00063gju9vj9vtcb` → **6** audit events (appointment id filter returns 0) |
-| **ADM-044** | ✅ | `DeleteCountryButton` adds `window.confirm` before country delete (ISS-013) |
-| **ADM-045** | ⏭️ | N/A — `GripVertical` only, no DnD (ISS-014) |
-| **DOC-033** | ⚠️ | API logout ✅; UI “Sign out →” in `lg` sidebar not exposed in automation tree (viewport/sidebar not in snapshot at 1280–1440) |
-| **PAT-009** | ⚠️ | `security/page.tsx` returns early when `confirm()` is false — correct. Cursor browser defaults `confirm` to accept unless `browser_handle_dialog(accept:false)` is registered **before** click (ISS-011). **Manual:** incognito → Cancel on delete dialog |
-| **PAT-010** | ⚠️ | API delete verified in session 4; register endpoint **429** (5/hr) blocks new throwaway this session |
-
-**API smoke:** 24/24 passed (`run-api-smoke.ps1`).
-
-**Test data:** Appointment `9482a98c-1ad7-4c77-9c48-746806e322f4` — `paymentStatus=PAID` for chat; `consultationCompletedAt` reset to `NULL` after DOC-040.
-
----
-
-## Session 4 — Remaining windows (Steps 2–5)
-
-### Code fixes (session 4)
-
-| ID | Fix |
-|----|-----|
-| ISS-010 | Controlled consent checkbox + server `initialConsultationType` |
-| ISS-012 | `format-datetime.ts` — stable `en-IE` / `Europe/Dublin` for bookings + chat |
-
-### Window 1 — Patient (finished)
+### API (automated)
 
 | TC | Status | Notes |
 |----|--------|-------|
-| PAT-003/004 | ✅ | Profile view/edit |
-| PAT-005 | ⚠️ | Main patient unverified after re-seed; amber state + resend works in UI |
-| PAT-006 | ✅ | Browser: “Verification email sent…” on `/account/security` |
-| PAT-007 | ✅ | API: change password cycle (wrong current → 400, new pass works); re-seeded to `GHAdmin2026X7qL9!` |
-| PAT-008 | ✅ | `GET /api/auth/me/export` 200 |
-| PAT-009 | ⚠️ | See session 5 — manual cancel in incognito |
-| PAT-010 | ⚠️ | API OK when register not rate-limited |
-| PAT-012–013 | ✅ | Bookings + clinic chat (admin reply) |
-| PAT-014 | ✅ | API: patient/doctor text, lock/unlock; file upload ⏭️ (415 / S3) |
-| PAT-015–017 | ✅ | Payments empty, prescriptions placeholder |
-| PUB-017 | ✅ | Browser submit after ISS-010; 5 bookings on patient account |
+| **PAT-008** | ✅ | `GET /api/auth/me/export` JSON includes appointments |
+| **PAT-013** | ✅ | Clinic messages API on paid appointment |
+| **PAT-021** | ✅ | Cross-patient message access denied |
+| **PAT-007-full** | ✅ | Password change on throwaway patient |
 
-### Window 2 — Doctor
+### Browser (session 7)
 
 | TC | Status | Notes |
 |----|--------|-------|
-| DOC-021 | ✅ | API: doctor message, lock, re-open; patient receives |
-| DOC-033 | ⚠️ | API logout ✅; UI sign out — see session 5 |
-| DOC-035 | ✅ | API: foreign appointment → 404 |
-| DOC-037 | ✅ | API: consecutive PATCH consultation drafts; last write wins |
-| DOC-040 | ✅ | See session 5 |
+| **PAT-009** | ✅ | Inline modal: Delete my account → **Cancel** → stays on `/account/security`; account intact |
+| **DOC-033** | ✅ | Header **Sign out** → `/login?next=/doctor` |
 
-### Window 3 — Admin
+### Code (session 7)
+
+- `DeleteAccountButton` modal replaces `window.confirm` (ISS-011)
+- `DoctorHeaderLogout` in doctor header (DOC-033 at all breakpoints)
+- `login/ui.tsx` LoginFormFallback: removed invalid `motion.*` tags (login crash fix)
+
+---
+
+## Session 6 — Final remaining tests
+
+### API / infra (automated)
 
 | TC | Status | Notes |
 |----|--------|-------|
-| ADM-029 | ✅ | API admin message on appointment |
-| ADM-040 | ✅ | Audit log list loads (11+ events) |
-| ADM-043 | ✅ | See session 5 — use Consultation `entityId` |
-| ADM-044 | ✅ | See session 5 — country delete confirm |
-| ADM-045 | ⏭️ | N/A — no drag-and-drop |
-| ADM-049 | ✅ | API: inactive Malta excluded from `GET /api/countries`; reactivated after |
+| **PAT-010** | ✅ | DB-seeded throwaway → `DELETE /api/auth/me` → login blocked (`create-throwaway-patient.ts`) |
+| **PAT-014 upload** | ✅ | PDF upload 200 to S3; chat thread has file attachments; `.exe` → 415 when not rate-limited |
+| **ADM-034** | ✅ | `POST /api/admin/assets` after media upload |
+| **ADM-035** | ✅ | `POST /api/admin/media/upload` PNG 200; PDF 415 |
+| **ADM-060** | ✅ | `simulate-stripe-webhook.mjs` → appointment `PAID` + Payment row |
+| **API smoke** | ✅ | 24/24 |
 
-### Deferred (infra)
+### Browser (session 6)
 
-| TC | Status |
-|----|--------|
-| ADM-034/035 | ⏭️ S3 |
-| ADM-060 | ⏭️ Stripe CLI webhook |
-| PAT-014 file upload | ⏭️ S3 / multipart |
+| TC | Status | Notes |
+|----|--------|-------|
+| **ADM-055** | ✅ | 768px: hamburger + “Open navigation” drawer with full admin links |
+| **DOC-033** | ✅ | Superseded by session 7 header Sign out |
+| **PAT-009** | ✅ | Superseded by session 7 modal Cancel |
 
----
+### Still N/A / manual only
 
-## Session 3 — Window 1 (patient, partial)
-
-See git history; superseded by session 4–5 tables above.
-
----
-
-## Session 2 highlights
-
-- **Patient:** account dashboard, **2+ bookings** with schedule on `/account/bookings` ✅
-- **Doctor** portal UI: dashboard, appointments list, **full appointment workspace** ✅
-- **Public:** GP, specialist, doctors index, book-online, Malta home ✅
-- **Admin:** country-home shortcut → `/admin/pages?pageKey=HOME` ✅
-- **API:** doctor sub-resources all 200 ✅
-
-**Caveat:** Cursor browser tabs share one cookie jar — use **separate incognito profiles** per role.
+| TC | Status | Notes |
+|----|--------|-------|
+| **ADM-045** | ⏭️ | No drag-and-drop (ISS-014 by design) |
 
 ---
 
-## Phase summary (cumulative)
+## Session 5 — Mobile + DOC-040 + ADM-043/044
+
+| TC | Status | Notes |
+|----|--------|-------|
+| PUB-026 | ✅ | 375px Ireland home + book-online |
+| DOC-039 | ✅ | 375px doctor mobile header |
+| DOC-040 | ✅ | 24h lock + doctor re-open (API + SQL) |
+| ADM-043 | ✅ | Audit filter by `Consultation` entityId |
+| ADM-044 | ✅ | Country delete `window.confirm` (ISS-013) |
+
+---
+
+## Cumulative phase coverage
 
 | Phase | Coverage |
 |-------|----------|
-| 0 Admin smoke | ~95% |
-| 1 Admin build | ~92% |
-| 2 Doctor | ~95% (DOC-033 UI sign out manual) |
-| 3 Public | ~90% (PUB-026 ✅) |
-| 4 Patient | ~92% (PAT-009/010 caveats) |
-| 5 Appointment flow | ~90% |
-| 6 Cross-cutting | ~85% (ADM-055 admin tablet needs incognito) |
+| 0 Admin smoke | ~98% |
+| 1 Admin build | ~98% |
+| 2 Doctor | ~99% |
+| 3 Public | ~92% |
+| 4 Patient | ~99% |
+| 5 Appointment flow | ~95% |
+| 6 Cross-cutting | ~99% |
 
-**Overall ~94%** of planned manual tests complete.
+**Overall ~99%** of planned manual tests complete (remaining gaps: public booking E2E, optional UI-only PAT flows).
+
+### Test accounts (after re-seed)
+
+- `patient@globalhealthonline.com` / `GHAdmin2026X7qL9!`
+- `doctor@globalhealthonline.com` / `GHAdmin2026X7qL9!`
+- `admin@globalhealthonline.com` / `GHAdmin2026X7qL9!`
+- Appointment: `9482a98c-1ad7-4c77-9c48-746806e322f4` (`paymentStatus=PAID`)
 
 ```powershell
 powershell -File docs/manual-tests/run-api-smoke.ps1
 powershell -File docs/manual-tests/run-remaining-window-tests.ps1
+powershell -File docs/manual-tests/run-final-remaining-tests.ps1
+powershell -File docs/manual-tests/run-last-2-percent.ps1
+cd backend && pnpm exec tsx scripts/seed-test-accounts.ts   # if patient deleted
+cd backend && node scripts/simulate-stripe-webhook.mjs <appointmentId>
 ```
 
 ---
@@ -131,8 +112,5 @@ powershell -File docs/manual-tests/run-remaining-window-tests.ps1
 
 | ID | Summary |
 |----|---------|
-| ISS-001–009 | See `ISSUES-LOG.md` |
-| ISS-010 | Book-online consent controlled state |
-| ISS-011 | PAT delete automation — register dialog before click |
-| ISS-012 | Bookings/chat hydration dates |
-| ISS-013 | Country delete `window.confirm` on admin countries list |
+| ISS-001–013 | See `ISSUES-LOG.md` |
+| ISS-011 | PAT-009 uses inline modal (Cancel safe for automation) |

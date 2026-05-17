@@ -113,24 +113,29 @@ export function ConsultationChat({
 
   useEffect(() => {
     let cancelled = false;
-    let timer: ReturnType<typeof setTimeout> | null = null;
+    let pollTimer: ReturnType<typeof setTimeout> | null = null;
 
-    void load();
+    // Defer the first fetch so setState runs after the effect commit (avoids
+    // react-hooks/set-state-in-effect and matches the polling callback path).
+    const bootstrapTimer = setTimeout(() => {
+      if (!cancelled) void load();
+    }, 0);
 
-    function schedule() {
+    function schedulePoll() {
       if (cancelled) return;
-      timer = setTimeout(async () => {
+      pollTimer = setTimeout(async () => {
         if (document.visibilityState === "visible" && !cancelled) {
           await load();
         }
-        schedule();
+        schedulePoll();
       }, pollIntervalMs);
     }
-    schedule();
+    schedulePoll();
 
     return () => {
       cancelled = true;
-      if (timer) clearTimeout(timer);
+      clearTimeout(bootstrapTimer);
+      if (pollTimer) clearTimeout(pollTimer);
     };
   }, [load, pollIntervalMs]);
 

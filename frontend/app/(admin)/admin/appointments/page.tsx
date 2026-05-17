@@ -250,7 +250,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                 <Th>Status</Th>
                 <Th>Created</Th>
                 <Th>Notes</Th>
-                <Th align="right" style={{ width: 80 }}>
+                <Th align="right" className="w-20">
                   Detail
                 </Th>
               </Thead>
@@ -321,10 +321,9 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
             <div className="flex flex-wrap gap-2">
               <Link
                 href={buildQueueHref(filters, { page: String(Math.max(1, page - 1)) })}
-                className={`gh-btn gh-btn-soft text-[13px] ${
+                className={`gh-admin-pager-btn gh-btn gh-btn-soft text-[13px] ${
                   page <= 1 ? "pointer-events-none opacity-40" : ""
                 }`}
-                style={{ minHeight: 36, padding: "0 14px" }}
               >
                 Previous
               </Link>
@@ -332,10 +331,9 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                 href={buildQueueHref(filters, {
                   page: String(Math.min(totalPages, page + 1)),
                 })}
-                className={`gh-btn gh-btn-primary text-[13px] ${
+                className={`gh-admin-pager-btn gh-btn gh-btn-primary text-[13px] ${
                   page >= totalPages ? "pointer-events-none opacity-40" : ""
                 }`}
-                style={{ minHeight: 36, padding: "0 14px" }}
               >
                 Next
               </Link>

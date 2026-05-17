@@ -5,6 +5,25 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { loginUser } from "@/lib/api/auth-api";
+import styles from "./login.module.css";
+
+export function LoginFormFallback() {
+  return (
+    <form className="grid gap-5" aria-hidden>
+      <div className="grid gap-2">
+        <div className="h-4 w-24 rounded bg-[var(--color-border)]/40" />
+        <div className="h-11 animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
+      </div>
+      <div className="grid gap-2">
+        <div className="h-4 w-20 rounded bg-[var(--color-border)]/40" />
+        <div className="h-11 animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
+      </div>
+      <div className={`${styles.submitBtn} gh-btn gh-btn-primary mt-1 animate-pulse opacity-60`}>
+        Sign in
+      </div>
+    </form>
+  );
+}
 
 export function LoginForm() {
   const router = useRouter();
@@ -16,9 +35,6 @@ export function LoginForm() {
 
   function getNextPath(role: "PATIENT" | "ADMIN" | "DOCTOR") {
     const next = searchParams.get("next");
-    // Must be a same-origin path. Rejects empty, off-site URLs, AND
-    // protocol-relative redirects like `//evil.com/...` which browsers
-    // resolve against the current scheme and treat as off-site.
     if (
       !next ||
       !next.startsWith("/") ||
@@ -54,7 +70,7 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-7 grid gap-5">
+    <form onSubmit={onSubmit} className="grid gap-5" suppressHydrationWarning>
       <div className="grid gap-2">
         <label htmlFor="login-email" className="gh-field-label">
           Email address
@@ -75,7 +91,10 @@ export function LoginForm() {
           <label htmlFor="login-password" className="gh-field-label">
             Password
           </label>
-          <Link href="/forgot-password" className="text-xs font-semibold text-[var(--color-brand-primary)] hover:underline">
+          <Link
+            href="/forgot-password"
+            className="text-xs font-semibold text-[var(--color-brand-primary)] hover:underline"
+          >
             Forgot password?
           </Link>
         </div>
@@ -100,23 +119,19 @@ export function LoginForm() {
         </div>
       </div>
 
-      <label
-        className="flex items-center gap-2 text-[13px] text-[var(--color-text-body)]"
-      >
+      <label className="flex items-center gap-2 text-[13px] text-[var(--color-text-body)]">
         <input
           type="checkbox"
           name="remember"
           defaultChecked
-          style={{ accentColor: "var(--color-brand-primary)" }}
-          className="size-4"
+          className={`${styles.rememberCheckbox} size-4`}
         />
         Remember me on this device
       </label>
 
       <button
         type="submit"
-        className="gh-btn gh-btn-primary mt-1"
-        style={{ minHeight: 48 }}
+        className={`${styles.submitBtn} gh-btn gh-btn-primary mt-1`}
         disabled={loading}
       >
         {loading ? "Signing in…" : "Sign in"}

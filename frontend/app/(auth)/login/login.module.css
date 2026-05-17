@@ -1,0 +1,134 @@
+.page {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  min-height: 100vh;
+}
+
+.brandPanel {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px 64px;
+  color: #fff;
+  background: var(--color-background-dark);
+}
+
+.pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 28px;
+}
+
+.logoMark {
+  display: inline-flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: var(--color-accent);
+  color: var(--color-brand-primary);
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.headline {
+  margin-top: 1rem;
+  max-width: 480px;
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.lead {
+  margin-top: 1rem;
+  max-width: 440px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: rgb(255 255 255 / 0.75);
+}
+
+.version {
+  position: relative;
+  margin: 0;
+  font-size: 12px;
+  color: rgb(255 255 255 / 0.45);
+}
+
+.formPanel {
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  background: var(--color-background-page);
+}
+
+.formInner {
+  width: 100%;
+  max-width: 400px;
+}
+
+.formTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: var(--color-text-primary);
+}
+
+.formSubtitle {
+  margin: 0;
+  margin-top: 0.375rem;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.formSlot {
+  margin-top: 1.75rem;
+}
+
+.formFootnote {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.submitBtn {
+  min-height: 48px;
+}
+
+.rememberCheckbox {
+  accent-color: var(--color-brand-primary);
+}
+
+@media (max-width: 900px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+
+  .brandPanel {
+    padding: 32px 24px;
+  }
+
+  .headline {
+    font-size: clamp(2rem, 6vw, 48px);
+  }
+}

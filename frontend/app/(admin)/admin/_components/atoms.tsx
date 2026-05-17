@@ -311,14 +311,17 @@ export function Thead({ children }: { children: ReactNode }) {
 export function Th({
   children,
   align = "left",
+  className,
   style = {},
 }: {
   children?: ReactNode;
   align?: "left" | "right" | "center";
+  className?: string;
   style?: CSSProperties;
 }) {
   return (
     <th
+      className={className}
       style={{
         padding: "12px 16px",
         textAlign: align,

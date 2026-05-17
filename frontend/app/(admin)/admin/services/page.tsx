@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, GripVertical, Plus, Trash2 } from "lucide-react";
+import { Edit3, Eye, GripVertical, Plus } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminServices,

@@ -5,6 +5,22 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { registerUser } from "@/lib/api/auth-api";
 
+export function RegisterFormFallback() {
+  return (
+    <form className="mt-7 grid gap-5" aria-hidden>
+      <div className="grid gap-2">
+        <div className="h-4 w-28 rounded bg-[var(--color-border)]/40" />
+        <div className="h-11 animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
+      </div>
+      <div className="grid gap-2">
+        <div className="h-4 w-24 rounded bg-[var(--color-border)]/40" />
+        <div className="h-11 animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
+      </div>
+      <div className="gh-btn gh-btn-primary mt-1 animate-pulse opacity-60">Create account</div>
+    </form>
+  );
+}
+
 export function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -148,3 +164,5 @@ export function RegisterForm() {
     </form>
   );
 }
+
+

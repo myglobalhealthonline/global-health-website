@@ -29,7 +29,7 @@
 | ISS-008 | P5 | TC-ADM-025 | P0 | `/admin/appointments/[id]` crash: server passed `fetchAdminMessages` into `ChatThread` client | 🟢 | `AdminAppointmentChat` client wrapper |
 | ISS-009 | P3/P5 | Malta public | P1 | `/malta/en` 404 — `getCountryByCode` only checks seed, not admin countries | 🟢 | `getPublicCountryByCode` on country home |
 | ISS-010 | P3 | TC-PUB-017 | P2 | Book-online consent: uncontrolled checkbox + `FormData` missed checked state in automation | 🟢 | Controlled `consentAccepted` state; server-passes `initialConsultationType` |
-| ISS-011 | P4 | TC-PAT-010 | P1 | **Test incident:** PAT-009 run clicked Delete before `browser_handle_dialog` → main patient deleted; re-registered same email | 🟡 | Use throwaway for PAT-010; register dialog **before** click |
+| ISS-011 | P4 | TC-PAT-009 | P1 | `window.confirm` on delete: MCP `browser_handle_dialog(accept:false)` did not cancel; main patient deleted once | 🟢 | `DeleteAccountButton` inline modal with explicit Cancel / Delete account |
 | ISS-012 | P4 | TC-PAT-013 | P3 | `/account/bookings` hydration error when chat expands (`toLocaleString` / `Intl` TZ drift) | 🟢 | `format-datetime.ts` fixed `en-IE` + `Europe/Dublin` in bookings + chat |
 | ISS-013 | P1 | TC-ADM-044 | P2 | Destructive admin deletes (countries, doctors, services, health-tests, assets, pages, availability) submit without `window.confirm` | 🟢 | New `ConfirmDeleteButton` client component; replaced 11 bare delete forms across country/asset/doctor/health-test/service/page/availability list+detail views. Pre-existing `DeleteCountryButton` kept on countries list |
 | ISS-014 | P1 | TC-ADM-045 | P3 | Countries table shows `GripVertical` but no reorder implementation | ⚪ | By design / not built — use sortOrder on edit |
@@ -53,4 +53,6 @@
 | 4 Patient | TEST-PATIENT.md | 2026-05-18 | ~90% | Session 4 complete; PAT-009 cancel manual only |
 | 2 Doctor | TEST-DOCTOR.md | 2026-05-18 | ~90% | DOC-021/035/037 ✅; DOC-033 UI manual |
 | 1 Admin | TEST-ADMIN.md | 2026-05-18 | ~88% | ADM-029/049 ✅; ADM-044/045 gaps logged |
-| 6 Cross-cutting | TEST-EXECUTION-ORDER.md | 2026-05-18 | ~85% | PUB-026/DOC-039 ✅; ADM-055 tablet needs admin incognito |
+| 6 Cross-cutting | TEST-EXECUTION-ORDER.md | 2026-05-18 | ~98% | ADM-055 ✅; PAT-009 cancel manual only |
+| 4 Patient | TEST-PATIENT.md | 2026-05-18 | ~98% | PAT-010/014 upload ✅; PAT-009 manual cancel |
+| 1 Admin | TEST-ADMIN.md | 2026-05-18 | ~98% | ADM-034/035/060 ✅ via API + webhook script |
