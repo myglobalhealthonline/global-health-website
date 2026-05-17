@@ -80,6 +80,17 @@ export const adminCountryCreateBodySchema = z
 
 export type AdminCountryCreateBody = z.infer<typeof adminCountryCreateBodySchema>;
 
+/** Per-country BookingSetting fields. All optional + partial — admin
+ *  can flip just one toggle without sending the full object. */
+const bookingSettingPartialSchema = z
+  .object({
+    bookingEnabled: z.boolean().optional(),
+    requirePhone: z.boolean().optional(),
+    requireDateOfBirth: z.boolean().optional(),
+    timezone: z.string().trim().min(1).max(64).optional(),
+  })
+  .strict();
+
 export const adminCountryUpdateBodySchema = z
   .object({
     code: z.string().trim().min(1).max(32).optional(),
@@ -94,6 +105,7 @@ export const adminCountryUpdateBodySchema = z
     currencyId: z.string().trim().min(1).optional(),
     isActive: z.boolean().optional(),
     domains: z.array(domainEntrySchema).optional(),
+    bookingSetting: bookingSettingPartialSchema.optional(),
   })
   .superRefine((data, ctx) => {
     if (data.supportedLocales !== undefined) {

@@ -107,6 +107,17 @@ export type AdminCountryDomainDto = {
   isPrimary: boolean;
 };
 
+export type AdminBookingSettingDto = {
+  id: string;
+  countryId: string;
+  bookingEnabled: boolean;
+  requirePhone: boolean;
+  requireDateOfBirth: boolean;
+  timezone: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type AdminCountryDto = {
   id: string;
   code: string;
@@ -124,6 +135,9 @@ export type AdminCountryDto = {
   currency: AdminCurrencyDto;
   countryLocales: AdminCountryLocaleDto[];
   domains: AdminCountryDomainDto[];
+  /** Per-country booking-intake settings. `null` if no row yet — admin
+   *  upserts on first edit; schema defaults apply otherwise. */
+  bookingSetting: AdminBookingSettingDto | null;
 };
 
 type AdminCountriesListPayload = {

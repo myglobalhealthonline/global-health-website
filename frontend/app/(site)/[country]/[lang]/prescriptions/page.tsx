@@ -108,7 +108,10 @@ export default async function PrescriptionsPage({
             {items.map((s) => (
               <Link
                 key={s.id}
-                href={bookHref}
+                // Append the service slug so the backend stamps the
+                // catalogue price + currency onto the appointment and
+                // the Stripe checkout handoff actually fires.
+                href={`${bookHref}${bookHref.includes("?") ? "&" : "?"}service=${encodeURIComponent(s.slug)}`}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
               >
                 <h3 className="text-lg font-bold text-slate-900 group-hover:text-emerald-700">

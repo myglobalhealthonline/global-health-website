@@ -122,6 +122,70 @@ export function CountryFields({ currencies, initial }: Props) {
         </select>
       </label>
 
+      {/* Per-country BookingSetting — controls whether bookings are
+          accepted at all, and which intake fields are required. Backend
+          reads these in /api/appointments before creating an Appointment.
+          Field names use the `bookingSetting.` prefix so the form action
+          parses them into a single nested object. */}
+      <fieldset className="flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
+        <legend className="px-1 text-sm font-semibold text-[var(--color-text-primary)]">
+          Booking settings
+        </legend>
+        <p className="text-xs text-[var(--color-text-muted)]">
+          Pause online bookings for this country, or require additional
+          intake fields. Patient gets a friendly error if a required
+          field is missing.
+        </p>
+
+        <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
+          <input
+            type="checkbox"
+            name="bookingSetting.bookingEnabled"
+            defaultChecked={initial?.bookingSetting?.bookingEnabled ?? true}
+            className="h-4 w-4 rounded border-[var(--color-border)]"
+          />
+          Online bookings enabled
+        </label>
+
+        <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
+          <input
+            type="checkbox"
+            name="bookingSetting.requirePhone"
+            defaultChecked={initial?.bookingSetting?.requirePhone ?? true}
+            className="h-4 w-4 rounded border-[var(--color-border)]"
+          />
+          Require phone number at booking
+        </label>
+
+        <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
+          <input
+            type="checkbox"
+            name="bookingSetting.requireDateOfBirth"
+            defaultChecked={initial?.bookingSetting?.requireDateOfBirth ?? true}
+            className="h-4 w-4 rounded border-[var(--color-border)]"
+          />
+          Require date of birth at booking
+          <span className="text-[11px] text-[var(--color-text-muted)]">
+            (UI field not yet on the public form — flip on once DOB is collected)
+          </span>
+        </label>
+
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Default timezone</span>
+          <input
+            type="text"
+            name="bookingSetting.timezone"
+            className="gh-input"
+            placeholder="e.g. Europe/Dublin or UTC"
+            defaultValue={initial?.bookingSetting?.timezone ?? "UTC"}
+            maxLength={64}
+          />
+          <span className="text-[11px] text-[var(--color-text-muted)]">
+            IANA timezone string. Used for reminder scheduling math.
+          </span>
+        </label>
+      </fieldset>
+
       <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
         <input
           type="checkbox"

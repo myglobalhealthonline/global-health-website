@@ -1,8 +1,7 @@
 import "server-only";
 
 import { cookies } from "next/headers";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 export type AccountPayment = {
   id: string;
@@ -34,10 +33,13 @@ async function buildCookieHeader() {
 }
 
 export async function fetchAccountPayments(): Promise<ApiResult<{ items: AccountPayment[] }>> {
-  if (!API_URL) return { ok: false, message: "Public API URL is not configured" };
+  // Server-side origin helper — picks API_BASE_URL when set, falls back
+  // to NEXT_PUBLIC_API_URL. Avoids "unavailable" on private-backend deploys.
+  const apiUrl = getBackendOrigin();
+  if (!apiUrl) return { ok: false, message: "Public API URL is not configured" };
   const cookieHeader = await buildCookieHeader();
   try {
-    const response = await fetch(`${API_URL}/api/account/payments`, {
+    const response = await fetch(`${apiUrl}/api/account/payments`, {
       method: "GET",
       headers: cookieHeader ? { cookie: cookieHeader } : undefined,
       cache: "no-store",

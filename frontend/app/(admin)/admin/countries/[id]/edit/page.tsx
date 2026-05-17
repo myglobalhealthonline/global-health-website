@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { CountryFields } from "../../_components/country-fields";
 import {
+  parseBookingSettingFromForm,
   parseDomainsFromForm,
   parseSupportedLocales,
 } from "@/lib/admin/country-form-parse";
@@ -80,7 +81,13 @@ export default async function AdminEditCountryPage({
     "use server";
 
     const supportedLocales = parseSupportedLocales(formData);
-    const domainsPayload = parseDomainsFromForm(formData) ?? [];
+    // Country edit form has no domain inputs (per-country domain split
+    // was deferred). Parse only if the form actually carried domain
+    // values; otherwise OMIT the field so backend `if (body.domains !==
+    // undefined)` leaves the existing domains untouched. Sending an
+    // empty array here would deleteMany.
+    const domainsPayload = parseDomainsFromForm(formData);
+    const bookingSettingPayload = parseBookingSettingFromForm(formData);
 
     const body = {
       code: String(formData.get("code") ?? "").trim(),
@@ -98,7 +105,8 @@ export default async function AdminEditCountryPage({
       supportedLocales,
       currencyId: String(formData.get("currencyId") ?? "").trim(),
       isActive: formData.get("isActive") === "on",
-      domains: domainsPayload,
+      ...(domainsPayload !== undefined ? { domains: domainsPayload } : {}),
+      ...(bookingSettingPayload !== undefined ? { bookingSetting: bookingSettingPayload } : {}),
     };
 
     const result = await patchAdminCountry(id, body);

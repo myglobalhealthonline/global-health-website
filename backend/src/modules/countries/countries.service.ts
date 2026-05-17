@@ -25,6 +25,10 @@ const adminCountryInclude = {
   currency: true,
   countryLocales: { orderBy: { locale: "asc" as const } },
   domains: { orderBy: { domain: "asc" as const } },
+  // Per-country BookingSetting (booking gate + intake rules). Surfaced
+  // so the admin country edit page can render + edit these fields.
+  // Optional one-to-one; `null` means "use schema defaults".
+  bookingSetting: true,
 } satisfies Prisma.CountryInclude;
 
 export type AdminCountryRecord = Prisma.CountryGetPayload<{ include: typeof adminCountryInclude }>;
@@ -239,6 +243,29 @@ export async function updateAdminCountry(
             })),
           });
         }
+      }
+
+      // BookingSetting — upsert when the admin form posted any of the
+      // fields. `undefined` means leave the row alone; partial values
+      // merge into the existing row (or schema defaults on first create).
+      if (body.bookingSetting !== undefined) {
+        const bs = body.bookingSetting;
+        await tx.bookingSetting.upsert({
+          where: { countryId: id },
+          create: {
+            countryId: id,
+            ...(bs.bookingEnabled !== undefined && { bookingEnabled: bs.bookingEnabled }),
+            ...(bs.requirePhone !== undefined && { requirePhone: bs.requirePhone }),
+            ...(bs.requireDateOfBirth !== undefined && { requireDateOfBirth: bs.requireDateOfBirth }),
+            ...(bs.timezone !== undefined && { timezone: bs.timezone }),
+          },
+          update: {
+            ...(bs.bookingEnabled !== undefined && { bookingEnabled: bs.bookingEnabled }),
+            ...(bs.requirePhone !== undefined && { requirePhone: bs.requirePhone }),
+            ...(bs.requireDateOfBirth !== undefined && { requireDateOfBirth: bs.requireDateOfBirth }),
+            ...(bs.timezone !== undefined && { timezone: bs.timezone }),
+          },
+        });
       }
 
       const updated = await tx.country.findUnique({

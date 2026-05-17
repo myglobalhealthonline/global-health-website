@@ -1,8 +1,7 @@
 import "server-only";
 
 import { cookies } from "next/headers";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 export type AccountAppointment = {
   id: string;
@@ -38,10 +37,16 @@ function buildCookieHeader() {
 }
 
 export async function fetchAccountAppointments(): Promise<ApiResult<{ items: AccountAppointment[] }>> {
-  if (!API_URL) return { ok: false, message: "Public API URL is not configured" };
+  // Use the server-side backend origin helper so we honour
+  // `API_BASE_URL` first (private/internal Railway URL) and fall back to
+  // `NEXT_PUBLIC_API_URL`. The old code read only the public env, so the
+  // patient portal showed "unavailable" on deploys that exposed only
+  // the private URL.
+  const apiUrl = getBackendOrigin();
+  if (!apiUrl) return { ok: false, message: "Public API URL is not configured" };
   const cookieHeader = await buildCookieHeader();
   try {
-    const response = await fetch(`${API_URL}/api/account/appointments`, {
+    const response = await fetch(`${apiUrl}/api/account/appointments`, {
       method: "GET",
       headers: cookieHeader ? { cookie: cookieHeader } : undefined,
       cache: "no-store",

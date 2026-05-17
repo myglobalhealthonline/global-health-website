@@ -38,6 +38,90 @@ What needs to ship for real slot booking:
 Effort estimate: 1 week of focused work. Not blocking the current
 testing phase — admin can keep scheduling manually via the existing
 Practicing-in flow.
+
+---
+
+## Other known gaps (from the 16-May audit)
+
+These are real architectural / scope items that didn't ship in the
+audit follow-up commit. Pick them up one at a time when the relevant
+slice of the product needs them.
+
+### Admin-added countries don't surface on the public site
+
+`countries.ts`, `country-slug.ts`, `frontend/proxy.ts`, and
+`backend/src/validations/shared.schema.ts` all hardcode the five
+existing country codes (`ie | pt | sp | cz | rm`). Admin can create a
+new Country row, but:
+- `countryCodeSchema` rejects its code in booking submits + admin
+  filters
+- The country picker on `/` only renders the five hardcoded entries
+- Sitemap + proxy redirects ignore it
+- Public country routes (`/[country]/[lang]/...`) won't resolve
+
+Fix path: turn `data/countries.ts` into a server-only fetch from
+`/api/countries`, swap `countryCodeSchema` for a runtime-loaded set,
+and rewrite the sitemap to enumerate live countries. Effort: 1–2 days.
+
+### Health-test Appointment link
+
+Booking form now accepts `?type=health-test` and the price flows via
+`?service=<slug>`, but `Appointment` has no `healthTestId` column.
+The picked test is captured as free text in `notes` / consultation
+type. Admin sees "health-test" intent + the priced row but no
+structural link back to the HealthTest row. Fix path: add
+`Appointment.healthTestId` FK + select it when listing admin
+appointments. Effort: half-day. Same shape as
+`Appointment.serviceId`.
+
+### Admin Pages doesn't cover prescriptions / tests / pages
+
+`PageKey` enum is HOME / DOCTORS_INDEX / GENERAL_CONSULTATION /
+SPECIALIST_CONSULTATION. The prescriptions and tests public pages
+render hardcoded copy + SEO. Operator can't edit hero / SEO / body
+copy for those pages without a code change. Fix path: add
+`PRESCRIPTIONS` + `HEALTH_TESTS` to the `PageKey` enum, surface in
+`/admin/pages`, and read those rows on the public pages with a
+fallback to the current static text. Effort: 1 day.
+
+### Admin patient / user management
+
+There's no `/admin/users` route, no backend admin-users endpoint,
+no sidebar entry. The seeded admin account exists in the DB but
+there's no surface to:
+- Search patient accounts
+- Reset another user's password
+- Suspend / re-activate a patient
+- Promote a patient to admin
+
+Fix path: new `/admin/users` listing + detail page (filter by role,
+search by email/name), `backend/src/routes/admin-users.route.ts` with
+auth-gated GET / PATCH, audit-log entries for every write. Effort:
+1.5 days.
+
+### Dead admin fields with no public render
+
+A handful of admin-editable fields don't surface anywhere on the
+public site:
+- `Service.heroTitle / heroDescription / ctaLabel / detailBody /
+  legacyPath` — leftovers from a service-detail page that never
+  shipped.
+- `HealthTest` gallery / detailIntro / `whatThisTestCovers` /
+  `whyGetTested` / `extraSections` / SEO — no public detail route.
+
+Either ship the service-detail + health-test detail pages, or trim
+these columns out of the admin forms and schema. Effort: 1 day to
+ship the public pages OR 0.5 day to trim. The fields are useless
+clutter in the admin until one of those happens.
+
+### Public booking form date-of-birth field
+
+`BookingSetting.requireDateOfBirth` is now wired in the admin UI and
+the backend reads it, but the public booking form has no DOB input.
+Flipping the toggle on today would reject every booking with
+"date-of-birth required." Public form gains a DOB field when this
+toggle is meant to be live. Effort: 0.5 day (add DOB input,
+bookingSchema field, backend enforcement).
 **Hosting:** Railway hosts all three services in this project — frontend (Next.js), backend (Fastify), Postgres. No Vercel split; promote each via the Railway dashboard.
 
 This document has two halves. **Part A** is the production-handover checklist — every account, env var, DNS record, and migration you have to set up before flipping the public DNS. **Part B** is the phase plan — what to build next, in priority order, with effort estimates.

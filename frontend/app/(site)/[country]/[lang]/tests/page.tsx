@@ -97,7 +97,10 @@ export default async function HealthTestsPage({
             {items.map((t) => (
               <Link
                 key={t.id}
-                href={bookHref}
+                // `?service=<slug>` triggers the price + Stripe handoff.
+                // HealthTest rows have their own slug; the backend
+                // resolves it the same way as Service slugs.
+                href={`${bookHref}${bookHref.includes("?") ? "&" : "?"}service=${encodeURIComponent(t.slug)}`}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-emerald-300 hover:shadow-md"
               >
                 {t.imageSrc ? (

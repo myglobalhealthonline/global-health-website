@@ -2,7 +2,17 @@ import { z } from "zod";
 
 export const countryCodeSchema = z.enum(["ie", "pt", "sp", "cz", "rm"]);
 
-export const consultationTypeSchema = z.enum(["general", "specialist", "follow-up"]);
+// Consultation intent on the booking form. Must stay in sync with the
+// dropdown options in `frontend/lib/content/booking-page-data.ts` and
+// the `?type=` URL params emitted by site CTAs (GP consultation,
+// specialist, prescription review, health test, follow-up).
+export const consultationTypeSchema = z.enum([
+  "general",
+  "specialist",
+  "prescription",
+  "health-test",
+  "follow-up",
+]);
 
 export const optionalPhoneSchema = z
   .string()
