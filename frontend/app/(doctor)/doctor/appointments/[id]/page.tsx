@@ -332,9 +332,18 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     key={s.id}
                     className="rounded-md border border-[var(--color-border)] bg-white p-3"
                   >
-                    <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">
-                      {s.template.title}
-                    </p>
+                    <div className="flex items-baseline justify-between gap-3">
+                      <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">
+                        {s.template.title}
+                      </p>
+                      <Link
+                        href={`/print/forms/${s.id}`}
+                        target="_blank"
+                        className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                      >
+                        <Printer className="size-3" /> Print
+                      </Link>
+                    </div>
                     <p className="text-[11.5px] text-[var(--color-text-muted)]">
                       submitted {new Date(s.submittedAt).toLocaleString()}
                     </p>

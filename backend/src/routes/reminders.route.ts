@@ -3,6 +3,7 @@ import { prisma } from "../db/prisma.js";
 import { env } from "../config/env.js";
 import { sendAppointmentReminderEmail } from "../lib/email/templates.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { notifyDoctor } from "../modules/notifications/notify.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
@@ -77,9 +78,61 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
         }
       }
 
+      // Doctor-side: fan out in-portal notifications for any
+      // appointment scheduled in the same 24h window that has an
+      // assigned doctor. Independent of the patient email path so
+      // doctors get reminded even when meetingUrl is empty (IN_PERSON
+      // appointments) or when the patient reminder is already sent.
+      const doctorWindowDue = await prisma.appointment.findMany({
+        where: {
+          scheduledAt: { gte: windowStart, lte: windowEnd },
+          doctorId: { not: null },
+          doctorReminderSentAt: null,
+          status: { notIn: ["CANCELLED", "COMPLETED"] },
+        },
+        select: {
+          id: true,
+          fullName: true,
+          doctorId: true,
+          consultationType: true,
+          scheduledAt: true,
+          meetingUrl: true,
+        },
+        take: 200,
+      });
+
+      let doctorNotified = 0;
+      for (const a of doctorWindowDue) {
+        if (!a.doctorId || !a.scheduledAt) continue;
+        try {
+          await notifyDoctor(a.doctorId, "APPOINTMENT_REMINDER", {
+            appointmentId: a.id,
+            snippet: `${a.fullName} · ${new Date(a.scheduledAt).toLocaleString()}${
+              a.meetingUrl ? "" : " (missing meeting link)"
+            }`,
+          });
+          await prisma.appointment.update({
+            where: { id: a.id },
+            data: { doctorReminderSentAt: new Date() },
+          });
+          doctorNotified++;
+        } catch (err) {
+          app.log.warn(
+            { err, appointmentId: a.id },
+            "Doctor reminder notify failed",
+          );
+        }
+      }
+
       return okResponse(
-        { candidates: due.length, sent, failed },
-        `Reminder run complete: ${sent} sent, ${failed} failed.`,
+        {
+          candidates: due.length,
+          sent,
+          failed,
+          doctorCandidates: doctorWindowDue.length,
+          doctorNotified,
+        },
+        `Reminder run complete: ${sent} patient email(s), ${doctorNotified} doctor notification(s).`,
       );
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {

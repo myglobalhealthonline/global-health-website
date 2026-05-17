@@ -22,6 +22,7 @@ import { notifyAdmins } from "../modules/notifications/notify.service.js";
 const createBodySchema = z
   .object({
     testName: z.string().trim().min(1).max(200),
+    status: z.enum(["REQUESTED", "COMPLETED"]).optional(),
     performedAt: z.string().datetime().nullable().optional(),
     notes: z.string().trim().max(8000).nullable().optional(),
     externalUrl: z
@@ -33,6 +34,25 @@ const createBodySchema = z
       .optional(),
   })
   .strict();
+
+const patchBodySchema = z
+  .object({
+    testName: z.string().trim().min(1).max(200).optional(),
+    status: z.enum(["REQUESTED", "COMPLETED"]).optional(),
+    performedAt: z.string().datetime().nullable().optional(),
+    notes: z.string().trim().max(8000).nullable().optional(),
+    externalUrl: z
+      .string()
+      .trim()
+      .url("External link must be a valid URL")
+      .max(2000)
+      .nullable()
+      .optional(),
+  })
+  .strict()
+  .refine((d) => Object.keys(d).length > 0, {
+    message: "Provide at least one field to update",
+  });
 
 const examResultsRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { id: string } }>(
@@ -89,11 +109,13 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
         }
+        const desiredStatus = body.data.status ?? "COMPLETED";
         const row = await prisma.examResult.create({
           data: {
             appointmentId: appt.id,
             doctorId: auth.doctorId,
             testName: body.data.testName,
+            status: desiredStatus,
             performedAt: body.data.performedAt
               ? new Date(body.data.performedAt)
               : null,
@@ -107,13 +129,20 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
           action: "EXAM_LOGGED",
           entityType: "ExamResult",
           entityId: row.id,
-          metadata: { appointmentId: appt.id, testName: row.testName },
+          metadata: {
+            appointmentId: appt.id,
+            testName: row.testName,
+            status: row.status,
+          },
           request,
         }).catch(() => {});
-        notifyAdmins("EXAM_LOGGED", {
-          appointmentId: appt.id,
-          snippet: row.testName,
-        }).catch(() => {});
+        notifyAdmins(
+          desiredStatus === "REQUESTED" ? "EXAM_REQUESTED" : "EXAM_LOGGED",
+          {
+            appointmentId: appt.id,
+            snippet: row.testName,
+          },
+        ).catch(() => {});
         return reply.status(201).send(
           okResponse({
             exam: {
@@ -163,6 +192,86 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not delete exam result"));
+      }
+    },
+  );
+
+  /**
+   * PATCH — used mostly to flip a REQUESTED exam to COMPLETED once
+   * the result is in, but accepts any of the fields the create
+   * endpoint takes. Notifies admin on the REQUESTED→COMPLETED
+   * transition so they can update the patient record.
+   */
+  app.patch<{ Params: { examId: string } }>(
+    "/api/doctor/exams/:examId",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      const body = patchBodySchema.safeParse(request.body);
+      if (!body.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid exam update", body.error.flatten()));
+      }
+      try {
+        const existing = await prisma.examResult.findUnique({
+          where: { id: request.params.examId },
+        });
+        if (!existing || existing.doctorId !== auth.doctorId) {
+          return reply.status(404).send(errorResponse("Exam result not found"));
+        }
+        const data: Record<string, unknown> = {};
+        if (body.data.testName !== undefined) data.testName = body.data.testName;
+        if (body.data.status !== undefined) data.status = body.data.status;
+        if (body.data.performedAt !== undefined) {
+          data.performedAt = body.data.performedAt
+            ? new Date(body.data.performedAt)
+            : null;
+        }
+        if (body.data.notes !== undefined) data.notes = body.data.notes;
+        if (body.data.externalUrl !== undefined)
+          data.externalUrl = body.data.externalUrl;
+
+        const row = await prisma.examResult.update({
+          where: { id: existing.id },
+          data,
+        });
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "EXAM_LOGGED",
+          entityType: "ExamResult",
+          entityId: row.id,
+          metadata: {
+            appointmentId: existing.appointmentId,
+            changed: Object.keys(data),
+            status: row.status,
+          },
+          request,
+        }).catch(() => {});
+        if (
+          existing.status === "REQUESTED" &&
+          row.status === "COMPLETED"
+        ) {
+          notifyAdmins("EXAM_LOGGED", {
+            appointmentId: existing.appointmentId,
+            snippet: `${row.testName} · result in`,
+          }).catch(() => {});
+        }
+        return okResponse({
+          exam: {
+            ...row,
+            performedAt: row.performedAt?.toISOString() ?? null,
+            createdAt: row.createdAt.toISOString(),
+            updatedAt: row.updatedAt.toISOString(),
+          },
+        });
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not update exam result"));
       }
     },
   );

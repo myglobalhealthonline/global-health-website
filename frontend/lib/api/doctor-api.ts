@@ -207,6 +207,7 @@ export type ExamResultDto = {
   appointmentId: string;
   doctorId: string;
   testName: string;
+  status: "REQUESTED" | "COMPLETED";
   performedAt: string | null;
   notes: string | null;
   externalUrl: string | null;
@@ -363,20 +364,36 @@ export async function fetchDoctorInvoicesList(query?: Record<string, string | un
 // Reports
 export type DoctorReportsDto = {
   range: { from: string; to: string };
+  filters: {
+    consultationType: string | null;
+    paymentStatus: string | null;
+    status: string | null;
+  };
   appointments: {
     total: number;
     byStatus: Array<{ status: string; count: number }>;
     byConsultationType: Array<{ consultationType: string; count: number }>;
   };
   signedConsults: number;
+  followUps: number;
   distinctPatients: number;
   revenueByCurrency: Record<string, number>;
 };
 
-export async function fetchDoctorReports(from?: string, to?: string) {
+export async function fetchDoctorReports(query?: {
+  from?: string;
+  to?: string;
+  consultationType?: string;
+  paymentStatus?: string;
+  status?: string;
+}) {
   const params = new URLSearchParams();
-  if (from) params.set("from", from);
-  if (to) params.set("to", to);
+  if (query?.from) params.set("from", query.from);
+  if (query?.to) params.set("to", query.to);
+  if (query?.consultationType)
+    params.set("consultationType", query.consultationType);
+  if (query?.paymentStatus) params.set("paymentStatus", query.paymentStatus);
+  if (query?.status) params.set("status", query.status);
   const qs = params.toString();
   return doctorRequest<DoctorReportsDto>(
     qs ? `/api/doctor/reports?${qs}` : "/api/doctor/reports",

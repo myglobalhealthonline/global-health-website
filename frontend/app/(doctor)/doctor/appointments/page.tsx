@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronRight, Video } from "lucide-react";
 import { fetchDoctorAppointments, type DoctorAppointment } from "@/lib/api/doctor-api";
+import { appointmentStatusLabel } from "@/lib/api/appointment-status-labels";
 
 export const dynamic = "force-dynamic";
 
@@ -60,10 +61,10 @@ export default async function DoctorAppointmentsPage({
             <span className="gh-field-label">Status</span>
             <select name="status" defaultValue={status ?? ""} className="gh-select">
               <option value="">Any</option>
-              <option value="REQUEST_RECEIVED">Request received</option>
-              <option value="UNDER_REVIEW">Under review</option>
+              <option value="REQUEST_RECEIVED">Created</option>
+              <option value="UNDER_REVIEW">Sent</option>
               <option value="CONTACTED">Contacted</option>
-              <option value="COMPLETED">Completed</option>
+              <option value="COMPLETED">Concluded</option>
               <option value="CANCELLED">Cancelled</option>
             </select>
           </label>
@@ -160,7 +161,7 @@ export default async function DoctorAppointmentsPage({
                         })
                       : "—"}
                   </td>
-                  <td className="px-4 py-3 text-xs">{a.status}</td>
+                  <td className="px-4 py-3 text-xs">{appointmentStatusLabel(a.status)}</td>
                   <td className="px-4 py-3 text-xs">{a.paymentStatus}</td>
                   <td className="px-4 py-3 text-right">
                     <div className="inline-flex items-center gap-2">

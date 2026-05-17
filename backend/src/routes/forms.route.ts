@@ -214,6 +214,67 @@ const formsRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
+  /**
+   * GET /api/doctor/form-submissions/:submissionId — single submission
+   * keyed by id (the appointment-scoped list above is for the
+   * workspace; this one feeds the print view at
+   * /print/forms/[submissionId]). Returns appointment context too so
+   * the print page has everything in one round-trip.
+   */
+  app.get<{ Params: { submissionId: string } }>(
+    "/api/doctor/form-submissions/:submissionId",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      try {
+        const sub = await prisma.formSubmission.findUnique({
+          where: { id: request.params.submissionId },
+          include: {
+            template: { select: { id: true, title: true, description: true, fields: true } },
+            appointment: {
+              select: {
+                id: true,
+                fullName: true,
+                email: true,
+                consultationType: true,
+                countryCode: true,
+                doctorId: true,
+              },
+            },
+          },
+        });
+        if (
+          !sub ||
+          !sub.appointment ||
+          sub.appointment.doctorId !== auth.doctorId
+        ) {
+          return reply.status(404).send(errorResponse("Submission not found"));
+        }
+        return okResponse({
+          submission: {
+            id: sub.id,
+            template: sub.template,
+            answers: sub.answers,
+            submittedAt: sub.submittedAt.toISOString(),
+          },
+          appointment: {
+            id: sub.appointment.id,
+            fullName: sub.appointment.fullName,
+            email: sub.appointment.email,
+            consultationType: sub.appointment.consultationType,
+            countryCode: sub.appointment.countryCode,
+          },
+        });
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not load submission"));
+      }
+    },
+  );
+
   app.get<{ Params: { id: string } }>(
     "/api/doctor/appointments/:id/form-submissions",
     async (request, reply) => {

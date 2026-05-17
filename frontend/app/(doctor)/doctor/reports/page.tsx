@@ -30,7 +30,16 @@ export default async function DoctorReportsPage({
   const sp = searchParams ? await searchParams : {};
   const from = pick(sp, "from");
   const to = pick(sp, "to");
-  const result = await fetchDoctorReports(from, to);
+  const consultationType = pick(sp, "consultationType");
+  const paymentStatus = pick(sp, "paymentStatus");
+  const status = pick(sp, "status");
+  const result = await fetchDoctorReports({
+    from,
+    to,
+    consultationType,
+    paymentStatus,
+    status,
+  });
 
   return (
     <>
@@ -47,7 +56,7 @@ export default async function DoctorReportsPage({
         </p>
       </header>
 
-      <form className="gh-card mb-4 flex flex-wrap items-end gap-3 p-4" method="get">
+      <form className="gh-card mb-4 grid gap-3 p-4 sm:grid-cols-5" method="get">
         <label className="flex flex-col gap-1">
           <span className="gh-field-label">From</span>
           <input
@@ -66,10 +75,57 @@ export default async function DoctorReportsPage({
             className="gh-input"
           />
         </label>
-        <button type="submit" className="gh-btn gh-btn-primary text-sm">
-          Apply
-        </button>
-        {result.ok ? <ReportsCsvButton data={result.data} /> : null}
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Type</span>
+          <select
+            name="consultationType"
+            defaultValue={consultationType ?? ""}
+            className="gh-select"
+          >
+            <option value="">Any</option>
+            <option value="general">General</option>
+            <option value="specialist">Specialist</option>
+            <option value="prescription">Prescription</option>
+            <option value="health-test">Health test</option>
+            <option value="follow-up">Follow-up</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Appt status</span>
+          <select
+            name="status"
+            defaultValue={status ?? ""}
+            className="gh-select"
+          >
+            <option value="">Any</option>
+            <option value="REQUEST_RECEIVED">Created</option>
+            <option value="UNDER_REVIEW">Under review</option>
+            <option value="CONTACTED">Contacted</option>
+            <option value="COMPLETED">Concluded</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Payment</span>
+          <select
+            name="paymentStatus"
+            defaultValue={paymentStatus ?? ""}
+            className="gh-select"
+          >
+            <option value="">Any</option>
+            <option value="UNPAID">Unpaid</option>
+            <option value="PENDING">Pending</option>
+            <option value="PAID">Paid</option>
+            <option value="REFUNDED">Refunded</option>
+            <option value="FAILED">Failed</option>
+          </select>
+        </label>
+        <div className="sm:col-span-5 flex flex-wrap items-center gap-2">
+          <button type="submit" className="gh-btn gh-btn-primary text-sm">
+            Apply
+          </button>
+          {result.ok ? <ReportsCsvButton data={result.data} /> : null}
+        </div>
       </form>
 
       {!result.ok ? (
@@ -80,7 +136,7 @@ export default async function DoctorReportsPage({
         </div>
       ) : (
         <>
-          <div className="mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <Tile
               label="Appointments"
               value={String(result.data.appointments.total)}
@@ -89,7 +145,14 @@ export default async function DoctorReportsPage({
               label="Signed consults"
               value={String(result.data.signedConsults)}
             />
-            <Tile label="Distinct patients" value={String(result.data.distinctPatients)} />
+            <Tile
+              label="Follow-ups"
+              value={String(result.data.followUps)}
+            />
+            <Tile
+              label="Distinct patients"
+              value={String(result.data.distinctPatients)}
+            />
             <Tile
               label="Revenue (paid)"
               value={

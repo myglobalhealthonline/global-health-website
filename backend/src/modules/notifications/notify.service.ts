@@ -29,9 +29,11 @@ export async function notifyAdmins(
     | "APPOINTMENT_STATUS_CHANGED"
     | "APPOINTMENT_RESCHEDULED"
     | "APPOINTMENT_FOLLOWUP_BOOKED"
+    | "APPOINTMENT_REMINDER"
     | "INTERNAL_MESSAGE"
     | "CONSULT_SIGNED"
     | "EXAM_LOGGED"
+    | "EXAM_REQUESTED"
     | "FORM_SUBMITTED"
     | "DOCUMENT_UPLOADED",
   payload: NotificationPayload,
@@ -63,9 +65,11 @@ export async function notifyDoctor(
     | "APPOINTMENT_STATUS_CHANGED"
     | "APPOINTMENT_RESCHEDULED"
     | "APPOINTMENT_FOLLOWUP_BOOKED"
+    | "APPOINTMENT_REMINDER"
     | "INTERNAL_MESSAGE"
     | "CONSULT_SIGNED"
     | "EXAM_LOGGED"
+    | "EXAM_REQUESTED"
     | "FORM_SUBMITTED"
     | "DOCUMENT_UPLOADED",
   payload: NotificationPayload,

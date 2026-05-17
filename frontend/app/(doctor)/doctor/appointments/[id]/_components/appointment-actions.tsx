@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { CalendarClock, Save, Video } from "lucide-react";
 
 const STATUS_OPTIONS = [
-  { value: "REQUEST_RECEIVED", label: "Request received" },
-  { value: "UNDER_REVIEW", label: "Under review" },
+  { value: "REQUEST_RECEIVED", label: "Created" },
+  { value: "UNDER_REVIEW", label: "Sent" },
   { value: "CONTACTED", label: "Contacted" },
-  { value: "COMPLETED", label: "Completed" },
+  { value: "COMPLETED", label: "Concluded" },
   { value: "CANCELLED", label: "Cancelled" },
 ];
 

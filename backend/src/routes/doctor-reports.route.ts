@@ -29,6 +29,19 @@ const querySchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .optional(),
+  consultationType: z.string().trim().min(1).max(64).optional(),
+  paymentStatus: z
+    .enum(["UNPAID", "PENDING", "PAID", "REFUNDED", "FAILED"])
+    .optional(),
+  status: z
+    .enum([
+      "REQUEST_RECEIVED",
+      "UNDER_REVIEW",
+      "CONTACTED",
+      "COMPLETED",
+      "CANCELLED",
+    ])
+    .optional(),
 });
 
 const doctorReportsRoute: FastifyPluginAsync = async (app) => {
@@ -54,17 +67,34 @@ const doctorReportsRoute: FastifyPluginAsync = async (app) => {
 
     try {
       const range = { gte: fromUtc, lte: toUtc };
+      const apptFilter = {
+        doctorId: auth.doctorId,
+        createdAt: range,
+        ...(parsed.data.consultationType
+          ? { consultationType: parsed.data.consultationType }
+          : {}),
+        ...(parsed.data.paymentStatus
+          ? { paymentStatus: parsed.data.paymentStatus }
+          : {}),
+        ...(parsed.data.status ? { status: parsed.data.status } : {}),
+      };
 
-      const [byStatus, byType, signedCount, distinctPatientRows, paidPayments] =
-        await Promise.all([
+      const [
+        byStatus,
+        byType,
+        signedCount,
+        followUpCount,
+        distinctPatientRows,
+        paidPayments,
+      ] = await Promise.all([
           prisma.appointment.groupBy({
             by: ["status"],
-            where: { doctorId: auth.doctorId, createdAt: range },
+            where: apptFilter,
             _count: { _all: true },
           }),
           prisma.appointment.groupBy({
             by: ["consultationType"],
-            where: { doctorId: auth.doctorId, createdAt: range },
+            where: apptFilter,
             _count: { _all: true },
           }),
           prisma.consultation.count({
@@ -74,13 +104,24 @@ const doctorReportsRoute: FastifyPluginAsync = async (app) => {
               signedAt: range,
             },
           }),
+          prisma.appointment.count({
+            where: {
+              ...apptFilter,
+              followUpFromAppointmentId: { not: null },
+            },
+          }),
           prisma.appointment.findMany({
-            where: { doctorId: auth.doctorId, createdAt: range },
+            where: apptFilter,
             select: { email: true },
           }),
           prisma.payment.findMany({
             where: {
-              appointment: { doctorId: auth.doctorId },
+              appointment: {
+                doctorId: auth.doctorId,
+                ...(parsed.data.consultationType
+                  ? { consultationType: parsed.data.consultationType }
+                  : {}),
+              },
               status: "PAID",
               createdAt: range,
             },
@@ -103,6 +144,11 @@ const doctorReportsRoute: FastifyPluginAsync = async (app) => {
           from: fromUtc.toISOString(),
           to: toUtc.toISOString(),
         },
+        filters: {
+          consultationType: parsed.data.consultationType ?? null,
+          paymentStatus: parsed.data.paymentStatus ?? null,
+          status: parsed.data.status ?? null,
+        },
         appointments: {
           total: byStatus.reduce((sum, r) => sum + r._count._all, 0),
           byStatus: byStatus.map((r) => ({
@@ -115,6 +161,7 @@ const doctorReportsRoute: FastifyPluginAsync = async (app) => {
           })),
         },
         signedConsults: signedCount,
+        followUps: followUpCount,
         distinctPatients,
         revenueByCurrency,
       });

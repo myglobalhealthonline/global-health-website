@@ -94,11 +94,21 @@ enum NotificationType {
   APPOINTMENT_STATUS_CHANGED
   APPOINTMENT_RESCHEDULED
   APPOINTMENT_FOLLOWUP_BOOKED
+  APPOINTMENT_REMINDER
   INTERNAL_MESSAGE
   CONSULT_SIGNED
   EXAM_LOGGED
+  EXAM_REQUESTED
   FORM_SUBMITTED
   DOCUMENT_UPLOADED
+}
+
+/// Exam lifecycle.
+///   REQUESTED — doctor wants this test run; result hasn't been logged yet
+///   COMPLETED — result has been recorded (notes / externalUrl)
+enum ExamStatus {
+  REQUESTED
+  COMPLETED
 }
 
 /// Scope for a `ShareLink` token. CONSULTATION = doctor sharing a
@@ -612,6 +622,10 @@ model Appointment {
   // Reminder job marks this once it has emailed the patient ~24h before
   // scheduledAt, so re-runs don't double-send. Null means "not sent yet".
   reminderSentAt            DateTime?
+  // Same idea but for the in-portal "you have an appointment tomorrow"
+  // notification fan-out to the assigned doctor. Tracked separately so
+  // the patient-email path and the doctor-notification path can diverge.
+  doctorReminderSentAt      DateTime?
   user                      User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
   payments                  Payment[]
   messages                  Message[]
@@ -894,15 +908,18 @@ model Consultation {
   @@index([doctorId, status])
 }
 
-/// Per-appointment lab / imaging / test result the doctor records.
-/// `externalUrl` for links to a partner lab portal; `notes` for free-text
-/// interpretation. File-upload of result PDFs comes in a follow-up — the
-/// MVP keeps it text + link only.
+/// Per-appointment lab / imaging / test order or result the doctor
+/// records. The same row covers two lifecycle states:
+///   REQUESTED — doctor has ordered the test, result not in yet
+///   COMPLETED — result recorded (notes / externalUrl populated)
+/// `externalUrl` links to a partner lab portal; first-party PDFs live
+/// on `AppointmentDocument` so clinical doc storage stays in one place.
 model ExamResult {
   id            String      @id @default(cuid())
   appointmentId String
   doctorId      String
   testName      String
+  status        ExamStatus  @default(COMPLETED)
   performedAt   DateTime?
   notes         String?
   externalUrl   String?
@@ -913,6 +930,7 @@ model ExamResult {
 
   @@index([appointmentId, createdAt])
   @@index([doctorId, createdAt])
+  @@index([appointmentId, status])
 }
 
 /// Doctor ↔ admin per-appointment note thread. Distinct from the
