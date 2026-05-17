@@ -70,6 +70,22 @@ enum DoctorSlotStatus {
   BLOCKED
 }
 
+/// Clinical consultation lifecycle.
+///   DRAFT  — doctor is still editing
+///   SIGNED — locked; further edits require a new amendment (out of scope)
+enum ConsultationStatus {
+  DRAFT
+  SIGNED
+}
+
+/// Author side for internal (doctor ↔ admin) per-appointment notes. Kept
+/// separate from the patient-facing `MessageAuthorRole` so we never mix
+/// the two threads.
+enum InternalMessageAuthorRole {
+  DOCTOR
+  ADMIN
+}
+
 model Currency {
   id        String    @id @default(cuid())
   code      String    @unique
@@ -186,6 +202,12 @@ model Doctor {
   availabilities         DoctorAvailability[]
   /// Generated bookable slots. Booking flow claims one atomically.
   timeSlots              DoctorTimeSlot[]
+  /// Inverse of `Consultation.doctorId`. Populated when the doctor
+  /// starts a consult on one of their assigned appointments.
+  consultations          Consultation[]
+  /// Inverse of `ExamResult.doctorId`. Populated when the doctor
+  /// uploads / records an exam result for an appointment.
+  examResults            ExamResult[]
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
 
@@ -452,7 +474,7 @@ enum PaymentStatus {
 }
 
 model Appointment {
-  id                    String          @id @default(cuid())
+  id                    String            @id @default(cuid())
   userId                String?
   countryCode           String
   consultationType      String
@@ -465,33 +487,41 @@ model Appointment {
   dateOfBirth           DateTime?
   notes                 String?
   consentAccepted       Boolean
-  status                String          @default("REQUEST_RECEIVED")
+  status                String            @default("REQUEST_RECEIVED")
   // Optional link to the catalogue Service that was booked. Populated when
   // the booking form passes ?service=<slug>; null for free-text bookings.
   serviceId             String?
-  service               Service?        @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  service               Service?          @relation(fields: [serviceId], references: [id], onDelete: SetNull)
   /// Optional HealthTest the patient picked at booking. Set when the
   /// booking form arrives with `?service=<healthTestSlug>` and the slug
   /// matches a HealthTest row. Symmetric with `serviceId` above.
   healthTestId          String?
-  healthTest            HealthTest?     @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
+  healthTest            HealthTest?       @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
   /// Doctor assigned to take the call. Set by admin on the schedule form;
   /// the doctor's portal at /doctor scopes queries to `doctorId = self`.
   /// Optional because not every appointment has a doctor yet.
   doctorId              String?
-  doctor                Doctor?         @relation("AppointmentDoctor", fields: [doctorId], references: [id], onDelete: SetNull)
+  doctor                Doctor?           @relation("AppointmentDoctor", fields: [doctorId], references: [id], onDelete: SetNull)
   /// Concrete time slot the patient picked at booking. Populated when
   /// the booking form posts with `timeSlotId`; the booking handler
   /// atomically claims the slot (UPDATE…WHERE status='OPEN') so two
   /// patients can never grab the same one. Null = legacy flow (admin
   /// schedules the call manually later).
-  timeSlotId            String?         @unique
-  timeSlot              DoctorTimeSlot? @relation("AppointmentSlot", fields: [timeSlotId], references: [id], onDelete: SetNull)
+  timeSlotId            String?           @unique
+  timeSlot              DoctorTimeSlot?   @relation("AppointmentSlot", fields: [timeSlotId], references: [id], onDelete: SetNull)
+  /// One Consultation row per Appointment — created on first save from
+  /// the doctor portal, locked when signed.
+  consultation          Consultation?
+  /// Per-appointment lab / imaging / exam results the doctor logs.
+  examResults           ExamResult[]
+  /// Doctor ↔ admin notes for this appointment (NOT patient-visible —
+  /// patient chat lives on `messages`).
+  internalMessages      InternalMessage[]
   // Payment lifecycle. UNPAID = free or pending-Stripe.
-  paymentStatus         PaymentStatus   @default(UNPAID)
+  paymentStatus         PaymentStatus     @default(UNPAID)
   // Stripe identifiers. Null until a Checkout Session is created.
-  stripeSessionId       String?         @unique
-  stripePaymentIntentId String?         @unique
+  stripeSessionId       String?           @unique
+  stripePaymentIntentId String?           @unique
   amountCents           Int?
   currencyCode          String?
   paidAt                DateTime?
@@ -503,11 +533,11 @@ model Appointment {
   // Reminder job marks this once it has emailed the patient ~24h before
   // scheduledAt, so re-runs don't double-send. Null means "not sent yet".
   reminderSentAt        DateTime?
-  user                  User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user                  User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
   payments              Payment[]
   messages              Message[]
-  createdAt             DateTime        @default(now())
-  updatedAt             DateTime        @updatedAt
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
 }
 
 /// Lightweight chat thread for the patient ↔ admin pre-consult conversation.
@@ -583,6 +613,10 @@ model User {
   appointments            Appointment[]
   resetTokens             PasswordResetToken[]
   emailVerificationTokens EmailVerificationToken[]
+  /// Internal (doctor ↔ admin) messages this user authored. Patient
+  /// messages live on `Message.authorUserId` which is unrelated to
+  /// this relation name.
+  internalMessages        InternalMessage[]        @relation("InternalMessageAuthor")
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
 }
@@ -737,4 +771,67 @@ model Setting {
   key       String   @id
   value     Json
   updatedAt DateTime @updatedAt
+}
+
+/// Clinical SOAP note bound to a single Appointment. Created lazily —
+/// the row only materialises the first time the doctor saves something
+/// from the portal. Locks on SIGN; further edits would require an
+/// amendment row (out of scope today).
+model Consultation {
+  id             String             @id @default(cuid())
+  appointmentId  String             @unique
+  doctorId       String
+  chiefComplaint String?
+  /// SOAP: Subjective — patient-reported history.
+  subjective     String?
+  /// SOAP: Objective — observable findings, vitals, exam.
+  objective      String?
+  /// SOAP: Assessment — clinical impression, diagnoses.
+  assessment     String?
+  /// SOAP: Plan — prescriptions, follow-up, referrals.
+  plan           String?
+  status         ConsultationStatus @default(DRAFT)
+  signedAt       DateTime?
+  appointment    Appointment        @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  doctor         Doctor             @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@index([doctorId, status])
+}
+
+/// Per-appointment lab / imaging / test result the doctor records.
+/// `externalUrl` for links to a partner lab portal; `notes` for free-text
+/// interpretation. File-upload of result PDFs comes in a follow-up — the
+/// MVP keeps it text + link only.
+model ExamResult {
+  id            String      @id @default(cuid())
+  appointmentId String
+  doctorId      String
+  testName      String
+  performedAt   DateTime?
+  notes         String?
+  externalUrl   String?
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  doctor        Doctor      @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([appointmentId, createdAt])
+  @@index([doctorId, createdAt])
+}
+
+/// Doctor ↔ admin per-appointment note thread. Distinct from the
+/// patient-facing `Message` model — patients can never see these.
+model InternalMessage {
+  id            String                    @id @default(cuid())
+  appointmentId String
+  authorUserId  String
+  authorRole    InternalMessageAuthorRole
+  body          String
+  appointment   Appointment               @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  author        User                      @relation("InternalMessageAuthor", fields: [authorUserId], references: [id], onDelete: Restrict)
+  createdAt     DateTime                  @default(now())
+
+  @@index([appointmentId, createdAt])
 }

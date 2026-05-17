@@ -599,6 +599,21 @@ export async function deleteAdminDoctor(id: string) {
   });
 }
 
+/** Per-appointment doctor ↔ admin notes (NOT patient-visible). */
+export type AdminInternalMessage = {
+  id: string;
+  authorRole: "DOCTOR" | "ADMIN";
+  authorName: string;
+  body: string;
+  createdAt: string;
+};
+
+export async function fetchAdminInternalMessages(appointmentId: string) {
+  return adminRequest<{ items: AdminInternalMessage[] }>(
+    `/api/admin/appointments/${appointmentId}/internal-messages`,
+  );
+}
+
 /** Doctor availability windows (recurring weekly slots). */
 export type AdminAvailabilityRow = {
   id: string;

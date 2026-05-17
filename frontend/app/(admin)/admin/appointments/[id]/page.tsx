@@ -4,10 +4,12 @@ import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import {
   fetchAdminAppointmentById,
+  fetchAdminInternalMessages,
   patchAdminAppointmentSchedule,
   patchAdminAppointmentStatus,
 } from "@/lib/admin/admin-api";
 import { ChatThread } from "@/components/chat/ChatThread";
+import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 import { fetchAdminMessages, postAdminMessage } from "@/lib/api/chat-api";
 import {
   getAllowedNextStatuses,
@@ -88,7 +90,13 @@ export default async function AdminAppointmentDetailPage({
 }: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
-  const result = await fetchAdminAppointmentById(id);
+  const [result, internalMessagesResult] = await Promise.all([
+    fetchAdminAppointmentById(id),
+    fetchAdminInternalMessages(id),
+  ]);
+  const internalMessages = internalMessagesResult.ok
+    ? internalMessagesResult.data.items
+    : [];
 
   async function updateStatusAction(formData: FormData) {
     "use server";
@@ -360,6 +368,23 @@ export default async function AdminAppointmentDetailPage({
               viewerRole="ADMIN"
               fetcher={fetchAdminMessages}
               poster={postAdminMessage}
+            />
+          </AdminCard>
+
+          {/* Internal (doctor ↔ admin) per-appointment notes. NOT
+              patient-visible. Same thread surface as on the doctor portal
+              at /doctor/appointments/[id]. */}
+          <AdminCard>
+            <h3 style={cardTitleStyle}>Internal notes (doctor ↔ admin)</h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Handoff context between you and the doctor. Hidden from the
+              patient.
+            </p>
+            <InternalMessagesThread
+              appointmentId={appointment.id}
+              initialItems={internalMessages}
+              postEndpoint={`/api/admin/appointments/${appointment.id}/internal-messages`}
+              currentRole="ADMIN"
             />
           </AdminCard>
 

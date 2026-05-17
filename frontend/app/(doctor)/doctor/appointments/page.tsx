@@ -1,4 +1,5 @@
-import { Video } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight, Video } from "lucide-react";
 import { fetchDoctorAppointments, type DoctorAppointment } from "@/lib/api/doctor-api";
 
 export const dynamic = "force-dynamic";
@@ -115,20 +116,24 @@ export default async function DoctorAppointmentsPage({
                   <td className="px-4 py-3 text-xs">{a.status}</td>
                   <td className="px-4 py-3 text-xs">{a.paymentStatus}</td>
                   <td className="px-4 py-3 text-right">
-                    {a.meetingUrl ? (
-                      <a
-                        href={a.meetingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800"
+                    <div className="inline-flex items-center gap-2">
+                      {a.meetingUrl ? (
+                        <a
+                          href={a.meetingUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800"
+                        >
+                          <Video className="size-3.5" aria-hidden /> Join
+                        </a>
+                      ) : null}
+                      <Link
+                        href={`/doctor/appointments/${a.id}`}
+                        className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1.5 text-xs font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                       >
-                        <Video className="size-3.5" aria-hidden /> Join
-                      </a>
-                    ) : (
-                      <span className="text-xs text-[var(--color-text-muted)]">
-                        No link yet
-                      </span>
-                    )}
+                        Open <ChevronRight className="size-3.5" />
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))}

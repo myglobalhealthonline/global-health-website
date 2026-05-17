@@ -113,3 +113,72 @@ export type DoctorPatient = {
 export async function fetchDoctorPatients() {
   return doctorRequest<{ items: DoctorPatient[] }>("/api/doctor/patients");
 }
+
+export type ConsultationDto = {
+  id: string;
+  appointmentId: string;
+  doctorId: string;
+  chiefComplaint: string | null;
+  subjective: string | null;
+  objective: string | null;
+  assessment: string | null;
+  plan: string | null;
+  status: "DRAFT" | "SIGNED";
+  signedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AppointmentDetailDto = {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string | null;
+  consultationType: string;
+  countryCode: string;
+  status: string;
+  scheduledAt: string | null;
+  meetingUrl: string | null;
+  notes: string | null;
+  dateOfBirth: string | null;
+  createdAt: string;
+};
+
+export async function fetchDoctorConsultation(appointmentId: string) {
+  return doctorRequest<{
+    appointment: AppointmentDetailDto;
+    consultation: ConsultationDto | null;
+  }>(`/api/doctor/appointments/${appointmentId}/consultation`);
+}
+
+export type ExamResultDto = {
+  id: string;
+  appointmentId: string;
+  doctorId: string;
+  testName: string;
+  performedAt: string | null;
+  notes: string | null;
+  externalUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export async function fetchDoctorExams(appointmentId: string) {
+  return doctorRequest<{ items: ExamResultDto[] }>(
+    `/api/doctor/appointments/${appointmentId}/exams`,
+  );
+}
+
+export type InternalMessageDto = {
+  id: string;
+  authorRole: "DOCTOR" | "ADMIN";
+  authorName: string;
+  body: string;
+  createdAt: string;
+};
+
+export async function fetchDoctorInternalMessages(appointmentId: string) {
+  return doctorRequest<{ items: InternalMessageDto[] }>(
+    `/api/doctor/appointments/${appointmentId}/internal-messages`,
+  );
+}
