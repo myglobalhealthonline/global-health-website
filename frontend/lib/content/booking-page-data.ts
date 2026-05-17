@@ -5,6 +5,7 @@ import type { LocaleCode } from "@/lib/i18n/types";
 const consultationTypeOptions = [
   { value: "general", label: "GP consultation" },
   { value: "specialist", label: "Specialist consultation" },
+  { value: "prescription", label: "Prescription review" },
   { value: "follow-up", label: "Follow-up consultation" },
 ];
 

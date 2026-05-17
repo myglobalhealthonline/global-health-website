@@ -108,10 +108,12 @@ export default async function CountryLangSpecialistConsultationPage({
   }));
 
   // Specialist service cards — auto from Service rows where kind=SPECIALIST.
+  // Each card links to the booking form WITH `?service=<slug>` so the
+  // backend stamps catalogue price + triggers Stripe Checkout.
   const serviceItems = services.map((s) => ({
     title: s.name,
     description: s.summary,
-    href: ctaHref,
+    href: `${ctaHref}${ctaHref.includes("?") ? "&" : "?"}service=${encodeURIComponent(s.slug)}`,
     serviceType: "specialist" as const,
     audience: s.specialtyName ?? undefined,
     duration: formatDuration(s.durationMinutes),

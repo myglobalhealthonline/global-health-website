@@ -154,8 +154,11 @@ export default async function CountryLangHomePage({
 
   const totalDoctorsAcrossEurope = allDoctors.length;
 
+  // "Book with X" button on the doctor wall — link to the country
+  // booking form with `?doctor=<slug>` so intent survives. Was previously
+  // pointing at the doctor profile URL, which mismatched the CTA label.
   const doctorWallItems: DoctorWallItem[] = countryDoctors.map((d) =>
-    mapDoctorToWallItem(d, code, `/${slug}/${lang}/doctors/${d.slug}`),
+    mapDoctorToWallItem(d, code, `${bookHref}?doctor=${encodeURIComponent(d.slug)}`),
   );
 
   const serviceCatalogItems: ServiceCatalogItem[] = [

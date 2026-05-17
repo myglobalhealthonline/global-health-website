@@ -15,6 +15,7 @@ import {
 } from "@/lib/admin/appointment-status";
 import { FlagBadge } from "../../_components/flag-badge";
 import { ScheduleTzOffsetInput } from "../_components/schedule-tz-offset";
+import { ScheduleSlotInput } from "../_components/schedule-slot-input";
 import {
   AdminCard,
   Btn,
@@ -25,15 +26,9 @@ import {
 
 export const dynamic = "force-dynamic";
 
-/** Convert an ISO timestamp to the "YYYY-MM-DDTHH:mm" format that
- *  `<input type="datetime-local">` expects (in the server's local TZ).
- *  Used to prefill the schedule form with the existing slot. */
-function toLocalDateTimeInputValue(iso: string): string {
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
+// (Server-side datetime-local conversion removed — `ScheduleSlotInput`
+// now does the ISO→local-input formatting in the browser so the prefill
+// matches the admin's wall clock, not the Node server's timezone.)
 
 function formatDate(dateIso: string) {
   const date = new Date(dateIso);
@@ -385,15 +380,12 @@ export default async function AdminAppointmentDetailPage({
               <ScheduleTzOffsetInput />
               <label className="flex flex-col gap-1.5">
                 <span className="gh-field-label">Slot (your local time)</span>
-                <input
-                  type="datetime-local"
+                {/* Client-side conversion of the stored UTC ISO into the
+                    admin's browser-local datetime-local string. Avoids
+                    server-timezone leakage on reopen. */}
+                <ScheduleSlotInput
                   name="scheduledAt"
-                  className="gh-input"
-                  defaultValue={
-                    appointment.scheduledAt
-                      ? toLocalDateTimeInputValue(appointment.scheduledAt)
-                      : ""
-                  }
+                  initialIso={appointment.scheduledAt}
                 />
                 <span className="text-[11px] text-[var(--color-text-muted)]">
                   Leave blank to clear.

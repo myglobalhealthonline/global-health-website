@@ -99,10 +99,13 @@ export default async function CountryLangGeneralConsultationPage({
 
   // Map Service rows to the ServicesGrid card shape. Cards auto-appear when
   // admin adds a Service row of kind=GENERAL for this country.
+  // Each service card links to the booking form WITH `?service=<slug>`
+  // so the backend resolves the catalogue price + triggers Stripe Checkout.
+  // Without this the priced services would never actually charge.
   const serviceItems = services.map((s) => ({
     title: s.name,
     description: s.summary,
-    href: ctaHref,
+    href: `${ctaHref}${ctaHref.includes("?") ? "&" : "?"}service=${encodeURIComponent(s.slug)}`,
     serviceType: "general" as const,
     duration: formatDuration(s.durationMinutes),
     startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
