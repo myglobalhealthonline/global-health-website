@@ -11,6 +11,9 @@ export type BookingPayload = {
   /** When set, links the appointment to a catalogue Service so price +
    *  currency get copied onto the row, enabling Stripe Checkout. */
   serviceSlug?: string;
+  /** YYYY-MM-DD. Optional; backend enforces per-country
+   *  `BookingSetting.requireDateOfBirth` when on. */
+  dateOfBirth?: string;
 };
 
 export type BookingApiSuccess = {

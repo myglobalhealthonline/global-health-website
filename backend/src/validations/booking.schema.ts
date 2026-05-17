@@ -24,6 +24,18 @@ export const bookingSchema = z.object({
   // service row and copy its price/currency onto the appointment so the
   // Stripe Checkout session has everything it needs without a second look-up.
   serviceSlug: z.string().trim().max(120).optional(),
+  /**
+   * Patient date of birth as `YYYY-MM-DD`. Optional at the schema layer
+   * because not every country requires it; `BookingSetting.requireDateOfBirth`
+   * is enforced in the route handler so the error message can mention
+   * the specific country's rule.
+   */
+  dateOfBirth: z
+    .string()
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date of birth must be in YYYY-MM-DD format")
+    .optional()
+    .or(z.literal("")),
 });
 
 export type BookingInput = z.infer<typeof bookingSchema>;

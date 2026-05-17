@@ -110,7 +110,13 @@ export async function fetchAssets(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
 
 export async function fetchPublicPage(
   countryCode: string,
-  pageKey: "HOME" | "DOCTORS_INDEX" | "GENERAL_CONSULTATION" | "SPECIALIST_CONSULTATION",
+  pageKey:
+    | "HOME"
+    | "DOCTORS_INDEX"
+    | "GENERAL_CONSULTATION"
+    | "SPECIALIST_CONSULTATION"
+    | "PRESCRIPTIONS"
+    | "HEALTH_TESTS",
   locale: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
 ) {

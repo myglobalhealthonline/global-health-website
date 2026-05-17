@@ -50,6 +50,8 @@ enum PageKey {
   GENERAL_CONSULTATION
   SPECIALIST_CONSULTATION
   DOCTORS_INDEX
+  PRESCRIPTIONS
+  HEALTH_TESTS
 }
 
 model Currency {
@@ -286,6 +288,9 @@ model HealthTest {
   seoDescription     String?
   legacyPath         String?
   country            Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  /// Appointments where the patient picked this specific health test
+  /// at booking (`?service=<healthTestSlug>` matched a row here).
+  appointments       Appointment[]
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 
@@ -371,6 +376,10 @@ model Appointment {
   fullName              String
   email                 String
   phone                 String?
+  /// Optional patient date of birth — captured when the country's
+  /// BookingSetting.requireDateOfBirth is on. Stored as a Date so we
+  /// can compute age + filter by ranges later.
+  dateOfBirth           DateTime?
   notes                 String?
   consentAccepted       Boolean
   status                String         @default("REQUEST_RECEIVED")
@@ -378,6 +387,11 @@ model Appointment {
   // the booking form passes ?service=<slug>; null for free-text bookings.
   serviceId             String?
   service               Service?       @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  /// Optional HealthTest the patient picked at booking. Set when the
+  /// booking form arrives with `?service=<healthTestSlug>` and the slug
+  /// matches a HealthTest row. Symmetric with `serviceId` above.
+  healthTestId          String?
+  healthTest            HealthTest?    @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
   // Payment lifecycle. UNPAID = free or pending-Stripe.
   paymentStatus         PaymentStatus  @default(UNPAID)
   // Stripe identifiers. Null until a Checkout Session is created.

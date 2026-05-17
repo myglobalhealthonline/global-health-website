@@ -605,6 +605,70 @@ export async function purgeAdminDoctor(id: string) {
   });
 }
 
+// ── Admin users (patients + admin accounts) ─────────────────────────────
+
+export type AdminUserRole = "PATIENT" | "ADMIN";
+
+export type AdminUserDto = {
+  id: string;
+  email: string;
+  fullName: string;
+  phone: string | null;
+  role: AdminUserRole;
+  isActive: boolean;
+  emailVerifiedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type AdminUsersListPayload = {
+  items: AdminUserDto[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+type AdminUserDetailPayload = {
+  user: AdminUserDto;
+  stats: { appointmentCount: number };
+};
+
+export async function fetchAdminUsers(query?: Record<string, string | undefined>) {
+  const params = new URLSearchParams();
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") params.set(key, value);
+    }
+  }
+  const qs = params.toString();
+  const path = qs ? `/api/admin/users?${qs}` : "/api/admin/users";
+  return adminRequest<AdminUsersListPayload>(path);
+}
+
+export const fetchAdminUserById = cache(async (id: string) => {
+  return adminRequest<AdminUserDetailPayload>(`/api/admin/users/${id}`);
+});
+
+export async function patchAdminUser(
+  id: string,
+  body: { isActive?: boolean; role?: AdminUserRole },
+) {
+  return adminRequest<{ user: AdminUserDto }>(`/api/admin/users/${id}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export async function resetAdminUserPassword(id: string, password: string) {
+  return adminRequest<{ reset: true }>(
+    `/api/admin/users/${id}/reset-password`,
+    { method: "POST", body: { password } },
+  );
+}
+
 export type AdminHealthTestExtraSectionDto = {
   heading: string;
   body: string;
@@ -778,7 +842,9 @@ export type AdminPageKey =
   | "HOME"
   | "DOCTORS_INDEX"
   | "GENERAL_CONSULTATION"
-  | "SPECIALIST_CONSULTATION";
+  | "SPECIALIST_CONSULTATION"
+  | "PRESCRIPTIONS"
+  | "HEALTH_TESTS";
 
 export type AdminPageLocale = "EN" | "PT" | "ES" | "CS" | "RO" | "DE";
 
@@ -828,8 +894,10 @@ type AdminPageDetailPayload = {
 export const ADMIN_PAGE_KEY_LABELS: Record<AdminPageKey, string> = {
   HOME: "Home",
   DOCTORS_INDEX: "Doctors index",
-  GENERAL_CONSULTATION: "General consultation",
+  GENERAL_CONSULTATION: "GP consultation",
   SPECIALIST_CONSULTATION: "Specialist consultation",
+  PRESCRIPTIONS: "Prescriptions",
+  HEALTH_TESTS: "Health tests",
 };
 
 export const ADMIN_PAGE_KEYS: AdminPageKey[] = [
@@ -837,6 +905,8 @@ export const ADMIN_PAGE_KEYS: AdminPageKey[] = [
   "DOCTORS_INDEX",
   "GENERAL_CONSULTATION",
   "SPECIALIST_CONSULTATION",
+  "PRESCRIPTIONS",
+  "HEALTH_TESTS",
 ];
 
 export async function fetchAdminPages(query?: Record<string, string | undefined>) {

@@ -1,6 +1,25 @@
 import { z } from "zod";
 
-export const countryCodeSchema = z.enum(["ie", "pt", "sp", "cz", "rm"]);
+/**
+ * Country code accepted by public endpoints. Earlier this was a hardcoded
+ * enum of the five seeded countries — admins could create new Country
+ * rows but bookings + filters for those new codes would 400 here. We now
+ * accept any 2–8 char lowercase identifier and let downstream code
+ * (`getPublicCountryByCode`, the country-scoped routes) do the actual
+ * existence check against the DB — that returns 404 for unknown codes
+ * with a clearer message.
+ *
+ * Length cap is loose enough for any real ISO 3166-1 alpha-2 or alpha-3
+ * code plus internal-only short codes; the regex stops obviously bogus
+ * inputs from reaching SQL.
+ */
+export const countryCodeSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .min(2, "Country code must be at least 2 characters")
+  .max(8, "Country code is too long")
+  .regex(/^[a-z][a-z0-9-]*$/, "Country code must be lowercase letters/digits/hyphens, starting with a letter");
 
 // Consultation intent on the booking form. Must stay in sync with the
 // dropdown options in `frontend/lib/content/booking-page-data.ts` and

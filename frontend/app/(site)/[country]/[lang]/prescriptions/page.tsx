@@ -12,8 +12,13 @@ import {
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
-import { isSupportedLocale } from "@/lib/content/get-public-page";
+import {
+  getPublicPage,
+  isSupportedLocale,
+  type PublicLocale,
+} from "@/lib/content/get-public-page";
 import { getCountryServices } from "@/lib/content/get-country-collections";
+import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
 
 type Params = { country: string; lang: string };
@@ -34,12 +39,19 @@ export async function generateMetadata({
   const code = countryCodeFromSlug(country);
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
+  // Admin-editable copy via /admin/pages (PageKey=PRESCRIPTIONS).
+  // Falls back to the hardcoded strings if no ContentPage row exists.
+  const page = await getPublicPage(code, "PRESCRIPTIONS", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/prescriptions`;
+  const title = page?.seoTitle ?? `Online prescriptions in ${config.name} · ${SITE_NAME}`;
+  const description =
+    page?.seoDescription ??
+    `Get a prescription online from a licensed doctor in ${config.name}.`;
   return {
-    title: `Online prescriptions in ${config.name} · ${SITE_NAME}`,
-    description: `Get a prescription online from a licensed doctor in ${config.name}.`,
+    title,
+    description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/prescriptions") },
-    openGraph: { type: "website", siteName: SITE_NAME, url },
+    openGraph: { type: "website", siteName: SITE_NAME, url, title, description },
   };
 }
 
@@ -61,8 +73,16 @@ export default async function PrescriptionsPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const items = await getCountryServices(code, "PRESCRIPTION");
+  const [items, page] = await Promise.all([
+    getCountryServices(code, "PRESCRIPTION"),
+    getPublicPage(code, "PRESCRIPTIONS", lang as PublicLocale),
+  ]);
   const bookHref = `/${slug}/${lang}/book-online?type=prescription`;
+  const heroTitle = page?.heroTitle ?? "Online prescriptions";
+  const heroSubtitle =
+    page?.heroSubtitle ??
+    `Renew or get a new prescription from a licensed doctor in ${config.name}, delivered electronically.`;
+  const ctaLabel = page?.ctaLabel ?? "Request a prescription";
 
   return (
     <>
@@ -79,20 +99,22 @@ export default async function PrescriptionsPage({
           {config.name} · Online prescriptions
         </p>
         <h1 className="mt-3 text-4xl font-semibold text-slate-900 sm:text-5xl">
-          Online prescriptions
+          {heroTitle}
         </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
-          Renew or get a new prescription from a licensed doctor in {config.name}, delivered electronically.
-        </p>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">{heroSubtitle}</p>
         <div className="mt-7">
           <Link
             href={bookHref}
             className="inline-flex items-center rounded-md bg-emerald-700 px-6 py-3 text-white shadow-sm hover:bg-emerald-800"
           >
-            Request a prescription
+            {ctaLabel}
           </Link>
         </div>
       </section>
+
+      {/* Admin-edited rich body from ContentPage (PRESCRIPTIONS). Hidden
+          when no row exists. */}
+      <RichBodySection html={page?.body} />
 
       <TrustRibbon />
 

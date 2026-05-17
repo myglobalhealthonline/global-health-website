@@ -89,6 +89,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
       typeof window !== "undefined"
         ? (new URLSearchParams(window.location.search).get("service") ?? undefined)
         : undefined;
+    const dob = String(formData.get("dateOfBirth") ?? "").trim();
     const payload = {
       country: String(formData.get("country") ?? "").trim(),
       consultationType: String(formData.get("consultationType") ?? "").trim(),
@@ -98,6 +99,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
       notes: String(formData.get("notes") ?? "").trim(),
       consentAccepted: formData.get("consentAccepted") === "on",
       serviceSlug: serviceSlug?.trim() || undefined,
+      ...(dob !== "" ? { dateOfBirth: dob } : {}),
     };
 
     const nextErrors: FieldErrors = {};
@@ -333,6 +335,21 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                   />
                 </Field>
               </div>
+
+              {/* Date of birth — only enforced when the country's
+                  BookingSetting.requireDateOfBirth is on. Always rendered
+                  so users in countries that do require it can submit;
+                  countries that don't require it can leave blank. The
+                  backend rejects with a per-country message if missing. */}
+              <Field id="booking-dob" label="Date of birth">
+                <input
+                  id="booking-dob"
+                  name="dateOfBirth"
+                  type="date"
+                  max={new Date().toISOString().slice(0, 10)}
+                  className="gh-input"
+                />
+              </Field>
 
               <Field id={ids.notes} label={form.fields.notes.label}>
                 <textarea

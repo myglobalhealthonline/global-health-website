@@ -50,6 +50,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/specialties", label: "Categories" },
     { href: "/admin/doctors", label: "Doctors" },
     { href: "/admin/assets", label: "Assets" },
+    { href: "/admin/users", label: "Users" },
     { href: "/admin/newsletter", label: "Newsletter" },
     { href: "/admin/settings", label: "Settings" },
     // Country-scoped

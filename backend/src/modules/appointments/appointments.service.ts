@@ -27,12 +27,21 @@ export async function createAppointmentWithOptionalOwner(
   try {
     const id = randomUUID();
 
+    // dateOfBirth — `YYYY-MM-DD` string from the form. Coerce to a
+    // proper Date (UTC midnight) so the DB column is a real date+time.
+    // null when not supplied; the booking schema validates the format
+    // before we ever land here.
+    const dob =
+      input.dateOfBirth && input.dateOfBirth !== ""
+        ? new Date(`${input.dateOfBirth}T00:00:00.000Z`)
+        : null;
+
     await prisma.$executeRawUnsafe(
       `
         INSERT INTO "Appointment"
-          ("id", "userId", "countryCode", "consultationType", "fullName", "email", "phone", "notes", "consentAccepted", "status", "createdAt", "updatedAt")
+          ("id", "userId", "countryCode", "consultationType", "fullName", "email", "phone", "dateOfBirth", "notes", "consentAccepted", "status", "createdAt", "updatedAt")
         VALUES
-          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())
+          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())
       `,
       id,
       options.userId ?? null,
@@ -41,6 +50,7 @@ export async function createAppointmentWithOptionalOwner(
       input.fullName,
       input.email,
       input.phone || null,
+      dob,
       input.notes || null,
       input.consentAccepted,
       "REQUEST_RECEIVED",

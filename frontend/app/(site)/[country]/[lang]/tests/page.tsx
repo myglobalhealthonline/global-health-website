@@ -12,8 +12,13 @@ import {
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
-import { isSupportedLocale } from "@/lib/content/get-public-page";
+import {
+  getPublicPage,
+  isSupportedLocale,
+  type PublicLocale,
+} from "@/lib/content/get-public-page";
 import { getCountryHealthTests } from "@/lib/content/get-country-collections";
+import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
 
 type Params = { country: string; lang: string };
@@ -34,12 +39,18 @@ export async function generateMetadata({
   const code = countryCodeFromSlug(country);
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
+  // Admin-editable copy via /admin/pages (PageKey=HEALTH_TESTS).
+  // Falls back to the hardcoded strings if no ContentPage row exists.
+  const page = await getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/tests`;
+  const title = page?.seoTitle ?? `Home health tests in ${config.name} · ${SITE_NAME}`;
+  const description =
+    page?.seoDescription ?? `Lab-quality home health tests delivered in ${config.name}.`;
   return {
-    title: `Home health tests in ${config.name} · ${SITE_NAME}`,
-    description: `Lab-quality home health tests delivered in ${config.name}.`,
+    title,
+    description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/tests") },
-    openGraph: { type: "website", siteName: SITE_NAME, url },
+    openGraph: { type: "website", siteName: SITE_NAME, url, title, description },
   };
 }
 
@@ -60,8 +71,15 @@ export default async function HealthTestsPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const items = await getCountryHealthTests(code);
+  const [items, page] = await Promise.all([
+    getCountryHealthTests(code),
+    getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale),
+  ]);
   const bookHref = `/${slug}/${lang}/book-online?type=health-test`;
+  const heroTitle = page?.heroTitle ?? "Lab-quality tests, delivered home";
+  const heroSubtitle =
+    page?.heroSubtitle ??
+    `Order a kit, take the sample at home, send it back. Results reviewed by a doctor licensed in ${config.name}.`;
 
   return (
     <>
@@ -77,14 +95,12 @@ export default async function HealthTestsPage({
         <p className="text-sm uppercase tracking-wide text-emerald-700">
           {config.name} · Home health tests
         </p>
-        <h1 className="mt-3 text-4xl font-semibold text-slate-900 sm:text-5xl">
-          Lab-quality tests, delivered home
-        </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">
-          Order a kit, take the sample at home, send it back. Results reviewed by
-          a doctor licensed in {config.name}.
-        </p>
+        <h1 className="mt-3 text-4xl font-semibold text-slate-900 sm:text-5xl">{heroTitle}</h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">{heroSubtitle}</p>
       </section>
+
+      {/* Admin-edited rich body from ContentPage (HEALTH_TESTS). */}
+      <RichBodySection html={page?.body} />
 
       <TrustRibbon />
 

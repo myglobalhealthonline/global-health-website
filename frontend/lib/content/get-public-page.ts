@@ -8,7 +8,9 @@ export type PublicPageKey =
   | "HOME"
   | "DOCTORS_INDEX"
   | "GENERAL_CONSULTATION"
-  | "SPECIALIST_CONSULTATION";
+  | "SPECIALIST_CONSULTATION"
+  | "PRESCRIPTIONS"
+  | "HEALTH_TESTS";
 
 /**
  * Public locale alias = the same LocaleCode union from `lib/i18n/types`.
@@ -54,7 +56,14 @@ export type PublicPageRecord = {
 };
 
 function isPageKey(v: unknown): v is PublicPageKey {
-  return v === "HOME" || v === "DOCTORS_INDEX" || v === "GENERAL_CONSULTATION" || v === "SPECIALIST_CONSULTATION";
+  return (
+    v === "HOME" ||
+    v === "DOCTORS_INDEX" ||
+    v === "GENERAL_CONSULTATION" ||
+    v === "SPECIALIST_CONSULTATION" ||
+    v === "PRESCRIPTIONS" ||
+    v === "HEALTH_TESTS"
+  );
 }
 
 function readImage(raw: unknown): PublicPageImage | null {
