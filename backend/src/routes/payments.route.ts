@@ -273,15 +273,25 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
         } else if (eventType === "checkout.session.async_payment_failed") {
           const session = event.data.object as { id: string; client_reference_id?: string | null };
           const appointmentId = session.client_reference_id ?? null;
-          if (appointmentId) {
-            await prisma.appointment.update({
-              where: { id: appointmentId },
-              data: { paymentStatus: PaymentStatus.FAILED },
-            });
+          // No appointmentId → we can't link a Payment row to anything
+          // meaningful. Previously we wrote `appointmentId: ""` which
+          // either FK-violated or stranded an orphan ledger entry.
+          // Ack the event to Stripe (no retries needed) and log so ops
+          // can investigate.
+          if (!appointmentId) {
+            app.log.warn(
+              { sessionId: session.id, eventId: event.id },
+              "async_payment_failed without appointmentId — skipping Payment row",
+            );
+            return okResponse({ received: true });
           }
+          await prisma.appointment.update({
+            where: { id: appointmentId },
+            data: { paymentStatus: PaymentStatus.FAILED },
+          });
           await prisma.payment.create({
             data: {
-              appointmentId: appointmentId ?? "",
+              appointmentId,
               stripeEventId: event.id,
               stripeSessionId: session.id,
               status: PaymentStatus.FAILED,

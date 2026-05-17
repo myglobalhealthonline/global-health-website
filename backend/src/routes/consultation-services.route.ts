@@ -2,7 +2,10 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyDoctorAccess } from "../utils/doctor-auth.js";
+import {
+  verifyClinicalReadAccess,
+  verifyDoctorAccess,
+} from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 
@@ -42,13 +45,18 @@ const consultationServicesRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { consultationId: string } }>(
     "/api/doctor/consultations/:consultationId/services",
     async (request, reply) => {
-      const auth = await verifyDoctorAccess(request);
+      const auth = await verifyClinicalReadAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
-        const consult = await ownedConsultation(
-          auth.doctorId,
-          request.params.consultationId,
-        );
+        const consult = await prisma.consultation.findFirst({
+          where: {
+            id: request.params.consultationId,
+            ...(auth.role === "DOCTOR" && auth.doctorId
+              ? { doctorId: auth.doctorId }
+              : {}),
+          },
+          select: { id: true, status: true },
+        });
         if (!consult) {
           return reply.status(404).send(errorResponse("Consultation not found"));
         }

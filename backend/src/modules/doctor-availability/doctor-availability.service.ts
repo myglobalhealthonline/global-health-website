@@ -183,6 +183,44 @@ export async function releaseDoctorSlot(slotId: string): Promise<void> {
   }
 }
 
+/**
+ * Detach + release the slot currently bound to an Appointment.
+ *
+ * Called when:
+ *   • Admin / doctor reschedules an appointment (the old slot is now
+ *     a phantom booking).
+ *   • Admin cancels the appointment outright.
+ *
+ * Idempotent: re-runs against an already-detached appointment are a
+ * no-op. Returns the slot id we released (or null if nothing to do)
+ * so the caller can record an audit row.
+ */
+export async function releaseAppointmentSlot(
+  appointmentId: string,
+): Promise<string | null> {
+  try {
+    const appt = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      select: { timeSlotId: true },
+    });
+    if (!appt?.timeSlotId) return null;
+    const slotId = appt.timeSlotId;
+    await prisma.$transaction([
+      prisma.appointment.update({
+        where: { id: appointmentId },
+        data: { timeSlotId: null },
+      }),
+      prisma.doctorTimeSlot.updateMany({
+        where: { id: slotId, status: "BOOKED" },
+        data: { status: "OPEN" },
+      }),
+    ]);
+    return slotId;
+  } catch (error) {
+    throw normalizeDbError(error, "Could not release booked slot");
+  }
+}
+
 export type AdminAvailabilityRow = {
   id: string;
   weekday: number;

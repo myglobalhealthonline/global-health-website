@@ -21,6 +21,16 @@ const mediaPublicRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid media key"));
     }
 
+    // Clinical document attachments are stored under the `clinical/`
+    // prefix and contain PHI. They MUST be served through the
+    // auth-gated `/api/doctor/documents/:id/download` endpoint, which
+    // resolves the AppointmentDocument row + verifies the caller
+    // owns it or is an admin. Refuse the public media path so
+    // a leaked S3 key alone never exposes a patient record.
+    if (key.startsWith("clinical/")) {
+      return reply.status(403).send(errorResponse("This document requires authentication"));
+    }
+
     try {
       const obj = await getObject(key);
       const stream = streamToNodeReadable(obj.Body);

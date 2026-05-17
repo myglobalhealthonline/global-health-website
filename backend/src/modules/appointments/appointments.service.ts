@@ -47,15 +47,19 @@ export async function createAppointmentWithOptionalOwner(
     // Slot booking path. If the patient picked a concrete slot, we wrap
     // the slot claim and the appointment INSERT in a single transaction
     // so a race-loser doesn't leave a half-formed appointment behind.
+    //
+    // `consultationMode` is explicit `'ONLINE'` (the default) because
+    // raw SQL bypasses Prisma column defaults, and the column is
+    // NON-NULL on the Postgres side — omitting it would error.
     if (input.timeSlotId) {
       await prisma.$transaction(async (tx) => {
         const claimed = await claimDoctorSlot(tx, input.timeSlotId as string);
         await tx.$executeRawUnsafe(
           `
             INSERT INTO "Appointment"
-              ("id", "userId", "countryCode", "consultationType", "fullName", "email", "phone", "dateOfBirth", "notes", "consentAccepted", "status", "doctorId", "timeSlotId", "scheduledAt", "createdAt", "updatedAt")
+              ("id", "userId", "countryCode", "consultationType", "fullName", "email", "phone", "dateOfBirth", "notes", "consentAccepted", "status", "consultationMode", "doctorId", "timeSlotId", "scheduledAt", "createdAt", "updatedAt")
             VALUES
-              ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW(), NOW())
+              ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::"ConsultationMode", $13, $14, $15, NOW(), NOW())
           `,
           id,
           options.userId ?? null,
@@ -68,6 +72,7 @@ export async function createAppointmentWithOptionalOwner(
           input.notes || null,
           input.consentAccepted,
           "REQUEST_RECEIVED",
+          "ONLINE",
           claimed.doctorId,
           input.timeSlotId,
           claimed.startAt,
@@ -79,9 +84,9 @@ export async function createAppointmentWithOptionalOwner(
     await prisma.$executeRawUnsafe(
       `
         INSERT INTO "Appointment"
-          ("id", "userId", "countryCode", "consultationType", "fullName", "email", "phone", "dateOfBirth", "notes", "consentAccepted", "status", "createdAt", "updatedAt")
+          ("id", "userId", "countryCode", "consultationType", "fullName", "email", "phone", "dateOfBirth", "notes", "consentAccepted", "status", "consultationMode", "createdAt", "updatedAt")
         VALUES
-          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())
+          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::"ConsultationMode", NOW(), NOW())
       `,
       id,
       options.userId ?? null,
@@ -94,6 +99,7 @@ export async function createAppointmentWithOptionalOwner(
       input.notes || null,
       input.consentAccepted,
       "REQUEST_RECEIVED",
+      "ONLINE",
     );
 
     return { id, status: "REQUEST_RECEIVED" };

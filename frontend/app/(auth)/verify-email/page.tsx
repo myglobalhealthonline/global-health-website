@@ -12,7 +12,6 @@ export default function VerifyEmailPage() {
   const token = searchParams.get("token");
   const [status, setStatus] = useState<Status>(token ? "verifying" : "pending");
   const [message, setMessage] = useState<string>("");
-  const apiBase = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
   const ranRef = useRef(false);
 
   useEffect(() => {
@@ -20,7 +19,11 @@ export default function VerifyEmailPage() {
     ranRef.current = true;
     async function verify() {
       try {
-        const res = await fetch(`${apiBase}/api/auth/verify-email`, {
+        // Same-origin proxy at /api/auth/verify-email — going direct
+        // to `${apiBase}/...` would 1) require CORS preflight, 2) not
+        // attach the session cookie on Railway subdomains. Stick to
+        // the proxy so this works on every deploy.
+        const res = await fetch(`/api/auth/verify-email`, {
           method: "POST",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
@@ -40,7 +43,7 @@ export default function VerifyEmailPage() {
       }
     }
     void verify();
-  }, [token, apiBase]);
+  }, [token]);
 
   return (
     <div className="min-h-screen bg-[var(--color-background-soft)] px-4 py-16">

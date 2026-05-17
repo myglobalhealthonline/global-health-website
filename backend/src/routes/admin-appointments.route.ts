@@ -7,11 +7,14 @@ import {
   UnrecognizedAppointmentStatusError,
   updateAppointmentStatus,
 } from "../modules/appointments/appointments.service.js";
+import { releaseAppointmentSlot } from "../modules/doctor-availability/doctor-availability.service.js";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { sendAppointmentScheduledEmail } from "../lib/email/templates.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { notifyDoctor } from "../modules/notifications/notify.service.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
+import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import {
   adminAppointmentsQuerySchema,
   appointmentIdParamsSchema,
@@ -113,16 +116,47 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       // URL actually changed. Without this guard the email re-fires every
       // time the admin saves the form, even on unrelated edits.
       const before = await getAppointmentById(params.data.id);
-      // Also snapshot the previous doctor assignment so we can fire a
-      // notification when the doctor changes (not on every save).
-      const beforeDoctorId = before
-        ? (
-            await prisma.appointment.findUnique({
-              where: { id: params.data.id },
-              select: { doctorId: true },
-            })
-          )?.doctorId ?? null
+      // Also snapshot the previous doctor + timeSlot so we can fire a
+      // notification on doctor change AND release the slot on reschedule.
+      const beforeSnapshot = before
+        ? await prisma.appointment.findUnique({
+            where: { id: params.data.id },
+            select: { doctorId: true, timeSlotId: true },
+          })
         : null;
+      const beforeDoctorId = beforeSnapshot?.doctorId ?? null;
+
+      // Reschedule guard: if scheduledAt is changing AND a slot is
+      // currently linked, release the booked slot before applying the
+      // update. Without this the original time stays BOOKED forever
+      // and can't be re-offered. `before.scheduledAt` is the ISO
+      // string (AdminAppointmentDetail.scheduledAt: string | null),
+      // so compare strings directly.
+      const isReschedule =
+        scheduledAtInput !== undefined &&
+        (before?.scheduledAt ?? null) !==
+          (scheduledAtInput === null ? null : scheduledAtInput.toISOString());
+      if (isReschedule && beforeSnapshot?.timeSlotId) {
+        const releasedSlotId = await releaseAppointmentSlot(
+          params.data.id,
+        ).catch((err) => {
+          app.log.warn({ err }, "Slot release failed on admin reschedule");
+          return null;
+        });
+        if (releasedSlotId) {
+          recordAudit({
+            actorRole: "ADMIN",
+            action: "TIMESLOT_RELEASED",
+            entityType: "DoctorTimeSlot",
+            entityId: releasedSlotId,
+            metadata: {
+              reason: "admin_reschedule",
+              appointmentId: params.data.id,
+            },
+            request,
+          }).catch(() => {});
+        }
+      }
 
       const appointment = await scheduleAppointment(params.data.id, {
         scheduledAt: scheduledAtInput,
@@ -192,10 +226,68 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
+      const before = await prisma.appointment.findUnique({
+        where: { id: params.data.id },
+        select: { status: true, doctorId: true, fullName: true },
+      });
       const appointment = await updateAppointmentStatus(params.data.id, body.data.status);
       if (!appointment) {
         return reply.status(404).send(errorResponse("Appointment not found"));
       }
+
+      // Slot release on cancellation: a CANCELLED appointment must not
+      // hold its slot hostage. Returns the slot to OPEN + clears
+      // Appointment.timeSlotId so the booking page re-offers the time.
+      if (
+        body.data.status === "CANCELLED" &&
+        before &&
+        before.status !== "CANCELLED"
+      ) {
+        const releasedSlotId = await releaseAppointmentSlot(params.data.id).catch(
+          (err) => {
+            app.log.warn({ err }, "Slot release failed on admin cancel");
+            return null;
+          },
+        );
+        if (releasedSlotId) {
+          recordAudit({
+            actorRole: "ADMIN",
+            action: "TIMESLOT_RELEASED",
+            entityType: "DoctorTimeSlot",
+            entityId: releasedSlotId,
+            metadata: {
+              reason: "admin_cancel",
+              appointmentId: params.data.id,
+            },
+            request,
+          }).catch(() => {});
+        }
+      }
+
+      // Audit + notify doctor on the status change (the doctor side of
+      // the same mutation already does this; admin side was bypassing).
+      if (before && before.status !== appointment.status) {
+        const actor = await resolveOptionalAuthUser(request);
+        recordAudit({
+          actorUserId: actor?.id ?? null,
+          actorRole: "ADMIN",
+          action: "APPOINTMENT_STATUS_CHANGED",
+          entityType: "Appointment",
+          entityId: appointment.id,
+          metadata: { from: before.status, to: appointment.status },
+          request,
+        }).catch(() => {});
+        if (before.doctorId) {
+          notifyDoctor(before.doctorId, "APPOINTMENT_STATUS_CHANGED", {
+            appointmentId: appointment.id,
+            snippet: `${before.fullName} · ${before.status} → ${appointment.status}`,
+            byRole: "ADMIN",
+          }).catch((err) =>
+            app.log.warn({ err }, "notifyDoctor failed (admin status change)"),
+          );
+        }
+      }
+
       return okResponse({ appointment }, "Appointment status updated");
     } catch (error) {
       if (error instanceof InvalidAppointmentStatusTransitionError) {

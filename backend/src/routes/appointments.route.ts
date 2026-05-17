@@ -10,6 +10,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { sendBookingConfirmationEmail } from "../lib/email/templates.js";
 import { isStripeConfigured } from "../lib/stripe/client.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 const appointmentsRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/appointments", {
@@ -146,6 +147,21 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
           "Booking confirmation email failed",
         );
       }
+
+      recordAudit({
+        actorUserId: authUserId ?? undefined,
+        actorRole: authUserId ? "PATIENT" : "SYSTEM",
+        action: "APPOINTMENT_CREATED",
+        entityType: "Appointment",
+        entityId: created.id,
+        metadata: {
+          consultationType: parsed.data.consultationType,
+          country: parsed.data.country,
+          serviceSlug: parsed.data.serviceSlug ?? null,
+          amountCents,
+        },
+        request,
+      }).catch(() => {});
 
       // Caller (the booking form) uses `paymentRequired` to decide whether to
       // route the user to Stripe Checkout vs the thank-you screen.

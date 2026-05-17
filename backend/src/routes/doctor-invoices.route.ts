@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyDoctorAccess } from "../utils/doctor-auth.js";
+import { verifyClinicalReadAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
@@ -20,11 +20,16 @@ const doctorInvoicesRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { id: string } }>(
     "/api/doctor/appointments/:id/invoice",
     async (request, reply) => {
-      const auth = await verifyDoctorAccess(request);
+      const auth = await verifyClinicalReadAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
         const appt = await prisma.appointment.findFirst({
-          where: { id: request.params.id, doctorId: auth.doctorId },
+          where: {
+            id: request.params.id,
+            ...(auth.role === "DOCTOR" && auth.doctorId
+              ? { doctorId: auth.doctorId }
+              : {}),
+          },
           select: {
             id: true,
             paymentStatus: true,
@@ -65,10 +70,31 @@ const doctorInvoicesRoute: FastifyPluginAsync = async (app) => {
           unitPriceCents: r.unitPriceCents,
           currencyCode: r.currencyCode,
         }));
-        const lineTotalCents = lines.reduce((sum, line) => {
-          if (line.unitPriceCents == null) return sum;
-          return sum + line.unitPriceCents * line.quantity;
-        }, 0);
+        // Bucket per-currency so mixed-currency line items can't
+        // sneak into a single arithmetic-meaningless total. Frontend
+        // renders each bucket separately. `lineTotalCents` is kept as
+        // a legacy single-bucket fallback for the dominant currency
+        // (Appointment.currencyCode, or whatever the first line uses)
+        // so older callers don't crash on missing fields.
+        const lineTotalsByCurrency: Record<string, number> = {};
+        for (const line of lines) {
+          if (line.unitPriceCents == null) continue;
+          const code = line.currencyCode ?? appt.currencyCode ?? "—";
+          lineTotalsByCurrency[code] =
+            (lineTotalsByCurrency[code] ?? 0) +
+            line.unitPriceCents * line.quantity;
+        }
+        const fallbackCurrency =
+          appt.currencyCode ??
+          lines.find((l) => l.currencyCode)?.currencyCode ??
+          null;
+        const lineTotalCents =
+          fallbackCurrency && lineTotalsByCurrency[fallbackCurrency] !== undefined
+            ? lineTotalsByCurrency[fallbackCurrency]
+            : Object.values(lineTotalsByCurrency).reduce(
+                (sum, v) => sum + v,
+                0,
+              );
         return okResponse({
           invoice: {
             paymentStatus: appt.paymentStatus,
@@ -78,6 +104,7 @@ const doctorInvoicesRoute: FastifyPluginAsync = async (app) => {
             stripeSessionId: appt.stripeSessionId,
             lines,
             lineTotalCents,
+            lineTotalsByCurrency,
             payments: appt.payments.map((p) => ({
               ...p,
               createdAt: p.createdAt.toISOString(),

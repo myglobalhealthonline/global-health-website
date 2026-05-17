@@ -311,6 +311,7 @@ export type DoctorInvoiceDto = {
   stripeSessionId: string | null;
   lines: DoctorInvoiceLine[];
   lineTotalCents: number;
+  lineTotalsByCurrency: Record<string, number>;
   payments: Array<{
     id: string;
     amountCents: number;

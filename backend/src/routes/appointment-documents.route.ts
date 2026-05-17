@@ -1,15 +1,21 @@
 import { randomUUID } from "node:crypto";
+import { NoSuchKey } from "@aws-sdk/client-s3";
 import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../db/prisma.js";
-import { env } from "../config/env.js";
 import {
   putObject,
+  getObject,
+  streamToNodeReadable,
   deleteObject,
   isMediaStorageConfigured,
+  MediaObjectNotFoundError,
 } from "../services/object-storage.js";
 import { sanitizeOriginalFilename } from "../utils/media-key.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyDoctorAccess } from "../utils/doctor-auth.js";
+import {
+  verifyClinicalReadAccess,
+  verifyDoctorAccess,
+} from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
@@ -20,13 +26,14 @@ import { notifyAdmins } from "../modules/notifications/notify.service.js";
  *   GET    /api/doctor/appointments/:id/documents
  *   POST   /api/doctor/appointments/:id/documents     — multipart
  *   DELETE /api/doctor/documents/:documentId
- *   GET    /api/doctor/documents/:documentId/download — streams the file
+ *   GET    /api/doctor/documents/:documentId/download — auth-gated stream
  *
- * Stored in S3 under a doctor-scoped key prefix so admins don't auto-
- * see clinical files alongside marketing assets. Download is gated by
- * the same `verifyDoctorAccess` check; admins fall through because the
- * helper tolerates ADMIN role for support cases (with a doctorId
- * linked — admins without one get a 403).
+ * Documents are stored in S3 under a `clinical/<doctorId>/<appointmentId>/`
+ * prefix. The public `/api/media/*` route refuses any key starting with
+ * `clinical/` so the S3 key alone is not enough to fetch the file — the
+ * caller MUST hit the auth-gated download endpoint below, which
+ * resolves the AppointmentDocument row and verifies the caller's
+ * doctorId matches or that an admin is acting on behalf of the doctor.
  *
  * MIME allowlist intentionally narrower than the marketing upload
  * (which accepts SVG / GIF) — clinical attachments are docs, scans,
@@ -43,29 +50,24 @@ const ALLOWED_MIME = new Set([
 
 const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
 
-function buildMediaPath(key: string): string {
-  return `/api/media/${key.split("/").map(encodeURIComponent).join("/")}`;
-}
-
-function buildPublicMediaUrl(
-  request: { protocol: string; hostname: string },
-  key: string,
-): string {
-  const configured = env.PUBLIC_MEDIA_ORIGIN?.trim().replace(/\/+$/, "");
-  const path = buildMediaPath(key);
-  if (configured) return `${configured}${path}`;
-  return `${request.protocol}://${request.hostname}${path}`;
+function buildDownloadPath(documentId: string): string {
+  return `/api/doctor/documents/${encodeURIComponent(documentId)}/download`;
 }
 
 const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { id: string } }>(
     "/api/doctor/appointments/:id/documents",
     async (request, reply) => {
-      const auth = await verifyDoctorAccess(request);
+      const auth = await verifyClinicalReadAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
         const appt = await prisma.appointment.findFirst({
-          where: { id: request.params.id, doctorId: auth.doctorId },
+          where: {
+            id: request.params.id,
+            ...(auth.role === "DOCTOR" && auth.doctorId
+              ? { doctorId: auth.doctorId }
+              : {}),
+          },
           select: { id: true },
         });
         if (!appt) {
@@ -81,7 +83,7 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
             label: r.label,
             mimetype: r.mimetype,
             byteSize: r.byteSize,
-            url: buildPublicMediaUrl(request, r.storageKey),
+            url: buildDownloadPath(r.id),
             createdAt: r.createdAt.toISOString(),
           })),
         });
@@ -183,7 +185,7 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
               label: row.label,
               mimetype: row.mimetype,
               byteSize: row.byteSize,
-              url: buildPublicMediaUrl(request, row.storageKey),
+              url: buildDownloadPath(row.id),
               createdAt: row.createdAt.toISOString(),
             },
           }),
@@ -200,6 +202,71 @@ const appointmentDocumentsRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not save document"));
+      }
+    },
+  );
+
+  /**
+   * Auth-gated streaming download. The public `/api/media/*` route
+   * refuses any `clinical/*` key, so this is the ONLY path that hands
+   * out clinical attachments. Doctors can fetch their own files;
+   * admins can fetch any (support workflows).
+   */
+  app.get<{ Params: { documentId: string } }>(
+    "/api/doctor/documents/:documentId/download",
+    async (request, reply) => {
+      const auth = await verifyClinicalReadAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      if (!isMediaStorageConfigured()) {
+        return reply
+          .status(503)
+          .send(errorResponse("Object storage is not configured"));
+      }
+      try {
+        const doc = await prisma.appointmentDocument.findUnique({
+          where: { id: request.params.documentId },
+          select: {
+            id: true,
+            doctorId: true,
+            mimetype: true,
+            label: true,
+            storageKey: true,
+          },
+        });
+        if (!doc) {
+          return reply.status(404).send(errorResponse("Document not found"));
+        }
+        // Doctors can only read their own attachments; admins (no
+        // doctorId on the session) get a free pass for support
+        // workflows.
+        if (auth.role === "DOCTOR" && doc.doctorId !== auth.doctorId) {
+          return reply.status(403).send(errorResponse("Forbidden"));
+        }
+        const obj = await getObject(doc.storageKey);
+        const stream = streamToNodeReadable(obj.Body);
+        if (!stream) {
+          return reply
+            .status(500)
+            .send(errorResponse("Unable to read document"));
+        }
+        reply.header("Content-Type", obj.ContentType ?? doc.mimetype);
+        // Inline so the browser tries to render PDFs / images; attach
+        // a filename hint so "Save As" produces a sensible default.
+        reply.header(
+          "Content-Disposition",
+          `inline; filename="${doc.label.replace(/"/g, "")}"`,
+        );
+        reply.header("Cache-Control", "private, no-store");
+        return reply.send(stream);
+      } catch (error) {
+        if (error instanceof NoSuchKey || error instanceof MediaObjectNotFoundError) {
+          return reply.status(404).send(errorResponse("Document not found"));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not stream document"));
       }
     },
   );

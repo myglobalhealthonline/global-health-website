@@ -103,6 +103,16 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
 
     try {
       const doctor = await createAdminDoctor(body.data);
+      const actor = await resolveOptionalAuthUser(request);
+      recordAudit({
+        actorUserId: actor?.id,
+        actorRole: "ADMIN",
+        action: "DOCTOR_CREATED",
+        entityType: "Doctor",
+        entityId: doctor.id,
+        metadata: { slug: doctor.slug, countryCode: doctor.country?.code ?? null },
+        request,
+      }).catch(() => {});
       return okResponse({ doctor }, "Doctor profile created");
     } catch (error) {
       return handleDoctorWriteError(app, reply, error);
@@ -129,6 +139,16 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       if (!doctor) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
+      const actor = await resolveOptionalAuthUser(request);
+      recordAudit({
+        actorUserId: actor?.id,
+        actorRole: "ADMIN",
+        action: "DOCTOR_UPDATED",
+        entityType: "Doctor",
+        entityId: doctor.id,
+        metadata: { changed: Object.keys(body.data) },
+        request,
+      }).catch(() => {});
       return okResponse({ doctor }, "Doctor profile updated");
     } catch (error) {
       return handleDoctorWriteError(app, reply, error);
@@ -146,6 +166,15 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       if (!doctor) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
+      const actor = await resolveOptionalAuthUser(request);
+      recordAudit({
+        actorUserId: actor?.id,
+        actorRole: "ADMIN",
+        action: "DOCTOR_DEACTIVATED",
+        entityType: "Doctor",
+        entityId: doctor.id,
+        request,
+      }).catch(() => {});
       return okResponse({ doctor }, "Doctor profile deactivated");
     } catch (error) {
       return handleDoctorWriteError(app, reply, error);
@@ -259,6 +288,7 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
 
       const token = await issuePasswordResetToken(user.id, {
         ttlMinutes: 7 * 24 * 60,
+        isInvite: true,
       });
 
       let emailed = false;
@@ -333,6 +363,15 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       if (!deleted) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
+      const actor = await resolveOptionalAuthUser(request);
+      recordAudit({
+        actorUserId: actor?.id,
+        actorRole: "ADMIN",
+        action: "DOCTOR_PURGED",
+        entityType: "Doctor",
+        entityId: params.data.id,
+        request,
+      }).catch(() => {});
       return okResponse({}, "Doctor profile deleted");
     } catch (error) {
       return handleDoctorWriteError(app, reply, error);

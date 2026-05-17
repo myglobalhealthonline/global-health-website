@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { UserRole, type User } from "@prisma/client";
+import { Prisma, UserRole, type User } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import type { LoginBody, RegisterBody } from "../../validations/auth.schema.js";
@@ -269,11 +269,13 @@ export async function findUserByEmail(email: string): Promise<User | null> {
 
 /** Issue a password-reset token; default expiry 1 hour. Pass
  *  `{ ttlMinutes }` to override (used for the doctor-invite flow that
- *  needs a 7-day window). Returns the plain token the caller can
- *  email — the DB only stores its SHA-256 hash. */
+ *  needs a 7-day window). Pass `{ isInvite: true }` to flag the token
+ *  as an invite so the consume path knows whether implicit
+ *  session-creation is allowed. Returns the plain token the caller
+ *  can email — the DB only stores its SHA-256 hash. */
 export async function issuePasswordResetToken(
   userId: string,
-  options?: { ttlMinutes?: number },
+  options?: { ttlMinutes?: number; isInvite?: boolean },
 ): Promise<string> {
   const token = generateToken();
   const tokenHash = hashToken(token);
@@ -284,7 +286,12 @@ export async function issuePasswordResetToken(
   const expiresAt = new Date(Date.now() + ttl * 60 * 1000);
   try {
     await prisma.passwordResetToken.create({
-      data: { userId, tokenHash, expiresAt },
+      data: {
+        userId,
+        tokenHash,
+        expiresAt,
+        isInvite: options?.isInvite === true,
+      },
     });
   } catch (error) {
     throw normalizeDbError(error, "Could not issue password reset token");
@@ -293,12 +300,14 @@ export async function issuePasswordResetToken(
 }
 
 export type ConsumeResetResult =
-  | { ok: true; userId: string }
+  | { ok: true; userId: string; isInvite: boolean }
   | { ok: false };
 
 /** Validate + consume a password-reset token, hash a new password, save.
- *  Returns the user id on success so callers (the invite flow) can
- *  immediately mint a session cookie. */
+ *  Returns the user id + whether the token was issued AS AN INVITE so
+ *  the caller can decide whether to mint a session cookie / set
+ *  emailVerifiedAt. A regular forgot-password token returns
+ *  isInvite=false even if the caller asked for `invite=true`. */
 export async function consumePasswordResetToken(
   token: string,
   newPassword: string,
@@ -311,14 +320,24 @@ export async function consumePasswordResetToken(
     if (row.expiresAt.getTime() < Date.now()) return { ok: false };
 
     const passwordHash = await bcrypt.hash(newPassword, 12);
-    await prisma.$transaction([
-      prisma.user.update({ where: { id: row.userId }, data: { passwordHash } }),
+    // Invite tokens additionally flip emailVerifiedAt — the doctor just
+    // proved control of the inbox by clicking the link, so we don't
+    // need a separate verification step. Regular forgot-password
+    // tokens leave verification state alone.
+    const updates: Prisma.PrismaPromise<unknown>[] = [
+      prisma.user.update({
+        where: { id: row.userId },
+        data: row.isInvite
+          ? { passwordHash, emailVerifiedAt: new Date() }
+          : { passwordHash },
+      }),
       prisma.passwordResetToken.update({
         where: { tokenHash },
         data: { usedAt: new Date() },
       }),
-    ]);
-    return { ok: true, userId: row.userId };
+    ];
+    await prisma.$transaction(updates);
+    return { ok: true, userId: row.userId, isInvite: row.isInvite };
   } catch (error) {
     throw normalizeDbError(error, "Could not reset password");
   }

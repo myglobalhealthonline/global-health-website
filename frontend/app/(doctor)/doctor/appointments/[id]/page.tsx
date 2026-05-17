@@ -437,19 +437,34 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       : "—"
                   }
                 />
-                <Row
-                  label="Line total"
-                  value={
-                    invoice.lineTotalCents > 0
-                      ? formatMoney(
-                          invoice.lineTotalCents,
-                          invoice.lines.find((l) => l.currencyCode)?.currencyCode ??
-                            invoice.currencyCode ??
-                            "EUR",
-                        )
-                      : "—"
+                {(() => {
+                  const buckets = Object.entries(
+                    invoice.lineTotalsByCurrency ?? {},
+                  ).filter(([, v]) => v > 0);
+                  if (buckets.length === 0) {
+                    return <Row label="Line total" value="—" />;
                   }
-                />
+                  if (buckets.length === 1) {
+                    const [code, total] = buckets[0]!;
+                    return (
+                      <Row
+                        label="Line total"
+                        value={formatMoney(total, code === "—" ? "EUR" : code)}
+                      />
+                    );
+                  }
+                  return (
+                    <>
+                      {buckets.map(([code, total]) => (
+                        <Row
+                          key={code}
+                          label={`Line total (${code})`}
+                          value={formatMoney(total, code === "—" ? "EUR" : code)}
+                        />
+                      ))}
+                    </>
+                  );
+                })()}
                 <Row
                   label="Paid"
                   value={

@@ -2,7 +2,10 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyDoctorAccess } from "../utils/doctor-auth.js";
+import {
+  verifyClinicalReadAccess,
+  verifyDoctorAccess,
+} from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
@@ -224,7 +227,7 @@ const formsRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { submissionId: string } }>(
     "/api/doctor/form-submissions/:submissionId",
     async (request, reply) => {
-      const auth = await verifyDoctorAccess(request);
+      const auth = await verifyClinicalReadAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
         const sub = await prisma.formSubmission.findUnique({
@@ -243,9 +246,11 @@ const formsRoute: FastifyPluginAsync = async (app) => {
             },
           },
         });
+        if (!sub || !sub.appointment) {
+          return reply.status(404).send(errorResponse("Submission not found"));
+        }
         if (
-          !sub ||
-          !sub.appointment ||
+          auth.role === "DOCTOR" &&
           sub.appointment.doctorId !== auth.doctorId
         ) {
           return reply.status(404).send(errorResponse("Submission not found"));
@@ -278,11 +283,16 @@ const formsRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { id: string } }>(
     "/api/doctor/appointments/:id/form-submissions",
     async (request, reply) => {
-      const auth = await verifyDoctorAccess(request);
+      const auth = await verifyClinicalReadAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
         const appt = await prisma.appointment.findFirst({
-          where: { id: request.params.id, doctorId: auth.doctorId },
+          where: {
+            id: request.params.id,
+            ...(auth.role === "DOCTOR" && auth.doctorId
+              ? { doctorId: auth.doctorId }
+              : {}),
+          },
           select: { id: true },
         });
         if (!appt) {

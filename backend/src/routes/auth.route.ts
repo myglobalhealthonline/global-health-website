@@ -230,11 +230,15 @@ const authRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Reset link is invalid or expired"));
       }
 
-      // Invite path: also mint a session cookie so the frontend can
-      // route the doctor straight to /doctor on success. Forgot-password
-      // flow (invite undefined) keeps the existing "set + sign in"
-      // semantics — no implicit session.
-      if (body.data.invite === true) {
+      // Invite path: mint a session cookie so the frontend can route
+      // the doctor straight to /doctor on success. Requires BOTH that
+      // the caller asked for invite mode AND that the token itself was
+      // issued as an invite (isInvite=true on the row). This blocks a
+      // stolen forgot-password token from being replayed with
+      // `?invite=1` to forge a session. The forgot-password flow
+      // (invite undefined or false) keeps the existing "set + sign in
+      // manually" semantics regardless of the token kind.
+      if (body.data.invite === true && result.isInvite) {
         const user = await getSafeUserById(result.userId);
         if (user && user.isActive) {
           const sessionToken = signAuthToken({

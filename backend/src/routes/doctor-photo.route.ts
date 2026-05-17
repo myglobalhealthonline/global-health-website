@@ -7,6 +7,7 @@ import { sanitizeOriginalFilename } from "../utils/media-key.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 /**
  * Doctor self-upload profile photo.
@@ -110,6 +111,16 @@ const doctorPhotoRoute: FastifyPluginAsync = async (app) => {
       return reply.status(500).send(errorResponse("Could not save photo"));
     }
 
+    recordAudit({
+      actorUserId: auth.userId,
+      actorRole: "DOCTOR",
+      action: "DOCTOR_PHOTO_UPDATED",
+      entityType: "Doctor",
+      entityId: auth.doctorId,
+      metadata: { key, byteSize: buffer.length },
+      request,
+    }).catch(() => {});
+
     const publicUrl = buildPublicMediaUrl(request, key);
     return okResponse(
       { key, publicUrl, path: buildMediaPath(key) },
@@ -129,6 +140,16 @@ const doctorPhotoRoute: FastifyPluginAsync = async (app) => {
         },
         data: { isActive: false },
       });
+      if (result.count > 0) {
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "DOCTOR_PHOTO_REMOVED",
+          entityType: "Doctor",
+          entityId: auth.doctorId,
+          request,
+        }).catch(() => {});
+      }
       return okResponse({ removed: result.count });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {

@@ -187,19 +187,44 @@ export default async function PrintInvoicePage({
             )}
           </tbody>
           <tfoot>
-            <tr style={{ borderTop: "2px solid #111" }}>
-              <td colSpan={3} style={{ textAlign: "right", padding: "10px 0", fontWeight: 700 }}>
-                Total
-              </td>
-              <td style={{ textAlign: "right", padding: "10px 0", fontWeight: 700 }}>
-                {fmtMoney(
-                  invoice.lineTotalCents > 0
-                    ? invoice.lineTotalCents
-                    : invoice.amountCents,
-                  currencyFallback,
-                )}
-              </td>
-            </tr>
+            {(() => {
+              const buckets = Object.entries(
+                invoice.lineTotalsByCurrency ?? {},
+              ).filter(([, v]) => v > 0);
+              if (buckets.length > 1) {
+                return buckets.map(([code, total]) => (
+                  <tr key={code} style={{ borderTop: "1px solid #111" }}>
+                    <td
+                      colSpan={3}
+                      style={{ textAlign: "right", padding: "8px 0", fontWeight: 700 }}
+                    >
+                      Total ({code})
+                    </td>
+                    <td style={{ textAlign: "right", padding: "8px 0", fontWeight: 700 }}>
+                      {fmtMoney(total, code === "—" ? currencyFallback : code)}
+                    </td>
+                  </tr>
+                ));
+              }
+              return (
+                <tr style={{ borderTop: "2px solid #111" }}>
+                  <td
+                    colSpan={3}
+                    style={{ textAlign: "right", padding: "10px 0", fontWeight: 700 }}
+                  >
+                    Total
+                  </td>
+                  <td style={{ textAlign: "right", padding: "10px 0", fontWeight: 700 }}>
+                    {fmtMoney(
+                      invoice.lineTotalCents > 0
+                        ? invoice.lineTotalCents
+                        : invoice.amountCents,
+                      currencyFallback,
+                    )}
+                  </td>
+                </tr>
+              );
+            })()}
           </tfoot>
         </table>
       </section>

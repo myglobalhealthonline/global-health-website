@@ -2,7 +2,10 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { verifyDoctorAccess } from "../utils/doctor-auth.js";
+import {
+  verifyClinicalReadAccess,
+  verifyDoctorAccess,
+} from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { notifyAdmins } from "../modules/notifications/notify.service.js";
@@ -59,14 +62,52 @@ async function findOwnedAppointment(doctorId: string, appointmentId: string) {
   });
 }
 
+/**
+ * Read-side appointment lookup that admins can use without being
+ * linked to a doctor. Doctors stay scoped to their own row; admins
+ * see any appointment.
+ */
+async function findReadableAppointment(
+  doctorId: string | null,
+  role: "DOCTOR" | "ADMIN",
+  appointmentId: string,
+) {
+  return prisma.appointment.findFirst({
+    where: {
+      id: appointmentId,
+      ...(role === "DOCTOR" && doctorId ? { doctorId } : {}),
+    },
+    select: {
+      id: true,
+      fullName: true,
+      email: true,
+      phone: true,
+      consultationType: true,
+      countryCode: true,
+      status: true,
+      scheduledAt: true,
+      meetingUrl: true,
+      notes: true,
+      dateOfBirth: true,
+      consultationMode: true,
+      followUpFromAppointmentId: true,
+      createdAt: true,
+    },
+  });
+}
+
 const consultationsRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { id: string } }>(
     "/api/doctor/appointments/:id/consultation",
     async (request, reply) => {
-      const auth = await verifyDoctorAccess(request);
+      const auth = await verifyClinicalReadAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
-        const appt = await findOwnedAppointment(auth.doctorId, request.params.id);
+        const appt = await findReadableAppointment(
+          auth.doctorId,
+          auth.role,
+          request.params.id,
+        );
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
         }

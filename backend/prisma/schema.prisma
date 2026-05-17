@@ -148,6 +148,15 @@ enum AuditAction {
   DOCUMENT_UPLOADED
   DOCUMENT_DELETED
   DOCTOR_INVITED
+  DOCTOR_CREATED
+  DOCTOR_UPDATED
+  DOCTOR_DEACTIVATED
+  DOCTOR_PURGED
+  DOCTOR_PHOTO_UPDATED
+  DOCTOR_PHOTO_REMOVED
+  APPOINTMENT_CREATED
+  APPOINTMENT_PAYMENT_UPDATED
+  TIMESLOT_RELEASED
 }
 
 model Currency {
@@ -732,6 +741,14 @@ model PasswordResetToken {
   tokenHash String    @unique
   expiresAt DateTime
   usedAt    DateTime?
+  /**
+   * Distinguishes a doctor-invite token (7-day TTL, on-consume auto
+   * sign-in) from a regular forgot-password token (1-hour TTL, no
+   * auto sign-in). The consume path validates the caller's intent
+   * against this flag so a stolen reset token can't be replayed with
+   * `?invite=1` to grant a session.
+   */
+  isInvite  Boolean   @default(false)
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
 }

@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { releaseAppointmentSlot } from "../modules/doctor-availability/doctor-availability.service.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
@@ -143,6 +144,7 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
             meetingUrl: true,
             scheduledAt: true,
             consultationMode: true,
+            timeSlotId: true,
             fullName: true,
           },
         });
@@ -181,6 +183,42 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         if (body.data.consultationMode !== undefined) {
           updateData.consultationMode = body.data.consultationMode;
         }
+
+        // Slot release on doctor-side reschedule + cancel. Matches the
+        // admin pathway in admin-appointments.route.ts — without this
+        // a doctor reschedule leaves the old DoctorTimeSlot in BOOKED
+        // state forever.
+        const isReschedule =
+          body.data.scheduledAt !== undefined &&
+          (appt.scheduledAt?.toISOString() ?? null) !==
+            (body.data.scheduledAt === null
+              ? null
+              : new Date(body.data.scheduledAt).toISOString());
+        const isCancelling =
+          body.data.status === "CANCELLED" && appt.status !== "CANCELLED";
+        if ((isReschedule || isCancelling) && appt.timeSlotId) {
+          const releasedSlotId = await releaseAppointmentSlot(appt.id).catch(
+            (err) => {
+              app.log.warn({ err }, "Slot release failed on doctor update");
+              return null;
+            },
+          );
+          if (releasedSlotId) {
+            recordAudit({
+              actorUserId: auth.userId,
+              actorRole: "DOCTOR",
+              action: "TIMESLOT_RELEASED",
+              entityType: "DoctorTimeSlot",
+              entityId: releasedSlotId,
+              metadata: {
+                reason: isCancelling ? "doctor_cancel" : "doctor_reschedule",
+                appointmentId: appt.id,
+              },
+              request,
+            }).catch(() => {});
+          }
+        }
+
         const updated = await prisma.appointment.update({
           where: { id: appt.id },
           data: updateData,
@@ -296,6 +334,10 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
             phone: true,
             dateOfBirth: true,
             consultationMode: true,
+            serviceId: true,
+            healthTestId: true,
+            amountCents: true,
+            currencyCode: true,
           },
         });
         if (!source) {
@@ -318,6 +360,12 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
               ? new Date(body.data.scheduledAt)
               : null,
             consultationMode: body.data.consultationMode ?? source.consultationMode,
+            // Carry billing context forward so the follow-up isn't a
+            // priceless orphan — admin can still adjust before issuing.
+            serviceId: source.serviceId,
+            healthTestId: source.healthTestId,
+            amountCents: source.amountCents,
+            currencyCode: source.currencyCode,
             followUpFromAppointmentId: source.id,
           },
           select: {
