@@ -9,6 +9,7 @@ import {
   purgeAdminDoctor,
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../_components/flag-badge";
+import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import {
   AdminCard,
   AdminTable,
@@ -375,13 +376,10 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                         </IconBtn>
                         <form action={deleteDoctorAction} className="inline-flex">
                           <input type="hidden" name="id" value={d.id} />
-                          <IconBtn
+                          <ConfirmDeleteButton
+                            message={`Permanently delete doctor "${d.fullName}"? This cannot be undone.`}
                             ariaLabel={`Delete ${d.fullName}`}
-                            type="submit"
-                            style={{ color: "var(--color-status-error-text)" }}
-                          >
-                            <Trash2 className="size-3.5" aria-hidden />
-                          </IconBtn>
+                          />
                         </form>
                       </div>
                     </Td>

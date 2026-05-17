@@ -22,7 +22,7 @@
 | ISS-001 | P3 | TC-PUB-001 | P0 | Country gate IE→EN → 404 `/ireland/services/en` | 🟢 | `CountryEntryGate`: `router.push(\`/${slug}/${lang}\`)` |
 | ISS-002 | P1 | TC-ADM-002 | P2 | Admin dashboard blank ~3s after login (RSC slow) | 🟡 | Hard refresh loads; watch |
 | ISS-003 | dev | all | P3 | Next.js dev hydration overlay blocks clicks (bottom-left) | 🟡 | Collapse badge before submit |
-| ISS-004 | dev | multiple | P3 | Hydration mismatches (login, CountryEntryGate, Toggle, RichText) | 🟡 | Dev-only noise; track prod |
+| ISS-004 | dev | multiple | P3 | Hydration mismatches (login, CountryEntryGate, Toggle, RichText) | 🟢 | `suppressHydrationWarning` on `getFullYear()` in CountryEntryGate, SiteFooter, footer-column; Toggle/RichText remain P3 dev-only noise |
 | ISS-005 | P1 | TC-ADM-010 | P0 | Doctor create → `Unexpected admin doctors error` (P2028 tx timeout + `pageSize=250` → 400) | 🟢 | `ADMIN_DOCTOR_TX_OPTIONS` 20s; `pageSize` max 250; P2028 → 503 message |
 | ISS-006 | P1/P2 | TC-ADM-048, TC-DOC-034 | P1 | Doctor session on `/api/admin/*` → 503 not 403 (`resolveOptionalAuthUser` ignored DOCTOR) | 🟢 | `verifyAdminAccess` reads JWT role from cookie |
 | ISS-007 | P1 | TC-ADM-024 | P2 | Appointment queue country filter hardcoded; Malta/Brazil missing | 🟢 | Options from `fetchAdminCountries()` |
@@ -31,6 +31,9 @@
 | ISS-010 | P3 | TC-PUB-017 | P2 | Book-online consent: uncontrolled checkbox + `FormData` missed checked state in automation | 🟢 | Controlled `consentAccepted` state; server-passes `initialConsultationType` |
 | ISS-011 | P4 | TC-PAT-010 | P1 | **Test incident:** PAT-009 run clicked Delete before `browser_handle_dialog` → main patient deleted; re-registered same email | 🟡 | Use throwaway for PAT-010; register dialog **before** click |
 | ISS-012 | P4 | TC-PAT-013 | P3 | `/account/bookings` hydration error when chat expands (`toLocaleString` / `Intl` TZ drift) | 🟢 | `format-datetime.ts` fixed `en-IE` + `Europe/Dublin` in bookings + chat |
+| ISS-013 | P1 | TC-ADM-044 | P2 | Destructive admin deletes (countries, doctors, services, health-tests, assets, pages, availability) submit without `window.confirm` | 🟢 | New `ConfirmDeleteButton` client component; replaced 11 bare delete forms across country/asset/doctor/health-test/service/page/availability list+detail views. Pre-existing `DeleteCountryButton` kept on countries list |
+| ISS-014 | P1 | TC-ADM-045 | P3 | Countries table shows `GripVertical` but no reorder implementation | ⚪ | By design / not built — use sortOrder on edit |
+| ISS-015 | P4 | TC-PAT-014 | P2 | Consultation chat file upload needs paid appointment + S3 (`isMediaStorageConfigured`) | 🟡 | Mark PAID on test apt; configure S3 for file E2E |
 
 ---
 
@@ -47,4 +50,7 @@
 | 6 Cross-cutting | TEST-EXECUTION-ORDER.md | 2026-05-18 | ~40% | Audit ✅; mobile/Stripe/destructive open |
 | 2 Doctor | TEST-DOCTOR.md | 2026-05-18 | ~75% | Portal UI ✅; DOC-040/033 partial |
 | 3 Public | TEST-PUBLIC-WEBSITE.md | 2026-05-18 | ~70% | Core pages ✅; booking E2E open |
-| 4 Patient | TEST-PATIENT.md | 2026-05-18 | ~75% | Window 1: profile, security, chat, payments, prescriptions ✅; PAT-009/010/006 open |
+| 4 Patient | TEST-PATIENT.md | 2026-05-18 | ~90% | Session 4 complete; PAT-009 cancel manual only |
+| 2 Doctor | TEST-DOCTOR.md | 2026-05-18 | ~90% | DOC-021/035/037 ✅; DOC-033 UI manual |
+| 1 Admin | TEST-ADMIN.md | 2026-05-18 | ~88% | ADM-029/049 ✅; ADM-044/045 gaps logged |
+| 6 Cross-cutting | TEST-EXECUTION-ORDER.md | 2026-05-18 | ~85% | PUB-026/DOC-039 ✅; ADM-055 tablet needs admin incognito |

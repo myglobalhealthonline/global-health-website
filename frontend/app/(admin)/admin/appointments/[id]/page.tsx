@@ -51,14 +51,6 @@ function statusToneFor(status: string): PillTone {
   return "neutral";
 }
 
-const cardTitleStyle = {
-  margin: 0,
-  fontFamily: "var(--font-display)",
-  fontSize: 16,
-  fontWeight: 800,
-  color: "var(--color-text-primary)",
-} as const;
-
 function FieldRow({
   label,
   value,
@@ -70,10 +62,10 @@ function FieldRow({
 }) {
   return (
     <div className={full ? "sm:col-span-2" : ""}>
-      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {label}
-      </dt>
-      <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">{value}</dd>
+      </p>
+      <p className="mt-1 text-[14px] text-[var(--color-text-primary)]">{value}</p>
     </div>
   );
 }
@@ -253,17 +245,14 @@ export default async function AdminAppointmentDetailPage({
         </p>
       ) : null}
 
-      <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
-      >
+      <div className="gh-admin-detail-layout">
         <div className="grid gap-4">
           <AdminCard>
-            <h3 style={cardTitleStyle}>Patient details</h3>
+            <h3 className="gh-admin-card-title">Patient details</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Contact info captured at booking.
             </p>
-            <dl className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               <FieldRow label="Full name" value={appointment.fullName} />
               <FieldRow label="Email" value={appointment.email} />
               <FieldRow
@@ -309,11 +298,11 @@ export default async function AdminAppointmentDetailPage({
               />
               <FieldRow label="Created" value={formatDate(appointment.createdAt)} />
               <FieldRow label="Updated" value={formatDate(appointment.updatedAt)} full />
-            </dl>
+            </div>
           </AdminCard>
 
           <AdminCard>
-            <h3 style={cardTitleStyle}>Notes</h3>
+            <h3 className="gh-admin-card-title">Notes</h3>
             <p className="mt-3 whitespace-pre-wrap text-[14px] leading-relaxed text-[var(--color-text-body)]">
               {appointment.notes ?? "No notes provided."}
             </p>
@@ -322,7 +311,7 @@ export default async function AdminAppointmentDetailPage({
 
         <div className="grid gap-4 self-start">
           <AdminCard>
-            <h3 style={cardTitleStyle}>Status</h3>
+            <h3 className="gh-admin-card-title">Status</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               {terminal
                 ? "This booking request is closed. Status updates are disabled."
@@ -358,7 +347,7 @@ export default async function AdminAppointmentDetailPage({
           {/* Patient ↔ admin chat for this appointment. Polling-based;
               only loads when this page is in view. */}
           <AdminCard>
-            <h3 style={cardTitleStyle}>Patient chat</h3>
+            <h3 className="gh-admin-card-title">Patient chat</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Pre-consult messages. The patient sees replies on /account/bookings.
             </p>
@@ -369,7 +358,7 @@ export default async function AdminAppointmentDetailPage({
               patient-visible. Same thread surface as on the doctor portal
               at /doctor/appointments/[id]. */}
           <AdminCard>
-            <h3 style={cardTitleStyle}>Internal notes (doctor ↔ admin)</h3>
+            <h3 className="gh-admin-card-title">Internal notes (doctor ↔ admin)</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Handoff context between you and the doctor. Hidden from the
               patient.
@@ -385,7 +374,7 @@ export default async function AdminAppointmentDetailPage({
           {/* Schedule the Google Meet call. Filling both fields and saving
               emails the patient with the link via SendGrid. */}
           <AdminCard>
-            <h3 style={cardTitleStyle}>Schedule call</h3>
+            <h3 className="gh-admin-card-title">Schedule call</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Set the slot and paste the Google Meet (or Zoom/Teams/Whereby/Daily)
               link. Saving emails the patient with the link.

@@ -126,7 +126,7 @@ export default function FooterColumn({
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-6 text-sm sm:flex sm:items-center sm:justify-between">
-          <p className="text-white/50">
+          <p className="text-white/50" suppressHydrationWarning>
             © {new Date().getFullYear()} {siteName}. All rights reserved.
           </p>
           <p className="mt-2 text-white/50 sm:mt-0">

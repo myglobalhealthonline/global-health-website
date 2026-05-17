@@ -135,7 +135,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
   const countryOptions = [
     { value: "", label: "All countries" },
     ...countriesForScope
-      .filter((c) => c.active)
+      .filter((c) => c.isActive)
       .sort((a, b) => a.name.localeCompare(b.name))
       .map((c) => ({ value: c.code, label: c.name })),
   ];
@@ -210,7 +210,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
           </div>
           <input type="hidden" name="page" value="1" />
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36 }}>
+            <button type="submit" className="gh-btn gh-btn-primary min-h-9">
               Apply filters
             </button>
             <Link

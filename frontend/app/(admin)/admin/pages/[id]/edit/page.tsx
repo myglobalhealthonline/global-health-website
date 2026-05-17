@@ -10,6 +10,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
+import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 import { PageFields } from "../../_components/page-fields";
 import { parsePageBody } from "../../_components/page-form-parse";
 
@@ -118,9 +119,13 @@ export default async function AdminEditPagePage({ params, searchParams }: PagePr
         description={`${page.pageKey} · ${page.locale} · ${page.status}`}
         actions={
           <form action={deletePageAction}>
-            <Btn type="submit" variant="danger" size="md" iconLeft={<Trash2 className="size-3.5" />}>
-              Delete
-            </Btn>
+            <ConfirmDeleteButton
+              message="Permanently delete this CMS page? This cannot be undone."
+              className="gh-btn gh-btn-danger"
+              ariaLabel="Delete page permanently"
+            >
+              <Trash2 className="mr-1.5 size-3.5" aria-hidden /> Delete
+            </ConfirmDeleteButton>
           </form>
         }
       />
