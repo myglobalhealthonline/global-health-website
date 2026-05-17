@@ -25,6 +25,14 @@ export const bookingSchema = z.object({
   // Stripe Checkout session has everything it needs without a second look-up.
   serviceSlug: z.string().trim().max(120).optional(),
   /**
+   * Optional concrete DoctorTimeSlot.id the patient picked at booking.
+   * Set when the booking form arrives from a doctor profile + the user
+   * clicked a calendar slot. The backend atomically claims the slot
+   * (`UPDATE … WHERE status='OPEN'`) inside the same transaction as the
+   * Appointment insert; conflict = 409 with `slot_taken`.
+   */
+  timeSlotId: z.string().trim().min(8).max(40).optional(),
+  /**
    * Patient date of birth as `YYYY-MM-DD`. Optional at the schema layer
    * because not every country requires it; `BookingSetting.requireDateOfBirth`
    * is enforced in the route handler so the error message can mention

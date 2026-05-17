@@ -1,6 +1,9 @@
 import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../db/prisma.js";
-import { createAppointmentWithOptionalOwner } from "../modules/appointments/appointments.service.js";
+import {
+  createAppointmentWithOptionalOwner,
+  SlotAlreadyTakenError,
+} from "../modules/appointments/appointments.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { bookingSchema } from "../validations/booking.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -158,6 +161,9 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
         "Request received. Our team will follow up.",
       );
     } catch (error) {
+      if (error instanceof SlotAlreadyTakenError) {
+        return reply.status(409).send(errorResponse(error.message));
+      }
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
       }

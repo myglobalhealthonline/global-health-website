@@ -1,13 +1,15 @@
 import { CountryEntryGate } from "@/components/sections/CountryEntryGate";
-import { countries } from "@/data/countries";
+import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { pageMetadata } from "@/lib/seo/page-seo";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
 
 export const metadata = pageMetadata("/");
 
 export default async function HomePage() {
-  // Compute per-country doctor counts from the DB so the entry gate's "N doctors"
-  // line reflects reality (instead of a hand-maintained constant).
+  // Pull live countries so the entry gate reflects admin-added markets.
+  // `getPublicCountriesMerged` also warms the slug↔code registry that the
+  // synchronous `countryCodeFromSlug` helpers downstream depend on.
+  const countries = await getPublicCountriesMerged();
   const allDoctors = await getPublicDoctorsNormalized();
   const countryMeta: Record<string, { doctors: number }> = {};
   for (const c of countries) {

@@ -11,9 +11,14 @@ import {
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
+import {
+  getBookingDoctorSummary,
+  getDoctorAvailability,
+} from "@/lib/content/get-doctor-availability";
 import { SITE_NAME } from "@/lib/constants";
 
 type Params = { country: string; lang: string };
+type SearchParams = Record<string, string | string[] | undefined>;
 
 export async function generateStaticParams(): Promise<Params[]> {
   return countries.map((c) => ({
@@ -46,10 +51,13 @@ export async function generateMetadata({
 
 export default async function CountryLangBookOnlinePage({
   params,
+  searchParams,
 }: {
   params: Promise<Params>;
+  searchParams?: Promise<SearchParams>;
 }) {
   const { country: slug, lang } = await params;
+  const sp = searchParams ? await searchParams : {};
   const code = countryCodeFromSlug(slug);
   if (!code) notFound();
   const config = getCountryByCode(code);
@@ -66,5 +74,36 @@ export default async function CountryLangBookOnlinePage({
           phone: authUser.phone,
         }
       : null;
-  return <BookingFormTemplate {...data} signedInPatient={signedInPatient} />;
+
+  // `?doctor=<slug>` arrives from the doctor profile + the doctor card
+  // links across the site. Load the doctor summary + open slots so the
+  // booking form can render the slot picker above the patient fields.
+  const doctorSlugParam =
+    typeof sp.doctor === "string" ? sp.doctor.trim() : null;
+  let doctorPrebook = null as
+    | NonNullable<Parameters<typeof BookingFormTemplate>[0]["doctorPrebook"]>
+    | null;
+  if (doctorSlugParam) {
+    const [summary, slots] = await Promise.all([
+      getBookingDoctorSummary(code, doctorSlugParam),
+      getDoctorAvailability(code, doctorSlugParam, 14),
+    ]);
+    if (summary) {
+      doctorPrebook = {
+        slug: summary.slug,
+        fullName: summary.fullName,
+        title: summary.title,
+        countryCode: summary.countryCode,
+        slots,
+      };
+    }
+  }
+
+  return (
+    <BookingFormTemplate
+      {...data}
+      signedInPatient={signedInPatient}
+      doctorPrebook={doctorPrebook}
+    />
+  );
 }

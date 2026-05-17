@@ -1,6 +1,16 @@
 ﻿import type { LocaleCode } from "@/lib/i18n/types";
 
-export type CountryCode = "ie" | "pt" | "sp" | "cz" | "rm";
+/**
+ * Internal short code for a country. Originally a literal union for the
+ * five seeded markets (`ie | pt | sp | cz | rm`); widened to `string` so
+ * admins can spin up new countries via `/admin/countries` and have them
+ * surface across the public site without a code release.
+ *
+ * Format constraint (enforced at the schema level, not the type system):
+ * 2–8 lowercase alphanum, must start with a letter. Anything else is
+ * rejected upstream by `countryCodeSchema` on the backend.
+ */
+export type CountryCode = string;
 
 export type CountryConfig = {
   code: CountryCode;
@@ -11,6 +21,12 @@ export type CountryConfig = {
   specialistPath: string;
   /** Short label for cards and compact UI */
   label: string;
+  /**
+   * URL slug. Falls back to `code` for admin-added countries that haven't
+   * picked a friendlier slug yet. Seeded countries override this to a full
+   * English noun (`ireland`, `portugal`, …) for SEO.
+   */
+  slug: string;
   defaultLocale: LocaleCode;
   supportedLocales: LocaleCode[];
 };
@@ -24,6 +40,7 @@ export const countries: CountryConfig[] = [
     code: "ie",
     name: "Ireland",
     label: "IE",
+    slug: "ireland",
     defaultLocale: "en",
     supportedLocales: ["en", "pt", "es"],
     legacyHomePath: "/home",
@@ -35,6 +52,7 @@ export const countries: CountryConfig[] = [
     code: "cz",
     name: "Czechia",
     label: "CZ",
+    slug: "czechia",
     defaultLocale: "cs",
     supportedLocales: ["cs", "en"],
     legacyHomePath: "/home-cz",
@@ -46,6 +64,7 @@ export const countries: CountryConfig[] = [
     code: "pt",
     name: "Portugal",
     label: "PT",
+    slug: "portugal",
     defaultLocale: "pt",
     supportedLocales: ["pt", "en"],
     legacyHomePath: "/home-pt",
@@ -57,6 +76,7 @@ export const countries: CountryConfig[] = [
     code: "sp",
     name: "Spain",
     label: "ES",
+    slug: "spain",
     defaultLocale: "es",
     supportedLocales: ["es", "en"],
     legacyHomePath: "/home-sp",
@@ -68,6 +88,7 @@ export const countries: CountryConfig[] = [
     code: "rm",
     name: "Romania",
     label: "RO",
+    slug: "romania",
     defaultLocale: "ro",
     supportedLocales: ["ro", "en"],
     legacyHomePath: "/home-rm",

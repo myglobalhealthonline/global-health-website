@@ -9,8 +9,16 @@ import {
   UnrecognizedAppointmentStatusError,
 } from "./appointment-status-transitions.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import {
+  claimDoctorSlot,
+  SlotAlreadyTakenError,
+} from "../doctor-availability/doctor-availability.service.js";
 
-export { InvalidAppointmentStatusTransitionError, UnrecognizedAppointmentStatusError };
+export {
+  InvalidAppointmentStatusTransitionError,
+  UnrecognizedAppointmentStatusError,
+  SlotAlreadyTakenError,
+};
 
 export async function createAppointmentRequest(input: BookingInput) {
   return createAppointmentWithOptionalOwner(input);
@@ -36,6 +44,38 @@ export async function createAppointmentWithOptionalOwner(
         ? new Date(`${input.dateOfBirth}T00:00:00.000Z`)
         : null;
 
+    // Slot booking path. If the patient picked a concrete slot, we wrap
+    // the slot claim and the appointment INSERT in a single transaction
+    // so a race-loser doesn't leave a half-formed appointment behind.
+    if (input.timeSlotId) {
+      await prisma.$transaction(async (tx) => {
+        const claimed = await claimDoctorSlot(tx, input.timeSlotId as string);
+        await tx.$executeRawUnsafe(
+          `
+            INSERT INTO "Appointment"
+              ("id", "userId", "countryCode", "consultationType", "fullName", "email", "phone", "dateOfBirth", "notes", "consentAccepted", "status", "doctorId", "timeSlotId", "scheduledAt", "createdAt", "updatedAt")
+            VALUES
+              ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW(), NOW())
+          `,
+          id,
+          options.userId ?? null,
+          input.country,
+          input.consultationType,
+          input.fullName,
+          input.email,
+          input.phone || null,
+          dob,
+          input.notes || null,
+          input.consentAccepted,
+          "REQUEST_RECEIVED",
+          claimed.doctorId,
+          input.timeSlotId,
+          claimed.startAt,
+        );
+      });
+      return { id, status: "REQUEST_RECEIVED" };
+    }
+
     await prisma.$executeRawUnsafe(
       `
         INSERT INTO "Appointment"
@@ -58,6 +98,9 @@ export async function createAppointmentWithOptionalOwner(
 
     return { id, status: "REQUEST_RECEIVED" };
   } catch (error) {
+    if (error instanceof SlotAlreadyTakenError) {
+      throw error;
+    }
     throw normalizeDbError(error, "Appointments are temporarily unavailable");
   }
 }

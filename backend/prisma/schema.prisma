@@ -58,6 +58,18 @@ enum PageKey {
   HEALTH_TESTS
 }
 
+/// Lifecycle for a concrete bookable slot on a doctor's calendar.
+///   OPEN     — published, can be claimed by a booking
+///   HELD     — temporarily reserved (e.g. patient in checkout)
+///   BOOKED   — claimed by an Appointment row
+///   BLOCKED  — admin/doctor marked it unavailable (vacation, sick day, training)
+enum DoctorSlotStatus {
+  OPEN
+  HELD
+  BOOKED
+  BLOCKED
+}
+
 model Currency {
   id        String    @id @default(cuid())
   code      String    @unique
@@ -142,7 +154,7 @@ model Clinic {
 /// login when `User.doctorId` is set. The doctor portal at /doctor reads
 /// `user.doctorProfile` to scope queries to this row's id.
 model Doctor {
-  id                     String            @id @default(cuid())
+  id                     String               @id @default(cuid())
   countryId              String
   slug                   String
   fullName               String
@@ -156,8 +168,8 @@ model Doctor {
   whatsappNumber         String?
   languages              String[]
   editorialChecklist     Json?
-  active                 Boolean           @default(true)
-  country                Country           @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  active                 Boolean              @default(true)
+  country                Country              @relation(fields: [countryId], references: [id], onDelete: Cascade)
   specialties            DoctorSpecialty[]
   assets                 Asset[]
   /// Additional country listings (Doctor ↔ Country M:N). The primary
@@ -165,14 +177,75 @@ model Doctor {
   /// each row here adds the doctor to another country's public roster.
   additionalCountries    DoctorCountry[]
   /// Inverse of `User.doctorId`. When set, that User logs in as this doctor.
-  loginUser              User?             @relation("DoctorUserLink")
+  loginUser              User?                @relation("DoctorUserLink")
   /// Inverse of `Appointment.doctorId`. Populated when admin assigns
   /// the doctor on the scheduling form.
-  appointments           Appointment[]     @relation("AppointmentDoctor")
-  createdAt              DateTime          @default(now())
-  updatedAt              DateTime          @updatedAt
+  appointments           Appointment[]        @relation("AppointmentDoctor")
+  /// Recurring weekly windows the doctor publishes for patient booking.
+  /// Concrete slots are derived from these into `DoctorTimeSlot` rows.
+  availabilities         DoctorAvailability[]
+  /// Generated bookable slots. Booking flow claims one atomically.
+  timeSlots              DoctorTimeSlot[]
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
 
   @@unique([countryId, slug])
+}
+
+/// Doctor's recurring weekly availability window. One row = "every
+/// {weekday} from {startMinute} until {endMinute} I take patients in
+/// {slotDurationMinutes}-minute slots." Slot rows are derived from
+/// these on-demand when the public availability endpoint is hit so the
+/// site doesn't carry a year's worth of pre-generated rows for doctors
+/// who don't get bookings.
+model DoctorAvailability {
+  id                  String    @id @default(cuid())
+  doctorId            String
+  /// 0 = Sunday … 6 = Saturday. Matches `Date#getDay()` in JS so the
+  /// generation loop doesn't have to translate.
+  weekday             Int
+  /// Minute offset from midnight (LOCAL to the doctor's country timezone).
+  /// e.g. 9 * 60 = 540 means 09:00; 17 * 60 = 1020 means 17:00.
+  startMinute         Int
+  endMinute           Int
+  slotDurationMinutes Int       @default(30)
+  /// Optional window boundaries — leave null for "always" availability.
+  /// Useful for temporary schedules ("Tuesdays open from Sept 1 to Nov 30").
+  effectiveFrom       DateTime?
+  effectiveUntil      DateTime?
+  isActive            Boolean   @default(true)
+  doctor              Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@index([doctorId, weekday])
+}
+
+/// Concrete bookable slot derived from a doctor's availability windows.
+/// `startAt`/`endAt` are stored as UTC; the generator translates from
+/// the doctor's local timezone (Country.bookingSetting.timezone or a
+/// sensible default per country).
+///
+/// `@@unique([doctorId, startAt])` is the atomic-claim contract: the
+/// booking flow uses `UPDATE … WHERE id = ? AND status = 'OPEN'` to
+/// flip it to `BOOKED` in one statement, preventing double-booking when
+/// two patients hit submit at the same instant.
+model DoctorTimeSlot {
+  id          String           @id @default(cuid())
+  doctorId    String
+  startAt     DateTime
+  endAt       DateTime
+  status      DoctorSlotStatus @default(OPEN)
+  /// Optional reason when status = BLOCKED. Free-text, admin-only.
+  blockReason String?
+  doctor      Doctor           @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  /// One slot ↔ at most one appointment. Set via `Appointment.timeSlotId`.
+  appointment Appointment?     @relation("AppointmentSlot")
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@unique([doctorId, startAt])
+  @@index([doctorId, startAt, status])
 }
 
 /// Join row letting one Doctor profile appear on multiple country rosters.
@@ -225,10 +298,10 @@ model DoctorSpecialty {
 }
 
 model Service {
-  id                    String      @id @default(cuid())
+  id                    String        @id @default(cuid())
   countryId             String
   specialtyId           String?
-  kind                  ServiceKind @default(GENERAL)
+  kind                  ServiceKind   @default(GENERAL)
   slug                  String
   name                  String
   summary               String?
@@ -239,21 +312,21 @@ model Service {
   detailBody            String?
   ctaLabel              String?
   legacyPath            String?
-  sortOrder             Int         @default(0)
+  sortOrder             Int           @default(0)
   durationMinutes       Int?
   basePriceCents        Int?
   currencyCode          String?
   editorialChecklist    Json?
-  isActive              Boolean     @default(true)
+  isActive              Boolean       @default(true)
   consultationSetting   Json?
   bookingSetting        Json?
-  country               Country     @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  specialty             Specialty?  @relation("ServiceSpecialty", fields: [specialtyId], references: [id])
-  primaryForSpecialties Specialty[] @relation("SpecialtyPrimaryService")
+  country               Country       @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  specialty             Specialty?    @relation("ServiceSpecialty", fields: [specialtyId], references: [id])
+  primaryForSpecialties Specialty[]   @relation("SpecialtyPrimaryService")
   assets                Asset[]
   appointments          Appointment[]
-  createdAt             DateTime    @default(now())
-  updatedAt             DateTime    @updatedAt
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
 
   @@unique([countryId, slug])
 }
@@ -276,7 +349,7 @@ model PricingPlan {
 }
 
 model HealthTest {
-  id                 String   @id @default(cuid())
+  id                 String        @id @default(cuid())
   countryId          String
   slug               String
   title              String
@@ -292,17 +365,17 @@ model HealthTest {
   whatThisTestCovers String[]
   whyGetTested       String[]
   extraSections      Json?
-  sortOrder          Int      @default(0)
-  isActive           Boolean  @default(true)
+  sortOrder          Int           @default(0)
+  isActive           Boolean       @default(true)
   seoTitle           String?
   seoDescription     String?
   legacyPath         String?
-  country            Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  country            Country       @relation(fields: [countryId], references: [id], onDelete: Cascade)
   /// Appointments where the patient picked this specific health test
   /// at booking (`?service=<healthTestSlug>` matched a row here).
   appointments       Appointment[]
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
 
   @@unique([countryId, slug])
 }
@@ -379,7 +452,7 @@ enum PaymentStatus {
 }
 
 model Appointment {
-  id                    String         @id @default(cuid())
+  id                    String          @id @default(cuid())
   userId                String?
   countryCode           String
   consultationType      String
@@ -392,26 +465,33 @@ model Appointment {
   dateOfBirth           DateTime?
   notes                 String?
   consentAccepted       Boolean
-  status                String         @default("REQUEST_RECEIVED")
+  status                String          @default("REQUEST_RECEIVED")
   // Optional link to the catalogue Service that was booked. Populated when
   // the booking form passes ?service=<slug>; null for free-text bookings.
   serviceId             String?
-  service               Service?       @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  service               Service?        @relation(fields: [serviceId], references: [id], onDelete: SetNull)
   /// Optional HealthTest the patient picked at booking. Set when the
   /// booking form arrives with `?service=<healthTestSlug>` and the slug
   /// matches a HealthTest row. Symmetric with `serviceId` above.
   healthTestId          String?
-  healthTest            HealthTest?    @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
+  healthTest            HealthTest?     @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
   /// Doctor assigned to take the call. Set by admin on the schedule form;
   /// the doctor's portal at /doctor scopes queries to `doctorId = self`.
   /// Optional because not every appointment has a doctor yet.
   doctorId              String?
-  doctor                Doctor?        @relation("AppointmentDoctor", fields: [doctorId], references: [id], onDelete: SetNull)
+  doctor                Doctor?         @relation("AppointmentDoctor", fields: [doctorId], references: [id], onDelete: SetNull)
+  /// Concrete time slot the patient picked at booking. Populated when
+  /// the booking form posts with `timeSlotId`; the booking handler
+  /// atomically claims the slot (UPDATE…WHERE status='OPEN') so two
+  /// patients can never grab the same one. Null = legacy flow (admin
+  /// schedules the call manually later).
+  timeSlotId            String?         @unique
+  timeSlot              DoctorTimeSlot? @relation("AppointmentSlot", fields: [timeSlotId], references: [id], onDelete: SetNull)
   // Payment lifecycle. UNPAID = free or pending-Stripe.
-  paymentStatus         PaymentStatus  @default(UNPAID)
+  paymentStatus         PaymentStatus   @default(UNPAID)
   // Stripe identifiers. Null until a Checkout Session is created.
-  stripeSessionId       String?        @unique
-  stripePaymentIntentId String?        @unique
+  stripeSessionId       String?         @unique
+  stripePaymentIntentId String?         @unique
   amountCents           Int?
   currencyCode          String?
   paidAt                DateTime?
@@ -423,11 +503,11 @@ model Appointment {
   // Reminder job marks this once it has emailed the patient ~24h before
   // scheduledAt, so re-runs don't double-send. Null means "not sent yet".
   reminderSentAt        DateTime?
-  user                  User?          @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user                  User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
   payments              Payment[]
   messages              Message[]
-  createdAt             DateTime       @default(now())
-  updatedAt             DateTime       @updatedAt
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
 }
 
 /// Lightweight chat thread for the patient ↔ admin pre-consult conversation.
@@ -457,7 +537,7 @@ model Message {
   appointmentId String
   appointment   Appointment       @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
   authorRole    MessageAuthorRole
-  authorUserId  String?           // null for the patient guest-booking path
+  authorUserId  String? // null for the patient guest-booking path
   body          String
   readByPatient Boolean           @default(false)
   readByAdmin   Boolean           @default(false)
@@ -487,24 +567,24 @@ model Payment {
 }
 
 model User {
-  id                       String                    @id @default(cuid())
-  email                    String                    @unique
-  passwordHash             String
-  fullName                 String
-  phone                    String?
-  role                     UserRole                  @default(PATIENT)
-  emailVerifiedAt          DateTime?
-  isActive                 Boolean                   @default(true)
+  id                      String                   @id @default(cuid())
+  email                   String                   @unique
+  passwordHash            String
+  fullName                String
+  phone                   String?
+  role                    UserRole                 @default(PATIENT)
+  emailVerifiedAt         DateTime?
+  isActive                Boolean                  @default(true)
   /// Set when role=DOCTOR — links the login account to the Doctor
   /// profile that shows on the public site. Admin assigns this from
   /// the doctor edit page. One-to-one.
-  doctorId                 String?                   @unique
-  doctorProfile            Doctor?                   @relation("DoctorUserLink", fields: [doctorId], references: [id], onDelete: SetNull)
-  appointments             Appointment[]
-  resetTokens              PasswordResetToken[]
-  emailVerificationTokens  EmailVerificationToken[]
-  createdAt                DateTime                  @default(now())
-  updatedAt                DateTime                  @updatedAt
+  doctorId                String?                  @unique
+  doctorProfile           Doctor?                  @relation("DoctorUserLink", fields: [doctorId], references: [id], onDelete: SetNull)
+  appointments            Appointment[]
+  resetTokens             PasswordResetToken[]
+  emailVerificationTokens EmailVerificationToken[]
+  createdAt               DateTime                 @default(now())
+  updatedAt               DateTime                 @updatedAt
 }
 
 model PasswordResetToken {
@@ -614,29 +694,28 @@ enum ReviewProvider {
  * per-provider aggregate (rating + count) lives here so the public
  * ReviewBadge and `AggregateRating` JSON-LD can read a single row per
  * (countryId?, provider) combination.
- *
  * When live API integrations land later (Trustpilot Business API,
  * Google Place Details, Doctify), they'll write to this table.
  */
 model Review {
-  id            String         @id @default(cuid())
-  countryId     String?
-  provider      ReviewProvider
-  externalId    String?
-  rating        Int
-  title         String?
-  body          String?
-  authorName    String?
-  sourceUrl     String?
-  verifiedAt    DateTime?
-  isApproved    Boolean        @default(true)
-  publishedAt   DateTime?
-  country       Country?       @relation(fields: [countryId], references: [id], onDelete: SetNull)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id          String         @id @default(cuid())
+  countryId   String?
+  provider    ReviewProvider
+  externalId  String?
+  rating      Int
+  title       String?
+  body        String?
+  authorName  String?
+  sourceUrl   String?
+  verifiedAt  DateTime?
+  isApproved  Boolean        @default(true)
+  publishedAt DateTime?
+  country     Country?       @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 
-  @@index([countryId, provider])
   @@unique([provider, externalId])
+  @@index([countryId, provider])
 }
 
 /**
@@ -645,15 +724,14 @@ model Review {
  * contact info, and other settings that don't justify their own table.
  * Values are JSON so structured data (e.g. aggregate snapshots) fits
  * alongside plain strings.
- *
  * Known keys (Phase 4):
- *   review.trustpilot.businessUnitId   string
- *   review.trustpilot.aggregate        { rating: number, count: number, updatedAt: iso8601 }
- *   review.google.placeId              string
- *   review.google.aggregate            { rating: number, count: number, updatedAt: iso8601 }
- *   review.doctify.clinicId            string
- *   review.doctify.aggregate           { rating: number, count: number, updatedAt: iso8601 }
- *   review.primaryProvider             "TRUSTPILOT" | "GOOGLE" | "DOCTIFY"
+ * review.trustpilot.businessUnitId   string
+ * review.trustpilot.aggregate        { rating: number, count: number, updatedAt: iso8601 }
+ * review.google.placeId              string
+ * review.google.aggregate            { rating: number, count: number, updatedAt: iso8601 }
+ * review.doctify.clinicId            string
+ * review.doctify.aggregate           { rating: number, count: number, updatedAt: iso8601 }
+ * review.primaryProvider             "TRUSTPILOT" | "GOOGLE" | "DOCTIFY"
  */
 model Setting {
   key       String   @id

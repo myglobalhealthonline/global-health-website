@@ -599,6 +599,62 @@ export async function deleteAdminDoctor(id: string) {
   });
 }
 
+/** Doctor availability windows (recurring weekly slots). */
+export type AdminAvailabilityRow = {
+  id: string;
+  weekday: number; // 0 = Sun … 6 = Sat
+  startMinute: number;
+  endMinute: number;
+  slotDurationMinutes: number;
+  effectiveFrom: string | null;
+  effectiveUntil: string | null;
+  isActive: boolean;
+};
+
+export async function fetchAdminDoctorAvailability(id: string) {
+  return adminRequest<{ items: AdminAvailabilityRow[] }>(
+    `/api/admin/doctors/${id}/availability`,
+  );
+}
+
+export async function postAdminDoctorAvailability(
+  id: string,
+  body: {
+    weekday: number;
+    startMinute: number;
+    endMinute: number;
+    slotDurationMinutes?: number;
+    effectiveFrom?: string | null;
+    effectiveUntil?: string | null;
+  },
+) {
+  return adminRequest<{ availability: AdminAvailabilityRow }>(
+    `/api/admin/doctors/${id}/availability`,
+    { method: "POST", body },
+  );
+}
+
+export async function patchAdminDoctorAvailability(
+  id: string,
+  availabilityId: string,
+  body: Partial<AdminAvailabilityRow>,
+) {
+  return adminRequest<{ availability: AdminAvailabilityRow }>(
+    `/api/admin/doctors/${id}/availability/${availabilityId}`,
+    { method: "PATCH", body },
+  );
+}
+
+export async function deleteAdminDoctorAvailability(
+  id: string,
+  availabilityId: string,
+) {
+  return adminRequest<{ deleted: boolean }>(
+    `/api/admin/doctors/${id}/availability/${availabilityId}`,
+    { method: "DELETE" },
+  );
+}
+
 export async function purgeAdminDoctor(id: string) {
   return adminRequest<Record<string, never>>(`/api/admin/doctors/${id}/purge`, {
     method: "DELETE",

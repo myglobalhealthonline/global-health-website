@@ -43,17 +43,36 @@ type BookingFormTemplateProps = {
     email: string;
     phone: string | null;
   } | null;
+  /**
+   * Doctor pre-book context. Populated when the visitor arrived via
+   * `?doctor=<slug>` from a doctor profile. Renders a slot picker above
+   * the patient fields; the chosen slot id ships with the booking POST
+   * so the backend can claim it atomically.
+   */
+  doctorPrebook?: {
+    slug: string;
+    fullName: string;
+    title: string;
+    countryCode: string;
+    slots: { id: string; startAt: string; endAt: string }[];
+  } | null;
 };
 
 type FieldErrors = Partial<
   Record<"country" | "consultationType" | "fullName" | "email" | "consentAccepted", string>
 >;
 
-export function BookingFormTemplate({ hero, form, signedInPatient }: BookingFormTemplateProps) {
+export function BookingFormTemplate({
+  hero,
+  form,
+  signedInPatient,
+  doctorPrebook,
+}: BookingFormTemplateProps) {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [statusType, setStatusType] = useState<"success" | "error" | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
 
   // Preselect the consultation type from `?type=` if it matches one of
   // the dropdown values. Booking CTAs across the site link with
@@ -100,6 +119,7 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
       consentAccepted: formData.get("consentAccepted") === "on",
       serviceSlug: serviceSlug?.trim() || undefined,
       ...(dob !== "" ? { dateOfBirth: dob } : {}),
+      ...(selectedSlotId ? { timeSlotId: selectedSlotId } : {}),
     };
 
     const nextErrors: FieldErrors = {};
@@ -109,6 +129,9 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email))
       nextErrors.email = "Enter a valid email address.";
     if (!payload.consentAccepted) nextErrors.consentAccepted = "Consent is required.";
+    if (doctorPrebook && doctorPrebook.slots.length > 0 && !selectedSlotId) {
+      nextErrors.consultationType = nextErrors.consultationType ?? "Pick a slot above to continue.";
+    }
 
     setErrors(nextErrors);
 
@@ -239,6 +262,14 @@ export function BookingFormTemplate({ hero, form, signedInPatient }: BookingForm
                 </span>{" "}
                 — details pre-filled.
               </div>
+            ) : null}
+
+            {doctorPrebook ? (
+              <SlotPicker
+                doctor={doctorPrebook}
+                selectedSlotId={selectedSlotId}
+                onSelect={setSelectedSlotId}
+              />
             ) : null}
 
             <form
@@ -497,6 +528,91 @@ function Field({
       {error ? (
         <span className="text-[12.5px] text-[var(--color-status-error)]">{error}</span>
       ) : null}
+    </div>
+  );
+}
+
+function SlotPicker({
+  doctor,
+  selectedSlotId,
+  onSelect,
+}: {
+  doctor: NonNullable<BookingFormTemplateProps["doctorPrebook"]>;
+  selectedSlotId: string | null;
+  onSelect: (id: string) => void;
+}) {
+  // Group slots by local-day string so the picker reads as
+  // "Mon 12 May → [09:00] [09:30] [10:00] …" instead of one giant list.
+  const groups = new Map<string, { id: string; startAt: Date }[]>();
+  for (const s of doctor.slots) {
+    const d = new Date(s.startAt);
+    const dayKey = d.toLocaleDateString(undefined, {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+    });
+    const list = groups.get(dayKey) ?? [];
+    list.push({ id: s.id, startAt: d });
+    groups.set(dayKey, list);
+  }
+
+  return (
+    <div className="mt-6 rounded-2xl border border-[var(--color-brand-primary)]/20 bg-[var(--color-background-soft)] p-5">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+            Booking with
+          </span>
+          <p className="mt-1 text-[15px] font-semibold text-[var(--color-text-primary)]">
+            {doctor.fullName}
+          </p>
+          {doctor.title ? (
+            <p className="text-[12.5px] text-[var(--color-text-muted)]">
+              {doctor.title}
+            </p>
+          ) : null}
+        </div>
+      </div>
+
+      {doctor.slots.length === 0 ? (
+        <p className="mt-4 text-[13.5px] text-[var(--color-text-muted)]">
+          No open slots in the next two weeks — submit the form anyway and
+          our team will reach out with a time.
+        </p>
+      ) : (
+        <div className="mt-4 flex flex-col gap-4">
+          {Array.from(groups.entries()).map(([dayKey, slots]) => (
+            <div key={dayKey}>
+              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+                {dayKey}
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {slots.map((s) => {
+                  const time = s.startAt.toLocaleTimeString(undefined, {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  });
+                  const active = selectedSlotId === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => onSelect(s.id)}
+                      className={`rounded-full border px-3 py-1.5 text-[13px] font-semibold transition ${
+                        active
+                          ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white"
+                          : "border-[var(--color-border)] bg-white text-[var(--color-text-primary)] hover:border-[var(--color-brand-primary)]"
+                      }`}
+                    >
+                      {time}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

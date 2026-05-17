@@ -1,7 +1,14 @@
 import type { CountryCode, CountryConfig } from "@/data/countries";
 import type { LocaleCode } from "@/lib/i18n/types";
 
-const KNOWN_COUNTRY_CODES = new Set<CountryCode>(["ie", "pt", "sp", "cz", "rm"]);
+/**
+ * Format gate for admin-added country codes. Earlier this was a literal
+ * allowlist of the five seeded codes; widened to a regex check so that a
+ * brand-new Country row from `/admin/countries` flows straight through
+ * the public site without a code release. Length + character set match
+ * the backend's `countryCodeSchema`.
+ */
+const COUNTRY_CODE_REGEX = /^[a-z][a-z0-9-]{1,7}$/;
 
 const BACKEND_LOCALE_MAP: Record<string, LocaleCode> = {
   EN: "en",
@@ -59,6 +66,7 @@ export function mergeCountryConfigWithBackend(
   fallback: CountryConfig,
   backend: {
     name?: string;
+    slug?: string;
     legacyHomePath?: string;
     teamPath?: string;
     generalConsultationPath?: string;
@@ -92,6 +100,10 @@ export function mergeCountryConfigWithBackend(
     ...fallback,
     ...pathMerge,
     name: backend.name ?? fallback.name,
+    slug:
+      typeof backend.slug === "string" && backend.slug.trim().length > 0
+        ? backend.slug.trim().toLowerCase()
+        : fallback.slug,
     ...(backend.defaultLocale ? { defaultLocale: backend.defaultLocale } : {}),
     ...(backend.supportedLocales && backend.supportedLocales.length > 0
       ? { supportedLocales: backend.supportedLocales }
@@ -100,5 +112,5 @@ export function mergeCountryConfigWithBackend(
 }
 
 export function isKnownCountryCode(code: unknown): code is CountryCode {
-  return typeof code === "string" && KNOWN_COUNTRY_CODES.has(code as CountryCode);
+  return typeof code === "string" && COUNTRY_CODE_REGEX.test(code.toLowerCase());
 }

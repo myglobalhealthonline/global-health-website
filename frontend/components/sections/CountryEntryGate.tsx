@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import type { CountryConfig } from "@/data/countries";
 import type { LocaleCode } from "@/lib/i18n/types";
-import { countrySlug } from "@/lib/routing/country-slug";
+import { countrySlug, registerCountrySlugs } from "@/lib/routing/country-slug";
 
 type Props = {
   countries: CountryConfig[];
@@ -52,13 +52,21 @@ const LANG_HELLO: Record<LocaleCode, string> = {
 // fake doctor count per country; both were removed when this section was
 // converted to be database-driven.
 
-const FLAG_CLASS: Record<string, string> = {
-  ie: "fi fi-ie",
-  pt: "fi fi-pt",
-  sp: "fi fi-es",
-  cz: "fi fi-cz",
-  rm: "fi fi-ro",
+// Seeded-country codes use internal short codes that don't all match
+// ISO 3166-1 alpha-2 (`sp` for Spain, `rm` for Romania). Alias only
+// the mismatches; everything else passes through, which means admin-
+// added countries that use a real ISO2 code (`uk`, `de`, …) get the
+// right flag without a code change.
+const FLAG_CODE_ALIAS: Record<string, string> = {
+  sp: "es",
+  rm: "ro",
 };
+
+function flagClassForCode(code: string): string {
+  const normalized = code.toLowerCase();
+  const iso = FLAG_CODE_ALIAS[normalized] ?? normalized;
+  return `fi fi-${iso}`;
+}
 
 const PATTERN_WHITE =
   "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")";
@@ -67,6 +75,10 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
   const router = useRouter();
   const [step, setStep] = useState<0 | 1>(0);
   const [countryCode, setCountryCode] = useState<string | null>(null);
+
+  // Client-side: replay the registry so client-component slug helpers
+  // resolve admin-added codes the same way server pages do.
+  registerCountrySlugs(countries);
 
   const chosenCountry = countries.find((c) => c.code === countryCode) ?? null;
 
@@ -77,7 +89,8 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
 
   function enter(lang: LocaleCode) {
     if (!chosenCountry) return;
-    router.push(`/${countrySlug(chosenCountry.code)}?lang=${lang}`);
+    const slug = chosenCountry.slug || countrySlug(chosenCountry.code);
+    router.push(`/${slug}?lang=${lang}`);
   }
 
   const steps = [
@@ -261,7 +274,7 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
               >
                 {countries.map((c) => {
                   const meta = countryMeta?.[c.code];
-                  const flagCls = FLAG_CLASS[c.code] ?? "";
+                  const flagCls = flagClassForCode(c.code);
                   return (
                     <button
                       key={c.code}
@@ -494,7 +507,10 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
         <span>
           © {new Date().getFullYear()} Global Health · EU-registered telemedicine provider
         </span>
-        <span>GDPR compliant · Doctors registered locally in 5 countries</span>
+        <span>
+          GDPR compliant · Doctors registered locally in {countries.length}{" "}
+          {countries.length === 1 ? "country" : "countries"}
+        </span>
       </footer>
 
       <style jsx>{`

@@ -14,6 +14,10 @@ export type BookingPayload = {
   /** YYYY-MM-DD. Optional; backend enforces per-country
    *  `BookingSetting.requireDateOfBirth` when on. */
   dateOfBirth?: string;
+  /** Optional DoctorTimeSlot.id when the patient picked a calendar slot.
+   *  Backend atomically claims it inside the same transaction as the
+   *  Appointment insert; conflicts return 409. */
+  timeSlotId?: string;
 };
 
 export type BookingApiSuccess = {

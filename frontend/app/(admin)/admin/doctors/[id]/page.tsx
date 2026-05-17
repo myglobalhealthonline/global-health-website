@@ -95,6 +95,9 @@ export default async function AdminDoctorDetailPage({
             <Pill tone={isActive ? "published" : "inactive"}>
               {isActive ? "Active" : "Inactive"}
             </Pill>
+            <Btn href={`/admin/doctors/${id}/availability`} variant="ghost">
+              Availability
+            </Btn>
             <Btn href={`/admin/doctors/${id}/edit`} variant="primary">
               Edit
             </Btn>

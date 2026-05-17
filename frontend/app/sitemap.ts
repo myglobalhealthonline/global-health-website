@@ -1,12 +1,13 @@
 import type { MetadataRoute } from "next";
-import { countries } from "@/data/countries";
-import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
+import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
+import { countrySlug } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
 
 /**
  * Phase 1 sitemap. Emits only canonical, indexable routes.
- *   • Country home + the four section routes per country
+ *   • Country home + the four section routes per country (live admin list,
+ *     not the hardcoded five — see `getPublicCountriesMerged`)
  *   • Doctor profile pages
  *
  * Excluded:
@@ -19,8 +20,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = getSiteUrl();
   const urls: MetadataRoute.Sitemap = [];
 
+  const countries = await getPublicCountriesMerged();
+
   for (const country of countries) {
-    const slug = `/${COUNTRY_CODE_TO_SLUG[country.code]}`;
+    const slug = `/${country.slug || countrySlug(country.code)}`;
     const lang = (country.defaultLocale ?? "en").toLowerCase();
     urls.push(
       { url: `${base}${slug}/${lang}`, changeFrequency: "weekly", priority: 0.9 },
@@ -46,12 +49,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Doctor profile pages — one per active doctor, in their country/language.
   try {
+    const byCode = new Map(countries.map((c) => [c.code, c]));
     const allDoctors = await getPublicDoctorsNormalized();
     for (const d of allDoctors) {
-      const slug = COUNTRY_CODE_TO_SLUG[d.countryCode];
-      const country = countries.find((c) => c.code === d.countryCode);
-      const lang = (country?.defaultLocale ?? "en").toLowerCase();
-      if (!slug) continue;
+      const country = byCode.get(d.countryCode);
+      if (!country) continue;
+      const slug = country.slug || countrySlug(d.countryCode);
+      const lang = (country.defaultLocale ?? "en").toLowerCase();
       urls.push({
         url: `${base}/${slug}/${lang}/doctors/${d.slug}`,
         changeFrequency: "weekly",
