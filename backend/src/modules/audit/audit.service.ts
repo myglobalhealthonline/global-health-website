@@ -26,7 +26,8 @@ type AuditAction =
   | "APPOINTMENT_RESCHEDULED"
   | "FOLLOW_UP_CREATED"
   | "DOCUMENT_UPLOADED"
-  | "DOCUMENT_DELETED";
+  | "DOCUMENT_DELETED"
+  | "DOCTOR_INVITED";
 
 type AuditInput = {
   actorUserId?: string | null;

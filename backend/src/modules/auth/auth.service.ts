@@ -267,12 +267,21 @@ export async function findUserByEmail(email: string): Promise<User | null> {
   }
 }
 
-/** Issue a password-reset token; expires in 1 hour. Returns the plain token
- *  the caller can email. The DB only stores its SHA-256 hash. */
-export async function issuePasswordResetToken(userId: string): Promise<string> {
+/** Issue a password-reset token; default expiry 1 hour. Pass
+ *  `{ ttlMinutes }` to override (used for the doctor-invite flow that
+ *  needs a 7-day window). Returns the plain token the caller can
+ *  email — the DB only stores its SHA-256 hash. */
+export async function issuePasswordResetToken(
+  userId: string,
+  options?: { ttlMinutes?: number },
+): Promise<string> {
   const token = generateToken();
   const tokenHash = hashToken(token);
-  const expiresAt = new Date(Date.now() + PASSWORD_RESET_TTL_MINUTES * 60 * 1000);
+  const ttl =
+    options?.ttlMinutes && options.ttlMinutes > 0
+      ? options.ttlMinutes
+      : PASSWORD_RESET_TTL_MINUTES;
+  const expiresAt = new Date(Date.now() + ttl * 60 * 1000);
   try {
     await prisma.passwordResetToken.create({
       data: { userId, tokenHash, expiresAt },
@@ -283,14 +292,23 @@ export async function issuePasswordResetToken(userId: string): Promise<string> {
   return token;
 }
 
-/** Validate + consume a password-reset token, hash a new password, save. */
-export async function consumePasswordResetToken(token: string, newPassword: string): Promise<boolean> {
+export type ConsumeResetResult =
+  | { ok: true; userId: string }
+  | { ok: false };
+
+/** Validate + consume a password-reset token, hash a new password, save.
+ *  Returns the user id on success so callers (the invite flow) can
+ *  immediately mint a session cookie. */
+export async function consumePasswordResetToken(
+  token: string,
+  newPassword: string,
+): Promise<ConsumeResetResult> {
   const tokenHash = hashToken(token);
   try {
     const row = await prisma.passwordResetToken.findUnique({ where: { tokenHash } });
-    if (!row) return false;
-    if (row.usedAt) return false;
-    if (row.expiresAt.getTime() < Date.now()) return false;
+    if (!row) return { ok: false };
+    if (row.usedAt) return { ok: false };
+    if (row.expiresAt.getTime() < Date.now()) return { ok: false };
 
     const passwordHash = await bcrypt.hash(newPassword, 12);
     await prisma.$transaction([
@@ -300,7 +318,7 @@ export async function consumePasswordResetToken(token: string, newPassword: stri
         data: { usedAt: new Date() },
       }),
     ]);
-    return true;
+    return { ok: true, userId: row.userId };
   } catch (error) {
     throw normalizeDbError(error, "Could not reset password");
   }

@@ -30,6 +30,14 @@ export const forgotPasswordBodySchema = z.object({
 export const resetPasswordBodySchema = z.object({
   token: z.string().trim().min(10).max(512),
   password: z.string().min(8, "Password must be at least 8 characters").max(128),
+  /**
+   * When true, the password set is part of the doctor-invite flow:
+   * the backend additionally mints a session cookie so the frontend
+   * can redirect the doctor straight to `/doctor` without a second
+   * sign-in step. Standard forgot-password flow leaves this undefined
+   * and keeps the existing "set password, sign in manually" semantics.
+   */
+  invite: z.boolean().optional(),
 });
 
 export const changePasswordBodySchema = z.object({

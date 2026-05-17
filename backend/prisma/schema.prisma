@@ -147,6 +147,7 @@ enum AuditAction {
   FOLLOW_UP_CREATED
   DOCUMENT_UPLOADED
   DOCUMENT_DELETED
+  DOCTOR_INVITED
 }
 
 model Currency {

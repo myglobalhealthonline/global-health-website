@@ -36,6 +36,8 @@ export function parseDoctorBodyFromForm(formData: FormData) {
     qualifications,
     whatsappNumber: String(formData.get("whatsappNumber") ?? "").trim(),
     languages,
+    seoTitle: String(formData.get("seoTitle") ?? "").trim(),
+    seoDescription: String(formData.get("seoDescription") ?? "").trim(),
     specialtyIds,
     additionalCountryIds,
     profileImagePath: String(formData.get("profileImagePath") ?? "").trim(),

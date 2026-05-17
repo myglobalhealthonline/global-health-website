@@ -240,6 +240,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
               <Th>Practicing in</Th>
               <Th>Languages</Th>
               <Th>Categories</Th>
+              <Th>Account</Th>
               <Th>Status</Th>
               <Th align="right" style={{ width: 120 }}>
                 Actions
@@ -339,6 +340,19 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                           ? d.specialties.map((s) => s.specialty.name).join(", ")
                           : "—"}
                       </span>
+                    </Td>
+                    <Td>
+                      {(() => {
+                        if (!d.loginUser) {
+                          return (
+                            <Pill tone="neutral">No account</Pill>
+                          );
+                        }
+                        if (!d.loginUser.emailVerifiedAt) {
+                          return <Pill tone="pending">Pending</Pill>;
+                        }
+                        return <Pill tone="active">Active</Pill>;
+                      })()}
                     </Td>
                     <Td>
                       <Pill tone={d.active ? "published" : "inactive"}>

@@ -225,10 +225,31 @@ const authRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid reset-password payload", body.error.flatten()));
     }
     try {
-      const ok = await consumePasswordResetToken(body.data.token, body.data.password);
-      if (!ok) {
+      const result = await consumePasswordResetToken(body.data.token, body.data.password);
+      if (!result.ok) {
         return reply.status(400).send(errorResponse("Reset link is invalid or expired"));
       }
+
+      // Invite path: also mint a session cookie so the frontend can
+      // route the doctor straight to /doctor on success. Forgot-password
+      // flow (invite undefined) keeps the existing "set + sign in"
+      // semantics — no implicit session.
+      if (body.data.invite === true) {
+        const user = await getSafeUserById(result.userId);
+        if (user && user.isActive) {
+          const sessionToken = signAuthToken({
+            sub: user.id,
+            role: user.role,
+            email: user.email,
+          });
+          reply.setCookie(env.AUTH_COOKIE_NAME, sessionToken, authCookieOptions());
+          return okResponse(
+            { accepted: true, user },
+            "Password set. Welcome aboard.",
+          );
+        }
+      }
+
       return okResponse({ accepted: true }, "Password updated. You can sign in now.");
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {

@@ -106,6 +106,25 @@ export const adminDoctorCreateBodySchema = z.object({
   additionalCountryIds: z.array(z.string().trim().min(1)).optional(),
   profileImagePath: profileImageRefSchema.optional(),
   active: z.boolean().optional(),
+  /**
+   * SEO metadata for the public doctor profile page. Kept admin-managed
+   * (not on the doctor's self-edit form) so changes can't break canonical
+   * URL signals after the doctor has signed up.
+   */
+  seoTitle: z
+    .string()
+    .trim()
+    .max(160)
+    .optional()
+    .nullable()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
+  seoDescription: z
+    .string()
+    .trim()
+    .max(320)
+    .optional()
+    .nullable()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
 });
 
 export type AdminDoctorCreateBody = z.infer<typeof adminDoctorCreateBodySchema>;
@@ -113,3 +132,21 @@ export type AdminDoctorCreateBody = z.infer<typeof adminDoctorCreateBodySchema>;
 export const adminDoctorUpdateBodySchema = adminDoctorCreateBodySchema.partial();
 
 export type AdminDoctorUpdateBody = z.infer<typeof adminDoctorUpdateBodySchema>;
+
+/**
+ * Body for `POST /api/admin/doctors/:id/invite`. Admin enters the
+ * doctor's email; `fullName` is optional because the Doctor profile
+ * already has one — supplied here just lets the admin override the
+ * greeting in the invite email.
+ */
+export const doctorInviteBodySchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .email("Enter a valid email address")
+    .max(200),
+  fullName: z.string().trim().min(1).max(200).optional(),
+});
+
+export type DoctorInviteBody = z.infer<typeof doctorInviteBodySchema>;

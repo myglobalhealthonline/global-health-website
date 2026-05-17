@@ -49,6 +49,22 @@ const adminDoctorInclude = {
     where: { kind: AssetKind.IMAGE },
     select: { id: true, kind: true, key: true, path: true },
   },
+  /**
+   * Linked login user (User.doctorId one-to-one). Powers the
+   * "Account access" card on /admin/doctors/[id] so the admin can see
+   * invite state (no account / pending / verified) without a second
+   * round-trip.
+   */
+  loginUser: {
+    select: {
+      id: true,
+      email: true,
+      fullName: true,
+      emailVerifiedAt: true,
+      isActive: true,
+      createdAt: true,
+    },
+  },
 } satisfies Prisma.DoctorInclude;
 
 export type AdminDoctorRecord = Prisma.DoctorGetPayload<{ include: typeof adminDoctorInclude }>;
@@ -358,6 +374,8 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
           qualifications: input.qualifications ?? [],
           whatsappNumber: input.whatsappNumber ?? null,
           languages: input.languages ?? [],
+          seoTitle: input.seoTitle ?? null,
+          seoDescription: input.seoDescription ?? null,
           active: input.active ?? true,
           specialties: {
             create: input.specialtyIds.map((specialtyId) => ({
@@ -451,6 +469,10 @@ export async function updateAdminDoctor(
           ...(body.qualifications !== undefined && { qualifications: body.qualifications }),
           ...(body.whatsappNumber !== undefined && { whatsappNumber: body.whatsappNumber }),
           ...(body.languages !== undefined && { languages: body.languages }),
+          ...(body.seoTitle !== undefined && { seoTitle: body.seoTitle }),
+          ...(body.seoDescription !== undefined && {
+            seoDescription: body.seoDescription,
+          }),
           ...(body.active !== undefined && { active: body.active }),
         },
         include: adminDoctorInclude,

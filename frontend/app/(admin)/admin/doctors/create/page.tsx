@@ -135,6 +135,8 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
       qualifications: raw.qualifications,
       whatsappNumber: raw.whatsappNumber === "" ? null : raw.whatsappNumber,
       languages: raw.languages,
+      seoTitle: raw.seoTitle === "" ? null : raw.seoTitle,
+      seoDescription: raw.seoDescription === "" ? null : raw.seoDescription,
       specialtyIds: raw.specialtyIds,
       // M:N additional country listings (primary stays on Doctor.countryId).
       additionalCountryIds: raw.additionalCountryIds,

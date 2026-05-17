@@ -42,6 +42,39 @@ export async function sendPasswordResetEmail(opts: {
   });
 }
 
+/**
+ * Sent when admin invites a doctor to the portal. Doctor lands on
+ * `/reset-password?invite=1&token=…` which swaps the copy to a
+ * "welcome — set your password" prompt and auto-signs them in to the
+ * doctor portal on success.
+ */
+export async function sendDoctorInviteEmail(opts: {
+  to: string;
+  fullName: string;
+  token: string;
+  doctorTitle?: string;
+}) {
+  const link = absoluteSiteUrl(
+    `/reset-password?token=${encodeURIComponent(opts.token)}&invite=1`,
+  );
+  const greetingName = opts.doctorTitle
+    ? `${opts.doctorTitle} ${opts.fullName}`
+    : opts.fullName;
+  return sendEmail({
+    to: opts.to,
+    subject: "You're invited to the Global Health doctor portal",
+    text: `Hi ${greetingName},\n\nThe Global Health team has set up a doctor portal account for you. Open the link below to set a password — you'll land straight on your dashboard. The link expires in 7 days.\n\n${link}\n\nIf you didn't expect this invite, you can ignore the email.\n\n— Global Health`,
+    html: wrapHtml(
+      "Welcome to Global Health",
+      `<p>Hi ${escapeHtml(greetingName)},</p>
+       <p>The Global Health team has set up a doctor portal account for you. Click the button to set a password — you'll land straight on your dashboard.</p>
+       <p style="margin:24px 0;"><a href="${link}" style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">Set password &amp; sign in</a></p>
+       <p style="font-size:13px;color:#737373;">Or paste this URL into your browser:<br/><a href="${link}">${escapeHtml(link)}</a></p>
+       <p>The link expires in 7 days. If you didn't expect this invite, you can ignore the email.</p>`,
+    ),
+  });
+}
+
 export async function sendEmailVerificationEmail(opts: {
   to: string;
   fullName: string;

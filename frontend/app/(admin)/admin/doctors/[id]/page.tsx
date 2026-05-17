@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Mail, RefreshCw } from "lucide-react";
 import {
   deleteAdminDoctor,
   doctorPublicProfilePath,
   fetchAdminDoctorById,
+  postAdminDoctorInvite,
   purgeAdminDoctor,
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../../_components/flag-badge";
@@ -45,6 +46,34 @@ export default async function AdminDoctorDetailPage({
     }
     revalidatePath("/admin/doctors");
     redirect("/admin/doctors");
+  }
+
+  async function inviteDoctorAction(formData: FormData) {
+    "use server";
+    const email = String(formData.get("email") ?? "").trim();
+    const fullName = String(formData.get("fullName") ?? "").trim();
+    if (!email) {
+      redirect(`/admin/doctors/${id}?error=${encodeURIComponent("Email is required")}`);
+    }
+    const result = await postAdminDoctorInvite(id, {
+      email,
+      ...(fullName ? { fullName } : {}),
+    });
+    if (!result.ok) {
+      redirect(
+        `/admin/doctors/${id}?error=${encodeURIComponent(result.message)}`,
+      );
+    }
+    revalidatePath(`/admin/doctors/${id}`);
+    revalidatePath("/admin/doctors");
+    const msg = result.data.resend
+      ? result.data.emailed
+        ? "Invite resent to the doctor"
+        : "Invite refreshed — email delivery failed, share link manually"
+      : result.data.emailed
+        ? "Doctor invited — they'll receive an email shortly"
+        : "Invite created — email delivery failed, share link manually";
+    redirect(`/admin/doctors/${id}?success=${encodeURIComponent(msg)}`);
   }
 
   if (!result.ok) {
@@ -219,6 +248,80 @@ export default async function AdminDoctorDetailPage({
         </div>
 
         <div className="grid gap-4 self-start">
+          <AdminCard>
+            <h3 style={cardTitleStyle}>Account access</h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Invite the doctor by email — they&apos;ll set a password and
+              land straight in the portal.
+            </p>
+            {d.loginUser ? (
+              <div className="grid gap-3">
+                <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3 text-[13px]">
+                  <p className="font-semibold text-[var(--color-text-primary)]">
+                    {d.loginUser.email}
+                  </p>
+                  <p className="text-[11.5px] text-[var(--color-text-muted)]">
+                    {d.loginUser.emailVerifiedAt
+                      ? `Verified ${new Date(d.loginUser.emailVerifiedAt).toLocaleString()}`
+                      : `Invited ${new Date(d.loginUser.createdAt).toLocaleString()} · awaiting password set`}
+                  </p>
+                  <p className="mt-1 text-[11.5px] text-[var(--color-text-muted)]">
+                    {d.loginUser.isActive ? "Account active" : "Account suspended"}
+                  </p>
+                </div>
+                <form action={inviteDoctorAction} className="grid gap-2">
+                  <input type="hidden" name="email" value={d.loginUser.email} />
+                  <input type="hidden" name="fullName" value={d.loginUser.fullName} />
+                  <button
+                    type="submit"
+                    className="gh-btn gh-btn-soft inline-flex items-center justify-center gap-1.5"
+                  >
+                    <RefreshCw className="size-3.5" /> Resend invite
+                  </button>
+                </form>
+                <Link
+                  href={`/admin/users/${d.loginUser.id}`}
+                  className="text-[12px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                >
+                  Manage account at /admin/users →
+                </Link>
+              </div>
+            ) : (
+              <form action={inviteDoctorAction} className="grid gap-2.5">
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Email address</span>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    maxLength={200}
+                    placeholder="doctor@example.com"
+                    className="gh-input"
+                  />
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="gh-field-label">Greeting name (optional)</span>
+                  <input
+                    type="text"
+                    name="fullName"
+                    maxLength={200}
+                    defaultValue={d.fullName}
+                    className="gh-input"
+                  />
+                  <span className="text-[11px] text-[var(--color-text-muted)]">
+                    Falls back to the doctor profile name above if left blank.
+                  </span>
+                </label>
+                <button
+                  type="submit"
+                  className="gh-btn gh-btn-primary inline-flex items-center justify-center gap-1.5"
+                >
+                  <Mail className="size-3.5" /> Send invitation
+                </button>
+              </form>
+            )}
+          </AdminCard>
+
           <AdminCard>
             <h3 style={cardTitleStyle}>Visibility</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">

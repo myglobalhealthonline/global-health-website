@@ -517,6 +517,8 @@ export type AdminDoctorDto = {
   qualifications: string[];
   whatsappNumber: string | null;
   languages: string[];
+  seoTitle: string | null;
+  seoDescription: string | null;
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -532,6 +534,15 @@ export type AdminDoctorDto = {
   }>;
   specialties: AdminDoctorSpecialtyLinkDto[];
   assets: AdminDoctorAssetDto[];
+  /** Linked login user. Null when no account exists yet. */
+  loginUser: {
+    id: string;
+    email: string;
+    fullName: string;
+    emailVerifiedAt: string | null;
+    isActive: boolean;
+    createdAt: string;
+  } | null;
 };
 
 type AdminDoctorsListPayload = {
@@ -597,6 +608,29 @@ export async function deleteAdminDoctor(id: string) {
   return adminRequest<AdminDoctorDetailPayload>(`/api/admin/doctors/${id}`, {
     method: "DELETE",
   });
+}
+
+/** Mint or refresh a doctor portal invite. Idempotent — second call for
+ *  the same doctor "resends" with a new token. */
+export type AdminDoctorInvitePayload = {
+  user: {
+    id: string;
+    email: string;
+    fullName: string;
+    emailVerifiedAt: string | null;
+  };
+  resend: boolean;
+  emailed: boolean;
+};
+
+export async function postAdminDoctorInvite(
+  doctorId: string,
+  body: { email: string; fullName?: string },
+) {
+  return adminRequest<AdminDoctorInvitePayload>(
+    `/api/admin/doctors/${doctorId}/invite`,
+    { method: "POST", body },
+  );
 }
 
 /** Audit-log row (append-only). */
