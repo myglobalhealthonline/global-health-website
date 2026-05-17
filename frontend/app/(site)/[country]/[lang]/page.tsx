@@ -12,7 +12,8 @@ import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { ReviewBadge } from "@/components/sections/ReviewBadge";
-import { countries, getCountryByCode } from "@/data/countries";
+import { countries } from "@/data/countries";
+import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
@@ -59,7 +60,7 @@ export async function generateMetadata({
   const { country, lang } = await params;
   const code = countryCodeFromSlug(country);
   if (!code) return { title: SITE_NAME };
-  const config = getCountryByCode(code);
+  const config = await getPublicCountryByCode(code);
   if (!config) return { title: SITE_NAME };
   if (!isSupportedLocale(lang)) return { title: SITE_NAME };
 
@@ -136,7 +137,7 @@ export default async function CountryLangHomePage({
   const { country: slug, lang } = await params;
   const code = countryCodeFromSlug(slug);
   if (!code) notFound();
-  const config = getCountryByCode(code);
+  const config = await getPublicCountryByCode(code);
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 

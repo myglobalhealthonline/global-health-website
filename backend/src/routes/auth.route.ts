@@ -84,8 +84,13 @@ const authRoute: FastifyPluginAsync = async (app) => {
 
   app.post("/api/auth/login", {
     // 10 attempts per 15min per IP. Stops credential-stuffing without
-    // breaking the typo-then-retry path real users hit.
-    config: { rateLimit: { max: 10, timeWindow: "15 minutes" } },
+    // breaking the typo-then-retry path real users hit. Relaxed in dev for E2E/manual runs.
+    config: {
+      rateLimit:
+        env.NODE_ENV === "development"
+          ? { max: 200, timeWindow: "15 minutes" }
+          : { max: 10, timeWindow: "15 minutes" },
+    },
   }, async (request, reply) => {
     const body = loginBodySchema.safeParse(request.body);
     if (!body.success) {

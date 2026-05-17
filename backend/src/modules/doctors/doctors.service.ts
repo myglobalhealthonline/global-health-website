@@ -21,6 +21,9 @@ export class DoctorSpecialtyInvalidError extends Error {
   }
 }
 
+/** Create/update sync assets + M:N countries; default 5s Prisma timeout is too low on Windows dev. */
+const ADMIN_DOCTOR_TX_OPTIONS = { maxWait: 10_000, timeout: 20_000 } as const;
+
 const adminDoctorInclude = {
   country: {
     select: {
@@ -423,7 +426,7 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
         where: { id: created.id },
         include: adminDoctorInclude,
       });
-    });
+    }, ADMIN_DOCTOR_TX_OPTIONS);
 
     return doctor;
   } catch (error) {
@@ -501,7 +504,7 @@ export async function updateAdminDoctor(
         where: { id },
         include: adminDoctorInclude,
       });
-    });
+    }, ADMIN_DOCTOR_TX_OPTIONS);
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }

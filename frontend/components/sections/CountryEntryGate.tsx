@@ -90,7 +90,8 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
   function enter(lang: LocaleCode) {
     if (!chosenCountry) return;
     const slug = chosenCountry.slug || countrySlug(chosenCountry.code);
-    router.push(`/${slug}?lang=${lang}`);
+    // Navigate directly to /{slug}/{lang} — query ?lang= can mis-resolve with [lang] routes (→ /ireland/services/en 404).
+    router.push(`/${slug}/${lang}`);
   }
 
   const steps = [

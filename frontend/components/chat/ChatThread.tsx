@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Send, Loader2 } from "lucide-react";
 import type { ChatMessage } from "@/lib/api/chat-api";
+import { formatAppDateTimeShort } from "@/lib/format-datetime";
 
 type FetcherResult =
   | { ok: true; data: { items: ChatMessage[] } }
@@ -147,12 +148,7 @@ export function ChatThread({
                       own ? "text-emerald-100" : "text-slate-500"
                     }`}
                   >
-                    {new Date(m.createdAt).toLocaleString(undefined, {
-                      month: "short",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatAppDateTimeShort(m.createdAt)}
                   </p>
                 </div>
               </li>

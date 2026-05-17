@@ -137,3 +137,12 @@ export const getPublicCountriesMerged = cache(async (): Promise<CountryConfig[]>
   registerCountrySlugs(merged);
   return merged;
 });
+
+/** Resolve a country from the live API merge (includes admin-added markets). */
+export const getPublicCountryByCode = cache(
+  async (code: string): Promise<CountryConfig | null> => {
+    const normalized = code.toLowerCase();
+    const list = await getPublicCountriesMerged();
+    return list.find((c) => c.code === normalized) ?? null;
+  },
+);

@@ -23,7 +23,8 @@ export const profileImageRefSchema = z.preprocess(
 
 export const adminDoctorsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
-  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  // Admin duplicate-check UIs fetch up to 250 rows in one country.
+  pageSize: z.coerce.number().int().min(1).max(250).default(20),
   countryId: z.preprocess(
     (v) => (v === "" || v === undefined || v === null ? undefined : v),
     z.string().trim().min(1).optional(),

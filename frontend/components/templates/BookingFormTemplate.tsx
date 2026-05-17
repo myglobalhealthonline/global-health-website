@@ -56,6 +56,8 @@ type BookingFormTemplateProps = {
     countryCode: string;
     slots: { id: string; startAt: string; endAt: string }[];
   } | null;
+  /** From server `searchParams` — avoids `window` during render (hydration). */
+  initialConsultationType?: string;
 };
 
 type FieldErrors = Partial<
@@ -67,23 +69,14 @@ export function BookingFormTemplate({
   form,
   signedInPatient,
   doctorPrebook,
+  initialConsultationType = "",
 }: BookingFormTemplateProps) {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [statusType, setStatusType] = useState<"success" | "error" | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
-
-  // Preselect the consultation type from `?type=` if it matches one of
-  // the dropdown values. Booking CTAs across the site link with
-  // ?type=general / ?type=specialist / ?type=prescription — preserving
-  // intent across the navigation.
-  const initialType = (() => {
-    if (typeof window === "undefined") return "";
-    const raw = new URLSearchParams(window.location.search).get("type") ?? "";
-    const allowed = new Set(form.consultationTypeOptions.map((o) => o.value));
-    return allowed.has(raw) ? raw : "";
-  })();
+  const [consentAccepted, setConsentAccepted] = useState(false);
 
   const ids = {
     country: "booking-country",
@@ -116,7 +109,7 @@ export function BookingFormTemplate({
       email: String(formData.get("email") ?? "").trim(),
       phone: String(formData.get("phone") ?? "").trim(),
       notes: String(formData.get("notes") ?? "").trim(),
-      consentAccepted: formData.get("consentAccepted") === "on",
+      consentAccepted,
       serviceSlug: serviceSlug?.trim() || undefined,
       ...(dob !== "" ? { dateOfBirth: dob } : {}),
       ...(selectedSlotId ? { timeSlotId: selectedSlotId } : {}),
@@ -190,11 +183,13 @@ export function BookingFormTemplate({
       );
       event.currentTarget.reset();
       setErrors({});
+      setConsentAccepted(false);
       return;
     }
 
     event.currentTarget.reset();
     setErrors({});
+    setConsentAccepted(false);
     setStatusType("success");
     setStatusMessage(
       signedInPatient
@@ -310,7 +305,7 @@ export function BookingFormTemplate({
                   <select
                     id={ids.consultation}
                     name="consultationType"
-                    defaultValue={initialType}
+                    defaultValue={initialConsultationType}
                     className="gh-select"
                   >
                     <option value="">{form.fields.consultationType.placeholder}</option>
@@ -400,6 +395,13 @@ export function BookingFormTemplate({
                   id={ids.consent}
                   name="consentAccepted"
                   type="checkbox"
+                  checked={consentAccepted}
+                  onChange={(event) => {
+                    setConsentAccepted(event.target.checked);
+                    if (errors.consentAccepted) {
+                      setErrors((prev) => ({ ...prev, consentAccepted: undefined }));
+                    }
+                  }}
                   className="mt-0.5 size-4 accent-[var(--color-brand-primary)]"
                 />
                 <span>{form.fields.consent}</span>

@@ -41,6 +41,11 @@ function handleDoctorWriteError(
   if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
     return reply.status(409).send(errorResponse("Duplicate value for a unique doctor field (country + slug)"));
   }
+  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2028") {
+    return reply
+      .status(503)
+      .send(errorResponse("Doctor save timed out — retry; if it persists, check database load"));
+  }
   if (error instanceof DatabaseUnavailableError) {
     return reply.status(503).send(errorResponse(error.message));
   }

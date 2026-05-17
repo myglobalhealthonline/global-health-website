@@ -28,15 +28,6 @@ const STATUS_OPTIONS = [
   { value: "COMPLETED", label: "Completed" },
 ] as const;
 
-const COUNTRY_OPTIONS = [
-  { value: "", label: "All countries" },
-  { value: "ie", label: "Ireland" },
-  { value: "pt", label: "Portugal" },
-  { value: "sp", label: "Spain" },
-  { value: "cz", label: "Czechia" },
-  { value: "rm", label: "Romania" },
-] as const;
-
 const CONSULT_OPTIONS = [
   { value: "", label: "All types" },
   { value: "general", label: "General" },
@@ -141,6 +132,14 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
   const hasRows = items.length > 0;
   const { page, pageSize, total, totalPages } = pagination;
 
+  const countryOptions = [
+    { value: "", label: "All countries" },
+    ...countriesForScope
+      .filter((c) => c.active)
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((c) => ({ value: c.code, label: c.name })),
+  ];
+
   return (
     <>
       <PageHeader
@@ -176,8 +175,8 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                 defaultValue={filters.countryCode ?? ""}
                 className="gh-select min-w-0"
               >
-                {COUNTRY_OPTIONS.map((o) => (
-                  <option key={o.label} value={o.value}>
+                {countryOptions.map((o) => (
+                  <option key={o.value || "all"} value={o.value}>
                     {o.label}
                   </option>
                 ))}

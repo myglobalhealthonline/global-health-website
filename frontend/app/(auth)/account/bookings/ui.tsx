@@ -12,6 +12,7 @@ import {
   postPatientMessage as postPatientChatMessage,
   uploadPatientChatFile,
 } from "@/lib/api/consultation-chat-api";
+import { formatAppDateTime } from "@/lib/format-datetime";
 
 type BookingsShellProps = {
   items: AccountAppointment[];
@@ -24,12 +25,6 @@ function formatStatus(status: string) {
     .split("_")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
-}
-
-function formatDate(dateLike: string) {
-  const value = new Date(dateLike);
-  if (Number.isNaN(value.getTime())) return dateLike;
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short" }).format(value);
 }
 
 function statusBadgeClass(status: string) {
@@ -46,6 +41,11 @@ function paymentBadgeClass(status: string) {
   if (status === "REFUNDED") return "gh-badge-neutral";
   if (status === "PROCESSING" || status === "REQUIRES_ACTION") return "gh-badge-warning";
   return "gh-badge-neutral";
+}
+
+function requiresPayment(item: AccountAppointment): boolean {
+  if (!item.amountCents || item.amountCents <= 0) return false;
+  return item.paymentStatus !== "PAID";
 }
 
 function formatPaymentLabel(status: string, amountCents: number | null, currency: string | null) {
@@ -103,7 +103,7 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="flex items-center gap-2">
               <CalendarDays className="size-4 text-[var(--color-text-muted)]" aria-hidden />
-              <span className="text-sm text-[var(--color-text-muted)]">{formatDate(item.createdAt)}</span>
+              <span className="text-sm text-[var(--color-text-muted)]">{formatAppDateTime(item.createdAt)}</span>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode) ? (
@@ -140,7 +140,7 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
                     Scheduled
                   </p>
                   <p className="mt-0.5 text-sm font-medium text-emerald-900">
-                    {item.scheduledAt ? formatDate(item.scheduledAt) : "Time to be confirmed"}
+                    {item.scheduledAt ? formatAppDateTime(item.scheduledAt) : "Time to be confirmed"}
                   </p>
                 </div>
               </div>
@@ -178,16 +178,26 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
               {openChatId === item.id ? "Hide clinic messages" : "Message the clinic"}
             </button>
 
-            <button
-              type="button"
-              onClick={() =>
-                setOpenConsultChatId((current) => (current === item.id ? null : item.id))
-              }
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
-            >
-              <MessageCircle className="size-4" aria-hidden />
-              {openConsultChatId === item.id ? "Hide doctor chat" : "Chat with your doctor"}
-            </button>
+            {requiresPayment(item) ? (
+              <span
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-700"
+                title="Complete payment to unlock chat with your doctor"
+              >
+                <MessageCircle className="size-4" aria-hidden />
+                Doctor chat — complete payment to unlock
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={() =>
+                  setOpenConsultChatId((current) => (current === item.id ? null : item.id))
+                }
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+              >
+                <MessageCircle className="size-4" aria-hidden />
+                {openConsultChatId === item.id ? "Hide doctor chat" : "Chat with your doctor"}
+              </button>
+            )}
           </div>
 
           {openChatId === item.id ? (
@@ -201,7 +211,7 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
             </div>
           ) : null}
 
-          {openConsultChatId === item.id ? (
+          {openConsultChatId === item.id && !requiresPayment(item) ? (
             <div className="mt-3">
               <ConsultationChat
                 appointmentId={item.id}

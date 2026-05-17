@@ -8,9 +8,8 @@ import {
   patchAdminAppointmentSchedule,
   patchAdminAppointmentStatus,
 } from "@/lib/admin/admin-api";
-import { ChatThread } from "@/components/chat/ChatThread";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
-import { fetchAdminMessages, postAdminMessage } from "@/lib/api/chat-api";
+import { AdminAppointmentChat } from "../_components/admin-appointment-chat";
 import {
   getAllowedNextStatuses,
   isTerminalAppointmentStatus,
@@ -363,12 +362,7 @@ export default async function AdminAppointmentDetailPage({
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Pre-consult messages. The patient sees replies on /account/bookings.
             </p>
-            <ChatThread
-              appointmentId={appointment.id}
-              viewerRole="ADMIN"
-              fetcher={fetchAdminMessages}
-              poster={postAdminMessage}
-            />
+            <AdminAppointmentChat appointmentId={appointment.id} />
           </AdminCard>
 
           {/* Internal (doctor ↔ admin) per-appointment notes. NOT

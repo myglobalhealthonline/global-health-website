@@ -11,7 +11,23 @@ export type ChatMessage = {
   createdAt: string;
 };
 
-type ChatResponse = { items: ChatMessage[]; chatLocked: boolean };
+type ChatResponse = {
+  items: ChatMessage[];
+  chatLocked: boolean;
+  paymentRequired: boolean;
+};
+
+function readChatResponse(data: {
+  items: ChatMessage[];
+  chatLocked: boolean;
+  paymentRequired?: boolean;
+}): ChatResponse {
+  return {
+    items: data.items,
+    chatLocked: data.chatLocked,
+    paymentRequired: data.paymentRequired ?? false,
+  };
+}
 
 // ── Patient ───────────────────────────────────────────────────────────────
 
@@ -23,7 +39,7 @@ export async function fetchPatientChat(
   });
   if (!res.ok) throw new Error("Failed to load messages");
   const json = await res.json();
-  return { items: json.data.items, chatLocked: json.data.chatLocked };
+  return readChatResponse(json.data);
 }
 
 export async function postPatientMessage(
@@ -35,10 +51,13 @@ export async function postPatientMessage(
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ body }),
   });
-  if (res.status === 403) throw new Error("Chat window closed");
+  if (res.status === 403) {
+    const json = await res.json().catch(() => ({}));
+    throw new Error(json?.message ?? "Chat unavailable");
+  }
   if (!res.ok) throw new Error("Failed to send message");
   const json = await res.json();
-  return { items: json.data.items, chatLocked: json.data.chatLocked };
+  return readChatResponse(json.data);
 }
 
 export async function uploadPatientChatFile(
@@ -51,10 +70,13 @@ export async function uploadPatientChatFile(
     `/api/account/appointments/${appointmentId}/chat/upload`,
     { method: "POST", body: formData },
   );
-  if (res.status === 403) throw new Error("Chat window closed");
+  if (res.status === 403) {
+    const json = await res.json().catch(() => ({}));
+    throw new Error(json?.message ?? "Upload unavailable");
+  }
   if (!res.ok) throw new Error("Upload failed");
   const json = await res.json();
-  return { items: json.data.items, chatLocked: json.data.chatLocked };
+  return readChatResponse(json.data);
 }
 
 // ── Doctor ────────────────────────────────────────────────────────────────
@@ -67,7 +89,7 @@ export async function fetchDoctorChat(
   });
   if (!res.ok) throw new Error("Failed to load messages");
   const json = await res.json();
-  return { items: json.data.items, chatLocked: json.data.chatLocked };
+  return readChatResponse(json.data);
 }
 
 export async function postDoctorMessage(
@@ -79,9 +101,13 @@ export async function postDoctorMessage(
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ body }),
   });
+  if (res.status === 403) {
+    const json = await res.json().catch(() => ({}));
+    throw new Error(json?.message ?? "Chat unavailable");
+  }
   if (!res.ok) throw new Error("Failed to send message");
   const json = await res.json();
-  return { items: json.data.items, chatLocked: json.data.chatLocked };
+  return readChatResponse(json.data);
 }
 
 export async function uploadDoctorChatFile(
@@ -94,9 +120,13 @@ export async function uploadDoctorChatFile(
     `/api/doctor/appointments/${appointmentId}/chat/upload`,
     { method: "POST", body: formData },
   );
+  if (res.status === 403) {
+    const json = await res.json().catch(() => ({}));
+    throw new Error(json?.message ?? "Upload unavailable");
+  }
   if (!res.ok) throw new Error("Upload failed");
   const json = await res.json();
-  return { items: json.data.items, chatLocked: json.data.chatLocked };
+  return readChatResponse(json.data);
 }
 
 export async function toggleDoctorChatLock(
