@@ -182,3 +182,146 @@ export async function fetchDoctorInternalMessages(appointmentId: string) {
     `/api/doctor/appointments/${appointmentId}/internal-messages`,
   );
 }
+
+// Forms
+export type FormFieldDef = {
+  key: string;
+  label: string;
+  type: "text" | "longtext" | "choice" | "number" | "date";
+  required?: boolean;
+  options?: string[];
+  helper?: string;
+};
+
+export type FormTemplateDto = {
+  id: string;
+  doctorId: string | null;
+  ownedBySelf: boolean;
+  title: string;
+  description: string | null;
+  fields: FormFieldDef[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export async function fetchDoctorFormTemplates() {
+  return doctorRequest<{ items: FormTemplateDto[] }>(
+    "/api/doctor/form-templates",
+  );
+}
+
+export type FormSubmissionDto = {
+  id: string;
+  template: { id: string; title: string; fields: FormFieldDef[] };
+  answers: Array<{ key: string; value: string | number | boolean | null }>;
+  submittedAt: string;
+};
+
+export async function fetchDoctorFormSubmissions(appointmentId: string) {
+  return doctorRequest<{ items: FormSubmissionDto[] }>(
+    `/api/doctor/appointments/${appointmentId}/form-submissions`,
+  );
+}
+
+// Consultation services-used
+export type ConsultationServiceLineDto = {
+  id: string;
+  serviceId: string | null;
+  service: { id: string; name: string; basePriceCents: number | null; currencyCode: string | null } | null;
+  customLabel: string | null;
+  quantity: number;
+  unitPriceCents: number | null;
+  currencyCode: string | null;
+  createdAt: string;
+};
+
+export async function fetchDoctorConsultationServices(consultationId: string) {
+  return doctorRequest<{ items: ConsultationServiceLineDto[] }>(
+    `/api/doctor/consultations/${consultationId}/services`,
+  );
+}
+
+// Invoice
+export type DoctorInvoiceLine = {
+  id: string;
+  label: string;
+  quantity: number;
+  unitPriceCents: number | null;
+  currencyCode: string | null;
+};
+
+export type DoctorInvoiceDto = {
+  paymentStatus: string;
+  amountCents: number | null;
+  currencyCode: string | null;
+  paidAt: string | null;
+  stripeSessionId: string | null;
+  lines: DoctorInvoiceLine[];
+  lineTotalCents: number;
+  payments: Array<{
+    id: string;
+    amountCents: number;
+    currencyCode: string;
+    status: string;
+    createdAt: string;
+  }>;
+};
+
+export async function fetchDoctorInvoice(appointmentId: string) {
+  return doctorRequest<{ invoice: DoctorInvoiceDto }>(
+    `/api/doctor/appointments/${appointmentId}/invoice`,
+  );
+}
+
+// Reports
+export type DoctorReportsDto = {
+  range: { from: string; to: string };
+  appointments: {
+    total: number;
+    byStatus: Array<{ status: string; count: number }>;
+    byConsultationType: Array<{ consultationType: string; count: number }>;
+  };
+  signedConsults: number;
+  distinctPatients: number;
+  revenueByCurrency: Record<string, number>;
+};
+
+export async function fetchDoctorReports(from?: string, to?: string) {
+  const params = new URLSearchParams();
+  if (from) params.set("from", from);
+  if (to) params.set("to", to);
+  const qs = params.toString();
+  return doctorRequest<DoctorReportsDto>(
+    qs ? `/api/doctor/reports?${qs}` : "/api/doctor/reports",
+  );
+}
+
+// Notifications
+export type DoctorNotificationDto = {
+  id: string;
+  type:
+    | "APPOINTMENT_ASSIGNED"
+    | "INTERNAL_MESSAGE"
+    | "CONSULT_SIGNED"
+    | "EXAM_LOGGED"
+    | "FORM_SUBMITTED";
+  payload: {
+    appointmentId?: string;
+    snippet?: string;
+    byUserName?: string;
+    byRole?: "DOCTOR" | "ADMIN";
+  };
+  readAt: string | null;
+  createdAt: string;
+};
+
+export async function fetchDoctorNotifications(onlyUnread = false) {
+  const path = onlyUnread
+    ? "/api/doctor/notifications?onlyUnread=1"
+    : "/api/doctor/notifications";
+  return doctorRequest<{
+    items: DoctorNotificationDto[];
+    unreadCount: number;
+  }>(path);
+}

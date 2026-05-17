@@ -86,6 +86,23 @@ enum InternalMessageAuthorRole {
   ADMIN
 }
 
+/// Doctor portal notification kinds. Add new values here as we wire
+/// more trigger points; the payload Json field carries the per-event
+/// context (appointmentId, internalMessageId, etc.).
+enum NotificationType {
+  APPOINTMENT_ASSIGNED
+  INTERNAL_MESSAGE
+  CONSULT_SIGNED
+  EXAM_LOGGED
+  FORM_SUBMITTED
+}
+
+/// Scope for a `ShareLink` token. CONSULTATION = doctor sharing a
+/// signed consult with a referring colleague via signed URL.
+enum ShareLinkScope {
+  CONSULTATION
+}
+
 model Currency {
   id        String    @id @default(cuid())
   code      String    @unique
@@ -208,6 +225,9 @@ model Doctor {
   /// Inverse of `ExamResult.doctorId`. Populated when the doctor
   /// uploads / records an exam result for an appointment.
   examResults            ExamResult[]
+  /// Form templates this doctor owns. Templates with `doctorId = null`
+  /// are shared/global (admin-managed).
+  formTemplates          FormTemplate[]
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
 
@@ -320,10 +340,10 @@ model DoctorSpecialty {
 }
 
 model Service {
-  id                    String        @id @default(cuid())
+  id                    String                @id @default(cuid())
   countryId             String
   specialtyId           String?
-  kind                  ServiceKind   @default(GENERAL)
+  kind                  ServiceKind           @default(GENERAL)
   slug                  String
   name                  String
   summary               String?
@@ -334,21 +354,25 @@ model Service {
   detailBody            String?
   ctaLabel              String?
   legacyPath            String?
-  sortOrder             Int           @default(0)
+  sortOrder             Int                   @default(0)
   durationMinutes       Int?
   basePriceCents        Int?
   currencyCode          String?
   editorialChecklist    Json?
-  isActive              Boolean       @default(true)
+  isActive              Boolean               @default(true)
   consultationSetting   Json?
   bookingSetting        Json?
-  country               Country       @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  specialty             Specialty?    @relation("ServiceSpecialty", fields: [specialtyId], references: [id])
-  primaryForSpecialties Specialty[]   @relation("SpecialtyPrimaryService")
+  country               Country               @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  specialty             Specialty?            @relation("ServiceSpecialty", fields: [specialtyId], references: [id])
+  primaryForSpecialties Specialty[]           @relation("SpecialtyPrimaryService")
   assets                Asset[]
   appointments          Appointment[]
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
+  /// Per-consultation services-rendered line items. Doctor logs which
+  /// catalogue services they performed during the consult; admin uses
+  /// these for invoicing.
+  consultationServices  ConsultationService[]
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
 
   @@unique([countryId, slug])
 }
@@ -517,6 +541,9 @@ model Appointment {
   /// Doctor ↔ admin notes for this appointment (NOT patient-visible —
   /// patient chat lives on `messages`).
   internalMessages      InternalMessage[]
+  /// Form submissions tied to this appointment (intake, pre-consult,
+  /// post-consult surveys).
+  formSubmissions       FormSubmission[]
   // Payment lifecycle. UNPAID = free or pending-Stripe.
   paymentStatus         PaymentStatus     @default(UNPAID)
   // Stripe identifiers. Null until a Checkout Session is created.
@@ -617,6 +644,14 @@ model User {
   /// messages live on `Message.authorUserId` which is unrelated to
   /// this relation name.
   internalMessages        InternalMessage[]        @relation("InternalMessageAuthor")
+  /// Doctor portal notifications routed to this user.
+  notifications           Notification[]
+  /// Share links this user created (signed consultation URLs etc.).
+  shareLinks              ShareLink[]              @relation("ShareLinkAuthor")
+  /// Patient-side: form submissions associated to this user (when the
+  /// patient is signed-in at submit time). Guest submissions don't
+  /// reference a user.
+  formSubmissions         FormSubmission[]
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
 }
@@ -778,8 +813,8 @@ model Setting {
 /// from the portal. Locks on SIGN; further edits would require an
 /// amendment row (out of scope today).
 model Consultation {
-  id             String             @id @default(cuid())
-  appointmentId  String             @unique
+  id             String                @id @default(cuid())
+  appointmentId  String                @unique
   doctorId       String
   chiefComplaint String?
   /// SOAP: Subjective — patient-reported history.
@@ -790,12 +825,16 @@ model Consultation {
   assessment     String?
   /// SOAP: Plan — prescriptions, follow-up, referrals.
   plan           String?
-  status         ConsultationStatus @default(DRAFT)
+  status         ConsultationStatus    @default(DRAFT)
   signedAt       DateTime?
-  appointment    Appointment        @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-  doctor         Doctor             @relation(fields: [doctorId], references: [id], onDelete: Restrict)
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
+  appointment    Appointment           @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  doctor         Doctor                @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  /// Per-consult services-rendered line items.
+  servicesUsed   ConsultationService[]
+  /// Share links pointing at this consultation (signed referral URLs).
+  shareLinks     ShareLink[]
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
 
   @@index([doctorId, status])
 }
@@ -834,4 +873,100 @@ model InternalMessage {
   createdAt     DateTime                  @default(now())
 
   @@index([appointmentId, createdAt])
+}
+
+/// Per-consultation services-rendered line item. The doctor records
+/// which catalogue services they performed during the consult; admin
+/// uses these rows for invoicing. `serviceId` links to the Service
+/// catalogue row when one matches; `customLabel` carries free-text for
+/// off-catalogue procedures.
+model ConsultationService {
+  id             String       @id @default(cuid())
+  consultationId String
+  serviceId      String?
+  customLabel    String?
+  quantity       Int          @default(1)
+  unitPriceCents Int?
+  currencyCode   String?
+  consultation   Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+  service        Service?     @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  createdAt      DateTime     @default(now())
+
+  @@index([consultationId])
+}
+
+/// Reusable form template (intake, pre-consult survey, post-consult
+/// feedback). `fields` is a JSON array of `{ key, label, type, required,
+/// options? }`. Validated server-side at submit time.
+///
+/// `doctorId = null` means an admin-managed shared template available to
+/// every doctor; a set `doctorId` scopes the template to one practice.
+model FormTemplate {
+  id          String           @id @default(cuid())
+  doctorId    String?
+  title       String
+  description String?
+  fields      Json
+  isActive    Boolean          @default(true)
+  doctor      Doctor?          @relation(fields: [doctorId], references: [id], onDelete: SetNull)
+  submissions FormSubmission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([doctorId, isActive])
+}
+
+/// One submission of a FormTemplate. `answers` is a JSON array of
+/// `{ key, value }`. `appointmentId` ties it to a specific encounter;
+/// `patientUserId` records the signed-in patient who filled it (null
+/// for guest submissions or when the doctor logs answers on the
+/// patient's behalf).
+model FormSubmission {
+  id            String       @id @default(cuid())
+  templateId    String
+  appointmentId String?
+  patientUserId String?
+  answers       Json
+  submittedAt   DateTime     @default(now())
+  template      FormTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  patientUser   User?        @relation(fields: [patientUserId], references: [id], onDelete: SetNull)
+
+  @@index([appointmentId, submittedAt])
+  @@index([templateId, submittedAt])
+}
+
+/// Doctor portal notification. Polling-based today; the bell on the
+/// doctor portal fetches unread count every minute. `payload` carries
+/// per-type context (e.g. `{ appointmentId, snippet }`).
+model Notification {
+  id              String           @id @default(cuid())
+  recipientUserId String
+  type            NotificationType
+  payload         Json
+  readAt          DateTime?
+  recipient       User             @relation(fields: [recipientUserId], references: [id], onDelete: Cascade)
+  createdAt       DateTime         @default(now())
+
+  @@index([recipientUserId, readAt])
+  @@index([recipientUserId, createdAt])
+}
+
+/// Signed share link. Doctor generates one for a signed consultation
+/// to hand off to a referring colleague; expires after the chosen
+/// window (default 7 days). The token is the URL-safe random; never
+/// reuse the row id for sharing.
+model ShareLink {
+  id              String         @id @default(cuid())
+  scope           ShareLinkScope
+  consultationId  String?
+  token           String         @unique
+  expiresAt       DateTime
+  revokedAt       DateTime?
+  createdByUserId String
+  consultation    Consultation?  @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+  createdBy       User           @relation("ShareLinkAuthor", fields: [createdByUserId], references: [id], onDelete: Restrict)
+  createdAt       DateTime       @default(now())
+
+  @@index([consultationId])
 }

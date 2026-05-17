@@ -2,11 +2,16 @@ import Link from "next/link";
 import { ArrowLeft, ExternalLink, Printer } from "lucide-react";
 import {
   fetchDoctorConsultation,
+  fetchDoctorConsultationServices,
   fetchDoctorExams,
+  fetchDoctorFormSubmissions,
   fetchDoctorInternalMessages,
+  fetchDoctorInvoice,
 } from "@/lib/api/doctor-api";
 import { ConsultationForm } from "./_components/consultation-form";
 import { ExamResultsList } from "./_components/exam-results-list";
+import { ServicesUsedList } from "./_components/services-used-list";
+import { ShareConsultationButton } from "./_components/share-button";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 
 export const dynamic = "force-dynamic";
@@ -24,11 +29,14 @@ type PageProps = {
  */
 export default async function DoctorAppointmentDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const [consultRes, examsRes, messagesRes] = await Promise.all([
-    fetchDoctorConsultation(id),
-    fetchDoctorExams(id),
-    fetchDoctorInternalMessages(id),
-  ]);
+  const [consultRes, examsRes, messagesRes, invoiceRes, submissionsRes] =
+    await Promise.all([
+      fetchDoctorConsultation(id),
+      fetchDoctorExams(id),
+      fetchDoctorInternalMessages(id),
+      fetchDoctorInvoice(id),
+      fetchDoctorFormSubmissions(id),
+    ]);
 
   if (!consultRes.ok) {
     return (
@@ -49,7 +57,17 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const { appointment, consultation } = consultRes.data;
   const exams = examsRes.ok ? examsRes.data.items : [];
   const messages = messagesRes.ok ? messagesRes.data.items : [];
+  const invoice = invoiceRes.ok ? invoiceRes.data.invoice : null;
+  const submissions = submissionsRes.ok ? submissionsRes.data.items : [];
   const signed = consultation?.status === "SIGNED";
+  // Services-used are scoped by consultationId, so we can only fetch
+  // them once the row exists. Hit the API conditionally to skip a 404
+  // for fresh appointments.
+  const servicesRes = consultation
+    ? await fetchDoctorConsultationServices(consultation.id)
+    : null;
+  const servicesUsed =
+    servicesRes && servicesRes.ok ? servicesRes.data.items : [];
 
   return (
     <>
@@ -152,7 +170,108 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     }
               }
             />
+
+            <div className="mt-6 border-t border-[var(--color-border)] pt-5">
+              <h4
+                className="m-0 text-[var(--color-text-primary)]"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: 14,
+                  fontWeight: 800,
+                }}
+              >
+                Services rendered
+              </h4>
+              <p className="mt-1 text-[12.5px] text-[var(--color-text-muted)]">
+                Log services performed during this consult — feeds the invoice.
+              </p>
+              <ServicesUsedList
+                consultationId={consultation?.id ?? null}
+                initialItems={servicesUsed}
+                locked={signed}
+              />
+            </div>
+
+            <div className="mt-6 border-t border-[var(--color-border)] pt-5">
+              <h4
+                className="m-0 text-[var(--color-text-primary)]"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: 14,
+                  fontWeight: 800,
+                }}
+              >
+                Share with a colleague
+              </h4>
+              <p className="mt-1 text-[12.5px] text-[var(--color-text-muted)]">
+                7-day signed link. Recipient sees the consult only — no
+                portal access.
+              </p>
+              <div className="mt-2">
+                {consultation ? (
+                  <ShareConsultationButton
+                    consultationId={consultation.id}
+                    disabled={!signed}
+                  />
+                ) : (
+                  <p className="text-[12px] text-[var(--color-text-muted)]">
+                    Save a draft first.
+                  </p>
+                )}
+              </div>
+            </div>
           </section>
+
+          {submissions.length > 0 ? (
+            <section className="gh-card p-6">
+              <h3
+                className="m-0 text-[var(--color-text-primary)]"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: 16,
+                  fontWeight: 800,
+                }}
+              >
+                Form submissions
+              </h3>
+              <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                Answers the patient (or admin on their behalf) filled
+                in for this appointment.
+              </p>
+              <ul className="mt-3 grid gap-3">
+                {submissions.map((s) => (
+                  <li
+                    key={s.id}
+                    className="rounded-md border border-[var(--color-border)] bg-white p-3"
+                  >
+                    <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">
+                      {s.template.title}
+                    </p>
+                    <p className="text-[11.5px] text-[var(--color-text-muted)]">
+                      submitted {new Date(s.submittedAt).toLocaleString()}
+                    </p>
+                    <dl className="mt-2 grid gap-1.5 text-[13px]">
+                      {(s.answers ?? []).map((a, i) => {
+                        const def = s.template.fields.find((f) => f.key === a.key);
+                        return (
+                          <div key={i} className="flex gap-2">
+                            <dt className="min-w-[40%] text-[var(--color-text-muted)]">
+                              {def?.label ?? a.key}
+                            </dt>
+                            <dd className="text-[var(--color-text-primary)] whitespace-pre-wrap">
+                              {a.value === null || a.value === ""
+                                ? "—"
+                                : String(a.value)}
+                            </dd>
+                          </div>
+                        );
+                      })}
+                    </dl>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
 
           <section className="gh-card p-6">
             <h3
@@ -174,6 +293,56 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
         </div>
 
         <aside className="grid gap-4 self-start">
+          {invoice ? (
+            <section className="gh-card p-6">
+              <h3
+                className="m-0 text-[var(--color-text-primary)]"
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: 16,
+                  fontWeight: 800,
+                }}
+              >
+                Invoice
+              </h3>
+              <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                Read-only view. Admin issues + refunds.
+              </p>
+              <dl className="mt-3 grid gap-2 text-[13px]">
+                <Row label="Status" value={invoice.paymentStatus} />
+                <Row
+                  label="Booked amount"
+                  value={
+                    invoice.amountCents != null && invoice.currencyCode
+                      ? formatMoney(invoice.amountCents, invoice.currencyCode)
+                      : "—"
+                  }
+                />
+                <Row
+                  label="Line total"
+                  value={
+                    invoice.lineTotalCents > 0
+                      ? formatMoney(
+                          invoice.lineTotalCents,
+                          invoice.lines.find((l) => l.currencyCode)?.currencyCode ??
+                            invoice.currencyCode ??
+                            "EUR",
+                        )
+                      : "—"
+                  }
+                />
+                <Row
+                  label="Paid"
+                  value={
+                    invoice.paidAt
+                      ? new Date(invoice.paidAt).toLocaleString()
+                      : "—"
+                  }
+                />
+              </dl>
+            </section>
+          ) : null}
+
           <section className="gh-card p-6">
             <h3
               className="m-0 text-[var(--color-text-primary)]"
@@ -239,6 +408,18 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
       </div>
     </>
   );
+}
+
+function formatMoney(cents: number, code: string) {
+  const v = cents / 100;
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: code,
+    }).format(v);
+  } catch {
+    return `${v.toFixed(2)} ${code}`;
+  }
 }
 
 function Row({ label, value }: { label: string; value: string }) {

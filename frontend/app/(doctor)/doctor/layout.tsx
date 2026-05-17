@@ -2,8 +2,17 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Stethoscope, Calendar, Users, UserCog } from "lucide-react";
+import {
+  Stethoscope,
+  Calendar,
+  Users,
+  UserCog,
+  BarChart3,
+  FileText,
+  Bell,
+} from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
+import { fetchDoctorNotifications } from "@/lib/api/doctor-api";
 
 const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME?.trim() || "gh_auth";
 
@@ -35,11 +44,27 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     redirect("/login?next=/doctor");
   }
 
+  // Best-effort unread-count fetch for the bell badge. Failures fall
+  // through to "0" so the nav never blocks the layout render.
+  let unreadCount = 0;
+  if (user.role === "DOCTOR") {
+    const notif = await fetchDoctorNotifications(true);
+    if (notif.ok) unreadCount = notif.data.unreadCount;
+  }
+
   const sections = [
-    { href: "/doctor", label: "Overview", icon: Stethoscope },
-    { href: "/doctor/appointments", label: "Appointments", icon: Calendar },
-    { href: "/doctor/patients", label: "Patients", icon: Users },
-    { href: "/doctor/profile", label: "Profile", icon: UserCog },
+    { href: "/doctor", label: "Overview", icon: Stethoscope, badge: 0 },
+    { href: "/doctor/appointments", label: "Appointments", icon: Calendar, badge: 0 },
+    { href: "/doctor/patients", label: "Patients", icon: Users, badge: 0 },
+    { href: "/doctor/forms", label: "Forms", icon: FileText, badge: 0 },
+    { href: "/doctor/reports", label: "Reports", icon: BarChart3, badge: 0 },
+    {
+      href: "/doctor/notifications",
+      label: "Notifications",
+      icon: Bell,
+      badge: unreadCount,
+    },
+    { href: "/doctor/profile", label: "Profile", icon: UserCog, badge: 0 },
   ];
 
   return (
@@ -78,7 +103,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
                 <Link
                   key={s.href}
                   href={s.href}
-                  className="flex items-center gap-2.5 transition-colors duration-150"
+                  className="flex items-center justify-between gap-2.5 transition-colors duration-150"
                   style={{
                     padding: "9px 12px",
                     borderRadius: 10,
@@ -88,8 +113,21 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
                     textDecoration: "none",
                   }}
                 >
-                  <s.icon className="size-4" aria-hidden />
-                  {s.label}
+                  <span className="inline-flex items-center gap-2.5">
+                    <s.icon className="size-4" aria-hidden />
+                    {s.label}
+                  </span>
+                  {s.badge > 0 ? (
+                    <span
+                      className="inline-flex min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-bold"
+                      style={{
+                        background: "var(--color-accent)",
+                        color: "var(--color-background-dark)",
+                      }}
+                    >
+                      {s.badge > 99 ? "99+" : s.badge}
+                    </span>
+                  ) : null}
                 </Link>
               ))}
             </div>

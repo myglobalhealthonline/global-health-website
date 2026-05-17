@@ -6,6 +6,10 @@ import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import {
+  notifyAdmins,
+  notifyDoctor,
+} from "../modules/notifications/notify.service.js";
 
 /**
  * Internal (doctor ↔ admin) per-appointment notes. Patient never sees
@@ -106,6 +110,16 @@ const internalMessagesRoute: FastifyPluginAsync = async (app) => {
           },
           include: { author: { select: { fullName: true } } },
         });
+        // Fan out to admin team-inbox. Best-effort — never block the
+        // POST on notification failure.
+        notifyAdmins("INTERNAL_MESSAGE", {
+          appointmentId: appt.id,
+          snippet: body.data.body.slice(0, 120),
+          byUserName: row.author?.fullName,
+          byRole: "DOCTOR",
+        }).catch((err) =>
+          app.log.warn({ err }, "notifyAdmins failed (doctor→admin message)"),
+        );
         return reply.status(201).send(okResponse({ message: serializeMessage(row) }));
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -168,7 +182,7 @@ const internalMessagesRoute: FastifyPluginAsync = async (app) => {
       try {
         const appt = await prisma.appointment.findUnique({
           where: { id: request.params.id },
-          select: { id: true },
+          select: { id: true, doctorId: true },
         });
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
@@ -182,6 +196,18 @@ const internalMessagesRoute: FastifyPluginAsync = async (app) => {
           },
           include: { author: { select: { fullName: true } } },
         });
+        // Notify the assigned doctor (if any). Skip when the
+        // appointment has no doctor linked yet.
+        if (appt.doctorId) {
+          notifyDoctor(appt.doctorId, "INTERNAL_MESSAGE", {
+            appointmentId: appt.id,
+            snippet: body.data.body.slice(0, 120),
+            byUserName: row.author?.fullName,
+            byRole: "ADMIN",
+          }).catch((err) =>
+            app.log.warn({ err }, "notifyDoctor failed (admin→doctor message)"),
+          );
+        }
         return reply.status(201).send(okResponse({ message: serializeMessage(row) }));
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

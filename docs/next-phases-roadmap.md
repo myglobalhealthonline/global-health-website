@@ -387,23 +387,21 @@ admin-managed on purpose — those affect public routing and verification copy.
 
 ---
 
-### Phase 4 — Doctor Dashboard expansion (the other 9 modules)
+### Phase 4 — Doctor Dashboard expansion — ✅ all 9 modules shipped
 
-Goal: turn the MVP into the full clinical workspace described in the
-14-section spec. Each module is independently shippable; pick them in the
-order the operator's actual case-mix demands.
+The full 14-section clinical spec landed across two rounds. Status per module:
 
-| # | Module | What it covers | Effort | Notes |
-|---|---|---|---|---|
-| 1 | **Consultations workspace** | Start/finish consult, structured SOAP notes, attached prescriptions, post-consult summary email to patient. | 3 days | Schema: `Consultation` row per Appointment with `chiefComplaint`, `subjective`, `objective`, `assessment`, `plan`, `signedAt`. Rich-text via existing `RichTextHtmlField`. Lock once signed. |
-| 2 | **Forms management** | Admin/doctor builds reusable intake / pre-consult forms; patient fills before the appointment. | 4 days | Schema: `FormTemplate` + `FormSubmission` (JSON answers). Builder UI = drag a small set of field types (text, choice, scale). Render to the patient inside `/account/bookings/[id]`. |
-| 3 | **Exam results** | Doctor uploads / orders external test PDFs, links them to the consultation, patient sees them in their portal. | 2 days | Schema: `ExamResult` (assetId, testName, performedAt, notes). Re-uses existing S3 upload + `MediaAsset`. |
-| 4 | **Services-used tracking** | Per-consultation list of services rendered (general consult, lab order, prescription review). Feeds the invoice. | 1 day | Schema: `ConsultationService` (consultationId, serviceId, qty, unitPriceCents). Read on invoice render. |
-| 5 | **Invoice visibility (doctor side)** | Doctor sees the invoice generated for each consult — total, payment status, refund state. Read-only; admin still issues invoices. | 1 day | Re-uses `Payment` + new `Invoice` view; no new ledger. |
-| 6 | **Reports** | Per-doctor monthly stats — appointments by status, top services, patient counts, no-show rate. Exportable CSV. | 1.5 days | All queryable from existing `Appointment` + `Consultation` tables. Add a `/doctor/reports` page with date-range filter + CSV download. |
-| 7 | **Notifications** | In-portal bell for new bookings assigned, patient messages, form submissions. Email mirrors for off-portal reach. | 2 days | Schema: `Notification` (recipientUserId, type, payload JSON, readAt). Polling endpoint at first; WebSockets later. |
-| 8 | **Internal messaging** | Doctor ↔ admin notes per appointment + a global thread per patient. Not patient-visible. | 2 days | Schema: `InternalMessage` (threadKey, authorUserId, body, createdAt). Same proxy pattern as existing chat for cookie-safe POST. |
-| 9 | **Print / share / export** | Print-friendly consult summary, share-via-link (signed URL, 7-day expiry) for referrals, export single consult as PDF. | 1.5 days | Server-render a `/print/consults/[id]` route with print CSS; PDF via Playwright in a job runner OR `@react-pdf/renderer`. |
+| # | Module | Status | Surfaces |
+|---|---|---|---|
+| 1 | **Consultations workspace** | ✅ shipped | `Consultation` model (SOAP) + `ConsultationStatus`; `/doctor/appointments/[id]` workspace; save-draft + sign-and-lock; print view |
+| 2 | **Forms management** | ✅ shipped | `FormTemplate` + `FormSubmission`; `/doctor/forms` builder; submissions render inline on the appointment workspace |
+| 3 | **Exam results** | ✅ shipped | `ExamResult` model (text + lab-portal-link MVP); inline list + create form on the workspace |
+| 4 | **Services-used tracking** | ✅ shipped | `ConsultationService` line items per consult, with totals; locked when the parent consult is signed |
+| 5 | **Invoice visibility (doctor side)** | ✅ shipped | Read-only Invoice card on the workspace; composes `Payment` ledger + line items |
+| 6 | **Reports** | ✅ shipped | `/doctor/reports` with date-range filter, tiles (appts / signed consults / patients / revenue), client-side CSV export |
+| 7 | **Notifications** | ✅ shipped | `Notification` model + `NotificationType` enum; bell badge on the doctor portal nav; `/doctor/notifications` list; mark-one / mark-all; auto-fanout on internal messages |
+| 8 | **Internal messaging** | ✅ shipped (in earlier commit) | `InternalMessage` model; doctor ↔ admin per-appointment thread surfaced on both sides |
+| 9 | **Print / share / export** | ✅ shipped | `/print/consults/[id]` print view (auth-gated, white-paper render); 7-day `ShareLink` token + public `/share/consults/[token]` page; copy-to-clipboard button on the workspace. PDF generator (Playwright / @react-pdf) still deferred — print view is the MVP. |
 
 **Cross-cutting work (do once, not per module):**
 
