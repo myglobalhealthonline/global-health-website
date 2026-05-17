@@ -405,16 +405,17 @@ The full 14-section clinical spec landed across two rounds. Status per module:
 
 **Cross-cutting work (do once, not per module):**
 
-| Item | Effort | Notes |
+| Item | Status | Notes |
 |---|---|---|
-| Multilingual UI strings in the doctor portal | 1 day | Today the portal is EN only. The site already has a `LocaleCode` switch in `gh_locale`; mirror it inside `(doctor)`. |
-| Access control hardening — every new query scoped by `doctorId = self` (or `ADMIN`) | rolling | Lean on `verifyDoctorAccess`; never read `request.user.id` directly. |
-| Audit log writes for every consult signature, prescription, message | 0.5 day | Hook into the `AuditLog` model added in Phase 5. |
-| Doctor self-uploads profile photo | 0.5 day | Mirror admin `ManagedImageField` behind a same-origin upload proxy. Today the photo is admin-managed. |
-| Doctor onboarding wizard — verification, registration number, first-slot setup | 1.5 days | Only matters once we open self-serve doctor sign-up; today admins onboard manually. |
-| Doctor availability + slot booking | (separate gap — see top of doc) | Real slot-picking is its own track. |
-| Video consultation provider integration | 2–3 days | Today doctors paste a Meet URL via the admin schedule action. Migrate to first-party (Daily.co or Whereby) when consult volume justifies it. |
-| Doctor payouts | 2 days | Stripe Connect Express. Only relevant if the contract model becomes "platform takes a cut" instead of "platform pays salary." |
+| Audit log writes for every clinical mutation | ✅ shipped | `AuditLog` model + `AuditAction` enum live; `recordAudit` helper wired into consult save/sign, exam create/delete, internal message post, share-link create/revoke, form submission, services-used add/remove. Admin reader at `/admin/audit-log` with action/entity/actor filters. |
+| Doctor self-uploads profile photo | ✅ shipped | `POST/DELETE /api/doctor/profile/photo` reuses the S3 object-storage flow; same-origin proxy buffers multipart bytes; UI tile on `/doctor/profile` with avatar fallback. |
+| Access control hardening — every new query scoped by `doctorId = self` (or `ADMIN`) | ✅ rolling | Every doctor route goes through `verifyDoctorAccess`; no callsite reads `request.user.id` directly. |
+| Doctor availability + slot booking | ✅ shipped | See top of doc. |
+| Multilingual UI strings in the doctor portal | ⏳ deferred | Today EN only. The site already has a `LocaleCode` switch in `gh_locale`; mirror inside `(doctor)`. ~1 day when the second-language doctor lands. |
+| Doctor onboarding wizard — verification, registration number, first-slot setup | ⏳ deferred | Only matters once self-serve doctor sign-up opens. Admins onboard manually today via `/admin/users/[id]` + `/admin/doctors`. |
+| Video consultation provider integration | ⏳ deferred | Doctors paste a Meet URL via the admin schedule action today. Migrate to first-party (Daily.co or Whereby) when consult volume justifies it (2–3 days). |
+| Doctor payouts | ⏳ deferred | Stripe Connect Express. Only relevant if the contract model becomes "platform takes a cut" instead of "platform pays salary." |
+| PDF generator for print view | ⏳ deferred | Print page exists at `/print/consults/[id]`; Cmd-P → PDF works today. Native PDF via Playwright / `@react-pdf/renderer` is a follow-up if email-attachment workflows demand it. |
 
 **Total Phase 4 eng effort:** ~18 working days for the 9 modules + ~5 days
 of cross-cutting = roughly 5 weeks of focused work. Ship the most

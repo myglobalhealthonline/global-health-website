@@ -34,6 +34,8 @@ import doctorInvoicesRoute from "./routes/doctor-invoices.route.js";
 import doctorReportsRoute from "./routes/doctor-reports.route.js";
 import notificationsRoute from "./routes/notifications.route.js";
 import shareLinksRoute from "./routes/share-links.route.js";
+import adminAuditLogRoute from "./routes/admin-audit-log.route.js";
+import doctorPhotoRoute from "./routes/doctor-photo.route.js";
 import accountAppointmentsRoute from "./routes/account-appointments.route.js";
 import accountPaymentsRoute from "./routes/account-payments.route.js";
 import mediaPublicRoute from "./routes/media-public.route.js";
@@ -135,6 +137,8 @@ export async function buildApp() {
   await app.register(doctorReportsRoute);
   await app.register(notificationsRoute);
   await app.register(shareLinksRoute);
+  await app.register(adminAuditLogRoute);
+  await app.register(doctorPhotoRoute);
   await app.register(mediaPublicRoute);
   await app.register(adminMediaUploadRoute);
   await app.register(pagesRoute);

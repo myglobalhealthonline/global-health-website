@@ -4,6 +4,7 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 /**
  * Per-consultation services-rendered line items.
@@ -138,6 +139,15 @@ const consultationServicesRoute: FastifyPluginAsync = async (app) => {
             currencyCode,
           },
         });
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "CONSULT_SERVICE_ADDED",
+          entityType: "ConsultationService",
+          entityId: row.id,
+          metadata: { consultationId: consult.id, label: row.customLabel ?? row.serviceId },
+          request,
+        }).catch(() => {});
         return reply.status(201).send(
           okResponse({
             line: {
@@ -175,6 +185,14 @@ const consultationServicesRoute: FastifyPluginAsync = async (app) => {
             .send(errorResponse("Consultation is signed; line items are locked"));
         }
         await prisma.consultationService.delete({ where: { id: existing.id } });
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "CONSULT_SERVICE_REMOVED",
+          entityType: "ConsultationService",
+          entityId: existing.id,
+          request,
+        }).catch(() => {});
         return okResponse({ deleted: true });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

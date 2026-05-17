@@ -38,6 +38,7 @@ export default async function DoctorProfilePage() {
           qualifications: doctor.qualifications,
           languages: doctor.languages,
           whatsappNumber: doctor.whatsappNumber ?? "",
+          profileImagePath: doctor.profileImagePath ?? null,
         }}
       />
     </>

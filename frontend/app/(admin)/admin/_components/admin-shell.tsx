@@ -62,6 +62,7 @@ const GLOBAL_HREFS = new Set([
   "/admin/assets",
   "/admin/users",
   "/admin/newsletter",
+  "/admin/audit-log",
   "/admin/settings",
 ]);
 
@@ -85,7 +86,8 @@ const ORDER: Record<string, number> = {
   "/admin/assets": 4,
   "/admin/users": 5,
   "/admin/newsletter": 6,
-  "/admin/settings": 7,
+  "/admin/audit-log": 7,
+  "/admin/settings": 8,
   "/admin/country-home": 0,
   "/admin/country-content": 1,
   "/admin/pages": 2,

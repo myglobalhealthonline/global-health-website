@@ -4,6 +4,7 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 /**
  * Exam-result endpoints, doctor-only (MVP).
@@ -99,6 +100,15 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
             externalUrl: body.data.externalUrl ?? null,
           },
         });
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "EXAM_LOGGED",
+          entityType: "ExamResult",
+          entityId: row.id,
+          metadata: { appointmentId: appt.id, testName: row.testName },
+          request,
+        }).catch(() => {});
         return reply.status(201).send(
           okResponse({
             exam: {
@@ -133,6 +143,14 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
           return reply.status(404).send(errorResponse("Exam result not found"));
         }
         await prisma.examResult.delete({ where: { id: existing.id } });
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "EXAM_DELETED",
+          entityType: "ExamResult",
+          entityId: existing.id,
+          request,
+        }).catch(() => {});
         return okResponse({ deleted: true });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

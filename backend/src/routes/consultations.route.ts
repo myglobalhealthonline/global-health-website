@@ -4,6 +4,7 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 /**
  * Clinical consultation endpoints, doctor-only.
@@ -148,6 +149,16 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
           update: data,
         });
 
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "CONSULT_SAVED",
+          entityType: "Consultation",
+          entityId: consultation.id,
+          metadata: { appointmentId: appt.id },
+          request,
+        }).catch(() => {});
+
         return okResponse(
           {
             consultation: {
@@ -204,6 +215,15 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
           where: { id: existing.id },
           data: { status: "SIGNED", signedAt: new Date() },
         });
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "CONSULT_SIGNED",
+          entityType: "Consultation",
+          entityId: consultation.id,
+          metadata: { appointmentId: appt.id },
+          request,
+        }).catch(() => {});
         return okResponse(
           {
             consultation: {

@@ -4,6 +4,7 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 /**
  * Forms management — reusable templates the doctor builds for intake /
@@ -287,6 +288,15 @@ const formsRoute: FastifyPluginAsync = async (app) => {
             answers: body.data.answers,
           },
         });
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "FORM_SUBMITTED",
+          entityType: "FormSubmission",
+          entityId: row.id,
+          metadata: { appointmentId: appt.id, templateId: template.id },
+          request,
+        }).catch(() => {});
         return reply.status(201).send(
           okResponse({
             submission: {

@@ -10,6 +10,7 @@ import {
   notifyAdmins,
   notifyDoctor,
 } from "../modules/notifications/notify.service.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 /**
  * Internal (doctor ↔ admin) per-appointment notes. Patient never sees
@@ -120,6 +121,15 @@ const internalMessagesRoute: FastifyPluginAsync = async (app) => {
         }).catch((err) =>
           app.log.warn({ err }, "notifyAdmins failed (doctor→admin message)"),
         );
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "INTERNAL_MESSAGE_POSTED",
+          entityType: "InternalMessage",
+          entityId: row.id,
+          metadata: { appointmentId: appt.id },
+          request,
+        }).catch(() => {});
         return reply.status(201).send(okResponse({ message: serializeMessage(row) }));
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -208,6 +218,15 @@ const internalMessagesRoute: FastifyPluginAsync = async (app) => {
             app.log.warn({ err }, "notifyDoctor failed (admin→doctor message)"),
           );
         }
+        recordAudit({
+          actorUserId: user.id,
+          actorRole: "ADMIN",
+          action: "INTERNAL_MESSAGE_POSTED",
+          entityType: "InternalMessage",
+          entityId: row.id,
+          metadata: { appointmentId: appt.id },
+          request,
+        }).catch(() => {});
         return reply.status(201).send(okResponse({ message: serializeMessage(row) }));
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
