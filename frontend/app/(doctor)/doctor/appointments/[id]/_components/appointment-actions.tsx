@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Video } from "lucide-react";
+import { CalendarClock, Save, Video } from "lucide-react";
 
 const STATUS_OPTIONS = [
   { value: "REQUEST_RECEIVED", label: "Request received" },
@@ -12,27 +12,62 @@ const STATUS_OPTIONS = [
   { value: "CANCELLED", label: "Cancelled" },
 ];
 
+const MODE_OPTIONS = [
+  { value: "ONLINE", label: "Online (video)" },
+  { value: "IN_PERSON", label: "In person" },
+];
+
 /**
  * Doctor-side appointment-actions card. Lets the doctor:
- *   • set / clear the meeting URL (Google Meet, Zoom, Teams, Whereby, Daily)
+ *   • set / clear the meeting URL (Google Meet / Zoom / Teams /
+ *     Whereby / Daily)
  *   • move the appointment through its status state machine
+ *   • reschedule (scheduledAt) without going through admin
+ *   • flip between ONLINE and IN_PERSON delivery
  *
- * Both fields are saved together because the typical doctor flow is
- * "paste link → mark as Contacted" or "complete the consult → mark as
- * Completed", and a single roundtrip keeps the audit trail clean.
+ * Everything saves in a single PATCH so a typical flow like
+ * "paste link → mark Contacted" or "reschedule + flip to in-person"
+ * is one round-trip.
  */
+
+function toLocalInputValue(iso: string | null): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function fromLocalInputValue(local: string): string | null {
+  if (!local) return null;
+  // datetime-local emits a local-wall-clock string. Build a Date via
+  // the local interpretation, then serialise as ISO so the server
+  // stores a proper UTC instant.
+  const parsed = new Date(local);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed.toISOString();
+}
+
 export function AppointmentActions({
   appointmentId,
   initialMeetingUrl,
   initialStatus,
+  initialScheduledAt,
+  initialMode,
 }: {
   appointmentId: string;
   initialMeetingUrl: string | null;
   initialStatus: string;
+  initialScheduledAt: string | null;
+  initialMode: "ONLINE" | "IN_PERSON";
 }) {
   const router = useRouter();
   const [meetingUrl, setMeetingUrl] = useState(initialMeetingUrl ?? "");
   const [status, setStatus] = useState(initialStatus);
+  const [scheduledAtLocal, setScheduledAtLocal] = useState(
+    toLocalInputValue(initialScheduledAt),
+  );
+  const [mode, setMode] = useState<"ONLINE" | "IN_PERSON">(initialMode);
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<
     { kind: "success" | "error"; text: string } | null
@@ -48,6 +83,16 @@ export function AppointmentActions({
     }
     if (status !== initialStatus) {
       payload.status = status;
+    }
+    const newScheduledIso = fromLocalInputValue(scheduledAtLocal);
+    if (
+      (newScheduledIso ?? null) !== (initialScheduledAt ?? null) ||
+      (initialScheduledAt && !scheduledAtLocal)
+    ) {
+      payload.scheduledAt = newScheduledIso;
+    }
+    if (mode !== initialMode) {
+      payload.consultationMode = mode;
     }
     if (Object.keys(payload).length === 0) {
       setMessage({ kind: "error", text: "Nothing to change." });
@@ -71,6 +116,36 @@ export function AppointmentActions({
 
   return (
     <form onSubmit={save} className="mt-3 grid gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="flex flex-col gap-1.5">
+          <span className="gh-field-label inline-flex items-center gap-1">
+            <CalendarClock className="size-3.5" /> Slot (your local time)
+          </span>
+          <input
+            type="datetime-local"
+            className="gh-input"
+            value={scheduledAtLocal}
+            onChange={(e) => setScheduledAtLocal(e.target.value)}
+          />
+        </label>
+        <label className="flex flex-col gap-1.5">
+          <span className="gh-field-label">Delivery</span>
+          <select
+            className="gh-select"
+            value={mode}
+            onChange={(e) =>
+              setMode(e.target.value as "ONLINE" | "IN_PERSON")
+            }
+          >
+            {MODE_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
       <label className="flex flex-col gap-1.5">
         <span className="gh-field-label">Meeting URL</span>
         <input
@@ -78,7 +153,11 @@ export function AppointmentActions({
           className="gh-input font-mono text-[12px]"
           value={meetingUrl}
           onChange={(e) => setMeetingUrl(e.target.value)}
-          placeholder="https://meet.google.com/abc-defg-hij"
+          placeholder={
+            mode === "IN_PERSON"
+              ? "Leave blank for in-person consults"
+              : "https://meet.google.com/abc-defg-hij"
+          }
           maxLength={500}
         />
         <span className="text-[11.5px] text-[var(--color-text-muted)]">

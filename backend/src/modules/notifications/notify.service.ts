@@ -26,10 +26,14 @@ export type NotificationPayload = {
 export async function notifyAdmins(
   type:
     | "APPOINTMENT_ASSIGNED"
+    | "APPOINTMENT_STATUS_CHANGED"
+    | "APPOINTMENT_RESCHEDULED"
+    | "APPOINTMENT_FOLLOWUP_BOOKED"
     | "INTERNAL_MESSAGE"
     | "CONSULT_SIGNED"
     | "EXAM_LOGGED"
-    | "FORM_SUBMITTED",
+    | "FORM_SUBMITTED"
+    | "DOCUMENT_UPLOADED",
   payload: NotificationPayload,
 ): Promise<void> {
   const admins = await prisma.user.findMany({
@@ -56,10 +60,14 @@ export async function notifyDoctor(
   doctorProfileId: string,
   type:
     | "APPOINTMENT_ASSIGNED"
+    | "APPOINTMENT_STATUS_CHANGED"
+    | "APPOINTMENT_RESCHEDULED"
+    | "APPOINTMENT_FOLLOWUP_BOOKED"
     | "INTERNAL_MESSAGE"
     | "CONSULT_SIGNED"
     | "EXAM_LOGGED"
-    | "FORM_SUBMITTED",
+    | "FORM_SUBMITTED"
+    | "DOCUMENT_UPLOADED",
   payload: NotificationPayload,
 ): Promise<void> {
   const link = await prisma.user.findFirst({

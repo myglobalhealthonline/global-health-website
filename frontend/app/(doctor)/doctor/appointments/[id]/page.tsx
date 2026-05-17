@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Printer } from "lucide-react";
+import { ArrowLeft, ExternalLink, Globe2, MapPin, Printer } from "lucide-react";
 import {
   fetchDoctorConsultation,
   fetchDoctorConsultationServices,
+  fetchDoctorDocuments,
   fetchDoctorExams,
   fetchDoctorFormSubmissions,
   fetchDoctorFormTemplates,
@@ -15,6 +16,8 @@ import { ServicesUsedList } from "./_components/services-used-list";
 import { ShareConsultationButton } from "./_components/share-button";
 import { AppointmentActions } from "./_components/appointment-actions";
 import { FormFillSection } from "./_components/form-fill";
+import { FollowUpButton } from "./_components/follow-up-button";
+import { DocumentsList } from "./_components/documents-list";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +42,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     invoiceRes,
     submissionsRes,
     templatesRes,
+    documentsRes,
   ] = await Promise.all([
     fetchDoctorConsultation(id),
     fetchDoctorExams(id),
@@ -46,6 +50,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     fetchDoctorInvoice(id),
     fetchDoctorFormSubmissions(id),
     fetchDoctorFormTemplates(),
+    fetchDoctorDocuments(id),
   ]);
 
   if (!consultRes.ok) {
@@ -70,6 +75,9 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const invoice = invoiceRes.ok ? invoiceRes.data.invoice : null;
   const submissions = submissionsRes.ok ? submissionsRes.data.items : [];
   const templates = templatesRes.ok ? templatesRes.data.items : [];
+  const documents = documentsRes.ok ? documentsRes.data.items : [];
+  const consultationMode = appointment.consultationMode ?? "ONLINE";
+  const followUpFromId = appointment.followUpFromAppointmentId ?? null;
   const signed = consultation?.status === "SIGNED";
   // Services-used are scoped by consultationId, so we can only fetch
   // them once the row exists. Hit the API conditionally to skip a 404
@@ -104,6 +112,30 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               : "Not scheduled"}{" "}
             · {appointment.countryCode.toUpperCase()}
           </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] ${
+                consultationMode === "ONLINE"
+                  ? "bg-[var(--color-brand-primary)]/10 text-[var(--color-brand-primary)]"
+                  : "bg-amber-100 text-amber-800"
+              }`}
+            >
+              {consultationMode === "ONLINE" ? (
+                <Globe2 className="size-3" aria-hidden />
+              ) : (
+                <MapPin className="size-3" aria-hidden />
+              )}
+              {consultationMode === "ONLINE" ? "Online" : "In person"}
+            </span>
+            {followUpFromId ? (
+              <Link
+                href={`/doctor/appointments/${followUpFromId}`}
+                className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] text-violet-800 hover:underline"
+              >
+                Follow-up of original →
+              </Link>
+            ) : null}
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {appointment.meetingUrl ? (
@@ -117,7 +149,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             </a>
           ) : null}
           <Link
-            href={`/print/consults/${id}`}
+            href={`/print/appointments/${id}`}
             target="_blank"
             className="gh-btn gh-btn-soft"
           >
@@ -150,7 +182,12 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               appointmentId={appointment.id}
               initialMeetingUrl={appointment.meetingUrl}
               initialStatus={appointment.status}
+              initialScheduledAt={appointment.scheduledAt}
+              initialMode={consultationMode}
             />
+            <div className="mt-4 border-t border-[var(--color-border)] pt-4">
+              <FollowUpButton appointmentId={appointment.id} />
+            </div>
           </section>
 
           <section className="gh-card p-6">
@@ -341,6 +378,28 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             </p>
             <ExamResultsList appointmentId={appointment.id} initialItems={exams} />
           </section>
+
+          <section className="gh-card p-6">
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 16,
+                fontWeight: 800,
+              }}
+            >
+              Documents
+            </h3>
+            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Attach PDFs, scans, or photos to this appointment. Stored
+              in encrypted object storage; only you and admin can see
+              them.
+            </p>
+            <DocumentsList
+              appointmentId={appointment.id}
+              initialItems={documents}
+            />
+          </section>
         </div>
 
         <aside className="grid gap-4 self-start">
@@ -391,6 +450,13 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   }
                 />
               </dl>
+              <Link
+                href={`/print/invoices/${appointment.id}`}
+                target="_blank"
+                className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-md border border-[var(--color-border)] px-3 py-2 text-[12.5px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+              >
+                <Printer className="size-3.5" /> Print invoice
+              </Link>
             </section>
           ) : null}
 

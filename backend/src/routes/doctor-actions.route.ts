@@ -5,6 +5,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { notifyAdmins } from "../modules/notifications/notify.service.js";
 import {
   assertValidStatusTransition,
   InvalidAppointmentStatusTransitionError,
@@ -80,11 +81,32 @@ const patchAppointmentSchema = z
         "CANCELLED",
       ])
       .optional(),
+    /** ISO 8601 with offset — doctor can reschedule from the workspace. */
+    scheduledAt: z
+      .union([z.string().datetime({ offset: true }), z.null()])
+      .optional(),
+    /** ONLINE | IN_PERSON. Defaults stay ONLINE for telemedicine. */
+    consultationMode: z.enum(["ONLINE", "IN_PERSON"]).optional(),
   })
   .strict()
   .refine((d) => Object.keys(d).length > 0, {
     message: "Provide at least one field to update",
   });
+
+const followUpSchema = z
+  .object({
+    scheduledAt: z
+      .string()
+      .datetime({ offset: true })
+      .nullable()
+      .optional(),
+    consultationType: z
+      .enum(["general", "specialist", "prescription", "health-test", "follow-up"])
+      .default("follow-up"),
+    notes: z.string().trim().max(2000).optional(),
+    consultationMode: z.enum(["ONLINE", "IN_PERSON"]).optional(),
+  })
+  .strict();
 
 const invoiceQuerySchema = z.object({
   from: z
@@ -115,7 +137,14 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
       try {
         const appt = await prisma.appointment.findFirst({
           where: { id: request.params.id, doctorId: auth.doctorId },
-          select: { id: true, status: true, meetingUrl: true },
+          select: {
+            id: true,
+            status: true,
+            meetingUrl: true,
+            scheduledAt: true,
+            consultationMode: true,
+            fullName: true,
+          },
         });
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
@@ -143,6 +172,15 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         if (body.data.status !== undefined) {
           updateData.status = body.data.status;
         }
+        if (body.data.scheduledAt !== undefined) {
+          updateData.scheduledAt =
+            body.data.scheduledAt === null
+              ? null
+              : new Date(body.data.scheduledAt);
+        }
+        if (body.data.consultationMode !== undefined) {
+          updateData.consultationMode = body.data.consultationMode;
+        }
         const updated = await prisma.appointment.update({
           where: { id: appt.id },
           data: updateData,
@@ -151,21 +189,65 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
             status: true,
             meetingUrl: true,
             scheduledAt: true,
+            consultationMode: true,
             updatedAt: true,
           },
         });
-        recordAudit({
-          actorUserId: auth.userId,
-          actorRole: "DOCTOR",
-          action: body.data.status ? "CONSULT_SAVED" : "CONSULT_SAVED",
-          entityType: "Appointment",
-          entityId: updated.id,
-          metadata: {
-            changed: Object.keys(updateData),
-            newStatus: updated.status,
-          },
-          request,
-        }).catch(() => {});
+
+        // Audit + notifications keyed off WHAT actually changed.
+        if (body.data.status !== undefined && body.data.status !== appt.status) {
+          recordAudit({
+            actorUserId: auth.userId,
+            actorRole: "DOCTOR",
+            action: "APPOINTMENT_STATUS_CHANGED",
+            entityType: "Appointment",
+            entityId: updated.id,
+            metadata: { from: appt.status, to: updated.status },
+            request,
+          }).catch(() => {});
+          notifyAdmins("APPOINTMENT_STATUS_CHANGED", {
+            appointmentId: updated.id,
+            snippet: `${appt.fullName} · ${appt.status} → ${updated.status}`,
+          }).catch(() => {});
+        }
+        if (
+          body.data.scheduledAt !== undefined &&
+          (appt.scheduledAt?.toISOString() ?? null) !==
+            (updated.scheduledAt?.toISOString() ?? null)
+        ) {
+          recordAudit({
+            actorUserId: auth.userId,
+            actorRole: "DOCTOR",
+            action: "APPOINTMENT_RESCHEDULED",
+            entityType: "Appointment",
+            entityId: updated.id,
+            metadata: {
+              from: appt.scheduledAt?.toISOString() ?? null,
+              to: updated.scheduledAt?.toISOString() ?? null,
+            },
+            request,
+          }).catch(() => {});
+          notifyAdmins("APPOINTMENT_RESCHEDULED", {
+            appointmentId: updated.id,
+            snippet: `${appt.fullName} · slot ${
+              updated.scheduledAt
+                ? new Date(updated.scheduledAt).toLocaleString()
+                : "cleared"
+            }`,
+          }).catch(() => {});
+        }
+        if (body.data.meetingUrl !== undefined) {
+          recordAudit({
+            actorUserId: auth.userId,
+            actorRole: "DOCTOR",
+            action: "CONSULT_SAVED",
+            entityType: "Appointment",
+            entityId: updated.id,
+            metadata: { changed: ["meetingUrl"] },
+            request,
+          }).catch(() => {});
+        }
+
         return okResponse({
           appointment: {
             ...updated,
@@ -179,6 +261,104 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not update appointment"));
+      }
+    },
+  );
+
+  /**
+   * Create a follow-up appointment linked to the source. Copies
+   * patient identity, doctor, consultation mode, country. Defaults to
+   * "follow-up" consultation type unless the caller overrides. The
+   * source appointment's `followUps` collection picks the new row up
+   * automatically.
+   */
+  app.post<{ Params: { id: string } }>(
+    "/api/doctor/appointments/:id/follow-up",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      const body = followUpSchema.safeParse(request.body ?? {});
+      if (!body.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid follow-up", body.error.flatten()));
+      }
+      try {
+        const source = await prisma.appointment.findFirst({
+          where: { id: request.params.id, doctorId: auth.doctorId },
+          select: {
+            id: true,
+            userId: true,
+            countryCode: true,
+            consultationType: true,
+            fullName: true,
+            email: true,
+            phone: true,
+            dateOfBirth: true,
+            consultationMode: true,
+          },
+        });
+        if (!source) {
+          return reply.status(404).send(errorResponse("Source appointment not found"));
+        }
+        const created = await prisma.appointment.create({
+          data: {
+            userId: source.userId,
+            countryCode: source.countryCode,
+            consultationType: body.data.consultationType,
+            fullName: source.fullName,
+            email: source.email,
+            phone: source.phone,
+            dateOfBirth: source.dateOfBirth,
+            notes: body.data.notes ?? null,
+            consentAccepted: true,
+            status: "REQUEST_RECEIVED",
+            doctorId: auth.doctorId,
+            scheduledAt: body.data.scheduledAt
+              ? new Date(body.data.scheduledAt)
+              : null,
+            consultationMode: body.data.consultationMode ?? source.consultationMode,
+            followUpFromAppointmentId: source.id,
+          },
+          select: {
+            id: true,
+            scheduledAt: true,
+            consultationType: true,
+            status: true,
+            createdAt: true,
+          },
+        });
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "FOLLOW_UP_CREATED",
+          entityType: "Appointment",
+          entityId: created.id,
+          metadata: { followUpFromAppointmentId: source.id },
+          request,
+        }).catch(() => {});
+        notifyAdmins("APPOINTMENT_FOLLOWUP_BOOKED", {
+          appointmentId: created.id,
+          snippet: `${source.fullName} · follow-up booked`,
+        }).catch(() => {});
+        return reply.status(201).send(
+          okResponse(
+            {
+              appointment: {
+                ...created,
+                scheduledAt: created.scheduledAt?.toISOString() ?? null,
+                createdAt: created.createdAt.toISOString(),
+              },
+            },
+            "Follow-up created",
+          ),
+        );
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not create follow-up"));
       }
     },
   );

@@ -52,6 +52,8 @@ async function findOwnedAppointment(doctorId: string, appointmentId: string) {
       meetingUrl: true,
       notes: true,
       dateOfBirth: true,
+      consultationMode: true,
+      followUpFromAppointmentId: true,
       createdAt: true,
     },
   });

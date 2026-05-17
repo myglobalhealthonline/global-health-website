@@ -91,16 +91,29 @@ enum InternalMessageAuthorRole {
 /// context (appointmentId, internalMessageId, etc.).
 enum NotificationType {
   APPOINTMENT_ASSIGNED
+  APPOINTMENT_STATUS_CHANGED
+  APPOINTMENT_RESCHEDULED
+  APPOINTMENT_FOLLOWUP_BOOKED
   INTERNAL_MESSAGE
   CONSULT_SIGNED
   EXAM_LOGGED
   FORM_SUBMITTED
+  DOCUMENT_UPLOADED
 }
 
 /// Scope for a `ShareLink` token. CONSULTATION = doctor sharing a
 /// signed consult with a referring colleague via signed URL.
 enum ShareLinkScope {
   CONSULTATION
+}
+
+/// Mode an appointment is delivered in. The booking flow defaults to
+/// ONLINE (the public site is a telemedicine platform); IN_PERSON is
+/// supported for hybrid clinics where the doctor sees the patient
+/// physically and the meetingUrl stays empty.
+enum ConsultationMode {
+  ONLINE
+  IN_PERSON
 }
 
 /// Audit-log event kinds. Append-only; never repurpose a value. Add
@@ -119,6 +132,11 @@ enum AuditAction {
   FORM_SUBMITTED
   CONSULT_SERVICE_ADDED
   CONSULT_SERVICE_REMOVED
+  APPOINTMENT_STATUS_CHANGED
+  APPOINTMENT_RESCHEDULED
+  FOLLOW_UP_CREATED
+  DOCUMENT_UPLOADED
+  DOCUMENT_DELETED
 }
 
 model Currency {
@@ -205,7 +223,7 @@ model Clinic {
 /// login when `User.doctorId` is set. The doctor portal at /doctor reads
 /// `user.doctorProfile` to scope queries to this row's id.
 model Doctor {
-  id                     String               @id @default(cuid())
+  id                     String                @id @default(cuid())
   countryId              String
   slug                   String
   fullName               String
@@ -219,8 +237,8 @@ model Doctor {
   whatsappNumber         String?
   languages              String[]
   editorialChecklist     Json?
-  active                 Boolean              @default(true)
-  country                Country              @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  active                 Boolean               @default(true)
+  country                Country               @relation(fields: [countryId], references: [id], onDelete: Cascade)
   specialties            DoctorSpecialty[]
   assets                 Asset[]
   /// Additional country listings (Doctor ↔ Country M:N). The primary
@@ -228,10 +246,10 @@ model Doctor {
   /// each row here adds the doctor to another country's public roster.
   additionalCountries    DoctorCountry[]
   /// Inverse of `User.doctorId`. When set, that User logs in as this doctor.
-  loginUser              User?                @relation("DoctorUserLink")
+  loginUser              User?                 @relation("DoctorUserLink")
   /// Inverse of `Appointment.doctorId`. Populated when admin assigns
   /// the doctor on the scheduling form.
-  appointments           Appointment[]        @relation("AppointmentDoctor")
+  appointments           Appointment[]         @relation("AppointmentDoctor")
   /// Recurring weekly windows the doctor publishes for patient booking.
   /// Concrete slots are derived from these into `DoctorTimeSlot` rows.
   availabilities         DoctorAvailability[]
@@ -246,8 +264,10 @@ model Doctor {
   /// Form templates this doctor owns. Templates with `doctorId = null`
   /// are shared/global (admin-managed).
   formTemplates          FormTemplate[]
-  createdAt              DateTime             @default(now())
-  updatedAt              DateTime             @updatedAt
+  /// First-party documents the doctor has uploaded.
+  appointmentDocuments   AppointmentDocument[]
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
 
   @@unique([countryId, slug])
 }
@@ -516,73 +536,87 @@ enum PaymentStatus {
 }
 
 model Appointment {
-  id                    String            @id @default(cuid())
-  userId                String?
-  countryCode           String
-  consultationType      String
-  fullName              String
-  email                 String
-  phone                 String?
+  id                        String                @id @default(cuid())
+  userId                    String?
+  countryCode               String
+  consultationType          String
+  fullName                  String
+  email                     String
+  phone                     String?
   /// Optional patient date of birth — captured when the country's
   /// BookingSetting.requireDateOfBirth is on. Stored as a Date so we
   /// can compute age + filter by ranges later.
-  dateOfBirth           DateTime?
-  notes                 String?
-  consentAccepted       Boolean
-  status                String            @default("REQUEST_RECEIVED")
+  dateOfBirth               DateTime?
+  notes                     String?
+  consentAccepted           Boolean
+  status                    String                @default("REQUEST_RECEIVED")
   // Optional link to the catalogue Service that was booked. Populated when
   // the booking form passes ?service=<slug>; null for free-text bookings.
-  serviceId             String?
-  service               Service?          @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  serviceId                 String?
+  service                   Service?              @relation(fields: [serviceId], references: [id], onDelete: SetNull)
   /// Optional HealthTest the patient picked at booking. Set when the
   /// booking form arrives with `?service=<healthTestSlug>` and the slug
   /// matches a HealthTest row. Symmetric with `serviceId` above.
-  healthTestId          String?
-  healthTest            HealthTest?       @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
+  healthTestId              String?
+  healthTest                HealthTest?           @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
   /// Doctor assigned to take the call. Set by admin on the schedule form;
   /// the doctor's portal at /doctor scopes queries to `doctorId = self`.
   /// Optional because not every appointment has a doctor yet.
-  doctorId              String?
-  doctor                Doctor?           @relation("AppointmentDoctor", fields: [doctorId], references: [id], onDelete: SetNull)
+  doctorId                  String?
+  doctor                    Doctor?               @relation("AppointmentDoctor", fields: [doctorId], references: [id], onDelete: SetNull)
   /// Concrete time slot the patient picked at booking. Populated when
   /// the booking form posts with `timeSlotId`; the booking handler
   /// atomically claims the slot (UPDATE…WHERE status='OPEN') so two
   /// patients can never grab the same one. Null = legacy flow (admin
   /// schedules the call manually later).
-  timeSlotId            String?           @unique
-  timeSlot              DoctorTimeSlot?   @relation("AppointmentSlot", fields: [timeSlotId], references: [id], onDelete: SetNull)
+  timeSlotId                String?               @unique
+  timeSlot                  DoctorTimeSlot?       @relation("AppointmentSlot", fields: [timeSlotId], references: [id], onDelete: SetNull)
   /// One Consultation row per Appointment — created on first save from
   /// the doctor portal, locked when signed.
-  consultation          Consultation?
+  consultation              Consultation?
   /// Per-appointment lab / imaging / exam results the doctor logs.
-  examResults           ExamResult[]
+  examResults               ExamResult[]
   /// Doctor ↔ admin notes for this appointment (NOT patient-visible —
   /// patient chat lives on `messages`).
-  internalMessages      InternalMessage[]
+  internalMessages          InternalMessage[]
   /// Form submissions tied to this appointment (intake, pre-consult,
   /// post-consult surveys).
-  formSubmissions       FormSubmission[]
+  formSubmissions           FormSubmission[]
+  /// First-party documents the doctor attaches to this appointment
+  /// (PDFs, scans, photos). Stored in S3 under a doctor-scoped key
+  /// prefix; admin doesn't auto-see them.
+  documents                 AppointmentDocument[]
+  /// Self-reference: when this appointment is a follow-up, points at
+  /// the appointment the patient is following up FROM. Lets the
+  /// workspace render a "Follow-up of …" badge and the patient
+  /// history a continuous chain.
+  followUpFromAppointmentId String?
+  followUpFrom              Appointment?          @relation("AppointmentFollowUp", fields: [followUpFromAppointmentId], references: [id], onDelete: SetNull)
+  followUps                 Appointment[]         @relation("AppointmentFollowUp")
+  /// ONLINE (telemedicine, default) or IN_PERSON (in-clinic). Empty
+  /// `meetingUrl` is the operational signal for IN_PERSON today.
+  consultationMode          ConsultationMode      @default(ONLINE)
   // Payment lifecycle. UNPAID = free or pending-Stripe.
-  paymentStatus         PaymentStatus     @default(UNPAID)
+  paymentStatus             PaymentStatus         @default(UNPAID)
   // Stripe identifiers. Null until a Checkout Session is created.
-  stripeSessionId       String?           @unique
-  stripePaymentIntentId String?           @unique
-  amountCents           Int?
-  currencyCode          String?
-  paidAt                DateTime?
+  stripeSessionId           String?               @unique
+  stripePaymentIntentId     String?               @unique
+  amountCents               Int?
+  currencyCode              String?
+  paidAt                    DateTime?
   // Scheduled call time + Google Meet (or any video) URL. Admin sets these
   // once a slot has been agreed; patient sees them on /account/bookings and
   // receives a SendGrid email with the link.
-  scheduledAt           DateTime?
-  meetingUrl            String?
+  scheduledAt               DateTime?
+  meetingUrl                String?
   // Reminder job marks this once it has emailed the patient ~24h before
   // scheduledAt, so re-runs don't double-send. Null means "not sent yet".
-  reminderSentAt        DateTime?
-  user                  User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
-  payments              Payment[]
-  messages              Message[]
-  createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @updatedAt
+  reminderSentAt            DateTime?
+  user                      User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+  payments                  Payment[]
+  messages                  Message[]
+  createdAt                 DateTime              @default(now())
+  updatedAt                 DateTime              @updatedAt
 }
 
 /// Lightweight chat thread for the patient ↔ admin pre-consult conversation.
@@ -1021,4 +1055,25 @@ model AuditLog {
   @@index([entityType, entityId])
   @@index([actorUserId, createdAt])
   @@index([action, createdAt])
+}
+
+/// First-party clinical documents the doctor attaches to an
+/// appointment (PDFs, scans, photos). Stored in S3 under a
+/// doctor-scoped key prefix. Kept separate from `Asset` (which is
+/// marketing-side, admin-managed, and publicly addressable) so the
+/// access surface is unambiguous.
+model AppointmentDocument {
+  id            String      @id @default(cuid())
+  appointmentId String
+  doctorId      String
+  label         String
+  storageKey    String
+  mimetype      String
+  byteSize      Int
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  doctor        Doctor      @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  createdAt     DateTime    @default(now())
+
+  @@index([appointmentId, createdAt])
+  @@index([doctorId, createdAt])
 }

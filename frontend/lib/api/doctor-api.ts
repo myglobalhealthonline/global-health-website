@@ -175,6 +175,8 @@ export type AppointmentDetailDto = {
   meetingUrl: string | null;
   notes: string | null;
   dateOfBirth: string | null;
+  consultationMode?: "ONLINE" | "IN_PERSON";
+  followUpFromAppointmentId?: string | null;
   createdAt: string;
 };
 
@@ -183,6 +185,21 @@ export async function fetchDoctorConsultation(appointmentId: string) {
     appointment: AppointmentDetailDto;
     consultation: ConsultationDto | null;
   }>(`/api/doctor/appointments/${appointmentId}/consultation`);
+}
+
+export type DoctorDocumentDto = {
+  id: string;
+  label: string;
+  mimetype: string;
+  byteSize: number;
+  url: string;
+  createdAt: string;
+};
+
+export async function fetchDoctorDocuments(appointmentId: string) {
+  return doctorRequest<{ items: DoctorDocumentDto[] }>(
+    `/api/doctor/appointments/${appointmentId}/documents`,
+  );
 }
 
 export type ExamResultDto = {

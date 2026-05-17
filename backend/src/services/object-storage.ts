@@ -1,11 +1,12 @@
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
   type GetObjectCommandOutput,
   S3Client,
 } from "@aws-sdk/client-s3";
 import { createReadStream } from "node:fs";
-import { access, mkdir, writeFile } from "node:fs/promises";
+import { access, mkdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { env } from "../config/env.js";
@@ -101,6 +102,29 @@ export async function putObject(key: string, body: Buffer, contentType: string):
   }
 
   throw new Error("Object storage is not configured");
+}
+
+export async function deleteObject(key: string): Promise<void> {
+  if (isObjectStorageConfigured()) {
+    await getClient().send(
+      new DeleteObjectCommand({
+        Bucket: env.S3_BUCKET!,
+        Key: key,
+      }),
+    );
+    return;
+  }
+  if (isDevLocalMediaEnabled()) {
+    const full = safeLocalFilePath(key);
+    try {
+      await unlink(full);
+    } catch {
+      // File may already be gone — treat delete as idempotent.
+    }
+    return;
+  }
+  // No storage configured — no-op. Callers running without storage
+  // have nothing to clean up.
 }
 
 export async function getObject(key: string): Promise<GetObjectCommandOutput> {
