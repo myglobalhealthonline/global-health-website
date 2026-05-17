@@ -34,13 +34,8 @@ function normalizeNextPath(pathname: string) {
   return pathname;
 }
 
-async function hasAllowedAccountSession(request: NextRequest) {
-  const auth = await resolveSessionUser(request);
-  return auth.role === "PATIENT" || auth.role === "ADMIN";
-}
-
 async function resolveSessionUser(request: NextRequest): Promise<{
-  role: "PATIENT" | "ADMIN" | null;
+  role: "PATIENT" | "ADMIN" | "DOCTOR" | null;
 }> {
   const apiBase = getApiBaseUrl();
   if (!apiBase) return { role: null };
@@ -58,7 +53,10 @@ async function resolveSessionUser(request: NextRequest): Promise<{
       data?: { user?: { role?: string } };
     };
     const role = json.data?.user?.role;
-    if (json.ok === true && (role === "PATIENT" || role === "ADMIN")) {
+    if (
+      json.ok === true &&
+      (role === "PATIENT" || role === "ADMIN" || role === "DOCTOR")
+    ) {
       return { role };
     }
     return { role: null };
@@ -80,7 +78,15 @@ export async function proxy(request: NextRequest) {
   }
 
   if (pathname === "/account" || pathname.startsWith("/account/")) {
-    const allowed = await hasAllowedAccountSession(request);
+    const session = await resolveSessionUser(request);
+    if (session.role === "DOCTOR") {
+      // Doctors don't have a patient profile here — bounce them home.
+      const doctorUrl = request.nextUrl.clone();
+      doctorUrl.pathname = "/doctor";
+      doctorUrl.search = "";
+      return NextResponse.redirect(doctorUrl);
+    }
+    const allowed = session.role === "PATIENT" || session.role === "ADMIN";
     if (!allowed) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
@@ -94,6 +100,29 @@ export async function proxy(request: NextRequest) {
     const session = await resolveSessionUser(request);
     if (session.role === "ADMIN") {
       // continue
+    } else if (session.role === "DOCTOR") {
+      const doctorUrl = request.nextUrl.clone();
+      doctorUrl.pathname = "/doctor";
+      doctorUrl.search = "";
+      return NextResponse.redirect(doctorUrl);
+    } else if (session.role === "PATIENT") {
+      const accountUrl = request.nextUrl.clone();
+      accountUrl.pathname = "/account";
+      accountUrl.search = "";
+      return NextResponse.redirect(accountUrl);
+    } else {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/login";
+      loginUrl.search = "";
+      loginUrl.searchParams.set("next", normalizeNextPath(pathname));
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  if (pathname === "/doctor" || pathname.startsWith("/doctor/")) {
+    const session = await resolveSessionUser(request);
+    if (session.role === "DOCTOR" || session.role === "ADMIN") {
+      // continue — admins can see the doctor portal for support purposes
     } else if (session.role === "PATIENT") {
       const accountUrl = request.nextUrl.clone();
       accountUrl.pathname = "/account";

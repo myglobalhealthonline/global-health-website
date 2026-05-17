@@ -10,7 +10,7 @@
 - GDPR: cookie banner + privacy notice + account-delete + data-export
 - GEO: `/llms.txt` + `MedicalProcedure` JSON-LD on consultation pages
 
-Owned by another team: doctor dashboard (excluded from this scope).
+Doctor dashboard MVP (overview, appointments, patients, self-edit profile) shipped this round. Expansion to the full 14-section clinical suite is Phase 4 — see below.
 
 ---
 
@@ -332,7 +332,7 @@ The site's own cookies (`gh_auth`, `gh_admin_country`, `gh_locale`) are **strict
 | **Phase 1** — country-first marketing site + super-admin portal | ✅ Done. 5 countries × home + doctors + general consult + specialist consult, plus prescriptions / tests / plans public pages. Admin CRUDs every editable surface. Image upload to S3. Rich-text editor with sanitizer + locale extensibility. |
 | **Phase 2 infrastructure** — SendGrid + Stripe + Payment ledger | ✅ Scaffolded, gated on env keys. Drops in instantly when you set the keys. |
 | **Phase 2 completion** — Patient Portal + Stripe flow + email gating | 🟡 Half done. Account dashboard + profile edit + bookings list + verify/reset pages all live. Stripe Checkout redirect from booking form not yet wired. |
-| **Phase 3** — Doctor Dashboard | 🔴 Not started. Schema slot reserved (`Doctor.userId` FK to `User` planned). |
+| **Phase 3** — Doctor Dashboard | 🟡 MVP shipped (auth + overview + my-appointments + patients + self-edit profile). Phase 4 dashboard expansion (consult notes, forms, exams, invoices, reports, messaging, etc.) listed below. |
 | **Phase 4** — Reviews + GEO + Conditions library | 🔴 Not started. |
 | **Phase 5** — Ops + scale | 🔴 Not started. |
 
@@ -356,26 +356,72 @@ Goal: every patient-facing action a logged-in user might take is wired.
 
 ---
 
-### Phase 3 — Doctor Dashboard (3–4 weeks)
+### Phase 3 — Doctor Dashboard MVP — ✅ shipped
 
-Goal: doctors log into their own dashboard, manage availability, run consultations, write prescriptions.
+Goal: doctors log into their own dashboard, see what's on their plate
+today, and keep their public profile up to date. The MVP unblocks
+alpha-testing without trying to bite off the whole 14-module clinical
+suite in one pass.
 
-| Item | Effort |
+| Item | Status |
 |---|---|
-| Add `UserRole.DOCTOR` enum value + `Doctor.userId` nullable FK | 0.5 day |
-| Doctor invitation flow — admin invites a Doctor row → email-based account creation | 1 day |
-| `(doctor)` route group, layout, auth gate | 1 day |
-| `/doctor/dashboard` — today's appointments, pending review, quick actions | 1 day |
-| `/doctor/availability` — weekly recurring slots + one-off blocks | 2 days |
-| `/doctor/appointments/[id]` — start consult, write notes, write prescription | 3 days |
-| Backend: `Prescription` model + `POST /api/doctor/prescriptions` | 1 day |
-| Email patient when prescription is issued | 0.5 day |
-| Doctor profile public page already exists — connect to logged-in doctor's CMS row | 0.5 day |
-| Doctor onboarding (registration number verification, photo upload, bio) | 1.5 days |
-| Doctor payout model (optional; depends on contract model) | 2 days |
-| Video consultation provider integration (Whereby? Daily.co? Zoom?) | 2–3 days, pick provider first |
+| `UserRole.DOCTOR` enum value + `User.doctorId` nullable FK | ✅ shipped |
+| `Appointment.doctorId` FK so a doctor's appointments are queryable | ✅ shipped |
+| Admin `/admin/users/[id]` linking — set role=DOCTOR + paste Doctor profile id | ✅ shipped |
+| `verifyDoctorAccess` middleware — session → role → User.doctorId required | ✅ shipped |
+| `(doctor)` route group + dark portal layout + double-layered auth gate (proxy + server) | ✅ shipped |
+| `/doctor` overview — today / this week / open appointment counts | ✅ shipped |
+| `/doctor/appointments` — paginated, status + search filters, Join-meeting button when scheduled | ✅ shipped |
+| `/doctor/patients` — distinct patients deduped by email with appointment counts | ✅ shipped |
+| `/doctor/profile` — self-edit fullName, bio, qualifications, languages, WhatsApp | ✅ shipped |
+| Login routing: DOCTOR role lands on `/doctor` (not `/account` or `/admin`) | ✅ shipped |
+| Proxy gating: PATIENT → `/account`, DOCTOR → `/doctor`, ADMIN can see both | ✅ shipped |
 
-**Total: ~15–20 working days.** Hire/contract a doctor early to alpha-test the consult flow.
+**Operator handoff (no code):**
+1. Admin creates a User account for the doctor (or asks them to register).
+2. Admin opens `/admin/users/[id]`, sets role=DOCTOR, pastes the Doctor profile id from `/admin/doctors`.
+3. Doctor signs in at `/login` → lands on `/doctor`.
+
+Country, slug, IMC registration, profile photo, and the specialty list stay
+admin-managed on purpose — those affect public routing and verification copy.
+
+---
+
+### Phase 4 — Doctor Dashboard expansion (the other 9 modules)
+
+Goal: turn the MVP into the full clinical workspace described in the
+14-section spec. Each module is independently shippable; pick them in the
+order the operator's actual case-mix demands.
+
+| # | Module | What it covers | Effort | Notes |
+|---|---|---|---|---|
+| 1 | **Consultations workspace** | Start/finish consult, structured SOAP notes, attached prescriptions, post-consult summary email to patient. | 3 days | Schema: `Consultation` row per Appointment with `chiefComplaint`, `subjective`, `objective`, `assessment`, `plan`, `signedAt`. Rich-text via existing `RichTextHtmlField`. Lock once signed. |
+| 2 | **Forms management** | Admin/doctor builds reusable intake / pre-consult forms; patient fills before the appointment. | 4 days | Schema: `FormTemplate` + `FormSubmission` (JSON answers). Builder UI = drag a small set of field types (text, choice, scale). Render to the patient inside `/account/bookings/[id]`. |
+| 3 | **Exam results** | Doctor uploads / orders external test PDFs, links them to the consultation, patient sees them in their portal. | 2 days | Schema: `ExamResult` (assetId, testName, performedAt, notes). Re-uses existing S3 upload + `MediaAsset`. |
+| 4 | **Services-used tracking** | Per-consultation list of services rendered (general consult, lab order, prescription review). Feeds the invoice. | 1 day | Schema: `ConsultationService` (consultationId, serviceId, qty, unitPriceCents). Read on invoice render. |
+| 5 | **Invoice visibility (doctor side)** | Doctor sees the invoice generated for each consult — total, payment status, refund state. Read-only; admin still issues invoices. | 1 day | Re-uses `Payment` + new `Invoice` view; no new ledger. |
+| 6 | **Reports** | Per-doctor monthly stats — appointments by status, top services, patient counts, no-show rate. Exportable CSV. | 1.5 days | All queryable from existing `Appointment` + `Consultation` tables. Add a `/doctor/reports` page with date-range filter + CSV download. |
+| 7 | **Notifications** | In-portal bell for new bookings assigned, patient messages, form submissions. Email mirrors for off-portal reach. | 2 days | Schema: `Notification` (recipientUserId, type, payload JSON, readAt). Polling endpoint at first; WebSockets later. |
+| 8 | **Internal messaging** | Doctor ↔ admin notes per appointment + a global thread per patient. Not patient-visible. | 2 days | Schema: `InternalMessage` (threadKey, authorUserId, body, createdAt). Same proxy pattern as existing chat for cookie-safe POST. |
+| 9 | **Print / share / export** | Print-friendly consult summary, share-via-link (signed URL, 7-day expiry) for referrals, export single consult as PDF. | 1.5 days | Server-render a `/print/consults/[id]` route with print CSS; PDF via Playwright in a job runner OR `@react-pdf/renderer`. |
+
+**Cross-cutting work (do once, not per module):**
+
+| Item | Effort | Notes |
+|---|---|---|
+| Multilingual UI strings in the doctor portal | 1 day | Today the portal is EN only. The site already has a `LocaleCode` switch in `gh_locale`; mirror it inside `(doctor)`. |
+| Access control hardening — every new query scoped by `doctorId = self` (or `ADMIN`) | rolling | Lean on `verifyDoctorAccess`; never read `request.user.id` directly. |
+| Audit log writes for every consult signature, prescription, message | 0.5 day | Hook into the `AuditLog` model added in Phase 5. |
+| Doctor self-uploads profile photo | 0.5 day | Mirror admin `ManagedImageField` behind a same-origin upload proxy. Today the photo is admin-managed. |
+| Doctor onboarding wizard — verification, registration number, first-slot setup | 1.5 days | Only matters once we open self-serve doctor sign-up; today admins onboard manually. |
+| Doctor availability + slot booking | (separate gap — see top of doc) | Real slot-picking is its own track. |
+| Video consultation provider integration | 2–3 days | Today doctors paste a Meet URL via the admin schedule action. Migrate to first-party (Daily.co or Whereby) when consult volume justifies it. |
+| Doctor payouts | 2 days | Stripe Connect Express. Only relevant if the contract model becomes "platform takes a cut" instead of "platform pays salary." |
+
+**Total Phase 4 eng effort:** ~18 working days for the 9 modules + ~5 days
+of cross-cutting = roughly 5 weeks of focused work. Ship the most
+demanded module first (likely **Consultations workspace** + **Exam
+results**, in that order) so doctors stop running notes in a Word doc.
 
 ---
 
@@ -472,7 +518,7 @@ Stripe + Resend can be configured the same day you create the accounts; everythi
 
 - **As soon as you have SendGrid keys** → I'll smoke-test the email flow against a real inbox + tighten any spam-trigger language in the templates.
 - **As soon as you have Stripe test keys** → I'll wire the booking form → Checkout redirect + payment-status column on /account/bookings (Phase 2 completion items 1–4 above).
-- **When you're ready for Phase 3 (Doctor Dashboard)** → it's a clean greenfield; the schema slot is already reserved.
+- **When you're ready for Phase 4 (Doctor Dashboard expansion)** → MVP is live at `/doctor`; the 9 remaining modules are documented under Phase 4 above. Pick the first one to ship and pass the spec back.
 - **Reviews:** all three providers (Trustpilot + Google + Doctify) are wired. Paste the IDs at `/admin/settings`.
 - **Production handover day** → I'll run the go-live runbook with you (deploy + smoke + DNS flip).
 

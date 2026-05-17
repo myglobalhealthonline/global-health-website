@@ -43,6 +43,10 @@ enum ServiceKind {
 enum UserRole {
   PATIENT
   ADMIN
+  /// Clinician account — logs in to /doctor and sees only their own
+  /// patients + appointments. Linked to a Doctor profile via
+  /// `User.doctorId` (one-to-one).
+  DOCTOR
 }
 
 enum PageKey {
@@ -134,8 +138,9 @@ model Clinic {
   @@unique([countryId, slug])
 }
 
-/// Public website profile (directory/CMS). Admins may edit these rows as content.
-/// Not an authenticated user: no doctor dashboard or portal login in this application.
+/// Public website profile (directory/CMS) AND the target of a clinician
+/// login when `User.doctorId` is set. The doctor portal at /doctor reads
+/// `user.doctorProfile` to scope queries to this row's id.
 model Doctor {
   id                     String            @id @default(cuid())
   countryId              String
@@ -159,6 +164,11 @@ model Doctor {
   /// country still lives on `countryId` above and scopes slug uniqueness;
   /// each row here adds the doctor to another country's public roster.
   additionalCountries    DoctorCountry[]
+  /// Inverse of `User.doctorId`. When set, that User logs in as this doctor.
+  loginUser              User?             @relation("DoctorUserLink")
+  /// Inverse of `Appointment.doctorId`. Populated when admin assigns
+  /// the doctor on the scheduling form.
+  appointments           Appointment[]     @relation("AppointmentDoctor")
   createdAt              DateTime          @default(now())
   updatedAt              DateTime          @updatedAt
 
@@ -392,6 +402,11 @@ model Appointment {
   /// matches a HealthTest row. Symmetric with `serviceId` above.
   healthTestId          String?
   healthTest            HealthTest?    @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
+  /// Doctor assigned to take the call. Set by admin on the schedule form;
+  /// the doctor's portal at /doctor scopes queries to `doctorId = self`.
+  /// Optional because not every appointment has a doctor yet.
+  doctorId              String?
+  doctor                Doctor?        @relation("AppointmentDoctor", fields: [doctorId], references: [id], onDelete: SetNull)
   // Payment lifecycle. UNPAID = free or pending-Stripe.
   paymentStatus         PaymentStatus  @default(UNPAID)
   // Stripe identifiers. Null until a Checkout Session is created.
@@ -480,6 +495,11 @@ model User {
   role                     UserRole                  @default(PATIENT)
   emailVerifiedAt          DateTime?
   isActive                 Boolean                   @default(true)
+  /// Set when role=DOCTOR — links the login account to the Doctor
+  /// profile that shows on the public site. Admin assigns this from
+  /// the doctor edit page. One-to-one.
+  doctorId                 String?                   @unique
+  doctorProfile            Doctor?                   @relation("DoctorUserLink", fields: [doctorId], references: [id], onDelete: SetNull)
   appointments             Appointment[]
   resetTokens              PasswordResetToken[]
   emailVerificationTokens  EmailVerificationToken[]

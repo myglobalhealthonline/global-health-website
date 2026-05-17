@@ -60,7 +60,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
   async function changeRoleAction(formData: FormData) {
     "use server";
     const role = String(formData.get("role") ?? "") as AdminUserRole;
-    if (role !== "PATIENT" && role !== "ADMIN") {
+    if (role !== "PATIENT" && role !== "ADMIN" && role !== "DOCTOR") {
       redirect(`/admin/users/${id}?error=${encodeURIComponent("Invalid role")}`);
     }
     const res = await patchAdminUser(id, { role });
@@ -68,6 +68,23 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
       redirect(`/admin/users/${id}?error=${encodeURIComponent(res.message)}`);
     }
     redirect(`/admin/users/${id}?success=${encodeURIComponent(`Role updated to ${role}`)}`);
+  }
+
+  // Link / unlink this user account to a Doctor profile. Only meaningful
+  // when role=DOCTOR — the doctor portal queries scope by doctorId.
+  async function linkDoctorAction(formData: FormData) {
+    "use server";
+    const raw = String(formData.get("doctorId") ?? "").trim();
+    const doctorId = raw === "" ? null : raw;
+    const res = await patchAdminUser(id, { doctorId });
+    if (!res.ok) {
+      redirect(`/admin/users/${id}?error=${encodeURIComponent(res.message)}`);
+    }
+    redirect(
+      `/admin/users/${id}?success=${encodeURIComponent(
+        doctorId ? "Linked doctor profile" : "Unlinked doctor profile",
+      )}`,
+    );
   }
 
   async function resetPasswordAction(formData: FormData) {
@@ -176,9 +193,40 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
               <select name="role" defaultValue={user.role} className="gh-select">
                 <option value="PATIENT">PATIENT</option>
                 <option value="ADMIN">ADMIN</option>
+                <option value="DOCTOR">DOCTOR</option>
               </select>
               <button type="submit" className="gh-btn gh-btn-primary w-full">
                 Update role
+              </button>
+            </form>
+          </AdminCard>
+
+          {/* Doctor profile link — only meaningful when role=DOCTOR.
+              Free-text id input keeps the markup small; admin can copy
+              the doctor id from /admin/doctors. A future iteration could
+              swap this for a searchable dropdown of unlinked doctors. */}
+          <AdminCard>
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            >
+              Doctor profile link
+            </h3>
+            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+              {user.role === "DOCTOR"
+                ? "Paste the Doctor profile id (from /admin/doctors). One profile per user — re-link will fail if the target is already taken. Leave blank to unlink."
+                : "Set role=DOCTOR first, then link the user to a Doctor profile here."}
+            </p>
+            <form action={linkDoctorAction} className="mt-3 flex flex-col gap-2">
+              <input
+                type="text"
+                name="doctorId"
+                defaultValue={user.doctorId ?? ""}
+                placeholder="Doctor id (cuid…)"
+                className="gh-input font-mono text-xs"
+              />
+              <button type="submit" className="gh-btn gh-btn-primary w-full">
+                {user.doctorId ? "Update link" : "Link doctor profile"}
               </button>
             </form>
           </AdminCard>

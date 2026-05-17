@@ -3,7 +3,7 @@ import { env } from "../config/env.js";
 
 type AuthTokenPayload = {
   sub: string;
-  role: "PATIENT" | "ADMIN";
+  role: "PATIENT" | "ADMIN" | "DOCTOR";
   email: string;
 };
 
@@ -25,7 +25,11 @@ export function verifyAuthToken(token: string): AuthTokenPayload | null {
     const sub = decoded.sub;
     const role = decoded.role;
     const email = decoded.email;
-    if (typeof sub !== "string" || (role !== "PATIENT" && role !== "ADMIN") || typeof email !== "string") {
+    if (
+      typeof sub !== "string" ||
+      (role !== "PATIENT" && role !== "ADMIN" && role !== "DOCTOR") ||
+      typeof email !== "string"
+    ) {
       return null;
     }
     return { sub, role, email };

@@ -607,7 +607,7 @@ export async function purgeAdminDoctor(id: string) {
 
 // ── Admin users (patients + admin accounts) ─────────────────────────────
 
-export type AdminUserRole = "PATIENT" | "ADMIN";
+export type AdminUserRole = "PATIENT" | "ADMIN" | "DOCTOR";
 
 export type AdminUserDto = {
   id: string;
@@ -616,6 +616,10 @@ export type AdminUserDto = {
   phone: string | null;
   role: AdminUserRole;
   isActive: boolean;
+  /** When set, this user logs in as a clinician and sees /doctor/*
+   *  scoped to this Doctor profile id. Set role=DOCTOR + assign
+   *  doctorId via the admin user detail page. */
+  doctorId: string | null;
   emailVerifiedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -654,7 +658,7 @@ export const fetchAdminUserById = cache(async (id: string) => {
 
 export async function patchAdminUser(
   id: string,
-  body: { isActive?: boolean; role?: AdminUserRole },
+  body: { isActive?: boolean; role?: AdminUserRole; doctorId?: string | null },
 ) {
   return adminRequest<{ user: AdminUserDto }>(`/api/admin/users/${id}`, {
     method: "PATCH",

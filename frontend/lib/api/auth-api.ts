@@ -47,7 +47,7 @@ export type AuthUser = {
   email: string;
   fullName: string;
   phone: string | null;
-  role: "PATIENT" | "ADMIN";
+  role: "PATIENT" | "ADMIN" | "DOCTOR";
   emailVerifiedAt: string | null;
   isActive: boolean;
   createdAt: string;

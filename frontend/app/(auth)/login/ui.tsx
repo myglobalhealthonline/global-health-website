@@ -14,7 +14,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  function getNextPath(role: "PATIENT" | "ADMIN") {
+  function getNextPath(role: "PATIENT" | "ADMIN" | "DOCTOR") {
     const next = searchParams.get("next");
     // Must be a same-origin path. Rejects empty, off-site URLs, AND
     // protocol-relative redirects like `//evil.com/...` which browsers
@@ -25,7 +25,9 @@ export function LoginForm() {
       next.startsWith("//") ||
       next.startsWith("/\\")
     ) {
-      return role === "ADMIN" ? "/admin" : "/account";
+      if (role === "ADMIN") return "/admin";
+      if (role === "DOCTOR") return "/doctor";
+      return "/account";
     }
     return next;
   }

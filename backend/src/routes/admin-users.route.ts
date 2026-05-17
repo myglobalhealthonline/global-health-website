@@ -50,10 +50,16 @@ const patchBodySchema = z
   .object({
     isActive: z.boolean().optional(),
     role: z.nativeEnum(UserRole).optional(),
+    /** Link this user account to a Doctor profile (one-to-one).
+     *  Pass null to unlink. Backend rejects when the target Doctor
+     *  is already linked to another user. */
+    doctorId: z.string().trim().min(1).nullable().optional(),
   })
-  .refine((d) => d.isActive !== undefined || d.role !== undefined, {
-    message: "Provide at least one of isActive or role",
-  });
+  .refine(
+    (d) =>
+      d.isActive !== undefined || d.role !== undefined || d.doctorId !== undefined,
+    { message: "Provide at least one of isActive, role, or doctorId" },
+  );
 
 const resetPasswordBodySchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters").max(128),
@@ -105,6 +111,7 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
             phone: true,
             role: true,
             isActive: true,
+            doctorId: true,
             emailVerifiedAt: true,
             createdAt: true,
             updatedAt: true,
@@ -190,11 +197,33 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         .send(errorResponse("Invalid update", body.error.flatten()));
     }
     try {
+      // If the admin is linking a Doctor, check the target isn't already
+      // taken by a different user. Without this the unique constraint
+      // would raise a Prisma P2002 and we'd lose the friendly error.
+      if (body.data.doctorId) {
+        const existing = await prisma.user.findFirst({
+          where: {
+            doctorId: body.data.doctorId,
+            id: { not: params.data.id },
+          },
+          select: { id: true, email: true },
+        });
+        if (existing) {
+          return reply
+            .status(409)
+            .send(
+              errorResponse(
+                `That doctor profile is already linked to ${existing.email}`,
+              ),
+            );
+        }
+      }
       const updated = await prisma.user.update({
         where: { id: params.data.id },
         data: {
           ...(body.data.isActive !== undefined && { isActive: body.data.isActive }),
           ...(body.data.role !== undefined && { role: body.data.role }),
+          ...(body.data.doctorId !== undefined && { doctorId: body.data.doctorId }),
         },
         select: {
           id: true,
@@ -202,6 +231,7 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           fullName: true,
           role: true,
           isActive: true,
+          doctorId: true,
           updatedAt: true,
         },
       });

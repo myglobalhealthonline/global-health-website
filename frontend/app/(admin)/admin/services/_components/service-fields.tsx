@@ -1,6 +1,5 @@
 import type { AdminCountryDto, AdminServiceDto, AdminServiceKind, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
 import { ManagedImageField } from "../../_components/managed-image-field";
-import { RichTextHtmlField } from "../../_components/rich-text-html-field";
 import { formatServicePriceInput } from "@/lib/admin/service-form-parse";
 import { SERVICE_KIND_META } from "@/lib/admin/service-kind";
 
@@ -151,53 +150,22 @@ export function ServiceFields({ countries, specialties, kind, initial, pinnedCou
         helperText={`Shown on the public ${meta.singularLabel.toLowerCase()} card and detail page.`}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Hero title</span>
-          <input
-            name="heroTitle"
-            className="gh-input min-w-0"
-            defaultValue={initial?.heroTitle ?? ""}
-            placeholder="Optional heading override"
-          />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">CTA label</span>
-          <input
-            name="ctaLabel"
-            className="gh-input min-w-0"
-            defaultValue={initial?.ctaLabel ?? ""}
-            placeholder="Book Online"
-          />
-        </label>
-      </div>
-
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Hero description</span>
-        <textarea
-          name="heroDescription"
-          rows={3}
-          className="gh-input min-h-[5rem] min-w-0 resize-y"
-          defaultValue={initial?.heroDescription ?? ""}
-        />
-      </label>
-
-      <RichTextHtmlField
-        name="detailBody"
-        label="Detail body"
-        initialValue={initial?.detailBody ?? ""}
-        helperText="Supports the same Word-style formatting used for doctor bios."
+      {/* The hero / detail-body / legacy-path columns exist on the DB
+          but no public surface reads them today (public ServicesGrid only
+          uses name + summary + slug + price). Hidden inputs preserve the
+          stored values across saves until either:
+          - a service-detail page ships (and these fields are useful), or
+          - the columns get dropped from the schema.
+          Keep them out of the visible form to reduce clutter. */}
+      <input type="hidden" name="heroTitle" defaultValue={initial?.heroTitle ?? ""} />
+      <input type="hidden" name="ctaLabel" defaultValue={initial?.ctaLabel ?? ""} />
+      <input
+        type="hidden"
+        name="heroDescription"
+        defaultValue={initial?.heroDescription ?? ""}
       />
-
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Legacy path</span>
-        <input
-          name="legacyPath"
-          className="gh-input min-w-0 font-mono text-sm"
-          defaultValue={initial?.legacyPath ?? ""}
-          placeholder="/path-if-used"
-        />
-      </label>
+      <input type="hidden" name="detailBody" defaultValue={initial?.detailBody ?? ""} />
+      <input type="hidden" name="legacyPath" defaultValue={initial?.legacyPath ?? ""} />
 
       <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
         <input
