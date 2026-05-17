@@ -19,6 +19,7 @@ import { FormFillSection } from "./_components/form-fill";
 import { FollowUpButton } from "./_components/follow-up-button";
 import { DocumentsList } from "./_components/documents-list";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
+import { DoctorConsultationChatSection } from "./_components/consultation-chat-section";
 
 export const dynamic = "force-dynamic";
 
@@ -544,6 +545,26 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               postEndpoint={`/api/doctor/appointments/${appointment.id}/internal-messages`}
               currentRole="DOCTOR"
             />
+          </section>
+
+          <section className="gh-card p-6">
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 16,
+                fontWeight: 800,
+              }}
+            >
+              Patient chat
+            </h3>
+            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Direct channel with the patient. Chat auto-locks 24h after
+              the appointment completes — you can re-open it here.
+            </p>
+            <div className="mt-4">
+              <DoctorConsultationChatSection appointmentId={appointment.id} />
+            </div>
           </section>
         </aside>
       </div>

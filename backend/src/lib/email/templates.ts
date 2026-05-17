@@ -196,6 +196,29 @@ Open it 5 minutes early to test camera + mic. Reply to this email if you need to
   });
 }
 
+export async function sendContactFormEmail(opts: {
+  to: string;
+  senderName: string;
+  senderEmail: string;
+  subject: string;
+  message: string;
+}) {
+  return sendEmail({
+    to: opts.to,
+    replyTo: opts.senderEmail,
+    subject: `Contact form: ${opts.subject}`,
+    text: `New contact form submission\n\nFrom: ${opts.senderName} <${opts.senderEmail}>\nSubject: ${opts.subject}\n\n${opts.message}\n\n---\nReply directly to this email to respond to the sender.`,
+    html: wrapHtml(
+      "New contact form message",
+      `<p><strong>From:</strong> ${escapeHtml(opts.senderName)} &lt;<a href="mailto:${escapeHtml(opts.senderEmail)}">${escapeHtml(opts.senderEmail)}</a>&gt;</p>
+       <p><strong>Subject:</strong> ${escapeHtml(opts.subject)}</p>
+       <hr style="margin:16px 0;border:0;border-top:1px solid #E5E5E3;" />
+       <div style="white-space:pre-wrap;line-height:1.6;">${escapeHtml(opts.message)}</div>
+       <p style="margin-top:24px;font-size:13px;color:#737373;">Reply directly to this email to respond to the sender.</p>`,
+    ),
+  });
+}
+
 export async function sendBookingConfirmationEmail(opts: {
   to: string;
   fullName: string;

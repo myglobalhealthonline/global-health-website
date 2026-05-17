@@ -419,10 +419,13 @@ export async function updateAppointmentStatus(
 
     assertValidStatusTransition(current.status, status);
 
+    const completedAtClause =
+      status === "COMPLETED" ? ', "consultationCompletedAt" = NOW()' : "";
+
     const rows = await prisma.$queryRawUnsafe<AppointmentRecord[]>(
       `
         UPDATE "Appointment"
-        SET "status" = $2, "updatedAt" = NOW()
+        SET "status" = $2, "updatedAt" = NOW()${completedAtClause}
         WHERE "id" = $1
         RETURNING
           "id",

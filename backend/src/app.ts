@@ -50,6 +50,7 @@ import reviewsConfigRoute from "./routes/reviews-config.route.js";
 import adminSettingsRoute from "./routes/admin-settings.route.js";
 import remindersRoute from "./routes/reminders.route.js";
 import chatRoute from "./routes/chat.route.js";
+import consultationChatRoute from "./routes/consultation-chat.route.js";
 import { env } from "./config/env.js";
 
 export async function buildApp() {
@@ -175,6 +176,7 @@ export async function buildApp() {
   await app.register(adminSettingsRoute);
   await app.register(remindersRoute);
   await app.register(chatRoute);
+  await app.register(consultationChatRoute);
 
   return app;
 }

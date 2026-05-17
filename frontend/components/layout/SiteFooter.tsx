@@ -44,10 +44,17 @@ export function SiteFooter({ siteName }: { siteName: string }) {
     { label: "My account", href: "/account" },
   ];
 
+  const companyLinks = [
+    { label: "Blog", href: "/blog" },
+    { label: "Contact us", href: "/contact" },
+    { label: "About", href: "/about" },
+  ];
+
   const groups = [
     { h: "Care", items: careLinks },
     { h: "Clinics", items: clinicsLinks },
     { h: "Account", items: accountLinks },
+    { h: "Company", items: companyLinks },
   ];
 
   return (
@@ -172,12 +179,15 @@ export function SiteFooter({ siteName }: { siteName: string }) {
 
       <style>{`
         .gh-footer-grid {
-          grid-template-columns: 1.5fr repeat(3, 1fr);
+          grid-template-columns: 1.5fr repeat(4, 1fr);
         }
-        @media (max-width: 900px) {
+        @media (max-width: 1100px) {
+          .gh-footer-grid { grid-template-columns: 1fr 1fr 1fr; }
+        }
+        @media (max-width: 700px) {
           .gh-footer-grid { grid-template-columns: 1fr 1fr; }
         }
-        @media (max-width: 600px) {
+        @media (max-width: 480px) {
           .gh-footer-grid { grid-template-columns: 1fr; }
         }
       `}</style>

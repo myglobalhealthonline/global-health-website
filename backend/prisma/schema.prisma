@@ -639,6 +639,15 @@ model Appointment {
   user                      User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
   payments                  Payment[]
   messages                  Message[]
+  /// Patient ↔ doctor consultation chat. Separate thread from the
+  /// patient ↔ admin `messages` above. Open by default; auto-locks
+  /// 24h after `consultationCompletedAt` unless doctor re-opens.
+  chatMessages              ConsultationMessage[]
+  /// Set when the appointment moves to COMPLETED status. Used to
+  /// compute the 24h chat-window expiry on the consultation chat.
+  consultationCompletedAt   DateTime?
+  /// Doctor can re-open the consultation chat after the 24h window.
+  chatReopenedByDoctor      Boolean               @default(false)
   createdAt                 DateTime              @default(now())
   updatedAt                 DateTime              @updatedAt
 }
@@ -663,6 +672,13 @@ model NewsletterSubscriber {
 enum MessageAuthorRole {
   PATIENT
   ADMIN
+}
+
+/// Author side for the patient ↔ doctor consultation chat. Separate from
+/// `MessageAuthorRole` (patient ↔ admin) so queries never mix the threads.
+enum ChatAuthorRole {
+  PATIENT
+  DOCTOR
 }
 
 model Message {
@@ -1112,4 +1128,30 @@ model AppointmentDocument {
 
   @@index([appointmentId, createdAt])
   @@index([doctorId, createdAt])
+}
+
+/// Patient ↔ doctor chat thread per appointment. Open from booking
+/// creation; auto-locks 24h after `Appointment.consultationCompletedAt`
+/// (set when status moves to COMPLETED). Doctor can re-open via PATCH.
+///
+/// File attachments (PDFs, images) are stored the same way as
+/// `AppointmentDocument` — directly in S3 under a patient-scoped key
+/// prefix. `body` is nullable so a message can be attachment-only.
+model ConsultationMessage {
+  id            String         @id @default(cuid())
+  appointmentId String
+  appointment   Appointment    @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  authorRole    ChatAuthorRole
+  authorUserId  String?
+  body          String?
+  /// S3 key for an attached file. Null when message is text-only.
+  storageKey    String?
+  fileName      String?
+  mimeType      String?
+  byteSize      Int?
+  readByPatient Boolean        @default(false)
+  readByDoctor  Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+
+  @@index([appointmentId, createdAt])
 }

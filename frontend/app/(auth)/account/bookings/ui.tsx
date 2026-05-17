@@ -6,6 +6,12 @@ import { CalendarDays, ArrowRight, ClipboardList, Video, Clock, MessageCircle } 
 import type { AccountAppointment } from "@/lib/api/account-appointments-api";
 import { ChatThread } from "@/components/chat/ChatThread";
 import { fetchPatientMessages, postPatientMessage } from "@/lib/api/chat-api";
+import { ConsultationChat } from "@/components/chat/ConsultationChat";
+import {
+  fetchPatientChat,
+  postPatientMessage as postPatientChatMessage,
+  uploadPatientChatFile,
+} from "@/lib/api/consultation-chat-api";
 
 type BookingsShellProps = {
   items: AccountAppointment[];
@@ -60,6 +66,7 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
   // background fetch every 10s regardless of how many bookings the
   // patient has in their history.
   const [openChatId, setOpenChatId] = useState<string | null>(null);
+  const [openConsultChatId, setOpenConsultChatId] = useState<string | null>(null);
 
   if (unavailableMessage) {
     return (
@@ -158,8 +165,8 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
             </div>
           ) : null}
 
-          {/* Per-card chat toggle. Only one thread can be open at once. */}
-          <div className="mt-3">
+          {/* Admin chat + doctor chat toggles */}
+          <div className="mt-3 flex flex-wrap gap-3">
             <button
               type="button"
               onClick={() =>
@@ -168,20 +175,43 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
             >
               <MessageCircle className="size-4" aria-hidden />
-              {openChatId === item.id ? "Hide messages" : "Message the clinic"}
+              {openChatId === item.id ? "Hide clinic messages" : "Message the clinic"}
             </button>
 
-            {openChatId === item.id ? (
-              <div className="mt-3">
-                <ChatThread
-                  appointmentId={item.id}
-                  viewerRole="PATIENT"
-                  fetcher={fetchPatientMessages}
-                  poster={postPatientMessage}
-                />
-              </div>
-            ) : null}
+            <button
+              type="button"
+              onClick={() =>
+                setOpenConsultChatId((current) => (current === item.id ? null : item.id))
+              }
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+            >
+              <MessageCircle className="size-4" aria-hidden />
+              {openConsultChatId === item.id ? "Hide doctor chat" : "Chat with your doctor"}
+            </button>
           </div>
+
+          {openChatId === item.id ? (
+            <div className="mt-3">
+              <ChatThread
+                appointmentId={item.id}
+                viewerRole="PATIENT"
+                fetcher={fetchPatientMessages}
+                poster={postPatientMessage}
+              />
+            </div>
+          ) : null}
+
+          {openConsultChatId === item.id ? (
+            <div className="mt-3">
+              <ConsultationChat
+                appointmentId={item.id}
+                viewerRole="PATIENT"
+                fetcher={fetchPatientChat}
+                poster={postPatientChatMessage}
+                fileUploader={uploadPatientChatFile}
+              />
+            </div>
+          ) : null}
         </article>
       ))}
     </div>
