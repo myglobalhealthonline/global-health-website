@@ -5,6 +5,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { notifyAdmins } from "../modules/notifications/notify.service.js";
 
 /**
  * Forms management — reusable templates the doctor builds for intake /
@@ -296,6 +297,9 @@ const formsRoute: FastifyPluginAsync = async (app) => {
           entityId: row.id,
           metadata: { appointmentId: appt.id, templateId: template.id },
           request,
+        }).catch(() => {});
+        notifyAdmins("FORM_SUBMITTED", {
+          appointmentId: appt.id,
         }).catch(() => {});
         return reply.status(201).send(
           okResponse({

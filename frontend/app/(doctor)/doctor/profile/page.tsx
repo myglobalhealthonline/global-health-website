@@ -15,6 +15,11 @@ export default async function DoctorProfilePage() {
     );
   }
   const { doctor } = result.data;
+  const primaryCountry = doctor.country;
+  const additional = doctor.additionalCountries
+    .map((row) => row.country)
+    .filter((c) => c.code !== primaryCountry.code);
+  const specialties = doctor.specialties.map((s) => s.specialty);
 
   return (
     <>
@@ -30,6 +35,73 @@ export default async function DoctorProfilePage() {
           admin-managed — ping support if anything there needs to change.
         </p>
       </header>
+
+      {/* Admin-set context: primary country + additional country
+          listings + categories the doctor is approved for. Surface
+          these so the doctor sees at a glance what they can consult
+          on, even though the values themselves stay admin-only. */}
+      <section className="gh-card mb-4 p-6">
+        <h3
+          className="m-0 text-[var(--color-text-primary)]"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: 16,
+            fontWeight: 800,
+          }}
+        >
+          Practice context
+        </h3>
+        <dl className="mt-3 grid gap-3 sm:grid-cols-3">
+          <div>
+            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+              Primary country
+            </dt>
+            <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">
+              {primaryCountry.name} ({primaryCountry.code.toUpperCase()})
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+              Also listed in
+            </dt>
+            <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">
+              {additional.length === 0
+                ? "—"
+                : additional
+                    .map((c) => `${c.name} (${c.code.toUpperCase()})`)
+                    .join(", ")}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+              URL slug
+            </dt>
+            <dd className="mt-1 text-[14px] font-mono text-[var(--color-text-primary)]">
+              /{primaryCountry.slug}/{primaryCountry.defaultLocale.toLowerCase()}/doctors/{doctor.slug}
+            </dd>
+          </div>
+        </dl>
+        <dl className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div>
+            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+              Categories
+            </dt>
+            <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">
+              {specialties.length === 0
+                ? "None assigned"
+                : specialties.map((s) => s.name).join(", ")}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+              Consultation types
+            </dt>
+            <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">
+              General · Specialist · Prescription · Follow-up
+            </dd>
+          </div>
+        </dl>
+      </section>
 
       <DoctorProfileEditForm
         initial={{

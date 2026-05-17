@@ -60,10 +60,18 @@ export const scheduleAppointmentBodySchema = z
       .union([z.string().datetime({ offset: true }), z.null()])
       .optional(),
     meetingUrl: z.union([meetingUrlSchema, z.literal(""), z.null()]).optional(),
+    /**
+     * Optional Doctor.id to assign / reassign / clear. Once set, the
+     * doctor portal at /doctor scopes queries by `doctorId = self`.
+     */
+    doctorId: z.union([z.string().trim().min(8).max(40), z.null()]).optional(),
   })
   .refine(
-    (data) => data.scheduledAt !== undefined || data.meetingUrl !== undefined,
-    { message: "Provide at least scheduledAt or meetingUrl" },
+    (data) =>
+      data.scheduledAt !== undefined ||
+      data.meetingUrl !== undefined ||
+      data.doctorId !== undefined,
+    { message: "Provide at least scheduledAt, meetingUrl, or doctorId" },
   );
 
 export type ScheduleAppointmentBody = z.infer<typeof scheduleAppointmentBodySchema>;

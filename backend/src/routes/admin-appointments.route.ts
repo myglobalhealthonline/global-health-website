@@ -7,9 +7,11 @@ import {
   UnrecognizedAppointmentStatusError,
   updateAppointmentStatus,
 } from "../modules/appointments/appointments.service.js";
+import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { sendAppointmentScheduledEmail } from "../lib/email/templates.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { notifyDoctor } from "../modules/notifications/notify.service.js";
 import {
   adminAppointmentsQuerySchema,
   appointmentIdParamsSchema,
@@ -101,15 +103,31 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
           ? null
           : new Date(body.data.scheduledAt);
 
+    // Doctor assignment goes through the same endpoint to keep the
+    // "schedule call" admin form a single round-trip. `null` clears the
+    // assignment; `undefined` leaves it alone.
+    const doctorIdInput = body.data.doctorId ?? undefined;
+
     try {
       // Snapshot the pre-update values so we can detect whether the slot or
       // URL actually changed. Without this guard the email re-fires every
       // time the admin saves the form, even on unrelated edits.
       const before = await getAppointmentById(params.data.id);
+      // Also snapshot the previous doctor assignment so we can fire a
+      // notification when the doctor changes (not on every save).
+      const beforeDoctorId = before
+        ? (
+            await prisma.appointment.findUnique({
+              where: { id: params.data.id },
+              select: { doctorId: true },
+            })
+          )?.doctorId ?? null
+        : null;
 
       const appointment = await scheduleAppointment(params.data.id, {
         scheduledAt: scheduledAtInput,
         meetingUrl: meetingUrlInput,
+        doctorId: doctorIdInput,
       });
       if (!appointment) {
         return reply.status(404).send(errorResponse("Appointment not found"));
@@ -134,6 +152,22 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         }).catch((emailErr) => {
           app.log.warn({ err: emailErr }, "Failed to send schedule email — continuing");
         });
+      }
+
+      // Fire APPOINTMENT_ASSIGNED to the doctor when the doctorId
+      // transitioned from null/different to a new value. Skip when the
+      // admin saved an unrelated edit (no doctor change).
+      if (
+        doctorIdInput !== undefined &&
+        doctorIdInput !== null &&
+        doctorIdInput !== beforeDoctorId
+      ) {
+        notifyDoctor(doctorIdInput, "APPOINTMENT_ASSIGNED", {
+          appointmentId: appointment.id,
+          snippet: `${appointment.consultationType} · ${appointment.fullName}`,
+        }).catch((err) =>
+          app.log.warn({ err }, "notifyDoctor failed (appointment assigned)"),
+        );
       }
 
       return okResponse({ appointment, emailed: shouldEmail }, "Appointment scheduled");

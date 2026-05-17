@@ -114,6 +114,40 @@ export async function fetchDoctorPatients() {
   return doctorRequest<{ items: DoctorPatient[] }>("/api/doctor/patients");
 }
 
+export type DoctorPatientDetail = {
+  patient: {
+    email: string;
+    fullName: string;
+    phone: string | null;
+    countryCode: string;
+    dateOfBirth: string | null;
+    firstSeen: string;
+    appointmentCount: number;
+    signedConsultCount: number;
+  };
+  appointments: Array<{
+    id: string;
+    consultationType: string;
+    countryCode: string;
+    status: string;
+    paymentStatus: string;
+    scheduledAt: string | null;
+    meetingUrl: string | null;
+    createdAt: string;
+    consultation: {
+      id: string;
+      status: "DRAFT" | "SIGNED";
+      signedAt: string | null;
+    } | null;
+  }>;
+};
+
+export async function fetchDoctorPatientDetail(email: string) {
+  return doctorRequest<DoctorPatientDetail>(
+    `/api/doctor/patients/${encodeURIComponent(email)}`,
+  );
+}
+
 export type ConsultationDto = {
   id: string;
   appointmentId: string;
@@ -242,7 +276,7 @@ export async function fetchDoctorConsultationServices(consultationId: string) {
   );
 }
 
-// Invoice
+// Invoice (per-appointment, embedded on workspace)
 export type DoctorInvoiceLine = {
   id: string;
   label: string;
@@ -272,6 +306,41 @@ export async function fetchDoctorInvoice(appointmentId: string) {
   return doctorRequest<{ invoice: DoctorInvoiceDto }>(
     `/api/doctor/appointments/${appointmentId}/invoice`,
   );
+}
+
+// Invoices index
+export type DoctorInvoiceRow = {
+  id: string;
+  fullName: string;
+  email: string;
+  consultationType: string;
+  countryCode: string;
+  status: string;
+  paymentStatus: string;
+  amountCents: number | null;
+  currencyCode: string | null;
+  paidAt: string | null;
+  scheduledAt: string | null;
+  createdAt: string;
+};
+
+export async function fetchDoctorInvoicesList(query?: Record<string, string | undefined>) {
+  const params = new URLSearchParams();
+  if (query) {
+    for (const [k, v] of Object.entries(query)) {
+      if (v !== undefined && v !== "") params.set(k, v);
+    }
+  }
+  const qs = params.toString();
+  return doctorRequest<{
+    items: DoctorInvoiceRow[];
+    pagination: {
+      page: number;
+      pageSize: number;
+      total: number;
+      totalPages: number;
+    };
+  }>(qs ? `/api/doctor/invoices?${qs}` : "/api/doctor/invoices");
 }
 
 // Reports

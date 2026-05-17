@@ -5,6 +5,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { notifyAdmins } from "../modules/notifications/notify.service.js";
 
 /**
  * Exam-result endpoints, doctor-only (MVP).
@@ -108,6 +109,10 @@ const examResultsRoute: FastifyPluginAsync = async (app) => {
           entityId: row.id,
           metadata: { appointmentId: appt.id, testName: row.testName },
           request,
+        }).catch(() => {});
+        notifyAdmins("EXAM_LOGGED", {
+          appointmentId: appt.id,
+          snippet: row.testName,
         }).catch(() => {});
         return reply.status(201).send(
           okResponse({

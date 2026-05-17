@@ -5,6 +5,7 @@ import {
   fetchDoctorConsultationServices,
   fetchDoctorExams,
   fetchDoctorFormSubmissions,
+  fetchDoctorFormTemplates,
   fetchDoctorInternalMessages,
   fetchDoctorInvoice,
 } from "@/lib/api/doctor-api";
@@ -12,6 +13,8 @@ import { ConsultationForm } from "./_components/consultation-form";
 import { ExamResultsList } from "./_components/exam-results-list";
 import { ServicesUsedList } from "./_components/services-used-list";
 import { ShareConsultationButton } from "./_components/share-button";
+import { AppointmentActions } from "./_components/appointment-actions";
+import { FormFillSection } from "./_components/form-fill";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 
 export const dynamic = "force-dynamic";
@@ -29,14 +32,21 @@ type PageProps = {
  */
 export default async function DoctorAppointmentDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const [consultRes, examsRes, messagesRes, invoiceRes, submissionsRes] =
-    await Promise.all([
-      fetchDoctorConsultation(id),
-      fetchDoctorExams(id),
-      fetchDoctorInternalMessages(id),
-      fetchDoctorInvoice(id),
-      fetchDoctorFormSubmissions(id),
-    ]);
+  const [
+    consultRes,
+    examsRes,
+    messagesRes,
+    invoiceRes,
+    submissionsRes,
+    templatesRes,
+  ] = await Promise.all([
+    fetchDoctorConsultation(id),
+    fetchDoctorExams(id),
+    fetchDoctorInternalMessages(id),
+    fetchDoctorInvoice(id),
+    fetchDoctorFormSubmissions(id),
+    fetchDoctorFormTemplates(),
+  ]);
 
   if (!consultRes.ok) {
     return (
@@ -59,6 +69,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const messages = messagesRes.ok ? messagesRes.data.items : [];
   const invoice = invoiceRes.ok ? invoiceRes.data.invoice : null;
   const submissions = submissionsRes.ok ? submissionsRes.data.items : [];
+  const templates = templatesRes.ok ? templatesRes.data.items : [];
   const signed = consultation?.status === "SIGNED";
   // Services-used are scoped by consultationId, so we can only fetch
   // them once the row exists. Hit the API conditionally to skip a 404
@@ -120,6 +131,28 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
         style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
       >
         <div className="grid gap-4">
+          <section className="gh-card p-6">
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 16,
+                fontWeight: 800,
+              }}
+            >
+              Meeting & status
+            </h3>
+            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Paste the video link the patient will use, and move the
+              appointment forward as you progress.
+            </p>
+            <AppointmentActions
+              appointmentId={appointment.id}
+              initialMeetingUrl={appointment.meetingUrl}
+              initialStatus={appointment.status}
+            />
+          </section>
+
           <section className="gh-card p-6">
             <div className="flex items-center justify-between gap-3">
               <h3
@@ -220,6 +253,24 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                 )}
               </div>
             </div>
+          </section>
+
+          <section className="gh-card p-6">
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 16,
+                fontWeight: 800,
+              }}
+            >
+              Forms
+            </h3>
+            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Fill an intake / consent / follow-up form on the
+              patient&apos;s behalf. New submissions show below.
+            </p>
+            <FormFillSection appointmentId={appointment.id} templates={templates} />
           </section>
 
           {submissions.length > 0 ? (

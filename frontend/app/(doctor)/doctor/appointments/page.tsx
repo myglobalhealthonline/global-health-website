@@ -19,6 +19,9 @@ export default async function DoctorAppointmentsPage({
   const sp = searchParams ? await searchParams : {};
   const status = pick(sp, "status");
   const search = pick(sp, "search");
+  const from = pick(sp, "from");
+  const to = pick(sp, "to");
+  const consultationType = pick(sp, "consultationType");
   const page = Number(pick(sp, "page") ?? "1") || 1;
 
   const result = await fetchDoctorAppointments({
@@ -26,6 +29,9 @@ export default async function DoctorAppointmentsPage({
     pageSize: "25",
     ...(status ? { status } : {}),
     ...(search ? { search } : {}),
+    ...(from ? { from } : {}),
+    ...(to ? { to } : {}),
+    ...(consultationType ? { consultationType } : {}),
   });
 
   return (
@@ -40,8 +46,8 @@ export default async function DoctorAppointmentsPage({
       </header>
 
       <div className="gh-card mb-4 p-4">
-        <form className="flex flex-wrap items-end gap-3">
-          <label className="flex flex-col gap-1">
+        <form className="grid grid-cols-1 gap-3 sm:grid-cols-6">
+          <label className="flex flex-col gap-1 sm:col-span-2">
             <span className="gh-field-label">Search</span>
             <input
               name="search"
@@ -61,9 +67,50 @@ export default async function DoctorAppointmentsPage({
               <option value="CANCELLED">Cancelled</option>
             </select>
           </label>
-          <button type="submit" className="gh-btn gh-btn-primary text-sm">
-            Apply
-          </button>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">Type</span>
+            <select
+              name="consultationType"
+              defaultValue={consultationType ?? ""}
+              className="gh-select"
+            >
+              <option value="">Any</option>
+              <option value="general">General</option>
+              <option value="specialist">Specialist</option>
+              <option value="prescription">Prescription</option>
+              <option value="health-test">Health test</option>
+              <option value="follow-up">Follow-up</option>
+            </select>
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">From</span>
+            <input
+              type="date"
+              name="from"
+              defaultValue={from ?? ""}
+              className="gh-input"
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">To</span>
+            <input
+              type="date"
+              name="to"
+              defaultValue={to ?? ""}
+              className="gh-input"
+            />
+          </label>
+          <div className="sm:col-span-6 flex items-center gap-2">
+            <button type="submit" className="gh-btn gh-btn-primary text-sm">
+              Apply
+            </button>
+            <Link
+              href="/doctor/appointments"
+              className="gh-btn gh-btn-soft text-sm"
+            >
+              Reset
+            </Link>
+          </div>
         </form>
       </div>
 

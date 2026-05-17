@@ -24,7 +24,12 @@ export type NotificationPayload = {
  * so unbounded fan-out can't happen.
  */
 export async function notifyAdmins(
-  type: "APPOINTMENT_ASSIGNED" | "INTERNAL_MESSAGE" | "CONSULT_SIGNED",
+  type:
+    | "APPOINTMENT_ASSIGNED"
+    | "INTERNAL_MESSAGE"
+    | "CONSULT_SIGNED"
+    | "EXAM_LOGGED"
+    | "FORM_SUBMITTED",
   payload: NotificationPayload,
 ): Promise<void> {
   const admins = await prisma.user.findMany({

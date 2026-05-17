@@ -46,6 +46,15 @@ const listAppointmentsQuerySchema = z.object({
     .max(120)
     .optional()
     .transform((v) => (v === "" || v === undefined ? undefined : v)),
+  from: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "from must be YYYY-MM-DD")
+    .optional(),
+  to: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "to must be YYYY-MM-DD")
+    .optional(),
+  consultationType: z.string().trim().min(1).max(64).optional(),
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(100).default(25),
 });
@@ -159,16 +168,44 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         .status(400)
         .send(errorResponse("Invalid query", query.error.flatten()));
     }
-    const { status, search, page, pageSize } = query.data;
+    const { status, search, from, to, consultationType, page, pageSize } = query.data;
+    const fromUtc = from ? new Date(`${from}T00:00:00.000Z`) : undefined;
+    const toUtc = to ? new Date(`${to}T23:59:59.999Z`) : undefined;
     try {
       const where = {
         doctorId: auth.doctorId,
         ...(status ? { status } : {}),
+        ...(consultationType ? { consultationType } : {}),
         ...(search
           ? {
               OR: [
                 { fullName: { contains: search, mode: "insensitive" as const } },
                 { email: { contains: search, mode: "insensitive" as const } },
+              ],
+            }
+          : {}),
+        // Filter on scheduledAt when present, fall back to createdAt
+        // so a brand-new unscheduled booking still shows in "today".
+        ...(fromUtc || toUtc
+          ? {
+              OR: [
+                {
+                  scheduledAt: {
+                    ...(fromUtc ? { gte: fromUtc } : {}),
+                    ...(toUtc ? { lte: toUtc } : {}),
+                  },
+                },
+                {
+                  AND: [
+                    { scheduledAt: null },
+                    {
+                      createdAt: {
+                        ...(fromUtc ? { gte: fromUtc } : {}),
+                        ...(toUtc ? { lte: toUtc } : {}),
+                      },
+                    },
+                  ],
+                },
               ],
             }
           : {}),

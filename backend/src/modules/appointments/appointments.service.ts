@@ -566,6 +566,7 @@ export async function scheduleAppointment(
   input: {
     scheduledAt?: Date | null;
     meetingUrl?: string | null;
+    doctorId?: string | null;
   },
 ): Promise<AdminAppointmentDetail | null> {
   const sets: string[] = [];
@@ -577,6 +578,10 @@ export async function scheduleAppointment(
   if (input.meetingUrl !== undefined) {
     args.push(input.meetingUrl);
     sets.push(`"meetingUrl" = $${args.length}`);
+  }
+  if (input.doctorId !== undefined) {
+    args.push(input.doctorId);
+    sets.push(`"doctorId" = $${args.length}`);
   }
   if (sets.length === 0) {
     return getAppointmentById(id);

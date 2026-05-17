@@ -10,6 +10,7 @@ import {
   BarChart3,
   FileText,
   Bell,
+  Receipt,
 } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { fetchDoctorNotifications } from "@/lib/api/doctor-api";
@@ -57,6 +58,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     { href: "/doctor/appointments", label: "Appointments", icon: Calendar, badge: 0 },
     { href: "/doctor/patients", label: "Patients", icon: Users, badge: 0 },
     { href: "/doctor/forms", label: "Forms", icon: FileText, badge: 0 },
+    { href: "/doctor/invoices", label: "Invoices", icon: Receipt, badge: 0 },
     { href: "/doctor/reports", label: "Reports", icon: BarChart3, badge: 0 },
     {
       href: "/doctor/notifications",

@@ -5,6 +5,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import { notifyAdmins } from "../modules/notifications/notify.service.js";
 
 /**
  * Clinical consultation endpoints, doctor-only.
@@ -223,6 +224,10 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
           entityId: consultation.id,
           metadata: { appointmentId: appt.id },
           request,
+        }).catch(() => {});
+        notifyAdmins("CONSULT_SIGNED", {
+          appointmentId: appt.id,
+          snippet: `${appt.fullName} · consult signed`,
         }).catch(() => {});
         return okResponse(
           {
