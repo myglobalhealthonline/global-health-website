@@ -76,6 +76,9 @@ export type CountryDoctorCard = {
   languages: string[];
   specialties: string[];
   imageSrc?: string;
+  /** Service IDs the doctor is bookable for, in admin-defined sort
+   *  order. Empty array means no current ServiceDoctor assignments. */
+  assignedServiceIds: string[];
 };
 
 function readSpecialtyName(row: unknown): string | null {
@@ -194,6 +197,15 @@ export const getCountryDoctors = cache(async (
     const languages = Array.isArray(r.languages)
       ? r.languages.filter((v): v is string => typeof v === "string")
       : [];
+    const assignedServiceIds: string[] = [];
+    const assignments = r.assignedServices;
+    if (Array.isArray(assignments)) {
+      for (const a of assignments) {
+        if (!a || typeof a !== "object") continue;
+        const id = (a as { serviceId?: unknown }).serviceId;
+        if (typeof id === "string" && id.length > 0) assignedServiceIds.push(id);
+      }
+    }
     out.push({
       id: r.id,
       slug: r.slug,
@@ -203,6 +215,7 @@ export const getCountryDoctors = cache(async (
       languages,
       specialties,
       imageSrc: pickImagePath(row),
+      assignedServiceIds,
     });
   }
   return out;
