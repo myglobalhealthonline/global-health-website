@@ -24,9 +24,7 @@ import { revalidatePath } from "next/cache";
 import {
   Calendar,
   FileText,
-  Globe2,
   Heart,
-  Layers,
   PillBottle,
   Stethoscope,
   TestTube,
@@ -63,34 +61,21 @@ type FeatureMeta = {
 
 // Source of truth for the toggle table. Order = display order; sidebar
 // uses its own ORDER table but they should stay roughly aligned.
+//
+// Three legacy keys (`country-home`, `country-content`, `services`) are
+// intentionally not in the table any more — the sidebar entries that
+// fed them were removed (Country home/Content were redirects to
+// /admin/pages, and Services was a cross-kind listing already covered
+// by the kind-specific tabs). The keys can still appear in
+// Country.enabledFeatures on legacy rows; the backend doesn't reject
+// them and nothing renders for them, so they're inert.
 const FEATURE_META: FeatureMeta[] = [
-  {
-    key: "country-home",
-    label: "Country home",
-    description: "Hero, doctor spotlight, trust badges, and CTA strip on the public country landing page.",
-    icon: Globe2,
-    href: "/admin/country-home",
-  },
-  {
-    key: "country-content",
-    label: "Country content",
-    description: "Per-country sections: FAQs, badges, partner logos.",
-    icon: FileText,
-    href: "/admin/country-content",
-  },
   {
     key: "pages",
     label: "Page content",
     description: "Editorial copy for public country pages (Health tests, Prescriptions, …).",
     icon: FileText,
     href: "/admin/pages",
-  },
-  {
-    key: "services",
-    label: "Services",
-    description: "Catalog of bookable services for this country.",
-    icon: Layers,
-    href: "/admin/services",
   },
   {
     key: "general-consultations",

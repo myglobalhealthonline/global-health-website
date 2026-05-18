@@ -60,11 +60,17 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/audit-log", label: "Audit log" },
     { href: "/admin/settings", label: "Settings" },
     // Country-scoped — "Pages" first as the visibility controller.
+    // Three sidebar entries were removed as redundant:
+    //   - /admin/services was a cross-kind catalogue listing; General
+    //     / Specialist / Online prescriptions / Health tests cover the
+    //     same rows filtered by kind.
+    //   - /admin/country-home and /admin/country-content were thin
+    //     redirects to /admin/pages with a filter pre-applied. The
+    //     active-tab highlight ended up on "Page content" after the
+    //     redirect, so clicking them looked broken. Page content +
+    //     URL-level filters are sufficient.
     { href: "/admin/country-features", label: "Pages" },
-    { href: "/admin/country-home", label: "Country home" },
-    { href: "/admin/country-content", label: "Country content" },
     { href: "/admin/pages", label: "Page content" },
-    { href: "/admin/services", label: "Services" },
     { href: "/admin/general-consultations", label: "General consultations" },
     { href: "/admin/specialist-consultations", label: "Specialist consultations" },
     { href: "/admin/online-prescriptions", label: "Online prescriptions" },
