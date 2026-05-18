@@ -3,6 +3,23 @@
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "./CartContext";
+import { getCountryByCode, type CountryCode } from "@/data/countries";
+import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
+
+/**
+ * Build the canonical cart URL for the cart's active country. Falls
+ * back to the legacy `/cart` redirect when the cart hasn't fixed a
+ * country yet (rare — cart only mints on first add).
+ */
+function buildCartHref(cartCountryCode: string): string {
+  const config = cartCountryCode
+    ? getCountryByCode(cartCountryCode.toLowerCase() as CountryCode)
+    : null;
+  if (!config) return "/cart";
+  const slug = COUNTRY_CODE_TO_SLUG[config.code] ?? config.code;
+  const lang = (config.defaultLocale ?? "en").toLowerCase();
+  return `/${slug}/${lang}/cart`;
+}
 
 /**
  * Header cart icon — shows item count badge.
@@ -17,9 +34,10 @@ export function CartIcon({
 }) {
   const { cart } = useCart();
   const count = cart.itemCount;
+  const href = buildCartHref(cart.countryCode);
   return (
     <Link
-      href="/cart"
+      href={href}
       aria-label={`Cart (${count} item${count === 1 ? "" : "s"})`}
       className={`relative inline-flex size-9 items-center justify-center rounded-full text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)] ${className ?? ""}`}
       style={style}

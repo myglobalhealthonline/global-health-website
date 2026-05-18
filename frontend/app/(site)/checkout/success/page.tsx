@@ -1,75 +1,39 @@
-import Link from "next/link";
-import { CheckCircle2 } from "lucide-react";
-import { fetchAccountOrder } from "@/lib/api/cart-server";
-import { formatPrice } from "@/lib/format-currency";
+"use client";
 
-export const dynamic = "force-dynamic";
+import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCart } from "@/components/cart/CartContext";
+import { getCountryByCode, type CountryCode } from "@/data/countries";
+import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 
-type Props = { searchParams: Promise<{ orderId?: string }> };
+/**
+ * Legacy Stripe success URL. New checkout sessions always send a
+ * country-scoped `returnTo`, but in-flight sessions before this
+ * change may still land here — bounce them to the canonical
+ * `/[country]/[lang]/checkout/success`, preserving `orderId`.
+ */
+export default function LegacyCheckoutSuccessRedirect() {
+  const router = useRouter();
+  const params = useSearchParams();
+  const { cart, loading } = useCart();
 
-export default async function CheckoutSuccessPage({ searchParams }: Props) {
-  const { orderId } = await searchParams;
-  const orderRes = orderId ? await fetchAccountOrder(orderId) : null;
-  const order = orderRes?.ok ? orderRes.data : null;
+  useEffect(() => {
+    if (loading) return;
+    const code = cart.countryCode?.toLowerCase() as CountryCode | undefined;
+    const config = code ? getCountryByCode(code) : null;
+    const qs = params?.toString();
+    if (config) {
+      const slug = COUNTRY_CODE_TO_SLUG[config.code] ?? config.code;
+      const lang = (config.defaultLocale ?? "en").toLowerCase();
+      router.replace(`/${slug}/${lang}/checkout/success${qs ? `?${qs}` : ""}`);
+    } else {
+      router.replace("/");
+    }
+  }, [loading, cart.countryCode, params, router]);
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="flex flex-col items-center text-center">
-        <div className="inline-flex size-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
-          <CheckCircle2 className="size-10" aria-hidden />
-        </div>
-        <h1 className="mt-6 text-3xl font-bold text-slate-900 sm:text-4xl">
-          Payment received
-        </h1>
-        <p className="mt-3 max-w-md text-slate-600">
-          Thanks for your order. We&apos;re processing it now — a receipt has been
-          emailed to you.
-        </p>
-      </div>
-
-      {order ? (
-        <div className="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-            Order
-          </p>
-          <p className="font-mono text-sm text-slate-900">#{order.id.slice(-8)}</p>
-
-          <ul className="mt-4 space-y-2 text-sm">
-            {order.items.map((i) => (
-              <li key={i.id} className="flex justify-between gap-3">
-                <span className="text-slate-700">
-                  {i.name} <span className="text-slate-400">× {i.quantity}</span>
-                </span>
-                <span className="font-semibold text-slate-900">
-                  {formatPrice(i.lineTotalCents, order.currencyCode)}
-                </span>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-4 flex justify-between border-t border-slate-100 pt-3 text-base">
-            <span className="font-bold">Total paid</span>
-            <span className="font-bold">
-              {formatPrice(order.totalCents, order.currencyCode)}
-            </span>
-          </div>
-        </div>
-      ) : null}
-
-      <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <Link
-          href="/account/orders"
-          className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
-        >
-          View orders
-        </Link>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-        >
-          Continue shopping
-        </Link>
-      </div>
+    <main className="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6 lg:px-8">
+      <p className="text-sm text-slate-500">Confirming your payment…</p>
     </main>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
 import type { CartItemKind } from "@/lib/api/cart-types";
@@ -25,6 +25,7 @@ export function ConsultationSlotPicker({
   slots,
 }: Props) {
   const router = useRouter();
+  const params = useParams<{ country: string; lang: string }>();
   const { add } = useCart();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +55,11 @@ export function ConsultationSlotPicker({
         setError(res.message ?? "Could not add to cart");
         return;
       }
-      router.push("/cart");
+      // Route params already carry the country/lang we're inside —
+      // keep the URL country-scoped on the cart redirect.
+      const country = params?.country ?? "";
+      const lang = params?.lang ?? "";
+      router.push(country && lang ? `/${country}/${lang}/cart` : "/cart");
     });
   }
 

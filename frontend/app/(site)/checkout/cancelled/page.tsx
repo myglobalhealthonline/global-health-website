@@ -1,35 +1,39 @@
-import Link from "next/link";
-import { XCircle } from "lucide-react";
+"use client";
 
-export default function CheckoutCancelledPage() {
+import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCart } from "@/components/cart/CartContext";
+import { getCountryByCode, type CountryCode } from "@/data/countries";
+import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
+
+/**
+ * Legacy Stripe cancel URL. New checkout sessions always send a
+ * country-scoped `returnTo`, but in-flight sessions before this
+ * change may still land here — bounce them to the canonical
+ * `/[country]/[lang]/checkout/cancelled`, preserving `orderId`.
+ */
+export default function LegacyCheckoutCancelledRedirect() {
+  const router = useRouter();
+  const params = useSearchParams();
+  const { cart, loading } = useCart();
+
+  useEffect(() => {
+    if (loading) return;
+    const code = cart.countryCode?.toLowerCase() as CountryCode | undefined;
+    const config = code ? getCountryByCode(code) : null;
+    const qs = params?.toString();
+    if (config) {
+      const slug = COUNTRY_CODE_TO_SLUG[config.code] ?? config.code;
+      const lang = (config.defaultLocale ?? "en").toLowerCase();
+      router.replace(`/${slug}/${lang}/checkout/cancelled${qs ? `?${qs}` : ""}`);
+    } else {
+      router.replace("/");
+    }
+  }, [loading, cart.countryCode, params, router]);
+
   return (
-    <main className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="flex flex-col items-center text-center">
-        <div className="inline-flex size-16 items-center justify-center rounded-full bg-amber-50 text-amber-700">
-          <XCircle className="size-10" aria-hidden />
-        </div>
-        <h1 className="mt-6 text-3xl font-bold text-slate-900 sm:text-4xl">
-          Payment cancelled
-        </h1>
-        <p className="mt-3 max-w-md text-slate-600">
-          No charge was made. Your cart is still saved — you can return whenever
-          you&apos;re ready.
-        </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/cart"
-            className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
-          >
-            Back to cart
-          </Link>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-          >
-            Keep shopping
-          </Link>
-        </div>
-      </div>
+    <main className="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6 lg:px-8">
+      <p className="text-sm text-slate-500">Returning to cart…</p>
     </main>
   );
 }

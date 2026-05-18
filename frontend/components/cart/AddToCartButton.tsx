@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { Check, Loader2, ShoppingCart } from "lucide-react";
 import { useCart } from "./CartContext";
 import type { CartItemKind } from "@/lib/api/cart-types";
+import { getCountryByCode, type CountryCode } from "@/data/countries";
+import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 
 type Props = {
   kind: CartItemKind;
@@ -23,7 +25,7 @@ export function AddToCartButton({
   className,
 }: Props) {
   const router = useRouter();
-  const { add } = useCart();
+  const { add, cart } = useCart();
   const [pending, startTransition] = useTransition();
   const [feedback, setFeedback] = useState<
     | { kind: "ok" }
@@ -74,7 +76,18 @@ export function AddToCartButton({
           {feedback.conflict === "country_mismatch" ? (
             <button
               type="button"
-              onClick={() => router.push("/cart")}
+              onClick={() => {
+                const config = cart.countryCode
+                  ? getCountryByCode(cart.countryCode.toLowerCase() as CountryCode)
+                  : null;
+                if (config) {
+                  const slug = COUNTRY_CODE_TO_SLUG[config.code] ?? config.code;
+                  const lang = (config.defaultLocale ?? "en").toLowerCase();
+                  router.push(`/${slug}/${lang}/cart`);
+                } else {
+                  router.push("/cart");
+                }
+              }}
               className="ml-2 font-semibold underline"
             >
               View cart
