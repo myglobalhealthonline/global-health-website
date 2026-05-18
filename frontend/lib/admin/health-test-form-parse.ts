@@ -23,6 +23,8 @@ type ParsedHealthTestBody = {
   extraSections: HealthTestExtraSection[] | null;
   sortOrder: number;
   isActive: boolean;
+  /** null = unlimited; 0 = sold out; 1–5 surfaces a "Only N left" badge. */
+  stock: number | null;
   seoTitle: string;
   seoDescription: string;
   legacyPath: string;
@@ -46,6 +48,15 @@ function parseLines(raw: string): string[] {
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean);
+}
+
+function parseOptionalStock(raw: string): number | null {
+  const trimmed = raw.trim();
+  if (trimmed === "") return null; // empty = unlimited
+  if (!/^\d+$/.test(trimmed)) throw new Error("Stock must be a whole number (0 or more), or leave blank for unlimited");
+  const value = Number(trimmed);
+  if (!Number.isFinite(value) || value < 0) throw new Error("Stock must be zero or greater");
+  return value;
 }
 
 function parseExtraSections(raw: string): HealthTestExtraSection[] | null {
@@ -103,6 +114,7 @@ export function parseHealthTestBodyFromForm(formData: FormData): ParseHealthTest
         extraSections: parseExtraSections(String(formData.get("extraSections") ?? "")),
         sortOrder: Number(formData.get("sortOrder") ?? 0),
         isActive: formData.get("isActive") === "on",
+        stock: parseOptionalStock(String(formData.get("stock") ?? "")),
         seoTitle: String(formData.get("seoTitle") ?? "").trim(),
         seoDescription: String(formData.get("seoDescription") ?? "").trim(),
         legacyPath: String(formData.get("legacyPath") ?? "").trim(),

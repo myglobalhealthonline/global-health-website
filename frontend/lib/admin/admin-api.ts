@@ -862,6 +862,9 @@ export type AdminHealthTestDto = {
   extraSections: AdminHealthTestExtraSectionDto[] | null;
   sortOrder: number;
   isActive: boolean;
+  /** null = unlimited inventory; 0 = sold out; 1–5 surfaces a
+   *  "Only N left" badge on the public card. */
+  stock: number | null;
   seoTitle: string | null;
   seoDescription: string | null;
   legacyPath: string | null;

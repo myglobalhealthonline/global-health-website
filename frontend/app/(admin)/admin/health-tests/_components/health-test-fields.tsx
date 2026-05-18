@@ -6,6 +6,11 @@ import {
 } from "@/lib/admin/health-test-form-parse";
 import { ManagedImageField } from "../../_components/managed-image-field";
 
+function formatStockInput(stock: number | null | undefined): string {
+  if (stock === null || stock === undefined) return "";
+  return String(stock);
+}
+
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
   initial?: AdminHealthTestDto | null;
@@ -85,74 +90,40 @@ export function HealthTestFields({ countries, initial, pinnedCountryId, countryL
         name="productImagePath"
         label="Product image"
         initialPath={initial?.productImagePath ?? ""}
-        helperText="Main image shown on the health-test card and detail page."
+        helperText="Main image shown on the health-test card. Required."
       />
-
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Gallery image paths</span>
-        <textarea
-          name="galleryImagePaths"
-          rows={4}
-          className="gh-input min-h-[6rem] min-w-0 resize-y font-mono text-sm"
-          defaultValue={formatHealthTestLines(initial?.galleryImagePaths)}
-          placeholder="/api/media/... one per line"
-        />
-      </label>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Hero button label</span>
-          <input name="heroButtonLabel" className="gh-input min-w-0" defaultValue={initial?.heroButtonLabel ?? ""} placeholder="Buy Now" />
+          <span className="gh-field-label">Stock</span>
+          <input
+            type="number"
+            min={0}
+            step={1}
+            name="stock"
+            className="gh-input min-w-0"
+            defaultValue={formatStockInput(initial?.stock)}
+            placeholder="Leave blank for unlimited"
+          />
+          <span className="text-xs text-[var(--color-text-muted)]">
+            Blank = unlimited. 0 = sold out. 1–5 surfaces an &quot;Only N left&quot; badge on the public card.
+          </span>
         </label>
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Sort order</span>
-          <input type="number" min={0} step={1} name="sortOrder" className="gh-input min-w-0" defaultValue={initial?.sortOrder ?? 0} />
+          <input
+            type="number"
+            min={0}
+            step={1}
+            name="sortOrder"
+            className="gh-input min-w-0"
+            defaultValue={initial?.sortOrder ?? 0}
+          />
+          <span className="text-xs text-[var(--color-text-muted)]">
+            Lower numbers appear first in the listing.
+          </span>
         </label>
       </div>
-
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Detail intro</span>
-        <textarea
-          name="detailIntro"
-          rows={6}
-          className="gh-input min-h-[10rem] min-w-0 resize-y"
-          defaultValue={initial?.detailIntro ?? ""}
-        />
-      </label>
-
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">What this test covers</span>
-        <textarea
-          name="whatThisTestCovers"
-          rows={8}
-          className="gh-input min-h-[12rem] min-w-0 resize-y"
-          defaultValue={formatHealthTestLines(initial?.whatThisTestCovers)}
-          placeholder="One bullet per line"
-        />
-      </label>
-
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Why get tested</span>
-        <textarea
-          name="whyGetTested"
-          rows={8}
-          className="gh-input min-h-[12rem] min-w-0 resize-y"
-          defaultValue={formatHealthTestLines(initial?.whyGetTested)}
-          placeholder="One reason per line"
-        />
-      </label>
-
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Extra sections</span>
-        <textarea
-          name="extraSections"
-          rows={10}
-          className="gh-input min-h-[14rem] min-w-0 resize-y"
-          defaultValue={formatHealthTestExtraSections(initial?.extraSections)}
-          placeholder={"Section heading\nSection body\n\nAnother heading\nAnother body"}
-        />
-        <span className="text-xs text-[var(--color-text-muted)]">Separate sections with a blank line. First line is the heading.</span>
-      </label>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-2">
@@ -160,25 +131,59 @@ export function HealthTestFields({ countries, initial, pinnedCountryId, countryL
           <input name="seoTitle" className="gh-input min-w-0" defaultValue={initial?.seoTitle ?? ""} />
         </label>
         <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Legacy path</span>
-          <input name="legacyPath" className="gh-input min-w-0 font-mono text-sm" defaultValue={initial?.legacyPath ?? ""} placeholder="/home-health-tests/slug" />
+          <span className="gh-field-label">SEO description</span>
+          <input name="seoDescription" className="gh-input min-w-0" defaultValue={initial?.seoDescription ?? ""} />
         </label>
       </div>
-
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">SEO description</span>
-        <textarea
-          name="seoDescription"
-          rows={3}
-          className="gh-input min-h-[5rem] min-w-0 resize-y"
-          defaultValue={initial?.seoDescription ?? ""}
-        />
-      </label>
 
       <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
         <input type="checkbox" name="isActive" defaultChecked={initial?.isActive ?? true} className="h-4 w-4 rounded border-[var(--color-border)]" />
         Health test active
       </label>
+
+      {/* Detail-page-only fields. The public /tests route is a listing
+          (card grid) with no per-test detail page, so these fields aren't
+          surfaced anywhere visitors can see. Kept as hidden inputs to
+          preserve whatever was previously saved across edits — that way
+          we don't blow away historical data if we later ship a detail
+          page. Drop the hidden inputs (or remove the columns from
+          schema.prisma) once it's clear the detail surface is dead for
+          good. */}
+      <input
+        type="hidden"
+        name="heroButtonLabel"
+        defaultValue={initial?.heroButtonLabel ?? ""}
+      />
+      <input
+        type="hidden"
+        name="galleryImagePaths"
+        defaultValue={formatHealthTestLines(initial?.galleryImagePaths)}
+      />
+      <input
+        type="hidden"
+        name="detailIntro"
+        defaultValue={initial?.detailIntro ?? ""}
+      />
+      <input
+        type="hidden"
+        name="whatThisTestCovers"
+        defaultValue={formatHealthTestLines(initial?.whatThisTestCovers)}
+      />
+      <input
+        type="hidden"
+        name="whyGetTested"
+        defaultValue={formatHealthTestLines(initial?.whyGetTested)}
+      />
+      <input
+        type="hidden"
+        name="extraSections"
+        defaultValue={formatHealthTestExtraSections(initial?.extraSections)}
+      />
+      <input
+        type="hidden"
+        name="legacyPath"
+        defaultValue={initial?.legacyPath ?? ""}
+      />
     </div>
   );
 }

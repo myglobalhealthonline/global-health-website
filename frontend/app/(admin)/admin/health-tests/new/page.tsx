@@ -71,6 +71,7 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
       extraSections: raw.extraSections,
       sortOrder: raw.sortOrder,
       isActive: raw.isActive,
+      stock: raw.stock,
       seoTitle: raw.seoTitle || null,
       seoDescription: raw.seoDescription || null,
       legacyPath: raw.legacyPath || null,
