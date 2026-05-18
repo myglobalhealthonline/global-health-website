@@ -200,47 +200,49 @@ export default async function AdminServicesPage({
 
       <ScopeBanner activeCountry={activeCountry} clearHref={basePath} />
 
-      {/* Service-type segmented control — always shown so users can flip
-          between general / specialist / prescriptions / health-tests
-          per the reference Screens3.jsx ServicesListScreen. */}
-      <div
-        className="mb-4 inline-flex items-center gap-1 border border-[var(--color-border)]"
-        style={{
-          padding: 4,
-          background: "var(--color-background-soft)",
-          borderRadius: 12,
-        }}
-      >
-        {SERVICE_KIND_ORDER.map((option) => {
-          const optionMeta = SERVICE_KIND_META[option];
-          const href = optionMeta.listHref;
-          const active = option === kind;
-          return (
-            <Link
-              key={option}
-              href={href}
-              className="inline-flex items-center gap-2 transition-all duration-150"
-              style={{
-                padding: "8px 14px",
-                borderRadius: 8,
-                background: active ? "var(--color-background-page)" : "transparent",
-                color: active
-                  ? "var(--color-brand-primary)"
-                  : "var(--color-text-muted)",
-                fontSize: 13,
-                fontWeight: 700,
-                boxShadow: active ? "var(--shadow-soft)" : "none",
-                textDecoration: "none",
-              }}
-            >
-              {optionMeta.label}
-            </Link>
-          );
-        })}
-      </div>
-
-      {/* Hide redundant nav from old wrappers (general-consultations etc.). */}
-      {showKindTabs ? null : null}
+      {/* Service-type segmented control — only on the generic
+          /admin/services route. The kind-specific wrappers
+          (general-consultations, specialist-consultations,
+          online-prescriptions, health-tests) pass `showKindTabs={false}`
+          because the sidebar already navigates between them; rendering
+          the same control twice was redundant. */}
+      {showKindTabs ? (
+        <div
+          className="mb-4 inline-flex items-center gap-1 border border-[var(--color-border)]"
+          style={{
+            padding: 4,
+            background: "var(--color-background-soft)",
+            borderRadius: 12,
+          }}
+        >
+          {SERVICE_KIND_ORDER.map((option) => {
+            const optionMeta = SERVICE_KIND_META[option];
+            const href = optionMeta.listHref;
+            const active = option === kind;
+            return (
+              <Link
+                key={option}
+                href={href}
+                className="inline-flex items-center gap-2 transition-all duration-150"
+                style={{
+                  padding: "8px 14px",
+                  borderRadius: 8,
+                  background: active ? "var(--color-background-page)" : "transparent",
+                  color: active
+                    ? "var(--color-brand-primary)"
+                    : "var(--color-text-muted)",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  boxShadow: active ? "var(--shadow-soft)" : "none",
+                  textDecoration: "none",
+                }}
+              >
+                {optionMeta.label}
+              </Link>
+            );
+          })}
+        </div>
+      ) : null}
 
       {errorMessage ? (
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
