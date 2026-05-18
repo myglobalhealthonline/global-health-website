@@ -107,7 +107,7 @@ export function SiteHeader({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={brandLogo?.src ?? "/logos/global-health-official.png"}
+            src={brandLogo?.src ?? "/logos/global-health-dark.png"}
             alt={brandLogo?.alt ?? siteName ?? "Global Health"}
             style={{ height: 44, width: "auto" }}
           />
