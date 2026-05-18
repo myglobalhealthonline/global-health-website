@@ -15,6 +15,9 @@ export type CartItem = {
   lineTotalCents: number;
   timeSlotId: string | null;
   doctorId: string | null;
+  /** ISO timestamp when this consultation slot reservation lapses.
+   *  Null for product items. UI polls this and shows a countdown. */
+  heldUntil: string | null;
 };
 
 export type Cart = {
@@ -24,7 +27,18 @@ export type Cart = {
   items: CartItem[];
   subtotalCents: number;
   itemCount: number;
+  /** Number of expired consultation reservations swept on the most
+   *  recent server read. UI flashes a "slot expired" toast when > 0. */
+  expiredHolds?: number;
 };
+
+/** Max units per non-consultation cart item. Matched in
+ *  backend/src/routes/cart.route.ts — keep in sync. */
+export const CART_ITEM_MAX_QTY = 5;
+
+/** Reservation TTL for consultation slots. Backend uses this when
+ *  setting heldUntil; UI uses it to show the countdown. */
+export const HOLD_TTL_MS = 10 * 60 * 1000;
 
 export type OrderListItem = {
   id: string;

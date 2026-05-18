@@ -1,14 +1,58 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowRight,
+  Clock,
+  Minus,
+  Plus,
+  ShoppingCart,
+  Trash2,
+} from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
 import { formatPrice } from "@/lib/format-currency";
+import { CART_ITEM_MAX_QTY } from "@/lib/api/cart-types";
+
+/** Live "Xm Ys" countdown until a consultation slot hold expires. */
+function useCountdown(heldUntil: string | null): string | null {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!heldUntil) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [heldUntil]);
+  if (!heldUntil) return null;
+  const ms = new Date(heldUntil).getTime() - now;
+  if (ms <= 0) return "expired";
+  const totalSec = Math.floor(ms / 1000);
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
 
 export default function CartPage() {
   const router = useRouter();
-  const { cart, loading, update, remove, clear } = useCart();
+  const { cart, loading, update, remove, clear, refresh } = useCart();
+  const [expiredFlash, setExpiredFlash] = useState(0);
+
+  // Show "slot expired" banner when server tells us it swept reservations
+  useEffect(() => {
+    if (cart.expiredHolds && cart.expiredHolds > 0) {
+      setExpiredFlash(cart.expiredHolds);
+    }
+  }, [cart.expiredHolds]);
+
+  // Auto-refresh while there are active consultation holds so the
+  // countdown stays accurate and expired items get swept.
+  useEffect(() => {
+    const hasHolds = cart.items.some((i) => i.heldUntil);
+    if (!hasHolds) return;
+    const id = setInterval(() => void refresh(), 30_000);
+    return () => clearInterval(id);
+  }, [cart.items, refresh]);
 
   if (loading) {
     return (
@@ -50,69 +94,40 @@ export default function CartPage() {
         {cart.countryCode.toUpperCase()} · {cart.currencyCode}
       </p>
 
+      {expiredFlash > 0 ? (
+        <div className="mt-4 flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2.5 text-sm text-amber-900">
+          <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
+          <span>
+            {expiredFlash} consultation reservation{expiredFlash === 1 ? "" : "s"}{" "}
+            expired (10-minute hold) and {expiredFlash === 1 ? "was" : "were"}
+            {" "}released. Pick a new slot to continue.
+          </span>
+          <button
+            type="button"
+            onClick={() => setExpiredFlash(0)}
+            className="ml-auto rounded p-0.5 text-amber-700 hover:bg-amber-100"
+            aria-label="Dismiss"
+          >
+            ×
+          </button>
+        </div>
+      ) : null}
+
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
         {/* Items */}
         <div className="rounded-xl border border-slate-200 bg-white">
           <ul className="divide-y divide-slate-100">
             {cart.items.map((item) => (
-              <li key={item.id} className="flex items-center gap-4 p-5">
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-slate-900">{item.name}</p>
-                  <p className="mt-1 text-xs text-slate-500">
-                    {item.kind === "HEALTH_TEST"
-                      ? "Health test"
-                      : item.kind === "PRESCRIPTION_SERVICE"
-                        ? "Online prescription"
-                        : "Consultation"}
-                    {" · "}
-                    {formatPrice(item.unitPriceCents, cart.currencyCode)} each
-                  </p>
-                </div>
-
-                {/* Quantity */}
-                {item.kind === "GENERAL_CONSULTATION" ||
-                item.kind === "SPECIALIST_CONSULTATION" ? (
-                  <span className="text-xs text-slate-500">1 booking</span>
-                ) : (
-                  <div className="inline-flex items-center rounded-md border border-slate-300">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        item.quantity > 1 && void update(item.id, item.quantity - 1)
-                      }
-                      disabled={item.quantity <= 1}
-                      aria-label="Decrease"
-                      className="px-2 py-1 text-slate-600 hover:bg-slate-50 disabled:opacity-40"
-                    >
-                      <Minus className="size-3.5" aria-hidden />
-                    </button>
-                    <span className="min-w-[2ch] px-2 text-center text-sm font-semibold">
-                      {item.quantity}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => void update(item.id, item.quantity + 1)}
-                      aria-label="Increase"
-                      className="px-2 py-1 text-slate-600 hover:bg-slate-50"
-                    >
-                      <Plus className="size-3.5" aria-hidden />
-                    </button>
-                  </div>
-                )}
-
-                <p className="min-w-[6rem] text-right font-bold text-slate-900">
-                  {formatPrice(item.lineTotalCents, cart.currencyCode)}
-                </p>
-
-                <button
-                  type="button"
-                  onClick={() => void remove(item.id)}
-                  aria-label={`Remove ${item.name}`}
-                  className="rounded-md p-1.5 text-rose-600 hover:bg-rose-50"
-                >
-                  <Trash2 className="size-4" aria-hidden />
-                </button>
-              </li>
+              <CartItemRow
+                key={item.id}
+                item={item}
+                currency={cart.currencyCode}
+                onIncrease={() => void update(item.id, item.quantity + 1)}
+                onDecrease={() =>
+                  item.quantity > 1 && void update(item.id, item.quantity - 1)
+                }
+                onRemove={() => void remove(item.id)}
+              />
             ))}
           </ul>
 
@@ -167,5 +182,103 @@ export default function CartPage() {
         </aside>
       </div>
     </main>
+  );
+}
+
+function CartItemRow({
+  item,
+  currency,
+  onIncrease,
+  onDecrease,
+  onRemove,
+}: {
+  item: import("@/lib/api/cart-types").CartItem;
+  currency: string;
+  onIncrease: () => void;
+  onDecrease: () => void;
+  onRemove: () => void;
+}) {
+  const isConsult =
+    item.kind === "GENERAL_CONSULTATION" ||
+    item.kind === "SPECIALIST_CONSULTATION";
+  const countdown = useCountdown(item.heldUntil);
+  const atMax = item.quantity >= CART_ITEM_MAX_QTY;
+
+  return (
+    <li className="flex items-center gap-4 p-5">
+      <div className="min-w-0 flex-1">
+        <p className="font-semibold text-slate-900">{item.name}</p>
+        <p className="mt-1 text-xs text-slate-500">
+          {item.kind === "HEALTH_TEST"
+            ? "Health test"
+            : item.kind === "PRESCRIPTION_SERVICE"
+              ? "Online prescription"
+              : "Consultation"}
+          {" · "}
+          {formatPrice(item.unitPriceCents, currency)} each
+        </p>
+        {/* Consultation hold countdown */}
+        {isConsult && countdown ? (
+          <p
+            className={`mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold ${
+              countdown === "expired" ? "text-rose-700" : "text-amber-700"
+            }`}
+          >
+            <Clock className="size-3" aria-hidden />
+            {countdown === "expired"
+              ? "Reservation expired"
+              : `Reserved for ${countdown}`}
+          </p>
+        ) : null}
+        {!isConsult && atMax ? (
+          <p className="mt-1 text-[11px] font-semibold text-amber-700">
+            Max {CART_ITEM_MAX_QTY} per item
+          </p>
+        ) : null}
+      </div>
+
+      {/* Quantity controls */}
+      {isConsult ? (
+        <span className="text-xs text-slate-500">1 booking</span>
+      ) : (
+        <div className="inline-flex items-center rounded-md border border-slate-300">
+          <button
+            type="button"
+            onClick={onDecrease}
+            disabled={item.quantity <= 1}
+            aria-label="Decrease"
+            className="px-2 py-1 text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+          >
+            <Minus className="size-3.5" aria-hidden />
+          </button>
+          <span className="min-w-[2ch] px-2 text-center text-sm font-semibold">
+            {item.quantity}
+          </span>
+          <button
+            type="button"
+            onClick={onIncrease}
+            disabled={atMax}
+            aria-label="Increase"
+            title={atMax ? `Max ${CART_ITEM_MAX_QTY} per item` : undefined}
+            className="px-2 py-1 text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+          >
+            <Plus className="size-3.5" aria-hidden />
+          </button>
+        </div>
+      )}
+
+      <p className="min-w-[6rem] text-right font-bold text-slate-900">
+        {formatPrice(item.lineTotalCents, currency)}
+      </p>
+
+      <button
+        type="button"
+        onClick={onRemove}
+        aria-label={`Remove ${item.name}`}
+        className="rounded-md p-1.5 text-rose-600 hover:bg-rose-50"
+      >
+        <Trash2 className="size-4" aria-hidden />
+      </button>
+    </li>
   );
 }

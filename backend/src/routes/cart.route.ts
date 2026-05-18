@@ -43,15 +43,21 @@ const addItemBodySchema = z.object({
   ]),
   healthTestId: z.string().min(1).max(120).optional(),
   serviceId: z.string().min(1).max(120).optional(),
-  quantity: z.number().int().min(1).max(20).optional(),
+  /** Capped at 5 per item per cart so casual product orders stay sensible. */
+  quantity: z.number().int().min(1).max(5).optional(),
   /** Consultation cart items only — slot + doctor selected up front. */
   timeSlotId: z.string().min(1).max(120).optional(),
   doctorId: z.string().min(1).max(120).optional(),
 });
 
 const updateItemBodySchema = z.object({
-  quantity: z.number().int().min(1).max(20),
+  quantity: z.number().int().min(1).max(5),
 });
+
+/** How long a consultation slot stays in the patient's cart before it
+ *  auto-releases back to OPEN. Matches the typical "checkout in this
+ *  window" UX so a single distracted patient can't hold a slot all day. */
+const HOLD_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
 const itemIdParamSchema = z.object({ itemId: z.string().min(1).max(120) });
 
@@ -66,6 +72,9 @@ type CartItemView = {
   lineTotalCents: number;
   timeSlotId: string | null;
   doctorId: string | null;
+  /** ISO timestamp when this consultation slot reservation lapses.
+   *  Null for product items. UI uses this for countdown display. */
+  heldUntil: string | null;
 };
 
 type CartView = {
@@ -75,6 +84,10 @@ type CartView = {
   items: CartItemView[];
   subtotalCents: number;
   itemCount: number;
+  /** Set when the most recent read swept N expired consultation
+   *  reservations off this cart so the UI can show a "your slot
+   *  expired" toast. */
+  expiredHolds?: number;
 };
 
 const EMPTY_CART: CartView = {
@@ -154,6 +167,42 @@ async function loadFullCart(cartId: string) {
   });
 }
 
+/**
+ * Sweep consultation cart items whose 10-minute hold has expired.
+ * Releases the slot HELD→OPEN (so another patient can claim it) and
+ * removes the cart item. Returns the count of removed items so the
+ * caller can surface "your slot expired" to the UI.
+ *
+ * Called at the start of every cart read/write so a stale hold can
+ * never linger past 10 minutes — no separate cron needed.
+ */
+async function sweepExpiredHolds(cartId: string): Promise<number> {
+  const now = new Date();
+  const expired = await prisma.cartItem.findMany({
+    where: {
+      cartId,
+      heldUntil: { lt: now },
+      timeSlotId: { not: null },
+    },
+    select: { id: true, timeSlotId: true },
+  });
+  if (expired.length === 0) return 0;
+
+  const slotIds = expired
+    .map((i) => i.timeSlotId)
+    .filter((id): id is string => Boolean(id));
+  const itemIds = expired.map((i) => i.id);
+
+  await prisma.$transaction([
+    prisma.doctorTimeSlot.updateMany({
+      where: { id: { in: slotIds }, status: "HELD" },
+      data: { status: "OPEN" },
+    }),
+    prisma.cartItem.deleteMany({ where: { id: { in: itemIds } } }),
+  ]);
+  return expired.length;
+}
+
 async function mergeCarts(sourceId: string, targetId: string) {
   const target = await prisma.cart.findUnique({
     where: { id: targetId },
@@ -216,8 +265,11 @@ async function mergeCarts(sourceId: string, targetId: string) {
   await prisma.cart.delete({ where: { id: sourceId } });
 }
 
-function serializeCart(cart: Awaited<ReturnType<typeof loadFullCart>>): CartView {
-  if (!cart) return EMPTY_CART;
+function serializeCart(
+  cart: Awaited<ReturnType<typeof loadFullCart>>,
+  expiredHolds = 0,
+): CartView {
+  if (!cart) return { ...EMPTY_CART, expiredHolds };
   const items: CartItemView[] = cart.items.map((i) => ({
     id: i.id,
     kind: i.kind,
@@ -229,6 +281,7 @@ function serializeCart(cart: Awaited<ReturnType<typeof loadFullCart>>): CartView
     lineTotalCents: i.unitPriceCents * i.quantity,
     timeSlotId: i.timeSlotId,
     doctorId: i.doctorId,
+    heldUntil: i.heldUntil ? i.heldUntil.toISOString() : null,
   }));
   return {
     id: cart.id,
@@ -237,6 +290,7 @@ function serializeCart(cart: Awaited<ReturnType<typeof loadFullCart>>): CartView
     items,
     subtotalCents: items.reduce((sum, i) => sum + i.lineTotalCents, 0),
     itemCount: items.reduce((sum, i) => sum + i.quantity, 0),
+    expiredHolds,
   };
 }
 
@@ -255,7 +309,10 @@ const cartRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/cart", async (request, reply) => {
     try {
       const { cart } = await resolveActiveCart(request, reply);
-      return okResponse(serializeCart(cart));
+      if (!cart) return okResponse(serializeCart(null));
+      const expired = await sweepExpiredHolds(cart.id);
+      const refreshed = expired > 0 ? await loadFullCart(cart.id) : cart;
+      return okResponse(serializeCart(refreshed, expired));
     } catch (err) {
       if (err instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(err.message));
@@ -406,7 +463,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         if (existing) {
           await prisma.cartItem.update({
             where: { id: existing.id },
-            data: { quantity: Math.min(existing.quantity + qty, 20) },
+            data: { quantity: Math.min(existing.quantity + qty, 5) },
           });
           const refreshed = await loadFullCart(cart.id);
           return okResponse(serializeCart(refreshed));
@@ -429,6 +486,10 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         }
       }
 
+      // Sweep before consultation add — frees expired holds so the
+      // patient doesn't see stale slots they think they reserved.
+      if (cart) await sweepExpiredHolds(cart.id);
+
       // For consultation items: claim the slot OPEN → HELD atomically
       // BEFORE creating the CartItem. If another patient grabbed it via
       // the regular booking flow we bail and return 409.
@@ -444,6 +505,13 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         }
       }
 
+      // Consultation slots get a 10-minute reservation; product items
+      // never expire from the cart on their own.
+      const heldUntil =
+        isConsultation && timeSlotId
+          ? new Date(Date.now() + HOLD_TTL_MS)
+          : null;
+
       try {
         await prisma.cartItem.create({
           data: {
@@ -456,6 +524,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             quantity: isConsultation ? 1 : qty,
             timeSlotId: timeSlotId ?? null,
             doctorId: doctorId ?? null,
+            heldUntil,
           },
         });
       } catch (err) {
@@ -488,7 +557,12 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       const { cart } = await resolveActiveCart(request, reply);
       if (!cart) return reply.status(404).send(errorResponse("Cart not found"));
 
-      const item = cart.items.find((i) => i.id === params.data.itemId);
+      // Sweep expired holds before mutating
+      const expired = await sweepExpiredHolds(cart.id);
+      const sweptCart = expired > 0 ? await loadFullCart(cart.id) : cart;
+      if (!sweptCart) return reply.status(404).send(errorResponse("Cart not found"));
+
+      const item = sweptCart.items.find((i) => i.id === params.data.itemId);
       if (!item) return reply.status(404).send(errorResponse("Item not found"));
 
       // Consultation items are always qty=1 (slot-based)
@@ -505,8 +579,8 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         where: { id: item.id },
         data: { quantity: body.data.quantity },
       });
-      const refreshed = await loadFullCart(cart.id);
-      return okResponse(serializeCart(refreshed));
+      const refreshed = await loadFullCart(sweptCart.id);
+      return okResponse(serializeCart(refreshed, expired));
     },
   );
 
@@ -519,8 +593,15 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       const { cart } = await resolveActiveCart(request, reply);
       if (!cart) return reply.status(404).send(errorResponse("Cart not found"));
 
-      const item = cart.items.find((i) => i.id === params.data.itemId);
-      if (!item) return reply.status(404).send(errorResponse("Item not found"));
+      const expired = await sweepExpiredHolds(cart.id);
+      const sweptCart = expired > 0 ? await loadFullCart(cart.id) : cart;
+      if (!sweptCart) return reply.status(404).send(errorResponse("Cart not found"));
+
+      const item = sweptCart.items.find((i) => i.id === params.data.itemId);
+      // If sweep already removed this item we still report a clean cart
+      if (!item) {
+        return okResponse(serializeCart(sweptCart, expired));
+      }
 
       await prisma.cartItem.delete({ where: { id: item.id } });
 
@@ -533,16 +614,16 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       }
 
       // If cart is now empty, clear country/currency stamps
-      const remaining = await prisma.cartItem.count({ where: { cartId: cart.id } });
+      const remaining = await prisma.cartItem.count({ where: { cartId: sweptCart.id } });
       if (remaining === 0) {
         await prisma.cart.update({
-          where: { id: cart.id },
+          where: { id: sweptCart.id },
           data: { countryCode: "", currencyCode: "" },
         });
       }
 
-      const refreshed = await loadFullCart(cart.id);
-      return okResponse(serializeCart(refreshed));
+      const refreshed = await loadFullCart(sweptCart.id);
+      return okResponse(serializeCart(refreshed, expired));
     },
   );
 

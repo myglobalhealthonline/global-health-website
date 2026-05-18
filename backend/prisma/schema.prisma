@@ -741,10 +741,18 @@ model CartItem {
   /// a price change between add-to-cart and pay doesn't surprise the user.
   unitPriceCents Int
   quantity       Int          @default(1)
-  /// Consultation items (v2): which slot the patient claimed.
+  /// Consultation items: which slot the patient claimed.
   timeSlotId     String?      @unique
   doctorId       String?
+  /// Consultation-only reservation deadline. Set to now+10min when a
+  /// consultation slot is added. Sweep on every cart op releases
+  /// expired items (slot HELD→OPEN + cart item deleted) so the same
+  /// time becomes bookable for another patient.
+  /// Null for product items (no slot to hold).
+  heldUntil      DateTime?
   createdAt      DateTime     @default(now())
+
+  @@index([heldUntil])
 }
 
 /// Multi-item order. One Stripe Checkout session per Order.
