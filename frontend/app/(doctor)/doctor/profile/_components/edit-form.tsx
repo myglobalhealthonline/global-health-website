@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, Trash2 } from "lucide-react";
+import { DoctorBioRichTextField } from "@/app/(admin)/admin/doctors/_components/doctor-bio-rich-text-field";
 
 /**
  * Doctor self-edit profile form. Only mutates the fields the doctor is
@@ -48,7 +49,6 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
   const [pending, startTransition] = useTransition();
   const [photoPending, startPhotoTransition] = useTransition();
   const [fullName, setFullName] = useState(initial.fullName);
-  const [bio, setBio] = useState(initial.bio);
   const [qualifications, setQualifications] = useState(
     initial.qualifications.join("\n"),
   );
@@ -114,9 +114,15 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage(null);
+    // Bio is owned by the rich-text editor (contentEditable + hidden
+    // input named "bio"). Read it from the form rather than React
+    // state so HTML markup the editor produces makes it through
+    // unchanged.
+    const formData = new FormData(event.currentTarget);
+    const bio = String(formData.get("bio") ?? "").trim();
     const payload = {
       fullName: fullName.trim(),
-      bio: bio.trim() || null,
+      bio: bio || null,
       qualifications: qualifications
         .split("\n")
         .map((line) => line.trim())
@@ -183,19 +189,14 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
               />
             </label>
 
-            <label className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2">
               <span className="gh-field-label">Bio</span>
-              <textarea
-                className="gh-input min-h-[10rem] min-w-0 resize-y"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                maxLength={12000}
-                placeholder="One or two paragraphs about your practice, training, and approach."
-              />
+              <DoctorBioRichTextField initialValue={initial.bio} />
               <span className="text-xs text-[var(--color-text-muted)]">
-                Plain text. Line breaks are preserved on the public page.
+                Rich text. Headings, bold, italics, lists, and link colour
+                are preserved on your public profile.
               </span>
-            </label>
+            </div>
 
             <label className="flex flex-col gap-2">
               <span className="gh-field-label">Qualifications</span>
