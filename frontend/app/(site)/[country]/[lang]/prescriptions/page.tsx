@@ -21,6 +21,7 @@ import { getCountryServices } from "@/lib/content/get-country-collections";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
 
 type Params = { country: string; lang: string };
 
@@ -127,35 +128,41 @@ export default async function PrescriptionsPage({
             Cards update as the team adds or retires prescription services.
           </p>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((s) => (
-              <Link
-                key={s.id}
-                // Append the service slug so the backend stamps the
-                // catalogue price + currency onto the appointment and
-                // the Stripe checkout handoff actually fires.
-                href={`${bookHref}${bookHref.includes("?") ? "&" : "?"}service=${encodeURIComponent(s.slug)}`}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-emerald-300 hover:shadow-md"
-              >
-                <h3 className="text-lg font-bold text-slate-900 group-hover:text-emerald-700">
-                  {s.name}
-                </h3>
-                {s.summary ? (
-                  <p className="mt-2 line-clamp-3 text-sm text-slate-600">{s.summary}</p>
-                ) : null}
-                <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-slate-500">
-                  {s.durationMinutes != null ? (
-                    <span className="rounded-full bg-slate-100 px-3 py-1">
-                      {s.durationMinutes} min
-                    </span>
+            {items.map((s) => {
+              const priceLabel = formatPrice(s.basePriceCents, s.currencyCode);
+              return (
+                <article
+                  key={s.id}
+                  className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+                >
+                  <h3 className="text-lg font-bold text-slate-900">{s.name}</h3>
+                  {s.summary ? (
+                    <p className="mt-2 line-clamp-3 text-sm text-slate-600">{s.summary}</p>
                   ) : null}
-                  {formatPrice(s.basePriceCents, s.currencyCode) ? (
-                    <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">
-                      from {formatPrice(s.basePriceCents, s.currencyCode)}
-                    </span>
-                  ) : null}
-                </div>
-              </Link>
-            ))}
+                  <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                    {s.durationMinutes != null ? (
+                      <span className="rounded-full bg-slate-100 px-3 py-1">
+                        {s.durationMinutes} min
+                      </span>
+                    ) : null}
+                    {priceLabel ? (
+                      <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">
+                        {priceLabel}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="mt-auto pt-5">
+                    {s.basePriceCents != null ? (
+                      <AddToCartButton
+                        kind="PRESCRIPTION_SERVICE"
+                        serviceId={s.id}
+                        label={priceLabel ? `Add to cart · ${priceLabel}` : "Add to cart"}
+                      />
+                    ) : null}
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
       ) : (

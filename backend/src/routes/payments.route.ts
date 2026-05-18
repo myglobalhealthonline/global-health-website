@@ -228,6 +228,31 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
             currency?: string | null;
             metadata?: Record<string, string>;
           };
+
+          // ── Order branch (cart checkout) ────────────────────────
+          if (session.metadata?.kind === "order") {
+            const orderId =
+              session.client_reference_id ?? session.metadata?.orderId ?? null;
+            if (!orderId) {
+              app.log.warn({ sessionId: session.id }, "Webhook: order session missing orderId");
+              return okResponse({ received: true });
+            }
+            await prisma.order.update({
+              where: { id: orderId },
+              data: {
+                status: "PAID",
+                paymentStatus: "PAID",
+                paidAt: new Date(),
+                stripePaymentIntentId:
+                  typeof session.payment_intent === "string"
+                    ? session.payment_intent
+                    : null,
+              },
+            });
+            return okResponse({ received: true });
+          }
+
+          // ── Appointment branch (legacy single-item booking) ─────
           const appointmentId =
             session.client_reference_id ??
             session.metadata?.appointmentId ??

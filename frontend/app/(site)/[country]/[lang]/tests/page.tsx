@@ -21,6 +21,7 @@ import { getCountryHealthTests } from "@/lib/content/get-country-collections";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
 
 type Params = { country: string; lang: string };
 
@@ -111,13 +112,9 @@ export default async function HealthTestsPage({
           </h2>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((t) => (
-              <Link
+              <article
                 key={t.id}
-                // `?service=<slug>` triggers the price + Stripe handoff.
-                // HealthTest rows have their own slug; the backend
-                // resolves it the same way as Service slugs.
-                href={`${bookHref}${bookHref.includes("?") ? "&" : "?"}service=${encodeURIComponent(t.slug)}`}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:border-emerald-300 hover:shadow-md"
+                className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
               >
                 {t.imageSrc ? (
                   <div className="aspect-[16/10] w-full overflow-hidden bg-slate-50">
@@ -130,9 +127,7 @@ export default async function HealthTestsPage({
                   </div>
                 ) : null}
                 <div className="flex h-full flex-col p-6">
-                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-emerald-700">
-                    {t.title}
-                  </h3>
+                  <h3 className="text-lg font-bold text-slate-900">{t.title}</h3>
                   {t.shortDescription ? (
                     <p className="mt-2 line-clamp-3 text-sm text-slate-600">
                       {t.shortDescription}
@@ -153,8 +148,15 @@ export default async function HealthTestsPage({
                       {formatPrice(t.priceCents, t.currencyCode)}
                     </span>
                   </div>
+                  <div className="mt-auto pt-5">
+                    <AddToCartButton
+                      kind="HEALTH_TEST"
+                      healthTestId={t.id}
+                      label={`Add to cart · ${formatPrice(t.priceCents, t.currencyCode)}`}
+                    />
+                  </div>
                 </div>
-              </Link>
+              </article>
             ))}
           </div>
         </section>

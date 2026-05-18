@@ -53,6 +53,8 @@ import chatRoute from "./routes/chat.route.js";
 import consultationChatRoute from "./routes/consultation-chat.route.js";
 import prescriptionsRoute from "./routes/prescriptions.route.js";
 import accountPrescriptionsRoute from "./routes/account-prescriptions.route.js";
+import cartRoute from "./routes/cart.route.js";
+import ordersRoute from "./routes/orders.route.js";
 import { env } from "./config/env.js";
 
 export async function buildApp() {
@@ -181,6 +183,8 @@ export async function buildApp() {
   await app.register(consultationChatRoute);
   await app.register(prescriptionsRoute);
   await app.register(accountPrescriptionsRoute);
+  await app.register(cartRoute);
+  await app.register(ordersRoute);
 
   return app;
 }

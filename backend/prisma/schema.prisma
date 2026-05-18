@@ -697,6 +697,111 @@ model Message {
   @@index([appointmentId, createdAt])
 }
 
+/// Shopping cart for orderable items (Health Tests + Online Prescriptions)
+/// and v2 consultations. Lives in DB for both guests (cookieToken) and
+/// logged-in patients (userId). On login, the cookie cart is merged
+/// into the user cart and the cookie one is deleted. One country per
+/// cart — adding from another country must clear the cart first.
+enum CartItemKind {
+  HEALTH_TEST
+  PRESCRIPTION_SERVICE
+  GENERAL_CONSULTATION
+  SPECIALIST_CONSULTATION
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FULFILLED
+  CANCELLED
+  REFUNDED
+}
+
+model Cart {
+  id           String     @id @default(cuid())
+  userId       String?    @unique
+  cookieToken  String?    @unique
+  countryCode  String
+  currencyCode String
+  items        CartItem[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model CartItem {
+  id             String       @id @default(cuid())
+  cartId         String
+  cart           Cart         @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  kind           CartItemKind
+  healthTestId   String?
+  serviceId      String?
+  /// Snapshot of the product name at the time the item was added.
+  name           String
+  /// Snapshot price in cents — checkout uses this, not the live row, so
+  /// a price change between add-to-cart and pay doesn't surprise the user.
+  unitPriceCents Int
+  quantity       Int          @default(1)
+  /// Consultation items (v2): which slot the patient claimed.
+  timeSlotId     String?      @unique
+  doctorId       String?
+  createdAt      DateTime     @default(now())
+}
+
+/// Multi-item order. One Stripe Checkout session per Order.
+/// Status flow: PENDING → PAID (via webhook) → FULFILLED (admin) → REFUNDED.
+model Order {
+  id                    String      @id @default(cuid())
+  userId                String?
+  email                 String
+  fullName              String
+  phone                 String?
+  countryCode           String
+  currencyCode          String
+  subtotalCents         Int
+  shippingCents         Int         @default(0)
+  totalCents            Int
+  status                OrderStatus @default(PENDING)
+  paymentStatus         String      @default("UNPAID")
+  stripeSessionId       String?     @unique
+  stripePaymentIntentId String?     @unique
+  paidAt                DateTime?
+  /// Shipping address — collected at checkout for product orders.
+  shipName              String?
+  shipLine1             String?
+  shipLine2             String?
+  shipCity              String?
+  shipPostalCode        String?
+  shipCountryCode       String?
+  /// Appointment ids minted for consultation items in this order (v2).
+  appointmentIds        String[]
+  items                 OrderItem[]
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+model OrderItem {
+  id             String       @id @default(cuid())
+  orderId        String
+  order          Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  kind           CartItemKind
+  healthTestId   String?
+  serviceId      String?
+  /// Snapshot — independent of source row deletion.
+  name           String
+  unitPriceCents Int
+  quantity       Int
+  lineTotalCents Int
+  /// Consultation-only refs (v2).
+  timeSlotId     String?
+  doctorId       String?
+  appointmentId  String?
+
+  @@index([orderId])
+}
+
 /// Append-only ledger of Stripe events per Appointment. One row per webhook
 /// `payment_intent.{created,succeeded,failed}` we accept. Makes the audit
 /// trail explicit even when an appointment ends up REFUNDED later.

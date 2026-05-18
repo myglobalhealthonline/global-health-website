@@ -34,6 +34,7 @@ import { CountrySwitcher } from "@/components/layout/CountrySwitcher";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { SectionNav, type SectionNavItem } from "@/components/layout/SectionNav";
 import { MobileNav } from "@/components/layout/MobileNav";
+import { CartIcon } from "@/components/cart/CartIcon";
 
 function sectionNavForCountryLang(countrySlug: string, lang: string): SectionNavItem[] {
   const base = `/${countrySlug}/${lang}`;
@@ -149,6 +150,8 @@ export function SiteHeader({
               />
             ) : null}
           </div>
+
+          <CartIcon />
 
           {!authUser ? (
             <Link
