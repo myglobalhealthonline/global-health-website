@@ -259,10 +259,22 @@ export async function ensureServiceSlotsForRange(
 }
 
 /**
- * Service-scoped public availability. Honours the chosen service's
- * duration and only returns slots whose minute-length actually matches
- * — so a 30-min general slot doesn't leak into a 60-min specialist
- * picker.
+ * Service-scoped public availability.
+ *
+ * Returns any OPEN slot in the range whose duration is **at least** the
+ * service's duration. The original (Phase 3) plan called for strict
+ * equality, but QA caught a real case: a doctor's recurring window was
+ * generated at 30 min, then the admin assigned them to a 25-min
+ * service. Strict equality returned zero rows even though the doctor
+ * was clearly available. The overlap guard in `ensureServiceSlotsForRange`
+ * already prevents two services fighting over the same minutes, so
+ * relaxing the listing filter to `≥` is safe — the patient just gets a
+ * little buffer (5 min in the example) and the doctor's calendar stays
+ * blocked for the slot's full length.
+ *
+ * If you need strict equality back (e.g. for billing systems that bill
+ * by slot length), flip the comparator to `===` and regenerate
+ * existing slots to match service durations.
  */
 export async function listOpenSlotsForDoctorAndService(
   doctorId: string,
@@ -286,11 +298,12 @@ export async function listOpenSlotsForDoctorAndService(
       orderBy: { startAt: "asc" },
       select: { id: true, startAt: true, endAt: true },
     });
-    const target = serviceDurationMinutes ?? 30;
+    const minDuration = serviceDurationMinutes ?? 0;
     return rows
       .filter((r) => {
+        if (minDuration === 0) return true;
         const minutes = Math.round((r.endAt.getTime() - r.startAt.getTime()) / 60000);
-        return minutes === target;
+        return minutes >= minDuration;
       })
       .map((r) => ({
         id: r.id,

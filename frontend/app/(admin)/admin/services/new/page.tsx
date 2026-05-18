@@ -224,10 +224,15 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
       );
     }
 
-    // Bust public Data Cache for the new service's country.
+    // Bust public Data Cache for the new service's country. Doctor
+    // assignments (ServiceDoctor) change which services each public
+    // doctor profile lists, so the country:<code>:doctors tag has to
+    // go too — otherwise doctor pages keep showing a service the
+    // admin just removed them from (QA finding C.3).
     const created = result.data.service;
     if (created.country?.code) {
       revalidateTag(SITE_CACHE_TAGS.countryServices(created.country.code), "max");
+      revalidateTag(SITE_CACHE_TAGS.countryDoctors(created.country.code), "max");
     }
     revalidateTag(SITE_CACHE_TAGS.globalServices(), "max");
 

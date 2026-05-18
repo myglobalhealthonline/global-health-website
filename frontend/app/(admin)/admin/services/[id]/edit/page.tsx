@@ -212,10 +212,14 @@ export default async function AdminEditServicePage({
     }
 
     // Bust public cache for the country's services so the new card appears
-    // on /[country]/[lang]/general-consultation immediately.
+    // on /[country]/[lang]/general-consultation immediately. Also bust
+    // the country doctors tag because ServiceDoctor assignment edits
+    // change which services each doctor's public profile lists (QA
+    // finding C.3).
     const saved = result.data.service;
     if (saved.country?.code) {
       revalidateTag(SITE_CACHE_TAGS.countryServices(saved.country.code), "max");
+      revalidateTag(SITE_CACHE_TAGS.countryDoctors(saved.country.code), "max");
     }
     revalidateTag(SITE_CACHE_TAGS.globalServices(), "max");
 
