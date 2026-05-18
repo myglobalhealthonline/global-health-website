@@ -317,9 +317,14 @@ export async function listOpenSlotsForDoctorAndService(
 
 /**
  * Claim a slot for a booking. Atomic in one statement — the WHERE clause
- * gates on `status = 'OPEN'`, so a race-loser sees zero rows updated and
- * we throw `SlotAlreadyTakenError`. Caller is expected to wrap this and
- * the appointment INSERT in the same transaction.
+ * gates on `status = 'OPEN'` AND `startAt > NOW()`, so:
+ *   - a race-loser (another booking already took it) sees zero updated
+ *     rows and we throw `SlotAlreadyTakenError`.
+ *   - a stale past slot that somehow stayed OPEN (e.g. nobody hit the
+ *     public availability endpoint to age it out) is also refused, so a
+ *     hand-crafted payload can't book yesterday.
+ * Caller is expected to wrap this and the appointment INSERT in the
+ * same transaction.
  *
  * Pass a Prisma transaction client when calling from inside `$transaction`.
  */
@@ -332,7 +337,7 @@ export async function claimDoctorSlot(
   >(Prisma.sql`
     UPDATE "DoctorTimeSlot"
     SET "status" = 'BOOKED', "updatedAt" = NOW()
-    WHERE "id" = ${slotId} AND "status" = 'OPEN'
+    WHERE "id" = ${slotId} AND "status" = 'OPEN' AND "startAt" > NOW()
     RETURNING "doctorId", "startAt", "endAt"
   `);
   if (rows.length === 0) {
