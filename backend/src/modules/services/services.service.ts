@@ -45,6 +45,23 @@ const adminServiceInclude = {
     orderBy: { createdAt: "asc" },
     select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
   },
+  // Doctor assignments — admin needs the current set to render the
+  // multi-select. We include the doctor's slug/name/country so the form
+  // can group + filter without a second fetch.
+  assignedDoctors: {
+    orderBy: { sortOrder: "asc" as const },
+    include: {
+      doctor: {
+        select: {
+          id: true,
+          slug: true,
+          fullName: true,
+          countryId: true,
+          active: true,
+        },
+      },
+    },
+  },
 } satisfies Prisma.ServiceInclude;
 
 export type AdminServiceRecord = Prisma.ServiceGetPayload<{ include: typeof adminServiceInclude }>;
@@ -500,6 +517,61 @@ export async function listAdminServices(query: AdminServicesQuery): Promise<List
   }
 }
 
+/**
+ * Replace the ServiceDoctor join rows for a service with the supplied
+ * doctorIds set. Idempotent — no-op when the array matches the existing
+ * set. Doctors whose primary country doesn't match the service country
+ * are filtered out unless they have a DoctorCountry link to that
+ * country (so admin can't accidentally attach a Romania-only doctor to
+ * an Ireland service).
+ */
+async function syncServiceDoctorAssignments(
+  serviceId: string,
+  doctorIds: string[],
+  serviceCountryId: string,
+): Promise<void> {
+  const unique = Array.from(new Set(doctorIds.map((id) => id.trim()).filter(Boolean)));
+
+  if (unique.length === 0) {
+    await prisma.serviceDoctor.deleteMany({ where: { serviceId } });
+    return;
+  }
+
+  // Eligibility: doctor's primary country == service country OR doctor
+  // has a DoctorCountry row for the service country.
+  const eligible = await prisma.doctor.findMany({
+    where: {
+      id: { in: unique },
+      OR: [
+        { countryId: serviceCountryId },
+        { additionalCountries: { some: { countryId: serviceCountryId } } },
+      ],
+    },
+    select: { id: true },
+  });
+  const eligibleIds = new Set(eligible.map((d) => d.id));
+  const filtered = unique.filter((id) => eligibleIds.has(id));
+
+  await prisma.$transaction(async (tx) => {
+    await tx.serviceDoctor.deleteMany({
+      where: {
+        serviceId,
+        doctorId: { notIn: filtered.length > 0 ? filtered : ["__none__"] },
+      },
+    });
+    if (filtered.length === 0) return;
+    await tx.serviceDoctor.createMany({
+      data: filtered.map((doctorId, index) => ({
+        serviceId,
+        doctorId,
+        sortOrder: index,
+        isActive: true,
+      })),
+      skipDuplicates: true,
+    });
+  });
+}
+
 export async function getAdminServiceById(id: string): Promise<AdminServiceRecord | null> {
   try {
     return await prisma.service.findUnique({
@@ -549,6 +621,13 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
       key: `service-hero:${service.id}`,
       usageNote: "Service detail hero image",
     });
+    if (input.doctorIds !== undefined) {
+      await syncServiceDoctorAssignments(
+        service.id,
+        input.doctorIds,
+        input.countryId,
+      );
+    }
     return prisma.service.findUniqueOrThrow({
       where: { id: service.id },
       include: adminServiceInclude,
@@ -615,6 +694,9 @@ export async function updateAdminService(
         key: `service-hero:${id}`,
         usageNote: "Service detail hero image",
       });
+    }
+    if (body.doctorIds !== undefined) {
+      await syncServiceDoctorAssignments(id, body.doctorIds, nextCountryId);
     }
     return prisma.service.findUniqueOrThrow({
       where: { id: service.id },

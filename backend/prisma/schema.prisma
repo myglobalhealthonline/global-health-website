@@ -277,6 +277,10 @@ model Doctor {
   /// Inverse of `Appointment.doctorId`. Populated when admin assigns
   /// the doctor on the scheduling form.
   appointments           Appointment[]         @relation("AppointmentDoctor")
+  /// Inverse of `ServiceDoctor.doctorId`. Admin-controlled M:N — which
+  /// catalogue services the doctor is bookable for. Public consult flow
+  /// uses this join to filter doctor cards by selected service.
+  assignedServices       ServiceDoctor[]
   /// Recurring weekly windows the doctor publishes for patient booking.
   /// Concrete slots are derived from these into `DoctorTimeSlot` rows.
   availabilities         DoctorAvailability[]
@@ -436,6 +440,9 @@ model Service {
   specialty             Specialty?            @relation("ServiceSpecialty", fields: [specialtyId], references: [id])
   primaryForSpecialties Specialty[]           @relation("SpecialtyPrimaryService")
   assets                Asset[]
+  /// Inverse of `ServiceDoctor.serviceId`. Admin-controlled M:N — which
+  /// doctors are bookable for this service.
+  assignedDoctors       ServiceDoctor[]
   appointments          Appointment[]
   /// Per-consultation services-rendered line items. Doctor logs which
   /// catalogue services they performed during the consult; admin uses
@@ -445,6 +452,27 @@ model Service {
   updatedAt             DateTime              @updatedAt
 
   @@unique([countryId, slug])
+}
+
+/// Service ↔ Doctor M:N — admin assigns one or more doctors to a service
+/// so the public consult page can scope "available doctors" by the
+/// chosen service. The doctor profile page uses the same join to show
+/// only services the doctor is bookable for.
+model ServiceDoctor {
+  id        String   @id @default(cuid())
+  serviceId String
+  doctorId  String
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, doctorId])
+  @@index([doctorId, isActive])
+  @@index([serviceId, isActive, sortOrder])
 }
 
 model PricingPlan {

@@ -161,6 +161,13 @@ const adminServiceBodyShape = {
     .max(12)
     .optional()
     .default([]),
+  /** Doctor ids assigned to this service. Public consult flow filters
+   *  doctor cards by this set; omit / undefined keeps existing
+   *  assignments untouched (only applied when the admin form sends it). */
+  doctorIds: z
+    .array(z.string().trim().min(1).max(64))
+    .max(200)
+    .optional(),
   isActive: z.boolean().optional(),
 } satisfies z.ZodRawShape;
 

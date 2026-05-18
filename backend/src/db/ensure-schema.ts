@@ -42,6 +42,30 @@ const PATCHES: { name: string; sql: string }[] = [
         ADD COLUMN IF NOT EXISTS "galleryImagePaths" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];
     `,
   },
+  {
+    name: "ServiceDoctor table + indexes",
+    sql: `
+      CREATE TABLE IF NOT EXISTS "ServiceDoctor" (
+        "id"         TEXT NOT NULL PRIMARY KEY,
+        "serviceId"  TEXT NOT NULL,
+        "doctorId"   TEXT NOT NULL,
+        "isActive"   BOOLEAN NOT NULL DEFAULT true,
+        "sortOrder"  INTEGER NOT NULL DEFAULT 0,
+        "createdAt"  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt"  TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "ServiceDoctor_service_fk"
+          FOREIGN KEY ("serviceId") REFERENCES "Service"("id") ON DELETE CASCADE,
+        CONSTRAINT "ServiceDoctor_doctor_fk"
+          FOREIGN KEY ("doctorId") REFERENCES "Doctor"("id") ON DELETE CASCADE
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS "ServiceDoctor_serviceId_doctorId_key"
+        ON "ServiceDoctor"("serviceId", "doctorId");
+      CREATE INDEX IF NOT EXISTS "ServiceDoctor_doctorId_isActive_idx"
+        ON "ServiceDoctor"("doctorId", "isActive");
+      CREATE INDEX IF NOT EXISTS "ServiceDoctor_serviceId_isActive_sortOrder_idx"
+        ON "ServiceDoctor"("serviceId", "isActive", "sortOrder");
+    `,
+  },
 ];
 
 export async function ensureSchema(log: {
