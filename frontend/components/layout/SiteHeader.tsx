@@ -101,34 +101,16 @@ export function SiteHeader({
         {/* Brand */}
         <Link
           href={activeCountry && parsed.lang ? `/${parsed.country}/${parsed.lang}` : "/"}
-          className="inline-flex items-center gap-2.5"
+          className="inline-flex items-center"
           style={{ textDecoration: "none" }}
+          aria-label={siteName || "Global Health"}
         >
-          <span
-            className="inline-flex items-center justify-center text-white"
-            style={{
-              width: 28,
-              height: 28,
-              borderRadius: 6,
-              background: "var(--color-brand-primary)",
-              fontFamily: "var(--font-display)",
-              fontSize: 14,
-              fontWeight: 800,
-            }}
-          >
-            g
-          </span>
-          <span
-            className="text-[var(--color-text-primary)]"
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: 17,
-              fontWeight: 800,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            {siteName || "Global Health"}
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={brandLogo?.src ?? "/logos/global-health-dark.png"}
+            alt={brandLogo?.alt ?? siteName ?? "Global Health"}
+            style={{ height: 44, width: "auto" }}
+          />
         </Link>
 
         {/* Section tabs — only inside a country */}

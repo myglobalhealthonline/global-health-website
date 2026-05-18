@@ -49,23 +49,25 @@ export default function FooterColumn({
       <div className="mx-auto max-w-[var(--container-width)] px-5 pb-8 pt-16 sm:px-8 lg:px-12 lg:pt-20">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center">
               {hasRealLogo ? (
                 <Image
-                  src={brandLogo!.src}
+                  src="/logos/global-health-light.png"
                   alt={brandLogo!.alt}
-                  width={40}
-                  height={40}
-                  className="h-10 w-10 rounded-full border border-white/20 bg-white object-cover"
+                  width={280}
+                  height={120}
+                  className="h-12 w-auto"
                 />
               ) : (
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white">
-                  <ShieldCheck className="size-5" aria-hidden />
+                <span className="inline-flex items-center gap-3">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white">
+                    <ShieldCheck className="size-5" aria-hidden />
+                  </span>
+                  <span className="text-xl font-semibold text-white">
+                    {siteName}
+                  </span>
                 </span>
               )}
-              <span className="text-xl font-semibold text-white">
-                {siteName}
-              </span>
             </div>
 
             <p className="mt-5 max-w-md text-sm leading-relaxed text-white/70 sm:max-w-xs">
