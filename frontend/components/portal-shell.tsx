@@ -115,28 +115,29 @@ export function PortalShell({
 
   return (
     <div className="min-h-screen bg-[var(--color-background-soft)]">
-      <div className="flex min-h-screen">
-        {/* Mobile overlay */}
-        {navOpen ? (
-          <button
-            type="button"
-            aria-label="Close navigation"
-            onClick={() => setNavOpen(false)}
-            className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
-          />
-        ) : null}
+      {/* Mobile overlay */}
+      {navOpen ? (
+        <button
+          type="button"
+          aria-label="Close navigation"
+          onClick={() => setNavOpen(false)}
+          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+        />
+      ) : null}
 
-        {/* Sidebar */}
-        <aside
-          className={`fixed inset-y-0 left-0 z-40 flex w-[260px] flex-col shadow-2xl transition-transform duration-200 ease-out lg:static lg:z-auto lg:translate-x-0 ${
-            navOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-          }`}
-          style={{
-            background: "var(--color-background-dark)",
-            color: "rgba(255,255,255,0.85)",
-            borderRight: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
+      {/* Sidebar — fixed on every breakpoint. Mobile slide-in via
+          translate; on desktop the main column gets `lg:pl-[260px]`
+          so content doesn't slide under it. */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 flex w-[260px] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
+          navOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
+        }`}
+        style={{
+          background: "var(--color-background-dark)",
+          color: "rgba(255,255,255,0.85)",
+          borderRight: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
           <div
             className="px-5 pb-[18px] pt-5"
             style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
@@ -187,12 +188,18 @@ export function PortalShell({
           </div>
         </aside>
 
-        {/* Main column */}
-        <div className="flex min-w-0 flex-1 flex-col">
-          {/* Top header */}
+      {/* Main column — offset by sidebar width on desktop so content
+          doesn't slide under the fixed sidebar. */}
+      <div className="flex min-h-screen min-w-0 flex-col lg:pl-[260px]">
+          {/* Top header — sticky, frosted-glass over scrolling content. */}
           <header
-            className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-background-page)] px-4 sm:px-7"
-            style={{ boxShadow: "0 1px 0 var(--color-border)" }}
+            className="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--color-border)] px-4 sm:px-7"
+            style={{
+              background: "color-mix(in srgb, var(--color-background-page) 88%, transparent)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              boxShadow: "0 1px 0 var(--color-border)",
+            }}
           >
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button
@@ -326,7 +333,6 @@ export function PortalShell({
             {children}
           </main>
         </div>
-      </div>
     </div>
   );
 }
@@ -371,7 +377,7 @@ function SidebarItem({
     <Link
       href={href}
       onClick={onNavigate}
-      className="flex w-full items-center gap-2.5 transition-all duration-150"
+      className="relative flex w-full items-center gap-2.5 transition-all duration-150"
       style={{
         padding: "9px 12px",
         borderRadius: 10,
@@ -388,6 +394,19 @@ function SidebarItem({
         if (!active) e.currentTarget.style.background = "transparent";
       }}
     >
+      {/* Left accent bar on active item — visual parity with AdminShell. */}
+      {active ? (
+        <span
+          aria-hidden
+          className="absolute left-0 top-1/2 -translate-y-1/2"
+          style={{
+            width: 3,
+            height: 18,
+            borderRadius: 2,
+            background: "var(--color-accent)",
+          }}
+        />
+      ) : null}
       <span className="inline-flex shrink-0 justify-center" style={{ width: 16 }}>
         {icon}
       </span>
