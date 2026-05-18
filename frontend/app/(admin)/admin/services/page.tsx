@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, GripVertical, Plus } from "lucide-react";
+import { Edit3, Eye, Plus } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminServices,
@@ -340,7 +340,6 @@ export default async function AdminServicesPage({
         <div className="overflow-x-auto">
           <AdminTable>
             <Thead>
-              <Th style={{ width: 40 }}> </Th>
               <Th>Title</Th>
               <Th>Slug</Th>
               <Th>Country</Th>
@@ -355,13 +354,6 @@ export default async function AdminServicesPage({
             <tbody>
               {items.map((service) => (
                 <Tr key={service.id}>
-                  <Td>
-                    <GripVertical
-                      aria-hidden
-                      className="size-3.5"
-                      style={{ color: "var(--color-text-muted)", cursor: "grab" }}
-                    />
-                  </Td>
                   <Td>
                     <span className="font-bold text-[var(--color-text-primary)]">
                       {service.name}

@@ -231,6 +231,7 @@ export function DoctorBioRichTextField({ initialValue }: Props) {
           ref={editorRef}
           contentEditable
           suppressContentEditableWarning
+          suppressHydrationWarning
           className="gh-input min-h-[12rem] min-w-0 resize-y overflow-auto rounded-none border-0 bg-white p-4 leading-7 outline-none"
           style={{
             /* Ensure lists render properly inside contentEditable */

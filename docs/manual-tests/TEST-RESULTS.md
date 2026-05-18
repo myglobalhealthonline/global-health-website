@@ -60,7 +60,7 @@ Legend: ✅ PASS · ⚠️ PARTIAL · ❌ FAIL · ⏭️ SKIP · 🔄 NOT RUN
 
 | TC | Status | Notes |
 |----|--------|-------|
-| **ADM-045** | ⏭️ | No drag-and-drop (ISS-014 by design) |
+| None | ✅ | Previous ADM-045 confusion removed after the drag affordance was deleted from the list UI |
 
 ---
 
@@ -88,7 +88,7 @@ Legend: ✅ PASS · ⚠️ PARTIAL · ❌ FAIL · ⏭️ SKIP · 🔄 NOT RUN
 | 5 Appointment flow | ~95% |
 | 6 Cross-cutting | ~99% |
 
-**Overall ~99%** of planned manual tests complete (remaining gaps: public booking E2E, optional UI-only PAT flows).
+**Overall ~99%** of planned manual tests complete (remaining gaps: public booking E2E, optional UI-only dev/manual flows).
 
 ### Test accounts (after re-seed)
 

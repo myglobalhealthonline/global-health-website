@@ -339,6 +339,7 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
           ref={editorRef}
           contentEditable
           suppressContentEditableWarning
+          suppressHydrationWarning
           className="gh-input min-h-[14rem] min-w-0 resize-y overflow-auto rounded-none border-0 bg-white p-4 leading-7 outline-none"
           style={{ listStylePosition: "inside" }}
           onInput={() => {

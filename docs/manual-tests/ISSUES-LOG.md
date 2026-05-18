@@ -20,7 +20,7 @@
 | ID | Phase | TC | Severity | Summary | Status | Fix |
 |----|-------|-----|----------|---------|--------|-----|
 | ISS-001 | P3 | TC-PUB-001 | P0 | Country gate IE→EN → 404 `/ireland/services/en` | 🟢 | `CountryEntryGate`: `router.push(\`/${slug}/${lang}\`)` |
-| ISS-002 | P1 | TC-ADM-002 | P2 | Admin dashboard blank ~3s after login (RSC slow) | 🟡 | Hard refresh loads; watch |
+| ISS-002 | P1 | TC-ADM-002 | P2 | Admin dashboard blank ~3s after login (RSC slow) | 🟢 | Added `/admin/loading.tsx` route skeleton so dashboard no longer renders blank while server data loads |
 | ISS-003 | dev | all | P3 | Next.js dev hydration overlay blocks clicks (bottom-left) | 🟡 | Collapse badge before submit |
 | ISS-004 | dev | multiple | P3 | Hydration mismatches (login, CountryEntryGate, Toggle, RichText) | 🟢 | `suppressHydrationWarning` on `getFullYear()` in CountryEntryGate, SiteFooter, footer-column; Toggle/RichText remain P3 dev-only noise |
 | ISS-005 | P1 | TC-ADM-010 | P0 | Doctor create → `Unexpected admin doctors error` (P2028 tx timeout + `pageSize=250` → 400) | 🟢 | `ADMIN_DOCTOR_TX_OPTIONS` 20s; `pageSize` max 250; P2028 → 503 message |
@@ -32,8 +32,8 @@
 | ISS-011 | P4 | TC-PAT-009 | P1 | `window.confirm` on delete: MCP `browser_handle_dialog(accept:false)` did not cancel; main patient deleted once | 🟢 | `DeleteAccountButton` inline modal with explicit Cancel / Delete account |
 | ISS-012 | P4 | TC-PAT-013 | P3 | `/account/bookings` hydration error when chat expands (`toLocaleString` / `Intl` TZ drift) | 🟢 | `format-datetime.ts` fixed `en-IE` + `Europe/Dublin` in bookings + chat |
 | ISS-013 | P1 | TC-ADM-044 | P2 | Destructive admin deletes (countries, doctors, services, health-tests, assets, pages, availability) submit without `window.confirm` | 🟢 | New `ConfirmDeleteButton` client component; replaced 11 bare delete forms across country/asset/doctor/health-test/service/page/availability list+detail views. Pre-existing `DeleteCountryButton` kept on countries list |
-| ISS-014 | P1 | TC-ADM-045 | P3 | Countries table shows `GripVertical` but no reorder implementation | ⚪ | By design / not built — use sortOrder on edit |
-| ISS-015 | P4 | TC-PAT-014 | P2 | Consultation chat file upload needs paid appointment + S3 (`isMediaStorageConfigured`) | 🟡 | Mark PAID on test apt; configure S3 for file E2E |
+| ISS-014 | P1 | TC-ADM-045 | P3 | Countries table shows `GripVertical` but no reorder implementation | 🟢 | Removed misleading drag handle from countries/services lists; `sortOrder` remains the explicit ordering control |
+| ISS-015 | P4 | TC-PAT-014 | P2 | Consultation chat file upload needs paid appointment + S3 (`isMediaStorageConfigured`) | 🟢 | Upload path passes with a paid appointment; storage supports S3 or local dev fallback via `isMediaStorageConfigured()` |
 
 ---
 
