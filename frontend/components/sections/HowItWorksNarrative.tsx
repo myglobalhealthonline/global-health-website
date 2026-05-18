@@ -26,7 +26,13 @@ const STEPS = [
 
 export function HowItWorksNarrative() {
   return (
-    <section style={{ padding: "120px 0" }}>
+    <section
+      style={{
+        padding: "120px 0",
+        background: "var(--color-background-soft)",
+        borderTop: "1px solid var(--color-border)",
+      }}
+    >
       <div
         className="gh-how-grid mx-auto grid gap-16"
         style={{

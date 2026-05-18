@@ -69,13 +69,21 @@ export function HomeHero({
   return (
     <section
       className="relative overflow-hidden"
-      style={{ paddingBottom: 64, paddingTop: 64 }}
+      style={{
+        paddingBottom: 80,
+        paddingTop: 96,
+        background: `
+          radial-gradient(ellipse 900px 600px at 80% -5%, rgba(176, 241, 34, 0.12), transparent 55%),
+          radial-gradient(ellipse 700px 500px at -5% 100%, rgba(27, 77, 62, 0.07), transparent 55%),
+          var(--color-background-page)
+        `,
+      }}
     >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
-          opacity: 0.04,
+          opacity: 0.032,
           backgroundImage: PATTERN_LIGHT,
           backgroundSize: "28px",
         }}

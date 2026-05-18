@@ -268,7 +268,7 @@ img {
 }
 
 .gh-btn:active {
-  transform: translateY(1px);
+  transform: translateY(1px) scale(0.98);
 }
 
 .gh-btn-primary {
@@ -762,13 +762,14 @@ img {
 .gh-card-calm {
   background: var(--color-background-soft);
   border-radius: var(--radius-card);
-  transition: background-color 220ms ease-out, transform 220ms ease-out,
-    box-shadow 220ms ease-out;
+  transition: background-color 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 180ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .gh-card-calm:hover {
   background: var(--color-background-panel);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-card-hover);
 }
 
@@ -785,12 +786,14 @@ img {
   border-radius: var(--radius-card);
   background: var(--color-brand-secondary);
   box-shadow: var(--shadow-card);
-  transition: box-shadow 180ms ease-out, transform 180ms ease-out;
+  transition: box-shadow 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 180ms ease-out;
 }
 
 .gh-card-hover:hover {
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .gh-card-interactive {
@@ -799,11 +802,11 @@ img {
 
 .gh-card-interactive:hover {
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .gh-card-interactive:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.99);
 }
 
 .gh-panel {
@@ -1031,6 +1034,30 @@ img {
   background: var(--color-background-soft);
   color: var(--color-text-primary);
   font-weight: 700;
+}
+
+/* Doctor wall card hover */
+.gh-doctor-card {
+  transition: background-color 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.gh-doctor-card:hover {
+  background: rgba(255, 255, 255, 0.09) !important;
+  border-color: rgba(255, 255, 255, 0.20) !important;
+  transform: translateY(-2px);
+}
+
+/* Service tile link hover */
+.gh-service-tile {
+  transition: transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 180ms cubic-bezier(0.23, 1, 0.32, 1) !important;
+}
+
+.gh-service-tile:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 /* Reduced motion */

@@ -219,6 +219,7 @@ export function DoctorWall({
             return (
               <div
                 key={d.id}
+                className="gh-doctor-card"
                 style={{
                   background: "rgba(255,255,255,0.05)",
                   border: "1px solid rgba(255,255,255,0.10)",

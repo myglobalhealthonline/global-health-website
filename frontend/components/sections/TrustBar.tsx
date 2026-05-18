@@ -21,11 +21,11 @@ export function TrustBar() {
                   key={item.label}
                   className="flex flex-col items-start"
                 >
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--color-brand-accent)]/20 text-[var(--color-brand-accent)]">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
                     <Icon className="size-5" />
                   </span>
                   <p className="mt-3 text-sm font-bold text-white">{item.label}</p>
-                  <p className="mt-1 text-xs text-white/70 leading-relaxed">{item.desc}</p>
+                  <p className="mt-1 text-sm text-white/75 leading-relaxed">{item.desc}</p>
                 </div>
               );
             })}

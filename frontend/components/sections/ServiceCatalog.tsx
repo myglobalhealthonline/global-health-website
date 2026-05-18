@@ -230,7 +230,6 @@ function ServiceTile({ service: s }: { service: ServiceCatalogItem }) {
         fontFamily: "inherit",
         boxShadow: "var(--shadow-soft)",
         textDecoration: "none",
-        transition: "all 180ms ease-out",
       }}
     >
       {s.imageSrc ? (
@@ -362,12 +361,6 @@ function ServiceTile({ service: s }: { service: ServiceCatalogItem }) {
         </div>
       </div>
 
-      <style jsx>{`
-        .gh-service-tile:hover {
-          transform: translateY(-2px);
-          box-shadow: var(--shadow-card-hover);
-        }
-      `}</style>
     </Link>
   );
 }
