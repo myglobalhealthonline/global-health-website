@@ -4,6 +4,7 @@ import { SiteChrome } from "@/components/layout/SiteChrome";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
+import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { DEFAULT_BRAND_LOGO } from "@/lib/content/brand-logo";
 import {
   resolveFooterCtaDecorAsset,
@@ -26,7 +27,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
       ? (headerCountry as CountryCode)
       : undefined;
 
-  const [{ common, navigation }, assets, authUser] = await Promise.all([
+  const [{ common, navigation }, assets, authUser, countriesMerged] = await Promise.all([
     getSiteContext({
       explicitCountryCode: runtimeCountry,
       headerLocale: requestHeaders.get("x-gh-locale"),
@@ -35,10 +36,18 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     }),
     getPublicAssetsNormalized(),
     getServerAuthUser(),
+    getPublicCountriesMerged(),
   ]);
 
   const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO;
   const footerDecorImage = resolveFooterCtaDecorAsset(assets);
+
+  // Build a code → enabledFeatures map so SiteHeader/MobileNav can hide
+  // nav tabs the admin has disabled per-country via /admin/country-features.
+  const countryFeatures: Record<string, string[] | undefined> = {};
+  for (const c of countriesMerged) {
+    if (c.enabledFeatures) countryFeatures[c.code] = c.enabledFeatures;
+  }
 
   return (
     <SiteChrome
@@ -47,6 +56,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
       brandLogo={brandLogo}
       footerDecorImage={footerDecorImage}
       authUser={authUser}
+      countryFeatures={countryFeatures}
     >
       <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
       {children}

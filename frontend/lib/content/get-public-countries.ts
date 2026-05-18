@@ -35,6 +35,7 @@ type BackendCountryOverlay = {
   specialistConsultationPath?: string;
   defaultLocale?: LocaleCode;
   supportedLocales?: LocaleCode[];
+  enabledFeatures?: string[];
 };
 
 function extractBackendCountryOverlay(row: unknown): { code: CountryCode } & BackendCountryOverlay | null {
@@ -54,6 +55,9 @@ function extractBackendCountryOverlay(row: unknown): { code: CountryCode } & Bac
 
   const defaultLocale = normalizeBackendLocale(r.defaultLocale);
   const supportedLocales = parseCountryLocales(r.countryLocales);
+  const enabledFeatures = Array.isArray(r.enabledFeatures)
+    ? r.enabledFeatures.filter((v): v is string => typeof v === "string")
+    : undefined;
 
   return {
     code: code.toLowerCase(),
@@ -65,6 +69,9 @@ function extractBackendCountryOverlay(row: unknown): { code: CountryCode } & Bac
     specialistConsultationPath,
     ...(defaultLocale ? { defaultLocale } : {}),
     ...(supportedLocales.length > 0 ? { supportedLocales } : {}),
+    ...(enabledFeatures && enabledFeatures.length > 0
+      ? { enabledFeatures }
+      : {}),
   };
 }
 
@@ -92,6 +99,9 @@ function synthesizeAdminCountry(
     generalConsultationPath:
       overlay.generalConsultationPath ?? `/${slug}/general-consultation`,
     specialistPath: overlay.specialistConsultationPath ?? `/${slug}/specialist-consultation`,
+    ...(overlay.enabledFeatures && overlay.enabledFeatures.length > 0
+      ? { enabledFeatures: overlay.enabledFeatures }
+      : {}),
   };
 }
 

@@ -14,6 +14,10 @@ type Props = {
   brandLogo?: { src: string; alt: string };
   footerDecorImage?: { src: string; alt: string };
   authUser?: AuthUser | null;
+  /** Per-country feature toggles, keyed by lowercased country code.
+   *  Forwarded to SiteHeader/MobileNav so they can hide nav items for
+   *  features the admin has disabled in /admin/country-features. */
+  countryFeatures?: Record<string, string[] | undefined>;
 };
 
 export function SiteChrome({
@@ -22,6 +26,7 @@ export function SiteChrome({
   navigation,
   brandLogo,
   authUser,
+  countryFeatures,
 }: Props) {
   const pathname = usePathname();
   const isGatewayHome = pathname === "/";
@@ -29,7 +34,13 @@ export function SiteChrome({
   return (
     <>
       {isGatewayHome ? null : (
-        <SiteHeader siteName={siteName} navigation={navigation} brandLogo={brandLogo} authUser={authUser} />
+        <SiteHeader
+          siteName={siteName}
+          navigation={navigation}
+          brandLogo={brandLogo}
+          authUser={authUser}
+          countryFeatures={countryFeatures}
+        />
       )}
       <main id="main-content" className="grow">
         {children}

@@ -10,6 +10,8 @@ import { FinalCTA } from "@/components/sections/FinalCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { ReviewBadge } from "@/components/sections/ReviewBadge";
 import { countries, getCountryByCode } from "@/data/countries";
+import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
+import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
@@ -85,6 +87,10 @@ export default async function CountryLangSpecialistConsultationPage({
   const config = getCountryByCode(code);
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
+
+  // Honor the per-country `specialist-consultations` toggle from /admin/country-features.
+  const overlay = await getPublicCountryByCode(code);
+  if (!isCountryFeatureEnabled(overlay, "specialist-consultations")) notFound();
 
   const [page, specialties, services, doctors] = await Promise.all([
     getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale),

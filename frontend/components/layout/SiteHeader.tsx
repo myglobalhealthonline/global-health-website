@@ -36,14 +36,25 @@ import { SectionNav, type SectionNavItem } from "@/components/layout/SectionNav"
 import { MobileNav } from "@/components/layout/MobileNav";
 import { CartIcon } from "@/components/cart/CartIcon";
 
-function sectionNavForCountryLang(countrySlug: string, lang: string): SectionNavItem[] {
+function sectionNavForCountryLang(
+  countrySlug: string,
+  lang: string,
+  features: string[] | undefined,
+): SectionNavItem[] {
   const base = `/${countrySlug}/${lang}`;
-  return [
-    { href: base, label: "Home", exact: true },
-    { href: `${base}/doctors`, label: "Doctors" },
-    { href: `${base}/general-consultation`, label: "GP" },
-    { href: `${base}/specialist-consultation`, label: "Specialist" },
-  ];
+  const enabled = (key: string) =>
+    !features || features.length === 0 || features.includes(key);
+  const items: SectionNavItem[] = [{ href: base, label: "Home", exact: true }];
+  // Doctors tab isn't covered by the toggle — it's part of the country's
+  // identity. The four feature-gated nav surfaces:
+  items.push({ href: `${base}/doctors`, label: "Doctors" });
+  if (enabled("general-consultations")) {
+    items.push({ href: `${base}/general-consultation`, label: "GP" });
+  }
+  if (enabled("specialist-consultations")) {
+    items.push({ href: `${base}/specialist-consultation`, label: "Specialist" });
+  }
+  return items;
 }
 
 export function SiteHeader({
@@ -51,11 +62,16 @@ export function SiteHeader({
   navigation,
   brandLogo,
   authUser,
+  /** Per-country feature toggles passed from the server layout. Keyed
+   *  by lowercased country code. Used to hide nav tabs for features
+   *  the admin has disabled in /admin/country-features. */
+  countryFeatures,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
   authUser?: AuthUser | null;
+  countryFeatures?: Record<string, string[] | undefined>;
 }) {
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
@@ -67,9 +83,12 @@ export function SiteHeader({
     : null;
   const activeLang = (parsed.lang ?? activeCountry?.defaultLocale ?? "en") as LocaleCode;
 
+  const activeFeatures = activeCountryCode
+    ? countryFeatures?.[activeCountryCode]
+    : undefined;
   const sectionItems: SectionNavItem[] =
     activeCountry && parsed.country && parsed.lang
-      ? sectionNavForCountryLang(parsed.country, parsed.lang)
+      ? sectionNavForCountryLang(parsed.country, parsed.lang, activeFeatures)
       : [];
 
   // The Book CTA stays country+lang scoped when inside a country; otherwise
@@ -176,6 +195,7 @@ export function SiteHeader({
               navigation={navigation}
               brandLogo={brandLogo}
               authUser={authUser}
+              countryFeatures={countryFeatures}
             />
           </div>
         </div>

@@ -50,11 +50,15 @@ export function MobileNav({
   navigation,
   brandLogo = DEFAULT_BRAND_LOGO,
   authUser,
+  countryFeatures,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
   authUser?: AuthUser | null;
+  /** Per-country feature toggles, keyed by lowercased country code.
+   *  Hides nav drawer entries the admin has disabled. */
+  countryFeatures?: Record<string, string[] | undefined>;
 }) {
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
@@ -67,19 +71,33 @@ export function MobileNav({
   const portalHref = authUser?.role === "ADMIN" ? "/admin" : "/account";
   const portalLabel = authUser?.role === "ADMIN" ? "Admin Portal" : "User Portal";
 
+  const activeFeatures = activeCountryCode
+    ? countryFeatures?.[activeCountryCode]
+    : undefined;
+  const isFeatureOn = (key: string) =>
+    !activeFeatures || activeFeatures.length === 0 || activeFeatures.includes(key);
+
   const sectionLinks =
     activeCountry && parsed.country && parsed.lang
       ? [
           { href: `/${parsed.country}/${parsed.lang}`, label: "Home" },
           { href: `/${parsed.country}/${parsed.lang}/doctors`, label: "Doctors" },
-          {
-            href: `/${parsed.country}/${parsed.lang}/general-consultation`,
-            label: "GP consultation",
-          },
-          {
-            href: `/${parsed.country}/${parsed.lang}/specialist-consultation`,
-            label: "Specialist consultation",
-          },
+          ...(isFeatureOn("general-consultations")
+            ? [
+                {
+                  href: `/${parsed.country}/${parsed.lang}/general-consultation`,
+                  label: "GP consultation",
+                },
+              ]
+            : []),
+          ...(isFeatureOn("specialist-consultations")
+            ? [
+                {
+                  href: `/${parsed.country}/${parsed.lang}/specialist-consultation`,
+                  label: "Specialist consultation",
+                },
+              ]
+            : []),
         ]
       : [];
 

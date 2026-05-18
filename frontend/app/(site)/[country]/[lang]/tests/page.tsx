@@ -5,6 +5,8 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { countries, getCountryByCode } from "@/data/countries";
+import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
+import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
@@ -71,6 +73,10 @@ export default async function HealthTestsPage({
   const config = getCountryByCode(code);
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
+
+  // Honor the per-country `health-tests` toggle from /admin/country-features.
+  const overlay = await getPublicCountryByCode(code);
+  if (!isCountryFeatureEnabled(overlay, "health-tests")) notFound();
 
   const [items, page] = await Promise.all([
     getCountryHealthTests(code),

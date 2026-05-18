@@ -29,6 +29,14 @@ export type CountryConfig = {
   slug: string;
   defaultLocale: LocaleCode;
   supportedLocales: LocaleCode[];
+  /**
+   * Per-country sidebar/page toggles surfaced by the public country
+   * fetch. Each entry is a slug from `COUNTRY_FEATURE_KEYS` (e.g.
+   * `health-tests`, `online-prescriptions`). Undefined means the
+   * backend hasn't told us — treat as "all enabled" for backward-
+   * compatibility. Admin manages these via `/admin/country-features`.
+   */
+  enabledFeatures?: string[];
 };
 
 /**
