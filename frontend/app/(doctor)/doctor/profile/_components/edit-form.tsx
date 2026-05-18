@@ -24,6 +24,25 @@ type Initial = {
   profileImagePath: string | null;
 };
 
+/**
+ * Mirrors the admin doctor image field's path resolver. Photo paths come
+ * back from the backend as `/api/media/<key>` — a same-origin path that
+ * relies on a Next.js proxy route to reach the backend. On Railway that
+ * proxy adds a serverless hop on every photo load; resolving directly to
+ * `${NEXT_PUBLIC_API_URL}/api/media/<key>` skips it and lets the browser
+ * hit the backend straight away, matching how the admin portal renders
+ * doctor photos (proven working there).
+ */
+function resolvePhotoSrc(path: string | null): string | null {
+  if (!path) return null;
+  if (/^https?:\/\//i.test(path)) return path;
+  if (path.startsWith("/api/media/")) {
+    const base = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "") ?? "";
+    return base ? `${base}${path}` : path;
+  }
+  return path;
+}
+
 export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -264,7 +283,7 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
               {photoPath ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={photoPath}
+                  src={resolvePhotoSrc(photoPath) ?? photoPath}
                   alt="Profile"
                   style={{ height: "100%", width: "100%", objectFit: "cover" }}
                 />
