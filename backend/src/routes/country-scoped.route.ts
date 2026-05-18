@@ -11,6 +11,8 @@ import {
 } from "../modules/services/services.service.js";
 import { listHealthTestsByCountry } from "../modules/health-tests/health-tests.service.js";
 import { getPublicCountryByCode } from "../modules/countries/countries.service.js";
+import { listOpenSlotsForDoctorAndService } from "../modules/doctor-availability/doctor-availability.service.js";
+import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
@@ -42,6 +44,16 @@ const servicesQuerySchema = z.object({
     (v) => (v === "" || v === undefined || v === null ? undefined : v),
     z.nativeEnum(ServiceKind).optional(),
   ),
+});
+
+const serviceAvailabilityParamsSchema = z.object({
+  countryCode: z.string().trim().min(1).max(8),
+  serviceSlug: z.string().trim().min(1).max(160),
+  doctorSlug: z.string().trim().min(1).max(160),
+});
+
+const serviceAvailabilityQuerySchema = z.object({
+  days: z.coerce.number().int().min(1).max(60).default(14),
 });
 
 function handleError(
@@ -152,6 +164,112 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
       return handleError(app, reply, error, "Unexpected services error");
     }
   });
+
+  /**
+   * Service-scoped availability — Phase 3 of the booking plan.
+   *
+   * Returns the OPEN slots a patient can book for a specific
+   * (country, service, doctor) tuple, with the slot duration coming
+   * from the service (so a 30-min general consult and a 60-min
+   * specialist on the same doctor produce different slot grids).
+   *
+   * Validation chain mirrors the plan:
+   *   - country active
+   *   - service active + in country
+   *   - doctor active + listed in country (primary or DoctorCountry)
+   *   - ServiceDoctor row exists + isActive (the admin assignment)
+   *
+   * Past slots are filtered by clamping `fromUtc` to `now`.
+   */
+  app.get(
+    "/api/services/:countryCode/:serviceSlug/doctors/:doctorSlug/availability",
+    async (request, reply) => {
+      applyPublicCache(reply);
+      const params = serviceAvailabilityParamsSchema.safeParse(request.params);
+      if (!params.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid availability path", params.error.flatten()));
+      }
+      const query = serviceAvailabilityQuerySchema.safeParse(request.query);
+      if (!query.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid availability query", query.error.flatten()));
+      }
+      const { countryCode, serviceSlug, doctorSlug } = params.data;
+      const days = query.data.days;
+
+      try {
+        if (!(await ensureCountryExists(countryCode, reply))) return;
+
+        // Service must exist + be active + scoped to this country.
+        const service = await prisma.service.findFirst({
+          where: {
+            slug: serviceSlug,
+            isActive: true,
+            country: { code: countryCode, isActive: true },
+          },
+          select: { id: true, durationMinutes: true },
+        });
+        if (!service) {
+          return reply.status(404).send(errorResponse("Service not found"));
+        }
+
+        // Doctor must exist + be active + reachable from this country
+        // (primary OR DoctorCountry).
+        const doctor = await prisma.doctor.findFirst({
+          where: {
+            slug: doctorSlug,
+            active: true,
+            OR: [
+              { country: { code: countryCode, isActive: true } },
+              {
+                additionalCountries: {
+                  some: {
+                    active: true,
+                    country: { code: countryCode, isActive: true },
+                  },
+                },
+              },
+            ],
+          },
+          select: { id: true },
+        });
+        if (!doctor) {
+          return reply.status(404).send(errorResponse("Doctor not found"));
+        }
+
+        // ServiceDoctor assignment — the doctor must be bookable for
+        // the chosen service.
+        const assignment = await prisma.serviceDoctor.findFirst({
+          where: {
+            serviceId: service.id,
+            doctorId: doctor.id,
+            isActive: true,
+          },
+          select: { id: true },
+        });
+        if (!assignment) {
+          return reply
+            .status(404)
+            .send(errorResponse("Doctor is not assigned to this service"));
+        }
+
+        const now = new Date();
+        const toUtc = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+        const slots = await listOpenSlotsForDoctorAndService(
+          doctor.id,
+          service.durationMinutes,
+          now,
+          toUtc,
+        );
+        return okResponse({ slots });
+      } catch (error) {
+        return handleError(app, reply, error, "Unexpected availability error");
+      }
+    },
+  );
 };
 
 export default countryScopedRoute;

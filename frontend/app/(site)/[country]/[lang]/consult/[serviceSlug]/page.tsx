@@ -13,7 +13,7 @@ import {
   getCountryServices,
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
-import { getDoctorAvailability } from "@/lib/content/get-doctor-availability";
+import { getServiceDoctorAvailability } from "@/lib/content/get-doctor-availability";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { ConsultationSlotPicker } from "./_components/consultation-slot-picker";
@@ -71,11 +71,13 @@ export default async function ConsultSlotPickerPage({
     ? allDoctors.filter((d) => assignedSet.has(d.id))
     : [];
 
-  // Fetch availability per assigned doctor in parallel.
+  // Fetch availability per assigned doctor in parallel. Uses the new
+  // service-scoped endpoint so slot duration tracks the chosen
+  // service (Phase 3) and mixed-duration assignments don't collide.
   const doctorsWithSlots = await Promise.all(
     doctors.map(async (d) => ({
       ...d,
-      slots: await getDoctorAvailability(code, d.slug, 14),
+      slots: await getServiceDoctorAvailability(code, service.slug, d.slug, 14),
     })),
   );
   const availableDoctors = doctorsWithSlots.filter((d) => d.slots.length > 0);

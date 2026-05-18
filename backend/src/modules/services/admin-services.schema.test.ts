@@ -121,4 +121,90 @@ describe("admin services validation", () => {
       assert.equal(result.data.isActive, false);
     }
   });
+
+  it("create accepts a non-empty doctorIds array", () => {
+    const result = adminServiceCreateBodySchema.safeParse({
+      countryId: "c1",
+      kind: "GENERAL",
+      slug: "with-doctors",
+      name: "With doctors",
+      doctorIds: ["d1", "d2", "d3"],
+    });
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.deepEqual(result.data.doctorIds, ["d1", "d2", "d3"]);
+    }
+  });
+
+  it("create accepts an empty doctorIds array (clears assignments)", () => {
+    const result = adminServiceCreateBodySchema.safeParse({
+      countryId: "c1",
+      kind: "GENERAL",
+      slug: "no-doctors",
+      name: "No doctors",
+      doctorIds: [],
+    });
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.deepEqual(result.data.doctorIds, []);
+    }
+  });
+
+  it("create treats missing doctorIds as undefined (leaves assignments alone)", () => {
+    const result = adminServiceCreateBodySchema.safeParse({
+      countryId: "c1",
+      kind: "GENERAL",
+      slug: "untouched",
+      name: "Untouched",
+    });
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.equal(result.data.doctorIds, undefined);
+    }
+  });
+
+  it("rejects doctorIds with empty / overlong entries", () => {
+    assert.equal(
+      adminServiceCreateBodySchema.safeParse({
+        countryId: "c1",
+        kind: "GENERAL",
+        slug: "bad-doctors",
+        name: "Bad",
+        doctorIds: [""],
+      }).success,
+      false,
+    );
+    assert.equal(
+      adminServiceCreateBodySchema.safeParse({
+        countryId: "c1",
+        kind: "GENERAL",
+        slug: "huge-id",
+        name: "Huge",
+        doctorIds: ["x".repeat(120)],
+      }).success,
+      false,
+    );
+  });
+
+  it("rejects > 200 doctorIds", () => {
+    const tooMany = Array.from({ length: 201 }, (_, i) => `d${i}`);
+    const result = adminServiceCreateBodySchema.safeParse({
+      countryId: "c1",
+      kind: "GENERAL",
+      slug: "too-many",
+      name: "Too many",
+      doctorIds: tooMany,
+    });
+    assert.equal(result.success, false);
+  });
+
+  it("update body also accepts doctorIds", () => {
+    const result = adminServiceUpdateBodySchema.safeParse({
+      doctorIds: ["d1", "d2"],
+    });
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.deepEqual(result.data.doctorIds, ["d1", "d2"]);
+    }
+  });
 });

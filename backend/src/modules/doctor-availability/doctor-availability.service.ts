@@ -144,6 +144,165 @@ export async function listOpenSlotsForDoctor(
 }
 
 /**
+ * Pure overlap test. Two intervals overlap when the first starts before
+ * the second ends AND ends after the second starts. Exposed for unit
+ * tests of the mixed-duration generation rules.
+ */
+export function intervalsOverlap(
+  a: { startAt: Date; endAt: Date },
+  b: { startAt: Date; endAt: Date },
+): boolean {
+  return a.startAt < b.endAt && a.endAt > b.startAt;
+}
+
+/**
+ * Mixed-duration-safe slot generation for a specific service. Same
+ * shape as `ensureSlotsForRange` but the slot duration comes from the
+ * service (with the doctor's recurring window as a fallback), and
+ * every candidate is dropped if it would overlap an existing slot in
+ * any status. That way a 30-min general slot at 09:00 and a 60-min
+ * specialist slot at 09:00 can't both exist for the same doctor.
+ */
+export async function ensureServiceSlotsForRange(
+  doctorId: string,
+  serviceDurationMinutes: number | null,
+  fromUtc: Date,
+  toUtc: Date,
+): Promise<void> {
+  if (toUtc <= fromUtc) return;
+  const fallback = 30;
+  const desiredDuration = Math.max(5, serviceDurationMinutes ?? fallback);
+
+  const windows = await prisma.doctorAvailability.findMany({
+    where: {
+      doctorId,
+      isActive: true,
+      OR: [
+        { effectiveFrom: null, effectiveUntil: null },
+        { effectiveFrom: null, effectiveUntil: { gte: fromUtc } },
+        { effectiveFrom: { lte: toUtc }, effectiveUntil: null },
+        { effectiveFrom: { lte: toUtc }, effectiveUntil: { gte: fromUtc } },
+      ],
+    },
+    select: {
+      weekday: true,
+      startMinute: true,
+      endMinute: true,
+      slotDurationMinutes: true,
+      effectiveFrom: true,
+      effectiveUntil: true,
+    },
+  });
+  if (windows.length === 0) return;
+
+  // Pre-fetch every existing slot for this doctor in the range so we
+  // can run the overlap test in-process instead of hammering the DB
+  // per candidate.
+  const existing = await prisma.doctorTimeSlot.findMany({
+    where: {
+      doctorId,
+      startAt: { gte: new Date(fromUtc.getTime() - 24 * 60 * 60 * 1000) },
+      endAt: { lte: new Date(toUtc.getTime() + 24 * 60 * 60 * 1000) },
+    },
+    select: { startAt: true, endAt: true },
+  });
+
+  const generated: { doctorId: string; startAt: Date; endAt: Date }[] = [];
+  const dayStart = startOfUtcDay(fromUtc);
+  const dayEnd = startOfUtcDay(toUtc);
+
+  for (let day = dayStart.getTime(); day <= dayEnd.getTime(); day += MS_PER_DAY) {
+    const dayDate = new Date(day);
+    const weekday = dayDate.getUTCDay();
+    for (const win of windows) {
+      if (win.weekday !== weekday) continue;
+      if (win.effectiveFrom && dayDate < win.effectiveFrom) continue;
+      if (win.effectiveUntil && dayDate > win.effectiveUntil) continue;
+      // Service duration trumps the window's own duration when set.
+      // Plan's rule: service.durationMinutes ?? availability.slotDurationMinutes ?? 30.
+      const duration =
+        serviceDurationMinutes != null && serviceDurationMinutes > 0
+          ? desiredDuration
+          : Math.max(5, win.slotDurationMinutes);
+      for (
+        let minute = win.startMinute;
+        minute + duration <= win.endMinute;
+        minute += duration
+      ) {
+        const startAt = new Date(dayDate.getTime() + minute * 60 * 1000);
+        const endAt = new Date(startAt.getTime() + duration * 60 * 1000);
+        if (startAt < fromUtc || startAt >= toUtc) continue;
+        // Drop the candidate if any existing slot overlaps. Pure interval
+        // math — works for OPEN, HELD, BOOKED, and BLOCKED alike.
+        const collides = existing.some((row) =>
+          intervalsOverlap({ startAt, endAt }, row),
+        );
+        if (collides) continue;
+        generated.push({ doctorId, startAt, endAt });
+        // Track the just-added candidate so other windows on the same
+        // day don't fight over the same minutes.
+        existing.push({ startAt, endAt });
+      }
+    }
+  }
+
+  if (generated.length === 0) return;
+
+  try {
+    await prisma.doctorTimeSlot.createMany({
+      data: generated,
+      skipDuplicates: true,
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Slot generation unavailable");
+  }
+}
+
+/**
+ * Service-scoped public availability. Honours the chosen service's
+ * duration and only returns slots whose minute-length actually matches
+ * — so a 30-min general slot doesn't leak into a 60-min specialist
+ * picker.
+ */
+export async function listOpenSlotsForDoctorAndService(
+  doctorId: string,
+  serviceDurationMinutes: number | null,
+  fromUtc: Date,
+  toUtc: Date,
+): Promise<PublicSlot[]> {
+  try {
+    await ensureServiceSlotsForRange(
+      doctorId,
+      serviceDurationMinutes,
+      fromUtc,
+      toUtc,
+    );
+    const rows = await prisma.doctorTimeSlot.findMany({
+      where: {
+        doctorId,
+        status: "OPEN",
+        startAt: { gte: fromUtc, lt: toUtc },
+      },
+      orderBy: { startAt: "asc" },
+      select: { id: true, startAt: true, endAt: true },
+    });
+    const target = serviceDurationMinutes ?? 30;
+    return rows
+      .filter((r) => {
+        const minutes = Math.round((r.endAt.getTime() - r.startAt.getTime()) / 60000);
+        return minutes === target;
+      })
+      .map((r) => ({
+        id: r.id,
+        startAt: r.startAt.toISOString(),
+        endAt: r.endAt.toISOString(),
+      }));
+  } catch (error) {
+    throw normalizeDbError(error, "Doctor availability is unavailable");
+  }
+}
+
+/**
  * Claim a slot for a booking. Atomic in one statement — the WHERE clause
  * gates on `status = 'OPEN'`, so a race-loser sees zero rows updated and
  * we throw `SlotAlreadyTakenError`. Caller is expected to wrap this and
