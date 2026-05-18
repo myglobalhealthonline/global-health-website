@@ -1,9 +1,5 @@
 import type { AdminCountryDto, AdminHealthTestDto } from "@/lib/admin/admin-api";
-import {
-  formatHealthTestExtraSections,
-  formatHealthTestLines,
-  formatHealthTestPriceInput,
-} from "@/lib/admin/health-test-form-parse";
+import { formatHealthTestPriceInput } from "@/lib/admin/health-test-form-parse";
 import { ManagedImageField } from "../../_components/managed-image-field";
 
 function formatStockInput(stock: number | null | undefined): string {
@@ -141,49 +137,21 @@ export function HealthTestFields({ countries, initial, pinnedCountryId, countryL
         Health test active
       </label>
 
-      {/* Detail-page-only fields. The public /tests route is a listing
-          (card grid) with no per-test detail page, so these fields aren't
-          surfaced anywhere visitors can see. Kept as hidden inputs to
-          preserve whatever was previously saved across edits — that way
-          we don't blow away historical data if we later ship a detail
-          page. Drop the hidden inputs (or remove the columns from
-          schema.prisma) once it's clear the detail surface is dead for
-          good. */}
-      <input
-        type="hidden"
-        name="heroButtonLabel"
-        defaultValue={initial?.heroButtonLabel ?? ""}
-      />
-      <input
-        type="hidden"
-        name="galleryImagePaths"
-        defaultValue={formatHealthTestLines(initial?.galleryImagePaths)}
-      />
-      <input
-        type="hidden"
-        name="detailIntro"
-        defaultValue={initial?.detailIntro ?? ""}
-      />
-      <input
-        type="hidden"
-        name="whatThisTestCovers"
-        defaultValue={formatHealthTestLines(initial?.whatThisTestCovers)}
-      />
-      <input
-        type="hidden"
-        name="whyGetTested"
-        defaultValue={formatHealthTestLines(initial?.whyGetTested)}
-      />
-      <input
-        type="hidden"
-        name="extraSections"
-        defaultValue={formatHealthTestExtraSections(initial?.extraSections)}
-      />
-      <input
-        type="hidden"
-        name="legacyPath"
-        defaultValue={initial?.legacyPath ?? ""}
-      />
+      {/* Detail-page-only fields (heroButtonLabel, galleryImagePaths,
+          detailIntro, whatThisTestCovers, whyGetTested, extraSections,
+          legacyPath) used to be hidden inputs here to round-trip
+          existing DB values. They were dropped because:
+
+            1. The round-trip wasn't safe — extraSections with empty
+               bodies could re-throw on parse ("Each extra section must
+               have a heading on the first line and body below it").
+            2. The save action sends a partial PATCH, so omitting these
+               keys leaves existing column values untouched.
+            3. CREATE works too — backend schema marks each field as
+               optional with a sane default (null / empty array).
+
+          When a per-test detail page ships, restore proper inputs (not
+          hidden ones) so admins can edit them deliberately. */}
     </div>
   );
 }

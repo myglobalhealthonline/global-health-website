@@ -53,6 +53,11 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
       );
     }
     const raw = parsed.data;
+    // Detail-only fields (galleryImagePaths, heroButtonLabel, detailIntro,
+    // whatThisTestCovers, whyGetTested, extraSections, legacyPath) are
+    // intentionally omitted — the public /tests listing doesn't render
+    // them, the admin form hides them, and the backend defaults handle
+    // first-time create. Re-add them here when a detail page ships.
     const body = {
       countryId: raw.countryId,
       slug: raw.slug,
@@ -61,20 +66,13 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
       priceCents: raw.priceCents,
       currencyCode: raw.currencyCode,
       productImagePath: raw.productImagePath,
-      galleryImagePaths: raw.galleryImagePaths,
       sampleType: raw.sampleType || null,
       resultsTimeline: raw.resultsTimeline || null,
-      heroButtonLabel: raw.heroButtonLabel || null,
-      detailIntro: raw.detailIntro || null,
-      whatThisTestCovers: raw.whatThisTestCovers,
-      whyGetTested: raw.whyGetTested,
-      extraSections: raw.extraSections,
       sortOrder: raw.sortOrder,
       isActive: raw.isActive,
       stock: raw.stock,
       seoTitle: raw.seoTitle || null,
       seoDescription: raw.seoDescription || null,
-      legacyPath: raw.legacyPath || null,
     };
     const result = await postAdminHealthTest(body);
     if (!result.ok) {
