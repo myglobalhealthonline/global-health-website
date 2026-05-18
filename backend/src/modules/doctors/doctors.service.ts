@@ -136,6 +136,20 @@ export async function listDoctorsByCountry(countryCode: string) {
           where: { isActive: true, kind: AssetKind.IMAGE },
           select: { id: true, kind: true, key: true, path: true, altText: true },
         },
+        // Services the doctor is bookable for in this country. Doctor
+        // profile page uses this to scope the service list shown next
+        // to the calendar.
+        assignedServices: {
+          where: {
+            isActive: true,
+            service: {
+              isActive: true,
+              country: { code: countryCode, isActive: true },
+            },
+          },
+          orderBy: { sortOrder: "asc" },
+          select: { serviceId: true },
+        },
       },
     });
   } catch (error) {
@@ -174,6 +188,31 @@ export async function getDoctorByCountryAndSlug(countryCode: string, slug: strin
         assets: {
           where: { isActive: true, kind: AssetKind.IMAGE },
           select: { id: true, kind: true, key: true, path: true, altText: true },
+        },
+        // Active service assignments scoped to the country being viewed.
+        assignedServices: {
+          where: {
+            isActive: true,
+            service: {
+              isActive: true,
+              country: { code: countryCode, isActive: true },
+            },
+          },
+          orderBy: { sortOrder: "asc" },
+          include: {
+            service: {
+              select: {
+                id: true,
+                slug: true,
+                name: true,
+                kind: true,
+                summary: true,
+                durationMinutes: true,
+                basePriceCents: true,
+                currencyCode: true,
+              },
+            },
+          },
         },
       },
     });

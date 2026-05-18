@@ -61,12 +61,17 @@ export default async function ConsultSlotPickerPage({
     specialists.find((s) => s.slug === serviceSlug);
   if (!service) notFound();
 
-  // All doctors active in this country. We can refine to specialty-match
-  // later for specialist services; for v1 we show all and the patient
-  // picks.
-  const doctors = await getCountryDoctors(code);
+  // Doctors bookable for the chosen service. The service record carries
+  // its `assignedDoctorIds` from `ServiceDoctor`; we intersect with the
+  // country roster so a stale assignment (e.g. doctor since deactivated)
+  // doesn't surface a ghost card.
+  const allDoctors = await getCountryDoctors(code);
+  const assignedSet = new Set(service.assignedDoctorIds);
+  const doctors = assignedSet.size > 0
+    ? allDoctors.filter((d) => assignedSet.has(d.id))
+    : [];
 
-  // Fetch availability per doctor in parallel
+  // Fetch availability per assigned doctor in parallel.
   const doctorsWithSlots = await Promise.all(
     doctors.map(async (d) => ({
       ...d,

@@ -29,6 +29,9 @@ export type CountryServiceCard = {
   currencyCode: string | null;
   specialtyName: string | null;
   imageSrc?: string;
+  /** Doctor IDs bookable for this service. Empty array = no assignment
+   *  yet; the public consult flow will show "no doctors available". */
+  assignedDoctorIds: string[];
 };
 
 export type CountryHealthTestCard = {
@@ -111,6 +114,15 @@ export const getCountryServices = cache(async (
     if (typeof r.id !== "string" || typeof r.slug !== "string") continue;
     if (typeof r.name !== "string") continue;
     if (r.isActive === false) continue;
+    const assignedDoctorIds: string[] = [];
+    const assignments = r.assignedDoctors;
+    if (Array.isArray(assignments)) {
+      for (const a of assignments) {
+        if (!a || typeof a !== "object") continue;
+        const id = (a as { doctorId?: unknown }).doctorId;
+        if (typeof id === "string" && id.length > 0) assignedDoctorIds.push(id);
+      }
+    }
     out.push({
       id: r.id,
       slug: r.slug,
@@ -122,6 +134,7 @@ export const getCountryServices = cache(async (
       currencyCode: typeof r.currencyCode === "string" ? r.currencyCode : null,
       specialtyName: readSpecialtyName(r.specialty),
       imageSrc: pickImagePath(row),
+      assignedDoctorIds,
     });
   }
   return out;
