@@ -48,19 +48,19 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
   }
 
   const sections: PortalNavItem[] = [
-    { href: "/doctor", label: "Overview", icon: LayoutDashboard },
-    { href: "/doctor/appointments", label: "Appointments", icon: Calendar },
-    { href: "/doctor/patients", label: "Patients", icon: Users },
-    { href: "/doctor/forms", label: "Forms", icon: FileText },
-    { href: "/doctor/invoices", label: "Invoices", icon: Receipt },
-    { href: "/doctor/reports", label: "Reports", icon: BarChart3 },
+    { href: "/doctor", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
+    { href: "/doctor/appointments", label: "Appointments", icon: <Calendar className="size-4" aria-hidden /> },
+    { href: "/doctor/patients", label: "Patients", icon: <Users className="size-4" aria-hidden /> },
+    { href: "/doctor/forms", label: "Forms", icon: <FileText className="size-4" aria-hidden /> },
+    { href: "/doctor/invoices", label: "Invoices", icon: <Receipt className="size-4" aria-hidden /> },
+    { href: "/doctor/reports", label: "Reports", icon: <BarChart3 className="size-4" aria-hidden /> },
     {
       href: "/doctor/notifications",
       label: "Notifications",
-      icon: Bell,
+      icon: <Bell className="size-4" aria-hidden />,
       badge: unreadCount,
     },
-    { href: "/doctor/profile", label: "Profile", icon: UserCog },
+    { href: "/doctor/profile", label: "Profile", icon: <UserCog className="size-4" aria-hidden /> },
   ];
 
   return (

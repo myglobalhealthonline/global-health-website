@@ -18,14 +18,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Bell,
-  ChevronDown,
-  ChevronRight,
-  Menu,
-  X,
-  type LucideIcon,
-} from "lucide-react";
+import { Bell, ChevronDown, ChevronRight, Menu, X } from "lucide-react";
 
 export type PortalShellUser = {
   fullName: string;
@@ -36,7 +29,10 @@ export type PortalShellUser = {
 export type PortalNavItem = {
   href: string;
   label: string;
-  icon: LucideIcon;
+  /** Pre-rendered icon element. Server Components cannot pass function
+   *  components across the boundary, so layouts pass `<Calendar … />`
+   *  instead of `Calendar`. */
+  icon: ReactNode;
   badge?: number;
 };
 
@@ -173,7 +169,7 @@ export function PortalShell({
                   <SidebarItem
                     key={s.href}
                     href={s.href}
-                    icon={<s.icon className="size-4" aria-hidden />}
+                    icon={s.icon}
                     label={s.label}
                     badge={s.badge}
                     active={isActive(s.href)}

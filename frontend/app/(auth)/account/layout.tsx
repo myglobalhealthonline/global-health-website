@@ -36,13 +36,13 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   }
 
   const sections: PortalNavItem[] = [
-    { href: "/account", label: "Overview", icon: LayoutDashboard },
-    { href: "/account/bookings", label: "My bookings", icon: CalendarDays },
-    { href: "/account/prescriptions", label: "Prescriptions", icon: PillBottle },
-    { href: "/account/payments", label: "Payments", icon: CreditCard },
-    { href: "/account/profile", label: "Profile", icon: UserRound },
-    { href: "/account/security", label: "Security", icon: ShieldCheck },
-    { href: "/", label: "Book consultation", icon: Stethoscope },
+    { href: "/account", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
+    { href: "/account/bookings", label: "My bookings", icon: <CalendarDays className="size-4" aria-hidden /> },
+    { href: "/account/prescriptions", label: "Prescriptions", icon: <PillBottle className="size-4" aria-hidden /> },
+    { href: "/account/payments", label: "Payments", icon: <CreditCard className="size-4" aria-hidden /> },
+    { href: "/account/profile", label: "Profile", icon: <UserRound className="size-4" aria-hidden /> },
+    { href: "/account/security", label: "Security", icon: <ShieldCheck className="size-4" aria-hidden /> },
+    { href: "/", label: "Book consultation", icon: <Stethoscope className="size-4" aria-hidden /> },
   ];
 
   return (
