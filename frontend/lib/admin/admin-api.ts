@@ -383,6 +383,9 @@ export type AdminServiceDto = {
   basePriceCents: number | null;
   currencyCode: string | null;
   isActive: boolean;
+  /** Shipping fee charged per item at checkout (cents). 0 = no
+   *  shipping line (the default — online consultations don't ship). */
+  shippingCents: number;
   /** Additional product images. Hero image lives on `assets[0]`. */
   galleryImagePaths: string[];
   /** Doctor join rows for the admin assignment multi-select. Empty
@@ -885,6 +888,8 @@ export type AdminHealthTestDto = {
   /** null = unlimited inventory; 0 = sold out; 1–5 surfaces a
    *  "Only N left" badge on the public card. */
   stock: number | null;
+  /** Shipping fee charged per kit at checkout (cents). 0 = free. */
+  shippingCents: number;
   seoTitle: string | null;
   seoDescription: string | null;
   legacyPath: string | null;

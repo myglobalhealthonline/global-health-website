@@ -25,6 +25,8 @@ type ParsedHealthTestBody = {
   isActive: boolean;
   /** null = unlimited; 0 = sold out; 1–5 surfaces a "Only N left" badge. */
   stock: number | null;
+  /** Shipping fee in cents charged per kit. 0 = free shipping. */
+  shippingCents: number;
   seoTitle: string;
   seoDescription: string;
   legacyPath: string;
@@ -57,6 +59,17 @@ function parseOptionalStock(raw: string): number | null {
   const value = Number(trimmed);
   if (!Number.isFinite(value) || value < 0) throw new Error("Stock must be zero or greater");
   return value;
+}
+
+function parseShippingToCents(raw: string): number {
+  const trimmed = raw.trim();
+  if (trimmed === "") return 0;
+  if (!/^\d+(?:\.\d{1,2})?$/.test(trimmed))
+    throw new Error("Shipping must be a valid amount like 5 or 5.00");
+  const value = Number(trimmed);
+  if (!Number.isFinite(value) || value < 0)
+    throw new Error("Shipping must be zero or greater");
+  return Math.round(value * 100);
 }
 
 function parseExtraSections(raw: string): HealthTestExtraSection[] | null {
@@ -115,6 +128,7 @@ export function parseHealthTestBodyFromForm(formData: FormData): ParseHealthTest
         sortOrder: Number(formData.get("sortOrder") ?? 0),
         isActive: formData.get("isActive") === "on",
         stock: parseOptionalStock(String(formData.get("stock") ?? "")),
+        shippingCents: parseShippingToCents(String(formData.get("shipping") ?? "")),
         seoTitle: String(formData.get("seoTitle") ?? "").trim(),
         seoDescription: String(formData.get("seoDescription") ?? "").trim(),
         legacyPath: String(formData.get("legacyPath") ?? "").trim(),

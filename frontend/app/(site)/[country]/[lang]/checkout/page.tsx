@@ -67,8 +67,18 @@ export default function CheckoutPage() {
 
   if (cart.items.length === 0) return null;
 
-  const shippingCents = 500;
+  // Mirror cart-page math: sum admin-set shipping per line. 0 for
+  // online consultations, set by admin per item for physical things.
+  const shippingCents = cart.items.reduce(
+    (s, i) => s + (i.shippingCents ?? 0) * i.quantity,
+    0,
+  );
   const total = cart.subtotalCents + shippingCents;
+  // Only ask for a postal address when something in the cart actually
+  // ships. Online consultations skip the section entirely.
+  const needsShipping = cart.items.some(
+    (i) => i.kind === "HEALTH_TEST" || i.kind === "PRESCRIPTION_SERVICE",
+  );
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
@@ -81,7 +91,9 @@ export default function CheckoutPage() {
       </Link>
       <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">Checkout</h1>
       <p className="mt-2 text-sm text-slate-500">
-        Shipping in {cart.countryCode.toUpperCase()} · paid in {cart.currencyCode}
+        {needsShipping
+          ? `Shipping in ${cart.countryCode.toUpperCase()} · paid in ${cart.currencyCode}`
+          : `Online services · paid in ${cart.currencyCode}`}
       </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]">
@@ -93,22 +105,26 @@ export default function CheckoutPage() {
             <Field name="phone" label="Phone (optional)" type="tel" autoComplete="tel" />
           </div>
 
-          <h2 className="mt-8 text-lg font-bold text-slate-900">Shipping address</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <Field name="shipName" label="Recipient name" required />
-            <Field
-              name="shipCountryCode"
-              label="Country code (ISO)"
-              required
-              defaultValue={cart.countryCode.toUpperCase()}
-              maxLength={4}
-              uppercase
-            />
-            <Field name="shipLine1" label="Address line 1" required full />
-            <Field name="shipLine2" label="Address line 2 (optional)" full />
-            <Field name="shipCity" label="City" required />
-            <Field name="shipPostalCode" label="Postal code" required />
-          </div>
+          {needsShipping ? (
+            <>
+              <h2 className="mt-8 text-lg font-bold text-slate-900">Shipping address</h2>
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <Field name="shipName" label="Recipient name" required />
+                <Field
+                  name="shipCountryCode"
+                  label="Country code (ISO)"
+                  required
+                  defaultValue={cart.countryCode.toUpperCase()}
+                  maxLength={4}
+                  uppercase
+                />
+                <Field name="shipLine1" label="Address line 1" required full />
+                <Field name="shipLine2" label="Address line 2 (optional)" full />
+                <Field name="shipCity" label="City" required />
+                <Field name="shipPostalCode" label="Postal code" required />
+              </div>
+            </>
+          ) : null}
 
           {error ? (
             <p className="mt-4 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
@@ -153,12 +169,14 @@ export default function CheckoutPage() {
                 {formatPrice(cart.subtotalCents, cart.currencyCode)}
               </dd>
             </div>
-            <div className="flex justify-between">
-              <dt className="text-slate-600">Shipping</dt>
-              <dd className="font-semibold text-slate-900">
-                {formatPrice(shippingCents, cart.currencyCode)}
-              </dd>
-            </div>
+            {shippingCents > 0 ? (
+              <div className="flex justify-between">
+                <dt className="text-slate-600">Shipping</dt>
+                <dd className="font-semibold text-slate-900">
+                  {formatPrice(shippingCents, cart.currencyCode)}
+                </dd>
+              </div>
+            ) : null}
             <div className="flex justify-between border-t border-slate-200 pt-3 text-base">
               <dt className="font-bold text-slate-900">Total</dt>
               <dd className="font-bold text-slate-900">

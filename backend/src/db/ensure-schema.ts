@@ -43,6 +43,27 @@ const PATCHES: { name: string; sql: string }[] = [
     `,
   },
   {
+    name: "Service.shippingCents",
+    sql: `
+      ALTER TABLE "Service"
+        ADD COLUMN IF NOT EXISTS "shippingCents" INTEGER NOT NULL DEFAULT 0;
+    `,
+  },
+  {
+    name: "HealthTest.shippingCents",
+    sql: `
+      ALTER TABLE "HealthTest"
+        ADD COLUMN IF NOT EXISTS "shippingCents" INTEGER NOT NULL DEFAULT 0;
+    `,
+  },
+  {
+    name: "CartItem.shippingCents",
+    sql: `
+      ALTER TABLE "CartItem"
+        ADD COLUMN IF NOT EXISTS "shippingCents" INTEGER NOT NULL DEFAULT 0;
+    `,
+  },
+  {
     name: "ServiceDoctor table + indexes",
     sql: `
       CREATE TABLE IF NOT EXISTS "ServiceDoctor" (

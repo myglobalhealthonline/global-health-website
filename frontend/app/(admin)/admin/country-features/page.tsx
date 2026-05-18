@@ -93,8 +93,8 @@ const FEATURE_META: FeatureMeta[] = [
   },
   {
     key: "online-prescriptions",
-    label: "Online prescriptions",
-    description: "Asynchronous prescription services without a live consultation.",
+    label: "Prescriptions",
+    description: "Prescription services (typically posted to the patient — set a shipping price on each item).",
     icon: PillBottle,
     href: "/admin/online-prescriptions",
   },

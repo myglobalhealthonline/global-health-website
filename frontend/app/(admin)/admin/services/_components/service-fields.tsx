@@ -155,16 +155,37 @@ export function ServiceFields({
         </label>
       </div>
 
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Currency code</span>
-        <input
-          name="currencyCode"
-          className="gh-input min-w-0 uppercase"
-          placeholder="EUR"
-          maxLength={8}
-          defaultValue={initial?.currencyCode ?? ""}
-        />
-      </label>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Currency code</span>
+          <input
+            name="currencyCode"
+            className="gh-input min-w-0 uppercase"
+            placeholder="EUR"
+            maxLength={8}
+            defaultValue={initial?.currencyCode ?? ""}
+          />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Shipping price</span>
+          <input
+            type="text"
+            inputMode="decimal"
+            name="shipping"
+            className="gh-input min-w-0"
+            defaultValue={
+              initial?.shippingCents && initial.shippingCents > 0
+                ? (initial.shippingCents / 100).toFixed(2)
+                : ""
+            }
+            placeholder="0.00"
+          />
+          <span className="text-xs text-[var(--color-text-muted)]">
+            Charged per item at checkout. Leave blank for online services
+            (no shipping). Set a value for prescription delivery.
+          </span>
+        </label>
+      </div>
 
       <ManagedImageField
         name="imagePath"

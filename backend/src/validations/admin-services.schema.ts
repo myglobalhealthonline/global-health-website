@@ -154,6 +154,16 @@ const adminServiceBodyShape = {
     z.string().trim().max(8).nullable(),
   ),
   imagePath: imagePathFieldSchema.optional(),
+  /** Per-item shipping price the admin charges patients (cents).
+   *  0 means no shipping line for this item — which is the default
+   *  for online consultations. Use a non-zero value for physical
+   *  things admin posts (e.g. prescription delivery). */
+  shippingCents: z.coerce
+    .number({ invalid_type_error: "Shipping must be a whole number" })
+    .int("Shipping must be a whole number (no decimals)")
+    .min(0, "Shipping must be zero or greater")
+    .max(100000, "Shipping looks too large")
+    .optional(),
   /** Additional product images. Hero image still flows through `imagePath`
    *  / Asset; these populate Service.galleryImagePaths directly. */
   galleryImagePaths: z

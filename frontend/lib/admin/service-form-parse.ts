@@ -19,6 +19,9 @@ type ParsedServiceBody = {
   imagePath: string;
   galleryImagePaths: string[];
   doctorIds: string[];
+  /** Shipping fee in cents charged per item at checkout. 0 = no
+   *  shipping (the default for online consultations). */
+  shippingCents: number;
   isActive: boolean;
 };
 
@@ -53,6 +56,19 @@ function parsePriceToCents(rawValue: string): number | undefined {
     throw new Error("Starting price must be zero or greater");
   }
 
+  return Math.round(value * 100);
+}
+
+function parseShippingToCents(rawValue: string): number {
+  const raw = rawValue.trim();
+  if (raw === "") return 0;
+  if (!/^\d+(?:\.\d{1,2})?$/.test(raw)) {
+    throw new Error("Shipping must be a valid amount like 5 or 5.00");
+  }
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value < 0) {
+    throw new Error("Shipping must be zero or greater");
+  }
   return Math.round(value * 100);
 }
 
@@ -98,6 +114,7 @@ export function parseServiceBodyFromForm(formData: FormData): ParseServiceFormRe
               .filter(Boolean),
           ),
         ),
+        shippingCents: parseShippingToCents(String(formData.get("shipping") ?? "")),
         isActive: formData.get("isActive") === "on",
       },
     };

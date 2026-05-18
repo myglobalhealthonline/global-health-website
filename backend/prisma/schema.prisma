@@ -429,6 +429,12 @@ model Service {
   durationMinutes       Int?
   basePriceCents        Int?
   currencyCode          String?
+  /// Shipping price the admin charges patients for this service when
+  /// the item is physical (online prescription delivered by post).
+  /// 0 = no shipping (the default — covers all online consultations).
+  /// Read by the cart when computing the order total, and by the
+  /// checkout flow when adding a Stripe shipping line.
+  shippingCents         Int                   @default(0)
   editorialChecklist    Json?
   isActive              Boolean               @default(true)
   /// Additional product images. Empty by default. Hero image still lives
@@ -499,6 +505,10 @@ model HealthTest {
   title              String
   shortDescription   String?
   priceCents         Int
+  /// Shipping price the admin charges patients for this kit. 0 = no
+  /// shipping. Cart sums this across all health-test line items
+  /// alongside Service.shippingCents for prescription services.
+  shippingCents      Int           @default(0)
   currencyCode       String
   productImagePath   String
   galleryImagePaths  String[]
@@ -788,6 +798,10 @@ model CartItem {
   /// Snapshot price in cents — checkout uses this, not the live row, so
   /// a price change between add-to-cart and pay doesn't surprise the user.
   unitPriceCents Int
+  /// Snapshot of the per-unit shipping fee at add-to-cart time. 0 for
+  /// online consultations (no physical delivery). Cart total adds
+  /// `shippingCents * quantity` across all items.
+  shippingCents  Int          @default(0)
   quantity       Int          @default(1)
   /// Consultation items: which slot the patient claimed.
   timeSlotId     String?      @unique

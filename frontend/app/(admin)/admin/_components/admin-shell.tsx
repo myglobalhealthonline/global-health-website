@@ -127,7 +127,7 @@ const ORDER: Record<string, number> = {
 const LABEL_OVERRIDES: Record<string, string> = {
   "/admin/general-consultations": "General consultations",
   "/admin/specialist-consultations": "Specialist consultations",
-  "/admin/online-prescriptions": "Online prescriptions",
+  "/admin/online-prescriptions": "Prescriptions",
   "/admin/health-tests": "Health tests",
   "/admin/specialties": "Categories",
 };

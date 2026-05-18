@@ -68,6 +68,10 @@ type CartItemView = {
   serviceId: string | null;
   name: string;
   unitPriceCents: number;
+  /** Shipping fee per unit (cents). Comes from HealthTest.shippingCents
+   *  or Service.shippingCents at add-to-cart time. 0 for online
+   *  consultations (no physical delivery). */
+  shippingCents: number;
   quantity: number;
   lineTotalCents: number;
   timeSlotId: string | null;
@@ -277,6 +281,7 @@ function serializeCart(
     serviceId: i.serviceId,
     name: i.name,
     unitPriceCents: i.unitPriceCents,
+    shippingCents: i.shippingCents ?? 0,
     quantity: i.quantity,
     lineTotalCents: i.unitPriceCents * i.quantity,
     timeSlotId: i.timeSlotId,
@@ -337,6 +342,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       // Validate referenced product exists + grab pricing snapshot
       let name = "";
       let unitPriceCents = 0;
+      let shippingCents = 0;
       let countryCode = "";
       let currencyCode = "";
 
@@ -366,6 +372,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           }
           name = ht.title;
           unitPriceCents = ht.priceCents;
+          shippingCents = ht.shippingCents ?? 0;
           countryCode = ht.country.code;
           currencyCode = ht.currencyCode ?? "EUR";
         } else if (
@@ -402,6 +409,11 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           }
           name = svc.name;
           unitPriceCents = svc.basePriceCents;
+          // Online consultations (GENERAL / SPECIALIST) never ship; the
+          // schema default for Service.shippingCents is 0, so the admin
+          // has to opt-in to a non-zero value (typically only for
+          // PRESCRIPTION items the team posts to the patient).
+          shippingCents = svc.shippingCents ?? 0;
           countryCode = svc.country.code;
           currencyCode = svc.country.currency.code;
         }
@@ -530,6 +542,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             serviceId: serviceId ?? null,
             name,
             unitPriceCents,
+            shippingCents,
             quantity: isConsultation ? 1 : qty,
             timeSlotId: timeSlotId ?? null,
             doctorId: doctorId ?? null,

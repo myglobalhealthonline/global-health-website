@@ -26,18 +26,20 @@ import { errorResponse, okResponse } from "../utils/response.js";
  */
 
 const CART_COOKIE = "gh_cart";
-const FLAT_SHIPPING_CENTS = 500; // €5 default
 
 const checkoutBodySchema = z.object({
   email: z.string().trim().email("Invalid email"),
   fullName: z.string().trim().min(2, "Name too short").max(120),
   phone: z.string().trim().max(40).optional().or(z.literal("")),
-  shipName: z.string().trim().min(2).max(120),
-  shipLine1: z.string().trim().min(2).max(200),
+  // Shipping fields are optional — checkouts with only online
+  // consultations don't ship. The handler nulls them out before
+  // saving the Order when none are supplied.
+  shipName: z.string().trim().max(120).optional().or(z.literal("")),
+  shipLine1: z.string().trim().max(200).optional().or(z.literal("")),
   shipLine2: z.string().trim().max(200).optional().or(z.literal("")),
-  shipCity: z.string().trim().min(2).max(120),
-  shipPostalCode: z.string().trim().min(2).max(40),
-  shipCountryCode: z.string().trim().min(2).max(4),
+  shipCity: z.string().trim().max(120).optional().or(z.literal("")),
+  shipPostalCode: z.string().trim().max(40).optional().or(z.literal("")),
+  shipCountryCode: z.string().trim().max(4).optional().or(z.literal("")),
   /** Where Stripe should return after success / cancel — relative path. */
   returnTo: z
     .string()
@@ -112,7 +114,14 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           (s, i) => s + i.unitPriceCents * i.quantity,
           0,
         );
-        const shippingCents = FLAT_SHIPPING_CENTS;
+        // Per-item shipping snapshot, summed across every line. Online
+        // consultations carry shippingCents=0, so a cart of just
+        // consultations totals to subtotal. Physical items (health
+        // tests, prescription delivery) add their admin-set fee.
+        const shippingCents = cart.items.reduce(
+          (s, i) => s + (i.shippingCents ?? 0) * i.quantity,
+          0,
+        );
         const totalCents = subtotalCents + shippingCents;
         const currency = cart.currencyCode.toLowerCase();
 
@@ -129,12 +138,14 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
               subtotalCents,
               shippingCents,
               totalCents,
-              shipName: body.data.shipName,
-              shipLine1: body.data.shipLine1,
+              shipName: body.data.shipName || null,
+              shipLine1: body.data.shipLine1 || null,
               shipLine2: body.data.shipLine2 || null,
-              shipCity: body.data.shipCity,
-              shipPostalCode: body.data.shipPostalCode,
-              shipCountryCode: body.data.shipCountryCode.toUpperCase(),
+              shipCity: body.data.shipCity || null,
+              shipPostalCode: body.data.shipPostalCode || null,
+              shipCountryCode: body.data.shipCountryCode
+                ? body.data.shipCountryCode.toUpperCase()
+                : null,
               items: {
                 create: cart.items.map((i) => ({
                   kind: i.kind,

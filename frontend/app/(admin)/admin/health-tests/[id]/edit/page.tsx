@@ -103,6 +103,7 @@ export default async function AdminEditHealthTestPage({
       sortOrder: raw.sortOrder,
       isActive: raw.isActive,
       stock: raw.stock,
+      shippingCents: raw.shippingCents,
       seoTitle: raw.seoTitle || null,
       seoDescription: raw.seoDescription || null,
     };

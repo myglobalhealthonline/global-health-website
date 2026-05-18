@@ -73,6 +73,7 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
       sortOrder: raw.sortOrder,
       isActive: raw.isActive,
       stock: raw.stock,
+      shippingCents: raw.shippingCents,
       seoTitle: raw.seoTitle || null,
       seoDescription: raw.seoDescription || null,
     };

@@ -11,6 +11,10 @@ export type CartItem = {
   serviceId: string | null;
   name: string;
   unitPriceCents: number;
+  /** Shipping fee charged per unit at checkout. 0 = no shipping line
+   *  for this item (the default for online consultations). The cart +
+   *  checkout pages sum `shippingCents * quantity` across the cart. */
+  shippingCents: number;
   quantity: number;
   lineTotalCents: number;
   timeSlotId: string | null;

@@ -177,6 +177,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
       imagePath: raw.imagePath.trim() === "" ? null : raw.imagePath.trim(),
       galleryImagePaths: raw.galleryImagePaths,
       doctorIds: raw.doctorIds,
+      shippingCents: raw.shippingCents,
       isActive: raw.isActive,
     };
 

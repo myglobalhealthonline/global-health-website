@@ -72,6 +72,15 @@ export const adminHealthTestCreateBodySchema = z.object({
     .min(0, "Stock must be zero or greater")
     .optional()
     .nullable(),
+  /** Per-kit shipping price the admin charges patients (cents).
+   *  Health tests ship a physical sample kit, so this normally
+   *  has a value. 0 = no shipping line. */
+  shippingCents: z.coerce
+    .number({ invalid_type_error: "Shipping must be a whole number" })
+    .int("Shipping must be a whole number (no decimals)")
+    .min(0, "Shipping must be zero or greater")
+    .max(100000, "Shipping looks too large")
+    .optional(),
   seoTitle: optionalTrimmed(200),
   seoDescription: optionalTrimmed(320),
   legacyPath: optionalTrimmed(240),

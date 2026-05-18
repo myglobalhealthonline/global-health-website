@@ -619,6 +619,7 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
         ...(input.galleryImagePaths !== undefined && {
           galleryImagePaths: input.galleryImagePaths,
         }),
+        ...(input.shippingCents !== undefined && { shippingCents: input.shippingCents }),
         isActive: input.isActive ?? true,
       },
       include: adminServiceInclude,
@@ -691,6 +692,7 @@ export async function updateAdminService(
         ...(body.galleryImagePaths !== undefined && {
           galleryImagePaths: body.galleryImagePaths,
         }),
+        ...(body.shippingCents !== undefined && { shippingCents: body.shippingCents }),
         ...(body.isActive !== undefined && { isActive: body.isActive }),
       },
       include: adminServiceInclude,

@@ -90,7 +90,13 @@ export default function CartPage() {
     );
   }
 
-  const shippingCents = 500;
+  // Per-item shipping snapshot, summed over the cart. Online
+  // consultations have shippingCents=0 by default — a cart of just
+  // consultations totals to subtotal with no shipping line.
+  const shippingCents = cart.items.reduce(
+    (s, i) => s + (i.shippingCents ?? 0) * i.quantity,
+    0,
+  );
   const total = cart.subtotalCents + shippingCents;
 
   return (
@@ -162,12 +168,14 @@ export default function CartPage() {
                 {formatPrice(cart.subtotalCents, cart.currencyCode)}
               </dd>
             </div>
-            <div className="flex justify-between">
-              <dt className="text-slate-600">Shipping (flat)</dt>
-              <dd className="font-semibold text-slate-900">
-                {formatPrice(shippingCents, cart.currencyCode)}
-              </dd>
-            </div>
+            {shippingCents > 0 ? (
+              <div className="flex justify-between">
+                <dt className="text-slate-600">Shipping</dt>
+                <dd className="font-semibold text-slate-900">
+                  {formatPrice(shippingCents, cart.currencyCode)}
+                </dd>
+              </div>
+            ) : null}
             <div className="flex justify-between border-t border-slate-200 pt-3 text-base">
               <dt className="font-bold text-slate-900">Total</dt>
               <dd className="font-bold text-slate-900">

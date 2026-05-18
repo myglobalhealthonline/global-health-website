@@ -8,6 +8,11 @@ function formatStockInput(stock: number | null | undefined): string {
   return String(stock);
 }
 
+function formatShippingInput(cents: number | null | undefined): string {
+  if (cents === null || cents === undefined || cents === 0) return "";
+  return (cents / 100).toFixed(2);
+}
+
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
   initial?: AdminHealthTestDto | null;
@@ -98,7 +103,7 @@ export function HealthTestFields({ countries, initial, pinnedCountryId, countryL
         max={12}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Stock</span>
           <input
@@ -112,6 +117,20 @@ export function HealthTestFields({ countries, initial, pinnedCountryId, countryL
           />
           <span className="text-xs text-[var(--color-text-muted)]">
             Blank = unlimited. 0 = sold out. 1–5 surfaces an &quot;Only N left&quot; badge on the public card.
+          </span>
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Shipping price</span>
+          <input
+            type="text"
+            inputMode="decimal"
+            name="shipping"
+            className="gh-input min-w-0"
+            defaultValue={formatShippingInput(initial?.shippingCents)}
+            placeholder="0.00"
+          />
+          <span className="text-xs text-[var(--color-text-muted)]">
+            Charged per kit at checkout. Leave blank for free shipping.
           </span>
         </label>
         <label className="flex flex-col gap-2">
