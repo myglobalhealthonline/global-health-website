@@ -17,8 +17,16 @@ type ParsedServiceBody = {
   basePriceCents: number | undefined;
   currencyCode: string;
   imagePath: string;
+  galleryImagePaths: string[];
   isActive: boolean;
 };
+
+function parseLines(raw: string): string[] {
+  return raw
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
 
 type ParseServiceFormResult =
   | { ok: true; data: ParsedServiceBody }
@@ -76,6 +84,7 @@ export function parseServiceBodyFromForm(formData: FormData): ParseServiceFormRe
         basePriceCents: parsePriceToCents(priceRaw),
         currencyCode: String(formData.get("currencyCode") ?? "").trim(),
         imagePath: String(formData.get("imagePath") ?? "").trim(),
+        galleryImagePaths: parseLines(String(formData.get("galleryImagePaths") ?? "")),
         isActive: formData.get("isActive") === "on",
       },
     };

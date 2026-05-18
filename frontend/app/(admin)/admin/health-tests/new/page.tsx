@@ -56,11 +56,9 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
       );
     }
     const raw = parsed.data;
-    // Detail-only fields (galleryImagePaths, heroButtonLabel, detailIntro,
-    // whatThisTestCovers, whyGetTested, extraSections, legacyPath) are
-    // intentionally omitted — the public /tests listing doesn't render
-    // them, the admin form hides them, and the backend defaults handle
-    // first-time create. Re-add them here when a detail page ships.
+    // heroButtonLabel / detailIntro / whatThisTestCovers / whyGetTested /
+    // extraSections / legacyPath are still omitted — no public surface
+    // renders them. PATCH is partial so this preserves existing values.
     const body = {
       countryId: raw.countryId,
       slug: raw.slug,
@@ -69,6 +67,7 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
       priceCents: raw.priceCents,
       currencyCode: raw.currencyCode,
       productImagePath: raw.productImagePath,
+      galleryImagePaths: raw.galleryImagePaths,
       sampleType: raw.sampleType || null,
       resultsTimeline: raw.resultsTimeline || null,
       sortOrder: raw.sortOrder,

@@ -154,6 +154,13 @@ const adminServiceBodyShape = {
     z.string().trim().max(8).nullable(),
   ),
   imagePath: imagePathFieldSchema.optional(),
+  /** Additional product images. Hero image still flows through `imagePath`
+   *  / Asset; these populate Service.galleryImagePaths directly. */
+  galleryImagePaths: z
+    .array(z.string().trim().min(1).max(2000))
+    .max(12)
+    .optional()
+    .default([]),
   isActive: z.boolean().optional(),
 } satisfies z.ZodRawShape;
 

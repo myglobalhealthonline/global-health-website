@@ -148,6 +148,7 @@ export default async function AdminEditServicePage({
       basePriceCents: raw.basePriceCents,
       currencyCode: raw.currencyCode.trim() === "" ? null : raw.currencyCode.trim(),
       imagePath: raw.imagePath.trim() === "" ? null : raw.imagePath.trim(),
+      galleryImagePaths: raw.galleryImagePaths,
       isActive: raw.isActive,
     };
 

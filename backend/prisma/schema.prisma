@@ -427,6 +427,9 @@ model Service {
   currencyCode          String?
   editorialChecklist    Json?
   isActive              Boolean               @default(true)
+  /// Additional product images. Empty by default. Hero image still lives
+  /// on the related Asset row (kind=IMAGE, synced via syncOwnedImageAsset).
+  galleryImagePaths     String[]              @default([])
   consultationSetting   Json?
   bookingSetting        Json?
   country               Country               @relation(fields: [countryId], references: [id], onDelete: Cascade)

@@ -86,11 +86,9 @@ export default async function AdminEditHealthTestPage({
     if (!parsed.ok)
       redirect(`/admin/health-tests/${id}/edit?error=${encodeURIComponent(parsed.error)}`);
     const raw = parsed.data;
-    // PATCH is partial — omitting galleryImagePaths / heroButtonLabel /
-    // detailIntro / whatThisTestCovers / whyGetTested / extraSections /
-    // legacyPath leaves whatever's in the DB untouched. Saves the parse
-    // throws on round-tripping malformed legacy data through a hidden
-    // input.
+    // heroButtonLabel / detailIntro / whatThisTestCovers / whyGetTested /
+    // extraSections / legacyPath are still omitted — no public surface
+    // renders them. PATCH is partial so existing DB values stay put.
     const body = {
       countryId: raw.countryId,
       slug: raw.slug,
@@ -99,6 +97,7 @@ export default async function AdminEditHealthTestPage({
       priceCents: raw.priceCents,
       currencyCode: raw.currencyCode,
       productImagePath: raw.productImagePath,
+      galleryImagePaths: raw.galleryImagePaths,
       sampleType: raw.sampleType || null,
       resultsTimeline: raw.resultsTimeline || null,
       sortOrder: raw.sortOrder,

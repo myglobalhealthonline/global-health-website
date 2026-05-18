@@ -35,6 +35,13 @@ const PATCHES: { name: string; sql: string }[] = [
         ]::TEXT[];
     `,
   },
+  {
+    name: "Service.galleryImagePaths",
+    sql: `
+      ALTER TABLE "Service"
+        ADD COLUMN IF NOT EXISTS "galleryImagePaths" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];
+    `,
+  },
 ];
 
 export async function ensureSchema(log: {

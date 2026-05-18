@@ -536,6 +536,9 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
         ...(input.durationMinutes !== undefined && { durationMinutes: input.durationMinutes }),
         ...(input.basePriceCents !== undefined && { basePriceCents: input.basePriceCents }),
         ...(input.currencyCode !== undefined && { currencyCode: input.currencyCode }),
+        ...(input.galleryImagePaths !== undefined && {
+          galleryImagePaths: input.galleryImagePaths,
+        }),
         isActive: input.isActive ?? true,
       },
       include: adminServiceInclude,
@@ -598,6 +601,9 @@ export async function updateAdminService(
         ...(body.durationMinutes !== undefined && { durationMinutes: body.durationMinutes }),
         ...(body.basePriceCents !== undefined && { basePriceCents: body.basePriceCents }),
         ...(body.currencyCode !== undefined && { currencyCode: body.currencyCode }),
+        ...(body.galleryImagePaths !== undefined && {
+          galleryImagePaths: body.galleryImagePaths,
+        }),
         ...(body.isActive !== undefined && { isActive: body.isActive }),
       },
       include: adminServiceInclude,

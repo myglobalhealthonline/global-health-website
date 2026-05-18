@@ -1,5 +1,6 @@
 import type { AdminCountryDto, AdminServiceDto, AdminServiceKind, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
 import { ManagedImageField } from "../../_components/managed-image-field";
+import { MultiImageField } from "../../_components/multi-image-field";
 import { formatServicePriceInput } from "@/lib/admin/service-form-parse";
 import { SERVICE_KIND_META } from "@/lib/admin/service-kind";
 
@@ -148,6 +149,14 @@ export function ServiceFields({ countries, specialties, kind, initial, pinnedCou
         label="Hero image"
         initialPath={initial?.assets[0]?.path ?? ""}
         helperText={`Shown on the public ${meta.singularLabel.toLowerCase()} card and detail page.`}
+      />
+
+      <MultiImageField
+        name="galleryImagePaths"
+        label="Gallery images"
+        initialPaths={initial?.galleryImagePaths ?? []}
+        helperText="Optional additional images. Up to 12. Not yet rendered on the public listing — saved for a future detail page."
+        max={12}
       />
 
       {/* The hero / detail-body / legacy-path columns exist on the DB

@@ -383,6 +383,8 @@ export type AdminServiceDto = {
   basePriceCents: number | null;
   currencyCode: string | null;
   isActive: boolean;
+  /** Additional product images. Hero image lives on `assets[0]`. */
+  galleryImagePaths: string[];
   createdAt: string;
   updatedAt: string;
   country: { id: string; code: string; name: string };

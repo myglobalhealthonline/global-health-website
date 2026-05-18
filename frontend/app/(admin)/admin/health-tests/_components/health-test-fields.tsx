@@ -1,6 +1,7 @@
 import type { AdminCountryDto, AdminHealthTestDto } from "@/lib/admin/admin-api";
 import { formatHealthTestPriceInput } from "@/lib/admin/health-test-form-parse";
 import { ManagedImageField } from "../../_components/managed-image-field";
+import { MultiImageField } from "../../_components/multi-image-field";
 
 function formatStockInput(stock: number | null | undefined): string {
   if (stock === null || stock === undefined) return "";
@@ -89,6 +90,14 @@ export function HealthTestFields({ countries, initial, pinnedCountryId, countryL
         helperText="Main image shown on the health-test card. Required."
       />
 
+      <MultiImageField
+        name="galleryImagePaths"
+        label="Gallery images"
+        initialPaths={initial?.galleryImagePaths ?? []}
+        helperText="Optional additional images. Up to 12. Not yet rendered on the public card — saved for a future per-test detail page."
+        max={12}
+      />
+
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Stock</span>
@@ -137,21 +146,11 @@ export function HealthTestFields({ countries, initial, pinnedCountryId, countryL
         Health test active
       </label>
 
-      {/* Detail-page-only fields (heroButtonLabel, galleryImagePaths,
-          detailIntro, whatThisTestCovers, whyGetTested, extraSections,
-          legacyPath) used to be hidden inputs here to round-trip
-          existing DB values. They were dropped because:
-
-            1. The round-trip wasn't safe — extraSections with empty
-               bodies could re-throw on parse ("Each extra section must
-               have a heading on the first line and body below it").
-            2. The save action sends a partial PATCH, so omitting these
-               keys leaves existing column values untouched.
-            3. CREATE works too — backend schema marks each field as
-               optional with a sane default (null / empty array).
-
-          When a per-test detail page ships, restore proper inputs (not
-          hidden ones) so admins can edit them deliberately. */}
+      {/* Detail-page-only fields (heroButtonLabel, detailIntro,
+          whatThisTestCovers, whyGetTested, extraSections, legacyPath)
+          are still omitted from the form — no per-test detail page
+          renders them yet. PATCH is partial so the underlying columns
+          stay put on edit. CREATE picks up the schema defaults. */}
     </div>
   );
 }
