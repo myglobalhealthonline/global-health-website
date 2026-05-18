@@ -5,6 +5,7 @@ import {
   BarChart3,
   Bell,
   Calendar,
+  CalendarClock,
   FileText,
   LayoutDashboard,
   Receipt,
@@ -50,6 +51,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
   const sections: PortalNavItem[] = [
     { href: "/doctor", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
     { href: "/doctor/appointments", label: "Appointments", icon: <Calendar className="size-4" aria-hidden /> },
+    { href: "/doctor/availability", label: "Availability", icon: <CalendarClock className="size-4" aria-hidden /> },
     { href: "/doctor/patients", label: "Patients", icon: <Users className="size-4" aria-hidden /> },
     { href: "/doctor/forms", label: "Forms", icon: <FileText className="size-4" aria-hidden /> },
     { href: "/doctor/invoices", label: "Invoices", icon: <Receipt className="size-4" aria-hidden /> },
