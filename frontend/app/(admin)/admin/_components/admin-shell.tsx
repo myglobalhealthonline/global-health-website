@@ -282,7 +282,7 @@ export function AdminShell({
             </p>
           </div>
 
-          <nav className="flex-1 overflow-y-auto">
+          <nav className="gh-dark-scroll flex-1 overflow-y-auto">
             {/* ── Global section ────────────────────────────────── */}
             <SidebarSectionLabel label="Global" />
             <div className="px-3 pt-1">

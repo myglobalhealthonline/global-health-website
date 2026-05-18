@@ -158,7 +158,7 @@ export function PortalShell({
             </p>
           </div>
 
-          <nav className="flex-1 overflow-y-auto">
+          <nav className="gh-dark-scroll flex-1 overflow-y-auto">
             <SidebarSectionLabel label={sectionLabel} />
             <div className="px-3 pb-6 pt-1">
               <div className="grid gap-0.5">
