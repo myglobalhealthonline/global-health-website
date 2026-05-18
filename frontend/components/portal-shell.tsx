@@ -18,7 +18,11 @@
 import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, ChevronDown, ChevronRight, Menu, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, X } from "lucide-react";
+import {
+  NotificationPopover,
+  type NotificationPopoverItem,
+} from "@/components/NotificationPopover";
 
 export type PortalShellUser = {
   fullName: string;
@@ -88,6 +92,10 @@ export function PortalShell({
   rootHref,
   rootBreadcrumb,
   signOutAction,
+  notifications,
+  notificationsUnreadCount = 0,
+  notificationsViewAllHref,
+  notificationsEmptyMessage,
   children,
 }: {
   user: PortalShellUser;
@@ -101,6 +109,15 @@ export function PortalShell({
   /** First breadcrumb label (e.g., "Doctor", "Account"). */
   rootBreadcrumb: string;
   signOutAction: SignOutAction;
+  /** Recent notifications for the bell dropdown. Empty (or undefined) =
+   *  shows the empty-state message; bell dot hides. */
+  notifications?: NotificationPopoverItem[];
+  /** Total unread count, drives the red bell dot + "N unread" label. */
+  notificationsUnreadCount?: number;
+  /** "View all" link href; null hides the link. */
+  notificationsViewAllHref?: string | null;
+  /** Fallback text when notifications is empty. */
+  notificationsEmptyMessage?: string;
   children: ReactNode;
 }) {
   const [navOpen, setNavOpen] = useState(false);
@@ -248,16 +265,14 @@ export function PortalShell({
             </div>
 
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-              {/* Notification bell — placeholder; bell unread state will
-                  be wired per portal later (doctor: appointments; patient:
-                  bookings). */}
-              <button
-                type="button"
-                aria-label="Notifications"
-                className="relative inline-flex size-9 items-center justify-center rounded-[10px] border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-muted)] transition hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
-              >
-                <Bell className="size-4" aria-hidden />
-              </button>
+              <NotificationPopover
+                items={notifications ?? []}
+                unreadCount={notificationsUnreadCount}
+                viewAllHref={notificationsViewAllHref ?? null}
+                emptyMessage={
+                  notificationsEmptyMessage ?? "You're all caught up."
+                }
+              />
 
               {/* User menu */}
               <div className="relative">

@@ -4,7 +4,6 @@ import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Bell,
   ChevronDown,
   ChevronRight,
   FileText,
@@ -27,6 +26,7 @@ import { Toaster } from "sonner";
 import { CountryPicker } from "./country-picker";
 import type { CountryPickerOption } from "./country-picker-constants";
 import { FlagBadge } from "./flag-badge";
+import { NotificationPopover } from "@/components/NotificationPopover";
 
 export type AdminShellUser = {
   fullName: string;
@@ -423,19 +423,14 @@ export function AdminShell({
                   </div>
                 ) : null}
 
-              {/* Notification bell */}
-              <button
-                type="button"
-                aria-label="Notifications"
-                className="relative inline-flex size-9 items-center justify-center rounded-[10px] border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-muted)] transition hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
-              >
-                <Bell className="size-4" aria-hidden />
-                {/* Notification dot — vivid lime for marketing-level attention */}
-                <span
-                  className="absolute right-[6px] top-[6px] size-[6px] rounded-full ring-2 ring-[var(--color-background-page)]"
-                  style={{ background: "var(--color-brand-accent)" }}
-                />
-              </button>
+              {/* Notification bell — admin feed isn't wired yet, so we
+                  show the popover with an empty-state message. */}
+              <NotificationPopover
+                items={[]}
+                unreadCount={0}
+                viewAllHref={null}
+                emptyMessage="No admin notifications yet. The audit log is the source of truth for now."
+              />
 
               {/* User menu */}
               <div className="relative">

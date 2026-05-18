@@ -39,11 +39,40 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     redirect("/login?next=/doctor");
   }
 
-  // Best-effort unread-count fetch for the bell badge on /notifications.
-  // Always a DOCTOR by this point — earlier guards redirect every other role.
+  // Pull the full notification list (not onlyUnread) so the popover
+  // can show both new + recently-read items. Doctor-only by this
+  // point — earlier guards redirect every other role.
+  const NOTIF_TYPE_LABEL: Record<string, string> = {
+    APPOINTMENT_ASSIGNED: "Appointment assigned",
+    INTERNAL_MESSAGE: "Internal message",
+    CONSULT_SIGNED: "Consultation signed",
+    EXAM_LOGGED: "Exam result logged",
+    FORM_SUBMITTED: "Form submitted",
+  };
   let unreadCount = 0;
-  const notif = await fetchDoctorNotifications(true);
-  if (notif.ok) unreadCount = notif.data.unreadCount;
+  let notifications: {
+    id: string;
+    title: string;
+    body: string | null;
+    href: string | null;
+    createdAt: string;
+    readAt: string | null;
+  }[] = [];
+  const notif = await fetchDoctorNotifications(false);
+  if (notif.ok) {
+    unreadCount = notif.data.unreadCount;
+    notifications = notif.data.items.slice(0, 10).map((n) => {
+      const appointmentId = n.payload?.appointmentId;
+      return {
+        id: n.id,
+        title: NOTIF_TYPE_LABEL[n.type] ?? n.type,
+        body: n.payload?.snippet ?? null,
+        href: appointmentId ? `/doctor/appointments/${appointmentId}` : "/doctor/notifications",
+        createdAt: n.createdAt,
+        readAt: n.readAt,
+      };
+    });
+  }
 
   const sections: PortalNavItem[] = [
     { href: "/doctor", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
@@ -71,6 +100,10 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       rootHref="/doctor"
       rootBreadcrumb="Doctor"
       signOutAction={logoutAction}
+      notifications={notifications}
+      notificationsUnreadCount={unreadCount}
+      notificationsViewAllHref="/doctor/notifications"
+      notificationsEmptyMessage="No notifications yet."
     >
       {children}
     </PortalShell>
