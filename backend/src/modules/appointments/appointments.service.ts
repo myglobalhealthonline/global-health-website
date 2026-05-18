@@ -14,6 +14,20 @@ import {
   SlotAlreadyTakenError,
 } from "../doctor-availability/doctor-availability.service.js";
 
+/**
+ * Thrown when a patient tries to book a slot whose doctor isn't
+ * assigned to the chosen service. Surfaced as `400 Bad Request` so the
+ * frontend can hint at "this doctor no longer offers that service" and
+ * refresh the picker — separate from `409` (slot race) so the UI can
+ * tell them apart.
+ */
+export class DoctorNotAssignedToServiceError extends Error {
+  constructor() {
+    super("This doctor is no longer offering that service. Please pick a different doctor or service.");
+    this.name = "DoctorNotAssignedToServiceError";
+  }
+}
+
 export {
   InvalidAppointmentStatusTransitionError,
   UnrecognizedAppointmentStatusError,
@@ -44,6 +58,25 @@ export async function createAppointmentWithOptionalOwner(
         ? new Date(`${input.dateOfBirth}T00:00:00.000Z`)
         : null;
 
+    // Resolve the chosen service (if any) before opening the booking
+    // transaction. We need its id to:
+    //   - verify the slot's doctor is assigned to it (Phase 4 guard).
+    //   - stamp Appointment.serviceId so the consultation flow can
+    //     surface duration / price downstream.
+    // Service is country-scoped, so the (slug, countryCode) tuple
+    // resolves to one row.
+    let serviceForBooking: { id: string } | null = null;
+    if (input.serviceSlug) {
+      serviceForBooking = await prisma.service.findFirst({
+        where: {
+          slug: input.serviceSlug,
+          isActive: true,
+          country: { code: input.country, isActive: true },
+        },
+        select: { id: true },
+      });
+    }
+
     // Slot booking path. If the patient picked a concrete slot, we wrap
     // the slot claim and the appointment INSERT in a single transaction
     // so a race-loser doesn't leave a half-formed appointment behind.
@@ -54,6 +87,22 @@ export async function createAppointmentWithOptionalOwner(
     if (input.timeSlotId) {
       await prisma.$transaction(async (tx) => {
         const claimed = await claimDoctorSlot(tx, input.timeSlotId as string);
+        // Assignment guard: if the patient supplied a service, verify
+        // the slot's doctor is bookable for that service. Throw inside
+        // the transaction so the slot claim rolls back to OPEN.
+        if (serviceForBooking) {
+          const assignment = await tx.serviceDoctor.findFirst({
+            where: {
+              serviceId: serviceForBooking.id,
+              doctorId: claimed.doctorId,
+              isActive: true,
+            },
+            select: { id: true },
+          });
+          if (!assignment) {
+            throw new DoctorNotAssignedToServiceError();
+          }
+        }
         await tx.$executeRawUnsafe(
           `
             INSERT INTO "Appointment"

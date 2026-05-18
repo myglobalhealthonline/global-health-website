@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../db/prisma.js";
 import {
   createAppointmentWithOptionalOwner,
+  DoctorNotAssignedToServiceError,
   SlotAlreadyTakenError,
 } from "../modules/appointments/appointments.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -179,6 +180,11 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
     } catch (error) {
       if (error instanceof SlotAlreadyTakenError) {
         return reply.status(409).send(errorResponse(error.message));
+      }
+      if (error instanceof DoctorNotAssignedToServiceError) {
+        // 400 — patient/payload mismatch (often a stale form). UI should
+        // refresh the doctor picker and surface the message.
+        return reply.status(400).send(errorResponse(error.message));
       }
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
