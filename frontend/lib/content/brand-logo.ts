@@ -1,30 +1,14 @@
 /**
- * Brand lockups used across the site + portals.
+ * Brand lockup. Points to one PNG on disk so the user only needs to
+ * replace a single file when the brand evolves. Dark-surfaced contexts
+ * (admin/doctor/patient sidebars, footer) layer a
+ * `filter: brightness(0) invert(1)` to render the same lockup white —
+ * avoids shipping two near-identical assets.
  *
- *  - `DEFAULT_BRAND_LOGO` (a.k.a. DARK) — green text + line on transparent
- *    background. Use on light surfaces: public site header, mobile drawer,
- *    auth pages.
- *  - `DEFAULT_BRAND_LOGO_LIGHT` — white text + line on transparent. Use on
- *    dark surfaces: admin / doctor / patient portal sidebars.
- *  - `DEFAULT_BRAND_ICON` — globe-only mark. Reserved for favicons, badges,
- *    and tight contexts where the wordmark won't fit.
- *
- * The admin can override `DEFAULT_BRAND_LOGO` via the `site-logo` CMS asset
- * (see `resolveSiteLogoAsset`). The light variant + icon are not yet CMS-
- * configurable because they're identity-critical lockups, not marketing
- * imagery.
+ * The admin can also override this via the `site-logo` CMS asset
+ * (see `resolveSiteLogoAsset`).
  */
 export const DEFAULT_BRAND_LOGO = {
-  src: "/logos/global-health-dark.png",
+  src: "/logos/global-health-official.png",
   alt: "Global Health — Medicine anytime anywhere",
-} as const;
-
-export const DEFAULT_BRAND_LOGO_LIGHT = {
-  src: "/logos/global-health-light.png",
-  alt: "Global Health — Medicine anytime anywhere",
-} as const;
-
-export const DEFAULT_BRAND_ICON = {
-  src: "/favicon.png",
-  alt: "Global Health",
 } as const;

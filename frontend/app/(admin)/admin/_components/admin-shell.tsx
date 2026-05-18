@@ -234,9 +234,13 @@ export function AdminShell({
             <Link href="/admin" className="inline-flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/logos/global-health-light.png"
+                src="/logos/global-health-official.png"
                 alt="Global Health"
-                style={{ height: 44, width: "auto" }}
+                style={{
+                  height: 44,
+                  width: "auto",
+                  filter: "brightness(0) invert(1)",
+                }}
               />
             </Link>
             <p

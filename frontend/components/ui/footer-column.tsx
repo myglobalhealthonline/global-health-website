@@ -52,11 +52,12 @@ export default function FooterColumn({
             <div className="flex items-center">
               {hasRealLogo ? (
                 <Image
-                  src="/logos/global-health-light.png"
+                  src={brandLogo!.src}
                   alt={brandLogo!.alt}
                   width={280}
                   height={120}
                   className="h-12 w-auto"
+                  style={{ filter: "brightness(0) invert(1)" }}
                 />
               ) : (
                 <span className="inline-flex items-center gap-3">
