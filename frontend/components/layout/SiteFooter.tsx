@@ -71,34 +71,19 @@ export function SiteFooter({ siteName }: { siteName: string }) {
       >
         <div className="gh-footer-grid grid gap-10">
           <div>
-            <div className="inline-flex items-center gap-2.5">
-              <span
-                className="inline-flex items-center justify-center"
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 8,
-                  background: "var(--color-accent)",
-                  color: "var(--color-background-dark)",
-                  fontFamily: "var(--font-display)",
-                  fontSize: 17,
-                  fontWeight: 800,
-                }}
-              >
-                g
-              </span>
-              <span
-                className="text-white"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: 19,
-                  fontWeight: 800,
-                  letterSpacing: "-0.02em",
-                }}
-              >
-                {siteName || "Global Health"}
-              </span>
-            </div>
+            <Link
+              href="/"
+              className="inline-flex items-center"
+              style={{ textDecoration: "none" }}
+              aria-label={siteName || "Global Health"}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logos/global-health-light.png"
+                alt={siteName || "Global Health"}
+                style={{ height: 44, width: "auto" }}
+              />
+            </Link>
             <p
               className="mt-4"
               style={{ fontSize: 14, lineHeight: 1.6, maxWidth: 320 }}

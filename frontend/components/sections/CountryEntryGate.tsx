@@ -101,10 +101,12 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
 
       {/* Top — wordmark + eyebrow */}
       <header className={`${styles.header} relative flex items-center justify-between`}>
-        <div className="inline-flex items-center gap-2.5">
-          <span className={`${styles.logoMark} inline-flex items-center justify-center`}>g</span>
-          <span className={`${styles.wordmark} text-white`}>Global Health</span>
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logos/global-health-light.png"
+          alt="Global Health"
+          style={{ height: 48, width: "auto" }}
+        />
         <p className={`${styles.tagline} uppercase`}>Medicine without borders</p>
       </header>
 
