@@ -26,6 +26,7 @@ import {
   getCountryServices,
 } from "@/lib/content/get-country-collections";
 import { SITE_NAME } from "@/lib/constants";
+import { formatPriceRounded } from "@/lib/format-currency";
 
 type Params = { country: string; lang: string };
 
@@ -63,9 +64,7 @@ export async function generateMetadata({
 
 function formatPrice(cents: number | null, currency: string | null): string | undefined {
   if (cents == null) return undefined;
-  const symbol = currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency === "USD" ? "$" : (currency ?? "");
-  const amount = (cents / 100).toLocaleString("en-IE", { maximumFractionDigits: 0 });
-  return `${symbol}${amount}`;
+  return formatPriceRounded(cents, currency);
 }
 
 function formatDuration(minutes: number | null): string | undefined {

@@ -259,6 +259,18 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
           where: { id: existing.id },
           data: { status: "SIGNED", signedAt: new Date() },
         });
+        // Sign also starts the 24h patient↔doctor chat lock window
+        // (independent of admin moving the appointment to COMPLETED).
+        // Only set the first time so doctor re-signs (out of scope today)
+        // wouldn't reset the lock countdown.
+        await prisma.appointment.update({
+          where: { id: appt.id, consultationCompletedAt: null },
+          data: { consultationCompletedAt: new Date() },
+        }).catch(() => {
+          // If row already has the timestamp, the WHERE narrowing
+          // returns no rows — Prisma throws P2025. Swallow; chat lock
+          // is already counting from the first sign.
+        });
         recordAudit({
           actorUserId: auth.userId,
           actorRole: "DOCTOR",

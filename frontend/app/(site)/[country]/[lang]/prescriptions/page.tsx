@@ -20,6 +20,7 @@ import {
 import { getCountryServices } from "@/lib/content/get-country-collections";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
+import { formatPriceRounded } from "@/lib/format-currency";
 
 type Params = { country: string; lang: string };
 
@@ -57,8 +58,7 @@ export async function generateMetadata({
 
 function formatPrice(cents: number | null, currency: string | null) {
   if (cents == null) return null;
-  const symbol = currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency === "USD" ? "$" : (currency ?? "");
-  return `${symbol}${(cents / 100).toLocaleString("en-IE", { maximumFractionDigits: 0 })}`;
+  return formatPriceRounded(cents, currency);
 }
 
 export default async function PrescriptionsPage({

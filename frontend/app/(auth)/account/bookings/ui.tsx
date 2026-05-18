@@ -13,6 +13,7 @@ import {
   uploadPatientChatFile,
 } from "@/lib/api/consultation-chat-api";
 import { formatAppDateTime } from "@/lib/format-datetime";
+import { formatPrice } from "@/lib/format-currency";
 
 type BookingsShellProps = {
   items: AccountAppointment[];
@@ -50,15 +51,14 @@ function requiresPayment(item: AccountAppointment): boolean {
 
 function formatPaymentLabel(status: string, amountCents: number | null, currency: string | null) {
   if (!amountCents) return null;
-  const symbol = currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency === "USD" ? "$" : `${currency} `;
-  const amt = (amountCents / 100).toFixed(2);
-  if (status === "PAID") return `Paid · ${symbol}${amt}`;
-  if (status === "PROCESSING") return `Processing · ${symbol}${amt}`;
-  if (status === "REQUIRES_ACTION") return `Awaiting payment · ${symbol}${amt}`;
-  if (status === "FAILED") return `Payment failed · ${symbol}${amt}`;
-  if (status === "REFUNDED") return `Refunded · ${symbol}${amt}`;
-  if (status === "CANCELED") return `Cancelled · ${symbol}${amt}`;
-  return `${symbol}${amt} unpaid`;
+  const price = formatPrice(amountCents, currency);
+  if (status === "PAID") return `Paid · ${price}`;
+  if (status === "PROCESSING") return `Processing · ${price}`;
+  if (status === "REQUIRES_ACTION") return `Awaiting payment · ${price}`;
+  if (status === "FAILED") return `Payment failed · ${price}`;
+  if (status === "REFUNDED") return `Refunded · ${price}`;
+  if (status === "CANCELED") return `Cancelled · ${price}`;
+  return `${price} unpaid`;
 }
 
 export function BookingsShell({ items, unavailableMessage }: BookingsShellProps) {

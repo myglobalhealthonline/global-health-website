@@ -2,15 +2,9 @@ import Link from "next/link";
 import { CreditCard, ExternalLink } from "lucide-react";
 import { fetchAccountPayments, type AccountPayment } from "@/lib/api/account-payments-api";
 import { formatAppDate } from "@/lib/format-datetime";
+import { formatPrice } from "@/lib/format-currency";
 
 export const dynamic = "force-dynamic";
-
-function formatAmount(cents: number, currency: string): string {
-  const major = (cents / 100).toFixed(2);
-  const symbol =
-    currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency === "USD" ? "$" : `${currency} `;
-  return `${symbol}${major}`;
-}
 
 const STATUS_LABEL: Record<AccountPayment["status"], string> = {
   PAID: "Paid",
@@ -105,7 +99,7 @@ export default async function AccountPaymentsPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 font-semibold text-[var(--color-text-primary)]">
-                    {formatAmount(p.amountCents, p.currencyCode)}
+                    {formatPrice(p.amountCents, p.currencyCode)}
                   </td>
                   <td className="px-4 py-3">
                     <span

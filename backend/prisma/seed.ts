@@ -34,11 +34,24 @@ type SeedService = {
 };
 
 async function main() {
-  await prisma.currency.upsert({
-    where: { code: "EUR" },
-    update: {},
-    create: { code: "EUR", symbol: "EUR" },
-  });
+  // ISO 4217 currencies supported by the platform. Add new countries by
+  // extending this list (Currency rows are FKs of Country.currencyId).
+  const currencies: { code: string; symbol: string; decimals?: number }[] = [
+    { code: "EUR", symbol: "€" },
+    { code: "GBP", symbol: "£" },
+    { code: "USD", symbol: "$" },
+    { code: "CZK", symbol: "Kč" },
+    { code: "BRL", symbol: "R$" },
+    { code: "RON", symbol: "lei" },
+    { code: "PLN", symbol: "zł" },
+  ];
+  for (const c of currencies) {
+    await prisma.currency.upsert({
+      where: { code: c.code },
+      update: { symbol: c.symbol },
+      create: { code: c.code, symbol: c.symbol, decimals: c.decimals ?? 2 },
+    });
+  }
 
   const countrySeeds = [
     {

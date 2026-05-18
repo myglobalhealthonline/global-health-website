@@ -10,6 +10,7 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
+import { currencySymbol } from "@/lib/format-currency";
 import {
   CheckCircle2,
   Package,
@@ -216,14 +217,7 @@ function ServiceTile({ service: s }: { service: ServiceCatalogItem }) {
   const stripeFg = s.type === "test" ? "var(--color-background-dark)" : "#fff";
   const tileBg =
     s.type === "test" ? "rgba(20,59,48,0.10)" : "rgba(255,255,255,0.14)";
-  const currencySymbol =
-    s.currency === "EUR" || !s.currency
-      ? "€"
-      : s.currency === "GBP"
-        ? "£"
-        : s.currency === "USD"
-          ? "$"
-          : `${s.currency} `;
+  const symbol = currencySymbol(s.currency);
 
   return (
     <Link
@@ -343,7 +337,7 @@ function ServiceTile({ service: s }: { service: ServiceCatalogItem }) {
                 fontVariantNumeric: "tabular-nums",
               }}
             >
-              {s.price == null ? "—" : `${currencySymbol}${s.price}`}
+              {s.price == null ? "—" : `${symbol}${s.price}`}
             </p>
           </div>
           <div className="text-right">
