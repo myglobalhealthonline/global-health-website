@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, Save } from "lucide-react";
+import { Save, UserRound } from "lucide-react";
 import {
   fetchCurrentUser,
   patchCurrentUser,
@@ -55,29 +54,26 @@ export default function AccountProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-background-soft)] px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-2xl">
-        <Link
-          href="/account"
-          className="mb-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-        >
-          <ArrowLeft className="size-3.5" aria-hidden /> Back to account
-        </Link>
-
-        <h1 className="gh-h2 text-[var(--color-text-primary)]">Profile</h1>
-        <p className="mt-2 text-[var(--color-text-muted)]">
+    <div className="mx-auto max-w-2xl">
+      <header className="mb-6">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+          Account
+        </p>
+        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--color-text-primary)]">
+          <UserRound className="size-6 text-[var(--color-brand-primary)]" aria-hidden />
+          Profile
+        </h2>
+        <p className="text-sm text-[var(--color-text-muted)]">
           Your contact details for bookings and confirmations.
         </p>
+      </header>
 
-        {loading ? (
-          <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500">
-            Loading…
-          </div>
-        ) : (
-          <form
-            onSubmit={onSubmit}
-            className="mt-6 space-y-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
-          >
+      {loading ? (
+        <div className="gh-card p-6 text-sm text-[var(--color-text-muted)]">
+          Loading…
+        </div>
+      ) : (
+        <form onSubmit={onSubmit} className="gh-card space-y-4 p-6">
             <label className="block">
               <span className="gh-field-label">Email</span>
               <input
@@ -131,17 +127,16 @@ export default function AccountProfilePage() {
               </p>
             ) : null}
 
-            <button
-              type="submit"
-              disabled={saving}
-              className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
-            >
-              <Save aria-hidden className="size-4" />
-              {saving ? "Saving…" : "Save changes"}
-            </button>
-          </form>
-        )}
-      </div>
+          <button
+            type="submit"
+            disabled={saving}
+            className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+          >
+            <Save aria-hidden className="size-4" />
+            {saving ? "Saving…" : "Save changes"}
+          </button>
+        </form>
+      )}
     </div>
   );
 }

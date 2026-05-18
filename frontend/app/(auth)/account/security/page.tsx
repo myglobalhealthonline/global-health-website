@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck, KeyRound, MailCheck, Download } from "lucide-react";
+import { ShieldCheck, KeyRound, MailCheck, Download } from "lucide-react";
 import {
   changeCurrentPassword,
   downloadOwnDataUrl,
@@ -88,29 +88,26 @@ export default function AccountSecurityPage() {
   const verified = Boolean(user?.emailVerifiedAt);
 
   return (
-    <div className="min-h-screen bg-[var(--color-background-soft)] px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-2xl">
-        <Link
-          href="/account"
-          className="mb-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-        >
-          <ArrowLeft className="size-3.5" aria-hidden /> Back to account
-        </Link>
-
-        <div className="flex items-center gap-2">
+    <div className="mx-auto max-w-2xl">
+      <header className="mb-6">
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+          Account
+        </p>
+        <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--color-text-primary)]">
           <ShieldCheck className="size-6 text-[var(--color-brand-primary)]" aria-hidden />
-          <h1 className="gh-h2 text-[var(--color-text-primary)]">Security</h1>
-        </div>
-        <p className="mt-2 text-[var(--color-text-muted)]">
+          Security
+        </h2>
+        <p className="text-sm text-[var(--color-text-muted)]">
           Manage your password and email verification status.
         </p>
+      </header>
 
-        {loading ? (
-          <div className="mt-6 rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-500">
-            Loading…
-          </div>
-        ) : (
-          <>
+      {loading ? (
+        <div className="gh-card p-6 text-sm text-[var(--color-text-muted)]">
+          Loading…
+        </div>
+      ) : (
+        <>
             {/* Email verification panel */}
             <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex items-start gap-3">
@@ -257,10 +254,9 @@ export default function AccountSecurityPage() {
                   </form>
                 </div>
               </div>
-            </section>
-          </>
-        )}
-      </div>
+          </section>
+        </>
+      )}
     </div>
   );
 }
