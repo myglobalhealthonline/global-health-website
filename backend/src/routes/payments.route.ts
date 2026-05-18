@@ -237,17 +237,88 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
               app.log.warn({ sessionId: session.id }, "Webhook: order session missing orderId");
               return okResponse({ received: true });
             }
-            await prisma.order.update({
-              where: { id: orderId },
-              data: {
-                status: "PAID",
-                paymentStatus: "PAID",
-                paidAt: new Date(),
-                stripePaymentIntentId:
-                  typeof session.payment_intent === "string"
-                    ? session.payment_intent
-                    : null,
-              },
+
+            // Mark paid + (if any consultation items) mint Appointments
+            await prisma.$transaction(async (tx) => {
+              const order = await tx.order.findUnique({
+                where: { id: orderId },
+                include: { items: true },
+              });
+              if (!order) return;
+
+              const consultationItems = order.items.filter(
+                (i) =>
+                  i.kind === "GENERAL_CONSULTATION" ||
+                  i.kind === "SPECIALIST_CONSULTATION",
+              );
+
+              const appointmentIds: string[] = [];
+              for (const item of consultationItems) {
+                if (!item.timeSlotId || !item.doctorId || !item.serviceId) {
+                  app.log.warn(
+                    { orderId, itemId: item.id },
+                    "Consultation order item missing slot/doctor/service",
+                  );
+                  continue;
+                }
+                // Claim slot (atomic) then create appointment
+                try {
+                  const slot = await tx.doctorTimeSlot.update({
+                    where: {
+                      id: item.timeSlotId,
+                      status: "OPEN",
+                    },
+                    data: { status: "BOOKED" },
+                  });
+                  const consultationType =
+                    item.kind === "SPECIALIST_CONSULTATION" ? "specialist" : "general";
+                  const apt = await tx.appointment.create({
+                    data: {
+                      userId: order.userId,
+                      countryCode: order.countryCode,
+                      consultationType,
+                      fullName: order.fullName,
+                      email: order.email,
+                      phone: order.phone,
+                      consentAccepted: true,
+                      status: "REQUEST_RECEIVED",
+                      serviceId: item.serviceId,
+                      doctorId: item.doctorId,
+                      timeSlotId: item.timeSlotId,
+                      scheduledAt: slot.startAt,
+                      amountCents: item.unitPriceCents,
+                      currencyCode: order.currencyCode,
+                      paymentStatus: "PAID",
+                      paidAt: new Date(),
+                      consultationMode: "ONLINE",
+                    },
+                  });
+                  await tx.orderItem.update({
+                    where: { id: item.id },
+                    data: { appointmentId: apt.id },
+                  });
+                  appointmentIds.push(apt.id);
+                } catch (err) {
+                  app.log.error(
+                    { err, orderId, itemId: item.id },
+                    "Failed to mint appointment for consultation item",
+                  );
+                }
+              }
+
+              await tx.order.update({
+                where: { id: orderId },
+                data: {
+                  status: "PAID",
+                  paymentStatus: "PAID",
+                  paidAt: new Date(),
+                  stripePaymentIntentId:
+                    typeof session.payment_intent === "string"
+                      ? session.payment_intent
+                      : null,
+                  appointmentIds,
+                },
+              });
             });
             return okResponse({ received: true });
           }
