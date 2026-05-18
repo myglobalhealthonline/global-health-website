@@ -22,17 +22,15 @@ const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME?.trim() || "gh_auth";
  * Doctor portal layout. Reuses `PortalShell` so admin / doctor / patient
  * share one chrome (dark sidebar, light header, breadcrumb, user menu).
  *
- * Auth gating is double-layered: this layout re-checks role server-side
- * AND the edge proxy at `frontend/proxy.ts` rejects /doctor/* for
- * non-doctor sessions before SSR runs.
+ * Auth gating: DOCTOR only. Admins land back on /admin (no peeking into
+ * a doctor's workspace by URL — they have their own portal). Patients
+ * land on /account.
  */
 export default async function DoctorLayout({ children }: { children: ReactNode }) {
   const user = await getServerAuthUser();
   if (!user) redirect("/login?next=/doctor");
-  // Only DOCTOR + ADMIN sessions may proceed. Patients land on /account.
-  if (user.role !== "DOCTOR" && user.role !== "ADMIN") {
-    redirect("/account");
-  }
+  if (user.role === "ADMIN") redirect("/admin");
+  if (user.role !== "DOCTOR") redirect("/account");
 
   async function logoutAction() {
     "use server";
@@ -42,11 +40,10 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
   }
 
   // Best-effort unread-count fetch for the bell badge on /notifications.
+  // Always a DOCTOR by this point — earlier guards redirect every other role.
   let unreadCount = 0;
-  if (user.role === "DOCTOR") {
-    const notif = await fetchDoctorNotifications(true);
-    if (notif.ok) unreadCount = notif.data.unreadCount;
-  }
+  const notif = await fetchDoctorNotifications(true);
+  if (notif.ok) unreadCount = notif.data.unreadCount;
 
   const sections: PortalNavItem[] = [
     { href: "/doctor", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },

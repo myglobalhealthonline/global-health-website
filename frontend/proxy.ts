@@ -86,8 +86,14 @@ export async function proxy(request: NextRequest) {
       doctorUrl.search = "";
       return NextResponse.redirect(doctorUrl);
     }
-    const allowed = session.role === "PATIENT" || session.role === "ADMIN";
-    if (!allowed) {
+    if (session.role === "ADMIN") {
+      // Admins shouldn't peek into a patient's portal by URL.
+      const adminUrl = request.nextUrl.clone();
+      adminUrl.pathname = "/admin";
+      adminUrl.search = "";
+      return NextResponse.redirect(adminUrl);
+    }
+    if (session.role !== "PATIENT") {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
       loginUrl.search = "";
@@ -121,8 +127,15 @@ export async function proxy(request: NextRequest) {
 
   if (pathname === "/doctor" || pathname.startsWith("/doctor/")) {
     const session = await resolveSessionUser(request);
-    if (session.role === "DOCTOR" || session.role === "ADMIN") {
-      // continue — admins can see the doctor portal for support purposes
+    if (session.role === "DOCTOR") {
+      // continue
+    } else if (session.role === "ADMIN") {
+      // Admins have their own portal. No peeking into a doctor's
+      // workspace by URL.
+      const adminUrl = request.nextUrl.clone();
+      adminUrl.pathname = "/admin";
+      adminUrl.search = "";
+      return NextResponse.redirect(adminUrl);
     } else if (session.role === "PATIENT") {
       const accountUrl = request.nextUrl.clone();
       accountUrl.pathname = "/account";
