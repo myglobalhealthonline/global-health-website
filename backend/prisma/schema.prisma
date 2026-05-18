@@ -281,6 +281,8 @@ model Doctor {
   /// Inverse of `ExamResult.doctorId`. Populated when the doctor
   /// uploads / records an exam result for an appointment.
   examResults            ExamResult[]
+  /// Clinical prescriptions issued by this doctor.
+  prescriptions          Prescription[]
   /// Form templates this doctor owns. Templates with `doctorId = null`
   /// are shared/global (admin-managed).
   formTemplates          FormTemplate[]
@@ -936,10 +938,44 @@ model Consultation {
   servicesUsed   ConsultationService[]
   /// Share links pointing at this consultation (signed referral URLs).
   shareLinks     ShareLink[]
+  /// Clinical prescriptions issued during this consult.
+  prescriptions  Prescription[]
   createdAt      DateTime              @default(now())
   updatedAt      DateTime              @updatedAt
 
   @@index([doctorId, status])
+}
+
+/// Structured clinical prescription issued by the doctor during a
+/// consultation. Distinct from `ServiceKind.PRESCRIPTION` services,
+/// which are orderable products (a "shop item" the patient buys
+/// without a clinical encounter — same pattern as HealthTest).
+///
+/// Drugs are stored as free-text for now (no formulary lookup).
+/// Locked once the parent Consultation is SIGNED — further edits
+/// would require an amendment row (out of scope today).
+model Prescription {
+  id             String       @id @default(cuid())
+  consultationId String
+  doctorId       String
+  drugName       String
+  /// Strength + form, e.g. "50 mg tablet", "10 mg/mL solution".
+  dose           String?
+  /// Dosing schedule, e.g. "1 tab twice daily", "as needed".
+  frequency      String?
+  /// How long to take it, in days. Null = ongoing / repeat.
+  durationDays   Int?
+  /// Free-text caveats: "with food", "do not drive", etc.
+  instructions   String?
+  /// Number of refills the patient is allowed without re-consulting.
+  refills        Int          @default(0)
+  consultation   Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+  doctor         Doctor       @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([consultationId, createdAt])
+  @@index([doctorId, createdAt])
 }
 
 /// Per-appointment lab / imaging / test order or result the doctor

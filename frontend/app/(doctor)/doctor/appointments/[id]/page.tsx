@@ -20,6 +20,8 @@ import { FollowUpButton } from "./_components/follow-up-button";
 import { DocumentsList } from "./_components/documents-list";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 import { DoctorConsultationChatSection } from "./_components/consultation-chat-section";
+import { PrescriptionsList } from "./_components/prescriptions-list";
+import { fetchDoctorPrescriptions } from "@/lib/api/prescriptions-api";
 
 export const dynamic = "force-dynamic";
 
@@ -44,6 +46,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     submissionsRes,
     templatesRes,
     documentsRes,
+    prescriptionsRes,
   ] = await Promise.all([
     fetchDoctorConsultation(id),
     fetchDoctorExams(id),
@@ -52,6 +55,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     fetchDoctorFormSubmissions(id),
     fetchDoctorFormTemplates(),
     fetchDoctorDocuments(id),
+    fetchDoctorPrescriptions(id),
   ]);
 
   if (!consultRes.ok) {
@@ -77,6 +81,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const submissions = submissionsRes.ok ? submissionsRes.data.items : [];
   const templates = templatesRes.ok ? templatesRes.data.items : [];
   const documents = documentsRes.ok ? documentsRes.data.items : [];
+  const prescriptions = prescriptionsRes.ok ? prescriptionsRes.data.items : [];
   const consultationMode = appointment.consultationMode ?? "ONLINE";
   const followUpFromId = appointment.followUpFromAppointmentId ?? null;
   const signed = consultation?.status === "SIGNED";
@@ -387,6 +392,28 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
               point at a partner-lab portal.
             </p>
             <ExamResultsList appointmentId={appointment.id} initialItems={exams} />
+          </section>
+
+          <section className="gh-card p-6">
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 16,
+                fontWeight: 800,
+              }}
+            >
+              Prescriptions
+            </h3>
+            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Clinical scripts issued during this consultation. Lock when
+              the consult is signed.
+            </p>
+            <PrescriptionsList
+              appointmentId={appointment.id}
+              initialItems={prescriptions}
+              consultationLocked={signed}
+            />
           </section>
 
           <section className="gh-card p-6">
