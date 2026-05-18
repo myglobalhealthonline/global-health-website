@@ -482,10 +482,23 @@ export function AdminShell({
                       <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
                         {user.role}
                       </p>
-                      <form
-                        action={signOutAction}
-                        className="mt-3"
-                      >
+                      <nav className="mt-2 flex flex-col gap-0.5">
+                        <Link
+                          href="/admin/settings"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="rounded-md px-2 py-1.5 text-sm font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                        >
+                          Account
+                        </Link>
+                        <Link
+                          href="/"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="rounded-md px-2 py-1.5 text-sm font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                        >
+                          Main site
+                        </Link>
+                      </nav>
+                      <form action={signOutAction} className="mt-2 border-t border-[var(--color-border)] pt-2">
                         <button
                           type="submit"
                           className="w-full rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] transition hover:bg-[var(--color-background-panel)] hover:border-[var(--color-border-strong)]"

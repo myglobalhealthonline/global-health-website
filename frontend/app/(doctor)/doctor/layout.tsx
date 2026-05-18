@@ -100,6 +100,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       rootHref="/doctor"
       rootBreadcrumb="Doctor"
       signOutAction={logoutAction}
+      accountHref="/doctor/profile"
       notifications={notifications}
       notificationsUnreadCount={unreadCount}
       notificationsViewAllHref="/doctor/notifications"

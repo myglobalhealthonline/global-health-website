@@ -56,6 +56,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       rootHref="/account"
       rootBreadcrumb="Account"
       signOutAction={logoutAction}
+      accountHref="/account/profile"
     >
       {children}
     </PortalShell>

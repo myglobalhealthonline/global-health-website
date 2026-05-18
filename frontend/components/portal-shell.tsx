@@ -92,6 +92,7 @@ export function PortalShell({
   rootHref,
   rootBreadcrumb,
   signOutAction,
+  accountHref,
   notifications,
   notificationsUnreadCount = 0,
   notificationsViewAllHref,
@@ -109,6 +110,10 @@ export function PortalShell({
   /** First breadcrumb label (e.g., "Doctor", "Account"). */
   rootBreadcrumb: string;
   signOutAction: SignOutAction;
+  /** Href for the user-menu "Account" link. Defaults to the portal's
+   *  root (e.g. /doctor or /account) so each layout can point at its
+   *  own profile sub-route without re-implementing the menu. */
+  accountHref?: string;
   /** Recent notifications for the bell dropdown. Empty (or undefined) =
    *  shows the empty-state message; bell dot hides. */
   notifications?: NotificationPopoverItem[];
@@ -329,7 +334,23 @@ export function PortalShell({
                       <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
                         {user.role}
                       </p>
-                      <form action={signOutAction} className="mt-3">
+                      <nav className="mt-2 flex flex-col gap-0.5">
+                        <Link
+                          href={accountHref ?? rootHref}
+                          onClick={() => setUserMenuOpen(false)}
+                          className="rounded-md px-2 py-1.5 text-sm font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                        >
+                          Account
+                        </Link>
+                        <Link
+                          href="/"
+                          onClick={() => setUserMenuOpen(false)}
+                          className="rounded-md px-2 py-1.5 text-sm font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                        >
+                          Main site
+                        </Link>
+                      </nav>
+                      <form action={signOutAction} className="mt-2 border-t border-[var(--color-border)] pt-2">
                         <button
                           type="submit"
                           className="w-full rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)] hover:bg-[var(--color-background-panel)]"
