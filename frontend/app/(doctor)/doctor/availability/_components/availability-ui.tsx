@@ -222,7 +222,7 @@ export function DoctorAvailabilityUI({ initialWindows, initialSlots }: Props) {
                               s.status === "OPEN"
                                 ? "border-emerald-200 bg-emerald-50 text-emerald-800 hover:border-emerald-400"
                                 : s.status === "BLOCKED"
-                                  ? "border-slate-300 bg-slate-100 text-slate-600 hover:border-slate-400"
+                                  ? "border-rose-300 bg-rose-50 text-rose-700 hover:border-rose-500"
                                   : s.status === "BOOKED"
                                     ? "border-blue-200 bg-blue-50 text-blue-800 opacity-80"
                                     : "border-amber-200 bg-amber-50 text-amber-800 opacity-80"
@@ -233,7 +233,13 @@ export function DoctorAvailabilityUI({ initialWindows, initialSlots }: Props) {
                             ) : s.status === "OPEN" ? (
                               <Unlock className="size-3" aria-hidden />
                             ) : null}
-                            {time}
+                            <span
+                              className={
+                                s.status === "BLOCKED" ? "line-through decoration-2" : ""
+                              }
+                            >
+                              {time}
+                            </span>
                           </button>
                         );
                       })}
