@@ -6,6 +6,7 @@ import { ServiceFields } from "../_components/service-fields";
 import { parseServiceBodyFromForm } from "@/lib/admin/service-form-parse";
 import {
   fetchAdminCountries,
+  fetchAdminDoctors,
   fetchAdminServices,
   fetchAdminSpecialties,
   postAdminService,
@@ -108,6 +109,20 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
     );
   }
 
+  // Doctors eligible for this service's country — feeds the assignment
+  // picker. Backend re-validates on save so an admin can't smuggle an
+  // unrelated doctor in via raw POST.
+  const doctorsResult = await fetchAdminDoctors({ countryId, pageSize: "200" });
+  const doctorOptions = doctorsResult.ok
+    ? doctorsResult.data.items.map((d) => ({
+        id: d.id,
+        slug: d.slug,
+        fullName: d.fullName,
+        title: d.title,
+        active: d.active,
+      }))
+    : [];
+
   const specialtiesResult = await fetchAdminSpecialties(countryId);
   if (!specialtiesResult.ok) {
     return (
@@ -161,6 +176,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
       currencyCode: raw.currencyCode.trim() === "" ? null : raw.currencyCode.trim(),
       imagePath: raw.imagePath.trim() === "" ? null : raw.imagePath.trim(),
       galleryImagePaths: raw.galleryImagePaths,
+      doctorIds: raw.doctorIds,
       isActive: raw.isActive,
     };
 
@@ -256,6 +272,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
             specialties={specialtiesResult.data.specialties}
             kind={kind}
             pinnedCountryId={countryId}
+            doctorOptions={doctorOptions}
           />
           <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">

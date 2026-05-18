@@ -6,6 +6,7 @@ import { ServiceFields } from "../../_components/service-fields";
 import { parseServiceBodyFromForm } from "@/lib/admin/service-form-parse";
 import {
   fetchAdminCountries,
+  fetchAdminDoctors,
   fetchAdminServiceById,
   fetchAdminServices,
   fetchAdminSpecialties,
@@ -91,7 +92,19 @@ export default async function AdminEditServicePage({
   }
   const kind = readServiceKind(messages.kind, service.kind);
   const meta = SERVICE_KIND_META[kind];
-  const specialtiesResult = await fetchAdminSpecialties(service.countryId);
+  const [specialtiesResult, doctorsResult] = await Promise.all([
+    fetchAdminSpecialties(service.countryId),
+    fetchAdminDoctors({ countryId: service.countryId, pageSize: "200" }),
+  ]);
+  const doctorOptions = doctorsResult.ok
+    ? doctorsResult.data.items.map((d) => ({
+        id: d.id,
+        slug: d.slug,
+        fullName: d.fullName,
+        title: d.title,
+        active: d.active,
+      }))
+    : [];
 
   if (!specialtiesResult.ok) {
     return (
@@ -149,6 +162,7 @@ export default async function AdminEditServicePage({
       currencyCode: raw.currencyCode.trim() === "" ? null : raw.currencyCode.trim(),
       imagePath: raw.imagePath.trim() === "" ? null : raw.imagePath.trim(),
       galleryImagePaths: raw.galleryImagePaths,
+      doctorIds: raw.doctorIds,
       isActive: raw.isActive,
     };
 
@@ -271,6 +285,7 @@ export default async function AdminEditServicePage({
               kind={kind}
               initial={service}
               countryLocked
+              doctorOptions={doctorOptions}
             />
             <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">

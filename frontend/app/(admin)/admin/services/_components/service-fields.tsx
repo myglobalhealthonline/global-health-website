@@ -11,13 +11,35 @@ type Props = {
   initial?: AdminServiceDto | null;
   pinnedCountryId?: string;
   countryLocked?: boolean;
+  /** Doctors eligible to be assigned to this service. Already filtered
+   *  on the server to those whose primary country (or DoctorCountry
+   *  link) matches the service country. Pass `null` when no country is
+   *  pinned yet — the checklist hides itself with a hint. */
+  doctorOptions?: Array<{
+    id: string;
+    slug: string;
+    fullName: string;
+    title: string;
+    active: boolean;
+  }> | null;
 };
 
-export function ServiceFields({ countries, specialties, kind, initial, pinnedCountryId, countryLocked }: Props) {
+export function ServiceFields({
+  countries,
+  specialties,
+  kind,
+  initial,
+  pinnedCountryId,
+  countryLocked,
+  doctorOptions,
+}: Props) {
   const pinId = pinnedCountryId ?? (countryLocked ? initial?.countryId : undefined);
   const pinnedMeta = pinId ? countries.find((c) => c.id === pinId) : undefined;
   const meta = SERVICE_KIND_META[kind];
   const usesSpecialty = kind === "SPECIALIST";
+  const assignedDoctorIds = new Set(
+    (initial?.assignedDoctors ?? []).map((row) => row.doctorId),
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -158,6 +180,79 @@ export function ServiceFields({ countries, specialties, kind, initial, pinnedCou
         helperText="Optional additional images. Up to 12. Not yet rendered on the public listing — saved for a future detail page."
         max={12}
       />
+
+      {/* Doctor assignment — the public consult flow lists doctors filtered
+          by this set. An empty set means the service has no bookable
+          doctors, which the public page surfaces as "no slots available
+          yet". */}
+      <fieldset className="flex flex-col gap-2">
+        <legend className="gh-field-label">Assigned doctors</legend>
+        {doctorOptions === null ? (
+          <p className="text-[12px] text-[var(--color-text-muted)]">
+            Pick the country first to load eligible doctors.
+          </p>
+        ) : !doctorOptions || doctorOptions.length === 0 ? (
+          <p className="text-[12px] text-[var(--color-text-muted)]">
+            No doctors are listed in this country yet. Create or assign one
+            under{" "}
+            <a
+              href="/admin/doctors"
+              className="font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
+            >
+              Doctors
+            </a>
+            .
+          </p>
+        ) : (
+          <>
+            {/* Sentinel — an empty hidden input ensures formData.getAll
+                ("doctorIds") returns at least the empty string when the
+                admin un-ticks every box. The parser filters falsy
+                entries so the resulting array is [] (clears the
+                assignment), not undefined (which would skip the
+                update). */}
+            <input type="hidden" name="doctorIds" value="" />
+            <div className="grid gap-1.5 sm:grid-cols-2">
+              {doctorOptions
+                .slice()
+                .sort((a, b) => a.fullName.localeCompare(b.fullName))
+                .map((doc) => (
+                  <label
+                    key={doc.id}
+                    className="inline-flex items-start gap-2 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-3 py-2 text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      name="doctorIds"
+                      value={doc.id}
+                      defaultChecked={assignedDoctorIds.has(doc.id)}
+                      className="mt-0.5 h-4 w-4 rounded border-[var(--color-border)]"
+                    />
+                    <span className="flex min-w-0 flex-col">
+                      <span
+                        className={`truncate font-semibold ${
+                          doc.active
+                            ? "text-[var(--color-text-primary)]"
+                            : "text-[var(--color-text-muted)] line-through"
+                        }`}
+                      >
+                        {doc.fullName}
+                      </span>
+                      <span className="truncate text-[11px] text-[var(--color-text-muted)]">
+                        {doc.title}
+                        {doc.active ? "" : " · inactive"}
+                      </span>
+                    </span>
+                  </label>
+                ))}
+            </div>
+            <span className="text-[11px] text-[var(--color-text-muted)]">
+              Patients booking this service only see ticked doctors. Untick
+              all to take the service offline without changing its status.
+            </span>
+          </>
+        )}
+      </fieldset>
 
       {/* The hero / detail-body / legacy-path columns exist on the DB
           but no public surface reads them today (public ServicesGrid only

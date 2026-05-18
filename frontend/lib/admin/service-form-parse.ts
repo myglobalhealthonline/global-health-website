@@ -18,6 +18,7 @@ type ParsedServiceBody = {
   currencyCode: string;
   imagePath: string;
   galleryImagePaths: string[];
+  doctorIds: string[];
   isActive: boolean;
 };
 
@@ -85,6 +86,18 @@ export function parseServiceBodyFromForm(formData: FormData): ParseServiceFormRe
         currencyCode: String(formData.get("currencyCode") ?? "").trim(),
         imagePath: String(formData.get("imagePath") ?? "").trim(),
         galleryImagePaths: parseLines(String(formData.get("galleryImagePaths") ?? "")),
+        // Multi-checkbox doctor picker — `name="doctorIds"` appears on
+        // each checkbox plus a sentinel hidden input, so getAll returns
+        // all checked ids plus an empty string when the admin cleared
+        // every box. Filter falsy + de-dupe.
+        doctorIds: Array.from(
+          new Set(
+            formData
+              .getAll("doctorIds")
+              .map((v) => String(v).trim())
+              .filter(Boolean),
+          ),
+        ),
         isActive: formData.get("isActive") === "on",
       },
     };

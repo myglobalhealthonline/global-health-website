@@ -385,6 +385,24 @@ export type AdminServiceDto = {
   isActive: boolean;
   /** Additional product images. Hero image lives on `assets[0]`. */
   galleryImagePaths: string[];
+  /** Doctor join rows for the admin assignment multi-select. Empty
+   *  array means no doctors are bookable for this service yet. */
+  assignedDoctors: Array<{
+    id: string;
+    serviceId: string;
+    doctorId: string;
+    isActive: boolean;
+    sortOrder: number;
+    createdAt: string;
+    updatedAt: string;
+    doctor: {
+      id: string;
+      slug: string;
+      fullName: string;
+      countryId: string;
+      active: boolean;
+    };
+  }>;
   createdAt: string;
   updatedAt: string;
   country: { id: string; code: string; name: string };
