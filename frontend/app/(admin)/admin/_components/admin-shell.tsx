@@ -237,27 +237,29 @@ export function AdminShell({
 
   return (
     <div className="min-h-screen bg-[var(--color-background-soft)]">
-      <div className="flex min-h-screen">
-        {/* Sidebar */}
-        {navOpen ? (
-          <button
-            type="button"
-            aria-label="Close navigation"
-            onClick={() => setNavOpen(false)}
-            className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
-          />
-        ) : null}
+      {/* Sidebar — fixed on every breakpoint so it stays put while the
+          main column scrolls. On mobile it slides in/out via translate;
+          on desktop it's always visible and the main column is offset by
+          `lg:pl-[260px]`. */}
+      {navOpen ? (
+        <button
+          type="button"
+          aria-label="Close navigation"
+          onClick={() => setNavOpen(false)}
+          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+        />
+      ) : null}
 
-        <aside
-          className={`fixed inset-y-0 left-0 z-40 flex w-[260px] flex-col shadow-2xl transition-transform duration-200 ease-out lg:static lg:z-auto lg:translate-x-0 ${
-            navOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-          }`}
-          style={{
-            background: "var(--color-background-dark)",
-            color: "rgba(255,255,255,0.85)",
-            borderRight: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 flex w-[260px] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
+          navOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
+        }`}
+        style={{
+          background: "var(--color-background-dark)",
+          color: "rgba(255,255,255,0.85)",
+          borderRight: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
           {/* Logo block — matches reference Shell.jsx exactly:
               padding 20 20 18, logo image filtered white, SUPER ADMIN eyebrow. */}
           <div
@@ -356,9 +358,18 @@ export function AdminShell({
           </div>
         </aside>
 
-        {/* Main column */}
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--color-border)] bg-[var(--color-background-page)] px-4 sm:px-7" style={{ boxShadow: "0 1px 0 var(--color-border)" }}>
+      {/* Main column — offset by sidebar width on desktop so content
+          doesn't slide under the fixed sidebar. */}
+      <div className="flex min-h-screen min-w-0 flex-col lg:pl-[260px]">
+          <header
+            className="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--color-border)] px-4 sm:px-7"
+            style={{
+              background: "color-mix(in srgb, var(--color-background-page) 88%, transparent)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              boxShadow: "0 1px 0 var(--color-border)",
+            }}
+          >
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button
                 type="button"
@@ -507,7 +518,6 @@ export function AdminShell({
 
           <main className="gh-admin-main min-w-0 flex-1 px-4 py-6 sm:px-7 sm:py-8">{children}</main>
         </div>
-      </div>
 
       <Toaster
         position="bottom-right"
@@ -584,7 +594,7 @@ function SidebarItem({
     <Link
       href={href}
       onClick={onNavigate}
-      className="flex w-full items-center gap-2.5 transition-all duration-150"
+      className="relative flex w-full items-center gap-2.5 transition-all duration-150"
       style={{
         padding: "9px 12px",
         borderRadius: 10,
@@ -601,6 +611,20 @@ function SidebarItem({
         if (!active) e.currentTarget.style.background = "transparent";
       }}
     >
+      {/* Left accent bar on active item — subtle but clearer than the
+          background tint alone. */}
+      {active ? (
+        <span
+          aria-hidden
+          className="absolute left-0 top-1/2 -translate-y-1/2"
+          style={{
+            width: 3,
+            height: 18,
+            borderRadius: 2,
+            background: "var(--color-accent)",
+          }}
+        />
+      ) : null}
       <span
         className="inline-flex shrink-0 justify-center"
         style={{ width: 16 }}
