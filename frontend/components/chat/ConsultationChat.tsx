@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import type { ChatMessage } from "@/lib/api/consultation-chat-api";
+import { formatAppDateTimeShort } from "@/lib/format-datetime";
 
 type ViewerRole = "PATIENT" | "DOCTOR";
 
@@ -20,9 +21,9 @@ type ConsultationChatProps = {
   viewerRole: ViewerRole;
   /** Initial lock state (pass from parent on first render). */
   initialChatLocked?: boolean;
-  fetcher: (id: string) => Promise<{ items: ChatMessage[]; chatLocked: boolean }>;
-  poster: (id: string, body: string) => Promise<{ items: ChatMessage[]; chatLocked: boolean }>;
-  fileUploader: (id: string, file: File) => Promise<{ items: ChatMessage[]; chatLocked: boolean }>;
+  fetcher: (id: string) => Promise<{ items: ChatMessage[]; chatLocked: boolean; paymentRequired: boolean }>;
+  poster: (id: string, body: string) => Promise<{ items: ChatMessage[]; chatLocked: boolean; paymentRequired: boolean }>;
+  fileUploader: (id: string, file: File) => Promise<{ items: ChatMessage[]; chatLocked: boolean; paymentRequired: boolean }>;
   /** Doctor-only: toggle chat open/closed. */
   onToggleLock?: (open: boolean) => Promise<{ chatLocked: boolean }>;
   pollIntervalMs?: number;
@@ -81,6 +82,7 @@ export function ConsultationChat({
 }: ConsultationChatProps) {
   const [items, setItems] = useState<ChatMessage[]>([]);
   const [chatLocked, setChatLocked] = useState(initialChatLocked);
+  const [paymentRequired, setPaymentRequired] = useState(false);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -100,6 +102,7 @@ export function ConsultationChat({
       const res = await fetcher(appointmentId);
       setItems(res.items);
       setChatLocked(res.chatLocked);
+      setPaymentRequired(res.paymentRequired);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load messages");
@@ -110,24 +113,29 @@ export function ConsultationChat({
 
   useEffect(() => {
     let cancelled = false;
-    let timer: ReturnType<typeof setTimeout> | null = null;
+    let pollTimer: ReturnType<typeof setTimeout> | null = null;
 
-    void load();
+    // Defer the first fetch so setState runs after the effect commit (avoids
+    // react-hooks/set-state-in-effect and matches the polling callback path).
+    const bootstrapTimer = setTimeout(() => {
+      if (!cancelled) void load();
+    }, 0);
 
-    function schedule() {
+    function schedulePoll() {
       if (cancelled) return;
-      timer = setTimeout(async () => {
+      pollTimer = setTimeout(async () => {
         if (document.visibilityState === "visible" && !cancelled) {
           await load();
         }
-        schedule();
+        schedulePoll();
       }, pollIntervalMs);
     }
-    schedule();
+    schedulePoll();
 
     return () => {
       cancelled = true;
-      if (timer) clearTimeout(timer);
+      clearTimeout(bootstrapTimer);
+      if (pollTimer) clearTimeout(pollTimer);
     };
   }, [load, pollIntervalMs]);
 
@@ -140,6 +148,7 @@ export function ConsultationChat({
       const res = await poster(appointmentId, trimmed);
       setItems(res.items);
       setChatLocked(res.chatLocked);
+      setPaymentRequired(res.paymentRequired);
       setDraft("");
       setError(null);
     } catch (err) {
@@ -163,6 +172,7 @@ export function ConsultationChat({
       const res = await fileUploader(appointmentId, pendingFile);
       setItems(res.items);
       setChatLocked(res.chatLocked);
+      setPaymentRequired(res.paymentRequired);
       setPendingFile(null);
       setError(null);
     } catch (err) {
@@ -185,7 +195,8 @@ export function ConsultationChat({
     }
   }
 
-  const canSend = viewerRole === "DOCTOR" || !chatLocked;
+  const canSend =
+    !paymentRequired && (viewerRole === "DOCTOR" || !chatLocked);
 
   return (
     <div className="flex flex-col rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -204,7 +215,7 @@ export function ConsultationChat({
 
         <div className="flex items-center gap-2">
           {loading && <Loader2 className="size-4 animate-spin text-slate-400" aria-hidden />}
-          {viewerRole === "DOCTOR" && onToggleLock && (
+          {viewerRole === "DOCTOR" && onToggleLock && !paymentRequired && (
             <button
               type="button"
               onClick={handleToggleLock}
@@ -230,8 +241,18 @@ export function ConsultationChat({
         </div>
       </header>
 
+      {/* Payment required banner — takes priority over lock banner */}
+      {paymentRequired && (
+        <div className="flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
+          <Lock className="size-4 shrink-0" aria-hidden />
+          {viewerRole === "PATIENT"
+            ? "Complete payment to start chatting with your doctor."
+            : "Patient has not completed payment — chat is unavailable until the booking is paid."}
+        </div>
+      )}
+
       {/* Lock banner for patients */}
-      {chatLocked && viewerRole === "PATIENT" && (
+      {!paymentRequired && chatLocked && viewerRole === "PATIENT" && (
         <div className="flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
           <Lock className="size-4 shrink-0" aria-hidden />
           Chat window closed. Contact your doctor to re-open.
@@ -283,12 +304,7 @@ export function ConsultationChat({
                       own ? "text-emerald-100" : "text-slate-500"
                     }`}
                   >
-                    {new Date(m.createdAt).toLocaleString(undefined, {
-                      month: "short",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatAppDateTimeShort(m.createdAt)}
                   </p>
                 </div>
               </li>
@@ -368,7 +384,11 @@ export function ConsultationChat({
         </form>
       ) : (
         <div className="border-t border-slate-100 px-4 py-3 text-center text-xs text-slate-400">
-          Chat is closed. Only your doctor can re-open it.
+          {paymentRequired
+            ? viewerRole === "PATIENT"
+              ? "Complete your booking payment to unlock the chat."
+              : "Patient has not completed payment yet."
+            : "Chat is closed. Only your doctor can re-open it."}
         </div>
       )}
     </div>

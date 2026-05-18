@@ -2,19 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, ShieldCheck, KeyRound, MailCheck, Download, Trash2 } from "lucide-react";
+import { ArrowLeft, ShieldCheck, KeyRound, MailCheck, Download } from "lucide-react";
 import {
   changeCurrentPassword,
-  deleteOwnAccount,
   downloadOwnDataUrl,
   fetchCurrentUser,
   resendVerificationEmail,
   type AuthUser,
 } from "@/lib/api/auth-api";
+import { DeleteAccountButton } from "./_components/delete-account-button";
 
 export default function AccountSecurityPage() {
-  const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -28,27 +26,6 @@ export default function AccountSecurityPage() {
   // Resend-verification state.
   const [sendingVerify, setSendingVerify] = useState(false);
   const [verifyMsg, setVerifyMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
-
-  // Delete-account state.
-  const [deleting, setDeleting] = useState(false);
-  const [deleteMsg, setDeleteMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
-
-  async function onDeleteAccount() {
-    const confirmed = window.confirm(
-      "This permanently deletes your account. Your booking history is preserved for regulatory reasons but stripped of identifying details. This cannot be undone — proceed?",
-    );
-    if (!confirmed) return;
-    setDeleteMsg(null);
-    setDeleting(true);
-    const res = await deleteOwnAccount();
-    setDeleting(false);
-    if (res.ok) {
-      router.replace("/");
-      router.refresh();
-    } else {
-      setDeleteMsg({ kind: "err", text: res.message });
-    }
-  }
 
   useEffect(() => {
     let cancelled = false;
@@ -200,27 +177,8 @@ export default function AccountSecurityPage() {
                   Download my data (JSON)
                 </a>
 
-                <button
-                  type="button"
-                  onClick={onDeleteAccount}
-                  disabled={deleting}
-                  className="inline-flex items-center gap-2 rounded-md border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60"
-                >
-                  <Trash2 className="size-4" aria-hidden />
-                  {deleting ? "Deleting…" : "Delete my account"}
-                </button>
+                <DeleteAccountButton />
               </div>
-              {deleteMsg ? (
-                <p
-                  className={`mt-3 rounded-md px-3 py-2 text-sm ${
-                    deleteMsg.kind === "ok"
-                      ? "bg-emerald-50 text-emerald-800"
-                      : "bg-rose-50 text-rose-800"
-                  }`}
-                >
-                  {deleteMsg.text}
-                </p>
-              ) : null}
             </section>
 
             {/* Change-password panel */}

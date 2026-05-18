@@ -1,7 +1,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, GripVertical, Plus, Trash2 } from "lucide-react";
+import { Edit3, Eye, GripVertical, Plus } from "lucide-react";
 import { fetchAdminCountries, purgeAdminCountry } from "@/lib/admin/admin-api";
+import { DeleteCountryButton } from "./_components/delete-country-button";
 import { FlagBadge } from "../_components/flag-badge";
 import {
   AdminCard,
@@ -173,13 +174,7 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
                       </IconBtn>
                       <form action={deleteCountryAction} className="inline-flex">
                         <input type="hidden" name="id" value={c.id} />
-                        <IconBtn
-                          ariaLabel={`Delete ${c.name}`}
-                          type="submit"
-                          style={{ color: "var(--color-status-error-text)" }}
-                        >
-                          <Trash2 className="size-3.5" aria-hidden />
-                        </IconBtn>
+                        <DeleteCountryButton countryName={c.name} />
                       </form>
                     </div>
                   </Td>

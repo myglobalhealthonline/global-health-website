@@ -11,6 +11,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
+import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
 
 export const dynamic = "force-dynamic";
 
@@ -229,9 +230,13 @@ export default async function AdminAssetDetailPage({
               Permanent delete removes this asset record entirely.
             </p>
             <form action={deleteAssetAction}>
-              <button type="submit" className="gh-btn gh-btn-danger w-full">
+              <ConfirmDeleteButton
+                message="Permanently delete this asset record? This cannot be undone."
+                className="gh-btn gh-btn-danger w-full"
+                ariaLabel="Delete asset permanently"
+              >
                 Delete permanently
-              </button>
+              </ConfirmDeleteButton>
             </form>
           </AdminCard>
         </div>

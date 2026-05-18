@@ -147,6 +147,27 @@ function isChatLocked(appt: {
   return Date.now() - appt.consultationCompletedAt.getTime() > TWENTY_FOUR_HOURS_MS;
 }
 
+/**
+ * Patient ↔ doctor chat is part of the paid service. If the appointment
+ * has a price but is not yet PAID, both surfaces are blocked. Free
+ * consultations (amountCents null / 0) are always allowed.
+ */
+function requiresPayment(appt: {
+  amountCents: number | null;
+  paymentStatus: string;
+}): boolean {
+  if (!appt.amountCents || appt.amountCents <= 0) return false;
+  return appt.paymentStatus !== "PAID";
+}
+
+const APPT_CHAT_SELECT = {
+  id: true,
+  consultationCompletedAt: true,
+  chatReopenedByDoctor: true,
+  amountCents: true,
+  paymentStatus: true,
+} as const;
+
 const consultationChatRoute: FastifyPluginAsync = async (app) => {
   // ── Patient: GET messages ────────────────────────────────────────
   app.get("/api/account/appointments/:id/chat", async (request, reply) => {
@@ -167,13 +188,13 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
     try {
       const appt = await prisma.appointment.findFirst({
         where: { id: params.data.id, userId: user.id },
-        select: {
-          id: true,
-          consultationCompletedAt: true,
-          chatReopenedByDoctor: true,
-        },
+        select: APPT_CHAT_SELECT,
       });
       if (!appt) return reply.status(404).send(errorResponse("Appointment not found"));
+
+      if (requiresPayment(appt)) {
+        return okResponse({ items: [], chatLocked: true, paymentRequired: true });
+      }
 
       const items = await listMessages(appt.id, "patient");
 
@@ -186,7 +207,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         data: { readByPatient: true },
       });
 
-      return okResponse({ items, chatLocked: isChatLocked(appt) });
+      return okResponse({ items, chatLocked: isChatLocked(appt), paymentRequired: false });
     } catch (err) {
       if (err instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(err.message));
@@ -223,13 +244,13 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       try {
         const appt = await prisma.appointment.findFirst({
           where: { id: params.data.id, userId: user.id },
-          select: {
-            id: true,
-            consultationCompletedAt: true,
-            chatReopenedByDoctor: true,
-          },
+          select: APPT_CHAT_SELECT,
         });
         if (!appt) return reply.status(404).send(errorResponse("Appointment not found"));
+
+        if (requiresPayment(appt)) {
+          return reply.status(403).send(errorResponse("Payment required. Complete your booking payment to start chatting with your doctor."));
+        }
 
         if (isChatLocked(appt)) {
           return reply.status(403).send(errorResponse("Chat window closed. Contact your doctor to re-open."));
@@ -247,7 +268,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         });
 
         const items = await listMessages(appt.id, "patient");
-        return okResponse({ items, chatLocked: false });
+        return okResponse({ items, chatLocked: false, paymentRequired: false });
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(err.message));
@@ -284,13 +305,13 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       try {
         const appt = await prisma.appointment.findFirst({
           where: { id: params.data.id, userId: user.id },
-          select: {
-            id: true,
-            consultationCompletedAt: true,
-            chatReopenedByDoctor: true,
-          },
+          select: APPT_CHAT_SELECT,
         });
         if (!appt) return reply.status(404).send(errorResponse("Appointment not found"));
+
+        if (requiresPayment(appt)) {
+          return reply.status(403).send(errorResponse("Payment required. Complete your booking payment to share documents with your doctor."));
+        }
 
         if (isChatLocked(appt)) {
           return reply.status(403).send(errorResponse("Chat window closed. Contact your doctor to re-open."));
@@ -329,7 +350,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         });
 
         const items = await listMessages(appt.id, "patient");
-        return okResponse({ items, chatLocked: false, uploadedId: row.id });
+        return okResponse({ items, chatLocked: false, paymentRequired: false, uploadedId: row.id });
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(err.message));
@@ -384,13 +405,13 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
     try {
       const appt = await prisma.appointment.findFirst({
         where: { id: params.data.id, doctorId: auth.doctorId },
-        select: {
-          id: true,
-          consultationCompletedAt: true,
-          chatReopenedByDoctor: true,
-        },
+        select: APPT_CHAT_SELECT,
       });
       if (!appt) return reply.status(404).send(errorResponse("Appointment not found"));
+
+      if (requiresPayment(appt)) {
+        return okResponse({ items: [], chatLocked: true, paymentRequired: true });
+      }
 
       const items = await listMessages(appt.id, "doctor");
 
@@ -403,7 +424,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         data: { readByDoctor: true },
       });
 
-      return okResponse({ items, chatLocked: isChatLocked(appt) });
+      return okResponse({ items, chatLocked: isChatLocked(appt), paymentRequired: false });
     } catch (err) {
       if (err instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(err.message));
@@ -432,13 +453,13 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       try {
         const appt = await prisma.appointment.findFirst({
           where: { id: params.data.id, doctorId: auth.doctorId },
-          select: {
-            id: true,
-            consultationCompletedAt: true,
-            chatReopenedByDoctor: true,
-          },
+          select: APPT_CHAT_SELECT,
         });
         if (!appt) return reply.status(404).send(errorResponse("Appointment not found"));
+
+        if (requiresPayment(appt)) {
+          return reply.status(403).send(errorResponse("Patient has not completed payment. Chat unavailable until the booking is paid."));
+        }
 
         await prisma.consultationMessage.create({
           data: {
@@ -452,7 +473,7 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
         });
 
         const items = await listMessages(appt.id, "doctor");
-        return okResponse({ items, chatLocked: isChatLocked(appt) });
+        return okResponse({ items, chatLocked: isChatLocked(appt), paymentRequired: false });
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(err.message));
@@ -481,9 +502,13 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       try {
         const appt = await prisma.appointment.findFirst({
           where: { id: params.data.id, doctorId: auth.doctorId },
-          select: { id: true },
+          select: APPT_CHAT_SELECT,
         });
         if (!appt) return reply.status(404).send(errorResponse("Appointment not found"));
+
+        if (requiresPayment(appt)) {
+          return reply.status(403).send(errorResponse("Patient has not completed payment. Chat unavailable until the booking is paid."));
+        }
 
         const file = await request.file();
         if (!file) return reply.status(400).send(errorResponse('Expected a file field named "file"'));
@@ -547,9 +572,13 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       try {
         const appt = await prisma.appointment.findFirst({
           where: { id: params.data.id, doctorId: auth.doctorId },
-          select: { id: true },
+          select: APPT_CHAT_SELECT,
         });
         if (!appt) return reply.status(404).send(errorResponse("Appointment not found"));
+
+        if (requiresPayment(appt)) {
+          return reply.status(403).send(errorResponse("Patient has not completed payment. Chat unavailable until the booking is paid."));
+        }
 
         await prisma.appointment.update({
           where: { id: appt.id },

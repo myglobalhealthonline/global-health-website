@@ -9,6 +9,7 @@ import {
   postAdminDoctorAvailability,
 } from "@/lib/admin/admin-api";
 import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
+import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 
 export const dynamic = "force-dynamic";
 
@@ -219,13 +220,13 @@ export default async function AdminDoctorAvailabilityPage({
                     <td className="py-2.5 text-right">
                       <form action={deleteAction} className="inline">
                         <input type="hidden" name="availabilityId" value={row.id} />
-                        <button
-                          type="submit"
+                        <ConfirmDeleteButton
+                          message="Remove this availability window? Any open slots derived from it will be unbookable."
                           className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-status-error)]"
-                          aria-label="Delete window"
+                          ariaLabel="Delete availability window"
                         >
-                          <Trash2 className="size-3.5" /> Remove
-                        </button>
+                          <Trash2 className="size-3.5" aria-hidden /> Remove
+                        </ConfirmDeleteButton>
                       </form>
                     </td>
                   </tr>

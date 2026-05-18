@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { Stethoscope, ShieldCheck, Clock } from "lucide-react";
-import { RegisterForm } from "./ui";
+import { RegisterForm, RegisterFormFallback } from "./ui";
 
 export const metadata: Metadata = {
   title: "Register",
@@ -29,7 +30,9 @@ export default function Page() {
               <p className="mt-2 text-sm text-[var(--color-text-muted)]">
                 Register to book consultations and track your requests securely.
               </p>
-              <RegisterForm />
+              <Suspense fallback={<RegisterFormFallback />}>
+                <RegisterForm />
+              </Suspense>
               <p className="mt-6 text-center text-sm text-[var(--color-text-muted)]">
                 Already have an account?{" "}
                 <Link href="/login" className="gh-link">Sign in</Link>

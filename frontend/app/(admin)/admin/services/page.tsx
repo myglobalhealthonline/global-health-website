@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, GripVertical, Plus, Trash2 } from "lucide-react";
+import { Edit3, Eye, GripVertical, Plus } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminServices,
@@ -16,6 +16,7 @@ import {
   SERVICE_KIND_ORDER,
 } from "@/lib/admin/service-kind";
 import { FlagBadge } from "../_components/flag-badge";
+import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { ScopeBanner } from "../_components/scope-banner";
 import {
   AdminCard,
@@ -423,13 +424,10 @@ export default async function AdminServicesPage({
                       </IconBtn>
                       <form action={deleteServiceAction} className="inline-flex">
                         <input type="hidden" name="id" value={service.id} />
-                        <IconBtn
+                        <ConfirmDeleteButton
+                          message={`Permanently delete service "${service.name}"? This cannot be undone.`}
                           ariaLabel={`Delete ${service.name}`}
-                          type="submit"
-                          style={{ color: "var(--color-status-error-text)" }}
-                        >
-                          <Trash2 className="size-3.5" aria-hidden />
-                        </IconBtn>
+                        />
                       </form>
                     </div>
                   </Td>

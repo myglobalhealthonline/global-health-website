@@ -56,6 +56,8 @@ type BookingFormTemplateProps = {
     countryCode: string;
     slots: { id: string; startAt: string; endAt: string }[];
   } | null;
+  /** From server `searchParams` — avoids `window` during render (hydration). */
+  initialConsultationType?: string;
 };
 
 type FieldErrors = Partial<
@@ -67,23 +69,14 @@ export function BookingFormTemplate({
   form,
   signedInPatient,
   doctorPrebook,
+  initialConsultationType = "",
 }: BookingFormTemplateProps) {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [statusType, setStatusType] = useState<"success" | "error" | null>(null);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
-
-  // Preselect the consultation type from `?type=` if it matches one of
-  // the dropdown values. Booking CTAs across the site link with
-  // ?type=general / ?type=specialist / ?type=prescription — preserving
-  // intent across the navigation.
-  const initialType = (() => {
-    if (typeof window === "undefined") return "";
-    const raw = new URLSearchParams(window.location.search).get("type") ?? "";
-    const allowed = new Set(form.consultationTypeOptions.map((o) => o.value));
-    return allowed.has(raw) ? raw : "";
-  })();
+  const [consentAccepted, setConsentAccepted] = useState(false);
 
   const ids = {
     country: "booking-country",
@@ -91,6 +84,7 @@ export function BookingFormTemplate({
     fullName: "booking-full-name",
     email: "booking-email",
     phone: "booking-phone",
+    dateOfBirth: "booking-dob",
     notes: "booking-notes",
     consent: "booking-consent",
   };
@@ -116,7 +110,7 @@ export function BookingFormTemplate({
       email: String(formData.get("email") ?? "").trim(),
       phone: String(formData.get("phone") ?? "").trim(),
       notes: String(formData.get("notes") ?? "").trim(),
-      consentAccepted: formData.get("consentAccepted") === "on",
+      consentAccepted,
       serviceSlug: serviceSlug?.trim() || undefined,
       ...(dob !== "" ? { dateOfBirth: dob } : {}),
       ...(selectedSlotId ? { timeSlotId: selectedSlotId } : {}),
@@ -190,11 +184,13 @@ export function BookingFormTemplate({
       );
       event.currentTarget.reset();
       setErrors({});
+      setConsentAccepted(false);
       return;
     }
 
     event.currentTarget.reset();
     setErrors({});
+    setConsentAccepted(false);
     setStatusType("success");
     setStatusMessage(
       signedInPatient
@@ -209,21 +205,14 @@ export function BookingFormTemplate({
       <section className="relative isolate overflow-hidden bg-[var(--color-background-soft)]">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10"
-          style={{
-            background:
-              "radial-gradient(900px 480px at 90% -10%, rgba(176, 241, 34, 0.18), transparent 60%), radial-gradient(800px 460px at -10% 110%, rgba(27, 77, 62, 0.08), transparent 60%)",
-          }}
+          className="gh-booking-hero-bloom pointer-events-none absolute inset-0 -z-10"
         />
         <div className="mx-auto w-full max-w-[1240px] px-6 py-16 lg:px-10 lg:py-20">
           <span className="gh-heading-eyebrow inline-flex items-center gap-2">
             <Stethoscope className="h-3.5 w-3.5" />
             Book online
           </span>
-          <h1
-            className="mt-5 max-w-3xl text-[clamp(2rem,4.5vw,3.75rem)] leading-[1.05] tracking-[-0.02em] text-[var(--color-text-primary)]"
-            style={{ fontFamily: "var(--font-cormorant)" }}
-          >
+          <h1 className="gh-display mt-5 max-w-3xl text-[clamp(2rem,4.5vw,3.75rem)] leading-[1.05] tracking-[-0.02em]">
             {hero.title}
           </h1>
           {hero.description ? (
@@ -244,10 +233,7 @@ export function BookingFormTemplate({
           {/* Form card */}
           <div className="rounded-3xl border border-[var(--color-border)] bg-white p-7 shadow-[0_30px_70px_-30px_rgba(15,46,37,0.18)] md:p-10">
             <span className="gh-heading-eyebrow">Patient details</span>
-            <h2
-              className="mt-3 text-[clamp(1.5rem,2.5vw,2rem)] leading-tight tracking-tight text-[var(--color-text-primary)]"
-              style={{ fontFamily: "var(--font-cormorant)" }}
-            >
+            <h2 className="gh-display mt-3 text-[clamp(1.5rem,2.5vw,2rem)] leading-tight tracking-tight">
               {form.title}
             </h2>
             <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--color-text-muted)]">
@@ -310,7 +296,7 @@ export function BookingFormTemplate({
                   <select
                     id={ids.consultation}
                     name="consultationType"
-                    defaultValue={initialType}
+                    defaultValue={initialConsultationType}
                     className="gh-select"
                   >
                     <option value="">{form.fields.consultationType.placeholder}</option>
@@ -372,11 +358,12 @@ export function BookingFormTemplate({
                   so users in countries that do require it can submit;
                   countries that don't require it can leave blank. The
                   backend rejects with a per-country message if missing. */}
-              <Field id="booking-dob" label="Date of birth">
+              <Field id={ids.dateOfBirth} label="Date of birth">
                 <input
-                  id="booking-dob"
+                  id={ids.dateOfBirth}
                   name="dateOfBirth"
                   type="date"
+                  title="Date of birth"
                   max={new Date().toISOString().slice(0, 10)}
                   className="gh-input"
                 />
@@ -400,6 +387,13 @@ export function BookingFormTemplate({
                   id={ids.consent}
                   name="consentAccepted"
                   type="checkbox"
+                  checked={consentAccepted}
+                  onChange={(event) => {
+                    setConsentAccepted(event.target.checked);
+                    if (errors.consentAccepted) {
+                      setErrors((prev) => ({ ...prev, consentAccepted: undefined }));
+                    }
+                  }}
                   className="mt-0.5 size-4 accent-[var(--color-brand-primary)]"
                 />
                 <span>{form.fields.consent}</span>
@@ -445,10 +439,7 @@ export function BookingFormTemplate({
               <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
                 What happens next
               </span>
-              <h3
-                className="mt-3 text-[1.5rem] leading-tight tracking-tight"
-                style={{ fontFamily: "var(--font-cormorant)" }}
-              >
+              <h3 className="gh-display mt-3 text-[1.5rem] leading-tight tracking-tight text-white">
                 A clear, calm booking.
               </h3>
               <ol className="mt-5 space-y-4 text-[14px] leading-relaxed text-white/85">

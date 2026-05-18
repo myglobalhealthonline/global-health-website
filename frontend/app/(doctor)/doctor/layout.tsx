@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { fetchDoctorNotifications } from "@/lib/api/doctor-api";
+import { DoctorHeaderLogout } from "./_components/doctor-header-logout";
 
 const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME?.trim() || "gh_auth";
 
@@ -161,9 +162,12 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
             <h1 className="text-sm font-semibold text-[var(--color-text-primary)]">
               Doctor portal
             </h1>
-            <span className="text-xs text-[var(--color-text-muted)] lg:hidden">
-              {user.fullName || user.email}
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-[var(--color-text-muted)]">
+                {user.fullName || user.email}
+              </span>
+              <DoctorHeaderLogout />
+            </div>
           </header>
           <main className="min-w-0 flex-1 px-4 py-6 sm:px-7 sm:py-8">
             {children}

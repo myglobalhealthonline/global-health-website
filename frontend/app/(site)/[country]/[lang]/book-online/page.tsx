@@ -65,6 +65,9 @@ export default async function CountryLangBookOnlinePage({
   if (!isSupportedLocale(lang)) notFound();
 
   const data = getBookingPageData(lang === "en" ? "en" : lang);
+  const rawType = typeof sp.type === "string" ? sp.type.trim() : "";
+  const allowedTypes = new Set(data.form.consultationTypeOptions.map((o) => o.value));
+  const initialConsultationType = allowedTypes.has(rawType) ? rawType : "";
   const authUser = await getServerAuthUser();
   const signedInPatient =
     authUser && (authUser.role === "PATIENT" || authUser.role === "ADMIN")
@@ -104,6 +107,7 @@ export default async function CountryLangBookOnlinePage({
       {...data}
       signedInPatient={signedInPatient}
       doctorPrebook={doctorPrebook}
+      initialConsultationType={initialConsultationType}
     />
   );
 }

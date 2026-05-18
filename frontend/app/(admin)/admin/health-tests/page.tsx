@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, Plus, Trash2 } from "lucide-react";
+import { Edit3, Eye, Plus } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminHealthTests,
@@ -9,6 +9,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
 import { FlagBadge } from "../_components/flag-badge";
+import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { ScopeBanner } from "../_components/scope-banner";
 import {
   AdminCard,
@@ -282,13 +283,10 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
                       </IconBtn>
                       <form action={deleteAction} className="inline-flex">
                         <input type="hidden" name="id" value={item.id} />
-                        <IconBtn
+                        <ConfirmDeleteButton
+                          message={`Permanently delete health test "${item.title}"? This cannot be undone.`}
                           ariaLabel={`Delete ${item.title}`}
-                          type="submit"
-                          style={{ color: "var(--color-status-error-text)" }}
-                        >
-                          <Trash2 className="size-3.5" aria-hidden />
-                        </IconBtn>
+                        />
                       </form>
                     </div>
                   </Td>

@@ -28,15 +28,6 @@ const STATUS_OPTIONS = [
   { value: "COMPLETED", label: "Completed" },
 ] as const;
 
-const COUNTRY_OPTIONS = [
-  { value: "", label: "All countries" },
-  { value: "ie", label: "Ireland" },
-  { value: "pt", label: "Portugal" },
-  { value: "sp", label: "Spain" },
-  { value: "cz", label: "Czechia" },
-  { value: "rm", label: "Romania" },
-] as const;
-
 const CONSULT_OPTIONS = [
   { value: "", label: "All types" },
   { value: "general", label: "General" },
@@ -141,6 +132,14 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
   const hasRows = items.length > 0;
   const { page, pageSize, total, totalPages } = pagination;
 
+  const countryOptions = [
+    { value: "", label: "All countries" },
+    ...countriesForScope
+      .filter((c) => c.isActive)
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((c) => ({ value: c.code, label: c.name })),
+  ];
+
   return (
     <>
       <PageHeader
@@ -176,8 +175,8 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                 defaultValue={filters.countryCode ?? ""}
                 className="gh-select min-w-0"
               >
-                {COUNTRY_OPTIONS.map((o) => (
-                  <option key={o.label} value={o.value}>
+                {countryOptions.map((o) => (
+                  <option key={o.value || "all"} value={o.value}>
                     {o.label}
                   </option>
                 ))}
@@ -211,7 +210,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
           </div>
           <input type="hidden" name="page" value="1" />
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36 }}>
+            <button type="submit" className="gh-btn gh-btn-primary min-h-9">
               Apply filters
             </button>
             <Link
@@ -251,7 +250,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                 <Th>Status</Th>
                 <Th>Created</Th>
                 <Th>Notes</Th>
-                <Th align="right" style={{ width: 80 }}>
+                <Th align="right" className="w-20">
                   Detail
                 </Th>
               </Thead>
@@ -322,10 +321,9 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
             <div className="flex flex-wrap gap-2">
               <Link
                 href={buildQueueHref(filters, { page: String(Math.max(1, page - 1)) })}
-                className={`gh-btn gh-btn-soft text-[13px] ${
+                className={`gh-admin-pager-btn gh-btn gh-btn-soft text-[13px] ${
                   page <= 1 ? "pointer-events-none opacity-40" : ""
                 }`}
-                style={{ minHeight: 36, padding: "0 14px" }}
               >
                 Previous
               </Link>
@@ -333,10 +331,9 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                 href={buildQueueHref(filters, {
                   page: String(Math.min(totalPages, page + 1)),
                 })}
-                className={`gh-btn gh-btn-primary text-[13px] ${
+                className={`gh-admin-pager-btn gh-btn gh-btn-primary text-[13px] ${
                   page >= totalPages ? "pointer-events-none opacity-40" : ""
                 }`}
-                style={{ minHeight: 36, padding: "0 14px" }}
               >
                 Next
               </Link>

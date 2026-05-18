@@ -9,6 +9,7 @@ import {
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
+import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
 
 export const dynamic = "force-dynamic";
 
@@ -250,9 +251,13 @@ export default async function AdminHealthTestDetailPage({
               Permanent delete removes this record instead of hiding it.
             </p>
             <form action={deleteAction}>
-              <button type="submit" className="gh-btn gh-btn-danger w-full">
+              <ConfirmDeleteButton
+                message="Permanently delete this health test? This cannot be undone."
+                className="gh-btn gh-btn-danger w-full"
+                ariaLabel="Delete health test permanently"
+              >
                 Delete permanently
-              </button>
+              </ConfirmDeleteButton>
             </form>
           </AdminCard>
         </div>

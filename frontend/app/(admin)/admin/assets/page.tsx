@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, Plus, Trash2 } from "lucide-react";
+import { Edit3, Eye, Plus } from "lucide-react";
 import {
   adminAssetPreviewable,
   fetchAdminAssets,
@@ -11,6 +11,7 @@ import {
   type AdminAssetKind,
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../_components/flag-badge";
+import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import {
   AdminCard,
   AdminTable,
@@ -313,13 +314,10 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
                       </IconBtn>
                       <form action={deleteAssetAction} className="inline-flex">
                         <input type="hidden" name="id" value={a.id} />
-                        <IconBtn
+                        <ConfirmDeleteButton
+                          message={`Permanently delete asset "${a.key}"? This cannot be undone.`}
                           ariaLabel={`Delete ${a.key}`}
-                          type="submit"
-                          style={{ color: "var(--color-status-error-text)" }}
-                        >
-                          <Trash2 className="size-3.5" aria-hidden />
-                        </IconBtn>
+                        />
                       </form>
                     </div>
                   </Td>

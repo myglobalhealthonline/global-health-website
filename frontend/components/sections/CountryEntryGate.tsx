@@ -18,6 +18,7 @@ import { ArrowRight } from "lucide-react";
 import type { CountryConfig } from "@/data/countries";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { countrySlug, registerCountrySlugs } from "@/lib/routing/country-slug";
+import styles from "./CountryEntryGate.module.css";
 
 type Props = {
   countries: CountryConfig[];
@@ -47,11 +48,6 @@ const LANG_HELLO: Record<LocaleCode, string> = {
   de: "Hallo.",
 };
 
-// Per-country counts are provided by the caller via `countryMeta` — no
-// hardcoded data lives in this file. Earlier versions baked in capitals + a
-// fake doctor count per country; both were removed when this section was
-// converted to be database-driven.
-
 // Seeded-country codes use internal short codes that don't all match
 // ISO 3166-1 alpha-2 (`sp` for Spain, `rm` for Romania). Alias only
 // the mismatches; everything else passes through, which means admin-
@@ -67,9 +63,6 @@ function flagClassForCode(code: string): string {
   const iso = FLAG_CODE_ALIAS[normalized] ?? normalized;
   return `fi fi-${iso}`;
 }
-
-const PATTERN_WHITE =
-  "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")";
 
 export function CountryEntryGate({ countries, countryMeta }: Props) {
   const router = useRouter();
@@ -90,7 +83,8 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
   function enter(lang: LocaleCode) {
     if (!chosenCountry) return;
     const slug = chosenCountry.slug || countrySlug(chosenCountry.code);
-    router.push(`/${slug}?lang=${lang}`);
+    // Navigate directly to /{slug}/{lang} — query ?lang= can mis-resolve with [lang] routes (→ /ireland/services/en 404).
+    router.push(`/${slug}/${lang}`);
   }
 
   const steps = [
@@ -100,118 +94,37 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
   ];
 
   return (
-    <div
-      className="relative flex min-h-screen flex-col overflow-hidden text-white"
-      style={{ background: "var(--color-background-dark)" }}
-    >
+    <div className={`${styles.root} relative flex min-h-screen flex-col overflow-hidden text-white`}>
       {/* Medical-pattern texture */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          opacity: 0.04,
-          backgroundImage: PATTERN_WHITE,
-          backgroundSize: "28px",
-        }}
-      />
-      {/* Radial accent blooms */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(900px 400px at 80% -10%, rgba(200,230,160,0.10), transparent 60%), radial-gradient(700px 400px at 0% 110%, rgba(176,241,34,0.06), transparent 70%)",
-        }}
-      />
+      <div aria-hidden className={`${styles.pattern} pointer-events-none absolute inset-0`} />
+      <div aria-hidden className={`${styles.blooms} pointer-events-none absolute inset-0`} />
 
       {/* Top — wordmark + eyebrow */}
-      <header
-        className="relative flex items-center justify-between"
-        style={{ padding: "28px clamp(20px,4vw,48px)" }}
-      >
+      <header className={`${styles.header} relative flex items-center justify-between`}>
         <div className="inline-flex items-center gap-2.5">
-          <span
-            className="inline-flex items-center justify-center"
-            style={{
-              width: 30,
-              height: 30,
-              borderRadius: 8,
-              background: "var(--color-accent)",
-              color: "var(--color-background-dark)",
-              fontFamily: "var(--font-display)",
-              fontSize: 15,
-              fontWeight: 800,
-            }}
-          >
-            g
-          </span>
-          <span
-            className="text-white"
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: 17,
-              fontWeight: 800,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Global Health
-          </span>
+          <span className={`${styles.logoMark} inline-flex items-center justify-center`}>g</span>
+          <span className={`${styles.wordmark} text-white`}>Global Health</span>
         </div>
-        <p
-          className="m-0 uppercase"
-          style={{
-            fontSize: 12,
-            color: "rgba(255,255,255,0.55)",
-            letterSpacing: "0.18em",
-            fontWeight: 700,
-          }}
-        >
-          Medicine without borders
-        </p>
+        <p className={`${styles.tagline} uppercase`}>Medicine without borders</p>
       </header>
 
       {/* Step pager */}
-      <div
-        className="relative w-full"
-        style={{
-          padding: "0 clamp(20px,4vw,48px)",
-          maxWidth: 1080,
-          margin: "0 auto",
-        }}
-      >
-        <ol
-          className="m-0 flex gap-8 p-0"
-          style={{ listStyle: "none", fontSize: 12, fontWeight: 600 }}
-        >
+      <div className={`${styles.pagerWrap} relative w-full`}>
+        <ol className={`${styles.stepList} flex gap-8`}>
           {steps.map((s, i) => {
             const isCurrent = i === step;
             const isDone = i < step;
-            const color = isCurrent
-              ? "#fff"
+            const stepClass = isCurrent
+              ? styles.stepItemCurrent
               : isDone
-                ? "var(--color-accent)"
-                : "rgba(255,255,255,0.40)";
+                ? styles.stepItemDone
+                : styles.stepItemPending;
             return (
-              <li
-                key={s.n}
-                className="inline-flex items-center gap-2.5"
-                style={{
-                  color,
-                  fontWeight: isCurrent ? 700 : 600,
-                }}
-              >
+              <li key={s.n} className={`${styles.stepItem} inline-flex items-center gap-2.5 ${stepClass}`}>
                 <span
-                  className="inline-flex items-center justify-center"
-                  style={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: 999,
-                    border: "1.5px solid currentColor",
-                    fontSize: 11,
-                    fontWeight: 800,
-                    background: isDone ? "var(--color-accent)" : "transparent",
-                    color: isDone ? "var(--color-background-dark)" : "currentColor",
-                  }}
+                  className={`${styles.stepBadge} inline-flex items-center justify-center ${
+                    isDone ? styles.stepBadgeDone : ""
+                  }`}
                 >
                   {isDone ? "✓" : s.n}
                 </span>
@@ -223,55 +136,18 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
       </div>
 
       {/* Body */}
-      <main
-        className="relative flex flex-1 items-center"
-        style={{ padding: "48px clamp(20px,4vw,48px) 96px" }}
-      >
-        <div className="w-full" style={{ maxWidth: 1080, margin: "0 auto" }}>
+      <main className={`${styles.body} relative flex flex-1 items-center`}>
+        <div className={`${styles.content} w-full`}>
           {step === 0 ? (
             <>
-              <h1
-                className="m-0 text-white"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "clamp(40px, 6vw, 80px)",
-                  fontWeight: 800,
-                  letterSpacing: "-0.03em",
-                  lineHeight: 0.96,
-                  maxWidth: "16ch",
-                }}
-              >
-                Where are{" "}
-                <span
-                  style={{
-                    background:
-                      "linear-gradient(180deg, transparent 60%, rgba(200,230,160,0.30) 60% 92%, transparent 92%)",
-                    paddingInline: "0.05em",
-                  }}
-                >
-                  you
-                </span>
-                ?
+              <h1 className={`${styles.heroTitle} ${styles.heroTitleCountry} text-white`}>
+                Where are <span className={styles.heroHighlight}>you</span>?
               </h1>
-              <p
-                className="m-0 mt-5"
-                style={{
-                  fontSize: 18,
-                  lineHeight: 1.55,
-                  color: "rgba(255,255,255,0.70)",
-                  maxWidth: "44ch",
-                }}
-              >
+              <p className={styles.heroLead}>
                 We connect you with doctors registered in your country. Pick yours to continue.
               </p>
 
-              <div
-                className="mt-14 grid gap-3"
-                style={{
-                  gridTemplateColumns:
-                    "repeat(auto-fit, minmax(200px, 1fr))",
-                }}
-              >
+              <div className={`${styles.countryGrid} mt-14 grid gap-3`}>
                 {countries.map((c) => {
                   const meta = countryMeta?.[c.code];
                   const flagCls = flagClassForCode(c.code);
@@ -280,85 +156,27 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
                       key={c.code}
                       type="button"
                       onClick={() => pickCountry(c.code)}
-                      className="gh-landing-card flex flex-col gap-4 text-left text-white"
-                      style={{
-                        padding: 22,
-                        background: "rgba(255,255,255,0.05)",
-                        border: "1px solid rgba(255,255,255,0.10)",
-                        borderRadius: 20,
-                        cursor: "pointer",
-                        fontFamily: "inherit",
-                        transition: "all 180ms ease-out",
-                      }}
+                      className={`${styles.countryCard} gh-landing-card flex flex-col gap-4 text-left text-white`}
                     >
                       <div className="flex items-center gap-3">
-                        <span
-                          className="inline-flex items-center justify-center"
-                          style={{
-                            width: 42,
-                            height: 42,
-                            borderRadius: 12,
-                            background: "rgba(255,255,255,0.10)",
-                          }}
-                        >
+                        <span className={`${styles.flagWrap} inline-flex items-center justify-center`}>
                           <span
                             aria-hidden
-                            className={`${flagCls} inline-block`}
-                            style={{
-                              width: 28,
-                              height: 20,
-                              borderRadius: 3,
-                              backgroundSize: "cover",
-                              backgroundPosition: "center",
-                            }}
+                            className={`${flagCls} ${styles.flagIcon} inline-block`}
                           />
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p
-                            className="m-0 text-white"
-                            style={{
-                              fontFamily: "var(--font-display)",
-                              fontSize: 20,
-                              fontWeight: 800,
-                              letterSpacing: "-0.015em",
-                              lineHeight: 1.1,
-                            }}
-                          >
-                            {c.name}
-                          </p>
-                          {/* Capital label dropped — Country model has no
-                              `capital` field today. Re-add once available. */}
+                          <p className={`${styles.countryName} text-white`}>{c.name}</p>
                         </div>
                       </div>
-                      <div
-                        className="flex items-center justify-between"
-                        style={{
-                          paddingTop: 12,
-                          borderTop: "1px solid rgba(255,255,255,0.10)",
-                        }}
-                      >
-                        <span
-                          style={{
-                            fontSize: 12,
-                            color: "rgba(255,255,255,0.60)",
-                          }}
-                        >
-                          <strong
-                            className="text-white"
-                            style={{ fontWeight: 700 }}
-                          >
+                      <div className={`${styles.cardFooter} flex items-center justify-between`}>
+                        <span className={styles.cardMeta}>
+                          <strong className={`${styles.cardMetaStrong} text-white`}>
                             {meta?.doctors ?? "—"}
                           </strong>{" "}
                           {meta?.doctors === 1 ? "doctor" : "doctors"}
                         </span>
-                        <span
-                          className="inline-flex items-center gap-1"
-                          style={{
-                            fontSize: 12,
-                            color: "var(--color-accent)",
-                            fontWeight: 700,
-                          }}
-                        >
+                        <span className={`${styles.cardEnter} inline-flex items-center gap-1`}>
                           Enter <ArrowRight className="size-3.5" aria-hidden />
                         </span>
                       </div>
@@ -377,115 +195,35 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
                   setStep(0);
                   setCountryCode(null);
                 }}
-                className="inline-flex items-center gap-2 text-white"
-                style={{
-                  padding: "8px 12px 8px 8px",
-                  borderRadius: 999,
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.10)",
-                  color: "rgba(255,255,255,0.80)",
-                  fontFamily: "inherit",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  marginBottom: 32,
-                }}
+                className={`${styles.backButton} inline-flex items-center gap-2 text-white`}
               >
-                <ArrowRight
-                  className="size-3.5"
-                  aria-hidden
-                  style={{ transform: "rotate(180deg)" }}
-                />
+                <ArrowRight className={`${styles.backIcon} size-3.5`} aria-hidden />
                 Change country · {chosenCountry.name}
               </button>
 
-              <h1
-                className="m-0 text-white"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontSize: "clamp(40px, 6vw, 80px)",
-                  fontWeight: 800,
-                  letterSpacing: "-0.03em",
-                  lineHeight: 0.96,
-                  maxWidth: "18ch",
-                }}
-              >
-                Choose your{" "}
-                <span
-                  style={{
-                    background:
-                      "linear-gradient(180deg, transparent 60%, rgba(200,230,160,0.30) 60% 92%, transparent 92%)",
-                    paddingInline: "0.05em",
-                  }}
-                >
-                  language
-                </span>
+              <h1 className={`${styles.heroTitle} ${styles.heroTitleLanguage} text-white`}>
+                Choose your <span className={styles.heroHighlight}>language</span>
               </h1>
-              <p
-                className="m-0 mt-5"
-                style={{
-                  fontSize: 18,
-                  lineHeight: 1.55,
-                  color: "rgba(255,255,255,0.70)",
-                  maxWidth: "44ch",
-                }}
-              >
-                Your consultation, your prescriptions, and the website — all in
-                the language you pick.
+              <p className={styles.heroLead}>
+                Your consultation, your prescriptions, and the website — all in the language you
+                pick.
               </p>
 
-              <div
-                className="mt-12 grid gap-3"
-                style={{
-                  gridTemplateColumns:
-                    "repeat(auto-fit, minmax(220px, 1fr))",
-                  maxWidth: 720,
-                }}
-              >
+              <div className={`${styles.languageGrid} mt-12 grid gap-3`}>
                 {chosenCountry.supportedLocales.map((l) => (
                   <button
                     key={l}
                     type="button"
                     onClick={() => enter(l)}
-                    className="gh-landing-card flex items-center justify-between gap-4 text-left text-white"
-                    style={{
-                      padding: "22px 24px",
-                      background: "rgba(255,255,255,0.05)",
-                      border: "1px solid rgba(255,255,255,0.10)",
-                      borderRadius: 20,
-                      cursor: "pointer",
-                      fontFamily: "inherit",
-                      transition: "all 180ms ease-out",
-                    }}
+                    className={`${styles.languageCard} gh-landing-card flex items-center justify-between gap-4 text-left text-white`}
                   >
                     <div>
-                      <p
-                        className="m-0 text-white"
-                        style={{
-                          fontFamily: "var(--font-display)",
-                          fontSize: 22,
-                          fontWeight: 800,
-                          letterSpacing: "-0.015em",
-                        }}
-                      >
-                        {LANG_HELLO[l]}
-                      </p>
-                      <p
-                        className="m-0"
-                        style={{
-                          marginTop: 4,
-                          fontSize: 13,
-                          color: "rgba(255,255,255,0.60)",
-                        }}
-                      >
+                      <p className={`${styles.langHello} text-white`}>{LANG_HELLO[l]}</p>
+                      <p className={styles.langMeta}>
                         {LANG_NAMES[l]} · {l.toUpperCase()}
                       </p>
                     </div>
-                    <ArrowRight
-                      className="size-[18px]"
-                      aria-hidden
-                      style={{ color: "var(--color-accent)" }}
-                    />
+                    <ArrowRight className={`${styles.langArrow} size-[18px]`} aria-hidden />
                   </button>
                 ))}
               </div>
@@ -495,16 +233,8 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
       </main>
 
       {/* Footer */}
-      <footer
-        className="relative flex flex-wrap justify-between gap-4"
-        style={{
-          padding: "20px clamp(20px,4vw,48px) 28px",
-          borderTop: "1px solid rgba(255,255,255,0.08)",
-          fontSize: 12,
-          color: "rgba(255,255,255,0.40)",
-        }}
-      >
-        <span>
+      <footer className={`${styles.footer} relative flex flex-wrap justify-between gap-4`}>
+        <span suppressHydrationWarning>
           © {new Date().getFullYear()} Global Health · EU-registered telemedicine provider
         </span>
         <span>
@@ -512,14 +242,6 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
           {countries.length === 1 ? "country" : "countries"}
         </span>
       </footer>
-
-      <style jsx>{`
-        .gh-landing-card:hover {
-          background: rgba(200, 230, 160, 0.1) !important;
-          border-color: var(--color-accent) !important;
-          transform: translateY(-2px);
-        }
-      `}</style>
     </div>
   );
 }

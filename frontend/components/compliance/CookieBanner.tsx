@@ -57,8 +57,7 @@ export function CookieBanner() {
       role="dialog"
       aria-live="polite"
       aria-label="Cookie consent"
-      className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-xl border border-slate-200 bg-white p-4 shadow-lg sm:p-5"
-      style={{ boxShadow: "0 10px 30px rgba(15, 46, 37, 0.18)" }}
+      className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-2xl rounded-xl border border-slate-200 bg-white p-4 shadow-[0_10px_30px_rgba(15,46,37,0.18)] sm:p-5"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-slate-700">

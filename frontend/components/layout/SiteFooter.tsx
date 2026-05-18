@@ -164,7 +164,7 @@ export function SiteFooter({ siteName }: { siteName: string }) {
             color: "rgba(255,255,255,0.45)",
           }}
         >
-          <span>
+          <span suppressHydrationWarning>
             © {year} {siteName || "Global Health"} · Medicine without borders
           </span>
           <span className="flex gap-3">
