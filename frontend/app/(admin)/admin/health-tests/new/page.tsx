@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { fetchAdminCountries, postAdminHealthTest } from "@/lib/admin/admin-api";
+import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { HealthTestFields } from "../_components/health-test-fields";
 import { parseHealthTestBodyFromForm } from "@/lib/admin/health-test-form-parse";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
@@ -80,8 +83,17 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
         `/admin/health-tests/new?countryId=${encodeURIComponent(raw.countryId)}&error=${encodeURIComponent(result.message)}`,
       );
     }
+    // Invalidate the public listing cache for this country so the new
+    // test surfaces immediately on /{slug}/{lang}/tests. The fetcher
+    // tags its result with `country:<code>:health-tests` — busting that
+    // tag is precise + cheap. Also revalidate the admin listing path.
+    const created = result.data.healthTest;
+    revalidateTag(SITE_CACHE_TAGS.countryHealthTests(created.country.code), "max");
+    const slug = COUNTRY_CODE_TO_SLUG[created.country.code as keyof typeof COUNTRY_CODE_TO_SLUG];
+    if (slug) revalidatePath(`/${slug}/[lang]/tests`, "page");
+    revalidatePath("/admin/health-tests");
     redirect(
-      `/admin/health-tests/${result.data.healthTest.id}?success=${encodeURIComponent("Health test created")}`,
+      `/admin/health-tests/${created.id}?success=${encodeURIComponent("Health test created")}`,
     );
   }
 

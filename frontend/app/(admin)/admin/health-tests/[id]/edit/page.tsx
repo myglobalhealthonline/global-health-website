@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminHealthTestById,
   patchAdminHealthTest,
 } from "@/lib/admin/admin-api";
+import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { parseHealthTestBodyFromForm } from "@/lib/admin/health-test-form-parse";
 import { HealthTestFields } from "../../_components/health-test-fields";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
@@ -107,6 +110,14 @@ export default async function AdminEditHealthTestPage({
     const result = await patchAdminHealthTest(id, body);
     if (!result.ok)
       redirect(`/admin/health-tests/${id}/edit?error=${encodeURIComponent(result.message)}`);
+    // Bust the per-country health-tests cache so price/stock/title
+    // edits surface immediately on /{slug}/{lang}/tests.
+    const updated = result.data.healthTest;
+    revalidateTag(SITE_CACHE_TAGS.countryHealthTests(updated.country.code), "max");
+    const slug = COUNTRY_CODE_TO_SLUG[updated.country.code as keyof typeof COUNTRY_CODE_TO_SLUG];
+    if (slug) revalidatePath(`/${slug}/[lang]/tests`, "page");
+    revalidatePath("/admin/health-tests");
+    revalidatePath(`/admin/health-tests/${id}`);
     redirect(
       `/admin/health-tests/${id}?success=${encodeURIComponent("Health test updated")}`,
     );

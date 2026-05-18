@@ -49,7 +49,11 @@ export const adminHealthTestCreateBodySchema = z.object({
   shortDescription: optionalTrimmed(4000),
   priceCents: z.coerce.number().int().min(0),
   currencyCode: z.string().trim().min(1).max(8),
-  productImagePath: z.string().trim().min(1).max(2000),
+  productImagePath: z
+    .string({ required_error: "Product image is required" })
+    .trim()
+    .min(1, "Product image is required")
+    .max(2000, "Product image path is too long"),
   galleryImagePaths: optionalStringArray(12, 2000),
   sampleType: optionalTrimmed(120),
   resultsTimeline: optionalTrimmed(240),
@@ -62,7 +66,12 @@ export const adminHealthTestCreateBodySchema = z.object({
   isActive: z.boolean().optional(),
   /** null = unlimited; 0 = sold out. Public card shows "Only N left"
    *  when 1..5. */
-  stock: z.coerce.number().int().min(0).optional().nullable(),
+  stock: z.coerce
+    .number({ invalid_type_error: "Stock must be a whole number" })
+    .int("Stock must be a whole number (no decimals)")
+    .min(0, "Stock must be zero or greater")
+    .optional()
+    .nullable(),
   seoTitle: optionalTrimmed(200),
   seoDescription: optionalTrimmed(320),
   legacyPath: optionalTrimmed(240),

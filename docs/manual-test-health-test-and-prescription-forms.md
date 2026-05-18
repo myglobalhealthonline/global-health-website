@@ -31,13 +31,19 @@ Covers the cleanup that landed for `/admin/health-tests` and
 > columns. Hidden inputs preserve them across saves.
 
 ### A.2 Required-field validation surfaces clearly
-- [ ] Hit **Create health test** with everything blank.
-- [ ] Page reloads with an error banner explaining what's missing.
-- [ ] Try again with title + price + currency but **no image** → backend
-      rejects with a clear message (`productImagePath` is required).
+> Note: Browser-level (HTML5) validation runs before the server. Empty
+> slug/title/etc. get a native browser tooltip ("Please fill out this
+> field") instead of a server banner — that's the expected, faster UX.
+> Server messages only appear for things the browser can't pre-check
+> (e.g. missing image upload).
+
+- [ ] Hit **Create health test** with everything blank → browser
+      tooltip on the first invalid field.
+- [ ] Fill title + price + currency but **leave the image empty** →
+      submit → page reloads with a friendly banner
+      "Product image is required" (no Zod jargon).
 - [ ] Upload a product image, fill the rest, submit → redirects to the
-      health-test detail page with a green "Health test created" toast/
-      banner.
+      health-test detail page with a green "Health test created" banner.
 
 ### A.3 Stock field behaviour
 - [ ] Create a test with **Stock = blank** → save → re-open in edit →
@@ -52,9 +58,21 @@ Covers the cleanup that landed for `/admin/health-tests` and
 > tab to bypass cache and confirm.
 
 ### A.4 Stock rejects bad input
-- [ ] Try `Stock = -1` → save fails with "Stock must be zero or greater".
-- [ ] Try `Stock = abc` → save fails with "Stock must be a whole number".
-- [ ] Try `Stock = 1.5` → same rejection (whole numbers only).
+> The Stock input is `type="number" min="0"`, so the browser blocks
+> `-1` / `abc` / `1.5` natively (no round-trip). Server-side validation
+> backs the same rules with friendly messages — exercise it via the
+> API or `fetch('/api/admin/health-tests/<id>', { method: 'PATCH', … })`
+> if you want to confirm.
+
+- [ ] Type `-1` into Stock → browser refuses to accept it on blur /
+      submit.
+- [ ] Type `1.5` → browser rounds or rejects depending on the OS.
+- [ ] (API call) PATCH `{ stock: -1 }` → response message
+      "Stock must be zero or greater".
+- [ ] (API call) PATCH `{ stock: 1.5 }` → response message
+      "Stock must be a whole number (no decimals)".
+- [ ] (API call) PATCH `{ stock: "abc" }` → response message
+      "Stock must be a whole number".
 
 ### A.5 Edit doesn't destroy hidden data
 - [ ] If you already have a real health test with non-null
@@ -65,8 +83,19 @@ Covers the cleanup that landed for `/admin/health-tests` and
     their old values.
 
 ### A.6 Public listing reads the new stock value
-- [ ] `/{country}/{lang}/tests` in an incognito tab.
-- [ ] Card pulls the latest stock without a deploy.
+> Public `/tests` is cached by tag (`country:<code>:health-tests`).
+> The admin save action calls `revalidateTag(…, "max")` so the next
+> request rebuilds the route. No incognito needed — a normal hard
+> refresh in the same tab will pick up the new data.
+
+- [ ] Save a stock change in `/admin/health-tests/<id>/edit`.
+- [ ] In another tab, hard-refresh `/{country}/{lang}/tests` (Ctrl + F5
+      / Cmd + Shift + R).
+- [ ] Card reflects the latest stock (badge state, Sold-out CTA, etc.).
+
+> Dev-only gotcha: if you create a test via API (not the admin form),
+> the tag never gets busted — the cache stays stale. Either use the
+> admin form, or restart the dev server.
 
 ---
 
@@ -89,12 +118,16 @@ Covers the cleanup that landed for `/admin/health-tests` and
       description, CTA label, Detail body, Legacy path.
 
 ### B.2 Validation
-- [ ] Submit blank → page reloads with the relevant error.
-- [ ] Save with name, slug, currency, and price filled → redirect to
-      the service detail page with a success message.
+> Same HTML5-first behavior as A.2 — browser blocks empty required
+> fields before they hit the server. That's expected.
+
+- [ ] Submit blank → browser tooltip on the first invalid field.
+- [ ] Fill name + slug + currency + price → submit → redirects to the
+      service detail page with a success message.
 - [ ] Public listing path: `/{country}/{lang}/prescriptions`. New
       prescription appears as a card with name, summary, duration pill,
-      price pill, and "Add to cart" button.
+      price pill, and "Add to cart" button (after a hard refresh — same
+      revalidateTag pattern as A.6).
 
 ### B.3 Same form unchanged for General / Specialist consultations
 - [ ] `/admin/general-consultations` → **+ New** → same form, no
