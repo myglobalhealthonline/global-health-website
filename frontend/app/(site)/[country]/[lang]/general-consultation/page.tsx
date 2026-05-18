@@ -104,7 +104,9 @@ export default async function CountryLangGeneralConsultationPage({
   const serviceItems = services.map((s) => ({
     title: s.name,
     description: s.summary,
-    href: `${ctaHref}${ctaHref.includes("?") ? "&" : "?"}service=${encodeURIComponent(s.slug)}`,
+    // Pickslot page lets the patient choose doctor + time, then adds
+    // the consultation to the cart with the selected timeSlotId.
+    href: `/${slug}/${lang}/consult/${encodeURIComponent(s.slug)}`,
     serviceType: "general" as const,
     duration: formatDuration(s.durationMinutes),
     startingPrice: formatPrice(s.basePriceCents, s.currencyCode),

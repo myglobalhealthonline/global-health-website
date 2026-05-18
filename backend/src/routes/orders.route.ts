@@ -418,6 +418,27 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       }
 
       try {
+        // If cancelling, release any HELD consultation slots back to OPEN
+        // so other patients can claim them. Skip slots already BOOKED
+        // (those are real appointments that need their own cancel flow).
+        if (body.data.status === OrderStatus.CANCELLED) {
+          const order = await prisma.order.findUnique({
+            where: { id: params.data.id },
+            include: { items: true },
+          });
+          if (order) {
+            const heldSlotIds = order.items
+              .map((i) => i.timeSlotId)
+              .filter((id): id is string => Boolean(id));
+            if (heldSlotIds.length > 0) {
+              await prisma.doctorTimeSlot.updateMany({
+                where: { id: { in: heldSlotIds }, status: "HELD" },
+                data: { status: "OPEN" },
+              });
+            }
+          }
+        }
+
         const order = await prisma.order.update({
           where: { id: params.data.id },
           data: { status: body.data.status },

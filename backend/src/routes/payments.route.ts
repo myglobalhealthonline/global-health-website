@@ -261,14 +261,26 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                   );
                   continue;
                 }
-                // Claim slot (atomic) then create appointment
+                // Claim slot (atomic) — accept HELD (cart reservation)
+                // or OPEN (defensive fallback). Skip if already BOOKED
+                // or BLOCKED so we don't overwrite real bookings.
                 try {
-                  const slot = await tx.doctorTimeSlot.update({
+                  const claim = await tx.doctorTimeSlot.updateMany({
                     where: {
                       id: item.timeSlotId,
-                      status: "OPEN",
+                      status: { in: ["HELD", "OPEN"] },
                     },
                     data: { status: "BOOKED" },
+                  });
+                  if (claim.count === 0) {
+                    app.log.warn(
+                      { orderId, itemId: item.id, slotId: item.timeSlotId },
+                      "Slot already claimed by someone else — appointment skipped",
+                    );
+                    continue;
+                  }
+                  const slot = await tx.doctorTimeSlot.findUniqueOrThrow({
+                    where: { id: item.timeSlotId },
                   });
                   const consultationType =
                     item.kind === "SPECIALIST_CONSULTATION" ? "specialist" : "general";
@@ -366,6 +378,47 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
               },
             });
           });
+        } else if (eventType === "checkout.session.expired") {
+          // Stripe expires unpaid Checkout Sessions after 24h. Release
+          // any HELD consultation slots in the associated Order so
+          // other patients can claim them. Mark order CANCELLED.
+          const session = event.data.object as {
+            id: string;
+            client_reference_id?: string | null;
+            metadata?: Record<string, string>;
+          };
+          if (session.metadata?.kind === "order") {
+            const orderId =
+              session.client_reference_id ?? session.metadata?.orderId ?? null;
+            if (orderId) {
+              const order = await prisma.order.findUnique({
+                where: { id: orderId },
+                include: { items: true },
+              });
+              if (order && order.status === "PENDING") {
+                const heldSlotIds = order.items
+                  .map((i) => i.timeSlotId)
+                  .filter((id): id is string => Boolean(id));
+                await prisma.$transaction([
+                  prisma.order.update({
+                    where: { id: orderId },
+                    data: { status: "CANCELLED" },
+                  }),
+                  ...(heldSlotIds.length > 0
+                    ? [
+                        prisma.doctorTimeSlot.updateMany({
+                          where: { id: { in: heldSlotIds }, status: "HELD" },
+                          data: { status: "OPEN" },
+                        }),
+                      ]
+                    : []),
+                ]);
+              }
+            }
+            return okResponse({ received: true });
+          }
+          // Non-order expirations fall through to the legacy path below
+          return okResponse({ received: true });
         } else if (eventType === "checkout.session.async_payment_failed") {
           const session = event.data.object as { id: string; client_reference_id?: string | null };
           const appointmentId = session.client_reference_id ?? null;

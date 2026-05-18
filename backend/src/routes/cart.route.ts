@@ -418,7 +418,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             .status(400)
             .send(errorResponse("Consultation items require timeSlotId + doctorId"));
         }
-        // Block adding the same slot twice
+        // Block adding the same slot twice in cart layer
         const slotTaken = await prisma.cartItem.findUnique({
           where: { timeSlotId },
         });
@@ -429,19 +429,45 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         }
       }
 
-      await prisma.cartItem.create({
-        data: {
-          cartId: cart.id,
-          kind,
-          healthTestId: healthTestId ?? null,
-          serviceId: serviceId ?? null,
-          name,
-          unitPriceCents,
-          quantity: isConsultation ? 1 : qty,
-          timeSlotId: timeSlotId ?? null,
-          doctorId: doctorId ?? null,
-        },
-      });
+      // For consultation items: claim the slot OPEN → HELD atomically
+      // BEFORE creating the CartItem. If another patient grabbed it via
+      // the regular booking flow we bail and return 409.
+      if (isConsultation && timeSlotId) {
+        const claim = await prisma.doctorTimeSlot.updateMany({
+          where: { id: timeSlotId, status: "OPEN" },
+          data: { status: "HELD" },
+        });
+        if (claim.count === 0) {
+          return reply
+            .status(409)
+            .send(errorResponse("That time slot is no longer available"));
+        }
+      }
+
+      try {
+        await prisma.cartItem.create({
+          data: {
+            cartId: cart.id,
+            kind,
+            healthTestId: healthTestId ?? null,
+            serviceId: serviceId ?? null,
+            name,
+            unitPriceCents,
+            quantity: isConsultation ? 1 : qty,
+            timeSlotId: timeSlotId ?? null,
+            doctorId: doctorId ?? null,
+          },
+        });
+      } catch (err) {
+        // Rollback slot HELD if cart item creation failed
+        if (isConsultation && timeSlotId) {
+          await prisma.doctorTimeSlot.updateMany({
+            where: { id: timeSlotId, status: "HELD" },
+            data: { status: "OPEN" },
+          });
+        }
+        throw err;
+      }
 
       const refreshed = await loadFullCart(cart.id);
       return okResponse(serializeCart(refreshed));
@@ -498,6 +524,14 @@ const cartRoute: FastifyPluginAsync = async (app) => {
 
       await prisma.cartItem.delete({ where: { id: item.id } });
 
+      // Release the slot HELD back to OPEN for consultation items
+      if (item.timeSlotId) {
+        await prisma.doctorTimeSlot.updateMany({
+          where: { id: item.timeSlotId, status: "HELD" },
+          data: { status: "OPEN" },
+        });
+      }
+
       // If cart is now empty, clear country/currency stamps
       const remaining = await prisma.cartItem.count({ where: { cartId: cart.id } });
       if (remaining === 0) {
@@ -515,6 +549,18 @@ const cartRoute: FastifyPluginAsync = async (app) => {
   app.delete("/api/cart", async (request, reply) => {
     const { cart } = await resolveActiveCart(request, reply);
     if (!cart) return okResponse(EMPTY_CART);
+
+    // Release all HELD slots back to OPEN before deleting cart items
+    const heldSlotIds = cart.items
+      .map((i) => i.timeSlotId)
+      .filter((id): id is string => Boolean(id));
+    if (heldSlotIds.length > 0) {
+      await prisma.doctorTimeSlot.updateMany({
+        where: { id: { in: heldSlotIds }, status: "HELD" },
+        data: { status: "OPEN" },
+      });
+    }
+
     await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
     await prisma.cart.update({
       where: { id: cart.id },
