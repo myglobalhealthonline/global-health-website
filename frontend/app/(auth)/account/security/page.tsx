@@ -10,6 +10,7 @@ import {
   resendVerificationEmail,
   type AuthUser,
 } from "@/lib/api/auth-api";
+import { formatAppDate } from "@/lib/format-datetime";
 import { DeleteAccountButton } from "./_components/delete-account-button";
 
 export default function AccountSecurityPage() {
@@ -127,7 +128,7 @@ export default function AccountSecurityPage() {
                   {verified ? (
                     <p className="mt-1 text-sm text-slate-600">
                       <span className="font-semibold text-emerald-700">Verified</span> on{" "}
-                      {new Date(user!.emailVerifiedAt!).toLocaleDateString()}.
+                      {formatAppDate(user!.emailVerifiedAt!)}.
                     </p>
                   ) : (
                     <>

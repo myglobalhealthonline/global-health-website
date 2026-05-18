@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 import type { FormFieldDef, FormTemplateDto } from "@/lib/api/doctor-api";
+import { formatAppDateTimeShort } from "@/lib/format-datetime";
 
 /**
  * Form templates manager. Tiny inline builder — title + description +
@@ -177,7 +178,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
                     ) : null}
                     <p className="mt-1 text-[11.5px] text-[var(--color-text-muted)]">
                       {t.fields.length} fields · updated{" "}
-                      {new Date(t.updatedAt).toLocaleDateString()}
+                      {formatAppDateTimeShort(t.updatedAt)}
                     </p>
                   </div>
                   {t.ownedBySelf ? (

@@ -23,3 +23,22 @@ export function formatAppDateTimeShort(dateLike: string): string {
     timeZone: DISPLAY_TIME_ZONE,
   }).format(value);
 }
+
+export function formatAppDate(dateLike: string): string {
+  const value = new Date(dateLike);
+  if (Number.isNaN(value.getTime())) return dateLike;
+  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+    dateStyle: "medium",
+    timeZone: DISPLAY_TIME_ZONE,
+  }).format(value);
+}
+
+export function formatAppTime(dateLike: string): string {
+  const value = new Date(dateLike);
+  if (Number.isNaN(value.getTime())) return dateLike;
+  return new Intl.DateTimeFormat(DISPLAY_LOCALE, {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: DISPLAY_TIME_ZONE,
+  }).format(value);
+}

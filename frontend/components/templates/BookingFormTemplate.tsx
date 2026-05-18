@@ -1,5 +1,5 @@
 "use client";
- 
+
 
 import { useState } from "react";
 import {
@@ -11,6 +11,7 @@ import {
   Stethoscope,
 } from "lucide-react";
 import { createCheckoutSession, submitBookingRequest } from "@/lib/api/booking-api";
+import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 
 type BookingOption = { value: string; label: string };
 
@@ -77,6 +78,8 @@ export function BookingFormTemplate({
   const [errors, setErrors] = useState<FieldErrors>({});
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
   const [consentAccepted, setConsentAccepted] = useState(false);
+  const maxDob =
+    typeof window !== "undefined" ? new Date().toISOString().slice(0, 10) : undefined;
 
   const ids = {
     country: "booking-country",
@@ -364,7 +367,8 @@ export function BookingFormTemplate({
                   name="dateOfBirth"
                   type="date"
                   title="Date of birth"
-                  max={new Date().toISOString().slice(0, 10)}
+                  max={maxDob}
+                  suppressHydrationWarning
                   className="gh-input"
                 />
               </Field>
@@ -537,11 +541,7 @@ function SlotPicker({
   const groups = new Map<string, { id: string; startAt: Date }[]>();
   for (const s of doctor.slots) {
     const d = new Date(s.startAt);
-    const dayKey = d.toLocaleDateString(undefined, {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-    });
+    const dayKey = formatAppDate(d.toISOString());
     const list = groups.get(dayKey) ?? [];
     list.push({ id: s.id, startAt: d });
     groups.set(dayKey, list);
@@ -579,10 +579,7 @@ function SlotPicker({
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {slots.map((s) => {
-                  const time = s.startAt.toLocaleTimeString(undefined, {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  });
+                  const time = formatAppTime(s.startAt.toISOString());
                   const active = selectedSlotId === s.id;
                   return (
                     <button

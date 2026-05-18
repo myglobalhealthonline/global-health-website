@@ -21,7 +21,7 @@
 |----|-------|-----|----------|---------|--------|-----|
 | ISS-001 | P3 | TC-PUB-001 | P0 | Country gate IE→EN → 404 `/ireland/services/en` | 🟢 | `CountryEntryGate`: `router.push(\`/${slug}/${lang}\`)` |
 | ISS-002 | P1 | TC-ADM-002 | P2 | Admin dashboard blank ~3s after login (RSC slow) | 🟢 | Added `/admin/loading.tsx` route skeleton so dashboard no longer renders blank while server data loads |
-| ISS-003 | dev | all | P3 | Next.js dev hydration overlay blocks clicks (bottom-left) | 🟡 | Collapse badge before submit |
+| ISS-003 | dev | all | P3 | Next.js dev hydration overlay blocks clicks (bottom-left) | 🟢 | Removed remaining client-side locale/time hydration mismatches and added targeted hydration suppression on rich editors / DOB max field |
 | ISS-004 | dev | multiple | P3 | Hydration mismatches (login, CountryEntryGate, Toggle, RichText) | 🟢 | `suppressHydrationWarning` on `getFullYear()` in CountryEntryGate, SiteFooter, footer-column; Toggle/RichText remain P3 dev-only noise |
 | ISS-005 | P1 | TC-ADM-010 | P0 | Doctor create → `Unexpected admin doctors error` (P2028 tx timeout + `pageSize=250` → 400) | 🟢 | `ADMIN_DOCTOR_TX_OPTIONS` 20s; `pageSize` max 250; P2028 → 503 message |
 | ISS-006 | P1/P2 | TC-ADM-048, TC-DOC-034 | P1 | Doctor session on `/api/admin/*` → 503 not 403 (`resolveOptionalAuthUser` ignored DOCTOR) | 🟢 | `verifyAdminAccess` reads JWT role from cookie |

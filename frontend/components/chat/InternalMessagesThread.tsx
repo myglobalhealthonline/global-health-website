@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { formatAppDateTime } from "@/lib/format-datetime";
 
 type InternalMessage = {
   id: string;
@@ -86,7 +87,7 @@ export function InternalMessagesThread({
                     {m.authorName}
                   </span>
                   <time className="text-[11px] text-[var(--color-text-muted)]">
-                    {new Date(m.createdAt).toLocaleString()}
+                    {formatAppDateTime(m.createdAt)}
                   </time>
                 </div>
                 <p className="mt-1 whitespace-pre-wrap text-[var(--color-text-primary)]">

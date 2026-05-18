@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Check, CheckCheck } from "lucide-react";
+import { formatAppDateTime } from "@/lib/format-datetime";
 
 type NotificationItem = {
   id: string;
@@ -98,7 +99,7 @@ export function NotificationListClient({
                     ) : null}
                   </p>
                   <time className="text-[11px] text-[var(--color-text-muted)]">
-                    {new Date(n.createdAt).toLocaleString()}
+                    {formatAppDateTime(n.createdAt)}
                   </time>
                 </div>
                 {n.snippet ? (
