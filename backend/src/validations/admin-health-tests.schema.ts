@@ -60,6 +60,9 @@ export const adminHealthTestCreateBodySchema = z.object({
   extraSections: z.array(extraSectionSchema).max(12).optional().nullable().transform((v) => (v == null ? null : v)),
   sortOrder: z.coerce.number().int().min(0).default(0),
   isActive: z.boolean().optional(),
+  /** null = unlimited; 0 = sold out. Public card shows "Only N left"
+   *  when 1..5. */
+  stock: z.coerce.number().int().min(0).optional().nullable(),
   seoTitle: optionalTrimmed(200),
   seoDescription: optionalTrimmed(320),
   legacyPath: optionalTrimmed(240),

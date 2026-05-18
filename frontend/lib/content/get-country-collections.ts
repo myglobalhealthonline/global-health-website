@@ -41,6 +41,9 @@ export type CountryHealthTestCard = {
   sampleType: string | null;
   resultsTimeline: string | null;
   imageSrc: string | null;
+  /** null = unlimited inventory; 0 = sold out; <=5 surfaces a "Only N
+   *  left" badge on the public card. */
+  stock: number | null;
 };
 
 export type CountryPricingPlanCard = {
@@ -219,6 +222,7 @@ export const getCountryHealthTests = cache(async (
       sampleType: typeof r.sampleType === "string" ? r.sampleType : null,
       resultsTimeline: typeof r.resultsTimeline === "string" ? r.resultsTimeline : null,
       imageSrc: imagePath ? resolveTrustedAssetUrl(imagePath) ?? null : null,
+      stock: typeof r.stock === "number" ? r.stock : null,
     });
   }
   return out;

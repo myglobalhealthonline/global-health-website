@@ -355,6 +355,15 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           if (ht.priceCents == null) {
             return reply.status(400).send(errorResponse("Health test has no price"));
           }
+          // Stock check — null = unlimited, 0 = sold out
+          if (ht.stock !== null && ht.stock <= 0) {
+            return reply.status(409).send(errorResponse("Out of stock"));
+          }
+          if (ht.stock !== null && qty > ht.stock) {
+            return reply
+              .status(409)
+              .send(errorResponse(`Only ${ht.stock} left in stock`));
+          }
           name = ht.title;
           unitPriceCents = ht.priceCents;
           countryCode = ht.country.code;
@@ -618,7 +627,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       if (remaining === 0) {
         await prisma.cart.update({
           where: { id: sweptCart.id },
-          data: { countryCode: "", currencyCode: "" },
+          data: { countryCode: "", currencyCode: "", abandonedEmailSentAt: null },
         });
       }
 
@@ -645,7 +654,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
     await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
     await prisma.cart.update({
       where: { id: cart.id },
-      data: { countryCode: "", currencyCode: "" },
+      data: { countryCode: "", currencyCode: "", abandonedEmailSentAt: null },
     });
     return okResponse(EMPTY_CART);
   });

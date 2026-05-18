@@ -219,6 +219,119 @@ export async function sendContactFormEmail(opts: {
   });
 }
 
+export async function sendOrderConfirmationEmail(opts: {
+  to: string;
+  fullName: string;
+  orderId: string;
+  totalLabel: string;
+  items: { name: string; quantity: number; lineLabel: string }[];
+  shipAddress?: {
+    name: string;
+    line1: string;
+    line2: string | null;
+    city: string;
+    postalCode: string;
+    countryCode: string;
+  } | null;
+}) {
+  const shortId = opts.orderId.slice(-8);
+  const itemLines = opts.items
+    .map((i) => `  - ${i.name} × ${i.quantity}  ${i.lineLabel}`)
+    .join("\n");
+  const shipText = opts.shipAddress
+    ? `\n\nShipping to:\n  ${opts.shipAddress.name}\n  ${opts.shipAddress.line1}${opts.shipAddress.line2 ? `\n  ${opts.shipAddress.line2}` : ""}\n  ${opts.shipAddress.city} ${opts.shipAddress.postalCode}\n  ${opts.shipAddress.countryCode}`
+    : "";
+  const itemRowsHtml = opts.items
+    .map(
+      (i) => `
+       <tr>
+         <td style="padding:8px 0;border-bottom:1px solid #F1F1EF;">${escapeHtml(i.name)} <span style="color:#737373;">× ${i.quantity}</span></td>
+         <td style="padding:8px 0;border-bottom:1px solid #F1F1EF;text-align:right;font-weight:600;">${escapeHtml(i.lineLabel)}</td>
+       </tr>`,
+    )
+    .join("");
+  const shipHtml = opts.shipAddress
+    ? `<p style="margin-top:24px;"><strong>Shipping to:</strong></p>
+       <p style="margin:6px 0;color:#374151;line-height:1.5;">
+         ${escapeHtml(opts.shipAddress.name)}<br/>
+         ${escapeHtml(opts.shipAddress.line1)}<br/>
+         ${opts.shipAddress.line2 ? `${escapeHtml(opts.shipAddress.line2)}<br/>` : ""}
+         ${escapeHtml(opts.shipAddress.city)} ${escapeHtml(opts.shipAddress.postalCode)}<br/>
+         ${escapeHtml(opts.shipAddress.countryCode)}
+       </p>`
+    : "";
+  return sendEmail({
+    to: opts.to,
+    subject: `Order confirmed #${shortId} — Global Health`,
+    text: `Hi ${opts.fullName},
+
+Your order is confirmed.
+
+Order #${shortId}
+${itemLines}
+
+Total paid: ${opts.totalLabel}${shipText}
+
+We'll send a separate email when your items ship. Track your order any time at your account page.
+
+— Global Health`,
+    html: wrapHtml(
+      "Order confirmed",
+      `<p>Hi ${escapeHtml(opts.fullName)},</p>
+       <p>Your order is confirmed and being prepared. We'll send another email when it ships.</p>
+       <p style="margin-top:16px;font-size:12px;color:#737373;">Order #${escapeHtml(shortId)}</p>
+       <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:14px;">
+         ${itemRowsHtml}
+         <tr>
+           <td style="padding:12px 0;font-weight:700;">Total paid</td>
+           <td style="padding:12px 0;text-align:right;font-weight:700;">${escapeHtml(opts.totalLabel)}</td>
+         </tr>
+       </table>
+       ${shipHtml}
+       <p style="margin-top:24px;font-size:13px;color:#737373;">
+         Track your order any time at your account page. Reply to this
+         email if you need anything.
+       </p>`,
+    ),
+  });
+}
+
+export async function sendAbandonedCartEmail(opts: {
+  to: string;
+  fullName: string;
+  itemCount: number;
+  totalLabel: string;
+}) {
+  return sendEmail({
+    to: opts.to,
+    subject: `Your cart is waiting — Global Health`,
+    text: `Hi ${opts.fullName},
+
+You left ${opts.itemCount} item${opts.itemCount === 1 ? "" : "s"} in your cart (${opts.totalLabel}).
+
+Pick up where you left off — your cart is saved for you.
+
+https://myglobalhealth.online/cart
+
+— Global Health`,
+    html: wrapHtml(
+      "Your cart is waiting",
+      `<p>Hi ${escapeHtml(opts.fullName)},</p>
+       <p>You left <strong>${opts.itemCount} item${opts.itemCount === 1 ? "" : "s"}</strong> in your cart (${escapeHtml(opts.totalLabel)}).</p>
+       <p style="margin:24px 0;">
+         <a href="${absoluteSiteUrl("/cart")}"
+            style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">
+           Resume checkout
+         </a>
+       </p>
+       <p style="font-size:13px;color:#737373;">
+         Reservations for consultation slots time out after 10 minutes,
+         so please complete checkout soon if you have a slot held.
+       </p>`,
+    ),
+  });
+}
+
 export async function sendBookingConfirmationEmail(opts: {
   to: string;
   fullName: string;

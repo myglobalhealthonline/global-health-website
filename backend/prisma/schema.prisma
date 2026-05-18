@@ -473,6 +473,11 @@ model HealthTest {
   extraSections      Json?
   sortOrder          Int           @default(0)
   isActive           Boolean       @default(true)
+  /// Inventory remaining for sale. null = unlimited (legacy default for
+  /// existing rows). Decrements when a paid Order containing this test
+  /// is fulfilled. Patient sees "Only N left" badge when stock <= 5.
+  /// Admin sets initial stock + restocks on the edit page.
+  stock              Int?
   seoTitle           String?
   seoDescription     String?
   legacyPath         String?
@@ -718,14 +723,19 @@ enum OrderStatus {
 }
 
 model Cart {
-  id           String     @id @default(cuid())
-  userId       String?    @unique
-  cookieToken  String?    @unique
-  countryCode  String
-  currencyCode String
-  items        CartItem[]
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id                   String     @id @default(cuid())
+  userId               String?    @unique
+  cookieToken          String?    @unique
+  countryCode          String
+  currencyCode         String
+  items                CartItem[]
+  /// Stamped when the abandoned-cart reminder has been emailed.
+  /// Prevents re-sending. Cleared on checkout / cart-clear.
+  abandonedEmailSentAt DateTime?
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+
+  @@index([updatedAt, abandonedEmailSentAt])
 }
 
 model CartItem {

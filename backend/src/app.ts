@@ -56,6 +56,7 @@ import accountPrescriptionsRoute from "./routes/account-prescriptions.route.js";
 import cartRoute from "./routes/cart.route.js";
 import ordersRoute from "./routes/orders.route.js";
 import doctorSelfAvailabilityRoute from "./routes/doctor-self-availability.route.js";
+import abandonedCartCronRoute from "./routes/cron-abandoned-cart.route.js";
 import { env } from "./config/env.js";
 
 export async function buildApp() {
@@ -187,6 +188,7 @@ export async function buildApp() {
   await app.register(cartRoute);
   await app.register(ordersRoute);
   await app.register(doctorSelfAvailabilityRoute);
+  await app.register(abandonedCartCronRoute);
 
   return app;
 }

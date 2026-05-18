@@ -69,6 +69,9 @@ export function DoctorAvailabilityUI({ initialWindows, initialSlots }: Props) {
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("17:00");
   const [duration, setDuration] = useState(30);
+  // ISO date strings (YYYY-MM-DD). Empty = "always" / "forever".
+  const [effectiveFromDate, setEffectiveFromDate] = useState("");
+  const [effectiveUntilDate, setEffectiveUntilDate] = useState("");
 
   function onAddWindow(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -79,18 +82,34 @@ export function DoctorAvailabilityUI({ initialWindows, initialSlots }: Props) {
       setError("End time must be after start time");
       return;
     }
+    if (
+      effectiveFromDate &&
+      effectiveUntilDate &&
+      effectiveFromDate > effectiveUntilDate
+    ) {
+      setError("End date must be on or after start date");
+      return;
+    }
     startTransition(async () => {
       const res = await createAvailabilityWindow({
         weekday,
         startMinute: startMin,
         endMinute: endMin,
         slotDurationMinutes: duration,
+        effectiveFrom: effectiveFromDate
+          ? new Date(`${effectiveFromDate}T00:00:00.000Z`).toISOString()
+          : undefined,
+        effectiveUntil: effectiveUntilDate
+          ? new Date(`${effectiveUntilDate}T23:59:59.999Z`).toISOString()
+          : undefined,
       });
       if (!res.ok) {
         setError(res.message);
         return;
       }
       setWindows((prev) => [...prev, res.data.availability]);
+      setEffectiveFromDate("");
+      setEffectiveUntilDate("");
       router.refresh();
     });
   }
@@ -255,6 +274,17 @@ export function DoctorAvailabilityUI({ initialWindows, initialSlots }: Props) {
                           {w.slotDurationMinutes}-min slots
                           {!w.isActive ? " · paused" : ""}
                         </p>
+                        {w.effectiveFrom || w.effectiveUntil ? (
+                          <p className="text-[10px] text-[var(--color-text-muted)]">
+                            {w.effectiveFrom
+                              ? `from ${new Date(w.effectiveFrom).toLocaleDateString("en-IE")}`
+                              : "from always"}
+                            {" "}·{" "}
+                            {w.effectiveUntil
+                              ? `until ${new Date(w.effectiveUntil).toLocaleDateString("en-IE")}`
+                              : "forever"}
+                          </p>
+                        ) : null}
                       </div>
                       <div className="flex items-center gap-2">
                         <Pill tone={w.isActive ? "active" : "neutral"}>
@@ -331,6 +361,33 @@ export function DoctorAvailabilityUI({ initialWindows, initialSlots }: Props) {
                   ))}
                 </select>
               </label>
+
+              {/* Optional effective range — leave blank for "always" */}
+              <div className="grid grid-cols-2 gap-2">
+                <label className="flex flex-col gap-1 text-sm">
+                  <span className="gh-field-label">Starts (optional)</span>
+                  <input
+                    type="date"
+                    value={effectiveFromDate}
+                    onChange={(e) => setEffectiveFromDate(e.target.value)}
+                    className="gh-input"
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-sm">
+                  <span className="gh-field-label">Ends (optional)</span>
+                  <input
+                    type="date"
+                    value={effectiveUntilDate}
+                    onChange={(e) => setEffectiveUntilDate(e.target.value)}
+                    className="gh-input"
+                  />
+                </label>
+              </div>
+              <p className="text-[11px] text-[var(--color-text-muted)]">
+                Leave dates empty for an always-active recurring window. Use
+                them for holidays, vacations, or seasonal hours.
+              </p>
+
               <Btn type="submit" variant="primary" size="sm" disabled={busy} iconLeft={<Plus className="size-3.5" />}>
                 {busy ? "Adding…" : "Add window"}
               </Btn>

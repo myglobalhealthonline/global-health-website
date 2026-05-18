@@ -147,13 +147,34 @@ export default async function HealthTestsPage({
                     <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">
                       {formatPrice(t.priceCents, t.currencyCode)}
                     </span>
+                    {/* Stock signal — null = unlimited, hidden.
+                        0 = sold out badge. 1–5 = "Only N left" badge. */}
+                    {t.stock !== null && t.stock <= 0 ? (
+                      <span className="rounded-full bg-rose-50 px-3 py-1 font-semibold text-rose-700">
+                        Sold out
+                      </span>
+                    ) : t.stock !== null && t.stock <= 5 ? (
+                      <span className="rounded-full bg-amber-50 px-3 py-1 font-semibold text-amber-800">
+                        Only {t.stock} left
+                      </span>
+                    ) : null}
                   </div>
                   <div className="mt-auto pt-5">
-                    <AddToCartButton
-                      kind="HEALTH_TEST"
-                      healthTestId={t.id}
-                      label={`Add to cart · ${formatPrice(t.priceCents, t.currencyCode)}`}
-                    />
+                    {t.stock !== null && t.stock <= 0 ? (
+                      <button
+                        type="button"
+                        disabled
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-500"
+                      >
+                        Sold out
+                      </button>
+                    ) : (
+                      <AddToCartButton
+                        kind="HEALTH_TEST"
+                        healthTestId={t.id}
+                        label={`Add to cart · ${formatPrice(t.priceCents, t.currencyCode)}`}
+                      />
+                    )}
                   </div>
                 </div>
               </article>

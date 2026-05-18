@@ -11,6 +11,10 @@ export type CreateWindowInput = {
   startMinute: number;
   endMinute: number;
   slotDurationMinutes?: number;
+  /** ISO datetime — window only kicks in from this date onwards. Omitted = always. */
+  effectiveFrom?: string;
+  /** ISO datetime — window stops applying after this date. Omitted = forever. */
+  effectiveUntil?: string;
 };
 
 export async function createAvailabilityWindow(

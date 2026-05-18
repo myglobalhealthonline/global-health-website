@@ -212,7 +212,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
         await prisma.cart.update({
           where: { id: cart.id },
-          data: { countryCode: "", currencyCode: "" },
+          data: { countryCode: "", currencyCode: "", abandonedEmailSentAt: null },
         });
 
         return okResponse({ orderId: order.id, url: session.url, sessionId: session.id });
@@ -399,6 +399,55 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(err);
         return reply.status(500).send(errorResponse("Could not load order"));
+      }
+    },
+  );
+
+  // ── Admin: bulk status transition ──────────────────────────────────
+  app.post(
+    "/api/admin/orders/bulk",
+    async (request, reply) => {
+      const auth = await verifyAdminAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+
+      const bulkSchema = z.object({
+        ids: z.array(z.string().min(1)).min(1).max(100),
+        status: z.enum([OrderStatus.FULFILLED, OrderStatus.CANCELLED]),
+      });
+      const body = bulkSchema.safeParse(request.body);
+      if (!body.success) {
+        return reply.status(400).send(errorResponse("Invalid body", body.error.flatten()));
+      }
+
+      try {
+        // For cancellations, release HELD slots from all selected orders
+        if (body.data.status === OrderStatus.CANCELLED) {
+          const orders = await prisma.order.findMany({
+            where: { id: { in: body.data.ids } },
+            include: { items: true },
+          });
+          const heldSlotIds = orders
+            .flatMap((o) => o.items.map((i) => i.timeSlotId))
+            .filter((id): id is string => Boolean(id));
+          if (heldSlotIds.length > 0) {
+            await prisma.doctorTimeSlot.updateMany({
+              where: { id: { in: heldSlotIds }, status: "HELD" },
+              data: { status: "OPEN" },
+            });
+          }
+        }
+
+        const result = await prisma.order.updateMany({
+          where: { id: { in: body.data.ids } },
+          data: { status: body.data.status },
+        });
+        return okResponse({ count: result.count, status: body.data.status });
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Bulk update failed"));
       }
     },
   );

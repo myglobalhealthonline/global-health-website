@@ -10,6 +10,7 @@ import {
 import { env } from "../config/env.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { sendOrderConfirmationEmail } from "../lib/email/templates.js";
 
 const createCheckoutBodySchema = z.object({
   appointmentId: z.string().trim().min(8).max(40),
@@ -252,6 +253,29 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                   i.kind === "SPECIALIST_CONSULTATION",
               );
 
+              // Decrement health-test stock. Null stock = unlimited (skip).
+              // Uses `decrement` operator so it's race-safe at the DB level.
+              const healthTestItems = order.items.filter(
+                (i) => i.kind === "HEALTH_TEST" && i.healthTestId,
+              );
+              for (const item of healthTestItems) {
+                if (!item.healthTestId) continue;
+                try {
+                  await tx.healthTest.updateMany({
+                    where: {
+                      id: item.healthTestId,
+                      stock: { not: null, gte: item.quantity },
+                    },
+                    data: { stock: { decrement: item.quantity } },
+                  });
+                } catch (decErr) {
+                  app.log.warn(
+                    { err: decErr, healthTestId: item.healthTestId, qty: item.quantity },
+                    "Stock decrement failed",
+                  );
+                }
+              }
+
               const appointmentIds: string[] = [];
               for (const item of consultationItems) {
                 if (!item.timeSlotId || !item.doctorId || !item.serviceId) {
@@ -332,6 +356,47 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                 },
               });
             });
+
+            // Send order confirmation email (best-effort, non-blocking)
+            try {
+              const paidOrder = await prisma.order.findUnique({
+                where: { id: orderId },
+                include: { items: true },
+              });
+              if (paidOrder) {
+                const currency = paidOrder.currencyCode || "EUR";
+                const fmt = (cents: number) => {
+                  const code = currency.toUpperCase();
+                  const symbol =
+                    code === "EUR" ? "€" : code === "CZK" ? "Kč " : code === "BRL" ? "R$" : `${code} `;
+                  return `${symbol}${(cents / 100).toFixed(2)}`;
+                };
+                await sendOrderConfirmationEmail({
+                  to: paidOrder.email,
+                  fullName: paidOrder.fullName,
+                  orderId: paidOrder.id,
+                  totalLabel: fmt(paidOrder.totalCents),
+                  items: paidOrder.items.map((i) => ({
+                    name: i.name,
+                    quantity: i.quantity,
+                    lineLabel: fmt(i.lineTotalCents),
+                  })),
+                  shipAddress: paidOrder.shipName
+                    ? {
+                        name: paidOrder.shipName,
+                        line1: paidOrder.shipLine1 ?? "",
+                        line2: paidOrder.shipLine2,
+                        city: paidOrder.shipCity ?? "",
+                        postalCode: paidOrder.shipPostalCode ?? "",
+                        countryCode: paidOrder.shipCountryCode ?? "",
+                      }
+                    : null,
+                });
+              }
+            } catch (emailErr) {
+              app.log.warn({ err: emailErr, orderId }, "Order confirmation email failed");
+            }
+
             return okResponse({ received: true });
           }
 
