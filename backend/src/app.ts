@@ -62,6 +62,15 @@ import { env } from "./config/env.js";
 export async function buildApp() {
   const app = Fastify({ logger: true, bodyLimit: 1_048_576, trustProxy: true });
 
+  // Idempotent additive DDL — keeps the live DB in sync with the Prisma
+  // schema for additive changes we couldn't slot into the migration
+  // history cleanly. See `db/ensure-schema.ts` for the rules.
+  const { ensureSchema } = await import("./db/ensure-schema.js");
+  await ensureSchema({
+    info: (m) => app.log.info(m),
+    error: (m) => app.log.error(m),
+  });
+
   const allowedOrigins = (env.CORS_ALLOWED_ORIGINS ?? "")
     .split(",")
     .map((origin) => origin.trim())
