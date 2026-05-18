@@ -20,12 +20,8 @@ const prisma = new PrismaClient({ adapter });
 
 const CURRENCIES: { code: string; symbol: string; decimals?: number }[] = [
   { code: "EUR", symbol: "€" },
-  { code: "GBP", symbol: "£" },
-  { code: "USD", symbol: "$" },
   { code: "CZK", symbol: "Kč" },
   { code: "BRL", symbol: "R$" },
-  { code: "RON", symbol: "lei" },
-  { code: "PLN", symbol: "zł" },
 ];
 
 async function main() {
@@ -38,6 +34,24 @@ async function main() {
     console.log(`  ✓ ${row.code}  ${row.symbol}`);
   }
   console.log(`\nSynced ${CURRENCIES.length} currencies.`);
+
+  // Remove currencies not in the supported list — but only if nothing
+  // references them (Country.currencyId FK). Skip with a warning if in use.
+  const supported = new Set(CURRENCIES.map((c) => c.code));
+  const existing = await prisma.currency.findMany({
+    select: { code: true, _count: { select: { countries: true } } },
+  });
+  for (const row of existing) {
+    if (supported.has(row.code)) continue;
+    if (row._count.countries > 0) {
+      console.warn(
+        `  ! ${row.code}  in use by ${row._count.countries} country(ies) — left in place`,
+      );
+      continue;
+    }
+    await prisma.currency.delete({ where: { code: row.code } });
+    console.log(`  ✗ ${row.code}  removed (unused)`);
+  }
 }
 
 main()

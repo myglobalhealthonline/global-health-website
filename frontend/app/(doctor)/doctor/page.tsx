@@ -13,6 +13,14 @@ import {
   fetchDoctorMe,
   fetchDoctorNotifications,
 } from "@/lib/api/doctor-api";
+import {
+  AdminCard,
+  Btn,
+  PageHeader,
+  SectionHeader,
+  StatCard,
+} from "@/components/portal-atoms";
+import { formatAppTime } from "@/lib/format-datetime";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +32,7 @@ export default async function DoctorOverviewPage() {
   const result = await fetchDoctorMe();
   if (!result.ok) {
     return (
-      <div className="gh-card p-6">
+      <AdminCard>
         <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
           {result.message}
         </p>
@@ -34,7 +42,7 @@ export default async function DoctorOverviewPage() {
             admin to set it under <span className="font-mono">/admin/users</span>.
           </p>
         ) : null}
-      </div>
+      </AdminCard>
     );
   }
   const { doctor, stats } = result.data;
@@ -59,9 +67,8 @@ export default async function DoctorOverviewPage() {
       )
     : [];
 
-  // Pending-action queue:
-  //   • Appointments scheduled within 24h that don't have a meeting URL set
-  //   • Plus the first few unread notifications
+  // Pending-action queue: appointments scheduled within 24h that don't
+  // have a meeting URL set + first unread notifications.
   const upcoming24h = todayAppointments.filter(
     (a) =>
       a.scheduledAt &&
@@ -70,289 +77,268 @@ export default async function DoctorOverviewPage() {
   const missingMeetingLink = upcoming24h.filter((a) => !a.meetingUrl);
   const unreadNotifs = notifRes.ok ? notifRes.data.items : [];
 
+  const subtitle =
+    `${doctor.title} · ${doctor.country.name}` +
+    (doctor.additionalCountries.length > 0
+      ? ` + ${doctor.additionalCountries.map((c) => c.country.name).join(", ")}`
+      : "");
+
   return (
     <>
-      <header className="mb-6">
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-          Welcome
-        </p>
-        <h2 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
-          {doctor.fullName}
-        </h2>
-        <p className="text-sm text-[var(--color-text-muted)]">
-          {doctor.title} · {doctor.country.name}
-          {doctor.additionalCountries.length > 0
-            ? " + " +
-              doctor.additionalCountries.map((c) => c.country.name).join(", ")
-            : ""}
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Welcome"
+        title={doctor.fullName}
+        description={subtitle}
+      />
 
+      {/* ── Stat tiles ─────────────────────────────────────────────── */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatTile
-          icon={<Calendar className="size-5" aria-hidden />}
+        <StatCard
+          tone="brand"
           label="Today"
-          value={String(stats.todayCount)}
+          value={stats.todayCount}
           hint="Scheduled appointments"
-        />
-        <StatTile
           icon={<Calendar className="size-5" aria-hidden />}
-          label="This week"
-          value={String(stats.weekCount)}
-          hint="Scheduled within 7 days"
         />
-        <StatTile
-          icon={<Stethoscope className="size-5" aria-hidden />}
+        <StatCard
+          tone="accent"
+          label="This week"
+          value={stats.weekCount}
+          hint="Scheduled within 7 days"
+          icon={<Calendar className="size-5" aria-hidden />}
+        />
+        <StatCard
           label="Open"
-          value={String(stats.totalActive)}
+          value={stats.totalActive}
           hint="Not cancelled or completed"
+          icon={<Stethoscope className="size-5" aria-hidden />}
         />
       </div>
 
+      {/* ── Pending-action banner ─────────────────────────────────── */}
       {missingMeetingLink.length > 0 ? (
-        <div
-          className="mt-6 gh-card p-5"
-          style={{ borderLeft: "3px solid var(--color-status-warning-text)" }}
-        >
-          <div className="flex items-start gap-3">
-            <AlertTriangle
-              className="size-5 shrink-0"
-              style={{ color: "var(--color-status-warning-text)" }}
-              aria-hidden
-            />
-            <div className="min-w-0 flex-1">
-              <p className="text-[14px] font-bold text-[var(--color-text-primary)]">
-                {missingMeetingLink.length} appointment
-                {missingMeetingLink.length === 1 ? "" : "s"} within 24h
-                without a meeting link
-              </p>
-              <ul className="mt-2 grid gap-1">
-                {missingMeetingLink.slice(0, 5).map((a) => (
-                  <li
-                    key={a.id}
-                    className="flex items-center justify-between gap-2 text-[13px]"
-                  >
-                    <span className="truncate text-[var(--color-text-primary)]">
-                      {a.fullName}
-                      <span className="ml-2 text-[var(--color-text-muted)]">
-                        {a.scheduledAt
-                          ? new Date(a.scheduledAt).toLocaleString(undefined, {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })
-                          : ""}
-                      </span>
-                    </span>
-                    <Link
-                      href={`/doctor/appointments/${a.id}`}
-                      className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+        <div className="mt-6">
+          <AdminCard
+            style={{ borderLeft: "3px solid var(--color-status-warning-text)" }}
+          >
+            <div className="flex items-start gap-3">
+              <AlertTriangle
+                className="size-5 shrink-0"
+                style={{ color: "var(--color-status-warning-text)" }}
+                aria-hidden
+              />
+              <div className="min-w-0 flex-1">
+                <p className="text-[14px] font-bold text-[var(--color-text-primary)]">
+                  {missingMeetingLink.length} appointment
+                  {missingMeetingLink.length === 1 ? "" : "s"} within 24h
+                  without a meeting link
+                </p>
+                <ul className="mt-2 grid gap-1">
+                  {missingMeetingLink.slice(0, 5).map((a) => (
+                    <li
+                      key={a.id}
+                      className="flex items-center justify-between gap-2 text-[13px]"
                     >
-                      Add link <ChevronRight className="size-3" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+                      <span className="truncate text-[var(--color-text-primary)]">
+                        {a.fullName}
+                        <span className="ml-2 text-[var(--color-text-muted)]">
+                          {a.scheduledAt ? formatAppTime(a.scheduledAt) : ""}
+                        </span>
+                      </span>
+                      <Link
+                        href={`/doctor/appointments/${a.id}`}
+                        className="inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                      >
+                        Add link <ChevronRight className="size-3" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          </div>
+          </AdminCard>
         </div>
       ) : null}
 
+      {/* ── Main grid: schedule + notifications ─────────────────── */}
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <section className="gh-card p-6 lg:col-span-2">
-          <h3
-            className="m-0 text-[var(--color-text-primary)]"
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: 16,
-              fontWeight: 800,
-            }}
-          >
-            Today&apos;s schedule
-          </h3>
-          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-            Open or upcoming appointments scheduled today.
-          </p>
-          {todayAppointments.length === 0 ? (
-            <p className="mt-4 text-[13px] text-[var(--color-text-muted)]">
-              Nothing on the calendar for today. Browse the full list at{" "}
-              <Link
-                href="/doctor/appointments"
-                className="font-semibold text-[var(--color-brand-primary)] hover:underline"
-              >
-                My appointments
-              </Link>
-              .
-            </p>
-          ) : (
-            <ul className="mt-4 divide-y divide-[var(--color-border)]">
-              {todayAppointments.slice(0, 8).map((a) => (
-                <li
-                  key={a.id}
-                  className="flex flex-wrap items-center justify-between gap-3 py-3"
+        <AdminCard padding={0} className="lg:col-span-2">
+          <SectionHeader
+            title="Today's schedule"
+            description="Open or upcoming appointments scheduled today."
+          />
+          <div className="p-5">
+            {todayAppointments.length === 0 ? (
+              <p className="text-[13px] text-[var(--color-text-muted)]">
+                Nothing on the calendar for today. Browse the full list at{" "}
+                <Link
+                  href="/doctor/appointments"
+                  className="font-semibold text-[var(--color-brand-primary)] hover:underline"
                 >
-                  <div className="min-w-0">
-                    <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
-                      {a.scheduledAt
-                        ? new Date(a.scheduledAt).toLocaleTimeString(undefined, {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
-                        : "Unscheduled"}{" "}
-                      · {a.fullName}
-                    </p>
-                    <p className="text-[12px] text-[var(--color-text-muted)]">
-                      {a.consultationType} · {a.status}
-                    </p>
-                  </div>
-                  <div className="inline-flex items-center gap-2">
-                    {a.meetingUrl ? (
-                      <a
-                        href={a.meetingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800"
+                  My appointments
+                </Link>
+                .
+              </p>
+            ) : (
+              <ul className="divide-y divide-[var(--color-border)]">
+                {todayAppointments.slice(0, 8).map((a) => (
+                  <li
+                    key={a.id}
+                    className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
+                        {a.scheduledAt ? formatAppTime(a.scheduledAt) : "Unscheduled"}{" "}
+                        · {a.fullName}
+                      </p>
+                      <p className="text-[12px] text-[var(--color-text-muted)]">
+                        {a.consultationType} · {a.status}
+                      </p>
+                    </div>
+                    <div className="inline-flex items-center gap-2">
+                      {a.meetingUrl ? (
+                        <Btn
+                          href={a.meetingUrl}
+                          variant="primary"
+                          size="sm"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          iconLeft={<Video className="size-3.5" />}
+                        >
+                          Join
+                        </Btn>
+                      ) : null}
+                      <Btn
+                        href={`/doctor/appointments/${a.id}`}
+                        variant="secondary"
+                        size="sm"
+                        iconRight={<ChevronRight className="size-3.5" />}
                       >
-                        <Video className="size-3.5" /> Join
-                      </a>
-                    ) : null}
-                    <Link
-                      href={`/doctor/appointments/${a.id}`}
-                      className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1.5 text-xs font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
-                    >
-                      Open <ChevronRight className="size-3.5" />
-                    </Link>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+                        Open
+                      </Btn>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </AdminCard>
 
-        <section className="gh-card p-6">
-          <h3
-            className="m-0 inline-flex items-center gap-2 text-[var(--color-text-primary)]"
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: 16,
-              fontWeight: 800,
-            }}
-          >
-            <Bell className="size-4" aria-hidden /> Unread notifications
-          </h3>
-          {unreadNotifs.length === 0 ? (
-            <p className="mt-3 text-[13px] text-[var(--color-text-muted)]">
-              You&apos;re caught up.
-            </p>
-          ) : (
-            <ul className="mt-3 grid gap-2">
-              {unreadNotifs.slice(0, 6).map((n) => (
-                <li key={n.id} className="text-[13px]">
-                  <p className="font-semibold text-[var(--color-text-primary)]">
-                    {n.type.replace(/_/g, " ").toLowerCase()}
-                  </p>
-                  {n.payload?.snippet ? (
-                    <p className="line-clamp-2 text-[12px] text-[var(--color-text-muted)]">
-                      {n.payload.snippet}
+        <AdminCard padding={0}>
+          <SectionHeader
+            title={
+              <span className="inline-flex items-center gap-2">
+                <Bell className="size-4" aria-hidden /> Unread notifications
+              </span>
+            }
+          />
+          <div className="p-5">
+            {unreadNotifs.length === 0 ? (
+              <p className="text-[13px] text-[var(--color-text-muted)]">
+                You&apos;re caught up.
+              </p>
+            ) : (
+              <ul className="grid gap-3">
+                {unreadNotifs.slice(0, 6).map((n) => (
+                  <li key={n.id} className="text-[13px]">
+                    <p className="font-semibold text-[var(--color-text-primary)]">
+                      {n.type.replace(/_/g, " ").toLowerCase()}
                     </p>
-                  ) : null}
-                  {n.payload?.appointmentId ? (
-                    <Link
-                      href={`/doctor/appointments/${n.payload.appointmentId}`}
-                      className="text-[11.5px] font-semibold text-[var(--color-brand-primary)] hover:underline"
-                    >
-                      Open →
-                    </Link>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
-          )}
-          <Link
-            href="/doctor/notifications"
-            className="mt-4 inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:underline"
-          >
-            See all <ChevronRight className="size-3" />
-          </Link>
-        </section>
+                    {n.payload?.snippet ? (
+                      <p className="line-clamp-2 text-[12px] text-[var(--color-text-muted)]">
+                        {n.payload.snippet}
+                      </p>
+                    ) : null}
+                    {n.payload?.appointmentId ? (
+                      <Link
+                        href={`/doctor/appointments/${n.payload.appointmentId}`}
+                        className="text-[11.5px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+                      >
+                        Open →
+                      </Link>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <Link
+              href="/doctor/notifications"
+              className="mt-4 inline-flex items-center gap-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:underline"
+            >
+              See all <ChevronRight className="size-3" />
+            </Link>
+          </div>
+        </AdminCard>
       </div>
 
+      {/* ── Quick links ───────────────────────────────────────────── */}
       <div className="mt-6 grid gap-4 sm:grid-cols-3">
-        <Link
+        <QuickActionCard
           href="/doctor/patients"
-          className="gh-card gh-card-interactive flex items-center gap-4 p-5"
-        >
-          <span className="gh-icon-circle">
-            <Users className="size-5" aria-hidden />
-          </span>
-          <div>
-            <p className="text-sm font-bold text-[var(--color-text-primary)]">
-              My patients
-            </p>
-            <p className="text-xs text-[var(--color-text-muted)]">
-              Search + history
-            </p>
-          </div>
-        </Link>
-        <Link
+          icon={<Users className="size-5" aria-hidden />}
+          label="My patients"
+          hint="Search + history"
+        />
+        <QuickActionCard
           href="/doctor/forms"
-          className="gh-card gh-card-interactive flex items-center gap-4 p-5"
-        >
-          <span className="gh-icon-circle">
-            <Calendar className="size-5" aria-hidden />
-          </span>
-          <div>
-            <p className="text-sm font-bold text-[var(--color-text-primary)]">
-              Forms
-            </p>
-            <p className="text-xs text-[var(--color-text-muted)]">
-              Intake / pre-consult / follow-up
-            </p>
-          </div>
-        </Link>
-        <Link
+          icon={<Calendar className="size-5" aria-hidden />}
+          label="Forms"
+          hint="Intake / pre-consult / follow-up"
+        />
+        <QuickActionCard
           href="/doctor/invoices"
-          className="gh-card gh-card-interactive flex items-center gap-4 p-5"
-        >
-          <span className="gh-icon-circle">
-            <Stethoscope className="size-5" aria-hidden />
-          </span>
-          <div>
-            <p className="text-sm font-bold text-[var(--color-text-primary)]">
-              Invoices
-            </p>
-            <p className="text-xs text-[var(--color-text-muted)]">
-              Payment status + history
-            </p>
-          </div>
-        </Link>
+          icon={<Stethoscope className="size-5" aria-hidden />}
+          label="Invoices"
+          hint="Payment status + history"
+        />
       </div>
     </>
   );
 }
 
-function StatTile({
+function QuickActionCard({
+  href,
   icon,
   label,
-  value,
   hint,
 }: {
+  href: string;
   icon: React.ReactNode;
   label: string;
-  value: string;
   hint: string;
 }) {
   return (
-    <div className="gh-card flex items-start gap-4 p-5">
-      <span className="gh-icon-circle">{icon}</span>
-      <div>
-        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-          {label}
-        </p>
-        <p className="mt-1 text-3xl font-bold text-[var(--color-text-primary)]">
-          {value}
-        </p>
-        <p className="text-xs text-[var(--color-text-muted)]">{hint}</p>
+    <Link
+      href={href}
+      className="block transition-all duration-150 hover:-translate-y-[1px] hover:shadow-[var(--shadow-card-hover)]"
+      style={{
+        background: "var(--color-background-page)",
+        border: "1px solid var(--color-border)",
+        borderRadius: 16,
+        boxShadow: "var(--shadow-soft)",
+        padding: 20,
+        textDecoration: "none",
+        color: "inherit",
+      }}
+    >
+      <div className="flex items-center gap-4">
+        <span
+          className="inline-flex items-center justify-center"
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: 10,
+            background: "rgba(200,230,160,0.30)",
+            color: "var(--color-brand-primary)",
+          }}
+        >
+          {icon}
+        </span>
+        <div>
+          <p className="text-sm font-bold text-[var(--color-text-primary)]">{label}</p>
+          <p className="text-xs text-[var(--color-text-muted)]">{hint}</p>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }

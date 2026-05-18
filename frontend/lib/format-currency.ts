@@ -5,22 +5,13 @@
  */
 const CURRENCY_SYMBOLS: Record<string, string> = {
   EUR: "€",
-  GBP: "£",
-  USD: "$",
   CZK: "Kč",
   BRL: "R$",
-  RON: "lei",
-  PLN: "zł",
-  CHF: "CHF ",
-  CAD: "C$",
-  AUD: "A$",
 };
 
 /** Position of the symbol relative to the amount. Default: prefix. */
 const CURRENCY_SUFFIX: Record<string, true> = {
   CZK: true,
-  RON: true,
-  PLN: true,
 };
 
 export function currencySymbol(code: string | null | undefined): string {
