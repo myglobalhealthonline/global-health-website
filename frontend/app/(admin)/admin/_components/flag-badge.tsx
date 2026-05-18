@@ -1,32 +1,96 @@
 /**
  * Country flag badge — renders a real SVG via the `flag-icons` package.
  *
- * Accepts either an ISO 3166-1 alpha-2 code (`ie`, `pt`, `de`, `us`, …) or
- * one of our internal country slugs (`ireland`, `portugal`, `spain`,
- * `czechia`, `romania`). The legacy slug `sp` (Spain shorthand) and `rm`
- * (Romania) are mapped to the correct ISO codes `es` and `ro`.
+ * Accepts either an ISO 3166-1 alpha-2 code (`ie`, `br`, `mt`, …) or one
+ * of our internal country slugs (`ireland`, `brazil`, `malta`, …). The
+ * legacy slugs `sp` (Spain) and `rm` (Romania) are mapped to the correct
+ * ISO codes `es` and `ro`.
  *
- * Imports `flag-icons/css/flag-icons.min.css` happen once in
- * `app/layout.tsx` so this component just emits the right CSS class.
+ * `flag-icons` covers every ISO 3166-1 country, so as long as we resolve
+ * to a real 2-letter ISO code the flag renders. The `NAME_TO_ISO` table
+ * lets admin-defined country rows that store the English name as a slug
+ * (`brazil`, `malta`, `germany`, …) still resolve. Anything unknown
+ * falls back to the brand gradient.
  *
- * Gradient fallback kicks in only when an unknown code is passed in —
- * prevents the badge from collapsing if admin types something weird.
+ * `flag-icons/css/flag-icons.min.css` is imported once in
+ * `app/layout.tsx`, so this component just emits the right CSS class.
  */
 
-const SLUG_TO_ISO: Record<string, string> = {
+// Lowercased English country name → ISO 3166-1 alpha-2. Covers the
+// countries admins are likely to add without a code release. Extend
+// this when a new market needs flag support.
+const NAME_TO_ISO: Record<string, string> = {
+  // Seeded markets (legacy slug forms)
   ireland: "ie",
   portugal: "pt",
   spain: "es",
   czechia: "cz",
+  "czech-republic": "cz",
   romania: "ro",
-  // Legacy internal codes from the data layer.
+  // Legacy internal short codes from the data layer.
   sp: "es",
   rm: "ro",
+
+  // Common admin-added markets — alphabetical.
+  argentina: "ar",
+  australia: "au",
+  austria: "at",
+  belgium: "be",
+  brazil: "br",
+  bulgaria: "bg",
+  canada: "ca",
+  chile: "cl",
+  china: "cn",
+  colombia: "co",
+  croatia: "hr",
+  cyprus: "cy",
+  denmark: "dk",
+  egypt: "eg",
+  estonia: "ee",
+  finland: "fi",
+  france: "fr",
+  germany: "de",
+  greece: "gr",
+  hungary: "hu",
+  iceland: "is",
+  india: "in",
+  indonesia: "id",
+  italy: "it",
+  japan: "jp",
+  latvia: "lv",
+  lithuania: "lt",
+  luxembourg: "lu",
+  malta: "mt",
+  mexico: "mx",
+  morocco: "ma",
+  netherlands: "nl",
+  "new-zealand": "nz",
+  norway: "no",
+  pakistan: "pk",
+  philippines: "ph",
+  poland: "pl",
+  qatar: "qa",
+  "saudi-arabia": "sa",
+  serbia: "rs",
+  singapore: "sg",
+  slovakia: "sk",
+  slovenia: "si",
+  "south-africa": "za",
+  "south-korea": "kr",
+  sweden: "se",
+  switzerland: "ch",
+  thailand: "th",
+  turkey: "tr",
+  uae: "ae",
+  "united-arab-emirates": "ae",
+  ukraine: "ua",
+  uk: "gb",
+  "united-kingdom": "gb",
+  usa: "us",
+  "united-states": "us",
+  vietnam: "vn",
 };
 
-// Last-resort gradients used only when the ISO code isn't recognised by
-// flag-icons (which covers every country in the world, so this almost
-// never fires).
 const FALLBACK_GRADIENT =
   "linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-accent))";
 
@@ -38,12 +102,11 @@ export function FlagBadge({
   size?: number;
 }) {
   const lower = (code ?? "").toLowerCase().trim();
-  const iso = SLUG_TO_ISO[lower] ?? lower;
+  // Resolve in order: explicit name map → already-ISO short code.
+  const iso = NAME_TO_ISO[lower] ?? lower;
 
-  // `fi` is the base class; `fi-{iso}` selects the country.
-  // Setting an inline width keeps the same calling contract as the old
-  // gradient version (callers pass `size`).
-  const aspect = 4 / 3; // flag-icons squared = 4:3 by default
+  // flag-icons squared = 4:3.
+  const aspect = 4 / 3;
 
   if (!iso || iso.length !== 2 || !/^[a-z]{2}$/.test(iso)) {
     return (
