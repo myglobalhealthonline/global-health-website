@@ -91,6 +91,25 @@ const bookingSettingPartialSchema = z
   })
   .strict();
 
+/** Country-scoped sidebar feature keys. Each one corresponds to a
+ *  `/admin/<key>` route — see admin-shell COUNTRY_HREFS. The "Pages"
+ *  (country-features) controller is intentionally NOT in this list,
+ *  because the visibility toggle for *other* features must itself be
+ *  always reachable. */
+export const COUNTRY_FEATURE_KEYS = [
+  "country-home",
+  "country-content",
+  "pages",
+  "services",
+  "general-consultations",
+  "specialist-consultations",
+  "online-prescriptions",
+  "health-tests",
+  "appointments",
+] as const;
+
+const countryFeatureKeySchema = z.enum(COUNTRY_FEATURE_KEYS);
+
 export const adminCountryUpdateBodySchema = z
   .object({
     code: z.string().trim().min(1).max(32).optional(),
@@ -106,6 +125,7 @@ export const adminCountryUpdateBodySchema = z
     isActive: z.boolean().optional(),
     domains: z.array(domainEntrySchema).optional(),
     bookingSetting: bookingSettingPartialSchema.optional(),
+    enabledFeatures: z.array(countryFeatureKeySchema).optional(),
   })
   .superRefine((data, ctx) => {
     if (data.supportedLocales !== undefined) {

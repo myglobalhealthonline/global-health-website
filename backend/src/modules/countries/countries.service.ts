@@ -217,6 +217,7 @@ export async function updateAdminCountry(
           ...(body.defaultLocale !== undefined && { defaultLocale: body.defaultLocale }),
           ...(body.currencyId !== undefined && { currencyId: body.currencyId }),
           ...(body.isActive !== undefined && { isActive: body.isActive }),
+          ...(body.enabledFeatures !== undefined && { enabledFeatures: body.enabledFeatures }),
         },
       });
 

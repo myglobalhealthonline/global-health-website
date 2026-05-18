@@ -10,6 +10,7 @@ import {
   FileText,
   Globe2,
   ImageIcon,
+  Layers,
   LayoutDashboard,
   Mail,
   Menu,
@@ -70,6 +71,7 @@ const GLOBAL_HREFS = new Set([
 ]);
 
 const COUNTRY_HREFS = new Set([
+  "/admin/country-features",
   "/admin/country-home",
   "/admin/country-content",
   "/admin/pages",
@@ -80,6 +82,23 @@ const COUNTRY_HREFS = new Set([
   "/admin/health-tests",
   "/admin/appointments",
 ]);
+
+/** Map sidebar href → feature key stored in `Country.enabledFeatures`.
+ *  Items not in this map are always shown when country-scoped. The
+ *  controller route (`/admin/country-features`) is intentionally NOT
+ *  in this map so it stays reachable when everything else is toggled
+ *  off. */
+const HREF_TO_FEATURE_KEY: Record<string, string> = {
+  "/admin/country-home": "country-home",
+  "/admin/country-content": "country-content",
+  "/admin/pages": "pages",
+  "/admin/services": "services",
+  "/admin/general-consultations": "general-consultations",
+  "/admin/specialist-consultations": "specialist-consultations",
+  "/admin/online-prescriptions": "online-prescriptions",
+  "/admin/health-tests": "health-tests",
+  "/admin/appointments": "appointments",
+};
 
 const ORDER: Record<string, number> = {
   "/admin": 0,
@@ -92,15 +111,16 @@ const ORDER: Record<string, number> = {
   "/admin/newsletter": 7,
   "/admin/audit-log": 8,
   "/admin/settings": 9,
-  "/admin/country-home": 0,
-  "/admin/country-content": 1,
-  "/admin/pages": 2,
-  "/admin/services": 3,
-  "/admin/general-consultations": 4,
-  "/admin/specialist-consultations": 5,
-  "/admin/online-prescriptions": 6,
-  "/admin/health-tests": 7,
-  "/admin/appointments": 8,
+  "/admin/country-features": 0,
+  "/admin/country-home": 1,
+  "/admin/country-content": 2,
+  "/admin/pages": 3,
+  "/admin/services": 4,
+  "/admin/general-consultations": 5,
+  "/admin/specialist-consultations": 6,
+  "/admin/online-prescriptions": 7,
+  "/admin/health-tests": 8,
+  "/admin/appointments": 9,
 };
 
 // Tighter labels — long phrases overflow the 260px sidebar.
@@ -112,17 +132,30 @@ const LABEL_OVERRIDES: Record<string, string> = {
   "/admin/specialties": "Categories",
 };
 
-function partitionSections(sections: Section[]): {
+function partitionSections(
+  sections: Section[],
+  enabledFeatures: string[] | undefined,
+): {
   global: Section[];
   country: Section[];
 } {
   const global: Section[] = [];
   const country: Section[] = [];
+  // Undefined enabledFeatures (legacy row before the schema column existed)
+  // = treat every feature as enabled. Backward-compat for any country row
+  // that pre-dates the visibility toggle.
+  const enabledSet = enabledFeatures ? new Set(enabledFeatures) : null;
   for (const s of sections) {
     const label = LABEL_OVERRIDES[s.href] ?? s.label;
     const entry = { href: s.href, label };
-    if (COUNTRY_HREFS.has(s.href)) country.push(entry);
-    else if (GLOBAL_HREFS.has(s.href)) global.push(entry);
+    if (COUNTRY_HREFS.has(s.href)) {
+      // Filter country items by the per-country toggle. The controller
+      // route itself (/admin/country-features) is excluded from the map
+      // so it always stays visible — admin needs it to re-enable things.
+      const featureKey = HREF_TO_FEATURE_KEY[s.href];
+      if (featureKey && enabledSet && !enabledSet.has(featureKey)) continue;
+      country.push(entry);
+    } else if (GLOBAL_HREFS.has(s.href)) global.push(entry);
     else global.push(entry);
   }
   global.sort((a, b) => (ORDER[a.href] ?? 99) - (ORDER[b.href] ?? 99));
@@ -191,8 +224,8 @@ export function AdminShell({
   const pathname = usePathname();
   const breadcrumbs = useBreadcrumbs(pathname, countries);
   const { global: globalSections, country: countrySections } = useMemo(
-    () => partitionSections(sections),
-    [sections],
+    () => partitionSections(sections, activeCountry?.enabledFeatures),
+    [sections, activeCountry?.enabledFeatures],
   );
   const countryScopeLabel = activeCountry ? activeCountry.name : "Country";
   const countryDimmed = !activeCountry;
@@ -292,8 +325,15 @@ export function AdminShell({
                       <SidebarItem
                         key={section.href}
                         href={section.href}
-                        // Dot bullet for country-scoped items, per reference
-                        icon={<DotBullet />}
+                        // The visibility controller gets a real icon to set
+                        // it apart from the dot-bulleted feature pages.
+                        icon={
+                          section.href === "/admin/country-features" ? (
+                            <Layers className="size-4" aria-hidden />
+                          ) : (
+                            <DotBullet />
+                          )
+                        }
                         label={section.label}
                         active={isActive(section.href)}
                         onNavigate={() => setNavOpen(false)}

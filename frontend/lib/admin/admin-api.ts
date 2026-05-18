@@ -130,6 +130,10 @@ export type AdminCountryDto = {
   defaultLocale: string;
   currencyId: string;
   isActive: boolean;
+  /** Country-scoped sidebar feature toggles. Each entry is a slug from
+   *  the admin nav (`country-home`, `services`, `health-tests`, …). When
+   *  absent (older row), treat as "all enabled" for backward-compat. */
+  enabledFeatures?: string[];
   createdAt: string;
   updatedAt: string;
   currency: AdminCurrencyDto;
@@ -139,6 +143,21 @@ export type AdminCountryDto = {
    *  upserts on first edit; schema defaults apply otherwise. */
   bookingSetting: AdminBookingSettingDto | null;
 };
+
+/** Canonical list of country-scoped sidebar features. Stays in lockstep
+ *  with backend `COUNTRY_FEATURE_KEYS`. */
+export const COUNTRY_FEATURE_KEYS = [
+  "country-home",
+  "country-content",
+  "pages",
+  "services",
+  "general-consultations",
+  "specialist-consultations",
+  "online-prescriptions",
+  "health-tests",
+  "appointments",
+] as const;
+export type CountryFeatureKey = (typeof COUNTRY_FEATURE_KEYS)[number];
 
 type AdminCountriesListPayload = {
   countries: AdminCountryDto[];

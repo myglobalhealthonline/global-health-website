@@ -182,6 +182,13 @@ model Country {
   currencyId                 String
   currency                   Currency             @relation(fields: [currencyId], references: [id])
   isActive                   Boolean              @default(true)
+  /// Per-country sidebar feature toggles. Each entry is a slug from the
+  /// admin country-scoped nav (`country-home`, `services`, `health-tests`,
+  /// …). Defaults include every feature so existing rows stay backward-
+  /// compatible. Admin edits this via /admin/country-features ("Pages" in
+  /// the sidebar) to hide features a market doesn't offer (e.g. a country
+  /// running only General Consultation can disable Specialist + Tests).
+  enabledFeatures            String[]             @default(["country-home", "country-content", "pages", "services", "general-consultations", "specialist-consultations", "online-prescriptions", "health-tests", "appointments"])
   countryLocales             CountryLocale[]
   domains                    CountryDomain[]
   clinics                    Clinic[]

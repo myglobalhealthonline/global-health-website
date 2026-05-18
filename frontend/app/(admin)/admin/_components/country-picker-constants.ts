@@ -9,4 +9,8 @@ export type CountryPickerOption = {
   slug: string;
   code: string;
   name: string;
+  /** Country-scoped sidebar feature toggles, surfaced from the admin
+   *  country DTO. Used by AdminShell to hide nav items the admin has
+   *  disabled for this market. Undefined → all enabled (legacy rows). */
+  enabledFeatures?: string[];
 };

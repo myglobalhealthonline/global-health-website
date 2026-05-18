@@ -43,6 +43,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   //   Country — content + bookings scoped to the active country (Country
   //             home, Country content, Pages, Services, Appointments).
   //             Items dim when no country is selected in the topbar picker.
+  // "Pages" (country-features) is always visible when a country is
+  // scoped — it's the controller for which other items appear. All other
+  // country-scoped items are filtered by `activeCountry.enabledFeatures`
+  // inside AdminShell.
   const sections = [
     // Global
     { href: "/admin", label: "Dashboard" },
@@ -55,10 +59,11 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/newsletter", label: "Newsletter" },
     { href: "/admin/audit-log", label: "Audit log" },
     { href: "/admin/settings", label: "Settings" },
-    // Country-scoped
+    // Country-scoped — "Pages" first as the visibility controller.
+    { href: "/admin/country-features", label: "Pages" },
     { href: "/admin/country-home", label: "Country home" },
     { href: "/admin/country-content", label: "Country content" },
-    { href: "/admin/pages", label: "Pages" },
+    { href: "/admin/pages", label: "Page content" },
     { href: "/admin/services", label: "Services" },
     { href: "/admin/general-consultations", label: "General consultations" },
     { href: "/admin/specialist-consultations", label: "Specialist consultations" },
@@ -79,6 +84,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         slug: c.slug,
         code: c.code,
         name: c.name,
+        enabledFeatures: c.enabledFeatures,
       }));
       const jar = await cookies();
       const preferred = jar.get(COUNTRY_PREF_COOKIE)?.value;
