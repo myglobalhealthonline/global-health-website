@@ -10,6 +10,10 @@ export type SafeUser = {
   email: string;
   fullName: string;
   phone: string | null;
+  /** Canonical patient DOB. ISO date string (YYYY-MM-DD…) or null.
+   *  Stored once on the User; every checkout / fallback intake form
+   *  prefills from this instead of asking again. */
+  dateOfBirth: string | null;
   role: UserRole;
   emailVerifiedAt: string | null;
   isActive: boolean;
@@ -37,6 +41,7 @@ function toSafeUser(user: User): SafeUser {
     email: user.email,
     fullName: user.fullName,
     phone: user.phone,
+    dateOfBirth: user.dateOfBirth ? user.dateOfBirth.toISOString() : null,
     role: user.role,
     emailVerifiedAt: user.emailVerifiedAt ? user.emailVerifiedAt.toISOString() : null,
     isActive: user.isActive,
@@ -150,6 +155,10 @@ export async function getSafeUserById(id: string) {
 export type ProfilePatchInput = {
   fullName?: string;
   phone?: string | null;
+  /** ISO date string (YYYY-MM-DD) or full ISO datetime. Stored at
+   *  start-of-day UTC so we don't accidentally shift across timezones
+   *  when the user is east/west of UTC. Pass null to clear. */
+  dateOfBirth?: string | null;
 };
 
 /**
@@ -250,11 +259,28 @@ export async function exportUserData(id: string) {
 
 export async function patchUserProfile(id: string, input: ProfilePatchInput) {
   try {
+    // Parse YYYY-MM-DD or full ISO into a start-of-day UTC Date so the
+    // stored timestamp doesn't drift when the user is on a non-UTC
+    // browser. `null` clears the column.
+    let dobValue: Date | null | undefined = undefined;
+    if (input.dateOfBirth !== undefined) {
+      if (input.dateOfBirth === null) {
+        dobValue = null;
+      } else {
+        const datePart = input.dateOfBirth.slice(0, 10);
+        const parsed = new Date(`${datePart}T00:00:00.000Z`);
+        if (Number.isNaN(parsed.getTime())) {
+          throw new Error("Invalid date of birth");
+        }
+        dobValue = parsed;
+      }
+    }
     const user = await prisma.user.update({
       where: { id },
       data: {
         ...(input.fullName !== undefined && { fullName: input.fullName }),
         ...(input.phone !== undefined && { phone: input.phone }),
+        ...(dobValue !== undefined && { dateOfBirth: dobValue }),
       },
     });
     return toSafeUser(user);

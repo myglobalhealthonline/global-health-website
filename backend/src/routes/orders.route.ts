@@ -125,6 +125,29 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         const totalCents = subtotalCents + shippingCents;
         const currency = cart.currencyCode.toLowerCase();
 
+        // Shipping address gate. HEALTH_TEST kits get posted to the
+        // patient, so we always need an address for them. Other kinds
+        // (consultations, online prescriptions) only need it when the
+        // admin opted into a non-zero per-item shipping fee. Reject up
+        // front rather than create a half-formed order.
+        const needsShippingAddress =
+          cart.items.some((i) => i.kind === "HEALTH_TEST") || shippingCents > 0;
+        if (needsShippingAddress) {
+          const ship = body.data;
+          const missing = !ship.shipName ||
+            !ship.shipLine1 ||
+            !ship.shipCity ||
+            !ship.shipPostalCode ||
+            !ship.shipCountryCode;
+          if (missing) {
+            return reply
+              .status(400)
+              .send(errorResponse(
+                "Shipping address required for this order. Please provide a name, address, city, postal code, and country code.",
+              ));
+          }
+        }
+
         // Create Order + OrderItems in one tx so a partial state is impossible
         const order = await prisma.$transaction(async (tx) => {
           const created = await tx.order.create({

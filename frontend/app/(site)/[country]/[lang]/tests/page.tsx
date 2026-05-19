@@ -81,7 +81,8 @@ export default async function HealthTestsPage({
     getCountryHealthTests(code),
     getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale),
   ]);
-  const bookHref = `/${slug}/${lang}/book-online?type=health-test`;
+  // Cart-first booking: hero/final CTA points at the tests grid below.
+  const bookHref = "#tests";
   const heroTitle = page?.heroTitle ?? "Lab-quality tests, delivered home";
   const heroSubtitle =
     page?.heroSubtitle ??
@@ -111,7 +112,7 @@ export default async function HealthTestsPage({
       <TrustRibbon />
 
       {items.length > 0 ? (
-        <section className="mx-auto max-w-6xl px-4 py-12">
+        <section id="tests" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-12">
           <h2 className="text-2xl font-semibold text-slate-900">
             {items.length} {items.length === 1 ? "test" : "tests"} available
           </h2>

@@ -84,7 +84,11 @@ export default async function PrescriptionsPage({
     getCountryServices(code, "PRESCRIPTION"),
     getPublicPage(code, "PRESCRIPTIONS", lang as PublicLocale),
   ]);
-  const bookHref = `/${slug}/${lang}/book-online?type=prescription`;
+  // Cart-first booking: hero CTA jumps to the prescription cards
+  // below; final CTA falls back to the doctors index for visitors who
+  // want a consultation instead.
+  const bookHref = "#prescriptions";
+  const fallbackHref = `/${slug}/${lang}/doctors`;
   const heroTitle = page?.heroTitle ?? "Online prescriptions";
   const heroSubtitle =
     page?.heroSubtitle ??
@@ -126,7 +130,7 @@ export default async function PrescriptionsPage({
       <TrustRibbon />
 
       {items.length > 0 ? (
-        <section className="mx-auto max-w-6xl px-4 py-12">
+        <section id="prescriptions" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-12">
           <h2 className="text-2xl font-semibold text-slate-900">
             {items.length} {items.length === 1 ? "prescription service" : "prescription services"} available
           </h2>
@@ -181,7 +185,7 @@ export default async function PrescriptionsPage({
         </section>
       )}
 
-      <FinalCTA primaryHref={bookHref} secondaryHref={`/${slug}/${lang}/doctors`} />
+      <FinalCTA primaryHref={bookHref} secondaryHref={fallbackHref} />
     </>
   );
 }

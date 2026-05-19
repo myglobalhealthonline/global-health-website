@@ -75,6 +75,7 @@ export default async function CountryLangBookOnlinePage({
           fullName: authUser.fullName,
           email: authUser.email,
           phone: authUser.phone,
+          dateOfBirth: authUser.dateOfBirth,
         }
       : null;
 

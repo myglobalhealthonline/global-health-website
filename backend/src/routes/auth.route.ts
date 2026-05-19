@@ -137,6 +137,21 @@ const authRoute: FastifyPluginAsync = async (app) => {
       .nullable()
       .optional()
       .transform((v) => (v === "" ? null : v)),
+    /** ISO date or full datetime ("2001-04-12" or "2001-04-12T00:00:00Z").
+     *  Accept either, normalize to start-of-day UTC in the service. */
+    dateOfBirth: z
+      .string()
+      .trim()
+      .nullable()
+      .optional()
+      .transform((v) => {
+        if (v === "" || v === null || v === undefined) return null;
+        return v;
+      })
+      .refine(
+        (v) => v === null || /^\d{4}-\d{2}-\d{2}(T.*)?$/.test(v),
+        "Date of birth must be a YYYY-MM-DD date",
+      ),
   });
 
   app.patch("/api/auth/me", { preHandler: requireAuth }, async (request, reply) => {

@@ -25,8 +25,11 @@ export function SiteFooter({ siteName }: { siteName: string }) {
 
   const careBase =
     parsed.country && parsed.lang ? `/${parsed.country}/${parsed.lang}` : null;
+  // Cart-first booking: footer "Book consultation" entry now lands on
+  // the GP catalogue (service-first); /book-online stays as a fallback
+  // path but isn't surfaced from the footer.
   const careLinks = [
-    { label: "Book consultation", href: careBase ? `${careBase}/book-online` : "/" },
+    { label: "Book consultation", href: careBase ? `${careBase}/general-consultation` : "/" },
     { label: "GP consultation", href: careBase ? `${careBase}/general-consultation` : "/" },
     { label: "Specialist consultation", href: careBase ? `${careBase}/specialist-consultation` : "/" },
     { label: "Our doctors", href: careBase ? `${careBase}/doctors` : "/" },

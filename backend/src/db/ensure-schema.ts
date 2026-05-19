@@ -64,6 +64,13 @@ const PATCHES: { name: string; sql: string }[] = [
     `,
   },
   {
+    name: "User.dateOfBirth",
+    sql: `
+      ALTER TABLE "User"
+        ADD COLUMN IF NOT EXISTS "dateOfBirth" TIMESTAMP(3);
+    `,
+  },
+  {
     name: "ServiceDoctor table + indexes",
     sql: `
       CREATE TABLE IF NOT EXISTS "ServiceDoctor" (

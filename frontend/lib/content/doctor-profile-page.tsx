@@ -96,31 +96,13 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   const lang = routeLang ?? "en";
   const teamHref = `/${slug}/${lang}/doctors`;
   const profileHref = `${teamHref}/${doctorSlug}`;
-  // Booking URL — preserve doctor intent via `?doctor=<slug>` so the
-  // form can preselect (when slot booking ships) and the appointment
-  // gets linked to this clinician.
-  const bookHref = `/${slug}/${lang}/book-online?doctor=${encodeURIComponent(doctorSlug)}`;
-  // Override both CTAs so the "Book" + "Back" links use the new URLs
-  // instead of the legacy `/book-online` and `/<country>-team` shapes
-  // baked into the doctor-profile-data fixture.
-  const templateData = {
-    ...data,
-    hero: {
-      ...data.hero,
-      primaryCta: {
-        label: data.hero.primaryCta.label,
-        href: bookHref,
-      },
-      secondaryCta: {
-        label: `Back to ${data.profile.country} clinicians`,
-        href: teamHref,
-      },
-    },
-    bottomCta: {
-      ...data.bottomCta,
-      ctaHref: bookHref,
-    },
-  };
+  // Fallback booking URL — used when the doctor has no assigned
+  // services. Carries `?doctor=<slug>` so the legacy form preselects.
+  const fallbackBookHref = `/${slug}/${lang}/book-online?doctor=${encodeURIComponent(doctorSlug)}`;
+  // When the doctor has assigned services we render them as the main
+  // booking surface below and the hero / bottom CTAs scroll to that
+  // section instead of dumping the patient into the fallback form.
+  // Decided after fetching `assignedServices` (just below).
   // Services this doctor is assigned to in the route country.
   // ServiceDoctor (Phase 1 backend) populates assignedServiceIds on the
   // doctor card; we filter the country's GENERAL + SPECIALIST service
@@ -151,6 +133,36 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
     }
   }
 
+  const hasServices = assignedServices.length > 0;
+  // Anchor lives on the "Services offered" section below. When the
+  // doctor has assignments we point both hero / bottom CTAs at that
+  // anchor so the visitor scrolls to the cart-first picker instead of
+  // landing in the legacy book-online form.
+  const servicesAnchor = "#services";
+  const primaryCtaHref = hasServices ? servicesAnchor : fallbackBookHref;
+  const primaryCtaLabel = hasServices
+    ? "See services"
+    : data.hero.primaryCta.label;
+
+  const templateData = {
+    ...data,
+    hero: {
+      ...data.hero,
+      primaryCta: {
+        label: primaryCtaLabel,
+        href: primaryCtaHref,
+      },
+      secondaryCta: {
+        label: `Back to ${data.profile.country} clinicians`,
+        href: teamHref,
+      },
+    },
+    bottomCta: {
+      ...data.bottomCta,
+      ctaHref: primaryCtaHref,
+    },
+  };
+
   return (
     <>
       <JsonLd
@@ -174,12 +186,14 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
 
       {/* Doctor-first booking: lists the services the admin has assigned
           to this doctor. Each card routes back through the service-first
-          consult page where the (now service-scoped) doctor list will
-          already be filtered to include this doctor + their open slots.
-          Hidden when no assignments — fall back to the legacy Book CTA
-          rendered by the template above. */}
-      {assignedServices.length > 0 ? (
-        <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+          consult page with `?doctor=<slug>` so the picker anchors on
+          this clinician. When no assignments, render a clear fallback
+          instead of silently leaning on the legacy CTA. */}
+      {hasServices ? (
+        <section
+          id="services"
+          className="mx-auto max-w-5xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-8"
+        >
           <div className="mb-6 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-700">
             <CalendarClock className="size-4" aria-hidden />
             Book with {data.profile.name}
@@ -192,7 +206,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           </p>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {assignedServices.map((service) => {
-              const consultHref = `/${slug}/${lang}/consult/${service.slug}`;
+              const consultHref = `/${slug}/${lang}/consult/${service.slug}?doctor=${encodeURIComponent(doctorSlug)}#doctor-${encodeURIComponent(doctorSlug)}`;
               const price = service.basePriceCents != null
                 ? formatPriceRounded(service.basePriceCents, service.currencyCode)
                 : null;
@@ -234,7 +248,28 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
             })}
           </div>
         </section>
-      ) : null}
+      ) : (
+        <section
+          id="services"
+          className="mx-auto max-w-5xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-8"
+        >
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center">
+            <p className="text-sm font-semibold text-slate-900">
+              No bookable services assigned yet.
+            </p>
+            <p className="mt-2 text-sm text-slate-600">
+              {data.profile.name} isn&apos;t currently set up for online bookings in {data.profile.country}.
+            </p>
+            <Link
+              href={`/${slug}/${lang}/general-consultation`}
+              className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+            >
+              Browse other clinicians
+              <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          </div>
+        </section>
+      )}
     </>
   );
 }

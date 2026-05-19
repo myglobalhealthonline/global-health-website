@@ -47,6 +47,10 @@ export type AuthUser = {
   email: string;
   fullName: string;
   phone: string | null;
+  /** Canonical patient DOB. ISO date string (YYYY-MM-DD…) or null.
+   *  Checkout / fallback intake prefill from this so the patient
+   *  doesn't retype it every booking. */
+  dateOfBirth: string | null;
   role: "PATIENT" | "ADMIN" | "DOCTOR";
   emailVerifiedAt: string | null;
   isActive: boolean;
@@ -84,6 +88,8 @@ export async function fetchCurrentUser() {
 export async function patchCurrentUser(input: {
   fullName?: string;
   phone?: string | null;
+  /** Pass YYYY-MM-DD to set the DOB, null to clear. */
+  dateOfBirth?: string | null;
 }) {
   return authRequest<{ user: AuthUser }>("/api/auth/me", {
     method: "PATCH",

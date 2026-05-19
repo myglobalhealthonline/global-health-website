@@ -91,12 +91,15 @@ export function SiteHeader({
       ? sectionNavForCountryLang(parsed.country, parsed.lang, activeFeatures)
       : [];
 
-  // The Book CTA stays country+lang scoped when inside a country; otherwise
-  // it falls through to the global `/book-online` redirect map.
+  // Cart-first booking: the header "Book" CTA points at the country's
+  // general consultation catalogue so visitors pick a service first
+  // (the legacy /book-online form still exists as a fallback). Outside
+  // a country we drop them on the global landing — the country gate
+  // resolves before they can pick a service.
   const bookHref =
     activeCountry && parsed.lang
-      ? `/${COUNTRY_CODE_TO_SLUG[activeCountry.code]}/${parsed.lang}/book-online`
-      : "/book-online";
+      ? `/${COUNTRY_CODE_TO_SLUG[activeCountry.code]}/${parsed.lang}/general-consultation`
+      : "/";
 
   return (
     <header

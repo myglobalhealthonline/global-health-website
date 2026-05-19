@@ -85,8 +85,8 @@ export default async function CountryLangDoctorsPage({
           ...d,
           href: `/${slug}/${lang}/doctors/${(d.href ?? "").split("/").pop() ?? ""}`,
         }))}
-        bookingHref={`/${slug}/${lang}/book-online`}
-        bookingLabel="Book consultation"
+        bookingHref={`/${slug}/${lang}/general-consultation`}
+        bookingLabel="Browse consultations"
       />
       <RichBodySection html={page?.body} />
     </>

@@ -100,7 +100,10 @@ export default async function CountryLangGeneralConsultationPage({
   const heroSubtitle =
     page?.heroSubtitle ?? `Speak to a licensed GP in ${config.name} about everyday health concerns.`;
   const ctaLabel = page?.ctaLabel ?? "Book GP consultation";
-  const ctaHref = page?.ctaHref ?? `/${slug}/${lang}/book-online?type=general`;
+  // Cart-first booking: hero CTA jumps to the in-page service list
+  // instead of the legacy /book-online form. Admin can still override
+  // via the ContentPage row.
+  const ctaHref = page?.ctaHref ?? "#services";
 
   // Map Service rows to the ServicesGrid card shape. Cards auto-appear when
   // admin adds a Service row of kind=GENERAL for this country.
@@ -186,12 +189,14 @@ export default async function CountryLangGeneralConsultationPage({
 
       {/* Service cards — auto from Service rows where kind=GENERAL, country=X */}
       {serviceItems.length > 0 ? (
-        <ServicesGrid
-          eyebrow="What you can book"
-          title="GP consultations available"
-          intro={`${serviceItems.length} ${serviceItems.length === 1 ? "service" : "services"} currently offered in ${config.name}. Cards update as the team adds or retires services.`}
-          items={serviceItems}
-        />
+        <div id="services" className="scroll-mt-24">
+          <ServicesGrid
+            eyebrow="What you can book"
+            title="GP consultations available"
+            intro={`${serviceItems.length} ${serviceItems.length === 1 ? "service" : "services"} currently offered in ${config.name}. Cards update as the team adds or retires services.`}
+            items={serviceItems}
+          />
+        </div>
       ) : null}
 
       {/* Doctor cards — auto from Doctor rows for this country */}

@@ -103,7 +103,10 @@ export default async function CountryLangSpecialistConsultationPage({
   const heroSubtitle =
     page?.heroSubtitle ?? `Connect with specialists licensed in ${config.name}.`;
   const ctaLabel = page?.ctaLabel ?? "Book specialist consultation";
-  const ctaHref = page?.ctaHref ?? `/${slug}/${lang}/book-online?type=specialist`;
+  // Cart-first booking: hero CTA scrolls to the in-page service grid
+  // rather than dumping into the legacy /book-online form. Admin can
+  // still override via ContentPage.
+  const ctaHref = page?.ctaHref ?? "#services";
 
   // Specialty cards — auto from Specialty rows for this country.
   const specialtyItems = specialties.map((s) => ({
@@ -203,12 +206,14 @@ export default async function CountryLangSpecialistConsultationPage({
 
       {/* Specialist service cards — auto from Service rows kind=SPECIALIST */}
       {serviceItems.length > 0 ? (
-        <ServicesGrid
-          eyebrow="What you can book"
-          title="Specialist consultations available"
-          intro="Cards update as the team adds or retires specialist services."
-          items={serviceItems}
-        />
+        <div id="services" className="scroll-mt-24">
+          <ServicesGrid
+            eyebrow="What you can book"
+            title="Specialist consultations available"
+            intro="Cards update as the team adds or retires specialist services."
+            items={serviceItems}
+          />
+        </div>
       ) : null}
 
       {/* Doctor cards — only specialists shown here */}

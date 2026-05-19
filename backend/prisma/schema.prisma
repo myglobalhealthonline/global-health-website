@@ -898,6 +898,11 @@ model User {
   passwordHash            String
   fullName                String
   phone                   String?
+  /// Canonical patient date of birth. Lives here (not on Appointment)
+  /// so signed-in users only enter it once and every checkout /
+  /// fallback intake can prefill it. Nullable for backward-compat
+  /// with existing accounts. Doctors/admins don't need it set.
+  dateOfBirth             DateTime?
   role                    UserRole                 @default(PATIENT)
   emailVerifiedAt         DateTime?
   isActive                Boolean                  @default(true)

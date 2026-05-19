@@ -12,6 +12,10 @@ export default function AccountProfilePage() {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
+  // DOB lives at `User.dateOfBirth` so the patient enters it once here
+  // and every checkout / fallback booking prefills from it. Always edited
+  // as YYYY-MM-DD; the API turns it into a start-of-day UTC Date.
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
@@ -25,6 +29,7 @@ export default function AccountProfilePage() {
         setUser(res.data.user);
         setFullName(res.data.user.fullName ?? "");
         setPhone(res.data.user.phone ?? "");
+        setDateOfBirth(res.data.user.dateOfBirth?.slice(0, 10) ?? "");
       } else {
         setMsg({ kind: "err", text: res.message });
       }
@@ -43,6 +48,7 @@ export default function AccountProfilePage() {
     const res = await patchCurrentUser({
       fullName: fullName.trim(),
       phone: phone.trim() === "" ? null : phone.trim(),
+      dateOfBirth: dateOfBirth.trim() === "" ? null : dateOfBirth.trim(),
     });
     setSaving(false);
     if (res.ok) {
@@ -112,6 +118,21 @@ export default function AccountProfilePage() {
               <p className="mt-1 text-xs text-slate-500">
                 Used so the clinic can reach you about your booking. Leave blank
                 if you prefer email only.
+              </p>
+            </label>
+
+            <label className="block">
+              <span className="gh-field-label">Date of birth</span>
+              <input
+                type="date"
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+                max={new Date().toISOString().slice(0, 10)}
+                className="gh-input mt-1 min-w-0"
+              />
+              <p className="mt-1 text-xs text-slate-500">
+                We use this on every booking so you don&apos;t have to retype it.
+                Leave blank to keep it off your account.
               </p>
             </label>
 

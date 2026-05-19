@@ -43,6 +43,10 @@ type BookingFormTemplateProps = {
     fullName: string;
     email: string;
     phone: string | null;
+    /** ISO datetime from `/api/auth/me`; we slice to YYYY-MM-DD for the
+     *  `<input type="date">` defaultValue so signed-in patients don't
+     *  re-type DOB on every fallback booking. */
+    dateOfBirth: string | null;
   } | null;
   /**
    * Doctor pre-book context. Populated when the visitor arrived via
@@ -371,6 +375,7 @@ export function BookingFormTemplate({
                   type="date"
                   title="Date of birth"
                   max={maxDob}
+                  defaultValue={signedInPatient?.dateOfBirth?.slice(0, 10) ?? ""}
                   suppressHydrationWarning
                   className="gh-input"
                 />

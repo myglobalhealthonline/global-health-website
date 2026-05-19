@@ -10,7 +10,8 @@
  * UX rules:
  *   • When all doctors share one country, filter chips are hidden.
  *   • If `doctors` is empty, the section returns `null`.
- *   • The "Book with …" link uses `bookHref` from the caller (lang-aware).
+ *   • The "View profile" link uses `href` from the caller (lang-aware) —
+ *     points at the doctor's profile page where the visitor picks a service.
  */
 
 import { useState } from "react";
@@ -205,16 +206,11 @@ export function DoctorWall({
           }}
         >
           {shown.map((d) => {
-            const lastName = d.name.includes(" ")
-              ? d.name.split(" ").slice(-1)[0]
-              : d.name;
             // `d.href` is the per-card link (typically the country-scoped
-            // booking URL injected by the page that renders this wall).
-            // `bookHref` is the wall-level fallback. We never fall through
-            // to a bare `/book-online` because that route doesn't exist —
-            // only `/[country]/[lang]/book-online` does. Render the link
-            // anyway with `/` (sends the visitor through the country gate)
-            // so we don't end up with a 404 button.
+            // doctor profile URL injected by the page that renders this
+            // wall). `bookHref` is the wall-level fallback. We never fall
+            // through to a bare `/` route if neither is set, but in practice
+            // the home page always passes a profile URL.
             const href = d.href || bookHref || "/";
             return (
               <div
@@ -331,7 +327,7 @@ export function DoctorWall({
                     textDecoration: "none",
                   }}
                 >
-                  Book with {lastName} <ArrowRight className="size-3.5" aria-hidden />
+                  View profile <ArrowRight className="size-3.5" aria-hidden />
                 </Link>
               </div>
             );

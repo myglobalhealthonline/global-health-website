@@ -16,6 +16,7 @@ import { formatPriceRounded } from "@/lib/format-currency";
 import { ConsultationSlotPicker } from "./_components/consultation-slot-picker";
 
 type Params = { country: string; lang: string; serviceSlug: string };
+type SearchParams = { doctor?: string };
 
 export async function generateMetadata({
   params,
@@ -40,10 +41,14 @@ export async function generateMetadata({
  */
 export default async function ConsultSlotPickerPage({
   params,
+  searchParams,
 }: {
   params: Promise<Params>;
+  searchParams?: Promise<SearchParams>;
 }) {
   const { country, lang, serviceSlug } = await params;
+  const sp = (await searchParams) ?? {};
+  const preselectedDoctorSlug = typeof sp.doctor === "string" ? sp.doctor : null;
   const code = countryCodeFromSlug(country);
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) notFound();
@@ -78,6 +83,17 @@ export default async function ConsultSlotPickerPage({
     })),
   );
   const availableDoctors = doctorsWithSlots.filter((d) => d.slots.length > 0);
+  // Preselect: when a doctor slug arrives in the query (e.g. from the
+  // doctor profile page), float that clinician to the top and tag them
+  // so the slot picker renders an anchor + emerald outline. Visitor
+  // can still pick any other doctor; we just nudge the default.
+  if (preselectedDoctorSlug) {
+    const idx = availableDoctors.findIndex((d) => d.slug === preselectedDoctorSlug);
+    if (idx > 0) {
+      const [picked] = availableDoctors.splice(idx, 1);
+      availableDoctors.unshift(picked);
+    }
+  }
 
   const consultRoot = `/${country}/${lang}/${
     service.kind === "SPECIALIST" ? "specialist-consultation" : "general-consultation"
@@ -137,10 +153,17 @@ export default async function ConsultSlotPickerPage({
         </div>
       ) : (
         <div className="mt-6 grid gap-4">
-          {availableDoctors.map((d) => (
+          {availableDoctors.map((d) => {
+            const isPreselected = preselectedDoctorSlug === d.slug;
+            return (
             <article
               key={d.id}
-              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+              id={isPreselected ? `doctor-${d.slug}` : undefined}
+              className={
+                isPreselected
+                  ? "scroll-mt-24 rounded-2xl border-2 border-emerald-400 bg-white p-6 shadow-md ring-2 ring-emerald-100"
+                  : "rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+              }
             >
               <header className="flex flex-wrap items-start justify-between gap-3">
                 <div>
@@ -167,7 +190,8 @@ export default async function ConsultSlotPickerPage({
                 slots={d.slots}
               />
             </article>
-          ))}
+            );
+          })}
         </div>
       )}
     </main>

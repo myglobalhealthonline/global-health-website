@@ -101,9 +101,12 @@ export function MobileNav({
         ]
       : [];
 
+  // Cart-first booking: mobile "Book" routes to the country general
+  // consultation catalogue (service-first). /book-online stays as a
+  // fallback when no country context exists yet.
   const bookHref =
     activeCountry && parsed.lang
-      ? `/${COUNTRY_CODE_TO_SLUG[activeCountry.code]}/${parsed.lang}/book-online`
+      ? `/${COUNTRY_CODE_TO_SLUG[activeCountry.code]}/${parsed.lang}/general-consultation`
       : navigation.headerPrimaryCta.href;
 
   return (

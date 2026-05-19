@@ -1,12 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
 import { startCheckout } from "@/lib/api/cart-client";
+import {
+  fetchCurrentUser,
+  patchCurrentUser,
+  type AuthUser,
+} from "@/lib/api/auth-api";
 import { formatPrice } from "@/lib/format-currency";
+
+/** Trim a full ISO datetime down to the YYYY-MM-DD an <input type="date">
+ *  expects. The saved DOB is start-of-day UTC; the date input only
+ *  cares about the date portion. */
+function isoToDateInput(iso: string | null): string {
+  if (!iso) return "";
+  return iso.slice(0, 10);
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -14,6 +27,44 @@ export default function CheckoutPage() {
   const { cart, loading } = useCart();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [me, setMe] = useState<AuthUser | null>(null);
+  const [authLoaded, setAuthLoaded] = useState(false);
+  // "Booking for someone else" — flips the patient identity fields
+  // (name, phone, DOB) to blank but keeps the email as the buyer's so
+  // confirmation / payment emails reach the signed-in user. Email
+  // stays editable too in case they want to send to a different
+  // address.
+  const [bookingForOther, setBookingForOther] = useState(false);
+
+  // Best-effort fetch of the signed-in user. Guests get null, render
+  // empty defaults — same path as before this change.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const res = await fetchCurrentUser();
+      if (cancelled) return;
+      setMe(res.ok ? res.data.user : null);
+      setAuthLoaded(true);
+    })().catch(() => {
+      if (!cancelled) setAuthLoaded(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // What to seed each field with. When "booking for someone else" is
+  // on, patient identity fields go blank; email stays prefilled (the
+  // buyer is paying — confirmation should still hit their inbox).
+  const defaults = useMemo(() => {
+    const dob = me ? isoToDateInput(me.dateOfBirth) : "";
+    return {
+      fullName: bookingForOther ? "" : me?.fullName ?? "",
+      email: me?.email ?? "",
+      phone: bookingForOther ? "" : me?.phone ?? "",
+      dateOfBirth: bookingForOther ? "" : dob,
+    };
+  }, [me, bookingForOther]);
   // Route segments carry the active country/lang; build URLs from them
   // so back-links + Stripe return-URLs keep the country prefix.
   const countrySlug = params?.country ?? "";
@@ -33,6 +84,26 @@ export default function CheckoutPage() {
     setError(null);
     const form = new FormData(e.currentTarget);
     setSubmitting(true);
+
+    // Opportunistically persist a DOB the patient typed in. Only when:
+    //   - signed in (we have a user to patch)
+    //   - not booking for someone else (the DOB they typed is THEIRS)
+    //   - the field actually has a value
+    //   - the saved DOB differs from what they typed
+    // Best-effort: don't block checkout if the PATCH fails.
+    const typedDob = String(form.get("dateOfBirth") ?? "").trim();
+    if (me && !bookingForOther && typedDob) {
+      const savedDob = isoToDateInput(me.dateOfBirth);
+      if (typedDob !== savedDob) {
+        try {
+          await patchCurrentUser({ dateOfBirth: typedDob });
+        } catch {
+          // Swallow — Stripe handoff is the critical path. Worst
+          // case the patient resaves DOB from /account/profile.
+        }
+      }
+    }
+
     const res = await startCheckout({
       email: String(form.get("email") ?? ""),
       fullName: String(form.get("fullName") ?? ""),
@@ -57,7 +128,7 @@ export default function CheckoutPage() {
     window.location.assign(res.data.url);
   }
 
-  if (loading) {
+  if (loading || !authLoaded) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         <p className="text-sm text-slate-500">Loading…</p>
@@ -74,10 +145,14 @@ export default function CheckoutPage() {
     0,
   );
   const total = cart.subtotalCents + shippingCents;
-  // Only ask for a postal address when something in the cart actually
-  // ships. Online consultations skip the section entirely.
+  // Shipping address gate. HEALTH_TEST kits always ship physically
+  // (we post a sample container). For other kinds we only ask for an
+  // address when the admin set a non-zero shipping fee on the item —
+  // online consultations + zero-shipping prescriptions skip the
+  // section entirely so the patient doesn't fight a form they don't
+  // need.
   const needsShipping = cart.items.some(
-    (i) => i.kind === "HEALTH_TEST" || i.kind === "PRESCRIPTION_SERVICE",
+    (i) => i.kind === "HEALTH_TEST" || (i.shippingCents ?? 0) > 0,
   );
 
   return (
@@ -97,12 +172,65 @@ export default function CheckoutPage() {
       </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]">
-        <form onSubmit={onSubmit} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-slate-900">Contact</h2>
+        {/* `key` ties the form's defaultValue lifecycle to the
+            "Booking for someone else" toggle so flipping it clears the
+            uncontrolled inputs cleanly. Without it React keeps the old
+            defaultValue render and the user has to clear by hand. */}
+        <form
+          key={bookingForOther ? "other" : "self"}
+          onSubmit={onSubmit}
+          className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <h2 className="text-lg font-bold text-slate-900">Contact & patient</h2>
+            {me ? (
+              <label className="inline-flex items-center gap-2 text-xs text-slate-600">
+                <input
+                  type="checkbox"
+                  checked={bookingForOther}
+                  onChange={(e) => setBookingForOther(e.target.checked)}
+                  className="size-3.5 rounded border-slate-300"
+                />
+                Booking for someone else
+              </label>
+            ) : null}
+          </div>
+          {me && !bookingForOther ? (
+            <p className="mt-1 text-xs text-slate-500">
+              Prefilled from your account. Edit anything that&apos;s out of date —
+              changes save when you continue to payment.
+            </p>
+          ) : null}
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <Field name="fullName" label="Full name" required />
-            <Field name="email" label="Email" type="email" required autoComplete="email" />
-            <Field name="phone" label="Phone (optional)" type="tel" autoComplete="tel" />
+            <Field
+              name="fullName"
+              label={bookingForOther ? "Patient name" : "Full name"}
+              required
+              defaultValue={defaults.fullName}
+              autoComplete={bookingForOther ? "off" : "name"}
+            />
+            <Field
+              name="email"
+              label="Email"
+              type="email"
+              required
+              autoComplete="email"
+              defaultValue={defaults.email}
+            />
+            <Field
+              name="phone"
+              label={bookingForOther ? "Patient phone (optional)" : "Phone (optional)"}
+              type="tel"
+              autoComplete={bookingForOther ? "off" : "tel"}
+              defaultValue={defaults.phone}
+            />
+            <Field
+              name="dateOfBirth"
+              label={bookingForOther ? "Patient date of birth" : "Date of birth"}
+              type="date"
+              defaultValue={defaults.dateOfBirth}
+              autoComplete={bookingForOther ? "off" : "bday"}
+            />
           </div>
 
           {needsShipping ? (

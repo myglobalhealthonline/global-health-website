@@ -141,8 +141,12 @@ export default async function CountryLangHomePage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const bookHref = `/${slug}/${lang}/book-online`;
+  // Cart-first booking: default site CTAs aim at service flows. The
+  // legacy `/book-online` route stays alive as a fallback but no longer
+  // surfaces from this page; both DoctorWall and FinalCTA now route at
+  // the doctors index for a smoother flow.
   const generalHref = `/${slug}/${lang}/general-consultation`;
+  const doctorsHref = `/${slug}/${lang}/doctors`;
 
   const [page, countryDoctors, generalServices, specialistServices, allDoctors] =
     await Promise.all([
@@ -155,11 +159,12 @@ export default async function CountryLangHomePage({
 
   const totalDoctorsAcrossEurope = allDoctors.length;
 
-  // "Book with X" button on the doctor wall — link to the country
-  // booking form with `?doctor=<slug>` so intent survives. Was previously
-  // pointing at the doctor profile URL, which mismatched the CTA label.
+  // "View profile" button on the doctor wall — link to the doctor's
+  // profile page where the visitor picks a service (cart-first booking
+  // flow). Previously dumped people into the fallback `/book-online` form
+  // with `?doctor=`, which skipped service selection.
   const doctorWallItems: DoctorWallItem[] = countryDoctors.map((d) =>
-    mapDoctorToWallItem(d, code, `${bookHref}?doctor=${encodeURIComponent(d.slug)}`),
+    mapDoctorToWallItem(d, code, `/${slug}/${lang}/doctors/${d.slug}`),
   );
 
   const serviceCatalogItems: ServiceCatalogItem[] = [
@@ -218,7 +223,7 @@ export default async function CountryLangHomePage({
         countryName={config.name}
         doctorCount={countryDoctors.length}
         languageLabel={languageLabel}
-        bookHref={page?.ctaHref ?? bookHref}
+        bookHref={page?.ctaHref ?? generalHref}
         totalDoctorsAcrossEurope={totalDoctorsAcrossEurope}
         liveDoctors={liveDoctors}
         heroTitle={page?.heroTitle ?? null}
@@ -230,9 +235,9 @@ export default async function CountryLangHomePage({
       <TrustRibbon items={trustItems} />
       <ReviewBadge countryName={config.name} />
       <ServiceCatalog services={serviceCatalogItems} />
-      <DoctorWall doctors={doctorWallItems} bookHref={bookHref} />
+      <DoctorWall doctors={doctorWallItems} bookHref={doctorsHref} />
       <HowItWorksNarrative />
-      <FinalCTA primaryHref={generalHref} secondaryHref={bookHref} />
+      <FinalCTA primaryHref={generalHref} secondaryHref={doctorsHref} />
     </>
   );
 }
