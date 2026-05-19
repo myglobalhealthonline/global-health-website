@@ -22,6 +22,29 @@ export type CartItem = {
   /** ISO timestamp when this consultation slot reservation lapses.
    *  Null for product items. UI polls this and shows a countdown. */
   heldUntil: string | null;
+  /** Consultation patient intake snapshot — captured on the consult
+   *  page before add-to-cart. Null for product items. */
+  patient: {
+    fullName: string | null;
+    email: string | null;
+    phone: string | null;
+    dateOfBirth: string | null;
+    notes: string | null;
+    consentAcceptedAt: string | null;
+    bookingForOther: boolean;
+  } | null;
+};
+
+/** Patient intake payload sent on POST /api/cart/items for
+ *  consultation kinds. Required by the backend; ignored for products. */
+export type CartItemPatientInput = {
+  fullName: string;
+  email: string;
+  phone?: string;
+  dateOfBirth?: string;
+  notes?: string;
+  consentAccepted: true;
+  bookingForOther?: boolean;
 };
 
 export type Cart = {

@@ -812,6 +812,20 @@ model CartItem {
   /// time becomes bookable for another patient.
   /// Null for product items (no slot to hold).
   heldUntil      DateTime?
+  /// Patient intake snapshot — collected on the consult page before
+  /// add-to-cart so the cart line carries everything the webhook needs
+  /// to mint the Appointment. Nullable for product items (HEALTH_TEST,
+  /// PRESCRIPTION_SERVICE never take a patient form). For consultation
+  /// kinds the cart route requires them on POST /api/cart/items.
+  patientFullName          String?
+  patientEmail             String?
+  patientPhone             String?
+  patientDateOfBirth       DateTime?
+  patientNotes             String?
+  patientConsentAcceptedAt DateTime?
+  /// `true` when the visitor toggled "Booking for someone else" on the
+  /// consult form. We still keep account DOB intact in that case.
+  bookingForOther          Boolean      @default(false)
   createdAt      DateTime     @default(now())
 
   @@index([heldUntil])
@@ -868,6 +882,17 @@ model OrderItem {
   timeSlotId     String?
   doctorId       String?
   appointmentId  String?
+  /// Patient intake snapshot — copied from CartItem at checkout time so
+  /// the payment webhook mints the Appointment with the right name,
+  /// email, phone, DOB, notes even when the booking is for someone
+  /// other than the payer. Nullable for product items.
+  patientFullName          String?
+  patientEmail             String?
+  patientPhone             String?
+  patientDateOfBirth       DateTime?
+  patientNotes             String?
+  patientConsentAcceptedAt DateTime?
+  bookingForOther          Boolean      @default(false)
 
   @@index([orderId])
 }

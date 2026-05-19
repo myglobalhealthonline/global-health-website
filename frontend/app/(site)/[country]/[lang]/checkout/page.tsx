@@ -6,21 +6,23 @@ import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
 import { startCheckout } from "@/lib/api/cart-client";
-import {
-  fetchCurrentUser,
-  patchCurrentUser,
-  type AuthUser,
-} from "@/lib/api/auth-api";
+import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { formatPrice } from "@/lib/format-currency";
 
-/** Trim a full ISO datetime down to the YYYY-MM-DD an <input type="date">
- *  expects. The saved DOB is start-of-day UTC; the date input only
- *  cares about the date portion. */
-function isoToDateInput(iso: string | null): string {
-  if (!iso) return "";
-  return iso.slice(0, 10);
-}
-
+/**
+ * Checkout = payment.
+ *
+ * Patient intake (name, DOB, notes, consent) was already collected
+ * on the consult page and is sitting on the cart items. Checkout
+ * only handles:
+ *   - payer contact (email, name, phone) for the Order + Stripe receipt
+ *   - shipping address when the cart contains a physical item
+ *   - the Stripe handoff
+ *
+ * Defaults: signed-in patient first, then the first consultation
+ * line's patient snapshot (covers guest bookings that never logged
+ * in). Each field stays editable so the buyer can override.
+ */
 export default function CheckoutPage() {
   const router = useRouter();
   const params = useParams<{ country: string; lang: string }>();
@@ -29,15 +31,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [me, setMe] = useState<AuthUser | null>(null);
   const [authLoaded, setAuthLoaded] = useState(false);
-  // "Booking for someone else" — flips the patient identity fields
-  // (name, phone, DOB) to blank but keeps the email as the buyer's so
-  // confirmation / payment emails reach the signed-in user. Email
-  // stays editable too in case they want to send to a different
-  // address.
-  const [bookingForOther, setBookingForOther] = useState(false);
 
-  // Best-effort fetch of the signed-in user. Guests get null, render
-  // empty defaults — same path as before this change.
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -53,25 +47,33 @@ export default function CheckoutPage() {
     };
   }, []);
 
-  // What to seed each field with. When "booking for someone else" is
-  // on, patient identity fields go blank; email stays prefilled (the
-  // buyer is paying — confirmation should still hit their inbox).
-  const defaults = useMemo(() => {
-    const dob = me ? isoToDateInput(me.dateOfBirth) : "";
-    return {
-      fullName: bookingForOther ? "" : me?.fullName ?? "",
-      email: me?.email ?? "",
-      phone: bookingForOther ? "" : me?.phone ?? "",
-      dateOfBirth: bookingForOther ? "" : dob,
-    };
-  }, [me, bookingForOther]);
-  // Route segments carry the active country/lang; build URLs from them
-  // so back-links + Stripe return-URLs keep the country prefix.
   const countrySlug = params?.country ?? "";
   const lang = params?.lang ?? "";
   const cartHref = countrySlug && lang ? `/${countrySlug}/${lang}/cart` : "/cart";
   const returnTo =
     countrySlug && lang ? `/${countrySlug}/${lang}/checkout` : "/checkout";
+
+  // Payer defaults — prefer signed-in account, then fall back to the
+  // first consultation line's patient snapshot. Guests booking purely
+  // products land on blank fields (which they fill in to receive their
+  // Stripe receipt).
+  const consultationPatient = useMemo(() => {
+    const consultLine = cart.items.find(
+      (i) =>
+        (i.kind === "GENERAL_CONSULTATION" ||
+          i.kind === "SPECIALIST_CONSULTATION") &&
+        i.patient,
+    );
+    return consultLine?.patient ?? null;
+  }, [cart.items]);
+
+  const defaults = useMemo(() => {
+    return {
+      fullName: me?.fullName ?? consultationPatient?.fullName ?? "",
+      email: me?.email ?? consultationPatient?.email ?? "",
+      phone: me?.phone ?? consultationPatient?.phone ?? "",
+    };
+  }, [me, consultationPatient]);
 
   useEffect(() => {
     if (!loading && cart.items.length === 0) {
@@ -85,25 +87,6 @@ export default function CheckoutPage() {
     const form = new FormData(e.currentTarget);
     setSubmitting(true);
 
-    // Opportunistically persist a DOB the patient typed in. Only when:
-    //   - signed in (we have a user to patch)
-    //   - not booking for someone else (the DOB they typed is THEIRS)
-    //   - the field actually has a value
-    //   - the saved DOB differs from what they typed
-    // Best-effort: don't block checkout if the PATCH fails.
-    const typedDob = String(form.get("dateOfBirth") ?? "").trim();
-    if (me && !bookingForOther && typedDob) {
-      const savedDob = isoToDateInput(me.dateOfBirth);
-      if (typedDob !== savedDob) {
-        try {
-          await patchCurrentUser({ dateOfBirth: typedDob });
-        } catch {
-          // Swallow — Stripe handoff is the critical path. Worst
-          // case the patient resaves DOB from /account/profile.
-        }
-      }
-    }
-
     const res = await startCheckout({
       email: String(form.get("email") ?? ""),
       fullName: String(form.get("fullName") ?? ""),
@@ -114,10 +97,6 @@ export default function CheckoutPage() {
       shipCity: String(form.get("shipCity") ?? ""),
       shipPostalCode: String(form.get("shipPostalCode") ?? ""),
       shipCountryCode: String(form.get("shipCountryCode") ?? cart.countryCode),
-      // Stripe success/cancel URLs are built as `${returnTo}/success`
-      // and `${returnTo}/cancelled` on the backend — pass the
-      // country-scoped path so the user lands back inside their
-      // country segment.
       returnTo,
     });
     if (!res.ok) {
@@ -138,21 +117,22 @@ export default function CheckoutPage() {
 
   if (cart.items.length === 0) return null;
 
-  // Mirror cart-page math: sum admin-set shipping per line. 0 for
-  // online consultations, set by admin per item for physical things.
   const shippingCents = cart.items.reduce(
     (s, i) => s + (i.shippingCents ?? 0) * i.quantity,
     0,
   );
   const total = cart.subtotalCents + shippingCents;
-  // Shipping address gate. HEALTH_TEST kits always ship physically
-  // (we post a sample container). For other kinds we only ask for an
-  // address when the admin set a non-zero shipping fee on the item —
-  // online consultations + zero-shipping prescriptions skip the
-  // section entirely so the patient doesn't fight a form they don't
-  // need.
+  // Shipping address gate. HEALTH_TEST kits always ship physically.
+  // Other kinds only need it when admin set a non-zero shipping fee.
   const needsShipping = cart.items.some(
     (i) => i.kind === "HEALTH_TEST" || (i.shippingCents ?? 0) > 0,
+  );
+
+  // List the booked consultation patients so the buyer sees what
+  // they're paying for. Edits live on the consult page, not here.
+  const consultationLines = cart.items.filter(
+    (i) =>
+      i.kind === "GENERAL_CONSULTATION" || i.kind === "SPECIALIST_CONSULTATION",
   );
 
   return (
@@ -172,42 +152,24 @@ export default function CheckoutPage() {
       </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]">
-        {/* `key` ties the form's defaultValue lifecycle to the
-            "Booking for someone else" toggle so flipping it clears the
-            uncontrolled inputs cleanly. Without it React keeps the old
-            defaultValue render and the user has to clear by hand. */}
         <form
-          key={bookingForOther ? "other" : "self"}
           onSubmit={onSubmit}
           className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
         >
-          <div className="flex flex-wrap items-baseline justify-between gap-3">
-            <h2 className="text-lg font-bold text-slate-900">Contact & patient</h2>
-            {me ? (
-              <label className="inline-flex items-center gap-2 text-xs text-slate-600">
-                <input
-                  type="checkbox"
-                  checked={bookingForOther}
-                  onChange={(e) => setBookingForOther(e.target.checked)}
-                  className="size-3.5 rounded border-slate-300"
-                />
-                Booking for someone else
-              </label>
-            ) : null}
-          </div>
-          {me && !bookingForOther ? (
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Payer contact</h2>
             <p className="mt-1 text-xs text-slate-500">
-              Prefilled from your account. Edit anything that&apos;s out of date —
-              changes save when you continue to payment.
+              Receipts and booking confirmations go here. Patient details for
+              each consultation were captured on the booking page.
             </p>
-          ) : null}
+          </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <Field
               name="fullName"
-              label={bookingForOther ? "Patient name" : "Full name"}
+              label="Full name"
               required
               defaultValue={defaults.fullName}
-              autoComplete={bookingForOther ? "off" : "name"}
+              autoComplete="name"
             />
             <Field
               name="email"
@@ -219,19 +181,42 @@ export default function CheckoutPage() {
             />
             <Field
               name="phone"
-              label={bookingForOther ? "Patient phone (optional)" : "Phone (optional)"}
+              label="Phone (optional)"
               type="tel"
-              autoComplete={bookingForOther ? "off" : "tel"}
+              autoComplete="tel"
               defaultValue={defaults.phone}
             />
-            <Field
-              name="dateOfBirth"
-              label={bookingForOther ? "Patient date of birth" : "Date of birth"}
-              type="date"
-              defaultValue={defaults.dateOfBirth}
-              autoComplete={bookingForOther ? "off" : "bday"}
-            />
           </div>
+
+          {consultationLines.length > 0 ? (
+            <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Consultations in this order
+              </p>
+              <ul className="mt-2 space-y-1.5 text-sm text-slate-700">
+                {consultationLines.map((line) => (
+                  <li key={line.id}>
+                    <span className="font-semibold">
+                      {line.patient?.fullName ?? "Patient name missing"}
+                    </span>
+                    {line.patient?.bookingForOther ? (
+                      <span className="ml-1 text-xs text-slate-500">
+                        (booked on their behalf)
+                      </span>
+                    ) : null}
+                    <span className="text-slate-500"> — {line.name}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-xs text-slate-500">
+                Need to change a patient?{" "}
+                <Link href={cartHref} className="font-semibold text-emerald-700 underline">
+                  Edit the cart line
+                </Link>
+                .
+              </p>
+            </div>
+          ) : null}
 
           {needsShipping ? (
             <>

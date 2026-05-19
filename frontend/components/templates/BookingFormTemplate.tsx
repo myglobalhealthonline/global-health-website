@@ -63,6 +63,11 @@ type BookingFormTemplateProps = {
   } | null;
   /** From server `searchParams` — avoids `window` during render (hydration). */
   initialConsultationType?: string;
+  /** Country code (e.g. "ie") from the route slug. Preselects the
+   *  country `<select>` so visitors who arrived from `/ireland/en/...`
+   *  don't see an empty country field. Editable — the patient can
+   *  still pick a different country before submitting. */
+  initialCountryCode?: string;
 };
 
 type FieldErrors = Partial<
@@ -75,6 +80,7 @@ export function BookingFormTemplate({
   signedInPatient,
   doctorPrebook,
   initialConsultationType = "",
+  initialCountryCode = "",
 }: BookingFormTemplateProps) {
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -285,7 +291,7 @@ export function BookingFormTemplate({
                   <select
                     id={ids.country}
                     name="country"
-                    defaultValue=""
+                    defaultValue={initialCountryCode}
                     className="gh-select"
                   >
                     <option value="">{form.fields.country.placeholder}</option>

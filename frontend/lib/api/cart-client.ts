@@ -1,6 +1,6 @@
 "use client";
 
-import type { Cart, CartItemKind } from "./cart-types";
+import type { Cart, CartItemKind, CartItemPatientInput } from "./cart-types";
 
 type Result<T> =
   | { ok: true; data: T; message?: string }
@@ -22,6 +22,9 @@ export type AddItemInput = {
   quantity?: number;
   timeSlotId?: string;
   doctorId?: string;
+  /** Patient intake — required for GENERAL_CONSULTATION /
+   *  SPECIALIST_CONSULTATION (the consult-page form collects it). */
+  patient?: CartItemPatientInput;
 };
 
 export async function addToCart(input: AddItemInput): Promise<Result<Cart>> {

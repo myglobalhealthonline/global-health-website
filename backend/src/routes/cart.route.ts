@@ -34,6 +34,14 @@ import { errorResponse, okResponse } from "../utils/response.js";
 const CART_COOKIE = "gh_cart";
 const CART_COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
+/** Accepts either a full ISO datetime or a `YYYY-MM-DD` date string. */
+const dobInputSchema = z
+  .string()
+  .trim()
+  .min(8)
+  .max(40)
+  .regex(/^\d{4}-\d{2}-\d{2}(T.*)?$/, "Invalid date of birth");
+
 const addItemBodySchema = z.object({
   kind: z.enum([
     CartItemKind.HEALTH_TEST,
@@ -48,6 +56,22 @@ const addItemBodySchema = z.object({
   /** Consultation cart items only — slot + doctor selected up front. */
   timeSlotId: z.string().min(1).max(120).optional(),
   doctorId: z.string().min(1).max(120).optional(),
+  /**
+   * Patient intake snapshot. REQUIRED for consultation kinds (the cart
+   * route below enforces presence + consent). Ignored for product
+   * kinds — those rows don't carry patient data.
+   */
+  patient: z
+    .object({
+      fullName: z.string().trim().min(2).max(120),
+      email: z.string().trim().email(),
+      phone: z.string().trim().max(40).optional().or(z.literal("")),
+      dateOfBirth: dobInputSchema.optional().or(z.literal("")),
+      notes: z.string().trim().max(2000).optional().or(z.literal("")),
+      consentAccepted: z.literal(true),
+      bookingForOther: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 const updateItemBodySchema = z.object({
@@ -82,6 +106,18 @@ type CartItemView = {
   /** ISO timestamp when this consultation slot reservation lapses.
    *  Null for product items. UI uses this for countdown display. */
   heldUntil: string | null;
+  /** Consultation patient intake snapshot — populated when the consult
+   *  page added this line. Null for product items. */
+  patient: {
+    fullName: string | null;
+    email: string | null;
+    phone: string | null;
+    /** ISO date string (YYYY-MM-DD or full ISO). */
+    dateOfBirth: string | null;
+    notes: string | null;
+    consentAcceptedAt: string | null;
+    bookingForOther: boolean;
+  } | null;
 };
 
 type CartView = {
@@ -319,6 +355,15 @@ async function mergeCarts(sourceId: string, targetId: string) {
           // Consultation lines carry the reservation deadline — drop
           // it onto the new row so sweep + countdown keep working.
           heldUntil: item.heldUntil,
+          // Patient intake snapshot — keep so the merged cart still
+          // mints the Appointment with the right data.
+          patientFullName: item.patientFullName,
+          patientEmail: item.patientEmail,
+          patientPhone: item.patientPhone,
+          patientDateOfBirth: item.patientDateOfBirth,
+          patientNotes: item.patientNotes,
+          patientConsentAcceptedAt: item.patientConsentAcceptedAt,
+          bookingForOther: item.bookingForOther,
         },
       });
     }
@@ -331,20 +376,40 @@ function serializeCart(
   expiredHolds = 0,
 ): CartView {
   if (!cart) return { ...EMPTY_CART, expiredHolds };
-  const items: CartItemView[] = cart.items.map((i) => ({
-    id: i.id,
-    kind: i.kind,
-    healthTestId: i.healthTestId,
-    serviceId: i.serviceId,
-    name: i.name,
-    unitPriceCents: i.unitPriceCents,
-    shippingCents: i.shippingCents ?? 0,
-    quantity: i.quantity,
-    lineTotalCents: i.unitPriceCents * i.quantity,
-    timeSlotId: i.timeSlotId,
-    doctorId: i.doctorId,
-    heldUntil: i.heldUntil ? i.heldUntil.toISOString() : null,
-  }));
+  const items: CartItemView[] = cart.items.map((i) => {
+    const isConsultationLine =
+      i.kind === CartItemKind.GENERAL_CONSULTATION ||
+      i.kind === CartItemKind.SPECIALIST_CONSULTATION;
+    return {
+      id: i.id,
+      kind: i.kind,
+      healthTestId: i.healthTestId,
+      serviceId: i.serviceId,
+      name: i.name,
+      unitPriceCents: i.unitPriceCents,
+      shippingCents: i.shippingCents ?? 0,
+      quantity: i.quantity,
+      lineTotalCents: i.unitPriceCents * i.quantity,
+      timeSlotId: i.timeSlotId,
+      doctorId: i.doctorId,
+      heldUntil: i.heldUntil ? i.heldUntil.toISOString() : null,
+      patient: isConsultationLine
+        ? {
+            fullName: i.patientFullName,
+            email: i.patientEmail,
+            phone: i.patientPhone,
+            dateOfBirth: i.patientDateOfBirth
+              ? i.patientDateOfBirth.toISOString()
+              : null,
+            notes: i.patientNotes,
+            consentAcceptedAt: i.patientConsentAcceptedAt
+              ? i.patientConsentAcceptedAt.toISOString()
+              : null,
+            bookingForOther: i.bookingForOther,
+          }
+        : null,
+    };
+  });
   return {
     id: cart.id,
     countryCode: cart.countryCode,
@@ -392,9 +457,36 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       if (!body.success) {
         return reply.status(400).send(errorResponse("Invalid item", body.error.flatten()));
       }
-      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId } =
+      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient } =
         body.data;
       const qty = quantity ?? 1;
+
+      // Consultation kinds require the patient intake snapshot up
+      // front — the consult page collects it before add-to-cart so
+      // checkout only handles payment. Product items don't take any
+      // patient data on the cart line.
+      const isConsultationKind =
+        kind === CartItemKind.GENERAL_CONSULTATION ||
+        kind === CartItemKind.SPECIALIST_CONSULTATION;
+      if (isConsultationKind) {
+        if (!patient) {
+          return reply
+            .status(400)
+            .send(errorResponse("Patient details required for consultation bookings"));
+        }
+      }
+
+      // Parse DOB → start-of-day UTC so it survives Stripe / webhook
+      // round-trips without timezone drift.
+      let patientDob: Date | null = null;
+      if (patient?.dateOfBirth) {
+        const datePart = patient.dateOfBirth.slice(0, 10);
+        const parsed = new Date(`${datePart}T00:00:00.000Z`);
+        if (Number.isNaN(parsed.getTime())) {
+          return reply.status(400).send(errorResponse("Invalid date of birth"));
+        }
+        patientDob = parsed;
+      }
 
       // Validate referenced product exists + grab pricing snapshot
       let name = "";
@@ -529,8 +621,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       }
 
       // De-dupe: same product → bump qty (consultations are unique per slot)
-      const isConsultation =
-        kind === "GENERAL_CONSULTATION" || kind === "SPECIALIST_CONSULTATION";
+      const isConsultation = isConsultationKind;
 
       if (!isConsultation) {
         const existing = cart.items.find(
@@ -604,6 +695,16 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             timeSlotId: timeSlotId ?? null,
             doctorId: doctorId ?? null,
             heldUntil,
+            // Consultation patient snapshot. Stamped here so cart →
+            // order → webhook can mint the Appointment without
+            // collecting any of this at checkout.
+            patientFullName: patient?.fullName ?? null,
+            patientEmail: patient?.email ?? null,
+            patientPhone: patient?.phone ? patient.phone : null,
+            patientDateOfBirth: patientDob,
+            patientNotes: patient?.notes ? patient.notes : null,
+            patientConsentAcceptedAt: patient?.consentAccepted ? new Date() : null,
+            bookingForOther: patient?.bookingForOther ?? false,
           },
         });
       } catch (err) {

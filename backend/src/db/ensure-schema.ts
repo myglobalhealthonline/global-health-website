@@ -71,6 +71,32 @@ const PATCHES: { name: string; sql: string }[] = [
     `,
   },
   {
+    name: "CartItem.patientFields",
+    sql: `
+      ALTER TABLE "CartItem"
+        ADD COLUMN IF NOT EXISTS "patientFullName"          TEXT,
+        ADD COLUMN IF NOT EXISTS "patientEmail"             TEXT,
+        ADD COLUMN IF NOT EXISTS "patientPhone"             TEXT,
+        ADD COLUMN IF NOT EXISTS "patientDateOfBirth"       TIMESTAMP(3),
+        ADD COLUMN IF NOT EXISTS "patientNotes"             TEXT,
+        ADD COLUMN IF NOT EXISTS "patientConsentAcceptedAt" TIMESTAMP(3),
+        ADD COLUMN IF NOT EXISTS "bookingForOther"          BOOLEAN NOT NULL DEFAULT FALSE;
+    `,
+  },
+  {
+    name: "OrderItem.patientFields",
+    sql: `
+      ALTER TABLE "OrderItem"
+        ADD COLUMN IF NOT EXISTS "patientFullName"          TEXT,
+        ADD COLUMN IF NOT EXISTS "patientEmail"             TEXT,
+        ADD COLUMN IF NOT EXISTS "patientPhone"             TEXT,
+        ADD COLUMN IF NOT EXISTS "patientDateOfBirth"       TIMESTAMP(3),
+        ADD COLUMN IF NOT EXISTS "patientNotes"             TEXT,
+        ADD COLUMN IF NOT EXISTS "patientConsentAcceptedAt" TIMESTAMP(3),
+        ADD COLUMN IF NOT EXISTS "bookingForOther"          BOOLEAN NOT NULL DEFAULT FALSE;
+    `,
+  },
+  {
     name: "ServiceDoctor table + indexes",
     sql: `
       CREATE TABLE IF NOT EXISTS "ServiceDoctor" (

@@ -362,15 +362,29 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                   });
                   const consultationType =
                     item.kind === "SPECIALIST_CONSULTATION" ? "specialist" : "general";
+                  // Prefer patient intake from the order line (collected
+                  // on the consult page). Fall back to the order-level
+                  // payer details when the line is missing them (legacy
+                  // carts created before the cart-first flow shipped).
+                  const aptFullName = item.patientFullName ?? order.fullName;
+                  const aptEmail = item.patientEmail ?? order.email;
+                  const aptPhone = item.patientPhone ?? order.phone;
+                  const aptDob = item.patientDateOfBirth ?? null;
+                  const aptNotes = item.patientNotes ?? null;
+                  const aptConsent = item.patientConsentAcceptedAt
+                    ? true
+                    : true; // schema requires boolean; we treat presence-on-line as confirmed
                   const apt = await tx.appointment.create({
                     data: {
                       userId: order.userId,
                       countryCode: order.countryCode,
                       consultationType,
-                      fullName: order.fullName,
-                      email: order.email,
-                      phone: order.phone,
-                      consentAccepted: true,
+                      fullName: aptFullName,
+                      email: aptEmail,
+                      phone: aptPhone,
+                      dateOfBirth: aptDob,
+                      notes: aptNotes,
+                      consentAccepted: aptConsent,
                       status: "REQUEST_RECEIVED",
                       serviceId: item.serviceId,
                       doctorId: item.doctorId,

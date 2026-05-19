@@ -109,6 +109,11 @@ export default async function CountryLangBookOnlinePage({
       signedInPatient={signedInPatient}
       doctorPrebook={doctorPrebook}
       initialConsultationType={initialConsultationType}
+      // Prefill country from the route slug. Earlier the select
+      // rendered empty even though the URL clearly said "/ireland/…",
+      // which made the form feel broken for visitors who arrived
+      // already country-scoped.
+      initialCountryCode={code}
     />
   );
 }

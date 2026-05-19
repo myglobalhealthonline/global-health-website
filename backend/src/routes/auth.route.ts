@@ -138,18 +138,27 @@ const authRoute: FastifyPluginAsync = async (app) => {
       .optional()
       .transform((v) => (v === "" ? null : v)),
     /** ISO date or full datetime ("2001-04-12" or "2001-04-12T00:00:00Z").
-     *  Accept either, normalize to start-of-day UTC in the service. */
+     *  Accept either, normalize to start-of-day UTC in the service.
+     *
+     *  Tristate is meaningful here:
+     *    - missing key (undefined) → leave existing DOB untouched
+     *    - explicit `null` / `""`   → clear the stored DOB
+     *    - valid date string         → set the DOB
+     *  Earlier this transform mapped `undefined → null`, which silently
+     *  wiped DOB on every partial PATCH that touched only e.g. fullName.
+     */
     dateOfBirth: z
       .string()
       .trim()
       .nullable()
       .optional()
       .transform((v) => {
-        if (v === "" || v === null || v === undefined) return null;
+        if (v === undefined) return undefined;
+        if (v === "" || v === null) return null;
         return v;
       })
       .refine(
-        (v) => v === null || /^\d{4}-\d{2}-\d{2}(T.*)?$/.test(v),
+        (v) => v === undefined || v === null || /^\d{4}-\d{2}-\d{2}(T.*)?$/.test(v),
         "Date of birth must be a YYYY-MM-DD date",
       ),
   });

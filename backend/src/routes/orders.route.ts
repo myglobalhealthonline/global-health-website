@@ -180,6 +180,17 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   lineTotalCents: i.unitPriceCents * i.quantity,
                   timeSlotId: i.timeSlotId,
                   doctorId: i.doctorId,
+                  // Patient intake snapshot: carry the cart-page form
+                  // data onto the order line so the payment webhook can
+                  // mint the Appointment without re-reading the (now
+                  // cleared) cart.
+                  patientFullName: i.patientFullName,
+                  patientEmail: i.patientEmail,
+                  patientPhone: i.patientPhone,
+                  patientDateOfBirth: i.patientDateOfBirth,
+                  patientNotes: i.patientNotes,
+                  patientConsentAcceptedAt: i.patientConsentAcceptedAt,
+                  bookingForOther: i.bookingForOther,
                 })),
               },
             },
