@@ -5,10 +5,8 @@
  * resolve to the active country/lang scope when the user is inside a country,
  * else they fall through to the entry gate at `/`.
  *
- * Deferred features (online prescriptions, home tests, partner clinics,
- * pricing plans, blog, careers, gift cards) are intentionally NOT linked
- * here — those routes don't exist yet and rendering not-found 200s would
- * mislead users. Re-add them as their pages ship.
+ * Care links resolve to the live public country pages that now exist:
+ * consultations, prescriptions, tests, and doctors.
  */
 
 import Link from "next/link";
@@ -32,6 +30,8 @@ export function SiteFooter({ siteName }: { siteName: string }) {
     { label: "Book consultation", href: careBase ? `${careBase}/general-consultation` : "/" },
     { label: "GP consultation", href: careBase ? `${careBase}/general-consultation` : "/" },
     { label: "Specialist consultation", href: careBase ? `${careBase}/specialist-consultation` : "/" },
+    { label: "Prescriptions", href: careBase ? `${careBase}/prescriptions` : "/" },
+    { label: "Health tests", href: careBase ? `${careBase}/tests` : "/" },
     { label: "Our doctors", href: careBase ? `${careBase}/doctors` : "/" },
   ];
 

@@ -31,10 +31,12 @@ import {
 } from "@/lib/content/get-public-page";
 import {
   getCountryDoctors,
+  getCountryHealthTests,
   getCountryServices,
   type CountryDoctorCard,
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
+import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -129,6 +131,26 @@ function mapServiceToCatalogItem(
   };
 }
 
+function mapCategoryTile(input: {
+  type: "prescription" | "test";
+  title: string;
+  tag: string;
+  price: number | null;
+  currency?: string;
+  dur: string;
+  href: string;
+}): ServiceCatalogItem {
+  return {
+    type: input.type,
+    title: input.title,
+    tag: input.tag,
+    price: input.price,
+    currency: input.currency,
+    dur: input.dur,
+    href: input.href,
+  };
+}
+
 export default async function CountryLangHomePage({
   params,
 }: {
@@ -148,12 +170,22 @@ export default async function CountryLangHomePage({
   const generalHref = `/${slug}/${lang}/general-consultation`;
   const doctorsHref = `/${slug}/${lang}/doctors`;
 
-  const [page, countryDoctors, generalServices, specialistServices, allDoctors] =
+  const [
+    page,
+    countryDoctors,
+    generalServices,
+    specialistServices,
+    prescriptionServices,
+    healthTests,
+    allDoctors,
+  ] =
     await Promise.all([
       getPublicPage(code, "HOME", lang as PublicLocale),
       getCountryDoctors(code),
       getCountryServices(code, "GENERAL"),
       getCountryServices(code, "SPECIALIST"),
+      getCountryServices(code, "PRESCRIPTION"),
+      getCountryHealthTests(code),
       getPublicDoctorsNormalized(),
     ]);
 
@@ -167,11 +199,39 @@ export default async function CountryLangHomePage({
     mapDoctorToWallItem(d, code, `/${slug}/${lang}/doctors/${d.slug}`),
   );
 
+  const prescriptionsHref = `/${slug}/${lang}/prescriptions`;
+  const testsHref = `/${slug}/${lang}/tests`;
   const serviceCatalogItems: ServiceCatalogItem[] = [
     ...generalServices.map((s) => mapServiceToCatalogItem(s, generalHref)),
     ...specialistServices.map((s) =>
       mapServiceToCatalogItem(s, `/${slug}/${lang}/specialist-consultation`),
     ),
+    ...(isCountryFeatureEnabled(config, "online-prescriptions") && prescriptionServices.length > 0
+      ? [
+          mapCategoryTile({
+            type: "prescription",
+            title: "Online prescriptions",
+            tag: "Prescription",
+            price: null,
+            dur: `${prescriptionServices.length} service${
+              prescriptionServices.length === 1 ? "" : "s"
+            }`,
+            href: prescriptionsHref,
+          }),
+        ]
+      : []),
+    ...(isCountryFeatureEnabled(config, "health-tests") && healthTests.length > 0
+      ? [
+          mapCategoryTile({
+            type: "test",
+            title: "Health tests",
+            tag: "Home tests",
+            price: null,
+            dur: `${healthTests.length} test${healthTests.length === 1 ? "" : "s"}`,
+            href: testsHref,
+          }),
+        ]
+      : []),
   ];
 
   const liveDoctors: LiveDoctorItem[] = countryDoctors

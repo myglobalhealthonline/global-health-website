@@ -98,6 +98,22 @@ export function MobileNav({
                 },
               ]
             : []),
+          ...(isFeatureOn("online-prescriptions")
+            ? [
+                {
+                  href: `/${parsed.country}/${parsed.lang}/prescriptions`,
+                  label: "Prescriptions",
+                },
+              ]
+            : []),
+          ...(isFeatureOn("health-tests")
+            ? [
+                {
+                  href: `/${parsed.country}/${parsed.lang}/tests`,
+                  label: "Health tests",
+                },
+              ]
+            : []),
         ]
       : [];
 

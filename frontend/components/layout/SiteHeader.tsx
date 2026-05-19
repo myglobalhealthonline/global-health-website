@@ -54,6 +54,12 @@ function sectionNavForCountryLang(
   if (enabled("specialist-consultations")) {
     items.push({ href: `${base}/specialist-consultation`, label: "Specialist" });
   }
+  if (enabled("online-prescriptions")) {
+    items.push({ href: `${base}/prescriptions`, label: "Prescriptions" });
+  }
+  if (enabled("health-tests")) {
+    items.push({ href: `${base}/tests`, label: "Health tests" });
+  }
   return items;
 }
 

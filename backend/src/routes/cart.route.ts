@@ -229,6 +229,17 @@ async function loadFullCart(cartId: string) {
   });
 }
 
+async function readBookingSettings(countryCode: string) {
+  return prisma.bookingSetting.findFirst({
+    where: { country: { code: countryCode } },
+    select: {
+      bookingEnabled: true,
+      requirePhone: true,
+      requireDateOfBirth: true,
+    },
+  });
+}
+
 /**
  * Best-effort lookup of doctor names + slot start times for the
  * consultation lines in a cart. Used purely for display on the cart +
@@ -626,6 +637,63 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           shippingCents = svc.shippingCents ?? 0;
           countryCode = svc.country.code;
           currencyCode = svc.country.currency.code;
+
+          if (isConsultationKind) {
+            if (!timeSlotId || !doctorId) {
+              return reply
+                .status(400)
+                .send(errorResponse("Consultation items require timeSlotId + doctorId"));
+            }
+
+            const [assignment, slot, settings] = await Promise.all([
+              prisma.serviceDoctor.findFirst({
+                where: {
+                  serviceId: svc.id,
+                  doctorId,
+                  isActive: true,
+                  doctor: { active: true },
+                },
+                select: { id: true },
+              }),
+              prisma.doctorTimeSlot.findFirst({
+                where: { id: timeSlotId, doctorId },
+                select: { id: true, status: true },
+              }),
+              readBookingSettings(svc.country.code),
+            ]);
+
+            if (!assignment) {
+              return reply.status(400).send(
+                errorResponse("That doctor is not bookable for this service."),
+              );
+            }
+
+            if (!slot) {
+              return reply.status(400).send(
+                errorResponse("That time slot does not belong to the selected doctor."),
+              );
+            }
+
+            if (settings) {
+              if (settings.bookingEnabled === false) {
+                return reply.status(503).send(
+                  errorResponse(
+                    "Online bookings are paused for this country. Please contact us by email.",
+                  ),
+                );
+              }
+              if (settings.requirePhone && !patient?.phone?.trim()) {
+                return reply.status(400).send(
+                  errorResponse("A phone number is required for bookings in this country."),
+                );
+              }
+              if (settings.requireDateOfBirth && !patientDob) {
+                return reply.status(400).send(
+                  errorResponse("A date of birth is required for bookings in this country."),
+                );
+              }
+            }
+          }
         }
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {
@@ -698,12 +766,6 @@ const cartRoute: FastifyPluginAsync = async (app) => {
           return okResponse(await serializeFreshCart(cart.id));
         }
       } else {
-        // Consultation must have timeSlotId
-        if (!timeSlotId || !doctorId) {
-          return reply
-            .status(400)
-            .send(errorResponse("Consultation items require timeSlotId + doctorId"));
-        }
         // Block adding the same slot twice in cart layer
         const slotTaken = await prisma.cartItem.findUnique({
           where: { timeSlotId },
@@ -722,9 +784,9 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       // For consultation items: claim the slot OPEN → HELD atomically
       // BEFORE creating the CartItem. If another patient grabbed it via
       // the regular booking flow we bail and return 409.
-      if (isConsultation && timeSlotId) {
+      if (isConsultation && timeSlotId && doctorId) {
         const claim = await prisma.doctorTimeSlot.updateMany({
-          where: { id: timeSlotId, status: "OPEN" },
+          where: { id: timeSlotId, doctorId, status: "OPEN" },
           data: { status: "HELD" },
         });
         if (claim.count === 0) {
