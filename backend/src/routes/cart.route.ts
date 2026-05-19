@@ -103,6 +103,12 @@ type CartItemView = {
   lineTotalCents: number;
   timeSlotId: string | null;
   doctorId: string | null;
+  /** Display-only doctor name (looked up at serialize time so the cart
+   *  / checkout UI can show "with Dr. X" without a second round-trip).
+   *  Null for product lines. Never trust this for authz. */
+  doctorName: string | null;
+  /** Display-only slot start ISO. Null for product lines. */
+  slotStartAt: string | null;
   /** ISO timestamp when this consultation slot reservation lapses.
    *  Null for product items. UI uses this for countdown display. */
   heldUntil: string | null;
@@ -141,6 +147,19 @@ const EMPTY_CART: CartView = {
   subtotalCents: 0,
   itemCount: 0,
 };
+
+/** One-shot: load the full cart + enrich consultation lines with
+ *  display-only doctor name + slot start, then serialize. Used by
+ *  every read/write endpoint so the response shape stays uniform. */
+async function serializeFreshCart(
+  cartId: string,
+  expiredHolds = 0,
+): Promise<CartView> {
+  const cart = await loadFullCart(cartId);
+  if (!cart) return { ...EMPTY_CART, expiredHolds };
+  const enrich = await enrichConsultationLines(cart.items);
+  return serializeCart(cart, expiredHolds, enrich);
+}
 
 // ── Cart resolver ────────────────────────────────────────────────────
 async function resolveActiveCart(
@@ -208,6 +227,42 @@ async function loadFullCart(cartId: string) {
     where: { id: cartId },
     include: { items: { orderBy: { createdAt: "asc" } } },
   });
+}
+
+/**
+ * Best-effort lookup of doctor names + slot start times for the
+ * consultation lines in a cart. Used purely for display on the cart +
+ * checkout pages — never trust this for authorization. Failures fall
+ * back to nulls so a missing doctor row (e.g. recently deactivated)
+ * doesn't blow up the cart endpoint.
+ */
+async function enrichConsultationLines(items: { doctorId: string | null; timeSlotId: string | null }[]) {
+  const doctorIds = Array.from(
+    new Set(items.map((i) => i.doctorId).filter((id): id is string => Boolean(id))),
+  );
+  const slotIds = Array.from(
+    new Set(items.map((i) => i.timeSlotId).filter((id): id is string => Boolean(id))),
+  );
+  if (doctorIds.length === 0 && slotIds.length === 0) {
+    return { doctorById: new Map<string, string>(), slotById: new Map<string, Date>() };
+  }
+  const [doctors, slots] = await Promise.all([
+    doctorIds.length
+      ? prisma.doctor.findMany({
+          where: { id: { in: doctorIds } },
+          select: { id: true, fullName: true },
+        })
+      : Promise.resolve([]),
+    slotIds.length
+      ? prisma.doctorTimeSlot.findMany({
+          where: { id: { in: slotIds } },
+          select: { id: true, startAt: true },
+        })
+      : Promise.resolve([]),
+  ]);
+  const doctorById = new Map(doctors.map((d) => [d.id, d.fullName]));
+  const slotById = new Map(slots.map((s) => [s.id, s.startAt]));
+  return { doctorById, slotById };
 }
 
 /**
@@ -374,12 +429,17 @@ async function mergeCarts(sourceId: string, targetId: string) {
 function serializeCart(
   cart: Awaited<ReturnType<typeof loadFullCart>>,
   expiredHolds = 0,
+  enrich?: {
+    doctorById: Map<string, string>;
+    slotById: Map<string, Date>;
+  },
 ): CartView {
   if (!cart) return { ...EMPTY_CART, expiredHolds };
   const items: CartItemView[] = cart.items.map((i) => {
     const isConsultationLine =
       i.kind === CartItemKind.GENERAL_CONSULTATION ||
       i.kind === CartItemKind.SPECIALIST_CONSULTATION;
+    const slot = i.timeSlotId ? enrich?.slotById.get(i.timeSlotId) : undefined;
     return {
       id: i.id,
       kind: i.kind,
@@ -392,6 +452,8 @@ function serializeCart(
       lineTotalCents: i.unitPriceCents * i.quantity,
       timeSlotId: i.timeSlotId,
       doctorId: i.doctorId,
+      doctorName: i.doctorId ? enrich?.doctorById.get(i.doctorId) ?? null : null,
+      slotStartAt: slot ? slot.toISOString() : null,
       heldUntil: i.heldUntil ? i.heldUntil.toISOString() : null,
       patient: isConsultationLine
         ? {
@@ -438,8 +500,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       const { cart } = await resolveActiveCart(request, reply);
       if (!cart) return okResponse(serializeCart(null));
       const expired = await sweepExpiredHolds(cart.id);
-      const refreshed = expired > 0 ? await loadFullCart(cart.id) : cart;
-      return okResponse(serializeCart(refreshed, expired));
+      return okResponse(await serializeFreshCart(cart.id, expired));
     } catch (err) {
       if (err instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(err.message));
@@ -634,8 +695,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             where: { id: existing.id },
             data: { quantity: Math.min(existing.quantity + qty, 5) },
           });
-          const refreshed = await loadFullCart(cart.id);
-          return okResponse(serializeCart(refreshed));
+          return okResponse(await serializeFreshCart(cart.id));
         }
       } else {
         // Consultation must have timeSlotId
@@ -718,8 +778,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         throw err;
       }
 
-      const refreshed = await loadFullCart(cart.id);
-      return okResponse(serializeCart(refreshed));
+      return okResponse(await serializeFreshCart(cart.id));
     },
   );
 
@@ -759,8 +818,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         where: { id: item.id },
         data: { quantity: body.data.quantity },
       });
-      const refreshed = await loadFullCart(sweptCart.id);
-      return okResponse(serializeCart(refreshed, expired));
+      return okResponse(await serializeFreshCart(sweptCart.id, expired));
     },
   );
 
@@ -780,7 +838,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       const item = sweptCart.items.find((i) => i.id === params.data.itemId);
       // If sweep already removed this item we still report a clean cart
       if (!item) {
-        return okResponse(serializeCart(sweptCart, expired));
+        return okResponse(await serializeFreshCart(sweptCart.id, expired));
       }
 
       await prisma.cartItem.delete({ where: { id: item.id } });
@@ -802,8 +860,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         });
       }
 
-      const refreshed = await loadFullCart(sweptCart.id);
-      return okResponse(serializeCart(refreshed, expired));
+      return okResponse(await serializeFreshCart(sweptCart.id, expired));
     },
   );
 

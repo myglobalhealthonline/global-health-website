@@ -19,6 +19,11 @@ export type CartItem = {
   lineTotalCents: number;
   timeSlotId: string | null;
   doctorId: string | null;
+  /** Display-only doctor name resolved by the backend at serialize
+   *  time. Null for product items or when the doctor row was deleted. */
+  doctorName: string | null;
+  /** Display-only slot start ISO. Null for product items. */
+  slotStartAt: string | null;
   /** ISO timestamp when this consultation slot reservation lapses.
    *  Null for product items. UI polls this and shows a countdown. */
   heldUntil: string | null;

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
 import { formatPrice } from "@/lib/format-currency";
+import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import { CART_ITEM_MAX_QTY } from "@/lib/api/cart-types";
 
 /** Live "Xm Ys" countdown until a consultation slot hold expires. */
@@ -237,6 +238,38 @@ function CartItemRow({
           {" · "}
           {formatPrice(item.unitPriceCents, currency)} each
         </p>
+        {/* Consultation lines: doctor + slot + patient identity so the
+            buyer can scan the cart and confirm what they're paying for
+            without leaving the page. */}
+        {isConsult ? (
+          <div className="mt-1.5 space-y-0.5 text-xs text-slate-600">
+            {item.doctorName ? (
+              <p>
+                <span className="text-slate-500">Doctor:</span>{" "}
+                <span className="font-semibold text-slate-700">{item.doctorName}</span>
+              </p>
+            ) : null}
+            {item.slotStartAt ? (
+              <p>
+                <span className="text-slate-500">When:</span>{" "}
+                <span className="font-semibold text-slate-700">
+                  {formatAppDateTimeShort(item.slotStartAt)}
+                </span>
+              </p>
+            ) : null}
+            {item.patient?.fullName ? (
+              <p>
+                <span className="text-slate-500">Patient:</span>{" "}
+                <span className="font-semibold text-slate-700">{item.patient.fullName}</span>
+                {item.patient.bookingForOther ? (
+                  <span className="ml-1 inline-flex items-center rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+                    Booked for them
+                  </span>
+                ) : null}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
         {/* Consultation hold countdown */}
         {isConsult && countdown ? (
           <p
