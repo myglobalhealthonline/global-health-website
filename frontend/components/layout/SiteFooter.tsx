@@ -12,28 +12,66 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { countries } from "@/data/countries";
-import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
+import {
+  COUNTRY_CODE_TO_SLUG,
+  countryCodeFromSlug,
+} from "@/lib/routing/country-slug";
 import { parseSitePath } from "@/lib/routing/path-rewrites";
 import { NewsletterSignup } from "./NewsletterSignup";
 
-export function SiteFooter({ siteName }: { siteName: string }) {
+export function SiteFooter({
+  siteName,
+  countryFeatures,
+}: {
+  siteName: string;
+  /** Code → enabled feature slugs (same shape SiteHeader receives).
+   *  Used to gate Prescriptions / Health tests links so the footer
+   *  doesn't expose pages the country has toggled off — those pages
+   *  hard-404, which used to look like broken footer links. */
+  countryFeatures?: Record<string, string[] | undefined>;
+}) {
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
   const year = new Date().getFullYear();
 
   const careBase =
     parsed.country && parsed.lang ? `/${parsed.country}/${parsed.lang}` : null;
+  // Resolve the active country's enabled feature list so we can hide
+  // Care entries the admin has disabled. Outside a country (`careBase`
+  // is null) we still render the labels — they fall through to the
+  // entry gate at "/" where the user picks a country.
+  const activeCountryCode = parsed.country
+    ? countryCodeFromSlug(parsed.country)
+    : null;
+  const activeFeatures = activeCountryCode
+    ? countryFeatures?.[activeCountryCode]
+    : undefined;
+  const isFeatureEnabled = (slug: string) => {
+    if (!careBase) return true; // pre-country: keep links so the gate can route
+    if (!activeFeatures) return true; // no toggle data → assume on (legacy default)
+    return activeFeatures.includes(slug);
+  };
   // Cart-first booking: footer "Book consultation" entry now lands on
   // the GP catalogue (service-first); /book-online stays as a fallback
   // path but isn't surfaced from the footer.
   const careLinks = [
-    { label: "Book consultation", href: careBase ? `${careBase}/general-consultation` : "/" },
-    { label: "GP consultation", href: careBase ? `${careBase}/general-consultation` : "/" },
-    { label: "Specialist consultation", href: careBase ? `${careBase}/specialist-consultation` : "/" },
-    { label: "Prescriptions", href: careBase ? `${careBase}/prescriptions` : "/" },
-    { label: "Health tests", href: careBase ? `${careBase}/tests` : "/" },
+    isFeatureEnabled("general-consultations")
+      ? { label: "Book consultation", href: careBase ? `${careBase}/general-consultation` : "/" }
+      : null,
+    isFeatureEnabled("general-consultations")
+      ? { label: "GP consultation", href: careBase ? `${careBase}/general-consultation` : "/" }
+      : null,
+    isFeatureEnabled("specialist-consultations")
+      ? { label: "Specialist consultation", href: careBase ? `${careBase}/specialist-consultation` : "/" }
+      : null,
+    isFeatureEnabled("online-prescriptions")
+      ? { label: "Prescriptions", href: careBase ? `${careBase}/prescriptions` : "/" }
+      : null,
+    isFeatureEnabled("health-tests")
+      ? { label: "Health tests", href: careBase ? `${careBase}/tests` : "/" }
+      : null,
     { label: "Our doctors", href: careBase ? `${careBase}/doctors` : "/" },
-  ];
+  ].filter((x): x is { label: string; href: string } => x !== null);
 
   const clinicsLinks = countries.map((c) => ({
     label: c.name,

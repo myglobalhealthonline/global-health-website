@@ -45,7 +45,9 @@ export function SiteChrome({
       <main id="main-content" className="grow">
         {children}
       </main>
-      {isGatewayHome ? null : <SiteFooter siteName={siteName} />}
+      {isGatewayHome ? null : (
+        <SiteFooter siteName={siteName} countryFeatures={countryFeatures} />
+      )}
     </>
   );
 }

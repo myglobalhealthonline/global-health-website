@@ -168,9 +168,18 @@ export function ConsultationBookingForm({
     );
   }
 
+  // Form is uncontrolled (defaultValue inputs), so the field defaults
+  // are captured at mount. `/api/auth/me` resolves async — without a
+  // key that flips when auth lands, a signed-in patient who renders
+  // the form before the fetch returns keeps blank fields until they
+  // toggle "Booking for someone else" or refresh. Including the user
+  // identity in the key forces a clean remount once auth resolves so
+  // the prefilled defaults actually appear.
+  const formKey = `${bookingForOther ? "other" : "self"}:${me?.id ?? (authLoaded ? "guest" : "loading")}`;
+
   return (
     <form
-      key={bookingForOther ? "other" : "self"}
+      key={formKey}
       onSubmit={onSubmit}
       className="mt-6 grid gap-6"
     >
