@@ -49,10 +49,13 @@ function isSessionRole(value: unknown): value is SessionRole {
 async function resolveSession(request: NextRequest): Promise<SessionLookup> {
   const key = getJwtSecretKey();
   if (!key) {
-    // Without the secret we can't verify anything. Returning "no role"
-    // would silently redirect every authenticated nav to /login — a
-    // confusing outage when the real cause is a missing env var.
-    // Surface it as a 503 instead so ops sees the misconfig.
+    // The edge check is only an optimization. When the frontend env
+    // lacks AUTH_JWT_SECRET, fall back to the server-side auth fetches
+    // used by the layouts/pages instead of hard-failing navigation.
+    //
+    // This keeps logout and role-gated redirects working even if only
+    // the frontend service is missing the secret, while the backend
+    // remains the source of truth for the actual session.
     return { kind: "misconfigured" };
   }
   const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
@@ -69,13 +72,6 @@ async function resolveSession(request: NextRequest): Promise<SessionLookup> {
   } catch {
     return { kind: "ok", role: null };
   }
-}
-
-function misconfiguredResponse() {
-  return new NextResponse(
-    "Auth verification is not configured: AUTH_JWT_SECRET is missing.",
-    { status: 503, headers: { "content-type": "text/plain; charset=utf-8" } },
-  );
 }
 
 function normalizeNextPath(pathname: string) {
@@ -97,7 +93,7 @@ export async function proxy(request: NextRequest) {
 
   if (pathname === "/account" || pathname.startsWith("/account/")) {
     const session = await resolveSession(request);
-    if (session.kind === "misconfigured") return misconfiguredResponse();
+    if (session.kind === "misconfigured") return NextResponse.next();
     const role = session.role;
     if (role === "DOCTOR") {
       const doctorUrl = request.nextUrl.clone();
@@ -122,7 +118,7 @@ export async function proxy(request: NextRequest) {
 
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     const session = await resolveSession(request);
-    if (session.kind === "misconfigured") return misconfiguredResponse();
+    if (session.kind === "misconfigured") return NextResponse.next();
     const role = session.role;
     if (role === "ADMIN") {
       // continue
@@ -147,7 +143,7 @@ export async function proxy(request: NextRequest) {
 
   if (pathname === "/doctor" || pathname.startsWith("/doctor/")) {
     const session = await resolveSession(request);
-    if (session.kind === "misconfigured") return misconfiguredResponse();
+    if (session.kind === "misconfigured") return NextResponse.next();
     const role = session.role;
     if (role === "DOCTOR") {
       // continue
