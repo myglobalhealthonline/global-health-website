@@ -126,7 +126,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   // doctor card; we filter the country's GENERAL + SPECIALIST service
   // pool to that set so the patient sees one card per bookable service.
   const code = countryCodeFromSlug(slug);
-  let assignedServices: Array<{
+  const assignedServices: Array<{
     id: string;
     slug: string;
     name: string;

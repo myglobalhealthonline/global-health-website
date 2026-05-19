@@ -45,6 +45,11 @@ export default async function AccountOverviewPage() {
   const payments = payRes.ok ? payRes.data.items : [];
 
   // ── Stat counts ────────────────────────────────────────────────────
+  // Server component — `Date.now()` is evaluated once per request, not
+  // during a client re-render. The react-hooks/purity lint rule fires
+  // because it can't tell server from client, but for an SSR-only page
+  // this is fine. (If this file ever becomes "use client", revisit.)
+  // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
   const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
 

@@ -49,8 +49,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
+  // Mount-time data fetch: the cart cookie was set server-side but
+  // we need to hydrate items + countdown state into client React.
+  // The lint rule warns because refresh() eventually calls setCart()
+  // inside the effect — that's intentional here (synchronizing
+  // client state with the server response, no cascading render
+  // problem). Disable the strict rule rather than restructure.
   useEffect(() => {
-    void refresh();
+    void refresh(); // eslint-disable-line react-hooks/set-state-in-effect
   }, [refresh]);
 
   const add = useCallback<CartContextValue["add"]>(async (input) => {

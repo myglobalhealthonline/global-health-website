@@ -45,10 +45,15 @@ export default function CartPage() {
   const countryHome = countrySlug && lang ? `/${countrySlug}/${lang}` : "/";
   const checkoutHref = countrySlug && lang ? `/${countrySlug}/${lang}/checkout` : "/checkout";
 
-  // Show "slot expired" banner when server tells us it swept reservations
+  // Show "slot expired" banner when server tells us it swept
+  // reservations. The setState is conditional on a derived server
+  // value, so a re-render won't loop (next render sees the new
+  // `expiredFlash` but the cart.expiredHolds dep stays the same
+  // until another sweep). The strict lint rule can't infer that —
+  // disable rather than restructure.
   useEffect(() => {
     if (cart.expiredHolds && cart.expiredHolds > 0) {
-      setExpiredFlash(cart.expiredHolds);
+      setExpiredFlash(cart.expiredHolds); // eslint-disable-line react-hooks/set-state-in-effect
     }
   }, [cart.expiredHolds]);
 

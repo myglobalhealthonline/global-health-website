@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { AdminCountryDto, AdminServiceDto, AdminServiceKind, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
 import { ManagedImageField } from "../../_components/managed-image-field";
 import { MultiImageField } from "../../_components/multi-image-field";
@@ -216,12 +217,12 @@ export function ServiceFields({
           <p className="text-[12px] text-[var(--color-text-muted)]">
             No doctors are listed in this country yet. Create or assign one
             under{" "}
-            <a
+            <Link
               href="/admin/doctors"
               className="font-semibold text-[var(--color-brand-primary)] underline-offset-2 hover:underline"
             >
               Doctors
-            </a>
+            </Link>
             .
           </p>
         ) : (
