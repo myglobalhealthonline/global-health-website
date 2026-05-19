@@ -40,10 +40,15 @@ export type CheckoutSessionSuccess = {
   sessionId: string;
 };
 
-/** Create a Stripe Checkout Session for a booking. The frontend then sets
- *  `window.location = url` to hand the user off to Stripe. */
+/** Create a Stripe Checkout Session for a booking. The frontend then
+ *  sets `window.location = url` to hand the user off to Stripe.
+ *
+ *  `email` proves the caller actually booked the appointment — backend
+ *  refuses if it doesn't match the row, so guessable appointment IDs
+ *  alone can't mint a Stripe URL. */
 export async function createCheckoutSession(input: {
   appointmentId: string;
+  email: string;
   returnTo?: string;
 }) {
   return apiRequest<CheckoutSessionSuccess>("/api/payments/checkout-session", {

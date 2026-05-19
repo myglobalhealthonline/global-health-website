@@ -172,6 +172,9 @@ export function BookingFormTemplate({
       const returnTo = typeof window !== "undefined" ? window.location.pathname : "/";
       const checkout = await createCheckoutSession({
         appointmentId: result.data.appointmentId,
+        // Backend matches this against the saved appointment row —
+        // proves the requester is the patient who just booked.
+        email: payload.email,
         returnTo,
       });
       if (checkout.ok && checkout.data.url) {

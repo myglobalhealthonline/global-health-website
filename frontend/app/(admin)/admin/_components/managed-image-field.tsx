@@ -3,12 +3,14 @@
 import { useRef, useState } from "react";
 import { Upload, X } from "lucide-react";
 
+// SVG removed: backend rejects them (stored-XSS risk via <script>
+// inside an SVG that /api/media/* would echo back with the original
+// content-type). Keep the picker honest by not advertising support.
 const ALLOWED_TYPES = new Set([
   "image/jpeg",
   "image/png",
   "image/webp",
   "image/gif",
-  "image/svg+xml",
   "image/avif",
 ]);
 
@@ -55,7 +57,7 @@ export function ManagedImageField({
       return;
     }
     if (!ALLOWED_TYPES.has(file.type)) {
-      setMsg("Unsupported file type. Use JPEG, PNG, WebP, GIF, SVG, or AVIF.");
+      setMsg("Unsupported file type. Use JPEG, PNG, WebP, GIF, or AVIF.");
       return;
     }
 
@@ -237,7 +239,7 @@ export function ManagedImageField({
                 {busy ? "Uploading…" : "Drag & drop an image here"}
               </p>
               <p className="m-0 mt-1 text-[12px]">
-                {hint ?? "JPEG, PNG, WebP, GIF, SVG, AVIF · max 5 MB"}
+                {hint ?? "JPEG, PNG, WebP, GIF, AVIF · max 5 MB"}
               </p>
               <button
                 type="button"
@@ -286,7 +288,7 @@ export function ManagedImageField({
       <input
         ref={fileRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif"
+        accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
         className="sr-only"
         disabled={busy}
         onChange={onFileSelected}

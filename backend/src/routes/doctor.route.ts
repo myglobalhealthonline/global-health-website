@@ -4,6 +4,7 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { sanitizeRichHtml } from "../utils/sanitize-html.js";
 
 /**
  * Doctor portal API. Every endpoint here is scoped to the logged-in
@@ -333,7 +334,9 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         where: { id: auth.doctorId },
         data: {
           ...(body.data.fullName !== undefined && { fullName: body.data.fullName }),
-          ...(body.data.bio !== undefined && { bio: body.data.bio }),
+          ...(body.data.bio !== undefined && {
+            bio: sanitizeRichHtml(body.data.bio),
+          }),
           ...(body.data.qualifications !== undefined && {
             qualifications: body.data.qualifications,
           }),

@@ -6,6 +6,7 @@ import type {
   AdminPagesQuery,
 } from "../../validations/admin-pages.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
 
 export class PageCountryNotFoundError extends Error {
   constructor() {
@@ -137,7 +138,9 @@ export async function createAdminPage(input: AdminPageCreateBody): Promise<Admin
         locale: input.locale,
         status: input.status ?? PublishStatus.DRAFT,
         title: input.title,
-        body: input.body,
+        // ContentPage.body is NOT NULL — fall back to "" if the
+        // sanitizer strips the input down to nothing.
+        body: sanitizeRichHtml(input.body) ?? "",
         heroTitle: input.heroTitle ?? null,
         heroSubtitle: input.heroSubtitle ?? null,
         heroImageAssetId: input.heroImageAssetId ?? null,
@@ -183,7 +186,11 @@ export async function updateAdminPage(
         ...(body.locale !== undefined && { locale: body.locale }),
         ...(body.status !== undefined && { status: body.status }),
         ...(body.title !== undefined && { title: body.title }),
-        ...(body.body !== undefined && { body: body.body }),
+        ...(body.body !== undefined && {
+          // ContentPage.body is NOT NULL — coalesce to "" when the
+          // sanitizer drops everything.
+          body: sanitizeRichHtml(body.body) ?? "",
+        }),
         ...(body.heroTitle !== undefined && { heroTitle: body.heroTitle }),
         ...(body.heroSubtitle !== undefined && { heroSubtitle: body.heroSubtitle }),
         ...(body.heroImageAssetId !== undefined && { heroImageAssetId: body.heroImageAssetId }),

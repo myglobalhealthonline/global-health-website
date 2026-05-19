@@ -26,3 +26,10 @@
 backend-dev*.log
 frontend-dev*.log
 *.log
+
+# ad-hoc local artifacts — manual API test cookie jars, screenshot
+# dumps, preview HTML drops. Never commit credentials by accident.
+.tmp-*
+**/.tmp-*
+preview-*.html
+preview-*.html.artifact.json

@@ -3,12 +3,14 @@
 import { useRef, useState } from "react";
 import { Plus, Trash2, Upload } from "lucide-react";
 
+// SVG removed: backend rejects them (stored-XSS risk via <script>
+// inside an SVG that /api/media/* would echo back with the original
+// content-type). Keep the picker honest by not advertising support.
 const ALLOWED_TYPES = new Set([
   "image/jpeg",
   "image/png",
   "image/webp",
   "image/gif",
-  "image/svg+xml",
   "image/avif",
 ]);
 
@@ -78,7 +80,7 @@ export function MultiImageField({
       return;
     }
     if (!ALLOWED_TYPES.has(file.type)) {
-      setMsg("Unsupported file type. Use JPEG, PNG, WebP, GIF, SVG, or AVIF.");
+      setMsg("Unsupported file type. Use JPEG, PNG, WebP, GIF, or AVIF.");
       return;
     }
     setBusyIndex(index);
@@ -157,7 +159,7 @@ export function MultiImageField({
               Add an image
             </span>
             <span className="text-[11px]">
-              JPEG / PNG / WebP / GIF / SVG / AVIF · max 5 MB each
+              JPEG / PNG / WebP / GIF / AVIF · max 5 MB each
             </span>
           </div>
         </button>
@@ -182,7 +184,7 @@ export function MultiImageField({
                     inputRefs.current[index] = el;
                   }}
                   type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif"
+                  accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
                   className="sr-only"
                   disabled={busy}
                   onChange={(e) => {

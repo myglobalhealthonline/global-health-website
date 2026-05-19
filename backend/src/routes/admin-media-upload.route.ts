@@ -6,12 +6,17 @@ import { sanitizeOriginalFilename } from "../utils/media-key.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
+// SVG is intentionally excluded. SVGs are XML and can carry inline
+// <script> tags or onload attributes; serving them back from /api/media/*
+// would execute that script in the patient's browser (stored XSS).
+// If we ever want to ship SVG support, run files through a sanitizer
+// (e.g. DOMPurify with the SVG profile) and serve them with a strict
+// Content-Security-Policy that forbids inline script.
 const ALLOWED_MIME = new Set([
   "image/jpeg",
   "image/png",
   "image/webp",
   "image/gif",
-  "image/svg+xml",
   "image/avif",
 ]);
 

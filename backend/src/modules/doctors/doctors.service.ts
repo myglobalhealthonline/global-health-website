@@ -6,6 +6,7 @@ import type {
   AdminDoctorsQuery,
 } from "../../validations/admin-doctors.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
 
 export class DoctorCountryNotFoundError extends Error {
   constructor() {
@@ -410,7 +411,7 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
           slug: input.slug,
           fullName: input.fullName,
           title: input.title,
-          bio: input.bio ?? null,
+          bio: sanitizeRichHtml(input.bio),
           imcRegistration: input.imcRegistration ?? null,
           medicalRegistrationUrl: input.medicalRegistrationUrl ?? null,
           qualifications: input.qualifications ?? [],
@@ -505,7 +506,7 @@ export async function updateAdminDoctor(
           ...(body.slug !== undefined && { slug: body.slug }),
           ...(body.fullName !== undefined && { fullName: body.fullName }),
           ...(body.title !== undefined && { title: body.title }),
-          ...(body.bio !== undefined && { bio: body.bio }),
+          ...(body.bio !== undefined && { bio: sanitizeRichHtml(body.bio) }),
           ...(body.imcRegistration !== undefined && { imcRegistration: body.imcRegistration }),
           ...(body.medicalRegistrationUrl !== undefined && { medicalRegistrationUrl: body.medicalRegistrationUrl }),
           ...(body.qualifications !== undefined && { qualifications: body.qualifications }),

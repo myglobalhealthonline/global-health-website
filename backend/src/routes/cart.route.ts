@@ -58,6 +58,9 @@ const updateItemBodySchema = z.object({
  *  auto-releases back to OPEN. Matches the typical "checkout in this
  *  window" UX so a single distracted patient can't hold a slot all day. */
 const HOLD_TTL_MS = 10 * 60 * 1000; // 10 minutes
+/** Max quantity per non-consultation product line. Matches the .max(5)
+ *  in the Zod body schemas above + the frontend CART_ITEM_MAX_QTY. */
+const CART_ITEM_MAX_QTY = 5;
 
 const itemIdParamSchema = z.object({ itemId: z.string().min(1).max(120) });
 
@@ -207,6 +210,36 @@ async function sweepExpiredHolds(cartId: string): Promise<number> {
   return expired.length;
 }
 
+/**
+ * Helper: release any HELD time slots the listed cart items were
+ * reserving, then delete the items themselves. Used when we discard a
+ * cart's items during merge — without this the slots stay HELD until
+ * heldUntil lapses, which can be 10 minutes of dead inventory per
+ * abandoned consultation.
+ */
+async function releaseHeldSlotsForItems(
+  items: { id: string; timeSlotId: string | null }[],
+) {
+  const slotIds = items
+    .map((i) => i.timeSlotId)
+    .filter((id): id is string => typeof id === "string" && id.length > 0);
+  const itemIds = items.map((i) => i.id);
+  if (slotIds.length === 0 && itemIds.length === 0) return;
+  await prisma.$transaction([
+    ...(slotIds.length
+      ? [
+          prisma.doctorTimeSlot.updateMany({
+            where: { id: { in: slotIds }, status: "HELD" },
+            data: { status: "OPEN" },
+          }),
+        ]
+      : []),
+    ...(itemIds.length
+      ? [prisma.cartItem.deleteMany({ where: { id: { in: itemIds } } })]
+      : []),
+  ]);
+}
+
 async function mergeCarts(sourceId: string, targetId: string) {
   const target = await prisma.cart.findUnique({
     where: { id: targetId },
@@ -232,23 +265,41 @@ async function mergeCarts(sourceId: string, targetId: string) {
 
   // If target already has items from a different country, drop the
   // source items rather than mix currencies. Patient can re-add later.
+  // CRITICAL: release HELD consultation slots before deleting the
+  // source cart — otherwise those time slots stay locked until
+  // `heldUntil` ticks down to zero (~10 minutes), blocking other
+  // patients from booking the same time.
   if (target.countryCode && source.countryCode !== target.countryCode) {
+    await releaseHeldSlotsForItems(source.items);
     await prisma.cart.delete({ where: { id: sourceId } });
     return;
   }
 
-  // Move source items to target
+  // Move source items to target.
+  // Consultations are 1-per-line + carry a heldUntil reservation. They
+  // never dupe-merge — each booked slot is its own line. Products
+  // (HEALTH_TEST, PRESCRIPTION_SERVICE) dupe-merge by underlying id,
+  // capped at CART_ITEM_MAX_QTY (matches /items POST).
   for (const item of source.items) {
-    // De-dupe by (healthTestId | serviceId) — bump qty instead of creating duplicate
-    const dupe = target.items.find(
-      (t) =>
-        (item.healthTestId && t.healthTestId === item.healthTestId) ||
-        (item.serviceId && t.serviceId === item.serviceId),
-    );
+    const isConsultation =
+      item.kind === "GENERAL_CONSULTATION" ||
+      item.kind === "SPECIALIST_CONSULTATION";
+
+    const dupe = isConsultation
+      ? undefined
+      : target.items.find(
+          (t) =>
+            (item.healthTestId && t.healthTestId === item.healthTestId) ||
+            (item.serviceId && t.serviceId === item.serviceId),
+        );
     if (dupe) {
+      const merged = Math.min(
+        dupe.quantity + item.quantity,
+        CART_ITEM_MAX_QTY,
+      );
       await prisma.cartItem.update({
         where: { id: dupe.id },
-        data: { quantity: dupe.quantity + item.quantity },
+        data: { quantity: merged },
       });
     } else {
       await prisma.cartItem.create({
@@ -259,9 +310,15 @@ async function mergeCarts(sourceId: string, targetId: string) {
           serviceId: item.serviceId,
           name: item.name,
           unitPriceCents: item.unitPriceCents,
+          // Snapshot the per-unit shipping fee too — without this the
+          // checkout total drops the shipping line on merged items.
+          shippingCents: item.shippingCents ?? 0,
           quantity: item.quantity,
           timeSlotId: item.timeSlotId,
           doctorId: item.doctorId,
+          // Consultation lines carry the reservation deadline — drop
+          // it onto the new row so sweep + countdown keep working.
+          heldUntil: item.heldUntil,
         },
       });
     }

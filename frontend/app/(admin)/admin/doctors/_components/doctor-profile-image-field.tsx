@@ -140,7 +140,7 @@ export function DoctorProfileImageField({ initialPath, formId, fullName }: Props
       <input
         ref={fileRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,image/avif"
+        accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
         className="sr-only"
         disabled={busy}
         onChange={onFileSelected}

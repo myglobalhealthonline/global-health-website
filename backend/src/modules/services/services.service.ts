@@ -8,6 +8,7 @@ import type {
   AdminServicesQuery,
 } from "../../validations/admin-services.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
 
 export class ServiceCountryNotFoundError extends Error {
   constructor() {
@@ -608,7 +609,9 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
         ...(input.summary !== undefined && { summary: input.summary }),
         ...(input.heroTitle !== undefined && { heroTitle: input.heroTitle }),
         ...(input.heroDescription !== undefined && { heroDescription: input.heroDescription }),
-        ...(input.detailBody !== undefined && { detailBody: input.detailBody }),
+        ...(input.detailBody !== undefined && {
+          detailBody: sanitizeRichHtml(input.detailBody),
+        }),
         ...(input.ctaLabel !== undefined && { ctaLabel: input.ctaLabel }),
         ...(input.legacyPath !== undefined && { legacyPath: input.legacyPath }),
         ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
@@ -681,7 +684,9 @@ export async function updateAdminService(
         ...(body.summary !== undefined && { summary: body.summary }),
         ...(body.heroTitle !== undefined && { heroTitle: body.heroTitle }),
         ...(body.heroDescription !== undefined && { heroDescription: body.heroDescription }),
-        ...(body.detailBody !== undefined && { detailBody: body.detailBody }),
+        ...(body.detailBody !== undefined && {
+          detailBody: sanitizeRichHtml(body.detailBody),
+        }),
         ...(body.ctaLabel !== undefined && { ctaLabel: body.ctaLabel }),
         ...(body.legacyPath !== undefined && { legacyPath: body.legacyPath }),
         ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),

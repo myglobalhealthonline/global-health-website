@@ -14,6 +14,11 @@ import { sendOrderConfirmationEmail } from "../lib/email/templates.js";
 
 const createCheckoutBodySchema = z.object({
   appointmentId: z.string().trim().min(8).max(40),
+  /** Patient email used at booking time. Required so an attacker
+   *  can't enumerate appointment IDs and harvest Stripe URLs that
+   *  expose the patient's email + amount. Compared
+   *  case-insensitively against the row's stored email. */
+  email: z.string().trim().toLowerCase().email("Invalid email"),
   /** Lang-aware base URL used to build success/cancel returns. */
   returnTo: z
     .string()
@@ -57,6 +62,17 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
         include: { service: true },
       });
       if (!appointment) {
+        return reply.status(404).send(errorResponse("Appointment not found"));
+      }
+      // Ownership proof — the caller has to know the email used at
+      // booking. Without this, anyone with a guessable appointmentId
+      // could mint a Stripe URL revealing the patient's email +
+      // amount. Returns a deliberately vague 404 so the endpoint
+      // doesn't leak which IDs exist.
+      if (
+        appointment.email.trim().toLowerCase() !==
+        body.data.email.trim().toLowerCase()
+      ) {
         return reply.status(404).send(errorResponse("Appointment not found"));
       }
       if (appointment.paymentStatus === PaymentStatus.PAID) {
@@ -255,19 +271,48 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
 
               // Decrement health-test stock. Null stock = unlimited (skip).
               // Uses `decrement` operator so it's race-safe at the DB level.
+              // We assert `count === 1` on each updateMany — if zero
+              // rows updated it means another paid order beat us to
+              // the inventory (or the row was deleted), and we log it
+              // as an oversell that ops needs to reconcile. We do NOT
+              // throw and abort the webhook tx: Stripe already took
+              // the patient's money, the order is PAID, and rolling
+              // back here would leave the payment without an order
+              // record. Better to record the discrepancy + ship the
+              // alert downstream.
               const healthTestItems = order.items.filter(
                 (i) => i.kind === "HEALTH_TEST" && i.healthTestId,
               );
               for (const item of healthTestItems) {
                 if (!item.healthTestId) continue;
                 try {
-                  await tx.healthTest.updateMany({
+                  const result = await tx.healthTest.updateMany({
                     where: {
                       id: item.healthTestId,
                       stock: { not: null, gte: item.quantity },
                     },
                     data: { stock: { decrement: item.quantity } },
                   });
+                  if (result.count !== 1) {
+                    // Either the test is null-stock (unlimited) or the
+                    // decrement was refused for lack of inventory.
+                    // Re-read the row to tell the difference.
+                    const fresh = await tx.healthTest.findUnique({
+                      where: { id: item.healthTestId },
+                      select: { stock: true },
+                    });
+                    if (fresh && fresh.stock !== null) {
+                      app.log.error(
+                        {
+                          orderId,
+                          healthTestId: item.healthTestId,
+                          requested: item.quantity,
+                          remaining: fresh.stock,
+                        },
+                        "OVERSELL: paid order item exceeds available stock — needs manual reconciliation",
+                      );
+                    }
+                  }
                 } catch (decErr) {
                   app.log.warn(
                     { err: decErr, healthTestId: item.healthTestId, qty: item.quantity },

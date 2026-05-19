@@ -27,7 +27,15 @@ const envSchema = z.object({
   ADMIN_TOKEN_FALLBACK_ENABLED: z
     .union([z.literal("true"), z.literal("false"), z.boolean()])
     .optional(),
-  AUTH_JWT_SECRET: z.string().trim().min(32, "AUTH_JWT_SECRET must be at least 32 characters").default("dev-only-change-this-auth-jwt-secret-min-32"),
+  // Default only kicks in for non-production runs (we re-check below
+   // and refuse to boot in production if the secret is missing or
+   // still the dev fallback). Prevents a misconfigured Railway service
+   // from silently signing tokens with a known string.
+  AUTH_JWT_SECRET: z
+    .string()
+    .trim()
+    .min(32, "AUTH_JWT_SECRET must be at least 32 characters")
+    .default("dev-only-change-this-auth-jwt-secret-min-32"),
   AUTH_COOKIE_NAME: z.string().trim().min(1).default("gh_auth"),
   AUTH_COOKIE_DOMAIN: z.string().trim().optional(),
   AUTH_JWT_EXPIRES_IN: z.string().trim().min(2).default("7d"),
@@ -68,6 +76,16 @@ const envSchema = z.object({
 });
 
 const parsed = envSchema.parse(mergeRailwayBucketAliases());
+
+// Hard-fail in production if the JWT secret is missing or still the
+// dev default. We can't rely on Zod alone because the default makes
+// the field "valid" at parse time.
+const DEV_JWT_FALLBACK = "dev-only-change-this-auth-jwt-secret-min-32";
+if (parsed.NODE_ENV === "production" && parsed.AUTH_JWT_SECRET === DEV_JWT_FALLBACK) {
+  throw new Error(
+    "AUTH_JWT_SECRET is the dev default in production. Set a real value (openssl rand -base64 48).",
+  );
+}
 
 const adminTokenFallbackEnabled =
   parsed.ADMIN_TOKEN_FALLBACK_ENABLED === undefined
