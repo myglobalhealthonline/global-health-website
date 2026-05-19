@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Playwright specs use the @playwright/test runner — not the
+    // app's tsconfig — so ESLint doesn't need to see them.
+    "tests/e2e/**",
   ]),
 ]);
 

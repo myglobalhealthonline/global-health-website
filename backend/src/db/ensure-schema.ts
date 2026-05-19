@@ -102,14 +102,52 @@ export async function ensureSchema(log: {
     max: 1,
   });
   try {
+    // Tracking table — records which patches have already run on this
+    // database, so subsequent boots skip the (still idempotent but
+    // wasteful) DDL roundtrip. Each patch runs at most once; the
+    // existing `IF NOT EXISTS` clauses inside the SQL stay as belt-
+    // and-braces in case the tracking row is missing or wiped.
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS "_EnsureSchemaPatches" (
+        "name"      TEXT PRIMARY KEY,
+        "appliedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    const applied = new Set<string>();
+    try {
+      const res = await pool.query<{ name: string }>(
+        `SELECT "name" FROM "_EnsureSchemaPatches"`,
+      );
+      for (const row of res.rows) applied.add(row.name);
+    } catch (err) {
+      log.error(
+        `[ensure-schema] could not read patch ledger — running all patches anyway — ${
+          err instanceof Error ? err.message : String(err)
+        }`,
+      );
+    }
+
+    let ran = 0;
+    let skipped = 0;
     for (const patch of PATCHES) {
+      if (applied.has(patch.name)) {
+        skipped += 1;
+        continue;
+      }
       try {
         await pool.query(patch.sql);
-        log.info(`[ensure-schema] applied/skipped: ${patch.name}`);
+        await pool.query(
+          `INSERT INTO "_EnsureSchemaPatches" ("name") VALUES ($1) ON CONFLICT ("name") DO NOTHING`,
+          [patch.name],
+        );
+        log.info(`[ensure-schema] applied: ${patch.name}`);
+        ran += 1;
       } catch (error) {
         // Log the failure but don't crash the server — the offending
         // query path can fail loudly later, and at least the rest of
-        // the app comes up.
+        // the app comes up. We deliberately DON'T record the patch as
+        // applied so the next boot retries.
         log.error(
           `[ensure-schema] failed: ${patch.name} — ${
             error instanceof Error ? error.message : String(error)
@@ -117,6 +155,7 @@ export async function ensureSchema(log: {
         );
       }
     }
+    log.info(`[ensure-schema] done — applied=${ran} skipped=${skipped}`);
   } finally {
     await pool.end();
   }

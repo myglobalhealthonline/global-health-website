@@ -1,7 +1,8 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { Edit3, Eye, Plus } from "lucide-react";
 import { fetchAdminCountries, purgeAdminCountry } from "@/lib/admin/admin-api";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { DeleteCountryButton } from "./_components/delete-country-button";
 import { FlagBadge } from "../_components/flag-badge";
 import {
@@ -35,6 +36,9 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
       redirect(`/admin/countries?error=${encodeURIComponent(deleteResult.message)}`);
     }
     revalidatePath("/admin/countries");
+    // Bust the public countries cache so the deleted country drops off
+    // the site header / country picker on next render.
+    revalidateTag(SITE_CACHE_TAGS.countries(), "max");
     redirect("/admin/countries?success=Country%20deleted");
   }
 

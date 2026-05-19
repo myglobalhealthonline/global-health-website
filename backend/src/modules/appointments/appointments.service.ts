@@ -103,53 +103,45 @@ export async function createAppointmentWithOptionalOwner(
             throw new DoctorNotAssignedToServiceError();
           }
         }
-        await tx.$executeRawUnsafe(
-          `
-            INSERT INTO "Appointment"
-              ("id", "userId", "countryCode", "consultationType", "fullName", "email", "phone", "dateOfBirth", "notes", "consentAccepted", "status", "consultationMode", "doctorId", "timeSlotId", "scheduledAt", "createdAt", "updatedAt")
-            VALUES
-              ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::"ConsultationMode", $13, $14, $15, NOW(), NOW())
-          `,
-          id,
-          options.userId ?? null,
-          input.country,
-          input.consultationType,
-          input.fullName,
-          input.email,
-          input.phone || null,
-          dob,
-          input.notes || null,
-          input.consentAccepted,
-          "REQUEST_RECEIVED",
-          "ONLINE",
-          claimed.doctorId,
-          input.timeSlotId,
-          claimed.startAt,
-        );
+        await tx.appointment.create({
+          data: {
+            id,
+            userId: options.userId ?? null,
+            countryCode: input.country,
+            consultationType: input.consultationType,
+            fullName: input.fullName,
+            email: input.email,
+            phone: input.phone || null,
+            dateOfBirth: dob,
+            notes: input.notes || null,
+            consentAccepted: input.consentAccepted,
+            status: "REQUEST_RECEIVED",
+            consultationMode: "ONLINE",
+            doctorId: claimed.doctorId,
+            timeSlotId: input.timeSlotId,
+            scheduledAt: claimed.startAt,
+          },
+        });
       });
       return { id, status: "REQUEST_RECEIVED" };
     }
 
-    await prisma.$executeRawUnsafe(
-      `
-        INSERT INTO "Appointment"
-          ("id", "userId", "countryCode", "consultationType", "fullName", "email", "phone", "dateOfBirth", "notes", "consentAccepted", "status", "consultationMode", "createdAt", "updatedAt")
-        VALUES
-          ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::"ConsultationMode", NOW(), NOW())
-      `,
-      id,
-      options.userId ?? null,
-      input.country,
-      input.consultationType,
-      input.fullName,
-      input.email,
-      input.phone || null,
-      dob,
-      input.notes || null,
-      input.consentAccepted,
-      "REQUEST_RECEIVED",
-      "ONLINE",
-    );
+    await prisma.appointment.create({
+      data: {
+        id,
+        userId: options.userId ?? null,
+        countryCode: input.country,
+        consultationType: input.consultationType,
+        fullName: input.fullName,
+        email: input.email,
+        phone: input.phone || null,
+        dateOfBirth: dob,
+        notes: input.notes || null,
+        consentAccepted: input.consentAccepted,
+        status: "REQUEST_RECEIVED",
+        consultationMode: "ONLINE",
+      },
+    });
 
     return { id, status: "REQUEST_RECEIVED" };
   } catch (error) {

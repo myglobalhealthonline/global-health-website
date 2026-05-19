@@ -87,9 +87,15 @@ if (parsed.NODE_ENV === "production" && parsed.AUTH_JWT_SECRET === DEV_JWT_FALLB
   );
 }
 
+// Default: ON only when NODE_ENV === "development". Anything else
+// (production, test, staging, preview…) must opt in via
+// ADMIN_TOKEN_FALLBACK_ENABLED=true. Previously the default was
+// "anything but production", which silently enabled the Bearer-token
+// admin bypass in staging / preview environments where the value
+// could be misconfigured.
 const adminTokenFallbackEnabled =
   parsed.ADMIN_TOKEN_FALLBACK_ENABLED === undefined
-    ? parsed.NODE_ENV !== "production"
+    ? parsed.NODE_ENV === "development"
     : parsed.ADMIN_TOKEN_FALLBACK_ENABLED === true || parsed.ADMIN_TOKEN_FALLBACK_ENABLED === "true";
 
 export const env = {

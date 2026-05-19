@@ -5,6 +5,7 @@ import {
   AuthInvalidCredentialsError,
   changeUserPassword,
   claimGuestAppointmentsForUser,
+  claimGuestOrdersForUser,
   consumeEmailVerificationToken,
   consumePasswordResetToken,
   deleteOwnAccount,
@@ -21,7 +22,7 @@ import {
   sendEmailVerificationEmail,
   sendPasswordResetEmail,
 } from "../lib/email/templates.js";
-import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { replyWithError } from "../utils/reply-error.js";
 import {
   changePasswordBodySchema,
   forgotPasswordBodySchema,
@@ -30,7 +31,8 @@ import {
   resetPasswordBodySchema,
 } from "../validations/auth.schema.js";
 import { env } from "../config/env.js";
-import { authCookieOptions, signAuthToken, verifyAuthToken } from "../utils/auth-session.js";
+import { authCookieOptions, signAuthToken } from "../utils/auth-session.js";
+import { requireAuth } from "../utils/require-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 const authRoute: FastifyPluginAsync = async (app) => {
@@ -51,6 +53,10 @@ const authRoute: FastifyPluginAsync = async (app) => {
       const claimed = await claimGuestAppointmentsForUser(user.id, user.email);
       if (claimed > 0) {
         app.log.info({ userId: user.id, claimed }, "Linked guest appointments on register");
+      }
+      const claimedOrders = await claimGuestOrdersForUser(user.id, user.email);
+      if (claimedOrders > 0) {
+        app.log.info({ userId: user.id, claimed: claimedOrders }, "Linked guest orders on register");
       }
 
       // Fire-and-forget verification email. Failures don't block signup —
@@ -74,11 +80,7 @@ const authRoute: FastifyPluginAsync = async (app) => {
       if (error instanceof AuthConflictError) {
         return reply.status(409).send(errorResponse(error.message));
       }
-      if (error instanceof DatabaseUnavailableError) {
-        return reply.status(503).send(errorResponse(error.message));
-      }
-      app.log.error(error);
-      return reply.status(500).send(errorResponse("Unexpected authentication error"));
+      return replyWithError(reply, app.log, error, "Unexpected authentication error");
     }
   });
 
@@ -107,17 +109,17 @@ const authRoute: FastifyPluginAsync = async (app) => {
       if (claimed > 0) {
         app.log.info({ userId: user.id, claimed }, "Linked guest appointments on login");
       }
+      const claimedOrders = await claimGuestOrdersForUser(user.id, user.email);
+      if (claimedOrders > 0) {
+        app.log.info({ userId: user.id, claimed: claimedOrders }, "Linked guest orders on login");
+      }
 
       return okResponse({ user }, "Logged in");
     } catch (error) {
       if (error instanceof AuthInvalidCredentialsError) {
         return reply.status(401).send(errorResponse(error.message));
       }
-      if (error instanceof DatabaseUnavailableError) {
-        return reply.status(503).send(errorResponse(error.message));
-      }
-      app.log.error(error);
-      return reply.status(500).send(errorResponse("Unexpected authentication error"));
+      return replyWithError(reply, app.log, error, "Unexpected authentication error");
     }
   });
 
@@ -137,15 +139,8 @@ const authRoute: FastifyPluginAsync = async (app) => {
       .transform((v) => (v === "" ? null : v)),
   });
 
-  app.patch("/api/auth/me", async (request, reply) => {
-    const token = request.cookies[env.AUTH_COOKIE_NAME];
-    if (!token) {
-      return reply.status(401).send(errorResponse("Not authenticated"));
-    }
-    const payload = verifyAuthToken(token);
-    if (!payload) {
-      return reply.status(401).send(errorResponse("Not authenticated"));
-    }
+  app.patch("/api/auth/me", { preHandler: requireAuth }, async (request, reply) => {
+    const payload = request.authUser!;
     const parsed = profilePatchSchema.safeParse(request.body);
     if (!parsed.success) {
       return reply.status(400).send(errorResponse("Invalid profile payload", parsed.error.flatten()));
@@ -154,23 +149,12 @@ const authRoute: FastifyPluginAsync = async (app) => {
       const user = await patchUserProfile(payload.sub, parsed.data);
       return okResponse({ user }, "Profile updated");
     } catch (error) {
-      if (error instanceof DatabaseUnavailableError) {
-        return reply.status(503).send(errorResponse(error.message));
-      }
-      app.log.error(error);
-      return reply.status(500).send(errorResponse("Could not update profile"));
+      return replyWithError(reply, app.log, error, "Could not update profile");
     }
   });
 
-  app.get("/api/auth/me", async (request, reply) => {
-    const token = request.cookies[env.AUTH_COOKIE_NAME];
-    if (!token) {
-      return reply.status(401).send(errorResponse("Not authenticated"));
-    }
-    const payload = verifyAuthToken(token);
-    if (!payload) {
-      return reply.status(401).send(errorResponse("Not authenticated"));
-    }
+  app.get("/api/auth/me", { preHandler: requireAuth }, async (request, reply) => {
+    const payload = request.authUser!;
     try {
       const user = await getSafeUserById(payload.sub);
       if (!user) {
@@ -179,11 +163,7 @@ const authRoute: FastifyPluginAsync = async (app) => {
       }
       return okResponse({ user });
     } catch (error) {
-      if (error instanceof DatabaseUnavailableError) {
-        return reply.status(503).send(errorResponse(error.message));
-      }
-      app.log.error(error);
-      return reply.status(500).send(errorResponse("Unexpected authentication error"));
+      return replyWithError(reply, app.log, error, "Unexpected authentication error");
     }
   });
 
@@ -198,9 +178,16 @@ const authRoute: FastifyPluginAsync = async (app) => {
     }
     // Never reveal whether the email exists (account-enumeration defense).
     // Always respond 200 with the same message regardless of lookup result.
-    try {
-      const user = await findUserByEmail(body.data.email);
-      if (user && user.isActive) {
+    //
+    // Token issuance + email dispatch run in the background so the
+    // response latency doesn't differ between "user exists" and "user
+    // missing" branches (closes the timing-side-channel that would
+    // otherwise leak account existence). The endpoint always responds
+    // 200 with the same message.
+    void (async () => {
+      try {
+        const user = await findUserByEmail(body.data.email);
+        if (!user || !user.isActive) return;
         const token = await issuePasswordResetToken(user.id);
         try {
           await sendPasswordResetEmail({
@@ -211,11 +198,10 @@ const authRoute: FastifyPluginAsync = async (app) => {
         } catch (emailError) {
           app.log.warn({ err: emailError, userId: user.id }, "Password reset email failed");
         }
+      } catch (error) {
+        app.log.warn({ err: error }, "Forgot-password lookup failed");
       }
-    } catch (error) {
-      // Swallow DB errors to avoid leaking signals — still respond 200.
-      app.log.warn({ err: error }, "Forgot-password lookup failed");
-    }
+    })();
     return okResponse(
       { accepted: true },
       "If an account exists for that email, password reset instructions are on the way.",
@@ -261,17 +247,17 @@ const authRoute: FastifyPluginAsync = async (app) => {
 
       return okResponse({ accepted: true }, "Password updated. You can sign in now.");
     } catch (error) {
-      if (error instanceof DatabaseUnavailableError) {
-        return reply.status(503).send(errorResponse(error.message));
-      }
-      app.log.error(error);
-      return reply.status(500).send(errorResponse("Could not reset password"));
+      return replyWithError(reply, app.log, error, "Could not reset password");
     }
   });
 
   // Verify the email-verification token sent on signup.
   const verifyEmailSchema = z.object({ token: z.string().trim().min(10).max(200) });
-  app.post("/api/auth/verify-email", async (request, reply) => {
+  app.post(
+    "/api/auth/verify-email",
+    // 20/hour/IP — covers typo-then-retry without enabling token-guessing.
+    { config: { rateLimit: { max: 20, timeWindow: "1 hour" } } },
+    async (request, reply) => {
     const body = verifyEmailSchema.safeParse(request.body);
     if (!body.success) {
       return reply.status(400).send(errorResponse("Invalid verify-email payload", body.error.flatten()));
@@ -283,22 +269,23 @@ const authRoute: FastifyPluginAsync = async (app) => {
       }
       return okResponse({ verified: true }, "Email verified");
     } catch (error) {
-      if (error instanceof DatabaseUnavailableError) {
-        return reply.status(503).send(errorResponse(error.message));
-      }
-      app.log.error(error);
-      return reply.status(500).send(errorResponse("Could not verify email"));
+      return replyWithError(reply, app.log, error, "Could not verify email");
     }
-  });
+  },
+  );
 
   // Authenticated password change — different from /reset-password (which
   // is for the forgot-flow). Requires the current password as a soft 2FA
   // step so a stolen cookie alone can't lock the user out.
-  app.post("/api/auth/change-password", async (request, reply) => {
-    const token = request.cookies[env.AUTH_COOKIE_NAME];
-    if (!token) return reply.status(401).send(errorResponse("Not authenticated"));
-    const payload = verifyAuthToken(token);
-    if (!payload) return reply.status(401).send(errorResponse("Not authenticated"));
+  app.post(
+    "/api/auth/change-password",
+    {
+      preHandler: requireAuth,
+      // 10/hour/user — defense against stolen-cookie rotation attempts.
+      config: { rateLimit: { max: 10, timeWindow: "1 hour" } },
+    },
+    async (request, reply) => {
+    const payload = request.authUser!;
 
     const body = changePasswordBodySchema.safeParse(request.body);
     if (!body.success) {
@@ -315,20 +302,20 @@ const authRoute: FastifyPluginAsync = async (app) => {
       if (error instanceof AuthInvalidCredentialsError) {
         return reply.status(400).send(errorResponse("Current password is incorrect"));
       }
-      if (error instanceof DatabaseUnavailableError) {
-        return reply.status(503).send(errorResponse(error.message));
-      }
-      app.log.error(error);
-      return reply.status(500).send(errorResponse("Could not change password"));
+      return replyWithError(reply, app.log, error, "Could not change password");
     }
   });
 
   // Allow logged-in users to request a fresh verification email.
-  app.post("/api/auth/resend-verification", async (request, reply) => {
-    const token = request.cookies[env.AUTH_COOKIE_NAME];
-    if (!token) return reply.status(401).send(errorResponse("Not authenticated"));
-    const payload = verifyAuthToken(token);
-    if (!payload) return reply.status(401).send(errorResponse("Not authenticated"));
+  app.post(
+    "/api/auth/resend-verification",
+    {
+      preHandler: requireAuth,
+      // 5/hour/user — protects the SendGrid quota.
+      config: { rateLimit: { max: 5, timeWindow: "1 hour" } },
+    },
+    async (request, reply) => {
+    const payload = request.authUser!;
     try {
       const user = await getSafeUserById(payload.sub);
       if (!user) return reply.status(401).send(errorResponse("Not authenticated"));
@@ -343,22 +330,16 @@ const authRoute: FastifyPluginAsync = async (app) => {
       });
       return okResponse({ accepted: true }, "Verification email sent");
     } catch (error) {
-      if (error instanceof DatabaseUnavailableError) {
-        return reply.status(503).send(errorResponse(error.message));
-      }
-      app.log.error(error);
-      return reply.status(500).send(errorResponse("Could not send verification email"));
+      return replyWithError(reply, app.log, error, "Could not send verification email");
     }
-  });
+  },
+  );
 
   // GDPR: dump everything we hold about the signed-in user as JSON.
   // Always served with Content-Disposition so the browser saves it as
   // a file rather than rendering it.
-  app.get("/api/auth/me/export", async (request, reply) => {
-    const token = request.cookies[env.AUTH_COOKIE_NAME];
-    if (!token) return reply.status(401).send(errorResponse("Not authenticated"));
-    const payload = verifyAuthToken(token);
-    if (!payload) return reply.status(401).send(errorResponse("Not authenticated"));
+  app.get("/api/auth/me/export", { preHandler: requireAuth }, async (request, reply) => {
+    const payload = request.authUser!;
     try {
       const data = await exportUserData(payload.sub);
       if (!data) return reply.status(404).send(errorResponse("Account not found"));
@@ -369,32 +350,21 @@ const authRoute: FastifyPluginAsync = async (app) => {
       reply.header("Content-Type", "application/json");
       return reply.send(data);
     } catch (error) {
-      if (error instanceof DatabaseUnavailableError) {
-        return reply.status(503).send(errorResponse(error.message));
-      }
-      app.log.error(error);
-      return reply.status(500).send(errorResponse("Could not export data"));
+      return replyWithError(reply, app.log, error, "Could not export data");
     }
   });
 
   // GDPR: soft-delete the signed-in user's account. PII is scrubbed but
   // booking history is preserved (regulatory / Stripe ledger). The
   // session cookie is cleared on success.
-  app.delete("/api/auth/me", async (request, reply) => {
-    const token = request.cookies[env.AUTH_COOKIE_NAME];
-    if (!token) return reply.status(401).send(errorResponse("Not authenticated"));
-    const payload = verifyAuthToken(token);
-    if (!payload) return reply.status(401).send(errorResponse("Not authenticated"));
+  app.delete("/api/auth/me", { preHandler: requireAuth }, async (request, reply) => {
+    const payload = request.authUser!;
     try {
       await deleteOwnAccount(payload.sub);
       reply.clearCookie(env.AUTH_COOKIE_NAME, authCookieOptions());
       return okResponse({ deleted: true }, "Account deleted");
     } catch (error) {
-      if (error instanceof DatabaseUnavailableError) {
-        return reply.status(503).send(errorResponse(error.message));
-      }
-      app.log.error(error);
-      return reply.status(500).send(errorResponse("Could not delete account"));
+      return replyWithError(reply, app.log, error, "Could not delete account");
     }
   });
 };

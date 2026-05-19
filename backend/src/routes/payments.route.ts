@@ -256,12 +256,21 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
             }
 
             // Mark paid + (if any consultation items) mint Appointments
-            await prisma.$transaction(async (tx) => {
+            const orderAlreadyPaid = await prisma.$transaction(async (tx) => {
               const order = await tx.order.findUnique({
                 where: { id: orderId },
                 include: { items: true },
               });
-              if (!order) return;
+              if (!order) return true;
+              // Idempotency gate: Stripe retries on 5xx, network blips, and
+              // duplicate-delivery sweeps. The appointment branch writes a
+              // `Payment` row keyed by `event.id` which the top-of-handler
+              // dedupe short-circuits on. The order branch never wrote one,
+              // so a retry used to re-decrement stock + re-send the email.
+              // Bail out as soon as we see the order is already PAID.
+              if (order.paymentStatus === "PAID" || order.status === "PAID") {
+                return true;
+              }
 
               const consultationItems = order.items.filter(
                 (i) =>
@@ -400,7 +409,14 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                   appointmentIds,
                 },
               });
+              return false;
             });
+
+            // Skip the email + return when this was a Stripe retry of an
+            // already-paid order. Prevents duplicate confirmation emails.
+            if (orderAlreadyPaid) {
+              return okResponse({ received: true, deduped: true });
+            }
 
             // Send order confirmation email (best-effort, non-blocking)
             try {

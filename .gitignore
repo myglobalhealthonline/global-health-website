@@ -33,3 +33,8 @@ frontend-dev*.log
 **/.tmp-*
 preview-*.html
 preview-*.html.artifact.json
+
+# Large design-reference archives (Figma/Stitch exports). Keep them
+# out of the repo — they're 24 MB each and not consumed at build time.
+docs/design-fetch*.zip
+docs/*.zip

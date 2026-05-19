@@ -1,43 +1,21 @@
 import "server-only";
 
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import type { AuthUser } from "./auth-api";
 
-/** Public origin for this deployment (Railway sets x-forwarded-*). Used to hit same-origin /api/auth/* proxies like the browser. */
-async function getForwardedSiteOrigin(): Promise<string | null> {
-  try {
-    const h = await headers();
-    const host = h.get("x-forwarded-host") ?? h.get("host");
-    if (!host) return null;
-    const rawProto = h.get("x-forwarded-proto")?.split(",")[0]?.trim().toLowerCase();
-    const protocol =
-      rawProto === "http" || rawProto === "https"
-        ? rawProto
-        : host.startsWith("localhost") || host.startsWith("127.")
-          ? "http"
-          : "https";
-    return `${protocol}://${host}`;
-  } catch {
-    return null;
-  }
-}
-
-async function fetchAuthMe(url: string, cookieHeader: string): Promise<AuthUser | null> {
-  const response = await fetch(url, {
-    method: "GET",
-    headers: { cookie: cookieHeader },
-    cache: "no-store",
-  });
-  if (!response.ok) return null;
-  const json = (await response.json()) as {
-    ok?: boolean;
-    data?: { user?: AuthUser };
-  };
-  if (!json.ok || !json.data?.user) return null;
-  return json.data.user;
-}
-
+/**
+ * Resolve the current session user by calling the backend's
+ * `/api/auth/me`. We forward the entire site cookie string so the
+ * backend can pick out its own `gh_auth` cookie.
+ *
+ * Earlier this function had a "try site origin, then backend origin"
+ * fallback ladder. That implicit contract (site cookie host vs.
+ * backend cookie host must align) was a footgun — if someone set
+ * `AUTH_COOKIE_DOMAIN` on the backend, the site-host fallback would
+ * silently start returning null. The backend is the source of truth;
+ * call it directly.
+ */
 export async function getServerAuthUser(): Promise<AuthUser | null> {
   const cookieHeader = (await cookies())
     .getAll()
@@ -45,22 +23,23 @@ export async function getServerAuthUser(): Promise<AuthUser | null> {
     .join("; ");
   if (!cookieHeader) return null;
 
-  const site = await getForwardedSiteOrigin();
   const backend = getBackendOrigin();
-  const urls = [
-    site ? `${site}/api/auth/me` : null,
-    backend ? `${backend}/api/auth/me` : null,
-  ].filter((u): u is string => Boolean(u));
+  if (!backend) return null;
 
-  const unique = [...new Set(urls)];
-
-  for (const url of unique) {
-    try {
-      const user = await fetchAuthMe(url, cookieHeader);
-      if (user) return user;
-    } catch {
-      continue;
-    }
+  try {
+    const response = await fetch(`${backend}/api/auth/me`, {
+      method: "GET",
+      headers: { cookie: cookieHeader },
+      cache: "no-store",
+    });
+    if (!response.ok) return null;
+    const json = (await response.json()) as {
+      ok?: boolean;
+      data?: { user?: AuthUser };
+    };
+    if (!json.ok || !json.data?.user) return null;
+    return json.data.user;
+  } catch {
+    return null;
   }
-  return null;
 }

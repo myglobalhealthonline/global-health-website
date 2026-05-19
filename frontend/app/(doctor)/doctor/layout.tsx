@@ -15,8 +15,7 @@ import {
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { fetchDoctorNotifications } from "@/lib/api/doctor-api";
 import { PortalShell, type PortalNavItem } from "@/components/portal-shell";
-
-const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME?.trim() || "gh_auth";
+import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 
 /**
  * Doctor portal layout. Reuses `PortalShell` so admin / doctor / patient

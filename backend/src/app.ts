@@ -1,66 +1,28 @@
-﻿import "dotenv/config";
+import "dotenv/config";
 
+import path from "node:path";
+import autoload from "@fastify/autoload";
 import cors from "@fastify/cors";
 import cookie from "@fastify/cookie";
 import compress from "@fastify/compress";
+import helmet from "@fastify/helmet";
 import multipart from "@fastify/multipart";
 import rateLimit from "@fastify/rate-limit";
 import Fastify from "fastify";
-import healthRoute from "./routes/health.route.js";
-import authRoute from "./routes/auth.route.js";
-import appointmentsRoute from "./routes/appointments.route.js";
-import countriesRoute from "./routes/countries.route.js";
-import doctorsRoute from "./routes/doctors.route.js";
-import servicesRoute from "./routes/services.route.js";
-import healthTestsRoute from "./routes/health-tests.route.js";
-import assetsRoute from "./routes/assets.route.js";
-import contactRoute from "./routes/contact.route.js";
-import newsletterRoute from "./routes/newsletter.route.js";
-import adminAppointmentsRoute from "./routes/admin-appointments.route.js";
-import adminCountriesRoute from "./routes/admin-countries.route.js";
-import adminServicesRoute from "./routes/admin-services.route.js";
-import adminDoctorsRoute from "./routes/admin-doctors.route.js";
-import adminHealthTestsRoute from "./routes/admin-health-tests.route.js";
-import adminAssetsRoute from "./routes/admin-assets.route.js";
-import adminUsersRoute from "./routes/admin-users.route.js";
-import doctorRoute from "./routes/doctor.route.js";
-import doctorAvailabilityRoute from "./routes/doctor-availability.route.js";
-import consultationsRoute from "./routes/consultations.route.js";
-import examResultsRoute from "./routes/exam-results.route.js";
-import internalMessagesRoute from "./routes/internal-messages.route.js";
-import formsRoute from "./routes/forms.route.js";
-import consultationServicesRoute from "./routes/consultation-services.route.js";
-import doctorInvoicesRoute from "./routes/doctor-invoices.route.js";
-import doctorReportsRoute from "./routes/doctor-reports.route.js";
-import notificationsRoute from "./routes/notifications.route.js";
-import shareLinksRoute from "./routes/share-links.route.js";
-import adminAuditLogRoute from "./routes/admin-audit-log.route.js";
-import doctorPhotoRoute from "./routes/doctor-photo.route.js";
-import doctorActionsRoute from "./routes/doctor-actions.route.js";
-import appointmentDocumentsRoute from "./routes/appointment-documents.route.js";
-import accountAppointmentsRoute from "./routes/account-appointments.route.js";
-import accountPaymentsRoute from "./routes/account-payments.route.js";
-import mediaPublicRoute from "./routes/media-public.route.js";
-import adminMediaUploadRoute from "./routes/admin-media-upload.route.js";
-import pagesRoute from "./routes/pages.route.js";
-import adminPagesRoute from "./routes/admin-pages.route.js";
-import countryScopedRoute from "./routes/country-scoped.route.js";
-import paymentsRoute from "./routes/payments.route.js";
-import reviewsConfigRoute from "./routes/reviews-config.route.js";
-import adminSettingsRoute from "./routes/admin-settings.route.js";
-import remindersRoute from "./routes/reminders.route.js";
-import chatRoute from "./routes/chat.route.js";
-import consultationChatRoute from "./routes/consultation-chat.route.js";
-import prescriptionsRoute from "./routes/prescriptions.route.js";
-import accountPrescriptionsRoute from "./routes/account-prescriptions.route.js";
-import cartRoute from "./routes/cart.route.js";
-import ordersRoute from "./routes/orders.route.js";
-import doctorSelfAvailabilityRoute from "./routes/doctor-self-availability.route.js";
-import abandonedCartCronRoute from "./routes/cron-abandoned-cart.route.js";
 import { env } from "./config/env.js";
 
 export async function buildApp() {
-  const app = Fastify({ logger: true, bodyLimit: 1_048_576, trustProxy: true });
+  // bodyLimit applies to non-multipart payloads. Aligned with the
+  // multipart fileSize ceiling so admin rich-text saves carrying
+  // embedded base64 imagery don't 413 just under the multipart limit.
+  // trustProxy: 1 trusts a single hop (the Railway edge proxy), which
+  // is enough to read the real client IP from X-Forwarded-For without
+  // accepting arbitrary spoofed chains.
+  const app = Fastify({
+    logger: true,
+    bodyLimit: 5 * 1024 * 1024,
+    trustProxy: 1,
+  });
 
   // Idempotent additive DDL — keeps the live DB in sync with the Prisma
   // schema for additive changes we couldn't slot into the migration
@@ -98,6 +60,17 @@ export async function buildApp() {
     allowedHeaders: ["Content-Type", "Authorization"],
   });
   await app.register(cookie);
+  // Security headers. Frontend serves the rendered HTML; the API only
+  // returns JSON/files, so we don't need a CSP here. Helmet's defaults
+  // give us X-Content-Type-Options, X-DNS-Prefetch-Control, Referrer-
+  // Policy, X-Download-Options, Strict-Transport-Security (in prod),
+  // and X-Frame-Options=DENY. CORP is set to cross-origin so the
+  // frontend on a different Railway host can fetch media from us.
+  await app.register(helmet, {
+    contentSecurityPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginEmbedderPolicy: false,
+  });
   // gzip/brotli/deflate on responses ≥ 1 KB. Public reads (doctors list,
   // services list, countries) shrink ~70% on the wire. Matters most for the
   // /portugal/pt / /ireland/en SSR fetches which can run 5+ parallel reads.
@@ -125,57 +98,16 @@ export async function buildApp() {
     skipOnError: true, // never 500 because Redis is down etc.
   });
 
-  await app.register(healthRoute);
-  await app.register(authRoute);
-  await app.register(appointmentsRoute);
-  await app.register(accountAppointmentsRoute);
-  await app.register(accountPaymentsRoute);
-  await app.register(countriesRoute);
-  await app.register(doctorsRoute);
-  await app.register(servicesRoute);
-  await app.register(healthTestsRoute);
-  await app.register(assetsRoute);
-  await app.register(contactRoute);
-  await app.register(newsletterRoute);
-  await app.register(adminAppointmentsRoute);
-  await app.register(adminCountriesRoute);
-  await app.register(adminServicesRoute);
-  await app.register(adminDoctorsRoute);
-  await app.register(adminHealthTestsRoute);
-  await app.register(adminAssetsRoute);
-  await app.register(adminUsersRoute);
-  await app.register(doctorRoute);
-  await app.register(doctorAvailabilityRoute);
-  await app.register(consultationsRoute);
-  await app.register(examResultsRoute);
-  await app.register(internalMessagesRoute);
-  await app.register(formsRoute);
-  await app.register(consultationServicesRoute);
-  await app.register(doctorInvoicesRoute);
-  await app.register(doctorReportsRoute);
-  await app.register(notificationsRoute);
-  await app.register(shareLinksRoute);
-  await app.register(adminAuditLogRoute);
-  await app.register(doctorPhotoRoute);
-  await app.register(doctorActionsRoute);
-  await app.register(appointmentDocumentsRoute);
-  await app.register(mediaPublicRoute);
-  await app.register(adminMediaUploadRoute);
-  await app.register(pagesRoute);
-  await app.register(countryScopedRoute);
-  await app.register(adminPagesRoute);
-
-  // Raw-body parser scoped to the Stripe webhook only — signature verification
-  // requires the unmodified request bytes. Registered after JSON content-type
-  // parser so it overrides only when the matcher hits.
+  // Raw-body parser scoped to the Stripe webhook only — signature
+  // verification requires the unmodified request bytes. Registered
+  // BEFORE autoload so every route registered afterwards inherits it.
+  // The parser is global; the URL gate inside it ensures only
+  // /api/payments/webhook requests get the raw Buffer stashed on the
+  // request object.
   app.addContentTypeParser(
     "application/json",
     { parseAs: "buffer" },
     function (request, body, done) {
-      // Stash the raw Buffer for Stripe webhook signature verification. We
-      // detect via URL because Fastify hasn't set the route binding at
-      // parser time. JSON parsing still happens so non-webhook routes get
-      // their normal body shape.
       if (request.url?.startsWith("/api/payments/webhook")) {
         (request as typeof request & { rawBody: Buffer }).rawBody = body as Buffer;
       }
@@ -186,18 +118,20 @@ export async function buildApp() {
       }
     },
   );
-  await app.register(paymentsRoute);
-  await app.register(reviewsConfigRoute);
-  await app.register(adminSettingsRoute);
-  await app.register(remindersRoute);
-  await app.register(chatRoute);
-  await app.register(consultationChatRoute);
-  await app.register(prescriptionsRoute);
-  await app.register(accountPrescriptionsRoute);
-  await app.register(cartRoute);
-  await app.register(ordersRoute);
-  await app.register(doctorSelfAvailabilityRoute);
-  await app.register(abandonedCartCronRoute);
+
+  // Auto-register every `*.route.ts` (or `*.route.js` in dist) under
+  // `src/routes/`. Skips `*.test.ts` so the schema tests can sit
+  // alongside the routes without trying to register themselves.
+  // Replaces ~50 hand-written imports + register calls.
+  // `__dirname` is CJS-global (this package compiles to CJS via
+  // tsconfig.module=NodeNext + no `"type":"module"` in package.json).
+  // If we ever migrate to ESM output, swap to
+  // `path.dirname(fileURLToPath(import.meta.url))`.
+  await app.register(autoload, {
+    dir: path.join(__dirname, "routes"),
+    matchFilter: (filename) =>
+      /\.route\.(?:js|ts)$/.test(filename) && !/\.test\.(?:js|ts)$/.test(filename),
+  });
 
   return app;
 }

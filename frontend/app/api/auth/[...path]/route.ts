@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { collectSetCookies, rewriteOutboundSetCookie } from "@/lib/server/set-cookie";
 
 export const dynamic = "force-dynamic";
 
@@ -42,17 +43,6 @@ function isAllowed(method: string, segments: string[]): boolean {
   if (!set) return false;
   const key = segments.join("/");
   return set.has(key);
-}
-
-function rewriteOutboundSetCookie(headerValue: string): string {
-  return headerValue.replace(/;\s*Domain=[^;]*/gi, "").trim();
-}
-
-function collectSetCookies(headers: Headers): string[] {
-  const getter = headers.getSetCookie?.bind(headers);
-  if (getter) return getter();
-  const single = headers.get("set-cookie");
-  return single ? [single] : [];
 }
 
 async function proxyAuth(request: NextRequest, segments: string[]) {

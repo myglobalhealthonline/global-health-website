@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { forwardSetCookies } from "@/lib/server/set-cookie";
 
 export const dynamic = "force-dynamic";
 
@@ -20,12 +21,12 @@ export async function POST(request: NextRequest) {
     cache: "no-store",
   });
   const text = await upstream.text();
-  const setCookie = upstream.headers.get("set-cookie");
-  return new NextResponse(text, {
+  const res = new NextResponse(text, {
     status: upstream.status,
     headers: {
       "content-type": upstream.headers.get("content-type") ?? "application/json",
-      ...(setCookie ? { "set-cookie": setCookie } : {}),
     },
   });
+  forwardSetCookies(upstream.headers, res.headers);
+  return res;
 }

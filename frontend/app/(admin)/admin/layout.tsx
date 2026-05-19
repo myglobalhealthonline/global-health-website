@@ -8,8 +8,7 @@ import {
   COUNTRY_PREF_COOKIE,
   type CountryPickerOption,
 } from "./_components/country-picker-constants";
-
-const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME?.trim() || "gh_auth";
+import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 
 async function logoutAdminAction() {
   "use server";

@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { createHash, randomBytes } from "node:crypto";
 import { Prisma, UserRole, type User } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
@@ -82,6 +83,30 @@ export async function claimGuestAppointmentsForUser(
 ): Promise<number> {
   try {
     const result = await prisma.appointment.updateMany({
+      where: {
+        userId: null,
+        email: { equals: email, mode: "insensitive" },
+      },
+      data: { userId },
+    });
+    return result.count;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Same idea as `claimGuestAppointmentsForUser` but for cart Orders the
+ * patient placed as a guest. Matches case-insensitively on email and
+ * scopes to rows with no existing owner. Failure is swallowed so
+ * register/login aren't blocked by a backfill miss.
+ */
+export async function claimGuestOrdersForUser(
+  userId: string,
+  email: string,
+): Promise<number> {
+  try {
+    const result = await prisma.order.updateMany({
       where: {
         userId: null,
         email: { equals: email, mode: "insensitive" },
@@ -244,8 +269,6 @@ export async function patchUserProfile(id: string, input: ProfilePatchInput) {
    only their SHA-256 hash is stored, so a DB leak doesn't expose
    usable links. Each token is single-use (usedAt set on consume).
    ───────────────────────────────────────────────────────────── */
-
-import { createHash, randomBytes } from "node:crypto";
 
 const PASSWORD_RESET_TTL_MINUTES = 60;
 const EMAIL_VERIFICATION_TTL_HOURS = 24;

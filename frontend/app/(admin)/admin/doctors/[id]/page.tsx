@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { ArrowLeft, Mail, RefreshCw } from "lucide-react";
 import {
@@ -9,6 +9,7 @@ import {
   postAdminDoctorInvite,
   purgeAdminDoctor,
 } from "@/lib/admin/admin-api";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
@@ -36,6 +37,10 @@ export default async function AdminDoctorDetailPage({
     }
     revalidatePath("/admin/doctors");
     revalidatePath(`/admin/doctors/${id}`);
+    // Public country-doctors lists need to drop the deactivated row.
+    // We don't know the country code here without re-reading the
+    // doctor — bust the global tag which covers all country lists.
+    revalidateTag(SITE_CACHE_TAGS.globalDoctors(), "max");
     redirect(`/admin/doctors/${id}?success=${encodeURIComponent("Doctor profile deactivated")}`);
   }
 
@@ -46,6 +51,7 @@ export default async function AdminDoctorDetailPage({
       redirect(`/admin/doctors/${id}?error=${encodeURIComponent(deleteResult.message)}`);
     }
     revalidatePath("/admin/doctors");
+    revalidateTag(SITE_CACHE_TAGS.globalDoctors(), "max");
     redirect("/admin/doctors");
   }
 

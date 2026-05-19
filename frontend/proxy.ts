@@ -1,68 +1,86 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { jwtVerify } from "jose";
 import { getRequestContext } from "@/lib/routing/get-request-context";
+import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 
 /**
  * Frontend edge proxy.
  *
  * Responsibilities (post-legacy cleanup):
- *   1. Auth-gate `/account/*` and `/admin/*` by calling the backend
- *      `/api/auth/me` with the request's cookies. Patients hitting
- *      `/admin/*` get redirected to `/account`. Unauthenticated visitors
- *      get redirected to `/login?next=…`.
+ *   1. Auth-gate `/account/*` and `/admin/*` and `/doctor/*` by
+ *      verifying the JWT cookie LOCALLY (HS256 via `jose`, which runs
+ *      in the edge runtime). Previously we called the backend's
+ *      `/api/auth/me` on every nav — measurable TTFB cost per internal
+ *      link. The local verify uses the same `AUTH_JWT_SECRET` and the
+ *      same issuer/audience claims as the backend signer in
+ *      `backend/src/utils/auth-session.ts`, so a leaked-cookie attack
+ *      surface stays identical.
+ *
+ *      A backend round-trip still happens on every authenticated API
+ *      request — this only skips it at navigation time.
+ *
  *   2. Stamp `x-gh-country`, `x-gh-locale`, `x-gh-pathname` request
  *      headers so downstream RSCs can read locale context.
- *
- * The legacy Wix redirect map (`/home-pt → /portugal/pt`, etc.) was
- * removed when we deleted the dormant routes. Inbound traffic for those
- * URLs now just 404s — there's no live Wix audience to preserve.
  */
 const PUBLIC_FILE = /\.(.*)$/;
 
-/** Same resolution as `getBackendOrigin()` (API_BASE_URL first). Avoids localhost in production. */
-function getApiBaseUrl() {
-  const raw =
-    process.env.API_BASE_URL?.trim() ?? process.env.NEXT_PUBLIC_API_URL?.trim() ?? "";
-  const origin = raw.replace(/\/+$/, "");
-  if (origin) return origin;
-  if (process.env.NODE_ENV === "development") return "http://localhost:4000";
-  return "";
+const JWT_ISSUER = "global-health-backend";
+const JWT_AUDIENCE = "global-health-website";
+
+let cachedSecretKey: Uint8Array | null = null;
+function getJwtSecretKey(): Uint8Array | null {
+  if (cachedSecretKey) return cachedSecretKey;
+  const raw = process.env.AUTH_JWT_SECRET?.trim();
+  if (!raw) return null;
+  cachedSecretKey = new TextEncoder().encode(raw);
+  return cachedSecretKey;
+}
+
+type SessionRole = "PATIENT" | "ADMIN" | "DOCTOR";
+type SessionLookup =
+  | { kind: "ok"; role: SessionRole | null }
+  | { kind: "misconfigured" };
+
+function isSessionRole(value: unknown): value is SessionRole {
+  return value === "PATIENT" || value === "ADMIN" || value === "DOCTOR";
+}
+
+async function resolveSession(request: NextRequest): Promise<SessionLookup> {
+  const key = getJwtSecretKey();
+  if (!key) {
+    // Without the secret we can't verify anything. Returning "no role"
+    // would silently redirect every authenticated nav to /login — a
+    // confusing outage when the real cause is a missing env var.
+    // Surface it as a 503 instead so ops sees the misconfig.
+    return { kind: "misconfigured" };
+  }
+  const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
+  if (!token) return { kind: "ok", role: null };
+  try {
+    const { payload } = await jwtVerify(token, key, {
+      issuer: JWT_ISSUER,
+      audience: JWT_AUDIENCE,
+    });
+    return {
+      kind: "ok",
+      role: isSessionRole(payload.role) ? payload.role : null,
+    };
+  } catch {
+    return { kind: "ok", role: null };
+  }
+}
+
+function misconfiguredResponse() {
+  return new NextResponse(
+    "Auth verification is not configured: AUTH_JWT_SECRET is missing.",
+    { status: 503, headers: { "content-type": "text/plain; charset=utf-8" } },
+  );
 }
 
 function normalizeNextPath(pathname: string) {
   if (!pathname.startsWith("/")) return "/account";
   return pathname;
-}
-
-async function resolveSessionUser(request: NextRequest): Promise<{
-  role: "PATIENT" | "ADMIN" | "DOCTOR" | null;
-}> {
-  const apiBase = getApiBaseUrl();
-  if (!apiBase) return { role: null };
-  try {
-    const response = await fetch(`${apiBase}/api/auth/me`, {
-      method: "GET",
-      headers: {
-        cookie: request.headers.get("cookie") ?? "",
-      },
-      cache: "no-store",
-    });
-    if (!response.ok) return { role: null };
-    const json = (await response.json()) as {
-      ok?: boolean;
-      data?: { user?: { role?: string } };
-    };
-    const role = json.data?.user?.role;
-    if (
-      json.ok === true &&
-      (role === "PATIENT" || role === "ADMIN" || role === "DOCTOR")
-    ) {
-      return { role };
-    }
-    return { role: null };
-  } catch {
-    return { role: null };
-  }
 }
 
 export async function proxy(request: NextRequest) {
@@ -78,22 +96,22 @@ export async function proxy(request: NextRequest) {
   }
 
   if (pathname === "/account" || pathname.startsWith("/account/")) {
-    const session = await resolveSessionUser(request);
-    if (session.role === "DOCTOR") {
-      // Doctors don't have a patient profile here — bounce them home.
+    const session = await resolveSession(request);
+    if (session.kind === "misconfigured") return misconfiguredResponse();
+    const role = session.role;
+    if (role === "DOCTOR") {
       const doctorUrl = request.nextUrl.clone();
       doctorUrl.pathname = "/doctor";
       doctorUrl.search = "";
       return NextResponse.redirect(doctorUrl);
     }
-    if (session.role === "ADMIN") {
-      // Admins shouldn't peek into a patient's portal by URL.
+    if (role === "ADMIN") {
       const adminUrl = request.nextUrl.clone();
       adminUrl.pathname = "/admin";
       adminUrl.search = "";
       return NextResponse.redirect(adminUrl);
     }
-    if (session.role !== "PATIENT") {
+    if (role !== "PATIENT") {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
       loginUrl.search = "";
@@ -103,15 +121,17 @@ export async function proxy(request: NextRequest) {
   }
 
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
-    const session = await resolveSessionUser(request);
-    if (session.role === "ADMIN") {
+    const session = await resolveSession(request);
+    if (session.kind === "misconfigured") return misconfiguredResponse();
+    const role = session.role;
+    if (role === "ADMIN") {
       // continue
-    } else if (session.role === "DOCTOR") {
+    } else if (role === "DOCTOR") {
       const doctorUrl = request.nextUrl.clone();
       doctorUrl.pathname = "/doctor";
       doctorUrl.search = "";
       return NextResponse.redirect(doctorUrl);
-    } else if (session.role === "PATIENT") {
+    } else if (role === "PATIENT") {
       const accountUrl = request.nextUrl.clone();
       accountUrl.pathname = "/account";
       accountUrl.search = "";
@@ -126,17 +146,17 @@ export async function proxy(request: NextRequest) {
   }
 
   if (pathname === "/doctor" || pathname.startsWith("/doctor/")) {
-    const session = await resolveSessionUser(request);
-    if (session.role === "DOCTOR") {
+    const session = await resolveSession(request);
+    if (session.kind === "misconfigured") return misconfiguredResponse();
+    const role = session.role;
+    if (role === "DOCTOR") {
       // continue
-    } else if (session.role === "ADMIN") {
-      // Admins have their own portal. No peeking into a doctor's
-      // workspace by URL.
+    } else if (role === "ADMIN") {
       const adminUrl = request.nextUrl.clone();
       adminUrl.pathname = "/admin";
       adminUrl.search = "";
       return NextResponse.redirect(adminUrl);
-    } else if (session.role === "PATIENT") {
+    } else if (role === "PATIENT") {
       const accountUrl = request.nextUrl.clone();
       accountUrl.pathname = "/account";
       accountUrl.search = "";

@@ -1,3 +1,5 @@
+import { timingSafeEqual } from "node:crypto";
+
 export type AdminAccessResult =
   | { ok: true; method: "session" | "token_fallback" }
   | { ok: false; status: 401 | 403 | 503; message: string };
@@ -29,10 +31,26 @@ export function evaluateAdminAccess(input: EvaluateAdminAccessInput): AdminAcces
   }
 
   const providedToken = input.authorizationHeader.slice("Bearer ".length).trim();
-  if (providedToken.length === 0 || providedToken !== input.expectedToken) {
+  if (providedToken.length === 0 || !constantTimeEqual(providedToken, input.expectedToken)) {
     return { ok: false, status: 401, message: "Invalid admin token" };
   }
 
   return { ok: true, method: "token_fallback" };
+}
+
+/** Length-agnostic constant-time string compare. `timingSafeEqual`
+ *  throws on unequal lengths; we equalise via the longer of the two so
+ *  the comparison itself doesn't short-circuit on length mismatch. */
+function constantTimeEqual(a: string, b: string): boolean {
+  const aBuf = Buffer.from(a, "utf8");
+  const bBuf = Buffer.from(b, "utf8");
+  if (aBuf.length !== bBuf.length) {
+    // Still touch both buffers to keep the timing flat.
+    const pad = Buffer.alloc(Math.max(aBuf.length, bBuf.length));
+    timingSafeEqual(pad.subarray(0, aBuf.length), aBuf);
+    timingSafeEqual(pad.subarray(0, bBuf.length), bBuf);
+    return false;
+  }
+  return timingSafeEqual(aBuf, bBuf);
 }
 

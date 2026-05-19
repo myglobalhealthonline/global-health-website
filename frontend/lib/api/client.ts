@@ -112,7 +112,14 @@ export async function apiRequest<T>(
       data: json.data as T,
       message: json.message,
     };
-  } catch {
+  } catch (err) {
+    // Surface the real error in dev — silent `{ ok: false, message }`
+    // makes "backend is unavailable" indistinguishable from a JSON
+    // parse error or an AbortController timeout. The user-facing
+    // message stays generic.
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[apiRequest] fetch failed", { path, err });
+    }
     return {
       ok: false,
       message: "Backend is unavailable",

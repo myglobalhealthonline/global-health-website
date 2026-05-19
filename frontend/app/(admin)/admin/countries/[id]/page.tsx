@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import {
   deleteAdminCountry,
   fetchAdminCountryById,
@@ -37,6 +38,7 @@ export default async function AdminCountryDetailPage({
     }
     revalidatePath("/admin/countries");
     revalidatePath(`/admin/countries/${id}`);
+    revalidateTag(SITE_CACHE_TAGS.countries(), "max");
     redirect(`/admin/countries/${id}?success=${encodeURIComponent("Country deactivated")}`);
   }
 
@@ -47,6 +49,7 @@ export default async function AdminCountryDetailPage({
       redirect(`/admin/countries/${id}?error=${encodeURIComponent(deleteResult.message)}`);
     }
     revalidatePath("/admin/countries");
+    revalidateTag(SITE_CACHE_TAGS.countries(), "max");
     redirect(`/admin/countries?success=${encodeURIComponent("Country deleted")}`);
   }
 

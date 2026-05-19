@@ -1,5 +1,16 @@
 ﻿import path from "node:path";
 import type { NextConfig } from "next";
+import bundleAnalyzer from "@next/bundle-analyzer";
+
+/**
+ * Bundle analyzer — opt-in via `ANALYZE=true pnpm --filter frontend build`.
+ * Writes interactive treemaps for client + server bundles to
+ * `.next/analyze/` so we can hunt down accidental large deps.
+ */
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+  openAnalyzer: false,
+});
 
 function mediaRemotePatterns(): NonNullable<NonNullable<NextConfig["images"]>["remotePatterns"]> | undefined {
   const raw = process.env.NEXT_PUBLIC_API_URL?.trim();
@@ -49,4 +60,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

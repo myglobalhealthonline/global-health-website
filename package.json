@@ -12,9 +12,12 @@
     "db:migrate": "pnpm --filter backend db:migrate",
     "db:deploy": "pnpm --filter backend db:deploy",
     "db:seed": "pnpm --filter backend db:seed",
-    "db:studio": "pnpm --filter backend db:studio"
+    "db:studio": "pnpm --filter backend db:studio",
+    "e2e": "playwright test",
+    "e2e:install": "playwright install --with-deps chromium"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "playwright": "^1.59.1"
   }
 }

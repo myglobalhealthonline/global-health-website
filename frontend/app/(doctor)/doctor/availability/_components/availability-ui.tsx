@@ -13,7 +13,6 @@ import type {
   DoctorTimeSlotView,
 } from "@/lib/api/doctor-availability-types";
 import { AdminCard, Btn, Pill, SectionHeader } from "@/components/portal-atoms";
-import type { PillTone } from "@/components/portal-atoms";
 
 const WEEKDAYS = [
   { value: 0, label: "Sun" },
@@ -36,20 +35,6 @@ function minutesToTime(min: number): string {
 function timeToMinutes(t: string): number {
   const [h, m] = t.split(":").map(Number);
   return (h || 0) * 60 + (m || 0);
-}
-
-function statusTone(status: DoctorTimeSlotView["status"]): PillTone {
-  if (status === "BOOKED") return "active";
-  if (status === "HELD") return "pending";
-  if (status === "BLOCKED") return "inactive";
-  return "published";
-}
-
-function statusLabel(status: DoctorTimeSlotView["status"]): string {
-  if (status === "OPEN") return "Open";
-  if (status === "BOOKED") return "Booked";
-  if (status === "HELD") return "Held";
-  return "Blocked";
 }
 
 type Props = {

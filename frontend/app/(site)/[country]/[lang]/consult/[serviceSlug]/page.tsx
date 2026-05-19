@@ -2,11 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CalendarClock } from "lucide-react";
-import { countries, getCountryByCode } from "@/data/countries";
-import {
-  COUNTRY_CODE_TO_SLUG,
-  countryCodeFromSlug,
-} from "@/lib/routing/country-slug";
+import { getCountryByCode } from "@/data/countries";
+import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import {
   getCountryDoctors,

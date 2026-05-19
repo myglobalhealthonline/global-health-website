@@ -254,8 +254,12 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
+      // Scope strictly to userId — guest orders placed with this user's
+      // email are linked explicitly via `claimGuestOrdersForUser` at
+      // register/login. Matching by email here would let any user view
+      // orders other people placed with their email address.
       const orders = await prisma.order.findMany({
-        where: { OR: [{ userId: user.id }, { email: user.email }] },
+        where: { userId: user.id },
         orderBy: { createdAt: "desc" },
         include: { items: true },
       });
@@ -305,7 +309,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         const order = await prisma.order.findFirst({
           where: {
             id: params.data.id,
-            OR: [{ userId: user.id }, { email: user.email }],
+            userId: user.id,
           },
           include: { items: true },
         });
@@ -353,18 +357,52 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
   );
 
   // ── Admin: list all orders ─────────────────────────────────────────
+  const adminOrdersQuerySchema = z.object({
+    limit: z.coerce.number().int().min(1).max(100).default(50),
+    cursor: z.string().min(1).max(120).optional(),
+    status: z.nativeEnum(OrderStatus).optional(),
+    countryCode: z.string().trim().min(2).max(4).optional(),
+    q: z.string().trim().min(1).max(120).optional(),
+  });
+
   app.get("/api/admin/orders", async (request, reply) => {
     const auth = await verifyAdminAccess(request);
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
 
+    const query = adminOrdersQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid orders query", query.error.flatten()));
+    }
+    const { limit, cursor, status, countryCode, q } = query.data;
+
     try {
+      // Filters compose: status / countryCode are exact-match, `q`
+      // searches across email + fullName + id (case-insensitive). Cursor
+      // pagination off Order.id — stable because id is a cuid.
       const orders = await prisma.order.findMany({
+        where: {
+          ...(status ? { status } : {}),
+          ...(countryCode ? { countryCode: countryCode.toUpperCase() } : {}),
+          ...(q
+            ? {
+                OR: [
+                  { email: { contains: q, mode: "insensitive" } },
+                  { fullName: { contains: q, mode: "insensitive" } },
+                  { id: { contains: q } },
+                ],
+              }
+            : {}),
+        },
         orderBy: { createdAt: "desc" },
-        include: { items: true },
-        take: 100,
+        include: { items: { select: { quantity: true } } },
+        take: limit + 1,
+        ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
       });
+      const hasMore = orders.length > limit;
+      const page = hasMore ? orders.slice(0, limit) : orders;
+      const nextCursor = hasMore ? page[page.length - 1]?.id ?? null : null;
       return okResponse({
-        items: orders.map((o) => ({
+        items: page.map((o) => ({
           id: o.id,
           status: o.status,
           paymentStatus: o.paymentStatus,
@@ -377,6 +415,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           paidAt: o.paidAt?.toISOString() ?? null,
           createdAt: o.createdAt.toISOString(),
         })),
+        nextCursor,
       });
     } catch (err) {
       if (err instanceof DatabaseUnavailableError) {
@@ -403,7 +442,49 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           include: { items: true },
         });
         if (!order) return reply.status(404).send(errorResponse("Order not found"));
-        return okResponse(order);
+        // Project to a DTO instead of returning the raw Prisma row.
+        // The raw row contains `stripeSessionId` + `stripePaymentIntentId`
+        // which the admin UI doesn't need and which have no business
+        // crossing the wire.
+        return okResponse({
+          id: order.id,
+          status: order.status,
+          paymentStatus: order.paymentStatus,
+          countryCode: order.countryCode,
+          currencyCode: order.currencyCode,
+          subtotalCents: order.subtotalCents,
+          shippingCents: order.shippingCents,
+          totalCents: order.totalCents,
+          email: order.email,
+          fullName: order.fullName,
+          phone: order.phone,
+          userId: order.userId,
+          ship: {
+            name: order.shipName,
+            line1: order.shipLine1,
+            line2: order.shipLine2,
+            city: order.shipCity,
+            postalCode: order.shipPostalCode,
+            countryCode: order.shipCountryCode,
+          },
+          items: order.items.map((i) => ({
+            id: i.id,
+            kind: i.kind,
+            name: i.name,
+            quantity: i.quantity,
+            unitPriceCents: i.unitPriceCents,
+            lineTotalCents: i.lineTotalCents,
+            healthTestId: i.healthTestId,
+            serviceId: i.serviceId,
+            timeSlotId: i.timeSlotId,
+            doctorId: i.doctorId,
+            appointmentId: i.appointmentId,
+          })),
+          appointmentIds: order.appointmentIds,
+          paidAt: order.paidAt?.toISOString() ?? null,
+          createdAt: order.createdAt.toISOString(),
+          updatedAt: order.updatedAt.toISOString(),
+        });
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(err.message));
