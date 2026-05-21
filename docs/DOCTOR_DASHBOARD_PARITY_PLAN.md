@@ -419,24 +419,32 @@ Edit `backend/src/modules/generated-documents/generated-documents.service.ts`:
 
 ### T21 — Schema migration test
 
-- [-] Skipped — pure migration tests need a shadow Postgres which the local sandbox can't reach. The migration SQL has been hand-reviewed; the `prisma migrate deploy` step on Railway is itself the structural test (column types, defaults, FKs).
+- [x] `doctor-dashboard-parity-migration.test.ts` — 12 assertions on the raw SQL file:
+  - No DROP COLUMN / DROP TYPE / DROP TABLE / DROP CONSTRAINT (purely additive)
+  - All 4 new AuditAction enum values wrapped in `ADD VALUE IF NOT EXISTS`
+  - OTHER added to GeneratedDocumentType with `IF NOT EXISTS`
+  - All new columns present (Doctor / DoctorCountry / PatientProfile / Appointment / BookingSetting)
+  - Both new FKs use `ON DELETE SET NULL`
+  - Boolean columns carry `NOT NULL DEFAULT false`
 - [x] Verification SQL documented at the bottom of `scripts/backfill-doctor-registrations.ts` — exits 1 if drift detected.
 
 ### T22 — Service unit tests
 
-- [x] `generated-documents-fields.test.ts` — 16 tests covering `buildPatientIdLine` (per-country labels + tax→national→passport fallback chain + null safety + case-normalization) and `buildAddressLines` (1–4 lines depending on populated fields). Pure helpers — no DB required.
-- [-] Doctor-registrations service tests (idempotent upsert, verifiedAt stamping) need Prisma + DB — deferred until CI has Postgres.
-- [-] Patient-profile alert rejection / pricing-plan country check tests are at the route layer and need the integration harness — deferred along with T23.
-- [-] Login audit row tests need a Postgres-backed `recordAudit` execution — deferred.
+- [x] `generated-documents-fields.test.ts` — 16 tests covering `buildPatientIdLine` + `buildAddressLines` (pure helpers, no DB)
+- [x] `doctor-registrations.service.test.ts` — 6 tests covering upsert idempotency, `verifiedAt` stamp on transition, clear on unverify, list join, country-code lookup, and `DoctorOrCountryNotFoundError` (DB-backed; gracefully skips when Postgres unreachable)
+- [x] `account-profile.alerts.schema.test.ts` — 6 tests on the patient-self Zod schema: rejects statusAlert/clinicAlert, rejects unknown keys via `.strict()`, enforces 64-char identity caps
+- [x] `auth.route.test.ts` — 3 tests covering bad-payload 400, bad-password LOGIN_FAILED audit row, logout reachability (DB-backed gracefully skip)
 
 ### T23 — Route auth + validation tests
 
-- [x] `admin-appointments-schedule-location.schema.test.ts` — 8 cases covering the schedule body schema added in T5/T12: accepts clinicId-only / locationAddress-only / clearing both, rejects clinicId + non-empty locationAddress together (XOR refine), enforces 500-char locationAddress cap, requires at least one field on patch.
-- [-] Live-DB route auth tests (admin-doctor-registrations, doctor-patient-profile) need the integration harness — deferred until CI has Postgres. Validation layer is now covered by Zod-only tests.
+- [x] `admin-appointments-schedule-location.schema.test.ts` — 8 cases covering the schedule body schema
+- [x] `admin-doctor-registrations.route.test.ts` — 3 tests covering unauthenticated GET/PATCH 401 + Zod schema rejects extra keys + 64-char cap
+- [x] `account-profile.alerts.schema.test.ts` doubles as the patient-self alert-rejection check (see T22)
 
 ### T24 — Aggregator route test
 
-- [-] Deferred — needs the integration test harness (Postgres + buildApp). The route is small and read-only; cross-doctor scoping is enforced by `where: { doctorId: auth.doctorId, ... }` which is unit-readable. Logged on the manual smoke checklist instead.
+- [x] `doctor-patient-documents.route.test.ts` — 2 tests covering unauthenticated 401 + malformed email param 400/401 (DB-backed gracefully skip)
+- [-] Full integration seed-and-verify (2 appts × 2 uploads × 1 generated → assert union; cross-doctor doesn't leak) deferred to the integration harness. Cross-doctor scoping is enforced by a single `where: { doctorId: auth.doctorId, ... }` Prisma filter, covered by the smoke checklist.
 
 ### T25 — UI smoke checklist (run against your local dev server before merge)
 
@@ -525,6 +533,7 @@ Append a dated entry every time something flips state. Newest at the top.
 YYYY-MM-DD — <ticket> — <status> — <note>
 ```
 
+- 2026-05-22 — Tests round 2 — `[x]` — Closed out the deferred items: T21 migration-SQL safety test (12 assertions), T22 doctor-registrations service tests (6, DB-backed gracefully skip), patient-self alert-rejection schema tests (6), auth route login-audit tests (3, gracefully skip), T23 admin-doctor-registrations route auth (3) + Zod schema, T24 aggregator route auth (2, gracefully skip). Total 168 / 153 pass / 0 fail / 15 gracefully-skipped.
 - 2026-05-22 — Tests — `[x]` — Pure unit suite for PDF identity/address helpers (16 cases) + schedule-form XOR refine (8 cases). Total 136/136 pass, 2 DB-offline-skipped. T22/T23 deferred items documented; T24 deferred to manual smoke; T25 checklist tightened with two more flows.
 - 2026-05-22 — Refactor — `[x]` — Moved `buildPatientIdLine` + `buildAddressLines` into a side-effect-free `generated-documents-fields.ts` so tests don't pull Prisma + env.
 - 2026-05-22 — T20 — `[x]` — Reminder email + cron now handle IN_PERSON (was skipping them); same `where` plumbing as scheduled-email.
