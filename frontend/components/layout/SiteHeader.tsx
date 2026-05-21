@@ -189,9 +189,13 @@ export function SiteHeader({
             </Link>
           )}
 
+          {/* Hidden on mobile so the drawer's sticky-bottom Book CTA is
+              the single tap target — previously both buttons rendered
+              side-by-side on phones and patients couldn't tell which
+              one to use. */}
           <Link
             href={bookHref}
-            className="gh-btn gh-btn-primary"
+            className="gh-btn gh-btn-primary hidden md:inline-flex"
             style={{ minHeight: 44, padding: "0 22px", fontSize: 14 }}
           >
             Book

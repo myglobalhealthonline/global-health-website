@@ -13,11 +13,12 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown, Check } from "lucide-react";
 import { countries, type CountryCode } from "@/data/countries";
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 import { swapCountryInPath } from "@/lib/routing/path-rewrites";
+import { useCart } from "@/components/cart/CartContext";
 
 const FLAG_CLASS: Record<string, string> = {
   ie: "fi fi-ie",
@@ -33,8 +34,39 @@ export function CountrySwitcher({
   activeCountryCode: CountryCode | null;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { cart, clear } = useCart();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  // If the cart has items pinned to a specific country, switching to a
+  // different country mid-flow would either silently mismatch pricing
+  // or get rejected at checkout. Intercept and confirm; clear the cart
+  // on accept so the new country starts fresh.
+  function handleSwitch(
+    nextHref: string,
+    nextCountryCode: CountryCode,
+    e: React.MouseEvent,
+  ) {
+    if (
+      cart.itemCount > 0 &&
+      cart.countryCode &&
+      cart.countryCode.toUpperCase() !== nextCountryCode.toUpperCase()
+    ) {
+      e.preventDefault();
+      const proceed = window.confirm(
+        `Your cart has ${cart.itemCount} item${
+          cart.itemCount === 1 ? "" : "s"
+        } from ${cart.countryCode.toUpperCase()}. Switching to a new country will clear it. Continue?`,
+      );
+      if (!proceed) return;
+      void clear();
+      setOpen(false);
+      router.push(nextHref);
+      return;
+    }
+    setOpen(false);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -112,7 +144,7 @@ export function CountrySwitcher({
                 <li key={c.code}>
                   <Link
                     href={href}
-                    onClick={() => setOpen(false)}
+                    onClick={(e) => handleSwitch(href, c.code, e)}
                     role="menuitem"
                     className="flex items-center justify-between gap-3"
                     style={{

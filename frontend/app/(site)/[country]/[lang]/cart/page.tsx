@@ -14,6 +14,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import { CART_ITEM_MAX_QTY } from "@/lib/api/cart-types";
@@ -98,22 +99,31 @@ export default function CartPage() {
 
   if (cart.items.length === 0) {
     return (
-      <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center rounded-xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-          <ShoppingCart className="size-10 text-slate-300" aria-hidden />
-          <h1 className="mt-4 text-2xl font-bold text-slate-900">Your cart is empty</h1>
-          <p className="mt-2 max-w-md text-sm text-slate-600">
-            Browse our health tests and online prescription products to get started.
-          </p>
-          <Link
-            href={countryHome}
-            className="mt-6 inline-flex items-center gap-2 rounded-md bg-emerald-700 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
-          >
-            Start shopping
-            <ArrowRight className="size-4" aria-hidden />
-          </Link>
-        </div>
-      </main>
+      <>
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: countrySlug.toUpperCase(), href: countryHome },
+            { label: "Cart" },
+          ]}
+        />
+        <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-center rounded-xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
+            <ShoppingCart className="size-10 text-slate-300" aria-hidden />
+            <h1 className="mt-4 text-2xl font-bold text-slate-900">Your cart is empty</h1>
+            <p className="mt-2 max-w-md text-sm text-slate-600">
+              Browse our health tests and online prescription products to get started.
+            </p>
+            <Link
+              href={countryHome}
+              className="mt-6 inline-flex items-center gap-2 rounded-md bg-emerald-700 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
+            >
+              Start shopping
+              <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          </div>
+        </main>
+      </>
     );
   }
 
@@ -127,7 +137,15 @@ export default function CartPage() {
   const total = cart.subtotalCents + shippingCents;
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+    <>
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: countrySlug.toUpperCase(), href: countryHome },
+          { label: "Cart" },
+        ]}
+      />
+      <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">Your cart</h1>
       <p className="mt-2 text-sm text-slate-500">
         {cart.itemCount} item{cart.itemCount === 1 ? "" : "s"} ·{" "}
@@ -234,6 +252,7 @@ export default function CartPage() {
         </aside>
       </div>
     </main>
+    </>
   );
 }
 

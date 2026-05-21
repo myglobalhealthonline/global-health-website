@@ -64,8 +64,14 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
 
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Link
-          href="/account/orders"
+          href="/account/bookings"
           className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
+        >
+          View my bookings
+        </Link>
+        <Link
+          href="/account/orders"
+          className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
         >
           View orders
         </Link>
