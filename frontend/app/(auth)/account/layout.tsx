@@ -14,6 +14,7 @@ import {
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { PortalShell, type PortalNavItem } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
+import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
 
 /**
  * Patient portal layout. Reuses `PortalShell` so admin / doctor / patient
@@ -35,6 +36,12 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     redirect("/login?next=/account");
   }
 
+  // The "Book consultation" link used to drop logged-in patients on
+  // `/` (the country picker) every time, forcing them to repick Ireland
+  // / Portugal / etc. on every booking. Now we route them straight to
+  // the country they last booked in.
+  const bookHref = await resolveBookConsultationHref();
+
   const sections: PortalNavItem[] = [
     { href: "/account", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
     { href: "/account/bookings", label: "My bookings", icon: <CalendarDays className="size-4" aria-hidden /> },
@@ -43,7 +50,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     { href: "/account/payments", label: "Payments", icon: <CreditCard className="size-4" aria-hidden /> },
     { href: "/account/profile", label: "Profile", icon: <UserRound className="size-4" aria-hidden /> },
     { href: "/account/security", label: "Security", icon: <ShieldCheck className="size-4" aria-hidden /> },
-    { href: "/", label: "Book consultation", icon: <Stethoscope className="size-4" aria-hidden /> },
+    { href: bookHref, label: "Book consultation", icon: <Stethoscope className="size-4" aria-hidden /> },
   ];
 
   return (

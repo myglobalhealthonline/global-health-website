@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
   AlertCircle,
   ArrowRight,
+  CheckCircle2,
   Clock,
   Minus,
   Plus,
@@ -37,8 +38,28 @@ function useCountdown(heldUntil: string | null): string | null {
 export default function CartPage() {
   const router = useRouter();
   const params = useParams<{ country: string; lang: string }>();
+  const searchParams = useSearchParams();
   const { cart, loading, update, remove, clear, refresh } = useCart();
   const [expiredFlash, setExpiredFlash] = useState(0);
+  // `?added=1` arrives from the consult booking form so the patient
+  // gets explicit positive feedback after add-to-cart. Auto-clears
+  // after 4s and the URL is rewritten without the flag so a refresh
+  // doesn't re-trigger the flash.
+  const [showAddedFlash, setShowAddedFlash] = useState(
+    () => searchParams?.get("added") === "1",
+  );
+  useEffect(() => {
+    if (!showAddedFlash) return;
+    const timer = setTimeout(() => setShowAddedFlash(false), 4_000);
+    // Drop the query so a refresh doesn't re-flash. Replace, not push,
+    // so the back button still goes where the patient expects.
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("added");
+      window.history.replaceState(null, "", url.toString());
+    }
+    return () => clearTimeout(timer);
+  }, [showAddedFlash]);
   // Route segments carry the active country/lang; build URLs from them
   // so the cart + checkout flow keeps the prefix the user picked.
   const countrySlug = params?.country ?? "";
@@ -112,6 +133,16 @@ export default function CartPage() {
         {cart.itemCount} item{cart.itemCount === 1 ? "" : "s"} ·{" "}
         {cart.countryCode.toUpperCase()} · {cart.currencyCode}
       </p>
+
+      {showAddedFlash ? (
+        <div
+          role="status"
+          className="mt-4 flex items-center gap-2 rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2.5 text-sm font-semibold text-emerald-900"
+        >
+          <CheckCircle2 className="size-4 shrink-0" aria-hidden />
+          <span>Added to your cart.</span>
+        </div>
+      ) : null}
 
       {expiredFlash > 0 ? (
         <div className="mt-4 flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2.5 text-sm text-amber-900">
@@ -270,16 +301,20 @@ function CartItemRow({
             ) : null}
           </div>
         ) : null}
-        {/* Consultation hold countdown */}
+        {/* Consultation hold countdown. Expired uses amber too — it's
+            an expected system state (10-minute hold lapsed), not a user
+            failure, so the styling shouldn't read as an error. */}
         {isConsult && countdown ? (
           <p
             className={`mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold ${
-              countdown === "expired" ? "text-rose-700" : "text-amber-700"
+              countdown === "expired"
+                ? "text-amber-800"
+                : "text-amber-700"
             }`}
           >
             <Clock className="size-3" aria-hidden />
             {countdown === "expired"
-              ? "Reservation expired"
+              ? "Hold released — pick another slot"
               : `Reserved for ${countdown}`}
           </p>
         ) : null}

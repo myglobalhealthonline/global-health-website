@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { fetchAccountAppointments } from "@/lib/api/account-appointments-api";
 import { fetchAccountPayments } from "@/lib/api/account-payments-api";
+import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import {
   AdminCard,
@@ -36,9 +37,10 @@ const ACTIVE_STATUSES = new Set([
 export default async function AccountOverviewPage() {
   const user = await getServerAuthUser();
 
-  const [apptRes, payRes] = await Promise.all([
+  const [apptRes, payRes, bookHref] = await Promise.all([
     fetchAccountAppointments(),
     fetchAccountPayments(),
+    resolveBookConsultationHref(),
   ]);
 
   const appointments = apptRes.ok ? apptRes.data.items : [];
@@ -215,7 +217,7 @@ export default async function AccountOverviewPage() {
                   Book your first consultation to see it here.
                 </p>
                 <Btn
-                  href="/"
+                  href={bookHref}
                   variant="primary"
                   size="sm"
                   iconRight={<ChevronRight className="size-4" />}
@@ -299,7 +301,7 @@ export default async function AccountOverviewPage() {
             </nav>
 
             <Link
-              href="/"
+              href={bookHref}
               className="mt-4 flex items-center justify-between rounded-md bg-[var(--color-background-soft)] px-3 py-2.5 text-sm font-bold text-[var(--color-brand-primary)] hover:bg-[var(--color-background-page)]"
             >
               <span className="inline-flex items-center gap-2">

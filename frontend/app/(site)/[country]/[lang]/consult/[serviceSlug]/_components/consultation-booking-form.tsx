@@ -172,7 +172,14 @@ export function ConsultationBookingForm({
       }
       const country = params?.country ?? "";
       const lang = params?.lang ?? "";
-      router.push(country && lang ? `/${country}/${lang}/cart` : "/cart");
+      // `?added=1` is the cue for the cart page to flash a green
+      // "Added to cart" banner so the patient sees positive feedback
+      // — the cart icon badge alone isn't loud enough.
+      const dest =
+        country && lang
+          ? `/${country}/${lang}/cart?added=1`
+          : "/cart?added=1";
+      router.push(dest);
     });
   }
 

@@ -139,9 +139,18 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   // anchor so the visitor scrolls to the cart-first picker instead of
   // landing in the legacy book-online form.
   const servicesAnchor = "#services";
+  // First-name-only label so the CTA reads as "Pick a time with Anna"
+  // not "Pick a time with Dr. Anna Garcia Lopez". Falls back to the
+  // generic label when we can't extract a first name.
+  const firstName = data.profile.name
+    .replace(/^(Dr\.?|Prof\.?|Mr\.?|Mrs\.?|Ms\.?)\s+/i, "")
+    .split(" ")[0]
+    ?.trim();
   const primaryCtaHref = hasServices ? servicesAnchor : fallbackBookHref;
   const primaryCtaLabel = hasServices
-    ? "See services"
+    ? firstName
+      ? `Pick a time with ${firstName}`
+      : "Pick a time"
     : data.hero.primaryCta.label;
 
   const templateData = {
