@@ -37,12 +37,21 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
     const windowEnd = new Date(now.getTime() + 25 * 60 * 60 * 1000);
 
     try {
+      // Reminder is due when scheduledAt is in the 23-25h window AND we
+      // can tell the patient how to attend — either a meetingUrl (ONLINE)
+      // OR a clinic / locationAddress (IN_PERSON). Skipping IN_PERSON
+      // because meetingUrl is null was a long-standing gap; the OR-of-
+      // signals below closes it.
       const due = await prisma.appointment.findMany({
         where: {
           scheduledAt: { gte: windowStart, lte: windowEnd },
-          meetingUrl: { not: null },
           reminderSentAt: null,
           status: { notIn: ["CANCELLED", "COMPLETED"] },
+          OR: [
+            { meetingUrl: { not: null } },
+            { clinicId: { not: null } },
+            { locationAddress: { not: null } },
+          ],
         },
         select: {
           id: true,
@@ -51,6 +60,9 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
           consultationType: true,
           scheduledAt: true,
           meetingUrl: true,
+          consultationMode: true,
+          locationAddress: true,
+          clinic: { select: { name: true, city: true } },
         },
         take: 100,
       });
@@ -58,14 +70,21 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
       let sent = 0;
       let failed = 0;
       for (const a of due) {
-        if (!a.scheduledAt || !a.meetingUrl) continue;
+        if (!a.scheduledAt) continue;
+        const isInPerson = a.consultationMode === "IN_PERSON";
+        const where = a.clinic
+          ? [a.clinic.name, a.clinic.city].filter(Boolean).join(", ")
+          : a.locationAddress ?? null;
+        if (isInPerson && !where) continue;
+        if (!isInPerson && !a.meetingUrl) continue;
         try {
           await sendAppointmentReminderEmail({
             to: a.email,
             fullName: a.fullName,
             consultationType: a.consultationType,
             scheduledAt: a.scheduledAt,
-            meetingUrl: a.meetingUrl,
+            meetingUrl: isInPerson ? null : a.meetingUrl,
+            where: isInPerson ? where : null,
           });
           await prisma.appointment.update({
             where: { id: a.id },

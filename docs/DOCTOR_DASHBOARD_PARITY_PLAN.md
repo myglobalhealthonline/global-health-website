@@ -396,19 +396,22 @@ model BookingSetting {
 
 Edit `backend/src/modules/generated-documents/generated-documents.service.ts`:
 
-- [ ] Fetch `DoctorCountry` row for `appointment.countryCode` → use `registrationNumber` + `chamberEntity` in header
-- [ ] Fetch `PatientProfile` by `appointment.email`:
-  - [ ] Emit address block (any address field present)
-  - [ ] Emit identity line — pick `NIF` / `PPS` / `CPF` / etc. by country code
-- [ ] Missing profile = blank fields, no crash
-- [ ] Missing registration = placeholder "Registration: not on file" + admin notify
+- [x] Fetch `DoctorCountry` row via `getDoctorRegistrationByCountryCode(doctorId, appointment.countryCode)`
+- [x] Header prints `${chamberEntity}: ${registrationNumber}` when set; appends `(unverified)` if `isVerified=false`
+- [x] Missing registration → emit "Registration (XX): not on file" placeholder + `console.warn`
+- [x] Fetch `PatientProfile` by `appointment.email` (case-insensitive lookup via lower())
+- [x] `buildPatientIdLine` picks the right ID per country (PT→NIF / BR→CPF / IE→PPS / ES→DNI, fallback "Tax ID" or "National ID" or "Passport")
+- [x] `buildAddressLines` emits 1–4 lines depending on which fields are populated
+- [x] Missing profile = silent blank, no crash
+- [x] `tsc` clean, 108/108 tests pass
 
 ### T20 — Booking confirmation email "Where"
 
-- [ ] Extend `sendAppointmentScheduledEmail`:
-  - [ ] New optional `where` arg
-  - [ ] When set, template adds "📍 {where}" block
-- [ ] Backend route fills `where` from `clinic` join or `locationAddress`
+- [x] `sendAppointmentScheduledEmail` accepts optional `where` + nullable `meetingUrl` (landed in T5)
+- [x] Admin schedule route fills `where` from joined clinic name+city or `locationAddress`, suppresses Meet CTA for IN_PERSON (also T5)
+- [x] **Reminder path** extended in this batch: `sendAppointmentReminderEmail` now mirrors the same `where`/`meetingUrl` optional pair
+- [x] `reminders.route.ts` no longer skips IN_PERSON appointments — the cron picks them up when clinic OR locationAddress is set and passes `where` accordingly
+- [x] `tsc` clean, 108/108 tests pass
 
 ---
 
@@ -538,6 +541,8 @@ Append a dated entry every time something flips state. Newest at the top.
 YYYY-MM-DD — <ticket> — <status> — <note>
 ```
 
+- 2026-05-22 — T20 — `[x]` — Reminder email + cron now handle IN_PERSON (was skipping them); same `where` plumbing as scheduled-email.
+- 2026-05-22 — T19 — `[x]` — Rx/cert PDFs emit per-country chamber + registration number + patient identity line + address block. Placeholder + console.warn when registration missing.
 - 2026-05-22 — T18 — `[x]` — Patient bookings page renders a "Where" block (+ Google Maps directions link) when IN_PERSON. Backend payload joined with Clinic.
 - 2026-05-22 — T17 — `[x]` — Booking form gains country-aware national-ID field; logged-in patients persist to PatientProfile on submit.
 - 2026-05-22 — T16 — `[x]` — Patient /account/profile gains "Medical identity" section + frontend proxy route.

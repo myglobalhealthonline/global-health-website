@@ -9,6 +9,7 @@ import {
   isMediaStorageConfigured,
 } from "../../services/object-storage.js";
 import { sendGeneratedDocumentEmail } from "../../lib/email/templates.js";
+import { getDoctorRegistrationByCountryCode } from "../doctor-registrations/doctor-registrations.service.js";
 
 const TITLES: Record<GeneratedDocumentType, string> = {
   ABSENCE_CERTIFICATE: "Medical absence certificate",
@@ -108,6 +109,49 @@ export async function generateAppointmentDocument(input: {
       "Global Health"
     : "Global Health";
 
+  // Per-country medical registration. PT prescription must print the OM
+  // number; BR must print the CRM; etc. If the doctor hasn't been linked
+  // for this country yet, the PDF emits a "Registration: not on file"
+  // placeholder so the clinician + admin notice the gap before issuing
+  // the document to a patient.
+  const registration = await getDoctorRegistrationByCountryCode(
+    input.doctorId,
+    appt.countryCode,
+  );
+  let registrationLine: string;
+  if (registration?.registrationNumber && registration?.chamberEntity) {
+    registrationLine = registration.isVerified
+      ? `${registration.chamberEntity}: ${registration.registrationNumber}`
+      : `${registration.chamberEntity}: ${registration.registrationNumber} (unverified)`;
+  } else {
+    registrationLine = `Registration (${appt.countryCode}): not on file`;
+    console.warn(
+      `[generated-documents] missing registration for doctorId=${input.doctorId} country=${appt.countryCode} — PDF emitted with placeholder`,
+    );
+  }
+
+  // Patient identity + address. Cached PatientProfile keyed by email —
+  // these fields are doctor-editable on the chart and patient-editable
+  // on /account/profile, so the most-recent value lands on the Rx.
+  const patientProfile = await prisma.patientProfile.findUnique({
+    where: { email: appt.email.toLowerCase() },
+    select: {
+      nationalIdNumber: true,
+      taxIdNumber: true,
+      passportNumber: true,
+      addressLine1: true,
+      addressLine2: true,
+      addressCity: true,
+      addressPostalCode: true,
+      addressCountryCode: true,
+    },
+  });
+
+  const patientIdLine = buildPatientIdLine(appt.countryCode, patientProfile);
+  const patientAddressLines = patientProfile
+    ? buildAddressLines(patientProfile)
+    : [];
+
   // OTHER documents carry their human title in `fields.customLabel`; the
   // enum entry is just a discriminator. Fall back to the static TITLES
   // entry when no customLabel is supplied (defensive — the route
@@ -121,7 +165,10 @@ export async function generateAppointmentDocument(input: {
   const pdfBytes = await buildPdf({
     title,
     patientName: appt.fullName,
+    patientIdLine,
+    patientAddressLines,
     doctorName,
+    registrationLine,
     date: new Date().toLocaleDateString("en-GB"),
     body: input.fields?.body ?? input.fields?.notes ?? "",
     extras: input.fields ?? {},
@@ -175,7 +222,13 @@ export async function generateAppointmentDocument(input: {
 async function buildPdf(opts: {
   title: string;
   patientName: string;
+  /** "NIF: 123…" / "PPS: …" / "Passport: …" — null when no ID on file. */
+  patientIdLine: string | null;
+  /** Multi-line address. Empty array hides the block. */
+  patientAddressLines: string[];
   doctorName: string;
+  /** "OM: 12345" / "Registration (PT): not on file" — always present. */
+  registrationLine: string;
   date: string;
   body: string;
   extras: Record<string, string>;
@@ -210,16 +263,82 @@ async function buildPdf(opts: {
 
   draw(opts.title, 18, true);
   draw(`Patient: ${opts.patientName}`, 12);
+  if (opts.patientIdLine) draw(opts.patientIdLine, 11);
+  for (const line of opts.patientAddressLines) {
+    draw(line, 10);
+  }
+  y -= 4;
   draw(`Doctor: ${opts.doctorName}`, 12);
+  draw(opts.registrationLine, 11);
   draw(`Date: ${opts.date}`, 12);
   y -= 8;
   if (opts.body) draw(opts.body, 11);
   for (const [k, v] of Object.entries(opts.extras)) {
-    if (k === "body" || k === "notes") continue;
+    if (k === "body" || k === "notes" || k === "customLabel") continue;
     draw(`${k}: ${v}`, 10);
   }
 
   return doc.save();
+}
+
+/**
+ * Pick the right ID label for the country and use whichever ID the
+ * patient has on file. Falls back through tax → national → passport so
+ * the most-relevant value lands on the document. Returns null when no
+ * IDs are stored.
+ */
+function buildPatientIdLine(
+  countryCode: string,
+  profile: {
+    nationalIdNumber: string | null;
+    taxIdNumber: string | null;
+    passportNumber: string | null;
+  } | null,
+): string | null {
+  if (!profile) return null;
+  const upper = countryCode.toUpperCase();
+  // Country-specific tax ID labels for the line that goes on Rx.
+  const taxLabel =
+    {
+      PT: "NIF",
+      BR: "CPF",
+      IE: "PPS",
+      ES: "DNI",
+    }[upper] ?? "Tax ID";
+  if (profile.taxIdNumber) {
+    return `${taxLabel}: ${profile.taxIdNumber}`;
+  }
+  if (profile.nationalIdNumber) {
+    const nationalLabel =
+      {
+        PT: "Cartão de Cidadão",
+        BR: "RG",
+        ES: "DNI",
+      }[upper] ?? "National ID";
+    return `${nationalLabel}: ${profile.nationalIdNumber}`;
+  }
+  if (profile.passportNumber) {
+    return `Passport: ${profile.passportNumber}`;
+  }
+  return null;
+}
+
+function buildAddressLines(profile: {
+  addressLine1: string | null;
+  addressLine2: string | null;
+  addressCity: string | null;
+  addressPostalCode: string | null;
+  addressCountryCode: string | null;
+}): string[] {
+  const out: string[] = [];
+  if (profile.addressLine1) out.push(profile.addressLine1);
+  if (profile.addressLine2) out.push(profile.addressLine2);
+  const cityLine = [profile.addressPostalCode, profile.addressCity]
+    .filter(Boolean)
+    .join(" ");
+  if (cityLine) out.push(cityLine);
+  if (profile.addressCountryCode) out.push(profile.addressCountryCode);
+  return out;
 }
 
 export async function listGeneratedDocuments(appointmentId: string, doctorId: string) {

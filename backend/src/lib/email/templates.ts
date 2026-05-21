@@ -176,41 +176,59 @@ export async function sendAppointmentReminderEmail(opts: {
   fullName: string;
   consultationType: string;
   scheduledAt: Date;
-  meetingUrl: string;
+  /** Empty for IN_PERSON visits — `where` carries the venue instead. */
+  meetingUrl?: string | null;
+  /** Pre-formatted "Where" line for IN_PERSON visits. */
+  where?: string | null;
 }) {
   const formatted = opts.scheduledAt.toUTCString();
   const localHint = opts.scheduledAt.toISOString();
-  return sendEmail({
-    to: opts.to,
-    subject: `Reminder: your call tomorrow — ${opts.consultationType}`,
-    text: `Hi ${opts.fullName},
+  const meetLink = opts.meetingUrl?.trim() || null;
+  const where = opts.where?.trim() || null;
+  const joinText = meetLink
+    ? `Join the call:\n${meetLink}\n\n`
+    : "";
+  const whereText = where ? `Where: ${where}\n\n` : "";
+  const earlyTipText = meetLink
+    ? "Open it 5 minutes early to test camera + mic."
+    : "Plan to arrive 5–10 minutes early.";
 
-Quick reminder — your ${opts.consultationType} is tomorrow at ${formatted}.
-
-Join the call:
-${opts.meetingUrl}
-
-Open it 5 minutes early to test camera + mic. Reply to this email if you need to reschedule.
-
-— Global Health`,
-    html: wrapHtml(
-      "Your call is tomorrow",
-      `<p>Hi ${escapeHtml(opts.fullName)},</p>
-       <p>Quick reminder — your <strong>${escapeHtml(opts.consultationType)}</strong> is tomorrow at:</p>
-       <p style="margin:16px 0;font-size:18px;font-weight:700;color:#1B4D3E;">
-         <time datetime="${escapeHtml(localHint)}">${escapeHtml(formatted)}</time>
-       </p>
-       <p style="margin:24px 0;">
-         <a href="${escapeHtml(opts.meetingUrl)}"
+  const ctaHtml = meetLink
+    ? `<p style="margin:24px 0;">
+         <a href="${escapeHtml(meetLink)}"
             style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">
            Join the call
          </a>
        </p>
        <p style="font-size:13px;color:#737373;">
          Or paste this link:<br/>
-         <a href="${escapeHtml(opts.meetingUrl)}">${escapeHtml(opts.meetingUrl)}</a>
+         <a href="${escapeHtml(meetLink)}">${escapeHtml(meetLink)}</a>
+       </p>`
+    : "";
+  const whereHtml = where
+    ? `<p style="margin:16px 0;font-size:14px;color:#1B4D3E;">📍 ${escapeHtml(where)}</p>`
+    : "";
+
+  return sendEmail({
+    to: opts.to,
+    subject: `Reminder: your appointment tomorrow — ${opts.consultationType}`,
+    text: `Hi ${opts.fullName},
+
+Quick reminder — your ${opts.consultationType} is tomorrow at ${formatted}.
+
+${whereText}${joinText}${earlyTipText} Reply to this email if you need to reschedule.
+
+— Global Health`,
+    html: wrapHtml(
+      "Your appointment is tomorrow",
+      `<p>Hi ${escapeHtml(opts.fullName)},</p>
+       <p>Quick reminder — your <strong>${escapeHtml(opts.consultationType)}</strong> is tomorrow at:</p>
+       <p style="margin:16px 0;font-size:18px;font-weight:700;color:#1B4D3E;">
+         <time datetime="${escapeHtml(localHint)}">${escapeHtml(formatted)}</time>
        </p>
-       <p>Open it 5 minutes early to test camera + mic. Reply if you need to reschedule.</p>`,
+       ${whereHtml}
+       ${ctaHtml}
+       <p>${earlyTipText} Reply if you need to reschedule.</p>`,
     ),
   });
 }
