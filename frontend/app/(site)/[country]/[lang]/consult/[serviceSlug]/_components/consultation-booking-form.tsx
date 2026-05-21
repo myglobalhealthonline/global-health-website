@@ -49,6 +49,8 @@ export function ConsultationBookingForm({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
+  const nationalIdLabel = idLabelForCountrySlug(params?.country);
+
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(
     slots[0]?.id ?? null,
   );
@@ -119,6 +121,7 @@ export function ConsultationBookingForm({
     const phone = String(form.get("phone") ?? "").trim();
     const dateOfBirth = String(form.get("dateOfBirth") ?? "").trim();
     const notes = String(form.get("notes") ?? "").trim();
+    const nationalIdNumber = String(form.get("nationalIdNumber") ?? "").trim();
     const consent = form.get("consent") === "on";
 
     if (fullName.length < 2) {
@@ -153,6 +156,21 @@ export function ConsultationBookingForm({
       if (!res.ok) {
         setError(res.message ?? "Could not add to cart");
         return;
+      }
+      // Fire-and-forget: persist the national ID onto the logged-in
+      // patient's PatientProfile. Guests skip — they'll fill it on
+      // /account/profile after they sign up + claim their booking.
+      if (me && !bookingForOther && nationalIdNumber) {
+        try {
+          await fetch("/api/account/profile", {
+            method: "PATCH",
+            credentials: "include",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ nationalIdNumber }),
+          });
+        } catch {
+          // Non-fatal — patient can edit it later from /account/profile.
+        }
       }
       const country = params?.country ?? "";
       const lang = params?.lang ?? "";
@@ -294,6 +312,22 @@ export function ConsultationBookingForm({
 
         <label className="mt-4 block">
           <span className="text-xs font-semibold text-slate-700">
+            {nationalIdLabel} (optional)
+          </span>
+          <input
+            type="text"
+            name="nationalIdNumber"
+            maxLength={64}
+            className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+          />
+          <p className="mt-1 text-xs text-slate-500">
+            Needed on prescriptions in your country. You can also fill it
+            in on your profile later.
+          </p>
+        </label>
+
+        <label className="mt-4 block">
+          <span className="text-xs font-semibold text-slate-700">
             Reason for visit (optional)
           </span>
           <textarea
@@ -335,4 +369,18 @@ export function ConsultationBookingForm({
       </button>
     </form>
   );
+}
+
+/** Label the national-ID field per market. Defaults to "ID number" so
+ *  patients in markets we haven't mapped yet still get a sensible prompt. */
+function idLabelForCountrySlug(slug: string | undefined): string {
+  if (!slug) return "ID number";
+  const lower = slug.toLowerCase();
+  if (lower.startsWith("portugal")) return "NIF / Cartão de Cidadão";
+  if (lower.startsWith("brazil")) return "CPF";
+  if (lower.startsWith("spain")) return "DNI / NIE";
+  if (lower.startsWith("ireland")) return "PPS number";
+  if (lower.startsWith("czech")) return "Rodné číslo";
+  if (lower.startsWith("romania")) return "CNP";
+  return "ID number";
 }

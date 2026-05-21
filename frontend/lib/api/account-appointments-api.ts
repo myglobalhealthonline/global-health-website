@@ -19,6 +19,12 @@ export type AccountAppointment = {
   email: string;
   phone: string | null;
   notesPreview: string | null;
+  /** For IN_PERSON appointments — either a joined clinic name/city or a
+   *  free-text locationAddress. UI renders a "Where" block from these. */
+  consultationMode?: string | null;
+  clinicName?: string | null;
+  clinicCity?: string | null;
+  locationAddress?: string | null;
 };
 
 type ApiResult<T> =

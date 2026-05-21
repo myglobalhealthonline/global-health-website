@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { fetchDoctorPatientDetail } from "@/lib/api/doctor-api";
 import { PatientProfilePanel } from "./_components/patient-profile-panel";
+import { AllDocumentsCard } from "./_components/all-documents-card";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +57,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
         className="grid gap-4"
         style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
       >
+        <div className="grid gap-4">
         <section className="gh-card p-6">
           <h3
             className="m-0 text-[var(--color-text-primary)]"
@@ -131,6 +133,9 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
             </table>
           )}
         </section>
+
+        <AllDocumentsCard email={patient.email} />
+        </div>
 
         <aside className="grid gap-4 self-start">
           <PatientProfilePanel email={patient.email} />

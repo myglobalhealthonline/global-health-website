@@ -15,12 +15,14 @@ const DOC_TYPES = [
   { value: "ABSENCE_CERTIFICATE", label: "Absence certificate" },
   { value: "EXAMS_PRESCRIPTION", label: "Examinations prescription" },
   { value: "PRESCRIPTION", label: "Prescription" },
+  { value: "OTHER", label: "Other (custom)" },
 ] as const;
 
 export function GeneratedDocumentsPanel({ appointmentId }: { appointmentId: string }) {
   const [items, setItems] = useState<GeneratedDoc[]>([]);
   const [docType, setDocType] = useState<string>("ABSENCE_CERTIFICATE");
   const [body, setBody] = useState("");
+  const [customLabel, setCustomLabel] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +44,15 @@ export function GeneratedDocumentsPanel({ appointmentId }: { appointmentId: stri
 
   function generate() {
     setError(null);
+    if (docType === "OTHER" && !customLabel.trim()) {
+      setError("Enter a label for the document.");
+      return;
+    }
+    const fields: Record<string, string> = {};
+    if (body.trim()) fields.body = body.trim();
+    if (docType === "OTHER" && customLabel.trim()) {
+      fields.customLabel = customLabel.trim();
+    }
     startTransition(async () => {
       const res = await fetch(
         `/api/doctor/appointments/${appointmentId}/documents/generate`,
@@ -50,7 +61,7 @@ export function GeneratedDocumentsPanel({ appointmentId }: { appointmentId: stri
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
             type: docType,
-            fields: body.trim() ? { body: body.trim() } : undefined,
+            fields: Object.keys(fields).length > 0 ? fields : undefined,
           }),
         },
       );
@@ -60,6 +71,7 @@ export function GeneratedDocumentsPanel({ appointmentId }: { appointmentId: stri
         return;
       }
       setBody("");
+      setCustomLabel("");
       await load();
     });
   }
@@ -121,6 +133,16 @@ export function GeneratedDocumentsPanel({ appointmentId }: { appointmentId: stri
           <FileText className="size-3.5" aria-hidden /> Generate PDF
         </button>
       </div>
+      {docType === "OTHER" ? (
+        <input
+          type="text"
+          value={customLabel}
+          onChange={(e) => setCustomLabel(e.target.value)}
+          placeholder="Custom title (e.g. Lab requisition)"
+          maxLength={80}
+          className="gh-input w-full"
+        />
+      ) : null}
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}

@@ -171,6 +171,10 @@ type AppointmentRecord = {
   locationAddress: string | null;
   createdAt: Date;
   updatedAt: Date;
+  /** Populated only by the patient-facing list/detail queries that
+   *  LEFT JOIN Clinic. Other readers leave it undefined. */
+  clinicName?: string | null;
+  clinicCity?: string | null;
 };
 
 export type AdminAppointmentListItem = {
@@ -222,6 +226,12 @@ export type AccountAppointmentListItem = {
   email: string;
   phone: string | null;
   notesPreview: string | null;
+  /** Patient-facing location data for IN_PERSON appointments. Either a
+   *  resolved Clinic (name + city) or a free-text `locationAddress`. */
+  consultationMode: string | null;
+  clinicName: string | null;
+  clinicCity: string | null;
+  locationAddress: string | null;
 };
 
 export type AccountAppointmentDetail = {
@@ -525,27 +535,30 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
     const rows = await prisma.$queryRawUnsafe<AppointmentRecord[]>(
       `
         SELECT
-          "id",
-          "countryCode",
-          "consultationType",
-          "fullName",
-          "email",
-          "phone",
-          "notes",
-          "status",
-          "scheduledAt",
-          "meetingUrl",
-          "paymentStatus",
-          "amountCents",
-          "currencyCode",
-          "consultationMode",
-          "clinicId",
-          "locationAddress",
-          "createdAt",
-          "updatedAt"
-        FROM "Appointment"
-        WHERE "userId" = $1
-        ORDER BY "createdAt" DESC
+          a."id",
+          a."countryCode",
+          a."consultationType",
+          a."fullName",
+          a."email",
+          a."phone",
+          a."notes",
+          a."status",
+          a."scheduledAt",
+          a."meetingUrl",
+          a."paymentStatus",
+          a."amountCents",
+          a."currencyCode",
+          a."consultationMode",
+          a."clinicId",
+          a."locationAddress",
+          a."createdAt",
+          a."updatedAt",
+          c."name" AS "clinicName",
+          c."city" AS "clinicCity"
+        FROM "Appointment" a
+        LEFT JOIN "Clinic" c ON c."id" = a."clinicId"
+        WHERE a."userId" = $1
+        ORDER BY a."createdAt" DESC
       `,
       userId,
     );
@@ -566,6 +579,10 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
       email: row.email,
       phone: row.phone,
       notesPreview: row.notes ? row.notes.slice(0, 140) : null,
+      consultationMode: row.consultationMode,
+      clinicName: row.clinicName ?? null,
+      clinicCity: row.clinicCity ?? null,
+      locationAddress: row.locationAddress,
     }));
   } catch (error) {
     throw normalizeDbError(error, "Appointments are temporarily unavailable");

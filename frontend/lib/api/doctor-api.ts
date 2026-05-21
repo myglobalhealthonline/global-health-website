@@ -150,6 +150,33 @@ export async function fetchDoctorPatientDetail(email: string) {
   );
 }
 
+export type DoctorPatientDocumentsPayload = {
+  uploads: Array<{
+    id: string;
+    appointmentId: string;
+    label: string;
+    fileName?: string;
+    mimetype: string;
+    byteSize: number;
+    createdAt: string;
+  }>;
+  generated: Array<{
+    id: string;
+    appointmentId: string;
+    fileName: string;
+    documentType: string;
+    sentToPatient: boolean;
+    metadata: unknown;
+    createdAt: string;
+  }>;
+};
+
+export async function fetchDoctorPatientDocuments(email: string) {
+  return doctorRequest<DoctorPatientDocumentsPayload>(
+    `/api/doctor/patients/${encodeURIComponent(email)}/documents`,
+  );
+}
+
 export type ConsultationDto = {
   id: string;
   appointmentId: string;

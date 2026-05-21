@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CalendarDays, ArrowRight, ClipboardList, Video, Clock, MessageCircle } from "lucide-react";
+import { CalendarDays, ArrowRight, ClipboardList, Video, Clock, MapPin, MessageCircle } from "lucide-react";
 import type { AccountAppointment } from "@/lib/api/account-appointments-api";
 import { ChatThread } from "@/components/chat/ChatThread";
 import { fetchPatientMessages, postPatientMessage } from "@/lib/api/chat-api";
@@ -158,6 +158,17 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
             </div>
           ) : null}
 
+          {/* In-person "Where" block — appears when consultationMode is
+              IN_PERSON and admin has set a Clinic or a free-text address. */}
+          {item.consultationMode === "IN_PERSON" &&
+          (item.clinicName || item.locationAddress) ? (
+            <WhereBlock
+              clinicName={item.clinicName ?? null}
+              clinicCity={item.clinicCity ?? null}
+              locationAddress={item.locationAddress ?? null}
+            />
+          ) : null}
+
           {item.notesPreview ? (
             <div className="mt-3 rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-3 py-2">
               <p className="text-xs font-semibold text-[var(--color-text-muted)]">Notes</p>
@@ -224,6 +235,53 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
           ) : null}
         </article>
       ))}
+    </div>
+  );
+}
+
+function WhereBlock({
+  clinicName,
+  clinicCity,
+  locationAddress,
+}: {
+  clinicName: string | null;
+  clinicCity: string | null;
+  locationAddress: string | null;
+}) {
+  const primary = clinicName ?? locationAddress ?? "";
+  const secondary = clinicName && clinicCity ? clinicCity : null;
+  // Build a Maps link from whichever address parts we have. Patient
+  // gets a one-tap directions launcher.
+  const query = clinicName
+    ? [clinicName, clinicCity].filter(Boolean).join(", ")
+    : (locationAddress ?? "");
+  const mapsHref = query
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
+    : null;
+  return (
+    <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-sky-200 bg-sky-50 px-4 py-3">
+      <div className="flex items-start gap-2">
+        <MapPin className="mt-0.5 size-4 text-sky-700" aria-hidden />
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-sky-700">
+            Where
+          </p>
+          <p className="mt-0.5 text-sm font-medium text-sky-900">{primary}</p>
+          {secondary ? (
+            <p className="text-xs text-sky-800">{secondary}</p>
+          ) : null}
+        </div>
+      </div>
+      {mapsHref ? (
+        <a
+          href={mapsHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-sky-800 hover:underline"
+        >
+          Directions <ArrowRight className="size-3.5" aria-hidden />
+        </a>
+      ) : null}
     </div>
   );
 }

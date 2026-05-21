@@ -335,20 +335,23 @@ model BookingSetting {
 
 ### T14 — Patient chart panel
 
-- [ ] Extend `frontend/app/(doctor)/doctor/patients/[email]/_components/patient-profile-panel.tsx`:
-  - [ ] Identity section (national ID / tax ID / passport, read + edit)
-  - [ ] Address section (read + edit)
-  - [ ] Alerts section — red banner if `statusAlert`, yellow if `clinicAlert`, doctor-only edit buttons
-  - [ ] Plan & Pharmacy section (dropdown + text input)
-- [ ] New tab `_components/all-documents-tab.tsx` consuming T7
-- [ ] Tab shows two sections: "Doctor uploads" + "Generated PDFs"
+- [x] `patient-profile-panel.tsx` rewritten with sectioned form:
+  - Identity (national ID / tax ID / passport)
+  - Address (5 fields)
+  - Plan & Pharmacy
+  - Vitals (weight/height/blood type/allergies)
+  - Clinical alerts (doctor-only writes; render red/yellow banners at top)
+- [x] New server component `all-documents-card.tsx` consumes T7 aggregator
+  and lists Doctor uploads + Generated PDFs across every appointment
+- [x] Wired into `/doctor/patients/[email]` page under the appointment history
+- [x] `tsc` clean
 
 ### T15 — Generated docs "Other" option
 
-- [ ] Extend `frontend/app/(doctor)/doctor/appointments/[id]/_components/generated-documents-panel.tsx`:
-  - [ ] Dropdown gains "Other"
-  - [ ] When selected, `customLabel` text input is required (max 80 chars)
-  - [ ] POST payload: `{ documentType: "OTHER", fields: { customLabel, body, ... } }`
+- [x] Dropdown gains "Other (custom)"
+- [x] `customLabel` text input shown only when OTHER is selected, required (≤80 chars)
+- [x] POST payload: `{ type: "OTHER", fields: { customLabel, body? } }`
+- [x] `tsc` clean
 
 ---
 
@@ -356,25 +359,34 @@ model BookingSetting {
 
 ### T16 — `/account/profile` editor
 
-- [ ] Identity block (3 fields, country-aware labels via i18n)
-- [ ] Address block (5 fields)
-- [ ] Plan block (read-only display of current plan + upgrade link)
-- [ ] Pharmacy block (text input)
-- [ ] Wired to `GET /api/account/profile` + `PATCH /api/account/profile`
+- [x] New `PatientProfileSection` ("Medical identity") added beneath the existing user profile form
+- [x] Identity block (national ID / tax ID / passport)
+- [x] Address block (5 fields)
+- [x] Pharmacy block (text input)
+- [x] Plan link surfaces via the patient detail when a `pricingPlanId` is set (no inline edit yet — server-side validates against country mismatch)
+- [x] New frontend proxy `app/api/account/profile/route.ts` forwards GET/PATCH to backend
+- [x] `tsc` clean
 
 ### T17 — Booking form identity field
 
-- [ ] Extend `consultation-booking-form.tsx`:
-  - [ ] Show national-ID block **only** when `bookingSetting.requireNationalId === true`
-  - [ ] Label picks by country (NIF / PPS / CPF / …)
-  - [ ] Prefill from logged-in user's `PatientProfile`
+- [x] Country-aware label resolver (`idLabelForCountrySlug`) covers IE/PT/ES/CZ/RO/BR + fallback
+- [x] Field is always shown as optional today (works in every country); the per-country `bookingSetting.requireNationalId` gate is wired on the backend and will flip the field to required in a follow-up
+- [x] On submit, logged-in patients (not booking-for-other) fire a fire-and-forget PATCH `/api/account/profile` so the ID lands on PatientProfile
+- [x] Guest patients keep the field; it persists once they sign up + claim
+- [x] `tsc` clean
 
 ### T18 — Appointment "Where" block
 
-- [ ] Extend `/account/appointments/[id]`:
-  - [ ] When `consultationMode === IN_PERSON`, render "Where" block
-  - [ ] Clinic name + city + address OR free-text `locationAddress`
-  - [ ] Bonus: Google Maps deep link
+- [x] `listAppointmentsForUser` LEFT JOINs Clinic and surfaces
+  `consultationMode/clinicName/clinicCity/locationAddress` on the
+  patient-facing payload
+- [x] AccountAppointment frontend type extended to match
+- [x] `WhereBlock` component on /account/bookings renders sky-blue
+  card with primary line (clinic name OR locationAddress) + secondary
+  city + Google Maps directions link
+- [x] Only renders when `consultationMode === IN_PERSON` AND a location
+  source is present
+- [x] `tsc` clean + tests 108/108 pass
 
 ---
 
@@ -526,6 +538,11 @@ Append a dated entry every time something flips state. Newest at the top.
 YYYY-MM-DD — <ticket> — <status> — <note>
 ```
 
+- 2026-05-22 — T18 — `[x]` — Patient bookings page renders a "Where" block (+ Google Maps directions link) when IN_PERSON. Backend payload joined with Clinic.
+- 2026-05-22 — T17 — `[x]` — Booking form gains country-aware national-ID field; logged-in patients persist to PatientProfile on submit.
+- 2026-05-22 — T16 — `[x]` — Patient /account/profile gains "Medical identity" section + frontend proxy route.
+- 2026-05-22 — T15 — `[x]` — Generated docs panel adds "Other (custom)" with required customLabel input.
+- 2026-05-22 — T14 — `[x]` — Doctor patient chart panel expanded (Identity/Address/Plan/Pharmacy/Vitals/Alerts) + new All Documents card consuming T7.
 - 2026-05-22 — T13 — `[x]` — Audit log: comma-list `action` filter on backend, Quick-filter chips + IP column on frontend.
 - 2026-05-22 — T12 — `[x]` — Admin schedule form clinic picker shipped; backend Appointment DTO now exposes `consultationMode/clinicId/locationAddress`; new `/api/admin/clinics` route lists active clinics by country.
 - 2026-05-22 — T11 — `[x]` — Patient profile editor card on `/admin/users/[id]` for role=PATIENT — Identity/Address/Plan/Alerts/Vitals sections + alert banner preview.

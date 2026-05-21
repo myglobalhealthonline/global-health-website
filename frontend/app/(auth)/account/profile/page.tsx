@@ -7,6 +7,7 @@ import {
   patchCurrentUser,
   type AuthUser,
 } from "@/lib/api/auth-api";
+import { PatientProfileSection } from "./_components/patient-profile-section";
 
 export default function AccountProfilePage() {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -158,6 +159,8 @@ export default function AccountProfilePage() {
           </button>
         </form>
       )}
+
+      <PatientProfileSection />
     </div>
   );
 }
