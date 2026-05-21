@@ -297,6 +297,7 @@ export async function patchAdminAppointmentSchedule(
   input: {
     scheduledAt?: string | null;
     meetingUrl?: string | null;
+    consultationMode?: "ONLINE" | "IN_PERSON";
     clinicId?: string | null;
     locationAddress?: string | null;
   },

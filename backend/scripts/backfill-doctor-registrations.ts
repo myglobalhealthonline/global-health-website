@@ -25,7 +25,18 @@ const DRY_RUN = args.includes("--dry");
 const COUNTRY_CODE = (
   args.find((a) => a.startsWith("--country="))?.split("=")[1] ?? "IE"
 ).toUpperCase();
-const CHAMBER = COUNTRY_CODE === "IE" ? "IMC" : COUNTRY_CODE;
+// Real chamber short-codes per market. Falls back to COUNTRY_CODE when
+// running against a market not enumerated below — admin can edit the
+// chamberEntity per row from /admin/doctors/[id] afterwards.
+const CHAMBER =
+  ({
+    IE: "IMC",
+    PT: "OM",
+    ES: "OMC",
+    CZ: "ČLK",
+    RO: "CMR",
+    BR: "CRM",
+  } as Record<string, string>)[COUNTRY_CODE] ?? COUNTRY_CODE;
 
 async function main() {
   const country = await prisma.country.findUnique({

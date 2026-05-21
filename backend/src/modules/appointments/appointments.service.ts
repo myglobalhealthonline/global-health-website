@@ -658,6 +658,7 @@ export async function scheduleAppointment(
     scheduledAt?: Date | null;
     meetingUrl?: string | null;
     doctorId?: string | null;
+    consultationMode?: "ONLINE" | "IN_PERSON";
     clinicId?: string | null;
     locationAddress?: string | null;
   },
@@ -675,6 +676,11 @@ export async function scheduleAppointment(
   if (input.doctorId !== undefined) {
     args.push(input.doctorId);
     sets.push(`"doctorId" = $${args.length}`);
+  }
+  if (input.consultationMode !== undefined) {
+    args.push(input.consultationMode);
+    // Cast keeps the prepared statement honest about the enum target.
+    sets.push(`"consultationMode" = $${args.length}::"ConsultationMode"`);
   }
   if (input.clinicId !== undefined) {
     args.push(input.clinicId);

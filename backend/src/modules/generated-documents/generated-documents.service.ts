@@ -194,18 +194,27 @@ export async function generateAppointmentDocument(input: {
 
   await putObject(storageKey, Buffer.from(pdfBytes), "application/pdf");
 
-  const existing = await prisma.generatedDocument.findFirst({
-    where: {
-      appointmentId: appt.id,
-      documentType: input.documentType,
-      sentToPatient: false,
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  // De-dupe rule: replace any unsent draft of the SAME documentType so a
+  // doctor can iterate on a prescription / certificate without piling up
+  // orphan PDFs in the Review queue. OTHER is exempt — by design it
+  // carries arbitrary customLabel content (lab requisition, imaging
+  // referral, etc.) and two OTHER docs at the same time on one
+  // appointment are perfectly valid; otherwise generating the second
+  // would silently wipe the first.
+  if (input.documentType !== "OTHER") {
+    const existing = await prisma.generatedDocument.findFirst({
+      where: {
+        appointmentId: appt.id,
+        documentType: input.documentType,
+        sentToPatient: false,
+      },
+      orderBy: { createdAt: "desc" },
+    });
 
-  if (existing) {
-    await deleteObject(existing.storageKey).catch(() => {});
-    await prisma.generatedDocument.delete({ where: { id: existing.id } });
+    if (existing) {
+      await deleteObject(existing.storageKey).catch(() => {});
+      await prisma.generatedDocument.delete({ where: { id: existing.id } });
+    }
   }
 
   const row = await prisma.generatedDocument.create({

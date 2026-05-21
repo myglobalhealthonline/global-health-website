@@ -135,7 +135,10 @@ const authRoute: FastifyPluginAsync = async (app) => {
           actorRole: null,
           action: "LOGIN_FAILED",
           entityType: "User",
-          entityId: body.data.email.trim().toLowerCase(),
+          // Leave entityId blank so admin filters by entityId don't conflate
+          // attacker-supplied emails with real User.id values. The attempted
+          // email still lives on metadata.email for forensics.
+          entityId: "",
           metadata: { email: body.data.email.trim().toLowerCase(), reason: "invalid_credentials" },
           request,
         }).catch(() => {});

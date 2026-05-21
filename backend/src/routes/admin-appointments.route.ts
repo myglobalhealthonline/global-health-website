@@ -111,6 +111,11 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     // assignment; `undefined` leaves it alone.
     const doctorIdInput = body.data.doctorId ?? undefined;
 
+    // Mode toggle. Cart-flow + manual creation default to ONLINE; admin
+    // can flip an existing row to IN_PERSON here, which unlocks the
+    // clinic picker + WhereBlock + the in-person reminder cron.
+    const consultationModeInput = body.data.consultationMode;
+
     // Clinic + free-text location for IN_PERSON visits. The Zod schema
     // already rejects "both at once"; here we additionally enforce that
     // an IN_PERSON appointment ends up with at least one location source
@@ -169,8 +174,9 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       }
 
       // For IN_PERSON consults, refuse to land the patch in a state with
-      // no location source. Read the appointment's current mode + the
-      // proposed inputs and reject if both end up null/empty.
+      // no location source. Compute the *post-patch* mode (in case admin
+      // is flipping ONLINE→IN_PERSON in this same request) and check
+      // location accordingly.
       const modeRow = await prisma.appointment.findUnique({
         where: { id: params.data.id },
         select: {
@@ -179,12 +185,14 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
           locationAddress: true,
         },
       });
-      if (modeRow?.consultationMode === "IN_PERSON") {
+      const finalMode =
+        consultationModeInput ?? modeRow?.consultationMode ?? "ONLINE";
+      if (finalMode === "IN_PERSON") {
         const finalClinicId =
-          clinicIdInput === undefined ? modeRow.clinicId : clinicIdInput;
+          clinicIdInput === undefined ? modeRow?.clinicId ?? null : clinicIdInput;
         const finalLocationAddress =
           locationAddressInput === undefined
-            ? modeRow.locationAddress
+            ? modeRow?.locationAddress ?? null
             : locationAddressInput;
         if (!finalClinicId && !finalLocationAddress) {
           return reply
@@ -201,6 +209,9 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         scheduledAt: scheduledAtInput,
         meetingUrl: meetingUrlInput,
         doctorId: doctorIdInput,
+        ...(consultationModeInput !== undefined
+          ? { consultationMode: consultationModeInput }
+          : {}),
         clinicId: clinicIdInput,
         locationAddress: locationAddressInput,
       });

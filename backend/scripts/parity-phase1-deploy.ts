@@ -29,7 +29,18 @@ const APPLY = process.argv.includes("--apply");
 const COUNTRY_CODE = (
   process.argv.find((a) => a.startsWith("--country="))?.split("=")[1] ?? "IE"
 ).toUpperCase();
-const CHAMBER = COUNTRY_CODE === "IE" ? "IMC" : COUNTRY_CODE;
+// Real chamber short-codes per market. The fallback to COUNTRY_CODE keeps
+// the script useful for new markets we haven't enumerated here yet —
+// admin can edit the row's chamberEntity in /admin/doctors/[id] later.
+const CHAMBER =
+  ({
+    IE: "IMC",
+    PT: "OM",
+    ES: "OMC",
+    CZ: "ČLK",
+    RO: "CMR",
+    BR: "CRM",
+  } as Record<string, string>)[COUNTRY_CODE] ?? COUNTRY_CODE;
 
 type StepResult = { name: string; ok: boolean; detail: string };
 const steps: StepResult[] = [];

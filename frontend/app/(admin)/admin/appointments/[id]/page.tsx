@@ -167,6 +167,12 @@ export default async function AdminAppointmentDetailPage({
     }
     const meetingUrl: string | null = rawUrl === "" ? null : rawUrl;
 
+    // Delivery mode. Form sends "ONLINE" or "IN_PERSON". Default stays
+    // ONLINE; flipping to IN_PERSON unlocks the clinic picker block.
+    const rawMode = String(formData.get("consultationMode") ?? "").trim();
+    const consultationModePatch: "ONLINE" | "IN_PERSON" | undefined =
+      rawMode === "ONLINE" || rawMode === "IN_PERSON" ? rawMode : undefined;
+
     // Clinic / location for in-person consults. The form submits ONE of:
     // - `clinicId=<id>` when a known clinic is picked
     // - `clinicId=__custom__` + `locationAddress=<text>` for free-text
@@ -192,6 +198,9 @@ export default async function AdminAppointmentDetailPage({
     const result = await patchAdminAppointmentSchedule(id, {
       scheduledAt,
       meetingUrl,
+      ...(consultationModePatch !== undefined
+        ? { consultationMode: consultationModePatch }
+        : {}),
       ...(clinicIdPatch !== undefined ? { clinicId: clinicIdPatch } : {}),
       ...(locationAddressPatch !== undefined
         ? { locationAddress: locationAddressPatch }
@@ -448,6 +457,22 @@ export default async function AdminAppointmentDetailPage({
                 <span className="text-[11px] text-[var(--color-text-muted)]">
                   Allowed hosts: meet.google.com, zoom.us, teams.microsoft.com,
                   whereby.com, daily.co.
+                </span>
+              </label>
+
+              <label className="flex flex-col gap-1.5">
+                <span className="gh-field-label">Mode</span>
+                <select
+                  name="consultationMode"
+                  defaultValue={appointment.consultationMode ?? "ONLINE"}
+                  className="gh-select"
+                >
+                  <option value="ONLINE">Online (video call)</option>
+                  <option value="IN_PERSON">In person (at a clinic)</option>
+                </select>
+                <span className="text-[11px] text-[var(--color-text-muted)]">
+                  In-person hides the Meet link + shows a venue picker. Save
+                  the form once to switch modes, then re-open to see the picker.
                 </span>
               </label>
 

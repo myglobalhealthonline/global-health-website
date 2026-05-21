@@ -157,20 +157,18 @@ export function ConsultationBookingForm({
         setError(res.message ?? "Could not add to cart");
         return;
       }
-      // Fire-and-forget: persist the national ID onto the logged-in
-      // patient's PatientProfile. Guests skip — they'll fill it on
-      // /account/profile after they sign up + claim their booking.
+      // Persist the national ID onto the logged-in patient's
+      // PatientProfile in the background. We deliberately don't `await`
+      // here — if the backend's slow, the patient still gets redirected
+      // to /cart in normal time. Failure is non-fatal; they can fill it
+      // in later from /account/profile.
       if (me && !bookingForOther && nationalIdNumber) {
-        try {
-          await fetch("/api/account/profile", {
-            method: "PATCH",
-            credentials: "include",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ nationalIdNumber }),
-          });
-        } catch {
-          // Non-fatal — patient can edit it later from /account/profile.
-        }
+        void fetch("/api/account/profile", {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ nationalIdNumber }),
+        }).catch(() => {});
       }
       const country = params?.country ?? "";
       const lang = params?.lang ?? "";

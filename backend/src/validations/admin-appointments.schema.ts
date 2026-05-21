@@ -66,6 +66,13 @@ export const scheduleAppointmentBodySchema = z
      */
     doctorId: z.union([z.string().trim().min(8).max(40), z.null()]).optional(),
     /**
+     * Delivery mode. Cart-flow + manual creation default the row to
+     * ONLINE; this lets admin flip the row to IN_PERSON (which unlocks
+     * the clinic picker + the "Where" block on the patient view + the
+     * in-person reminder cron) and back.
+     */
+    consultationMode: z.enum(["ONLINE", "IN_PERSON"]).optional(),
+    /**
      * In-person consults: soft FK to a known Clinic row, OR free-text
      * `locationAddress` for off-grid venues. Route handler enforces
      * "exactly one" when consultationMode = IN_PERSON.
@@ -80,11 +87,12 @@ export const scheduleAppointmentBodySchema = z
       data.scheduledAt !== undefined ||
       data.meetingUrl !== undefined ||
       data.doctorId !== undefined ||
+      data.consultationMode !== undefined ||
       data.clinicId !== undefined ||
       data.locationAddress !== undefined,
     {
       message:
-        "Provide at least scheduledAt, meetingUrl, doctorId, clinicId, or locationAddress",
+        "Provide at least scheduledAt, meetingUrl, doctorId, consultationMode, clinicId, or locationAddress",
     },
   )
   .refine(
