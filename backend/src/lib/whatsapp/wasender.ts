@@ -2,15 +2,23 @@ import { env } from "../../config/env.js";
 
 const API_BASE = "https://wasenderapi.com/api";
 
+// Serialize WaSender calls so concurrent senders don't all read the same
+// lastSentAt and fire at once. Each caller awaits a shared promise chain
+// that enforces the configured gap between actual sends.
+let chainTail: Promise<void> = Promise.resolve();
 let lastSentAt = 0;
 
-async function gap() {
+function nextGapSlot(): Promise<void> {
   const ms = env.WASENDER_GAP_MS ?? 5500;
-  const elapsed = Date.now() - lastSentAt;
-  if (elapsed < ms) {
-    await new Promise((r) => setTimeout(r, ms - elapsed));
-  }
-  lastSentAt = Date.now();
+  const slot = chainTail.then(async () => {
+    const elapsed = Date.now() - lastSentAt;
+    if (elapsed < ms) {
+      await new Promise((r) => setTimeout(r, ms - elapsed));
+    }
+    lastSentAt = Date.now();
+  });
+  chainTail = slot.catch(() => {});
+  return slot;
 }
 
 export function isWhatsAppConfigured(): boolean {
@@ -28,11 +36,15 @@ export async function sendWhatsAppText(opts: {
   if (!token) {
     return { ok: true, skipped: true };
   }
-  const to = opts.to.replace(/\D/g, "");
+  // Strip everything except digits and leading +. WaSender accepts E.164.
+  const trimmed = opts.to.trim();
+  const plus = trimmed.startsWith("+") ? "+" : "";
+  const digits = trimmed.replace(/\D/g, "");
+  const to = digits ? `${plus}${digits}` : "";
   if (!to) {
     return { ok: false, message: "Invalid phone number" };
   }
-  await gap();
+  await nextGapSlot();
   try {
     const res = await fetch(`${API_BASE}/send-message`, {
       method: "POST",

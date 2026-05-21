@@ -1,14 +1,89 @@
-import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+﻿import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import type { GeneratedDocumentType } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
-import { putObject, deleteObject, isMediaStorageConfigured } from "../../services/object-storage.js";
+import {
+  putObject,
+  deleteObject,
+  getObject,
+  streamToNodeReadable,
+  isMediaStorageConfigured,
+} from "../../services/object-storage.js";
 import { sendGeneratedDocumentEmail } from "../../lib/email/templates.js";
 
 const TITLES: Record<GeneratedDocumentType, string> = {
   ABSENCE_CERTIFICATE: "Medical absence certificate",
   EXAMS_PRESCRIPTION: "Examinations prescription",
   PRESCRIPTION: "Medical prescription",
+  // OTHER falls back to "Document" when no customLabel is passed; the
+  // builder + email template prefer fields.customLabel when present.
+  OTHER: "Document",
 };
+
+const PAGE_WIDTH = 595;
+const PAGE_HEIGHT = 842;
+const MARGIN_X = 50;
+const MARGIN_TOP = 780;
+const MARGIN_BOTTOM = 60;
+const CONTENT_WIDTH = PAGE_WIDTH - MARGIN_X * 2;
+
+/**
+ * pdf-lib's standard fonts use WinAnsi which throws on characters outside
+ * Latin-1 (e.g. Portuguese ã, ç, é). We don't bundle a Unicode TTF in this
+ * repo, so we normalize the text down to a Latin-1-safe form before drawing:
+ * decompose accented characters and drop the diacritics, then drop any
+ * remaining non-printable / non-Latin-1 codepoints. Names lose their accent
+ * marks but no crash — preferable to a 500 mid-consultation. If full Unicode
+ * fidelity is needed, add `@pdf-lib/fontkit` + a Noto TTF and swap `font`.
+ */
+function toWinAnsiSafe(text: string): string {
+  if (!text) return "";
+  return text
+    .normalize("NFKD")
+    .replace(/\p{M}/gu, "")
+    .replace(/[^\x20-\x7E\n\r\t]/g, "?");
+}
+
+function wrapToWidth(text: string, font: PDFFont, size: number, maxWidth: number): string[] {
+  const out: string[] = [];
+  for (const rawLine of text.split("\n")) {
+    if (rawLine === "") {
+      out.push("");
+      continue;
+    }
+    const words = rawLine.split(/\s+/);
+    let current = "";
+    for (const word of words) {
+      const candidate = current ? `${current} ${word}` : word;
+      const w = font.widthOfTextAtSize(candidate, size);
+      if (w <= maxWidth) {
+        current = candidate;
+        continue;
+      }
+      if (current) {
+        out.push(current);
+        current = "";
+      }
+      // Word itself wider than the column — hard-break by char.
+      if (font.widthOfTextAtSize(word, size) > maxWidth) {
+        let chunk = "";
+        for (const ch of word) {
+          const next = chunk + ch;
+          if (font.widthOfTextAtSize(next, size) > maxWidth) {
+            if (chunk) out.push(chunk);
+            chunk = ch;
+          } else {
+            chunk = next;
+          }
+        }
+        current = chunk;
+      } else {
+        current = word;
+      }
+    }
+    if (current) out.push(current);
+  }
+  return out;
+}
 
 export async function generateAppointmentDocument(input: {
   appointmentId: string;
@@ -28,18 +103,42 @@ export async function generateAppointmentDocument(input: {
   });
   if (!appt) return null;
 
+  const doctorName = appt.doctor
+    ? [appt.doctor.title, appt.doctor.fullName].filter((s) => Boolean(s?.trim())).join(" ").trim() ||
+      "Global Health"
+    : "Global Health";
+
+  // OTHER documents carry their human title in `fields.customLabel`; the
+  // enum entry is just a discriminator. Fall back to the static TITLES
+  // entry when no customLabel is supplied (defensive — the route
+  // validates this, but the service stays robust if a caller bypasses).
+  const customLabel = input.fields?.customLabel?.trim();
+  const title =
+    input.documentType === "OTHER" && customLabel
+      ? customLabel
+      : TITLES[input.documentType];
+
   const pdfBytes = await buildPdf({
-    title: TITLES[input.documentType],
+    title,
     patientName: appt.fullName,
-    doctorName: appt.doctor
-      ? `${appt.doctor.title} ${appt.doctor.fullName}`.trim()
-      : "Global Health",
+    doctorName,
     date: new Date().toLocaleDateString("en-GB"),
     body: input.fields?.body ?? input.fields?.notes ?? "",
     extras: input.fields ?? {},
   });
 
-  const fileName = `${input.documentType.toLowerCase()}-${appt.id.slice(0, 8)}.pdf`;
+  // Filename uses the customLabel slug for OTHER so the patient sees
+  // a recognisable file (e.g. "lab-requisition-abc12345.pdf") rather
+  // than "other-abc12345.pdf".
+  const slugBase =
+    input.documentType === "OTHER" && customLabel
+      ? customLabel
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(0, 40) || "document"
+      : input.documentType.toLowerCase();
+  const fileName = `${slugBase}-${appt.id.slice(0, 8)}.pdf`;
   const storageKey = `generated/${input.doctorId}/${appt.id}/${fileName}`;
 
   await putObject(storageKey, Buffer.from(pdfBytes), "application/pdf");
@@ -82,20 +181,31 @@ async function buildPdf(opts: {
   extras: Record<string, string>;
 }): Promise<Uint8Array> {
   const doc = await PDFDocument.create();
-  const page = doc.addPage([595, 842]);
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
-  let y = 780;
+
+  let page: PDFPage = doc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+  let y = MARGIN_TOP;
+
+  const newPage = () => {
+    page = doc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+    y = MARGIN_TOP;
+  };
 
   const draw = (text: string, size: number, useBold = false) => {
-    page.drawText(text.slice(0, 90), {
-      x: 50,
-      y,
-      size,
-      font: useBold ? bold : font,
-      color: rgb(0.1, 0.2, 0.15),
-    });
-    y -= size + 10;
+    const safe = toWinAnsiSafe(text);
+    const lines = wrapToWidth(safe, useBold ? bold : font, size, CONTENT_WIDTH);
+    for (const line of lines) {
+      if (y < MARGIN_BOTTOM) newPage();
+      page.drawText(line, {
+        x: MARGIN_X,
+        y,
+        size,
+        font: useBold ? bold : font,
+        color: rgb(0.1, 0.2, 0.15),
+      });
+      y -= size + 6;
+    }
   };
 
   draw(opts.title, 18, true);
@@ -103,11 +213,7 @@ async function buildPdf(opts: {
   draw(`Doctor: ${opts.doctorName}`, 12);
   draw(`Date: ${opts.date}`, 12);
   y -= 8;
-  if (opts.body) {
-    for (const line of opts.body.split("\n").slice(0, 20)) {
-      draw(line, 11);
-    }
-  }
+  if (opts.body) draw(opts.body, 11);
   for (const [k, v] of Object.entries(opts.extras)) {
     if (k === "body" || k === "notes") continue;
     draw(`${k}: ${v}`, 10);
@@ -126,6 +232,21 @@ export async function listGeneratedDocuments(appointmentId: string, doctorId: st
     where: { appointmentId },
     orderBy: { createdAt: "desc" },
   });
+}
+
+async function readStorageToBuffer(storageKey: string): Promise<Buffer | null> {
+  try {
+    const obj = await getObject(storageKey);
+    const readable = streamToNodeReadable(obj.Body);
+    if (!readable) return null;
+    const chunks: Buffer[] = [];
+    for await (const chunk of readable) {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    }
+    return Buffer.concat(chunks);
+  } catch {
+    return null;
+  }
 }
 
 export async function sendGeneratedDocuments(
@@ -148,20 +269,40 @@ export async function sendGeneratedDocuments(
     },
   });
 
+  let sent = 0;
   for (const doc of docs) {
-    await sendGeneratedDocumentEmail({
+    const pdfBuffer = await readStorageToBuffer(doc.storageKey);
+    // Use customLabel from metadata for OTHER docs so the email subject
+    // matches what the doctor titled it (e.g. "Lab requisition") rather
+    // than the generic "Document" fallback.
+    const meta = (doc.metadata ?? null) as { customLabel?: unknown } | null;
+    const customLabel =
+      typeof meta?.customLabel === "string" ? meta.customLabel.trim() : "";
+    const documentLabel =
+      doc.documentType === "OTHER" && customLabel
+        ? customLabel
+        : TITLES[doc.documentType];
+    const result = await sendGeneratedDocumentEmail({
       to: appt.email,
       patientName: appt.fullName,
-      documentType: TITLES[doc.documentType],
+      documentType: documentLabel,
       fileName: doc.fileName,
+      attachment: pdfBuffer
+        ? { filename: doc.fileName, content: pdfBuffer, contentType: "application/pdf" }
+        : undefined,
     });
-    await prisma.generatedDocument.update({
-      where: { id: doc.id },
-      data: { sentToPatient: true },
-    });
+    // Only mark as sent if the send actually succeeded — otherwise the
+    // doctor sees "delivered" but the patient never got it.
+    if (result.ok) {
+      await prisma.generatedDocument.update({
+        where: { id: doc.id },
+        data: { sentToPatient: true },
+      });
+      sent += 1;
+    }
   }
 
-  return docs.length;
+  return sent;
 }
 
 export async function deleteGeneratedDocument(doctorId: string, documentId: string) {

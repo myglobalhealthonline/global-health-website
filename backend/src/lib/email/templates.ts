@@ -108,10 +108,40 @@ export async function sendAppointmentScheduledEmail(opts: {
   fullName: string;
   consultationType: string;
   scheduledAt: Date;
-  meetingUrl: string;
+  /** Empty / omitted for IN_PERSON visits where the venue replaces the link. */
+  meetingUrl?: string | null;
+  /** Pre-formatted "Where" line — clinic name + city, or a free-text address. */
+  where?: string | null;
 }) {
   const formatted = opts.scheduledAt.toUTCString();
   const localHint = opts.scheduledAt.toISOString();
+  const meetLink = opts.meetingUrl?.trim() || null;
+  const where = opts.where?.trim() || null;
+
+  const joinText = meetLink
+    ? `Join the call here when it's time:\n${meetLink}\n\n`
+    : "";
+  const whereText = where ? `Where: ${where}\n\n` : "";
+  const earlyTipText = meetLink
+    ? "open the link 5 minutes early to test your camera and mic."
+    : "plan to arrive 5–10 minutes early.";
+
+  const ctaHtml = meetLink
+    ? `<p style="margin:24px 0;">
+         <a href="${escapeHtml(meetLink)}"
+            style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">
+           Join the call
+         </a>
+       </p>
+       <p style="font-size:13px;color:#737373;">
+         Or paste this link into your browser:<br/>
+         <a href="${escapeHtml(meetLink)}">${escapeHtml(meetLink)}</a>
+       </p>`
+    : "";
+  const whereHtml = where
+    ? `<p style="margin:16px 0;font-size:14px;color:#1B4D3E;">📍 ${escapeHtml(where)}</p>`
+    : "";
+
   return sendEmail({
     to: opts.to,
     subject: `Your appointment is scheduled — ${opts.consultationType}`,
@@ -119,10 +149,7 @@ export async function sendAppointmentScheduledEmail(opts: {
 
 Your ${opts.consultationType} is scheduled for ${formatted}.
 
-Join the call here when it's time:
-${opts.meetingUrl}
-
-Tip: open the link 5 minutes early to test your camera and mic. If you need to reschedule, reply to this email.
+${whereText}${joinText}Tip: ${earlyTipText} If you need to reschedule, reply to this email.
 
 — Global Health`,
     html: wrapHtml(
@@ -132,18 +159,9 @@ Tip: open the link 5 minutes early to test your camera and mic. If you need to r
        <p style="margin:16px 0;font-size:18px;font-weight:700;color:#1B4D3E;">
          <time datetime="${escapeHtml(localHint)}">${escapeHtml(formatted)}</time>
        </p>
-       <p style="margin:24px 0;">
-         <a href="${escapeHtml(opts.meetingUrl)}"
-            style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">
-           Join the call
-         </a>
-       </p>
-       <p style="font-size:13px;color:#737373;">
-         Or paste this link into your browser:<br/>
-         <a href="${escapeHtml(opts.meetingUrl)}">${escapeHtml(opts.meetingUrl)}</a>
-       </p>
-       <p>Tip: open the link 5 minutes early to test your camera and mic.
-          If you need to reschedule, just reply to this email.</p>`,
+       ${whereHtml}
+       ${ctaHtml}
+       <p>Tip: ${earlyTipText} If you need to reschedule, just reply to this email.</p>`,
     ),
   });
 }
@@ -398,16 +416,24 @@ export async function sendGeneratedDocumentEmail(opts: {
   patientName: string;
   documentType: string;
   fileName: string;
+  attachment?: { filename: string; content: Buffer; contentType?: string };
 }) {
+  const noteText = opts.attachment
+    ? `Your doctor has sent you ${opts.documentType.toLowerCase()} — see the attached file (${opts.fileName}).`
+    : `Your doctor has issued ${opts.documentType.toLowerCase()} (${opts.fileName}). Please contact the clinic to receive a copy.`;
+  const noteHtml = opts.attachment
+    ? `<p>Your doctor has sent you <strong>${escapeHtml(opts.documentType)}</strong> — see the attached file (${escapeHtml(opts.fileName)}).</p>`
+    : `<p>Your doctor has issued <strong>${escapeHtml(opts.documentType)}</strong> (${escapeHtml(opts.fileName)}). Please contact the clinic to receive a copy.</p>`;
   return sendEmail({
     to: opts.to,
     subject: `${opts.documentType} — Global Health`,
-    text: `Hi ${opts.patientName},\n\nYour doctor has sent you a document (${opts.fileName}). Sign in to your patient portal or contact the clinic if you need a copy.\n\n— Global Health`,
+    text: `Hi ${opts.patientName},\n\n${noteText}\n\n— Global Health`,
     html: wrapHtml(
       opts.documentType,
       `<p>Hi ${escapeHtml(opts.patientName)},</p>
-       <p>Your doctor has sent you <strong>${escapeHtml(opts.documentType)}</strong> (${escapeHtml(opts.fileName)}). Contact the clinic if you need a downloadable copy.</p>`,
+       ${noteHtml}`,
     ),
+    ...(opts.attachment ? { attachments: [opts.attachment] } : {}),
   });
 }
 

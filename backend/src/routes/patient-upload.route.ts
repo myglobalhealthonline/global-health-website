@@ -43,6 +43,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
     return okResponse({
       email: verified.email,
       fullName: profile?.fullName ?? null,
+      appointmentId: verified.appointmentId,
     });
   });
 
@@ -83,9 +84,16 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
 
     try {
       await upsertPatientProfileByEmail({ email: verified.email });
+      // Token carries appointmentId + doctorId — bind upload to the exact
+      // appointment the doctor minted the link for. Re-check the row still
+      // exists and the email matches so a stale token can't slot files
+      // into an appointment that was reassigned.
       const appt = await prisma.appointment.findFirst({
-        where: { email: { equals: verified.email, mode: "insensitive" } },
-        orderBy: { createdAt: "desc" },
+        where: {
+          id: verified.appointmentId,
+          doctorId: verified.doctorId,
+          email: { equals: verified.email, mode: "insensitive" },
+        },
         select: { id: true, doctorId: true },
       });
       if (!appt?.doctorId) {
@@ -127,34 +135,67 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       const auth = await verifyDoctorAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
-      const email = decodeURIComponent(request.params.email).trim().toLowerCase();
+      let email = "";
+      try {
+        email = decodeURIComponent(request.params.email).trim().toLowerCase();
+      } catch {
+        return reply.status(400).send(errorResponse("Invalid email param"));
+      }
       if (!email) return reply.status(400).send(errorResponse("Email required"));
 
+      // Pick the most recent appointment between THIS doctor and patient —
+      // bind that exact appointment into the token so uploads can't land on
+      // a different doctor's row even if the patient also sees other doctors.
       const hasAppt = await prisma.appointment.findFirst({
         where: { doctorId: auth.doctorId, email: { equals: email, mode: "insensitive" } },
-        select: { fullName: true, phone: true },
+        orderBy: { createdAt: "desc" },
+        select: { id: true, fullName: true, phone: true },
       });
       if (!hasAppt) {
         return reply.status(404).send(errorResponse("Patient not found for this doctor"));
       }
 
-      const { token, expiresAt } = createPatientUploadToken(email);
+      const { token, expiresAt } = createPatientUploadToken({
+        email,
+        appointmentId: hasAppt.id,
+        doctorId: auth.doctorId,
+      });
       const link = buildPatientUploadUrl(token);
 
-      await sendPatientUploadLinkEmail({
-        to: email,
-        patientName: hasAppt.fullName ?? email,
-        link,
-      });
+      const deliveryWarnings: string[] = [];
 
-      if (hasAppt.phone) {
-        await sendWhatsAppText({
-          to: hasAppt.phone,
-          message: `Upload your medical files securely:\n${link}`,
+      try {
+        await sendPatientUploadLinkEmail({
+          to: email,
+          patientName: hasAppt.fullName ?? email,
+          link,
         });
+      } catch (err) {
+        app.log.error({ err }, "patient-upload: email send failed");
+        deliveryWarnings.push("email");
       }
 
-      return okResponse({ link, expiresAt: expiresAt.toISOString() });
+      if (hasAppt.phone) {
+        try {
+          const wa = await sendWhatsAppText({
+            to: hasAppt.phone,
+            message: `Upload your medical files securely:\n${link}`,
+          });
+          if (!wa.ok && !wa.skipped) {
+            app.log.warn({ wa }, "patient-upload: whatsapp send failed");
+            deliveryWarnings.push("whatsapp");
+          }
+        } catch (err) {
+          app.log.error({ err }, "patient-upload: whatsapp send threw");
+          deliveryWarnings.push("whatsapp");
+        }
+      }
+
+      return okResponse({
+        link,
+        expiresAt: expiresAt.toISOString(),
+        deliveryWarnings: deliveryWarnings.length ? deliveryWarnings : undefined,
+      });
     },
   );
 };

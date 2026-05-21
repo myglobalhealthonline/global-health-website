@@ -30,7 +30,15 @@ async function proxy(request: NextRequest, method: "GET" | "DELETE") {
       headers: cookieHeader ? { cookie: cookieHeader } : {},
       cache: "no-store",
     });
-  } catch {
+  } catch (err) {
+    // Log so a backend outage isn't silently masked by the empty-cart
+    // fallback below — without this, ops can't tell from frontend logs
+    // that upstream went away.
+    console.error("[cart-proxy] backend fetch failed", {
+      method,
+      backend,
+      error: err instanceof Error ? err.message : String(err),
+    });
     if (method === "GET") {
       return NextResponse.json(EMPTY_CART_RESPONSE);
     }

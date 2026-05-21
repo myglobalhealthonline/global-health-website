@@ -6,6 +6,9 @@ import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
 export const metadata = pageMetadata("/");
 
 export default async function HomePage() {
+  // getPublicCountriesMerged also warms the slug↔code registry that the
+  // synchronous countryCodeFromSlug helpers downstream depend on — don't
+  // remove this call without re-routing those callers.
   const countries = await getPublicCountriesMerged();
   const allDoctors = await getPublicDoctorsNormalized();
   const countryMeta: Record<string, { doctors: number }> = {};

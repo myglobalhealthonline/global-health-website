@@ -41,6 +41,12 @@ export function isEmailConfigured(): boolean {
   return Boolean(env.SENDGRID_API_KEY && env.EMAIL_FROM);
 }
 
+export type SendEmailAttachment = {
+  filename: string;
+  content: Buffer;
+  contentType?: string;
+};
+
 export type SendEmailInput = {
   to: string;
   subject: string;
@@ -48,6 +54,7 @@ export type SendEmailInput = {
   text: string;
   /** Override the default reply-to. */
   replyTo?: string;
+  attachments?: SendEmailAttachment[];
 };
 
 export type SendEmailResult =
@@ -94,6 +101,16 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
       html: input.html,
       text: input.text,
       ...(input.replyTo ? { replyTo: input.replyTo } : {}),
+      ...(input.attachments?.length
+        ? {
+            attachments: input.attachments.map((a) => ({
+              filename: a.filename,
+              content: a.content.toString("base64"),
+              type: a.contentType ?? "application/octet-stream",
+              disposition: "attachment",
+            })),
+          }
+        : {}),
     });
     // SendGrid returns the message id in the `x-message-id` response header.
     const headers = response.headers as Record<string, string | undefined> | undefined;
