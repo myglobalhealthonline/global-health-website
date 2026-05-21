@@ -166,6 +166,9 @@ type AppointmentRecord = {
   paymentStatus: string;
   amountCents: number | null;
   currencyCode: string | null;
+  consultationMode: string | null;
+  clinicId: string | null;
+  locationAddress: string | null;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -196,6 +199,9 @@ export type AdminAppointmentDetail = {
   paymentStatus: string;
   amountCents: number | null;
   currencyCode: string | null;
+  consultationMode: string | null;
+  clinicId: string | null;
+  locationAddress: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -267,6 +273,9 @@ function toAdminAppointment(record: AppointmentRecord): AdminAppointmentDetail {
     paymentStatus: record.paymentStatus,
     amountCents: record.amountCents,
     currencyCode: record.currencyCode,
+    consultationMode: record.consultationMode,
+    clinicId: record.clinicId,
+    locationAddress: record.locationAddress,
     createdAt: record.createdAt.toISOString(),
     updatedAt: record.updatedAt.toISOString(),
   };
@@ -405,6 +414,9 @@ export async function getAppointmentById(id: string): Promise<AdminAppointmentDe
           "paymentStatus",
           "amountCents",
           "currencyCode",
+          "consultationMode",
+          "clinicId",
+          "locationAddress",
           "createdAt",
           "updatedAt"
         FROM "Appointment"
@@ -442,6 +454,9 @@ export async function updateAppointmentStatus(
           "paymentStatus",
           "amountCents",
           "currencyCode",
+          "consultationMode",
+          "clinicId",
+          "locationAddress",
           "createdAt",
           "updatedAt"
         FROM "Appointment"
@@ -482,6 +497,9 @@ export async function updateAppointmentStatus(
           "paymentStatus",
           "amountCents",
           "currencyCode",
+          "consultationMode",
+          "clinicId",
+          "locationAddress",
           "createdAt",
           "updatedAt"
       `,
@@ -520,6 +538,9 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
           "paymentStatus",
           "amountCents",
           "currencyCode",
+          "consultationMode",
+          "clinicId",
+          "locationAddress",
           "createdAt",
           "updatedAt"
         FROM "Appointment"
@@ -572,6 +593,9 @@ export async function getAppointmentForUser(
           "paymentStatus",
           "amountCents",
           "currencyCode",
+          "consultationMode",
+          "clinicId",
+          "locationAddress",
           "createdAt",
           "updatedAt"
         FROM "Appointment"
@@ -668,6 +692,9 @@ export async function scheduleAppointment(
           "paymentStatus",
           "amountCents",
           "currencyCode",
+          "consultationMode",
+          "clinicId",
+          "locationAddress",
           "createdAt",
           "updatedAt"
       `,

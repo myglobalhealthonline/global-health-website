@@ -517,6 +517,9 @@ export async function updateAdminDoctor(
             seoDescription: body.seoDescription,
           }),
           ...(body.active !== undefined && { active: body.active }),
+          ...(body.canCreateManualAppointments !== undefined && {
+            canCreateManualAppointments: body.canCreateManualAppointments,
+          }),
         },
         include: adminDoctorInclude,
       });

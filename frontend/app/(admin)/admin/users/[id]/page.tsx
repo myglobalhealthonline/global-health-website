@@ -2,12 +2,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import {
+  fetchAdminPatientProfile,
   fetchAdminUserById,
   patchAdminUser,
   resetAdminUserPassword,
   type AdminUserRole,
 } from "@/lib/admin/admin-api";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
+import { PatientProfileEditor } from "../_components/patient-profile-editor";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +45,18 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
   }
 
   const { user, stats } = result.data;
+
+  // Fetch the patient profile in parallel below; only render the editor
+  // for role=PATIENT accounts. ADMIN / DOCTOR users don't carry a clinical
+  // chart so the editor would be empty.
+  const patientProfileResult =
+    user.role === "PATIENT"
+      ? await fetchAdminPatientProfile(user.email)
+      : null;
+  const patientProfile =
+    patientProfileResult && patientProfileResult.ok
+      ? patientProfileResult.data.profile
+      : null;
 
   async function toggleActiveAction() {
     "use server";
@@ -159,6 +173,14 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
               <Field label="Updated" value={new Date(user.updatedAt).toLocaleString()} />
             </dl>
           </AdminCard>
+
+          {user.role === "PATIENT" ? (
+            <PatientProfileEditor
+              userId={user.id}
+              email={user.email}
+              profile={patientProfile}
+            />
+          ) : null}
         </div>
 
         <div className="grid gap-4 self-start">

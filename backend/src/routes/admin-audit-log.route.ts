@@ -16,7 +16,12 @@ import { errorResponse, okResponse } from "../utils/response.js";
 const listQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(200).default(50),
-  action: z.string().trim().min(1).max(64).optional(),
+  /**
+   * Action filter — accepts a single action name OR a comma-separated
+   * list (e.g. `LOGIN,LOGOUT,LOGIN_FAILED`) so the admin UI can offer
+   * one-click filter chips for related action groups.
+   */
+  action: z.string().trim().min(1).max(256).optional(),
   entityType: z.string().trim().min(1).max(64).optional(),
   entityId: z.string().trim().min(1).max(64).optional(),
   actorUserId: z.string().trim().min(1).max(64).optional(),
@@ -32,8 +37,13 @@ const adminAuditLogRoute: FastifyPluginAsync = async (app) => {
     }
     const { page, pageSize, action, entityType, entityId, actorUserId } = q.data;
     try {
+      const actionFilter = action
+        ? action.includes(",")
+          ? { in: action.split(",").map((s) => s.trim()).filter(Boolean) as never[] }
+          : (action as never)
+        : undefined;
       const where = {
-        ...(action ? { action: action as never } : {}),
+        ...(actionFilter !== undefined ? { action: actionFilter } : {}),
         ...(entityType ? { entityType } : {}),
         ...(entityId ? { entityId } : {}),
         ...(actorUserId ? { actorUserId } : {}),

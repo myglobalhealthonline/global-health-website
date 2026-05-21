@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import {
   fetchAdminAppointmentById,
+  fetchAdminClinicsByCountryCode,
   fetchAdminInternalMessages,
   patchAdminAppointmentSchedule,
   patchAdminAppointmentStatus,
@@ -166,9 +167,35 @@ export default async function AdminAppointmentDetailPage({
     }
     const meetingUrl: string | null = rawUrl === "" ? null : rawUrl;
 
+    // Clinic / location for in-person consults. The form submits ONE of:
+    // - `clinicId=<id>` when a known clinic is picked
+    // - `clinicId=__custom__` + `locationAddress=<text>` for free-text
+    // - `clinicId=` (empty) to clear both
+    // The two fields are mutually exclusive at the backend (XOR refine).
+    const rawClinic = String(formData.get("clinicId") ?? "").trim();
+    const rawLocation = String(formData.get("locationAddress") ?? "").trim();
+    let clinicIdPatch: string | null | undefined = undefined;
+    let locationAddressPatch: string | null | undefined = undefined;
+    if (formData.has("clinicId")) {
+      if (rawClinic === "" || rawClinic === "__none__") {
+        clinicIdPatch = null;
+        locationAddressPatch = null;
+      } else if (rawClinic === "__custom__") {
+        clinicIdPatch = null;
+        locationAddressPatch = rawLocation || null;
+      } else {
+        clinicIdPatch = rawClinic;
+        locationAddressPatch = null;
+      }
+    }
+
     const result = await patchAdminAppointmentSchedule(id, {
       scheduledAt,
       meetingUrl,
+      ...(clinicIdPatch !== undefined ? { clinicId: clinicIdPatch } : {}),
+      ...(locationAddressPatch !== undefined
+        ? { locationAddress: locationAddressPatch }
+        : {}),
     });
     if (!result.ok) {
       redirect(`/admin/appointments/${id}?error=${encodeURIComponent(result.message)}`);
@@ -209,6 +236,14 @@ export default async function AdminAppointmentDetailPage({
   const terminal = isTerminalAppointmentStatus(appointment.status);
   const allowedNext = getAllowedNextStatuses(appointment.status);
   const canUpdate = !terminal && allowedNext.length > 0;
+
+  const isInPerson = appointment.consultationMode === "IN_PERSON";
+  const clinicsResult = isInPerson
+    ? await fetchAdminClinicsByCountryCode(appointment.country)
+    : null;
+  const clinicOptions = clinicsResult && clinicsResult.ok
+    ? clinicsResult.data.clinics
+    : [];
 
   return (
     <>
@@ -415,6 +450,54 @@ export default async function AdminAppointmentDetailPage({
                   whereby.com, daily.co.
                 </span>
               </label>
+
+              {isInPerson ? (
+                <fieldset className="flex flex-col gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3">
+                  <legend className="px-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    Where (in-person)
+                  </legend>
+                  <label className="flex flex-col gap-1.5">
+                    <span className="gh-field-label">Clinic</span>
+                    <select
+                      name="clinicId"
+                      defaultValue={
+                        appointment.clinicId
+                          ? appointment.clinicId
+                          : appointment.locationAddress
+                            ? "__custom__"
+                            : "__none__"
+                      }
+                      className="gh-select"
+                    >
+                      <option value="__none__">— No location set —</option>
+                      {clinicOptions.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                          {c.city ? ` · ${c.city}` : ""}
+                        </option>
+                      ))}
+                      <option value="__custom__">Other (custom address)…</option>
+                    </select>
+                    <span className="text-[11px] text-[var(--color-text-muted)]">
+                      Pick from {appointment.country.toUpperCase()} clinics, or
+                      switch to a free-text address below.
+                    </span>
+                  </label>
+                  <label className="flex flex-col gap-1.5">
+                    <span className="gh-field-label">
+                      Custom address (used only when &ldquo;Other&rdquo; is selected)
+                    </span>
+                    <input
+                      type="text"
+                      name="locationAddress"
+                      className="gh-input"
+                      placeholder="Street, city, postal code"
+                      defaultValue={appointment.locationAddress ?? ""}
+                      maxLength={500}
+                    />
+                  </label>
+                </fieldset>
+              ) : null}
 
               <button type="submit" className="gh-btn gh-btn-primary w-full">
                 Save schedule

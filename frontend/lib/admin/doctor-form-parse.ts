@@ -42,5 +42,7 @@ export function parseDoctorBodyFromForm(formData: FormData) {
     additionalCountryIds,
     profileImagePath: String(formData.get("profileImagePath") ?? "").trim(),
     active: formData.get("active") === "on",
+    canCreateManualAppointments:
+      formData.get("canCreateManualAppointments") === "on",
   };
 }

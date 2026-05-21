@@ -296,28 +296,38 @@ model BookingSetting {
 
 ### T10 — Doctor edit page
 
-- [ ] New tab "Registrations" in `frontend/app/(admin)/admin/doctors/[id]/page.tsx`
-- [ ] New component `_components/registrations-tab.tsx`
-- [ ] Table columns: Country · Chamber · Number · Verified · Actions
-- [ ] "Verify" action calls PATCH with `isVerified=true`
-- [ ] Checkbox: `canCreateManualAppointments` in main details form
+- [x] New "Medical registrations" card in `frontend/app/(admin)/admin/doctors/[id]/page.tsx`
+- [x] New component `_components/registrations-card.tsx` (form per associated country)
+- [x] Inline edit: chamber · number · verified checkbox per row · Save button
+- [x] Verified state stamps `verifiedAt` automatically on transition
+- [x] Checkbox: `canCreateManualAppointments` added to the edit form's right sidebar (`/admin/doctors/[id]/edit`)
+- [x] `doctor-form-parse.ts` + admin-doctors schema + service write path all propagate the new flag
+- [x] `tsc` clean (backend + frontend)
 
 ### T11 — Patient detail editor
 
-- [ ] Tabs: Identity · Address · Plan & Pharmacy · Clinical alerts · Notes (existing)
-- [ ] Each tab is a form bound to `PATCH /api/admin/patients/:email/profile`
-- [ ] Alerts tab includes inline preview of banner styling
+- [x] New `PatientProfileEditor` card on `/admin/users/[id]`, gated to `role=PATIENT`
+- [x] Sections (single form, sectioned headings — simpler than tabs): Identity · Address · Plan & Pharmacy · Clinical alerts · Vitals
+- [x] Bound to `PATCH /api/admin/patients/:email/profile`
+- [x] Inline preview banners (red / amber) above the form when alerts are set
+- [x] `tsc` clean
 
 ### T12 — Schedule form clinic picker
 
-- [ ] When `consultationMode === IN_PERSON`, show clinic picker from `country.clinics` (active only)
-- [ ] "Other (custom address)" option reveals free-text `locationAddress` input
-- [ ] Hidden entirely for `ONLINE`
+- [x] Picker section renders only when `consultationMode === IN_PERSON`
+- [x] `<select>` of active clinics for the appointment's country + "Other (custom address)" option
+- [x] Free-text `locationAddress` used when "Other" is selected
+- [x] New backend route `GET /api/admin/clinics?countryCode=XX` returns `{ clinics: [...] }`
+- [x] Appointment DTO + service projections extended to expose `consultationMode`, `clinicId`, `locationAddress`
+- [x] `tsc` clean
 
 ### T13 — Audit log filters
 
-- [ ] Chip "Logins" filters `action IN ('LOGIN','LOGOUT','LOGIN_FAILED')`
-- [ ] Visible column: `ipAddress`
+- [x] Backend `action` query param now accepts comma-separated lists (e.g. `LOGIN,LOGOUT,LOGIN_FAILED`) → translated to Prisma `{ in: [...] }`
+- [x] Quick-filter chips at the top of the page: Logins · Patient alerts · Consultations · Clear
+- [x] New ACTION_LABEL + ACTION_TONE entries for LOGIN / LOGOUT / LOGIN_FAILED / PATIENT_ALERT_UPDATED
+- [x] New "IP" column in the audit table
+- [x] `tsc` clean
 
 ---
 
@@ -516,6 +526,10 @@ Append a dated entry every time something flips state. Newest at the top.
 YYYY-MM-DD — <ticket> — <status> — <note>
 ```
 
+- 2026-05-22 — T13 — `[x]` — Audit log: comma-list `action` filter on backend, Quick-filter chips + IP column on frontend.
+- 2026-05-22 — T12 — `[x]` — Admin schedule form clinic picker shipped; backend Appointment DTO now exposes `consultationMode/clinicId/locationAddress`; new `/api/admin/clinics` route lists active clinics by country.
+- 2026-05-22 — T11 — `[x]` — Patient profile editor card on `/admin/users/[id]` for role=PATIENT — Identity/Address/Plan/Alerts/Vitals sections + alert banner preview.
+- 2026-05-22 — T10 — `[x]` — Admin doctor detail page gains a Medical-registrations card (one form per associated country) + `canCreateManualAppointments` checkbox on the edit sidebar. Schema + service + form parser propagate the flag.
 - 2026-05-22 — T9 — `[x]` — OTHER doc type accepts customLabel; PDF, filename, and email subject all derive from it.
 - 2026-05-22 — T8 — `[x]` — `verifyManualEntryPermission` helper + `GET /api/doctor/me/permissions` for UI gating. Actual create-manual-appointment route doesn't exist in this codebase yet; helper ready for the day it lands.
 - 2026-05-22 — T7 — `[x]` — Patient-wide docs aggregator route shipped.

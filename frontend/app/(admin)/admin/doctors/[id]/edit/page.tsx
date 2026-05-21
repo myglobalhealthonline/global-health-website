@@ -133,6 +133,7 @@ export default async function AdminEditDoctorPage({
       additionalCountryIds: raw.additionalCountryIds,
       profileImagePath: raw.profileImagePath === "" ? null : raw.profileImagePath,
       active: raw.active,
+      canCreateManualAppointments: raw.canCreateManualAppointments,
     };
 
     const [existingDoctors, validation] = await Promise.all([
@@ -365,6 +366,38 @@ export default async function AdminEditDoctorPage({
               public roster (their profile stays intact under the primary
               country).
             </p>
+          </AdminCard>
+
+          <AdminCard>
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            >
+              Permissions
+            </h3>
+            <p className="mb-3 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Extra capabilities granted to this doctor&apos;s portal account.
+              Admins always bypass these flags.
+            </p>
+            <label className="flex cursor-pointer items-start gap-2.5 border-t border-[var(--color-border)] py-3">
+              <input
+                type="checkbox"
+                form="doctor-edit-form"
+                name="canCreateManualAppointments"
+                defaultChecked={Boolean(doctor.canCreateManualAppointments)}
+                className="mt-0.5 h-5 w-5 rounded border-[var(--color-border)] accent-[var(--color-brand-primary)]"
+              />
+              <div className="flex-1">
+                <p className="m-0 text-[13px] font-bold text-[var(--color-text-primary)]">
+                  Can create manual appointments
+                </p>
+                <p className="m-0 text-[12px] text-[var(--color-text-muted)]">
+                  When on, the doctor sees a &ldquo;New appointment&rdquo;
+                  action in their portal and can book on behalf of patients
+                  without going through the public flow.
+                </p>
+              </div>
+            </label>
           </AdminCard>
         </div>
       </div>

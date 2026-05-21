@@ -83,9 +83,23 @@ type AdminAppointmentDetailPayload = {
     paymentStatus: string;
     amountCents: number | null;
     currencyCode: string | null;
+    consultationMode: string | null;
+    clinicId: string | null;
+    locationAddress: string | null;
     createdAt: string;
     updatedAt: string;
   };
+};
+
+export type AdminClinicDto = {
+  id: string;
+  countryId: string;
+  countryCode: string;
+  countryName: string;
+  name: string;
+  slug: string;
+  city: string | null;
+  active: boolean;
 };
 
 export type AdminCurrencyDto = {
@@ -273,11 +287,19 @@ export async function patchAdminAppointmentStatus(id: string, status: string) {
   });
 }
 
-/** Set/clear the call slot + meeting URL. Each field is independently
- *  optional; omitting one leaves the existing value alone. */
+/** Set/clear the call slot, meeting URL, and (for IN_PERSON visits) the
+ *  clinic FK or free-text locationAddress. Each field is independently
+ *  optional; omitting one leaves the existing value alone. The backend
+ *  enforces that clinicId and locationAddress are mutually exclusive
+ *  AND that IN_PERSON appointments end up with at least one of them. */
 export async function patchAdminAppointmentSchedule(
   id: string,
-  input: { scheduledAt?: string | null; meetingUrl?: string | null },
+  input: {
+    scheduledAt?: string | null;
+    meetingUrl?: string | null;
+    clinicId?: string | null;
+    locationAddress?: string | null;
+  },
 ) {
   // Response includes `emailed: boolean` — true when the schedule email
   // actually fired (changed values + both fields set). Used to tailor the
@@ -287,6 +309,14 @@ export async function patchAdminAppointmentSchedule(
     { method: "PATCH", body: input },
   );
 }
+
+export const fetchAdminClinicsByCountryCode = cache(async (countryCode: string) => {
+  const code = countryCode.trim().toUpperCase();
+  const path = code
+    ? `/api/admin/clinics?countryCode=${encodeURIComponent(code)}`
+    : "/api/admin/clinics";
+  return adminRequest<{ clinics: AdminClinicDto[] }>(path);
+});
 
 // `cache()` deduplicates identical reads within a single SSR request.
 // Many admin pages call `fetchAdminCountries()` (layout + page + ScopeBanner
@@ -585,6 +615,22 @@ export type AdminDoctorDto = {
     isActive: boolean;
     createdAt: string;
   } | null;
+  /** When true the doctor's own portal can create manual appointments.
+   *  Default false — admin grants per doctor. ADMIN role always bypasses. */
+  canCreateManualAppointments?: boolean;
+};
+
+export type AdminDoctorRegistrationDto = {
+  id: string;
+  doctorId: string;
+  countryId: string;
+  countryCode: string;
+  countryName: string;
+  chamberEntity: string | null;
+  registrationNumber: string | null;
+  isVerified: boolean;
+  verifiedAt: string | null;
+  active: boolean;
 };
 
 type AdminDoctorsListPayload = {
@@ -672,6 +718,27 @@ export async function postAdminDoctorInvite(
   return adminRequest<AdminDoctorInvitePayload>(
     `/api/admin/doctors/${doctorId}/invite`,
     { method: "POST", body },
+  );
+}
+
+export const fetchAdminDoctorRegistrations = cache(async (doctorId: string) => {
+  return adminRequest<{ registrations: AdminDoctorRegistrationDto[] }>(
+    `/api/admin/doctors/${doctorId}/registrations`,
+  );
+});
+
+export async function patchAdminDoctorRegistration(
+  doctorId: string,
+  countryId: string,
+  body: {
+    chamberEntity?: string | null;
+    registrationNumber?: string | null;
+    isVerified?: boolean;
+  },
+) {
+  return adminRequest<{ registration: AdminDoctorRegistrationDto }>(
+    `/api/admin/doctors/${doctorId}/registrations/${countryId}`,
+    { method: "PATCH", body },
   );
 }
 
@@ -858,6 +925,82 @@ export async function resetAdminUserPassword(id: string, password: string) {
   return adminRequest<{ reset: true }>(
     `/api/admin/users/${id}/reset-password`,
     { method: "POST", body: { password } },
+  );
+}
+
+export type AdminPatientProfileDto = {
+  id: string;
+  email: string;
+  userId: string | null;
+  fullName: string | null;
+  phone: string | null;
+  dateOfBirth: string | null;
+  weightKg: number | null;
+  heightM: number | null;
+  bmi: number | null;
+  bloodType: string | null;
+  allergies: string[];
+  chronicDiseases: string[];
+  familyHistory: string[];
+  socialHabits: string[];
+  surgeries: string[];
+  nationalIdNumber: string | null;
+  taxIdNumber: string | null;
+  passportNumber: string | null;
+  addressLine1: string | null;
+  addressLine2: string | null;
+  addressCity: string | null;
+  addressPostalCode: string | null;
+  addressCountryCode: string | null;
+  preferredPharmacy: string | null;
+  statusAlert: string | null;
+  clinicAlert: string | null;
+  pricingPlanId: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const fetchAdminPatientProfile = cache(async (email: string) => {
+  return adminRequest<{ profile: AdminPatientProfileDto | null }>(
+    `/api/admin/patients/${encodeURIComponent(email)}/profile`,
+  );
+});
+
+export async function patchAdminPatientProfile(
+  email: string,
+  body: Partial<
+    Pick<
+      AdminPatientProfileDto,
+      | "fullName"
+      | "phone"
+      | "dateOfBirth"
+      | "weightKg"
+      | "heightM"
+      | "bmi"
+      | "bloodType"
+      | "allergies"
+      | "chronicDiseases"
+      | "familyHistory"
+      | "socialHabits"
+      | "surgeries"
+      | "nationalIdNumber"
+      | "taxIdNumber"
+      | "passportNumber"
+      | "addressLine1"
+      | "addressLine2"
+      | "addressCity"
+      | "addressPostalCode"
+      | "addressCountryCode"
+      | "preferredPharmacy"
+      | "statusAlert"
+      | "clinicAlert"
+      | "pricingPlanId"
+    >
+  >,
+) {
+  return adminRequest<{ profile: AdminPatientProfileDto | null }>(
+    `/api/admin/patients/${encodeURIComponent(email)}/profile`,
+    { method: "PATCH", body },
   );
 }
 

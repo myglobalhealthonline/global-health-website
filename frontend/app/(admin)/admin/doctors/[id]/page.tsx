@@ -6,6 +6,7 @@ import {
   deleteAdminDoctor,
   doctorPublicProfilePath,
   fetchAdminDoctorById,
+  fetchAdminDoctorRegistrations,
   postAdminDoctorInvite,
   purgeAdminDoctor,
 } from "@/lib/admin/admin-api";
@@ -13,6 +14,7 @@ import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
+import { DoctorRegistrationsCard } from "../_components/registrations-card";
 
 export const dynamic = "force-dynamic";
 
@@ -108,6 +110,25 @@ export default async function AdminDoctorDetailPage({
   const publicPath = doctorPublicProfilePath(d.country, d.slug);
   const profileImage = d.assets[0]?.path ?? null;
   const isActive = d.active;
+
+  // Fetched in parallel with the doctor row above would be cleaner, but
+  // the page already does serial reads — keep the simple sequencing.
+  const registrationsResult = await fetchAdminDoctorRegistrations(id);
+  const registrations = registrationsResult.ok
+    ? registrationsResult.data.registrations
+    : [];
+  // Primary country + any additional country listings — admin can issue
+  // a registration for any of these.
+  const associatedCountries = [
+    { id: d.country.id, code: d.country.code, name: d.country.name },
+    ...d.additionalCountries
+      .filter((link) => link.active)
+      .map((link) => ({
+        id: link.country.id,
+        code: link.country.code,
+        name: link.country.name,
+      })),
+  ];
 
   return (
     <>
@@ -252,6 +273,12 @@ export default async function AdminDoctorDetailPage({
               </p>
             )}
           </AdminCard>
+
+          <DoctorRegistrationsCard
+            doctorId={d.id}
+            rows={registrations}
+            associatedCountries={associatedCountries}
+          />
         </div>
 
         <div className="grid gap-4 self-start">

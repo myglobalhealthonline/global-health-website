@@ -108,6 +108,12 @@ export const adminDoctorCreateBodySchema = z.object({
   profileImagePath: profileImageRefSchema.optional(),
   active: z.boolean().optional(),
   /**
+   * Per-doctor RBAC flag for the manual-entry CTA in their portal.
+   * Default false on the schema — admin grants per doctor. ADMIN role
+   * always bypasses this gate downstream.
+   */
+  canCreateManualAppointments: z.boolean().optional(),
+  /**
    * SEO metadata for the public doctor profile page. Kept admin-managed
    * (not on the doctor's self-edit form) so changes can't break canonical
    * URL signals after the doctor has signed up.

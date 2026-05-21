@@ -21,6 +21,10 @@ const ACTION_LABEL: Record<string, string> = {
   FORM_SUBMITTED: "Form submitted",
   CONSULT_SERVICE_ADDED: "Service line added",
   CONSULT_SERVICE_REMOVED: "Service line removed",
+  LOGIN: "Login",
+  LOGOUT: "Logout",
+  LOGIN_FAILED: "Login failed",
+  PATIENT_ALERT_UPDATED: "Patient alert updated",
 };
 
 const ACTION_TONE: Record<string, string> = {
@@ -28,7 +32,19 @@ const ACTION_TONE: Record<string, string> = {
   SHARE_LINK_REVOKED: "bg-amber-100 text-amber-800",
   EXAM_DELETED: "bg-rose-100 text-rose-800",
   CONSULT_SERVICE_REMOVED: "bg-rose-100 text-rose-800",
+  LOGIN: "bg-sky-100 text-sky-800",
+  LOGOUT: "bg-slate-200 text-slate-700",
+  LOGIN_FAILED: "bg-rose-100 text-rose-800",
+  PATIENT_ALERT_UPDATED: "bg-amber-100 text-amber-800",
 };
+
+/** Action-group quick filters wired to the comma-list `action` query
+ *  param the backend now accepts. */
+const QUICK_FILTERS: Array<{ label: string; actions: string[] }> = [
+  { label: "Logins", actions: ["LOGIN", "LOGOUT", "LOGIN_FAILED"] },
+  { label: "Patient alerts", actions: ["PATIENT_ALERT_UPDATED"] },
+  { label: "Consultations", actions: ["CONSULT_SAVED", "CONSULT_SIGNED"] },
+];
 
 export default async function AdminAuditLogPage({
   searchParams,
@@ -60,6 +76,37 @@ export default async function AdminAuditLogPage({
       />
 
       <AdminCard>
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+            Quick filters
+          </span>
+          {QUICK_FILTERS.map((qf) => {
+            const value = qf.actions.join(",");
+            const isActive = (action ?? "") === value;
+            return (
+              <a
+                key={qf.label}
+                href={`?action=${encodeURIComponent(value)}`}
+                className={`rounded-full px-3 py-1 text-[12px] font-semibold ${
+                  isActive
+                    ? "bg-[var(--color-brand-primary)] text-white"
+                    : "bg-[var(--color-background-soft)] text-[var(--color-text-primary)] hover:bg-[var(--color-background-muted)]"
+                }`}
+              >
+                {qf.label}
+              </a>
+            );
+          })}
+          {action ? (
+            <a
+              href="?"
+              className="rounded-full px-3 py-1 text-[12px] font-semibold text-[var(--color-text-muted)] underline-offset-2 hover:underline"
+            >
+              Clear
+            </a>
+          ) : null}
+        </div>
+
         <form className="mb-4 grid gap-3 sm:grid-cols-4" method="get">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Action</span>
@@ -121,6 +168,7 @@ export default async function AdminAuditLogPage({
                   <th className="px-3 py-2 font-semibold">Action</th>
                   <th className="px-3 py-2 font-semibold">Actor</th>
                   <th className="px-3 py-2 font-semibold">Entity</th>
+                  <th className="px-3 py-2 font-semibold">IP</th>
                   <th className="px-3 py-2 font-semibold">Metadata</th>
                 </tr>
               </thead>
@@ -159,6 +207,9 @@ export default async function AdminAuditLogPage({
                     <td className="px-3 py-2 font-mono text-[11.5px]">
                       <p className="text-[var(--color-text-primary)]">{r.entityType}</p>
                       <p className="text-[var(--color-text-muted)]">{r.entityId}</p>
+                    </td>
+                    <td className="px-3 py-2 font-mono text-[11px] text-[var(--color-text-muted)]">
+                      {r.ipAddress ?? "—"}
                     </td>
                     <td className="px-3 py-2">
                       {r.metadata ? (
