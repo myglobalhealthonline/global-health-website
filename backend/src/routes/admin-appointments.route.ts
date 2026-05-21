@@ -111,6 +111,16 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     // assignment; `undefined` leaves it alone.
     const doctorIdInput = body.data.doctorId ?? undefined;
 
+    // Clinic + free-text location for IN_PERSON visits. The Zod schema
+    // already rejects "both at once"; here we additionally enforce that
+    // an IN_PERSON appointment ends up with at least one location source
+    // after the patch is applied.
+    const clinicIdInput = body.data.clinicId;
+    const locationAddressInput =
+      body.data.locationAddress === ""
+        ? null
+        : body.data.locationAddress;
+
     try {
       // Snapshot the pre-update values so we can detect whether the slot or
       // URL actually changed. Without this guard the email re-fires every
@@ -158,31 +168,81 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         }
       }
 
+      // For IN_PERSON consults, refuse to land the patch in a state with
+      // no location source. Read the appointment's current mode + the
+      // proposed inputs and reject if both end up null/empty.
+      const modeRow = await prisma.appointment.findUnique({
+        where: { id: params.data.id },
+        select: {
+          consultationMode: true,
+          clinicId: true,
+          locationAddress: true,
+        },
+      });
+      if (modeRow?.consultationMode === "IN_PERSON") {
+        const finalClinicId =
+          clinicIdInput === undefined ? modeRow.clinicId : clinicIdInput;
+        const finalLocationAddress =
+          locationAddressInput === undefined
+            ? modeRow.locationAddress
+            : locationAddressInput;
+        if (!finalClinicId && !finalLocationAddress) {
+          return reply
+            .status(422)
+            .send(
+              errorResponse(
+                "In-person appointments need a clinic or a location address.",
+              ),
+            );
+        }
+      }
+
       const appointment = await scheduleAppointment(params.data.id, {
         scheduledAt: scheduledAtInput,
         meetingUrl: meetingUrlInput,
         doctorId: doctorIdInput,
+        clinicId: clinicIdInput,
+        locationAddress: locationAddressInput,
       });
       if (!appointment) {
         return reply.status(404).send(errorResponse("Appointment not found"));
       }
 
-      // Fire the schedule email only when:
-      //   - both fields are set on the record after the save AND
-      //   - at least one of them changed value from before.
-      // Clearing or no-op saves shouldn't email the patient.
+      // Fire the schedule email only when the appointment has enough
+      // info to be useful: a scheduledAt + (meetingUrl for ONLINE or a
+      // clinic/location for IN_PERSON). Clearing or no-op saves shouldn't
+      // re-email the patient.
+      const afterRow = await prisma.appointment.findUnique({
+        where: { id: params.data.id },
+        select: {
+          consultationMode: true,
+          clinicId: true,
+          locationAddress: true,
+          clinic: { select: { name: true, city: true } },
+        },
+      });
+      const whereLabel = afterRow?.clinic
+        ? [afterRow.clinic.name, afterRow.clinic.city].filter(Boolean).join(", ")
+        : afterRow?.locationAddress ?? null;
+      const isInPerson = afterRow?.consultationMode === "IN_PERSON";
       const slotChanged = (before?.scheduledAt ?? null) !== (appointment.scheduledAt ?? null);
       const urlChanged = (before?.meetingUrl ?? null) !== (appointment.meetingUrl ?? null);
+      const locationChanged =
+        clinicIdInput !== undefined || locationAddressInput !== undefined;
+      const hasLink = isInPerson
+        ? Boolean(whereLabel)
+        : Boolean(appointment.meetingUrl);
       const shouldEmail =
-        Boolean(appointment.scheduledAt && appointment.meetingUrl) &&
-        (slotChanged || urlChanged);
+        Boolean(appointment.scheduledAt && hasLink) &&
+        (slotChanged || urlChanged || locationChanged);
       if (shouldEmail) {
         sendAppointmentScheduledEmail({
           to: appointment.email,
           fullName: appointment.fullName,
           consultationType: appointment.consultationType,
           scheduledAt: new Date(appointment.scheduledAt!),
-          meetingUrl: appointment.meetingUrl!,
+          meetingUrl: isInPerson ? null : appointment.meetingUrl,
+          where: isInPerson ? whereLabel : null,
         }).catch((emailErr) => {
           app.log.warn({ err: emailErr }, "Failed to send schedule email — continuing");
         });

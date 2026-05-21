@@ -65,13 +65,41 @@ export const scheduleAppointmentBodySchema = z
      * doctor portal at /doctor scopes queries by `doctorId = self`.
      */
     doctorId: z.union([z.string().trim().min(8).max(40), z.null()]).optional(),
+    /**
+     * In-person consults: soft FK to a known Clinic row, OR free-text
+     * `locationAddress` for off-grid venues. Route handler enforces
+     * "exactly one" when consultationMode = IN_PERSON.
+     */
+    clinicId: z.union([z.string().trim().min(8).max(40), z.null()]).optional(),
+    locationAddress: z
+      .union([z.string().trim().min(1).max(500), z.literal(""), z.null()])
+      .optional(),
   })
   .refine(
     (data) =>
       data.scheduledAt !== undefined ||
       data.meetingUrl !== undefined ||
-      data.doctorId !== undefined,
-    { message: "Provide at least scheduledAt, meetingUrl, or doctorId" },
+      data.doctorId !== undefined ||
+      data.clinicId !== undefined ||
+      data.locationAddress !== undefined,
+    {
+      message:
+        "Provide at least scheduledAt, meetingUrl, doctorId, clinicId, or locationAddress",
+    },
+  )
+  .refine(
+    (data) =>
+      !(
+        data.clinicId !== undefined &&
+        data.clinicId !== null &&
+        data.locationAddress !== undefined &&
+        data.locationAddress !== null &&
+        data.locationAddress !== ""
+      ),
+    {
+      message: "Provide a clinic OR a location address, not both.",
+      path: ["locationAddress"],
+    },
   );
 
 export type ScheduleAppointmentBody = z.infer<typeof scheduleAppointmentBodySchema>;

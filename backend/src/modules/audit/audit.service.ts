@@ -1,5 +1,5 @@
 import type { FastifyRequest } from "fastify";
-import { Prisma } from "@prisma/client";
+import { Prisma, type AuditAction } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 
 /**
@@ -10,33 +10,6 @@ import { prisma } from "../../db/prisma.js";
  *
  * Reads happen out of `/admin/audit-log`; there's no public surface.
  */
-
-type AuditAction =
-  | "CONSULT_SAVED"
-  | "CONSULT_SIGNED"
-  | "EXAM_LOGGED"
-  | "EXAM_DELETED"
-  | "INTERNAL_MESSAGE_POSTED"
-  | "SHARE_LINK_CREATED"
-  | "SHARE_LINK_REVOKED"
-  | "FORM_SUBMITTED"
-  | "CONSULT_SERVICE_ADDED"
-  | "CONSULT_SERVICE_REMOVED"
-  | "APPOINTMENT_STATUS_CHANGED"
-  | "APPOINTMENT_RESCHEDULED"
-  | "FOLLOW_UP_CREATED"
-  | "DOCUMENT_UPLOADED"
-  | "DOCUMENT_DELETED"
-  | "DOCTOR_INVITED"
-  | "DOCTOR_CREATED"
-  | "DOCTOR_UPDATED"
-  | "DOCTOR_DEACTIVATED"
-  | "DOCTOR_PURGED"
-  | "DOCTOR_PHOTO_UPDATED"
-  | "DOCTOR_PHOTO_REMOVED"
-  | "APPOINTMENT_CREATED"
-  | "APPOINTMENT_PAYMENT_UPDATED"
-  | "TIMESLOT_RELEASED";
 
 type AuditInput = {
   actorUserId?: string | null;

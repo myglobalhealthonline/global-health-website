@@ -1,0 +1,204 @@
+import { prisma } from "../../db/prisma.js";
+
+export type DoctorRegistrationInput = {
+  chamberEntity?: string | null;
+  registrationNumber?: string | null;
+  isVerified?: boolean;
+};
+
+export type DoctorRegistrationRow = {
+  id: string;
+  doctorId: string;
+  countryId: string;
+  countryCode: string;
+  countryName: string;
+  chamberEntity: string | null;
+  registrationNumber: string | null;
+  isVerified: boolean;
+  verifiedAt: string | null;
+  active: boolean;
+};
+
+/**
+ * Per-market doctor medical-registration rows. Lives on the existing
+ * DoctorCountry M:N link table — same row that lists the doctor on a
+ * country's public roster also holds the chamber + registration number
+ * used on prescription PDFs for that country.
+ *
+ * Admin-only writes. Reads are joined with `Country` so the caller can
+ * render the code/name without a second round-trip.
+ */
+export async function listDoctorRegistrations(
+  doctorId: string,
+): Promise<DoctorRegistrationRow[]> {
+  const rows = await prisma.doctorCountry.findMany({
+    where: { doctorId },
+    select: {
+      id: true,
+      doctorId: true,
+      countryId: true,
+      chamberEntity: true,
+      registrationNumber: true,
+      isVerified: true,
+      verifiedAt: true,
+      active: true,
+      country: { select: { code: true, name: true } },
+    },
+    orderBy: [{ active: "desc" }, { country: { name: "asc" } }],
+  });
+  return rows.map((r) => ({
+    id: r.id,
+    doctorId: r.doctorId,
+    countryId: r.countryId,
+    countryCode: r.country.code,
+    countryName: r.country.name,
+    chamberEntity: r.chamberEntity,
+    registrationNumber: r.registrationNumber,
+    isVerified: r.isVerified,
+    verifiedAt: r.verifiedAt?.toISOString() ?? null,
+    active: r.active,
+  }));
+}
+
+export class DoctorOrCountryNotFoundError extends Error {
+  constructor() {
+    super("Doctor or country not found");
+    this.name = "DoctorOrCountryNotFoundError";
+  }
+}
+
+/**
+ * Upsert the registration on the DoctorCountry link row for
+ * (doctorId, countryId). If the link doesn't exist yet, create it.
+ * Setting `isVerified=true` stamps `verifiedAt = now()`; flipping it
+ * back to false clears `verifiedAt` so admins can see when a
+ * verification was withdrawn.
+ *
+ * Returns the saved row joined with the country (same shape as `list`).
+ */
+export async function upsertDoctorRegistration(
+  doctorId: string,
+  countryId: string,
+  input: DoctorRegistrationInput,
+): Promise<DoctorRegistrationRow> {
+  const doctor = await prisma.doctor.findUnique({
+    where: { id: doctorId },
+    select: { id: true },
+  });
+  const country = await prisma.country.findUnique({
+    where: { id: countryId },
+    select: { id: true, code: true, name: true },
+  });
+  if (!doctor || !country) {
+    throw new DoctorOrCountryNotFoundError();
+  }
+
+  const chamberEntity = normalizeString(input.chamberEntity, 64);
+  const registrationNumber = normalizeString(input.registrationNumber, 64);
+
+  // Only stamp verifiedAt when transitioning *to* verified — keeps the
+  // historical stamp stable if admin re-edits the same row without
+  // changing the verified flag.
+  const existing = await prisma.doctorCountry.findUnique({
+    where: { doctorId_countryId: { doctorId, countryId } },
+    select: { isVerified: true, verifiedAt: true },
+  });
+
+  let isVerified = input.isVerified;
+  if (typeof isVerified !== "boolean") {
+    isVerified = existing?.isVerified ?? false;
+  }
+  let verifiedAt: Date | null = existing?.verifiedAt ?? null;
+  if (isVerified && !existing?.isVerified) {
+    verifiedAt = new Date();
+  } else if (!isVerified) {
+    verifiedAt = null;
+  }
+
+  const saved = await prisma.doctorCountry.upsert({
+    where: { doctorId_countryId: { doctorId, countryId } },
+    update: {
+      chamberEntity,
+      registrationNumber,
+      isVerified,
+      verifiedAt,
+    },
+    create: {
+      doctorId,
+      countryId,
+      chamberEntity,
+      registrationNumber,
+      isVerified,
+      verifiedAt,
+      active: true,
+    },
+    select: {
+      id: true,
+      doctorId: true,
+      countryId: true,
+      chamberEntity: true,
+      registrationNumber: true,
+      isVerified: true,
+      verifiedAt: true,
+      active: true,
+    },
+  });
+
+  return {
+    id: saved.id,
+    doctorId: saved.doctorId,
+    countryId: saved.countryId,
+    countryCode: country.code,
+    countryName: country.name,
+    chamberEntity: saved.chamberEntity,
+    registrationNumber: saved.registrationNumber,
+    isVerified: saved.isVerified,
+    verifiedAt: saved.verifiedAt?.toISOString() ?? null,
+    active: saved.active,
+  };
+}
+
+/**
+ * Look up the doctor's registration for a given country code — used at
+ * PDF render time so prescriptions for, say, a PT appointment print the
+ * OM number rather than the IE IMC number.
+ */
+export async function getDoctorRegistrationByCountryCode(
+  doctorId: string,
+  countryCode: string,
+): Promise<DoctorRegistrationRow | null> {
+  const row = await prisma.doctorCountry.findFirst({
+    where: { doctorId, country: { code: countryCode.toUpperCase() } },
+    select: {
+      id: true,
+      doctorId: true,
+      countryId: true,
+      chamberEntity: true,
+      registrationNumber: true,
+      isVerified: true,
+      verifiedAt: true,
+      active: true,
+      country: { select: { code: true, name: true } },
+    },
+  });
+  if (!row) return null;
+  return {
+    id: row.id,
+    doctorId: row.doctorId,
+    countryId: row.countryId,
+    countryCode: row.country.code,
+    countryName: row.country.name,
+    chamberEntity: row.chamberEntity,
+    registrationNumber: row.registrationNumber,
+    isVerified: row.isVerified,
+    verifiedAt: row.verifiedAt?.toISOString() ?? null,
+    active: row.active,
+  };
+}
+
+function normalizeString(value: string | null | undefined, max: number): string | null {
+  if (value == null) return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  return trimmed.slice(0, max);
+}

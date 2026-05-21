@@ -34,6 +34,7 @@ import { env } from "../config/env.js";
 import { authCookieOptions, signAuthToken } from "../utils/auth-session.js";
 import { requireAuth } from "../utils/require-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 const authRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/auth/register", {
@@ -114,17 +115,67 @@ const authRoute: FastifyPluginAsync = async (app) => {
         app.log.info({ userId: user.id, claimed: claimedOrders }, "Linked guest orders on login");
       }
 
+      recordAudit({
+        actorUserId: user.id,
+        actorRole: user.role,
+        action: "LOGIN",
+        entityType: "User",
+        entityId: user.id,
+        metadata: { email: user.email },
+        request,
+      }).catch(() => {});
+
       return okResponse({ user }, "Logged in");
     } catch (error) {
       if (error instanceof AuthInvalidCredentialsError) {
+        // Log the attempt with actorUserId=null so admin can spot
+        // credential-stuffing bursts even when no user row matched.
+        recordAudit({
+          actorUserId: null,
+          actorRole: null,
+          action: "LOGIN_FAILED",
+          entityType: "User",
+          entityId: body.data.email.trim().toLowerCase(),
+          metadata: { email: body.data.email.trim().toLowerCase(), reason: "invalid_credentials" },
+          request,
+        }).catch(() => {});
         return reply.status(401).send(errorResponse(error.message));
       }
       return replyWithError(reply, app.log, error, "Unexpected authentication error");
     }
   });
 
-  app.post("/api/auth/logout", async (_request, reply) => {
+  app.post("/api/auth/logout", async (request, reply) => {
+    // Snapshot the session payload before clearing the cookie so the
+    // audit row carries who logged out.
+    const token = request.cookies[env.AUTH_COOKIE_NAME];
+    let payload: ReturnType<typeof signAuthToken extends never ? never : never> | null = null;
+    if (token) {
+      // Lazy import to avoid coupling at module-load; verifyAuthToken
+      // is already exported from auth-session.
+      const { verifyAuthToken } = await import("../utils/auth-session.js");
+      payload = (verifyAuthToken(token) ?? null) as typeof payload;
+    }
     reply.clearCookie(env.AUTH_COOKIE_NAME, authCookieOptions());
+    if (payload && typeof payload === "object" && "sub" in payload) {
+      recordAudit({
+        actorUserId: (payload as { sub: string }).sub,
+        actorRole:
+          "role" in (payload as object)
+            ? ((payload as { role?: string }).role ?? null)
+            : null,
+        action: "LOGOUT",
+        entityType: "User",
+        entityId: (payload as { sub: string }).sub,
+        metadata: {
+          email:
+            "email" in (payload as object)
+              ? ((payload as { email?: string }).email ?? null)
+              : null,
+        },
+        request,
+      }).catch(() => {});
+    }
     return okResponse({ loggedOut: true }, "Logged out");
   });
 

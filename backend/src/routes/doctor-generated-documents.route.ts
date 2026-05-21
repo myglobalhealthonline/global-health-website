@@ -11,10 +11,20 @@ import {
   sendGeneratedDocuments,
 } from "../modules/generated-documents/generated-documents.service.js";
 
-const generateSchema = z.object({
-  type: z.nativeEnum(GeneratedDocumentType),
-  fields: z.record(z.string()).optional(),
-});
+const generateSchema = z
+  .object({
+    type: z.nativeEnum(GeneratedDocumentType),
+    fields: z.record(z.string()).optional(),
+  })
+  .refine(
+    (data) =>
+      data.type !== GeneratedDocumentType.OTHER ||
+      Boolean(data.fields?.customLabel?.trim()),
+    {
+      message: "Provide fields.customLabel when type=OTHER",
+      path: ["fields", "customLabel"],
+    },
+  );
 
 const sendSchema = z.object({
   documentIds: z.array(z.string().min(1)).min(1),

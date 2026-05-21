@@ -70,3 +70,140 @@ export async function upsertPatientProfileByEmail(input: {
     throw normalizeDbError(error, "Patient profile is temporarily unavailable");
   }
 }
+
+export class PricingPlanCountryMismatchError extends Error {
+  constructor() {
+    super("Pricing plan must belong to the patient's country");
+    this.name = "PricingPlanCountryMismatchError";
+  }
+}
+
+/**
+ * Fields any role can write to. Patient self can set every field in
+ * this set; doctor/admin add `statusAlert` / `clinicAlert` on top via
+ * `ProfileWriteFieldsWithAlerts`.
+ */
+export type ProfileWriteFields = {
+  fullName?: string | null;
+  phone?: string | null;
+  dateOfBirth?: Date | null;
+  weightKg?: number | null;
+  heightM?: number | null;
+  bmi?: number | null;
+  bloodType?: string | null;
+  allergies?: string[];
+  chronicDiseases?: string[];
+  familyHistory?: string[];
+  socialHabits?: string[];
+  surgeries?: string[];
+  nationalIdNumber?: string | null;
+  taxIdNumber?: string | null;
+  passportNumber?: string | null;
+  addressLine1?: string | null;
+  addressLine2?: string | null;
+  addressCity?: string | null;
+  addressPostalCode?: string | null;
+  addressCountryCode?: string | null;
+  preferredPharmacy?: string | null;
+  pricingPlanId?: string | null;
+};
+
+export type ProfileWriteFieldsWithAlerts = ProfileWriteFields & {
+  statusAlert?: string | null;
+  clinicAlert?: string | null;
+};
+
+type WriteOutcome = {
+  profile: Awaited<ReturnType<typeof prisma.patientProfile.findUnique>>;
+  alertChanges: { statusAlert?: boolean; clinicAlert?: boolean };
+};
+
+/**
+ * Validate `pricingPlanId` against the patient's most recent
+ * appointment country. If the patient has no appointments yet, accept
+ * any plan — first-time signups shouldn't be blocked.
+ */
+async function validatePricingPlan(
+  email: string,
+  pricingPlanId: string,
+): Promise<void> {
+  const plan = await prisma.pricingPlan.findUnique({
+    where: { id: pricingPlanId },
+    select: { id: true, country: { select: { code: true } } },
+  });
+  if (!plan) {
+    throw new PricingPlanCountryMismatchError();
+  }
+  const recentAppt = await prisma.appointment.findFirst({
+    where: { email: { equals: email, mode: "insensitive" } },
+    orderBy: { createdAt: "desc" },
+    select: { countryCode: true },
+  });
+  if (recentAppt && recentAppt.countryCode.toUpperCase() !== plan.country.code.toUpperCase()) {
+    throw new PricingPlanCountryMismatchError();
+  }
+}
+
+/**
+ * Persist the writable subset onto the PatientProfile row. Returns the
+ * full row + which alerts mutated (so the route can decide whether to
+ * emit a PATIENT_ALERT_UPDATED audit event).
+ */
+export async function applyPatientProfileUpdate(
+  email: string,
+  input: ProfileWriteFieldsWithAlerts,
+  options: {
+    fallbackFullName?: string | null;
+    fallbackPhone?: string | null;
+  } = {},
+): Promise<WriteOutcome> {
+  if (input.pricingPlanId) {
+    await validatePricingPlan(email, input.pricingPlanId);
+  }
+  const before = await prisma.patientProfile.findUnique({
+    where: { email },
+    select: { statusAlert: true, clinicAlert: true },
+  });
+  try {
+    const profile = await prisma.patientProfile.upsert({
+      where: { email },
+      create: {
+        email,
+        fullName: input.fullName ?? options.fallbackFullName ?? null,
+        phone: input.phone ?? options.fallbackPhone ?? null,
+        ...input,
+      },
+      update: input,
+    });
+    const alertChanges: WriteOutcome["alertChanges"] = {};
+    if ("statusAlert" in input && (before?.statusAlert ?? null) !== (input.statusAlert ?? null)) {
+      alertChanges.statusAlert = true;
+    }
+    if ("clinicAlert" in input && (before?.clinicAlert ?? null) !== (input.clinicAlert ?? null)) {
+      alertChanges.clinicAlert = true;
+    }
+    return { profile, alertChanges };
+  } catch (error) {
+    throw normalizeDbError(error, "Patient profile update temporarily unavailable");
+  }
+}
+
+/**
+ * Serializer that all three roles return through, so the response
+ * shape stays consistent. Pass `includeAlerts=false` for the
+ * patient-facing endpoint so the doctor-only flags never leak.
+ */
+export function serializeProfile(
+  profile: Awaited<ReturnType<typeof prisma.patientProfile.findUnique>>,
+  options: { includeAlerts: boolean },
+) {
+  if (!profile) return null;
+  const { statusAlert, clinicAlert, ...rest } = profile;
+  return {
+    ...rest,
+    ...(options.includeAlerts ? { statusAlert, clinicAlert } : {}),
+    dateOfBirth: profile.dateOfBirth?.toISOString() ?? null,
+    createdAt: profile.createdAt.toISOString(),
+    updatedAt: profile.updatedAt.toISOString(),
+  };
+}

@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
-import { verifyDoctorAccess } from "../utils/doctor-auth.js";
+import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
@@ -15,11 +15,7 @@ import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 const stringField = (max: number) =>
   z.string().trim().max(max).nullable().optional();
 
-/**
- * Doctor-side patch — accepts the full clinical + administrative
- * surface including alerts, which patient-self endpoints reject.
- */
-const patchProfileSchema = z
+const adminPatchSchema = z
   .object({
     fullName: stringField(200),
     phone: stringField(40),
@@ -49,27 +45,28 @@ const patchProfileSchema = z
   .strict()
   .refine((d) => Object.keys(d).length > 0, { message: "Provide at least one field" });
 
-const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
+const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
+  app.addHook("onRequest", async (request, reply) => {
+    const auth = await verifyAdminAccess(request);
+    if (!auth.ok) {
+      return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+  });
+
   app.get<{ Params: { email: string } }>(
-    "/api/doctor/patients/:email/profile",
+    "/api/admin/patients/:email/profile",
     async (request, reply) => {
-      const auth = await verifyDoctorAccess(request);
-      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       let email: string;
       try {
         email = decodeURIComponent(request.params.email).trim().toLowerCase();
       } catch {
         return reply.status(400).send(errorResponse("Invalid email param"));
       }
-      const hasAppt = await prisma.appointment.findFirst({
-        where: { doctorId: auth.doctorId, email: { equals: email, mode: "insensitive" } },
-        select: { id: true },
-      });
-      if (!hasAppt) {
-        return reply.status(404).send(errorResponse("Patient not found"));
-      }
       try {
         const profile = await prisma.patientProfile.findUnique({ where: { email } });
+        if (!profile) {
+          return reply.status(404).send(errorResponse("Patient profile not found"));
+        }
         return okResponse({
           profile: serializeProfile(profile, { includeAlerts: true }),
         });
@@ -84,44 +81,31 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
   );
 
   app.patch<{ Params: { email: string } }>(
-    "/api/doctor/patients/:email/profile",
+    "/api/admin/patients/:email/profile",
     async (request, reply) => {
-      const auth = await verifyDoctorAccess(request);
-      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       let email: string;
       try {
         email = decodeURIComponent(request.params.email).trim().toLowerCase();
       } catch {
         return reply.status(400).send(errorResponse("Invalid email param"));
       }
-      const body = patchProfileSchema.safeParse(request.body ?? {});
+      const body = adminPatchSchema.safeParse(request.body ?? {});
       if (!body.success) {
         return reply.status(400).send(errorResponse("Invalid profile", body.error.flatten()));
       }
-      const appt = await prisma.appointment.findFirst({
-        where: { doctorId: auth.doctorId, email: { equals: email, mode: "insensitive" } },
-        select: { fullName: true, phone: true },
-      });
-      if (!appt) {
-        return reply.status(404).send(errorResponse("Patient not found"));
-      }
       try {
         const { dateOfBirth, ...rest } = body.data;
-        const { profile, alertChanges } = await applyPatientProfileUpdate(
-          email,
-          {
-            ...rest,
-            ...(dateOfBirth !== undefined
-              ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
-              : {}),
-          },
-          { fallbackFullName: appt.fullName, fallbackPhone: appt.phone },
-        );
+        const { profile, alertChanges } = await applyPatientProfileUpdate(email, {
+          ...rest,
+          ...(dateOfBirth !== undefined
+            ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
+            : {}),
+        });
         if (alertChanges.statusAlert || alertChanges.clinicAlert) {
           const actor = await resolveOptionalAuthUser(request);
           recordAudit({
             actorUserId: actor?.id ?? null,
-            actorRole: actor?.role ?? "DOCTOR",
+            actorRole: actor?.role ?? "ADMIN",
             action: "PATIENT_ALERT_UPDATED",
             entityType: "PatientProfile",
             entityId: profile?.id ?? email,
@@ -151,4 +135,4 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
   );
 };
 
-export default doctorPatientProfileRoute;
+export default adminPatientProfileRoute;

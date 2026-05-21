@@ -617,6 +617,8 @@ export async function scheduleAppointment(
     scheduledAt?: Date | null;
     meetingUrl?: string | null;
     doctorId?: string | null;
+    clinicId?: string | null;
+    locationAddress?: string | null;
   },
 ): Promise<AdminAppointmentDetail | null> {
   const sets: string[] = [];
@@ -632,6 +634,16 @@ export async function scheduleAppointment(
   if (input.doctorId !== undefined) {
     args.push(input.doctorId);
     sets.push(`"doctorId" = $${args.length}`);
+  }
+  if (input.clinicId !== undefined) {
+    args.push(input.clinicId);
+    sets.push(`"clinicId" = $${args.length}`);
+  }
+  if (input.locationAddress !== undefined) {
+    // Normalise empty string to null so DB columns stay consistent
+    // ("no override" should be NULL, not "").
+    args.push(input.locationAddress === "" ? null : input.locationAddress);
+    sets.push(`"locationAddress" = $${args.length}`);
   }
   if (sets.length === 0) {
     return getAppointmentById(id);

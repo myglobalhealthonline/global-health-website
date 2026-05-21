@@ -123,6 +123,7 @@ enum GeneratedDocumentType {
   ABSENCE_CERTIFICATE
   EXAMS_PRESCRIPTION
   PRESCRIPTION
+  OTHER
 }
 
 enum BrazilConsentPaymentStatus {
@@ -170,6 +171,10 @@ enum AuditAction {
   APPOINTMENT_CREATED
   APPOINTMENT_PAYMENT_UPDATED
   TIMESLOT_RELEASED
+  LOGIN
+  LOGOUT
+  LOGIN_FAILED
+  PATIENT_ALERT_UPDATED
 }
 
 model Currency {
@@ -246,15 +251,18 @@ model CountryDomain {
 }
 
 model Clinic {
-  id        String   @id @default(cuid())
-  countryId String
-  name      String
-  slug      String
-  city      String?
-  active    Boolean  @default(true)
-  country   Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String        @id @default(cuid())
+  countryId    String
+  name         String
+  slug         String
+  city         String?
+  active       Boolean       @default(true)
+  country      Country       @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  /// In-person appointments scheduled at this clinic (inverse of
+  /// Appointment.clinicId).
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   @@unique([countryId, slug])
 }
@@ -263,58 +271,62 @@ model Clinic {
 /// login when `User.doctorId` is set. The doctor portal at /doctor reads
 /// `user.doctorProfile` to scope queries to this row's id.
 model Doctor {
-  id                     String                @id @default(cuid())
-  countryId              String
-  slug                   String
-  fullName               String
-  title                  String
-  bio                    String?
-  seoTitle               String?
-  seoDescription         String?
-  imcRegistration        String?
-  medicalRegistrationUrl String?
-  qualifications         String[]
-  whatsappNumber         String?
-  languages              String[]
-  editorialChecklist     Json?
-  active                 Boolean               @default(true)
-  country                Country               @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  specialties            DoctorSpecialty[]
-  assets                 Asset[]
+  id                          String                @id @default(cuid())
+  countryId                   String
+  slug                        String
+  fullName                    String
+  title                       String
+  bio                         String?
+  seoTitle                    String?
+  seoDescription              String?
+  imcRegistration             String?
+  medicalRegistrationUrl      String?
+  qualifications              String[]
+  whatsappNumber              String?
+  languages                   String[]
+  editorialChecklist          Json?
+  active                      Boolean               @default(true)
+  country                     Country               @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  specialties                 DoctorSpecialty[]
+  assets                      Asset[]
   /// Additional country listings (Doctor ↔ Country M:N). The primary
   /// country still lives on `countryId` above and scopes slug uniqueness;
   /// each row here adds the doctor to another country's public roster.
-  additionalCountries    DoctorCountry[]
+  additionalCountries         DoctorCountry[]
   /// Inverse of `User.doctorId`. When set, that User logs in as this doctor.
-  loginUser              User?                 @relation("DoctorUserLink")
+  loginUser                   User?                 @relation("DoctorUserLink")
   /// Inverse of `Appointment.doctorId`. Populated when admin assigns
   /// the doctor on the scheduling form.
-  appointments           Appointment[]         @relation("AppointmentDoctor")
+  appointments                Appointment[]         @relation("AppointmentDoctor")
   /// Inverse of `ServiceDoctor.doctorId`. Admin-controlled M:N — which
   /// catalogue services the doctor is bookable for. Public consult flow
   /// uses this join to filter doctor cards by selected service.
-  assignedServices       ServiceDoctor[]
+  assignedServices            ServiceDoctor[]
   /// Recurring weekly windows the doctor publishes for patient booking.
   /// Concrete slots are derived from these into `DoctorTimeSlot` rows.
-  availabilities         DoctorAvailability[]
+  availabilities              DoctorAvailability[]
   /// Generated bookable slots. Booking flow claims one atomically.
-  timeSlots              DoctorTimeSlot[]
+  timeSlots                   DoctorTimeSlot[]
   /// Inverse of `Consultation.doctorId`. Populated when the doctor
   /// starts a consult on one of their assigned appointments.
-  consultations          Consultation[]
+  consultations               Consultation[]
   /// Inverse of `ExamResult.doctorId`. Populated when the doctor
   /// uploads / records an exam result for an appointment.
-  examResults            ExamResult[]
+  examResults                 ExamResult[]
   /// Clinical prescriptions issued by this doctor.
-  prescriptions          Prescription[]
-  generatedDocuments     GeneratedDocument[]
+  prescriptions               Prescription[]
+  generatedDocuments          GeneratedDocument[]
   /// Form templates this doctor owns. Templates with `doctorId = null`
   /// are shared/global (admin-managed).
-  formTemplates          FormTemplate[]
+  formTemplates               FormTemplate[]
   /// First-party documents the doctor has uploaded.
-  appointmentDocuments   AppointmentDocument[]
-  createdAt              DateTime              @default(now())
-  updatedAt              DateTime              @updatedAt
+  appointmentDocuments        AppointmentDocument[]
+  /// Per-doctor RBAC: when true, the doctor can create manual appointments
+  /// from their portal. Admin still bypasses via role=ADMIN. Default false
+  /// so existing doctors retain current scope until an admin grants it.
+  canCreateManualAppointments Boolean               @default(false)
+  createdAt                   DateTime              @default(now())
+  updatedAt                   DateTime              @updatedAt
 
   @@unique([countryId, slug])
 }
@@ -380,17 +392,30 @@ model DoctorTimeSlot {
 /// for *additional* country listings only. We don't duplicate the primary
 /// row here — public list queries UNION the primary + linked sets.
 model DoctorCountry {
-  id        String   @id @default(cuid())
-  doctorId  String
-  countryId String
-  sortOrder Int      @default(0)
-  active    Boolean  @default(true)
-  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  country   Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  id                 String    @id @default(cuid())
+  doctorId           String
+  countryId          String
+  sortOrder          Int       @default(0)
+  active             Boolean   @default(true)
+  /// Country medical-council short name as it should appear on PDFs
+  /// (e.g. "IMC", "OM", "OMC", "ČLK", "CRM-SP"). Paired with
+  /// `registrationNumber` for the appointment's country at PDF render
+  /// time so prescriptions show the right credential.
+  chamberEntity      String?
+  /// Doctor's license number issued by `chamberEntity` for this country.
+  registrationNumber String?
+  /// Admin marks the registration verified after sighting documentation;
+  /// PDFs print "(unverified)" if `isVerified = false` so clinicians
+  /// don't accidentally issue Rx under an unconfirmed credential.
+  isVerified         Boolean   @default(false)
+  verifiedAt         DateTime?
+  doctor             Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  country            Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt          DateTime  @default(now())
 
   @@unique([doctorId, countryId])
   @@index([countryId, active])
+  @@index([countryId, isVerified])
 }
 
 model Specialty {
@@ -487,8 +512,8 @@ model ServiceDoctor {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  doctor  Doctor  @relation(fields: [doctorId], references: [id], onDelete: Cascade)
 
   @@unique([serviceId, doctorId])
   @@index([doctorId, isActive])
@@ -496,18 +521,20 @@ model ServiceDoctor {
 }
 
 model PricingPlan {
-  id           String   @id @default(cuid())
-  countryId    String
-  slug         String
-  name         String
-  description  String?
-  priceCents   Int
-  currencyCode String
-  interval     String
-  isActive     Boolean  @default(true)
-  country      Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String           @id @default(cuid())
+  countryId       String
+  slug            String
+  name            String
+  description     String?
+  priceCents      Int
+  currencyCode    String
+  interval        String
+  isActive        Boolean          @default(true)
+  country         Country          @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  /// Patients enrolled in this plan (inverse of PatientProfile.pricingPlanId).
+  patientProfiles PatientProfile[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   @@unique([countryId, slug])
 }
@@ -610,6 +637,10 @@ model BookingSetting {
   bookingEnabled     Boolean  @default(true)
   requirePhone       Boolean  @default(true)
   requireDateOfBirth Boolean  @default(true)
+  /// When true, the country's booking form requires the patient to enter
+  /// a national ID at booking time. UI label resolves per-country (NIF,
+  /// PPS, CPF, …). Default off so existing markets opt-in.
+  requireNationalId  Boolean  @default(false)
   timezone           String   @default("UTC")
   country            Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
   createdAt          DateTime @default(now())
@@ -625,7 +656,7 @@ enum PaymentStatus {
 }
 
 model Appointment {
-  id                        String                @id @default(cuid())
+  id                        String                    @id @default(cuid())
   userId                    String?
   countryCode               String
   consultationType          String
@@ -638,28 +669,28 @@ model Appointment {
   dateOfBirth               DateTime?
   notes                     String?
   consentAccepted           Boolean
-  status                    String                @default("REQUEST_RECEIVED")
+  status                    String                    @default("REQUEST_RECEIVED")
   // Optional link to the catalogue Service that was booked. Populated when
   // the booking form passes ?service=<slug>; null for free-text bookings.
   serviceId                 String?
-  service                   Service?              @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  service                   Service?                  @relation(fields: [serviceId], references: [id], onDelete: SetNull)
   /// Optional HealthTest the patient picked at booking. Set when the
   /// booking form arrives with `?service=<healthTestSlug>` and the slug
   /// matches a HealthTest row. Symmetric with `serviceId` above.
   healthTestId              String?
-  healthTest                HealthTest?           @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
+  healthTest                HealthTest?               @relation(fields: [healthTestId], references: [id], onDelete: SetNull)
   /// Doctor assigned to take the call. Set by admin on the schedule form;
   /// the doctor's portal at /doctor scopes queries to `doctorId = self`.
   /// Optional because not every appointment has a doctor yet.
   doctorId                  String?
-  doctor                    Doctor?               @relation("AppointmentDoctor", fields: [doctorId], references: [id], onDelete: SetNull)
+  doctor                    Doctor?                   @relation("AppointmentDoctor", fields: [doctorId], references: [id], onDelete: SetNull)
   /// Concrete time slot the patient picked at booking. Populated when
   /// the booking form posts with `timeSlotId`; the booking handler
   /// atomically claims the slot (UPDATE…WHERE status='OPEN') so two
   /// patients can never grab the same one. Null = legacy flow (admin
   /// schedules the call manually later).
-  timeSlotId                String?               @unique
-  timeSlot                  DoctorTimeSlot?       @relation("AppointmentSlot", fields: [timeSlotId], references: [id], onDelete: SetNull)
+  timeSlotId                String?                   @unique
+  timeSlot                  DoctorTimeSlot?           @relation("AppointmentSlot", fields: [timeSlotId], references: [id], onDelete: SetNull)
   /// One Consultation row per Appointment — created on first save from
   /// the doctor portal, locked when signed.
   consultation              Consultation?
@@ -680,16 +711,16 @@ model Appointment {
   /// workspace render a "Follow-up of …" badge and the patient
   /// history a continuous chain.
   followUpFromAppointmentId String?
-  followUpFrom              Appointment?          @relation("AppointmentFollowUp", fields: [followUpFromAppointmentId], references: [id], onDelete: SetNull)
-  followUps                 Appointment[]         @relation("AppointmentFollowUp")
+  followUpFrom              Appointment?              @relation("AppointmentFollowUp", fields: [followUpFromAppointmentId], references: [id], onDelete: SetNull)
+  followUps                 Appointment[]             @relation("AppointmentFollowUp")
   /// ONLINE (telemedicine, default) or IN_PERSON (in-clinic). Empty
   /// `meetingUrl` is the operational signal for IN_PERSON today.
-  consultationMode          ConsultationMode      @default(ONLINE)
+  consultationMode          ConsultationMode          @default(ONLINE)
   // Payment lifecycle. UNPAID = free or pending-Stripe.
-  paymentStatus             PaymentStatus         @default(UNPAID)
+  paymentStatus             PaymentStatus             @default(UNPAID)
   // Stripe identifiers. Null until a Checkout Session is created.
-  stripeSessionId           String?               @unique
-  stripePaymentIntentId     String?               @unique
+  stripeSessionId           String?                   @unique
+  stripePaymentIntentId     String?                   @unique
   amountCents               Int?
   currencyCode              String?
   paidAt                    DateTime?
@@ -705,7 +736,7 @@ model Appointment {
   // notification fan-out to the assigned doctor. Tracked separately so
   // the patient-email path and the doctor-notification path can diverge.
   doctorReminderSentAt      DateTime?
-  user                      User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user                      User?                     @relation(fields: [userId], references: [id], onDelete: SetNull)
   payments                  Payment[]
   messages                  Message[]
   /// Patient ↔ doctor consultation chat. Separate thread from the
@@ -716,59 +747,102 @@ model Appointment {
   /// compute the 24h chat-window expiry on the consultation chat.
   consultationCompletedAt   DateTime?
   /// Doctor can re-open the consultation chat after the 24h window.
-  chatReopenedByDoctor      Boolean               @default(false)
+  chatReopenedByDoctor      Boolean                   @default(false)
   /// Legacy doctor-dashboard finalize workflow.
-  finalized                 Boolean               @default(false)
-  notesUploaded             Boolean               @default(false)
-  filesUploaded             Boolean               @default(false)
-  manualEntry               Boolean               @default(false)
+  finalized                 Boolean                   @default(false)
+  notesUploaded             Boolean                   @default(false)
+  filesUploaded             Boolean                   @default(false)
+  manualEntry               Boolean                   @default(false)
   pharmacy                  String?
   symptoms                  String?
   formResponses             Json?
   generatedDocuments        GeneratedDocument[]
   brazilConsentSubmissions  BrazilConsentSubmission[]
   reviewInvites             ReviewInvite[]
-  createdAt                 DateTime              @default(now())
-  updatedAt                 DateTime              @updatedAt
+  /// For IN_PERSON appointments — soft FK to a known Clinic OR a free-text
+  /// override in `locationAddress`. Exactly one of (clinicId, locationAddress)
+  /// is required when consultationMode = IN_PERSON; backend rejects requests
+  /// with both or neither.
+  clinicId                  String?
+  clinic                    Clinic?                   @relation(fields: [clinicId], references: [id], onDelete: SetNull)
+  locationAddress           String?
+  createdAt                 DateTime                  @default(now())
+  updatedAt                 DateTime                  @updatedAt
+
+  @@index([clinicId])
 }
 
 /// Persistent patient chart keyed by email (one row per patient identity).
 model PatientProfile {
-  id               String        @id @default(cuid())
-  email            String        @unique
-  userId           String?       @unique
-  user             User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
-  fullName         String?
-  phone            String?
-  dateOfBirth      DateTime?
-  weightKg         Float?
-  heightM          Float?
-  bmi              Float?
-  bloodType        String?
-  allergies        String[]      @default([])
-  chronicDiseases  String[]      @default([])
-  familyHistory    String[]      @default([])
-  socialHabits     String[]      @default([])
-  surgeries        String[]      @default([])
-  medicalNotes     Json          @default("[]")
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  id                 String       @id @default(cuid())
+  email              String       @unique
+  userId             String?      @unique
+  user               User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  fullName           String?
+  phone              String?
+  dateOfBirth        DateTime?
+  weightKg           Float?
+  heightM            Float?
+  bmi                Float?
+  bloodType          String?
+  allergies          String[]     @default([])
+  chronicDiseases    String[]     @default([])
+  familyHistory      String[]     @default([])
+  socialHabits       String[]     @default([])
+  surgeries          String[]     @default([])
+  medicalNotes       Json         @default("[]")
+  /// National identity card / NIC / DNI / RG / CC — single field, label
+  /// resolved per country in the UI layer (i18n).
+  nationalIdNumber   String?
+  /// Tax / health-system ID (NIF in PT, PPS in IE, CPF in BR). Used on
+  /// prescription PDFs + invoices.
+  taxIdNumber        String?
+  /// Passport number — orthogonal to local IDs; international patients
+  /// often have both.
+  passportNumber     String?
+  /// Persistent address. `Order.ship*` stays per-checkout so patients
+  /// can ship to a different address; this is the canonical "home".
+  addressLine1       String?
+  addressLine2       String?
+  addressCity        String?
+  addressPostalCode  String?
+  addressCountryCode String?
+  /// Pharmacy the patient most often uses. Prefills
+  /// `Appointment.pharmacy` so doctor doesn't re-enter each visit.
+  preferredPharmacy  String?
+  /// Doctor-only clinical flag shown as a red banner at the top of the
+  /// patient chart (e.g. "Severe penicillin allergy"). Never visible to
+  /// the patient. Writes audit-logged via PATIENT_ALERT_UPDATED.
+  statusAlert        String?
+  /// Doctor-only operational flag shown as a yellow banner (e.g.
+  /// "Schedule mornings only"). Same visibility + audit rules as
+  /// `statusAlert`.
+  clinicAlert        String?
+  /// Optional link to a brand-side PricingPlan the patient is enrolled
+  /// in. Drives plan-aware behaviour on /account/profile and (later)
+  /// invoice copy. Null = pay-as-you-go.
+  pricingPlanId      String?
+  pricingPlan        PricingPlan? @relation(fields: [pricingPlanId], references: [id], onDelete: SetNull)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  @@index([pricingPlanId])
 }
 
 model GeneratedDocument {
-  id             String               @id @default(cuid())
-  appointmentId  String
-  doctorId       String
-  patientEmail   String
-  documentType   GeneratedDocumentType
-  fileName       String
-  storageKey     String
-  sentToPatient  Boolean              @default(false)
-  metadata       Json?
-  appointment    Appointment          @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-  doctor         Doctor               @relation(fields: [doctorId], references: [id], onDelete: Restrict)
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
+  id            String                @id @default(cuid())
+  appointmentId String
+  doctorId      String
+  patientEmail  String
+  documentType  GeneratedDocumentType
+  fileName      String
+  storageKey    String
+  sentToPatient Boolean               @default(false)
+  metadata      Json?
+  appointment   Appointment           @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  doctor        Doctor                @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
 
   @@index([appointmentId, documentType])
   @@index([appointmentId, sentToPatient])
@@ -901,31 +975,31 @@ model Cart {
 }
 
 model CartItem {
-  id             String       @id @default(cuid())
-  cartId         String
-  cart           Cart         @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  kind           CartItemKind
-  healthTestId   String?
-  serviceId      String?
+  id                       String       @id @default(cuid())
+  cartId                   String
+  cart                     Cart         @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  kind                     CartItemKind
+  healthTestId             String?
+  serviceId                String?
   /// Snapshot of the product name at the time the item was added.
-  name           String
+  name                     String
   /// Snapshot price in cents — checkout uses this, not the live row, so
   /// a price change between add-to-cart and pay doesn't surprise the user.
-  unitPriceCents Int
+  unitPriceCents           Int
   /// Snapshot of the per-unit shipping fee at add-to-cart time. 0 for
   /// online consultations (no physical delivery). Cart total adds
   /// `shippingCents * quantity` across all items.
-  shippingCents  Int          @default(0)
-  quantity       Int          @default(1)
+  shippingCents            Int          @default(0)
+  quantity                 Int          @default(1)
   /// Consultation items: which slot the patient claimed.
-  timeSlotId     String?      @unique
-  doctorId       String?
+  timeSlotId               String?      @unique
+  doctorId                 String?
   /// Consultation-only reservation deadline. Set to now+10min when a
   /// consultation slot is added. Sweep on every cart op releases
   /// expired items (slot HELD→OPEN + cart item deleted) so the same
   /// time becomes bookable for another patient.
   /// Null for product items (no slot to hold).
-  heldUntil      DateTime?
+  heldUntil                DateTime?
   /// Patient intake snapshot — collected on the consult page before
   /// add-to-cart so the cart line carries everything the webhook needs
   /// to mint the Appointment. Nullable for product items (HEALTH_TEST,
@@ -940,7 +1014,7 @@ model CartItem {
   /// `true` when the visitor toggled "Booking for someone else" on the
   /// consult form. We still keep account DOB intact in that case.
   bookingForOther          Boolean      @default(false)
-  createdAt      DateTime     @default(now())
+  createdAt                DateTime     @default(now())
 
   @@index([heldUntil])
 }
@@ -981,21 +1055,21 @@ model Order {
 }
 
 model OrderItem {
-  id             String       @id @default(cuid())
-  orderId        String
-  order          Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  kind           CartItemKind
-  healthTestId   String?
-  serviceId      String?
+  id                       String       @id @default(cuid())
+  orderId                  String
+  order                    Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  kind                     CartItemKind
+  healthTestId             String?
+  serviceId                String?
   /// Snapshot — independent of source row deletion.
-  name           String
-  unitPriceCents Int
-  quantity       Int
-  lineTotalCents Int
+  name                     String
+  unitPriceCents           Int
+  quantity                 Int
+  lineTotalCents           Int
   /// Consultation-only refs (v2).
-  timeSlotId     String?
-  doctorId       String?
-  appointmentId  String?
+  timeSlotId               String?
+  doctorId                 String?
+  appointmentId            String?
   /// Patient intake snapshot — copied from CartItem at checkout time so
   /// the payment webhook mints the Appointment with the right name,
   /// email, phone, DOB, notes even when the booking is for someone

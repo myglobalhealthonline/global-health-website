@@ -1,0 +1,98 @@
+import type { FastifyPluginAsync } from "fastify";
+import { prisma } from "../db/prisma.js";
+import { verifyDoctorAccess } from "../utils/doctor-auth.js";
+import { errorResponse, okResponse } from "../utils/response.js";
+import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+
+/**
+ * Patient-wide document aggregator for the doctor portal. Mongo kept
+ * every clinical doc (patient uploads, doctor-generated PDFs) inside a
+ * single subdoc on the patient row; Prisma split them into
+ * `AppointmentDocument` + `GeneratedDocument` keyed by appointment id.
+ * This route unions the two tables so the doctor's chart can render a
+ * single "All documents" tab across every appointment the doctor has
+ * with this patient.
+ *
+ * Scoped to `auth.doctorId` — Doctor-A never sees Doctor-B's patient's
+ * docs, even if the patient happens to see both.
+ */
+const doctorPatientDocumentsRoute: FastifyPluginAsync = async (app) => {
+  app.get<{ Params: { email: string } }>(
+    "/api/doctor/patients/:email/documents",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      let email: string;
+      try {
+        email = decodeURIComponent(request.params.email).trim().toLowerCase();
+      } catch {
+        return reply.status(400).send(errorResponse("Invalid email param"));
+      }
+      try {
+        // First pull every appointment-id the doctor shares with this
+        // patient so we can filter both child tables by that set in one
+        // round-trip per table.
+        const appointments = await prisma.appointment.findMany({
+          where: {
+            doctorId: auth.doctorId,
+            email: { equals: email, mode: "insensitive" },
+          },
+          select: { id: true },
+        });
+        const appointmentIds = appointments.map((a) => a.id);
+        if (appointmentIds.length === 0) {
+          return okResponse({ uploads: [], generated: [] });
+        }
+
+        const [uploads, generated] = await Promise.all([
+          prisma.appointmentDocument.findMany({
+            where: { appointmentId: { in: appointmentIds } },
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              appointmentId: true,
+              label: true,
+              storageKey: true,
+              mimetype: true,
+              byteSize: true,
+              createdAt: true,
+            },
+          }),
+          prisma.generatedDocument.findMany({
+            where: { appointmentId: { in: appointmentIds } },
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              appointmentId: true,
+              fileName: true,
+              documentType: true,
+              sentToPatient: true,
+              storageKey: true,
+              metadata: true,
+              createdAt: true,
+            },
+          }),
+        ]);
+
+        return okResponse({
+          uploads: uploads.map((u) => ({
+            ...u,
+            createdAt: u.createdAt.toISOString(),
+          })),
+          generated: generated.map((g) => ({
+            ...g,
+            createdAt: g.createdAt.toISOString(),
+          })),
+        });
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not load documents"));
+      }
+    },
+  );
+};
+
+export default doctorPatientDocumentsRoute;

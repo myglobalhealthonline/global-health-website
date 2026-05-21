@@ -80,6 +80,37 @@ export type ClinicalReadResult =
     }
   | { ok: false; status: 401 | 403; message: string };
 
+/**
+ * Per-doctor permission gate for manual appointment creation. ADMINs
+ * always pass; DOCTORs need `Doctor.canCreateManualAppointments=true`.
+ * Returns the same Result shape as `verifyDoctorAccess` so callers can
+ * chain validations consistently.
+ */
+export async function verifyManualEntryPermission(
+  request: FastifyRequest,
+): Promise<DoctorAuthResult> {
+  const auth = await verifyDoctorAccess(request);
+  if (!auth.ok) return auth;
+  // Resolve role again — verifyDoctorAccess collapses both DOCTOR and
+  // ADMIN into the success branch; ADMIN bypasses the per-doctor flag.
+  const token = request.cookies[env.AUTH_COOKIE_NAME];
+  const payload = token ? verifyAuthToken(token) : null;
+  if (payload?.role === "ADMIN") return auth;
+  const doctor = await prisma.doctor.findUnique({
+    where: { id: auth.doctorId },
+    select: { canCreateManualAppointments: true },
+  });
+  if (!doctor?.canCreateManualAppointments) {
+    return {
+      ok: false,
+      status: 403,
+      message:
+        "Your account isn't enabled for manual entry. Ask an admin to enable it.",
+    };
+  }
+  return auth;
+}
+
 export async function verifyClinicalReadAccess(
   request: FastifyRequest,
 ): Promise<ClinicalReadResult> {
