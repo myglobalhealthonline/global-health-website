@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { cookies, headers } from "next/headers";
 import { SiteChrome } from "@/components/layout/SiteChrome";
+import { CartProvider } from "@/components/cart/CartContext";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
@@ -50,16 +51,18 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   }
 
   return (
-    <SiteChrome
-      siteName={common.site.name}
-      navigation={navigation}
-      brandLogo={brandLogo}
-      footerDecorImage={footerDecorImage}
-      authUser={authUser}
-      countryFeatures={countryFeatures}
-    >
-      <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
-      {children}
-    </SiteChrome>
+    <CartProvider>
+      <SiteChrome
+        siteName={common.site.name}
+        navigation={navigation}
+        brandLogo={brandLogo}
+        footerDecorImage={footerDecorImage}
+        authUser={authUser}
+        countryFeatures={countryFeatures}
+      >
+        <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
+        {children}
+      </SiteChrome>
+    </CartProvider>
   );
 }

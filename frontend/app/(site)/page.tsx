@@ -6,9 +6,6 @@ import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
 export const metadata = pageMetadata("/");
 
 export default async function HomePage() {
-  // Pull live countries so the entry gate reflects admin-added markets.
-  // `getPublicCountriesMerged` also warms the slug↔code registry that the
-  // synchronous `countryCodeFromSlug` helpers downstream depend on.
   const countries = await getPublicCountriesMerged();
   const allDoctors = await getPublicDoctorsNormalized();
   const countryMeta: Record<string, { doctors: number }> = {};

@@ -6,10 +6,10 @@ type Result<T> =
   | { ok: true; data: T; message?: string }
   | { ok: false; message: string; conflict?: string };
 
-async function cartFetch(
+async function cartFetch<T>(
   input: RequestInfo | URL,
   init?: RequestInit,
-): Promise<Result<never>> {
+): Promise<Result<T>> {
   try {
     const res = await fetch(input, init);
     const json = await res.json().catch(() => ({}));
@@ -20,16 +20,14 @@ async function cartFetch(
         conflict: json?.errors?.conflict,
       };
     }
-    return { ok: true, data: json.data, message: json.message };
+    return { ok: true, data: json.data as T, message: json.message };
   } catch {
     return { ok: false, message: "Could not reach the server — is the backend running?" };
   }
 }
 
 export async function getCart(): Promise<Result<Cart>> {
-  const res = await cartFetch("/api/cart", { cache: "no-store" });
-  if (!res.ok) return res;
-  return { ok: true, data: res.data as Cart };
+  return cartFetch<Cart>("/api/cart", { cache: "no-store" });
 }
 
 export type AddItemInput = {
@@ -45,38 +43,30 @@ export type AddItemInput = {
 };
 
 export async function addToCart(input: AddItemInput): Promise<Result<Cart>> {
-  const res = await cartFetch("/api/cart/items", {
+  return cartFetch<Cart>("/api/cart/items", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(input),
   });
-  if (!res.ok) return res;
-  return { ok: true, data: res.data as Cart };
 }
 
 export async function updateCartItem(
   itemId: string,
   quantity: number,
 ): Promise<Result<Cart>> {
-  const res = await cartFetch(`/api/cart/items/${itemId}`, {
+  return cartFetch<Cart>(`/api/cart/items/${itemId}`, {
     method: "PATCH",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ quantity }),
   });
-  if (!res.ok) return res;
-  return { ok: true, data: res.data as Cart };
 }
 
 export async function removeCartItem(itemId: string): Promise<Result<Cart>> {
-  const res = await cartFetch(`/api/cart/items/${itemId}`, { method: "DELETE" });
-  if (!res.ok) return res;
-  return { ok: true, data: res.data as Cart };
+  return cartFetch<Cart>(`/api/cart/items/${itemId}`, { method: "DELETE" });
 }
 
 export async function clearCart(): Promise<Result<Cart>> {
-  const res = await cartFetch("/api/cart", { method: "DELETE" });
-  if (!res.ok) return res;
-  return { ok: true, data: res.data as Cart };
+  return cartFetch<Cart>("/api/cart", { method: "DELETE" });
 }
 
 export type CheckoutInput = {
@@ -95,11 +85,9 @@ export type CheckoutInput = {
 export async function startCheckout(
   input: CheckoutInput,
 ): Promise<Result<{ orderId: string; url: string }>> {
-  const res = await cartFetch("/api/cart/checkout", {
+  return cartFetch<{ orderId: string; url: string }>("/api/cart/checkout", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(input),
   });
-  if (!res.ok) return res;
-  return { ok: true, data: res.data as { orderId: string; url: string } };
 }
