@@ -56,6 +56,15 @@ const listAppointmentsQuerySchema = z.object({
     .regex(/^\d{4}-\d{2}-\d{2}$/, "to must be YYYY-MM-DD")
     .optional(),
   consultationType: z.string().trim().min(1).max(64).optional(),
+  finalized: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => (v === "true" ? true : v === "false" ? false : undefined)),
+  /** Legacy open window: non-finalized with scheduledAt within last 30h (or recent unscheduled). */
+  openOnly: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((v) => v === "true"),
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(100).default(25),
 });
@@ -169,14 +178,32 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         .status(400)
         .send(errorResponse("Invalid query", query.error.flatten()));
     }
-    const { status, search, from, to, consultationType, page, pageSize } = query.data;
+    const { status, search, from, to, consultationType, finalized, openOnly, page, pageSize } =
+      query.data;
     const fromUtc = from ? new Date(`${from}T00:00:00.000Z`) : undefined;
     const toUtc = to ? new Date(`${to}T23:59:59.999Z`) : undefined;
+    const openWindowStart = new Date(Date.now() - 30 * 60 * 60 * 1000);
     try {
       const where = {
         doctorId: auth.doctorId,
         ...(status ? { status } : {}),
         ...(consultationType ? { consultationType } : {}),
+        ...(finalized !== undefined ? { finalized } : {}),
+        ...(openOnly
+          ? {
+              finalized: false,
+              status: { notIn: ["CANCELLED"] },
+              OR: [
+                { scheduledAt: { gte: openWindowStart } },
+                {
+                  AND: [
+                    { scheduledAt: null },
+                    { createdAt: { gte: openWindowStart } },
+                  ],
+                },
+              ],
+            }
+          : {}),
         ...(search
           ? {
               OR: [
@@ -231,6 +258,8 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
             meetingUrl: true,
             createdAt: true,
             notes: true,
+            finalized: true,
+            manualEntry: true,
           },
         }),
       ]);

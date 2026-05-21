@@ -4,17 +4,41 @@ import { forwardSetCookies } from "@/lib/server/set-cookie";
 
 export const dynamic = "force-dynamic";
 
+const EMPTY_CART_RESPONSE = {
+  ok: true,
+  data: {
+    id: "",
+    countryCode: "",
+    currencyCode: "",
+    items: [],
+    subtotalCents: 0,
+    itemCount: 0,
+    expiredHolds: 0,
+  },
+};
+
 async function proxy(request: NextRequest, method: "GET" | "DELETE") {
   const backend = getBackendOrigin();
   if (!backend) {
     return NextResponse.json({ ok: false, message: "Backend not configured" }, { status: 503 });
   }
   const cookieHeader = request.headers.get("cookie") ?? "";
-  const upstream = await fetch(`${backend}/api/cart`, {
-    method,
-    headers: cookieHeader ? { cookie: cookieHeader } : {},
-    cache: "no-store",
-  });
+  let upstream: Response;
+  try {
+    upstream = await fetch(`${backend}/api/cart`, {
+      method,
+      headers: cookieHeader ? { cookie: cookieHeader } : {},
+      cache: "no-store",
+    });
+  } catch {
+    if (method === "GET") {
+      return NextResponse.json(EMPTY_CART_RESPONSE);
+    }
+    return NextResponse.json(
+      { ok: false, message: "Backend is unavailable" },
+      { status: 503 },
+    );
+  }
   const text = await upstream.text();
   const res = new NextResponse(text, {
     status: upstream.status,

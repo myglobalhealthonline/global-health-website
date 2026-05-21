@@ -84,6 +84,8 @@ export type DoctorAppointment = {
   meetingUrl: string | null;
   createdAt: string;
   notesPreview: string | null;
+  finalized?: boolean;
+  manualEntry?: boolean;
 };
 
 export async function fetchDoctorAppointments(query?: Record<string, string | undefined>) {
@@ -177,6 +179,12 @@ export type AppointmentDetailDto = {
   dateOfBirth: string | null;
   consultationMode?: "ONLINE" | "IN_PERSON";
   followUpFromAppointmentId?: string | null;
+  finalized?: boolean;
+  notesUploaded?: boolean;
+  filesUploaded?: boolean;
+  manualEntry?: boolean;
+  pharmacy?: string | null;
+  symptoms?: string | null;
   createdAt: string;
 };
 

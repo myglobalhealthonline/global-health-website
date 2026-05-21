@@ -73,6 +73,20 @@ const envSchema = z.object({
    *  Required to keep the endpoint behind auth without needing a session.
    *  Generate with: openssl rand -base64 32. */
   CRON_SECRET: z.string().trim().min(16).optional(),
+
+  BRAZIL_BOOKING_URL: z.string().trim().url().optional(),
+  BRAZIL_CONSENT_NOTIFY_EMAIL: z.string().trim().email().optional(),
+  BRAZIL_CONSENT_DOCTOR_PHONE: z.string().trim().optional(),
+
+  PATIENT_UPLOAD_LINK_SECRET: z.string().trim().min(16).optional(),
+
+  WASENDER_API_TOKEN: z.string().trim().min(1).optional(),
+  WASENDER_GAP_MS: z.coerce.number().int().min(0).default(5500).optional(),
+
+  REVIEW_FORM_WEBHOOK_SECRET: z.string().trim().min(1).optional(),
+
+  STRIPE_SUCCESS_URL: z.string().trim().url().optional(),
+  STRIPE_CANCEL_URL: z.string().trim().url().optional(),
 });
 
 const parsed = envSchema.parse(mergeRailwayBucketAliases());

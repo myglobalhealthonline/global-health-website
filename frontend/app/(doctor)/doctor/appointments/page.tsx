@@ -23,6 +23,8 @@ export default async function DoctorAppointmentsPage({
   const from = pick(sp, "from");
   const to = pick(sp, "to");
   const consultationType = pick(sp, "consultationType");
+  const openOnly = pick(sp, "openOnly");
+  const finalized = pick(sp, "finalized");
   const page = Number(pick(sp, "page") ?? "1") || 1;
 
   const result = await fetchDoctorAppointments({
@@ -33,6 +35,8 @@ export default async function DoctorAppointmentsPage({
     ...(from ? { from } : {}),
     ...(to ? { to } : {}),
     ...(consultationType ? { consultationType } : {}),
+    ...(openOnly ? { openOnly: "true" } : {}),
+    ...(finalized ? { finalized } : {}),
   });
 
   return (
@@ -100,6 +104,24 @@ export default async function DoctorAppointmentsPage({
               defaultValue={to ?? ""}
               className="gh-input"
             />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">Finalized</span>
+            <select name="finalized" defaultValue={finalized ?? ""} className="gh-select">
+              <option value="">Any</option>
+              <option value="false">Open (not finalized)</option>
+              <option value="true">Finalized</option>
+            </select>
+          </label>
+          <label className="flex items-end gap-2 pb-2 sm:col-span-2">
+            <input
+              type="checkbox"
+              name="openOnly"
+              value="true"
+              defaultChecked={openOnly === "true"}
+              className="size-4"
+            />
+            <span className="text-sm">Legacy open window (30h)</span>
           </label>
           <div className="sm:col-span-6 flex items-center gap-2">
             <button type="submit" className="gh-btn gh-btn-primary text-sm">

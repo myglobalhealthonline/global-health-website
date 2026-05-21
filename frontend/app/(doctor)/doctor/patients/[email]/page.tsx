@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { fetchDoctorPatientDetail } from "@/lib/api/doctor-api";
+import { PatientProfilePanel } from "./_components/patient-profile-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -132,6 +133,7 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
         </section>
 
         <aside className="grid gap-4 self-start">
+          <PatientProfilePanel email={patient.email} />
           <section className="gh-card p-6">
             <h3
               className="m-0 text-[var(--color-text-primary)]"

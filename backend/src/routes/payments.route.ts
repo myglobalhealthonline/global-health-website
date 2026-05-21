@@ -246,6 +246,19 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
             metadata?: Record<string, string>;
           };
 
+          // ── Brazil consent fee (€29) ───────────────────────────
+          if (session.metadata?.kind === "brazil_consent") {
+            const submissionId =
+              session.client_reference_id ?? session.metadata?.submissionId ?? null;
+            if (submissionId) {
+              const { markBrazilConsentPaid } = await import(
+                "../modules/brazil-consent/brazil-consent.service.js"
+              );
+              await markBrazilConsentPaid(submissionId, session.id);
+            }
+            return okResponse({ received: true });
+          }
+
           // ── Order branch (cart checkout) ────────────────────────
           if (session.metadata?.kind === "order") {
             const orderId =

@@ -1,3 +1,4 @@
+import { env } from "../../config/env.js";
 import { absoluteSiteUrl, sendEmail } from "./send-email.js";
 
 /** Shared, minimal transactional email shell — works in plain-text clients
@@ -348,6 +349,82 @@ export async function sendBookingConfirmationEmail(opts: {
        <p>We received your booking request for a <strong>${escapeHtml(opts.consultationType)}</strong> in <strong>${escapeHtml(opts.countryName)}</strong>. Our team will follow up by email within 24 hours to confirm the slot.</p>
        <p>If you need to change anything, just reply to this email.</p>
        <p style="font-size:13px;color:#737373;">You'll get a separate confirmation once a doctor is assigned.</p>`,
+    ),
+  });
+}
+
+export async function sendBrazilFinalizationEmail(opts: {
+  to: string;
+  patientName: string;
+  appointmentId: string;
+}) {
+  const bookingUrl =
+    env.BRAZIL_BOOKING_URL?.trim() ||
+    absoluteSiteUrl(`/brazil/consent?appointmentId=${encodeURIComponent(opts.appointmentId)}`);
+  return sendEmail({
+    to: opts.to,
+    subject: "Próximos passos — consentimento médico Brasil",
+    text: `Olá ${opts.patientName},\n\nA sua consulta foi concluída. Para os próximos passos no Brasil, complete o consentimento e o pagamento de processamento:\n\n${bookingUrl}\n\n— Global Health`,
+    html: wrapHtml(
+      "Consulta concluída",
+      `<p>Olá ${escapeHtml(opts.patientName)},</p>
+       <p>A sua consulta foi concluída. Para os próximos passos no Brasil, complete o consentimento e o pagamento de processamento (€29).</p>
+       <p style="margin:24px 0;"><a href="${bookingUrl}" style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">Continuar</a></p>`,
+    ),
+  });
+}
+
+export async function sendReviewInviteEmail(opts: {
+  to: string;
+  patientName: string;
+  link: string;
+  localeTitle: string;
+}) {
+  return sendEmail({
+    to: opts.to,
+    subject: `${opts.localeTitle} — Global Health`,
+    text: `Hi ${opts.patientName},\n\nWe would love your feedback on your recent visit:\n\n${opts.link}\n\n— Global Health`,
+    html: wrapHtml(
+      opts.localeTitle,
+      `<p>Hi ${escapeHtml(opts.patientName)},</p>
+       <p>We would love your feedback on your recent visit.</p>
+       <p style="margin:24px 0;"><a href="${opts.link}" style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">Leave a review</a></p>`,
+    ),
+  });
+}
+
+export async function sendGeneratedDocumentEmail(opts: {
+  to: string;
+  patientName: string;
+  documentType: string;
+  fileName: string;
+}) {
+  return sendEmail({
+    to: opts.to,
+    subject: `${opts.documentType} — Global Health`,
+    text: `Hi ${opts.patientName},\n\nYour doctor has sent you a document (${opts.fileName}). Sign in to your patient portal or contact the clinic if you need a copy.\n\n— Global Health`,
+    html: wrapHtml(
+      opts.documentType,
+      `<p>Hi ${escapeHtml(opts.patientName)},</p>
+       <p>Your doctor has sent you <strong>${escapeHtml(opts.documentType)}</strong> (${escapeHtml(opts.fileName)}). Contact the clinic if you need a downloadable copy.</p>`,
+    ),
+  });
+}
+
+export async function sendPatientUploadLinkEmail(opts: {
+  to: string;
+  patientName: string;
+  link: string;
+}) {
+  return sendEmail({
+    to: opts.to,
+    subject: "Upload your medical files — Global Health",
+    text: `Hi ${opts.patientName},\n\nUse this secure link to upload files for your doctor (expires in 7 days):\n\n${opts.link}\n\n— Global Health`,
+    html: wrapHtml(
+      "Upload your files",
+      `<p>Hi ${escapeHtml(opts.patientName)},</p>
+       <p>Use this secure link to upload files for your doctor. The link expires in 7 days.</p>
+       <p style="margin:24px 0;"><a href="${opts.link}" style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">Upload files</a></p>`,
     ),
   });
 }

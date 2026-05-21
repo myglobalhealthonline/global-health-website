@@ -6,13 +6,30 @@ type Result<T> =
   | { ok: true; data: T; message?: string }
   | { ok: false; message: string; conflict?: string };
 
-export async function getCart(): Promise<Result<Cart>> {
-  const res = await fetch("/api/cart", { cache: "no-store" });
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok || !json?.ok) {
-    return { ok: false, message: json?.message ?? "Could not load cart" };
+async function cartFetch(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<Result<never>> {
+  try {
+    const res = await fetch(input, init);
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json?.ok) {
+      return {
+        ok: false,
+        message: json?.message ?? "Cart request failed",
+        conflict: json?.errors?.conflict,
+      };
+    }
+    return { ok: true, data: json.data, message: json.message };
+  } catch {
+    return { ok: false, message: "Could not reach the server — is the backend running?" };
   }
-  return { ok: true, data: json.data };
+}
+
+export async function getCart(): Promise<Result<Cart>> {
+  const res = await cartFetch("/api/cart", { cache: "no-store" });
+  if (!res.ok) return res;
+  return { ok: true, data: res.data as Cart };
 }
 
 export type AddItemInput = {
@@ -28,54 +45,38 @@ export type AddItemInput = {
 };
 
 export async function addToCart(input: AddItemInput): Promise<Result<Cart>> {
-  const res = await fetch("/api/cart/items", {
+  const res = await cartFetch("/api/cart/items", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(input),
   });
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok || !json?.ok) {
-    return {
-      ok: false,
-      message: json?.message ?? "Could not add to cart",
-      conflict: json?.errors?.conflict,
-    };
-  }
-  return { ok: true, data: json.data };
+  if (!res.ok) return res;
+  return { ok: true, data: res.data as Cart };
 }
 
 export async function updateCartItem(
   itemId: string,
   quantity: number,
 ): Promise<Result<Cart>> {
-  const res = await fetch(`/api/cart/items/${itemId}`, {
+  const res = await cartFetch(`/api/cart/items/${itemId}`, {
     method: "PATCH",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ quantity }),
   });
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok || !json?.ok) {
-    return { ok: false, message: json?.message ?? "Could not update item" };
-  }
-  return { ok: true, data: json.data };
+  if (!res.ok) return res;
+  return { ok: true, data: res.data as Cart };
 }
 
 export async function removeCartItem(itemId: string): Promise<Result<Cart>> {
-  const res = await fetch(`/api/cart/items/${itemId}`, { method: "DELETE" });
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok || !json?.ok) {
-    return { ok: false, message: json?.message ?? "Could not remove item" };
-  }
-  return { ok: true, data: json.data };
+  const res = await cartFetch(`/api/cart/items/${itemId}`, { method: "DELETE" });
+  if (!res.ok) return res;
+  return { ok: true, data: res.data as Cart };
 }
 
 export async function clearCart(): Promise<Result<Cart>> {
-  const res = await fetch("/api/cart", { method: "DELETE" });
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok || !json?.ok) {
-    return { ok: false, message: json?.message ?? "Could not clear cart" };
-  }
-  return { ok: true, data: json.data };
+  const res = await cartFetch("/api/cart", { method: "DELETE" });
+  if (!res.ok) return res;
+  return { ok: true, data: res.data as Cart };
 }
 
 export type CheckoutInput = {
@@ -94,14 +95,11 @@ export type CheckoutInput = {
 export async function startCheckout(
   input: CheckoutInput,
 ): Promise<Result<{ orderId: string; url: string }>> {
-  const res = await fetch("/api/cart/checkout", {
+  const res = await cartFetch("/api/cart/checkout", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(input),
   });
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok || !json?.ok) {
-    return { ok: false, message: json?.message ?? "Checkout failed" };
-  }
-  return { ok: true, data: json.data };
+  if (!res.ok) return res;
+  return { ok: true, data: res.data as { orderId: string; url: string } };
 }

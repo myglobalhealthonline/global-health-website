@@ -839,9 +839,76 @@
 
 ---
 
+## TC-DOC-041 — Manual Appointment Create
+
+**Steps**:
+1. Sign in as doctor → `/doctor/appointments`
+2. Click **Manual booking**
+3. Enter patient email, name, country, type → Create
+4. Verify redirect to new appointment workspace; `manualEntry` visible in API/DB
+
+**Expected**: Appointment created with `REQUEST_RECEIVED`, audit `APPOINTMENT_CREATED`
+
+---
+
+## TC-DOC-042 — Finalize Appointment
+
+**Steps**:
+1. Open an assigned appointment workspace
+2. Check both finalize checklist items → **Finalize appointment**
+3. Verify status `COMPLETED`, `finalized: true`, review invite email logged (if email configured)
+
+**Expected**: Cannot finalize without both boxes; Brazil patients get consent email after finalize
+
+---
+
+## TC-DOC-043 — Generated Documents (Generate & Send)
+
+**Preconditions**: S3 configured
+
+**Steps**:
+1. On appointment workspace → **Generated documents**
+2. Generate absence certificate (optional body text)
+3. Select in queue → **Send selected**
+4. Verify patient email logged; row marked `sent`; delete blocked on sent row
+
+---
+
+## TC-DOC-044 — Patient Upload Link
+
+**Steps**:
+1. `/doctor/patients/{email}` → **Send upload link**
+2. Open link from email/log → `/patient-upload?token=…`
+3. Upload PDF or image
+4. Verify file appears on latest appointment documents for that patient
+
+---
+
+## TC-DOC-045 — Brazil Consent (Doctor View + Public Form)
+
+**Preconditions**: Brazil appointment; Stripe test mode optional
+
+**Steps**:
+1. Doctor workspace shows **Brazil consent** panel (BR appointments)
+2. Patient opens `/brazil/consent?appointmentId=…` → submit → Stripe checkout (if configured)
+3. Complete payment → webhook marks submission `PAID`
+4. Doctor panel shows submission + `PAID`
+
+---
+
+## TC-DOC-046 — Review Invite (Post-Finalize)
+
+**Steps**:
+1. Finalize an appointment (TC-DOC-042)
+2. Open review link from email → `/reviews/rate?token=…`
+3. Submit all 1–5 ratings
+4. Re-open link → already submitted message
+
+---
+
 ## Exit Checklist
 
-- [ ] TC-DOC-001 through TC-DOC-040 executed
+- [ ] TC-DOC-001 through TC-DOC-046 executed
 - [ ] All SOAP fields save + lock on sign
 - [ ] Services rendered work + lock on sign
 - [ ] Documents upload/download/delete OK

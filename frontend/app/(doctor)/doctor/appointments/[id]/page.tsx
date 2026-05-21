@@ -23,6 +23,9 @@ import { DoctorConsultationChatSection } from "./_components/consultation-chat-s
 import { PrescriptionsList } from "./_components/prescriptions-list";
 import { fetchDoctorPrescriptions } from "@/lib/api/prescriptions-api";
 import { AppointmentTabs } from "./_components/appointment-tabs";
+import { FinalizeChecklist } from "./_components/finalize-checklist";
+import { GeneratedDocumentsPanel } from "./_components/generated-documents-panel";
+import { BrazilConsentPanel } from "./_components/brazil-consent-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -196,9 +199,56 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       initialMode={consultationMode}
                     />
                     <div className="mt-4 border-t border-[var(--color-border)] pt-4">
+                      <h4 className="text-sm font-bold text-[var(--color-text-primary)]">
+                        Finalize
+                      </h4>
+                      <FinalizeChecklist
+                        appointmentId={appointment.id}
+                        initialFinalized={appointment.finalized ?? false}
+                        initialNotesUploaded={appointment.notesUploaded ?? false}
+                        initialFilesUploaded={appointment.filesUploaded ?? false}
+                      />
+                    </div>
+                    <div className="mt-4 border-t border-[var(--color-border)] pt-4">
                       <FollowUpButton appointmentId={appointment.id} />
                     </div>
                   </section>
+
+                  <section className="gh-card p-6">
+                    <h3
+                      className="m-0 text-[var(--color-text-primary)]"
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: 16,
+                        fontWeight: 800,
+                      }}
+                    >
+                      Generated documents
+                    </h3>
+                    <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+                      Generate PDF certificates and send them to the patient.
+                    </p>
+                    <GeneratedDocumentsPanel appointmentId={appointment.id} />
+                  </section>
+
+                  {appointment.countryCode.toLowerCase() === "br" ? (
+                    <section className="gh-card p-6">
+                      <h3
+                        className="m-0 text-[var(--color-text-primary)]"
+                        style={{
+                          fontFamily: "var(--font-display)",
+                          fontSize: 16,
+                          fontWeight: 800,
+                        }}
+                      >
+                        Brazil consent
+                      </h3>
+                      <BrazilConsentPanel
+                        appointmentId={appointment.id}
+                        countryCode={appointment.countryCode}
+                      />
+                    </section>
+                  ) : null}
 
                   <section className="gh-card p-6">
                     <h3

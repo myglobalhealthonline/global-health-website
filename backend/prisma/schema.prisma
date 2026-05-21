@@ -115,6 +115,19 @@ enum ExamStatus {
 /// signed consult with a referring colleague via signed URL.
 enum ShareLinkScope {
   CONSULTATION
+  PATIENT_UPLOAD
+}
+
+/// System-generated clinical letters (absence cert, exams Rx, prescription).
+enum GeneratedDocumentType {
+  ABSENCE_CERTIFICATE
+  EXAMS_PRESCRIPTION
+  PRESCRIPTION
+}
+
+enum BrazilConsentPaymentStatus {
+  PENDING
+  PAID
 }
 
 /// Mode an appointment is delivered in. The booking flow defaults to
@@ -294,6 +307,7 @@ model Doctor {
   examResults            ExamResult[]
   /// Clinical prescriptions issued by this doctor.
   prescriptions          Prescription[]
+  generatedDocuments     GeneratedDocument[]
   /// Form templates this doctor owns. Templates with `doctorId = null`
   /// are shared/global (admin-managed).
   formTemplates          FormTemplate[]
@@ -703,8 +717,108 @@ model Appointment {
   consultationCompletedAt   DateTime?
   /// Doctor can re-open the consultation chat after the 24h window.
   chatReopenedByDoctor      Boolean               @default(false)
+  /// Legacy doctor-dashboard finalize workflow.
+  finalized                 Boolean               @default(false)
+  notesUploaded             Boolean               @default(false)
+  filesUploaded             Boolean               @default(false)
+  manualEntry               Boolean               @default(false)
+  pharmacy                  String?
+  symptoms                  String?
+  formResponses             Json?
+  generatedDocuments        GeneratedDocument[]
+  brazilConsentSubmissions  BrazilConsentSubmission[]
+  reviewInvites             ReviewInvite[]
   createdAt                 DateTime              @default(now())
   updatedAt                 DateTime              @updatedAt
+}
+
+/// Persistent patient chart keyed by email (one row per patient identity).
+model PatientProfile {
+  id               String        @id @default(cuid())
+  email            String        @unique
+  userId           String?       @unique
+  user             User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  fullName         String?
+  phone            String?
+  dateOfBirth      DateTime?
+  weightKg         Float?
+  heightM          Float?
+  bmi              Float?
+  bloodType        String?
+  allergies        String[]      @default([])
+  chronicDiseases  String[]      @default([])
+  familyHistory    String[]      @default([])
+  socialHabits     String[]      @default([])
+  surgeries        String[]      @default([])
+  medicalNotes     Json          @default("[]")
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model GeneratedDocument {
+  id             String               @id @default(cuid())
+  appointmentId  String
+  doctorId       String
+  patientEmail   String
+  documentType   GeneratedDocumentType
+  fileName       String
+  storageKey     String
+  sentToPatient  Boolean              @default(false)
+  metadata       Json?
+  appointment    Appointment          @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  doctor         Doctor               @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  @@index([appointmentId, documentType])
+  @@index([appointmentId, sentToPatient])
+}
+
+model BrazilConsentSubmission {
+  id              String                     @id @default(cuid())
+  appointmentId   String
+  fullName        String?
+  dob             String?
+  address         String?
+  email           String?
+  phone           String?
+  pharmacy        String?
+  message         String                     @default("")
+  gdprConsent     Boolean                    @default(true)
+  stripeSessionId String?
+  paymentStatus   BrazilConsentPaymentStatus @default(PENDING)
+  paidAt          DateTime?
+  appointment     Appointment                @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+
+  @@index([appointmentId])
+}
+
+model ReviewInvite {
+  id                    String       @id @default(cuid())
+  token                 String       @unique
+  appointmentId         String?
+  orderNumber           String?
+  customerName          String?
+  serviceName           String?
+  doctorName            String?
+  contactEmail          String?
+  contactPhone          String?
+  localeCode            String?
+  expiresAt             DateTime
+  submittedAt           DateTime?
+  overallSatisfaction   Int?
+  doctorProfessionalism Int?
+  communicationClarity  Int?
+  timelinessOfService   Int?
+  valueForMoney         Int?
+  likeliness            Int?
+  bookingExperience     Int?
+  appointment           Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  createdAt             DateTime     @default(now())
+
+  @@index([appointmentId])
 }
 
 /// Lightweight chat thread for the patient ↔ admin pre-consult conversation.
@@ -954,6 +1068,7 @@ model User {
   /// Audit-log rows authored by this user (consult signs, message
   /// posts, share-link mints…). actor=null entries are SYSTEM events.
   auditEvents             AuditLog[]
+  patientProfile          PatientProfile?
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
 }

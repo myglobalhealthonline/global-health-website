@@ -12,6 +12,9 @@ import {
   InvalidAppointmentStatusTransitionError,
   UnrecognizedAppointmentStatusError,
 } from "../modules/appointments/appointment-status-transitions.js";
+import {
+  finalizeDoctorAppointment,
+} from "../modules/doctor-appointments/doctor-appointments.service.js";
 
 /**
  * Doctor-side appointment actions + per-patient drilldown + invoices.
@@ -106,6 +109,13 @@ const followUpSchema = z
       .default("follow-up"),
     notes: z.string().trim().max(2000).optional(),
     consultationMode: z.enum(["ONLINE", "IN_PERSON"]).optional(),
+  })
+  .strict();
+
+const finalizeSchema = z
+  .object({
+    notesUploaded: z.literal(true),
+    filesUploaded: z.literal(true),
   })
   .strict();
 
@@ -299,6 +309,66 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not update appointment"));
+      }
+    },
+  );
+
+  app.post<{ Params: { id: string } }>(
+    "/api/doctor/appointments/:id/finalize",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      const body = finalizeSchema.safeParse(request.body ?? {});
+      if (!body.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid finalize payload", body.error.flatten()));
+      }
+      try {
+        const updated = await finalizeDoctorAppointment(
+          auth.doctorId,
+          request.params.id,
+          body.data,
+        );
+        if (!updated) {
+          return reply.status(404).send(errorResponse("Appointment not found"));
+        }
+        recordAudit({
+          actorUserId: auth.userId,
+          actorRole: "DOCTOR",
+          action: "APPOINTMENT_STATUS_CHANGED",
+          entityType: "Appointment",
+          entityId: updated.id,
+          metadata: { finalized: true, status: "COMPLETED" },
+          request,
+        }).catch(() => {});
+        notifyAdmins("APPOINTMENT_STATUS_CHANGED", {
+          appointmentId: updated.id,
+          snippet: `${updated.fullName} · finalized`,
+        }).catch(() => {});
+        return okResponse({
+          appointment: {
+            id: updated.id,
+            status: updated.status,
+            finalized: updated.finalized,
+            notesUploaded: updated.notesUploaded,
+            filesUploaded: updated.filesUploaded,
+            consultationCompletedAt:
+              updated.consultationCompletedAt?.toISOString() ?? null,
+          },
+        });
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("already finalized")) {
+          return reply.status(409).send(errorResponse(error.message));
+        }
+        if (error instanceof Error && error.message.includes("Both notes")) {
+          return reply.status(400).send(errorResponse(error.message));
+        }
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not finalize appointment"));
       }
     },
   );
