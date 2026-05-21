@@ -487,15 +487,13 @@ A ticket is **done** only if **all** of:
 ## 13. Rollout order
 
 ```
-Day 1  T1, T2          Schema migration + backfill
-Day 2  T3, T4, T5      Core backend services + routes
-Day 2  T6, T7, T8, T9  Smaller backend bits in parallel
-Day 3  T10–T13         Admin UI (so admin can populate fields first)
-Day 4  T14, T15        Doctor UI
-Day 4  T16, T17, T18   Patient UI
-Day 5  T19, T20        PDF + email integration (depends on T3 + T4 data)
-Day 6  T21–T26         Final test pass, smoke checklist
-Day 7  Follow-up       Drop `Doctor.imcRegistration` column
+Day 1  T1, T2          Schema migration + backfill                      [x]
+Day 2  T3–T9           Backend services + routes                        [x]
+Day 3  T10–T13         Admin UI                                          [x]
+Day 4  T14–T18         Doctor + patient UI                                [x]
+Day 5  T19, T20        PDF + email integration                            [x]
+Day 6  T21–T26         Final test pass + acceptance                       [x]
+Day 7  (Phase 2)       Drop `Doctor.imcRegistration` column               [ ] (gated, see §17)
 ```
 
 (Each "day" = code-day, not calendar.)
@@ -525,6 +523,54 @@ Before T1 ships, confirm:
 
 ---
 
+## 17. Phase 2 — drop legacy `imcRegistration` (gated)
+
+The follow-up migration is **already written** and parked at
+[backend/prisma/pending-migrations/20260523_drop_legacy_imcRegistration/migration.sql](../backend/prisma/pending-migrations/20260523_drop_legacy_imcRegistration/migration.sql).
+Prisma does not scan `pending-migrations/`, so it cannot ship by
+accident.
+
+To graduate it:
+
+1. Run the deploy orchestrator against prod with `--apply`:
+   ```
+   pnpm tsx scripts/parity-phase1-deploy.ts --apply
+   ```
+   All 6 step lights must be ✓. The script's drift check exits 1 on
+   any row mismatch.
+2. Audit `rg -nF "imcRegistration"` — only schema / migration /
+   form-write paths may remain; zero display / serializer references
+   should be left.
+3. Render a prescription PDF for a real IE doctor on staging and
+   confirm the header still shows their registration.
+4. Move the folder into `backend/prisma/migrations/` with a fresh
+   timestamp prefix and open the follow-up PR.
+
+`backend/prisma/pending-migrations/README.md` has the standing
+instructions.
+
+## 18. Deploy orchestrator
+
+`backend/scripts/parity-phase1-deploy.ts` automates the deploy-time
+checklist:
+
+| Step | What it does |
+|---|---|
+| 1 | Probes Postgres connectivity |
+| 2 | Asserts every new column from the migration exists in `information_schema` |
+| 3 | Counts doctors with legacy `imcRegistration` set |
+| 4 | Dry-run / apply backfill via the same idempotent upsert as `backfill-doctor-registrations.ts` |
+| 5 | Re-counts `DoctorCountry` rows and confirms ≥ legacy count |
+| 6 | Re-runs the drift SQL — exits 1 if any row is out of sync |
+| 7 | Samples up to 3 IE doctors and prints the new vs. legacy PDF-header values |
+
+Usage:
+```
+pnpm tsx scripts/parity-phase1-deploy.ts              # dry-run
+pnpm tsx scripts/parity-phase1-deploy.ts --apply      # commit backfill
+pnpm tsx scripts/parity-phase1-deploy.ts --country=PT # alt country
+```
+
 ## 16. Progress log
 
 Append a dated entry every time something flips state. Newest at the top.
@@ -533,6 +579,7 @@ Append a dated entry every time something flips state. Newest at the top.
 YYYY-MM-DD — <ticket> — <status> — <note>
 ```
 
+- 2026-05-22 — Phase 1 closeout — `[x]` — Deploy orchestrator `scripts/parity-phase1-deploy.ts` writes the 7-step gate (connectivity → schema check → pre-count → backfill → post-count → drift → PDF sample). Follow-up migration to drop `Doctor.imcRegistration` parked in `backend/prisma/pending-migrations/` with a heavy gating banner. Plan §17 + §18 added so the deploy + Phase-2 graduation are self-serve.
 - 2026-05-22 — Tests round 2 — `[x]` — Closed out the deferred items: T21 migration-SQL safety test (12 assertions), T22 doctor-registrations service tests (6, DB-backed gracefully skip), patient-self alert-rejection schema tests (6), auth route login-audit tests (3, gracefully skip), T23 admin-doctor-registrations route auth (3) + Zod schema, T24 aggregator route auth (2, gracefully skip). Total 168 / 153 pass / 0 fail / 15 gracefully-skipped.
 - 2026-05-22 — Tests — `[x]` — Pure unit suite for PDF identity/address helpers (16 cases) + schedule-form XOR refine (8 cases). Total 136/136 pass, 2 DB-offline-skipped. T22/T23 deferred items documented; T24 deferred to manual smoke; T25 checklist tightened with two more flows.
 - 2026-05-22 — Refactor — `[x]` — Moved `buildPatientIdLine` + `buildAddressLines` into a side-effect-free `generated-documents-fields.ts` so tests don't pull Prisma + env.

@@ -1,0 +1,33 @@
+-- ============================================================================
+-- PENDING — DO NOT MOVE OUT OF .pending/ UNTIL ALL OF THE FOLLOWING ARE TRUE:
+--
+--   1. Backfill `scripts/backfill-doctor-registrations.ts` has been executed
+--      against prod (non-dry) AND its built-in drift check passed.
+--      Verification SQL (must return 0 rows):
+--        SELECT d."fullName", d."imcRegistration", dc."registrationNumber"
+--        FROM "Doctor" d
+--        LEFT JOIN "DoctorCountry" dc
+--          ON dc."doctorId" = d.id
+--         AND dc."countryId" = (SELECT id FROM "Country" WHERE code = 'IE')
+--        WHERE d."imcRegistration" IS NOT NULL AND d."imcRegistration" <> ''
+--          AND (dc."registrationNumber" IS NULL
+--               OR dc."registrationNumber" <> d."imcRegistration");
+--
+--   2. Every code path that *reads* Doctor.imcRegistration has been migrated
+--      to read from DoctorCountry.registrationNumber.  Audit:
+--        rg -nF "imcRegistration" backend/src frontend
+--      ought to return only:
+--        - schema / migration / form-write paths (acceptable until next PR)
+--      and zero display / serializer references.
+--
+--   3. A staging deploy has rendered a prescription PDF for at least one
+--      IE doctor and confirmed the registration number still appears in
+--      the header (proves the new code path resolves correctly).
+--
+-- Once those three are green, move this folder out of `.pending/` and into
+-- `backend/prisma/migrations/` with a real timestamp (e.g. when the
+-- follow-up PR is opened). Prisma will pick it up on the next
+-- `prisma migrate deploy`.
+-- ============================================================================
+
+ALTER TABLE "Doctor" DROP COLUMN "imcRegistration";
