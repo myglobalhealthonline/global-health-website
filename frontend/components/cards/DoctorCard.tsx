@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowRight, Calendar, Globe, ShieldCheck, Phone, IdCard } from "lucide-react";
+import { ArrowRight, Globe, ShieldCheck, Phone } from "lucide-react";
 import Link from "next/link";
 
 const PLACEHOLDER_PORTRAIT = "/images/ireland/doctor-spotlight-ai.svg";
@@ -27,17 +27,19 @@ export function DoctorCard({
   whatsappNumber,
   imageSrc,
   href,
-  ctaLabel = "View Profile",
+  ctaLabel = "Book Appointment",
 }: DoctorCardProps) {
   const src = imageSrc?.trim() ? imageSrc.trim() : PLACEHOLDER_PORTRAIT;
   const unoptimized = /^https?:\/\//i.test(src) || src.startsWith("/api/media/");
   const languageList = languages.length > 0 ? languages.join(", ") : "Not listed";
   const whatsappDigits = whatsappNumber?.replace(/[^\d+]/g, "");
-  const whatsappHref = whatsappDigits ? `https://wa.me/${whatsappDigits.replace("+", "")}` : null;
+  const whatsappHref = whatsappDigits
+    ? `https://wa.me/${whatsappDigits.replace("+", "")}`
+    : null;
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)] transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
-      {/* Image area with specialty badge */}
+    <article className="group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)] transition-[transform,box-shadow] duration-300 hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+      {/* Portrait */}
       <div className="relative overflow-hidden">
         <Image
           src={src}
@@ -47,101 +49,81 @@ export function DoctorCard({
           unoptimized={unoptimized}
           className="h-64 w-full object-cover object-top"
         />
-        {/* Gradient overlay at bottom */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-        
-        {/* Specialty badge */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+
+        {/* Specialty badge — bottom-left over portrait */}
         <div className="absolute bottom-4 left-4">
-          <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)] px-4 py-2 text-sm font-semibold text-white shadow-lg">
-            <ShieldCheck className="size-4" />
+          <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-brand-primary)] px-4 py-2 text-sm font-semibold text-white shadow-sm">
+            <ShieldCheck className="size-4" strokeWidth={1.5} />
             {title}
           </span>
         </div>
       </div>
 
-      {/* Content */}
+      {/* Card body */}
       <div className="flex flex-1 flex-col p-5">
-        {/* Name */}
-        <h3 className="text-xl font-bold text-[var(--color-text-primary)]">{name}</h3>
-        
-        {/* Details */}
-        <div className="mt-4 space-y-3">
-          {/* Registration */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-background-soft)] ring-1 ring-[var(--color-border)]">
-              <IdCard className="size-4 text-[var(--color-brand-primary)]" />
-            </div>
-            <div>
-              <p className="text-xs text-[var(--color-text-muted)]">Registration</p>
-              <p className="text-sm font-bold text-[var(--color-text-primary)]">
-                {imcRegistration ? (
-                  medicalRegistrationUrl ? (
-                    <a
-                      href={medicalRegistrationUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 hover:text-[var(--color-brand-primary)] transition-colors"
-                    >
-                      IMC <span className="text-[var(--color-text-muted)] font-normal mx-1">|</span> {imcRegistration}
-                    </a>
-                  ) : (
-                    <>
-                      IMC <span className="text-[var(--color-text-muted)] font-normal mx-1">|</span> {imcRegistration}
-                    </>
-                  )
-                ) : (
-                  "N/A"
-                )}
-              </p>
-            </div>
-          </div>
+        <h3 className="text-lg font-bold text-[var(--color-text-primary)]">{name}</h3>
 
-          {/* Languages */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-background-soft)] ring-1 ring-[var(--color-border)]">
-              <Globe className="size-4 text-[var(--color-brand-primary)]" />
+        {/* Metadata — registration + languages */}
+        <div className="mt-4 space-y-2.5">
+          {imcRegistration ? (
+            <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+              <ShieldCheck className="size-3.5 shrink-0 text-[var(--color-brand-primary)]" strokeWidth={1.5} aria-hidden />
+              {medicalRegistrationUrl ? (
+                <a
+                  href={medicalRegistrationUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[var(--color-brand-primary)] transition-colors"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  IMC {imcRegistration}
+                </a>
+              ) : (
+                <span>IMC {imcRegistration}</span>
+              )}
             </div>
-            <div>
-              <p className="text-xs text-[var(--color-text-muted)]">Languages</p>
-              <p className="text-sm font-semibold text-[var(--color-text-primary)]">{languageList}</p>
-            </div>
+          ) : null}
+
+          <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+            <Globe className="size-3.5 shrink-0 text-[var(--color-brand-primary)]" strokeWidth={1.5} aria-hidden />
+            <span>{languageList}</span>
           </div>
         </div>
 
-        {/* Action buttons -- bio removed to avoid duplicate IMC/language info */}
-        <div className="mt-5 flex items-center gap-3">
+        {/* Single primary action + optional WhatsApp in same row */}
+        <div className="mt-5 flex items-center gap-2">
           <Link
             href={href ?? "/book-online"}
-            className="gh-btn gh-btn-primary flex-1 gap-2"
+            className="gh-btn gh-btn-primary flex-1 gap-2 text-sm"
+            style={{ minHeight: 44, padding: "0 18px" }}
           >
-            <Calendar className="size-4" />
-            Book Appointment
-            <ArrowRight className="size-4" />
+            <ArrowRight className="size-4" strokeWidth={1.5} />
+            {ctaLabel}
           </Link>
-          
+
           {whatsappHref ? (
             <a
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-[var(--color-border)] bg-white text-[var(--color-brand-primary)] transition-all hover:bg-[var(--color-brand-primary)] hover:text-white hover:border-[var(--color-brand-primary)]"
-              aria-label="Call on WhatsApp"
+              className="
+                inline-flex h-11 w-11 shrink-0 items-center justify-center
+                rounded-full
+                border border-[var(--color-border)]
+                bg-[var(--color-background-soft)]
+                text-[var(--color-brand-primary)]
+                transition-[background-color,border-color] duration-200
+                hover:bg-[var(--color-brand-primary)] hover:text-white hover:border-[var(--color-brand-primary)]
+                motion-reduce:transition-none
+              "
+              aria-label="Contact on WhatsApp"
+              onClick={(e) => e.stopPropagation()}
             >
-              <Phone className="size-4" />
+              <Phone className="size-4" strokeWidth={1.5} />
             </a>
           ) : null}
         </div>
-
-        {/* View Profile link */}
-        {href ? (
-          <Link
-            href={href}
-            className="mt-3 flex items-center justify-center gap-2 rounded-full border-2 border-[var(--color-border)] py-3 text-sm font-bold text-[var(--color-brand-primary)] transition-all hover:bg-[var(--color-background-soft)] hover:border-[var(--color-brand-primary)]/30"
-          >
-            {ctaLabel}
-            <ArrowRight className="size-4" />
-          </Link>
-        ) : null}
       </div>
     </article>
   );

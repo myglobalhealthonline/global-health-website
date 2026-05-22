@@ -1,17 +1,11 @@
 "use client";
 
 /**
- * Doctor wall — dark forest section with optional country filter chips.
+ * Doctor wall — soft mint-cream section with optional country filter chips.
  *
- * Data-driven: callers pass `doctors`. The earlier version hard-coded 8 fake
- * doctors and faked an availability state. Both removed — this component now
- * only shows real Doctor rows from the DB.
- *
- * UX rules:
- *   • When all doctors share one country, filter chips are hidden.
- *   • If `doctors` is empty, the section returns `null`.
- *   • The "View profile" link uses `href` from the caller (lang-aware) —
- *     points at the doctor's profile page where the visitor picks a service.
+ * Data-driven: callers pass `doctors`. If `doctors` is empty the section
+ * returns `null`. The "View profile" link uses `href` from the caller
+ * (lang-aware) — points at the doctor's profile page.
  */
 
 import { useState } from "react";
@@ -20,24 +14,15 @@ import { ArrowRight } from "lucide-react";
 import { Flag } from "@/components/ui/Flag";
 
 export type DoctorWallItem = {
-  /** Stable id (e.g. Doctor.id). Used for React keys. */
   id: string;
-  /** Initials, 1–3 chars. Caller computes from fullName if needed. */
   initials: string;
   name: string;
   role: string;
-  /** Country code (`ie | pt | sp | cz | rm`). */
   country: string;
-  /** Free-text language list (e.g. "PT · EN"). Pass empty string to omit. */
   langs: string;
-  /** Profile href. The button text appends the last name. */
   href: string;
-  /** Optional uploaded portrait. When provided, replaces the initials tile. */
   imageSrc?: string | null;
 };
-
-const PATTERN_DARK =
-  "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")";
 
 const FILTER_LABELS: Record<string, string> = {
   ie: "Ireland",
@@ -52,10 +37,8 @@ export function DoctorWall({
   bookHref,
 }: {
   doctors: DoctorWallItem[];
-  /** Optional fallback when a doctor card has no `href`. */
   bookHref?: string;
 }) {
-  // Compute country buckets from the actual data, in source order.
   const countriesInData = Array.from(new Set(doctors.map((d) => d.country)));
   const filterOptions: { id: string; label: string }[] = [
     { id: "all", label: "All" },
@@ -75,83 +58,59 @@ export function DoctorWall({
 
   return (
     <section
-      className="relative overflow-hidden text-white gh-section"
-      style={{
-        background: `
-          radial-gradient(ellipse 1100px 700px at 110% 0%, rgba(176, 241, 34, 0.10), transparent 55%),
-          linear-gradient(180deg, #061914 0%, var(--color-background-dark) 50%, #061914 100%)
-        `,
-      }}
+      className="relative gh-section bg-[var(--color-background-soft)]"
     >
-      {/* Pattern overlay — same forest-night dotted texture as before
-        * but cranked slightly so the section reads as a different
-        * surface from the marquee/hero above. */}
       <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
-        style={{
-          backgroundImage: PATTERN_DARK,
-          backgroundSize: "28px",
-        }}
-      />
-
-      <div
-        className="relative mx-auto"
-        style={{
-          maxWidth: 1320,
-          padding: "0 clamp(20px, 4vw, 40px)",
-        }}
+        className="relative mx-auto px-5 md:px-10"
+        style={{ maxWidth: "var(--container-width)" }}
       >
-        {/* Magazine-style title — Cormorant italic accent inside a big
-          * sans display headline. Plus a number column that surfaces
-          * the actual roster size as a visual element. */}
-        <div className="grid items-end gap-10 lg:grid-cols-[1.5fr_auto] mb-12 md:mb-16">
+        {/* Section header */}
+        <div className="grid items-end gap-8 lg:grid-cols-[1.5fr_auto] mb-12 md:mb-16">
           <div>
-            <span className="gh-eyebrow text-[var(--color-accent)]" style={{ letterSpacing: "0.18em" }}>
+            <span className="gh-eyebrow text-[var(--color-brand-primary)]">
               The team
             </span>
             <h2
               className="
-                mt-3 max-w-[16ch]
+                mt-3 max-w-[18ch]
+                text-[length:var(--text-h1)]
                 font-semibold tracking-[-0.03em] leading-[1.02]
-                text-white
-                text-[clamp(2.5rem,5vw+0.5rem,4.5rem)]
+                text-[var(--color-text-primary)]
               "
             >
               Doctors who actually{" "}
-              <span className="font-extrabold text-[var(--color-brand-accent)]">
-                pick up
+              <span className="font-extrabold text-[var(--color-brand-primary)]">
+                pick up.
               </span>
-              .
             </h2>
-            <p className="mt-5 max-w-[44ch] text-base text-white/65">
+            <p className="mt-5 max-w-[48ch] text-[length:var(--text-body-lg)] text-[var(--color-text-body)]">
               Every consultation is with someone licensed where you are. No
               call centres, no rota of strangers — the doctor on screen is
               the doctor on the profile.
             </p>
           </div>
+
+          {/* Doctor count — large tabular number anchoring the right column */}
           <div className="text-right">
             <p
               className="
+                text-[length:var(--text-display)]
                 font-semibold leading-none tracking-[-0.03em]
-                text-[var(--color-accent)]
+                text-[var(--color-brand-primary)]
                 [font-variant-numeric:tabular-nums]
-                text-[clamp(4.5rem,9vw,8rem)]
               "
             >
               {shown.length}
             </p>
-            <p className="mt-3 text-xs uppercase tracking-[0.16em] text-white/55">
+            <p className="mt-2 gh-eyebrow text-[var(--color-text-muted)]">
               Registered clinicians
             </p>
           </div>
         </div>
 
+        {/* Filter chips */}
         {showFilters ? (
-          <div
-            className="flex flex-wrap gap-2"
-            style={{ marginBottom: 28 }}
-          >
+          <div className="flex flex-wrap gap-2 mb-8">
             {filterOptions.map((f) => {
               const isActive = filter === f.id;
               return (
@@ -159,24 +118,18 @@ export function DoctorWall({
                   key={f.id}
                   type="button"
                   onClick={() => setFilter(f.id)}
-                  className="inline-flex items-center gap-2"
-                  style={{
-                    padding: "8px 16px",
-                    borderRadius: 999,
-                    border:
-                      "1px solid " +
-                      (isActive
-                        ? "var(--color-accent)"
-                        : "rgba(255,255,255,0.20)"),
-                    background: isActive ? "var(--color-accent)" : "transparent",
-                    color: isActive
-                      ? "var(--color-background-dark)"
-                      : "rgba(255,255,255,0.85)",
-                    fontFamily: "inherit",
-                    fontSize: 13,
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
+                  className={`
+                    inline-flex items-center gap-2
+                    rounded-full px-4 py-2
+                    text-[length:var(--text-meta)] font-semibold
+                    border
+                    transition-[background-color,border-color,color] duration-200
+                    motion-reduce:transition-none
+                    ${isActive
+                      ? "bg-[var(--color-brand-primary)] border-[var(--color-brand-primary)] text-white"
+                      : "bg-[var(--color-background-page)] border-[var(--color-border)] text-[var(--color-text-body)] hover:bg-[var(--color-background-panel)] hover:border-[var(--color-border-strong)]"
+                    }
+                  `}
                 >
                   {f.id !== "all" ? <Flag code={f.id} size="sm" /> : null}
                   {f.label}
@@ -186,9 +139,7 @@ export function DoctorWall({
           </div>
         ) : null}
 
-        {/* Editorial doctor grid — portrait dominates, metadata is
-          * a quiet caption underneath. The portrait is the protagonist
-          * because faces are what makes "telemedicine" feel real. */}
+        {/* Doctor card grid */}
         <div
           className="grid gap-5"
           style={{
@@ -196,32 +147,28 @@ export function DoctorWall({
           }}
         >
           {shown.map((d) => {
-            // `d.href` is the per-card link (typically the country-scoped
-            // doctor profile URL injected by the page that renders this
-            // wall). `bookHref` is the wall-level fallback.
             const href = d.href || bookHref || "/";
             return (
               <Link
                 key={d.id}
                 href={href}
                 className="
-                  gh-doctor-card group block overflow-hidden
+                  group block overflow-hidden
                   rounded-[var(--radius-card)]
-                  border border-white/10
-                  bg-white/[0.03]
-                  transition-[transform,background-color,border-color] duration-300
+                  border border-[var(--color-border)]
+                  bg-[var(--color-background-page)]
+                  transition-[transform,box-shadow,border-color] duration-300
                   ease-[cubic-bezier(0.16,1,0.3,1)]
-                  hover:-translate-y-1 hover:bg-white/[0.06] hover:border-white/20
+                  hover:-translate-y-0.5
+                  hover:shadow-[var(--shadow-card-hover)]
+                  hover:border-[var(--color-border-strong)]
                   motion-reduce:transition-none motion-reduce:hover:translate-y-0
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/30
                 "
                 style={{ textDecoration: "none" }}
               >
-                {/* Portrait — fills the top of the card. Aspect ratio
-                  * 3:4 (portrait) so faces don't get cropped weird at
-                  * different card widths. Falls back to a gradient
-                  * initials tile when no photo. */}
-                <div className="relative aspect-[3/4] w-full overflow-hidden bg-white/5">
+                {/* Portrait */}
+                <div className="relative aspect-[3/4] w-full overflow-hidden bg-[var(--color-background-panel)]">
                   {d.imageSrc ? (
                     <>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -230,33 +177,26 @@ export function DoctorWall({
                         alt={d.name}
                         className="h-full w-full object-cover object-top"
                       />
-                      {/* Bottom gradient scrim so name + flag overlay
-                        * stays legible regardless of the portrait. */}
+                      {/* Gradient scrim for overlay legibility */}
                       <div
                         aria-hidden
                         className="pointer-events-none absolute inset-0"
                         style={{
                           background:
-                            "linear-gradient(180deg, transparent 50%, rgba(15,46,37,0.75) 100%)",
+                            "linear-gradient(180deg, transparent 55%, rgba(15,46,37,0.65) 100%)",
                         }}
                       />
                     </>
                   ) : (
                     <div
-                      className="flex h-full w-full items-center justify-center text-[clamp(48px,8vw,80px)] font-bold tracking-tight text-[var(--color-background-dark)]"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, var(--color-accent), var(--color-brand-primary))",
-                        fontFamily: "var(--font-display)",
-                      }}
+                      className="flex h-full w-full items-center justify-center text-[clamp(48px,8vw,80px)] font-bold tracking-tight text-white bg-[var(--color-brand-primary)]"
                     >
                       {d.initials}
                     </div>
                   )}
-                  {/* Floating country flag — bottom-left over the
-                    * portrait scrim. Replaces the "Country: XX" metadata
-                    * row, which read as form fields. */}
-                  <span className="absolute left-4 bottom-4 inline-flex items-center gap-2 rounded-full bg-black/40 px-2.5 py-1 backdrop-blur-sm">
+
+                  {/* Country flag chip */}
+                  <span className="absolute left-4 bottom-4 inline-flex items-center gap-2 rounded-full bg-black/35 px-2.5 py-1 backdrop-blur-sm">
                     <Flag code={d.country} size="sm" />
                     <span className="text-[11px] font-semibold uppercase tracking-wide text-white">
                       {d.country.toUpperCase()}
@@ -264,17 +204,16 @@ export function DoctorWall({
                   </span>
                 </div>
 
-                {/* Caption — name + title + languages + arrow. Single
-                  * column, tight rhythm. */}
+                {/* Card caption */}
                 <div className="p-5">
-                  <p className="text-base font-semibold leading-tight text-white">
+                  <p className="text-base font-semibold leading-tight text-[var(--color-text-primary)]">
                     {d.name}
                   </p>
-                  <p className="mt-1 text-xs text-white/60">
+                  <p className="mt-1 text-xs text-[var(--color-text-muted)]">
                     {d.role}
                   </p>
                   {d.langs ? (
-                    <p className="mt-3 text-[11px] uppercase tracking-[0.12em] text-white/45">
+                    <p className="mt-2 text-[11px] uppercase tracking-[0.1em] text-[var(--color-text-muted)]">
                       {d.langs}
                     </p>
                   ) : null}
@@ -282,7 +221,7 @@ export function DoctorWall({
                   <span
                     className="
                       mt-4 inline-flex items-center gap-1.5
-                      text-[var(--color-accent)] text-sm font-semibold
+                      text-[var(--color-brand-primary)] text-sm font-semibold
                       transition-transform duration-200
                       group-hover:translate-x-0.5
                       motion-reduce:group-hover:translate-x-0
@@ -298,29 +237,5 @@ export function DoctorWall({
         </div>
       </div>
     </section>
-  );
-}
-
-function DKV({ k, v }: { k: string; v: React.ReactNode }) {
-  return (
-    <div>
-      <p
-        className="m-0 uppercase"
-        style={{
-          fontSize: 10,
-          color: "rgba(255,255,255,0.50)",
-          letterSpacing: "0.06em",
-          fontWeight: 700,
-        }}
-      >
-        {k}
-      </p>
-      <p
-        className="m-0 text-white"
-        style={{ marginTop: 2, fontSize: 13, fontWeight: 600 }}
-      >
-        {v}
-      </p>
-    </div>
   );
 }

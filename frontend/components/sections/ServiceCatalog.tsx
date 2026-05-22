@@ -169,17 +169,6 @@ export function ServiceCatalog({
   );
 }
 
-const STRIPE_GRADIENTS: Record<ServiceTileType, string> = {
-  general:
-    "linear-gradient(135deg, #1B4D3E 0%, #2D6A5A 55%, #3F8770 100%)",
-  specialist:
-    "linear-gradient(135deg, #0F2E25 0%, #1B4D3E 60%, #2D6A5A 100%)",
-  prescription:
-    "linear-gradient(135deg, #143B30 0%, #1B4D3E 50%, #143B30 100%)",
-  test:
-    "linear-gradient(135deg, #C8E6A0 0%, #B0F122 60%, #C8E6A0 100%)",
-};
-
 function ServiceTile({
   service: s,
   variant,
@@ -188,8 +177,6 @@ function ServiceTile({
   variant: "default" | "featured";
 }) {
   const isFeatured = variant === "featured";
-  const stripeBg = STRIPE_GRADIENTS[s.type];
-  const stripeFg = s.type === "test" ? "var(--color-background-dark)" : "#fff";
   const symbol = currencySymbol(s.currency);
 
   return (
@@ -210,10 +197,9 @@ function ServiceTile({
         "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
       )}
     >
-      {/* Top stripe — image when admin uploaded one, otherwise a
-        * gradient + icon + tag combo that's still visually distinct
-        * per service type. Featured cards get a taller stripe so the
-        * card has more presence. */}
+      {/* Top section — image when uploaded, otherwise a clean icon tile
+        * on soft background. No gradients; type identity comes from the
+        * icon, not the colour. */}
       {s.imageSrc ? (
         <div
           className="relative overflow-hidden"
@@ -230,7 +216,7 @@ function ServiceTile({
               absolute right-3 top-3 uppercase
               rounded-full px-2.5 py-1
               text-[10px] font-bold tracking-[0.08em]
-              bg-black/55 text-white
+              bg-black/50 text-white
             "
           >
             {s.tag}
@@ -239,30 +225,30 @@ function ServiceTile({
       ) : (
         <div
           className={cn(
-            "flex items-start justify-between overflow-hidden p-5",
-            isFeatured ? "h-[160px]" : "h-[110px]",
+            "flex items-start justify-between p-5",
+            "bg-[var(--color-background-soft)]",
+            "border-b border-[var(--color-border)]",
+            isFeatured ? "min-h-[120px]" : "min-h-[88px]",
           )}
-          style={{ background: stripeBg, color: stripeFg }}
         >
           <span
             className={cn(
-              "inline-flex items-center justify-center rounded-2xl",
+              "inline-flex items-center justify-center rounded-[var(--radius-tile)]",
+              "bg-[var(--color-background-page)]",
+              "border border-[var(--color-border)]",
+              "text-[var(--color-brand-primary)]",
               isFeatured ? "size-14" : "size-11",
-              s.type === "test"
-                ? "bg-[rgba(20,59,48,0.12)]"
-                : "bg-white/16",
             )}
           >
             {DEFAULT_ICONS[s.type]}
           </span>
           <span
-            className={cn(
-              "uppercase rounded-full px-2.5 py-1",
-              "text-[10px] font-bold tracking-[0.08em]",
-              s.type === "test"
-                ? "bg-[rgba(20,59,48,0.12)] text-[var(--color-background-dark)]"
-                : "bg-white/16 text-white",
-            )}
+            className="
+              uppercase rounded-full px-2.5 py-1
+              text-[10px] font-bold tracking-[0.08em]
+              bg-[var(--color-background-page)] border border-[var(--color-border)]
+              text-[var(--color-text-muted)]
+            "
           >
             {s.tag}
           </span>

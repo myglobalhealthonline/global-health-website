@@ -63,7 +63,7 @@ export function StatsBand({ items }: { items: StatBandItem[] }) {
                   font-semibold tracking-[-0.035em] leading-none
                   text-[var(--color-text-primary)]
                   [font-variant-numeric:tabular-nums]
-                  text-[clamp(3.25rem,7vw,7rem)]
+                  text-[length:var(--text-display)]
                 "
               >
                 {it.value}

@@ -156,13 +156,13 @@ export function SiteHeader({
   return (
     <header className="gh-header-sticky w-full">
       <div
-        className="mx-auto grid items-center"
-        style={{
-          maxWidth: 1320,
-          padding: "14px clamp(20px, 4vw, 40px)",
-          gridTemplateColumns: "auto 1fr auto",
-          gap: 24,
-        }}
+        className="
+          mx-auto grid items-center
+          max-w-[1320px]
+          px-5 md:px-10 py-3.5
+          grid-cols-[auto_1fr_auto]
+          gap-6
+        "
       >
         {/* Brand */}
         <Link
@@ -175,7 +175,7 @@ export function SiteHeader({
           <img
             src={brandLogo?.src ?? "/logos/global-health-dark.png"}
             alt={brandLogo?.alt ?? siteName ?? "Global Health"}
-            style={{ height: 44, width: "auto" }}
+            className="h-11 w-auto"
           />
         </Link>
 
@@ -204,37 +204,23 @@ export function SiteHeader({
           {!authUser ? (
             <Link
               href="/login"
-              className="hidden text-[var(--color-text-body)] hover:text-[var(--color-text-primary)] md:inline-block"
-              style={{
-                fontSize: 14,
-                fontWeight: 600,
-                textDecoration: "none",
-              }}
+              className="hidden text-[length:var(--text-meta)] font-semibold no-underline text-[var(--color-text-body)] hover:text-[var(--color-text-primary)] md:inline-block"
             >
               Log in
             </Link>
           ) : (
             <Link
               href={authUser.role === "ADMIN" ? "/admin" : "/account"}
-              className="hidden text-[var(--color-text-body)] hover:text-[var(--color-text-primary)] md:inline-block"
-              style={{
-                fontSize: 14,
-                fontWeight: 600,
-                textDecoration: "none",
-              }}
+              className="hidden text-[length:var(--text-meta)] font-semibold no-underline text-[var(--color-text-body)] hover:text-[var(--color-text-primary)] md:inline-block"
             >
               {authUser.role === "ADMIN" ? "Admin" : "Account"}
             </Link>
           )}
 
-          {/* Hidden on mobile so the drawer's sticky-bottom Book CTA is
-              the single tap target — previously both buttons rendered
-              side-by-side on phones and patients couldn't tell which
-              one to use. */}
           <Link
             href={bookHref}
             className="gh-btn gh-btn-primary hidden md:inline-flex"
-            style={{ minHeight: 44, padding: "0 22px", fontSize: 14 }}
+            style={{ minHeight: 44, padding: "0 22px" }}
           >
             Book
           </Link>

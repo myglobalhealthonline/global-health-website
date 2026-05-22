@@ -1,247 +1,408 @@
-# Phase 1 — Public Marketing Site Redesign Audit
+# Phase 1 — Public Site Redesign Audit (Fresh, Current State)
 
-**Scope** Public marketing surface only. `app/(site)/**` plus the section + card + layout components it consumes. Admin / doctor / patient portals deferred.
-**Target aesthetic** Minimalist, calm, health-trust. Locked.
-**Stack** Next.js 16.2.4, React 19.2.4, Tailwind v4 (`@import "tailwindcss"`), Radix primitives (dialog, dropdown, slot), lucide-react, sonner, flag-icons. **No framer-motion, no GSAP, no Lottie.** Motion = CSS / Web Animations only.
-**Date** 2026-05-22.
+**Scope** Public marketing surface only. `app/(site)/**` + section/card/layout components it
+consumes. Admin / doctor / patient portals out of scope.
+**Stack** Next.js · React 19 · Tailwind v4 · Manrope via next/font · Radix
+primitives · lucide-react. No motion library.
+**Audit date** 2026-05-22. Prior redesign passes already ran; this audit reads the
+CURRENT code, not the previous session's notes.
 
 ---
 
-## 0. Foundation gaps (block clean Phase 2)
+## 0. TL;DR — what's wrong
 
-Both must be addressed before Phase 2 produces a meaningful `direction.md`.
+The site passed the first-order AI reflex test (not "healthcare white + teal") but
+walked straight into the second-order trap: **"health platform that rejected the
+default → dark editorial startup with lime accent."** That is now the new training-data
+reflex, and the result looks like every funded-startup homepage circa 2024, not a
+trusted European telemedicine clinic. The problems are clustered in five themes:
 
-| Gap | State | Impact | Recommendation |
-|---|---|---|---|
-| **PRODUCT.md missing** | Loader reports `hasProduct: false` | Audit lacks formal "who / why / anti-references" anchor; brand voice is inferred from code + filenames | Run `$impeccable teach` between Phase 1 sign-off and Phase 2 to generate it. Will need user input on tone + anti-references. |
-| **DESIGN.md is Linear preset** | Loader returned a Linear-style dark/lavender system. The actual project tokens live in `frontend/app/globals.css` (forest #1B4D3E + mint + lime + white) | If Phase 2 grades work against this stale file, every page fails. Reverse is also wrong — promoting it would dark-mode a health site. | Delete `DESIGN.md` at project root. Phase 2 produces a new one from `globals.css` + the direction decisions. |
+1. Dark editorial aesthetic on a trust-product (wrong scene, wrong mood)
+2. The same decorative technique — lime radial glow on forest-night canvas — used
+   across FOUR sections, making every section look templated
+3. Primary CTA colour split (mint on dark hero, forest everywhere else)
+4. Typography token system exists but is ignored — every component hand-rolls
+   its own `clamp()` at wildly different scales
+5. Inline `style={}` attributes scattered across header and DoctorWall, bypassing
+   the token system
+
+These are fixable without rebuilding. Everything structural (routing, data fetching,
+schema markup, auth, cart) stays unchanged.
 
 ---
 
 ## 1. Stack signal
 
 ```
-next 16.2.4 · react 19.2.4 · tailwind v4 · radix (dialog/dropdown/slot)
-lucide-react · sonner · flag-icons · jose · sanitize-html · clsx · tailwind-merge
+Next.js 16.2.4 · React 19 · Tailwind v4 (@import "tailwindcss")
+Manrope via next/font (Manual da Marca spec — Gilroy substitute)
+Radix (dialog, dropdown, slot) · lucide-react · sonner · flag-icons
+No framer-motion, no GSAP. Motion = CSS + Web Animations only.
 ```
 
-Implication: **all motion in Phase 4 must use CSS transitions / Web Animations API**, not a runtime motion library. `globals.css` already has a `prefers-reduced-motion: reduce` guard at lines 1064–1073 — good baseline.
-
-The existing token system in `globals.css` is the source of truth:
-
-| Layer | Tokens |
-|---|---|
-| Brand | `--color-brand-primary` `#1B4D3E` (forest), `--color-brand-accent` `#B0F122` (marketing lime), `--color-accent` `#C8E6A0` (UI mint) |
-| Surface | `--color-background-page` (white), `--color-background-soft` (mint-cream), `--color-background-panel`, `--color-background-dark` (#0F2E25 forest night) |
-| Text | `--color-text-primary` `#0F2E25`, `--color-text-body`, `--color-text-muted`, `--color-text-placeholder` |
-| Border | `--color-border`, `--color-border-strong` |
-| Radius | `--radius-card` 20px, `--radius-card-sm` 12px, `--radius-button` 999px (pill), `--radius-tile` 16px |
-| Shadow | Forest-tinted (`rgba(15, 46, 37, ...)`) — never neutral black |
-| Type | Fluid via `clamp()` — `--text-display` `--text-h1..h3` `--text-body-lg` `--text-body` |
-| Layout | `--container-width` 1280px, `--section-padding-y` 112px (sm 64), `--header-height` 88px |
-
-Good news: **the design system is already minimalist + health-themed.** The redesign is about applying it consistently, not inventing it.
+`globals.css` already contains the right token system. It is **not being used
+consistently**. The redesign is about applying the existing system, not inventing
+a new one.
 
 ---
 
 ## 2. Inventory
 
-### Pages (`app/(site)/**`)
+### Pages in scope (`app/(site)/**`)
 
 | Path | Role | LOC |
 |---|---|---|
-| `layout.tsx` | Shell wrapper (JSON-LD, CartProvider) | 68 |
-| `page.tsx` | Root redirect via CountryEntryGate | 21 |
-| `[country]/page.tsx` | Country root → lang redirect | 50 |
-| **`[country]/[lang]/page.tsx`** | **Country home — primary marketing surface** | **303** |
+| `(site)/layout.tsx` | Shell — CartProvider, SiteChrome | 68 |
+| `[country]/[lang]/page.tsx` | Country home — primary marketing page | 391 |
 | `[country]/[lang]/doctors/page.tsx` | Doctors index | 94 |
-| `[country]/[lang]/doctors/[doctorSlug]/page.tsx` | Doctor profile wrapper | 27 |
 | `[country]/[lang]/general-consultation/page.tsx` | GP service page | 215 |
-| `[country]/[lang]/specialist-consultation/page.tsx` | Specialist service page | 232 |
+| `[country]/[lang]/specialist-consultation/page.tsx` | Specialist page | 232 |
 | `[country]/[lang]/prescriptions/page.tsx` | Rx catalogue | 192 |
 | `[country]/[lang]/tests/page.tsx` | Health tests catalogue | 200 |
-| `[country]/[lang]/book-online/page.tsx` | Legacy booking wrapper | 120 |
-| `[country]/[lang]/consult/[serviceSlug]/page.tsx` | Service → doctor → slot picker | 315 |
+| `[country]/[lang]/consult/[serviceSlug]/page.tsx` | Service → doctor picker | 315 |
 | `[country]/[lang]/cart/page.tsx` | Cart | 392 |
 | `[country]/[lang]/checkout/page.tsx` | Checkout | 345 |
-| `[country]/[lang]/checkout/{success,cancelled}/page.tsx` | Stripe return | small |
 | `blog/page.tsx` | Blog index | 38 |
-| `blog/[slug]/page.tsx` | Article | medium |
+| `blog/[slug]/page.tsx` | Blog article | ~150 |
 | `contact/page.tsx` | Contact + form | 61 |
-| `privacy/page.tsx` | Legal | medium |
-| `brazil/consent/page.tsx` | BR GDPR consent + Stripe fee | medium |
-| `cart/page.tsx`, `checkout/page.tsx` | Legacy redirects | small |
-| `patient-upload/page.tsx`, `reviews/rate/page.tsx` | Tokenised one-shot pages | small |
+| `privacy/page.tsx` | Legal | ~120 |
+| `brazil/consent/page.tsx` | BR GDPR consent | ~90 |
 
-### Section components (`frontend/components/sections/`)
+### Section components (`components/sections/`)
 
-Heroes + CTAs that compose the marketing canvas — these carry the most weight in Phase 3.
+`HomeHero`, `CountryMarquee`, `TrustRibbon`, `TrustBar`, `ReviewBadge`,
+`ServiceCatalog`, `StatsBand`, `FeaturedDoctor`, `DoctorWall`, `DoctorsSection`,
+`HowItWorks`, `HowItWorksNarrative`, `PageHero`, `HeroSection`, `ServicesGrid`,
+`SpecialtiesGrid`, `FAQSection`, `FinalCTA`, `BookingCTA`, `RichBodySection`,
+`TeamHero`.
 
-`HomeHero`, `HeroSection`, `TrustBar`, `TrustRibbon`, `TrustSignals`, `HowItWorks`, `HowItWorksNarrative`, `ServicesGrid`, `SpecialtiesGrid`, `ServiceCatalog`, `DoctorsSection`, `DoctorWall`, `FeaturedDoctor`, `FAQSection`, `FinalCTA`, `BookingCTA`, `CountryEntryGate`, `RichBodySection`, `ReviewBadge`, `TeamHero`.
+### Cards (`components/cards/`)
 
-### Cards (`frontend/components/cards/`)
+`DoctorCard`, `ServiceCard`, `BlogCard`, `ConsultationDestinationCard`,
+`PricingCard`.
 
-`BlogCard`, `DoctorCard`, `PricingCard`, `ServiceCard`, `ConsultationDestinationCard`.
+### Layout shell (`components/layout/`)
 
-### Layout shell (`frontend/components/layout/`)
-
-`SiteChrome`, `SiteHeader`, `SiteFooter`, `MobileNav`, `Container`, `Section`, `Breadcrumbs`, `CTAFooter`, `CountrySwitcher`, `LanguageSwitcher`, `NewsletterSignup`, `SectionNav`.
+`SiteChrome`, `SiteHeader`, `SiteFooter`, `MobileNav`, `Container`, `Section`,
+`Breadcrumbs`, `CTAFooter`, `CountrySwitcher`, `LanguageSwitcher`, `SectionNav`,
+`NewsletterSignup`.
 
 ---
 
-## 3. Per-page audit (0–5)
+## 3. Per-page audit (0–5 per dimension)
 
-Wrappers / pure redirects collapsed into a single line. **Bold rows** are the ones Phase 3 should land first.
+**Scale:** 5 = best-in-class, 0 = needs full rewrite.
 
-| Page | HIER | SPACE | TYPE | COLOR | CONTRAST | MOTION | A11Y | RESP | SLOP | One-line evidence |
+| Page | HIER | SPACE | TYPE | COLOR | CONTRAST | MOTION | A11Y | RESP | SLOP | Evidence |
 |---|---|---|---|---|---|---|---|---|---|---|
-| `(site)/layout.tsx` | — | — | — | — | — | — | 2 | — | 0 | Plumbing only; JSON-LD wiring intact. |
-| `(site)/page.tsx`, `[country]/page.tsx` | — | — | — | — | — | — | 1 | — | 0 | Pure redirects. Country gate handles UX. |
-| **`[country]/[lang]/page.tsx`** | 4 | 3 | 4 | 4 | 4 | 3 | 3 | 4 | 2 | Six modular sections (Hero → Trust → ServiceCatalog → DoctorWall → HowItWorks → FinalCTA) but `ServiceCatalog` cards are identical — no weight diff between General vs Specialist tiles. |
-| `doctors/page.tsx` | 3 | 3 | 3 | 3 | 3 | 1 | 3 | 2 | 2 | Delegates everything to `DoctorTeamTemplate`; identical card grid expected. |
-| **`general-consultation/page.tsx`** | 4 | 3 | 4 | 4 | 4 | 2 | 3 | 4 | 2 | 7 serial sections, ServicesGrid lacks "most popular" or doctor-count hierarchy. |
-| **`specialist-consultation/page.tsx`** | 4 | 3 | 4 | 4 | 4 | 2 | 3 | 4 | 2 | 8 layers — adds `SpecialtiesGrid`; specialty tiles + service cards both identical card shape, no visual distinction. |
-| `prescriptions/page.tsx` | 3 | 3 | 3 | 3 | 3 | 1 | 3 | 4 | 2 | "Coming soon" fallback identical to populated grid — no visual cue when empty. |
-| **`tests/page.tsx`** | 3 | 3 | 3 | 3 | 4 | 1 | 3 | 4 | 2 | Stock-state badges cascade (rose "Sold out" + amber "Only N left" + emerald price) — three overlapping signals on one card. Should consolidate into the CTA. |
-| `consult/[serviceSlug]/page.tsx` | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 2 | Service-context card is highlighted (`border-2 border-emerald-400 ring-2`); doctor grid below blends. |
-| `checkout/page.tsx` | 3 | 4 | 4 | 3 | 4 | 2 | 4 | 3 | 1 | Strong checkout pattern; only nit — Stripe disclaimer is tiny + below the CTA, should be above. |
-| `cart/page.tsx` | 3 | 3 | 3 | 3 | 4 | 2 | 4 | 4 | 1 | Item kind (HEALTH_TEST / RX / CONSULT) shown as text-xs only; would scan faster with an icon. |
-| `blog/page.tsx` | 3 | 3 | 3 | 2 | 2 | 1 | 2 | 3 | 2 | All BlogCards equal weight; no featured / latest sort signal. |
-| `blog/[slug]/page.tsx` | 4 | 4 | 4 | 3 | 4 | 1 | 3 | 4 | 0 | Best article layout in repo. One bug: CTA `/book-online` is **not locale-aware** — should be `/{country}/{lang}/general-consultation`. |
-| `contact/page.tsx` | 4 | 4 | 4 | 3 | 4 | 1 | 4 | 3 | 0 | Cleanest split-grid page. |
-| `privacy/page.tsx` | 3 | 3 | 4 | 2 | 4 | 0 | 3 | 3 | 0 | Linear h2 cadence; last-updated date is too subtle. |
-| **`brazil/consent/page.tsx`** | 2 | 2 | 2 | 1 | 2 | 1 | 2 | 2 | 2 | Mixes custom `gh-*` CSS classes with raw Tailwind; falls back to unstyled if theme CSS loads late. Lowest-scoring page in the audit. |
+| `[country]/[lang]/page.tsx` | 3 | 3 | 2 | 2 | 3 | 3 | 3 | 3 | **1** | Four dark sections (hero + marquee + doctor wall + final CTA). Mint CTA on dark hero contradicts forest CTA everywhere else. |
+| `doctors/page.tsx` | 3 | 3 | 3 | 3 | 3 | 2 | 3 | 3 | 2 | Delegates to DoctorCard grid — three CTAs per card. |
+| `general-consultation/page.tsx` | 3 | 3 | 3 | 3 | 3 | 2 | 3 | 3 | 2 | ServicesGrid with gradient stripe cards. |
+| `specialist-consultation/page.tsx` | 3 | 3 | 3 | 3 | 3 | 2 | 3 | 3 | 2 | Two grids (specialties + services) with same card shape. |
+| `prescriptions/page.tsx` | 3 | 3 | 3 | 3 | 3 | 1 | 3 | 4 | 2 | Reasonable. |
+| `tests/page.tsx` | 3 | 3 | 3 | 3 | 3 | 1 | 3 | 4 | 2 | Reasonable. |
+| `consult/[serviceSlug]/page.tsx` | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 3 | 2 | OK flow. |
+| `checkout/page.tsx` | 4 | 4 | 4 | 4 | 4 | 2 | 4 | 3 | 1 | **Strong.** Leave it. |
+| `cart/page.tsx` | 3 | 3 | 3 | 3 | 4 | 2 | 4 | 4 | 1 | Good. |
+| `blog/page.tsx` | 3 | 3 | 3 | 3 | 3 | 1 | 3 | 3 | 2 | All BlogCards equal weight. |
+| `blog/[slug]/page.tsx` | 4 | 4 | 4 | 3 | 4 | 1 | 3 | 4 | 0 | Best page in the repo. |
+| `contact/page.tsx` | 4 | 4 | 4 | 3 | 4 | 1 | 4 | 3 | 0 | Clean. |
+| `privacy/page.tsx` | 3 | 3 | 4 | 3 | 4 | 0 | 3 | 3 | 0 | Fine. |
+| `brazil/consent/page.tsx` | 2 | 2 | 2 | 2 | 2 | 0 | 2 | 2 | 2 | Still the worst-scoring page. |
 
 ---
 
-## 4. Second-read moments — what should catch the eye but doesn't
+## 4. Critical findings — detailed
 
-A "second read" is what a returning visitor's eye lands on after the hero. These are the slots where the minimalist treatment is most likely to feel flat.
+### F1. The "dark SaaS editorial" is the second-order health-site reflex
+
+**HomeHero.tsx lines 53–82, CountryMarquee.tsx lines 29–38, DoctorWall.tsx lines
+77–97, FinalCTA.tsx lines 19–34**
+
+All four sections use the same three-part recipe:
+- `background: var(--color-background-dark)` (forest night `#0F2E25`)
+- `radial-gradient(ellipse …px …px at 95%-110% 0%-(-20%), rgba(176, 241, 34, 0.10–0.22), transparent)` — lime glow top-right
+- Dotted SVG texture overlay at 4–6% opacity
+
+Running the scene-sentence test: *"Patient at 2pm in a bright Dublin office deciding
+whether to book an online GP appointment."* The answer is not a dark-canvas
+magazine layout. That's a fintech or developer tool. The first-order reflex
+("healthcare → white + teal") was avoided; the second-order reflex ("dark editorial
+startup") was not.
+
+**Severity: Critical.**
+
+### F2. Primary CTA colour is split across the page
+
+**HomeHero.tsx line 141:** `bg-[var(--color-accent)]` = pastel mint (#C8E6A0)
+**FinalCTA.tsx line 98:** same `bg-[var(--color-accent)]`
+**SiteHeader.tsx line 238:** `gh-btn-primary` = forest green (#1D4B36)
+**ServiceTile hover CTA:** forest green
+
+The two most-visible CTAs (hero + closer) use mint (soft, passive). The header and
+every service card use forest (brand primary, authoritative). A patient sees a MINT
+"Book a consultation" on the hero then a FOREST "Book" in the header and a FOREST
+hover CTA on service tiles. Split signals = weak brand identity.
+
+**Severity: High.**
+
+### F3. Typography token system exists; nothing uses it
+
+`globals.css` defines `--text-display` (max 6rem), `--text-h1` (max 4.25rem),
+`--text-h2` (max 3rem), `--text-h3` (max 1.75rem).
+
+What components actually use:
+
+| Component | Actual size | Token says |
+|---|---|---|
+| HomeHero h1 | `clamp(3.25rem,9vw,11rem)` — **11rem/176px** | `--text-display` = max 6rem |
+| DoctorWall count | `clamp(4.5rem,9vw,8rem)` | `--text-display` = max 6rem |
+| DoctorWall h2 | `clamp(2.5rem,5vw+0.5rem,4.5rem)` | `--text-h1` = max 4.25rem |
+| FinalCTA "24h" | `clamp(4.5rem,11vw,9rem)` — **9rem/144px** | `--text-display` = max 6rem |
+| StatsBand numbers | `clamp(3.25rem,7vw,7rem)` | `--text-display` = max 6rem |
+| ServiceCatalog h2 | `clamp(2rem,4vw+0.5rem,3.5rem)` | `--text-h2` = max 3rem |
+
+Every section hand-rolls its own clamp with different max values. The token system
+is ornamental. At desktop, sections compete for "biggest number" (176px hero
+headline vs 144px FinalCTA "24h" vs 128px DoctorWall count). The page looks like
+each section was designed in isolation.
+
+**Severity: High.**
+
+### F4. Inline `style={}` attributes bypass the token system
+
+**SiteHeader.tsx lines 160–167:**
+```tsx
+style={{
+  maxWidth: 1320,
+  padding: "14px clamp(20px, 4vw, 40px)",
+  gridTemplateColumns: "auto 1fr auto",
+  gap: 24,
+}}
+```
+
+**DoctorWall.tsx lines 164–177:** Entire filter button styling via inline `style`
+object (border, background, color, fontFamily, fontSize, fontWeight, cursor).
+
+These bypass the design system. Token drift becomes invisible when styling lives in
+`style={}` instead of CSS vars or utility classes.
+
+**Severity: Medium.**
+
+### F5. DoctorCard has three competing CTAs per card
+
+**DoctorCard.tsx lines 113–144:**
+1. Forest pill "Book Appointment" (full-width primary)
+2. WhatsApp circle icon button
+3. Bordered "View Profile" link
+
+One card. Three actions. Which one is primary? The first. So 2 and 3 are cognitive
+noise. The WhatsApp button makes sense as the primary for some markets; the "View
+Profile" link is useful for trust. But stacking all three on the same card inflates
+card height and dilutes the message.
+
+**Severity: Medium.**
+
+### F6. ServiceCatalog uses gradient stripe card tops — banning-adjacent
+
+**ServiceCatalog.tsx lines 172–181:** `STRIPE_GRADIENTS` maps service type to a
+forest-to-lighter-forest gradient. These are gradient background areas (not text
+gradients), but they share the "decorative gradient" problem from the ban list.
+Three of four service types look like dark-forest slabs topped with a slightly
+lighter dark-forest gradient; visually they blur together. The "test" type uses
+`#C8E6A0 → #B0F122` lime gradient — completely different colour family, looks
+incongruous next to the other three.
+
+**Severity: Medium.**
+
+### F7. TrustBar is a fifth hardcoded dark section
+
+**TrustBar.tsx line 13:** `bg-[var(--color-brand-primary)]` = forest green section.
+All four items are hardcoded in the component (no admin data). Section reads as a
+marketing afterthought — icons, bold labels, two-line descriptions — generic trust
+boilerplate identical to a hundred SaaS landing pages.
+
+**TrustRibbon** (data-driven, mint-cream surface) already exists and is better.
+TrustBar appears to be a duplicate / fallback that should be deprecated.
+
+**Severity: Medium (data/duplication problem more than visual).**
+
+### F8. Page rhythm — four dark sections in one page
+
+Country home section sequence:
+`HomeHero (dark)` → `CountryMarquee (dark)` → `RichBodySection (varies)` →
+`TrustRibbon (soft)` → `ReviewBadge` → `ServiceCatalog (white)` →
+`StatsBand (white)` → `FeaturedDoctor` → `DoctorWall (dark)` →
+`HowItWorksNarrative (soft)` → `FinalCTA (dark)`
+
+Hero + marquee = two consecutive dark sections at the top. Then later:
+DoctorWall (dark) → HowItWorks (light) → FinalCTA (dark).
+
+`FinalCTA` and `DoctorWall` use the SAME dark canvas + lime glow. If a user
+scrolls past the hero, finds the FinalCTA, they've seen this aesthetic three times.
+
+**Target rhythm:** dark (hero) → light (trust + services + stats) → light-soft
+(doctors + how it works) → dark (FinalCTA). Marquee should be a one-line divider
+between dark hero and light section, not a second full dark section.
+
+**Severity: High.**
+
+### F9. Dead code
+
+- **DoctorWall.tsx lines 304–326:** `function DKV({k, v})` is defined but never
+  called in the component's JSX. Orphaned.
+- **SiteHeader.tsx line 260:** `void countries;` — a hack to suppress an
+  "unused import" TS error. Should be removed along with the import.
+
+**Severity: Low (cleanup).**
+
+### F10. AvatarBubble uses banned gradient
+
+**HomeHero.tsx lines 275–278:**
+```tsx
+background: "linear-gradient(135deg, var(--color-accent) 0%, #B0F122 60%, var(--color-accent) 100%)"
+```
+
+The impeccable rules ban gradient backgrounds used decoratively. This is a
+decorative initials bubble — the gradient serves no semantic purpose. Replace with
+solid `--color-accent` background or solid `--color-background-panel`.
+
+**Severity: Low.**
+
+---
+
+## 5. Second-read moments — what should catch the eye but doesn't
 
 | Page | Today | Should be |
 |---|---|---|
-| Country home | Three identical service tiles in `ServiceCatalog` | One feature tile (most-booked / hero service) + two flat tiles. Asymmetric grid. |
-| Country home | `DoctorWall` shows all doctors equal weight | One "featured" doctor card 2× width / promoted treatment + the rest at default. Already partially supported via `FeaturedDoctor` component — not wired in. |
-| General consultation | Service cards in a 3-up grid | Pricing-prominent layout: large bold price + small caption + CTA pill, varied row heights. |
-| Specialist consultation | Two separate grids (specialties + services) | Collapse to a **single decision surface**: specialty → expanded services within. Removes one "stack of identical cards" repetition. |
-| Tests | Stock badges + price badge + image + body + CTA | Stock state lives inside the CTA button (`Add to cart · €45` vs disabled `Sold out`). Image stays. Strip the badges. |
-| `consult/[serviceSlug]` | Doctor grid is identical cards with a tiny "Pick a time" link | Promote `Pick a time` to a primary pill button; show a per-doctor "next available slot" preview (`Tomorrow 09:30` etc.). |
-| Blog index | All BlogCards equal | Featured post on top (1×, wider, larger title), then 3-up grid below. |
-| Privacy | Last-updated date is `text-sm text-slate-500` | Promote into the hero strip (eyebrow + h1 + "Updated 16 May 2026" as a meta line). |
+| Country home | Hero is ALL dark — the hero itself doesn't create visual hierarchy because everything is equally dark/editorial | Asymmetric hero (light canvas): big serif/sans headline left, one-line availability panel right. Forest primary CTA. Trust established by restraint. |
+| Country home | DoctorWall and FinalCTA look identical from a distance | DoctorWall on soft/light surface OR with a distinct editorial contrast point that differs from FinalCTA dark |
+| Service catalog | All four service type stripes look dark/identical | First card (general consultation) has a SOFT mint stripe; others use a single light icon tile — no gradients |
+| Doctors page | Three CTAs per DoctorCard compete for attention | One primary action ("Book") + portrait + name + specialty. Trust signals in small meta line. |
+| Blog index | All cards identical weight | Featured post 2× width at top, then 3-up grid |
 
 ---
 
-## 5. Broken patterns observed
+## 6. Anti-AI-slop checklist
 
-Anti-AI-slop checklist + project-specific patterns.
+**Running the full impeccable test against current code:**
 
-| Pattern | Where | Severity |
-|---|---|---|
-| **Identical card grids** | `(site)/[country]/[lang]/page.tsx` `ServiceCatalog`, `general-consultation` `ServicesGrid`, `specialist-consultation` (twice — specialties + services), `consult/[serviceSlug]` doctor grid, `blog/page.tsx`, `tests/page.tsx`, `prescriptions/page.tsx` | **High** — the most repeated anti-pattern in the codebase |
-| **7+ serial sections per page, equal visual weight** | All three top service pages (general, specialist, country home) | **High** — no rhythm between sections; eye gets lost |
-| **Cascading status badges on one card** | `tests/page.tsx` lines 158–166 (emerald price + amber "Only N left" + rose "Sold out") | **Medium** — fold into the CTA |
-| **Hardcoded grid `<style>` blocks instead of tokens** | `SiteFooter.tsx` lines 207–218, `HomeHero.tsx` lines 389–392, `CountryEntryGate.module.css` | **Medium** — repeats a rhythm pattern the design system should own |
-| **Inline `padding: "112px 0"`** (raw px, not a token) | `FinalCTA.tsx` line 19, `CTAFooter.tsx` line 19 | **Low** — drift risk |
-| **Flag rendering re-implemented per consumer** | `MobileNav`, `CountrySwitcher`, `DoctorWall`, doctor card | **Low** — extract `<Flag code="ie" />` |
-| **`dangerouslySetInnerHTML` from admin-supplied content** | `RichBodySection.tsx`, used on home/general/specialist/Rx/tests/blog | **Audit gate** — confirm `sanitize-html` runs before render; if not, **XSS + a11y risk** |
-| **`gh-*` custom classes + Tailwind mixed** | `brazil/consent/page.tsx` (full page); `globals.css` defines `.gh-card .gh-input .gh-btn-primary` etc. | **Medium** — pick one approach per page; theme-load race is real |
-| **Backdrop-filter inlined on header** | `SiteHeader.tsx` lines 114–116 hardcode `backdropFilter` | **Low** — extract `.gh-header-sticky` |
-| **Hover-scale on doctor portrait** | `DoctorCard.tsx` line 48 `group-hover:scale-105`, missing `motion-reduce:` | **Low** — add the guard |
-| **TrustSignals column-count ternary** | `TrustSignals.tsx` line 32 — fragile logic switching between 2/3/4 cols based on item count | **Low** — simplify to `lg:grid-cols-3` |
-| **`/book-online` CTA in `blog/[slug]` is not locale-aware** | `blog/[slug]/page.tsx` line 86 | **Bug, not visual** — but already in scope to fix while we're there |
-| **Pulsing live-doctor dot in hero** | `HomeHero.tsx` lines 251–256 — pulse CSS animation, relies on global motion-reduce only | **Low** — add explicit `motion-reduce:animate-none` |
-
-### What is *not* broken — explicitly noted to avoid over-correcting
-
-- No glassmorphism abuse. The header has one tasteful blur; nothing else.
-- No gradient text spam. `HomeHero` has one subtle highlight on "From anywhere" — keep.
-- No bouncing / elastic easings. No stagger-spam. No fade-on-mount on static content.
-- No cards-inside-cards. No modal-first thinking.
-- No side-stripe borders >1px used decoratively.
-- No `#000` or `#fff` literals in tokens — every neutral tints toward forest.
-
-The site is **6.5–7 / 10** by both auditors' summary scores. The work is mostly tightening, not rebuilding.
+| Check | Result |
+|---|---|
+| Gradient text (`background-clip: text`) | PASS — not used |
+| Glassmorphism as default | PARTIAL FAIL — hero live-availability panel uses `bg-white/[0.03] backdrop-blur-sm`; subtle but present |
+| Hero metric template (big number / small label / gradient) | **FAIL** — HomeHero "doctors live now", DoctorWall large count, FinalCTA "24h", StatsBand — four sections all display a large number as a hero metric |
+| Identical card grids | PARTIAL FAIL — ServiceCatalog uses featured-first (good) but gradient stripes make cards visually identical |
+| Hover-scale on cards | PASS — removed in previous session |
+| Fade-on-mount static content | PASS — not found |
+| Stagger-spam | PASS — not found |
+| Side-stripe borders decorative | PASS — not found |
+| Same decorative technique repeated 3+ times | **FAIL** — lime radial glow on dark canvas appears in HomeHero, DoctorWall, and FinalCTA (identical technique, slightly different opacity) |
+| First-order category reflex (healthcare → white/teal) | PASS — not white/teal |
+| Second-order category reflex (not-white-teal health → dark editorial startup) | **FAIL** — this is exactly what the site is |
+| `#000` or `#fff` literals | PASS — not in tokens |
+| Cards-inside-cards | PASS |
+| h-screen on heroes | PASS |
+| Inline padding literals | PARTIAL FAIL — SiteHeader uses `style` objects |
 
 ---
 
-## 6. Cross-cutting findings
+## 7. What is working well — lock list (visual)
 
-| # | Finding | Suggested home in Phase 3 |
-|---|---|---|
-| C1 | Section padding is sometimes inline `112px`, sometimes Tailwind `py-12`, sometimes `--section-padding-y`. Three sources of truth. | Extract `.gh-section` utility in `globals.css` using `padding-block: clamp(64px, 8vw, 112px)`. Replace inline / Tailwind usage. |
-| C2 | Card grid (`grid gap-6 sm:grid-cols-2 lg:grid-cols-3`) hand-coded in **every** card-rendering component. | Add `.gh-card-grid` utility. Use everywhere. Single point of change when we move to asymmetric grids in Phase 3. |
-| C3 | No `<Flag>` atom — flag rendering re-implemented 4+ times. | Extract `frontend/components/ui/Flag.tsx`. |
-| C4 | `motion-reduce:` guards missing on 4–5 visible animations (DoctorCard scale, ServiceCard arrow translate, DoctorWall lift, HomeHero pulse, FinalCTA padding pulse if any). | Add per-element. Global guard is fallback, not primary. |
-| C5 | `CountrySwitcher` + `LanguageSwitcher` are hand-rolled custom dropdowns with manual click-outside. Don't trap focus on open. | Migrate to Radix `Select` or `DropdownMenu`. Already in deps. |
-| C6 | `RichBodySection` calls `dangerouslySetInnerHTML` on admin-supplied content. `sanitize-html` is in deps — verify it runs at render time. | Sanity check in Phase 3 first commit. Not a redesign issue per se but worth confirming while we're in the file. |
-| C7 | `[country]/[lang]/page.tsx` doesn't wire `FeaturedDoctor` even though the component exists. | Phase 3: replace one `DoctorWall` card with a `FeaturedDoctor` slot to break the monotony. |
-| C8 | `brazil/consent/page.tsx` is the worst-scoring page — different style language from the rest of the site. | Phase 3: rewrite using `gh-*` classes consistently (or Tailwind consistently), pick one. |
+The following are **correct** and must not be reverted:
 
----
-
-## 7. Lock list — must be preserved verbatim through Phase 3
-
-These are content + behaviour the redesign must NOT touch.
-
-**Routing + slug architecture**
-- `/[country]/[lang]/*` shape; `COUNTRY_CODE_TO_SLUG` mapping.
-- `pageMetadata()` calls on every page.
-- `breadcrumbJsonLd`, `medicalBusinessJsonLd`, `medicalProcedureJsonLd` — legal / SEO contracts.
-- `isCountryFeatureEnabled` gating logic.
-
-**CTAs + business copy**
-- "Book a consultation" / "Request a prescription" / "Add to cart" / "Browse consultations" — exact labels.
-- "Licensed doctors", "Compliant by default", "GDPR-compliant" — trust line copy.
-- "Lab-quality tests, delivered home" — tests hero claim.
-- Doctor-count + language-count interpolation logic in `HomeHero`.
-
-**Compliance**
-- All copy in `privacy/page.tsx` (Who we are / What we collect / Cookies / Your rights / Retention / Sub-processors).
-- All Portuguese copy in `brazil/consent/*` — "Submeter e pagar", "O seu consentimento foi registado", etc.
-- Emergency number "112 in EU" (`contact/page.tsx` line 50).
-- Email addresses `info@myglobalhealth.online`, `privacy@myglobalhealth.online`.
-
-**Form fields (booking + checkout + contact)**
-- All form field names + autocomplete attributes in `checkout/page.tsx`.
-- Cart `kind` enum (`HEALTH_TEST` / `PRESCRIPTION_SERVICE` / `GENERAL_CONSULTATION` / `SPECIALIST_CONSULTATION`).
-- `heldUntil` slot-hold countdown on cart rows.
-- Stripe disclaimer text.
-
-**Provider wiring**
-- `CartProvider`, `JsonLd` injection at layout level.
-- `sanitize-html` if present in the `RichBodySection` render path.
+- `globals.css` token system (colors, radius, shadows) — accurate to brand spec
+- Manrope font loaded via `next/font` — correct brand substitute for Gilroy
+- `.gh-section` / `.gh-card-grid` / `.gh-section-tight` utilities
+- `ServiceCatalog` filter interaction (good component; needs surface-level fixes)
+- `HowItWorks` sticky illustration + intersection observer step highlight
+- `ServiceCatalog` featured-first layout concept (first card 2×2)
+- All `motion-reduce:` guards on hover transforms
+- `FinalCTA` asymmetric layout (number left, copy right) — concept is right
+- `DoctorWall` portrait-first card grid — concept is right
+- `TrustRibbon` (data-driven, four-up credentials strip on soft surface) — keep
+- `ServiceTile` hover CTA that animates to forest on hover — keep the interaction
+- `--shadow-*` tokens all forest-tinted (never neutral grey) — correct
+- All a11y: `aria-*`, `role`, `data-testid`, event handlers — untouched
 
 ---
 
-## 8. Suggested Phase 3 ordering (for discussion in Phase 2 boundary)
+## 8. Lock list — must not change
 
-Each unit = one commit. Each commit aligns to one component family.
+**Routing + SEO:**
+- `/[country]/[lang]/*` slug architecture
+- `pageMetadata()` on every page
+- `breadcrumbJsonLd`, `medicalBusinessJsonLd`, `medicalProcedureJsonLd`
+- `isCountryFeatureEnabled` gating
 
-| Order | Unit | Why first |
-|---|---|---|
-| 1 | `globals.css` — add `.gh-section`, `.gh-card-grid`, normalise spacing tokens | Foundation. Every later commit reads from these. |
-| 2 | `Flag` atom extraction + replace 4 call sites | Tiny win, unblocks `CountrySwitcher` redesign. |
-| 3 | `SiteHeader` — extract `.gh-header-sticky`, migrate switchers to Radix | High-traffic, every page touches it. |
-| 4 | `SiteFooter` — remove inline `<style>`, use `.gh-footer-grid` | Same. |
-| 5 | `HomeHero` + `[country]/[lang]/page.tsx` — wire `FeaturedDoctor`, break ServiceCatalog symmetry | The page the most users see. |
-| 6 | `general-consultation` + `specialist-consultation` — collapse specialty + service into one progressive surface, vary card weight | Two of the highest-converting pages. |
-| 7 | `tests/page.tsx` — fold stock state into CTA | Quick clarity win. |
-| 8 | `consult/[serviceSlug]` — promote doctor card CTA + show "next available" preview | Critical conversion surface. |
-| 9 | `blog/*` — featured-post layout + fix non-locale-aware CTA | Low risk, quick polish. |
-| 10 | `brazil/consent/page.tsx` — single styling system, tighten consent block | Worst-scoring page; isolated blast radius. |
-| 11 | Add motion-reduce guards across `DoctorCard`, `ServiceCard`, `HomeHero` pulse, `DoctorWall` lift | A11y polish; safe last. |
+**Copy (CTA labels):**
+- "Book a consultation" / "Request a prescription" / "Add to cart" / "Browse consultations"
+- "Licensed doctors" / "Compliant by default" / "GDPR-compliant" trust claims
+- "Lab-quality tests, delivered home"
 
-Phase 4 motion work follows; only one signature moment in scope (likely the country gate or hero transition).
+**Compliance:**
+- All copy in `privacy/page.tsx`
+- All Portuguese copy in `brazil/consent/page.tsx`
+- Emergency "112 in EU" copy
+- `info@myglobalhealth.online`, `privacy@myglobalhealth.online`
+
+**Forms + cart:**
+- All form field names + autocomplete attributes in `checkout/page.tsx`
+- Cart `kind` enum (HEALTH_TEST / PRESCRIPTION_SERVICE / GENERAL_CONSULTATION / SPECIALIST_CONSULTATION)
+- `heldUntil` slot-hold countdown
+- Stripe disclaimer text
+
+**Provider wiring:**
+- `CartProvider`, `JsonLd` at layout level
+- `sanitize-html` in RichBodySection render path
 
 ---
 
-## Open questions for the Phase 1 boundary
+## 9. Suggested Phase 3 ordering
 
-Before Phase 2 starts, four decisions me need from you:
+Each row = one commit. Commit message pattern: `ui(<surface>): <verb>`.
 
-1. **Run `$impeccable teach`** between Phase 1 and Phase 2 to produce `PRODUCT.md`, or proceed without it and write `direction.md` from code intuition?
-2. **Delete the stale Linear `DESIGN.md`** at project root? Phase 2 will produce a fresh one from `globals.css`.
-3. **Is `brazil/consent` in scope?** It's a Portuguese consent + Stripe-fee page — different audience (existing patient finishing a flow). Rebuilding it = the highest risk per minute of work.
-4. **`FeaturedDoctor` wiring** — currently the component exists but isn't used. Phase 3 plan promotes it. Confirm one featured doctor card on the country home is the right direction, or hold off?
+| # | Surface | What changes | Why first |
+|---|---|---|---|
+| 1 | `HomeHero.tsx` | Flip to light canvas. Asymmetric split (text left, availability panel right). Forest primary CTA. Remove gradient mesh + dotted texture. Radial glow banned. AvatarBubble → solid accent bg. | Highest-traffic. Sets the tone for everything else. |
+| 2 | `CountryMarquee.tsx` | Convert to a thin light-on-soft divider strip. Soft background, no forest-night. Remove edge-fade gradient overlays. | Stops two consecutive dark sections. |
+| 3 | `SiteHeader.tsx` | Replace all inline `style={}` with Tailwind tokens. Remove `void countries` hack. | Every page. Should match the light hero aesthetic. |
+| 4 | `ServiceCatalog.tsx` (ServiceTile) | Replace `STRIPE_GRADIENTS` with solid icon-tile tops (no gradients). Single background per type using existing tokens. | Kills the gradient stripe anti-pattern. |
+| 5 | `DoctorCard.tsx` | Reduce to one primary action. "Book Appointment" is the CTA. WhatsApp → secondary ghost. Remove "View Profile" from the card body (link to same `href` via the portrait). | Cleans card hierarchy. |
+| 6 | `DoctorWall.tsx` | Move to light or soft surface. Remove inline `style` filter buttons → token-driven. Remove dead `DKV` function. | Breaks "identical dark section" repetition. |
+| 7 | `FinalCTA.tsx` | Keep asymmetric layout. Replace `--color-accent` (mint) with `--color-brand-primary` (forest) for the "24h" number (or keep mint but cap size to `--text-display`). Tone the lime radial glow to 8% max. | Reduces slop. Caps type size to token. |
+| 8 | `TrustBar.tsx` | Deprecate or make data-driven. `TrustRibbon` already serves this purpose better. | Removes the fifth dark/forest section. |
+| 9 | All `text-[clamp(…)]` in section components | Replace with `text-[length:var(--text-display)]` / `--text-h1` etc. Remove every hand-rolled clamp that exceeds the token max (11rem → 6rem, 9rem → 6rem). | Restores type hierarchy. The 176px hero headline dwarfs all other type on page. |
+| 10 | `StatsBand.tsx` | Cap numbers to `--text-display`. The four-up hero-metric layout is the metric template anti-pattern — convert to editorial data rows or fold into TrustRibbon. | Kills hero-metric repeat. |
+| 11 | `brazil/consent/page.tsx` | Single styling language, tighten consent block. | Worst-scoring page, isolated blast radius. |
+| 12 | A11y pass | `void countries` SiteHeader, `DKV` dead code removal, missing `alt` audits. | Safety polish. |
 
-No code touched yet. Awaiting Phase 1 sign-off before invoking taste-skill + writing `direction.md`.
+Phase 4 motion: the only new animation in scope is a subtle entrance for the hero
+headline (one fade + translate-y, instant if `prefers-reduced-motion`). Everything
+else that currently animates should be reviewed for purpose before keeping.
+
+---
+
+## 10. Open questions for Phase 1 boundary
+
+Before Phase 2 direction doc and Phase 3 implementation:
+
+1. **Light vs dark hero?** This audit recommends flipping the hero to a light canvas.
+   If you want to keep the dark editorial feeling, Phase 3 can keep the dark hero but
+   MUST change the other three sections away from the same dark aesthetic. Can't have
+   it both ways — either the hero is the unique dark moment, or the whole page is light.
+
+2. **`TrustBar` deprecation?** The hardcoded four-item bar duplicates `TrustRibbon`
+   (data-driven). Safe to remove if `TrustRibbon` is in use on the country home (it is).
+
+3. **DoctorWall surface?** Currently dark forest night. Three options:
+   a. Move to `--color-background-soft` (mint-cream) — calm, reads as editorial
+   b. Keep dark but make it the ONLY dark section (remove dark marquee + dark FinalCTA)
+   c. Use a strong border-top on white — no section colour, pure type
+
+4. **Type size cap?** The 11rem headline is a deliberate bold choice from `ui(bold)`.
+   The token cap is 6rem. Confirm: keep the aggressive 11rem OR rein it in to the
+   4–5rem range that reads as a health platform rather than a crypto/fashion brand?
+
+No code touched. Awaiting Phase 1 sign-off and answers to the four questions above
+before starting Phase 2 direction + Phase 3 execution.

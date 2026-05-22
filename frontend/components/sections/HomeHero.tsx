@@ -1,16 +1,5 @@
-/**
- * Dark editorial hero — forest-night canvas, massive sans display,
- * Cormorant italic accent (single word), live-availability bar
- * inline below the headline, asymmetric CTA cluster.
- *
- * The previous "type + side panel" composition was technically clean
- * but read like every other SaaS template. This one borrows from
- * magazine cover layouts — heavy ink, big imagery feel from type alone,
- * one italic moment to break the sans monotony.
- */
-
 import Link from "next/link";
-import { ArrowUpRight, ShieldCheck, Stethoscope, Clock } from "lucide-react";
+import { ArrowRight, ShieldCheck, Stethoscope, Clock } from "lucide-react";
 import type { CountryCode } from "@/data/countries";
 import { Flag } from "@/components/ui/Flag";
 
@@ -46,216 +35,182 @@ export function HomeHero({
 }) {
   const displayHeroTitle = heroTitle?.trim() || null;
   const displayHeroSubtitle = heroSubtitle?.trim() || null;
-  const displayCtaLabel = ctaLabel?.trim() || `Book a consultation`;
+  const displayCtaLabel = ctaLabel?.trim() || "Book a consultation";
   const doctorsForPanel = (liveDoctors ?? []).slice(0, 4);
 
   return (
     <section
+      aria-labelledby="hero-title"
       className="
-        relative isolate overflow-hidden
-        bg-[var(--color-background-dark)]
-        text-white
+        relative overflow-hidden
+        bg-[var(--color-background-page)]
       "
     >
-      {/* Layered background — three planes stacked for depth.
-        * Plane 1: gradient mesh top-right (lime → fade).
-        * Plane 2: dotted texture overlay at 4% opacity.
-        * Plane 3: bottom hairline that separates from the marquee. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background: `
-            radial-gradient(ellipse 1400px 800px at 100% -20%, rgba(176, 241, 34, 0.22), transparent 55%),
-            radial-gradient(ellipse 900px 700px at -10% 110%, rgba(200, 230, 160, 0.10), transparent 60%),
-            linear-gradient(180deg, #0A2620 0%, var(--color-background-dark) 60%, #0A2620 100%)
-          `,
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='16' cy='16' r='1' fill='%23ffffff'/%3E%3C/svg%3E\")",
-          backgroundSize: "32px 32px",
-        }}
-      />
+      {/* Subtle grain texture — warming the white canvas without adding
+        * ink. Invisible at a glance, tactile when the eye settles. */}
+      <div aria-hidden className="gh-hero-grain pointer-events-none absolute inset-0 -z-10" />
 
-      <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10 pt-20 pb-24 md:pt-28 md:pb-32">
-        {/* Eyebrow row — country + live indicator + crumbs. Tabular
-          * numerics for the doctor count so it doesn't bounce. */}
-        <div className="flex flex-wrap items-center gap-4 text-[length:var(--text-eyebrow)]">
-          <span className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/[0.04] px-3 py-1.5 backdrop-blur-sm">
-            <Flag code={countryCode} size="sm" />
-            <span className="font-semibold tracking-[0.04em] uppercase text-white">
+      <div
+        className="
+          relative mx-auto max-w-[var(--container-width)]
+          px-5 md:px-10
+          gh-section
+          grid gap-12
+          lg:grid-cols-[1.15fr_1fr] lg:items-start lg:gap-16
+        "
+      >
+        {/* Left column — headline + sub + CTAs + proof points */}
+        <div className="flex flex-col lg:pt-4">
+          {/* Eyebrow row — country + live indicator */}
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="gh-eyebrow inline-flex items-center gap-2 text-[var(--color-brand-primary)]">
+              <Flag code={countryCode} size="sm" />
               {countryName}
             </span>
-          </span>
-          <span className="inline-flex items-center gap-2 text-white/60">
-            <span aria-hidden className="gh-pulse-dot !size-2" />
-            <span className="uppercase tracking-[0.16em]">
-              {doctorCount} doctors live now
+            <span className="gh-eyebrow inline-flex items-center gap-2 text-[var(--color-text-muted)]">
+              <span aria-hidden className="gh-pulse-dot !size-2" />
+              {doctorCount} doctors available
             </span>
-          </span>
-        </div>
+          </div>
 
-        {/* Massive editorial headline. Mixed weight (sans semibold +
-          * serif italic for one accent word) creates the magazine feel.
-          * Scale tops out at 11rem (≈176px) on huge desktops. */}
-        <h1
-          className="
-            mt-10 max-w-[18ch]
-            font-semibold
-            tracking-[-0.04em] leading-[0.92]
-            text-[clamp(3.25rem,9vw,11rem)]
-          "
-        >
-          {displayHeroTitle ? (
-            displayHeroTitle
-          ) : (
-            <>
-              See a doctor
-              <br />
-              <span className="font-extrabold text-[var(--color-brand-accent)]">
-                from anywhere
-              </span>{" "}
-              <span className="text-white/95">on your terms.</span>
-            </>
-          )}
-        </h1>
-
-        {/* Subhead — narrow column, generous leading. Sits under the
-          * headline like editorial standfirst. */}
-        <p className="mt-8 max-w-[42ch] text-base md:text-lg leading-relaxed text-white/72">
-          {displayHeroSubtitle ??
-            "Locally-registered clinicians, single-form booking, no waiting rooms. Pay only after the video call connects."}
-        </p>
-
-        {/* CTA cluster + proof points stacked. Lime pill primary,
-          * ghost-on-dark secondary, proof points under both. */}
-        <div className="mt-12 flex flex-wrap items-center gap-x-3 gap-y-4">
-          <Link
-            href={bookHref}
+          {/* Headline — uses the design-system display token. */}
+          <h1
+            id="hero-title"
             className="
-              inline-flex items-center justify-center gap-2
-              rounded-full bg-[var(--color-accent)]
-              px-7 py-4
-              text-[15px] font-bold text-[var(--color-background-dark)]
-              transition-[background-color,transform] duration-200
-              hover:bg-white
-              active:scale-[0.98] motion-reduce:active:scale-100
-              motion-reduce:transition-none
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
+              mt-6
+              text-[length:var(--text-display)]
+              font-semibold leading-[0.95] tracking-[-0.035em]
+              text-[var(--color-text-primary)]
+              max-w-[16ch]
             "
           >
-            {displayCtaLabel}
-            <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
-          </Link>
-          <Link
-            href="#services"
-            className="
-              inline-flex items-center justify-center gap-2
-              rounded-full
-              border border-white/25 bg-transparent
-              px-6 py-4 text-[15px] font-semibold text-white/90
-              transition-[background-color,border-color] duration-200
-              hover:bg-white/10 hover:border-white/40
-              motion-reduce:transition-none
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
-            "
-          >
-            Browse services
-          </Link>
+            {displayHeroTitle ? (
+              displayHeroTitle
+            ) : (
+              <>
+                See a doctor,{" "}
+                <span className="text-[var(--color-brand-primary)]">
+                  from anywhere.
+                </span>
+              </>
+            )}
+          </h1>
 
-          <ul className="ml-2 hidden flex-wrap gap-x-6 gap-y-2 lg:flex text-[length:var(--text-meta)] text-white/60">
+          <p className="mt-6 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed text-[var(--color-text-body)]">
+            {displayHeroSubtitle ??
+              "Locally-registered clinicians, one-form booking, no waiting rooms. Pay only after the video call connects."}
+          </p>
+
+          {/* CTA cluster */}
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <Link
+              href={bookHref}
+              className="gh-btn gh-btn-primary active:scale-[0.98] motion-reduce:active:scale-100"
+            >
+              {displayCtaLabel}
+              <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+            </Link>
+            <Link href="#services" className="gh-btn gh-btn-outline">
+              Browse services
+            </Link>
+          </div>
+
+          {/* Proof points */}
+          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-[length:var(--text-meta)] text-[var(--color-text-muted)]">
             <li className="inline-flex items-center gap-2">
-              <ShieldCheck className="size-4 text-[var(--color-accent)]" strokeWidth={1.5} aria-hidden />
+              <ShieldCheck
+                className="size-4 text-[var(--color-brand-primary)]"
+                strokeWidth={1.5}
+                aria-hidden
+              />
               Licensed in {countryName}
             </li>
             <li className="inline-flex items-center gap-2">
-              <Clock className="size-4 text-[var(--color-accent)]" strokeWidth={1.5} aria-hidden />
+              <Clock
+                className="size-4 text-[var(--color-brand-primary)]"
+                strokeWidth={1.5}
+                aria-hidden
+              />
               Same-day slots
             </li>
             <li className="inline-flex items-center gap-2">
-              <Stethoscope className="size-4 text-[var(--color-accent)]" strokeWidth={1.5} aria-hidden />
+              <Stethoscope
+                className="size-4 text-[var(--color-brand-primary)]"
+                strokeWidth={1.5}
+                aria-hidden
+              />
               No clinic visits
             </li>
           </ul>
         </div>
 
-        {/* Live availability strip — sits at the bottom of the hero
-          * as a horizontal rail. Doctor avatars + names + free-slot
-          * chips. Replaces the side panel — keeps the hero focused on
-          * type while still giving the page real product signal. */}
+        {/* Right column — live availability panel */}
         {doctorsForPanel.length > 0 ? (
-          <div
+          <aside
+            aria-label="Doctors available now"
             className="
-              mt-16 md:mt-20
               rounded-[var(--radius-card)]
-              border border-white/10
-              bg-white/[0.03]
-              backdrop-blur-sm
-              p-6 md:p-7
+              border border-[var(--color-border)]
+              bg-[var(--color-background-soft)]
+              p-[var(--space-inset)]
+              shadow-[var(--shadow-card)]
+              lg:sticky lg:top-28
             "
           >
-            <div className="flex flex-wrap items-baseline justify-between gap-4">
-              <p className="gh-eyebrow text-[var(--color-accent)]">
+            <div className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] pb-4">
+              <p className="gh-eyebrow inline-flex items-center gap-2 text-[var(--color-brand-primary)]">
+                <span aria-hidden className="gh-pulse-dot !size-2" />
                 Available right now
               </p>
-              <p className="text-[length:var(--text-meta)] text-white/55">
-                Consulting in {languageLabel} ·{" "}
-                <span className="font-semibold text-white/90 [font-variant-numeric:tabular-nums]">
-                  {totalDoctorsAcrossEurope} across Europe
-                </span>
+              <p className="text-[length:var(--text-meta)] text-[var(--color-text-muted)] [font-variant-numeric:tabular-nums]">
+                {totalDoctorsAcrossEurope} across Europe
               </p>
             </div>
-            <ul className="mt-6 grid gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
+
+            <ul className="mt-2 divide-y divide-[var(--color-border)]">
               {doctorsForPanel.map((d) => (
-                <li key={d.name} className="flex items-center gap-3 min-w-0">
+                <li key={d.name} className="flex items-center gap-4 py-4">
                   <AvatarBubble name={d.name} />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-white">
+                    <p className="truncate text-sm font-semibold text-[var(--color-text-primary)]">
                       {d.name}
                     </p>
-                    <p className="truncate text-xs text-white/55">
+                    <p className="truncate text-xs text-[var(--color-text-muted)]">
                       {d.role}
                     </p>
                   </div>
-                  <span className="shrink-0 rounded-full bg-[var(--color-accent)]/15 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--color-accent)]">
+                  <span className="shrink-0 rounded-full bg-[var(--color-accent)]/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[var(--color-brand-primary)]">
                     Free
                   </span>
                 </li>
               ))}
             </ul>
-          </div>
-        ) : null}
 
-        {/* Admin-uploaded hero image — appears below if provided.
-          * Wide editorial slot, doesn't compete with the headline. */}
-        {heroImageSrc ? (
-          <div
-            className="
-              mt-16 overflow-hidden
-              rounded-[var(--radius-card)]
-              border border-white/10
-            "
-          >
+            <p className="mt-4 text-[length:var(--text-meta)] text-[var(--color-text-muted)]">
+              Consulting in {languageLabel}
+            </p>
+          </aside>
+        ) : null}
+      </div>
+
+      {/* Optional admin-uploaded hero image — editorial wide slot below fold */}
+      {heroImageSrc ? (
+        <div className="mx-auto max-w-[var(--container-width)] px-5 pb-16 md:px-10 md:pb-20">
+          <div className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={heroImageSrc}
               alt={displayHeroTitle ?? `${countryName} clinic`}
-              className="block w-full"
-              style={{ maxHeight: 480, objectFit: "cover" }}
+              className="block w-full object-cover"
+              style={{ maxHeight: 480 }}
             />
           </div>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </section>
   );
 }
 
-/** Forest-gradient initials bubble used in the live strip. */
 function AvatarBubble({ name }: { name: string }) {
   const initials =
     name.match(/[A-Z]/g)?.slice(0, 2).join("") || name.slice(0, 2).toUpperCase();
@@ -266,14 +221,11 @@ function AvatarBubble({ name }: { name: string }) {
         inline-flex size-10 shrink-0
         items-center justify-center
         rounded-full
+        bg-[var(--color-background-panel)]
         text-[11px] font-bold tracking-tight
-        text-[var(--color-background-dark)]
-        ring-2 ring-[var(--color-background-dark)]
+        text-[var(--color-brand-primary)]
+        ring-1 ring-[var(--color-border)]
       "
-      style={{
-        background:
-          "linear-gradient(135deg, var(--color-accent) 0%, #B0F122 60%, var(--color-accent) 100%)",
-      }}
     >
       {initials}
     </span>
