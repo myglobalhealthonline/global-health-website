@@ -74,17 +74,28 @@ export default async function BlogPostPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: post.body }}
       />
 
-      <div className="mt-12 rounded-xl border border-emerald-100 bg-emerald-50 p-6">
-        <p className="text-sm font-semibold text-emerald-900">
+      <div
+        className="
+          mt-12 p-6
+          rounded-[var(--radius-card)]
+          border border-[var(--color-border)]
+          bg-[var(--color-background-soft)]
+        "
+      >
+        <p className="text-sm font-semibold text-[var(--color-text-primary)]">
           Ready to speak with a doctor?
         </p>
-        <p className="mt-1 text-sm text-emerald-700">
+        <p className="mt-1 text-sm text-[var(--color-text-muted)]">
           Book an online consultation with a locally-registered doctor in your
           country — same day appointments available.
         </p>
+        {/* Blog articles live outside the [country]/[lang] segment, so we
+          * route through the root country gate (CountryEntryGate at /)
+          * which negotiates the right country + locale for the reader.
+          * Previously linked to /book-online which is a 404 at root. */}
         <Link
-          href="/book-online"
-          className="mt-4 inline-block rounded-lg bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-800"
+          href="/"
+          className="gh-btn gh-btn-primary mt-4"
         >
           Book consultation
         </Link>

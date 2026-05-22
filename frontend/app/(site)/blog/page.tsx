@@ -10,26 +10,48 @@ export const metadata: Metadata = {
 };
 
 export default function BlogIndexPage() {
+  // Sort newest-first by publishedAt, then promote the freshest post
+  // into the 2x2 featured slot of .gh-card-grid--featured. Falls back
+  // to a flat grid when there aren't enough posts to justify a hero
+  // (4 minimum — the featured tile spans two rows so we need at
+  // least three flat cards beneath it to avoid an empty grid row).
+  const ordered = [...blogPosts].sort((a, b) =>
+    a.publishedAt < b.publishedAt ? 1 : -1,
+  );
+  const useFeatured = ordered.length >= 4;
+
   return (
-    <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+    <main className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 gh-section-tight">
       <div className="mb-10">
-        <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+        <p className="gh-eyebrow text-[var(--color-brand-primary)]">
+          Global Health · Blog
+        </p>
+        <h1 className="mt-3 text-3xl font-bold text-[var(--color-text-primary)] sm:text-4xl">
           Health guides &amp; articles
         </h1>
-        <p className="mt-3 max-w-2xl text-base text-slate-500">
+        <p className="mt-3 max-w-[65ch] text-base text-[var(--color-text-muted)]">
           Evidence-based health guides written and reviewed by our medical team.
           No ads, no fluff — just clear information to help you make informed
           decisions about your care.
         </p>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {blogPosts.map((post) => (
+      <div
+        className={
+          useFeatured
+            ? "gh-card-grid gh-card-grid--featured"
+            : "gh-card-grid"
+        }
+      >
+        {ordered.map((post, i) => (
           <BlogCard
             key={post.slug}
             title={post.title}
             excerpt={post.excerpt}
             href={`/blog/${post.slug}`}
+            category={post.category}
+            publishedAt={post.publishedAt}
+            featured={useFeatured && i === 0}
           />
         ))}
       </div>
