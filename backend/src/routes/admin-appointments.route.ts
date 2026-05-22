@@ -80,10 +80,11 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
     }
 
     // Determine the admin actor id. Session cookie → User.id; token
-    // fallback has no user row, so we leave actorUserId as a synthetic
-    // marker ("admin_token_fallback") for audit purposes.
+    // fallback has no User row, so we pass null and rely on the audit
+    // metadata + actorRole + IP address for traceability. (AuditLog
+    // FK rejects synthetic strings.)
     const actor = await resolveOptionalAuthUser(request);
-    const adminUserId = actor?.role === "ADMIN" ? actor.id : "admin_token_fallback";
+    const adminUserId: string | null = actor?.role === "ADMIN" ? actor.id : null;
 
     try {
       const result = await createManualBooking({

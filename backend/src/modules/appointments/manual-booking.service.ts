@@ -61,8 +61,11 @@ export class DoctorNotFoundError extends Error {
 }
 
 export type CreateManualBookingInput = {
-  /** Admin user id — recorded in audit metadata + as the row author. */
-  adminUserId: string;
+  /** Admin user id — recorded in audit metadata + as the row author.
+   *  Null when the caller authenticated via ADMIN_API_TOKEN (no User
+   *  row to attribute the action to); audit row still records the
+   *  IP + role for traceability. */
+  adminUserId: string | null;
   patient: {
     email: string;
     fullName: string;
@@ -402,13 +405,17 @@ export async function createManualBooking(
 
   // 7) Audit.
   recordAudit({
-    actorUserId: input.adminUserId,
+    actorUserId: input.adminUserId ?? null,
     actorRole: "ADMIN",
     action: "APPOINTMENT_CREATED",
     entityType: "Appointment",
     entityId: appointmentId,
     metadata: {
       source: "admin_manual",
+      // Surface whether this was a session-cookie admin or a
+      // token-fallback admin so audit readers can tell them apart
+      // even when actorUserId is null.
+      adminAuth: input.adminUserId ? "session" : "token",
       newPatientUserId: userId,
       serviceId: service.id,
       doctorId: input.doctorId ?? null,
