@@ -110,7 +110,7 @@ export function DoctorProfileTemplate({
                   font-semibold tracking-[-0.03em] leading-[0.98]
                   text-[clamp(2.75rem,5.5vw+0.5rem,5.5rem)]
                 "
-                style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", fontWeight: 500 }}
+                style={{ fontWeight: 800 }}
               >
                 {profile.name}
               </h1>
@@ -200,7 +200,7 @@ export function DoctorProfileTemplate({
             <span className="gh-heading-eyebrow">Profile</span>
             <h2
               className="gh-display mt-5 text-[clamp(1.85rem,3.5vw,2.75rem)]"
-              style={{ fontFamily: "var(--font-cormorant)" }}
+              style={{ fontWeight: 700 }}
             >
               About {profile.name.split(" ").slice(0, 2).join(" ")}
             </h2>
@@ -242,7 +242,7 @@ export function DoctorProfileTemplate({
               </span>
               <h3
                 className="gh-display mt-5 text-[1.85rem] text-white"
-                style={{ fontFamily: "var(--font-cormorant)" }}
+                style={{ fontWeight: 700 }}
               >
                 Same-day video slots, typically.
               </h3>
@@ -270,7 +270,7 @@ export function DoctorProfileTemplate({
               <span className="gh-heading-eyebrow">Next step</span>
               <h2
                 className="gh-display mt-5 text-[clamp(1.85rem,4vw,3rem)]"
-                style={{ fontFamily: "var(--font-cormorant)" }}
+                style={{ fontWeight: 700 }}
               >
                 {bottomCta.title}
               </h2>

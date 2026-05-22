@@ -119,10 +119,7 @@ export function DoctorWall({
               "
             >
               Doctors who actually{" "}
-              <span
-                className="italic font-normal text-[var(--color-accent)]"
-                style={{ fontFamily: "var(--font-cormorant)" }}
-              >
+              <span className="font-extrabold text-[var(--color-brand-accent)]">
                 pick up
               </span>
               .

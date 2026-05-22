@@ -117,14 +117,7 @@ export function HomeHero({
             <>
               See a doctor
               <br />
-              <span
-                className="
-                  italic font-normal
-                  tracking-[-0.01em]
-                  text-[var(--color-accent)]
-                "
-                style={{ fontFamily: "var(--font-cormorant)" }}
-              >
+              <span className="font-extrabold text-[var(--color-brand-accent)]">
                 from anywhere
               </span>{" "}
               <span className="text-white/95">on your terms.</span>

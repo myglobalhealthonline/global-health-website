@@ -33,10 +33,7 @@ export function StatsBand({ items }: { items: StatBandItem[] }) {
           "
         >
           Built for people who shouldn't have to{" "}
-          <span
-            className="italic font-normal text-[var(--color-brand-primary)]"
-            style={{ fontFamily: "var(--font-cormorant)" }}
-          >
+          <span className="font-extrabold text-[var(--color-brand-primary)]">
             wait
           </span>
           .
@@ -52,10 +49,11 @@ export function StatsBand({ items }: { items: StatBandItem[] }) {
             <div key={`${it.label}-${it.value}`} className="flex flex-col gap-2">
               <dt
                 className="
-                  italic font-normal text-base text-[var(--color-text-muted)]
+                  text-[length:var(--text-eyebrow)] font-semibold uppercase
+                  tracking-[0.08em]
+                  text-[var(--color-text-muted)]
                   border-b border-[var(--color-border)] pb-3
                 "
-                style={{ fontFamily: "var(--font-cormorant)" }}
               >
                 {it.label}
               </dt>

@@ -109,10 +109,7 @@ export function PageHero({
               "
             >
               {titleLead}{" "}
-              <span
-                className="italic font-normal text-[var(--color-accent)] tracking-[-0.01em]"
-                style={{ fontFamily: "var(--font-cormorant)" }}
-              >
+              <span className="font-extrabold text-[var(--color-brand-accent)]">
                 {titleAccent}
               </span>
               {titleTrail ? <span className="text-white/95">{` ${titleTrail}`}</span> : null}

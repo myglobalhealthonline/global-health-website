@@ -70,7 +70,7 @@ export function DoctorTeamTemplate({
             <div className="mx-auto max-w-[480px] text-center">
               <h2
                 className="gh-display text-[2rem]"
-                style={{ fontFamily: "var(--font-cormorant)" }}
+                style={{ fontWeight: 800 }}
               >
                 Onboarding clinicians.
               </h2>
@@ -154,7 +154,7 @@ export function DoctorTeamTemplate({
             <div className="grid items-end gap-10 lg:grid-cols-[1.6fr_1fr]">
               <h2
                 className="gh-display text-[clamp(2rem,4.5vw,4rem)]"
-                style={{ fontFamily: "var(--font-cormorant)" }}
+                style={{ fontWeight: 800 }}
               >
                 Pick a clinician. Book{" "}
                 <span className="gh-display-em">the same day.</span>

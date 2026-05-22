@@ -47,10 +47,7 @@ export default function AboutPage() {
             "
           >
             Healthcare should feel less like{" "}
-            <span
-              className="italic font-normal text-[var(--color-brand-primary)]"
-              style={{ fontFamily: "var(--font-cormorant)" }}
-            >
+            <span className="font-extrabold text-[var(--color-brand-primary)]">
               admin
             </span>
             .
@@ -95,10 +92,7 @@ export default function AboutPage() {
                 "
               >
                 The pieces that make it{" "}
-                <span
-                  className="italic font-normal"
-                  style={{ fontFamily: "var(--font-cormorant)" }}
-                >
+                <span className="font-extrabold text-[var(--color-brand-primary)]">
                   work
                 </span>
                 .

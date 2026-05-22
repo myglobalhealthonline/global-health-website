@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Geist_Mono, Manrope } from "next/font/google";
 import { SITE_NAME } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { CookieBanner } from "@/components/compliance/CookieBanner";
@@ -8,8 +8,16 @@ import { CookieBanner } from "@/components/compliance/CookieBanner";
 import "flag-icons/css/flag-icons.min.css";
 import "./globals.css";
 
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta",
+/**
+ * Brand spec (Manual da Marca) names Gilroy Regular + Gilroy Black as
+ * the typefaces. Gilroy is paid; Manrope is the standard free
+ * substitute — same geometric humanist character, same x-height, same
+ * open apertures. Two CSS variables wired so legacy refs to
+ * --font-plus-jakarta still resolve (alias for one release; can be
+ * removed once nothing references it).
+ */
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
@@ -17,13 +25,6 @@ const plusJakarta = Plus_Jakarta_Sans({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
-
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -52,7 +53,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakarta.variable} ${cormorant.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${manrope.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {children}

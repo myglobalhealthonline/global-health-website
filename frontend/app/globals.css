@@ -27,33 +27,46 @@
 }
 
 :root {
-  /* ── Brand (exact values from Manual da Marca) ───────────── */
-  --color-brand-primary:       #1B4D3E;   /* forest deep */
-  --color-brand-primary-hover: #143B30;   /* forest darker */
+  /* ── Brand (EXACT values from Manual da Marca) ────────────
+   * Source: Global Health Manual da Marca PDF page 1. The previous
+   * tokens drifted off-spec (forest at #1B4D3E vs brand #1D4B36, no
+   * mid-mint #8FB021 in the system). All five brand swatches are
+   * now declared verbatim with no rounding. */
+  --color-brand-primary:       #1D4B36;   /* Forest deep — primary */
+  --color-brand-primary-hover: #163826;   /* Darker forest — hover */
   --color-brand-secondary:     #FFFFFF;
-  /* UI-safe mint (icon tiles, on-dark CTAs) */
+  /* Mid-mint — the missing brand swatch. Used for icon tiles, on-dark
+   * CTAs, secondary accents that need more saturation than the
+   * pastel mint but less punch than the lime. */
+  --color-brand-mint:           #8FB021;
+  --color-brand-mint-soft:      rgba(143, 176, 33, 0.18);
+  --color-brand-mint-dim:       rgba(143, 176, 33, 0.10);
+  /* Pastel mint (kept under the legacy --color-accent name so
+   * existing call sites don't break). Tints UI tiles, soft chips. */
   --color-accent:              #C8E6A0;
   --color-accent-soft:         rgba(200, 230, 160, 0.30);
   --color-accent-dim:          rgba(200, 230, 160, 0.16);
-  /* Marketing-only lime (notification dots, hero highlights) */
+  /* Bright lime — the loud brand accent. Notification dots, hero
+   * highlights, "available now" indicators. Brand spec value. */
   --color-brand-accent:        #B0F122;
   --color-brand-accent-soft:   #D6F87A;
 
   /* Backgrounds */
   --color-background-page:  #FFFFFF;
-  --color-background-soft:  #F4F8F4;   /* mint-cream surface */
-  --color-background-panel: #EDF2ED;   /* panel surface */
+  --color-background-soft:  #F6F8F1;   /* warm off-white */
+  --color-background-panel: #EDF2E2;   /* mint-tinted panel */
   --color-background-dark:  #0F2E25;   /* forest night — sidebar */
 
-  /* Text */
+  /* Text — brand spec uses #6D6D6D as mid grey. Carry it through as
+   * the muted tier; primary + body remain forest-toned. */
   --color-text-primary:     #0F2E25;
   --color-text-body:        #2D3B36;
-  --color-text-muted:       #5A6B64;
-  --color-text-placeholder: #8A9A92;
+  --color-text-muted:       #6D6D6D;
+  --color-text-placeholder: #9A9A9A;
 
   /* Borders */
-  --color-border:        #D8E0D8;
-  --color-border-strong: #B8C8B8;
+  --color-border:        #E4E7DD;
+  --color-border-strong: #C3CCB5;
 
   --color-hero-overlay: rgba(15, 46, 37, 0.72);
 
@@ -145,7 +158,12 @@ html {
 
 body {
   margin: 0;
-  font-family: var(--font-plus-jakarta), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Brand spec (Manual da Marca): Gilroy Regular for body, Gilroy
+   * Black for display + emphasis. Gilroy is paid; Manrope is the
+   * standard free substitute — same geometric humanist DNA, same
+   * x-height, same open apertures. The --font-plus-jakarta variable
+   * is aliased to Manrope below so legacy references keep resolving. */
+  font-family: var(--font-manrope), var(--font-plus-jakarta), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: var(--text-body);
   line-height: 1.6;
   color: var(--color-text-body);
@@ -200,12 +218,14 @@ img {
   color: var(--color-accent);
 }
 
-/* Editorial display — paired with Cormorant via inline style. */
+/* Editorial display — Manrope at extrabold for the brand's "Gilroy
+ * Black" moment. Negative tracking on display sizes mirrors the
+ * brand-book treatment. */
 .gh-display {
-  font-family: var(--font-cormorant), Georgia, "Times New Roman", serif;
-  font-weight: 500;
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
   line-height: 0.98;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
   color: var(--color-text-primary);
 }
 
@@ -965,20 +985,29 @@ img {
   background: var(--color-border);
 }
 
-/* Cards */
+/* Cards — flatter, sharper, brand-aligned. Default card sits on a
+ * 1px hairline border with NO resting shadow (shadows on every card
+ * read as a 2010 SaaS template). Shadow appears only on hover, and
+ * even then it's a forest-tinted lift, never neutral black.
+ * Hover state also deepens the border to brand-mint (#8FB021 at low
+ * opacity) so the card has a brand-recognition moment when touched. */
 .gh-card {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   background: var(--color-brand-secondary);
-  box-shadow: var(--shadow-card);
-  transition: box-shadow 180ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 180ms cubic-bezier(0.23, 1, 0.32, 1),
+  transition:
+    box-shadow 220ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 220ms cubic-bezier(0.23, 1, 0.32, 1),
     border-color 180ms ease-out;
 }
 
 .gh-card-hover:hover {
+  border-color: var(--color-brand-mint);
   box-shadow: var(--shadow-card-hover);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh-card-hover:hover { transform: none; }
 }
 
 .gh-card-interactive {
