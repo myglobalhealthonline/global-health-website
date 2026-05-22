@@ -1,10 +1,8 @@
 "use client";
 
 /**
- * Filterable service catalogue. Bento layout: first card in a non-
- * filtered view spans 2x at lg+ so the page has a clear focal point
- * instead of N identical tiles. Per-type gradient stripes carry
- * visual identity without resorting to colour theme switches.
+ * Filterable service catalogue — dark luxury version.
+ * Forest night bg, glass cards, lime hover CTA, active filter = lime pill.
  */
 
 import { useState, type ReactNode } from "react";
@@ -25,13 +23,10 @@ export type ServiceCatalogItem = {
   type: ServiceTileType;
   title: string;
   tag: string;
-  /** Price in major-currency units (e.g. 50 for €50). Pass null if unknown. */
   price: number | null;
   currency?: string;
-  /** Free-text duration (e.g. "30 min", "Sent home"). */
   dur: string;
   href: string;
-  /** Optional uploaded hero image. */
   imageSrc?: string | null;
 };
 
@@ -63,46 +58,45 @@ export function ServiceCatalog({
   const shown =
     filter === "all" ? services : services.filter((s) => s.type === filter);
 
-  // Only show filter pills for service types that actually exist in the data,
-  // plus the "all" pill. Avoids dead "Home tests (0)" chips in countries
-  // without those services.
   const availableTypes = new Set(services.map((s) => s.type));
   const visibleFilters = FILTERS.filter(
     (f) => f.id === "all" || availableTypes.has(f.id as ServiceTileType),
   );
 
-  if (services.length === 0) {
-    return null;
-  }
+  if (services.length === 0) return null;
 
-  // Featured layout: first card spans 2x at lg+ when we're showing
-  // 4+ services with no filter applied. Filtered views go flat so a
-  // single "Specialist" filter doesn't leave a 2x card hanging alone.
   const useFeaturedFirst = filter === "all" && shown.length >= 4;
 
   return (
-    <section id="services" className="gh-section scroll-mt-24">
+    <section
+      id="services"
+      className="scroll-mt-24"
+      style={{
+        background: "var(--color-background-dark)",
+        padding: "clamp(64px,8vw,120px) 0",
+      }}
+    >
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-        {/* Header — eyebrow + heading + lede in one editorial block.
-          * Three columns at lg so the head, sub-head and filter row
-          * sit on one baseline; stacks at md. */}
-        <header className="grid items-end gap-8 lg:grid-cols-[1fr_auto] mb-10 md:mb-14">
+        {/* Header */}
+        <header className="grid items-end gap-8 lg:grid-cols-[1fr_auto] mb-12 md:mb-16">
           <div>
-            <p className="gh-eyebrow text-[var(--color-brand-primary)]">
+            <p
+              className="text-[11px] font-bold tracking-[0.2em] uppercase"
+              style={{ color: "var(--color-brand-accent)" }}
+            >
               What we treat
             </p>
             <h2
-              className="
-                mt-3 max-w-[18ch]
-                font-extrabold tracking-[-0.03em] leading-[1.02]
-                text-[var(--color-text-primary)]
-                text-[clamp(2rem,4vw+0.5rem,3.5rem)]
-              "
+              className="mt-4 max-w-[18ch] font-extrabold tracking-[-0.03em] leading-[1.02] text-white"
+              style={{ fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)" }}
             >
-              Care for what's actually going on.
+              Care for what&apos;s actually going on.
             </h2>
             {intro ? (
-              <p className="mt-5 max-w-[58ch] text-[length:var(--text-body-lg)] text-[var(--color-text-muted)]">
+              <p
+                className="mt-5 max-w-[58ch] text-[length:var(--text-body-lg)] leading-relaxed"
+                style={{ color: "rgba(255,255,255,0.45)" }}
+              >
                 {intro}
               </p>
             ) : null}
@@ -122,24 +116,29 @@ export function ServiceCatalog({
                     type="button"
                     onClick={() => setFilter(f.id)}
                     aria-pressed={isActive}
-                    className={cn(
-                      "inline-flex items-center gap-2 rounded-full px-4 py-2",
-                      "text-[length:var(--text-meta)] font-semibold",
-                      "transition-[background-color,border-color,color] duration-200",
-                      "motion-reduce:transition-none",
+                    className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[length:var(--text-meta)] font-semibold transition-all duration-200 motion-reduce:transition-none"
+                    style={
                       isActive
-                        ? "bg-[var(--color-brand-primary)] text-white border border-[var(--color-brand-primary)]"
-                        : "bg-transparent text-[var(--color-text-body)] border border-[var(--color-border)] hover:border-[var(--color-border-strong)] hover:bg-[var(--color-background-soft)]",
-                    )}
+                        ? {
+                            background: "var(--color-brand-accent)",
+                            color: "#0a1f14",
+                            border: "1px solid var(--color-brand-accent)",
+                          }
+                        : {
+                            background: "rgba(255,255,255,0.06)",
+                            color: "rgba(255,255,255,0.60)",
+                            border: "1px solid rgba(255,255,255,0.12)",
+                          }
+                    }
                   >
                     {f.label}
                     <span
-                      className={cn(
-                        "inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold",
+                      className="inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold"
+                      style={
                         isActive
-                          ? "bg-white/20 text-white"
-                          : "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]",
-                      )}
+                          ? { background: "rgba(0,0,0,0.18)", color: "#0a1f14" }
+                          : { background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.45)" }
+                      }
                     >
                       {count}
                     </span>
@@ -185,21 +184,18 @@ function ServiceTile({
       className={cn(
         "group relative flex h-full flex-col overflow-hidden text-left",
         "rounded-[var(--radius-card)]",
-        "border border-[var(--color-border)]",
-        "bg-[var(--color-background-page)]",
-        "shadow-[var(--shadow-soft)]",
         "transition-[transform,box-shadow,border-color] duration-300",
         "ease-[cubic-bezier(0.16,1,0.3,1)]",
         "hover:-translate-y-0.5",
-        "hover:border-[var(--color-border-strong)]",
-        "hover:shadow-[var(--shadow-card-hover)]",
-        "focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]",
+        "focus-visible:outline-none",
         "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
       )}
+      style={{
+        background: "rgba(255,255,255,0.04)",
+        border: "1px solid rgba(255,255,255,0.09)",
+      }}
     >
-      {/* Top section — image when uploaded, otherwise a clean icon tile
-        * on soft background. No gradients; type identity comes from the
-        * icon, not the colour. */}
+      {/* Top: image or icon tile */}
       {s.imageSrc ? (
         <div
           className="relative overflow-hidden"
@@ -212,12 +208,8 @@ function ServiceTile({
             className="block h-full w-full object-cover"
           />
           <span
-            className="
-              absolute right-3 top-3 uppercase
-              rounded-full px-2.5 py-1
-              text-[10px] font-bold tracking-[0.08em]
-              bg-black/50 text-white
-            "
+            className="absolute right-3 top-3 uppercase rounded-full px-2.5 py-1 text-[10px] font-bold tracking-[0.08em]"
+            style={{ background: "rgba(0,0,0,0.55)", color: "rgba(255,255,255,0.80)" }}
           >
             {s.tag}
           </span>
@@ -226,29 +218,33 @@ function ServiceTile({
         <div
           className={cn(
             "flex items-start justify-between p-5",
-            "bg-[var(--color-background-soft)]",
-            "border-b border-[var(--color-border)]",
             isFeatured ? "min-h-[120px]" : "min-h-[88px]",
           )}
+          style={{
+            background: "rgba(255,255,255,0.04)",
+            borderBottom: "1px solid rgba(255,255,255,0.07)",
+          }}
         >
           <span
             className={cn(
               "inline-flex items-center justify-center rounded-[var(--radius-tile)]",
-              "bg-[var(--color-background-page)]",
-              "border border-[var(--color-border)]",
-              "text-[var(--color-brand-primary)]",
               isFeatured ? "size-14" : "size-11",
             )}
+            style={{
+              background: "rgba(255,255,255,0.07)",
+              border: "1px solid rgba(255,255,255,0.10)",
+              color: "var(--color-brand-accent)",
+            }}
           >
             {DEFAULT_ICONS[s.type]}
           </span>
           <span
-            className="
-              uppercase rounded-full px-2.5 py-1
-              text-[10px] font-bold tracking-[0.08em]
-              bg-[var(--color-background-page)] border border-[var(--color-border)]
-              text-[var(--color-text-muted)]
-            "
+            className="uppercase rounded-full px-2.5 py-1 text-[10px] font-bold tracking-[0.08em]"
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.10)",
+              color: "rgba(255,255,255,0.40)",
+            }}
           >
             {s.tag}
           </span>
@@ -259,43 +255,58 @@ function ServiceTile({
         <h3
           className={cn(
             "font-semibold tracking-[-0.015em]",
-            "text-[var(--color-text-primary)]",
             isFeatured
               ? "text-[length:var(--text-h2)] leading-tight max-w-[14ch]"
               : "text-[length:var(--text-h3)] leading-snug",
           )}
+          style={{ color: "rgba(255,255,255,0.88)" }}
         >
           {s.title}
         </h3>
 
         {isFeatured ? (
-          <p className="mt-3 text-[length:var(--text-body)] text-[var(--color-text-muted)] max-w-[40ch]">
+          <p
+            className="mt-3 text-[length:var(--text-body)] leading-relaxed max-w-[40ch]"
+            style={{ color: "rgba(255,255,255,0.42)" }}
+          >
             Most patients start here. Same-day consultations with a doctor
             registered in your country, follow-up notes included.
           </p>
         ) : null}
 
-        {/* Footer — price / time on one row, then a forest pill that
-          * spans full width acts as the primary action plane. */}
         <div className="mt-auto pt-6">
-          <div className="flex items-baseline justify-between gap-4 pb-4 border-b border-[var(--color-border)]">
+          <div
+            className="flex items-baseline justify-between gap-4 pb-4"
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
+          >
             <div>
-              <p className="gh-eyebrow text-[var(--color-text-muted)]">From</p>
+              <p
+                className="text-[10px] font-bold uppercase tracking-[0.14em]"
+                style={{ color: "rgba(255,255,255,0.28)" }}
+              >
+                From
+              </p>
               <p
                 className={cn(
-                  "font-semibold leading-none tracking-[-0.015em]",
-                  "text-[var(--color-text-primary)] [font-variant-numeric:tabular-nums]",
+                  "font-semibold leading-none tracking-[-0.015em] [font-variant-numeric:tabular-nums]",
                   isFeatured ? "mt-2 text-3xl" : "mt-1 text-2xl",
                 )}
+                style={{ color: "rgba(255,255,255,0.88)" }}
               >
                 {s.price == null ? "—" : `${symbol}${s.price}`}
               </p>
             </div>
             <div className="text-right">
-              <p className="gh-eyebrow text-[var(--color-text-muted)]">
+              <p
+                className="text-[10px] font-bold uppercase tracking-[0.14em]"
+                style={{ color: "rgba(255,255,255,0.28)" }}
+              >
                 {s.type === "test" ? "Turnaround" : "Duration"}
               </p>
-              <p className="mt-1 text-sm font-semibold text-[var(--color-text-body)]">
+              <p
+                className="mt-1 text-sm font-semibold"
+                style={{ color: "rgba(255,255,255,0.55)" }}
+              >
                 {s.dur}
               </p>
             </div>
@@ -304,21 +315,22 @@ function ServiceTile({
           <span
             className="
               mt-4 inline-flex items-center justify-between gap-2
-              w-full rounded-full
-              border border-[var(--color-border-strong)]
-              px-4 py-2.5
+              w-full rounded-full px-4 py-2.5
               text-[length:var(--text-meta)] font-semibold
-              text-[var(--color-brand-primary)]
-              transition-colors duration-200
-              group-hover:bg-[var(--color-brand-primary)]
-              group-hover:text-white
-              group-hover:border-[var(--color-brand-primary)]
+              transition-all duration-200
+              group-hover:bg-[var(--color-brand-accent)]
               motion-reduce:transition-none
             "
+            style={{
+              border: "1px solid rgba(255,255,255,0.18)",
+              color: "rgba(255,255,255,0.70)",
+            }}
           >
-            {s.type === "test" ? "Order kit" : "Book consultation"}
+            <span className="group-hover:text-[#0a1f14] transition-colors duration-200">
+              {s.type === "test" ? "Order kit" : "Book consultation"}
+            </span>
             <ArrowUpRight
-              className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:group-hover:translate-x-0"
+              className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#0a1f14] motion-reduce:group-hover:translate-x-0"
               strokeWidth={1.5}
               aria-hidden
             />

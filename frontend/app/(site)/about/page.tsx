@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <main>
+      {/* DARK — hero */}
       <PageHero
         countryLabel="Global Health · About"
         titleLead="A small team building"
@@ -32,25 +33,18 @@ export default function AboutPage() {
         secondaryHref="/contact"
       />
 
-      {/* What we believe — three pillars */}
+      {/* LIGHT — three pillars */}
       <section className="bg-[var(--color-background-page)]">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section">
           <p className="gh-eyebrow text-[var(--color-brand-primary)]">
             What we believe
           </p>
           <h2
-            className="
-              mt-3 max-w-[20ch]
-              font-semibold tracking-[-0.025em] leading-[1.05]
-              text-[var(--color-text-primary)]
-              text-[clamp(2rem,4vw+0.5rem,3.5rem)]
-            "
+            className="mt-3 max-w-[20ch] font-extrabold tracking-[-0.03em] leading-[1.02] text-[var(--color-text-primary)]"
+            style={{ fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)" }}
           >
             Healthcare should feel less like{" "}
-            <span className="font-extrabold text-[var(--color-brand-primary)]">
-              admin
-            </span>
-            .
+            <span className="text-[var(--color-brand-primary)]">admin</span>.
           </h2>
 
           <div className="mt-14 grid gap-10 lg:grid-cols-3">
@@ -76,45 +70,49 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* How we work */}
-      <section className="bg-[var(--color-background-soft)]">
-        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section">
+      {/* DARK — how we work */}
+      <section
+        className="gh-medical-pattern gh-medical-pattern-dark"
+        style={{
+          background: "var(--color-background-dark)",
+          padding: "clamp(64px,8vw,120px) 0",
+          borderTop: "1px solid rgba(255,255,255,0.07)",
+        }}
+      >
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
             <div>
-              <p className="gh-eyebrow text-[var(--color-brand-primary)]">
+              <p
+                className="text-[11px] font-bold uppercase tracking-[0.2em]"
+                style={{ color: "var(--color-brand-accent)" }}
+              >
                 How we work
               </p>
               <h2
-                className="
-                  mt-3 font-semibold tracking-[-0.025em] leading-[1.05]
-                  text-[var(--color-text-primary)]
-                  text-[clamp(1.75rem,3vw+0.5rem,2.75rem)]
-                "
+                className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02] text-white"
+                style={{ fontSize: "clamp(1.75rem,3vw+0.5rem,2.75rem)" }}
               >
                 The pieces that make it{" "}
-                <span className="font-extrabold text-[var(--color-brand-primary)]">
-                  work
-                </span>
-                .
+                <span style={{ color: "var(--color-brand-accent)" }}>work</span>.
               </h2>
             </div>
             <div className="space-y-8">
-              <Step
+              <DarkStep
                 num="01"
                 title="Pick a country, then a service"
                 body="Click your flag. Browse general consultations, specialist consultations, prescriptions, or home tests. Prices and durations are listed up front."
               />
-              <Step
+              <DarkStep
                 num="02"
                 title="Choose your doctor + slot"
                 body="Every doctor's profile lists qualifications, languages, registration body. Pick a date from the rail, pick a time on that date."
               />
-              <Step
+              <DarkStep
                 num="03"
                 title="Pay only after the call connects"
                 body="Stripe processes the payment the moment the doctor joins the video call. If something goes wrong on our end, you don't pay."
               />
-              <Step
+              <DarkStep
                 num="04"
                 title="Get prescriptions, referrals, or test kits at home"
                 body="Prescriptions land in your patient portal within the hour. Test kits ship to your door. Referrals go straight to the clinic of your choice."
@@ -124,7 +122,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Coverage band */}
+      {/* LIGHT — coverage */}
       <section className="bg-[var(--color-background-page)]">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section-tight">
           <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
@@ -133,20 +131,13 @@ export default function AboutPage() {
                 Where we cover
               </p>
               <h2
-                className="
-                  mt-3 max-w-[16ch]
-                  font-semibold tracking-[-0.025em] leading-[1.05]
-                  text-[var(--color-text-primary)]
-                  text-[clamp(1.75rem,3vw+0.5rem,2.75rem)]
-                "
+                className="mt-3 max-w-[16ch] font-extrabold tracking-[-0.025em] leading-[1.05] text-[var(--color-text-primary)]"
+                style={{ fontSize: "clamp(1.75rem,3vw+0.5rem,2.75rem)" }}
               >
                 Five European markets and counting.
               </h2>
             </div>
-            <Link
-              href="/"
-              className="gh-btn gh-btn-primary"
-            >
+            <Link href="/" className="gh-btn gh-btn-primary">
               Pick your country
               <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
             </Link>
@@ -161,12 +152,7 @@ export default function AboutPage() {
             ].map((c) => (
               <li
                 key={c.code}
-                className="
-                  flex items-center gap-3 rounded-[var(--radius-card-sm)]
-                  border border-[var(--color-border)]
-                  bg-[var(--color-background-page)]
-                  px-4 py-3
-                "
+                className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] px-4 py-3"
               >
                 <span aria-hidden className={`fi fi-${c.code} inline-block text-xl leading-none`} />
                 <span className="font-semibold text-[var(--color-text-primary)]">
@@ -207,7 +193,7 @@ function Pillar({
           {eyebrow}
         </span>
       </div>
-      <h3 className="mt-5 text-xl font-semibold text-[var(--color-text-primary)] tracking-[-0.01em]">
+      <h3 className="mt-5 text-xl font-extrabold tracking-[-0.015em] text-[var(--color-text-primary)]">
         {title}
       </h3>
       <p className="mt-3 max-w-[42ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-text-muted)]">
@@ -217,7 +203,7 @@ function Pillar({
   );
 }
 
-function Step({
+function DarkStep({
   num,
   title,
   body,
@@ -227,15 +213,27 @@ function Step({
   body: string;
 }) {
   return (
-    <article className="grid gap-4 sm:grid-cols-[auto_1fr] sm:gap-6">
-      <span className="text-3xl font-semibold tracking-[-0.03em] text-[var(--color-brand-primary)] [font-variant-numeric:tabular-nums]">
+    <article
+      className="grid gap-5 sm:grid-cols-[auto_1fr] sm:gap-7 pt-8"
+      style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+    >
+      <span
+        className="font-extrabold tracking-[-0.03em] [font-variant-numeric:tabular-nums]"
+        style={{ fontSize: "2rem", color: "var(--color-brand-accent)", lineHeight: 1 }}
+      >
         {num}
       </span>
       <div>
-        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
+        <h3
+          className="text-lg font-extrabold tracking-[-0.01em]"
+          style={{ color: "rgba(255,255,255,0.90)" }}
+        >
           {title}
         </h3>
-        <p className="mt-2 max-w-[56ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-text-body)]">
+        <p
+          className="mt-2 max-w-[56ch] text-[length:var(--text-body)] leading-relaxed"
+          style={{ color: "rgba(255,255,255,0.42)" }}
+        >
           {body}
         </p>
       </div>

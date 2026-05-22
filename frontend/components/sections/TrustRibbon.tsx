@@ -1,12 +1,6 @@
 /**
- * Editorial trust ribbon — four-up proof points on a mint-cream surface
- * with subtle vertical hairlines. Each item carries an icon, a big
- * value, and a one-line caption. Stops being a flat row of stats and
- * starts reading as a credentials line.
- *
- * Data-driven. Caller passes the live counts; an icon mapper picks the
- * right Lucide icon per item type so we don't have to hand-thread a
- * fifth prop everywhere.
+ * Trust ribbon — light luxury version.
+ * White surface, forest icon circles, brand-primary values, muted labels.
  */
 
 import {
@@ -21,7 +15,6 @@ import type { LucideIcon } from "lucide-react";
 export type TrustRibbonItem = {
   v: string;
   l: string;
-  /** Optional icon key. Defaults to a sparkles icon when not set. */
   icon?: "shield" | "doctor" | "globe" | "lock" | "sparkles";
 };
 
@@ -54,41 +47,34 @@ export function TrustRibbon({ items }: { items?: TrustRibbonItem[] }) {
   const list = items && items.length > 0 ? items : FALLBACK_ITEMS;
   return (
     <section
-      className="
-        relative
-        bg-[var(--color-background-soft)]
-        border-y border-[var(--color-border)]
-      "
+      className="relative bg-[var(--color-background-page)]"
+      style={{ borderBottom: "1px solid var(--color-border)" }}
     >
       <div
-        className="
-          mx-auto max-w-[var(--container-width)]
-          px-5 md:px-10
-          py-8 md:py-10
-        "
+        className="mx-auto max-w-[var(--container-width)] px-5 md:px-10"
+        style={{ padding: "clamp(40px,5vw,64px) clamp(20px,4vw,40px)" }}
       >
         <ul
-          className="
-            grid gap-y-8 gap-x-6
-            grid-cols-2
-            md:grid-cols-2
-            lg:grid-cols-4
-            divide-x-0
-            lg:divide-x lg:divide-[var(--color-border)]
-          "
+          className="grid gap-y-10 gap-x-6 grid-cols-2 lg:grid-cols-4"
+          style={{
+            borderTop: "1px solid var(--color-border)",
+            paddingTop: "clamp(40px,5vw,56px)",
+          }}
         >
           {list.map((it, i) => {
             const Icon = ICONS[it.icon ?? inferIcon(it.l)];
             return (
               <li
                 key={`${it.v}-${it.l}`}
-                className={
-                  i > 0
-                    ? "lg:pl-6 flex flex-col gap-2"
-                    : "flex flex-col gap-2"
-                }
+                className={i > 0 ? "lg:pl-6 flex flex-col gap-3" : "flex flex-col gap-3"}
               >
-                <span className="inline-flex size-9 items-center justify-center rounded-full bg-[var(--color-background-page)] border border-[var(--color-border)]">
+                <span
+                  className="inline-flex size-10 items-center justify-center rounded-full"
+                  style={{
+                    background: "var(--color-background-soft)",
+                    border: "1px solid var(--color-border)",
+                  }}
+                >
                   <Icon
                     className="size-4 text-[var(--color-brand-primary)]"
                     strokeWidth={1.5}
@@ -96,15 +82,18 @@ export function TrustRibbon({ items }: { items?: TrustRibbonItem[] }) {
                   />
                 </span>
                 <p
-                  className="
-                    font-semibold tracking-[-0.02em]
-                    text-[2rem] leading-none
-                    text-[var(--color-text-primary)]
-                  "
+                  className="font-extrabold tracking-[-0.03em] leading-none [font-variant-numeric:tabular-nums]"
+                  style={{
+                    fontSize: "clamp(1.75rem,3vw,2.5rem)",
+                    color: "var(--color-text-primary)",
+                  }}
                 >
                   {it.v}
                 </p>
-                <p className="text-[length:var(--text-meta)] text-[var(--color-text-muted)]">
+                <p
+                  className="text-[11px] font-bold uppercase tracking-[0.12em]"
+                  style={{ color: "var(--color-text-muted)" }}
+                >
                   {it.l}
                 </p>
               </li>

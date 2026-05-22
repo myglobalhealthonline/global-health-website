@@ -1,9 +1,7 @@
 /**
  * Edge-to-edge marquee — country names + flags + active-doctor counts
- * scroll horizontally on loop. Sits between the hero and the trust
- * ribbon as a thin kinetic divider that visualises the European footprint.
- *
- * Pure CSS animation, `prefers-reduced-motion` guard pauses it.
+ * scroll horizontally on loop. Dark luxury version: forest night surface,
+ * lime doctor counts.
  */
 
 import { Flag } from "@/components/ui/Flag";
@@ -22,27 +20,28 @@ export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
   return (
     <section
       aria-label="Countries we serve"
-      className="
-        relative overflow-hidden
-        border-y border-[var(--color-border)]
-        bg-[var(--color-background-soft)]
-      "
+      className="relative overflow-hidden"
+      style={{
+        background: "var(--color-background-dark)",
+        borderTop: "1px solid rgba(255,255,255,0.07)",
+        borderBottom: "1px solid rgba(255,255,255,0.07)",
+      }}
     >
       {/* Edge fade masks */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20"
+        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24"
         style={{
           background:
-            "linear-gradient(90deg, var(--color-background-soft) 0%, transparent 100%)",
+            "linear-gradient(90deg, var(--color-background-dark) 0%, transparent 100%)",
         }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20"
+        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24"
         style={{
           background:
-            "linear-gradient(270deg, var(--color-background-soft) 0%, transparent 100%)",
+            "linear-gradient(270deg, var(--color-background-dark) 0%, transparent 100%)",
         }}
       />
 
@@ -55,28 +54,36 @@ export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
             >
               <Flag code={c.code as string} size="md" />
               <span
-                className="
-                  font-semibold tracking-[-0.015em]
-                  text-[clamp(0.95rem,1.5vw+0.4rem,1.25rem)]
-                  text-[var(--color-text-primary)]
-                "
+                className="font-semibold tracking-[-0.015em]"
+                style={{
+                  fontSize: "clamp(0.95rem,1.5vw+0.4rem,1.25rem)",
+                  color: "rgba(255,255,255,0.60)",
+                }}
               >
                 {c.name}
               </span>
               <span
-                className="
-                  text-[length:var(--text-meta)] font-semibold
-                  text-[var(--color-brand-primary)] [font-variant-numeric:tabular-nums]
-                "
+                className="font-bold [font-variant-numeric:tabular-nums]"
+                style={{
+                  fontSize: "var(--text-meta)",
+                  color: "var(--color-brand-accent)",
+                }}
               >
                 {c.doctorCount}
-                <span className="ml-1 text-[length:var(--text-eyebrow)] uppercase tracking-[0.1em] text-[var(--color-text-muted)]">
+                <span
+                  className="ml-1 uppercase tracking-[0.1em]"
+                  style={{
+                    fontSize: "var(--text-eyebrow)",
+                    color: "rgba(255,255,255,0.28)",
+                  }}
+                >
                   {c.doctorCount === 1 ? "doctor" : "doctors"}
                 </span>
               </span>
               <span
                 aria-hidden
-                className="inline-block size-1 rounded-full bg-[var(--color-border-strong)]"
+                className="inline-block size-1 rounded-full"
+                style={{ background: "rgba(255,255,255,0.12)" }}
               />
             </li>
           ))}

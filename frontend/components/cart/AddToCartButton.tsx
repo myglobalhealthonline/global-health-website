@@ -58,7 +58,7 @@ export function AddToCartButton({
         disabled={pending}
         className={
           className ??
-          "inline-flex items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:opacity-60"
+          "gh-btn gh-btn-accent w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
         }
       >
         {pending ? (

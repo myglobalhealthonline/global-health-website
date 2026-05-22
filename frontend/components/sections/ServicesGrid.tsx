@@ -1,6 +1,5 @@
 import { ServiceCard } from "@/components/cards/ServiceCard";
 import { Container } from "@/components/layout/Container";
-import { Section } from "@/components/layout/Section";
 
 type Item = {
   title: string;
@@ -18,11 +17,9 @@ type ServicesGridProps = {
   intro?: string;
   eyebrow?: string;
   items: Item[];
-  /** When true, the first card spans 2x2 on lg viewports — breaks the
-   *  3-up-identical-cards pattern when there are 4+ services. Caller
-   *  is responsible for choosing which item to promote (typically the
-   *  most-booked or country-flagship service). Defaults to true. */
   featureFirst?: boolean;
+  /** "dark" renders forest-night glass cards; "light" (default) renders white cards. */
+  variant?: "light" | "dark";
 };
 
 export function ServicesGrid({
@@ -31,37 +28,61 @@ export function ServicesGrid({
   eyebrow,
   items,
   featureFirst = true,
+  variant = "light",
 }: ServicesGridProps) {
-  // The promoted-first-card composition only reads as intentional when
-  // there are enough cards to fill the row beneath the featured tile;
-  // below that, fall back to a flat 3-up which reads cleaner.
   const useFeatured = featureFirst && items.length >= 4;
+  const isDark = variant === "dark";
+
   return (
-    <Section variant="white" pattern="soft">
+    <section
+      style={
+        isDark
+          ? {
+              background: "var(--color-background-dark)",
+              padding: "clamp(64px,8vw,120px) 0",
+              borderTop: "1px solid rgba(255,255,255,0.07)",
+            }
+          : { background: "var(--color-background-page)", padding: "clamp(48px,6vw,96px) 0" }
+      }
+    >
       <Container>
         {/* Header */}
         <div className="mb-12 lg:mb-14">
           {eyebrow && (
-            <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
+            <span
+              className="text-[11px] font-bold uppercase tracking-[0.2em]"
+              style={{ color: isDark ? "var(--color-brand-accent)" : "var(--color-brand-primary)" }}
+            >
               {eyebrow}
             </span>
           )}
-          {title && <h2 className="gh-h2 mt-3 text-[var(--color-text-primary)]">{title}</h2>}
-          {intro && <p className="gh-body-lg mt-3 max-w-2xl text-[var(--color-text-muted)]">{intro}</p>}
+          {title && (
+            <h2
+              className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.02]"
+              style={{
+                fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)",
+                color: isDark ? "rgba(255,255,255,0.92)" : "var(--color-text-primary)",
+              }}
+            >
+              {title}
+            </h2>
+          )}
+          {intro && (
+            <p
+              className="mt-3 max-w-2xl text-[length:var(--text-body-lg)] leading-relaxed"
+              style={{ color: isDark ? "rgba(255,255,255,0.42)" : "var(--color-text-muted)" }}
+            >
+              {intro}
+            </p>
+          )}
         </div>
 
-        <div
-          className={
-            useFeatured
-              ? "gh-card-grid gh-card-grid--featured"
-              : "gh-card-grid"
-          }
-        >
+        <div className={useFeatured ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}>
           {items.map((item) => (
-            <ServiceCard key={item.href} {...item} />
+            <ServiceCard key={item.href} {...item} dark={isDark} />
           ))}
         </div>
       </Container>
-    </Section>
+    </section>
   );
 }

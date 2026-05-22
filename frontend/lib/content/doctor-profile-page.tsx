@@ -201,81 +201,151 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
       {hasServices ? (
         <section
           id="services"
-          className="mx-auto max-w-5xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-8"
+          className="scroll-mt-24"
+          style={{
+            background: "var(--color-background-dark)",
+            padding: "clamp(64px,8vw,120px) 0",
+            borderTop: "1px solid rgba(255,255,255,0.07)",
+          }}
         >
-          <div className="mb-6 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-700">
-            <CalendarClock className="size-4" aria-hidden />
-            Book with {data.profile.name}
-          </div>
-          <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-            Services offered
-          </h2>
-          <p className="mt-2 text-sm text-slate-600">
-            Pick a service to see this doctor&apos;s open slots.
-          </p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            {assignedServices.map((service) => {
-              const consultHref = `/${slug}/${lang}/consult/${service.slug}?doctor=${encodeURIComponent(doctorSlug)}#doctor-${encodeURIComponent(doctorSlug)}`;
-              const price = service.basePriceCents != null
-                ? formatPriceRounded(service.basePriceCents, service.currencyCode)
-                : null;
-              return (
-                <Link
-                  key={service.id}
-                  href={consultHref}
-                  className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-emerald-400 hover:shadow-md"
-                >
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">
-                    {service.kind === "SPECIALIST" ? "Specialist" : "General"}
-                  </p>
-                  <h3 className="mt-1 text-lg font-bold text-slate-900">
-                    {service.name}
-                  </h3>
-                  {service.summary ? (
-                    <p className="mt-2 line-clamp-3 text-sm text-slate-600">
-                      {service.summary}
-                    </p>
-                  ) : null}
-                  <div className="mt-4 flex flex-wrap items-center gap-3 text-xs">
-                    {price ? (
-                      <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">
-                        {price}
-                      </span>
-                    ) : null}
-                    {service.durationMinutes != null ? (
-                      <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">
-                        {service.durationMinutes} min
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="mt-auto flex items-center gap-1.5 pt-5 text-sm font-semibold text-emerald-700">
-                    Pick a slot
-                    <ArrowRight className="size-4 transition group-hover:translate-x-0.5" aria-hidden />
-                  </div>
-                </Link>
-              );
-            })}
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <div
+              className="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em]"
+              style={{ color: "var(--color-brand-accent)" }}
+            >
+              <CalendarClock className="size-4" aria-hidden />
+              Book with {data.profile.name}
+            </div>
+            <h2
+              className="font-extrabold tracking-[-0.03em] leading-[1.02]"
+              style={{
+                fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)",
+                color: "rgba(255,255,255,0.92)",
+              }}
+            >
+              Services offered
+            </h2>
+            <p
+              className="mt-3 max-w-xl text-[length:var(--text-body-lg)] leading-relaxed"
+              style={{ color: "rgba(255,255,255,0.42)" }}
+            >
+              Pick a service to see open slots with {firstName ?? data.profile.name}.
+            </p>
+            <div className="mt-10 grid gap-5 sm:grid-cols-2">
+              {assignedServices.map((service) => {
+                const consultHref = `/${slug}/${lang}/consult/${service.slug}?doctor=${encodeURIComponent(doctorSlug)}#doctor-${encodeURIComponent(doctorSlug)}`;
+                const price = service.basePriceCents != null
+                  ? formatPriceRounded(service.basePriceCents, service.currencyCode)
+                  : null;
+                return (
+                  <Link
+                    key={service.id}
+                    href={consultHref}
+                    className="group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] transition-[transform,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.09)",
+                    }}
+                  >
+                    <div className="flex h-full flex-col p-6 sm:p-7">
+                      <p
+                        className="text-[11px] font-bold uppercase tracking-[0.18em]"
+                        style={{ color: "var(--color-brand-accent)" }}
+                      >
+                        {service.kind === "SPECIALIST" ? "Specialist" : "General"}
+                      </p>
+                      <h3
+                        className="mt-1 text-lg font-bold tracking-[-0.01em] transition-colors duration-200 group-hover:text-[var(--color-brand-accent)]"
+                        style={{ color: "rgba(255,255,255,0.88)" }}
+                      >
+                        {service.name}
+                      </h3>
+                      {service.summary ? (
+                        <p
+                          className="mt-2 flex-1 line-clamp-3 text-sm leading-relaxed"
+                          style={{ color: "rgba(255,255,255,0.42)" }}
+                        >
+                          {service.summary}
+                        </p>
+                      ) : null}
+                      <div className="mt-4 flex flex-wrap items-center gap-3">
+                        {price ? (
+                          <span
+                            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                            style={{
+                              background: "rgba(176,241,34,0.12)",
+                              color: "var(--color-brand-accent)",
+                            }}
+                          >
+                            {price}
+                          </span>
+                        ) : null}
+                        {service.durationMinutes != null ? (
+                          <span
+                            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                            style={{
+                              background: "rgba(255,255,255,0.07)",
+                              color: "rgba(255,255,255,0.45)",
+                            }}
+                          >
+                            {service.durationMinutes} min
+                          </span>
+                        ) : null}
+                      </div>
+                      <div
+                        className="mt-5 flex items-center gap-2 text-sm font-semibold transition-colors duration-200 group-hover:text-[var(--color-brand-accent)]"
+                        style={{ color: "rgba(255,255,255,0.55)" }}
+                      >
+                        <span>Pick a slot</span>
+                        <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" aria-hidden />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </section>
       ) : (
         <section
           id="services"
-          className="mx-auto max-w-5xl scroll-mt-24 px-4 py-12 sm:px-6 lg:px-8"
+          className="scroll-mt-24"
+          style={{
+            background: "var(--color-background-dark)",
+            padding: "clamp(48px,6vw,80px) 0",
+            borderTop: "1px solid rgba(255,255,255,0.07)",
+          }}
         >
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center">
-            <p className="text-sm font-semibold text-slate-900">
-              No bookable services assigned yet.
-            </p>
-            <p className="mt-2 text-sm text-slate-600">
-              {data.profile.name} isn&apos;t currently set up for online bookings in {data.profile.country}.
-            </p>
-            <Link
-              href={`/${slug}/${lang}/general-consultation`}
-              className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <div
+              className="mx-auto max-w-lg rounded-[var(--radius-card)] p-8 text-center"
+              style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.09)" }}
             >
-              Browse other clinicians
-              <ArrowRight className="size-4" aria-hidden />
-            </Link>
+              <p
+                className="text-sm font-semibold"
+                style={{ color: "rgba(255,255,255,0.88)" }}
+              >
+                No bookable services assigned yet.
+              </p>
+              <p
+                className="mt-2 text-sm"
+                style={{ color: "rgba(255,255,255,0.42)" }}
+              >
+                {data.profile.name} isn&apos;t currently set up for online bookings in{" "}
+                {data.profile.country}.
+              </p>
+              <Link
+                href={`/${slug}/${lang}/general-consultation`}
+                className="mt-5 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:bg-white"
+                style={{
+                  background: "var(--color-brand-accent)",
+                  color: "#0a1f14",
+                }}
+              >
+                Browse other clinicians
+                <ArrowRight className="size-4" aria-hidden />
+              </Link>
+            </div>
           </div>
         </section>
       )}

@@ -200,7 +200,7 @@ export function DoctorProfileTemplate({
             <span className="gh-heading-eyebrow">Profile</span>
             <h2
               className="gh-display mt-5 text-[clamp(1.85rem,3.5vw,2.75rem)]"
-              style={{ fontWeight: 700 }}
+              style={{ fontWeight: 800 }}
             >
               About {profile.name.split(" ").slice(0, 2).join(" ")}
             </h2>
@@ -242,7 +242,7 @@ export function DoctorProfileTemplate({
               </span>
               <h3
                 className="gh-display mt-5 text-[1.85rem] text-white"
-                style={{ fontWeight: 700 }}
+                style={{ fontWeight: 800 }}
               >
                 Same-day video slots, typically.
               </h3>
@@ -270,7 +270,7 @@ export function DoctorProfileTemplate({
               <span className="gh-heading-eyebrow">Next step</span>
               <h2
                 className="gh-display mt-5 text-[clamp(1.85rem,4vw,3rem)]"
-                style={{ fontWeight: 700 }}
+                style={{ fontWeight: 800 }}
               >
                 {bottomCta.title}
               </h2>

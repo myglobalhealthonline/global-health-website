@@ -126,58 +126,121 @@ export default async function PrescriptionsPage({
       <TrustRibbon />
 
       {items.length > 0 ? (
-        <section id="prescriptions" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-12">
-          <h2 className="text-2xl font-semibold text-slate-900">
-            {items.length} {items.length === 1 ? "prescription service" : "prescription services"} available
-          </h2>
-          <p className="mt-2 text-slate-600">
-            Cards update as the team adds or retires prescription services.
-          </p>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((s) => {
-              const priceLabel = formatPrice(s.basePriceCents, s.currencyCode);
-              return (
-                <article
-                  key={s.id}
-                  className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-                >
-                  <h3 className="text-lg font-bold text-slate-900">{s.name}</h3>
-                  {s.summary ? (
-                    <p className="mt-2 line-clamp-3 text-sm text-slate-600">{s.summary}</p>
-                  ) : null}
-                  <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-slate-500">
-                    {s.durationMinutes != null ? (
-                      <span className="rounded-full bg-slate-100 px-3 py-1">
-                        {s.durationMinutes} min
-                      </span>
-                    ) : null}
-                    {priceLabel ? (
-                      <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">
-                        {priceLabel}
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="mt-auto pt-5">
-                    {s.basePriceCents != null ? (
-                      <AddToCartButton
-                        kind="PRESCRIPTION_SERVICE"
-                        serviceId={s.id}
-                        label={priceLabel ? `Add to cart · ${priceLabel}` : "Add to cart"}
-                      />
-                    ) : null}
-                  </div>
-                </article>
-              );
-            })}
+        <section
+          id="prescriptions"
+          className="scroll-mt-24"
+          style={{
+            background: "var(--color-background-dark)",
+            padding: "clamp(64px,8vw,120px) 0",
+            borderTop: "1px solid rgba(255,255,255,0.07)",
+          }}
+        >
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <p
+              className="text-[11px] font-bold uppercase tracking-[0.2em]"
+              style={{ color: "var(--color-brand-accent)" }}
+            >
+              What you can book
+            </p>
+            <h2
+              className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.02]"
+              style={{
+                fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)",
+                color: "rgba(255,255,255,0.92)",
+              }}
+            >
+              Prescription services available
+            </h2>
+            <p
+              className="mt-3 max-w-2xl text-[length:var(--text-body-lg)] leading-relaxed"
+              style={{ color: "rgba(255,255,255,0.42)" }}
+            >
+              {items.length}{" "}
+              {items.length === 1 ? "prescription service" : "prescription services"} in{" "}
+              {config.name}. Cards update as the team adds or retires services.
+            </p>
+            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((s) => {
+                const priceLabel = formatPrice(s.basePriceCents, s.currencyCode);
+                return (
+                  <article
+                    key={s.id}
+                    className="flex h-full flex-col overflow-hidden rounded-[var(--radius-card)]"
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.09)",
+                    }}
+                  >
+                    <div className="flex h-full flex-col p-6 sm:p-7">
+                      <h3
+                        className="text-lg font-bold tracking-[-0.01em]"
+                        style={{ color: "rgba(255,255,255,0.88)" }}
+                      >
+                        {s.name}
+                      </h3>
+                      {s.summary ? (
+                        <p
+                          className="mt-2 flex-1 line-clamp-3 text-sm leading-relaxed"
+                          style={{ color: "rgba(255,255,255,0.42)" }}
+                        >
+                          {s.summary}
+                        </p>
+                      ) : null}
+                      <div className="mt-4 flex flex-wrap items-center gap-3">
+                        {s.durationMinutes != null ? (
+                          <span
+                            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                            style={{
+                              background: "rgba(255,255,255,0.07)",
+                              color: "rgba(255,255,255,0.45)",
+                            }}
+                          >
+                            {s.durationMinutes} min
+                          </span>
+                        ) : null}
+                        {priceLabel ? (
+                          <span
+                            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                            style={{
+                              background: "rgba(176,241,34,0.12)",
+                              color: "var(--color-brand-accent)",
+                            }}
+                          >
+                            {priceLabel}
+                          </span>
+                        ) : null}
+                      </div>
+                      <div className="mt-auto pt-5">
+                        {s.basePriceCents != null ? (
+                          <AddToCartButton
+                            kind="PRESCRIPTION_SERVICE"
+                            serviceId={s.id}
+                            label={priceLabel ? `Add to cart · ${priceLabel}` : "Add to cart"}
+                          />
+                        ) : null}
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
           </div>
         </section>
       ) : (
-        <section className="mx-auto max-w-3xl px-4 py-16 text-center text-slate-600">
-          <p>
-            Online prescriptions for {config.name} are coming soon. In the meantime,
-            book a general consultation and our doctors will issue a prescription
-            as part of the visit.
-          </p>
+        <section
+          style={{
+            background: "var(--color-background-dark)",
+            padding: "clamp(48px,6vw,80px) 0",
+            borderTop: "1px solid rgba(255,255,255,0.07)",
+          }}
+        >
+          <div className="mx-auto max-w-3xl px-5 md:px-10 text-center">
+            <p style={{ color: "rgba(255,255,255,0.55)" }}>
+              Online prescriptions for {config.name} are coming soon. In the meantime,
+              book a general consultation and our doctors will issue a prescription
+              as part of the visit.
+            </p>
+          </div>
         </section>
       )}
 

@@ -11,8 +11,6 @@ export const metadata: Metadata = {
     "Common questions about booking, prescriptions, lab tests, payments, and privacy on the Global Health telemedicine platform.",
 };
 
-// Source of truth for the FAQ — easier to maintain inline than to wire
-// admin CRUD for a content surface that changes once a quarter.
 const FAQ_GROUPS: Array<{
   eyebrow: string;
   title: string;
@@ -112,6 +110,7 @@ const FAQ_GROUPS: Array<{
 export default function FAQPage() {
   return (
     <main>
+      {/* DARK — hero */}
       <PageHero
         countryLabel="Global Health · FAQ"
         titleLead="Questions, answered"
@@ -130,15 +129,16 @@ export default function FAQPage() {
         secondaryHref="/"
       />
 
-      <div className="bg-[var(--color-background-page)]">
+      {/* LIGHT — FAQ accordion groups, alternating white/soft */}
+      <div>
         {FAQ_GROUPS.map((group, i) => (
           <section
             key={group.title}
-            className={
-              i % 2 === 0
-                ? "bg-[var(--color-background-page)]"
-                : "bg-[var(--color-background-soft)]"
-            }
+            style={{
+              background: i % 2 === 0
+                ? "var(--color-background-page)"
+                : "var(--color-background-soft)",
+            }}
           >
             <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section-tight">
               <div className="mx-auto max-w-3xl">
@@ -146,33 +146,31 @@ export default function FAQPage() {
                   {group.eyebrow}
                 </p>
                 <h2
-                  className="
-                    mt-3 font-semibold tracking-[-0.025em] leading-[1.05]
-                    text-[var(--color-text-primary)]
-                    text-[clamp(1.75rem,3vw+0.5rem,2.5rem)]
-                  "
+                  className="mt-3 font-extrabold tracking-[-0.025em] leading-[1.05] text-[var(--color-text-primary)]"
+                  style={{ fontSize: "clamp(1.75rem,3vw+0.5rem,2.5rem)" }}
                 >
                   {group.title}
                 </h2>
-                <div className="mt-8 divide-y divide-[var(--color-border)]">
+                <div
+                  className="mt-8"
+                  style={{ borderTop: "1px solid var(--color-border)" }}
+                >
                   {group.items.map((item) => (
-                    <details key={item.question} className="group py-5">
-                      <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
+                    <details key={item.question} className="group" style={{ borderBottom: "1px solid var(--color-border)" }}>
+                      <summary className="flex cursor-pointer list-none items-start justify-between gap-4 py-5">
                         <span className="text-base font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-brand-primary)] transition-colors">
                           {item.question}
                         </span>
-                        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-background-page)] border border-[var(--color-border)] text-[var(--color-brand-primary)] transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none">
+                        <span
+                          className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-brand-primary)] transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
+                          style={{ background: "var(--color-background-page)" }}
+                        >
                           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                            <path
-                              d="M7 1V13M1 7H13"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                            />
+                            <path d="M7 1V13M1 7H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                           </svg>
                         </span>
                       </summary>
-                      <p className="mt-3 max-w-[62ch] text-sm leading-relaxed text-[var(--color-text-body)]">
+                      <p className="pb-5 max-w-[62ch] text-sm leading-relaxed text-[var(--color-text-body)]">
                         {item.answer}
                       </p>
                     </details>
@@ -182,35 +180,52 @@ export default function FAQPage() {
             </div>
           </section>
         ))}
-
-        {/* Tail CTA */}
-        <section className="bg-[var(--color-background-page)]">
-          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section">
-            <div className="
-              rounded-[var(--radius-card)]
-              border border-[var(--color-border)]
-              bg-[var(--color-background-soft)]
-              p-8 md:p-12
-              grid gap-6 items-end lg:grid-cols-[1fr_auto]
-            ">
-              <div>
-                <p className="gh-eyebrow text-[var(--color-brand-primary)]">
-                  Still stuck
-                </p>
-                <h2 className="mt-3 max-w-[18ch] font-semibold tracking-[-0.02em] text-[var(--color-text-primary)] text-[clamp(1.5rem,2.5vw+0.5rem,2.25rem)]">
-                  Not the question you came with? Talk to us.
-                </h2>
-              </div>
-              <Link href="/contact" className="gh-btn gh-btn-primary lg:justify-self-end">
-                Contact the team
-                <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
-              </Link>
-            </div>
-          </div>
-        </section>
       </div>
-      {/* FAQSection import kept for backwards-compat consumers; this
-        * page renders its own inline UI for finer grouping control. */}
+
+      {/* DARK — tail CTA */}
+      <section
+        className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
+        style={{
+          background: "var(--color-background-dark)",
+          padding: "clamp(64px,8vw,96px) 0",
+        }}
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background: "radial-gradient(ellipse 700px 400px at 100% -10%, rgba(176,241,34,0.08), transparent 55%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <div className="grid gap-8 items-end lg:grid-cols-[1fr_auto]">
+            <div>
+              <p
+                className="text-[11px] font-bold uppercase tracking-[0.2em]"
+                style={{ color: "var(--color-brand-accent)" }}
+              >
+                Still stuck
+              </p>
+              <h2
+                className="mt-4 max-w-[22ch] font-extrabold tracking-[-0.03em] leading-[1.02] text-white"
+                style={{ fontSize: "clamp(1.75rem,3vw+0.5rem,2.75rem)" }}
+              >
+                Not the question you came with?{" "}
+                <span style={{ color: "var(--color-brand-accent)" }}>Talk to us.</span>
+              </h2>
+            </div>
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-bold text-white transition-colors duration-200 hover:bg-white/10 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 lg:justify-self-end"
+              style={{ border: "1px solid rgba(255,255,255,0.22)" }}
+            >
+              Contact the team
+              <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {false && <FAQSection items={[]} />}
     </main>
   );

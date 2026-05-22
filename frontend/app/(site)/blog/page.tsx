@@ -21,40 +21,76 @@ export default function BlogIndexPage() {
   const useFeatured = ordered.length >= 4;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 gh-section-tight">
-      <div className="mb-10">
-        <p className="gh-eyebrow text-[var(--color-brand-primary)]">
-          Global Health · Blog
-        </p>
-        <h1 className="mt-3 text-3xl font-bold text-[var(--color-text-primary)] sm:text-4xl">
-          Health guides &amp; articles
-        </h1>
-        <p className="mt-3 max-w-[65ch] text-base text-[var(--color-text-muted)]">
-          Evidence-based health guides written and reviewed by our medical team.
-          No ads, no fluff — just clear information to help you make informed
-          decisions about your care.
-        </p>
-      </div>
-
-      <div
-        className={
-          useFeatured
-            ? "gh-card-grid gh-card-grid--featured"
-            : "gh-card-grid"
-        }
+    <>
+      {/* Dark editorial header */}
+      <section
+        className="relative isolate overflow-hidden"
+        style={{
+          background: "var(--color-background-dark)",
+          padding: "clamp(72px,10vw,140px) 0 clamp(56px,7vw,96px)",
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+        }}
       >
-        {ordered.map((post, i) => (
-          <BlogCard
-            key={post.slug}
-            title={post.title}
-            excerpt={post.excerpt}
-            href={`/blog/${post.slug}`}
-            category={post.category}
-            publishedAt={post.publishedAt}
-            featured={useFeatured && i === 0}
-          />
-        ))}
-      </div>
-    </main>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(ellipse 900px 500px at 80% -10%, rgba(176,241,34,0.12), transparent 55%)",
+          }}
+        />
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <p
+            className="text-[11px] font-bold uppercase tracking-[0.2em]"
+            style={{ color: "var(--color-brand-accent)" }}
+          >
+            Global Health · Blog
+          </p>
+          <h1
+            className="mt-5 font-extrabold tracking-[-0.04em] leading-[0.97]"
+            style={{
+              fontSize: "clamp(3rem,7vw+0.5rem,7rem)",
+              color: "rgba(255,255,255,0.95)",
+            }}
+          >
+            Health guides{" "}
+            <em style={{ fontStyle: "italic", color: "var(--color-brand-accent)" }}>
+              &amp; articles.
+            </em>
+          </h1>
+          <p
+            className="mt-7 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed"
+            style={{ color: "rgba(255,255,255,0.50)" }}
+          >
+            Evidence-based guides written and reviewed by our medical team.
+            No ads, no fluff.
+          </p>
+        </div>
+      </section>
+
+      {/* Light card grid */}
+      <section
+        style={{
+          background: "var(--color-background-soft)",
+          padding: "clamp(64px,8vw,120px) 0",
+        }}
+      >
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <div className={useFeatured ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}>
+            {ordered.map((post, i) => (
+              <BlogCard
+                key={post.slug}
+                title={post.title}
+                excerpt={post.excerpt}
+                href={`/blog/${post.slug}`}
+                category={post.category}
+                publishedAt={post.publishedAt}
+                featured={useFeatured && i === 0}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

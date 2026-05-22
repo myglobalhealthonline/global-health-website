@@ -118,102 +118,152 @@ export default async function HealthTestsPage({
       <TrustRibbon />
 
       {items.length > 0 ? (
-        <section id="tests" className="gh-section-tight mx-auto max-w-6xl scroll-mt-24 px-4">
-          <h2 className="text-2xl font-semibold text-[var(--color-text-primary)]">
-            {items.length} {items.length === 1 ? "test" : "tests"} available
-          </h2>
-          <div className="mt-8 gh-card-grid">
-            {items.map((t) => {
-              // Audit fix: collapse the three cascading stock badges into a
-              // single CTA state. "Sold out" → disabled button. "Only N left"
-              // → primary CTA prefixed with the low-stock count. Otherwise
-              // just the standard add-to-cart label. Strips two coloured
-              // chips per card (the rose "Sold out" + amber "Only N left").
-              const soldOut = t.stock !== null && t.stock <= 0;
-              const lowStock = !soldOut && t.stock !== null && t.stock <= 5;
-              const ctaLabel = soldOut
-                ? "Sold out"
-                : lowStock
-                  ? `Add to cart · Only ${t.stock} left`
-                  : `Add to cart · ${formatPrice(t.priceCents, t.currencyCode)}`;
-              return (
-                <article
-                  key={t.id}
-                  className="
-                    flex h-full flex-col overflow-hidden
-                    rounded-[var(--radius-card)]
-                    border border-[var(--color-border)]
-                    bg-[var(--color-background-page)]
-                    shadow-[var(--shadow-soft)]
-                  "
-                >
-                  {t.imageSrc ? (
-                    <div className="aspect-[16/10] w-full overflow-hidden bg-[var(--color-background-soft)]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={t.imageSrc}
-                        alt={t.title}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  ) : null}
-                  <div className="flex h-full flex-col p-6">
-                    <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
-                      {t.title}
-                    </h3>
-                    {t.shortDescription ? (
-                      <p className="mt-2 line-clamp-3 text-sm text-[var(--color-text-muted)]">
-                        {t.shortDescription}
-                      </p>
-                    ) : null}
-                    <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-[var(--color-text-muted)]">
-                      {t.sampleType ? (
-                        <span className="rounded-full bg-[var(--color-background-panel)] px-3 py-1">
-                          Sample: {t.sampleType}
-                        </span>
-                      ) : null}
-                      {t.resultsTimeline ? (
-                        <span className="rounded-full bg-[var(--color-background-panel)] px-3 py-1">
-                          Results: {t.resultsTimeline}
-                        </span>
-                      ) : null}
-                      <span className="rounded-full bg-[var(--color-accent-dim)] px-3 py-1 font-semibold text-[var(--color-brand-primary)]">
-                        {formatPrice(t.priceCents, t.currencyCode)}
-                      </span>
-                    </div>
-                    <div className="mt-auto pt-5">
-                      {soldOut ? (
-                        <button
-                          type="button"
-                          disabled
-                          aria-label={`${t.title} — sold out`}
-                          className="
-                            inline-flex w-full items-center justify-center gap-2
-                            rounded-full px-5 py-2.5 text-sm font-semibold
-                            bg-[var(--color-background-panel)]
-                            text-[var(--color-text-placeholder)]
-                            cursor-not-allowed
-                          "
-                        >
-                          Sold out
-                        </button>
-                      ) : (
-                        <AddToCartButton
-                          kind="HEALTH_TEST"
-                          healthTestId={t.id}
-                          label={ctaLabel}
+        <section
+          id="tests"
+          className="scroll-mt-24"
+          style={{
+            background: "var(--color-background-dark)",
+            padding: "clamp(64px,8vw,120px) 0",
+            borderTop: "1px solid rgba(255,255,255,0.07)",
+          }}
+        >
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <p
+              className="text-[11px] font-bold uppercase tracking-[0.2em]"
+              style={{ color: "var(--color-brand-accent)" }}
+            >
+              What you can order
+            </p>
+            <h2
+              className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.02]"
+              style={{
+                fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)",
+                color: "rgba(255,255,255,0.92)",
+              }}
+            >
+              {items.length} {items.length === 1 ? "test" : "tests"} available
+            </h2>
+            <div className="mt-12 gh-card-grid">
+              {items.map((t) => {
+                const soldOut = t.stock !== null && t.stock <= 0;
+                const lowStock = !soldOut && t.stock !== null && t.stock <= 5;
+                const ctaLabel = soldOut
+                  ? "Sold out"
+                  : lowStock
+                    ? `Add to cart · Only ${t.stock} left`
+                    : `Add to cart · ${formatPrice(t.priceCents, t.currencyCode)}`;
+                return (
+                  <article
+                    key={t.id}
+                    className="flex h-full flex-col overflow-hidden rounded-[var(--radius-card)]"
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.09)",
+                    }}
+                  >
+                    {t.imageSrc ? (
+                      <div
+                        className="aspect-[16/10] w-full overflow-hidden"
+                        style={{ background: "rgba(255,255,255,0.06)" }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={t.imageSrc}
+                          alt={t.title}
+                          className="h-full w-full object-cover"
                         />
-                      )}
+                      </div>
+                    ) : null}
+                    <div className="flex h-full flex-col p-6 sm:p-7">
+                      <h3
+                        className="text-lg font-bold tracking-[-0.01em]"
+                        style={{ color: "rgba(255,255,255,0.88)" }}
+                      >
+                        {t.title}
+                      </h3>
+                      {t.shortDescription ? (
+                        <p
+                          className="mt-2 flex-1 line-clamp-3 text-sm leading-relaxed"
+                          style={{ color: "rgba(255,255,255,0.42)" }}
+                        >
+                          {t.shortDescription}
+                        </p>
+                      ) : null}
+                      <div className="mt-4 flex flex-wrap items-center gap-3">
+                        {t.sampleType ? (
+                          <span
+                            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                            style={{
+                              background: "rgba(255,255,255,0.07)",
+                              color: "rgba(255,255,255,0.45)",
+                            }}
+                          >
+                            Sample: {t.sampleType}
+                          </span>
+                        ) : null}
+                        {t.resultsTimeline ? (
+                          <span
+                            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                            style={{
+                              background: "rgba(255,255,255,0.07)",
+                              color: "rgba(255,255,255,0.45)",
+                            }}
+                          >
+                            Results: {t.resultsTimeline}
+                          </span>
+                        ) : null}
+                        <span
+                          className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                          style={{
+                            background: "rgba(176,241,34,0.12)",
+                            color: "var(--color-brand-accent)",
+                          }}
+                        >
+                          {formatPrice(t.priceCents, t.currencyCode)}
+                        </span>
+                      </div>
+                      <div className="mt-auto pt-5">
+                        {soldOut ? (
+                          <button
+                            type="button"
+                            disabled
+                            aria-label={`${t.title} — sold out`}
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold cursor-not-allowed"
+                            style={{
+                              background: "rgba(255,255,255,0.06)",
+                              color: "rgba(255,255,255,0.25)",
+                            }}
+                          >
+                            Sold out
+                          </button>
+                        ) : (
+                          <AddToCartButton
+                            kind="HEALTH_TEST"
+                            healthTestId={t.id}
+                            label={ctaLabel}
+                          />
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </article>
-              );
-            })}
+                  </article>
+                );
+              })}
+            </div>
           </div>
         </section>
       ) : (
-        <section className="gh-section-tight mx-auto max-w-3xl px-4 text-center text-[var(--color-text-muted)]">
-          <p>Home health tests for {config.name} are coming soon.</p>
+        <section
+          style={{
+            background: "var(--color-background-dark)",
+            padding: "clamp(48px,6vw,80px) 0",
+            borderTop: "1px solid rgba(255,255,255,0.07)",
+          }}
+        >
+          <div className="mx-auto max-w-3xl px-5 md:px-10 text-center">
+            <p style={{ color: "rgba(255,255,255,0.55)" }}>
+              Home health tests for {config.name} are coming soon.
+            </p>
+          </div>
         </section>
       )}
 

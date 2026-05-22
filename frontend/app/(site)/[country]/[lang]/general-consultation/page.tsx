@@ -201,6 +201,7 @@ export default async function CountryLangGeneralConsultationPage({
             title="GP consultations available"
             intro={`${serviceItems.length} ${serviceItems.length === 1 ? "service" : "services"} currently offered in ${config.name}. Cards update as the team adds or retires services.`}
             items={serviceItems}
+            variant="dark"
           />
         </div>
       ) : null}

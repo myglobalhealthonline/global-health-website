@@ -1,6 +1,6 @@
 /**
- * Vertical narrative "How it works" with big serif numbers.
- * Matches `ui_kits/website/Sections.jsx HowItWorks`.
+ * Vertical narrative "How it works" — dark luxury version.
+ * Forest night bg, lime step numbers, white titles, muted lede.
  */
 
 const STEPS = [
@@ -29,8 +29,8 @@ export function HowItWorksNarrative() {
     <section
       style={{
         padding: "120px 0",
-        background: "var(--color-background-soft)",
-        borderTop: "1px solid var(--color-border)",
+        background: "var(--color-background-dark)",
+        borderTop: "1px solid rgba(255,255,255,0.07)",
       }}
     >
       <div
@@ -54,14 +54,13 @@ export function HowItWorksNarrative() {
             style={{
               fontSize: 11,
               fontWeight: 700,
-              letterSpacing: "0.18em",
-              color: "var(--color-brand-primary)",
+              letterSpacing: "0.2em",
+              color: "var(--color-brand-accent)",
             }}
           >
             How it works
           </span>
           <h2
-            className="text-[var(--color-text-primary)]"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: "clamp(40px, 5vw, 64px)",
@@ -69,6 +68,7 @@ export function HowItWorksNarrative() {
               letterSpacing: "-0.025em",
               lineHeight: 1.0,
               margin: "16px 0 24px",
+              color: "rgba(255,255,255,0.92)",
             }}
           >
             Three steps.
@@ -76,11 +76,12 @@ export function HowItWorksNarrative() {
             Roughly two&nbsp;minutes.
           </h2>
           <p
-            className="m-0 text-[var(--color-text-muted)]"
+            className="m-0"
             style={{
               fontSize: 17,
               lineHeight: 1.55,
               maxWidth: "32ch",
+              color: "rgba(255,255,255,0.40)",
             }}
           >
             From landing on the page to a confirmed appointment, we built the
@@ -89,16 +90,15 @@ export function HowItWorksNarrative() {
         </div>
 
         {/* Steps RIGHT */}
-        <ol
-          className="m-0 flex list-none flex-col gap-12 p-0"
-        >
+        <ol className="m-0 flex list-none flex-col gap-12 p-0">
           {STEPS.map((s, i) => (
             <li
               key={s.n}
               className="grid items-start gap-7"
               style={{
                 gridTemplateColumns: "auto 1fr",
-                borderTop: i === 0 ? "none" : "1px solid var(--color-border)",
+                borderTop:
+                  i === 0 ? "none" : "1px solid rgba(255,255,255,0.07)",
                 paddingTop: i === 0 ? 0 : 48,
               }}
             >
@@ -107,17 +107,16 @@ export function HowItWorksNarrative() {
                   fontFamily: "var(--font-display)",
                   fontSize: 64,
                   fontWeight: 800,
-                  color: "var(--color-brand-primary)",
+                  color: "var(--color-brand-accent)",
                   letterSpacing: "-0.03em",
                   lineHeight: 0.9,
-                  opacity: 0.85,
+                  opacity: 0.75,
                 }}
               >
                 {s.n}
               </span>
               <div>
                 <h3
-                  className="text-[var(--color-text-primary)]"
                   style={{
                     fontFamily: "var(--font-display)",
                     fontSize: 28,
@@ -125,16 +124,18 @@ export function HowItWorksNarrative() {
                     letterSpacing: "-0.015em",
                     lineHeight: 1.15,
                     margin: "0 0 10px",
+                    color: "rgba(255,255,255,0.88)",
                   }}
                 >
                   {s.title}
                 </h3>
                 <p
-                  className="m-0 text-[var(--color-text-muted)]"
+                  className="m-0"
                   style={{
                     fontSize: 17,
                     lineHeight: 1.6,
                     maxWidth: "44ch",
+                    color: "rgba(255,255,255,0.40)",
                   }}
                 >
                   {s.lede}

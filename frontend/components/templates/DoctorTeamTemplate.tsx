@@ -63,8 +63,8 @@ export function DoctorTeamTemplate({
         ctaHref={bookingHref}
       />
 
-      {/* GRID */}
-      <section className="gh-section bg-[var(--color-background-page)]">
+      {/* GRID — light section, white cards */}
+      <section className="gh-section bg-[var(--color-background-soft)]">
         <div className="gh-container">
           {doctors.length === 0 ? (
             <div className="mx-auto max-w-[480px] text-center">

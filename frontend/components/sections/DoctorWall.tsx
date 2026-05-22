@@ -1,11 +1,8 @@
 "use client";
 
 /**
- * Doctor wall — soft mint-cream section with optional country filter chips.
- *
- * Data-driven: callers pass `doctors`. If `doctors` is empty the section
- * returns `null`. The "View profile" link uses `href` from the caller
- * (lang-aware) — points at the doctor's profile page.
+ * Doctor wall — light luxury version.
+ * Soft white surface, white doctor cards with elevated hover, forest accents.
  */
 
 import { useState } from "react";
@@ -57,9 +54,7 @@ export function DoctorWall({
   const showFilters = countriesInData.length > 1;
 
   return (
-    <section
-      className="relative gh-section bg-[var(--color-background-soft)]"
-    >
+    <section className="relative gh-section bg-[var(--color-background-soft)]">
       <div
         className="relative mx-auto px-5 md:px-10"
         style={{ maxWidth: "var(--container-width)" }}
@@ -71,34 +66,24 @@ export function DoctorWall({
               The team
             </span>
             <h2
-              className="
-                mt-3 max-w-[18ch]
-                text-[length:var(--text-h1)]
-                font-extrabold tracking-[-0.03em] leading-[1.02]
-                text-[var(--color-text-primary)]
-              "
+              className="mt-3 max-w-[18ch] font-extrabold tracking-[-0.03em] leading-[1.02] text-[var(--color-text-primary)]"
+              style={{ fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)" }}
             >
               Doctors who actually{" "}
-              <span className="font-extrabold text-[var(--color-brand-primary)]">
-                pick up.
-              </span>
+              <span className="text-[var(--color-brand-primary)]">pick up.</span>
             </h2>
-            <p className="mt-5 max-w-[48ch] text-[length:var(--text-body-lg)] text-[var(--color-text-body)]">
+            <p className="mt-5 max-w-[48ch] text-[length:var(--text-body-lg)] text-[var(--color-text-body)] leading-relaxed">
               Every consultation is with someone licensed where you are. No
               call centres, no rota of strangers — the doctor on screen is
               the doctor on the profile.
             </p>
           </div>
 
-          {/* Doctor count — large tabular number anchoring the right column */}
+          {/* Doctor count */}
           <div className="text-right">
             <p
-              className="
-                text-[length:var(--text-display)]
-                font-extrabold leading-none tracking-[-0.04em]
-                text-[var(--color-brand-primary)]
-                [font-variant-numeric:tabular-nums]
-              "
+              className="font-extrabold leading-none tracking-[-0.04em] text-[var(--color-brand-primary)] [font-variant-numeric:tabular-nums]"
+              style={{ fontSize: "var(--text-display)" }}
             >
               {shown.length}
             </p>
@@ -127,7 +112,7 @@ export function DoctorWall({
                     motion-reduce:transition-none
                     ${isActive
                       ? "bg-[var(--color-brand-primary)] border-[var(--color-brand-primary)] text-white"
-                      : "bg-[var(--color-background-page)] border-[var(--color-border)] text-[var(--color-text-body)] hover:bg-[var(--color-background-panel)] hover:border-[var(--color-border-strong)]"
+                      : "bg-white border-[var(--color-border)] text-[var(--color-text-body)] hover:bg-[var(--color-background-soft)] hover:border-[var(--color-border-strong)]"
                     }
                   `}
                 >
@@ -142,9 +127,7 @@ export function DoctorWall({
         {/* Doctor card grid */}
         <div
           className="grid gap-5"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-          }}
+          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
         >
           {shown.map((d) => {
             const href = d.href || bookHref || "/";
@@ -177,7 +160,6 @@ export function DoctorWall({
                         alt={d.name}
                         className="h-full w-full object-cover object-top"
                       />
-                      {/* Gradient scrim for overlay legibility */}
                       <div
                         aria-hidden
                         className="pointer-events-none absolute inset-0"
@@ -189,7 +171,8 @@ export function DoctorWall({
                     </>
                   ) : (
                     <div
-                      className="flex h-full w-full items-center justify-center text-[clamp(48px,8vw,80px)] font-bold tracking-tight text-white bg-[var(--color-brand-primary)]"
+                      className="flex h-full w-full items-center justify-center font-bold tracking-tight text-white bg-[var(--color-brand-primary)]"
+                      style={{ fontSize: "clamp(48px,8vw,80px)" }}
                     >
                       {d.initials}
                     </div>

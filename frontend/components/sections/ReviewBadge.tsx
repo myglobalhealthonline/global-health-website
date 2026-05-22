@@ -7,17 +7,8 @@ import {
 } from "@/lib/api/reviews-config";
 
 /**
- * Public review badge — surfaces ratings from Trustpilot, Google, and
- * Doctify based on what's configured in admin Settings. Renders nothing
- * when no provider has an aggregate set, so the page doesn't show a
- * misleading "no reviews yet" placeholder.
- *
- * The Trustpilot TrustBox + Doctify embed widgets pull live data from
- * their CDNs via script tags. We add the JSON-LD `AggregateRating`
- * markup for SEO using whichever provider the admin picked as primary
- * (or the first one available).
- *
- * Server Component — fetches the config once per render and caches.
+ * Public review badge — light luxury version.
+ * White/soft surface, amber stars, brand-primary rating, muted count.
  */
 export async function ReviewBadge({
   countryName,
@@ -70,7 +61,6 @@ export async function ReviewBadge({
         }}
       />
 
-      {/* Trustpilot loader — script-injected once per page, no-op when not used. */}
       {cfg.trustpilot.businessUnitId ? (
         <script
           async
@@ -86,9 +76,7 @@ type ProviderEntry = {
   label: string;
   href: string | null;
   aggregate: AggregateSnapshot;
-  // For Trustpilot widget rendering
   trustpilotBusinessUnitId?: string;
-  // For Doctify widget rendering
   doctifyClinicId?: string;
 };
 
@@ -130,21 +118,13 @@ function pickProvidersWithData(cfg: ReviewConfig): ProviderEntry[] {
 }
 
 function ProviderBlock({ provider }: { provider: ProviderEntry }) {
-  // Doctify clinic widget — their public embed is an iframe. We size it to
-  // sit cleanly in the review band; admin can swap the URL pattern via the
-  // clinic slug at /admin/settings if Doctify changes their embed format.
   if (provider.key === "DOCTIFY" && provider.doctifyClinicId) {
     return (
       <div style={{ minWidth: 260 }}>
         <iframe
           title="Doctify reviews"
           src={`https://www.doctify.com/embed/clinic/${provider.doctifyClinicId}/widget`}
-          style={{
-            width: 260,
-            height: 88,
-            border: "none",
-            background: "transparent",
-          }}
+          style={{ width: 260, height: 88, border: "none", background: "transparent" }}
           loading="lazy"
         />
         <a
@@ -166,8 +146,6 @@ function ProviderBlock({ provider }: { provider: ProviderEntry }) {
       </div>
     );
   }
-  // Trustpilot mini widget when the businessUnitId is set — falls back to
-  // the static badge when only the aggregate is configured manually.
   if (provider.key === "TRUSTPILOT" && provider.trustpilotBusinessUnitId) {
     return (
       <div
@@ -183,12 +161,7 @@ function ProviderBlock({ provider }: { provider: ProviderEntry }) {
           href={provider.href ?? "#"}
           target="_blank"
           rel="noopener noreferrer"
-          style={{
-            fontSize: 13,
-            fontWeight: 600,
-            color: "var(--color-text-muted)",
-            textDecoration: "none",
-          }}
+          style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-muted)", textDecoration: "none" }}
         >
           {provider.aggregate.rating.toFixed(2)} · {provider.aggregate.count.toLocaleString()} Trustpilot reviews
         </a>
@@ -201,7 +174,7 @@ function ProviderBlock({ provider }: { provider: ProviderEntry }) {
 function StaticBadge({ provider }: { provider: ProviderEntry }) {
   const rounded = provider.aggregate.rating.toFixed(2);
   const inner = (
-    <div className="inline-flex items-center gap-2.5">
+    <div className="inline-flex items-center gap-3">
       <div className="flex items-center gap-0.5">
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
@@ -218,9 +191,10 @@ function StaticBadge({ provider }: { provider: ProviderEntry }) {
       <span
         style={{
           fontFamily: "var(--font-display)",
-          fontSize: 20,
+          fontSize: 22,
           fontWeight: 800,
           color: "var(--color-text-primary)",
+          letterSpacing: "-0.02em",
         }}
       >
         {rounded}

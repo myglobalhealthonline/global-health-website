@@ -214,6 +214,7 @@ export default async function CountryLangSpecialistConsultationPage({
             title="Specialist consultations available"
             intro="Cards update as the team adds or retires specialist services."
             items={serviceItems}
+            variant="dark"
           />
         </div>
       ) : null}

@@ -65,8 +65,8 @@ export function BlogCard({
       <h3
         className={
           featured
-            ? "mt-4 text-2xl font-bold leading-tight text-[var(--color-text-primary)] sm:text-3xl"
-            : "mt-3 text-lg font-bold leading-snug text-[var(--color-text-primary)]"
+            ? "mt-4 text-2xl font-extrabold tracking-[-0.02em] leading-tight text-[var(--color-text-primary)] sm:text-3xl"
+            : "mt-3 text-lg font-extrabold tracking-[-0.01em] leading-snug text-[var(--color-text-primary)]"
         }
       >
         {title}

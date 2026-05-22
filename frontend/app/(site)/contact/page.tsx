@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <main>
+      {/* DARK — hero */}
       <PageHero
         countryLabel="Global Health · Contact"
         titleLead="Talk to us"
@@ -27,22 +28,19 @@ export default function ContactPage() {
         }
       />
 
+      {/* LIGHT — contact form + reach info */}
       <section className="bg-[var(--color-background-page)]">
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr]">
             <aside>
-              <h2 className="text-xl font-semibold text-[var(--color-text-primary)]">
+              <h2 className="text-xl font-extrabold tracking-[-0.015em] text-[var(--color-text-primary)]">
                 Reach us
               </h2>
 
               <ul className="mt-6 space-y-5">
                 <li className="flex items-start gap-3">
                   <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-background-soft)] border border-[var(--color-border)]">
-                    <Mail
-                      className="size-4 text-[var(--color-brand-primary)]"
-                      strokeWidth={1.5}
-                      aria-hidden
-                    />
+                    <Mail className="size-4 text-[var(--color-brand-primary)]" strokeWidth={1.5} aria-hidden />
                   </span>
                   <div>
                     <p className="text-[length:var(--text-meta)] font-semibold text-[var(--color-text-primary)]">
@@ -59,11 +57,7 @@ export default function ContactPage() {
 
                 <li className="flex items-start gap-3">
                   <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-[var(--color-background-soft)] border border-[var(--color-border)]">
-                    <Clock
-                      className="size-4 text-[var(--color-brand-primary)]"
-                      strokeWidth={1.5}
-                      aria-hidden
-                    />
+                    <Clock className="size-4 text-[var(--color-brand-primary)]" strokeWidth={1.5} aria-hidden />
                   </span>
                   <div>
                     <p className="text-[length:var(--text-meta)] font-semibold text-[var(--color-text-primary)]">
@@ -76,24 +70,31 @@ export default function ContactPage() {
                 </li>
               </ul>
 
-              <div className="
-                mt-10
-                rounded-[var(--radius-card)]
-                border border-[var(--color-status-warning-border)]
-                bg-[var(--color-status-warning-bg)]
-                p-5
-              ">
+              <div
+                className="mt-10 rounded-[var(--radius-card)] p-5"
+                style={{
+                  border: "1px solid var(--color-status-warning-border)",
+                  background: "var(--color-status-warning-bg)",
+                }}
+              >
                 <div className="flex items-start gap-3">
                   <AlertTriangle
-                    className="mt-0.5 size-4 shrink-0 text-[var(--color-status-warning-text)]"
+                    className="mt-0.5 size-4 shrink-0"
+                    style={{ color: "var(--color-status-warning-text)" }}
                     strokeWidth={1.5}
                     aria-hidden
                   />
                   <div>
-                    <p className="text-sm font-semibold text-[var(--color-status-warning-text)]">
+                    <p
+                      className="text-sm font-semibold"
+                      style={{ color: "var(--color-status-warning-text)" }}
+                    >
                       Medical emergencies
                     </p>
-                    <p className="mt-1 text-sm text-[var(--color-status-warning-text)] opacity-90">
+                    <p
+                      className="mt-1 text-sm opacity-90"
+                      style={{ color: "var(--color-status-warning-text)" }}
+                    >
                       If you are experiencing a medical emergency, call your
                       local emergency services (112 in the EU) — do not use
                       this form.

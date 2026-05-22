@@ -39,200 +39,224 @@ export function HomeHero({
   const doctorsForPanel = (liveDoctors ?? []).slice(0, 4);
 
   return (
-    <section aria-labelledby="hero-title" className="relative overflow-hidden">
+    <section
+      aria-labelledby="hero-title"
+      className="
+        relative overflow-hidden
+        bg-[var(--color-background-dark)]
+        gh-medical-pattern gh-medical-pattern-dark
+      "
+    >
+      {/* Lime bloom — single source, top-right, 7% max. Warmth not spotlight. */}
       <div
-        className="grid lg:grid-cols-[1.1fr_0.9fr]"
-        style={{ minHeight: "calc(100svh - var(--header-height))" }}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 700px 500px at 105% -5%, rgba(176,241,34,0.07), transparent 50%)",
+        }}
+      />
+
+      <div
+        className="relative z-[1] mx-auto max-w-[var(--container-width)] px-8 md:px-16"
+        style={{
+          minHeight: "calc(100svh - var(--header-height))",
+          display: "grid",
+          gridTemplateColumns: "1fr auto",
+          alignItems: "center",
+          gap: "clamp(32px,4vw,72px)",
+        }}
       >
-        {/* LEFT — forest green brand panel */}
-        <div
-          className="
-            relative flex flex-col justify-center overflow-hidden
-            bg-[var(--color-brand-primary)]
-            gh-medical-pattern gh-medical-pattern-dark
-            px-8 py-20 md:px-16 lg:px-20
-            min-h-[480px]
-          "
-        >
-          {/* Lime atmospheric bloom — top-right corner only, 10% max */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0"
+        {/* ── Type column ── */}
+        <div className="flex flex-col py-16 lg:py-24 max-w-[720px]">
+
+          {/* Eyebrow */}
+          <div className="flex flex-wrap items-center gap-5 mb-10">
+            <span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] uppercase text-[var(--color-brand-accent)]">
+              <Flag code={countryCode} size="sm" />
+              {countryName}
+            </span>
+            <span
+              className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.12em] uppercase"
+              style={{ color: "rgba(255,255,255,0.28)" }}
+            >
+              <span aria-hidden className="gh-pulse-dot !size-1.5" />
+              {doctorCount} available
+            </span>
+          </div>
+
+          {/* Headline — the design IS the type */}
+          <h1
+            id="hero-title"
+            className="font-extrabold text-white max-w-[14ch]"
             style={{
-              background:
-                "radial-gradient(ellipse 700px 500px at 110% -10%, rgba(176,241,34,0.10), transparent 55%)",
+              fontSize: "clamp(3.25rem, 7.5vw + 0.5rem, 7.5rem)",
+              lineHeight: 0.91,
+              letterSpacing: "-0.045em",
             }}
-          />
+          >
+            {displayHeroTitle ? (
+              displayHeroTitle
+            ) : (
+              <>
+                See a doctor,{" "}
+                <span style={{ color: "var(--color-brand-accent)" }}>
+                  from anywhere.
+                </span>
+              </>
+            )}
+          </h1>
 
-          <div className="relative z-[1]">
-            {/* Eyebrow row */}
-            <div className="flex flex-wrap items-center gap-4 mb-8">
-              <span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.18em] uppercase text-[var(--color-brand-accent)]">
-                <Flag code={countryCode} size="sm" />
-                {countryName}
-              </span>
-              <span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.12em] uppercase text-white/50">
-                <span aria-hidden className="gh-pulse-dot !size-2" />
-                {doctorCount} available
-              </span>
-            </div>
+          {/* Lede — white/45, restrained */}
+          <p
+            className="mt-8 max-w-[44ch] text-[length:var(--text-body-lg)] leading-relaxed"
+            style={{ color: "rgba(255,255,255,0.45)" }}
+          >
+            {displayHeroSubtitle ??
+              "Locally-registered clinicians. Same-day appointments. Pay only after the call connects."}
+          </p>
 
-            {/* Headline — Manrope 800, white */}
-            <h1
-              id="hero-title"
+          {/* CTAs — outline primary, ghost secondary */}
+          <div className="mt-12 flex flex-wrap items-center gap-4">
+            <Link
+              href={bookHref}
               className="
-                text-[length:var(--text-display)]
-                font-extrabold leading-[0.93] tracking-[-0.04em]
-                text-white
-                max-w-[13ch]
+                inline-flex items-center gap-2.5
+                rounded-full px-8 py-[14px]
+                text-sm font-bold tracking-[-0.01em] text-white
+                transition-colors duration-200
+                hover:bg-white/10
+                motion-reduce:transition-none
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
+              "
+              style={{ border: "1px solid rgba(255,255,255,0.22)" }}
+            >
+              {displayCtaLabel}
+              <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+            </Link>
+            <Link
+              href="#services"
+              className="
+                text-sm font-semibold text-white/35
+                hover:text-white/65
+                transition-colors duration-200
+                motion-reduce:transition-none
+                focus-visible:outline-none
               "
             >
-              {displayHeroTitle ? (
-                displayHeroTitle
-              ) : (
-                <>
-                  See a doctor,{" "}
-                  <span className="text-[var(--color-brand-accent)]">
-                    from anywhere.
-                  </span>
-                </>
-              )}
-            </h1>
+              Browse services
+            </Link>
+          </div>
 
-            <p className="mt-7 max-w-[46ch] text-[length:var(--text-body-lg)] leading-relaxed text-white/65">
-              {displayHeroSubtitle ??
-                "Locally-registered clinicians, one-form booking, no waiting rooms. Pay only after the video call connects."}
+          {/* Proof points — minimal, uppercase, very low opacity */}
+          <ul
+            className="mt-12 flex flex-wrap gap-x-8 gap-y-2"
+          >
+            {[
+              { icon: ShieldCheck, label: `Licensed in ${countryName}` },
+              { icon: Clock, label: "Same-day slots" },
+              { icon: Stethoscope, label: "No clinic visits" },
+            ].map(({ icon: Icon, label }) => (
+              <li
+                key={label}
+                className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.12em] uppercase"
+                style={{ color: "rgba(255,255,255,0.28)" }}
+              >
+                <Icon
+                  className="size-3.5 text-[var(--color-brand-accent)]"
+                  strokeWidth={1.5}
+                  aria-hidden
+                />
+                {label}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* ── Availability panel — glass, no heavy card ── */}
+        {doctorsForPanel.length > 0 ? (
+          <aside
+            aria-label="Doctors available now"
+            className="hidden lg:flex flex-col self-center"
+            style={{
+              width: 296,
+              border: "1px solid rgba(255,255,255,0.09)",
+              borderRadius: 20,
+              background: "rgba(255,255,255,0.03)",
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              padding: "28px",
+              flexShrink: 0,
+            }}
+          >
+            <p
+              className="text-[10px] font-bold tracking-[0.22em] uppercase mb-6 inline-flex items-center gap-2"
+              style={{ color: "var(--color-brand-accent)" }}
+            >
+              <span aria-hidden className="gh-pulse-dot !size-1.5" />
+              Available now
             </p>
 
-            {/* CTA cluster */}
-            <div className="mt-10 flex flex-wrap items-center gap-3">
-              <Link
-                href={bookHref}
-                className="gh-btn gh-btn-ghost-dark active:scale-[0.98] motion-reduce:active:scale-100"
-              >
-                {displayCtaLabel}
-                <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
-              </Link>
-              <Link
-                href="#services"
-                className="
-                  inline-flex items-center justify-center gap-2
-                  rounded-full px-6 py-3
-                  border border-white/20 bg-transparent
-                  text-sm font-semibold text-white/80
-                  hover:bg-white/10 hover:border-white/35
-                  transition-colors duration-200
-                  motion-reduce:transition-none
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
-                "
-              >
-                Browse services
-              </Link>
-            </div>
-
-            {/* Proof points */}
-            <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2.5 text-[length:var(--text-meta)] text-white/55">
-              <li className="inline-flex items-center gap-2">
-                <ShieldCheck
-                  className="size-3.5 text-[var(--color-brand-accent)]"
-                  strokeWidth={1.5}
-                  aria-hidden
-                />
-                Licensed in {countryName}
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <Clock
-                  className="size-3.5 text-[var(--color-brand-accent)]"
-                  strokeWidth={1.5}
-                  aria-hidden
-                />
-                Same-day slots
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <Stethoscope
-                  className="size-3.5 text-[var(--color-brand-accent)]"
-                  strokeWidth={1.5}
-                  aria-hidden
-                />
-                No clinic visits
-              </li>
+            <ul className="space-y-5">
+              {doctorsForPanel.map((d) => (
+                <li key={d.name} className="flex items-center gap-3">
+                  <AvatarBubble name={d.name} />
+                  <div className="min-w-0 flex-1">
+                    <p
+                      className="truncate text-[13px] font-bold"
+                      style={{ color: "rgba(255,255,255,0.85)" }}
+                    >
+                      {d.name}
+                    </p>
+                    <p
+                      className="truncate text-[11px]"
+                      style={{ color: "rgba(255,255,255,0.38)" }}
+                    >
+                      {d.role}
+                    </p>
+                  </div>
+                </li>
+              ))}
             </ul>
-          </div>
-        </div>
 
-        {/* RIGHT — white availability or booking panel */}
-        <div
-          className="
-            flex flex-col justify-center
-            bg-[var(--color-background-page)]
-            px-8 py-20 md:px-12 lg:px-16
-            border-t lg:border-t-0 lg:border-l border-[var(--color-border)]
-          "
-        >
-          {doctorsForPanel.length > 0 ? (
-            <aside aria-label="Doctors available now" className="max-w-[400px]">
-              <p className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.18em] uppercase text-[var(--color-brand-primary)] mb-5">
-                <span aria-hidden className="gh-pulse-dot !size-1.5" />
-                Available right now
-              </p>
-
-              <p className="text-[length:var(--text-h3)] font-extrabold tracking-[-0.025em] leading-tight text-[var(--color-text-primary)] mb-8">
-                {totalDoctorsAcrossEurope} doctors{" "}
-                <span className="text-[var(--color-brand-primary)]">
-                  across Europe
-                </span>
-              </p>
-
-              <ul className="divide-y divide-[var(--color-border)] mb-6">
-                {doctorsForPanel.map((d) => (
-                  <li key={d.name} className="flex items-center gap-4 py-4">
-                    <AvatarBubble name={d.name} />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-bold text-[var(--color-text-primary)]">
-                        {d.name}
-                      </p>
-                      <p className="truncate text-xs text-[var(--color-text-muted)]">
-                        {d.role}
-                      </p>
-                    </div>
-                    <span className="shrink-0 rounded-full bg-[var(--color-accent-soft)] border border-[var(--color-border)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[var(--color-brand-primary)]">
-                      Free
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <p className="text-[length:var(--text-meta)] text-[var(--color-text-muted)] mb-8">
+            <div
+              className="mt-6 pt-5"
+              style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}
+            >
+              <p
+                className="text-[11px] mb-5 leading-relaxed"
+                style={{ color: "rgba(255,255,255,0.28)" }}
+              >
+                {totalDoctorsAcrossEurope} doctors across Europe
+                <br />
                 Consulting in {languageLabel}
               </p>
-
               <Link
                 href={bookHref}
-                className="gh-btn gh-btn-primary w-full"
+                className="
+                  flex items-center justify-center gap-2
+                  w-full rounded-full py-3
+                  text-[13px] font-bold text-white
+                  transition-colors duration-200
+                  hover:bg-white/10
+                  motion-reduce:transition-none
+                "
+                style={{ border: "1px solid rgba(255,255,255,0.14)" }}
               >
-                Book a consultation
-                <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
-              </Link>
-            </aside>
-          ) : (
-            <div className="max-w-[400px]">
-              <p className="text-[11px] font-bold tracking-[0.18em] uppercase text-[var(--color-brand-primary)] mb-5">
-                Book online
-              </p>
-              <h2 className="text-[length:var(--text-h2)] font-extrabold tracking-[-0.03em] text-[var(--color-text-primary)] leading-tight mb-7">
-                Your consultation<br />starts here.
-              </h2>
-              <p className="text-[length:var(--text-body-lg)] text-[var(--color-text-muted)] mb-9 max-w-[36ch]">
-                Choose a time that works for you. Video call with a doctor licensed in {countryName}.
-              </p>
-              <Link href={bookHref} className="gh-btn gh-btn-primary">
-                {displayCtaLabel}
-                <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+                Book now
+                <ArrowRight className="size-3.5" strokeWidth={1.5} aria-hidden />
               </Link>
             </div>
-          )}
-        </div>
+          </aside>
+        ) : null}
       </div>
+
+      {/* Bottom hairline separator */}
+      <div
+        aria-hidden
+        className="absolute bottom-0 left-0 right-0 h-px"
+        style={{ background: "rgba(255,255,255,0.06)" }}
+      />
     </section>
   );
 }
@@ -243,15 +267,12 @@ function AvatarBubble({ name }: { name: string }) {
   return (
     <span
       aria-hidden
-      className="
-        inline-flex size-10 shrink-0
-        items-center justify-center
-        rounded-full
-        bg-[var(--color-background-panel)]
-        text-[11px] font-bold tracking-tight
-        text-[var(--color-brand-primary)]
-        ring-1 ring-[var(--color-border)]
-      "
+      className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-[11px] font-bold tracking-tight"
+      style={{
+        background: "rgba(255,255,255,0.07)",
+        color: "rgba(255,255,255,0.70)",
+        border: "1px solid rgba(255,255,255,0.10)",
+      }}
     >
       {initials}
     </span>
