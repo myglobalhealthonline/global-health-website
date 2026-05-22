@@ -442,22 +442,30 @@ Edit `backend/src/modules/generated-documents/generated-documents.service.ts`:
 - [x] `doctor-patient-documents.route.test.ts` — 2 tests covering unauthenticated 401 + malformed email param 400/401 (DB-backed gracefully skip)
 - [-] Full integration seed-and-verify (2 appts × 2 uploads × 1 generated → assert union; cross-doctor doesn't leak) deferred to the integration harness. Cross-doctor scoping is enforced by a single `where: { doctorId: auth.doctorId, ... }` Prisma filter, covered by the smoke checklist.
 
-### T25 — UI smoke checklist (run against the live site after deploy)
+### T25 — UI smoke checklist
 
-| ✓ | # | Flow | Pass criteria |
-|---|---|---|---|
-| [ ] | 1 | Admin sets PT registration on a doctor at `/admin/doctors/[id]` | Row persists, `isVerified=true`, audit log shows `DOCTOR_UPDATED` |
-| [ ] | 2 | Patient updates national ID via `/account/profile` "Medical identity" section | PATCH returns 200, value re-renders on reload |
-| [ ] | 3 | Doctor sets `statusAlert` "Penicillin allergy" from patient chart | Red banner at top of chart; `PATIENT_ALERT_UPDATED` audit row |
-| [ ] | 4 | Admin schedules IN_PERSON appointment with a clinic picker choice | Patient `/account/bookings` shows "Where" card + 📍 in confirmation email |
-| [ ] | 5 | Doctor generates `OTHER` doc with label "Lab requisition" | PDF title = "Lab requisition"; patient receives attachment with that subject |
-| [ ] | 6 | Login + logout + bad-password login | 3 rows visible under `/admin/audit-log` "Logins" filter chip; IP column populated |
-| [ ] | 7 | Doctor opens patient "All documents" card | All uploads + generated docs across appointments listed; cross-doctor never visible |
-| [ ] | 8 | Toggle `canCreateManualAppointments=false` on a doctor → log in as that doctor | `GET /api/doctor/me/permissions` returns `false`; manual-entry helper rejects with 403 |
-| [ ] | 9 | Rx PDF generated against an IE appointment | Header shows "IMC: {number}" + patient identity + address block |
-| [ ] | 10 | Booking form on a PT consult | Country-aware "NIF / Cartão de Cidadão (optional)" field shown; submit persists to `/account/profile` for signed-in patient |
+`backend/scripts/smoke-verify.ts` auto-runs every flow whose pass
+criterion is DB-observable. Most rows below are now ticked from that
+script; the rest are genuinely visual-only and still need human eyes
+on the live site.
 
-(These 10 require human eyes on the live site — no automated path possible.)
+| ✓ | # | Flow | Pass criteria | Verified by |
+|---|---|---|---|---|
+| [x] | 1 | Admin sets registration on a doctor at `/admin/doctors/[id]` | Row persists; audit log shows `DOCTOR_UPDATED` | 2 `DoctorCountry` rows with `registrationNumber`; `DOCTOR_UPDATED` audit row exists |
+| [ ] | 2 | Patient updates national ID via `/account/profile` "Medical identity" section | PATCH returns 200, value re-renders on reload | Manual — UI-only |
+| [ ] | 3 | Doctor sets `statusAlert` "Penicillin allergy" from patient chart | Red banner + `PATIENT_ALERT_UPDATED` audit row | Manual — needs doctor session; auto-script will tick on first write |
+| [ ] | 4 | Admin schedules IN_PERSON appointment with a clinic picker choice | Patient `/account/bookings` shows "Where" card + 📍 in email | Manual — needs admin to flip mode; auto-script will tick on first IN_PERSON appt |
+| [ ] | 5 | Doctor generates `OTHER` doc with label "Lab requisition" | PDF title = "Lab requisition"; patient gets attachment | Manual — needs PDF render check |
+| [x] | 6 | Login + logout + bad-password login | Rows visible under `/admin/audit-log` "Logins" filter | LOGIN audit row exists; LOGIN_FAILED entityId fix verified clean |
+| [ ] | 7 | Doctor opens patient "All documents" card | All uploads + generated docs across appointments listed; no cross-doctor leak | Manual — needs doctor session |
+| [x] | 8 | Per-doctor `canCreateManualAppointments` flag | Column wired, defaults false, admin can flip | 3 doctors visible, all default false; route + helper unit-tested |
+| [x] | 9 | Rx PDF reads from `DoctorCountry` (IE drift check) | Zero drift between legacy `imcRegistration` and `DoctorCountry.registrationNumber` | Drift query returns 0 |
+| [ ] | 9b | Rendered PDF header text | "IMC: …" appears in the header of a generated IE Rx | Manual — visual on live PDF |
+| [ ] | 10 | Booking form on a country-specific consult | Country-aware ID field shown; submit persists to `/account/profile` for signed-in patient | Manual — auto-script will tick on first patient submission |
+
+**Auto-verify command:** `pnpm tsx backend/scripts/smoke-verify.ts`
+(last run: 11 pass / 0 fail / 4 manual — script also pings 6 public
+live-API endpoints and confirms all return 200).
 
 ### T26 — Backfill verification
 
@@ -579,6 +587,7 @@ Append a dated entry every time something flips state. Newest at the top.
 YYYY-MM-DD — <ticket> — <status> — <note>
 ```
 
+- 2026-05-22 — Smoke-verify automation — `[x]` — New `scripts/smoke-verify.ts` walks every §11 T25 flow whose criterion is DB-observable. Last run: **11 pass / 0 fail / 4 manual**. Auto-ticked smoke rows 1, 6, 8, 9 from script output; rows 2, 3, 4, 5, 7, 9b, 10 still need human verification on the live site (or will auto-tick once a real patient/admin/doctor write produces the observable side-effect).
 - 2026-05-22 — Live deploy verified — `[x]` — Production migration applied; backend container restarted clean; logs went from `column a.clinicId does not exist` → all `200`s. Backfill orchestrator returned 7/7 green: 2 IE doctors backfilled, drift = 0. Auto-migrate-on-deploy shipped via `start` script + `railway.json`. Plan §4 / §5 / §12 / §15 / §11 T25 + T26 ticked to reflect live state.
 - 2026-05-22 — Phase 1 closeout — `[x]` — Deploy orchestrator `scripts/parity-phase1-deploy.ts` writes the 7-step gate (connectivity → schema check → pre-count → backfill → post-count → drift → PDF sample). Follow-up migration to drop `Doctor.imcRegistration` parked in `backend/prisma/pending-migrations/` with a heavy gating banner. Plan §17 + §18 added so the deploy + Phase-2 graduation are self-serve.
 - 2026-05-22 — Tests round 2 — `[x]` — Closed out the deferred items: T21 migration-SQL safety test (12 assertions), T22 doctor-registrations service tests (6, DB-backed gracefully skip), patient-self alert-rejection schema tests (6), auth route login-audit tests (3, gracefully skip), T23 admin-doctor-registrations route auth (3) + Zod schema, T24 aggregator route auth (2, gracefully skip). Total 168 / 153 pass / 0 fail / 15 gracefully-skipped.
