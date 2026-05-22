@@ -89,39 +89,74 @@ function BrazilConsentForm() {
 
   return (
     <div className="gh-card mx-auto max-w-lg p-8">
-      <h1 className="text-xl font-bold text-[var(--color-text-primary)]">
-        Consentimento médico — Brasil
+      <p className="gh-eyebrow text-[var(--color-brand-primary)]">
+        Brasil · Consultoria
+      </p>
+      <h1 className="mt-2 text-2xl font-bold text-[var(--color-text-primary)]">
+        Consentimento médico
       </h1>
       <p className="mt-2 text-sm text-[var(--color-text-muted)]">
         Complete o formulário e proceda ao pagamento de processamento (€29).
       </p>
-      {error ? <p className="mt-4 text-sm text-red-700">{error}</p> : null}
+      {error ? (
+        <p
+          role="alert"
+          className="
+            mt-4 rounded-[var(--radius-card-sm)] px-3 py-2 text-sm
+            border border-[var(--color-status-error-border)]
+            bg-[var(--color-status-error-bg)]
+            text-[var(--color-status-error-text)]
+          "
+        >
+          {error}
+        </p>
+      ) : null}
       {prefill ? (
-        <form className="mt-6 grid gap-3" onSubmit={submit}>
+        <form className="mt-6 grid gap-4" onSubmit={submit}>
           <input type="hidden" name="gdprConsent" value="true" />
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--color-text-primary)]">
             Nome
             <input name="fullName" defaultValue={prefill.fullName} required className="gh-input" />
           </label>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--color-text-primary)]">
             Email
             <input name="email" type="email" defaultValue={prefill.email} required className="gh-input" />
           </label>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--color-text-primary)]">
             Telefone
             <input name="phone" defaultValue={prefill.phone} className="gh-input" />
           </label>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--color-text-primary)]">
             Farmácia
             <input name="pharmacy" defaultValue={prefill.pharmacy} className="gh-input" />
           </label>
-          <label className="flex flex-col gap-1 text-sm">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--color-text-primary)]">
             Mensagem
             <textarea name="message" rows={3} className="gh-input" />
           </label>
-          <label className="flex items-start gap-2 text-sm">
-            <input type="checkbox" required defaultChecked className="mt-1" />
-            Concordo com o tratamento dos meus dados de saúde.
+          {/* Consent block is the legally-significant gate — surface it
+            * inside its own panel above the submit button instead of as
+            * a footnote checkbox the eye skims past. */}
+          <label
+            className="
+              mt-2 flex items-start gap-3 text-sm
+              rounded-[var(--radius-card-sm)] p-3
+              border border-[var(--color-border)]
+              bg-[var(--color-background-soft)]
+              text-[var(--color-text-body)]
+            "
+          >
+            <input
+              type="checkbox"
+              required
+              defaultChecked
+              className="mt-0.5 size-4 accent-[var(--color-brand-primary)]"
+              aria-describedby="brazil-consent-text"
+            />
+            <span id="brazil-consent-text" className="leading-relaxed">
+              Concordo com o tratamento dos meus dados de saúde para fins de
+              consulta médica e processamento de pagamento.
+            </span>
           </label>
           <button type="submit" disabled={pending} className="gh-btn gh-btn-primary">
             {pending ? "A processar…" : "Submeter e pagar"}
@@ -134,8 +169,14 @@ function BrazilConsentForm() {
 
 export default function BrazilConsentPage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16">
-      <Suspense fallback={<p className="text-center text-sm">Loading…</p>}>
+    <main className="gh-section-tight mx-auto max-w-3xl px-4">
+      <Suspense
+        fallback={
+          <p className="text-center text-sm text-[var(--color-text-muted)]">
+            Loading…
+          </p>
+        }
+      >
         <BrazilConsentForm />
       </Suspense>
     </main>
