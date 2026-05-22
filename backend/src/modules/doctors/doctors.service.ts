@@ -114,7 +114,7 @@ export async function listDoctors() {
  */
 export async function listDoctorsByCountry(countryCode: string) {
   try {
-    return await prisma.doctor.findMany({
+    const rows = await prisma.doctor.findMany({
       where: {
         active: true,
         OR: [
@@ -137,6 +137,19 @@ export async function listDoctorsByCountry(countryCode: string) {
           where: { isActive: true, kind: AssetKind.IMAGE },
           select: { id: true, kind: true, key: true, path: true, altText: true },
         },
+        // Per-market registration row. The single DoctorCountry record
+        // for the country being viewed replaces the legacy
+        // Doctor.imcRegistration field via the post-mapper below — once
+        // every reader is on this path, the legacy column drops.
+        additionalCountries: {
+          where: { country: { code: countryCode } },
+          select: {
+            chamberEntity: true,
+            registrationNumber: true,
+            isVerified: true,
+          },
+          take: 1,
+        },
         // Services the doctor is bookable for in this country. Doctor
         // profile page uses this to scope the service list shown next
         // to the calendar.
@@ -153,9 +166,37 @@ export async function listDoctorsByCountry(countryCode: string) {
         },
       },
     });
+    return rows.map((d) => overrideImcRegistrationFromCountry(d));
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }
+}
+
+/**
+ * Phase 2 alias: the public `imcRegistration` field on a doctor used to
+ * read straight off Doctor.imcRegistration (IE-only). The Phase 1
+ * migration moved the real value into DoctorCountry.registrationNumber
+ * (one row per market the doctor is registered in). Until the legacy
+ * column is dropped, this helper keeps the existing field name on the
+ * payload but resolves it from the new source. When DoctorCountry has
+ * a row for this country we use that; otherwise we fall back to the
+ * legacy column so doctors who haven't been backfilled yet still show.
+ */
+function overrideImcRegistrationFromCountry<
+  T extends {
+    imcRegistration: string | null;
+    additionalCountries?: Array<{
+      chamberEntity: string | null;
+      registrationNumber: string | null;
+      isVerified: boolean;
+    }>;
+  },
+>(doctor: T): T {
+  const link = doctor.additionalCountries?.[0];
+  if (link?.registrationNumber) {
+    return { ...doctor, imcRegistration: link.registrationNumber };
+  }
+  return doctor;
 }
 
 /**
@@ -190,6 +231,17 @@ export async function getDoctorByCountryAndSlug(countryCode: string, slug: strin
           where: { isActive: true, kind: AssetKind.IMAGE },
           select: { id: true, kind: true, key: true, path: true, altText: true },
         },
+        // Per-market registration row for this country (see Phase 2
+        // note on overrideImcRegistrationFromCountry below).
+        additionalCountries: {
+          where: { country: { code: countryCode } },
+          select: {
+            chamberEntity: true,
+            registrationNumber: true,
+            isVerified: true,
+          },
+          take: 1,
+        },
         // Active service assignments scoped to the country being viewed.
         assignedServices: {
           where: {
@@ -217,7 +269,7 @@ export async function getDoctorByCountryAndSlug(countryCode: string, slug: strin
         },
       },
     });
-    return doctor;
+    return doctor ? overrideImcRegistrationFromCountry(doctor) : null;
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }
