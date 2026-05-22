@@ -20,7 +20,16 @@ function mergeRailwayBucketAliases(): NodeJS.ProcessEnv {
 }
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  // Railway (and a few other PaaS) export NODE_ENV as the empty string
+  // when no value is set, which bypasses Zod's `.default()` (that only
+  // fires on undefined). Preprocess "" → undefined so the default
+  // kicks in. Default is "production" because this file only runs when
+  // bundled; dev mode comes from `tsx watch` + `.env` which sets the
+  // value explicitly.
+  NODE_ENV: z.preprocess(
+    (v) => (v === "" || v === undefined ? undefined : v),
+    z.enum(["development", "test", "production"]).default("production"),
+  ),
   PORT: z.coerce.number().default(4000),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   ADMIN_API_TOKEN: z.string().trim().min(1, "ADMIN_API_TOKEN cannot be empty").optional(),
