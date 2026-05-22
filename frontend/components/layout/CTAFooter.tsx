@@ -43,6 +43,10 @@ export function CTAFooter({
                   width={480}
                   height={320}
                   className="h-auto w-full object-cover opacity-95"
+                  unoptimized={
+                    /^https?:\/\//i.test(decorImage.src) ||
+                    decorImage.src.startsWith("/api/media/")
+                  }
                 />
               </div>
             ) : null}

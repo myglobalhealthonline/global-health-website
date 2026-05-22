@@ -99,6 +99,17 @@ export function DoctorTeamTemplate({
                             fill
                             sizes="(min-width:1024px) 380px, (min-width:768px) 50vw, 100vw"
                             className="object-cover"
+                            // Admin-uploaded portraits live under /api/media/
+                            // and aren't pre-registered in
+                            // next.config.remotePatterns. Without
+                            // `unoptimized`, Next's image optimiser refuses
+                            // them and returns a broken response — same
+                            // guard DoctorCard already has on the consult
+                            // pages.
+                            unoptimized={
+                              /^https?:\/\//i.test(d.imageSrc) ||
+                              d.imageSrc.startsWith("/api/media/")
+                            }
                           />
                         ) : null}
                       </div>

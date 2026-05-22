@@ -166,6 +166,9 @@ export function HealthcareMediaFrame({
           height={900}
           className={`h-auto w-full ${objectFit === "cover" ? "object-cover" : "object-contain"}`}
           priority={priority}
+          unoptimized={
+            /^https?:\/\//i.test(src) || src.startsWith("/api/media/")
+          }
         />
       </div>
     </div>

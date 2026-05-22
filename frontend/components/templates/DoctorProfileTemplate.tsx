@@ -85,6 +85,14 @@ export function DoctorProfileTemplate({
                     sizes="(min-width:1024px) 460px, 100vw"
                     priority
                     className="object-cover"
+                    // Same /api/media/ + external-https guard the
+                    // DoctorCard already uses — Next's image optimiser
+                    // refuses paths it can't pre-resolve and returns a
+                    // broken response otherwise.
+                    unoptimized={
+                      /^https?:\/\//i.test(profileImageSrc) ||
+                      profileImageSrc.startsWith("/api/media/")
+                    }
                   />
                 </div>
               ) : (
