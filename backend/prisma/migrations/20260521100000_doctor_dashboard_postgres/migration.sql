@@ -1,11 +1,20 @@
 -- Doctor dashboard Postgres replication (legacy parity)
 
--- CreateEnum
-CREATE TYPE "GeneratedDocumentType" AS ENUM ('ABSENCE_CERTIFICATE', 'EXAMS_PRESCRIPTION', 'PRESCRIPTION');
-CREATE TYPE "BrazilConsentPaymentStatus" AS ENUM ('PENDING', 'PAID');
+-- CreateEnum (idempotent — production may already have these from db push)
+DO $$ BEGIN
+  CREATE TYPE "GeneratedDocumentType" AS ENUM ('ABSENCE_CERTIFICATE', 'EXAMS_PRESCRIPTION', 'PRESCRIPTION');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
--- AlterEnum
-ALTER TYPE "ShareLinkScope" ADD VALUE 'PATIENT_UPLOAD';
+DO $$ BEGIN
+  CREATE TYPE "BrazilConsentPaymentStatus" AS ENUM ('PENDING', 'PAID');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
+
+-- AlterEnum (idempotent, PostgreSQL 15+)
+ALTER TYPE "ShareLinkScope" ADD VALUE IF NOT EXISTS 'PATIENT_UPLOAD';
 
 -- AlterTable Appointment
 ALTER TABLE "Appointment" ADD COLUMN IF NOT EXISTS "finalized" BOOLEAN NOT NULL DEFAULT false;
