@@ -6,7 +6,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
-import { DEFAULT_BRAND_LOGO } from "@/lib/content/brand-logo";
+import { DEFAULT_BRAND_LOGO, DEFAULT_BRAND_LOGO_LIGHT } from "@/lib/content/brand-logo";
 import {
   resolveFooterCtaDecorAsset,
   resolveSiteLogoAsset,
@@ -40,7 +40,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     getPublicCountriesMerged(),
   ]);
 
-  const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO;
+  const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO_LIGHT;
   const footerDecorImage = resolveFooterCtaDecorAsset(assets);
 
   // Build a code → enabledFeatures map so SiteHeader/MobileNav can hide
