@@ -176,12 +176,13 @@ export function SiteHeader({
             src={brandLogo?.src ?? "/logos/global-health-dark.png"}
             alt={brandLogo?.alt ?? siteName ?? "Global Health"}
             className="h-11 w-auto"
+            style={{ filter: "brightness(0) invert(1)" }}
           />
         </Link>
 
         {/* Section tabs — only inside a country */}
         <div className="hidden md:flex" style={{ justifySelf: "center" }}>
-          {sectionItems.length > 0 ? <SectionNav items={sectionItems} /> : null}
+          {sectionItems.length > 0 ? <SectionNav items={sectionItems} variant="dark" /> : null}
         </div>
 
         {/* Right — switchers + auth + CTA */}
@@ -204,14 +205,14 @@ export function SiteHeader({
           {!authUser ? (
             <Link
               href="/login"
-              className="hidden text-[length:var(--text-meta)] font-semibold no-underline text-[var(--color-text-body)] hover:text-[var(--color-text-primary)] md:inline-block"
+              className="hidden text-[length:var(--text-meta)] font-semibold no-underline text-white/70 hover:text-white md:inline-block"
             >
               Log in
             </Link>
           ) : (
             <Link
               href={authUser.role === "ADMIN" ? "/admin" : "/account"}
-              className="hidden text-[length:var(--text-meta)] font-semibold no-underline text-[var(--color-text-body)] hover:text-[var(--color-text-primary)] md:inline-block"
+              className="hidden text-[length:var(--text-meta)] font-semibold no-underline text-white/70 hover:text-white md:inline-block"
             >
               {authUser.role === "ADMIN" ? "Admin" : "Account"}
             </Link>
@@ -219,7 +220,7 @@ export function SiteHeader({
 
           <Link
             href={bookHref}
-            className="gh-btn gh-btn-primary hidden md:inline-flex"
+            className="gh-btn gh-btn-ghost-dark hidden md:inline-flex"
             style={{ minHeight: 44, padding: "0 22px" }}
           >
             Book

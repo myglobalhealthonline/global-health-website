@@ -23,8 +23,15 @@ export type SectionNavItem = {
   children?: Array<{ href: string; label: string; description?: string }>;
 };
 
-export function SectionNav({ items }: { items: SectionNavItem[] }) {
+export function SectionNav({
+  items,
+  variant = "light",
+}: {
+  items: SectionNavItem[];
+  variant?: "light" | "dark";
+}) {
   const pathname = usePathname() || "";
+  const isDark = variant === "dark";
 
   function isLinkActive(item: SectionNavItem): boolean {
     if (!item.href) return false;
@@ -45,10 +52,10 @@ export function SectionNav({ items }: { items: SectionNavItem[] }) {
       className="hidden items-center md:flex"
       style={{
         gap: 4,
-        background: "var(--color-background-soft)",
+        background: isDark ? "rgba(255,255,255,0.07)" : "var(--color-background-soft)",
         padding: 4,
         borderRadius: 999,
-        border: "1px solid var(--color-border)",
+        border: isDark ? "1px solid rgba(255,255,255,0.10)" : "1px solid var(--color-border)",
         width: "fit-content",
       }}
     >
@@ -60,7 +67,7 @@ export function SectionNav({ items }: { items: SectionNavItem[] }) {
             <DropdownMenu.Root key={item.label}>
               <DropdownMenu.Trigger
                 className="inline-flex items-center gap-1 transition-all duration-150 focus-visible:outline-none"
-                style={pillStyle(active)}
+                style={pillStyle(active, isDark)}
                 aria-label={`${item.label} submenu`}
               >
                 {item.label}
@@ -114,7 +121,7 @@ export function SectionNav({ items }: { items: SectionNavItem[] }) {
             key={item.href ?? item.label}
             href={item.href ?? "#"}
             className="inline-flex items-center transition-all duration-150"
-            style={pillStyle(active)}
+            style={pillStyle(active, isDark)}
           >
             {item.label}
           </Link>
@@ -124,7 +131,23 @@ export function SectionNav({ items }: { items: SectionNavItem[] }) {
   );
 }
 
-function pillStyle(active: boolean): React.CSSProperties {
+function pillStyle(active: boolean, dark = false): React.CSSProperties {
+  if (dark) {
+    return {
+      padding: "8px 16px",
+      borderRadius: 999,
+      background: active ? "rgba(255,255,255,0.14)" : "transparent",
+      color: active ? "#ffffff" : "rgba(255,255,255,0.62)",
+      fontFamily: "inherit",
+      fontSize: 13,
+      fontWeight: 700,
+      textDecoration: "none",
+      boxShadow: "none",
+      whiteSpace: "nowrap",
+      cursor: "pointer",
+      border: "none",
+    };
+  }
   return {
     padding: "8px 16px",
     borderRadius: 999,

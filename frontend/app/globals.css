@@ -428,10 +428,10 @@ img {
   position: sticky;
   top: 0;
   z-index: 40;
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  background-color: rgb(255 255 255 / 0.92);
-  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background-color: rgba(15, 46, 37, 0.96);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 /* Site footer grid — replaces SiteFooter.tsx inline <style> block.
