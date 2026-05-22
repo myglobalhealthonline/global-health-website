@@ -38,3 +38,4 @@ preview-*.html.artifact.json
 # out of the repo — they're 24 MB each and not consumed at build time.
 docs/design-fetch*.zip
 docs/*.zip
+backups/
