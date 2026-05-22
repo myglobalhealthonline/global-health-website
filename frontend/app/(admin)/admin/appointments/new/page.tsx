@@ -89,8 +89,8 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
 
   // Load country-scoped picklists.
   const [servicesResult, doctorsResult, clinicsResult] = await Promise.all([
-    fetchAdminServices({ countryCode, pageSize: "200" }),
-    fetchAdminDoctors({ countryCode, pageSize: "200" }),
+    fetchAdminServices({ countryCode, pageSize: "100" }),
+    fetchAdminDoctors({ countryCode, pageSize: "100" }),
     fetchAdminClinicsByCountryCode(countryCode),
   ]);
   if (!servicesResult.ok || !doctorsResult.ok) {
