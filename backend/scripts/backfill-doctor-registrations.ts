@@ -39,8 +39,9 @@ const CHAMBER =
   } as Record<string, string>)[COUNTRY_CODE] ?? COUNTRY_CODE;
 
 async function main() {
-  const country = await prisma.country.findUnique({
-    where: { code: COUNTRY_CODE },
+  // Country codes are stored lowercase in this DB.
+  const country = await prisma.country.findFirst({
+    where: { code: COUNTRY_CODE.toLowerCase() },
     select: { id: true, code: true, name: true },
   });
   if (!country) {

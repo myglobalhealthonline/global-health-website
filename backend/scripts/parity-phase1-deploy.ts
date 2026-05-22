@@ -263,8 +263,11 @@ async function main(): Promise<void> {
   await probeConnectivity();
   await checkSchemaApplied();
 
-  const country = await prisma.country.findUnique({
-    where: { code: COUNTRY_CODE },
+  // Country codes are stored lowercase in this DB (`ie`, `pt`, etc.).
+  // The CLI flag uppercases for the chamber lookup table; convert to
+  // lowercase here for the row lookup.
+  const country = await prisma.country.findFirst({
+    where: { code: COUNTRY_CODE.toLowerCase() },
     select: { id: true, code: true, name: true },
   });
   if (!country) {
