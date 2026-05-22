@@ -70,6 +70,9 @@ export function MobileNav({
   const isFeatureOn = (key: string) =>
     !activeFeatures || activeFeatures.length === 0 || activeFeatures.includes(key);
 
+  // Mirror the desktop SiteHeader IA: Home / Doctors / [Services...] /
+  // About / Blog / FAQ. Services expand inline on mobile (no nested
+  // dropdown — taps go straight to the destination).
   const sectionLinks =
     activeCountry && parsed.country && parsed.lang
       ? [
@@ -79,7 +82,7 @@ export function MobileNav({
             ? [
                 {
                   href: `/${parsed.country}/${parsed.lang}/general-consultation`,
-                  label: "GP consultation",
+                  label: "General consultation",
                 },
               ]
             : []),
@@ -95,7 +98,7 @@ export function MobileNav({
             ? [
                 {
                   href: `/${parsed.country}/${parsed.lang}/prescriptions`,
-                  label: "Prescriptions",
+                  label: "Prescription",
                 },
               ]
             : []),
@@ -103,12 +106,21 @@ export function MobileNav({
             ? [
                 {
                   href: `/${parsed.country}/${parsed.lang}/tests`,
-                  label: "Health tests",
+                  label: "Health test",
                 },
               ]
             : []),
+          { href: "/about", label: "About" },
+          { href: "/blog", label: "Blog" },
+          { href: "/faq", label: "FAQ" },
         ]
-      : [];
+      : [
+          { href: "/", label: "Home" },
+          { href: "/about", label: "About" },
+          { href: "/blog", label: "Blog" },
+          { href: "/faq", label: "FAQ" },
+          { href: "/contact", label: "Contact" },
+        ];
 
   // Cart-first booking: mobile "Book" routes to the country general
   // consultation catalogue (service-first). /book-online stays as a

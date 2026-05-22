@@ -44,23 +44,69 @@ function sectionNavForCountryLang(
   const base = `/${countrySlug}/${lang}`;
   const enabled = (key: string) =>
     !features || features.length === 0 || features.includes(key);
-  const items: SectionNavItem[] = [{ href: base, label: "Home", exact: true }];
-  // Doctors tab isn't covered by the toggle — it's part of the country's
-  // identity. The four feature-gated nav surfaces:
-  items.push({ href: `${base}/doctors`, label: "Doctors" });
+
+  // Build the Services submenu in admin-configured order. Each child
+  // gets a short description for the dropdown body — minimal context
+  // since the labels are already specific.
+  const servicesChildren: Array<{
+    href: string;
+    label: string;
+    description?: string;
+  }> = [];
   if (enabled("general-consultations")) {
-    items.push({ href: `${base}/general-consultation`, label: "GP" });
+    servicesChildren.push({
+      href: `${base}/general-consultation`,
+      label: "General consultation",
+      description: "GP video call · same-day slots",
+    });
   }
   if (enabled("specialist-consultations")) {
-    items.push({ href: `${base}/specialist-consultation`, label: "Specialist" });
+    servicesChildren.push({
+      href: `${base}/specialist-consultation`,
+      label: "Specialist consultation",
+      description: "Cardiology, dermatology, paediatrics + more",
+    });
   }
   if (enabled("online-prescriptions")) {
-    items.push({ href: `${base}/prescriptions`, label: "Prescriptions" });
+    servicesChildren.push({
+      href: `${base}/prescriptions`,
+      label: "Prescription",
+      description: "Repeat scripts, sent to your pharmacy",
+    });
   }
   if (enabled("health-tests")) {
-    items.push({ href: `${base}/tests`, label: "Health tests" });
+    servicesChildren.push({
+      href: `${base}/tests`,
+      label: "Health test",
+      description: "Lab-quality kits, delivered home",
+    });
   }
+
+  const items: SectionNavItem[] = [
+    { href: base, label: "Home", exact: true },
+    { href: `${base}/doctors`, label: "Doctors" },
+  ];
+  if (servicesChildren.length > 0) {
+    items.push({ label: "Services", children: servicesChildren });
+  }
+  // Global pages — country/lang-agnostic.
+  items.push({ href: "/about", label: "About" });
+  items.push({ href: "/blog", label: "Blog" });
+  items.push({ href: "/faq", label: "FAQ" });
   return items;
+}
+
+/** Outside-a-country nav: no per-country service links, but About /
+ *  Blog / FAQ + a top-level Services pointer that bounces visitors
+ *  to the country gate. */
+function sectionNavGlobal(): SectionNavItem[] {
+  return [
+    { href: "/", label: "Home", exact: true },
+    { href: "/about", label: "About" },
+    { href: "/blog", label: "Blog" },
+    { href: "/faq", label: "FAQ" },
+    { href: "/contact", label: "Contact" },
+  ];
 }
 
 export function SiteHeader({
@@ -95,7 +141,7 @@ export function SiteHeader({
   const sectionItems: SectionNavItem[] =
     activeCountry && parsed.country && parsed.lang
       ? sectionNavForCountryLang(parsed.country, parsed.lang, activeFeatures)
-      : [];
+      : sectionNavGlobal();
 
   // Cart-first booking: the header "Book" CTA points at the country's
   // general consultation catalogue so visitors pick a service first
