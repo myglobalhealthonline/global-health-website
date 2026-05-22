@@ -135,6 +135,13 @@ export async function listDoctorsByCountry(countryCode: string) {
         specialties: { include: { specialty: true } },
         assets: {
           where: { isActive: true, kind: AssetKind.IMAGE },
+          // Deterministic ordering — without an explicit orderBy the
+          // listing endpoint and the detail endpoint can pick different
+          // images for the same doctor (Postgres row order is
+          // unspecified). createdAt ASC means whichever image was
+          // uploaded first wins on both surfaces — same portrait
+          // everywhere.
+          orderBy: [{ createdAt: "asc" }, { id: "asc" }],
           select: { id: true, kind: true, key: true, path: true, altText: true },
         },
         // Per-market registration row. The single DoctorCountry record
@@ -225,6 +232,10 @@ export async function getDoctorByCountryAndSlug(countryCode: string, slug: strin
         specialties: { include: { specialty: true } },
         assets: {
           where: { isActive: true, kind: AssetKind.IMAGE },
+          // Match the listing endpoint's asset ordering so the same
+          // doctor renders the same portrait on /{country}/{lang}/doctors
+          // and on /{country}/{lang}/doctors/{slug}.
+          orderBy: [{ createdAt: "asc" }, { id: "asc" }],
           select: { id: true, kind: true, key: true, path: true, altText: true },
         },
         // Per-market registration row for this country (see Phase 2

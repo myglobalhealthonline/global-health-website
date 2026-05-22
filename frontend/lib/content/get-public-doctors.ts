@@ -66,14 +66,26 @@ function readCountry(row: unknown): { code: CountryCode; name: string; teamPath:
 function profileImageFromRow(row: unknown): string | undefined {
   const assets = (row as { assets?: unknown }).assets;
   if (!Array.isArray(assets)) return undefined;
+  // Prefer the asset whose key matches the canonical "doctor-<id>-profile"
+  // convention used when an admin explicitly uploads a profile shot via
+  // the doctor edit form. Falls back to the first IMAGE asset (which is
+  // now ordered deterministically by createdAt on the backend) so older
+  // doctors who only have a single asset still render. Same picker
+  // runs on the country-collections + admin-list paths, so all surfaces
+  // agree.
+  let firstImage: string | undefined;
   for (const a of assets) {
     if (!a || typeof a !== "object") continue;
-    const rec = a as { kind?: unknown; path?: unknown };
+    const rec = a as { kind?: unknown; path?: unknown; key?: unknown };
     if (rec.kind !== "IMAGE" || typeof rec.path !== "string") continue;
     const url = resolveTrustedAssetUrl(rec.path);
-    if (url) return url;
+    if (!url) continue;
+    if (typeof rec.key === "string" && /-profile$/i.test(rec.key)) {
+      return url;
+    }
+    if (!firstImage) firstImage = url;
   }
-  return undefined;
+  return firstImage;
 }
 
 function specialtyNames(row: unknown): string[] {

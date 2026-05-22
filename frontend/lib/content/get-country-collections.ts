@@ -90,14 +90,24 @@ function readSpecialtyName(row: unknown): string | null {
 function pickImagePath(row: unknown): string | undefined {
   const assets = (row as { assets?: unknown }).assets;
   if (!Array.isArray(assets)) return undefined;
+  // Match `profileImageFromRow` in get-public-doctors.ts: prefer the
+  // asset whose key matches the "-profile" convention, else fall back
+  // to the first image (now ordered deterministically by backend).
+  // Identical logic on both pickers so /doctors index + doctor detail
+  // + home DoctorWall all render the same portrait per doctor.
+  let firstImage: string | undefined;
   for (const a of assets) {
     if (!a || typeof a !== "object") continue;
-    const rec = a as { kind?: unknown; path?: unknown };
+    const rec = a as { kind?: unknown; path?: unknown; key?: unknown };
     if (rec.kind !== "IMAGE" || typeof rec.path !== "string") continue;
     const resolved = resolveTrustedAssetUrl(rec.path);
-    if (resolved) return resolved;
+    if (!resolved) continue;
+    if (typeof rec.key === "string" && /-profile$/i.test(rec.key)) {
+      return resolved;
+    }
+    if (!firstImage) firstImage = resolved;
   }
-  return undefined;
+  return firstImage;
 }
 
 /** Services for a country, filtered by kind. Skips inactive rows. */
