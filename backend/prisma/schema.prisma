@@ -1121,6 +1121,11 @@ model User {
   role                    UserRole                 @default(PATIENT)
   emailVerifiedAt         DateTime?
   isActive                Boolean                  @default(true)
+  /// True when this account was created with a temporary password
+  /// (e.g. admin-initiated manual booking). Login flow force-redirects
+  /// to /account/change-password on first successful sign-in; the
+  /// change-password endpoint clears the flag back to false.
+  mustChangePassword      Boolean                  @default(false)
   /// Set when role=DOCTOR — links the login account to the Doctor
   /// profile that shows on the public site. Admin assigns this from
   /// the doctor edit page. One-to-one.

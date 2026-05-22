@@ -280,6 +280,52 @@ export const fetchAdminAppointmentById = cache(async (id: string) => {
   return adminRequest<AdminAppointmentDetailPayload>(`/api/admin/appointments/${id}`);
 });
 
+/** Body for POST /api/admin/appointments — admin-initiated manual
+ *  appointment creation. Server upserts the patient User, generates a
+ *  unique temp password, and emails both a Stripe payment link AND a
+ *  set-password link. Response carries the temp password + set-password
+ *  URL so the admin UI can show a recovery banner if the email fails. */
+export type CreateManualAppointmentInput = {
+  patient: {
+    email: string;
+    fullName: string;
+    phone?: string | null;
+    dateOfBirth?: string | null;
+    nationalIdNumber?: string | null;
+    taxIdNumber?: string | null;
+    passportNumber?: string | null;
+    addressLine1?: string | null;
+    addressCity?: string | null;
+    addressCountryCode?: string | null;
+  };
+  serviceId: string;
+  doctorId?: string | null;
+  scheduledAt?: string | null;
+  consultationMode: "ONLINE" | "IN_PERSON";
+  clinicId?: string | null;
+  locationAddress?: string | null;
+  notes?: string | null;
+  countryCode: string;
+  returnTo?: string;
+};
+
+export type CreateManualAppointmentResult = {
+  appointmentId: string;
+  patientUserId: string;
+  paymentUrl: string | null;
+  paymentSessionId: string | null;
+  tempPassword: string;
+  setPasswordUrl: string;
+  emailQueued: boolean;
+};
+
+export async function postAdminManualBooking(input: CreateManualAppointmentInput) {
+  return adminRequest<CreateManualAppointmentResult>("/api/admin/appointments", {
+    method: "POST",
+    body: input,
+  });
+}
+
 export async function patchAdminAppointmentStatus(id: string, status: string) {
   return adminRequest<AdminAppointmentDetailPayload>(`/api/admin/appointments/${id}/status`, {
     method: "PATCH",

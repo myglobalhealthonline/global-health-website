@@ -7,6 +7,7 @@ import { ScopeBanner } from "../_components/scope-banner";
 import {
   AdminCard,
   AdminTable,
+  Btn,
   IconBtn,
   PageHeader,
   Pill,
@@ -146,6 +147,18 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
         eyebrow="Operations"
         title="Appointment queue"
         description="Internal review queue. Filters and pagination run on the server; status moves follow rules on the detail page."
+        actions={
+          <Btn
+            href={
+              activeCountry?.code
+                ? `/admin/appointments/new?countryCode=${activeCountry.code}`
+                : "/admin/appointments/new"
+            }
+            variant="primary"
+          >
+            + New manual booking
+          </Btn>
+        }
       />
 
       <ScopeBanner activeCountry={activeCountry} clearHref="/admin/appointments" />

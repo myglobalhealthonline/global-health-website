@@ -18,10 +18,17 @@ import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import {
   adminAppointmentsQuerySchema,
   appointmentIdParamsSchema,
+  createManualAppointmentBodySchema,
   scheduleAppointmentBodySchema,
   updateAppointmentStatusBodySchema,
 } from "../validations/admin-appointments.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import {
+  createManualBooking,
+  DoctorNotFoundError,
+  ServiceNotFoundError,
+  ServicePriceMissingError,
+} from "../modules/appointments/manual-booking.service.js";
 
 const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
@@ -53,6 +60,64 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected admin appointments error"));
+    }
+  });
+
+  /**
+   * Admin-initiated manual appointment creation. Walks the full
+   * pipeline (patient User + temp password + Stripe Checkout +
+   * portal-invite email) via `createManualBooking`. Body shape lives
+   * in `createManualAppointmentBodySchema`; response carries the
+   * temp password + set-password URL so the admin can read them out
+   * to the patient if the email is delayed.
+   */
+  app.post("/api/admin/appointments", async (request, reply) => {
+    const body = createManualAppointmentBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid manual booking payload", body.error.flatten()));
+    }
+
+    // Determine the admin actor id. Session cookie → User.id; token
+    // fallback has no user row, so we leave actorUserId as a synthetic
+    // marker ("admin_token_fallback") for audit purposes.
+    const actor = await resolveOptionalAuthUser(request);
+    const adminUserId = actor?.role === "ADMIN" ? actor.id : "admin_token_fallback";
+
+    try {
+      const result = await createManualBooking({
+        adminUserId,
+        patient: body.data.patient,
+        serviceId: body.data.serviceId,
+        doctorId: body.data.doctorId ?? null,
+        scheduledAt: body.data.scheduledAt ?? null,
+        consultationMode: body.data.consultationMode,
+        clinicId: body.data.clinicId ?? null,
+        locationAddress: body.data.locationAddress ?? null,
+        notes: body.data.notes ?? null,
+        countryCode: body.data.countryCode,
+        returnTo: body.data.returnTo,
+        request,
+      });
+      return reply.status(201).send(okResponse(result, "Manual booking created"));
+    } catch (error) {
+      if (error instanceof ServiceNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      if (error instanceof DoctorNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      if (error instanceof ServicePriceMissingError) {
+        return reply.status(422).send(errorResponse(error.message));
+      }
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply
+        .status(500)
+        .send(errorResponse("Unexpected manual booking error"));
     }
   });
 

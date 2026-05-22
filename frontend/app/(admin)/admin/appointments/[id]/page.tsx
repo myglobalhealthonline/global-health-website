@@ -73,7 +73,18 @@ function FieldRow({
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ error?: string; success?: string }>;
+  searchParams?: Promise<{
+    error?: string;
+    success?: string;
+    /** Recovery banner after admin-initiated manual booking — carries
+     *  the freshly-generated temp password + invite link so the admin
+     *  can read them out if the patient says the email didn't arrive. */
+    manualBooked?: string;
+    tempPassword?: string;
+    setPasswordUrl?: string;
+    paymentUrl?: string;
+    emailQueued?: string;
+  }>;
 };
 
 export default async function AdminAppointmentDetailPage({
@@ -287,6 +298,53 @@ export default async function AdminAppointmentDetailPage({
         <p className="gh-status-success mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
           {messages.success}
         </p>
+      ) : null}
+
+      {messages.manualBooked === "1" ? (
+        <div className="mb-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border-strong)] bg-[var(--color-background-soft)] px-4 py-3 text-sm">
+          <p className="font-bold text-[var(--color-text-primary)]">
+            Manual booking created.
+            {messages.emailQueued === "1"
+              ? " Patient email queued."
+              : " ⚠ Email send failed — copy the details below and share manually."}
+          </p>
+          <dl className="mt-2 grid gap-1 text-[13px] text-[var(--color-text-body)]">
+            {messages.tempPassword ? (
+              <div>
+                <dt className="inline font-semibold">Temp password:</dt>{" "}
+                <code className="rounded bg-[var(--color-background-page)] px-2 py-0.5 font-mono">
+                  {messages.tempPassword}
+                </code>
+              </div>
+            ) : null}
+            {messages.setPasswordUrl ? (
+              <div className="break-all">
+                <dt className="inline font-semibold">Set-password URL (7d):</dt>{" "}
+                <a
+                  className="text-[var(--color-primary)] underline"
+                  href={messages.setPasswordUrl}
+                >
+                  {messages.setPasswordUrl}
+                </a>
+              </div>
+            ) : null}
+            {messages.paymentUrl ? (
+              <div className="break-all">
+                <dt className="inline font-semibold">Stripe payment URL:</dt>{" "}
+                <a
+                  className="text-[var(--color-primary)] underline"
+                  href={messages.paymentUrl}
+                >
+                  {messages.paymentUrl}
+                </a>
+              </div>
+            ) : (
+              <div className="text-[var(--color-text-muted)]">
+                Stripe not configured — invoice this booking manually.
+              </div>
+            )}
+          </dl>
+        </div>
       ) : null}
 
       <div className="gh-admin-detail-layout">

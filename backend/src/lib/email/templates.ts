@@ -455,6 +455,101 @@ export async function sendGeneratedDocumentEmail(opts: {
   });
 }
 
+/**
+ * Sent when admin creates an appointment on the patient's behalf
+ * (walk-in / phone-in). Single email, two CTAs:
+ *   1) pay the consultation fee via Stripe Checkout
+ *   2) access the patient portal — either via a 7-day set-password
+ *      invite link, OR with a uniquely-generated temporary password
+ *      they're forced to rotate on first login.
+ *
+ * Mirrors the doctor-invite pattern for the portal CTA so the consent
+ * + bounce profile stays the same across all "admin created an
+ * account for you" flows.
+ */
+export async function sendManualBookingEmail(opts: {
+  to: string;
+  patientName: string;
+  doctorName: string | null;
+  serviceName: string;
+  scheduledAt: Date | null;
+  paymentUrl: string;
+  setPasswordUrl: string;
+  tempPassword: string;
+}) {
+  const greeting = opts.patientName?.trim() || "there";
+  const doctorLine = opts.doctorName
+    ? ` with ${opts.doctorName}`
+    : "";
+  const slotLine = opts.scheduledAt
+    ? `Scheduled for ${opts.scheduledAt.toUTCString()}.`
+    : "Our team will follow up with the exact slot.";
+  const localHint = opts.scheduledAt?.toISOString() ?? "";
+  const slotHtml = opts.scheduledAt
+    ? `<p style="margin:16px 0;font-size:16px;font-weight:600;color:#1B4D3E;">
+         📅 <time datetime="${escapeHtml(localHint)}">${escapeHtml(opts.scheduledAt.toUTCString())}</time>
+       </p>`
+    : `<p style="margin:16px 0;font-size:14px;color:#737373;">Our team will follow up to confirm the exact slot.</p>`;
+
+  return sendEmail({
+    to: opts.to,
+    subject: `Your appointment is booked — pay & access your portal`,
+    text: `Hi ${greeting},
+
+Our team booked a ${opts.serviceName}${doctorLine} for you. ${slotLine}
+
+To finish:
+
+1) Pay your consultation fee:
+   ${opts.paymentUrl}
+
+2) Access your patient portal — choose one:
+   • Set your own password (recommended, link valid 7 days):
+     ${opts.setPasswordUrl}
+   • Or sign in now with your temporary password: ${opts.tempPassword}
+     (you'll be asked to change it on first login).
+
+Reply to this email if anything looks off.
+
+— Global Health`,
+    html: wrapHtml(
+      "Your appointment is booked",
+      `<p>Hi ${escapeHtml(greeting)},</p>
+       <p>Our team booked a <strong>${escapeHtml(opts.serviceName)}</strong>${doctorLine ? ` with <strong>${escapeHtml(opts.doctorName ?? "")}</strong>` : ""} for you.</p>
+       ${slotHtml}
+
+       <h3 style="margin:32px 0 8px;color:#1B4D3E;">1. Pay for your consultation</h3>
+       <p>Secure checkout — we'll confirm the booking automatically once payment lands.</p>
+       <p style="margin:16px 0 28px;">
+         <a href="${escapeHtml(opts.paymentUrl)}"
+            style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">
+           Pay now
+         </a>
+       </p>
+
+       <h3 style="margin:24px 0 8px;color:#1B4D3E;">2. Access your patient portal</h3>
+       <p>Two ways to get in — pick whichever feels easier:</p>
+       <p style="margin:16px 0;">
+         <a href="${escapeHtml(opts.setPasswordUrl)}"
+            style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">
+           Set your password
+         </a>
+         <span style="font-size:13px;color:#737373;margin-left:8px;">recommended · link valid 7 days</span>
+       </p>
+       <p style="margin:16px 0;font-size:14px;color:#374151;">
+         Or sign in right now with this temporary password
+         (you'll be asked to change it on first login):<br/>
+         <code style="display:inline-block;margin-top:6px;padding:8px 12px;background:#F1F1EF;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:1px;">${escapeHtml(opts.tempPassword)}</code>
+       </p>
+
+       <p style="margin-top:32px;font-size:13px;color:#737373;">
+         If you didn't expect this booking, reply to this email and
+         we'll sort it out.
+       </p>`,
+    ),
+  });
+}
+
 export async function sendPatientUploadLinkEmail(opts: {
   to: string;
   patientName: string;

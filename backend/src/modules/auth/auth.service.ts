@@ -17,6 +17,11 @@ export type SafeUser = {
   role: UserRole;
   emailVerifiedAt: string | null;
   isActive: boolean;
+  /** Set TRUE when account was created with a temporary password
+   *  (admin walk-in flow). Frontend force-redirects the user to
+   *  /account/change-password on first authenticated request. Cleared
+   *  the moment the user changes the password themselves. */
+  mustChangePassword: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -45,6 +50,7 @@ function toSafeUser(user: User): SafeUser {
     role: user.role,
     emailVerifiedAt: user.emailVerifiedAt ? user.emailVerifiedAt.toISOString() : null,
     isActive: user.isActive,
+    mustChangePassword: (user as { mustChangePassword?: boolean }).mustChangePassword ?? false,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),
   };
@@ -180,7 +186,9 @@ export async function changeUserPassword(
     const newHash = await bcrypt.hash(newPassword, 12);
     const updated = await prisma.user.update({
       where: { id },
-      data: { passwordHash: newHash },
+      // Clear the must-change flag on a successful self-rotation —
+      // the temp password is now invalid, so the gate is satisfied.
+      data: { passwordHash: newHash, mustChangePassword: false },
     });
     return toSafeUser(updated);
   } catch (error) {
@@ -376,9 +384,12 @@ export async function consumePasswordResetToken(
     const updates: Prisma.PrismaPromise<unknown>[] = [
       prisma.user.update({
         where: { id: row.userId },
+        // Resetting the password via the email token always satisfies
+        // the must-change gate (the patient just proved control of
+        // the inbox AND chose their own password).
         data: row.isInvite
-          ? { passwordHash, emailVerifiedAt: new Date() }
-          : { passwordHash },
+          ? { passwordHash, emailVerifiedAt: new Date(), mustChangePassword: false }
+          : { passwordHash, mustChangePassword: false },
       }),
       prisma.passwordResetToken.update({
         where: { tokenHash },

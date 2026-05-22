@@ -136,5 +136,79 @@ export const adminAppointmentsQuerySchema = z.object({
     .transform((value) => (value === undefined || value === "" ? undefined : value)),
 });
 
+/**
+ * Body for admin-initiated manual appointment creation. The admin is
+ * filling in the booking form on behalf of a walk-in / phone-in
+ * patient, so we collect the patient identity + the appointment slot
+ * + the consultation mode in one shot. The route layer then upserts
+ * a patient User account, generates a unique temp password, fires a
+ * payment link via Stripe, and emails the patient with both CTAs.
+ */
+export const createManualAppointmentBodySchema = z
+  .object({
+    patient: z
+      .object({
+        email: z.string().trim().toLowerCase().email("Invalid patient email").max(254),
+        fullName: z.string().trim().min(2).max(120),
+        phone: z.string().trim().max(40).optional().nullable(),
+        dateOfBirth: z.string().trim().max(40).optional().nullable(),
+        nationalIdNumber: z.string().trim().max(64).optional().nullable(),
+        taxIdNumber: z.string().trim().max(64).optional().nullable(),
+        passportNumber: z.string().trim().max(64).optional().nullable(),
+        addressLine1: z.string().trim().max(200).optional().nullable(),
+        addressCity: z.string().trim().max(100).optional().nullable(),
+        addressCountryCode: z.string().trim().max(8).optional().nullable(),
+      })
+      .strict(),
+    serviceId: z.string().trim().min(1).max(60),
+    doctorId: z.string().trim().min(1).max(60).optional().nullable(),
+    scheduledAt: z
+      .string()
+      .datetime({ offset: true })
+      .optional()
+      .nullable(),
+    consultationMode: z.enum(["ONLINE", "IN_PERSON"]).default("ONLINE"),
+    clinicId: z.string().trim().min(1).max(60).optional().nullable(),
+    locationAddress: z.string().trim().max(500).optional().nullable(),
+    notes: z.string().trim().max(2000).optional().nullable(),
+    countryCode: countryCodeSchema,
+    returnTo: z
+      .string()
+      .trim()
+      .max(200)
+      .regex(/^\/[a-z0-9/-]*$/i, "returnTo must start with /")
+      .optional(),
+  })
+  .strict()
+  .refine(
+    (data) => {
+      if (data.consultationMode !== "IN_PERSON") return true;
+      return Boolean(
+        (data.clinicId && data.clinicId.length > 0) ||
+          (data.locationAddress && data.locationAddress.length > 0),
+      );
+    },
+    {
+      message:
+        "In-person appointments need a clinic or a location address.",
+      path: ["clinicId"],
+    },
+  )
+  .refine(
+    (data) =>
+      !(
+        data.clinicId &&
+        data.clinicId.length > 0 &&
+        data.locationAddress &&
+        data.locationAddress.length > 0
+      ),
+    {
+      message: "Provide a clinic OR a location address, not both.",
+      path: ["locationAddress"],
+    },
+  );
+
+export type CreateManualAppointmentBody = z.infer<typeof createManualAppointmentBodySchema>;
+
 export type AppointmentStatus = z.infer<typeof appointmentStatusSchema>;
 export type AdminAppointmentsQuery = z.infer<typeof adminAppointmentsQuerySchema>;
