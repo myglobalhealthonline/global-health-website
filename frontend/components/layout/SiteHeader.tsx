@@ -108,15 +108,7 @@ export function SiteHeader({
       : "/";
 
   return (
-    <header
-      className="sticky top-0 z-40 w-full"
-      style={{
-        background: "rgba(255,255,255,0.92)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        borderBottom: "1px solid var(--color-border)",
-      }}
-    >
+    <header className="gh-header-sticky w-full">
       <div
         className="mx-auto grid items-center"
         style={{
