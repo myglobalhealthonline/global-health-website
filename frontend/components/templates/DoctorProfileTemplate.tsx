@@ -4,10 +4,16 @@ import Link from "next/link";
 import {
   ArrowLeft,
   ArrowUpRight,
+  CalendarDays,
   ExternalLink,
+  Globe,
+  MapPin,
+  ShieldCheck,
+  User,
 } from "lucide-react";
 import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 
+/* ─── Types ──────────────────────────────────────────────────────────────── */
 type DoctorProfileTemplateProps = {
   hero: {
     title: string;
@@ -34,6 +40,30 @@ type DoctorProfileTemplateProps = {
   doctifyWidgetUrl?: string;
 };
 
+/* ─── Hero metadata chip ─────────────────────────────────────────────────── */
+function MetaChip({
+  icon,
+  label,
+}: {
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <span
+      className="inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-medium"
+      style={{
+        background: "rgba(255,255,255,0.07)",
+        border: "1px solid rgba(255,255,255,0.12)",
+        color: "rgba(255,255,255,0.80)",
+      }}
+    >
+      <span style={{ color: "var(--color-brand-accent)", display: "flex" }}>{icon}</span>
+      {label}
+    </span>
+  );
+}
+
+/* ─── Component ──────────────────────────────────────────────────────────── */
 export function DoctorProfileTemplate({
   hero,
   profile,
@@ -46,143 +76,224 @@ export function DoctorProfileTemplate({
 
   return (
     <main className="bg-[var(--color-background-page)]">
-      {/* HERO — dark editorial with portrait split. Keeps the
-        * portrait-alongside-name pattern (it's a profile page) but on
-        * a forest-night canvas with Cormorant italic accent. */}
+
+      {/* ── HERO — dark forest, medical cross pattern, split layout ── */}
       <section
-        className="relative isolate overflow-hidden bg-[var(--color-background-dark)] text-white"
+        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
+        style={{
+          background: "var(--color-background-dark)",
+          padding: "clamp(48px,6vw,80px) 0 clamp(56px,7vw,96px)",
+        }}
       >
+        {/* Lime radial glow — top-right */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10"
           style={{
-            background: `
-              radial-gradient(ellipse 1200px 700px at 100% -20%, rgba(176, 241, 34, 0.18), transparent 55%),
-              radial-gradient(ellipse 900px 600px at -10% 110%, rgba(200, 230, 160, 0.08), transparent 60%),
-              linear-gradient(180deg, #0A2620 0%, var(--color-background-dark) 60%, #0A2620 100%)
-            `,
+            background:
+              "radial-gradient(ellipse 900px 600px at 100% -15%, rgba(176,241,34,0.13), transparent 55%)",
           }}
         />
-        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10 pt-12 pb-20 md:pt-16 md:pb-24">
-          {backHref ? (
-            <Link
-              href={backHref}
-              className="inline-flex items-center gap-1.5 text-[12.5px] font-medium uppercase tracking-[0.16em] text-white/55 underline-offset-4 hover:text-white hover:underline"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              Back to {profile.country} clinicians
-            </Link>
-          ) : null}
 
-          <div className="mt-10 grid items-start gap-12 lg:grid-cols-[460px_1fr] lg:gap-20">
-            <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-white/10 bg-white/[0.03]">
+        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <div className="grid items-center gap-10 lg:grid-cols-[420px_1fr] lg:gap-16 xl:grid-cols-[460px_1fr] xl:gap-20">
+
+            {/* ── LEFT — portrait ── */}
+            <div
+              className="relative overflow-hidden"
+              style={{
+                borderRadius: 28,
+                border: "1px solid rgba(255,255,255,0.10)",
+                background: "rgba(255,255,255,0.03)",
+                aspectRatio: "3 / 4",
+              }}
+            >
               {profileImageSrc ? (
-                <div className="relative aspect-[4/5]">
-                  <Image
-                    src={profileImageSrc}
-                    alt={profile.name}
-                    fill
-                    sizes="(min-width:1024px) 460px, 100vw"
-                    priority
-                    className="object-cover"
-                    // Same /api/media/ + external-https guard the
-                    // DoctorCard already uses — Next's image optimiser
-                    // refuses paths it can't pre-resolve and returns a
-                    // broken response otherwise.
-                    unoptimized={
-                      /^https?:\/\//i.test(profileImageSrc) ||
-                      profileImageSrc.startsWith("/api/media/")
-                    }
-                  />
-                </div>
+                <Image
+                  src={profileImageSrc}
+                  alt={profile.name}
+                  fill
+                  sizes="(min-width:1280px) 460px, (min-width:1024px) 420px, 100vw"
+                  priority
+                  className="object-cover object-top"
+                  unoptimized={
+                    /^https?:\/\//i.test(profileImageSrc) ||
+                    profileImageSrc.startsWith("/api/media/")
+                  }
+                />
               ) : (
-                <div className="aspect-[4/5]" />
+                /* placeholder gradient when no image */
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(160deg, rgba(176,241,34,0.08) 0%, rgba(29,75,54,0.30) 100%)",
+                  }}
+                />
               )}
+
+              {/* Bottom name card overlay */}
+              {profileImageSrc ? (
+                <div
+                  className="absolute bottom-0 left-0 right-0 px-5 py-4"
+                  style={{
+                    background:
+                      "linear-gradient(0deg, rgba(8,22,15,0.82) 0%, rgba(8,22,15,0.55) 70%, transparent 100%)",
+                  }}
+                >
+                  <p className="text-[13px] font-medium" style={{ color: "rgba(255,255,255,0.55)" }}>
+                    {profile.title}
+                  </p>
+                  <p className="mt-0.5 text-[15px] font-bold" style={{ color: "rgba(255,255,255,0.92)" }}>
+                    {profile.name}
+                  </p>
+                </div>
+              ) : null}
             </div>
 
+            {/* ── RIGHT — info ── */}
             <div>
-              <span className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/[0.04] px-3 py-1.5 backdrop-blur-sm text-[length:var(--text-eyebrow)] font-semibold uppercase tracking-[0.06em] text-white/90">
-                {profile.title} · {profile.country}
-              </span>
+              {/* Nav links */}
+              <div className="flex flex-wrap items-center gap-2">
+                {backHref ? (
+                  <Link
+                    href={backHref}
+                    className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12.5px] font-semibold transition-colors duration-200 hover:bg-white/10"
+                    style={{
+                      background: "rgba(255,255,255,0.06)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                      color: "rgba(255,255,255,0.70)",
+                    }}
+                  >
+                    <ArrowLeft className="size-3.5 shrink-0" strokeWidth={2} />
+                    Back to {profile.country} team
+                  </Link>
+                ) : null}
+
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12.5px] font-semibold"
+                  style={{
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    color: "rgba(255,255,255,0.70)",
+                  }}
+                >
+                  <User className="size-3.5 shrink-0" strokeWidth={1.8} aria-hidden />
+                  Doctor Profile
+                </span>
+              </div>
+
+              {/* Name */}
               <h1
-                className="
-                  mt-7 max-w-[18ch]
-                  font-semibold tracking-[-0.03em] leading-[0.98]
-                  text-[clamp(2.75rem,5.5vw+0.5rem,5.5rem)]
-                "
-                style={{ fontWeight: 800 }}
+                className="mt-6 font-extrabold tracking-[-0.03em] leading-[1.0]"
+                style={{
+                  fontSize: "clamp(2.4rem,4.5vw+0.5rem,4.2rem)",
+                  color: "rgba(255,255,255,0.95)",
+                }}
               >
                 {profile.name}
               </h1>
 
+              {/* Role — lime green */}
+              <p
+                className="mt-3 text-[1.1rem] font-semibold"
+                style={{ color: "var(--color-brand-accent)" }}
+              >
+                {profile.title}
+              </p>
+
+              {/* Description */}
               {hero.description ? (
-                <p className="mt-7 max-w-[44ch] text-base md:text-lg leading-relaxed text-white/72">
+                <p
+                  className="mt-4 max-w-[46ch] text-[15px] leading-relaxed"
+                  style={{ color: "rgba(255,255,255,0.48)" }}
+                >
                   {hero.description}
                 </p>
               ) : null}
 
-              <dl className="mt-10 grid max-w-[520px] grid-cols-2 gap-x-10 gap-y-7 border-t border-white/10 pt-9">
-                {profile.imcRegistration ? (
-                  <Meta
-                    label="Registration"
-                    value={
-                      profile.medicalRegistrationUrl ? (
-                        <a
-                          href={profile.medicalRegistrationUrl}
-                          target="_blank"
-                          rel="noopener"
-                          className="inline-flex items-center gap-1 text-[var(--color-accent)] underline-offset-4 hover:underline"
-                        >
-                          {profile.imcRegistration}
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      ) : (
-                        profile.imcRegistration
-                      )
-                    }
+              {/* Specialty tags */}
+              {profile.specialties.length > 0 ? (
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {profile.specialties.slice(0, 4).map((s) => (
+                    <span
+                      key={s}
+                      className="rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold"
+                      style={{
+                        background: "rgba(255,255,255,0.07)",
+                        border: "1px solid rgba(255,255,255,0.12)",
+                        color: "rgba(255,255,255,0.75)",
+                      }}
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+
+              {/* Metadata chips — horizontal */}
+              <div className="mt-6 flex flex-wrap gap-2.5">
+                {profile.country ? (
+                  <MetaChip
+                    icon={<MapPin className="size-3.5" strokeWidth={1.8} aria-hidden />}
+                    label={profile.country}
                   />
                 ) : null}
                 {profile.languages.length > 0 ? (
-                  <Meta label="Languages" value={profile.languages.join(" · ")} />
-                ) : null}
-                {profile.specialties.length > 0 ? (
-                  <Meta
-                    label="Focus areas"
-                    value={profile.specialties.slice(0, 3).join(" · ")}
+                  <MetaChip
+                    icon={<Globe className="size-3.5" strokeWidth={1.8} aria-hidden />}
+                    label={profile.languages.join(", ")}
                   />
                 ) : null}
-                <Meta label="Country" value={profile.country} />
-              </dl>
+                {profile.imcRegistration ? (
+                  <MetaChip
+                    icon={<ShieldCheck className="size-3.5" strokeWidth={1.8} aria-hidden />}
+                    label={profile.imcRegistration}
+                  />
+                ) : null}
+              </div>
 
-              <div className="mt-10 flex flex-wrap items-center gap-3">
+              {/* CTA buttons */}
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                {/* Primary — lime, dark text */}
                 <Link
                   href={hero.primaryCta.href}
-                  className="
-                    inline-flex items-center justify-center gap-2
-                    rounded-full bg-[var(--color-accent)]
-                    px-7 py-4
-                    text-[15px] font-bold text-[var(--color-background-dark)]
-                    transition-[background-color,transform] duration-200
-                    hover:bg-white
-                    active:scale-[0.98] motion-reduce:active:scale-100
-                    motion-reduce:transition-none
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
-                  "
+                  className="inline-flex items-center gap-2 rounded-full text-[14.5px] font-bold transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-[0.98]"
+                  style={{
+                    background: "var(--color-brand-accent)",
+                    color: "var(--color-brand-primary)",
+                    padding: "13px 24px",
+                  }}
                 >
+                  <CalendarDays className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
                   {hero.primaryCta.label}
-                  <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} />
                 </Link>
-                {hero.secondaryCta ? (
+
+                {/* Secondary — outlined */}
+                {profile.medicalRegistrationUrl ? (
+                  <a
+                    href={profile.medicalRegistrationUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full text-[14.5px] font-semibold transition-[background-color] duration-200 hover:bg-white/10"
+                    style={{
+                      border: "1.5px solid rgba(255,255,255,0.22)",
+                      color: "rgba(255,255,255,0.85)",
+                      padding: "12px 22px",
+                    }}
+                  >
+                    <ExternalLink className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
+                    Medical registration
+                  </a>
+                ) : hero.secondaryCta ? (
                   <Link
                     href={hero.secondaryCta.href}
-                    className="
-                      inline-flex items-center justify-center gap-2
-                      rounded-full border border-white/25 bg-transparent
-                      px-6 py-4 text-[15px] font-semibold text-white/90
-                      transition-[background-color,border-color] duration-200
-                      hover:bg-white/10 hover:border-white/40
-                      motion-reduce:transition-none
-                    "
+                    className="inline-flex items-center gap-2 rounded-full text-[14.5px] font-semibold transition-[background-color] duration-200 hover:bg-white/10"
+                    style={{
+                      border: "1.5px solid rgba(255,255,255,0.22)",
+                      color: "rgba(255,255,255,0.85)",
+                      padding: "12px 22px",
+                    }}
                   >
                     {hero.secondaryCta.label}
                   </Link>
@@ -193,7 +304,7 @@ export function DoctorProfileTemplate({
         </div>
       </section>
 
-      {/* BODY — long-form bio + sticky booking */}
+      {/* ── BODY — long-form bio + sticky booking ── */}
       <section className="gh-section bg-[var(--color-background-page)]">
         <div className="gh-container grid gap-16 lg:grid-cols-[1.5fr_1fr] lg:gap-24">
           <article>
@@ -262,7 +373,7 @@ export function DoctorProfileTemplate({
         </div>
       </section>
 
-      {/* Bottom CTA */}
+      {/* ── Bottom CTA ── */}
       <section className="gh-section-sm border-t border-[var(--color-border)] bg-[var(--color-background-soft)]">
         <div className="gh-container">
           <div className="grid items-end gap-10 lg:grid-cols-[1.6fr_1fr]">
@@ -285,17 +396,7 @@ export function DoctorProfileTemplate({
           </div>
         </div>
       </section>
-    </main>
-  );
-}
 
-function Meta({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div>
-      <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/55">
-        {label}
-      </dt>
-      <dd className="mt-2 text-[14.5px] text-white">{value}</dd>
-    </div>
+    </main>
   );
 }
