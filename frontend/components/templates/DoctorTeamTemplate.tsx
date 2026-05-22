@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Languages } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
+import { DoctorCard } from "@/components/cards/DoctorCard";
 
 type Doctor = {
   name: string;
@@ -24,15 +24,6 @@ type DoctorTeamTemplateProps = {
   bookingLabel: string;
   showBottomCta?: boolean;
 };
-
-function stripHtml(value: string) {
-  return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-}
-
-function truncate(value: string, max = 140) {
-  const t = stripHtml(value);
-  return t.length <= max ? t : `${t.slice(0, max - 1).trimEnd()}…`;
-}
 
 export function DoctorTeamTemplate({
   countryName,
@@ -63,7 +54,7 @@ export function DoctorTeamTemplate({
         ctaHref={bookingHref}
       />
 
-      {/* GRID — light section, white cards */}
+      {/* GRID — light soft section, DoctorCard components */}
       <section className="gh-section bg-[var(--color-background-soft)]">
         <div className="gh-container">
           {doctors.length === 0 ? (
@@ -83,64 +74,21 @@ export function DoctorTeamTemplate({
               </Link>
             </div>
           ) : (
-            <ul className="grid grid-cols-1 gap-x-10 gap-y-16 md:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
               {doctors.map((d) => (
                 <li key={(d.href ?? "") + d.name}>
-                  <article>
-                    <Link
-                      href={d.href ?? "#"}
-                      className="group block"
-                    >
-                      <div className="relative aspect-[3/4] overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-background-panel)]">
-                        {d.imageSrc ? (
-                          <Image
-                            src={d.imageSrc}
-                            alt={d.name}
-                            fill
-                            sizes="(min-width:1024px) 380px, (min-width:768px) 50vw, 100vw"
-                            className="object-cover"
-                            // Admin-uploaded portraits live under /api/media/
-                            // and aren't pre-registered in
-                            // next.config.remotePatterns. Without
-                            // `unoptimized`, Next's image optimiser refuses
-                            // them and returns a broken response — same
-                            // guard DoctorCard already has on the consult
-                            // pages.
-                            unoptimized={
-                              /^https?:\/\//i.test(d.imageSrc) ||
-                              d.imageSrc.startsWith("/api/media/")
-                            }
-                          />
-                        ) : null}
-                      </div>
-                      <div className="mt-5 flex items-start justify-between gap-4">
-                        <div>
-                          <h3 className="text-[1.05rem] font-extrabold tracking-[-0.01em] leading-tight text-[var(--color-text-primary)]">
-                            {d.name}
-                          </h3>
-                          {d.title ? (
-                            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-                              {d.title}
-                            </p>
-                          ) : null}
-                        </div>
-                        <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-[var(--color-text-muted)] transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[var(--color-text-primary)] motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0" />
-                      </div>
-                    </Link>
-
-                    {d.languages && d.languages.length > 0 ? (
-                      <p className="mt-3 inline-flex items-center gap-1.5 text-[11.5px] uppercase tracking-[0.14em] text-[var(--color-text-muted)]">
-                        <Languages className="h-3 w-3" />
-                        {d.languages.slice(0, 3).join(" · ")}
-                      </p>
-                    ) : null}
-
-                    {d.bio ? (
-                      <p className="mt-3 text-[14px] leading-[1.7] text-[var(--color-text-muted)]">
-                        {truncate(d.bio, 160)}
-                      </p>
-                    ) : null}
-                  </article>
+                  <DoctorCard
+                    name={d.name}
+                    title={d.title}
+                    imcRegistration={d.imcRegistration}
+                    medicalRegistrationUrl={d.medicalRegistrationUrl}
+                    languages={d.languages}
+                    whatsappNumber={d.whatsappNumber}
+                    bio={d.bio}
+                    imageSrc={d.imageSrc}
+                    href={d.href}
+                    ctaLabel={d.ctaLabel ?? "View profile"}
+                  />
                 </li>
               ))}
             </ul>
