@@ -104,7 +104,7 @@ export function DoctorTeamTemplate({
                             alt={d.name}
                             fill
                             sizes="(min-width:1024px) 380px, (min-width:768px) 50vw, 100vw"
-                            className="object-cover transition duration-700 group-hover:scale-[1.04]"
+                            className="object-cover"
                           />
                         ) : null}
                       </div>
@@ -119,7 +119,7 @@ export function DoctorTeamTemplate({
                             </p>
                           ) : null}
                         </div>
-                        <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-[var(--color-text-muted)] transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[var(--color-text-primary)]" />
+                        <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-[var(--color-text-muted)] transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[var(--color-text-primary)] motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0" />
                       </div>
                     </Link>
 

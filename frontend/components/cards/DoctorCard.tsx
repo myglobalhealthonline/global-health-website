@@ -45,7 +45,7 @@ export function DoctorCard({
           width={400}
           height={480}
           unoptimized={unoptimized}
-          className="h-64 w-full object-cover object-top transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          className="h-64 w-full object-cover object-top"
         />
         {/* Gradient overlay at bottom */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
