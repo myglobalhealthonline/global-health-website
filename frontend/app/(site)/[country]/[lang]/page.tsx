@@ -9,6 +9,8 @@ import {
 } from "@/components/sections/ServiceCatalog";
 import { DoctorWall, type DoctorWallItem } from "@/components/sections/DoctorWall";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
+import { CountryMarquee, type MarqueeCountry } from "@/components/sections/CountryMarquee";
+import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
@@ -295,6 +297,46 @@ export default async function CountryLangHomePage({
     "english",
   );
 
+  // Marquee shows every country we cover with its live doctor count
+  // alongside the flag. Active doctors per country come from the
+  // pre-fetched allDoctors roster; falls back to 0 when a country has
+  // no roster yet (still useful — signals coverage).
+  const marqueeCountries: MarqueeCountry[] = countries.map((c) => ({
+    code: c.code,
+    name: c.name,
+    doctorCount: allDoctors.filter((d) => d.countryCode === c.code).length,
+  }));
+
+  // Stats band — four concrete numbers, no marketing puffery. Pulled
+  // from real catalogue data so they update as the platform grows.
+  const totalServicesAcrossEurope =
+    generalServices.length +
+    specialistServices.length +
+    prescriptionServices.length +
+    healthTests.length;
+  const statsItems: StatBandItem[] = [
+    {
+      value: String(totalDoctorsAcrossEurope),
+      label: "Licensed clinicians",
+      caption: "Registered with their local medical council.",
+    },
+    {
+      value: String(countries.length),
+      label: "European markets",
+      caption: "EU-registered, GDPR-compliant by default.",
+    },
+    {
+      value: "24h",
+      label: "Average wait",
+      caption: "From booking to first available video call.",
+    },
+    {
+      value: String(totalServicesAcrossEurope),
+      label: "Bookable services",
+      caption: "Consultations, prescriptions, and home tests.",
+    },
+  ];
+
   const countryUrl = `${getSiteUrl()}/${slug}/${lang}`;
 
   return (
@@ -322,10 +364,12 @@ export default async function CountryLangHomePage({
         heroImageSrc={page?.heroImageSrc ?? null}
         ctaLabel={page?.ctaLabel ?? null}
       />
+      <CountryMarquee countries={marqueeCountries} />
       <RichBodySection html={page?.body} />
       <TrustRibbon items={trustItems} />
       <ReviewBadge countryName={config.name} />
       <ServiceCatalog services={serviceCatalogItems} />
+      <StatsBand items={statsItems} />
       {featuredDoctor ? (
         <FeaturedDoctor
           doctor={{

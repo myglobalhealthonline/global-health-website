@@ -1,22 +1,16 @@
 /**
- * Editorial hero — type-first composition + a live-availability panel
- * that makes the abstract "online consultations" concept tactile by
- * showing real clinicians who are bookable right now.
+ * Dark editorial hero — forest-night canvas, massive sans display,
+ * Cormorant italic accent (single word), live-availability bar
+ * inline below the headline, asymmetric CTA cluster.
  *
- * Layout (lg+):
- *   ┌──────────────────────────────────────────────┐
- *   │  eyebrow                                     │
- *   │  big headline                  ┌──────────┐  │
- *   │  short lede                    │ live now │  │
- *   │  cta row                       │ avatars  │  │
- *   │  ── pulse line ──              │ + book   │  │
- *   └──────────────────────────────────────────────┘
- *
- * Mobile stacks; live panel sits below the CTA row.
+ * The previous "type + side panel" composition was technically clean
+ * but read like every other SaaS template. This one borrows from
+ * magazine cover layouts — heavy ink, big imagery feel from type alone,
+ * one italic moment to break the sans monotony.
  */
 
 import Link from "next/link";
-import { ArrowUpRight, ShieldCheck, Clock } from "lucide-react";
+import { ArrowUpRight, ShieldCheck, Stethoscope, Clock } from "lucide-react";
 import type { CountryCode } from "@/data/countries";
 import { Flag } from "@/components/ui/Flag";
 
@@ -57,260 +51,201 @@ export function HomeHero({
 
   return (
     <section
-      className="gh-section relative overflow-hidden"
-      style={{
-        background: `
-          radial-gradient(ellipse 1100px 700px at 110% -10%, rgba(176, 241, 34, 0.18), transparent 60%),
-          radial-gradient(ellipse 900px 600px at -10% 110%, rgba(27, 77, 62, 0.10), transparent 60%),
-          var(--color-background-page)
-        `,
-      }}
+      className="
+        relative isolate overflow-hidden
+        bg-[var(--color-background-dark)]
+        text-white
+      "
     >
-      {/* Subtle dotted texture — adds visual warmth without competing
-        * with the type. Strength tuned so a screenshot at 1x can't
-        * read it as a pattern, only as paper texture. */}
+      {/* Layered background — three planes stacked for depth.
+        * Plane 1: gradient mesh top-right (lime → fade).
+        * Plane 2: dotted texture overlay at 4% opacity.
+        * Plane 3: bottom hairline that separates from the marquee. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 gh-hero-grain"
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background: `
+            radial-gradient(ellipse 1400px 800px at 100% -20%, rgba(176, 241, 34, 0.22), transparent 55%),
+            radial-gradient(ellipse 900px 700px at -10% 110%, rgba(200, 230, 160, 0.10), transparent 60%),
+            linear-gradient(180deg, #0A2620 0%, var(--color-background-dark) 60%, #0A2620 100%)
+          `,
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='16' cy='16' r='1' fill='%23ffffff'/%3E%3C/svg%3E\")",
+          backgroundSize: "32px 32px",
+        }}
       />
 
-      <div className="relative z-[1] mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-        <div className="gh-hero-split grid items-center gap-12 lg:gap-16">
-          {/* ── LEFT: type + CTAs ─────────────────────────── */}
-          <div className="max-w-[560px]">
-            <div className="inline-flex items-center gap-3">
-              <span aria-hidden className="gh-pulse-dot !size-2" />
-              <span className="gh-eyebrow text-[var(--color-brand-primary)]">
-                {countryName} · Available today
-              </span>
-            </div>
-
-            <h1
-              className="
-                gh-hero-title mt-5
-                font-semibold
-                tracking-[-0.035em]
-                text-[var(--color-text-primary)]
-              "
-            >
-              {displayHeroTitle ? (
-                displayHeroTitle
-              ) : (
-                <>
-                  See a doctor.
-                  <br />
-                  <span className="gh-hero-accent">From anywhere.</span>
-                </>
-              )}
-            </h1>
-
-            <p
-              className="
-                mt-6 max-w-[42ch]
-                text-[length:var(--text-body-lg)]
-                leading-relaxed
-                text-[var(--color-text-body)]
-              "
-            >
-              {displayHeroSubtitle ??
-                "Licensed clinicians, single-form booking, no clinic queues. Pay after the call connects."}
-            </p>
-
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link
-                href={bookHref}
-                className="gh-btn gh-btn-primary"
-                style={{ minWidth: 200 }}
-              >
-                {displayCtaLabel}
-                <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
-              </Link>
-              <Link
-                href="#services"
-                className="gh-btn gh-btn-outline"
-              >
-                Browse services
-              </Link>
-            </div>
-
-            {/* Quiet proof line — sits below the CTAs so it reinforces
-              * the decision rather than competing for attention. */}
-            <ul className="mt-10 flex flex-wrap gap-x-7 gap-y-3 text-[length:var(--text-meta)] text-[var(--color-text-muted)]">
-              <li className="inline-flex items-center gap-2">
-                <ShieldCheck
-                  className="size-4 text-[var(--color-brand-primary)]"
-                  strokeWidth={1.5}
-                  aria-hidden
-                />
-                Registered with {countryName === "Ireland" ? "the IMC" : "the local council"}
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <Clock
-                  className="size-4 text-[var(--color-brand-primary)]"
-                  strokeWidth={1.5}
-                  aria-hidden
-                />
-                Same-day appointments
-              </li>
-            </ul>
-          </div>
-
-          {/* ── RIGHT: live availability panel ────────────── */}
-          <aside
-            aria-label="Doctors available today"
-            className="
-              relative
-              rounded-[var(--radius-card)]
-              border border-[var(--color-border)]
-              bg-[var(--color-background-page)]
-              shadow-[var(--shadow-elevated)]
-              overflow-hidden
-            "
-          >
-            {/* Mint-cream header strip + country tag. The lime pulse
-              * carries the only motion in the hero (motion-reduce
-              * guarded by .gh-pulse-dot in globals.css). */}
-            <header
-              className="
-                flex items-center justify-between
-                px-6 py-4
-                border-b border-[var(--color-border)]
-                bg-[var(--color-background-soft)]
-              "
-            >
-              <div className="inline-flex items-center gap-3">
-                <span
-                  aria-hidden
-                  className="
-                    inline-flex size-9 items-center justify-center
-                    rounded-full
-                    bg-[var(--color-background-page)]
-                    border border-[var(--color-border)]
-                  "
-                >
-                  <Flag code={countryCode} size="md" />
-                </span>
-                <div>
-                  <p className="gh-eyebrow text-[var(--color-text-muted)]">
-                    Booking in
-                  </p>
-                  <p
-                    className="
-                      font-semibold tracking-[-0.01em]
-                      text-[length:var(--text-h3)] leading-tight
-                      text-[var(--color-text-primary)]
-                    "
-                  >
-                    {countryName}
-                  </p>
-                </div>
-              </div>
-              <span className="inline-flex items-center gap-2">
-                <span aria-hidden className="gh-pulse-dot !size-2.5" />
-                <span className="gh-eyebrow text-[var(--color-text-muted)]">
-                  Live
-                </span>
-              </span>
-            </header>
-
-            {/* Doctor avatar strip — overlapping circles is the
-              * universal "people are here right now" signal. Falls
-              * back to a static count when liveDoctors is empty. */}
-            <div className="px-6 pt-6 pb-2">
-              {doctorsForPanel.length > 0 ? (
-                <>
-                  <div className="flex items-center gap-3">
-                    <div className="flex -space-x-2">
-                      {doctorsForPanel.map((d) => (
-                        <AvatarBubble key={d.name} name={d.name} />
-                      ))}
-                    </div>
-                    <p className="text-[length:var(--text-meta)] text-[var(--color-text-body)]">
-                      <span className="font-semibold text-[var(--color-text-primary)]">
-                        {doctorCount}{" "}
-                        {doctorCount === 1 ? "doctor" : "doctors"}
-                      </span>{" "}
-                      online · consulting in {languageLabel}
-                    </p>
-                  </div>
-
-                  <ul className="mt-5 divide-y divide-[var(--color-border)]">
-                    {doctorsForPanel.slice(0, 3).map((d) => (
-                      <li
-                        key={d.name}
-                        className="flex items-center gap-3 py-3 first:pt-0 last:pb-1"
-                      >
-                        <AvatarBubble name={d.name} />
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-[length:var(--text-meta)] font-semibold text-[var(--color-text-primary)]">
-                            {d.name}
-                          </p>
-                          <p className="truncate text-xs text-[var(--color-text-muted)]">
-                            {d.role}
-                          </p>
-                        </div>
-                        <span
-                          className="
-                            shrink-0
-                            rounded-full
-                            bg-[var(--color-accent-dim)]
-                            px-2.5 py-1
-                            text-xs font-semibold
-                            text-[var(--color-brand-primary)]
-                          "
-                        >
-                          Free slot
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : (
-                // Empty-state — still useful: shows the cross-Europe
-                // count so the user knows the platform isn't dead,
-                // just no one from this country is online this minute.
-                <div className="py-4">
-                  <p className="text-[length:var(--text-meta)] text-[var(--color-text-body)]">
-                    <span className="font-semibold text-[var(--color-text-primary)]">
-                      {totalDoctorsAcrossEurope} doctors
-                    </span>{" "}
-                    across our European network
-                  </p>
-                  <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                    No one from {countryName} online right now — book a slot and we'll
-                    line one up.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Bottom CTA — duplicates the primary CTA so the panel
-              * stands alone as a booking surface. Forest pill, full
-              * width. */}
-            <div className="border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-6 py-5">
-              <Link
-                href={bookHref}
-                className="gh-btn gh-btn-primary w-full justify-center"
-              >
-                Pick a time
-                <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
-              </Link>
-              <p className="mt-3 text-center text-xs text-[var(--color-text-muted)]">
-                No card required to browse · payment after the call
-              </p>
-            </div>
-          </aside>
+      <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10 pt-20 pb-24 md:pt-28 md:pb-32">
+        {/* Eyebrow row — country + live indicator + crumbs. Tabular
+          * numerics for the doctor count so it doesn't bounce. */}
+        <div className="flex flex-wrap items-center gap-4 text-[length:var(--text-eyebrow)]">
+          <span className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/[0.04] px-3 py-1.5 backdrop-blur-sm">
+            <Flag code={countryCode} size="sm" />
+            <span className="font-semibold tracking-[0.04em] uppercase text-white">
+              {countryName}
+            </span>
+          </span>
+          <span className="inline-flex items-center gap-2 text-white/60">
+            <span aria-hidden className="gh-pulse-dot !size-2" />
+            <span className="uppercase tracking-[0.16em]">
+              {doctorCount} doctors live now
+            </span>
+          </span>
         </div>
 
-        {/* Admin-uploaded hero image — lives below the split as an
-          * editorial wide image, doesn't compete with the panel. */}
+        {/* Massive editorial headline. Mixed weight (sans semibold +
+          * serif italic for one accent word) creates the magazine feel.
+          * Scale tops out at 11rem (≈176px) on huge desktops. */}
+        <h1
+          className="
+            mt-10 max-w-[18ch]
+            font-semibold
+            tracking-[-0.04em] leading-[0.92]
+            text-[clamp(3.25rem,9vw,11rem)]
+          "
+        >
+          {displayHeroTitle ? (
+            displayHeroTitle
+          ) : (
+            <>
+              See a doctor
+              <br />
+              <span
+                className="
+                  italic font-normal
+                  tracking-[-0.01em]
+                  text-[var(--color-accent)]
+                "
+                style={{ fontFamily: "var(--font-cormorant)" }}
+              >
+                from anywhere
+              </span>{" "}
+              <span className="text-white/95">on your terms.</span>
+            </>
+          )}
+        </h1>
+
+        {/* Subhead — narrow column, generous leading. Sits under the
+          * headline like editorial standfirst. */}
+        <p className="mt-8 max-w-[42ch] text-base md:text-lg leading-relaxed text-white/72">
+          {displayHeroSubtitle ??
+            "Locally-registered clinicians, single-form booking, no waiting rooms. Pay only after the video call connects."}
+        </p>
+
+        {/* CTA cluster + proof points stacked. Lime pill primary,
+          * ghost-on-dark secondary, proof points under both. */}
+        <div className="mt-12 flex flex-wrap items-center gap-x-3 gap-y-4">
+          <Link
+            href={bookHref}
+            className="
+              inline-flex items-center justify-center gap-2
+              rounded-full bg-[var(--color-accent)]
+              px-7 py-4
+              text-[15px] font-bold text-[var(--color-background-dark)]
+              transition-[background-color,transform] duration-200
+              hover:bg-white
+              active:scale-[0.98] motion-reduce:active:scale-100
+              motion-reduce:transition-none
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
+            "
+          >
+            {displayCtaLabel}
+            <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+          </Link>
+          <Link
+            href="#services"
+            className="
+              inline-flex items-center justify-center gap-2
+              rounded-full
+              border border-white/25 bg-transparent
+              px-6 py-4 text-[15px] font-semibold text-white/90
+              transition-[background-color,border-color] duration-200
+              hover:bg-white/10 hover:border-white/40
+              motion-reduce:transition-none
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
+            "
+          >
+            Browse services
+          </Link>
+
+          <ul className="ml-2 hidden flex-wrap gap-x-6 gap-y-2 lg:flex text-[length:var(--text-meta)] text-white/60">
+            <li className="inline-flex items-center gap-2">
+              <ShieldCheck className="size-4 text-[var(--color-accent)]" strokeWidth={1.5} aria-hidden />
+              Licensed in {countryName}
+            </li>
+            <li className="inline-flex items-center gap-2">
+              <Clock className="size-4 text-[var(--color-accent)]" strokeWidth={1.5} aria-hidden />
+              Same-day slots
+            </li>
+            <li className="inline-flex items-center gap-2">
+              <Stethoscope className="size-4 text-[var(--color-accent)]" strokeWidth={1.5} aria-hidden />
+              No clinic visits
+            </li>
+          </ul>
+        </div>
+
+        {/* Live availability strip — sits at the bottom of the hero
+          * as a horizontal rail. Doctor avatars + names + free-slot
+          * chips. Replaces the side panel — keeps the hero focused on
+          * type while still giving the page real product signal. */}
+        {doctorsForPanel.length > 0 ? (
+          <div
+            className="
+              mt-16 md:mt-20
+              rounded-[var(--radius-card)]
+              border border-white/10
+              bg-white/[0.03]
+              backdrop-blur-sm
+              p-6 md:p-7
+            "
+          >
+            <div className="flex flex-wrap items-baseline justify-between gap-4">
+              <p className="gh-eyebrow text-[var(--color-accent)]">
+                Available right now
+              </p>
+              <p className="text-[length:var(--text-meta)] text-white/55">
+                Consulting in {languageLabel} ·{" "}
+                <span className="font-semibold text-white/90 [font-variant-numeric:tabular-nums]">
+                  {totalDoctorsAcrossEurope} across Europe
+                </span>
+              </p>
+            </div>
+            <ul className="mt-6 grid gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
+              {doctorsForPanel.map((d) => (
+                <li key={d.name} className="flex items-center gap-3 min-w-0">
+                  <AvatarBubble name={d.name} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-white">
+                      {d.name}
+                    </p>
+                    <p className="truncate text-xs text-white/55">
+                      {d.role}
+                    </p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-[var(--color-accent)]/15 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--color-accent)]">
+                    Free
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        {/* Admin-uploaded hero image — appears below if provided.
+          * Wide editorial slot, doesn't compete with the headline. */}
         {heroImageSrc ? (
           <div
             className="
               mt-16 overflow-hidden
               rounded-[var(--radius-card)]
-              border border-[var(--color-border)]
-              shadow-[var(--shadow-soft)]
+              border border-white/10
             "
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -327,9 +262,7 @@ export function HomeHero({
   );
 }
 
-/** Two-letter avatar bubble. Forest gradient = visual identity, not
- *  generic gray. Initials are derived from the first two capital
- *  letters of the name so "Dr Hassaan Bin Ghayas" lands on HG. */
+/** Forest-gradient initials bubble used in the live strip. */
 function AvatarBubble({ name }: { name: string }) {
   const initials =
     name.match(/[A-Z]/g)?.slice(0, 2).join("") || name.slice(0, 2).toUpperCase();
@@ -337,16 +270,16 @@ function AvatarBubble({ name }: { name: string }) {
     <span
       aria-hidden
       className="
-        inline-flex size-9 shrink-0
+        inline-flex size-10 shrink-0
         items-center justify-center
         rounded-full
-        text-[11px] font-bold
-        text-white
-        ring-2 ring-[var(--color-background-page)]
+        text-[11px] font-bold tracking-tight
+        text-[var(--color-background-dark)]
+        ring-2 ring-[var(--color-background-dark)]
       "
       style={{
         background:
-          "linear-gradient(135deg, var(--color-brand-primary), #2D6A4F 60%, var(--color-accent))",
+          "linear-gradient(135deg, var(--color-accent) 0%, #B0F122 60%, var(--color-accent) 100%)",
       }}
     >
       {initials}

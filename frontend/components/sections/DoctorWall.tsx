@@ -75,17 +75,21 @@ export function DoctorWall({
 
   return (
     <section
-      className="relative overflow-hidden text-white"
+      className="relative overflow-hidden text-white gh-section"
       style={{
-        padding: "96px 0",
-        background: "var(--color-background-dark)",
+        background: `
+          radial-gradient(ellipse 1100px 700px at 110% 0%, rgba(176, 241, 34, 0.10), transparent 55%),
+          linear-gradient(180deg, #061914 0%, var(--color-background-dark) 50%, #061914 100%)
+        `,
       }}
     >
+      {/* Pattern overlay — same forest-night dotted texture as before
+        * but cranked slightly so the section reads as a different
+        * surface from the marquee/hero above. */}
       <div
         aria-hidden
-        className="absolute inset-0"
+        className="pointer-events-none absolute inset-0 opacity-[0.05]"
         style={{
-          opacity: 0.04,
           backgroundImage: PATTERN_DARK,
           backgroundSize: "28px",
         }}
@@ -98,47 +102,52 @@ export function DoctorWall({
           padding: "0 clamp(20px, 4vw, 40px)",
         }}
       >
-        <div
-          className="flex flex-wrap items-end justify-between gap-6"
-          style={{ marginBottom: 32 }}
-        >
+        {/* Magazine-style title — Cormorant italic accent inside a big
+          * sans display headline. Plus a number column that surfaces
+          * the actual roster size as a visual element. */}
+        <div className="grid items-end gap-10 lg:grid-cols-[1.5fr_auto] mb-12 md:mb-16">
           <div>
-            <span
-              className="uppercase"
-              style={{
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: "0.18em",
-                color: "var(--color-accent)",
-              }}
-            >
+            <span className="gh-eyebrow text-[var(--color-accent)]" style={{ letterSpacing: "0.18em" }}>
               The team
             </span>
             <h2
-              className="text-white"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(32px, 4vw, 48px)",
-                fontWeight: 800,
-                letterSpacing: "-0.02em",
-                lineHeight: 1.1,
-                margin: "12px 0 0",
-                maxWidth: "16ch",
-              }}
+              className="
+                mt-3 max-w-[16ch]
+                font-semibold tracking-[-0.03em] leading-[1.02]
+                text-white
+                text-[clamp(2.5rem,5vw+0.5rem,4.5rem)]
+              "
             >
-              Real doctors. Registered locally.
+              Doctors who actually{" "}
+              <span
+                className="italic font-normal text-[var(--color-accent)]"
+                style={{ fontFamily: "var(--font-cormorant)" }}
+              >
+                pick up
+              </span>
+              .
             </h2>
+            <p className="mt-5 max-w-[44ch] text-base text-white/65">
+              Every consultation is with someone licensed where you are. No
+              call centres, no rota of strangers — the doctor on screen is
+              the doctor on the profile.
+            </p>
           </div>
-          <p
-            className="m-0"
-            style={{
-              color: "rgba(255,255,255,0.65)",
-              maxWidth: "32ch",
-              fontSize: 16,
-            }}
-          >
-            Every consultation is with someone licensed where you are.
-          </p>
+          <div className="text-right">
+            <p
+              className="
+                font-semibold leading-none tracking-[-0.03em]
+                text-[var(--color-accent)]
+                [font-variant-numeric:tabular-nums]
+                text-[clamp(4.5rem,9vw,8rem)]
+              "
+            >
+              {shown.length}
+            </p>
+            <p className="mt-3 text-xs uppercase tracking-[0.16em] text-white/55">
+              Registered clinicians
+            </p>
+          </div>
         </div>
 
         {showFilters ? (

@@ -310,6 +310,29 @@ img {
 
 /* Sticky translucent site header. Replaces SiteHeader.tsx inline
  * backdropFilter + bg/opacity literals. */
+/* Country marquee — edge-to-edge horizontal scroll. Track is exactly
+ * 100% width (the content array is doubled by the caller), so a
+ * translateX(-50%) loop wraps seamlessly. Duration tuned so a single
+ * country pass takes ~3.5s — slow enough to read, fast enough to feel
+ * alive. */
+.gh-marquee {
+  overflow: hidden;
+}
+.gh-marquee-track {
+  animation: gh-marquee 45s linear infinite;
+  will-change: transform;
+}
+@keyframes gh-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.gh-marquee:hover .gh-marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh-marquee-track { animation: none; }
+}
+
 /* Hero composition — type column on the left, live-availability
  * panel on the right at lg+. Stacks below 1024px so the panel
  * doesn't squeeze the headline on tablets. Asymmetric ratio (1.15fr
