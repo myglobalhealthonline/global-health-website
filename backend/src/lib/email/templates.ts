@@ -475,7 +475,11 @@ export async function sendManualBookingEmail(opts: {
   scheduledAt: Date | null;
   paymentUrl: string;
   setPasswordUrl: string;
-  tempPassword: string;
+  /** Plain-text temp password. Null when the patient already had
+   *  an account — we don't print a fresh password they'd have to
+   *  reconcile against their existing one. The set-password URL is
+   *  always present as the recovery path. */
+  tempPassword: string | null;
 }) {
   const greeting = opts.patientName?.trim() || "there";
   const doctorLine = opts.doctorName
@@ -505,9 +509,10 @@ To finish:
 
 2) Access your patient portal — choose one:
    • Set your own password (recommended, link valid 7 days):
-     ${opts.setPasswordUrl}
+     ${opts.setPasswordUrl}${opts.tempPassword ? `
    • Or sign in now with your temporary password: ${opts.tempPassword}
-     (you'll be asked to change it on first login).
+     (you'll be asked to change it on first login).` : `
+   • If you already have an account, sign in with your existing password.`}
 
 Reply to this email if anything looks off.
 
@@ -536,11 +541,15 @@ Reply to this email if anything looks off.
          </a>
          <span style="font-size:13px;color:#737373;margin-left:8px;">recommended · link valid 7 days</span>
        </p>
-       <p style="margin:16px 0;font-size:14px;color:#374151;">
-         Or sign in right now with this temporary password
-         (you'll be asked to change it on first login):<br/>
-         <code style="display:inline-block;margin-top:6px;padding:8px 12px;background:#F1F1EF;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:1px;">${escapeHtml(opts.tempPassword)}</code>
-       </p>
+       ${opts.tempPassword
+         ? `<p style="margin:16px 0;font-size:14px;color:#374151;">
+              Or sign in right now with this temporary password
+              (you'll be asked to change it on first login):<br/>
+              <code style="display:inline-block;margin-top:6px;padding:8px 12px;background:#F1F1EF;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:1px;">${escapeHtml(opts.tempPassword)}</code>
+            </p>`
+         : `<p style="margin:16px 0;font-size:14px;color:#374151;">
+              If you already have an account, sign in with your existing password.
+            </p>`}
 
        <p style="margin-top:32px;font-size:13px;color:#737373;">
          If you didn't expect this booking, reply to this email and

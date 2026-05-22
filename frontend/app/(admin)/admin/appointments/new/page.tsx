@@ -194,7 +194,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
     const data = result.data;
     const qs = new URLSearchParams({
       manualBooked: "1",
-      tempPassword: data.tempPassword,
+      tempPassword: data.tempPassword ?? "",
       setPasswordUrl: data.setPasswordUrl,
       paymentUrl: data.paymentUrl ?? "",
       emailQueued: data.emailQueued ? "1" : "0",

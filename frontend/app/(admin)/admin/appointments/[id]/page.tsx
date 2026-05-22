@@ -316,7 +316,12 @@ export default async function AdminAppointmentDetailPage({
                   {messages.tempPassword}
                 </code>
               </div>
-            ) : null}
+            ) : (
+              <div className="text-[var(--color-text-muted)]">
+                Existing patient — their existing password is untouched.
+                Share the set-password URL below if they need to reset.
+              </div>
+            )}
             {messages.setPasswordUrl ? (
               <div className="break-all">
                 <dt className="inline font-semibold">Set-password URL (7d):</dt>{" "}

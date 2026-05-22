@@ -314,7 +314,10 @@ export type CreateManualAppointmentResult = {
   patientUserId: string;
   paymentUrl: string | null;
   paymentSessionId: string | null;
-  tempPassword: string;
+  /** Null when an existing patient was matched by email — we don't
+   *  rotate live credentials silently. The set-password URL is the
+   *  recovery path in that case. */
+  tempPassword: string | null;
   setPasswordUrl: string;
   emailQueued: boolean;
 };

@@ -4,31 +4,47 @@ import { UserRole } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 
-export async function upsertPatientProfileByEmail(input: {
-  email: string;
-  fullName?: string | null;
-  phone?: string | null;
-  dateOfBirth?: Date | null;
-}) {
+export async function upsertPatientProfileByEmail(
+  input: {
+    email: string;
+    fullName?: string | null;
+    phone?: string | null;
+    dateOfBirth?: Date | null;
+  },
+  options?: {
+    /** Pre-computed bcrypt hash to use when creating the User row.
+     *  Skips the throwaway random-placeholder hash + saves a bcrypt
+     *  round when the caller already needs a real password (e.g. the
+     *  admin manual-booking flow that generates a temp password the
+     *  patient will use to log in). Ignored when the user already
+     *  exists. */
+    passwordHashOverride?: string;
+    /** Set User.mustChangePassword when creating the row. Used by the
+     *  manual-booking flow so the patient is force-redirected to the
+     *  change-password page on first sign-in. */
+    mustChangePassword?: boolean;
+  },
+) {
   const email = input.email.trim().toLowerCase();
   try {
     let user = await prisma.user.findUnique({
       where: { email },
       select: { id: true, role: true },
     });
+    const created = !user;
     if (!user) {
-      const placeholderHash = await bcrypt.hash(
-        randomBytes(32).toString("hex"),
-        12,
-      );
+      const newHash =
+        options?.passwordHashOverride ??
+        (await bcrypt.hash(randomBytes(32).toString("hex"), 12));
       user = await prisma.user.create({
         data: {
           email,
-          passwordHash: placeholderHash,
+          passwordHash: newHash,
           fullName: input.fullName?.trim() || email,
           phone: input.phone?.trim() || null,
           dateOfBirth: input.dateOfBirth ?? null,
           role: UserRole.PATIENT,
+          ...(options?.mustChangePassword ? { mustChangePassword: true } : {}),
         },
         select: { id: true, role: true },
       });
@@ -65,7 +81,11 @@ export async function upsertPatientProfileByEmail(input: {
       data: { userId: user.role === UserRole.PATIENT ? user.id : undefined },
     });
 
-    return { profile, userId: user.role === UserRole.PATIENT ? user.id : null };
+    return {
+      profile,
+      userId: user.role === UserRole.PATIENT ? user.id : null,
+      created,
+    };
   } catch (error) {
     throw normalizeDbError(error, "Patient profile is temporarily unavailable");
   }

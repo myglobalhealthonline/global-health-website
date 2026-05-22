@@ -50,7 +50,7 @@ function toSafeUser(user: User): SafeUser {
     role: user.role,
     emailVerifiedAt: user.emailVerifiedAt ? user.emailVerifiedAt.toISOString() : null,
     isActive: user.isActive,
-    mustChangePassword: (user as { mustChangePassword?: boolean }).mustChangePassword ?? false,
+    mustChangePassword: user.mustChangePassword,
     createdAt: user.createdAt.toISOString(),
     updatedAt: user.updatedAt.toISOString(),
   };
