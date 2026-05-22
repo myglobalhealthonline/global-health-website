@@ -173,10 +173,9 @@ export function SiteHeader({
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={brandLogo?.src ?? "/logos/global-health-dark.png"}
+            src={brandLogo?.src ?? "/logos/global-health-light.png"}
             alt={brandLogo?.alt ?? siteName ?? "Global Health"}
             className="h-11 w-auto"
-            style={{ filter: "brightness(0) invert(1)" }}
           />
         </Link>
 

@@ -430,7 +430,7 @@ img {
   z-index: 40;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  background-color: rgba(15, 46, 37, 0.96);
+  background-color: var(--color-background-dark);
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
