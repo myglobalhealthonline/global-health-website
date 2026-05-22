@@ -19,14 +19,7 @@ import { countries, type CountryCode } from "@/data/countries";
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 import { swapCountryInPath } from "@/lib/routing/path-rewrites";
 import { useCart } from "@/components/cart/CartContext";
-
-const FLAG_CLASS: Record<string, string> = {
-  ie: "fi fi-ie",
-  pt: "fi fi-pt",
-  sp: "fi fi-es",
-  cz: "fi fi-cz",
-  rm: "fi fi-ro",
-};
+import { Flag } from "@/components/ui/Flag";
 
 export function CountrySwitcher({
   activeCountryCode,
@@ -101,19 +94,7 @@ export function CountrySwitcher({
           cursor: "pointer",
         }}
       >
-        {active ? (
-          <span
-            aria-hidden
-            className={`${FLAG_CLASS[active.code] ?? ""} inline-block`}
-            style={{
-              width: 18,
-              height: 13,
-              borderRadius: 2,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          />
-        ) : null}
+        {active ? <Flag code={active.code} size="sm" /> : null}
         <span>{active ? active.name : "Choose country"}</span>
         <ChevronDown aria-hidden className="size-3" />
       </button>
@@ -160,17 +141,7 @@ export function CountrySwitcher({
                     }}
                   >
                     <span className="inline-flex items-center gap-2.5">
-                      <span
-                        aria-hidden
-                        className={`${FLAG_CLASS[c.code] ?? ""} inline-block`}
-                        style={{
-                          width: 18,
-                          height: 13,
-                          borderRadius: 2,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                        }}
-                      />
+                      <Flag code={c.code} size="sm" />
                       <span>{c.name}</span>
                     </span>
                     {isActive ? (

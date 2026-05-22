@@ -36,14 +36,7 @@ import {
   swapLangInPath,
 } from "@/lib/routing/path-rewrites";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
-
-const FLAG_CLASS: Record<string, string> = {
-  ie: "fi fi-ie",
-  pt: "fi fi-pt",
-  sp: "fi fi-es",
-  cz: "fi fi-cz",
-  rm: "fi fi-ro",
-};
+import { Flag } from "@/components/ui/Flag";
 
 export function MobileNav({
   siteName,
@@ -201,17 +194,7 @@ export function MobileNav({
                           className="flex items-center justify-between rounded-[14px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                         >
                           <span className="inline-flex items-center gap-3">
-                            <span
-                              aria-hidden
-                              className={`${FLAG_CLASS[c.code] ?? ""} inline-block`}
-                              style={{
-                                width: 22,
-                                height: 16,
-                                borderRadius: 2,
-                                backgroundSize: "cover",
-                                backgroundPosition: "center",
-                              }}
-                            />
+                            <Flag code={c.code} size="md" />
                             <span>{c.name}</span>
                           </span>
                           {isActive ? (

@@ -17,6 +17,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Flag } from "@/components/ui/Flag";
 
 export type DoctorWallItem = {
   /** Stable id (e.g. Doctor.id). Used for React keys. */
@@ -33,14 +34,6 @@ export type DoctorWallItem = {
   href: string;
   /** Optional uploaded portrait. When provided, replaces the initials tile. */
   imageSrc?: string | null;
-};
-
-const FLAG_CLASS: Record<string, string> = {
-  ie: "fi fi-ie",
-  pt: "fi fi-pt",
-  sp: "fi fi-es",
-  cz: "fi fi-cz",
-  rm: "fi fi-ro",
 };
 
 const PATTERN_DARK =
@@ -179,19 +172,7 @@ export function DoctorWall({
                     cursor: "pointer",
                   }}
                 >
-                  {f.id !== "all" ? (
-                    <span
-                      aria-hidden
-                      className={`${FLAG_CLASS[f.id] ?? ""} inline-block`}
-                      style={{
-                        width: 18,
-                        height: 13,
-                        borderRadius: 2,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                      }}
-                    />
-                  ) : null}
+                  {f.id !== "all" ? <Flag code={f.id} size="sm" /> : null}
                   {f.label}
                 </button>
               );
@@ -295,17 +276,7 @@ export function DoctorWall({
                     k="Country"
                     v={
                       <span className="inline-flex items-center gap-1.5">
-                        <span
-                          aria-hidden
-                          className={`${FLAG_CLASS[d.country] ?? ""} inline-block`}
-                          style={{
-                            width: 18,
-                            height: 13,
-                            borderRadius: 2,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                          }}
-                        />
+                        <Flag code={d.country} size="sm" />
                         {d.country.toUpperCase()}
                       </span>
                     }

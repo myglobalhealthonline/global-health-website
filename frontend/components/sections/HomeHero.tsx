@@ -10,19 +10,12 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { CountryCode } from "@/data/countries";
+import { Flag } from "@/components/ui/Flag";
 
 const PATTERN_LIGHT =
   "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231B4D3E' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")";
 const PATTERN_DARK =
   "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")";
-
-const FLAG_CLASS: Record<string, string> = {
-  ie: "fi fi-ie",
-  pt: "fi fi-pt",
-  sp: "fi fi-es",
-  cz: "fi fi-cz",
-  rm: "fi fi-ro",
-};
 
 export type LiveDoctorItem = {
   name: string;
@@ -61,7 +54,6 @@ export function HomeHero({
   heroImageSrc?: string | null;
   ctaLabel?: string | null;
 }) {
-  const flag = FLAG_CLASS[countryCode] ?? "";
   const displayHeroTitle = heroTitle?.trim() || null;
   const displayHeroSubtitle = heroSubtitle?.trim() || null;
   const displayCtaLabel = ctaLabel?.trim() || `Book consultation in ${countryName}`;
@@ -206,17 +198,7 @@ export function HomeHero({
                   border: "1px solid var(--color-border)",
                 }}
               >
-                <span
-                  aria-hidden
-                  className={`${flag} inline-block`}
-                  style={{
-                    width: 30,
-                    height: 22,
-                    borderRadius: 3,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                />
+                <Flag code={countryCode} size="lg" />
               </span>
               <div className="flex-1">
                 <p
