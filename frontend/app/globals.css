@@ -101,12 +101,30 @@
   --text-h3: clamp(1.25rem, 2vw + 0.3rem, 1.75rem);
   --text-body-lg: clamp(1.05rem, 1vw + 0.6rem, 1.25rem);
   --text-body: clamp(0.95rem, 0.5vw + 0.7rem, 1.05rem);
+  /* Fixed sizes for meta + eyebrow — these stay legible at any viewport.
+   * Eyebrow is the only place positive letter-tracking exists in the
+   * system; the +0.06em opens uppercase taxonomy labels against the
+   * negative-tracked display headlines. */
+  --text-eyebrow: 0.8125rem;
+  --text-meta: 0.875rem;
 
   /* Layout */
   --container-width: 1280px;
   --section-padding-y: 112px;
   --section-padding-y-sm: 64px;
   --header-height: 88px;
+
+  /* Spacing — fluid block tokens. Drive every section + card inner
+   * padding from these instead of hand-coded px values, so the whole
+   * page rhythm can be retuned from one place. */
+  --space-section: clamp(64px, 8vw, 112px);
+  --space-section-tight: clamp(40px, 5vw, 64px);
+  --space-stack: clamp(16px, 1.5vw, 24px);
+  --space-inset: clamp(20px, 3vw, 32px);
+
+  /* Radius alias — kept as a separate name from --radius-card-sm so
+   * inputs + cards can diverge later without find-and-replace. */
+  --radius-input: 12px;
 }
 
 /* Reset & base */
@@ -244,6 +262,77 @@ img {
   font-size: 0.92rem;
   line-height: 1.55;
   color: var(--color-text-muted);
+}
+
+/* Eyebrow — taxonomy label above a heading. Sole positive-tracking
+ * type token; the +0.06em opens letters against the negative-tracked
+ * display sizes. */
+.gh-eyebrow {
+  font-size: var(--text-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* Section block-padding driven by --space-section (fluid 64→112px).
+ * Replaces inline `padding: 112px 0` + ad-hoc Tailwind `py-12`. Use
+ * .gh-section-tight (fluid 40→64px) between sub-sections of one
+ * topic that should breathe together. */
+.gh-section {
+  padding-block: var(--space-section);
+}
+.gh-section-tight {
+  padding-block: var(--space-section-tight);
+}
+
+/* Canonical card grid. One source of truth for the mobile→tablet→
+ * desktop step that every card-rendering surface hand-rolled. Combine
+ * with .gh-card-grid--featured to promote the first child to a 2x2
+ * tile (kills the 3-up-identical-cards anti-pattern). */
+.gh-card-grid {
+  display: grid;
+  gap: var(--space-stack);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .gh-card-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .gh-card-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1024px) {
+  .gh-card-grid--featured > :first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+}
+
+/* Sticky translucent site header. Replaces SiteHeader.tsx inline
+ * backdropFilter + bg/opacity literals. */
+.gh-header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  background-color: rgb(255 255 255 / 0.92);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Site footer grid — replaces SiteFooter.tsx inline <style> block.
+ * 4 columns at lg, 2 at md, 1 at mobile. Hairline below brand col on
+ * mobile so the dark canvas separates without an explicit divider. */
+.gh-footer-grid {
+  display: grid;
+  gap: var(--space-stack);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px) {
+  .gh-footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .gh-footer-grid { grid-template-columns: 1.4fr repeat(3, 1fr); }
 }
 
 /* Buttons — slightly taller, slightly tighter typography. */
