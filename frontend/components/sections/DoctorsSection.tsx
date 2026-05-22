@@ -37,7 +37,7 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
             {intro ? <p className="gh-body-lg mt-3 max-w-2xl text-[var(--color-text-muted)]">{intro}</p> : null}
           </div>
         )}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="gh-card-grid">
           {doctors.map((doctor) => (
             <DoctorCard key={doctor.href ?? `${doctor.name}-${doctor.title}`} {...doctor} />
           ))}

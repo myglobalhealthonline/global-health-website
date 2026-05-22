@@ -154,22 +154,29 @@ export default async function CountryLangGeneralConsultationPage({
       />
 
       {/* Hero — admin-editable copy + optional uploaded image from ContentPage */}
-      <section className="mx-auto max-w-5xl px-4 pt-16 pb-10 text-center">
-        <p className="text-sm uppercase tracking-wide text-emerald-700">
+      <section className="gh-section-tight mx-auto max-w-5xl px-4 text-center">
+        <p className="gh-eyebrow text-[var(--color-brand-primary)]">
           {config.name} · GP Consultation
         </p>
-        <h1 className="mt-3 text-4xl font-semibold text-slate-900 sm:text-5xl">{heroTitle}</h1>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">{heroSubtitle}</p>
+        <h1 className="mt-3 text-4xl font-semibold text-[var(--color-text-primary)] sm:text-5xl">
+          {heroTitle}
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-[var(--color-text-muted)]">
+          {heroSubtitle}
+        </p>
         <div className="mt-7 flex flex-wrap justify-center gap-3">
-          <Link
-            href={ctaHref}
-            className="inline-flex items-center rounded-md bg-emerald-700 px-6 py-3 text-white shadow-sm hover:bg-emerald-800"
-          >
+          <Link href={ctaHref} className="gh-btn gh-btn-primary">
             {ctaLabel}
           </Link>
         </div>
         {page?.heroImageSrc ? (
-          <div className="mx-auto mt-10 overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
+          <div
+            className="
+              mx-auto mt-10 overflow-hidden
+              rounded-[var(--radius-card)]
+              border border-[var(--color-border)] shadow-[var(--shadow-soft)]
+            "
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={page.heroImageSrc}

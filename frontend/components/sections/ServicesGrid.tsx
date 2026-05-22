@@ -18,12 +18,24 @@ type ServicesGridProps = {
   intro?: string;
   eyebrow?: string;
   items: Item[];
+  /** When true, the first card spans 2x2 on lg viewports — breaks the
+   *  3-up-identical-cards pattern when there are 4+ services. Caller
+   *  is responsible for choosing which item to promote (typically the
+   *  most-booked or country-flagship service). Defaults to true. */
+  featureFirst?: boolean;
 };
 
-export function ServicesGrid({ title, intro, eyebrow, items }: ServicesGridProps) {
-  // Note: the `showRating` block (an unsourced "4.94 · Based on 19 reviews")
-  // was removed when the public surface was made fully DB-driven. Re-add only
-  // when a real review source (Trustpilot, Google) is wired in.
+export function ServicesGrid({
+  title,
+  intro,
+  eyebrow,
+  items,
+  featureFirst = true,
+}: ServicesGridProps) {
+  // The promoted-first-card composition only reads as intentional when
+  // there are enough cards to fill the row beneath the featured tile;
+  // below that, fall back to a flat 3-up which reads cleaner.
+  const useFeatured = featureFirst && items.length >= 4;
   return (
     <Section variant="white" pattern="soft">
       <Container>
@@ -38,8 +50,13 @@ export function ServicesGrid({ title, intro, eyebrow, items }: ServicesGridProps
           {intro && <p className="gh-body-lg mt-3 max-w-2xl text-[var(--color-text-muted)]">{intro}</p>}
         </div>
 
-        {/* Grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          className={
+            useFeatured
+              ? "gh-card-grid gh-card-grid--featured"
+              : "gh-card-grid"
+          }
+        >
           {items.map((item) => (
             <ServiceCard key={item.href} {...item} />
           ))}

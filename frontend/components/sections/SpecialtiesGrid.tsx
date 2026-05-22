@@ -22,7 +22,7 @@ export function SpecialtiesGrid({ title = "Specialist consultations", items }: S
     <Section variant="soft" pattern="soft">
       <Container>
         <h2 className="gh-h2 text-[var(--color-text-primary)] mb-10">{title}</h2>
-        <div className="grid gap-6 sm:grid-cols-2 lg:gap-8">
+        <div className="gh-card-grid">
           {items.map((item) => (
             <ServiceCard key={item.href} {...item} ctaLabel="See specialty" />
           ))}
