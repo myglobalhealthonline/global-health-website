@@ -310,9 +310,50 @@ img {
 
 /* Sticky translucent site header. Replaces SiteHeader.tsx inline
  * backdropFilter + bg/opacity literals. */
-/* Hero bottom grid — booking panel + live-doctors aside. Stacks
- * below 900px; goes side-by-side (1.1fr / 1fr) above. Owned by the
- * token system so HomeHero.tsx stops shipping an inline <style>. */
+/* Hero composition — type column on the left, live-availability
+ * panel on the right at lg+. Stacks below 1024px so the panel
+ * doesn't squeeze the headline on tablets. Asymmetric ratio (1.15fr
+ * to 1fr) gives the type more breathing room than a 50/50 split. */
+.gh-hero-split {
+  grid-template-columns: 1fr;
+}
+@media (min-width: 1024px) {
+  .gh-hero-split { grid-template-columns: 1.15fr 1fr; }
+}
+
+/* Hero headline — fluid scale up to a confident desktop size. */
+.gh-hero-title {
+  font-size: clamp(2.5rem, 5.5vw + 0.5rem, 5.5rem);
+  line-height: 0.98;
+}
+
+/* Hero accent — highlighter band underneath a single phrase. Single
+ * solid lime block; no gradient. Sits behind the text via box-shadow
+ * inset so it tracks the type baseline at every viewport. */
+.gh-hero-accent {
+  background-image: linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 62%,
+    var(--color-accent) 62%,
+    var(--color-accent) 92%,
+    transparent 92%
+  );
+  padding-inline: 0.08em;
+}
+
+/* Paper-texture grain that warms the otherwise sterile white canvas.
+ * Tuned so it's invisible at a glance but visible enough to feel
+ * tactile when the eye rests on a large empty zone. */
+.gh-hero-grain {
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.06  0 0 0 0 0.18  0 0 0 0 0.14  0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 280px 280px;
+  mix-blend-mode: multiply;
+}
+
+/* Hero bottom grid — kept as alias for any consumer that still
+ * references it. (HomeHero no longer needs it after the rewrite.) */
 .gh-hero-bottom {
   display: grid;
   gap: var(--space-stack);

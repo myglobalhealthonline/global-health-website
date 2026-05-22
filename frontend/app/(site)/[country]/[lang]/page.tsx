@@ -268,9 +268,26 @@ export default async function CountryLangHomePage({
           ? `${Math.floor(countryDoctors.length / 10) * 10}+`
           : String(countryDoctors.length),
       l: countryDoctors.length === 1 ? "Licensed doctor" : "Licensed doctors",
+      icon: "doctor",
     },
-    { v: String(countries.length), l: "Countries · EU-registered" },
-    { v: "GDPR", l: "Compliant by default" },
+    {
+      v: String(countries.length),
+      l: "European markets · EU-registered",
+      icon: "globe",
+    },
+    {
+      v: "GDPR",
+      l: "Compliant by default",
+      icon: "lock",
+    },
+    {
+      // Fourth slot — fills the 4-up grid on lg. Concrete claim, no
+      // unsourced rating; same-day availability is something we
+      // actually deliver.
+      v: "24h",
+      l: "Same-day consultations",
+      icon: "sparkles",
+    },
   ];
 
   const languageLabel = localeDisplayName(

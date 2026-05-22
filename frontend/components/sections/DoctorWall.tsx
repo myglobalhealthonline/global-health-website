@@ -180,8 +180,11 @@ export function DoctorWall({
           </div>
         ) : null}
 
+        {/* Editorial doctor grid — portrait dominates, metadata is
+          * a quiet caption underneath. The portrait is the protagonist
+          * because faces are what makes "telemedicine" feel real. */}
         <div
-          className="grid gap-4"
+          className="grid gap-5"
           style={{
             gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
           }}
@@ -189,118 +192,101 @@ export function DoctorWall({
           {shown.map((d) => {
             // `d.href` is the per-card link (typically the country-scoped
             // doctor profile URL injected by the page that renders this
-            // wall). `bookHref` is the wall-level fallback. We never fall
-            // through to a bare `/` route if neither is set, but in practice
-            // the home page always passes a profile URL.
+            // wall). `bookHref` is the wall-level fallback.
             const href = d.href || bookHref || "/";
             return (
-              <div
+              <Link
                 key={d.id}
-                className="gh-doctor-card"
-                style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.10)",
-                  borderRadius: 20,
-                  padding: 20,
-                }}
+                href={href}
+                className="
+                  gh-doctor-card group block overflow-hidden
+                  rounded-[var(--radius-card)]
+                  border border-white/10
+                  bg-white/[0.03]
+                  transition-[transform,background-color,border-color] duration-300
+                  ease-[cubic-bezier(0.16,1,0.3,1)]
+                  hover:-translate-y-1 hover:bg-white/[0.06] hover:border-white/20
+                  motion-reduce:transition-none motion-reduce:hover:translate-y-0
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]
+                "
+                style={{ textDecoration: "none" }}
               >
-                <div
-                  className="flex items-center gap-3.5"
-                  style={{ marginBottom: 16 }}
-                >
+                {/* Portrait — fills the top of the card. Aspect ratio
+                  * 3:4 (portrait) so faces don't get cropped weird at
+                  * different card widths. Falls back to a gradient
+                  * initials tile when no photo. */}
+                <div className="relative aspect-[3/4] w-full overflow-hidden bg-white/5">
                   {d.imageSrc ? (
-                    // Uploaded portrait — falls back to initials if the URL
-                    // 404s by virtue of <img onError> below.
-                    <span
-                      className="inline-flex shrink-0 items-center justify-center overflow-hidden"
-                      style={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: 16,
-                        background: "rgba(255,255,255,0.10)",
-                      }}
-                    >
+                    <>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={d.imageSrc}
                         alt={d.name}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        className="h-full w-full object-cover object-top"
                       />
-                    </span>
+                      {/* Bottom gradient scrim so name + flag overlay
+                        * stays legible regardless of the portrait. */}
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0"
+                        style={{
+                          background:
+                            "linear-gradient(180deg, transparent 50%, rgba(15,46,37,0.75) 100%)",
+                        }}
+                      />
+                    </>
                   ) : (
-                    <span
-                      className="inline-flex shrink-0 items-center justify-center"
+                    <div
+                      className="flex h-full w-full items-center justify-center text-[clamp(48px,8vw,80px)] font-bold tracking-tight text-[var(--color-background-dark)]"
                       style={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: 16,
                         background:
                           "linear-gradient(135deg, var(--color-accent), var(--color-brand-primary))",
-                        color: "var(--color-background-dark)",
                         fontFamily: "var(--font-display)",
-                        fontSize: 18,
-                        fontWeight: 800,
                       }}
                     >
                       {d.initials}
-                    </span>
+                    </div>
                   )}
-                  <div className="min-w-0 flex-1">
-                    <p
-                      className="m-0 truncate text-white"
-                      style={{ fontSize: 15, fontWeight: 700 }}
-                    >
-                      {d.name}
-                    </p>
-                    <p
-                      className="m-0"
-                      style={{
-                        fontSize: 12,
-                        color: "rgba(255,255,255,0.60)",
-                      }}
-                    >
-                      {d.role}
-                    </p>
-                  </div>
+                  {/* Floating country flag — bottom-left over the
+                    * portrait scrim. Replaces the "Country: XX" metadata
+                    * row, which read as form fields. */}
+                  <span className="absolute left-4 bottom-4 inline-flex items-center gap-2 rounded-full bg-black/40 px-2.5 py-1 backdrop-blur-sm">
+                    <Flag code={d.country} size="sm" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wide text-white">
+                      {d.country.toUpperCase()}
+                    </span>
+                  </span>
                 </div>
 
-                <div
-                  className="grid grid-cols-2 gap-1"
-                  style={{
-                    marginBottom: 14,
-                    paddingBottom: 14,
-                    borderBottom: "1px solid rgba(255,255,255,0.10)",
-                  }}
-                >
-                  <DKV
-                    k="Country"
-                    v={
-                      <span className="inline-flex items-center gap-1.5">
-                        <Flag code={d.country} size="sm" />
-                        {d.country.toUpperCase()}
-                      </span>
-                    }
-                  />
-                  <DKV k="Languages" v={d.langs || "—"} />
-                </div>
+                {/* Caption — name + title + languages + arrow. Single
+                  * column, tight rhythm. */}
+                <div className="p-5">
+                  <p className="text-base font-semibold leading-tight text-white">
+                    {d.name}
+                  </p>
+                  <p className="mt-1 text-xs text-white/60">
+                    {d.role}
+                  </p>
+                  {d.langs ? (
+                    <p className="mt-3 text-[11px] uppercase tracking-[0.12em] text-white/45">
+                      {d.langs}
+                    </p>
+                  ) : null}
 
-                <Link
-                  href={href}
-                  className="inline-flex w-full items-center justify-center gap-1.5 text-white"
-                  style={{
-                    padding: "10px 14px",
-                    borderRadius: 999,
-                    background: "rgba(255,255,255,0.10)",
-                    border: "1px solid rgba(255,255,255,0.16)",
-                    fontFamily: "inherit",
-                    fontSize: 13,
-                    fontWeight: 700,
-                    textDecoration: "none",
-                  }}
-                >
-                  View profile <ArrowRight className="size-3.5" aria-hidden />
-                </Link>
-              </div>
+                  <span
+                    className="
+                      mt-4 inline-flex items-center gap-1.5
+                      text-[var(--color-accent)] text-sm font-semibold
+                      transition-transform duration-200
+                      group-hover:translate-x-0.5
+                      motion-reduce:group-hover:translate-x-0
+                    "
+                  >
+                    View profile
+                    <ArrowRight className="size-3.5" strokeWidth={1.5} aria-hidden />
+                  </span>
+                </div>
+              </Link>
             );
           })}
         </div>

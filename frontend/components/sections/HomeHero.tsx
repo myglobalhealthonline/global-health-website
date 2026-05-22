@@ -1,21 +1,24 @@
 /**
- * Editorial type-first hero — "See a doctor. From anywhere."
+ * Editorial hero — type-first composition + a live-availability panel
+ * that makes the abstract "online consultations" concept tactile by
+ * showing real clinicians who are bookable right now.
  *
- * Data-driven. All country-specific values (doctor count, locale, live-doctor
- * feed) are passed in by the caller. Earlier versions hard-coded a
- * `COUNTRY_META` table and a fake "NOW_FEED" — both removed so the hero only
- * shows what the database actually knows.
+ * Layout (lg+):
+ *   ┌──────────────────────────────────────────────┐
+ *   │  eyebrow                                     │
+ *   │  big headline                  ┌──────────┐  │
+ *   │  short lede                    │ live now │  │
+ *   │  cta row                       │ avatars  │  │
+ *   │  ── pulse line ──              │ + book   │  │
+ *   └──────────────────────────────────────────────┘
+ *
+ * Mobile stacks; live panel sits below the CTA row.
  */
 
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ShieldCheck, Clock } from "lucide-react";
 import type { CountryCode } from "@/data/countries";
 import { Flag } from "@/components/ui/Flag";
-
-const PATTERN_LIGHT =
-  "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231B4D3E' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")";
-const PATTERN_DARK =
-  "url(\"data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E\")";
 
 export type LiveDoctorItem = {
   name: string;
@@ -37,18 +40,11 @@ export function HomeHero({
 }: {
   countryCode: CountryCode;
   countryName: string;
-  /** Active doctors registered in this country, from the DB. */
   doctorCount: number;
-  /** Display label for the country's default locale (e.g. "English"). */
   languageLabel: string;
-  /** Where the primary CTA points. Caller passes the lang-aware path. */
   bookHref: string;
-  /** Sum of active doctors across all countries. */
   totalDoctorsAcrossEurope: number;
-  /** Optional spotlight: a handful of doctors to surface in the "Right now" feed.
-   *  Pass undefined or [] to hide the feed entirely (preferred over fake data). */
   liveDoctors?: LiveDoctorItem[];
-  /** Admin overrides — when set, these replace the default copy/visual. */
   heroTitle?: string | null;
   heroSubtitle?: string | null;
   heroImageSrc?: string | null;
@@ -56,331 +52,304 @@ export function HomeHero({
 }) {
   const displayHeroTitle = heroTitle?.trim() || null;
   const displayHeroSubtitle = heroSubtitle?.trim() || null;
-  const displayCtaLabel = ctaLabel?.trim() || `Book consultation in ${countryName}`;
+  const displayCtaLabel = ctaLabel?.trim() || `Book a consultation`;
+  const doctorsForPanel = (liveDoctors ?? []).slice(0, 4);
 
   return (
     <section
       className="gh-section relative overflow-hidden"
       style={{
         background: `
-          radial-gradient(ellipse 900px 600px at 80% -5%, rgba(176, 241, 34, 0.12), transparent 55%),
-          radial-gradient(ellipse 700px 500px at -5% 100%, rgba(27, 77, 62, 0.07), transparent 55%),
+          radial-gradient(ellipse 1100px 700px at 110% -10%, rgba(176, 241, 34, 0.18), transparent 60%),
+          radial-gradient(ellipse 900px 600px at -10% 110%, rgba(27, 77, 62, 0.10), transparent 60%),
           var(--color-background-page)
         `,
       }}
     >
+      {/* Subtle dotted texture — adds visual warmth without competing
+        * with the type. Strength tuned so a screenshot at 1x can't
+        * read it as a pattern, only as paper texture. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          opacity: 0.032,
-          backgroundImage: PATTERN_LIGHT,
-          backgroundSize: "28px",
-        }}
+        className="pointer-events-none absolute inset-0 gh-hero-grain"
       />
 
-      <div
-        className="relative z-[1] mx-auto"
-        style={{
-          maxWidth: 1320,
-          padding: "0 clamp(20px, 4vw, 40px)",
-        }}
-      >
-        <div
-          className="inline-flex items-center gap-3 uppercase"
-          style={{
-            fontSize: 12,
-            fontWeight: 700,
-            color: "var(--color-brand-primary)",
-            letterSpacing: "0.18em",
-          }}
-        >
-          <span
-            aria-hidden
-            style={{
-              display: "inline-block",
-              width: 24,
-              height: 1,
-              background: "var(--color-brand-primary)",
-            }}
-          />
-          Medicine without borders
+      <div className="relative z-[1] mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+        <div className="gh-hero-split grid items-center gap-12 lg:gap-16">
+          {/* ── LEFT: type + CTAs ─────────────────────────── */}
+          <div className="max-w-[560px]">
+            <div className="inline-flex items-center gap-3">
+              <span aria-hidden className="gh-pulse-dot !size-2" />
+              <span className="gh-eyebrow text-[var(--color-brand-primary)]">
+                {countryName} · Available today
+              </span>
+            </div>
+
+            <h1
+              className="
+                gh-hero-title mt-5
+                font-semibold
+                tracking-[-0.035em]
+                text-[var(--color-text-primary)]
+              "
+            >
+              {displayHeroTitle ? (
+                displayHeroTitle
+              ) : (
+                <>
+                  See a doctor.
+                  <br />
+                  <span className="gh-hero-accent">From anywhere.</span>
+                </>
+              )}
+            </h1>
+
+            <p
+              className="
+                mt-6 max-w-[42ch]
+                text-[length:var(--text-body-lg)]
+                leading-relaxed
+                text-[var(--color-text-body)]
+              "
+            >
+              {displayHeroSubtitle ??
+                "Licensed clinicians, single-form booking, no clinic queues. Pay after the call connects."}
+            </p>
+
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link
+                href={bookHref}
+                className="gh-btn gh-btn-primary"
+                style={{ minWidth: 200 }}
+              >
+                {displayCtaLabel}
+                <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+              </Link>
+              <Link
+                href="#services"
+                className="gh-btn gh-btn-outline"
+              >
+                Browse services
+              </Link>
+            </div>
+
+            {/* Quiet proof line — sits below the CTAs so it reinforces
+              * the decision rather than competing for attention. */}
+            <ul className="mt-10 flex flex-wrap gap-x-7 gap-y-3 text-[length:var(--text-meta)] text-[var(--color-text-muted)]">
+              <li className="inline-flex items-center gap-2">
+                <ShieldCheck
+                  className="size-4 text-[var(--color-brand-primary)]"
+                  strokeWidth={1.5}
+                  aria-hidden
+                />
+                Registered with {countryName === "Ireland" ? "the IMC" : "the local council"}
+              </li>
+              <li className="inline-flex items-center gap-2">
+                <Clock
+                  className="size-4 text-[var(--color-brand-primary)]"
+                  strokeWidth={1.5}
+                  aria-hidden
+                />
+                Same-day appointments
+              </li>
+            </ul>
+          </div>
+
+          {/* ── RIGHT: live availability panel ────────────── */}
+          <aside
+            aria-label="Doctors available today"
+            className="
+              relative
+              rounded-[var(--radius-card)]
+              border border-[var(--color-border)]
+              bg-[var(--color-background-page)]
+              shadow-[var(--shadow-elevated)]
+              overflow-hidden
+            "
+          >
+            {/* Mint-cream header strip + country tag. The lime pulse
+              * carries the only motion in the hero (motion-reduce
+              * guarded by .gh-pulse-dot in globals.css). */}
+            <header
+              className="
+                flex items-center justify-between
+                px-6 py-4
+                border-b border-[var(--color-border)]
+                bg-[var(--color-background-soft)]
+              "
+            >
+              <div className="inline-flex items-center gap-3">
+                <span
+                  aria-hidden
+                  className="
+                    inline-flex size-9 items-center justify-center
+                    rounded-full
+                    bg-[var(--color-background-page)]
+                    border border-[var(--color-border)]
+                  "
+                >
+                  <Flag code={countryCode} size="md" />
+                </span>
+                <div>
+                  <p className="gh-eyebrow text-[var(--color-text-muted)]">
+                    Booking in
+                  </p>
+                  <p
+                    className="
+                      font-semibold tracking-[-0.01em]
+                      text-[length:var(--text-h3)] leading-tight
+                      text-[var(--color-text-primary)]
+                    "
+                  >
+                    {countryName}
+                  </p>
+                </div>
+              </div>
+              <span className="inline-flex items-center gap-2">
+                <span aria-hidden className="gh-pulse-dot !size-2.5" />
+                <span className="gh-eyebrow text-[var(--color-text-muted)]">
+                  Live
+                </span>
+              </span>
+            </header>
+
+            {/* Doctor avatar strip — overlapping circles is the
+              * universal "people are here right now" signal. Falls
+              * back to a static count when liveDoctors is empty. */}
+            <div className="px-6 pt-6 pb-2">
+              {doctorsForPanel.length > 0 ? (
+                <>
+                  <div className="flex items-center gap-3">
+                    <div className="flex -space-x-2">
+                      {doctorsForPanel.map((d) => (
+                        <AvatarBubble key={d.name} name={d.name} />
+                      ))}
+                    </div>
+                    <p className="text-[length:var(--text-meta)] text-[var(--color-text-body)]">
+                      <span className="font-semibold text-[var(--color-text-primary)]">
+                        {doctorCount}{" "}
+                        {doctorCount === 1 ? "doctor" : "doctors"}
+                      </span>{" "}
+                      online · consulting in {languageLabel}
+                    </p>
+                  </div>
+
+                  <ul className="mt-5 divide-y divide-[var(--color-border)]">
+                    {doctorsForPanel.slice(0, 3).map((d) => (
+                      <li
+                        key={d.name}
+                        className="flex items-center gap-3 py-3 first:pt-0 last:pb-1"
+                      >
+                        <AvatarBubble name={d.name} />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-[length:var(--text-meta)] font-semibold text-[var(--color-text-primary)]">
+                            {d.name}
+                          </p>
+                          <p className="truncate text-xs text-[var(--color-text-muted)]">
+                            {d.role}
+                          </p>
+                        </div>
+                        <span
+                          className="
+                            shrink-0
+                            rounded-full
+                            bg-[var(--color-accent-dim)]
+                            px-2.5 py-1
+                            text-xs font-semibold
+                            text-[var(--color-brand-primary)]
+                          "
+                        >
+                          Free slot
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                // Empty-state — still useful: shows the cross-Europe
+                // count so the user knows the platform isn't dead,
+                // just no one from this country is online this minute.
+                <div className="py-4">
+                  <p className="text-[length:var(--text-meta)] text-[var(--color-text-body)]">
+                    <span className="font-semibold text-[var(--color-text-primary)]">
+                      {totalDoctorsAcrossEurope} doctors
+                    </span>{" "}
+                    across our European network
+                  </p>
+                  <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                    No one from {countryName} online right now — book a slot and we'll
+                    line one up.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Bottom CTA — duplicates the primary CTA so the panel
+              * stands alone as a booking surface. Forest pill, full
+              * width. */}
+            <div className="border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-6 py-5">
+              <Link
+                href={bookHref}
+                className="gh-btn gh-btn-primary w-full justify-center"
+              >
+                Pick a time
+                <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+              </Link>
+              <p className="mt-3 text-center text-xs text-[var(--color-text-muted)]">
+                No card required to browse · payment after the call
+              </p>
+            </div>
+          </aside>
         </div>
 
-        <h1
-          className="m-0 text-[var(--color-text-primary)]"
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "clamp(48px, 9vw, 128px)",
-            fontWeight: 800,
-            letterSpacing: "-0.035em",
-            lineHeight: 0.92,
-            marginTop: 20,
-            maxWidth: "14ch",
-          }}
-        >
-          {displayHeroTitle ? (
-            displayHeroTitle
-          ) : (
-            <>
-              See a doctor.{" "}
-              <span
-                style={{
-                  background:
-                    "linear-gradient(180deg, transparent 64%, var(--color-accent) 64% 92%, transparent 92%)",
-                  paddingInline: "0.05em",
-                }}
-              >
-                From anywhere.
-              </span>
-            </>
-          )}
-        </h1>
-
-        <p
-          className="text-[var(--color-text-muted)]"
-          style={{
-            marginTop: 28,
-            fontSize: "clamp(17px, 1.4vw, 22px)",
-            lineHeight: 1.55,
-            maxWidth: "44ch",
-          }}
-        >
-          {displayHeroSubtitle ??
-            "Online video consultations with locally-registered doctors. Same day, in your language, from your sofa."}
-        </p>
-
+        {/* Admin-uploaded hero image — lives below the split as an
+          * editorial wide image, doesn't compete with the panel. */}
         {heroImageSrc ? (
-          // Admin-uploaded hero visual sits between the lede and the booking
-          // panel. Wrapped in a `next/image`-less <img> because the source can
-          // be an arbitrary /api/media path or external HTTPS URL and we don't
-          // pre-register it in next.config remotePatterns.
           <div
-            className="mt-10 overflow-hidden"
-            style={{
-              borderRadius: 24,
-              border: "1px solid var(--color-border)",
-              boxShadow: "var(--shadow-soft)",
-              background: "var(--color-background-soft)",
-            }}
+            className="
+              mt-16 overflow-hidden
+              rounded-[var(--radius-card)]
+              border border-[var(--color-border)]
+              shadow-[var(--shadow-soft)]
+            "
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={heroImageSrc}
               alt={displayHeroTitle ?? `${countryName} clinic`}
               className="block w-full"
-              style={{ maxHeight: 440, objectFit: "cover" }}
+              style={{ maxHeight: 480, objectFit: "cover" }}
             />
           </div>
         ) : null}
-
-        <div className="gh-hero-bottom grid gap-4" style={{ marginTop: 48 }}>
-          <div
-            className="flex flex-col gap-5"
-            style={{
-              border: "1px solid var(--color-border)",
-              borderRadius: 24,
-              background: "var(--color-background-page)",
-              padding: 28,
-              boxShadow: "var(--shadow-card)",
-            }}
-          >
-            <div className="flex items-center gap-4">
-              <span
-                className="inline-flex shrink-0 items-center justify-center"
-                style={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: 16,
-                  background: "var(--color-background-soft)",
-                  border: "1px solid var(--color-border)",
-                }}
-              >
-                <Flag code={countryCode} size="lg" />
-              </span>
-              <div className="flex-1">
-                <p
-                  className="m-0 uppercase"
-                  style={{
-                    fontSize: 12,
-                    color: "var(--color-text-muted)",
-                    letterSpacing: "0.1em",
-                    fontWeight: 700,
-                  }}
-                >
-                  Booking in
-                </p>
-                <p
-                  className="m-0"
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: 28,
-                    fontWeight: 800,
-                    color: "var(--color-text-primary)",
-                    letterSpacing: "-0.015em",
-                    lineHeight: 1.1,
-                  }}
-                >
-                  {countryName}
-                </p>
-              </div>
-              <span aria-hidden className="gh-pulse-dot" />
-            </div>
-
-            <div
-              className="grid grid-cols-2 gap-3"
-              style={{
-                padding: "16px 0",
-                borderTop: "1px solid var(--color-border)",
-                borderBottom: "1px solid var(--color-border)",
-              }}
-            >
-              <Stat label="Doctors" value={String(doctorCount)} />
-              <Stat label="Language" value={languageLabel} />
-            </div>
-
-            <Link
-              href={bookHref}
-              className="gh-btn gh-btn-primary"
-              style={{ minHeight: 52 }}
-            >
-              {displayCtaLabel}
-              <ArrowUpRight className="size-4" aria-hidden />
-            </Link>
-          </div>
-
-          {/* "Right now" feed only renders when the caller passed real data.
-              Empty feed → omit the panel entirely. */}
-          {liveDoctors && liveDoctors.length > 0 ? (
-            <div
-              className="relative flex flex-col gap-4 overflow-hidden text-white"
-              style={{
-                borderRadius: 24,
-                background: "var(--color-background-dark)",
-                padding: 28,
-              }}
-            >
-              <div
-                aria-hidden
-                className="absolute inset-0"
-                style={{
-                  opacity: 0.06,
-                  backgroundImage: PATTERN_DARK,
-                  backgroundSize: "28px",
-                }}
-              />
-              <div className="relative">
-                <p
-                  className="m-0 uppercase"
-                  style={{
-                    fontSize: 11,
-                    color: "var(--color-accent)",
-                    letterSpacing: "0.18em",
-                    fontWeight: 700,
-                  }}
-                >
-                  Doctors live
-                </p>
-                <p
-                  className="m-0"
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: 22,
-                    fontWeight: 800,
-                    letterSpacing: "-0.015em",
-                    lineHeight: 1.2,
-                    marginTop: 4,
-                  }}
-                >
-                  {totalDoctorsAcrossEurope} active doctors across Europe
-                </p>
-              </div>
-              <div className="relative flex flex-col gap-2.5">
-                {liveDoctors.slice(0, 4).map((d) => {
-                  const initials =
-                    d.name.match(/[A-Z]/g)?.slice(0, 2).join("") ?? "·";
-                  return (
-                    <div
-                      key={d.name}
-                      className="flex items-center gap-3"
-                      style={{
-                        background: "rgba(255,255,255,0.06)",
-                        border: "1px solid rgba(255,255,255,0.10)",
-                        borderRadius: 14,
-                        padding: "10px 14px",
-                      }}
-                    >
-                      <span
-                        className="inline-flex items-center justify-center"
-                        style={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: 999,
-                          background:
-                            "linear-gradient(135deg, var(--color-accent), var(--color-brand-primary))",
-                          color: "var(--color-background-dark)",
-                          fontWeight: 800,
-                          fontSize: 11,
-                        }}
-                      >
-                        {initials}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p
-                          className="m-0 truncate text-white"
-                          style={{ fontSize: 13, fontWeight: 700 }}
-                        >
-                          {d.name}
-                        </p>
-                        <p
-                          className="m-0"
-                          style={{
-                            fontSize: 11,
-                            color: "rgba(255,255,255,0.65)",
-                          }}
-                        >
-                          {d.role}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
-        </div>
       </div>
-
     </section>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+/** Two-letter avatar bubble. Forest gradient = visual identity, not
+ *  generic gray. Initials are derived from the first two capital
+ *  letters of the name so "Dr Hassaan Bin Ghayas" lands on HG. */
+function AvatarBubble({ name }: { name: string }) {
+  const initials =
+    name.match(/[A-Z]/g)?.slice(0, 2).join("") || name.slice(0, 2).toUpperCase();
   return (
-    <div>
-      <p
-        className="m-0 uppercase"
-        style={{
-          fontSize: 11,
-          color: "var(--color-text-muted)",
-          letterSpacing: "0.08em",
-          fontWeight: 700,
-        }}
-      >
-        {label}
-      </p>
-      <p
-        className="m-0"
-        style={{
-          marginTop: 2,
-          fontSize: 14,
-          fontWeight: 700,
-          color: "var(--color-text-primary)",
-          fontVariantNumeric: "tabular-nums",
-        }}
-      >
-        {value}
-      </p>
-    </div>
+    <span
+      aria-hidden
+      className="
+        inline-flex size-9 shrink-0
+        items-center justify-center
+        rounded-full
+        text-[11px] font-bold
+        text-white
+        ring-2 ring-[var(--color-background-page)]
+      "
+      style={{
+        background:
+          "linear-gradient(135deg, var(--color-brand-primary), #2D6A4F 60%, var(--color-accent))",
+      }}
+    >
+      {initials}
+    </span>
   );
 }

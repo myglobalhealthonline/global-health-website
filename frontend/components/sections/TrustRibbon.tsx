@@ -1,66 +1,116 @@
 /**
- * One-line trust ribbon.
+ * Editorial trust ribbon — four-up proof points on a mint-cream surface
+ * with subtle vertical hairlines. Each item carries an icon, a big
+ * value, and a one-line caption. Stops being a flat row of stats and
+ * starts reading as a credentials line.
  *
- * Phase 1: data-driven via props. The earlier version hard-coded
- *   "50+ Licensed doctors · 5 Countries · GDPR · 4.94 Doctify rating · 19 reviews"
- * which (a) drifts from the real catalogue and (b) made an unsourced rating
- * claim. Callers should compute the doctor/country counts from the DB and
- * pass a reviews item only when there's a verified source.
+ * Data-driven. Caller passes the live counts; an icon mapper picks the
+ * right Lucide icon per item type so we don't have to hand-thread a
+ * fifth prop everywhere.
  */
 
-export type TrustRibbonItem = { v: string; l: string };
+import {
+  ShieldCheck,
+  Stethoscope,
+  Globe2,
+  Sparkles,
+  Lock,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+export type TrustRibbonItem = {
+  v: string;
+  l: string;
+  /** Optional icon key. Defaults to a sparkles icon when not set. */
+  icon?: "shield" | "doctor" | "globe" | "lock" | "sparkles";
+};
+
+const ICONS: Record<NonNullable<TrustRibbonItem["icon"]>, LucideIcon> = {
+  shield: ShieldCheck,
+  doctor: Stethoscope,
+  globe: Globe2,
+  lock: Lock,
+  sparkles: Sparkles,
+};
+
+function inferIcon(label: string): NonNullable<TrustRibbonItem["icon"]> {
+  const normalised = label.toLowerCase();
+  if (normalised.includes("doctor") || normalised.includes("clinician"))
+    return "doctor";
+  if (normalised.includes("countr") || normalised.includes("europ"))
+    return "globe";
+  if (normalised.includes("gdpr") || normalised.includes("complian"))
+    return "lock";
+  if (normalised.includes("secure") || normalised.includes("encrypt"))
+    return "shield";
+  return "sparkles";
+}
 
 const FALLBACK_ITEMS: TrustRibbonItem[] = [
-  { v: "GDPR", l: "Compliant by default" },
+  { v: "GDPR", l: "Compliant by default", icon: "lock" },
 ];
 
 export function TrustRibbon({ items }: { items?: TrustRibbonItem[] }) {
   const list = items && items.length > 0 ? items : FALLBACK_ITEMS;
   return (
     <section
-      style={{
-        background: "var(--color-background-soft)",
-        borderTop: "1px solid var(--color-border)",
-        borderBottom: "1px solid var(--color-border)",
-        padding: "20px 0",
-      }}
+      className="
+        relative
+        bg-[var(--color-background-soft)]
+        border-y border-[var(--color-border)]
+      "
     >
       <div
-        className="mx-auto flex flex-wrap justify-between gap-4"
-        style={{
-          maxWidth: 1320,
-          padding: "0 clamp(20px, 4vw, 40px)",
-        }}
+        className="
+          mx-auto max-w-[var(--container-width)]
+          px-5 md:px-10
+          py-8 md:py-10
+        "
       >
-        {list.map((it) => (
-          <div
-            key={it.l}
-            className="inline-flex items-baseline gap-3"
-            style={{ flex: "1 1 200px" }}
-          >
-            <span
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: 28,
-                fontWeight: 800,
-                color: "var(--color-brand-primary)",
-                letterSpacing: "-0.02em",
-                lineHeight: 1,
-              }}
-            >
-              {it.v}
-            </span>
-            <span
-              style={{
-                fontSize: 13,
-                color: "var(--color-text-muted)",
-                fontWeight: 600,
-              }}
-            >
-              {it.l}
-            </span>
-          </div>
-        ))}
+        <ul
+          className="
+            grid gap-y-8 gap-x-6
+            grid-cols-2
+            md:grid-cols-2
+            lg:grid-cols-4
+            divide-x-0
+            lg:divide-x lg:divide-[var(--color-border)]
+          "
+        >
+          {list.map((it, i) => {
+            const Icon = ICONS[it.icon ?? inferIcon(it.l)];
+            return (
+              <li
+                key={`${it.v}-${it.l}`}
+                className={
+                  i > 0
+                    ? "lg:pl-6 flex flex-col gap-2"
+                    : "flex flex-col gap-2"
+                }
+              >
+                <span className="inline-flex size-9 items-center justify-center rounded-full bg-[var(--color-background-page)] border border-[var(--color-border)]">
+                  <Icon
+                    className="size-4 text-[var(--color-brand-primary)]"
+                    strokeWidth={1.5}
+                    aria-hidden
+                  />
+                </span>
+                <p
+                  className="
+                    font-semibold tracking-[-0.02em]
+                    text-[2rem] leading-none
+                    text-[var(--color-text-primary)]
+                  "
+                >
+                  {it.v}
+                </p>
+                <p className="text-[length:var(--text-meta)] text-[var(--color-text-muted)]">
+                  {it.l}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </section>
   );

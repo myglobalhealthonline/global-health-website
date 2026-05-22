@@ -1,22 +1,23 @@
 "use client";
 
 /**
- * Filterable service catalogue.
- *
- * Data-driven: callers pass the full `services` array. Cards auto-update as
- * the team adds/retires Service rows in admin. The earlier hard-coded SERVICES
- * list has been removed so this section only shows what the DB knows.
+ * Filterable service catalogue. Bento layout: first card in a non-
+ * filtered view spans 2x at lg+ so the page has a clear focal point
+ * instead of N identical tiles. Per-type gradient stripes carry
+ * visual identity without resorting to colour theme switches.
  */
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { currencySymbol } from "@/lib/format-currency";
 import {
+  ArrowUpRight,
   CheckCircle2,
   Package,
   Stethoscope,
   User,
 } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
 
 export type ServiceTileType = "general" | "specialist" | "prescription" | "test";
 
@@ -30,15 +31,15 @@ export type ServiceCatalogItem = {
   /** Free-text duration (e.g. "30 min", "Sent home"). */
   dur: string;
   href: string;
-  /** Optional uploaded hero image. Renders above the icon/tag stripe. */
+  /** Optional uploaded hero image. */
   imageSrc?: string | null;
 };
 
 const DEFAULT_ICONS: Record<ServiceTileType, ReactNode> = {
-  general: <Stethoscope className="size-[22px]" aria-hidden />,
-  specialist: <User className="size-[22px]" aria-hidden />,
-  prescription: <Package className="size-[22px]" aria-hidden />,
-  test: <CheckCircle2 className="size-[22px]" aria-hidden />,
+  general: <Stethoscope className="size-5" strokeWidth={1.5} aria-hidden />,
+  specialist: <User className="size-5" strokeWidth={1.5} aria-hidden />,
+  prescription: <Package className="size-5" strokeWidth={1.5} aria-hidden />,
+  test: <CheckCircle2 className="size-5" strokeWidth={1.5} aria-hidden />,
 };
 
 const FILTERS = [
@@ -56,7 +57,6 @@ export function ServiceCatalog({
   intro,
 }: {
   services: ServiceCatalogItem[];
-  /** Optional intro paragraph in the section header. */
   intro?: string;
 }) {
   const [filter, setFilter] = useState<FilterId>("all");
@@ -75,129 +75,93 @@ export function ServiceCatalog({
     return null;
   }
 
+  // Featured layout: first card spans 2x at lg+ when we're showing
+  // 4+ services with no filter applied. Filtered views go flat so a
+  // single "Specialist" filter doesn't leave a 2x card hanging alone.
+  const useFeaturedFirst = filter === "all" && shown.length >= 4;
+
   return (
-    <section style={{ padding: "96px 0 64px" }}>
-      <div
-        className="mx-auto"
-        style={{
-          maxWidth: 1320,
-          padding: "0 clamp(20px, 4vw, 40px)",
-        }}
-      >
-        <div
-          className="flex flex-wrap items-end justify-between gap-6"
-          style={{ marginBottom: 36 }}
-        >
+    <section id="services" className="gh-section scroll-mt-24">
+      <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+        {/* Header — eyebrow + heading + lede in one editorial block.
+          * Three columns at lg so the head, sub-head and filter row
+          * sit on one baseline; stacks at md. */}
+        <header className="grid items-end gap-8 lg:grid-cols-[1fr_auto] mb-10 md:mb-14">
           <div>
-            <span
-              className="uppercase"
-              style={{
-                fontSize: 11,
-                fontWeight: 700,
-                letterSpacing: "0.18em",
-                color: "var(--color-brand-primary)",
-              }}
-            >
+            <p className="gh-eyebrow text-[var(--color-brand-primary)]">
               What we treat
-            </span>
-            <h2
-              className="text-[var(--color-text-primary)]"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(32px, 4vw, 48px)",
-                fontWeight: 800,
-                letterSpacing: "-0.02em",
-                lineHeight: 1.1,
-                margin: "12px 0 0",
-                maxWidth: "16ch",
-              }}
-            >
-              {services.length === 1
-                ? "Browse 1 service."
-                : `Browse ${services.length} services.`}
-            </h2>
-          </div>
-          {intro ? (
-            <p
-              className="m-0 text-[var(--color-text-muted)]"
-              style={{ maxWidth: "32ch", fontSize: 16 }}
-            >
-              {intro}
             </p>
-          ) : null}
-        </div>
-
-        {visibleFilters.length > 2 ? (
-          <div
-            className="flex flex-wrap gap-2"
-            style={{
-              padding: "16px 0",
-              borderTop: "1px solid var(--color-border)",
-              borderBottom: "1px solid var(--color-border)",
-              marginBottom: 24,
-            }}
-          >
-            {visibleFilters.map((f) => {
-              const count =
-                f.id === "all"
-                  ? services.length
-                  : services.filter((s) => s.type === f.id).length;
-              const isActive = filter === f.id;
-              return (
-                <button
-                  key={f.id}
-                  type="button"
-                  onClick={() => setFilter(f.id)}
-                  className="inline-flex items-center gap-2 transition-all duration-150"
-                  style={{
-                    padding: "10px 18px",
-                    borderRadius: 999,
-                    border:
-                      "1px solid " +
-                      (isActive
-                        ? "var(--color-brand-primary)"
-                        : "var(--color-border)"),
-                    background: isActive
-                      ? "var(--color-brand-primary)"
-                      : "var(--color-background-page)",
-                    color: isActive ? "#fff" : "var(--color-text-body)",
-                    fontFamily: "inherit",
-                    fontSize: 13,
-                    fontWeight: 700,
-                    cursor: "pointer",
-                  }}
-                >
-                  {f.label}
-                  <span
-                    className="inline-flex items-center justify-center"
-                    style={{
-                      background: isActive
-                        ? "rgba(255,255,255,0.20)"
-                        : "var(--color-background-soft)",
-                      color: isActive ? "#fff" : "var(--color-text-muted)",
-                      fontSize: 11,
-                      fontWeight: 800,
-                      padding: "2px 6px",
-                      borderRadius: 999,
-                      minWidth: 20,
-                    }}
-                  >
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
+            <h2
+              className="
+                mt-3 max-w-[18ch]
+                font-semibold tracking-[-0.025em] leading-[1.05]
+                text-[var(--color-text-primary)]
+                text-[clamp(2rem,4vw+0.5rem,3.5rem)]
+              "
+            >
+              Care for what's actually going on.
+            </h2>
+            {intro ? (
+              <p className="mt-5 max-w-[58ch] text-[length:var(--text-body-lg)] text-[var(--color-text-muted)]">
+                {intro}
+              </p>
+            ) : null}
           </div>
-        ) : null}
+
+          {visibleFilters.length > 2 ? (
+            <div className="flex flex-wrap gap-2">
+              {visibleFilters.map((f) => {
+                const count =
+                  f.id === "all"
+                    ? services.length
+                    : services.filter((s) => s.type === f.id).length;
+                const isActive = filter === f.id;
+                return (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => setFilter(f.id)}
+                    aria-pressed={isActive}
+                    className={cn(
+                      "inline-flex items-center gap-2 rounded-full px-4 py-2",
+                      "text-[length:var(--text-meta)] font-semibold",
+                      "transition-[background-color,border-color,color] duration-200",
+                      "motion-reduce:transition-none",
+                      isActive
+                        ? "bg-[var(--color-brand-primary)] text-white border border-[var(--color-brand-primary)]"
+                        : "bg-transparent text-[var(--color-text-body)] border border-[var(--color-border)] hover:border-[var(--color-border-strong)] hover:bg-[var(--color-background-soft)]",
+                    )}
+                  >
+                    {f.label}
+                    <span
+                      className={cn(
+                        "inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold",
+                        isActive
+                          ? "bg-white/20 text-white"
+                          : "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]",
+                      )}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
+        </header>
 
         <div
-          className="grid gap-4"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-          }}
+          className={cn(
+            "gh-card-grid",
+            useFeaturedFirst ? "gh-card-grid--featured" : null,
+          )}
         >
-          {shown.map((s) => (
-            <ServiceTile key={`${s.type}-${s.title}-${s.href}`} service={s} />
+          {shown.map((s, i) => (
+            <ServiceTile
+              key={`${s.type}-${s.title}-${s.href}`}
+              service={s}
+              variant={useFeaturedFirst && i === 0 ? "featured" : "default"}
+            />
           ))}
         </div>
       </div>
@@ -205,162 +169,176 @@ export function ServiceCatalog({
   );
 }
 
-function ServiceTile({ service: s }: { service: ServiceCatalogItem }) {
-  const stripeBg =
-    s.type === "test"
-      ? "linear-gradient(135deg, #C8E6A0 0%, #A4D177 100%)"
-      : s.type === "specialist"
-        ? "linear-gradient(135deg, var(--color-brand-primary) 0%, #143B30 100%)"
-        : s.type === "prescription"
-          ? "linear-gradient(135deg, #2D3B36 0%, #0F2E25 100%)"
-          : "linear-gradient(135deg, #1B4D3E 0%, #2D6A5A 100%)";
+const STRIPE_GRADIENTS: Record<ServiceTileType, string> = {
+  general:
+    "linear-gradient(135deg, #1B4D3E 0%, #2D6A5A 55%, #3F8770 100%)",
+  specialist:
+    "linear-gradient(135deg, #0F2E25 0%, #1B4D3E 60%, #2D6A5A 100%)",
+  prescription:
+    "linear-gradient(135deg, #143B30 0%, #1B4D3E 50%, #143B30 100%)",
+  test:
+    "linear-gradient(135deg, #C8E6A0 0%, #B0F122 60%, #C8E6A0 100%)",
+};
+
+function ServiceTile({
+  service: s,
+  variant,
+}: {
+  service: ServiceCatalogItem;
+  variant: "default" | "featured";
+}) {
+  const isFeatured = variant === "featured";
+  const stripeBg = STRIPE_GRADIENTS[s.type];
   const stripeFg = s.type === "test" ? "var(--color-background-dark)" : "#fff";
-  const tileBg =
-    s.type === "test" ? "rgba(20,59,48,0.10)" : "rgba(255,255,255,0.14)";
   const symbol = currencySymbol(s.currency);
 
   return (
     <Link
       href={s.href}
-      className="gh-service-tile relative block overflow-hidden text-left"
-      style={{
-        background: "var(--color-background-page)",
-        border: "1px solid var(--color-border)",
-        borderRadius: 20,
-        fontFamily: "inherit",
-        boxShadow: "var(--shadow-soft)",
-        textDecoration: "none",
-      }}
+      className={cn(
+        "group relative flex h-full flex-col overflow-hidden text-left",
+        "rounded-[var(--radius-card)]",
+        "border border-[var(--color-border)]",
+        "bg-[var(--color-background-page)]",
+        "shadow-[var(--shadow-soft)]",
+        "transition-[transform,box-shadow,border-color] duration-300",
+        "ease-[cubic-bezier(0.16,1,0.3,1)]",
+        "hover:-translate-y-0.5",
+        "hover:border-[var(--color-border-strong)]",
+        "hover:shadow-[var(--shadow-card-hover)]",
+        "focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]",
+        "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+      )}
     >
+      {/* Top stripe — image when admin uploaded one, otherwise a
+        * gradient + icon + tag combo that's still visually distinct
+        * per service type. Featured cards get a taller stripe so the
+        * card has more presence. */}
       {s.imageSrc ? (
-        // Uploaded hero — pre-empts the icon stripe so the photo dominates.
-        <div className="relative overflow-hidden" style={{ height: 160 }}>
+        <div
+          className="relative overflow-hidden"
+          style={{ height: isFeatured ? 240 : 160 }}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={s.imageSrc}
             alt={s.title}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            className="block h-full w-full object-cover"
           />
           <span
-            className="uppercase absolute right-3 top-3"
-            style={{
-              padding: "4px 10px",
-              borderRadius: 999,
-              background: "rgba(0,0,0,0.55)",
-              color: "#fff",
-              fontSize: 10,
-              fontWeight: 800,
-              letterSpacing: "0.08em",
-            }}
+            className="
+              absolute right-3 top-3 uppercase
+              rounded-full px-2.5 py-1
+              text-[10px] font-bold tracking-[0.08em]
+              bg-black/55 text-white
+            "
           >
             {s.tag}
           </span>
         </div>
       ) : (
         <div
-          className="flex items-start justify-between overflow-hidden"
-          style={{
-            height: 90,
-            background: stripeBg,
-            color: stripeFg,
-            padding: 16,
-          }}
+          className={cn(
+            "flex items-start justify-between overflow-hidden p-5",
+            isFeatured ? "h-[160px]" : "h-[110px]",
+          )}
+          style={{ background: stripeBg, color: stripeFg }}
         >
           <span
-            className="inline-flex items-center justify-center"
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 12,
-              background: tileBg,
-            }}
+            className={cn(
+              "inline-flex items-center justify-center rounded-2xl",
+              isFeatured ? "size-14" : "size-11",
+              s.type === "test"
+                ? "bg-[rgba(20,59,48,0.12)]"
+                : "bg-white/16",
+            )}
           >
             {DEFAULT_ICONS[s.type]}
           </span>
           <span
-            className="uppercase"
-            style={{
-              padding: "4px 10px",
-              borderRadius: 999,
-              background:
-                s.type === "test"
-                  ? "rgba(20,59,48,0.12)"
-                  : "rgba(255,255,255,0.16)",
-              fontSize: 10,
-              fontWeight: 800,
-              letterSpacing: "0.08em",
-            }}
+            className={cn(
+              "uppercase rounded-full px-2.5 py-1",
+              "text-[10px] font-bold tracking-[0.08em]",
+              s.type === "test"
+                ? "bg-[rgba(20,59,48,0.12)] text-[var(--color-background-dark)]"
+                : "bg-white/16 text-white",
+            )}
           >
             {s.tag}
           </span>
         </div>
       )}
 
-      <div style={{ padding: "20px 22px 22px" }}>
+      <div className={cn("flex flex-1 flex-col", isFeatured ? "p-7" : "p-6")}>
         <h3
-          className="text-[var(--color-text-primary)]"
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: 19,
-            fontWeight: 800,
-            letterSpacing: "-0.01em",
-            margin: "0 0 14px",
-          }}
+          className={cn(
+            "font-semibold tracking-[-0.015em]",
+            "text-[var(--color-text-primary)]",
+            isFeatured
+              ? "text-[length:var(--text-h2)] leading-tight max-w-[14ch]"
+              : "text-[length:var(--text-h3)] leading-snug",
+          )}
         >
           {s.title}
         </h3>
-        <div
-          className="grid grid-cols-2 gap-1"
-          style={{
-            paddingTop: 14,
-            borderTop: "1px solid var(--color-border)",
-          }}
-        >
-          <div>
-            <p
-              className="m-0 uppercase"
-              style={{
-                fontSize: 10,
-                color: "var(--color-text-muted)",
-                letterSpacing: "0.08em",
-                fontWeight: 700,
-              }}
-            >
-              From
-            </p>
-            <p
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{
-                fontSize: 18,
-                fontWeight: 800,
-                fontVariantNumeric: "tabular-nums",
-              }}
-            >
-              {s.price == null ? "—" : `${symbol}${s.price}`}
-            </p>
+
+        {isFeatured ? (
+          <p className="mt-3 text-[length:var(--text-body)] text-[var(--color-text-muted)] max-w-[40ch]">
+            Most patients start here. Same-day consultations with a doctor
+            registered in your country, follow-up notes included.
+          </p>
+        ) : null}
+
+        {/* Footer — price / time on one row, then a forest pill that
+          * spans full width acts as the primary action plane. */}
+        <div className="mt-auto pt-6">
+          <div className="flex items-baseline justify-between gap-4 pb-4 border-b border-[var(--color-border)]">
+            <div>
+              <p className="gh-eyebrow text-[var(--color-text-muted)]">From</p>
+              <p
+                className={cn(
+                  "font-semibold leading-none tracking-[-0.015em]",
+                  "text-[var(--color-text-primary)] [font-variant-numeric:tabular-nums]",
+                  isFeatured ? "mt-2 text-3xl" : "mt-1 text-2xl",
+                )}
+              >
+                {s.price == null ? "—" : `${symbol}${s.price}`}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="gh-eyebrow text-[var(--color-text-muted)]">
+                {s.type === "test" ? "Turnaround" : "Duration"}
+              </p>
+              <p className="mt-1 text-sm font-semibold text-[var(--color-text-body)]">
+                {s.dur}
+              </p>
+            </div>
           </div>
-          <div className="text-right">
-            <p
-              className="m-0 uppercase"
-              style={{
-                fontSize: 10,
-                color: "var(--color-text-muted)",
-                letterSpacing: "0.08em",
-                fontWeight: 700,
-              }}
-            >
-              {s.type === "test" ? "Turnaround" : "Time"}
-            </p>
-            <p
-              className="m-0 text-[var(--color-text-body)]"
-              style={{ fontSize: 13, fontWeight: 700 }}
-            >
-              {s.dur}
-            </p>
-          </div>
+
+          <span
+            className="
+              mt-4 inline-flex items-center justify-between gap-2
+              w-full rounded-full
+              border border-[var(--color-border-strong)]
+              px-4 py-2.5
+              text-[length:var(--text-meta)] font-semibold
+              text-[var(--color-brand-primary)]
+              transition-colors duration-200
+              group-hover:bg-[var(--color-brand-primary)]
+              group-hover:text-white
+              group-hover:border-[var(--color-brand-primary)]
+              motion-reduce:transition-none
+            "
+          >
+            {s.type === "test" ? "Order kit" : "Book consultation"}
+            <ArrowUpRight
+              className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:group-hover:translate-x-0"
+              strokeWidth={1.5}
+              aria-hidden
+            />
+          </span>
         </div>
       </div>
-
     </Link>
   );
 }
