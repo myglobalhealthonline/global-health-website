@@ -173,30 +173,26 @@ export async function listDoctorsByCountry(countryCode: string) {
 }
 
 /**
- * Phase 2 alias: the public `imcRegistration` field on a doctor used to
- * read straight off Doctor.imcRegistration (IE-only). The Phase 1
- * migration moved the real value into DoctorCountry.registrationNumber
- * (one row per market the doctor is registered in). Until the legacy
- * column is dropped, this helper keeps the existing field name on the
- * payload but resolves it from the new source. When DoctorCountry has
- * a row for this country we use that; otherwise we fall back to the
- * legacy column so doctors who haven't been backfilled yet still show.
+ * Phase 2 shim: the legacy `Doctor.imcRegistration` column is gone.
+ * Every public payload that used to surface it now gets the value
+ * computed from `DoctorCountry.registrationNumber` for the country
+ * being viewed. Frontend display code stays on the legacy field name
+ * — only the data source moved.
  */
 function overrideImcRegistrationFromCountry<
   T extends {
-    imcRegistration: string | null;
     additionalCountries?: Array<{
       chamberEntity: string | null;
       registrationNumber: string | null;
       isVerified: boolean;
     }>;
   },
->(doctor: T): T {
+>(doctor: T): T & { imcRegistration: string | null } {
   const link = doctor.additionalCountries?.[0];
-  if (link?.registrationNumber) {
-    return { ...doctor, imcRegistration: link.registrationNumber };
-  }
-  return doctor;
+  return {
+    ...doctor,
+    imcRegistration: link?.registrationNumber ?? null,
+  };
 }
 
 /**
@@ -464,7 +460,11 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
           fullName: input.fullName,
           title: input.title,
           bio: sanitizeRichHtml(input.bio),
-          imcRegistration: input.imcRegistration ?? null,
+          // Phase 2: imcRegistration column is gone. The admin schema
+          // still accepts the field for backward compat with old form
+          // submissions (a stale frontend cache might POST it); we just
+          // drop it on the floor here. Real per-country registrations
+          // are saved via /api/admin/doctors/:id/registrations/:countryId.
           medicalRegistrationUrl: input.medicalRegistrationUrl ?? null,
           qualifications: input.qualifications ?? [],
           whatsappNumber: input.whatsappNumber ?? null,
@@ -559,7 +559,9 @@ export async function updateAdminDoctor(
           ...(body.fullName !== undefined && { fullName: body.fullName }),
           ...(body.title !== undefined && { title: body.title }),
           ...(body.bio !== undefined && { bio: sanitizeRichHtml(body.bio) }),
-          ...(body.imcRegistration !== undefined && { imcRegistration: body.imcRegistration }),
+          // Phase 2: imcRegistration column dropped — silently ignore
+          // any legacy frontend that still posts it. Real registrations
+          // live on DoctorCountry rows now.
           ...(body.medicalRegistrationUrl !== undefined && { medicalRegistrationUrl: body.medicalRegistrationUrl }),
           ...(body.qualifications !== undefined && { qualifications: body.qualifications }),
           ...(body.whatsappNumber !== undefined && { whatsappNumber: body.whatsappNumber }),

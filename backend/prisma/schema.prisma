@@ -279,7 +279,9 @@ model Doctor {
   bio                         String?
   seoTitle                    String?
   seoDescription              String?
-  imcRegistration             String?
+  // Phase 2: imcRegistration removed. Per-country registration lives on
+  // DoctorCountry.registrationNumber. Public payload computes the
+  // display value via `overrideImcRegistrationFromCountry`.
   medicalRegistrationUrl      String?
   qualifications              String[]
   whatsappNumber              String?

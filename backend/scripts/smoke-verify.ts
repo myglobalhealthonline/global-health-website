@@ -204,37 +204,71 @@ async function flow8ManualEntryFlag() {
 }
 
 async function flow9RxRegistration() {
-  // Flow 9 — Rx PDF for IE doctor. Observable: doctors with both a
-  // legacy imcRegistration AND a matching DoctorCountry row exist
-  // (backfill landed, drift = 0). PDF rendering itself is binary
-  // output — can't auto-verify without rendering.
-  const drift = await prisma.$queryRawUnsafe<
-    Array<{ count: bigint }>
-  >(
-    `SELECT COUNT(*)::bigint AS count
-     FROM "Doctor" d
-     LEFT JOIN "DoctorCountry" dc
-       ON dc."doctorId" = d.id
-      AND dc."countryId" = (SELECT id FROM "Country" WHERE code = 'ie' LIMIT 1)
-     WHERE d."imcRegistration" IS NOT NULL AND d."imcRegistration" <> ''
-       AND (dc."registrationNumber" IS NULL
-            OR dc."registrationNumber" <> d."imcRegistration")`,
+  // Flow 9 — Rx PDF for IE doctor. Post-Phase-2 the legacy
+  // Doctor.imcRegistration column is dropped; DoctorCountry.registrationNumber
+  // is the single source of truth. We probe for the column's presence
+  // first; if it's still there (i.e. running this against a pre-drop
+  // DB) we run the drift check; otherwise we assert there are
+  // DoctorCountry rows for IE with registration numbers.
+  const cols = await prisma.$queryRawUnsafe<Array<{ exists: boolean }>>(
+    `SELECT EXISTS (
+       SELECT 1 FROM information_schema.columns
+       WHERE table_name = 'Doctor' AND column_name = 'imcRegistration'
+     ) AS exists`,
   );
-  const driftCount = Number(drift[0]?.count ?? 0n);
-  if (driftCount > 0) {
-    return record(
+  const legacyColumnExists = Boolean(cols[0]?.exists);
+
+  if (legacyColumnExists) {
+    const drift = await prisma.$queryRawUnsafe<Array<{ count: bigint }>>(
+      `SELECT COUNT(*)::bigint AS count
+       FROM "Doctor" d
+       LEFT JOIN "DoctorCountry" dc
+         ON dc."doctorId" = d.id
+        AND dc."countryId" = (SELECT id FROM "Country" WHERE code = 'ie' LIMIT 1)
+       WHERE d."imcRegistration" IS NOT NULL AND d."imcRegistration" <> ''
+         AND (dc."registrationNumber" IS NULL
+              OR dc."registrationNumber" <> d."imcRegistration")`,
+    );
+    const driftCount = Number(drift[0]?.count ?? 0n);
+    if (driftCount > 0) {
+      return record(
+        "9",
+        "IE Rx registration drift (pre-Phase-2)",
+        "fail",
+        `${driftCount} doctor(s) out of sync between legacy + DoctorCountry`,
+      );
+    }
+    record(
       "9",
-      "IE Rx registration drift",
-      "fail",
-      `${driftCount} doctor(s) out of sync between legacy + DoctorCountry`,
+      "IE Rx registration drift (pre-Phase-2)",
+      "pass",
+      "0 doctors out of sync — Rx header will print IMC + number for IE",
+    );
+  } else {
+    // Post-Phase-2: legacy column is gone. Confirm DoctorCountry has IE
+    // registrations directly.
+    const ieRegs = await prisma.doctorCountry.findMany({
+      where: {
+        country: { code: "ie" },
+        registrationNumber: { not: null },
+      },
+      select: { registrationNumber: true },
+    });
+    if (ieRegs.length === 0) {
+      return record(
+        "9",
+        "IE Rx registration source (post-Phase-2)",
+        "fail",
+        "No DoctorCountry rows with registrationNumber for IE — Rx will print placeholder",
+      );
+    }
+    record(
+      "9",
+      "IE Rx registration source (post-Phase-2)",
+      "pass",
+      `${ieRegs.length} IE doctor(s) have DoctorCountry.registrationNumber set; legacy column dropped`,
     );
   }
-  record(
-    "9",
-    "IE Rx registration drift",
-    "pass",
-    "0 doctors out of sync — Rx header will print IMC + number for IE",
-  );
 
   // Visual PDF still needs human verification; flag as manual.
   record(
