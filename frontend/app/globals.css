@@ -321,18 +321,20 @@ img {
 }
 
 /* Site footer grid — replaces SiteFooter.tsx inline <style> block.
- * 4 columns at lg, 2 at md, 1 at mobile. Hairline below brand col on
- * mobile so the dark canvas separates without an explicit divider. */
+ * Brand column (1.5fr) + four link columns at lg, collapses to 3 / 2 /
+ * 1 column at smaller viewports. Caller composes with `.grid` for the
+ * display rule; this class owns only the column template. */
 .gh-footer-grid {
-  display: grid;
-  gap: var(--space-stack);
-  grid-template-columns: 1fr;
+  grid-template-columns: 1.5fr repeat(4, 1fr);
 }
-@media (min-width: 768px) {
+@media (max-width: 1100px) {
+  .gh-footer-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 700px) {
   .gh-footer-grid { grid-template-columns: repeat(2, 1fr); }
 }
-@media (min-width: 1024px) {
-  .gh-footer-grid { grid-template-columns: 1.4fr repeat(3, 1fr); }
+@media (max-width: 480px) {
+  .gh-footer-grid { grid-template-columns: 1fr; }
 }
 
 /* Buttons — slightly taller, slightly tighter typography. */

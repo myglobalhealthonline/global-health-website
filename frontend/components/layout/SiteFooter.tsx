@@ -203,20 +203,6 @@ export function SiteFooter({
         </div>
       </div>
 
-      <style>{`
-        .gh-footer-grid {
-          grid-template-columns: 1.5fr repeat(4, 1fr);
-        }
-        @media (max-width: 1100px) {
-          .gh-footer-grid { grid-template-columns: 1fr 1fr 1fr; }
-        }
-        @media (max-width: 700px) {
-          .gh-footer-grid { grid-template-columns: 1fr 1fr; }
-        }
-        @media (max-width: 480px) {
-          .gh-footer-grid { grid-template-columns: 1fr; }
-        }
-      `}</style>
     </footer>
   );
 }
