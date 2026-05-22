@@ -310,6 +310,36 @@ img {
 
 /* Sticky translucent site header. Replaces SiteHeader.tsx inline
  * backdropFilter + bg/opacity literals. */
+/* Hero bottom grid — booking panel + live-doctors aside. Stacks
+ * below 900px; goes side-by-side (1.1fr / 1fr) above. Owned by the
+ * token system so HomeHero.tsx stops shipping an inline <style>. */
+.gh-hero-bottom {
+  display: grid;
+  gap: var(--space-stack);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 900px) {
+  .gh-hero-bottom { grid-template-columns: 1.1fr 1fr; }
+}
+
+/* Pulse dot — used by the live-doctor live indicator. Honours
+ * prefers-reduced-motion via @keyframes gh-pulse fallback below. */
+@keyframes gh-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18); }
+  50%      { box-shadow: 0 0 0 8px rgba(22, 163, 74, 0.05); }
+}
+.gh-pulse-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #16A34A;
+  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18);
+  animation: gh-pulse 2s ease-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh-pulse-dot { animation: none; }
+}
+
 .gh-header-sticky {
   position: sticky;
   top: 0;

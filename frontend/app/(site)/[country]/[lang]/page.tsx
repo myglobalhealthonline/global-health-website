@@ -8,6 +8,7 @@ import {
   type ServiceCatalogItem,
 } from "@/components/sections/ServiceCatalog";
 import { DoctorWall, type DoctorWallItem } from "@/components/sections/DoctorWall";
+import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
@@ -244,6 +245,19 @@ export default async function CountryLangHomePage({
           : `${d.title}, ${config.name}`,
     }));
 
+  // Promote one doctor into the FeaturedDoctor section to break the
+  // monotony of the DoctorWall grid (Phase 1 audit finding). Picks the
+  // first doctor with both a bio and an image — those are the rows
+  // that actually have enough content to fill the featured layout
+  // without looking sparse. Falls back to null if no doctor qualifies;
+  // the section then doesn't render at all.
+  const featuredDoctor =
+    countryDoctors.find((d) => d.bio && d.bio.trim().length > 0 && d.imageSrc) ??
+    null;
+  const wallDoctorsExcludingFeatured = featuredDoctor
+    ? doctorWallItems.filter((d) => d.id !== featuredDoctor.id)
+    : doctorWallItems;
+
   const trustItems: TrustRibbonItem[] = [
     {
       // Show a rounded "N+" only once the roster is big enough to justify it;
@@ -295,7 +309,19 @@ export default async function CountryLangHomePage({
       <TrustRibbon items={trustItems} />
       <ReviewBadge countryName={config.name} />
       <ServiceCatalog services={serviceCatalogItems} />
-      <DoctorWall doctors={doctorWallItems} bookHref={doctorsHref} />
+      {featuredDoctor ? (
+        <FeaturedDoctor
+          doctor={{
+            name: featuredDoctor.fullName,
+            title: featuredDoctor.title,
+            languages: featuredDoctor.languages,
+            bio: featuredDoctor.bio ?? "",
+            imageSrc: featuredDoctor.imageSrc ?? null,
+            href: `/${slug}/${lang}/doctors/${featuredDoctor.slug}`,
+          }}
+        />
+      ) : null}
+      <DoctorWall doctors={wallDoctorsExcludingFeatured} bookHref={doctorsHref} />
       <HowItWorksNarrative />
       <FinalCTA primaryHref={generalHref} secondaryHref={doctorsHref} />
     </>

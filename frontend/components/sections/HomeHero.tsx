@@ -60,10 +60,8 @@ export function HomeHero({
 
   return (
     <section
-      className="relative overflow-hidden"
+      className="gh-section relative overflow-hidden"
       style={{
-        paddingBottom: 80,
-        paddingTop: 96,
         background: `
           radial-gradient(ellipse 900px 600px at 80% -5%, rgba(176, 241, 34, 0.12), transparent 55%),
           radial-gradient(ellipse 700px 500px at -5% 100%, rgba(27, 77, 62, 0.07), transparent 55%),
@@ -226,17 +224,7 @@ export function HomeHero({
                   {countryName}
                 </p>
               </div>
-              <span
-                aria-hidden
-                style={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: 999,
-                  background: "#16A34A",
-                  boxShadow: "0 0 0 4px rgba(22,163,74,0.18)",
-                  animation: "gh-pulse 2s ease-out infinite",
-                }}
-              />
+              <span aria-hidden className="gh-pulse-dot" />
             </div>
 
             <div
@@ -363,16 +351,6 @@ export function HomeHero({
         </div>
       </div>
 
-      <style>{`
-        @keyframes gh-pulse {
-          0%, 100% { box-shadow: 0 0 0 4px rgba(22,163,74,0.18); }
-          50% { box-shadow: 0 0 0 8px rgba(22,163,74,0.05); }
-        }
-        .gh-hero-bottom { grid-template-columns: 1fr; }
-        @media (min-width: 900px) {
-          .gh-hero-bottom { grid-template-columns: 1.1fr 1fr; gap: 20px; }
-        }
-      `}</style>
     </section>
   );
 }
