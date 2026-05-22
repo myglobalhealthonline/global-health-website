@@ -98,12 +98,16 @@ export default async function HealthTestsPage({
         ])}
       />
 
-      <section className="mx-auto max-w-5xl px-4 pt-16 pb-10 text-center">
-        <p className="text-sm uppercase tracking-wide text-emerald-700">
+      <section className="gh-section-tight mx-auto max-w-5xl px-4 text-center">
+        <p className="gh-eyebrow text-[var(--color-brand-primary)]">
           {config.name} · Home health tests
         </p>
-        <h1 className="mt-3 text-4xl font-semibold text-slate-900 sm:text-5xl">{heroTitle}</h1>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">{heroSubtitle}</p>
+        <h1 className="mt-3 text-4xl font-semibold text-[var(--color-text-primary)] sm:text-5xl">
+          {heroTitle}
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-[var(--color-text-muted)]">
+          {heroSubtitle}
+        </p>
       </section>
 
       {/* Admin-edited rich body from ContentPage (HEALTH_TESTS). */}
@@ -112,83 +116,101 @@ export default async function HealthTestsPage({
       <TrustRibbon />
 
       {items.length > 0 ? (
-        <section id="tests" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-12">
-          <h2 className="text-2xl font-semibold text-slate-900">
+        <section id="tests" className="gh-section-tight mx-auto max-w-6xl scroll-mt-24 px-4">
+          <h2 className="text-2xl font-semibold text-[var(--color-text-primary)]">
             {items.length} {items.length === 1 ? "test" : "tests"} available
           </h2>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((t) => (
-              <article
-                key={t.id}
-                className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-              >
-                {t.imageSrc ? (
-                  <div className="aspect-[16/10] w-full overflow-hidden bg-slate-50">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={t.imageSrc}
-                      alt={t.title}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                ) : null}
-                <div className="flex h-full flex-col p-6">
-                  <h3 className="text-lg font-bold text-slate-900">{t.title}</h3>
-                  {t.shortDescription ? (
-                    <p className="mt-2 line-clamp-3 text-sm text-slate-600">
-                      {t.shortDescription}
-                    </p>
-                  ) : null}
-                  <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-slate-500">
-                    {t.sampleType ? (
-                      <span className="rounded-full bg-slate-100 px-3 py-1">
-                        Sample: {t.sampleType}
-                      </span>
-                    ) : null}
-                    {t.resultsTimeline ? (
-                      <span className="rounded-full bg-slate-100 px-3 py-1">
-                        Results: {t.resultsTimeline}
-                      </span>
-                    ) : null}
-                    <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">
-                      {formatPrice(t.priceCents, t.currencyCode)}
-                    </span>
-                    {/* Stock signal — null = unlimited, hidden.
-                        0 = sold out badge. 1–5 = "Only N left" badge. */}
-                    {t.stock !== null && t.stock <= 0 ? (
-                      <span className="rounded-full bg-rose-50 px-3 py-1 font-semibold text-rose-700">
-                        Sold out
-                      </span>
-                    ) : t.stock !== null && t.stock <= 5 ? (
-                      <span className="rounded-full bg-amber-50 px-3 py-1 font-semibold text-amber-800">
-                        Only {t.stock} left
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="mt-auto pt-5">
-                    {t.stock !== null && t.stock <= 0 ? (
-                      <button
-                        type="button"
-                        disabled
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-500"
-                      >
-                        Sold out
-                      </button>
-                    ) : (
-                      <AddToCartButton
-                        kind="HEALTH_TEST"
-                        healthTestId={t.id}
-                        label={`Add to cart · ${formatPrice(t.priceCents, t.currencyCode)}`}
+          <div className="mt-8 gh-card-grid">
+            {items.map((t) => {
+              // Audit fix: collapse the three cascading stock badges into a
+              // single CTA state. "Sold out" → disabled button. "Only N left"
+              // → primary CTA prefixed with the low-stock count. Otherwise
+              // just the standard add-to-cart label. Strips two coloured
+              // chips per card (the rose "Sold out" + amber "Only N left").
+              const soldOut = t.stock !== null && t.stock <= 0;
+              const lowStock = !soldOut && t.stock !== null && t.stock <= 5;
+              const ctaLabel = soldOut
+                ? "Sold out"
+                : lowStock
+                  ? `Add to cart · Only ${t.stock} left`
+                  : `Add to cart · ${formatPrice(t.priceCents, t.currencyCode)}`;
+              return (
+                <article
+                  key={t.id}
+                  className="
+                    flex h-full flex-col overflow-hidden
+                    rounded-[var(--radius-card)]
+                    border border-[var(--color-border)]
+                    bg-[var(--color-background-page)]
+                    shadow-[var(--shadow-soft)]
+                  "
+                >
+                  {t.imageSrc ? (
+                    <div className="aspect-[16/10] w-full overflow-hidden bg-[var(--color-background-soft)]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={t.imageSrc}
+                        alt={t.title}
+                        className="h-full w-full object-cover"
                       />
-                    )}
+                    </div>
+                  ) : null}
+                  <div className="flex h-full flex-col p-6">
+                    <h3 className="text-lg font-bold text-[var(--color-text-primary)]">
+                      {t.title}
+                    </h3>
+                    {t.shortDescription ? (
+                      <p className="mt-2 line-clamp-3 text-sm text-[var(--color-text-muted)]">
+                        {t.shortDescription}
+                      </p>
+                    ) : null}
+                    <div className="mt-4 flex flex-wrap items-center gap-3 text-xs text-[var(--color-text-muted)]">
+                      {t.sampleType ? (
+                        <span className="rounded-full bg-[var(--color-background-panel)] px-3 py-1">
+                          Sample: {t.sampleType}
+                        </span>
+                      ) : null}
+                      {t.resultsTimeline ? (
+                        <span className="rounded-full bg-[var(--color-background-panel)] px-3 py-1">
+                          Results: {t.resultsTimeline}
+                        </span>
+                      ) : null}
+                      <span className="rounded-full bg-[var(--color-accent-dim)] px-3 py-1 font-semibold text-[var(--color-brand-primary)]">
+                        {formatPrice(t.priceCents, t.currencyCode)}
+                      </span>
+                    </div>
+                    <div className="mt-auto pt-5">
+                      {soldOut ? (
+                        <button
+                          type="button"
+                          disabled
+                          aria-label={`${t.title} — sold out`}
+                          className="
+                            inline-flex w-full items-center justify-center gap-2
+                            rounded-full px-5 py-2.5 text-sm font-semibold
+                            bg-[var(--color-background-panel)]
+                            text-[var(--color-text-placeholder)]
+                            cursor-not-allowed
+                          "
+                        >
+                          Sold out
+                        </button>
+                      ) : (
+                        <AddToCartButton
+                          kind="HEALTH_TEST"
+                          healthTestId={t.id}
+                          label={ctaLabel}
+                        />
+                      )}
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         </section>
       ) : (
-        <section className="mx-auto max-w-3xl px-4 py-16 text-center text-slate-600">
+        <section className="gh-section-tight mx-auto max-w-3xl px-4 text-center text-[var(--color-text-muted)]">
           <p>Home health tests for {config.name} are coming soon.</p>
         </section>
       )}
