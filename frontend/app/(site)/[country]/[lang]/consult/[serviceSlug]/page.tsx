@@ -277,7 +277,7 @@ function DoctorListMode({
 
   return (
     <div className="mt-6 grid gap-4">
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-[var(--color-text-muted)]">
         Pick a clinician to see their open times and finish booking.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
@@ -285,27 +285,57 @@ function DoctorListMode({
           <Link
             key={d.id}
             href={`/${country}/${lang}/consult/${serviceSlug}?doctor=${encodeURIComponent(d.slug)}`}
-            className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-emerald-400 hover:shadow-md"
+            className="
+              group flex h-full flex-col
+              rounded-[var(--radius-card)]
+              border border-[var(--color-border)]
+              bg-[var(--color-background-page)]
+              p-6 shadow-[var(--shadow-soft)]
+              transition-[transform,box-shadow,border-color]
+              duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
+              hover:-translate-y-0.5
+              hover:border-[var(--color-border-strong)]
+              hover:shadow-[var(--shadow-card-hover)]
+              motion-reduce:transition-none
+              motion-reduce:hover:translate-y-0
+              focus-visible:outline-none
+              focus-visible:shadow-[var(--shadow-focus)]
+            "
           >
-            <p className="text-lg font-bold text-slate-900">{d.fullName}</p>
-            <p className="text-sm text-slate-600">{d.title}</p>
+            <p className="text-lg font-bold text-[var(--color-text-primary)]">
+              {d.fullName}
+            </p>
+            <p className="text-sm text-[var(--color-text-muted)]">{d.title}</p>
             {d.specialties.length > 0 ? (
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-[var(--color-text-muted)]">
                 {d.specialties.join(" · ")}
               </p>
             ) : null}
             {d.languages.length > 0 ? (
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-xs text-[var(--color-text-muted)]">
                 Languages: {d.languages.join(", ")}
               </p>
             ) : null}
-            <div className="mt-auto flex items-center gap-1.5 pt-5 text-sm font-semibold text-emerald-700">
+            {/* Promoted to primary pill so the doctor card has a clear
+              * action surface; Phase 1 audit flagged the subtle inline
+              * "Pick a time" link as a conversion drag. */}
+            <span
+              className="
+                mt-auto inline-flex items-center justify-center gap-1.5 self-start
+                rounded-full bg-[var(--color-brand-primary)]
+                px-4 py-2 text-sm font-semibold text-white
+                transition-transform duration-200
+                group-hover:bg-[var(--color-brand-primary-hover)]
+                motion-reduce:transition-none
+              "
+            >
               Pick a time
               <ArrowRight
-                className="size-4 transition group-hover:translate-x-0.5"
+                className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:group-hover:translate-x-0"
+                strokeWidth={1.5}
                 aria-hidden
               />
-            </div>
+            </span>
           </Link>
         ))}
       </div>
