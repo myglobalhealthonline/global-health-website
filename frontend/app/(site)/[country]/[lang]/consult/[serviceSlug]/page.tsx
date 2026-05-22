@@ -81,63 +81,130 @@ export default async function ConsultPage({
     service.kind === "SPECIALIST" ? "SPECIALIST_CONSULTATION" : "GENERAL_CONSULTATION";
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-      <Link
-        href={consultRoot}
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700 hover:underline"
+    <>
+      {/* Dark hero — service context */}
+      <section
+        className="relative isolate overflow-hidden"
+        style={{
+          background: "var(--color-background-dark)",
+          padding: "clamp(56px,7vw,96px) 0 clamp(40px,5vw,64px)",
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+        }}
       >
-        <ArrowLeft className="size-4" aria-hidden />
-        Back to consultations
-      </Link>
-
-      <header className="mt-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-700">
-          <CalendarClock className="size-3.5" aria-hidden />
-          {selectedDoctorSlug ? "Confirm your booking" : "Pick a doctor"}
-        </p>
-        <h1 className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">
-          {service.name}
-        </h1>
-        {service.summary ? (
-          <p className="mt-2 text-sm text-slate-600">{service.summary}</p>
-        ) : null}
-        <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-          <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">
-            {service.basePriceCents != null
-              ? formatPriceRounded(service.basePriceCents, service.currencyCode)
-              : "Price varies"}
-          </span>
-          {service.durationMinutes != null ? (
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-slate-600">
-              {service.durationMinutes} min
-            </span>
-          ) : null}
-          <span className="text-slate-500">in {config.name}</span>
-        </div>
-      </header>
-
-      {selectedDoctorSlug ? (
-        // Single-doctor mode — slot picker + patient form.
-        await renderSelectedDoctorMode({
-          code,
-          service,
-          serviceSlug,
-          itemKind,
-          doctors,
-          selectedDoctorSlug,
-          country,
-          lang,
-        })
-      ) : (
-        // Doctor pick mode — list assigned doctors.
-        <DoctorListMode
-          country={country}
-          lang={lang}
-          serviceSlug={serviceSlug}
-          doctors={doctors}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(ellipse 700px 400px at 90% -5%, rgba(176,241,34,0.10), transparent 55%)",
+          }}
         />
-      )}
-    </main>
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <Link
+            href={consultRoot}
+            className="inline-flex items-center gap-1.5 text-[12.5px] font-medium uppercase tracking-[0.12em] transition-colors hover:text-white"
+            style={{ color: "rgba(255,255,255,0.50)" }}
+          >
+            <ArrowLeft className="size-4" aria-hidden />
+            Back to consultations
+          </Link>
+
+          <div className="mt-6 flex items-center gap-2">
+            <CalendarClock
+              className="size-4"
+              style={{ color: "var(--color-brand-accent)" }}
+              aria-hidden
+            />
+            <p
+              className="text-[11px] font-bold uppercase tracking-[0.2em]"
+              style={{ color: "var(--color-brand-accent)" }}
+            >
+              {selectedDoctorSlug ? "Confirm your booking" : "Pick a doctor"}
+            </p>
+          </div>
+
+          <h1
+            className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
+            style={{
+              fontSize: "clamp(2rem,4.5vw+0.5rem,4rem)",
+              color: "rgba(255,255,255,0.95)",
+            }}
+          >
+            {service.name}
+          </h1>
+
+          {service.summary ? (
+            <p
+              className="mt-3 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed"
+              style={{ color: "rgba(255,255,255,0.50)" }}
+            >
+              {service.summary}
+            </p>
+          ) : null}
+
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <span
+              className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+              style={{
+                background: "rgba(176,241,34,0.12)",
+                color: "var(--color-brand-accent)",
+              }}
+            >
+              {service.basePriceCents != null
+                ? formatPriceRounded(service.basePriceCents, service.currencyCode)
+                : "Price varies"}
+            </span>
+            {service.durationMinutes != null ? (
+              <span
+                className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                style={{
+                  background: "rgba(255,255,255,0.07)",
+                  color: "rgba(255,255,255,0.45)",
+                }}
+              >
+                {service.durationMinutes} min
+              </span>
+            ) : null}
+            <span
+              className="text-sm"
+              style={{ color: "rgba(255,255,255,0.38)" }}
+            >
+              in {config.name}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Light content — doctor pick or booking form */}
+      <section
+        style={{
+          background: "var(--color-background-soft)",
+          padding: "clamp(48px,6vw,80px) 0",
+        }}
+      >
+        <div className="mx-auto max-w-5xl px-5 md:px-10">
+          {selectedDoctorSlug ? (
+            await renderSelectedDoctorMode({
+              code,
+              service,
+              serviceSlug,
+              itemKind,
+              doctors,
+              selectedDoctorSlug,
+              country,
+              lang,
+            })
+          ) : (
+            <DoctorListMode
+              country={country}
+              lang={lang}
+              serviceSlug={serviceSlug}
+              doctors={doctors}
+            />
+          )}
+        </div>
+      </section>
+    </>
   );
 }
 
@@ -163,14 +230,20 @@ async function renderSelectedDoctorMode({
   const doctor = doctors.find((d) => d.slug === selectedDoctorSlug);
   if (!doctor) {
     return (
-      <div className="mt-6 rounded-xl border border-amber-300 bg-amber-50 p-6">
-        <p className="text-sm font-semibold text-amber-900">
+      <div
+        className="rounded-[var(--radius-card)] p-6"
+        style={{
+          background: "rgba(255,196,0,0.08)",
+          border: "1px solid rgba(255,196,0,0.25)",
+        }}
+      >
+        <p className="text-sm font-semibold text-[var(--color-text-primary)]">
           That clinician isn&apos;t offering {service.name} right now.
         </p>
-        <p className="mt-2 text-sm text-amber-800">
+        <p className="mt-2 text-sm text-[var(--color-text-muted)]">
           <Link
             href={`/${country}/${lang}/consult/${serviceSlug}`}
-            className="font-semibold underline"
+            className="font-semibold text-[var(--color-brand-primary)] underline"
           >
             See other clinicians who do
           </Link>
@@ -189,34 +262,49 @@ async function renderSelectedDoctorMode({
 
   return (
     <>
-      <article className="mt-6 rounded-2xl border-2 border-emerald-400 bg-white p-6 shadow-md ring-2 ring-emerald-100">
-        <header className="flex flex-wrap items-start justify-between gap-3">
+      <article
+        className="rounded-[var(--radius-card)] p-6 sm:p-8"
+        style={{
+          background: "var(--color-background-page)",
+          border: "2px solid var(--color-brand-primary)",
+          boxShadow: "var(--shadow-elevated)",
+        }}
+      >
+        <header className="flex flex-wrap items-start justify-between gap-3 border-b border-[var(--color-border)] pb-5">
           <div>
-            <p className="text-lg font-bold text-slate-900">{doctor.fullName}</p>
-            <p className="text-sm text-slate-600">{doctor.title}</p>
+            <p className="text-lg font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
+              {doctor.fullName}
+            </p>
+            <p className="mt-0.5 text-sm text-[var(--color-text-muted)]">{doctor.title}</p>
             {doctor.specialties.length > 0 ? (
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-[var(--color-text-muted)]">
                 {doctor.specialties.join(" · ")}
               </p>
             ) : null}
           </div>
           {doctor.languages.length > 0 ? (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-[var(--color-text-muted)]">
               {doctor.languages.join(", ")}
             </p>
           ) : null}
         </header>
 
         {slots.length === 0 ? (
-          <div className="mt-6 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm">
-            <p className="font-semibold text-amber-900">
+          <div
+            className="mt-6 rounded-[var(--radius-card)] p-4 text-sm"
+            style={{
+              background: "rgba(255,196,0,0.08)",
+              border: "1px solid rgba(255,196,0,0.25)",
+            }}
+          >
+            <p className="font-semibold text-[var(--color-text-primary)]">
               No open slots in the next 14 days.
             </p>
-            <p className="mt-2 text-amber-800">
+            <p className="mt-2 text-[var(--color-text-muted)]">
               Try another clinician —{" "}
               <Link
                 href={`/${country}/${lang}/consult/${serviceSlug}`}
-                className="font-semibold underline"
+                className="font-semibold text-[var(--color-brand-primary)] underline"
               >
                 see who else offers {service.name}
               </Link>
@@ -234,11 +322,11 @@ async function renderSelectedDoctorMode({
         )}
       </article>
 
-      <p className="mt-4 text-xs text-slate-500">
+      <p className="mt-4 text-xs text-[var(--color-text-muted)]">
         Wrong clinician?{" "}
         <Link
           href={`/${country}/${lang}/consult/${serviceSlug}`}
-          className="font-semibold text-emerald-700 underline"
+          className="font-semibold text-[var(--color-brand-primary)] underline"
         >
           Pick a different doctor
         </Link>
@@ -261,12 +349,21 @@ function DoctorListMode({
 }) {
   if (doctors.length === 0) {
     return (
-      <div className="mt-6 rounded-xl border border-amber-300 bg-amber-50 p-6 text-center">
-        <p className="text-sm font-semibold text-amber-900">
+      <div
+        className="rounded-[var(--radius-card)] p-6 text-center"
+        style={{
+          background: "rgba(255,196,0,0.08)",
+          border: "1px solid rgba(255,196,0,0.25)",
+        }}
+      >
+        <p className="text-sm font-semibold text-[var(--color-text-primary)]">
           No clinicians assigned to this service yet.
         </p>
-        <p className="mt-2 text-sm text-amber-800">
-          <Link href={`/${country}/${lang}/doctors`} className="font-semibold underline">
+        <p className="mt-2 text-sm text-[var(--color-text-muted)]">
+          <Link
+            href={`/${country}/${lang}/doctors`}
+            className="font-semibold text-[var(--color-brand-primary)] underline"
+          >
             Browse our doctors
           </Link>{" "}
           and pick someone whose services are open.

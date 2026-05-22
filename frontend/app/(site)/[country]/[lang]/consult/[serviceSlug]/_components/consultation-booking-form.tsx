@@ -192,7 +192,7 @@ export function ConsultationBookingForm({
 
   if (slots.length === 0) {
     return (
-      <p className="mt-4 text-sm text-slate-500">
+      <p className="mt-4 text-sm text-[var(--color-text-muted)]">
         No open slots in the next 14 days for {doctorName}.
       </p>
     );
@@ -347,17 +347,17 @@ export function ConsultationBookingForm({
       </div>
 
       {/* 2. Patient details — prefilled from account when signed in. */}
-      <fieldset className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-        <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">
+      <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
+        <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
           Patient details
         </legend>
         {me ? (
-          <label className="mt-1 flex items-center gap-2 text-sm text-slate-700">
+          <label className="mt-1 flex items-center gap-2 text-sm text-[var(--color-text-body)]">
             <input
               type="checkbox"
               checked={bookingForOther}
               onChange={(e) => setBookingForOther(e.target.checked)}
-              className="size-4 rounded border-slate-300"
+              className="size-4 rounded border-[var(--color-border)]"
             />
             Booking for someone else (clears the patient fields — your account
             details stay intact)
@@ -366,7 +366,7 @@ export function ConsultationBookingForm({
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="text-xs font-semibold text-slate-700">
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">
               Patient full name
             </span>
             <input
@@ -376,38 +376,38 @@ export function ConsultationBookingForm({
               minLength={2}
               maxLength={120}
               defaultValue={defaults.fullName}
-              className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
           </label>
           <label className="block">
-            <span className="text-xs font-semibold text-slate-700">Email</span>
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">Email</span>
             <input
               type="email"
               name="email"
               required
               defaultValue={defaults.email}
-              className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
             {bookingForOther ? (
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-[var(--color-text-muted)]">
                 Booking confirmations + receipts go here. Edit if the patient
                 wants their own copy.
               </p>
             ) : null}
           </label>
           <label className="block">
-            <span className="text-xs font-semibold text-slate-700">Phone</span>
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">Phone</span>
             <input
               type="tel"
               name="phone"
               maxLength={40}
               placeholder="+353 89 …"
               defaultValue={defaults.phone}
-              className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
           </label>
           <label className="block">
-            <span className="text-xs font-semibold text-slate-700">
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">
               Date of birth
             </span>
             <input
@@ -416,29 +416,29 @@ export function ConsultationBookingForm({
               max={maxDob}
               defaultValue={defaults.dateOfBirth}
               suppressHydrationWarning
-              className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
           </label>
         </div>
 
         <label className="mt-4 block">
-          <span className="text-xs font-semibold text-slate-700">
+          <span className="text-xs font-semibold text-[var(--color-text-body)]">
             {nationalIdLabel} (optional)
           </span>
           <input
             type="text"
             name="nationalIdNumber"
             maxLength={64}
-            className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+            className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
           />
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-1 text-xs text-[var(--color-text-muted)]">
             Needed on prescriptions in your country. You can also fill it
             in on your profile later.
           </p>
         </label>
 
         <label className="mt-4 block">
-          <span className="text-xs font-semibold text-slate-700">
+          <span className="text-xs font-semibold text-[var(--color-text-body)]">
             Reason for visit (optional)
           </span>
           <textarea
@@ -446,16 +446,16 @@ export function ConsultationBookingForm({
             rows={3}
             maxLength={2000}
             placeholder="Briefly describe your symptoms or what you'd like to discuss."
-            className="mt-1 block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm"
+            className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
           />
         </label>
 
-        <label className="mt-4 flex items-start gap-2 text-xs text-slate-700">
+        <label className="mt-4 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
           <input
             type="checkbox"
             name="consent"
             required
-            className="mt-0.5 size-4 rounded border-slate-300"
+            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
           />
           <span>
             I confirm the details above are accurate and consent to a video
@@ -465,7 +465,14 @@ export function ConsultationBookingForm({
       </fieldset>
 
       {error ? (
-        <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
+        <div
+          className="rounded-[var(--radius-card)] px-4 py-3 text-sm font-medium"
+          style={{
+            background: "rgba(239,68,68,0.08)",
+            border: "1px solid rgba(239,68,68,0.25)",
+            color: "var(--color-text-primary)",
+          }}
+        >
           {error}
         </div>
       ) : null}
@@ -473,7 +480,7 @@ export function ConsultationBookingForm({
       <button
         type="submit"
         disabled={pending || !authLoaded}
-        className="inline-flex items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:opacity-60"
+        className="gh-btn gh-btn-primary w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
         {pending ? "Adding to cart…" : "Continue to cart"}
