@@ -30,6 +30,8 @@ import {
 } from "@/lib/routing/country-slug";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { parseSitePath } from "@/lib/routing/path-rewrites";
+import { rememberCountry, useLastCountry } from "@/lib/routing/last-country";
+import { useEffect } from "react";
 import { CountrySwitcher } from "@/components/layout/CountrySwitcher";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { SectionNav, type SectionNavItem } from "@/components/layout/SectionNav";
@@ -127,20 +129,53 @@ export function SiteHeader({
 }) {
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
-  const activeCountryCode: CountryCode | null = parsed.country
+
+  // Country resolution priority:
+  // 1) URL segment (`/[country]/[lang]/...`) — authoritative when set
+  // 2) Last-country cookie — kicks in on global pages (/about, /blog,
+  //    /faq, /contact, /) so the switchers don't reset to "Choose
+  //    country" after a visitor has already picked one.
+  const lastCountry = useLastCountry();
+
+  const urlCountryCode: CountryCode | null = parsed.country
     ? countryCodeFromSlug(parsed.country)
     : null;
+  const activeCountryCode: CountryCode | null =
+    urlCountryCode ?? lastCountry?.code ?? null;
+
   const activeCountry = activeCountryCode
     ? getCountryByCode(activeCountryCode) ?? null
     : null;
-  const activeLang = (parsed.lang ?? activeCountry?.defaultLocale ?? "en") as LocaleCode;
+
+  // Lang: URL > cookie > active country's default > "en".
+  const activeLang = (
+    parsed.lang ??
+    (urlCountryCode ? null : lastCountry?.lang) ??
+    activeCountry?.defaultLocale ??
+    "en"
+  ) as LocaleCode;
+
+  // Refresh the last-country cookie whenever the URL has a real
+  // country segment. Stale cookies get overwritten; first-time visitors
+  // populate it as soon as they cross the country gate.
+  useEffect(() => {
+    if (parsed.country && parsed.lang) {
+      rememberCountry(parsed.country, parsed.lang);
+    }
+  }, [parsed.country, parsed.lang]);
 
   const activeFeatures = activeCountryCode
     ? countryFeatures?.[activeCountryCode]
     : undefined;
+
+  // Section nav: prefer the in-country IA when we have a country
+  // context AT ALL (URL or cookie). Only show the global IA when the
+  // visitor has truly never picked a country yet.
+  const effectiveCountrySlug = parsed.country ?? lastCountry?.slug ?? null;
+  const effectiveLang = parsed.lang ?? lastCountry?.lang ?? null;
   const sectionItems: SectionNavItem[] =
-    activeCountry && parsed.country && parsed.lang
-      ? sectionNavForCountryLang(parsed.country, parsed.lang, activeFeatures)
+    activeCountry && effectiveCountrySlug && effectiveLang
+      ? sectionNavForCountryLang(effectiveCountrySlug, effectiveLang, activeFeatures)
       : sectionNavGlobal();
 
   // Cart-first booking: the header "Book" CTA points at the country's
@@ -195,6 +230,9 @@ export function SiteHeader({
               <LanguageSwitcher
                 currentLang={activeLang}
                 availableLocales={activeCountry.supportedLocales}
+                fallbackCountrySlug={
+                  parsed.country ?? lastCountry?.slug ?? undefined
+                }
               />
             ) : null}
           </div>

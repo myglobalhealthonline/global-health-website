@@ -116,11 +116,19 @@ export function CountrySwitcher({
             {countries.map((c) => {
               const isActive = c.code === activeCountryCode;
               const slug = COUNTRY_CODE_TO_SLUG[c.code];
-              const href = swapCountryInPath(
-                pathname || "/",
-                slug,
-                c.defaultLocale,
-              );
+              // On country-scoped paths (/{country}/{lang}/...) swap
+              // the country segment in place. On global paths
+              // (/about, /blog, /faq, /contact, /) there's nothing to
+              // swap — route straight to the country home in its
+              // default locale. swapCountryInPath returns the input
+              // unchanged on global paths, so detect that and route
+              // to the country home instead.
+              const current = pathname || "/";
+              const swapped = swapCountryInPath(current, slug, c.defaultLocale);
+              const href =
+                swapped === current
+                  ? `/${slug}/${c.defaultLocale.toLowerCase()}`
+                  : swapped;
               return (
                 <li key={c.code}>
                   <Link

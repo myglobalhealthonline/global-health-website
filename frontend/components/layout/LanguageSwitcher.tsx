@@ -22,9 +22,17 @@ import { swapLangInPath } from "@/lib/routing/path-rewrites";
 export function LanguageSwitcher({
   currentLang,
   availableLocales,
+  /** When the current URL has no country/lang segment to swap (the
+   *  global pages: /about, /blog, /faq, /contact, /), the switcher
+   *  routes to the country home in the chosen language instead of
+   *  mangling the path. Required by the SiteHeader's last-country
+   *  fallback so the picker still works after the visitor leaves
+   *  the country-scoped URL space. */
+  fallbackCountrySlug,
 }: {
   currentLang: LocaleCode;
   availableLocales: LocaleCode[];
+  fallbackCountrySlug?: string;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -82,7 +90,17 @@ export function LanguageSwitcher({
           <ul className="m-0 list-none p-1">
             {availableLocales.map((loc) => {
               const isActive = loc === currentLang;
-              const href = swapLangInPath(pathname || "/", loc);
+              // Try to swap in place; if the path lacks a lang
+              // segment, route to the remembered country home in
+              // the new lang (or `/` if there's no fallback).
+              const current = pathname || "/";
+              const swapped = swapLangInPath(current, loc);
+              const langSwapWorked = swapped !== current || /\/[a-z]{2,}\/[a-z]{2}(?:\/|$)/.test(current);
+              const href = langSwapWorked
+                ? swapped
+                : fallbackCountrySlug
+                  ? `/${fallbackCountrySlug}/${loc.toLowerCase()}`
+                  : "/";
               return (
                 <li key={loc}>
                   <Link
