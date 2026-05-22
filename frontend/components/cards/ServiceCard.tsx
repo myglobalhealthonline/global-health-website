@@ -72,7 +72,7 @@ export function ServiceCard({
 
       <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-[var(--color-brand-primary)]">
         <span>{ctaLabel ?? "Learn More"}</span>
-        <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
+        <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" />
       </div>
       </div>
     </Link>

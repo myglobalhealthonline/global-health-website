@@ -36,7 +36,7 @@ export function DoctorCard({
   const whatsappHref = whatsappDigits ? `https://wa.me/${whatsappDigits.replace("+", "")}` : null;
 
   return (
-    <article className="group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)] transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-1">
+    <article className="group relative flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)] transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
       {/* Image area with specialty badge */}
       <div className="relative overflow-hidden">
         <Image
@@ -45,7 +45,7 @@ export function DoctorCard({
           width={400}
           height={480}
           unoptimized={unoptimized}
-          className="h-64 w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          className="h-64 w-full object-cover object-top transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         />
         {/* Gradient overlay at bottom */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />

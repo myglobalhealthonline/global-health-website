@@ -40,11 +40,11 @@ export function ConsultationDestinationCard({
     <div style={{ ["--theme-color" as string]: themeColor }} className={cn("group h-full w-full", className)}>
       <Link
         href={href}
-        className="relative block h-full min-h-[34rem] overflow-hidden rounded-[2.25rem] border border-black/10 bg-[#0a3f31] shadow-[0_30px_90px_-34px_rgba(5,38,29,0.78)] transition-all duration-500 ease-in-out cursor-pointer group-hover:-translate-y-1.5 group-hover:shadow-[0_38px_100px_-30px_hsl(var(--theme-color)/0.65)]"
+        className="relative block h-full min-h-[34rem] overflow-hidden rounded-[2.25rem] border border-black/10 bg-[#0a3f31] shadow-[0_30px_90px_-34px_rgba(5,38,29,0.78)] transition-all duration-500 ease-in-out cursor-pointer group-hover:-translate-y-1.5 group-hover:shadow-[0_38px_100px_-30px_hsl(var(--theme-color)/0.65)] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0"
       >
         {imageSrc ? (
           <div
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-in-out group-hover:scale-[1.03]"
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-in-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             style={{ backgroundImage: `url(${imageSrc})` }}
           />
         ) : (
@@ -111,9 +111,9 @@ export function ConsultationDestinationCard({
             ) : null}
 
             <div className="mt-10">
-              <div className="flex items-center justify-between rounded-[1.7rem] bg-[linear-gradient(135deg,#edf9d5_0%,#daf6c8_48%,#d0f2c4_100%)] px-7 py-5 text-[#0b3f31] shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_18px_40px_-22px_rgba(180,236,182,0.9)] transition-transform duration-300 group-hover:translate-y-[-2px]">
+              <div className="flex items-center justify-between rounded-[1.7rem] bg-[linear-gradient(135deg,#edf9d5_0%,#daf6c8_48%,#d0f2c4_100%)] px-7 py-5 text-[#0b3f31] shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_18px_40px_-22px_rgba(180,236,182,0.9)] transition-transform duration-300 group-hover:translate-y-[-2px] motion-reduce:transition-none motion-reduce:group-hover:translate-y-0">
                 <span className="text-[1.3rem] font-extrabold tracking-[-0.04em]">{ctaLabel}</span>
-                <ArrowRight className="h-6 w-6 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.2} />
+                <ArrowRight className="h-6 w-6 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" strokeWidth={2.2} />
               </div>
             </div>
           </div>
