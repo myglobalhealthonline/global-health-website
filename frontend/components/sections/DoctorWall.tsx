@@ -74,7 +74,7 @@ export function DoctorWall({
               className="
                 mt-3 max-w-[18ch]
                 text-[length:var(--text-h1)]
-                font-semibold tracking-[-0.03em] leading-[1.02]
+                font-extrabold tracking-[-0.03em] leading-[1.02]
                 text-[var(--color-text-primary)]
               "
             >
@@ -95,7 +95,7 @@ export function DoctorWall({
             <p
               className="
                 text-[length:var(--text-display)]
-                font-semibold leading-none tracking-[-0.03em]
+                font-extrabold leading-none tracking-[-0.04em]
                 text-[var(--color-brand-primary)]
                 [font-variant-numeric:tabular-nums]
               "

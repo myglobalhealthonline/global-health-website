@@ -71,7 +71,7 @@ export function FinalCTA({
             <h2
               className="
                 text-[length:var(--text-h1)]
-                font-semibold tracking-[-0.03em] leading-[1.02]
+                font-extrabold tracking-[-0.035em] leading-[1.0]
                 text-white
               "
             >

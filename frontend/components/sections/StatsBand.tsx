@@ -27,7 +27,7 @@ export function StatsBand({ items }: { items: StatBandItem[] }) {
         <h2
           className="
             mt-3 max-w-[20ch]
-            font-semibold tracking-[-0.025em] leading-[1.05]
+            font-extrabold tracking-[-0.03em] leading-[1.02]
             text-[var(--color-text-primary)]
             text-[clamp(2rem,4vw+0.5rem,3.5rem)]
           "

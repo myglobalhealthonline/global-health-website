@@ -18,7 +18,7 @@ export function HomeHero({
   liveDoctors,
   heroTitle,
   heroSubtitle,
-  heroImageSrc,
+  heroImageSrc: _heroImageSrc,
   ctaLabel,
 }: {
   countryCode: CountryCode;
@@ -39,174 +39,200 @@ export function HomeHero({
   const doctorsForPanel = (liveDoctors ?? []).slice(0, 4);
 
   return (
-    <section
-      aria-labelledby="hero-title"
-      className="
-        relative overflow-hidden
-        bg-[var(--color-background-page)]
-      "
-    >
-      {/* Subtle grain texture — warming the white canvas without adding
-        * ink. Invisible at a glance, tactile when the eye settles. */}
-      <div aria-hidden className="gh-hero-grain pointer-events-none absolute inset-0 -z-10" />
-
+    <section aria-labelledby="hero-title" className="relative overflow-hidden">
       <div
-        className="
-          relative mx-auto max-w-[var(--container-width)]
-          px-5 md:px-10
-          gh-section
-          grid gap-12
-          lg:grid-cols-[1.15fr_1fr] lg:items-start lg:gap-16
-        "
+        className="grid lg:grid-cols-[1.1fr_0.9fr]"
+        style={{ minHeight: "calc(100svh - var(--header-height))" }}
       >
-        {/* Left column — headline + sub + CTAs + proof points */}
-        <div className="flex flex-col lg:pt-4">
-          {/* Eyebrow row — country + live indicator */}
-          <div className="flex flex-wrap items-center gap-4">
-            <span className="gh-eyebrow inline-flex items-center gap-2 text-[var(--color-brand-primary)]">
-              <Flag code={countryCode} size="sm" />
-              {countryName}
-            </span>
-            <span className="gh-eyebrow inline-flex items-center gap-2 text-[var(--color-text-muted)]">
-              <span aria-hidden className="gh-pulse-dot !size-2" />
-              {doctorCount} doctors available
-            </span>
-          </div>
+        {/* LEFT — forest green brand panel */}
+        <div
+          className="
+            relative flex flex-col justify-center overflow-hidden
+            bg-[var(--color-brand-primary)]
+            gh-medical-pattern gh-medical-pattern-dark
+            px-8 py-20 md:px-16 lg:px-20
+            min-h-[480px]
+          "
+        >
+          {/* Lime atmospheric bloom — top-right corner only, 10% max */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 700px 500px at 110% -10%, rgba(176,241,34,0.10), transparent 55%)",
+            }}
+          />
 
-          {/* Headline — uses the design-system display token. */}
-          <h1
-            id="hero-title"
-            className="
-              mt-6
-              text-[length:var(--text-display)]
-              font-semibold leading-[0.95] tracking-[-0.035em]
-              text-[var(--color-text-primary)]
-              max-w-[16ch]
-            "
-          >
-            {displayHeroTitle ? (
-              displayHeroTitle
-            ) : (
-              <>
-                See a doctor,{" "}
-                <span className="text-[var(--color-brand-primary)]">
-                  from anywhere.
-                </span>
-              </>
-            )}
-          </h1>
-
-          <p className="mt-6 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed text-[var(--color-text-body)]">
-            {displayHeroSubtitle ??
-              "Locally-registered clinicians, one-form booking, no waiting rooms. Pay only after the video call connects."}
-          </p>
-
-          {/* CTA cluster */}
-          <div className="mt-10 flex flex-wrap items-center gap-3">
-            <Link
-              href={bookHref}
-              className="gh-btn gh-btn-primary active:scale-[0.98] motion-reduce:active:scale-100"
-            >
-              {displayCtaLabel}
-              <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
-            </Link>
-            <Link href="#services" className="gh-btn gh-btn-outline">
-              Browse services
-            </Link>
-          </div>
-
-          {/* Proof points */}
-          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-[length:var(--text-meta)] text-[var(--color-text-muted)]">
-            <li className="inline-flex items-center gap-2">
-              <ShieldCheck
-                className="size-4 text-[var(--color-brand-primary)]"
-                strokeWidth={1.5}
-                aria-hidden
-              />
-              Licensed in {countryName}
-            </li>
-            <li className="inline-flex items-center gap-2">
-              <Clock
-                className="size-4 text-[var(--color-brand-primary)]"
-                strokeWidth={1.5}
-                aria-hidden
-              />
-              Same-day slots
-            </li>
-            <li className="inline-flex items-center gap-2">
-              <Stethoscope
-                className="size-4 text-[var(--color-brand-primary)]"
-                strokeWidth={1.5}
-                aria-hidden
-              />
-              No clinic visits
-            </li>
-          </ul>
-        </div>
-
-        {/* Right column — live availability panel */}
-        {doctorsForPanel.length > 0 ? (
-          <aside
-            aria-label="Doctors available now"
-            className="
-              rounded-[var(--radius-card)]
-              border border-[var(--color-border)]
-              bg-[var(--color-background-soft)]
-              p-[var(--space-inset)]
-              shadow-[var(--shadow-card)]
-              lg:sticky lg:top-28
-            "
-          >
-            <div className="flex items-center justify-between gap-4 border-b border-[var(--color-border)] pb-4">
-              <p className="gh-eyebrow inline-flex items-center gap-2 text-[var(--color-brand-primary)]">
+          <div className="relative z-[1]">
+            {/* Eyebrow row */}
+            <div className="flex flex-wrap items-center gap-4 mb-8">
+              <span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.18em] uppercase text-[var(--color-brand-accent)]">
+                <Flag code={countryCode} size="sm" />
+                {countryName}
+              </span>
+              <span className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.12em] uppercase text-white/50">
                 <span aria-hidden className="gh-pulse-dot !size-2" />
-                Available right now
-              </p>
-              <p className="text-[length:var(--text-meta)] text-[var(--color-text-muted)] [font-variant-numeric:tabular-nums]">
-                {totalDoctorsAcrossEurope} across Europe
-              </p>
+                {doctorCount} available
+              </span>
             </div>
 
-            <ul className="mt-2 divide-y divide-[var(--color-border)]">
-              {doctorsForPanel.map((d) => (
-                <li key={d.name} className="flex items-center gap-4 py-4">
-                  <AvatarBubble name={d.name} />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-[var(--color-text-primary)]">
-                      {d.name}
-                    </p>
-                    <p className="truncate text-xs text-[var(--color-text-muted)]">
-                      {d.role}
-                    </p>
-                  </div>
-                  <span className="shrink-0 rounded-full bg-[var(--color-accent)]/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[var(--color-brand-primary)]">
-                    Free
+            {/* Headline — Manrope 800, white */}
+            <h1
+              id="hero-title"
+              className="
+                text-[length:var(--text-display)]
+                font-extrabold leading-[0.93] tracking-[-0.04em]
+                text-white
+                max-w-[13ch]
+              "
+            >
+              {displayHeroTitle ? (
+                displayHeroTitle
+              ) : (
+                <>
+                  See a doctor,{" "}
+                  <span className="text-[var(--color-brand-accent)]">
+                    from anywhere.
                   </span>
-                </li>
-              ))}
-            </ul>
+                </>
+              )}
+            </h1>
 
-            <p className="mt-4 text-[length:var(--text-meta)] text-[var(--color-text-muted)]">
-              Consulting in {languageLabel}
+            <p className="mt-7 max-w-[46ch] text-[length:var(--text-body-lg)] leading-relaxed text-white/65">
+              {displayHeroSubtitle ??
+                "Locally-registered clinicians, one-form booking, no waiting rooms. Pay only after the video call connects."}
             </p>
-          </aside>
-        ) : null}
-      </div>
 
-      {/* Optional admin-uploaded hero image — editorial wide slot below fold */}
-      {heroImageSrc ? (
-        <div className="mx-auto max-w-[var(--container-width)] px-5 pb-16 md:px-10 md:pb-20">
-          <div className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={heroImageSrc}
-              alt={displayHeroTitle ?? `${countryName} clinic`}
-              className="block w-full object-cover"
-              style={{ maxHeight: 480 }}
-            />
+            {/* CTA cluster */}
+            <div className="mt-10 flex flex-wrap items-center gap-3">
+              <Link
+                href={bookHref}
+                className="gh-btn gh-btn-ghost-dark active:scale-[0.98] motion-reduce:active:scale-100"
+              >
+                {displayCtaLabel}
+                <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+              </Link>
+              <Link
+                href="#services"
+                className="
+                  inline-flex items-center justify-center gap-2
+                  rounded-full px-6 py-3
+                  border border-white/20 bg-transparent
+                  text-sm font-semibold text-white/80
+                  hover:bg-white/10 hover:border-white/35
+                  transition-colors duration-200
+                  motion-reduce:transition-none
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
+                "
+              >
+                Browse services
+              </Link>
+            </div>
+
+            {/* Proof points */}
+            <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2.5 text-[length:var(--text-meta)] text-white/55">
+              <li className="inline-flex items-center gap-2">
+                <ShieldCheck
+                  className="size-3.5 text-[var(--color-brand-accent)]"
+                  strokeWidth={1.5}
+                  aria-hidden
+                />
+                Licensed in {countryName}
+              </li>
+              <li className="inline-flex items-center gap-2">
+                <Clock
+                  className="size-3.5 text-[var(--color-brand-accent)]"
+                  strokeWidth={1.5}
+                  aria-hidden
+                />
+                Same-day slots
+              </li>
+              <li className="inline-flex items-center gap-2">
+                <Stethoscope
+                  className="size-3.5 text-[var(--color-brand-accent)]"
+                  strokeWidth={1.5}
+                  aria-hidden
+                />
+                No clinic visits
+              </li>
+            </ul>
           </div>
         </div>
-      ) : null}
+
+        {/* RIGHT — white availability or booking panel */}
+        <div
+          className="
+            flex flex-col justify-center
+            bg-[var(--color-background-page)]
+            px-8 py-20 md:px-12 lg:px-16
+            border-t lg:border-t-0 lg:border-l border-[var(--color-border)]
+          "
+        >
+          {doctorsForPanel.length > 0 ? (
+            <aside aria-label="Doctors available now" className="max-w-[400px]">
+              <p className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.18em] uppercase text-[var(--color-brand-primary)] mb-5">
+                <span aria-hidden className="gh-pulse-dot !size-1.5" />
+                Available right now
+              </p>
+
+              <p className="text-[length:var(--text-h3)] font-extrabold tracking-[-0.025em] leading-tight text-[var(--color-text-primary)] mb-8">
+                {totalDoctorsAcrossEurope} doctors{" "}
+                <span className="text-[var(--color-brand-primary)]">
+                  across Europe
+                </span>
+              </p>
+
+              <ul className="divide-y divide-[var(--color-border)] mb-6">
+                {doctorsForPanel.map((d) => (
+                  <li key={d.name} className="flex items-center gap-4 py-4">
+                    <AvatarBubble name={d.name} />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-bold text-[var(--color-text-primary)]">
+                        {d.name}
+                      </p>
+                      <p className="truncate text-xs text-[var(--color-text-muted)]">
+                        {d.role}
+                      </p>
+                    </div>
+                    <span className="shrink-0 rounded-full bg-[var(--color-accent-soft)] border border-[var(--color-border)] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[var(--color-brand-primary)]">
+                      Free
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              <p className="text-[length:var(--text-meta)] text-[var(--color-text-muted)] mb-8">
+                Consulting in {languageLabel}
+              </p>
+
+              <Link
+                href={bookHref}
+                className="gh-btn gh-btn-primary w-full"
+              >
+                Book a consultation
+                <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+              </Link>
+            </aside>
+          ) : (
+            <div className="max-w-[400px]">
+              <p className="text-[11px] font-bold tracking-[0.18em] uppercase text-[var(--color-brand-primary)] mb-5">
+                Book online
+              </p>
+              <h2 className="text-[length:var(--text-h2)] font-extrabold tracking-[-0.03em] text-[var(--color-text-primary)] leading-tight mb-7">
+                Your consultation<br />starts here.
+              </h2>
+              <p className="text-[length:var(--text-body-lg)] text-[var(--color-text-muted)] mb-9 max-w-[36ch]">
+                Choose a time that works for you. Video call with a doctor licensed in {countryName}.
+              </p>
+              <Link href={bookHref} className="gh-btn gh-btn-primary">
+                {displayCtaLabel}
+                <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
     </section>
   );
 }
