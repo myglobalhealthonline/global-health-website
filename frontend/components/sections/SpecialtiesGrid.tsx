@@ -1,6 +1,4 @@
 import { ServiceCard } from "@/components/cards/ServiceCard";
-import { Container } from "@/components/layout/Container";
-import { Section } from "@/components/layout/Section";
 
 type Item = {
   title: string;
@@ -19,15 +17,37 @@ type SpecialtiesGridProps = {
 
 export function SpecialtiesGrid({ title = "Specialist consultations", items }: SpecialtiesGridProps) {
   return (
-    <Section variant="soft" pattern="soft">
-      <Container>
-        <h2 className="gh-h2 text-[var(--color-text-primary)] mb-10">{title}</h2>
+    <section
+      style={{
+        background: "var(--color-background-page)",
+        padding: "clamp(64px,8vw,120px) 0",
+        borderBottom: "1px solid var(--color-border)",
+      }}
+    >
+      <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+        <div className="mb-10 lg:mb-12">
+          <span
+            className="text-[11px] font-bold uppercase tracking-[0.2em]"
+            style={{ color: "var(--color-brand-primary)" }}
+          >
+            Specialist areas
+          </span>
+          <h2
+            className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.05]"
+            style={{
+              fontSize: "clamp(1.85rem,3.5vw,3rem)",
+              color: "var(--color-text-primary)",
+            }}
+          >
+            {title}
+          </h2>
+        </div>
         <div className="gh-card-grid">
           {items.map((item) => (
             <ServiceCard key={item.href} {...item} ctaLabel="See specialty" />
           ))}
         </div>
-      </Container>
-    </Section>
+      </div>
+    </section>
   );
 }

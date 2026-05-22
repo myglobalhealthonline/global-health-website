@@ -1,6 +1,4 @@
 import { DoctorCard } from "@/components/cards/DoctorCard";
-import { Container } from "@/components/layout/Container";
-import { Section } from "@/components/layout/Section";
 
 type DoctorItem = {
   name: string;
@@ -24,25 +22,48 @@ type DoctorsSectionProps = {
 
 export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
   return (
-    <Section variant="white" pattern="soft">
-      <Container>
+    <section
+      style={{
+        background: "var(--color-background-soft)",
+        padding: "clamp(64px,8vw,120px) 0",
+      }}
+    >
+      <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         {(title || intro) && (
           <div className="mb-12 lg:mb-14">
+            <span
+              className="text-[11px] font-bold uppercase tracking-[0.2em]"
+              style={{ color: "var(--color-brand-primary)" }}
+            >
+              Our Team
+            </span>
             {title && (
-              <span className="gh-heading-eyebrow text-[var(--color-brand-primary)]">
-                Our Team
-              </span>
+              <h2
+                className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.05]"
+                style={{
+                  fontSize: "clamp(1.85rem,3.5vw,3rem)",
+                  color: "var(--color-text-primary)",
+                }}
+              >
+                {title}
+              </h2>
             )}
-            {title && <h2 className="gh-h2 mt-3 text-[var(--color-text-primary)]">{title}</h2>}
-            {intro ? <p className="gh-body-lg mt-3 max-w-2xl text-[var(--color-text-muted)]">{intro}</p> : null}
+            {intro ? (
+              <p
+                className="mt-3 max-w-2xl text-[length:var(--text-body-lg)] leading-relaxed"
+                style={{ color: "var(--color-text-muted)" }}
+              >
+                {intro}
+              </p>
+            ) : null}
           </div>
         )}
-        <div className="gh-card-grid">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {doctors.map((doctor) => (
             <DoctorCard key={doctor.href ?? `${doctor.name}-${doctor.title}`} {...doctor} />
           ))}
         </div>
-      </Container>
-    </Section>
+      </div>
+    </section>
   );
 }
