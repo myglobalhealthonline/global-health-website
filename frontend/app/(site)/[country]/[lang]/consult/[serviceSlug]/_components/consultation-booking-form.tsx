@@ -54,6 +54,13 @@ export function ConsultationBookingForm({
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(
     slots[0]?.id ?? null,
   );
+  // Date-first UX — pick the day, then the times for that day render
+  // below. Defaults to the day of the pre-selected slot (which is the
+  // first slot in the list), so the panel is never empty on first
+  // render.
+  const [selectedDay, setSelectedDay] = useState<string | null>(
+    slots[0] ? formatAppDate(slots[0].startAt) : null,
+  );
 
   // Auth + prefill state. We render the form unconditionally so guests
   // can still book — when signed in we fill the defaults from /api/auth/me.
@@ -206,38 +213,137 @@ export function ConsultationBookingForm({
       onSubmit={onSubmit}
       className="mt-6 grid gap-6"
     >
-      {/* 1. Slot picker — single-select. */}
+      {/* 1. Slot picker — two-step: pick the day, then the times for
+        * that day render below in a clean morning/afternoon/evening
+        * grouped grid. Replaces the previous "wall of chips with day
+        * headers" pattern which was overwhelming when 5+ days had 6+
+        * slots each. */}
       <div>
-        <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">
-          Pick a time
-        </p>
-        <div className="mt-3 grid gap-4">
-          {Array.from(grouped.entries()).map(([day, daySlots]) => (
-            <div key={day}>
-              <p className="text-sm font-semibold text-slate-700">{day}</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {daySlots.map((s) => {
-                  const isSelected = selectedSlotId === s.id;
-                  return (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => setSelectedSlotId(s.id)}
-                      disabled={pending}
-                      className={
-                        isSelected
-                          ? "inline-flex items-center gap-1.5 rounded-full border-2 border-emerald-500 bg-emerald-600 px-3 py-1.5 text-[13px] font-semibold text-white shadow-sm"
-                          : "inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[13px] font-semibold text-emerald-800 transition hover:border-emerald-400 hover:bg-emerald-100 disabled:opacity-60"
-                      }
-                    >
-                      {formatAppTime(s.startAt)}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+        <div className="flex items-baseline justify-between gap-3">
+          <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+            Pick a date
+          </p>
+          <p className="text-xs text-[var(--color-text-muted)]">
+            {grouped.size} {grouped.size === 1 ? "day" : "days"} available · times in your timezone
+          </p>
         </div>
+
+        {/* Date pills row — horizontally scrollable so 14 days fit on
+          * mobile without wrapping into a chaotic stack. Each pill:
+          * weekday short, day number big, slot count tiny. */}
+        <div
+          role="tablist"
+          aria-label="Available dates"
+          className="mt-3 -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]"
+        >
+          {Array.from(grouped.entries()).map(([day, daySlots]) => {
+            const isActive = selectedDay === day;
+            const firstSlotAt = daySlots[0]?.startAt;
+            const date = firstSlotAt ? new Date(firstSlotAt) : null;
+            // Render compact: "Mon" on top, "12" big, "Aug" small.
+            const weekday = date
+              ? date.toLocaleDateString(undefined, { weekday: "short" })
+              : "";
+            const dayNum = date ? date.getDate() : "";
+            const month = date
+              ? date.toLocaleDateString(undefined, { month: "short" })
+              : "";
+            return (
+              <button
+                key={day}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => {
+                  setSelectedDay(day);
+                  // Auto-select the first slot of the new day so the
+                  // submit button never sits disabled after a date pick.
+                  const first = daySlots[0];
+                  if (first) setSelectedSlotId(first.id);
+                }}
+                disabled={pending}
+                className={
+                  isActive
+                    ? "flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border-2 border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white px-4 py-3 min-w-[68px] shadow-[var(--shadow-card)]"
+                    : "flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-body)] px-4 py-3 min-w-[68px] transition-[border-color,background-color,transform] duration-200 hover:border-[var(--color-border-strong)] hover:bg-[var(--color-background-soft)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
+                }
+              >
+                <span
+                  className={
+                    isActive
+                      ? "text-[10px] font-bold uppercase tracking-[0.12em] text-white/80"
+                      : "text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]"
+                  }
+                >
+                  {weekday}
+                </span>
+                <span
+                  className={
+                    isActive
+                      ? "text-2xl font-bold leading-none [font-variant-numeric:tabular-nums] text-white"
+                      : "text-2xl font-bold leading-none [font-variant-numeric:tabular-nums] text-[var(--color-text-primary)]"
+                  }
+                >
+                  {dayNum}
+                </span>
+                <span
+                  className={
+                    isActive
+                      ? "text-[10px] font-semibold uppercase tracking-[0.1em] text-white/70"
+                      : "text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]"
+                  }
+                >
+                  {month}
+                </span>
+                <span
+                  className={
+                    isActive
+                      ? "mt-1 text-[10px] font-semibold text-white/80"
+                      : "mt-1 text-[10px] font-semibold text-[var(--color-brand-primary)]"
+                  }
+                >
+                  {daySlots.length} {daySlots.length === 1 ? "slot" : "slots"}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Time grid for the active day. Buttons in a responsive
+          * grid (2 cols on mobile, 4 on lg) so they look like a
+          * proper picker, not a sloppy wrap. */}
+        {selectedDay ? (
+          <div className="mt-6">
+            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+              Pick a time on {selectedDay}
+            </p>
+            <div
+              role="tabpanel"
+              aria-label={`Times on ${selectedDay}`}
+              className="mt-3 grid gap-2 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
+            >
+              {(grouped.get(selectedDay) ?? []).map((s) => {
+                const isSelected = selectedSlotId === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setSelectedSlotId(s.id)}
+                    disabled={pending}
+                    aria-pressed={isSelected}
+                    className={
+                      isSelected
+                        ? "inline-flex items-center justify-center rounded-xl border-2 border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white px-3 py-3 text-sm font-semibold [font-variant-numeric:tabular-nums] shadow-[var(--shadow-card)]"
+                        : "inline-flex items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-primary)] px-3 py-3 text-sm font-semibold [font-variant-numeric:tabular-nums] transition-[border-color,background-color,transform] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
+                    }
+                  >
+                    {formatAppTime(s.startAt)}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
       </div>
 
       {/* 2. Patient details — prefilled from account when signed in. */}
