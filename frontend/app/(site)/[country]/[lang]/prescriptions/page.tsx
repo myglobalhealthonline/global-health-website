@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
+import { PageHero } from "@/components/sections/PageHero";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { countries, getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
@@ -105,23 +106,18 @@ export default async function PrescriptionsPage({
         ])}
       />
 
-      <section className="mx-auto max-w-5xl px-4 pt-16 pb-10 text-center">
-        <p className="text-sm uppercase tracking-wide text-emerald-700">
-          {config.name} · Online prescriptions
-        </p>
-        <h1 className="mt-3 text-4xl font-semibold text-slate-900 sm:text-5xl">
-          {heroTitle}
-        </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">{heroSubtitle}</p>
-        <div className="mt-7">
-          <Link
-            href={bookHref}
-            className="inline-flex items-center rounded-md bg-emerald-700 px-6 py-3 text-white shadow-sm hover:bg-emerald-800"
-          >
-            {ctaLabel}
-          </Link>
-        </div>
-      </section>
+      <PageHero
+        countryCode={config.code}
+        countryLabel={`${config.name} · Online prescriptions`}
+        titleLead="Repeat scripts"
+        titleAccent="without"
+        titleTrail="the waiting room."
+        lede={heroSubtitle}
+        ctaLabel={ctaLabel}
+        ctaHref={bookHref}
+        secondaryLabel="Browse all services"
+        secondaryHref={`/${slug}/${lang}`}
+      />
 
       {/* Admin-edited rich body from ContentPage (PRESCRIPTIONS). Hidden
           when no row exists. */}

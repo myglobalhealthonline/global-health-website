@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
+import { PageHero } from "@/components/sections/PageHero";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { countries, getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
@@ -98,17 +99,18 @@ export default async function HealthTestsPage({
         ])}
       />
 
-      <section className="gh-section-tight mx-auto max-w-5xl px-4 text-center">
-        <p className="gh-eyebrow text-[var(--color-brand-primary)]">
-          {config.name} · Home health tests
-        </p>
-        <h1 className="mt-3 text-4xl font-semibold text-[var(--color-text-primary)] sm:text-5xl">
-          {heroTitle}
-        </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-[var(--color-text-muted)]">
-          {heroSubtitle}
-        </p>
-      </section>
+      <PageHero
+        countryCode={config.code}
+        countryLabel={`${config.name} · Home health tests`}
+        titleLead="Lab-quality"
+        titleAccent="results"
+        titleTrail="without leaving home."
+        lede={heroSubtitle}
+        ctaLabel="Browse tests"
+        ctaHref={bookHref}
+        secondaryLabel="Book a consultation"
+        secondaryHref={`/${slug}/${lang}/general-consultation`}
+      />
 
       {/* Admin-edited rich body from ContentPage (HEALTH_TESTS). */}
       <RichBodySection html={page?.body} />

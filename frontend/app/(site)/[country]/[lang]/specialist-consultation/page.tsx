@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SpecialtiesGrid } from "@/components/sections/SpecialtiesGrid";
+import { PageHero } from "@/components/sections/PageHero";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
@@ -165,40 +166,34 @@ export default async function CountryLangSpecialistConsultationPage({
         })}
       />
 
-      {/* Hero — admin-editable copy + optional uploaded image from ContentPage */}
-      <section className="gh-section-tight mx-auto max-w-5xl px-4 text-center">
-        <p className="gh-eyebrow text-[var(--color-brand-primary)]">
-          {config.name} · Specialist Consultation
-        </p>
-        <h1 className="mt-3 text-4xl font-semibold text-[var(--color-text-primary)] sm:text-5xl">
-          {heroTitle}
-        </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-[var(--color-text-muted)]">
-          {heroSubtitle}
-        </p>
-        <div className="mt-7 flex flex-wrap justify-center gap-3">
-          <Link href={ctaHref} className="gh-btn gh-btn-primary">
-            {ctaLabel}
-          </Link>
-        </div>
-        {page?.heroImageSrc ? (
-          <div
-            className="
-              mx-auto mt-10 overflow-hidden
-              rounded-[var(--radius-card)]
-              border border-[var(--color-border)] shadow-[var(--shadow-soft)]
-            "
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={page.heroImageSrc}
-              alt={heroTitle}
-              className="block w-full"
-              style={{ maxHeight: 440, objectFit: "cover" }}
-            />
+      <PageHero
+        countryCode={config.code}
+        countryLabel={`${config.name} · Specialist Consultation`}
+        titleLead="Talk to a"
+        titleAccent="specialist"
+        titleTrail="this week."
+        lede={heroSubtitle}
+        ctaLabel={ctaLabel}
+        ctaHref={ctaHref}
+        secondaryLabel="Meet the team"
+        secondaryHref={`/${slug}/${lang}/doctors`}
+      />
+
+      {page?.heroImageSrc ? (
+        <section className="bg-[var(--color-background-page)]">
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 -mt-16 relative">
+            <div className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-[var(--shadow-elevated)]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={page.heroImageSrc}
+                alt={heroTitle}
+                className="block w-full"
+                style={{ maxHeight: 480, objectFit: "cover" }}
+              />
+            </div>
           </div>
-        ) : null}
-      </section>
+        </section>
+      ) : null}
 
       <RichBodySection html={page?.body} />
 

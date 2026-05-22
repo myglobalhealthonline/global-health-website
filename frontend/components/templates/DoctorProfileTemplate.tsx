@@ -46,21 +46,36 @@ export function DoctorProfileTemplate({
 
   return (
     <main className="bg-[var(--color-background-page)]">
-      {/* HERO — split portrait + meta */}
-      <section className="gh-section-sm bg-[var(--color-background-soft)]">
-        <div className="gh-container">
+      {/* HERO — dark editorial with portrait split. Keeps the
+        * portrait-alongside-name pattern (it's a profile page) but on
+        * a forest-night canvas with Cormorant italic accent. */}
+      <section
+        className="relative isolate overflow-hidden bg-[var(--color-background-dark)] text-white"
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background: `
+              radial-gradient(ellipse 1200px 700px at 100% -20%, rgba(176, 241, 34, 0.18), transparent 55%),
+              radial-gradient(ellipse 900px 600px at -10% 110%, rgba(200, 230, 160, 0.08), transparent 60%),
+              linear-gradient(180deg, #0A2620 0%, var(--color-background-dark) 60%, #0A2620 100%)
+            `,
+          }}
+        />
+        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10 pt-12 pb-20 md:pt-16 md:pb-24">
           {backHref ? (
             <Link
               href={backHref}
-              className="inline-flex items-center gap-1.5 text-[12.5px] font-medium uppercase tracking-[0.16em] text-[var(--color-text-muted)] underline-offset-4 hover:text-[var(--color-text-primary)] hover:underline"
+              className="inline-flex items-center gap-1.5 text-[12.5px] font-medium uppercase tracking-[0.16em] text-white/55 underline-offset-4 hover:text-white hover:underline"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               Back to {profile.country} clinicians
             </Link>
           ) : null}
 
-          <div className="mt-12 grid items-start gap-12 lg:grid-cols-[460px_1fr] lg:gap-20">
-            <div className="relative overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-background-panel)]">
+          <div className="mt-10 grid items-start gap-12 lg:grid-cols-[460px_1fr] lg:gap-20">
+            <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-white/10 bg-white/[0.03]">
               {profileImageSrc ? (
                 <div className="relative aspect-[4/5]">
                   <Image
@@ -78,23 +93,27 @@ export function DoctorProfileTemplate({
             </div>
 
             <div>
-              <span className="gh-heading-eyebrow">
+              <span className="inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/[0.04] px-3 py-1.5 backdrop-blur-sm text-[length:var(--text-eyebrow)] font-semibold uppercase tracking-[0.06em] text-white/90">
                 {profile.title} · {profile.country}
               </span>
               <h1
-                className="gh-display mt-6 text-[clamp(2.5rem,5vw,4.5rem)]"
-                style={{ fontFamily: "var(--font-cormorant)" }}
+                className="
+                  mt-7 max-w-[18ch]
+                  font-semibold tracking-[-0.03em] leading-[0.98]
+                  text-[clamp(2.75rem,5.5vw+0.5rem,5.5rem)]
+                "
+                style={{ fontFamily: "var(--font-cormorant)", fontStyle: "italic", fontWeight: 500 }}
               >
                 {profile.name}
               </h1>
 
               {hero.description ? (
-                <p className="mt-8 max-w-[560px] text-[1.05rem] leading-[1.7] text-[var(--color-text-body)] md:text-[1.15rem]">
+                <p className="mt-7 max-w-[44ch] text-base md:text-lg leading-relaxed text-white/72">
                   {hero.description}
                 </p>
               ) : null}
 
-              <dl className="mt-12 grid max-w-[520px] grid-cols-2 gap-x-10 gap-y-8 border-t border-[var(--color-border)] pt-10">
+              <dl className="mt-10 grid max-w-[520px] grid-cols-2 gap-x-10 gap-y-7 border-t border-white/10 pt-9">
                 {profile.imcRegistration ? (
                   <Meta
                     label="Registration"
@@ -104,7 +123,7 @@ export function DoctorProfileTemplate({
                           href={profile.medicalRegistrationUrl}
                           target="_blank"
                           rel="noopener"
-                          className="inline-flex items-center gap-1 underline-offset-4 hover:underline"
+                          className="inline-flex items-center gap-1 text-[var(--color-accent)] underline-offset-4 hover:underline"
                         >
                           {profile.imcRegistration}
                           <ExternalLink className="h-3 w-3" />
@@ -127,13 +146,36 @@ export function DoctorProfileTemplate({
                 <Meta label="Country" value={profile.country} />
               </dl>
 
-              <div className="mt-12 flex flex-wrap items-center gap-3">
-                <Link href={hero.primaryCta.href} className="gh-btn gh-btn-primary">
+              <div className="mt-10 flex flex-wrap items-center gap-3">
+                <Link
+                  href={hero.primaryCta.href}
+                  className="
+                    inline-flex items-center justify-center gap-2
+                    rounded-full bg-[var(--color-accent)]
+                    px-7 py-4
+                    text-[15px] font-bold text-[var(--color-background-dark)]
+                    transition-[background-color,transform] duration-200
+                    hover:bg-white
+                    active:scale-[0.98] motion-reduce:active:scale-100
+                    motion-reduce:transition-none
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
+                  "
+                >
                   {hero.primaryCta.label}
-                  <ArrowUpRight className="h-4 w-4" />
+                  <ArrowUpRight className="h-4 w-4" strokeWidth={1.5} />
                 </Link>
                 {hero.secondaryCta ? (
-                  <Link href={hero.secondaryCta.href} className="gh-btn gh-btn-outline">
+                  <Link
+                    href={hero.secondaryCta.href}
+                    className="
+                      inline-flex items-center justify-center gap-2
+                      rounded-full border border-white/25 bg-transparent
+                      px-6 py-4 text-[15px] font-semibold text-white/90
+                      transition-[background-color,border-color] duration-200
+                      hover:bg-white/10 hover:border-white/40
+                      motion-reduce:transition-none
+                    "
+                  >
                     {hero.secondaryCta.label}
                   </Link>
                 ) : null}
@@ -242,10 +284,10 @@ export function DoctorProfileTemplate({
 function Meta({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
-      <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
+      <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/55">
         {label}
       </dt>
-      <dd className="mt-2 text-[14.5px] text-[var(--color-text-primary)]">{value}</dd>
+      <dd className="mt-2 text-[14.5px] text-white">{value}</dd>
     </div>
   );
 }

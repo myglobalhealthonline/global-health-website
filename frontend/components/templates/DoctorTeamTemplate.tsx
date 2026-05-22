@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Languages } from "lucide-react";
+import { PageHero } from "@/components/sections/PageHero";
 
 type Doctor = {
   name: string;
@@ -42,32 +43,25 @@ export function DoctorTeamTemplate({
 }: DoctorTeamTemplateProps) {
   return (
     <main className="bg-[var(--color-background-page)]">
-      {/* HERO */}
-      <section className="gh-section-sm border-b border-[var(--color-border)] bg-[var(--color-background-soft)]">
-        <div className="gh-container">
-          <span className="gh-heading-eyebrow">{countryName} clinicians</span>
-          <h1
-            className="gh-display mt-8 max-w-[20ch] text-[clamp(2.5rem,5.5vw,5rem)]"
-            style={{ fontFamily: "var(--font-cormorant)" }}
-          >
-            Meet the team behind your{" "}
-            <span className="gh-display-em">{countryName}</span> care.
-          </h1>
-          <p className="mt-8 max-w-[620px] text-[1.05rem] leading-[1.7] text-[var(--color-text-body)] md:text-[1.15rem]">
+      <PageHero
+        countryLabel={`${countryName} · The team`}
+        titleLead="Doctors who"
+        titleAccent="actually"
+        titleTrail="pick up."
+        lede={
+          <>
             Every clinician below is licensed in {countryName}, vetted for
             online care, and reviewed by patients after each consultation.
-          </p>
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <Link href={bookingHref} className="gh-btn gh-btn-primary">
-              {bookingLabel}
-              <ArrowUpRight className="h-4 w-4" />
-            </Link>
-            <span className="text-[13px] text-[var(--color-text-muted)]">
-              {doctors.length} licensed clinicians available
+            <br />
+            <span className="text-white/55">
+              {doctors.length} licensed{" "}
+              {doctors.length === 1 ? "clinician" : "clinicians"} available
             </span>
-          </div>
-        </div>
-      </section>
+          </>
+        }
+        ctaLabel={bookingLabel}
+        ctaHref={bookingHref}
+      />
 
       {/* GRID */}
       <section className="gh-section bg-[var(--color-background-page)]">
