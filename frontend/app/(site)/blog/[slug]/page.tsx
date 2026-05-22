@@ -34,45 +34,82 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <>
-      {/* Article body — light, wide enough for long-form prose */}
-      <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-        <Link
-          href="/blog"
-          className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-brand-primary)] hover:opacity-80 transition-opacity"
-        >
-          <ArrowLeft className="size-4" aria-hidden />
-          All articles
-        </Link>
+      {/* Dark hero header */}
+      <section
+        className="relative overflow-hidden"
+        style={{
+          background: "var(--color-background-dark)",
+          padding: "clamp(56px,7vw,96px) 0 clamp(48px,6vw,80px)",
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
+        }}
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 700px 400px at 90% -10%, rgba(176,241,34,0.09), transparent 55%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-3xl px-5 md:px-10">
+          <Link
+            href="/blog"
+            className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-80"
+            style={{ color: "rgba(255,255,255,0.45)" }}
+          >
+            <ArrowLeft className="size-4" aria-hidden />
+            All articles
+          </Link>
 
-        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-brand-primary)]">
-          {post.category}
-        </span>
+          <p
+            className="mt-6 text-[11px] font-bold uppercase tracking-[0.2em]"
+            style={{ color: "var(--color-brand-accent)" }}
+          >
+            {post.category}
+          </p>
 
-        <h1 className="mt-3 text-3xl font-extrabold tracking-[-0.03em] leading-tight text-[var(--color-text-primary)] sm:text-4xl">
-          {post.title}
-        </h1>
+          <h1
+            className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.05]"
+            style={{
+              fontSize: "clamp(1.85rem,4vw,3rem)",
+              color: "rgba(255,255,255,0.93)",
+            }}
+          >
+            {post.title}
+          </h1>
 
-        <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-[var(--color-text-muted)]">
-          <span className="flex items-center gap-1.5">
-            <User className="size-4" aria-hidden />
-            {post.author}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Calendar className="size-4" aria-hidden />
-            {formatted}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Clock className="size-4" aria-hidden />
-            {post.readingTime} min read
-          </span>
+          <p
+            className="mt-4 max-w-[60ch] text-[length:var(--text-body-lg)] leading-relaxed"
+            style={{ color: "rgba(255,255,255,0.48)" }}
+          >
+            {post.excerpt}
+          </p>
+
+          <div
+            className="mt-6 flex flex-wrap items-center gap-5 text-sm"
+            style={{ color: "rgba(255,255,255,0.38)" }}
+          >
+            <span className="flex items-center gap-1.5">
+              <User className="size-4" aria-hidden />
+              {post.author}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Calendar className="size-4" aria-hidden />
+              {formatted}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Clock className="size-4" aria-hidden />
+              {post.readingTime} min read
+            </span>
+          </div>
         </div>
+      </section>
 
-        <p className="mt-6 text-lg leading-relaxed text-[var(--color-text-muted)]">
-          {post.excerpt}
-        </p>
-
-        <hr className="my-8 border-[var(--color-border)]" />
-
+      {/* Article body — light, wide prose column */}
+      <main
+        className="mx-auto max-w-3xl px-5 md:px-10"
+        style={{ padding: "clamp(48px,6vw,80px) 20px" }}
+      >
         <div
           className="prose max-w-none prose-headings:font-extrabold prose-headings:tracking-[-0.02em] prose-headings:text-[var(--color-text-primary)] prose-h2:text-xl prose-h2:mt-8 prose-h3:text-lg prose-h3:mt-6 prose-p:leading-relaxed prose-p:text-[var(--color-text-body)] prose-li:leading-relaxed prose-li:text-[var(--color-text-body)] prose-a:text-[var(--color-brand-primary)] prose-a:no-underline hover:prose-a:underline"
           dangerouslySetInnerHTML={{ __html: post.body }}

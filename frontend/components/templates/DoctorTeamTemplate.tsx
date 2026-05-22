@@ -115,7 +115,7 @@ export function DoctorTeamTemplate({
                       </div>
                       <div className="mt-5 flex items-start justify-between gap-4">
                         <div>
-                          <h3 className="text-[1.05rem] font-medium leading-tight text-[var(--color-text-primary)]">
+                          <h3 className="text-[1.05rem] font-extrabold tracking-[-0.01em] leading-tight text-[var(--color-text-primary)]">
                             {d.name}
                           </h3>
                           {d.title ? (
