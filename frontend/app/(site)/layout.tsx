@@ -43,6 +43,18 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO_LIGHT;
   const footerDecorImage = resolveFooterCtaDecorAsset(assets);
 
+  // Read the gh-last-country cookie server-side so the header renders
+  // the remembered country + lang on the first paint. Without this,
+  // useLastCountry() resolves only after the client-side effect runs
+  // and the header flashes the global IA before swapping in the
+  // country-scoped one — looks broken on /about, /blog, /faq.
+  const lastCountryRaw = cookieStore.get("gh-last-country")?.value;
+  let initialLastCountry: { slug: string; lang: string } | null = null;
+  if (lastCountryRaw) {
+    const [slug, lang] = lastCountryRaw.split(":");
+    if (slug && lang) initialLastCountry = { slug, lang };
+  }
+
   // Build a code → enabledFeatures map so SiteHeader/MobileNav can hide
   // nav tabs the admin has disabled per-country via /admin/country-features.
   const countryFeatures: Record<string, string[] | undefined> = {};
@@ -59,6 +71,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         footerDecorImage={footerDecorImage}
         authUser={authUser}
         countryFeatures={countryFeatures}
+        initialLastCountry={initialLastCountry}
       >
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
         {children}

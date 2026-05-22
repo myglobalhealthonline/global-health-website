@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { Globe, ShieldCheck, Phone, CalendarDays, ArrowRight } from "lucide-react";
 import Link from "next/link";

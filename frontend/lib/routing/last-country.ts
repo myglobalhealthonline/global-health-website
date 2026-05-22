@@ -86,23 +86,49 @@ export type LastCountry = {
 };
 
 /**
- * Read the remembered country on the client. Returns null until the
- * effect runs (cookie is browser-only), so call sites should handle
- * the null branch gracefully — typically by showing the same UI as
- * "no country selected yet" until the value resolves.
+ * Read the remembered country on the client. Accepts an optional
+ * server-resolved initial value (read from the cookie in the layout)
+ * so the first paint matches the post-hydration state — no flash of
+ * "no country" before the cookie reads in. Pass `null` from the
+ * server when the cookie was empty.
+ *
+ * After mount, the effect re-validates against the live cookie in
+ * case it was rotated in another tab.
  */
-export function useLastCountry(): LastCountry | null {
-  const [value, setValue] = useState<LastCountry | null>(null);
+export function useLastCountry(
+  initial?: { slug: string; lang: string } | null,
+): LastCountry | null {
+  const seed = initial ? resolveLastCountry(initial.slug, initial.lang) : null;
+  const [value, setValue] = useState<LastCountry | null>(seed);
   useEffect(() => {
     const raw = readCookie(LAST_COUNTRY_COOKIE);
     const parsed = raw ? decode(raw) : null;
     if (!parsed) return;
-    const code = countryCodeFromSlug(parsed.slug);
-    if (!code) return;
-    // Sanity: confirm the slug round-trips so a stale cookie from a
-    // renamed country gets ignored rather than crashing the header.
-    if (COUNTRY_CODE_TO_SLUG[code] !== parsed.slug) return;
-    setValue({ code, slug: parsed.slug, lang: parsed.lang });
+    const resolved = resolveLastCountry(parsed.slug, parsed.lang);
+    if (!resolved) return;
+    // Skip the re-render when the seed already matches — avoids a
+    // hydration mismatch dance on the common case where SSR and CSR
+    // agree about the cookie.
+    if (
+      seed &&
+      seed.slug === resolved.slug &&
+      seed.lang === resolved.lang &&
+      seed.code === resolved.code
+    ) {
+      return;
+    }
+    setValue(resolved);
+    // intentionally empty dep array — we want this once on mount; the
+    // seed snapshot was captured at first render. Cookie rotations from
+    // other tabs are rare enough to not warrant a listener.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return value;
+}
+
+function resolveLastCountry(slug: string, lang: string): LastCountry | null {
+  const code = countryCodeFromSlug(slug);
+  if (!code) return null;
+  if (COUNTRY_CODE_TO_SLUG[code] !== slug) return null;
+  return { code, slug, lang };
 }

@@ -120,12 +120,17 @@ export function SiteHeader({
    *  by lowercased country code. Used to hide nav tabs for features
    *  the admin has disabled in /admin/country-features. */
   countryFeatures,
+  /** Server-resolved gh-last-country cookie value. Seeds
+   *  useLastCountry() so the header renders the remembered country
+   *  on first paint instead of flashing the global IA. */
+  initialLastCountry,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
   authUser?: AuthUser | null;
   countryFeatures?: Record<string, string[] | undefined>;
+  initialLastCountry?: { slug: string; lang: string } | null;
 }) {
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
@@ -135,7 +140,7 @@ export function SiteHeader({
   // 2) Last-country cookie — kicks in on global pages (/about, /blog,
   //    /faq, /contact, /) so the switchers don't reset to "Choose
   //    country" after a visitor has already picked one.
-  const lastCountry = useLastCountry();
+  const lastCountry = useLastCountry(initialLastCountry);
 
   const urlCountryCode: CountryCode | null = parsed.country
     ? countryCodeFromSlug(parsed.country)
