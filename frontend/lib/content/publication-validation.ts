@@ -141,14 +141,13 @@ export function validateAdminServicePayload(service: Pick<AdminServiceDto, "kind
   });
 }
 
-export function validateAdminDoctorPayload(doctor: Pick<AdminDoctorDto, "fullName" | "title" | "bio" | "languages" | "imcRegistration" | "medicalRegistrationUrl" | "qualifications"> & { specialties: string[] }): PublicationValidationResult {
+export function validateAdminDoctorPayload(doctor: Pick<AdminDoctorDto, "fullName" | "title" | "bio" | "languages" | "medicalRegistrationUrl" | "qualifications"> & { specialties: string[] }): PublicationValidationResult {
   return validatePublicDoctorRecord({
     fullName: doctor.fullName,
     title: doctor.title,
     bio: doctor.bio,
     languages: doctor.languages,
     specialties: doctor.specialties,
-    imcRegistration: doctor.imcRegistration ?? undefined,
     medicalRegistrationUrl: doctor.medicalRegistrationUrl ?? undefined,
     qualifications: doctor.qualifications,
   });
