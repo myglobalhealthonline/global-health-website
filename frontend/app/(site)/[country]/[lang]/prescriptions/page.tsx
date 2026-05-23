@@ -171,6 +171,16 @@ export default async function PrescriptionsPage({
                       border: "1px solid rgba(255,255,255,0.09)",
                     }}
                   >
+                    {s.imageSrc ? (
+                      <div className="w-full overflow-hidden" style={{ aspectRatio: "4/3" }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={s.imageSrc}
+                          alt={s.name}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : null}
                     <div className="flex h-full flex-col p-6 sm:p-7">
                       <h3
                         className="text-lg font-bold tracking-[-0.01em]"
