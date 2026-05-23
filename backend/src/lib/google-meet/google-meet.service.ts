@@ -25,8 +25,8 @@ async function getAccessToken(): Promise<string> {
     error_description?: string;
     error?: string;
   };
-  if (!data.access_token) {
-    throw new Error(`OAuth Failed: ${data.error_description || data.error || "unknown"}`);
+  if (!response.ok || !data.access_token) {
+    throw new Error(`OAuth Failed: ${data.error_description || data.error || `HTTP ${response.status}`}`);
   }
   return data.access_token;
 }
@@ -46,22 +46,37 @@ async function createOpenSpace(token: string): Promise<{ meetingUri: string }> {
     }),
   });
 
-  const data = (await response.json()) as { meetingUri?: string };
-  if (!data.meetingUri) {
-    throw new Error(`Meet API Error: ${JSON.stringify(data)}`);
+  const data = (await response.json()) as {
+    meetingUri?: string;
+    error?: { message?: string };
+  };
+  if (!response.ok || !data.meetingUri) {
+    throw new Error(
+      `Meet API Error: ${data.error?.message ?? `HTTP ${response.status}`}`,
+    );
   }
-  return data as { meetingUri: string };
-}
-
-function toGoogleDateTime(date: Date): string {
-  return date.toISOString();
+  return { meetingUri: data.meetingUri };
 }
 
 /**
- * Creates an OPEN Google Meet space and a calendar event (no attendees).
- * Returns the Meet join URI.
+ * Mints an OPEN Google Meet space and returns its join URI.
+ *
+ * Why no calendar event: a previous version of this function also POSTed a
+ * Google Calendar event using `conferenceData.createRequest`, but the
+ * calendar event's auto-minted Meet link was discarded (we returned the
+ * separate OPEN space URI instead). The result was an orphan calendar
+ * entry with no working Meet link tied to it. The calendar call is
+ * dropped here; if a calendar entry is needed later, add it through the
+ * scheduling system that owns the appointment, with `entryPoints`
+ * pointing at the URI returned here so the link and the event stay in
+ * sync.
+ *
+ * `startTime`, `endTime`, and `serviceTitle` are accepted but not used
+ * in space creation today — kept on the signature so callers can pass
+ * them once we wire up an integrated calendar entry without another
+ * API churn.
  */
-export async function createMeetLinkForAppointment(input: {
+export async function createMeetLinkForAppointment(_input: {
   startTime: Date;
   endTime: Date;
   serviceTitle: string;
@@ -73,34 +88,6 @@ export async function createMeetLinkForAppointment(input: {
   }
 
   const token = await getAccessToken();
-  const spaceData = await createOpenSpace(token);
-
-  const calendarId = env.GOOGLE_CALENDAR_ID?.trim() || "primary";
-  const event = {
-    summary: input.serviceTitle || "Global Health Appointment",
-    start: {
-      dateTime: toGoogleDateTime(input.startTime),
-      timeZone: "GMT",
-    },
-    end: {
-      dateTime: toGoogleDateTime(input.endTime),
-      timeZone: "GMT",
-    },
-    conferenceData: {
-      createRequest: { requestId: `meet_${Date.now()}` },
-    },
-  };
-
-  const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?conferenceDataVersion=1`;
-
-  await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(event),
-  });
-
-  return spaceData.meetingUri;
+  const space = await createOpenSpace(token);
+  return space.meetingUri;
 }

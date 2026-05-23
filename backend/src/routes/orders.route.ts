@@ -12,6 +12,7 @@ import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { generateOrderMeetLink } from "../modules/admin-orders/generate-order-meet-link.service.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 /**
  * Orders + checkout.
@@ -637,6 +638,15 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
   );
 
   // ── Admin: generate Google Meet link for consultation order ───────
+  const generateMeetLinkBodySchema = z
+    .object({
+      // When true, force a fresh Meet link even if one already exists.
+      // Without this flag the service short-circuits and returns the
+      // existing link unchanged — protects against double-click misuse.
+      regenerate: z.boolean().optional(),
+    })
+    .optional();
+
   app.post<{ Params: { id: string } }>(
     "/api/admin/orders/:id/generate-meet-link",
     async (request, reply) => {
@@ -646,8 +656,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       const params = orderIdParamSchema.safeParse(request.params);
       if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
 
+      const body = generateMeetLinkBodySchema.safeParse(request.body ?? {});
+      const regenerate = body.success ? Boolean(body.data?.regenerate) : false;
+
       try {
-        const result = await generateOrderMeetLink(params.data.id);
+        const result = await generateOrderMeetLink(params.data.id, { regenerate });
         if (!result.ok) {
           const status =
             result.code === "NOT_FOUND"
@@ -657,11 +670,25 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                 : 400;
           return reply.status(status).send(errorResponse(result.message));
         }
+        // Only audit when the link was actually minted — short-circuited
+        // "reused" calls aren't a meaningful admin action.
+        if (!result.reused) {
+          const actor = await resolveOptionalAuthUser(request);
+          recordAudit({
+            actorUserId: actor?.id,
+            actorRole: "ADMIN",
+            action: "MEET_LINK_GENERATED",
+            entityType: "Order",
+            entityId: params.data.id,
+            metadata: { serviceTitle: result.serviceTitle, regenerate },
+            request,
+          }).catch(() => {});
+        }
         return okResponse({
           success: true,
           meetLink: result.meetLink,
-          meetingUrl: result.meetLink,
           serviceUsed: result.serviceTitle,
+          reused: result.reused,
         });
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {

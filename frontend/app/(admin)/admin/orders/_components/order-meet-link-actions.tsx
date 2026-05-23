@@ -30,20 +30,27 @@ export function OrderMeetLinkActions({
 
   async function generateLink() {
     setError(null);
+    // When a link already exists the backend short-circuits unless the
+    // caller explicitly asks for a fresh one — this is what makes the
+    // "Regenerate" button actually regenerate instead of returning the
+    // existing link unchanged.
+    const regenerate = Boolean(link);
     startTransition(async () => {
       const res = await fetch(`/api/admin/orders/${orderId}/generate-meet-link`, {
         method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ regenerate }),
       });
       const json = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
         message?: string;
-        data?: { meetLink?: string; meetingUrl?: string };
+        data?: { meetLink?: string };
       };
       if (!res.ok || !json?.ok) {
         setError(json?.message ?? "Failed to generate Meet link");
         return;
       }
-      const nextLink = json.data?.meetLink ?? json.data?.meetingUrl ?? null;
+      const nextLink = json.data?.meetLink ?? null;
       if (nextLink) setLink(nextLink);
       router.refresh();
     });

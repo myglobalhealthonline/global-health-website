@@ -175,6 +175,7 @@ enum AuditAction {
   LOGOUT
   LOGIN_FAILED
   PATIENT_ALERT_UPDATED
+  MEET_LINK_GENERATED
 }
 
 model Currency {
