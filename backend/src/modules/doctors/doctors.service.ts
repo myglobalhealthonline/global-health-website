@@ -543,7 +543,15 @@ export async function updateAdminDoctor(
 ): Promise<AdminDoctorRecord | null> {
   const existing = await prisma.doctor.findUnique({
     where: { id },
-    select: { countryId: true },
+    select: {
+      countryId: true,
+      // Load the old country's DoctorCountry row so we can copy the
+      // registration to the new country when the primary country changes.
+      additionalCountries: {
+        where: { doctorId: id },
+        select: { countryId: true, chamberEntity: true, registrationNumber: true, isVerified: true },
+      },
+    },
   });
   if (!existing) return null;
 
@@ -586,6 +594,32 @@ export async function updateAdminDoctor(
         },
         include: adminDoctorInclude,
       });
+
+      // When the primary country changes, copy the registration from the old
+      // country's DoctorCountry row into the new country's row (upsert so we
+      // don't overwrite an existing registration the admin already set up).
+      if (countryChanging) {
+        const oldReg = existing.additionalCountries.find(
+          (r) => r.countryId === existing.countryId,
+        );
+        const newHasReg = existing.additionalCountries.some(
+          (r) => r.countryId === nextCountryId,
+        );
+        if (oldReg && !newHasReg) {
+          await tx.doctorCountry.upsert({
+            where: { doctorId_countryId: { doctorId: id, countryId: nextCountryId } },
+            update: {},
+            create: {
+              doctorId: id,
+              countryId: nextCountryId,
+              chamberEntity: oldReg.chamberEntity,
+              registrationNumber: oldReg.registrationNumber,
+              isVerified: oldReg.isVerified,
+              active: true,
+            },
+          });
+        }
+      }
 
       if (nextSpecialtyIds !== undefined) {
         await tx.doctorSpecialty.deleteMany({ where: { doctorId: id } });
