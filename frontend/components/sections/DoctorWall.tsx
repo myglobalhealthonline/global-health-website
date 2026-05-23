@@ -36,9 +36,14 @@ const FILTER_LABELS: Record<string, string> = {
 export function DoctorWall({
   doctors,
   bookHref,
+  /** When true, the section heading + lede are hidden. Use when
+   *  DoctorWall is embedded inside a parent section that provides
+   *  the heading (e.g. DoctorTeamSection). */
+  hideHeader = false,
 }: {
   doctors: DoctorWallItem[];
   bookHref?: string;
+  hideHeader?: boolean;
 }) {
   const countriesInData = Array.from(new Set(doctors.map((d) => d.country)));
   const filterOptions: { id: string; label: string }[] = [
@@ -57,13 +62,13 @@ export function DoctorWall({
 
   const showFilters = countriesInData.length > 1;
 
-  return (
-    <section className="relative gh-section bg-[var(--color-background-soft)]">
-      <div
-        className="relative mx-auto px-5 md:px-10"
-        style={{ maxWidth: "var(--container-width)" }}
-      >
-        {/* Section header */}
+  const inner = (
+    <div
+      className="relative mx-auto px-5 md:px-10"
+      style={{ maxWidth: "var(--container-width)" }}
+    >
+      {/* Section header — hidden when embedded in a parent section */}
+      {!hideHeader && (
         <div className="mb-12 md:mb-16">
           <div className="flex flex-wrap items-baseline justify-between gap-4">
             <span className="gh-eyebrow text-[var(--color-brand-primary)]">
@@ -88,63 +93,72 @@ export function DoctorWall({
             the doctor on the profile.
           </p>
         </div>
+      )}
 
-        {/* Filter chips */}
-        {showFilters ? (
-          <div className="flex flex-wrap gap-2 mb-8">
-            {filterOptions.map((f) => {
-              const isActive = filter === f.id;
-              return (
-                <button
-                  key={f.id}
-                  type="button"
-                  onClick={() => setFilter(f.id)}
-                  className={`
-                    inline-flex items-center gap-2
-                    rounded-full px-4 py-2
-                    text-[length:var(--text-meta)] font-semibold
-                    border
-                    transition-[background-color,border-color,color] duration-200
-                    motion-reduce:transition-none
-                    ${isActive
-                      ? "bg-[var(--color-brand-primary)] border-[var(--color-brand-primary)] text-white"
-                      : "bg-white border-[var(--color-border)] text-[var(--color-text-body)] hover:bg-[var(--color-background-soft)] hover:border-[var(--color-border-strong)]"
-                    }
-                  `}
-                >
-                  {f.id !== "all" ? <Flag code={f.id} size="sm" /> : null}
-                  {f.label}
-                </button>
-              );
-            })}
-          </div>
-        ) : null}
-
-        {/* Doctor card grid — matches /doctors page layout */}
-        <div
-          className="grid gap-6"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
-        >
-          {shown.map((d) => (
-            <DoctorCard
-              key={d.id}
-              name={d.name}
-              title={d.role}
-              country={d.country}
-              imcRegistration={d.imcRegistration}
-              medicalRegistrationUrl={d.medicalRegistrationUrl}
-              whatsappNumber={d.whatsappNumber}
-              languages={d.langs ? d.langs.split(" · ") : []}
-              bio=""
-              imageSrc={d.imageSrc}
-              initials={d.initials}
-              href={d.href}
-              bookingHref={d.bookingHref ?? bookHref}
-              ctaLabel="View profile"
-            />
-          ))}
+      {/* Filter chips */}
+      {showFilters ? (
+        <div className="flex flex-wrap gap-2 mb-8">
+          {filterOptions.map((f) => {
+            const isActive = filter === f.id;
+            return (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => setFilter(f.id)}
+                className={`
+                  inline-flex items-center gap-2
+                  rounded-full px-4 py-2
+                  text-[length:var(--text-meta)] font-semibold
+                  border
+                  transition-[background-color,border-color,color] duration-200
+                  motion-reduce:transition-none
+                  ${isActive
+                    ? "bg-[var(--color-brand-primary)] border-[var(--color-brand-primary)] text-white"
+                    : "bg-white border-[var(--color-border)] text-[var(--color-text-body)] hover:bg-[var(--color-background-soft)] hover:border-[var(--color-border-strong)]"
+                  }
+                `}
+              >
+                {f.id !== "all" ? <Flag code={f.id} size="sm" /> : null}
+                {f.label}
+              </button>
+            );
+          })}
         </div>
+      ) : null}
+
+      {/* Doctor card grid */}
+      <div
+        className="grid gap-6"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+      >
+        {shown.map((d) => (
+          <DoctorCard
+            key={d.id}
+            name={d.name}
+            title={d.role}
+            country={d.country}
+            imcRegistration={d.imcRegistration}
+            medicalRegistrationUrl={d.medicalRegistrationUrl}
+            whatsappNumber={d.whatsappNumber}
+            languages={d.langs ? d.langs.split(" · ") : []}
+            bio=""
+            imageSrc={d.imageSrc}
+            initials={d.initials}
+            href={d.href}
+            bookingHref={d.bookingHref ?? bookHref}
+            ctaLabel="View profile"
+          />
+        ))}
       </div>
+    </div>
+  );
+
+  /* When hiding header, caller owns the outer section wrapper */
+  if (hideHeader) return <>{inner}</>;
+
+  return (
+    <section className="relative gh-section bg-[var(--color-background-soft)]">
+      {inner}
     </section>
   );
 }

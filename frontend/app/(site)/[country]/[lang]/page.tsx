@@ -374,19 +374,62 @@ export default async function CountryLangHomePage({
       <ReviewBadge countryName={config.name} />
       <ServiceCatalog services={serviceCatalogItems} />
       <StatsBand items={statsItems} />
-      {featuredDoctor ? (
-        <FeaturedDoctor
-          doctor={{
-            name: featuredDoctor.fullName,
-            title: featuredDoctor.title,
-            languages: featuredDoctor.languages,
-            bio: featuredDoctor.bio ?? "",
-            imageSrc: featuredDoctor.imageSrc ?? null,
-            href: `/${slug}/${lang}/doctors/${featuredDoctor.slug}`,
-          }}
-        />
-      ) : null}
-      <DoctorWall doctors={wallDoctorsExcludingFeatured} />
+      {/* ── Team section — featured card + full grid under one heading ── */}
+      <section className="relative bg-[var(--color-background-soft)]" style={{ borderTop: "1px solid var(--color-border)" }}>
+        <div
+          className="mx-auto px-5 md:px-10 gh-section"
+          style={{ maxWidth: "var(--container-width)" }}
+        >
+          {/* Shared heading */}
+          <div className="mb-12 md:mb-16">
+            <div className="flex flex-wrap items-baseline justify-between gap-4">
+              <span className="gh-eyebrow text-[var(--color-brand-primary)]">
+                The team
+              </span>
+              <span
+                className="text-[11px] font-bold uppercase tracking-[0.14em] [font-variant-numeric:tabular-nums]"
+                style={{ color: "var(--color-text-muted)" }}
+              >
+                {doctorWallItems.length} registered {doctorWallItems.length === 1 ? "clinician" : "clinicians"}
+              </span>
+            </div>
+            <h2
+              className="mt-3 max-w-[22ch] text-[length:var(--text-h1)] font-extrabold tracking-[-0.03em] leading-[1.02] text-[var(--color-text-primary)]"
+            >
+              Doctors who actually{" "}
+              <span className="text-[var(--color-brand-primary)]">pick up.</span>
+            </h2>
+            <p className="mt-5 max-w-[52ch] text-[length:var(--text-body-lg)] text-[var(--color-text-body)] leading-relaxed">
+              Every consultation is with someone licensed where you are. No
+              call centres, no rota of strangers — the doctor on screen is
+              the doctor on the profile.
+            </p>
+          </div>
+
+          {/* Featured doctor card — only when doctor has bio + image */}
+          {featuredDoctor ? (
+            <div className="mb-10">
+              <FeaturedDoctor
+                standalone={false}
+                doctor={{
+                  name: featuredDoctor.fullName,
+                  title: featuredDoctor.title,
+                  languages: featuredDoctor.languages,
+                  bio: featuredDoctor.bio ?? "",
+                  imageSrc: featuredDoctor.imageSrc ?? null,
+                  href: `/${slug}/${lang}/doctors/${featuredDoctor.slug}`,
+                }}
+              />
+            </div>
+          ) : null}
+
+          {/* Rest of the team grid */}
+          <DoctorWall
+            doctors={wallDoctorsExcludingFeatured}
+            hideHeader
+          />
+        </div>
+      </section>
       <HowItWorksNarrative />
       <FinalCTA primaryHref={generalHref} secondaryHref={doctorsHref} />
     </>
