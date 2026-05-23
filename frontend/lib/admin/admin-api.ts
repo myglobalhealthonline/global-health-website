@@ -695,6 +695,14 @@ type AdminDoctorsListPayload = {
 
 type AdminDoctorDetailPayload = {
   doctor: AdminDoctorDto;
+  /** Populated by PATCH when the primary country changed — lets the caller
+   *  invalidate caches for the OLD country code in addition to the new one. */
+  countryChange?: {
+    fromCountryId: string;
+    fromCountryCode: string | null;
+    toCountryId: string;
+    toCountryCode: string | null;
+  } | null;
 };
 
 /** Canonical public profile URL for a doctor. The new public route shape

@@ -103,7 +103,7 @@ function initialsFromName(name: string): string {
 function mapDoctorToWallItem(
   d: CountryDoctorCard,
   countryCode: string,
-  bookHref: string,
+  profileHref: string,
 ): DoctorWallItem {
   const role =
     d.specialties.length > 0 ? d.specialties[0] : d.title || "Doctor";
@@ -114,9 +114,11 @@ function mapDoctorToWallItem(
     role,
     country: countryCode,
     langs: d.languages.join(" · "),
-    href: bookHref,
+    href: profileHref,
     imageSrc: d.imageSrc,
     imcRegistration: d.imcRegistration,
+    medicalRegistrationUrl: d.medicalRegistrationUrl,
+    whatsappNumber: d.whatsappNumber,
   };
 }
 
@@ -384,7 +386,7 @@ export default async function CountryLangHomePage({
           }}
         />
       ) : null}
-      <DoctorWall doctors={wallDoctorsExcludingFeatured} bookHref={doctorsHref} />
+      <DoctorWall doctors={wallDoctorsExcludingFeatured} />
       <HowItWorksNarrative />
       <FinalCTA primaryHref={generalHref} secondaryHref={doctorsHref} />
     </>

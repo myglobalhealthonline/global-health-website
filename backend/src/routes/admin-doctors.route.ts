@@ -140,10 +140,11 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
-      const doctor = await updateAdminDoctor(params.data.id, body.data);
-      if (!doctor) {
+      const result = await updateAdminDoctor(params.data.id, body.data);
+      if (!result) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
+      const { doctor, countryChange } = result;
       const actor = await resolveOptionalAuthUser(request);
       recordAudit({
         actorUserId: actor?.id,
@@ -151,10 +152,18 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
         action: "DOCTOR_UPDATED",
         entityType: "Doctor",
         entityId: doctor.id,
-        metadata: { changed: Object.keys(body.data) },
+        metadata: {
+          changed: Object.keys(body.data),
+          ...(countryChange && {
+            countryChange: {
+              from: countryChange.fromCountryCode ?? countryChange.fromCountryId,
+              to: countryChange.toCountryCode ?? countryChange.toCountryId,
+            },
+          }),
+        },
         request,
       }).catch(() => {});
-      return okResponse({ doctor }, "Doctor profile updated");
+      return okResponse({ doctor, countryChange }, "Doctor profile updated");
     } catch (error) {
       return handleDoctorWriteError(app, reply, error);
     }
