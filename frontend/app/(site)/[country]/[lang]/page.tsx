@@ -115,6 +115,8 @@ function mapDoctorToWallItem(
     country: countryCode,
     langs: d.languages.join(" · "),
     href: bookHref,
+    imageSrc: d.imageSrc,
+    imcRegistration: d.imcRegistration,
   };
 }
 

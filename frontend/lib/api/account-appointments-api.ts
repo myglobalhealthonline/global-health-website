@@ -75,3 +75,18 @@ export async function fetchAccountAppointments(): Promise<ApiResult<{ items: Acc
   }
 }
 
+export async function fetchPatientUnreadMessageCount(): Promise<number> {
+  const apiUrl = getBackendOrigin();
+  if (!apiUrl) return 0;
+  const cookieHeader = await buildCookieHeader();
+  try {
+    const res = await fetch(`${apiUrl}/api/account/messages/unread`, {
+      headers: cookieHeader ? { cookie: cookieHeader } : undefined,
+      cache: "no-store",
+    });
+    const json = (await res.json()) as { ok?: boolean; data?: { unreadCount?: number } };
+    return json.ok && typeof json.data?.unreadCount === "number" ? json.data.unreadCount : 0;
+  } catch {
+    return 0;
+  }
+}

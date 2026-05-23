@@ -15,6 +15,7 @@ import { getServerAuthUser } from "@/lib/api/server-auth";
 import { PortalShell, type PortalNavItem } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
+import { fetchPatientUnreadMessageCount } from "@/lib/api/account-appointments-api";
 
 /**
  * Patient portal layout. Reuses `PortalShell` so admin / doctor / patient
@@ -40,11 +41,14 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   // `/` (the country picker) every time, forcing them to repick Ireland
   // / Portugal / etc. on every booking. Now we route them straight to
   // the country they last booked in.
-  const bookHref = await resolveBookConsultationHref();
+  const [bookHref, unreadMessages] = await Promise.all([
+    resolveBookConsultationHref(),
+    fetchPatientUnreadMessageCount(),
+  ]);
 
   const sections: PortalNavItem[] = [
     { href: "/account", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
-    { href: "/account/bookings", label: "My bookings", icon: <CalendarDays className="size-4" aria-hidden /> },
+    { href: "/account/bookings", label: "My bookings", icon: <CalendarDays className="size-4" aria-hidden />, badge: unreadMessages },
     { href: "/account/orders", label: "My orders", icon: <ShoppingBag className="size-4" aria-hidden /> },
     { href: "/account/prescriptions", label: "Prescriptions", icon: <PillBottle className="size-4" aria-hidden /> },
     { href: "/account/payments", label: "Payments", icon: <CreditCard className="size-4" aria-hidden /> },

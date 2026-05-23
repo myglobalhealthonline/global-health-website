@@ -377,6 +377,19 @@ export async function sendGeneratedDocuments(
   return sent;
 }
 
+export async function getGeneratedDocumentFile(
+  doctorId: string,
+  documentId: string,
+): Promise<{ fileName: string; buffer: Buffer } | null | "not_found"> {
+  const doc = await prisma.generatedDocument.findFirst({
+    where: { id: documentId, doctorId },
+  });
+  if (!doc) return "not_found";
+  const buffer = await readStorageToBuffer(doc.storageKey);
+  if (!buffer) return null;
+  return { fileName: doc.fileName, buffer };
+}
+
 export async function deleteGeneratedDocument(doctorId: string, documentId: string) {
   const doc = await prisma.generatedDocument.findFirst({
     where: { id: documentId, doctorId },

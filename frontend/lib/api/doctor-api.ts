@@ -88,6 +88,11 @@ export type DoctorAppointment = {
   manualEntry?: boolean;
 };
 
+export async function fetchDoctorUnreadMessageCount(): Promise<number> {
+  const result = await doctorRequest<{ unreadCount: number }>("/api/doctor/messages/unread");
+  return result.ok && typeof result.data.unreadCount === "number" ? result.data.unreadCount : 0;
+}
+
 export async function fetchDoctorAppointments(query?: Record<string, string | undefined>) {
   const params = new URLSearchParams();
   if (query) {

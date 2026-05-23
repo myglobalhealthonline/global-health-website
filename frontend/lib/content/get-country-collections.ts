@@ -79,6 +79,11 @@ export type CountryDoctorCard = {
   /** Service IDs the doctor is bookable for, in admin-defined sort
    *  order. Empty array means no current ServiceDoctor assignments. */
   assignedServiceIds: string[];
+  /** Formatted as "CHAMBER | NUMBER" (e.g. "IMC | 523449") when both
+   *  fields are set on the DoctorCountry row, otherwise just the number. */
+  imcRegistration?: string;
+  medicalRegistrationUrl?: string;
+  whatsappNumber?: string;
 };
 
 function readSpecialtyName(row: unknown): string | null {
@@ -216,6 +221,24 @@ export const getCountryDoctors = cache(async (
         if (typeof id === "string" && id.length > 0) assignedServiceIds.push(id);
       }
     }
+    // Registration: backend computes imcRegistration = DoctorCountry.registrationNumber
+    // for the queried country. chamberEntity (e.g. "IMC", "OMC") lives on the same row.
+    const regNum =
+      typeof r.imcRegistration === "string" && r.imcRegistration.trim()
+        ? r.imcRegistration.trim()
+        : null;
+    const additionals = Array.isArray(r.additionalCountries) ? r.additionalCountries : [];
+    const link = additionals[0] as { chamberEntity?: string | null } | undefined;
+    const chamberEntity =
+      typeof link?.chamberEntity === "string" && link.chamberEntity.trim()
+        ? link.chamberEntity.trim()
+        : null;
+    const imcRegistration = regNum
+      ? chamberEntity
+        ? `${chamberEntity} | ${regNum}`
+        : regNum
+      : undefined;
+
     out.push({
       id: r.id,
       slug: r.slug,
@@ -226,6 +249,13 @@ export const getCountryDoctors = cache(async (
       specialties,
       imageSrc: pickImagePath(row),
       assignedServiceIds,
+      ...(imcRegistration ? { imcRegistration } : {}),
+      ...(typeof r.medicalRegistrationUrl === "string" && r.medicalRegistrationUrl.trim()
+        ? { medicalRegistrationUrl: r.medicalRegistrationUrl.trim() }
+        : {}),
+      ...(typeof r.whatsappNumber === "string" && r.whatsappNumber.trim()
+        ? { whatsappNumber: r.whatsappNumber.trim() }
+        : {}),
     });
   }
   return out;

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { DoctorTeamTemplate } from "@/components/templates/DoctorTeamTemplate";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { countries, getCountryByCode } from "@/data/countries";
-import { getTemplatePageData } from "@/lib/content/template-page-data";
+import { getCountryDoctors } from "@/lib/content/get-country-collections";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
@@ -65,10 +65,23 @@ export default async function CountryLangDoctorsPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
-  const [data, page] = await Promise.all([
-    getTemplatePageData(config.teamPath, code),
+  const [doctors, page] = await Promise.all([
+    getCountryDoctors(code),
     getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale),
   ]);
+
+  const doctorCards = doctors.map((d) => ({
+    name: d.fullName,
+    title: d.title,
+    imcRegistration: d.imcRegistration,
+    medicalRegistrationUrl: d.medicalRegistrationUrl,
+    languages: d.languages,
+    whatsappNumber: d.whatsappNumber,
+    bio: d.bio ?? `Licensed clinician available for online consultations in ${config.name}.`,
+    imageSrc: d.imageSrc,
+    href: `/${slug}/${lang}/doctors/${d.slug}`,
+    ctaLabel: "View profile",
+  }));
 
   return (
     <>
@@ -81,10 +94,7 @@ export default async function CountryLangDoctorsPage({
       />
       <DoctorTeamTemplate
         countryName={config.name}
-        doctors={data.doctors.map((d) => ({
-          ...d,
-          href: `/${slug}/${lang}/doctors/${(d.href ?? "").split("/").pop() ?? ""}`,
-        }))}
+        doctors={doctorCards}
         bookingHref={`/${slug}/${lang}/general-consultation`}
         bookingLabel="Browse consultations"
       />

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
-import { FileText, Send, Trash2 } from "lucide-react";
+import { Download, FileText, Send, Trash2 } from "lucide-react";
 
 type GeneratedDoc = {
   id: string;
@@ -197,6 +197,15 @@ export function GeneratedDocumentsPanel({ appointmentId }: { appointmentId: stri
                     ) : null}
                   </span>
                 </label>
+                <a
+                  href={`/api/doctor/documents/generated/${row.id}/pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2 py-1 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                  title="View PDF"
+                >
+                  <Download className="size-3" /> View
+                </a>
                 {!row.sentToPatient ? (
                   <button
                     type="button"

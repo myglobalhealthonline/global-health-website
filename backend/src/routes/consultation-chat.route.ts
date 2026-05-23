@@ -623,6 +623,27 @@ const consultationChatRoute: FastifyPluginAsync = async (app) => {
       return reply.status(500).send(errorResponse("Could not retrieve file"));
     }
   });
+  // ── Doctor: unread count ─────────────────────────────────────────
+  app.get("/api/doctor/messages/unread", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+    try {
+      const count = await prisma.consultationMessage.count({
+        where: {
+          appointment: { doctorId: auth.doctorId },
+          authorRole: ChatAuthorRole.PATIENT,
+          readByDoctor: false,
+        },
+      });
+      return okResponse({ unreadCount: count });
+    } catch (err) {
+      if (err instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse((err as Error).message));
+      }
+      app.log.error(err);
+      return reply.status(500).send(errorResponse("Could not fetch unread count"));
+    }
+  });
 };
 
 export default consultationChatRoute;

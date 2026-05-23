@@ -13,7 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
-import { fetchDoctorNotifications } from "@/lib/api/doctor-api";
+import { fetchDoctorNotifications, fetchDoctorUnreadMessageCount } from "@/lib/api/doctor-api";
 import { PortalShell, type PortalNavItem } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 
@@ -57,7 +57,10 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     createdAt: string;
     readAt: string | null;
   }[] = [];
-  const notif = await fetchDoctorNotifications(false);
+  const [notif, unreadMessages] = await Promise.all([
+    fetchDoctorNotifications(false),
+    fetchDoctorUnreadMessageCount(),
+  ]);
   if (notif.ok) {
     unreadCount = notif.data.unreadCount;
     notifications = notif.data.items.slice(0, 10).map((n) => {
@@ -75,7 +78,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
 
   const sections: PortalNavItem[] = [
     { href: "/doctor", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
-    { href: "/doctor/appointments", label: "Appointments", icon: <Calendar className="size-4" aria-hidden /> },
+    { href: "/doctor/appointments", label: "Appointments", icon: <Calendar className="size-4" aria-hidden />, badge: unreadMessages },
     { href: "/doctor/availability", label: "Availability", icon: <CalendarClock className="size-4" aria-hidden /> },
     { href: "/doctor/patients", label: "Patients", icon: <Users className="size-4" aria-hidden /> },
     { href: "/doctor/forms", label: "Forms", icon: <FileText className="size-4" aria-hidden /> },

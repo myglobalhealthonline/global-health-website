@@ -167,6 +167,36 @@ const chatRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
+  // ── Patient: unread count ────────────────────────────────────────
+  app.get("/api/account/messages/unread", async (request, reply) => {
+    let user: SafeUser | null = null;
+    try {
+      user = await resolveOptionalAuthUser(request);
+    } catch (err) {
+      if (err instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse((err as Error).message));
+      }
+      return reply.status(500).send(errorResponse("Unexpected authentication error"));
+    }
+    if (!user) return reply.status(401).send(errorResponse("Not authenticated"));
+    try {
+      const count = await prisma.message.count({
+        where: {
+          appointment: { userId: user.id },
+          authorRole: MessageAuthorRole.ADMIN,
+          readByPatient: false,
+        },
+      });
+      return okResponse({ unreadCount: count });
+    } catch (err) {
+      if (err instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse((err as Error).message));
+      }
+      app.log.error(err);
+      return reply.status(500).send(errorResponse("Could not fetch unread count"));
+    }
+  });
+
   // ── Admin surface ───────────────────────────────────────────────
   app.get("/api/admin/appointments/:id/messages", async (request, reply) => {
     let user: SafeUser | null = null;

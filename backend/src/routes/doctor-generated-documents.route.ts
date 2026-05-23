@@ -7,6 +7,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   deleteGeneratedDocument,
   generateAppointmentDocument,
+  getGeneratedDocumentFile,
   listGeneratedDocuments,
   sendGeneratedDocuments,
 } from "../modules/generated-documents/generated-documents.service.js";
@@ -127,6 +128,31 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not send documents"));
+      }
+    },
+  );
+
+  app.get<{ Params: { id: string } }>(
+    "/api/doctor/documents/generated/:id/pdf",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      try {
+        const result = await getGeneratedDocumentFile(auth.doctorId, request.params.id);
+        if (result === "not_found") return reply.status(404).send(errorResponse("Document not found"));
+        if (!result) return reply.status(404).send(errorResponse("PDF file not found in storage"));
+        reply.header("Content-Type", "application/pdf");
+        reply.header(
+          "Content-Disposition",
+          `inline; filename="${result.fileName.replace(/"/g, "")}"`,
+        );
+        return reply.send(result.buffer);
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not retrieve document"));
       }
     },
   );
