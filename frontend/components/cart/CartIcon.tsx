@@ -28,18 +28,26 @@ function buildCartHref(cartCountryCode: string): string {
 export function CartIcon({
   className,
   style,
+  /** Dark sticky header — icon must be light on forest background. */
+  variant = "light",
 }: {
   className?: string;
   style?: React.CSSProperties;
+  variant?: "light" | "dark";
 }) {
   const { cart } = useCart();
   const count = cart.itemCount;
   const href = buildCartHref(cart.countryCode);
+  const isDark = variant === "dark";
   return (
     <Link
       href={href}
       aria-label={`Cart (${count} item${count === 1 ? "" : "s"})`}
-      className={`relative inline-flex size-9 items-center justify-center rounded-full text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)] ${className ?? ""}`}
+      className={`relative inline-flex size-9 items-center justify-center rounded-full ${
+        isDark
+          ? "text-white hover:bg-white/12"
+          : "text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+      } ${className ?? ""}`}
       style={style}
     >
       <ShoppingCart className="size-4" aria-hidden />

@@ -60,7 +60,7 @@ export default function BlogIndexPage() {
           </h1>
           <p
             className="mt-7 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed"
-            style={{ color: "rgba(255,255,255,0.50)" }}
+            style={{ color: "rgba(255,255,255,0.72)" }}
           >
             Evidence-based guides written and reviewed by our medical team.
             No ads, no fluff.

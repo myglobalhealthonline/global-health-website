@@ -144,7 +144,7 @@ export default async function BlogPostPage({ params }: Props) {
               </h2>
               <p
                 className="mt-5 max-w-[48ch] text-[length:var(--text-body-lg)] leading-relaxed"
-                style={{ color: "rgba(255,255,255,0.50)" }}
+                style={{ color: "rgba(255,255,255,0.72)" }}
               >
                 {/* Blog articles live outside the [country]/[lang] segment, so we
                   * route through the root country gate (CountryEntryGate at /)

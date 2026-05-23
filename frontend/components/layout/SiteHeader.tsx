@@ -242,19 +242,21 @@ export function SiteHeader({
             ) : null}
           </div>
 
-          <CartIcon />
+          <CartIcon variant="dark" />
 
           {!authUser ? (
             <Link
               href="/login"
-              className="hidden text-[length:var(--text-meta)] font-semibold no-underline text-white/70 hover:text-white md:inline-block"
+              className="gh-btn gh-btn-ghost-dark hidden md:inline-flex"
+              style={{ minHeight: 44, padding: "0 18px", fontSize: "0.875rem" }}
             >
               Log in
             </Link>
           ) : (
             <Link
               href={authUser.role === "ADMIN" ? "/admin" : "/account"}
-              className="hidden text-[length:var(--text-meta)] font-semibold no-underline text-white/70 hover:text-white md:inline-block"
+              className="gh-btn gh-btn-ghost-dark hidden md:inline-flex"
+              style={{ minHeight: 44, padding: "0 18px", fontSize: "0.875rem" }}
             >
               {authUser.role === "ADMIN" ? "Admin" : "Account"}
             </Link>
