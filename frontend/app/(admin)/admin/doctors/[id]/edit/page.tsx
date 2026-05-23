@@ -116,6 +116,7 @@ export default async function AdminEditDoctorPage({
 
     const raw = parseDoctorBodyFromForm(formData);
     const body = {
+      countryId: raw.countryId,
       slug: raw.slug,
       fullName: raw.fullName,
       title: raw.title,
@@ -128,7 +129,6 @@ export default async function AdminEditDoctorPage({
       seoTitle: raw.seoTitle === "" ? null : raw.seoTitle,
       seoDescription: raw.seoDescription === "" ? null : raw.seoDescription,
       specialtyIds: raw.specialtyIds,
-      // M:N additional country listings (primary stays on Doctor.countryId).
       additionalCountryIds: raw.additionalCountryIds,
       profileImagePath: raw.profileImagePath === "" ? null : raw.profileImagePath,
       active: raw.active,
@@ -256,7 +256,6 @@ export default async function AdminEditDoctorPage({
               countries={countries}
               specialties={specialtiesResult.data.specialties}
               initial={doctor}
-              countryLocked
             />
             <div className="flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">
@@ -304,9 +303,8 @@ export default async function AdminEditDoctorPage({
               Practicing in
             </h3>
             <p className="mb-2 mt-1 text-[13px] text-[var(--color-text-muted)]">
-              The primary country is fixed and scopes the URL slug. Tick any
-              additional countries you want this profile to appear in — they
-              save as part of the main form submit.
+              Tick any additional countries to list this doctor there. To change
+              the primary country, use the Country dropdown in the main form.
             </p>
             {countriesResult.data.countries.map((c) => {
               const isPrimary = c.id === doctor.countryId;
@@ -317,11 +315,8 @@ export default async function AdminEditDoctorPage({
               return (
                 <label
                   key={c.id}
-                  className="flex cursor-pointer items-center gap-2.5 border-t border-[var(--color-border)] py-3"
-                  style={{
-                    cursor: isPrimary ? "default" : "pointer",
-                    opacity: isPrimary ? 1 : 1,
-                  }}
+                  className="flex items-center gap-2.5 border-t border-[var(--color-border)] py-3"
+                  style={{ cursor: isPrimary ? "default" : "pointer" }}
                 >
                   <FlagBadge code={c.code} size={16} />
                   <div className="flex-1">
@@ -330,18 +325,12 @@ export default async function AdminEditDoctorPage({
                     </p>
                     <p className="m-0 text-[12px] text-[var(--color-text-muted)]">
                       {isPrimary
-                        ? "Primary country (locked)"
+                        ? "Primary — change via Country field"
                         : checked
                           ? "Linked listing"
                           : "Not listed here"}
                     </p>
                   </div>
-                  {/* `form="doctor-edit-form"` ties this input to the
-                      <form> in the left column so it submits with the
-                      rest even though it's physically in the right
-                      sidebar. The primary country has its own `countryId`
-                      input from DoctorFields, so we don't POST its id
-                      here — the disabled primary toggle is visual only. */}
                   <input
                     type="checkbox"
                     form="doctor-edit-form"
@@ -352,7 +341,7 @@ export default async function AdminEditDoctorPage({
                     className="h-5 w-5 rounded border-[var(--color-border)] accent-[var(--color-brand-primary)]"
                     title={
                       isPrimary
-                        ? "Change the primary country via the Country field above."
+                        ? "Change the primary country via the Country dropdown in the form."
                         : `Toggle ${c.name} listing`
                     }
                   />
@@ -360,9 +349,8 @@ export default async function AdminEditDoctorPage({
               );
             })}
             <p className="mt-3 text-[11px] text-[var(--color-text-muted)]">
-              Toggling a country off removes this doctor from that country&apos;s
-              public roster (their profile stays intact under the primary
-              country).
+              Use the Country dropdown in the main form to change the primary
+              country. Tick additional countries to list this doctor there too.
             </p>
           </AdminCard>
 
