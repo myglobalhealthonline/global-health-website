@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 import { CountryFields } from "../_components/country-fields";
 import {
   parseDomainsFromForm,
   parseSupportedLocales,
 } from "@/lib/admin/country-form-parse";
 import { fetchAdminCurrencies, postAdminCountry } from "@/lib/admin/admin-api";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
 
 export const dynamic = "force-dynamic";
@@ -81,6 +83,11 @@ export default async function AdminNewCountryPage({ searchParams }: PageProps) {
     if (!result.ok) {
       redirect(`/admin/countries/new?error=${encodeURIComponent(result.message)}`);
     }
+
+    // Bust the public countries cache so the new country shows up in
+    // the switcher, marquee, and routable-slug registry on the next
+    // public request instead of waiting for the 120s ISR window.
+    revalidateTag(SITE_CACHE_TAGS.countries(), "max");
 
     redirect(
       `/admin/countries/${result.data.country.id}?success=${encodeURIComponent("Country created")}`,

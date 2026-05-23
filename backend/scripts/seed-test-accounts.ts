@@ -5,6 +5,9 @@
  * the password to the requested value.
  *
  *   pnpm --filter backend ts seed:test-accounts
+ *
+ * Refuses to run when NODE_ENV=production so the test rows can't
+ * accidentally appear on the live database.
  */
 import "dotenv/config";
 import bcrypt from "bcryptjs";
@@ -13,8 +16,19 @@ import { prisma } from "../src/db/prisma.js";
 const PASSWORD = "GHAdmin2026X7qL9!";
 const DOCTOR_EMAIL = "doctor@globalhealthonline.com";
 const PATIENT_EMAIL = "patient@globalhealthonline.com";
+// Public-facing name. Deliberately NOT "Dr. Global Health" — that
+// reads as the site name and confuses visitors when the test row
+// leaks onto the public roster. "Dr. Test Account" makes it obvious
+// in the admin UI and on any roster page if it slips through.
+const DOCTOR_DISPLAY_NAME = "Dr. Test Account";
 
 async function main() {
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "seed-test-accounts refuses to run with NODE_ENV=production — these are test rows only.",
+    );
+  }
+
   // Pick the first active country with a slug as the doctor's home
   // market. Ireland is the canonical seed; if it's gone we fall back
   // to whatever's available so this script never wedges on a fresh DB.
@@ -40,17 +54,24 @@ async function main() {
     create: {
       countryId: country.id,
       slug: "global-health-doctor",
-      fullName: "Dr. Global Health",
+      fullName: DOCTOR_DISPLAY_NAME,
       title: "General Practitioner",
       bio:
         "Test doctor account for the doctor portal. Replace with a real profile before production.",
       qualifications: ["MB BCh BAO", "MRCPI"],
       languages: ["English"],
-      active: true,
+      // Inactive by default so the test row never surfaces on the
+      // public country roster. Re-enable manually in /admin/doctors
+      // when you actually need to test the public flow.
+      active: false,
     },
     update: {
-      // No-op update so upsert returns the existing row when it exists.
-      active: true,
+      // Rename any existing row carrying the old "Dr. Global Health"
+      // label, and force-deactivate so re-running this script also
+      // cleans up an over-eager prior run that left the test row
+      // visible to public visitors.
+      fullName: DOCTOR_DISPLAY_NAME,
+      active: false,
     },
   });
 
@@ -60,7 +81,7 @@ async function main() {
     create: {
       email: DOCTOR_EMAIL,
       passwordHash,
-      fullName: "Dr. Global Health",
+      fullName: DOCTOR_DISPLAY_NAME,
       role: "DOCTOR",
       doctorId: doctorProfile.id,
       isActive: true,
@@ -68,6 +89,7 @@ async function main() {
     },
     update: {
       passwordHash,
+      fullName: DOCTOR_DISPLAY_NAME,
       role: "DOCTOR",
       doctorId: doctorProfile.id,
       isActive: true,

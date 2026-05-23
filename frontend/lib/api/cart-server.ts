@@ -78,6 +78,46 @@ export async function fetchAccountOrder(id: string): Promise<Result<OrderDetail>
   }
 }
 
+export type OrderReceipt = {
+  id: string;
+  status: string;
+  paymentStatus: string;
+  currencyCode: string;
+  subtotalCents: number;
+  shippingCents: number;
+  totalCents: number;
+  fullName: string;
+  items: { id: string; kind: string; name: string; quantity: number; lineTotalCents: number }[];
+  paidAt: string | null;
+  createdAt: string;
+};
+
+/**
+ * Public receipt fetch — keyed on the unguessable order CUID, no
+ * authentication. Used by the post-Stripe success page so guest
+ * checkouts (userId: null) still see their line items + total.
+ */
+export async function fetchOrderReceipt(id: string): Promise<Result<OrderReceipt>> {
+  const backend = getBackendOrigin();
+  if (!backend) return { ok: false, message: "Backend not configured" };
+  try {
+    const res = await fetch(`${backend}/api/orders/${id}/receipt`, {
+      cache: "no-store",
+    });
+    const json = (await res.json()) as {
+      ok?: boolean;
+      data?: OrderReceipt;
+      message?: string;
+    };
+    if (!res.ok || !json.ok || !json.data) {
+      return { ok: false, status: res.status, message: json.message ?? "Failed" };
+    }
+    return { ok: true, data: json.data };
+  } catch {
+    return { ok: false, message: "Backend unavailable" };
+  }
+}
+
 export async function fetchAdminOrders(): Promise<Result<{ items: unknown[] }>> {
   const backend = getBackendOrigin();
   if (!backend) return { ok: false, message: "Backend not configured" };
