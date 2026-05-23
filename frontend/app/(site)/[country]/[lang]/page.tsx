@@ -146,6 +146,7 @@ function mapCategoryTile(input: {
   currency?: string;
   dur: string;
   href: string;
+  imageSrc?: string | null;
 }): ServiceCatalogItem {
   return {
     type: input.type,
@@ -155,6 +156,7 @@ function mapCategoryTile(input: {
     currency: input.currency,
     dur: input.dur,
     href: input.href,
+    imageSrc: input.imageSrc ?? null,
   };
 }
 
@@ -214,30 +216,52 @@ export default async function CountryLangHomePage({
       mapServiceToCatalogItem(s, `/${slug}/${lang}/specialist-consultation`),
     ),
     ...(isCountryFeatureEnabled(config, "online-prescriptions") && prescriptionServices.length > 0
-      ? [
-          mapCategoryTile({
-            type: "prescription",
-            title: "Online prescriptions",
-            tag: "Prescription",
-            price: null,
-            dur: `${prescriptionServices.length} service${
-              prescriptionServices.length === 1 ? "" : "s"
-            }`,
-            href: prescriptionsHref,
-          }),
-        ]
+      ? (() => {
+          // Cheapest prescription price across the catalogue
+          const minRx = prescriptionServices.reduce<number | null>((acc, s) => {
+            if (s.basePriceCents == null) return acc;
+            return acc == null ? s.basePriceCents : Math.min(acc, s.basePriceCents);
+          }, null);
+          const rxImage = prescriptionServices.find((s) => s.imageSrc)?.imageSrc ?? null;
+          const rxCurrency = prescriptionServices[0]?.currencyCode ?? "EUR";
+          return [
+            mapCategoryTile({
+              type: "prescription",
+              title: "Online prescriptions",
+              tag: "Prescription",
+              price: minRx != null ? Math.round(minRx / 100) : null,
+              currency: rxCurrency,
+              dur: `${prescriptionServices.length} service${
+                prescriptionServices.length === 1 ? "" : "s"
+              }`,
+              href: prescriptionsHref,
+              imageSrc: rxImage,
+            }),
+          ];
+        })()
       : []),
     ...(isCountryFeatureEnabled(config, "health-tests") && healthTests.length > 0
-      ? [
-          mapCategoryTile({
-            type: "test",
-            title: "Health tests",
-            tag: "Home tests",
-            price: null,
-            dur: `${healthTests.length} test${healthTests.length === 1 ? "" : "s"}`,
-            href: testsHref,
-          }),
-        ]
+      ? (() => {
+          // Cheapest health test price across the catalogue
+          const minTest = healthTests.reduce<number>(
+            (acc, t) => Math.min(acc, t.priceCents),
+            healthTests[0]?.priceCents ?? 0,
+          );
+          const testImage = healthTests.find((t) => t.imageSrc)?.imageSrc ?? null;
+          const testCurrency = healthTests[0]?.currencyCode ?? "EUR";
+          return [
+            mapCategoryTile({
+              type: "test",
+              title: "Health tests",
+              tag: "Home tests",
+              price: Math.round(minTest / 100),
+              currency: testCurrency,
+              dur: `${healthTests.length} test${healthTests.length === 1 ? "" : "s"}`,
+              href: testsHref,
+              imageSrc: testImage,
+            }),
+          ];
+        })()
       : []),
   ];
 
