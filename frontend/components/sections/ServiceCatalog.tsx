@@ -11,6 +11,8 @@ import { currencySymbol } from "@/lib/format-currency";
 import {
   ArrowUpRight,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Package,
   Stethoscope,
   User,
@@ -47,6 +49,13 @@ const FILTERS = [
 
 type FilterId = (typeof FILTERS)[number]["id"];
 
+/** Desktop grid: 3 cols.
+ *  Featured page:  row1 = featured(2col) + 1 card  → 3 slots
+ *                  row2 = 3 cards                   → 3 slots  = 5 items per page
+ *  Regular page:   row1 = 3 cards, row2 = 3 cards  = 6 items per page */
+const PAGE_SIZE_FEATURED = 5;
+const PAGE_SIZE_REGULAR = 6;
+
 export function ServiceCatalog({
   services,
   intro,
@@ -55,7 +64,9 @@ export function ServiceCatalog({
   intro?: string;
 }) {
   const [filter, setFilter] = useState<FilterId>("all");
-  const shown =
+  const [page, setPage] = useState(0);
+
+  const allShown =
     filter === "all" ? services : services.filter((s) => s.type === filter);
 
   const availableTypes = new Set(services.map((s) => s.type));
@@ -65,7 +76,16 @@ export function ServiceCatalog({
 
   if (services.length === 0) return null;
 
-  const useFeaturedFirst = filter === "all" && shown.length >= 4;
+  const useFeaturedFirst = filter === "all" && page === 0 && allShown.length >= 4;
+  const pageSize = useFeaturedFirst ? PAGE_SIZE_FEATURED : PAGE_SIZE_REGULAR;
+  const totalPages = Math.ceil(allShown.length / pageSize);
+  const shown = allShown.slice(page * pageSize, (page + 1) * pageSize);
+  const showPager = totalPages > 1;
+
+  function handleFilter(id: FilterId) {
+    setFilter(id);
+    setPage(0);
+  }
 
   return (
     <section
@@ -102,51 +122,94 @@ export function ServiceCatalog({
             ) : null}
           </div>
 
-          {visibleFilters.length > 2 ? (
-            <div className="flex flex-wrap gap-2">
-              {visibleFilters.map((f) => {
-                const count =
-                  f.id === "all"
-                    ? services.length
-                    : services.filter((s) => s.type === f.id).length;
-                const isActive = filter === f.id;
-                return (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => setFilter(f.id)}
-                    aria-pressed={isActive}
-                    className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[length:var(--text-meta)] font-semibold transition-all duration-200 motion-reduce:transition-none"
-                    style={
-                      isActive
-                        ? {
-                            background: "var(--color-brand-accent)",
-                            color: "#0a1f14",
-                            border: "1px solid var(--color-brand-accent)",
-                          }
-                        : {
-                            background: "rgba(255,255,255,0.06)",
-                            color: "rgba(255,255,255,0.60)",
-                            border: "1px solid rgba(255,255,255,0.12)",
-                          }
-                    }
-                  >
-                    {f.label}
-                    <span
-                      className="inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold"
+          {/* Filter chips + pager arrows */}
+          <div className="flex flex-wrap items-center gap-4">
+            {visibleFilters.length > 2 ? (
+              <div className="flex flex-wrap gap-2">
+                {visibleFilters.map((f) => {
+                  const count =
+                    f.id === "all"
+                      ? services.length
+                      : services.filter((s) => s.type === f.id).length;
+                  const isActive = filter === f.id;
+                  return (
+                    <button
+                      key={f.id}
+                      type="button"
+                      onClick={() => handleFilter(f.id)}
+                      aria-pressed={isActive}
+                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[length:var(--text-meta)] font-semibold transition-all duration-200 motion-reduce:transition-none"
                       style={
                         isActive
-                          ? { background: "rgba(0,0,0,0.18)", color: "#0a1f14" }
-                          : { background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.70)" }
+                          ? {
+                              background: "var(--color-brand-accent)",
+                              color: "#0a1f14",
+                              border: "1px solid var(--color-brand-accent)",
+                            }
+                          : {
+                              background: "rgba(255,255,255,0.06)",
+                              color: "rgba(255,255,255,0.60)",
+                              border: "1px solid rgba(255,255,255,0.12)",
+                            }
                       }
                     >
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          ) : null}
+                      {f.label}
+                      <span
+                        className="inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold"
+                        style={
+                          isActive
+                            ? { background: "rgba(0,0,0,0.18)", color: "#0a1f14" }
+                            : { background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.70)" }
+                        }
+                      >
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
+
+            {/* Prev / Next — only when more than one page */}
+            {showPager && (
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  disabled={page === 0}
+                  aria-label="Previous services"
+                  className="inline-flex size-10 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                  style={{
+                    background: page > 0 ? "var(--color-brand-accent)" : "transparent",
+                    borderColor: page > 0 ? "var(--color-brand-accent)" : "rgba(255,255,255,0.20)",
+                    color: page > 0 ? "#0a1f14" : "rgba(255,255,255,0.50)",
+                  }}
+                >
+                  <ChevronLeft className="size-4" strokeWidth={2} aria-hidden />
+                </button>
+                <span
+                  className="text-[11px] font-bold tabular-nums"
+                  style={{ color: "rgba(255,255,255,0.40)" }}
+                >
+                  {page + 1} / {totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  disabled={page === totalPages - 1}
+                  aria-label="Next services"
+                  className="inline-flex size-10 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                  style={{
+                    background: page < totalPages - 1 ? "var(--color-brand-accent)" : "transparent",
+                    borderColor: page < totalPages - 1 ? "var(--color-brand-accent)" : "rgba(255,255,255,0.20)",
+                    color: page < totalPages - 1 ? "#0a1f14" : "rgba(255,255,255,0.50)",
+                  }}
+                >
+                  <ChevronRight className="size-4" strokeWidth={2} aria-hidden />
+                </button>
+              </div>
+            )}
+          </div>
         </header>
 
         <div
