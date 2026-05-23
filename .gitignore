@@ -1,5 +1,7 @@
 ﻿# root
 /node_modules
+/.railway
+**/.env.railway
 
 # frontend
 /frontend/.next

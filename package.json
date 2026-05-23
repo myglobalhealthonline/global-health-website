@@ -14,7 +14,12 @@
     "db:seed": "pnpm --filter backend db:seed",
     "db:studio": "pnpm --filter backend db:studio",
     "e2e": "playwright test",
-    "e2e:install": "playwright install --with-deps chromium"
+    "e2e:install": "playwright install --with-deps chromium",
+    "railway:login": "railway login",
+    "railway:link": "railway link",
+    "railway:status": "railway status",
+    "railway:logs": "railway logs",
+    "railway:connect": "node scripts/connect-railway.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",

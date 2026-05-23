@@ -1,0 +1,106 @@
+import { env } from "../../config/env.js";
+
+export function isGoogleMeetConfigured(): boolean {
+  return Boolean(
+    env.GOOGLE_OAUTH_CLIENT_ID?.trim() &&
+      env.GOOGLE_OAUTH_CLIENT_SECRET?.trim() &&
+      env.GOOGLE_OAUTH_REFRESH_TOKEN?.trim(),
+  );
+}
+
+async function getAccessToken(): Promise<string> {
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client_id: env.GOOGLE_OAUTH_CLIENT_ID,
+      client_secret: env.GOOGLE_OAUTH_CLIENT_SECRET,
+      refresh_token: env.GOOGLE_OAUTH_REFRESH_TOKEN,
+      grant_type: "refresh_token",
+    }),
+  });
+
+  const data = (await response.json()) as {
+    access_token?: string;
+    error_description?: string;
+    error?: string;
+  };
+  if (!data.access_token) {
+    throw new Error(`OAuth Failed: ${data.error_description || data.error || "unknown"}`);
+  }
+  return data.access_token;
+}
+
+async function createOpenSpace(token: string): Promise<{ meetingUri: string }> {
+  const response = await fetch("https://meet.googleapis.com/v2/spaces", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      config: {
+        accessType: "OPEN",
+        entryPointAccess: "ALL",
+      },
+    }),
+  });
+
+  const data = (await response.json()) as { meetingUri?: string };
+  if (!data.meetingUri) {
+    throw new Error(`Meet API Error: ${JSON.stringify(data)}`);
+  }
+  return data as { meetingUri: string };
+}
+
+function toGoogleDateTime(date: Date): string {
+  return date.toISOString();
+}
+
+/**
+ * Creates an OPEN Google Meet space and a calendar event (no attendees).
+ * Returns the Meet join URI.
+ */
+export async function createMeetLinkForAppointment(input: {
+  startTime: Date;
+  endTime: Date;
+  serviceTitle: string;
+}): Promise<string> {
+  if (!isGoogleMeetConfigured()) {
+    throw new Error(
+      "Google Meet is not configured. Set GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, and GOOGLE_OAUTH_REFRESH_TOKEN.",
+    );
+  }
+
+  const token = await getAccessToken();
+  const spaceData = await createOpenSpace(token);
+
+  const calendarId = env.GOOGLE_CALENDAR_ID?.trim() || "primary";
+  const event = {
+    summary: input.serviceTitle || "Global Health Appointment",
+    start: {
+      dateTime: toGoogleDateTime(input.startTime),
+      timeZone: "GMT",
+    },
+    end: {
+      dateTime: toGoogleDateTime(input.endTime),
+      timeZone: "GMT",
+    },
+    conferenceData: {
+      createRequest: { requestId: `meet_${Date.now()}` },
+    },
+  };
+
+  const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?conferenceDataVersion=1`;
+
+  await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(event),
+  });
+
+  return spaceData.meetingUri;
+}

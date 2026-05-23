@@ -11,6 +11,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { generateOrderMeetLink } from "../modules/admin-orders/generate-order-meet-link.service.js";
 
 /**
  * Orders + checkout.
@@ -428,7 +429,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             : {}),
         },
         orderBy: { createdAt: "desc" },
-        include: { items: { select: { quantity: true } } },
+        include: { items: { select: { quantity: true, kind: true } } },
         take: limit + 1,
         ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
       });
@@ -446,6 +447,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           currencyCode: o.currencyCode,
           totalCents: o.totalCents,
           itemCount: o.items.reduce((s, i) => s + i.quantity, 0),
+          meetingUrl: o.meetingUrl,
+          hasConsultation: o.items.some(
+            (i) =>
+              i.kind === "GENERAL_CONSULTATION" || i.kind === "SPECIALIST_CONSULTATION",
+          ),
           paidAt: o.paidAt?.toISOString() ?? null,
           createdAt: o.createdAt.toISOString(),
         })),
@@ -515,6 +521,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             appointmentId: i.appointmentId,
           })),
           appointmentIds: order.appointmentIds,
+          meetingUrl: order.meetingUrl,
           paidAt: order.paidAt?.toISOString() ?? null,
           createdAt: order.createdAt.toISOString(),
           updatedAt: order.updatedAt.toISOString(),
@@ -625,6 +632,44 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(err);
         return reply.status(500).send(errorResponse("Could not update order"));
+      }
+    },
+  );
+
+  // ── Admin: generate Google Meet link for consultation order ───────
+  app.post<{ Params: { id: string } }>(
+    "/api/admin/orders/:id/generate-meet-link",
+    async (request, reply) => {
+      const auth = await verifyAdminAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+
+      const params = orderIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      try {
+        const result = await generateOrderMeetLink(params.data.id);
+        if (!result.ok) {
+          const status =
+            result.code === "NOT_FOUND"
+              ? 404
+              : result.code === "NOT_CONFIGURED"
+                ? 503
+                : 400;
+          return reply.status(status).send(errorResponse(result.message));
+        }
+        return okResponse({
+          success: true,
+          meetLink: result.meetLink,
+          meetingUrl: result.meetLink,
+          serviceUsed: result.serviceTitle,
+        });
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        const message = err instanceof Error ? err.message : "Could not generate Meet link";
+        return reply.status(500).send(errorResponse(message));
       }
     },
   );

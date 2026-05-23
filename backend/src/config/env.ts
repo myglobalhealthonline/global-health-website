@@ -96,6 +96,11 @@ const envSchema = z.object({
 
   STRIPE_SUCCESS_URL: z.string().trim().url().optional(),
   STRIPE_CANCEL_URL: z.string().trim().url().optional(),
+
+  GOOGLE_OAUTH_CLIENT_ID: z.string().trim().min(1).optional(),
+  GOOGLE_OAUTH_CLIENT_SECRET: z.string().trim().min(1).optional(),
+  GOOGLE_OAUTH_REFRESH_TOKEN: z.string().trim().min(1).optional(),
+  GOOGLE_CALENDAR_ID: z.string().trim().min(1).optional(),
 });
 
 const parsed = envSchema.parse(mergeRailwayBucketAliases());
