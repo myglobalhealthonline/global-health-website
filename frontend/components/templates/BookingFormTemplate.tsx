@@ -107,7 +107,8 @@ export function BookingFormTemplate({
     setStatusMessage(null);
     setStatusType(null);
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     // ?service=<slug> on the URL hands the form the catalogue link so the
     // backend can stamp price + currency for Stripe. Free-form bookings
     // (no slug) skip payment.
@@ -198,13 +199,13 @@ export function BookingFormTemplate({
           ? "Request received. Track it in your account booking history. (Payment link will follow by email.)"
           : "Request received. Our team will follow up shortly with a payment link.",
       );
-      event.currentTarget.reset();
+      form.reset();
       setErrors({});
       setConsentAccepted(false);
       return;
     }
 
-    event.currentTarget.reset();
+    form.reset();
     setErrors({});
     setConsentAccepted(false);
     setStatusType("success");
