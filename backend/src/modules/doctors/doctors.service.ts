@@ -548,9 +548,13 @@ export async function updateAdminDoctor(
   if (!existing) return null;
 
   const nextCountryId = body.countryId ?? existing.countryId;
+  const countryChanging = body.countryId !== undefined && body.countryId !== existing.countryId;
 
-  const nextSpecialtyIds = body.specialtyIds;
-  if (nextSpecialtyIds !== undefined) {
+  // When the primary country changes, any existing specialty assignments belong
+  // to the old country and would fail validation. Clear them automatically so
+  // the admin re-assigns specialties for the new country without an error.
+  const nextSpecialtyIds = countryChanging ? [] : body.specialtyIds;
+  if (nextSpecialtyIds !== undefined && nextSpecialtyIds.length > 0) {
     await assertSpecialtiesForCountry(nextSpecialtyIds, nextCountryId);
   }
 
