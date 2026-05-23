@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ServiceCard } from "@/components/cards/ServiceCard";
 import { Container } from "@/components/layout/Container";
 
@@ -22,6 +26,9 @@ type ServicesGridProps = {
   variant?: "light" | "dark";
 };
 
+const PAGE_SIZE_FEATURED = 5;
+const PAGE_SIZE_REGULAR = 6;
+
 export function ServicesGrid({
   title,
   intro,
@@ -30,8 +37,40 @@ export function ServicesGrid({
   featureFirst = true,
   variant = "light",
 }: ServicesGridProps) {
-  const useFeatured = featureFirst && items.length >= 4;
+  const [page, setPage] = useState(0);
   const isDark = variant === "dark";
+
+  const useFeaturedFirst = featureFirst && page === 0 && items.length >= 4;
+  const pageSize = useFeaturedFirst ? PAGE_SIZE_FEATURED : PAGE_SIZE_REGULAR;
+  const totalPages = Math.ceil(items.length / pageSize);
+  const paged = items.slice(page * pageSize, (page + 1) * pageSize);
+  const showPager = totalPages > 1;
+
+  const arrowActive = isDark
+    ? {
+        background: "var(--color-brand-accent)",
+        color: "#0a1f14",
+        border: "1px solid var(--color-brand-accent)",
+      }
+    : {
+        background: "var(--color-brand-primary)",
+        color: "#ffffff",
+        border: "1px solid var(--color-brand-primary)",
+      };
+
+  const arrowInactive = isDark
+    ? {
+        background: "transparent",
+        color: "rgba(255,255,255,0.50)",
+        border: "1px solid rgba(255,255,255,0.20)",
+      }
+    : {
+        background: "transparent",
+        color: "var(--color-text-muted)",
+        border: "1px solid var(--color-border)",
+      };
+
+  const counterColor = isDark ? "rgba(255,255,255,0.50)" : "var(--color-text-muted)";
 
   return (
     <section
@@ -46,39 +85,73 @@ export function ServicesGrid({
       }
     >
       <Container>
-        {/* Header */}
-        <div className="mb-12 lg:mb-14">
-          {eyebrow && (
-            <span
-              className="text-[11px] font-bold uppercase tracking-[0.2em]"
-              style={{ color: isDark ? "var(--color-brand-accent)" : "var(--color-brand-primary)" }}
-            >
-              {eyebrow}
-            </span>
-          )}
-          {title && (
-            <h2
-              className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.02]"
-              style={{
-                fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)",
-                color: isDark ? "rgba(255,255,255,0.92)" : "var(--color-text-primary)",
-              }}
-            >
-              {title}
-            </h2>
-          )}
-          {intro && (
-            <p
-              className="mt-3 max-w-2xl text-[length:var(--text-body-lg)] leading-relaxed"
-              style={{ color: isDark ? "rgba(255,255,255,0.70)" : "var(--color-text-muted)" }}
-            >
-              {intro}
-            </p>
+        {/* Header row */}
+        <div className="flex items-end justify-between gap-8 mb-12 lg:mb-14">
+          {/* Left: eyebrow / title / intro */}
+          <div>
+            {eyebrow && (
+              <span
+                className="text-[11px] font-bold uppercase tracking-[0.2em]"
+                style={{ color: isDark ? "var(--color-brand-accent)" : "var(--color-brand-primary)" }}
+              >
+                {eyebrow}
+              </span>
+            )}
+            {title && (
+              <h2
+                className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.02]"
+                style={{
+                  fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)",
+                  color: isDark ? "rgba(255,255,255,0.92)" : "var(--color-text-primary)",
+                }}
+              >
+                {title}
+              </h2>
+            )}
+            {intro && (
+              <p
+                className="mt-3 max-w-2xl text-[length:var(--text-body-lg)] leading-relaxed"
+                style={{ color: isDark ? "rgba(255,255,255,0.70)" : "var(--color-text-muted)" }}
+              >
+                {intro}
+              </p>
+            )}
+          </div>
+
+          {/* Right: pager arrows */}
+          {showPager && (
+            <div className="flex items-center gap-3 shrink-0">
+              <span
+                className="text-[11px] font-bold tabular-nums"
+                style={{ color: counterColor }}
+              >
+                {page + 1} / {totalPages}
+              </span>
+              <button
+                onClick={() => setPage((p) => p - 1)}
+                disabled={page === 0}
+                aria-label="Previous page"
+                className="size-10 rounded-full inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                style={page === 0 ? arrowInactive : arrowActive}
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                disabled={page >= totalPages - 1}
+                aria-label="Next page"
+                className="size-10 rounded-full inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
+                style={page >= totalPages - 1 ? arrowInactive : arrowActive}
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
           )}
         </div>
 
-        <div className={useFeatured ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}>
-          {items.map((item) => (
+        {/* Card grid */}
+        <div className={useFeaturedFirst ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}>
+          {paged.map((item) => (
             <ServiceCard key={item.href} {...item} dark={isDark} />
           ))}
         </div>
