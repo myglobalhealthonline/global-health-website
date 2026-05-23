@@ -31,7 +31,6 @@ export function parseDoctorBodyFromForm(formData: FormData) {
     fullName: String(formData.get("fullName") ?? "").trim(),
     title: String(formData.get("title") ?? "").trim(),
     bio: String(formData.get("bio") ?? "").trim(),
-    imcRegistration: String(formData.get("imcRegistration") ?? "").trim(),
     medicalRegistrationUrl: String(formData.get("medicalRegistrationUrl") ?? "").trim(),
     qualifications,
     whatsappNumber: String(formData.get("whatsappNumber") ?? "").trim(),

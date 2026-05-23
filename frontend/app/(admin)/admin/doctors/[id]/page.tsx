@@ -187,7 +187,6 @@ export default async function AdminDoctorDetailPage({
               <FieldRow label="Slug" value={d.slug} mono />
               <FieldRow label="Country" value={`${d.country.name} (${d.country.code.toUpperCase()})`} />
               <FieldRow label="Public path" value={publicPath} mono full />
-              <FieldRow label="IMC registration" value={d.imcRegistration ?? "—"} />
               <FieldRow
                 label="Medical registration"
                 value={

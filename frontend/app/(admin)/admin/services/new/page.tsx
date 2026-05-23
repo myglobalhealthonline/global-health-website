@@ -170,7 +170,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
       ctaLabel: raw.ctaLabel.trim() === "" ? null : raw.ctaLabel.trim(),
       legacyPath: raw.legacyPath.trim() === "" ? null : raw.legacyPath.trim(),
       sortOrder: raw.sortOrder,
-      specialtyId: raw.specialtyId,
+      ...(raw.specialtyId !== null ? { specialtyId: raw.specialtyId } : {}),
       durationMinutes: raw.durationMinutes,
       basePriceCents: raw.basePriceCents,
       currencyCode: raw.currencyCode.trim() === "" ? null : raw.currencyCode.trim(),

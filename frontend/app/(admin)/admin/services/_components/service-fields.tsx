@@ -276,21 +276,28 @@ export function ServiceFields({
         )}
       </fieldset>
 
-      {/* The hero / detail-body / legacy-path columns exist on the DB
-          but no public surface reads them today (public ServicesGrid only
-          uses name + summary + slug + price). Hidden inputs preserve the
-          stored values across saves until either:
-          - a service-detail page ships (and these fields are useful), or
-          - the columns get dropped from the schema.
-          Keep them out of the visible form to reduce clutter. */}
-      <input type="hidden" name="heroTitle" defaultValue={initial?.heroTitle ?? ""} />
-      <input type="hidden" name="ctaLabel" defaultValue={initial?.ctaLabel ?? ""} />
-      <input
-        type="hidden"
-        name="heroDescription"
-        defaultValue={initial?.heroDescription ?? ""}
-      />
-      <input type="hidden" name="detailBody" defaultValue={initial?.detailBody ?? ""} />
+      <div className="flex flex-col gap-5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
+        <header>
+          <h3 className="m-0 text-sm font-bold text-[var(--color-text-primary)]">Hero &amp; detail page</h3>
+          <p className="mt-1 text-xs text-[var(--color-text-muted)]">Shown on the public detail page and used for SEO previews.</p>
+        </header>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Hero title</span>
+          <input name="heroTitle" className="gh-input min-w-0" defaultValue={initial?.heroTitle ?? ""} placeholder="e.g. Online Medical Consultation Ireland" />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Hero description</span>
+          <textarea name="heroDescription" rows={3} className="gh-input min-w-0 resize-y" defaultValue={initial?.heroDescription ?? ""} placeholder="Short tagline shown under the hero title." />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">CTA button label</span>
+          <input name="ctaLabel" className="gh-input min-w-0" defaultValue={initial?.ctaLabel ?? ""} placeholder="e.g. Book Consultation" />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Detail body (HTML)</span>
+          <textarea name="detailBody" rows={6} className="gh-input min-w-0 resize-y font-mono text-xs" defaultValue={initial?.detailBody ?? ""} placeholder="<p>Rich description shown on the service detail page.</p>" />
+        </label>
+      </div>
       <input type="hidden" name="legacyPath" defaultValue={initial?.legacyPath ?? ""} />
 
       <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">

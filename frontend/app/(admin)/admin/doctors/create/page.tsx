@@ -129,7 +129,6 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
       fullName: raw.fullName,
       title: raw.title,
       bio: raw.bio.trim() === "" ? null : raw.bio.trim(),
-      imcRegistration: raw.imcRegistration === "" ? null : raw.imcRegistration,
       medicalRegistrationUrl:
         raw.medicalRegistrationUrl === "" ? null : raw.medicalRegistrationUrl,
       qualifications: raw.qualifications,
@@ -152,7 +151,6 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
           title: body.title,
           bio: body.bio,
           languages: body.languages,
-          imcRegistration: body.imcRegistration,
           medicalRegistrationUrl: body.medicalRegistrationUrl,
           qualifications: body.qualifications,
           specialties: body.specialtyIds,

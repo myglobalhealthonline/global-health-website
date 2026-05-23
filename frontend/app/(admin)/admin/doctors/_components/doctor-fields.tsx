@@ -117,15 +117,12 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
         </fieldset>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <label className="flex flex-col gap-2">
-            <span className="gh-field-label">IMC registration</span>
-            <input
-              name="imcRegistration"
-              className="gh-input min-w-0"
-              defaultValue={initial?.imcRegistration ?? ""}
-              placeholder="e.g. IMC 542074"
-            />
-          </label>
+          <div className="flex flex-col gap-2">
+            <span className="gh-field-label">Registration number</span>
+            <p className="text-xs text-[var(--color-text-muted)] rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2">
+              Managed in the <strong>Medical registrations</strong> card on the doctor detail page — one entry per country with chamber, number, and verified flag.
+            </p>
+          </div>
           <label className="flex flex-col gap-2">
             <span className="gh-field-label">Medical registration URL</span>
             <input

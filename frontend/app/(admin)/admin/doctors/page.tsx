@@ -306,7 +306,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                             isPrimary: true,
                           },
                           ...d.additionalCountries
-                            .filter((link) => link.active)
+                            .filter((link) => link.active && link.countryId !== d.countryId)
                             .map((link) => ({
                               code: link.country.code,
                               name: link.country.name,
