@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { CountryFields } from "../../_components/country-fields";
 import {
@@ -12,6 +13,7 @@ import {
   fetchAdminCountryById,
   patchAdminCountry,
 } from "@/lib/admin/admin-api";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 
 export const dynamic = "force-dynamic";
@@ -113,6 +115,13 @@ export default async function AdminEditCountryPage({
     if (!result.ok) {
       redirect(`/admin/countries/${id}/edit?error=${encodeURIComponent(result.message)}`);
     }
+
+    // Bust the public countries cache so the switcher, marquee, and
+    // routable-slug registry pick up isActive / slug / name changes on
+    // the next public request instead of waiting for the 120s ISR
+    // window. Without this, toggling a country off in admin keeps the
+    // country surfaced on the public site for minutes-to-hours.
+    revalidateTag(SITE_CACHE_TAGS.countries(), "max");
 
     redirect(
       `/admin/countries/${id}?success=${encodeURIComponent("Country updated")}`,

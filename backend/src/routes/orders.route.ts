@@ -12,6 +12,7 @@ import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { generateOrderMeetLink } from "../modules/admin-orders/generate-order-meet-link.service.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 
 /**
  * Orders + checkout.
@@ -321,6 +322,62 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       return reply.status(500).send(errorResponse("Could not load orders"));
     }
   });
+
+  // ── Public: post-checkout receipt by order id ─────────────────────
+  // Used by the /checkout/success page so guest checkouts (which have
+  // userId: null and therefore can't authenticate against the patient
+  // endpoint below) still see their line items and total. Returns
+  // minimal, non-PII fields keyed off the unguessable CUID. Email,
+  // phone, and full shipping address are kept off this payload — the
+  // patient endpoint stays the source of truth for authenticated reads.
+  app.get<{ Params: { id: string } }>(
+    "/api/orders/:id/receipt",
+    async (request, reply) => {
+      const params = orderIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      try {
+        const order = await prisma.order.findUnique({
+          where: { id: params.data.id },
+          select: {
+            id: true,
+            status: true,
+            paymentStatus: true,
+            currencyCode: true,
+            subtotalCents: true,
+            shippingCents: true,
+            totalCents: true,
+            fullName: true,
+            paidAt: true,
+            createdAt: true,
+            items: {
+              select: { id: true, kind: true, name: true, quantity: true, lineTotalCents: true },
+            },
+          },
+        });
+        if (!order) return reply.status(404).send(errorResponse("Order not found"));
+        return okResponse({
+          id: order.id,
+          status: order.status,
+          paymentStatus: order.paymentStatus,
+          currencyCode: order.currencyCode,
+          subtotalCents: order.subtotalCents,
+          shippingCents: order.shippingCents,
+          totalCents: order.totalCents,
+          fullName: order.fullName,
+          items: order.items,
+          paidAt: order.paidAt?.toISOString() ?? null,
+          createdAt: order.createdAt.toISOString(),
+        });
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not load order"));
+      }
+    },
+  );
 
   // ── Patient: own order detail ──────────────────────────────────────
   app.get<{ Params: { id: string } }>(
@@ -637,6 +694,15 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
   );
 
   // ── Admin: generate Google Meet link for consultation order ───────
+  const generateMeetLinkBodySchema = z
+    .object({
+      // When true, force a fresh Meet link even if one already exists.
+      // Without this flag the service short-circuits and returns the
+      // existing link unchanged — protects against double-click misuse.
+      regenerate: z.boolean().optional(),
+    })
+    .optional();
+
   app.post<{ Params: { id: string } }>(
     "/api/admin/orders/:id/generate-meet-link",
     async (request, reply) => {
@@ -646,8 +712,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       const params = orderIdParamSchema.safeParse(request.params);
       if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
 
+      const body = generateMeetLinkBodySchema.safeParse(request.body ?? {});
+      const regenerate = body.success ? Boolean(body.data?.regenerate) : false;
+
       try {
-        const result = await generateOrderMeetLink(params.data.id);
+        const result = await generateOrderMeetLink(params.data.id, { regenerate });
         if (!result.ok) {
           const status =
             result.code === "NOT_FOUND"
@@ -657,11 +726,25 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                 : 400;
           return reply.status(status).send(errorResponse(result.message));
         }
+        // Only audit when the link was actually minted — short-circuited
+        // "reused" calls aren't a meaningful admin action.
+        if (!result.reused) {
+          const actor = await resolveOptionalAuthUser(request);
+          recordAudit({
+            actorUserId: actor?.id,
+            actorRole: "ADMIN",
+            action: "MEET_LINK_GENERATED",
+            entityType: "Order",
+            entityId: params.data.id,
+            metadata: { serviceTitle: result.serviceTitle, regenerate },
+            request,
+          }).catch(() => {});
+        }
         return okResponse({
           success: true,
           meetLink: result.meetLink,
-          meetingUrl: result.meetLink,
           serviceUsed: result.serviceTitle,
+          reused: result.reused,
         });
       } catch (err) {
         if (err instanceof DatabaseUnavailableError) {

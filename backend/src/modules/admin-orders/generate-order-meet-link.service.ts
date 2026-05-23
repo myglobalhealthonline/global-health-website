@@ -11,10 +11,13 @@ const CONSULTATION_KINDS: CartItemKind[] = [
 ];
 
 export type GenerateOrderMeetLinkResult =
-  | { ok: true; meetLink: string; serviceTitle: string }
+  | { ok: true; meetLink: string; serviceTitle: string; reused: boolean }
   | { ok: false; code: "NOT_FOUND" | "NO_CONSULTATION" | "MISSING_SCHEDULE" | "NOT_CONFIGURED"; message: string };
 
-export async function generateOrderMeetLink(orderId: string): Promise<GenerateOrderMeetLinkResult> {
+export async function generateOrderMeetLink(
+  orderId: string,
+  options: { regenerate?: boolean } = {},
+): Promise<GenerateOrderMeetLinkResult> {
   if (!isGoogleMeetConfigured()) {
     return {
       ok: false,
@@ -30,6 +33,16 @@ export async function generateOrderMeetLink(orderId: string): Promise<GenerateOr
   });
   if (!order) {
     return { ok: false, code: "NOT_FOUND", message: "Order not found" };
+  }
+
+  // Idempotency: if a link already exists and the caller didn't ask for
+  // a fresh one, return the existing link without burning another Meet
+  // API call. Prevents double-click on "Generate" from minting two
+  // separate links and overwriting the first.
+  if (order.meetingUrl && !options.regenerate) {
+    const existingTitle =
+      order.items.find((item) => CONSULTATION_KINDS.includes(item.kind))?.name ?? "Consultation";
+    return { ok: true, meetLink: order.meetingUrl, serviceTitle: existingTitle, reused: true };
   }
 
   const consultItem = order.items.find((item) => CONSULTATION_KINDS.includes(item.kind));
@@ -109,5 +122,5 @@ export async function generateOrderMeetLink(orderId: string): Promise<GenerateOr
     }
   });
 
-  return { ok: true, meetLink, serviceTitle: eventTitle };
+  return { ok: true, meetLink, serviceTitle: eventTitle, reused: false };
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
-import { fetchAccountOrder } from "@/lib/api/cart-server";
+import { fetchOrderReceipt } from "@/lib/api/cart-server";
 import { formatPrice } from "@/lib/format-currency";
 
 export const dynamic = "force-dynamic";
@@ -14,9 +14,13 @@ type Props = {
 export default async function CheckoutSuccessPage({ params, searchParams }: Props) {
   const { country, lang } = await params;
   const { orderId } = await searchParams;
-  const orderRes = orderId ? await fetchAccountOrder(orderId) : null;
+  // Public receipt — keyed on the unguessable order id. Works for both
+  // authenticated patients and guest checkouts (the old path forced a
+  // patient session and dead-ended guests with an empty card).
+  const orderRes = orderId ? await fetchOrderReceipt(orderId) : null;
   const order = orderRes?.ok ? orderRes.data : null;
   const homeHref = `/${country}/${lang}`;
+  const doctorsHref = `/${country}/${lang}/doctors`;
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
@@ -28,8 +32,8 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
           Payment received
         </h1>
         <p className="mt-3 max-w-md text-slate-600">
-          Thanks for your order. We&apos;re processing it now — a receipt has been
-          emailed to you.
+          Thanks{order?.fullName ? `, ${order.fullName.split(" ")[0]}` : ""}. Your
+          order is confirmed — a receipt has been emailed to you.
         </p>
       </div>
 
@@ -53,6 +57,13 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
             ))}
           </ul>
 
+          {order.shippingCents > 0 ? (
+            <div className="mt-3 flex justify-between text-sm text-slate-600">
+              <span>Shipping</span>
+              <span>{formatPrice(order.shippingCents, order.currencyCode)}</span>
+            </div>
+          ) : null}
+
           <div className="mt-4 flex justify-between border-t border-slate-100 pt-3 text-base">
             <span className="font-bold">Total paid</span>
             <span className="font-bold">
@@ -60,20 +71,26 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
             </span>
           </div>
         </div>
+      ) : orderId ? (
+        <div className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          We couldn&apos;t load the receipt right now. Your payment is confirmed —
+          check your email for the order details, or contact support if anything
+          looks off.
+        </div>
       ) : null}
 
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Link
-          href="/account/bookings"
+          href="/account/orders"
           className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
         >
-          View my bookings
+          View my orders
         </Link>
         <Link
-          href="/account/orders"
+          href={doctorsHref}
           className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
         >
-          View orders
+          Browse doctors
         </Link>
         <Link
           href={homeHref}
