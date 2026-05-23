@@ -537,37 +537,54 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
   }
 }
 
+export type UpdateAdminDoctorResult = {
+  doctor: AdminDoctorRecord;
+  /**
+   * Populated when the PATCH changed `Doctor.countryId`. Lets the route
+   * handler emit a precise audit record (`from`/`to`) and bust caches
+   * for the OLD country code in addition to the new one.
+   */
+  countryChange: {
+    fromCountryId: string;
+    fromCountryCode: string | null;
+    toCountryId: string;
+    toCountryCode: string | null;
+  } | null;
+};
+
 export async function updateAdminDoctor(
   id: string,
   body: AdminDoctorUpdateBody,
-): Promise<AdminDoctorRecord | null> {
+): Promise<UpdateAdminDoctorResult | null> {
   const existing = await prisma.doctor.findUnique({
     where: { id },
     select: {
       countryId: true,
-      // Load the old country's DoctorCountry row so we can copy the
-      // registration to the new country when the primary country changes.
-      additionalCountries: {
-        where: { doctorId: id },
-        select: { countryId: true, chamberEntity: true, registrationNumber: true, isVerified: true },
-      },
+      country: { select: { code: true } },
     },
   });
   if (!existing) return null;
 
   const nextCountryId = body.countryId ?? existing.countryId;
-  const countryChanging = body.countryId !== undefined && body.countryId !== existing.countryId;
+  const countryChanging =
+    body.countryId !== undefined && body.countryId !== existing.countryId;
 
-  // When the primary country changes, any existing specialty assignments belong
-  // to the old country and would fail validation. Clear them automatically so
-  // the admin re-assigns specialties for the new country without an error.
-  const nextSpecialtyIds = countryChanging ? [] : body.specialtyIds;
+  // Honor admin-supplied specialtyIds when present (validated against the
+  // NEW primary country). When the country changes and admin did NOT send a
+  // new specialty list, clear the existing assignments — they belong to the
+  // old country and would FK-conflict with new-country specialties.
+  const nextSpecialtyIds =
+    body.specialtyIds !== undefined
+      ? body.specialtyIds
+      : countryChanging
+        ? []
+        : undefined;
   if (nextSpecialtyIds !== undefined && nextSpecialtyIds.length > 0) {
     await assertSpecialtiesForCountry(nextSpecialtyIds, nextCountryId);
   }
 
   try {
-    return await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updated = await tx.doctor.update({
         where: { id },
         data: {
@@ -592,34 +609,8 @@ export async function updateAdminDoctor(
             canCreateManualAppointments: body.canCreateManualAppointments,
           }),
         },
-        include: adminDoctorInclude,
+        include: { country: { select: { id: true, code: true } } },
       });
-
-      // When the primary country changes, copy the registration from the old
-      // country's DoctorCountry row into the new country's row (upsert so we
-      // don't overwrite an existing registration the admin already set up).
-      if (countryChanging) {
-        const oldReg = existing.additionalCountries.find(
-          (r) => r.countryId === existing.countryId,
-        );
-        const newHasReg = existing.additionalCountries.some(
-          (r) => r.countryId === nextCountryId,
-        );
-        if (oldReg && !newHasReg) {
-          await tx.doctorCountry.upsert({
-            where: { doctorId_countryId: { doctorId: id, countryId: nextCountryId } },
-            update: {},
-            create: {
-              doctorId: id,
-              countryId: nextCountryId,
-              chamberEntity: oldReg.chamberEntity,
-              registrationNumber: oldReg.registrationNumber,
-              isVerified: oldReg.isVerified,
-              active: true,
-            },
-          });
-        }
-      }
 
       if (nextSpecialtyIds !== undefined) {
         await tx.doctorSpecialty.deleteMany({ where: { doctorId: id } });
@@ -640,11 +631,65 @@ export async function updateAdminDoctor(
         body.additionalCountryIds,
       );
 
-      return tx.doctor.findUniqueOrThrow({
+      // When the primary country changed, repoint the existing portrait
+      // Asset.countryId so country-scoped admin asset queries don't keep
+      // classifying the doctor's image under the OLD country. syncProfileImageAsset
+      // above only fires when the admin actually re-uploaded — for a country-only
+      // PATCH we still need to repoint the row in place.
+      if (countryChanging && body.profileImagePath === undefined) {
+        await tx.asset.updateMany({
+          where: {
+            doctorId: id,
+            kind: AssetKind.IMAGE,
+            key: doctorProfileImageKey(id),
+          },
+          data: { countryId: effectiveCountryId },
+        });
+      }
+
+      // When the primary country changed, prune ServiceDoctor join rows
+      // that point at services the doctor is no longer reachable from.
+      // Effective country set = new primary + supplied additionalCountryIds
+      // (when omitted, we fall back to the rows currently in DoctorCountry).
+      if (countryChanging) {
+        const effectiveCountryIds = new Set<string>([effectiveCountryId]);
+        if (body.additionalCountryIds !== undefined) {
+          for (const cid of body.additionalCountryIds) {
+            effectiveCountryIds.add(cid);
+          }
+        } else {
+          const linked = await tx.doctorCountry.findMany({
+            where: { doctorId: id, active: true },
+            select: { countryId: true },
+          });
+          for (const link of linked) effectiveCountryIds.add(link.countryId);
+        }
+        await tx.serviceDoctor.deleteMany({
+          where: {
+            doctorId: id,
+            service: { countryId: { notIn: [...effectiveCountryIds] } },
+          },
+        });
+      }
+
+      const refreshed = await tx.doctor.findUniqueOrThrow({
         where: { id },
         include: adminDoctorInclude,
       });
+      return {
+        doctor: refreshed,
+        countryChange: countryChanging
+          ? {
+              fromCountryId: existing.countryId,
+              fromCountryCode: existing.country?.code ?? null,
+              toCountryId: effectiveCountryId,
+              toCountryCode: updated.country?.code ?? null,
+            }
+          : null,
+      } satisfies UpdateAdminDoctorResult;
     }, ADMIN_DOCTOR_TX_OPTIONS);
+
+    return result;
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }

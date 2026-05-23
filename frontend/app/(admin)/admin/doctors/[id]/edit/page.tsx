@@ -177,6 +177,21 @@ export default async function AdminEditDoctorPage({
         "max",
       );
     }
+    // When the primary country changed, the OLD country's roster and
+    // slug-scoped profile cache must also be busted — otherwise visitors
+    // hitting /<old>/<lang>/doctors or /<old>/<lang>/doctors/<slug>
+    // keep seeing the moved doctor in cached HTML indefinitely.
+    const change = result.data.countryChange;
+    if (change?.fromCountryCode) {
+      revalidateTag(
+        SITE_CACHE_TAGS.countryDoctors(change.fromCountryCode),
+        "max",
+      );
+      revalidateTag(
+        SITE_CACHE_TAGS.countryDoctorBySlug(change.fromCountryCode, saved.slug),
+        "max",
+      );
+    }
     for (const link of saved.additionalCountries ?? []) {
       const code = link.country?.code;
       if (code) {

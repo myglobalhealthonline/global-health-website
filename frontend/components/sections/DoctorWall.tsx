@@ -10,10 +10,19 @@ export type DoctorWallItem = {
   name: string;
   role: string;
   country: string;
+  /** Languages list joined with " · ". Single source of truth on the
+   *  producer side; DoctorWall splits on the same separator before
+   *  passing to DoctorCard. */
   langs: string;
+  /** Profile page URL — the whole card routes here. */
   href: string;
+  /** Optional booking flow URL. When provided, a "Book Appointment"
+   *  CTA is rendered alongside "View profile". */
+  bookingHref?: string;
   imageSrc?: string | null;
   imcRegistration?: string;
+  medicalRegistrationUrl?: string;
+  whatsappNumber?: string;
 };
 
 const FILTER_LABELS: Record<string, string> = {
@@ -129,11 +138,16 @@ export function DoctorWall({
               key={d.id}
               name={d.name}
               title={d.role}
+              country={d.country}
               imcRegistration={d.imcRegistration}
+              medicalRegistrationUrl={d.medicalRegistrationUrl}
+              whatsappNumber={d.whatsappNumber}
               languages={d.langs ? d.langs.split(" · ") : []}
               bio=""
               imageSrc={d.imageSrc}
-              href={d.href || bookHref}
+              initials={d.initials}
+              href={d.href}
+              bookingHref={d.bookingHref ?? bookHref}
               ctaLabel="View profile"
             />
           ))}

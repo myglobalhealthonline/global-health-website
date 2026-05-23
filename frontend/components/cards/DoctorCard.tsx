@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { Globe, ShieldCheck, Phone, CalendarDays, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { Globe, ShieldCheck, Phone, CalendarDays, ArrowRight } from "lucide-react";
+import { Flag } from "@/components/ui/Flag";
 
 const PLACEHOLDER_PORTRAIT = "/images/ireland/doctor-spotlight-ai.svg";
 
@@ -32,7 +33,18 @@ type DoctorCardProps = {
   whatsappNumber?: string;
   bio: string;
   imageSrc?: string | null;
+  /** Initials fallback shown when imageSrc is missing. Without it the card
+   *  falls back to a single stock SVG for every photo-less doctor. */
+  initials?: string;
+  /** Card-wide link target — usually the doctor's profile page. The whole
+   *  card surface routes here; inner CTAs sit above via z-index. */
   href?: string;
+  /** Optional separate booking target. When provided, a primary
+   *  "Book Appointment" CTA is rendered alongside the "View profile"
+   *  outline button. When omitted, only the "View profile" CTA shows —
+   *  avoids labelling a button "Book Appointment" while routing it at
+   *  the profile page. */
+  bookingHref?: string;
   ctaLabel?: string;
 };
 
@@ -42,62 +54,103 @@ export function DoctorCard({
   title,
   imcRegistration,
   medicalRegistrationUrl,
+  country,
   languages = [],
   whatsappNumber,
   imageSrc,
+  initials,
   href,
+  bookingHref,
   ctaLabel = "View profile",
 }: DoctorCardProps) {
-  const src = imageSrc?.trim() ? imageSrc.trim() : PLACEHOLDER_PORTRAIT;
+  const trimmedImage = imageSrc?.trim();
+  const hasImage = Boolean(trimmedImage);
+  const src = trimmedImage ? trimmedImage : PLACEHOLDER_PORTRAIT;
   const unoptimized = /^https?:\/\//i.test(src) || src.startsWith("/api/media/");
+  const initialsLabel = initials?.trim() || nameToInitials(name);
   const whatsappDigits = whatsappNumber?.replace(/[^\d+]/g, "");
   const whatsappHref = whatsappDigits
     ? `https://wa.me/${whatsappDigits.replace("+", "")}`
     : null;
-  const bookHref = href ?? "/book-online";
+  const profileHref = href;
+  const bookHref = bookingHref ?? null;
 
   return (
     <article
-      className="group flex flex-col overflow-hidden bg-white"
+      className="
+        group relative flex flex-col overflow-hidden bg-white
+        transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
+        hover:-translate-y-[3px]
+        motion-reduce:transition-none motion-reduce:hover:translate-y-0
+        focus-within:ring-2 focus-within:ring-[var(--color-brand-primary)]/30
+      "
       style={{
         borderRadius: 24,
         border: "1px solid rgba(29,75,54,0.10)",
         boxShadow: "0 2px 8px rgba(15,46,37,0.06), 0 8px 28px rgba(15,46,37,0.07)",
-        transition: "transform 300ms cubic-bezier(0.16,1,0.3,1), box-shadow 300ms",
-      }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLElement).style.transform = "translateY(-3px)";
-        (e.currentTarget as HTMLElement).style.boxShadow =
-          "0 6px 18px rgba(15,46,37,0.10), 0 16px 40px rgba(15,46,37,0.10)";
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
-        (e.currentTarget as HTMLElement).style.boxShadow =
-          "0 2px 8px rgba(15,46,37,0.06), 0 8px 28px rgba(15,46,37,0.07)";
       }}
     >
-      {/* ── Portrait ── */}
-      <div className="relative overflow-hidden" style={{ aspectRatio: "1 / 1.1" }}>
-        <Image
-          src={src}
-          alt={name}
-          fill
-          sizes="(min-width:1024px) 360px, (min-width:768px) 50vw, 100vw"
-          unoptimized={unoptimized}
-          className="object-cover object-top"
+      {/* Whole-card overlay link — routes to profile. CTAs below sit
+          above this via z-index so their own anchor handlers fire. */}
+      {profileHref ? (
+        <Link
+          href={profileHref}
+          aria-label={`View profile for ${name}`}
+          className="absolute inset-0 z-0 rounded-[24px] focus:outline-none"
+          tabIndex={-1}
         />
+      ) : null}
 
-        {/* Title badge — bottom-left overlay */}
+      {/* ── Portrait ── */}
+      <div
+        className="relative z-[1] overflow-hidden"
+        style={{ aspectRatio: "1 / 1.1" }}
+      >
+        {hasImage ? (
+          <Image
+            src={src}
+            alt={name}
+            fill
+            sizes="(min-width:1024px) 360px, (min-width:768px) 50vw, 100vw"
+            unoptimized={unoptimized}
+            className="object-cover object-top"
+          />
+        ) : (
+          <div
+            className="flex h-full w-full items-center justify-center font-extrabold tracking-tight text-white"
+            style={{
+              background: "var(--color-brand-primary)",
+              fontSize: "clamp(48px,8vw,80px)",
+              letterSpacing: "-0.02em",
+            }}
+            aria-hidden
+          >
+            {initialsLabel}
+          </div>
+        )}
+
+        {/* Country flag chip — top-left overlay */}
+        {country ? (
+          <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/35 px-2.5 py-1 backdrop-blur-sm">
+            <Flag code={country} size="sm" />
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-white">
+              {country.toUpperCase()}
+            </span>
+          </span>
+        ) : null}
+
+        {/* Title badge — bottom-left overlay (role/specialty, NOT a
+            verification credential — shield-check icon dropped because
+            it implied verified clinical credential). */}
         {title ? (
           <div className="absolute bottom-3 left-3">
             <span
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-semibold text-white"
+              className="inline-flex items-center rounded-full px-3 py-1.5 text-[12px] font-semibold text-white"
               style={{
                 background: "var(--color-brand-primary)",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
               }}
             >
-              <ShieldCheck className="size-[13px] shrink-0" strokeWidth={2.2} aria-hidden />
               {title}
             </span>
           </div>
@@ -105,7 +158,7 @@ export function DoctorCard({
       </div>
 
       {/* ── Body ── */}
-      <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
+      <div className="relative z-[1] flex flex-1 flex-col px-5 pb-5 pt-4">
 
         {/* Name — dark green, extrabold */}
         <h3
@@ -139,7 +192,7 @@ export function DoctorCard({
                     href={medicalRegistrationUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[13px] font-semibold transition-opacity hover:opacity-75"
+                    className="relative z-20 text-[13px] font-semibold transition-opacity hover:opacity-75"
                     style={{ color: "var(--color-brand-primary)" }}
                     onClick={(e) => e.stopPropagation()}
                   >
@@ -188,73 +241,81 @@ export function DoctorCard({
         {/* ── Actions ── */}
         <div className="mt-5 space-y-2">
 
-          {/* Row 1 — primary + phone */}
-          <div className="flex items-center gap-2">
-            <Link
-              href={bookHref}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full text-[13.5px] font-bold text-white transition-[background-color,transform] duration-200 hover:opacity-90 active:scale-[0.98]"
-              style={{
-                background: "var(--color-brand-primary)",
-                padding: "11px 16px",
-                minHeight: 46,
-              }}
-            >
-              <CalendarDays className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
-              Book Appointment
-              <ArrowRight className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
-            </Link>
-
-            {whatsappHref ? (
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex size-[46px] shrink-0 items-center justify-center rounded-full transition-[background-color,border-color] duration-200"
+          {/* Row 1 — primary book + phone (only when bookingHref provided) */}
+          {bookHref ? (
+            <div className="flex items-center gap-2">
+              <Link
+                href={bookHref}
+                className="relative z-20 inline-flex flex-1 items-center justify-center gap-2 rounded-full text-[13.5px] font-bold text-white transition-[background-color,transform] duration-200 hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
                 style={{
-                  border: "1.5px solid rgba(29,75,54,0.20)",
-                  background: "transparent",
-                  color: "var(--color-brand-primary)",
+                  background: "var(--color-brand-primary)",
+                  padding: "11px 16px",
+                  minHeight: 46,
                 }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "var(--color-brand-primary)";
-                  (e.currentTarget as HTMLElement).style.color = "#fff";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "transparent";
-                  (e.currentTarget as HTMLElement).style.color = "var(--color-brand-primary)";
-                }}
-                aria-label="Contact on WhatsApp"
-                onClick={(e) => e.stopPropagation()}
               >
-                <Phone className="size-4" strokeWidth={1.6} />
-              </a>
-            ) : null}
-          </div>
+                <CalendarDays className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
+                Book Appointment
+                <ArrowRight className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
+              </Link>
 
-          {/* Row 2 — secondary outline */}
-          <Link
-            href={bookHref}
-            className="inline-flex w-full items-center justify-center gap-1.5 rounded-full text-[13px] font-semibold transition-[background-color,border-color,color] duration-200"
-            style={{
-              border: "1.5px solid rgba(29,75,54,0.20)",
-              padding: "9px 16px",
-              color: "var(--color-brand-primary)",
-            }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = "var(--color-brand-primary)";
-              (e.currentTarget as HTMLElement).style.background = "rgba(29,75,54,0.04)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(29,75,54,0.20)";
-              (e.currentTarget as HTMLElement).style.background = "transparent";
-            }}
-          >
-            {ctaLabel}
-            <ArrowRight className="size-[14px] shrink-0" strokeWidth={1.8} aria-hidden />
-          </Link>
+              {whatsappHref ? (
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative z-20 inline-flex size-[46px] shrink-0 items-center justify-center rounded-full border-[1.5px] border-[rgba(29,75,54,0.20)] bg-transparent text-[var(--color-brand-primary)] transition-colors duration-200 hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+                  aria-label="Contact on WhatsApp"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Phone className="size-4" strokeWidth={1.6} />
+                </a>
+              ) : null}
+            </div>
+          ) : null}
+
+          {/* Row 2 — secondary outline → profile */}
+          {profileHref ? (
+            <Link
+              href={profileHref}
+              className="relative z-20 inline-flex w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[rgba(29,75,54,0.20)] px-4 py-[9px] text-[13px] font-semibold text-[var(--color-brand-primary)] transition-colors duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[rgba(29,75,54,0.04)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+            >
+              {ctaLabel}
+              <ArrowRight className="size-[14px] shrink-0" strokeWidth={1.8} aria-hidden />
+            </Link>
+          ) : null}
+
+          {/* When there's no booking CTA and no profile CTA fell through,
+              render a single phone shortcut if available so the card
+              still has an action. */}
+          {!bookHref && !profileHref && whatsappHref ? (
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative z-20 inline-flex w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-[rgba(29,75,54,0.20)] px-4 py-[9px] text-[13px] font-semibold text-[var(--color-brand-primary)] hover:bg-[rgba(29,75,54,0.04)]"
+            >
+              <Phone className="size-4" strokeWidth={1.6} aria-hidden />
+              WhatsApp
+            </a>
+          ) : null}
         </div>
 
       </div>
     </article>
+  );
+}
+
+/* ─── Helpers ────────────────────────────────────────────────────────────── */
+function nameToInitials(name: string): string {
+  const parts = name
+    .trim()
+    .split(/\s+/)
+    .filter((p) => p && !/^Dr\.?$/i.test(p));
+  if (parts.length === 0) return "·";
+  return (
+    parts
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase() ?? "")
+      .join("") || "·"
   );
 }
