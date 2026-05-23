@@ -43,7 +43,7 @@ export function StatsBand({ items }: { items: StatBandItem[] }) {
             <div key={`${it.label}-${it.value}`} className="flex flex-col gap-3">
               <dt
                 className="text-[11px] font-bold uppercase tracking-[0.14em]"
-                style={{ color: "rgba(255,255,255,0.35)" }}
+                style={{ color: "rgba(255,255,255,0.60)" }}
               >
                 {it.label}
               </dt>
@@ -58,7 +58,7 @@ export function StatsBand({ items }: { items: StatBandItem[] }) {
                 {it.value}
               </dd>
               {it.caption ? (
-                <p className="text-sm max-w-[20ch]" style={{ color: "rgba(255,255,255,0.38)" }}>
+                <p className="text-sm max-w-[20ch]" style={{ color: "rgba(255,255,255,0.62)" }}>
                   {it.caption}
                 </p>
               ) : null}

@@ -70,7 +70,7 @@ export function ServicesGrid({
           {intro && (
             <p
               className="mt-3 max-w-2xl text-[length:var(--text-body-lg)] leading-relaxed"
-              style={{ color: isDark ? "rgba(255,255,255,0.42)" : "var(--color-text-muted)" }}
+              style={{ color: isDark ? "rgba(255,255,255,0.70)" : "var(--color-text-muted)" }}
             >
               {intro}
             </p>

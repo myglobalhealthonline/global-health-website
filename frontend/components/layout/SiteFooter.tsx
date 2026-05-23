@@ -187,7 +187,7 @@ export function SiteFooter({
             paddingTop: 24,
             borderTop: "1px solid rgba(255,255,255,0.10)",
             fontSize: 12,
-            color: "rgba(255,255,255,0.45)",
+            color: "rgba(255,255,255,0.65)",
           }}
         >
           <span suppressHydrationWarning>

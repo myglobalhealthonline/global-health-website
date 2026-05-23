@@ -95,7 +95,7 @@ export function ServiceCatalog({
             {intro ? (
               <p
                 className="mt-5 max-w-[58ch] text-[length:var(--text-body-lg)] leading-relaxed"
-                style={{ color: "rgba(255,255,255,0.45)" }}
+                style={{ color: "rgba(255,255,255,0.70)" }}
               >
                 {intro}
               </p>
@@ -137,7 +137,7 @@ export function ServiceCatalog({
                       style={
                         isActive
                           ? { background: "rgba(0,0,0,0.18)", color: "#0a1f14" }
-                          : { background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.45)" }
+                          : { background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.70)" }
                       }
                     >
                       {count}
@@ -243,7 +243,7 @@ function ServiceTile({
             style={{
               background: "rgba(255,255,255,0.06)",
               border: "1px solid rgba(255,255,255,0.10)",
-              color: "rgba(255,255,255,0.40)",
+              color: "rgba(255,255,255,0.65)",
             }}
           >
             {s.tag}
@@ -267,7 +267,7 @@ function ServiceTile({
         {isFeatured ? (
           <p
             className="mt-3 text-[length:var(--text-body)] leading-relaxed max-w-[40ch]"
-            style={{ color: "rgba(255,255,255,0.42)" }}
+            style={{ color: "rgba(255,255,255,0.70)" }}
           >
             Most patients start here. Same-day consultations with a doctor
             registered in your country, follow-up notes included.
@@ -282,7 +282,7 @@ function ServiceTile({
             <div>
               <p
                 className="text-[10px] font-bold uppercase tracking-[0.14em]"
-                style={{ color: "rgba(255,255,255,0.28)" }}
+                style={{ color: "rgba(255,255,255,0.60)" }}
               >
                 From
               </p>
@@ -299,7 +299,7 @@ function ServiceTile({
             <div className="text-right">
               <p
                 className="text-[10px] font-bold uppercase tracking-[0.14em]"
-                style={{ color: "rgba(255,255,255,0.28)" }}
+                style={{ color: "rgba(255,255,255,0.60)" }}
               >
                 {s.type === "test" ? "Turnaround" : "Duration"}
               </p>

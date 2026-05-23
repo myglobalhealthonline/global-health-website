@@ -153,7 +153,7 @@ export default async function PrescriptionsPage({
             </h2>
             <p
               className="mt-3 max-w-2xl text-[length:var(--text-body-lg)] leading-relaxed"
-              style={{ color: "rgba(255,255,255,0.42)" }}
+              style={{ color: "rgba(255,255,255,0.70)" }}
             >
               {items.length}{" "}
               {items.length === 1 ? "prescription service" : "prescription services"} in{" "}
@@ -191,7 +191,7 @@ export default async function PrescriptionsPage({
                       {s.summary ? (
                         <p
                           className="mt-2 flex-1 line-clamp-3 text-sm leading-relaxed"
-                          style={{ color: "rgba(255,255,255,0.42)" }}
+                          style={{ color: "rgba(255,255,255,0.70)" }}
                         >
                           {s.summary}
                         </p>
@@ -202,7 +202,7 @@ export default async function PrescriptionsPage({
                             className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
                             style={{
                               background: "rgba(255,255,255,0.07)",
-                              color: "rgba(255,255,255,0.45)",
+                              color: "rgba(255,255,255,0.70)",
                             }}
                           >
                             {s.durationMinutes} min

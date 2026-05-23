@@ -36,7 +36,7 @@ export default function PrivacyPage() {
           </h1>
           <p
             className="mt-3 text-sm"
-            style={{ color: "rgba(255,255,255,0.40)" }}
+            style={{ color: "rgba(255,255,255,0.65)" }}
           >
             Last updated: 16 May 2026
           </p>

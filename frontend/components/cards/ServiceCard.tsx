@@ -157,7 +157,7 @@ export function ServiceCard({
           </h3>
           <p
             className="mt-2 flex-1 text-sm leading-relaxed"
-            style={{ color: "rgba(255,255,255,0.42)" }}
+            style={{ color: "rgba(255,255,255,0.65)" }}
           >
             {description}
           </p>
@@ -166,7 +166,7 @@ export function ServiceCard({
             {duration ? (
               <span
                 className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
-                style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.45)" }}
+                style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.70)" }}
               >
                 <Clock className="size-3.5" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
                 {duration}

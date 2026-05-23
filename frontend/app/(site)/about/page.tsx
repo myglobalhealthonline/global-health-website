@@ -232,7 +232,7 @@ function DarkStep({
         </h3>
         <p
           className="mt-2 max-w-[56ch] text-[length:var(--text-body)] leading-relaxed"
-          style={{ color: "rgba(255,255,255,0.42)" }}
+          style={{ color: "rgba(255,255,255,0.70)" }}
         >
           {body}
         </p>

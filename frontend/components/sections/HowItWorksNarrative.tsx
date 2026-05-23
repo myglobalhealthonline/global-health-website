@@ -81,7 +81,7 @@ export function HowItWorksNarrative() {
               fontSize: 17,
               lineHeight: 1.55,
               maxWidth: "32ch",
-              color: "rgba(255,255,255,0.40)",
+              color: "rgba(255,255,255,0.65)",
             }}
           >
             From landing on the page to a confirmed appointment, we built the
@@ -135,7 +135,7 @@ export function HowItWorksNarrative() {
                     fontSize: 17,
                     lineHeight: 1.6,
                     maxWidth: "44ch",
-                    color: "rgba(255,255,255,0.40)",
+                    color: "rgba(255,255,255,0.65)",
                   }}
                 >
                   {s.lede}

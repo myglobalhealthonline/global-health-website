@@ -110,7 +110,7 @@ export function HomeHero({
           {/* Lede — white/45, restrained */}
           <p
             className="mt-8 max-w-[44ch] text-[length:var(--text-body-lg)] leading-relaxed"
-            style={{ color: "rgba(255,255,255,0.45)" }}
+            style={{ color: "rgba(255,255,255,0.75)" }}
           >
             {displayHeroSubtitle ??
               "Locally-registered clinicians. Same-day appointments. Pay only after the call connects."}
@@ -137,8 +137,8 @@ export function HomeHero({
             <Link
               href="#services"
               className="
-                text-sm font-semibold text-white/35
-                hover:text-white/65
+                text-sm font-semibold text-white/60
+                hover:text-white/85
                 transition-colors duration-200
                 motion-reduce:transition-none
                 focus-visible:outline-none
@@ -160,7 +160,7 @@ export function HomeHero({
               <li
                 key={label}
                 className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.12em] uppercase"
-                style={{ color: "rgba(255,255,255,0.28)" }}
+                style={{ color: "rgba(255,255,255,0.58)" }}
               >
                 <Icon
                   className="size-3.5 text-[var(--color-brand-accent)]"
@@ -210,7 +210,7 @@ export function HomeHero({
                     </p>
                     <p
                       className="truncate text-[11px]"
-                      style={{ color: "rgba(255,255,255,0.38)" }}
+                      style={{ color: "rgba(255,255,255,0.62)" }}
                     >
                       {d.role}
                     </p>

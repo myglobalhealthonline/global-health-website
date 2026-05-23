@@ -159,7 +159,7 @@ export default async function ConsultPage({
                 className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
                 style={{
                   background: "rgba(255,255,255,0.07)",
-                  color: "rgba(255,255,255,0.45)",
+                  color: "rgba(255,255,255,0.70)",
                 }}
               >
                 {service.durationMinutes} min
@@ -167,7 +167,7 @@ export default async function ConsultPage({
             ) : null}
             <span
               className="text-sm"
-              style={{ color: "rgba(255,255,255,0.38)" }}
+              style={{ color: "rgba(255,255,255,0.65)" }}
             >
               in {config.name}
             </span>

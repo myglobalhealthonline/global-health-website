@@ -206,7 +206,7 @@ export function DoctorProfileTemplate({
               {hero.description ? (
                 <p
                   className="mt-4 max-w-[46ch] text-[15px] leading-relaxed"
-                  style={{ color: "rgba(255,255,255,0.48)" }}
+                  style={{ color: "rgba(255,255,255,0.72)" }}
                 >
                   {hero.description}
                 </p>

@@ -55,7 +55,7 @@ export default async function BlogPostPage({ params }: Props) {
           <Link
             href="/blog"
             className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-80"
-            style={{ color: "rgba(255,255,255,0.45)" }}
+            style={{ color: "rgba(255,255,255,0.70)" }}
           >
             <ArrowLeft className="size-4" aria-hidden />
             All articles
@@ -80,14 +80,14 @@ export default async function BlogPostPage({ params }: Props) {
 
           <p
             className="mt-4 max-w-[60ch] text-[length:var(--text-body-lg)] leading-relaxed"
-            style={{ color: "rgba(255,255,255,0.48)" }}
+            style={{ color: "rgba(255,255,255,0.72)" }}
           >
             {post.excerpt}
           </p>
 
           <div
             className="mt-6 flex flex-wrap items-center gap-5 text-sm"
-            style={{ color: "rgba(255,255,255,0.38)" }}
+            style={{ color: "rgba(255,255,255,0.62)" }}
           >
             <span className="flex items-center gap-1.5">
               <User className="size-4" aria-hidden />

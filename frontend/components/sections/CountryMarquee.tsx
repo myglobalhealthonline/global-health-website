@@ -14,8 +14,9 @@ export type MarqueeCountry = {
 };
 
 export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
-  if (!countries || countries.length === 0) return null;
-  const items = [...countries, ...countries];
+  const active = countries?.filter((c) => c.doctorCount > 0) ?? [];
+  if (active.length === 0) return null;
+  const items = [...active, ...active];
 
   return (
     <section
@@ -74,7 +75,7 @@ export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
                   className="ml-1 uppercase tracking-[0.1em]"
                   style={{
                     fontSize: "var(--text-eyebrow)",
-                    color: "rgba(255,255,255,0.28)",
+                    color: "rgba(255,255,255,0.60)",
                   }}
                 >
                   {c.doctorCount === 1 ? "doctor" : "doctors"}
