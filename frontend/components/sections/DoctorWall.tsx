@@ -1,13 +1,7 @@
 "use client";
 
-/**
- * Doctor wall — light luxury version.
- * Soft white surface, white doctor cards with elevated hover, forest accents.
- */
-
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { DoctorCard } from "@/components/cards/DoctorCard";
 import { Flag } from "@/components/ui/Flag";
 
 export type DoctorWallItem = {
@@ -125,99 +119,24 @@ export function DoctorWall({
           </div>
         ) : null}
 
-        {/* Doctor card grid */}
+        {/* Doctor card grid — matches /doctors page layout */}
         <div
-          className="grid gap-5"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}
+          className="grid gap-6"
+          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
         >
-          {shown.map((d) => {
-            const href = d.href || bookHref || "/";
-            return (
-              <Link
-                key={d.id}
-                href={href}
-                className="
-                  group block overflow-hidden
-                  rounded-[var(--radius-card)]
-                  border border-[var(--color-border)]
-                  bg-[var(--color-background-page)]
-                  transition-[transform,box-shadow,border-color] duration-300
-                  ease-[cubic-bezier(0.16,1,0.3,1)]
-                  hover:-translate-y-0.5
-                  hover:shadow-[var(--shadow-card-hover)]
-                  hover:border-[var(--color-border-strong)]
-                  motion-reduce:transition-none motion-reduce:hover:translate-y-0
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/30
-                "
-                style={{ textDecoration: "none" }}
-              >
-                {/* Portrait */}
-                <div className="relative aspect-[3/4] w-full overflow-hidden bg-[var(--color-background-panel)]">
-                  {d.imageSrc ? (
-                    <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={d.imageSrc}
-                        alt={d.name}
-                        className="h-full w-full object-cover object-top"
-                      />
-                      <div
-                        aria-hidden
-                        className="pointer-events-none absolute inset-0"
-                        style={{
-                          background:
-                            "linear-gradient(180deg, transparent 55%, rgba(15,46,37,0.65) 100%)",
-                        }}
-                      />
-                    </>
-                  ) : (
-                    <div
-                      className="flex h-full w-full items-center justify-center font-bold tracking-tight text-white bg-[var(--color-brand-primary)]"
-                      style={{ fontSize: "clamp(48px,8vw,80px)" }}
-                    >
-                      {d.initials}
-                    </div>
-                  )}
-
-                  {/* Country flag chip */}
-                  <span className="absolute left-4 bottom-4 inline-flex items-center gap-2 rounded-full bg-black/35 px-2.5 py-1 backdrop-blur-sm">
-                    <Flag code={d.country} size="sm" />
-                    <span className="text-[11px] font-semibold uppercase tracking-wide text-white">
-                      {d.country.toUpperCase()}
-                    </span>
-                  </span>
-                </div>
-
-                {/* Card caption */}
-                <div className="p-5">
-                  <p className="text-base font-semibold leading-tight text-[var(--color-text-primary)]">
-                    {d.name}
-                  </p>
-                  <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                    {d.role}
-                  </p>
-                  {d.langs ? (
-                    <p className="mt-2 text-[11px] uppercase tracking-[0.1em] text-[var(--color-text-muted)]">
-                      {d.langs}
-                    </p>
-                  ) : null}
-
-                  <span
-                    className="
-                      mt-4 inline-flex items-center gap-1.5
-                      text-[var(--color-brand-primary)] text-sm font-semibold
-                      transition-transform duration-200
-                      group-hover:translate-x-0.5
-                      motion-reduce:group-hover:translate-x-0
-                    "
-                  >
-                    View profile
-                    <ArrowRight className="size-3.5" strokeWidth={1.5} aria-hidden />
-                  </span>
-                </div>
-              </Link>
-            );
-          })}
+          {shown.map((d) => (
+            <DoctorCard
+              key={d.id}
+              name={d.name}
+              title={d.role}
+              imcRegistration={d.imcRegistration}
+              languages={d.langs ? d.langs.split(" · ") : []}
+              bio=""
+              imageSrc={d.imageSrc}
+              href={d.href || bookHref}
+              ctaLabel="View profile"
+            />
+          ))}
         </div>
       </div>
     </section>
