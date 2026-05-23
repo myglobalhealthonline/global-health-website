@@ -120,6 +120,13 @@ const PATCHES: { name: string; sql: string }[] = [
         ON "ServiceDoctor"("serviceId", "isActive", "sortOrder");
     `,
   },
+  {
+    name: "Order.meetingUrl",
+    sql: `
+      ALTER TABLE "Order"
+        ADD COLUMN IF NOT EXISTS "meetingUrl" TEXT;
+    `,
+  },
 ];
 
 export async function ensureSchema(log: {

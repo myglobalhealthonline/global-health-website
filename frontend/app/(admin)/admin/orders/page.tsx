@@ -21,7 +21,7 @@ export default async function AdminOrdersPage() {
           </span>
         }
         title="Orders"
-        description="Multi-item product orders. Consultation bookings stay on the Appointments queue. Select rows to fulfill or cancel in bulk."
+        description="Multi-item product orders. Generate Google Meet links for consultation orders from the Meet link column or order detail."
       />
 
       <AdminCard padding={0}>

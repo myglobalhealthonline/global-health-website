@@ -17,6 +17,8 @@ import {
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 
+import { OrderMeetLinkActions } from "./order-meet-link-actions";
+
 export type AdminOrderRow = {
   id: string;
   status: string;
@@ -27,6 +29,8 @@ export type AdminOrderRow = {
   currencyCode: string;
   totalCents: number;
   itemCount: number;
+  meetingUrl: string | null;
+  hasConsultation: boolean;
   paidAt: string | null;
   createdAt: string;
 };
@@ -155,6 +159,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
             <Th>Items</Th>
             <Th align="right">Total</Th>
             <Th>Status</Th>
+            <Th>Meet link</Th>
             <Th>Created</Th>
             <Th align="right" style={{ width: 80 }}>
               {" "}
@@ -205,6 +210,14 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                   </Td>
                   <Td>
                     <Pill tone={statusTone(o.status)}>{o.status.toLowerCase()}</Pill>
+                  </Td>
+                  <Td>
+                    <OrderMeetLinkActions
+                      orderId={o.id}
+                      meetingUrl={o.meetingUrl ?? null}
+                      hasConsultation={o.hasConsultation ?? false}
+                      variant="cell"
+                    />
                   </Td>
                   <Td>{formatAppDate(o.createdAt)}</Td>
                   <Td align="right">

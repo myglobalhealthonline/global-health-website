@@ -13,6 +13,7 @@ import {
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { AdminOrderActions } from "./_components/order-actions";
+import { OrderMeetLinkPanel } from "./_components/order-meet-link";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,7 @@ type AdminOrder = {
   shipPostalCode: string | null;
   shipCountryCode: string | null;
   appointmentIds: string[];
+  meetingUrl: string | null;
   items: {
     id: string;
     kind: string;
@@ -93,6 +95,10 @@ export default async function AdminOrderDetailPage({ params }: Props) {
     order.status === "FULFILLED" ||
     order.status === "CANCELLED" ||
     order.status === "REFUNDED";
+
+  const hasConsultation = order.items.some(
+    (i) => i.kind === "GENERAL_CONSULTATION" || i.kind === "SPECIALIST_CONSULTATION",
+  );
 
   return (
     <>
@@ -192,6 +198,17 @@ export default async function AdminOrderDetailPage({ params }: Props) {
         </div>
 
         <aside className="grid gap-4 self-start">
+          {hasConsultation ? (
+            <AdminCard padding={0}>
+              <SectionHeader title="Google Meet" />
+              <OrderMeetLinkPanel
+                orderId={order.id}
+                meetingUrl={order.meetingUrl}
+                hasConsultation={hasConsultation}
+              />
+            </AdminCard>
+          ) : null}
+
           <AdminCard padding={0}>
             <SectionHeader title="Shipping" />
             <div className="p-5 text-sm">
