@@ -547,13 +547,7 @@ export async function updateAdminDoctor(
   });
   if (!existing) return null;
 
-  if (body.countryId !== undefined && body.countryId !== existing.countryId) {
-    throw new DoctorSpecialtyInvalidError(
-      "Country cannot be changed on an existing profile — create a new doctor profile in the target country and deactivate this one if needed",
-    );
-  }
-
-  const nextCountryId = existing.countryId;
+  const nextCountryId = body.countryId ?? existing.countryId;
 
   const nextSpecialtyIds = body.specialtyIds;
   if (nextSpecialtyIds !== undefined) {
