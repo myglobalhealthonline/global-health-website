@@ -64,37 +64,29 @@ export function DoctorWall({
         style={{ maxWidth: "var(--container-width)" }}
       >
         {/* Section header */}
-        <div className="grid items-end gap-8 lg:grid-cols-[1.5fr_auto] mb-12 md:mb-16">
-          <div>
+        <div className="mb-12 md:mb-16">
+          <div className="flex flex-wrap items-baseline justify-between gap-4">
             <span className="gh-eyebrow text-[var(--color-brand-primary)]">
               The team
             </span>
-            <h2
-              className="mt-3 max-w-[18ch] font-extrabold tracking-[-0.03em] leading-[1.02] text-[var(--color-text-primary)]"
-              style={{ fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)" }}
+            <span
+              className="text-[11px] font-bold uppercase tracking-[0.14em] [font-variant-numeric:tabular-nums]"
+              style={{ color: "var(--color-text-muted)" }}
             >
-              Doctors who actually{" "}
-              <span className="text-[var(--color-brand-primary)]">pick up.</span>
-            </h2>
-            <p className="mt-5 max-w-[48ch] text-[length:var(--text-body-lg)] text-[var(--color-text-body)] leading-relaxed">
-              Every consultation is with someone licensed where you are. No
-              call centres, no rota of strangers — the doctor on screen is
-              the doctor on the profile.
-            </p>
+              {shown.length} registered {shown.length === 1 ? "clinician" : "clinicians"}
+            </span>
           </div>
-
-          {/* Doctor count */}
-          <div className="text-right">
-            <p
-              className="font-extrabold leading-none tracking-[-0.04em] text-[var(--color-brand-primary)] [font-variant-numeric:tabular-nums]"
-              style={{ fontSize: "var(--text-display)" }}
-            >
-              {shown.length}
-            </p>
-            <p className="mt-2 gh-eyebrow text-[var(--color-text-muted)]">
-              Registered clinicians
-            </p>
-          </div>
+          <h2
+            className="mt-3 max-w-[22ch] text-[length:var(--text-h1)] font-extrabold tracking-[-0.03em] leading-[1.02] text-[var(--color-text-primary)]"
+          >
+            Doctors who actually{" "}
+            <span className="text-[var(--color-brand-primary)]">pick up.</span>
+          </h2>
+          <p className="mt-5 max-w-[52ch] text-[length:var(--text-body-lg)] text-[var(--color-text-body)] leading-relaxed">
+            Every consultation is with someone licensed where you are. No
+            call centres, no rota of strangers — the doctor on screen is
+            the doctor on the profile.
+          </p>
         </div>
 
         {/* Filter chips */}
