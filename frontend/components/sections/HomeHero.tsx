@@ -85,14 +85,13 @@ export function HomeHero({
             </span>
           </div>
 
-          {/* Headline — the design IS the type */}
+          {/* Headline — display scale capped at token max (6rem) */}
           <h1
             id="hero-title"
-            className="font-extrabold text-white max-w-[14ch]"
+            className="font-extrabold text-white max-w-[14ch] text-[length:var(--text-display)]"
             style={{
-              fontSize: "clamp(3.25rem, 7.5vw + 0.5rem, 7.5rem)",
-              lineHeight: 0.91,
-              letterSpacing: "-0.045em",
+              lineHeight: 0.95,
+              letterSpacing: "-0.04em",
             }}
           >
             {displayHeroTitle ? (
