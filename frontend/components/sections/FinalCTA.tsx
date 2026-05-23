@@ -41,7 +41,7 @@ export function FinalCTA({
           gh-section
         "
       >
-        <div className="grid items-end gap-12 lg:grid-cols-[auto_1fr] lg:gap-16">
+        <div className="grid items-center gap-12 lg:grid-cols-[auto_1fr] lg:gap-16">
           {/* Lime numeric callout */}
           <div>
             <p
