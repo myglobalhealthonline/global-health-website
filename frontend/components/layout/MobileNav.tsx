@@ -25,7 +25,7 @@ import { usePathname } from "next/navigation";
 import type { SiteNavigationData } from "@/data/navigation";
 import type { AuthUser } from "@/lib/api/auth-api";
 import { DEFAULT_BRAND_LOGO } from "@/lib/content/brand-logo";
-import { countries, getCountryByCode } from "@/data/countries";
+import type { CountryConfig } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
@@ -44,21 +44,21 @@ export function MobileNav({
   brandLogo = DEFAULT_BRAND_LOGO,
   authUser,
   countryFeatures,
+  countries,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
   authUser?: AuthUser | null;
-  /** Per-country feature toggles, keyed by lowercased country code.
-   *  Hides nav drawer entries the admin has disabled. */
   countryFeatures?: Record<string, string[] | undefined>;
+  countries: CountryConfig[];
 }) {
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
   const activeCountryCode = parsed.country
     ? countryCodeFromSlug(parsed.country)
     : null;
-  const activeCountry = activeCountryCode ? getCountryByCode(activeCountryCode) : null;
+  const activeCountry = activeCountryCode ? (countries.find((c) => c.code === activeCountryCode) ?? null) : null;
   const activeLang = parsed.lang ?? activeCountry?.defaultLocale ?? null;
 
   const portalHref = authUser?.role === "ADMIN" ? "/admin" : "/account";

@@ -133,11 +133,14 @@ export const getPublicCountriesMerged = cache(async (): Promise<CountryConfig[]>
   }
 
   const seedCodes = new Set(fallbackCountries.map((c) => c.code));
-  const merged: CountryConfig[] = fallbackCountries.map((seed) => {
+  // Only include seed countries that the backend reports as active.
+  // Seed countries absent from byCode are inactive in the admin — omit them.
+  const merged: CountryConfig[] = [];
+  for (const seed of fallbackCountries) {
     const overlay = byCode.get(seed.code);
-    if (!overlay) return seed;
-    return mergeCountryConfigWithBackend(seed, overlay);
-  });
+    if (!overlay) continue;
+    merged.push(mergeCountryConfigWithBackend(seed, overlay));
+  }
 
   for (const [code, overlay] of byCode.entries()) {
     if (seedCodes.has(code)) continue;

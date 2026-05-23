@@ -72,6 +72,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         authUser={authUser}
         countryFeatures={countryFeatures}
         initialLastCountry={initialLastCountry}
+        countries={countriesMerged}
       >
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
         {children}

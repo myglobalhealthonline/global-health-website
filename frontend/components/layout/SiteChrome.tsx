@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import type { SiteNavigationData } from "@/data/navigation";
 import type { AuthUser } from "@/lib/api/auth-api";
+import type { CountryConfig } from "@/data/countries";
 
 type Props = {
   children: ReactNode;
@@ -14,14 +15,9 @@ type Props = {
   brandLogo?: { src: string; alt: string };
   footerDecorImage?: { src: string; alt: string };
   authUser?: AuthUser | null;
-  /** Per-country feature toggles, keyed by lowercased country code.
-   *  Forwarded to SiteHeader/MobileNav so they can hide nav items for
-   *  features the admin has disabled in /admin/country-features. */
   countryFeatures?: Record<string, string[] | undefined>;
-  /** Server-resolved gh-last-country cookie. Lets SiteHeader render
-   *  the remembered country on first paint instead of flashing the
-   *  global IA before useLastCountry() resolves client-side. */
   initialLastCountry?: { slug: string; lang: string } | null;
+  countries: CountryConfig[];
 };
 
 export function SiteChrome({
@@ -32,6 +28,7 @@ export function SiteChrome({
   authUser,
   countryFeatures,
   initialLastCountry,
+  countries,
 }: Props) {
   const pathname = usePathname();
   const isGatewayHome = pathname === "/";
@@ -46,6 +43,7 @@ export function SiteChrome({
           authUser={authUser}
           countryFeatures={countryFeatures}
           initialLastCountry={initialLastCountry}
+          countries={countries}
         />
       )}
       <main id="main-content" className="grow">

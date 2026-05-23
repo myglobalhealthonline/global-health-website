@@ -15,7 +15,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown, Check } from "lucide-react";
-import { countries, type CountryCode } from "@/data/countries";
+import { type CountryCode, type CountryConfig } from "@/data/countries";
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 import { swapCountryInPath } from "@/lib/routing/path-rewrites";
 import { useCart } from "@/components/cart/CartContext";
@@ -23,8 +23,10 @@ import { Flag } from "@/components/ui/Flag";
 
 export function CountrySwitcher({
   activeCountryCode,
+  countries,
 }: {
   activeCountryCode: CountryCode | null;
+  countries: CountryConfig[];
 }) {
   const pathname = usePathname();
   const router = useRouter();

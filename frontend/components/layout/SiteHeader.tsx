@@ -23,7 +23,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { SiteNavigationData } from "@/data/navigation";
 import type { AuthUser } from "@/lib/api/auth-api";
-import { countries, getCountryByCode, type CountryCode } from "@/data/countries";
+import { type CountryCode, type CountryConfig } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
@@ -116,14 +116,9 @@ export function SiteHeader({
   navigation,
   brandLogo,
   authUser,
-  /** Per-country feature toggles passed from the server layout. Keyed
-   *  by lowercased country code. Used to hide nav tabs for features
-   *  the admin has disabled in /admin/country-features. */
   countryFeatures,
-  /** Server-resolved gh-last-country cookie value. Seeds
-   *  useLastCountry() so the header renders the remembered country
-   *  on first paint instead of flashing the global IA. */
   initialLastCountry,
+  countries,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
@@ -131,6 +126,7 @@ export function SiteHeader({
   authUser?: AuthUser | null;
   countryFeatures?: Record<string, string[] | undefined>;
   initialLastCountry?: { slug: string; lang: string } | null;
+  countries: CountryConfig[];
 }) {
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
@@ -149,7 +145,7 @@ export function SiteHeader({
     urlCountryCode ?? lastCountry?.code ?? null;
 
   const activeCountry = activeCountryCode
-    ? getCountryByCode(activeCountryCode) ?? null
+    ? (countries.find((c) => c.code === activeCountryCode) ?? null)
     : null;
 
   // Lang: URL > cookie > active country's default > "en".
@@ -230,7 +226,7 @@ export function SiteHeader({
           style={{ justifySelf: "end" }}
         >
           <div className="hidden md:flex md:items-center md:gap-2">
-            <CountrySwitcher activeCountryCode={activeCountryCode} />
+            <CountrySwitcher activeCountryCode={activeCountryCode} countries={countries} />
             {activeCountry ? (
               <LanguageSwitcher
                 currentLang={activeLang}
@@ -278,6 +274,7 @@ export function SiteHeader({
               brandLogo={brandLogo}
               authUser={authUser}
               countryFeatures={countryFeatures}
+              countries={countries}
             />
           </div>
         </div>
@@ -286,6 +283,3 @@ export function SiteHeader({
   );
 }
 
-// `countries` is intentionally imported to keep the country list type-checked
-// against `data/countries.ts` even though the switcher reads it directly.
-void countries;
