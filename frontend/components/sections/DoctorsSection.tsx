@@ -15,6 +15,7 @@ type DoctorItem = {
   bio: string;
   imageSrc?: string | null;
   href?: string;
+  bookingHref?: string;
   ctaLabel?: string;
 };
 

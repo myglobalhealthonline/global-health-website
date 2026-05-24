@@ -21,9 +21,9 @@ import {
 } from "@/lib/content/get-public-page";
 import { getCountryServices } from "@/lib/content/get-country-collections";
 import { RichBodySection } from "@/components/sections/RichBodySection";
+import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
-import { CartServiceCard } from "@/components/cards/CartServiceCard";
 
 type Params = { country: string; lang: string };
 
@@ -59,9 +59,14 @@ export async function generateMetadata({
   };
 }
 
-function formatPrice(cents: number | null, currency: string | null) {
-  if (cents == null) return null;
+function formatPrice(cents: number | null, currency: string | null): string | undefined {
+  if (cents == null) return undefined;
   return formatPriceRounded(cents, currency);
+}
+
+function formatDuration(minutes: number | null): string | undefined {
+  if (minutes == null) return undefined;
+  return `${minutes} min`;
 }
 
 export default async function PrescriptionsPage({
@@ -80,15 +85,21 @@ export default async function PrescriptionsPage({
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "online-prescriptions")) notFound();
 
-  const [items, page] = await Promise.all([
+  const [services, page] = await Promise.all([
     getCountryServices(code, "PRESCRIPTION"),
     getPublicPage(code, "PRESCRIPTIONS", lang as PublicLocale),
   ]);
-  // Cart-first booking: hero CTA jumps to the prescription cards
-  // below; final CTA falls back to the doctors index for visitors who
-  // want a consultation instead.
   const bookHref = "#prescriptions";
   const fallbackHref = `/${slug}/${lang}/doctors`;
+
+  const serviceItems = services.map((s) => ({
+    title: s.name,
+    description: s.summary ?? "",
+    href: `/${slug}/${lang}/consult/${encodeURIComponent(s.slug)}`,
+    duration: formatDuration(s.durationMinutes),
+    startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
+    imageSrc: s.imageSrc ?? null,
+  }));
   const heroTitle = page?.heroTitle ?? "Online prescriptions";
   const heroSubtitle =
     page?.heroSubtitle ??
@@ -124,61 +135,16 @@ export default async function PrescriptionsPage({
 
       <TrustRibbon />
 
-      {items.length > 0 ? (
-        <section
-          id="prescriptions"
-          className="scroll-mt-24"
-          style={{
-            background: "var(--color-background-dark)",
-            padding: "clamp(64px,8vw,120px) 0",
-            borderTop: "1px solid rgba(255,255,255,0.07)",
-          }}
-        >
-          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-            <p
-              className="text-[11px] font-bold uppercase tracking-[0.2em]"
-              style={{ color: "var(--color-brand-accent)" }}
-            >
-              What you can book
-            </p>
-            <h2
-              className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.02]"
-              style={{
-                fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
-                color: "rgba(255,255,255,0.92)",
-              }}
-            >
-              Prescription services available
-            </h2>
-            <p
-              className="mt-3 max-w-2xl text-[length:var(--text-body-lg)] leading-relaxed"
-              style={{ color: "rgba(255,255,255,0.70)" }}
-            >
-              {items.length}{" "}
-              {items.length === 1 ? "prescription service" : "prescription services"} in{" "}
-              {config.name}. Cards update as the team adds or retires services.
-            </p>
-            <div className="mt-12 gh-card-grid">
-              {items.map((s) => {
-                const priceLabel = formatPrice(s.basePriceCents, s.currencyCode);
-                return (
-                  <CartServiceCard
-                    key={s.id}
-                    kind="PRESCRIPTION_SERVICE"
-                    serviceId={s.id}
-                    title={s.name}
-                    description={s.summary}
-                    imageSrc={s.imageSrc}
-                    duration={s.durationMinutes != null ? `${s.durationMinutes} min` : null}
-                    startingPrice={priceLabel}
-                    ctaLabel={priceLabel ? `Add to cart · ${priceLabel}` : "Add to cart"}
-                    iconVariant="stethoscope"
-                  />
-                );
-              })}
-            </div>
-          </div>
-        </section>
+      {serviceItems.length > 0 ? (
+        <div id="prescriptions" className="scroll-mt-24">
+          <ServicesGrid
+            eyebrow="What you can book"
+            title="Prescription services available"
+            intro={`${serviceItems.length} ${serviceItems.length === 1 ? "prescription service" : "prescription services"} in ${config.name}. Cards update as the team adds or retires services.`}
+            items={serviceItems}
+            variant="dark"
+          />
+        </div>
       ) : (
         <section
           style={{

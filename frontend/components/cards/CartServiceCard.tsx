@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import { Clock, Tag, Stethoscope, FlaskConical } from "lucide-react";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import type { CartItemKind } from "@/lib/api/cart-types";
@@ -166,6 +167,12 @@ export function CartServiceCard({
                   healthTestId={healthTestId}
                   serviceId={serviceId}
                   label={buttonLabel}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    background: "rgba(255,255,255,0.10)",
+                    border: "1px solid rgba(255,255,255,0.18)",
+                    color: "rgba(255,255,255,0.90)",
+                  } as React.CSSProperties}
                 />
               )}
             </div>
@@ -251,6 +258,12 @@ export function CartServiceCard({
               healthTestId={healthTestId}
               serviceId={serviceId}
               label={buttonLabel}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                background: "rgba(255,255,255,0.10)",
+                border: "1px solid rgba(255,255,255,0.18)",
+                color: "rgba(255,255,255,0.90)",
+              } as React.CSSProperties}
             />
           )}
         </div>
