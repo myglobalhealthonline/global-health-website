@@ -19,6 +19,7 @@ type Doctor = {
   bio: string;
   imageSrc?: string | null;
   href?: string;
+  bookingHref?: string;
   ctaLabel?: string;
 };
 
@@ -143,6 +144,7 @@ export function DoctorTeamTemplate({
                       bio={d.bio}
                       imageSrc={d.imageSrc}
                       href={d.href}
+                      bookingHref={d.bookingHref ?? bookingHref}
                       ctaLabel={d.ctaLabel ?? "View profile"}
                     />
                   </li>
