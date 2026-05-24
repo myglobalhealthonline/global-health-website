@@ -1,6 +1,8 @@
 /**
- * Vertical narrative "How it works" — dark luxury version.
- * Forest night bg, lime step numbers, white titles, muted lede.
+ * Vertical narrative "How it works" — light soft version.
+ * Warm off-white surface, forest-primary step numbers, ink titles.
+ * Sits between DoctorWall and FinalCTA; acts as a calm editorial
+ * breath before the dark closing CTA.
  */
 
 const STEPS = [
@@ -28,15 +30,15 @@ export function HowItWorksNarrative() {
   return (
     <section
       style={{
-        padding: "120px 0",
-        background: "var(--color-background-dark)",
-        borderTop: "1px solid rgba(255,255,255,0.07)",
+        padding: "clamp(64px,8vw,120px) 0",
+        background: "var(--color-background-soft)",
+        borderTop: "1px solid var(--color-border)",
       }}
     >
       <div
         className="gh-how-grid mx-auto grid gap-16"
         style={{
-          maxWidth: 1320,
+          maxWidth: "var(--container-width)",
           padding: "0 clamp(20px, 4vw, 40px)",
         }}
       >
@@ -55,7 +57,7 @@ export function HowItWorksNarrative() {
               fontSize: 11,
               fontWeight: 700,
               letterSpacing: "0.2em",
-              color: "var(--color-brand-accent)",
+              color: "var(--color-brand-primary)",
             }}
           >
             How it works
@@ -63,12 +65,12 @@ export function HowItWorksNarrative() {
           <h2
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "clamp(40px, 5vw, 64px)",
+              fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
               fontWeight: 800,
               letterSpacing: "-0.025em",
-              lineHeight: 1.0,
+              lineHeight: 1.05,
               margin: "16px 0 24px",
-              color: "rgba(255,255,255,0.92)",
+              color: "var(--color-text-primary)",
             }}
           >
             Three steps.
@@ -78,10 +80,10 @@ export function HowItWorksNarrative() {
           <p
             className="m-0"
             style={{
-              fontSize: 17,
-              lineHeight: 1.55,
+              fontSize: "var(--text-body-lg)",
+              lineHeight: 1.6,
               maxWidth: "32ch",
-              color: "rgba(255,255,255,0.65)",
+              color: "var(--color-text-body)",
             }}
           >
             From landing on the page to a confirmed appointment, we built the
@@ -98,7 +100,7 @@ export function HowItWorksNarrative() {
               style={{
                 gridTemplateColumns: "auto 1fr",
                 borderTop:
-                  i === 0 ? "none" : "1px solid rgba(255,255,255,0.07)",
+                  i === 0 ? "none" : "1px solid var(--color-border)",
                 paddingTop: i === 0 ? 0 : 48,
               }}
             >
@@ -107,10 +109,10 @@ export function HowItWorksNarrative() {
                   fontFamily: "var(--font-display)",
                   fontSize: 64,
                   fontWeight: 800,
-                  color: "var(--color-brand-accent)",
+                  color: "var(--color-brand-primary)",
                   letterSpacing: "-0.03em",
                   lineHeight: 0.9,
-                  opacity: 0.75,
+                  opacity: 0.35,
                 }}
               >
                 {s.n}
@@ -119,12 +121,12 @@ export function HowItWorksNarrative() {
                 <h3
                   style={{
                     fontFamily: "var(--font-display)",
-                    fontSize: 28,
+                    fontSize: "clamp(1.25rem, 2vw + 0.3rem, 1.75rem)",
                     fontWeight: 800,
                     letterSpacing: "-0.015em",
                     lineHeight: 1.15,
                     margin: "0 0 10px",
-                    color: "rgba(255,255,255,0.88)",
+                    color: "var(--color-text-primary)",
                   }}
                 >
                   {s.title}
@@ -132,10 +134,10 @@ export function HowItWorksNarrative() {
                 <p
                   className="m-0"
                   style={{
-                    fontSize: 17,
+                    fontSize: "var(--text-body-lg)",
                     lineHeight: 1.6,
                     maxWidth: "44ch",
-                    color: "rgba(255,255,255,0.65)",
+                    color: "var(--color-text-body)",
                   }}
                 >
                   {s.lede}

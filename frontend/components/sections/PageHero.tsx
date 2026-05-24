@@ -105,7 +105,7 @@ export function PageHero({
               className="
                 mt-7 max-w-[18ch]
                 font-semibold tracking-[-0.035em] leading-[0.96]
-                text-[clamp(2.75rem,6.5vw+0.5rem,7rem)]
+                text-[clamp(2.75rem, 6.5vw + 0.5rem, 7rem)]
               "
             >
               {titleLead}{" "}

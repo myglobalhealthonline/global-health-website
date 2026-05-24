@@ -15,6 +15,7 @@ type Props = {
   /** Optional CTA override, e.g. "Add to cart · €50". */
   label?: string;
   className?: string;
+  style?: React.CSSProperties;
 };
 
 export function AddToCartButton({
@@ -23,6 +24,7 @@ export function AddToCartButton({
   serviceId,
   label,
   className,
+  style,
 }: Props) {
   const router = useRouter();
   const { add, cart } = useCart();
@@ -60,6 +62,7 @@ export function AddToCartButton({
           className ??
           "gh-btn gh-btn-accent w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
         }
+        style={style}
       >
         {pending ? (
           <Loader2 className="size-4 animate-spin" aria-hidden />

@@ -321,10 +321,11 @@ img {
 @media (min-width: 1024px) {
   .gh-card-grid { grid-template-columns: repeat(3, 1fr); }
 }
+/* Featured-first: wide card spans 2 columns, same row height as siblings.
+ * Horizontal layout inside the tile makes up for not spanning 2 rows. */
 @media (min-width: 1024px) {
   .gh-card-grid--featured > :first-child {
     grid-column: span 2;
-    grid-row: span 2;
   }
 }
 

@@ -23,7 +23,7 @@ import { getCountryHealthTests } from "@/lib/content/get-country-collections";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
-import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { CartServiceCard } from "@/components/cards/CartServiceCard";
 
 type Params = { country: string; lang: string };
 
@@ -137,7 +137,7 @@ export default async function HealthTestsPage({
             <h2
               className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.02]"
               style={{
-                fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)",
+                fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
                 color: "rgba(255,255,255,0.92)",
               }}
             >
@@ -146,106 +146,24 @@ export default async function HealthTestsPage({
             <div className="mt-12 gh-card-grid">
               {items.map((t) => {
                 const soldOut = t.stock !== null && t.stock <= 0;
-                const lowStock = !soldOut && t.stock !== null && t.stock <= 5;
-                const ctaLabel = soldOut
-                  ? "Sold out"
-                  : lowStock
-                    ? `Add to cart · Only ${t.stock} left`
-                    : `Add to cart · ${formatPrice(t.priceCents, t.currencyCode)}`;
+                const lowStock = !soldOut && t.stock !== null && t.stock <= 5 ? t.stock : null;
+                const priceLabel = formatPrice(t.priceCents, t.currencyCode);
                 return (
-                  <article
+                  <CartServiceCard
                     key={t.id}
-                    className="flex h-full flex-col overflow-hidden rounded-[var(--radius-card)]"
-                    style={{
-                      background: "rgba(255,255,255,0.04)",
-                      border: "1px solid rgba(255,255,255,0.09)",
-                    }}
-                  >
-                    {t.imageSrc ? (
-                      <div
-                        className="aspect-[16/10] w-full overflow-hidden"
-                        style={{ background: "rgba(255,255,255,0.06)" }}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={t.imageSrc}
-                          alt={t.title}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    ) : null}
-                    <div className="flex h-full flex-col p-6 sm:p-7">
-                      <h3
-                        className="text-lg font-bold tracking-[-0.01em]"
-                        style={{ color: "rgba(255,255,255,0.88)" }}
-                      >
-                        {t.title}
-                      </h3>
-                      {t.shortDescription ? (
-                        <p
-                          className="mt-2 flex-1 line-clamp-3 text-sm leading-relaxed"
-                          style={{ color: "rgba(255,255,255,0.70)" }}
-                        >
-                          {t.shortDescription}
-                        </p>
-                      ) : null}
-                      <div className="mt-4 flex flex-wrap items-center gap-3">
-                        {t.sampleType ? (
-                          <span
-                            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
-                            style={{
-                              background: "rgba(255,255,255,0.07)",
-                              color: "rgba(255,255,255,0.70)",
-                            }}
-                          >
-                            Sample: {t.sampleType}
-                          </span>
-                        ) : null}
-                        {t.resultsTimeline ? (
-                          <span
-                            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
-                            style={{
-                              background: "rgba(255,255,255,0.07)",
-                              color: "rgba(255,255,255,0.70)",
-                            }}
-                          >
-                            Results: {t.resultsTimeline}
-                          </span>
-                        ) : null}
-                        <span
-                          className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
-                          style={{
-                            background: "rgba(176,241,34,0.12)",
-                            color: "var(--color-brand-accent)",
-                          }}
-                        >
-                          {formatPrice(t.priceCents, t.currencyCode)}
-                        </span>
-                      </div>
-                      <div className="mt-auto pt-5">
-                        {soldOut ? (
-                          <button
-                            type="button"
-                            disabled
-                            aria-label={`${t.title} — sold out`}
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold cursor-not-allowed"
-                            style={{
-                              background: "rgba(255,255,255,0.06)",
-                              color: "rgba(255,255,255,0.25)",
-                            }}
-                          >
-                            Sold out
-                          </button>
-                        ) : (
-                          <AddToCartButton
-                            kind="HEALTH_TEST"
-                            healthTestId={t.id}
-                            label={ctaLabel}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </article>
+                    kind="HEALTH_TEST"
+                    healthTestId={t.id}
+                    title={t.title}
+                    description={t.shortDescription}
+                    imageSrc={t.imageSrc}
+                    sampleType={t.sampleType}
+                    resultsTimeline={t.resultsTimeline}
+                    startingPrice={priceLabel}
+                    ctaLabel={`Add to cart · ${priceLabel}`}
+                    soldOut={soldOut}
+                    lowStock={lowStock}
+                    iconVariant="flask"
+                  />
                 );
               })}
             </div>

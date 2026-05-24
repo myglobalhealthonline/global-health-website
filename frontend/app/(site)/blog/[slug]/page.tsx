@@ -136,7 +136,7 @@ export default async function BlogPostPage({ params }: Props) {
               <h2
                 className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
                 style={{
-                  fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)",
+                  fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
                   color: "rgba(255,255,255,0.92)",
                 }}
               >

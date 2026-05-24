@@ -132,6 +132,8 @@ export default async function CountryLangGeneralConsultationPage({
     country: config.name,
     imageSrc: d.imageSrc ?? null,
     href: `/${slug}/${lang}/doctors/${d.slug}`,
+    bookingHref: `/${slug}/${lang}/general-consultation#services`,
+    whatsappNumber: d.whatsappNumber,
     ctaLabel: "View profile",
   }));
 

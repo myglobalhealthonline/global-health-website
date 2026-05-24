@@ -144,6 +144,8 @@ export default async function CountryLangSpecialistConsultationPage({
       country: config.name,
       imageSrc: d.imageSrc ?? null,
       href: `/${slug}/${lang}/doctors/${d.slug}`,
+      bookingHref: `/${slug}/${lang}/specialist-consultation#services`,
+      whatsappNumber: d.whatsappNumber,
       ctaLabel: "View profile",
     }));
 
@@ -200,11 +202,6 @@ export default async function CountryLangSpecialistConsultationPage({
       <ReviewBadge countryName={config.name} />
 
       <TrustRibbon />
-
-      {/* Specialty cards — auto from Specialty rows for this country */}
-      {specialtyItems.length > 0 ? (
-        <SpecialtiesGrid title={`Specialties in ${config.name}`} items={specialtyItems} />
-      ) : null}
 
       {/* Specialist service cards — auto from Service rows kind=SPECIALIST */}
       {serviceItems.length > 0 ? (
