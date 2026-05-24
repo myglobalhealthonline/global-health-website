@@ -41,7 +41,7 @@ export default function AboutPage() {
           </p>
           <h2
             className="mt-3 max-w-[20ch] font-extrabold tracking-[-0.03em] leading-[1.02] text-[var(--color-text-primary)]"
-            style={{ fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)" }}
+            style={{ fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)" }}
           >
             Healthcare should feel less like{" "}
             <span className="text-[var(--color-brand-primary)]">admin</span>.
@@ -90,7 +90,7 @@ export default function AboutPage() {
               </p>
               <h2
                 className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02] text-white"
-                style={{ fontSize: "clamp(1.75rem,3vw+0.5rem,2.75rem)" }}
+                style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.75rem)" }}
               >
                 The pieces that make it{" "}
                 <span style={{ color: "var(--color-brand-accent)" }}>work</span>.
@@ -132,7 +132,7 @@ export default function AboutPage() {
               </p>
               <h2
                 className="mt-3 max-w-[16ch] font-extrabold tracking-[-0.025em] leading-[1.05] text-[var(--color-text-primary)]"
-                style={{ fontSize: "clamp(1.75rem,3vw+0.5rem,2.75rem)" }}
+                style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.75rem)" }}
               >
                 Five European markets and counting.
               </h2>

@@ -25,8 +25,8 @@ async function getAccessToken(): Promise<string> {
     error_description?: string;
     error?: string;
   };
-  if (!data.access_token) {
-    throw new Error(`OAuth Failed: ${data.error_description || data.error || "unknown"}`);
+  if (!response.ok || !data.access_token) {
+    throw new Error(`OAuth Failed: ${data.error_description || data.error || `HTTP ${response.status}`}`);
   }
   return data.access_token;
 }
@@ -46,11 +46,16 @@ async function createOpenSpace(token: string): Promise<{ meetingUri: string }> {
     }),
   });
 
-  const data = (await response.json()) as { meetingUri?: string };
-  if (!data.meetingUri) {
-    throw new Error(`Meet API Error: ${JSON.stringify(data)}`);
+  const data = (await response.json()) as {
+    meetingUri?: string;
+    error?: { message?: string };
+  };
+  if (!response.ok || !data.meetingUri) {
+    throw new Error(
+      `Meet API Error: ${data.error?.message ?? `HTTP ${response.status}`}`,
+    );
   }
-  return data as { meetingUri: string };
+  return { meetingUri: data.meetingUri };
 }
 
 function toGoogleDateTime(date: Date): string {

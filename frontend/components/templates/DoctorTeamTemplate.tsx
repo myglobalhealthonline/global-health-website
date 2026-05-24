@@ -1,7 +1,12 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
 import { DoctorCard } from "@/components/cards/DoctorCard";
+
+const PAGE_SIZE = 6;
 
 type Doctor = {
   name: string;
@@ -14,6 +19,7 @@ type Doctor = {
   bio: string;
   imageSrc?: string | null;
   href?: string;
+  bookingHref?: string;
   ctaLabel?: string;
 };
 
@@ -32,6 +38,10 @@ export function DoctorTeamTemplate({
   bookingLabel,
   showBottomCta = false,
 }: DoctorTeamTemplateProps) {
+  const [page, setPage] = useState(0);
+  const totalPages = Math.ceil(doctors.length / PAGE_SIZE);
+  const paged = doctors.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
   return (
     <main className="bg-[var(--color-background-page)]">
       <PageHero
@@ -74,24 +84,73 @@ export function DoctorTeamTemplate({
               </Link>
             </div>
           ) : (
-            <ul className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
-              {doctors.map((d) => (
-                <li key={(d.href ?? "") + d.name}>
-                  <DoctorCard
-                    name={d.name}
-                    title={d.title}
-                    imcRegistration={d.imcRegistration}
-                    medicalRegistrationUrl={d.medicalRegistrationUrl}
-                    languages={d.languages}
-                    whatsappNumber={d.whatsappNumber}
-                    bio={d.bio}
-                    imageSrc={d.imageSrc}
-                    href={d.href}
-                    ctaLabel={d.ctaLabel ?? "View profile"}
-                  />
-                </li>
-              ))}
-            </ul>
+            <>
+              {totalPages > 1 && (
+                <div className="mb-6 flex items-center justify-end gap-2">
+                  <span
+                    className="text-[11px] font-bold tabular-nums"
+                    style={{ color: "var(--color-text-muted)" }}
+                  >
+                    {page + 1} / {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setPage((p) => Math.max(0, p - 1))}
+                    disabled={page === 0}
+                    aria-label="Previous page"
+                    className="inline-flex size-10 items-center justify-center rounded-full border transition-opacity"
+                    style={
+                      page === 0
+                        ? { opacity: 0.3, borderColor: "currentColor" }
+                        : {
+                            backgroundColor: "var(--color-brand-accent)",
+                            borderColor: "var(--color-brand-accent)",
+                            color: "var(--color-brand-primary)",
+                          }
+                    }
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() =>
+                      setPage((p) => Math.min(totalPages - 1, p + 1))
+                    }
+                    disabled={page === totalPages - 1}
+                    aria-label="Next page"
+                    className="inline-flex size-10 items-center justify-center rounded-full border transition-opacity"
+                    style={
+                      page === totalPages - 1
+                        ? { opacity: 0.3, borderColor: "currentColor" }
+                        : {
+                            backgroundColor: "var(--color-brand-accent)",
+                            borderColor: "var(--color-brand-accent)",
+                            color: "var(--color-brand-primary)",
+                          }
+                    }
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+              <ul className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+                {paged.map((d) => (
+                  <li key={(d.href ?? "") + d.name}>
+                    <DoctorCard
+                      name={d.name}
+                      title={d.title}
+                      imcRegistration={d.imcRegistration}
+                      medicalRegistrationUrl={d.medicalRegistrationUrl}
+                      languages={d.languages}
+                      whatsappNumber={d.whatsappNumber}
+                      bio={d.bio}
+                      imageSrc={d.imageSrc}
+                      href={d.href}
+                      bookingHref={d.bookingHref ?? bookingHref}
+                      ctaLabel={d.ctaLabel ?? "View profile"}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </div>
       </section>

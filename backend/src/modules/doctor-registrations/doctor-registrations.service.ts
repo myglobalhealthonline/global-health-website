@@ -122,6 +122,12 @@ export async function upsertDoctorRegistration(
       registrationNumber,
       isVerified,
       verifiedAt,
+      // Re-activate the row when a registration is set. Profile-save
+      // flow may have deactivated this row (admin unticked the country
+      // without realising it held registration data) — saving the
+      // registration here makes the country visible again so the data
+      // surfaces on the public roster.
+      active: true,
     },
     create: {
       doctorId,

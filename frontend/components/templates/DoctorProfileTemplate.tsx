@@ -187,7 +187,7 @@ export function DoctorProfileTemplate({
               <h1
                 className="mt-6 font-extrabold tracking-[-0.03em] leading-[1.0]"
                 style={{
-                  fontSize: "clamp(2.4rem,4.5vw+0.5rem,4.2rem)",
+                  fontSize: "clamp(2.4rem, 4.5vw + 0.5rem, 4.2rem)",
                   color: "rgba(255,255,255,0.95)",
                 }}
               >

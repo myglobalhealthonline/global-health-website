@@ -18,8 +18,7 @@ export type GenerateOrderMeetLinkResult =
         | "NOT_FOUND"
         | "NO_CONSULTATION"
         | "MISSING_SCHEDULE"
-        | "NOT_CONFIGURED"
-        | "ALREADY_EXISTS";
+        | "NOT_CONFIGURED";
       message: string;
     };
 
@@ -98,10 +97,12 @@ export async function generateOrderMeetLink(
   }
 
   if (options.skipIfExists && order.meetingUrl?.trim()) {
+    const existingTitle =
+      order.items.find((item) => CONSULTATION_KINDS.includes(item.kind))?.name ?? "Consultation";
     return {
       ok: true,
       meetLink: order.meetingUrl.trim(),
-      serviceTitle: "Existing consultation",
+      serviceTitle: existingTitle,
       skipped: true,
     };
   }

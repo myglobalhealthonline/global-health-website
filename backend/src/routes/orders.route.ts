@@ -326,6 +326,62 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
+  // ── Public: post-checkout receipt by order id ─────────────────────
+  // Used by the /checkout/success page so guest checkouts (which have
+  // userId: null and therefore can't authenticate against the patient
+  // endpoint below) still see their line items and total. Returns
+  // minimal, non-PII fields keyed off the unguessable CUID. Email,
+  // phone, and full shipping address are kept off this payload — the
+  // patient endpoint stays the source of truth for authenticated reads.
+  app.get<{ Params: { id: string } }>(
+    "/api/orders/:id/receipt",
+    async (request, reply) => {
+      const params = orderIdParamSchema.safeParse(request.params);
+      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
+
+      try {
+        const order = await prisma.order.findUnique({
+          where: { id: params.data.id },
+          select: {
+            id: true,
+            status: true,
+            paymentStatus: true,
+            currencyCode: true,
+            subtotalCents: true,
+            shippingCents: true,
+            totalCents: true,
+            fullName: true,
+            paidAt: true,
+            createdAt: true,
+            items: {
+              select: { id: true, kind: true, name: true, quantity: true, lineTotalCents: true },
+            },
+          },
+        });
+        if (!order) return reply.status(404).send(errorResponse("Order not found"));
+        return okResponse({
+          id: order.id,
+          status: order.status,
+          paymentStatus: order.paymentStatus,
+          currencyCode: order.currencyCode,
+          subtotalCents: order.subtotalCents,
+          shippingCents: order.shippingCents,
+          totalCents: order.totalCents,
+          fullName: order.fullName,
+          items: order.items,
+          paidAt: order.paidAt?.toISOString() ?? null,
+          createdAt: order.createdAt.toISOString(),
+        });
+      } catch (err) {
+        if (err instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(err.message));
+        }
+        app.log.error(err);
+        return reply.status(500).send(errorResponse("Could not load order"));
+      }
+    },
+  );
+
   // ── Patient: own order detail ──────────────────────────────────────
   app.get<{ Params: { id: string } }>(
     "/api/account/orders/:id",

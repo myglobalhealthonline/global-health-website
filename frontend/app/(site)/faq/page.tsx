@@ -147,7 +147,7 @@ export default function FAQPage() {
                 </p>
                 <h2
                   className="mt-3 font-extrabold tracking-[-0.025em] leading-[1.05] text-[var(--color-text-primary)]"
-                  style={{ fontSize: "clamp(1.75rem,3vw+0.5rem,2.5rem)" }}
+                  style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.5rem)" }}
                 >
                   {group.title}
                 </h2>
@@ -208,7 +208,7 @@ export default function FAQPage() {
               </p>
               <h2
                 className="mt-4 max-w-[22ch] font-extrabold tracking-[-0.03em] leading-[1.02] text-white"
-                style={{ fontSize: "clamp(1.75rem,3vw+0.5rem,2.75rem)" }}
+                style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.75rem)" }}
               >
                 Not the question you came with?{" "}
                 <span style={{ color: "var(--color-brand-accent)" }}>Talk to us.</span>

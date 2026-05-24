@@ -127,6 +127,16 @@ const PATCHES: { name: string; sql: string }[] = [
         ADD COLUMN IF NOT EXISTS "meetingUrl" TEXT;
     `,
   },
+  {
+    name: "AuditAction.MEET_LINK_GENERATED",
+    sql: `
+      DO $$ BEGIN
+        ALTER TYPE "AuditAction" ADD VALUE IF NOT EXISTS 'MEET_LINK_GENERATED';
+      EXCEPTION
+        WHEN duplicate_object THEN NULL;
+      END $$;
+    `,
+  },
 ];
 
 export async function ensureSchema(log: {
