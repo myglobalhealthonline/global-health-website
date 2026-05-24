@@ -450,6 +450,7 @@ export default async function CountryLangHomePage({
           {/* Rest of the team grid */}
           <DoctorWall
             doctors={wallDoctorsExcludingFeatured}
+            bookHref={generalHref}
             hideHeader
           />
         </div>
