@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { PageHero } from "@/components/sections/PageHero";
@@ -24,7 +23,7 @@ import { getCountryServices } from "@/lib/content/get-country-collections";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
-import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { CartServiceCard } from "@/components/cards/CartServiceCard";
 
 type Params = { country: string; lang: string };
 
@@ -159,78 +158,22 @@ export default async function PrescriptionsPage({
               {items.length === 1 ? "prescription service" : "prescription services"} in{" "}
               {config.name}. Cards update as the team adds or retires services.
             </p>
-            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-12 gh-card-grid">
               {items.map((s) => {
                 const priceLabel = formatPrice(s.basePriceCents, s.currencyCode);
                 return (
-                  <article
+                  <CartServiceCard
                     key={s.id}
-                    className="flex h-full flex-col overflow-hidden rounded-[var(--radius-card)]"
-                    style={{
-                      background: "rgba(255,255,255,0.04)",
-                      border: "1px solid rgba(255,255,255,0.09)",
-                    }}
-                  >
-                    {s.imageSrc ? (
-                      <div className="w-full overflow-hidden" style={{ aspectRatio: "4/3" }}>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={s.imageSrc}
-                          alt={s.name}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    ) : null}
-                    <div className="flex h-full flex-col p-6 sm:p-7">
-                      <h3
-                        className="text-lg font-bold tracking-[-0.01em]"
-                        style={{ color: "rgba(255,255,255,0.88)" }}
-                      >
-                        {s.name}
-                      </h3>
-                      {s.summary ? (
-                        <p
-                          className="mt-2 flex-1 line-clamp-3 text-sm leading-relaxed"
-                          style={{ color: "rgba(255,255,255,0.70)" }}
-                        >
-                          {s.summary}
-                        </p>
-                      ) : null}
-                      <div className="mt-4 flex flex-wrap items-center gap-3">
-                        {s.durationMinutes != null ? (
-                          <span
-                            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
-                            style={{
-                              background: "rgba(255,255,255,0.07)",
-                              color: "rgba(255,255,255,0.70)",
-                            }}
-                          >
-                            {s.durationMinutes} min
-                          </span>
-                        ) : null}
-                        {priceLabel ? (
-                          <span
-                            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
-                            style={{
-                              background: "rgba(176,241,34,0.12)",
-                              color: "var(--color-brand-accent)",
-                            }}
-                          >
-                            {priceLabel}
-                          </span>
-                        ) : null}
-                      </div>
-                      <div className="mt-auto pt-5">
-                        {s.basePriceCents != null ? (
-                          <AddToCartButton
-                            kind="PRESCRIPTION_SERVICE"
-                            serviceId={s.id}
-                            label={priceLabel ? `Add to cart · ${priceLabel}` : "Add to cart"}
-                          />
-                        ) : null}
-                      </div>
-                    </div>
-                  </article>
+                    kind="PRESCRIPTION_SERVICE"
+                    serviceId={s.id}
+                    title={s.name}
+                    description={s.summary}
+                    imageSrc={s.imageSrc}
+                    duration={s.durationMinutes != null ? `${s.durationMinutes} min` : null}
+                    startingPrice={priceLabel}
+                    ctaLabel={priceLabel ? `Add to cart · ${priceLabel}` : "Add to cart"}
+                    iconVariant="stethoscope"
+                  />
                 );
               })}
             </div>
