@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, CalendarClock } from "lucide-react";
+import { ArrowLeft, CalendarClock } from "lucide-react";
+import { DoctorCard } from "@/components/cards/DoctorCard";
 import { getCountryByCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
@@ -373,69 +374,29 @@ function DoctorListMode({
   }
 
   return (
-    <div className="mt-6 grid gap-4">
+    <div className="mt-6 grid gap-6">
       <p className="text-sm text-[var(--color-text-muted)]">
         Pick a clinician to see their open times and finish booking.
       </p>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
         {doctors.map((d) => (
-          <Link
-            key={d.id}
-            href={`/${country}/${lang}/consult/${serviceSlug}?doctor=${encodeURIComponent(d.slug)}`}
-            className="
-              group flex h-full flex-col
-              rounded-[var(--radius-card)]
-              border border-[var(--color-border)]
-              bg-[var(--color-background-page)]
-              p-6 shadow-[var(--shadow-soft)]
-              transition-[transform,box-shadow,border-color]
-              duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
-              hover:-translate-y-0.5
-              hover:border-[var(--color-border-strong)]
-              hover:shadow-[var(--shadow-card-hover)]
-              motion-reduce:transition-none
-              motion-reduce:hover:translate-y-0
-              focus-visible:outline-none
-              focus-visible:shadow-[var(--shadow-focus)]
-            "
-          >
-            <p className="text-lg font-bold text-[var(--color-text-primary)]">
-              {d.fullName}
-            </p>
-            <p className="text-sm text-[var(--color-text-muted)]">{d.title}</p>
-            {d.specialties.length > 0 ? (
-              <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                {d.specialties.join(" · ")}
-              </p>
-            ) : null}
-            {d.languages.length > 0 ? (
-              <p className="mt-2 text-xs text-[var(--color-text-muted)]">
-                Languages: {d.languages.join(", ")}
-              </p>
-            ) : null}
-            {/* Promoted to primary pill so the doctor card has a clear
-              * action surface; Phase 1 audit flagged the subtle inline
-              * "Pick a time" link as a conversion drag. */}
-            <span
-              className="
-                mt-auto inline-flex items-center justify-center gap-1.5 self-start
-                rounded-full bg-[var(--color-brand-primary)]
-                px-4 py-2 text-sm font-semibold text-white
-                transition-transform duration-200
-                group-hover:bg-[var(--color-brand-primary-hover)]
-                motion-reduce:transition-none
-              "
-            >
-              Pick a time
-              <ArrowRight
-                className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:group-hover:translate-x-0"
-                strokeWidth={1.5}
-                aria-hidden
-              />
-            </span>
-          </Link>
+          <li key={d.id}>
+            <DoctorCard
+              name={d.fullName}
+              title={d.title}
+              imcRegistration={d.imcRegistration}
+              medicalRegistrationUrl={d.medicalRegistrationUrl}
+              languages={d.languages}
+              whatsappNumber={d.whatsappNumber}
+              bio={d.bio ?? ""}
+              imageSrc={d.imageSrc ?? null}
+              href={`/${country}/${lang}/doctors/${d.slug}`}
+              bookingHref={`/${country}/${lang}/consult/${serviceSlug}?doctor=${encodeURIComponent(d.slug)}`}
+              ctaLabel="Pick a time"
+            />
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
