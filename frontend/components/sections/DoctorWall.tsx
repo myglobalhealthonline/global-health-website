@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { Flag } from "@/components/ui/Flag";
@@ -31,9 +31,7 @@ const FILTER_LABELS: Record<string, string> = {
   rm: "Romania",
 };
 
-/** Cards visible at once per breakpoint.
- *  The scroll container shows exactly VISIBLE cards; arrows step by that amount. */
-const VISIBLE = 5;
+const PAGE_SIZE = 6;
 
 export function DoctorWall({
   doctors,
@@ -54,58 +52,23 @@ export function DoctorWall({
   ];
 
   const [filter, setFilter] = useState<string>("all");
+  const [page, setPage] = useState(0);
+
   const shown =
     filter === "all" ? doctors : doctors.filter((d) => d.country === filter);
 
-  // Reset scroll position when filter changes
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [canPrev, setCanPrev] = useState(false);
-  const [canNext, setCanNext] = useState(false);
+  const totalPages = Math.ceil(shown.length / PAGE_SIZE);
+  const paged = shown.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const showPager = totalPages > 1;
+  const showFilters = countriesInData.length > 1;
 
-  const updateArrows = useCallback(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    setCanPrev(el.scrollLeft > 4);
-    setCanNext(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
-  }, []);
-
-  useEffect(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    // Reset scroll on filter change
-    el.scrollLeft = 0;
-    updateArrows();
-  }, [filter, shown.length, updateArrows]);
-
-  useEffect(() => {
-    const el = trackRef.current;
-    if (!el) return;
-    updateArrows();
-    el.addEventListener("scroll", updateArrows, { passive: true });
-    // Also update on resize
-    const ro = new ResizeObserver(updateArrows);
-    ro.observe(el);
-    return () => {
-      el.removeEventListener("scroll", updateArrows);
-      ro.disconnect();
-    };
-  }, [updateArrows]);
-
-  function scrollBy(direction: "prev" | "next") {
-    const el = trackRef.current;
-    if (!el) return;
-    // Scroll by exactly one card width including gap
-    const card = el.querySelector<HTMLElement>("[data-doctor-card]");
-    if (!card) return;
-    const gap = 24; // matches gap-6
-    const step = card.offsetWidth + gap;
-    el.scrollBy({ left: direction === "next" ? step : -step, behavior: "smooth" });
+  // Reset to page 0 when filter changes
+  function handleFilter(id: string) {
+    setFilter(id);
+    setPage(0);
   }
 
   if (doctors.length === 0) return null;
-
-  const showFilters = countriesInData.length > 1;
-  const showArrows = shown.length > VISIBLE;
 
   const inner = (
     <div
@@ -138,7 +101,7 @@ export function DoctorWall({
         </div>
       )}
 
-      {/* Filter chips + arrow controls row */}
+      {/* Filter chips + pagination controls row */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         {showFilters ? (
           <div className="flex flex-wrap gap-2">
@@ -148,7 +111,7 @@ export function DoctorWall({
                 <button
                   key={f.id}
                   type="button"
-                  onClick={() => setFilter(f.id)}
+                  onClick={() => handleFilter(f.id)}
                   className={`
                     inline-flex items-center gap-2
                     rounded-full px-4 py-2
@@ -169,51 +132,42 @@ export function DoctorWall({
             })}
           </div>
         ) : (
-          /* Spacer so arrows stay right-aligned even without filters */
           <div />
         )}
 
-        {/* Prev / Next arrows — only shown when there are more than 5 cards */}
-        {showArrows && (
+        {/* Page arrows */}
+        {showPager && (
           <div className="flex items-center gap-2 shrink-0">
             <button
               type="button"
-              onClick={() => scrollBy("prev")}
-              disabled={!canPrev}
-              aria-label="Previous doctors"
-              className="
-                inline-flex size-10 items-center justify-center
-                rounded-full border
-                transition-[background-color,border-color,opacity] duration-200
-                disabled:opacity-30 disabled:cursor-not-allowed
-              "
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              disabled={page === 0}
+              aria-label="Previous page"
+              className="inline-flex size-10 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
               style={{
-                background: canPrev ? "var(--color-brand-primary)" : "transparent",
-                borderColor: canPrev
-                  ? "var(--color-brand-primary)"
-                  : "var(--color-border-strong)",
-                color: canPrev ? "#fff" : "var(--color-text-muted)",
+                background: page === 0 ? "transparent" : "var(--color-brand-primary)",
+                borderColor: page === 0 ? "var(--color-border-strong)" : "var(--color-brand-primary)",
+                color: page === 0 ? "var(--color-text-muted)" : "#fff",
               }}
             >
               <ChevronLeft className="size-4" strokeWidth={2} aria-hidden />
             </button>
+            <span
+              className="text-[11px] font-bold tabular-nums"
+              style={{ color: "var(--color-text-muted)" }}
+            >
+              {page + 1} / {totalPages}
+            </span>
             <button
               type="button"
-              onClick={() => scrollBy("next")}
-              disabled={!canNext}
-              aria-label="Next doctors"
-              className="
-                inline-flex size-10 items-center justify-center
-                rounded-full border
-                transition-[background-color,border-color,opacity] duration-200
-                disabled:opacity-30 disabled:cursor-not-allowed
-              "
+              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              disabled={page === totalPages - 1}
+              aria-label="Next page"
+              className="inline-flex size-10 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
               style={{
-                background: canNext ? "var(--color-brand-primary)" : "transparent",
-                borderColor: canNext
-                  ? "var(--color-brand-primary)"
-                  : "var(--color-border-strong)",
-                color: canNext ? "#fff" : "var(--color-text-muted)",
+                background: page === totalPages - 1 ? "transparent" : "var(--color-brand-primary)",
+                borderColor: page === totalPages - 1 ? "var(--color-border-strong)" : "var(--color-brand-primary)",
+                color: page === totalPages - 1 ? "var(--color-text-muted)" : "#fff",
               }}
             >
               <ChevronRight className="size-4" strokeWidth={2} aria-hidden />
@@ -222,32 +176,10 @@ export function DoctorWall({
         )}
       </div>
 
-      {/* Scroll track — shows VISIBLE cards, scrolls one at a time */}
-      <div
-        ref={trackRef}
-        data-doctor-wall-track
-        className="flex gap-6 overflow-x-auto scroll-smooth gh-doctor-wall-track"
-        style={{
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-          scrollSnapType: "x mandatory",
-          paddingBottom: 4,
-        }}
-      >
-        {shown.map((d) => (
-          <div
-            key={d.id}
-            data-doctor-card
-            className="shrink-0"
-            style={{
-              /* 5 cards with gap: (100% - 4×24px) / 5 */
-              width: "calc((100% - 4 * 24px) / 5)",
-              /* Fallback for fewer cards */
-              minWidth: 240,
-              maxWidth: 320,
-              scrollSnapAlign: "start",
-            }}
-          >
+      {/* 3-column grid */}
+      <ul className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+        {paged.map((d) => (
+          <li key={d.id}>
             <DoctorCard
               name={d.name}
               title={d.role}
@@ -263,13 +195,9 @@ export function DoctorWall({
               bookingHref={d.bookingHref ?? bookHref}
               ctaLabel="View profile"
             />
-          </div>
+          </li>
         ))}
-      </div>
-
-      <style>{`
-        .gh-doctor-wall-track::-webkit-scrollbar { display: none; }
-      `}</style>
+      </ul>
     </div>
   );
 
