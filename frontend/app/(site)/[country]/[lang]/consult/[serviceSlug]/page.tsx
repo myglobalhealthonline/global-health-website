@@ -126,7 +126,7 @@ export default async function ConsultPage({
           <h1
             className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
             style={{
-              fontSize: "clamp(2rem,4.5vw+0.5rem,4rem)",
+              fontSize: "clamp(2rem, 4.5vw + 0.5rem, 4rem)",
               color: "rgba(255,255,255,0.95)",
             }}
           >

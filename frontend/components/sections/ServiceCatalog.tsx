@@ -108,7 +108,7 @@ export function ServiceCatalog({
             </p>
             <h2
               className="mt-4 max-w-[18ch] font-extrabold tracking-[-0.03em] leading-[1.02] text-white"
-              style={{ fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)" }}
+              style={{ fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)" }}
             >
               Care for what&apos;s actually going on.
             </h2>

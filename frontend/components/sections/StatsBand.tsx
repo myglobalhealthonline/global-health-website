@@ -29,7 +29,7 @@ export function StatsBand({ items }: { items: StatBandItem[] }) {
             mt-4 max-w-[22ch]
             font-extrabold tracking-[-0.03em] leading-[1.02]
             text-[var(--color-text-primary)]
-            text-[clamp(2rem,4vw+0.5rem,3.5rem)]
+            text-[clamp(2rem, 4vw + 0.5rem, 3.5rem)]
           "
         >
           Built for people who shouldn&apos;t have to{" "}

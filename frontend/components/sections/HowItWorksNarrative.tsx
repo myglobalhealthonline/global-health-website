@@ -65,7 +65,7 @@ export function HowItWorksNarrative() {
           <h2
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)",
+              fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
               fontWeight: 800,
               letterSpacing: "-0.025em",
               lineHeight: 1.05,
@@ -121,7 +121,7 @@ export function HowItWorksNarrative() {
                 <h3
                   style={{
                     fontFamily: "var(--font-display)",
-                    fontSize: "clamp(1.25rem,2vw+0.3rem,1.75rem)",
+                    fontSize: "clamp(1.25rem, 2vw + 0.3rem, 1.75rem)",
                     fontWeight: 800,
                     letterSpacing: "-0.015em",
                     lineHeight: 1.15,
