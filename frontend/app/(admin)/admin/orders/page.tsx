@@ -21,7 +21,7 @@ export default async function AdminOrdersPage() {
           </span>
         }
         title="Orders"
-        description="Multi-item product orders. Generate Google Meet links for consultation orders from the Meet link column or order detail."
+        description="Multi-item product orders. Google Meet links are created automatically when consultation orders are paid."
       />
 
       <AdminCard padding={0}>

@@ -58,13 +58,16 @@ function toGoogleDateTime(date: Date): string {
 }
 
 /**
- * Creates an OPEN Google Meet space and a calendar event (no attendees).
- * Returns the Meet join URI.
+ * Creates an OPEN Google Meet space and a calendar event titled with
+ * `serviceTitle`. The Meet join URL is in the description and location.
+ * When `attendeeEmails` are provided, Google sends calendar invites to
+ * doctor and patient (`sendUpdates=all`).
  */
 export async function createMeetLinkForAppointment(input: {
   startTime: Date;
   endTime: Date;
   serviceTitle: string;
+  attendeeEmails?: string[];
 }): Promise<string> {
   if (!isGoogleMeetConfigured()) {
     throw new Error(
@@ -74,10 +77,20 @@ export async function createMeetLinkForAppointment(input: {
 
   const token = await getAccessToken();
   const spaceData = await createOpenSpace(token);
+  const meetLink = spaceData.meetingUri;
+  const summary = input.serviceTitle || "Global Health Appointment";
+
+  const attendees = [...new Set(
+    (input.attendeeEmails ?? [])
+      .map((email) => email.trim().toLowerCase())
+      .filter((email) => email.length > 0 && email.includes("@")),
+  )].map((email) => ({ email }));
 
   const calendarId = env.GOOGLE_CALENDAR_ID?.trim() || "primary";
   const event = {
-    summary: input.serviceTitle || "Global Health Appointment",
+    summary,
+    description: `Service: ${summary}\n\nJoin Google Meet:\n${meetLink}`,
+    location: meetLink,
     start: {
       dateTime: toGoogleDateTime(input.startTime),
       timeZone: "GMT",
@@ -86,14 +99,13 @@ export async function createMeetLinkForAppointment(input: {
       dateTime: toGoogleDateTime(input.endTime),
       timeZone: "GMT",
     },
-    conferenceData: {
-      createRequest: { requestId: `meet_${Date.now()}` },
-    },
+    ...(attendees.length > 0 ? { attendees } : {}),
   };
 
-  const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?conferenceDataVersion=1`;
+  const sendUpdates = attendees.length > 0 ? "?sendUpdates=all" : "";
+  const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events${sendUpdates}`;
 
-  await fetch(url, {
+  const calResponse = await fetch(url, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -102,5 +114,12 @@ export async function createMeetLinkForAppointment(input: {
     body: JSON.stringify(event),
   });
 
-  return spaceData.meetingUri;
+  const calData = (await calResponse.json()) as { error?: { message?: string } };
+  if (!calResponse.ok) {
+    throw new Error(
+      `Calendar API Error: ${calData.error?.message ?? JSON.stringify(calData)}`,
+    );
+  }
+
+  return meetLink;
 }

@@ -16,8 +16,7 @@ import {
 } from "@/components/portal-atoms";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
-
-import { OrderMeetLinkActions } from "./order-meet-link-actions";
+import { OrderMeetLinkDisplay } from "./order-meet-link-display";
 
 export type AdminOrderRow = {
   id: string;
@@ -212,8 +211,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                     <Pill tone={statusTone(o.status)}>{o.status.toLowerCase()}</Pill>
                   </Td>
                   <Td>
-                    <OrderMeetLinkActions
-                      orderId={o.id}
+                    <OrderMeetLinkDisplay
                       meetingUrl={o.meetingUrl ?? null}
                       hasConsultation={o.hasConsultation ?? false}
                       variant="cell"
