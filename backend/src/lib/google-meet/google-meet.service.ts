@@ -58,28 +58,21 @@ async function createOpenSpace(token: string): Promise<{ meetingUri: string }> {
   return { meetingUri: data.meetingUri };
 }
 
+function toGoogleDateTime(date: Date): string {
+  return date.toISOString();
+}
+
 /**
- * Mints an OPEN Google Meet space and returns its join URI.
- *
- * Why no calendar event: a previous version of this function also POSTed a
- * Google Calendar event using `conferenceData.createRequest`, but the
- * calendar event's auto-minted Meet link was discarded (we returned the
- * separate OPEN space URI instead). The result was an orphan calendar
- * entry with no working Meet link tied to it. The calendar call is
- * dropped here; if a calendar entry is needed later, add it through the
- * scheduling system that owns the appointment, with `entryPoints`
- * pointing at the URI returned here so the link and the event stay in
- * sync.
- *
- * `startTime`, `endTime`, and `serviceTitle` are accepted but not used
- * in space creation today — kept on the signature so callers can pass
- * them once we wire up an integrated calendar entry without another
- * API churn.
+ * Creates an OPEN Google Meet space and a calendar event titled with
+ * `serviceTitle`. The Meet join URL is in the description and location.
+ * When `attendeeEmails` are provided, Google sends calendar invites to
+ * doctor and patient (`sendUpdates=all`).
  */
-export async function createMeetLinkForAppointment(_input: {
+export async function createMeetLinkForAppointment(input: {
   startTime: Date;
   endTime: Date;
   serviceTitle: string;
+  attendeeEmails?: string[];
 }): Promise<string> {
   if (!isGoogleMeetConfigured()) {
     throw new Error(
@@ -88,6 +81,50 @@ export async function createMeetLinkForAppointment(_input: {
   }
 
   const token = await getAccessToken();
-  const space = await createOpenSpace(token);
-  return space.meetingUri;
+  const spaceData = await createOpenSpace(token);
+  const meetLink = spaceData.meetingUri;
+  const summary = input.serviceTitle || "Global Health Appointment";
+
+  const attendees = [...new Set(
+    (input.attendeeEmails ?? [])
+      .map((email) => email.trim().toLowerCase())
+      .filter((email) => email.length > 0 && email.includes("@")),
+  )].map((email) => ({ email }));
+
+  const calendarId = env.GOOGLE_CALENDAR_ID?.trim() || "primary";
+  const event = {
+    summary,
+    description: `Service: ${summary}\n\nJoin Google Meet:\n${meetLink}`,
+    location: meetLink,
+    start: {
+      dateTime: toGoogleDateTime(input.startTime),
+      timeZone: "GMT",
+    },
+    end: {
+      dateTime: toGoogleDateTime(input.endTime),
+      timeZone: "GMT",
+    },
+    ...(attendees.length > 0 ? { attendees } : {}),
+  };
+
+  const sendUpdates = attendees.length > 0 ? "?sendUpdates=all" : "";
+  const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events${sendUpdates}`;
+
+  const calResponse = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(event),
+  });
+
+  const calData = (await calResponse.json()) as { error?: { message?: string } };
+  if (!calResponse.ok) {
+    throw new Error(
+      `Calendar API Error: ${calData.error?.message ?? JSON.stringify(calData)}`,
+    );
+  }
+
+  return meetLink;
 }

@@ -13,7 +13,7 @@ import {
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { AdminOrderActions } from "./_components/order-actions";
-import { OrderMeetLinkPanel } from "./_components/order-meet-link";
+import { OrderMeetLinkDisplay } from "../_components/order-meet-link-display";
 
 export const dynamic = "force-dynamic";
 
@@ -201,10 +201,10 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           {hasConsultation ? (
             <AdminCard padding={0}>
               <SectionHeader title="Google Meet" />
-              <OrderMeetLinkPanel
-                orderId={order.id}
+              <OrderMeetLinkDisplay
                 meetingUrl={order.meetingUrl}
                 hasConsultation={hasConsultation}
+                variant="panel"
               />
             </AdminCard>
           ) : null}

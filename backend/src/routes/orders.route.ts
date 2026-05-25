@@ -11,8 +11,11 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
-import { generateOrderMeetLink } from "../modules/admin-orders/generate-order-meet-link.service.js";
-import { recordAudit } from "../modules/audit/audit.service.js";
+import {
+  ensurePaidOrderMeetLink,
+  orderHasConsultationItem,
+  orderNeedsAutoMeetLink,
+} from "../modules/admin-orders/generate-order-meet-link.service.js";
 
 /**
  * Orders + checkout.
@@ -493,6 +496,39 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       const hasMore = orders.length > limit;
       const page = hasMore ? orders.slice(0, limit) : orders;
       const nextCursor = hasMore ? page[page.length - 1]?.id ?? null : null;
+
+      const needingMeet = page.filter((o) =>
+        orderNeedsAutoMeetLink({
+          meetingUrl: o.meetingUrl,
+          status: o.status,
+          paymentStatus: o.paymentStatus,
+          items: o.items,
+        }),
+      );
+      if (needingMeet.length > 0) {
+        await Promise.all(
+          needingMeet.map((o) =>
+            ensurePaidOrderMeetLink(o.id).catch((err) => {
+              request.log.warn({ err, orderId: o.id }, "Auto Meet link on admin list failed");
+              return null;
+            }),
+          ),
+        );
+      }
+
+      const meetingUrlById = new Map<string, string | null>(
+        page.map((o) => [o.id, o.meetingUrl]),
+      );
+      if (needingMeet.length > 0) {
+        const refreshed = await prisma.order.findMany({
+          where: { id: { in: needingMeet.map((o) => o.id) } },
+          select: { id: true, meetingUrl: true },
+        });
+        for (const row of refreshed) {
+          meetingUrlById.set(row.id, row.meetingUrl);
+        }
+      }
+
       return okResponse({
         items: page.map((o) => ({
           id: o.id,
@@ -504,11 +540,8 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           currencyCode: o.currencyCode,
           totalCents: o.totalCents,
           itemCount: o.items.reduce((s, i) => s + i.quantity, 0),
-          meetingUrl: o.meetingUrl,
-          hasConsultation: o.items.some(
-            (i) =>
-              i.kind === "GENERAL_CONSULTATION" || i.kind === "SPECIALIST_CONSULTATION",
-          ),
+          meetingUrl: meetingUrlById.get(o.id) ?? o.meetingUrl,
+          hasConsultation: orderHasConsultationItem(o.items),
           paidAt: o.paidAt?.toISOString() ?? null,
           createdAt: o.createdAt.toISOString(),
         })),
@@ -539,6 +572,26 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           include: { items: true },
         });
         if (!order) return reply.status(404).send(errorResponse("Order not found"));
+
+        let meetingUrl = order.meetingUrl;
+        if (
+          orderNeedsAutoMeetLink({
+            meetingUrl: order.meetingUrl,
+            status: order.status,
+            paymentStatus: order.paymentStatus,
+            items: order.items,
+          })
+        ) {
+          await ensurePaidOrderMeetLink(order.id).catch((err) => {
+            request.log.warn({ err, orderId: order.id }, "Auto Meet link on admin detail failed");
+          });
+          const fresh = await prisma.order.findUnique({
+            where: { id: order.id },
+            select: { meetingUrl: true },
+          });
+          meetingUrl = fresh?.meetingUrl ?? meetingUrl;
+        }
+
         // Project to a DTO instead of returning the raw Prisma row.
         // The raw row contains `stripeSessionId` + `stripePaymentIntentId`
         // which the admin UI doesn't need and which have no business
@@ -578,7 +631,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             appointmentId: i.appointmentId,
           })),
           appointmentIds: order.appointmentIds,
-          meetingUrl: order.meetingUrl,
+          meetingUrl,
           paidAt: order.paidAt?.toISOString() ?? null,
           createdAt: order.createdAt.toISOString(),
           updatedAt: order.updatedAt.toISOString(),
@@ -689,70 +742,6 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(err);
         return reply.status(500).send(errorResponse("Could not update order"));
-      }
-    },
-  );
-
-  // ── Admin: generate Google Meet link for consultation order ───────
-  const generateMeetLinkBodySchema = z
-    .object({
-      // When true, force a fresh Meet link even if one already exists.
-      // Without this flag the service short-circuits and returns the
-      // existing link unchanged — protects against double-click misuse.
-      regenerate: z.boolean().optional(),
-    })
-    .optional();
-
-  app.post<{ Params: { id: string } }>(
-    "/api/admin/orders/:id/generate-meet-link",
-    async (request, reply) => {
-      const auth = await verifyAdminAccess(request);
-      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
-
-      const params = orderIdParamSchema.safeParse(request.params);
-      if (!params.success) return reply.status(400).send(errorResponse("Invalid id"));
-
-      const body = generateMeetLinkBodySchema.safeParse(request.body ?? {});
-      const regenerate = body.success ? Boolean(body.data?.regenerate) : false;
-
-      try {
-        const result = await generateOrderMeetLink(params.data.id, { regenerate });
-        if (!result.ok) {
-          const status =
-            result.code === "NOT_FOUND"
-              ? 404
-              : result.code === "NOT_CONFIGURED"
-                ? 503
-                : 400;
-          return reply.status(status).send(errorResponse(result.message));
-        }
-        // Only audit when the link was actually minted — short-circuited
-        // "reused" calls aren't a meaningful admin action.
-        if (!result.reused) {
-          const actor = await resolveOptionalAuthUser(request);
-          recordAudit({
-            actorUserId: actor?.id,
-            actorRole: "ADMIN",
-            action: "MEET_LINK_GENERATED",
-            entityType: "Order",
-            entityId: params.data.id,
-            metadata: { serviceTitle: result.serviceTitle, regenerate },
-            request,
-          }).catch(() => {});
-        }
-        return okResponse({
-          success: true,
-          meetLink: result.meetLink,
-          serviceUsed: result.serviceTitle,
-          reused: result.reused,
-        });
-      } catch (err) {
-        if (err instanceof DatabaseUnavailableError) {
-          return reply.status(503).send(errorResponse(err.message));
-        }
-        app.log.error(err);
-        const message = err instanceof Error ? err.message : "Could not generate Meet link";
-        return reply.status(500).send(errorResponse(message));
       }
     },
   );

@@ -485,6 +485,17 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
               app.log.warn({ err: emailErr, orderId }, "Order confirmation email failed");
             }
 
+            // Consultation orders: create Google Meet link + calendar event
+            // (best-effort — payment is already recorded).
+            try {
+              const { autoProvisionOrderMeetOnPaid } = await import(
+                "../modules/admin-orders/generate-order-meet-link.service.js"
+              );
+              await autoProvisionOrderMeetOnPaid(orderId, app.log);
+            } catch (meetErr) {
+              app.log.warn({ err: meetErr, orderId }, "Order Meet auto-provision import failed");
+            }
+
             return okResponse({ received: true });
           }
 
