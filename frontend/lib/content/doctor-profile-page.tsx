@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, CalendarClock } from "lucide-react";
+import { ArrowRight, CalendarClock, Clock, Tag } from "lucide-react";
 import { DoctorProfileTemplate } from "@/components/templates/DoctorProfileTemplate";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data";
@@ -263,7 +263,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                       {service.summary ? (
                         <p
                           className="mt-2 flex-1 line-clamp-3 text-sm leading-relaxed"
-                          style={{ color: "rgba(255,255,255,0.42)" }}
+                          style={{ color: "rgba(255,255,255,0.65)" }}
                         >
                           {service.summary}
                         </p>
@@ -271,23 +271,25 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                       <div className="mt-4 flex flex-wrap items-center gap-3">
                         {price ? (
                           <span
-                            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
                             style={{
                               background: "rgba(176,241,34,0.12)",
                               color: "var(--color-brand-accent)",
                             }}
                           >
+                            <Tag className="size-3.5" aria-hidden />
                             {price}
                           </span>
                         ) : null}
                         {service.durationMinutes != null ? (
                           <span
-                            className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
                             style={{
                               background: "rgba(255,255,255,0.07)",
-                              color: "rgba(255,255,255,0.45)",
+                              color: "rgba(255,255,255,0.70)",
                             }}
                           >
+                            <Clock className="size-3.5" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
                             {service.durationMinutes} min
                           </span>
                         ) : null}
