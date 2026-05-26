@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, CalendarClock, Clock, Tag } from "lucide-react";
+import { ArrowRight, CalendarClock } from "lucide-react";
+import { ServiceCard } from "@/components/cards/ServiceCard";
 import { DoctorProfileTemplate } from "@/components/templates/DoctorProfileTemplate";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data";
@@ -117,6 +118,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
     durationMinutes: number | null;
     basePriceCents: number | null;
     currencyCode: string | null;
+    imageSrc: string | null;
   }> = [];
   if (code) {
     const [doctors, generals, specialists] = await Promise.all([
@@ -128,7 +130,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
     if (doc) {
       const assigned = new Set(doc.assignedServiceIds);
       for (const s of [...generals, ...specialists]) {
-        if (assigned.has(s.id)) assignedServices.push(s);
+        if (assigned.has(s.id)) assignedServices.push({ ...s, imageSrc: s.imageSrc ?? null });
       }
     }
   }
@@ -234,75 +236,21 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
             <div className="mt-10 grid gap-5 sm:grid-cols-2">
               {assignedServices.map((service) => {
                 const consultHref = `/${slug}/${lang}/consult/${service.slug}?doctor=${encodeURIComponent(doctorSlug)}#doctor-${encodeURIComponent(doctorSlug)}`;
-                const price = service.basePriceCents != null
+                const startingPrice = service.basePriceCents != null
                   ? formatPriceRounded(service.basePriceCents, service.currencyCode)
-                  : null;
+                  : undefined;
                 return (
-                  <Link
+                  <ServiceCard
                     key={service.id}
                     href={consultHref}
-                    className="group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] transition-[transform,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-                    style={{
-                      background: "rgba(255,255,255,0.04)",
-                      border: "1px solid rgba(255,255,255,0.09)",
-                    }}
-                  >
-                    <div className="flex h-full flex-col p-6 sm:p-7">
-                      <p
-                        className="text-[11px] font-bold uppercase tracking-[0.18em]"
-                        style={{ color: "var(--color-brand-accent)" }}
-                      >
-                        {service.kind === "SPECIALIST" ? "Specialist" : "General"}
-                      </p>
-                      <h3
-                        className="mt-1 text-lg font-bold tracking-[-0.01em] transition-colors duration-200 group-hover:text-[var(--color-brand-accent)]"
-                        style={{ color: "rgba(255,255,255,0.88)" }}
-                      >
-                        {service.name}
-                      </h3>
-                      {service.summary ? (
-                        <p
-                          className="mt-2 flex-1 line-clamp-3 text-sm leading-relaxed"
-                          style={{ color: "rgba(255,255,255,0.65)" }}
-                        >
-                          {service.summary}
-                        </p>
-                      ) : null}
-                      <div className="mt-4 flex flex-wrap items-center gap-3">
-                        {price ? (
-                          <span
-                            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
-                            style={{
-                              background: "rgba(176,241,34,0.12)",
-                              color: "var(--color-brand-accent)",
-                            }}
-                          >
-                            <Tag className="size-3.5" aria-hidden />
-                            {price}
-                          </span>
-                        ) : null}
-                        {service.durationMinutes != null ? (
-                          <span
-                            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
-                            style={{
-                              background: "rgba(255,255,255,0.07)",
-                              color: "rgba(255,255,255,0.70)",
-                            }}
-                          >
-                            <Clock className="size-3.5" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
-                            {service.durationMinutes} min
-                          </span>
-                        ) : null}
-                      </div>
-                      <div
-                        className="mt-5 flex items-center gap-2 text-sm font-semibold transition-colors duration-200 group-hover:text-[var(--color-brand-accent)]"
-                        style={{ color: "rgba(255,255,255,0.55)" }}
-                      >
-                        <span>Pick a slot</span>
-                        <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" aria-hidden />
-                      </div>
-                    </div>
-                  </Link>
+                    title={service.name}
+                    description={service.summary ?? ""}
+                    duration={service.durationMinutes != null ? `${service.durationMinutes} min` : undefined}
+                    startingPrice={startingPrice}
+                    ctaLabel="Pick a slot"
+                    imageSrc={service.imageSrc}
+                    dark
+                  />
                 );
               })}
             </div>
