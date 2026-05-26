@@ -1,4 +1,7 @@
-import { Container } from "@/components/layout/Container";
+/**
+ * FAQ accordion — dark luxury version.
+ * Forest-night canvas, border-top dividers, lime expand icon.
+ */
 
 type FAQItem = { question: string; answer: string };
 
@@ -9,31 +12,75 @@ type FAQSectionProps = {
 
 export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
   return (
-    <section className="bg-white py-16 sm:py-20 lg:py-24">
-      <Container>
-        <div className="mx-auto max-w-3xl">
-          <h2 className="gh-h2 text-[var(--color-text-primary)]">{title}</h2>
+    <section
+      style={{
+        background: "var(--color-background-dark)",
+        padding: "clamp(64px,8vw,120px) 0",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+      }}
+    >
+      <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+        {/* Header */}
+        <div className="mb-12 lg:mb-16">
+          <p
+            className="text-[11px] font-bold tracking-[0.22em] uppercase"
+            style={{ color: "var(--color-brand-accent)" }}
+          >
+            Questions
+          </p>
+          <h2
+            className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
+            style={{
+              fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
+              color: "rgba(255,255,255,0.95)",
+              maxWidth: "22ch",
+            }}
+          >
+            {title}
+          </h2>
         </div>
-        <div className="mx-auto mt-10 max-w-3xl divide-y divide-[var(--color-border)]">
-          {items.map((item) => (
-            <details key={item.question} className="group py-5">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
-                <span className="text-base font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-brand-primary)] transition-colors">
+
+        {/* Accordion */}
+        <div className="mx-auto max-w-3xl">
+          {items.map((item, i) => (
+            <details
+              key={item.question}
+              className="group"
+              style={{
+                borderTop: i === 0 ? "1px solid rgba(255,255,255,0.08)" : undefined,
+                borderBottom: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 md:py-6">
+                <span
+                  className="text-base font-semibold leading-snug transition-colors duration-200 group-hover:text-[var(--color-brand-accent)] motion-reduce:transition-none"
+                  style={{ color: "rgba(255,255,255,0.88)" }}
+                >
                   {item.question}
                 </span>
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-background-soft)] text-[var(--color-brand-primary)] transition-transform duration-200 group-open:rotate-45">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="transition-transform">
-                    <path d="M7 1V13M1 7H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <span
+                  className="inline-flex size-8 shrink-0 items-center justify-center rounded-full transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.10)",
+                    color: "var(--color-brand-accent)",
+                  }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path d="M7 1V13M1 7H13" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
                   </svg>
                 </span>
               </summary>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--color-text-muted)]">
+              <p
+                className="pb-6 text-sm leading-relaxed"
+                style={{ color: "rgba(255,255,255,0.52)", maxWidth: "62ch" }}
+              >
                 {item.answer}
               </p>
             </details>
           ))}
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

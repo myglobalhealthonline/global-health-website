@@ -1,3 +1,8 @@
+/**
+ * Specialties grid — dark luxury version.
+ * Forest-night canvas, lime eyebrow, white headline.
+ */
+
 import { ServiceCard } from "@/components/cards/ServiceCard";
 
 type Item = {
@@ -19,24 +24,26 @@ export function SpecialtiesGrid({ title = "Specialist consultations", items }: S
   return (
     <section
       style={{
-        background: "var(--color-background-page)",
+        background: "var(--color-background-dark)",
         padding: "clamp(64px,8vw,120px) 0",
-        borderBottom: "1px solid var(--color-border)",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-        <div className="mb-10 lg:mb-12">
+        <div className="mb-10 lg:mb-14">
           <span
-            className="text-[11px] font-bold uppercase tracking-[0.2em]"
-            style={{ color: "var(--color-brand-primary)" }}
+            className="text-[11px] font-bold uppercase tracking-[0.22em]"
+            style={{ color: "var(--color-brand-accent)" }}
           >
             Specialist areas
           </span>
           <h2
-            className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.05]"
+            className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
             style={{
-              fontSize: "clamp(1.85rem,3.5vw,3rem)",
-              color: "var(--color-text-primary)",
+              fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)",
+              color: "rgba(255,255,255,0.95)",
+              maxWidth: "22ch",
             }}
           >
             {title}
@@ -44,7 +51,7 @@ export function SpecialtiesGrid({ title = "Specialist consultations", items }: S
         </div>
         <div className="gh-card-grid">
           {items.map((item) => (
-            <ServiceCard key={item.href} {...item} ctaLabel="See specialty" />
+            <ServiceCard key={item.href} {...item} ctaLabel="See specialty" dark />
           ))}
         </div>
       </div>

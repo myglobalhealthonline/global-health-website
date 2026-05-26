@@ -1,5 +1,14 @@
 "use client";
 
+/**
+ * Featured doctor spotlight — dark luxury version.
+ * Forest-night canvas, glass card, lime accent CTAs.
+ *
+ * Two rendering modes:
+ * - default (standalone=true): wraps in its own <section>
+ * - asCard (standalone=false): card only, no section wrapper
+ */
+
 import Image from "next/image";
 import { ArrowRight, Globe, ShieldCheck } from "lucide-react";
 import Link from "next/link";
@@ -16,24 +25,11 @@ type DoctorSpotlightProps = {
   href?: string;
 };
 
-/**
- * Featured doctor spotlight.
- *
- * Two rendering modes:
- * - default (standalone=true): wraps in its own <section> with panel bg,
- *   border, padding, and "Featured clinician" eyebrow. Use when not inside
- *   a parent section.
- * - asCard (standalone=false): renders only the card element — no <section>
- *   wrapper, no outer padding, no eyebrow. Use inside DoctorTeamSection
- *   where the parent provides the heading and surface.
- */
 export function FeaturedDoctor({
   doctor,
   standalone = true,
 }: {
   doctor: DoctorSpotlightProps;
-  /** When false, renders only the card (no section wrapper / eyebrow).
-   *  Used when embedded inside a shared parent section. */
   standalone?: boolean;
 }) {
   const src = doctor.imageSrc?.trim()
@@ -53,14 +49,12 @@ export function FeaturedDoctor({
 
   const card = (
     <>
-      {/* Card — responsive two-column grid */}
       <div
         className="gh-featured-card overflow-hidden"
         style={{
           borderRadius: "var(--radius-card)",
-          background: "#FFFFFF",
-          border: "1px solid var(--color-border)",
-          boxShadow: "var(--shadow-elevated)",
+          background: "rgba(255,255,255,0.03)",
+          border: "1px solid rgba(255,255,255,0.09)",
         }}
       >
         {/* Portrait */}
@@ -76,6 +70,15 @@ export function FeaturedDoctor({
             className="object-cover object-top"
             sizes="(min-width:640px) 340px, 100vw"
           />
+          {/* Right-edge fade into card body on desktop */}
+          <div
+            aria-hidden
+            className="absolute inset-y-0 right-0 w-16 hidden sm:block"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent 0%, rgba(15,46,37,0.60) 100%)",
+            }}
+          />
         </div>
 
         {/* Info column */}
@@ -83,11 +86,11 @@ export function FeaturedDoctor({
           <div>
             {/* Specialty tag */}
             <span
-              className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.1em]"
+              className="inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.1em]"
               style={{
-                background: "var(--color-background-panel)",
-                color: "var(--color-brand-primary)",
-                border: "1px solid var(--color-border)",
+                background: "rgba(176,241,34,0.10)",
+                border: "1px solid rgba(176,241,34,0.18)",
+                color: "var(--color-brand-accent)",
               }}
             >
               {doctor.title}
@@ -96,7 +99,7 @@ export function FeaturedDoctor({
             {/* Name */}
             <h3
               className="mt-3 font-extrabold tracking-[-0.03em] leading-tight text-[length:var(--text-h2)]"
-              style={{ color: "var(--color-text-primary)" }}
+              style={{ color: "rgba(255,255,255,0.92)" }}
             >
               {doctor.name}
             </h3>
@@ -107,7 +110,7 @@ export function FeaturedDoctor({
                 <span className="inline-flex items-center gap-1.5 text-[13px]">
                   <ShieldCheck
                     className="size-4 shrink-0"
-                    style={{ color: "var(--color-brand-primary)" }}
+                    style={{ color: "var(--color-brand-accent)" }}
                     strokeWidth={1.5}
                     aria-hidden
                   />
@@ -116,13 +119,16 @@ export function FeaturedDoctor({
                       href={doctor.medicalRegistrationUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold transition-opacity hover:opacity-75"
-                      style={{ color: "var(--color-text-body)" }}
+                      className="font-semibold transition-opacity hover:opacity-75 motion-reduce:transition-none"
+                      style={{ color: "rgba(255,255,255,0.65)" }}
                     >
                       {doctor.imcRegistration}
                     </a>
                   ) : (
-                    <span className="font-semibold" style={{ color: "var(--color-text-body)" }}>
+                    <span
+                      className="font-semibold"
+                      style={{ color: "rgba(255,255,255,0.65)" }}
+                    >
                       {doctor.imcRegistration}
                     </span>
                   )}
@@ -132,11 +138,14 @@ export function FeaturedDoctor({
               <span className="inline-flex items-center gap-1.5 text-[13px]">
                 <Globe
                   className="size-4 shrink-0"
-                  style={{ color: "var(--color-brand-primary)" }}
+                  style={{ color: "var(--color-brand-accent)" }}
                   strokeWidth={1.5}
                   aria-hidden
                 />
-                <span className="font-semibold" style={{ color: "var(--color-text-body)" }}>
+                <span
+                  className="font-semibold"
+                  style={{ color: "rgba(255,255,255,0.65)" }}
+                >
                   {languageList}
                 </span>
               </span>
@@ -146,7 +155,7 @@ export function FeaturedDoctor({
             {bioPreview ? (
               <p
                 className="mt-5 line-clamp-3 text-[length:var(--text-body)] leading-relaxed"
-                style={{ color: "var(--color-text-muted)", maxWidth: "52ch" }}
+                style={{ color: "rgba(255,255,255,0.48)", maxWidth: "52ch" }}
               >
                 {bioPreview}
               </p>
@@ -158,8 +167,8 @@ export function FeaturedDoctor({
             {doctor.href ? (
               <Link
                 href={doctor.href}
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-[13.5px] font-bold text-white transition-[background-color,transform] duration-200 hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
-                style={{ background: "var(--color-brand-primary)" }}
+                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-[13.5px] font-bold transition-[background-color,transform] duration-200 hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]/40 motion-reduce:transition-none"
+                style={{ background: "var(--color-brand-accent)", color: "#0a1f14" }}
               >
                 Book with {firstName}
                 <ArrowRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
@@ -168,8 +177,8 @@ export function FeaturedDoctor({
             {doctor.href ? (
               <Link
                 href={doctor.href}
-                className="inline-flex items-center gap-1.5 text-[13px] font-semibold transition-opacity hover:opacity-70"
-                style={{ color: "var(--color-text-muted)" }}
+                className="inline-flex items-center gap-1.5 text-[13px] font-semibold transition-opacity hover:opacity-70 motion-reduce:transition-none"
+                style={{ color: "rgba(255,255,255,0.48)" }}
               >
                 View profile
               </Link>
@@ -195,13 +204,12 @@ export function FeaturedDoctor({
     </>
   );
 
-  /* Standalone mode — own section + eyebrow */
   if (standalone) {
     return (
       <section
         style={{
-          background: "var(--color-background-soft)",
-          borderTop: "1px solid var(--color-border)",
+          background: "var(--color-background-dark)",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
           padding: "clamp(48px,7vw,96px) 0",
         }}
       >
@@ -213,8 +221,8 @@ export function FeaturedDoctor({
           }}
         >
           <p
-            className="mb-8 text-[11px] font-bold uppercase tracking-[0.2em]"
-            style={{ color: "var(--color-brand-primary)" }}
+            className="mb-8 text-[11px] font-bold uppercase tracking-[0.22em]"
+            style={{ color: "var(--color-brand-accent)" }}
           >
             Featured clinician
           </p>
@@ -224,6 +232,5 @@ export function FeaturedDoctor({
     );
   }
 
-  /* Card-only mode — no wrapper, caller owns layout */
   return card;
 }

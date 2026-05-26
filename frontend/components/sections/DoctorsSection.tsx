@@ -1,5 +1,10 @@
 "use client";
 
+/**
+ * Doctors grid — dark luxury version.
+ * Forest-night canvas, lime pager buttons, white/90 text.
+ */
+
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
@@ -37,8 +42,9 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
   return (
     <section
       style={{
-        background: "var(--color-background-soft)",
+        background: "var(--color-background-dark)",
         padding: "clamp(64px,8vw,120px) 0",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
@@ -46,17 +52,17 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
           <div className="flex flex-wrap items-end justify-between gap-4 mb-12 lg:mb-14">
             <div>
               <span
-                className="text-[11px] font-bold uppercase tracking-[0.2em]"
-                style={{ color: "var(--color-brand-primary)" }}
+                className="text-[11px] font-bold uppercase tracking-[0.22em]"
+                style={{ color: "var(--color-brand-accent)" }}
               >
                 Our Team
               </span>
               {title && (
                 <h2
-                  className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.05]"
+                  className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
                   style={{
-                    fontSize: "clamp(1.85rem,3.5vw,3rem)",
-                    color: "var(--color-text-primary)",
+                    fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)",
+                    color: "rgba(255,255,255,0.95)",
                   }}
                 >
                   {title}
@@ -64,8 +70,8 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
               )}
               {intro ? (
                 <p
-                  className="mt-3 max-w-2xl text-[length:var(--text-body-lg)] leading-relaxed"
-                  style={{ color: "var(--color-text-muted)" }}
+                  className="mt-4 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed"
+                  style={{ color: "rgba(255,255,255,0.55)" }}
                 >
                   {intro}
                 </p>
@@ -81,28 +87,18 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
                   className="size-10 rounded-full border inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={
                     page === 0
-                      ? {
-                          background: "transparent",
-                          borderColor: "var(--color-border)",
-                          color: "var(--color-text-muted)",
-                        }
-                      : {
-                          background: "var(--color-brand-primary)",
-                          borderColor: "var(--color-brand-primary)",
-                          color: "#fff",
-                        }
+                      ? { background: "transparent", borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.40)" }
+                      : { background: "var(--color-brand-accent)", borderColor: "var(--color-brand-accent)", color: "#0a1f14" }
                   }
                 >
-                  <ChevronLeft size={18} />
+                  <ChevronLeft size={18} aria-hidden />
                 </button>
-
                 <span
                   className="text-[11px] font-bold tabular-nums"
-                  style={{ color: "var(--color-text-muted)" }}
+                  style={{ color: "rgba(255,255,255,0.38)" }}
                 >
                   {page + 1} / {totalPages}
                 </span>
-
                 <button
                   onClick={() => setPage((p) => p + 1)}
                   disabled={page === totalPages - 1}
@@ -110,19 +106,11 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
                   className="size-10 rounded-full border inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={
                     page === totalPages - 1
-                      ? {
-                          background: "transparent",
-                          borderColor: "var(--color-border)",
-                          color: "var(--color-text-muted)",
-                        }
-                      : {
-                          background: "var(--color-brand-primary)",
-                          borderColor: "var(--color-brand-primary)",
-                          color: "#fff",
-                        }
+                      ? { background: "transparent", borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.40)" }
+                      : { background: "var(--color-brand-accent)", borderColor: "var(--color-brand-accent)", color: "#0a1f14" }
                   }
                 >
-                  <ChevronRight size={18} />
+                  <ChevronRight size={18} aria-hidden />
                 </button>
               </div>
             )}

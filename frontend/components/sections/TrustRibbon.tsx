@@ -1,6 +1,7 @@
 /**
- * Trust ribbon — light luxury version.
- * White surface, forest icon circles, brand-primary values, muted labels.
+ * Trust ribbon — dark luxury version.
+ * Forest-night canvas, lime oversized values, white/40 labels,
+ * lime icon circles.
  */
 
 import {
@@ -27,15 +28,11 @@ const ICONS: Record<NonNullable<TrustRibbonItem["icon"]>, LucideIcon> = {
 };
 
 function inferIcon(label: string): NonNullable<TrustRibbonItem["icon"]> {
-  const normalised = label.toLowerCase();
-  if (normalised.includes("doctor") || normalised.includes("clinician"))
-    return "doctor";
-  if (normalised.includes("countr") || normalised.includes("europ"))
-    return "globe";
-  if (normalised.includes("gdpr") || normalised.includes("complian"))
-    return "lock";
-  if (normalised.includes("secure") || normalised.includes("encrypt"))
-    return "shield";
+  const n = label.toLowerCase();
+  if (n.includes("doctor") || n.includes("clinician")) return "doctor";
+  if (n.includes("countr") || n.includes("europ")) return "globe";
+  if (n.includes("gdpr") || n.includes("complian")) return "lock";
+  if (n.includes("secure") || n.includes("encrypt")) return "shield";
   return "sparkles";
 }
 
@@ -45,19 +42,22 @@ const FALLBACK_ITEMS: TrustRibbonItem[] = [
 
 export function TrustRibbon({ items }: { items?: TrustRibbonItem[] }) {
   const list = items && items.length > 0 ? items : FALLBACK_ITEMS;
+
   return (
     <section
-      className="relative bg-[var(--color-background-page)]"
-      style={{ borderBottom: "1px solid var(--color-border)" }}
+      style={{
+        background: "var(--color-background-dark)",
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        padding: "clamp(48px,6vw,80px) 0",
+      }}
     >
       <div
         className="mx-auto max-w-[var(--container-width)] px-5 md:px-10"
-        style={{ padding: "clamp(40px,5vw,64px) clamp(20px,4vw,40px)" }}
       >
         <ul
           className="grid gap-y-10 gap-x-6 grid-cols-2 lg:grid-cols-4"
           style={{
-            borderTop: "1px solid var(--color-border)",
+            borderTop: "1px solid rgba(255,255,255,0.07)",
             paddingTop: "clamp(40px,5vw,56px)",
           }}
         >
@@ -66,33 +66,30 @@ export function TrustRibbon({ items }: { items?: TrustRibbonItem[] }) {
             return (
               <li
                 key={`${it.v}-${it.l}`}
-                className={i > 0 ? "lg:pl-6 flex flex-col gap-3" : "flex flex-col gap-3"}
+                className={`flex flex-col gap-3 ${i > 0 ? "lg:pl-6" : ""}`}
               >
                 <span
                   className="inline-flex size-10 items-center justify-center rounded-full"
                   style={{
-                    background: "var(--color-background-soft)",
-                    border: "1px solid var(--color-border)",
+                    background: "rgba(176,241,34,0.10)",
+                    border: "1px solid rgba(176,241,34,0.18)",
+                    color: "var(--color-brand-accent)",
                   }}
                 >
-                  <Icon
-                    className="size-4 text-[var(--color-brand-primary)]"
-                    strokeWidth={1.5}
-                    aria-hidden
-                  />
+                  <Icon className="size-4" strokeWidth={1.5} aria-hidden />
                 </span>
                 <p
-                  className="font-extrabold tracking-[-0.03em] leading-none [font-variant-numeric:tabular-nums]"
+                  className="font-extrabold tracking-[-0.04em] leading-none [font-variant-numeric:tabular-nums]"
                   style={{
                     fontSize: "clamp(1.75rem,3vw,2.5rem)",
-                    color: "var(--color-text-primary)",
+                    color: "var(--color-brand-accent)",
                   }}
                 >
                   {it.v}
                 </p>
                 <p
-                  className="text-[11px] font-bold uppercase tracking-[0.12em]"
-                  style={{ color: "var(--color-text-muted)" }}
+                  className="text-[11px] font-bold uppercase tracking-[0.14em]"
+                  style={{ color: "rgba(255,255,255,0.42)" }}
                 >
                   {it.l}
                 </p>
