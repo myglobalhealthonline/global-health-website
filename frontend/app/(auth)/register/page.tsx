@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--color-background-soft)]">
+    <div className="flex min-h-screen flex-col" style={{ background: "var(--color-background-dark)" }}>
       <header className="px-6 py-5">
         <Link href="/" className="inline-flex items-center gap-2 text-[var(--color-brand-primary)]">
           <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-brand-primary)] text-white">

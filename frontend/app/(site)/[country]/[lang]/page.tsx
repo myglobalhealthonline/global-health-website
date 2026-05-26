@@ -399,7 +399,7 @@ export default async function CountryLangHomePage({
       <ServiceCatalog services={serviceCatalogItems} />
       <StatsBand items={statsItems} />
       {/* ── Team section — featured card + full grid under one heading ── */}
-      <section className="relative bg-[var(--color-background-soft)]" style={{ borderTop: "1px solid var(--color-border)" }}>
+      <section className="relative" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div
           className="mx-auto px-5 md:px-10 gh-section"
           style={{ maxWidth: "var(--container-width)" }}
@@ -407,23 +407,32 @@ export default async function CountryLangHomePage({
           {/* Shared heading */}
           <div className="mb-12 md:mb-16">
             <div className="flex flex-wrap items-baseline justify-between gap-4">
-              <span className="gh-eyebrow text-[var(--color-brand-primary)]">
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: "0.20em",
+                  textTransform: "uppercase",
+                  color: "var(--color-brand-accent)",
+                }}
+              >
                 The team
               </span>
               <span
                 className="text-[11px] font-bold uppercase tracking-[0.14em] [font-variant-numeric:tabular-nums]"
-                style={{ color: "var(--color-text-muted)" }}
+                style={{ color: "rgba(255,255,255,0.42)" }}
               >
                 {doctorWallItems.length} registered {doctorWallItems.length === 1 ? "clinician" : "clinicians"}
               </span>
             </div>
             <h2
-              className="mt-3 max-w-[22ch] text-[length:var(--text-h1)] font-extrabold tracking-[-0.03em] leading-[1.02] text-[var(--color-text-primary)]"
+              className="mt-3 max-w-[22ch] text-[length:var(--text-h1)] font-extrabold tracking-[-0.03em] leading-[1.02]"
+              style={{ color: "rgba(255,255,255,0.92)" }}
             >
               Doctors who actually{" "}
-              <span className="text-[var(--color-brand-primary)]">pick up.</span>
+              <span style={{ color: "var(--color-brand-accent)" }}>pick up.</span>
             </h2>
-            <p className="mt-5 max-w-[52ch] text-[length:var(--text-body-lg)] text-[var(--color-text-body)] leading-relaxed">
+            <p className="mt-5 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
               Every consultation is with someone licensed where you are. No
               call centres, no rota of strangers — the doctor on screen is
               the doctor on the profile.

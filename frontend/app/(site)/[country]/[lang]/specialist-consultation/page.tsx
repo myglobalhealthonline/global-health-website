@@ -182,9 +182,9 @@ export default async function CountryLangSpecialistConsultationPage({
       />
 
       {page?.heroImageSrc ? (
-        <section className="bg-[var(--color-background-page)]">
+        <section style={{ background: "var(--color-background-dark)" }}>
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 -mt-16 relative">
-            <div className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] shadow-[var(--shadow-elevated)]">
+            <div className="overflow-hidden rounded-[var(--radius-card)]" style={{ border: "1px solid rgba(255,255,255,0.09)" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={page.heroImageSrc}
