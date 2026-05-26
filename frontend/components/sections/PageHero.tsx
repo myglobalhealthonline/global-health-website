@@ -148,17 +148,13 @@ export function PageHero({
                       rounded-full
                       px-7 py-4
                       text-[15px] font-bold
+                      bg-[var(--color-brand-accent)] text-[#0a1f14]
+                      hover:bg-white
                       transition-[background-color,transform] duration-200
                       active:scale-[0.98] motion-reduce:active:scale-100
                       motion-reduce:transition-none
                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
                     "
-                    style={{
-                      background: "var(--color-brand-accent)",
-                      color: "#0a1f14",
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.background = "#ffffff")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "var(--color-brand-accent)")}
                   >
                     {ctaLabel}
                     <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
