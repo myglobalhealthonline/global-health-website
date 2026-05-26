@@ -70,9 +70,10 @@ export function PageHero({
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
           background: `
-            radial-gradient(ellipse 1200px 700px at 100% -20%, rgba(176, 241, 34, 0.20), transparent 55%),
-            radial-gradient(ellipse 900px 600px at -10% 110%, rgba(200, 230, 160, 0.08), transparent 60%),
-            linear-gradient(180deg, #0A2620 0%, var(--color-background-dark) 60%, #0A2620 100%)
+            radial-gradient(ellipse 1400px 800px at 95% -15%, rgba(176, 241, 34, 0.28), transparent 52%),
+            radial-gradient(ellipse 900px 600px at -5% 105%, rgba(176, 241, 34, 0.07), transparent 55%),
+            radial-gradient(ellipse 600px 400px at 50% 120%, rgba(29, 75, 54, 0.6), transparent 70%),
+            var(--color-background-dark)
           `,
         }}
       />
@@ -86,8 +87,11 @@ export function PageHero({
         }}
       />
 
-      <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10 pt-20 pb-20 md:pt-24 md:pb-28">
-        <div className="grid items-end gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
+      <div
+        className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10"
+        style={{ padding: rightSlot ? "clamp(80px,10vw,140px) clamp(20px,4vw,40px)" : "clamp(96px,12vw,160px) clamp(20px,4vw,40px)" }}
+      >
+        <div className={rightSlot ? "grid items-end gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-16" : ""}>
           {/* LEFT — eyebrow + headline + lede + CTAs */}
           <div>
             {countryCode || countryLabel ? (
@@ -102,41 +106,59 @@ export function PageHero({
             ) : null}
 
             <h1
-              className="
-                mt-7 max-w-[18ch]
-                font-semibold tracking-[-0.035em] leading-[0.96]
-                text-[clamp(2.75rem, 6.5vw + 0.5rem, 7rem)]
-              "
+              style={{
+                marginTop: 28,
+                maxWidth: rightSlot ? "18ch" : "22ch",
+                fontWeight: 800,
+                letterSpacing: "-0.035em",
+                lineHeight: 0.96,
+                fontSize: rightSlot
+                  ? "clamp(2.75rem, 6.5vw + 0.5rem, 7rem)"
+                  : "clamp(3.5rem, 8vw + 0.5rem, 8rem)",
+              }}
             >
               {titleLead}{" "}
-              <span className="font-extrabold text-[var(--color-brand-accent)]">
+              <span style={{ color: "var(--color-brand-accent)" }}>
                 {titleAccent}
               </span>
-              {titleTrail ? <span className="text-white/95">{` ${titleTrail}`}</span> : null}
+              {titleTrail ? <span style={{ color: "rgba(255,255,255,0.95)" }}>{` ${titleTrail}`}</span> : null}
             </h1>
 
             {lede ? (
-              <p className="mt-7 max-w-[44ch] text-base md:text-lg leading-relaxed text-white/72">
+              <p
+                className="leading-relaxed"
+                style={{
+                  marginTop: 28,
+                  maxWidth: rightSlot ? "44ch" : "52ch",
+                  fontSize: "clamp(1rem, 1vw + 0.6rem, 1.2rem)",
+                  color: "rgba(255,255,255,0.72)",
+                }}
+              >
                 {lede}
               </p>
             ) : null}
 
             {(ctaHref && ctaLabel) || (secondaryHref && secondaryLabel) ? (
-              <div className="mt-10 flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3" style={{ marginTop: 40 }}>
                 {ctaHref && ctaLabel ? (
                   <Link
                     href={ctaHref}
                     className="
                       inline-flex items-center justify-center gap-2
-                      rounded-full bg-[var(--color-accent)]
+                      rounded-full
                       px-7 py-4
-                      text-[15px] font-bold text-[var(--color-background-dark)]
+                      text-[15px] font-bold
                       transition-[background-color,transform] duration-200
-                      hover:bg-white
                       active:scale-[0.98] motion-reduce:active:scale-100
                       motion-reduce:transition-none
                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
                     "
+                    style={{
+                      background: "var(--color-brand-accent)",
+                      color: "#0a1f14",
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "#ffffff")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "var(--color-brand-accent)")}
                   >
                     {ctaLabel}
                     <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
