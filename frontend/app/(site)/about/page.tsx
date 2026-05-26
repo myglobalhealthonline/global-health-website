@@ -33,18 +33,21 @@ export default function AboutPage() {
         secondaryHref="/contact"
       />
 
-      {/* LIGHT — three pillars */}
-      <section className="bg-[var(--color-background-page)]">
-        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section">
-          <p className="gh-eyebrow text-[var(--color-brand-primary)]">
+      {/* DARK — three pillars */}
+      <section style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)", padding: "clamp(64px,8vw,120px) 0" }}>
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <p
+            className="gh-eyebrow"
+            style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.20em", textTransform: "uppercase", color: "var(--color-brand-accent)" }}
+          >
             What we believe
           </p>
           <h2
-            className="mt-3 max-w-[20ch] font-extrabold tracking-[-0.03em] leading-[1.02] text-[var(--color-text-primary)]"
-            style={{ fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)" }}
+            className="mt-3 max-w-[20ch] font-extrabold tracking-[-0.03em] leading-[1.02]"
+            style={{ fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)", color: "rgba(255,255,255,0.92)" }}
           >
             Healthcare should feel less like{" "}
-            <span className="text-[var(--color-brand-primary)]">admin</span>.
+            <span style={{ color: "var(--color-brand-accent)" }}>admin</span>.
           </h2>
 
           <div className="mt-14 grid gap-10 lg:grid-cols-3">
@@ -122,22 +125,29 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* LIGHT — coverage */}
-      <section className="bg-[var(--color-background-page)]">
-        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section-tight">
+      {/* DARK — coverage */}
+      <section style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)", padding: "clamp(40px,5vw,64px) 0" }}>
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
-              <p className="gh-eyebrow text-[var(--color-brand-primary)]">
+              <p
+                className="gh-eyebrow"
+                style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.20em", textTransform: "uppercase", color: "var(--color-brand-accent)" }}
+              >
                 Where we cover
               </p>
               <h2
-                className="mt-3 max-w-[16ch] font-extrabold tracking-[-0.025em] leading-[1.05] text-[var(--color-text-primary)]"
-                style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.75rem)" }}
+                className="mt-3 max-w-[16ch] font-extrabold tracking-[-0.025em] leading-[1.05]"
+                style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.75rem)", color: "rgba(255,255,255,0.92)" }}
               >
                 Five European markets and counting.
               </h2>
             </div>
-            <Link href="/" className="gh-btn gh-btn-primary">
+            <Link
+              href="/"
+              className="gh-btn"
+              style={{ background: "var(--color-brand-accent)", color: "#0a1f14", borderColor: "var(--color-brand-accent)" }}
+            >
               Pick your country
               <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
             </Link>
@@ -152,14 +162,16 @@ export default function AboutPage() {
             ].map((c) => (
               <li
                 key={c.code}
-                className="flex items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] px-4 py-3"
+                className="flex items-center gap-3 rounded-[var(--radius-card-sm)] px-4 py-3"
+                style={{ border: "1px solid rgba(255,255,255,0.09)", background: "rgba(255,255,255,0.03)" }}
               >
                 <span aria-hidden className={`fi fi-${c.code} inline-block text-xl leading-none`} />
-                <span className="font-semibold text-[var(--color-text-primary)]">
+                <span className="font-semibold" style={{ color: "rgba(255,255,255,0.88)" }}>
                   {c.name}
                 </span>
                 <Globe2
-                  className="ml-auto size-4 text-[var(--color-text-muted)]"
+                  className="ml-auto size-4"
+                  style={{ color: "rgba(255,255,255,0.35)" }}
                   strokeWidth={1.5}
                   aria-hidden
                 />
@@ -186,17 +198,23 @@ function Pillar({
   return (
     <article>
       <div className="flex items-center gap-3">
-        <span className="inline-flex size-10 items-center justify-center rounded-full bg-[var(--color-background-soft)] border border-[var(--color-border)] text-[var(--color-brand-primary)]">
+        <span
+          className="inline-flex size-10 items-center justify-center rounded-full"
+          style={{ background: "rgba(176,241,34,0.08)", border: "1px solid rgba(176,241,34,0.18)", color: "var(--color-brand-accent)" }}
+        >
           {icon}
         </span>
-        <span className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-text-muted)] [font-variant-numeric:tabular-nums]">
+        <span
+          className="text-xs font-bold uppercase tracking-[0.16em] [font-variant-numeric:tabular-nums]"
+          style={{ color: "rgba(255,255,255,0.45)" }}
+        >
           {eyebrow}
         </span>
       </div>
-      <h3 className="mt-5 text-xl font-extrabold tracking-[-0.015em] text-[var(--color-text-primary)]">
+      <h3 className="mt-5 text-xl font-extrabold tracking-[-0.015em]" style={{ color: "rgba(255,255,255,0.92)" }}>
         {title}
       </h3>
-      <p className="mt-3 max-w-[42ch] text-[length:var(--text-body)] leading-relaxed text-[var(--color-text-muted)]">
+      <p className="mt-3 max-w-[42ch] text-[length:var(--text-body)] leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
         {body}
       </p>
     </article>

@@ -43,7 +43,7 @@ export function DoctorTeamTemplate({
   const paged = doctors.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   return (
-    <main className="bg-[var(--color-background-page)]">
+    <main style={{ background: "var(--color-background-dark)" }}>
       <PageHero
         countryLabel={`${countryName} · The team`}
         titleLead="Doctors who"
@@ -65,21 +65,25 @@ export function DoctorTeamTemplate({
       />
 
       {/* GRID — light soft section, DoctorCard components */}
-      <section className="gh-section bg-[var(--color-background-soft)]">
+      <section className="gh-section" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="gh-container">
           {doctors.length === 0 ? (
             <div className="mx-auto max-w-[480px] text-center">
               <h2
                 className="gh-display text-[2rem]"
-                style={{ fontWeight: 800 }}
+                style={{ fontWeight: 800, color: "rgba(255,255,255,0.92)" }}
               >
                 Onboarding clinicians.
               </h2>
-              <p className="mt-4 text-[15px] text-[var(--color-text-muted)]">
+              <p className="mt-4 text-[15px]" style={{ color: "rgba(255,255,255,0.65)" }}>
                 Our {countryName} medical team is being verified. Check back
                 soon — or book with our cross-border specialists.
               </p>
-              <Link href={bookingHref} className="gh-btn gh-btn-primary mt-8">
+              <Link
+                href={bookingHref}
+                className="gh-btn mt-8"
+                style={{ background: "var(--color-brand-accent)", color: "#0a1f14", borderRadius: 999 }}
+              >
                 {bookingLabel}
               </Link>
             </div>
@@ -89,7 +93,7 @@ export function DoctorTeamTemplate({
                 <div className="mb-6 flex items-center justify-end gap-2">
                   <span
                     className="text-[11px] font-bold tabular-nums"
-                    style={{ color: "var(--color-text-muted)" }}
+                    style={{ color: "rgba(255,255,255,0.55)" }}
                   >
                     {page + 1} / {totalPages}
                   </span>
@@ -156,17 +160,21 @@ export function DoctorTeamTemplate({
       </section>
 
       {showBottomCta ? (
-        <section className="gh-section bg-[var(--color-background-soft)]">
+        <section className="gh-section" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="gh-container">
             <div className="grid items-end gap-10 lg:grid-cols-[1.6fr_1fr]">
               <h2
                 className="gh-display text-[clamp(2rem,4.5vw,4rem)]"
-                style={{ fontWeight: 800 }}
+                style={{ fontWeight: 800, color: "rgba(255,255,255,0.92)" }}
               >
                 Pick a clinician. Book{" "}
-                <span className="gh-display-em">the same day.</span>
+                <em style={{ fontStyle: "italic", color: "var(--color-brand-accent)" }}>the same day.</em>
               </h2>
-              <Link href={bookingHref} className="gh-btn gh-btn-primary lg:justify-self-end">
+              <Link
+                href={bookingHref}
+                className="gh-btn lg:justify-self-end"
+                style={{ background: "var(--color-brand-accent)", color: "#0a1f14", borderRadius: 999 }}
+              >
                 {bookingLabel}
                 <ArrowUpRight className="h-4 w-4" />
               </Link>

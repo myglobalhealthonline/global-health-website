@@ -68,10 +68,11 @@ export default function BlogIndexPage() {
         </div>
       </section>
 
-      {/* Light card grid */}
+      {/* Card grid */}
       <section
         style={{
-          background: "var(--color-background-soft)",
+          background: "var(--color-background-dark)",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
           padding: "clamp(64px,8vw,120px) 0",
         }}
       >
