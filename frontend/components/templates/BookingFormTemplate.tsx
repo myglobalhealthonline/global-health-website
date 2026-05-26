@@ -217,50 +217,109 @@ export function BookingFormTemplate({
   }
 
   return (
-    <main className="bg-white">
+    <main style={{ background: "var(--color-background-dark)" }}>
       {/* HERO */}
-      <section className="relative isolate overflow-hidden bg-[var(--color-background-soft)]">
+      <section
+        className="relative isolate overflow-hidden"
+        style={{ background: "var(--color-background-dark)" }}
+      >
+        {/* Lime radial glow */}
         <div
           aria-hidden
-          className="gh-booking-hero-bloom pointer-events-none absolute inset-0 -z-10"
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(ellipse 700px 400px at 80% -10%, rgba(176,241,34,0.08), transparent 55%)",
+          }}
         />
         <div className="mx-auto w-full max-w-[1240px] px-6 py-16 lg:px-10 lg:py-20">
-          <span className="gh-heading-eyebrow inline-flex items-center gap-2">
-            <Stethoscope className="h-3.5 w-3.5" />
+          <span
+            className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em]"
+            style={{ color: "var(--color-brand-accent)" }}
+          >
+            <Stethoscope className="h-3.5 w-3.5" aria-hidden />
             Book online
           </span>
-          <h1 className="gh-display mt-5 max-w-3xl text-[clamp(2rem,4.5vw,3.75rem)] leading-[1.05] tracking-[-0.02em]">
+          <h1
+            className="mt-5 max-w-3xl font-extrabold tracking-[-0.03em] leading-[1.05]"
+            style={{
+              fontSize: "clamp(2rem,4.5vw,3.75rem)",
+              color: "rgba(255,255,255,0.95)",
+            }}
+          >
             {hero.title}
           </h1>
           {hero.description ? (
-            <p className="mt-4 max-w-2xl text-[1.05rem] leading-relaxed text-[var(--color-text-muted)]">
+            <p
+              className="mt-4 max-w-2xl text-[1.05rem] leading-relaxed"
+              style={{ color: "rgba(255,255,255,0.55)" }}
+            >
               {hero.description}
             </p>
           ) : null}
-          <a href="#booking-form" className="gh-btn gh-btn-primary mt-8">
+          <a
+            href="#booking-form"
+            className="mt-8 inline-flex items-center gap-2 rounded-full text-[14.5px] font-bold transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-[0.98]"
+            style={{
+              background: "var(--color-brand-accent)",
+              color: "#0a1f14",
+              padding: "13px 28px",
+            }}
+          >
             {hero.primaryCtaLabel}
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4" aria-hidden />
           </a>
         </div>
       </section>
 
       {/* FORM + SIDEBAR */}
-      <section id="booking-form" className="bg-white">
+      <section
+        id="booking-form"
+        style={{
+          background: "var(--color-background-dark)",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
         <div className="mx-auto grid w-full max-w-[1240px] gap-10 px-6 py-16 lg:grid-cols-[1.6fr_1fr] lg:px-10 lg:py-20">
           {/* Form card */}
-          <div className="rounded-3xl border border-[var(--color-border)] bg-white p-7 shadow-[0_30px_70px_-30px_rgba(15,46,37,0.18)] md:p-10">
-            <span className="gh-heading-eyebrow">Patient details</span>
-            <h2 className="gh-display mt-3 text-[clamp(1.5rem,2.5vw,2rem)] leading-tight tracking-tight">
+          <div
+            className="p-7 md:p-10"
+            style={{
+              borderRadius: 24,
+              border: "1px solid rgba(255,255,255,0.09)",
+              background: "rgba(255,255,255,0.03)",
+            }}
+          >
+            <p
+              className="text-[11px] font-bold uppercase tracking-[0.22em]"
+              style={{ color: "var(--color-brand-accent)" }}
+            >
+              Patient details
+            </p>
+            <h2
+              className="mt-3 font-extrabold tracking-[-0.03em] leading-tight"
+              style={{ fontSize: "clamp(1.5rem,2.5vw,2rem)", color: "rgba(255,255,255,0.95)" }}
+            >
               {form.title}
             </h2>
-            <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--color-text-muted)]">
+            <p
+              className="mt-2 text-[14.5px] leading-relaxed"
+              style={{ color: "rgba(255,255,255,0.52)" }}
+            >
               {form.description}
             </p>
 
             {signedInPatient ? (
-              <div className="mt-5 rounded-2xl border border-[var(--color-brand-primary)]/20 bg-[var(--color-background-soft)] px-4 py-3 text-[13px] text-[var(--color-text-muted)]">
+              <div
+                className="mt-5 rounded-2xl px-4 py-3 text-[13px]"
+                style={{
+                  border: "1px solid rgba(176,241,34,0.18)",
+                  background: "rgba(176,241,34,0.05)",
+                  color: "rgba(255,255,255,0.65)",
+                }}
+              >
                 Signed in as{" "}
-                <span className="font-semibold text-[var(--color-brand-primary)]">
+                <span style={{ fontWeight: 600, color: "var(--color-brand-accent)" }}>
                   {signedInPatient.fullName}
                 </span>{" "}
                 — details pre-filled.
@@ -454,17 +513,33 @@ export function BookingFormTemplate({
 
           {/* Sidebar */}
           <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-3xl bg-[var(--color-brand-primary)] p-7 text-white">
-              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
+            <div
+              className="p-7"
+              style={{
+                borderRadius: 24,
+                border: "1px solid rgba(255,255,255,0.09)",
+                background: "rgba(255,255,255,0.03)",
+              }}
+            >
+              <span
+                className="text-[11px] font-bold uppercase tracking-[0.22em]"
+                style={{ color: "var(--color-brand-accent)" }}
+              >
                 What happens next
               </span>
-              <h3 className="gh-display mt-3 text-[1.5rem] leading-tight tracking-tight text-white">
+              <h3
+                className="mt-3 font-extrabold tracking-[-0.03em] leading-tight"
+                style={{ fontSize: "1.5rem", color: "rgba(255,255,255,0.95)" }}
+              >
                 A clear, calm booking.
               </h3>
-              <ol className="mt-5 space-y-4 text-[14px] leading-relaxed text-white/85">
+              <ol className="mt-5 space-y-4 text-[14px] leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
                 {(form.nextSteps?.items ?? DEFAULT_NEXT_STEPS).map((item, i) => (
                   <li key={item} className="flex gap-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-[12px] font-bold text-[var(--color-brand-primary)]">
+                    <span
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[12px] font-bold"
+                      style={{ background: "var(--color-brand-accent)", color: "#0a1f14" }}
+                    >
                       {i + 1}
                     </span>
                     <span>{item}</span>
@@ -496,7 +571,15 @@ export function BookingFormTemplate({
               />
             </ul>
 
-            <div className="rounded-3xl border border-dashed border-[var(--color-border)] bg-[var(--color-background-soft)] p-5 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+            <div
+              className="p-5 text-[13px] leading-relaxed"
+              style={{
+                borderRadius: 24,
+                border: "1px dashed rgba(255,255,255,0.12)",
+                background: "rgba(255,255,255,0.02)",
+                color: "rgba(255,255,255,0.42)",
+              }}
+            >
               Not sure what to book? Pick &ldquo;GP consultation&rdquo; —
               our team will route you to the right clinician.
             </div>
@@ -551,8 +634,6 @@ function SlotPicker({
   selectedSlotId: string | null;
   onSelect: (id: string) => void;
 }) {
-  // Group slots by local-day string so the picker reads as
-  // "Mon 12 May → [09:00] [09:30] [10:00] …" instead of one giant list.
   const groups = new Map<string, { id: string; startAt: Date }[]>();
   for (const s of doctor.slots) {
     const d = new Date(s.startAt);
@@ -563,17 +644,26 @@ function SlotPicker({
   }
 
   return (
-    <div className="mt-6 rounded-2xl border border-[var(--color-brand-primary)]/20 bg-[var(--color-background-soft)] p-5">
+    <div
+      className="mt-6 rounded-2xl p-5"
+      style={{
+        border: "1px solid rgba(176,241,34,0.18)",
+        background: "rgba(176,241,34,0.04)",
+      }}
+    >
       <div className="flex items-start justify-between gap-3">
         <div>
-          <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+          <span
+            className="text-[11px] font-bold uppercase tracking-[0.18em]"
+            style={{ color: "var(--color-brand-accent)" }}
+          >
             Booking with
           </span>
-          <p className="mt-1 text-[15px] font-semibold text-[var(--color-text-primary)]">
+          <p className="mt-1 text-[15px] font-semibold" style={{ color: "rgba(255,255,255,0.90)" }}>
             {doctor.fullName}
           </p>
           {doctor.title ? (
-            <p className="text-[12.5px] text-[var(--color-text-muted)]">
+            <p className="text-[12.5px]" style={{ color: "rgba(255,255,255,0.52)" }}>
               {doctor.title}
             </p>
           ) : null}
@@ -581,7 +671,7 @@ function SlotPicker({
       </div>
 
       {doctor.slots.length === 0 ? (
-        <p className="mt-4 text-[13.5px] text-[var(--color-text-muted)]">
+        <p className="mt-4 text-[13.5px]" style={{ color: "rgba(255,255,255,0.52)" }}>
           No open slots in the next two weeks — submit the form anyway and
           our team will reach out with a time.
         </p>
@@ -589,7 +679,10 @@ function SlotPicker({
         <div className="mt-4 flex flex-col gap-4">
           {Array.from(groups.entries()).map(([dayKey, slots]) => (
             <div key={dayKey}>
-              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+              <p
+                className="text-[11px] font-bold uppercase tracking-[0.12em]"
+                style={{ color: "rgba(255,255,255,0.40)" }}
+              >
                 {dayKey}
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -601,11 +694,12 @@ function SlotPicker({
                       key={s.id}
                       type="button"
                       onClick={() => onSelect(s.id)}
-                      className={`rounded-full border px-3 py-1.5 text-[13px] font-semibold transition ${
+                      className="rounded-full px-3 py-1.5 text-[13px] font-semibold transition-all duration-200"
+                      style={
                         active
-                          ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white"
-                          : "border-[var(--color-border)] bg-white text-[var(--color-text-primary)] hover:border-[var(--color-brand-primary)]"
-                      }`}
+                          ? { background: "var(--color-brand-accent)", color: "#0a1f14", border: "1px solid var(--color-brand-accent)" }
+                          : { border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.75)" }
+                      }
                     >
                       {time}
                     </button>
@@ -630,15 +724,24 @@ function SidebarChip({
   detail: string;
 }) {
   return (
-    <li className="flex items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-white px-4 py-3">
-      <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--color-background-soft)]">
-        <Icon className="h-4 w-4 text-[var(--color-brand-primary)]" />
+    <li
+      className="flex items-center gap-3 rounded-2xl px-4 py-3"
+      style={{
+        border: "1px solid rgba(255,255,255,0.08)",
+        background: "rgba(255,255,255,0.03)",
+      }}
+    >
+      <span
+        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+        style={{ background: "rgba(176,241,34,0.10)", color: "var(--color-brand-accent)" }}
+      >
+        <Icon className="h-4 w-4" aria-hidden />
       </span>
       <span>
-        <p className="text-[13.5px] font-semibold text-[var(--color-text-primary)]">
+        <p className="text-[13.5px] font-semibold" style={{ color: "rgba(255,255,255,0.88)" }}>
           {title}
         </p>
-        <p className="text-[12px] text-[var(--color-text-muted)]">{detail}</p>
+        <p className="text-[12px]" style={{ color: "rgba(255,255,255,0.42)" }}>{detail}</p>
       </span>
     </li>
   );

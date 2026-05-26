@@ -1,3 +1,8 @@
+/**
+ * Public review badge — dark luxury version.
+ * Forest-night canvas, white rating text, amber stars.
+ */
+
 import { Star } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import {
@@ -6,10 +11,6 @@ import {
   type AggregateSnapshot,
 } from "@/lib/api/reviews-config";
 
-/**
- * Public review badge — light luxury version.
- * White/soft surface, amber stars, brand-primary rating, muted count.
- */
 export async function ReviewBadge({
   countryName,
 }: {
@@ -31,10 +32,10 @@ export async function ReviewBadge({
     <section
       aria-label="Patient reviews"
       style={{
-        background: "var(--color-background-soft)",
-        borderTop: "1px solid var(--color-border)",
-        borderBottom: "1px solid var(--color-border)",
-        padding: "32px 0",
+        background: "var(--color-background-dark)",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        padding: "28px 0",
       }}
     >
       <div
@@ -136,7 +137,7 @@ function ProviderBlock({ provider }: { provider: ProviderEntry }) {
             marginTop: 4,
             fontSize: 12,
             fontWeight: 600,
-            color: "var(--color-text-muted)",
+            color: "rgba(255,255,255,0.45)",
             textDecoration: "none",
             textAlign: "center",
           }}
@@ -161,7 +162,12 @@ function ProviderBlock({ provider }: { provider: ProviderEntry }) {
           href={provider.href ?? "#"}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ fontSize: 13, fontWeight: 600, color: "var(--color-text-muted)", textDecoration: "none" }}
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: "rgba(255,255,255,0.45)",
+            textDecoration: "none",
+          }}
         >
           {provider.aggregate.rating.toFixed(2)} · {provider.aggregate.count.toLocaleString()} Trustpilot reviews
         </a>
@@ -182,7 +188,7 @@ function StaticBadge({ provider }: { provider: ProviderEntry }) {
             className={
               star <= Math.round(provider.aggregate.rating)
                 ? "size-4 fill-amber-400 text-amber-400"
-                : "size-4 fill-slate-200 text-slate-200"
+                : "size-4 fill-white/10 text-white/10"
             }
             aria-hidden
           />
@@ -193,13 +199,13 @@ function StaticBadge({ provider }: { provider: ProviderEntry }) {
           fontFamily: "var(--font-display)",
           fontSize: 22,
           fontWeight: 800,
-          color: "var(--color-text-primary)",
+          color: "rgba(255,255,255,0.92)",
           letterSpacing: "-0.02em",
         }}
       >
         {rounded}
       </span>
-      <span style={{ fontSize: 13, color: "var(--color-text-muted)", fontWeight: 600 }}>
+      <span style={{ fontSize: 13, color: "rgba(255,255,255,0.42)", fontWeight: 600 }}>
         {provider.aggregate.count.toLocaleString()} reviews · {provider.label}
       </span>
     </div>

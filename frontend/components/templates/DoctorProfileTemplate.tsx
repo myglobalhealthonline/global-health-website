@@ -305,28 +305,57 @@ export function DoctorProfileTemplate({
       </section>
 
       {/* ── BODY — long-form bio + sticky booking ── */}
-      <section className="gh-section bg-[var(--color-background-page)]">
+      <section
+        style={{
+          background: "var(--color-background-dark)",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+          padding: "clamp(56px,7vw,96px) 0",
+        }}
+      >
         <div className="gh-container grid gap-16 lg:grid-cols-[1.5fr_1fr] lg:gap-24">
           <article>
-            <span className="gh-heading-eyebrow">Profile</span>
+            <p
+              className="text-[11px] font-bold uppercase tracking-[0.22em]"
+              style={{ color: "var(--color-brand-accent)" }}
+            >
+              Profile
+            </p>
             <h2
-              className="gh-display mt-5 text-[clamp(1.85rem,3.5vw,2.75rem)]"
-              style={{ fontWeight: 800 }}
+              className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.05]"
+              style={{
+                fontSize: "clamp(1.85rem,3.5vw,2.75rem)",
+                color: "rgba(255,255,255,0.95)",
+              }}
             >
               About {profile.name.split(" ").slice(0, 2).join(" ")}
             </h2>
             <div
-              className="mt-8 text-[16px] leading-[1.85] text-[var(--color-text-body)] [&_p]:mt-5 [&_p:first-child]:mt-0 [&_a]:text-[var(--color-brand-primary)] [&_a]:underline [&_a]:underline-offset-2"
+              className="mt-8 text-[16px] leading-[1.85] [&_p]:mt-5 [&_p:first-child]:mt-0 [&_a]:underline [&_a]:underline-offset-2"
+              style={{
+                color: "rgba(255,255,255,0.68)",
+              }}
+              // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{ __html: safeBio }}
             />
 
             {profile.qualifications.length > 0 ? (
-              <div className="mt-14 border-t border-[var(--color-border)] pt-10">
-                <span className="gh-heading-eyebrow">Qualifications</span>
-                <ul className="mt-6 space-y-3 text-[15px] leading-[1.7] text-[var(--color-text-body)]">
+              <div
+                className="mt-14 pt-10"
+                style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+              >
+                <p
+                  className="text-[11px] font-bold uppercase tracking-[0.22em]"
+                  style={{ color: "var(--color-brand-accent)" }}
+                >
+                  Qualifications
+                </p>
+                <ul className="mt-6 space-y-3 text-[15px] leading-[1.7]" style={{ color: "rgba(255,255,255,0.65)" }}>
                   {profile.qualifications.map((q) => (
                     <li key={q} className="flex items-start gap-3">
-                      <span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-[var(--color-text-primary)]" />
+                      <span
+                        className="mt-2.5 h-1 w-1 shrink-0 rounded-full"
+                        style={{ background: "var(--color-brand-accent)" }}
+                      />
                       <span>{q}</span>
                     </li>
                   ))}
@@ -335,7 +364,14 @@ export function DoctorProfileTemplate({
             ) : null}
 
             {doctifyWidgetUrl ? (
-              <div className="mt-12 overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-background-soft)] p-6">
+              <div
+                className="mt-12 overflow-hidden p-6"
+                style={{
+                  borderRadius: "var(--radius-card)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: "rgba(255,255,255,0.03)",
+                }}
+              >
                 <iframe
                   src={doctifyWidgetUrl}
                   title="Patient reviews"
@@ -347,26 +383,43 @@ export function DoctorProfileTemplate({
           </article>
 
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-[var(--radius-card)] bg-[var(--color-brand-primary)] p-8 text-white md:p-10">
-              <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
+            <div
+              className="p-8 md:p-10"
+              style={{
+                borderRadius: "var(--radius-card)",
+                border: "1px solid rgba(176,241,34,0.18)",
+                background: "rgba(176,241,34,0.04)",
+              }}
+            >
+              <span
+                className="text-[11px] font-bold uppercase tracking-[0.22em]"
+                style={{ color: "var(--color-brand-accent)" }}
+              >
                 Book this clinician
               </span>
               <h3
-                className="gh-display mt-5 text-[1.85rem] text-white"
-                style={{ fontWeight: 800 }}
+                className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.1]"
+                style={{ fontSize: "clamp(1.4rem,2.5vw,1.85rem)", color: "rgba(255,255,255,0.95)" }}
               >
                 Same-day video slots, typically.
               </h3>
-              <p className="mt-4 text-[14.5px] leading-[1.7] text-white/75">
-                You'll receive a calendar invite immediately after booking — no
-                back-and-forth.
+              <p
+                className="mt-4 text-[14.5px] leading-[1.7]"
+                style={{ color: "rgba(255,255,255,0.55)" }}
+              >
+                You&apos;ll receive a calendar invite immediately after booking — no back-and-forth.
               </p>
               <Link
                 href={hero.primaryCta.href}
-                className="gh-btn gh-btn-accent mt-8 w-full justify-center"
+                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full text-[14.5px] font-bold transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-[0.98] focus-visible:outline-none"
+                style={{
+                  background: "var(--color-brand-accent)",
+                  color: "#0a1f14",
+                  padding: "14px 24px",
+                }}
               >
                 {hero.primaryCta.label}
-                <ArrowUpRight className="h-4 w-4" />
+                <ArrowUpRight className="h-4 w-4" aria-hidden />
               </Link>
             </div>
           </aside>
@@ -374,24 +427,49 @@ export function DoctorProfileTemplate({
       </section>
 
       {/* ── Bottom CTA ── */}
-      <section className="gh-section-sm border-t border-[var(--color-border)] bg-[var(--color-background-soft)]">
+      <section
+        style={{
+          background: "var(--color-background-dark)",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+          padding: "clamp(40px,5vw,64px) 0",
+        }}
+      >
         <div className="gh-container">
           <div className="grid items-end gap-10 lg:grid-cols-[1.6fr_1fr]">
             <div>
-              <span className="gh-heading-eyebrow">Next step</span>
+              <p
+                className="text-[11px] font-bold uppercase tracking-[0.22em]"
+                style={{ color: "var(--color-brand-accent)" }}
+              >
+                Next step
+              </p>
               <h2
-                className="gh-display mt-5 text-[clamp(1.85rem,4vw,3rem)]"
-                style={{ fontWeight: 800 }}
+                className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.05]"
+                style={{
+                  fontSize: "clamp(1.85rem,4vw,3rem)",
+                  color: "rgba(255,255,255,0.95)",
+                }}
               >
                 {bottomCta.title}
               </h2>
-              <p className="mt-6 max-w-[520px] text-[15px] leading-[1.7] text-[var(--color-text-muted)]">
+              <p
+                className="mt-6 max-w-[520px] text-[15px] leading-[1.7]"
+                style={{ color: "rgba(255,255,255,0.52)" }}
+              >
                 {bottomCta.description}
               </p>
             </div>
-            <Link href={bottomCta.ctaHref} className="gh-btn gh-btn-primary lg:justify-self-end">
+            <Link
+              href={bottomCta.ctaHref}
+              className="inline-flex items-center justify-center gap-2 rounded-full text-[14.5px] font-bold transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-[0.98] lg:justify-self-end"
+              style={{
+                background: "var(--color-brand-accent)",
+                color: "#0a1f14",
+                padding: "14px 28px",
+              }}
+            >
               {bottomCta.ctaLabel}
-              <ArrowUpRight className="h-4 w-4" />
+              <ArrowUpRight className="h-4 w-4" aria-hidden />
             </Link>
           </div>
         </div>

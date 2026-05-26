@@ -1,12 +1,8 @@
 /**
  * Public-side renderer for the rich-text `body` field on a ContentPage.
  *
- * The admin editor sanitizes HTML before saving (strips scripts, drops
- * disallowed attributes, narrows inline styles to a safe list) so the DB
- * value is render-safe. We still scope the HTML to a `prose`-style wrapper
- * with conservative styling defaults.
- *
- * Renders `null` when the body is empty so we don't show a stray spacer.
+ * Dark luxury version — forest-night canvas, white/80 prose text.
+ * The admin editor sanitizes HTML before saving so the DB value is render-safe.
  */
 
 export function RichBodySection({
@@ -15,9 +11,7 @@ export function RichBodySection({
   maxWidth = 720,
 }: {
   html: string | null | undefined;
-  /** Optional small label above the body, e.g. "What you should know". */
   eyebrow?: string;
-  /** Constrain the prose column for readability. */
   maxWidth?: number;
 }) {
   const trimmed = (html ?? "").trim();
@@ -25,7 +19,13 @@ export function RichBodySection({
     return null;
   }
   return (
-    <section style={{ padding: "48px 0" }}>
+    <section
+      style={{
+        background: "var(--color-background-dark)",
+        padding: "clamp(40px,5vw,64px) 0",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+      }}
+    >
       <div
         className="mx-auto"
         style={{
@@ -39,49 +39,52 @@ export function RichBodySection({
             style={{
               fontSize: 11,
               fontWeight: 700,
-              letterSpacing: "0.18em",
-              color: "var(--color-brand-primary)",
-              margin: 0,
+              letterSpacing: "0.20em",
+              color: "var(--color-brand-accent)",
+              marginBottom: 16,
             }}
           >
             {eyebrow}
           </p>
         ) : null}
         <article
-          className="gh-rich-body mt-4 text-[var(--color-text-body)]"
-          style={{ fontSize: 16, lineHeight: 1.7 }}
+          className="gh-rich-body-dark mt-4"
+          style={{ fontSize: 16, lineHeight: 1.75, color: "rgba(255,255,255,0.72)" }}
           dangerouslySetInnerHTML={{ __html: trimmed }}
         />
       </div>
-      {/* Conservative prose defaults — the editor's allowed tags are
-          h2/h3/p/ul/ol/li/strong/em/u/a/span/font. */}
+
       <style>{`
-        .gh-rich-body h2 {
+        .gh-rich-body-dark h2 {
           font-family: var(--font-display);
-          font-size: clamp(24px, 3vw, 32px);
+          font-size: clamp(22px, 3vw, 30px);
           font-weight: 800;
-          letter-spacing: -0.015em;
-          line-height: 1.2;
-          margin: 32px 0 12px;
-          color: var(--color-text-primary);
+          letter-spacing: -0.02em;
+          line-height: 1.15;
+          margin: 36px 0 14px;
+          color: rgba(255,255,255,0.92);
         }
-        .gh-rich-body h3 {
+        .gh-rich-body-dark h3 {
           font-family: var(--font-display);
-          font-size: clamp(18px, 2vw, 22px);
-          font-weight: 800;
+          font-size: clamp(17px, 2vw, 21px);
+          font-weight: 700;
           letter-spacing: -0.01em;
           line-height: 1.3;
-          margin: 24px 0 8px;
-          color: var(--color-text-primary);
+          margin: 28px 0 10px;
+          color: rgba(255,255,255,0.88);
         }
-        .gh-rich-body p { margin: 12px 0; }
-        .gh-rich-body ul, .gh-rich-body ol { margin: 12px 0 12px 24px; padding: 0; }
-        .gh-rich-body li { margin: 6px 0; }
-        .gh-rich-body a { color: var(--color-brand-primary); text-decoration: underline; }
-        .gh-rich-body strong { font-weight: 700; }
-        .gh-rich-body em { font-style: italic; }
-        .gh-rich-body u { text-decoration: underline; }
-        .gh-rich-body img { max-width: 100%; height: auto; }
+        .gh-rich-body-dark p { margin: 14px 0; }
+        .gh-rich-body-dark ul, .gh-rich-body-dark ol { margin: 14px 0 14px 24px; padding: 0; }
+        .gh-rich-body-dark li { margin: 8px 0; }
+        .gh-rich-body-dark a {
+          color: var(--color-brand-accent);
+          text-decoration: underline;
+          text-underline-offset: 3px;
+        }
+        .gh-rich-body-dark strong { font-weight: 700; color: rgba(255,255,255,0.88); }
+        .gh-rich-body-dark em { font-style: italic; }
+        .gh-rich-body-dark u { text-decoration: underline; }
+        .gh-rich-body-dark img { max-width: 100%; height: auto; border-radius: 12px; }
       `}</style>
     </section>
   );
