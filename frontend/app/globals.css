@@ -55,11 +55,11 @@
   --color-background-page:  #FFFFFF;
   --color-background-soft:  #F6F8F1;   /* warm off-white */
   --color-background-panel: #EDF2E2;   /* mint-tinted panel */
-  --color-background-dark:  #0F2E25;   /* forest night — sidebar */
+  --color-background-dark:  #1D4B36;   /* brand forest deep — exact swatch from Manual da Marca */
 
   /* Text — brand spec uses #6D6D6D as mid grey. Carry it through as
    * the muted tier; primary + body remain forest-toned. */
-  --color-text-primary:     #0F2E25;
+  --color-text-primary:     #1D4B36;   /* aligned to brand primary swatch */
   --color-text-body:        #2D3B36;
   --color-text-muted:       #6D6D6D;
   --color-text-placeholder: #9A9A9A;
@@ -68,7 +68,7 @@
   --color-border:        #E4E7DD;
   --color-border-strong: #C3CCB5;
 
-  --color-hero-overlay: rgba(15, 46, 37, 0.72);
+  --color-hero-overlay: rgba(29, 75, 54, 0.72);
 
   /* Status */
   --color-status-error:        #B91C1C;
@@ -93,11 +93,11 @@
   --radius-chip:    999px;
 
   /* Shadows — forest-tinted, never neutral black */
-  --shadow-soft:       0 1px 3px rgba(15, 46, 37, 0.06);
-  --shadow-card:       0 1px 3px rgba(15, 46, 37, 0.08), 0 4px 12px rgba(15, 46, 37, 0.04);
-  --shadow-card-hover: 0 4px 12px rgba(15, 46, 37, 0.12), 0 8px 24px rgba(15, 46, 37, 0.08);
-  --shadow-elevated:   0 8px 30px rgba(15, 46, 37, 0.14), 0 2px 8px rgba(15, 46, 37, 0.08);
-  --shadow-focus:      0 0 0 3px rgba(27, 77, 62, 0.15);
+  --shadow-soft:       0 1px 3px rgba(29, 75, 54, 0.06);
+  --shadow-card:       0 1px 3px rgba(29, 75, 54, 0.08), 0 4px 12px rgba(29, 75, 54, 0.04);
+  --shadow-card-hover: 0 4px 12px rgba(29, 75, 54, 0.12), 0 8px 24px rgba(29, 75, 54, 0.08);
+  --shadow-elevated:   0 8px 30px rgba(29, 75, 54, 0.14), 0 2px 8px rgba(29, 75, 54, 0.08);
+  --shadow-focus:      0 0 0 3px rgba(29, 75, 54, 0.15);
   --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.15);
 
   /* Medical pattern tokens */
@@ -786,7 +786,7 @@ img {
 .gh-booking-hero-bloom {
   background:
     radial-gradient(900px 480px at 90% -10%, rgba(176, 241, 34, 0.18), transparent 60%),
-    radial-gradient(800px 460px at -10% 110%, rgba(27, 77, 62, 0.08), transparent 60%);
+    radial-gradient(800px 460px at -10% 110%, rgba(29, 75, 54, 0.08), transparent 60%);
 }
 
 /* Admin appointment detail */
