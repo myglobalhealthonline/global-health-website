@@ -48,37 +48,37 @@ function FallbackVisual({
     }
   > = {
     hero: {
-      bg: "bg-[#1B4D3E]",
-      accentBg: "bg-[#C8E6A0]/20",
+      bg: "bg-[#1D4B36]",
+      accentBg: "bg-[#B0F122]/15",
       icon: <HeartPulse className="size-10 text-white/90" strokeWidth={1.5} />,
       defaultLabel: "Online Consultation",
       aspectClass: "aspect-[16/10]",
     },
     doctor: {
       bg: "bg-[#F6F9F6]",
-      accentBg: "bg-[#1B4D3E]/8",
-      icon: <Stethoscope className="size-10 text-[#1B4D3E]/80" strokeWidth={1.5} />,
+      accentBg: "bg-[#1D4B36]/8",
+      icon: <Stethoscope className="size-10 text-[#1D4B36]/80" strokeWidth={1.5} />,
       defaultLabel: "Doctor Profile",
       aspectClass: "aspect-[4/5]",
     },
     delivery: {
-      bg: "bg-[#1B4D3E]",
-      accentBg: "bg-[#C8E6A0]/15",
+      bg: "bg-[#1D4B36]",
+      accentBg: "bg-[#B0F122]/12",
       icon: <Package className="size-10 text-white/90" strokeWidth={1.5} />,
       defaultLabel: "Home Delivery",
       aspectClass: "aspect-[4/3]",
     },
     cta: {
       bg: "bg-[#F6F9F6]",
-      accentBg: "bg-[#C8E6A0]/30",
-      icon: <MessageCircle className="size-8 text-[#1B4D3E]/80" strokeWidth={1.5} />,
+      accentBg: "bg-[#B0F122]/20",
+      icon: <MessageCircle className="size-8 text-[#1D4B36]/80" strokeWidth={1.5} />,
       defaultLabel: "Get Started",
       aspectClass: "aspect-[16/10]",
     },
     generic: {
       bg: "bg-[#F6F9F6]",
-      accentBg: "bg-[#1B4D3E]/6",
-      icon: <Cross className="size-8 text-[#1B4D3E]/70" strokeWidth={1.5} />,
+      accentBg: "bg-[#1D4B36]/6",
+      icon: <Cross className="size-8 text-[#1D4B36]/70" strokeWidth={1.5} />,
       defaultLabel: "Healthcare",
       aspectClass: "aspect-[16/10]",
     },
@@ -124,7 +124,7 @@ function FallbackVisual({
           className={`text-sm font-semibold tracking-wide ${
             variant === "hero" || variant === "delivery"
               ? "text-white/80"
-              : "text-[#1B4D3E]/70"
+              : "text-[#1D4B36]/70"
           }`}
         >
           {label ?? c.defaultLabel}

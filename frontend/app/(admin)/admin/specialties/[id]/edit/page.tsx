@@ -187,7 +187,7 @@ export default async function AdminSpecialtyEditPage({
                 name="cardThemeColor"
                 defaultValue={s.cardThemeColor ?? ""}
                 className="gh-input min-w-0 font-mono text-sm"
-                placeholder="#1b4d3e"
+                placeholder="#1d4b36"
               />
             </label>
             <label className="flex flex-col gap-1.5">

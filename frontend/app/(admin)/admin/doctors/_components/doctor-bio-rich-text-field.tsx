@@ -19,10 +19,10 @@ type Props = {
 
 /* Theme palette colours */
 const COLORS = [
-  { label: "Dark", value: "#1b4d3e" },      // brand primary
+  { label: "Dark", value: "#1d4b36" },      // brand primary
   { label: "Body", value: "#333333" },      // text body
   { label: "Muted", value: "#666666" },     // text muted
-  { label: "Accent", value: "#c8e6a0" },    // brand accent
+  { label: "Accent", value: "#b0f122" },    // brand accent
   { label: "Error", value: "#dc2626" },     // status error
   { label: "Info", value: "#075985" },      // status info
 ];

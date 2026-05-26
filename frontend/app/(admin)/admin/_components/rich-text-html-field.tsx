@@ -11,10 +11,10 @@ type Props = {
 };
 
 const COLORS = [
-  { label: "Dark", value: "#1b4d3e" },
+  { label: "Dark", value: "#1d4b36" },
   { label: "Body", value: "#333333" },
   { label: "Muted", value: "#666666" },
-  { label: "Accent", value: "#c8e6a0" },
+  { label: "Accent", value: "#b0f122" },
   { label: "Blue", value: "#075985" },
   { label: "Red", value: "#dc2626" },
 ];

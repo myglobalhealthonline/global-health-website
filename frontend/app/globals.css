@@ -41,15 +41,17 @@
   --color-brand-mint:           #8FB021;
   --color-brand-mint-soft:      rgba(143, 176, 33, 0.18);
   --color-brand-mint-dim:       rgba(143, 176, 33, 0.10);
-  /* Pastel mint (kept under the legacy --color-accent name so
-   * existing call sites don't break). Tints UI tiles, soft chips. */
-  --color-accent:              #C8E6A0;
-  --color-accent-soft:         rgba(200, 230, 160, 0.30);
-  --color-accent-dim:          rgba(200, 230, 160, 0.16);
+  /* Brand lime aliased under --color-accent so legacy call sites
+   * (portal/admin sidebar, CountryEntryGate, icon tiles) resolve to
+   * the correct on-brand colour without a mass rename. The old pastel
+   * #C8E6A0 was off-spec; these values are now exact-palette tints. */
+  --color-accent:              #B0F122;
+  --color-accent-soft:         rgba(176, 241, 34, 0.20);
+  --color-accent-dim:          rgba(176, 241, 34, 0.10);
   /* Bright lime — the loud brand accent. Notification dots, hero
    * highlights, "available now" indicators. Brand spec value. */
   --color-brand-accent:        #B0F122;
-  --color-brand-accent-soft:   #D6F87A;
+  --color-brand-accent-soft:   rgba(176, 241, 34, 0.55);  /* lime at 55% — hover/soft states */
 
   /* Backgrounds */
   --color-background-page:  #FFFFFF;
@@ -1078,7 +1080,7 @@ img {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231b4d3e' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231d4b36' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E");
   background-size: var(--medical-pattern-size) var(--medical-pattern-size);
   opacity: var(--medical-pattern-opacity);
 }
@@ -1109,7 +1111,7 @@ img {
 }
 
 .gh-medical-pattern-panel::before {
-  background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231b4d3e' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231d4b36' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M14 9v10M9 14h10'/%3E%3C/g%3E%3C/svg%3E");
   opacity: 0.03;
 }
 

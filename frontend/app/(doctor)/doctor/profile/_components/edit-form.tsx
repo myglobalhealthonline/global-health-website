@@ -292,7 +292,7 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
                 <span
                   className="text-[28px] font-bold"
                   style={{
-                    background: "linear-gradient(135deg, #1b4d3e 0%, #b0f122 100%)",
+                    background: "linear-gradient(135deg, #1d4b36 0%, #b0f122 100%)",
                     WebkitBackgroundClip: "text",
                     backgroundClip: "text",
                     color: "transparent",
