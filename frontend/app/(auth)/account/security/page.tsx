@@ -108,7 +108,7 @@ export default function AccountSecurityPage() {
       ) : (
         <>
             {/* Email verification panel */}
-            <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <section className="mt-6 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
               <div className="flex items-start gap-3">
                 <span
                   className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full ${
@@ -120,15 +120,15 @@ export default function AccountSecurityPage() {
                   <MailCheck className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-base font-bold text-slate-900">Email verification</h2>
+                  <h2 className="text-base font-bold text-[var(--color-text-primary)]">Email verification</h2>
                   {verified ? (
-                    <p className="mt-1 text-sm text-slate-600">
+                    <p className="mt-1 text-sm text-[var(--color-text-muted)]">
                       <span className="font-semibold text-emerald-700">Verified</span> on{" "}
                       {formatAppDate(user!.emailVerifiedAt!)}.
                     </p>
                   ) : (
                     <>
-                      <p className="mt-1 text-sm text-slate-600">
+                      <p className="mt-1 text-sm text-[var(--color-text-muted)]">
                         Your email address ({user?.email}) hasn&apos;t been verified yet.
                         Verifying confirms you can receive booking + password-reset emails.
                       </p>
@@ -158,9 +158,9 @@ export default function AccountSecurityPage() {
             </section>
 
             {/* Privacy controls — GDPR data-export + account-delete */}
-            <section className="mt-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="text-base font-bold text-slate-900">Your data</h2>
-              <p className="mt-1 text-sm text-slate-600">
+            <section className="mt-4 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
+              <h2 className="text-base font-bold text-[var(--color-text-primary)]">Your data</h2>
+              <p className="mt-1 text-sm text-[var(--color-text-muted)]">
                 Under GDPR you can download everything we hold about you, or
                 delete your account.
               </p>
@@ -179,14 +179,14 @@ export default function AccountSecurityPage() {
             </section>
 
             {/* Change-password panel */}
-            <section className="mt-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+            <section className="mt-4 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
               <div className="flex items-start gap-3">
                 <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
                   <KeyRound className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-base font-bold text-slate-900">Change password</h2>
-                  <p className="mt-1 text-sm text-slate-600">
+                  <h2 className="text-base font-bold text-[var(--color-text-primary)]">Change password</h2>
+                  <p className="mt-1 text-sm text-[var(--color-text-muted)]">
                     You&apos;ll need your current password to confirm the change.
                   </p>
 

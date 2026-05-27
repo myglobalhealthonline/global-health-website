@@ -95,12 +95,12 @@ function DeleteAccountModal({
         aria-modal="true"
         aria-labelledby="delete-account-title"
         aria-describedby="delete-account-desc"
-        className="fixed left-1/2 top-1/2 z-50 w-[min(100%-2rem,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-slate-200 bg-white p-6 shadow-xl"
+        className="fixed left-1/2 top-1/2 z-50 w-[min(100%-2rem,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-[var(--color-border)] bg-white p-6 shadow-xl"
       >
-        <h2 id="delete-account-title" className="text-base font-bold text-slate-900">
+        <h2 id="delete-account-title" className="text-base font-bold text-[var(--color-text-primary)]">
           Delete your account?
         </h2>
-        <p id="delete-account-desc" className="mt-2 text-sm text-slate-600">
+        <p id="delete-account-desc" className="mt-2 text-sm text-[var(--color-text-muted)]">
           {DELETE_COPY}
         </p>
         <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -108,7 +108,7 @@ function DeleteAccountModal({
             type="button"
             onClick={onCancel}
             disabled={confirming}
-            className="rounded-md border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60"
+            className="rounded-md border border-[var(--color-border-strong)] px-4 py-2 text-sm font-semibold text-[var(--color-text-body)] hover:bg-[var(--color-background-soft)] disabled:opacity-60"
           >
             Cancel
           </button>

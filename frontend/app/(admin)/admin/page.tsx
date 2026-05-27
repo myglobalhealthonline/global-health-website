@@ -395,23 +395,27 @@ export default async function AdminDashboardPage() {
                 <Link
                   key={a.label}
                   href={a.href}
-                  className="group flex items-center gap-3 transition-all duration-150"
+                  className="gh-quick-action group flex items-center gap-3 transition-all duration-200"
                   style={{
-                    padding: 12,
-                    borderRadius: 10,
+                    padding: 14,
+                    paddingLeft: 18,
+                    borderRadius: 12,
                     border: "1px solid var(--color-border)",
                     background: "var(--color-background-page)",
                     textDecoration: "none",
                   }}
                 >
                   <span
-                    className="inline-flex shrink-0 items-center justify-center"
+                    className="inline-flex shrink-0 items-center justify-center transition-transform duration-200 group-hover:scale-[1.04]"
                     style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 10,
-                      background: "rgba(200,230,160,0.30)",
-                      color: "var(--color-brand-primary)",
+                      width: 38,
+                      height: 38,
+                      borderRadius: 11,
+                      background:
+                        "linear-gradient(135deg, var(--color-accent) 0%, var(--color-brand-mint) 100%)",
+                      color: "#143B30",
+                      boxShadow:
+                        "0 4px 12px rgba(176,241,34,0.28), inset 0 1px 0 rgba(255,255,255,0.4)",
                     }}
                   >
                     <Icon className="size-4" aria-hidden />

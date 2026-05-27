@@ -210,7 +210,7 @@ export function ExamResultsList({
           {items.map((r) => (
             <li
               key={r.id}
-              className="rounded-md border border-[var(--color-border)] bg-white p-3"
+              className="gh-admin-card rounded-md border border-[var(--color-border)] p-3"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">

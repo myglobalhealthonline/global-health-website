@@ -570,7 +570,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       {submissions.map((s) => (
                         <li
                           key={s.id}
-                          className="rounded-md border border-[var(--color-border)] bg-white p-3"
+                          className="gh-admin-card rounded-md border border-[var(--color-border)] p-3"
                         >
                           <div className="flex items-baseline justify-between gap-3">
                             <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">

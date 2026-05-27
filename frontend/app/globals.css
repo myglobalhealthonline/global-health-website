@@ -881,6 +881,109 @@ img {
   border-radius: 18px;
 }
 
+/* Admin StatCard — hover lift + accent rule reveal. Uses transform/box-shadow
+ * (compositor-friendly), reveals a thin lime hairline across the top edge,
+ * and tightens the border to brand green for premium tactile feedback. */
+.gh-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 28px rgba(29, 75, 54, 0.10),
+    0 4px 10px rgba(29, 75, 54, 0.06);
+  border-color: var(--color-border-strong);
+}
+.gh-stat-card:hover .gh-stat-accent {
+  opacity: 1;
+}
+.gh-stat-card:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Admin quick action card — slide arrow + accent border reveal on hover. */
+.gh-quick-action {
+  position: relative;
+  overflow: hidden;
+}
+.gh-quick-action::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--color-brand-primary), var(--color-accent));
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gh-quick-action:hover {
+  border-color: var(--color-border-strong);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FCFDF8 100%);
+  transform: translateX(2px);
+}
+.gh-quick-action:hover::before {
+  transform: scaleY(1);
+}
+
+/* Admin table — premium row hover with forest-tinted background and
+ * left accent rule that reveals on hover. Uses background only (no
+ * transform on tr — would break border-collapse). */
+.gh-admin-table-wrap {
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+}
+.gh-admin-row {
+  transition: background 160ms ease-out;
+  position: relative;
+}
+.gh-admin-row:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(176, 241, 34, 0.06) 0%,
+    rgba(176, 241, 34, 0.03) 30%,
+    transparent 100%
+  );
+}
+.gh-admin-row:hover > td:first-child {
+  box-shadow: inset 3px 0 0 0 var(--color-accent);
+}
+
+/* Admin/portal card — sage-tinted gradient surface. Doubles as a
+ * utility class so any panel can pick up the same treatment without
+ * importing the React component. */
+.gh-admin-card {
+  background: linear-gradient(180deg, var(--color-background-page) 0%, #FCFDF8 100%);
+}
+
+/* Admin icon button (table row actions) — brand-tint hover with subtle
+ * lift. Compositor-friendly (background + color + transform). */
+.gh-icon-btn:hover {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F6F8F1 100%);
+  border-color: var(--color-brand-primary);
+  color: var(--color-brand-primary);
+  transform: translateY(-1px);
+}
+.gh-icon-btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-color: var(--color-brand-primary);
+}
+.gh-icon-btn:active {
+  transform: translateY(0);
+}
+
+/* Admin sidebar logo — radial glow behind the wordmark to give the
+ * brand block atmosphere instead of sitting flat on the dark surface. */
+.gh-admin-sidebar-logo {
+  position: relative;
+}
+.gh-admin-sidebar-logo::before {
+  content: "";
+  position: absolute;
+  inset: -20px -40px auto -40px;
+  height: 120px;
+  background: radial-gradient(ellipse at center top, rgba(176, 241, 34, 0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+
 /* Legacy alias — keep backward compat */
 .gh-icon-circle {
   display: inline-flex;

@@ -161,7 +161,7 @@ export function PortalShell({
         }}
       >
           <div
-            className="px-5 pb-[18px] pt-5"
+            className="gh-admin-sidebar-logo px-5 pb-[18px] pt-5"
             style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
           >
             <Link href={rootHref} className="inline-flex items-center gap-2.5">
@@ -380,15 +380,25 @@ export function PortalShell({
 function SidebarSectionLabel({ label }: { label: string }) {
   return (
     <div
-      className="flex items-center gap-2 px-6 pb-1.5 pt-4"
+      className="flex items-center gap-2 px-6 pb-2 pt-5"
       style={{
         fontSize: 10,
-        fontWeight: 700,
-        letterSpacing: "0.18em",
+        fontWeight: 800,
+        letterSpacing: "0.22em",
         textTransform: "uppercase",
-        color: "rgba(255,255,255,0.50)",
+        color: "rgba(255,255,255,0.55)",
       }}
     >
+      <span
+        aria-hidden
+        style={{
+          width: 14,
+          height: 2,
+          borderRadius: 2,
+          background:
+            "linear-gradient(90deg, var(--color-accent) 0%, transparent 100%)",
+        }}
+      />
       <span>{label}</span>
     </div>
   );
@@ -413,18 +423,21 @@ function SidebarItem({
     <Link
       href={href}
       onClick={onNavigate}
-      className="relative flex w-full items-center gap-2.5 transition-all duration-150"
+      className="relative flex w-full items-center gap-2.5"
       style={{
         padding: "9px 12px",
         borderRadius: 10,
-        background: active ? "rgba(200,230,160,0.16)" : "transparent",
+        background: active
+          ? "linear-gradient(90deg, rgba(176,241,34,0.18) 0%, rgba(176,241,34,0.04) 100%)"
+          : "transparent",
         color: active ? "var(--color-accent)" : "rgba(255,255,255,0.80)",
         fontSize: 13,
         fontWeight: active ? 700 : 500,
         textDecoration: "none",
+        transition: "background 240ms cubic-bezier(0.25, 1.1, 0.4, 1), color 240ms ease-out",
       }}
       onMouseEnter={(e) => {
-        if (!active) e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+        if (!active) e.currentTarget.style.background = "rgba(255,255,255,0.06)";
       }}
       onMouseLeave={(e) => {
         if (!active) e.currentTarget.style.background = "transparent";

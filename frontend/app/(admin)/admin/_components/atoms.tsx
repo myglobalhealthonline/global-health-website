@@ -33,25 +33,46 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <header className="mb-6 flex flex-wrap items-end justify-between gap-6">
+    <header
+      className="relative mb-7 flex flex-wrap items-end justify-between gap-6 pl-4"
+      style={{
+        borderLeft: "3px solid transparent",
+        backgroundImage:
+          "linear-gradient(white, white), linear-gradient(180deg, var(--color-brand-primary) 0%, var(--color-accent) 100%)",
+        backgroundOrigin: "border-box",
+        backgroundClip: "padding-box, border-box",
+      }}
+    >
       <div className="min-w-0">
         {eyebrow ? (
-          <p className="gh-eyebrow inline-flex items-center gap-2">{eyebrow}</p>
+          <p className="gh-eyebrow inline-flex items-center gap-2">
+            <span
+              aria-hidden
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: 999,
+                background: "var(--color-accent)",
+                boxShadow: "0 0 0 3px rgba(176,241,34,0.18)",
+              }}
+            />
+            {eyebrow}
+          </p>
         ) : null}
         <h1
-          className="m-0 tracking-[-0.02em] text-[var(--color-text-primary)]"
+          className="m-0 tracking-[-0.025em] text-[var(--color-text-primary)]"
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: 32,
+            fontSize: "clamp(28px, 2.6vw, 38px)",
             fontWeight: 800,
-            lineHeight: 1.15,
+            lineHeight: 1.1,
             marginTop: eyebrow ? 10 : 0,
           }}
         >
           {title}
         </h1>
         {description ? (
-          <p className="mt-1.5 max-w-2xl text-[15px] text-[var(--color-text-muted)]">
+          <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-[var(--color-text-muted)]">
             {description}
           </p>
         ) : null}
@@ -89,21 +110,39 @@ export function SectionHeader({
   right?: ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-4">
+    <div
+      className="flex items-start justify-between gap-4 border-b border-[var(--color-border)] px-5 py-4"
+      style={{
+        background:
+          "linear-gradient(180deg, var(--color-background-page) 0%, var(--color-background-soft) 100%)",
+      }}
+    >
       <div className="min-w-0">
-        <h3
-          className="m-0 text-[var(--color-text-primary)]"
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: 18,
-            fontWeight: 800,
-            letterSpacing: "-0.01em",
-          }}
-        >
-          {title}
-        </h3>
+        <div className="flex items-center gap-2.5">
+          <span
+            aria-hidden
+            style={{
+              width: 3,
+              height: 16,
+              borderRadius: 2,
+              background:
+                "linear-gradient(180deg, var(--color-brand-primary), var(--color-accent))",
+            }}
+          />
+          <h3
+            className="m-0 text-[var(--color-text-primary)]"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 18,
+              fontWeight: 800,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {title}
+          </h3>
+        </div>
         {description ? (
-          <p className="mt-0.5 text-[12px] text-[var(--color-text-muted)]">
+          <p className="mt-1 pl-[14px] text-[12px] text-[var(--color-text-muted)]">
             {description}
           </p>
         ) : null}
@@ -130,8 +169,10 @@ export function AdminCard({
 }) {
   return (
     <div
-      className={`bg-[var(--color-background-page)] ${className}`}
+      className={`gh-admin-card ${className}`}
       style={{
+        background:
+          "linear-gradient(180deg, var(--color-background-page) 0%, #FCFDF8 100%)",
         border: "1px solid var(--color-border)",
         borderRadius: 16,
         boxShadow: "var(--shadow-soft)",
@@ -167,61 +208,118 @@ export function StatCard({
 }) {
   const tileBg =
     tone === "brand"
-      ? "rgba(27,77,62,0.10)"
+      ? "linear-gradient(135deg, var(--color-brand-primary) 0%, #2A6B4E 100%)"
       : tone === "accent"
-        ? "rgba(200,230,160,0.30)"
-        : "var(--color-background-soft)";
+        ? "linear-gradient(135deg, var(--color-accent) 0%, var(--color-brand-mint) 100%)"
+        : "linear-gradient(135deg, #F6F8F1 0%, #EDF2E2 100%)";
+  const tileFg =
+    tone === "brand" ? "#B0F122" : tone === "accent" ? "#143B30" : "var(--color-brand-primary)";
+  const tileShadow =
+    tone === "brand"
+      ? "0 6px 16px rgba(29,75,54,0.25), inset 0 1px 0 rgba(255,255,255,0.1)"
+      : tone === "accent"
+        ? "0 6px 16px rgba(176,241,34,0.30), inset 0 1px 0 rgba(255,255,255,0.4)"
+        : "inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(29,75,54,0.04)";
 
   const inner = (
-    <>
-      <div className="flex items-start justify-between">
-        <p className="m-0 text-[13px] font-semibold text-[var(--color-text-muted)]">
+    <div className="relative">
+      {/* Decorative corner glow — borrowed from 21st premium dashboard
+          cards (two soft circles in the corner, low opacity). Pure CSS
+          radial gradients avoid SVG filter-id collisions when many cards
+          render on the same page. */}
+      <span
+        aria-hidden
+        style={{
+          position: "absolute",
+          top: -10,
+          right: -10,
+          width: 140,
+          height: 140,
+          background:
+            "radial-gradient(circle at 70% 30%, rgba(176,241,34,0.18) 0%, transparent 38%), radial-gradient(circle at 50% 50%, rgba(29,75,54,0.12) 0%, transparent 55%)",
+          pointerEvents: "none",
+          borderRadius: 999,
+        }}
+      />
+      {/* Decorative top accent rule — thin gradient line that fades in on hover */}
+      <span
+        aria-hidden
+        className="gh-stat-accent"
+        style={{
+          position: "absolute",
+          top: -20,
+          left: -20,
+          right: -20,
+          height: 2,
+          borderTopLeftRadius: 16,
+          borderTopRightRadius: 16,
+          background:
+            "linear-gradient(90deg, transparent 0%, var(--color-accent) 50%, transparent 100%)",
+          opacity: 0,
+          transition: "opacity 220ms ease-out",
+        }}
+      />
+      <div className="relative flex items-start justify-between" style={{ zIndex: 1 }}>
+        <p className="m-0 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-muted)]">
           {label}
         </p>
         <span
           className="inline-flex items-center justify-center"
           style={{
-            width: 36,
-            height: 36,
-            borderRadius: 10,
+            width: 40,
+            height: 40,
+            borderRadius: 12,
             background: tileBg,
-            color: "var(--color-brand-primary)",
+            color: tileFg,
+            boxShadow: tileShadow,
           }}
         >
           {icon}
         </span>
       </div>
       <p
-        className="m-0 mt-2.5 text-[var(--color-text-primary)]"
+        className="relative m-0 mt-3"
         style={{
           fontFamily: "var(--font-display)",
-          fontSize: 40,
+          fontSize: 44,
           fontWeight: 800,
-          letterSpacing: "-0.02em",
+          letterSpacing: "-0.03em",
           lineHeight: 1,
+          background:
+            "linear-gradient(180deg, var(--color-text-primary) 0%, #2A5A45 100%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+          color: "transparent",
         }}
       >
         {value}
       </p>
       {hint ? (
-        <p className="m-0 mt-1 text-[12px] text-[var(--color-text-muted)]">{hint}</p>
+        <p className="m-0 mt-1.5 text-[12px] font-medium text-[var(--color-text-muted)]">
+          {hint}
+        </p>
       ) : null}
-    </>
+    </div>
   );
 
   if (href) {
     return (
       <Link
         href={href}
-        className="block transition-all duration-150 hover:-translate-y-[1px] hover:shadow-[var(--shadow-card-hover)]"
+        className="gh-stat-card block"
         style={{
-          background: "var(--color-background-page)",
+          background:
+            "linear-gradient(180deg, var(--color-background-page) 0%, #FCFDF8 100%)",
           border: "1px solid var(--color-border)",
           borderRadius: 16,
           boxShadow: "var(--shadow-soft)",
           padding: 20,
           textDecoration: "none",
           color: "inherit",
+          position: "relative",
+          overflow: "hidden",
+          transition: "transform 200ms ease-out, box-shadow 200ms ease-out, border-color 200ms ease-out",
         }}
       >
         {inner}
@@ -244,22 +342,44 @@ export type PillTone =
   | "inactive"
   | "brand";
 
-const PILL_TONES: Record<PillTone, { bg: string; fg: string; bd: string }> = {
-  neutral: { bg: "var(--color-background-soft)", fg: "var(--color-text-body)", bd: "var(--color-border)" },
-  published: { bg: "rgba(200,230,160,0.30)", fg: "var(--color-brand-primary)", bd: "transparent" },
-  draft: { bg: "#F5F5F4", fg: "#78716C", bd: "#E5E5E3" },
-  pending: { bg: "#FEF3C7", fg: "#92400E", bd: "#FDE68A" },
-  active: { bg: "#DCFCE7", fg: "#166534", bd: "#BBF7D0" },
-  inactive: { bg: "#FEE2E2", fg: "#991B1B", bd: "#FECACA" },
-  brand: { bg: "var(--color-brand-primary)", fg: "#fff", bd: "transparent" },
+const PILL_TONES: Record<PillTone, { bg: string; fg: string; bd: string; dot?: string }> = {
+  neutral: { bg: "var(--color-background-soft)", fg: "var(--color-text-body)", bd: "var(--color-border)", dot: "#9A9A9A" },
+  published: {
+    bg: "linear-gradient(180deg, rgba(176,241,34,0.20) 0%, rgba(143,176,33,0.18) 100%)",
+    fg: "var(--color-brand-primary)",
+    bd: "rgba(143,176,33,0.40)",
+    dot: "var(--color-brand-mint)",
+  },
+  draft: { bg: "#F5F5F4", fg: "#78716C", bd: "#E5E5E3", dot: "#A8A29E" },
+  pending: {
+    bg: "linear-gradient(180deg, #FEF7E0 0%, #FEF3C7 100%)",
+    fg: "#92400E",
+    bd: "#FDE68A",
+    dot: "#D97706",
+  },
+  active: {
+    bg: "linear-gradient(180deg, #ECFDF5 0%, #DCFCE7 100%)",
+    fg: "#166534",
+    bd: "#BBF7D0",
+    dot: "#22C55E",
+  },
+  inactive: { bg: "#FEE2E2", fg: "#991B1B", bd: "#FECACA", dot: "#EF4444" },
+  brand: {
+    bg: "linear-gradient(180deg, var(--color-brand-primary) 0%, #163826 100%)",
+    fg: "#B0F122",
+    bd: "transparent",
+    dot: "#B0F122",
+  },
 };
 
 export function Pill({
   children,
   tone = "neutral",
+  withDot = false,
 }: {
   children: ReactNode;
   tone?: PillTone;
+  withDot?: boolean;
 }) {
   const t = PILL_TONES[tone];
   return (
@@ -268,15 +388,28 @@ export function Pill({
       style={{
         padding: "3px 10px",
         borderRadius: 999,
-        fontSize: 11,
-        fontWeight: 700,
-        letterSpacing: "0.04em",
+        fontSize: 10.5,
+        fontWeight: 800,
+        letterSpacing: "0.06em",
         textTransform: "uppercase",
         background: t.bg,
         color: t.fg,
         border: `1px solid ${t.bd}`,
+        boxShadow: tone === "brand" ? "0 1px 2px rgba(29,75,54,0.20)" : "none",
       }}
     >
+      {withDot && t.dot ? (
+        <span
+          aria-hidden
+          style={{
+            width: 5,
+            height: 5,
+            borderRadius: 999,
+            background: t.dot,
+            boxShadow: `0 0 0 2px ${t.dot}33`,
+          }}
+        />
+      ) : null}
       {children}
     </span>
   );
@@ -288,22 +421,26 @@ export function Pill({
 
 export function AdminTable({ children }: { children: ReactNode }) {
   return (
-    <table
-      style={{
-        width: "100%",
-        borderCollapse: "collapse",
-        fontSize: 14,
-      }}
-    >
-      {children}
-    </table>
+    <div className="gh-admin-table-wrap">
+      <table className="gh-admin-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+        {children}
+      </table>
+    </div>
   );
 }
 
 export function Thead({ children }: { children: ReactNode }) {
   return (
     <thead>
-      <tr style={{ background: "var(--color-background-soft)" }}>{children}</tr>
+      <tr
+        style={{
+          background:
+            "linear-gradient(180deg, #F6F8F1 0%, #EDF2E2 100%)",
+          borderBottom: "1px solid var(--color-border-strong)",
+        }}
+      >
+        {children}
+      </tr>
     </thead>
   );
 }
@@ -323,13 +460,13 @@ export function Th({
     <th
       className={className}
       style={{
-        padding: "12px 16px",
+        padding: "13px 16px",
         textAlign: align,
-        fontSize: 11,
-        fontWeight: 700,
-        letterSpacing: "0.08em",
+        fontSize: 10.5,
+        fontWeight: 800,
+        letterSpacing: "0.12em",
         textTransform: "uppercase",
-        color: "var(--color-text-muted)",
+        color: "var(--color-brand-primary)",
         ...style,
       }}
     >
@@ -362,7 +499,7 @@ export function Td({
 }
 
 export function Tr({ children }: { children: ReactNode }) {
-  return <tr style={{ borderTop: "1px solid var(--color-border)" }}>{children}</tr>;
+  return <tr className="gh-admin-row" style={{ borderTop: "1px solid var(--color-border)" }}>{children}</tr>;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -384,9 +521,9 @@ type IconBtnLinkProps = IconBtnBaseProps &
 
 export function IconBtn(props: IconBtnButtonProps | IconBtnLinkProps) {
   const sharedStyle: CSSProperties = {
-    width: 30,
-    height: 30,
-    borderRadius: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 9,
     border: "1px solid var(--color-border)",
     background: "var(--color-background-page)",
     color: "var(--color-text-muted)",
@@ -394,20 +531,32 @@ export function IconBtn(props: IconBtnButtonProps | IconBtnLinkProps) {
     alignItems: "center",
     justifyContent: "center",
     cursor: "pointer",
-    transition: "color 120ms, border-color 120ms",
+    transition: "color 160ms, border-color 160ms, background 160ms, transform 160ms",
   };
 
   if ("href" in props) {
-    const { children, ariaLabel, href, style, ...rest } = props;
+    const { children, ariaLabel, href, style, className, ...rest } = props;
     return (
-      <Link href={href} aria-label={ariaLabel} {...rest} style={{ ...sharedStyle, ...style }}>
+      <Link
+        href={href}
+        aria-label={ariaLabel}
+        className={`gh-icon-btn ${className ?? ""}`}
+        {...rest}
+        style={{ ...sharedStyle, ...style }}
+      >
         {children}
       </Link>
     );
   }
-  const { children, ariaLabel, style, type, ...rest } = props;
+  const { children, ariaLabel, style, type, className, ...rest } = props;
   return (
-    <button type={type ?? "button"} aria-label={ariaLabel} {...rest} style={{ ...sharedStyle, ...style }}>
+    <button
+      type={type ?? "button"}
+      aria-label={ariaLabel}
+      className={`gh-icon-btn ${className ?? ""}`}
+      {...rest}
+      style={{ ...sharedStyle, ...style }}
+    >
       {children}
     </button>
   );

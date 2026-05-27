@@ -84,9 +84,9 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen bg-[var(--color-background-soft)] px-4 py-16">
-      <div className="mx-auto max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h1 className="text-2xl font-bold text-slate-900">{heading}</h1>
-        <p className="mt-2 text-sm text-slate-600">{subhead}</p>
+      <div className="gh-admin-card mx-auto max-w-md rounded-2xl border border-[var(--color-border)] p-8 shadow-sm">
+        <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{heading}</h1>
+        <p className="mt-2 text-sm text-[var(--color-text-muted)]">{subhead}</p>
 
         {!token ? (
           <p className="mt-6 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800">

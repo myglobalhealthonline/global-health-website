@@ -87,9 +87,9 @@ export default function AccountProfilePage() {
                 type="email"
                 value={user?.email ?? ""}
                 disabled
-                className="gh-input mt-1 min-w-0 bg-slate-50 text-slate-500"
+                className="gh-input mt-1 min-w-0 bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
               />
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-[var(--color-text-muted)]">
                 Email can&apos;t be changed yet. Contact support if you need to switch.
               </p>
             </label>
@@ -116,7 +116,7 @@ export default function AccountProfilePage() {
                 maxLength={40}
                 className="gh-input mt-1 min-w-0"
               />
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-[var(--color-text-muted)]">
                 Used so the clinic can reach you about your booking. Leave blank
                 if you prefer email only.
               </p>
@@ -131,7 +131,7 @@ export default function AccountProfilePage() {
                 max={new Date().toISOString().slice(0, 10)}
                 className="gh-input mt-1 min-w-0"
               />
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-[var(--color-text-muted)]">
                 We use this on every booking so you don&apos;t have to retype it.
                 Leave blank to keep it off your account.
               </p>
