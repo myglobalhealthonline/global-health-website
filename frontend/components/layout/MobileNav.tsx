@@ -81,32 +81,32 @@ export function MobileNav({
           ...(isFeatureOn("general-consultations")
             ? [
                 {
-                  href: `/${parsed.country}/${parsed.lang}/general-consultation`,
-                  label: "General consultation",
+                  href: `/${parsed.country}/${parsed.lang}/gp-appointment`,
+                  label: "Book a GP Appointment",
                 },
               ]
             : []),
           ...(isFeatureOn("specialist-consultations")
             ? [
                 {
-                  href: `/${parsed.country}/${parsed.lang}/specialist-consultation`,
-                  label: "Specialist consultation",
+                  href: `/${parsed.country}/${parsed.lang}/see-a-specialist`,
+                  label: "See a Specialist",
                 },
               ]
             : []),
           ...(isFeatureOn("online-prescriptions")
             ? [
                 {
-                  href: `/${parsed.country}/${parsed.lang}/prescriptions`,
-                  label: "Prescription",
+                  href: `/${parsed.country}/${parsed.lang}/repeat-prescription-request`,
+                  label: "Repeat Prescription Request",
                 },
               ]
             : []),
           ...(isFeatureOn("health-tests")
             ? [
                 {
-                  href: `/${parsed.country}/${parsed.lang}/tests`,
-                  label: "Health test",
+                  href: `/${parsed.country}/${parsed.lang}/lab-tests`,
+                  label: "Lab Test Booking",
                 },
               ]
             : []),
@@ -127,7 +127,7 @@ export function MobileNav({
   // fallback when no country context exists yet.
   const bookHref =
     activeCountry && parsed.lang
-      ? `/${COUNTRY_CODE_TO_SLUG[activeCountry.code]}/${parsed.lang}/general-consultation`
+      ? `/${COUNTRY_CODE_TO_SLUG[activeCountry.code]}/${parsed.lang}/gp-appointment`
       : navigation.headerPrimaryCta.href;
 
   return (

@@ -57,30 +57,30 @@ function sectionNavForCountryLang(
   }> = [];
   if (enabled("general-consultations")) {
     servicesChildren.push({
-      href: `${base}/general-consultation`,
-      label: "General consultation",
-      description: "GP video call · same-day slots",
+      href: `${base}/gp-appointment`,
+      label: "Book a GP Appointment",
+      description: "General practitioners registered in your country",
     });
   }
   if (enabled("specialist-consultations")) {
     servicesChildren.push({
-      href: `${base}/specialist-consultation`,
-      label: "Specialist consultation",
+      href: `${base}/see-a-specialist`,
+      label: "See a Specialist",
       description: "Cardiology, dermatology, paediatrics + more",
     });
   }
   if (enabled("online-prescriptions")) {
     servicesChildren.push({
-      href: `${base}/prescriptions`,
-      label: "Prescription",
-      description: "Repeat scripts, sent to your pharmacy",
+      href: `${base}/repeat-prescription-request`,
+      label: "Repeat Prescription Request",
+      description: "Reviewed by licensed doctors, sent to your pharmacy",
     });
   }
   if (enabled("health-tests")) {
     servicesChildren.push({
-      href: `${base}/tests`,
-      label: "Health test",
-      description: "Lab-quality kits, delivered home",
+      href: `${base}/lab-tests`,
+      label: "Lab Test Booking",
+      description: "Lab-quality kits reviewed by our doctors",
     });
   }
 

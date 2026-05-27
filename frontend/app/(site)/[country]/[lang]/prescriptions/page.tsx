@@ -46,15 +46,15 @@ export async function generateMetadata({
   // Admin-editable copy via /admin/pages (PageKey=PRESCRIPTIONS).
   // Falls back to the hardcoded strings if no ContentPage row exists.
   const page = await getPublicPage(code, "PRESCRIPTIONS", lang as PublicLocale);
-  const url = `${getSiteUrl()}/${country}/${lang}/prescriptions`;
-  const title = page?.seoTitle ?? `Online prescriptions in ${config.name} · ${SITE_NAME}`;
+  const url = `${getSiteUrl()}/${country}/${lang}/repeat-prescription-request`;
+  const title = page?.seoTitle ?? `Repeat Prescription Request in ${config.name} · ${SITE_NAME}`;
   const description =
     page?.seoDescription ??
     `Get a prescription online from a licensed doctor in ${config.name}.`;
   return {
     title,
     description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/prescriptions") },
+    alternates: { canonical: url, languages: hreflangAlternates(config, "/repeat-prescription-request") },
     openGraph: { type: "website", siteName: SITE_NAME, url, title, description },
   };
 }

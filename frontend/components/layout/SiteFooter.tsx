@@ -56,19 +56,16 @@ export function SiteFooter({
   // path but isn't surfaced from the footer.
   const careLinks = [
     isFeatureEnabled("general-consultations")
-      ? { label: "Book consultation", href: careBase ? `${careBase}/general-consultation` : "/" }
-      : null,
-    isFeatureEnabled("general-consultations")
-      ? { label: "GP consultation", href: careBase ? `${careBase}/general-consultation` : "/" }
+      ? { label: "Book a GP Appointment", href: careBase ? `${careBase}/gp-appointment` : "/" }
       : null,
     isFeatureEnabled("specialist-consultations")
-      ? { label: "Specialist consultation", href: careBase ? `${careBase}/specialist-consultation` : "/" }
+      ? { label: "See a Specialist", href: careBase ? `${careBase}/see-a-specialist` : "/" }
       : null,
     isFeatureEnabled("online-prescriptions")
-      ? { label: "Prescriptions", href: careBase ? `${careBase}/prescriptions` : "/" }
+      ? { label: "Repeat Prescription Request", href: careBase ? `${careBase}/repeat-prescription-request` : "/" }
       : null,
     isFeatureEnabled("health-tests")
-      ? { label: "Health tests", href: careBase ? `${careBase}/tests` : "/" }
+      ? { label: "Lab Test Booking", href: careBase ? `${careBase}/lab-tests` : "/" }
       : null,
     { label: "Our doctors", href: careBase ? `${careBase}/doctors` : "/" },
   ].filter((x): x is { label: string; href: string } => x !== null);

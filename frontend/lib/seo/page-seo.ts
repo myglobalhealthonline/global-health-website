@@ -169,46 +169,47 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
     description: "Medici autorizați în România disponibili pentru consultații online.",
   },
 
-  // ── Consultation listings ─────────────────────────────────────────────────
+  // ── Service listings ──────────────────────────────────────────────────────
+  // Provider-first labels per Google Ads "restricted services" guidance.
   "/general-consultation-ie": {
-    title: "GP consultation · Ireland",
-    description: "GP video consultations with Irish-registered clinicians — same-day slots, prescriptions and sick notes.",
+    title: "Book a GP Appointment · Ireland",
+    description: "Irish Medical Council-registered general practitioners available for patient appointments.",
   },
   "/general-consultation-pt": {
-    title: "Consulta médica geral · Portugal",
-    description: "Consultas com clínicos gerais portugueses por videochamada — receitas, atestados e encaminhamentos.",
+    title: "Marcar consulta com clínico geral · Portugal",
+    description: "Médicos de clínica geral inscritos na Ordem dos Médicos em Portugal.",
   },
   "/general-consultation-sp": {
-    title: "Consulta médica general · España",
-    description: "Consultas con médicos de cabecera colegiados en España — recetas, bajas y derivaciones.",
+    title: "Reservar cita con médico de cabecera · España",
+    description: "Médicos de cabecera colegiados en España.",
   },
   "/general-consultation-cz": {
-    title: "Praktická konzultace · Česko",
-    description: "Online konzultace s praktickými lékaři v Česku — recepty, neschopenky a doporučení.",
+    title: "Objednat se k praktickému lékaři · Česko",
+    description: "Praktičtí lékaři registrovaní u České lékařské komory.",
   },
   "/general-consultation-rm": {
-    title: "Consultație generală · România",
-    description: "Consultații cu medici de familie autorizați în România — rețete, concedii și trimiteri.",
+    title: "Programare la medicul de familie · România",
+    description: "Medici de familie autorizați în România.",
   },
   "/specialty-ie": {
-    title: "Specialist consultations · Ireland",
-    description: "Cardiology, dermatology, mental health and more — Irish-registered consultants on video.",
+    title: "See a Specialist · Ireland",
+    description: "Cardiology, dermatology, mental health and more — Irish Medical Council-registered specialists.",
   },
   "/specialty-pt": {
-    title: "Consultas de especialidade · Portugal",
-    description: "Cardiologia, dermatologia, saúde mental — especialistas portugueses por videoconsulta.",
+    title: "Marcar consulta de especialidade · Portugal",
+    description: "Cardiologia, dermatologia, saúde mental — especialistas inscritos na Ordem dos Médicos em Portugal.",
   },
   "/specialty-sp": {
-    title: "Consultas de especialista · España",
-    description: "Cardiología, dermatología, salud mental — especialistas españoles por videollamada.",
+    title: "Ver a un especialista · España",
+    description: "Cardiología, dermatología, salud mental — especialistas colegiados en España.",
   },
   "/specialty-cz": {
-    title: "Specialistické konzultace · Česko",
-    description: "Kardiologie, dermatologie, duševní zdraví — čeští specialisté online.",
+    title: "Objednat se ke specialistovi · Česko",
+    description: "Kardiologie, dermatologie, duševní zdraví — specialisté registrovaní u ČLK.",
   },
   "/specialty-rm": {
-    title: "Consultații de specialitate · România",
-    description: "Cardiologie, dermatologie, sănătate mintală — specialiști români prin video.",
+    title: "Vezi un specialist · România",
+    description: "Cardiologie, dermatologie, sănătate mintală — specialiști autorizați în România.",
   },
 };
 
@@ -218,7 +219,7 @@ export function getRouteSeo(pathname: string): RouteSeo {
     ROUTE_SEO[pathname] ?? {
       title: "Global Health",
       description:
-        "Online consultations with licensed clinicians across Ireland, Portugal, Spain, Czechia and Romania.",
+        "Licensed clinicians registered with national medical councils across Ireland, Portugal, Spain, Czechia and Romania.",
     }
   );
 }

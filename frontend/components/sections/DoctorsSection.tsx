@@ -28,11 +28,13 @@ type DoctorsSectionProps = {
   title?: string;
   intro?: string;
   doctors: DoctorItem[];
+  theme?: "dark" | "light";
 };
 
 const PAGE_SIZE = 6;
 
-export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
+export function DoctorsSection({ title, intro, doctors, theme = "dark" }: DoctorsSectionProps) {
+  const isLight = theme === "light";
   const [page, setPage] = useState(0);
 
   const totalPages = Math.ceil(doctors.length / PAGE_SIZE);
@@ -42,9 +44,9 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
   return (
     <section
       style={{
-        background: "var(--color-background-dark)",
+        background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         padding: "clamp(64px,8vw,120px) 0",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
+        borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
@@ -53,7 +55,7 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
             <div>
               <span
                 className="text-[11px] font-bold uppercase tracking-[0.22em]"
-                style={{ color: "var(--color-brand-accent)" }}
+                style={{ color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
               >
                 Our Team
               </span>
@@ -62,7 +64,7 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
                   className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
                   style={{
                     fontSize: "clamp(2rem,4vw+0.5rem,3.5rem)",
-                    color: "rgba(255,255,255,0.95)",
+                    color: isLight ? "var(--color-text-primary)" : "rgba(255,255,255,0.95)",
                   }}
                 >
                   {title}
@@ -71,7 +73,7 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
               {intro ? (
                 <p
                   className="mt-4 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed"
-                  style={{ color: "rgba(255,255,255,0.55)" }}
+                  style={{ color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.55)" }}
                 >
                   {intro}
                 </p>
@@ -87,7 +89,7 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
                   className="size-10 rounded-full border inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={
                     page === 0
-                      ? { background: "transparent", borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.40)" }
+                      ? (isLight ? { background: "transparent", borderColor: "rgba(29,75,54,0.20)", color: "rgba(29,75,54,0.35)" } : { background: "transparent", borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.40)" })
                       : { background: "var(--color-brand-accent)", borderColor: "var(--color-brand-accent)", color: "#0a1f14" }
                   }
                 >
@@ -95,7 +97,7 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
                 </button>
                 <span
                   className="text-[11px] font-bold tabular-nums"
-                  style={{ color: "rgba(255,255,255,0.38)" }}
+                  style={{ color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.38)" }}
                 >
                   {page + 1} / {totalPages}
                 </span>
@@ -106,7 +108,7 @@ export function DoctorsSection({ title, intro, doctors }: DoctorsSectionProps) {
                   className="size-10 rounded-full border inline-flex items-center justify-center transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={
                     page === totalPages - 1
-                      ? { background: "transparent", borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.40)" }
+                      ? (isLight ? { background: "transparent", borderColor: "rgba(29,75,54,0.20)", color: "rgba(29,75,54,0.35)" } : { background: "transparent", borderColor: "rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.40)" })
                       : { background: "var(--color-brand-accent)", borderColor: "var(--color-brand-accent)", color: "#0a1f14" }
                   }
                 >

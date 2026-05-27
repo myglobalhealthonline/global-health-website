@@ -71,8 +71,8 @@ export default function BlogIndexPage() {
       {/* Card grid */}
       <section
         style={{
-          background: "var(--color-background-dark)",
-          borderTop: "1px solid rgba(255,255,255,0.06)",
+          background: "var(--color-background-soft)",
+          borderTop: "1px solid rgba(29,75,54,0.10)",
           padding: "clamp(64px,8vw,120px) 0",
         }}
       >

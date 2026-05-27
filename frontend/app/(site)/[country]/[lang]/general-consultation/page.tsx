@@ -51,15 +51,15 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
   const page = await getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale);
-  const url = `${getSiteUrl()}/${country}/${lang}/general-consultation`;
-  const title = page?.seoTitle ?? `GP consultation in ${config.name} · ${SITE_NAME}`;
+  const url = `${getSiteUrl()}/${country}/${lang}/gp-appointment`;
+  const title = page?.seoTitle ?? `Book a GP Appointment in ${config.name} · ${SITE_NAME}`;
   const description =
     page?.seoDescription ??
-    `Online GP (general practitioner) consultation with a licensed doctor in ${config.name}.`;
+    `General practitioners registered to practise in ${config.name}.`;
   return {
     title,
     description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/general-consultation") },
+    alternates: { canonical: url, languages: hreflangAlternates(config, "/gp-appointment") },
     openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
     twitter: { card: "summary_large_image", title, description },
   };
@@ -191,11 +191,11 @@ export default async function CountryLangGeneralConsultationPage({
         </section>
       ) : null}
 
-      <RichBodySection html={page?.body} />
+      <RichBodySection html={page?.body} theme="light" />
 
       <ReviewBadge countryName={config.name} />
 
-      <TrustRibbon />
+      <TrustRibbon theme="light" />
 
       {/* Service cards — auto from Service rows where kind=GENERAL, country=X */}
       {serviceItems.length > 0 ? (
@@ -216,6 +216,7 @@ export default async function CountryLangGeneralConsultationPage({
           title={`Doctors in ${config.name}`}
           intro="Licensed GPs available for online consultations. Each profile lists qualifications, languages, and registration."
           doctors={doctorItems}
+          theme="light"
         />
       ) : null}
 

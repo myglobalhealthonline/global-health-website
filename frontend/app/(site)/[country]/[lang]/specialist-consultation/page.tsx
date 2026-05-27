@@ -53,15 +53,15 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
   const page = await getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale);
-  const url = `${getSiteUrl()}/${country}/${lang}/specialist-consultation`;
-  const title = page?.seoTitle ?? `Specialist consultation in ${config.name} · ${SITE_NAME}`;
+  const url = `${getSiteUrl()}/${country}/${lang}/see-a-specialist`;
+  const title = page?.seoTitle ?? `See a Specialist in ${config.name} · ${SITE_NAME}`;
   const description =
     page?.seoDescription ??
-    `Online specialist consultation in ${config.name}. Cardiology, dermatology, nutrition, and more.`;
+    `Specialists registered to practise in ${config.name}. Cardiology, dermatology, nutrition, and more.`;
   return {
     title,
     description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/specialist-consultation") },
+    alternates: { canonical: url, languages: hreflangAlternates(config, "/see-a-specialist") },
     openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
     twitter: { card: "summary_large_image", title, description },
   };
@@ -198,11 +198,11 @@ export default async function CountryLangSpecialistConsultationPage({
         </section>
       ) : null}
 
-      <RichBodySection html={page?.body} />
+      <RichBodySection html={page?.body} theme="light" />
 
       <ReviewBadge countryName={config.name} />
 
-      <TrustRibbon />
+      <TrustRibbon theme="light" />
 
       {/* Specialist service cards — auto from Service rows kind=SPECIALIST */}
       {serviceItems.length > 0 ? (
@@ -223,6 +223,7 @@ export default async function CountryLangSpecialistConsultationPage({
           title={`Specialists in ${config.name}`}
           intro="Specialists registered with national medical councils."
           doctors={doctorItems}
+          theme="light"
         />
       ) : null}
 

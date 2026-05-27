@@ -105,14 +105,14 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Article body — dark, wide prose column */}
+      {/* Article body — light, wide prose column */}
       <main
         className="mx-auto max-w-3xl px-5 md:px-10"
-        style={{ background: "var(--color-background-dark)", padding: "clamp(48px,6vw,80px) 20px" }}
+        style={{ background: "var(--color-background-page)", padding: "clamp(48px,6vw,80px) 20px" }}
       >
         <div
-          className="prose max-w-none prose-headings:font-extrabold prose-headings:tracking-[-0.02em] prose-headings:text-white/90 prose-h2:text-xl prose-h2:mt-8 prose-h3:text-lg prose-h3:mt-6 prose-p:leading-relaxed prose-p:text-white/75 prose-li:leading-relaxed prose-li:text-white/75 prose-a:text-[#B0F122] prose-a:no-underline hover:prose-a:underline"
-          style={{ color: "rgba(255,255,255,0.75)" }}
+          className="prose max-w-none prose-headings:font-extrabold prose-headings:tracking-[-0.02em] prose-headings:text-[var(--color-text-primary)] prose-h2:text-xl prose-h2:mt-8 prose-h3:text-lg prose-h3:mt-6 prose-p:leading-relaxed prose-p:text-[var(--color-text-body)] prose-li:leading-relaxed prose-li:text-[var(--color-text-body)] prose-a:text-[var(--color-brand-primary)] prose-a:no-underline hover:prose-a:underline"
+          style={{ color: "var(--color-text-body)" }}
           dangerouslySetInnerHTML={{ __html: post.body }}
         />
       </main>

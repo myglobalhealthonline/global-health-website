@@ -46,14 +46,14 @@ export async function generateMetadata({
   // Admin-editable copy via /admin/pages (PageKey=HEALTH_TESTS).
   // Falls back to the hardcoded strings if no ContentPage row exists.
   const page = await getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale);
-  const url = `${getSiteUrl()}/${country}/${lang}/tests`;
-  const title = page?.seoTitle ?? `Home health tests in ${config.name} · ${SITE_NAME}`;
+  const url = `${getSiteUrl()}/${country}/${lang}/lab-tests`;
+  const title = page?.seoTitle ?? `Lab Test Booking in ${config.name} · ${SITE_NAME}`;
   const description =
     page?.seoDescription ?? `Lab-quality home health tests delivered in ${config.name}.`;
   return {
     title,
     description,
-    alternates: { canonical: url, languages: hreflangAlternates(config, "/tests") },
+    alternates: { canonical: url, languages: hreflangAlternates(config, "/lab-tests") },
     openGraph: { type: "website", siteName: SITE_NAME, url, title, description },
   };
 }

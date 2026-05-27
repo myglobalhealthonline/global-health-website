@@ -28,28 +28,28 @@ export default function ContactPage() {
         }
       />
 
-      {/* DARK — contact form + reach info */}
-      <section style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      {/* LIGHT — contact form + reach info */}
+      <section style={{ background: "var(--color-background-soft)", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr]">
             <aside>
-              <h2 className="text-xl font-extrabold tracking-[-0.015em]" style={{ color: "rgba(255,255,255,0.92)" }}>
+              <h2 className="text-xl font-extrabold tracking-[-0.015em]" style={{ color: "var(--color-text-primary)" }}>
                 Reach us
               </h2>
 
               <ul className="mt-6 space-y-5">
                 <li className="flex items-start gap-3">
-                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full" style={{ background: "rgba(176,241,34,0.08)", border: "1px solid rgba(176,241,34,0.20)" }}>
-                    <Mail className="size-4" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.5} aria-hidden />
+                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full" style={{ background: "rgba(29,75,54,0.08)", border: "1px solid rgba(29,75,54,0.20)" }}>
+                    <Mail className="size-4" style={{ color: "var(--color-brand-primary)" }} strokeWidth={1.5} aria-hidden />
                   </span>
                   <div>
-                    <p className="text-[length:var(--text-meta)] font-semibold" style={{ color: "rgba(255,255,255,0.88)" }}>
+                    <p className="text-[length:var(--text-meta)] font-semibold" style={{ color: "var(--color-text-primary)" }}>
                       Email
                     </p>
                     <a
                       href="mailto:info@myglobalhealth.online"
                       className="text-sm hover:underline"
-                      style={{ color: "var(--color-brand-accent)" }}
+                      style={{ color: "var(--color-brand-primary)" }}
                     >
                       info@myglobalhealth.online
                     </a>
@@ -57,14 +57,14 @@ export default function ContactPage() {
                 </li>
 
                 <li className="flex items-start gap-3">
-                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full" style={{ background: "rgba(176,241,34,0.08)", border: "1px solid rgba(176,241,34,0.20)" }}>
-                    <Clock className="size-4" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.5} aria-hidden />
+                  <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full" style={{ background: "rgba(29,75,54,0.08)", border: "1px solid rgba(29,75,54,0.20)" }}>
+                    <Clock className="size-4" style={{ color: "var(--color-brand-primary)" }} strokeWidth={1.5} aria-hidden />
                   </span>
                   <div>
-                    <p className="text-[length:var(--text-meta)] font-semibold" style={{ color: "rgba(255,255,255,0.88)" }}>
+                    <p className="text-[length:var(--text-meta)] font-semibold" style={{ color: "var(--color-text-primary)" }}>
                       Response time
                     </p>
-                    <p className="text-sm" style={{ color: "rgba(255,255,255,0.60)" }}>
+                    <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
                       Within 24 hours on working days
                     </p>
                   </div>

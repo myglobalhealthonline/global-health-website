@@ -227,7 +227,7 @@ export default async function CountryLangHomePage({
           return [
             mapCategoryTile({
               type: "prescription",
-              title: "Online prescriptions",
+              title: "Repeat Prescription Request",
               tag: "Prescription",
               price: minRx != null ? Math.round(minRx / 100) : null,
               currency: rxCurrency,
@@ -252,8 +252,8 @@ export default async function CountryLangHomePage({
           return [
             mapCategoryTile({
               type: "test",
-              title: "Health tests",
-              tag: "Home tests",
+              title: "Lab Test Booking",
+              tag: "Lab tests",
               price: Math.round(minTest / 100),
               currency: testCurrency,
               dur: `${healthTests.length} test${healthTests.length === 1 ? "" : "s"}`,
