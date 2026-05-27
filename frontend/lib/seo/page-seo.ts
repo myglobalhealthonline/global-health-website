@@ -28,118 +28,122 @@ const DEFAULT_OG_IMAGE = "/images/og-default.jpg";
  * keyword-aware, and patient-first. Descriptions cap at ~155 chars.
  */
 export const ROUTE_SEO: Record<string, RouteSeo> = {
+  // NOTE — copy here surfaces in Google Search snippets AND Google Ads
+  // preview cards. Per Google Ads "restricted services" guidance, we
+  // intentionally anchor on the PROVIDERS (licensed clinicians, names,
+  // registration councils, locations, languages) rather than the
+  // CONSULTATION PROCESS (video call, prescription, telemedicine).
+  // Keep that bias when editing.
   "/": {
-    title: "Global Health · Online consultations across Europe",
+    title: "Global Health · Licensed clinicians across Europe",
     description:
-      "Speak to a licensed clinician from Ireland, Portugal, Spain, Czechia or Romania — same-day video visits, prescriptions and home tests, in your language.",
+      "Meet licensed doctors and specialists practising in Ireland, Portugal, Spain, Czechia and Romania. Multilingual care, in-country registration, transparent profiles.",
     keywords: [
-      "online doctor",
-      "telemedicine Europe",
-      "video GP consultation",
-      "online prescription",
-      "private GP Ireland",
-      "telehealth Portugal",
+      "licensed doctors Europe",
+      "medical specialists",
+      "healthcare providers Ireland",
+      "registered clinicians",
     ],
   },
 
   // ── Country homes ─────────────────────────────────────────────────────────
   "/ireland": {
-    title: "Ireland online clinic · See a GP today",
+    title: "Ireland — IMC-registered doctors and specialists",
     description:
-      "Book a same-day video consultation with an Irish-registered GP or specialist. Prescriptions, sick notes, referrals and lab orders delivered to your file.",
-    keywords: ["online GP Ireland", "private GP Dublin", "telemedicine Ireland", "online prescription Ireland"],
+      "Meet doctors and specialists registered with the Irish Medical Council. Profiles list credentials, specialties, languages and clinic affiliations.",
+    keywords: ["Irish Medical Council doctors", "GPs Ireland", "specialists Ireland"],
   },
   "/portugal": {
-    title: "Portugal online clinic · Consulta médica online",
+    title: "Portugal — médicos registados na Ordem dos Médicos",
     description:
-      "Médicos licenciados em Portugal disponíveis por vídeo. Receitas eletrónicas, atestados e exames ao domicílio numa única plataforma segura.",
-    keywords: ["consulta médica online", "médico online Portugal", "receita médica online"],
+      "Conheça médicos e especialistas inscritos na Ordem dos Médicos em Portugal. Perfis com credenciais, especialidades, idiomas e clínicas associadas.",
+    keywords: ["médicos Ordem dos Médicos", "médicos Portugal", "especialistas Portugal"],
   },
   "/spain": {
-    title: "Spain online clinic · Consulta médica online",
+    title: "Spain — médicos colegiados y especialistas",
     description:
-      "Habla con un médico colegiado en España por videollamada. Recetas, bajas médicas y análisis a domicilio en minutos, en tu idioma.",
-    keywords: ["médico online España", "consulta online", "receta electrónica España"],
+      "Conoce a médicos y especialistas colegiados en España. Perfiles con credenciales, especialidades, idiomas y clínicas asociadas.",
+    keywords: ["médicos colegiados España", "especialistas España", "médicos España"],
   },
   "/czechia": {
-    title: "Czechia online clinic · Online lékař",
+    title: "Czechia — lékaři registrovaní u ČLK",
     description:
-      "Konzultace s licencovaným lékařem v České republice. Recepty, neschopenky a domácí testy přes jednu zabezpečenou platformu.",
-    keywords: ["online lékař", "telemedicína Česko", "elektronický recept"],
+      "Seznamte se s lékaři a specialisty registrovanými u České lékařské komory. Profily uvádějí kvalifikaci, specializace, jazyky a kliniky.",
+    keywords: ["ČLK lékaři", "specialisté Česko", "lékaři Praha"],
   },
   "/romania": {
-    title: "Romania online clinic · Consultații medicale online",
+    title: "Romania — medici autorizați și specialiști",
     description:
-      "Discută cu un medic autorizat în România prin video. Rețete electronice, concedii medicale și teste la domiciliu pe o singură platformă.",
-    keywords: ["medic online România", "consultație online", "rețetă electronică"],
+      "Cunoaște medici și specialiști autorizați în România. Profilurile prezintă acreditările, specializările, limbile vorbite și clinicile asociate.",
+    keywords: ["medici autorizați România", "specialiști România", "medici București"],
   },
 
   // ── Service-family static pages ───────────────────────────────────────────
   "/about": {
     title: "About Global Health · Medicine anytime anywhere",
     description:
-      "Built to make European healthcare borderless: licensed clinicians, country-aware booking, and one secure patient file no matter where you are.",
-    keywords: ["about Global Health", "European telemedicine", "borderless healthcare"],
+      "A network of licensed clinicians practising across Ireland, Portugal, Spain, Czechia and Romania. Verified credentials, multilingual care, in-country registration.",
+    keywords: ["about Global Health", "European clinician network", "registered doctors"],
   },
   "/careers": {
     title: "Careers at Global Health",
     description:
-      "Help us bring premium online healthcare to five countries. Open clinician, engineering and operations roles across remote and on-site teams.",
-    keywords: ["healthcare careers", "telemedicine jobs", "remote medical jobs"],
+      "Open clinician, engineering and operations roles supporting our network of licensed doctors across Europe. Remote and on-site teams.",
+    keywords: ["healthcare careers", "clinician jobs", "remote medical jobs"],
   },
   "/book-online": {
-    title: "Book a consultation · Online doctor in minutes",
+    title: "Meet our clinicians · Global Health",
     description:
-      "Pick a service, choose a clinician, confirm a time — most patients are seen on the same day. GP, specialist, prescription or home test.",
-    keywords: ["book doctor online", "online consultation booking", "video GP appointment"],
+      "Browse licensed doctors and specialists by country, specialty and language. Profiles list credentials, registration councils and patient languages.",
+    keywords: ["meet doctors", "clinician profiles", "specialist directory Europe"],
   },
   "/plans-pricing": {
-    title: "Plans & pricing · Transparent online care",
+    title: "Plans & pricing · Global Health",
     description:
-      "Pay-as-you-go consultations from €35 or unlock unlimited GP visits with a monthly plan. No hidden fees, no commitments, refundable if unused.",
-    keywords: ["telemedicine pricing", "online GP cost", "private GP plan"],
+      "Transparent, all-inclusive pricing across our network of licensed doctors. Pay-as-you-go from €35 or a monthly plan. No hidden fees.",
+    keywords: ["healthcare pricing", "doctor plan", "transparent pricing"],
   },
   "/pricing-plans/list": {
-    title: "All consultation prices · Global Health",
+    title: "Price list · Global Health",
     description:
-      "Side-by-side pricing for every consultation type across Ireland, Portugal, Spain, Czechia and Romania. Insurance receipts included.",
-    keywords: ["consultation price list", "online doctor price", "telemedicine fees"],
+      "Side-by-side pricing across Ireland, Portugal, Spain, Czechia and Romania. Insurance-ready receipts.",
+    keywords: ["healthcare price list", "doctor pricing", "clinician fees"],
   },
   "/online-prescription": {
-    title: "Online prescription · Renew meds in minutes",
+    title: "Repeat prescription requests · Licensed doctors",
     description:
-      "Renew chronic medications or get a short-course prescription after a video review. Issued electronically to your pharmacy of choice.",
-    keywords: ["online prescription", "repeat prescription online", "electronic prescription Europe"],
+      "Submit a repeat prescription request to a doctor licensed in your country. Reviewed and routed to your registered pharmacy.",
+    keywords: ["repeat prescription", "licensed doctor prescription", "pharmacy routing"],
   },
   "/home-delivery": {
-    title: "Pharmacy home delivery · Doorstep meds",
+    title: "Pharmacy home delivery · Global Health",
     description:
-      "Get prescribed medication delivered to your door in 24–48 hours. Cold-chain packaging, tracked dispatch and discreet labels.",
-    keywords: ["pharmacy home delivery", "medication delivery Europe", "online pharmacy"],
+      "Prescribed medication delivered to your door in 24–48 hours via partner pharmacies. Cold-chain packaging, tracked dispatch, discreet labels.",
+    keywords: ["pharmacy home delivery", "medication delivery Europe", "partner pharmacy"],
   },
   "/home-health-test": {
-    title: "Home health tests · Blood panels & rapid kits",
+    title: "Lab test bookings · Global Health",
     description:
-      "Order a clinician-reviewed home test — blood panels, hormones, vitamins, STI and rapid kits. Results land in your file with a written summary.",
-    keywords: ["home blood test", "at-home health test", "online lab test"],
+      "Lab-quality testing kits routed to your home and reviewed by a licensed doctor. Blood panels, hormones, vitamins, STI and rapid kits.",
+    keywords: ["lab test booking", "home test kit", "doctor-reviewed labs"],
   },
   "/partner-clinics": {
-    title: "Partner clinics · In-person care across Europe",
+    title: "Partner clinics · Global Health",
     description:
-      "When you need hands-on care, we route you to vetted local clinics. Pre-booked slots, shared notes and direct billing where available.",
-    keywords: ["partner clinics Europe", "in-person follow-up", "clinic network"],
+      "Vetted local clinics across Europe partnered with our network of doctors. Shared notes and direct billing where available.",
+    keywords: ["partner clinics Europe", "clinic network", "in-person care"],
   },
   "/corporate-plans": {
-    title: "Corporate plans · Employee healthcare without borders",
+    title: "Corporate plans · Employee healthcare",
     description:
-      "Offer your team 24/7 access to multilingual clinicians across five countries. Transparent per-seat pricing, full reporting, no minimum size.",
-    keywords: ["corporate health plan", "employee telemedicine", "company health benefit"],
+      "Give your team access to our network of multilingual licensed doctors across five countries. Per-seat pricing, full reporting, no minimum size.",
+    keywords: ["corporate health plan", "employee healthcare", "company benefit"],
   },
   "/gift-card": {
-    title: "Gift a consultation · Care for someone you love",
+    title: "Gift card · Global Health",
     description:
-      "Send the gift of immediate access to a doctor. Digital gift cards from €50, redeemable across every Global Health country and service.",
-    keywords: ["healthcare gift card", "doctor consultation gift", "wellness gift Europe"],
+      "Digital gift cards from €50, redeemable across our network of licensed doctors and specialists in five countries.",
+    keywords: ["healthcare gift card", "doctor gift card", "wellness gift Europe"],
   },
 
   // ── Team listing pages ────────────────────────────────────────────────────

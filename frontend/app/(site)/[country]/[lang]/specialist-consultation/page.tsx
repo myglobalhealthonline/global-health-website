@@ -100,10 +100,11 @@ export default async function CountryLangSpecialistConsultationPage({
     getCountryDoctors(code),
   ]);
 
-  const heroTitle = page?.heroTitle ?? "Specialist consultation";
+  // Provider-first defaults per Google Ads "restricted services" guidance.
+  const heroTitle = page?.heroTitle ?? "Meet our specialists";
   const heroSubtitle =
-    page?.heroSubtitle ?? `Connect with specialists licensed in ${config.name}.`;
-  const ctaLabel = page?.ctaLabel ?? "Book specialist consultation";
+    page?.heroSubtitle ?? `Specialists registered to practise in ${config.name}.`;
+  const ctaLabel = page?.ctaLabel ?? "Meet the specialists";
   // Cart-first booking: hero CTA scrolls to the in-page service grid
   // rather than dumping into the legacy /book-online form. Admin can
   // still override via ContentPage.
@@ -160,8 +161,8 @@ export default async function CountryLangSpecialistConsultationPage({
       />
       <JsonLd
         data={medicalProcedureJsonLd({
-          name: `Specialist medical consultation in ${config.name}`,
-          description: `Online specialist consultation (cardiology, dermatology, psychiatry, nutrition, and more) with clinicians licensed in ${config.name}.`,
+          name: `Specialists in ${config.name}`,
+          description: `Network of specialists (cardiology, dermatology, psychiatry, nutrition, and more) registered to practise in ${config.name}.`,
           countryName: config.name,
           url: `/${slug}/${lang}/specialist-consultation`,
           bookingUrl: ctaHref,
@@ -170,14 +171,14 @@ export default async function CountryLangSpecialistConsultationPage({
 
       <PageHero
         countryCode={config.code}
-        countryLabel={`${config.name} · Specialist Consultation`}
-        titleLead="Talk to a"
-        titleAccent="specialist"
-        titleTrail="this week."
+        countryLabel={`${config.name} · Specialists`}
+        titleLead="Meet our"
+        titleAccent="registered"
+        titleTrail="specialists."
         lede={heroSubtitle}
         ctaLabel={ctaLabel}
         ctaHref={ctaHref}
-        secondaryLabel="Meet the team"
+        secondaryLabel="View profiles"
         secondaryHref={`/${slug}/${lang}/doctors`}
       />
 
@@ -207,9 +208,9 @@ export default async function CountryLangSpecialistConsultationPage({
       {serviceItems.length > 0 ? (
         <div id="services" className="scroll-mt-24">
           <ServicesGrid
-            eyebrow="What you can book"
-            title="Specialist consultations available"
-            intro="Cards update as the team adds or retires specialist services."
+            eyebrow="Specialty areas"
+            title="Specialists available"
+            intro="Profiles update as the team adds or retires clinicians in our network."
             items={serviceItems}
             variant="dark"
           />
@@ -219,8 +220,8 @@ export default async function CountryLangSpecialistConsultationPage({
       {/* Doctor cards — only specialists shown here */}
       {doctorItems.length > 0 ? (
         <DoctorsSection
-          title={`Specialist doctors in ${config.name}`}
-          intro="Licensed specialists available for online consultations."
+          title={`Specialists in ${config.name}`}
+          intro="Specialists registered with national medical councils."
           doctors={doctorItems}
         />
       ) : null}

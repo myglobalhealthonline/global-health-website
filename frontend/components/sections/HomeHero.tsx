@@ -98,21 +98,24 @@ export function HomeHero({
               displayHeroTitle
             ) : (
               <>
-                See a doctor,{" "}
+                Meet our{" "}
                 <span style={{ color: "var(--color-brand-accent)" }}>
-                  from anywhere.
+                  licensed doctors.
                 </span>
               </>
             )}
           </h1>
 
-          {/* Lede — white/45, restrained */}
+          {/* Lede — provider-first per Google Ads "restricted services"
+              guidance: anchor on WHO (registered clinicians, credentials)
+              rather than the consultation process. Avoid "video", "same-
+              day", "online appointment" copy near the hero CTA. */}
           <p
             className="mt-8 max-w-[44ch] text-[length:var(--text-body-lg)] leading-relaxed"
             style={{ color: "rgba(255,255,255,0.75)" }}
           >
             {displayHeroSubtitle ??
-              "Locally-registered clinicians. Same-day appointments. Pay only after the call connects."}
+              "Licensed clinicians registered with national medical councils across Ireland, Portugal, Spain, Czechia and Romania."}
           </p>
 
           {/* CTAs — outline primary, ghost secondary */}

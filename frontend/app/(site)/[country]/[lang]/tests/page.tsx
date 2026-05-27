@@ -84,10 +84,13 @@ export default async function HealthTestsPage({
   ]);
   // Cart-first booking: hero/final CTA points at the tests grid below.
   const bookHref = "#tests";
-  const heroTitle = page?.heroTitle ?? "Lab-quality tests, delivered home";
+  // Provider-first defaults per Google Ads "restricted services" guidance.
+  // Lab-test pages also fall under restricted scope when copy emphasises
+  // the kit/sample/process. Anchor on the reviewing clinician instead.
+  const heroTitle = page?.heroTitle ?? "Lab tests reviewed by licensed doctors";
   const heroSubtitle =
     page?.heroSubtitle ??
-    `Order a kit, take the sample at home, send it back. Results reviewed by a doctor licensed in ${config.name}.`;
+    `Lab-quality test results reviewed by a doctor registered to practise in ${config.name}.`;
 
   return (
     <>
@@ -101,15 +104,15 @@ export default async function HealthTestsPage({
 
       <PageHero
         countryCode={config.code}
-        countryLabel={`${config.name} · Home health tests`}
-        titleLead="Lab-quality"
-        titleAccent="results"
-        titleTrail="without leaving home."
+        countryLabel={`${config.name} · Lab tests reviewed by doctors`}
+        titleLead="Lab results,"
+        titleAccent="reviewed by"
+        titleTrail="our doctors."
         lede={heroSubtitle}
         ctaLabel="Browse tests"
         ctaHref={bookHref}
-        secondaryLabel="Book a consultation"
-        secondaryHref={`/${slug}/${lang}/general-consultation`}
+        secondaryLabel="Meet our doctors"
+        secondaryHref={`/${slug}/${lang}/doctors`}
       />
 
       {/* Admin-edited rich body from ContentPage (HEALTH_TESTS). */}
@@ -132,7 +135,7 @@ export default async function HealthTestsPage({
               className="text-[11px] font-bold uppercase tracking-[0.2em]"
               style={{ color: "var(--color-brand-accent)" }}
             >
-              What you can order
+              Reviewed by our doctors
             </p>
             <h2
               className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.02]"

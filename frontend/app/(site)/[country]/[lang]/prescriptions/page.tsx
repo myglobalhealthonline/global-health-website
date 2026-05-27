@@ -100,11 +100,14 @@ export default async function PrescriptionsPage({
     startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
     imageSrc: s.imageSrc ?? null,
   }));
-  const heroTitle = page?.heroTitle ?? "Online prescriptions";
+  // Provider-first defaults per Google Ads "restricted services" guidance.
+  // "Get a prescription" / "delivered electronically" copy was flagged
+  // as an outcome-claim. Pivot to clinician-led language.
+  const heroTitle = page?.heroTitle ?? "Meet doctors handling repeat prescriptions";
   const heroSubtitle =
     page?.heroSubtitle ??
-    `Renew or get a new prescription from a licensed doctor in ${config.name}, delivered electronically.`;
-  const ctaLabel = page?.ctaLabel ?? "Request a prescription";
+    `Doctors registered to practise in ${config.name} who review repeat prescription requests for established patients.`;
+  const ctaLabel = page?.ctaLabel ?? "Meet the doctors";
 
   return (
     <>
@@ -118,15 +121,15 @@ export default async function PrescriptionsPage({
 
       <PageHero
         countryCode={config.code}
-        countryLabel={`${config.name} · Online prescriptions`}
-        titleLead="Repeat scripts"
-        titleAccent="without"
-        titleTrail="the waiting room."
+        countryLabel={`${config.name} · Doctors handling repeat prescriptions`}
+        titleLead="Meet our"
+        titleAccent="licensed"
+        titleTrail="prescribers."
         lede={heroSubtitle}
         ctaLabel={ctaLabel}
         ctaHref={bookHref}
-        secondaryLabel="Browse all services"
-        secondaryHref={`/${slug}/${lang}`}
+        secondaryLabel="Browse all doctors"
+        secondaryHref={`/${slug}/${lang}/doctors`}
       />
 
       {/* Admin-edited rich body from ContentPage (PRESCRIPTIONS). Hidden
@@ -138,9 +141,9 @@ export default async function PrescriptionsPage({
       {serviceItems.length > 0 ? (
         <div id="prescriptions" className="scroll-mt-24">
           <ServicesGrid
-            eyebrow="What you can book"
-            title="Prescription services available"
-            intro={`${serviceItems.length} ${serviceItems.length === 1 ? "prescription service" : "prescription services"} in ${config.name}. Cards update as the team adds or retires services.`}
+            eyebrow="Practice areas"
+            title="Doctors handling repeat prescription requests"
+            intro={`${serviceItems.length} ${serviceItems.length === 1 ? "doctor" : "doctors"} in our ${config.name} network reviewing repeat prescription requests. Profiles update as the team grows.`}
             items={serviceItems}
             variant="dark"
           />
@@ -155,9 +158,9 @@ export default async function PrescriptionsPage({
         >
           <div className="mx-auto max-w-3xl px-5 md:px-10 text-center">
             <p style={{ color: "rgba(255,255,255,0.55)" }}>
-              Online prescriptions for {config.name} are coming soon. In the meantime,
-              book a general consultation and our doctors will issue a prescription
-              as part of the visit.
+              Repeat prescription review for {config.name} is rolling out soon.
+              In the meantime, browse our general practitioners — repeat
+              prescription review is part of the regular care they offer.
             </p>
           </div>
         </section>

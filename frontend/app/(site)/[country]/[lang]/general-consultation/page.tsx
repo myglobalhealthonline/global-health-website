@@ -97,10 +97,12 @@ export default async function CountryLangGeneralConsultationPage({
     getCountryDoctors(code),
   ]);
 
-  const heroTitle = page?.heroTitle ?? "GP consultation";
+  // Provider-first defaults per Google Ads "restricted services" guidance.
+  // Admin can override via the ContentPage row when localised copy lands.
+  const heroTitle = page?.heroTitle ?? "Meet our general practitioners";
   const heroSubtitle =
-    page?.heroSubtitle ?? `Speak to a licensed GP in ${config.name} about everyday health concerns.`;
-  const ctaLabel = page?.ctaLabel ?? "Book GP consultation";
+    page?.heroSubtitle ?? `General practitioners registered to practise in ${config.name}.`;
+  const ctaLabel = page?.ctaLabel ?? "Meet the doctors";
   // Cart-first booking: hero CTA jumps to the in-page service list
   // instead of the legacy /book-online form. Admin can still override
   // via the ContentPage row.
@@ -148,8 +150,8 @@ export default async function CountryLangGeneralConsultationPage({
       />
       <JsonLd
         data={medicalProcedureJsonLd({
-          name: `GP consultation in ${config.name}`,
-          description: `Video consultation with a licensed GP (general practitioner) in ${config.name}. Covers everyday health concerns, prescriptions, and referrals.`,
+          name: `General practitioners in ${config.name}`,
+          description: `Network of general practitioners registered to practise in ${config.name}. Profiles include credentials, specialties and languages.`,
           countryName: config.name,
           url: `/${slug}/${lang}/general-consultation`,
           bookingUrl: ctaHref,
@@ -162,14 +164,14 @@ export default async function CountryLangGeneralConsultationPage({
         * page-type-specific italic word. */}
       <PageHero
         countryCode={config.code}
-        countryLabel={`${config.name} · GP Consultation`}
-        titleLead={heroTitle === "GP consultation" ? "Care for what's" : heroTitle.split(" ").slice(0, 2).join(" ")}
-        titleAccent={heroTitle === "GP consultation" ? "going on" : "today"}
-        titleTrail={heroTitle === "GP consultation" ? "today." : undefined}
+        countryLabel={`${config.name} · General practitioners`}
+        titleLead="Meet our"
+        titleAccent="licensed"
+        titleTrail="doctors."
         lede={heroSubtitle}
         ctaLabel={ctaLabel}
         ctaHref={ctaHref}
-        secondaryLabel="Meet the team"
+        secondaryLabel="View profiles"
         secondaryHref={`/${slug}/${lang}/doctors`}
       />
 
@@ -199,9 +201,9 @@ export default async function CountryLangGeneralConsultationPage({
       {serviceItems.length > 0 ? (
         <div id="services" className="scroll-mt-24">
           <ServicesGrid
-            eyebrow="What you can book"
-            title="GP consultations available"
-            intro={`${serviceItems.length} ${serviceItems.length === 1 ? "service" : "services"} currently offered in ${config.name}. Cards update as the team adds or retires services.`}
+            eyebrow="Practice areas"
+            title="General practitioners available"
+            intro={`${serviceItems.length} ${serviceItems.length === 1 ? "doctor" : "doctors"} currently in our ${config.name} network. Profiles update as the team adds or retires clinicians.`}
             items={serviceItems}
             variant="dark"
           />

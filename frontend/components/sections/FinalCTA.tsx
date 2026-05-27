@@ -87,6 +87,11 @@ export function FinalCTA({
               <span style={{ color: "var(--color-brand-accent)" }}>health</span>{" "}
               on the calendar.
             </h2>
+            {/* Provider-first lede per Google Ads "restricted services"
+                guidance. Anchored on the doctors (credentials, registration,
+                multilingual care) rather than the consultation flow. Avoid
+                "video call", "skip the waiting room", "get a prescription"
+                near landing-page CTAs. */}
             <p
               className="mt-6 leading-relaxed"
               style={{
@@ -95,14 +100,14 @@ export function FinalCTA({
                 maxWidth: "50ch",
               }}
             >
-              Skip the waiting room. Book a video call with a doctor licensed
-              in your country, get a prescription or referral, and move on
-              with your day.
+              Browse profiles of licensed doctors registered with national
+              medical councils across Europe. Filter by specialty, language
+              and country.
             </p>
 
             <div className="mt-9 flex flex-wrap gap-3">
               <Link href={primaryHref} className="gh-btn gh-btn-ghost-dark">
-                Book a consultation
+                Meet our doctors
                 <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
               </Link>
               <Link
@@ -127,7 +132,7 @@ export function FinalCTA({
               </li>
               <li className="inline-flex items-center gap-2">
                 <Clock className="size-4 shrink-0" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.5} aria-hidden />
-                No waiting rooms
+                Flexible scheduling
               </li>
             </ul>
           </div>
