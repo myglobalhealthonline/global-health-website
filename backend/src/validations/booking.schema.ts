@@ -21,18 +21,16 @@ export const bookingSchema = z.object({
     }),
   }),
   /**
-   * GDPR consent — two independent boolean acks. Both required to submit.
-   * Stored separately on Appointment so withdrawal of marketing consent
-   * doesn't invalidate the clinical record.
+   * GDPR consent — two independent boolean acks. Both are required by
+   * the new cart-first flow (validated at the route layer below so we
+   * can return a country-aware error message). Kept optional at the
+   * schema layer so the legacy `BookingFormTemplate` direct-submit
+   * surface keeps working until that template is retired.
    * - clinic: share with treating clinic/doctor for this consultation
-   * - platform: platform processing for service improvement + communications
+   * - platform: platform processing for service improvement + comms
    */
-  gdprConsentClinic: z.literal(true, {
-    errorMap: () => ({ message: "Clinic data sharing consent is required" }),
-  }),
-  gdprConsentPlatform: z.literal(true, {
-    errorMap: () => ({ message: "Platform processing consent is required" }),
-  }),
+  gdprConsentClinic: z.boolean().optional(),
+  gdprConsentPlatform: z.boolean().optional(),
   // Optional Service catalogue link. When set we resolve the slug to the
   // service row and copy its price/currency onto the appointment so the
   // Stripe Checkout session has everything it needs without a second look-up.

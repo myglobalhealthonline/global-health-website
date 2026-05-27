@@ -255,6 +255,8 @@ async function readBookingSettings(countryCode: string) {
       bookingEnabled: true,
       requirePhone: true,
       requireDateOfBirth: true,
+      requireNationalId: true,
+      requireAddress: true,
     },
   });
 }
@@ -709,6 +711,48 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               if (settings.requireDateOfBirth && !patientDob) {
                 return reply.status(400).send(
                   errorResponse("A date of birth is required for bookings in this country."),
+                );
+              }
+              // Per-country national-ID enforcement. Format validation
+              // (NATIONAL_ID_VALIDATORS) runs on the direct /api/appointments
+              // path; cart flow checks presence only — the booking form
+              // already enforces format client-side and the value just
+              // rides on the snapshot to the appointment-mint webhook.
+              if (settings.requireNationalId && !patient?.nationalIdNumber?.trim()) {
+                return reply.status(400).send(
+                  errorResponse("A national ID number is required for bookings in this country."),
+                );
+              }
+              if (settings.requireAddress) {
+                const missing: string[] = [];
+                if (!patient?.addressLine1?.trim()) missing.push("street address");
+                if (!patient?.addressCity?.trim()) missing.push("city");
+                if (!patient?.addressPostalCode?.trim()) missing.push("postal code");
+                if (missing.length > 0) {
+                  return reply.status(400).send(
+                    errorResponse(
+                      `Address required for this country. Missing: ${missing.join(", ")}.`,
+                    ),
+                  );
+                }
+              }
+              // Dual GDPR consent — both required for every cart-first
+              // consultation booking regardless of country (legal
+              // requirement, not country-specific). Stored independently
+              // so platform consent can be withdrawn without nuking the
+              // clinical record.
+              if (patient?.gdprConsentClinic !== true) {
+                return reply.status(400).send(
+                  errorResponse(
+                    "Clinic data sharing consent is required to book a consultation.",
+                  ),
+                );
+              }
+              if (patient?.gdprConsentPlatform !== true) {
+                return reply.status(400).send(
+                  errorResponse(
+                    "Platform processing consent is required to book a consultation.",
+                  ),
                 );
               }
             }
