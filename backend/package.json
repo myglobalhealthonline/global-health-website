@@ -14,7 +14,6 @@
         "db:generate": "prisma generate",
         "db:migrate": "prisma migrate dev",
         "db:deploy": "prisma migrate deploy",
-        "db:seed": "tsx prisma/seed.ts",
         "db:studio": "prisma studio"
     },
     "dependencies": {
@@ -47,8 +46,5 @@
         "prisma": "^7.8.0",
         "tsx": "^4.21.0",
         "typescript": "^5"
-    },
-    "prisma": {
-        "seed": "tsx prisma/seed.ts"
     }
 }

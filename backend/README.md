@@ -64,7 +64,6 @@ cp .env.example .env
 # Edit .env: set DATABASE_URL, ADMIN_API_TOKEN, PORT as needed
 pnpm db:generate
 pnpm db:migrate
-pnpm db:seed
 ```
 
 From **repository root**:
@@ -72,7 +71,6 @@ From **repository root**:
 ```bash
 pnpm --filter backend db:generate
 pnpm --filter backend db:migrate
-pnpm --filter backend db:seed
 ```
 
 Or use the root shortcuts (same as above):
@@ -80,8 +78,12 @@ Or use the root shortcuts (same as above):
 ```bash
 pnpm db:generate
 pnpm db:migrate
-pnpm db:seed
 ```
+
+Note: there is no seed script. All schema + data changes ship as
+migration SQL — data inserts (currencies, countries, settings) live
+inside `prisma/migrations/*/migration.sql` so prod and dev DBs land in
+the same state via `prisma migrate deploy` alone.
 
 ### Production / CI deploy
 
@@ -100,7 +102,6 @@ pnpm --filter backend db:deploy
 | `db:generate` | `prisma generate` — refreshes the Prisma Client after schema changes |
 | `db:migrate` | `prisma migrate dev` — creates/applies migrations in development |
 | `db:deploy` | `prisma migrate deploy` — applies pending migrations in staging/production |
-| `db:seed` | Runs `prisma/seed.ts` |
 | `db:studio` | Opens Prisma Studio (needs `DATABASE_URL`) |
 
 ### Windows PowerShell (no `.env` file yet)
@@ -127,17 +128,17 @@ See **`backend/.env.example`**. Summary:
 - **Railway Bucket / S3** — required in **`NODE_ENV=production`** for uploads. Set **`S3_ENDPOINT`**, **`S3_REGION`**, **`S3_BUCKET`**, **`S3_ACCESS_KEY_ID`**, **`S3_SECRET_ACCESS_KEY`** (Railway’s bucket credential preset maps **`ENDPOINT`**, **`BUCKET`**, **`ACCESS_KEY_ID`**, **`SECRET_ACCESS_KEY`**, **`REGION`** into these — see **`src/config/env.ts`**). Enables **`POST /api/admin/media/upload`** (admin session) and public **`GET /api/media/*`**. Use **`PUBLIC_MEDIA_ORIGIN`** (HTTPS origin of this API, no trailing slash) so upload responses return stable URLs behind reverse proxies.
 - **Local development without S3** — when **`NODE_ENV`** is not **`production`**, uploads and **`GET /api/media/*`** use **`backend/.data/local-media`** by default (override with **`LOCAL_MEDIA_ROOT`**). This folder is gitignored.
 
-Optional **`DATABASE_PUBLIC_URL`** in comments in `.env.example`: some platforms use an internal URL for the deployed app and a **public** URL for tools running on your laptop; use whichever host your machine can reach as **`DATABASE_URL`** when running migrations/seeds locally.
+Optional **`DATABASE_PUBLIC_URL`** in comments in `.env.example`: some platforms use an internal URL for the deployed app and a **public** URL for tools running on your laptop; use whichever host your machine can reach as **`DATABASE_URL`** when running migrations locally.
 
 ### Troubleshooting
 
 | Issue | What to do |
 | --- | --- |
-| **`GET /api/countries` (or other public reads) returns `503`** | The handler catches Prisma/database errors and maps them to **`DatabaseUnavailableError`**. Typical causes: **`DATABASE_URL` points at an unreachable host** (e.g. cloud internal hostname from your laptop), Postgres not running, wrong password, database name missing, or **migrations not applied** (`relation ... does not exist`). Fix connectivity, then **`pnpm --filter backend db:migrate`** (or **`db:deploy`**) and **`pnpm --filter backend db:seed`**. |
+| **`GET /api/countries` (or other public reads) returns `503`** | The handler catches Prisma/database errors and maps them to **`DatabaseUnavailableError`**. Typical causes: **`DATABASE_URL` points at an unreachable host** (e.g. cloud internal hostname from your laptop), Postgres not running, wrong password, database name missing, or **migrations not applied** (`relation ... does not exist`). Fix connectivity, then run **`pnpm --filter backend db:migrate`** (or **`db:deploy`**). |
 | **`GET /health?db=1` shows `database.connected: false`** | Same as above — use the returned **`database.code`** (`ECONNREFUSED`, `ENOTFOUND`, `AUTH_FAILED`, `SCHEMA_NOT_MIGRATED`, etc.) as a hint. No secrets are returned. |
-| Local Postgres quickly | From **repository root**: **`docker compose up -d`** (see root **`docker-compose.yml`**), then set **`DATABASE_URL=postgresql://postgres:postgres@localhost:5432/global_health`** in **`backend/.env`**, migrate, and seed. |
+| Local Postgres quickly | From **repository root**: **`docker compose up -d`** (see root **`docker-compose.yml`**), then set **`DATABASE_URL=postgresql://postgres:postgres@localhost:5432/global_health`** in **`backend/.env`** and run **`db:migrate`**. |
 | `Cannot resolve environment variable: DATABASE_URL` | Ensure **`backend/.env`** exists (copy from **`.env.example`**) **or** export **`DATABASE_URL`** in the shell (see PowerShell above). |
-| Internal vs public DB host | Hosted DBs often give a private URL for the app and a public URL for developers — use the URL your environment can reach for **`pnpm db:migrate`** / **`db:seed`**. |
+| Internal vs public DB host | Hosted DBs often give a private URL for the app and a public URL for developers — use the URL your environment can reach for **`pnpm db:migrate`**. |
 | Ran Prisma from wrong directory | Prefer **`pnpm --filter backend db:*`** from repo root, or **`cd backend`** then **`pnpm db:*`**. |
 | **`POST /api/admin/media/upload` returns `503`** | In **production**, set all **S3_*** variables (or Railway bucket preset). In **development**, uploads use **`.data/local-media`** automatically when S3 is unset — ensure the backend process cwd is **`backend/`** (normal for **`pnpm --filter backend dev`**). |
 | Assets admin errors before migration | Apply migrations so **`Asset.usageNote`** and **`Asset.isActive`** exist — run **`db:migrate`** or **`db:deploy`**. |
