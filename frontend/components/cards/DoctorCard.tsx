@@ -3,6 +3,35 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Globe, ShieldCheck, Phone, CalendarDays, ArrowRight } from "lucide-react";
+
+// Brand icons aren't shipped by lucide-react v1 (they were removed in
+// favour of dedicated SimpleIcons-style packages). Inline these three
+// SVGs to avoid a new dependency; sized 14px to match the surrounding
+// icon button (size-9). currentColor lets the parent `text-` class
+// drive fill/stroke.
+function IconInstagram(props: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={props.className} aria-hidden>
+      <rect x="2" y="2" width="20" height="20" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+function IconFacebook(props: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={props.className} aria-hidden>
+      <path d="M22 12a10 10 0 1 0-11.5 9.88v-6.99H8v-2.89h2.5V9.85c0-2.48 1.49-3.85 3.74-3.85 1.08 0 2.21.2 2.21.2v2.44h-1.25c-1.23 0-1.61.77-1.61 1.55v1.87h2.74l-.44 2.89H13.6v6.99A10 10 0 0 0 22 12z" />
+    </svg>
+  );
+}
+function IconLinkedin(props: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={props.className} aria-hidden>
+      <path d="M4.98 3.5a2.5 2.5 0 1 1-.02 5 2.5 2.5 0 0 1 .02-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-.93 1.83-1.92 3.77-1.92 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.36c0-1.28-.02-2.92-1.78-2.92-1.78 0-2.05 1.39-2.05 2.83V21H9z" />
+    </svg>
+  );
+}
 import { Flag } from "@/components/ui/Flag";
 
 const PLACEHOLDER_PORTRAIT = "/images/ireland/doctor-spotlight-ai.svg";
@@ -31,6 +60,12 @@ type DoctorCardProps = {
   country?: string;
   languages?: string[];
   whatsappNumber?: string;
+  /** Optional social profile URLs surfaced under the WhatsApp button.
+   *  Per-doctor (not per-clinic) so each clinician can opt in
+   *  independently. Absolute https:// URLs only. */
+  instagramUrl?: string | null;
+  facebookUrl?: string | null;
+  linkedinUrl?: string | null;
   bio: string;
   imageSrc?: string | null;
   /** Initials fallback shown when imageSrc is missing. Without it the card
@@ -57,6 +92,9 @@ export function DoctorCard({
   country,
   languages = [],
   whatsappNumber,
+  instagramUrl,
+  facebookUrl,
+  linkedinUrl,
   imageSrc,
   initials,
   href,
@@ -297,6 +335,51 @@ export function DoctorCard({
               <Phone className="size-4" strokeWidth={1.6} aria-hidden />
               WhatsApp
             </a>
+          ) : null}
+
+          {/* Social row — only renders when at least one URL is set.
+              Sits below the action stack so the primary book CTA stays
+              the visual anchor. Icons open in a new tab; stopPropagation
+              prevents card-wide href interception. */}
+          {instagramUrl || facebookUrl || linkedinUrl ? (
+            <div className="relative z-20 flex items-center justify-center gap-2 pt-1">
+              {instagramUrl ? (
+                <a
+                  href={instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${name} on Instagram`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex size-9 items-center justify-center rounded-full border border-[rgba(29,75,54,0.15)] text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-brand-primary)] hover:text-white"
+                >
+                  <IconInstagram className="size-[14px]" />
+                </a>
+              ) : null}
+              {facebookUrl ? (
+                <a
+                  href={facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${name} on Facebook`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex size-9 items-center justify-center rounded-full border border-[rgba(29,75,54,0.15)] text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-brand-primary)] hover:text-white"
+                >
+                  <IconFacebook className="size-[14px]" />
+                </a>
+              ) : null}
+              {linkedinUrl ? (
+                <a
+                  href={linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${name} on LinkedIn`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex size-9 items-center justify-center rounded-full border border-[rgba(29,75,54,0.15)] text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-brand-primary)] hover:text-white"
+                >
+                  <IconLinkedin className="size-[14px]" />
+                </a>
+              ) : null}
+            </div>
           ) : null}
         </div>
 

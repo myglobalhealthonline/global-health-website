@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Globe2, MapPin, Printer } from "lucide-react";
+import { formatAppDualTz } from "@/lib/format-datetime";
 import {
   fetchDoctorConsultation,
   fetchDoctorConsultationServices,
@@ -118,7 +119,15 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           <p className="text-sm text-[var(--color-text-muted)]">
             {appointment.consultationType} ·{" "}
             {appointment.scheduledAt
-              ? new Date(appointment.scheduledAt).toLocaleString()
+              ? formatAppDualTz(
+                  appointment.scheduledAt,
+                  // Doctor's default zone — fall back to Europe/Dublin via
+                  // formatter's own default. We can lift this to a per-doctor
+                  // preference later; today doctor TZ lives on the doctor
+                  // row only as a soft attribute.
+                  null,
+                  appointment.patientTimezone ?? null,
+                )
               : "Not scheduled"}{" "}
             · {appointment.countryCode.toUpperCase()}
           </p>

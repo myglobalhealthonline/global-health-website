@@ -140,7 +140,9 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
                     Scheduled
                   </p>
                   <p className="mt-0.5 text-sm font-medium text-emerald-900">
-                    {item.scheduledAt ? formatAppDateTime(item.scheduledAt) : "Time to be confirmed"}
+                    {item.scheduledAt
+                      ? formatAppDateTime(item.scheduledAt, item.patientTimezone)
+                      : "Time to be confirmed"}
                   </p>
                 </div>
               </div>

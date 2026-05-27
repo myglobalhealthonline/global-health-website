@@ -7,11 +7,15 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
   EUR: "€",
   CZK: "Kč",
   BRL: "R$",
+  RON: "lei",
 };
 
-/** Position of the symbol relative to the amount. Default: prefix. */
+/** Position of the symbol relative to the amount. Default: prefix.
+ *  Currencies whose conventional notation reads "amount + symbol" go
+ *  here (CZK → "500 Kč", RON → "120 lei"). */
 const CURRENCY_SUFFIX: Record<string, true> = {
   CZK: true,
+  RON: true,
 };
 
 export function currencySymbol(code: string | null | undefined): string {

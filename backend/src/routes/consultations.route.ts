@@ -63,6 +63,7 @@ async function findOwnedAppointment(doctorId: string, appointmentId: string) {
       manualEntry: true,
       pharmacy: true,
       symptoms: true,
+      patientTimezone: true,
       createdAt: true,
     },
   });
@@ -103,6 +104,7 @@ async function findReadableAppointment(
       manualEntry: true,
       pharmacy: true,
       symptoms: true,
+      patientTimezone: true,
       createdAt: true,
     },
   });

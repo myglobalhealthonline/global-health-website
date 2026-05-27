@@ -40,6 +40,7 @@ async function main() {
     { code: "EUR", symbol: "€" },
     { code: "CZK", symbol: "Kč" },
     { code: "BRL", symbol: "R$" },
+    { code: "RON", symbol: "lei" },
   ];
   for (const c of currencies) {
     await prisma.currency.upsert({
@@ -142,6 +143,9 @@ async function main() {
       defaultLocale: LocaleCode.RO,
       locales: [LocaleCode.RO, LocaleCode.EN],
       domain: "ro.myglobalhealth.online",
+      currencyCode: "RON",
+      timezone: "Europe/Bucharest",
+      requireNationalId: true,
       doctor: { slug: "dr-maristela-ferro-nepomuceno", fullName: "Dr Maristela Ferro Nepomuceno", title: "General Practitioner" },
       specialty: { slug: "neurology", name: "Neurology" },
       service: { kind: ServiceKind.GENERAL, slug: "medical-consultation", name: "Consultatie Medicala", legacyPath: "/general-consultation-rm" },
@@ -171,7 +175,7 @@ async function main() {
         generalConsultationPath: seed.generalConsultationPath,
         specialistConsultationPath: seed.specialistConsultationPath,
         defaultLocale: seed.defaultLocale,
-        currency: { connect: { code: "EUR" } },
+        currency: { connect: { code: ("currencyCode" in seed ? seed.currencyCode : null) ?? "EUR" } },
       },
     });
 
@@ -190,7 +194,12 @@ async function main() {
     await prisma.bookingSetting.upsert({
       where: { countryId: country.id },
       update: {},
-      create: { countryId: country.id, bookingEnabled: true, timezone: "Europe/Dublin" },
+      create: {
+        countryId: country.id,
+        bookingEnabled: true,
+        timezone: ("timezone" in seed && seed.timezone) || "Europe/Dublin",
+        requireNationalId: ("requireNationalId" in seed && seed.requireNationalId) || false,
+      },
     });
 
     for (const locale of seed.locales) {

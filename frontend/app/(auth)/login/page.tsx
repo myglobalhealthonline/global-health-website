@@ -45,7 +45,7 @@ export default async function Page() {
         </div>
 
         <p className={styles.version} suppressHydrationWarning>
-          v1.0 · Medicine without borders
+          v1.0 · Medicine anytime anywhere
         </p>
       </aside>
 

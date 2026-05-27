@@ -169,67 +169,20 @@ export function PatientProfilePanel({ email }: { email: string }) {
       ) : null}
 
       <form className="mt-4 grid gap-5 text-sm" onSubmit={save}>
-        <Section title="Identity">
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Field
-              name="nationalIdNumber"
-              label="National ID"
-              defaultValue={profile?.nationalIdNumber ?? ""}
-              maxLength={64}
-              hint="NIC / DNI / RG / CC"
-            />
-            <Field
-              name="taxIdNumber"
-              label="Tax ID"
-              defaultValue={profile?.taxIdNumber ?? ""}
-              maxLength={64}
-              hint="NIF / PPS / CPF"
-            />
-            <Field
-              name="passportNumber"
-              label="Passport"
-              defaultValue={profile?.passportNumber ?? ""}
-              maxLength={64}
-            />
-          </div>
-        </Section>
-
-        <Section title="Address">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field
-              name="addressLine1"
-              label="Line 1"
-              defaultValue={profile?.addressLine1 ?? ""}
-              maxLength={200}
-              fullSpan
-            />
-            <Field
-              name="addressLine2"
-              label="Line 2"
-              defaultValue={profile?.addressLine2 ?? ""}
-              maxLength={200}
-              fullSpan
-            />
-            <Field
-              name="addressCity"
-              label="City"
-              defaultValue={profile?.addressCity ?? ""}
-              maxLength={120}
-            />
-            <Field
-              name="addressPostalCode"
-              label="Postal code"
-              defaultValue={profile?.addressPostalCode ?? ""}
-              maxLength={32}
-            />
-            <Field
-              name="addressCountryCode"
-              label="Country (ISO)"
-              defaultValue={profile?.addressCountryCode ?? ""}
-              maxLength={8}
-            />
-          </div>
-        </Section>
+        {/* Identity (national ID / tax ID / passport) and Address sections
+            intentionally hidden from the doctor portal per GDPR plan.
+            They remain editable from /admin/users for staff. The fields
+            are still submitted as the existing profile values (so saving
+            from the doctor portal preserves them) — we just don't render
+            inputs the doctor shouldn't see. */}
+        <input type="hidden" name="nationalIdNumber" value={profile?.nationalIdNumber ?? ""} />
+        <input type="hidden" name="taxIdNumber" value={profile?.taxIdNumber ?? ""} />
+        <input type="hidden" name="passportNumber" value={profile?.passportNumber ?? ""} />
+        <input type="hidden" name="addressLine1" value={profile?.addressLine1 ?? ""} />
+        <input type="hidden" name="addressLine2" value={profile?.addressLine2 ?? ""} />
+        <input type="hidden" name="addressCity" value={profile?.addressCity ?? ""} />
+        <input type="hidden" name="addressPostalCode" value={profile?.addressPostalCode ?? ""} />
+        <input type="hidden" name="addressCountryCode" value={profile?.addressCountryCode ?? ""} />
 
         <Section title="Plan & pharmacy">
           <Field

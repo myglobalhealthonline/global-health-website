@@ -76,7 +76,7 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
 
   // ── Service-family static pages ───────────────────────────────────────────
   "/about": {
-    title: "About Global Health · Medicine without borders",
+    title: "About Global Health · Medicine anytime anywhere",
     description:
       "Built to make European healthcare borderless: licensed clinicians, country-aware booking, and one secure patient file no matter where you are.",
     keywords: ["about Global Health", "European telemedicine", "borderless healthcare"],

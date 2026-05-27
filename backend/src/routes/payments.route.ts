@@ -408,6 +408,20 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                       paymentStatus: "PAID",
                       paidAt: new Date(),
                       consultationMode: "ONLINE",
+                      // New booking snapshot — mint with the timezone,
+                      // structured address, country-specific ID, and dual
+                      // GDPR consents captured at add-to-cart time. Falls
+                      // back to null on legacy carts that pre-date the
+                      // new columns.
+                      patientTimezone: item.patientTimezone,
+                      addressLine1: item.patientAddressLine1,
+                      addressLine2: item.patientAddressLine2,
+                      addressCity: item.patientAddressCity,
+                      addressPostalCode: item.patientAddressPostalCode,
+                      addressCountryCode: item.patientAddressCountryCode,
+                      gdprConsentClinic: item.patientGdprConsentClinic,
+                      gdprConsentPlatform: item.patientGdprConsentPlatform,
+                      gdprConsentedAt: item.patientGdprConsentedAt,
                     },
                   });
                   await tx.orderItem.update({

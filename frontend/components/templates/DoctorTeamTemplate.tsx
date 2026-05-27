@@ -16,6 +16,11 @@ type Doctor = {
   country?: string;
   languages?: string[];
   whatsappNumber?: string;
+  /** Optional social URLs — surfaced as icon row on each card. Per-doctor
+   *  so each clinician opts in independently. Absolute https:// URLs. */
+  instagramUrl?: string | null;
+  facebookUrl?: string | null;
+  linkedinUrl?: string | null;
   bio: string;
   imageSrc?: string | null;
   href?: string;
@@ -145,6 +150,9 @@ export function DoctorTeamTemplate({
                       medicalRegistrationUrl={d.medicalRegistrationUrl}
                       languages={d.languages}
                       whatsappNumber={d.whatsappNumber}
+                      instagramUrl={d.instagramUrl}
+                      facebookUrl={d.facebookUrl}
+                      linkedinUrl={d.linkedinUrl}
                       bio={d.bio}
                       imageSrc={d.imageSrc}
                       href={d.href}

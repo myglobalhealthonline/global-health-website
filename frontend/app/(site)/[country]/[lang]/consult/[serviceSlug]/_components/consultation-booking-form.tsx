@@ -129,7 +129,14 @@ export function ConsultationBookingForm({
     const dateOfBirth = String(form.get("dateOfBirth") ?? "").trim();
     const notes = String(form.get("notes") ?? "").trim();
     const nationalIdNumber = String(form.get("nationalIdNumber") ?? "").trim();
+    const addressLine1 = String(form.get("addressLine1") ?? "").trim();
+    const addressLine2 = String(form.get("addressLine2") ?? "").trim();
+    const addressCity = String(form.get("addressCity") ?? "").trim();
+    const addressPostalCode = String(form.get("addressPostalCode") ?? "").trim();
+    const addressCountryCode = (params?.country ?? "").slice(0, 2).toLowerCase();
     const consent = form.get("consent") === "on";
+    const gdprConsentClinic = form.get("gdprConsentClinic") === "on";
+    const gdprConsentPlatform = form.get("gdprConsentPlatform") === "on";
 
     if (fullName.length < 2) {
       setError("Enter the patient full name.");
@@ -142,6 +149,25 @@ export function ConsultationBookingForm({
     if (!consent) {
       setError("You need to accept the consent statement to continue.");
       return;
+    }
+    if (!gdprConsentClinic) {
+      setError("You need to consent to sharing your data with the treating clinic.");
+      return;
+    }
+    if (!gdprConsentPlatform) {
+      setError("You need to consent to platform processing of your data.");
+      return;
+    }
+
+    // IANA tz from browser. Falls back to undefined on the rare engine
+    // that doesn't expose `resolvedOptions().timeZone` so the cart route
+    // can default it from BookingSetting.timezone.
+    let patientTimezone: string | undefined;
+    try {
+      patientTimezone =
+        Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
+    } catch {
+      patientTimezone = undefined;
     }
 
     startTransition(async () => {
@@ -158,6 +184,15 @@ export function ConsultationBookingForm({
           notes: notes || undefined,
           consentAccepted: true,
           bookingForOther,
+          nationalIdNumber: nationalIdNumber || undefined,
+          patientTimezone,
+          addressLine1: addressLine1 || undefined,
+          addressLine2: addressLine2 || undefined,
+          addressCity: addressCity || undefined,
+          addressPostalCode: addressPostalCode || undefined,
+          addressCountryCode: addressCountryCode || undefined,
+          gdprConsentClinic: true,
+          gdprConsentPlatform: true,
         },
       });
       if (!res.ok) {
@@ -460,6 +495,103 @@ export function ConsultationBookingForm({
           <span>
             I confirm the details above are accurate and consent to a video
             consultation with the selected clinician.
+          </span>
+        </label>
+      </fieldset>
+
+      {/* 3. Patient address — required when the country's BookingSetting
+        * has requireAddress on. Snapshotted onto the appointment so the
+        * clinical record + any prescription dispatch has the address as
+        * it stood at booking, even if the patient later edits their
+        * profile. Country code is implicit from the URL slug. */}
+      <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
+        <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+          Patient address
+        </legend>
+        <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+          Required for prescriptions and any physical materials.
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <label className="block sm:col-span-2">
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">
+              Street address
+            </span>
+            <input
+              type="text"
+              name="addressLine1"
+              maxLength={120}
+              autoComplete="address-line1"
+              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+            />
+          </label>
+          <label className="block sm:col-span-2">
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">
+              Apt / unit (optional)
+            </span>
+            <input
+              type="text"
+              name="addressLine2"
+              maxLength={120}
+              autoComplete="address-line2"
+              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+            />
+          </label>
+          <label className="block">
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">City</span>
+            <input
+              type="text"
+              name="addressCity"
+              maxLength={80}
+              autoComplete="address-level2"
+              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+            />
+          </label>
+          <label className="block">
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">
+              Postal code
+            </span>
+            <input
+              type="text"
+              name="addressPostalCode"
+              maxLength={20}
+              autoComplete="postal-code"
+              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+            />
+          </label>
+        </div>
+      </fieldset>
+
+      {/* 4. GDPR — two independent required checkboxes per legal review.
+        * Stored separately on Appointment so withdrawal of marketing
+        * consent (gdprConsentPlatform) doesn't invalidate the clinical
+        * record (gdprConsentClinic). Wording deliberately scopes each
+        * one's purpose to make withdrawal scope unambiguous. */}
+      <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
+        <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+          Data sharing consent (GDPR)
+        </legend>
+        <label className="mt-2 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
+          <input
+            type="checkbox"
+            name="gdprConsentClinic"
+            required
+            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
+          />
+          <span>
+            I consent to sharing my personal and medical data with the treating
+            clinic and doctor for the purpose of this consultation.
+          </span>
+        </label>
+        <label className="mt-3 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
+          <input
+            type="checkbox"
+            name="gdprConsentPlatform"
+            required
+            className="mt-0.5 size-4 rounded border-[var(--color-border)]"
+          />
+          <span>
+            I consent to the Global Health platform processing my data for
+            service improvement, security, and platform communications.
           </span>
         </label>
       </fieldset>

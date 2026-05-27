@@ -286,6 +286,13 @@ model Doctor {
   medicalRegistrationUrl      String?
   qualifications              String[]
   whatsappNumber              String?
+  /// Optional social media profile URLs surfaced on the public clinic +
+  /// doctor pages. Each is an absolute https:// URL or null. Admin sets
+  /// these from the doctor edit form. Validated for URL shape only — we
+  /// don't verify the handle exists on the third-party platform.
+  instagramUrl                String?
+  facebookUrl                 String?
+  linkedinUrl                 String?
   languages                   String[]
   editorialChecklist          Json?
   active                      Boolean               @default(true)
@@ -644,6 +651,10 @@ model BookingSetting {
   /// a national ID at booking time. UI label resolves per-country (NIF,
   /// PPS, CPF, …). Default off so existing markets opt-in.
   requireNationalId  Boolean  @default(false)
+  /// When true, the booking form requires structured address fields
+  /// (line1, city, postal). Defaults true for RX-eligible markets so we
+  /// can ship prescriptions; pure-telemedicine markets can disable.
+  requireAddress     Boolean  @default(true)
   timezone           String   @default("UTC")
   country            Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
   createdAt          DateTime @default(now())
@@ -769,6 +780,29 @@ model Appointment {
   clinicId                  String?
   clinic                    Clinic?                   @relation(fields: [clinicId], references: [id], onDelete: SetNull)
   locationAddress           String?
+  /// Patient timezone captured at booking time (IANA TZ string from
+  /// `Intl.DateTimeFormat().resolvedOptions().timeZone`). Used to render
+  /// `scheduledAt` in the patient's local time on emails + portals; doctor
+  /// portal shows both doctor-local and patient-local side-by-side.
+  /// Null on legacy appointments — render uses browser TZ as fallback.
+  patientTimezone           String?
+  /// Patient address snapshot — captured on the booking form when
+  /// `BookingSetting.requireAddress` is on (RX-eligible markets default
+  /// true). Snapshotted onto the appointment so changes to PatientProfile
+  /// don't rewrite the historical booking record.
+  addressLine1              String?
+  addressLine2              String?
+  addressCity               String?
+  addressPostalCode         String?
+  addressCountryCode        String?
+  /// GDPR consent — two independent flags captured at booking. The first
+  /// is required to submit (sharing data with the treating clinic/doctor);
+  /// the second is independently required (platform processing for service
+  /// improvement + communications). Stored separately so withdrawal of
+  /// platform consent doesn't invalidate the clinical record.
+  gdprConsentClinic         Boolean                   @default(false)
+  gdprConsentPlatform       Boolean                   @default(false)
+  gdprConsentedAt           DateTime?
   createdAt                 DateTime                  @default(now())
   updatedAt                 DateTime                  @updatedAt
 
@@ -1017,6 +1051,20 @@ model CartItem {
   /// `true` when the visitor toggled "Booking for someone else" on the
   /// consult form. We still keep account DOB intact in that case.
   bookingForOther          Boolean      @default(false)
+  /// Patient identity + address + GDPR snapshot captured at add-to-cart
+  /// time so the post-payment webhook can mint the Appointment without
+  /// asking again at checkout. Mirrors the new Appointment columns added
+  /// in the same migration. Nullable for product items.
+  patientNationalIdNumber  String?
+  patientTimezone          String?
+  patientAddressLine1      String?
+  patientAddressLine2      String?
+  patientAddressCity       String?
+  patientAddressPostalCode String?
+  patientAddressCountryCode String?
+  patientGdprConsentClinic   Boolean   @default(false)
+  patientGdprConsentPlatform Boolean   @default(false)
+  patientGdprConsentedAt     DateTime?
   createdAt                DateTime     @default(now())
 
   @@index([heldUntil])
@@ -1086,6 +1134,20 @@ model OrderItem {
   patientNotes             String?
   patientConsentAcceptedAt DateTime?
   bookingForOther          Boolean      @default(false)
+  /// Mirror of the CartItem snapshot columns added in the booking-fields
+  /// migration. The payment webhook reads these to mint the Appointment
+  /// with the right timezone, address, ID number, and dual GDPR consent
+  /// even when the booking is for someone other than the payer.
+  patientNationalIdNumber  String?
+  patientTimezone          String?
+  patientAddressLine1      String?
+  patientAddressLine2      String?
+  patientAddressCity       String?
+  patientAddressPostalCode String?
+  patientAddressCountryCode String?
+  patientGdprConsentClinic   Boolean   @default(false)
+  patientGdprConsentPlatform Boolean   @default(false)
+  patientGdprConsentedAt     DateTime?
 
   @@index([orderId])
 }

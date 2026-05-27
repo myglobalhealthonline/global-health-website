@@ -22,6 +22,13 @@ const doctorPatientDocumentsRoute: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       const auth = await verifyDoctorAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      // GDPR plan: downloadable patient-document archive is admin-only.
+      // Doctors still view documents in-context on the per-appointment
+      // workspace (no download), where the in-app chat is the contact
+      // channel. Bouncing DOCTOR here closes the GET-all archive surface.
+      if (auth.role !== "ADMIN") {
+        return reply.status(403).send(errorResponse("Admin access required"));
+      }
       let email: string;
       try {
         email = decodeURIComponent(request.params.email).trim().toLowerCase();

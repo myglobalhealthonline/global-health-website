@@ -230,6 +230,47 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
           </label>
         </div>
 
+        {/* Social media — optional. Empty value clears the link. Surfaced
+            below the WhatsApp button on every public DoctorCard. */}
+        <div className="grid gap-4 sm:grid-cols-3">
+          <label className="flex flex-col gap-2">
+            <span className="gh-field-label">Instagram URL</span>
+            <input
+              name="instagramUrl"
+              type="url"
+              className="gh-input min-w-0"
+              defaultValue={
+                (initial as { instagramUrl?: string | null } | undefined)?.instagramUrl ?? ""
+              }
+              placeholder="https://instagram.com/handle"
+            />
+          </label>
+          <label className="flex flex-col gap-2">
+            <span className="gh-field-label">Facebook URL</span>
+            <input
+              name="facebookUrl"
+              type="url"
+              className="gh-input min-w-0"
+              defaultValue={
+                (initial as { facebookUrl?: string | null } | undefined)?.facebookUrl ?? ""
+              }
+              placeholder="https://facebook.com/handle"
+            />
+          </label>
+          <label className="flex flex-col gap-2">
+            <span className="gh-field-label">LinkedIn URL</span>
+            <input
+              name="linkedinUrl"
+              type="url"
+              className="gh-input min-w-0"
+              defaultValue={
+                (initial as { linkedinUrl?: string | null } | undefined)?.linkedinUrl ?? ""
+              }
+              placeholder="https://www.linkedin.com/in/handle"
+            />
+          </label>
+        </div>
+
         {/* Profile-photo picker lives outside this component:
             - on /admin/doctors/[id]/edit it's mounted in the right-sidebar
               "Profile photo" card and ties back via `form="doctor-edit-form"`;

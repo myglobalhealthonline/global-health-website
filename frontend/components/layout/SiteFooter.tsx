@@ -129,7 +129,7 @@ export function SiteFooter({
               className="mt-4"
               style={{ fontSize: 14, lineHeight: 1.6, maxWidth: 320 }}
             >
-              Medicine without borders. Online medical consultations with
+              Medicine anytime anywhere. Online medical consultations with
               locally-registered doctors across Europe.
             </p>
             <p
@@ -191,7 +191,7 @@ export function SiteFooter({
           }}
         >
           <span suppressHydrationWarning>
-            © {year} {siteName || "Global Health"} · Medicine without borders
+            © {year} {siteName || "Global Health"} · Medicine anytime anywhere
           </span>
           <span className="flex gap-3">
             <Link href="/privacy" className="hover:text-white" style={{ color: "inherit", textDecoration: "none" }}>

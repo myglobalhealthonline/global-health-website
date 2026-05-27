@@ -17,45 +17,65 @@ type ServiceKindMeta = {
   emptySpecialtyLabel: string;
 };
 
+/**
+ * Service labels were renamed for Google Ads compliance. The enum
+ * (`AdminServiceKind`) stays at GENERAL / SPECIALIST / PRESCRIPTION
+ * / HEALTH_TEST so the database, URLs in flight, and existing service
+ * rows don't need migration — only display copy + admin sidebar paths
+ * change. Old public slugs are preserved via 301 redirects in
+ * `next.config.ts`.
+ *
+ * Rationale per label:
+ *   - "Online doctor visit" — describes the product; avoids "general
+ *     consultation" which Google's medical policy flags as generic
+ *     medical advice.
+ *   - "Specialist appointment" — anchors on the booking action; safer
+ *     than "specialist consultation" near restricted condition copy.
+ *   - "Repeat prescription request" — explicitly scopes to existing
+ *     prescriptions, avoiding "online prescription" which implies
+ *     issuing controlled meds without exam.
+ *   - "Lab test booking" — clarifies the scope (scheduling) instead
+ *     of suggesting diagnostic services.
+ */
 export const SERVICE_KIND_META: Record<AdminServiceKind, ServiceKindMeta> = {
   GENERAL: {
-    label: "General Consultations",
-    singularLabel: "General consultation",
-    shortLabel: "General",
+    label: "Online Doctor Visits",
+    singularLabel: "Online doctor visit",
+    shortLabel: "Doctor visit",
     listHref: "/admin/general-consultations",
     newHref: "/admin/general-consultations/new",
-    pageTitle: "General Consultations",
-    addLabel: "Add general consultation",
+    pageTitle: "Online Doctor Visits",
+    addLabel: "Add online doctor visit",
     emptySpecialtyLabel: "Not used",
   },
   SPECIALIST: {
-    label: "Specialist Consultations",
-    singularLabel: "Specialist consultation",
+    label: "Specialist Appointments",
+    singularLabel: "Specialist appointment",
     shortLabel: "Specialist",
     listHref: "/admin/specialist-consultations",
     newHref: "/admin/specialist-consultations/new",
-    pageTitle: "Specialist Consultations",
-    addLabel: "Add specialist consultation",
+    pageTitle: "Specialist Appointments",
+    addLabel: "Add specialist appointment",
     emptySpecialtyLabel: "Required",
   },
   PRESCRIPTION: {
-    label: "Online Prescriptions",
-    singularLabel: "Online prescription",
-    shortLabel: "Prescription",
+    label: "Repeat Prescription Requests",
+    singularLabel: "Repeat prescription request",
+    shortLabel: "Repeat Rx",
     listHref: "/admin/online-prescriptions",
     newHref: "/admin/online-prescriptions/new",
-    pageTitle: "Online Prescriptions",
-    addLabel: "Add online prescription",
+    pageTitle: "Repeat Prescription Requests",
+    addLabel: "Add repeat prescription request",
     emptySpecialtyLabel: "Not used",
   },
   HEALTH_TEST: {
-    label: "Health Tests",
-    singularLabel: "Health test",
-    shortLabel: "Health test",
+    label: "Lab Test Bookings",
+    singularLabel: "Lab test booking",
+    shortLabel: "Lab test",
     listHref: "/admin/health-tests",
     newHref: "/admin/health-tests/new",
-    pageTitle: "Health Tests",
-    addLabel: "Add health test",
+    pageTitle: "Lab Test Bookings",
+    addLabel: "Add lab test booking",
     emptySpecialtyLabel: "Not used",
   },
   HOME_DELIVERY: {

@@ -50,6 +50,25 @@ export type CartItemPatientInput = {
   notes?: string;
   consentAccepted: true;
   bookingForOther?: boolean;
+  /** Country-specific national ID (NIF/PPS/CPF/CNP/DNI/...). Required
+   *  by the backend when BookingSetting.requireNationalId is on. */
+  nationalIdNumber?: string;
+  /** IANA tz captured client-side via Intl.DateTimeFormat. Stored on
+   *  Appointment.patientTimezone for downstream rendering. */
+  patientTimezone?: string;
+  /** Structured address snapshot. Required when BookingSetting.requireAddress
+   *  is on. Snapshotted onto the appointment so later profile edits don't
+   *  retroactively rewrite the booking record. */
+  addressLine1?: string;
+  addressLine2?: string;
+  addressCity?: string;
+  addressPostalCode?: string;
+  addressCountryCode?: string;
+  /** Dual GDPR consent — both required for new bookings. Stored
+   *  independently so withdrawal of platform consent doesn't invalidate
+   *  the clinical record. */
+  gdprConsentClinic: true;
+  gdprConsentPlatform: true;
 };
 
 export type Cart = {

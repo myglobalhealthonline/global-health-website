@@ -84,6 +84,12 @@ export type CountryDoctorCard = {
   imcRegistration?: string;
   medicalRegistrationUrl?: string;
   whatsappNumber?: string;
+  /** Optional social profile URLs surfaced on doctor cards + clinic
+   *  pages. Each is an absolute https:// URL pulled from the Doctor
+   *  row. Admin sets them via the doctor edit form. */
+  instagramUrl?: string;
+  facebookUrl?: string;
+  linkedinUrl?: string;
 };
 
 function readSpecialtyName(row: unknown): string | null {
@@ -255,6 +261,15 @@ export const getCountryDoctors = cache(async (
         : {}),
       ...(typeof r.whatsappNumber === "string" && r.whatsappNumber.trim()
         ? { whatsappNumber: r.whatsappNumber.trim() }
+        : {}),
+      ...(typeof r.instagramUrl === "string" && r.instagramUrl.trim()
+        ? { instagramUrl: r.instagramUrl.trim() }
+        : {}),
+      ...(typeof r.facebookUrl === "string" && r.facebookUrl.trim()
+        ? { facebookUrl: r.facebookUrl.trim() }
+        : {}),
+      ...(typeof r.linkedinUrl === "string" && r.linkedinUrl.trim()
+        ? { linkedinUrl: r.linkedinUrl.trim() }
         : {}),
     });
   }

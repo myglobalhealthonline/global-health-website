@@ -55,8 +55,75 @@ const nextConfig: NextConfig = {
           source: "/admin/doctors/new",
           destination: "/admin/doctors/create",
         },
+        // Ads-safe public slugs — server resolves to the existing
+        // template folders so we don't need to duplicate page code.
+        // The matching `redirects()` block below 301s legacy URLs to
+        // these new ones so SEO migrates cleanly.
+        {
+          source: "/:country/:lang/online-doctor-visit",
+          destination: "/:country/:lang/general-consultation",
+        },
+        {
+          source: "/:country/:lang/online-doctor-visit/:slug",
+          destination: "/:country/:lang/general-consultation/:slug",
+        },
+        {
+          source: "/:country/:lang/specialist-appointment",
+          destination: "/:country/:lang/specialist-consultation",
+        },
+        {
+          source: "/:country/:lang/specialist-appointment/:slug",
+          destination: "/:country/:lang/specialist-consultation/:slug",
+        },
+        {
+          source: "/:country/:lang/repeat-prescription",
+          destination: "/:country/:lang/prescriptions",
+        },
+        {
+          source: "/:country/:lang/repeat-prescription/:slug",
+          destination: "/:country/:lang/prescriptions/:slug",
+        },
+        {
+          source: "/:country/:lang/lab-tests",
+          destination: "/:country/:lang/tests",
+        },
+        {
+          source: "/:country/:lang/lab-tests/:slug",
+          destination: "/:country/:lang/tests/:slug",
+        },
       ],
     };
+  },
+  /**
+   * 301 redirects for the Ads-safe service rename. Inbound traffic to
+   * the historical `/general-consultation`, `/specialist-consultation`,
+   * `/prescriptions`, `/tests` slugs is permanently moved to the new
+   * Ads-policy-friendly URLs. Country/lang segments are preserved.
+   * The query string is forwarded automatically by Next's redirect.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/:country/:lang/general-consultation",
+        destination: "/:country/:lang/online-doctor-visit",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/specialist-consultation",
+        destination: "/:country/:lang/specialist-appointment",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/prescriptions",
+        destination: "/:country/:lang/repeat-prescription",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/tests",
+        destination: "/:country/:lang/lab-tests",
+        permanent: true,
+      },
+    ];
   },
 };
 

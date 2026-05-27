@@ -87,11 +87,13 @@ export default async function DoctorPatientsPage({
       ) : (
         <div className="gh-card p-0 overflow-hidden">
           <table className="w-full text-sm">
+            {/* Email + phone columns intentionally removed (GDPR/privacy).
+                Doctors contact patients only through the in-app chat thread
+                on the appointment workspace. Admin keeps full PII under
+                /admin/users. */}
             <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
               <tr>
                 <th className="px-4 py-3 font-semibold">Patient</th>
-                <th className="px-4 py-3 font-semibold">Email</th>
-                <th className="px-4 py-3 font-semibold">Phone</th>
                 <th className="px-4 py-3 font-semibold">Country</th>
                 <th className="px-4 py-3 font-semibold">First seen</th>
                 <th className="px-4 py-3 font-semibold text-right">Bookings</th>
@@ -103,10 +105,6 @@ export default async function DoctorPatientsPage({
                 <tr key={p.email}>
                   <td className="px-4 py-3 font-semibold text-[var(--color-text-primary)]">
                     {p.fullName}
-                  </td>
-                  <td className="px-4 py-3 text-xs text-[var(--color-text-muted)]">{p.email}</td>
-                  <td className="px-4 py-3 text-xs text-[var(--color-text-muted)]">
-                    {p.phone ?? "—"}
                   </td>
                   <td className="px-4 py-3 text-xs uppercase">{p.countryCode}</td>
                   <td className="px-4 py-3 text-xs text-[var(--color-text-muted)]">

@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { fetchDoctorPatientDetail } from "@/lib/api/doctor-api";
 import { PatientProfilePanel } from "./_components/patient-profile-panel";
-import { AllDocumentsCard } from "./_components/all-documents-card";
 
 export const dynamic = "force-dynamic";
 
@@ -46,9 +45,10 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
         <h2 className="mt-1 text-2xl font-bold text-[var(--color-text-primary)]">
           {patient.fullName}
         </h2>
+        {/* Email + phone intentionally omitted from the doctor view.
+            Doctor contacts patient via the in-app chat thread on the
+            appointment workspace; admin keeps full PII under /admin/users. */}
         <p className="text-sm text-[var(--color-text-muted)]">
-          {patient.email}
-          {patient.phone ? ` · ${patient.phone}` : ""} ·{" "}
           {patient.countryCode.toUpperCase()}
         </p>
       </header>
@@ -134,7 +134,10 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
           )}
         </section>
 
-        <AllDocumentsCard email={patient.email} />
+        {/* Documents card hidden from doctor portal per GDPR plan —
+            doctors view (but don't download) docs inside the appointment
+            workspace via the existing per-appointment Documents tab.
+            Admin retains the all-documents archive under /admin/users. */}
         </div>
 
         <aside className="grid gap-4 self-start">
@@ -151,8 +154,6 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
               Summary
             </h3>
             <dl className="mt-3 grid gap-2 text-[13px]">
-              <Row label="Email" value={patient.email} />
-              <Row label="Phone" value={patient.phone ?? "—"} />
               <Row label="Country" value={patient.countryCode.toUpperCase()} />
               <Row
                 label="Date of birth"

@@ -25,6 +25,9 @@ export type AccountAppointment = {
   clinicName?: string | null;
   clinicCity?: string | null;
   locationAddress?: string | null;
+  /** IANA tz the patient was in at booking time. Used to render
+   *  scheduledAt in their local time on the bookings list + emails. */
+  patientTimezone?: string | null;
 };
 
 type ApiResult<T> =

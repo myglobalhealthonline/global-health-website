@@ -70,6 +70,25 @@ const addItemBodySchema = z.object({
       notes: z.string().trim().max(2000).optional().or(z.literal("")),
       consentAccepted: z.literal(true),
       bookingForOther: z.boolean().optional(),
+      // New booking fields — persisted onto CartItem so the post-payment
+      // webhook can mint the Appointment without re-collecting them.
+      // Required-ness is enforced upstream by the appointments route /
+      // mint flow based on BookingSetting per country.
+      nationalIdNumber: z.string().trim().max(50).optional().or(z.literal("")),
+      patientTimezone: z.string().trim().max(64).optional().or(z.literal("")),
+      addressLine1: z.string().trim().max(120).optional().or(z.literal("")),
+      addressLine2: z.string().trim().max(120).optional().or(z.literal("")),
+      addressCity: z.string().trim().max(80).optional().or(z.literal("")),
+      addressPostalCode: z.string().trim().max(20).optional().or(z.literal("")),
+      addressCountryCode: z
+        .string()
+        .trim()
+        .length(2)
+        .toLowerCase()
+        .optional()
+        .or(z.literal("")),
+      gdprConsentClinic: z.literal(true).optional(),
+      gdprConsentPlatform: z.literal(true).optional(),
     })
     .optional(),
 });
@@ -827,6 +846,22 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             patientNotes: patient?.notes ? patient.notes : null,
             patientConsentAcceptedAt: patient?.consentAccepted ? new Date() : null,
             bookingForOther: patient?.bookingForOther ?? false,
+            // New booking snapshot — mirrors the Appointment columns the
+            // post-payment webhook will write when minting from this row.
+            patientNationalIdNumber: patient?.nationalIdNumber || null,
+            patientTimezone: patient?.patientTimezone || null,
+            patientAddressLine1: patient?.addressLine1 || null,
+            patientAddressLine2: patient?.addressLine2 || null,
+            patientAddressCity: patient?.addressCity || null,
+            patientAddressPostalCode: patient?.addressPostalCode || null,
+            patientAddressCountryCode: patient?.addressCountryCode || null,
+            patientGdprConsentClinic: patient?.gdprConsentClinic === true,
+            patientGdprConsentPlatform: patient?.gdprConsentPlatform === true,
+            patientGdprConsentedAt:
+              patient?.gdprConsentClinic === true &&
+              patient?.gdprConsentPlatform === true
+                ? new Date()
+                : null,
           },
         });
       } catch (err) {

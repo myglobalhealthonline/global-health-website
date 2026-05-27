@@ -196,6 +196,18 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   patientNotes: i.patientNotes,
                   patientConsentAcceptedAt: i.patientConsentAcceptedAt,
                   bookingForOther: i.bookingForOther,
+                  // Carry the new booking snapshot through to the order
+                  // item; the payment webhook reads it to mint Appointment.
+                  patientNationalIdNumber: i.patientNationalIdNumber,
+                  patientTimezone: i.patientTimezone,
+                  patientAddressLine1: i.patientAddressLine1,
+                  patientAddressLine2: i.patientAddressLine2,
+                  patientAddressCity: i.patientAddressCity,
+                  patientAddressPostalCode: i.patientAddressPostalCode,
+                  patientAddressCountryCode: i.patientAddressCountryCode,
+                  patientGdprConsentClinic: i.patientGdprConsentClinic,
+                  patientGdprConsentPlatform: i.patientGdprConsentPlatform,
+                  patientGdprConsentedAt: i.patientGdprConsentedAt,
                 })),
               },
             },

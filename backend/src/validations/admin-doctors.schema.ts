@@ -83,6 +83,29 @@ export const adminDoctorCreateBodySchema = z.object({
     .optional()
     .nullable()
     .transform((v) => (v === "" || v === undefined ? null : v)),
+  // Optional social profile URLs. URL shape only — we don't verify the
+  // handle exists on the third-party platform. Empty string clears.
+  instagramUrl: z
+    .string()
+    .trim()
+    .max(500)
+    .optional()
+    .nullable()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
+  facebookUrl: z
+    .string()
+    .trim()
+    .max(500)
+    .optional()
+    .nullable()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
+  linkedinUrl: z
+    .string()
+    .trim()
+    .max(500)
+    .optional()
+    .nullable()
+    .transform((v) => (v === "" || v === undefined ? null : v)),
   medicalRegistrationUrl: z
     .string()
     .trim()

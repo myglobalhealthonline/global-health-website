@@ -38,6 +38,34 @@ export async function createAppointmentRequest(input: BookingInput) {
   return createAppointmentWithOptionalOwner(input);
 }
 
+/**
+ * Build the optional extras object written onto every new Appointment:
+ * patient timezone, structured address snapshot, and dual GDPR consents.
+ * Pulled into a single helper so both the timed-slot and untimed code
+ * paths stay in sync as we extend the booking payload.
+ *
+ * Returns only the keys the caller supplied — falsy strings become null
+ * so the DB stays clean. `gdprConsentedAt` is stamped only when both
+ * consents are truthy, mirroring the schema's two-flag requirement.
+ */
+function buildBookingExtras(input: BookingInput) {
+  const nullify = (s: string | undefined | null): string | null =>
+    s && s.trim() !== "" ? s.trim() : null;
+  const bothConsents =
+    input.gdprConsentClinic === true && input.gdprConsentPlatform === true;
+  return {
+    patientTimezone: nullify(input.patientTimezone),
+    addressLine1: nullify(input.addressLine1),
+    addressLine2: nullify(input.addressLine2),
+    addressCity: nullify(input.addressCity),
+    addressPostalCode: nullify(input.addressPostalCode),
+    addressCountryCode: nullify(input.addressCountryCode),
+    gdprConsentClinic: input.gdprConsentClinic === true,
+    gdprConsentPlatform: input.gdprConsentPlatform === true,
+    gdprConsentedAt: bothConsents ? new Date() : null,
+  };
+}
+
 type CreateAppointmentOptions = {
   userId?: string | null;
 };
@@ -120,6 +148,7 @@ export async function createAppointmentWithOptionalOwner(
             doctorId: claimed.doctorId,
             timeSlotId: input.timeSlotId,
             scheduledAt: claimed.startAt,
+            ...buildBookingExtras(input),
           },
         });
       });
@@ -140,6 +169,7 @@ export async function createAppointmentWithOptionalOwner(
         consentAccepted: input.consentAccepted,
         status: "REQUEST_RECEIVED",
         consultationMode: "ONLINE",
+        ...buildBookingExtras(input),
       },
     });
 
@@ -169,6 +199,9 @@ type AppointmentRecord = {
   consultationMode: string | null;
   clinicId: string | null;
   locationAddress: string | null;
+  /** IANA tz captured at booking time. Surfaced on the patient + doctor
+   *  views so scheduledAt renders in the patient's local time. */
+  patientTimezone?: string | null;
   createdAt: Date;
   updatedAt: Date;
   /** Populated only by the patient-facing list/detail queries that
@@ -232,6 +265,9 @@ export type AccountAppointmentListItem = {
   clinicName: string | null;
   clinicCity: string | null;
   locationAddress: string | null;
+  /** IANA tz captured at booking time. Used by the patient portal to
+   *  render scheduledAt in the patient's own zone. */
+  patientTimezone: string | null;
 };
 
 export type AccountAppointmentDetail = {
@@ -551,6 +587,7 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
           a."consultationMode",
           a."clinicId",
           a."locationAddress",
+          a."patientTimezone",
           a."createdAt",
           a."updatedAt",
           c."name" AS "clinicName",
@@ -583,6 +620,7 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
       clinicName: row.clinicName ?? null,
       clinicCity: row.clinicCity ?? null,
       locationAddress: row.locationAddress,
+      patientTimezone: row.patientTimezone ?? null,
     }));
   } catch (error) {
     throw normalizeDbError(error, "Appointments are temporarily unavailable");

@@ -9,7 +9,7 @@ function wrapHtml(title: string, bodyHtml: string): string {
   <h2 style="color:#1B4D3E;margin:0 0 16px;">${escapeHtml(title)}</h2>
   ${bodyHtml}
   <hr style="margin-top:32px;border:0;border-top:1px solid #E5E5E3;" />
-  <p style="font-size:12px;color:#737373;">Global Health · Medicine without borders</p>
+  <p style="font-size:12px;color:#737373;">Global Health · Medicine anytime anywhere</p>
 </body></html>`;
 }
 

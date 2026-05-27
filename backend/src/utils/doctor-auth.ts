@@ -17,7 +17,15 @@ import { verifyAuthToken } from "./auth-session.js";
  *   - user has no Doctor profile linked
  */
 export type DoctorAuthResult =
-  | { ok: true; userId: string; doctorId: string; email: string }
+  | {
+      ok: true;
+      userId: string;
+      doctorId: string;
+      email: string;
+      /** "DOCTOR" or "ADMIN" — exposed so routes can gate admin-only
+       *  surfaces (e.g. the downloadable patient-document archive). */
+      role: "DOCTOR" | "ADMIN";
+    }
   | { ok: false; status: 401 | 403; message: string };
 
 export async function verifyDoctorAccess(
@@ -52,7 +60,13 @@ export async function verifyDoctorAccess(
         message: "No doctor profile is linked to this account",
       };
     }
-    return { ok: true, userId: user.id, doctorId: user.doctorId, email: user.email };
+    return {
+      ok: true,
+      userId: user.id,
+      doctorId: user.doctorId,
+      email: user.email,
+      role: user.role as "DOCTOR" | "ADMIN",
+    };
   } catch {
     return { ok: false, status: 401, message: "Not authenticated" };
   }

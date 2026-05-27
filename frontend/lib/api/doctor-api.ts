@@ -217,6 +217,10 @@ export type AppointmentDetailDto = {
   manualEntry?: boolean;
   pharmacy?: string | null;
   symptoms?: string | null;
+  /** IANA tz the patient was in at booking. Doctor portal uses this to
+   *  show patient-local time alongside doctor-local time. Null on legacy
+   *  appointments that pre-date the booking-fields migration. */
+  patientTimezone?: string | null;
   createdAt: string;
 };
 

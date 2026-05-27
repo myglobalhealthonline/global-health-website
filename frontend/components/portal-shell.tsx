@@ -206,7 +206,7 @@ export function PortalShell({
               color: "rgba(255,255,255,0.45)",
             }}
           >
-            v1.0 · medicine without borders
+            v1.0 · medicine anytime anywhere
           </div>
         </aside>
 

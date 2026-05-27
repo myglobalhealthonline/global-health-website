@@ -107,7 +107,7 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
           alt="Global Health"
           style={{ height: 48, width: "auto" }}
         />
-        <p className={`${styles.tagline} uppercase`}>Medicine without borders</p>
+        <p className={`${styles.tagline} uppercase`}>Medicine anytime anywhere</p>
       </header>
 
       {/* Step pager */}

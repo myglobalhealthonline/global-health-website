@@ -6,7 +6,7 @@ import {
   SlotAlreadyTakenError,
 } from "../modules/appointments/appointments.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import { bookingSchema } from "../validations/booking.schema.js";
+import { bookingSchema, NATIONAL_ID_VALIDATORS } from "../validations/booking.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { sendBookingConfirmationEmail } from "../lib/email/templates.js";
@@ -39,6 +39,8 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
             bookingEnabled: true,
             requirePhone: true,
             requireDateOfBirth: true,
+            requireNationalId: true,
+            requireAddress: true,
           },
         });
         if (settings) {
@@ -60,6 +62,36 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
             return reply
               .status(400)
               .send(errorResponse("A date of birth is required for bookings in this country."));
+          }
+          if (settings.requireNationalId) {
+            const id = (parsed.data.nationalIdNumber ?? "").trim();
+            const validator = NATIONAL_ID_VALIDATORS[parsed.data.country];
+            const label = validator?.label ?? "National ID";
+            if (!id) {
+              return reply
+                .status(400)
+                .send(errorResponse(`A ${label} is required for bookings in this country.`));
+            }
+            if (validator && !validator.valid(id)) {
+              return reply
+                .status(400)
+                .send(errorResponse(`The ${label} you entered is not in the expected format.`));
+            }
+          }
+          if (settings.requireAddress) {
+            const missing: string[] = [];
+            if (!parsed.data.addressLine1) missing.push("street address");
+            if (!parsed.data.addressCity) missing.push("city");
+            if (!parsed.data.addressPostalCode) missing.push("postal code");
+            if (missing.length > 0) {
+              return reply
+                .status(400)
+                .send(
+                  errorResponse(
+                    `Address required for this country. Missing: ${missing.join(", ")}.`,
+                  ),
+                );
+            }
           }
         }
       } catch (settingsErr) {
