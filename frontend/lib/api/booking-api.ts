@@ -8,6 +8,14 @@ export type BookingPayload = {
   phone?: string;
   notes?: string;
   consentAccepted: boolean;
+  /**
+   * Dual GDPR consent — clinic (data sharing with treating clinic) +
+   * platform (analytics/comms). Backend rejects bookings unless both
+   * are true; stored independently on the appointment so platform
+   * consent can be withdrawn without invalidating the clinical record.
+   */
+  gdprConsentClinic: true;
+  gdprConsentPlatform: true;
   /** When set, links the appointment to a catalogue Service so price +
    *  currency get copied onto the row, enabling Stripe Checkout. */
   serviceSlug?: string;

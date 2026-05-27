@@ -4,6 +4,28 @@ import { serviceSlugSchema } from "./admin-services.schema.js";
 /** Same URL-safe rules as services (lowercase a-z, 0-9, hyphens). */
 export const doctorSlugSchema = serviceSlugSchema;
 
+/**
+ * Optional social profile URL (Instagram / Facebook / LinkedIn).
+ * Restricted to https:// so we can safely render as <a href={...}>
+ * without sanitisation. Empty string clears the link (transforms to
+ * null). Rejects javascript:, data:, file:, and other unsafe schemes.
+ */
+export const socialUrlSchema = z.preprocess(
+  (v) => (v === "" || v === undefined || v === null ? null : v),
+  z
+    .union([
+      z.null(),
+      z
+        .string()
+        .trim()
+        .max(500)
+        .refine((s) => /^https:\/\/[^\s<>"']+$/i.test(s), {
+          message: "Must be an https:// URL",
+        }),
+    ])
+    .nullable(),
+);
+
 /** HTTPS URLs or site-relative paths starting with `/`. */
 export const profileImageRefSchema = z.preprocess(
   (val) => (val === "" || val === undefined || val === null ? null : val),
@@ -83,29 +105,13 @@ export const adminDoctorCreateBodySchema = z.object({
     .optional()
     .nullable()
     .transform((v) => (v === "" || v === undefined ? null : v)),
-  // Optional social profile URLs. URL shape only — we don't verify the
-  // handle exists on the third-party platform. Empty string clears.
-  instagramUrl: z
-    .string()
-    .trim()
-    .max(500)
-    .optional()
-    .nullable()
-    .transform((v) => (v === "" || v === undefined ? null : v)),
-  facebookUrl: z
-    .string()
-    .trim()
-    .max(500)
-    .optional()
-    .nullable()
-    .transform((v) => (v === "" || v === undefined ? null : v)),
-  linkedinUrl: z
-    .string()
-    .trim()
-    .max(500)
-    .optional()
-    .nullable()
-    .transform((v) => (v === "" || v === undefined ? null : v)),
+  // Optional social profile URLs. Validated as URLs AND restricted to
+  // https:// (no javascript:, data:, or http:) so the value can be
+  // safely rendered as <a href={...}> without sanitisation. Empty
+  // string clears the link.
+  instagramUrl: socialUrlSchema,
+  facebookUrl: socialUrlSchema,
+  linkedinUrl: socialUrlSchema,
   medicalRegistrationUrl: z
     .string()
     .trim()

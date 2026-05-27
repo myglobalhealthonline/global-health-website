@@ -24,15 +24,14 @@ export default async function DoctorPatientsPage({
   // /api/doctor/patients endpoint caps source rows at 500). A
   // server-side search adds plumbing without buying much UX win until
   // a doctor breaches the cap.
+  // Search now matches name only — phone was stripped from the DTO per
+  // GDPR plan, and email is intentionally hidden from doctor view so
+  // searching it would be a back-door reveal of which patient owns
+  // which address. Doctor's typical lookup is by name + country anyway.
   const items = !result.ok
     ? []
     : q
-      ? result.data.items.filter(
-          (p) =>
-            p.email.toLowerCase().includes(q) ||
-            p.fullName.toLowerCase().includes(q) ||
-            (p.phone ?? "").toLowerCase().includes(q),
-        )
+      ? result.data.items.filter((p) => p.fullName.toLowerCase().includes(q))
       : result.data.items;
 
   return (

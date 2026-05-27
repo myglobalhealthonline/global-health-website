@@ -429,6 +429,81 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                     data: { appointmentId: apt.id },
                   });
                   appointmentIds.push(apt.id);
+
+                  // Upsert PatientProfile so the national ID, address,
+                  // and identity fields captured at booking persist in
+                  // their canonical home. Appointment doesn't have a
+                  // nationalIdNumber column (it lives on PatientProfile
+                  // by design), so without this upsert the CNP/NIF/PPS
+                  // collected at booking would silently drop.
+                  //
+                  // Email is unique on PatientProfile. Existing rows are
+                  // only patched on fields that are currently null — we
+                  // never overwrite values the patient already set from
+                  // /account/profile, since the per-booking snapshot is
+                  // the SOURCE OF TRUTH only on first capture.
+                  if (aptEmail && (
+                    item.patientNationalIdNumber ||
+                    item.patientAddressLine1 ||
+                    item.patientAddressCity
+                  )) {
+                    try {
+                      const existing = await tx.patientProfile.findUnique({
+                        where: { email: aptEmail.toLowerCase() },
+                        select: {
+                          nationalIdNumber: true,
+                          addressLine1: true,
+                          addressLine2: true,
+                          addressCity: true,
+                          addressPostalCode: true,
+                          addressCountryCode: true,
+                        },
+                      });
+                      const fill = <T>(existingVal: T | null, snapshotVal: T | null): T | null =>
+                        existingVal ?? snapshotVal ?? null;
+                      await tx.patientProfile.upsert({
+                        where: { email: aptEmail.toLowerCase() },
+                        update: {
+                          // Only fill nulls — never overwrite.
+                          nationalIdNumber: fill(
+                            existing?.nationalIdNumber ?? null,
+                            item.patientNationalIdNumber,
+                          ),
+                          addressLine1: fill(existing?.addressLine1 ?? null, item.patientAddressLine1),
+                          addressLine2: fill(existing?.addressLine2 ?? null, item.patientAddressLine2),
+                          addressCity: fill(existing?.addressCity ?? null, item.patientAddressCity),
+                          addressPostalCode: fill(
+                            existing?.addressPostalCode ?? null,
+                            item.patientAddressPostalCode,
+                          ),
+                          addressCountryCode: fill(
+                            existing?.addressCountryCode ?? null,
+                            item.patientAddressCountryCode,
+                          ),
+                        },
+                        create: {
+                          email: aptEmail.toLowerCase(),
+                          fullName: aptFullName,
+                          phone: aptPhone,
+                          dateOfBirth: aptDob,
+                          nationalIdNumber: item.patientNationalIdNumber,
+                          addressLine1: item.patientAddressLine1,
+                          addressLine2: item.patientAddressLine2,
+                          addressCity: item.patientAddressCity,
+                          addressPostalCode: item.patientAddressPostalCode,
+                          addressCountryCode: item.patientAddressCountryCode,
+                        },
+                      });
+                    } catch (profileErr) {
+                      // Profile upsert is best-effort — the appointment
+                      // already minted successfully. Log + continue so a
+                      // schema mismatch doesn't kill payment webhook idempotency.
+                      app.log.warn(
+                        { err: profileErr, email: aptEmail },
+                        "PatientProfile upsert failed after appointment mint",
+                      );
+                    }
+                  }
                 } catch (err) {
                   app.log.error(
                     { err, orderId, itemId: item.id },

@@ -100,6 +100,27 @@ const appointmentsRoute: FastifyPluginAsync = async (app) => {
         app.log.warn({ err: settingsErr }, "BookingSetting lookup failed; allowing booking");
       }
 
+      // Dual GDPR consent — required for EVERY booking regardless of
+      // country and regardless of whether a BookingSetting row exists.
+      // Fired outside the settings try/catch so a settings lookup
+      // failure doesn't bypass the legal-basis check. Both flags must
+      // be explicitly true (schema loosened them to optional booleans
+      // for legacy /book-online template compat; enforcement is here).
+      if (parsed.data.gdprConsentClinic !== true) {
+        return reply.status(400).send(
+          errorResponse(
+            "Clinic data sharing consent is required to book a consultation.",
+          ),
+        );
+      }
+      if (parsed.data.gdprConsentPlatform !== true) {
+        return reply.status(400).send(
+          errorResponse(
+            "Platform processing consent is required to book a consultation.",
+          ),
+        );
+      }
+
       let authUserId: string | null = null;
       try {
         const authUser = await resolveOptionalAuthUser(request);

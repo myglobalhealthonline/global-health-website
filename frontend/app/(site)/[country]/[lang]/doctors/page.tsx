@@ -22,15 +22,22 @@ import { SITE_NAME } from "@/lib/constants";
 type Params = { country: string; lang: string };
 type SearchParams = { lang?: string | string[] };
 
-/** Normalize a language token to a comparable form. Doctor.languages
- *  rows may be stored as "Portuguese", "pt", "PT", "Português" — we
- *  lowercase + take the first 2 chars when long enough, so "Portuguese"
- *  and "pt" both compare as "po"/"pt". Imperfect but pragmatic. */
+/** Normalize a language token to an ISO 639-1 code so chip toggles and
+ *  filters line up regardless of how the doctor's language list is
+ *  stored (e.g. "Portuguese", "pt", "PT", "Português").
+ *
+ *  Fail-closed for unmapped names: returns the lowercased raw value
+ *  unchanged. Truncating the first two characters silently produces
+ *  wrong codes for many languages ("Dutch" → "du" instead of "nl",
+ *  "Swedish" → "sw" instead of "sv"). When `getLanguageKey` returns an
+ *  unmapped value, comparisons against the named-map keys simply miss
+ *  — which surfaces the inconsistency in the chip filter UI instead of
+ *  silently mis-categorising doctors. */
 function langKey(raw: string): string {
   const s = raw.trim().toLowerCase();
+  // Already a code (or "ro" / "pt" etc.). 2-char codes are accepted as
+  // ISO 639-1; 3-char codes are accepted as ISO 639-2/3.
   if (s.length <= 3) return s;
-  // Map common full names to ISO 639-1 codes so chip toggle + filter
-  // line up regardless of which form is stored on Doctor.languages.
   const namedMap: Record<string, string> = {
     english: "en",
     português: "pt",
@@ -47,8 +54,45 @@ function langKey(raw: string): string {
     romanian: "ro",
     čeština: "cs",
     czech: "cs",
+    polski: "pl",
+    polish: "pl",
+    nederlands: "nl",
+    dutch: "nl",
+    svenska: "sv",
+    swedish: "sv",
+    العربية: "ar",
+    arabic: "ar",
+    русский: "ru",
+    russian: "ru",
+    हिन्दी: "hi",
+    hindi: "hi",
+    urdu: "ur",
+    اردو: "ur",
+    magyar: "hu",
+    hungarian: "hu",
+    slovenčina: "sk",
+    slovak: "sk",
+    suomi: "fi",
+    finnish: "fi",
+    norsk: "no",
+    norwegian: "no",
+    dansk: "da",
+    danish: "da",
+    ελληνικά: "el",
+    greek: "el",
+    "中文": "zh",
+    chinese: "zh",
+    日本語: "ja",
+    japanese: "ja",
+    한국어: "ko",
+    korean: "ko",
+    türkçe: "tr",
+    turkish: "tr",
   };
-  return namedMap[s] ?? s.slice(0, 2);
+  // Fail closed — unknown names round-trip as-is. The filter chip will
+  // show the raw lowercased value (e.g. "tagalog"), which is honest
+  // about what's stored. Op can add a mapping in this list.
+  return namedMap[s] ?? s;
 }
 
 export async function generateStaticParams(): Promise<Params[]> {

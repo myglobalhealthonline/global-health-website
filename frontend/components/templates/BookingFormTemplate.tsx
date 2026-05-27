@@ -71,7 +71,16 @@ type BookingFormTemplateProps = {
 };
 
 type FieldErrors = Partial<
-  Record<"country" | "consultationType" | "fullName" | "email" | "consentAccepted", string>
+  Record<
+    | "country"
+    | "consultationType"
+    | "fullName"
+    | "email"
+    | "consentAccepted"
+    | "gdprConsentClinic"
+    | "gdprConsentPlatform",
+    string
+  >
 >;
 
 export function BookingFormTemplate({
@@ -88,6 +97,8 @@ export function BookingFormTemplate({
   const [errors, setErrors] = useState<FieldErrors>({});
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
   const [consentAccepted, setConsentAccepted] = useState(false);
+  const [gdprConsentClinic, setGdprConsentClinic] = useState(false);
+  const [gdprConsentPlatform, setGdprConsentPlatform] = useState(false);
   const maxDob =
     typeof window !== "undefined" ? new Date().toISOString().slice(0, 10) : undefined;
 
@@ -125,6 +136,10 @@ export function BookingFormTemplate({
       phone: String(formData.get("phone") ?? "").trim(),
       notes: String(formData.get("notes") ?? "").trim(),
       consentAccepted,
+      // Dual GDPR consent — backend enforces both must be true. The
+      // booking-api type uses `true` literals so we cast after checking.
+      gdprConsentClinic: true as const,
+      gdprConsentPlatform: true as const,
       serviceSlug: serviceSlug?.trim() || undefined,
       ...(dob !== "" ? { dateOfBirth: dob } : {}),
       ...(selectedSlotId ? { timeSlotId: selectedSlotId } : {}),
@@ -136,7 +151,11 @@ export function BookingFormTemplate({
     if (payload.fullName.length < 2) nextErrors.fullName = "Enter the patient full name.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email))
       nextErrors.email = "Enter a valid email address.";
-    if (!payload.consentAccepted) nextErrors.consentAccepted = "Consent is required.";
+    if (!consentAccepted) nextErrors.consentAccepted = "Consent is required.";
+    if (!gdprConsentClinic)
+      nextErrors.gdprConsentClinic = "Clinic data sharing consent is required.";
+    if (!gdprConsentPlatform)
+      nextErrors.gdprConsentPlatform = "Platform processing consent is required.";
     if (doctorPrebook && doctorPrebook.slots.length > 0 && !selectedSlotId) {
       nextErrors.consultationType = nextErrors.consultationType ?? "Pick a slot above to continue.";
     }
@@ -479,6 +498,67 @@ export function BookingFormTemplate({
               {errors.consentAccepted ? (
                 <p className="-mt-3 text-[13px] text-[var(--color-status-error)]">
                   {errors.consentAccepted}
+                </p>
+              ) : null}
+
+              {/* GDPR — two independent required checkboxes per legal
+                  review. Backend rejects the submission unless both
+                  flags are true; stored independently on the appointment
+                  so platform consent can be withdrawn without nuking
+                  the clinical record. */}
+              <label
+                htmlFor="booking-gdpr-clinic"
+                className="flex items-start gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-[13.5px] leading-relaxed text-[var(--color-text-muted)]"
+              >
+                <input
+                  id="booking-gdpr-clinic"
+                  type="checkbox"
+                  checked={gdprConsentClinic}
+                  onChange={(event) => {
+                    setGdprConsentClinic(event.target.checked);
+                    if (errors.gdprConsentClinic) {
+                      setErrors((prev) => ({ ...prev, gdprConsentClinic: undefined }));
+                    }
+                  }}
+                  className="mt-0.5 size-4 accent-[var(--color-brand-primary)]"
+                />
+                <span>
+                  I consent to sharing my personal and medical data with
+                  the treating clinic and doctor for the purpose of this
+                  consultation.
+                </span>
+              </label>
+              {errors.gdprConsentClinic ? (
+                <p className="-mt-3 text-[13px] text-[var(--color-status-error)]">
+                  {errors.gdprConsentClinic}
+                </p>
+              ) : null}
+
+              <label
+                htmlFor="booking-gdpr-platform"
+                className="flex items-start gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-[13.5px] leading-relaxed text-[var(--color-text-muted)]"
+              >
+                <input
+                  id="booking-gdpr-platform"
+                  type="checkbox"
+                  checked={gdprConsentPlatform}
+                  onChange={(event) => {
+                    setGdprConsentPlatform(event.target.checked);
+                    if (errors.gdprConsentPlatform) {
+                      setErrors((prev) => ({ ...prev, gdprConsentPlatform: undefined }));
+                    }
+                  }}
+                  className="mt-0.5 size-4 accent-[var(--color-brand-primary)]"
+                />
+                <span>
+                  I consent to the Global Health platform processing my
+                  data for service improvement, security, and platform
+                  communications.
+                </span>
+              </label>
+              {errors.gdprConsentPlatform ? (
+                <p className="-mt-3 text-[13px] text-[var(--color-status-error)]">
+                  {errors.gdprConsentPlatform}
                 </p>
               ) : null}
 

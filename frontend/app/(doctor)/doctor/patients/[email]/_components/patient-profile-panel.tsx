@@ -171,18 +171,37 @@ export function PatientProfilePanel({ email }: { email: string }) {
       <form className="mt-4 grid gap-5 text-sm" onSubmit={save}>
         {/* Identity (national ID / tax ID / passport) and Address sections
             intentionally hidden from the doctor portal per GDPR plan.
-            They remain editable from /admin/users for staff. The fields
-            are still submitted as the existing profile values (so saving
-            from the doctor portal preserves them) — we just don't render
-            inputs the doctor shouldn't see. */}
-        <input type="hidden" name="nationalIdNumber" value={profile?.nationalIdNumber ?? ""} />
-        <input type="hidden" name="taxIdNumber" value={profile?.taxIdNumber ?? ""} />
-        <input type="hidden" name="passportNumber" value={profile?.passportNumber ?? ""} />
-        <input type="hidden" name="addressLine1" value={profile?.addressLine1 ?? ""} />
-        <input type="hidden" name="addressLine2" value={profile?.addressLine2 ?? ""} />
-        <input type="hidden" name="addressCity" value={profile?.addressCity ?? ""} />
-        <input type="hidden" name="addressPostalCode" value={profile?.addressPostalCode ?? ""} />
-        <input type="hidden" name="addressCountryCode" value={profile?.addressCountryCode ?? ""} />
+            They remain editable from /admin/users for staff.
+            We only emit hidden inputs once `profile` has loaded AND the
+            value exists — empty values are omitted so the PATCH never
+            blanks server-side data on a race (form submitted before the
+            initial profile fetch resolved). If a value is missing
+            server-side we simply don't carry it; the backend's PATCH
+            treats undefined fields as "leave alone". */}
+        {profile?.nationalIdNumber ? (
+          <input type="hidden" name="nationalIdNumber" defaultValue={profile.nationalIdNumber} />
+        ) : null}
+        {profile?.taxIdNumber ? (
+          <input type="hidden" name="taxIdNumber" defaultValue={profile.taxIdNumber} />
+        ) : null}
+        {profile?.passportNumber ? (
+          <input type="hidden" name="passportNumber" defaultValue={profile.passportNumber} />
+        ) : null}
+        {profile?.addressLine1 ? (
+          <input type="hidden" name="addressLine1" defaultValue={profile.addressLine1} />
+        ) : null}
+        {profile?.addressLine2 ? (
+          <input type="hidden" name="addressLine2" defaultValue={profile.addressLine2} />
+        ) : null}
+        {profile?.addressCity ? (
+          <input type="hidden" name="addressCity" defaultValue={profile.addressCity} />
+        ) : null}
+        {profile?.addressPostalCode ? (
+          <input type="hidden" name="addressPostalCode" defaultValue={profile.addressPostalCode} />
+        ) : null}
+        {profile?.addressCountryCode ? (
+          <input type="hidden" name="addressCountryCode" defaultValue={profile.addressCountryCode} />
+        ) : null}
 
         <Section title="Plan & pharmacy">
           <Field

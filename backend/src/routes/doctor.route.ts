@@ -298,12 +298,15 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
       // a userId) who have at least one appointment with this doctor.
       // The aggregation is a JS groupBy because Prisma's distinct +
       // count is awkward; the per-doctor scope keeps row count small.
+      // GDPR plan: email + phone never surface to the doctor portal.
+      // Email is still used internally as the dedupe key + URL slug for
+      // /doctor/patients/[email] navigation, but it is masked in the
+      // outbound DTO. Admins keep raw values via /admin/users.
       const rows = await prisma.appointment.findMany({
         where: { doctorId: auth.doctorId },
         select: {
           email: true,
           fullName: true,
-          phone: true,
           countryCode: true,
           createdAt: true,
         },
@@ -313,9 +316,10 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
       const map = new Map<
         string,
         {
+          /** URL-safe email (lowercased) — used for navigation only.
+           *  Frontend MUST NOT render this value as visible text. */
           email: string;
           fullName: string;
-          phone: string | null;
           countryCode: string;
           firstSeen: string;
           appointmentCount: number;
@@ -328,9 +332,8 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           existing.appointmentCount += 1;
         } else {
           map.set(key, {
-            email: r.email,
+            email: key,
             fullName: r.fullName,
-            phone: r.phone,
             countryCode: r.countryCode,
             firstSeen: r.createdAt.toISOString(),
             appointmentCount: 1,

@@ -109,9 +109,10 @@ export async function fetchDoctorAppointments(query?: Record<string, string | un
 }
 
 export type DoctorPatient = {
+  /** URL-safe email — used as the route slug for /doctor/patients/[email].
+   *  Frontend MUST NOT render this as visible text per GDPR plan. */
   email: string;
   fullName: string;
-  phone: string | null;
   countryCode: string;
   firstSeen: string;
   appointmentCount: number;
@@ -123,9 +124,10 @@ export async function fetchDoctorPatients() {
 
 export type DoctorPatientDetail = {
   patient: {
+    /** URL-safe email — passed through for navigation + chat thread
+     *  routing only. NOT rendered as visible text in the doctor UI. */
     email: string;
     fullName: string;
-    phone: string | null;
     countryCode: string;
     dateOfBirth: string | null;
     firstSeen: string;

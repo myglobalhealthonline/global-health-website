@@ -527,11 +527,16 @@ const doctorActionsRoute: FastifyPluginAsync = async (app) => {
           return reply.status(404).send(errorResponse("Patient not found"));
         }
         const latest = rows[0];
+        // GDPR plan: email + phone never surface to the doctor portal.
+        // Email is still in URL (used as the slug) and used by the
+        // upload-link / chat-thread routes downstream, so we expose it
+        // here for those follow-on requests — but the DTO does NOT
+        // include `phone` or render it anywhere in the doctor UI.
+        // Admins keep full PII via /api/admin/patients/:email/profile.
         return okResponse({
           patient: {
             email: latest.email,
             fullName: latest.fullName,
-            phone: latest.phone,
             countryCode: latest.countryCode,
             dateOfBirth: latest.dateOfBirth?.toISOString() ?? null,
             firstSeen: rows[rows.length - 1].createdAt.toISOString(),
