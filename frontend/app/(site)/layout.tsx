@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
+import { getAllCountryFooters } from "@/lib/content/get-country-footers";
 import { DEFAULT_BRAND_LOGO, DEFAULT_BRAND_LOGO_LIGHT } from "@/lib/content/brand-logo";
 import {
   resolveFooterCtaDecorAsset,
@@ -62,6 +63,13 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     if (c.enabledFeatures) countryFeatures[c.code] = c.enabledFeatures;
   }
 
+  // Per-country footer overrides (admin-managed). Falsy entries fall
+  // back to SiteFooter defaults. Fetched once at layout level so every
+  // page render inside this country shares the same data.
+  const countryFooters = await getAllCountryFooters(
+    countriesMerged.map((c) => c.code),
+  );
+
   return (
     <CartProvider>
       <SiteChrome
@@ -71,6 +79,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         footerDecorImage={footerDecorImage}
         authUser={authUser}
         countryFeatures={countryFeatures}
+        countryFooters={countryFooters}
         initialLastCountry={initialLastCountry}
         countries={countriesMerged}
       >

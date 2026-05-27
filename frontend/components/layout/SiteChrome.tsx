@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import type { SiteNavigationData } from "@/data/navigation";
 import type { AuthUser } from "@/lib/api/auth-api";
 import type { CountryConfig } from "@/data/countries";
+import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
 
 type Props = {
   children: ReactNode;
@@ -16,6 +17,9 @@ type Props = {
   footerDecorImage?: { src: string; alt: string };
   authUser?: AuthUser | null;
   countryFeatures?: Record<string, string[] | undefined>;
+  /** Per-country footer overrides keyed by lowercase country code.
+   *  Missing or null entries fall back to the global defaults. */
+  countryFooters?: Record<string, PublicCountryFooter | null>;
   initialLastCountry?: { slug: string; lang: string } | null;
   countries: CountryConfig[];
 };
@@ -27,6 +31,7 @@ export function SiteChrome({
   brandLogo,
   authUser,
   countryFeatures,
+  countryFooters,
   initialLastCountry,
   countries,
 }: Props) {
@@ -50,7 +55,11 @@ export function SiteChrome({
         {children}
       </main>
       {isGatewayHome ? null : (
-        <SiteFooter siteName={siteName} countryFeatures={countryFeatures} />
+        <SiteFooter
+          siteName={siteName}
+          countryFeatures={countryFeatures}
+          countryFooters={countryFooters}
+        />
       )}
     </>
   );

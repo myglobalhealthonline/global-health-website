@@ -196,7 +196,7 @@ const VALID_COOKIE_NAME = /^[!#$%&'*+\-.0-9A-Z^_`a-z|~]+$/;
 async function adminRequest<T>(
   path: string,
   init?: {
-    method?: "GET" | "POST" | "PATCH" | "DELETE";
+    method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
     body?: unknown;
   },
 ): Promise<AdminApiResponse<T>> {
@@ -1352,3 +1352,51 @@ export async function purgeAdminPage(id: string) {
 }
 
 
+
+/* ─────────────────────────────────────────────────────────────
+   Per-country footer (admin) — backed by /api/admin/countries/:id/footer
+   ───────────────────────────────────────────────────────────── */
+
+export type AdminFooterCustomColumn = {
+  title: string;
+  links: Array<{ label: string; href: string; external?: boolean }>;
+};
+
+export type AdminCountryFooterDto = {
+  id: string;
+  countryId: string;
+  countryCode: string;
+  countryName: string;
+  tagline: string | null;
+  contactAddress: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  contactHours: string | null;
+  instagramUrl: string | null;
+  facebookUrl: string | null;
+  linkedinUrl: string | null;
+  twitterUrl: string | null;
+  youtubeUrl: string | null;
+  customColumns: AdminFooterCustomColumn[];
+  copyrightLine: string | null;
+  isActive: boolean;
+  updatedAt: string;
+};
+
+export type AdminCountryFooterFetchPayload = {
+  footer: AdminCountryFooterDto | null;
+  country: { id: string; code: string; name: string };
+};
+
+export async function fetchAdminCountryFooter(countryId: string) {
+  return adminRequest<AdminCountryFooterFetchPayload>(
+    `/api/admin/countries/${countryId}/footer`,
+  );
+}
+
+export async function putAdminCountryFooter(countryId: string, body: unknown) {
+  return adminRequest<{ footer: AdminCountryFooterDto }>(
+    `/api/admin/countries/${countryId}/footer`,
+    { method: "PUT", body },
+  );
+}

@@ -70,6 +70,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     //     URL-level filters are sufficient.
     { href: "/admin/country-features", label: "Pages" },
     { href: "/admin/pages", label: "Page content" },
+    { href: "/admin/footer", label: "Footer" },
     { href: "/admin/general-consultations", label: "General consultations" },
     { href: "/admin/specialist-consultations", label: "Specialist consultations" },
     { href: "/admin/online-prescriptions", label: "Prescriptions" },

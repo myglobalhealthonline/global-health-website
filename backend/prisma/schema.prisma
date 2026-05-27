@@ -176,6 +176,7 @@ enum AuditAction {
   LOGIN_FAILED
   PATIENT_ALERT_UPDATED
   MEET_LINK_GENERATED
+  COUNTRY_FOOTER_UPDATED
 }
 
 model Currency {
@@ -227,6 +228,7 @@ model Country {
   reviews                    Review[]
   consultationSetting        ConsultationSetting?
   bookingSetting             BookingSetting?
+  footer                     CountryFooter?
   createdAt                  DateTime             @default(now())
   updatedAt                  DateTime             @updatedAt
 }
@@ -639,6 +641,54 @@ model ConsultationSetting {
   country                Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
+}
+
+/**
+ * Per-country footer content. One row per country, edited from
+ * /admin/footer (country-scoped). Drives the public site footer
+ * when the visitor is inside a country scope (`/[country]/[lang]/*`).
+ * Outside that scope the footer falls back to the global defaults
+ * baked into SiteFooter so the entry gate + global pages still work.
+ *
+ * `customColumns` is a JSON array of `{ title, links: [{ label, href, external? }] }`.
+ * Care + Clinics columns stay auto-derived (so admins don't have to
+ * re-type service links every time a feature toggle changes); custom
+ * columns are appended for country-specific copy (e.g. local press,
+ * partner clinic addresses, regulator references).
+ */
+model CountryFooter {
+  id             String   @id @default(cuid())
+  countryId      String   @unique
+  country        Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  /// Brand tagline shown under the logo. Defaults to the global
+  /// "Medicine anytime anywhere…" copy when null.
+  tagline        String?
+  /// Contact block (admin-managed plaintext). Multi-line OK.
+  contactAddress String?
+  contactEmail   String?
+  contactPhone   String?
+  /// Optional opening-hours blurb (e.g. "Mon–Fri · 09:00–17:00 IST").
+  contactHours   String?
+  /// Social URLs surfaced as small icons in the footer ribbon. https://
+  /// only — validated at the route layer.
+  instagramUrl   String?
+  facebookUrl    String?
+  linkedinUrl    String?
+  twitterUrl     String?
+  youtubeUrl     String?
+  /// Custom link columns. Array of
+  /// `{ title: string; links: Array<{ label: string; href: string; external?: boolean }> }`.
+  /// Defaults to `[]`. Admin reorders by re-saving; UI is a simple
+  /// add/remove form, not drag-to-reorder.
+  customColumns  Json     @default("[]")
+  /// Optional copyright suffix override (replaces "© Global Health"
+  /// when set, e.g. "© Global Health Romania SRL"). The "Medicine
+  /// anytime anywhere" tagline + year prefix stay the same.
+  copyrightLine  String?
+  /// Soft-disable so admin can prep a footer without surfacing it yet.
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model BookingSetting {
