@@ -660,7 +660,7 @@ export function BookingFormTemplate({
                 color: "rgba(255,255,255,0.42)",
               }}
             >
-              Not sure what to book? Pick &ldquo;GP consultation&rdquo; —
+              Not sure what to book? Pick &ldquo;Book a GP Appointment&rdquo; —
               our team will route you to the right clinician.
             </div>
           </aside>

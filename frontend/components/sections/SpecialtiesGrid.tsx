@@ -20,7 +20,7 @@ type SpecialtiesGridProps = {
   items: Item[];
 };
 
-export function SpecialtiesGrid({ title = "Specialist consultations", items }: SpecialtiesGridProps) {
+export function SpecialtiesGrid({ title = "See a Specialist", items }: SpecialtiesGridProps) {
   return (
     <section
       style={{
