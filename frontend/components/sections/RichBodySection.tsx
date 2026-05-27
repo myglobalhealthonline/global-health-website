@@ -9,21 +9,28 @@ export function RichBodySection({
   html,
   eyebrow,
   maxWidth = 720,
+  theme = "dark",
 }: {
   html: string | null | undefined;
   eyebrow?: string;
   maxWidth?: number;
+  theme?: "dark" | "light";
 }) {
   const trimmed = (html ?? "").trim();
   if (!trimmed || trimmed === "<p><br/></p>" || trimmed === "<p><br></p>") {
     return null;
   }
+
+  const isLight = theme === "light";
+
   return (
     <section
       style={{
-        background: "var(--color-background-dark)",
+        background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         padding: "clamp(40px,5vw,64px) 0",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
+        borderTop: isLight
+          ? "1px solid rgba(29,75,54,0.10)"
+          : "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div
@@ -40,7 +47,7 @@ export function RichBodySection({
               fontSize: 11,
               fontWeight: 700,
               letterSpacing: "0.20em",
-              color: "var(--color-brand-accent)",
+              color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
               marginBottom: 16,
             }}
           >
@@ -48,8 +55,12 @@ export function RichBodySection({
           </p>
         ) : null}
         <article
-          className="gh-rich-body-dark mt-4"
-          style={{ fontSize: 16, lineHeight: 1.75, color: "rgba(255,255,255,0.72)" }}
+          className={isLight ? "gh-rich-body-light mt-4" : "gh-rich-body-dark mt-4"}
+          style={{
+            fontSize: 16,
+            lineHeight: 1.75,
+            color: isLight ? "var(--color-text-body)" : "rgba(255,255,255,0.72)",
+          }}
           dangerouslySetInnerHTML={{ __html: trimmed }}
         />
       </div>
@@ -85,6 +96,37 @@ export function RichBodySection({
         .gh-rich-body-dark em { font-style: italic; }
         .gh-rich-body-dark u { text-decoration: underline; }
         .gh-rich-body-dark img { max-width: 100%; height: auto; border-radius: 12px; }
+
+        .gh-rich-body-light h2 {
+          font-family: var(--font-display);
+          font-size: clamp(22px, 3vw, 30px);
+          font-weight: 800;
+          letter-spacing: -0.02em;
+          line-height: 1.15;
+          margin: 36px 0 14px;
+          color: var(--color-text-primary);
+        }
+        .gh-rich-body-light h3 {
+          font-family: var(--font-display);
+          font-size: clamp(17px, 2vw, 21px);
+          font-weight: 700;
+          letter-spacing: -0.01em;
+          line-height: 1.3;
+          margin: 28px 0 10px;
+          color: var(--color-text-primary);
+        }
+        .gh-rich-body-light p { margin: 14px 0; }
+        .gh-rich-body-light ul, .gh-rich-body-light ol { margin: 14px 0 14px 24px; padding: 0; }
+        .gh-rich-body-light li { margin: 8px 0; }
+        .gh-rich-body-light a {
+          color: var(--color-brand-primary);
+          text-decoration: underline;
+          text-underline-offset: 3px;
+        }
+        .gh-rich-body-light strong { font-weight: 700; color: var(--color-text-primary); }
+        .gh-rich-body-light em { font-style: italic; }
+        .gh-rich-body-light u { text-decoration: underline; }
+        .gh-rich-body-light img { max-width: 100%; height: auto; border-radius: 12px; }
       `}</style>
     </section>
   );

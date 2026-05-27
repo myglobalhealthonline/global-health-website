@@ -10,15 +10,17 @@ export type StatBandItem = {
   caption?: string;
 };
 
-export function StatsBand({ items }: { items: StatBandItem[] }) {
+export function StatsBand({ items, theme = "dark" }: { items: StatBandItem[]; theme?: "dark" | "light" }) {
   if (!items || items.length === 0) return null;
+
+  const isLight = theme === "light";
 
   return (
     <section
       style={{
-        background: "var(--color-background-dark)",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
+        borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
+        borderBottom: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
         padding: "clamp(64px,8vw,112px) 0",
       }}
     >
@@ -30,7 +32,7 @@ export function StatsBand({ items }: { items: StatBandItem[] }) {
         <div>
           <p
             className="text-[11px] font-bold tracking-[0.22em] uppercase"
-            style={{ color: "var(--color-brand-accent)" }}
+            style={{ color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
           >
             The platform
           </p>
@@ -38,18 +40,18 @@ export function StatsBand({ items }: { items: StatBandItem[] }) {
             className="mt-4 font-extrabold leading-[1.02] tracking-[-0.03em]"
             style={{
               fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
-              color: "rgba(255,255,255,0.95)",
+              color: isLight ? "var(--color-text-primary)" : "rgba(255,255,255,0.95)",
               maxWidth: "18ch",
             }}
           >
             Built for people who shouldn&apos;t have to{" "}
-            <span style={{ color: "var(--color-brand-accent)" }}>wait</span>.
+            <span style={{ color: isLight ? "#8FB021" : "var(--color-brand-accent)" }}>wait</span>.
           </h2>
           <p
             className="mt-5 leading-relaxed"
             style={{
               fontSize: "var(--text-body-lg)",
-              color: "rgba(255,255,255,0.50)",
+              color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.50)",
               maxWidth: "38ch",
             }}
           >
@@ -62,7 +64,7 @@ export function StatsBand({ items }: { items: StatBandItem[] }) {
         <dl
           className="grid grid-cols-2"
           style={{
-            border: "1px solid rgba(255,255,255,0.08)",
+            border: isLight ? "1px solid rgba(29,75,54,0.12)" : "1px solid rgba(255,255,255,0.08)",
             borderRadius: "var(--radius-card)",
             overflow: "hidden",
           }}
@@ -72,33 +74,39 @@ export function StatsBand({ items }: { items: StatBandItem[] }) {
               key={`${it.label}-${it.value}`}
               className="flex flex-col gap-2 p-7 sm:p-8"
               style={{
-                borderRight: i % 2 === 0 ? "1px solid rgba(255,255,255,0.08)" : "none",
-                borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.08)" : "none",
-                background:
-                  i === 0
-                    ? "rgba(176,241,34,0.04)"
-                    : "rgba(255,255,255,0.02)",
+                borderRight: i % 2 === 0
+                  ? isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.08)"
+                  : "none",
+                borderBottom: i < 2
+                  ? isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.08)"
+                  : "none",
+                background: isLight
+                  ? i === 0 ? "rgba(29,75,54,0.05)" : "rgba(255,255,255,0.60)"
+                  : i === 0 ? "rgba(176,241,34,0.04)" : "rgba(255,255,255,0.02)",
               }}
             >
               <dd
                 className="font-extrabold leading-none tracking-[-0.04em] [font-variant-numeric:tabular-nums]"
                 style={{
                   fontSize: "clamp(2.2rem,4.5vw,3.25rem)",
-                  color: "var(--color-brand-accent)",
+                  color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
                 }}
               >
                 {it.value}
               </dd>
               <dt
                 className="text-[11px] font-bold uppercase tracking-[0.18em]"
-                style={{ color: "rgba(255,255,255,0.45)" }}
+                style={{ color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.45)" }}
               >
                 {it.label}
               </dt>
               {it.caption ? (
                 <p
                   className="text-sm leading-snug"
-                  style={{ color: "rgba(255,255,255,0.28)", maxWidth: "18ch" }}
+                  style={{
+                    color: isLight ? "rgba(29,75,54,0.50)" : "rgba(255,255,255,0.28)",
+                    maxWidth: "18ch",
+                  }}
                 >
                   {it.caption}
                 </p>

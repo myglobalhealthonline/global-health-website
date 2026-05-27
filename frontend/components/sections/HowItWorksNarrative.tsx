@@ -27,13 +27,15 @@ const STEPS = [
   },
 ];
 
-export function HowItWorksNarrative() {
+export function HowItWorksNarrative({ theme = "dark" }: { theme?: "dark" | "light" }) {
+  const isLight = theme === "light";
+
   return (
     <section
       style={{
-        background: "var(--color-background-dark)",
+        background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         padding: "clamp(64px,8vw,120px) 0",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
+        borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div
@@ -45,7 +47,7 @@ export function HowItWorksNarrative() {
           <div>
             <p
               className="text-[11px] font-bold tracking-[0.22em] uppercase"
-              style={{ color: "var(--color-brand-accent)" }}
+              style={{ color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
             >
               How it works
             </p>
@@ -53,12 +55,12 @@ export function HowItWorksNarrative() {
               className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
               style={{
                 fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
-                color: "rgba(255,255,255,0.95)",
+                color: isLight ? "var(--color-text-primary)" : "rgba(255,255,255,0.95)",
                 maxWidth: "22ch",
               }}
             >
               Three steps.{" "}
-              <span style={{ color: "var(--color-brand-accent)" }}>
+              <span style={{ color: isLight ? "#8FB021" : "var(--color-brand-accent)" }}>
                 Roughly two minutes.
               </span>
             </h2>
@@ -67,7 +69,7 @@ export function HowItWorksNarrative() {
             className="leading-relaxed"
             style={{
               fontSize: "var(--text-body-lg)",
-              color: "rgba(255,255,255,0.45)",
+              color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.45)",
               maxWidth: "38ch",
             }}
           >
@@ -77,18 +79,19 @@ export function HowItWorksNarrative() {
         </div>
 
         {/* Steps — 3 cards with connector */}
-        <div className="gh-hiw-grid">
+        <div className={isLight ? "gh-hiw-grid-light" : "gh-hiw-grid"}>
           {STEPS.map((s, i) => (
-            <div key={s.n} className="gh-hiw-item">
+            <div key={s.n} className={isLight ? "gh-hiw-item-light" : "gh-hiw-item"}>
               {/* Card */}
               <div
-                className="gh-hiw-card flex flex-col h-full"
+                className={isLight ? "gh-hiw-card-light flex flex-col h-full" : "gh-hiw-card flex flex-col h-full"}
                 style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: isLight ? "rgba(255,255,255,0.80)" : "rgba(255,255,255,0.03)",
+                  border: isLight ? "1px solid rgba(29,75,54,0.12)" : "1px solid rgba(255,255,255,0.08)",
                   borderRadius: "var(--radius-card)",
                   padding: "clamp(28px,3vw,40px)",
                   transition: "border-color 0.2s, background 0.2s",
+                  boxShadow: isLight ? "0 2px 16px rgba(29,75,54,0.06)" : "none",
                 }}
               >
                 {/* Step number */}
@@ -96,7 +99,7 @@ export function HowItWorksNarrative() {
                   className="font-extrabold leading-none tracking-[-0.04em] [font-variant-numeric:tabular-nums] select-none"
                   style={{
                     fontSize: "clamp(3rem,6vw,5rem)",
-                    color: "var(--color-brand-accent)",
+                    color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
                     opacity: 0.9,
                   }}
                   aria-hidden
@@ -110,7 +113,7 @@ export function HowItWorksNarrative() {
                     className="font-extrabold tracking-[-0.02em] leading-tight"
                     style={{
                       fontSize: "clamp(1.2rem,2vw,1.5rem)",
-                      color: "rgba(255,255,255,0.92)",
+                      color: isLight ? "var(--color-text-primary)" : "rgba(255,255,255,0.92)",
                     }}
                   >
                     {s.title}
@@ -119,7 +122,7 @@ export function HowItWorksNarrative() {
                     className="mt-3 leading-relaxed"
                     style={{
                       fontSize: "var(--text-body)",
-                      color: "rgba(255,255,255,0.55)",
+                      color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.55)",
                       maxWidth: "34ch",
                     }}
                   >
@@ -131,11 +134,11 @@ export function HowItWorksNarrative() {
               {/* Connector arrow — hidden after last item */}
               {i < STEPS.length - 1 ? (
                 <div
-                  className="gh-hiw-connector"
+                  className={isLight ? "gh-hiw-connector-light" : "gh-hiw-connector"}
                   aria-hidden
                 >
                   <ArrowRight
-                    style={{ color: "rgba(176,241,34,0.35)" }}
+                    style={{ color: isLight ? "rgba(29,75,54,0.30)" : "rgba(176,241,34,0.35)" }}
                     strokeWidth={1.5}
                   />
                 </div>
@@ -146,27 +149,27 @@ export function HowItWorksNarrative() {
       </div>
 
       <style>{`
-        .gh-hiw-grid {
+        .gh-hiw-grid, .gh-hiw-grid-light {
           display: grid;
           grid-template-columns: 1fr;
           gap: 16px;
         }
-        .gh-hiw-item {
+        .gh-hiw-item, .gh-hiw-item-light {
           display: contents;
         }
-        .gh-hiw-connector {
+        .gh-hiw-connector, .gh-hiw-connector-light {
           display: none;
         }
         @media (min-width: 900px) {
-          .gh-hiw-grid {
+          .gh-hiw-grid, .gh-hiw-grid-light {
             grid-template-columns: 1fr auto 1fr auto 1fr;
             align-items: stretch;
             gap: 0;
           }
-          .gh-hiw-item {
+          .gh-hiw-item, .gh-hiw-item-light {
             display: contents;
           }
-          .gh-hiw-connector {
+          .gh-hiw-connector, .gh-hiw-connector-light {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -175,6 +178,10 @@ export function HowItWorksNarrative() {
           .gh-hiw-card:hover {
             background: rgba(176,241,34,0.05) !important;
             border-color: rgba(176,241,34,0.18) !important;
+          }
+          .gh-hiw-card-light:hover {
+            background: rgba(255,255,255,0.95) !important;
+            border-color: rgba(29,75,54,0.25) !important;
           }
         }
       `}</style>

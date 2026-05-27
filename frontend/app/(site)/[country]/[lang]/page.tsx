@@ -393,11 +393,11 @@ export default async function CountryLangHomePage({
         ctaLabel={page?.ctaLabel ?? null}
       />
       <CountryMarquee countries={marqueeCountries} />
-      <RichBodySection html={page?.body} />
+      <RichBodySection html={page?.body} theme="light" />
       <TrustRibbon items={trustItems} />
-      <ReviewBadge countryName={config.name} />
+      <ReviewBadge countryName={config.name} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} />
-      <StatsBand items={statsItems} />
+      <StatsBand items={statsItems} theme="light" />
       {/* ── Team section — featured card + full grid under one heading ── */}
       <section className="relative" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div
@@ -464,7 +464,7 @@ export default async function CountryLangHomePage({
           />
         </div>
       </section>
-      <HowItWorksNarrative />
+      <HowItWorksNarrative theme="light" />
       <FinalCTA primaryHref={generalHref} secondaryHref={doctorsHref} />
     </>
   );

@@ -13,8 +13,10 @@ import {
 
 export async function ReviewBadge({
   countryName,
+  theme = "dark",
 }: {
   countryName?: string;
+  theme?: "dark" | "light";
 }) {
   const res = await fetchPublicReviewConfig();
   const cfg: ReviewConfig | null = res.ok ? res.data : null;
@@ -28,13 +30,15 @@ export async function ReviewBadge({
       ? providers.find((p) => p.key === cfg.primaryProvider)!
       : providers[0];
 
+  const isLight = theme === "light";
+
   return (
     <section
       aria-label="Patient reviews"
       style={{
-        background: "var(--color-background-dark)",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        background: isLight ? "var(--color-background-page)" : "var(--color-background-dark)",
+        borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
+        borderBottom: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
         padding: "28px 0",
       }}
     >
@@ -43,7 +47,7 @@ export async function ReviewBadge({
         style={{ maxWidth: 1320, padding: "0 clamp(20px, 4vw, 40px)" }}
       >
         {providers.map((p) => (
-          <ProviderBlock key={p.key} provider={p} />
+          <ProviderBlock key={p.key} provider={p} isLight={isLight} />
         ))}
       </div>
 
@@ -118,7 +122,8 @@ function pickProvidersWithData(cfg: ReviewConfig): ProviderEntry[] {
   return out;
 }
 
-function ProviderBlock({ provider }: { provider: ProviderEntry }) {
+function ProviderBlock({ provider, isLight }: { provider: ProviderEntry; isLight: boolean }) {
+  const mutedColor = isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.45)";
   if (provider.key === "DOCTIFY" && provider.doctifyClinicId) {
     return (
       <div style={{ minWidth: 260 }}>
@@ -137,7 +142,7 @@ function ProviderBlock({ provider }: { provider: ProviderEntry }) {
             marginTop: 4,
             fontSize: 12,
             fontWeight: 600,
-            color: "rgba(255,255,255,0.45)",
+            color: mutedColor,
             textDecoration: "none",
             textAlign: "center",
           }}
@@ -165,7 +170,7 @@ function ProviderBlock({ provider }: { provider: ProviderEntry }) {
           style={{
             fontSize: 13,
             fontWeight: 600,
-            color: "rgba(255,255,255,0.45)",
+            color: mutedColor,
             textDecoration: "none",
           }}
         >
@@ -174,10 +179,10 @@ function ProviderBlock({ provider }: { provider: ProviderEntry }) {
       </div>
     );
   }
-  return <StaticBadge provider={provider} />;
+  return <StaticBadge provider={provider} isLight={isLight} />;
 }
 
-function StaticBadge({ provider }: { provider: ProviderEntry }) {
+function StaticBadge({ provider, isLight }: { provider: ProviderEntry; isLight: boolean }) {
   const rounded = provider.aggregate.rating.toFixed(2);
   const inner = (
     <div className="inline-flex items-center gap-3">
@@ -188,7 +193,9 @@ function StaticBadge({ provider }: { provider: ProviderEntry }) {
             className={
               star <= Math.round(provider.aggregate.rating)
                 ? "size-4 fill-amber-400 text-amber-400"
-                : "size-4 fill-white/10 text-white/10"
+                : isLight
+                  ? "size-4 fill-black/10 text-black/10"
+                  : "size-4 fill-white/10 text-white/10"
             }
             aria-hidden
           />
@@ -199,13 +206,13 @@ function StaticBadge({ provider }: { provider: ProviderEntry }) {
           fontFamily: "var(--font-display)",
           fontSize: 22,
           fontWeight: 800,
-          color: "rgba(255,255,255,0.92)",
+          color: isLight ? "var(--color-text-primary)" : "rgba(255,255,255,0.92)",
           letterSpacing: "-0.02em",
         }}
       >
         {rounded}
       </span>
-      <span style={{ fontSize: 13, color: "rgba(255,255,255,0.42)", fontWeight: 600 }}>
+      <span style={{ fontSize: 13, color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.42)", fontWeight: 600 }}>
         {provider.aggregate.count.toLocaleString()} reviews · {provider.label}
       </span>
     </div>
