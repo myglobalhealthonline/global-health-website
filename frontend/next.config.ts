@@ -59,28 +59,34 @@ const nextConfig: NextConfig = {
         // template folders so we don't need to duplicate page code.
         // The matching `redirects()` block below 301s legacy URLs to
         // these new ones so SEO migrates cleanly.
+        //
+        // Final approved slug set (from product brief):
+        //   GENERAL       → /gp-appointment
+        //   SPECIALIST    → /see-a-specialist
+        //   PRESCRIPTION  → /repeat-prescription-request
+        //   HEALTH_TEST   → /lab-tests
         {
-          source: "/:country/:lang/online-doctor-visit",
+          source: "/:country/:lang/gp-appointment",
           destination: "/:country/:lang/general-consultation",
         },
         {
-          source: "/:country/:lang/online-doctor-visit/:slug",
+          source: "/:country/:lang/gp-appointment/:slug",
           destination: "/:country/:lang/general-consultation/:slug",
         },
         {
-          source: "/:country/:lang/specialist-appointment",
+          source: "/:country/:lang/see-a-specialist",
           destination: "/:country/:lang/specialist-consultation",
         },
         {
-          source: "/:country/:lang/specialist-appointment/:slug",
+          source: "/:country/:lang/see-a-specialist/:slug",
           destination: "/:country/:lang/specialist-consultation/:slug",
         },
         {
-          source: "/:country/:lang/repeat-prescription",
+          source: "/:country/:lang/repeat-prescription-request",
           destination: "/:country/:lang/prescriptions",
         },
         {
-          source: "/:country/:lang/repeat-prescription/:slug",
+          source: "/:country/:lang/repeat-prescription-request/:slug",
           destination: "/:country/:lang/prescriptions/:slug",
         },
         {
@@ -99,28 +105,52 @@ const nextConfig: NextConfig = {
    * the historical `/general-consultation`, `/specialist-consultation`,
    * `/prescriptions`, `/tests` slugs is permanently moved to the new
    * Ads-policy-friendly URLs. Country/lang segments are preserved.
+   *
+   * The "interim" slugs from the first rename pass
+   * (`/online-doctor-visit`, `/specialist-appointment`,
+   * `/repeat-prescription`) are ALSO 301'd to the final set in case
+   * any pre-launch test traffic / Ads preview-URL cached them. Cheap
+   * insurance — no real visitors had those URLs.
+   *
    * The query string is forwarded automatically by Next's redirect.
    */
   async redirects() {
     return [
+      // Legacy → final
       {
         source: "/:country/:lang/general-consultation",
-        destination: "/:country/:lang/online-doctor-visit",
+        destination: "/:country/:lang/gp-appointment",
         permanent: true,
       },
       {
         source: "/:country/:lang/specialist-consultation",
-        destination: "/:country/:lang/specialist-appointment",
+        destination: "/:country/:lang/see-a-specialist",
         permanent: true,
       },
       {
         source: "/:country/:lang/prescriptions",
-        destination: "/:country/:lang/repeat-prescription",
+        destination: "/:country/:lang/repeat-prescription-request",
         permanent: true,
       },
       {
         source: "/:country/:lang/tests",
         destination: "/:country/:lang/lab-tests",
+        permanent: true,
+      },
+      // Interim → final (safety net)
+      {
+        source: "/:country/:lang/online-doctor-visit",
+        destination: "/:country/:lang/gp-appointment",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/specialist-appointment",
+        destination: "/:country/:lang/see-a-specialist",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/repeat-prescription",
+        destination: "/:country/:lang/repeat-prescription-request",
         permanent: true,
       },
     ];

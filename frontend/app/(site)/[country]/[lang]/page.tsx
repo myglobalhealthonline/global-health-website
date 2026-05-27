@@ -176,7 +176,7 @@ export default async function CountryLangHomePage({
   // legacy `/book-online` route stays alive as a fallback but no longer
   // surfaces from this page; both DoctorWall and FinalCTA now route at
   // the doctors index for a smoother flow.
-  const generalHref = `/${slug}/${lang}/general-consultation`;
+  const generalHref = `/${slug}/${lang}/gp-appointment`;
   const doctorsHref = `/${slug}/${lang}/doctors`;
 
   const [
@@ -208,12 +208,12 @@ export default async function CountryLangHomePage({
     mapDoctorToWallItem(d, code, `/${slug}/${lang}/doctors/${d.slug}`),
   );
 
-  const prescriptionsHref = `/${slug}/${lang}/prescriptions`;
-  const testsHref = `/${slug}/${lang}/tests`;
+  const prescriptionsHref = `/${slug}/${lang}/repeat-prescription-request`;
+  const testsHref = `/${slug}/${lang}/lab-tests`;
   const serviceCatalogItems: ServiceCatalogItem[] = [
     ...generalServices.map((s) => mapServiceToCatalogItem(s, generalHref)),
     ...specialistServices.map((s) =>
-      mapServiceToCatalogItem(s, `/${slug}/${lang}/specialist-consultation`),
+      mapServiceToCatalogItem(s, `/${slug}/${lang}/see-a-specialist`),
     ),
     ...(isCountryFeatureEnabled(config, "online-prescriptions") && prescriptionServices.length > 0
       ? (() => {

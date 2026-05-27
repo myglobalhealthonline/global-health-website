@@ -98,7 +98,7 @@ export default async function HealthTestsPage({
         data={breadcrumbJsonLd([
           { name: "Home", url: "/" },
           { name: config.name, url: `/${slug}/${lang}` },
-          { name: "Health tests", url: `/${slug}/${lang}/tests` },
+          { name: "Lab tests", url: `/${slug}/${lang}/lab-tests` },
         ])}
       />
 

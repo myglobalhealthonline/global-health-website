@@ -115,7 +115,7 @@ export default async function PrescriptionsPage({
         data={breadcrumbJsonLd([
           { name: "Home", url: "/" },
           { name: config.name, url: `/${slug}/${lang}` },
-          { name: "Online prescriptions", url: `/${slug}/${lang}/prescriptions` },
+          { name: "Repeat prescription request", url: `/${slug}/${lang}/repeat-prescription-request` },
         ])}
       />
 

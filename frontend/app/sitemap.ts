@@ -29,12 +29,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       { url: `${base}${slug}/${lang}`, changeFrequency: "weekly", priority: 0.9 },
       { url: `${base}${slug}/${lang}/doctors`, changeFrequency: "weekly", priority: 0.8 },
       {
-        url: `${base}${slug}/${lang}/general-consultation`,
+        url: `${base}${slug}/${lang}/gp-appointment`,
         changeFrequency: "weekly",
         priority: 0.8,
       },
       {
-        url: `${base}${slug}/${lang}/specialist-consultation`,
+        url: `${base}${slug}/${lang}/see-a-specialist`,
         changeFrequency: "weekly",
         priority: 0.8,
       },

@@ -37,44 +37,51 @@ type ServiceKindMeta = {
  *   - "Lab test booking" — clarifies the scope (scheduling) instead
  *     of suggesting diagnostic services.
  */
+/**
+ * Final user-approved labels + public slugs for Google Ads compliance.
+ * Enum (`AdminServiceKind`) stays GENERAL/SPECIALIST/PRESCRIPTION/
+ * HEALTH_TEST so the DB, existing Service rows, and admin sidebar
+ * paths don't need migration — only display copy + public URLs change.
+ * Old public slugs are preserved via 301 redirects in `next.config.ts`.
+ */
 export const SERVICE_KIND_META: Record<AdminServiceKind, ServiceKindMeta> = {
   GENERAL: {
-    label: "Online Doctor Visits",
-    singularLabel: "Online doctor visit",
-    shortLabel: "Doctor visit",
+    label: "Book a GP Appointment",
+    singularLabel: "GP appointment",
+    shortLabel: "GP",
     listHref: "/admin/general-consultations",
     newHref: "/admin/general-consultations/new",
-    pageTitle: "Online Doctor Visits",
-    addLabel: "Add online doctor visit",
+    pageTitle: "Book a GP Appointment",
+    addLabel: "Add GP appointment",
     emptySpecialtyLabel: "Not used",
   },
   SPECIALIST: {
-    label: "Specialist Appointments",
+    label: "See a Specialist",
     singularLabel: "Specialist appointment",
     shortLabel: "Specialist",
     listHref: "/admin/specialist-consultations",
     newHref: "/admin/specialist-consultations/new",
-    pageTitle: "Specialist Appointments",
+    pageTitle: "See a Specialist",
     addLabel: "Add specialist appointment",
     emptySpecialtyLabel: "Required",
   },
   PRESCRIPTION: {
-    label: "Repeat Prescription Requests",
+    label: "Repeat Prescription Request",
     singularLabel: "Repeat prescription request",
     shortLabel: "Repeat Rx",
     listHref: "/admin/online-prescriptions",
     newHref: "/admin/online-prescriptions/new",
-    pageTitle: "Repeat Prescription Requests",
+    pageTitle: "Repeat Prescription Request",
     addLabel: "Add repeat prescription request",
     emptySpecialtyLabel: "Not used",
   },
   HEALTH_TEST: {
-    label: "Lab Test Bookings",
+    label: "Lab Test Booking",
     singularLabel: "Lab test booking",
     shortLabel: "Lab test",
     listHref: "/admin/health-tests",
     newHref: "/admin/health-tests/new",
-    pageTitle: "Lab Test Bookings",
+    pageTitle: "Lab Test Booking",
     addLabel: "Add lab test booking",
     emptySpecialtyLabel: "Not used",
   },

@@ -145,7 +145,7 @@ export default async function CountryLangSpecialistConsultationPage({
       country: config.name,
       imageSrc: d.imageSrc ?? null,
       href: `/${slug}/${lang}/doctors/${d.slug}`,
-      bookingHref: `/${slug}/${lang}/specialist-consultation#services`,
+      bookingHref: `/${slug}/${lang}/see-a-specialist#services`,
       whatsappNumber: d.whatsappNumber,
       ctaLabel: "View profile",
     }));
@@ -156,7 +156,7 @@ export default async function CountryLangSpecialistConsultationPage({
         data={breadcrumbJsonLd([
           { name: "Home", url: "/" },
           { name: config.name, url: `/${slug}/${lang}` },
-          { name: "Specialist consultation", url: `/${slug}/${lang}/specialist-consultation` },
+          { name: "See a specialist", url: `/${slug}/${lang}/see-a-specialist` },
         ])}
       />
       <JsonLd
@@ -164,7 +164,7 @@ export default async function CountryLangSpecialistConsultationPage({
           name: `Specialists in ${config.name}`,
           description: `Network of specialists (cardiology, dermatology, psychiatry, nutrition, and more) registered to practise in ${config.name}.`,
           countryName: config.name,
-          url: `/${slug}/${lang}/specialist-consultation`,
+          url: `/${slug}/${lang}/see-a-specialist`,
           bookingUrl: ctaHref,
         })}
       />

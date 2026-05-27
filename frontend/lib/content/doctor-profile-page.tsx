@@ -285,7 +285,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                 {data.profile.country}.
               </p>
               <Link
-                href={`/${slug}/${lang}/general-consultation`}
+                href={`/${slug}/${lang}/gp-appointment`}
                 className="mt-5 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:bg-white"
                 style={{
                   background: "var(--color-brand-accent)",

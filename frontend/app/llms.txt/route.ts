@@ -27,8 +27,8 @@ export async function GET() {
     const slug = COUNTRY_CODE_TO_SLUG[c.code];
     const lang = (c.defaultLocale ?? "EN").toLowerCase();
     lines.push(`- [${c.name}](${origin}/${slug}/${lang}): country landing page with available doctors and consultation types.`);
-    lines.push(`- [${c.name} — GP consultation](${origin}/${slug}/${lang}/general-consultation): everyday primary-care consultations with a general practitioner.`);
-    lines.push(`- [${c.name} — specialist consultation](${origin}/${slug}/${lang}/specialist-consultation): consultations with specialists in cardiology, dermatology, nutrition, and more.`);
+    lines.push(`- [${c.name} — Book a GP appointment](${origin}/${slug}/${lang}/gp-appointment): general practitioners registered in ${c.name}.`);
+    lines.push(`- [${c.name} — See a specialist](${origin}/${slug}/${lang}/see-a-specialist): specialists registered in ${c.name} across cardiology, dermatology, nutrition and more.`);
     lines.push(`- [${c.name} — doctors](${origin}/${slug}/${lang}/doctors): clinician roster with qualifications and specialties.`);
     lines.push(`- [${c.name} — book online](${origin}/${slug}/${lang}/book-online): submit a booking request.`);
   }

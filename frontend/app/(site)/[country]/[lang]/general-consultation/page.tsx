@@ -134,7 +134,7 @@ export default async function CountryLangGeneralConsultationPage({
     country: config.name,
     imageSrc: d.imageSrc ?? null,
     href: `/${slug}/${lang}/doctors/${d.slug}`,
-    bookingHref: `/${slug}/${lang}/general-consultation#services`,
+    bookingHref: `/${slug}/${lang}/gp-appointment#services`,
     whatsappNumber: d.whatsappNumber,
     ctaLabel: "View profile",
   }));
@@ -145,7 +145,7 @@ export default async function CountryLangGeneralConsultationPage({
         data={breadcrumbJsonLd([
           { name: "Home", url: "/" },
           { name: config.name, url: `/${slug}/${lang}` },
-          { name: "GP consultation", url: `/${slug}/${lang}/general-consultation` },
+          { name: "GP appointment", url: `/${slug}/${lang}/gp-appointment` },
         ])}
       />
       <JsonLd
@@ -153,7 +153,7 @@ export default async function CountryLangGeneralConsultationPage({
           name: `General practitioners in ${config.name}`,
           description: `Network of general practitioners registered to practise in ${config.name}. Profiles include credentials, specialties and languages.`,
           countryName: config.name,
-          url: `/${slug}/${lang}/general-consultation`,
+          url: `/${slug}/${lang}/gp-appointment`,
           bookingUrl: ctaHref,
         })}
       />

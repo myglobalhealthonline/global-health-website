@@ -241,7 +241,7 @@ export default async function CountryLangDoctorsPage({
       <DoctorTeamTemplate
         countryName={config.name}
         doctors={doctorCards}
-        bookingHref={`/${slug}/${lang}/general-consultation`}
+        bookingHref={`/${slug}/${lang}/gp-appointment`}
         bookingLabel="Browse consultations"
       />
       <RichBodySection html={page?.body} />
