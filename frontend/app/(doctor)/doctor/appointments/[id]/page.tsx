@@ -25,7 +25,10 @@ import { PrescriptionsList } from "./_components/prescriptions-list";
 import { fetchDoctorPrescriptions } from "@/lib/api/prescriptions-api";
 import { AppointmentTabs } from "./_components/appointment-tabs";
 import { FinalizeChecklist } from "./_components/finalize-checklist";
-import { GeneratedDocumentsPanel } from "./_components/generated-documents-panel";
+import {
+  ConsultationDocumentsSection,
+  ConsultationDocumentsTrigger,
+} from "./_components/consultation-documents-section";
 import { BrazilConsentPanel } from "./_components/brazil-consent-panel";
 
 export const dynamic = "force-dynamic";
@@ -232,12 +235,13 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                         fontWeight: 800,
                       }}
                     >
-                      Generated documents
+                      Consultation documents
                     </h3>
                     <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-                      Generate PDF certificates and send them to the patient.
+                      Medical notes, prescriptions, absence certificates, and
+                      review &amp; send — all in one place.
                     </p>
-                    <GeneratedDocumentsPanel appointmentId={appointment.id} />
+                    <ConsultationDocumentsSection appointmentId={appointment.id} />
                   </section>
 
                   {appointment.countryCode.toLowerCase() === "br" ? (
@@ -382,7 +386,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             badge: signed ? "signed" : "draft",
             panel: (
               <section className="gh-card p-6">
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                   <h3
                     className="m-0 text-[var(--color-text-primary)]"
                     style={{
@@ -393,6 +397,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   >
                     Consultation note
                   </h3>
+                  <ConsultationDocumentsTrigger appointmentId={appointment.id} />
                   <span
                     className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] ${
                       signed

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { fetchDoctorPatientDetail } from "@/lib/api/doctor-api";
 import { PatientProfilePanel } from "./_components/patient-profile-panel";
+import { ConsultationHistoryPanel } from "./_components/consultation-history-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -132,6 +133,25 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
               </tbody>
             </table>
           )}
+        </section>
+
+        <section className="gh-card p-6">
+          <h3
+            className="m-0 text-[var(--color-text-primary)]"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 16,
+              fontWeight: 800,
+            }}
+          >
+            Consultation history
+          </h3>
+          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+            Medical notes, generated PDFs, and uploaded files across appointments.
+          </p>
+          <div className="mt-4">
+            <ConsultationHistoryPanel patientEmail={patient.email} />
+          </div>
         </section>
 
         {/* Documents card hidden from doctor portal per GDPR plan —

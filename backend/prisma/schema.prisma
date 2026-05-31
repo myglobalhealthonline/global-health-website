@@ -821,6 +821,7 @@ model Appointment {
   symptoms                  String?
   formResponses             Json?
   generatedDocuments        GeneratedDocument[]
+  medicalNotes              MedicalNote[]
   brazilConsentSubmissions  BrazilConsentSubmission[]
   reviewInvites             ReviewInvite[]
   /// For IN_PERSON appointments — soft FK to a known Clinic OR a free-text
@@ -933,6 +934,22 @@ model GeneratedDocument {
 
   @@index([appointmentId, documentType])
   @@index([appointmentId, sentToPatient])
+}
+
+/// Free-text clinical note per appointment (not a PDF; no review/send).
+model MedicalNote {
+  id                String      @id @default(cuid())
+  appointmentId     String
+  patientEmail      String
+  content           String
+  consultationType  String?
+  createdByDoctorId String
+  createdByName     String
+  appointment       Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  createdAt         DateTime    @default(now())
+
+  @@index([patientEmail, createdAt])
+  @@index([appointmentId])
 }
 
 model BrazilConsentSubmission {

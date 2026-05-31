@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{title}}</title>
+  {{{styles}}}
+</head>
+<body>
+  <div class="header">
+    <div class="brand">Global Health</div>
+    <h1>{{title}}</h1>
+  </div>
+  <p style="margin:0 0 12px;color:#4a4a4a;">This certifies that <span class="field-value">{{patientName}}</span> is unfit for work or study for the period below.</p>
+  <div class="patient-card">
+    {{#if patientIdLine}}<p class="field-row"><span class="field-label">ID:</span> <span class="field-value">{{patientIdLine}}</span></p>{{/if}}
+    {{#if birthDate}}<p class="field-row"><span class="field-label">Date of birth:</span> <span class="field-value">{{birthDate}}</span></p>{{/if}}
+    {{#if address}}<p class="field-row"><span class="field-label">Address:</span> <span class="field-value">{{address}}</span></p>{{/if}}
+    <p class="field-row"><span class="field-label">Consultation date:</span> <span class="field-value">{{consultationDate}}</span></p>
+  </div>
+  <div class="patient-body-gap" aria-hidden="true"></div>
+  <p class="section-title">Medical absence period</p>
+  {{#if startDate}}<p class="field-row"><span class="field-label">From:</span> <span class="field-value">{{startDate}}</span></p>{{/if}}
+  {{#if endDate}}<p class="field-row"><span class="field-label">To:</span> <span class="field-value">{{endDate}}</span></p>{{/if}}
+  {{#if reason}}<p class="field-row"><span class="field-label">Reason:</span> <span class="field-value">{{reason}}</span></p>{{/if}}
+  <div class="signature-block">
+    <p class="field-row"><span class="field-label">Doctor:</span> <span class="field-value">{{doctorName}}</span></p>
+    <p class="field-row"><span class="field-label">Registration:</span> <span class="field-value">{{registrationNumber}}</span></p>
+    <p class="signature-line"><span class="sig-label">Prescriber signature:</span><span class="sig-name">{{doctorName}}</span></p>
+  </div>
+  <div class="footer-gap" aria-hidden="true"></div>
+</body>
+</html>

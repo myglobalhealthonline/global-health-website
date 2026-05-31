@@ -7,47 +7,112 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   deleteGeneratedDocument,
   generateAppointmentDocument,
+  getAppointmentDocumentContext,
   getGeneratedDocumentFile,
   listGeneratedDocuments,
   sendGeneratedDocuments,
 } from "../modules/generated-documents/generated-documents.service.js";
 
+const baseFields = z.record(z.string()).optional();
+
 const generateSchema = z
   .object({
     type: z.nativeEnum(GeneratedDocumentType),
-    fields: z.record(z.string()).optional(),
+    fields: baseFields,
+    editDocumentId: z.string().min(1).optional(),
   })
-  .refine(
-    (data) =>
-      data.type !== GeneratedDocumentType.OTHER ||
-      Boolean(data.fields?.customLabel?.trim()),
-    {
-      message: "Provide fields.customLabel when type=OTHER",
-      path: ["fields", "customLabel"],
-    },
-  );
+  .superRefine((data, ctx) => {
+    if (data.type === GeneratedDocumentType.OTHER && !data.fields?.customLabel?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Provide fields.customLabel when type=OTHER",
+        path: ["fields", "customLabel"],
+      });
+    }
+    if (data.type === GeneratedDocumentType.PRESCRIPTION && !data.fields?.medication1?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "medication1 is required for prescriptions",
+        path: ["fields", "medication1"],
+      });
+    }
+    if (data.type === GeneratedDocumentType.ABSENCE_CERTIFICATE && !data.fields?.endDate?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "endDate is required for absence certificates",
+        path: ["fields", "endDate"],
+      });
+    }
+    if (data.type === GeneratedDocumentType.EXAMS_PRESCRIPTION && !data.fields?.exams?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "exams is required for examinations prescription",
+        path: ["fields", "exams"],
+      });
+    }
+  });
 
 const sendSchema = z.object({
   documentIds: z.array(z.string().min(1)).min(1),
 });
 
+function mapDocRow(r: {
+  id: string;
+  documentType: GeneratedDocumentType;
+  fileName: string;
+  sentToPatient: boolean;
+  createdAt: Date;
+  metadata: unknown;
+}) {
+  const metadata =
+    r.metadata && typeof r.metadata === "object" && !Array.isArray(r.metadata)
+      ? (r.metadata as Record<string, string>)
+      : null;
+  return {
+    id: r.id,
+    documentType: r.documentType,
+    fileName: r.fileName,
+    sentToPatient: r.sentToPatient,
+    createdAt: r.createdAt.toISOString(),
+    metadata,
+  };
+}
+
 const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
+  app.get<{ Params: { id: string } }>(
+    "/api/doctor/appointments/:id/documents/context",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      try {
+        const context = await getAppointmentDocumentContext(
+          request.params.id,
+          auth.doctorId,
+        );
+        if (!context) return reply.status(404).send(errorResponse("Appointment not found"));
+        return okResponse(context);
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not load document context"));
+      }
+    },
+  );
+
   app.get<{ Params: { id: string } }>(
     "/api/doctor/appointments/:id/documents/generated",
     async (request, reply) => {
       const auth = await verifyDoctorAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       try {
-        const rows = await listGeneratedDocuments(request.params.id, auth.doctorId);
-        if (!rows) return reply.status(404).send(errorResponse("Appointment not found"));
+        const result = await listGeneratedDocuments(request.params.id, auth.doctorId);
+        if (!result) return reply.status(404).send(errorResponse("Appointment not found"));
         return okResponse({
-          items: rows.map((r) => ({
-            id: r.id,
-            documentType: r.documentType,
-            fileName: r.fileName,
-            sentToPatient: r.sentToPatient,
-            createdAt: r.createdAt.toISOString(),
-          })),
+          items: result.items.map(mapDocRow),
+          queue: result.queue.map(mapDocRow),
+          history: result.history.map(mapDocRow),
         });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -69,13 +134,15 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid payload", body.error.flatten()));
       }
       try {
-        const row = await generateAppointmentDocument({
+        const result = await generateAppointmentDocument({
           appointmentId: request.params.id,
           doctorId: auth.doctorId,
           documentType: body.data.type,
           fields: body.data.fields,
+          editDocumentId: body.data.editDocumentId,
         });
-        if (!row) return reply.status(404).send(errorResponse("Appointment not found"));
+        if (!result) return reply.status(404).send(errorResponse("Appointment not found"));
+        const { row, pdfUrl, healthPortalUrl, healthPortalLabel } = result;
         return reply.status(201).send(
           okResponse(
             {
@@ -86,6 +153,9 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
                 sentToPatient: row.sentToPatient,
                 createdAt: row.createdAt.toISOString(),
               },
+              pdfUrl,
+              healthPortalUrl,
+              healthPortalLabel,
             },
             "Document generated",
           ),

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{title}}</title>
+  {{{styles}}}
+</head>
+<body>
+  <div class="header">
+    <div class="brand">Global Health</div>
+    <h1>{{title}}</h1>
+  </div>
+  <div class="patient-card">
+    <p class="field-row"><span class="field-label">Patient name:</span> <span class="field-value">{{patientName}}</span></p>
+    {{#if patientIdLine}}<p class="field-row"><span class="field-label">ID:</span> <span class="field-value">{{patientIdLine}}</span></p>{{/if}}
+    {{#if birthDate}}<p class="field-row"><span class="field-label">Date of birth:</span> <span class="field-value">{{birthDate}}</span></p>{{/if}}
+    {{#if address}}<p class="field-row"><span class="field-label">Address:</span> <span class="field-value">{{address}}</span></p>{{/if}}
+    <p class="field-row"><span class="field-label">Consultation date:</span> <span class="field-value">{{consultationDate}}</span></p>
+  </div>
+  <div class="patient-body-gap" aria-hidden="true"></div>
+  <p class="section-title">Examinations requested</p>
+  <div class="content-block" style="white-space:pre-line">{{examsNotes}}</div>
+  <div class="signature-block">
+    <p class="field-row"><span class="field-label">Doctor:</span> <span class="field-value">{{doctorName}}</span></p>
+    <p class="field-row"><span class="field-label">Registration:</span> <span class="field-value">{{registrationNumber}}</span></p>
+    <p class="signature-line"><span class="sig-label">Prescriber signature:</span><span class="sig-name">{{doctorName}}</span></p>
+  </div>
+  <div class="footer-gap" aria-hidden="true"></div>
+</body>
+</html>

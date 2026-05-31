@@ -28,6 +28,10 @@ export function buildPatientIdLine(
       BR: "CPF",
       IE: "PPS",
       ES: "DNI",
+      SP: "DNI",
+      CZ: "Rodné číslo",
+      RM: "CNP",
+      RO: "CNP",
     }[upper] ?? "Tax ID";
   if (profile.taxIdNumber) {
     return `${taxLabel}: ${profile.taxIdNumber}`;
@@ -38,6 +42,10 @@ export function buildPatientIdLine(
         PT: "Cartão de Cidadão",
         BR: "RG",
         ES: "DNI",
+        SP: "DNI",
+        CZ: "Občanský průkaz",
+        RM: "CI",
+        RO: "CI",
       }[upper] ?? "National ID";
     return `${nationalLabel}: ${profile.nationalIdNumber}`;
   }

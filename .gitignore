@@ -36,6 +36,12 @@ frontend-dev*.log
 preview-*.html
 preview-*.html.artifact.json
 
+# Generated PDF/DOCX QA output and local unzip inspection
+/backend/test-output/
+
+# Alex Brush TTF is copied on postinstall (see assets/fonts/README.md)
+/backend/assets/fonts/*.ttf
+
 # Large design-reference archives (Figma/Stitch exports). Keep them
 # out of the repo — they're 24 MB each and not consumed at build time.
 docs/design-fetch*.zip

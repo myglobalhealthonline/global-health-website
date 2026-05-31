@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{title}}</title>
+  {{{styles}}}
+</head>
+<body>
+  <div class="header">
+    <div class="brand">Global Health</div>
+    <h1>{{title}}</h1>
+  </div>
+  <dl class="meta">
+    <dt>Patient</dt>
+    <dd>{{patientName}}</dd>
+    {{#if patientIdLine}}<dt>ID</dt><dd>{{patientIdLine}}</dd>{{/if}}
+    {{#if address}}<dt>Address</dt><dd>{{address}}</dd>{{/if}}
+    <dt>Doctor</dt>
+    <dd>{{doctorName}}</dd>
+    <dt>Registration</dt>
+    <dd>{{registrationNumber}}</dd>
+    <dt>Date</dt>
+    <dd>{{currentDate}}</dd>
+  </dl>
+  {{#if body}}
+  <div class="body-block">{{body}}</div>
+  {{/if}}
+  <div class="signature">
+    <p>{{doctorName}}</p>
+    <p>{{registrationNumber}}</p>
+  </div>
+</body>
+</html>

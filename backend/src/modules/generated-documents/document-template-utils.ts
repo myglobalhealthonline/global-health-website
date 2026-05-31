@@ -1,0 +1,54 @@
+import type { GeneratedDocumentType } from "@prisma/client";
+
+export const TEMPLATE_FILE_BY_TYPE: Record<GeneratedDocumentType, string> = {
+  EXAMS_PRESCRIPTION: "exams-prescription.html",
+  ABSENCE_CERTIFICATE: "absence-certificate.html",
+  PRESCRIPTION: "prescription.html",
+  OTHER: "other.html",
+};
+
+/** Join newline-separated exams with ", " and append optional notes (spec). */
+export function formatExamsNotes(exams: string | undefined, notes: string | undefined): string {
+  const lines = (exams ?? "")
+    .split(/\r?\n/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const combined = lines.join(", ");
+  const notePart = (notes ?? "").trim();
+  if (!combined && !notePart) return "";
+  if (!notePart) return combined;
+  if (!combined) return notePart;
+  return `${combined}  ${notePart}`;
+}
+
+export function formatDateDdMmYyyy(value: string | Date | null | undefined): string {
+  if (!value) return "";
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return String(value);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+export const ABSENCE_DEFAULT_REASON = "Medical Confidentiality (GDPR)";
+
+/** Document types that appear in Review & Send queue. */
+export const REVIEW_QUEUE_TYPES: GeneratedDocumentType[] = [
+  "EXAMS_PRESCRIPTION",
+  "ABSENCE_CERTIFICATE",
+  "OTHER",
+];
+
+export function isInReviewQueue(documentType: GeneratedDocumentType, sentToPatient: boolean): boolean {
+  return REVIEW_QUEUE_TYPES.includes(documentType) && sentToPatient === false;
+}
+
+/** History visibility per spec. */
+export function isVisibleInHistory(
+  documentType: GeneratedDocumentType,
+  sentToPatient: boolean,
+): boolean {
+  if (documentType === "PRESCRIPTION") return true;
+  return sentToPatient === true;
+}

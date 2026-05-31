@@ -1,11 +1,38 @@
 # Railway backend service — set Root Directory to `backend`.
 # Uses Nixpacks (see backend/railway.json). Prisma migrate runs on start.
+#
+# LibreOffice: branded DOCX → PDF (IE, PT, ES, CZ, RO).
+# Playwright: HTML PDF fallback when no DOCX pack (e.g. Brazil).
+# postinstall syncs Templates → assets/docx-templates and Alex Brush font.
 
 [phases.setup]
 nixPkgs = ["nodejs_22", "pnpm"]
+aptPkgs = [
+  "libreoffice",
+  "libreoffice-writer",
+  "fontconfig",
+  "fonts-liberation",
+  "libnss3",
+  "libatk1.0-0",
+  "libatk-bridge2.0-0",
+  "libcups2",
+  "libdrm2",
+  "libxkbcommon0",
+  "libxcomposite1",
+  "libxdamage1",
+  "libxfixes3",
+  "libxrandr2",
+  "libgbm1",
+  "libasound2",
+  "libpango-1.0-0",
+  "libcairo2",
+]
 
 [phases.install]
-cmds = ["pnpm install --no-frozen-lockfile"]
+cmds = [
+  "pnpm install --frozen-lockfile",
+  "npx playwright install chromium",
+]
 
 [phases.build]
 cmds = ["pnpm run build"]
