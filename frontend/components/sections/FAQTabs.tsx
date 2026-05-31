@@ -14,14 +14,15 @@ export function FAQTabs({ groups }: { groups: FAQGroup[] }) {
       {/* Tab bar */}
       <div style={{ borderBottom: "1px solid rgba(29,75,54,0.12)" }}>
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <div role="tablist" className="flex overflow-x-auto" style={{ gap: 0 }}>
+          <div role="tablist" className="flex overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" style={{ gap: 0 }}>
             {groups.map((group, i) => {
               const isActive = i === activeIdx;
               return (
                 <button
                   key={group.eyebrow}
+                  type="button"
                   role="tab"
-                  aria-selected={isActive}
+                  aria-selected={isActive ? "true" : "false"}
                   onClick={() => setActiveIdx(i)}
                   className="whitespace-nowrap px-6 py-4 text-sm transition-colors duration-150"
                   style={{
@@ -29,15 +30,14 @@ export function FAQTabs({ groups }: { groups: FAQGroup[] }) {
                     color: isActive
                       ? "var(--color-brand-primary)"
                       : "var(--color-text-muted)",
+                    borderTop: "none",
+                    borderLeft: "none",
+                    borderRight: "none",
                     borderBottom: isActive
                       ? "2px solid var(--color-brand-primary)"
                       : "2px solid transparent",
                     marginBottom: -1,
                     background: "none",
-                    border: "none",
-                    borderBottom: isActive
-                      ? "2px solid var(--color-brand-primary)"
-                      : "2px solid transparent",
                     cursor: "pointer",
                   }}
                 >

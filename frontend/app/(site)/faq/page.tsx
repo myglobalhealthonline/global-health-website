@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SITE_NAME } from "@/lib/constants";
 import { PageHero } from "@/components/sections/PageHero";
 import { FAQSection } from "@/components/sections/FAQSection";
+import { FAQTabs } from "@/components/sections/FAQTabs";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -129,73 +130,8 @@ export default function FAQPage() {
         secondaryHref="/"
       />
 
-      {/* Alternating light/dark FAQ accordion groups */}
-      <div>
-        {FAQ_GROUPS.map((group, i) => {
-          const isLight = i % 2 === 0;
-          return (
-            <section
-              key={group.title}
-              style={{
-                background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
-                borderTop: i === 0 ? "1px solid rgba(29,75,54,0.10)" : "none",
-              }}
-            >
-              <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section-tight">
-                <div className="mx-auto max-w-3xl">
-                  <p
-                    className="gh-eyebrow"
-                    style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.20em", textTransform: "uppercase", color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
-                  >
-                    {group.eyebrow}
-                  </p>
-                  <h2
-                    className="mt-3 font-extrabold tracking-[-0.025em] leading-[1.05]"
-                    style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.5rem)", color: isLight ? "var(--color-text-primary)" : "rgba(255,255,255,0.92)" }}
-                  >
-                    {group.title}
-                  </h2>
-                  <div
-                    className="mt-8"
-                    style={{ borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.08)" }}
-                  >
-                    {group.items.map((item) => (
-                      <details key={item.question} className="group" style={{ borderBottom: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.08)" }}>
-                        <summary className="flex cursor-pointer list-none items-start justify-between gap-4 py-5">
-                          <span
-                            className={`text-base font-semibold transition-colors ${isLight ? "group-hover:text-[var(--color-brand-primary)]" : "group-hover:text-[var(--color-brand-accent)]"}`}
-                            style={{ color: isLight ? "var(--color-text-primary)" : "rgba(255,255,255,0.88)" }}
-                          >
-                            {item.question}
-                          </span>
-                          <span
-                            className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
-                            style={{
-                              border: isLight ? "1px solid rgba(29,75,54,0.20)" : "1px solid rgba(255,255,255,0.15)",
-                              color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
-                              background: isLight ? "rgba(29,75,54,0.06)" : "rgba(176,241,34,0.06)",
-                            }}
-                          >
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                              <path d="M7 1V13M1 7H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                            </svg>
-                          </span>
-                        </summary>
-                        <p
-                          className="pb-5 max-w-[62ch] text-sm leading-relaxed"
-                          style={{ color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.65)" }}
-                        >
-                          {item.answer}
-                        </p>
-                      </details>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </section>
-          );
-        })}
-      </div>
+      {/* Tabbed FAQ */}
+      <FAQTabs groups={FAQ_GROUPS} />
 
       {/* DARK — tail CTA */}
       <section
