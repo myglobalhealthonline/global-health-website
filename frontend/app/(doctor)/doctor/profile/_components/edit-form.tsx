@@ -4,6 +4,10 @@ import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, Trash2 } from "lucide-react";
 import { DoctorBioRichTextField } from "@/app/(admin)/admin/doctors/_components/doctor-bio-rich-text-field";
+import {
+  LanguagePicker,
+  canonicalizeLanguages,
+} from "@/components/forms/LanguagePicker";
 
 /**
  * Doctor self-edit profile form. Only mutates the fields the doctor is
@@ -52,7 +56,10 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
   const [qualifications, setQualifications] = useState(
     initial.qualifications.join("\n"),
   );
-  const [languages, setLanguages] = useState(initial.languages.join(", "));
+  // Canonical labels picked from the shared registry (not free text).
+  const [languages, setLanguages] = useState<string[]>(() =>
+    canonicalizeLanguages(initial.languages),
+  );
   const [whatsappNumber, setWhatsappNumber] = useState(initial.whatsappNumber);
   const [photoPath, setPhotoPath] = useState<string | null>(
     initial.profileImagePath,
@@ -127,10 +134,7 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
         .split("\n")
         .map((line) => line.trim())
         .filter(Boolean),
-      languages: languages
-        .split(",")
-        .map((line) => line.trim())
-        .filter(Boolean),
+      languages: languages.map((l) => l.trim()).filter(Boolean),
       whatsappNumber: whatsappNumber.trim() || null,
     };
     startTransition(async () => {
@@ -211,19 +215,16 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
               </span>
             </label>
 
+            <div className="flex flex-col gap-2">
+              <span className="gh-field-label">Languages</span>
+              <LanguagePicker selected={languages} onChange={setLanguages} />
+              <span className="text-xs text-[var(--color-text-muted)]">
+                Pick from the list so languages stay consistent on your
+                public profile + doctor cards.
+              </span>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
-              <label className="flex flex-col gap-2">
-                <span className="gh-field-label">Languages</span>
-                <input
-                  className="gh-input min-w-0"
-                  value={languages}
-                  onChange={(e) => setLanguages(e.target.value)}
-                  placeholder="English, Portuguese"
-                />
-                <span className="text-xs text-[var(--color-text-muted)]">
-                  Comma-separated. Used on public doctor cards.
-                </span>
-              </label>
               <label className="flex flex-col gap-2">
                 <span className="gh-field-label">WhatsApp number</span>
                 <input
