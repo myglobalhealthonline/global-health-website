@@ -253,6 +253,16 @@ export function DoctorProfileTemplate({
                 ) : null}
               </div>
 
+              {/* Registration number */}
+              {profile.imcRegistration ? (
+                <p className="mt-6 text-[13px]" style={{ color: "rgba(255,255,255,0.45)" }}>
+                  <span style={{ color: "rgba(255,255,255,0.28)" }}>Registration No.</span>{" "}
+                  <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>
+                    {profile.imcRegistration}
+                  </span>
+                </p>
+              ) : null}
+
               {/* CTA buttons */}
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 {/* Primary — lime, dark text */}

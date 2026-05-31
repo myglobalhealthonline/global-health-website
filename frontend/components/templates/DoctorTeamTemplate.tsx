@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
@@ -34,6 +34,9 @@ type DoctorTeamTemplateProps = {
   bookingHref: string;
   bookingLabel: string;
   showBottomCta?: boolean;
+  /** Optional filter bar rendered at the top of the grid section
+   *  (above the doctor cards, on the dark background). */
+  filters?: ReactNode;
 };
 
 export function DoctorTeamTemplate({
@@ -42,10 +45,14 @@ export function DoctorTeamTemplate({
   bookingHref,
   bookingLabel,
   showBottomCta = false,
+  filters,
 }: DoctorTeamTemplateProps) {
   const [page, setPage] = useState(0);
   const totalPages = Math.ceil(doctors.length / PAGE_SIZE);
-  const paged = doctors.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  // Clamp so a filter that shrinks the list (URL nav keeps the page
+  // state) never slices past the end into an empty grid.
+  const safePage = Math.min(page, Math.max(0, totalPages - 1));
+  const paged = doctors.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
 
   return (
     <main style={{ background: "var(--color-background-dark)" }}>
@@ -72,6 +79,11 @@ export function DoctorTeamTemplate({
       {/* GRID — light soft section, DoctorCard components */}
       <section className="gh-section" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="gh-container">
+          {/* Filter bar (language + specialty) — rendered above the grid
+              so it reads as part of the directory, not a stray strip
+              above the hero. Stays visible on empty results so the user
+              can clear an over-narrow filter. */}
+          {filters}
           {doctors.length === 0 ? (
             <div className="mx-auto max-w-[480px] text-center">
               <h2
@@ -100,15 +112,15 @@ export function DoctorTeamTemplate({
                     className="text-[11px] font-bold tabular-nums"
                     style={{ color: "rgba(255,255,255,0.55)" }}
                   >
-                    {page + 1} / {totalPages}
+                    {safePage + 1} / {totalPages}
                   </span>
                   <button
                     onClick={() => setPage((p) => Math.max(0, p - 1))}
-                    disabled={page === 0}
+                    disabled={safePage === 0}
                     aria-label="Previous page"
                     className="inline-flex size-10 items-center justify-center rounded-full border transition-opacity"
                     style={
-                      page === 0
+                      safePage === 0
                         ? { opacity: 0.3, borderColor: "currentColor" }
                         : {
                             backgroundColor: "var(--color-brand-accent)",
@@ -123,11 +135,11 @@ export function DoctorTeamTemplate({
                     onClick={() =>
                       setPage((p) => Math.min(totalPages - 1, p + 1))
                     }
-                    disabled={page === totalPages - 1}
+                    disabled={safePage === totalPages - 1}
                     aria-label="Next page"
                     className="inline-flex size-10 items-center justify-center rounded-full border transition-opacity"
                     style={
-                      page === totalPages - 1
+                      safePage === totalPages - 1
                         ? { opacity: 0.3, borderColor: "currentColor" }
                         : {
                             backgroundColor: "var(--color-brand-accent)",

@@ -17,82 +17,29 @@ import {
   type PublicLocale,
 } from "@/lib/content/get-public-page";
 import { RichBodySection } from "@/components/sections/RichBodySection";
+import { DoctorFilters, type FilterGroup } from "@/components/sections/DoctorFilters";
+import { languageKey, languageLabel } from "@/lib/content/languages";
 import { SITE_NAME } from "@/lib/constants";
 
 type Params = { country: string; lang: string };
-type SearchParams = { lang?: string | string[] };
+type SearchParams = { lang?: string | string[]; specialty?: string | string[] };
 
-/** Normalize a language token to an ISO 639-1 code so chip toggles and
- *  filters line up regardless of how the doctor's language list is
- *  stored (e.g. "Portuguese", "pt", "PT", "Português").
- *
- *  Fail-closed for unmapped names: returns the lowercased raw value
- *  unchanged. Truncating the first two characters silently produces
- *  wrong codes for many languages ("Dutch" → "du" instead of "nl",
- *  "Swedish" → "sw" instead of "sv"). When `getLanguageKey` returns an
- *  unmapped value, comparisons against the named-map keys simply miss
- *  — which surfaces the inconsistency in the chip filter UI instead of
- *  silently mis-categorising doctors. */
-function langKey(raw: string): string {
-  const s = raw.trim().toLowerCase();
-  // Already a code (or "ro" / "pt" etc.). 2-char codes are accepted as
-  // ISO 639-1; 3-char codes are accepted as ISO 639-2/3.
-  if (s.length <= 3) return s;
-  const namedMap: Record<string, string> = {
-    english: "en",
-    português: "pt",
-    portuguese: "pt",
-    español: "es",
-    spanish: "es",
-    deutsch: "de",
-    german: "de",
-    français: "fr",
-    french: "fr",
-    italiano: "it",
-    italian: "it",
-    română: "ro",
-    romanian: "ro",
-    čeština: "cs",
-    czech: "cs",
-    polski: "pl",
-    polish: "pl",
-    nederlands: "nl",
-    dutch: "nl",
-    svenska: "sv",
-    swedish: "sv",
-    العربية: "ar",
-    arabic: "ar",
-    русский: "ru",
-    russian: "ru",
-    हिन्दी: "hi",
-    hindi: "hi",
-    urdu: "ur",
-    اردو: "ur",
-    magyar: "hu",
-    hungarian: "hu",
-    slovenčina: "sk",
-    slovak: "sk",
-    suomi: "fi",
-    finnish: "fi",
-    norsk: "no",
-    norwegian: "no",
-    dansk: "da",
-    danish: "da",
-    ελληνικά: "el",
-    greek: "el",
-    "中文": "zh",
-    chinese: "zh",
-    日本語: "ja",
-    japanese: "ja",
-    한국어: "ko",
-    korean: "ko",
-    türkçe: "tr",
-    turkish: "tr",
-  };
-  // Fail closed — unknown names round-trip as-is. The filter chip will
-  // show the raw lowercased value (e.g. "tagalog"), which is honest
-  // about what's stored. Op can add a mapping in this list.
-  return namedMap[s] ?? s;
+/** Stable slug for a specialty name so it survives in the URL filter
+ *  param (e.g. "Cardiology" → "cardiology", "Women's Health" →
+ *  "womens-health"). */
+function specialtySlug(name: string): string {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Parse a comma-or-repeat search param into a clean string[]. */
+function parseMultiParam(raw: string | string[] | undefined): string[] {
+  return (Array.isArray(raw) ? raw.flatMap((v) => v.split(",")) : (raw ?? "").split(","))
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
 }
 
 export async function generateStaticParams(): Promise<Params[]> {
@@ -142,33 +89,48 @@ export default async function CountryLangDoctorsPage({
   if (!isSupportedLocale(lang)) notFound();
 
   const sp = searchParams ? await searchParams : {};
-  // Accept `?lang=es,pt`, `?lang=es&lang=pt`, or single value.
-  const langParamRaw = sp?.lang;
-  const filterLangs = (
-    Array.isArray(langParamRaw)
-      ? langParamRaw.flatMap((v) => v.split(","))
-      : (langParamRaw ?? "").split(",")
-  )
-    .map((s) => langKey(s))
-    .filter((s) => s.length > 0);
+  // Active filters from the URL. Languages keyed by ISO code; specialties
+  // by slug. Accept `?lang=es,pt`, `?lang=es&lang=pt`, single value, etc.
+  const filterLangs = parseMultiParam(sp?.lang).map((s) => languageKey(s));
+  const filterSpecs = parseMultiParam(sp?.specialty).map((s) => specialtySlug(s));
 
   const [doctors, page] = await Promise.all([
     getCountryDoctors(code),
     getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale),
   ]);
 
-  // All language tokens advertised by at least one doctor in this country.
-  // Drives the chip filter row. Sorted alphabetically for stable order.
-  const allLangs = Array.from(
-    new Set(doctors.flatMap((d) => (d.languages ?? []).map(langKey))),
-  ).sort();
+  // Distinct language codes + specialty slugs advertised by at least one
+  // doctor in this country — these drive the filter chips. Sorted by
+  // display label for a stable, readable order.
+  const langOptions = Array.from(
+    new Map(
+      doctors
+        .flatMap((d) => d.languages ?? [])
+        .map((token) => [languageKey(token), languageLabel(token)] as const),
+    ).entries(),
+  ).sort((a, b) => a[1].localeCompare(b[1]));
 
-  const filteredDoctors =
-    filterLangs.length === 0
-      ? doctors
-      : doctors.filter((d) =>
-          (d.languages ?? []).some((l) => filterLangs.includes(langKey(l))),
-        );
+  const specOptions = Array.from(
+    new Map(
+      doctors
+        .flatMap((d) => d.specialties ?? [])
+        .map((name) => [specialtySlug(name), name] as const),
+    ).entries(),
+  ).sort((a, b) => a[1].localeCompare(b[1]));
+
+  // A doctor passes when it matches EVERY active filter group (AND across
+  // groups) and ANY chip within a group (OR within a group).
+  const filteredDoctors = doctors.filter((d) => {
+    const docLangCodes = (d.languages ?? []).map(languageKey);
+    const docSpecSlugs = (d.specialties ?? []).map(specialtySlug);
+    const langOk =
+      filterLangs.length === 0 ||
+      filterLangs.some((code) => docLangCodes.includes(code));
+    const specOk =
+      filterSpecs.length === 0 ||
+      filterSpecs.some((s) => docSpecSlugs.includes(s));
+    return langOk && specOk;
+  });
 
   const doctorCards = filteredDoctors.map((d) => ({
     name: d.fullName,
@@ -190,13 +152,48 @@ export default async function CountryLangDoctorsPage({
     ctaLabel: "View profile",
   }));
 
-  function chipHref(code: string, currentlyOn: boolean): string {
-    const next = new Set(filterLangs);
-    if (currentlyOn) next.delete(code);
-    else next.add(code);
-    const qs = next.size > 0 ? `?lang=${Array.from(next).join(",")}` : "";
-    return `/${slug}/${lang}/doctors${qs}`;
+  // Build a toggle href: flips one token in its param while preserving
+  // the OTHER active filter group. Keeps language + specialty filters
+  // independent so toggling a language doesn't wipe a specialty pick.
+  function toggleHref(
+    param: "lang" | "specialty",
+    token: string,
+    activeList: string[],
+    otherParam: "lang" | "specialty",
+    otherList: string[],
+  ): string {
+    const next = new Set(activeList);
+    if (next.has(token)) next.delete(token);
+    else next.add(token);
+    const qs = new URLSearchParams();
+    if (next.size > 0) qs.set(param, Array.from(next).join(","));
+    if (otherList.length > 0) qs.set(otherParam, otherList.join(","));
+    const str = qs.toString();
+    return `/${slug}/${lang}/doctors${str ? `?${str}` : ""}`;
   }
+
+  const hasActive = filterLangs.length > 0 || filterSpecs.length > 0;
+
+  const filterGroups: FilterGroup[] = [
+    {
+      heading: "Speaks",
+      options: langOptions.map(([codeKey, label]) => ({
+        token: codeKey,
+        label,
+        active: filterLangs.includes(codeKey),
+        href: toggleHref("lang", codeKey, filterLangs, "specialty", filterSpecs),
+      })),
+    },
+    {
+      heading: "Specialty",
+      options: specOptions.map(([specKey, name]) => ({
+        token: specKey,
+        label: name,
+        active: filterSpecs.includes(specKey),
+        href: toggleHref("specialty", specKey, filterSpecs, "lang", filterLangs),
+      })),
+    },
+  ];
 
   return (
     <>
@@ -207,46 +204,18 @@ export default async function CountryLangDoctorsPage({
           { name: "Doctors", url: `/${slug}/${lang}/doctors` },
         ])}
       />
-      {allLangs.length > 1 ? (
-        <nav
-          aria-label="Filter doctors by spoken language"
-          className="mx-auto mt-6 flex max-w-6xl flex-wrap items-center gap-2 px-4 sm:px-6"
-        >
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-muted)]">
-            Speaks
-          </span>
-          {allLangs.map((code) => {
-            const on = filterLangs.includes(code);
-            return (
-              <a
-                key={code}
-                href={chipHref(code, on)}
-                aria-pressed={on}
-                className={
-                  on
-                    ? "inline-flex items-center rounded-full bg-[var(--color-brand-primary)] px-3 py-1 text-[12px] font-bold uppercase tracking-[0.08em] text-white"
-                    : "inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-[var(--color-text-body)] hover:border-[var(--color-brand-primary)] hover:text-[var(--color-brand-primary)]"
-                }
-              >
-                {code.toUpperCase()}
-              </a>
-            );
-          })}
-          {filterLangs.length > 0 ? (
-            <a
-              href={`/${slug}/${lang}/doctors`}
-              className="ml-2 text-[12px] font-semibold text-[var(--color-text-muted)] underline decoration-dotted hover:text-[var(--color-brand-primary)]"
-            >
-              Clear
-            </a>
-          ) : null}
-        </nav>
-      ) : null}
       <DoctorTeamTemplate
         countryName={config.name}
         doctors={doctorCards}
         bookingHref={`/${slug}/${lang}/gp-appointment`}
         bookingLabel="Browse consultations"
+        filters={
+          <DoctorFilters
+            groups={filterGroups}
+            clearHref={`/${slug}/${lang}/doctors`}
+            hasActive={hasActive}
+          />
+        }
       />
       <RichBodySection html={page?.body} />
     </>

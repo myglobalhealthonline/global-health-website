@@ -1,5 +1,6 @@
 import type { AdminCountryDto, AdminDoctorDto, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
 import { RichTextHtmlField } from "../../_components/rich-text-html-field";
+import { LanguageMultiSelect } from "./language-multiselect";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
@@ -206,29 +207,20 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
           <span className="text-xs text-[var(--color-text-muted)]">One qualification per line. Shown on the public profile.</span>
         </label>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="flex flex-col gap-2">
-            <span className="gh-field-label">WhatsApp number</span>
-            <input
-              name="whatsappNumber"
-              className="gh-input min-w-0"
-              defaultValue={initial?.whatsappNumber ?? ""}
-              placeholder="e.g. +353871234567"
-            />
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="gh-field-label">Languages</span>
-            <input
-              name="languagesCsv"
-              className="gh-input min-w-0"
-              defaultValue={(initial?.languages ?? []).join(", ")}
-              placeholder="English, Portuguese"
-            />
-            <span className="text-xs text-[var(--color-text-muted)]">
-              Comma-separated list used on public doctor cards.
-            </span>
-          </label>
-        </div>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">WhatsApp number</span>
+          <input
+            name="whatsappNumber"
+            className="gh-input min-w-0 sm:max-w-sm"
+            defaultValue={initial?.whatsappNumber ?? ""}
+            placeholder="e.g. +353871234567"
+          />
+        </label>
+
+        {/* Languages — multi-select from the canonical list so the same
+            language never shows two ways across the site. Full width
+            because the search + chip picker is taller than a plain input. */}
+        <LanguageMultiSelect initial={initial?.languages ?? []} />
 
         {/* Social media — optional. Empty value clears the link. Surfaced
             below the WhatsApp button on every public DoctorCard. */}
