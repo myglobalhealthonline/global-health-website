@@ -58,3 +58,30 @@ export const fullNameSchema = z
   .trim()
   .min(2, "Full name must be at least 2 characters")
   .max(120, "Full name is too long");
+
+/**
+ * Optional social profile URL (Instagram / Facebook / LinkedIn / X /
+ * YouTube). Restricted to https:// so we can safely render as
+ * `<a href={...}>` without sanitisation — rejects javascript:, data:,
+ * file:, and other unsafe schemes. Empty string clears (transforms to
+ * null) so the public renderer falls back to "no link".
+ *
+ * Reused by:
+ *  - admin-doctors.schema.ts (Doctor.instagram/facebook/linkedinUrl)
+ *  - country-footer.schema.ts (CountryFooter social URLs)
+ */
+export const socialUrlSchema = z.preprocess(
+  (v) => (v === "" || v === undefined || v === null ? null : v),
+  z
+    .union([
+      z.null(),
+      z
+        .string()
+        .trim()
+        .max(500)
+        .refine((s) => /^https:\/\/[^\s<>"']+$/i.test(s), {
+          message: "Must be an https:// URL",
+        }),
+    ])
+    .nullable(),
+);

@@ -164,6 +164,7 @@ export const COUNTRY_FEATURE_KEYS = [
   "country-home",
   "country-content",
   "pages",
+  "footer",
   "services",
   "general-consultations",
   "specialist-consultations",

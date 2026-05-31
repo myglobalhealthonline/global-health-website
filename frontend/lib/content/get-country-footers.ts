@@ -4,11 +4,13 @@ import { cache } from "react";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 
 /**
- * Per-country footer DTO mirrors the backend `CountryFooterDto`
- * shape — see backend/src/validations/country-footer.schema.ts.
+ * Per-country footer fields the public site renders. Narrower than the
+ * backend `CountryFooterDto` — the admin DTO ships id/countryId/
+ * updatedAt for the edit-form prefill, but SiteFooter never references
+ * those. Drop them here so the public type stays focused on what the
+ * footer actually displays.
  */
 export type PublicCountryFooter = {
-  id: string;
   countryCode: string;
   countryName: string;
   tagline: string | null;
@@ -65,19 +67,3 @@ export const getCountryFooter = cache(
   },
 );
 
-/**
- * Bulk-fetch every country's footer. Parallel calls; failed lookups
- * return null in the map entry so SiteFooter renders defaults for
- * those countries.
- */
-export async function getAllCountryFooters(
-  countryCodes: string[],
-): Promise<Record<string, PublicCountryFooter | null>> {
-  const entries = await Promise.all(
-    countryCodes.map(async (code) => {
-      const footer = await getCountryFooter(code);
-      return [code.toLowerCase(), footer] as const;
-    }),
-  );
-  return Object.fromEntries(entries);
-}

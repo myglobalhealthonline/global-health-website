@@ -6,7 +6,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
-import { getAllCountryFooters } from "@/lib/content/get-country-footers";
+import { getCountryFooter } from "@/lib/content/get-country-footers";
 import { DEFAULT_BRAND_LOGO, DEFAULT_BRAND_LOGO_LIGHT } from "@/lib/content/brand-logo";
 import {
   resolveFooterCtaDecorAsset,
@@ -63,12 +63,19 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     if (c.enabledFeatures) countryFeatures[c.code] = c.enabledFeatures;
   }
 
-  // Per-country footer overrides (admin-managed). Falsy entries fall
-  // back to SiteFooter defaults. Fetched once at layout level so every
-  // page render inside this country shares the same data.
-  const countryFooters = await getAllCountryFooters(
-    countriesMerged.map((c) => c.code),
-  );
+  // Per-country footer override (admin-managed). Only the active
+  // country's row is fetched — SiteFooter doesn't render footers for
+  // other countries, so requesting all 5 every layout render would
+  // burn 4 round-trips for data nothing reads. Outside a country
+  // scope (entry gate / global pages) we skip the fetch entirely
+  // and SiteFooter falls back to its defaults.
+  const activeFooter = runtimeCountry
+    ? await getCountryFooter(runtimeCountry)
+    : null;
+  const countryFooters: Record<string, typeof activeFooter> = {};
+  if (runtimeCountry) {
+    countryFooters[runtimeCountry.toLowerCase()] = activeFooter;
+  }
 
   return (
     <CartProvider>

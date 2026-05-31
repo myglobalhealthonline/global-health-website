@@ -25,6 +25,7 @@ import {
   Calendar,
   FileText,
   Heart,
+  PanelBottom,
   PillBottle,
   Stethoscope,
   TestTube,
@@ -76,6 +77,13 @@ const FEATURE_META: FeatureMeta[] = [
     description: "Editorial copy for public country pages (Health tests, Prescriptions, …).",
     icon: FileText,
     href: "/admin/pages",
+  },
+  {
+    key: "footer",
+    label: "Footer",
+    description: "Per-country tagline, contact, social links, custom columns and copyright.",
+    icon: PanelBottom,
+    href: "/admin/footer",
   },
   {
     key: "general-consultations",

@@ -273,6 +273,7 @@ export default async function CountryLangHomePage({
         d.specialties.length > 0
           ? `${d.specialties[0]}, ${config.name}`
           : `${d.title}, ${config.name}`,
+      imageSrc: d.imageSrc,
     }));
 
   // Promote one doctor into the FeaturedDoctor section to break the

@@ -93,6 +93,7 @@ const HREF_TO_FEATURE_KEY: Record<string, string> = {
   "/admin/country-home": "country-home",
   "/admin/country-content": "country-content",
   "/admin/pages": "pages",
+  "/admin/footer": "footer",
   "/admin/services": "services",
   "/admin/general-consultations": "general-consultations",
   "/admin/specialist-consultations": "specialist-consultations",

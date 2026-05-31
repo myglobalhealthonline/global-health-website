@@ -2,7 +2,10 @@ import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../db/prisma.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
-import type { CountryFooterDto } from "../validations/country-footer.schema.js";
+import {
+  toCountryFooterDto,
+  type CountryFooterDto,
+} from "../validations/country-footer.schema.js";
 
 /**
  * Public read for the per-country footer. SSR'd by the Next layout
@@ -28,27 +31,7 @@ const publicCountryFooterRoute: FastifyPluginAsync = async (app) => {
         if (!row) {
           return okResponse<{ footer: CountryFooterDto | null }>({ footer: null });
         }
-        const dto: CountryFooterDto = {
-          id: row.id,
-          countryId: row.countryId,
-          countryCode: row.country.code,
-          countryName: row.country.name,
-          tagline: row.tagline,
-          contactAddress: row.contactAddress,
-          contactEmail: row.contactEmail,
-          contactPhone: row.contactPhone,
-          contactHours: row.contactHours,
-          instagramUrl: row.instagramUrl,
-          facebookUrl: row.facebookUrl,
-          linkedinUrl: row.linkedinUrl,
-          twitterUrl: row.twitterUrl,
-          youtubeUrl: row.youtubeUrl,
-          customColumns: row.customColumns as CountryFooterDto["customColumns"],
-          copyrightLine: row.copyrightLine,
-          isActive: row.isActive,
-          updatedAt: row.updatedAt.toISOString(),
-        };
-        return okResponse({ footer: dto });
+        return okResponse({ footer: toCountryFooterDto(row) });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(error.message));

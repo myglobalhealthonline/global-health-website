@@ -1,5 +1,4 @@
 import type { FastifyPluginAsync } from "fastify";
-import { Prisma } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
@@ -8,7 +7,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import {
   countryFooterUpsertSchema,
-  type CountryFooterDto,
+  toCountryFooterDto,
 } from "../validations/country-footer.schema.js";
 
 /**
@@ -22,32 +21,6 @@ import {
  * site-content cache so SSR pages pick up the change on next render
  * without a deploy.
  */
-type CountryFooterRow = Prisma.CountryFooterGetPayload<{
-  include: { country: { select: { id: true; code: true; name: true } } };
-}>;
-
-function toDto(row: CountryFooterRow): CountryFooterDto {
-  return {
-    id: row.id,
-    countryId: row.countryId,
-    countryCode: row.country.code,
-    countryName: row.country.name,
-    tagline: row.tagline,
-    contactAddress: row.contactAddress,
-    contactEmail: row.contactEmail,
-    contactPhone: row.contactPhone,
-    contactHours: row.contactHours,
-    instagramUrl: row.instagramUrl,
-    facebookUrl: row.facebookUrl,
-    linkedinUrl: row.linkedinUrl,
-    twitterUrl: row.twitterUrl,
-    youtubeUrl: row.youtubeUrl,
-    customColumns: row.customColumns as CountryFooterDto["customColumns"],
-    copyrightLine: row.copyrightLine,
-    isActive: row.isActive,
-    updatedAt: row.updatedAt.toISOString(),
-  };
-}
 
 const adminCountryFooterRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { countryId: string } }>(
@@ -58,22 +31,28 @@ const adminCountryFooterRoute: FastifyPluginAsync = async (app) => {
         return reply.status(auth.status).send(errorResponse(auth.message));
       }
       try {
-        // Resolve the country first so a 404 here means "country missing"
-        // (not "footer missing") and admin can navigate to /admin/countries
-        // to add the row. The footer row itself is lazy-created on first
-        // PUT, so GET returning null is the normal first-load state.
+        // Single round-trip: pull the country + its (optional) footer
+        // in one Prisma call. Null country = 404; null footer = first
+        // load (lazy-created on first PUT).
         const country = await prisma.country.findUnique({
           where: { id: request.params.countryId },
-          select: { id: true, code: true, name: true },
+          select: {
+            id: true,
+            code: true,
+            name: true,
+            footer: true,
+          },
         });
         if (!country) {
           return reply.status(404).send(errorResponse("Country not found"));
         }
-        const row = await prisma.countryFooter.findUnique({
-          where: { countryId: country.id },
-          include: { country: { select: { id: true, code: true, name: true } } },
+        const { footer, ...countryHeader } = country;
+        return okResponse({
+          footer: footer
+            ? toCountryFooterDto({ ...footer, country: countryHeader })
+            : null,
+          country: countryHeader,
         });
-        return okResponse({ footer: row ? toDto(row) : null, country });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(error.message));
@@ -105,25 +84,12 @@ const adminCountryFooterRoute: FastifyPluginAsync = async (app) => {
         if (!country) {
           return reply.status(404).send(errorResponse("Country not found"));
         }
-        const data = {
-          tagline: parsed.data.tagline,
-          contactAddress: parsed.data.contactAddress,
-          contactEmail: parsed.data.contactEmail,
-          contactPhone: parsed.data.contactPhone,
-          contactHours: parsed.data.contactHours,
-          instagramUrl: parsed.data.instagramUrl,
-          facebookUrl: parsed.data.facebookUrl,
-          linkedinUrl: parsed.data.linkedinUrl,
-          twitterUrl: parsed.data.twitterUrl,
-          youtubeUrl: parsed.data.youtubeUrl,
-          customColumns: parsed.data.customColumns,
-          copyrightLine: parsed.data.copyrightLine,
-          isActive: parsed.data.isActive,
-        };
+        // Zod-validated payload already matches the column shape — no
+        // re-listing every field.
         const row = await prisma.countryFooter.upsert({
           where: { countryId: country.id },
-          update: data,
-          create: { ...data, countryId: country.id },
+          update: parsed.data,
+          create: { ...parsed.data, countryId: country.id },
           include: { country: { select: { id: true, code: true, name: true } } },
         });
         const actor = await resolveOptionalAuthUser(request);
@@ -136,7 +102,7 @@ const adminCountryFooterRoute: FastifyPluginAsync = async (app) => {
           metadata: { countryCode: country.code },
           request,
         }).catch(() => {});
-        return okResponse({ footer: toDto(row) }, "Footer saved");
+        return okResponse({ footer: toCountryFooterDto(row) }, "Footer saved");
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(error.message));

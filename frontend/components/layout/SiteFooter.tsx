@@ -18,49 +18,45 @@ import {
 } from "@/lib/routing/country-slug";
 import { parseSitePath } from "@/lib/routing/path-rewrites";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
+import {
+  IconInstagram,
+  IconFacebook,
+  IconLinkedin,
+  IconTwitter,
+  IconYoutube,
+  type BrandIcon,
+} from "@/components/ui/BrandIcons";
 import { NewsletterSignup } from "./NewsletterSignup";
 
-// Brand icons aren't shipped by lucide-react in this project (they were
-// removed in favour of dedicated SimpleIcons-style packages). Inline
-// SVGs sized 16px to match the footer ribbon. `currentColor` lets the
-// parent `text-` class drive fill/stroke. Same pattern as DoctorCard.
-function IconInstagram(props: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={props.className} aria-hidden>
-      <rect x="2" y="2" width="20" height="20" rx="5" />
-      <circle cx="12" cy="12" r="4" />
-      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
-    </svg>
-  );
-}
-function IconFacebook(props: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={props.className} aria-hidden>
-      <path d="M22 12a10 10 0 1 0-11.5 9.88v-6.99H8v-2.89h2.5V9.85c0-2.48 1.49-3.85 3.74-3.85 1.08 0 2.21.2 2.21.2v2.44h-1.25c-1.23 0-1.61.77-1.61 1.55v1.87h2.74l-.44 2.89H13.6v6.99A10 10 0 0 0 22 12z" />
-    </svg>
-  );
-}
-function IconLinkedin(props: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={props.className} aria-hidden>
-      <path d="M4.98 3.5a2.5 2.5 0 1 1-.02 5 2.5 2.5 0 0 1 .02-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-.93 1.83-1.92 3.77-1.92 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.36c0-1.28-.02-2.92-1.78-2.92-1.78 0-2.05 1.39-2.05 2.83V21H9z" />
-    </svg>
-  );
-}
-function IconTwitter(props: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={props.className} aria-hidden>
-      <path d="M18.244 2H21.5l-7.5 8.57L23 22h-6.86l-5.37-7.04L4.5 22H1.245l8.04-9.18L1 2h7.04l4.85 6.41L18.244 2zm-2.4 18h1.81L7.27 4h-1.9l10.474 16z" />
-    </svg>
-  );
-}
-function IconYoutube(props: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={props.className} aria-hidden>
-      <path d="M23.5 6.5a3 3 0 0 0-2.1-2.12C19.5 4 12 4 12 4s-7.5 0-9.4.38A3 3 0 0 0 .5 6.5 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.5 3 3 0 0 0 2.1 2.12C4.5 20 12 20 12 20s7.5 0 9.4-.38a3 3 0 0 0 2.1-2.12A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.5zM9.6 15.5v-7l6.4 3.5-6.4 3.5z" />
-    </svg>
-  );
-}
+// Static spec for the social ribbon. Keeping it module-scoped lets the
+// component body flatMap straight into render entries without ad-hoc
+// ternary-then-filter shapes.
+const SOCIAL_FIELDS: ReadonlyArray<{
+  key: "instagramUrl" | "facebookUrl" | "linkedinUrl" | "twitterUrl" | "youtubeUrl";
+  Icon: BrandIcon;
+  label: string;
+}> = [
+  { key: "instagramUrl", Icon: IconInstagram, label: "Instagram" },
+  { key: "facebookUrl", Icon: IconFacebook, label: "Facebook" },
+  { key: "linkedinUrl", Icon: IconLinkedin, label: "LinkedIn" },
+  { key: "twitterUrl", Icon: IconTwitter, label: "X / Twitter" },
+  { key: "youtubeUrl", Icon: IconYoutube, label: "YouTube" },
+];
+
+// Care column spec. Each entry: featureFlag key, label, route segment.
+// flatMap below drops entries whose feature is off so the column stays
+// clean without per-entry ternaries.
+const CARE_FIELDS: ReadonlyArray<{
+  flag: string | null;
+  label: string;
+  slug: string;
+}> = [
+  { flag: "general-consultations", label: "Book a GP Appointment", slug: "gp-appointment" },
+  { flag: "specialist-consultations", label: "See a Specialist", slug: "see-a-specialist" },
+  { flag: "online-prescriptions", label: "Repeat Prescription Request", slug: "repeat-prescription-request" },
+  { flag: "health-tests", label: "Lab Test Booking", slug: "lab-tests" },
+  { flag: null, label: "Our doctors", slug: "doctors" },
+];
 
 export function SiteFooter({
   siteName,
@@ -108,21 +104,11 @@ export function SiteFooter({
   // Cart-first booking: footer "Book consultation" entry now lands on
   // the GP catalogue (service-first); /book-online stays as a fallback
   // path but isn't surfaced from the footer.
-  const careLinks = [
-    isFeatureEnabled("general-consultations")
-      ? { label: "Book a GP Appointment", href: careBase ? `${careBase}/gp-appointment` : "/" }
-      : null,
-    isFeatureEnabled("specialist-consultations")
-      ? { label: "See a Specialist", href: careBase ? `${careBase}/see-a-specialist` : "/" }
-      : null,
-    isFeatureEnabled("online-prescriptions")
-      ? { label: "Repeat Prescription Request", href: careBase ? `${careBase}/repeat-prescription-request` : "/" }
-      : null,
-    isFeatureEnabled("health-tests")
-      ? { label: "Lab Test Booking", href: careBase ? `${careBase}/lab-tests` : "/" }
-      : null,
-    { label: "Our doctors", href: careBase ? `${careBase}/doctors` : "/" },
-  ].filter((x): x is { label: string; href: string } => x !== null);
+  const careLinks = CARE_FIELDS.flatMap((entry) =>
+    entry.flag !== null && !isFeatureEnabled(entry.flag)
+      ? []
+      : [{ label: entry.label, href: careBase ? `${careBase}/${entry.slug}` : "/" }],
+  );
 
   const clinicsLinks = countries.map((c) => ({
     label: c.name,
@@ -165,24 +151,10 @@ export function SiteFooter({
   const contactPhone = override?.contactPhone ?? null;
   const contactAddress = override?.contactAddress ?? null;
   const contactHours = override?.contactHours ?? null;
-  type SocialIcon = (props: { className?: string }) => React.ReactElement;
-  const socialLinks: Array<{ url: string; Icon: SocialIcon; label: string }> = [
-    override?.instagramUrl
-      ? { url: override.instagramUrl, Icon: IconInstagram, label: "Instagram" }
-      : null,
-    override?.facebookUrl
-      ? { url: override.facebookUrl, Icon: IconFacebook, label: "Facebook" }
-      : null,
-    override?.linkedinUrl
-      ? { url: override.linkedinUrl, Icon: IconLinkedin, label: "LinkedIn" }
-      : null,
-    override?.twitterUrl
-      ? { url: override.twitterUrl, Icon: IconTwitter, label: "X / Twitter" }
-      : null,
-    override?.youtubeUrl
-      ? { url: override.youtubeUrl, Icon: IconYoutube, label: "YouTube" }
-      : null,
-  ].filter((x): x is { url: string; Icon: SocialIcon; label: string } => x !== null);
+  const socialLinks = SOCIAL_FIELDS.flatMap((entry) => {
+    const url = override?.[entry.key];
+    return url ? [{ url, Icon: entry.Icon, label: entry.label }] : [];
+  });
   const copyrightPrefix =
     override?.copyrightLine ?? `© ${year} ${siteName || "Global Health"}`;
 
@@ -280,34 +252,31 @@ export function SiteFooter({
                   // Admin custom links may set `external: true` for offsite
                   // URLs, mailto:, or tel:. Use a plain <a> in that case so
                   // Next doesn't try to prefetch them. Internal hrefs keep
-                  // the <Link> for client-side nav.
-                  const external =
+                  // the <Link> for client-side nav. One renderer either way
+                  // — the only branch is the element type + tab attrs.
+                  const isExternal =
                     item.external === true ||
                     /^(https?:|mailto:|tel:)/i.test(item.href);
-                  if (external) {
-                    return (
-                      <li key={item.label + item.href}>
+                  const linkClass = "text-[rgba(255,255,255,0.70)] transition-colors hover:text-white";
+                  const linkStyle = { fontSize: 14, textDecoration: "none" } as const;
+                  const newTab = item.external === true;
+                  return (
+                    <li key={item.label + item.href}>
+                      {isExternal ? (
                         <a
                           href={item.href}
-                          target={item.external ? "_blank" : undefined}
-                          rel={item.external ? "noopener noreferrer" : undefined}
-                          className="text-[rgba(255,255,255,0.70)] transition-colors hover:text-white"
-                          style={{ fontSize: 14, textDecoration: "none" }}
+                          target={newTab ? "_blank" : undefined}
+                          rel={newTab ? "noopener noreferrer" : undefined}
+                          className={linkClass}
+                          style={linkStyle}
                         >
                           {item.label}
                         </a>
-                      </li>
-                    );
-                  }
-                  return (
-                    <li key={item.label + item.href}>
-                      <Link
-                        href={item.href}
-                        className="text-[rgba(255,255,255,0.70)] transition-colors hover:text-white"
-                        style={{ fontSize: 14, textDecoration: "none" }}
-                      >
-                        {item.label}
-                      </Link>
+                      ) : (
+                        <Link href={item.href} className={linkClass} style={linkStyle}>
+                          {item.label}
+                        </Link>
+                      )}
                     </li>
                   );
                 })}

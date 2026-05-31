@@ -39,6 +39,13 @@ const DEFAULT_ICONS: Record<ServiceTileType, ReactNode> = {
   test: <CheckCircle2 className="size-5" strokeWidth={1.5} aria-hidden />,
 };
 
+const DEFAULT_SERVICE_IMAGES: Record<ServiceTileType, string> = {
+  general: "/images/hero/homehero.png",
+  specialist: "/images/hero/ireland-hero-photo.png",
+  prescription: "/images/ireland/ireland-home-delivery.png",
+  test: "/images/ireland/ireland-about-section.png",
+};
+
 const FILTERS = [
   { id: "all", label: "All" },
   { id: "general", label: "General" },
@@ -240,6 +247,7 @@ function ServiceTile({
 }) {
   const isFeatured = variant === "featured";
   const symbol = currencySymbol(s.currency);
+  const tileImageSrc = s.imageSrc ?? DEFAULT_SERVICE_IMAGES[s.type];
 
   /* ── Featured card — horizontal layout: image left | content right ── */
   if (isFeatured) {
@@ -265,12 +273,12 @@ function ServiceTile({
       >
         {/* Image — fills full height of row */}
         <div className="relative overflow-hidden" style={{ minHeight: 200 }}>
-          {s.imageSrc ? (
+          {tileImageSrc ? (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={s.imageSrc}
-                alt={s.title}
+                src={tileImageSrc}
+                alt={`${s.title} telemedicine consultation`}
                 className="absolute inset-0 h-full w-full object-cover"
               />
               {/* Subtle right-edge fade into card body */}
@@ -407,12 +415,12 @@ function ServiceTile({
       }}
     >
       {/* Top: image or icon tile */}
-      {s.imageSrc ? (
+      {tileImageSrc ? (
         <div className="relative overflow-hidden" style={{ height: 160 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={s.imageSrc}
-            alt={s.title}
+            src={tileImageSrc}
+            alt={`${s.title} telemedicine consultation`}
             className="block h-full w-full object-cover"
           />
           <span

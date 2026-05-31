@@ -208,7 +208,7 @@ model Country {
   /// compatible. Admin edits this via /admin/country-features ("Pages" in
   /// the sidebar) to hide features a market doesn't offer (e.g. a country
   /// running only General Consultation can disable Specialist + Tests).
-  enabledFeatures            String[]             @default(["country-home", "country-content", "pages", "services", "general-consultations", "specialist-consultations", "online-prescriptions", "health-tests", "appointments"])
+  enabledFeatures            String[]             @default(["country-home", "country-content", "pages", "footer", "services", "general-consultations", "specialist-consultations", "online-prescriptions", "health-tests", "appointments"])
   countryLocales             CountryLocale[]
   domains                    CountryDomain[]
   clinics                    Clinic[]

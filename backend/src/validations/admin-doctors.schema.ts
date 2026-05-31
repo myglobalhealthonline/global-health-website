@@ -4,27 +4,10 @@ import { serviceSlugSchema } from "./admin-services.schema.js";
 /** Same URL-safe rules as services (lowercase a-z, 0-9, hyphens). */
 export const doctorSlugSchema = serviceSlugSchema;
 
-/**
- * Optional social profile URL (Instagram / Facebook / LinkedIn).
- * Restricted to https:// so we can safely render as <a href={...}>
- * without sanitisation. Empty string clears the link (transforms to
- * null). Rejects javascript:, data:, file:, and other unsafe schemes.
- */
-export const socialUrlSchema = z.preprocess(
-  (v) => (v === "" || v === undefined || v === null ? null : v),
-  z
-    .union([
-      z.null(),
-      z
-        .string()
-        .trim()
-        .max(500)
-        .refine((s) => /^https:\/\/[^\s<>"']+$/i.test(s), {
-          message: "Must be an https:// URL",
-        }),
-    ])
-    .nullable(),
-);
+// socialUrlSchema moved to shared.schema.ts — both Doctor + CountryFooter
+// social URLs use the same https:// + max-length + null-on-empty shape.
+import { socialUrlSchema } from "./shared.schema.js";
+export { socialUrlSchema };
 
 /** HTTPS URLs or site-relative paths starting with `/`. */
 export const profileImageRefSchema = z.preprocess(

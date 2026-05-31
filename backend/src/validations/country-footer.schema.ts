@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { socialUrlSchema } from "./shared.schema.js";
+import type { Prisma } from "@prisma/client";
 
 /**
  * Per-country footer content edited at /admin/footer.
@@ -8,9 +10,9 @@ import { z } from "zod";
  * hours). Empty string normalises to null at the route layer so the
  * frontend can fall back to the global default.
  *
- * Social URLs restrict to https:// only (same shape as Doctor social
- * URLs added in the booking-fields migration) — rendered as
- * `<a href={...}>` so we never want javascript:/data: schemes.
+ * Social URLs delegate to the shared https://-only `socialUrlSchema`
+ * (also used by Doctor social URLs) — rendered as `<a href={...}>` so
+ * we never want javascript:/data: schemes.
  *
  * `customColumns` is the structural payload — admin's free-form link
  * columns rendered after the auto-derived Care + Clinics columns on
@@ -20,16 +22,6 @@ import { z } from "zod";
  * bottom-bar copyright line. Useful for markets where a local legal
  * entity owns the brand (e.g. "© Global Health Romania SRL").
  */
-const httpsUrlSchema = z
-  .string()
-  .trim()
-  .max(500)
-  .regex(/^https:\/\/[^\s<>"']+$/i, { message: "Must be an https:// URL" });
-
-const optionalHttpsUrl = z
-  .union([z.null(), z.literal(""), httpsUrlSchema])
-  .transform((v) => (v === "" || v === null ? null : v));
-
 const optionalText = (max: number) =>
   z
     .union([z.null(), z.string().trim().max(max)])
@@ -73,11 +65,11 @@ export const countryFooterUpsertSchema = z.object({
     .transform((v) => (v === "" || v === null ? null : v)),
   contactPhone: optionalText(60),
   contactHours: optionalText(160),
-  instagramUrl: optionalHttpsUrl,
-  facebookUrl: optionalHttpsUrl,
-  linkedinUrl: optionalHttpsUrl,
-  twitterUrl: optionalHttpsUrl,
-  youtubeUrl: optionalHttpsUrl,
+  instagramUrl: socialUrlSchema,
+  facebookUrl: socialUrlSchema,
+  linkedinUrl: socialUrlSchema,
+  twitterUrl: socialUrlSchema,
+  youtubeUrl: socialUrlSchema,
   customColumns: z.array(footerColumnSchema).max(6).default([]),
   copyrightLine: optionalText(160),
   isActive: z.boolean().default(true),
@@ -113,3 +105,37 @@ export type CountryFooterDto = {
   isActive: boolean;
   updatedAt: string;
 };
+
+/**
+ * Single mapper shared by the admin + public footer routes. Keeps
+ * the field list in one place so adding a new column to CountryFooter
+ * only touches the DTO type + this function.
+ */
+type CountryFooterRowWithCountry = Prisma.CountryFooterGetPayload<{
+  include: { country: { select: { id: true; code: true; name: true } } };
+}>;
+
+export function toCountryFooterDto(
+  row: CountryFooterRowWithCountry,
+): CountryFooterDto {
+  return {
+    id: row.id,
+    countryId: row.countryId,
+    countryCode: row.country.code,
+    countryName: row.country.name,
+    tagline: row.tagline,
+    contactAddress: row.contactAddress,
+    contactEmail: row.contactEmail,
+    contactPhone: row.contactPhone,
+    contactHours: row.contactHours,
+    instagramUrl: row.instagramUrl,
+    facebookUrl: row.facebookUrl,
+    linkedinUrl: row.linkedinUrl,
+    twitterUrl: row.twitterUrl,
+    youtubeUrl: row.youtubeUrl,
+    customColumns: row.customColumns as CountryFooterDto["customColumns"],
+    copyrightLine: row.copyrightLine,
+    isActive: row.isActive,
+    updatedAt: row.updatedAt.toISOString(),
+  };
+}

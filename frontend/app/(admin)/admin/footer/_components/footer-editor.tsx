@@ -15,9 +15,6 @@ import { AdminCard, Btn } from "../../_components/atoms";
  * mirroring how the page-content editor works.
  */
 type Props = {
-  countryId: string;
-  countryCode: string;
-  countryName: string;
   initial: AdminCountryFooterDto | null;
   saveAction: (formData: FormData) => Promise<void>;
 };

@@ -105,9 +105,6 @@ export default async function AdminFooterPage({
       ) : null}
 
       <FooterEditor
-        countryId={active.id}
-        countryCode={active.code}
-        countryName={active.name}
         initial={initialFooter}
         saveAction={saveFooterAction}
       />
