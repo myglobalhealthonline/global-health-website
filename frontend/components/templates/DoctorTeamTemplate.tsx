@@ -37,6 +37,9 @@ type DoctorTeamTemplateProps = {
   /** Optional filter bar rendered at the top of the grid section
    *  (above the doctor cards, on the dark background). */
   filters?: ReactNode;
+  /** Optional featured-doctor spotlight rendered between the hero and
+   *  the filters/grid (the admin-chosen featured doctor). */
+  spotlight?: ReactNode;
 };
 
 export function DoctorTeamTemplate({
@@ -46,6 +49,7 @@ export function DoctorTeamTemplate({
   bookingLabel,
   showBottomCta = false,
   filters,
+  spotlight,
 }: DoctorTeamTemplateProps) {
   const [page, setPage] = useState(0);
   const totalPages = Math.ceil(doctors.length / PAGE_SIZE);
@@ -79,6 +83,8 @@ export function DoctorTeamTemplate({
       {/* GRID — light soft section, DoctorCard components */}
       <section className="gh-section" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="gh-container">
+          {/* Featured-doctor spotlight (admin-chosen) above the filters. */}
+          {spotlight}
           {/* Filter bar (language + specialty) — rendered above the grid
               so it reads as part of the directory, not a stray strip
               above the hero. Stays visible on empty results so the user

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { DoctorTeamTemplate } from "@/components/templates/DoctorTeamTemplate";
+import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { countries, getCountryByCode } from "@/data/countries";
 import { getCountryDoctors } from "@/lib/content/get-country-collections";
@@ -132,7 +133,16 @@ export default async function CountryLangDoctorsPage({
     return langOk && specOk;
   });
 
-  const doctorCards = filteredDoctors.map((d) => ({
+  // Admin-chosen featured doctor → the spotlight card at the top. Pulled
+  // out of the grid below so it isn't shown twice. Only spotlighted when
+  // it's part of the current (filtered) view; otherwise the grid just
+  // shows the matches.
+  const featured = filteredDoctors.find((d) => d.isFeatured) ?? null;
+  const gridDoctors = featured
+    ? filteredDoctors.filter((d) => d.id !== featured.id)
+    : filteredDoctors;
+
+  const doctorCards = gridDoctors.map((d) => ({
     name: d.fullName,
     title: d.title,
     imcRegistration: d.imcRegistration,
@@ -209,6 +219,29 @@ export default async function CountryLangDoctorsPage({
         doctors={doctorCards}
         bookingHref={`/${slug}/${lang}/gp-appointment`}
         bookingLabel="Browse consultations"
+        spotlight={
+          featured ? (
+            <div className="mb-10">
+              <FeaturedDoctor
+                standalone={false}
+                doctor={{
+                  name: featured.fullName,
+                  title: featured.title,
+                  imcRegistration: featured.imcRegistration,
+                  medicalRegistrationUrl: featured.medicalRegistrationUrl,
+                  languages: featured.languages,
+                  bio: featured.bio ?? "",
+                  imageSrc: featured.imageSrc ?? null,
+                  href: `/${slug}/${lang}/doctors/${featured.slug}`,
+                  whatsappNumber: featured.whatsappNumber,
+                  instagramUrl: featured.instagramUrl,
+                  facebookUrl: featured.facebookUrl,
+                  linkedinUrl: featured.linkedinUrl,
+                }}
+              />
+            </div>
+          ) : null
+        }
         filters={
           <DoctorFilters
             groups={filterGroups}

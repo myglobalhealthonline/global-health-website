@@ -757,6 +757,22 @@ export async function deleteAdminDoctor(id: string) {
   });
 }
 
+/** Is this doctor the featured one for its country? (drives the toggle). */
+export async function fetchAdminDoctorFeatured(id: string) {
+  return adminRequest<{ featured: boolean }>(
+    `/api/admin/doctors/${id}/featured`,
+  );
+}
+
+/** Set/clear the featured doctor for its country. Setting one featured
+ *  replaces the previous one (one featured doctor per country). */
+export async function setAdminDoctorFeatured(id: string, featured: boolean) {
+  return adminRequest<{ featured: boolean }>(
+    `/api/admin/doctors/${id}/featured`,
+    { method: "PUT", body: { featured } },
+  );
+}
+
 /** Mint or refresh a doctor portal invite. Idempotent — second call for
  *  the same doctor "resends" with a new token. */
 export type AdminDoctorInvitePayload = {

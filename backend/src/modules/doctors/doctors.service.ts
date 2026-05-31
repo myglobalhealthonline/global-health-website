@@ -7,6 +7,7 @@ import type {
 } from "../../validations/admin-doctors.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
+import { getFeaturedDoctorId } from "./featured-doctor.service.js";
 
 export class DoctorCountryNotFoundError extends Error {
   constructor() {
@@ -173,7 +174,14 @@ export async function listDoctorsByCountry(countryCode: string) {
         },
       },
     });
-    return rows.map((d) => overrideImcRegistrationFromCountry(d));
+    // Flag the country's featured doctor (admin-chosen, stored in the
+    // Setting table — no Doctor column). The public /doctors page pulls
+    // this row out into the FeaturedDoctor spotlight.
+    const featuredId = await getFeaturedDoctorId(countryCode);
+    return rows.map((d) => ({
+      ...overrideImcRegistrationFromCountry(d),
+      isFeatured: d.id === featuredId,
+    }));
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }

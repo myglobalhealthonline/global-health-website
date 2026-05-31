@@ -90,6 +90,10 @@ export type CountryDoctorCard = {
   instagramUrl?: string;
   facebookUrl?: string;
   linkedinUrl?: string;
+  /** Admin-chosen featured doctor for the country (stored in the Setting
+   *  table). The /doctors page promotes the featured row into the
+   *  FeaturedDoctor spotlight. */
+  isFeatured?: boolean;
 };
 
 function readSpecialtyName(row: unknown): string | null {
@@ -255,6 +259,7 @@ export const getCountryDoctors = cache(async (
       specialties,
       imageSrc: pickImagePath(row),
       assignedServiceIds,
+      isFeatured: r.isFeatured === true,
       ...(imcRegistration ? { imcRegistration } : {}),
       ...(typeof r.medicalRegistrationUrl === "string" && r.medicalRegistrationUrl.trim()
         ? { medicalRegistrationUrl: r.medicalRegistrationUrl.trim() }
