@@ -115,6 +115,12 @@ function mapDoctorToWallItem(
     country: countryCode,
     langs: d.languages.join(" · "),
     href: profileHref,
+    // "Book Appointment" jumps to the doctor's OWN profile page, scrolled
+    // to their services section — not the generic country GP page. The
+    // profile page always renders an `id="services"` anchor (even its
+    // empty state), so this resolves whether or not the doctor has
+    // services assigned yet.
+    bookingHref: `${profileHref}#services`,
     imageSrc: d.imageSrc,
     imcRegistration: d.imcRegistration,
     medicalRegistrationUrl: d.medicalRegistrationUrl,

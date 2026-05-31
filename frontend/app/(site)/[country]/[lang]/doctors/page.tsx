@@ -183,6 +183,10 @@ export default async function CountryLangDoctorsPage({
     bio: d.bio ?? `Licensed clinician available for online consultations in ${config.name}.`,
     imageSrc: d.imageSrc,
     href: `/${slug}/${lang}/doctors/${d.slug}`,
+    // Book → THIS doctor's profile, scrolled to their services, instead
+    // of the section-level fallback (generic GP page). The profile page
+    // always renders an `id="services"` anchor.
+    bookingHref: `/${slug}/${lang}/doctors/${d.slug}#services`,
     ctaLabel: "View profile",
   }));
 

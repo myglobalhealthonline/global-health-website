@@ -145,7 +145,9 @@ export default async function CountryLangSpecialistConsultationPage({
       country: config.name,
       imageSrc: d.imageSrc ?? null,
       href: `/${slug}/${lang}/doctors/${d.slug}`,
-      bookingHref: `/${slug}/${lang}/see-a-specialist#services`,
+      // Book → THIS doctor's profile, scrolled to their services. The
+      // profile page always renders an `id="services"` anchor.
+      bookingHref: `/${slug}/${lang}/doctors/${d.slug}#services`,
       whatsappNumber: d.whatsappNumber,
       ctaLabel: "View profile",
     }));

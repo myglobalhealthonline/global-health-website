@@ -61,6 +61,13 @@ export function FeaturedDoctor({
     .replace(/^Dr\.?\s*/i, "")
     .split(" ")[0] ?? doctor.name;
 
+  // "Book with X" lands on the doctor's profile page scrolled to their
+  // services section; "View profile" lands at the top. The profile page
+  // always renders an `id="services"` anchor so #services resolves even
+  // when no services are assigned yet.
+  const profileHref = doctor.href;
+  const bookHref = doctor.href ? `${doctor.href}#services` : undefined;
+
   // WhatsApp deep link — strip non-digits, drop the leading +, same as
   // DoctorCard so the two surfaces resolve identical wa.me URLs.
   const whatsappDigits = doctor.whatsappNumber?.replace(/[^\d+]/g, "");
@@ -198,9 +205,9 @@ export function FeaturedDoctor({
 
           {/* CTAs */}
           <div className="mt-7 flex flex-wrap items-center gap-3">
-            {doctor.href ? (
+            {bookHref ? (
               <Link
-                href={doctor.href}
+                href={bookHref}
                 className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-[13.5px] font-bold transition-[background-color,transform] duration-200 hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]/40 motion-reduce:transition-none"
                 style={{ background: "var(--color-brand-accent)", color: "#0a1f14" }}
               >
@@ -228,9 +235,9 @@ export function FeaturedDoctor({
               </a>
             ) : null}
 
-            {doctor.href ? (
+            {profileHref ? (
               <Link
-                href={doctor.href}
+                href={profileHref}
                 className="inline-flex items-center gap-1.5 text-[13px] font-semibold transition-opacity hover:opacity-70 motion-reduce:transition-none"
                 style={{ color: "rgba(255,255,255,0.48)" }}
               >
