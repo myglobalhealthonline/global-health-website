@@ -448,10 +448,21 @@ export default async function CountryLangHomePage({
                 doctor={{
                   name: featuredDoctor.fullName,
                   title: featuredDoctor.title,
+                  // Registration ("IMC | 523449") + verification URL —
+                  // these the card already renders behind a shield icon
+                  // but they were never passed through.
+                  imcRegistration: featuredDoctor.imcRegistration,
+                  medicalRegistrationUrl: featuredDoctor.medicalRegistrationUrl,
                   languages: featuredDoctor.languages,
                   bio: featuredDoctor.bio ?? "",
                   imageSrc: featuredDoctor.imageSrc ?? null,
                   href: `/${slug}/${lang}/doctors/${featuredDoctor.slug}`,
+                  // Call (WhatsApp) + social links — same fields the
+                  // DoctorWall cards surface.
+                  whatsappNumber: featuredDoctor.whatsappNumber,
+                  instagramUrl: featuredDoctor.instagramUrl,
+                  facebookUrl: featuredDoctor.facebookUrl,
+                  linkedinUrl: featuredDoctor.linkedinUrl,
                 }}
               />
             </div>

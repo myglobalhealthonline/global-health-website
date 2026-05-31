@@ -10,9 +10,15 @@
  */
 
 import Image from "next/image";
-import { ArrowRight, Globe, ShieldCheck } from "lucide-react";
+import { ArrowRight, Globe, Phone, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { toDoctorBioPlainText } from "@/lib/content/doctor-bio-format";
+import {
+  IconInstagram,
+  IconFacebook,
+  IconLinkedin,
+  type BrandIcon,
+} from "@/components/ui/BrandIcons";
 
 type DoctorSpotlightProps = {
   name: string;
@@ -23,6 +29,14 @@ type DoctorSpotlightProps = {
   bio: string;
   imageSrc?: string | null;
   href?: string;
+  /** WhatsApp contact — rendered as a "Call" pill next to the booking
+   *  CTA when set (same wa.me href shape as DoctorCard). */
+  whatsappNumber?: string;
+  /** Optional social profile URLs surfaced as an icon row below the
+   *  CTAs. Each is an absolute https:// URL or undefined. */
+  instagramUrl?: string;
+  facebookUrl?: string;
+  linkedinUrl?: string;
 };
 
 export function FeaturedDoctor({
@@ -46,6 +60,26 @@ export function FeaturedDoctor({
   const firstName = doctor.name
     .replace(/^Dr\.?\s*/i, "")
     .split(" ")[0] ?? doctor.name;
+
+  // WhatsApp deep link — strip non-digits, drop the leading +, same as
+  // DoctorCard so the two surfaces resolve identical wa.me URLs.
+  const whatsappDigits = doctor.whatsappNumber?.replace(/[^\d+]/g, "");
+  const whatsappHref = whatsappDigits
+    ? `https://wa.me/${whatsappDigits.replace("+", "")}`
+    : null;
+
+  // Social icon row — only the URLs the admin actually set render.
+  const socialLinks: Array<{ url: string; Icon: BrandIcon; label: string }> = [
+    doctor.instagramUrl
+      ? { url: doctor.instagramUrl, Icon: IconInstagram, label: "Instagram" }
+      : null,
+    doctor.facebookUrl
+      ? { url: doctor.facebookUrl, Icon: IconFacebook, label: "Facebook" }
+      : null,
+    doctor.linkedinUrl
+      ? { url: doctor.linkedinUrl, Icon: IconLinkedin, label: "LinkedIn" }
+      : null,
+  ].filter((x): x is { url: string; Icon: BrandIcon; label: string } => x !== null);
 
   const card = (
     <>
@@ -174,6 +208,26 @@ export function FeaturedDoctor({
                 <ArrowRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
               </Link>
             ) : null}
+
+            {/* Call / WhatsApp pill — outline lime, opens wa.me in a new
+                tab. Only renders when the doctor has a WhatsApp number. */}
+            {whatsappHref ? (
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border-[1.5px] px-5 py-[11px] text-[13px] font-semibold transition-colors duration-200 hover:bg-[rgba(176,241,34,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]/40 motion-reduce:transition-none"
+                style={{
+                  borderColor: "rgba(176,241,34,0.40)",
+                  color: "var(--color-brand-accent)",
+                }}
+                aria-label={`Call ${firstName} on WhatsApp`}
+              >
+                <Phone className="size-4 shrink-0" strokeWidth={1.7} aria-hidden />
+                Call
+              </a>
+            ) : null}
+
             {doctor.href ? (
               <Link
                 href={doctor.href}
@@ -184,6 +238,28 @@ export function FeaturedDoctor({
               </Link>
             ) : null}
           </div>
+
+          {/* Social row — only the URLs the admin set render. */}
+          {socialLinks.length > 0 ? (
+            <div className="mt-5 flex items-center gap-2">
+              {socialLinks.map(({ url, Icon, label }) => (
+                <a
+                  key={url}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${doctor.name} on ${label}`}
+                  className="inline-flex size-9 items-center justify-center rounded-full border transition-colors duration-200 hover:bg-[rgba(176,241,34,0.10)] motion-reduce:transition-none"
+                  style={{
+                    borderColor: "rgba(255,255,255,0.15)",
+                    color: "rgba(255,255,255,0.65)",
+                  }}
+                >
+                  <Icon className="size-4" />
+                </a>
+              ))}
+            </div>
+          ) : null}
         </div>
       </div>
 
