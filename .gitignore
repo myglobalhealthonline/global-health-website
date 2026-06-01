@@ -9,11 +9,15 @@
 /frontend/out
 /frontend/coverage
 /frontend/*.tsbuildinfo
-/frontend/.env*
+/frontend/.env
+/frontend/.env.*
+!/frontend/.env.example
 
 # backend
 /backend/node_modules
-/backend/.env*
+/backend/.env
+/backend/.env.*
+!/backend/.env.example
 
 # editor
 .vscode
