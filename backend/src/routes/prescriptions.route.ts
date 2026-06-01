@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { ensureConsultationDraft } from "../modules/consultations/ensure-consultation-draft.js";
 import { verifyDoctorAccess, verifyClinicalReadAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
@@ -137,16 +138,11 @@ const prescriptionsRoute: FastifyPluginAsync = async (app) => {
           return reply.status(404).send(errorResponse("Appointment not found"));
         }
 
-        const consultation = await prisma.consultation.findUnique({
-          where: { appointmentId: appt.id },
-          select: { id: true, status: true },
-        });
-        if (!consultation) {
-          return reply
-            .status(400)
-            .send(errorResponse("Save a consultation draft before issuing prescriptions"));
+        const consultationResult = await ensureConsultationDraft(appt.id, auth.doctorId);
+        if (consultationResult === "not_found") {
+          return reply.status(404).send(errorResponse("Appointment not found"));
         }
-        if (consultation.status === "SIGNED") {
+        if (consultationResult === "signed") {
           return reply
             .status(409)
             .send(errorResponse("Consultation is signed — prescriptions are locked"));
@@ -154,7 +150,7 @@ const prescriptionsRoute: FastifyPluginAsync = async (app) => {
 
         const created = await prisma.prescription.create({
           data: {
-            consultationId: consultation.id,
+            consultationId: consultationResult.id,
             doctorId: auth.doctorId,
             drugName: body.data.drugName,
             dose: body.data.dose && body.data.dose !== "" ? body.data.dose : null,

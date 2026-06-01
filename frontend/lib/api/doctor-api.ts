@@ -248,6 +248,22 @@ export async function fetchDoctorDocuments(appointmentId: string) {
   );
 }
 
+export type GeneratedDocumentListItem = {
+  id: string;
+  documentType: string;
+  fileName: string;
+  sentToPatient: boolean;
+  createdAt: string;
+};
+
+export async function fetchDoctorGeneratedDocuments(appointmentId: string) {
+  return doctorRequest<{
+    items: GeneratedDocumentListItem[];
+    queue: GeneratedDocumentListItem[];
+    history: GeneratedDocumentListItem[];
+  }>(`/api/doctor/appointments/${appointmentId}/documents/generated`);
+}
+
 export type ExamResultDto = {
   id: string;
   appointmentId: string;

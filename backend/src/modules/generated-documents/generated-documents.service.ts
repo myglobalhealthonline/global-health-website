@@ -1,4 +1,4 @@
-﻿import type { GeneratedDocument, GeneratedDocumentType } from "@prisma/client";
+import type { GeneratedDocument, GeneratedDocumentType } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import {
   putObject,
@@ -314,8 +314,13 @@ export async function sendGeneratedDocuments(
   });
 
   let sent = 0;
+  const errors: string[] = [];
   for (const doc of docs) {
     const pdfBuffer = await readStorageToBuffer(doc.storageKey);
+    if (!pdfBuffer) {
+      errors.push(`${doc.fileName}: PDF file missing from storage`);
+      continue;
+    }
     const meta = (doc.metadata ?? null) as { customLabel?: unknown } | null;
     const customLabel =
       typeof meta?.customLabel === "string" ? meta.customLabel.trim() : "";
@@ -328,20 +333,29 @@ export async function sendGeneratedDocuments(
       patientName: appt.fullName,
       documentType: documentLabel,
       fileName: doc.fileName,
-      attachment: pdfBuffer
-        ? { filename: doc.fileName, content: pdfBuffer, contentType: "application/pdf" }
-        : undefined,
+      attachment: {
+        filename: doc.fileName,
+        content: pdfBuffer,
+        contentType: "application/pdf",
+      },
     });
-    if (result.ok) {
+    if (result.ok && result.mode !== "log") {
       await prisma.generatedDocument.update({
         where: { id: doc.id },
         data: { sentToPatient: true },
       });
       sent += 1;
+    } else {
+      const detail = !result.ok
+        ? result.message
+        : result.mode === "log"
+          ? "Email not configured — set GMAIL_SEND_FROM + Google OAuth or SENDGRID_API_KEY in backend .env"
+          : "Email delivery failed";
+      errors.push(`${doc.fileName}: ${detail}`);
     }
   }
 
-  return sent;
+  return { sentCount: sent, errors, attempted: docs.length };
 }
 
 export async function getGeneratedDocumentFile(

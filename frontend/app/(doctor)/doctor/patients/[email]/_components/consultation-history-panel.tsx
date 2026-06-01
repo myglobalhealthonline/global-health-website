@@ -1,16 +1,19 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { ChevronDown, ChevronRight, Download } from "lucide-react";
+import { ChevronDown, ChevronRight, Eye } from "lucide-react";
 
 type MedicalNoteRow = {
   id: string;
   appointmentId: string;
   content: string;
   consultationType: string | null;
+  consultationTypeLabel: string;
   createdByName: string;
   createdAt: string;
   sessionDate: string;
+  sessionTime: string;
+  orderNumber: string;
   symptoms: string | null;
 };
 
@@ -18,10 +21,17 @@ type DocRow = {
   id: string;
   appointmentId: string;
   fileName: string;
+  documentType: string;
+  fileTypeLabel: string;
   sentToPatient: boolean;
   createdAt: string;
   sessionDate: string;
+  sessionTime: string;
+  orderNumber: string;
   consultationType: string;
+  consultationTypeLabel: string;
+  uploadedBy: string;
+  pdfUrl: string;
 };
 
 type UploadRow = {
@@ -29,14 +39,23 @@ type UploadRow = {
   appointmentId: string;
   label: string;
   fileName: string;
+  mimetype: string;
+  fileTypeLabel: string;
   createdAt: string;
   sessionDate: string;
+  sessionTime: string;
+  orderNumber: string;
   consultationType: string;
+  consultationTypeLabel: string;
+  uploadedBy: string;
+  viewUrl: string;
 };
 
 type HistoryData = {
   medicalNotes: MedicalNoteRow[];
   generatedDocuments: {
+    total: number;
+    rows: DocRow[];
     examsPrescriptions: DocRow[];
     absenceCertificates: DocRow[];
     medicinePrescriptions: DocRow[];
@@ -45,46 +64,188 @@ type HistoryData = {
   uploadedFiles: UploadRow[];
 };
 
-function formatWhen(iso: string) {
-  try {
-    return new Date(iso).toLocaleString();
-  } catch {
-    return iso;
-  }
+function SessionTypeBadge({ label }: { label: string }) {
+  return (
+    <span className="inline-block max-w-[180px] truncate rounded-full bg-[var(--color-brand-mint-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--color-brand-primary)]">
+      {label}
+    </span>
+  );
 }
 
-function DocSubSection({ title, rows }: { title: string; rows: DocRow[] }) {
-  const [open, setOpen] = useState(rows.length > 0);
+function FileTypeBadge({ label }: { label: string }) {
+  const tone =
+    label === "PDF"
+      ? "bg-rose-50 text-rose-800"
+      : label === "Image"
+        ? "bg-sky-50 text-sky-800"
+        : label.includes("prescription") || label.includes("Prescription")
+          ? "bg-violet-50 text-violet-800"
+          : label.includes("Absence")
+            ? "bg-amber-50 text-amber-900"
+            : label.includes("Exams")
+              ? "bg-blue-50 text-blue-800"
+              : "bg-emerald-50 text-emerald-800";
+  return (
+    <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold ${tone}`}>
+      {label}
+    </span>
+  );
+}
+
+function HistorySection({
+  title,
+  count,
+  defaultOpen = true,
+  children,
+}: {
+  title: string;
+  count?: number;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <section className="overflow-hidden rounded-md border border-[var(--color-border)]">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between gap-2 bg-[var(--color-brand-primary)] px-4 py-2.5 text-left text-sm font-bold text-white"
+      >
+        <span className="flex items-center gap-2">
+          {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
+          {title}
+          {count !== undefined ? (
+            <span className="text-[12px] font-semibold opacity-90">({count})</span>
+          ) : null}
+        </span>
+      </button>
+      {open ? <div className="bg-white">{children}</div> : null}
+    </section>
+  );
+}
+
+function DocTypeGroup({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: DocRow[];
+}) {
+  const [open, setOpen] = useState(true);
   if (rows.length === 0) return null;
   return (
     <div className="border-t border-[var(--color-border)]">
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm font-bold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] font-bold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
       >
         {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
-        {title} ({rows.length})
+        {title}
+        <span className="text-[var(--color-text-muted)]">({rows.length})</span>
       </button>
-      {open ? (
-        <ul className="px-3 pb-3 text-[13px]">
+      {open ? <DocumentTable rows={rows} /> : null}
+    </div>
+  );
+}
+
+const TABLE_HEAD =
+  "text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]";
+
+function DocumentTable({ rows }: { rows: DocRow[] }) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[720px] text-[13px]">
+        <thead>
+          <tr className={TABLE_HEAD}>
+            <th className="px-3 py-2 text-left">Session date</th>
+            <th className="px-3 py-2 text-left">Time</th>
+            <th className="px-3 py-2 text-left">Order #</th>
+            <th className="px-3 py-2 text-left">Session type</th>
+            <th className="px-3 py-2 text-left">File name</th>
+            <th className="px-3 py-2 text-left">File type</th>
+            <th className="px-3 py-2 text-left">Uploaded by</th>
+            <th className="px-3 py-2 text-right">View</th>
+          </tr>
+        </thead>
+        <tbody>
           {rows.map((r) => (
-            <li key={r.id} className="flex items-center justify-between gap-2 py-1.5">
-              <span className="text-[var(--color-text-muted)]">
-                {formatWhen(r.sessionDate)} · {r.consultationType}
-              </span>
-              <a
-                href={`/api/doctor/documents/generated/${r.id}/pdf`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 font-semibold text-[var(--color-brand-primary)]"
-              >
-                <Download className="size-3" /> {r.fileName}
-              </a>
-            </li>
+            <tr key={r.id} className="border-t border-[var(--color-border)]">
+              <td className="px-3 py-2.5 whitespace-nowrap">{r.sessionDate}</td>
+              <td className="px-3 py-2.5 whitespace-nowrap">{r.sessionTime}</td>
+              <td className="px-3 py-2.5">{r.orderNumber}</td>
+              <td className="px-3 py-2.5">
+                <SessionTypeBadge label={r.consultationTypeLabel} />
+              </td>
+              <td className="max-w-[200px] truncate px-3 py-2.5 font-medium">{r.fileName}</td>
+              <td className="px-3 py-2.5">
+                <FileTypeBadge label={r.fileTypeLabel} />
+              </td>
+              <td className="px-3 py-2.5">{r.uploadedBy}</td>
+              <td className="px-3 py-2.5 text-right">
+                <a
+                  href={r.pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)]"
+                >
+                  <Eye className="size-3.5" aria-hidden />
+                  View
+                </a>
+              </td>
+            </tr>
           ))}
-        </ul>
-      ) : null}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function UploadsTable({ rows }: { rows: UploadRow[] }) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[720px] text-[13px]">
+        <thead>
+          <tr className={TABLE_HEAD}>
+            <th className="px-3 py-2 text-left">Session date</th>
+            <th className="px-3 py-2 text-left">Time</th>
+            <th className="px-3 py-2 text-left">Order #</th>
+            <th className="px-3 py-2 text-left">Session type</th>
+            <th className="px-3 py-2 text-left">File name</th>
+            <th className="px-3 py-2 text-left">File type</th>
+            <th className="px-3 py-2 text-left">Uploaded by</th>
+            <th className="px-3 py-2 text-right">View</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((u) => (
+            <tr key={u.id} className="border-t border-[var(--color-border)]">
+              <td className="px-3 py-2.5 whitespace-nowrap">{u.sessionDate}</td>
+              <td className="px-3 py-2.5 whitespace-nowrap">{u.sessionTime}</td>
+              <td className="px-3 py-2.5">{u.orderNumber}</td>
+              <td className="px-3 py-2.5">
+                <SessionTypeBadge label={u.consultationTypeLabel} />
+              </td>
+              <td className="max-w-[200px] truncate px-3 py-2.5 font-medium">{u.fileName}</td>
+              <td className="px-3 py-2.5">
+                <FileTypeBadge label={u.fileTypeLabel} />
+              </td>
+              <td className="px-3 py-2.5">{u.uploadedBy}</td>
+              <td className="px-3 py-2.5 text-right">
+                <a
+                  href={u.viewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] px-2.5 py-1 text-[12px] font-semibold text-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)]"
+                >
+                  <Eye className="size-3.5" aria-hidden />
+                  View
+                </a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -122,10 +283,7 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
 
   const hasAny =
     data.medicalNotes.length > 0 ||
-    data.generatedDocuments.examsPrescriptions.length > 0 ||
-    data.generatedDocuments.absenceCertificates.length > 0 ||
-    data.generatedDocuments.medicinePrescriptions.length > 0 ||
-    data.generatedDocuments.other.length > 0 ||
+    data.generatedDocuments.total > 0 ||
     data.uploadedFiles.length > 0;
 
   if (!hasAny) {
@@ -136,84 +294,85 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
     );
   }
 
+  const gen = data.generatedDocuments;
+
   return (
     <div className="space-y-4">
       {data.medicalNotes.length > 0 ? (
-        <section>
-          <h4 className="text-sm font-bold text-[var(--color-text-primary)]">Medical notes</h4>
-          <table className="mt-2 w-full text-[13px]">
-            <thead>
-              <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                <th className="py-2 text-left">Session</th>
-                <th className="py-2 text-left">Type</th>
-                <th className="py-2 text-left">Doctor</th>
-                <th className="py-2 text-left">Preview</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.medicalNotes.map((n) => (
-                <Fragment key={n.id}>
-                  <tr
-                    className="cursor-pointer border-t border-[var(--color-border)] hover:bg-[var(--color-background-soft)]"
-                    onClick={() =>
-                      setExpandedNote(expandedNote === n.id ? null : n.id)
-                    }
-                  >
-                    <td className="py-2">{formatWhen(n.sessionDate)}</td>
-                    <td className="py-2">{n.consultationType ?? "—"}</td>
-                    <td className="py-2">{n.createdByName}</td>
-                    <td className="py-2 max-w-[200px] truncate text-[var(--color-text-muted)]">
-                      {n.content.slice(0, 80)}
-                      {n.content.length > 80 ? "…" : ""}
-                    </td>
-                  </tr>
-                  {expandedNote === n.id ? (
-                    <tr className="border-t border-[var(--color-border)] bg-[var(--color-background-soft)]">
-                      <td colSpan={4} className="px-3 py-3 whitespace-pre-wrap">
-                        {n.symptoms ? (
-                          <p className="mb-2 text-xs text-[var(--color-text-muted)]">
-                            <strong>Symptoms:</strong> {n.symptoms}
-                          </p>
-                        ) : null}
-                        {n.content}
+        <HistorySection title="Medical notes" count={data.medicalNotes.length}>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] text-[13px]">
+              <thead>
+                <tr className={TABLE_HEAD}>
+                  <th className="px-3 py-2 text-left">Session date</th>
+                  <th className="px-3 py-2 text-left">Time</th>
+                  <th className="px-3 py-2 text-left">Order #</th>
+                  <th className="px-3 py-2 text-left">Session type</th>
+                  <th className="px-3 py-2 text-left">Symptoms</th>
+                  <th className="px-3 py-2 text-left">Doctor</th>
+                  <th className="px-3 py-2 text-left">Medical notes</th>
+                  <th className="px-3 py-2 w-8" />
+                </tr>
+              </thead>
+              <tbody>
+                {data.medicalNotes.map((n) => (
+                  <Fragment key={n.id}>
+                    <tr
+                      className="cursor-pointer border-t border-[var(--color-border)] hover:bg-[var(--color-background-soft)]"
+                      onClick={() =>
+                        setExpandedNote(expandedNote === n.id ? null : n.id)
+                      }
+                    >
+                      <td className="px-3 py-2.5 whitespace-nowrap">{n.sessionDate}</td>
+                      <td className="px-3 py-2.5 whitespace-nowrap">{n.sessionTime}</td>
+                      <td className="px-3 py-2.5">{n.orderNumber}</td>
+                      <td className="px-3 py-2.5">
+                        <SessionTypeBadge label={n.consultationTypeLabel} />
+                      </td>
+                      <td className="max-w-[120px] truncate px-3 py-2.5 text-[var(--color-text-muted)]">
+                        {n.symptoms?.trim() || "—"}
+                      </td>
+                      <td className="px-3 py-2.5">{n.createdByName}</td>
+                      <td className="max-w-[160px] truncate px-3 py-2.5 text-[var(--color-text-muted)]">
+                        {n.content.slice(0, 80)}
+                        {n.content.length > 80 ? "…" : ""}
+                      </td>
+                      <td className="px-3 py-2.5">
+                        {expandedNote === n.id ? (
+                          <ChevronDown className="size-4 text-[var(--color-text-muted)]" />
+                        ) : (
+                          <ChevronRight className="size-4 text-[var(--color-text-muted)]" />
+                        )}
                       </td>
                     </tr>
-                  ) : null}
-                </Fragment>
-              ))}
-            </tbody>
-          </table>
-        </section>
+                    {expandedNote === n.id ? (
+                      <tr className="border-t border-[var(--color-border)] bg-[var(--color-background-soft)]">
+                        <td colSpan={8} className="px-4 py-3 whitespace-pre-wrap">
+                          {n.content}
+                        </td>
+                      </tr>
+                    ) : null}
+                  </Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </HistorySection>
       ) : null}
 
-      {(data.generatedDocuments.examsPrescriptions.length > 0 ||
-        data.generatedDocuments.absenceCertificates.length > 0 ||
-        data.generatedDocuments.medicinePrescriptions.length > 0 ||
-        data.generatedDocuments.other.length > 0) && (
-        <section className="rounded-md border border-[var(--color-border)]">
-          <h4 className="px-3 py-2 text-sm font-bold text-[var(--color-text-primary)]">
-            Generated documents
-          </h4>
-          <DocSubSection title="Exams prescriptions" rows={data.generatedDocuments.examsPrescriptions} />
-          <DocSubSection title="Absence certificates" rows={data.generatedDocuments.absenceCertificates} />
-          <DocSubSection title="Medicine prescriptions" rows={data.generatedDocuments.medicinePrescriptions} />
-          <DocSubSection title="Other" rows={data.generatedDocuments.other} />
-        </section>
-      )}
+      {gen.total > 0 ? (
+        <HistorySection title="Generated documents" count={gen.total}>
+          <DocTypeGroup title="Exams prescriptions" rows={gen.examsPrescriptions} />
+          <DocTypeGroup title="Absence certificates" rows={gen.absenceCertificates} />
+          <DocTypeGroup title="Medicine prescriptions" rows={gen.medicinePrescriptions} />
+          <DocTypeGroup title="Other" rows={gen.other} />
+        </HistorySection>
+      ) : null}
 
       {data.uploadedFiles.length > 0 ? (
-        <section>
-          <h4 className="text-sm font-bold text-[var(--color-text-primary)]">Uploaded files</h4>
-          <ul className="mt-2 space-y-1 text-[13px]">
-            {data.uploadedFiles.map((u) => (
-              <li key={u.id} className="flex justify-between gap-2 border-t border-[var(--color-border)] py-2">
-                <span className="text-[var(--color-text-muted)]">
-                  {formatWhen(u.sessionDate)} · {u.label}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <HistorySection title="Uploaded files" count={data.uploadedFiles.length}>
+          <UploadsTable rows={data.uploadedFiles} />
+        </HistorySection>
       ) : null}
     </div>
   );

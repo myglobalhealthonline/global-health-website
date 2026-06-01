@@ -54,6 +54,7 @@
   --color-brand-accent-soft:   rgba(176, 241, 34, 0.55);  /* lime at 55% — hover/soft states */
 
   /* Backgrounds */
+  --color-background:       #FFFFFF; /* alias for --color-background-page */
   --color-background-page:  #FFFFFF;
   --color-background-soft:  #F6F8F1;   /* warm off-white */
   --color-background-panel: #EDF2E2;   /* mint-tinted panel */

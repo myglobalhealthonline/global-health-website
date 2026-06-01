@@ -1,44 +1,35 @@
 import sgMail from "@sendgrid/mail";
 import { env } from "../../config/env.js";
+import { isGmailConfigured, sendViaGmail } from "./gmail-send.js";
 
 /**
- * Transactional email adapter — SendGrid.
+ * Transactional email — Gmail API (preferred) or SendGrid, else dev console log.
  *
- * Falls back to a console log in dev when SENDGRID_API_KEY is unset so the
- * rest of the system keeps working (signups, password reset, booking
- * confirmation don't block on missing creds).
+ * Gmail setup (consultation document attachments, etc.):
+ *   GMAIL_SEND_FROM=globalhealth@myglobalhealth.online
+ *   GOOGLE_OAUTH_CLIENT_ID / GOOGLE_OAUTH_CLIENT_SECRET / GMAIL_SEND_REFRESH_TOKEN
+ *   (falls back to GOOGLE_OAUTH_REFRESH_TOKEN only if send token is unset)
+ *   Send refresh token must include https://www.googleapis.com/auth/gmail.send
  *
- * Setup:
- *   1. Sign up at https://sendgrid.com (free tier: 100 emails/day forever)
- *   2. Set up sender authentication:
- *        Settings → Sender Authentication → Authenticate Your Domain
- *      Publish the CNAME records they give you at your DNS registrar.
- *      (Single Sender works for testing but Domain Authentication is needed
- *      for real production deliverability.)
- *   3. Create an API key at Settings → API Keys → "Restricted Access" with
- *      "Mail Send → Full Access". Copy the SG.… string.
- *   4. Put in backend/.env:
- *        SENDGRID_API_KEY=SG.…
- *        EMAIL_FROM=noreply@myglobalhealth.online
- *        PUBLIC_SITE_URL=https://myglobalhealth.online
- *   5. Restart the backend.
- *
- * Public interface (`sendEmail({ to, subject, html, text })`) is unchanged
- * from the previous adapter — callers stay portable across providers.
+ * SendGrid fallback:
+ *   SENDGRID_API_KEY=SG.…
+ *   EMAIL_FROM=noreply@myglobalhealth.online
  */
 
-let initialized = false;
-function ensureInitialized() {
+let sendGridInitialized = false;
+function ensureSendGridInitialized() {
   if (!env.SENDGRID_API_KEY) return false;
-  if (!initialized) {
+  if (!sendGridInitialized) {
     sgMail.setApiKey(env.SENDGRID_API_KEY);
-    initialized = true;
+    sendGridInitialized = true;
   }
   return true;
 }
 
 export function isEmailConfigured(): boolean {
-  return Boolean(env.SENDGRID_API_KEY && env.EMAIL_FROM);
+  return (
+    isGmailConfigured() || Boolean(env.SENDGRID_API_KEY && env.EMAIL_FROM)
+  );
 }
 
 export type SendEmailAttachment = {
@@ -52,45 +43,54 @@ export type SendEmailInput = {
   subject: string;
   html: string;
   text: string;
-  /** Override the default reply-to. */
   replyTo?: string;
   attachments?: SendEmailAttachment[];
 };
 
 export type SendEmailResult =
+  | { ok: true; id: string | null; mode: "gmail" }
   | { ok: true; id: string | null; mode: "sendgrid" }
   | { ok: true; id: null; mode: "log"; reason: string }
-  | { ok: false; mode: "sendgrid" | "log"; message: string };
+  | { ok: false; mode: "gmail" | "sendgrid" | "log"; message: string };
+
+function logEmailInstead(input: SendEmailInput, reason: string): SendEmailResult {
+  // eslint-disable-next-line no-console
+  console.log(
+    "[email:log]",
+    JSON.stringify(
+      {
+        to: input.to,
+        subject: input.subject,
+        replyTo: input.replyTo,
+        text: input.text.slice(0, 500),
+        reason,
+      },
+      null,
+      2,
+    ),
+  );
+  return { ok: true, id: null, mode: "log", reason };
+}
 
 export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult> {
-  const from = env.EMAIL_FROM;
-  const hasKey = ensureInitialized();
+  if (isGmailConfigured()) {
+    const result = await sendViaGmail(input);
+    if (result.ok) {
+      return { ok: true, id: result.id, mode: "gmail" };
+    }
+    return { ok: false, mode: "gmail", message: result.message };
+  }
 
-  if (!hasKey || !from) {
-    // Dev fallback — log the message so password-reset tokens etc. are still
-    // visible in development. Configure SendGrid keys for real delivery.
-    // eslint-disable-next-line no-console
-    console.log(
-      "[email:log]",
-      JSON.stringify(
-        {
-          to: input.to,
-          subject: input.subject,
-          replyTo: input.replyTo,
-          text: input.text.slice(0, 500),
-        },
-        null,
-        2,
-      ),
-    );
-    return {
-      ok: true,
-      id: null,
-      mode: "log",
-      reason: hasKey
+  const from = env.EMAIL_FROM;
+  const hasSendGrid = ensureSendGridInitialized();
+
+  if (!hasSendGrid || !from) {
+    return logEmailInstead(
+      input,
+      hasSendGrid
         ? "EMAIL_FROM missing — logged instead of sending"
-        : "SENDGRID_API_KEY missing — logged instead of sending",
-    };
+        : "No Gmail or SendGrid configured — logged instead of sending",
+    );
   }
 
   try {
@@ -112,12 +112,10 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
           }
         : {}),
     });
-    // SendGrid returns the message id in the `x-message-id` response header.
     const headers = response.headers as Record<string, string | undefined> | undefined;
     const messageId = headers?.["x-message-id"] ?? null;
     return { ok: true, id: messageId, mode: "sendgrid" };
   } catch (error) {
-    // SendGrid surfaces field-level errors via `error.response.body.errors[]`.
     const err = error as {
       message?: string;
       response?: { body?: { errors?: Array<{ message?: string }> } };
@@ -130,11 +128,6 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
   }
 }
 
-/**
- * Build an absolute URL using PUBLIC_SITE_URL (with safe fallback to dev
- * frontend origin). Used inside email templates so the link works wherever
- * the receiver opens it.
- */
 export function absoluteSiteUrl(pathname: string): string {
   const base = env.PUBLIC_SITE_URL?.trim().replace(/\/+$/, "") ?? "http://localhost:3000";
   const path = pathname.startsWith("/") ? pathname : `/${pathname}`;

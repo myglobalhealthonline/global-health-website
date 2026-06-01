@@ -1,6 +1,83 @@
 import { GeneratedDocumentType } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
-import { isVisibleInHistory } from "../generated-documents/document-template-utils.js";
+import {
+  formatConsultationTypeLabel,
+  formatOrderRef,
+  formatSessionParts,
+  generatedDocumentTitle,
+  GENERATED_DOCUMENT_TYPE_LABELS,
+  uploadFileTypeLabel,
+} from "./consultation-history-display.js";
+
+async function loadOrderRefsByAppointmentId(
+  appointmentIds: string[],
+): Promise<Map<string, string>> {
+  const map = new Map<string, string>();
+  if (appointmentIds.length === 0) return map;
+
+  const [orders, orderItems] = await Promise.all([
+    prisma.order.findMany({
+      where: { appointmentIds: { hasSome: appointmentIds } },
+      select: { id: true, appointmentIds: true },
+    }),
+    prisma.orderItem.findMany({
+      where: { appointmentId: { in: appointmentIds } },
+      select: { appointmentId: true, orderId: true },
+    }),
+  ]);
+
+  for (const o of orders) {
+    for (const aid of o.appointmentIds) {
+      if (appointmentIds.includes(aid)) map.set(aid, o.id);
+    }
+  }
+  for (const item of orderItems) {
+    if (item.appointmentId) map.set(item.appointmentId, item.orderId);
+  }
+  return map;
+}
+
+function mapGeneratedRow(
+  d: {
+    id: string;
+    appointmentId: string;
+    fileName: string;
+    documentType: GeneratedDocumentType;
+    sentToPatient: boolean;
+    metadata: unknown;
+    createdAt: Date;
+    appointment: {
+      scheduledAt: Date | null;
+      createdAt: Date;
+      consultationType: string;
+    };
+    doctor: { fullName: string };
+  },
+  orderRefByAppointment: Map<string, string>,
+) {
+  const { sessionDate, sessionTime, sessionIso } = formatSessionParts(
+    d.appointment.scheduledAt,
+    d.appointment.createdAt,
+  );
+  const orderId = orderRefByAppointment.get(d.appointmentId);
+  return {
+    id: d.id,
+    appointmentId: d.appointmentId,
+    fileName: generatedDocumentTitle(d.documentType, d.fileName, d.metadata),
+    documentType: d.documentType,
+    fileTypeLabel: GENERATED_DOCUMENT_TYPE_LABELS[d.documentType],
+    sentToPatient: d.sentToPatient,
+    createdAt: d.createdAt.toISOString(),
+    sessionDate,
+    sessionTime,
+    sessionIso,
+    orderNumber: formatOrderRef(d.appointmentId, orderId),
+    consultationType: d.appointment.consultationType,
+    consultationTypeLabel: formatConsultationTypeLabel(d.appointment.consultationType),
+    uploadedBy: d.doctor.fullName,
+    pdfUrl: `/api/doctor/documents/generated/${d.id}/pdf`,
+  };
+}
 
 export async function getPatientConsultationHistory(patientEmail: string, doctorId: string) {
   const email = patientEmail.toLowerCase().trim();
@@ -18,6 +95,7 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
   });
 
   const appointmentIds = appointments.map((a) => a.id);
+  const orderRefByAppointment = await loadOrderRefsByAppointmentId(appointmentIds);
 
   const [medicalNotes, generatedDocs, uploads] = await Promise.all([
     prisma.medicalNote.findMany({
@@ -54,6 +132,7 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
             consultationType: true,
           },
         },
+        doctor: { select: { fullName: true } },
       },
     }),
     prisma.appointmentDocument.findMany({
@@ -71,54 +150,72 @@ export async function getPatientConsultationHistory(patientEmail: string, doctor
             consultationType: true,
           },
         },
+        doctor: { select: { fullName: true } },
       },
     }),
   ]);
 
-  const historyDocs = generatedDocs.filter((d) =>
-    isVisibleInHistory(d.documentType, d.sentToPatient),
-  );
+  const generatedRows = generatedDocs.map((d) => mapGeneratedRow(d, orderRefByAppointment));
 
   const byType = (type: GeneratedDocumentType) =>
-    historyDocs
-      .filter((d) => d.documentType === type)
-      .map((d) => ({
-        id: d.id,
-        appointmentId: d.appointmentId,
-        fileName: d.fileName,
-        sentToPatient: d.sentToPatient,
-        createdAt: d.createdAt.toISOString(),
-        sessionDate: d.appointment.scheduledAt?.toISOString() ?? d.appointment.createdAt.toISOString(),
-        consultationType: d.appointment.consultationType,
-      }));
+    generatedRows.filter((r) => r.documentType === type);
 
   return {
-    medicalNotes: medicalNotes.map((n) => ({
-      id: n.id,
-      appointmentId: n.appointmentId,
-      content: n.content,
-      consultationType: n.consultationType,
-      createdByName: n.createdByName,
-      createdAt: n.createdAt.toISOString(),
-      sessionDate:
-        n.appointment.scheduledAt?.toISOString() ?? n.appointment.createdAt.toISOString(),
-      symptoms: n.appointment.symptoms,
-    })),
+    medicalNotes: medicalNotes.map((n) => {
+      const { sessionDate, sessionTime, sessionIso } = formatSessionParts(
+        n.appointment.scheduledAt,
+        n.appointment.createdAt,
+      );
+      const orderId = orderRefByAppointment.get(n.appointmentId);
+      return {
+        id: n.id,
+        appointmentId: n.appointmentId,
+        content: n.content,
+        consultationType: n.consultationType,
+        consultationTypeLabel: formatConsultationTypeLabel(
+          n.consultationType ?? n.appointment.consultationType,
+        ),
+        createdByName: n.createdByName,
+        createdAt: n.createdAt.toISOString(),
+        sessionDate,
+        sessionTime,
+        sessionIso,
+        orderNumber: formatOrderRef(n.appointmentId, orderId),
+        symptoms: n.appointment.symptoms,
+      };
+    }),
     generatedDocuments: {
+      total: generatedRows.length,
+      rows: generatedRows,
       examsPrescriptions: byType("EXAMS_PRESCRIPTION"),
       absenceCertificates: byType("ABSENCE_CERTIFICATE"),
       medicinePrescriptions: byType("PRESCRIPTION"),
       other: byType("OTHER"),
     },
-    uploadedFiles: uploads.map((u) => ({
-      id: u.id,
-      appointmentId: u.appointmentId,
-      label: u.label,
-      fileName: u.label,
-      createdAt: u.createdAt.toISOString(),
-      sessionDate:
-        u.appointment.scheduledAt?.toISOString() ?? u.appointment.createdAt.toISOString(),
-      consultationType: u.appointment.consultationType,
-    })),
+    uploadedFiles: uploads.map((u) => {
+      const { sessionDate, sessionTime, sessionIso } = formatSessionParts(
+        u.appointment.scheduledAt,
+        u.appointment.createdAt,
+      );
+      const orderId = orderRefByAppointment.get(u.appointmentId);
+      return {
+        id: u.id,
+        appointmentId: u.appointmentId,
+        label: u.label,
+        fileName: u.label,
+        mimetype: u.mimetype,
+        fileTypeLabel: uploadFileTypeLabel(u.mimetype),
+        byteSize: u.byteSize,
+        createdAt: u.createdAt.toISOString(),
+        sessionDate,
+        sessionTime,
+        sessionIso,
+        orderNumber: formatOrderRef(u.appointmentId, orderId),
+        consultationType: u.appointment.consultationType,
+        consultationTypeLabel: formatConsultationTypeLabel(u.appointment.consultationType),
+        uploadedBy: u.doctor.fullName,
+        viewUrl: `/api/doctor/documents/${u.id}/download`,
+      };
+    }),
   };
 }

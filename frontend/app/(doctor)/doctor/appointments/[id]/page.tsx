@@ -5,6 +5,8 @@ import {
   fetchDoctorConsultation,
   fetchDoctorConsultationServices,
   fetchDoctorDocuments,
+  fetchDoctorGeneratedDocuments,
+  fetchDoctorMe,
   fetchDoctorExams,
   fetchDoctorFormSubmissions,
   fetchDoctorFormTemplates,
@@ -18,7 +20,7 @@ import { ShareConsultationButton } from "./_components/share-button";
 import { AppointmentActions } from "./_components/appointment-actions";
 import { FormFillSection } from "./_components/form-fill";
 import { FollowUpButton } from "./_components/follow-up-button";
-import { DocumentsList } from "./_components/documents-list";
+import { AppointmentDocumentsTab } from "./_components/appointment-documents-tab";
 import { InternalMessagesThread } from "@/components/chat/InternalMessagesThread";
 import { DoctorConsultationChatSection } from "./_components/consultation-chat-section";
 import { PrescriptionsList } from "./_components/prescriptions-list";
@@ -54,6 +56,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     submissionsRes,
     templatesRes,
     documentsRes,
+    generatedDocsRes,
+    meRes,
     prescriptionsRes,
   ] = await Promise.all([
     fetchDoctorConsultation(id),
@@ -63,6 +67,8 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     fetchDoctorFormSubmissions(id),
     fetchDoctorFormTemplates(),
     fetchDoctorDocuments(id),
+    fetchDoctorGeneratedDocuments(id),
+    fetchDoctorMe(),
     fetchDoctorPrescriptions(id),
   ]);
 
@@ -89,6 +95,12 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const submissions = submissionsRes.ok ? submissionsRes.data.items : [];
   const templates = templatesRes.ok ? templatesRes.data.items : [];
   const documents = documentsRes.ok ? documentsRes.data.items : [];
+  const generatedDocCount = generatedDocsRes.ok ? generatedDocsRes.data.items.length : 0;
+  const doctorName = meRes.ok ? meRes.data.doctor.fullName : "Doctor";
+  const documentsTabBadge =
+    documents.length + generatedDocCount > 0
+      ? String(documents.length + generatedDocCount)
+      : null;
   const prescriptions = prescriptionsRes.ok ? prescriptionsRes.data.items : [];
   const consultationMode = appointment.consultationMode ?? "ONLINE";
   const followUpFromId = appointment.followUpFromAppointmentId ?? null;
@@ -237,10 +249,6 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                     >
                       Consultation documents
                     </h3>
-                    <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-                      Medical notes, prescriptions, absence certificates, and
-                      review &amp; send — all in one place.
-                    </p>
                     <ConsultationDocumentsSection appointmentId={appointment.id} />
                   </section>
 
@@ -629,7 +637,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           {
             id: "documents",
             label: "Documents",
-            badge: documents.length > 0 ? String(documents.length) : null,
+            badge: documentsTabBadge,
             panel: (
               <section className="gh-card p-6">
                 <h3
@@ -643,13 +651,16 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                   Documents
                 </h3>
                 <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-                  Attach PDFs, scans, or photos to this appointment. Stored
-                  in encrypted object storage; only you and admin can see
-                  them.
+                  Generated consultation PDFs and files you attach to this
+                  appointment. Use View to open any document in the browser.
                 </p>
-                <DocumentsList
+                <AppointmentDocumentsTab
                   appointmentId={appointment.id}
-                  initialItems={documents}
+                  scheduledAt={appointment.scheduledAt}
+                  createdAt={appointment.createdAt}
+                  consultationType={appointment.consultationType}
+                  doctorName={doctorName}
+                  initialUploads={documents}
                 />
               </section>
             ),

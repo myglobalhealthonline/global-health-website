@@ -4,27 +4,19 @@ import { forwardToBackend } from "@/lib/server/proxy-forward";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(
-  request: NextRequest,
-  ctx: { params: Promise<{ id: string }> },
-) {
-  const { id } = await ctx.params;
-  return forwardToBackend(
-    request,
-    `/api/doctor/appointments/${encodeURIComponent(id)}/documents`,
-    "GET",
-  );
+type RouteCtx = { params: Promise<{ id: string }> };
+
+function backendPath(id: string) {
+  return `/api/doctor/appointments/${encodeURIComponent(id)}/documents`;
 }
 
-/**
- * Multipart upload — buffer the bytes so the backend's
- * @fastify/multipart parser sees the boundary intact (same pattern as
- * admin media upload + doctor photo upload).
- */
-export async function POST(
-  request: NextRequest,
-  ctx: { params: Promise<{ id: string }> },
-) {
+/** List / upload appointment documents (patient uploads, etc.). */
+export async function GET(request: NextRequest, ctx: RouteCtx) {
+  const { id } = await ctx.params;
+  return forwardToBackend(request, backendPath(id), "GET");
+}
+
+export async function POST(request: NextRequest, ctx: RouteCtx) {
   const { id } = await ctx.params;
   const backend = getBackendOrigin();
   if (!backend) {
@@ -37,19 +29,16 @@ export async function POST(
   const contentType = request.headers.get("content-type") ?? "";
   const bodyBuffer = Buffer.from(await request.arrayBuffer());
 
-  const upstream = await fetch(
-    `${backend}/api/doctor/appointments/${encodeURIComponent(id)}/documents`,
-    {
-      method: "POST",
-      headers: {
-        ...(contentType ? { "content-type": contentType } : {}),
-        ...(cookieHeader ? { cookie: cookieHeader } : {}),
-        "content-length": String(bodyBuffer.length),
-      },
-      body: bodyBuffer,
-      cache: "no-store",
+  const upstream = await fetch(`${backend}${backendPath(id)}`, {
+    method: "POST",
+    headers: {
+      ...(contentType ? { "content-type": contentType } : {}),
+      ...(cookieHeader ? { cookie: cookieHeader } : {}),
+      "content-length": String(bodyBuffer.length),
     },
-  );
+    body: bodyBuffer,
+    cache: "no-store",
+  });
   const text = await upstream.text();
   return new NextResponse(text, {
     status: upstream.status,

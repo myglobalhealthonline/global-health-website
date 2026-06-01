@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ClipboardList, FileText, Pill, Stethoscope } from "lucide-react";
+import { FileText } from "lucide-react";
 import {
   ConsultationDocumentsModal,
   type ConsultationDocTabId,
@@ -9,49 +9,27 @@ import {
 
 export function ConsultationDocumentsSection({
   appointmentId,
+  onDocumentsChange,
 }: {
   appointmentId: string;
+  onDocumentsChange?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [initialTab, setInitialTab] = useState<ConsultationDocTabId>("overview");
 
-  function openTab(tab: ConsultationDocTabId) {
-    setInitialTab(tab);
-    setOpen(true);
-  }
-
   return (
     <>
-      <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-        <QuickAction
-          icon={ClipboardList}
-          label="Exams prescription"
-          hint="Request labs or imaging"
-          onClick={() => openTab("exams")}
-        />
-        <QuickAction
-          icon={Pill}
-          label="Medicine prescription"
-          hint="PDF for your national portal"
-          onClick={() => openTab("medicine")}
-        />
-        <QuickAction
-          icon={Stethoscope}
-          label="Absence certificate"
-          hint="Review & email to patient"
-          onClick={() => openTab("absence")}
-        />
-        <QuickAction
-          icon={FileText}
-          label="Medical notes"
-          hint="Free text, not emailed"
-          onClick={() => openTab("medical-notes")}
-        />
-      </div>
+      <p className="mt-3 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
+        Generate exams, prescriptions, or absence certificates. Patient details and your
+        registration are filled in automatically from records.
+      </p>
       <button
         type="button"
-        onClick={() => openTab("overview")}
-        className="gh-btn gh-btn-primary mt-3 w-full text-sm sm:w-auto"
+        onClick={() => {
+          setInitialTab("overview");
+          setOpen(true);
+        }}
+        className="gh-btn gh-btn-primary mt-4 w-full text-sm sm:w-auto"
       >
         <FileText className="size-3.5" aria-hidden />
         Open document workspace
@@ -61,32 +39,9 @@ export function ConsultationDocumentsSection({
         open={open}
         onClose={() => setOpen(false)}
         initialTab={initialTab}
+        onDocumentsChange={onDocumentsChange}
       />
     </>
-  );
-}
-
-function QuickAction({
-  icon: Icon,
-  label,
-  hint,
-  onClick,
-}: {
-  icon: typeof FileText;
-  label: string;
-  hint: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex flex-col items-start gap-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] px-3 py-3 text-left transition hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)]"
-    >
-      <Icon className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
-      <span className="text-[13px] font-bold text-[var(--color-text-primary)]">{label}</span>
-      <span className="text-[11px] text-[var(--color-text-muted)]">{hint}</span>
-    </button>
   );
 }
 
@@ -94,9 +49,11 @@ function QuickAction({
 export function ConsultationDocumentsTrigger({
   appointmentId,
   className,
+  onDocumentsChange,
 }: {
   appointmentId: string;
   className?: string;
+  onDocumentsChange?: () => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -112,8 +69,12 @@ export function ConsultationDocumentsTrigger({
       <ConsultationDocumentsModal
         appointmentId={appointmentId}
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={() => {
+          setOpen(false);
+          onDocumentsChange?.();
+        }}
         initialTab="overview"
+        onDocumentsChange={onDocumentsChange}
       />
     </>
   );

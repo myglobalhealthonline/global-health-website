@@ -137,6 +137,34 @@ const PATCHES: { name: string; sql: string }[] = [
       END $$;
     `,
   },
+  {
+    name: "MedicalNote.table",
+    sql: `
+      CREATE TABLE IF NOT EXISTS "MedicalNote" (
+        "id" TEXT NOT NULL,
+        "appointmentId" TEXT NOT NULL,
+        "patientEmail" TEXT NOT NULL,
+        "content" TEXT NOT NULL,
+        "consultationType" TEXT,
+        "createdByDoctorId" TEXT NOT NULL,
+        "createdByName" TEXT NOT NULL,
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "MedicalNote_pkey" PRIMARY KEY ("id")
+      );
+      CREATE INDEX IF NOT EXISTS "MedicalNote_patientEmail_createdAt_idx"
+        ON "MedicalNote"("patientEmail", "createdAt");
+      CREATE INDEX IF NOT EXISTS "MedicalNote_appointmentId_idx"
+        ON "MedicalNote"("appointmentId");
+      DO $$ BEGIN
+        ALTER TABLE "MedicalNote"
+          ADD CONSTRAINT "MedicalNote_appointmentId_fkey"
+          FOREIGN KEY ("appointmentId") REFERENCES "Appointment"("id")
+          ON DELETE CASCADE ON UPDATE CASCADE;
+      EXCEPTION
+        WHEN duplicate_object THEN NULL;
+      END $$;
+    `,
+  },
 ];
 
 export async function ensureSchema(log: {

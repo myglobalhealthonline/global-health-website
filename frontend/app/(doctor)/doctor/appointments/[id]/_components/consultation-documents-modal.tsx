@@ -1,47 +1,29 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
+import {
+  doctorApiErrorMessage,
+  parseDoctorApiJson,
+} from "@/lib/doctor-api-client";
 import {
   ChevronRight,
   ClipboardList,
   FileText,
   Loader2,
-  Pencil,
   Pill,
-  Send,
   Stethoscope,
-  Trash2,
   X,
 } from "lucide-react";
-import {
-  DocumentContextBanner,
-  type DocumentContext,
-} from "./document-context-banner";
+import { type DocumentContext } from "./document-context-banner";
 
-type GeneratedDoc = {
-  id: string;
-  documentType: string;
-  fileName: string;
-  sentToPatient: boolean;
-  createdAt: string;
-  metadata?: Record<string, string> | null;
-};
-
-export type ConsultationDocTabId =
-  | "overview"
-  | "medical-notes"
-  | "exams"
-  | "medicine"
-  | "absence"
-  | "review";
+export type ConsultationDocTabId = "overview" | "exams" | "medicine" | "absence";
 
 const TABS: { id: ConsultationDocTabId; label: string }[] = [
   { id: "overview", label: "Overview" },
-  { id: "medical-notes", label: "Medical notes" },
   { id: "exams", label: "Exams" },
   { id: "medicine", label: "Prescription" },
   { id: "absence", label: "Absence" },
-  { id: "review", label: "Review & send" },
 ];
 
 export function ConsultationDocumentsModal({
@@ -49,24 +31,23 @@ export function ConsultationDocumentsModal({
   open,
   onClose,
   initialTab,
+  onDocumentsChange,
 }: {
   appointmentId: string;
   open: boolean;
   onClose: () => void;
   initialTab?: ConsultationDocTabId;
+  onDocumentsChange?: () => void;
 }) {
   const [tab, setTab] = useState<ConsultationDocTabId>(initialTab ?? "overview");
   const [context, setContext] = useState<DocumentContext | null>(null);
   const [contextLoading, setContextLoading] = useState(false);
-  const [queue, setQueue] = useState<GeneratedDoc[]>([]);
-  const [history, setHistory] = useState<GeneratedDoc[]>([]);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [editingDocId, setEditingDocId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-  const [noteText, setNoteText] = useState("");
   const [exams, setExams] = useState("");
   const [examsNotes, setExamsNotes] = useState("");
   const [meds, setMeds] = useState<string[]>([""]);
@@ -79,52 +60,47 @@ export function ConsultationDocumentsModal({
     setContextLoading(true);
     try {
       const res = await fetch(
-        `/api/doctor/appointments/${appointmentId}/documents/context`,
+        `/api/doctor/appointments/${appointmentId}/documents-context`,
       );
-      const json = (await res.json()) as { ok?: boolean; data?: DocumentContext };
+      const json = await parseDoctorApiJson<{ ok?: boolean; data?: DocumentContext }>(res);
+      if (!json) {
+        setError(doctorApiErrorMessage(res, null, "Could not load patient context."));
+        return;
+      }
       if (json.ok && json.data) {
         setContext(json.data);
         setPharmacy((prev) => prev || json.data!.patient.pharmacy || "");
+      } else {
+        setError(doctorApiErrorMessage(res, json, "Could not load patient context."));
       }
     } finally {
       setContextLoading(false);
     }
   }, [appointmentId]);
 
-  const loadDocs = useCallback(async () => {
-    const res = await fetch(
-      `/api/doctor/appointments/${appointmentId}/documents/generated`,
-    );
-    const json = (await res.json()) as {
-      ok?: boolean;
-      data?: { queue?: GeneratedDoc[]; history?: GeneratedDoc[] };
-    };
-    if (json.ok && json.data) {
-      setQueue(json.data.queue ?? []);
-      setHistory(json.data.history ?? []);
-    }
-  }, [appointmentId]);
-
   useEffect(() => {
-    if (open) {
-      void loadDocs();
-      void loadContext();
-      if (initialTab) setTab(initialTab);
-    }
-  }, [open, loadDocs, loadContext, initialTab]);
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
+    setError(null);
+    setSuccess(null);
+    void loadContext();
+    if (initialTab) setTab(initialTab);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open, loadContext, initialTab, onClose]);
 
-  if (!open) return null;
-
-  const visibleTabs = TABS.filter((t) => t.id !== "review" || queue.length > 0);
+  if (!open || !mounted) return null;
 
   function buildFields(
     type: string,
@@ -139,73 +115,58 @@ export function ConsultationDocumentsModal({
     return payload;
   }
 
-  async function saveNote() {
-    setError(null);
-    setSuccess(null);
-    if (!noteText.trim()) {
-      setError("Enter a medical note.");
-      return;
-    }
-    startTransition(async () => {
-      const res = await fetch(
-        `/api/doctor/appointments/${appointmentId}/medical-notes`,
-        {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ note: noteText.trim() }),
-        },
-      );
-      const json = (await res.json()) as { ok?: boolean; message?: string };
-      if (!res.ok || !json.ok) {
-        setError(json.message ?? "Could not save note");
-        return;
-      }
-      setNoteText("");
-      setSuccess("Medical note saved.");
-    });
-  }
-
   async function generate(type: string, fields: Record<string, string>) {
     setError(null);
     setSuccess(null);
     startTransition(async () => {
       const res = await fetch(
-        `/api/doctor/appointments/${appointmentId}/documents/generate`,
+        `/api/doctor/appointments/${appointmentId}/documents-generate`,
         {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(buildFields(type, fields)),
         },
       );
-      const json = (await res.json()) as {
+      const json = await parseDoctorApiJson<{
         ok?: boolean;
         message?: string;
         data?: {
           pdfUrl?: string;
+          document?: { id: string };
           healthPortalUrl?: string | null;
           healthPortalLabel?: string | null;
         };
-      };
-      if (!res.ok || !json.ok) {
-        setError(json.message ?? "Generate failed");
+      }>(res);
+      if (!res.ok || !json?.ok) {
+        setError(doctorApiErrorMessage(res, json, "Generate failed"));
         return;
       }
       setEditingDocId(null);
-      await loadDocs();
-      if (type === "PRESCRIPTION" && json.data?.pdfUrl) {
-        window.open(json.data.pdfUrl, "_blank", "noopener,noreferrer");
-        if (json.data.healthPortalUrl) {
+      onDocumentsChange?.();
+      const pdfUrl =
+        json.data?.pdfUrl ??
+        (json.data?.document?.id
+          ? `/api/doctor/documents/generated/${json.data.document.id}/pdf`
+          : null);
+      if (pdfUrl) {
+        window.open(pdfUrl, "_blank", "noopener,noreferrer");
+      }
+      if (type === "PRESCRIPTION") {
+        if (json.data?.healthPortalUrl) {
           setSuccess(
             `PDF opened. Submit via ${json.data.healthPortalLabel ?? "national portal"}.`,
           );
         } else {
-          setSuccess("PDF generated and opened.");
+          setSuccess("PDF generated and opened in a new tab.");
         }
       } else if (type === "EXAMS_PRESCRIPTION" || type === "ABSENCE_CERTIFICATE") {
-        setTab("review");
-        setSuccess("Document generated — review and send when ready.");
+        setSuccess(
+          pdfUrl
+            ? "PDF opened — use Review & send on the Documents tab when ready."
+            : "Document generated — use Review & send on the Documents tab.",
+        );
       } else {
-        setSuccess("Document generated.");
+        setSuccess(pdfUrl ? "PDF generated and opened." : "Document generated.");
       }
     });
   }
@@ -247,40 +208,6 @@ export function ConsultationDocumentsModal({
     });
   }
 
-  function sendSelected() {
-    const ids = [...selected].filter((id) => queue.some((q) => q.id === id));
-    if (ids.length === 0) return;
-    startTransition(async () => {
-      const res = await fetch(
-        `/api/doctor/appointments/${appointmentId}/documents/send`,
-        {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ documentIds: ids }),
-        },
-      );
-      const json = (await res.json()) as {
-        ok?: boolean;
-        message?: string;
-        data?: { sentCount?: number };
-      };
-      if (!res.ok || !json.ok) {
-        setError(json.message ?? "Send failed");
-        return;
-      }
-      setSelected(new Set());
-      setSuccess(`Sent ${json.data?.sentCount ?? 0} document(s) to patient.`);
-      await loadDocs();
-    });
-  }
-
-  function remove(id: string) {
-    startTransition(async () => {
-      await fetch(`/api/doctor/documents/generated/${id}`, { method: "DELETE" });
-      await loadDocs();
-    });
-  }
-
   function applyMetadata(meta: Record<string, string> | null | undefined, docType: string) {
     if (!meta) return;
     if (docType === "EXAMS_PRESCRIPTION") {
@@ -301,23 +228,21 @@ export function ConsultationDocumentsModal({
     }
   }
 
-  function startEdit(row: GeneratedDoc) {
-    setEditingDocId(row.id);
-    applyMetadata(row.metadata, row.documentType);
-    if (row.documentType === "EXAMS_PRESCRIPTION") setTab("exams");
-    else if (row.documentType === "ABSENCE_CERTIFICATE") setTab("absence");
-    else if (row.documentType === "PRESCRIPTION") setTab("medicine");
-  }
-
-  return (
+  const modal = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="consultation-docs-title"
     >
-      <div className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] shadow-xl">
-        <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/75"
+        aria-label="Close dialog"
+        onClick={onClose}
+      />
+      <div className="relative z-10 flex max-h-[min(92vh,900px)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-[var(--color-border)] bg-white shadow-2xl">
+        <div className="flex shrink-0 items-center justify-between border-b border-[var(--color-border)] bg-white px-4 py-3">
           <div>
             <h2
               id="consultation-docs-title"
@@ -340,8 +265,8 @@ export function ConsultationDocumentsModal({
           </button>
         </div>
 
-        <div className="flex flex-wrap gap-1 border-b border-[var(--color-border)] px-3 py-2">
-          {visibleTabs.map((t) => (
+        <div className="flex shrink-0 flex-wrap gap-1 border-b border-[var(--color-border)] bg-white px-3 py-2">
+          {TABS.map((t) => (
             <button
               key={t.id}
               type="button"
@@ -353,12 +278,11 @@ export function ConsultationDocumentsModal({
               }`}
             >
               {t.label}
-              {t.id === "review" && queue.length > 0 ? ` (${queue.length})` : ""}
             </button>
           ))}
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-white p-4">
           {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
           {success ? <p className="mb-3 text-sm text-emerald-700">{success}</p> : null}
           {editingDocId ? (
@@ -370,12 +294,30 @@ export function ConsultationDocumentsModal({
           {contextLoading ? (
             <p className="mb-4 flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
               <Loader2 className="size-4 animate-spin" aria-hidden />
-              Loading patient &amp; profile…
+              Loading…
             </p>
-          ) : context ? (
-            <div className="mb-4">
-              <DocumentContextBanner context={context} />
+          ) : context && tab === "overview" ? (
+            <div className="mb-4 space-y-2">
+              {!context.hasDocxTemplate ? (
+                <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+                  Branded Word templates are not available for {context.countryLabel};
+                  PDFs use the HTML layout instead.
+                </p>
+              ) : null}
+              {context.doctor.registrationMissing ? (
+                <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+                  Add your {context.countryLabel} registration in your doctor profile so it
+                  appears on generated documents.
+                </p>
+              ) : null}
             </div>
+          ) : null}
+
+          {(tab === "exams" || tab === "medicine" || tab === "absence") && !contextLoading ? (
+            <p className="mb-3 text-xs text-[var(--color-text-muted)]">
+              Patient and prescriber details from records are applied to the PDF automatically
+              — enter clinical content only.
+            </p>
           ) : null}
 
           {tab === "overview" ? (
@@ -388,7 +330,7 @@ export function ConsultationDocumentsModal({
                 <OverviewCard
                   icon={ClipboardList}
                   title="Exams prescription"
-                  description="List tests or imaging — email to patient after review."
+                  description="List tests or imaging — send from Documents tab after review."
                   onClick={() => setTab("exams")}
                 />
                 <OverviewCard
@@ -400,48 +342,14 @@ export function ConsultationDocumentsModal({
                 <OverviewCard
                   icon={Stethoscope}
                   title="Absence certificate"
-                  description="Unfit for work dates — email to patient after review."
+                  description="Unfit for work dates — send from Documents tab after review."
                   onClick={() => setTab("absence")}
                 />
-                <OverviewCard
-                  icon={FileText}
-                  title="Medical notes"
-                  description="Internal note only — not sent as PDF."
-                  onClick={() => setTab("medical-notes")}
-                />
               </div>
-              {queue.length > 0 ? (
-                <button
-                  type="button"
-                  onClick={() => setTab("review")}
-                  className="text-sm font-semibold text-[var(--color-brand-primary)] hover:underline"
-                >
-                  {queue.length} document(s) waiting to send → Review &amp; send
-                </button>
-              ) : null}
-            </div>
-          ) : null}
-
-          {tab === "medical-notes" ? (
-            <div className="space-y-3">
-              <p className="text-sm text-[var(--color-text-muted)]">
-                Free-text note — saved immediately, not emailed.
+              <p className="text-xs text-[var(--color-text-muted)]">
+                Medical notes and Review &amp; send live on the Documents tab (not in this
+                dialog).
               </p>
-              <textarea
-                value={noteText}
-                onChange={(e) => setNoteText(e.target.value)}
-                rows={6}
-                className="gh-input w-full"
-                placeholder="Clinical notes for this session…"
-              />
-              <button
-                type="button"
-                disabled={pending}
-                onClick={() => void saveNote()}
-                className="gh-btn gh-btn-primary text-sm"
-              >
-                Save note
-              </button>
             </div>
           ) : null}
 
@@ -587,103 +495,12 @@ export function ConsultationDocumentsModal({
               </button>
             </div>
           ) : null}
-
-          {tab === "review" ? (
-            <div className="space-y-3">
-              {queue.length === 0 ? (
-                <p className="text-sm text-[var(--color-text-muted)]">Nothing pending.</p>
-              ) : (
-                <>
-                  <p className="text-sm text-[var(--color-text-muted)]">
-                    Preview each PDF, then send selected documents to the patient by email.
-                  </p>
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      disabled={pending || selected.size === 0}
-                      onClick={sendSelected}
-                      className="gh-btn gh-btn-primary text-xs"
-                    >
-                      <Send className="size-3" aria-hidden /> Send selected
-                    </button>
-                  </div>
-                  <ul className="divide-y divide-[var(--color-border)] rounded-md border border-[var(--color-border)]">
-                    {queue.map((row) => (
-                      <li
-                        key={row.id}
-                        className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm"
-                      >
-                        <label className="flex flex-1 items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={selected.has(row.id)}
-                            onChange={(e) => {
-                              const next = new Set(selected);
-                              if (e.target.checked) next.add(row.id);
-                              else next.delete(row.id);
-                              setSelected(next);
-                            }}
-                          />
-                          <span>
-                            {formatDocType(row.documentType)} · {row.fileName}
-                          </span>
-                        </label>
-                        <div className="flex items-center gap-1">
-                          <a
-                            href={`/api/doctor/documents/generated/${row.id}/pdf`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
-                          >
-                            Preview
-                          </a>
-                          <button
-                            type="button"
-                            onClick={() => startEdit(row)}
-                            className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
-                          >
-                            <Pencil className="size-3" aria-hidden /> Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => remove(row.id)}
-                            className="p-1 text-[var(--color-text-muted)] hover:text-red-700"
-                            aria-label="Delete"
-                          >
-                            <Trash2 className="size-4" />
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-              {history.length > 0 ? (
-                <div className="mt-4">
-                  <h4 className="text-sm font-bold">Sent on this appointment</h4>
-                  <ul className="mt-2 space-y-1 text-sm text-[var(--color-text-muted)]">
-                    {history.map((row) => (
-                      <li key={row.id}>
-                        <a
-                          href={`/api/doctor/documents/generated/${row.id}/pdf`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-semibold text-[var(--color-brand-primary)] hover:underline"
-                        >
-                          {row.fileName}
-                        </a>
-                        {row.sentToPatient ? " · sent" : ""}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
         </div>
       </div>
     </div>
   );
+
+  return createPortal(modal, document.body);
 }
 
 function OverviewCard({
@@ -715,6 +532,3 @@ function OverviewCard({
   );
 }
 
-function formatDocType(type: string): string {
-  return type.replace(/_/g, " ").toLowerCase();
-}

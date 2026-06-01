@@ -183,15 +183,28 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid payload", body.error.flatten()));
       }
       try {
-        const count = await sendGeneratedDocuments(
+        const result = await sendGeneratedDocuments(
           auth.doctorId,
           request.params.id,
           body.data.documentIds,
         );
-        if (count === null) {
+        if (result === null) {
           return reply.status(404).send(errorResponse("Appointment not found"));
         }
-        return okResponse({ sentCount: count });
+        const { sentCount, errors, attempted } = result;
+        if (sentCount === 0 && attempted > 0) {
+          return reply.status(502).send(
+            errorResponse(
+              errors[0] ??
+                "Could not send email. Configure GMAIL_SEND_FROM and Google OAuth (gmail.send scope) in backend .env.",
+              { sentCount, errors },
+            ),
+          );
+        }
+        return okResponse({
+          sentCount,
+          ...(errors.length > 0 ? { errors } : {}),
+        });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(error.message));

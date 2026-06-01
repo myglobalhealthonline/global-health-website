@@ -6,7 +6,9 @@ function mergeRailwayBucketAliases(): NodeJS.ProcessEnv {
   if (!out.S3_BUCKET?.trim() && out.BUCKET?.trim()) out.S3_BUCKET = out.BUCKET;
   if (!out.S3_ENDPOINT?.trim() && out.ENDPOINT?.trim()) out.S3_ENDPOINT = out.ENDPOINT;
   if (!out.S3_ACCESS_KEY_ID?.trim() && out.ACCESS_KEY_ID?.trim()) out.S3_ACCESS_KEY_ID = out.ACCESS_KEY_ID;
+  if (!out.S3_ACCESS_KEY_ID?.trim() && out.S3_ACCESS_KEY?.trim()) out.S3_ACCESS_KEY_ID = out.S3_ACCESS_KEY;
   if (!out.S3_SECRET_ACCESS_KEY?.trim() && out.SECRET_ACCESS_KEY?.trim()) out.S3_SECRET_ACCESS_KEY = out.SECRET_ACCESS_KEY;
+  if (!out.S3_SECRET_ACCESS_KEY?.trim() && out.S3_SECRET_KEY?.trim()) out.S3_SECRET_ACCESS_KEY = out.S3_SECRET_KEY;
   if (!out.S3_REGION?.trim() && out.REGION?.trim()) out.S3_REGION = out.REGION;
   // Railway bucket credentials CLI currently prints AWS_* names. Accept both shapes.
   if (!out.S3_BUCKET?.trim() && out.AWS_S3_BUCKET_NAME?.trim()) out.S3_BUCKET = out.AWS_S3_BUCKET_NAME;
@@ -63,9 +65,13 @@ const envSchema = z.object({
    */
   LOCAL_MEDIA_ROOT: z.string().trim().min(1).optional(),
 
-  /** SendGrid (transactional email). All three required to actually send. */
+  /** SendGrid (transactional email fallback when Gmail is not configured). */
   SENDGRID_API_KEY: z.string().trim().min(1).optional(),
   EMAIL_FROM: z.string().trim().email().optional(),
+  /** Gmail API sender (uses GOOGLE_OAUTH_* client + GMAIL_SEND_REFRESH_TOKEN with gmail.send scope). */
+  GMAIL_SEND_FROM: z.string().trim().email().optional(),
+  /** Refresh token authorized for gmail.send — separate from calendar/meet token. */
+  GMAIL_SEND_REFRESH_TOKEN: z.string().trim().min(1).optional(),
   /** Used to build absolute URLs in emails (e.g. https://myglobalhealth.online). No trailing slash. */
   PUBLIC_SITE_URL: z.string().trim().url().optional(),
 
