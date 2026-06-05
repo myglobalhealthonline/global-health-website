@@ -1,0 +1,83 @@
+/**
+ * Per-service SEO overrides (meta title + description).
+ *
+ * Source of truth: the marketing "Meta Tags" sheet — the columns
+ * "Suggested Meta Title" / "Suggested Meta Description" approved for the
+ * migration from the legacy Wix site. Keyed by `${countryCode}:${slug}`
+ * so the same service slug can carry a different, locale-correct meta per
+ * market (e.g. `ie:medical-consultation` in English vs
+ * `pt:medical-consultation` in Portuguese).
+ *
+ * The per-service consult page (`/[country]/[lang]/consult/[serviceSlug]`)
+ * reads this via `getServiceSeo`; when no override exists it falls back to
+ * the generic generated title/description.
+ *
+ * To add a market/service: drop a new `${code}:${slug}` entry below using
+ * the exact slug the backend serves for that service.
+ */
+export type ServiceSeo = {
+  title: string;
+  description: string;
+};
+
+const SERVICE_SEO: Record<string, ServiceSeo> = {
+  // ── Ireland (English) ──────────────────────────────────────────────
+  "ie:sick-leave": {
+    title: "Online Sick Leave Certificate Ireland | Certified Sick Cert Online",
+    description:
+      "Book online doctor consultation in Ireland for sick leave certificates. Receive your sick cert online quickly with secure, same-day medical assessment.",
+  },
+  "ie:medical-consultation": {
+    title: "Online Doctor Consultation Ireland | Medical Prescriptions & Services",
+    description:
+      "Book an online doctor consultation in Ireland with qualified medical doctors. Access trusted online medical services in Ireland and fast online prescriptions.",
+  },
+  "ie:weight-loss-consultation": {
+    title: "Medical Weight Loss Online Ireland | Physician Supervised Program",
+    description:
+      "Join an online medical weight loss program with physician supervised weight loss. Get personalised plans and guidance from qualified doctors online in Ireland.",
+  },
+
+  // ── Portugal (Portuguese) ──────────────────────────────────────────
+  "pt:medical-consultation": {
+    title: "Consulta Médica Online em Portugal | Consulta de Saúde Segura",
+    description:
+      "Agende a sua consulta médica online em Portugal de forma rápida e segura. Consulta de saúde em Portugal com médicos qualificados e atendimento no mesmo dia.",
+  },
+  "pt:medical-exam": {
+    title: "Atestado Médico Portugal | Atestado Médico para Trabalho Online",
+    description:
+      "Obtenha atestado médico em Portugal com avaliação de saúde em Portugal de forma online. Processo rápido e seguro para obter atestado médico para trabalho de forma online.",
+  },
+  "pt:travelers-consultation": {
+    title: "Consulta de Saúde Internacional | Consulta Viagem Online",
+    description:
+      "Marque a sua consulta do viajante online com aconselhamento médico para viajar de forma rápida, segura e adaptada ao seu destino.",
+  },
+};
+
+/** Normalize a slug for matching: lowercase, drop apostrophes/curly quotes
+ *  so legacy slugs like `traveler's-consultation` resolve to the stored
+ *  `travelers-consultation` key. */
+function normalizeSlug(slug: string): string {
+  return slug.toLowerCase().replace(/['’]/g, "");
+}
+
+/**
+ * Resolve the approved SEO override for a `(country, service)` pair, or
+ * `null` when no override is defined. Matching is apostrophe-insensitive.
+ */
+export function getServiceSeo(
+  countryCode: string,
+  serviceSlug: string,
+): ServiceSeo | null {
+  const code = countryCode.toLowerCase();
+  const direct = SERVICE_SEO[`${code}:${serviceSlug.toLowerCase()}`];
+  if (direct) return direct;
+  const target = normalizeSlug(serviceSlug);
+  for (const [key, value] of Object.entries(SERVICE_SEO)) {
+    const [keyCode, keySlug] = key.split(":");
+    if (keyCode === code && normalizeSlug(keySlug) === target) return value;
+  }
+  return null;
+}

@@ -12,6 +12,8 @@ import {
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
 import { getServiceDoctorAvailability } from "@/lib/content/get-doctor-availability";
+import { getServiceSeo } from "@/data/service-seo";
+import { getSiteUrl } from "@/lib/seo/site-url";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { ConsultationBookingForm } from "./_components/consultation-booking-form";
@@ -24,10 +26,24 @@ export async function generateMetadata({
 }: {
   params: Promise<Params>;
 }): Promise<Metadata> {
-  const { country, serviceSlug } = await params;
+  const { country, lang, serviceSlug } = await params;
+  const code = countryCodeFromSlug(country);
+
+  // Approved per-service meta from the migration "Meta Tags" sheet, keyed
+  // by country + slug. Falls back to a generic generated pair otherwise.
+  const seo = code ? getServiceSeo(code, serviceSlug) : null;
+  const title = seo?.title ?? `Book ${serviceSlug} | ${SITE_NAME}`;
+  const description =
+    seo?.description ??
+    `Pick a doctor and time slot to book your consultation in ${country}.`;
+  const url = `${getSiteUrl()}/${country}/${lang}/consult/${serviceSlug}`;
+
   return {
-    title: `Book ${serviceSlug} | ${SITE_NAME}`,
-    description: `Pick a doctor and time slot to book your consultation in ${country}.`,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
