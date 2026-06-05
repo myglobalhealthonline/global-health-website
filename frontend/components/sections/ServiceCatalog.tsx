@@ -33,13 +33,14 @@ export type ServiceCatalogItem = {
 };
 
 /**
- * Forest-glass card surface — same tokens as the "Available now" doctors
- * card on the hero: forest-night #0F2E25 at 72% with an 18px backdrop
- * blur and a faint white hairline border. Shared so every service tile
- * (featured + default) reads as the same glass material.
+ * Forest-glass card surface — matches the `.gh-glass-card` class (and the
+ * hero "Available now" card). Forest-night #0F2E25 at 0.85 so the colour
+ * stays consistent over the solid section bg (0.72 lets the section green
+ * bleed through and washes the cards out). Kept as an inline const here
+ * because the featured tile spreads it with an extra `minHeight`.
  */
 const GLASS_CARD_STYLE = {
-  background: "rgba(15, 46, 37, 0.72)",
+  background: "rgba(15, 46, 37, 0.85)",
   border: "1px solid rgba(255, 255, 255, 0.14)",
   backdropFilter: "blur(18px)",
   WebkitBackdropFilter: "blur(18px)",

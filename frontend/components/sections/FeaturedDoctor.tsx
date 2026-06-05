@@ -91,11 +91,9 @@ export function FeaturedDoctor({
   const card = (
     <>
       <div
-        className="gh-featured-card overflow-hidden"
+        className="gh-featured-card gh-glass-card overflow-hidden"
         style={{
           borderRadius: "var(--radius-card)",
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.09)",
         }}
       >
         {/* Portrait */}

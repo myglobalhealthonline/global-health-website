@@ -121,7 +121,11 @@ export function DoctorsSection({ title, intro, doctors, theme = "dark" }: Doctor
 
         <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
           {paged.map((doctor) => (
-            <DoctorCard key={doctor.href ?? `${doctor.name}-${doctor.title}`} {...doctor} />
+            <DoctorCard
+              key={doctor.href ?? `${doctor.name}-${doctor.title}`}
+              {...doctor}
+              dark={!isLight}
+            />
           ))}
         </div>
       </div>

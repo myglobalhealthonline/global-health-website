@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Globe, ShieldCheck, Phone, CalendarDays, ArrowRight } from "lucide-react";
@@ -18,8 +19,8 @@ function IconBox({ children }: { children: React.ReactNode }) {
     <span
       className="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-[10px]"
       style={{
-        background: "rgba(29,75,54,0.07)",
-        border: "1px solid rgba(29,75,54,0.10)",
+        background: "var(--dc-icon-bg, rgba(29,75,54,0.07))",
+        border: "1px solid var(--dc-icon-line, rgba(29,75,54,0.10))",
       }}
     >
       {children}
@@ -57,6 +58,10 @@ type DoctorCardProps = {
    *  the profile page. */
   bookingHref?: string;
   ctaLabel?: string;
+  /** Dark variant — forest-glass surface + light text, for dark sections
+   *  (doctors directory, dark DoctorsSection). Defaults to the original
+   *  white card for light sections (DoctorWall, consult page). */
+  dark?: boolean;
 };
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
@@ -76,6 +81,7 @@ export function DoctorCard({
   href,
   bookingHref,
   ctaLabel = "View profile",
+  dark = false,
 }: DoctorCardProps) {
   const trimmedImage = imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
@@ -89,19 +95,39 @@ export function DoctorCard({
   const profileHref = href;
   const bookHref = bookingHref ?? null;
 
+  // Card palette as root-scoped CSS vars so descendants (text, icons,
+  // borders) recolor for the dark variant without per-element prop
+  // threading. Light = the original white-card greens; dark = light ink
+  // on the forest-glass surface. `background: var(--color-brand-primary)`
+  // usages (initials tile, title badge, Book button) intentionally stay
+  // green in both modes — only text/border tokens switch here.
+  const cardVars = {
+    "--dc-ink": dark ? "rgba(255,255,255,0.92)" : "var(--color-brand-primary)",
+    "--dc-muted": dark ? "rgba(255,255,255,0.55)" : "rgba(29,75,54,0.45)",
+    "--dc-line": dark ? "rgba(255,255,255,0.22)" : "rgba(29,75,54,0.20)",
+    "--dc-icon-bg": dark ? "rgba(255,255,255,0.06)" : "rgba(29,75,54,0.07)",
+    "--dc-icon-line": dark ? "rgba(255,255,255,0.10)" : "rgba(29,75,54,0.10)",
+    "--dc-hover": dark ? "rgba(255,255,255,0.08)" : "rgba(29,75,54,0.04)",
+  } as CSSProperties;
+
   return (
     <article
-      className="
-        group relative flex flex-col overflow-hidden bg-white
+      className={`
+        group relative flex flex-col overflow-hidden ${dark ? "gh-glass-card" : "bg-white"}
         transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
         hover:-translate-y-[3px]
         motion-reduce:transition-none motion-reduce:hover:translate-y-0
         focus-within:ring-2 focus-within:ring-[var(--color-brand-primary)]/30
-      "
+      `}
       style={{
+        ...cardVars,
         borderRadius: 24,
-        border: "1px solid rgba(29,75,54,0.10)",
-        boxShadow: "0 2px 8px rgba(15,46,37,0.06), 0 8px 28px rgba(15,46,37,0.07)",
+        ...(dark
+          ? {}
+          : {
+              border: "1px solid rgba(29,75,54,0.10)",
+              boxShadow: "0 2px 8px rgba(15,46,37,0.06), 0 8px 28px rgba(15,46,37,0.07)",
+            }),
       }}
     >
       {/* Whole-card overlay link — routes to profile. CTAs below sit
@@ -177,7 +203,7 @@ export function DoctorCard({
         {/* Name — dark green, extrabold */}
         <h3
           className="text-[1.1rem] font-extrabold tracking-[-0.015em] leading-snug"
-          style={{ color: "var(--color-brand-primary)" }}
+          style={{ color: "var(--dc-ink)" }}
         >
           {name}
         </h3>
@@ -189,7 +215,7 @@ export function DoctorCard({
               <IconBox>
                 <ShieldCheck
                   className="size-[15px]"
-                  style={{ color: "var(--color-brand-primary)" }}
+                  style={{ color: "var(--dc-ink)" }}
                   strokeWidth={1.6}
                   aria-hidden
                 />
@@ -197,7 +223,7 @@ export function DoctorCard({
               <div className="min-w-0">
                 <p
                   className="text-[10.5px] font-bold uppercase tracking-[0.13em]"
-                  style={{ color: "rgba(29,75,54,0.45)" }}
+                  style={{ color: "var(--dc-muted)" }}
                 >
                   Registration
                 </p>
@@ -207,7 +233,7 @@ export function DoctorCard({
                     target="_blank"
                     rel="noopener noreferrer"
                     className="relative z-20 text-[13px] font-semibold transition-opacity hover:opacity-75"
-                    style={{ color: "var(--color-brand-primary)" }}
+                    style={{ color: "var(--dc-ink)" }}
                     onClick={(e) => e.stopPropagation()}
                   >
                     {imcRegistration}
@@ -215,7 +241,7 @@ export function DoctorCard({
                 ) : (
                   <p
                     className="text-[13px] font-semibold"
-                    style={{ color: "var(--color-brand-primary)" }}
+                    style={{ color: "var(--dc-ink)" }}
                   >
                     {imcRegistration}
                   </p>
@@ -229,7 +255,7 @@ export function DoctorCard({
               <IconBox>
                 <Globe
                   className="size-[15px]"
-                  style={{ color: "var(--color-brand-primary)" }}
+                  style={{ color: "var(--dc-ink)" }}
                   strokeWidth={1.6}
                   aria-hidden
                 />
@@ -237,13 +263,13 @@ export function DoctorCard({
               <div className="min-w-0">
                 <p
                   className="text-[10.5px] font-bold uppercase tracking-[0.13em]"
-                  style={{ color: "rgba(29,75,54,0.45)" }}
+                  style={{ color: "var(--dc-muted)" }}
                 >
                   Languages
                 </p>
                 <p
                   className="text-[13px] font-semibold leading-snug"
-                  style={{ color: "var(--color-brand-primary)" }}
+                  style={{ color: "var(--dc-ink)" }}
                 >
                   {languages.join(", ")}
                 </p>
@@ -277,7 +303,7 @@ export function DoctorCard({
                   href={whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative z-20 inline-flex size-[46px] shrink-0 items-center justify-center rounded-full border-[1.5px] border-[rgba(29,75,54,0.20)] bg-transparent text-[var(--color-brand-primary)] transition-colors duration-200 hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+                  className="relative z-20 inline-flex size-[46px] shrink-0 items-center justify-center rounded-full border-[1.5px] border-[color:var(--dc-line)] bg-transparent text-[color:var(--dc-ink)] transition-colors duration-200 hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
                   aria-label="Contact on WhatsApp"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -291,7 +317,7 @@ export function DoctorCard({
           {profileHref ? (
             <Link
               href={profileHref}
-              className="relative z-20 inline-flex w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[rgba(29,75,54,0.20)] px-4 py-[9px] text-[13px] font-semibold text-[var(--color-brand-primary)] transition-colors duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[rgba(29,75,54,0.04)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+              className="relative z-20 inline-flex w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 py-[9px] text-[13px] font-semibold text-[color:var(--dc-ink)] transition-colors duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[color:var(--dc-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
             >
               {ctaLabel}
               <ArrowRight className="size-[14px] shrink-0" strokeWidth={1.8} aria-hidden />
@@ -306,7 +332,7 @@ export function DoctorCard({
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="relative z-20 inline-flex w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-[rgba(29,75,54,0.20)] px-4 py-[9px] text-[13px] font-semibold text-[var(--color-brand-primary)] hover:bg-[rgba(29,75,54,0.04)]"
+              className="relative z-20 inline-flex w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 py-[9px] text-[13px] font-semibold text-[color:var(--dc-ink)] hover:bg-[color:var(--dc-hover)]"
             >
               <Phone className="size-4" strokeWidth={1.6} aria-hidden />
               WhatsApp
@@ -326,7 +352,7 @@ export function DoctorCard({
                   rel="noopener noreferrer"
                   aria-label={`${name} on Instagram`}
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex size-9 items-center justify-center rounded-full border border-[rgba(29,75,54,0.15)] text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-brand-primary)] hover:text-white"
+                  className="inline-flex size-9 items-center justify-center rounded-full border border-[color:var(--dc-line)] text-[color:var(--dc-ink)] transition-colors hover:bg-[var(--color-brand-primary)] hover:text-white"
                 >
                   <IconInstagram className="size-[14px]" />
                 </a>
@@ -338,7 +364,7 @@ export function DoctorCard({
                   rel="noopener noreferrer"
                   aria-label={`${name} on Facebook`}
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex size-9 items-center justify-center rounded-full border border-[rgba(29,75,54,0.15)] text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-brand-primary)] hover:text-white"
+                  className="inline-flex size-9 items-center justify-center rounded-full border border-[color:var(--dc-line)] text-[color:var(--dc-ink)] transition-colors hover:bg-[var(--color-brand-primary)] hover:text-white"
                 >
                   <IconFacebook className="size-[14px]" />
                 </a>
@@ -350,7 +376,7 @@ export function DoctorCard({
                   rel="noopener noreferrer"
                   aria-label={`${name} on LinkedIn`}
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex size-9 items-center justify-center rounded-full border border-[rgba(29,75,54,0.15)] text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-brand-primary)] hover:text-white"
+                  className="inline-flex size-9 items-center justify-center rounded-full border border-[color:var(--dc-line)] text-[color:var(--dc-ink)] transition-colors hover:bg-[var(--color-brand-primary)] hover:text-white"
                 >
                   <IconLinkedin className="size-[14px]" />
                 </a>

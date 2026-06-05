@@ -176,6 +176,7 @@ export function DoctorTeamTemplate({
                       href={d.href}
                       bookingHref={d.bookingHref ?? bookingHref}
                       ctaLabel={d.ctaLabel ?? "View profile"}
+                      dark
                     />
                   </li>
                 ))}
