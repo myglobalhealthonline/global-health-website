@@ -54,11 +54,9 @@ const doctorMedicalNotesRoute: FastifyPluginAsync = async (app) => {
       try {
         const doctor = await prisma.doctor.findUnique({
           where: { id: auth.doctorId },
-          select: { fullName: true, title: true },
+          select: { fullName: true },
         });
-        const doctorDisplayName = doctor
-          ? [doctor.title, doctor.fullName].filter(Boolean).join(" ").trim() || "Doctor"
-          : "Doctor";
+        const doctorDisplayName = doctor?.fullName?.trim() || "Doctor";
 
         const row = await createMedicalNote({
           appointmentId: request.params.id,

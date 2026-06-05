@@ -81,7 +81,7 @@ const accountPrescriptionsRoute: FastifyPluginAsync = async (app) => {
           instructions: true,
           refills: true,
           createdAt: true,
-          doctor: { select: { fullName: true, title: true } },
+          doctor: { select: { fullName: true } },
           consultation: {
             select: {
               signedAt: true,

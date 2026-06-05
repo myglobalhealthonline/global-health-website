@@ -67,7 +67,7 @@ export async function resolveAppointmentDocumentSource(
   const appt = await prisma.appointment.findFirst({
     where: { id: appointmentId, doctorId },
     include: {
-      doctor: { select: { fullName: true, title: true } },
+      doctor: { select: { fullName: true } },
     },
   });
   if (!appt) return null;
@@ -77,10 +77,7 @@ export async function resolveAppointmentDocumentSource(
     select: { name: true },
   });
 
-  const doctorName = appt.doctor
-    ? [appt.doctor.title, appt.doctor.fullName].filter((s) => Boolean(s?.trim())).join(" ").trim() ||
-      "Global Health"
-    : "Global Health";
+  const doctorName = appt.doctor?.fullName?.trim() || "Global Health";
 
   const registration = await getDoctorRegistrationByCountryCode(doctorId, appt.countryCode);
   let registrationLine: string;

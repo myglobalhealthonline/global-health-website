@@ -16,7 +16,7 @@ export async function createReviewInviteForAppointment(appointmentId: string) {
   const appt = await prisma.appointment.findUnique({
     where: { id: appointmentId },
     include: {
-      doctor: { select: { fullName: true, title: true } },
+      doctor: { select: { fullName: true } },
       service: { select: { name: true } },
     },
   });
@@ -41,9 +41,7 @@ export async function createReviewInviteForAppointment(appointmentId: string) {
       customerName: appt.fullName,
       contactEmail: appt.email,
       contactPhone: appt.phone,
-      doctorName: appt.doctor
-        ? `${appt.doctor.title} ${appt.doctor.fullName}`.trim()
-        : null,
+      doctorName: appt.doctor ? appt.doctor.fullName.trim() : null,
       serviceName: appt.service?.name ?? appt.consultationType,
       localeCode,
       expiresAt,

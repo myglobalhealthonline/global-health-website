@@ -149,11 +149,10 @@ export async function createManualBooking(
   if (input.doctorId) {
     const doc = await prisma.doctor.findUnique({
       where: { id: input.doctorId },
-      select: { fullName: true, title: true },
+      select: { fullName: true },
     });
     if (!doc) throw new DoctorNotFoundError();
-    doctorName =
-      [doc.title, doc.fullName].filter(Boolean).join(" ").trim() || doc.fullName;
+    doctorName = doc.fullName.trim() || doc.fullName;
   }
 
   // Reject IN_PERSON without a venue up-front (route Zod also enforces
