@@ -33,14 +33,13 @@ export type ServiceCatalogItem = {
 };
 
 /**
- * Forest-glass card surface — matches the `.gh-glass-card` class (and the
- * hero "Available now" card). Forest-night #0F2E25 at 0.85 so the colour
- * stays consistent over the solid section bg (0.72 lets the section green
- * bleed through and washes the cards out). Kept as an inline const here
- * because the featured tile spreads it with an extra `minHeight`.
+ * Forest-glass card surface — exact tokens from the hero "Available now"
+ * card: forest-night #0F2E25 at 72%, 18px backdrop blur, 14%-white
+ * hairline. Matches the `.gh-glass-card` class. Kept as an inline const
+ * here because the featured tile spreads it with an extra `minHeight`.
  */
 const GLASS_CARD_STYLE = {
-  background: "rgba(15, 46, 37, 0.85)",
+  background: "rgba(15, 46, 37, 0.72)",
   border: "1px solid rgba(255, 255, 255, 0.14)",
   backdropFilter: "blur(18px)",
   WebkitBackdropFilter: "blur(18px)",
