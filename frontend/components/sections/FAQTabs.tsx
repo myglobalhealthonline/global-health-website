@@ -49,13 +49,19 @@ export function FAQTabs({ groups }: { groups: FAQGroup[] }) {
         </div>
       </div>
 
-      {/* Panel */}
+      {/* Panel — same container + horizontal padding as the tab bar so
+          the content's left edge lines up with the tabs. Only the
+          vertical padding is set inline (the earlier `padding` shorthand
+          overrode the Tailwind px-* and pushed the content out of
+          alignment with the tabs). */}
       <div
         role="tabpanel"
         className="mx-auto max-w-[var(--container-width)] px-5 md:px-10"
-        style={{ padding: "clamp(40px,5vw,72px) var(--container-padding, 2.5rem)" }}
+        style={{ paddingBlock: "clamp(40px,5vw,72px)" }}
       >
-        <div className="mx-auto max-w-3xl">
+        {/* Left-aligned (no mx-auto) so it shares the tab bar's left
+            edge; capped to a readable width. */}
+        <div className="max-w-3xl">
           <p
             style={{
               fontSize: 11,
