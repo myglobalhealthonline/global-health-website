@@ -32,6 +32,20 @@ export type ServiceCatalogItem = {
   imageSrc?: string | null;
 };
 
+/**
+ * Forest-glass card surface — same tokens as the "Available now" doctors
+ * card on the hero: forest-night #0F2E25 at 72% with an 18px backdrop
+ * blur and a faint white hairline border. Shared so every service tile
+ * (featured + default) reads as the same glass material.
+ */
+const GLASS_CARD_STYLE = {
+  background: "rgba(15, 46, 37, 0.72)",
+  border: "1px solid rgba(255, 255, 255, 0.14)",
+  backdropFilter: "blur(18px)",
+  WebkitBackdropFilter: "blur(18px)",
+  boxShadow: "0 18px 50px rgba(0, 0, 0, 0.22)",
+} as const;
+
 const DEFAULT_ICONS: Record<ServiceTileType, ReactNode> = {
   general: <Stethoscope className="size-5" strokeWidth={1.5} aria-hidden />,
   specialist: <User className="size-5" strokeWidth={1.5} aria-hidden />,
@@ -266,8 +280,7 @@ function ServiceTile({
           "grid grid-cols-1 sm:grid-cols-[2fr_3fr]",
         )}
         style={{
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.09)",
+          ...GLASS_CARD_STYLE,
           minHeight: 260,
         }}
       >
@@ -409,10 +422,7 @@ function ServiceTile({
         "focus-visible:outline-none",
         "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
       )}
-      style={{
-        background: "rgba(255,255,255,0.04)",
-        border: "1px solid rgba(255,255,255,0.09)",
-      }}
+      style={GLASS_CARD_STYLE}
     >
       {/* Top: image or icon tile */}
       {tileImageSrc ? (
