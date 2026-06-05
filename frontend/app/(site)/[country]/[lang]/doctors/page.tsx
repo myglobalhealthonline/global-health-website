@@ -221,7 +221,7 @@ export default async function CountryLangDoctorsPage({
         bookingLabel="Browse consultations"
         spotlight={
           featured ? (
-            <div className="mb-10">
+            <div key="featured-spotlight" className="mb-10">
               <FeaturedDoctor
                 standalone={false}
                 doctor={{
@@ -244,6 +244,7 @@ export default async function CountryLangDoctorsPage({
         }
         filters={
           <DoctorFilters
+            key="doctor-filters"
             groups={filterGroups}
             clearHref={`/${slug}/${lang}/doctors`}
             hasActive={hasActive}
