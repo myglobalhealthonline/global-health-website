@@ -12,97 +12,71 @@ export const metadata: Metadata = {
     "Common questions about booking, prescriptions, lab tests, payments, and privacy on the Global Health telemedicine platform.",
 };
 
+// Content mirrors the live myglobalhealth.online FAQ verbatim (5
+// categories scraped from the production Wix page). Keep in sync with
+// that page until the FAQ is admin-managed.
 const FAQ_GROUPS: Array<{
   eyebrow: string;
   title: string;
   items: Array<{ question: string; answer: string }>;
 }> = [
   {
-    eyebrow: "Booking",
-    title: "Booking a consultation",
+    eyebrow: "How it works",
+    title: "How it works",
     items: [
       {
-        question: "Do I need an account to book?",
+        question: "How can I choose the right health plan for me?",
         answer:
-          "No. You can book as a guest with just an email and phone number. We create a patient portal for you automatically so you can pull up the appointment later — but you don't have to sign up first.",
+          "Explore our Essential, Comprehensive, or Premium Wellness plans to find the one that best suits your lifestyle and healthcare needs.",
       },
       {
-        question: "How quickly can I see a doctor?",
+        question: "Step 2: Sign Up with Ease",
         answer:
-          "Most countries have same-day slots available, especially for general consultations. Pick a date from the rail on the booking page and you'll see live availability for that day.",
-      },
-      {
-        question: "Can I book on behalf of someone else?",
-        answer:
-          "Yes. Tick \"Booking for someone else\" on the patient details step and fill in their information. Useful for parents booking for kids or carers booking for relatives.",
-      },
-      {
-        question: "What if the doctor doesn't show up?",
-        answer:
-          "You don't pay. Stripe only charges your card once the doctor joins the video call. If we cancel on our end, the slot is rebooked at no cost.",
+          "Select the health plan that fits your lifestyle and needs — Essential, Comprehensive, or Premium Wellness.",
       },
     ],
   },
   {
-    eyebrow: "Payment",
-    title: "Payment & pricing",
+    eyebrow: "Devices",
+    title: "Telemedicine Devices",
     items: [
       {
-        question: "When do I pay?",
+        question: "What telemedicine devices are compatible with Global Health?",
         answer:
-          "Most services charge after the doctor joins the call. Home tests and prescriptions charge at checkout. The exact moment is shown on the service page before you commit.",
-      },
-      {
-        question: "Which cards do you accept?",
-        answer:
-          "All major credit + debit cards via Stripe. Some countries also support Apple Pay and Google Pay at checkout. We don't store card numbers ourselves — Stripe handles all card data.",
-      },
-      {
-        question: "Can I get a receipt for insurance?",
-        answer:
-          "Yes — receipts land in your patient portal immediately after payment and are also emailed. They include the doctor's registration number, the consultation type, and the amount paid.",
-      },
-    ],
-  },
-  {
-    eyebrow: "Care",
-    title: "Prescriptions, tests, and referrals",
-    items: [
-      {
-        question: "Can the doctor prescribe medication?",
-        answer:
-          "Yes, where it's clinically appropriate and legal in your country. Prescriptions land in your patient portal within the hour and can be sent to the pharmacy of your choice.",
-      },
-      {
-        question: "What if I need to see a specialist?",
-        answer:
-          "Our GPs can refer you to a specialist either inside the platform (book a specialist consultation directly) or to a local clinic via a written referral letter.",
-      },
-      {
-        question: "How do home tests work?",
-        answer:
-          "Order the kit on the site, sample it at home using the included instructions, post it back in the prepaid envelope. Results land in your patient portal once the lab processes them — typically 3–5 days.",
+          "Global Health supports a variety of telemedicine devices, including easy-to-use blood pressure monitors and glucose meters, all designed to work seamlessly with our online consultation platform for a smooth healthcare experience.",
       },
     ],
   },
   {
     eyebrow: "Privacy",
-    title: "Privacy & data",
+    title: "Privacy Policy",
     items: [
       {
-        question: "Where is my data stored?",
+        question: "How does Global Health safeguard your personal information?",
         answer:
-          "EU data centres only. We're GDPR-compliant by default — that means no off-shore processing, no selling to insurers, no advertising profiling. The privacy notice has the full breakdown.",
+          "Your privacy is our priority at Global Health. We adhere to strict privacy standards and our comprehensive Privacy Policy ensures your personal information is handled securely and transparently. Rest assured, your data is always protected.",
       },
+    ],
+  },
+  {
+    eyebrow: "Plans",
+    title: "Healthcare Plans",
+    items: [
       {
-        question: "Who sees my medical records?",
+        question: "What types of healthcare plans does Global Health offer?",
         answer:
-          "Only the doctor on your call and you. We don't share records between doctors unless you explicitly ask us to (e.g. for a follow-up or referral). Admin staff don't have access to consultation notes.",
+          "Global Health provides a range of healthcare plans, including individual consultations, family packages, and specialized care plans, all designed to offer comprehensive coverage and flexibility to suit your needs.",
       },
+    ],
+  },
+  {
+    eyebrow: "Payments",
+    title: "Payment Methods",
+    items: [
       {
-        question: "How do I delete my account?",
+        question: "What payment methods can I use at Global Health?",
         answer:
-          "Sign in, go to /account, and click \"Delete account\". Your personal data is scrubbed immediately; appointment history is retained for the regulatory minimum (varies by country) for audit purposes.",
+          "We accept credit cards for all transactions at Global Health. Your payment information is processed securely to ensure your privacy and security.",
       },
     ],
   },
