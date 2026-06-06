@@ -33,7 +33,11 @@ aptPkgs = [
 
 [phases.install]
 cmds = [
-  "pnpm install --frozen-lockfile",
+  # Monorepo: the pnpm-lock.yaml lives at the repo root, but Railway builds
+  # this service with Root Directory = backend, so the lockfile isn't in the
+  # build context. --frozen-lockfile therefore fails (ERR_PNPM_NO_LOCKFILE).
+  # Use --no-frozen-lockfile (the proven-good value before 459c71d).
+  "pnpm install --no-frozen-lockfile",
   "npx playwright install chromium",
 ]
 
