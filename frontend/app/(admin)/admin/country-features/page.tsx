@@ -212,7 +212,7 @@ export default async function AdminCountryFeaturesPage({ searchParams }: PagePro
     // `enabledFeatures` from `fetchCountries()` (tag: "countries"). Without
     // this the navbar/footer keep showing a disabled page until the 120s
     // data-cache window expires on its own.
-    revalidateTag(SITE_CACHE_TAGS.countries());
+    revalidateTag(SITE_CACHE_TAGS.countries(), "max");
     redirect(`/admin/country-features?success=${encodeURIComponent(`${key} updated`)}`);
   }
 

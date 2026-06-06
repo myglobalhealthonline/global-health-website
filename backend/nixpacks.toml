@@ -23,7 +23,10 @@ aptPkgs = [
   "libxfixes3",
   "libxrandr2",
   "libgbm1",
-  "libasound2",
+  # Ubuntu Noble (24.04) renamed libasound2 → libasound2t64 (t64 ABI transition).
+  # The Railway/nixpacks base image is now Noble, so the old name has no install
+  # candidate and the build fails. See: time_t 64-bit transition.
+  "libasound2t64",
   "libpango-1.0-0",
   "libcairo2",
 ]

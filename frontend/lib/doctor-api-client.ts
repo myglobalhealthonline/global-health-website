@@ -13,7 +13,10 @@ export async function parseDoctorApiJson<T>(res: Response): Promise<T | null> {
 
 export function doctorApiErrorMessage(
   res: Response,
-  json: { message?: string } | null,
+  // Accepts any parsed JSON body — we only read `.message`. The index
+  // signature lets callers pass their own response shapes (e.g.
+  // `{ ok?: boolean; data?: T }`) without a type mismatch (TS2559).
+  json: { message?: string; [key: string]: unknown } | null,
   fallback: string,
 ): string {
   if (json?.message) return json.message;
