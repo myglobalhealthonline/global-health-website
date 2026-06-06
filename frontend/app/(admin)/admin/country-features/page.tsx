@@ -20,7 +20,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import {
   Calendar,
   FileText,
@@ -37,6 +37,7 @@ import {
   COUNTRY_FEATURE_KEYS,
   type CountryFeatureKey,
 } from "@/lib/admin/admin-api";
+import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { COUNTRY_PREF_COOKIE } from "../_components/country-picker-constants";
 import { FlagBadge } from "../_components/flag-badge";
 import {
@@ -207,6 +208,11 @@ export default async function AdminCountryFeaturesPage({ searchParams }: PagePro
     }
 
     revalidatePath("/admin", "layout");
+    // Bust the PUBLIC countries cache too — the site header/footer read
+    // `enabledFeatures` from `fetchCountries()` (tag: "countries"). Without
+    // this the navbar/footer keep showing a disabled page until the 120s
+    // data-cache window expires on its own.
+    revalidateTag(SITE_CACHE_TAGS.countries());
     redirect(`/admin/country-features?success=${encodeURIComponent(`${key} updated`)}`);
   }
 

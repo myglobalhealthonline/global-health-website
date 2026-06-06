@@ -123,12 +123,14 @@ export function MobileNav({
         ];
 
   // Cart-first booking: mobile "Book" routes to the country general
-  // consultation catalogue (service-first). /book-online stays as a
-  // fallback when no country context exists yet.
+  // consultation catalogue (service-first). With no country context yet
+  // we drop to the entry gate ("/") — the bare `/book-online` slug has no
+  // global route and 404s, so it must not be the fallback. Mirrors the
+  // desktop SiteHeader `bookHref` fallback.
   const bookHref =
     activeCountry && parsed.lang
       ? `/${COUNTRY_CODE_TO_SLUG[activeCountry.code]}/${parsed.lang}/gp-appointment`
-      : navigation.headerPrimaryCta.href;
+      : "/";
 
   return (
     <Dialog.Root>
