@@ -6,7 +6,10 @@ import {
   fetchAdminCountries,
   patchAdminSpecialty,
 } from "@/lib/admin/admin-api";
+import { resolveCountryLocaleTabs } from "@/lib/admin/service-form-parse";
+import { parseLocaleTranslations } from "@/lib/admin/translation-form-parse";
 import { ManagedImageField } from "../../../_components/managed-image-field";
+import { SpecialtyTranslationTabs } from "../../_components/specialty-translation-tabs";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 
 export const dynamic = "force-dynamic";
@@ -76,17 +79,22 @@ export default async function AdminSpecialtyEditPage({
     code: c.code,
     name: c.name,
   }));
+  const specialtyCountry = countriesResult.data.countries.find((c) => c.id === s.countryId);
+  const { locales, defaultLocale } = resolveCountryLocaleTabs(specialtyCountry);
 
   async function updateSpecialtyAction(formData: FormData) {
     "use server";
+    const translations = parseLocaleTranslations(formData, ["name", "cardSummary"]);
+    const base = translations.find((t) => t.locale === defaultLocale.toUpperCase());
     const body = {
       slug: String(formData.get("slug") ?? "").trim(),
-      name: String(formData.get("name") ?? "").trim(),
-      cardSummary: String(formData.get("cardSummary") ?? "").trim() || null,
+      name: base?.name ?? "",
+      cardSummary: base?.cardSummary ?? null,
       cardThemeColor: String(formData.get("cardThemeColor") ?? "").trim() || null,
       sortOrder: Number(String(formData.get("sortOrder") ?? "0").trim() || "0"),
       imagePath: String(formData.get("imagePath") ?? "").trim() || null,
       active: formData.get("active") === "on",
+      translations,
     };
     const result = await patchAdminSpecialty(id, body);
     if (!result.ok) {
@@ -140,38 +148,25 @@ export default async function AdminSpecialtyEditPage({
             </select>
           </label>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5">
-              <span className="gh-field-label">Name</span>
-              <input
-                name="name"
-                defaultValue={s.name}
-                className="gh-input min-w-0"
-                required
-              />
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="gh-field-label">Slug</span>
-              <input
-                name="slug"
-                defaultValue={s.slug}
-                className="gh-input min-w-0 font-mono text-sm"
-                required
-              />
-            </label>
-          </div>
+          <label className="flex flex-col gap-1.5">
+            <span className="gh-field-label">Slug</span>
+            <input
+              name="slug"
+              defaultValue={s.slug}
+              className="gh-input min-w-0 font-mono text-sm"
+              required
+            />
+          </label>
           <p className="-mt-2 text-[12px] text-[var(--color-text-muted)]">
             Slug must be lowercase and use hyphens only.
           </p>
 
-          <label className="flex flex-col gap-1.5">
-            <span className="gh-field-label">Card summary</span>
-            <textarea
-              name="cardSummary"
-              defaultValue={s.cardSummary ?? ""}
-              className="gh-input min-h-[5rem] min-w-0 resize-y"
-            />
-          </label>
+          <SpecialtyTranslationTabs
+            locales={locales}
+            defaultLocale={defaultLocale}
+            initialTranslations={s.translations}
+            baseFallback={{ name: s.name, cardSummary: s.cardSummary }}
+          />
 
           <ManagedImageField
             name="imagePath"

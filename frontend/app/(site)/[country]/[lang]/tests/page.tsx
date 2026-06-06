@@ -79,7 +79,7 @@ export default async function HealthTestsPage({
   if (!isCountryFeatureEnabled(overlay, "health-tests")) notFound();
 
   const [items, page] = await Promise.all([
-    getCountryHealthTests(code),
+    getCountryHealthTests(code, lang),
     getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale),
   ]);
   // Cart-first booking: hero/final CTA points at the tests grid below.

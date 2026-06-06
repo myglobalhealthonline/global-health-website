@@ -29,9 +29,12 @@ export const SITE_CACHE_TAGS = {
   countryDoctors: (code: string) => `country:${code}:doctors`,
   countryDoctorBySlug: (code: string, slug: string) =>
     `country:${code}:doctors:${slug}`,
-  countrySpecialties: (code: string) => `country:${code}:specialties`,
-  countryServices: (code: string) => `country:${code}:services`,
-  countryHealthTests: (code: string) => `country:${code}:health-tests`,
+  countrySpecialties: (code: string, locale?: string) =>
+    locale ? `country:${code}:specialties:${locale}` : `country:${code}:specialties`,
+  countryServices: (code: string, locale?: string) =>
+    locale ? `country:${code}:services:${locale}` : `country:${code}:services`,
+  countryHealthTests: (code: string, locale?: string) =>
+    locale ? `country:${code}:health-tests:${locale}` : `country:${code}:health-tests`,
   countryPlans: (code: string) => `country:${code}:plans`,
   countryPage: (code: string, pageKey: string, locale: string) =>
     `country:${code}:pages:${pageKey}:${locale}`,
@@ -162,32 +165,54 @@ export async function fetchDoctorByCountryAndSlug(
   );
 }
 
+/** Locale arrives lowercase from the `[lang]` route segment; the backend
+ *  LocaleCode enum is uppercase. Normalize at the fetch boundary. */
+function toBackendLocale(locale?: string): string | undefined {
+  return locale ? locale.toUpperCase() : undefined;
+}
+
 export async function fetchSpecialtiesByCountry(
   countryCode: string,
+  locale?: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
 ) {
-  return apiRequest<unknown[]>(
-    `/api/countries/${encodeURIComponent(countryCode)}/specialties`,
-    {
-      timeoutMs,
-      revalidate: REVALIDATE_SECONDS,
-      tags: [SITE_CACHE_TAGS.countrySpecialties(countryCode)],
-    },
-  );
+  const upper = toBackendLocale(locale);
+  const url = upper
+    ? `/api/countries/${encodeURIComponent(countryCode)}/specialties?locale=${upper}`
+    : `/api/countries/${encodeURIComponent(countryCode)}/specialties`;
+  return apiRequest<unknown[]>(url, {
+    timeoutMs,
+    revalidate: REVALIDATE_SECONDS,
+    // Dual tag: the base tag busts every locale at once (admin edits call
+    // it), the locale tag scopes the cached payload per language.
+    tags: upper
+      ? [
+          SITE_CACHE_TAGS.countrySpecialties(countryCode),
+          SITE_CACHE_TAGS.countrySpecialties(countryCode, upper),
+        ]
+      : [SITE_CACHE_TAGS.countrySpecialties(countryCode)],
+  });
 }
 
 export async function fetchHealthTestsByCountry(
   countryCode: string,
+  locale?: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
 ) {
-  return apiRequest<unknown[]>(
-    `/api/countries/${encodeURIComponent(countryCode)}/health-tests`,
-    {
-      timeoutMs,
-      revalidate: REVALIDATE_SECONDS,
-      tags: [SITE_CACHE_TAGS.countryHealthTests(countryCode)],
-    },
-  );
+  const upper = toBackendLocale(locale);
+  const url = upper
+    ? `/api/countries/${encodeURIComponent(countryCode)}/health-tests?locale=${upper}`
+    : `/api/countries/${encodeURIComponent(countryCode)}/health-tests`;
+  return apiRequest<unknown[]>(url, {
+    timeoutMs,
+    revalidate: REVALIDATE_SECONDS,
+    tags: upper
+      ? [
+          SITE_CACHE_TAGS.countryHealthTests(countryCode),
+          SITE_CACHE_TAGS.countryHealthTests(countryCode, upper),
+        ]
+      : [SITE_CACHE_TAGS.countryHealthTests(countryCode)],
+  });
 }
 
 export async function fetchPlansByCountry(
@@ -207,14 +232,25 @@ export async function fetchPlansByCountry(
 export async function fetchServicesByCountry(
   countryCode: string,
   kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY" | undefined,
+  locale?: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
 ) {
-  const url = kind
-    ? `/api/countries/${encodeURIComponent(countryCode)}/services?kind=${kind}`
+  const upper = toBackendLocale(locale);
+  const params = new URLSearchParams();
+  if (kind) params.set("kind", kind);
+  if (upper) params.set("locale", upper);
+  const qs = params.toString();
+  const url = qs
+    ? `/api/countries/${encodeURIComponent(countryCode)}/services?${qs}`
     : `/api/countries/${encodeURIComponent(countryCode)}/services`;
   return apiRequest<unknown[]>(url, {
     timeoutMs,
     revalidate: REVALIDATE_SECONDS,
-    tags: [SITE_CACHE_TAGS.countryServices(countryCode)],
+    tags: upper
+      ? [
+          SITE_CACHE_TAGS.countryServices(countryCode),
+          SITE_CACHE_TAGS.countryServices(countryCode, upper),
+        ]
+      : [SITE_CACHE_TAGS.countryServices(countryCode)],
   });
 }

@@ -10,6 +10,7 @@ import {
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { parseHealthTestBodyFromForm } from "@/lib/admin/health-test-form-parse";
+import { resolveCountryLocaleTabs } from "@/lib/admin/service-form-parse";
 import { HealthTestFields } from "../../_components/health-test-fields";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 
@@ -79,10 +80,12 @@ export default async function AdminEditHealthTestPage({
     code: country.code,
     name: country.name,
   }));
+  const testCountry = countriesResult.data.countries.find((c) => c.id === test.countryId);
+  const { locales, defaultLocale } = resolveCountryLocaleTabs(testCountry);
 
   async function updateAction(formData: FormData) {
     "use server";
-    const parsed = parseHealthTestBodyFromForm(formData);
+    const parsed = parseHealthTestBodyFromForm(formData, defaultLocale);
     if (!parsed.ok)
       redirect(`/admin/health-tests/${id}/edit?error=${encodeURIComponent(parsed.error)}`);
     const raw = parsed.data;
@@ -106,6 +109,7 @@ export default async function AdminEditHealthTestPage({
       shippingCents: raw.shippingCents,
       seoTitle: raw.seoTitle || null,
       seoDescription: raw.seoDescription || null,
+      translations: raw.translations,
     };
     const result = await patchAdminHealthTest(id, body);
     if (!result.ok)
@@ -150,7 +154,13 @@ export default async function AdminEditHealthTestPage({
 
       <AdminCard>
         <form action={updateAction} className="flex flex-col gap-8">
-          <HealthTestFields countries={countries} initial={test} countryLocked />
+          <HealthTestFields
+            countries={countries}
+            initial={test}
+            countryLocked
+            locales={locales}
+            defaultLocale={defaultLocale}
+          />
           <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Save changes

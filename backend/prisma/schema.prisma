@@ -445,10 +445,31 @@ model Specialty {
   services         Service[]         @relation("ServiceSpecialty")
   primaryService   Service?          @relation("SpecialtyPrimaryService", fields: [primaryServiceId], references: [id], onDelete: SetNull)
   assets           Asset[]
+  /// Per-locale CMS content (name, cardSummary). The base columns above
+  /// stay as the default-locale copy + final fallback; a translation row
+  /// overrides them for a given locale. Operational fields are NOT here.
+  translations     SpecialtyTranslation[]
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
   @@unique([countryId, slug])
+}
+
+/// Per-locale display content for a Specialty. One stable Specialty record
+/// per real specialty; this table holds the language-specific labels so
+/// switching locale never duplicates the specialty or its bookings.
+model SpecialtyTranslation {
+  id          String     @id @default(cuid())
+  specialtyId String
+  locale      LocaleCode
+  name        String
+  cardSummary String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  specialty   Specialty  @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
+
+  @@unique([specialtyId, locale])
+  @@index([specialtyId])
 }
 
 model DoctorSpecialty {
@@ -505,10 +526,38 @@ model Service {
   /// catalogue services they performed during the consult; admin uses
   /// these for invoicing.
   consultationServices  ConsultationService[]
+  /// Per-locale CMS content (name, summary, SEO, hero, detail, CTA). The
+  /// base columns above stay as the default-locale copy + final fallback;
+  /// a translation row overrides them for a given locale. Operational
+  /// fields (price, slug, doctors, booking) are NOT translated.
+  translations          ServiceTranslation[]
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
 
   @@unique([countryId, slug])
+}
+
+/// Per-locale display content for a Service. One stable Service record per
+/// real service; this table holds the language-specific marketing copy so
+/// the same Service.id (and its booking flow) serves every locale.
+model ServiceTranslation {
+  id              String     @id @default(cuid())
+  serviceId       String
+  locale          LocaleCode
+  name            String
+  summary         String?
+  seoTitle        String?
+  seoDescription  String?
+  heroTitle       String?
+  heroDescription String?
+  detailBody      String?
+  ctaLabel        String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  service         Service    @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, locale])
+  @@index([serviceId])
 }
 
 /// Service ↔ Doctor M:N — admin assigns one or more doctors to a service
@@ -586,10 +635,42 @@ model HealthTest {
   /// Appointments where the patient picked this specific health test
   /// at booking (`?service=<healthTestSlug>` matched a row here).
   appointments       Appointment[]
+  /// Per-locale CMS content (title, descriptions, SEO, detail copy). The
+  /// base columns above stay as the default-locale copy + final fallback;
+  /// a translation row overrides them for a given locale. Operational
+  /// fields (price, currency, stock, slug, images) are NOT translated.
+  translations       HealthTestTranslation[]
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
 
   @@unique([countryId, slug])
+}
+
+/// Per-locale display content for a HealthTest. One stable HealthTest
+/// record per real test; this table holds the language-specific copy.
+/// Array/JSON fields mirror the base columns for forward-compat (the
+/// detail page that renders them is not built yet).
+model HealthTestTranslation {
+  id                 String     @id @default(cuid())
+  healthTestId       String
+  locale             LocaleCode
+  title              String
+  shortDescription   String?
+  sampleType         String?
+  resultsTimeline    String?
+  heroButtonLabel    String?
+  detailIntro        String?
+  whatThisTestCovers String[]   @default([])
+  whyGetTested       String[]   @default([])
+  extraSections      Json?
+  seoTitle           String?
+  seoDescription     String?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  healthTest         HealthTest @relation(fields: [healthTestId], references: [id], onDelete: Cascade)
+
+  @@unique([healthTestId, locale])
+  @@index([healthTestId])
 }
 
 model Asset {

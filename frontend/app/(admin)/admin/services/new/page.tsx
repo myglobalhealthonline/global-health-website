@@ -3,7 +3,10 @@ import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
 import { ServiceFields } from "../_components/service-fields";
-import { parseServiceBodyFromForm } from "@/lib/admin/service-form-parse";
+import {
+  parseServiceBodyFromForm,
+  resolveCountryLocaleTabs,
+} from "@/lib/admin/service-form-parse";
 import {
   fetchAdminCountries,
   fetchAdminDoctors,
@@ -123,6 +126,9 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
       }))
     : [];
 
+  const selectedCountry = countriesResult.data.countries.find((c) => c.id === countryId);
+  const { locales, defaultLocale } = resolveCountryLocaleTabs(selectedCountry);
+
   const specialtiesResult = await fetchAdminSpecialties(countryId);
   if (!specialtiesResult.ok) {
     return (
@@ -148,7 +154,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
   async function createServiceAction(formData: FormData) {
     "use server";
 
-    const parsed = parseServiceBodyFromForm(formData);
+    const parsed = parseServiceBodyFromForm(formData, defaultLocale);
     if (!parsed.ok) {
       redirect(
         `/admin/services/new?kind=${encodeURIComponent(kind)}&countryId=${encodeURIComponent(
@@ -163,11 +169,15 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
       slug: raw.slug,
       name: raw.name,
       summary: raw.summary.trim() === "" ? null : raw.summary.trim(),
+      seoTitle: raw.seoTitle.trim() === "" ? null : raw.seoTitle.trim(),
+      seoDescription:
+        raw.seoDescription.trim() === "" ? null : raw.seoDescription.trim(),
       heroTitle: raw.heroTitle.trim() === "" ? null : raw.heroTitle.trim(),
       heroDescription:
         raw.heroDescription.trim() === "" ? null : raw.heroDescription.trim(),
       detailBody: raw.detailBody.trim() === "" ? null : raw.detailBody.trim(),
       ctaLabel: raw.ctaLabel.trim() === "" ? null : raw.ctaLabel.trim(),
+      translations: raw.translations,
       legacyPath: raw.legacyPath.trim() === "" ? null : raw.legacyPath.trim(),
       sortOrder: raw.sortOrder,
       ...(raw.specialtyId !== null ? { specialtyId: raw.specialtyId } : {}),
@@ -279,6 +289,8 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
             kind={kind}
             pinnedCountryId={countryId}
             doctorOptions={doctorOptions}
+            locales={locales}
+            defaultLocale={defaultLocale}
           />
           <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">

@@ -7,6 +7,7 @@ import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { HealthTestFields } from "../_components/health-test-fields";
 import { parseHealthTestBodyFromForm } from "@/lib/admin/health-test-form-parse";
+import { resolveCountryLocaleTabs } from "@/lib/admin/service-form-parse";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
 
 export const dynamic = "force-dynamic";
@@ -41,15 +42,18 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
     );
   }
 
-  const countries = countriesResult.data.countries.map((country) => ({
+  const allCountries = countriesResult.data.countries;
+  const countries = allCountries.map((country) => ({
     id: country.id,
     code: country.code,
     name: country.name,
   }));
+  const selectedCountry = allCountries.find((c) => c.id === countryId);
+  const { locales, defaultLocale } = resolveCountryLocaleTabs(selectedCountry);
 
   async function createAction(formData: FormData) {
     "use server";
-    const parsed = parseHealthTestBodyFromForm(formData);
+    const parsed = parseHealthTestBodyFromForm(formData, defaultLocale);
     if (!parsed.ok) {
       redirect(
         `/admin/health-tests/new?countryId=${encodeURIComponent(countryId ?? "")}&error=${encodeURIComponent(parsed.error)}`,
@@ -76,6 +80,7 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
       shippingCents: raw.shippingCents,
       seoTitle: raw.seoTitle || null,
       seoDescription: raw.seoDescription || null,
+      translations: raw.translations,
     };
     const result = await postAdminHealthTest(body);
     if (!result.ok) {
@@ -164,7 +169,12 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
 
       <AdminCard>
         <form action={createAction} className="flex flex-col gap-8">
-          <HealthTestFields countries={countries} pinnedCountryId={countryId} />
+          <HealthTestFields
+            countries={countries}
+            pinnedCountryId={countryId}
+            locales={locales}
+            defaultLocale={defaultLocale}
+          />
           <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Create health test

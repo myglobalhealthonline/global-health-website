@@ -1,4 +1,8 @@
 import "server-only";
+import {
+  parseLocaleTranslations,
+  type LocaleFieldValue,
+} from "@/lib/admin/translation-form-parse";
 
 type HealthTestExtraSection = {
   heading: string;
@@ -8,6 +12,7 @@ type HealthTestExtraSection = {
 type ParsedHealthTestBody = {
   countryId: string;
   slug: string;
+  /** Base display fields, derived from the default-locale tab. */
   title: string;
   shortDescription: string;
   priceCents: number | undefined;
@@ -30,7 +35,20 @@ type ParsedHealthTestBody = {
   seoTitle: string;
   seoDescription: string;
   legacyPath: string;
+  /** Per-locale CMS content (title, shortDescription, sampleType,
+   *  resultsTimeline, seoTitle, seoDescription). */
+  translations: LocaleFieldValue[];
 };
+
+/** Translatable fields exposed in the health-test tabs (title is primary). */
+export const HEALTH_TEST_TRANSLATABLE_FIELDS = [
+  "title",
+  "shortDescription",
+  "sampleType",
+  "resultsTimeline",
+  "seoTitle",
+  "seoDescription",
+] as const;
 
 type ParseHealthTestFormResult =
   | { ok: true; data: ParsedHealthTestBody }
@@ -105,21 +123,27 @@ export function formatHealthTestExtraSections(
   return (sections ?? []).map((section) => `${section.heading}\n${section.body}`).join("\n\n");
 }
 
-export function parseHealthTestBodyFromForm(formData: FormData): ParseHealthTestFormResult {
+export function parseHealthTestBodyFromForm(
+  formData: FormData,
+  defaultLocale: string,
+): ParseHealthTestFormResult {
   try {
+    const translations = parseLocaleTranslations(formData, HEALTH_TEST_TRANSLATABLE_FIELDS);
+    // Base columns are seeded from the default-locale tab (Option B).
+    const base = translations.find((t) => t.locale === defaultLocale.toUpperCase());
     return {
       ok: true,
       data: {
         countryId: String(formData.get("countryId") ?? "").trim(),
         slug: String(formData.get("slug") ?? "").trim(),
-        title: String(formData.get("title") ?? "").trim(),
-        shortDescription: String(formData.get("shortDescription") ?? "").trim(),
+        title: base?.title ?? "",
+        shortDescription: base?.shortDescription ?? "",
         priceCents: parsePriceToCents(String(formData.get("price") ?? "")),
         currencyCode: String(formData.get("currencyCode") ?? "").trim(),
         productImagePath: String(formData.get("productImagePath") ?? "").trim(),
         galleryImagePaths: parseLines(String(formData.get("galleryImagePaths") ?? "")),
-        sampleType: String(formData.get("sampleType") ?? "").trim(),
-        resultsTimeline: String(formData.get("resultsTimeline") ?? "").trim(),
+        sampleType: base?.sampleType ?? "",
+        resultsTimeline: base?.resultsTimeline ?? "",
         heroButtonLabel: String(formData.get("heroButtonLabel") ?? "").trim(),
         detailIntro: String(formData.get("detailIntro") ?? "").trim(),
         whatThisTestCovers: parseLines(String(formData.get("whatThisTestCovers") ?? "")),
@@ -129,9 +153,10 @@ export function parseHealthTestBodyFromForm(formData: FormData): ParseHealthTest
         isActive: formData.get("isActive") === "on",
         stock: parseOptionalStock(String(formData.get("stock") ?? "")),
         shippingCents: parseShippingToCents(String(formData.get("shipping") ?? "")),
-        seoTitle: String(formData.get("seoTitle") ?? "").trim(),
-        seoDescription: String(formData.get("seoDescription") ?? "").trim(),
+        seoTitle: base?.seoTitle ?? "",
+        seoDescription: base?.seoDescription ?? "",
         legacyPath: String(formData.get("legacyPath") ?? "").trim(),
+        translations,
       },
     };
   } catch (error) {

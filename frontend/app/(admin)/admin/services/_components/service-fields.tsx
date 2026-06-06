@@ -4,6 +4,7 @@ import { ManagedImageField } from "../../_components/managed-image-field";
 import { MultiImageField } from "../../_components/multi-image-field";
 import { formatServicePriceInput } from "@/lib/admin/service-form-parse";
 import { SERVICE_KIND_META } from "@/lib/admin/service-kind";
+import { ServiceTranslationTabs } from "./service-translation-tabs";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
@@ -12,6 +13,10 @@ type Props = {
   initial?: AdminServiceDto | null;
   pinnedCountryId?: string;
   countryLocked?: boolean;
+  /** Locale tabs for the CMS content section, derived from the service's
+   *  country enabled locales. Always includes the default locale. */
+  locales: { code: string; isDefault: boolean }[];
+  defaultLocale: string;
   /** Doctors eligible to be assigned to this service. Already filtered
    *  on the server to those whose primary country (or DoctorCountry
    *  link) matches the service country. Pass `null` when no country is
@@ -33,6 +38,8 @@ export function ServiceFields({
   pinnedCountryId,
   countryLocked,
   doctorOptions,
+  locales,
+  defaultLocale,
 }: Props) {
   const pinId = pinnedCountryId ?? (countryLocked ? initial?.countryId : undefined);
   const pinnedMeta = pinId ? countries.find((c) => c.id === pinId) : undefined;
@@ -41,6 +48,16 @@ export function ServiceFields({
   const assignedDoctorIds = new Set(
     (initial?.assignedDoctors ?? []).map((row) => row.doctorId),
   );
+  const baseFallback = {
+    name: initial?.name ?? "",
+    summary: initial?.summary ?? null,
+    seoTitle: initial?.seoTitle ?? null,
+    seoDescription: initial?.seoDescription ?? null,
+    heroTitle: initial?.heroTitle ?? null,
+    heroDescription: initial?.heroDescription ?? null,
+    detailBody: initial?.detailBody ?? null,
+    ctaLabel: initial?.ctaLabel ?? null,
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -88,10 +105,6 @@ export function ServiceFields({
             placeholder="e.g. cardiology-consultation"
           />
         </label>
-        <label className="flex flex-col gap-2 sm:col-span-2">
-          <span className="gh-field-label">Title (name)</span>
-          <input name="name" className="gh-input min-w-0" required defaultValue={initial?.name} />
-        </label>
       </div>
 
       {usesSpecialty ? (
@@ -110,15 +123,12 @@ export function ServiceFields({
         <input type="hidden" name="specialtyId" value="" />
       )}
 
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Summary</span>
-        <textarea
-          name="summary"
-          rows={4}
-          className="gh-input min-h-[6rem] min-w-0 resize-y"
-          defaultValue={initial?.summary ?? ""}
-        />
-      </label>
+      <ServiceTranslationTabs
+        locales={locales}
+        defaultLocale={defaultLocale}
+        initialTranslations={initial?.translations ?? []}
+        baseFallback={baseFallback}
+      />
 
       <div className="grid gap-4 sm:grid-cols-3">
         <label className="flex flex-col gap-2">
@@ -276,28 +286,6 @@ export function ServiceFields({
         )}
       </fieldset>
 
-      <div className="flex flex-col gap-5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
-        <header>
-          <h3 className="m-0 text-sm font-bold text-[var(--color-text-primary)]">Hero &amp; detail page</h3>
-          <p className="mt-1 text-xs text-[var(--color-text-muted)]">Shown on the public detail page and used for SEO previews.</p>
-        </header>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Hero title</span>
-          <input name="heroTitle" className="gh-input min-w-0" defaultValue={initial?.heroTitle ?? ""} placeholder="e.g. Online Medical Consultation Ireland" />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Hero description</span>
-          <textarea name="heroDescription" rows={3} className="gh-input min-w-0 resize-y" defaultValue={initial?.heroDescription ?? ""} placeholder="Short tagline shown under the hero title." />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">CTA button label</span>
-          <input name="ctaLabel" className="gh-input min-w-0" defaultValue={initial?.ctaLabel ?? ""} placeholder="e.g. Book Consultation" />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Detail body (HTML)</span>
-          <textarea name="detailBody" rows={6} className="gh-input min-w-0 resize-y font-mono text-xs" defaultValue={initial?.detailBody ?? ""} placeholder="<p>Rich description shown on the service detail page.</p>" />
-        </label>
-      </div>
       <input type="hidden" name="legacyPath" defaultValue={initial?.legacyPath ?? ""} />
 
       <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">

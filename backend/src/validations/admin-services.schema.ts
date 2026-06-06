@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { localeCodeSchema } from "./admin-countries.schema.js";
 
 export const serviceKindSchema = z.enum([
   "GENERAL",
@@ -96,20 +97,32 @@ export const adminSpecialtiesQuerySchema = z.object({
   countryId: z.string().trim().min(1, "countryId is required"),
 });
 
-export const adminSpecialtyCreateBodySchema = z.object({
-  countryId: z.string().trim().min(1),
-  slug: serviceSlugSchema,
+/** Per-locale CMS content for a specialty (name + card summary). */
+const specialtyTranslationEntrySchema = z.object({
+  locale: localeCodeSchema,
   name: z.string().trim().min(1).max(200),
   cardSummary: nullableTrimmedString(1000),
-  cardThemeColor: nullableTrimmedString(40),
-  sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
-  primaryServiceId: z.preprocess(
-    (v) => (v === "" || v === undefined || v === null ? null : v),
-    z.string().trim().min(1).nullable(),
-  ),
-  imagePath: imagePathFieldSchema.optional(),
-  active: z.boolean().optional(),
 });
+
+export type SpecialtyTranslationInput = z.infer<typeof specialtyTranslationEntrySchema>;
+
+export const adminSpecialtyCreateBodySchema = z
+  .object({
+    countryId: z.string().trim().min(1),
+    slug: serviceSlugSchema,
+    name: z.string().trim().min(1).max(200),
+    cardSummary: nullableTrimmedString(1000),
+    cardThemeColor: nullableTrimmedString(40),
+    sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
+    primaryServiceId: z.preprocess(
+      (v) => (v === "" || v === undefined || v === null ? null : v),
+      z.string().trim().min(1).nullable(),
+    ),
+    imagePath: imagePathFieldSchema.optional(),
+    active: z.boolean().optional(),
+    translations: z.array(specialtyTranslationEntrySchema).max(6).optional(),
+  })
+  .superRefine((value, ctx) => validateUniqueLocales(value.translations, ctx));
 
 export type AdminSpecialtyCreateBody = z.infer<typeof adminSpecialtyCreateBodySchema>;
 
@@ -126,10 +139,51 @@ export const adminSpecialtyUpdateBodySchema = z
     ).optional(),
     imagePath: imagePathFieldSchema.optional(),
     active: z.boolean().optional(),
+    translations: z.array(specialtyTranslationEntrySchema).max(6).optional(),
   })
+  .superRefine((value, ctx) => validateUniqueLocales(value.translations, ctx))
   .refine((v) => Object.keys(v).length > 0, "No fields to update");
 
 export type AdminSpecialtyUpdateBody = z.infer<typeof adminSpecialtyUpdateBodySchema>;
+
+/**
+ * Per-locale CMS content for a service. `name` is required (the table's
+ * invariant); every other field is optional and falls back to the
+ * default-locale base column when absent. The default-locale entry mirrors
+ * the top-level body fields (which still seed the Service base columns).
+ */
+const serviceTranslationEntrySchema = z.object({
+  locale: localeCodeSchema,
+  name: z.string().trim().min(1).max(200),
+  summary: nullableTrimmedString(4000),
+  seoTitle: nullableTrimmedString(200),
+  seoDescription: nullableTrimmedString(500),
+  heroTitle: nullableTrimmedString(200),
+  heroDescription: nullableTrimmedString(2000),
+  detailBody: nullableTrimmedString(100000),
+  ctaLabel: nullableTrimmedString(120),
+});
+
+export type ServiceTranslationInput = z.infer<typeof serviceTranslationEntrySchema>;
+
+/** Reject the same locale appearing twice in a translations array. */
+export function validateUniqueLocales(
+  translations: { locale: string }[] | undefined,
+  ctx: z.RefinementCtx,
+): void {
+  if (!translations) return;
+  const seen = new Set<string>();
+  translations.forEach((entry, index) => {
+    if (seen.has(entry.locale)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Duplicate translation for locale ${entry.locale}`,
+        path: ["translations", index, "locale"],
+      });
+    }
+    seen.add(entry.locale);
+  });
+}
 
 const adminServiceBodyShape = {
   countryId: z.string().trim().min(1),
@@ -137,10 +191,16 @@ const adminServiceBodyShape = {
   slug: serviceSlugSchema,
   name: z.string().trim().min(1).max(200),
   summary: nullableTrimmedString(4000),
+  seoTitle: nullableTrimmedString(200),
+  seoDescription: nullableTrimmedString(500),
   heroTitle: nullableTrimmedString(200),
   heroDescription: nullableTrimmedString(2000),
   detailBody: nullableTrimmedString(100000),
   ctaLabel: nullableTrimmedString(120),
+  /** Per-locale display content (name, summary, SEO, hero, detail, CTA).
+   *  When present the default-locale entry should mirror the top-level
+   *  fields above; backend upserts one ServiceTranslation row per entry. */
+  translations: z.array(serviceTranslationEntrySchema).max(6).optional(),
   legacyPath: legacyPathFieldSchema.optional(),
   sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
   specialtyId: z.preprocess(
@@ -202,7 +262,12 @@ function validateServiceKindRules(
   }
 }
 
-export const adminServiceCreateBodySchema = z.object(adminServiceBodyShape).superRefine(validateServiceKindRules);
+export const adminServiceCreateBodySchema = z
+  .object(adminServiceBodyShape)
+  .superRefine((value, ctx) => {
+    validateServiceKindRules(value, ctx);
+    validateUniqueLocales(value.translations, ctx);
+  });
 
 export type AdminServiceCreateBody = z.infer<typeof adminServiceCreateBodySchema>;
 
@@ -213,6 +278,7 @@ export const adminServiceUpdateBodySchema = z
   })
   .partial()
   .superRefine((value, ctx) => {
+    validateUniqueLocales(value.translations, ctx);
     if (!value.kind) return;
     validateServiceKindRules(
       {

@@ -1,15 +1,36 @@
 import "server-only";
 
+/** One locale's CMS content, parsed from the `tr_<LOCALE>_<field>` inputs.
+ *  `name` is always non-empty (the parser skips locales with a blank name).
+ *  Nullable fields are null when the textarea/input was left blank. */
+export type ParsedServiceTranslation = {
+  locale: string;
+  name: string;
+  summary: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  ctaLabel: string | null;
+};
+
 type ParsedServiceBody = {
   countryId: string;
   kind: string;
   slug: string;
+  /** Base display fields, derived from the default-locale tab. The backend
+   *  still writes these to the Service base columns (Option B), while
+   *  `translations` carries every locale (including the default). */
   name: string;
   summary: string;
+  seoTitle: string;
+  seoDescription: string;
   heroTitle: string;
   heroDescription: string;
   detailBody: string;
   ctaLabel: string;
+  translations: ParsedServiceTranslation[];
   legacyPath: string;
   sortOrder: number | undefined;
   specialtyId: string | null;
@@ -77,23 +98,101 @@ export function formatServicePriceInput(basePriceCents: number | null | undefine
   return (basePriceCents / 100).toFixed(2);
 }
 
-export function parseServiceBodyFromForm(formData: FormData): ParseServiceFormResult {
+/** Locale tab descriptor used by the admin form + parser. Codes are
+ *  uppercase LocaleCode values (EN, PT, …). */
+export type ServiceLocaleTab = { code: string; isDefault: boolean };
+
+/**
+ * Resolve which locale tabs to render for a service form from the parent
+ * country's enabled locales. Always includes the default locale (so the
+ * required base content always has a home), even on older countries with
+ * no CountryLocale rows.
+ */
+export function resolveCountryLocaleTabs(
+  country: { defaultLocale?: string | null; countryLocales?: { locale: string }[] } | undefined,
+): { locales: ServiceLocaleTab[]; defaultLocale: string } {
+  const defaultLocale = (country?.defaultLocale ?? "EN").toUpperCase();
+  const seen = new Set<string>();
+  const locales: ServiceLocaleTab[] = [];
+  for (const row of country?.countryLocales ?? []) {
+    const code = row.locale.toUpperCase();
+    if (seen.has(code)) continue;
+    seen.add(code);
+    locales.push({ code, isDefault: code === defaultLocale });
+  }
+  if (!seen.has(defaultLocale)) {
+    locales.unshift({ code: defaultLocale, isDefault: true });
+  }
+  return { locales, defaultLocale };
+}
+
+/** Trim a `tr_<LOCALE>_<field>` value; "" → null for nullable fields. */
+function trNullable(formData: FormData, locale: string, field: string): string | null {
+  const raw = String(formData.get(`tr_${locale}_${field}`) ?? "").trim();
+  return raw === "" ? null : raw;
+}
+
+/**
+ * Collect one ParsedServiceTranslation per locale that has a non-empty
+ * name. Locales with a blank name are skipped (no translation written) —
+ * except the default locale, whose blank name surfaces as an empty base
+ * `name` and is rejected by backend validation.
+ */
+function parseTranslations(formData: FormData): ParsedServiceTranslation[] {
+  const locales = new Set<string>();
+  for (const key of formData.keys()) {
+    const match = /^tr_([A-Za-z]{2,})_name$/.exec(key);
+    if (match) locales.add(match[1].toUpperCase());
+  }
+
+  const result: ParsedServiceTranslation[] = [];
+  for (const locale of locales) {
+    const name = String(formData.get(`tr_${locale}_name`) ?? "").trim();
+    if (name === "") continue;
+    result.push({
+      locale,
+      name,
+      summary: trNullable(formData, locale, "summary"),
+      seoTitle: trNullable(formData, locale, "seoTitle"),
+      seoDescription: trNullable(formData, locale, "seoDescription"),
+      heroTitle: trNullable(formData, locale, "heroTitle"),
+      heroDescription: trNullable(formData, locale, "heroDescription"),
+      detailBody: trNullable(formData, locale, "detailBody"),
+      ctaLabel: trNullable(formData, locale, "ctaLabel"),
+    });
+  }
+  return result;
+}
+
+export function parseServiceBodyFromForm(
+  formData: FormData,
+  defaultLocale: string,
+): ParseServiceFormResult {
   const specialtyRaw = String(formData.get("specialtyId") ?? "").trim();
   const priceRaw = String(formData.get("basePrice") ?? "").trim();
+  const upperDefault = defaultLocale.toUpperCase();
 
   try {
+    const translations = parseTranslations(formData);
+    // Base display columns are seeded from the default-locale tab so the
+    // Service base row stays authoritative for the default locale.
+    const base = translations.find((t) => t.locale === upperDefault);
+
     return {
       ok: true,
       data: {
         countryId: String(formData.get("countryId") ?? "").trim(),
         kind: String(formData.get("kind") ?? "").trim(),
         slug: String(formData.get("slug") ?? "").trim(),
-        name: String(formData.get("name") ?? "").trim(),
-        summary: String(formData.get("summary") ?? "").trim(),
-        heroTitle: String(formData.get("heroTitle") ?? "").trim(),
-        heroDescription: String(formData.get("heroDescription") ?? "").trim(),
-        detailBody: String(formData.get("detailBody") ?? "").trim(),
-        ctaLabel: String(formData.get("ctaLabel") ?? "").trim(),
+        name: base?.name ?? "",
+        summary: base?.summary ?? "",
+        seoTitle: base?.seoTitle ?? "",
+        seoDescription: base?.seoDescription ?? "",
+        heroTitle: base?.heroTitle ?? "",
+        heroDescription: base?.heroDescription ?? "",
+        detailBody: base?.detailBody ?? "",
+        ctaLabel: base?.ctaLabel ?? "",
+        translations,
         legacyPath: String(formData.get("legacyPath") ?? "").trim(),
         sortOrder: optionalInt(formData, "sortOrder"),
         specialtyId: specialtyRaw === "" ? null : specialtyRaw,

@@ -1,4 +1,4 @@
-import { Prisma, ServiceKind } from "@prisma/client";
+import { LocaleCode, Prisma, ServiceKind } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import type {
   AdminSpecialtyCreateBody,
@@ -6,9 +6,144 @@ import type {
   AdminServiceCreateBody,
   AdminServiceUpdateBody,
   AdminServicesQuery,
+  ServiceTranslationInput,
+  SpecialtyTranslationInput,
 } from "../../validations/admin-services.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
+import { resolveTranslation } from "../shared/resolve-translation.js";
+import { assertLocaleSupported } from "../shared/locale-support.js";
+
+/** Display fields a ServiceTranslation can override, plus the locale key. */
+const serviceTranslationSelect = {
+  locale: true,
+  name: true,
+  summary: true,
+  seoTitle: true,
+  seoDescription: true,
+  heroTitle: true,
+  heroDescription: true,
+  detailBody: true,
+  ctaLabel: true,
+} satisfies Prisma.ServiceTranslationSelect;
+
+type ServiceDisplayBase = {
+  name: string;
+  summary: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  ctaLabel: string | null;
+};
+
+type ServiceTranslationRow = ServiceDisplayBase & { locale: LocaleCode };
+
+/**
+ * Merge a service's base display columns with the best translation for the
+ * requested locale (requested → default → first → base). Returns the row
+ * with display fields overwritten by the resolved values, the raw
+ * `translations` array stripped, and the locale that actually resolved.
+ */
+function mergeServiceTranslation<
+  S extends ServiceDisplayBase & { translations: ServiceTranslationRow[] },
+>(service: S, requested: LocaleCode, defaultLocale: LocaleCode): Omit<S, "translations"> & {
+  resolvedLocale: LocaleCode;
+} {
+  const { tr, resolvedLocale } = resolveTranslation(service.translations, requested, defaultLocale);
+  const { translations: _translations, ...rest } = service;
+  return {
+    ...rest,
+    name: tr?.name ?? service.name,
+    summary: tr?.summary ?? service.summary,
+    seoTitle: tr?.seoTitle ?? service.seoTitle,
+    seoDescription: tr?.seoDescription ?? service.seoDescription,
+    heroTitle: tr?.heroTitle ?? service.heroTitle,
+    heroDescription: tr?.heroDescription ?? service.heroDescription,
+    detailBody: tr?.detailBody ?? service.detailBody,
+    ctaLabel: tr?.ctaLabel ?? service.ctaLabel,
+    resolvedLocale,
+  };
+}
+
+/**
+ * Upsert one ServiceTranslation row per supplied entry, keyed by
+ * (serviceId, locale). Validates each locale is enabled for the country
+ * and sanitizes rich HTML per locale. Sequential + additive, mirroring the
+ * existing asset/doctor sync (not wrapped in a single transaction).
+ */
+async function upsertServiceTranslations(
+  serviceId: string,
+  countryId: string,
+  translations: ServiceTranslationInput[],
+): Promise<void> {
+  for (const entry of translations) {
+    await assertLocaleSupported(countryId, entry.locale);
+    const detailBody = entry.detailBody === null ? null : sanitizeRichHtml(entry.detailBody);
+    const data = {
+      name: entry.name,
+      summary: entry.summary,
+      seoTitle: entry.seoTitle,
+      seoDescription: entry.seoDescription,
+      heroTitle: entry.heroTitle,
+      heroDescription: entry.heroDescription,
+      detailBody,
+      ctaLabel: entry.ctaLabel,
+    };
+    await prisma.serviceTranslation.upsert({
+      where: { serviceId_locale: { serviceId, locale: entry.locale } },
+      create: { serviceId, locale: entry.locale, ...data },
+      update: data,
+    });
+  }
+}
+
+const specialtyTranslationSelect = {
+  locale: true,
+  name: true,
+  cardSummary: true,
+} satisfies Prisma.SpecialtyTranslationSelect;
+
+type SpecialtyDisplayBase = { name: string; cardSummary: string | null };
+type SpecialtyTranslationRow = SpecialtyDisplayBase & { locale: LocaleCode };
+
+/** Merge a specialty's base name/cardSummary with the best translation. */
+function mergeSpecialtyTranslation<
+  S extends SpecialtyDisplayBase & { translations: SpecialtyTranslationRow[] },
+>(specialty: S, requested: LocaleCode, defaultLocale: LocaleCode): Omit<S, "translations"> & {
+  resolvedLocale: LocaleCode;
+} {
+  const { tr, resolvedLocale } = resolveTranslation(
+    specialty.translations,
+    requested,
+    defaultLocale,
+  );
+  const { translations: _translations, ...rest } = specialty;
+  return {
+    ...rest,
+    name: tr?.name ?? specialty.name,
+    cardSummary: tr?.cardSummary ?? specialty.cardSummary,
+    resolvedLocale,
+  };
+}
+
+/** Upsert one SpecialtyTranslation row per entry, keyed (specialtyId, locale). */
+async function upsertSpecialtyTranslations(
+  specialtyId: string,
+  countryId: string,
+  translations: SpecialtyTranslationInput[],
+): Promise<void> {
+  for (const entry of translations) {
+    await assertLocaleSupported(countryId, entry.locale);
+    const data = { name: entry.name, cardSummary: entry.cardSummary };
+    await prisma.specialtyTranslation.upsert({
+      where: { specialtyId_locale: { specialtyId, locale: entry.locale } },
+      create: { specialtyId, locale: entry.locale, ...data },
+      update: data,
+    });
+  }
+}
 
 export class ServiceCountryNotFoundError extends Error {
   constructor() {
@@ -63,6 +198,8 @@ const adminServiceInclude = {
       },
     },
   },
+  // Per-locale CMS content for the admin translation tabs (form pre-fill).
+  translations: { orderBy: { locale: "asc" as const } },
 } satisfies Prisma.ServiceInclude;
 
 export type AdminServiceRecord = Prisma.ServiceGetPayload<{ include: typeof adminServiceInclude }>;
@@ -97,9 +234,13 @@ export async function listServices() {
   }
 }
 
-export async function listServicesByCountry(countryCode: string, kind?: ServiceKind) {
+export async function listServicesByCountry(
+  countryCode: string,
+  kind?: ServiceKind,
+  locale?: LocaleCode,
+) {
   try {
-    return await prisma.service.findMany({
+    const rows = await prisma.service.findMany({
       where: {
         isActive: true,
         country: { code: countryCode, isActive: true },
@@ -107,7 +248,9 @@ export async function listServicesByCountry(countryCode: string, kind?: ServiceK
       },
       orderBy: [{ kind: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
       include: {
-        country: { select: { id: true, code: true, slug: true, name: true } },
+        country: {
+          select: { id: true, code: true, slug: true, name: true, defaultLocale: true },
+        },
         specialty: true,
         assets: {
           where: { isActive: true, kind: "IMAGE" },
@@ -122,20 +265,28 @@ export async function listServicesByCountry(countryCode: string, kind?: ServiceK
           orderBy: { sortOrder: "asc" },
           select: { doctorId: true },
         },
+        translations: { select: serviceTranslationSelect },
       },
     });
+    // Merge each row to the requested locale (falling back to the
+    // country default + base columns). Same Service.id either way.
+    return rows.map((row) =>
+      mergeServiceTranslation(row, locale ?? row.country.defaultLocale, row.country.defaultLocale),
+    );
   } catch (error) {
     throw normalizeDbError(error, "Services data is unavailable");
   }
 }
 
-export async function listSpecialtiesByCountry(countryCode: string) {
+export async function listSpecialtiesByCountry(countryCode: string, locale?: LocaleCode) {
   try {
-    return await prisma.specialty.findMany({
+    const rows = await prisma.specialty.findMany({
       where: { active: true, country: { code: countryCode, isActive: true } },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
       include: {
-        country: { select: { id: true, code: true, slug: true, name: true } },
+        country: {
+          select: { id: true, code: true, slug: true, name: true, defaultLocale: true },
+        },
         primaryService: {
           select: {
             id: true,
@@ -150,8 +301,16 @@ export async function listSpecialtiesByCountry(countryCode: string) {
             isActive: true,
           },
         },
+        translations: { select: specialtyTranslationSelect },
       },
     });
+    return rows.map((row) =>
+      mergeSpecialtyTranslation(
+        row,
+        locale ?? row.country.defaultLocale,
+        row.country.defaultLocale,
+      ),
+    );
   } catch (error) {
     throw normalizeDbError(error, "Specialties data is unavailable");
   }
@@ -246,6 +405,7 @@ const adminSpecialtyInclude = {
     orderBy: { createdAt: "asc" },
     select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
   },
+  translations: { orderBy: { locale: "asc" as const } },
 } satisfies Prisma.SpecialtyInclude;
 
 async function syncOwnedImageAsset(input: {
@@ -372,6 +532,9 @@ export async function createAdminSpecialty(input: AdminSpecialtyCreateBody) {
       key: `specialty-card:${specialty.id}`,
       usageNote: "Specialty listing card image",
     });
+    if (input.translations !== undefined) {
+      await upsertSpecialtyTranslations(specialty.id, specialty.countryId, input.translations);
+    }
     const record = await prisma.specialty.findUniqueOrThrow({
       where: { id: specialty.id },
       include: adminSpecialtyInclude,
@@ -412,6 +575,9 @@ export async function updateAdminSpecialty(id: string, body: AdminSpecialtyUpdat
         key: `specialty-card:${id}`,
         usageNote: "Specialty listing card image",
       });
+    }
+    if (body.translations !== undefined) {
+      await upsertSpecialtyTranslations(id, existing.countryId, body.translations);
     }
     const record = await prisma.specialty.findUniqueOrThrow({
       where: { id: specialty.id },
@@ -607,10 +773,12 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
         slug: input.slug,
         name: input.name,
         ...(input.summary !== undefined && { summary: input.summary }),
+        ...(input.seoTitle !== undefined && { seoTitle: input.seoTitle }),
+        ...(input.seoDescription !== undefined && { seoDescription: input.seoDescription }),
         ...(input.heroTitle !== undefined && { heroTitle: input.heroTitle }),
         ...(input.heroDescription !== undefined && { heroDescription: input.heroDescription }),
         ...(input.detailBody !== undefined && {
-          detailBody: sanitizeRichHtml(input.detailBody),
+          detailBody: input.detailBody === null ? null : sanitizeRichHtml(input.detailBody),
         }),
         ...(input.ctaLabel !== undefined && { ctaLabel: input.ctaLabel }),
         ...(input.legacyPath !== undefined && { legacyPath: input.legacyPath }),
@@ -639,6 +807,9 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
         input.doctorIds,
         input.countryId,
       );
+    }
+    if (input.translations !== undefined) {
+      await upsertServiceTranslations(service.id, input.countryId, input.translations);
     }
     return prisma.service.findUniqueOrThrow({
       where: { id: service.id },
@@ -682,10 +853,12 @@ export async function updateAdminService(
         ...(body.slug !== undefined && { slug: body.slug }),
         ...(body.name !== undefined && { name: body.name }),
         ...(body.summary !== undefined && { summary: body.summary }),
+        ...(body.seoTitle !== undefined && { seoTitle: body.seoTitle }),
+        ...(body.seoDescription !== undefined && { seoDescription: body.seoDescription }),
         ...(body.heroTitle !== undefined && { heroTitle: body.heroTitle }),
         ...(body.heroDescription !== undefined && { heroDescription: body.heroDescription }),
         ...(body.detailBody !== undefined && {
-          detailBody: sanitizeRichHtml(body.detailBody),
+          detailBody: body.detailBody === null ? null : sanitizeRichHtml(body.detailBody),
         }),
         ...(body.ctaLabel !== undefined && { ctaLabel: body.ctaLabel }),
         ...(body.legacyPath !== undefined && { legacyPath: body.legacyPath }),
@@ -712,6 +885,9 @@ export async function updateAdminService(
     }
     if (body.doctorIds !== undefined) {
       await syncServiceDoctorAssignments(id, body.doctorIds, nextCountryId);
+    }
+    if (body.translations !== undefined) {
+      await upsertServiceTranslations(id, nextCountryId, body.translations);
     }
     return prisma.service.findUniqueOrThrow({
       where: { id: service.id },

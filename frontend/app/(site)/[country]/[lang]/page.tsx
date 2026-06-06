@@ -197,10 +197,10 @@ export default async function CountryLangHomePage({
     await Promise.all([
       getPublicPage(code, "HOME", lang as PublicLocale),
       getCountryDoctors(code),
-      getCountryServices(code, "GENERAL"),
-      getCountryServices(code, "SPECIALIST"),
-      getCountryServices(code, "PRESCRIPTION"),
-      getCountryHealthTests(code),
+      getCountryServices(code, "GENERAL", lang),
+      getCountryServices(code, "SPECIALIST", lang),
+      getCountryServices(code, "PRESCRIPTION", lang),
+      getCountryHealthTests(code, lang),
       getPublicDoctorsNormalized(),
     ]);
 

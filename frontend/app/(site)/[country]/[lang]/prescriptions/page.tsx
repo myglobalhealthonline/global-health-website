@@ -86,7 +86,7 @@ export default async function PrescriptionsPage({
   if (!isCountryFeatureEnabled(overlay, "online-prescriptions")) notFound();
 
   const [services, page] = await Promise.all([
-    getCountryServices(code, "PRESCRIPTION"),
+    getCountryServices(code, "PRESCRIPTION", lang),
     getPublicPage(code, "PRESCRIPTIONS", lang as PublicLocale),
   ]);
   const bookHref = "#prescriptions";

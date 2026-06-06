@@ -2,6 +2,7 @@ import type { AdminCountryDto, AdminHealthTestDto } from "@/lib/admin/admin-api"
 import { formatHealthTestPriceInput } from "@/lib/admin/health-test-form-parse";
 import { ManagedImageField } from "../../_components/managed-image-field";
 import { MultiImageField } from "../../_components/multi-image-field";
+import { HealthTestTranslationTabs } from "./health-test-translation-tabs";
 
 function formatStockInput(stock: number | null | undefined): string {
   if (stock === null || stock === undefined) return "";
@@ -18,11 +19,28 @@ type Props = {
   initial?: AdminHealthTestDto | null;
   pinnedCountryId?: string;
   countryLocked?: boolean;
+  locales: { code: string; isDefault: boolean }[];
+  defaultLocale: string;
 };
 
-export function HealthTestFields({ countries, initial, pinnedCountryId, countryLocked }: Props) {
+export function HealthTestFields({
+  countries,
+  initial,
+  pinnedCountryId,
+  countryLocked,
+  locales,
+  defaultLocale,
+}: Props) {
   const pinId = pinnedCountryId ?? (countryLocked ? initial?.countryId : undefined);
   const pinnedMeta = pinId ? countries.find((c) => c.id === pinId) : undefined;
+  const baseFallback = {
+    title: initial?.title ?? "",
+    shortDescription: initial?.shortDescription ?? null,
+    sampleType: initial?.sampleType ?? null,
+    resultsTimeline: initial?.resultsTimeline ?? null,
+    seoTitle: initial?.seoTitle ?? null,
+    seoDescription: initial?.seoDescription ?? null,
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -48,28 +66,19 @@ export function HealthTestFields({ countries, initial, pinnedCountryId, countryL
         </label>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Slug</span>
-          <input name="slug" className="gh-input min-w-0 font-mono text-sm" required defaultValue={initial?.slug ?? ""} />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Title</span>
-          <input name="title" className="gh-input min-w-0" required defaultValue={initial?.title ?? ""} />
-        </label>
-      </div>
-
       <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Short description</span>
-        <textarea
-          name="shortDescription"
-          rows={4}
-          className="gh-input min-h-[6rem] min-w-0 resize-y"
-          defaultValue={initial?.shortDescription ?? ""}
-        />
+        <span className="gh-field-label">Slug</span>
+        <input name="slug" className="gh-input min-w-0 font-mono text-sm" required defaultValue={initial?.slug ?? ""} />
       </label>
 
-      <div className="grid gap-4 sm:grid-cols-4">
+      <HealthTestTranslationTabs
+        locales={locales}
+        defaultLocale={defaultLocale}
+        initialTranslations={initial?.translations ?? []}
+        baseFallback={baseFallback}
+      />
+
+      <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Price</span>
           <input type="text" inputMode="decimal" name="price" className="gh-input min-w-0" defaultValue={formatHealthTestPriceInput(initial?.priceCents)} placeholder="84.00" />
@@ -77,14 +86,6 @@ export function HealthTestFields({ countries, initial, pinnedCountryId, countryL
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Currency</span>
           <input name="currencyCode" className="gh-input min-w-0 uppercase" defaultValue={initial?.currencyCode ?? "EUR"} />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Sample type</span>
-          <input name="sampleType" className="gh-input min-w-0" defaultValue={initial?.sampleType ?? ""} placeholder="Finger Prick" />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Results timeline</span>
-          <input name="resultsTimeline" className="gh-input min-w-0" defaultValue={initial?.resultsTimeline ?? ""} placeholder="Results in 2–3 working days after arrival in lab" />
         </label>
       </div>
 
@@ -146,17 +147,6 @@ export function HealthTestFields({ countries, initial, pinnedCountryId, countryL
           <span className="text-xs text-[var(--color-text-muted)]">
             Lower numbers appear first in the listing.
           </span>
-        </label>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">SEO title</span>
-          <input name="seoTitle" className="gh-input min-w-0" defaultValue={initial?.seoTitle ?? ""} />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">SEO description</span>
-          <input name="seoDescription" className="gh-input min-w-0" defaultValue={initial?.seoDescription ?? ""} />
         </label>
       </div>
 

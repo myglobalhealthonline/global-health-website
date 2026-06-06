@@ -93,9 +93,11 @@ export default async function ConsultPage({
   if (!code || !config || !isSupportedLocale(lang)) notFound();
 
   // Resolve the service. It can be either GENERAL or SPECIALIST kind.
+  // Pass the route locale so display fields resolve to the viewing
+  // language (same Service.id either way — booking is unaffected).
   const [generals, specialists] = await Promise.all([
-    getCountryServices(code, "GENERAL"),
-    getCountryServices(code, "SPECIALIST"),
+    getCountryServices(code, "GENERAL", lang),
+    getCountryServices(code, "SPECIALIST", lang),
   ]);
   const service: CountryServiceCard | undefined =
     generals.find((s) => s.slug === serviceSlug) ??

@@ -411,6 +411,13 @@ export async function purgeAdminCountry(id: string) {
   });
 }
 
+export type AdminSpecialtyTranslationDto = {
+  id: string;
+  locale: string;
+  name: string;
+  cardSummary: string | null;
+};
+
 export type AdminSpecialtyOptionDto = {
   id: string;
   countryId: string;
@@ -421,6 +428,8 @@ export type AdminSpecialtyOptionDto = {
   sortOrder: number;
   primaryServiceId: string | null;
   active: boolean;
+  /** Per-locale CMS content for the translation tabs. */
+  translations: AdminSpecialtyTranslationDto[];
   createdAt: string;
   updatedAt: string;
   primaryService: {
@@ -446,6 +455,19 @@ export type AdminServiceKind =
   | "HEALTH_TEST"
   | "HOME_DELIVERY";
 
+export type AdminServiceTranslationDto = {
+  id: string;
+  locale: string;
+  name: string;
+  summary: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  heroTitle: string | null;
+  heroDescription: string | null;
+  detailBody: string | null;
+  ctaLabel: string | null;
+};
+
 export type AdminServiceDto = {
   id: string;
   countryId: string;
@@ -454,6 +476,8 @@ export type AdminServiceDto = {
   slug: string;
   name: string;
   summary: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
   heroTitle: string | null;
   heroDescription: string | null;
   detailBody: string | null;
@@ -464,6 +488,10 @@ export type AdminServiceDto = {
   basePriceCents: number | null;
   currencyCode: string | null;
   isActive: boolean;
+  /** Per-locale CMS content for the translation tabs. The default-locale
+   *  row mirrors the base display columns above; absent rows fall back to
+   *  base at read time. */
+  translations: AdminServiceTranslationDto[];
   /** Shipping fee charged per item at checkout (cents). 0 = no
    *  shipping line (the default — online consultations don't ship). */
   shippingCents: number;
@@ -1084,6 +1112,19 @@ export type AdminHealthTestExtraSectionDto = {
   body: string;
 };
 
+export type AdminHealthTestTranslationDto = {
+  id: string;
+  locale: string;
+  title: string;
+  shortDescription: string | null;
+  sampleType: string | null;
+  resultsTimeline: string | null;
+  heroButtonLabel: string | null;
+  detailIntro: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+};
+
 export type AdminHealthTestDto = {
   id: string;
   countryId: string;
@@ -1111,6 +1152,8 @@ export type AdminHealthTestDto = {
   seoTitle: string | null;
   seoDescription: string | null;
   legacyPath: string | null;
+  /** Per-locale CMS content for the translation tabs. */
+  translations: AdminHealthTestTranslationDto[];
   createdAt: string;
   updatedAt: string;
   country: { id: string; code: string; name: string };

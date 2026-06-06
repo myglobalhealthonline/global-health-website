@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { serviceSlugSchema } from "./admin-services.schema.js";
+import { serviceSlugSchema, validateUniqueLocales } from "./admin-services.schema.js";
+import { localeCodeSchema } from "./admin-countries.schema.js";
 
 const optionalTrimmed = (max: number) =>
   z
@@ -42,7 +43,27 @@ export const healthTestIdParamsSchema = z.object({
   id: z.string().trim().min(1),
 });
 
-export const adminHealthTestCreateBodySchema = z.object({
+/**
+ * Per-locale CMS content for a health test. Covers the fields rendered
+ * today (title, shortDescription, sampleType, resultsTimeline) plus SEO
+ * and detail copy for forward-compat. Array/JSON fields stay on the base
+ * row only for now (no public detail page renders them yet).
+ */
+const healthTestTranslationEntrySchema = z.object({
+  locale: localeCodeSchema,
+  title: z.string().trim().min(1).max(200),
+  shortDescription: optionalTrimmed(4000),
+  sampleType: optionalTrimmed(120),
+  resultsTimeline: optionalTrimmed(240),
+  heroButtonLabel: optionalTrimmed(80),
+  detailIntro: optionalTrimmed(12000),
+  seoTitle: optionalTrimmed(200),
+  seoDescription: optionalTrimmed(320),
+});
+
+export type HealthTestTranslationInput = z.infer<typeof healthTestTranslationEntrySchema>;
+
+const adminHealthTestBaseObject = z.object({
   countryId: z.string().trim().min(1),
   slug: serviceSlugSchema,
   title: z.string().trim().min(1).max(200),
@@ -84,8 +105,19 @@ export const adminHealthTestCreateBodySchema = z.object({
   seoTitle: optionalTrimmed(200),
   seoDescription: optionalTrimmed(320),
   legacyPath: optionalTrimmed(240),
+  /** Per-locale CMS content. The default-locale entry mirrors the base
+   *  fields above; backend upserts one HealthTestTranslation per entry. */
+  translations: z.array(healthTestTranslationEntrySchema).max(6).optional(),
 });
 
+export const adminHealthTestCreateBodySchema = adminHealthTestBaseObject.superRefine(
+  (value, ctx) => validateUniqueLocales(value.translations, ctx),
+);
+
 export type AdminHealthTestCreateBody = z.infer<typeof adminHealthTestCreateBodySchema>;
-export const adminHealthTestUpdateBodySchema = adminHealthTestCreateBodySchema.partial();
+
+export const adminHealthTestUpdateBodySchema = adminHealthTestBaseObject
+  .partial()
+  .superRefine((value, ctx) => validateUniqueLocales(value.translations, ctx));
+
 export type AdminHealthTestUpdateBody = z.infer<typeof adminHealthTestUpdateBodySchema>;

@@ -1,11 +1,88 @@
-import { Prisma } from "@prisma/client";
+import { LocaleCode, Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import type {
   AdminHealthTestCreateBody,
   AdminHealthTestsQuery,
   AdminHealthTestUpdateBody,
+  HealthTestTranslationInput,
 } from "../../validations/admin-health-tests.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { resolveTranslation } from "../shared/resolve-translation.js";
+import { assertLocaleSupported } from "../shared/locale-support.js";
+
+/** Scalar display fields a HealthTestTranslation overrides. Array/JSON
+ *  fields stay on the base row for now (no public detail page yet). */
+const healthTestTranslationSelect = {
+  locale: true,
+  title: true,
+  shortDescription: true,
+  sampleType: true,
+  resultsTimeline: true,
+  heroButtonLabel: true,
+  detailIntro: true,
+  seoTitle: true,
+  seoDescription: true,
+} satisfies Prisma.HealthTestTranslationSelect;
+
+type HealthTestDisplayBase = {
+  title: string;
+  shortDescription: string | null;
+  sampleType: string | null;
+  resultsTimeline: string | null;
+  heroButtonLabel: string | null;
+  detailIntro: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+};
+
+type HealthTestTranslationRow = HealthTestDisplayBase & { locale: LocaleCode };
+
+function mergeHealthTestTranslation<
+  S extends HealthTestDisplayBase & { translations: HealthTestTranslationRow[] },
+>(test: S, requested: LocaleCode, defaultLocale: LocaleCode): Omit<S, "translations"> & {
+  resolvedLocale: LocaleCode;
+} {
+  const { tr, resolvedLocale } = resolveTranslation(test.translations, requested, defaultLocale);
+  const { translations: _translations, ...rest } = test;
+  return {
+    ...rest,
+    title: tr?.title ?? test.title,
+    shortDescription: tr?.shortDescription ?? test.shortDescription,
+    sampleType: tr?.sampleType ?? test.sampleType,
+    resultsTimeline: tr?.resultsTimeline ?? test.resultsTimeline,
+    heroButtonLabel: tr?.heroButtonLabel ?? test.heroButtonLabel,
+    detailIntro: tr?.detailIntro ?? test.detailIntro,
+    seoTitle: tr?.seoTitle ?? test.seoTitle,
+    seoDescription: tr?.seoDescription ?? test.seoDescription,
+    resolvedLocale,
+  };
+}
+
+/** Upsert one HealthTestTranslation row per entry, keyed (healthTestId, locale). */
+async function upsertHealthTestTranslations(
+  healthTestId: string,
+  countryId: string,
+  translations: HealthTestTranslationInput[],
+): Promise<void> {
+  for (const entry of translations) {
+    await assertLocaleSupported(countryId, entry.locale);
+    const data = {
+      title: entry.title,
+      shortDescription: entry.shortDescription,
+      sampleType: entry.sampleType,
+      resultsTimeline: entry.resultsTimeline,
+      heroButtonLabel: entry.heroButtonLabel,
+      detailIntro: entry.detailIntro,
+      seoTitle: entry.seoTitle,
+      seoDescription: entry.seoDescription,
+    };
+    await prisma.healthTestTranslation.upsert({
+      where: { healthTestId_locale: { healthTestId, locale: entry.locale } },
+      create: { healthTestId, locale: entry.locale, ...data },
+      update: data,
+    });
+  }
+}
 
 export class HealthTestCountryNotFoundError extends Error {
   constructor() {
@@ -30,6 +107,7 @@ export class HealthTestCountryChangeNotAllowedError extends Error {
 
 const adminHealthTestInclude = {
   country: { select: { id: true, code: true, name: true } },
+  translations: { orderBy: { locale: "asc" as const } },
 } satisfies Prisma.HealthTestInclude;
 
 export type AdminHealthTestRecord = Prisma.HealthTestGetPayload<{ include: typeof adminHealthTestInclude }>;
@@ -84,13 +162,23 @@ export async function listHealthTests() {
   }
 }
 
-export async function listHealthTestsByCountry(countryCode: string) {
+export async function listHealthTestsByCountry(countryCode: string, locale?: LocaleCode) {
   try {
-    return await prisma.healthTest.findMany({
+    const rows = await prisma.healthTest.findMany({
       where: { isActive: true, country: { code: { equals: countryCode, mode: "insensitive" } } },
       orderBy: [{ sortOrder: "asc" }, { title: "asc" }],
-      include: { country: true },
+      include: {
+        country: { select: { id: true, code: true, name: true, defaultLocale: true } },
+        translations: { select: healthTestTranslationSelect },
+      },
     });
+    return rows.map((row) =>
+      mergeHealthTestTranslation(
+        row,
+        locale ?? row.country.defaultLocale,
+        row.country.defaultLocale,
+      ),
+    );
   } catch (error) {
     throw normalizeDbError(error, "Health test data is unavailable");
   }
@@ -136,7 +224,7 @@ export async function createAdminHealthTest(input: AdminHealthTestCreateBody): P
   await assertCountryExists(input.countryId);
   await assertCurrencyCodeExists(input.currencyCode);
   try {
-    return await prisma.healthTest.create({
+    const created = await prisma.healthTest.create({
       data: {
         countryId: input.countryId,
         slug: input.slug,
@@ -163,6 +251,14 @@ export async function createAdminHealthTest(input: AdminHealthTestCreateBody): P
       },
       include: adminHealthTestInclude,
     });
+    if (input.translations !== undefined) {
+      await upsertHealthTestTranslations(created.id, input.countryId, input.translations);
+      return await prisma.healthTest.findUniqueOrThrow({
+        where: { id: created.id },
+        include: adminHealthTestInclude,
+      });
+    }
+    return created;
   } catch (error) {
     throw normalizeDbError(error, "Health test data is unavailable");
   }
@@ -178,7 +274,7 @@ export async function updateAdminHealthTest(id: string, body: AdminHealthTestUpd
   if (body.currencyCode !== undefined) await assertCurrencyCodeExists(body.currencyCode);
 
   try {
-    return await prisma.healthTest.update({
+    await prisma.healthTest.update({
       where: { id },
       data: {
         ...(body.slug !== undefined && { slug: body.slug }),
@@ -203,6 +299,12 @@ export async function updateAdminHealthTest(id: string, body: AdminHealthTestUpd
         ...(body.seoDescription !== undefined && { seoDescription: body.seoDescription }),
         ...(body.legacyPath !== undefined && { legacyPath: body.legacyPath }),
       },
+    });
+    if (body.translations !== undefined) {
+      await upsertHealthTestTranslations(id, existing.countryId, body.translations);
+    }
+    return await prisma.healthTest.findUniqueOrThrow({
+      where: { id },
       include: adminHealthTestInclude,
     });
   } catch (error) {

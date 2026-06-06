@@ -107,7 +107,7 @@ export default async function CountryLangGeneralConsultationPage({
 
   const [page, services, doctors] = await Promise.all([
     getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale),
-    getCountryServices(code, "GENERAL"),
+    getCountryServices(code, "GENERAL", lang),
     getCountryDoctors(code),
   ]);
 

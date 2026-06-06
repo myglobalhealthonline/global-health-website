@@ -37,7 +37,8 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
     );
   }
 
-  const countries = countriesResult.data.countries.map((c) => ({
+  const allCountries = countriesResult.data.countries;
+  const countries = allCountries.map((c) => ({
     id: c.id,
     code: c.code,
     name: c.name,
@@ -45,15 +46,23 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
 
   async function createSpecialtyAction(formData: FormData) {
     "use server";
+    const countryId = String(formData.get("countryId") ?? "").trim();
+    const name = String(formData.get("name") ?? "").trim();
+    const cardSummary = String(formData.get("cardSummary") ?? "").trim() || null;
+    // Seed the default-locale translation from the single-language inputs so
+    // the row exists immediately; other languages are added on the edit page.
+    const selected = allCountries.find((c) => c.id === countryId);
+    const defaultLocale = (selected?.defaultLocale ?? "EN").toUpperCase();
     const body = {
-      countryId: String(formData.get("countryId") ?? "").trim(),
+      countryId,
       slug: String(formData.get("slug") ?? "").trim(),
-      name: String(formData.get("name") ?? "").trim(),
-      cardSummary: String(formData.get("cardSummary") ?? "").trim() || null,
+      name,
+      cardSummary,
       cardThemeColor: String(formData.get("cardThemeColor") ?? "").trim() || null,
       sortOrder: Number(String(formData.get("sortOrder") ?? "0").trim() || "0"),
       imagePath: String(formData.get("imagePath") ?? "").trim() || null,
       active: formData.get("active") === "on",
+      translations: name ? [{ locale: defaultLocale, name, cardSummary }] : [],
     };
     const result = await postAdminSpecialty(body);
     if (!result.ok) {
@@ -136,6 +145,10 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
               placeholder="Short description shown on the public specialty card"
             />
           </label>
+          <p className="-mt-2 text-[12px] text-[var(--color-text-muted)]">
+            Enter the default language here. Add other languages after creating,
+            from the category&apos;s edit page.
+          </p>
 
           <ManagedImageField
             name="imagePath"

@@ -125,12 +125,15 @@ function pickImagePath(row: unknown): string | undefined {
   return firstImage;
 }
 
-/** Services for a country, filtered by kind. Skips inactive rows. */
+/** Services for a country, filtered by kind. Skips inactive rows. When a
+ *  locale is passed the backend returns display fields merged to that
+ *  language (falling back to the country default). */
 export const getCountryServices = cache(async (
   countryCode: string,
   kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY",
+  locale?: string,
 ): Promise<CountryServiceCard[]> => {
-  const res = await fetchServicesByCountry(countryCode, kind);
+  const res = await fetchServicesByCountry(countryCode, kind, locale);
   if (!res.ok) {
     logPublicContentFallback(`country-services:${countryCode}:${kind}`, res.message);
     return [];
@@ -171,8 +174,9 @@ export const getCountryServices = cache(async (
 /** Specialties (categories) for a country. */
 export const getCountrySpecialties = cache(async (
   countryCode: string,
+  locale?: string,
 ): Promise<CountrySpecialtyCard[]> => {
-  const res = await fetchSpecialtiesByCountry(countryCode);
+  const res = await fetchSpecialtiesByCountry(countryCode, locale);
   if (!res.ok) {
     logPublicContentFallback(`country-specialties:${countryCode}`, res.message);
     return [];
@@ -284,8 +288,9 @@ export const getCountryDoctors = cache(async (
 /** Health tests for a country. Maps the HealthTest model to a card shape. */
 export const getCountryHealthTests = cache(async (
   countryCode: string,
+  locale?: string,
 ): Promise<CountryHealthTestCard[]> => {
-  const res = await fetchHealthTestsByCountry(countryCode);
+  const res = await fetchHealthTestsByCountry(countryCode, locale);
   if (!res.ok) {
     logPublicContentFallback(`country-health-tests:${countryCode}`, res.message);
     return [];

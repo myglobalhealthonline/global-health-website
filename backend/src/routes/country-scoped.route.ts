@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync, FastifyReply } from "fastify";
 import { ServiceKind } from "@prisma/client";
 import { z } from "zod";
+import { localeCodeSchema } from "../validations/admin-countries.schema.js";
 import {
   getDoctorByCountryAndSlug,
   listDoctorsByCountry,
@@ -42,11 +43,23 @@ const countrySlugParamsSchema = z.object({
   slug: z.string().trim().min(1).max(160),
 });
 
+/** Optional locale (uppercase LocaleCode) — selects which translation the
+ *  merged service display fields resolve to. Absent → country default. */
+const localeQuerySchema = z.preprocess(
+  (v) => (v === "" || v === undefined || v === null ? undefined : v),
+  localeCodeSchema.optional(),
+);
+
 const servicesQuerySchema = z.object({
   kind: z.preprocess(
     (v) => (v === "" || v === undefined || v === null ? undefined : v),
     z.nativeEnum(ServiceKind).optional(),
   ),
+  locale: localeQuerySchema,
+});
+
+const collectionLocaleQuerySchema = z.object({
+  locale: localeQuerySchema,
 });
 
 const serviceAvailabilityParamsSchema = z.object({
@@ -125,9 +138,16 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
     }
+    const query = collectionLocaleQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid specialties query", query.error.flatten()));
+    }
     try {
       if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
-      const specialties = await listSpecialtiesByCountry(params.data.countryCode);
+      const specialties = await listSpecialtiesByCountry(
+        params.data.countryCode,
+        query.data.locale,
+      );
       return okResponse(specialties);
     } catch (error) {
       return handleError(app, reply, error, "Unexpected specialties error");
@@ -140,9 +160,13 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
     }
+    const query = collectionLocaleQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid health-tests query", query.error.flatten()));
+    }
     try {
       if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
-      const items = await listHealthTestsByCountry(params.data.countryCode);
+      const items = await listHealthTestsByCountry(params.data.countryCode, query.data.locale);
       return okResponse(items);
     } catch (error) {
       return handleError(app, reply, error, "Unexpected health-tests error");
@@ -161,7 +185,11 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
     }
     try {
       if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
-      const services = await listServicesByCountry(params.data.countryCode, query.data.kind);
+      const services = await listServicesByCountry(
+        params.data.countryCode,
+        query.data.kind,
+        query.data.locale,
+      );
       return okResponse(services);
     } catch (error) {
       return handleError(app, reply, error, "Unexpected services error");

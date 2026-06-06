@@ -123,8 +123,8 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   if (code) {
     const [doctors, generals, specialists] = await Promise.all([
       getCountryDoctors(code),
-      getCountryServices(code, "GENERAL"),
-      getCountryServices(code, "SPECIALIST"),
+      getCountryServices(code, "GENERAL", lang),
+      getCountryServices(code, "SPECIALIST", lang),
     ]);
     const doc = doctors.find((d) => d.slug === doctorSlug);
     if (doc) {
