@@ -202,8 +202,9 @@ export const getCountrySpecialties = cache(async (
 /** Doctors active in a country, scoped via the country-scoped backend endpoint. */
 export const getCountryDoctors = cache(async (
   countryCode: string,
+  locale?: string,
 ): Promise<CountryDoctorCard[]> => {
-  const res = await fetchDoctorsByCountry(countryCode);
+  const res = await fetchDoctorsByCountry(countryCode, locale);
   if (!res.ok) {
     logPublicContentFallback(`country-doctors:${countryCode}`, res.message);
     return [];

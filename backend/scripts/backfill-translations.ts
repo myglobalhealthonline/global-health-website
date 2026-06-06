@@ -116,11 +116,42 @@ async function backfillHealthTests(): Promise<void> {
   );
 }
 
+async function backfillDoctors(): Promise<void> {
+  const doctors = await prisma.doctor.findMany({
+    select: {
+      id: true,
+      title: true,
+      bio: true,
+      seoTitle: true,
+      seoDescription: true,
+      country: { select: { defaultLocale: true } },
+    },
+  });
+
+  const data = doctors.map((d) => ({
+    doctorId: d.id,
+    locale: d.country.defaultLocale,
+    title: d.title,
+    bio: d.bio,
+    seoTitle: d.seoTitle,
+    seoDescription: d.seoDescription,
+  }));
+
+  const result =
+    data.length > 0
+      ? await prisma.doctorTranslation.createMany({ data, skipDuplicates: true })
+      : { count: 0 };
+  console.log(
+    `DoctorTranslation: ${result.count} created, ${data.length - result.count} already existed (of ${data.length} doctors)`,
+  );
+}
+
 async function main(): Promise<void> {
   console.log("Backfilling default-locale translations…");
   await backfillServices();
   await backfillSpecialties();
   await backfillHealthTests();
+  await backfillDoctors();
   console.log("Backfill complete.");
 }
 

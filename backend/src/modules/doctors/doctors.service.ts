@@ -1,13 +1,80 @@
-import { AssetKind, Prisma } from "@prisma/client";
+import { AssetKind, LocaleCode, Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import type {
   AdminDoctorCreateBody,
   AdminDoctorUpdateBody,
   AdminDoctorsQuery,
+  DoctorTranslationInput,
 } from "../../validations/admin-doctors.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
+import { resolveTranslation } from "../shared/resolve-translation.js";
+import { assertLocaleSupported } from "../shared/locale-support.js";
 import { getFeaturedDoctorId } from "./featured-doctor.service.js";
+
+/** Display fields a DoctorTranslation overrides. */
+const doctorTranslationSelect = {
+  locale: true,
+  title: true,
+  bio: true,
+  seoTitle: true,
+  seoDescription: true,
+} satisfies Prisma.DoctorTranslationSelect;
+
+type DoctorDisplayBase = {
+  title: string;
+  bio: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+};
+
+type DoctorTranslationRow = DoctorDisplayBase & { locale: LocaleCode };
+
+/**
+ * Merge a doctor's base title/bio/SEO with the best translation for the
+ * requested locale (requested -> default -> first -> base), field by field.
+ * fullName + qualifications are not translated, so they pass through.
+ */
+function mergeDoctorTranslation<
+  S extends DoctorDisplayBase & { translations: DoctorTranslationRow[] },
+>(doctor: S, requested: LocaleCode, defaultLocale: LocaleCode): Omit<S, "translations"> & {
+  resolvedLocale: LocaleCode;
+} {
+  const { tr, resolvedLocale } = resolveTranslation(doctor.translations, requested, defaultLocale);
+  const { translations: _translations, ...rest } = doctor;
+  return {
+    ...rest,
+    title: tr?.title ?? doctor.title,
+    bio: tr?.bio ?? doctor.bio,
+    seoTitle: tr?.seoTitle ?? doctor.seoTitle,
+    seoDescription: tr?.seoDescription ?? doctor.seoDescription,
+    resolvedLocale,
+  };
+}
+
+/** Upsert one DoctorTranslation row per entry, keyed (doctorId, locale).
+ *  Validates each locale is enabled for the country, sanitizes bio. */
+async function upsertDoctorTranslations(
+  tx: Prisma.TransactionClient,
+  doctorId: string,
+  countryId: string,
+  translations: DoctorTranslationInput[],
+): Promise<void> {
+  for (const entry of translations) {
+    await assertLocaleSupported(countryId, entry.locale);
+    const data = {
+      title: entry.title,
+      bio: entry.bio === null || entry.bio === undefined ? null : sanitizeRichHtml(entry.bio),
+      seoTitle: entry.seoTitle ?? null,
+      seoDescription: entry.seoDescription ?? null,
+    };
+    await tx.doctorTranslation.upsert({
+      where: { doctorId_locale: { doctorId, locale: entry.locale } },
+      create: { doctorId, locale: entry.locale, ...data },
+      update: data,
+    });
+  }
+}
 
 export class DoctorCountryNotFoundError extends Error {
   constructor() {
@@ -70,6 +137,8 @@ const adminDoctorInclude = {
       createdAt: true,
     },
   },
+  // Per-locale CMS content for the admin translation tabs (form pre-fill).
+  translations: { orderBy: { locale: "asc" as const } },
 } satisfies Prisma.DoctorInclude;
 
 export type AdminDoctorRecord = Prisma.DoctorGetPayload<{ include: typeof adminDoctorInclude }>;
@@ -88,9 +157,9 @@ function doctorProfileImageKey(doctorId: string): string {
   return `doctor-${doctorId}-profile`;
 }
 
-export async function listDoctors() {
+export async function listDoctors(locale?: LocaleCode) {
   try {
-    return await prisma.doctor.findMany({
+    const rows = await prisma.doctor.findMany({
       where: { active: true },
       orderBy: [{ country: { name: "asc" } }, { fullName: "asc" }],
       include: {
@@ -101,8 +170,14 @@ export async function listDoctors() {
           },
         },
         assets: true,
+        translations: { select: doctorTranslationSelect },
       },
     });
+    // Each doctor merges to the requested locale, falling back to their own
+    // country's default locale (then base columns). Same id either way.
+    return rows.map((d) =>
+      mergeDoctorTranslation(d, locale ?? d.country.defaultLocale, d.country.defaultLocale),
+    );
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }
@@ -113,7 +188,7 @@ export async function listDoctors() {
  * this one PLUS doctors linked in via the DoctorCountry join (active rows
  * only). Linked rows are deduped if the primary already matches.
  */
-export async function listDoctorsByCountry(countryCode: string) {
+export async function listDoctorsByCountry(countryCode: string, locale?: LocaleCode) {
   try {
     const rows = await prisma.doctor.findMany({
       where: {
@@ -132,8 +207,9 @@ export async function listDoctorsByCountry(countryCode: string) {
       },
       orderBy: [{ fullName: "asc" }],
       include: {
-        country: { select: { id: true, code: true, slug: true, name: true } },
+        country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true } },
         specialties: { include: { specialty: true } },
+        translations: { select: doctorTranslationSelect },
         assets: {
           where: { isActive: true, kind: AssetKind.IMAGE },
           // Deterministic ordering — without an explicit orderBy the
@@ -178,10 +254,17 @@ export async function listDoctorsByCountry(countryCode: string) {
     // Setting table — no Doctor column). The public /doctors page pulls
     // this row out into the FeaturedDoctor spotlight.
     const featuredId = await getFeaturedDoctorId(countryCode);
-    return rows.map((d) => ({
-      ...overrideImcRegistrationFromCountry(d),
-      isFeatured: d.id === featuredId,
-    }));
+    return rows.map((d) => {
+      const merged = mergeDoctorTranslation(
+        d,
+        locale ?? d.country.defaultLocale,
+        d.country.defaultLocale,
+      );
+      return {
+        ...overrideImcRegistrationFromCountry(merged),
+        isFeatured: d.id === featuredId,
+      };
+    });
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }
@@ -217,7 +300,11 @@ function overrideImcRegistrationFromCountry<
  * is also valid — we accept the match if the doctor is linked into that
  * country via DoctorCountry.
  */
-export async function getDoctorByCountryAndSlug(countryCode: string, slug: string) {
+export async function getDoctorByCountryAndSlug(
+  countryCode: string,
+  slug: string,
+  locale?: LocaleCode,
+) {
   try {
     const doctor = await prisma.doctor.findFirst({
       where: {
@@ -236,8 +323,9 @@ export async function getDoctorByCountryAndSlug(countryCode: string, slug: strin
         ],
       },
       include: {
-        country: { select: { id: true, code: true, slug: true, name: true } },
+        country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true } },
         specialties: { include: { specialty: true } },
+        translations: { select: doctorTranslationSelect },
         assets: {
           where: { isActive: true, kind: AssetKind.IMAGE },
           // Match the listing endpoint's asset ordering so the same
@@ -284,7 +372,13 @@ export async function getDoctorByCountryAndSlug(countryCode: string, slug: strin
         },
       },
     });
-    return doctor ? overrideImcRegistrationFromCountry(doctor) : null;
+    if (!doctor) return null;
+    const merged = mergeDoctorTranslation(
+      doctor,
+      locale ?? doctor.country.defaultLocale,
+      doctor.country.defaultLocale,
+    );
+    return overrideImcRegistrationFromCountry(merged);
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }
@@ -596,6 +690,10 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
         input.additionalCountryIds,
       );
 
+      if (input.translations !== undefined) {
+        await upsertDoctorTranslations(tx, created.id, input.countryId, input.translations);
+      }
+
       return tx.doctor.findUniqueOrThrow({
         where: { id: created.id },
         include: adminDoctorInclude,
@@ -697,6 +795,10 @@ export async function updateAdminDoctor(
 
       const effectiveCountryId = updated.countryId;
       await syncProfileImageAsset(id, effectiveCountryId, body.profileImagePath);
+
+      if (body.translations !== undefined) {
+        await upsertDoctorTranslations(tx, id, effectiveCountryId, body.translations);
+      }
 
       await syncAdditionalCountries(
         tx,

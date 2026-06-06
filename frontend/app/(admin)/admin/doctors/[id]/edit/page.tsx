@@ -6,6 +6,7 @@ import { FlagBadge } from "../../../_components/flag-badge";
 import { DoctorFields } from "../../_components/doctor-fields";
 import { DoctorProfileImageField } from "../../_components/doctor-profile-image-field";
 import { parseDoctorBodyFromForm } from "@/lib/admin/doctor-form-parse";
+import { resolveCountryLocaleTabs } from "@/lib/admin/service-form-parse";
 import {
   fetchAdminCountries,
   fetchAdminDoctorById,
@@ -110,11 +111,14 @@ export default async function AdminEditDoctorPage({
     code: c.code,
     name: c.name,
   }));
+  const { locales, defaultLocale } = resolveCountryLocaleTabs(
+    countriesResult.data.countries.find((c) => c.id === doctor.countryId),
+  );
 
   async function updateDoctorAction(formData: FormData) {
     "use server";
 
-    const raw = parseDoctorBodyFromForm(formData);
+    const raw = parseDoctorBodyFromForm(formData, defaultLocale);
     const body = {
       countryId: raw.countryId,
       slug: raw.slug,
@@ -128,6 +132,7 @@ export default async function AdminEditDoctorPage({
       languages: raw.languages,
       seoTitle: raw.seoTitle === "" ? null : raw.seoTitle,
       seoDescription: raw.seoDescription === "" ? null : raw.seoDescription,
+      translations: raw.translations,
       specialtyIds: raw.specialtyIds,
       additionalCountryIds: raw.additionalCountryIds,
       profileImagePath: raw.profileImagePath === "" ? null : raw.profileImagePath,
@@ -271,6 +276,8 @@ export default async function AdminEditDoctorPage({
               countries={countries}
               specialties={specialtiesResult.data.specialties}
               initial={doctor}
+              locales={locales}
+              defaultLocale={defaultLocale}
             />
             <div className="flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">

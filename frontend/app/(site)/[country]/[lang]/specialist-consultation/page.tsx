@@ -97,7 +97,7 @@ export default async function CountryLangSpecialistConsultationPage({
     getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale),
     getCountrySpecialties(code, lang),
     getCountryServices(code, "SPECIALIST", lang),
-    getCountryDoctors(code),
+    getCountryDoctors(code, lang),
   ]);
 
   // Provider-first defaults per Google Ads "restricted services" guidance.

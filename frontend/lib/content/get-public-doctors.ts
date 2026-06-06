@@ -175,27 +175,35 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
   };
 }
 
-export const getPublicDoctorsNormalized = cache(async (): Promise<PublicDoctorRecord[]> => {
-  const res = await fetchDoctors();
-  if (!res.ok) {
-    logPublicContentFallback("doctors", res.message);
-    return [];
-  }
+export const getPublicDoctorsNormalized = cache(
+  async (locale?: string): Promise<PublicDoctorRecord[]> => {
+    const res = await fetchDoctors(locale);
+    if (!res.ok) {
+      logPublicContentFallback("doctors", res.message);
+      return [];
+    }
 
-  const out: PublicDoctorRecord[] = [];
-  for (const row of res.data) {
-    const n = normalizeDoctor(row);
-    if (n) out.push(n);
-  }
-  return out;
-});
+    const out: PublicDoctorRecord[] = [];
+    for (const row of res.data) {
+      const n = normalizeDoctor(row);
+      if (n) out.push(n);
+    }
+    return out;
+  },
+);
 
-export async function getPublicDoctorsForCountry(countryCode: CountryCode): Promise<PublicDoctorRecord[]> {
-  const all = await getPublicDoctorsNormalized();
+export async function getPublicDoctorsForCountry(
+  countryCode: CountryCode,
+  locale?: string,
+): Promise<PublicDoctorRecord[]> {
+  const all = await getPublicDoctorsNormalized(locale);
   return all.filter((d) => d.countryCode === countryCode);
 }
 
-export async function getPublicDoctorBySlug(slug: string): Promise<PublicDoctorRecord | undefined> {
-  const all = await getPublicDoctorsNormalized();
+export async function getPublicDoctorBySlug(
+  slug: string,
+  locale?: string,
+): Promise<PublicDoctorRecord | undefined> {
+  const all = await getPublicDoctorsNormalized(locale);
   return all.find((d) => d.slug === slug);
 }

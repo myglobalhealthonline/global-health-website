@@ -32,8 +32,8 @@ type DoctorProfileRouteParams = {
 export async function buildDoctorProfileMetadata(
   params: Promise<DoctorProfileRouteParams>,
 ): Promise<Metadata> {
-  const { doctorSlug } = await params;
-  const data = await resolveDoctorProfilePageData(doctorSlug);
+  const { doctorSlug, lang } = await params;
+  const data = await resolveDoctorProfilePageData(doctorSlug, lang);
   const validation = validatePublicDoctorRecord({
     fullName: data.profile.name,
     title: data.profile.title,
@@ -81,7 +81,7 @@ export async function buildDoctorProfileMetadata(
 
 export async function renderDoctorProfilePage(params: Promise<DoctorProfileRouteParams>) {
   const { doctorSlug, countrySlug: routeCountrySlug, lang: routeLang } = await params;
-  const data = await resolveDoctorProfilePageData(doctorSlug);
+  const data = await resolveDoctorProfilePageData(doctorSlug, routeLang);
   const countryNameToSlug: Record<string, string> = {
     Ireland: "ireland",
     Portugal: "portugal",
@@ -122,7 +122,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   }> = [];
   if (code) {
     const [doctors, generals, specialists] = await Promise.all([
-      getCountryDoctors(code),
+      getCountryDoctors(code, lang),
       getCountryServices(code, "GENERAL", lang),
       getCountryServices(code, "SPECIALIST", lang),
     ]);

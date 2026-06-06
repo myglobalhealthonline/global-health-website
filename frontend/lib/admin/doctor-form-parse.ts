@@ -1,6 +1,18 @@
 import "server-only";
+import {
+  parseLocaleTranslations,
+  type LocaleFieldValue,
+} from "@/lib/admin/translation-form-parse";
 
-export function parseDoctorBodyFromForm(formData: FormData) {
+/** Translatable doctor fields exposed in the tabs (title is primary). */
+export const DOCTOR_TRANSLATABLE_FIELDS = [
+  "title",
+  "bio",
+  "seoTitle",
+  "seoDescription",
+] as const;
+
+export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: string) {
   const specialtyIds = formData
     .getAll("specialtyIds")
     .map((v) => String(v).trim())
@@ -25,20 +37,29 @@ export function parseDoctorBodyFromForm(formData: FormData) {
     .map((v) => v.trim())
     .filter(Boolean);
 
+  // Per-locale CMS content (title/bio/SEO). Base columns are seeded from the
+  // default-locale tab so the Doctor base row stays authoritative there.
+  const translations: LocaleFieldValue[] = parseLocaleTranslations(
+    formData,
+    DOCTOR_TRANSLATABLE_FIELDS,
+  );
+  const base = translations.find((t) => t.locale === defaultLocale.toUpperCase());
+
   return {
     countryId: String(formData.get("countryId") ?? "").trim(),
     slug: String(formData.get("slug") ?? "").trim(),
     fullName: String(formData.get("fullName") ?? "").trim(),
-    title: String(formData.get("title") ?? "").trim(),
-    bio: String(formData.get("bio") ?? "").trim(),
+    title: base?.title ?? "",
+    bio: base?.bio ?? "",
     medicalRegistrationUrl: String(formData.get("medicalRegistrationUrl") ?? "").trim(),
     qualifications,
     whatsappNumber: String(formData.get("whatsappNumber") ?? "").trim(),
     languages,
-    seoTitle: String(formData.get("seoTitle") ?? "").trim(),
-    seoDescription: String(formData.get("seoDescription") ?? "").trim(),
+    seoTitle: base?.seoTitle ?? "",
+    seoDescription: base?.seoDescription ?? "",
     specialtyIds,
     additionalCountryIds,
+    translations,
     profileImagePath: String(formData.get("profileImagePath") ?? "").trim(),
     active: formData.get("active") === "on",
     canCreateManualAppointments:

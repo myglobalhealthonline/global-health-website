@@ -196,12 +196,12 @@ export default async function CountryLangHomePage({
   ] =
     await Promise.all([
       getPublicPage(code, "HOME", lang as PublicLocale),
-      getCountryDoctors(code),
+      getCountryDoctors(code, lang),
       getCountryServices(code, "GENERAL", lang),
       getCountryServices(code, "SPECIALIST", lang),
       getCountryServices(code, "PRESCRIPTION", lang),
       getCountryHealthTests(code, lang),
-      getPublicDoctorsNormalized(),
+      getPublicDoctorsNormalized(lang),
     ]);
 
   const totalDoctorsAcrossEurope = allDoctors.length;

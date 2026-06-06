@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { DoctorFields } from "../_components/doctor-fields";
 import { DoctorProfileImageField } from "../_components/doctor-profile-image-field";
 import { parseDoctorBodyFromForm } from "@/lib/admin/doctor-form-parse";
+import { resolveCountryLocaleTabs } from "@/lib/admin/service-form-parse";
 import {
   fetchAdminCountries,
   fetchAdminDoctors,
@@ -51,11 +52,15 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
     );
   }
 
-  const countries = countriesResult.data.countries.map((c) => ({
+  const allCountries = countriesResult.data.countries;
+  const countries = allCountries.map((c) => ({
     id: c.id,
     code: c.code,
     name: c.name,
   }));
+  const { locales, defaultLocale } = resolveCountryLocaleTabs(
+    allCountries.find((c) => c.id === countryId),
+  );
 
   if (!countryId) {
     return (
@@ -122,7 +127,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
   async function createDoctorAction(formData: FormData) {
     "use server";
 
-    const raw = parseDoctorBodyFromForm(formData);
+    const raw = parseDoctorBodyFromForm(formData, defaultLocale);
     const body = {
       countryId: raw.countryId,
       slug: raw.slug,
@@ -136,6 +141,7 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
       languages: raw.languages,
       seoTitle: raw.seoTitle === "" ? null : raw.seoTitle,
       seoDescription: raw.seoDescription === "" ? null : raw.seoDescription,
+      translations: raw.translations,
       specialtyIds: raw.specialtyIds,
       // M:N additional country listings (primary stays on Doctor.countryId).
       additionalCountryIds: raw.additionalCountryIds,
@@ -224,6 +230,8 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
             countries={countries}
             specialties={specialtiesResult.data.specialties}
             pinnedCountryId={countryId}
+            locales={locales}
+            defaultLocale={defaultLocale}
           />
           {/* Create flow has no right sidebar — mount the picker inline.
               No formId needed; the hidden input is already a child of

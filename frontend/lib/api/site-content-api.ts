@@ -26,9 +26,10 @@ const COUNTRIES_REVALIDATE_SECONDS = 120;
 
 export const SITE_CACHE_TAGS = {
   countries: () => "countries",
-  countryDoctors: (code: string) => `country:${code}:doctors`,
-  countryDoctorBySlug: (code: string, slug: string) =>
-    `country:${code}:doctors:${slug}`,
+  countryDoctors: (code: string, locale?: string) =>
+    locale ? `country:${code}:doctors:${locale}` : `country:${code}:doctors`,
+  countryDoctorBySlug: (code: string, slug: string, locale?: string) =>
+    locale ? `country:${code}:doctors:${slug}:${locale}` : `country:${code}:doctors:${slug}`,
   countrySpecialties: (code: string, locale?: string) =>
     locale ? `country:${code}:specialties:${locale}` : `country:${code}:specialties`,
   countryServices: (code: string, locale?: string) =>
@@ -38,7 +39,8 @@ export const SITE_CACHE_TAGS = {
   countryPlans: (code: string) => `country:${code}:plans`,
   countryPage: (code: string, pageKey: string, locale: string) =>
     `country:${code}:pages:${pageKey}:${locale}`,
-  globalDoctors: () => "global:doctors",
+  globalDoctors: (locale?: string) =>
+    locale ? `global:doctors:${locale}` : "global:doctors",
   globalServices: () => "global:services",
   globalSpecialties: () => "global:specialties",
   globalAssets: () => "global:assets",
@@ -71,11 +73,18 @@ export async function fetchSpecialties(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_
   });
 }
 
-export async function fetchDoctors(timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS) {
-  return apiRequest<unknown[]>("/api/doctors", {
+export async function fetchDoctors(
+  locale?: string,
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+) {
+  const upper = toBackendLocale(locale);
+  const url = upper ? `/api/doctors?locale=${upper}` : "/api/doctors";
+  return apiRequest<unknown[]>(url, {
     timeoutMs,
     revalidate: REVALIDATE_SECONDS,
-    tags: [SITE_CACHE_TAGS.globalDoctors()],
+    tags: upper
+      ? [SITE_CACHE_TAGS.globalDoctors(), SITE_CACHE_TAGS.globalDoctors(upper)]
+      : [SITE_CACHE_TAGS.globalDoctors()],
   });
 }
 
@@ -135,34 +144,49 @@ export async function fetchPublicPage(
 
 export async function fetchDoctorsByCountry(
   countryCode: string,
+  locale?: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
 ) {
-  return apiRequest<unknown[]>(
-    `/api/countries/${encodeURIComponent(countryCode)}/doctors`,
-    {
-      timeoutMs,
-      revalidate: REVALIDATE_SECONDS,
-      tags: [SITE_CACHE_TAGS.countryDoctors(countryCode)],
-    },
-  );
+  const upper = toBackendLocale(locale);
+  const url = upper
+    ? `/api/countries/${encodeURIComponent(countryCode)}/doctors?locale=${upper}`
+    : `/api/countries/${encodeURIComponent(countryCode)}/doctors`;
+  return apiRequest<unknown[]>(url, {
+    timeoutMs,
+    revalidate: REVALIDATE_SECONDS,
+    tags: upper
+      ? [
+          SITE_CACHE_TAGS.countryDoctors(countryCode),
+          SITE_CACHE_TAGS.countryDoctors(countryCode, upper),
+        ]
+      : [SITE_CACHE_TAGS.countryDoctors(countryCode)],
+  });
 }
 
 export async function fetchDoctorByCountryAndSlug(
   countryCode: string,
   slug: string,
+  locale?: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
 ) {
-  return apiRequest<{ doctor: unknown }>(
-    `/api/countries/${encodeURIComponent(countryCode)}/doctors/${encodeURIComponent(slug)}`,
-    {
-      timeoutMs,
-      revalidate: REVALIDATE_SECONDS,
-      tags: [
-        SITE_CACHE_TAGS.countryDoctorBySlug(countryCode, slug),
-        SITE_CACHE_TAGS.countryDoctors(countryCode),
-      ],
-    },
-  );
+  const upper = toBackendLocale(locale);
+  const url = upper
+    ? `/api/countries/${encodeURIComponent(countryCode)}/doctors/${encodeURIComponent(slug)}?locale=${upper}`
+    : `/api/countries/${encodeURIComponent(countryCode)}/doctors/${encodeURIComponent(slug)}`;
+  return apiRequest<{ doctor: unknown }>(url, {
+    timeoutMs,
+    revalidate: REVALIDATE_SECONDS,
+    tags: upper
+      ? [
+          SITE_CACHE_TAGS.countryDoctorBySlug(countryCode, slug),
+          SITE_CACHE_TAGS.countryDoctorBySlug(countryCode, slug, upper),
+          SITE_CACHE_TAGS.countryDoctors(countryCode),
+        ]
+      : [
+          SITE_CACHE_TAGS.countryDoctorBySlug(countryCode, slug),
+          SITE_CACHE_TAGS.countryDoctors(countryCode),
+        ],
+  });
 }
 
 /** Locale arrives lowercase from the `[lang]` route segment; the backend

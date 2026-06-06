@@ -110,7 +110,7 @@ export default async function ConsultPage({
   const detail = getServiceDetailContent(code, serviceSlug);
 
   // Doctors bookable for this service (admin-assigned via ServiceDoctor).
-  const allDoctors = await getCountryDoctors(code);
+  const allDoctors = await getCountryDoctors(code, lang);
   const assignedSet = new Set(service.assignedDoctorIds);
   const doctors = assignedSet.size > 0
     ? allDoctors.filter((d) => assignedSet.has(d.id))

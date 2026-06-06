@@ -337,10 +337,34 @@ model Doctor {
   /// from their portal. Admin still bypasses via role=ADMIN. Default false
   /// so existing doctors retain current scope until an admin grants it.
   canCreateManualAppointments Boolean               @default(false)
+  /// Per-locale CMS content (professional title, bio, SEO). Base columns
+  /// above stay as the default-locale copy + fallback; a translation row
+  /// overrides them per locale. fullName + qualifications are NOT
+  /// translated (proper name + credentials stay single).
+  translations                DoctorTranslation[]
   createdAt                   DateTime              @default(now())
   updatedAt                   DateTime              @updatedAt
 
   @@unique([countryId, slug])
+}
+
+/// Per-locale display content for a Doctor. One stable Doctor record per
+/// real doctor; this table holds the language-specific title/bio/SEO so the
+/// same profile + booking serve every locale.
+model DoctorTranslation {
+  id             String     @id @default(cuid())
+  doctorId       String
+  locale         LocaleCode
+  title          String
+  bio            String?
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  doctor         Doctor     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, locale])
+  @@index([doctorId])
 }
 
 /// Doctor's recurring weekly availability window. One row = "every

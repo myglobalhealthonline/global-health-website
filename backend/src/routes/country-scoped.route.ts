@@ -105,9 +105,13 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
     }
+    const query = collectionLocaleQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid doctors query", query.error.flatten()));
+    }
     try {
       if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
-      const doctors = await listDoctorsByCountry(params.data.countryCode);
+      const doctors = await listDoctorsByCountry(params.data.countryCode, query.data.locale);
       return okResponse(doctors);
     } catch (error) {
       return handleError(app, reply, error, "Unexpected doctors error");
@@ -120,9 +124,17 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
     if (!params.success) {
       return reply.status(400).send(errorResponse("Invalid doctor lookup", params.error.flatten()));
     }
+    const query = collectionLocaleQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid doctor query", query.error.flatten()));
+    }
     try {
       if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
-      const doctor = await getDoctorByCountryAndSlug(params.data.countryCode, params.data.slug);
+      const doctor = await getDoctorByCountryAndSlug(
+        params.data.countryCode,
+        params.data.slug,
+        query.data.locale,
+      );
       if (!doctor) {
         return reply.status(404).send(errorResponse("Doctor not found"));
       }

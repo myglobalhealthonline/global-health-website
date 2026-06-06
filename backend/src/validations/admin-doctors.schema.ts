@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { serviceSlugSchema } from "./admin-services.schema.js";
+import { serviceSlugSchema, validateUniqueLocales } from "./admin-services.schema.js";
+import { localeCodeSchema } from "./admin-countries.schema.js";
 
 /** Same URL-safe rules as services (lowercase a-z, 0-9, hyphens). */
 export const doctorSlugSchema = serviceSlugSchema;
@@ -62,7 +63,28 @@ export const doctorIdParamsSchema = z.object({
   id: z.string().trim().min(1),
 });
 
-export const adminDoctorCreateBodySchema = z.object({
+const nullableTrimmed = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .optional()
+    .nullable()
+    .transform((v) => (v === "" || v === undefined ? null : v));
+
+/** Per-locale CMS content for a doctor (professional title + bio + SEO).
+ *  fullName + qualifications are NOT translated. */
+const doctorTranslationEntrySchema = z.object({
+  locale: localeCodeSchema,
+  title: z.string().trim().min(1).max(200),
+  bio: nullableTrimmed(12000),
+  seoTitle: nullableTrimmed(160),
+  seoDescription: nullableTrimmed(320),
+});
+
+export type DoctorTranslationInput = z.infer<typeof doctorTranslationEntrySchema>;
+
+const adminDoctorBaseObject = z.object({
   countryId: z.string().trim().min(1),
   slug: doctorSlugSchema,
   fullName: z.string().trim().min(1).max(200),
@@ -144,11 +166,21 @@ export const adminDoctorCreateBodySchema = z.object({
     .optional()
     .nullable()
     .transform((v) => (v === "" || v === undefined ? null : v)),
+  /** Per-locale CMS content (title, bio, SEO). The default-locale entry
+   *  mirrors the base fields above; backend upserts one DoctorTranslation
+   *  row per entry. */
+  translations: z.array(doctorTranslationEntrySchema).max(6).optional(),
 });
+
+export const adminDoctorCreateBodySchema = adminDoctorBaseObject.superRefine(
+  (value, ctx) => validateUniqueLocales(value.translations, ctx),
+);
 
 export type AdminDoctorCreateBody = z.infer<typeof adminDoctorCreateBodySchema>;
 
-export const adminDoctorUpdateBodySchema = adminDoctorCreateBodySchema.partial();
+export const adminDoctorUpdateBodySchema = adminDoctorBaseObject
+  .partial()
+  .superRefine((value, ctx) => validateUniqueLocales(value.translations, ctx));
 
 export type AdminDoctorUpdateBody = z.infer<typeof adminDoctorUpdateBodySchema>;
 

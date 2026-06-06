@@ -96,7 +96,7 @@ export default async function CountryLangDoctorsPage({
   const filterSpecs = parseMultiParam(sp?.specialty).map((s) => specialtySlug(s));
 
   const [doctors, page] = await Promise.all([
-    getCountryDoctors(code),
+    getCountryDoctors(code, lang),
     getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale),
   ]);
 

@@ -97,10 +97,13 @@ export function getDoctorProfileData(doctorSlug: string): DoctorProfilePageData 
   };
 }
 
-export async function resolveDoctorProfilePageData(doctorSlug: string): Promise<DoctorProfilePageData> {
+export async function resolveDoctorProfilePageData(
+  doctorSlug: string,
+  locale?: string,
+): Promise<DoctorProfilePageData> {
   const base = getDoctorProfileData(doctorSlug);
   const [backend, profileImageSrc] = await Promise.all([
-    getPublicDoctorBySlug(doctorSlug),
+    getPublicDoctorBySlug(doctorSlug, locale),
     resolveDoctorProfileImageUrl(doctorSlug),
   ]);
 

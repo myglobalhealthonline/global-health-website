@@ -1,6 +1,6 @@
 import type { AdminCountryDto, AdminDoctorDto, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
-import { RichTextHtmlField } from "../../_components/rich-text-html-field";
 import { LanguageMultiSelect } from "./language-multiselect";
+import { DoctorTranslationTabs } from "./doctor-translation-tabs";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
@@ -8,12 +8,30 @@ type Props = {
   initial?: AdminDoctorDto | null;
   pinnedCountryId?: string;
   countryLocked?: boolean;
+  /** Locale tabs for the title/bio/SEO section, from the doctor's country
+   *  enabled locales. Always includes the default locale. */
+  locales: { code: string; isDefault: boolean }[];
+  defaultLocale: string;
 };
 
-export function DoctorFields({ countries, specialties, initial, pinnedCountryId, countryLocked }: Props) {
+export function DoctorFields({
+  countries,
+  specialties,
+  initial,
+  pinnedCountryId,
+  countryLocked,
+  locales,
+  defaultLocale,
+}: Props) {
   const pinId = pinnedCountryId ?? (countryLocked ? initial?.countryId : undefined);
   const pinnedMeta = pinId ? countries.find((c) => c.id === pinId) : undefined;
   const selectedSpecialtyIds = initial?.specialties.map((s) => s.specialtyId) ?? [];
+  const baseFallback = {
+    title: initial?.title ?? "",
+    bio: initial?.bio ?? null,
+    seoTitle: initial?.seoTitle ?? null,
+    seoDescription: initial?.seoDescription ?? null,
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -136,34 +154,10 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
           </label>
         </div>
 
-        <div className="grid gap-4">
-          <label className="flex flex-col gap-2">
-            <span className="gh-field-label">SEO title</span>
-            <input
-              name="seoTitle"
-              className="gh-input min-w-0"
-              defaultValue={initial?.seoTitle ?? ""}
-              maxLength={160}
-              placeholder="Optional — defaults to the doctor's full name + title"
-            />
-            <span className="text-xs text-[var(--color-text-muted)]">
-              Renders as the &lt;title&gt; tag on the public doctor profile. Up to ~60 chars renders cleanly in Google.
-            </span>
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="gh-field-label">SEO description</span>
-            <textarea
-              name="seoDescription"
-              className="gh-input min-w-0 min-h-[5rem] resize-y"
-              defaultValue={initial?.seoDescription ?? ""}
-              maxLength={320}
-              placeholder="Optional — short summary used in search results and link previews."
-            />
-            <span className="text-xs text-[var(--color-text-muted)]">
-              Used as &lt;meta name=&quot;description&quot;&gt;. ~160 chars renders without truncation.
-            </span>
-          </label>
-        </div>
+        <p className="text-xs text-[var(--color-text-muted)]">
+          Professional title, bio and SEO are now edited per language in the
+          <strong> Title, bio &amp; SEO by language</strong> section below.
+        </p>
 
         <label className="flex cursor-pointer items-center gap-2">
           <input type="checkbox" name="active" defaultChecked={initial?.active ?? true} className="h-4 w-4 rounded border-[var(--color-border)]" />
@@ -178,22 +172,19 @@ export function DoctorFields({ countries, specialties, initial, pinnedCountryId,
         title="Public profile (doctor self-managed)"
         subtitle="Admin can pre-fill these to bootstrap a new doctor, but they own these fields after accepting the invite."
       >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="flex flex-col gap-2">
-            <span className="gh-field-label">Full name</span>
-            <input name="fullName" className="gh-input min-w-0" required defaultValue={initial?.fullName} />
-          </label>
-          <label className="flex flex-col gap-2">
-            <span className="gh-field-label">Professional title</span>
-            <input name="title" className="gh-input min-w-0" required defaultValue={initial?.title} placeholder="e.g. Consultant Cardiologist" />
-          </label>
-        </div>
+        <label className="flex flex-col gap-2 sm:max-w-md">
+          <span className="gh-field-label">Full name</span>
+          <input name="fullName" className="gh-input min-w-0" required defaultValue={initial?.fullName} />
+          <span className="text-xs text-[var(--color-text-muted)]">
+            Same across all languages (proper name).
+          </span>
+        </label>
 
-        <RichTextHtmlField
-          name="bio"
-          label="Bio"
-          initialValue={initial?.bio ?? ""}
-          helperText="Supports the same formatting tools used for service detail content."
+        <DoctorTranslationTabs
+          locales={locales}
+          defaultLocale={defaultLocale}
+          initialTranslations={initial?.translations ?? []}
+          baseFallback={baseFallback}
         />
 
         <label className="flex flex-col gap-2">

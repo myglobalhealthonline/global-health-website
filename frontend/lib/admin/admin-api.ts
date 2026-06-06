@@ -656,6 +656,15 @@ export type AdminDoctorAssetDto = {
   path: string;
 };
 
+export type AdminDoctorTranslationDto = {
+  id: string;
+  locale: string;
+  title: string;
+  bio: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+};
+
 export type AdminDoctorDto = {
   id: string;
   countryId: string;
@@ -663,6 +672,8 @@ export type AdminDoctorDto = {
   fullName: string;
   title: string;
   bio: string | null;
+  /** Per-locale CMS content for the translation tabs. */
+  translations: AdminDoctorTranslationDto[];
   imcRegistration: string | null;
   medicalRegistrationUrl: string | null;
   qualifications: string[];
