@@ -27,7 +27,7 @@ export const blogPosts: BlogPost[] = [
   <li><strong>Book online.</strong> Choose your country, consultation type, and preferred time. Payments are handled securely before or after your session.</li>
   <li><strong>Share your details.</strong> Upload any relevant documents, test results, or a brief medical history through the patient portal.</li>
   <li><strong>Meet your doctor.</strong> Join a private video or phone call with a locally-registered GP or specialist at the scheduled time.</li>
-  <li><strong>Receive your care plan.</strong> Your doctor can issue referrals, prescriptions (where permitted), sick notes, and follow-up instructions — all sent securely to your account.</li>
+  <li><strong>Receive your care plan.</strong> Your doctor can issue referrals, sick notes, and follow-up instructions — all sent securely to your account.</li>
 </ol>
 
 <h2>What telemedicine can and cannot do</h2>
@@ -74,40 +74,13 @@ export const blogPosts: BlogPost[] = [
 </ul>
 
 <h2>After the consultation</h2>
-<p>Your doctor's notes and any prescriptions will appear in your account shortly after the call. If anything is unclear, you can follow up through the chat in your patient portal. For time-sensitive questions, contact the clinic directly.</p>
+<p>Your doctor's notes and any documents will appear in your account shortly after the call. If anything is unclear, you can follow up through the chat in your patient portal. For time-sensitive questions, contact the clinic directly.</p>
     `,
   },
-  {
-    slug: "online-prescriptions-europe",
-    title: "Understanding Online Prescriptions in Europe",
-    category: "Prescriptions",
-    author: "Global Health Editorial Team",
-    publishedAt: "2026-04-25",
-    readingTime: 6,
-    excerpt:
-      "Can a doctor issue a prescription over a video call? The short answer is yes — with important country-specific rules that every patient should know.",
-    body: `
-<p>Online prescriptions are legally valid in most European countries, provided they are issued by a registered doctor following a proper clinical assessment. Here is what you need to know.</p>
-
-<h2>The legal framework</h2>
-<p>Under EU Directive 2011/24/EU on patients' rights in cross-border healthcare, prescriptions issued in one member state must be recognised in all others for non-controlled substances. Each country still sets its own rules for controlled medications (Schedule drugs).</p>
-<p>At Global Health, every prescription is issued by a doctor registered in your country of consultation — meaning Irish prescriptions are signed by Irish-registered GPs, Portuguese prescriptions by Portuguese-registered doctors, and so on.</p>
-
-<h2>How the process works</h2>
-<ol>
-  <li>Your doctor assesses your condition during the online consultation.</li>
-  <li>If appropriate, a prescription is generated and digitally signed.</li>
-  <li>The prescription is sent to your account and, in countries with electronic prescription systems (like Ireland's PCRS or Portugal's PEM), directly to your preferred pharmacy.</li>
-  <li>In countries without full e-prescription integration, a PDF is available to print and present at any pharmacy.</li>
-</ol>
-
-<h2>What can and cannot be prescribed online?</h2>
-<p>Most common medications — antibiotics, blood pressure drugs, oral contraceptives, inhalers, and chronic-disease management drugs — can be prescribed after an online consultation. Controlled substances (opioids, benzodiazepines, certain stimulants) are generally restricted to in-person assessments and cannot be issued via telemedicine.</p>
-
-<h2>Repeat prescriptions</h2>
-<p>If you are on a stable long-term medication, repeat prescription appointments are quick — typically 10–15 minutes — and can be done via video or in some cases through an asynchronous review where you complete a short questionnaire. Your doctor decides which pathway is appropriate based on clinical safety.</p>
-    `,
-  },
+  // TEMP (Google Ads / LegitScript): the "Understanding Online Prescriptions
+  // in Europe" blog post is intentionally removed from the public blog while
+  // the LegitScript certificate is pending. Restore the full post from git
+  // history (this file) once online-prescription services are re-enabled.
   {
     slug: "benefits-remote-health-monitoring",
     title: "Benefits of Remote Health Monitoring",
@@ -131,7 +104,7 @@ export const blogPosts: BlogPost[] = [
 <p>When patients see their own data — and know their doctor is reviewing it — adherence to treatment plans improves. The feedback loop between tracking and behaviour change is well-documented in diabetes self-management research.</p>
 
 <h3>Reduced travel and appointment burden</h3>
-<p>Quarterly check-ins for stable chronic conditions can often be replaced by data review sessions where the doctor assesses trends and adjusts prescriptions without the patient needing to travel. This is especially valuable for elderly patients and those in rural areas.</p>
+<p>Quarterly check-ins for stable chronic conditions can often be replaced by data review sessions where the doctor assesses trends and adjusts treatment without the patient needing to travel. This is especially valuable for elderly patients and those in rural areas.</p>
 
 <h2>How Global Health uses monitoring data</h2>
 <p>Patients can upload device readings (CSV exports or manual logs) directly to their appointment in the patient portal. Your doctor reviews these before the consultation, allowing the video call to focus on interpretation and care planning rather than data collection.</p>

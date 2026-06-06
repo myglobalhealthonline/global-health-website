@@ -11,19 +11,19 @@ const STEPS = [
     n: "01",
     title: "Pick your country",
     lede:
-      "We connect you with doctors registered in your country — so referrals, prescriptions, and follow-ups all work locally.",
+      "We connect you with doctors registered in your country — so referrals, certificates, and follow-ups all work locally.",
   },
   {
     n: "02",
     title: "Choose what you need",
     lede:
-      "Browse general, specialist, prescription, and home-test services. Filter by language, urgency, or price.",
+      "Browse general, specialist, and home-test services. Filter by language, urgency, or price.",
   },
   {
     n: "03",
     title: "Talk to a doctor",
     lede:
-      "Join the consultation from any device. Receive prescriptions and referrals by email within the hour.",
+      "Join the consultation from any device. Receive clinical notes and referrals by email within the hour.",
   },
 ];
 

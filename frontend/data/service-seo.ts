@@ -23,14 +23,14 @@ export type ServiceSeo = {
 const SERVICE_SEO: Record<string, ServiceSeo> = {
   // ── Ireland (English) ──────────────────────────────────────────────
   "ie:sick-leave": {
-    title: "Online Sick Leave Certificate Ireland | Certified Sick Cert Online",
+    title: "Sick Leave Certificate Online Ireland | IMC-Registered GP | Global Health",
     description:
-      "Book online doctor consultation in Ireland for sick leave certificates. Receive your sick cert online quickly with secure, same-day medical assessment.",
+      "Speak to an IMC-registered GP online and receive a sick leave certificate for work on the same day. Available in English, Portuguese, Spanish, Arabic and Urdu. From €45.",
   },
   "ie:medical-consultation": {
-    title: "Online Doctor Consultation Ireland | Medical Prescriptions & Services",
+    title: "Online GP Consultation Ireland | IMC-Registered Doctors",
     description:
-      "Book an online doctor consultation in Ireland with qualified medical doctors. Access trusted online medical services in Ireland and fast online prescriptions.",
+      "Book an online GP consultation in Ireland with IMC-registered doctors. Same-day video consultations, with medical certificates and referrals where clinically appropriate.",
   },
   "ie:weight-loss-consultation": {
     title: "Medical Weight Loss Online Ireland | Physician Supervised Program",

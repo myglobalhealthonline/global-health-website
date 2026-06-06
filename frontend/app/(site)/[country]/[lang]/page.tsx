@@ -368,7 +368,7 @@ export default async function CountryLangHomePage({
     {
       value: String(totalServicesAcrossEurope),
       label: "Bookable services",
-      caption: "Consultations, prescriptions, and home tests.",
+      caption: "Consultations, referrals, and home tests.",
     },
   ];
 

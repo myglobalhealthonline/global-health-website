@@ -103,7 +103,7 @@ export default function AboutPage() {
               <DarkStep
                 num="01"
                 title="Pick a country, then a service"
-                body="Click your flag. Browse general consultations, specialist consultations, prescriptions, or home tests. Prices and durations are listed up front."
+                body="Click your flag. Browse general consultations, specialist consultations, or home tests. Prices and durations are listed up front."
               />
               <DarkStep
                 num="02"
@@ -117,8 +117,8 @@ export default function AboutPage() {
               />
               <DarkStep
                 num="04"
-                title="Get prescriptions, referrals, or test kits at home"
-                body="Prescriptions land in your patient portal within the hour. Test kits ship to your door. Referrals go straight to the clinic of your choice."
+                title="Get referrals, certificates, or test kits at home"
+                body="Clinical notes and follow-up guidance land in your patient portal within the hour. Test kits ship to your door. Referrals go straight to the clinic of your choice."
               />
             </div>
           </div>

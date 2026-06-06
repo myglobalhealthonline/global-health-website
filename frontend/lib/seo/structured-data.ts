@@ -118,7 +118,7 @@ export function medicalProcedureJsonLd(input: {
     bodyLocation: undefined,
     preparation: "Have your symptoms, medications list, and ID ready for the video call.",
     howPerformed: "Video consultation via Google Meet with a licensed clinician.",
-    followup: "Prescriptions and follow-up referrals are issued during or shortly after the call.",
+    followup: "Clinical notes, referrals and follow-up guidance are issued during or shortly after the call.",
     potentialAction: {
       "@type": "ReserveAction",
       target: input.bookingUrl.startsWith("http") ? input.bookingUrl : `${SITE_URL}${input.bookingUrl}`,

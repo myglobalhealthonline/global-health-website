@@ -112,7 +112,7 @@ export default function CartPage() {
             <ShoppingCart className="size-10 text-slate-300" aria-hidden />
             <h1 className="mt-4 text-2xl font-bold text-slate-900">Your cart is empty</h1>
             <p className="mt-2 max-w-md text-sm text-slate-600">
-              Browse our health tests and online prescription products to get started.
+              Browse our consultations and health tests to get started.
             </p>
             <Link
               href={countryHome}

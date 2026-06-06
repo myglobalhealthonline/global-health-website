@@ -13,9 +13,21 @@ import {
 } from "@/lib/content/get-country-collections";
 import { getServiceDoctorAvailability } from "@/lib/content/get-doctor-availability";
 import { getServiceSeo } from "@/data/service-seo";
+import { getServiceDetailContent } from "@/lib/content/ireland-service-content";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { faqJsonLd } from "@/lib/seo/structured-data";
+import { FAQSection } from "@/components/sections/FAQSection";
+import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import {
+  ServiceIntro,
+  ChecklistSection,
+  ProcessStepsSection,
+  ImportantInfoSection,
+  WhyChooseSection,
+} from "@/components/sections/ServiceContentSections";
 import { ConsultationBookingForm } from "./_components/consultation-booking-form";
 
 type Params = { country: string; lang: string; serviceSlug: string };
@@ -29,17 +41,23 @@ export async function generateMetadata({
   const { country, lang, serviceSlug } = await params;
   const code = countryCodeFromSlug(country);
 
-  // Approved per-service meta from the migration "Meta Tags" sheet, keyed
-  // by country + slug. Falls back to a generic generated pair otherwise.
+  // Authored long-form detail copy (e.g. IE sick-leave) wins; then the
+  // approved per-service meta from the migration "Meta Tags" sheet, keyed
+  // by country + slug; then a generic generated pair.
+  const detail = code ? getServiceDetailContent(code, serviceSlug) : null;
   const seo = code ? getServiceSeo(code, serviceSlug) : null;
-  const title = seo?.title ?? `Book ${serviceSlug} | ${SITE_NAME}`;
+  const title = detail?.seoTitle ?? seo?.title ?? `Book ${serviceSlug} | ${SITE_NAME}`;
   const description =
+    detail?.seoDescription ??
     seo?.description ??
     `Pick a doctor and time slot to book your consultation in ${country}.`;
   const url = `${getSiteUrl()}/${country}/${lang}/consult/${serviceSlug}`;
+  // Authored detail titles already carry the "| Global Health" brand, so
+  // bypass the layout's "%s · Global Health" template to avoid doubling it.
+  const useAbsoluteTitle = !!detail;
 
   return {
-    title,
+    title: useAbsoluteTitle ? { absolute: title } : title,
     description,
     alternates: { canonical: url },
     openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
@@ -84,6 +102,11 @@ export default async function ConsultPage({
     specialists.find((s) => s.slug === serviceSlug);
   if (!service) notFound();
 
+  // Long-form GP sub-service copy (e.g. IE sick-leave): reshapes the hero
+  // headline and appends marketing / FAQ / disclaimer sections below the
+  // booking flow. Null for services without authored copy.
+  const detail = getServiceDetailContent(code, serviceSlug);
+
   // Doctors bookable for this service (admin-assigned via ServiceDoctor).
   const allDoctors = await getCountryDoctors(code);
   const assignedSet = new Set(service.assignedDoctorIds);
@@ -99,6 +122,8 @@ export default async function ConsultPage({
 
   return (
     <>
+      {detail ? <JsonLd data={faqJsonLd(detail.faq)} /> : null}
+
       {/* Dark hero — service context */}
       <section
         className="relative isolate overflow-hidden"
@@ -147,7 +172,7 @@ export default async function ConsultPage({
               color: "rgba(255,255,255,0.95)",
             }}
           >
-            {service.name}
+            {detail?.h1 ?? service.name}
           </h1>
 
           {service.summary ? (
@@ -219,8 +244,56 @@ export default async function ConsultPage({
               doctors={doctors}
             />
           )}
+
+          {/* Compact disclaimer beside the booking confirmation step. */}
+          {detail && selectedDoctorSlug ? (
+            <div className="mt-8">
+              <MedicalDisclaimer variant="short" text={detail.disclaimerShort} />
+            </div>
+          ) : null}
         </div>
       </section>
+
+      {/* Long-form service content — shown on the landing (doctor-pick)
+          view, kept out of the focused booking-confirmation step. */}
+      {detail && !selectedDoctorSlug ? (
+        <>
+          <ServiceIntro body={detail.intro} theme="light" />
+          {detail.covers ? (
+            <ChecklistSection
+              eyebrow="What it covers"
+              title={detail.covers.title}
+              intro={detail.covers.intro}
+              items={detail.covers.items}
+              note={detail.covers.note}
+              theme="soft"
+            />
+          ) : null}
+          {detail.process ? (
+            <ProcessStepsSection
+              title={detail.process.title}
+              steps={detail.process.steps}
+              theme="light"
+            />
+          ) : null}
+          {detail.importantInfo ? (
+            <ImportantInfoSection
+              title={detail.importantInfo.title}
+              paragraphs={detail.importantInfo.paragraphs}
+              theme="soft"
+            />
+          ) : null}
+          {detail.whyChoose ? (
+            <WhyChooseSection
+              title={detail.whyChoose.title}
+              items={detail.whyChoose.items}
+              theme="light"
+            />
+          ) : null}
+          <FAQSection title="Frequently asked questions" items={detail.faq} />
+          <MedicalDisclaimer paragraphs={detail.disclaimerFull} />
+        </>
+      ) : null}
     </>
   );
 }

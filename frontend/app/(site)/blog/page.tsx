@@ -6,7 +6,7 @@ import { BlogCard } from "@/components/cards/BlogCard";
 export const metadata: Metadata = {
   title: `Health Blog | ${SITE_NAME}`,
   description:
-    "Guides, explainers, and health education from the Global Health medical team — covering telemedicine, prescriptions, lab tests, and more.",
+    "Guides, explainers, and health education from the Global Health medical team — covering telemedicine, online consultations, lab tests, and more.",
 };
 
 export default function BlogIndexPage() {

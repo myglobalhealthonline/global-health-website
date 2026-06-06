@@ -9,7 +9,7 @@ import { ArrowUpRight } from "lucide-react";
 export const metadata: Metadata = {
   title: `FAQ | ${SITE_NAME}`,
   description:
-    "Common questions about booking, prescriptions, lab tests, payments, and privacy on the Global Health telemedicine platform.",
+    "Common questions about booking, consultations, lab tests, payments, and privacy on the Global Health telemedicine platform.",
 };
 
 // Content mirrors the live myglobalhealth.online FAQ verbatim (5
@@ -93,7 +93,7 @@ export default function FAQPage() {
         titleTrail="the marketing speak."
         lede={
           <>
-            Booking, payment, prescriptions, privacy. The questions
+            Booking, payment, consultations, privacy. The questions
             patients actually ask, with answers that don&apos;t pad. Can&apos;t
             find what you need? Drop us a line.
           </>

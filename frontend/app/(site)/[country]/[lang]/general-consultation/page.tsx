@@ -9,6 +9,14 @@ import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { ReviewBadge } from "@/components/sections/ReviewBadge";
+import { FAQSection } from "@/components/sections/FAQSection";
+import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import {
+  ServiceIntro,
+  ChecklistSection,
+  WhyChooseSection,
+} from "@/components/sections/ServiceContentSections";
+import { getGpHubContent } from "@/lib/content/ireland-service-content";
 import { countries, getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -17,7 +25,7 @@ import {
   countryCodeFromSlug,
 } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { breadcrumbJsonLd, medicalProcedureJsonLd } from "@/lib/seo/structured-data";
+import { breadcrumbJsonLd, medicalProcedureJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
   getPublicPage,
@@ -51,13 +59,19 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
   const page = await getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale);
+  const hub = getGpHubContent(code);
   const url = `${getSiteUrl()}/${country}/${lang}/gp-appointment`;
-  const title = page?.seoTitle ?? `Book a GP Appointment in ${config.name} · ${SITE_NAME}`;
+  const title =
+    page?.seoTitle ?? hub?.seoTitle ?? `Book a GP Appointment in ${config.name} · ${SITE_NAME}`;
   const description =
     page?.seoDescription ??
+    hub?.seoDescription ??
     `General practitioners registered to practise in ${config.name}.`;
+  // The authored hub title already carries the "| Global Health" brand, so
+  // bypass the layout's "%s · Global Health" template to avoid doubling it.
+  const useAbsoluteTitle = !page?.seoTitle && !!hub;
   return {
-    title,
+    title: useAbsoluteTitle ? { absolute: title } : title,
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/gp-appointment") },
     openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
@@ -97,12 +111,23 @@ export default async function CountryLangGeneralConsultationPage({
     getCountryDoctors(code),
   ]);
 
+  // Long-form GP positioning copy (Ireland only for now). When present it
+  // reshapes the hero headline and adds the marketing / FAQ / disclaimer
+  // sections below the doctor + service grids.
+  const gpHub = getGpHubContent(code);
+
   // Provider-first defaults per Google Ads "restricted services" guidance.
   // Admin can override via the ContentPage row when localised copy lands.
   const heroTitle = page?.heroTitle ?? "Meet our general practitioners";
   const heroSubtitle =
     page?.heroSubtitle ?? `General practitioners registered to practise in ${config.name}.`;
-  const ctaLabel = page?.ctaLabel ?? "Meet the doctors";
+  const ctaLabel = page?.ctaLabel ?? (gpHub ? "Book a consultation" : "Meet the doctors");
+  // Hero headline composition: GP hub copy takes over the lead/accent for
+  // markets with authored copy; generic "Meet our licensed doctors."
+  // elsewhere.
+  const heroLead = gpHub ? gpHub.h1Lead : "Meet our";
+  const heroAccent = gpHub ? gpHub.h1Accent : "licensed";
+  const heroTrail = gpHub ? undefined : "doctors.";
   // Cart-first booking: hero CTA jumps to the in-page service list
   // instead of the legacy /book-online form. Admin can still override
   // via the ContentPage row.
@@ -164,12 +189,18 @@ export default async function CountryLangGeneralConsultationPage({
         * copy still takes precedence via the heroTitle / heroSubtitle
         * overrides; titleAccent is the only place we baked in the
         * page-type-specific italic word. */}
+      {gpHub ? (
+        <JsonLd data={faqJsonLd(gpHub.faq)} />
+      ) : null}
+
       <PageHero
         countryCode={config.code}
-        countryLabel={`${config.name} · General practitioners`}
-        titleLead="Meet our"
-        titleAccent="licensed"
-        titleTrail="doctors."
+        countryLabel={
+          gpHub ? `${config.name} · Online GP consultation` : `${config.name} · General practitioners`
+        }
+        titleLead={heroLead}
+        titleAccent={heroAccent}
+        titleTrail={heroTrail}
         lede={heroSubtitle}
         ctaLabel={ctaLabel}
         ctaHref={ctaHref}
@@ -194,6 +225,19 @@ export default async function CountryLangGeneralConsultationPage({
       ) : null}
 
       <RichBodySection html={page?.body} theme="light" />
+
+      {gpHub ? (
+        <>
+          <ServiceIntro body={gpHub.intro} theme="light" />
+          <ChecklistSection
+            eyebrow="Who it's for"
+            title={gpHub.whoFor.title}
+            intro={gpHub.whoFor.intro}
+            items={gpHub.whoFor.items}
+            theme="soft"
+          />
+        </>
+      ) : null}
 
       <ReviewBadge countryName={config.name} />
 
@@ -222,7 +266,20 @@ export default async function CountryLangGeneralConsultationPage({
         />
       ) : null}
 
+      {gpHub ? (
+        <>
+          <WhyChooseSection
+            title={gpHub.whyChoose.title}
+            items={gpHub.whyChoose.items}
+            theme="light"
+          />
+          <FAQSection title="Frequently asked questions" items={gpHub.faq} />
+        </>
+      ) : null}
+
       <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
+
+      {gpHub ? <MedicalDisclaimer paragraphs={gpHub.disclaimerFull} /> : null}
     </>
   );
 }

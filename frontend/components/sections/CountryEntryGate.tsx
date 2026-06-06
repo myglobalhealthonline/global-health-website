@@ -207,7 +207,7 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
                 Choose your <span className={styles.heroHighlight}>language</span>
               </h1>
               <p className={styles.heroLead}>
-                Your consultation, your prescriptions, and the website — all in the language you
+                Your consultation, your care, and the website — all in the language you
                 pick.
               </p>
 

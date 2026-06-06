@@ -467,8 +467,8 @@ export function ConsultationBookingForm({
             className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
           />
           <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-            Needed on prescriptions in your country. You can also fill it
-            in on your profile later.
+            Needed on medical documents in your country. You can also fill
+            it in on your profile later.
           </p>
         </label>
 
@@ -509,7 +509,7 @@ export function ConsultationBookingForm({
           Patient address
         </legend>
         <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-          Required for prescriptions and any physical materials.
+          Required for medical documents and any physical materials.
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="block sm:col-span-2">
