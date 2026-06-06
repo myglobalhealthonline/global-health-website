@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SITE_NAME } from "@/lib/constants";
-import { blogPosts } from "@/data/blog-posts";
+import { listBlogPosts } from "@/lib/content/get-public-blog";
 import { BlogCard } from "@/components/cards/BlogCard";
 
 export const metadata: Metadata = {
@@ -9,16 +9,13 @@ export const metadata: Metadata = {
     "Guides, explainers, and health education from the Global Health medical team — covering telemedicine, online consultations, lab tests, and more.",
 };
 
-export default function BlogIndexPage() {
-  // Sort newest-first by publishedAt, then promote the freshest post
-  // into the 2x2 featured slot of .gh-card-grid--featured. Falls back
+export default async function BlogIndexPage() {
+  // Merged admin (DB) + static posts, newest-first. Promote the freshest
+  // post into the 2x2 featured slot of .gh-card-grid--featured. Falls back
   // to a flat grid when there aren't enough posts to justify a hero
   // (4 minimum — the featured tile spans two rows so we need at
   // least three flat cards beneath it to avoid an empty grid row).
-  const ordered = [...blogPosts].sort((a, b) =>
-    a.publishedAt < b.publishedAt ? 1 : -1,
-  );
-  const useFeatured = ordered.length >= 4;
+  const ordered = await listBlogPosts();
 
   return (
     <>
@@ -76,20 +73,30 @@ export default function BlogIndexPage() {
           padding: "clamp(64px,8vw,120px) 0",
         }}
       >
-        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <div className={useFeatured ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}>
-            {ordered.map((post, i) => (
-              <BlogCard
-                key={post.slug}
-                title={post.title}
-                excerpt={post.excerpt}
-                href={`/blog/${post.slug}`}
-                category={post.category}
-                publishedAt={post.publishedAt}
-                featured={useFeatured && i === 0}
-              />
-            ))}
-          </div>
+        <div className="mx-auto max-w-4xl px-5 md:px-10">
+          {ordered.length === 0 ? (
+            <p
+              className="text-[length:var(--text-body-lg)]"
+              style={{ color: "var(--color-text-muted)" }}
+            >
+              No articles published yet. Check back soon.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-6">
+              {ordered.map((post) => (
+                <BlogCard
+                  key={post.slug}
+                  title={post.title}
+                  excerpt={post.excerpt}
+                  href={`/blog/${post.slug}`}
+                  category={post.category}
+                  publishedAt={post.publishedAt}
+                  coverImageSrc={post.coverImageSrc}
+                  coverImageAlt={post.coverImageAlt}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </>

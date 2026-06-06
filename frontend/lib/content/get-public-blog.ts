@@ -1,0 +1,107 @@
+import { cache } from "react";
+import { apiRequest } from "@/lib/api/client";
+import { logPublicContentFallback } from "@/lib/content/public-content-source";
+import { resolveTrustedAssetUrl } from "@/lib/content/asset-media-url";
+
+/** Cache tag for public blog reads — busted by admin create/edit/delete. */
+export const PUBLIC_BLOG_TAG = "public-blog";
+
+export type BlogListItem = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  author: string;
+  publishedAt: string;
+  readingTime: number;
+  coverImageSrc: string | null;
+  coverImageAlt: string | null;
+};
+
+export type BlogPostFull = BlogListItem & {
+  body: string;
+  seoTitle: string | null;
+  seoDescription: string | null;
+};
+
+type ApiBlogPost = {
+  slug?: unknown;
+  title?: unknown;
+  excerpt?: unknown;
+  body?: unknown;
+  category?: unknown;
+  author?: unknown;
+  publishedAt?: unknown;
+  coverImageUrl?: unknown;
+  coverImageAlt?: unknown;
+  seoTitle?: unknown;
+  seoDescription?: unknown;
+};
+
+const str = (v: unknown): string => (typeof v === "string" ? v : "");
+
+/** Rough reading-time estimate from the HTML body (200 wpm, min 1). */
+function readingTimeFromHtml(html: string): number {
+  const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  const words = text ? text.split(" ").length : 0;
+  return Math.max(1, Math.ceil(words / 200));
+}
+
+function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
+  const slug = str(raw.slug);
+  const title = str(raw.title);
+  const body = str(raw.body);
+  if (!slug || !title) return null;
+  const publishedAt = str(raw.publishedAt) || new Date(0).toISOString();
+  const coverUrl = str(raw.coverImageUrl);
+  return {
+    slug,
+    title,
+    excerpt: str(raw.excerpt),
+    body,
+    category: str(raw.category) || "Health guide",
+    author: str(raw.author) || "Global Health Editorial Team",
+    publishedAt,
+    readingTime: readingTimeFromHtml(body),
+    coverImageSrc: coverUrl ? resolveTrustedAssetUrl(coverUrl) ?? coverUrl : null,
+    coverImageAlt: str(raw.coverImageAlt) || null,
+    seoTitle: str(raw.seoTitle) || null,
+    seoDescription: str(raw.seoDescription) || null,
+  };
+}
+
+/** All published, admin-managed posts (newest-first). [] when unavailable. */
+const fetchPublishedPosts = cache(async (): Promise<BlogPostFull[]> => {
+  const res = await apiRequest<{ posts?: ApiBlogPost[] }>("/api/blog", {
+    revalidate: 60,
+    tags: [PUBLIC_BLOG_TAG],
+  });
+  if (!res.ok) {
+    logPublicContentFallback("blog:list", res.message);
+    return [];
+  }
+  const posts = Array.isArray(res.data?.posts) ? res.data.posts : [];
+  return posts.map(normalizeApiPost).filter((p): p is BlogPostFull => p !== null);
+});
+
+/** Card list for the blog index. */
+export async function listBlogPosts(): Promise<BlogListItem[]> {
+  const posts = await fetchPublishedPosts();
+  return posts.map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    excerpt: p.excerpt,
+    category: p.category,
+    author: p.author,
+    publishedAt: p.publishedAt,
+    readingTime: p.readingTime,
+    coverImageSrc: p.coverImageSrc,
+    coverImageAlt: p.coverImageAlt,
+  }));
+}
+
+/** Full post for the detail page; null when the slug is unknown. */
+export async function getBlogPost(slug: string): Promise<BlogPostFull | null> {
+  const posts = await fetchPublishedPosts();
+  return posts.find((p) => p.slug === slug) ?? null;
+}

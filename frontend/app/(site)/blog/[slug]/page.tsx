@@ -3,27 +3,29 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, User, Calendar } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
-import { blogPosts } from "@/data/blog-posts";
+import { getBlogPost } from "@/lib/content/get-public-blog";
+import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  return blogPosts.map((p) => ({ slug: p.slug }));
+  // All posts are admin-managed (DB) and render on demand.
+  return [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = blogPosts.find((p) => p.slug === slug);
+  const post = await getBlogPost(slug);
   if (!post) return {};
   return {
-    title: `${post.title} | ${SITE_NAME}`,
-    description: post.excerpt,
+    title: post.seoTitle ?? `${post.title} | ${SITE_NAME}`,
+    description: post.seoDescription ?? post.excerpt,
   };
 }
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = blogPosts.find((p) => p.slug === slug);
+  const post = await getBlogPost(slug);
   if (!post) notFound();
 
   const formatted = new Date(post.publishedAt).toLocaleDateString("en-GB", {
@@ -51,7 +53,7 @@ export default async function BlogPostPage({ params }: Props) {
               "radial-gradient(ellipse 700px 400px at 90% -10%, rgba(176,241,34,0.09), transparent 55%)",
           }}
         />
-        <div className="relative mx-auto max-w-3xl px-5 md:px-10">
+        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <Link
             href="/blog"
             className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-80"
@@ -105,15 +107,33 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Article body — light, wide prose column */}
+      {/* Cover image banner */}
+      {post.coverImageSrc ? (
+        <div style={{ background: "var(--color-background-page)" }}>
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10" style={{ paddingTop: "clamp(32px,4vw,56px)" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={post.coverImageSrc}
+              alt={post.coverImageAlt ?? post.title}
+              className="block w-full rounded-[var(--radius-card)] object-cover"
+              style={{ maxHeight: 460 }}
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {/* Article body — full-width; the article's own HTML controls its
+          inner layout/width. */}
       <main
-        className="mx-auto max-w-3xl px-5 md:px-10"
-        style={{ background: "var(--color-background-page)", padding: "clamp(48px,6vw,80px) 20px" }}
+        className="mx-auto max-w-[var(--container-width)]"
+        style={{ background: "var(--color-background-page)", padding: "clamp(48px,6vw,80px) clamp(20px,4vw,40px)" }}
       >
+        {/* Admin-authored article HTML. Sanitized on save (scripts stripped,
+            <style>/classes preserved) and CSS-scoped to .gh-article-body so it
+            can't bleed into the site. Rendered server-side for SEO. */}
         <div
-          className="prose max-w-none prose-headings:font-extrabold prose-headings:tracking-[-0.02em] prose-headings:text-[var(--color-text-primary)] prose-h2:text-xl prose-h2:mt-8 prose-h3:text-lg prose-h3:mt-6 prose-p:leading-relaxed prose-p:text-[var(--color-text-body)] prose-li:leading-relaxed prose-li:text-[var(--color-text-body)] prose-a:text-[var(--color-brand-primary)] prose-a:no-underline hover:prose-a:underline"
-          style={{ color: "var(--color-text-body)" }}
-          dangerouslySetInnerHTML={{ __html: post.body }}
+          className="gh-article-body"
+          dangerouslySetInnerHTML={{ __html: scopeBlogHtml(post.body) }}
         />
       </main>
 

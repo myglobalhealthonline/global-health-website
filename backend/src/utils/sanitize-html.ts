@@ -38,7 +38,85 @@ const ALLOWED_TAGS = [
   "hr",
   "span",
   "div",
+  // Blog bodies (admin-uploaded HTML articles) need images, figures and
+  // tables. These are structural/content tags with no script execution;
+  // attributes are still whitelisted below and img src is http/https only.
+  "img",
+  "figure",
+  "figcaption",
+  "table",
+  "thead",
+  "tbody",
+  "tfoot",
+  "tr",
+  "td",
+  "th",
+  "caption",
+  "colgroup",
+  "col",
 ];
+
+/**
+ * Permissive sanitizer for full, self-styled blog articles. Unlike
+ * `sanitizeRichHtml`, this KEEPS `<style>` blocks, `class`/`id`, and all
+ * inline styles + layout/structural tags so a designed HTML article renders
+ * as authored. It is ONLY safe because the public site renders the result
+ * inside an isolated Shadow DOM (`BlogHtml`) — which encapsulates the CSS —
+ * and because we still strip every script vector here:
+ *   - <script>, <iframe>, <object>, <embed>, <form>/<input>/<button>, <link>,
+ *     <meta>, <base> are dropped (not in the allow-list).
+ *   - on* event handlers and javascript:/data: URLs are dropped.
+ */
+const BLOG_ALLOWED_TAGS = [
+  "p", "br", "strong", "b", "em", "i", "u", "s", "del", "ins", "mark", "small",
+  "sub", "sup", "abbr", "q", "cite", "wbr",
+  "ul", "ol", "li", "dl", "dt", "dd", "blockquote", "pre", "code", "kbd", "samp", "var",
+  "h1", "h2", "h3", "h4", "h5", "h6", "a", "hr",
+  "div", "span", "section", "article", "header", "footer", "main", "aside", "nav",
+  "figure", "figcaption", "address", "time", "details", "summary",
+  "img", "picture", "source",
+  "table", "thead", "tbody", "tfoot", "tr", "td", "th", "caption", "colgroup", "col",
+  "style",
+];
+
+const BLOG_COMMON_ATTRS = ["class", "id", "style", "title", "role", "dir", "lang", "align"];
+
+export function sanitizeBlogHtml(input: string | null | undefined): string | null {
+  if (input == null) return null;
+  const trimmed = input.trim();
+  if (trimmed === "") return null;
+  return sanitizeHtmlLib(trimmed, {
+    allowedTags: BLOG_ALLOWED_TAGS,
+    // We allow <style> for designed articles; safe because output renders in
+    // an isolated Shadow DOM and scripts are stripped. No <script> is allowed.
+    allowVulnerableTags: true,
+    allowedAttributes: {
+      "*": [...BLOG_COMMON_ATTRS, "aria-label", "aria-hidden", "aria-labelledby", "aria-describedby"],
+      a: [...BLOG_COMMON_ATTRS, "href", "name", "target", "rel"],
+      img: [...BLOG_COMMON_ATTRS, "src", "srcset", "sizes", "alt", "width", "height", "loading"],
+      source: ["src", "srcset", "sizes", "type", "media"],
+      td: [...BLOG_COMMON_ATTRS, "colspan", "rowspan"],
+      th: [...BLOG_COMMON_ATTRS, "colspan", "rowspan", "scope"],
+      col: [...BLOG_COMMON_ATTRS, "span"],
+      colgroup: [...BLOG_COMMON_ATTRS, "span"],
+      time: [...BLOG_COMMON_ATTRS, "datetime"],
+    },
+    // No allowedStyles filter → inline styles pass through verbatim (layout,
+    // spacing, colour, grid/flex all survive). Safe inside the Shadow DOM.
+    allowedSchemes: ["http", "https", "mailto", "tel"],
+    allowedSchemesByTag: { img: ["http", "https"] },
+    transformTags: {
+      a: (tagName, attribs) => {
+        const next: Record<string, string> = { ...attribs };
+        if (next.target === "_blank") {
+          next.rel = `${next.rel ?? ""} noopener noreferrer`.trim();
+        }
+        return { tagName, attribs: next };
+      },
+    },
+    disallowedTagsMode: "discard",
+  });
+}
 
 export function sanitizeRichHtml(input: string | null | undefined): string | null {
   if (input == null) return null;
@@ -49,6 +127,13 @@ export function sanitizeRichHtml(input: string | null | undefined): string | nul
     allowedAttributes: {
       // Links: anchor only — no javascript: URLs, no target=_top tricks.
       a: ["href", "title", "rel", "target"],
+      // Images in blog bodies. No on* handlers (not listed = stripped);
+      // src restricted to http/https via allowedSchemesByTag below.
+      img: ["src", "alt", "title", "width", "height", "loading"],
+      td: ["colspan", "rowspan", "style"],
+      th: ["colspan", "rowspan", "scope", "style"],
+      col: ["span", "style"],
+      colgroup: ["span", "style"],
       // Inline styling kept narrow: just colour + font-family + font-weight
       // + text-align so the rich-text editor's basic formatting survives.
       span: ["style"],
@@ -65,7 +150,9 @@ export function sanitizeRichHtml(input: string | null | undefined): string | nul
     },
     // Stripe down to safe schemes + reject any inline event handlers.
     allowedSchemes: ["http", "https", "mailto", "tel"],
-    allowedSchemesByTag: {},
+    // Images must load over http/https only — block data: (SVG-in-data XSS
+    // vectors) and any other scheme.
+    allowedSchemesByTag: { img: ["http", "https"] },
     allowedStyles: {
       "*": {
         color: [/^#(0x)?[0-9a-fA-F]+$/, /^rgb\(\s*(\d{1,3}\s*,\s*){2}\d{1,3}\s*\)$/],

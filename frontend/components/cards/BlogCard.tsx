@@ -9,9 +9,10 @@ type BlogCardProps = {
   category?: string;
   /** ISO date string; rendered as a human-readable month/year. */
   publishedAt?: string;
-  /** Promotes this card to the 2x2 featured slot in
-   *  .gh-card-grid--featured. Larger headline, longer excerpt, no
-   *  layout changes elsewhere — the grid utility handles the span. */
+  /** Optional cover thumbnail (absolute URL or resolvable path). */
+  coverImageSrc?: string | null;
+  coverImageAlt?: string | null;
+  /** Kept for API compatibility — long cards no longer use a featured slot. */
   featured?: boolean;
 };
 
@@ -27,66 +28,72 @@ function formatDate(iso?: string): string | null {
   return DATE_FORMATTER.format(date);
 }
 
+/**
+ * Long (horizontal) article card: cover image on the left, content on the
+ * right; stacks to image-on-top on mobile. Designed to sit in a single
+ * vertical column on the blog index.
+ */
 export function BlogCard({
   title,
   excerpt,
   href,
   category,
   publishedAt,
-  featured = false,
+  coverImageSrc,
+  coverImageAlt,
 }: BlogCardProps) {
   const dateLabel = formatDate(publishedAt);
   return (
-    <article
-      className={
-        featured
-          ? "gh-card gh-card-hover flex h-full flex-col p-8 sm:p-10"
-          : "gh-card gh-card-hover flex h-full flex-col p-6"
-      }
-    >
-      <div className="flex items-center gap-3 text-[var(--text-eyebrow)]">
-        <span className="gh-eyebrow text-[var(--color-brand-primary)]">
-          {category ?? "Health guide"}
-        </span>
-        {dateLabel ? (
-          <>
-            <span aria-hidden className="text-[var(--color-text-placeholder)]">
-              ·
-            </span>
-            <time
-              dateTime={publishedAt}
-              className="text-[var(--color-text-muted)]"
-            >
-              {dateLabel}
-            </time>
-          </>
-        ) : null}
+    <article className="gh-card gh-card-hover flex h-full flex-col overflow-hidden p-0 sm:flex-row">
+      {coverImageSrc ? (
+        <Link
+          href={href}
+          aria-hidden
+          tabIndex={-1}
+          className="block shrink-0 sm:w-[38%] sm:max-w-[360px]"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={coverImageSrc}
+            alt={coverImageAlt ?? ""}
+            className="block h-48 w-full object-cover sm:h-full sm:min-h-[220px]"
+          />
+        </Link>
+      ) : null}
+
+      <div className="flex flex-1 flex-col p-6 sm:p-8">
+        <div className="flex items-center gap-3 text-[var(--text-eyebrow)]">
+          <span className="gh-eyebrow text-[var(--color-brand-primary)]">
+            {category ?? "Health guide"}
+          </span>
+          {dateLabel ? (
+            <>
+              <span aria-hidden className="text-[var(--color-text-placeholder)]">
+                ·
+              </span>
+              <time dateTime={publishedAt} className="text-[var(--color-text-muted)]">
+                {dateLabel}
+              </time>
+            </>
+          ) : null}
+        </div>
+
+        <h3 className="mt-3 text-xl font-extrabold tracking-[-0.015em] leading-snug text-[var(--color-text-primary)] sm:text-2xl">
+          {title}
+        </h3>
+
+        <p className="mt-3 flex-1 text-sm leading-relaxed text-[var(--color-text-muted)] sm:text-base">
+          {excerpt}
+        </p>
+
+        <Link
+          href={href}
+          className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-[var(--color-brand-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
+        >
+          Read article
+          <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+        </Link>
       </div>
-      <h3
-        className={
-          featured
-            ? "mt-4 text-2xl font-extrabold tracking-[-0.02em] leading-tight text-[var(--color-text-primary)] sm:text-3xl"
-            : "mt-3 text-lg font-extrabold tracking-[-0.01em] leading-snug text-[var(--color-text-primary)]"
-        }
-      >
-        {title}
-      </h3>
-      <p
-        className={
-          featured
-            ? "mt-4 flex-1 text-base leading-relaxed text-[var(--color-text-muted)] sm:text-lg"
-            : "mt-3 flex-1 text-sm leading-relaxed text-[var(--color-text-muted)]"
-        }
-      >
-        {excerpt}
-      </p>
-      <Link
-        href={href}
-        className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-[var(--color-brand-primary)] transition-colors hover:text-[var(--color-brand-primary-hover)]"
-      >
-        Read article
-        <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
-      </Link>
     </article>
   );
 }

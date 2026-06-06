@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   Mail,
   Menu,
+  Newspaper,
   Settings,
   ShoppingBag,
   Stethoscope,
@@ -53,6 +54,7 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/settings": Settings,
   "/admin/pages": FileText,
   "/admin/services": Stethoscope,
+  "/admin/blog": Newspaper,
 };
 
 // Global = admin-wide ops; Country = items scoped to a single country
@@ -61,6 +63,7 @@ const GLOBAL_HREFS = new Set([
   "/admin",
   "/admin/countries",
   "/admin/doctors",
+  "/admin/blog",
   "/admin/specialties",
   "/admin/assets",
   "/admin/users",

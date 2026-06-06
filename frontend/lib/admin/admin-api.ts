@@ -1371,6 +1371,84 @@ export async function purgeAdminPage(id: string) {
 
 
 /* ─────────────────────────────────────────────────────────────
+   Blog posts (admin) — backed by /api/admin/blog
+   ───────────────────────────────────────────────────────────── */
+
+export type AdminBlogStatus = "DRAFT" | "PUBLISHED";
+export type AdminBlogLocale = "EN" | "PT" | "ES" | "CS" | "RO" | "DE";
+
+export const ADMIN_BLOG_LOCALES: AdminBlogLocale[] = ["EN", "PT", "ES", "CS", "RO", "DE"];
+
+export type AdminBlogDto = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  body: string;
+  status: AdminBlogStatus;
+  locale: AdminBlogLocale;
+  category: string | null;
+  authorDisplayName: string | null;
+  reviewerDisplayName: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  countryId: string | null;
+  publishedAt: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  country: { id: string; code: string; slug: string; name: string } | null;
+  coverAsset: { id: string; path: string; altText: string | null } | null;
+};
+
+type AdminBlogListPayload = {
+  items: AdminBlogDto[];
+  pagination: { page: number; pageSize: number; total: number; totalPages: number };
+};
+
+type AdminBlogDetailPayload = { post: AdminBlogDto };
+
+export async function fetchAdminBlogPosts(query?: Record<string, string | undefined>) {
+  const params = new URLSearchParams();
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") {
+        params.set(key, value);
+      }
+    }
+  }
+  const qs = params.toString();
+  const path = qs ? `/api/admin/blog?${qs}` : "/api/admin/blog";
+  return adminRequest<AdminBlogListPayload>(path);
+}
+
+export const fetchAdminBlogPostById = cache(async (id: string) => {
+  return adminRequest<AdminBlogDetailPayload>(`/api/admin/blog/${id}`);
+});
+
+export async function postAdminBlogPost(body: unknown) {
+  return adminRequest<AdminBlogDetailPayload>("/api/admin/blog", {
+    method: "POST",
+    body,
+  });
+}
+
+export async function patchAdminBlogPost(id: string, body: unknown) {
+  return adminRequest<AdminBlogDetailPayload>(`/api/admin/blog/${id}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export async function purgeAdminBlogPost(id: string) {
+  return adminRequest<{ deleted: true }>(`/api/admin/blog/${id}/purge`, {
+    method: "DELETE",
+  });
+}
+
+
+
+/* ─────────────────────────────────────────────────────────────
    Per-country footer (admin) — backed by /api/admin/countries/:id/footer
    ───────────────────────────────────────────────────────────── */
 

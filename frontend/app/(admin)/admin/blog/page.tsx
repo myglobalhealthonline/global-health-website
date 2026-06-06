@@ -1,0 +1,150 @@
+import { Edit3, Plus } from "lucide-react";
+import { fetchAdminBlogPosts, type AdminBlogDto } from "@/lib/admin/admin-api";
+import {
+  AdminCard,
+  AdminTable,
+  Btn,
+  IconBtn,
+  PageHeader,
+  Pill,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from "../_components/atoms";
+
+export const dynamic = "force-dynamic";
+
+function spRead(
+  sp: Record<string, string | string[] | undefined>,
+  key: string,
+): string | undefined {
+  const v = sp[key];
+  if (Array.isArray(v)) return v[0];
+  return v;
+}
+
+type SearchParams = Record<string, string | string[] | undefined>;
+
+const DATE_FMT = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+});
+
+export default async function AdminBlogListPage({
+  searchParams,
+}: {
+  searchParams?: Promise<SearchParams>;
+}) {
+  const sp = searchParams ? await searchParams : {};
+  const filters = {
+    status: spRead(sp, "status"),
+    search: spRead(sp, "search"),
+  };
+  const result = await fetchAdminBlogPosts(filters);
+
+  return (
+    <>
+      <PageHeader
+        eyebrow="Global"
+        title="Blog"
+        description="Upload and publish blog articles. Published posts appear on the public /blog."
+        actions={
+          <Btn href="/admin/blog/new" variant="primary" size="md" iconLeft={<Plus className="size-4" />}>
+            New post
+          </Btn>
+        }
+      />
+
+      <AdminCard padding={16}>
+        <form action="/admin/blog" className="flex flex-wrap items-end gap-3 px-2 py-1" method="get">
+          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+            Search
+            <input
+              name="search"
+              defaultValue={filters.search ?? ""}
+              placeholder="Title, slug or category"
+              className="mt-1 min-w-[220px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+            />
+          </label>
+          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+            Status
+            <select
+              name="status"
+              defaultValue={filters.status ?? ""}
+              className="mt-1 min-w-[120px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+            >
+              <option value="">Any status</option>
+              <option value="PUBLISHED">Published</option>
+              <option value="DRAFT">Draft</option>
+            </select>
+          </label>
+          <Btn type="submit" variant="secondary" size="sm">
+            Apply
+          </Btn>
+          <Btn href="/admin/blog" variant="ghost" size="sm">
+            Clear
+          </Btn>
+        </form>
+      </AdminCard>
+
+      <div className="mt-6">
+        {!result.ok ? (
+          <AdminCard>
+            <p className="gh-status-warning rounded-md border px-4 py-3 text-sm">
+              Could not load blog posts: {result.message}
+            </p>
+          </AdminCard>
+        ) : result.data.items.length === 0 ? (
+          <AdminCard>
+            <p className="text-sm text-[var(--color-text-muted)]">
+              No blog posts yet. Use “New post” to upload one.
+            </p>
+          </AdminCard>
+        ) : (
+          <AdminCard padding={0}>
+            <AdminTable>
+              <Thead>
+                <Th>Title</Th>
+                <Th>Slug</Th>
+                <Th>Category</Th>
+                <Th>Lang</Th>
+                <Th>Status</Th>
+                <Th>Published</Th>
+                <Th align="right">Actions</Th>
+              </Thead>
+              <tbody>
+                {result.data.items.map((p: AdminBlogDto) => (
+                  <Tr key={p.id}>
+                    <Td>
+                      <span className="line-clamp-1 max-w-[280px] font-semibold">{p.title}</span>
+                    </Td>
+                    <Td>
+                      <span className="line-clamp-1 max-w-[200px] text-[var(--color-text-muted)]">
+                        {p.slug}
+                      </span>
+                    </Td>
+                    <Td>{p.category ?? "—"}</Td>
+                    <Td>{p.locale}</Td>
+                    <Td>
+                      <Pill tone={p.status === "PUBLISHED" ? "published" : "draft"}>
+                        {p.isActive ? p.status : "INACTIVE"}
+                      </Pill>
+                    </Td>
+                    <Td>{p.publishedAt ? DATE_FMT.format(new Date(p.publishedAt)) : "—"}</Td>
+                    <Td align="right">
+                      <IconBtn href={`/admin/blog/${p.id}/edit`} ariaLabel="Edit post">
+                        <Edit3 className="size-4" />
+                      </IconBtn>
+                    </Td>
+                  </Tr>
+                ))}
+              </tbody>
+            </AdminTable>
+          </AdminCard>
+        )}
+      </div>
+    </>
+  );
+}

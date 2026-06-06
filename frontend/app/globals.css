@@ -332,6 +332,31 @@ img {
   }
 }
 
+/* Admin-authored blog article body. The article's own <style>/classes are
+ * preserved on save and applied here. Base rules use :where() so they carry
+ * ZERO specificity — the author's CSS always wins; these are only fallbacks
+ * for un-styled markup. */
+.gh-article-body {
+  line-height: 1.7;
+  color: var(--color-text-body);
+  overflow-wrap: break-word;
+}
+.gh-article-body :where(img, svg, video) {
+  max-width: 100%;
+  height: auto;
+}
+.gh-article-body :where(a):not([class]) {
+  color: var(--color-brand-primary);
+}
+.gh-article-body :where(table) {
+  max-width: 100%;
+}
+.gh-article-body :where(h1, h2, h3):not([class]) {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
 /* Sticky translucent site header. Replaces SiteHeader.tsx inline
  * backdropFilter + bg/opacity literals. */
 /* Country marquee — edge-to-edge horizontal scroll. Track is exactly
