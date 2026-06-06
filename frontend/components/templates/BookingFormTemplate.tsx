@@ -60,6 +60,9 @@ type BookingFormTemplateProps = {
     title: string;
     countryCode: string;
     slots: { id: string; startAt: string; endAt: string }[];
+    /** Clinic timezone the slots are in. Slot picker renders clinic-local
+     *  times so the patient sees the same wall-clock the clinic uses. */
+    clinicTimezone?: string;
   } | null;
   /** From server `searchParams` — avoids `window` during render (hydration). */
   initialConsultationType?: string;
@@ -714,10 +717,11 @@ function SlotPicker({
   selectedSlotId: string | null;
   onSelect: (id: string) => void;
 }) {
+  const tz = doctor.clinicTimezone ?? "Europe/Dublin";
   const groups = new Map<string, { id: string; startAt: Date }[]>();
   for (const s of doctor.slots) {
     const d = new Date(s.startAt);
-    const dayKey = formatAppDate(d.toISOString());
+    const dayKey = formatAppDate(d.toISOString(), tz);
     const list = groups.get(dayKey) ?? [];
     list.push({ id: s.id, startAt: d });
     groups.set(dayKey, list);
@@ -767,7 +771,7 @@ function SlotPicker({
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {slots.map((s) => {
-                  const time = formatAppTime(s.startAt.toISOString());
+                  const time = formatAppTime(s.startAt.toISOString(), tz);
                   const active = selectedSlotId === s.id;
                   return (
                     <button

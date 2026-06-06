@@ -5,6 +5,18 @@ const localeValues = Object.values(LocaleCode) as [LocaleCode, ...LocaleCode[]];
 
 export const localeCodeSchema = z.enum(localeValues);
 
+/** True when the Node runtime recognizes the IANA zone. Rejects typos that
+ *  the admin timezone dropdown can't produce but a hand-crafted API call
+ *  could. Dependency-free + self-updating as the tz database evolves. */
+function isValidIanaTimeZone(tz: string): boolean {
+  try {
+    new Intl.DateTimeFormat("en", { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export const countryIdParamsSchema = z.object({
   id: z.string().trim().min(1, "Country id is required"),
 });
@@ -87,7 +99,13 @@ const bookingSettingPartialSchema = z
     bookingEnabled: z.boolean().optional(),
     requirePhone: z.boolean().optional(),
     requireDateOfBirth: z.boolean().optional(),
-    timezone: z.string().trim().min(1).max(64).optional(),
+    timezone: z
+      .string()
+      .trim()
+      .min(1)
+      .max(64)
+      .refine(isValidIanaTimeZone, { message: "Unknown IANA timezone" })
+      .optional(),
   })
   .strict();
 

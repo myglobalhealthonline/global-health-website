@@ -1,4 +1,9 @@
 import type { AdminCountryDto, AdminCurrencyDto } from "@/lib/admin/admin-api";
+import {
+  CURATED_TIME_ZONES,
+  getNonCuratedTimeZones,
+  timeZoneLabel,
+} from "@/lib/timezones";
 import { CountrySelect } from "./country-select";
 
 const LOCALES = ["EN", "PT", "ES", "CS", "RO", "DE"] as const;
@@ -172,16 +177,29 @@ export function CountryFields({ currencies, initial }: Props) {
 
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Default timezone</span>
-          <input
-            type="text"
+          <select
             name="bookingSetting.timezone"
-            className="gh-input"
-            placeholder="e.g. Europe/Dublin or UTC"
+            className="gh-select min-w-0"
             defaultValue={initial?.bookingSetting?.timezone ?? "UTC"}
-            maxLength={64}
-          />
+          >
+            <optgroup label="Common">
+              {CURATED_TIME_ZONES.map((tz) => (
+                <option key={tz} value={tz}>
+                  {timeZoneLabel(tz)}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="All time zones">
+              {getNonCuratedTimeZones().map((tz) => (
+                <option key={tz} value={tz}>
+                  {timeZoneLabel(tz)}
+                </option>
+              ))}
+            </optgroup>
+          </select>
           <span className="text-[11px] text-[var(--color-text-muted)]">
-            IANA timezone string. Used for reminder scheduling math.
+            Clinic timezone for this country. Drives the booking slot times
+            shown to doctors and patients, and reminder scheduling math.
           </span>
         </label>
       </fieldset>

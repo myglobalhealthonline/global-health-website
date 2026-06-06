@@ -7,6 +7,7 @@ import {
   deleteAdminAvailability,
   ensureSlotsForRange,
   listAdminAvailability,
+  resolveDoctorTimeZone,
 } from "../modules/doctor-availability/doctor-availability.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
@@ -81,7 +82,7 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
         // public availability endpoint.
         await ensureSlotsForRange(auth.doctorId, fromUtc, toUtc);
 
-        const [windows, slots] = await Promise.all([
+        const [windows, slots, clinicTimezone] = await Promise.all([
           listAdminAvailability(auth.doctorId),
           prisma.doctorTimeSlot.findMany({
             where: {
@@ -96,6 +97,7 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
               status: true,
             },
           }),
+          resolveDoctorTimeZone(auth.doctorId),
         ]);
 
         return okResponse({
@@ -106,6 +108,7 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
             endAt: s.endAt.toISOString(),
             status: s.status,
           })),
+          clinicTimezone,
         });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

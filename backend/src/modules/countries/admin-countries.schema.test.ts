@@ -75,4 +75,20 @@ describe("admin countries validation", () => {
     });
     assert.equal(result.success, false);
   });
+
+  it("accepts a valid IANA bookingSetting.timezone", () => {
+    for (const timezone of ["Europe/Bucharest", "UTC", "Europe/Dublin"]) {
+      const result = adminCountryUpdateBodySchema.safeParse({
+        bookingSetting: { timezone },
+      });
+      assert.equal(result.success, true, `${timezone} should be valid`);
+    }
+  });
+
+  it("rejects an unknown bookingSetting.timezone string", () => {
+    const result = adminCountryUpdateBodySchema.safeParse({
+      bookingSetting: { timezone: "Mars/Olympus_Mons" },
+    });
+    assert.equal(result.success, false);
+  });
 });

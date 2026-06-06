@@ -88,7 +88,7 @@ export default async function CountryLangBookOnlinePage({
     | NonNullable<Parameters<typeof BookingFormTemplate>[0]["doctorPrebook"]>
     | null;
   if (doctorSlugParam) {
-    const [summary, slots] = await Promise.all([
+    const [summary, availability] = await Promise.all([
       getBookingDoctorSummary(code, doctorSlugParam),
       getDoctorAvailability(code, doctorSlugParam, 14),
     ]);
@@ -98,7 +98,8 @@ export default async function CountryLangBookOnlinePage({
         fullName: summary.fullName,
         title: summary.title,
         countryCode: summary.countryCode,
-        slots,
+        slots: availability.slots,
+        clinicTimezone: availability.clinicTimezone,
       };
     }
   }

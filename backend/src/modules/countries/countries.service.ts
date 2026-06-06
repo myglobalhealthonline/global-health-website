@@ -60,6 +60,9 @@ export async function listCountries() {
         countryLocales: {
           orderBy: { locale: "asc" },
         },
+        // Clinic timezone drives patient-facing slot display. Only the
+        // timezone is public; the booking-intake flags stay admin-only.
+        bookingSetting: { select: { timezone: true } },
       },
     });
   } catch (error) {

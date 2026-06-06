@@ -40,9 +40,16 @@ function timeToMinutes(t: string): number {
 type Props = {
   initialWindows: AvailabilityWindow[];
   initialSlots: DoctorTimeSlotView[];
+  /** Clinic timezone (Country.bookingSetting.timezone). Window minutes are
+   *  wall-clock in this zone and concrete slots render in it. */
+  countryTimeZone: string;
 };
 
-export function DoctorAvailabilityUI({ initialWindows, initialSlots }: Props) {
+export function DoctorAvailabilityUI({
+  initialWindows,
+  initialSlots,
+  countryTimeZone,
+}: Props) {
   const router = useRouter();
   const [windows, setWindows] = useState(initialWindows);
   const [slots, setSlots] = useState(initialSlots);
@@ -141,14 +148,14 @@ export function DoctorAvailabilityUI({ initialWindows, initialSlots }: Props) {
         day: "2-digit",
         month: "short",
         year: "numeric",
-        timeZone: "Europe/Dublin",
+        timeZone: countryTimeZone,
       });
       const list = map.get(key) ?? [];
       list.push(s);
       map.set(key, list);
     }
     return map;
-  }, [slots]);
+  }, [slots, countryTimeZone]);
 
   return (
     <>
@@ -185,7 +192,7 @@ export function DoctorAvailabilityUI({ initialWindows, initialSlots }: Props) {
                           {
                             hour: "2-digit",
                             minute: "2-digit",
-                            timeZone: "Europe/Dublin",
+                            timeZone: countryTimeZone,
                           },
                         );
                         const interactive =
@@ -301,7 +308,7 @@ export function DoctorAvailabilityUI({ initialWindows, initialSlots }: Props) {
           <AdminCard padding={0}>
             <SectionHeader
               title="Add window"
-              description="A weekly recurring time band."
+              description={`A weekly recurring time band — times in ${countryTimeZone} (clinic time).`}
             />
             <form onSubmit={onAddWindow} className="grid gap-3 p-5">
               <label className="flex flex-col gap-1 text-sm">
@@ -394,8 +401,8 @@ export function DoctorAvailabilityUI({ initialWindows, initialSlots }: Props) {
               <Legend tone="held" label="Held · in someone's cart" />
             </ul>
             <p className="px-5 pb-5 text-[11px] text-[var(--color-text-muted)]">
-              Times shown in Europe/Dublin. Patients in other locales see
-              their own local time.
+              Times shown in {countryTimeZone} (clinic time). Patients booking
+              this clinic see the same times.
             </p>
           </AdminCard>
         </aside>

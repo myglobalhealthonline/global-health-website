@@ -257,6 +257,7 @@ async function readBookingSettings(countryCode: string) {
       requireDateOfBirth: true,
       requireNationalId: true,
       requireAddress: true,
+      timezone: true,
     },
   });
 }

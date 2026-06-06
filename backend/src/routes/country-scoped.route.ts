@@ -11,7 +11,10 @@ import {
 } from "../modules/services/services.service.js";
 import { listHealthTestsByCountry } from "../modules/health-tests/health-tests.service.js";
 import { getPublicCountryByCode } from "../modules/countries/countries.service.js";
-import { listOpenSlotsForDoctorAndService } from "../modules/doctor-availability/doctor-availability.service.js";
+import {
+  listOpenSlotsForDoctorAndService,
+  resolveDoctorTimeZone,
+} from "../modules/doctor-availability/doctor-availability.service.js";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -264,7 +267,10 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
           now,
           toUtc,
         );
-        return okResponse({ slots });
+        // Same tz the slots were generated in — the patient sees clinic-local
+        // times so "09:00" reads identically to the doctor and the patient.
+        const clinicTimezone = await resolveDoctorTimeZone(doctor.id);
+        return okResponse({ slots, clinicTimezone });
       } catch (error) {
         return handleError(app, reply, error, "Unexpected availability error");
       }

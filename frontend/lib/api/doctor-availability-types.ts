@@ -19,4 +19,8 @@ export type DoctorTimeSlotView = {
 export type DoctorAvailabilityResponse = {
   windows: AvailabilityWindow[];
   slots: DoctorTimeSlotView[];
+  /** Clinic timezone (Country.bookingSetting.timezone) the windows + slots
+   *  are expressed in. The portal renders slot times in this zone so the
+   *  doctor sees their own local working hours. */
+  clinicTimezone: string;
 };

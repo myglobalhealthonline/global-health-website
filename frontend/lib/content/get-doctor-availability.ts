@@ -13,27 +13,38 @@ export type PublicSlot = {
   endAt: string;
 };
 
+export type DoctorAvailabilityResult = {
+  slots: PublicSlot[];
+  /** Clinic timezone the slots are expressed in; the patient sees clinic-local
+   *  times. Falls back to "UTC" when the backend omits it. */
+  clinicTimezone: string;
+};
+
 export async function getDoctorAvailability(
   countryCode: string,
   doctorSlug: string,
   days = 14,
-): Promise<PublicSlot[]> {
+): Promise<DoctorAvailabilityResult> {
+  const empty: DoctorAvailabilityResult = { slots: [], clinicTimezone: "UTC" };
   const backend = getBackendOrigin();
-  if (!backend) return [];
+  if (!backend) return empty;
   const url = `${backend}/api/doctors/${encodeURIComponent(countryCode)}/${encodeURIComponent(
     doctorSlug,
   )}/availability?days=${days}`;
   try {
     const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) return [];
+    if (!res.ok) return empty;
     const json = (await res.json()) as {
       ok?: boolean;
-      data?: { slots?: PublicSlot[] };
+      data?: { slots?: PublicSlot[]; clinicTimezone?: string };
     };
-    if (!json.ok || !json.data?.slots) return [];
-    return json.data.slots;
+    if (!json.ok || !json.data?.slots) return empty;
+    return {
+      slots: json.data.slots,
+      clinicTimezone: json.data.clinicTimezone ?? "UTC",
+    };
   } catch {
-    return [];
+    return empty;
   }
 }
 
@@ -61,9 +72,10 @@ export async function getServiceDoctorAvailability(
   serviceSlug: string,
   doctorSlug: string,
   days = 14,
-): Promise<PublicSlot[]> {
+): Promise<DoctorAvailabilityResult> {
+  const empty: DoctorAvailabilityResult = { slots: [], clinicTimezone: "UTC" };
   const backend = getBackendOrigin();
-  if (!backend) return [];
+  if (!backend) return empty;
   const url = `${backend}/api/services/${encodeURIComponent(
     countryCode,
   )}/${encodeURIComponent(serviceSlug)}/doctors/${encodeURIComponent(
@@ -71,15 +83,18 @@ export async function getServiceDoctorAvailability(
   )}/availability?days=${days}`;
   try {
     const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) return [];
+    if (!res.ok) return empty;
     const json = (await res.json()) as {
       ok?: boolean;
-      data?: { slots?: PublicSlot[] };
+      data?: { slots?: PublicSlot[]; clinicTimezone?: string };
     };
-    if (!json.ok || !json.data?.slots) return [];
-    return json.data.slots;
+    if (!json.ok || !json.data?.slots) return empty;
+    return {
+      slots: json.data.slots,
+      clinicTimezone: json.data.clinicTimezone ?? "UTC",
+    };
   } catch {
-    return [];
+    return empty;
   }
 }
 

@@ -16,6 +16,9 @@ type Props = {
   serviceId: string;
   kind: Extract<CartItemKind, "GENERAL_CONSULTATION" | "SPECIALIST_CONSULTATION">;
   slots: Slot[];
+  /** Clinic timezone the slots are in. Patient sees clinic-local times so
+   *  "09:00" reads the same to patient, doctor, and clinic. */
+  clinicTimezone?: string;
 };
 
 /**
@@ -42,12 +45,21 @@ export function ConsultationBookingForm({
   serviceId,
   kind,
   slots,
+  clinicTimezone,
 }: Props) {
   const router = useRouter();
   const params = useParams<{ country: string; lang: string }>();
   const { add } = useCart();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+
+  // Clinic timezone drives all slot display so the patient sees the same
+  // wall-clock the clinic + doctor use. Falls back to the app default when a
+  // caller (e.g. the legacy book-online path) doesn't supply one.
+  const tz = clinicTimezone ?? "Europe/Dublin";
+  const tzLabel = tz.includes("/")
+    ? tz.slice(tz.lastIndexOf("/") + 1).replace(/_/g, " ")
+    : tz;
 
   const nationalIdLabel = idLabelForCountrySlug(params?.country);
 
@@ -59,7 +71,7 @@ export function ConsultationBookingForm({
   // first slot in the list), so the panel is never empty on first
   // render.
   const [selectedDay, setSelectedDay] = useState<string | null>(
-    slots[0] ? formatAppDate(slots[0].startAt) : null,
+    slots[0] ? formatAppDate(slots[0].startAt, tz) : null,
   );
 
   // Auth + prefill state. We render the form unconditionally so guests
@@ -103,13 +115,13 @@ export function ConsultationBookingForm({
   const grouped = useMemo(() => {
     const map = new Map<string, Slot[]>();
     for (const s of slots) {
-      const day = formatAppDate(s.startAt);
+      const day = formatAppDate(s.startAt, tz);
       const list = map.get(day) ?? [];
       list.push(s);
       map.set(day, list);
     }
     return map;
-  }, [slots]);
+  }, [slots, tz]);
 
   const maxDob = new Date().toISOString().slice(0, 10);
 
@@ -259,7 +271,7 @@ export function ConsultationBookingForm({
             Pick a date
           </p>
           <p className="text-xs text-[var(--color-text-muted)]">
-            {grouped.size} {grouped.size === 1 ? "day" : "days"} available · times in your timezone
+            {grouped.size} {grouped.size === 1 ? "day" : "days"} available · times in {tzLabel}
           </p>
         </div>
 
@@ -277,11 +289,13 @@ export function ConsultationBookingForm({
             const date = firstSlotAt ? new Date(firstSlotAt) : null;
             // Render compact: "Mon" on top, "12" big, "Aug" small.
             const weekday = date
-              ? date.toLocaleDateString(undefined, { weekday: "short" })
+              ? date.toLocaleDateString(undefined, { weekday: "short", timeZone: tz })
               : "";
-            const dayNum = date ? date.getDate() : "";
+            const dayNum = date
+              ? date.toLocaleDateString(undefined, { day: "numeric", timeZone: tz })
+              : "";
             const month = date
-              ? date.toLocaleDateString(undefined, { month: "short" })
+              ? date.toLocaleDateString(undefined, { month: "short", timeZone: tz })
               : "";
             return (
               <button
@@ -372,7 +386,7 @@ export function ConsultationBookingForm({
                         : "inline-flex items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-primary)] px-3 py-3 text-sm font-semibold [font-variant-numeric:tabular-nums] transition-[border-color,background-color,transform] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
                     }
                   >
-                    {formatAppTime(s.startAt)}
+                    {formatAppTime(s.startAt, tz)}
                   </button>
                 );
               })}

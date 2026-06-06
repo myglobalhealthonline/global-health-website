@@ -343,7 +343,7 @@ async function renderSelectedDoctorMode({
     );
   }
 
-  const slots = await getServiceDoctorAvailability(
+  const { slots, clinicTimezone } = await getServiceDoctorAvailability(
     code,
     service.slug,
     doctor.slug,
@@ -408,6 +408,7 @@ async function renderSelectedDoctorMode({
             serviceId={service.id}
             kind={itemKind}
             slots={slots}
+            clinicTimezone={clinicTimezone}
           />
         )}
       </article>

@@ -43,6 +43,7 @@ export default async function DoctorAvailabilityPage() {
       <DoctorAvailabilityUI
         initialWindows={result.data.windows}
         initialSlots={result.data.slots}
+        countryTimeZone={result.data.clinicTimezone}
       />
     </>
   );

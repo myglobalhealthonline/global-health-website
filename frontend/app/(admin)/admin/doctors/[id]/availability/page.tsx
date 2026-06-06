@@ -181,8 +181,9 @@ export default async function AdminDoctorAvailabilityPage({
             Weekly windows
           </h3>
           <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-            Times are stored as UTC for the MVP — pick the UTC offsets the
-            doctor actually consults. (Local-tz support is on the roadmap.)
+            Times are in the doctor&apos;s country clinic timezone (set on the
+            Country page). The doctor portal and patients booking this clinic
+            see these same times.
           </p>
           {!availabilityResult.ok ? (
             <p className="mt-4 gh-status-warning rounded-md border px-4 py-3 text-sm">
@@ -260,7 +261,7 @@ export default async function AdminDoctorAvailabilityPage({
             </label>
             <div className="grid grid-cols-2 gap-3">
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">From (UTC)</span>
+                <span className="gh-field-label">From (clinic time)</span>
                 <input
                   type="time"
                   name="startTime"
@@ -270,7 +271,7 @@ export default async function AdminDoctorAvailabilityPage({
                 />
               </label>
               <label className="flex flex-col gap-1">
-                <span className="gh-field-label">To (UTC)</span>
+                <span className="gh-field-label">To (clinic time)</span>
                 <input
                   type="time"
                   name="endTime"

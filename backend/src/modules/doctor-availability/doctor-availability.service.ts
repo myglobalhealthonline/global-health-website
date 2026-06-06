@@ -1,6 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import {
+  calendarDayNumber,
+  eachClinicLocalDay,
+  isValidTimeZone,
+  utcCalendarDayNumber,
+  zonedWallClockToUtc,
+} from "./timezone.js";
 
 /**
  * Doctor availability + concrete time-slot service.
@@ -22,8 +29,6 @@ import { normalizeDbError } from "../shared/db-errors.js";
  *   submit at the same instant can't both grab the same slot.
  */
 
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
-
 export class SlotAlreadyTakenError extends Error {
   constructor() {
     super("This slot is no longer available. Please pick another.");
@@ -31,8 +36,22 @@ export class SlotAlreadyTakenError extends Error {
   }
 }
 
-function startOfUtcDay(date: Date): Date {
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+/**
+ * The timezone a doctor's availability wall-clock minutes are expressed in:
+ * their clinic's `Country.bookingSetting.timezone`. This single value drives
+ * both slot generation (here) and display (frontend), so "09:00" always means
+ * 09:00 clinic-local to the doctor and the patient alike. Falls back to UTC
+ * for doctors with no country booking setting or an unrecognized zone.
+ */
+export async function resolveDoctorTimeZone(doctorId: string): Promise<string> {
+  const row = await prisma.doctor.findUnique({
+    where: { id: doctorId },
+    select: {
+      country: { select: { bookingSetting: { select: { timezone: true } } } },
+    },
+  });
+  const tz = row?.country?.bookingSetting?.timezone;
+  return tz && isValidTimeZone(tz) ? tz : "UTC";
 }
 
 /**
@@ -70,28 +89,30 @@ export async function ensureSlotsForRange(
   });
   if (windows.length === 0) return;
 
+  const tz = await resolveDoctorTimeZone(doctorId);
   const generated: { doctorId: string; startAt: Date; endAt: Date }[] = [];
-  const dayStart = startOfUtcDay(fromUtc);
-  const dayEnd = startOfUtcDay(toUtc);
 
-  for (
-    let day = dayStart.getTime();
-    day <= dayEnd.getTime();
-    day += MS_PER_DAY
-  ) {
-    const dayDate = new Date(day);
-    const weekday = dayDate.getUTCDay();
+  // Iterate clinic-local calendar days (not UTC midnights). `startMinute` is
+  // wall-clock in `tz`; `zonedWallClockToUtc` resolves the per-date offset so
+  // DST transitions land on the right instant. Edge days are over-generated
+  // (eachClinicLocalDay pads ±1) and trimmed by the fromUtc/toUtc guard below.
+  for (const day of eachClinicLocalDay(fromUtc, toUtc, tz)) {
     for (const win of windows) {
-      if (win.weekday !== weekday) continue;
-      if (win.effectiveFrom && dayDate < win.effectiveFrom) continue;
-      if (win.effectiveUntil && dayDate > win.effectiveUntil) continue;
+      if (win.weekday !== day.weekday) continue;
+      // Effective bounds are date-only ("from date → to date"); compare as
+      // calendar dates so a positive-offset clinic isn't off by one at edges.
+      const dayNum = calendarDayNumber(day);
+      if (win.effectiveFrom && dayNum < utcCalendarDayNumber(win.effectiveFrom))
+        continue;
+      if (win.effectiveUntil && dayNum > utcCalendarDayNumber(win.effectiveUntil))
+        continue;
       const duration = Math.max(5, win.slotDurationMinutes);
       for (
         let minute = win.startMinute;
         minute + duration <= win.endMinute;
         minute += duration
       ) {
-        const startAt = new Date(dayDate.getTime() + minute * 60 * 1000);
+        const startAt = zonedWallClockToUtc(day, minute, tz);
         const endAt = new Date(startAt.getTime() + duration * 60 * 1000);
         if (startAt < fromUtc || startAt >= toUtc) continue;
         generated.push({ doctorId, startAt, endAt });
@@ -195,6 +216,8 @@ export async function ensureServiceSlotsForRange(
   });
   if (windows.length === 0) return;
 
+  const tz = await resolveDoctorTimeZone(doctorId);
+
   // Pre-fetch every existing slot for this doctor in the range so we
   // can run the overlap test in-process instead of hammering the DB
   // per candidate.
@@ -208,16 +231,19 @@ export async function ensureServiceSlotsForRange(
   });
 
   const generated: { doctorId: string; startAt: Date; endAt: Date }[] = [];
-  const dayStart = startOfUtcDay(fromUtc);
-  const dayEnd = startOfUtcDay(toUtc);
 
-  for (let day = dayStart.getTime(); day <= dayEnd.getTime(); day += MS_PER_DAY) {
-    const dayDate = new Date(day);
-    const weekday = dayDate.getUTCDay();
+  // Clinic-local day iteration, DST-aware — see ensureSlotsForRange for the
+  // rationale. `tz` is the doctor's clinic timezone.
+  for (const day of eachClinicLocalDay(fromUtc, toUtc, tz)) {
     for (const win of windows) {
-      if (win.weekday !== weekday) continue;
-      if (win.effectiveFrom && dayDate < win.effectiveFrom) continue;
-      if (win.effectiveUntil && dayDate > win.effectiveUntil) continue;
+      if (win.weekday !== day.weekday) continue;
+      // Effective bounds are date-only ("from date → to date"); compare as
+      // calendar dates so a positive-offset clinic isn't off by one at edges.
+      const dayNum = calendarDayNumber(day);
+      if (win.effectiveFrom && dayNum < utcCalendarDayNumber(win.effectiveFrom))
+        continue;
+      if (win.effectiveUntil && dayNum > utcCalendarDayNumber(win.effectiveUntil))
+        continue;
       // Service duration trumps the window's own duration when set.
       // Plan's rule: service.durationMinutes ?? availability.slotDurationMinutes ?? 30.
       const duration =
@@ -229,7 +255,7 @@ export async function ensureServiceSlotsForRange(
         minute + duration <= win.endMinute;
         minute += duration
       ) {
-        const startAt = new Date(dayDate.getTime() + minute * 60 * 1000);
+        const startAt = zonedWallClockToUtc(day, minute, tz);
         const endAt = new Date(startAt.getTime() + duration * 60 * 1000);
         if (startAt < fromUtc || startAt >= toUtc) continue;
         // Drop the candidate if any existing slot overlaps. Pure interval

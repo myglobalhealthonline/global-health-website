@@ -223,6 +223,10 @@ export type AppointmentDetailDto = {
    *  show patient-local time alongside doctor-local time. Null on legacy
    *  appointments that pre-date the booking-fields migration. */
   patientTimezone?: string | null;
+  /** Clinic timezone (Country.bookingSetting.timezone) for this appointment's
+   *  country. Drives the doctor-local time shown in the portal. Defaults to
+   *  "UTC" when the country has no booking setting. */
+  clinicTimezone?: string;
   createdAt: string;
 };
 

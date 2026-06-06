@@ -8,6 +8,7 @@ import {
   listAdminAvailability,
   listOpenSlotsForDoctor,
   patchAdminAvailability,
+  resolveDoctorTimeZone,
 } from "../modules/doctor-availability/doctor-availability.service.js";
 import { countryCodeSchema } from "../validations/shared.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -97,7 +98,8 @@ const doctorAvailabilityRoute: FastifyPluginAsync = async (app) => {
       );
 
       const slots = await listOpenSlotsForDoctor(doctor.id, fromUtc, toUtc);
-      return okResponse({ slots });
+      const clinicTimezone = await resolveDoctorTimeZone(doctor.id);
+      return okResponse({ slots, clinicTimezone });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));

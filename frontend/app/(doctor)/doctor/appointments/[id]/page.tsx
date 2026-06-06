@@ -136,11 +136,10 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             {appointment.scheduledAt
               ? formatAppDualTz(
                   appointment.scheduledAt,
-                  // Doctor's default zone — fall back to Europe/Dublin via
-                  // formatter's own default. We can lift this to a per-doctor
-                  // preference later; today doctor TZ lives on the doctor
-                  // row only as a soft attribute.
-                  null,
+                  // Clinic timezone (Country.bookingSetting.timezone) = the
+                  // doctor's working-hours zone. Falls back to the formatter's
+                  // own default when the country has no booking setting.
+                  appointment.clinicTimezone ?? null,
                   appointment.patientTimezone ?? null,
                 )
               : "Not scheduled"}{" "}

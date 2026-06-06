@@ -110,6 +110,20 @@ async function findReadableAppointment(
   });
 }
 
+/**
+ * Resolve the clinic timezone for an appointment's country. Stored values
+ * are IANA-validated on write, so a plain default to UTC is enough here.
+ * Drives the doctor portal's clinic-local time display.
+ */
+async function readClinicTimezone(countryCode: string | null): Promise<string> {
+  if (!countryCode) return "UTC";
+  const bs = await prisma.bookingSetting.findFirst({
+    where: { country: { code: countryCode } },
+    select: { timezone: true },
+  });
+  return bs?.timezone ?? "UTC";
+}
+
 const consultationsRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { id: string } }>(
     "/api/doctor/appointments/:id/consultation",
@@ -128,12 +142,14 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
         const consultation = await prisma.consultation.findUnique({
           where: { appointmentId: appt.id },
         });
+        const clinicTimezone = await readClinicTimezone(appt.countryCode);
         return okResponse({
           appointment: {
             ...appt,
             scheduledAt: appt.scheduledAt?.toISOString() ?? null,
             dateOfBirth: appt.dateOfBirth?.toISOString() ?? null,
             createdAt: appt.createdAt.toISOString(),
+            clinicTimezone,
           },
           consultation: consultation
             ? {
