@@ -2,6 +2,8 @@
 /node_modules
 /.railway
 **/.env.railway
+/.pnpm-store
+/.claude/worktrees
 
 # frontend
 /frontend/.next
