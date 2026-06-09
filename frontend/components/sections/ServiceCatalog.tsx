@@ -345,8 +345,8 @@ function ServiceTile({
               className="mt-3 text-[length:var(--text-body)] leading-relaxed"
               style={{ color: "rgba(255,255,255,0.62)", maxWidth: "38ch" }}
             >
-              Most patients start here. Same-day consultations with a doctor
-              registered in your country, follow-up notes included.
+              Most patients start here. Choose an open consultation slot with
+              a doctor registered in your country.
             </p>
           </div>
 

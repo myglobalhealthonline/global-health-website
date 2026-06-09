@@ -73,14 +73,14 @@ export function buildSiteNavigationData(
   const headerAuthLink: NavLink = { label: copy.navigation.login, href: "/login" };
   const headerPrimaryCta: NavLink = {
     label: copy.navigation.bookOnline,
-    href: "/book-online",
+    href: "/ireland/en/book",
   };
 
   const footerColumns: FooterColumn[] = [
     {
       heading: copy.footer.company,
       links: [
-        { label: copy.footer.contactUs, href: "/book-online" },
+        { label: copy.footer.contactUs, href: "/contact" },
         { label: copy.footer.clinics, href: "/#countries" },
         { label: copy.footer.aboutUs, href: "/about" },
       ],
@@ -105,7 +105,7 @@ export function buildSiteNavigationData(
     headerAuthLink,
     headerPrimaryCta,
     footerColumns,
-    footerCta: { label: copy.footer.cta, href: "/book-online" },
+    footerCta: { label: copy.footer.cta, href: "/ireland/en/book" },
     siteContactEmail: "info@myglobalhealth.online",
     trustLine: copy.footer.trustLine,
     clinicsLabel: copy.navigation.clinics,

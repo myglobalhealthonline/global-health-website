@@ -11,12 +11,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { countries } from "@/data/countries";
+import { countries as staticCountries, type CountryConfig } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
 } from "@/lib/routing/country-slug";
 import { parseSitePath } from "@/lib/routing/path-rewrites";
+import { buildBookHref } from "@/lib/routing/book-href";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
 import {
   IconInstagram,
@@ -62,6 +63,7 @@ export function SiteFooter({
   siteName,
   countryFeatures,
   countryFooters,
+  countries,
 }: {
   siteName: string;
   /** Code → enabled feature slugs (same shape SiteHeader receives).
@@ -74,6 +76,9 @@ export function SiteFooter({
    *  exists, it replaces the brand block + adds the admin-managed
    *  contact, social, custom columns, and copyright. */
   countryFooters?: Record<string, PublicCountryFooter | null>;
+  /** Active countries from the CMS. Falls back to the static seed list
+   *  when not provided so the footer renders on every context. */
+  countries?: CountryConfig[];
 }) {
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
@@ -101,18 +106,27 @@ export function SiteFooter({
     if (!activeFeatures) return true; // no toggle data → assume on (legacy default)
     return activeFeatures.includes(slug);
   };
-  // Cart-first booking: footer "Book consultation" entry now lands on
-  // the GP catalogue (service-first); /book-online stays as a fallback
-  // path but isn't surfaced from the footer.
-  const careLinks = CARE_FIELDS.flatMap((entry) =>
-    entry.flag !== null && !isFeatureEnabled(entry.flag)
-      ? []
-      : [{ label: entry.label, href: careBase ? `${careBase}/${entry.slug}` : "/" }],
-  );
+  const bookHref =
+    parsed.country && parsed.lang
+      ? buildBookHref({ country: parsed.country, lang: parsed.lang })
+      : "/";
+  const careLinks = [
+    { label: "Book Appointment", href: bookHref },
+    ...CARE_FIELDS.flatMap((entry) =>
+      entry.flag !== null && !isFeatureEnabled(entry.flag)
+        ? []
+        : [{ label: entry.label, href: careBase ? `${careBase}/${entry.slug}` : "/" }],
+    ),
+  ];
 
-  const clinicsLinks = countries.map((c) => ({
+  // Use the CMS-derived country list when available so deactivated or
+  // unpublished countries don't appear in the Clinics column. Fall back
+  // to the static seed list so the footer works on pages that don't
+  // pass the prop (e.g. storybook, older layouts).
+  const activeCountries = countries ?? staticCountries;
+  const clinicsLinks = activeCountries.map((c) => ({
     label: c.name,
-    href: `/${COUNTRY_CODE_TO_SLUG[c.code]}`,
+    href: `/${COUNTRY_CODE_TO_SLUG[c.code]}/${c.defaultLocale ?? "en"}`,
   }));
 
   const accountLinks = [
@@ -124,8 +138,11 @@ export function SiteFooter({
 
   const companyLinks = [
     { label: "Blog", href: "/blog" },
-    { label: "Contact us", href: "/contact" },
+    { label: "FAQ", href: "/faq" },
     { label: "About", href: "/about" },
+    { label: "Contact us", href: "/contact" },
+    { label: "Privacy policy", href: "/privacy" },
+    { label: "Terms of service", href: "/terms" },
   ];
 
   // Built-in groups stay auto-derived (Care + Clinics from features,
@@ -289,6 +306,17 @@ export function SiteFooter({
             locale={parsed.lang ?? null}
           />
         </div>
+
+        <p
+          className="mt-10 max-w-[980px] text-sm leading-relaxed"
+          style={{ color: "rgba(255,255,255,0.58)" }}
+        >
+          Online consultations are not a substitute for emergency care. If you
+          need urgent help, call 112 or your local emergency number. Information
+          on this website is general guidance; prescriptions, certificates,
+          referrals and next steps depend on clinical assessment and are issued
+          at the treating clinician&apos;s discretion.
+        </p>
 
         <div
           className="flex flex-wrap justify-between gap-3"

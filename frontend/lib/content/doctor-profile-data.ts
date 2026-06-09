@@ -83,7 +83,7 @@ export function getDoctorProfileData(doctorSlug: string): DoctorProfilePageData 
       title: profile.name,
       description:
         "Review doctor profile details, consultation areas, and booking options before scheduling your appointment.",
-      primaryCta: { label: "Book consultation", href: "/book-online" },
+      primaryCta: { label: "Book consultation", href: "/ireland/en/book" },
       secondaryCta: { label: "Back to Ireland team", href: "/ireland-team" },
     },
     profile,
@@ -92,7 +92,7 @@ export function getDoctorProfileData(doctorSlug: string): DoctorProfilePageData 
       description:
         "Book your consultation and the clinic team will confirm the right appointment route based on availability.",
       ctaLabel: "Start booking",
-      ctaHref: "/book-online",
+      ctaHref: "/ireland/en/book",
     },
   };
 }

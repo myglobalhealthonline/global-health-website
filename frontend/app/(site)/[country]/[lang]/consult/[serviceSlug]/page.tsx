@@ -17,6 +17,7 @@ import { getServiceDetailContent } from "@/lib/content/ireland-service-content";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
+import { buildBookHref } from "@/lib/routing/book-href";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqJsonLd } from "@/lib/seo/structured-data";
 import { FAQSection } from "@/components/sections/FAQSection";
@@ -31,7 +32,7 @@ import {
 import { ConsultationBookingForm } from "./_components/consultation-booking-form";
 
 type Params = { country: string; lang: string; serviceSlug: string };
-type SearchParams = { doctor?: string };
+type SearchParams = { doctor?: string; slot?: string };
 
 export async function generateMetadata({
   params,
@@ -88,6 +89,7 @@ export default async function ConsultPage({
   const { country, lang, serviceSlug } = await params;
   const sp = (await searchParams) ?? {};
   const selectedDoctorSlug = typeof sp.doctor === "string" ? sp.doctor : null;
+  const selectedSlotId = typeof sp.slot === "string" ? sp.slot : null;
   const code = countryCodeFromSlug(country);
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) notFound();
@@ -237,6 +239,7 @@ export default async function ConsultPage({
               selectedDoctorSlug,
               country,
               lang,
+              selectedSlotId,
             })
           ) : (
             <DoctorListMode
@@ -309,6 +312,7 @@ async function renderSelectedDoctorMode({
   selectedDoctorSlug,
   country,
   lang,
+  selectedSlotId,
 }: {
   code: string;
   service: CountryServiceCard;
@@ -318,6 +322,7 @@ async function renderSelectedDoctorMode({
   selectedDoctorSlug: string;
   country: string;
   lang: string;
+  selectedSlotId: string | null;
 }) {
   const doctor = doctors.find((d) => d.slug === selectedDoctorSlug);
   if (!doctor) {
@@ -411,6 +416,7 @@ async function renderSelectedDoctorMode({
             kind={itemKind}
             slots={slots}
             clinicTimezone={clinicTimezone}
+            initialSlotId={selectedSlotId}
           />
         )}
       </article>
@@ -483,7 +489,12 @@ function DoctorListMode({
               bio={d.bio ?? ""}
               imageSrc={d.imageSrc ?? null}
               href={`/${country}/${lang}/doctors/${d.slug}`}
-              bookingHref={`/${country}/${lang}/consult/${serviceSlug}?doctor=${encodeURIComponent(d.slug)}`}
+              bookingHref={buildBookHref({
+                country,
+                lang,
+                service: serviceSlug,
+                doctor: d.slug,
+              })}
               ctaLabel="Pick a time"
             />
           </li>

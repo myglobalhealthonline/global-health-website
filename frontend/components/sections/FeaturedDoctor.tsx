@@ -29,6 +29,7 @@ type DoctorSpotlightProps = {
   bio: string;
   imageSrc?: string | null;
   href?: string;
+  bookingHref?: string;
   /** WhatsApp contact — rendered as a "Call" pill next to the booking
    *  CTA when set (same wa.me href shape as DoctorCard). */
   whatsappNumber?: string;
@@ -61,12 +62,8 @@ export function FeaturedDoctor({
     .replace(/^Dr\.?\s*/i, "")
     .split(" ")[0] ?? doctor.name;
 
-  // "Book with X" lands on the doctor's profile page scrolled to their
-  // services section; "View profile" lands at the top. The profile page
-  // always renders an `id="services"` anchor so #services resolves even
-  // when no services are assigned yet.
   const profileHref = doctor.href;
-  const bookHref = doctor.href ? `${doctor.href}#services` : undefined;
+  const bookHref = doctor.bookingHref ?? (doctor.href ? `${doctor.href}#services` : undefined);
 
   // WhatsApp deep link — strip non-digits, drop the leading +, same as
   // DoctorCard so the two surfaces resolve identical wa.me URLs.

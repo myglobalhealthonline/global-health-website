@@ -23,7 +23,7 @@ const STEPS = [
     n: "03",
     title: "Talk to a doctor",
     lede:
-      "Join the consultation from any device. Receive clinical notes and referrals by email within the hour.",
+      "Join the consultation from any device. Receive notes or next steps when clinically appropriate after the appointment.",
   },
 ];
 
@@ -32,6 +32,7 @@ export function HowItWorksNarrative({ theme = "dark" }: { theme?: "dark" | "ligh
 
   return (
     <section
+      id="how-it-works"
       style={{
         background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         padding: "clamp(64px,8vw,120px) 0",
@@ -61,7 +62,7 @@ export function HowItWorksNarrative({ theme = "dark" }: { theme?: "dark" | "ligh
             >
               Three steps.{" "}
               <span style={{ color: isLight ? "#8FB021" : "var(--color-brand-accent)" }}>
-                Roughly two minutes.
+                A clearer path.
               </span>
             </h2>
           </div>
@@ -74,7 +75,7 @@ export function HowItWorksNarrative({ theme = "dark" }: { theme?: "dark" | "ligh
             }}
           >
             From landing on the page to a confirmed appointment — the
-            shortest path. No accounts, no questionnaires, no upsells.
+            path through service, clinician, time, and patient details.
           </p>
         </div>
 

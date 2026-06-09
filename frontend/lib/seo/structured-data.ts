@@ -32,11 +32,6 @@ export function websiteJsonLd() {
     "@type": "WebSite",
     name: SITE_NAME,
     url: SITE_URL,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${SITE_URL}/book-online?q={query}`,
-      "query-input": "required name=query",
-    },
   };
 }
 

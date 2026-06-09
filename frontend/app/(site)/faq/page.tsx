@@ -1,82 +1,89 @@
 import type { Metadata } from "next";
-import { SITE_NAME } from "@/lib/constants";
-import { PageHero } from "@/components/sections/PageHero";
-import { FAQSection } from "@/components/sections/FAQSection";
-import { FAQTabs } from "@/components/sections/FAQTabs";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { SITE_NAME } from "@/lib/constants";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { PageHero } from "@/components/sections/PageHero";
+import { FAQTabs } from "@/components/sections/FAQTabs";
+import { faqJsonLd } from "@/lib/seo/structured-data";
 
 export const metadata: Metadata = {
   title: `FAQ | ${SITE_NAME}`,
   description:
-    "Common questions about booking, consultations, lab tests, payments, and privacy on the Global Health telemedicine platform.",
+    "Common questions about booking, online consultations, payments, privacy, and emergency-care limits on Global Health.",
 };
 
-// Content mirrors the live myglobalhealth.online FAQ verbatim (5
-// categories scraped from the production Wix page). Keep in sync with
-// that page until the FAQ is admin-managed.
 const FAQ_GROUPS: Array<{
   eyebrow: string;
   title: string;
   items: Array<{ question: string; answer: string }>;
 }> = [
   {
-    eyebrow: "How it works",
-    title: "How it works",
+    eyebrow: "Booking",
+    title: "Booking an appointment",
     items: [
       {
-        question: "How can I choose the right health plan for me?",
+        question: "How do I book an online consultation?",
         answer:
-          "Explore our Essential, Comprehensive, or Premium Wellness plans to find the one that best suits your lifestyle and healthcare needs.",
+          "Choose your country, select a service, pick a clinician and open time slot, then complete the patient details and checkout steps.",
       },
       {
-        question: "Step 2: Sign Up with Ease",
+        question: "Can I choose the doctor before I book?",
         answer:
-          "Select the health plan that fits your lifestyle and needs — Essential, Comprehensive, or Premium Wellness.",
+          "Yes. Doctor profiles show the clinician's registration details, specialties, languages, and bookable services where available.",
+      },
+      {
+        question: "Are appointments guaranteed for the same day?",
+        answer:
+          "No. Appointment times depend on clinician availability, country coverage, and the selected service. Open slots are shown during booking.",
       },
     ],
   },
   {
-    eyebrow: "Devices",
-    title: "Telemedicine Devices",
+    eyebrow: "Care",
+    title: "Consultations and next steps",
     items: [
       {
-        question: "What telemedicine devices are compatible with Global Health?",
+        question: "Can the doctor issue a prescription, referral, or certificate?",
         answer:
-          "Global Health supports a variety of telemedicine devices, including easy-to-use blood pressure monitors and glucose meters, all designed to work seamlessly with our online consultation platform for a smooth healthcare experience.",
+          "Where clinically appropriate, the treating doctor can issue next steps such as a prescription, referral, or certificate. These are never guaranteed before assessment.",
+      },
+      {
+        question: "Is online care suitable for emergencies?",
+        answer:
+          "No. Online consultations are not emergency care. If you need urgent help, call 112 or your local emergency number.",
       },
     ],
   },
   {
     eyebrow: "Privacy",
-    title: "Privacy Policy",
+    title: "Privacy and records",
     items: [
       {
-        question: "How does Global Health safeguard your personal information?",
+        question: "How is my information protected?",
         answer:
-          "Your privacy is our priority at Global Health. We adhere to strict privacy standards and our comprehensive Privacy Policy ensures your personal information is handled securely and transparently. Rest assured, your data is always protected.",
+          "Global Health handles personal data under GDPR principles and collects the details needed to provide the service. You can read more in the privacy policy.",
       },
-    ],
-  },
-  {
-    eyebrow: "Plans",
-    title: "Healthcare Plans",
-    items: [
       {
-        question: "What types of healthcare plans does Global Health offer?",
+        question: "Will my consultation notes be available after the appointment?",
         answer:
-          "Global Health provides a range of healthcare plans, including individual consultations, family packages, and specialized care plans, all designed to offer comprehensive coverage and flexibility to suit your needs.",
+          "Clinical notes or follow-up guidance may be shared after the consultation where appropriate for the service and country workflow.",
       },
     ],
   },
   {
     eyebrow: "Payments",
-    title: "Payment Methods",
+    title: "Payments",
     items: [
       {
-        question: "What payment methods can I use at Global Health?",
+        question: "When do I see the price?",
         answer:
-          "We accept credit cards for all transactions at Global Health. Your payment information is processed securely to ensure your privacy and security.",
+          "Service prices are shown before booking and checkout. Final availability and payment options depend on the selected country and service.",
+      },
+      {
+        question: "Do I need a subscription or wellness plan?",
+        answer:
+          "No. The public site is currently built around pay-per-consultation and service-based bookings, not bundled wellness plans.",
       },
     ],
   },
@@ -85,7 +92,8 @@ const FAQ_GROUPS: Array<{
 export default function FAQPage() {
   return (
     <main>
-      {/* DARK — hero */}
+      <JsonLd data={faqJsonLd(FAQ_GROUPS.flatMap((group) => group.items))} />
+
       <PageHero
         countryLabel="Global Health · FAQ"
         titleLead="Questions, answered"
@@ -93,21 +101,23 @@ export default function FAQPage() {
         titleTrail="the marketing speak."
         lede={
           <>
-            Booking, payment, consultations, privacy. The questions
-            patients actually ask, with answers that don&apos;t pad. Can&apos;t
-            find what you need? Drop us a line.
+            Booking, payment, consultations, privacy, and when online care is
+            not the right route. Can&apos;t find what you need? Drop us a line.
           </>
         }
         ctaLabel="Contact the team"
         ctaHref="/contact"
-        secondaryLabel="Browse doctors"
+        secondaryLabel="Start booking"
         secondaryHref="/"
+        heroImage={{
+          src: "/images/about/about-clinic-ai.svg",
+          alt: "Healthcare team support illustration",
+          priority: true,
+        }}
       />
 
-      {/* Tabbed FAQ */}
       <FAQTabs groups={FAQ_GROUPS} />
 
-      {/* DARK — tail CTA */}
       <section
         className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
         style={{
@@ -119,11 +129,12 @@ export default function FAQPage() {
           aria-hidden
           className="pointer-events-none absolute inset-0"
           style={{
-            background: "radial-gradient(ellipse 700px 400px at 100% -10%, rgba(176,241,34,0.08), transparent 55%)",
+            background:
+              "radial-gradient(ellipse 700px 400px at 100% -10%, rgba(176,241,34,0.08), transparent 55%)",
           }}
         />
         <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <div className="grid gap-8 items-end lg:grid-cols-[1fr_auto]">
+          <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
               <p
                 className="text-[11px] font-bold uppercase tracking-[0.2em]"
@@ -132,7 +143,7 @@ export default function FAQPage() {
                 Still stuck
               </p>
               <h2
-                className="mt-4 max-w-[22ch] font-extrabold tracking-[-0.03em] leading-[1.02] text-white"
+                className="mt-4 max-w-[22ch] font-extrabold leading-[1.02] tracking-[-0.03em] text-white"
                 style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.75rem)" }}
               >
                 Not the question you came with?{" "}
@@ -150,8 +161,6 @@ export default function FAQPage() {
           </div>
         </div>
       </section>
-
-      {false && <FAQSection items={[]} />}
     </main>
   );
 }

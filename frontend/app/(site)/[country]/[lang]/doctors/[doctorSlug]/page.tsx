@@ -9,7 +9,9 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
   const p = await params;
   const code = countryCodeFromSlug(p.country);
   if (!code || !isSupportedLocale(p.lang)) return { title: "Global Health" };
-  return buildDoctorProfileMetadata(Promise.resolve({ doctorSlug: p.doctorSlug }));
+  return buildDoctorProfileMetadata(
+    Promise.resolve({ doctorSlug: p.doctorSlug, countrySlug: p.country, lang: p.lang }),
+  );
 }
 
 export default async function CountryLangDoctorProfilePage({

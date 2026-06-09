@@ -7,7 +7,7 @@ import { PageHero } from "@/components/sections/PageHero";
 export const metadata: Metadata = {
   title: `About | ${SITE_NAME}`,
   description:
-    "Global Health is a European telemedicine platform connecting patients with locally-licensed doctors. No call centres, no waiting rooms, no surprise fees.",
+    "Global Health is a European telemedicine platform connecting patients with locally-licensed doctors. Medicine Anytime Anywhere.",
 };
 
 export default function AboutPage() {
@@ -21,7 +21,7 @@ export default function AboutPage() {
         titleTrail="online healthcare."
         lede={
           <>
-            We&apos;re a European telemedicine platform connecting patients
+            Medicine Anytime Anywhere. We&apos;re a European telemedicine platform connecting patients
             with locally-licensed doctors. No call centres, no waiting
             rooms, no surprise fees. You see who you&apos;re booking, what
             it costs, and when they&apos;re free.
@@ -31,6 +31,11 @@ export default function AboutPage() {
         ctaHref="/"
         secondaryLabel="Contact the team"
         secondaryHref="/contact"
+        heroImage={{
+          src: "/images/ireland/ireland-about-hero.png",
+          alt: "Healthcare team reviewing online consultation notes",
+          priority: true,
+        }}
       />
 
       {/* LIGHT — three pillars */}
@@ -118,7 +123,7 @@ export default function AboutPage() {
               <DarkStep
                 num="04"
                 title="Get referrals, certificates, or test kits at home"
-                body="Clinical notes and follow-up guidance land in your patient portal within the hour. Test kits ship to your door. Referrals go straight to the clinic of your choice."
+                body="Where clinically appropriate, the doctor can issue referrals, certificates, or follow-up guidance. Notes are shared after the consultation according to the service and country workflow."
               />
             </div>
           </div>

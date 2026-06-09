@@ -75,11 +75,11 @@ export type ServiceDetailContent = {
 export const IE_GP_HUB: GpHubContent = {
   seoTitle: "Online GP Consultation in Ireland | Global Health",
   seoDescription:
-    "Same-day online GP consultations with IMC-registered doctors in Ireland. Speak to a licensed doctor from home — available in English, Portuguese, Spanish, Arabic and Urdu.",
+    "Online GP consultations with IMC-registered doctors in Ireland. Choose from open appointment slots where available.",
   h1Lead: "Online GP Consultation in",
   h1Accent: "Ireland",
   intro:
-    "Global Health connects you with doctors registered with the Irish Medical Council for same-day online GP consultations across Ireland. Our experienced clinicians conduct thorough assessments via secure video call, providing accurate clinical evaluations and personalised care plans tailored to your medical history and current condition. No waiting rooms. No referral chains. Consultations available in English, Portuguese, Spanish, Arabic, Urdu and more.",
+    "Global Health connects you with doctors registered with the Irish Medical Council for online GP consultations across Ireland. Clinicians review your symptoms, history, and current concern through secure online appointments. Consultations are available in English, Portuguese, Spanish, Arabic, Urdu and more, subject to clinician availability.",
   whoFor: {
     title: "Who this service is for",
     intro: "This consultation is suitable for assessment and management of:",
@@ -104,7 +104,7 @@ export const IE_GP_HUB: GpHubContent = {
     items: [
       "Doctors registered with the Irish Medical Council — registration numbers displayed on every profile",
       "Secure video consultations conducted to Irish telemedicine standards",
-      "Same-day availability — most patients seen within 24 hours of booking",
+      "Open appointment slots shown during booking, subject to clinician availability",
       "Consultations available in English, Portuguese, Spanish, Arabic, Urdu, Punjabi and more — the only multilingual online clinic in Ireland",
       "Clinical documentation and follow-up guidance provided by email after every consultation",
       "Transparent pricing — no hidden fees, no membership required",
@@ -114,7 +114,7 @@ export const IE_GP_HUB: GpHubContent = {
     {
       question: "Can I get an online GP consultation in Ireland?",
       answer:
-        "Yes. Global Health provides same-day online GP consultations in Ireland with doctors registered with the Irish Medical Council. Appointments are available seven days a week via secure video call from any device with a camera.",
+        "Yes. Global Health provides online GP consultations in Ireland with doctors registered with the Irish Medical Council. Available appointment times are shown during booking.",
     },
     {
       question: "How much does an online GP consultation cost in Ireland?",
@@ -134,7 +134,7 @@ export const IE_GP_HUB: GpHubContent = {
     {
       question: "How quickly can I see a doctor online in Ireland?",
       answer:
-        "Most patients are seen within 24 hours of booking. Same-day slots are frequently available. You will receive a calendar confirmation immediately after booking.",
+        "Open slots are shown during booking and depend on the selected service and clinician schedule. You will receive confirmation after completing your booking.",
     },
     {
       question: "What happens after my online GP consultation?",
@@ -168,10 +168,10 @@ export const IE_GP_HUB: GpHubContent = {
 const IE_SICK_LEAVE: ServiceDetailContent = {
   seoTitle: "Sick Leave Certificate Online Ireland | IMC-Registered GP | Global Health",
   seoDescription:
-    "Speak to an IMC-registered GP online and receive a sick leave certificate for work on the same day. Available in English, Portuguese, Spanish, Arabic and Urdu. From €45.",
+    "Speak to an IMC-registered GP online about sick leave certification. Certificates are issued only where clinically appropriate. From EUR 45.",
   h1: "Sick Leave Certificate Consultation in Ireland",
   intro:
-    "Global Health provides same-day online sick leave consultations across Ireland with doctors registered with the Irish Medical Council. If you are unwell and unable to attend work, our GPs will assess your symptoms via secure video consultation and determine whether a medical certificate is clinically appropriate for your situation. No waiting rooms, no travel required. Most patients receive their documentation the same day as their consultation.",
+    "Global Health provides online sick leave consultations across Ireland with doctors registered with the Irish Medical Council. If you are unwell and unable to attend work, a GP will assess your symptoms and determine whether a medical certificate is clinically appropriate for your situation.",
   covers: {
     title: "What the consultation covers",
     intro:
@@ -219,8 +219,8 @@ const IE_SICK_LEAVE: ServiceDetailContent = {
     title: "Why choose Global Health",
     items: [
       "Doctors registered with the Irish Medical Council — IMC registration numbers displayed on every doctor profile",
-      "Same-day availability — most consultations available within 24 hours of booking",
-      "Certificates issued and delivered digitally by email on the day of consultation where clinically appropriate",
+      "Open appointment slots shown during booking, subject to clinician availability",
+      "Certificates issued digitally where clinically appropriate after assessment",
       "Available in English, Portuguese, Spanish, Arabic, Urdu, Punjabi and more — the only multilingual online clinic in Ireland",
       "Transparent pricing — €45 per consultation, no hidden fees",
       "Your medical information is handled in strict confidence and will never be shared with your employer without your explicit consent",
@@ -230,12 +230,12 @@ const IE_SICK_LEAVE: ServiceDetailContent = {
     {
       question: "Can I get a sick note online in Ireland?",
       answer:
-        "Yes. Global Health provides online sick leave consultations in Ireland with IMC-registered GPs. If your condition is assessed as clinically warranting certification, your doctor will issue a medical certificate digitally on the day of your consultation.",
+        "Yes. Global Health provides online sick leave consultations in Ireland with IMC-registered GPs. If your condition is assessed as clinically warranting certification, your doctor can issue a medical certificate digitally after the consultation.",
     },
     {
       question: "How much does an online sick leave certificate cost in Ireland?",
       answer:
-        "A sick leave consultation at Global Health costs €45. This covers a 15-minute video consultation with an IMC-registered GP and, where clinically appropriate, the issue of a medical certificate sent to you by email the same day.",
+        "A sick leave consultation at Global Health costs EUR 45. This covers a video consultation with an IMC-registered GP and, where clinically appropriate, the issue of a medical certificate.",
     },
     {
       question: "Is an online sick certificate accepted by employers in Ireland?",
@@ -261,7 +261,7 @@ const IE_SICK_LEAVE: ServiceDetailContent = {
     {
       question: "How quickly will I receive my sick certificate after the consultation?",
       answer:
-        "Where a certificate is clinically appropriate it will be issued and emailed to you on the same day as your consultation, typically within the hour of the appointment ending.",
+        "Where a certificate is clinically appropriate, it will be issued digitally after the consultation according to the service workflow.",
     },
     {
       question: "Can I get a sick note in a language other than English in Ireland?",

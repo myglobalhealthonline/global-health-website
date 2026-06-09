@@ -247,6 +247,28 @@
   color: var(--color-accent);
 }
 
+.bookButton {
+  margin-top: 24px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #fff;
+  color: var(--color-background-dark) !important;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.bookButton:hover {
+  background: var(--color-accent);
+  transform: translateY(-1px);
+}
+
 .footer {
   padding: 20px clamp(20px, 4vw, 48px) 28px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);

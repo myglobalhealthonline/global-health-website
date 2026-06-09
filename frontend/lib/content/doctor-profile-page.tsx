@@ -4,6 +4,7 @@ import { ArrowRight, CalendarClock } from "lucide-react";
 import { ServiceCard } from "@/components/cards/ServiceCard";
 import { DoctorProfileTemplate } from "@/components/templates/DoctorProfileTemplate";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { resolveDoctorProfilePageData } from "@/lib/content/doctor-profile-data";
 import { validatePublicDoctorRecord } from "@/lib/content/publication-validation";
 import { getSiteUrl } from "@/lib/seo/site-url";
@@ -13,6 +14,7 @@ import {
 } from "@/lib/seo/structured-data";
 import { SITE_NAME } from "@/lib/constants";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
+import { buildBookHref } from "@/lib/routing/book-href";
 import {
   getCountryDoctors,
   getCountryServices,
@@ -32,7 +34,7 @@ type DoctorProfileRouteParams = {
 export async function buildDoctorProfileMetadata(
   params: Promise<DoctorProfileRouteParams>,
 ): Promise<Metadata> {
-  const { doctorSlug, lang } = await params;
+  const { doctorSlug, countrySlug: routeCountrySlug, lang } = await params;
   const data = await resolveDoctorProfilePageData(doctorSlug, lang);
   const validation = validatePublicDoctorRecord({
     fullName: data.profile.name,
@@ -44,7 +46,6 @@ export async function buildDoctorProfileMetadata(
     medicalRegistrationUrl: data.profile.medicalRegistrationUrl,
     qualifications: data.profile.qualifications,
   });
-  // Canonical lives at the new `/{country}/team/[doctorSlug]` URL.
   const countryNameToSlug: Record<string, string> = {
     Ireland: "ireland",
     Portugal: "portugal",
@@ -52,8 +53,9 @@ export async function buildDoctorProfileMetadata(
     Czechia: "czechia",
     Romania: "romania",
   };
-  const slug = countryNameToSlug[data.profile.country] ?? "ireland";
-  const canonical = `/${slug}/team/${doctorSlug}`;
+  const slug = routeCountrySlug ?? countryNameToSlug[data.profile.country] ?? "ireland";
+  const routeLang = lang ?? "en";
+  const canonical = `/${slug}/${routeLang}/doctors/${doctorSlug}`;
   const url = `${getSiteUrl()}${canonical}`;
   const title =
     data.profile.seoTitle ?? `${data.profile.name} · ${data.profile.title} · ${data.profile.country}`;
@@ -97,9 +99,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   const lang = routeLang ?? "en";
   const teamHref = `/${slug}/${lang}/doctors`;
   const profileHref = `${teamHref}/${doctorSlug}`;
-  // Fallback booking URL — used when the doctor has no assigned
-  // services. Carries `?doctor=<slug>` so the legacy form preselects.
-  const fallbackBookHref = `/${slug}/${lang}/book-online?doctor=${encodeURIComponent(doctorSlug)}`;
+  const fallbackBookHref = buildBookHref({ country: slug, lang, doctor: doctorSlug });
   // When the doctor has assigned services we render them as the main
   // booking surface below and the hero / bottom CTAs scroll to that
   // section instead of dumping the patient into the fallback form.
@@ -136,11 +136,6 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   }
 
   const hasServices = assignedServices.length > 0;
-  // Anchor lives on the "Services offered" section below. When the
-  // doctor has assignments we point both hero / bottom CTAs at that
-  // anchor so the visitor scrolls to the cart-first picker instead of
-  // landing in the legacy book-online form.
-  const servicesAnchor = "#services";
   // First-name-only label so the CTA reads as "Pick a time with Anna"
   // not "Pick a time with Dr. Anna Garcia Lopez". Falls back to the
   // generic label when we can't extract a first name.
@@ -148,7 +143,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
     .replace(/^(Dr\.?|Prof\.?|Mr\.?|Mrs\.?|Ms\.?)\s+/i, "")
     .split(" ")[0]
     ?.trim();
-  const primaryCtaHref = hasServices ? servicesAnchor : fallbackBookHref;
+  const primaryCtaHref = fallbackBookHref;
   const primaryCtaLabel = hasServices
     ? firstName
       ? `Pick a time with ${firstName}`
@@ -235,7 +230,12 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
             </p>
             <div className="mt-10 grid gap-5 sm:grid-cols-2">
               {assignedServices.map((service) => {
-                const consultHref = `/${slug}/${lang}/consult/${service.slug}?doctor=${encodeURIComponent(doctorSlug)}#doctor-${encodeURIComponent(doctorSlug)}`;
+                const consultHref = buildBookHref({
+                  country: slug,
+                  lang,
+                  service: service.slug,
+                  doctor: doctorSlug,
+                });
                 const startingPrice = service.basePriceCents != null
                   ? formatPriceRounded(service.basePriceCents, service.currencyCode)
                   : undefined;
@@ -285,7 +285,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                 {data.profile.country}.
               </p>
               <Link
-                href={`/${slug}/${lang}/gp-appointment`}
+                href={buildBookHref({ country: slug, lang, doctor: doctorSlug })}
                 className="mt-5 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-bold transition-colors duration-200 hover:bg-white"
                 style={{
                   background: "var(--color-brand-accent)",
@@ -299,6 +299,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           </div>
         </section>
       )}
+      <StickyBookingCTA href={fallbackBookHref} label={`Book with ${firstName ?? data.profile.name}`} />
     </>
   );
 }

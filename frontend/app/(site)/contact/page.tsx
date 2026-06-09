@@ -7,7 +7,7 @@ import { Mail, Clock, AlertTriangle } from "lucide-react";
 export const metadata: Metadata = {
   title: `Contact us | ${SITE_NAME}`,
   description:
-    "Get in touch with the Global Health team. We typically respond within 24 hours on working days.",
+    "Get in touch with the Global Health team. We usually respond within 24 hours on working days.",
 };
 
 export default function ContactPage() {
@@ -22,10 +22,15 @@ export default function ContactPage() {
         lede={
           <>
             Bookings, consultations, partnerships, anything else — drop a line
-            and a real person on our team gets back to you within 24 hours on
+            and a real person on our team usually gets back to you within 24 hours on
             working days. No bots, no ticket queue.
           </>
         }
+        heroImage={{
+          src: "/images/how-it-works/steps-hero.png",
+          alt: "Patient using a laptop for an online healthcare appointment",
+          priority: true,
+        }}
       />
 
       {/* LIGHT — contact form + reach info */}
@@ -65,7 +70,7 @@ export default function ContactPage() {
                       Response time
                     </p>
                     <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
-                      Within 24 hours on working days
+                      Usually within 24 hours on working days
                     </p>
                   </div>
                 </li>

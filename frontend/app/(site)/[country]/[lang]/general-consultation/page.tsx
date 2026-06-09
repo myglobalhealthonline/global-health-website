@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { PageHero } from "@/components/sections/PageHero";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FinalCTA } from "@/components/sections/FinalCTA";
+import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { ReviewBadge } from "@/components/sections/ReviewBadge";
 import { FAQSection } from "@/components/sections/FAQSection";
@@ -24,6 +24,7 @@ import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
 } from "@/lib/routing/country-slug";
+import { buildBookHref } from "@/lib/routing/book-href";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd, medicalProcedureJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
@@ -122,7 +123,7 @@ export default async function CountryLangGeneralConsultationPage({
   const heroTitle = page?.heroTitle ?? "Meet our general practitioners";
   const heroSubtitle =
     page?.heroSubtitle ?? `General practitioners registered to practise in ${config.name}.`;
-  const ctaLabel = page?.ctaLabel ?? (gpHub ? "Book a consultation" : "Meet the doctors");
+  const ctaLabel = page?.ctaLabel ?? "Book appointment";
   // Hero headline composition: GP hub copy takes over the lead/accent for
   // markets with authored copy; generic "Meet our licensed doctors."
   // elsewhere.
@@ -132,7 +133,9 @@ export default async function CountryLangGeneralConsultationPage({
   // Cart-first booking: hero CTA jumps to the in-page service list
   // instead of the legacy /book-online form. Admin can still override
   // via the ContentPage row.
-  const ctaHref = page?.ctaHref ?? "#services";
+  const ctaHref =
+    page?.ctaHref ??
+    buildBookHref({ country: slug, lang, service: services[0]?.slug ?? null });
 
   // Map Service rows to the ServicesGrid card shape. Cards auto-appear when
   // admin adds a Service row of kind=GENERAL for this country.
@@ -144,7 +147,7 @@ export default async function CountryLangGeneralConsultationPage({
     description: s.summary,
     // Pickslot page lets the patient choose doctor + time, then adds
     // the consultation to the cart with the selected timeSlotId.
-    href: `/${slug}/${lang}/consult/${encodeURIComponent(s.slug)}`,
+    href: buildBookHref({ country: slug, lang, service: s.slug }),
     serviceType: "general" as const,
     duration: formatDuration(s.durationMinutes),
     startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
@@ -160,9 +163,7 @@ export default async function CountryLangGeneralConsultationPage({
     country: config.name,
     imageSrc: d.imageSrc ?? null,
     href: `/${slug}/${lang}/doctors/${d.slug}`,
-    // Book → THIS doctor's profile, scrolled to their services. The
-    // profile page always renders an `id="services"` anchor.
-    bookingHref: `/${slug}/${lang}/doctors/${d.slug}#services`,
+    bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
     whatsappNumber: d.whatsappNumber,
     ctaLabel: "View profile",
   }));
@@ -279,6 +280,7 @@ export default async function CountryLangGeneralConsultationPage({
       ) : null}
 
       <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
+      <StickyBookingCTA href={ctaHref} />
 
       {gpHub ? <MedicalDisclaimer paragraphs={gpHub.disclaimerFull} /> : null}
     </>

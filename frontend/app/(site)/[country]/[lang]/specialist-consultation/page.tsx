@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { SpecialtiesGrid } from "@/components/sections/SpecialtiesGrid";
 import { PageHero } from "@/components/sections/PageHero";
@@ -8,6 +7,7 @@ import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FinalCTA } from "@/components/sections/FinalCTA";
+import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { ReviewBadge } from "@/components/sections/ReviewBadge";
 import { countries, getCountryByCode } from "@/data/countries";
@@ -17,6 +17,7 @@ import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
 } from "@/lib/routing/country-slug";
+import { buildBookHref } from "@/lib/routing/book-href";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd, medicalProcedureJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
@@ -105,17 +106,19 @@ export default async function CountryLangSpecialistConsultationPage({
   const heroTitle = page?.heroTitle ?? "Meet our specialists";
   const heroSubtitle =
     page?.heroSubtitle ?? `Specialists registered to practise in ${config.name}.`;
-  const ctaLabel = page?.ctaLabel ?? "Meet the specialists";
+  const ctaLabel = page?.ctaLabel ?? "Book appointment";
   // Cart-first booking: hero CTA scrolls to the in-page service grid
   // rather than dumping into the legacy /book-online form. Admin can
   // still override via ContentPage.
-  const ctaHref = page?.ctaHref ?? "#services";
+  const ctaHref =
+    page?.ctaHref ??
+    buildBookHref({ country: slug, lang, service: services[0]?.slug ?? null });
 
   // Specialty cards — auto from Specialty rows for this country.
   const specialtyItems = specialties.map((s) => ({
     title: s.name,
     description: s.cardSummary ?? "",
-    href: ctaHref,
+    href: `#services`,
   }));
 
   // Specialist service cards — auto from Service rows where kind=SPECIALIST.
@@ -126,7 +129,7 @@ export default async function CountryLangSpecialistConsultationPage({
     description: s.summary,
     // Pickslot page lets the patient choose doctor + time, then adds
     // the consultation to the cart with the selected timeSlotId.
-    href: `/${slug}/${lang}/consult/${encodeURIComponent(s.slug)}`,
+    href: buildBookHref({ country: slug, lang, service: s.slug }),
     serviceType: "specialist" as const,
     audience: s.specialtyName ?? undefined,
     duration: formatDuration(s.durationMinutes),
@@ -146,9 +149,7 @@ export default async function CountryLangSpecialistConsultationPage({
       country: config.name,
       imageSrc: d.imageSrc ?? null,
       href: `/${slug}/${lang}/doctors/${d.slug}`,
-      // Book → THIS doctor's profile, scrolled to their services. The
-      // profile page always renders an `id="services"` anchor.
-      bookingHref: `/${slug}/${lang}/doctors/${d.slug}#services`,
+      bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
       whatsappNumber: d.whatsappNumber,
       ctaLabel: "View profile",
     }));
@@ -207,6 +208,10 @@ export default async function CountryLangSpecialistConsultationPage({
 
       <TrustRibbon theme="light" />
 
+      {specialtyItems.length > 0 ? (
+        <SpecialtiesGrid title="Find the right specialty" items={specialtyItems} />
+      ) : null}
+
       {/* Specialist service cards — auto from Service rows kind=SPECIALIST */}
       {serviceItems.length > 0 ? (
         <div id="services" className="scroll-mt-24">
@@ -231,6 +236,7 @@ export default async function CountryLangSpecialistConsultationPage({
       ) : null}
 
       <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
+      <StickyBookingCTA href={ctaHref} />
     </>
   );
 }

@@ -349,7 +349,7 @@ function buildCountryHomeData(
           "Irish Medical Council certified and specialized doctors available across Ireland, with multilingual consultations when you need them.",
         primaryCta: { label: "Schedule with a GP", href: paths.general },
         secondaryCta: { label: "Schedule with a Specialist", href: paths.specialist },
-        trustBadges: ["Irish Medical Council", "Same-day consultation", "Multilingual care"],
+        trustBadges: ["Irish Medical Council", "Open appointment slots", "Multilingual care"],
         heroImage: {
           src: "/images/hero/ireland-hero-photo.png",
           alt: "Patient at home on a video call with a licensed doctor for an online medical consultation",
@@ -442,7 +442,7 @@ function buildCountryHomeData(
       faqTitle: "Ireland clinic FAQs",
       booking: {
         title: "Start Your Online Consultation",
-        description: "Choose your country and connect with a licensed doctor in minutes. 100% online, no waiting rooms, confidential.",
+        description: "Choose your country and connect with a licensed doctor through open online appointment slots.",
         ctaLabel: "Start Consultation",
         ctaHref: paths.general,
       },

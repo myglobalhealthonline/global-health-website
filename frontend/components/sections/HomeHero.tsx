@@ -38,7 +38,7 @@ export function HomeHero({
 }) {
   const displayHeroTitle = heroTitle?.trim() || null;
   const displayHeroSubtitle = heroSubtitle?.trim() || null;
-  const displayCtaLabel = ctaLabel?.trim() || "Book a consultation";
+  const displayCtaLabel = ctaLabel?.trim() || "Book Appointment";
   const doctorsForPanel = (liveDoctors ?? []).slice(0, 4);
   const heroPhotoSrc = normalizeHeroPhoto(heroImageSrc);
   const unoptimizedHeroPhoto =
@@ -96,9 +96,9 @@ export function HomeHero({
                 displayHeroTitle
               ) : (
                 <>
-                  Meet our{" "}
+                  Medicine Anytime{" "}
                   <span style={{ color: "var(--color-brand-accent)" }}>
-                    licensed doctors.
+                    Anywhere.
                   </span>
                 </>
               )}
@@ -111,7 +111,7 @@ export function HomeHero({
               style={{ color: "rgba(255,255,255,0.75)" }}
             >
               {displayHeroSubtitle ??
-                "Licensed clinicians registered with national medical councils across Ireland, Portugal, Spain, Czechia and Romania."}
+                "Choose a service, select an open time, and speak with licensed clinicians registered with national medical councils across Europe."}
             </p>
           </HeroReveal>
 
@@ -156,8 +156,8 @@ export function HomeHero({
             <ul className="mt-12 flex flex-wrap gap-x-8 gap-y-2">
               {[
                 { icon: ShieldCheck, label: `Licensed in ${countryName}` },
-                { icon: Clock, label: "Same-day slots" },
-                { icon: Stethoscope, label: "No clinic visits" },
+                { icon: Clock, label: "Live availability" },
+                { icon: Stethoscope, label: "Online appointments" },
               ].map(({ icon: Icon, label }) => (
                 <li
                   key={label}
@@ -263,7 +263,7 @@ export function HomeHero({
                 style={{ color: "var(--color-brand-accent)" }}
               >
                 <span aria-hidden className="gh-pulse-dot !size-1.5" />
-                Available now
+                Open calendars
               </p>
 
               <ul className="space-y-4">

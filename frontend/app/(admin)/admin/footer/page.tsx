@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import {
   fetchAdminCountries,
@@ -71,6 +71,9 @@ export default async function AdminFooterPage({
     }
     // Bust the public site cache so the next render of any country page
     // picks up the new footer immediately.
+    // revalidateTag busts the fetch-level tag cache; revalidatePath busts
+    // the RSC cache so the layout re-runs on the next request.
+    revalidateTag(`country-footer:${active!.code.toLowerCase()}`);
     revalidatePath(`/${active!.slug}`, "layout");
     redirect("/admin/footer?saved=1");
   }

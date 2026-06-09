@@ -13,6 +13,7 @@ import { CountryMarquee, type MarqueeCountry } from "@/components/sections/Count
 import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
 import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
+import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { ReviewBadge } from "@/components/sections/ReviewBadge";
 import { countries } from "@/data/countries";
@@ -21,6 +22,7 @@ import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
 } from "@/lib/routing/country-slug";
+import { buildBookHref } from "@/lib/routing/book-href";
 import {
   breadcrumbJsonLd,
   medicalBusinessJsonLd,
@@ -104,6 +106,7 @@ function mapDoctorToWallItem(
   d: CountryDoctorCard,
   countryCode: string,
   profileHref: string,
+  bookingHref: string,
 ): DoctorWallItem {
   const role =
     d.specialties.length > 0 ? d.specialties[0] : d.title || "Doctor";
@@ -115,12 +118,7 @@ function mapDoctorToWallItem(
     country: countryCode,
     langs: d.languages.join(" · "),
     href: profileHref,
-    // "Book Appointment" jumps to the doctor's OWN profile page, scrolled
-    // to their services section — not the generic country GP page. The
-    // profile page always renders an `id="services"` anchor (even its
-    // empty state), so this resolves whether or not the doctor has
-    // services assigned yet.
-    bookingHref: `${profileHref}#services`,
+    bookingHref,
     imageSrc: d.imageSrc,
     imcRegistration: d.imcRegistration,
     medicalRegistrationUrl: d.medicalRegistrationUrl,
@@ -177,11 +175,7 @@ export default async function CountryLangHomePage({
   const config = await getPublicCountryByCode(code);
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
-  // Cart-first booking: default site CTAs aim at service flows. The
-  // legacy `/book-online` route stays alive as a fallback but no longer
-  // surfaces from this page; both DoctorWall and FinalCTA now route at
-  // the doctors index for a smoother flow.
-  const generalHref = `/${slug}/${lang}/gp-appointment`;
+  const bookHref = buildBookHref({ country: slug, lang });
   const doctorsHref = `/${slug}/${lang}/doctors`;
 
   const [
@@ -214,15 +208,22 @@ export default async function CountryLangHomePage({
   // flow). Previously dumped people into the fallback `/book-online` form
   // with `?doctor=`, which skipped service selection.
   const doctorWallItems: DoctorWallItem[] = countryDoctors.map((d) =>
-    mapDoctorToWallItem(d, code, `/${slug}/${lang}/doctors/${d.slug}`),
+    mapDoctorToWallItem(
+      d,
+      code,
+      `/${slug}/${lang}/doctors/${d.slug}`,
+      buildBookHref({ country: slug, lang, doctor: d.slug }),
+    ),
   );
 
   const prescriptionsHref = `/${slug}/${lang}/repeat-prescription-request`;
   const testsHref = `/${slug}/${lang}/lab-tests`;
   const serviceCatalogItems: ServiceCatalogItem[] = [
-    ...generalServices.map((s) => mapServiceToCatalogItem(s, generalHref)),
+    ...generalServices.map((s) =>
+      mapServiceToCatalogItem(s, buildBookHref({ country: slug, lang, service: s.slug })),
+    ),
     ...specialistServices.map((s) =>
-      mapServiceToCatalogItem(s, `/${slug}/${lang}/see-a-specialist`),
+      mapServiceToCatalogItem(s, buildBookHref({ country: slug, lang, service: s.slug })),
     ),
     ...(isCountryFeatureEnabled(config, "online-prescriptions") && prescriptionServices.length > 0
       ? (() => {
@@ -322,10 +323,10 @@ export default async function CountryLangHomePage({
     },
     {
       // Fourth slot — fills the 4-up grid on lg. Concrete claim, no
-      // unsourced rating; same-day availability is something we
-      // actually deliver.
-      v: "24h",
-      l: "Same-day consultations",
+      // Avoid absolute wait-time promises; slot availability is live
+      // inventory and varies by doctor.
+      v: "Live",
+      l: "Slots subject to availability",
       icon: "sparkles",
     },
   ];
@@ -364,9 +365,9 @@ export default async function CountryLangHomePage({
       caption: "EU-registered, GDPR-compliant by default.",
     },
     {
-      value: "24h",
-      label: "Average wait",
-      caption: "From booking to first available video call.",
+      value: "Live",
+      label: "Availability",
+      caption: "Open slots are shown from live doctor calendars.",
     },
     {
       value: String(totalServicesAcrossEurope),
@@ -394,7 +395,7 @@ export default async function CountryLangHomePage({
         countryName={config.name}
         doctorCount={countryDoctors.length}
         languageLabel={languageLabel}
-        bookHref={page?.ctaHref ?? generalHref}
+        bookHref={page?.ctaHref ?? bookHref}
         totalDoctorsAcrossEurope={totalDoctorsAcrossEurope}
         liveDoctors={liveDoctors}
         heroTitle={page?.heroTitle ?? null}
@@ -439,8 +440,8 @@ export default async function CountryLangHomePage({
               className="mt-3 max-w-[22ch] text-[length:var(--text-h1)] font-extrabold tracking-[-0.03em] leading-[1.02]"
               style={{ color: "rgba(255,255,255,0.92)" }}
             >
-              Doctors who actually{" "}
-              <span style={{ color: "var(--color-brand-accent)" }}>pick up.</span>
+              The clinician you choose is{" "}
+              <span style={{ color: "var(--color-brand-accent)" }}>the clinician you see.</span>
             </h2>
             <p className="mt-5 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
               Every consultation is with someone licensed where you are. No
@@ -466,6 +467,7 @@ export default async function CountryLangHomePage({
                   bio: featuredDoctor.bio ?? "",
                   imageSrc: featuredDoctor.imageSrc ?? null,
                   href: `/${slug}/${lang}/doctors/${featuredDoctor.slug}`,
+                  bookingHref: buildBookHref({ country: slug, lang, doctor: featuredDoctor.slug }),
                   // Call (WhatsApp) + social links — same fields the
                   // DoctorWall cards surface.
                   whatsappNumber: featuredDoctor.whatsappNumber,
@@ -480,13 +482,14 @@ export default async function CountryLangHomePage({
           {/* Rest of the team grid */}
           <DoctorWall
             doctors={wallDoctorsExcludingFeatured}
-            bookHref={generalHref}
+            bookHref={bookHref}
             hideHeader
           />
         </div>
       </section>
       <HowItWorksNarrative theme="light" />
-      <FinalCTA primaryHref={generalHref} secondaryHref={doctorsHref} />
+      <FinalCTA primaryHref={bookHref} secondaryHref={doctorsHref} />
+      <StickyBookingCTA href={bookHref} />
     </>
   );
 }

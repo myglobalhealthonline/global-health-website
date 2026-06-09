@@ -44,6 +44,7 @@ export function MobileNav({
   brandLogo = DEFAULT_BRAND_LOGO,
   authUser,
   countryFeatures,
+  bookHref,
   countries,
 }: {
   siteName: string;
@@ -51,6 +52,7 @@ export function MobileNav({
   brandLogo?: { src: string; alt: string };
   authUser?: AuthUser | null;
   countryFeatures?: Record<string, string[] | undefined>;
+  bookHref: string;
   countries: CountryConfig[];
 }) {
   const pathname = usePathname() || "/";
@@ -110,9 +112,9 @@ export function MobileNav({
                 },
               ]
             : []),
+          { href: `/${parsed.country}/${parsed.lang}#how-it-works`, label: "How It Works" },
           { href: "/about", label: "About" },
-          { href: "/blog", label: "Blog" },
-          { href: "/faq", label: "FAQ" },
+          { href: "/contact", label: "Contact" },
         ]
       : [
           { href: "/", label: "Home" },
@@ -127,11 +129,6 @@ export function MobileNav({
   // we drop to the entry gate ("/") — the bare `/book-online` slug has no
   // global route and 404s, so it must not be the fallback. Mirrors the
   // desktop SiteHeader `bookHref` fallback.
-  const bookHref =
-    activeCountry && parsed.lang
-      ? `/${COUNTRY_CODE_TO_SLUG[activeCountry.code]}/${parsed.lang}/gp-appointment`
-      : "/";
-
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
@@ -290,7 +287,7 @@ export function MobileNav({
           <div className="fixed bottom-0 left-0 right-0 border-t border-[var(--color-border)] bg-white/95 p-4 backdrop-blur-md">
             <Dialog.Close asChild>
               <Link href={bookHref} className="gh-btn gh-btn-primary flex w-full text-base">
-                Book consultation
+                Book Appointment
               </Link>
             </Dialog.Close>
           </div>

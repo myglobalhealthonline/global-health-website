@@ -14,6 +14,7 @@
  */
 
 import type { ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Flag } from "@/components/ui/Flag";
@@ -40,6 +41,7 @@ export type PageHeroProps = {
   /** Optional right column — typically a stats block or live
    *  availability strip. Hidden below lg. */
   rightSlot?: ReactNode;
+  heroImage?: { src: string; alt: string; priority?: boolean };
 };
 
 export function PageHero({
@@ -54,7 +56,10 @@ export function PageHero({
   secondaryLabel,
   secondaryHref,
   rightSlot,
+  heroImage,
 }: PageHeroProps) {
+  const hasRightColumn = Boolean(rightSlot || heroImage);
+
   return (
     <section
       className="
@@ -89,9 +94,9 @@ export function PageHero({
 
       <div
         className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10"
-        style={{ padding: rightSlot ? "clamp(80px,10vw,140px) clamp(20px,4vw,40px)" : "clamp(96px,12vw,160px) clamp(20px,4vw,40px)" }}
+        style={{ padding: hasRightColumn ? "clamp(80px,10vw,140px) clamp(20px,4vw,40px)" : "clamp(96px,12vw,160px) clamp(20px,4vw,40px)" }}
       >
-        <div className={rightSlot ? "grid items-end gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-16" : ""}>
+        <div className={hasRightColumn ? "grid items-end gap-12 lg:grid-cols-[1.4fr_1fr] lg:gap-16" : ""}>
           {/* LEFT — eyebrow + headline + lede + CTAs */}
           <div>
             {countryCode || countryLabel ? (
@@ -108,11 +113,11 @@ export function PageHero({
             <h1
               style={{
                 marginTop: 28,
-                maxWidth: rightSlot ? "18ch" : "22ch",
+                maxWidth: hasRightColumn ? "18ch" : "22ch",
                 fontWeight: 800,
                 letterSpacing: "-0.035em",
                 lineHeight: 0.96,
-                fontSize: rightSlot
+                fontSize: hasRightColumn
                   ? "clamp(2.75rem, 6.5vw + 0.5rem, 7rem)"
                   : "clamp(3.5rem, 8vw + 0.5rem, 8rem)",
               }}
@@ -129,7 +134,7 @@ export function PageHero({
                 className="leading-relaxed"
                 style={{
                   marginTop: 28,
-                  maxWidth: rightSlot ? "44ch" : "52ch",
+                  maxWidth: hasRightColumn ? "44ch" : "52ch",
                   fontSize: "clamp(1rem, 1vw + 0.6rem, 1.2rem)",
                   color: "rgba(255,255,255,0.72)",
                 }}
@@ -182,11 +187,33 @@ export function PageHero({
 
           {/* RIGHT — optional slot. Hidden below lg so the headline
             * gets full attention on mobile. */}
-          {rightSlot ? (
-            <aside className="hidden lg:block">{rightSlot}</aside>
+          {rightSlot || heroImage ? (
+            <aside className="hidden lg:block">
+              {rightSlot ?? (heroImage ? <HeroImagePanel image={heroImage} /> : null)}
+            </aside>
           ) : null}
         </div>
       </div>
     </section>
+  );
+}
+
+function HeroImagePanel({ image }: { image: { src: string; alt: string; priority?: boolean } }) {
+  return (
+    <div className="relative aspect-[4/3] overflow-hidden rounded-[var(--radius-card)] border border-white/12 bg-white/[0.04] shadow-[0_18px_50px_rgba(0,0,0,0.22)]">
+      <Image
+        src={image.src}
+        alt={image.alt}
+        fill
+        priority={image.priority}
+        sizes="(min-width: 1024px) 420px, 100vw"
+        className="object-cover"
+        unoptimized={/^https?:\/\//i.test(image.src) || image.src.startsWith("/api/media/")}
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-t from-[rgba(15,46,37,0.58)] via-transparent to-transparent"
+      />
+    </div>
   );
 }
