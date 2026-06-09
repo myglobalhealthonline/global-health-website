@@ -38,6 +38,8 @@ import {
 } from "@/lib/content/get-country-collections";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type Params = { country: string; lang: string };
 
@@ -101,6 +103,9 @@ export default async function CountryLangGeneralConsultationPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const gp = c.gpPage;
+
   // Honor the per-country `general-consultations` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "general-consultations")) notFound();
@@ -119,16 +124,16 @@ export default async function CountryLangGeneralConsultationPage({
 
   // Provider-first defaults per Google Ads "restricted services" guidance.
   // Admin can override via the ContentPage row when localised copy lands.
-  const heroTitle = page?.heroTitle ?? "Meet our general practitioners";
+  const heroTitle = page?.heroTitle ?? gp.heroTitle;
   const heroSubtitle =
-    page?.heroSubtitle ?? `General practitioners registered to practise in ${config.name}.`;
-  const ctaLabel = page?.ctaLabel ?? "Book appointment";
+    page?.heroSubtitle ?? gp.heroSubtitle.replace("{country}", config.name);
+  const ctaLabel = page?.ctaLabel ?? c.doctors.bookAppointment;
   // Hero headline composition: GP hub copy takes over the lead/accent for
   // markets with authored copy; generic "Meet our licensed doctors."
   // elsewhere.
-  const heroLead = gpHub ? gpHub.h1Lead : "Meet our";
-  const heroAccent = gpHub ? gpHub.h1Accent : "licensed";
-  const heroTrail = gpHub ? undefined : "doctors.";
+  const heroLead = gpHub ? gpHub.h1Lead : gp.heroLead;
+  const heroAccent = gpHub ? gpHub.h1Accent : gp.heroAccent;
+  const heroTrail = gpHub ? undefined : gp.heroTrail;
   // Cart-first booking: hero CTA jumps to the in-page service list
   // instead of the legacy /book-online form. Admin can still override
   // via the ContentPage row.
@@ -164,7 +169,7 @@ export default async function CountryLangGeneralConsultationPage({
     href: `/${slug}/${lang}/doctors/${d.slug}`,
     bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
     whatsappNumber: d.whatsappNumber,
-    ctaLabel: "View profile",
+    ctaLabel: c.doctors.viewProfile,
   }));
 
   return (
@@ -197,7 +202,9 @@ export default async function CountryLangGeneralConsultationPage({
       <PageHero
         countryCode={config.code}
         countryLabel={
-          gpHub ? `${config.name} · Online GP consultation` : `${config.name} · General practitioners`
+          gpHub
+            ? gp.countryLabelGp.replace("{country}", config.name)
+            : gp.countryLabelGeneral.replace("{country}", config.name)
         }
         titleLead={heroLead}
         titleAccent={heroAccent}
@@ -205,7 +212,7 @@ export default async function CountryLangGeneralConsultationPage({
         lede={heroSubtitle}
         ctaLabel={ctaLabel}
         ctaHref={ctaHref}
-        secondaryLabel="View profiles"
+        secondaryLabel={gp.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
         heroImage={{
           src: "/images/stock/gp.jpg",
@@ -251,9 +258,12 @@ export default async function CountryLangGeneralConsultationPage({
       {serviceItems.length > 0 ? (
         <div id="services" className="scroll-mt-24">
           <ServicesGrid
-            eyebrow="Practice areas"
-            title="GP consultations available"
-            intro={`${serviceItems.length} ${serviceItems.length === 1 ? "consultation" : "consultations"} you can book online with a GP in our ${config.name} network. Profiles update as the team adds or retires clinicians.`}
+            eyebrow={gp.practiceAreas}
+            title={gp.gpConsultationsTitle}
+            intro={gp.gpConsultationsIntro
+              .replace("{count}", String(serviceItems.length))
+              .replace("{consultation}", serviceItems.length === 1 ? gp.consultation : gp.consultations)
+              .replace("{country}", config.name)}
             items={serviceItems}
             variant="dark"
           />
@@ -263,8 +273,8 @@ export default async function CountryLangGeneralConsultationPage({
       {/* Doctor cards — auto from Doctor rows for this country */}
       {doctorItems.length > 0 ? (
         <DoctorsSection
-          title={`Doctors in ${config.name}`}
-          intro="Licensed GPs available for online consultations. Each profile lists qualifications, languages, and registration."
+          title={gp.doctorsSectionTitle.replace("{country}", config.name)}
+          intro={gp.doctorsSectionIntro}
           doctors={doctorItems}
           theme="light"
         />
@@ -277,7 +287,7 @@ export default async function CountryLangGeneralConsultationPage({
             items={gpHub.whyChoose.items}
             theme="light"
           />
-          <FAQSection title="Frequently asked questions" items={gpHub.faq} />
+          <FAQSection title={gp.faqTitle} items={gpHub.faq} />
         </>
       ) : null}
 

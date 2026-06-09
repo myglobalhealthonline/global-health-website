@@ -20,6 +20,8 @@ import {
   getCountryServices,
 } from "@/lib/content/get-country-collections";
 import { formatPriceRounded } from "@/lib/format-currency";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type DoctorProfileRouteParams = {
   doctorSlug: string;
@@ -97,6 +99,8 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   // without route context).
   const slug = routeCountrySlug ?? countryNameToSlug[data.profile.country] ?? "ireland";
   const lang = routeLang ?? "en";
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const dp = c.doctorProfile;
   const teamHref = `/${slug}/${lang}/doctors`;
   const profileHref = `${teamHref}/${doctorSlug}`;
   const fallbackBookHref = buildBookHref({ country: slug, lang, doctor: doctorSlug });
@@ -146,8 +150,8 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   const primaryCtaHref = fallbackBookHref;
   const primaryCtaLabel = hasServices
     ? firstName
-      ? `Pick a time with ${firstName}`
-      : "Pick a time"
+      ? dp.pickTimeWith.replace("{name}", firstName)
+      : dp.pickTime
     : data.hero.primaryCta.label;
 
   const templateData = {
@@ -159,7 +163,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
         href: primaryCtaHref,
       },
       secondaryCta: {
-        label: `Back to ${data.profile.country} clinicians`,
+        label: dp.backToClinicians.replace("{country}", data.profile.country),
         href: teamHref,
       },
     },
@@ -211,7 +215,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
               style={{ color: "var(--color-brand-accent)" }}
             >
               <CalendarClock className="size-4" aria-hidden />
-              Book with {data.profile.name}
+              {dp.bookWithDoctor.replace("{name}", data.profile.name)}
             </div>
             <h2
               className="font-extrabold tracking-[-0.03em] leading-[1.02]"
@@ -220,13 +224,13 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                 color: "rgba(255,255,255,0.92)",
               }}
             >
-              Services offered
+              {dp.servicesOffered}
             </h2>
             <p
               className="mt-3 max-w-xl text-[length:var(--text-body-lg)] leading-relaxed"
               style={{ color: "rgba(255,255,255,0.42)" }}
             >
-              Pick a service to see open slots with {firstName ?? data.profile.name}.
+              {dp.pickSlotWith.replace("{name}", firstName ?? data.profile.name)}
             </p>
             <div className="mt-10 grid gap-5 sm:grid-cols-2">
               {assignedServices.map((service) => {
@@ -247,7 +251,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                     description={service.summary ?? ""}
                     duration={service.durationMinutes != null ? `${service.durationMinutes} min` : undefined}
                     startingPrice={startingPrice}
-                    ctaLabel="Pick a slot"
+                    ctaLabel={dp.pickSlot}
                     imageSrc={service.imageSrc}
                     dark
                   />
@@ -275,14 +279,15 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                 className="text-sm font-semibold"
                 style={{ color: "rgba(255,255,255,0.88)" }}
               >
-                No bookable services assigned yet.
+                {dp.noServicesAssigned}
               </p>
               <p
                 className="mt-2 text-sm"
                 style={{ color: "rgba(255,255,255,0.42)" }}
               >
-                {data.profile.name} isn&apos;t currently set up for online bookings in{" "}
-                {data.profile.country}.
+                {dp.notSetupForBookings
+                  .replace("{name}", data.profile.name)
+                  .replace("{country}", data.profile.country)}
               </p>
               <Link
                 href={buildBookHref({ country: slug, lang, doctor: doctorSlug })}
@@ -292,14 +297,14 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
                   color: "#0a1f14",
                 }}
               >
-                Browse other clinicians
+                {dp.browseOtherClinicians}
                 <ArrowRight className="size-4" aria-hidden />
               </Link>
             </div>
           </div>
         </section>
       )}
-      <StickyBookingCTA href={fallbackBookHref} label={`Book with ${firstName ?? data.profile.name}`} />
+      <StickyBookingCTA href={fallbackBookHref} label={dp.bookWithDoctor.replace("{name}", firstName ?? data.profile.name)} />
     </>
   );
 }

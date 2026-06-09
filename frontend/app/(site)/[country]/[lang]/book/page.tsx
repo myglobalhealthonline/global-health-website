@@ -28,6 +28,8 @@ import { hreflangAlternates } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { ConsultationBookingForm } from "../consult/[serviceSlug]/_components/consultation-booking-form";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type Params = { country: string; lang: string };
 type SearchParams = {
@@ -88,6 +90,8 @@ export default async function CountryLangBookPage({
   const code = countryCodeFromSlug(slug);
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) notFound();
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const bf = c.bookingForm;
 
   const serviceSlugParam = firstParam(sp.service);
   const serviceIdParam = firstParam(sp.serviceId);
@@ -218,6 +222,7 @@ export default async function CountryLangBookPage({
                   doctorSlug={doctorSlugParam}
                   slotId={slotParam}
                   itemKind={itemKind}
+                  bf={bf}
                 />
               )}
             </div>
@@ -237,6 +242,7 @@ async function SelectedServiceFlow({
   doctorSlug,
   slotId,
   itemKind,
+  bf,
 }: {
   code: string;
   country: string;
@@ -246,6 +252,7 @@ async function SelectedServiceFlow({
   doctorSlug: string | null;
   slotId: string | null;
   itemKind: "GENERAL_CONSULTATION" | "SPECIALIST_CONSULTATION";
+  bf: import("@/lib/i18n/types").CommonLocale["bookingForm"];
 }) {
   const assignedDoctorIds = new Set(service.assignedDoctorIds);
   const serviceDoctors =
@@ -357,6 +364,7 @@ async function SelectedServiceFlow({
             slots={slots}
             clinicTimezone={clinicTimezone}
             initialSlotId={slotId}
+            i18n={bf}
           />
         )}
       </div>

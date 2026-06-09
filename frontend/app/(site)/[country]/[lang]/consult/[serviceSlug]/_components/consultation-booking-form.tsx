@@ -7,6 +7,7 @@ import { useCart } from "@/components/cart/CartContext";
 import type { CartItemKind } from "@/lib/api/cart-types";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
+import type { CommonLocale } from "@/lib/i18n/types";
 
 type Slot = { id: string; startAt: string; endAt: string };
 
@@ -22,6 +23,7 @@ type Props = {
   /** Optional deep-link slot id. Used by /book and /consult when the
    *  server has already verified the service + doctor context. */
   initialSlotId?: string | null;
+  i18n: CommonLocale["bookingForm"];
 };
 
 /**
@@ -50,6 +52,7 @@ export function ConsultationBookingForm({
   slots,
   clinicTimezone,
   initialSlotId,
+  i18n,
 }: Props) {
   const router = useRouter();
   const params = useParams<{ country: string; lang: string }>();
@@ -138,7 +141,7 @@ export function ConsultationBookingForm({
     setError(null);
 
     if (!selectedSlotId) {
-      setError("Pick a time slot before continuing.");
+      setError(i18n.pickSlotError);
       return;
     }
 
@@ -159,23 +162,23 @@ export function ConsultationBookingForm({
     const gdprConsentPlatform = form.get("gdprConsentPlatform") === "on";
 
     if (fullName.length < 2) {
-      setError("Enter the patient full name.");
+      setError(i18n.enterFullName);
       return;
     }
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-      setError("Enter a valid email address.");
+      setError(i18n.enterValidEmail);
       return;
     }
     if (!consent) {
-      setError("You need to accept the consent statement to continue.");
+      setError(i18n.acceptConsent);
       return;
     }
     if (!gdprConsentClinic) {
-      setError("You need to consent to sharing your data with the treating clinic.");
+      setError(i18n.acceptClinicConsent);
       return;
     }
     if (!gdprConsentPlatform) {
-      setError("You need to consent to platform processing of your data.");
+      setError(i18n.acceptPlatformConsent);
       return;
     }
 
@@ -248,7 +251,7 @@ export function ConsultationBookingForm({
   if (slots.length === 0) {
     return (
       <p className="mt-4 text-sm text-[var(--color-text-muted)]">
-        No open slots in the next 14 days for {doctorName}.
+        {i18n.noOpenSlots.replace("{doctor}", doctorName)}
       </p>
     );
   }
@@ -276,10 +279,13 @@ export function ConsultationBookingForm({
       <div>
         <div className="flex items-baseline justify-between gap-3">
           <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-            Pick a date
+            {i18n.pickDate}
           </p>
           <p className="text-xs text-[var(--color-text-muted)]">
-            {grouped.size} {grouped.size === 1 ? "day" : "days"} available · times in {tzLabel}
+            {i18n.daysAvailable
+              .replace("{count}", String(grouped.size))
+              .replace("{day}", grouped.size === 1 ? i18n.day : i18n.days)
+              .replace("{tz}", tzLabel)}
           </p>
         </div>
 
@@ -359,7 +365,7 @@ export function ConsultationBookingForm({
                       : "mt-1 text-[10px] font-semibold text-[var(--color-brand-primary)]"
                   }
                 >
-                  {daySlots.length} {daySlots.length === 1 ? "slot" : "slots"}
+                  {daySlots.length} {daySlots.length === 1 ? i18n.slotSingular : i18n.slotPlural}
                 </span>
               </button>
             );
@@ -372,7 +378,7 @@ export function ConsultationBookingForm({
         {selectedDay ? (
           <div className="mt-6">
             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-              Pick a time on {selectedDay}
+              {i18n.pickTimeOn.replace("{date}", selectedDay)}
             </p>
             <div
               role="tabpanel"
@@ -406,7 +412,7 @@ export function ConsultationBookingForm({
       {/* 2. Patient details — prefilled from account when signed in. */}
       <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
         <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-          Patient details
+          {i18n.patientDetails}
         </legend>
         {me ? (
           <label className="mt-1 flex items-center gap-2 text-sm text-[var(--color-text-body)]">
@@ -416,15 +422,14 @@ export function ConsultationBookingForm({
               onChange={(e) => setBookingForOther(e.target.checked)}
               className="size-4 rounded border-[var(--color-border)]"
             />
-            Booking for someone else (clears the patient fields — your account
-            details stay intact)
+            {i18n.bookingForOther}
           </label>
         ) : null}
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
-              Patient full name
+              {i18n.patientFullName}
             </span>
             <input
               type="text"
@@ -437,7 +442,7 @@ export function ConsultationBookingForm({
             />
           </label>
           <label className="block">
-            <span className="text-xs font-semibold text-[var(--color-text-body)]">Email</span>
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.email}</span>
             <input
               type="email"
               name="email"
@@ -447,13 +452,12 @@ export function ConsultationBookingForm({
             />
             {bookingForOther ? (
               <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                Booking confirmations + receipts go here. Edit if the patient
-                wants their own copy.
+                {i18n.bookingConfirmationsNote}
               </p>
             ) : null}
           </label>
           <label className="block">
-            <span className="text-xs font-semibold text-[var(--color-text-body)]">Phone</span>
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.phone}</span>
             <input
               type="tel"
               name="phone"
@@ -465,7 +469,7 @@ export function ConsultationBookingForm({
           </label>
           <label className="block">
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
-              Date of birth
+              {i18n.dateOfBirth}
             </span>
             <input
               type="date"
@@ -480,7 +484,7 @@ export function ConsultationBookingForm({
 
         <label className="mt-4 block">
           <span className="text-xs font-semibold text-[var(--color-text-body)]">
-            {nationalIdLabel} (optional)
+            {i18n.nationalIdOptional.replace("{label}", nationalIdLabel)}
           </span>
           <input
             type="text"
@@ -489,20 +493,19 @@ export function ConsultationBookingForm({
             className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
           />
           <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-            Needed on medical documents in your country. You can also fill
-            it in on your profile later.
+            {i18n.nationalIdHint}
           </p>
         </label>
 
         <label className="mt-4 block">
           <span className="text-xs font-semibold text-[var(--color-text-body)]">
-            Reason for visit (optional)
+            {i18n.reasonForVisit}
           </span>
           <textarea
             name="notes"
             rows={3}
             maxLength={2000}
-            placeholder="Briefly describe your symptoms or what you'd like to discuss."
+            placeholder={i18n.reasonPlaceholder}
             className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
           />
         </label>
@@ -515,8 +518,7 @@ export function ConsultationBookingForm({
             className="mt-0.5 size-4 rounded border-[var(--color-border)]"
           />
           <span>
-            I confirm the details above are accurate and consent to a video
-            consultation with the selected clinician.
+            {i18n.consentStatement}
           </span>
         </label>
       </fieldset>
@@ -528,15 +530,15 @@ export function ConsultationBookingForm({
         * profile. Country code is implicit from the URL slug. */}
       <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
         <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-          Patient address
+          {i18n.patientAddress}
         </legend>
         <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-          Required for medical documents and any physical materials.
+          {i18n.patientAddressNote}
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="block sm:col-span-2">
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
-              Street address
+              {i18n.streetAddress}
             </span>
             <input
               type="text"
@@ -548,7 +550,7 @@ export function ConsultationBookingForm({
           </label>
           <label className="block sm:col-span-2">
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
-              Apt / unit (optional)
+              {i18n.aptUnit}
             </span>
             <input
               type="text"
@@ -559,7 +561,7 @@ export function ConsultationBookingForm({
             />
           </label>
           <label className="block">
-            <span className="text-xs font-semibold text-[var(--color-text-body)]">City</span>
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.city}</span>
             <input
               type="text"
               name="addressCity"
@@ -570,7 +572,7 @@ export function ConsultationBookingForm({
           </label>
           <label className="block">
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
-              Postal code
+              {i18n.postalCode}
             </span>
             <input
               type="text"
@@ -590,7 +592,7 @@ export function ConsultationBookingForm({
         * one's purpose to make withdrawal scope unambiguous. */}
       <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
         <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-          Data sharing consent (GDPR)
+          {i18n.gdprConsent}
         </legend>
         <label className="mt-2 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
           <input
@@ -599,10 +601,7 @@ export function ConsultationBookingForm({
             required
             className="mt-0.5 size-4 rounded border-[var(--color-border)]"
           />
-          <span>
-            I consent to sharing my personal and medical data with the treating
-            clinic and doctor for the purpose of this consultation.
-          </span>
+          <span>{i18n.gdprClinicConsent}</span>
         </label>
         <label className="mt-3 flex items-start gap-2 text-xs text-[var(--color-text-muted)]">
           <input
@@ -611,10 +610,7 @@ export function ConsultationBookingForm({
             required
             className="mt-0.5 size-4 rounded border-[var(--color-border)]"
           />
-          <span>
-            I consent to the Global Health platform processing my data for
-            service improvement, security, and platform communications.
-          </span>
+          <span>{i18n.gdprPlatformConsent}</span>
         </label>
       </fieldset>
 
@@ -637,7 +633,7 @@ export function ConsultationBookingForm({
         className="gh-btn gh-btn-primary w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
-        {pending ? "Adding to cart…" : "Continue to cart"}
+        {pending ? i18n.addingToCart : i18n.continueToCart}
       </button>
     </form>
   );

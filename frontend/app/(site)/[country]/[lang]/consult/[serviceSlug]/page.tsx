@@ -30,6 +30,8 @@ import {
   WhyChooseSection,
 } from "@/components/sections/ServiceContentSections";
 import { ConsultationBookingForm } from "./_components/consultation-booking-form";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type Params = { country: string; lang: string; serviceSlug: string };
 type SearchParams = { doctor?: string; slot?: string };
@@ -94,6 +96,10 @@ export default async function ConsultPage({
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) notFound();
 
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const cp = c.consultPage;
+  const bf = c.bookingForm;
+
   // Resolve the service. It can be either GENERAL or SPECIALIST kind.
   // Pass the route locale so display fields resolve to the viewing
   // language (same Service.id either way — booking is unaffected).
@@ -152,7 +158,7 @@ export default async function ConsultPage({
             style={{ color: "rgba(255,255,255,0.50)" }}
           >
             <ArrowLeft className="size-4" aria-hidden />
-            Back to consultations
+            {cp.backToConsultations}
           </Link>
 
           <div className="mt-6 flex items-center gap-2">
@@ -165,7 +171,7 @@ export default async function ConsultPage({
               className="text-[11px] font-bold uppercase tracking-[0.2em]"
               style={{ color: "var(--color-brand-accent)" }}
             >
-              {selectedDoctorSlug ? "Confirm your booking" : "Pick a doctor"}
+              {selectedDoctorSlug ? cp.confirmBooking : cp.pickDoctor}
             </p>
           </div>
 
@@ -198,7 +204,7 @@ export default async function ConsultPage({
             >
               {service.basePriceCents != null
                 ? formatPriceRounded(service.basePriceCents, service.currencyCode)
-                : "Price varies"}
+                : cp.priceVaries}
             </span>
             {service.durationMinutes != null ? (
               <span
@@ -215,7 +221,7 @@ export default async function ConsultPage({
               className="text-sm"
               style={{ color: "rgba(255,255,255,0.65)" }}
             >
-              in {config.name}
+              {config.name}
             </span>
           </div>
         </div>
@@ -240,6 +246,8 @@ export default async function ConsultPage({
               country,
               lang,
               selectedSlotId,
+              cp,
+              bf,
             })
           ) : (
             <DoctorListMode
@@ -247,6 +255,7 @@ export default async function ConsultPage({
               lang={lang}
               serviceSlug={serviceSlug}
               doctors={doctors}
+              cp={cp}
             />
           )}
 
@@ -295,7 +304,7 @@ export default async function ConsultPage({
               theme="light"
             />
           ) : null}
-          <FAQSection title="Frequently asked questions" items={detail.faq} />
+          <FAQSection title={c.gpPage.faqTitle} items={detail.faq} />
           <MedicalDisclaimer paragraphs={detail.disclaimerFull} />
         </>
       ) : null}
@@ -313,6 +322,8 @@ async function renderSelectedDoctorMode({
   country,
   lang,
   selectedSlotId,
+  cp,
+  bf,
 }: {
   code: string;
   service: CountryServiceCard;
@@ -323,6 +334,8 @@ async function renderSelectedDoctorMode({
   country: string;
   lang: string;
   selectedSlotId: string | null;
+  cp: import("@/lib/i18n/types").CommonLocale["consultPage"];
+  bf: import("@/lib/i18n/types").CommonLocale["bookingForm"];
 }) {
   const doctor = doctors.find((d) => d.slug === selectedDoctorSlug);
   if (!doctor) {
@@ -335,14 +348,14 @@ async function renderSelectedDoctorMode({
         }}
       >
         <p className="text-sm font-semibold text-[var(--color-text-primary)]">
-          That clinician isn&apos;t offering {service.name} right now.
+          {cp.notOffering.replace("{service}", service.name)}
         </p>
         <p className="mt-2 text-sm text-[var(--color-text-muted)]">
           <Link
             href={`/${country}/${lang}/consult/${serviceSlug}`}
             className="font-semibold text-[var(--color-brand-primary)] underline"
           >
-            See other clinicians who do
+            {cp.seeOtherClinicians}
           </Link>
           .
         </p>
@@ -395,15 +408,15 @@ async function renderSelectedDoctorMode({
             }}
           >
             <p className="font-semibold text-[var(--color-text-primary)]">
-              No open slots in the next 14 days.
+              {cp.noSlots}
             </p>
             <p className="mt-2 text-[var(--color-text-muted)]">
-              Try another clinician —{" "}
+              {cp.tryAnotherClinician}{" "}
               <Link
                 href={`/${country}/${lang}/consult/${serviceSlug}`}
                 className="font-semibold text-[var(--color-brand-primary)] underline"
               >
-                see who else offers {service.name}
+                {cp.seeWhoElseOffers.replace("{service}", service.name)}
               </Link>
               .
             </p>
@@ -417,17 +430,18 @@ async function renderSelectedDoctorMode({
             slots={slots}
             clinicTimezone={clinicTimezone}
             initialSlotId={selectedSlotId}
+            i18n={bf}
           />
         )}
       </article>
 
       <p className="mt-4 text-xs text-[var(--color-text-muted)]">
-        Wrong clinician?{" "}
+        {cp.wrongClinician}{" "}
         <Link
           href={`/${country}/${lang}/consult/${serviceSlug}`}
           className="font-semibold text-[var(--color-brand-primary)] underline"
         >
-          Pick a different doctor
+          {cp.pickDifferentDoctor}
         </Link>
         .
       </p>
@@ -440,11 +454,13 @@ function DoctorListMode({
   lang,
   serviceSlug,
   doctors,
+  cp,
 }: {
   country: string;
   lang: string;
   serviceSlug: string;
   doctors: Awaited<ReturnType<typeof getCountryDoctors>>;
+  cp: import("@/lib/i18n/types").CommonLocale["consultPage"];
 }) {
   if (doctors.length === 0) {
     return (
@@ -456,16 +472,16 @@ function DoctorListMode({
         }}
       >
         <p className="text-sm font-semibold text-[var(--color-text-primary)]">
-          No clinicians assigned to this service yet.
+          {cp.noCliniciansAssigned}
         </p>
         <p className="mt-2 text-sm text-[var(--color-text-muted)]">
           <Link
             href={`/${country}/${lang}/doctors`}
             className="font-semibold text-[var(--color-brand-primary)] underline"
           >
-            Browse our doctors
+            {cp.browseDoctors}
           </Link>{" "}
-          and pick someone whose services are open.
+          {cp.pickSomeone}
         </p>
       </div>
     );
@@ -474,7 +490,7 @@ function DoctorListMode({
   return (
     <div className="mt-6 grid gap-6">
       <p className="text-sm text-[var(--color-text-muted)]">
-        Pick a clinician to see their open times and finish booking.
+        {cp.pickClinician}
       </p>
       <ul className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
         {doctors.map((d) => (
@@ -495,7 +511,7 @@ function DoctorListMode({
                 service: serviceSlug,
                 doctor: d.slug,
               })}
-              ctaLabel="Pick a time"
+              ctaLabel={cp.pickTime}
             />
           </li>
         ))}

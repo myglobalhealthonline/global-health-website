@@ -30,6 +30,8 @@ import {
 } from "@/lib/content/get-country-collections";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type Params = { country: string; lang: string };
 
@@ -87,6 +89,9 @@ export default async function CountryLangSpecialistConsultationPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const sp = c.specialistPage;
+
   // Honor the per-country `specialist-consultations` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "specialist-consultations")) notFound();
@@ -99,10 +104,10 @@ export default async function CountryLangSpecialistConsultationPage({
   const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
 
   // Provider-first defaults per Google Ads "restricted services" guidance.
-  const heroTitle = page?.heroTitle ?? "Meet our specialists";
+  const heroTitle = page?.heroTitle ?? sp.heroTitle;
   const heroSubtitle =
-    page?.heroSubtitle ?? `Specialists registered to practise in ${config.name}.`;
-  const ctaLabel = page?.ctaLabel ?? "Book appointment";
+    page?.heroSubtitle ?? sp.heroSubtitle.replace("{country}", config.name);
+  const ctaLabel = page?.ctaLabel ?? c.doctors.bookAppointment;
   // Cart-first booking: hero CTA scrolls to the in-page service grid
   // rather than dumping into the legacy /book-online form. Admin can
   // still override via ContentPage.
@@ -143,7 +148,7 @@ export default async function CountryLangSpecialistConsultationPage({
       href: `/${slug}/${lang}/doctors/${d.slug}`,
       bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
       whatsappNumber: d.whatsappNumber,
-      ctaLabel: "View profile",
+      ctaLabel: c.doctors.viewProfile,
     }));
 
   return (
@@ -167,14 +172,14 @@ export default async function CountryLangSpecialistConsultationPage({
 
       <PageHero
         countryCode={config.code}
-        countryLabel={`${config.name} · Specialists`}
-        titleLead="Meet our"
-        titleAccent="registered"
-        titleTrail="specialists."
+        countryLabel={sp.countryLabel.replace("{country}", config.name)}
+        titleLead={sp.heroLead}
+        titleAccent={sp.heroAccent}
+        titleTrail={sp.heroTrail}
         lede={heroSubtitle}
         ctaLabel={ctaLabel}
         ctaHref={ctaHref}
-        secondaryLabel="View profiles"
+        secondaryLabel={sp.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
         heroImage={{
           src: "/images/stock/specialist.jpg",
@@ -209,9 +214,9 @@ export default async function CountryLangSpecialistConsultationPage({
       {serviceItems.length > 0 ? (
         <div id="services" className="scroll-mt-24">
           <ServicesGrid
-            eyebrow="Specialty areas"
-            title="Specialist consultations available"
-            intro="Profiles update as the team adds or retires clinicians in our network."
+            eyebrow={sp.specialtyAreas}
+            title={sp.specialistConsultationsTitle}
+            intro={sp.specialistConsultationsIntro}
             items={serviceItems}
             variant="dark"
           />
@@ -221,8 +226,8 @@ export default async function CountryLangSpecialistConsultationPage({
       {/* Doctor cards — only specialists shown here */}
       {doctorItems.length > 0 ? (
         <DoctorsSection
-          title={`Specialists in ${config.name}`}
-          intro="Specialists registered with national medical councils."
+          title={sp.doctorsSectionTitle.replace("{country}", config.name)}
+          intro={sp.doctorsSectionIntro}
           doctors={doctorItems}
           theme="light"
         />
