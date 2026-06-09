@@ -639,8 +639,8 @@ export function BookingFormTemplate({
               />
               <SidebarChip
                 icon={CalendarClock}
-                title="Same-day response"
-                detail="Most requests answered in 60 min"
+                title="Availability shown before checkout"
+                detail="Response times vary by service"
               />
               <SidebarChip
                 icon={Languages}

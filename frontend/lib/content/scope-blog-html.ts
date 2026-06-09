@@ -1,5 +1,29 @@
+import sanitizeHtml from "sanitize-html";
+import type { IOptions } from "sanitize-html";
+
 /** Wrapper class the public article body + its scoped CSS hang off. */
 export const BLOG_SCOPE_CLASS = "gh-article-body";
+
+const BLOG_ALLOWED_TAGS = [
+  ...sanitizeHtml.defaults.allowedTags,
+  "article",
+  "aside",
+  "figure",
+  "figcaption",
+  "h1",
+  "h2",
+  "img",
+  "section",
+  "span",
+  "style",
+];
+
+const BLOG_ALLOWED_ATTRIBUTES: IOptions["allowedAttributes"] = {
+  ...sanitizeHtml.defaults.allowedAttributes,
+  "*": ["class", "id", "style", "aria-label", "aria-hidden"],
+  a: ["href", "name", "target", "rel", "title"],
+  img: ["src", "alt", "title", "width", "height", "loading"],
+};
 
 /**
  * Contain an admin-authored article's own CSS so it can't bleed into the
@@ -15,7 +39,15 @@ export const BLOG_SCOPE_CLASS = "gh-article-body";
  */
 export function scopeBlogHtml(html: string): string {
   if (!html) return html;
-  return html.replace(
+  const sanitized = sanitizeHtml(html, {
+    allowedTags: BLOG_ALLOWED_TAGS,
+    allowedAttributes: BLOG_ALLOWED_ATTRIBUTES,
+    allowedSchemes: ["http", "https", "mailto", "tel"],
+    allowedSchemesByTag: { img: ["http", "https", "data"] },
+    allowProtocolRelative: false,
+  });
+
+  return sanitized.replace(
     /<style\b([^>]*)>([\s\S]*?)<\/style>/gi,
     (_match, attrs: string, css: string) =>
       `<style${attrs}>@scope (.${BLOG_SCOPE_CLASS}) {\n${css}\n}</style>`,

@@ -116,6 +116,11 @@ const nextConfig: NextConfig = {
    */
   async redirects() {
     return [
+      {
+        source: "/:country/:lang/book-online",
+        destination: "/:country/:lang/book",
+        permanent: true,
+      },
       // Legacy → final
       {
         source: "/:country/:lang/general-consultation",

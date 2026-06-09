@@ -88,6 +88,12 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
     router.push(`/${slug}/${lang}`);
   }
 
+  function book(lang: LocaleCode) {
+    if (!chosenCountry) return;
+    const slug = chosenCountry.slug || countrySlug(chosenCountry.code);
+    router.push(`/${slug}/${lang}/book`);
+  }
+
   const steps = [
     { n: 1, label: "Country" },
     { n: 2, label: "Language" },
@@ -246,6 +252,15 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
                   </HeroReveal>
                 ))}
               </div>
+
+              <button
+                type="button"
+                onClick={() => book((chosenCountry.defaultLocale ?? "en") as LocaleCode)}
+                className={`${styles.bookButton} inline-flex items-center justify-center gap-2 text-white`}
+              >
+                Book appointment in {chosenCountry.name}
+                <ArrowRight className="size-4" aria-hidden />
+              </button>
             </>
           ) : null}
         </div>

@@ -19,6 +19,9 @@ type Props = {
   /** Clinic timezone the slots are in. Patient sees clinic-local times so
    *  "09:00" reads the same to patient, doctor, and clinic. */
   clinicTimezone?: string;
+  /** Optional deep-link slot id. Used by /book and /consult when the
+   *  server has already verified the service + doctor context. */
+  initialSlotId?: string | null;
 };
 
 /**
@@ -46,6 +49,7 @@ export function ConsultationBookingForm({
   kind,
   slots,
   clinicTimezone,
+  initialSlotId,
 }: Props) {
   const router = useRouter();
   const params = useParams<{ country: string; lang: string }>();
@@ -62,16 +66,20 @@ export function ConsultationBookingForm({
     : tz;
 
   const nationalIdLabel = idLabelForCountrySlug(params?.country);
+  const initialSlot =
+    (initialSlotId ? slots.find((slot) => slot.id === initialSlotId) : undefined) ??
+    slots[0] ??
+    null;
 
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(
-    slots[0]?.id ?? null,
+    initialSlot?.id ?? null,
   );
   // Date-first UX — pick the day, then the times for that day render
   // below. Defaults to the day of the pre-selected slot (which is the
   // first slot in the list), so the panel is never empty on first
   // render.
   const [selectedDay, setSelectedDay] = useState<string | null>(
-    slots[0] ? formatAppDate(slots[0].startAt, tz) : null,
+    initialSlot ? formatAppDate(initialSlot.startAt, tz) : null,
   );
 
   // Auth + prefill state. We render the form unconditionally so guests

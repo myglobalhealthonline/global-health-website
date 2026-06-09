@@ -91,11 +91,11 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
       "Open clinician, engineering and operations roles supporting our network of licensed doctors across Europe. Remote and on-site teams.",
     keywords: ["healthcare careers", "clinician jobs", "remote medical jobs"],
   },
-  "/book-online": {
-    title: "Meet our clinicians · Global Health",
+  "/book": {
+    title: "Book an online consultation · Global Health",
     description:
-      "Browse licensed doctors and specialists by country, specialty and language. Profiles list credentials, registration councils and patient languages.",
-    keywords: ["meet doctors", "clinician profiles", "specialist directory Europe"],
+      "Medicine Anytime Anywhere. Choose a service, clinician, and open appointment time through Global Health's guided booking flow.",
+    keywords: ["book online consultation", "licensed doctor booking", "telemedicine appointment Europe"],
   },
   "/plans-pricing": {
     title: "Plans & pricing · Global Health",

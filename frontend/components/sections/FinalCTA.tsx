@@ -54,7 +54,7 @@ export function FinalCTA({
                 className="text-[11px] font-bold tracking-[0.22em] uppercase mb-3"
                 style={{ color: "rgba(255,255,255,0.32)" }}
               >
-                Average to first slot
+                Subject to availability
               </p>
               <p
                 className="font-extrabold leading-none tracking-[-0.05em] [font-variant-numeric:tabular-nums]"
@@ -63,7 +63,7 @@ export function FinalCTA({
                   color: "var(--color-brand-accent)",
                 }}
               >
-                24h
+                Live
               </p>
               <p
                 className="mt-5 font-bold tracking-[-0.02em]"
@@ -72,7 +72,7 @@ export function FinalCTA({
                   color: "rgba(255,255,255,0.55)",
                 }}
               >
-                Tomorrow, not next month.
+                Choose from open clinician calendars.
               </p>
             </div>
           </RevealOnScroll>
@@ -87,9 +87,9 @@ export function FinalCTA({
                 color: "rgba(255,255,255,0.95)",
               }}
             >
-              Stop putting your{" "}
-              <span style={{ color: "var(--color-brand-accent)" }}>health</span>{" "}
-              on the calendar.
+              Book care with a{" "}
+              <span style={{ color: "var(--color-brand-accent)" }}>clinician</span>{" "}
+              you choose.
             </h2>
             {/* Provider-first lede per Google Ads "restricted services"
                 guidance. Anchored on the doctors (credentials, registration,
@@ -104,21 +104,21 @@ export function FinalCTA({
                 maxWidth: "50ch",
               }}
             >
-              Browse profiles of licensed doctors registered with national
-              medical councils across Europe. Filter by specialty, language
-              and country.
+              Browse licensed doctors registered with national medical councils
+              across Europe, then choose an open appointment time where
+              availability is shown.
             </p>
 
             <div className="mt-9 flex flex-wrap gap-3">
               <Link href={primaryHref} className="gh-btn gh-btn-ghost-dark">
-                Meet our doctors
+                Book Appointment
                 <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
               </Link>
               <Link
                 href={secondaryHref}
                 className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 border border-white/20 bg-transparent text-sm font-semibold text-white/75 hover:bg-white/08 hover:border-white/38 transition-colors duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
               >
-                Meet the team
+                View doctors
               </Link>
             </div>
 

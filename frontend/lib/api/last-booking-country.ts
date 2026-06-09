@@ -9,7 +9,7 @@ import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
  * country picker), forcing logged-in patients to repick Ireland (or
  * wherever) every single time. We instead read the patient's most
  * recent booking, look up its country slug + default locale, and route
- * them straight into the general-consultation landing for that market.
+ * them straight into the guided booking flow for that market.
  *
  * Returns `/` as a graceful fallback when:
  *  - the patient has no bookings yet (first-time CTA)
@@ -32,7 +32,7 @@ export async function resolveBookConsultationHref(): Promise<string> {
     );
     if (!country) return "/";
     const lang = country.defaultLocale.toLowerCase();
-    return `/${country.slug}/${lang}/general-consultation`;
+    return `/${country.slug}/${lang}/book`;
   } catch {
     return "/";
   }

@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-/* eslint-disable react/no-unescaped-entities */
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -344,7 +343,6 @@ export function DoctorProfileTemplate({
               style={{
                 color: "rgba(255,255,255,0.68)",
               }}
-              // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{ __html: safeBio }}
             />
 
@@ -411,7 +409,7 @@ export function DoctorProfileTemplate({
                 className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.1]"
                 style={{ fontSize: "clamp(1.4rem,2.5vw,1.85rem)", color: "rgba(255,255,255,0.95)" }}
               >
-                Same-day video slots, typically.
+                Open video slots, subject to availability.
               </h3>
               <p
                 className="mt-4 text-[14.5px] leading-[1.7]"

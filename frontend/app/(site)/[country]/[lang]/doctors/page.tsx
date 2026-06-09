@@ -11,6 +11,7 @@ import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
 } from "@/lib/routing/country-slug";
+import { buildBookHref } from "@/lib/routing/book-href";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
@@ -159,10 +160,7 @@ export default async function CountryLangDoctorsPage({
     bio: d.bio ?? `Licensed clinician available for online consultations in ${config.name}.`,
     imageSrc: d.imageSrc,
     href: `/${slug}/${lang}/doctors/${d.slug}`,
-    // Book → THIS doctor's profile, scrolled to their services, instead
-    // of the section-level fallback (generic GP page). The profile page
-    // always renders an `id="services"` anchor.
-    bookingHref: `/${slug}/${lang}/doctors/${d.slug}#services`,
+    bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
     ctaLabel: "View profile",
   }));
 
@@ -221,8 +219,8 @@ export default async function CountryLangDoctorsPage({
       <DoctorTeamTemplate
         countryName={config.name}
         doctors={doctorCards}
-        bookingHref={`/${slug}/${lang}/gp-appointment`}
-        bookingLabel="Browse consultations"
+        bookingHref={buildBookHref({ country: slug, lang })}
+        bookingLabel="Book appointment"
         spotlight={
           featured ? (
             <div key="featured-spotlight" className="mb-10">
@@ -237,6 +235,7 @@ export default async function CountryLangDoctorsPage({
                   bio: featured.bio ?? "",
                   imageSrc: featured.imageSrc ?? null,
                   href: `/${slug}/${lang}/doctors/${featured.slug}`,
+                  bookingHref: buildBookHref({ country: slug, lang, doctor: featured.slug }),
                   whatsappNumber: featured.whatsappNumber,
                   instagramUrl: featured.instagramUrl,
                   facebookUrl: featured.facebookUrl,

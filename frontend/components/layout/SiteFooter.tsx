@@ -17,6 +17,7 @@ import {
   countryCodeFromSlug,
 } from "@/lib/routing/country-slug";
 import { parseSitePath } from "@/lib/routing/path-rewrites";
+import { buildBookHref } from "@/lib/routing/book-href";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
 import {
   IconInstagram,
@@ -101,18 +102,22 @@ export function SiteFooter({
     if (!activeFeatures) return true; // no toggle data → assume on (legacy default)
     return activeFeatures.includes(slug);
   };
-  // Cart-first booking: footer "Book consultation" entry now lands on
-  // the GP catalogue (service-first); /book-online stays as a fallback
-  // path but isn't surfaced from the footer.
-  const careLinks = CARE_FIELDS.flatMap((entry) =>
-    entry.flag !== null && !isFeatureEnabled(entry.flag)
-      ? []
-      : [{ label: entry.label, href: careBase ? `${careBase}/${entry.slug}` : "/" }],
-  );
+  const bookHref =
+    parsed.country && parsed.lang
+      ? buildBookHref({ country: parsed.country, lang: parsed.lang })
+      : "/";
+  const careLinks = [
+    { label: "Book Appointment", href: bookHref },
+    ...CARE_FIELDS.flatMap((entry) =>
+      entry.flag !== null && !isFeatureEnabled(entry.flag)
+        ? []
+        : [{ label: entry.label, href: careBase ? `${careBase}/${entry.slug}` : "/" }],
+    ),
+  ];
 
   const clinicsLinks = countries.map((c) => ({
     label: c.name,
-    href: `/${COUNTRY_CODE_TO_SLUG[c.code]}`,
+    href: `/${COUNTRY_CODE_TO_SLUG[c.code]}/${c.defaultLocale ?? "en"}`,
   }));
 
   const accountLinks = [
@@ -289,6 +294,17 @@ export function SiteFooter({
             locale={parsed.lang ?? null}
           />
         </div>
+
+        <p
+          className="mt-10 max-w-[980px] text-sm leading-relaxed"
+          style={{ color: "rgba(255,255,255,0.58)" }}
+        >
+          Online consultations are not a substitute for emergency care. If you
+          need urgent help, call 112 or your local emergency number. Information
+          on this website is general guidance; prescriptions, certificates,
+          referrals and next steps depend on clinical assessment and are issued
+          at the treating clinician&apos;s discretion.
+        </p>
 
         <div
           className="flex flex-wrap justify-between gap-3"

@@ -171,7 +171,7 @@ export default async function BlogPostPage({ params }: Props) {
                   * route through the root country gate (CountryEntryGate at /)
                   * which negotiates the right country + locale for the reader. */}
                 Book an online consultation with a locally-registered doctor in
-                your country. Same-day appointments available.
+                your country. Open appointments are shown during booking.
               </p>
             </div>
             <Link

@@ -24,12 +24,10 @@ import { usePathname } from "next/navigation";
 import type { SiteNavigationData } from "@/data/navigation";
 import type { AuthUser } from "@/lib/api/auth-api";
 import { type CountryCode, type CountryConfig } from "@/data/countries";
-import {
-  COUNTRY_CODE_TO_SLUG,
-  countryCodeFromSlug,
-} from "@/lib/routing/country-slug";
+import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { parseSitePath } from "@/lib/routing/path-rewrites";
+import { buildBookHref } from "@/lib/routing/book-href";
 import { rememberCountry, useLastCountry } from "@/lib/routing/last-country";
 import { useEffect } from "react";
 import { CountrySwitcher } from "@/components/layout/CountrySwitcher";
@@ -92,9 +90,9 @@ function sectionNavForCountryLang(
     items.push({ label: "Services", children: servicesChildren });
   }
   // Global pages — country/lang-agnostic.
+  items.push({ href: `${base}#how-it-works`, label: "How It Works" });
   items.push({ href: "/about", label: "About" });
-  items.push({ href: "/blog", label: "Blog" });
-  items.push({ href: "/faq", label: "FAQ" });
+  items.push({ href: "/contact", label: "Contact" });
   return items;
 }
 
@@ -185,8 +183,8 @@ export function SiteHeader({
   // a country we drop them on the global landing — the country gate
   // resolves before they can pick a service.
   const bookHref =
-    activeCountry && parsed.lang
-      ? `/${COUNTRY_CODE_TO_SLUG[activeCountry.code]}/${parsed.lang}/general-consultation`
+    activeCountry && effectiveCountrySlug && activeLang
+      ? buildBookHref({ country: effectiveCountrySlug, lang: activeLang })
       : "/";
 
   return (
@@ -243,16 +241,16 @@ export function SiteHeader({
           {!authUser ? (
             <Link
               href="/login"
-              className="gh-btn gh-btn-ghost-dark hidden md:inline-flex"
-              style={{ minHeight: 44, padding: "0 18px", fontSize: "0.875rem" }}
+              className="hidden px-2 text-sm font-semibold text-white/70 transition-colors hover:text-white md:inline-flex"
+              style={{ minHeight: 44, alignItems: "center", textDecoration: "none" }}
             >
               Log in
             </Link>
           ) : (
             <Link
               href={authUser.role === "ADMIN" ? "/admin" : "/account"}
-              className="gh-btn gh-btn-ghost-dark hidden md:inline-flex"
-              style={{ minHeight: 44, padding: "0 18px", fontSize: "0.875rem" }}
+              className="hidden px-2 text-sm font-semibold text-white/70 transition-colors hover:text-white md:inline-flex"
+              style={{ minHeight: 44, alignItems: "center", textDecoration: "none" }}
             >
               {authUser.role === "ADMIN" ? "Admin" : "Account"}
             </Link>
@@ -260,8 +258,16 @@ export function SiteHeader({
 
           <Link
             href={bookHref}
-            className="gh-btn gh-btn-ghost-dark hidden md:inline-flex"
-            style={{ minHeight: 44, padding: "0 22px" }}
+            className="hidden items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-bold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-brand-accent)] md:inline-flex"
+            style={{ minHeight: 44, textDecoration: "none" }}
+          >
+            Book Appointment
+          </Link>
+
+          <Link
+            href={bookHref}
+            className="inline-flex items-center justify-center rounded-full bg-white px-4 py-2.5 text-sm font-bold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-brand-accent)] md:hidden"
+            style={{ minHeight: 40, textDecoration: "none" }}
           >
             Book
           </Link>
@@ -274,6 +280,7 @@ export function SiteHeader({
               brandLogo={brandLogo}
               authUser={authUser}
               countryFeatures={countryFeatures}
+              bookHref={bookHref}
               countries={countries}
             />
           </div>

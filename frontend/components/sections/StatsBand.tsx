@@ -58,8 +58,8 @@ export function StatsBand({ items, theme = "dark" }: { items: StatBandItem[]; th
                 maxWidth: "38ch",
               }}
             >
-              Same-day access to licensed clinicians. No waiting rooms,
-              no referral chains, no upsells.
+              Access licensed clinicians through open appointment slots,
+              clear profiles, and service-specific booking steps.
             </p>
           </div>
         </RevealOnScroll>
