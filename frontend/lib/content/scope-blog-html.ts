@@ -45,6 +45,11 @@ export function scopeBlogHtml(html: string): string {
     allowedSchemes: ["http", "https", "mailto", "tel"],
     allowedSchemesByTag: { img: ["http", "https", "data"] },
     allowProtocolRelative: false,
+    // Defence-in-depth: force rel="noopener noreferrer" on every link so a
+    // target="_blank" in admin-authored HTML can't reverse-tabnab the opener.
+    transformTags: {
+      a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer" }, true),
+    },
   });
 
   return sanitized.replace(

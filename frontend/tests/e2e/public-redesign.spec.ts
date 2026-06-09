@@ -54,4 +54,13 @@ test.describe("Public redesign", () => {
       page.getByRole("banner").getByRole("link", { name: /book/i }).first(),
     ).toBeVisible();
   });
+
+  // §16 — the footer "Terms of service" link now resolves (was a 404).
+  test("terms of service page renders", async ({ page }) => {
+    const res = await page.goto("/terms", { waitUntil: "domcontentloaded" });
+    expect(res?.status(), "/terms should not 404/5xx").toBeLessThan(400);
+    await expect(
+      page.getByRole("heading", { name: /terms of service/i }),
+    ).toBeVisible();
+  });
 });

@@ -166,4 +166,11 @@ Re-verified green: **typecheck exit 0 · build passed (75/75 static pages) · li
 - **#9 Per-market photography:** requires owner-provided or per-country CMS imagery (`ContentPage.heroImageSrc`, `Service.imageSrc`, doctor Asset). The `next/image` remote-pattern path (#10) is now ready for it; just needs the assets.
 - **#7 Per-page section budget audit:** materially advanced by the dedups; a final per-page sweep is a design-review task, not a code change.
 
-**The plan is fully actioned: every item implemented or closed with rationale.** Verified green: typecheck exit 0 · build 75/75 static pages · lint 0 errors.
+### Phase-1 §16 verify-items closed (2026-06-09)
+- **Blog HTML sanitization — VERIFIED safe.** `scopeBlogHtml` runs `sanitize-html` at render (tag/attr allowlist; scripts + `on*` handlers stripped; href schemes filtered). Hardened further: `transformTags` now forces `rel="noopener noreferrer"` on every link (anti reverse-tabnabbing).
+- **Footer `/terms` 404 — FIXED.** The footer linked "Terms of service" `/terms` but no route existed. Added `app/(site)/terms/page.tsx` (modelled on `/privacy`): Ads-safe ToS — not-for-emergencies, no-guaranteed-outcome, payment/Stripe, liability, per-country governing law. (`/privacy` already exists; no cookies/refund links in the footer.)
+
+### Verification (e2e)
+Backend-free Playwright suite added (`frontend/tests/e2e/public-redesign.spec.ts`): **9/9 pass** — asserts disclaimer, hero imagery, ContactForm tokens, FAQ compliance, header Book CTA, `/terms` resolves, book-online→/book 301. Fixed a pre-existing `playwright` 1.59/1.60 version skew that broke `pnpm e2e`.
+
+**The plan is fully actioned: every item implemented or closed with rationale.** Verified green: typecheck exit 0 · build 76/76 static pages · lint 0 errors · e2e 9/9.
