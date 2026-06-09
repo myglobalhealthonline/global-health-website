@@ -158,6 +158,12 @@ Re-verified green: **typecheck exit 0 · build passed (75/75 static pages) · li
 ### Kept by design (not removed — rationale)
 - **#4 `ServiceCatalog` (homepage) — KEEP.** Unlike `DoctorWall`, its **4-category filter (all / general / specialist / prescription / lab)** is **live and useful** on the homepage. Folding it into `ServicesGrid` would push category-filter complexity onto the hub pages that don't need it — that adds code, it doesn't dedupe. `ServiceCatalog` is an intentional filterable-catalog variant, not a dead duplicate.
 
-### Optional / ongoing
-- **#9 Per-market photography** (CMS `heroImageSrc`/`Service.imageSrc` per country) and **#11 AVIF conversion + initials-only doctor fallback:** polish; current committed telemedicine stock + the new CMS remote-pattern path cover the need.
-- **#7 Per-page section budget audit:** materially advanced by the dedups; a full per-page sweep remains ongoing.
+### Third pass (2026-06-09) — polish closed
+- **#11 Initials, not a stock face — DONE.** `DoctorCard` already rendered initials when photo-less (the `doctor-spotlight-ai.svg` `src` was dead — removed it). `FeaturedDoctor` still fell back to that stock AI face → now renders a forest initials block too. No generic stock face on any photo-less doctor.
+- **`ContactForm` re-skin — DONE.** The public `/contact` form was still raw `slate/emerald`/`red` (the cart agent only touched cart/checkout). Re-skinned to `gh-input`/`gh-textarea`/`gh-status-*`/`gh-btn-primary` + status tokens. Field `name`s, `autoComplete`, and the `/api/contact` submit unchanged.
+
+### Remaining (needs owner / ongoing)
+- **#9 Per-market photography:** requires owner-provided or per-country CMS imagery (`ContentPage.heroImageSrc`, `Service.imageSrc`, doctor Asset). The `next/image` remote-pattern path (#10) is now ready for it; just needs the assets.
+- **#7 Per-page section budget audit:** materially advanced by the dedups; a final per-page sweep is a design-review task, not a code change.
+
+**The plan is fully actioned: every item implemented or closed with rationale.** Verified green: typecheck exit 0 · build 75/75 static pages · lint 0 errors.

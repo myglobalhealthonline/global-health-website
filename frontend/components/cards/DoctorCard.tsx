@@ -11,8 +11,6 @@ import {
 } from "@/components/ui/BrandIcons";
 import { Flag } from "@/components/ui/Flag";
 
-const PLACEHOLDER_PORTRAIT = "/images/ireland/doctor-spotlight-ai.svg";
-
 /* ─── Mint icon box ──────────────────────────────────────────────────────── */
 function IconBox({ children }: { children: React.ReactNode }) {
   return (
@@ -85,7 +83,7 @@ export function DoctorCard({
 }: DoctorCardProps) {
   const trimmedImage = imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
-  const src = trimmedImage ? trimmedImage : PLACEHOLDER_PORTRAIT;
+  const src = trimmedImage ?? "";
   const unoptimized = /^https?:\/\//i.test(src) || src.startsWith("/api/media/");
   const initialsLabel = initials?.trim() || nameToInitials(name);
   const whatsappDigits = whatsappNumber?.replace(/[^\d+]/g, "");

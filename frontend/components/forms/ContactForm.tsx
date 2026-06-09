@@ -61,10 +61,10 @@ export function ContactForm() {
 
   if (state === "success") {
     return (
-      <div className="flex flex-col items-center gap-4 rounded-xl border border-emerald-200 bg-emerald-50 px-6 py-10 text-center">
-        <CheckCircle className="size-10 text-emerald-600" aria-hidden />
-        <h2 className="text-xl font-bold text-emerald-900">Message sent!</h2>
-        <p className="max-w-sm text-sm text-emerald-700">
+      <div className="gh-status-success flex flex-col items-center gap-4 rounded-[var(--radius-card)] px-6 py-10 text-center">
+        <CheckCircle className="size-10" style={{ color: "var(--color-status-success-text)" }} aria-hidden />
+        <h2 className="text-xl font-bold">Message sent!</h2>
+        <p className="max-w-sm text-sm">
           Thank you for reaching out. Our team will get back to you within 24 hours.
         </p>
       </div>
@@ -74,7 +74,7 @@ export function ContactForm() {
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-5">
       {state === "error" && (
-        <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="gh-status-error flex items-start gap-3 rounded-[var(--radius-card-sm)] px-4 py-3 text-sm">
           <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
           {errorMessage}
         </div>
@@ -113,9 +113,10 @@ export function ContactForm() {
       <div>
         <label
           htmlFor="message"
-          className="mb-1.5 block text-sm font-medium text-slate-700"
+          className="mb-1.5 block text-sm font-medium"
+          style={{ color: "var(--color-text-body)" }}
         >
-          Message <span className="text-red-500">*</span>
+          Message <span style={{ color: "var(--color-status-error)" }}>*</span>
         </label>
         <textarea
           id="message"
@@ -123,19 +124,20 @@ export function ContactForm() {
           rows={6}
           required
           placeholder="Tell us what you need..."
-          className={`w-full resize-y rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 ${
-            fieldErrors.message ? "border-red-400 bg-red-50" : "border-slate-300 bg-white"
-          }`}
+          aria-invalid={Boolean(fieldErrors.message)}
+          className="gh-textarea resize-y"
         />
         {fieldErrors.message && (
-          <p className="mt-1 text-xs text-red-600">{fieldErrors.message[0]}</p>
+          <p className="mt-1 text-xs" style={{ color: "var(--color-status-error-text)" }}>
+            {fieldErrors.message[0]}
+          </p>
         )}
       </div>
 
       <button
         type="submit"
         disabled={state === "loading"}
-        className="inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-800 disabled:opacity-60"
+        className="gh-btn gh-btn-primary disabled:opacity-60"
       >
         {state === "loading" && <Loader2 className="size-4 animate-spin" aria-hidden />}
         {state === "loading" ? "Sending…" : "Send message"}
@@ -163,8 +165,12 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={name} className="mb-1.5 block text-sm font-medium text-slate-700">
-        {label} {required && <span className="text-red-500">*</span>}
+      <label
+        htmlFor={name}
+        className="mb-1.5 block text-sm font-medium"
+        style={{ color: "var(--color-text-body)" }}
+      >
+        {label} {required && <span style={{ color: "var(--color-status-error)" }}>*</span>}
       </label>
       <input
         id={name}
@@ -173,11 +179,14 @@ function Field({
         autoComplete={autoComplete}
         placeholder={placeholder}
         required={required}
-        className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600 ${
-          error ? "border-red-400 bg-red-50" : "border-slate-300 bg-white"
-        }`}
+        aria-invalid={Boolean(error)}
+        className="gh-input"
       />
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error && (
+        <p className="mt-1 text-xs" style={{ color: "var(--color-status-error-text)" }}>
+          {error}
+        </p>
+      )}
     </div>
   );
 }

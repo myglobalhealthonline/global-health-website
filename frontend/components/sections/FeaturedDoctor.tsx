@@ -47,11 +47,21 @@ export function FeaturedDoctor({
   doctor: DoctorSpotlightProps;
   standalone?: boolean;
 }) {
-  const src = doctor.imageSrc?.trim()
-    ? doctor.imageSrc.trim()
-    : "/images/ireland/doctor-spotlight-ai.svg";
+  const trimmedImage = doctor.imageSrc?.trim();
+  const hasImage = Boolean(trimmedImage);
+  const src = trimmedImage ?? "";
   const unoptimized =
-    /^https?:\/\//i.test(src) || src.startsWith("/api/media/");
+    hasImage && (/^https?:\/\//i.test(src) || src.startsWith("/api/media/"));
+  // Initials fallback instead of a generic stock face when a doctor has no
+  // uploaded photo (matches DoctorCard behaviour).
+  const initials =
+    doctor.name
+      .replace(/^Dr\.?\s*/i, "")
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0]?.toUpperCase() ?? "")
+      .join("") || "·";
   const languageList =
     doctor.languages && doctor.languages.length > 0
       ? doctor.languages.join(", ")
@@ -98,14 +108,28 @@ export function FeaturedDoctor({
           className="relative overflow-hidden gh-featured-photo"
           style={{ minHeight: 240 }}
         >
-          <Image
-            src={src}
-            alt={doctor.name}
-            fill
-            unoptimized={unoptimized}
-            className="object-cover object-top"
-            sizes="(min-width:640px) 340px, 100vw"
-          />
+          {hasImage ? (
+            <Image
+              src={src}
+              alt={doctor.name}
+              fill
+              unoptimized={unoptimized}
+              className="object-cover object-top"
+              sizes="(min-width:640px) 340px, 100vw"
+            />
+          ) : (
+            <div
+              className="absolute inset-0 flex items-center justify-center font-extrabold text-white"
+              style={{
+                background: "var(--color-brand-primary)",
+                fontSize: "clamp(56px,9vw,96px)",
+                letterSpacing: "-0.02em",
+              }}
+              aria-hidden
+            >
+              {initials}
+            </div>
+          )}
           {/* Right-edge fade into card body on desktop */}
           <div
             aria-hidden
