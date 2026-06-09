@@ -193,7 +193,7 @@ export function SiteHeader({
         className="
           mx-auto grid items-center
           max-w-[1320px]
-          px-5 md:px-10 py-3.5
+          px-5 md:px-10 py-3
           grid-cols-[auto_1fr_auto]
           gap-6
         "
@@ -209,7 +209,7 @@ export function SiteHeader({
           <img
             src={brandLogo?.src ?? "/logos/global-health-dark.png"}
             alt={brandLogo?.alt ?? siteName ?? "Global Health"}
-            className="h-11 w-auto"
+            className="h-10 w-auto"
           />
         </Link>
 

@@ -180,7 +180,7 @@ export function SiteFooter({
       style={{
         background: "var(--color-background-dark)",
         color: "rgba(255,255,255,0.70)",
-        padding: "64px 0 28px",
+        padding: "48px 0 24px",
         borderTop: "1px solid rgba(176,241,34,0.16)",
       }}
     >
@@ -188,7 +188,7 @@ export function SiteFooter({
         className="mx-auto"
         style={{ maxWidth: 1320, padding: "0 clamp(20px, 4vw, 40px)" }}
       >
-        <div className="gh-footer-grid grid gap-10">
+        <div className="gh-footer-grid grid gap-x-8 gap-y-10">
           <div>
             <Link
               href="/"
@@ -200,7 +200,7 @@ export function SiteFooter({
               <img
                 src="/logos/global-health-light.png"
                 alt={siteName || "Global Health"}
-                style={{ height: 44, width: "auto" }}
+                style={{ height: 38, width: "auto" }}
               />
             </Link>
             <p
@@ -250,6 +250,14 @@ export function SiteFooter({
                 ))}
               </div>
             ) : null}
+            {/* Newsletter sits in the brand column so the footer grid stays a
+                single clean row (no orphaned full-width void below). */}
+            <div className="mt-7 max-w-[320px]">
+              <NewsletterSignup
+                countryCode={parsed.country ?? null}
+                locale={parsed.lang ?? null}
+              />
+            </div>
           </div>
 
           {groups.map((group) => (
@@ -306,15 +314,10 @@ export function SiteFooter({
               </ul>
             </div>
           ))}
-
-          <NewsletterSignup
-            countryCode={parsed.country ?? null}
-            locale={parsed.lang ?? null}
-          />
         </div>
 
         <p
-          className="mt-10 max-w-[980px] text-sm leading-relaxed"
+          className="mt-12 max-w-[980px] text-sm leading-relaxed"
           style={{ color: "rgba(255,255,255,0.58)" }}
         >
           Online consultations are not a substitute for emergency care. If you
@@ -327,7 +330,7 @@ export function SiteFooter({
         <div
           className="flex flex-wrap justify-between gap-3"
           style={{
-            marginTop: 56,
+            marginTop: 40,
             paddingTop: 24,
             borderTop: "1px solid rgba(255,255,255,0.10)",
             fontSize: 12,

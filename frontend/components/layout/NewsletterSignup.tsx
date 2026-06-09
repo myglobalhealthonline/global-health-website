@@ -52,7 +52,7 @@ export function NewsletterSignup({ countryCode, locale }: Props) {
   return (
     <div>
       <p
-        className="m-0 uppercase text-white"
+        className="m-0 inline-flex items-center gap-2 uppercase text-white"
         style={{
           fontSize: 11,
           fontWeight: 700,
@@ -60,6 +60,11 @@ export function NewsletterSignup({ countryCode, locale }: Props) {
           marginBottom: 14,
         }}
       >
+        <span
+          aria-hidden
+          className="inline-block h-3 w-[3px] rounded-full"
+          style={{ background: "var(--color-brand-accent)" }}
+        />
         Stay informed
       </p>
       <p style={{ fontSize: 13, lineHeight: 1.5, maxWidth: 280 }}>
@@ -81,15 +86,14 @@ export function NewsletterSignup({ countryCode, locale }: Props) {
               required
               maxLength={254}
               disabled={status === "loading"}
-              className="w-full rounded-md border border-white/20 bg-white/10 py-2 pl-9 pr-3 text-sm text-white placeholder-white/40 focus:border-white/40 focus:outline-none focus:ring-0"
+              className="w-full rounded-lg border border-white/20 bg-white/10 py-2 pl-9 pr-3 text-sm text-white placeholder-white/40 focus:border-white/40 focus:outline-none focus:ring-0"
             />
           </div>
         </label>
         <button
           type="submit"
           disabled={status === "loading"}
-          className="rounded-md px-3 py-2 text-sm font-semibold text-[var(--color-background-dark)] transition disabled:opacity-60"
-          style={{ background: "var(--color-accent)" }}
+          className="shrink-0 rounded-lg bg-white px-4 py-2 text-sm font-bold text-[var(--color-brand-primary)] shadow-[0_2px_8px_rgba(15,46,37,0.18)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(15,46,37,0.30)] active:translate-y-0 active:scale-[0.98] disabled:opacity-60 motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)]"
         >
           {status === "loading" ? "…" : "Subscribe"}
         </button>

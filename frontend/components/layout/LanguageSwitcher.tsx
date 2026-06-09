@@ -56,22 +56,17 @@ export function LanguageSwitcher({
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="inline-flex items-center gap-1.5 transition-colors"
-        style={{
-          padding: "8px 12px",
-          borderRadius: 999,
-          border: "1px solid var(--color-border)",
-          background: "var(--color-background-page)",
-          color: "var(--color-text-primary)",
-          fontFamily: "inherit",
-          fontSize: 13,
-          fontWeight: 600,
-          cursor: "pointer",
-        }}
+        data-open={open}
+        className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-[13px] font-semibold text-white/85 transition-colors duration-200 hover:border-white/30 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 data-[open=true]:border-white/30 data-[open=true]:bg-white/10"
+        style={{ minHeight: 40 }}
       >
-        <Languages aria-hidden className="size-3.5" />
+        <Languages aria-hidden className="size-3.5 opacity-80" />
         <span className="uppercase">{currentLang}</span>
-        <ChevronDown aria-hidden className="size-3" />
+        <ChevronDown
+          aria-hidden
+          className="size-3 opacity-70 transition-transform duration-200 motion-reduce:transition-none"
+          style={{ transform: open ? "rotate(180deg)" : "none" }}
+        />
       </button>
 
       {open ? (
