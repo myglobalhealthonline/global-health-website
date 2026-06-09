@@ -19,12 +19,12 @@ test.describe("Smoke", () => {
     await expect(page).toHaveTitle(/global health/i);
   });
 
-  test("legacy book-online redirects to /book", async ({ page }) => {
-    const response = await page.goto("/ireland/en/book-online", {
-      waitUntil: "domcontentloaded",
-    });
-    expect(response?.status(), "/book should not 5xx").toBeLessThan(500);
-    expect(page.url(), "redirects to the guided /book page").toContain("/book");
+  test("legacy book-online redirects to /book", async ({ request }) => {
+    // HTTP-level check (no render) so it stays backend-free: the config
+    // 301/308 fires before the target /book page is rendered.
+    const res = await request.get("/ireland/en/book-online", { maxRedirects: 0 });
+    expect([301, 307, 308]).toContain(res.status());
+    expect(res.headers()["location"] ?? "", "redirect target").toContain("/book");
   });
 
   test("login form renders", async ({ page }) => {
