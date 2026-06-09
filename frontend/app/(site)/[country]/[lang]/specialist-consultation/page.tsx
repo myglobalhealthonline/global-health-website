@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { SpecialtiesGrid } from "@/components/sections/SpecialtiesGrid";
 import { PageHero } from "@/components/sections/PageHero";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
@@ -28,7 +27,6 @@ import {
 import {
   getCountryDoctors,
   getCountryServices,
-  getCountrySpecialties,
 } from "@/lib/content/get-country-collections";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
@@ -92,9 +90,8 @@ export default async function CountryLangSpecialistConsultationPage({
   // Honor the per-country `specialist-consultations` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "specialist-consultations")) notFound();
-  const [{ record: rawPage, disabled: pageDisabled }, specialties, services, doctors] = await Promise.all([
+  const [{ record: rawPage, disabled: pageDisabled }, services, doctors] = await Promise.all([
     getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale),
-    getCountrySpecialties(code, lang),
     getCountryServices(code, "SPECIALIST", lang),
     getCountryDoctors(code, lang),
   ]);
@@ -113,14 +110,10 @@ export default async function CountryLangSpecialistConsultationPage({
     page?.ctaHref ??
     buildBookHref({ country: slug, lang, service: services[0]?.slug ?? null });
 
-  // Specialty cards — auto from Specialty rows for this country.
-  const specialtyItems = specialties.map((s) => ({
-    title: s.name,
-    description: s.cardSummary ?? "",
-    href: `#services`,
-  }));
-
   // Specialist service cards — auto from Service rows where kind=SPECIALIST.
+  // Each card is tagged with its specialty (the category it falls under) via
+  // `audience` — so specialties surface as labels on the consultations rather
+  // than as a separate browse section.
   // Each card links to the booking form WITH `?service=<slug>` so the
   // backend stamps catalogue price + triggers Stripe Checkout.
   const serviceItems = services.map((s) => ({
@@ -210,11 +203,9 @@ export default async function CountryLangSpecialistConsultationPage({
 
       <ReviewBadge countryName={config.name} />
 
-      {specialtyItems.length > 0 ? (
-        <SpecialtiesGrid title="Find the right specialty" items={specialtyItems} />
-      ) : null}
-
-      {/* Specialist service cards — auto from Service rows kind=SPECIALIST */}
+      {/* Specialist service cards — auto from Service rows kind=SPECIALIST.
+          Specialty = the category each consultation falls under, shown as a
+          tag on the card (not a separate section). */}
       {serviceItems.length > 0 ? (
         <div id="services" className="scroll-mt-24">
           <ServicesGrid
