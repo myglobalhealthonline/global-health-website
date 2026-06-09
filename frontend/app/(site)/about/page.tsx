@@ -33,7 +33,7 @@ export default function AboutPage() {
         secondaryHref="/contact"
         heroImage={{
           src: "/images/stock/about.jpg",
-          alt: "A doctor talking warmly with a patient during a consultation",
+          alt: "Telemedicine care team reviewing a secure digital health dashboard",
           priority: true,
         }}
       />

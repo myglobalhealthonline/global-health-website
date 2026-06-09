@@ -28,7 +28,7 @@ export default function ContactPage() {
         }
         heroImage={{
           src: "/images/stock/contact.jpg",
-          alt: "A member of the Global Health team ready to help with your online care",
+          alt: "Telehealth care coordinator supporting a patient through an online consultation platform",
           priority: true,
         }}
       />

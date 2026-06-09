@@ -601,7 +601,7 @@ function BookingHeroPanel({
       <div className="relative aspect-[4/3]">
         <Image
           src={imageSrc}
-          alt="Patient booking an online healthcare appointment from home"
+          alt={`Patient booking a telemedicine consultation in ${countryName} from home`}
           fill
           sizes="420px"
           className="object-cover"

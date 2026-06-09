@@ -111,7 +111,7 @@ export default function FAQPage() {
         secondaryHref="/"
         heroImage={{
           src: "/images/stock/contact.jpg",
-          alt: "Patient on a video call with a doctor during an online consultation",
+          alt: "Telehealth care coordinator helping a patient during an online consultation",
           priority: true,
         }}
       />
