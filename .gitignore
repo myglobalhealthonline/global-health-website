@@ -5,6 +5,12 @@
 /.pnpm-store
 /.claude/worktrees
 
+# playwright e2e artifacts
+/test-results
+/playwright-report
+/blob-report
+/frontend/test-results
+
 # frontend
 /frontend/.next
 /frontend/node_modules
