@@ -243,28 +243,37 @@ const publicPageInclude = {
 
 export type PublicPageRecord = Prisma.ContentPageGetPayload<{ include: typeof publicPageInclude }>;
 
+export type GetPublicPageResult =
+  | { page: PublicPageRecord; disabled: false }
+  | { page: null; disabled: boolean };
+
 /**
  * Public read: returns the published ContentPage row for (countryCode, pageKey, locale)
  * with a locale fallback chain — exact locale → country defaultLocale → null.
+ * disabled=true means a ContentPage entry exists but is inactive/draft (caller should
+ * hide all sections rather than rendering with defaults).
  */
 export async function getPublicPage(
   countryCode: string,
   pageKey: PageKey,
   locale: LocaleCode,
-): Promise<PublicPageRecord | null> {
+): Promise<GetPublicPageResult> {
   try {
     const country = await prisma.country.findUnique({
       where: { code: countryCode },
       select: { id: true, defaultLocale: true, isActive: true },
     });
-    if (!country || !country.isActive) return null;
+    if (!country || !country.isActive) return { page: null, disabled: false };
 
     const exact = await prisma.contentPage.findUnique({
       where: { countryId_pageKey_locale: { countryId: country.id, pageKey, locale } },
       include: publicPageInclude,
     });
     if (exact && exact.status === PublishStatus.PUBLISHED && exact.isActive) {
-      return exact;
+      return { page: exact, disabled: false };
+    }
+    if (exact) {
+      return { page: null, disabled: true };
     }
 
     if (locale !== country.defaultLocale) {
@@ -279,11 +288,14 @@ export async function getPublicPage(
         include: publicPageInclude,
       });
       if (fallback && fallback.status === PublishStatus.PUBLISHED && fallback.isActive) {
-        return fallback;
+        return { page: fallback, disabled: false };
+      }
+      if (fallback) {
+        return { page: null, disabled: true };
       }
     }
 
-    return null;
+    return { page: null, disabled: false };
   } catch (error) {
     throw normalizeDbError(error, "Pages data is unavailable");
   }

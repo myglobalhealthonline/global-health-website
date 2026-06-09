@@ -132,7 +132,7 @@ export async function fetchPublicPage(
   locale: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
 ) {
-  return apiRequest<{ page: unknown }>(
+  return apiRequest<{ page: unknown; disabled?: boolean }>(
     `/api/countries/${encodeURIComponent(countryCode)}/pages/${encodeURIComponent(pageKey)}?locale=${encodeURIComponent(locale)}`,
     {
       timeoutMs,

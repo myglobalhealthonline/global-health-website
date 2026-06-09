@@ -40,11 +40,14 @@ const pagesRoute: FastifyPluginAsync = async (app) => {
         locale = country.defaultLocale;
       }
 
-      const page = await getPublicPage(params.data.countryCode, params.data.pageKey, locale);
-      if (!page) {
+      const result = await getPublicPage(params.data.countryCode, params.data.pageKey, locale);
+      if (!result.page) {
+        if (result.disabled) {
+          return okResponse({ page: null, disabled: true });
+        }
         return reply.status(404).send(errorResponse("Page not published for this country/locale"));
       }
-      return okResponse({ page });
+      return okResponse({ page: result.page });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));

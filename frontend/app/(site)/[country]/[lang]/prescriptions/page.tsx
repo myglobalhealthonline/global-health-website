@@ -45,7 +45,7 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
   // Admin-editable copy via /admin/pages (PageKey=PRESCRIPTIONS).
   // Falls back to the hardcoded strings if no ContentPage row exists.
-  const page = await getPublicPage(code, "PRESCRIPTIONS", lang as PublicLocale);
+  const { record: page } = await getPublicPage(code, "PRESCRIPTIONS", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/repeat-prescription-request`;
   const title = page?.seoTitle ?? `Repeat Prescription Request in ${config.name} · ${SITE_NAME}`;
   const description =
@@ -84,11 +84,12 @@ export default async function PrescriptionsPage({
   // Honor the per-country `online-prescriptions` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "online-prescriptions")) notFound();
-
-  const [services, page] = await Promise.all([
+  const [services, { record: rawPage, disabled: pageDisabled }] = await Promise.all([
     getCountryServices(code, "PRESCRIPTION", lang),
     getPublicPage(code, "PRESCRIPTIONS", lang as PublicLocale),
   ]);
+
+  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
   const bookHref = "#prescriptions";
   const fallbackHref = `/${slug}/${lang}/doctors`;
 

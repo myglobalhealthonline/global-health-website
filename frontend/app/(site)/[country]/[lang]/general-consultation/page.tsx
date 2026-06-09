@@ -58,7 +58,7 @@ export async function generateMetadata({
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const page = await getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale);
+  const { record: page } = await getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale);
   const hub = getGpHubContent(code);
   const url = `${getSiteUrl()}/${country}/${lang}/gp-appointment`;
   const title =
@@ -104,12 +104,13 @@ export default async function CountryLangGeneralConsultationPage({
   // Honor the per-country `general-consultations` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "general-consultations")) notFound();
-
-  const [page, services, doctors] = await Promise.all([
+  const [{ record: rawPage, disabled: pageDisabled }, services, doctors] = await Promise.all([
     getPublicPage(code, "GENERAL_CONSULTATION", lang as PublicLocale),
     getCountryServices(code, "GENERAL", lang),
     getCountryDoctors(code, lang),
   ]);
+
+  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
 
   // Long-form GP positioning copy (Ireland only for now). When present it
   // reshapes the hero headline and adds the marketing / FAQ / disclaimer

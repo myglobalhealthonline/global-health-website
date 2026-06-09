@@ -127,19 +127,25 @@ export function isSupportedLocale(value: string): value is PublicLocale {
   return SUPPORTED_LOCALE_SET.has(value);
 }
 
+export type PublicPageResult = {
+  record: PublicPageRecord | null;
+  disabled: boolean;
+};
+
 export const getPublicPage = cache(async (
   countryCode: string,
   pageKey: PublicPageKey,
   locale: PublicLocale,
-): Promise<PublicPageRecord | null> => {
+): Promise<PublicPageResult> => {
   // Backend uses the uppercase Prisma `LocaleCode` enum values.
   const backendLocale = locale.toUpperCase();
   const res = await fetchPublicPage(countryCode, pageKey, backendLocale);
   if (!res.ok) {
     logPublicContentFallback(`page:${countryCode}:${pageKey}:${locale}`, res.message);
-    return null;
+    return { record: null, disabled: false };
   }
-  const wrapper = res.data as { page?: unknown } | null;
-  if (!wrapper || typeof wrapper !== "object") return null;
-  return normalizePage(wrapper.page);
+  const wrapper = res.data as { page?: unknown; disabled?: boolean } | null;
+  if (!wrapper || typeof wrapper !== "object") return { record: null, disabled: false };
+  if (wrapper.disabled) return { record: null, disabled: true };
+  return { record: normalizePage(wrapper.page), disabled: false };
 });
