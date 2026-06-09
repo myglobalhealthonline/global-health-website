@@ -12,6 +12,7 @@ import {
   Lock,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
 export type TrustRibbonItem = {
   v: string;
@@ -55,49 +56,51 @@ export function TrustRibbon({ items, theme = "dark" }: { items?: TrustRibbonItem
       <div
         className="mx-auto max-w-[var(--container-width)] px-5 md:px-10"
       >
-        <ul
+        <RevealOnScroll
+          stagger
           className="grid gap-y-10 gap-x-6 grid-cols-2 lg:grid-cols-4"
           style={{
             borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.07)",
             paddingTop: "clamp(40px,5vw,56px)",
           }}
         >
-          {list.map((it, i) => {
-            const Icon = ICONS[it.icon ?? inferIcon(it.l)];
-            return (
-              <li
-                key={`${it.v}-${it.l}`}
-                className={`flex flex-col gap-3 ${i > 0 ? "lg:pl-6" : ""}`}
-              >
-                <span
-                  className="inline-flex size-10 items-center justify-center rounded-full"
-                  style={{
-                    background: isLight ? "rgba(29,75,54,0.08)" : "rgba(176,241,34,0.10)",
-                    border: isLight ? "1px solid rgba(29,75,54,0.20)" : "1px solid rgba(176,241,34,0.18)",
-                    color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
-                  }}
+            {list.map((it, i) => {
+              const Icon = ICONS[it.icon ?? inferIcon(it.l)];
+              return (
+                <div
+                  key={`${it.v}-${it.l}`}
+                  className={`flex flex-col gap-3 ${i > 0 ? "lg:pl-6" : ""}`}
+                  role="listitem"
                 >
-                  <Icon className="size-4" strokeWidth={1.5} aria-hidden />
-                </span>
-                <p
-                  className="font-extrabold tracking-[-0.04em] leading-none [font-variant-numeric:tabular-nums]"
-                  style={{
-                    fontSize: "clamp(1.75rem,3vw,2.5rem)",
-                    color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
-                  }}
-                >
-                  {it.v}
-                </p>
-                <p
-                  className="text-[11px] font-bold uppercase tracking-[0.14em]"
-                  style={{ color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.42)" }}
-                >
-                  {it.l}
-                </p>
-              </li>
-            );
-          })}
-        </ul>
+                  <span
+                    className="inline-flex size-10 items-center justify-center rounded-full"
+                    style={{
+                      background: isLight ? "rgba(29,75,54,0.08)" : "rgba(176,241,34,0.10)",
+                      border: isLight ? "1px solid rgba(29,75,54,0.20)" : "1px solid rgba(176,241,34,0.18)",
+                      color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
+                    }}
+                  >
+                    <Icon className="size-4" strokeWidth={1.5} aria-hidden />
+                  </span>
+                  <p
+                    className="font-extrabold tracking-[-0.04em] leading-none [font-variant-numeric:tabular-nums]"
+                    style={{
+                      fontSize: "clamp(1.75rem,3vw,2.5rem)",
+                      color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
+                    }}
+                  >
+                    {it.v}
+                  </p>
+                  <p
+                    className="text-[11px] font-bold uppercase tracking-[0.14em]"
+                    style={{ color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.42)" }}
+                  >
+                    {it.l}
+                  </p>
+                </div>
+              );
+            })}
+        </RevealOnScroll>
       </div>
     </section>
   );

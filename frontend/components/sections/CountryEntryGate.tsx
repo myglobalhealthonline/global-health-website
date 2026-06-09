@@ -18,6 +18,7 @@ import { ArrowRight } from "lucide-react";
 import type { CountryConfig } from "@/data/countries";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { countrySlug, registerCountrySlugs } from "@/lib/routing/country-slug";
+import { HeroReveal } from "@/components/motion/HeroReveal";
 import styles from "./CountryEntryGate.module.css";
 
 type Props = {
@@ -142,23 +143,30 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
         <div className={`${styles.content} w-full`}>
           {step === 0 ? (
             <>
-              <h1 className={`${styles.heroTitle} ${styles.heroTitleCountry} text-white`}>
+              <HeroReveal key="step0-h1" delay={0}>
+              <h1
+                className={`${styles.heroTitle} ${styles.heroTitleCountry} text-white`}
+              >
                 Where are <span className={styles.heroHighlight}>you</span>?
               </h1>
-              <p className={styles.heroLead}>
+              </HeroReveal>
+              <HeroReveal key="step0-lead" delay={80}>
+              <p className={`${styles.heroLead}`}>
                 We connect you with doctors registered in your country. Pick yours to continue.
               </p>
+              </HeroReveal>
 
               <div className={`${styles.countryGrid} mt-14 grid gap-3`}>
-                {countries.map((c) => {
+                {countries.map((c, i) => {
                   const meta = countryMeta?.[c.code];
                   const flagCls = flagClassForCode(c.code);
                   return (
+                    <HeroReveal key={`step0-country-${c.code}`} delay={i * 60 + 160}>
                     <button
-                      key={c.code}
                       type="button"
                       onClick={() => pickCountry(c.code)}
                       className={`${styles.countryCard} gh-landing-card flex flex-col gap-4 text-left text-white`}
+                      style={{ width: "100%" }}
                     >
                       <div className="flex items-center gap-3">
                         <span className={`${styles.flagWrap} inline-flex items-center justify-center`}>
@@ -183,6 +191,7 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
                         </span>
                       </div>
                     </button>
+                    </HeroReveal>
                   );
                 })}
               </div>
@@ -203,21 +212,28 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
                 Change country · {chosenCountry.name}
               </button>
 
-              <h1 className={`${styles.heroTitle} ${styles.heroTitleLanguage} text-white`}>
+              <HeroReveal key="step1-h1" delay={0}>
+              <h1
+                className={`${styles.heroTitle} ${styles.heroTitleLanguage} text-white`}
+              >
                 Choose your <span className={styles.heroHighlight}>language</span>
               </h1>
-              <p className={styles.heroLead}>
+              </HeroReveal>
+              <HeroReveal key="step1-lead" delay={80}>
+              <p className={`${styles.heroLead}`}>
                 Your consultation, your care, and the website — all in the language you
                 pick.
               </p>
+              </HeroReveal>
 
               <div className={`${styles.languageGrid} mt-12 grid gap-3`}>
-                {chosenCountry.supportedLocales.map((l) => (
+                {chosenCountry.supportedLocales.map((l, idx) => (
+                  <HeroReveal key={`step1-lang-${l}`} delay={idx * 80 + 160}>
                   <button
-                    key={l}
                     type="button"
                     onClick={() => enter(l)}
                     className={`${styles.languageCard} gh-landing-card flex items-center justify-between gap-4 text-left text-white`}
+                    style={{ width: "100%" }}
                   >
                     <div>
                       <p className={`${styles.langHello} text-white`}>{LANG_HELLO[l]}</p>
@@ -227,6 +243,7 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
                     </div>
                     <ArrowRight className={`${styles.langArrow} size-[18px]`} aria-hidden />
                   </button>
+                  </HeroReveal>
                 ))}
               </div>
             </>

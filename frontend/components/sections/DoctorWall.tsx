@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { Flag } from "@/components/ui/Flag";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
 export type DoctorWallItem = {
   id: string;
@@ -177,9 +178,9 @@ export function DoctorWall({
       </div>
 
       {/* 3-column grid */}
-      <ul className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+      <RevealOnScroll stagger className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
         {paged.map((d) => (
-          <li key={d.id}>
+          <div key={d.id}>
             <DoctorCard
               name={d.name}
               title={d.role}
@@ -195,9 +196,9 @@ export function DoctorWall({
               bookingHref={d.bookingHref ?? bookHref}
               ctaLabel="View profile"
             />
-          </li>
+          </div>
         ))}
-      </ul>
+      </RevealOnScroll>
     </div>
   );
 
