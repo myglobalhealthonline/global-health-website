@@ -16,9 +16,8 @@ export default function AboutPage() {
       {/* DARK — hero */}
       <PageHero
         countryLabel="Global Health · About"
-        titleLead="A small team building"
-        titleAccent="grown-up"
-        titleTrail="online healthcare."
+        titleLead="Grown-up online"
+        titleAccent="healthcare."
         lede={
           <>
             Medicine Anytime Anywhere. We&apos;re a European telemedicine platform connecting patients
