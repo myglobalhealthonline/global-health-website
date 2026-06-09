@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SITE_NAME } from "@/lib/constants";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const metadata: Metadata = {
   title: "Terms of service",
   description: `The terms that apply when you use ${SITE_NAME} to book an online consultation.`,
 };
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  const locale = await getPageLocale();
+  const { terms } = loadLocaleBundle(locale).legal;
+
   return (
     <>
       {/* Dark header */}
@@ -23,7 +28,7 @@ export default function TermsPage() {
             className="text-[11px] font-bold uppercase tracking-[0.2em]"
             style={{ color: "var(--color-brand-accent)" }}
           >
-            Legal
+            {terms.eyebrow}
           </p>
           <h1
             className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
@@ -32,10 +37,10 @@ export default function TermsPage() {
               color: "rgba(255,255,255,0.95)",
             }}
           >
-            Terms of service
+            {terms.title}
           </h1>
           <p className="mt-3 text-sm" style={{ color: "rgba(255,255,255,0.65)" }}>
-            Last updated: 9 June 2026
+            {terms.lastUpdated}
           </p>
         </div>
       </section>
@@ -47,146 +52,87 @@ export default function TermsPage() {
       >
         <div className="space-y-8 text-base leading-relaxed text-[var(--color-text-body)]">
           <section>
-            <p>
-              These terms apply when you use {SITE_NAME} to book or attend an
-              online consultation. By booking, you agree to them. They are
-              general terms of use and are not a substitute for the specific
-              consent and clinical information you receive at the time of your
-              consultation.
-            </p>
+            <p>{terms.intro}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-              What the service is
+              {terms.s1_h}
             </h2>
-            <p className="mt-2">
-              {SITE_NAME} connects you with doctors registered to practise in
-              the country you book in, for consultations held online. The
-              clinical relationship is between you and the treating clinician,
-              who is responsible for their own clinical decisions within the
-              limits of their registration.
-            </p>
+            <p className="mt-2">{terms.s1_p}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-              Not for emergencies
+              {terms.s2_h}
             </h2>
-            <p className="mt-2">
-              Online consultations are not suitable for medical emergencies. If
-              this is an emergency, or you think your life or someone else&apos;s
-              is at risk, call 112 (or your local emergency number) or go to your
-              nearest emergency department. Do not use this service to seek
-              urgent or emergency care.
-            </p>
+            <p className="mt-2">{terms.s2_p}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-              No guaranteed outcome
+              {terms.s3_h}
             </h2>
-            <p className="mt-2">
-              Booking a consultation pays for the clinician&apos;s time and
-              assessment. It does not guarantee any particular outcome. Whether a
-              prescription, medical certificate, referral, or other document is
-              issued is decided by the treating clinician following assessment,
-              where it is clinically appropriate and legally permitted. A
-              prescription or certificate is never guaranteed in advance.
-            </p>
+            <p className="mt-2">{terms.s3_p}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-              Eligibility and accurate information
+              {terms.s4_h}
             </h2>
-            <p className="mt-2">
-              You must provide accurate personal and health information so the
-              clinician can assess you safely. Consultations are intended for
-              adults; care for a minor must be arranged by a parent or guardian
-              where that is supported in your country. Using inaccurate
-              information may make a consultation unsafe and is not permitted.
-            </p>
+            <p className="mt-2">{terms.s4_p}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-              Bookings, payment, and cancellations
+              {terms.s5_h}
             </h2>
-            <p className="mt-2">
-              Prices are shown before payment and are charged securely through
-              Stripe — we never see your card number. Availability of
-              appointments depends on clinician calendars and is not guaranteed.
-              Cancellation and refund arrangements depend on the country and
-              clinic you book with; where a consultation has not taken place,
-              contact us and we will help resolve it fairly.
-            </p>
+            <p className="mt-2">{terms.s5_p}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-              Your account
+              {terms.s6_h}
             </h2>
             <p className="mt-2">
-              Keep your login details confidential — you are responsible for
-              activity under your account. Tell us promptly if you believe your
-              account has been used without your permission. How we handle your
-              data is described in our{" "}
+              {terms.s6_p_pre}
               <Link
                 href="/privacy"
                 className="font-medium text-[var(--color-brand-primary)] underline underline-offset-2"
               >
-                Privacy notice
+                {terms.s6_link}
               </Link>
-              .
+              {terms.s6_p_post}
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-              Content and intellectual property
+              {terms.s7_h}
             </h2>
-            <p className="mt-2">
-              The {SITE_NAME} website, brand, and its content are owned by us or
-              our licensors and are provided for your personal use in booking
-              care. Health information on this website is general guidance only
-              and does not replace advice from a qualified healthcare
-              professional.
-            </p>
+            <p className="mt-2">{terms.s7_p}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-              Liability
+              {terms.s8_h}
             </h2>
-            <p className="mt-2">
-              To the extent permitted by law, {SITE_NAME} is not liable for loss
-              arising from use of the website outside its intended purpose, from
-              inaccurate information you provide, or from using the service for
-              emergencies. Nothing in these terms limits liability that cannot be
-              limited by law, including liability for death or personal injury
-              caused by negligence.
-            </p>
+            <p className="mt-2">{terms.s8_p}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-              Changes and governing law
+              {terms.s9_h}
             </h2>
-            <p className="mt-2">
-              We may update these terms from time to time; the date above shows
-              the latest version. The legal entity providing the service and the
-              governing law depend on the country you book in — see the relevant
-              country pages for local details.
-            </p>
+            <p className="mt-2">{terms.s9_p}</p>
           </section>
 
           <section>
             <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-              Contact
+              {terms.s10_h}
             </h2>
             <p className="mt-2">
-              Questions about these terms? Email us at{" "}
+              {terms.s10_pre}{" "}
               <a
                 href="mailto:info@myglobalhealth.online"
                 className="font-medium text-[var(--color-brand-primary)] underline underline-offset-2"

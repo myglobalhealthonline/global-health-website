@@ -106,9 +106,14 @@ export function mergeCountryConfigWithBackend(
         ? backend.slug.trim().toLowerCase()
         : fallback.slug,
     ...(backend.defaultLocale ? { defaultLocale: backend.defaultLocale } : {}),
-    ...(backend.supportedLocales && backend.supportedLocales.length > 0
-      ? { supportedLocales: backend.supportedLocales }
-      : {}),
+    ...((() => {
+      const combined = [
+        ...fallback.supportedLocales,
+        ...(backend.supportedLocales ?? []),
+      ];
+      const deduped = [...new Set(combined)];
+      return deduped.length > 0 ? { supportedLocales: deduped } : {};
+    })()),
     ...(backend.enabledFeatures && backend.enabledFeatures.length > 0
       ? { enabledFeatures: backend.enabledFeatures }
       : {}),

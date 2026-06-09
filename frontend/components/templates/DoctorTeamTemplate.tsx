@@ -28,18 +28,29 @@ type Doctor = {
   ctaLabel?: string;
 };
 
+export type DoctorTeamI18n = {
+  theTeamBadge: string;
+  heroTitleLead: string;
+  heroTitleAccent: string;
+  heroTitleTrail: string;
+  heroLedeTemplate: string;
+  heroAvailableSingular: string;
+  heroAvailablePlural: string;
+  onboardingTitle: string;
+  onboardingBodyTemplate: string;
+  bottomCtaTitle: string;
+  bottomCtaAccent: string;
+};
+
 type DoctorTeamTemplateProps = {
   countryName: string;
   doctors: Doctor[];
   bookingHref: string;
   bookingLabel: string;
   showBottomCta?: boolean;
-  /** Optional filter bar rendered at the top of the grid section
-   *  (above the doctor cards, on the dark background). */
   filters?: ReactNode;
-  /** Optional featured-doctor spotlight rendered between the hero and
-   *  the filters/grid (the admin-chosen featured doctor). */
   spotlight?: ReactNode;
+  i18n?: DoctorTeamI18n;
 };
 
 export function DoctorTeamTemplate({
@@ -50,6 +61,7 @@ export function DoctorTeamTemplate({
   showBottomCta = false,
   filters,
   spotlight,
+  i18n,
 }: DoctorTeamTemplateProps) {
   const [page, setPage] = useState(0);
   const totalPages = Math.ceil(doctors.length / PAGE_SIZE);
@@ -61,18 +73,19 @@ export function DoctorTeamTemplate({
   return (
     <main style={{ background: "var(--color-background-dark)" }}>
       <PageHero
-        countryLabel={`${countryName} · The team`}
-        titleLead="Doctors who"
-        titleAccent="actually"
-        titleTrail="pick up."
+        countryLabel={`${countryName} · ${i18n?.theTeamBadge ?? "The team"}`}
+        titleLead={i18n?.heroTitleLead ?? "Doctors who"}
+        titleAccent={i18n?.heroTitleAccent ?? "actually"}
+        titleTrail={i18n?.heroTitleTrail ?? "pick up."}
         lede={
           <>
-            Every clinician below is licensed in {countryName}, vetted for
-            online care, and reviewed by patients after each consultation.
+            {(i18n?.heroLedeTemplate ?? "Every clinician below is licensed in {country}, vetted for online care, and reviewed by patients after each consultation.").replace("{country}", countryName)}
             <br />
             <span className="text-white/55">
-              {doctors.length} licensed{" "}
-              {doctors.length === 1 ? "clinician" : "clinicians"} available
+              {doctors.length}{" "}
+              {doctors.length === 1
+                ? (i18n?.heroAvailableSingular ?? "licensed clinician available")
+                : (i18n?.heroAvailablePlural ?? "licensed clinicians available")}
             </span>
           </>
         }
@@ -101,11 +114,10 @@ export function DoctorTeamTemplate({
                 className="gh-display text-[2rem]"
                 style={{ fontWeight: 800, color: "rgba(255,255,255,0.92)" }}
               >
-                Onboarding clinicians.
+                {i18n?.onboardingTitle ?? "Onboarding clinicians."}
               </h2>
               <p className="mt-4 text-[15px]" style={{ color: "rgba(255,255,255,0.65)" }}>
-                Our {countryName} medical team is being verified. Check back
-                soon — or book with our cross-border specialists.
+                {(i18n?.onboardingBodyTemplate ?? "Our {country} medical team is being verified. Check back soon — or book with our cross-border specialists.").replace("{country}", countryName)}
               </p>
               <Link
                 href={bookingHref}
@@ -199,8 +211,8 @@ export function DoctorTeamTemplate({
                 className="gh-display text-[clamp(2rem,4.5vw,4rem)]"
                 style={{ fontWeight: 800, color: "rgba(255,255,255,0.92)" }}
               >
-                Pick a clinician. Book{" "}
-                <em style={{ fontStyle: "italic", color: "var(--color-brand-accent)" }}>the same day.</em>
+                {i18n?.bottomCtaTitle ?? "Pick a clinician. Book"}{" "}
+                <em style={{ fontStyle: "italic", color: "var(--color-brand-accent)" }}>{i18n?.bottomCtaAccent ?? "the same day."}</em>
               </h2>
               <Link
                 href={bookingHref}

@@ -11,6 +11,17 @@ export type LiveDoctorItem = {
   imageSrc?: string | null;
 };
 
+export type HomeHeroI18n = {
+  titleMain: string;
+  titleAccent: string;
+  subtitle: string;
+  cta: string;
+  secondary: string;
+  trustLicensed: string;
+  trustAvailability: string;
+  trustAppointments: string;
+};
+
 export function HomeHero({
   countryCode,
   countryName,
@@ -23,6 +34,7 @@ export function HomeHero({
   heroSubtitle,
   heroImageSrc,
   ctaLabel,
+  i18n,
 }: {
   countryCode: CountryCode;
   countryName: string;
@@ -35,10 +47,11 @@ export function HomeHero({
   heroSubtitle?: string | null;
   heroImageSrc?: string | null;
   ctaLabel?: string | null;
+  i18n?: HomeHeroI18n;
 }) {
   const displayHeroTitle = heroTitle?.trim() || null;
   const displayHeroSubtitle = heroSubtitle?.trim() || null;
-  const displayCtaLabel = ctaLabel?.trim() || "Book Appointment";
+  const displayCtaLabel = ctaLabel?.trim() || i18n?.cta || "Book Appointment";
   const doctorsForPanel = (liveDoctors ?? []).slice(0, 4);
   const heroPhotoSrc = normalizeHeroPhoto(heroImageSrc);
   const unoptimizedHeroPhoto =
@@ -96,9 +109,9 @@ export function HomeHero({
                 displayHeroTitle
               ) : (
                 <>
-                  Medicine Anytime{" "}
+                  {i18n?.titleMain ?? "Medicine Anytime"}{" "}
                   <span style={{ color: "var(--color-brand-accent)" }}>
-                    Anywhere.
+                    {i18n?.titleAccent ?? "Anywhere."}
                   </span>
                 </>
               )}
@@ -111,7 +124,8 @@ export function HomeHero({
               style={{ color: "rgba(255,255,255,0.75)" }}
             >
               {displayHeroSubtitle ??
-                "Choose a service, select an open time, and speak with licensed clinicians registered with national medical councils across Europe."}
+                (i18n?.subtitle ??
+                  "Choose a service, select an open time, and speak with licensed clinicians registered with national medical councils across Europe.")}
             </p>
           </HeroReveal>
 
@@ -147,7 +161,7 @@ export function HomeHero({
                   focus-visible:outline-none
                 "
               >
-                Browse services
+                {i18n?.secondary ?? "Browse services"}
               </Link>
             </div>
           </HeroReveal>
@@ -155,9 +169,9 @@ export function HomeHero({
           <HeroReveal delay={440}>
             <ul className="mt-12 flex flex-wrap gap-x-8 gap-y-2">
               {[
-                { icon: ShieldCheck, label: `Licensed in ${countryName}` },
-                { icon: Clock, label: "Live availability" },
-                { icon: Stethoscope, label: "Online appointments" },
+                { icon: ShieldCheck, label: `${i18n?.trustLicensed ?? "Licensed in"} ${countryName}` },
+                { icon: Clock, label: i18n?.trustAvailability ?? "Live availability" },
+                { icon: Stethoscope, label: i18n?.trustAppointments ?? "Online appointments" },
               ].map(({ icon: Icon, label }) => (
                 <li
                   key={label}

@@ -44,6 +44,7 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { SITE_NAME } from "@/lib/constants";
 
 type Params = { country: string; lang: string };
@@ -145,6 +146,7 @@ export default async function CountryLangHomePage({
   params: Promise<Params>;
 }) {
   const { country: slug, lang } = await params;
+  const { home: t } = loadLocaleBundle(lang as LocaleCode);
   const code = countryCodeFromSlug(slug);
   if (!code) notFound();
   const config = await getPublicCountryByCode(code);
@@ -277,37 +279,31 @@ export default async function CountryLangHomePage({
     initials: initialsFromName(d.fullName),
     href: `/${slug}/${lang}/doctors/${d.slug}`,
     bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
-    ctaLabel: "View profile",
+    ctaLabel: t.team.ctaView,
   }));
 
   const trustItems: TrustRibbonItem[] = [
     {
-      // Show a rounded "N+" only once the roster is big enough to justify it;
-      // for small counts show the exact number so the ribbon doesn't read as
-      // marketing puffery.
       v:
         countryDoctors.length >= 10
           ? `${Math.floor(countryDoctors.length / 10) * 10}+`
           : String(countryDoctors.length),
-      l: countryDoctors.length === 1 ? "Licensed doctor" : "Licensed doctors",
+      l: countryDoctors.length === 1 ? t.trust.licensedSingular : t.trust.licensedPlural,
       icon: "doctor",
     },
     {
       v: String(countries.length),
-      l: "European markets · EU-registered",
+      l: t.trust.markets,
       icon: "globe",
     },
     {
       v: "GDPR",
-      l: "Compliant by default",
+      l: t.trust.gdpr,
       icon: "lock",
     },
     {
-      // Fourth slot — fills the 4-up grid on lg. Concrete claim, no
-      // Avoid absolute wait-time promises; slot availability is live
-      // inventory and varies by doctor.
       v: "Live",
-      l: "Slots subject to availability",
+      l: t.trust.slots,
       icon: "sparkles",
     },
   ];
@@ -337,23 +333,23 @@ export default async function CountryLangHomePage({
   const statsItems: StatBandItem[] = [
     {
       value: String(totalDoctorsAcrossEurope),
-      label: "Licensed clinicians",
-      caption: "Registered with their local medical council.",
+      label: t.statsBand.stat1Label,
+      caption: t.statsBand.stat1Caption,
     },
     {
       value: String(countries.length),
-      label: "European markets",
-      caption: "EU-registered, GDPR-compliant by default.",
+      label: t.statsBand.stat2Label,
+      caption: t.statsBand.stat2Caption,
     },
     {
-      value: "Live",
-      label: "Availability",
-      caption: "Open slots are shown from live doctor calendars.",
+      value: t.statsBand.stat3Value,
+      label: t.statsBand.stat3Label,
+      caption: t.statsBand.stat3Caption,
     },
     {
       value: String(totalServicesAcrossEurope),
-      label: "Bookable services",
-      caption: "Consultations, referrals, and home tests.",
+      label: t.statsBand.stat4Label,
+      caption: t.statsBand.stat4Caption,
     },
   ];
 
@@ -383,13 +379,14 @@ export default async function CountryLangHomePage({
         heroSubtitle={page?.heroSubtitle ?? null}
         heroImageSrc={page?.heroImageSrc ?? null}
         ctaLabel={page?.ctaLabel ?? null}
+        i18n={t.countryHero}
       />
       <CountryMarquee countries={marqueeCountries} />
       <RichBodySection html={page?.body} theme="light" />
       <TrustRibbon items={trustItems} />
       <ReviewBadge countryName={config.name} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} />
-      <StatsBand items={statsItems} theme="light" />
+      <StatsBand items={statsItems} theme="light" i18n={t.statsBand} />
       {/* ── Team section — featured card + full grid under one heading ── */}
       <section className="relative" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div
@@ -408,26 +405,24 @@ export default async function CountryLangHomePage({
                   color: "var(--color-brand-accent)",
                 }}
               >
-                The team
+                {t.team.eyebrow}
               </span>
               <span
                 className="text-[11px] font-bold uppercase tracking-[0.14em] [font-variant-numeric:tabular-nums]"
                 style={{ color: "rgba(255,255,255,0.42)" }}
               >
-                {countryDoctors.length} registered {countryDoctors.length === 1 ? "clinician" : "clinicians"}
+                {countryDoctors.length} {countryDoctors.length === 1 ? t.team.registeredSingular : t.team.registeredPlural}
               </span>
             </div>
             <h2
               className="mt-3 max-w-[22ch] text-[length:var(--text-h1)] font-extrabold tracking-[-0.03em] leading-[1.02]"
               style={{ color: "rgba(255,255,255,0.92)" }}
             >
-              The clinician you choose is{" "}
-              <span style={{ color: "var(--color-brand-accent)" }}>the clinician you see.</span>
+              {t.team.headline}{" "}
+              <span style={{ color: "var(--color-brand-accent)" }}>{t.team.headlineAccent}</span>
             </h2>
             <p className="mt-5 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
-              Every consultation is with someone licensed where you are. No
-              call centres, no rota of strangers — the doctor on screen is
-              the doctor on the profile.
+              {t.team.body}
             </p>
           </div>
 
@@ -464,8 +459,8 @@ export default async function CountryLangHomePage({
           <DoctorsSection doctors={teamDoctorItems} theme="light" bare />
         </div>
       </section>
-      <HowItWorksNarrative theme="light" />
-      <FinalCTA primaryHref={bookHref} secondaryHref={doctorsHref} />
+      <HowItWorksNarrative theme="light" i18n={t.howItWorks} />
+      <FinalCTA primaryHref={bookHref} secondaryHref={doctorsHref} i18n={t.finalCta} />
       <StickyBookingCTA href={bookHref} />
     </>
   );

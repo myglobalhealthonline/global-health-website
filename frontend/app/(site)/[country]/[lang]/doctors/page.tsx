@@ -24,6 +24,8 @@ import { RichBodySection } from "@/components/sections/RichBodySection";
 import { DoctorFilters, type FilterGroup } from "@/components/sections/DoctorFilters";
 import { languageKey, languageLabel } from "@/lib/content/languages";
 import { SITE_NAME } from "@/lib/constants";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type Params = { country: string; lang: string };
 type SearchParams = { lang?: string | string[]; specialty?: string | string[] };
@@ -98,6 +100,8 @@ export default async function CountryLangDoctorsPage({
   const filterLangs = parseMultiParam(sp?.lang).map((s) => languageKey(s));
   const filterSpecs = parseMultiParam(sp?.specialty).map((s) => specialtySlug(s));
 
+  const { common } = loadLocaleBundle(lang as LocaleCode);
+
   const [doctors, { record: rawPage, disabled: pageDisabled }] = await Promise.all([
     getCountryDoctors(code, lang),
     getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale),
@@ -161,7 +165,7 @@ export default async function CountryLangDoctorsPage({
     imageSrc: d.imageSrc,
     href: `/${slug}/${lang}/doctors/${d.slug}`,
     bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
-    ctaLabel: "View profile",
+    ctaLabel: common.doctors.viewProfile,
   }));
 
   // Build a toggle href: flips one token in its param while preserving
@@ -188,7 +192,7 @@ export default async function CountryLangDoctorsPage({
 
   const filterGroups: FilterGroup[] = [
     {
-      heading: "Speaks",
+      heading: common.doctors.filterSpeaks,
       options: langOptions.map(([codeKey, label]) => ({
         token: codeKey,
         label,
@@ -197,7 +201,7 @@ export default async function CountryLangDoctorsPage({
       })),
     },
     {
-      heading: "Specialty",
+      heading: common.doctors.filterSpecialty,
       options: specOptions.map(([specKey, name]) => ({
         token: specKey,
         label: name,
@@ -220,7 +224,8 @@ export default async function CountryLangDoctorsPage({
         countryName={config.name}
         doctors={doctorCards}
         bookingHref={buildBookHref({ country: slug, lang })}
-        bookingLabel="Book appointment"
+        bookingLabel={common.doctors.bookAppointment}
+        i18n={common.doctors}
         spotlight={
           featured ? (
             <div key="featured-spotlight" className="mb-10">
@@ -251,6 +256,7 @@ export default async function CountryLangDoctorsPage({
             groups={filterGroups}
             clearHref={`/${slug}/${lang}/doctors`}
             hasActive={hasActive}
+            clearLabel={common.doctors.clearFilters}
           />
         }
       />

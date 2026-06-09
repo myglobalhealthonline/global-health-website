@@ -19,6 +19,7 @@ import {
 import { parseSitePath } from "@/lib/routing/path-rewrites";
 import { buildBookHref } from "@/lib/routing/book-href";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
+import type { SiteNavigationData } from "@/data/navigation";
 import {
   IconInstagram,
   IconFacebook,
@@ -44,40 +45,26 @@ const SOCIAL_FIELDS: ReadonlyArray<{
   { key: "youtubeUrl", Icon: IconYoutube, label: "YouTube" },
 ];
 
-// Care column spec. Each entry: featureFlag key, label, route segment.
-// flatMap below drops entries whose feature is off so the column stays
-// clean without per-entry ternaries.
-const CARE_FIELDS: ReadonlyArray<{
-  flag: string | null;
-  label: string;
-  slug: string;
-}> = [
-  { flag: "general-consultations", label: "Book a GP Appointment", slug: "gp-appointment" },
-  { flag: "specialist-consultations", label: "See a Specialist", slug: "see-a-specialist" },
-  { flag: "online-prescriptions", label: "Repeat Prescription Request", slug: "repeat-prescription-request" },
-  { flag: "health-tests", label: "Lab Test Booking", slug: "lab-tests" },
-  { flag: null, label: "Our doctors", slug: "doctors" },
+type CareField = { flag: string | null; labelKey: keyof SiteNavigationData; slug: string };
+const CARE_FIELDS: ReadonlyArray<CareField> = [
+  { flag: "general-consultations", labelKey: "navBookGp", slug: "gp-appointment" },
+  { flag: "specialist-consultations", labelKey: "navSeeSpecialist", slug: "see-a-specialist" },
+  { flag: "online-prescriptions", labelKey: "navRepeatPrescription", slug: "repeat-prescription-request" },
+  { flag: "health-tests", labelKey: "navLabTests", slug: "lab-tests" },
+  { flag: null, labelKey: "footerOurDoctors", slug: "doctors" },
 ];
 
 export function SiteFooter({
   siteName,
+  navigation,
   countryFeatures,
   countryFooters,
   countries,
 }: {
   siteName: string;
-  /** Code → enabled feature slugs (same shape SiteHeader receives).
-   *  Used to gate Prescriptions / Health tests links so the footer
-   *  doesn't expose pages the country has toggled off — those pages
-   *  hard-404, which used to look like broken footer links. */
+  navigation: SiteNavigationData;
   countryFeatures?: Record<string, string[] | undefined>;
-  /** Per-country footer overrides keyed by lowercase country code.
-   *  When the visitor is inside `/<country>/<lang>/*` and an override
-   *  exists, it replaces the brand block + adds the admin-managed
-   *  contact, social, custom columns, and copyright. */
   countryFooters?: Record<string, PublicCountryFooter | null>;
-  /** Active countries from the CMS. Falls back to the static seed list
-   *  when not provided so the footer renders on every context. */
   countries?: CountryConfig[];
 }) {
   const pathname = usePathname() || "/";
@@ -111,11 +98,11 @@ export function SiteFooter({
       ? buildBookHref({ country: parsed.country, lang: parsed.lang })
       : "/";
   const careLinks = [
-    { label: "Book Appointment", href: bookHref },
+    { label: navigation.navBookAppointment, href: bookHref },
     ...CARE_FIELDS.flatMap((entry) =>
       entry.flag !== null && !isFeatureEnabled(entry.flag)
         ? []
-        : [{ label: entry.label, href: careBase ? `${careBase}/${entry.slug}` : "/" }],
+        : [{ label: navigation[entry.labelKey] as string, href: careBase ? `${careBase}/${entry.slug}` : "/" }],
     ),
   ];
 
@@ -130,19 +117,19 @@ export function SiteFooter({
   }));
 
   const accountLinks = [
-    { label: "Sign in", href: "/login" },
-    { label: "Create account", href: "/register" },
-    { label: "Forgot password?", href: "/forgot-password" },
-    { label: "My account", href: "/account" },
+    { label: navigation.footerSignIn, href: "/login" },
+    { label: navigation.footerCreateAccount, href: "/register" },
+    { label: navigation.footerForgotPassword, href: "/forgot-password" },
+    { label: navigation.footerMyAccount, href: "/account" },
   ];
 
   const companyLinks = [
-    { label: "Blog", href: "/blog" },
-    { label: "FAQ", href: "/faq" },
-    { label: "About", href: "/about" },
-    { label: "Contact us", href: "/contact" },
-    { label: "Privacy policy", href: "/privacy" },
-    { label: "Terms of service", href: "/terms" },
+    { label: navigation.navBlog, href: "/blog" },
+    { label: navigation.navFaq, href: "/faq" },
+    { label: navigation.navAbout, href: "/about" },
+    { label: navigation.footerContactUs, href: "/contact" },
+    { label: navigation.footerPrivacyPolicy, href: "/privacy" },
+    { label: navigation.footerTermsOfService, href: "/terms" },
   ];
 
   // Built-in groups stay auto-derived (Care + Clinics from features,
@@ -150,10 +137,10 @@ export function SiteFooter({
   // override appends custom columns AFTER these — the patient still
   // sees the in-country service links and country picker.
   const groups: Array<{ h: string; items: Array<{ label: string; href: string; external?: boolean }> }> = [
-    { h: "Care", items: careLinks },
-    { h: "Clinics", items: clinicsLinks },
-    { h: "Account", items: accountLinks },
-    { h: "Company", items: companyLinks },
+    { h: navigation.footerCareHeading, items: careLinks },
+    { h: navigation.footerClinicsHeading, items: clinicsLinks },
+    { h: navigation.footerAccountHeading, items: accountLinks },
+    { h: navigation.footerCompanyHeading, items: companyLinks },
     ...(override?.customColumns ?? []).map((c) => ({ h: c.title, items: c.links })),
   ];
 
@@ -161,9 +148,7 @@ export function SiteFooter({
   // country scope or when admin hasn't customised. The default tagline
   // matches the historical hard-coded copy so non-customised countries
   // look the same as before this feature shipped.
-  const tagline =
-    override?.tagline ??
-    "Medicine anytime anywhere. Online medical consultations with locally-registered doctors across Europe.";
+  const tagline = override?.tagline ?? navigation.footerTagline;
   const contactEmail = override?.contactEmail ?? "info@myglobalhealth.online";
   const contactPhone = override?.contactPhone ?? null;
   const contactAddress = override?.contactAddress ?? null;
@@ -256,6 +241,12 @@ export function SiteFooter({
               <NewsletterSignup
                 countryCode={parsed.country ?? null}
                 locale={parsed.lang ?? null}
+                i18n={{
+                  stayInformed: navigation.footerStayInformed,
+                  newsletterDesc: navigation.footerNewsletterDesc,
+                  subscribe: navigation.footerSubscribe,
+                  newsletterSuccess: navigation.footerNewsletterSuccess,
+                }}
               />
             </div>
           </div>
@@ -320,11 +311,7 @@ export function SiteFooter({
           className="mt-12 max-w-[980px] text-sm leading-relaxed"
           style={{ color: "rgba(255,255,255,0.58)" }}
         >
-          Online consultations are not a substitute for emergency care. If you
-          need urgent help, call 112 or your local emergency number. Information
-          on this website is general guidance; prescriptions, certificates,
-          referrals and next steps depend on clinical assessment and are issued
-          at the treating clinician&apos;s discretion.
+          {navigation.footerDisclaimer}
         </p>
 
         <div
@@ -338,14 +325,14 @@ export function SiteFooter({
           }}
         >
           <span suppressHydrationWarning>
-            {copyrightPrefix} · Medicine anytime anywhere
+            {copyrightPrefix} · {navigation.footerCopyrightSuffix}
           </span>
           <span className="flex gap-3">
             <Link href="/privacy" className="transition-colors hover:text-white focus-visible:text-white focus-visible:outline-none" style={{ color: "inherit", textDecoration: "none" }}>
-              Privacy
+              {navigation.footerPrivacyLink}
             </Link>
             <span aria-hidden>·</span>
-            <span>EU-registered telemedicine provider · GDPR compliant</span>
+            <span>{navigation.footerEuCompliant}</span>
           </span>
         </div>
       </div>

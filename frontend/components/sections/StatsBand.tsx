@@ -12,7 +12,14 @@ export type StatBandItem = {
   caption?: string;
 };
 
-export function StatsBand({ items, theme = "dark" }: { items: StatBandItem[]; theme?: "dark" | "light" }) {
+export type StatsBandI18n = {
+  eyebrow: string;
+  headline: string;
+  headlineAccent: string;
+  body: string;
+};
+
+export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem[]; theme?: "dark" | "light"; i18n?: StatsBandI18n }) {
   if (!items || items.length === 0) return null;
 
   const isLight = theme === "light";
@@ -37,7 +44,7 @@ export function StatsBand({ items, theme = "dark" }: { items: StatBandItem[]; th
               className="text-[11px] font-bold tracking-[0.22em] uppercase"
               style={{ color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
             >
-              The platform
+              {i18n?.eyebrow ?? "The platform"}
             </p>
             <h2
               className="mt-4 font-extrabold leading-[1.02] tracking-[-0.03em]"
@@ -47,8 +54,10 @@ export function StatsBand({ items, theme = "dark" }: { items: StatBandItem[]; th
                 maxWidth: "18ch",
               }}
             >
-              Built for people who shouldn&apos;t have to{" "}
-              <span style={{ color: isLight ? "#8FB021" : "var(--color-brand-accent)" }}>wait</span>.
+              {i18n?.headline ?? "Built for people who shouldn't have to"}{" "}
+              <span style={{ color: isLight ? "#8FB021" : "var(--color-brand-accent)" }}>
+                {i18n?.headlineAccent ?? "wait"}
+              </span>.
             </h2>
             <p
               className="mt-5 leading-relaxed"
@@ -58,8 +67,7 @@ export function StatsBand({ items, theme = "dark" }: { items: StatBandItem[]; th
                 maxWidth: "38ch",
               }}
             >
-              Access licensed clinicians through open appointment slots,
-              clear profiles, and service-specific booking steps.
+              {i18n?.body ?? "Access licensed clinicians through open appointment slots, clear profiles, and service-specific booking steps."}
             </p>
           </div>
         </RevealOnScroll>

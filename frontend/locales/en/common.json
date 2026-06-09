@@ -19,7 +19,21 @@
     "partnerClinics": "Partner Clinics",
     "searchCountryOrService": "Search country or service",
     "viewAllClinics": "View All Clinics",
-    "trustedCareAcrossEurope": "Trusted care across Europe"
+    "trustedCareAcrossEurope": "Trusted care across Europe",
+    "home": "Home",
+    "doctors": "Doctors",
+    "services": "Services",
+    "contact": "Contact",
+    "bookAppointment": "Book Appointment",
+    "bookShort": "Book",
+    "bookGp": "Book a GP Appointment",
+    "bookGpDesc": "General practitioners registered in your country",
+    "seeSpecialist": "See a Specialist",
+    "seeSpecialistDesc": "Cardiology, dermatology, paediatrics + more",
+    "repeatPrescription": "Repeat Prescription Request",
+    "repeatPrescriptionDesc": "Reviewed by licensed doctors, sent to your pharmacy",
+    "labTests": "Lab Test Booking",
+    "labTestsDesc": "Lab-quality kits reviewed by our doctors"
   },
   "footer": {
     "company": "Company",
@@ -37,7 +51,28 @@
     "privacy": "Privacy Policy",
     "copyright": "All rights reserved.",
     "cta": "Start Your Online Consultation",
-    "trustLine": "Licensed care · Privacy-first · Europe-wide clinics"
+    "trustLine": "Licensed care · Privacy-first · Europe-wide clinics",
+    "careHeading": "Care",
+    "clinicsHeading": "Clinics",
+    "accountHeading": "Account",
+    "companyHeading": "Company",
+    "ourDoctors": "Our doctors",
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "forgotPassword": "Forgot password?",
+    "myAccount": "My account",
+    "contactUs": "Contact us",
+    "privacyPolicy": "Privacy policy",
+    "termsOfService": "Terms of service",
+    "tagline": "Medicine anytime anywhere. Online medical consultations with locally-registered doctors across Europe.",
+    "stayInformed": "Stay informed",
+    "newsletterDesc": "Quarterly updates on new countries, doctors, and health topics. No spam.",
+    "subscribe": "Subscribe",
+    "newsletterSuccess": "Thanks — you're on the list.",
+    "disclaimer": "Online consultations are not a substitute for emergency care. If you need urgent help, call 112 or your local emergency number. Information on this website is general guidance; prescriptions, certificates, referrals and next steps depend on clinical assessment and are issued at the treating clinician's discretion.",
+    "copyrightSuffix": "Medicine anytime anywhere",
+    "privacyLink": "Privacy",
+    "euCompliant": "EU-registered telemedicine provider · GDPR compliant"
   },
   "countrySelector": {
     "title": "Choose your country",
@@ -46,5 +81,33 @@
   },
   "cta": {
     "primaryBooking": "Book Online"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The page you are looking for does not exist or has been moved.",
+    "cta": "Back to home"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "tryAgain": "Try again",
+    "backToHome": "Back to home"
+  },
+  "doctors": {
+    "theTeamBadge": "The team",
+    "heroTitleLead": "Doctors who",
+    "heroTitleAccent": "actually",
+    "heroTitleTrail": "pick up.",
+    "heroLedeTemplate": "Every clinician below is licensed in {country}, vetted for online care, and reviewed by patients after each consultation.",
+    "heroAvailableSingular": "licensed clinician available",
+    "heroAvailablePlural": "licensed clinicians available",
+    "onboardingTitle": "Onboarding clinicians.",
+    "onboardingBodyTemplate": "Our {country} medical team is being verified. Check back soon — or book with our cross-border specialists.",
+    "bottomCtaTitle": "Pick a clinician. Book",
+    "bottomCtaAccent": "the same day.",
+    "filterSpeaks": "Speaks",
+    "filterSpecialty": "Specialty",
+    "clearFilters": "Clear all filters",
+    "viewProfile": "View profile",
+    "bookAppointment": "Book appointment"
   }
 }

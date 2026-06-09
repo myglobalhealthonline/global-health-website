@@ -6,6 +6,8 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { PageHero } from "@/components/sections/PageHero";
 import { FAQTabs } from "@/components/sections/FAQTabs";
 import { faqJsonLd } from "@/lib/seo/structured-data";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const metadata: Metadata = {
   title: `FAQ | ${SITE_NAME}`,
@@ -13,101 +15,59 @@ export const metadata: Metadata = {
     "Common questions about booking, online consultations, payments, privacy, and emergency-care limits on Global Health.",
 };
 
-const FAQ_GROUPS: Array<{
-  eyebrow: string;
-  title: string;
-  items: Array<{ question: string; answer: string }>;
-}> = [
-  {
-    eyebrow: "Booking",
-    title: "Booking an appointment",
-    items: [
-      {
-        question: "How do I book an online consultation?",
-        answer:
-          "Choose your country, select a service, pick a clinician and open time slot, then complete the patient details and checkout steps.",
-      },
-      {
-        question: "Can I choose the doctor before I book?",
-        answer:
-          "Yes. Doctor profiles show the clinician's registration details, specialties, languages, and bookable services where available.",
-      },
-      {
-        question: "Are appointments guaranteed for the same day?",
-        answer:
-          "No. Appointment times depend on clinician availability, country coverage, and the selected service. Open slots are shown during booking.",
-      },
-    ],
-  },
-  {
-    eyebrow: "Care",
-    title: "Consultations and next steps",
-    items: [
-      {
-        question: "Can the doctor issue a prescription, referral, or certificate?",
-        answer:
-          "Where clinically appropriate, the treating doctor can issue next steps such as a prescription, referral, or certificate. These are never guaranteed before assessment.",
-      },
-      {
-        question: "Is online care suitable for emergencies?",
-        answer:
-          "No. Online consultations are not emergency care. If you need urgent help, call 112 or your local emergency number.",
-      },
-    ],
-  },
-  {
-    eyebrow: "Privacy",
-    title: "Privacy and records",
-    items: [
-      {
-        question: "How is my information protected?",
-        answer:
-          "Global Health handles personal data under GDPR principles and collects the details needed to provide the service. You can read more in the privacy policy.",
-      },
-      {
-        question: "Will my consultation notes be available after the appointment?",
-        answer:
-          "Clinical notes or follow-up guidance may be shared after the consultation where appropriate for the service and country workflow.",
-      },
-    ],
-  },
-  {
-    eyebrow: "Payments",
-    title: "Payments",
-    items: [
-      {
-        question: "When do I see the price?",
-        answer:
-          "Service prices are shown before booking and checkout. Final availability and payment options depend on the selected country and service.",
-      },
-      {
-        question: "Do I need a subscription or wellness plan?",
-        answer:
-          "No. The public site is currently built around pay-per-consultation and service-based bookings, not bundled wellness plans.",
-      },
-    ],
-  },
-];
+export default async function FAQPage() {
+  const locale = await getPageLocale();
+  const { faq } = loadLocaleBundle(locale);
 
-export default function FAQPage() {
+  const FAQ_GROUPS = [
+    {
+      eyebrow: faq.g1_eyebrow,
+      title: faq.g1_title,
+      items: [
+        { question: faq.g1_q1, answer: faq.g1_a1 },
+        { question: faq.g1_q2, answer: faq.g1_a2 },
+        { question: faq.g1_q3, answer: faq.g1_a3 },
+      ],
+    },
+    {
+      eyebrow: faq.g2_eyebrow,
+      title: faq.g2_title,
+      items: [
+        { question: faq.g2_q1, answer: faq.g2_a1 },
+        { question: faq.g2_q2, answer: faq.g2_a2 },
+      ],
+    },
+    {
+      eyebrow: faq.g3_eyebrow,
+      title: faq.g3_title,
+      items: [
+        { question: faq.g3_q1, answer: faq.g3_a1 },
+        { question: faq.g3_q2, answer: faq.g3_a2 },
+      ],
+    },
+    {
+      eyebrow: faq.g4_eyebrow,
+      title: faq.g4_title,
+      items: [
+        { question: faq.g4_q1, answer: faq.g4_a1 },
+        { question: faq.g4_q2, answer: faq.g4_a2 },
+      ],
+    },
+  ];
+
   return (
     <main>
       <JsonLd data={faqJsonLd(FAQ_GROUPS.flatMap((group) => group.items))} />
 
       <PageHero
-        countryLabel="Global Health · FAQ"
-        titleLead="Questions, answered"
-        titleAccent="without"
-        titleTrail="the marketing speak."
-        lede={
-          <>
-            Booking, payment, consultations, privacy, and when online care is
-            not the right route. Can&apos;t find what you need? Drop us a line.
-          </>
-        }
-        ctaLabel="Contact the team"
+        countryLabel={faq.hero_eyebrow}
+        titleLead={faq.hero_title_lead}
+        titleAccent={faq.hero_title_accent}
+        titleTrail={faq.hero_title_trail}
+        lede={faq.hero_lede}
+        ctaLabel={faq.hero_cta}
         ctaHref="/contact"
-        secondaryLabel="Choose your country"
+        secondaryLabel={faq.hero_secondary}
         secondaryHref="/"
         heroImage={{
           src: "/images/stock/contact.jpg",
@@ -140,14 +100,14 @@ export default function FAQPage() {
                 className="text-[11px] font-bold uppercase tracking-[0.2em]"
                 style={{ color: "var(--color-brand-accent)" }}
               >
-                Still stuck
+                {faq.stuck_eyebrow}
               </p>
               <h2
                 className="mt-4 max-w-[22ch] font-extrabold leading-[1.02] tracking-[-0.03em] text-white"
                 style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.75rem)" }}
               >
-                Not the question you came with?{" "}
-                <span style={{ color: "var(--color-brand-accent)" }}>Talk to us.</span>
+                {faq.stuck_h2_pre}{" "}
+                <span style={{ color: "var(--color-brand-accent)" }}>{faq.stuck_h2_accent}</span>
               </h2>
             </div>
             <Link
@@ -155,7 +115,7 @@ export default function FAQPage() {
               className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-sm font-bold text-white transition-colors duration-200 hover:bg-white/10 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 lg:justify-self-end"
               style={{ border: "1px solid rgba(255,255,255,0.22)" }}
             >
-              Contact the team
+              {faq.stuck_cta}
               <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
             </Link>
           </div>

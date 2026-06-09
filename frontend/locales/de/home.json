@@ -1,8 +1,72 @@
 {
   "hero": {
-    "eyebrow": "Online medical clinic - Europe-wide",
-    "title": "Licensed online consultations tailored to where you live",
-    "description": "Secure video and messaging-based care across Europe.",
-    "selectCountry": "Select your country"
+    "eyebrow": "Online-Klinik – europaweit",
+    "title": "Lizenzierte Online-Konsultationen, abgestimmt auf Ihren Wohnort",
+    "description": "Sichere Betreuung per Video und Nachrichten in ganz Europa.",
+    "selectCountry": "Wählen Sie Ihr Land"
+  },
+  "countryHero": {
+    "titleMain": "Medizin jederzeit",
+    "titleAccent": "und überall.",
+    "subtitle": "Wählen Sie einen Dienst, suchen Sie sich einen Termin aus und sprechen Sie mit zugelassenen Ärzten, die bei den nationalen Ärztekammern in ganz Europa registriert sind.",
+    "cta": "Termin buchen",
+    "secondary": "Leistungen anzeigen",
+    "trustLicensed": "Zugelassen in",
+    "trustAvailability": "Echtzeitverfügbarkeit",
+    "trustAppointments": "Online-Konsultationen"
+  },
+  "team": {
+    "eyebrow": "Das Team",
+    "headline": "Der Arzt, den Sie wählen, ist",
+    "headlineAccent": "der Arzt, der Sie behandelt.",
+    "body": "Jede Konsultation findet mit jemandem statt, der dort zugelassen ist, wo Sie sich befinden. Keine Call-Center, keine wechselnden Unbekannten — der Arzt auf dem Bildschirm ist der Arzt im Profil.",
+    "registeredSingular": "registrierter Arzt",
+    "registeredPlural": "registrierte Ärzte",
+    "ctaView": "Profil ansehen"
+  },
+  "trust": {
+    "licensedSingular": "Zugelassener Arzt",
+    "licensedPlural": "Zugelassene Ärzte",
+    "markets": "Europäische Märkte · EU-registriert",
+    "gdpr": "DSGVO-konform als Standard",
+    "slots": "Termine je nach Verfügbarkeit"
+  },
+  "howItWorks": {
+    "eyebrow": "Wie es funktioniert",
+    "headlineMain": "Drei Schritte.",
+    "headlineAccent": "Ein klarerer Weg.",
+    "subtitle": "Von der Landung auf der Seite bis zum bestätigten Termin — der Weg durch Dienst, Arzt, Zeit und Patientendaten.",
+    "step1Title": "Wählen Sie Ihr Land",
+    "step1Body": "Wir verbinden Sie mit in Ihrem Land registrierten Ärzten — damit Überweisungen, Zertifikate und Nachsorge lokal funktionieren.",
+    "step2Title": "Wählen Sie, was Sie brauchen",
+    "step2Body": "Durchsuchen Sie allgemeine, Fach- und Heimtestdienste. Filtern Sie nach Sprache, Dringlichkeit oder Preis.",
+    "step3Title": "Sprechen Sie mit einem Arzt",
+    "step3Body": "Nehmen Sie die Konsultation von jedem Gerät aus teil. Erhalten Sie Notizen oder nächste Schritte, wenn es nach dem Termin klinisch angemessen ist."
+  },
+  "finalCta": {
+    "eyebrow": "Vorbehaltlich der Verfügbarkeit",
+    "liveLabel": "Live",
+    "calendarLine": "Wählen Sie aus offenen Arztkalendern.",
+    "headlinePre": "Buchen Sie Pflege bei einem",
+    "headlineAccent": "Arzt",
+    "headlinePost": "Ihrer Wahl.",
+    "body": "Durchsuchen Sie lizenzierte Ärzte, die bei nationalen Ärztekammern in ganz Europa registriert sind, und wählen Sie einen verfügbaren Terminslot.",
+    "primaryCta": "Termin buchen",
+    "secondaryCta": "Ärzte ansehen"
+  },
+  "statsBand": {
+    "eyebrow": "Die Plattform",
+    "headline": "Gebaut für Menschen, die nicht warten",
+    "headlineAccent": "sollten",
+    "body": "Greifen Sie über offene Terminslots, klare Profile und servicespezifische Buchungsschritte auf zugelassene Ärzte zu.",
+    "stat1Label": "Zugelassene Ärzte",
+    "stat1Caption": "Bei der lokalen Ärztekammer registriert.",
+    "stat2Label": "Europäische Märkte",
+    "stat2Caption": "EU-registriert, DSGVO-konform als Standard.",
+    "stat3Value": "Live",
+    "stat3Label": "Verfügbarkeit",
+    "stat3Caption": "Offene Termine aus Live-Arztkalendern.",
+    "stat4Label": "Buchbare Leistungen",
+    "stat4Caption": "Konsultationen, Überweisungen und Heimtests."
   }
 }

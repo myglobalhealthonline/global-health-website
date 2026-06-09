@@ -1,4 +1,4 @@
-﻿import type { LocaleCode } from "@/lib/i18n/types";
+import type { LocaleCode } from "@/lib/i18n/types";
 import { getCommonLocale } from "@/lib/i18n/get-common-locale";
 
 import enHome from "@/locales/en/home.json";
@@ -36,11 +36,27 @@ import csForms from "@/locales/cs/forms.json";
 import roForms from "@/locales/ro/forms.json";
 import deForms from "@/locales/de/forms.json";
 
+import enAbout from "@/locales/en/about.json";
+import ptAbout from "@/locales/pt/about.json";
+import esAbout from "@/locales/es/about.json";
+import csAbout from "@/locales/cs/about.json";
+import roAbout from "@/locales/ro/about.json";
+import deAbout from "@/locales/de/about.json";
+
+import enContact from "@/locales/en/contact.json";
+import ptContact from "@/locales/pt/contact.json";
+import esContact from "@/locales/es/contact.json";
+import csContact from "@/locales/cs/contact.json";
+import roContact from "@/locales/ro/contact.json";
+import deContact from "@/locales/de/contact.json";
+
 const homeByLocale = { en: enHome, pt: ptHome, es: esHome, cs: csHome, ro: roHome, de: deHome } as const;
 const servicesByLocale = { en: enServices, pt: ptServices, es: esServices, cs: csServices, ro: roServices, de: deServices } as const;
 const faqByLocale = { en: enFaq, pt: ptFaq, es: esFaq, cs: csFaq, ro: roFaq, de: deFaq } as const;
 const legalByLocale = { en: enLegal, pt: ptLegal, es: esLegal, cs: csLegal, ro: roLegal, de: deLegal } as const;
 const formsByLocale = { en: enForms, pt: ptForms, es: esForms, cs: csForms, ro: roForms, de: deForms } as const;
+const aboutByLocale = { en: enAbout, pt: ptAbout, es: esAbout, cs: csAbout, ro: roAbout, de: deAbout } as const;
+const contactByLocale = { en: enContact, pt: ptContact, es: esContact, cs: csContact, ro: roContact, de: deContact } as const;
 
 export function loadLocaleBundle(locale: LocaleCode) {
   return {
@@ -50,5 +66,7 @@ export function loadLocaleBundle(locale: LocaleCode) {
     faq: faqByLocale[locale] ?? faqByLocale.en,
     legal: legalByLocale[locale] ?? legalByLocale.en,
     forms: formsByLocale[locale] ?? formsByLocale.en,
+    about: aboutByLocale[locale] ?? aboutByLocale.en,
+    contact: contactByLocale[locale] ?? contactByLocale.en,
   };
 }

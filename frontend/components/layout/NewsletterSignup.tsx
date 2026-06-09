@@ -4,9 +4,17 @@ import { useState } from "react";
 import { Mail } from "lucide-react";
 import { apiRequest } from "@/lib/api/client";
 
+type NewsletterI18n = {
+  stayInformed: string;
+  newsletterDesc: string;
+  subscribe: string;
+  newsletterSuccess: string;
+};
+
 type Props = {
   countryCode?: string | null;
   locale?: string | null;
+  i18n?: NewsletterI18n;
 };
 
 /**
@@ -15,7 +23,7 @@ type Props = {
  * inline success/error message. We pass the user's current country +
  * locale so the admin export shows where each signup came from.
  */
-export function NewsletterSignup({ countryCode, locale }: Props) {
+export function NewsletterSignup({ countryCode, locale, i18n }: Props) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -41,7 +49,7 @@ export function NewsletterSignup({ countryCode, locale }: Props) {
     });
     if (res.ok) {
       setStatus("ok");
-      setMessage("Thanks — you're on the list.");
+      setMessage(i18n?.newsletterSuccess ?? "Thanks — you're on the list.");
       setEmail("");
     } else {
       setStatus("error");
@@ -65,10 +73,10 @@ export function NewsletterSignup({ countryCode, locale }: Props) {
           className="inline-block h-3 w-[3px] rounded-full"
           style={{ background: "var(--color-brand-accent)" }}
         />
-        Stay informed
+        {i18n?.stayInformed ?? "Stay informed"}
       </p>
       <p style={{ fontSize: 13, lineHeight: 1.5, maxWidth: 280 }}>
-        Quarterly updates on new countries, doctors, and health topics. No spam.
+        {i18n?.newsletterDesc ?? "Quarterly updates on new countries, doctors, and health topics. No spam."}
       </p>
       <form onSubmit={onSubmit} className="mt-3 flex gap-2">
         <label className="flex-1">
@@ -95,7 +103,7 @@ export function NewsletterSignup({ countryCode, locale }: Props) {
           disabled={status === "loading"}
           className="shrink-0 rounded-lg bg-white px-4 py-2 text-sm font-bold text-[var(--color-brand-primary)] shadow-[0_2px_8px_rgba(15,46,37,0.18)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(15,46,37,0.30)] active:translate-y-0 active:scale-[0.98] disabled:opacity-60 motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)]"
         >
-          {status === "loading" ? "…" : "Subscribe"}
+          {status === "loading" ? "…" : (i18n?.subscribe ?? "Subscribe")}
         </button>
       </form>
       {message ? (

@@ -4,5 +4,69 @@
     "title": "Licensed online consultations tailored to where you live",
     "description": "Secure video and messaging-based care across Europe.",
     "selectCountry": "Select your country"
+  },
+  "countryHero": {
+    "titleMain": "Medicine Anytime",
+    "titleAccent": "Anywhere.",
+    "subtitle": "Choose a service, select an open time, and speak with licensed clinicians registered with national medical councils across Europe.",
+    "cta": "Book Appointment",
+    "secondary": "Browse services",
+    "trustLicensed": "Licensed in",
+    "trustAvailability": "Live availability",
+    "trustAppointments": "Online appointments"
+  },
+  "team": {
+    "eyebrow": "The team",
+    "headline": "The clinician you choose is",
+    "headlineAccent": "the clinician you see.",
+    "body": "Every consultation is with someone licensed where you are. No call centres, no rota of strangers — the doctor on screen is the doctor on the profile.",
+    "registeredSingular": "registered clinician",
+    "registeredPlural": "registered clinicians",
+    "ctaView": "View profile"
+  },
+  "trust": {
+    "licensedSingular": "Licensed doctor",
+    "licensedPlural": "Licensed doctors",
+    "markets": "European markets · EU-registered",
+    "gdpr": "Compliant by default",
+    "slots": "Slots subject to availability"
+  },
+  "howItWorks": {
+    "eyebrow": "How it works",
+    "headlineMain": "Three steps.",
+    "headlineAccent": "A clearer path.",
+    "subtitle": "From landing on the page to a confirmed appointment — the path through service, clinician, time, and patient details.",
+    "step1Title": "Pick your country",
+    "step1Body": "We connect you with doctors registered in your country — so referrals, certificates, and follow-ups all work locally.",
+    "step2Title": "Choose what you need",
+    "step2Body": "Browse general, specialist, and home-test services. Filter by language, urgency, or price.",
+    "step3Title": "Talk to a doctor",
+    "step3Body": "Join the consultation from any device. Receive notes or next steps when clinically appropriate after the appointment."
+  },
+  "finalCta": {
+    "eyebrow": "Subject to availability",
+    "liveLabel": "Live",
+    "calendarLine": "Choose from open clinician calendars.",
+    "headlinePre": "Book care with a",
+    "headlineAccent": "clinician",
+    "headlinePost": "you choose.",
+    "body": "Browse licensed doctors registered with national medical councils across Europe, then choose an open appointment time where availability is shown.",
+    "primaryCta": "Book Appointment",
+    "secondaryCta": "View doctors"
+  },
+  "statsBand": {
+    "eyebrow": "The platform",
+    "headline": "Built for people who shouldn't have to",
+    "headlineAccent": "wait",
+    "body": "Access licensed clinicians through open appointment slots, clear profiles, and service-specific booking steps.",
+    "stat1Label": "Licensed clinicians",
+    "stat1Caption": "Registered with their local medical council.",
+    "stat2Label": "European markets",
+    "stat2Caption": "EU-registered, GDPR-compliant by default.",
+    "stat3Value": "Live",
+    "stat3Label": "Availability",
+    "stat3Caption": "Open slots are shown from live doctor calendars.",
+    "stat4Label": "Bookable services",
+    "stat4Caption": "Consultations, referrals, and home tests."
   }
 }

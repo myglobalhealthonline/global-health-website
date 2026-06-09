@@ -1,8 +1,72 @@
 {
   "hero": {
-    "eyebrow": "Online medical clinic - Europe-wide",
-    "title": "Licensed online consultations tailored to where you live",
-    "description": "Secure video and messaging-based care across Europe.",
-    "selectCountry": "Select your country"
+    "eyebrow": "Clínica médica online — en toda Europa",
+    "title": "Consultas online con colegiados, adaptadas a donde vives",
+    "description": "Atención segura por vídeo y mensajes en toda Europa.",
+    "selectCountry": "Selecciona tu país"
+  },
+  "countryHero": {
+    "titleMain": "Medicina cuando quieras",
+    "titleAccent": "y donde quieras.",
+    "subtitle": "Elige un servicio, selecciona un horario y habla con médicos colegiados registrados en los colegios médicos nacionales de toda Europa.",
+    "cta": "Reservar cita",
+    "secondary": "Ver servicios",
+    "trustLicensed": "Colegiados en",
+    "trustAvailability": "Disponibilidad en tiempo real",
+    "trustAppointments": "Citas online"
+  },
+  "team": {
+    "eyebrow": "El equipo",
+    "headline": "El médico que eliges es",
+    "headlineAccent": "el médico que te atiende.",
+    "body": "Cada consulta es con alguien colegiado donde estás. Sin call centres, sin rotación de desconocidos — el médico en pantalla es el médico del perfil.",
+    "registeredSingular": "clínico registrado",
+    "registeredPlural": "clínicos registrados",
+    "ctaView": "Ver perfil"
+  },
+  "trust": {
+    "licensedSingular": "Médico colegiado",
+    "licensedPlural": "Médicos colegiados",
+    "markets": "Mercados europeos · Registrado en la UE",
+    "gdpr": "Conformidad RGPD por defecto",
+    "slots": "Plazas sujetas a disponibilidad"
+  },
+  "howItWorks": {
+    "eyebrow": "Cómo funciona",
+    "headlineMain": "Tres pasos.",
+    "headlineAccent": "Un camino más claro.",
+    "subtitle": "Desde que entra en la página hasta una cita confirmada — el camino a través del servicio, clínico, horario y datos del paciente.",
+    "step1Title": "Elige tu país",
+    "step1Body": "Te conectamos con médicos registrados en tu país — para que las derivaciones, certificados y seguimientos funcionen localmente.",
+    "step2Title": "Elige lo que necesitas",
+    "step2Body": "Navega por servicios generales, de especialidad y pruebas en casa. Filtra por idioma, urgencia o precio.",
+    "step3Title": "Habla con un médico",
+    "step3Body": "Únete a la consulta desde cualquier dispositivo. Recibe notas o próximos pasos cuando sea clínicamente apropiado tras la cita."
+  },
+  "finalCta": {
+    "eyebrow": "Sujeto a disponibilidad",
+    "liveLabel": "En vivo",
+    "calendarLine": "Elige entre los calendarios abiertos de los médicos.",
+    "headlinePre": "Reserva atención con un",
+    "headlineAccent": "médico",
+    "headlinePost": "que tú elijas.",
+    "body": "Explora médicos con colegiación registrados en los colegios médicos nacionales de toda Europa y elige un horario disponible.",
+    "primaryCta": "Reservar cita",
+    "secondaryCta": "Ver médicos"
+  },
+  "statsBand": {
+    "eyebrow": "La plataforma",
+    "headline": "Hecha para personas que no deberían tener que",
+    "headlineAccent": "esperar",
+    "body": "Accede a médicos colegiados a través de citas disponibles, perfiles claros y pasos de reserva específicos al servicio.",
+    "stat1Label": "Médicos colegiados",
+    "stat1Caption": "Registrados en su colegio médico local.",
+    "stat2Label": "Mercados europeos",
+    "stat2Caption": "Registrados en la UE, conformidad con el RGPD.",
+    "stat3Value": "En vivo",
+    "stat3Label": "Disponibilidad",
+    "stat3Caption": "Horarios abiertos de calendarios de médicos en tiempo real.",
+    "stat4Label": "Servicios reservables",
+    "stat4Caption": "Consultas, derivaciones y pruebas en casa."
   }
 }

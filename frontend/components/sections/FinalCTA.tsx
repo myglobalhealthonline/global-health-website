@@ -1,19 +1,27 @@
-/**
- * Closer CTA — forest-night canvas, asymmetric layout. Lime number
- * callout left, declarative headline right. This is the ONE dark section
- * on the page; the lime accent is earned here.
- */
-
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
+export type FinalCtaI18n = {
+  eyebrow: string;
+  liveLabel: string;
+  calendarLine: string;
+  headlinePre: string;
+  headlineAccent: string;
+  headlinePost: string;
+  body: string;
+  primaryCta: string;
+  secondaryCta: string;
+};
+
 export function FinalCTA({
   primaryHref = "/",
   secondaryHref = "/contact",
+  i18n,
 }: {
   primaryHref?: string;
   secondaryHref?: string;
+  i18n?: FinalCtaI18n;
 }) {
   return (
     <section
@@ -54,7 +62,7 @@ export function FinalCTA({
                 className="text-[11px] font-bold tracking-[0.22em] uppercase mb-3"
                 style={{ color: "rgba(255,255,255,0.32)" }}
               >
-                Subject to availability
+                {i18n?.eyebrow ?? "Subject to availability"}
               </p>
               <p
                 className="font-extrabold leading-none tracking-[-0.05em] [font-variant-numeric:tabular-nums]"
@@ -63,7 +71,7 @@ export function FinalCTA({
                   color: "var(--color-brand-accent)",
                 }}
               >
-                Live
+                {i18n?.liveLabel ?? "Live"}
               </p>
               <p
                 className="mt-5 font-bold tracking-[-0.02em]"
@@ -72,7 +80,7 @@ export function FinalCTA({
                   color: "rgba(255,255,255,0.55)",
                 }}
               >
-                Choose from open clinician calendars.
+                {i18n?.calendarLine ?? "Choose from open clinician calendars."}
               </p>
             </div>
           </RevealOnScroll>
@@ -87,15 +95,12 @@ export function FinalCTA({
                 color: "rgba(255,255,255,0.95)",
               }}
             >
-              Book care with a{" "}
-              <span style={{ color: "var(--color-brand-accent)" }}>clinician</span>{" "}
-              you choose.
+              {i18n?.headlinePre ?? "Book care with a"}{" "}
+              <span style={{ color: "var(--color-brand-accent)" }}>
+                {i18n?.headlineAccent ?? "clinician"}
+              </span>{" "}
+              {i18n?.headlinePost ?? "you choose."}
             </h2>
-            {/* Provider-first lede per Google Ads "restricted services"
-                guidance. Anchored on the doctors (credentials, registration,
-                multilingual care) rather than the consultation flow. Avoid
-                "video call", "skip the waiting room", "get a prescription"
-                near landing-page CTAs. */}
             <p
               className="mt-6 leading-relaxed"
               style={{
@@ -104,21 +109,20 @@ export function FinalCTA({
                 maxWidth: "50ch",
               }}
             >
-              Browse licensed doctors registered with national medical councils
-              across Europe, then choose an open appointment time where
-              availability is shown.
+              {i18n?.body ??
+                "Browse licensed doctors registered with national medical councils across Europe, then choose an open appointment time where availability is shown."}
             </p>
 
             <div className="mt-9 flex flex-wrap gap-3">
               <Link href={primaryHref} className="gh-btn gh-btn-ghost-dark">
-                Book Appointment
+                {i18n?.primaryCta ?? "Book Appointment"}
                 <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
               </Link>
               <Link
                 href={secondaryHref}
                 className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 border border-white/20 bg-transparent text-sm font-semibold text-white/75 hover:bg-white/08 hover:border-white/38 transition-colors duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
               >
-                View doctors
+                {i18n?.secondaryCta ?? "View doctors"}
               </Link>
             </div>
             </div>

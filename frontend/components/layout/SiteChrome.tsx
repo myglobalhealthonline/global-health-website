@@ -72,6 +72,7 @@ export function SiteChrome({
       {isGatewayHome ? null : (
         <SiteFooter
           siteName={siteName}
+          navigation={navigation}
           countryFeatures={countryFeatures}
           countryFooters={countryFooters}
           countries={countries}

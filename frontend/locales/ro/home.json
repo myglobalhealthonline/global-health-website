@@ -1,8 +1,72 @@
 {
   "hero": {
-    "eyebrow": "Online medical clinic - Europe-wide",
-    "title": "Licensed online consultations tailored to where you live",
-    "description": "Secure video and messaging-based care across Europe.",
-    "selectCountry": "Select your country"
+    "eyebrow": "Clinică medicală online — în toată Europa",
+    "title": "Consultații online licențiate, adaptate locului unde trăiești",
+    "description": "Îngrijire sigură prin video și mesaje în toată Europa.",
+    "selectCountry": "Selectați țara dvs."
+  },
+  "countryHero": {
+    "titleMain": "Medicină oricând",
+    "titleAccent": "și oriunde.",
+    "subtitle": "Alegeți un serviciu, selectați un interval orar și discutați cu medici autorizați înregistrați la colegiile medicale naționale din toată Europa.",
+    "cta": "Programează o consultație",
+    "secondary": "Vezi servicii",
+    "trustLicensed": "Autorizat în",
+    "trustAvailability": "Disponibilitate în timp real",
+    "trustAppointments": "Consultații online"
+  },
+  "team": {
+    "eyebrow": "Echipa",
+    "headline": "Medicul pe care îl alegeți este",
+    "headlineAccent": "medicul care vă consultă.",
+    "body": "Fiecare consultație este cu cineva autorizat acolo unde vă aflați. Fără call centre, fără rotație de necunoscuți — medicul de pe ecran este medicul din profil.",
+    "registeredSingular": "medic înregistrat",
+    "registeredPlural": "medici înregistrați",
+    "ctaView": "Vezi profilul"
+  },
+  "trust": {
+    "licensedSingular": "Medic licențiat",
+    "licensedPlural": "Medici licențiați",
+    "markets": "Piețe europene · Înregistrat în UE",
+    "gdpr": "Conformitate GDPR implicit",
+    "slots": "Locuri disponibile în funcție de program"
+  },
+  "howItWorks": {
+    "eyebrow": "Cum funcționează",
+    "headlineMain": "Trei pași.",
+    "headlineAccent": "O cale mai clară.",
+    "subtitle": "De la accesarea paginii până la o programare confirmată — traseul prin serviciu, clinician, orar și datele pacientului.",
+    "step1Title": "Alegeți țara dvs.",
+    "step1Body": "Vă conectăm cu medici înregistrați în țara dvs. — astfel încât trimiterile, certificatele și urmăririle să funcționeze local.",
+    "step2Title": "Alegeți ce aveți nevoie",
+    "step2Body": "Răsfoiți servicii generale, de specialitate și teste la domiciliu. Filtrați după limbă, urgență sau preț.",
+    "step3Title": "Vorbiți cu un medic",
+    "step3Body": "Alăturați-vă consultației de pe orice dispozitiv. Primiți note sau pași următori când este clinic adecvat după programare."
+  },
+  "finalCta": {
+    "eyebrow": "Sub rezerva disponibilității",
+    "liveLabel": "Live",
+    "calendarLine": "Alegeți din calendarele deschise ale clinicienilor.",
+    "headlinePre": "Programați îngrijire cu un",
+    "headlineAccent": "clinician",
+    "headlinePost": "ales de dvs.",
+    "body": "Răsfoiți medici licențiați înregistrați la consiliile medicale naționale din toată Europa și alegeți un interval disponibil.",
+    "primaryCta": "Programează consultație",
+    "secondaryCta": "Vezi medici"
+  },
+  "statsBand": {
+    "eyebrow": "Platforma",
+    "headline": "Construită pentru oameni care nu ar trebui să",
+    "headlineAccent": "aștepte",
+    "body": "Accesați medici autorizați prin programări disponibile, profiluri clare și pași de rezervare specifici serviciului.",
+    "stat1Label": "Medici autorizați",
+    "stat1Caption": "Înregistrați la consiliul medical local.",
+    "stat2Label": "Piețe europene",
+    "stat2Caption": "Înregistrați în UE, conformi cu GDPR.",
+    "stat3Value": "Live",
+    "stat3Label": "Disponibilitate",
+    "stat3Caption": "Sloturi deschise din calendare live ale medicilor.",
+    "stat4Label": "Servicii rezervabile",
+    "stat4Caption": "Consultații, trimiteri și teste la domiciliu."
   }
 }

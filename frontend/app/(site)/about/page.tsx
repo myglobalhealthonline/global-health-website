@@ -3,6 +3,8 @@ import Link from "next/link";
 import { ArrowUpRight, ShieldCheck, Stethoscope, Globe2, Clock } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
 import { PageHero } from "@/components/sections/PageHero";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const metadata: Metadata = {
   title: `About | ${SITE_NAME}`,
@@ -10,25 +12,21 @@ export const metadata: Metadata = {
     "Global Health is a European telemedicine platform connecting patients with locally-licensed doctors. Medicine Anytime Anywhere.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const locale = await getPageLocale();
+  const { about } = loadLocaleBundle(locale);
+
   return (
     <main>
       {/* DARK — hero */}
       <PageHero
-        countryLabel="Global Health · About"
-        titleLead="Grown-up online"
-        titleAccent="healthcare."
-        lede={
-          <>
-            Medicine Anytime Anywhere. We&apos;re a European telemedicine platform connecting patients
-            with locally-licensed doctors. No call centres, no waiting
-            rooms, no surprise fees. You see who you&apos;re booking, what
-            it costs, and when they&apos;re free.
-          </>
-        }
-        ctaLabel="Browse doctors"
+        countryLabel={about.hero_eyebrow}
+        titleLead={about.hero_title_lead}
+        titleAccent={about.hero_title_accent}
+        lede={about.hero_lede}
+        ctaLabel={about.hero_cta}
         ctaHref="/"
-        secondaryLabel="Contact the team"
+        secondaryLabel={about.hero_secondary}
         secondaryHref="/contact"
         heroImage={{
           src: "/images/stock/about.jpg",
@@ -44,34 +42,35 @@ export default function AboutPage() {
             className="gh-eyebrow"
             style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.20em", textTransform: "uppercase", color: "var(--color-brand-primary)" }}
           >
-            What we believe
+            {about.pillars_eyebrow}
           </p>
           <h2
             className="mt-3 max-w-[20ch] font-extrabold tracking-[-0.03em] leading-[1.02]"
             style={{ fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)", color: "var(--color-text-primary)" }}
           >
-            Healthcare should feel less like{" "}
-            <span style={{ color: "#8FB021" }}>admin</span>.
+            {about.pillars_headline_pre}{" "}
+            <span style={{ color: "#8FB021" }}>{about.pillars_headline_accent}</span>
+            {about.pillars_headline_post}
           </h2>
 
           <div className="mt-14 grid gap-10 lg:grid-cols-3">
             <Pillar
               icon={<Stethoscope className="size-5" strokeWidth={1.5} aria-hidden />}
               eyebrow="01"
-              title="Real doctors, registered locally"
-              body="Every clinician on the platform is licensed in your country. No off-shore call centres, no rota of strangers. The doctor on the profile is the doctor on the call."
+              title={about.p1_title}
+              body={about.p1_body}
             />
             <Pillar
               icon={<Clock className="size-5" strokeWidth={1.5} aria-hidden />}
               eyebrow="02"
-              title="Booking that respects your time"
-              body="Pick a date, pick a time, pay only after the call connects. No upfront forms, no insurance pre-auth, no 'we'll call you back within 5 business days'."
+              title={about.p2_title}
+              body={about.p2_body}
             />
             <Pillar
               icon={<ShieldCheck className="size-5" strokeWidth={1.5} aria-hidden />}
               eyebrow="03"
-              title="GDPR-compliant by default"
-              body="Your data lives in EU data centres. We don't sell it, we don't profile you, we don't share it with insurers. The only people who see your records are the doctor on your call and you."
+              title={about.p3_title}
+              body={about.p3_body}
             />
           </div>
         </div>
@@ -93,37 +92,22 @@ export default function AboutPage() {
                 className="text-[11px] font-bold uppercase tracking-[0.2em]"
                 style={{ color: "var(--color-brand-accent)" }}
               >
-                How we work
+                {about.steps_eyebrow}
               </p>
               <h2
                 className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02] text-white"
                 style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.75rem)" }}
               >
-                The pieces that make it{" "}
-                <span style={{ color: "var(--color-brand-accent)" }}>work</span>.
+                {about.steps_headline_pre}{" "}
+                <span style={{ color: "var(--color-brand-accent)" }}>{about.steps_headline_accent}</span>
+                {about.steps_headline_post}
               </h2>
             </div>
             <div className="space-y-8">
-              <DarkStep
-                num="01"
-                title="Pick a country, then a service"
-                body="Click your flag. Browse general consultations, specialist consultations, or home tests. Prices and durations are listed up front."
-              />
-              <DarkStep
-                num="02"
-                title="Choose your doctor + slot"
-                body="Every doctor's profile lists qualifications, languages, registration body. Pick a date from the rail, pick a time on that date."
-              />
-              <DarkStep
-                num="03"
-                title="Pay only after the call connects"
-                body="Stripe processes the payment the moment the doctor joins the video call. If something goes wrong on our end, you don't pay."
-              />
-              <DarkStep
-                num="04"
-                title="Get referrals, certificates, or test kits at home"
-                body="Where clinically appropriate, the doctor can issue referrals, certificates, or follow-up guidance. Notes are shared after the consultation according to the service and country workflow."
-              />
+              <DarkStep num="01" title={about.s1_title} body={about.s1_body} />
+              <DarkStep num="02" title={about.s2_title} body={about.s2_body} />
+              <DarkStep num="03" title={about.s3_title} body={about.s3_body} />
+              <DarkStep num="04" title={about.s4_title} body={about.s4_body} />
             </div>
           </div>
         </div>
@@ -138,13 +122,13 @@ export default function AboutPage() {
                 className="gh-eyebrow"
                 style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.20em", textTransform: "uppercase", color: "var(--color-brand-primary)" }}
               >
-                Where we cover
+                {about.coverage_eyebrow}
               </p>
               <h2
                 className="mt-3 max-w-[16ch] font-extrabold tracking-[-0.025em] leading-[1.05]"
                 style={{ fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.75rem)", color: "var(--color-text-primary)" }}
               >
-                Five European markets and counting.
+                {about.coverage_headline}
               </h2>
             </div>
             <Link
@@ -152,7 +136,7 @@ export default function AboutPage() {
               className="gh-btn"
               style={{ background: "var(--color-brand-accent)", color: "#0a1f14", borderColor: "var(--color-brand-accent)" }}
             >
-              Pick your country
+              {about.coverage_cta}
               <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
             </Link>
           </div>

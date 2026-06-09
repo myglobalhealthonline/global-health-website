@@ -1,8 +1,72 @@
 {
   "hero": {
-    "eyebrow": "Online medical clinic - Europe-wide",
-    "title": "Licensed online consultations tailored to where you live",
-    "description": "Secure video and messaging-based care across Europe.",
-    "selectCountry": "Select your country"
+    "eyebrow": "Online zdravotní klinika — po celé Evropě",
+    "title": "Licencované online konzultace přizpůsobené vašemu bydlišti",
+    "description": "Bezpečná péče prostřednictvím videa a zpráv po celé Evropě.",
+    "selectCountry": "Vyberte svou zemi"
+  },
+  "countryHero": {
+    "titleMain": "Medicína kdykoliv",
+    "titleAccent": "a kdekoliv.",
+    "subtitle": "Vyberte si službu, zvolte volný termín a promluvte si s lékaři registrovanými u národních lékařských komor po celé Evropě.",
+    "cta": "Rezervovat konzultaci",
+    "secondary": "Zobrazit služby",
+    "trustLicensed": "Registrováno v",
+    "trustAvailability": "Dostupnost v reálném čase",
+    "trustAppointments": "Online konzultace"
+  },
+  "team": {
+    "eyebrow": "Tým",
+    "headline": "Lékař, kterého si vyberete, je",
+    "headlineAccent": "lékař, se kterým se poradíte.",
+    "body": "Každá konzultace probíhá s někým registrovaným tam, kde se nacházíte. Žádná call centra, žádné neznámé tváře — lékař na obrazovce je lékař z profilu.",
+    "registeredSingular": "registrovaný lékař",
+    "registeredPlural": "registrovaní lékaři",
+    "ctaView": "Zobrazit profil"
+  },
+  "trust": {
+    "licensedSingular": "Licencovaný lékař",
+    "licensedPlural": "Licencovaní lékaři",
+    "markets": "Evropské trhy · Registrováno v EU",
+    "gdpr": "Soulad s GDPR jako standard",
+    "slots": "Termíny dle dostupnosti"
+  },
+  "howItWorks": {
+    "eyebrow": "Jak to funguje",
+    "headlineMain": "Tři kroky.",
+    "headlineAccent": "Jasnější cesta.",
+    "subtitle": "Od přistání na stránce k potvrzené schůzce — cesta přes službu, lékaře, čas a údaje pacienta.",
+    "step1Title": "Vyberte svoji zemi",
+    "step1Body": "Propojíme vás s lékaři registrovanými ve vaší zemi — aby doporučení, certifikáty a kontroly fungovaly lokálně.",
+    "step2Title": "Vyberte, co potřebujete",
+    "step2Body": "Procházejte obecné, specializované a domácí testovací služby. Filtrujte podle jazyka, naléhavosti nebo ceny.",
+    "step3Title": "Promluvte si s lékařem",
+    "step3Body": "Připojte se ke konzultaci z jakéhokoli zařízení. Obdržíte poznámky nebo další kroky, pokud je to klinicky vhodné po schůzce."
+  },
+  "finalCta": {
+    "eyebrow": "Podle dostupnosti",
+    "liveLabel": "Živě",
+    "calendarLine": "Vyberte z otevřených kalendářů lékařů.",
+    "headlinePre": "Rezervujte péči u",
+    "headlineAccent": "lékaře",
+    "headlinePost": "podle vlastního výběru.",
+    "body": "Procházejte licencované lékaře registrované u národních lékařských rad v celé Evropě a vyberte si volný termín, kde je zobrazena dostupnost.",
+    "primaryCta": "Rezervovat termín",
+    "secondaryCta": "Zobrazit lékaře"
+  },
+  "statsBand": {
+    "eyebrow": "Platforma",
+    "headline": "Vytvořeno pro lidi, kteří by neměli",
+    "headlineAccent": "čekat",
+    "body": "Přistupte k licencovaným lékařům přes volné termíny, přehledné profily a kroky rezervace specifické pro danou službu.",
+    "stat1Label": "Licencovaní lékaři",
+    "stat1Caption": "Registrovaní u místní lékařské komory.",
+    "stat2Label": "Evropské trhy",
+    "stat2Caption": "Registrováno v EU, shoda s GDPR.",
+    "stat3Value": "Živě",
+    "stat3Label": "Dostupnost",
+    "stat3Caption": "Otevřené termíny z živých kalendářů lékařů.",
+    "stat4Label": "Rezervovatelné služby",
+    "stat4Caption": "Konzultace, doporučení a domácí testy."
   }
 }

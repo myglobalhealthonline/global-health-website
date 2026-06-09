@@ -28,6 +28,44 @@ export type SiteNavigationData = {
   searchCountryOrServiceLabel: string;
   viewAllClinicsLabel: string;
   trustedCareAcrossEuropeLabel: string;
+  navHome: string;
+  navDoctors: string;
+  navServices: string;
+  navBlog: string;
+  navAbout: string;
+  navFaq: string;
+  navContact: string;
+  navBookAppointment: string;
+  navBookShort: string;
+  navBookGp: string;
+  navBookGpDesc: string;
+  navSeeSpecialist: string;
+  navSeeSpecialistDesc: string;
+  navRepeatPrescription: string;
+  navRepeatPrescriptionDesc: string;
+  navLabTests: string;
+  navLabTestsDesc: string;
+  footerCareHeading: string;
+  footerClinicsHeading: string;
+  footerAccountHeading: string;
+  footerCompanyHeading: string;
+  footerOurDoctors: string;
+  footerSignIn: string;
+  footerCreateAccount: string;
+  footerForgotPassword: string;
+  footerMyAccount: string;
+  footerContactUs: string;
+  footerPrivacyPolicy: string;
+  footerTermsOfService: string;
+  footerTagline: string;
+  footerStayInformed: string;
+  footerNewsletterDesc: string;
+  footerSubscribe: string;
+  footerNewsletterSuccess: string;
+  footerDisclaimer: string;
+  footerCopyrightSuffix: string;
+  footerPrivacyLink: string;
+  footerEuCompliant: string;
 };
 
 function clinicLinksForCountry(c: CountryConfig, copy: CommonLocale): NavLink[] {
@@ -113,6 +151,44 @@ export function buildSiteNavigationData(
     searchCountryOrServiceLabel: copy.navigation.searchCountryOrService,
     viewAllClinicsLabel: copy.navigation.viewAllClinics,
     trustedCareAcrossEuropeLabel: copy.navigation.trustedCareAcrossEurope,
+    navHome: copy.navigation.home,
+    navDoctors: copy.navigation.doctors,
+    navServices: copy.navigation.services,
+    navBlog: copy.navigation.blog,
+    navAbout: copy.navigation.about,
+    navFaq: copy.navigation.faq,
+    navContact: copy.navigation.contact,
+    navBookAppointment: copy.navigation.bookAppointment,
+    navBookShort: copy.navigation.bookShort,
+    navBookGp: copy.navigation.bookGp,
+    navBookGpDesc: copy.navigation.bookGpDesc,
+    navSeeSpecialist: copy.navigation.seeSpecialist,
+    navSeeSpecialistDesc: copy.navigation.seeSpecialistDesc,
+    navRepeatPrescription: copy.navigation.repeatPrescription,
+    navRepeatPrescriptionDesc: copy.navigation.repeatPrescriptionDesc,
+    navLabTests: copy.navigation.labTests,
+    navLabTestsDesc: copy.navigation.labTestsDesc,
+    footerCareHeading: copy.footer.careHeading,
+    footerClinicsHeading: copy.footer.clinicsHeading,
+    footerAccountHeading: copy.footer.accountHeading,
+    footerCompanyHeading: copy.footer.companyHeading,
+    footerOurDoctors: copy.footer.ourDoctors,
+    footerSignIn: copy.footer.signIn,
+    footerCreateAccount: copy.footer.createAccount,
+    footerForgotPassword: copy.footer.forgotPassword,
+    footerMyAccount: copy.footer.myAccount,
+    footerContactUs: copy.footer.contactUs,
+    footerPrivacyPolicy: copy.footer.privacyPolicy,
+    footerTermsOfService: copy.footer.termsOfService,
+    footerTagline: copy.footer.tagline,
+    footerStayInformed: copy.footer.stayInformed,
+    footerNewsletterDesc: copy.footer.newsletterDesc,
+    footerSubscribe: copy.footer.subscribe,
+    footerNewsletterSuccess: copy.footer.newsletterSuccess,
+    footerDisclaimer: copy.footer.disclaimer,
+    footerCopyrightSuffix: copy.footer.copyrightSuffix,
+    footerPrivacyLink: copy.footer.privacyLink,
+    footerEuCompliant: copy.footer.euCompliant,
   };
 }
 

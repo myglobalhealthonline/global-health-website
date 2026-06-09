@@ -22,6 +22,20 @@ export type CommonLocale = {
     searchCountryOrService: string;
     viewAllClinics: string;
     trustedCareAcrossEurope: string;
+    home: string;
+    doctors: string;
+    services: string;
+    contact: string;
+    bookAppointment: string;
+    bookShort: string;
+    bookGp: string;
+    bookGpDesc: string;
+    seeSpecialist: string;
+    seeSpecialistDesc: string;
+    repeatPrescription: string;
+    repeatPrescriptionDesc: string;
+    labTests: string;
+    labTestsDesc: string;
   };
   footer: {
     company: string;
@@ -40,6 +54,44 @@ export type CommonLocale = {
     copyright: string;
     cta: string;
     trustLine: string;
+    careHeading: string;
+    clinicsHeading: string;
+    accountHeading: string;
+    companyHeading: string;
+    ourDoctors: string;
+    signIn: string;
+    createAccount: string;
+    forgotPassword: string;
+    myAccount: string;
+    privacyPolicy: string;
+    termsOfService: string;
+    tagline: string;
+    stayInformed: string;
+    newsletterDesc: string;
+    subscribe: string;
+    newsletterSuccess: string;
+    disclaimer: string;
+    copyrightSuffix: string;
+    privacyLink: string;
+    euCompliant: string;
+  };
+  doctors: {
+    theTeamBadge: string;
+    heroTitleLead: string;
+    heroTitleAccent: string;
+    heroTitleTrail: string;
+    heroLedeTemplate: string;
+    heroAvailableSingular: string;
+    heroAvailablePlural: string;
+    onboardingTitle: string;
+    onboardingBodyTemplate: string;
+    bottomCtaTitle: string;
+    bottomCtaAccent: string;
+    filterSpeaks: string;
+    filterSpecialty: string;
+    clearFilters: string;
+    viewProfile: string;
+    bookAppointment: string;
   };
   countrySelector: {
     title: string;
@@ -48,5 +100,15 @@ export type CommonLocale = {
   };
   cta: {
     primaryBooking: string;
+  };
+  notFound: {
+    title: string;
+    body: string;
+    cta: string;
+  };
+  error: {
+    title: string;
+    tryAgain: string;
+    backToHome: string;
   };
 };

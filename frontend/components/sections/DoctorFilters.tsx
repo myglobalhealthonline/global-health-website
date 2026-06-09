@@ -31,11 +31,12 @@ export function DoctorFilters({
   groups,
   clearHref,
   hasActive,
+  clearLabel,
 }: {
   groups: FilterGroup[];
-  /** Reset-all href; the "Clear" link renders only when hasActive. */
   clearHref: string;
   hasActive: boolean;
+  clearLabel?: string;
 }) {
   const visibleGroups = groups.filter((g) => g.options.length > 0);
   if (visibleGroups.length === 0) return null;
@@ -91,7 +92,7 @@ export function DoctorFilters({
               className="text-[12px] font-semibold underline decoration-dotted underline-offset-2 transition-opacity hover:opacity-70"
               style={{ color: "rgba(255,255,255,0.55)" }}
             >
-              Clear all filters
+              {clearLabel ?? "Clear all filters"}
             </Link>
           </div>
         ) : null}

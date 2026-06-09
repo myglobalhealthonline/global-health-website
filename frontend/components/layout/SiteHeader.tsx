@@ -25,7 +25,7 @@ import type { SiteNavigationData } from "@/data/navigation";
 import type { AuthUser } from "@/lib/api/auth-api";
 import { type CountryCode, type CountryConfig } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
-import type { LocaleCode } from "@/lib/i18n/types";
+import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
 import { parseSitePath } from "@/lib/routing/path-rewrites";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { rememberCountry, useLastCountry } from "@/lib/routing/last-country";
@@ -41,14 +41,12 @@ function sectionNavForCountryLang(
   countrySlug: string,
   lang: string,
   features: string[] | undefined,
+  nav: SiteNavigationData,
 ): SectionNavItem[] {
   const base = `/${countrySlug}/${lang}`;
   const enabled = (key: string) =>
     !features || features.length === 0 || features.includes(key);
 
-  // Build the Services submenu in admin-configured order. Each child
-  // gets a short description for the dropdown body — minimal context
-  // since the labels are already specific.
   const servicesChildren: Array<{
     href: string;
     label: string;
@@ -57,56 +55,53 @@ function sectionNavForCountryLang(
   if (enabled("general-consultations")) {
     servicesChildren.push({
       href: `${base}/gp-appointment`,
-      label: "Book a GP Appointment",
-      description: "General practitioners registered in your country",
+      label: nav.navBookGp,
+      description: nav.navBookGpDesc,
     });
   }
   if (enabled("specialist-consultations")) {
     servicesChildren.push({
       href: `${base}/see-a-specialist`,
-      label: "See a Specialist",
-      description: "Cardiology, dermatology, paediatrics + more",
+      label: nav.navSeeSpecialist,
+      description: nav.navSeeSpecialistDesc,
     });
   }
   if (enabled("online-prescriptions")) {
     servicesChildren.push({
       href: `${base}/repeat-prescription-request`,
-      label: "Repeat Prescription Request",
-      description: "Reviewed by licensed doctors, sent to your pharmacy",
+      label: nav.navRepeatPrescription,
+      description: nav.navRepeatPrescriptionDesc,
     });
   }
   if (enabled("health-tests")) {
     servicesChildren.push({
       href: `${base}/lab-tests`,
-      label: "Lab Test Booking",
-      description: "Lab-quality kits reviewed by our doctors",
+      label: nav.navLabTests,
+      description: nav.navLabTestsDesc,
     });
   }
 
   const items: SectionNavItem[] = [
-    { href: base, label: "Home", exact: true },
-    { href: `${base}/doctors`, label: "Doctors" },
+    { href: base, label: nav.navHome, exact: true },
+    { href: `${base}/doctors`, label: nav.navDoctors },
   ];
   if (servicesChildren.length > 0) {
-    items.push({ label: "Services", children: servicesChildren });
+    items.push({ label: nav.navServices, children: servicesChildren });
   }
-  // Global pages — country/lang-agnostic.
-  items.push({ href: "/blog", label: "Blog" });
-  items.push({ href: "/about", label: "About" });
-  items.push({ href: "/contact", label: "Contact" });
+  items.push({ href: "/blog", label: nav.navBlog });
+  items.push({ href: "/about", label: nav.navAbout });
+  items.push({ href: "/contact", label: nav.navContact });
   return items;
 }
 
-/** Outside-a-country nav: no per-country service links, but About /
- *  Blog / FAQ + a top-level Services pointer that bounces visitors
- *  to the country gate. */
-function sectionNavGlobal(): SectionNavItem[] {
+/** Outside-a-country nav: no per-country service links. */
+function sectionNavGlobal(nav: SiteNavigationData): SectionNavItem[] {
   return [
-    { href: "/", label: "Home", exact: true },
-    { href: "/about", label: "About" },
-    { href: "/blog", label: "Blog" },
-    { href: "/faq", label: "FAQ" },
-    { href: "/contact", label: "Contact" },
+    { href: "/", label: nav.navHome, exact: true },
+    { href: "/about", label: nav.navAbout },
+    { href: "/blog", label: nav.navBlog },
+    { href: "/faq", label: nav.navFaq },
+    { href: "/contact", label: nav.navContact },
   ];
 }
 
@@ -175,8 +170,8 @@ export function SiteHeader({
   const effectiveLang = parsed.lang ?? lastCountry?.lang ?? null;
   const sectionItems: SectionNavItem[] =
     activeCountry && effectiveCountrySlug && effectiveLang
-      ? sectionNavForCountryLang(effectiveCountrySlug, effectiveLang, activeFeatures)
-      : sectionNavGlobal();
+      ? sectionNavForCountryLang(effectiveCountrySlug, effectiveLang, activeFeatures, navigation)
+      : sectionNavGlobal(navigation);
 
   // Cart-first booking: the header "Book" CTA opens the guided /book page
   // (service → doctor → time → details in one flow). Outside a country we
@@ -225,15 +220,13 @@ export function SiteHeader({
         >
           <div className="hidden md:flex md:items-center md:gap-2">
             <CountrySwitcher activeCountryCode={activeCountryCode} countries={countries} />
-            {activeCountry ? (
-              <LanguageSwitcher
-                currentLang={activeLang}
-                availableLocales={activeCountry.supportedLocales}
-                fallbackCountrySlug={
-                  parsed.country ?? lastCountry?.slug ?? undefined
-                }
-              />
-            ) : null}
+            <LanguageSwitcher
+              currentLang={activeLang}
+              availableLocales={
+                activeCountry?.supportedLocales ?? [...supportedLocaleCodes]
+              }
+              fallbackCountrySlug={parsed.country ?? lastCountry?.slug ?? undefined}
+            />
           </div>
 
           <CartIcon variant="dark" />
@@ -244,7 +237,7 @@ export function SiteHeader({
               className="hidden rounded-full px-2 text-sm font-semibold text-white/70 transition-colors hover:text-white active:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 md:inline-flex"
               style={{ minHeight: 44, alignItems: "center", textDecoration: "none" }}
             >
-              Log in
+              {navigation.headerAuthLink.label}
             </Link>
           ) : (
             <Link
@@ -265,7 +258,7 @@ export function SiteHeader({
             className="group hidden items-center justify-center gap-1.5 rounded-full bg-[var(--color-brand-accent)] pl-5 pr-4 py-3 text-sm font-bold text-[var(--color-brand-primary)] shadow-[0_2px_8px_rgba(15,46,37,0.18)] transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(15,46,37,0.32)] active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)] md:inline-flex"
             style={{ minHeight: 44, textDecoration: "none" }}
           >
-            Book Appointment
+            {navigation.navBookAppointment}
             <ArrowUpRight
               className="size-4 text-[var(--color-brand-primary)] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none"
               strokeWidth={2.5}
@@ -279,7 +272,7 @@ export function SiteHeader({
             className="inline-flex items-center justify-center gap-1 rounded-full bg-[var(--color-brand-accent)] px-4 py-2.5 text-sm font-bold text-[var(--color-brand-primary)] shadow-[0_2px_8px_rgba(15,46,37,0.18)] transition-transform duration-200 active:scale-[0.97] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)] md:hidden"
             style={{ minHeight: 40, textDecoration: "none" }}
           >
-            Book
+            {navigation.navBookShort}
             <ArrowUpRight className="size-3.5 text-[var(--color-brand-primary)]" strokeWidth={2.5} aria-hidden />
           </Link>
 

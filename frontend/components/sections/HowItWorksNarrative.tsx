@@ -1,34 +1,50 @@
-/**
- * "How it works" — dark luxury version.
- * Forest-night canvas, lime step numbers, 3-card horizontal layout
- * with connector line on desktop. White titles, white/60 descriptions.
- */
-
 import { ArrowRight } from "lucide-react";
 
-const STEPS = [
-  {
-    n: "01",
-    title: "Pick your country",
-    lede:
-      "We connect you with doctors registered in your country — so referrals, certificates, and follow-ups all work locally.",
-  },
-  {
-    n: "02",
-    title: "Choose what you need",
-    lede:
-      "Browse general, specialist, and home-test services. Filter by language, urgency, or price.",
-  },
-  {
-    n: "03",
-    title: "Talk to a doctor",
-    lede:
-      "Join the consultation from any device. Receive notes or next steps when clinically appropriate after the appointment.",
-  },
-];
+export type HowItWorksI18n = {
+  eyebrow: string;
+  headlineMain: string;
+  headlineAccent: string;
+  subtitle: string;
+  step1Title: string;
+  step1Body: string;
+  step2Title: string;
+  step2Body: string;
+  step3Title: string;
+  step3Body: string;
+};
 
-export function HowItWorksNarrative({ theme = "dark" }: { theme?: "dark" | "light" }) {
+export function HowItWorksNarrative({
+  theme = "dark",
+  i18n,
+}: {
+  theme?: "dark" | "light";
+  i18n?: HowItWorksI18n;
+}) {
   const isLight = theme === "light";
+
+  const steps = [
+    {
+      n: "01",
+      title: i18n?.step1Title ?? "Pick your country",
+      lede:
+        i18n?.step1Body ??
+        "We connect you with doctors registered in your country — so referrals, certificates, and follow-ups all work locally.",
+    },
+    {
+      n: "02",
+      title: i18n?.step2Title ?? "Choose what you need",
+      lede:
+        i18n?.step2Body ??
+        "Browse general, specialist, and home-test services. Filter by language, urgency, or price.",
+    },
+    {
+      n: "03",
+      title: i18n?.step3Title ?? "Talk to a doctor",
+      lede:
+        i18n?.step3Body ??
+        "Join the consultation from any device. Receive notes or next steps when clinically appropriate after the appointment.",
+    },
+  ];
 
   return (
     <section
@@ -50,7 +66,7 @@ export function HowItWorksNarrative({ theme = "dark" }: { theme?: "dark" | "ligh
               className="text-[11px] font-bold tracking-[0.22em] uppercase"
               style={{ color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
             >
-              How it works
+              {i18n?.eyebrow ?? "How it works"}
             </p>
             <h2
               className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
@@ -60,9 +76,9 @@ export function HowItWorksNarrative({ theme = "dark" }: { theme?: "dark" | "ligh
                 maxWidth: "22ch",
               }}
             >
-              Three steps.{" "}
+              {i18n?.headlineMain ?? "Three steps."}{" "}
               <span style={{ color: isLight ? "#8FB021" : "var(--color-brand-accent)" }}>
-                A clearer path.
+                {i18n?.headlineAccent ?? "A clearer path."}
               </span>
             </h2>
           </div>
@@ -74,14 +90,14 @@ export function HowItWorksNarrative({ theme = "dark" }: { theme?: "dark" | "ligh
               maxWidth: "38ch",
             }}
           >
-            From landing on the page to a confirmed appointment — the
-            path through service, clinician, time, and patient details.
+            {i18n?.subtitle ??
+              "From landing on the page to a confirmed appointment — the path through service, clinician, time, and patient details."}
           </p>
         </div>
 
         {/* Steps — 3 cards with connector */}
         <div className={isLight ? "gh-hiw-grid-light" : "gh-hiw-grid"}>
-          {STEPS.map((s, i) => (
+          {steps.map((s, i) => (
             <div key={s.n} className={isLight ? "gh-hiw-item-light" : "gh-hiw-item"}>
               {/* Card */}
               <div
@@ -133,7 +149,7 @@ export function HowItWorksNarrative({ theme = "dark" }: { theme?: "dark" | "ligh
               </div>
 
               {/* Connector arrow — hidden after last item */}
-              {i < STEPS.length - 1 ? (
+              {i < steps.length - 1 ? (
                 <div
                   className={isLight ? "gh-hiw-connector-light" : "gh-hiw-connector"}
                   aria-hidden
