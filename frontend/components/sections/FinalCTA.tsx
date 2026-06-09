@@ -6,6 +6,7 @@
 
 import Link from "next/link";
 import { ArrowUpRight, ShieldCheck, Stethoscope, Clock } from "lucide-react";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
 export function FinalCTA({
   primaryHref = "/",
@@ -47,35 +48,38 @@ export function FinalCTA({
         {/* Main grid */}
         <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-20 items-end">
           {/* Left — oversized lime stat */}
-          <div>
-            <p
-              className="text-[11px] font-bold tracking-[0.22em] uppercase mb-3"
-              style={{ color: "rgba(255,255,255,0.32)" }}
-            >
-              Average to first slot
-            </p>
-            <p
-              className="font-extrabold leading-none tracking-[-0.05em] [font-variant-numeric:tabular-nums]"
-              style={{
-                fontSize: "clamp(5rem,13vw,9rem)",
-                color: "var(--color-brand-accent)",
-              }}
-            >
-              24h
-            </p>
-            <p
-              className="mt-5 font-bold tracking-[-0.02em]"
-              style={{
-                fontSize: "clamp(1.1rem,2vw,1.5rem)",
-                color: "rgba(255,255,255,0.55)",
-              }}
-            >
-              Tomorrow, not next month.
-            </p>
-          </div>
+          <RevealOnScroll delay={0}>
+            <div>
+              <p
+                className="text-[11px] font-bold tracking-[0.22em] uppercase mb-3"
+                style={{ color: "rgba(255,255,255,0.32)" }}
+              >
+                Average to first slot
+              </p>
+              <p
+                className="font-extrabold leading-none tracking-[-0.05em] [font-variant-numeric:tabular-nums]"
+                style={{
+                  fontSize: "clamp(5rem,13vw,9rem)",
+                  color: "var(--color-brand-accent)",
+                }}
+              >
+                24h
+              </p>
+              <p
+                className="mt-5 font-bold tracking-[-0.02em]"
+                style={{
+                  fontSize: "clamp(1.1rem,2vw,1.5rem)",
+                  color: "rgba(255,255,255,0.55)",
+                }}
+              >
+                Tomorrow, not next month.
+              </p>
+            </div>
+          </RevealOnScroll>
 
           {/* Right — headline + CTAs */}
-          <div>
+          <RevealOnScroll delay={150}>
+            <div>
             <h2
               className="font-extrabold tracking-[-0.035em] leading-[1.02]"
               style={{
@@ -135,7 +139,8 @@ export function FinalCTA({
                 Flexible scheduling
               </li>
             </ul>
-          </div>
+            </div>
+          </RevealOnScroll>
         </div>
       </div>
     </section>

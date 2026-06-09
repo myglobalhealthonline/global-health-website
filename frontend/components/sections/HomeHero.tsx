@@ -3,6 +3,7 @@ import Image from "next/image";
 import { ArrowRight, ShieldCheck, Stethoscope, Clock } from "lucide-react";
 import type { CountryCode } from "@/data/countries";
 import { Flag } from "@/components/ui/Flag";
+import { HeroReveal } from "@/components/motion/HeroReveal";
 
 export type LiveDoctorItem = {
   name: string;
@@ -66,99 +67,113 @@ export function HomeHero({
         style={{ minHeight: "calc(100svh - var(--header-height))" }}
       >
         <div className="flex max-w-[720px] flex-col py-12 lg:py-24">
-          <div className="mb-10 flex flex-wrap items-center gap-5">
-            <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]">
-              <Flag code={countryCode} size="sm" />
-              {countryName}
-            </span>
-            <span
-              className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.12em]"
-              style={{ color: "rgba(255,255,255,0.28)" }}
-            >
-              <span aria-hidden className="gh-pulse-dot !size-1.5" />
-              {doctorCount} available
-            </span>
-          </div>
-
-          <h1
-            id="hero-title"
-            className="max-w-[14ch] text-[length:var(--text-display)] font-extrabold text-white"
-            style={{
-              lineHeight: 0.95,
-              letterSpacing: "-0.04em",
-            }}
-          >
-            {displayHeroTitle ? (
-              displayHeroTitle
-            ) : (
-              <>
-                Meet our{" "}
-                <span style={{ color: "var(--color-brand-accent)" }}>
-                  licensed doctors.
-                </span>
-              </>
-            )}
-          </h1>
-
-          <p
-            className="mt-8 max-w-[44ch] text-[length:var(--text-body-lg)] leading-relaxed"
-            style={{ color: "rgba(255,255,255,0.75)" }}
-          >
-            {displayHeroSubtitle ??
-              "Licensed clinicians registered with national medical councils across Ireland, Portugal, Spain, Czechia and Romania."}
-          </p>
-
-          <div className="mt-12 flex flex-wrap items-center gap-4">
-            <Link
-              href={bookHref}
-              className="
-                inline-flex items-center gap-2.5
-                rounded-full px-8 py-[14px]
-                text-sm font-bold tracking-[-0.01em] text-white
-                transition-colors duration-200
-                hover:bg-white/10
-                motion-reduce:transition-none
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40
-              "
-              style={{ border: "1px solid rgba(255,255,255,0.22)" }}
-            >
-              {displayCtaLabel}
-              <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
-            </Link>
-            <Link
-              href="#services"
-              className="
-                text-sm font-semibold text-white/60
-                transition-colors duration-200
-                hover:text-white/85
-                motion-reduce:transition-none
-                focus-visible:outline-none
-              "
-            >
-              Browse services
-            </Link>
-          </div>
-
-          <ul className="mt-12 flex flex-wrap gap-x-8 gap-y-2">
-            {[
-              { icon: ShieldCheck, label: `Licensed in ${countryName}` },
-              { icon: Clock, label: "Same-day slots" },
-              { icon: Stethoscope, label: "No clinic visits" },
-            ].map(({ icon: Icon, label }) => (
-              <li
-                key={label}
+          <HeroReveal delay={0}>
+            <div className="mb-10 flex flex-wrap items-center gap-5">
+              <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]">
+                <Flag code={countryCode} size="sm" />
+                {countryName}
+              </span>
+              <span
                 className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.12em]"
-                style={{ color: "rgba(255,255,255,0.58)" }}
+                style={{ color: "rgba(255,255,255,0.28)" }}
               >
-                <Icon
-                  className="size-3.5 text-[var(--color-brand-accent)]"
-                  strokeWidth={1.5}
-                  aria-hidden
-                />
-                {label}
-              </li>
-            ))}
-          </ul>
+                <span aria-hidden className="gh-pulse-dot !size-1.5" />
+                {doctorCount} available
+              </span>
+            </div>
+          </HeroReveal>
+
+          <HeroReveal delay={150}>
+            <h1
+              id="hero-title"
+              className="max-w-[14ch] text-[length:var(--text-display)] font-extrabold text-white"
+              style={{
+                lineHeight: 0.95,
+                letterSpacing: "-0.04em",
+              }}
+            >
+              {displayHeroTitle ? (
+                displayHeroTitle
+              ) : (
+                <>
+                  Meet our{" "}
+                  <span style={{ color: "var(--color-brand-accent)" }}>
+                    licensed doctors.
+                  </span>
+                </>
+              )}
+            </h1>
+          </HeroReveal>
+
+          <HeroReveal delay={250}>
+            <p
+              className="mt-8 max-w-[44ch] text-[length:var(--text-body-lg)] leading-relaxed"
+              style={{ color: "rgba(255,255,255,0.75)" }}
+            >
+              {displayHeroSubtitle ??
+                "Licensed clinicians registered with national medical councils across Ireland, Portugal, Spain, Czechia and Romania."}
+            </p>
+          </HeroReveal>
+
+          <HeroReveal delay={350}>
+            <div className="mt-12 flex flex-wrap items-center gap-4">
+              <Link
+                href={bookHref}
+                className="
+                  inline-flex items-center gap-2.5
+                  rounded-full px-8 py-[14px]
+                  text-sm font-bold tracking-[-0.01em]
+                  transition-all duration-200
+                  hover:brightness-110 hover:-translate-y-px
+                  motion-reduce:transition-none motion-reduce:hover:translate-y-0
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]/60
+                "
+                style={{
+                  background: "var(--color-brand-accent)",
+                  color: "#0a1f14",
+                  boxShadow: "0 0 24px rgba(176,241,34,0.30)",
+                }}
+              >
+                {displayCtaLabel}
+                <ArrowRight className="size-4" strokeWidth={1.5} aria-hidden />
+              </Link>
+              <Link
+                href="#services"
+                className="
+                  text-sm font-semibold text-white/60
+                  transition-colors duration-200
+                  hover:text-white/85
+                  motion-reduce:transition-none
+                  focus-visible:outline-none
+                "
+              >
+                Browse services
+              </Link>
+            </div>
+          </HeroReveal>
+
+          <HeroReveal delay={440}>
+            <ul className="mt-12 flex flex-wrap gap-x-8 gap-y-2">
+              {[
+                { icon: ShieldCheck, label: `Licensed in ${countryName}` },
+                { icon: Clock, label: "Same-day slots" },
+                { icon: Stethoscope, label: "No clinic visits" },
+              ].map(({ icon: Icon, label }) => (
+                <li
+                  key={label}
+                  className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.12em]"
+                  style={{ color: "rgba(255,255,255,0.58)" }}
+                >
+                  <Icon
+                    className="size-3.5 text-[var(--color-brand-accent)]"
+                    strokeWidth={1.5}
+                    aria-hidden
+                  />
+                  {label}
+                </li>
+              ))}
+            </ul>
+          </HeroReveal>
 
           <div
             className="relative mt-10 aspect-[16/10] overflow-hidden lg:hidden"
@@ -180,7 +195,7 @@ export function HomeHero({
           </div>
         </div>
 
-        <div className="relative hidden min-h-[520px] lg:block">
+        <HeroReveal delay={400} className="relative hidden min-h-[520px] lg:block">
           <div
             className="absolute inset-y-6 left-0 right-0 overflow-hidden"
             style={{
@@ -303,7 +318,7 @@ export function HomeHero({
               </div>
             </aside>
           ) : null}
-        </div>
+        </HeroReveal>
       </div>
 
       <div

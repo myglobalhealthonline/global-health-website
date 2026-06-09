@@ -18,6 +18,7 @@ import {
   User,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
 export type ServiceTileType = "general" | "specialist" | "prescription" | "test";
 
@@ -233,7 +234,8 @@ export function ServiceCatalog({
           </div>
         </header>
 
-        <div
+        <RevealOnScroll
+          stagger
           className={cn(
             "gh-card-grid",
             useFeaturedFirst ? "gh-card-grid--featured" : null,
@@ -246,7 +248,7 @@ export function ServiceCatalog({
               variant={useFeaturedFirst && i === 0 ? "featured" : "default"}
             />
           ))}
-        </div>
+        </RevealOnScroll>
       </div>
     </section>
   );

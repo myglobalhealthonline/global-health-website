@@ -1257,6 +1257,57 @@ img {
   opacity: 0.03;
 }
 
+/* ── Entry animation system ─────────────────────────────────────────
+ * Luxury reveal: fade + subtle 20px lift, expo-out easing, 700ms.
+ * Used by RevealOnScroll.tsx (IO-triggered) and direct hero classes.
+ * ------------------------------------------------------------------ */
+@keyframes gh-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes gh-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Base: invisible until JS kicks in. JS adds this class on mount,
+ * so SSR/no-JS users always see content (progressive enhancement). */
+.gh-reveal {
+  opacity: 0;
+}
+
+/* Triggered by IntersectionObserver — added alongside gh-reveal */
+.gh-reveal-visible {
+  animation: gh-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--gh-delay, 0ms);
+}
+
+/* Stagger system — delays cascade through direct children.
+ * Container gets .gh-stagger; each child picks up --gh-delay via
+ * nth-child. Max 8 items; beyond that delay plateaus at 525ms. */
+.gh-stagger > *:nth-child(1)  { --gh-delay: 0ms;   }
+.gh-stagger > *:nth-child(2)  { --gh-delay: 75ms;  }
+.gh-stagger > *:nth-child(3)  { --gh-delay: 150ms; }
+.gh-stagger > *:nth-child(4)  { --gh-delay: 225ms; }
+.gh-stagger > *:nth-child(5)  { --gh-delay: 300ms; }
+.gh-stagger > *:nth-child(6)  { --gh-delay: 375ms; }
+.gh-stagger > *:nth-child(7)  { --gh-delay: 450ms; }
+.gh-stagger > *:nth-child(8)  { --gh-delay: 525ms; }
+
+/* Hero load — above-fold elements animate on page load (no IO).
+ * Applied directly to JSX elements via className + animationDelay. */
+.gh-hero-animate {
+  animation: gh-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Reduced-motion: skip all entry animations. */
+@media (prefers-reduced-motion: reduce) {
+  .gh-reveal         { opacity: 1; }
+  .gh-reveal-visible { animation: none; }
+  .gh-hero-animate   { opacity: 1; animation: none; }
+}
+
 /* Animations */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
