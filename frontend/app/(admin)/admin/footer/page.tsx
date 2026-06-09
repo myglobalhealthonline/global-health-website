@@ -73,7 +73,7 @@ export default async function AdminFooterPage({
     // picks up the new footer immediately.
     // revalidateTag busts the fetch-level tag cache; revalidatePath busts
     // the RSC cache so the layout re-runs on the next request.
-    revalidateTag(`country-footer:${active!.code.toLowerCase()}`);
+    revalidateTag(`country-footer:${active!.code.toLowerCase()}`, "max");
     revalidatePath(`/${active!.slug}`, "layout");
     redirect("/admin/footer?saved=1");
   }

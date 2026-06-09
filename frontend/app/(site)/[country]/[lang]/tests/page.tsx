@@ -114,12 +114,24 @@ export default async function HealthTestsPage({
         ctaHref={bookHref}
         secondaryLabel="Meet our doctors"
         secondaryHref={`/${slug}/${lang}/doctors`}
+        heroImage={{
+          src: "/images/stock/tests.jpg",
+          alt: `Lab-quality home health test results reviewed by a doctor in ${config.name}`,
+          priority: true,
+        }}
       />
 
       {/* Admin-edited rich body from ContentPage (HEALTH_TESTS). */}
       <RichBodySection html={page?.body} />
 
-      <TrustRibbon />
+      <TrustRibbon
+        items={[
+          { v: "Lab-quality", l: "results", icon: "sparkles" },
+          { v: "Doctor", l: "reviewed", icon: "doctor" },
+          { v: "Home", l: "sample kits", icon: "shield" },
+          { v: "GDPR", l: "compliant", icon: "lock" },
+        ]}
+      />
 
       {items.length > 0 ? (
         <section

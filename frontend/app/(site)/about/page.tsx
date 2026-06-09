@@ -32,8 +32,8 @@ export default function AboutPage() {
         secondaryLabel="Contact the team"
         secondaryHref="/contact"
         heroImage={{
-          src: "/images/ireland/ireland-about-hero.png",
-          alt: "Healthcare team reviewing online consultation notes",
+          src: "/images/stock/about.jpg",
+          alt: "A doctor talking warmly with a patient during a consultation",
           priority: true,
         }}
       />

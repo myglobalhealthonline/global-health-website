@@ -55,10 +55,10 @@ const DEFAULT_ICONS: Record<ServiceTileType, ReactNode> = {
 };
 
 const DEFAULT_SERVICE_IMAGES: Record<ServiceTileType, string> = {
-  general: "/images/hero/homehero.png",
-  specialist: "/images/hero/ireland-hero-photo.png",
-  prescription: "/images/ireland/ireland-home-delivery.png",
-  test: "/images/ireland/ireland-about-section.png",
+  general: "/images/stock/gp.jpg",
+  specialist: "/images/stock/specialist.jpg",
+  prescription: "/images/stock/prescriptions.jpg",
+  test: "/images/stock/tests.jpg",
 };
 
 const FILTERS = [

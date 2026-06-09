@@ -27,8 +27,8 @@ export default function ContactPage() {
           </>
         }
         heroImage={{
-          src: "/images/how-it-works/steps-hero.png",
-          alt: "Patient using a laptop for an online healthcare appointment",
+          src: "/images/stock/contact.jpg",
+          alt: "A member of the Global Health team ready to help with your online care",
           priority: true,
         }}
       />

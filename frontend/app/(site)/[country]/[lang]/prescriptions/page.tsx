@@ -131,13 +131,25 @@ export default async function PrescriptionsPage({
         ctaHref={bookHref}
         secondaryLabel="Browse all doctors"
         secondaryHref={`/${slug}/${lang}/doctors`}
+        heroImage={{
+          src: "/images/stock/prescriptions.jpg",
+          alt: `Doctor reviewing a repeat prescription request in ${config.name}`,
+          priority: true,
+        }}
       />
 
       {/* Admin-edited rich body from ContentPage (PRESCRIPTIONS). Hidden
           when no row exists. */}
       <RichBodySection html={page?.body} />
 
-      <TrustRibbon />
+      <TrustRibbon
+        items={[
+          { v: "Licensed", l: "doctors", icon: "doctor" },
+          { v: "Clinician", l: "reviewed", icon: "shield" },
+          { v: "GDPR", l: "compliant", icon: "lock" },
+          { v: "EU", l: "registered", icon: "globe" },
+        ]}
+      />
 
       {serviceItems.length > 0 ? (
         <div id="prescriptions" className="scroll-mt-24">

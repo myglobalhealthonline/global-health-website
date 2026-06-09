@@ -343,9 +343,9 @@ export function HomeHero({
 
 function normalizeHeroPhoto(src?: string | null): string {
   const trimmed = src?.trim();
-  if (!trimmed) return "/images/hero/homehero.png";
+  if (!trimmed) return "/images/stock/home-hero.jpg";
   if (trimmed.endsWith(".svg") || trimmed.includes("-ai.") || trimmed.includes("-placeholder.")) {
-    return "/images/hero/homehero.png";
+    return "/images/stock/home-hero.jpg";
   }
   return trimmed;
 }

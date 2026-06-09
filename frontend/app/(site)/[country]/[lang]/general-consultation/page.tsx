@@ -4,7 +4,6 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { PageHero } from "@/components/sections/PageHero";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
-import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
@@ -155,7 +154,7 @@ export default async function CountryLangGeneralConsultationPage({
   }));
 
   // Doctor cards — admin adding a Doctor row for this country adds a card.
-  const doctorItems = doctors.slice(0, 12).map((d) => ({
+  const doctorItems = doctors.slice(0, 6).map((d) => ({
     name: d.fullName,
     title: d.title,
     bio: d.bio ?? "",
@@ -208,6 +207,11 @@ export default async function CountryLangGeneralConsultationPage({
         ctaHref={ctaHref}
         secondaryLabel="View profiles"
         secondaryHref={`/${slug}/${lang}/doctors`}
+        heroImage={{
+          src: "/images/stock/gp.jpg",
+          alt: `General practitioner available for an online consultation in ${config.name}`,
+          priority: true,
+        }}
       />
 
       {page?.heroImageSrc ? (
@@ -242,8 +246,6 @@ export default async function CountryLangGeneralConsultationPage({
       ) : null}
 
       <ReviewBadge countryName={config.name} />
-
-      <TrustRibbon theme="light" />
 
       {/* Service cards — auto from Service rows where kind=GENERAL, country=X */}
       {serviceItems.length > 0 ? (

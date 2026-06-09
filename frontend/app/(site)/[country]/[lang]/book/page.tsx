@@ -170,7 +170,7 @@ export default async function CountryLangBookPage({
             countryName={config.name}
             doctorCount={doctors.length}
             serviceCount={services.length}
-            imageSrc={homePage?.heroImageSrc ?? "/images/how-it-works/steps-hero.png"}
+            imageSrc={homePage?.heroImageSrc ?? "/images/stock/book.jpg"}
           />
         }
       />

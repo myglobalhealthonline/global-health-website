@@ -5,7 +5,6 @@ import { SpecialtiesGrid } from "@/components/sections/SpecialtiesGrid";
 import { PageHero } from "@/components/sections/PageHero";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
-import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
@@ -140,7 +139,7 @@ export default async function CountryLangSpecialistConsultationPage({
   // Doctor cards filtered to those with at least one specialty link.
   const doctorItems = doctors
     .filter((d) => d.specialties.length > 0)
-    .slice(0, 12)
+    .slice(0, 6)
     .map((d) => ({
       name: d.fullName,
       title: d.title,
@@ -184,6 +183,11 @@ export default async function CountryLangSpecialistConsultationPage({
         ctaHref={ctaHref}
         secondaryLabel="View profiles"
         secondaryHref={`/${slug}/${lang}/doctors`}
+        heroImage={{
+          src: "/images/stock/specialist.jpg",
+          alt: `Specialist available for an online consultation in ${config.name}`,
+          priority: true,
+        }}
       />
 
       {page?.heroImageSrc ? (
@@ -205,8 +209,6 @@ export default async function CountryLangSpecialistConsultationPage({
       <RichBodySection html={page?.body} theme="light" />
 
       <ReviewBadge countryName={config.name} />
-
-      <TrustRibbon theme="light" />
 
       {specialtyItems.length > 0 ? (
         <SpecialtiesGrid title="Find the right specialty" items={specialtyItems} />
