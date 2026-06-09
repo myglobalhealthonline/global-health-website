@@ -52,7 +52,7 @@ export async function generateMetadata({
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const page = await getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale);
+  const { record: page } = await getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/see-a-specialist`;
   const title = page?.seoTitle ?? `See a Specialist in ${config.name} · ${SITE_NAME}`;
   const description =
@@ -92,13 +92,14 @@ export default async function CountryLangSpecialistConsultationPage({
   // Honor the per-country `specialist-consultations` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "specialist-consultations")) notFound();
-
-  const [page, specialties, services, doctors] = await Promise.all([
+  const [{ record: rawPage, disabled: pageDisabled }, specialties, services, doctors] = await Promise.all([
     getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale),
     getCountrySpecialties(code, lang),
     getCountryServices(code, "SPECIALIST", lang),
     getCountryDoctors(code, lang),
   ]);
+
+  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
 
   // Provider-first defaults per Google Ads "restricted services" guidance.
   const heroTitle = page?.heroTitle ?? "Meet our specialists";

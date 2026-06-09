@@ -69,7 +69,7 @@ export async function generateMetadata({
   if (!config) return { title: SITE_NAME };
   if (!isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const page = await getPublicPage(code, "HOME", lang as PublicLocale);
+  const { record: page } = await getPublicPage(code, "HOME", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}`;
   const title = page?.seoTitle ?? `${config.name} Online Clinic | ${SITE_NAME}`;
   const description =
@@ -177,7 +177,6 @@ export default async function CountryLangHomePage({
   const config = await getPublicCountryByCode(code);
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
-
   // Cart-first booking: default site CTAs aim at service flows. The
   // legacy `/book-online` route stays alive as a fallback but no longer
   // surfaces from this page; both DoctorWall and FinalCTA now route at
@@ -186,7 +185,7 @@ export default async function CountryLangHomePage({
   const doctorsHref = `/${slug}/${lang}/doctors`;
 
   const [
-    page,
+    { record: rawPage, disabled: pageDisabled },
     countryDoctors,
     generalServices,
     specialistServices,
@@ -203,6 +202,10 @@ export default async function CountryLangHomePage({
       getCountryHealthTests(code, lang),
       getPublicDoctorsNormalized(lang),
     ]);
+
+  // Null out CMS content when the page entry is disabled or the "pages"
+  // feature is toggled off — structural sections still render with defaults.
+  const page = (pageDisabled || !isCountryFeatureEnabled(config, "pages")) ? null : rawPage;
 
   const totalDoctorsAcrossEurope = allDoctors.length;
 

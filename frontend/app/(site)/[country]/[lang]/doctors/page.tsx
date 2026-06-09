@@ -5,6 +5,8 @@ import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { countries, getCountryByCode } from "@/data/countries";
 import { getCountryDoctors } from "@/lib/content/get-country-collections";
+import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
+import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
@@ -60,7 +62,7 @@ export async function generateMetadata({
   const config = code ? getCountryByCode(code) : null;
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
 
-  const page = await getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale);
+  const { record: page } = await getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/doctors`;
   const title = page?.seoTitle ?? `${config.name} doctors · ${SITE_NAME}`;
   const description =
@@ -88,17 +90,19 @@ export default async function CountryLangDoctorsPage({
   const config = getCountryByCode(code);
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
-
+  const overlay = await getPublicCountryByCode(code);
   const sp = searchParams ? await searchParams : {};
   // Active filters from the URL. Languages keyed by ISO code; specialties
   // by slug. Accept `?lang=es,pt`, `?lang=es&lang=pt`, single value, etc.
   const filterLangs = parseMultiParam(sp?.lang).map((s) => languageKey(s));
   const filterSpecs = parseMultiParam(sp?.specialty).map((s) => specialtySlug(s));
 
-  const [doctors, page] = await Promise.all([
+  const [doctors, { record: rawPage, disabled: pageDisabled }] = await Promise.all([
     getCountryDoctors(code, lang),
     getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale),
   ]);
+
+  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
 
   // Distinct language codes + specialty slugs advertised by at least one
   // doctor in this country — these drive the filter chips. Sorted by

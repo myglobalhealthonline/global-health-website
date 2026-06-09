@@ -45,7 +45,7 @@ export async function generateMetadata({
   if (!code || !config || !isSupportedLocale(lang)) return { title: SITE_NAME };
   // Admin-editable copy via /admin/pages (PageKey=HEALTH_TESTS).
   // Falls back to the hardcoded strings if no ContentPage row exists.
-  const page = await getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale);
+  const { record: page } = await getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/lab-tests`;
   const title = page?.seoTitle ?? `Lab Test Booking in ${config.name} · ${SITE_NAME}`;
   const description =
@@ -77,11 +77,12 @@ export default async function HealthTestsPage({
   // Honor the per-country `health-tests` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "health-tests")) notFound();
-
-  const [items, page] = await Promise.all([
+  const [items, { record: rawPage, disabled: pageDisabled }] = await Promise.all([
     getCountryHealthTests(code, lang),
     getPublicPage(code, "HEALTH_TESTS", lang as PublicLocale),
   ]);
+
+  const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
   // Cart-first booking: hero/final CTA points at the tests grid below.
   const bookHref = "#tests";
   // Provider-first defaults per Google Ads "restricted services" guidance.
