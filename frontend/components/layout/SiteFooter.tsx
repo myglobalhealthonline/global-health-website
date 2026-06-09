@@ -181,6 +181,7 @@ export function SiteFooter({
         background: "var(--color-background-dark)",
         color: "rgba(255,255,255,0.70)",
         padding: "64px 0 28px",
+        borderTop: "1px solid rgba(176,241,34,0.16)",
       }}
     >
       <div
@@ -242,7 +243,7 @@ export function SiteFooter({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="inline-flex size-9 items-center justify-center rounded-full border border-white/15 text-white/70 transition-colors hover:border-white/40 hover:text-white"
+                    className="inline-flex size-9 items-center justify-center rounded-full border border-white/15 text-white/70 transition-[transform,color,border-color] duration-200 hover:-translate-y-0.5 hover:border-[var(--color-brand-accent)] hover:text-white active:scale-95 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.5)]"
                   >
                     <Icon className="size-4" />
                   </a>
@@ -254,7 +255,7 @@ export function SiteFooter({
           {groups.map((group) => (
             <div key={group.h}>
               <p
-                className="m-0 uppercase text-white"
+                className="m-0 inline-flex items-center gap-2 uppercase text-white"
                 style={{
                   fontSize: 11,
                   fontWeight: 700,
@@ -262,6 +263,11 @@ export function SiteFooter({
                   marginBottom: 14,
                 }}
               >
+                <span
+                  aria-hidden
+                  className="inline-block h-3 w-[3px] rounded-full"
+                  style={{ background: "var(--color-brand-accent)" }}
+                />
                 {group.h}
               </p>
               <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
@@ -274,7 +280,7 @@ export function SiteFooter({
                   const isExternal =
                     item.external === true ||
                     /^(https?:|mailto:|tel:)/i.test(item.href);
-                  const linkClass = "text-[rgba(255,255,255,0.70)] transition-colors hover:text-white";
+                  const linkClass = "inline-block text-[rgba(255,255,255,0.70)] transition-[color,transform] duration-200 hover:translate-x-0.5 hover:text-white focus-visible:text-white focus-visible:outline-none motion-reduce:transition-none";
                   const linkStyle = { fontSize: 14, textDecoration: "none" } as const;
                   const newTab = item.external === true;
                   return (
@@ -332,7 +338,7 @@ export function SiteFooter({
             {copyrightPrefix} · Medicine anytime anywhere
           </span>
           <span className="flex gap-3">
-            <Link href="/privacy" className="hover:text-white" style={{ color: "inherit", textDecoration: "none" }}>
+            <Link href="/privacy" className="transition-colors hover:text-white focus-visible:text-white focus-visible:outline-none" style={{ color: "inherit", textDecoration: "none" }}>
               Privacy
             </Link>
             <span aria-hidden>·</span>

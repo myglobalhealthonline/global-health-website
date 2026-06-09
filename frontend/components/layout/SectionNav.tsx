@@ -5,6 +5,10 @@
  * with submenus (e.g. Services → GP, Specialist, Prescriptions, Tests).
  * Renders as a pill rail at md+. Hidden below — the MobileNav drawer
  * handles small viewports.
+ *
+ * Tabs are className-driven (not inline styles) so hover + focus states
+ * actually work. The ACTIVE tab is rendered in the brand lime accent —
+ * lime is used as an accent here (text), never as a button fill.
  */
 
 import Link from "next/link";
@@ -22,6 +26,20 @@ export type SectionNavItem = {
    *  these children in a Radix DropdownMenu popover. */
   children?: Array<{ href: string; label: string; description?: string }>;
 };
+
+const PILL_BASE =
+  "group/navitem relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-bold whitespace-nowrap cursor-pointer outline-none transition-[color,background-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2";
+
+function pillClass(active: boolean, dark: boolean): string {
+  if (dark) {
+    return active
+      ? `${PILL_BASE} text-[var(--color-brand-accent)] bg-white/[0.07] focus-visible:ring-[color:rgba(176,241,34,0.45)]`
+      : `${PILL_BASE} text-white/55 hover:text-white hover:bg-white/[0.07] focus-visible:ring-white/40`;
+  }
+  return active
+    ? `${PILL_BASE} text-[var(--color-brand-primary)] bg-white shadow-[var(--shadow-soft)] focus-visible:ring-[color:rgba(29,75,54,0.3)]`
+    : `${PILL_BASE} text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-white/60 focus-visible:ring-[color:rgba(29,75,54,0.3)]`;
+}
 
 export function SectionNav({
   items,
@@ -52,7 +70,7 @@ export function SectionNav({
       className="hidden items-center md:flex"
       style={{
         gap: 4,
-        background: isDark ? "rgba(255,255,255,0.07)" : "var(--color-background-soft)",
+        background: isDark ? "rgba(255,255,255,0.05)" : "var(--color-background-soft)",
         padding: 4,
         borderRadius: 999,
         border: isDark ? "1px solid rgba(255,255,255,0.10)" : "1px solid var(--color-border)",
@@ -66,14 +84,14 @@ export function SectionNav({
           return (
             <DropdownMenu.Root key={item.label}>
               <DropdownMenu.Trigger
-                className="inline-flex items-center gap-1 transition-all duration-150 focus-visible:outline-none"
-                style={pillStyle(active, isDark)}
+                className={pillClass(active, isDark)}
                 aria-label={`${item.label} submenu`}
               >
+                {active ? <ActiveDot /> : null}
                 {item.label}
                 <ChevronDown
-                  className="size-3.5 opacity-70"
-                  strokeWidth={1.5}
+                  className="size-3.5 opacity-70 transition-transform duration-200 group-data-[state=open]/navitem:rotate-180 motion-reduce:transition-none"
+                  strokeWidth={2}
                   aria-hidden
                 />
               </DropdownMenu.Trigger>
@@ -88,7 +106,7 @@ export function SectionNav({
                       <Link
                         href={c.href}
                         className="
-                          flex flex-col gap-0.5 rounded-[var(--radius-card-sm)]
+                          group/sub flex flex-col gap-0.5 rounded-[var(--radius-card-sm)]
                           px-3 py-2.5
                           text-sm font-semibold text-[var(--color-text-primary)]
                           outline-none
@@ -99,9 +117,16 @@ export function SectionNav({
                           motion-reduce:transition-none
                         "
                       >
-                        <span>{c.label}</span>
+                        <span className="inline-flex items-center gap-2">
+                          <span
+                            aria-hidden
+                            className="h-3.5 w-[3px] rounded-full opacity-0 transition-opacity duration-150 group-hover/sub:opacity-100 group-focus-visible/sub:opacity-100 group-data-[highlighted]/sub:opacity-100"
+                            style={{ background: "var(--color-brand-accent)" }}
+                          />
+                          {c.label}
+                        </span>
                         {c.description ? (
-                          <span className="text-xs font-normal text-[var(--color-text-muted)]">
+                          <span className="pl-[11px] text-xs font-normal text-[var(--color-text-muted)]">
                             {c.description}
                           </span>
                         ) : null}
@@ -120,9 +145,10 @@ export function SectionNav({
           <Link
             key={item.href ?? item.label}
             href={item.href ?? "#"}
-            className="inline-flex items-center transition-all duration-150"
-            style={pillStyle(active, isDark)}
+            className={pillClass(active, isDark)}
+            aria-current={active ? "page" : undefined}
           >
+            {active ? <ActiveDot /> : null}
             {item.label}
           </Link>
         );
@@ -131,37 +157,13 @@ export function SectionNav({
   );
 }
 
-function pillStyle(active: boolean, dark = false): React.CSSProperties {
-  if (dark) {
-    return {
-      padding: "8px 16px",
-      borderRadius: 999,
-      background: active ? "rgba(255,255,255,0.14)" : "transparent",
-      color: active ? "#ffffff" : "rgba(255,255,255,0.62)",
-      fontFamily: "inherit",
-      fontSize: 13,
-      fontWeight: 700,
-      textDecoration: "none",
-      boxShadow: "none",
-      whiteSpace: "nowrap",
-      cursor: "pointer",
-      border: "none",
-    };
-  }
-  return {
-    padding: "8px 16px",
-    borderRadius: 999,
-    background: active ? "var(--color-background-page)" : "transparent",
-    color: active
-      ? "var(--color-text-primary)"
-      : "var(--color-text-muted)",
-    fontFamily: "inherit",
-    fontSize: 13,
-    fontWeight: 700,
-    textDecoration: "none",
-    boxShadow: active ? "var(--shadow-soft)" : "none",
-    whiteSpace: "nowrap",
-    cursor: "pointer",
-    border: "none",
-  };
+/** Small lime pulse dot marking the active tab — the signature accent. */
+function ActiveDot() {
+  return (
+    <span
+      aria-hidden
+      className="inline-block size-1.5 shrink-0 rounded-full gh-pulse-dot"
+      style={{ background: "var(--color-brand-accent)" }}
+    />
+  );
 }
