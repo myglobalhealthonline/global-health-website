@@ -11,7 +11,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { countries } from "@/data/countries";
+import { countries as staticCountries, type CountryConfig } from "@/data/countries";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
@@ -63,6 +63,7 @@ export function SiteFooter({
   siteName,
   countryFeatures,
   countryFooters,
+  countries,
 }: {
   siteName: string;
   /** Code → enabled feature slugs (same shape SiteHeader receives).
@@ -75,6 +76,9 @@ export function SiteFooter({
    *  exists, it replaces the brand block + adds the admin-managed
    *  contact, social, custom columns, and copyright. */
   countryFooters?: Record<string, PublicCountryFooter | null>;
+  /** Active countries from the CMS. Falls back to the static seed list
+   *  when not provided so the footer renders on every context. */
+  countries?: CountryConfig[];
 }) {
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
@@ -115,7 +119,12 @@ export function SiteFooter({
     ),
   ];
 
-  const clinicsLinks = countries.map((c) => ({
+  // Use the CMS-derived country list when available so deactivated or
+  // unpublished countries don't appear in the Clinics column. Fall back
+  // to the static seed list so the footer works on pages that don't
+  // pass the prop (e.g. storybook, older layouts).
+  const activeCountries = countries ?? staticCountries;
+  const clinicsLinks = activeCountries.map((c) => ({
     label: c.name,
     href: `/${COUNTRY_CODE_TO_SLUG[c.code]}/${c.defaultLocale ?? "en"}`,
   }));
@@ -129,8 +138,11 @@ export function SiteFooter({
 
   const companyLinks = [
     { label: "Blog", href: "/blog" },
-    { label: "Contact us", href: "/contact" },
+    { label: "FAQ", href: "/faq" },
     { label: "About", href: "/about" },
+    { label: "Contact us", href: "/contact" },
+    { label: "Privacy policy", href: "/privacy" },
+    { label: "Terms of service", href: "/terms" },
   ];
 
   // Built-in groups stay auto-derived (Care + Clinics from features,

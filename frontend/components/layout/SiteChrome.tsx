@@ -59,6 +59,7 @@ export function SiteChrome({
           siteName={siteName}
           countryFeatures={countryFeatures}
           countryFooters={countryFooters}
+          countries={countries}
         />
       )}
     </>

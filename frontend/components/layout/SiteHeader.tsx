@@ -90,7 +90,7 @@ function sectionNavForCountryLang(
     items.push({ label: "Services", children: servicesChildren });
   }
   // Global pages — country/lang-agnostic.
-  items.push({ href: `${base}#how-it-works`, label: "How It Works" });
+  items.push({ href: "/blog", label: "Blog" });
   items.push({ href: "/about", label: "About" });
   items.push({ href: "/contact", label: "Contact" });
   return items;
