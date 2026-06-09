@@ -16,7 +16,6 @@
  */
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown, Languages, Check } from "lucide-react";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -129,16 +128,20 @@ export function LanguageSwitcher({
               );
 
               if (isCountryPage) {
-                // URL-based swap — navigate to new path and persist cookie.
+                // Hard-navigate so the server layout re-renders with the new
+                // locale. Using <Link> (client-side nav) preserves the shared
+                // (site)/layout.tsx and the navbar/footer never see the new
+                // x-gh-locale header stamped by the middleware.
                 return (
                   <li key={loc}>
-                    <Link
-                      href={swapped}
+                    <button
+                      type="button"
+                      role="menuitem"
                       onClick={() => {
                         setLocaleCookie(loc);
                         setOpen(false);
+                        window.location.href = swapped;
                       }}
-                      role="menuitem"
                       style={itemStyle(isActive)}
                     >
                       {label}
@@ -148,7 +151,7 @@ export function LanguageSwitcher({
                           className="size-3.5 text-[var(--color-brand-primary)]"
                         />
                       ) : null}
-                    </Link>
+                    </button>
                   </li>
                 );
               }
