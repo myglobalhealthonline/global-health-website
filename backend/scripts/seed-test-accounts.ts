@@ -23,9 +23,29 @@ import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { prisma } from "../src/db/prisma.js";
 
-const PASSWORD = "GHAdmin2026X7qL9!";
+// Passwords are read from the environment — never hardcoded. Set
+// SEED_DOCTOR_PASSWORD and SEED_PATIENT_PASSWORD (distinct values) before
+// running. The script refuses to run if either is missing.
+const DOCTOR_PASSWORD = process.env.SEED_DOCTOR_PASSWORD;
+const PATIENT_PASSWORD = process.env.SEED_PATIENT_PASSWORD;
 const DOCTOR_EMAIL = "doctor@globalhealthonline.com";
 const PATIENT_EMAIL = "patient@globalhealthonline.com";
+
+// Refuse to run against a production-looking database host. NODE_ENV is not
+// enough: the documented local workflow points DATABASE_URL at the Railway
+// production proxy while NODE_ENV=development, so guard on the host too.
+const PROD_DB_HOST_PATTERNS = [/rlwy\.net/i, /railway\.internal/i, /\.proxy\./i];
+
+function assertNotProductionDatabase(): void {
+  if (process.env.FORCE_SEED === "true") return;
+  const url = process.env.DATABASE_URL ?? "";
+  if (PROD_DB_HOST_PATTERNS.some((pattern) => pattern.test(url))) {
+    throw new Error(
+      "seed-test-accounts refuses to run: DATABASE_URL points at a production-looking host. " +
+        "Set FORCE_SEED=true only if you are certain this is a disposable database.",
+    );
+  }
+}
 // Defaults used only when the rows DON'T EXIST yet. Re-runs do not
 // overwrite admin-edited names — see the upsert update branches below.
 const DOCTOR_DEFAULT_NAME = "Dr. Test Account";
@@ -42,6 +62,15 @@ async function main() {
     throw new Error(
       "seed-test-accounts refuses to run with NODE_ENV=production — these are test rows only.",
     );
+  }
+  assertNotProductionDatabase();
+  if (!DOCTOR_PASSWORD || !PATIENT_PASSWORD) {
+    throw new Error(
+      "SEED_DOCTOR_PASSWORD and SEED_PATIENT_PASSWORD must both be set (and distinct) before seeding test accounts.",
+    );
+  }
+  if (DOCTOR_PASSWORD === PATIENT_PASSWORD) {
+    throw new Error("SEED_DOCTOR_PASSWORD and SEED_PATIENT_PASSWORD must be different values.");
   }
 
   // Pick the first active country with a slug as the doctor's home
@@ -83,7 +112,8 @@ async function main() {
     console.log(`  Cleanup: renamed ${renamedPatients.count} legacy patient row(s).`);
   }
 
-  const passwordHash = await bcrypt.hash(PASSWORD, 12);
+  const doctorPasswordHash = await bcrypt.hash(DOCTOR_PASSWORD, 12);
+  const patientPasswordHash = await bcrypt.hash(PATIENT_PASSWORD, 12);
 
   // ---- Doctor profile (public directory row) ----
   // CREATE uses the default name + inactive. UPDATE deliberately omits
@@ -126,7 +156,7 @@ async function main() {
     where: { email: DOCTOR_EMAIL },
     create: {
       email: DOCTOR_EMAIL,
-      passwordHash,
+      passwordHash: doctorPasswordHash,
       fullName: DOCTOR_DEFAULT_NAME,
       role: "DOCTOR",
       doctorId: doctorProfile.id,
@@ -134,7 +164,7 @@ async function main() {
       emailVerifiedAt: new Date(),
     },
     update: {
-      passwordHash,
+      passwordHash: doctorPasswordHash,
       role: "DOCTOR",
       doctorId: doctorProfile.id,
       isActive: true,
@@ -149,14 +179,14 @@ async function main() {
     where: { email: PATIENT_EMAIL },
     create: {
       email: PATIENT_EMAIL,
-      passwordHash,
+      passwordHash: patientPasswordHash,
       fullName: PATIENT_DEFAULT_NAME,
       role: "PATIENT",
       isActive: true,
       emailVerifiedAt: new Date(),
     },
     update: {
-      passwordHash,
+      passwordHash: patientPasswordHash,
       role: "PATIENT",
       isActive: true,
       emailVerifiedAt: new Date(),

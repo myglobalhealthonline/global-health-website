@@ -8,6 +8,7 @@ import {
   getBrazilConsentForDoctor,
   submitBrazilConsent,
 } from "../modules/brazil-consent/brazil-consent.service.js";
+import { verifyBrazilConsentToken } from "../modules/brazil-consent/brazil-consent-link.service.js";
 
 // Per-(appointment,IP) sliding window. Anyone with an appointmentId can hit
 // the public submit endpoint, which creates a Stripe session and DB row.
@@ -38,6 +39,7 @@ function clientIp(request: FastifyRequest): string {
 
 const submitSchema = z.object({
   appointmentId: z.string().min(1),
+  token: z.string().min(1),
   fullName: z.string().trim().max(200).optional(),
   dob: z.string().trim().max(32).optional(),
   address: z.string().trim().max(500).optional(),
@@ -50,9 +52,16 @@ const submitSchema = z.object({
 
 const brazilConsentRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/public/brazil-consent", async (request, reply) => {
-    const appointmentId = (request.query as { appointmentId?: string }).appointmentId;
+    const query = request.query as { appointmentId?: string; token?: string };
+    const appointmentId = query.appointmentId;
     if (!appointmentId?.trim()) {
       return reply.status(400).send(errorResponse("appointmentId is required"));
+    }
+    // The form exposes patient PII — require a valid signed token bound to
+    // this appointment id before returning anything.
+    const tokenCheck = verifyBrazilConsentToken(appointmentId.trim(), query.token);
+    if (!tokenCheck.ok) {
+      return reply.status(401).send(errorResponse(tokenCheck.message));
     }
     try {
       const data = await getBrazilConsentFormData(appointmentId.trim());
@@ -90,6 +99,10 @@ const brazilConsentRoute: FastifyPluginAsync = async (app) => {
     const body = submitSchema.safeParse(request.body ?? {});
     if (!body.success) {
       return reply.status(400).send(errorResponse("Invalid submission", body.error.flatten()));
+    }
+    const tokenCheck = verifyBrazilConsentToken(body.data.appointmentId, body.data.token);
+    if (!tokenCheck.ok) {
+      return reply.status(401).send(errorResponse(tokenCheck.message));
     }
     const rlKey = `${body.data.appointmentId}|${clientIp(request)}`;
     if (isRateLimited(rlKey)) {

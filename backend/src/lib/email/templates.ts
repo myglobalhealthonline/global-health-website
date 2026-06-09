@@ -1,5 +1,6 @@
 import { env } from "../../config/env.js";
 import { absoluteSiteUrl, sendEmail } from "./send-email.js";
+import { createBrazilConsentToken } from "../../modules/brazil-consent/brazil-consent-link.service.js";
 
 /** Shared, minimal transactional email shell — works in plain-text clients
  *  and renders neatly in HTML clients. Avoid heavy inline CSS so the message
@@ -394,9 +395,12 @@ export async function sendBrazilFinalizationEmail(opts: {
   patientName: string;
   appointmentId: string;
 }) {
+  const consentToken = createBrazilConsentToken(opts.appointmentId);
   const bookingUrl =
     env.BRAZIL_BOOKING_URL?.trim() ||
-    absoluteSiteUrl(`/brazil/consent?appointmentId=${encodeURIComponent(opts.appointmentId)}`);
+    absoluteSiteUrl(
+      `/brazil/consent?appointmentId=${encodeURIComponent(opts.appointmentId)}&token=${encodeURIComponent(consentToken)}`,
+    );
   return sendEmail({
     to: opts.to,
     subject: "Próximos passos — consentimento médico Brasil",

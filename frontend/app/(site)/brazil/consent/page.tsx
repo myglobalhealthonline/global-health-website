@@ -10,6 +10,7 @@ import {
 function BrazilConsentForm() {
   const searchParams = useSearchParams();
   const appointmentId = searchParams.get("appointmentId") ?? "";
+  const token = searchParams.get("token") ?? "";
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [prefill, setPrefill] = useState<{
@@ -22,12 +23,12 @@ function BrazilConsentForm() {
   const [pending, startTransition] = useTransition();
 
   useEffect(() => {
-    if (!appointmentId) {
-      setError("Missing appointment reference.");
+    if (!appointmentId || !token) {
+      setError("This consent link is missing or invalid. Please use the link from your email.");
       setLoading(false);
       return;
     }
-    fetchBrazilConsentForm(appointmentId).then((res) => {
+    fetchBrazilConsentForm(appointmentId, token).then((res) => {
       setLoading(false);
       if (!res.ok) {
         setError(res.message);
@@ -43,7 +44,7 @@ function BrazilConsentForm() {
         pharmacy: res.data.appointment.pharmacy ?? "",
       });
     });
-  }, [appointmentId]);
+  }, [appointmentId, token]);
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -52,6 +53,7 @@ function BrazilConsentForm() {
     startTransition(async () => {
       const res = await submitBrazilConsent({
         appointmentId,
+        token,
         fullName: String(fd.get("fullName") ?? ""),
         email: String(fd.get("email") ?? ""),
         phone: String(fd.get("phone") ?? ""),

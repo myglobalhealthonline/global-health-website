@@ -9,6 +9,10 @@ import {
 import { isSafeMediaKey } from "../utils/media-key.js";
 import { errorResponse } from "../utils/response.js";
 
+// S3 key prefixes that contain patient health information. Objects under
+// these prefixes are never served through the public media proxy.
+const PHI_PREFIXES = ["clinical/", "patient-upload/"] as const;
+
 const mediaPublicRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/media/*", async (request, reply) => {
     if (!isMediaStorageConfigured()) {
@@ -21,13 +25,15 @@ const mediaPublicRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid media key"));
     }
 
-    // Clinical document attachments are stored under the `clinical/`
-    // prefix and contain PHI. They MUST be served through the
-    // auth-gated `/api/doctor/documents/:id/download` endpoint, which
-    // resolves the AppointmentDocument row + verifies the caller
-    // owns it or is an admin. Refuse the public media path so
-    // a leaked S3 key alone never exposes a patient record.
-    if (key.startsWith("clinical/")) {
+    // PHI-bearing prefixes MUST never be served through the public media
+    // path. A leaked S3 key alone must not expose a patient record:
+    //   - `clinical/`       — clinical document attachments, served via the
+    //                         auth-gated `/api/doctor/documents/:id/download`
+    //                         endpoint which verifies ownership/admin.
+    //   - `patient-upload/`  — patient-uploaded medical documents. The key
+    //                         embeds the patient email, so it is guessable;
+    //                         these must be served through an auth-gated route.
+    if (PHI_PREFIXES.some((prefix) => key.startsWith(prefix))) {
       return reply.status(403).send(errorResponse("This document requires authentication"));
     }
 

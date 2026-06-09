@@ -3,6 +3,7 @@ import { env } from "../../config/env.js";
 import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
 import { sendEmail } from "../../lib/email/send-email.js";
 import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
+import { createBrazilConsentToken } from "./brazil-consent-link.service.js";
 
 const BRAZIL_CONSENT_AMOUNT_CENTS = 2900;
 
@@ -73,9 +74,10 @@ export async function submitBrazilConsent(input: {
     const success =
       env.STRIPE_SUCCESS_URL ??
       `${(env.PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "")}/brazil/consent/success`;
+    const cancelToken = createBrazilConsentToken(appt.id);
     const cancel =
       env.STRIPE_CANCEL_URL ??
-      `${(env.PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "")}/brazil/consent?appointmentId=${appt.id}`;
+      `${(env.PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "")}/brazil/consent?appointmentId=${appt.id}&token=${encodeURIComponent(cancelToken)}`;
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",

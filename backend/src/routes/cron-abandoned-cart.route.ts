@@ -22,11 +22,15 @@ const IDLE_MS = 60 * 60 * 1000; // 1 hour
 
 const abandonedCartCronRoute: FastifyPluginAsync = async (app) => {
   app.post("/api/cron/abandoned-carts", async (request, reply) => {
-    // Token check — CRON_SECRET must be set in env (skip enforcement only
-    // when env var unset to keep dev easy; production should always set it).
+    // Token check — fail CLOSED. If CRON_SECRET is unset the endpoint is
+    // unconfigured and must refuse all callers (never run unauthenticated).
     const expected = env.CRON_SECRET;
     const provided = request.headers["x-cron-token"];
-    if (expected && provided !== expected) {
+    if (!expected) {
+      app.log.error("CRON_SECRET is not set — refusing cron request");
+      return reply.status(503).send(errorResponse("Cron endpoint is not configured"));
+    }
+    if (provided !== expected) {
       return reply.status(401).send(errorResponse("Invalid cron token"));
     }
 

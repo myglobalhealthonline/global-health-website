@@ -2,8 +2,10 @@
  * Public-side renderer for the rich-text `body` field on a ContentPage.
  *
  * Dark luxury version — forest-night canvas, white/80 prose text.
- * The admin editor sanitizes HTML before saving so the DB value is render-safe.
+ * HTML is sanitized at render time (server component) so a payload that
+ * slipped past the admin editor can never execute in a visitor's browser.
  */
+import { sanitizePageBodyHtml } from "@/lib/content/sanitize-page-body";
 
 export function RichBodySection({
   html,
@@ -18,6 +20,11 @@ export function RichBodySection({
 }) {
   const trimmed = (html ?? "").trim();
   if (!trimmed || trimmed === "<p><br/></p>" || trimmed === "<p><br></p>") {
+    return null;
+  }
+
+  const safeHtml = sanitizePageBodyHtml(trimmed);
+  if (!safeHtml) {
     return null;
   }
 
@@ -61,7 +68,7 @@ export function RichBodySection({
             lineHeight: 1.75,
             color: isLight ? "var(--color-text-body)" : "rgba(255,255,255,0.72)",
           }}
-          dangerouslySetInnerHTML={{ __html: trimmed }}
+          dangerouslySetInnerHTML={{ __html: safeHtml }}
         />
       </div>
 

@@ -14,6 +14,7 @@ import {
   setAdminDoctorFeatured,
 } from "@/lib/admin/admin-api";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
+import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
@@ -303,7 +304,7 @@ export default async function AdminDoctorDetailPage({
             {d.bio ? (
               <div
                 className="prose prose-sm mt-3 max-w-none text-[var(--color-text-body)]"
-                dangerouslySetInnerHTML={{ __html: d.bio }}
+                dangerouslySetInnerHTML={{ __html: sanitizeDoctorBioHtml(d.bio) }}
               />
             ) : (
               <p className="mt-3 text-[13px] text-[var(--color-text-muted)]">

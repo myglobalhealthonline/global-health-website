@@ -32,7 +32,7 @@ async function publicFetch<T>(
   }
 }
 
-export function fetchBrazilConsentForm(appointmentId: string) {
+export function fetchBrazilConsentForm(appointmentId: string, token: string) {
   return publicFetch<{
     appointment: {
       id: string;
@@ -43,7 +43,9 @@ export function fetchBrazilConsentForm(appointmentId: string) {
       symptoms: string | null;
     };
     submission: { id: string; paymentStatus: string; paidAt: string | null } | null;
-  }>(`/api/public/brazil-consent?appointmentId=${encodeURIComponent(appointmentId)}`);
+  }>(
+    `/api/public/brazil-consent?appointmentId=${encodeURIComponent(appointmentId)}&token=${encodeURIComponent(token)}`,
+  );
 }
 
 export function submitBrazilConsent(body: Record<string, unknown>) {
