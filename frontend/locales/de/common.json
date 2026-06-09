@@ -33,7 +33,14 @@
     "repeatPrescription": "Rezeptanforderung",
     "repeatPrescriptionDesc": "Von lizenzierten Ärzten geprüft, an Ihre Apotheke gesendet",
     "labTests": "Labortest-Buchung",
-    "labTestsDesc": "Kits in Laborqualität von unseren Ärzten geprüft"
+    "labTestsDesc": "Kits in Laborqualität von unseren Ärzten geprüft",
+    "howItWorks": "Wie es funktioniert",
+    "chooseCountry": "Land wählen",
+    "language": "Sprache",
+    "closeMenu": "Menü schließen",
+    "adminPortal": "Admin-Portal",
+    "accountPortal": "Mein Konto",
+    "bookNow": "Jetzt buchen"
   },
   "footer": {
     "company": "Unternehmen",
@@ -109,5 +116,19 @@
     "clearFilters": "Filter zurücksetzen",
     "viewProfile": "Profil ansehen",
     "bookAppointment": "Termin buchen"
+  },
+  "cookie": {
+    "title": "Cookie-Einwilligung",
+    "body": "Wir verwenden einen Sitzungscookie, um Sie angemeldet zu halten, sowie Länder- und Sprachpräferenzen. Keine Drittanbieter-Tracker. Siehe unsere",
+    "privacyNotice": "Datenschutzhinweis",
+    "forDetails": "für Details.",
+    "gotIt": "Verstanden"
+  },
+  "cart": {
+    "adding": "Wird hinzugefügt…",
+    "added": "Hinzugefügt",
+    "addToCart": "In den Warenkorb",
+    "couldNotAdd": "Konnte nicht zum Warenkorb hinzugefügt werden",
+    "viewCart": "Warenkorb ansehen"
   }
 }

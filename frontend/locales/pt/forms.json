@@ -1,6 +1,42 @@
 {
+  "contact": {
+    "name": "Nome completo",
+    "namePlaceholder": "O seu nome",
+    "email": "Endereço de email",
+    "emailPlaceholder": "voce@exemplo.com",
+    "phone": "Número de telefone",
+    "phonePlaceholder": "+351…",
+    "phoneOptional": "(opcional)",
+    "subject": "Assunto",
+    "subjectPlaceholder": "Como podemos ajudar?",
+    "message": "Mensagem",
+    "messagePlaceholder": "Descreva a sua questão ou problema…",
+    "submit": "Enviar mensagem",
+    "sending": "A enviar…",
+    "successTitle": "Mensagem enviada",
+    "successBody": "Entraremos em contacto dentro de um dia útil.",
+    "errorBody": "Algo correu mal. Por favor, tente novamente."
+  },
+  "newsletter": {
+    "emailPlaceholder": "o_seu@email.com",
+    "subscribe": "Subscrever",
+    "subscribing": "A subscrever…",
+    "success": "Obrigado — está na lista.",
+    "error": "Não foi possível subscrever. Por favor, tente novamente."
+  },
   "booking": {
-    "submit": "Book Online",
-    "status": "needs localization audit"
+    "submit": "Marcar Online",
+    "submitting": "A processar…",
+    "selectTime": "Selecionar horário",
+    "chooseDoctor": "Escolher médico",
+    "confirmBooking": "Confirmar marcação",
+    "cancelBooking": "Cancelar"
+  },
+  "validation": {
+    "required": "Este campo é obrigatório",
+    "invalidEmail": "Por favor, introduza um email válido",
+    "invalidPhone": "Por favor, introduza um número de telefone válido",
+    "tooShort": "Deve ter pelo menos {min} caracteres",
+    "tooLong": "Não deve ter mais de {max} caracteres"
   }
 }

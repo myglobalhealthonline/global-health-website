@@ -33,7 +33,14 @@
     "repeatPrescription": "Žádost o recept",
     "repeatPrescriptionDesc": "Posouzeno licencovanými lékaři, zasláno do vaší lékárny",
     "labTests": "Rezervace laboratorních testů",
-    "labTestsDesc": "Sady laboratorní kvality posouzené našimi lékaři"
+    "labTestsDesc": "Sady laboratorní kvality posouzené našimi lékaři",
+    "howItWorks": "Jak to funguje",
+    "chooseCountry": "Vyberte zemi",
+    "language": "Jazyk",
+    "closeMenu": "Zavřít menu",
+    "adminPortal": "Adminský portál",
+    "accountPortal": "Můj účet",
+    "bookNow": "Rezervovat nyní"
   },
   "footer": {
     "company": "Společnost",
@@ -109,5 +116,19 @@
     "clearFilters": "Vymazat filtry",
     "viewProfile": "Zobrazit profil",
     "bookAppointment": "Rezervovat konzultaci"
+  },
+  "cookie": {
+    "title": "Souhlas s cookies",
+    "body": "Používáme cookie relace k udržení přihlášení plus preference země a jazyka. Žádné sledovače třetích stran. Viz naše",
+    "privacyNotice": "informace o ochraně soukromí",
+    "forDetails": "pro podrobnosti.",
+    "gotIt": "Rozumím"
+  },
+  "cart": {
+    "adding": "Přidávání…",
+    "added": "Přidáno",
+    "addToCart": "Přidat do košíku",
+    "couldNotAdd": "Nepodařilo se přidat do košíku",
+    "viewCart": "Zobrazit košík"
   }
 }

@@ -7,7 +7,37 @@ import { Eye, EyeOff } from "lucide-react";
 import { loginUser } from "@/lib/api/auth-api";
 import styles from "./login.module.css";
 
-export function LoginFormFallback() {
+type LoginI18n = {
+  title: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  passwordLabel: string;
+  forgotPassword: string;
+  passwordPlaceholder: string;
+  hidePassword: string;
+  showPassword: string;
+  rememberMe: string;
+  signingIn: string;
+  signIn: string;
+  loggedInAs: string;
+};
+
+const DEFAULT_I18N: LoginI18n = {
+  title: "Sign in",
+  emailLabel: "Email address",
+  emailPlaceholder: "you@example.com",
+  passwordLabel: "Password",
+  forgotPassword: "Forgot password?",
+  passwordPlaceholder: "Your password",
+  hidePassword: "Hide password",
+  showPassword: "Show password",
+  rememberMe: "Remember me on this device",
+  signingIn: "Signing in…",
+  signIn: "Sign in",
+  loggedInAs: "Logged in as {name}. Redirecting...",
+};
+
+export function LoginFormFallback({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
   return (
     <form className="grid gap-5" aria-hidden>
       <div className="grid gap-2">
@@ -19,13 +49,13 @@ export function LoginFormFallback() {
         <div className="h-11 animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
       </div>
       <div className={`${styles.submitBtn} gh-btn gh-btn-primary mt-1 animate-pulse opacity-60`}>
-        Sign in
+        {i18n.signIn}
       </div>
     </form>
   );
 }
 
-export function LoginForm() {
+export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [message, setMessage] = useState<string | null>(null);
@@ -58,7 +88,7 @@ export function LoginForm() {
     setIsError(false);
     const result = await loginUser({ email, password });
     if (result.ok) {
-      setMessage(`Logged in as ${result.data.user.fullName}. Redirecting...`);
+      setMessage(i18n.loggedInAs.replace("{name}", result.data.user.fullName));
       setLoading(false);
       router.replace(getNextPath(result.data.user.role));
       router.refresh();
@@ -73,14 +103,14 @@ export function LoginForm() {
     <form onSubmit={onSubmit} className="grid gap-5" suppressHydrationWarning>
       <div className="grid gap-2">
         <label htmlFor="login-email" className="gh-field-label">
-          Email address
+          {i18n.emailLabel}
         </label>
         <input
           id="login-email"
           name="email"
           type="email"
           className="gh-input"
-          placeholder="you@example.com"
+          placeholder={i18n.emailPlaceholder}
           required
           autoComplete="email"
         />
@@ -89,13 +119,13 @@ export function LoginForm() {
       <div className="grid gap-2">
         <div className="flex items-center justify-between">
           <label htmlFor="login-password" className="gh-field-label">
-            Password
+            {i18n.passwordLabel}
           </label>
           <Link
             href="/forgot-password"
             className="text-xs font-semibold text-[var(--color-brand-primary)] hover:underline"
           >
-            Forgot password?
+            {i18n.forgotPassword}
           </Link>
         </div>
         <div className="relative">
@@ -104,7 +134,7 @@ export function LoginForm() {
             name="password"
             type={showPassword ? "text" : "password"}
             className="gh-input pr-12"
-            placeholder="Your password"
+            placeholder={i18n.passwordPlaceholder}
             required
             autoComplete="current-password"
           />
@@ -112,7 +142,7 @@ export function LoginForm() {
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-label={showPassword ? i18n.hidePassword : i18n.showPassword}
           >
             {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
           </button>
@@ -126,7 +156,7 @@ export function LoginForm() {
           defaultChecked
           className={`${styles.rememberCheckbox} size-4`}
         />
-        Remember me on this device
+        {i18n.rememberMe}
       </label>
 
       <button
@@ -134,7 +164,7 @@ export function LoginForm() {
         className={`${styles.submitBtn} gh-btn gh-btn-primary mt-1`}
         disabled={loading}
       >
-        {loading ? "Signing in…" : "Sign in"}
+        {loading ? i18n.signingIn : i18n.signIn}
       </button>
 
       {message ? (

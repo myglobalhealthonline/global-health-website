@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Stethoscope, ArrowLeft } from "lucide-react";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { ForgotPasswordForm } from "./ui";
 
 export const metadata: Metadata = {
@@ -8,7 +10,11 @@ export const metadata: Metadata = {
   description: "Request a password reset for your Global Health account.",
 };
 
-export default function Page() {
+export default async function Page() {
+  const locale = await getPageLocale();
+  const { auth } = loadLocaleBundle(locale);
+  const forgotI18n = auth.forgotPassword;
+
   return (
     <div className="flex min-h-screen flex-col bg-[var(--color-background-soft)]">
       <header className="px-6 py-5">
@@ -36,7 +42,7 @@ export default function Page() {
               Enter your email and we will accept the reset request. If the account exists, instructions will be sent when email delivery is enabled.
             </p>
 
-            <ForgotPasswordForm />
+            <ForgotPasswordForm i18n={forgotI18n} />
           </div>
         </div>
       </main>

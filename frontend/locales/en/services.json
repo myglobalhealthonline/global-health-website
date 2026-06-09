@@ -1,4 +1,21 @@
 {
-  "title": "Services",
-  "status": "needs localization audit"
+  "catalog": {
+    "eyebrow": "What we treat",
+    "headline": "Care for what's actually going on.",
+    "featuredDescription": "Most patients start here. Choose an open consultation slot with a doctor registered in your country.",
+    "priceFrom": "From",
+    "durationLabel": "Duration",
+    "turnaroundLabel": "Turnaround",
+    "orderKit": "Order kit",
+    "bookConsultation": "Book consultation",
+    "prevServices": "Previous services",
+    "nextServices": "Next services",
+    "filters": {
+      "all": "All",
+      "general": "General",
+      "specialist": "Specialist",
+      "prescription": "Prescriptions",
+      "test": "Home tests"
+    }
+  }
 }

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Stethoscope, ShieldCheck, Clock } from "lucide-react";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { RegisterForm, RegisterFormFallback } from "./ui";
 
 export const metadata: Metadata = {
@@ -9,7 +11,11 @@ export const metadata: Metadata = {
   description: "Create a patient account for Global Health.",
 };
 
-export default function Page() {
+export default async function Page() {
+  const locale = await getPageLocale();
+  const { auth } = loadLocaleBundle(locale);
+  const registerI18n = auth.register;
+
   return (
     <div className="flex min-h-screen flex-col" style={{ background: "var(--color-background-dark)" }}>
       <header className="px-6 py-5">
@@ -30,8 +36,8 @@ export default function Page() {
               <p className="mt-2 text-sm text-[var(--color-text-muted)]">
                 Register to book consultations and track your requests securely.
               </p>
-              <Suspense fallback={<RegisterFormFallback />}>
-                <RegisterForm />
+              <Suspense fallback={<RegisterFormFallback i18n={registerI18n} />}>
+                <RegisterForm i18n={registerI18n} />
               </Suspense>
               <p className="mt-6 text-center text-sm text-[var(--color-text-muted)]">
                 Already have an account?{" "}

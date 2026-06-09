@@ -15,6 +15,8 @@ import { fetchAccountAppointments } from "@/lib/api/account-appointments-api";
 import { fetchAccountPayments } from "@/lib/api/account-payments-api";
 import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
 import { getServerAuthUser } from "@/lib/api/server-auth";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import {
   AdminCard,
   Btn,
@@ -37,11 +39,13 @@ const ACTIVE_STATUSES = new Set([
 export default async function AccountOverviewPage() {
   const user = await getServerAuthUser();
 
-  const [apptRes, payRes, bookHref] = await Promise.all([
+  const [apptRes, payRes, bookHref, locale] = await Promise.all([
     fetchAccountAppointments(),
     fetchAccountPayments(),
     resolveBookConsultationHref(),
+    getPageLocale(),
   ]);
+  const { account: a } = loadLocaleBundle(locale);
 
   const appointments = apptRes.ok ? apptRes.data.items : [];
   const payments = payRes.ok ? payRes.data.items : [];
@@ -83,31 +87,31 @@ export default async function AccountOverviewPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Welcome"
+        eyebrow={a.dashboard.welcome}
         title={user?.fullName || user?.email || "My account"}
-        description="Track bookings, payments, and prescriptions — all in one place."
+        description={a.dashboard.subtitle}
       />
 
       {/* ── Stat tiles ─────────────────────────────────────────────── */}
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard
           tone="brand"
-          label="Open"
+          label={a.dashboard.openLabel}
           value={openCount}
-          hint="Active booking requests"
+          hint={a.dashboard.activeBookings}
           icon={<CalendarDays className="size-5" aria-hidden />}
         />
         <StatCard
           tone="accent"
-          label="This week"
+          label={a.dashboard.thisWeek}
           value={upcomingWeek}
-          hint="Scheduled within 7 days"
+          hint={a.dashboard.scheduledThisWeek}
           icon={<Clock className="size-5" aria-hidden />}
         />
         <StatCard
-          label="Total"
+          label={a.dashboard.totalLabel}
           value={totalBookings}
-          hint="All-time bookings"
+          hint={a.dashboard.allTimeBookings}
           icon={<Stethoscope className="size-5" aria-hidden />}
         />
       </div>
@@ -131,11 +135,10 @@ export default async function AccountOverviewPage() {
                 />
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-bold text-[var(--color-text-primary)]">
-                    Verify your email
+                    {a.dashboard.verifyEmail}
                   </p>
                   <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-                    We sent a link to {user.email}. Click it to confirm — or
-                    resend from Security.
+                    {a.dashboard.verifyEmailBody.replace("{email}", user.email)}
                   </p>
                 </div>
                 <ChevronRight
@@ -160,7 +163,7 @@ export default async function AccountOverviewPage() {
                 />
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
-                    Next consultation
+                    {a.dashboard.nextConsultation}
                   </p>
                   <p className="mt-0.5 text-sm font-medium text-[var(--color-text-primary)]">
                     {formatAppDateTime(nextCall.scheduledAt as string)} ·{" "}
@@ -177,11 +180,11 @@ export default async function AccountOverviewPage() {
                   size="sm"
                   iconLeft={<Video className="size-4" />}
                 >
-                  Join call
+                  {a.dashboard.joinCall}
                 </Btn>
               ) : (
                 <Btn href="/account/bookings" variant="secondary" size="sm">
-                  View details
+                  {a.dashboard.viewDetails}
                 </Btn>
               )}
             </div>
@@ -193,13 +196,13 @@ export default async function AccountOverviewPage() {
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
         <AdminCard padding={0} className="lg:col-span-2">
           <SectionHeader
-            title="Recent bookings"
+            title={a.dashboard.recentBookings}
             right={
               <Link
                 href="/account/bookings"
                 className="text-[13px] font-semibold text-[var(--color-brand-primary)] hover:underline"
               >
-                See all →
+                {a.dashboard.seeAll}
               </Link>
             }
           />
@@ -211,10 +214,10 @@ export default async function AccountOverviewPage() {
                   aria-hidden
                 />
                 <p className="mt-3 text-sm font-semibold text-[var(--color-text-primary)]">
-                  No bookings yet
+                  {a.dashboard.noBookings}
                 </p>
                 <p className="mt-1 max-w-xs text-xs text-[var(--color-text-muted)]">
-                  Book your first consultation to see it here.
+                  {a.dashboard.noBookingsBody}
                 </p>
                 <Btn
                   href={bookHref}
@@ -222,7 +225,7 @@ export default async function AccountOverviewPage() {
                   size="sm"
                   iconRight={<ChevronRight className="size-4" />}
                 >
-                  Book consultation
+                  {a.dashboard.bookConsultation}
                 </Btn>
               </div>
             ) : (
@@ -240,7 +243,7 @@ export default async function AccountOverviewPage() {
                         </span>
                       </p>
                       <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[var(--color-text-muted)]">
-                        <span>Booked {formatAppDateTime(b.createdAt)}</span>
+                        <span>{a.dashboard.booked.replace("{date}", formatAppDateTime(b.createdAt))}</span>
                         <Pill tone={statusTone(b.status)}>
                           {b.status.replace(/_/g, " ").toLowerCase()}
                         </Pill>
@@ -252,7 +255,7 @@ export default async function AccountOverviewPage() {
                       size="sm"
                       iconRight={<ChevronRight className="size-3.5" />}
                     >
-                      Open
+                      {a.dashboard.openLabel}
                     </Btn>
                   </li>
                 ))}
@@ -263,40 +266,40 @@ export default async function AccountOverviewPage() {
 
         <AdminCard padding={0}>
           <SectionHeader
-            title="Quick actions"
-            description="Jump to the most-used parts of your account."
+            title={a.dashboard.quickActions}
+            description={a.dashboard.quickActionsBody}
           />
           <div className="p-5">
             <nav className="flex flex-col gap-2">
               <QuickLink
                 href="/account/bookings"
                 icon={<CalendarDays className="size-4" aria-hidden />}
-                label="My bookings"
+                label={a.dashboard.goToBookings}
                 hint={`${totalBookings} total`}
               />
               <QuickLink
                 href="/account/prescriptions"
                 icon={<PillBottle className="size-4" aria-hidden />}
-                label="Prescriptions"
-                hint="Issued meds"
+                label={a.dashboard.goToPrescriptions}
+                hint={a.dashboard.prescriptionsHint}
               />
               <QuickLink
                 href="/account/payments"
                 icon={<CreditCard className="size-4" aria-hidden />}
-                label="Payments"
+                label={a.dashboard.goToPayments}
                 hint={`${payments.length} receipt${payments.length === 1 ? "" : "s"}`}
               />
               <QuickLink
                 href="/account/profile"
                 icon={<UserRound className="size-4" aria-hidden />}
-                label="Profile"
-                hint="Name, phone"
+                label={a.dashboard.goToProfile}
+                hint={a.dashboard.profileHint}
               />
               <QuickLink
                 href="/account/security"
                 icon={<ShieldCheck className="size-4" aria-hidden />}
-                label="Security"
-                hint="Password, email"
+                label={a.dashboard.goToSecurity}
+                hint={a.dashboard.securityHint}
               />
             </nav>
 
@@ -306,7 +309,7 @@ export default async function AccountOverviewPage() {
             >
               <span className="inline-flex items-center gap-2">
                 <Stethoscope className="size-4" aria-hidden />
-                Book a consultation
+                {a.dashboard.bookCta}
               </span>
               <ChevronRight className="size-4" aria-hidden />
             </Link>

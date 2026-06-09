@@ -33,7 +33,14 @@
     "repeatPrescription": "Repeat Prescription Request",
     "repeatPrescriptionDesc": "Reviewed by licensed doctors, sent to your pharmacy",
     "labTests": "Lab Test Booking",
-    "labTestsDesc": "Lab-quality kits reviewed by our doctors"
+    "labTestsDesc": "Lab-quality kits reviewed by our doctors",
+    "howItWorks": "How It Works",
+    "chooseCountry": "Choose country",
+    "language": "Language",
+    "closeMenu": "Close menu",
+    "adminPortal": "Admin Portal",
+    "accountPortal": "My account",
+    "bookNow": "Book now"
   },
   "footer": {
     "company": "Company",
@@ -109,5 +116,19 @@
     "clearFilters": "Clear all filters",
     "viewProfile": "View profile",
     "bookAppointment": "Book appointment"
+  },
+  "cookie": {
+    "title": "Cookie consent",
+    "body": "We use a session cookie to keep you signed in plus country and language preferences. No third-party trackers. See our",
+    "privacyNotice": "privacy notice",
+    "forDetails": "for details.",
+    "gotIt": "Got it"
+  },
+  "cart": {
+    "adding": "Adding…",
+    "added": "Added",
+    "addToCart": "Add to cart",
+    "couldNotAdd": "Could not add to cart",
+    "viewCart": "View cart"
   }
 }

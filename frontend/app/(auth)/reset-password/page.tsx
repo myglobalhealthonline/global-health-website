@@ -1,8 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import type { LocaleCode } from "@/lib/i18n/types";
+
+function readClientLocale(): LocaleCode {
+  try {
+    const match = document.cookie.match(/(?:^|;\s*)gh_locale=([^;]+)/);
+    const raw = match ? decodeURIComponent(match[1]) : "";
+    return resolveLocale({ cookieLocale: raw });
+  } catch {
+    return "en";
+  }
+}
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -18,16 +31,22 @@ export default function ResetPasswordPage() {
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [locale, setLocale] = useState<LocaleCode>("en");
+
+  useEffect(() => {
+    setLocale(readClientLocale());
+  }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMsg(null);
+    const t = loadLocaleBundle(locale).auth.resetPassword;
     if (password.length < 8) {
-      setMsg({ kind: "err", text: "Password must be at least 8 characters" });
+      setMsg({ kind: "err", text: t.tooShort });
       return;
     }
     if (password !== confirm) {
-      setMsg({ kind: "err", text: "Passwords don't match" });
+      setMsg({ kind: "err", text: t.noMatch });
       return;
     }
     setBusy(true);
@@ -48,39 +67,30 @@ export default function ResetPasswordPage() {
       const json = (await res.json()) as { ok?: boolean; message?: string };
       if (res.ok && json.ok) {
         if (isInvite) {
-          setMsg({
-            kind: "ok",
-            text: "Password set. Taking you to the doctor portal…",
-          });
+          setMsg({ kind: "ok", text: t.inviteSuccess });
           setPassword("");
           setConfirm("");
           router.replace("/doctor");
           router.refresh();
         } else {
-          setMsg({
-            kind: "ok",
-            text: json.message ?? "Password updated. You can sign in now.",
-          });
+          setMsg({ kind: "ok", text: json.message ?? t.resetSuccess });
           setPassword("");
           setConfirm("");
         }
       } else {
-        setMsg({ kind: "err", text: json.message ?? "Reset failed" });
+        setMsg({ kind: "err", text: json.message ?? t.resetFailed });
       }
     } catch (err) {
-      setMsg({ kind: "err", text: err instanceof Error ? err.message : "Reset failed" });
+      setMsg({ kind: "err", text: err instanceof Error ? err.message : t.resetFailed });
     } finally {
       setBusy(false);
     }
   }
 
-  const heading = isInvite
-    ? "Welcome to Global Health — set your password"
-    : "Set a new password";
-  const subhead = isInvite
-    ? "Pick a password at least 8 characters long. We'll sign you in and drop you on your doctor dashboard."
-    : "Pick a password at least 8 characters long.";
-  const submitLabel = isInvite ? "Set password & sign in" : "Save new password";
+  const t = loadLocaleBundle(locale).auth.resetPassword;
+  const heading = isInvite ? t.inviteTitle : t.resetTitle;
+  const subhead = isInvite ? t.inviteSubtitle : t.resetSubtitle;
+  const submitLabel = isInvite ? t.inviteSubmit : t.resetSubmit;
 
   return (
     <div className="min-h-screen bg-[var(--color-background-soft)] px-4 py-16">
@@ -90,13 +100,12 @@ export default function ResetPasswordPage() {
 
         {!token ? (
           <p className="mt-6 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-800">
-            This page needs a {isInvite ? "invite" : "reset"} token. Open the
-            link from the email we sent you.
+            {t.noToken.replace("{kind}", isInvite ? t.inviteTokenKind : t.resetTokenKind)}
           </p>
         ) : (
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <label className="block">
-              <span className="gh-field-label">New password</span>
+              <span className="gh-field-label">{t.newPasswordLabel}</span>
               <input
                 type="password"
                 value={password}
@@ -109,7 +118,7 @@ export default function ResetPasswordPage() {
               />
             </label>
             <label className="block">
-              <span className="gh-field-label">Confirm password</span>
+              <span className="gh-field-label">{t.confirmPasswordLabel}</span>
               <input
                 type="password"
                 value={confirm}
@@ -139,7 +148,7 @@ export default function ResetPasswordPage() {
               disabled={busy}
               className="inline-flex rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
             >
-              {busy ? "Saving…" : submitLabel}
+              {busy ? t.saving : submitLabel}
             </button>
 
             {msg?.kind === "ok" && !isInvite ? (
@@ -147,7 +156,7 @@ export default function ResetPasswordPage() {
                 href="/login"
                 className="ml-3 text-sm font-semibold text-emerald-700 hover:underline"
               >
-                Go to sign in →
+                {t.goToSignIn}
               </Link>
             ) : null}
           </form>

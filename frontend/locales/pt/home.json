@@ -13,7 +13,14 @@
     "secondary": "Ver serviços",
     "trustLicensed": "Licenciados em",
     "trustAvailability": "Disponibilidade em tempo real",
-    "trustAppointments": "Consultas online"
+    "trustAppointments": "Consultas online",
+    "available": "disponível",
+    "secureOnlineCare": "Cuidados online seguros",
+    "fromHome": "Em casa",
+    "openCalendars": "Calendários abertos",
+    "doctorsAcrossEurope": "{count} médicos em toda a Europa",
+    "consultingIn": "A consultar em {lang}",
+    "bookNow": "Marcar agora"
   },
   "team": {
     "eyebrow": "A equipa",

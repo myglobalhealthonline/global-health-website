@@ -1,6 +1,42 @@
 {
+  "contact": {
+    "name": "Full name",
+    "namePlaceholder": "Your name",
+    "email": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "phone": "Phone number",
+    "phonePlaceholder": "+353…",
+    "phoneOptional": "(optional)",
+    "subject": "Subject",
+    "subjectPlaceholder": "How can we help?",
+    "message": "Message",
+    "messagePlaceholder": "Describe your question or issue…",
+    "submit": "Send message",
+    "sending": "Sending…",
+    "successTitle": "Message sent",
+    "successBody": "We'll get back to you within one business day.",
+    "errorBody": "Something went wrong. Please try again."
+  },
+  "newsletter": {
+    "emailPlaceholder": "your@email.com",
+    "subscribe": "Subscribe",
+    "subscribing": "Subscribing…",
+    "success": "Thanks — you're on the list.",
+    "error": "Could not subscribe. Please try again."
+  },
   "booking": {
     "submit": "Book Online",
-    "status": "needs localization audit"
+    "submitting": "Processing…",
+    "selectTime": "Select a time",
+    "chooseDoctor": "Choose a doctor",
+    "confirmBooking": "Confirm booking",
+    "cancelBooking": "Cancel"
+  },
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email",
+    "invalidPhone": "Please enter a valid phone number",
+    "tooShort": "Must be at least {min} characters",
+    "tooLong": "Must be no more than {max} characters"
   }
 }

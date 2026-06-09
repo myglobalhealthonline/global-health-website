@@ -45,6 +45,13 @@ export type SiteNavigationData = {
   navRepeatPrescriptionDesc: string;
   navLabTests: string;
   navLabTestsDesc: string;
+  navHowItWorks: string;
+  navChooseCountry: string;
+  navLanguage: string;
+  navCloseMenu: string;
+  navAdminPortal: string;
+  navAccountPortal: string;
+  navBookNow: string;
   footerCareHeading: string;
   footerClinicsHeading: string;
   footerAccountHeading: string;
@@ -168,6 +175,13 @@ export function buildSiteNavigationData(
     navRepeatPrescriptionDesc: copy.navigation.repeatPrescriptionDesc,
     navLabTests: copy.navigation.labTests,
     navLabTestsDesc: copy.navigation.labTestsDesc,
+    navHowItWorks: copy.navigation.howItWorks,
+    navChooseCountry: copy.navigation.chooseCountry,
+    navLanguage: copy.navigation.language,
+    navCloseMenu: copy.navigation.closeMenu,
+    navAdminPortal: copy.navigation.adminPortal,
+    navAccountPortal: copy.navigation.accountPortal,
+    navBookNow: copy.navigation.bookNow,
     footerCareHeading: copy.footer.careHeading,
     footerClinicsHeading: copy.footer.clinicsHeading,
     footerAccountHeading: copy.footer.accountHeading,

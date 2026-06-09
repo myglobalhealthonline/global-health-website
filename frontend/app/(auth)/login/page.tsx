@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getServerAuthUser } from "@/lib/api/server-auth";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { LoginForm, LoginFormFallback } from "./ui";
 import styles from "./login.module.css";
 
@@ -13,10 +15,12 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-  const user = await getServerAuthUser();
+  const [user, locale] = await Promise.all([getServerAuthUser(), getPageLocale()]);
   if (user) {
     redirect(user.role === "ADMIN" ? "/admin" : "/account");
   }
+  const { auth } = loadLocaleBundle(locale);
+  const loginI18n = auth.login;
 
   return (
     <div className={styles.page}>
@@ -52,12 +56,11 @@ export default async function Page() {
       {/* ── RIGHT — sign-in form ────────────────────────────── */}
       <main className={styles.formPanel}>
         <div className={styles.formInner} suppressHydrationWarning>
-          <h2 className={styles.formTitle}>Welcome back</h2>
-          <p className={styles.formSubtitle}>Sign in to the Global Health admin portal.</p>
+          <h2 className={styles.formTitle}>{loginI18n.title}</h2>
 
           <div className={styles.formSlot}>
-            <Suspense fallback={<LoginFormFallback />}>
-              <LoginForm />
+            <Suspense fallback={<LoginFormFallback i18n={loginI18n} />}>
+              <LoginForm i18n={loginI18n} />
             </Suspense>
           </div>
 

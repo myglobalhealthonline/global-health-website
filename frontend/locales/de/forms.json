@@ -1,6 +1,42 @@
 {
+  "contact": {
+    "name": "Vollständiger Name",
+    "namePlaceholder": "Dein Name",
+    "email": "E-Mail-Adresse",
+    "emailPlaceholder": "du@beispiel.de",
+    "phone": "Telefonnummer",
+    "phonePlaceholder": "+49…",
+    "phoneOptional": "(optional)",
+    "subject": "Betreff",
+    "subjectPlaceholder": "Wie können wir helfen?",
+    "message": "Nachricht",
+    "messagePlaceholder": "Beschreibe deine Frage oder dein Problem…",
+    "submit": "Nachricht senden",
+    "sending": "Wird gesendet…",
+    "successTitle": "Nachricht gesendet",
+    "successBody": "Wir melden uns innerhalb eines Werktages.",
+    "errorBody": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+  },
+  "newsletter": {
+    "emailPlaceholder": "deine@email.de",
+    "subscribe": "Abonnieren",
+    "subscribing": "Wird abonniert…",
+    "success": "Danke — du bist auf der Liste.",
+    "error": "Konnte nicht abonnieren. Bitte versuche es erneut."
+  },
   "booking": {
-    "submit": "Book Online",
-    "status": "needs localization audit"
+    "submit": "Online buchen",
+    "submitting": "Wird verarbeitet…",
+    "selectTime": "Zeit auswählen",
+    "chooseDoctor": "Arzt wählen",
+    "confirmBooking": "Buchung bestätigen",
+    "cancelBooking": "Abbrechen"
+  },
+  "validation": {
+    "required": "Dieses Feld ist erforderlich",
+    "invalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein",
+    "invalidPhone": "Bitte gib eine gültige Telefonnummer ein",
+    "tooShort": "Muss mindestens {min} Zeichen haben",
+    "tooLong": "Darf nicht mehr als {max} Zeichen haben"
   }
 }

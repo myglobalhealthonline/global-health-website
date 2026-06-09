@@ -33,7 +33,14 @@
     "repeatPrescription": "Pedido de receita",
     "repeatPrescriptionDesc": "Revisto por médicos licenciados, enviado para a sua farmácia",
     "labTests": "Pedido de análises",
-    "labTestsDesc": "Kits de qualidade laboratorial revistos pelos nossos médicos"
+    "labTestsDesc": "Kits de qualidade laboratorial revistos pelos nossos médicos",
+    "howItWorks": "Como funciona",
+    "chooseCountry": "Escolha o país",
+    "language": "Idioma",
+    "closeMenu": "Fechar menu",
+    "adminPortal": "Portal de Admin",
+    "accountPortal": "A minha conta",
+    "bookNow": "Marcar agora"
   },
   "footer": {
     "company": "Empresa",
@@ -109,5 +116,19 @@
     "clearFilters": "Limpar filtros",
     "viewProfile": "Ver perfil",
     "bookAppointment": "Marcar consulta"
+  },
+  "cookie": {
+    "title": "Consentimento de cookies",
+    "body": "Utilizamos um cookie de sessão para o manter autenticado, bem como preferências de país e idioma. Sem rastreadores de terceiros. Consulte a nossa",
+    "privacyNotice": "aviso de privacidade",
+    "forDetails": "para detalhes.",
+    "gotIt": "Entendido"
+  },
+  "cart": {
+    "adding": "A adicionar…",
+    "added": "Adicionado",
+    "addToCart": "Adicionar ao carrinho",
+    "couldNotAdd": "Não foi possível adicionar ao carrinho",
+    "viewCart": "Ver carrinho"
   }
 }

@@ -3,18 +3,10 @@ import { CreditCard, ExternalLink } from "lucide-react";
 import { fetchAccountPayments, type AccountPayment } from "@/lib/api/account-payments-api";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
-
-const STATUS_LABEL: Record<AccountPayment["status"], string> = {
-  PAID: "Paid",
-  PROCESSING: "Processing",
-  REQUIRES_ACTION: "Action required",
-  REFUNDED: "Refunded",
-  FAILED: "Failed",
-  CANCELED: "Canceled",
-  UNPAID: "Unpaid",
-};
 
 const STATUS_PILL: Record<AccountPayment["status"], string> = {
   PAID: "bg-emerald-50 text-emerald-800 border border-emerald-200",
@@ -27,23 +19,36 @@ const STATUS_PILL: Record<AccountPayment["status"], string> = {
 };
 
 export default async function AccountPaymentsPage() {
-  const result = await fetchAccountPayments();
+  const [result, locale] = await Promise.all([
+    fetchAccountPayments(),
+    getPageLocale(),
+  ]);
+  const { account: a } = loadLocaleBundle(locale);
   const items = result.ok ? result.data.items : [];
   const unavailable = result.ok ? null : result.message;
+
+  const statusLabel: Record<AccountPayment["status"], string> = {
+    PAID: a.payments.statusPaid,
+    PROCESSING: a.payments.statusProcessing,
+    REQUIRES_ACTION: a.payments.statusActionRequired,
+    REFUNDED: a.payments.statusRefunded,
+    FAILED: a.payments.statusFailed,
+    CANCELED: a.payments.statusCanceled,
+    UNPAID: a.payments.statusUnpaid,
+  };
 
   return (
     <>
       <header className="mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-          Account
+          {a.payments.breadcrumb}
         </p>
         <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--color-text-primary)]">
           <CreditCard className="size-6 text-[var(--color-brand-primary)]" aria-hidden />
-          Payments
+          {a.payments.title}
         </h2>
         <p className="text-sm text-[var(--color-text-muted)]">
-          Receipts for consultations you&apos;ve booked. Stripe sends an email
-          receipt the moment a charge clears — this page is the running log.
+          {a.payments.subtitle}
         </p>
       </header>
 
@@ -59,17 +64,16 @@ export default async function AccountPaymentsPage() {
             <CreditCard aria-hidden className="size-6" />
           </div>
           <h2 className="mt-4 text-lg font-bold text-[var(--color-text-primary)]">
-            No payments yet
+            {a.payments.noPayments}
           </h2>
           <p className="mt-2 max-w-md text-sm text-[var(--color-text-muted)]">
-            Once you complete a paid booking the receipt lands here. Free
-            consultations don&apos;t appear in this list.
+            {a.payments.noPaymentsBody}
           </p>
           <Link
             href="/account/bookings"
             className="mt-5 inline-flex items-center rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"
           >
-            View bookings
+            {a.payments.viewBookings}
           </Link>
         </div>
       ) : null}
@@ -79,11 +83,11 @@ export default async function AccountPaymentsPage() {
           <table className="w-full text-sm">
             <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wide text-[var(--color-text-muted)]">
               <tr>
-                <th className="px-4 py-3 font-semibold">Date</th>
-                <th className="px-4 py-3 font-semibold">Consultation</th>
-                <th className="px-4 py-3 font-semibold">Amount</th>
-                <th className="px-4 py-3 font-semibold">Status</th>
-                <th className="px-4 py-3 text-right font-semibold">Booking</th>
+                <th className="px-4 py-3 font-semibold">{a.payments.colDate}</th>
+                <th className="px-4 py-3 font-semibold">{a.payments.colConsultation}</th>
+                <th className="px-4 py-3 font-semibold">{a.payments.colAmount}</th>
+                <th className="px-4 py-3 font-semibold">{a.payments.colStatus}</th>
+                <th className="px-4 py-3 text-right font-semibold">{a.payments.colBooking}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-border)]">
@@ -105,7 +109,7 @@ export default async function AccountPaymentsPage() {
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_PILL[p.status]}`}
                     >
-                      {STATUS_LABEL[p.status]}
+                      {statusLabel[p.status]}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -113,7 +117,7 @@ export default async function AccountPaymentsPage() {
                       href="/account/bookings"
                       className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:underline"
                     >
-                      View <ExternalLink className="size-3" aria-hidden />
+                      {a.payments.view} <ExternalLink className="size-3" aria-hidden />
                     </Link>
                   </td>
                 </tr>

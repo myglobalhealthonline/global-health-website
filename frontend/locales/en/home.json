@@ -13,7 +13,14 @@
     "secondary": "Browse services",
     "trustLicensed": "Licensed in",
     "trustAvailability": "Live availability",
-    "trustAppointments": "Online appointments"
+    "trustAppointments": "Online appointments",
+    "available": "available",
+    "secureOnlineCare": "Secure online care",
+    "fromHome": "From home",
+    "openCalendars": "Open calendars",
+    "doctorsAcrossEurope": "{count} doctors across Europe",
+    "consultingIn": "Consulting in {lang}",
+    "bookNow": "Book now"
   },
   "team": {
     "eyebrow": "The team",

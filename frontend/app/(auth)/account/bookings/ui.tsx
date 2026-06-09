@@ -15,9 +15,27 @@ import {
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 
+type BookingsI18n = {
+  bookings: {
+    noBookings: string;
+    noBookingsBody: string;
+    bookOnline: string;
+  };
+  payments: {
+    statusPaid: string;
+    statusProcessing: string;
+    statusActionRequired: string;
+    statusFailed: string;
+    statusRefunded: string;
+    statusCanceled: string;
+    statusUnpaid: string;
+  };
+};
+
 type BookingsShellProps = {
   items: AccountAppointment[];
   unavailableMessage?: string | null;
+  i18n?: BookingsI18n;
 };
 
 function formatStatus(status: string) {
@@ -49,19 +67,25 @@ function requiresPayment(item: AccountAppointment): boolean {
   return item.paymentStatus !== "PAID";
 }
 
-function formatPaymentLabel(status: string, amountCents: number | null, currency: string | null) {
+function formatPaymentLabel(
+  status: string,
+  amountCents: number | null,
+  currency: string | null,
+  i18n?: BookingsI18n,
+) {
   if (!amountCents) return null;
   const price = formatPrice(amountCents, currency);
-  if (status === "PAID") return `Paid · ${price}`;
-  if (status === "PROCESSING") return `Processing · ${price}`;
-  if (status === "REQUIRES_ACTION") return `Awaiting payment · ${price}`;
-  if (status === "FAILED") return `Payment failed · ${price}`;
-  if (status === "REFUNDED") return `Refunded · ${price}`;
-  if (status === "CANCELED") return `Cancelled · ${price}`;
-  return `${price} unpaid`;
+  const p = i18n?.payments;
+  if (status === "PAID") return `${p?.statusPaid ?? "Paid"} · ${price}`;
+  if (status === "PROCESSING") return `${p?.statusProcessing ?? "Processing"} · ${price}`;
+  if (status === "REQUIRES_ACTION") return `${p?.statusActionRequired ?? "Awaiting payment"} · ${price}`;
+  if (status === "FAILED") return `${p?.statusFailed ?? "Payment failed"} · ${price}`;
+  if (status === "REFUNDED") return `${p?.statusRefunded ?? "Refunded"} · ${price}`;
+  if (status === "CANCELED") return `${p?.statusCanceled ?? "Cancelled"} · ${price}`;
+  return `${price} ${p?.statusUnpaid ?? "unpaid"}`;
 }
 
-export function BookingsShell({ items, unavailableMessage }: BookingsShellProps) {
+export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShellProps) {
   // Only one chat thread is open at a time. Keeps polling load to one
   // background fetch every 10s regardless of how many bookings the
   // patient has in their history.
@@ -80,13 +104,15 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
     return (
       <div className="mt-8 flex flex-col items-center rounded-[var(--radius-card-sm)] border border-dashed border-[var(--color-border)] bg-[var(--color-background-panel)] px-6 py-12 text-center">
         <ClipboardList className="size-10 text-[var(--color-border-strong)]" aria-hidden />
-        <p className="mt-4 text-base font-semibold text-[var(--color-text-primary)]">No bookings yet</p>
+        <p className="mt-4 text-base font-semibold text-[var(--color-text-primary)]">
+          {i18n?.bookings.noBookings ?? "No bookings yet"}
+        </p>
         <p className="mt-1 max-w-xs text-sm text-[var(--color-text-muted)]">
-          You have not made any booking requests. Start by booking your first consultation.
+          {i18n?.bookings.noBookingsBody ?? "You have not made any booking requests. Start by booking your first consultation."}
         </p>
         {/* No country/lang context in /account — go through gate. */}
         <Link href="/" className="gh-btn gh-btn-primary mt-5 text-sm">
-          Book online
+          {i18n?.bookings.bookOnline ?? "Book online"}
           <ArrowRight className="size-4" aria-hidden />
         </Link>
       </div>
@@ -106,9 +132,9 @@ export function BookingsShell({ items, unavailableMessage }: BookingsShellProps)
               <span className="text-sm text-[var(--color-text-muted)]">{formatAppDateTime(item.createdAt)}</span>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode) ? (
+              {formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode, i18n) ? (
                 <span className={`gh-badge ${paymentBadgeClass(item.paymentStatus)}`}>
-                  {formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode)}
+                  {formatPaymentLabel(item.paymentStatus, item.amountCents, item.currencyCode, i18n)}
                 </span>
               ) : null}
               <span className={`gh-badge ${statusBadgeClass(item.status)}`}>

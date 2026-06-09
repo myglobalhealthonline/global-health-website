@@ -3,7 +3,23 @@
 import { useState } from "react";
 import { requestPasswordReset } from "@/lib/api/auth-api";
 
-export function ForgotPasswordForm() {
+type ForgotPasswordI18n = {
+  emailLabel: string;
+  emailPlaceholder: string;
+  submitting: string;
+  requestReset: string;
+  securityNote: string;
+};
+
+const DEFAULT_I18N: ForgotPasswordI18n = {
+  emailLabel: "Email address",
+  emailPlaceholder: "you@example.com",
+  submitting: "Submitting...",
+  requestReset: "Request reset",
+  securityNote: "For security, we never confirm whether an email is registered.",
+};
+
+export function ForgotPasswordForm({ i18n = DEFAULT_I18N }: { i18n?: ForgotPasswordI18n }) {
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -27,25 +43,25 @@ export function ForgotPasswordForm() {
     <form action={onSubmit} className="mt-7 grid gap-5">
       <div className="grid gap-2">
         <label htmlFor="forgot-email" className="gh-field-label">
-          Email address
+          {i18n.emailLabel}
         </label>
         <input
           id="forgot-email"
           name="email"
           type="email"
           className="gh-input"
-          placeholder="you@example.com"
+          placeholder={i18n.emailPlaceholder}
           required
           autoComplete="email"
         />
       </div>
 
       <button type="submit" className="gh-btn gh-btn-primary" disabled={loading}>
-        {loading ? "Submitting..." : "Request reset"}
+        {loading ? i18n.submitting : i18n.requestReset}
       </button>
 
       <p className="text-sm text-[var(--color-text-muted)]">
-        For security, we never confirm whether an email is registered.
+        {i18n.securityNote}
       </p>
 
       {message ? (

@@ -8,8 +8,22 @@ import {
   type AuthUser,
 } from "@/lib/api/auth-api";
 import { PatientProfileSection } from "./_components/patient-profile-section";
+import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import type { LocaleCode } from "@/lib/i18n/types";
+
+function readClientLocale(): LocaleCode {
+  try {
+    const match = document.cookie.match(/(?:^|;\s*)gh_locale=([^;]+)/);
+    const raw = match ? decodeURIComponent(match[1]) : "";
+    return resolveLocale({ cookieLocale: raw });
+  } catch {
+    return "en";
+  }
+}
 
 export default function AccountProfilePage() {
+  const [locale, setLocale] = useState<LocaleCode>("en");
   const [user, setUser] = useState<AuthUser | null>(null);
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -22,6 +36,7 @@ export default function AccountProfilePage() {
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   useEffect(() => {
+    setLocale(readClientLocale());
     let cancelled = false;
     async function load() {
       const res = await fetchCurrentUser();
@@ -42,6 +57,8 @@ export default function AccountProfilePage() {
     };
   }, []);
 
+  const a = loadLocaleBundle(locale).account;
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSaving(true);
@@ -54,7 +71,7 @@ export default function AccountProfilePage() {
     setSaving(false);
     if (res.ok) {
       setUser(res.data.user);
-      setMsg({ kind: "ok", text: "Profile saved" });
+      setMsg({ kind: "ok", text: a.profile.saved });
     } else {
       setMsg({ kind: "err", text: res.message });
     }
@@ -64,25 +81,25 @@ export default function AccountProfilePage() {
     <div className="mx-auto max-w-2xl">
       <header className="mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-          Account
+          {a.profile.breadcrumb}
         </p>
         <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--color-text-primary)]">
           <UserRound className="size-6 text-[var(--color-brand-primary)]" aria-hidden />
-          Profile
+          {a.profile.title}
         </h2>
         <p className="text-sm text-[var(--color-text-muted)]">
-          Your contact details for bookings and confirmations.
+          {a.profile.subtitle}
         </p>
       </header>
 
       {loading ? (
         <div className="gh-card p-6 text-sm text-[var(--color-text-muted)]">
-          Loading…
+          {a.profile.loading}
         </div>
       ) : (
         <form onSubmit={onSubmit} className="gh-card space-y-4 p-6">
             <label className="block">
-              <span className="gh-field-label">Email</span>
+              <span className="gh-field-label">{a.profile.emailLabel}</span>
               <input
                 type="email"
                 value={user?.email ?? ""}
@@ -90,12 +107,12 @@ export default function AccountProfilePage() {
                 className="gh-input mt-1 min-w-0 bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
               />
               <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                Email can&apos;t be changed yet. Contact support if you need to switch.
+                {a.profile.emailNote}
               </p>
             </label>
 
             <label className="block">
-              <span className="gh-field-label">Full name</span>
+              <span className="gh-field-label">{a.profile.fullNameLabel}</span>
               <input
                 type="text"
                 value={fullName}
@@ -107,23 +124,22 @@ export default function AccountProfilePage() {
             </label>
 
             <label className="block">
-              <span className="gh-field-label">Phone</span>
+              <span className="gh-field-label">{a.profile.phoneLabel}</span>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="+353 89 …"
+                placeholder={a.profile.phonePlaceholder}
                 maxLength={40}
                 className="gh-input mt-1 min-w-0"
               />
               <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                Used so the clinic can reach you about your booking. Leave blank
-                if you prefer email only.
+                {a.profile.phoneNote}
               </p>
             </label>
 
             <label className="block">
-              <span className="gh-field-label">Date of birth</span>
+              <span className="gh-field-label">{a.profile.dobLabel}</span>
               <input
                 type="date"
                 value={dateOfBirth}
@@ -132,8 +148,7 @@ export default function AccountProfilePage() {
                 className="gh-input mt-1 min-w-0"
               />
               <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                We use this on every booking so you don&apos;t have to retype it.
-                Leave blank to keep it off your account.
+                {a.profile.dobNote}
               </p>
             </label>
 
@@ -155,12 +170,12 @@ export default function AccountProfilePage() {
             className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
           >
             <Save aria-hidden className="size-4" />
-            {saving ? "Saving…" : "Save changes"}
+            {saving ? a.profile.saving : a.profile.saveChanges}
           </button>
         </form>
       )}
 
-      <PatientProfileSection />
+      <PatientProfileSection i18n={a.profile} />
     </div>
   );
 }

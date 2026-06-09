@@ -1,4 +1,21 @@
 {
-  "title": "Services",
-  "status": "needs localization audit"
+  "catalog": {
+    "eyebrow": "Co léčíme",
+    "headline": "Péče o to, co skutečně trápí.",
+    "featuredDescription": "Většina pacientů začíná zde. Vyberte volný termín konzultace s lékařem registrovaným ve vaší zemi.",
+    "priceFrom": "Od",
+    "durationLabel": "Délka",
+    "turnaroundLabel": "Doba zpracování",
+    "orderKit": "Objednat sadu",
+    "bookConsultation": "Rezervovat konzultaci",
+    "prevServices": "Předchozí služby",
+    "nextServices": "Další služby",
+    "filters": {
+      "all": "Vše",
+      "general": "Obecná péče",
+      "specialist": "Specialista",
+      "prescription": "Předpisy",
+      "test": "Domácí testy"
+    }
+  }
 }

@@ -1,6 +1,42 @@
 {
+  "contact": {
+    "name": "Nume complet",
+    "namePlaceholder": "Numele tău",
+    "email": "Adresă de email",
+    "emailPlaceholder": "tu@exemplu.ro",
+    "phone": "Număr de telefon",
+    "phonePlaceholder": "+40…",
+    "phoneOptional": "(opțional)",
+    "subject": "Subiect",
+    "subjectPlaceholder": "Cum te putem ajuta?",
+    "message": "Mesaj",
+    "messagePlaceholder": "Descrie întrebarea sau problema ta…",
+    "submit": "Trimite mesaj",
+    "sending": "Se trimite…",
+    "successTitle": "Mesaj trimis",
+    "successBody": "Îți vom răspunde în termen de o zi lucrătoare.",
+    "errorBody": "Ceva a mers greșit. Te rugăm să încerci din nou."
+  },
+  "newsletter": {
+    "emailPlaceholder": "tu@email.ro",
+    "subscribe": "Abonare",
+    "subscribing": "Se abonează…",
+    "success": "Mulțumim — ești pe listă.",
+    "error": "Nu s-a putut abona. Te rugăm să încerci din nou."
+  },
   "booking": {
-    "submit": "Book Online",
-    "status": "needs localization audit"
+    "submit": "Rezervă Online",
+    "submitting": "Se procesează…",
+    "selectTime": "Selectează o oră",
+    "chooseDoctor": "Alege un medic",
+    "confirmBooking": "Confirmă rezervarea",
+    "cancelBooking": "Anulează"
+  },
+  "validation": {
+    "required": "Acest câmp este obligatoriu",
+    "invalidEmail": "Te rugăm să introduci un email valid",
+    "invalidPhone": "Te rugăm să introduci un număr de telefon valid",
+    "tooShort": "Trebuie să aibă cel puțin {min} caractere",
+    "tooLong": "Nu trebuie să depășească {max} caractere"
   }
 }

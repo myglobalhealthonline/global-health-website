@@ -1,4 +1,21 @@
 {
-  "title": "Services",
-  "status": "needs localization audit"
+  "catalog": {
+    "eyebrow": "Was wir behandeln",
+    "headline": "Versorgung für das, was wirklich los ist.",
+    "featuredDescription": "Die meisten Patienten beginnen hier. Wähle einen freien Beratungstermin mit einem in deinem Land registrierten Arzt.",
+    "priceFrom": "Ab",
+    "durationLabel": "Dauer",
+    "turnaroundLabel": "Bearbeitungszeit",
+    "orderKit": "Kit bestellen",
+    "bookConsultation": "Beratung buchen",
+    "prevServices": "Vorherige Dienste",
+    "nextServices": "Nächste Dienste",
+    "filters": {
+      "all": "Alle",
+      "general": "Allgemein",
+      "specialist": "Spezialist",
+      "prescription": "Rezepte",
+      "test": "Heimtests"
+    }
+  }
 }

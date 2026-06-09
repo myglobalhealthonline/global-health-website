@@ -10,6 +10,15 @@ import type { CartItemKind } from "@/lib/api/cart-types";
  * gradient overlay, or glass card when no image) but renders an
  * AddToCartButton instead of a Link — used for prescriptions & tests.
  */
+type CartI18n = {
+  adding: string;
+  added: string;
+  addToCart: string;
+  couldNotAdd: string;
+  viewCart: string;
+  soldOut?: string;
+};
+
 type CartServiceCardProps = {
   title: string;
   description?: string | null;
@@ -28,6 +37,7 @@ type CartServiceCardProps = {
   lowStock?: number | null;
   /** Icon variant */
   iconVariant?: "stethoscope" | "flask";
+  i18n?: CartI18n;
 };
 
 export function CartServiceCard({
@@ -45,7 +55,9 @@ export function CartServiceCard({
   soldOut = false,
   lowStock,
   iconVariant = "stethoscope",
+  i18n,
 }: CartServiceCardProps) {
+  const soldOutLabel = i18n?.soldOut ?? "Sold out";
   const trimmed = imageSrc?.trim();
   const hasImage = Boolean(trimmed);
   const Icon = iconVariant === "flask" ? FlaskConical : Stethoscope;
@@ -159,7 +171,7 @@ export function CartServiceCard({
                     color: "rgba(255,255,255,0.25)",
                   }}
                 >
-                  Sold out
+                  {soldOutLabel}
                 </button>
               ) : (
                 <AddToCartButton
@@ -167,6 +179,7 @@ export function CartServiceCard({
                   healthTestId={healthTestId}
                   serviceId={serviceId}
                   label={buttonLabel}
+                  i18n={i18n}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{
                     background: "rgba(255,255,255,0.10)",
@@ -250,7 +263,7 @@ export function CartServiceCard({
                 color: "rgba(255,255,255,0.25)",
               }}
             >
-              Sold out
+              {soldOutLabel}
             </button>
           ) : (
             <AddToCartButton
@@ -258,6 +271,7 @@ export function CartServiceCard({
               healthTestId={healthTestId}
               serviceId={serviceId}
               label={buttonLabel}
+              i18n={i18n}
               className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 background: "rgba(255,255,255,0.10)",

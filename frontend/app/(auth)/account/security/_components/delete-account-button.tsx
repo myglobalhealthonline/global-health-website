@@ -5,13 +5,29 @@ import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { deleteOwnAccount } from "@/lib/api/auth-api";
 
-const DELETE_COPY =
-  "This permanently deletes your account. Your booking history is preserved for regulatory reasons but stripped of identifying details. This cannot be undone.";
+type DeleteI18n = {
+  deleteWarning: string;
+  deleting: string;
+  deleteMyAccount: string;
+  deleteAccountTitle: string;
+  cancel: string;
+  deleteAccount: string;
+};
+
+const DEFAULT_I18N: DeleteI18n = {
+  deleteWarning:
+    "This permanently deletes your account. Your booking history is preserved for regulatory reasons but stripped of identifying details. This cannot be undone.",
+  deleting: "Deleting…",
+  deleteMyAccount: "Delete my account",
+  deleteAccountTitle: "Delete your account?",
+  cancel: "Cancel",
+  deleteAccount: "Delete account",
+};
 
 /**
  * Inline confirmation for account deletion (replaces window.confirm — ISS-011).
  */
-export function DeleteAccountButton() {
+export function DeleteAccountButton({ i18n = DEFAULT_I18N }: { i18n?: DeleteI18n }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -45,7 +61,7 @@ export function DeleteAccountButton() {
         className="inline-flex items-center gap-2 rounded-md border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60"
       >
         <Trash2 className="size-4" aria-hidden />
-        {deleting ? "Deleting…" : "Delete my account"}
+        {deleting ? i18n.deleting : i18n.deleteMyAccount}
       </button>
 
       {deleteMsg ? (
@@ -62,6 +78,7 @@ export function DeleteAccountButton() {
 
       {open ? (
         <DeleteAccountModal
+          i18n={i18n}
           confirming={deleting}
           onCancel={() => {
             if (!deleting) setOpen(false);
@@ -77,10 +94,12 @@ function DeleteAccountModal({
   onCancel,
   onConfirm,
   confirming,
+  i18n,
 }: {
   onCancel: () => void;
   onConfirm: () => void;
   confirming: boolean;
+  i18n: DeleteI18n;
 }) {
   return (
     <>
@@ -98,10 +117,10 @@ function DeleteAccountModal({
         className="fixed left-1/2 top-1/2 z-50 w-[min(100%-2rem,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-[var(--color-border)] bg-white p-6 shadow-xl"
       >
         <h2 id="delete-account-title" className="text-base font-bold text-[var(--color-text-primary)]">
-          Delete your account?
+          {i18n.deleteAccountTitle}
         </h2>
         <p id="delete-account-desc" className="mt-2 text-sm text-[var(--color-text-muted)]">
-          {DELETE_COPY}
+          {i18n.deleteWarning}
         </p>
         <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <button
@@ -110,7 +129,7 @@ function DeleteAccountModal({
             disabled={confirming}
             className="rounded-md border border-[var(--color-border-strong)] px-4 py-2 text-sm font-semibold text-[var(--color-text-body)] hover:bg-[var(--color-background-soft)] disabled:opacity-60"
           >
-            Cancel
+            {i18n.cancel}
           </button>
           <button
             type="button"
@@ -118,7 +137,7 @@ function DeleteAccountModal({
             disabled={confirming}
             className="rounded-md bg-rose-700 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-800 disabled:opacity-60"
           >
-            {confirming ? "Deleting…" : "Delete account"}
+            {confirming ? i18n.deleting : i18n.deleteAccount}
           </button>
         </div>
       </div>

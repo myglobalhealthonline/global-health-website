@@ -1,6 +1,42 @@
 {
+  "contact": {
+    "name": "Celé jméno",
+    "namePlaceholder": "Vaše jméno",
+    "email": "E-mailová adresa",
+    "emailPlaceholder": "vas@priklad.cz",
+    "phone": "Telefonní číslo",
+    "phonePlaceholder": "+420…",
+    "phoneOptional": "(volitelné)",
+    "subject": "Předmět",
+    "subjectPlaceholder": "Jak vám můžeme pomoci?",
+    "message": "Zpráva",
+    "messagePlaceholder": "Popište svůj dotaz nebo problém…",
+    "submit": "Odeslat zprávu",
+    "sending": "Odesílání…",
+    "successTitle": "Zpráva odeslána",
+    "successBody": "Odpovíme vám do jednoho pracovního dne.",
+    "errorBody": "Něco se pokazilo. Prosím, zkuste to znovu."
+  },
+  "newsletter": {
+    "emailPlaceholder": "vas@email.cz",
+    "subscribe": "Přihlásit se k odběru",
+    "subscribing": "Přihlašování…",
+    "success": "Děkujeme — jste na seznamu.",
+    "error": "Nepodařilo se přihlásit k odběru. Prosím, zkuste to znovu."
+  },
   "booking": {
-    "submit": "Book Online",
-    "status": "needs localization audit"
+    "submit": "Rezervovat Online",
+    "submitting": "Zpracování…",
+    "selectTime": "Vybrat čas",
+    "chooseDoctor": "Vybrat lékaře",
+    "confirmBooking": "Potvrdit rezervaci",
+    "cancelBooking": "Zrušit"
+  },
+  "validation": {
+    "required": "Toto pole je povinné",
+    "invalidEmail": "Prosím, zadejte platný e-mail",
+    "invalidPhone": "Prosím, zadejte platné telefonní číslo",
+    "tooShort": "Musí mít alespoň {min} znaků",
+    "tooLong": "Nesmí mít více než {max} znaků"
   }
 }

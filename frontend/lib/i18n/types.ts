@@ -36,6 +36,13 @@ export type CommonLocale = {
     repeatPrescriptionDesc: string;
     labTests: string;
     labTestsDesc: string;
+    howItWorks: string;
+    chooseCountry: string;
+    language: string;
+    closeMenu: string;
+    adminPortal: string;
+    accountPortal: string;
+    bookNow: string;
   };
   footer: {
     company: string;
@@ -110,5 +117,19 @@ export type CommonLocale = {
     title: string;
     tryAgain: string;
     backToHome: string;
+  };
+  cookie: {
+    title: string;
+    body: string;
+    privacyNotice: string;
+    forDetails: string;
+    gotIt: string;
+  };
+  cart: {
+    adding: string;
+    added: string;
+    addToCart: string;
+    couldNotAdd: string;
+    viewCart: string;
   };
 };

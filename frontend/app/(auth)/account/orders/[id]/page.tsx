@@ -6,6 +6,8 @@ import { AdminCard, PageHeader, Pill, SectionHeader } from "@/components/portal-
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -20,10 +22,11 @@ function statusTone(status: string): PillTone {
 }
 
 export default async function AccountOrderDetailPage({ params }: Props) {
-  const { id } = await params;
+  const [{ id }, locale] = await Promise.all([params, getPageLocale()]);
   const res = await fetchAccountOrder(id);
   if (!res.ok) notFound();
   const order = res.data;
+  const { account: a } = loadLocaleBundle(locale);
 
   return (
     <>
@@ -32,7 +35,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
         className="mb-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
-        Back to orders
+        {a.orders.backToOrders}
       </Link>
 
       <PageHeader
@@ -43,12 +46,12 @@ export default async function AccountOrderDetailPage({ params }: Props) {
             <Pill tone={statusTone(order.status)}>{order.status.toLowerCase()}</Pill>
           </span>
         }
-        description={`Placed ${formatAppDateTime(order.createdAt)}`}
+        description={a.orders.placedOn.replace("{date}", formatAppDateTime(order.createdAt))}
       />
 
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <AdminCard padding={0}>
-          <SectionHeader title="Items" />
+          <SectionHeader title={a.orders.itemsSection} />
           <div className="p-5">
             <ul className="divide-y divide-[var(--color-border)]">
               {order.items.map((i) => (
@@ -61,7 +64,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
                       {i.name}
                     </p>
                     <p className="text-xs text-[var(--color-text-muted)]">
-                      {i.kind === "HEALTH_TEST" ? "Health test" : "Online prescription"}
+                      {i.kind === "HEALTH_TEST" ? a.orders.healthTest : a.orders.onlinePrescription}
                       {" · "}
                       {formatPrice(i.unitPriceCents, order.currencyCode)} × {i.quantity}
                     </p>
@@ -73,16 +76,16 @@ export default async function AccountOrderDetailPage({ params }: Props) {
               ))}
             </ul>
             <dl className="mt-4 space-y-2 border-t border-[var(--color-border)] pt-4 text-sm">
-              <Row label="Subtotal" value={formatPrice(order.subtotalCents, order.currencyCode)} />
-              <Row label="Shipping" value={formatPrice(order.shippingCents, order.currencyCode)} />
-              <Row label="Total" value={formatPrice(order.totalCents, order.currencyCode)} bold />
+              <Row label={a.orders.subtotal} value={formatPrice(order.subtotalCents, order.currencyCode)} />
+              <Row label={a.orders.shippingCost} value={formatPrice(order.shippingCents, order.currencyCode)} />
+              <Row label={a.orders.total} value={formatPrice(order.totalCents, order.currencyCode)} bold />
             </dl>
           </div>
         </AdminCard>
 
         <aside className="grid gap-4 self-start">
           <AdminCard padding={0}>
-            <SectionHeader title="Shipping" />
+            <SectionHeader title={a.orders.shippingSection} />
             <div className="p-5 text-sm text-[var(--color-text-primary)]">
               {order.ship.name ? (
                 <>
@@ -95,13 +98,13 @@ export default async function AccountOrderDetailPage({ params }: Props) {
                   <p>{order.ship.countryCode}</p>
                 </>
               ) : (
-                <p className="text-[var(--color-text-muted)]">No address on file.</p>
+                <p className="text-[var(--color-text-muted)]">{a.orders.noAddress}</p>
               )}
             </div>
           </AdminCard>
 
           <AdminCard padding={0}>
-            <SectionHeader title="Contact" />
+            <SectionHeader title={a.orders.contact} />
             <div className="p-5 text-sm">
               <p>{order.fullName}</p>
               <p className="text-[var(--color-text-muted)]">{order.email}</p>
@@ -112,15 +115,15 @@ export default async function AccountOrderDetailPage({ params }: Props) {
           </AdminCard>
 
           <AdminCard padding={0}>
-            <SectionHeader title="Payment" />
+            <SectionHeader title={a.orders.payment} />
             <div className="p-5 text-sm">
               <p>
-                <span className="text-[var(--color-text-muted)]">Status:</span>{" "}
+                <span className="text-[var(--color-text-muted)]">{a.orders.statusLabel}:</span>{" "}
                 <span className="font-semibold">{order.paymentStatus}</span>
               </p>
               {order.paidAt ? (
                 <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-                  Paid {formatAppDateTime(order.paidAt)}
+                  {a.orders.paidOn.replace("{date}", formatAppDateTime(order.paidAt))}
                 </p>
               ) : null}
             </div>

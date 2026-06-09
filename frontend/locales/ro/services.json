@@ -1,4 +1,21 @@
 {
-  "title": "Services",
-  "status": "needs localization audit"
+  "catalog": {
+    "eyebrow": "Ce tratăm",
+    "headline": "Îngrijire pentru ce se întâmplă cu adevărat.",
+    "featuredDescription": "Majoritatea pacienților încep aici. Alege un interval disponibil cu un medic înregistrat în țara ta.",
+    "priceFrom": "De la",
+    "durationLabel": "Durată",
+    "turnaroundLabel": "Timp de răspuns",
+    "orderKit": "Comandă kit",
+    "bookConsultation": "Rezervă consultație",
+    "prevServices": "Servicii anterioare",
+    "nextServices": "Servicii următoare",
+    "filters": {
+      "all": "Toate",
+      "general": "General",
+      "specialist": "Specialist",
+      "prescription": "Rețete",
+      "test": "Teste acasă"
+    }
+  }
 }

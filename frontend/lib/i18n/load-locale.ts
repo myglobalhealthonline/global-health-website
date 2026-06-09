@@ -50,6 +50,20 @@ import csContact from "@/locales/cs/contact.json";
 import roContact from "@/locales/ro/contact.json";
 import deContact from "@/locales/de/contact.json";
 
+import enAuth from "@/locales/en/auth.json";
+import ptAuth from "@/locales/pt/auth.json";
+import esAuth from "@/locales/es/auth.json";
+import csAuth from "@/locales/cs/auth.json";
+import roAuth from "@/locales/ro/auth.json";
+import deAuth from "@/locales/de/auth.json";
+
+import enAccount from "@/locales/en/account.json";
+import ptAccount from "@/locales/pt/account.json";
+import esAccount from "@/locales/es/account.json";
+import csAccount from "@/locales/cs/account.json";
+import roAccount from "@/locales/ro/account.json";
+import deAccount from "@/locales/de/account.json";
+
 const homeByLocale = { en: enHome, pt: ptHome, es: esHome, cs: csHome, ro: roHome, de: deHome } as const;
 const servicesByLocale = { en: enServices, pt: ptServices, es: esServices, cs: csServices, ro: roServices, de: deServices } as const;
 const faqByLocale = { en: enFaq, pt: ptFaq, es: esFaq, cs: csFaq, ro: roFaq, de: deFaq } as const;
@@ -57,6 +71,8 @@ const legalByLocale = { en: enLegal, pt: ptLegal, es: esLegal, cs: csLegal, ro: 
 const formsByLocale = { en: enForms, pt: ptForms, es: esForms, cs: csForms, ro: roForms, de: deForms } as const;
 const aboutByLocale = { en: enAbout, pt: ptAbout, es: esAbout, cs: csAbout, ro: roAbout, de: deAbout } as const;
 const contactByLocale = { en: enContact, pt: ptContact, es: esContact, cs: csContact, ro: roContact, de: deContact } as const;
+const authByLocale = { en: enAuth, pt: ptAuth, es: esAuth, cs: csAuth, ro: roAuth, de: deAuth } as const;
+const accountByLocale = { en: enAccount, pt: ptAccount, es: esAccount, cs: csAccount, ro: roAccount, de: deAccount } as const;
 
 export function loadLocaleBundle(locale: LocaleCode) {
   return {
@@ -68,5 +84,7 @@ export function loadLocaleBundle(locale: LocaleCode) {
     forms: formsByLocale[locale] ?? formsByLocale.en,
     about: aboutByLocale[locale] ?? aboutByLocale.en,
     contact: contactByLocale[locale] ?? contactByLocale.en,
+    auth: authByLocale[locale] ?? authByLocale.en,
+    account: accountByLocale[locale] ?? accountByLocale.en,
   };
 }

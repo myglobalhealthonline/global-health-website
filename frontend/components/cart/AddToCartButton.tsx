@@ -8,6 +8,22 @@ import type { CartItemKind } from "@/lib/api/cart-types";
 import { getCountryByCode, type CountryCode } from "@/data/countries";
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 
+type CartI18n = {
+  adding: string;
+  added: string;
+  addToCart: string;
+  couldNotAdd: string;
+  viewCart: string;
+};
+
+const DEFAULT_I18N: CartI18n = {
+  adding: "Adding…",
+  added: "Added",
+  addToCart: "Add to cart",
+  couldNotAdd: "Could not add to cart",
+  viewCart: "View cart",
+};
+
 type Props = {
   kind: CartItemKind;
   healthTestId?: string;
@@ -16,6 +32,7 @@ type Props = {
   label?: string;
   className?: string;
   style?: React.CSSProperties;
+  i18n?: CartI18n;
 };
 
 export function AddToCartButton({
@@ -25,7 +42,9 @@ export function AddToCartButton({
   label,
   className,
   style,
+  i18n: i18nProp,
 }: Props) {
+  const i18n = i18nProp ?? DEFAULT_I18N;
   const router = useRouter();
   const { add, cart } = useCart();
   const [pending, startTransition] = useTransition();
@@ -45,7 +64,7 @@ export function AddToCartButton({
       } else {
         setFeedback({
           kind: "err",
-          message: res.message ?? "Could not add to cart",
+          message: res.message ?? i18n.couldNotAdd,
           conflict: res.conflict,
         });
       }
@@ -71,7 +90,7 @@ export function AddToCartButton({
         ) : (
           <ShoppingCart className="size-4" aria-hidden />
         )}
-        {pending ? "Adding…" : feedback?.kind === "ok" ? "Added" : (label ?? "Add to cart")}
+        {pending ? i18n.adding : feedback?.kind === "ok" ? i18n.added : (label ?? i18n.addToCart)}
       </button>
       {feedback?.kind === "err" ? (
         <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-800">
@@ -93,7 +112,7 @@ export function AddToCartButton({
               }}
               className="ml-2 font-semibold underline"
             >
-              View cart
+              {i18n.viewCart}
             </button>
           ) : null}
         </div>

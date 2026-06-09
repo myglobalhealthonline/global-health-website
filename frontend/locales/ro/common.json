@@ -33,7 +33,14 @@
     "repeatPrescription": "Cerere rețetă",
     "repeatPrescriptionDesc": "Revizuită de medici licențiați, trimisă la farmacia dvs.",
     "labTests": "Programare analize",
-    "labTestsDesc": "Kituri de calitate de laborator revizuite de medicii noștri"
+    "labTestsDesc": "Kituri de calitate de laborator revizuite de medicii noștri",
+    "howItWorks": "Cum funcționează",
+    "chooseCountry": "Alegeți țara",
+    "language": "Limbă",
+    "closeMenu": "Închide meniu",
+    "adminPortal": "Portal Admin",
+    "accountPortal": "Contul meu",
+    "bookNow": "Rezervă acum"
   },
   "footer": {
     "company": "Companie",
@@ -109,5 +116,19 @@
     "clearFilters": "Șterge filtrele",
     "viewProfile": "Vezi profilul",
     "bookAppointment": "Programează consultație"
+  },
+  "cookie": {
+    "title": "Consimțământ cookie",
+    "body": "Folosim un cookie de sesiune pentru a vă menține conectat plus preferințe de țară și limbă. Fără trackere de la terți. Consultați",
+    "privacyNotice": "informarea de confidențialitate",
+    "forDetails": "pentru detalii.",
+    "gotIt": "Am înțeles"
+  },
+  "cart": {
+    "adding": "Se adaugă…",
+    "added": "Adăugat",
+    "addToCart": "Adaugă în coș",
+    "couldNotAdd": "Nu s-a putut adăuga în coș",
+    "viewCart": "Vezi coșul"
   }
 }

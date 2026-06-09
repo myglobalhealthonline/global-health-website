@@ -16,6 +16,8 @@ import { PortalShell, type PortalNavItem } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
 import { fetchPatientUnreadMessageCount } from "@/lib/api/account-appointments-api";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 /**
  * Patient portal layout. Reuses `PortalShell` so admin / doctor / patient
@@ -41,30 +43,32 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   // `/` (the country picker) every time, forcing them to repick Ireland
   // / Portugal / etc. on every booking. Now we route them straight to
   // the country they last booked in.
-  const [bookHref, unreadMessages] = await Promise.all([
+  const [bookHref, unreadMessages, locale] = await Promise.all([
     resolveBookConsultationHref(),
     fetchPatientUnreadMessageCount(),
+    getPageLocale(),
   ]);
+  const { account: a } = loadLocaleBundle(locale);
 
   const sections: PortalNavItem[] = [
-    { href: "/account", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
-    { href: "/account/bookings", label: "My bookings", icon: <CalendarDays className="size-4" aria-hidden />, badge: unreadMessages },
-    { href: "/account/orders", label: "My orders", icon: <ShoppingBag className="size-4" aria-hidden /> },
-    { href: "/account/prescriptions", label: "Prescriptions", icon: <PillBottle className="size-4" aria-hidden /> },
-    { href: "/account/payments", label: "Payments", icon: <CreditCard className="size-4" aria-hidden /> },
-    { href: "/account/profile", label: "Profile", icon: <UserRound className="size-4" aria-hidden /> },
-    { href: "/account/security", label: "Security", icon: <ShieldCheck className="size-4" aria-hidden /> },
-    { href: bookHref, label: "Book consultation", icon: <Stethoscope className="size-4" aria-hidden /> },
+    { href: "/account", label: a.nav.overview, icon: <LayoutDashboard className="size-4" aria-hidden /> },
+    { href: "/account/bookings", label: a.nav.myBookings, icon: <CalendarDays className="size-4" aria-hidden />, badge: unreadMessages },
+    { href: "/account/orders", label: a.nav.myOrders, icon: <ShoppingBag className="size-4" aria-hidden /> },
+    { href: "/account/prescriptions", label: a.nav.prescriptions, icon: <PillBottle className="size-4" aria-hidden /> },
+    { href: "/account/payments", label: a.nav.payments, icon: <CreditCard className="size-4" aria-hidden /> },
+    { href: "/account/profile", label: a.nav.profile, icon: <UserRound className="size-4" aria-hidden /> },
+    { href: "/account/security", label: a.nav.security, icon: <ShieldCheck className="size-4" aria-hidden /> },
+    { href: bookHref, label: a.nav.bookConsultation, icon: <Stethoscope className="size-4" aria-hidden /> },
   ];
 
   return (
     <PortalShell
       user={{ fullName: user.fullName, email: user.email, role: user.role }}
       sections={sections}
-      portalLabel="Patient portal"
-      sectionLabel="Account"
+      portalLabel={a.portal.label}
+      sectionLabel={a.portal.sectionLabel}
       rootHref="/account"
-      rootBreadcrumb="Account"
+      rootBreadcrumb={a.portal.sectionLabel}
       signOutAction={logoutAction}
       accountHref="/account/profile"
     >

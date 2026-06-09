@@ -146,7 +146,7 @@ export default async function CountryLangHomePage({
   params: Promise<Params>;
 }) {
   const { country: slug, lang } = await params;
-  const { home: t } = loadLocaleBundle(lang as LocaleCode);
+  const { home: t, services: tServices } = loadLocaleBundle(lang as LocaleCode);
   const code = countryCodeFromSlug(slug);
   if (!code) notFound();
   const config = await getPublicCountryByCode(code);
@@ -385,7 +385,7 @@ export default async function CountryLangHomePage({
       <RichBodySection html={page?.body} theme="light" />
       <TrustRibbon items={trustItems} />
       <ReviewBadge countryName={config.name} theme="light" />
-      <ServiceCatalog services={serviceCatalogItems} />
+      <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
       <StatsBand items={statsItems} theme="light" i18n={t.statsBand} />
       {/* ── Team section — featured card + full grid under one heading ── */}
       <section className="relative" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>

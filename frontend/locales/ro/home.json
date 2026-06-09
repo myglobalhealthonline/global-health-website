@@ -13,7 +13,14 @@
     "secondary": "Vezi servicii",
     "trustLicensed": "Autorizat în",
     "trustAvailability": "Disponibilitate în timp real",
-    "trustAppointments": "Consultații online"
+    "trustAppointments": "Consultații online",
+    "available": "disponibil",
+    "secureOnlineCare": "Îngrijire online securizată",
+    "fromHome": "De acasă",
+    "openCalendars": "Calendare deschise",
+    "doctorsAcrossEurope": "{count} medici în toată Europa",
+    "consultingIn": "Consultând în {lang}",
+    "bookNow": "Rezervă acum"
   },
   "team": {
     "eyebrow": "Echipa",

@@ -1,4 +1,21 @@
 {
-  "title": "Services",
-  "status": "needs localization audit"
+  "catalog": {
+    "eyebrow": "O que tratamos",
+    "headline": "Cuidados para o que realmente está a acontecer.",
+    "featuredDescription": "A maioria dos pacientes começa aqui. Escolha um horário de consulta disponível com um médico registado no seu país.",
+    "priceFrom": "A partir de",
+    "durationLabel": "Duração",
+    "turnaroundLabel": "Tempo de resposta",
+    "orderKit": "Encomendar kit",
+    "bookConsultation": "Marcar consulta",
+    "prevServices": "Serviços anteriores",
+    "nextServices": "Próximos serviços",
+    "filters": {
+      "all": "Todos",
+      "general": "Geral",
+      "specialist": "Especialidade",
+      "prescription": "Prescrições",
+      "test": "Testes em casa"
+    }
+  }
 }

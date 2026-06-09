@@ -20,6 +20,13 @@ export type HomeHeroI18n = {
   trustLicensed: string;
   trustAvailability: string;
   trustAppointments: string;
+  available: string;
+  secureOnlineCare: string;
+  fromHome: string;
+  openCalendars: string;
+  doctorsAcrossEurope: string;
+  consultingIn: string;
+  bookNow: string;
 };
 
 export function HomeHero({
@@ -91,7 +98,7 @@ export function HomeHero({
                 style={{ color: "rgba(255,255,255,0.28)" }}
               >
                 <span aria-hidden className="gh-pulse-dot !size-1.5" />
-                {doctorCount} available
+                {doctorCount} {i18n?.available ?? "available"}
               </span>
             </div>
           </HeroReveal>
@@ -251,9 +258,9 @@ export function HomeHero({
               <Stethoscope className="size-4" strokeWidth={1.7} aria-hidden />
             </span>
             <span className="text-[12px] font-bold leading-tight">
-              Secure online care
+              {i18n?.secureOnlineCare ?? "Secure online care"}
               <span className="block text-[10px] font-semibold text-[var(--color-text-muted)]">
-                From home
+                {i18n?.fromHome ?? "From home"}
               </span>
             </span>
           </div>
@@ -277,7 +284,7 @@ export function HomeHero({
                 style={{ color: "var(--color-brand-accent)" }}
               >
                 <span aria-hidden className="gh-pulse-dot !size-1.5" />
-                Open calendars
+                {i18n?.openCalendars ?? "Open calendars"}
               </p>
 
               <ul className="space-y-4">
@@ -310,9 +317,9 @@ export function HomeHero({
                   className="mb-5 text-[11px] leading-relaxed"
                   style={{ color: "rgba(255,255,255,0.40)" }}
                 >
-                  {totalDoctorsAcrossEurope} doctors across Europe
+                  {(i18n?.doctorsAcrossEurope ?? "{count} doctors across Europe").replace("{count}", String(totalDoctorsAcrossEurope))}
                   <br />
-                  Consulting in {languageLabel}
+                  {(i18n?.consultingIn ?? "Consulting in {lang}").replace("{lang}", languageLabel)}
                 </p>
                 <Link
                   href={bookHref}
@@ -326,7 +333,7 @@ export function HomeHero({
                   "
                   style={{ border: "1px solid rgba(255,255,255,0.18)" }}
                 >
-                  Book now
+                  {i18n?.bookNow ?? "Book now"}
                   <ArrowRight className="size-3.5" strokeWidth={1.5} aria-hidden />
                 </Link>
               </div>

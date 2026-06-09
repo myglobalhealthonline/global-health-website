@@ -1,4 +1,21 @@
 {
-  "title": "Services",
-  "status": "needs localization audit"
+  "catalog": {
+    "eyebrow": "Qué tratamos",
+    "headline": "Atención para lo que realmente está pasando.",
+    "featuredDescription": "La mayoría de los pacientes empieza aquí. Elige una franja disponible con un médico registrado en tu país.",
+    "priceFrom": "Desde",
+    "durationLabel": "Duración",
+    "turnaroundLabel": "Tiempo de respuesta",
+    "orderKit": "Pedir kit",
+    "bookConsultation": "Reservar consulta",
+    "prevServices": "Servicios anteriores",
+    "nextServices": "Próximos servicios",
+    "filters": {
+      "all": "Todos",
+      "general": "General",
+      "specialist": "Especialista",
+      "prescription": "Recetas",
+      "test": "Tests en casa"
+    }
+  }
 }

@@ -5,7 +5,45 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { registerUser } from "@/lib/api/auth-api";
 
-export function RegisterFormFallback() {
+type RegisterI18n = {
+  title: string;
+  fullNameLabel: string;
+  fullNamePlaceholder: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  phoneLabel: string;
+  phoneOptional: string;
+  phonePlaceholder: string;
+  passwordLabel: string;
+  passwordHint: string;
+  hidePassword: string;
+  showPassword: string;
+  passwordHelp: string;
+  termsNotice: string;
+  creating: string;
+  createAccount: string;
+};
+
+const DEFAULT_I18N: RegisterI18n = {
+  title: "Create account",
+  fullNameLabel: "Full name",
+  fullNamePlaceholder: "Your full name",
+  emailLabel: "Email address",
+  emailPlaceholder: "you@example.com",
+  phoneLabel: "Phone",
+  phoneOptional: "(optional)",
+  phonePlaceholder: "+353...",
+  passwordLabel: "Password",
+  passwordHint: "At least 8 characters",
+  hidePassword: "Hide password",
+  showPassword: "Show password",
+  passwordHelp: "Use at least 8 characters with a mix of letters and numbers.",
+  termsNotice: "By creating an account, you agree to use this platform for patient booking and consultation management.",
+  creating: "Creating account...",
+  createAccount: "Create account",
+};
+
+export function RegisterFormFallback({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
   return (
     <form className="mt-7 grid gap-5" aria-hidden>
       <div className="grid gap-2">
@@ -16,12 +54,12 @@ export function RegisterFormFallback() {
         <div className="h-4 w-24 rounded bg-[var(--color-border)]/40" />
         <div className="h-11 animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
       </div>
-      <div className="gh-btn gh-btn-primary mt-1 animate-pulse opacity-60">Create account</div>
+      <div className="gh-btn gh-btn-primary mt-1 animate-pulse opacity-60">{i18n.createAccount}</div>
     </form>
   );
 }
 
-export function RegisterForm() {
+export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [message, setMessage] = useState<string | null>(null);
@@ -72,14 +110,14 @@ export function RegisterForm() {
     <form onSubmit={onSubmit} className="mt-7 grid gap-5">
       <div className="grid gap-2">
         <label htmlFor="register-name" className="gh-field-label">
-          Full name
+          {i18n.fullNameLabel}
         </label>
         <input
           id="register-name"
           name="fullName"
           type="text"
           className="gh-input"
-          placeholder="Your full name"
+          placeholder={i18n.fullNamePlaceholder}
           required
           autoComplete="name"
         />
@@ -87,14 +125,14 @@ export function RegisterForm() {
 
       <div className="grid gap-2">
         <label htmlFor="register-email" className="gh-field-label">
-          Email address
+          {i18n.emailLabel}
         </label>
         <input
           id="register-email"
           name="email"
           type="email"
           className="gh-input"
-          placeholder="you@example.com"
+          placeholder={i18n.emailPlaceholder}
           required
           autoComplete="email"
         />
@@ -102,21 +140,21 @@ export function RegisterForm() {
 
       <div className="grid gap-2">
         <label htmlFor="register-phone" className="gh-field-label">
-          Phone <span className="text-[var(--color-text-muted)]">(optional)</span>
+          {i18n.phoneLabel} <span className="text-[var(--color-text-muted)]">{i18n.phoneOptional}</span>
         </label>
         <input
           id="register-phone"
           name="phone"
           type="tel"
           className="gh-input"
-          placeholder="+353..."
+          placeholder={i18n.phonePlaceholder}
           autoComplete="tel"
         />
       </div>
 
       <div className="grid gap-2">
         <label htmlFor="register-password" className="gh-field-label">
-          Password
+          {i18n.passwordLabel}
         </label>
         <div className="relative">
           <input
@@ -124,7 +162,7 @@ export function RegisterForm() {
             name="password"
             type={showPassword ? "text" : "password"}
             className="gh-input pr-12"
-            placeholder="At least 8 characters"
+            placeholder={i18n.passwordHint}
             required
             minLength={8}
             autoComplete="new-password"
@@ -133,22 +171,22 @@ export function RegisterForm() {
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-            aria-label={showPassword ? "Hide password" : "Show password"}
+            aria-label={showPassword ? i18n.hidePassword : i18n.showPassword}
           >
             {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
           </button>
         </div>
         <p className="text-xs text-[var(--color-text-muted)]">
-          Use at least 8 characters with a mix of letters and numbers.
+          {i18n.passwordHelp}
         </p>
       </div>
 
       <p className="text-sm text-[var(--color-text-muted)]">
-        By creating an account, you agree to use this platform for patient booking and consultation management.
+        {i18n.termsNotice}
       </p>
 
       <button type="submit" className="gh-btn gh-btn-primary mt-1" disabled={loading}>
-        {loading ? "Creating account..." : "Create account"}
+        {loading ? i18n.creating : i18n.createAccount}
       </button>
 
       {message ? (

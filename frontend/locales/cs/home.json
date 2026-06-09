@@ -13,7 +13,14 @@
     "secondary": "Zobrazit služby",
     "trustLicensed": "Registrováno v",
     "trustAvailability": "Dostupnost v reálném čase",
-    "trustAppointments": "Online konzultace"
+    "trustAppointments": "Online konzultace",
+    "available": "k dispozici",
+    "secureOnlineCare": "Bezpečná online péče",
+    "fromHome": "Z domova",
+    "openCalendars": "Otevřené kalendáře",
+    "doctorsAcrossEurope": "{count} lékařů v celé Evropě",
+    "consultingIn": "Konzultace v jazyce {lang}",
+    "bookNow": "Rezervovat nyní"
   },
   "team": {
     "eyebrow": "Tým",

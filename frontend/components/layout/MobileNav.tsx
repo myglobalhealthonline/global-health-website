@@ -64,7 +64,7 @@ export function MobileNav({
   const activeLang = parsed.lang ?? activeCountry?.defaultLocale ?? null;
 
   const portalHref = authUser?.role === "ADMIN" ? "/admin" : "/account";
-  const portalLabel = authUser?.role === "ADMIN" ? "Admin Portal" : "User Portal";
+  const portalLabel = authUser?.role === "ADMIN" ? navigation.navAdminPortal : navigation.navAccountPortal;
 
   const activeFeatures = activeCountryCode
     ? countryFeatures?.[activeCountryCode]
@@ -78,13 +78,13 @@ export function MobileNav({
   const sectionLinks =
     activeCountry && parsed.country && parsed.lang
       ? [
-          { href: `/${parsed.country}/${parsed.lang}`, label: "Home" },
-          { href: `/${parsed.country}/${parsed.lang}/doctors`, label: "Doctors" },
+          { href: `/${parsed.country}/${parsed.lang}`, label: navigation.navHome },
+          { href: `/${parsed.country}/${parsed.lang}/doctors`, label: navigation.navDoctors },
           ...(isFeatureOn("general-consultations")
             ? [
                 {
                   href: `/${parsed.country}/${parsed.lang}/gp-appointment`,
-                  label: "Book a GP Appointment",
+                  label: navigation.navBookGp,
                 },
               ]
             : []),
@@ -92,7 +92,7 @@ export function MobileNav({
             ? [
                 {
                   href: `/${parsed.country}/${parsed.lang}/see-a-specialist`,
-                  label: "See a Specialist",
+                  label: navigation.navSeeSpecialist,
                 },
               ]
             : []),
@@ -100,7 +100,7 @@ export function MobileNav({
             ? [
                 {
                   href: `/${parsed.country}/${parsed.lang}/repeat-prescription-request`,
-                  label: "Repeat Prescription Request",
+                  label: navigation.navRepeatPrescription,
                 },
               ]
             : []),
@@ -108,20 +108,20 @@ export function MobileNav({
             ? [
                 {
                   href: `/${parsed.country}/${parsed.lang}/lab-tests`,
-                  label: "Lab Test Booking",
+                  label: navigation.navLabTests,
                 },
               ]
             : []),
-          { href: `/${parsed.country}/${parsed.lang}#how-it-works`, label: "How It Works" },
-          { href: "/about", label: "About" },
-          { href: "/contact", label: "Contact" },
+          { href: `/${parsed.country}/${parsed.lang}#how-it-works`, label: navigation.navHowItWorks },
+          { href: "/about", label: navigation.navAbout },
+          { href: "/contact", label: navigation.navContact },
         ]
       : [
-          { href: "/", label: "Home" },
-          { href: "/about", label: "About" },
-          { href: "/blog", label: "Blog" },
-          { href: "/faq", label: "FAQ" },
-          { href: "/contact", label: "Contact" },
+          { href: "/", label: navigation.navHome },
+          { href: "/about", label: navigation.navAbout },
+          { href: "/blog", label: navigation.navBlog },
+          { href: "/faq", label: navigation.navFaq },
+          { href: "/contact", label: navigation.navContact },
         ];
 
   // Cart-first booking: mobile "Book" opens the guided /book page. With no
@@ -142,7 +142,7 @@ export function MobileNav({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" />
         <Dialog.Content className="fixed inset-x-0 top-0 z-50 flex max-h-[100dvh] flex-col bg-white shadow-[var(--shadow-elevated)] lg:hidden">
-          <Dialog.Title className="sr-only">Main navigation</Dialog.Title>
+          <Dialog.Title className="sr-only">{navigation.navHome} navigation</Dialog.Title>
           <Dialog.Description className="sr-only">
             Switch country, change language, and book a consultation.
           </Dialog.Description>
@@ -158,7 +158,7 @@ export function MobileNav({
               />
             </Link>
             <Dialog.Close className="inline-flex rounded-full border border-[var(--color-border)] bg-white p-2 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)] focus-visible:ring-offset-2">
-              <span className="sr-only">Close menu</span>
+              <span className="sr-only">{navigation.navCloseMenu}</span>
               <X className="size-5 text-[var(--color-text-primary)]" aria-hidden />
             </Dialog.Close>
           </div>
@@ -188,7 +188,7 @@ export function MobileNav({
 
             <section className="mb-6">
               <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
-                Choose country
+                {navigation.navChooseCountry}
               </p>
               <ul className="flex flex-col gap-1">
                 {countries.map((c) => {
@@ -224,7 +224,7 @@ export function MobileNav({
               <section className="mb-6">
                 <p className="mb-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
                   <Languages aria-hidden className="size-3.5" />
-                  Language
+                  {navigation.navLanguage}
                 </p>
                 <ul className="flex flex-col gap-1">
                   {activeCountry.supportedLocales.map((loc) => {
@@ -285,7 +285,7 @@ export function MobileNav({
           <div className="fixed bottom-0 left-0 right-0 border-t border-[var(--color-border)] bg-white/95 p-4 backdrop-blur-md">
             <Dialog.Close asChild>
               <Link href={bookHref} className="gh-btn gh-btn-primary flex w-full text-base">
-                Book Appointment
+                {navigation.navBookAppointment}
               </Link>
             </Dialog.Close>
           </div>

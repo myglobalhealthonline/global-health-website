@@ -5,6 +5,8 @@ import { AdminCard, Btn, PageHeader, Pill as PillBadge, SectionHeader } from "@/
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
+import { getPageLocale } from "@/lib/i18n/get-page-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +19,11 @@ function paymentTone(status: string): PillTone {
 }
 
 export default async function AccountPrescriptionsPage() {
-  const result = await fetchPatientPrescriptions();
+  const [result, locale] = await Promise.all([
+    fetchPatientPrescriptions(),
+    getPageLocale(),
+  ]);
+  const { account: a } = loadLocaleBundle(locale);
   const issued = result.ok ? result.data.issued : [];
   const orders = result.ok ? result.data.orders : [];
   const unavailable = result.ok ? null : result.message;
@@ -25,9 +31,9 @@ export default async function AccountPrescriptionsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Account"
-        title="Prescriptions"
-        description="Clinical scripts your doctor has issued, plus any online prescription products you've ordered."
+        eyebrow={a.prescriptions.breadcrumb}
+        title={a.prescriptions.title}
+        description={a.prescriptions.subtitle}
       />
 
       {unavailable ? (
@@ -41,16 +47,15 @@ export default async function AccountPrescriptionsPage() {
         <SectionHeader
           title={
             <span className="inline-flex items-center gap-2">
-              <Pill className="size-4" aria-hidden /> Issued by your doctor
+              <Pill className="size-4" aria-hidden /> {a.prescriptions.issuedByDoctor}
             </span>
           }
-          description="Scripts written during a signed consultation. Read-only history."
+          description={a.prescriptions.issuedByDoctorHint}
         />
         <div className="p-5">
           {issued.length === 0 ? (
             <p className="text-sm text-[var(--color-text-muted)]">
-              No prescriptions issued yet. After a consultation, scripts your
-              doctor writes will appear here.
+              {a.prescriptions.noPrescriptions}
             </p>
           ) : (
             <ul className="grid gap-3">
@@ -73,10 +78,10 @@ export default async function AccountPrescriptionsPage() {
                         {[
                           p.frequency,
                           p.durationDays != null
-                            ? `${p.durationDays} day(s)`
+                            ? `${p.durationDays} ${a.prescriptions.days}`
                             : null,
                           p.refills > 0
-                            ? `${p.refills} refill${p.refills === 1 ? "" : "s"}`
+                            ? `${p.refills} ${p.refills === 1 ? a.prescriptions.refill : a.prescriptions.refills}`
                             : null,
                         ]
                           .filter(Boolean)
@@ -88,8 +93,9 @@ export default async function AccountPrescriptionsPage() {
                         </p>
                       ) : null}
                       <p className="mt-2 text-[11px] text-[var(--color-text-muted)]">
-                        Issued by {p.doctorName} on{" "}
-                        {formatAppDate(p.consultationSignedAt ?? p.createdAt)}
+                        {a.prescriptions.issuedBy
+                          .replace("{doctor}", p.doctorName)
+                          .replace("{date}", formatAppDate(p.consultationSignedAt ?? p.createdAt))}
                       </p>
                     </div>
                     <Btn
@@ -98,7 +104,7 @@ export default async function AccountPrescriptionsPage() {
                       size="sm"
                       iconRight={<ChevronRight className="size-3.5" />}
                     >
-                      View booking
+                      {a.prescriptions.viewBooking}
                     </Btn>
                   </div>
                 </li>
@@ -113,25 +119,25 @@ export default async function AccountPrescriptionsPage() {
         <SectionHeader
           title={
             <span className="inline-flex items-center gap-2">
-              <ShoppingBag className="size-4" aria-hidden /> Online orders
+              <ShoppingBag className="size-4" aria-hidden /> {a.prescriptions.onlineOrders}
             </span>
           }
-          description="Online prescription products you've ordered — like health tests, but for medication."
+          description={a.prescriptions.onlineOrdersHint}
           right={
             <Btn href="/" variant="primary" size="sm">
-              Order new
+              {a.prescriptions.orderNew}
             </Btn>
           }
         />
         <div className="p-5">
           {orders.length === 0 ? (
             <p className="text-sm text-[var(--color-text-muted)]">
-              No online prescription orders yet.{" "}
+              {a.prescriptions.noOnlineOrders}{" "}
               <Link
                 href="/"
                 className="font-semibold text-[var(--color-brand-primary)] hover:underline"
               >
-                Browse products →
+                {a.prescriptions.browseProducts}
               </Link>
             </p>
           ) : (
@@ -146,7 +152,7 @@ export default async function AccountPrescriptionsPage() {
                       {o.serviceName || o.consultationType}
                     </p>
                     <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[var(--color-text-muted)]">
-                      <span>Ordered {formatAppDate(o.createdAt)}</span>
+                      <span>{a.prescriptions.ordered.replace("{date}", formatAppDate(o.createdAt))}</span>
                       <span>· {o.countryCode.toUpperCase()}</span>
                       <PillBadge tone={paymentTone(o.paymentStatus)}>
                         {o.paymentStatus.toLowerCase()}
@@ -164,7 +170,7 @@ export default async function AccountPrescriptionsPage() {
                     size="sm"
                     iconRight={<ChevronRight className="size-3.5" />}
                   >
-                    Open
+                    {a.prescriptions.open}
                   </Btn>
                 </li>
               ))}

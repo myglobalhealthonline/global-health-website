@@ -13,7 +13,14 @@
     "secondary": "Leistungen anzeigen",
     "trustLicensed": "Zugelassen in",
     "trustAvailability": "Echtzeitverfügbarkeit",
-    "trustAppointments": "Online-Konsultationen"
+    "trustAppointments": "Online-Konsultationen",
+    "available": "verfügbar",
+    "secureOnlineCare": "Sichere Online-Versorgung",
+    "fromHome": "Von zu Hause",
+    "openCalendars": "Offene Kalender",
+    "doctorsAcrossEurope": "{count} Ärzte in ganz Europa",
+    "consultingIn": "Beratung auf {lang}",
+    "bookNow": "Jetzt buchen"
   },
   "team": {
     "eyebrow": "Das Team",

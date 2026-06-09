@@ -11,8 +11,22 @@ import {
 } from "@/lib/api/auth-api";
 import { formatAppDate } from "@/lib/format-datetime";
 import { DeleteAccountButton } from "./_components/delete-account-button";
+import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import type { LocaleCode } from "@/lib/i18n/types";
+
+function readClientLocale(): LocaleCode {
+  try {
+    const match = document.cookie.match(/(?:^|;\s*)gh_locale=([^;]+)/);
+    const raw = match ? decodeURIComponent(match[1]) : "";
+    return resolveLocale({ cookieLocale: raw });
+  } catch {
+    return "en";
+  }
+}
 
 export default function AccountSecurityPage() {
+  const [locale, setLocale] = useState<LocaleCode>("en");
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -28,6 +42,7 @@ export default function AccountSecurityPage() {
   const [verifyMsg, setVerifyMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   useEffect(() => {
+    setLocale(readClientLocale());
     let cancelled = false;
     async function load() {
       const res = await fetchCurrentUser();
@@ -41,15 +56,17 @@ export default function AccountSecurityPage() {
     };
   }, []);
 
+  const a = loadLocaleBundle(locale).account;
+
   async function onChangePassword(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setPwdMsg(null);
     if (newPassword !== confirmPassword) {
-      setPwdMsg({ kind: "err", text: "New password and confirmation do not match." });
+      setPwdMsg({ kind: "err", text: a.security.passwordNoMatch });
       return;
     }
     if (newPassword.length < 8) {
-      setPwdMsg({ kind: "err", text: "New password must be at least 8 characters." });
+      setPwdMsg({ kind: "err", text: a.security.passwordTooShort });
       return;
     }
     setSavingPwd(true);
@@ -59,7 +76,7 @@ export default function AccountSecurityPage() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      setPwdMsg({ kind: "ok", text: "Password updated. Use the new one next time you sign in." });
+      setPwdMsg({ kind: "ok", text: a.security.passwordUpdated });
     } else {
       setPwdMsg({ kind: "err", text: res.message });
     }
@@ -72,12 +89,9 @@ export default function AccountSecurityPage() {
     setSendingVerify(false);
     if (res.ok) {
       if (res.data.alreadyVerified) {
-        setVerifyMsg({ kind: "ok", text: "This email is already verified." });
+        setVerifyMsg({ kind: "ok", text: a.security.alreadyVerified });
       } else {
-        setVerifyMsg({
-          kind: "ok",
-          text: "Verification email sent. Check your inbox — link expires in 24 hours.",
-        });
+        setVerifyMsg({ kind: "ok", text: a.security.verificationSent });
       }
     } else {
       setVerifyMsg({ kind: "err", text: res.message });
@@ -90,20 +104,20 @@ export default function AccountSecurityPage() {
     <div className="mx-auto max-w-2xl">
       <header className="mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
-          Account
+          {a.security.breadcrumb}
         </p>
         <h2 className="mt-1 flex items-center gap-2 text-2xl font-bold text-[var(--color-text-primary)]">
           <ShieldCheck className="size-6 text-[var(--color-brand-primary)]" aria-hidden />
-          Security
+          {a.security.title}
         </h2>
         <p className="text-sm text-[var(--color-text-muted)]">
-          Manage your password and email verification status.
+          {a.security.subtitle}
         </p>
       </header>
 
       {loading ? (
         <div className="gh-card p-6 text-sm text-[var(--color-text-muted)]">
-          Loading…
+          {a.security.loading}
         </div>
       ) : (
         <>
@@ -120,17 +134,19 @@ export default function AccountSecurityPage() {
                   <MailCheck className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-base font-bold text-[var(--color-text-primary)]">Email verification</h2>
+                  <h2 className="text-base font-bold text-[var(--color-text-primary)]">
+                    {a.security.emailVerification}
+                  </h2>
                   {verified ? (
                     <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-                      <span className="font-semibold text-emerald-700">Verified</span> on{" "}
+                      <span className="font-semibold text-emerald-700">{a.security.verified}</span>{" "}
+                      {a.security.verifiedOn}{" "}
                       {formatAppDate(user!.emailVerifiedAt!)}.
                     </p>
                   ) : (
                     <>
                       <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-                        Your email address ({user?.email}) hasn&apos;t been verified yet.
-                        Verifying confirms you can receive booking + password-reset emails.
+                        {a.security.unverifiedBody.replace("{email}", user?.email ?? "")}
                       </p>
                       <button
                         type="button"
@@ -138,7 +154,7 @@ export default function AccountSecurityPage() {
                         disabled={sendingVerify}
                         className="mt-3 inline-flex items-center gap-2 rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 disabled:opacity-60"
                       >
-                        {sendingVerify ? "Sending…" : "Resend verification email"}
+                        {sendingVerify ? a.security.sending : a.security.resendVerification}
                       </button>
                     </>
                   )}
@@ -159,10 +175,11 @@ export default function AccountSecurityPage() {
 
             {/* Privacy controls — GDPR data-export + account-delete */}
             <section className="mt-4 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
-              <h2 className="text-base font-bold text-[var(--color-text-primary)]">Your data</h2>
+              <h2 className="text-base font-bold text-[var(--color-text-primary)]">
+                {a.security.yourData}
+              </h2>
               <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-                Under GDPR you can download everything we hold about you, or
-                delete your account.
+                {a.security.gdprBody}
               </p>
 
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -171,10 +188,10 @@ export default function AccountSecurityPage() {
                   className="inline-flex items-center gap-2 rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"
                 >
                   <Download className="size-4" aria-hidden />
-                  Download my data (JSON)
+                  {a.security.downloadData}
                 </a>
 
-                <DeleteAccountButton />
+                <DeleteAccountButton i18n={a.security} />
               </div>
             </section>
 
@@ -185,14 +202,16 @@ export default function AccountSecurityPage() {
                   <KeyRound className="size-5" aria-hidden />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-base font-bold text-[var(--color-text-primary)]">Change password</h2>
+                  <h2 className="text-base font-bold text-[var(--color-text-primary)]">
+                    {a.security.changePassword}
+                  </h2>
                   <p className="mt-1 text-sm text-[var(--color-text-muted)]">
-                    You&apos;ll need your current password to confirm the change.
+                    {a.security.changePasswordBody}
                   </p>
 
                   <form onSubmit={onChangePassword} className="mt-4 space-y-3">
                     <label className="block">
-                      <span className="gh-field-label">Current password</span>
+                      <span className="gh-field-label">{a.security.currentPassword}</span>
                       <input
                         type="password"
                         value={currentPassword}
@@ -204,7 +223,7 @@ export default function AccountSecurityPage() {
                     </label>
 
                     <label className="block">
-                      <span className="gh-field-label">New password</span>
+                      <span className="gh-field-label">{a.security.newPassword}</span>
                       <input
                         type="password"
                         value={newPassword}
@@ -218,7 +237,7 @@ export default function AccountSecurityPage() {
                     </label>
 
                     <label className="block">
-                      <span className="gh-field-label">Confirm new password</span>
+                      <span className="gh-field-label">{a.security.confirmNewPassword}</span>
                       <input
                         type="password"
                         value={confirmPassword}
@@ -248,7 +267,7 @@ export default function AccountSecurityPage() {
                       disabled={savingPwd}
                       className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
                     >
-                      {savingPwd ? "Updating…" : "Update password"}
+                      {savingPwd ? a.security.updating : a.security.updatePassword}
                     </button>
                   </form>
                 </div>

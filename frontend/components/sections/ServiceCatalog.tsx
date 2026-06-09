@@ -61,15 +61,8 @@ const DEFAULT_SERVICE_IMAGES: Record<ServiceTileType, string> = {
   test: "/images/stock/tests.jpg",
 };
 
-const FILTERS = [
-  { id: "all", label: "All" },
-  { id: "general", label: "General" },
-  { id: "specialist", label: "Specialist" },
-  { id: "prescription", label: "Prescriptions" },
-  { id: "test", label: "Home tests" },
-] as const;
-
-type FilterId = (typeof FILTERS)[number]["id"];
+const FILTER_IDS = ["all", "general", "specialist", "prescription", "test"] as const;
+type FilterId = (typeof FILTER_IDS)[number];
 
 /** Desktop grid: 3 cols.
  *  Featured page:  row1 = featured(2col) + 1 card  → 3 slots
@@ -78,15 +71,48 @@ type FilterId = (typeof FILTERS)[number]["id"];
 const PAGE_SIZE_FEATURED = 5;
 const PAGE_SIZE_REGULAR = 6;
 
+export type ServiceCatalogI18n = {
+  eyebrow: string;
+  headline: string;
+  featuredDescription: string;
+  priceFrom: string;
+  durationLabel: string;
+  turnaroundLabel: string;
+  orderKit: string;
+  bookConsultation: string;
+  prevServices: string;
+  nextServices: string;
+  filters: { all: string; general: string; specialist: string; prescription: string; test: string };
+};
+
+const DEFAULT_I18N: ServiceCatalogI18n = {
+  eyebrow: "What we treat",
+  headline: "Care for what's actually going on.",
+  featuredDescription: "Most patients start here. Choose an open consultation slot with a doctor registered in your country.",
+  priceFrom: "From",
+  durationLabel: "Duration",
+  turnaroundLabel: "Turnaround",
+  orderKit: "Order kit",
+  bookConsultation: "Book consultation",
+  prevServices: "Previous services",
+  nextServices: "Next services",
+  filters: { all: "All", general: "General", specialist: "Specialist", prescription: "Prescriptions", test: "Home tests" },
+};
+
 export function ServiceCatalog({
   services,
   intro,
+  i18n: i18nProp,
 }: {
   services: ServiceCatalogItem[];
   intro?: string;
+  i18n?: ServiceCatalogI18n;
 }) {
+  const i18n = i18nProp ?? DEFAULT_I18N;
   const [filter, setFilter] = useState<FilterId>("all");
   const [page, setPage] = useState(0);
+
+  const FILTERS = FILTER_IDS.map((id) => ({ id, label: i18n.filters[id] }));
 
   const allShown =
     filter === "all" ? services : services.filter((s) => s.type === filter);
@@ -126,13 +152,13 @@ export function ServiceCatalog({
               className="text-[11px] font-bold tracking-[0.2em] uppercase"
               style={{ color: "var(--color-brand-accent)" }}
             >
-              What we treat
+              {i18n.eyebrow}
             </p>
             <h2
               className="mt-4 max-w-[18ch] font-extrabold tracking-[-0.03em] leading-[1.02] text-white"
               style={{ fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)" }}
             >
-              Care for what&apos;s actually going on.
+              {i18n.headline}
             </h2>
             {intro ? (
               <p
@@ -199,7 +225,7 @@ export function ServiceCatalog({
                   type="button"
                   onClick={() => setPage((p) => Math.max(0, p - 1))}
                   disabled={page === 0}
-                  aria-label="Previous services"
+                  aria-label={i18n.prevServices}
                   className="inline-flex size-10 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{
                     background: page > 0 ? "var(--color-brand-accent)" : "transparent",
@@ -219,7 +245,7 @@ export function ServiceCatalog({
                   type="button"
                   onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                   disabled={page === totalPages - 1}
-                  aria-label="Next services"
+                  aria-label={i18n.nextServices}
                   className="inline-flex size-10 items-center justify-center rounded-full border transition-[background-color,border-color,opacity] duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{
                     background: page < totalPages - 1 ? "var(--color-brand-accent)" : "transparent",
@@ -246,6 +272,7 @@ export function ServiceCatalog({
               key={`${s.type}-${s.title}-${s.href}`}
               service={s}
               variant={useFeaturedFirst && i === 0 ? "featured" : "default"}
+              i18n={i18n}
             />
           ))}
         </RevealOnScroll>
@@ -257,9 +284,11 @@ export function ServiceCatalog({
 function ServiceTile({
   service: s,
   variant,
+  i18n,
 }: {
   service: ServiceCatalogItem;
   variant: "default" | "featured";
+  i18n: ServiceCatalogI18n;
 }) {
   const isFeatured = variant === "featured";
   const symbol = currencySymbol(s.currency);
@@ -345,8 +374,7 @@ function ServiceTile({
               className="mt-3 text-[length:var(--text-body)] leading-relaxed"
               style={{ color: "rgba(255,255,255,0.62)", maxWidth: "38ch" }}
             >
-              Most patients start here. Choose an open consultation slot with
-              a doctor registered in your country.
+              {i18n.featuredDescription}
             </p>
           </div>
 
@@ -360,7 +388,7 @@ function ServiceTile({
                   className="text-[10px] font-bold uppercase tracking-[0.14em]"
                   style={{ color: "rgba(255,255,255,0.50)" }}
                 >
-                  From
+                  {i18n.priceFrom}
                 </p>
                 <p
                   className="mt-1 text-3xl font-semibold leading-none tracking-[-0.02em] [font-variant-numeric:tabular-nums]"
@@ -374,7 +402,7 @@ function ServiceTile({
                   className="text-[10px] font-bold uppercase tracking-[0.14em]"
                   style={{ color: "rgba(255,255,255,0.50)" }}
                 >
-                  {s.type === "test" ? "Turnaround" : "Duration"}
+                  {s.type === "test" ? i18n.turnaroundLabel : i18n.durationLabel}
                 </p>
                 <p className="mt-1 text-sm font-semibold" style={{ color: "rgba(255,255,255,0.50)" }}>
                   {s.dur}
@@ -397,7 +425,7 @@ function ServiceTile({
               }}
             >
               <span className="group-hover:text-[#0a1f14] transition-colors duration-200">
-                {s.type === "test" ? "Order kit" : "Book consultation"}
+                {s.type === "test" ? i18n.orderKit : i18n.bookConsultation}
               </span>
               <ArrowUpRight
                 className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#0a1f14] motion-reduce:group-hover:translate-x-0"
@@ -491,7 +519,7 @@ function ServiceTile({
                 className="text-[10px] font-bold uppercase tracking-[0.14em]"
                 style={{ color: "rgba(255,255,255,0.60)" }}
               >
-                From
+                {i18n.priceFrom}
               </p>
               <p
                 className="mt-1 text-2xl font-semibold leading-none tracking-[-0.015em] [font-variant-numeric:tabular-nums]"
@@ -505,7 +533,7 @@ function ServiceTile({
                 className="text-[10px] font-bold uppercase tracking-[0.14em]"
                 style={{ color: "rgba(255,255,255,0.60)" }}
               >
-                {s.type === "test" ? "Turnaround" : "Duration"}
+                {s.type === "test" ? i18n.turnaroundLabel : i18n.durationLabel}
               </p>
               <p className="mt-1 text-sm font-semibold" style={{ color: "rgba(255,255,255,0.55)" }}>
                 {s.dur}
@@ -528,7 +556,7 @@ function ServiceTile({
             }}
           >
             <span className="group-hover:text-[#0a1f14] transition-colors duration-200">
-              {s.type === "test" ? "Order kit" : "Book consultation"}
+              {s.type === "test" ? i18n.orderKit : i18n.bookConsultation}
             </span>
             <ArrowUpRight
               className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#0a1f14] motion-reduce:group-hover:translate-x-0"

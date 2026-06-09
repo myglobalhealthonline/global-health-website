@@ -4,15 +4,33 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { resolveLocale } from "@/lib/i18n/resolve-locale";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import type { LocaleCode } from "@/lib/i18n/types";
 
 type Status = "pending" | "verifying" | "ok" | "error";
+
+function readClientLocale(): LocaleCode {
+  try {
+    const match = document.cookie.match(/(?:^|;\s*)gh_locale=([^;]+)/);
+    const raw = match ? decodeURIComponent(match[1]) : "";
+    return resolveLocale({ cookieLocale: raw });
+  } catch {
+    return "en";
+  }
+}
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const [status, setStatus] = useState<Status>(token ? "verifying" : "pending");
   const [message, setMessage] = useState<string>("");
+  const [locale, setLocale] = useState<LocaleCode>("en");
   const ranRef = useRef(false);
+
+  useEffect(() => {
+    setLocale(readClientLocale());
+  }, []);
 
   useEffect(() => {
     if (!token || ranRef.current) return;
@@ -30,36 +48,37 @@ export default function VerifyEmailPage() {
           body: JSON.stringify({ token }),
         });
         const json = (await res.json()) as { ok?: boolean; message?: string };
+        const t = loadLocaleBundle(locale).auth.verifyEmail;
         if (res.ok && json.ok) {
           setStatus("ok");
-          setMessage(json.message ?? "Email verified");
+          setMessage(json.message ?? t.verified);
         } else {
           setStatus("error");
-          setMessage(json.message ?? "Verification failed");
+          setMessage(json.message ?? t.failed);
         }
       } catch (err) {
+        const t = loadLocaleBundle(locale).auth.verifyEmail;
         setStatus("error");
-        setMessage(err instanceof Error ? err.message : "Verification failed");
+        setMessage(err instanceof Error ? err.message : t.failed);
       }
     }
     void verify();
   }, [token]);
+
+  const t = loadLocaleBundle(locale).auth.verifyEmail;
 
   return (
     <div className="min-h-screen bg-[var(--color-background-soft)] px-4 py-16">
       <div className="gh-admin-card mx-auto max-w-md rounded-2xl border border-[var(--color-border)] p-8 shadow-sm">
         {status === "pending" ? (
           <>
-            <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">Verify your email</h1>
-            <p className="mt-3 text-sm text-[var(--color-text-muted)]">
-              Click the link in the email we sent you. If you didn&apos;t get it,
-              check spam or sign in to request a new one.
-            </p>
+            <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{t.title}</h1>
+            <p className="mt-3 text-sm text-[var(--color-text-muted)]">{t.body}</p>
             <Link
               href="/login"
               className="mt-6 inline-flex rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800"
             >
-              Go to sign in
+              {t.goToSignIn}
             </Link>
           </>
         ) : null}
@@ -67,20 +86,20 @@ export default function VerifyEmailPage() {
         {status === "verifying" ? (
           <div className="flex items-center gap-3">
             <Loader2 aria-hidden className="size-5 animate-spin text-emerald-700" />
-            <p className="text-sm text-[var(--color-text-body)]">Verifying your email…</p>
+            <p className="text-sm text-[var(--color-text-body)]">{t.verifying}</p>
           </div>
         ) : null}
 
         {status === "ok" ? (
           <>
             <CheckCircle2 aria-hidden className="size-10 text-emerald-700" />
-            <h1 className="mt-4 text-2xl font-bold text-[var(--color-text-primary)]">Email verified</h1>
+            <h1 className="mt-4 text-2xl font-bold text-[var(--color-text-primary)]">{t.verified}</h1>
             <p className="mt-2 text-sm text-[var(--color-text-muted)]">{message}</p>
             <Link
               href="/account"
               className="mt-6 inline-flex rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800"
             >
-              Go to my account
+              {t.goToAccount}
             </Link>
           </>
         ) : null}
@@ -88,16 +107,14 @@ export default function VerifyEmailPage() {
         {status === "error" ? (
           <>
             <XCircle aria-hidden className="size-10 text-rose-600" />
-            <h1 className="mt-4 text-2xl font-bold text-[var(--color-text-primary)]">Verification failed</h1>
+            <h1 className="mt-4 text-2xl font-bold text-[var(--color-text-primary)]">{t.failed}</h1>
             <p className="mt-2 text-sm text-[var(--color-text-muted)]">{message}</p>
-            <p className="mt-3 text-sm text-[var(--color-text-muted)]">
-              The link may be expired or already used. Sign in and request a new one.
-            </p>
+            <p className="mt-3 text-sm text-[var(--color-text-muted)]">{t.failedBody}</p>
             <Link
               href="/login"
               className="mt-6 inline-flex rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800"
             >
-              Go to sign in
+              {t.goToSignIn}
             </Link>
           </>
         ) : null}
