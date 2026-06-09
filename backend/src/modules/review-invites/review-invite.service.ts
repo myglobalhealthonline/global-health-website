@@ -32,7 +32,7 @@ export async function createReviewInviteForAppointment(appointmentId: string) {
 
   const token = randomBytes(24).toString("base64url");
   const expiresAt = new Date(Date.now() + INVITE_TTL_DAYS * 24 * 60 * 60 * 1000);
-  const localeCode = appt.countryCode === "br" ? "pt-br" : "en";
+  const localeCode = appt.countryCode?.toLowerCase() === "br" ? "pt-br" : "en";
 
   const invite = await prisma.reviewInvite.create({
     data: {
@@ -50,17 +50,24 @@ export async function createReviewInviteForAppointment(appointmentId: string) {
 
   const locale = getReviewFormLocale(localeCode);
   const link = reviewUrl(token);
+  // The invite row is already persisted. Treat delivery as best-effort so a
+  // failed email/WhatsApp send doesn't throw back to the caller (which would
+  // make it retry and create duplicate invites). Failures are logged.
   await sendReviewInviteEmail({
     to: appt.email,
     patientName: appt.fullName,
     link,
     localeTitle: locale.title,
+  }).catch((err) => {
+    console.error("[review-invite] email send failed", { appointmentId: appt.id, err });
   });
 
   if (appt.phone) {
     await sendWhatsAppText({
       to: appt.phone,
       message: `${locale.title}\n${link}`,
+    }).catch((err) => {
+      console.error("[review-invite] whatsapp send failed", { appointmentId: appt.id, err });
     });
   }
 

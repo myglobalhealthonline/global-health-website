@@ -18,7 +18,11 @@ function getAdminApiToken() {
 
 function isAdminTokenFallbackEnabled() {
   const raw = process.env.ADMIN_TOKEN_FALLBACK_ENABLED;
-  if (raw === undefined) return process.env.NODE_ENV !== "production";
+  // Default ON only in local development — matches the backend rule in
+  // backend/src/config/env.ts. Staging/preview (NODE_ENV !== "development")
+  // must opt in explicitly so the Bearer-token admin bypass never ships
+  // silently to an internet-reachable non-prod environment.
+  if (raw === undefined) return process.env.NODE_ENV === "development";
   return raw === "true";
 }
 

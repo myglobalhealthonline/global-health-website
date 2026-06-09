@@ -79,6 +79,28 @@ function normalizeNextPath(pathname: string) {
   return pathname;
 }
 
+/**
+ * Handle a `misconfigured` edge session (AUTH_JWT_SECRET unset on the
+ * frontend) for a protected route. Defense-in-depth: in production we fail
+ * CLOSED — log loudly and redirect to login rather than silently passing
+ * unauthenticated traffic through to the protected page tree. In development
+ * we pass through so a missing local secret doesn't block work.
+ */
+function handleMisconfiguredSession(request: NextRequest, pathname: string) {
+  console.error(
+    "[proxy] AUTH_JWT_SECRET is not set — edge auth disabled for",
+    pathname,
+  );
+  if (process.env.NODE_ENV !== "production") {
+    return NextResponse.next();
+  }
+  const loginUrl = request.nextUrl.clone();
+  loginUrl.pathname = "/login";
+  loginUrl.search = "";
+  loginUrl.searchParams.set("next", normalizeNextPath(pathname));
+  return NextResponse.redirect(loginUrl);
+}
+
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
@@ -93,7 +115,7 @@ export async function proxy(request: NextRequest) {
 
   if (pathname === "/account" || pathname.startsWith("/account/")) {
     const session = await resolveSession(request);
-    if (session.kind === "misconfigured") return NextResponse.next();
+    if (session.kind === "misconfigured") return handleMisconfiguredSession(request, pathname);
     const role = session.role;
     if (role === "DOCTOR") {
       const doctorUrl = request.nextUrl.clone();
@@ -118,7 +140,7 @@ export async function proxy(request: NextRequest) {
 
   if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     const session = await resolveSession(request);
-    if (session.kind === "misconfigured") return NextResponse.next();
+    if (session.kind === "misconfigured") return handleMisconfiguredSession(request, pathname);
     const role = session.role;
     if (role === "ADMIN") {
       // continue
@@ -143,7 +165,7 @@ export async function proxy(request: NextRequest) {
 
   if (pathname === "/doctor" || pathname.startsWith("/doctor/")) {
     const session = await resolveSession(request);
-    if (session.kind === "misconfigured") return NextResponse.next();
+    if (session.kind === "misconfigured") return handleMisconfiguredSession(request, pathname);
     const role = session.role;
     if (role === "DOCTOR") {
       // continue

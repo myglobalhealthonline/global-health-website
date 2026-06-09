@@ -92,7 +92,9 @@ const reviewInvitesRoute: FastifyPluginAsync = async (app) => {
       if (!invite) {
         return reply.status(404).send(errorResponse("Appointment not found or not completed"));
       }
-      return okResponse({ inviteId: invite.id, token: invite.token });
+      // Never return the raw token — it grants review submission on the
+      // patient's behalf. It is delivered to the patient via email/WhatsApp.
+      return okResponse({ inviteId: invite.id, expiresAt: invite.expiresAt.toISOString() });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));

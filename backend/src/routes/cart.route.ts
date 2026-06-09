@@ -737,25 +737,28 @@ const cartRoute: FastifyPluginAsync = async (app) => {
                   );
                 }
               }
-              // Dual GDPR consent — both required for every cart-first
-              // consultation booking regardless of country (legal
-              // requirement, not country-specific). Stored independently
-              // so platform consent can be withdrawn without nuking the
-              // clinical record.
-              if (patient?.gdprConsentClinic !== true) {
-                return reply.status(400).send(
-                  errorResponse(
-                    "Clinic data sharing consent is required to book a consultation.",
-                  ),
-                );
-              }
-              if (patient?.gdprConsentPlatform !== true) {
-                return reply.status(400).send(
-                  errorResponse(
-                    "Platform processing consent is required to book a consultation.",
-                  ),
-                );
-              }
+            }
+
+            // Dual GDPR consent — both required for every cart-first
+            // consultation booking regardless of country (legal
+            // requirement, not country-specific). Enforced OUTSIDE the
+            // `if (settings)` block so a missing BookingSetting row can
+            // never silently skip consent. Stored independently so
+            // platform consent can be withdrawn without nuking the
+            // clinical record.
+            if (patient?.gdprConsentClinic !== true) {
+              return reply.status(400).send(
+                errorResponse(
+                  "Clinic data sharing consent is required to book a consultation.",
+                ),
+              );
+            }
+            if (patient?.gdprConsentPlatform !== true) {
+              return reply.status(400).send(
+                errorResponse(
+                  "Platform processing consent is required to book a consultation.",
+                ),
+              );
             }
           }
         }
