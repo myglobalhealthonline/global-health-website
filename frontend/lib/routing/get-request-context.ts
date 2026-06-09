@@ -12,10 +12,15 @@ function normalizePathname(pathname?: string | null): string {
 
 function getLocaleFromPath(pathname: string): string | null {
   const segments = pathname.split("/").filter(Boolean);
-  const first = segments[0]?.toLowerCase();
-  if (!first) return null;
-  if (supportedLocaleCodes.includes(first as LocaleCode)) {
-    return first;
+  // URL shape can be /{lang}/... (lang-first) or /{country}/{lang}/...
+  // (the standard /{country}/{lang} App Router pattern). Check both the
+  // first and second segments so the proxy correctly stamps x-gh-locale
+  // as the URL locale rather than falling back to the cookie.
+  for (const seg of segments.slice(0, 2)) {
+    const lower = seg?.toLowerCase();
+    if (lower && supportedLocaleCodes.includes(lower as LocaleCode)) {
+      return lower;
+    }
   }
   return null;
 }
