@@ -124,11 +124,9 @@ export function MobileNav({
           { href: "/contact", label: "Contact" },
         ];
 
-  // Cart-first booking: mobile "Book" routes to the country general
-  // consultation catalogue (service-first). With no country context yet
-  // we drop to the entry gate ("/") — the bare `/book-online` slug has no
-  // global route and 404s, so it must not be the fallback. Mirrors the
-  // desktop SiteHeader `bookHref` fallback.
+  // Cart-first booking: mobile "Book" opens the guided /book page. With no
+  // country context yet we drop to the entry gate ("/") so the user picks a
+  // country first. Mirrors the desktop SiteHeader `bookHref` fallback.
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>

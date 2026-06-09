@@ -104,7 +104,6 @@ export default async function PrescriptionsPage({
   // Provider-first defaults per Google Ads "restricted services" guidance.
   // "Get a prescription" / "delivered electronically" copy was flagged
   // as an outcome-claim. Pivot to clinician-led language.
-  const heroTitle = page?.heroTitle ?? "Meet doctors handling repeat prescriptions";
   const heroSubtitle =
     page?.heroSubtitle ??
     `Doctors registered to practise in ${config.name} who review repeat prescription requests for established patients.`;
@@ -155,8 +154,8 @@ export default async function PrescriptionsPage({
         <div id="prescriptions" className="scroll-mt-24">
           <ServicesGrid
             eyebrow="Practice areas"
-            title="Doctors handling repeat prescription requests"
-            intro={`${serviceItems.length} ${serviceItems.length === 1 ? "doctor" : "doctors"} in our ${config.name} network reviewing repeat prescription requests. Profiles update as the team grows.`}
+            title="Repeat prescription consultations"
+            intro={`${serviceItems.length} repeat-prescription ${serviceItems.length === 1 ? "consultation" : "consultations"} available in our ${config.name} network. Profiles update as the team grows.`}
             items={serviceItems}
             variant="dark"
           />

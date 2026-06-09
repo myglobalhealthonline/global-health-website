@@ -107,11 +107,11 @@ export default function FAQPage() {
         }
         ctaLabel="Contact the team"
         ctaHref="/contact"
-        secondaryLabel="Start booking"
+        secondaryLabel="Choose your country"
         secondaryHref="/"
         heroImage={{
-          src: "/images/about/about-clinic-ai.svg",
-          alt: "Healthcare team support illustration",
+          src: "/images/stock/contact.jpg",
+          alt: "Patient on a video call with a doctor during an online consultation",
           priority: true,
         }}
       />

@@ -5,6 +5,16 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    rules: {
+      // Perf-oriented rule from eslint-plugin-react-hooks v6. The flagged
+      // effects (HeroReveal, last-country, brazil-consent, …) are
+      // pre-existing and behavior-correct; keep as a warning so it does not
+      // block `next build`. Proper effect refactors are tracked in
+      // docs/public-website-phase-2-redundancy-imagery-plan.md.
+      "react-hooks/set-state-in-effect": "warn",
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

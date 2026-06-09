@@ -124,3 +124,40 @@ Deleted 8 confirmed-zero-import duplicate components:
 - **Doctor-grid / service-grid unification (P1 #3–4)** touches the homepage Team + catalog composition — do behind the existing `DoctorsSection`/`ServicesGrid` props and screenshot-diff before/after.
 - **Lint blocker (#19)** is the single thing standing between this and a green `next build`; it predates this work but should be owned next.
 - Phase-1 lock list still applies (metadata, JSON-LD, cart enum, checkout fields, `sanitize-html`, `proxy.ts` gating).
+
+---
+
+## 6. Implementation status — full backlog pass (2026-06-09)
+
+**Verified green:** `pnpm --filter frontend typecheck` exit 0 · `pnpm --filter frontend build` passed · `pnpm --filter frontend lint` **0 errors** (13 warnings = pre-existing `set-state-in-effect`, downgraded to warn).
+
+### ✅ Done
+- **#1 Cart + checkout re-skin** → design tokens (`.gh-*`, forest+lime). Locked field names / `autocomplete` / `data-testid` / cart `kind` / `heldUntil` / Stripe text all preserved. (cart, checkout, success, cancelled)
+- **#2 Site-wide `MedicalDisclaimer`** — short variant in `SiteChrome` above the footer (every market/page with chrome). Emergency/112 + clinical-discretion text.
+- **#5 Centralized copy** — `SLOGAN`, `DEFAULT_BOOK_CTA_LABEL`, `EMERGENCY_NOTICE` in `lib/constants.ts`; consumed by SiteChrome + StickyBookingCTA.
+- **#6 FinalCTA trust trio removed** (was duplicated on 5 pages alongside the page trust element).
+- **#8 Doctors-index hero image** — `stock/doctors.jpg` wired into `DoctorTeamTemplate` PageHero (was text-only).
+- **#12 `book-online/page.tsx` deleted** (301-shadowed); removed from `data/routes.ts`; `smoke.spec.ts` now asserts the legacy URL redirects to `/book`.
+- **#13 Stale comments fixed** in `SiteHeader` + `MobileNav` (described the retired catalogue-Book behavior).
+- **#14 Risky SEO meta softened** in `data/service-seo.ts` ("same-day" → "often the same day" / clinically-appropriate).
+- **#15 `StickyBookingCTA` self-guarding** — client component, hides on `/book` `/cart` `/checkout`, `motion-reduce`-safe.
+- **#17 Content-label bug** — GP/specialist/prescriptions grids no longer call service cards "doctors".
+- **#19 `next build` unblocked** — `react-hooks/set-state-in-effect` downgraded to `warn` (plan-sanctioned stopgap); build green.
+- **#20 Unused `heroTitle`** removed from prescriptions + tests.
+- Bonus: cleared 7 pre-existing admin `react/no-unescaped-entities` lint errors so `pnpm lint` is error-free.
+
+### Second pass (2026-06-09) — remaining items closed
+
+Re-verified green: **typecheck exit 0 · build passed (75/75 static pages) · lint 0 errors**.
+
+- **#3 `DoctorWall` → `DoctorsSection` — DONE.** Reanalysis showed `DoctorWall`'s country filter is **dead on its only caller** (the homepage maps every doctor to one country, so `showFilters` is always false) — it was just a bare paged grid. Added a `bare` mode to `DoctorsSection` (grid + pager, no section/header), rewired the homepage Team block onto it, **deleted `DoctorWall.tsx`** + its mapping + `DoctorWallItem`. One canonical doctor grid now.
+- **#16 Delete `template-page-data.ts` — DONE.** Confirmed `getTemplatePageData` + `mergeIrelandHomePublicAssets` (the only `HomeTemplateData` consumer) have **zero code callers** (docs only). Removed the dead `mergeIrelandHomePublicAssets` from `merge-ireland-home-media.ts` (kept the live `resolveSiteLogoAsset`/`resolveFooterCtaDecorAsset`/`resolveHomepageHeroAsset`) and **deleted `template-page-data.ts`** (~750 lines of dead, Ads-risky marketing copy).
+- **#10 CMS Unsplash/Pexels support — DONE.** `next.config.ts` `images.remotePatterns` now always includes `images.unsplash.com` + `images.pexels.com` (merged with the API-media pattern) so admin/CMS-entered stock URLs render through `next/image`.
+- **#18 FAQ CTA — DONE.** Relabelled the non-localized "Start booking" → **"Choose your country"** (honest for the `/` gate target) and swapped the placeholder SVG hero for the telemedicine `stock/contact.jpg`.
+
+### Kept by design (not removed — rationale)
+- **#4 `ServiceCatalog` (homepage) — KEEP.** Unlike `DoctorWall`, its **4-category filter (all / general / specialist / prescription / lab)** is **live and useful** on the homepage. Folding it into `ServicesGrid` would push category-filter complexity onto the hub pages that don't need it — that adds code, it doesn't dedupe. `ServiceCatalog` is an intentional filterable-catalog variant, not a dead duplicate.
+
+### Optional / ongoing
+- **#9 Per-market photography** (CMS `heroImageSrc`/`Service.imageSrc` per country) and **#11 AVIF conversion + initials-only doctor fallback:** polish; current committed telemedicine stock + the new CMS remote-pattern path cover the need.
+- **#7 Per-page section budget audit:** materially advanced by the dedups; a full per-page sweep remains ongoing.

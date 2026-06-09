@@ -7,7 +7,7 @@ import {
   ServiceCatalog,
   type ServiceCatalogItem,
 } from "@/components/sections/ServiceCatalog";
-import { DoctorWall, type DoctorWallItem } from "@/components/sections/DoctorWall";
+import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { CountryMarquee, type MarqueeCountry } from "@/components/sections/CountryMarquee";
 import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
@@ -38,7 +38,6 @@ import {
   getCountryDoctors,
   getCountryHealthTests,
   getCountryServices,
-  type CountryDoctorCard,
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -100,30 +99,6 @@ function initialsFromName(name: string): string {
     .slice(0, 2)
     .map((p) => p[0]?.toUpperCase() ?? "")
     .join("") || "·";
-}
-
-function mapDoctorToWallItem(
-  d: CountryDoctorCard,
-  countryCode: string,
-  profileHref: string,
-  bookingHref: string,
-): DoctorWallItem {
-  const role =
-    d.specialties.length > 0 ? d.specialties[0] : d.title || "Doctor";
-  return {
-    id: d.id,
-    initials: initialsFromName(d.fullName),
-    name: d.fullName,
-    role,
-    country: countryCode,
-    langs: d.languages.join(" · "),
-    href: profileHref,
-    bookingHref,
-    imageSrc: d.imageSrc,
-    imcRegistration: d.imcRegistration,
-    medicalRegistrationUrl: d.medicalRegistrationUrl,
-    whatsappNumber: d.whatsappNumber,
-  };
 }
 
 function mapServiceToCatalogItem(
@@ -202,19 +177,6 @@ export default async function CountryLangHomePage({
   const page = (pageDisabled || !isCountryFeatureEnabled(config, "pages")) ? null : rawPage;
 
   const totalDoctorsAcrossEurope = allDoctors.length;
-
-  // "View profile" button on the doctor wall — link to the doctor's
-  // profile page where the visitor picks a service (cart-first booking
-  // flow). Previously dumped people into the fallback `/book-online` form
-  // with `?doctor=`, which skipped service selection.
-  const doctorWallItems: DoctorWallItem[] = countryDoctors.map((d) =>
-    mapDoctorToWallItem(
-      d,
-      code,
-      `/${slug}/${lang}/doctors/${d.slug}`,
-      buildBookHref({ country: slug, lang, doctor: d.slug }),
-    ),
-  );
 
   const prescriptionsHref = `/${slug}/${lang}/repeat-prescription-request`;
   const testsHref = `/${slug}/${lang}/lab-tests`;
@@ -295,9 +257,28 @@ export default async function CountryLangHomePage({
   const featuredDoctor =
     countryDoctors.find((d) => d.bio && d.bio.trim().length > 0 && d.imageSrc) ??
     null;
-  const wallDoctorsExcludingFeatured = featuredDoctor
-    ? doctorWallItems.filter((d) => d.id !== featuredDoctor.id)
-    : doctorWallItems;
+  // Team grid uses the canonical DoctorsSection in `bare` mode (no section
+  // wrapper) so the homepage owns the heading + featured card above it.
+  // "View profile" routes to the doctor's profile where the visitor picks a
+  // service (cart-first booking flow).
+  const teamDoctorItems = (featuredDoctor
+    ? countryDoctors.filter((d) => d.id !== featuredDoctor.id)
+    : countryDoctors
+  ).map((d) => ({
+    name: d.fullName,
+    title: d.specialties.length > 0 ? d.specialties[0] : d.title || "Doctor",
+    imcRegistration: d.imcRegistration,
+    medicalRegistrationUrl: d.medicalRegistrationUrl,
+    country: code,
+    languages: d.languages,
+    whatsappNumber: d.whatsappNumber,
+    bio: "",
+    imageSrc: d.imageSrc,
+    initials: initialsFromName(d.fullName),
+    href: `/${slug}/${lang}/doctors/${d.slug}`,
+    bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
+    ctaLabel: "View profile",
+  }));
 
   const trustItems: TrustRibbonItem[] = [
     {
@@ -433,7 +414,7 @@ export default async function CountryLangHomePage({
                 className="text-[11px] font-bold uppercase tracking-[0.14em] [font-variant-numeric:tabular-nums]"
                 style={{ color: "rgba(255,255,255,0.42)" }}
               >
-                {doctorWallItems.length} registered {doctorWallItems.length === 1 ? "clinician" : "clinicians"}
+                {countryDoctors.length} registered {countryDoctors.length === 1 ? "clinician" : "clinicians"}
               </span>
             </div>
             <h2
@@ -479,12 +460,8 @@ export default async function CountryLangHomePage({
             </div>
           ) : null}
 
-          {/* Rest of the team grid */}
-          <DoctorWall
-            doctors={wallDoctorsExcludingFeatured}
-            bookHref={bookHref}
-            hideHeader
-          />
+          {/* Rest of the team grid — canonical DoctorsSection (bare) */}
+          <DoctorsSection doctors={teamDoctorItems} theme="light" bare />
         </div>
       </section>
       <HowItWorksNarrative theme="light" />

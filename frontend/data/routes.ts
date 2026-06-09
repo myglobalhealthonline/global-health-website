@@ -6,7 +6,6 @@ export const routeInventory = {
   primary: [
     "/",
     "/home",
-    "/book-online",
     "/about",
     "/careers",
     "/gift-card",

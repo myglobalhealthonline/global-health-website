@@ -25,32 +25,35 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
   return (
     <main className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="flex flex-col items-center text-center">
-        <div className="inline-flex size-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
+        <div
+          className="inline-flex size-16 items-center justify-center rounded-full"
+          style={{ background: "var(--color-accent-soft)", color: "var(--color-brand-primary)" }}
+        >
           <CheckCircle2 className="size-10" aria-hidden />
         </div>
-        <h1 className="mt-6 text-3xl font-bold text-slate-900 sm:text-4xl">
+        <h1 className="gh-h1 mt-6">
           Payment received
         </h1>
-        <p className="mt-3 max-w-md text-slate-600">
+        <p className="gh-body mt-3 max-w-md" style={{ color: "var(--color-text-muted)" }}>
           Thanks{order?.fullName ? `, ${order.fullName.split(" ")[0]}` : ""}. Your
           order is confirmed — a receipt has been emailed to you.
         </p>
       </div>
 
       {order ? (
-        <div className="mt-8 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <div className="gh-card mt-8 p-6" style={{ boxShadow: "var(--shadow-card)" }}>
+          <p className="gh-eyebrow text-xs font-semibold uppercase tracking-wider">
             Order
           </p>
-          <p className="font-mono text-sm text-slate-900">#{order.id.slice(-8)}</p>
+          <p className="font-mono text-sm" style={{ color: "var(--color-text-primary)" }}>#{order.id.slice(-8)}</p>
 
           <ul className="mt-4 space-y-2 text-sm">
             {order.items.map((i) => (
               <li key={i.id} className="flex justify-between gap-3">
-                <span className="text-slate-700">
-                  {i.name} <span className="text-slate-400">× {i.quantity}</span>
+                <span style={{ color: "var(--color-text-body)" }}>
+                  {i.name} <span style={{ color: "var(--color-text-muted)" }}>× {i.quantity}</span>
                 </span>
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold" style={{ color: "var(--color-text-primary)" }}>
                   {formatPrice(i.lineTotalCents, order.currencyCode)}
                 </span>
               </li>
@@ -58,13 +61,16 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
           </ul>
 
           {order.shippingCents > 0 ? (
-            <div className="mt-3 flex justify-between text-sm text-slate-600">
+            <div className="mt-3 flex justify-between text-sm" style={{ color: "var(--color-text-muted)" }}>
               <span>Shipping</span>
               <span>{formatPrice(order.shippingCents, order.currencyCode)}</span>
             </div>
           ) : null}
 
-          <div className="mt-4 flex justify-between border-t border-slate-100 pt-3 text-base">
+          <div
+            className="mt-4 flex justify-between border-t pt-3 text-base"
+            style={{ borderColor: "var(--color-border)", color: "var(--color-text-primary)" }}
+          >
             <span className="font-bold">Total paid</span>
             <span className="font-bold">
               {formatPrice(order.totalCents, order.currencyCode)}
@@ -72,7 +78,7 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
           </div>
         </div>
       ) : orderId ? (
-        <div className="mt-8 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+        <div className="gh-status-warning mt-8 rounded-[var(--radius-card)] p-4 text-sm">
           We couldn&apos;t load the receipt right now. Your payment is confirmed —
           check your email for the order details, or contact support if anything
           looks off.
@@ -80,22 +86,13 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
       ) : null}
 
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <Link
-          href="/account/orders"
-          className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
-        >
+        <Link href="/account/orders" className="gh-btn gh-btn-primary">
           View my orders
         </Link>
-        <Link
-          href={doctorsHref}
-          className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-        >
+        <Link href={doctorsHref} className="gh-btn gh-btn-outline">
           Browse doctors
         </Link>
-        <Link
-          href={homeHref}
-          className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-        >
+        <Link href={homeHref} className="gh-btn gh-btn-outline">
           Continue shopping
         </Link>
       </div>

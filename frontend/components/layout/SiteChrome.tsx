@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import { EMERGENCY_NOTICE } from "@/lib/constants";
 import type { SiteNavigationData } from "@/data/navigation";
 import type { AuthUser } from "@/lib/api/auth-api";
 import type { CountryConfig } from "@/data/countries";
@@ -54,6 +56,19 @@ export function SiteChrome({
       <main id="main-content" className="grow">
         {children}
       </main>
+      {isGatewayHome ? null : (
+        <aside
+          aria-label="Medical disclaimer"
+          style={{
+            background: "var(--color-background-soft)",
+            borderTop: "1px solid rgba(29,75,54,0.10)",
+          }}
+        >
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 py-6">
+            <MedicalDisclaimer variant="short" text={EMERGENCY_NOTICE} />
+          </div>
+        </aside>
+      )}
       {isGatewayHome ? null : (
         <SiteFooter
           siteName={siteName}

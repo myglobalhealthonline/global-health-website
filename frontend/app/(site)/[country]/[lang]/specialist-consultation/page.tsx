@@ -219,7 +219,7 @@ export default async function CountryLangSpecialistConsultationPage({
         <div id="services" className="scroll-mt-24">
           <ServicesGrid
             eyebrow="Specialty areas"
-            title="Specialists available"
+            title="Specialist consultations available"
             intro="Profiles update as the team adds or retires clinicians in our network."
             items={serviceItems}
             variant="dark"

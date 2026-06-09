@@ -319,7 +319,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
             </label>
           </div>
           <p className="mt-2 text-[12px] text-[var(--color-text-muted)]">
-            The patient's email will include a Stripe payment link AND a set-password invite — they can either set
+            The patient&apos;s email will include a Stripe payment link AND a set-password invite — they can either set
             their own password (recommended) or sign in immediately with a unique temporary password.
           </p>
         </AdminCard>

@@ -177,11 +177,10 @@ export function SiteHeader({
       ? sectionNavForCountryLang(effectiveCountrySlug, effectiveLang, activeFeatures)
       : sectionNavGlobal();
 
-  // Cart-first booking: the header "Book" CTA points at the country's
-  // general consultation catalogue so visitors pick a service first
-  // (the legacy /book-online form still exists as a fallback). Outside
-  // a country we drop them on the global landing — the country gate
-  // resolves before they can pick a service.
+  // Cart-first booking: the header "Book" CTA opens the guided /book page
+  // (service → doctor → time → details in one flow). Outside a country we
+  // drop them on the global landing — the country gate resolves before
+  // they can book.
   const bookHref =
     activeCountry && effectiveCountrySlug && activeLang
       ? buildBookHref({ country: effectiveCountrySlug, lang: activeLang })

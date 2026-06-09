@@ -12,22 +12,29 @@ const withBundleAnalyzer = bundleAnalyzer({
   openAnalyzer: false,
 });
 
-function mediaRemotePatterns(): NonNullable<NonNullable<NextConfig["images"]>["remotePatterns"]> | undefined {
+function mediaRemotePatterns(): NonNullable<NonNullable<NextConfig["images"]>["remotePatterns"]> {
+  const patterns: NonNullable<NonNullable<NextConfig["images"]>["remotePatterns"]> = [
+    // Free stock hosts so admin-/CMS-entered Unsplash & Pexels image URLs
+    // render through next/image (both licenses permit commercial use).
+    // Bundled /public/images remain the shipped defaults.
+    { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
+    { protocol: "https", hostname: "images.pexels.com", pathname: "/**" },
+  ];
   const raw = process.env.NEXT_PUBLIC_API_URL?.trim();
-  if (!raw) return undefined;
-  try {
-    const url = new URL(raw);
-    return [
-      {
+  if (raw) {
+    try {
+      const url = new URL(raw);
+      patterns.push({
         protocol: url.protocol.replace(":", "") as "http" | "https",
         hostname: url.hostname,
         ...(url.port ? { port: url.port } : {}),
         pathname: "/api/media/**",
-      },
-    ];
-  } catch {
-    return undefined;
+      });
+    } catch {
+      // ignore a malformed NEXT_PUBLIC_API_URL
+    }
   }
+  return patterns;
 }
 
 const remotePatterns = mediaRemotePatterns();
@@ -37,7 +44,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname, ".."),
   },
-  ...(remotePatterns ? { images: { remotePatterns } } : {}),
+  images: { remotePatterns },
   async rewrites() {
     const dynamicRewrites = apiOrigin
       ? [

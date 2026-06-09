@@ -110,7 +110,7 @@ export default function CheckoutPage() {
   if (loading || !authLoaded) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-        <p className="text-sm text-slate-500">Loading…</p>
+        <p className="gh-body-sm">Loading…</p>
       </main>
     );
   }
@@ -137,15 +137,12 @@ export default function CheckoutPage() {
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-      <Link
-        href={cartHref}
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700 hover:underline"
-      >
+      <Link href={cartHref} className="gh-link mb-4 inline-flex items-center gap-1.5 text-sm">
         <ArrowLeft className="size-4" aria-hidden />
         Back to cart
       </Link>
-      <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">Checkout</h1>
-      <p className="mt-2 text-sm text-slate-500">
+      <h1 className="gh-h1">Checkout</h1>
+      <p className="gh-body-sm mt-2">
         {needsShipping
           ? `Shipping in ${cart.countryCode.toUpperCase()} · paid in ${cart.currencyCode}`
           : `Online services · paid in ${cart.currencyCode}`}
@@ -154,11 +151,12 @@ export default function CheckoutPage() {
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]">
         <form
           onSubmit={onSubmit}
-          className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+          className="gh-card p-6"
+          style={{ boxShadow: "var(--shadow-card)" }}
         >
           <div>
-            <h2 className="text-lg font-bold text-slate-900">Payer contact</h2>
-            <p className="mt-1 text-xs text-slate-500">
+            <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>Payer contact</h2>
+            <p className="gh-body-sm mt-1" style={{ fontSize: "0.75rem" }}>
               Receipts and booking confirmations go here. Patient details for
               each consultation were captured on the booking page.
             </p>
@@ -189,28 +187,31 @@ export default function CheckoutPage() {
           </div>
 
           {consultationLines.length > 0 ? (
-            <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
+            <div
+              className="mt-6 rounded-[var(--radius-card-sm)] border p-4"
+              style={{ borderColor: "var(--color-border)", background: "var(--color-background-soft)" }}
+            >
+              <p className="gh-eyebrow text-xs font-bold uppercase tracking-wider">
                 Consultations in this order
               </p>
-              <ul className="mt-2 space-y-1.5 text-sm text-slate-700">
+              <ul className="mt-2 space-y-1.5 text-sm" style={{ color: "var(--color-text-body)" }}>
                 {consultationLines.map((line) => (
                   <li key={line.id}>
                     <span className="font-semibold">
                       {line.patient?.fullName ?? "Patient name missing"}
                     </span>
                     {line.patient?.bookingForOther ? (
-                      <span className="ml-1 text-xs text-slate-500">
+                      <span className="ml-1 text-xs" style={{ color: "var(--color-text-muted)" }}>
                         (booked on their behalf)
                       </span>
                     ) : null}
-                    <span className="text-slate-500"> — {line.name}</span>
+                    <span style={{ color: "var(--color-text-muted)" }}> — {line.name}</span>
                   </li>
                 ))}
               </ul>
-              <p className="mt-2 text-xs text-slate-500">
+              <p className="mt-2 text-xs" style={{ color: "var(--color-text-muted)" }}>
                 Need to change a patient?{" "}
-                <Link href={cartHref} className="font-semibold text-emerald-700 underline">
+                <Link href={cartHref} className="gh-link">
                   Edit the cart line
                 </Link>
                 .
@@ -220,7 +221,7 @@ export default function CheckoutPage() {
 
           {needsShipping ? (
             <>
-              <h2 className="mt-8 text-lg font-bold text-slate-900">Shipping address</h2>
+              <h2 className="gh-h3 mt-8" style={{ fontSize: "1.125rem" }}>Shipping address</h2>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 <Field name="shipName" label="Recipient name" required />
                 <Field
@@ -240,7 +241,7 @@ export default function CheckoutPage() {
           ) : null}
 
           {error ? (
-            <p className="mt-4 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">
+            <p className="gh-status-error mt-4 rounded-[var(--radius-card-sm)] px-3 py-2 text-sm">
               {error}
             </p>
           ) : null}
@@ -248,51 +249,51 @@ export default function CheckoutPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="mt-6 inline-flex items-center justify-center gap-2 rounded-md bg-emerald-700 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+            className="gh-btn gh-btn-primary mt-6 disabled:opacity-60"
           >
             {submitting ? (
               <Loader2 className="size-4 animate-spin" aria-hidden />
             ) : null}
             {submitting ? "Redirecting to Stripe…" : `Pay ${formatPrice(total, cart.currencyCode)}`}
           </button>
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="gh-body-sm mt-2" style={{ fontSize: "0.75rem" }}>
             You will be redirected to Stripe to complete payment.
           </p>
         </form>
 
-        <aside className="self-start rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-slate-900">Order summary</h2>
+        <aside className="gh-card self-start p-6" style={{ boxShadow: "var(--shadow-card)" }}>
+          <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>Order summary</h2>
           <ul className="mt-4 space-y-3 text-sm">
             {cart.items.map((i) => (
               <li key={i.id} className="flex justify-between gap-3">
-                <span className="min-w-0 flex-1 text-slate-700">
+                <span className="min-w-0 flex-1" style={{ color: "var(--color-text-body)" }}>
                   {i.name}{" "}
-                  <span className="text-slate-400">× {i.quantity}</span>
+                  <span style={{ color: "var(--color-text-muted)" }}>× {i.quantity}</span>
                 </span>
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold" style={{ color: "var(--color-text-primary)" }}>
                   {formatPrice(i.lineTotalCents, cart.currencyCode)}
                 </span>
               </li>
             ))}
           </ul>
-          <dl className="mt-4 space-y-2 border-t border-slate-100 pt-4 text-sm">
+          <dl className="mt-4 space-y-2 border-t pt-4 text-sm" style={{ borderColor: "var(--color-border)" }}>
             <div className="flex justify-between">
-              <dt className="text-slate-600">Subtotal</dt>
-              <dd className="font-semibold text-slate-900">
+              <dt style={{ color: "var(--color-text-muted)" }}>Subtotal</dt>
+              <dd className="font-semibold" style={{ color: "var(--color-text-primary)" }}>
                 {formatPrice(cart.subtotalCents, cart.currencyCode)}
               </dd>
             </div>
             {shippingCents > 0 ? (
               <div className="flex justify-between">
-                <dt className="text-slate-600">Shipping</dt>
-                <dd className="font-semibold text-slate-900">
+                <dt style={{ color: "var(--color-text-muted)" }}>Shipping</dt>
+                <dd className="font-semibold" style={{ color: "var(--color-text-primary)" }}>
                   {formatPrice(shippingCents, cart.currencyCode)}
                 </dd>
               </div>
             ) : null}
-            <div className="flex justify-between border-t border-slate-200 pt-3 text-base">
-              <dt className="font-bold text-slate-900">Total</dt>
-              <dd className="font-bold text-slate-900">
+            <div className="flex justify-between border-t pt-3 text-base" style={{ borderColor: "var(--color-border)" }}>
+              <dt className="font-bold" style={{ color: "var(--color-text-primary)" }}>Total</dt>
+              <dd className="font-bold" style={{ color: "var(--color-text-primary)" }}>
                 {formatPrice(total, cart.currencyCode)}
               </dd>
             </div>
@@ -325,9 +326,9 @@ function Field({
   uppercase?: boolean;
 }) {
   return (
-    <label className={`flex min-w-0 flex-col gap-1 ${full ? "sm:col-span-2" : ""}`}>
-      <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-        {label} {required ? <span className="text-rose-500">*</span> : null}
+    <label className={`flex min-w-0 flex-col gap-1.5 ${full ? "sm:col-span-2" : ""}`}>
+      <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
+        {label} {required ? <span style={{ color: "var(--color-status-error)" }}>*</span> : null}
       </span>
       <input
         type={type}
@@ -336,7 +337,7 @@ function Field({
         autoComplete={autoComplete}
         defaultValue={defaultValue}
         maxLength={maxLength}
-        className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-emerald-600 focus:outline-none focus:ring-1 focus:ring-emerald-600"
+        className="gh-input"
         style={uppercase ? { textTransform: "uppercase" } : undefined}
       />
     </label>

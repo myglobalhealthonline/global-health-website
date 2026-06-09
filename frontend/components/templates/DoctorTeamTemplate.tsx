@@ -78,6 +78,11 @@ export function DoctorTeamTemplate({
         }
         ctaLabel={bookingLabel}
         ctaHref={bookingHref}
+        heroImage={{
+          src: "/images/stock/doctors.jpg",
+          alt: `Doctors available for online consultations in ${countryName}`,
+          priority: true,
+        }}
       />
 
       {/* GRID — light soft section, DoctorCard components */}

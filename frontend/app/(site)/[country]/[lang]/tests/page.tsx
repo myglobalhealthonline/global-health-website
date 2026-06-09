@@ -88,7 +88,6 @@ export default async function HealthTestsPage({
   // Provider-first defaults per Google Ads "restricted services" guidance.
   // Lab-test pages also fall under restricted scope when copy emphasises
   // the kit/sample/process. Anchor on the reviewing clinician instead.
-  const heroTitle = page?.heroTitle ?? "Lab tests reviewed by licensed doctors";
   const heroSubtitle =
     page?.heroSubtitle ??
     `Lab-quality test results reviewed by a doctor registered to practise in ${config.name}.`;

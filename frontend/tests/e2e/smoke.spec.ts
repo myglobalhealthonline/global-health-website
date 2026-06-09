@@ -2,8 +2,8 @@ import { expect, test } from "@playwright/test";
 
 /**
  * Smoke test — verifies the site shell renders, the locale-aware
- * landing page is reachable, and the /book-online entry point doesn't
- * 500. This is intentionally minimal so it runs in <10s without a
+ * landing page is reachable, and the legacy /book-online URL redirects
+ * to the guided /book page. This is intentionally minimal so it runs in <10s without a
  * backend; everything beyond this should mock the backend or be marked
  * `test.describe.serial(...)` with explicit setup.
  *
@@ -19,11 +19,12 @@ test.describe("Smoke", () => {
     await expect(page).toHaveTitle(/global health/i);
   });
 
-  test("book-online entry renders", async ({ page }) => {
-    const response = await page.goto("/book-online", {
+  test("legacy book-online redirects to /book", async ({ page }) => {
+    const response = await page.goto("/ireland/en/book-online", {
       waitUntil: "domcontentloaded",
     });
-    expect(response?.status(), "/book-online should not 5xx").toBeLessThan(500);
+    expect(response?.status(), "/book should not 5xx").toBeLessThan(500);
+    expect(page.url(), "redirects to the guided /book page").toContain("/book");
   });
 
   test("login form renders", async ({ page }) => {

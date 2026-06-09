@@ -92,7 +92,7 @@ export default function CartPage() {
   if (loading) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-        <p className="text-sm text-slate-500">Loading cart…</p>
+        <p className="gh-body-sm">Loading cart…</p>
       </main>
     );
   }
@@ -108,16 +108,16 @@ export default function CartPage() {
           ]}
         />
         <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center rounded-xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
-            <ShoppingCart className="size-10 text-slate-300" aria-hidden />
-            <h1 className="mt-4 text-2xl font-bold text-slate-900">Your cart is empty</h1>
-            <p className="mt-2 max-w-md text-sm text-slate-600">
+          <div
+            className="flex flex-col items-center rounded-[var(--radius-card)] border border-dashed px-6 py-16 text-center"
+            style={{ borderColor: "var(--color-border-strong)", background: "var(--color-background-soft)" }}
+          >
+            <ShoppingCart className="size-10" style={{ color: "var(--color-border-strong)" }} aria-hidden />
+            <h1 className="gh-h3 mt-4">Your cart is empty</h1>
+            <p className="gh-body-sm mt-2 max-w-md">
               Browse our consultations and health tests to get started.
             </p>
-            <Link
-              href={countryHome}
-              className="mt-6 inline-flex items-center gap-2 rounded-md bg-emerald-700 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
-            >
+            <Link href={countryHome} className="gh-btn gh-btn-primary mt-6">
               Start shopping
               <ArrowRight className="size-4" aria-hidden />
             </Link>
@@ -146,8 +146,8 @@ export default function CartPage() {
         ]}
       />
       <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">Your cart</h1>
-      <p className="mt-2 text-sm text-slate-500">
+      <h1 className="gh-h1">Your cart</h1>
+      <p className="gh-body-sm mt-2">
         {cart.itemCount} item{cart.itemCount === 1 ? "" : "s"} ·{" "}
         {cart.countryCode.toUpperCase()} · {cart.currencyCode}
       </p>
@@ -155,7 +155,7 @@ export default function CartPage() {
       {showAddedFlash ? (
         <div
           role="status"
-          className="mt-4 flex items-center gap-2 rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2.5 text-sm font-semibold text-emerald-900"
+          className="gh-status-success mt-4 flex items-center gap-2 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm font-semibold"
         >
           <CheckCircle2 className="size-4 shrink-0" aria-hidden />
           <span>Added to your cart.</span>
@@ -163,7 +163,7 @@ export default function CartPage() {
       ) : null}
 
       {expiredFlash > 0 ? (
-        <div className="mt-4 flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2.5 text-sm text-amber-900">
+        <div className="gh-status-warning mt-4 flex items-start gap-2 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm">
           <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
           <span>
             {expiredFlash} consultation reservation{expiredFlash === 1 ? "" : "s"}{" "}
@@ -173,7 +173,8 @@ export default function CartPage() {
           <button
             type="button"
             onClick={() => setExpiredFlash(0)}
-            className="ml-auto rounded p-0.5 text-amber-700 hover:bg-amber-100"
+            className="ml-auto rounded p-0.5 transition-colors hover:bg-black/5"
+            style={{ color: "var(--color-status-warning-text)" }}
             aria-label="Dismiss"
           >
             ×
@@ -183,8 +184,8 @@ export default function CartPage() {
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
         {/* Items */}
-        <div className="rounded-xl border border-slate-200 bg-white">
-          <ul className="divide-y divide-slate-100">
+        <div className="gh-card overflow-hidden">
+          <ul className="divide-y" style={{ borderColor: "var(--color-border)" }}>
             {cart.items.map((item) => (
               <CartItemRow
                 key={item.id}
@@ -199,14 +200,15 @@ export default function CartPage() {
             ))}
           </ul>
 
-          <div className="flex justify-between border-t border-slate-100 p-4">
-            <Link href={countryHome} className="text-sm font-medium text-emerald-700 hover:underline">
+          <div className="flex justify-between border-t p-4" style={{ borderColor: "var(--color-border)" }}>
+            <Link href={countryHome} className="gh-link text-sm">
               ← Continue shopping
             </Link>
             <button
               type="button"
               onClick={() => void clear()}
-              className="text-sm font-medium text-rose-700 hover:underline"
+              className="text-sm font-semibold underline-offset-2 hover:underline"
+              style={{ color: "var(--color-status-error)" }}
             >
               Clear cart
             </button>
@@ -214,26 +216,26 @@ export default function CartPage() {
         </div>
 
         {/* Summary */}
-        <aside className="self-start rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-slate-900">Order summary</h2>
+        <aside className="gh-card self-start p-6" style={{ boxShadow: "var(--shadow-card)" }}>
+          <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>Order summary</h2>
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between">
-              <dt className="text-slate-600">Subtotal</dt>
-              <dd className="font-semibold text-slate-900">
+              <dt style={{ color: "var(--color-text-muted)" }}>Subtotal</dt>
+              <dd className="font-semibold" style={{ color: "var(--color-text-primary)" }}>
                 {formatPrice(cart.subtotalCents, cart.currencyCode)}
               </dd>
             </div>
             {shippingCents > 0 ? (
               <div className="flex justify-between">
-                <dt className="text-slate-600">Shipping</dt>
-                <dd className="font-semibold text-slate-900">
+                <dt style={{ color: "var(--color-text-muted)" }}>Shipping</dt>
+                <dd className="font-semibold" style={{ color: "var(--color-text-primary)" }}>
                   {formatPrice(shippingCents, cart.currencyCode)}
                 </dd>
               </div>
             ) : null}
-            <div className="flex justify-between border-t border-slate-200 pt-3 text-base">
-              <dt className="font-bold text-slate-900">Total</dt>
-              <dd className="font-bold text-slate-900">
+            <div className="flex justify-between border-t pt-3 text-base" style={{ borderColor: "var(--color-border)" }}>
+              <dt className="font-bold" style={{ color: "var(--color-text-primary)" }}>Total</dt>
+              <dd className="font-bold" style={{ color: "var(--color-text-primary)" }}>
                 {formatPrice(total, cart.currencyCode)}
               </dd>
             </div>
@@ -241,12 +243,12 @@ export default function CartPage() {
           <button
             type="button"
             onClick={() => router.push(checkoutHref)}
-            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800"
+            className="gh-btn gh-btn-primary mt-6 w-full"
           >
             Checkout
             <ArrowRight className="size-4" aria-hidden />
           </button>
-          <p className="mt-3 text-xs text-slate-500">
+          <p className="gh-body-sm mt-3" style={{ fontSize: "0.75rem" }}>
             Payment is processed by Stripe. We never store your card details.
           </p>
         </aside>
@@ -278,8 +280,8 @@ function CartItemRow({
   return (
     <li className="flex items-center gap-4 p-5">
       <div className="min-w-0 flex-1">
-        <p className="font-semibold text-slate-900">{item.name}</p>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="font-semibold" style={{ color: "var(--color-text-primary)" }}>{item.name}</p>
+        <p className="mt-1 text-xs" style={{ color: "var(--color-text-muted)" }}>
           {item.kind === "HEALTH_TEST"
             ? "Health test"
             : item.kind === "PRESCRIPTION_SERVICE"
@@ -292,27 +294,27 @@ function CartItemRow({
             buyer can scan the cart and confirm what they're paying for
             without leaving the page. */}
         {isConsult ? (
-          <div className="mt-1.5 space-y-0.5 text-xs text-slate-600">
+          <div className="mt-1.5 space-y-0.5 text-xs" style={{ color: "var(--color-text-body)" }}>
             {item.doctorName ? (
               <p>
-                <span className="text-slate-500">Doctor:</span>{" "}
-                <span className="font-semibold text-slate-700">{item.doctorName}</span>
+                <span style={{ color: "var(--color-text-muted)" }}>Doctor:</span>{" "}
+                <span className="font-semibold" style={{ color: "var(--color-text-body)" }}>{item.doctorName}</span>
               </p>
             ) : null}
             {item.slotStartAt ? (
               <p>
-                <span className="text-slate-500">When:</span>{" "}
-                <span className="font-semibold text-slate-700">
+                <span style={{ color: "var(--color-text-muted)" }}>When:</span>{" "}
+                <span className="font-semibold" style={{ color: "var(--color-text-body)" }}>
                   {formatAppDateTimeShort(item.slotStartAt)}
                 </span>
               </p>
             ) : null}
             {item.patient?.fullName ? (
               <p>
-                <span className="text-slate-500">Patient:</span>{" "}
-                <span className="font-semibold text-slate-700">{item.patient.fullName}</span>
+                <span style={{ color: "var(--color-text-muted)" }}>Patient:</span>{" "}
+                <span className="font-semibold" style={{ color: "var(--color-text-body)" }}>{item.patient.fullName}</span>
                 {item.patient.bookingForOther ? (
-                  <span className="ml-1 inline-flex items-center rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+                  <span className="gh-badge gh-badge-warning ml-1.5 px-1.5 py-0.5 text-[10px] uppercase tracking-wide">
                     Booked for them
                   </span>
                 ) : null}
@@ -325,11 +327,8 @@ function CartItemRow({
             failure, so the styling shouldn't read as an error. */}
         {isConsult && countdown ? (
           <p
-            className={`mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold ${
-              countdown === "expired"
-                ? "text-amber-800"
-                : "text-amber-700"
-            }`}
+            className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold"
+            style={{ color: "var(--color-status-warning-text)" }}
           >
             <Clock className="size-3" aria-hidden />
             {countdown === "expired"
@@ -338,7 +337,7 @@ function CartItemRow({
           </p>
         ) : null}
         {!isConsult && atMax ? (
-          <p className="mt-1 text-[11px] font-semibold text-amber-700">
+          <p className="mt-1 text-[11px] font-semibold" style={{ color: "var(--color-status-warning-text)" }}>
             Max {CART_ITEM_MAX_QTY} per item
           </p>
         ) : null}
@@ -346,19 +345,23 @@ function CartItemRow({
 
       {/* Quantity controls */}
       {isConsult ? (
-        <span className="text-xs text-slate-500">1 booking</span>
+        <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>1 booking</span>
       ) : (
-        <div className="inline-flex items-center rounded-md border border-slate-300">
+        <div
+          className="inline-flex items-center rounded-[var(--radius-card-sm)] border"
+          style={{ borderColor: "var(--color-border)" }}
+        >
           <button
             type="button"
             onClick={onDecrease}
             disabled={item.quantity <= 1}
             aria-label="Decrease"
-            className="px-2 py-1 text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+            className="px-2 py-1 transition-colors hover:bg-[var(--color-background-soft)] disabled:opacity-40"
+            style={{ color: "var(--color-text-body)" }}
           >
             <Minus className="size-3.5" aria-hidden />
           </button>
-          <span className="min-w-[2ch] px-2 text-center text-sm font-semibold">
+          <span className="min-w-[2ch] px-2 text-center text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
             {item.quantity}
           </span>
           <button
@@ -367,14 +370,15 @@ function CartItemRow({
             disabled={atMax}
             aria-label="Increase"
             title={atMax ? `Max ${CART_ITEM_MAX_QTY} per item` : undefined}
-            className="px-2 py-1 text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+            className="px-2 py-1 transition-colors hover:bg-[var(--color-background-soft)] disabled:opacity-40"
+            style={{ color: "var(--color-text-body)" }}
           >
             <Plus className="size-3.5" aria-hidden />
           </button>
         </div>
       )}
 
-      <p className="min-w-[6rem] text-right font-bold text-slate-900">
+      <p className="min-w-[6rem] text-right font-bold" style={{ color: "var(--color-text-primary)" }}>
         {formatPrice(item.lineTotalCents, currency)}
       </p>
 
@@ -382,7 +386,8 @@ function CartItemRow({
         type="button"
         onClick={onRemove}
         aria-label={`Remove ${item.name}`}
-        className="rounded-md p-1.5 text-rose-600 hover:bg-rose-50"
+        className="rounded-[var(--radius-card-sm)] p-1.5 transition-colors hover:bg-[var(--color-status-error-bg)]"
+        style={{ color: "var(--color-status-error)" }}
       >
         <Trash2 className="size-4" aria-hidden />
       </button>

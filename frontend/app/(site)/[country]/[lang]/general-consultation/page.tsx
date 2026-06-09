@@ -252,8 +252,8 @@ export default async function CountryLangGeneralConsultationPage({
         <div id="services" className="scroll-mt-24">
           <ServicesGrid
             eyebrow="Practice areas"
-            title="General practitioners available"
-            intro={`${serviceItems.length} ${serviceItems.length === 1 ? "doctor" : "doctors"} currently in our ${config.name} network. Profiles update as the team adds or retires clinicians.`}
+            title="GP consultations available"
+            intro={`${serviceItems.length} ${serviceItems.length === 1 ? "consultation" : "consultations"} you can book online with a GP in our ${config.name} network. Profiles update as the team adds or retires clinicians.`}
             items={serviceItems}
             variant="dark"
           />

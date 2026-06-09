@@ -25,12 +25,12 @@ const SERVICE_SEO: Record<string, ServiceSeo> = {
   "ie:sick-leave": {
     title: "Sick Leave Certificate Online Ireland | IMC-Registered GP | Global Health",
     description:
-      "Speak to an IMC-registered GP online and receive a sick leave certificate for work on the same day. Available in English, Portuguese, Spanish, Arabic and Urdu. From €45.",
+      "Speak to an IMC-registered GP online about your symptoms and, where clinically appropriate, receive a sick leave certificate for work — often the same day. Available in English, Portuguese, Spanish, Arabic and Urdu. From €45.",
   },
   "ie:medical-consultation": {
     title: "Online GP Consultation Ireland | IMC-Registered Doctors",
     description:
-      "Book an online GP consultation in Ireland with IMC-registered doctors. Same-day video consultations, with medical certificates and referrals where clinically appropriate.",
+      "Book an online GP consultation in Ireland with IMC-registered doctors. Video consultations often available the same day, with medical certificates and referrals where clinically appropriate.",
   },
   "ie:weight-loss-consultation": {
     title: "Medical Weight Loss Online Ireland | Physician Supervised Program",

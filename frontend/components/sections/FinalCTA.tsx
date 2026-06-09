@@ -5,7 +5,7 @@
  */
 
 import Link from "next/link";
-import { ArrowUpRight, ShieldCheck, Stethoscope, Clock } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
 export function FinalCTA({
@@ -121,24 +121,6 @@ export function FinalCTA({
                 View doctors
               </Link>
             </div>
-
-            <ul
-              className="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-sm"
-              style={{ color: "rgba(255,255,255,0.40)" }}
-            >
-              <li className="inline-flex items-center gap-2">
-                <Stethoscope className="size-4 shrink-0" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.5} aria-hidden />
-                Locally-registered doctors
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <ShieldCheck className="size-4 shrink-0" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.5} aria-hidden />
-                GDPR-compliant
-              </li>
-              <li className="inline-flex items-center gap-2">
-                <Clock className="size-4 shrink-0" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.5} aria-hidden />
-                Flexible scheduling
-              </li>
-            </ul>
             </div>
           </RevealOnScroll>
         </div>

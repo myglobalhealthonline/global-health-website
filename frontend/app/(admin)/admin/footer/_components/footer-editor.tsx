@@ -190,8 +190,8 @@ export function FooterEditor({ initial, saveAction }: Props) {
         </h2>
         <p className="mt-1 text-xs text-[var(--color-text-muted)]">
           Tagline appears under the logo. Leave blank to use the global
-          default ("Medicine anytime anywhere. Online medical consultations
-          with locally-registered doctors across Europe.").
+          default (&quot;Medicine anytime anywhere. Online medical consultations
+          with locally-registered doctors across Europe.&quot;).
         </p>
         <label className="mt-4 block">
           <span className="text-xs font-semibold text-[var(--color-text-body)]">
@@ -455,8 +455,8 @@ export function FooterEditor({ initial, saveAction }: Props) {
               className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
             <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-              Replaces the default "© {`{year}`} Global Health" prefix.
-              The "Medicine anytime anywhere" tagline stays unchanged.
+              Replaces the default &quot;© {`{year}`} Global Health&quot; prefix.
+              The &quot;Medicine anytime anywhere&quot; tagline stays unchanged.
             </p>
           </label>
           <label className="flex items-center gap-2 text-sm">
