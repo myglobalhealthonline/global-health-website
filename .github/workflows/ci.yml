@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    # Dummy values so Prisma client / config validation don't throw at
+    # import time. The current test suite is unit/schema-level and does not
+    # require a live database; if integration tests are added, provision a
+    # Postgres service container here.
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://user:pass@localhost:5432/db?schema=public
+      AUTH_JWT_SECRET: ci-only-placeholder-secret-min-32-characters-long
+      CRON_SECRET: ci-cron-secret
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm --filter backend db:generate
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint (frontend)
+        run: pnpm lint
+
+      - name: Test (backend)
+        run: pnpm --filter backend test
+
+      - name: Test (frontend)
+        run: pnpm --filter frontend test

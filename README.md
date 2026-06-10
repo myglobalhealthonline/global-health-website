@@ -2,11 +2,18 @@
 
 A scalable healthcare platform rebuilt from the existing Wix website into a clean, maintainable, responsive full-stack web application.
 
-Current implementation status:
+> **Status note (June 2026):** The bullets immediately below are historical
+> and no longer accurate. The repo now ships a full admin CMS, Stripe
+> payments (checkout sessions + webhooks with idempotency), a cart-first
+> booking flow, and a doctor portal (`frontend/app/(doctor)`). Treat the
+> code and `REPO_REVIEW_FINDINGS.md` as the source of truth, not the
+> legacy status list. The rest of this document is being revised.
+
+Current implementation status (HISTORICAL — see status note above):
 - public frontend is stable and fallback-safe
 - backend/admin phase 1 introduces read APIs and booking request intake
-- admin CRUD, payments, and full dashboards remain deferred
-- **doctor portal** is explicitly **out of scope** for this repo (separate product later)
+- ~~admin CRUD, payments, and full dashboards remain deferred~~ (now implemented)
+- ~~**doctor portal** is explicitly **out of scope**~~ (now implemented)
 
 The goal of this project is to recreate the Global Health online clinic website in code while preserving the current public page structure, user journeys, brand experience, consultation booking flow, country-specific clinic pages, service pages, legal pages, blog content, and navigation patterns.
 
