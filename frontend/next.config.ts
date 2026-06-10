@@ -67,6 +67,7 @@ const SECURITY_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   turbopack: {
     root: path.resolve(__dirname, ".."),
   },

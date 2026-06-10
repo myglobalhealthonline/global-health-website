@@ -1,6 +1,6 @@
-function apiBase(): string {
-  return (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/+$/, "");
-}
+// Public-facing API calls routed through the Next.js same-origin proxy at
+// /api/public/[...path]. Avoids cross-origin fetch and removes the browser's
+// dependency on NEXT_PUBLIC_API_URL being reachable from end-user networks.
 
 type ApiResult<T> =
   | { ok: true; data: T; message?: string }
@@ -10,10 +10,8 @@ async function publicFetch<T>(
   path: string,
   init?: RequestInit,
 ): Promise<ApiResult<T>> {
-  const base = apiBase();
-  if (!base) return { ok: false, message: "API not configured" };
   try {
-    const res = await fetch(`${base}${path}`, {
+    const res = await fetch(path, {
       ...init,
       headers: {
         ...(init?.headers ?? {}),
@@ -90,13 +88,11 @@ export function fetchPatientUploadInfo(token: string) {
 }
 
 export async function uploadPatientFile(token: string, file: File) {
-  const base = apiBase();
-  if (!base) return { ok: false as const, message: "API not configured" };
   const fd = new FormData();
   fd.set("token", token);
   fd.set("file", file);
   try {
-    const res = await fetch(`${base}/api/public/patient-upload`, {
+    const res = await fetch("/api/public/patient-upload", {
       method: "POST",
       body: fd,
     });

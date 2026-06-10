@@ -12,8 +12,8 @@ import { InsuranceTab } from "./_components/insurance-tab";
 import { VerificationTab } from "./_components/verification-tab";
 import { NationalityTab } from "./_components/nationality-tab";
 import { GdprPreferencesTab } from "./_components/gdpr-tab";
-import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { readClientLocale } from "@/lib/i18n/get-client-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 type Tab = "personal" | "insurance" | "verification" | "nationality" | "privacy";
@@ -26,18 +26,8 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "privacy", label: "Privacy" },
 ];
 
-function readClientLocale(): LocaleCode {
-  try {
-    const match = document.cookie.match(/(?:^|;\s*)gh_locale=([^;]+)/);
-    const raw = match ? decodeURIComponent(match[1]) : "";
-    return resolveLocale({ cookieLocale: raw });
-  } catch {
-    return "en";
-  }
-}
-
 export default function AccountProfilePage() {
-  const [locale, setLocale] = useState<LocaleCode>("en");
+  const [locale] = useState<LocaleCode>(() => readClientLocale());
   const [user, setUser] = useState<AuthUser | null>(null);
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -49,7 +39,6 @@ export default function AccountProfilePage() {
   const [activeTab, setActiveTab] = useState<Tab>("personal");
 
   useEffect(() => {
-    setLocale(readClientLocale());
     let cancelled = false;
     async function load() {
       const [authRes, profileRes] = await Promise.all([

@@ -58,7 +58,9 @@ preview-*.html.artifact.json
 !/backend/assets/fonts/AlexBrush-Regular.ttf
 
 # Large design-reference archives (Figma/Stitch exports). Keep them
-# out of the repo — they're 24 MB each and not consumed at build time.
+# out of the repo — they're large and not consumed at build time.
+docs/design-fetch*/
 docs/design-fetch*.zip
 docs/*.zip
+docs/admin-portal-reference.html
 backups/

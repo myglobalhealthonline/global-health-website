@@ -1,13 +1,12 @@
 # syntax=docker/dockerfile:1
 # Railway: set service Root Directory to `frontend` so this Dockerfile is used.
-# Ensures `next build` output (.next/) is in the same image as `next start`
-# (fixes production-start-no-build-id when the builder omitted artifacts).
+# Multi-stage build: only the standalone Next.js output reaches the final image,
+# stripping devDependencies, source files, and build cache.
 
-FROM node:22-bookworm-slim
+# ── Stage 1: install dependencies ────────────────────────────────────────────
+FROM node:22-bookworm-slim AS deps
 
 WORKDIR /app
-ENV NEXT_TELEMETRY_DISABLED=1
-# Keep devDependencies for `next build`; set production only after the build.
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends ca-certificates \
@@ -15,19 +14,41 @@ RUN apt-get update \
 
 COPY package.json pnpm-lock.yaml ./
 
-# Reproducible install — the standalone frontend/pnpm-lock.yaml is committed
-# and kept in sync with frontend/package.json. --frozen-lockfile fails the
-# build if they drift instead of silently resolving new versions.
+# Reproducible install — --frozen-lockfile fails the build if lockfile drifts.
 RUN corepack enable && corepack prepare pnpm@10.33.2 --activate \
   && pnpm install --frozen-lockfile --ignore-workspace
 
+# ── Stage 2: build ────────────────────────────────────────────────────────────
+FROM node:22-bookworm-slim AS builder
+
+WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-RUN pnpm run build
+RUN corepack enable && corepack prepare pnpm@10.33.2 --activate \
+  && pnpm run build
 
+# ── Stage 3: production runner (minimal) ─────────────────────────────────────
+FROM node:22-bookworm-slim AS runner
+
+WORKDIR /app
 ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs \
+  && adduser --system --uid 1001 nextjs
+
+# next.config.ts output:"standalone" bundles all required node_modules into
+# .next/standalone — no separate node_modules install needed here.
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+
+USER nextjs
 
 EXPOSE 3000
 
-# Railway sets PORT; Next reads it. Host 0.0.0.0 for container networking.
-CMD ["sh", "-c", "exec pnpm exec next start -H 0.0.0.0 -p \"${PORT:-3000}\""]
+# Railway sets PORT; the standalone server.js reads it automatically.
+CMD ["sh", "-c", "exec node server.js"]

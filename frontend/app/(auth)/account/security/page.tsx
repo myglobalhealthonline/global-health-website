@@ -11,22 +11,12 @@ import {
 } from "@/lib/api/auth-api";
 import { formatAppDate } from "@/lib/format-datetime";
 import { DeleteAccountButton } from "./_components/delete-account-button";
-import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { readClientLocale } from "@/lib/i18n/get-client-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
 
-function readClientLocale(): LocaleCode {
-  try {
-    const match = document.cookie.match(/(?:^|;\s*)gh_locale=([^;]+)/);
-    const raw = match ? decodeURIComponent(match[1]) : "";
-    return resolveLocale({ cookieLocale: raw });
-  } catch {
-    return "en";
-  }
-}
-
 export default function AccountSecurityPage() {
-  const [locale, setLocale] = useState<LocaleCode>("en");
+  const [locale] = useState<LocaleCode>(() => readClientLocale());
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -42,7 +32,6 @@ export default function AccountSecurityPage() {
   const [verifyMsg, setVerifyMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
   useEffect(() => {
-    setLocale(readClientLocale());
     let cancelled = false;
     async function load() {
       const res = await fetchCurrentUser();
