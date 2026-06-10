@@ -63,6 +63,8 @@ type AdminAppointmentsListPayload = {
     notesPreview: string | null;
     status: string;
     createdAt: string;
+    doctorId: string | null;
+    doctorName: string | null;
   }>;
   pagination: {
     page: number;

@@ -260,6 +260,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                 <Th>Contact</Th>
                 <Th>Country</Th>
                 <Th>Consultation</Th>
+                <Th>Doctor</Th>
                 <Th>Status</Th>
                 <Th>Created</Th>
                 <Th>Notes</Th>
@@ -294,6 +295,11 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                     <Td>
                       <span className="text-[13px] text-[var(--color-text-muted)]">
                         {appointment.consultationType}
+                      </span>
+                    </Td>
+                    <Td>
+                      <span className="text-[13px] text-[var(--color-text-body)]">
+                        {appointment.doctorName ?? "Unassigned"}
                       </span>
                     </Td>
                     <Td>

@@ -220,6 +220,8 @@ export type AdminAppointmentListItem = {
   notesPreview: string | null;
   status: string;
   createdAt: string;
+  doctorId: string | null;
+  doctorName: string | null;
 };
 
 export type AdminAppointmentDetail = {
@@ -333,22 +335,22 @@ function buildAppointmentWhereClause(options: ListAppointmentsOptions): Prisma.S
   if (options.status) {
     // Compare as text so this is valid whether "status" is the enum
     // ("AppointmentStatus") or still text during the conversion boot.
-    parts.push(Prisma.sql`"status"::text = ${options.status}`);
+    parts.push(Prisma.sql`a."status"::text = ${options.status}`);
   }
   if (options.countryCode) {
-    parts.push(Prisma.sql`"countryCode" = ${options.countryCode}`);
+    parts.push(Prisma.sql`a."countryCode" = ${options.countryCode}`);
   }
   if (options.consultationType) {
-    parts.push(Prisma.sql`"consultationType" = ${options.consultationType}`);
+    parts.push(Prisma.sql`a."consultationType" = ${options.consultationType}`);
   }
 
   const q = options.search?.trim();
   if (q && q.length > 0) {
     const term = q.slice(0, 120);
     parts.push(Prisma.sql`(
-      strpos(lower("fullName"), lower(${term})) > 0
-      OR strpos(lower("email"), lower(${term})) > 0
-      OR strpos(lower(coalesce("phone", '')), lower(${term})) > 0
+      strpos(lower(a."fullName"), lower(${term})) > 0
+      OR strpos(lower(a."email"), lower(${term})) > 0
+      OR strpos(lower(coalesce(a."phone", '')), lower(${term})) > 0
     )`);
   }
 
@@ -367,7 +369,7 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
   try {
     const countRows = await prisma.$queryRaw<[{ count: bigint }]>(Prisma.sql`
       SELECT COUNT(*)::bigint AS count
-      FROM "Appointment"
+      FROM "Appointment" a
       ${where}
     `);
     const total = Number(countRows[0]?.count ?? 0n);
@@ -375,26 +377,36 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
     const effectivePage = totalPages === 0 ? page : Math.min(page, totalPages);
     const offset = (effectivePage - 1) * pageSize;
 
-    const rows = await prisma.$queryRaw<AppointmentRecord[]>(Prisma.sql`
+    const rows = await prisma.$queryRaw<
+      Array<
+        AppointmentRecord & {
+          doctorId: string | null;
+          doctorName: string | null;
+        }
+      >
+    >(Prisma.sql`
       SELECT
-        "id",
-        "countryCode",
-        "consultationType",
-        "fullName",
-        "email",
-        "phone",
-        "notes",
-        "status",
-        "scheduledAt",
-        "meetingUrl",
-        "paymentStatus",
-        "amountCents",
-        "currencyCode",
-        "createdAt",
-        "updatedAt"
-      FROM "Appointment"
+        a."id",
+        a."countryCode",
+        a."consultationType",
+        a."fullName",
+        a."email",
+        a."phone",
+        a."notes",
+        a."status",
+        a."scheduledAt",
+        a."meetingUrl",
+        a."paymentStatus",
+        a."amountCents",
+        a."currencyCode",
+        a."createdAt",
+        a."updatedAt",
+        a."doctorId",
+        d."fullName" AS "doctorName"
+      FROM "Appointment" a
+      LEFT JOIN "Doctor" d ON d."id" = a."doctorId"
       ${where}
-      ORDER BY "createdAt" DESC
+      ORDER BY a."createdAt" DESC
       LIMIT ${pageSize} OFFSET ${offset}
     `);
 
@@ -408,6 +420,8 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
       notesPreview: row.notes ? row.notes.slice(0, 140) : null,
       status: row.status,
       createdAt: row.createdAt.toISOString(),
+      doctorId: row.doctorId,
+      doctorName: row.doctorName,
     }));
 
     return {
