@@ -11,6 +11,7 @@ import {
 } from "../modules/patient-profile/patient-profile.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
+import { logAccess } from "../lib/access-log.js";
 
 const stringField = (max: number) =>
   z.string().trim().max(max).nullable().optional();
@@ -70,6 +71,18 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
       }
       try {
         const profile = await prisma.patientProfile.findUnique({ where: { email } });
+        if (profile) {
+          await logAccess({
+            patientProfileId: profile.id,
+            globalHealthNumber: profile.globalHealthNumber,
+            accessedByUserId: auth.userId,
+            accessedByRole: "DOCTOR",
+            accessedResourceType: "PATIENT_PROFILE",
+            accessAction: "VIEW",
+            ipAddress: request.ip,
+            userAgent: request.headers["user-agent"] ?? null,
+          });
+        }
         return okResponse({
           profile: serializeProfile(profile, { includeAlerts: true }),
         });

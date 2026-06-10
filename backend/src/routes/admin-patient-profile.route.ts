@@ -18,6 +18,7 @@ import {
 } from "../services/patient-nationality.service.js";
 import { getObject, streamToNodeReadable } from "../services/object-storage.js";
 import { VerificationStatus } from "@prisma/client";
+import { logAccess } from "../lib/access-log.js";
 
 const stringField = (max: number) =>
   z.string().trim().max(max).nullable().optional();
@@ -74,6 +75,17 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         if (!profile) {
           return reply.status(404).send(errorResponse("Patient profile not found"));
         }
+        const actor = await resolveOptionalAuthUser(request);
+        await logAccess({
+          patientProfileId: profile.id,
+          globalHealthNumber: profile.globalHealthNumber,
+          accessedByUserId: actor?.id ?? null,
+          accessedByRole: "ADMIN",
+          accessedResourceType: "PATIENT_PROFILE",
+          accessAction: "VIEW",
+          ipAddress: request.ip,
+          userAgent: request.headers["user-agent"] ?? null,
+        });
         return okResponse({
           profile: serializeProfile(profile, { includeAlerts: true }),
         });
@@ -300,11 +312,22 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       try {
         const profile = await prisma.patientProfile.findUnique({
           where: { email },
-          select: { id: true },
+          select: { id: true, globalHealthNumber: true },
         });
         if (!profile) return reply.status(404).send(errorResponse("Patient not found"));
 
         const docs = await listNationalityDocuments(profile.id);
+        const actor = await resolveOptionalAuthUser(request);
+        await logAccess({
+          patientProfileId: profile.id,
+          globalHealthNumber: profile.globalHealthNumber,
+          accessedByUserId: actor?.id ?? null,
+          accessedByRole: "ADMIN",
+          accessedResourceType: "NationalityDocuments",
+          accessAction: "VIEW",
+          ipAddress: request.ip,
+          userAgent: request.headers["user-agent"] ?? null,
+        });
         return okResponse({ nationalityDocuments: docs });
       } catch (error) {
         app.log.error(error);
@@ -388,7 +411,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       try {
         const row = await prisma.patientProfile.findUnique({
           where: { email },
-          select: { idDocumentKey: true, idDocumentBackKey: true },
+          select: { id: true, globalHealthNumber: true, idDocumentKey: true, idDocumentBackKey: true },
         });
         const key = side === "back" ? row?.idDocumentBackKey : row?.idDocumentKey;
         if (!key) return reply.status(404).send(errorResponse("Document not found"));
@@ -397,6 +420,17 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         const stream = streamToNodeReadable(obj.Body);
         if (!stream) return reply.status(404).send(errorResponse("Document not found"));
 
+        const actor = await resolveOptionalAuthUser(request);
+        await logAccess({
+          patientProfileId: row!.id,
+          globalHealthNumber: row!.globalHealthNumber,
+          accessedByUserId: actor?.id ?? null,
+          accessedByRole: "ADMIN",
+          accessedResourceType: "IdDocument",
+          accessAction: "DOWNLOAD",
+          ipAddress: request.ip,
+          userAgent: request.headers["user-agent"] ?? null,
+        });
         void reply.header("Content-Type", obj.ContentType ?? "application/octet-stream");
         void reply.header("Cache-Control", "private, no-store");
         return reply.send(stream);
@@ -419,7 +453,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       try {
         const row = await prisma.patientProfile.findUnique({
           where: { email },
-          select: { insuranceDocumentKey: true },
+          select: { id: true, globalHealthNumber: true, insuranceDocumentKey: true },
         });
         if (!row?.insuranceDocumentKey) return reply.status(404).send(errorResponse("Document not found"));
 
@@ -427,6 +461,17 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         const stream = streamToNodeReadable(obj.Body);
         if (!stream) return reply.status(404).send(errorResponse("Document not found"));
 
+        const actor = await resolveOptionalAuthUser(request);
+        await logAccess({
+          patientProfileId: row.id,
+          globalHealthNumber: row.globalHealthNumber,
+          accessedByUserId: actor?.id ?? null,
+          accessedByRole: "ADMIN",
+          accessedResourceType: "InsuranceDocument",
+          accessAction: "DOWNLOAD",
+          ipAddress: request.ip,
+          userAgent: request.headers["user-agent"] ?? null,
+        });
         void reply.header("Content-Type", obj.ContentType ?? "application/octet-stream");
         void reply.header("Cache-Control", "private, no-store");
         return reply.send(stream);
