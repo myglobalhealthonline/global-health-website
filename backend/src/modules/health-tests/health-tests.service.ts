@@ -64,24 +64,30 @@ async function upsertHealthTestTranslations(
   countryId: string,
   translations: HealthTestTranslationInput[],
 ): Promise<void> {
-  for (const entry of translations) {
-    await assertLocaleSupported(countryId, entry.locale);
-    const data = {
-      title: entry.title,
-      shortDescription: entry.shortDescription,
-      sampleType: entry.sampleType,
-      resultsTimeline: entry.resultsTimeline,
-      heroButtonLabel: entry.heroButtonLabel,
-      detailIntro: entry.detailIntro,
-      seoTitle: entry.seoTitle,
-      seoDescription: entry.seoDescription,
-    };
-    await prisma.healthTestTranslation.upsert({
-      where: { healthTestId_locale: { healthTestId, locale: entry.locale } },
-      create: { healthTestId, locale: entry.locale, ...data },
-      update: data,
-    });
-  }
+  // Validate locales in parallel, then write all rows in one atomic
+  // transaction (was a sequential per-locale check + upsert loop).
+  await Promise.all(
+    translations.map((entry) => assertLocaleSupported(countryId, entry.locale)),
+  );
+  await prisma.$transaction(
+    translations.map((entry) => {
+      const data = {
+        title: entry.title,
+        shortDescription: entry.shortDescription,
+        sampleType: entry.sampleType,
+        resultsTimeline: entry.resultsTimeline,
+        heroButtonLabel: entry.heroButtonLabel,
+        detailIntro: entry.detailIntro,
+        seoTitle: entry.seoTitle,
+        seoDescription: entry.seoDescription,
+      };
+      return prisma.healthTestTranslation.upsert({
+        where: { healthTestId_locale: { healthTestId, locale: entry.locale } },
+        create: { healthTestId, locale: entry.locale, ...data },
+        update: data,
+      });
+    }),
+  );
 }
 
 export class HealthTestCountryNotFoundError extends Error {
