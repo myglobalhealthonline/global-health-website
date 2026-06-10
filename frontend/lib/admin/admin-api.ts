@@ -781,6 +781,10 @@ export type AdminDoctorDto = {
     country: { id: string; code: string; name: string; slug: string; defaultLocale: string };
   }>;
   specialties: AdminDoctorSpecialtyLinkDto[];
+  /** Active service assignments — used for consultation-type column on list. */
+  assignedServices: Array<{
+    service: { kind: AdminServiceKind };
+  }>;
   assets: AdminDoctorAssetDto[];
   /** Linked login user. Null when no account exists yet. */
   loginUser: {

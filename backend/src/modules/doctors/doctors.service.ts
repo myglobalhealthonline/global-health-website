@@ -121,6 +121,14 @@ const adminDoctorInclude = {
       },
     },
   },
+  assignedServices: {
+    where: { isActive: true, status: "active" },
+    select: {
+      service: {
+        select: { kind: true },
+      },
+    },
+  },
   assets: {
     where: { kind: AssetKind.IMAGE },
     select: { id: true, kind: true, key: true, path: true },
@@ -418,8 +426,14 @@ function buildAdminDoctorWhere(query: AdminDoctorsQuery): Prisma.DoctorWhereInpu
   if (query.countryCode) {
     where.country = { code: query.countryCode };
   }
-  if (query.specialtyId) {
-    where.specialties = { some: { specialtyId: query.specialtyId } };
+  if (query.serviceKind) {
+    where.assignedServices = {
+      some: {
+        isActive: true,
+        status: "active",
+        service: { kind: query.serviceKind, isActive: true },
+      },
+    };
   }
   if (query.isActive !== undefined) {
     where.active = query.isActive;

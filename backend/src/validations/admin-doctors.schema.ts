@@ -1,3 +1,4 @@
+import { ServiceKind } from "@prisma/client";
 import { z } from "zod";
 import { serviceSlugSchema, validateUniqueLocales } from "./admin-services.schema.js";
 import { localeCodeSchema } from "./admin-countries.schema.js";
@@ -39,9 +40,9 @@ export const adminDoctorsQuerySchema = z.object({
     (v) => (v === "" || v === undefined || v === null ? undefined : v),
     z.string().trim().min(1).max(8).optional(),
   ),
-  specialtyId: z.preprocess(
+  serviceKind: z.preprocess(
     (v) => (v === "" || v === undefined || v === null ? undefined : v),
-    z.string().trim().min(1).optional(),
+    z.nativeEnum(ServiceKind).optional(),
   ),
   isActive: z.preprocess((v) => {
     if (v === undefined || v === null || v === "") return undefined;

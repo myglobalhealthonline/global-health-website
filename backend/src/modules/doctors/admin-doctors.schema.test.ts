@@ -70,7 +70,7 @@ describe("admin doctors validation", () => {
       page: "3",
       pageSize: "25",
       countryCode: "ie",
-      specialtyId: "sp1",
+      serviceKind: "GENERAL",
       isActive: "true",
       search: "smith",
     });
@@ -79,7 +79,7 @@ describe("admin doctors validation", () => {
       assert.equal(result.data.page, 3);
       assert.equal(result.data.pageSize, 25);
       assert.equal(result.data.countryCode, "ie");
-      assert.equal(result.data.specialtyId, "sp1");
+      assert.equal(result.data.serviceKind, "GENERAL");
       assert.equal(result.data.isActive, true);
       assert.equal(result.data.search, "smith");
     }

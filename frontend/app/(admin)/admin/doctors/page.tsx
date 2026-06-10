@@ -6,9 +6,10 @@ import { Edit3, Eye, Plus } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminDoctors,
-  fetchAdminSpecialties,
   purgeAdminDoctor,
+  type AdminServiceKind,
 } from "@/lib/admin/admin-api";
+import { SERVICE_KIND_META } from "@/lib/admin/service-kind";
 import { FlagBadge } from "../_components/flag-badge";
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import {
@@ -25,6 +26,29 @@ import {
 } from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
+
+const CONSULTATION_TYPE_FILTER_ORDER: AdminServiceKind[] = [
+  "GENERAL",
+  "SPECIALIST",
+  "PRESCRIPTION",
+  "HEALTH_TEST",
+];
+
+function doctorConsultationTypeLabels(
+  assignedServices: Array<{ service: { kind: AdminServiceKind } }>,
+): string {
+  const kinds = [
+    ...new Set(assignedServices.map((row) => row.service.kind)),
+  ].sort(
+    (a, b) =>
+      CONSULTATION_TYPE_FILTER_ORDER.indexOf(a) -
+      CONSULTATION_TYPE_FILTER_ORDER.indexOf(b),
+  );
+  if (kinds.length === 0) return "—";
+  return kinds
+    .map((kind) => SERVICE_KIND_META[kind].shortLabel)
+    .join(", ");
+}
 
 function buildDoctorsHref(
   filters: Record<string, string | undefined>,
@@ -60,7 +84,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
     page: spRead(sp, "page"),
     pageSize: spRead(sp, "pageSize"),
     countryId: spRead(sp, "countryId"),
-    specialtyId: spRead(sp, "specialtyId"),
+    serviceKind: spRead(sp, "serviceKind"),
     isActive: spRead(sp, "isActive"),
     search: spRead(sp, "search"),
   };
@@ -99,15 +123,6 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
   const { items, pagination } = listResult.data;
   const { page, pageSize, total, totalPages } = pagination;
   const countries = countriesResult.data.countries;
-  const filterCountryId = filters.countryId;
-
-  let specialtyOptions: { id: string; name: string; slug: string }[] = [];
-  if (filterCountryId) {
-    const spRes = await fetchAdminSpecialties(filterCountryId);
-    if (spRes.ok) {
-      specialtyOptions = spRes.data.specialties;
-    }
-  }
 
   const statusFilter = filters.isActive ?? "";
   const successMessage = spRead(sp, "success");
@@ -174,17 +189,16 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
               </select>
             </label>
             <label className="flex min-w-0 flex-col gap-1.5">
-              <span className="gh-field-label">Category</span>
+              <span className="gh-field-label">Consultation type</span>
               <select
-                name="specialtyId"
-                defaultValue={filters.specialtyId ?? ""}
+                name="serviceKind"
+                defaultValue={filters.serviceKind ?? ""}
                 className="gh-select min-w-0"
-                disabled={!filterCountryId}
               >
                 <option value="">Any</option>
-                {specialtyOptions.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
+                {CONSULTATION_TYPE_FILTER_ORDER.map((kind) => (
+                  <option key={kind} value={kind}>
+                    {SERVICE_KIND_META[kind].singularLabel}
                   </option>
                 ))}
               </select>
@@ -215,7 +229,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
           </div>
           <input type="hidden" name="page" value="1" />
           <div className="mt-4 flex flex-wrap items-center gap-3">
-            <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36 }}>
+            <button type="submit" className="gh-btn gh-btn-primary gh-admin-pager-btn">
               Apply filters
             </button>
             <Link
@@ -242,10 +256,10 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
               <Th>Title</Th>
               <Th>Practicing in</Th>
               <Th>Languages</Th>
-              <Th>Categories</Th>
+              <Th>Consultation type</Th>
               <Th>Account</Th>
               <Th>Status</Th>
-              <Th align="right" style={{ width: 120 }}>
+              <Th align="right" className="w-[120px]">
                 Actions
               </Th>
             </Thead>
@@ -262,22 +276,11 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                     <Td>
                       <Link
                         href={`/admin/doctors/${d.id}`}
-                        className="inline-flex items-center gap-3"
-                        style={{ textDecoration: "none" }}
+                        className="inline-flex items-center gap-3 no-underline"
                       >
                         <span
                           aria-hidden
-                          className="inline-flex shrink-0 items-center justify-center text-white"
-                          style={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 999,
-                            background:
-                              "linear-gradient(135deg, var(--color-brand-primary), var(--color-accent))",
-                            fontFamily: "var(--font-display)",
-                            fontWeight: 800,
-                            fontSize: 13,
-                          }}
+                          className="gh-admin-doctor-avatar inline-flex shrink-0 items-center justify-center text-white"
                         >
                           {initials || "·"}
                         </span>
@@ -321,7 +324,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                               <span
                                 key={f.code}
                                 title={f.isPrimary ? `${f.name} · primary` : f.name}
-                                style={{ display: "inline-flex" }}
+                                className="inline-flex"
                               >
                                 <FlagBadge code={f.code} size={18} />
                               </span>
@@ -339,9 +342,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                     </Td>
                     <Td>
                       <span className="block max-w-[12rem] truncate text-[13px] text-[var(--color-text-muted)]">
-                        {d.specialties.length > 0
-                          ? d.specialties.map((s) => s.specialty.name).join(", ")
-                          : "—"}
+                        {doctorConsultationTypeLabels(d.assignedServices ?? [])}
                       </span>
                     </Td>
                     <Td>
@@ -408,10 +409,9 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                 href={buildDoctorsHref(filters, {
                   page: String(Math.max(1, page - 1)),
                 })}
-                className={`gh-btn gh-btn-soft text-[13px] ${
+                className={`gh-btn gh-btn-soft gh-admin-pager-btn text-[13px] ${
                   page <= 1 ? "pointer-events-none opacity-40" : ""
                 }`}
-                style={{ minHeight: 36, padding: "0 14px" }}
               >
                 Previous
               </Link>
@@ -419,10 +419,9 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                 href={buildDoctorsHref(filters, {
                   page: String(Math.min(totalPages, page + 1)),
                 })}
-                className={`gh-btn gh-btn-primary text-[13px] ${
+                className={`gh-btn gh-btn-primary gh-admin-pager-btn text-[13px] ${
                   page >= totalPages ? "pointer-events-none opacity-40" : ""
                 }`}
-                style={{ minHeight: 36, padding: "0 14px" }}
               >
                 Next
               </Link>

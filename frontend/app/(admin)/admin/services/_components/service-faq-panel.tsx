@@ -135,15 +135,7 @@ export function ServiceFaqPanel({ serviceId, initialFaqs }: Props) {
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
-        <h3
-          style={{
-            margin: 0,
-            fontFamily: "var(--font-display)",
-            fontSize: 16,
-            fontWeight: 800,
-            color: "var(--color-text-primary)",
-          }}
-        >
+        <h3 className="gh-admin-card-title">
           FAQs{" "}
           <span className="ml-1.5 text-[13px] font-normal text-[var(--color-text-muted)]">
             ({faqs.length})

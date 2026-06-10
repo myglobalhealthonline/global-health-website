@@ -866,6 +866,20 @@ img {
   padding: 0 14px;
 }
 
+.gh-admin-doctor-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    var(--color-brand-primary),
+    var(--color-accent)
+  );
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+}
+
 /* ── Admin card section wrapper ─────────────────────────────── */
 .gh-admin-section {
   padding: 24px;
