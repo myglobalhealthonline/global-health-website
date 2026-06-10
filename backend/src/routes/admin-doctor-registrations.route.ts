@@ -30,6 +30,8 @@ const upsertBodySchema = z
   })
   .strict();
 
+const idParam = z.string().trim().min(1).max(64);
+
 const adminDoctorRegistrationsRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
     const auth = await verifyAdminAccess(request);
@@ -41,6 +43,9 @@ const adminDoctorRegistrationsRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { doctorId: string } }>(
     "/api/admin/doctors/:doctorId/registrations",
     async (request, reply) => {
+      if (!idParam.safeParse(request.params.doctorId).success) {
+        return reply.status(400).send(errorResponse("Invalid doctor id"));
+      }
       try {
         const rows = await listDoctorRegistrations(request.params.doctorId);
         return okResponse({ registrations: rows });
@@ -57,6 +62,12 @@ const adminDoctorRegistrationsRoute: FastifyPluginAsync = async (app) => {
   app.patch<{ Params: { doctorId: string; countryId: string } }>(
     "/api/admin/doctors/:doctorId/registrations/:countryId",
     async (request, reply) => {
+      if (
+        !idParam.safeParse(request.params.doctorId).success ||
+        !idParam.safeParse(request.params.countryId).success
+      ) {
+        return reply.status(400).send(errorResponse("Invalid id parameter"));
+      }
       const body = upsertBodySchema.safeParse(request.body ?? {});
       if (!body.success) {
         return reply

@@ -67,17 +67,18 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
         take: 100,
       });
 
-      let sent = 0;
-      let failed = 0;
-      for (const a of due) {
-        if (!a.scheduledAt) continue;
-        const isInPerson = a.consultationMode === "IN_PERSON";
-        const where = a.clinic
-          ? [a.clinic.name, a.clinic.city].filter(Boolean).join(", ")
-          : a.locationAddress ?? null;
-        if (isInPerson && !where) continue;
-        if (!isInPerson && !a.meetingUrl) continue;
-        try {
+      // Send all reminders in parallel (a single hung email no longer stalls
+      // the whole run), then stamp reminderSentAt for the successes in one
+      // updateMany instead of an update per row.
+      const sendResults = await Promise.allSettled(
+        due.map(async (a) => {
+          if (!a.scheduledAt) return null;
+          const isInPerson = a.consultationMode === "IN_PERSON";
+          const where = a.clinic
+            ? [a.clinic.name, a.clinic.city].filter(Boolean).join(", ")
+            : a.locationAddress ?? null;
+          if (isInPerson && !where) return null;
+          if (!isInPerson && !a.meetingUrl) return null;
           await sendAppointmentReminderEmail({
             to: a.email,
             fullName: a.fullName,
@@ -86,16 +87,26 @@ const remindersRoute: FastifyPluginAsync = async (app) => {
             meetingUrl: isInPerson ? null : a.meetingUrl,
             where: isInPerson ? where : null,
           });
-          await prisma.appointment.update({
-            where: { id: a.id },
-            data: { reminderSentAt: new Date() },
-          });
-          sent++;
-        } catch (err) {
+          return a.id;
+        }),
+      );
+      const sentIds: string[] = [];
+      let failed = 0;
+      for (const r of sendResults) {
+        if (r.status === "fulfilled") {
+          if (r.value) sentIds.push(r.value);
+        } else {
           failed++;
-          app.log.warn({ err, appointmentId: a.id }, "Reminder email failed");
+          app.log.warn({ err: r.reason }, "Reminder email failed");
         }
       }
+      if (sentIds.length > 0) {
+        await prisma.appointment.updateMany({
+          where: { id: { in: sentIds } },
+          data: { reminderSentAt: new Date() },
+        });
+      }
+      const sent = sentIds.length;
 
       // Doctor-side: fan out in-portal notifications for any
       // appointment scheduled in the same 24h window that has an

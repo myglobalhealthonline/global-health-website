@@ -51,13 +51,21 @@ const abandonedCartCronRoute: FastifyPluginAsync = async (app) => {
         take: 100,
       });
 
+      // Batch-load the users in ONE query (was a findUnique per candidate =
+      // up to 100 sequential round-trips per run), then look them up by id.
+      const userIds = candidates
+        .map((c) => c.userId)
+        .filter((id): id is string => Boolean(id));
+      const users = await prisma.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, email: true, fullName: true },
+      });
+      const userById = new Map(users.map((u) => [u.id, u]));
+
       let sent = 0;
       for (const cart of candidates) {
         if (!cart.userId) continue;
-        const user = await prisma.user.findUnique({
-          where: { id: cart.userId },
-          select: { email: true, fullName: true },
-        });
+        const user = userById.get(cart.userId);
         if (!user) continue;
 
         const subtotalCents = cart.items.reduce(

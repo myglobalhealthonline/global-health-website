@@ -62,7 +62,10 @@ async function listMessages(appointmentId: string): Promise<SerializedMessage[]>
 
 const chatRoute: FastifyPluginAsync = async (app) => {
   // ── Patient surface ─────────────────────────────────────────────
-  app.get("/api/account/appointments/:id/messages", async (request, reply) => {
+  app.get(
+    "/api/account/appointments/:id/messages",
+    { config: { rateLimit: { max: 120, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     let user: SafeUser | null = null;
     try {
       user = await resolveOptionalAuthUser(request);
@@ -108,7 +111,8 @@ const chatRoute: FastifyPluginAsync = async (app) => {
       app.log.error(err);
       return reply.status(500).send(errorResponse("Could not load messages"));
     }
-  });
+    },
+  );
 
   app.post(
     "/api/account/appointments/:id/messages",
@@ -168,7 +172,10 @@ const chatRoute: FastifyPluginAsync = async (app) => {
   );
 
   // ── Patient: unread count ────────────────────────────────────────
-  app.get("/api/account/messages/unread", async (request, reply) => {
+  app.get(
+    "/api/account/messages/unread",
+    { config: { rateLimit: { max: 120, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     let user: SafeUser | null = null;
     try {
       user = await resolveOptionalAuthUser(request);
@@ -195,10 +202,14 @@ const chatRoute: FastifyPluginAsync = async (app) => {
       app.log.error(err);
       return reply.status(500).send(errorResponse("Could not fetch unread count"));
     }
-  });
+    },
+  );
 
   // ── Admin surface ───────────────────────────────────────────────
-  app.get("/api/admin/appointments/:id/messages", async (request, reply) => {
+  app.get(
+    "/api/admin/appointments/:id/messages",
+    { config: { rateLimit: { max: 120, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     let user: SafeUser | null = null;
     try {
       user = await resolveOptionalAuthUser(request);
@@ -243,7 +254,8 @@ const chatRoute: FastifyPluginAsync = async (app) => {
       app.log.error(err);
       return reply.status(500).send(errorResponse("Could not load messages"));
     }
-  });
+    },
+  );
 
   app.post(
     "/api/admin/appointments/:id/messages",

@@ -24,6 +24,7 @@ import {
  *        one for that country (radio-style across the roster).
  */
 const featuredBodySchema = z.object({ featured: z.boolean() });
+const idParam = z.string().trim().min(1).max(64);
 
 async function primaryCountryCode(doctorId: string): Promise<string | null> {
   const row = await prisma.doctor.findUnique({
@@ -39,6 +40,9 @@ const adminFeaturedDoctorRoute: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       const auth = await verifyAdminAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      if (!idParam.safeParse(request.params.id).success) {
+        return reply.status(400).send(errorResponse("Invalid doctor id"));
+      }
       try {
         const code = await primaryCountryCode(request.params.id);
         if (!code) return reply.status(404).send(errorResponse("Doctor not found"));
@@ -59,6 +63,9 @@ const adminFeaturedDoctorRoute: FastifyPluginAsync = async (app) => {
     async (request, reply) => {
       const auth = await verifyAdminAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      if (!idParam.safeParse(request.params.id).success) {
+        return reply.status(400).send(errorResponse("Invalid doctor id"));
+      }
       const parsed = featuredBodySchema.safeParse(request.body);
       if (!parsed.success) {
         return reply.status(400).send(errorResponse("Invalid body", parsed.error.flatten()));

@@ -84,8 +84,8 @@ const doctorReportsRoute: FastifyPluginAsync = async (app) => {
         byType,
         signedCount,
         followUpCount,
-        distinctPatientRows,
-        paidPayments,
+        distinctPatientGroups,
+        revenueGroups,
       ] = await Promise.all([
           prisma.appointment.groupBy({
             by: ["status"],
@@ -110,11 +110,16 @@ const doctorReportsRoute: FastifyPluginAsync = async (app) => {
               followUpFromAppointmentId: { not: null },
             },
           }),
-          prisma.appointment.findMany({
+          // Distinct-patient count via groupBy — bounded, instead of loading
+          // every appointment email into memory.
+          prisma.appointment.groupBy({
+            by: ["email"],
             where: apptFilter,
-            select: { email: true },
           }),
-          prisma.payment.findMany({
+          // Revenue per currency via groupBy + _sum — bounded, instead of
+          // loading every paid payment row.
+          prisma.payment.groupBy({
+            by: ["currencyCode"],
             where: {
               appointment: {
                 doctorId: auth.doctorId,
@@ -125,18 +130,16 @@ const doctorReportsRoute: FastifyPluginAsync = async (app) => {
               status: "PAID",
               createdAt: range,
             },
-            select: { amountCents: true, currencyCode: true },
+            _sum: { amountCents: true },
           }),
         ]);
 
-      const distinctPatients = new Set(
-        distinctPatientRows.map((r) => r.email.toLowerCase()),
-      ).size;
+      const distinctPatients = distinctPatientGroups.length;
 
       const revenueByCurrency: Record<string, number> = {};
-      for (const p of paidPayments) {
-        const key = p.currencyCode ?? "—";
-        revenueByCurrency[key] = (revenueByCurrency[key] ?? 0) + p.amountCents;
+      for (const g of revenueGroups) {
+        const key = g.currencyCode ?? "—";
+        revenueByCurrency[key] = g._sum.amountCents ?? 0;
       }
 
       return okResponse({
