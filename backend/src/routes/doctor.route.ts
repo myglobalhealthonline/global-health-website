@@ -6,6 +6,10 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { sanitizeRichHtml } from "../utils/sanitize-html.js";
+import {
+  listDoctorSelectableServices,
+  saveDoctorServiceSelections,
+} from "../modules/doctor-services/doctor-services.service.js";
 
 /**
  * Doctor portal API. Every endpoint here is scoped to the logged-in
@@ -82,6 +86,10 @@ const profilePatchBodySchema = z
   .refine((d) => Object.keys(d).length > 0, {
     message: "Provide at least one field to update",
   });
+
+const doctorServicesBodySchema = z.object({
+  serviceIds: z.array(z.string().trim().min(1)).max(100),
+});
 
 const doctorRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/doctor/me", async (request, reply) => {
@@ -394,6 +402,70 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not update profile"));
+    }
+  });
+
+  app.get("/api/doctor/services", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) {
+      return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+    try {
+      const data = await listDoctorSelectableServices(auth.doctorId);
+      return okResponse(data);
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not load services"));
+    }
+  });
+
+  app.get("/api/doctor/services/approval-required", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) {
+      return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+    try {
+      const data = await listDoctorSelectableServices(auth.doctorId);
+      return okResponse({ approvalRequired: data.approvalRequired });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply
+        .status(500)
+        .send(errorResponse("Could not load approval settings"));
+    }
+  });
+
+  app.post("/api/doctor/services", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) {
+      return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+    const body = doctorServicesBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid service selection", body.error.flatten()));
+    }
+    try {
+      const data = await saveDoctorServiceSelections(
+        auth.doctorId,
+        body.data.serviceIds,
+      );
+      return okResponse(data, "Service selections saved");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply
+        .status(500)
+        .send(errorResponse("Could not save service selections"));
     }
   });
 };

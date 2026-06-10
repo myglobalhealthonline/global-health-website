@@ -271,6 +271,18 @@ const PATCHES: { name: string; sql: string }[] = [
         ON "CountryDomain"("countryId") WHERE "isPrimary" = true;
     `,
   },
+  {
+    name: "ServiceDoctor.doctor-self-selection-2026-06",
+    sql: `
+      ALTER TABLE "ServiceDoctor"
+        ADD COLUMN IF NOT EXISTS "selectedBy" TEXT NOT NULL DEFAULT 'admin',
+        ADD COLUMN IF NOT EXISTS "status" TEXT NOT NULL DEFAULT 'active';
+      CREATE INDEX IF NOT EXISTS "ServiceDoctor_doctorId_status_idx"
+        ON "ServiceDoctor"("doctorId", "status");
+      ALTER TABLE "BookingSetting"
+        ADD COLUMN IF NOT EXISTS "doctorServiceSelfSelectApproval" BOOLEAN NOT NULL DEFAULT true;
+    `,
+  },
 ];
 
 export async function ensureSchema(log: {

@@ -9,6 +9,7 @@ import {
   FileText,
   LayoutDashboard,
   Receipt,
+  Stethoscope,
   UserCog,
   Users,
 } from "lucide-react";
@@ -80,6 +81,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     { href: "/doctor", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
     { href: "/doctor/appointments", label: "Appointments", icon: <Calendar className="size-4" aria-hidden />, badge: unreadMessages },
     { href: "/doctor/availability", label: "Availability", icon: <CalendarClock className="size-4" aria-hidden /> },
+    { href: "/doctor/services", label: "My Services", icon: <Stethoscope className="size-4" aria-hidden /> },
     { href: "/doctor/patients", label: "Patients", icon: <Users className="size-4" aria-hidden /> },
     { href: "/doctor/forms", label: "Forms", icon: <FileText className="size-4" aria-hidden /> },
     { href: "/doctor/invoices", label: "Invoices", icon: <Receipt className="size-4" aria-hidden /> },

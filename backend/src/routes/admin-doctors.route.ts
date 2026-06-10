@@ -27,6 +27,14 @@ import {
 } from "../validations/admin-doctors.schema.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import {
+  adminAssignServiceToDoctor,
+  adminRemoveDoctorService,
+  adminUpdateDoctorService,
+  listAdminDoctorServices,
+  type ServiceDoctorStatus,
+} from "../modules/doctor-services/doctor-services.service.js";
+import { z } from "zod";
 
 function handleDoctorWriteError(
   app: { log: { error: (e: unknown) => void } },
@@ -52,6 +60,19 @@ function handleDoctorWriteError(
   app.log.error(error);
   return reply.status(500).send(errorResponse("Unexpected admin doctors error"));
 }
+
+const adminDoctorServiceAssignBodySchema = z.object({
+  serviceId: z.string().trim().min(1),
+});
+
+const adminDoctorServicePatchBodySchema = z.object({
+  status: z.enum(["pending", "active", "rejected", "disabled"]),
+});
+
+const serviceDoctorIdParamsSchema = z.object({
+  id: z.string().trim().min(1),
+  serviceDoctorId: z.string().trim().min(1),
+});
 
 const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
@@ -365,6 +386,124 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       return reply.status(500).send(errorResponse("Could not send invite"));
     }
   });
+
+  app.get("/api/admin/doctors/:id/services", async (request, reply) => {
+    const params = doctorIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid doctor id", params.error.flatten()));
+    }
+    try {
+      const doctor = await prisma.doctor.findUnique({
+        where: { id: params.data.id },
+        select: { id: true },
+      });
+      if (!doctor) {
+        return reply.status(404).send(errorResponse("Doctor profile not found"));
+      }
+      const items = await listAdminDoctorServices(params.data.id);
+      return okResponse({ items });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not load doctor services"));
+    }
+  });
+
+  app.post("/api/admin/doctors/:id/services", async (request, reply) => {
+    const params = doctorIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid doctor id", params.error.flatten()));
+    }
+    const body = adminDoctorServiceAssignBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid service assignment", body.error.flatten()));
+    }
+    try {
+      const row = await adminAssignServiceToDoctor(
+        params.data.id,
+        body.data.serviceId,
+      );
+      if (!row) {
+        return reply
+          .status(404)
+          .send(errorResponse("Doctor or service not found for this country"));
+      }
+      return okResponse({ assignment: row }, "Service assigned to doctor");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not assign service"));
+    }
+  });
+
+  app.patch(
+    "/api/admin/doctors/:id/services/:serviceDoctorId",
+    async (request, reply) => {
+      const params = serviceDoctorIdParamsSchema.safeParse(request.params);
+      if (!params.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid parameters", params.error.flatten()));
+      }
+      const body = adminDoctorServicePatchBodySchema.safeParse(request.body);
+      if (!body.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid status update", body.error.flatten()));
+      }
+      try {
+        const row = await adminUpdateDoctorService(
+          params.data.id,
+          params.data.serviceDoctorId,
+          body.data.status as ServiceDoctorStatus,
+        );
+        if (!row) {
+          return reply.status(404).send(errorResponse("Assignment not found"));
+        }
+        return okResponse({ assignment: row }, "Assignment updated");
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not update assignment"));
+      }
+    },
+  );
+
+  app.delete(
+    "/api/admin/doctors/:id/services/:serviceDoctorId",
+    async (request, reply) => {
+      const params = serviceDoctorIdParamsSchema.safeParse(request.params);
+      if (!params.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid parameters", params.error.flatten()));
+      }
+      try {
+        const removed = await adminRemoveDoctorService(
+          params.data.id,
+          params.data.serviceDoctorId,
+        );
+        if (!removed) {
+          return reply.status(404).send(errorResponse("Assignment not found"));
+        }
+        return okResponse({}, "Assignment removed");
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not remove assignment"));
+      }
+    },
+  );
 
   app.delete("/api/admin/doctors/:id/purge", async (request, reply) => {
     const params = doctorIdParamsSchema.safeParse(request.params);

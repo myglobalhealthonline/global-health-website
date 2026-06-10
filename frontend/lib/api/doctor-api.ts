@@ -495,3 +495,33 @@ export async function fetchDoctorNotifications(onlyUnread = false) {
     unreadCount: number;
   }>(path);
 }
+
+export type DoctorServiceAssignment = {
+  id: string;
+  serviceId: string;
+  status: "pending" | "active" | "rejected" | "disabled";
+  selectedBy: "admin" | "doctor";
+  isActive: boolean;
+};
+
+export type DoctorSelectableService = {
+  id: string;
+  slug: string;
+  name: string;
+  summary: string | null;
+  kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION";
+  durationMinutes: number | null;
+  basePriceCents: number | null;
+  currencyCode: string | null;
+  specialty: { id: string; name: string; slug: string } | null;
+  assignment: DoctorServiceAssignment | null;
+};
+
+export type DoctorServicesPayload = {
+  approvalRequired: boolean;
+  items: DoctorSelectableService[];
+};
+
+export async function fetchDoctorServices() {
+  return doctorRequest<DoctorServicesPayload>("/api/doctor/services");
+}

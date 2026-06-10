@@ -632,13 +632,17 @@ model ServiceTranslation {
 /// chosen service. The doctor profile page uses the same join to show
 /// only services the doctor is bookable for.
 model ServiceDoctor {
-  id        String   @id @default(cuid())
-  serviceId String
-  doctorId  String
-  isActive  Boolean  @default(true)
-  sortOrder Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  serviceId  String
+  doctorId   String
+  isActive   Boolean  @default(true)
+  sortOrder  Int      @default(0)
+  /// Who created this assignment: admin from service form, or doctor self-select.
+  selectedBy String   @default("admin")
+  /// pending = awaiting admin approval; active = bookable; rejected/disabled = not bookable.
+  status     String   @default("active")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   doctor  Doctor  @relation(fields: [doctorId], references: [id], onDelete: Cascade)
@@ -646,6 +650,7 @@ model ServiceDoctor {
   @@unique([serviceId, doctorId])
   @@index([doctorId, isActive])
   @@index([serviceId, isActive, sortOrder])
+  @@index([doctorId, status])
 }
 
 model PricingPlan {
@@ -853,6 +858,8 @@ model BookingSetting {
   /// (line1, city, postal). Defaults true for RX-eligible markets so we
   /// can ship prescriptions; pure-telemedicine markets can disable.
   requireAddress     Boolean  @default(true)
+  /// When true, doctor self-selected services require admin approval before booking.
+  doctorServiceSelfSelectApproval Boolean @default(true)
   timezone           String   @default("UTC")
   country            Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
   createdAt          DateTime @default(now())

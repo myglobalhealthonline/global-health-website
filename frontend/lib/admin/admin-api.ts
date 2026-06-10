@@ -998,6 +998,66 @@ export async function deleteAdminDoctorAvailability(
   );
 }
 
+export type AdminDoctorServiceAssignmentDto = {
+  id: string;
+  serviceId: string;
+  doctorId: string;
+  status: "pending" | "active" | "rejected" | "disabled";
+  selectedBy: "admin" | "doctor";
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+  service: {
+    id: string;
+    slug: string;
+    name: string;
+    kind: AdminServiceKind;
+    durationMinutes: number | null;
+    basePriceCents: number | null;
+    currencyCode: string | null;
+    isActive: boolean;
+    specialty: { id: string; name: string; slug: string } | null;
+  };
+};
+
+export async function fetchAdminDoctorServices(doctorId: string) {
+  return adminRequest<{ items: AdminDoctorServiceAssignmentDto[] }>(
+    `/api/admin/doctors/${doctorId}/services`,
+  );
+}
+
+export async function adminAssignServiceToDoctor(
+  doctorId: string,
+  serviceId: string,
+) {
+  return adminRequest<{ assignment: AdminDoctorServiceAssignmentDto }>(
+    `/api/admin/doctors/${doctorId}/services`,
+    { method: "POST", body: { serviceId } },
+  );
+}
+
+export async function approveRejectDoctorService(
+  doctorId: string,
+  serviceDoctorId: string,
+  status: "pending" | "active" | "rejected" | "disabled",
+) {
+  return adminRequest<{ assignment: AdminDoctorServiceAssignmentDto }>(
+    `/api/admin/doctors/${doctorId}/services/${serviceDoctorId}`,
+    { method: "PATCH", body: { status } },
+  );
+}
+
+export async function adminRemoveDoctorService(
+  doctorId: string,
+  serviceDoctorId: string,
+) {
+  return adminRequest<Record<string, never>>(
+    `/api/admin/doctors/${doctorId}/services/${serviceDoctorId}`,
+    { method: "DELETE" },
+  );
+}
+
 export async function purgeAdminDoctor(id: string) {
   return adminRequest<Record<string, never>>(`/api/admin/doctors/${id}/purge`, {
     method: "DELETE",

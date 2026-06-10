@@ -746,15 +746,28 @@ async function syncServiceDoctorAssignments(
       },
     });
     if (filtered.length === 0) return;
-    await tx.serviceDoctor.createMany({
-      data: filtered.map((doctorId, index) => ({
-        serviceId,
-        doctorId,
-        sortOrder: index,
-        isActive: true,
-      })),
-      skipDuplicates: true,
-    });
+    for (let index = 0; index < filtered.length; index++) {
+      const doctorId = filtered[index]!;
+      await tx.serviceDoctor.upsert({
+        where: {
+          serviceId_doctorId: { serviceId, doctorId },
+        },
+        create: {
+          serviceId,
+          doctorId,
+          sortOrder: index,
+          isActive: true,
+          selectedBy: "admin",
+          status: "active",
+        },
+        update: {
+          sortOrder: index,
+          isActive: true,
+          selectedBy: "admin",
+          status: "active",
+        },
+      });
+    }
   });
 }
 
