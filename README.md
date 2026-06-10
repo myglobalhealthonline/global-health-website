@@ -2,14 +2,39 @@
 
 A scalable healthcare platform rebuilt from the existing Wix website into a clean, maintainable, responsive full-stack web application.
 
-> **Status note (June 2026):** The bullets immediately below are historical
-> and no longer accurate. The repo now ships a full admin CMS, Stripe
-> payments (checkout sessions + webhooks with idempotency), a cart-first
-> booking flow, and a doctor portal (`frontend/app/(doctor)`). Treat the
-> code and `REPO_REVIEW_FINDINGS.md` as the source of truth, not the
-> legacy status list. The rest of this document is being revised.
+> **Status (June 2026):** This is a production system. The bullets below are
+> historical artifacts — the platform now ships all listed features and more.
+> Treat the code and `REPO_REVIEW_FINDINGS.md` as the source of truth.
 
-Current implementation status (HISTORICAL — see status note above):
+## What is shipped
+
+| Area | Status |
+|------|--------|
+| Public site (6 locales, 5 countries) | ✅ Live |
+| Cart-first booking flow (`/book`) | ✅ Live |
+| Stripe checkout + webhooks (idempotent) | ✅ Live |
+| Admin CMS (doctors, services, content, blog, settings) | ✅ Live |
+| Doctor portal (`/doctor`) | ✅ Live |
+| Patient account portal (`/account`) | ✅ Live |
+| Brazil consent form (LGPD) | ✅ Live |
+| Generated documents (PDF, DOCX) | ✅ Live |
+| Appointment scheduling + reminders | ✅ Live |
+| PHI media gating (clinical + patient-upload prefixes) | ✅ Live |
+| JWT edge auth (proxy stamps x-gh-role, no backend round-trip on public pages) | ✅ Live |
+| CI (typecheck + lint + tests on push/PR) | ✅ Live |
+| Multi-stage Docker + Next standalone output | ✅ Live |
+| Review invite system | ✅ Live |
+| Audit log | ✅ Live |
+
+## Known open items (requiring dedicated sprint)
+
+| Item | Severity | Description |
+|------|----------|-------------|
+| C8 | Critical | Schema migration drift — `ensure-schema.ts` runtime patches not yet baselined into Prisma migrations |
+| C9 | Critical | Rotate production credentials (Railway Postgres, S3, Stripe webhook, Deepgram) |
+| H18 | High | Government IDs / PHI stored as plaintext — application-layer encryption pending |
+
+Current implementation status (HISTORICAL — retained for git blame purposes):
 - public frontend is stable and fallback-safe
 - backend/admin phase 1 introduces read APIs and booking request intake
 - ~~admin CRUD, payments, and full dashboards remain deferred~~ (now implemented)
