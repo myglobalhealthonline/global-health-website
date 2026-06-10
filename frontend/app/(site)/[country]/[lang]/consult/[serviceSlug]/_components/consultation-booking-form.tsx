@@ -7,9 +7,17 @@ import { useCart } from "@/components/cart/CartContext";
 import type { CartItemKind } from "@/lib/api/cart-types";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
+import { formatPriceRounded } from "@/lib/format-currency";
 import type { CommonLocale } from "@/lib/i18n/types";
 
-type Slot = { id: string; startAt: string; endAt: string };
+type Slot = {
+  id: string;
+  startAt: string;
+  endAt: string;
+  priceCents?: number;
+  pricingType?: "STANDARD" | "PEAK" | "OFF_PEAK";
+  currencyCode?: string;
+};
 
 type Props = {
   doctorId: string;
@@ -396,11 +404,22 @@ export function ConsultationBookingForm({
                     aria-pressed={isSelected}
                     className={
                       isSelected
-                        ? "inline-flex items-center justify-center rounded-xl border-2 border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white px-3 py-3 text-sm font-semibold [font-variant-numeric:tabular-nums] shadow-[var(--shadow-card)]"
-                        : "inline-flex items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-primary)] px-3 py-3 text-sm font-semibold [font-variant-numeric:tabular-nums] transition-[border-color,background-color,transform] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
+                        ? "inline-flex flex-col items-center justify-center rounded-xl border-2 border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white px-3 py-2.5 text-sm font-semibold [font-variant-numeric:tabular-nums] shadow-[var(--shadow-card)]"
+                        : "inline-flex flex-col items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-primary)] px-3 py-2.5 text-sm font-semibold [font-variant-numeric:tabular-nums] transition-[border-color,background-color,transform] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
                     }
                   >
-                    {formatAppTime(s.startAt, tz)}
+                    <span>{formatAppTime(s.startAt, tz)}</span>
+                    {typeof s.priceCents === "number" ? (
+                      <span
+                        className={
+                          isSelected
+                            ? "mt-0.5 text-xs font-medium text-white/85"
+                            : "mt-0.5 text-xs font-medium text-[var(--color-text-muted)]"
+                        }
+                      >
+                        {formatPriceRounded(s.priceCents, s.currencyCode ?? "EUR")}
+                      </span>
+                    ) : null}
                   </button>
                 );
               })}

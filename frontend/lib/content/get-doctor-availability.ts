@@ -7,10 +7,19 @@ import { getBackendOrigin } from "@/lib/server/backend-origin";
  * so we can render the slot picker before they fill the form.
  */
 
+export type SlotPricingType = "STANDARD" | "PEAK" | "OFF_PEAK";
+
 export type PublicSlot = {
   id: string;
   startAt: string;
   endAt: string;
+  /** Price (in cents) this slot will be charged. Resolved server-side from
+   *  peak-hour pricing config + the slot's clinic-local start time. Optional
+   *  for backward compatibility with the doctor-scoped endpoint, which is not
+   *  service-aware and omits pricing. */
+  priceCents?: number;
+  pricingType?: SlotPricingType;
+  currencyCode?: string;
 };
 
 export type DoctorAvailabilityResult = {

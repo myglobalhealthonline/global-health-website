@@ -12,10 +12,13 @@ import {
   fetchAdminCountries,
   fetchAdminDoctors,
   fetchAdminServiceById,
+  fetchAdminServicePeakPricing,
   fetchAdminServices,
   fetchAdminSpecialties,
   patchAdminService,
+  putAdminServicePeakPricing,
 } from "@/lib/admin/admin-api";
+import { PeakPricingCard } from "../../_components/peak-pricing-card";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { readServiceKind, SERVICE_KIND_META } from "@/lib/admin/service-kind";
 import {
@@ -30,8 +33,33 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ error?: string; kind?: string }>;
+  searchParams?: Promise<{
+    error?: string;
+    kind?: string;
+    peakSuccess?: string;
+    peakError?: string;
+  }>;
 };
+
+/** "HH:MM" (native time input) → clinic-local minute-of-day. */
+function hhmmToMinutes(value: string): number {
+  const m = /^(\d{2}):(\d{2})$/.exec(value.trim());
+  if (!m) throw new Error("Time must be in HH:MM format");
+  const minutes = Number(m[1]) * 60 + Number(m[2]);
+  if (!Number.isFinite(minutes) || minutes < 0 || minutes > 1440) {
+    throw new Error("Time is out of range");
+  }
+  return minutes;
+}
+
+/** Decimal amount string → integer cents. */
+function priceToCents(value: string): number {
+  const raw = value.trim();
+  if (!/^\d+(?:\.\d{1,2})?$/.test(raw)) {
+    throw new Error("Price must be a valid amount like 49 or 49.00");
+  }
+  return Math.round(Number(raw) * 100);
+}
 
 export default async function AdminEditServicePage({
   params,
@@ -141,6 +169,73 @@ export default async function AdminEditServicePage({
     (c) => c.id === service.countryId,
   );
   const { locales, defaultLocale } = resolveCountryLocaleTabs(serviceCountry);
+
+  // Peak-hour pricing only applies to online consultations (they're the only
+  // service kinds booked against a time slot).
+  const supportsPeakPricing = kind === "GENERAL" || kind === "SPECIALIST";
+  const peakResult = supportsPeakPricing
+    ? await fetchAdminServicePeakPricing(id)
+    : null;
+  const peakConfig = peakResult?.ok ? peakResult.data.config : null;
+
+  async function savePeakPricingAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+
+    const redirectError = (msg: string) =>
+      redirect(
+        `/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&peakError=${encodeURIComponent(msg)}`,
+      );
+
+    let body: {
+      enabled: boolean;
+      peakStartMinute: number;
+      peakEndMinute: number;
+      peakPriceCents: number;
+      offPeakPriceCents: number;
+      currencyCode: string;
+    };
+    try {
+      const peakStartMinute = hhmmToMinutes(String(formData.get("peakStart") ?? ""));
+      const peakEndMinute = hhmmToMinutes(String(formData.get("peakEnd") ?? ""));
+      if (peakEndMinute <= peakStartMinute) {
+        return redirectError("Peak end must be after peak start.");
+      }
+      const currencyCode = String(formData.get("currencyCode") ?? "")
+        .trim()
+        .toUpperCase();
+      if (currencyCode.length !== 3) {
+        return redirectError("Currency must be a 3-letter code like EUR.");
+      }
+      body = {
+        enabled: formData.get("enabled") === "on",
+        peakStartMinute,
+        peakEndMinute,
+        peakPriceCents: priceToCents(String(formData.get("peakPrice") ?? "")),
+        offPeakPriceCents: priceToCents(String(formData.get("offPeakPrice") ?? "")),
+        currencyCode,
+      };
+    } catch (err) {
+      return redirectError(
+        err instanceof Error ? err.message : "Invalid peak pricing.",
+      );
+    }
+
+    const result = await putAdminServicePeakPricing(id, body);
+    if (!result.ok) {
+      return redirectError(result.message);
+    }
+
+    // Bust the public services cache so slot prices refresh on the consult page.
+    if (service.country?.code) {
+      revalidateTag(SITE_CACHE_TAGS.countryServices(service.country.code), "max");
+    }
+    revalidateTag(SITE_CACHE_TAGS.globalServices(), "max");
+
+    redirect(
+      `/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&peakSuccess=${encodeURIComponent("Peak pricing saved")}`,
+    );
+  }
 
   async function updateServiceAction(formData: FormData) {
     "use server";
@@ -466,6 +561,16 @@ export default async function AdminEditServicePage({
               </div>
             </dl>
           </AdminCard>
+
+          {supportsPeakPricing ? (
+            <PeakPricingCard
+              action={savePeakPricingAction}
+              config={peakConfig}
+              defaultCurrency={service.currencyCode ?? "EUR"}
+              success={messages.peakSuccess}
+              error={messages.peakError}
+            />
+          ) : null}
         </div>
       </div>
     </>

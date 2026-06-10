@@ -566,10 +566,41 @@ model Service {
   /// a translation row overrides them for a given locale. Operational
   /// fields (price, slug, doctors, booking) are NOT translated.
   translations          ServiceTranslation[]
+  /// Optional fixed peak-hour pricing override for this service. When
+  /// enabled, slots inside the configured clinic-local window charge the
+  /// peak price and slots outside it the off-peak price; otherwise the
+  /// flat basePriceCents applies. See ServicePeakPricing.
+  peakPricing           ServicePeakPricing?
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
 
   @@unique([countryId, slug])
+}
+
+/// Admin-defined fixed peak-hour pricing for a single service (v1: one
+/// daily window applied to every day). The peak window is expressed as a
+/// clinic-local minute-of-day range (matching DoctorAvailability's
+/// startMinute/endMinute convention). The window end is EXCLUSIVE, so a
+/// window of 18:00–22:00 means a 22:00 slot is off-peak.
+///
+/// Price authority lives in peak-pricing.service.ts; this row is just the
+/// stored config. When `enabled` is false or no row exists, the service's
+/// flat basePriceCents is charged.
+model ServicePeakPricing {
+  id                String   @id @default(cuid())
+  serviceId         String   @unique
+  service           Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  enabled           Boolean  @default(false)
+  /// Clinic-local minute-of-day, 0..1439 (inclusive start of peak window).
+  peakStartMinute   Int
+  /// Clinic-local minute-of-day, 1..1440 (exclusive end of peak window).
+  peakEndMinute     Int
+  peakPriceCents    Int
+  offPeakPriceCents Int
+  /// ISO-4217 code; defaults to the service/country currency in the admin UI.
+  currencyCode      String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
 /// Per-locale display content for a Service. One stable Service record per

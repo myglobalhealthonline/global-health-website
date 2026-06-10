@@ -16,6 +16,11 @@ import {
   orderHasConsultationItem,
   orderNeedsAutoMeetLink,
 } from "../modules/admin-orders/generate-order-meet-link.service.js";
+import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
+import {
+  computeSlotPrice,
+  getServicePeakConfig,
+} from "../modules/pricing/peak-pricing.service.js";
 
 /**
  * Orders + checkout.
@@ -115,8 +120,59 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           return reply.status(400).send(errorResponse("Cart is empty"));
         }
 
+        // Anti-manipulation gate: re-derive the price of every consultation
+        // line from the CURRENT peak-pricing config and the slot's own
+        // clinic-local start time. The cart snapshot (i.unitPriceCents) is
+        // display-only and could be stale (admin changed prices) or forged;
+        // the amount we record on the Order and charge via Stripe must be the
+        // server-recomputed one. Non-consultation items keep their snapshot.
+        const effectivePriceByItemId = new Map<string, number>();
+        await Promise.all(
+          cart.items.map(async (i) => {
+            const isConsultation =
+              i.kind === "GENERAL_CONSULTATION" ||
+              i.kind === "SPECIALIST_CONSULTATION";
+            if (
+              !isConsultation ||
+              !i.serviceId ||
+              !i.doctorId ||
+              !i.timeSlotId
+            ) {
+              return;
+            }
+            const [svc, slot, config] = await Promise.all([
+              prisma.service.findUnique({
+                where: { id: i.serviceId },
+                select: {
+                  basePriceCents: true,
+                  currencyCode: true,
+                  country: { select: { currency: { select: { code: true } } } },
+                },
+              }),
+              prisma.doctorTimeSlot.findUnique({
+                where: { id: i.timeSlotId },
+                select: { startAt: true },
+              }),
+              getServicePeakConfig(i.serviceId),
+            ]);
+            if (!svc || svc.basePriceCents == null || !slot) return;
+            const tz = await resolveDoctorTimeZone(i.doctorId);
+            const priced = computeSlotPrice({
+              config,
+              basePriceCents: svc.basePriceCents,
+              fallbackCurrency:
+                svc.currencyCode ?? svc.country.currency.code,
+              slotStartUtc: slot.startAt,
+              clinicTimezone: tz,
+            });
+            effectivePriceByItemId.set(i.id, priced.unitPriceCents);
+          }),
+        );
+        const effectiveUnitPrice = (i: { id: string; unitPriceCents: number }) =>
+          effectivePriceByItemId.get(i.id) ?? i.unitPriceCents;
+
         const subtotalCents = cart.items.reduce(
-          (s, i) => s + i.unitPriceCents * i.quantity,
+          (s, i) => s + effectiveUnitPrice(i) * i.quantity,
           0,
         );
         // Per-item shipping snapshot, summed across every line. Online
@@ -180,9 +236,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   healthTestId: i.healthTestId,
                   serviceId: i.serviceId,
                   name: i.name,
-                  unitPriceCents: i.unitPriceCents,
+                  unitPriceCents: effectiveUnitPrice(i),
                   quantity: i.quantity,
-                  lineTotalCents: i.unitPriceCents * i.quantity,
+                  lineTotalCents: effectiveUnitPrice(i) * i.quantity,
                   timeSlotId: i.timeSlotId,
                   doctorId: i.doctorId,
                   // Patient intake snapshot: carry the cart-page form

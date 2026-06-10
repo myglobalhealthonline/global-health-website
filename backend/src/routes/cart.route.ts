@@ -6,6 +6,11 @@ import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
+import {
+  computeSlotPrice,
+  getServicePeakConfig,
+} from "../modules/pricing/peak-pricing.service.js";
 
 /**
  * Shopping cart for orderable items.
@@ -679,7 +684,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               }),
               prisma.doctorTimeSlot.findFirst({
                 where: { id: timeSlotId, doctorId },
-                select: { id: true, status: true },
+                select: { id: true, status: true, startAt: true },
               }),
               readBookingSettings(svc.country.code),
             ]);
@@ -694,6 +699,24 @@ const cartRoute: FastifyPluginAsync = async (app) => {
               return reply.status(400).send(
                 errorResponse("That time slot does not belong to the selected doctor."),
               );
+            }
+
+            // Peak-hour pricing: override the flat service price with the
+            // price for this specific slot's clinic-local start time. This is
+            // a display-only snapshot — checkout re-derives it from current
+            // config — but keeping it correct here avoids a price jump
+            // between the slot picker, the cart, and the checkout summary.
+            const peakConfig = await getServicePeakConfig(svc.id);
+            if (peakConfig?.enabled) {
+              const tz = await resolveDoctorTimeZone(doctorId);
+              const priced = computeSlotPrice({
+                config: peakConfig,
+                basePriceCents: svc.basePriceCents,
+                fallbackCurrency: svc.country.currency.code,
+                slotStartUtc: slot.startAt,
+                clinicTimezone: tz,
+              });
+              unitPriceCents = priced.unitPriceCents;
             }
 
             if (settings) {

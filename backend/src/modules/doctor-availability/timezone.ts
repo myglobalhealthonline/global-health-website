@@ -82,6 +82,25 @@ export function zonedWallClockToUtc(
 }
 
 /**
+ * Read the clinic-local minute-of-day (0..1439) for a UTC instant. The
+ * inverse direction of `zonedWallClockToUtc`: given a stored slot `startAt`,
+ * tell us where it falls in the clinic's day so we can compare it against a
+ * wall-clock peak window. DST-correct because luxon resolves the per-date
+ * offset. An unknown zone falls back to UTC.
+ *
+ *   utcToClinicMinuteOfDay(new Date("2026-07-15T16:00:00Z"), "Europe/Bucharest")
+ *     → 1140   (19:00 local; Bucharest = UTC+3 in July)
+ */
+export function utcToClinicMinuteOfDay(utc: Date, timeZone: string): number {
+  const zone = isValidTimeZone(timeZone) ? timeZone : "utc";
+  const dt = DateTime.fromJSDate(utc).setZone(zone);
+  if (!dt.isValid) {
+    return utc.getUTCHours() * 60 + utc.getUTCMinutes();
+  }
+  return dt.hour * 60 + dt.minute;
+}
+
+/**
  * Enumerate every clinic-local calendar day overlapping [fromUtc, toUtc],
  * padded ±1 day at each edge. The padding matters: a clinic-local day's
  * slots can land on a UTC instant just outside the requested range because

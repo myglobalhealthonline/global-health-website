@@ -642,6 +642,30 @@ export async function deleteAdminService(id: string) {
   });
 }
 
+export type AdminPeakPricingDto = {
+  id: string;
+  serviceId: string;
+  enabled: boolean;
+  peakStartMinute: number;
+  peakEndMinute: number;
+  peakPriceCents: number;
+  offPeakPriceCents: number;
+  currencyCode: string;
+};
+
+export async function fetchAdminServicePeakPricing(id: string) {
+  return adminRequest<{ config: AdminPeakPricingDto | null }>(
+    `/api/admin/services/${id}/peak-pricing`,
+  );
+}
+
+export async function putAdminServicePeakPricing(id: string, body: unknown) {
+  return adminRequest<{ config: AdminPeakPricingDto }>(
+    `/api/admin/services/${id}/peak-pricing`,
+    { method: "PUT", body },
+  );
+}
+
 export async function purgeAdminService(id: string) {
   return adminRequest<Record<string, never>>(`/api/admin/services/${id}/purge`, {
     method: "DELETE",

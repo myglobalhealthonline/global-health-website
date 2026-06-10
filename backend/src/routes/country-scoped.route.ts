@@ -16,6 +16,10 @@ import {
   listOpenSlotsForDoctorAndService,
   resolveDoctorTimeZone,
 } from "../modules/doctor-availability/doctor-availability.service.js";
+import {
+  computeSlotPrice,
+  getServicePeakConfig,
+} from "../modules/pricing/peak-pricing.service.js";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -253,7 +257,13 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
             isActive: true,
             country: { code: countryCode, isActive: true },
           },
-          select: { id: true, durationMinutes: true },
+          select: {
+            id: true,
+            durationMinutes: true,
+            basePriceCents: true,
+            currencyCode: true,
+            country: { select: { currency: { select: { code: true } } } },
+          },
         });
         if (!service) {
           return reply.status(404).send(errorResponse("Service not found"));
@@ -310,7 +320,32 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
         // Same tz the slots were generated in — the patient sees clinic-local
         // times so "09:00" reads identically to the doctor and the patient.
         const clinicTimezone = await resolveDoctorTimeZone(doctor.id);
-        return okResponse({ slots, clinicTimezone });
+
+        // Attach the price each slot will be charged. Peak-hour pricing is
+        // resolved server-side from the slot's clinic-local start time so the
+        // displayed price always matches what checkout re-derives. Falls back
+        // to the flat service price when no config / disabled. basePriceCents
+        // can be null for not-yet-priced services → treat as 0.
+        const peakConfig = await getServicePeakConfig(service.id);
+        const basePriceCents = service.basePriceCents ?? 0;
+        const fallbackCurrency =
+          service.currencyCode ?? service.country.currency.code;
+        const pricedSlots = slots.map((s) => {
+          const priced = computeSlotPrice({
+            config: peakConfig,
+            basePriceCents,
+            fallbackCurrency,
+            slotStartUtc: new Date(s.startAt),
+            clinicTimezone,
+          });
+          return {
+            ...s,
+            priceCents: priced.unitPriceCents,
+            pricingType: priced.pricingType,
+            currencyCode: priced.currencyCode,
+          };
+        });
+        return okResponse({ slots: pricedSlots, clinicTimezone });
       } catch (error) {
         return handleError(app, reply, error, "Unexpected availability error");
       }
