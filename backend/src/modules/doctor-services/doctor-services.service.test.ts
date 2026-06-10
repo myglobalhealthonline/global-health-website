@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { config as loadEnv } from "dotenv";
 import { after, before, describe, it } from "node:test";
 
+// The backend compiles to CommonJS, so use __dirname (a CJS global) rather
+// than import.meta.url, which tsc rejects under module: CommonJS output.
 loadEnv({
-  path: join(dirname(fileURLToPath(import.meta.url)), "../../..", ".env"),
+  path: join(__dirname, "../../..", ".env"),
 });
 
 /**
