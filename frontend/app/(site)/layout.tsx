@@ -7,7 +7,7 @@ import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { getCountryFooter } from "@/lib/content/get-country-footers";
-import { DEFAULT_BRAND_LOGO, DEFAULT_BRAND_LOGO_LIGHT } from "@/lib/content/brand-logo";
+import { DEFAULT_BRAND_LOGO_LIGHT } from "@/lib/content/brand-logo";
 import {
   resolveFooterCtaDecorAsset,
   resolveSiteLogoAsset,

@@ -29,16 +29,12 @@ function setLocaleCookie(loc: LocaleCode) {
 export function LanguageSwitcher({
   currentLang,
   availableLocales,
-  /** When the current URL has no country/lang segment to swap (the
-   *  global pages: /about, /blog, /faq, /contact, /), the switcher
-   *  routes to the country home in the chosen language instead of
-   *  mangling the path. Required by the SiteHeader's last-country
-   *  fallback so the picker still works after the visitor leaves
-   *  the country-scoped URL space. */
-  fallbackCountrySlug,
 }: {
   currentLang: LocaleCode;
   availableLocales: LocaleCode[];
+  /** Accepted for caller compatibility (SiteHeader passes it) but not
+   *  currently consumed — the path-swap logic below already handles the
+   *  global-page case. Kept in the prop type so callers still typecheck. */
   fallbackCountrySlug?: string;
 }) {
   const pathname = usePathname();

@@ -208,26 +208,6 @@ export function ConsultationDocumentsModal({
     });
   }
 
-  function applyMetadata(meta: Record<string, string> | null | undefined, docType: string) {
-    if (!meta) return;
-    if (docType === "EXAMS_PRESCRIPTION") {
-      setExams(meta.exams ?? "");
-      setExamsNotes(meta.notes ?? "");
-    } else if (docType === "PRESCRIPTION") {
-      const next: string[] = [];
-      for (let i = 1; i <= 7; i++) {
-        const v = meta[`medication${i}`]?.trim();
-        if (v) next.push(v);
-      }
-      setMeds(next.length > 0 ? next : [""]);
-      setPharmacy(meta.pharmacy ?? context?.patient.pharmacy ?? "");
-    } else if (docType === "ABSENCE_CERTIFICATE") {
-      setStartDate(meta.startDate ?? "");
-      setEndDate(meta.endDate ?? "");
-      setAbsenceReason(meta.reason ?? "");
-    }
-  }
-
   const modal = (
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"

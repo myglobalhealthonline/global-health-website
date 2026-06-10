@@ -63,6 +63,11 @@ export default function VerifyEmailPage() {
       }
     }
     void verify();
+    // Intentionally keyed on `token` only — the ranRef guard runs this once
+    // on mount. `locale` is read inside but deliberately omitted (adding it
+    // would not re-run due to the guard). Proper locale threading is tracked
+    // separately (server-prop, to avoid the first-paint "en" flash).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const t = loadLocaleBundle(locale).auth.verifyEmail;
