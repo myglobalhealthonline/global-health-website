@@ -42,6 +42,25 @@ export function scopeBlogHtml(html: string): string {
   const sanitized = sanitizeHtml(html, {
     allowedTags: BLOG_ALLOWED_TAGS,
     allowedAttributes: BLOG_ALLOWED_ATTRIBUTES,
+    // Constrain the inline `style` attribute to a presentational allowlist.
+    // This keeps the rich-text editor's typography output (color, font,
+    // alignment) while dropping layout-escape vectors an admin-authored or
+    // imported payload could use to deface the page — position, z-index,
+    // top/left/inset, transform, width/height, margin/padding. (Full CSS in
+    // <style> blocks is separately contained via @scope below.)
+    allowedStyles: {
+      "*": {
+        color: [/.*/],
+        "background-color": [/.*/],
+        "font-size": [/^[\d.]+(px|em|rem|%|pt)$/],
+        "font-family": [/.*/],
+        "font-weight": [/^(normal|bold|lighter|bolder|[1-9]00)$/],
+        "font-style": [/^(normal|italic|oblique)$/],
+        "text-align": [/^(left|right|center|justify)$/],
+        "text-decoration": [/^(none|underline|line-through|overline)$/],
+        "line-height": [/^[\d.]+(px|em|rem|%)?$/],
+      },
+    },
     allowedSchemes: ["http", "https", "mailto", "tel"],
     allowedSchemesByTag: { img: ["http", "https", "data"] },
     allowProtocolRelative: false,

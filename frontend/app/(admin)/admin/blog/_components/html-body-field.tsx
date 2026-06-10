@@ -3,14 +3,6 @@
 import { useRef, useState } from "react";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 
-/** Light client-side strip so the unsaved preview can't run scripts. */
-function stripScripts(html: string): string {
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, "")
-    .replace(/<\/?(iframe|object|embed|base|form)[^>]*>/gi, "")
-    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "");
-}
-
 type Props = {
   name: string;
   initialValue?: string | null;
@@ -173,7 +165,7 @@ export function HtmlBodyField({ name, initialValue }: Props) {
           {/* Matches how the public article will render. */}
           <div
             className="gh-article-body"
-            dangerouslySetInnerHTML={{ __html: scopeBlogHtml(stripScripts(value)) }}
+            dangerouslySetInnerHTML={{ __html: scopeBlogHtml(value) }}
           />
         </div>
       ) : null}

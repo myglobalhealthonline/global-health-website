@@ -40,11 +40,40 @@ function mediaRemotePatterns(): NonNullable<NonNullable<NextConfig["images"]>["r
 const remotePatterns = mediaRemotePatterns();
 const apiOrigin = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/+$/, "");
 
+// Baseline security headers applied to every response. A full script-src
+// CSP is intentionally NOT set here — Next.js injects inline bootstrap
+// scripts and the CMS renders inline <style>, so a strict policy would need
+// per-request nonces to avoid breaking the app. We ship the high-value,
+// no-breakage headers now: clickjacking protection (frame-ancestors +
+// X-Frame-Options), MIME sniffing off, HSTS, a tight referrer policy, and
+// a locked-down Permissions-Policy. A nonce-based script-src CSP is a
+// follow-up.
+const SECURITY_HEADERS = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  {
+    key: "Strict-Transport-Security",
+    value: "max-age=31536000; includeSubDomains; preload",
+  },
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+  },
+  {
+    key: "Content-Security-Policy",
+    value: "frame-ancestors 'self'; object-src 'none'; base-uri 'self'",
+  },
+];
+
 const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(__dirname, ".."),
   },
   images: { remotePatterns },
+  async headers() {
+    return [{ source: "/:path*", headers: SECURITY_HEADERS }];
+  },
   async rewrites() {
     const dynamicRewrites = apiOrigin
       ? [
