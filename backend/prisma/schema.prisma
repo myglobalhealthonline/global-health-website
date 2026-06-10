@@ -898,6 +898,9 @@ model Appointment {
   userId                    String?
   countryCode               String
   consultationType          String
+  /// BCP-47 language code chosen by patient at booking time (e.g. "en", "pt", "fr").
+  /// Null for legacy bookings made before language selection was introduced.
+  consultationLanguageCode  String?
   fullName                  String
   email                     String
   phone                     String?

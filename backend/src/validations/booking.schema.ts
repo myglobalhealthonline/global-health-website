@@ -71,6 +71,11 @@ export const bookingSchema = z.object({
    */
   patientTimezone: z.string().trim().min(1).max(64).optional(),
   /**
+   * BCP-47 language code the patient selected in the booking flow (e.g. "en", "pt", "fr").
+   * Stored on the appointment so doctor + admin know which language to use.
+   */
+  consultationLanguageCode: z.string().trim().min(2).max(10).optional(),
+  /**
    * Structured address fields — required when `BookingSetting.requireAddress`
    * is on (defaults true for RX-eligible markets). Validated at schema
    * layer only for max length; route handler enforces presence.

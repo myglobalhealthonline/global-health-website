@@ -299,6 +299,212 @@ const PATCHES: { name: string; sql: string }[] = [
         ADD COLUMN IF NOT EXISTS "doctorServiceSelfSelectApproval" BOOLEAN NOT NULL DEFAULT true;
     `,
   },
+  // ─── S0: Patient portal expansion — schema foundation ────────────────────
+  {
+    name: "VerificationStatus.enum-2026-06",
+    sql: `
+      DO $$ BEGIN
+        CREATE TYPE "VerificationStatus" AS ENUM (
+          'NOT_VERIFIED', 'PENDING', 'VERIFIED', 'REJECTED'
+        );
+      EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+    `,
+  },
+  {
+    name: "ghn_counter.table-2026-06",
+    sql: `
+      CREATE TABLE IF NOT EXISTS "ghn_counter" (
+        "year"     TEXT NOT NULL PRIMARY KEY,
+        "last_seq" BIGINT NOT NULL DEFAULT 0
+      );
+    `,
+  },
+  {
+    name: "PatientProfile.globalHealthNumber-2026-06",
+    sql: `
+      ALTER TABLE "PatientProfile"
+        ADD COLUMN IF NOT EXISTS "globalHealthNumber"       TEXT,
+        ADD COLUMN IF NOT EXISTS "insuranceProviderName"    TEXT,
+        ADD COLUMN IF NOT EXISTS "insurancePolicyNumber"    TEXT,
+        ADD COLUMN IF NOT EXISTS "insuranceDocumentKey"     TEXT,
+        ADD COLUMN IF NOT EXISTS "insuranceDocumentStatus"  "VerificationStatus" NOT NULL DEFAULT 'NOT_VERIFIED',
+        ADD COLUMN IF NOT EXISTS "insuranceAdminNotes"      TEXT,
+        ADD COLUMN IF NOT EXISTS "idVerificationStatus"     "VerificationStatus" NOT NULL DEFAULT 'NOT_VERIFIED',
+        ADD COLUMN IF NOT EXISTS "idDocumentKey"            TEXT,
+        ADD COLUMN IF NOT EXISTS "idDocumentBackKey"        TEXT,
+        ADD COLUMN IF NOT EXISTS "idDocumentType"           TEXT,
+        ADD COLUMN IF NOT EXISTS "idDocumentNumber"         TEXT,
+        ADD COLUMN IF NOT EXISTS "idDocumentIssuingCountry" TEXT,
+        ADD COLUMN IF NOT EXISTS "idDocumentExpiryDate"     TIMESTAMP(3),
+        ADD COLUMN IF NOT EXISTS "idVerificationAdminNotes" TEXT,
+        ADD COLUMN IF NOT EXISTS "idVerificationReviewedBy" TEXT,
+        ADD COLUMN IF NOT EXISTS "idVerificationReviewedAt" TIMESTAMP(3),
+        ADD COLUMN IF NOT EXISTS "phoneVerificationStatus"  "VerificationStatus" NOT NULL DEFAULT 'NOT_VERIFIED',
+        ADD COLUMN IF NOT EXISTS "phoneVerifiedAt"          TIMESTAMP(3),
+        ADD COLUMN IF NOT EXISTS "emailVerificationStatus"  "VerificationStatus" NOT NULL DEFAULT 'NOT_VERIFIED',
+        ADD COLUMN IF NOT EXISTS "emailVerifiedAt"          TIMESTAMP(3),
+        ADD COLUMN IF NOT EXISTS "stripeCustomerId"         TEXT;
+      CREATE UNIQUE INDEX IF NOT EXISTS "PatientProfile_globalHealthNumber_key"
+        ON "PatientProfile"("globalHealthNumber") WHERE "globalHealthNumber" IS NOT NULL;
+      CREATE UNIQUE INDEX IF NOT EXISTS "PatientProfile_stripeCustomerId_key"
+        ON "PatientProfile"("stripeCustomerId") WHERE "stripeCustomerId" IS NOT NULL;
+      CREATE INDEX IF NOT EXISTS "PatientProfile_globalHealthNumber_idx"
+        ON "PatientProfile"("globalHealthNumber");
+    `,
+  },
+  {
+    name: "ServiceFaq.table-2026-06",
+    sql: `
+      CREATE TABLE IF NOT EXISTS "ServiceFaq" (
+        "id"        TEXT NOT NULL,
+        "serviceId" TEXT NOT NULL,
+        "question"  TEXT NOT NULL,
+        "answer"    TEXT NOT NULL,
+        "sortOrder" INTEGER NOT NULL DEFAULT 0,
+        "isVisible" BOOLEAN NOT NULL DEFAULT true,
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "ServiceFaq_pkey" PRIMARY KEY ("id")
+      );
+      DO $$ BEGIN
+        ALTER TABLE "ServiceFaq"
+          ADD CONSTRAINT "ServiceFaq_serviceId_fkey"
+          FOREIGN KEY ("serviceId") REFERENCES "Service"("id")
+          ON DELETE CASCADE ON UPDATE CASCADE;
+      EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+      CREATE INDEX IF NOT EXISTS "ServiceFaq_serviceId_isVisible_sortOrder_idx"
+        ON "ServiceFaq"("serviceId", "isVisible", "sortOrder");
+    `,
+  },
+  {
+    name: "PatientNationalityDocument.table-2026-06",
+    sql: `
+      CREATE TABLE IF NOT EXISTS "PatientNationalityDocument" (
+        "id"                 TEXT NOT NULL,
+        "patientProfileId"   TEXT NOT NULL,
+        "globalHealthNumber" TEXT,
+        "slotNumber"         INTEGER NOT NULL,
+        "nationalityCountry" TEXT NOT NULL,
+        "documentType"       TEXT NOT NULL,
+        "documentNumber"     TEXT,
+        "frontFileKey"       TEXT,
+        "backFileKey"        TEXT,
+        "expiryDate"         TIMESTAMP(3),
+        "verificationStatus" "VerificationStatus" NOT NULL DEFAULT 'NOT_VERIFIED',
+        "adminNotes"         TEXT,
+        "reviewedByAdminId"  TEXT,
+        "reviewedAt"         TIMESTAMP(3),
+        "createdAt"          TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt"          TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "PatientNationalityDocument_pkey" PRIMARY KEY ("id")
+      );
+      DO $$ BEGIN
+        ALTER TABLE "PatientNationalityDocument"
+          ADD CONSTRAINT "PatientNationalityDocument_patientProfileId_fkey"
+          FOREIGN KEY ("patientProfileId") REFERENCES "PatientProfile"("id")
+          ON DELETE CASCADE ON UPDATE CASCADE;
+      EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+      CREATE UNIQUE INDEX IF NOT EXISTS "PatientNationalityDocument_patientProfileId_slotNumber_key"
+        ON "PatientNationalityDocument"("patientProfileId", "slotNumber");
+      CREATE INDEX IF NOT EXISTS "PatientNationalityDocument_patientProfileId_idx"
+        ON "PatientNationalityDocument"("patientProfileId");
+    `,
+  },
+  {
+    name: "MedicalDocument.table-2026-06",
+    sql: `
+      CREATE TABLE IF NOT EXISTS "MedicalDocument" (
+        "id"                    TEXT NOT NULL,
+        "patientProfileId"      TEXT NOT NULL,
+        "globalHealthNumber"    TEXT,
+        "uploadedByUserId"      TEXT,
+        "uploadedByRole"        TEXT NOT NULL,
+        "documentType"          TEXT NOT NULL,
+        "title"                 TEXT NOT NULL,
+        "description"           TEXT,
+        "fileKey"               TEXT NOT NULL,
+        "fileName"              TEXT NOT NULL,
+        "mimetype"              TEXT NOT NULL,
+        "byteSize"              INTEGER NOT NULL,
+        "relatedAppointmentId"  TEXT,
+        "relatedConsultationId" TEXT,
+        "visibleToPatient"      BOOLEAN NOT NULL DEFAULT false,
+        "createdAt"             TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        "updatedAt"             TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "MedicalDocument_pkey" PRIMARY KEY ("id")
+      );
+      DO $$ BEGIN
+        ALTER TABLE "MedicalDocument"
+          ADD CONSTRAINT "MedicalDocument_patientProfileId_fkey"
+          FOREIGN KEY ("patientProfileId") REFERENCES "PatientProfile"("id")
+          ON DELETE CASCADE ON UPDATE CASCADE;
+      EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+      CREATE INDEX IF NOT EXISTS "MedicalDocument_patientProfileId_documentType_idx"
+        ON "MedicalDocument"("patientProfileId", "documentType");
+      CREATE INDEX IF NOT EXISTS "MedicalDocument_patientProfileId_visibleToPatient_idx"
+        ON "MedicalDocument"("patientProfileId", "visibleToPatient");
+      CREATE INDEX IF NOT EXISTS "MedicalDocument_relatedAppointmentId_idx"
+        ON "MedicalDocument"("relatedAppointmentId");
+    `,
+  },
+  {
+    name: "PatientConsent.table-2026-06",
+    sql: `
+      CREATE TABLE IF NOT EXISTS "PatientConsent" (
+        "id"                 TEXT NOT NULL,
+        "patientProfileId"   TEXT NOT NULL,
+        "globalHealthNumber" TEXT,
+        "consentType"        TEXT NOT NULL,
+        "consentValue"       BOOLEAN NOT NULL,
+        "consentVersion"     TEXT,
+        "source"             TEXT NOT NULL DEFAULT 'PATIENT_PORTAL',
+        "changedByUserId"    TEXT,
+        "changedByRole"      TEXT,
+        "createdAt"          TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "PatientConsent_pkey" PRIMARY KEY ("id")
+      );
+      DO $$ BEGIN
+        ALTER TABLE "PatientConsent"
+          ADD CONSTRAINT "PatientConsent_patientProfileId_fkey"
+          FOREIGN KEY ("patientProfileId") REFERENCES "PatientProfile"("id")
+          ON DELETE CASCADE ON UPDATE CASCADE;
+      EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+      CREATE INDEX IF NOT EXISTS "PatientConsent_patientProfileId_consentType_createdAt_idx"
+        ON "PatientConsent"("patientProfileId", "consentType", "createdAt");
+    `,
+  },
+  {
+    name: "MedicalAccessLog.table-2026-06",
+    sql: `
+      CREATE TABLE IF NOT EXISTS "MedicalAccessLog" (
+        "id"                   TEXT NOT NULL,
+        "patientProfileId"     TEXT NOT NULL,
+        "globalHealthNumber"   TEXT,
+        "accessedByUserId"     TEXT,
+        "accessedByRole"       TEXT NOT NULL,
+        "accessedByName"       TEXT,
+        "accessedResourceType" TEXT NOT NULL,
+        "accessedResourceId"   TEXT,
+        "accessAction"         TEXT NOT NULL,
+        "accessReason"         TEXT,
+        "relatedAppointmentId" TEXT,
+        "ipAddress"            TEXT,
+        "userAgent"            TEXT,
+        "createdAt"            TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "MedicalAccessLog_pkey" PRIMARY KEY ("id")
+      );
+      DO $$ BEGIN
+        ALTER TABLE "MedicalAccessLog"
+          ADD CONSTRAINT "MedicalAccessLog_patientProfileId_fkey"
+          FOREIGN KEY ("patientProfileId") REFERENCES "PatientProfile"("id")
+          ON DELETE CASCADE ON UPDATE CASCADE;
+      EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+      CREATE INDEX IF NOT EXISTS "MedicalAccessLog_patientProfileId_createdAt_idx"
+        ON "MedicalAccessLog"("patientProfileId", "createdAt");
+      CREATE INDEX IF NOT EXISTS "MedicalAccessLog_patientProfileId_accessedByRole_idx"
+        ON "MedicalAccessLog"("patientProfileId", "accessedByRole");
+    `,
+  },
 ];
 
 export async function ensureSchema(log: {

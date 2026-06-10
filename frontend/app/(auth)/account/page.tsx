@@ -11,7 +11,7 @@ import {
   UserRound,
   Video,
 } from "lucide-react";
-import { fetchAccountAppointments } from "@/lib/api/account-appointments-api";
+import { fetchAccountAppointments, fetchTrustpilotReminder } from "@/lib/api/account-appointments-api";
 import { fetchAccountPayments } from "@/lib/api/account-payments-api";
 import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
 import { getServerAuthUser } from "@/lib/api/server-auth";
@@ -25,6 +25,7 @@ import {
   SectionHeader,
   StatCard,
 } from "@/components/portal-atoms";
+import { Star } from "lucide-react";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
 
@@ -39,11 +40,12 @@ const ACTIVE_STATUSES = new Set([
 export default async function AccountOverviewPage() {
   const user = await getServerAuthUser();
 
-  const [apptRes, payRes, bookHref, locale] = await Promise.all([
+  const [apptRes, payRes, bookHref, locale, trustpilot] = await Promise.all([
     fetchAccountAppointments(),
     fetchAccountPayments(),
     resolveBookConsultationHref(),
     getPageLocale(),
+    fetchTrustpilotReminder(),
   ]);
   const { account: a } = loadLocaleBundle(locale);
 
@@ -148,6 +150,41 @@ export default async function AccountOverviewPage() {
               </div>
             </AdminCard>
           </Link>
+        </div>
+      ) : null}
+
+      {/* ── Trustpilot review reminder ────────────────────────────── */}
+      {trustpilot.showCta && trustpilot.trustpilotUrl ? (
+        <div className="mt-6">
+          <AdminCard style={{ borderLeft: "3px solid #00b67a" }}>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <Star
+                  className="size-5 shrink-0"
+                  style={{ color: "#00b67a" }}
+                  aria-hidden
+                />
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#00b67a" }}>
+                    Share your experience
+                  </p>
+                  <p className="mt-0.5 text-sm font-medium text-[var(--color-text-primary)]">
+                    Your consultation is complete — leave us a review on Trustpilot
+                  </p>
+                </div>
+              </div>
+              <Btn
+                href={trustpilot.trustpilotUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="primary"
+                size="sm"
+                iconLeft={<Star className="size-4" />}
+              >
+                Write a review
+              </Btn>
+            </div>
+          </AdminCard>
         </div>
       ) : null}
 

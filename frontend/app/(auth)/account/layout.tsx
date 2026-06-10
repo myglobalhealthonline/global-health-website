@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import {
   CalendarDays,
   CreditCard,
+  FileText,
+  History,
   LayoutDashboard,
   PillBottle,
   ShieldCheck,
@@ -55,6 +57,8 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     { href: "/account/bookings", label: a.nav.myBookings, icon: <CalendarDays className="size-4" aria-hidden />, badge: unreadMessages },
     { href: "/account/orders", label: a.nav.myOrders, icon: <ShoppingBag className="size-4" aria-hidden /> },
     { href: "/account/prescriptions", label: a.nav.prescriptions, icon: <PillBottle className="size-4" aria-hidden /> },
+    { href: "/account/medical-files", label: "Medical files", icon: <FileText className="size-4" aria-hidden /> },
+    { href: "/account/access-history", label: "Access history", icon: <History className="size-4" aria-hidden /> },
     { href: "/account/payments", label: a.nav.payments, icon: <CreditCard className="size-4" aria-hidden /> },
     { href: "/account/profile", label: a.nav.profile, icon: <UserRound className="size-4" aria-hidden /> },
     { href: "/account/security", label: a.nav.security, icon: <ShieldCheck className="size-4" aria-hidden /> },

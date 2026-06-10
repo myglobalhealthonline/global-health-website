@@ -674,6 +674,60 @@ export async function purgeAdminService(id: string) {
   });
 }
 
+// ─── Service FAQ admin API ────────────────────────────────────────────────────
+
+export type AdminServiceFaqDto = {
+  id: string;
+  serviceId: string;
+  question: string;
+  answer: string;
+  sortOrder: number;
+  isVisible: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export async function fetchAdminServiceFaqs(serviceId: string) {
+  return adminRequest<{ faqs: AdminServiceFaqDto[] }>(
+    `/api/admin/services/${serviceId}/faqs`,
+  );
+}
+
+export async function createAdminServiceFaq(
+  serviceId: string,
+  body: { question: string; answer: string; isVisible?: boolean },
+) {
+  return adminRequest<{ faq: AdminServiceFaqDto }>(
+    `/api/admin/services/${serviceId}/faqs`,
+    { method: "POST", body },
+  );
+}
+
+export async function updateAdminServiceFaq(
+  serviceId: string,
+  faqId: string,
+  body: { question?: string; answer?: string; sortOrder?: number; isVisible?: boolean },
+) {
+  return adminRequest<{ faq: AdminServiceFaqDto }>(
+    `/api/admin/services/${serviceId}/faqs/${faqId}`,
+    { method: "PATCH", body },
+  );
+}
+
+export async function deleteAdminServiceFaq(serviceId: string, faqId: string) {
+  return adminRequest<Record<string, never>>(
+    `/api/admin/services/${serviceId}/faqs/${faqId}`,
+    { method: "DELETE" },
+  );
+}
+
+export async function reorderAdminServiceFaqs(serviceId: string, orderedIds: string[]) {
+  return adminRequest<{ faqs: AdminServiceFaqDto[] }>(
+    `/api/admin/services/${serviceId}/faqs/reorder`,
+    { method: "PATCH", body: { orderedIds } },
+  );
+}
+
 export type AdminDoctorSpecialtyLinkDto = {
   id: string;
   doctorId: string;

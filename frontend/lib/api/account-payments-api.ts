@@ -8,12 +8,15 @@ export type AccountPayment = {
   appointmentId: string;
   consultationType: string;
   countryCode: string;
+  serviceName: string | null;
+  doctorName: string | null;
   status: "REQUIRES_ACTION" | "PROCESSING" | "PAID" | "FAILED" | "REFUNDED" | "CANCELED" | "UNPAID";
   amountCents: number;
   currencyCode: string;
   eventType: string;
   bookedAt: string;
   paidAt: string;
+  stripePaymentIntentId: string | null;
 };
 
 type ApiResult<T> =

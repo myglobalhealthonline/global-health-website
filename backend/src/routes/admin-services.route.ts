@@ -27,7 +27,21 @@ import {
   adminSpecialtiesQuerySchema,
   adminSpecialtyUpdateBodySchema,
   serviceIdParamsSchema,
+  serviceFaqIdParamsSchema,
+  serviceFaqCreateBodySchema,
+  serviceFaqUpdateBodySchema,
+  serviceFaqReorderBodySchema,
 } from "../validations/admin-services.schema.js";
+import {
+  listServiceFaqs,
+  createServiceFaq,
+  updateServiceFaq,
+  deleteServiceFaq,
+  reorderServiceFaqs,
+  ServiceFaqNotFoundError,
+  ServiceFaqServiceNotFoundError,
+  ServiceFaqMaxLimitError,
+} from "../services/service-faq.service.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
@@ -281,6 +295,107 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       return okResponse({}, "Service deleted");
     } catch (error) {
       return handleServiceWriteError(app, reply, error);
+    }
+  });
+  // ─── Service FAQs ──────────────────────────────────────────────────────────
+
+  app.get("/api/admin/services/:id/faqs", async (request, reply) => {
+    const params = serviceIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid service id", params.error.flatten()));
+    }
+    try {
+      const faqs = await listServiceFaqs(params.data.id);
+      return okResponse({ faqs });
+    } catch (error) {
+      if (error instanceof ServiceFaqServiceNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected FAQ error"));
+    }
+  });
+
+  app.post("/api/admin/services/:id/faqs", async (request, reply) => {
+    const params = serviceIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid service id", params.error.flatten()));
+    }
+    const body = serviceFaqCreateBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid FAQ payload", body.error.flatten()));
+    }
+    try {
+      const faq = await createServiceFaq(params.data.id, body.data);
+      return reply.status(201).send({ success: true, data: { faq } });
+    } catch (error) {
+      if (error instanceof ServiceFaqServiceNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      if (error instanceof ServiceFaqMaxLimitError) {
+        return reply.status(422).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected FAQ error"));
+    }
+  });
+
+  app.patch("/api/admin/services/:id/faqs/:faqId", async (request, reply) => {
+    const params = serviceFaqIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid params", params.error.flatten()));
+    }
+    const body = serviceFaqUpdateBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid FAQ update", body.error.flatten()));
+    }
+    try {
+      const faq = await updateServiceFaq(params.data.faqId, body.data);
+      return okResponse({ faq }, "FAQ updated");
+    } catch (error) {
+      if (error instanceof ServiceFaqNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected FAQ error"));
+    }
+  });
+
+  app.delete("/api/admin/services/:id/faqs/:faqId", async (request, reply) => {
+    const params = serviceFaqIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid params", params.error.flatten()));
+    }
+    try {
+      await deleteServiceFaq(params.data.faqId);
+      return okResponse({}, "FAQ deleted");
+    } catch (error) {
+      if (error instanceof ServiceFaqNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected FAQ error"));
+    }
+  });
+
+  app.patch("/api/admin/services/:id/faqs/reorder", async (request, reply) => {
+    const params = serviceIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid service id", params.error.flatten()));
+    }
+    const body = serviceFaqReorderBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid reorder payload", body.error.flatten()));
+    }
+    try {
+      const faqs = await reorderServiceFaqs(params.data.id, body.data.orderedIds);
+      return okResponse({ faqs }, "FAQs reordered");
+    } catch (error) {
+      if (error instanceof ServiceFaqNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected FAQ error"));
     }
   });
 };

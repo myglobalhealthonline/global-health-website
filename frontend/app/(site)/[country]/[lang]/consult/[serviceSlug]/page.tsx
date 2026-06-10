@@ -11,6 +11,7 @@ import {
   getCountryServices,
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
+import { fetchServiceFaqs } from "@/lib/api/site-content-api";
 import { getServiceDoctorAvailability } from "@/lib/content/get-doctor-availability";
 import { getServiceSeo } from "@/data/service-seo";
 import { getServiceDetailContent } from "@/lib/content/ireland-service-content";
@@ -103,9 +104,10 @@ export default async function ConsultPage({
   // Resolve the service. It can be either GENERAL or SPECIALIST kind.
   // Pass the route locale so display fields resolve to the viewing
   // language (same Service.id either way — booking is unaffected).
-  const [generals, specialists] = await Promise.all([
+  const [generals, specialists, dynamicFaqs] = await Promise.all([
     getCountryServices(code, "GENERAL", lang),
     getCountryServices(code, "SPECIALIST", lang),
+    fetchServiceFaqs(serviceSlug, code),
   ]);
   const service: CountryServiceCard | undefined =
     generals.find((s) => s.slug === serviceSlug) ??
@@ -307,6 +309,15 @@ export default async function ConsultPage({
           <FAQSection title={c.gpPage.faqTitle} items={detail.faq} />
           <MedicalDisclaimer paragraphs={detail.disclaimerFull} />
         </>
+      ) : null}
+
+      {/* Dynamic service FAQs from the admin CMS — shown when no authored
+          static detail content is present (or always if admin adds them). */}
+      {!detail && dynamicFaqs.length > 0 && !selectedDoctorSlug ? (
+        <FAQSection title="Frequently Asked Questions" items={dynamicFaqs} />
+      ) : null}
+      {detail && dynamicFaqs.length > 0 && !selectedDoctorSlug ? (
+        <FAQSection title="More Questions" items={dynamicFaqs} />
       ) : null}
     </>
   );

@@ -64,6 +64,7 @@ async function findOwnedAppointment(doctorId: string, appointmentId: string) {
       pharmacy: true,
       symptoms: true,
       patientTimezone: true,
+      consultationLanguageCode: true,
       createdAt: true,
     },
   });
@@ -105,6 +106,7 @@ async function findReadableAppointment(
       pharmacy: true,
       symptoms: true,
       patientTimezone: true,
+      consultationLanguageCode: true,
       createdAt: true,
     },
   });
@@ -139,10 +141,14 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
         if (!appt) {
           return reply.status(404).send(errorResponse("Appointment not found"));
         }
-        const consultation = await prisma.consultation.findUnique({
-          where: { appointmentId: appt.id },
-        });
-        const clinicTimezone = await readClinicTimezone(appt.countryCode);
+        const [consultation, clinicTimezone, patientProfile] = await Promise.all([
+          prisma.consultation.findUnique({ where: { appointmentId: appt.id } }),
+          readClinicTimezone(appt.countryCode),
+          prisma.patientProfile.findUnique({
+            where: { email: appt.email },
+            select: { globalHealthNumber: true },
+          }),
+        ]);
         return okResponse({
           appointment: {
             ...appt,
@@ -150,6 +156,7 @@ const consultationsRoute: FastifyPluginAsync = async (app) => {
             dateOfBirth: appt.dateOfBirth?.toISOString() ?? null,
             createdAt: appt.createdAt.toISOString(),
             clinicTimezone,
+            globalHealthNumber: patientProfile?.globalHealthNumber ?? null,
           },
           consultation: consultation
             ? {

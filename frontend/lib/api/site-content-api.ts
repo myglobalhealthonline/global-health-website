@@ -278,3 +278,28 @@ export async function fetchServicesByCountry(
       : [SITE_CACHE_TAGS.countryServices(countryCode)],
   });
 }
+
+export type ServiceFaqItem = {
+  id: string;
+  question: string;
+  answer: string;
+  sortOrder: number;
+};
+
+export async function fetchServiceFaqs(
+  serviceSlug: string,
+  countryCode?: string,
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+): Promise<ServiceFaqItem[]> {
+  const params = new URLSearchParams();
+  if (countryCode) params.set("countryCode", countryCode);
+  const qs = params.toString();
+  const url = `/api/services/${encodeURIComponent(serviceSlug)}/faqs${qs ? `?${qs}` : ""}`;
+  const result = await apiRequest<{ faqs: ServiceFaqItem[] }>(url, {
+    timeoutMs,
+    revalidate: REVALIDATE_SECONDS,
+    tags: [`service:${serviceSlug}:faqs`],
+  });
+  if (!result.ok) return [];
+  return result.data.faqs;
+}

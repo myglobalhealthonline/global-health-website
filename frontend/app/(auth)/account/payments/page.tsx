@@ -5,6 +5,7 @@ import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { ReceiptButton } from "./_components/receipt-button";
 
 export const dynamic = "force-dynamic";
 
@@ -87,7 +88,7 @@ export default async function AccountPaymentsPage() {
                 <th className="px-4 py-3 font-semibold">{a.payments.colConsultation}</th>
                 <th className="px-4 py-3 font-semibold">{a.payments.colAmount}</th>
                 <th className="px-4 py-3 font-semibold">{a.payments.colStatus}</th>
-                <th className="px-4 py-3 text-right font-semibold">{a.payments.colBooking}</th>
+                <th className="px-4 py-3 text-right font-semibold">Receipt</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-border)]">
@@ -97,7 +98,14 @@ export default async function AccountPaymentsPage() {
                     {formatAppDate(p.paidAt)}
                   </td>
                   <td className="px-4 py-3 text-[var(--color-text-primary)]">
-                    <span className="block font-semibold">{p.consultationType}</span>
+                    <span className="block font-semibold">
+                      {p.serviceName ?? p.consultationType}
+                    </span>
+                    {p.doctorName && (
+                      <span className="block text-xs text-[var(--color-text-muted)]">
+                        Dr. {p.doctorName}
+                      </span>
+                    )}
                     <span className="block text-xs text-[var(--color-text-muted)]">
                       {p.countryCode}
                     </span>
@@ -113,12 +121,7 @@ export default async function AccountPaymentsPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <Link
-                      href="/account/bookings"
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:underline"
-                    >
-                      {a.payments.view} <ExternalLink className="size-3" aria-hidden />
-                    </Link>
+                    <ReceiptButton paymentId={p.id} />
                   </td>
                 </tr>
               ))}

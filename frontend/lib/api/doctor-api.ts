@@ -227,6 +227,10 @@ export type AppointmentDetailDto = {
    *  country. Drives the doctor-local time shown in the portal. Defaults to
    *  "UTC" when the country has no booking setting. */
   clinicTimezone?: string;
+  /** BCP-47 language the patient selected at booking (e.g. "en", "pt"). */
+  consultationLanguageCode?: string | null;
+  /** Patient's Global Health Number — shown in appointment/medical context only. */
+  globalHealthNumber?: string | null;
   createdAt: string;
 };
 

@@ -948,3 +948,35 @@ export async function purgeAdminService(id: string): Promise<boolean> {
     throw normalizeDbError(error, "Services data is unavailable");
   }
 }
+
+/** Public: resolve a service by slug + country code; include visible FAQs. */
+export async function getPublicServiceBySlug(slug: string, countryCode?: string) {
+  try {
+    return await prisma.service.findFirst({
+      where: {
+        slug,
+        isActive: true,
+        ...(countryCode ? { country: { code: countryCode, isActive: true } } : {}),
+      },
+      include: {
+        country: {
+          select: { id: true, code: true, slug: true, name: true, defaultLocale: true },
+        },
+        specialty: true,
+        assets: {
+          where: { isActive: true, kind: "IMAGE" },
+          orderBy: { createdAt: "asc" },
+          select: { id: true, kind: true, key: true, path: true, altText: true, usageNote: true },
+        },
+        faqs: {
+          where: { isVisible: true },
+          orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+          select: { id: true, question: true, answer: true, sortOrder: true },
+        },
+        translations: { select: serviceTranslationSelect },
+      },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Service data is unavailable");
+  }
+}

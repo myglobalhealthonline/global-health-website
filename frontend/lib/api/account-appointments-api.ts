@@ -78,6 +78,29 @@ export async function fetchAccountAppointments(): Promise<ApiResult<{ items: Acc
   }
 }
 
+export type TrustpilotReminderData = {
+  showCta: boolean;
+  trustpilotUrl: string | null;
+  completedAt: string | null;
+};
+
+export async function fetchTrustpilotReminder(): Promise<TrustpilotReminderData> {
+  const apiUrl = getBackendOrigin();
+  if (!apiUrl) return { showCta: false, trustpilotUrl: null, completedAt: null };
+  const cookieHeader = await buildCookieHeader();
+  try {
+    const res = await fetch(`${apiUrl}/api/account/trustpilot-reminder`, {
+      headers: cookieHeader ? { cookie: cookieHeader } : undefined,
+      cache: "no-store",
+    });
+    const json = (await res.json()) as { ok?: boolean; data?: TrustpilotReminderData };
+    if (!res.ok || !json.ok || !json.data) return { showCta: false, trustpilotUrl: null, completedAt: null };
+    return json.data;
+  } catch {
+    return { showCta: false, trustpilotUrl: null, completedAt: null };
+  }
+}
+
 export async function fetchPatientUnreadMessageCount(): Promise<number> {
   const apiUrl = getBackendOrigin();
   if (!apiUrl) return 0;

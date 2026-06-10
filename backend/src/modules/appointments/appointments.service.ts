@@ -54,6 +54,7 @@ function buildBookingExtras(input: BookingInput) {
   const bothConsents =
     input.gdprConsentClinic === true && input.gdprConsentPlatform === true;
   return {
+    consultationLanguageCode: nullify(input.consultationLanguageCode),
     patientTimezone: nullify(input.patientTimezone),
     addressLine1: nullify(input.addressLine1),
     addressLine2: nullify(input.addressLine2),

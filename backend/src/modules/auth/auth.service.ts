@@ -1,9 +1,10 @@
 import bcrypt from "bcryptjs";
 import { createHash, randomBytes } from "node:crypto";
-import { Prisma, UserRole, type User } from "@prisma/client";
+import { Prisma, UserRole, VerificationStatus, type User } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import type { LoginBody, RegisterBody } from "../../validations/auth.schema.js";
+import { generateGlobalHealthNumber } from "../../lib/global-health-number.js";
 
 export type SafeUser = {
   id: string;
@@ -59,6 +60,18 @@ function toSafeUser(user: User): SafeUser {
 export async function registerPatient(input: RegisterBody) {
   const email = input.email.toLowerCase();
   const passwordHash = await bcrypt.hash(input.password, 12);
+
+  // Generate GHN before transaction — atomic counter guarantees uniqueness.
+  let ghn: string;
+  try {
+    ghn = await generateGlobalHealthNumber();
+  } catch {
+    // If GHN generation fails (DB unavailable at counter step), generate a
+    // temporary fallback using timestamp+random. A backfill job normalises
+    // these. This path should never happen in production with a healthy DB.
+    ghn = `GH-${new Date().getFullYear()}-T${Date.now().toString(36).toUpperCase()}`;
+  }
+
   try {
     const user = await prisma.user.create({
       data: {
@@ -69,6 +82,30 @@ export async function registerPatient(input: RegisterBody) {
         role: UserRole.PATIENT,
       },
     });
+
+    // Create PatientProfile immediately with GHN so it is always present
+    // from registration. upsert protects against the rare case where a
+    // PatientProfile was pre-created (e.g. manual booking before signup).
+    await prisma.patientProfile.upsert({
+      where: { email },
+      create: {
+        email,
+        userId: user.id,
+        fullName: input.fullName,
+        phone: input.phone?.trim() || null,
+        globalHealthNumber: ghn,
+        emailVerificationStatus: VerificationStatus.NOT_VERIFIED,
+      },
+      update: {
+        userId: user.id,
+        // Only set GHN if the profile doesn't already have one.
+        ...(await prisma.patientProfile
+          .findUnique({ where: { email }, select: { globalHealthNumber: true } })
+          .then((p) => (!p?.globalHealthNumber ? { globalHealthNumber: ghn } : {}))
+          .catch(() => ({}))),
+      },
+    });
+
     return toSafeUser(user);
   } catch (error) {
     if (typeof error === "object" && error && "code" in error && (error as { code?: string }).code === "P2002") {

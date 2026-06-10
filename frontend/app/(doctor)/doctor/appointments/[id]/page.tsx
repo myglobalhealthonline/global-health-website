@@ -282,6 +282,9 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       Patient
                     </h3>
                     <dl className="mt-3 grid gap-2 text-[13px]">
+                      {appointment.globalHealthNumber ? (
+                        <Row label="Global Health No." value={appointment.globalHealthNumber} />
+                      ) : null}
                       <Row label="Email" value={appointment.email} />
                       <Row label="Phone" value={appointment.phone ?? "—"} />
                       <Row
@@ -292,6 +295,9 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                             : "—"
                         }
                       />
+                      {appointment.consultationLanguageCode ? (
+                        <Row label="Consultation language" value={appointment.consultationLanguageCode.toUpperCase()} />
+                      ) : null}
                       <Row label="Status" value={appointment.status} />
                       <Row
                         label="Booked"

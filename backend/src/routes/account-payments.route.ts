@@ -4,6 +4,7 @@ import { DatabaseUnavailableError, normalizeDbError } from "../modules/shared/db
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import type { SafeUser } from "../modules/auth/auth.service.js";
+import { getReceiptUrl } from "../services/stripe-receipt.service.js";
 
 /**
  * Public-facing payment receipts list for the signed-in patient.
@@ -48,6 +49,7 @@ const accountPaymentsRoute: FastifyPluginAsync = async (app) => {
           amountCents: true,
           currencyCode: true,
           rawEventType: true,
+          stripePaymentIntentId: true,
           createdAt: true,
           appointment: {
             select: {
@@ -55,6 +57,8 @@ const accountPaymentsRoute: FastifyPluginAsync = async (app) => {
               consultationType: true,
               countryCode: true,
               createdAt: true,
+              service: { select: { name: true } },
+              doctor: { select: { fullName: true } },
             },
           },
         },
@@ -66,12 +70,15 @@ const accountPaymentsRoute: FastifyPluginAsync = async (app) => {
         appointmentId: p.appointment.id,
         consultationType: p.appointment.consultationType,
         countryCode: p.appointment.countryCode,
+        serviceName: p.appointment.service?.name ?? null,
+        doctorName: p.appointment.doctor?.fullName ?? null,
         status: p.status,
         amountCents: p.amountCents,
         currencyCode: p.currencyCode,
         eventType: p.rawEventType,
         bookedAt: p.appointment.createdAt.toISOString(),
         paidAt: p.createdAt.toISOString(),
+        stripePaymentIntentId: p.stripePaymentIntentId ?? null,
       }));
 
       return okResponse({ items });
@@ -84,6 +91,40 @@ const accountPaymentsRoute: FastifyPluginAsync = async (app) => {
       return reply.status(500).send(errorResponse("Could not load payment history"));
     }
   });
+  // ─── Receipt URL (on-demand per payment) ─────────────────────────────────
+
+  app.get<{ Params: { id: string } }>(
+    "/api/account/payments/:id/receipt-url",
+    async (request, reply) => {
+      let authUser: SafeUser | null = null;
+      try {
+        authUser = await resolveOptionalAuthUser(request);
+      } catch {
+        return reply.status(401).send(errorResponse("Not authenticated"));
+      }
+      if (!authUser) return reply.status(401).send(errorResponse("Not authenticated"));
+      if (authUser.role !== "PATIENT" && authUser.role !== "ADMIN") {
+        return reply.status(403).send(errorResponse("Forbidden"));
+      }
+
+      try {
+        const payment = await prisma.payment.findFirst({
+          where: {
+            id: request.params.id,
+            appointment: { userId: authUser.id },
+          },
+          select: { stripePaymentIntentId: true },
+        });
+        if (!payment) return reply.status(404).send(errorResponse("Payment not found"));
+
+        const url = await getReceiptUrl(payment.stripePaymentIntentId ?? null);
+        return okResponse({ url });
+      } catch (error) {
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not fetch receipt"));
+      }
+    },
+  );
 };
 
 export default accountPaymentsRoute;

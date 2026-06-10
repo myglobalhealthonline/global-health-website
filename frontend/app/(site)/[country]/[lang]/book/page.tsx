@@ -28,6 +28,7 @@ import { hreflangAlternates } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { ConsultationBookingForm } from "../consult/[serviceSlug]/_components/consultation-booking-form";
+import { LanguageFilteredDoctors } from "./_components/language-filtered-doctors";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -280,7 +281,7 @@ async function SelectedServiceFlow({
             }}
           />
         ) : null}
-        <DoctorPicker
+        <LanguageFilteredDoctors
           country={country}
           lang={lang}
           service={service}

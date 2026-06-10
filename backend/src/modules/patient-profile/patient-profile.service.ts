@@ -4,6 +4,7 @@ import { UserRole } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { encryptPhiFields, decryptPhiFields } from "../../lib/crypto/phi-crypto.js";
+import { generateGlobalHealthNumber } from "../../lib/global-health-number.js";
 
 export async function upsertPatientProfileByEmail(
   input: {
@@ -60,6 +61,20 @@ export async function upsertPatientProfileByEmail(
       });
     }
 
+    // Generate GHN only when we know we need to create a new profile row.
+    let ghn: string | null = null;
+    const existing = await prisma.patientProfile.findUnique({
+      where: { email },
+      select: { globalHealthNumber: true },
+    });
+    if (!existing) {
+      try {
+        ghn = await generateGlobalHealthNumber();
+      } catch {
+        ghn = `GH-${new Date().getFullYear()}-T${Date.now().toString(36).toUpperCase()}`;
+      }
+    }
+
     const profile = await prisma.patientProfile.upsert({
       where: { email },
       create: {
@@ -68,12 +83,15 @@ export async function upsertPatientProfileByEmail(
         fullName: input.fullName?.trim() || null,
         phone: input.phone?.trim() || null,
         dateOfBirth: input.dateOfBirth ?? null,
+        ...(ghn ? { globalHealthNumber: ghn } : {}),
       },
       update: {
         userId: user.role === UserRole.PATIENT ? user.id : undefined,
         ...(input.fullName !== undefined ? { fullName: input.fullName?.trim() || null } : {}),
         ...(input.phone !== undefined ? { phone: input.phone?.trim() || null } : {}),
         ...(input.dateOfBirth !== undefined ? { dateOfBirth: input.dateOfBirth } : {}),
+        // Backfill GHN for profiles that existed before this feature shipped.
+        ...(!existing?.globalHealthNumber && ghn ? { globalHealthNumber: ghn } : {}),
       },
     });
 

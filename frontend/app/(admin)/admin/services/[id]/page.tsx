@@ -6,12 +6,14 @@ import { ArrowLeft } from "lucide-react";
 import {
   deleteAdminService,
   fetchAdminServiceById,
+  fetchAdminServiceFaqs,
   purgeAdminService,
 } from "@/lib/admin/admin-api";
 import { readServiceKind, SERVICE_KIND_META } from "@/lib/admin/service-kind";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
+import { ServiceFaqPanel } from "../_components/service-faq-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -74,7 +76,10 @@ export default async function AdminServiceDetailPage({
 }: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
-  const result = await fetchAdminServiceById(id);
+  const [result, faqsResult] = await Promise.all([
+    fetchAdminServiceById(id),
+    fetchAdminServiceFaqs(id),
+  ]);
 
   if (!result.ok) {
     return (
@@ -254,6 +259,13 @@ export default async function AdminServiceDetailPage({
                     .trim()
                 : "—"}
             </p>
+          </AdminCard>
+
+          <AdminCard>
+            <ServiceFaqPanel
+              serviceId={id}
+              initialFaqs={faqsResult.ok ? faqsResult.data.faqs : []}
+            />
           </AdminCard>
         </div>
 
