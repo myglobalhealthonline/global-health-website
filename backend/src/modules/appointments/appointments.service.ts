@@ -327,26 +327,6 @@ function toAdminAppointment(record: AppointmentRecord): AdminAppointmentDetail {
   };
 }
 
-/**
- * Standard projection of the Appointment row used by every read in this
- * file. Keeping the column list centralised means adding a new column
- * (like `scheduledAt`) only requires a single edit here.
- */
-const APPOINTMENT_SELECT_COLUMNS = `
-  "id",
-  "countryCode",
-  "consultationType",
-  "fullName",
-  "email",
-  "phone",
-  "notes",
-  "status",
-  "scheduledAt",
-  "meetingUrl",
-  "createdAt",
-  "updatedAt"
-`;
-
 function buildAppointmentWhereClause(options: ListAppointmentsOptions): Prisma.Sql {
   const parts: Prisma.Sql[] = [];
 

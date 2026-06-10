@@ -75,7 +75,7 @@ export function AssetPathWithUpload({ initialPath }: Props) {
           {busy ? "Uploading…" : "Upload image to bucket"}
         </button>
         <span className="text-xs text-[var(--color-text-muted)]">
-          JPEG, PNG, WebP, GIF, SVG — max 5MB. Requires backend bucket env vars.
+          JPEG, PNG, WebP, GIF — max 5MB. Requires backend bucket env vars.
         </span>
       </div>
       {msg ? <p className="text-xs text-[var(--color-status-warning-text)]">{msg}</p> : null}

@@ -1,5 +1,9 @@
 import { env } from "../../config/env.js";
 
+// Hard timeout for every Google API call so a hung request can't pin the
+// admin route handler (and its DB connection) open indefinitely.
+const GOOGLE_API_TIMEOUT_MS = 10_000;
+
 export function isGoogleMeetConfigured(): boolean {
   return Boolean(
     env.GOOGLE_OAUTH_CLIENT_ID?.trim() &&
@@ -18,6 +22,7 @@ async function getAccessToken(): Promise<string> {
       refresh_token: env.GOOGLE_OAUTH_REFRESH_TOKEN,
       grant_type: "refresh_token",
     }),
+    signal: AbortSignal.timeout(GOOGLE_API_TIMEOUT_MS),
   });
 
   const data = (await response.json()) as {
@@ -44,6 +49,7 @@ async function createOpenSpace(token: string): Promise<{ meetingUri: string }> {
         entryPointAccess: "ALL",
       },
     }),
+    signal: AbortSignal.timeout(GOOGLE_API_TIMEOUT_MS),
   });
 
   const data = (await response.json()) as {
@@ -117,6 +123,7 @@ export async function createMeetLinkForAppointment(input: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(event),
+    signal: AbortSignal.timeout(GOOGLE_API_TIMEOUT_MS),
   });
 
   const calData = (await calResponse.json()) as { error?: { message?: string } };

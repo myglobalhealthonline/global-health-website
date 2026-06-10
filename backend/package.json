@@ -11,6 +11,7 @@
         "start": "prisma migrate deploy && node dist/server.js",
         "typecheck": "tsc --noEmit",
         "test": "node --import tsx --test \"src/**/*.test.ts\"",
+        "db:seed": "node --import tsx scripts/seed-test-accounts.ts",
         "db:generate": "prisma generate",
         "db:migrate": "prisma migrate dev",
         "db:deploy": "prisma migrate deploy",
