@@ -166,12 +166,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
         return (
           <section key={kind} className="gh-card p-6">
             <h3
-              className="m-0 text-[var(--color-text-primary)]"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: 16,
-                fontWeight: 800,
-              }}
+              className="m-0 text-[var(--color-text-primary)] [font-family:var(--font-display)] text-base font-extrabold"
             >
               {KIND_LABELS[kind]}
             </h3>

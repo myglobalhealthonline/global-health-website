@@ -222,16 +222,15 @@ export default async function AdminDoctorDetailPage({
       ) : null}
 
       <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
+        className="grid gap-4 grid-cols-[minmax(0,2fr)_minmax(0,1fr)]"
       >
         <div className="grid gap-4">
           <AdminCard>
-            <h3 style={cardTitleStyle}>Identifiers</h3>
+            <h3 className={cardTitleClass}>Identifiers</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Public marketing profile — not a login account.
             </p>
-            <dl className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               <FieldRow label="Slug" value={d.slug} mono />
               <FieldRow label="Country" value={`${d.country.name} (${d.country.code.toUpperCase()})`} />
               <FieldRow label="Public path" value={publicPath} mono full />
@@ -273,11 +272,11 @@ export default async function AdminDoctorDetailPage({
                 mono
                 full
               />
-            </dl>
+            </div>
           </AdminCard>
 
           <AdminCard>
-            <h3 style={cardTitleStyle}>Qualifications</h3>
+            <h3 className={cardTitleClass}>Qualifications</h3>
             {d.qualifications.length > 0 ? (
               <ul className="mt-3 grid gap-2 text-[14px] leading-relaxed text-[var(--color-text-body)]">
                 {d.qualifications.map((q, i) => (
@@ -287,14 +286,7 @@ export default async function AdminDoctorDetailPage({
                   >
                     <span
                       aria-hidden
-                      style={{
-                        width: 4,
-                        height: 4,
-                        borderRadius: 999,
-                        background: "var(--color-brand-primary)",
-                        marginTop: 8,
-                        flexShrink: 0,
-                      }}
+                      className="block w-1 h-1 shrink-0 rounded-full bg-[var(--color-brand-primary)] mt-2"
                     />
                     <span>{q}</span>
                   </li>
@@ -308,7 +300,7 @@ export default async function AdminDoctorDetailPage({
           </AdminCard>
 
           <AdminCard>
-            <h3 style={cardTitleStyle}>Bio</h3>
+            <h3 className={cardTitleClass}>Bio</h3>
             {d.bio ? (
               <div
                 className="prose prose-sm mt-3 max-w-none text-[var(--color-text-body)]"
@@ -330,7 +322,7 @@ export default async function AdminDoctorDetailPage({
 
         <div className="grid gap-4 self-start">
           <AdminCard>
-            <h3 style={cardTitleStyle}>Account access</h3>
+            <h3 className={cardTitleClass}>Account access</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Invite the doctor by email — they&apos;ll set a password and
               land straight in the portal.
@@ -404,7 +396,7 @@ export default async function AdminDoctorDetailPage({
           </AdminCard>
 
           <AdminCard>
-            <h3 style={cardTitleStyle}>Visibility</h3>
+            <h3 className={cardTitleClass}>Visibility</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Deactivating hides this profile from the public doctors listing API.
             </p>
@@ -422,12 +414,7 @@ export default async function AdminDoctorDetailPage({
           </AdminCard>
 
           <AdminCard>
-            <h3
-              style={{
-                ...cardTitleStyle,
-                color: "var(--color-status-error-text)",
-              }}
-            >
+            <h3 className="m-0 [font-family:var(--font-display)] text-base font-extrabold text-[var(--color-status-error-text)]">
               Danger zone
             </h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
@@ -449,13 +436,8 @@ export default async function AdminDoctorDetailPage({
   );
 }
 
-const cardTitleStyle = {
-  margin: 0,
-  fontFamily: "var(--font-display)",
-  fontSize: 16,
-  fontWeight: 800,
-  color: "var(--color-text-primary)",
-} as const;
+const cardTitleClass =
+  "m-0 [font-family:var(--font-display)] text-base font-extrabold text-[var(--color-text-primary)]";
 
 function FieldRow({
   label,
@@ -470,15 +452,14 @@ function FieldRow({
 }) {
   return (
     <div className={full ? "sm:col-span-2" : ""}>
-      <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+      <div className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {label}
-      </dt>
-      <dd
-        className="mt-1 text-[14px] text-[var(--color-text-primary)]"
-        style={mono ? { fontFamily: "ui-monospace, monospace", fontSize: 12.5 } : undefined}
+      </div>
+      <div
+        className={`mt-1 text-[var(--color-text-primary)] ${mono ? "font-mono text-[12.5px]" : "text-[14px]"}`}
       >
         {value}
-      </dd>
+      </div>
     </div>
   );
 }

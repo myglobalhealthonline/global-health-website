@@ -181,11 +181,7 @@ export default async function CountryLangBookPage({
 
       <section
         id="booking"
-        className="scroll-mt-24"
-        style={{
-          background: "var(--color-background-soft)",
-          padding: "clamp(48px,6vw,88px) 0",
-        }}
+        className="scroll-mt-24 bg-[var(--color-background-soft)] py-[clamp(48px,6vw,88px)]"
       >
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.8fr)]">
@@ -672,12 +668,11 @@ function InlineNotice({ notice }: { notice: NonNullable<Notice> }) {
   const isWarning = notice.tone === "warning";
   return (
     <div
-      className="mb-5 rounded-[var(--radius-card-sm)] px-4 py-3 text-sm"
-      style={{
-        background: isWarning ? "rgba(255,196,0,0.08)" : "rgba(29,75,54,0.06)",
-        border: isWarning ? "1px solid rgba(255,196,0,0.25)" : "1px solid rgba(29,75,54,0.16)",
-        color: "var(--color-text-body)",
-      }}
+      className={`mb-5 rounded-[var(--radius-card-sm)] px-4 py-3 text-sm border text-[var(--color-text-body)] ${
+        isWarning
+          ? "bg-[rgba(255,196,0,0.08)] border-[rgba(255,196,0,0.25)]"
+          : "bg-[rgba(29,75,54,0.06)] border-[rgba(29,75,54,0.16)]"
+      }`}
     >
       {notice.message}
     </div>
