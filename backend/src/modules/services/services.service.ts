@@ -78,25 +78,32 @@ async function upsertServiceTranslations(
   countryId: string,
   translations: ServiceTranslationInput[],
 ): Promise<void> {
-  for (const entry of translations) {
-    await assertLocaleSupported(countryId, entry.locale);
-    const detailBody = entry.detailBody === null ? null : sanitizeRichHtml(entry.detailBody);
-    const data = {
-      name: entry.name,
-      summary: entry.summary,
-      seoTitle: entry.seoTitle,
-      seoDescription: entry.seoDescription,
-      heroTitle: entry.heroTitle,
-      heroDescription: entry.heroDescription,
-      detailBody,
-      ctaLabel: entry.ctaLabel,
-    };
-    await prisma.serviceTranslation.upsert({
-      where: { serviceId_locale: { serviceId, locale: entry.locale } },
-      create: { serviceId, locale: entry.locale, ...data },
-      update: data,
-    });
-  }
+  // Validate every locale up front (in parallel — was N sequential reads),
+  // then write all translations in one atomic transaction instead of a
+  // sequential per-locale upsert loop.
+  await Promise.all(
+    translations.map((entry) => assertLocaleSupported(countryId, entry.locale)),
+  );
+  await prisma.$transaction(
+    translations.map((entry) => {
+      const detailBody = entry.detailBody === null ? null : sanitizeRichHtml(entry.detailBody);
+      const data = {
+        name: entry.name,
+        summary: entry.summary,
+        seoTitle: entry.seoTitle,
+        seoDescription: entry.seoDescription,
+        heroTitle: entry.heroTitle,
+        heroDescription: entry.heroDescription,
+        detailBody,
+        ctaLabel: entry.ctaLabel,
+      };
+      return prisma.serviceTranslation.upsert({
+        where: { serviceId_locale: { serviceId, locale: entry.locale } },
+        create: { serviceId, locale: entry.locale, ...data },
+        update: data,
+      });
+    }),
+  );
 }
 
 const specialtyTranslationSelect = {
@@ -134,15 +141,19 @@ async function upsertSpecialtyTranslations(
   countryId: string,
   translations: SpecialtyTranslationInput[],
 ): Promise<void> {
-  for (const entry of translations) {
-    await assertLocaleSupported(countryId, entry.locale);
-    const data = { name: entry.name, cardSummary: entry.cardSummary };
-    await prisma.specialtyTranslation.upsert({
-      where: { specialtyId_locale: { specialtyId, locale: entry.locale } },
-      create: { specialtyId, locale: entry.locale, ...data },
-      update: data,
-    });
-  }
+  await Promise.all(
+    translations.map((entry) => assertLocaleSupported(countryId, entry.locale)),
+  );
+  await prisma.$transaction(
+    translations.map((entry) => {
+      const data = { name: entry.name, cardSummary: entry.cardSummary };
+      return prisma.specialtyTranslation.upsert({
+        where: { specialtyId_locale: { specialtyId, locale: entry.locale } },
+        create: { specialtyId, locale: entry.locale, ...data },
+        update: data,
+      });
+    }),
+  );
 }
 
 export class ServiceCountryNotFoundError extends Error {

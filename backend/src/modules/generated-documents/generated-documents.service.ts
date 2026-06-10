@@ -190,6 +190,10 @@ export async function generateAppointmentDocument(input: {
 
   await putObject(storageKey, pdfBuffer, "application/pdf");
 
+  // The S3 object is written before the DB row. If any DB step below throws,
+  // delete the now-orphaned object so storage doesn't leak a file nothing
+  // references.
+  try {
   if (input.editDocumentId) {
     const existing = await prisma.generatedDocument.findFirst({
       where: {
@@ -254,6 +258,10 @@ export async function generateAppointmentDocument(input: {
     healthPortalUrl: portal?.url ?? null,
     healthPortalLabel: portal?.label ?? null,
   };
+  } catch (err) {
+    await deleteObject(storageKey).catch(() => {});
+    throw err;
+  }
 }
 
 export function partitionGeneratedDocuments(rows: GeneratedDocument[]) {

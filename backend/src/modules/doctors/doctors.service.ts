@@ -60,8 +60,12 @@ async function upsertDoctorTranslations(
   countryId: string,
   translations: DoctorTranslationInput[],
 ): Promise<void> {
+  // Validate locales in parallel (was N sequential reads) before the
+  // transactional upsert loop below.
+  await Promise.all(
+    translations.map((entry) => assertLocaleSupported(countryId, entry.locale)),
+  );
   for (const entry of translations) {
-    await assertLocaleSupported(countryId, entry.locale);
     const data = {
       title: entry.title,
       bio: entry.bio === null || entry.bio === undefined ? null : sanitizeRichHtml(entry.bio),
