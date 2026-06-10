@@ -1553,3 +1553,19 @@ export async function putAdminCountryFooter(countryId: string, body: unknown) {
     { method: "PUT", body },
   );
 }
+
+export type NewsletterSubscriberDto = {
+  id: string;
+  email: string;
+  countryCode: string | null;
+  locale: string | null;
+  source: string | null;
+  unsubscribedAt: string | null;
+  createdAt: string;
+};
+
+export async function fetchNewsletterSubscribers() {
+  return adminRequest<{ items: NewsletterSubscriberDto[] }>(
+    "/api/admin/newsletter",
+  );
+}

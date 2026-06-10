@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Geist_Mono, Manrope } from "next/font/google";
 import { SITE_NAME } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/seo/site-url";
@@ -45,14 +46,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+// Map a full locale code (e.g. "pt-br") to a base BCP-47 lang for the
+// <html lang> attribute. The proxy stamps x-gh-locale on every request.
+function htmlLang(localeHeader: string | null): string {
+  const base = (localeHeader ?? "en").split("-")[0].toLowerCase();
+  const supported = new Set(["en", "pt", "es", "cs", "ro", "de"]);
+  return supported.has(base) ? base : "en";
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const lang = htmlLang((await headers()).get("x-gh-locale"));
   return (
     <html
-      lang="en"
+      lang={lang}
       className={`${manrope.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">

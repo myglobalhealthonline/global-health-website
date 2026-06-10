@@ -7,7 +7,7 @@ import { postAdminBlogPost } from "@/lib/admin/admin-api";
 import { PUBLIC_BLOG_TAG } from "@/lib/content/get-public-blog";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
 import { BlogFields } from "../_components/blog-fields";
-import { parseBlogBody } from "../_components/blog-form-parse";
+import { parseBlogBody, validateBlogBody } from "../_components/blog-form-parse";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +22,10 @@ export default async function AdminNewBlogPage({ searchParams }: PageProps) {
     "use server";
     await requireAdminAction();
     const body = parseBlogBody(formData);
+    const validationError = validateBlogBody(body);
+    if (validationError) {
+      redirect(`/admin/blog/new?error=${encodeURIComponent(validationError)}`);
+    }
     const result = await postAdminBlogPost(body);
     if (!result.ok) {
       redirect(`/admin/blog/new?error=${encodeURIComponent(result.message)}`);

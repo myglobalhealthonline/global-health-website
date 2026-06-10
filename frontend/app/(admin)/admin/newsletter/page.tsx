@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { fetchNewsletterSubscribers } from "@/lib/admin/admin-api";
 import {
   AdminCard,
   Btn,
@@ -7,56 +7,11 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const DEFAULT_API = "http://localhost:4000";
-
-function adminApiBase() {
-  return (
-    process.env.ADMIN_API_BASE_URL?.replace(/\/$/, "") ??
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ??
-    DEFAULT_API
-  );
-}
-
-type Subscriber = {
-  id: string;
-  email: string;
-  countryCode: string | null;
-  locale: string | null;
-  source: string | null;
-  unsubscribedAt: string | null;
-  createdAt: string;
-};
-
-async function fetchSubscribers(): Promise<
-  | { ok: true; items: Subscriber[] }
-  | { ok: false; message: string }
-> {
-  const jar = await cookies();
-  const cookieHeader = jar
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
-  try {
-    const res = await fetch(`${adminApiBase()}/api/admin/newsletter`, {
-      headers: cookieHeader ? { cookie: cookieHeader } : undefined,
-      cache: "no-store",
-    });
-    const json = (await res.json()) as {
-      ok?: boolean;
-      message?: string;
-      data?: { items?: Subscriber[] };
-    };
-    if (!res.ok || !json.ok || !json.data?.items) {
-      return { ok: false, message: json.message ?? "Could not load subscribers" };
-    }
-    return { ok: true, items: json.data.items };
-  } catch {
-    return { ok: false, message: "Admin backend unavailable" };
-  }
-}
-
 export default async function AdminNewsletterPage() {
-  const result = await fetchSubscribers();
+  const fetched = await fetchNewsletterSubscribers();
+  const result = fetched.ok
+    ? { ok: true as const, items: fetched.data.items }
+    : { ok: false as const, message: fetched.message };
 
   return (
     <>

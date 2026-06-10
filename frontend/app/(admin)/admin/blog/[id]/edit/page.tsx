@@ -12,7 +12,7 @@ import { PUBLIC_BLOG_TAG } from "@/lib/content/get-public-blog";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 import { BlogFields } from "../../_components/blog-fields";
-import { parseBlogBody } from "../../_components/blog-form-parse";
+import { parseBlogBody, validateBlogBody } from "../../_components/blog-form-parse";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +59,10 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
     "use server";
     await requireAdminAction();
     const body = parseBlogBody(formData);
+    const validationError = validateBlogBody(body);
+    if (validationError) {
+      redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(validationError)}`);
+    }
     const updated = await patchAdminBlogPost(id, body);
     if (!updated.ok) {
       redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(updated.message)}`);
