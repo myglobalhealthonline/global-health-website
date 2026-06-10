@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -32,6 +33,7 @@ export default async function AdminCountryDetailPage({
 
   async function deactivateCountryAction() {
     "use server";
+    await requireAdminAction();
     const updateResult = await deleteAdminCountry(id);
     if (!updateResult.ok) {
       redirect(`/admin/countries/${id}?error=${encodeURIComponent(updateResult.message)}`);
@@ -44,6 +46,7 @@ export default async function AdminCountryDetailPage({
 
   async function deleteCountryAction() {
     "use server";
+    await requireAdminAction();
     const deleteResult = await purgeAdminCountry(id);
     if (!deleteResult.ok) {
       redirect(`/admin/countries/${id}?error=${encodeURIComponent(deleteResult.message)}`);

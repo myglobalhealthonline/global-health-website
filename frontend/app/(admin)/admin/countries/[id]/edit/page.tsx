@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
@@ -81,6 +82,7 @@ export default async function AdminEditCountryPage({
 
   async function updateCountryAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
 
     const supportedLocales = parseSupportedLocales(formData);
     // Country edit form has no domain inputs (per-country domain split

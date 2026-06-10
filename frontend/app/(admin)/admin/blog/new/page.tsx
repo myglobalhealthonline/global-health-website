@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
@@ -19,6 +20,7 @@ export default async function AdminNewBlogPage({ searchParams }: PageProps) {
 
   async function createBlogAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const body = parseBlogBody(formData);
     const result = await postAdminBlogPost(body);
     if (!result.ok) {

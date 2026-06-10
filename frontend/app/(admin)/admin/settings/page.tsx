@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidateTag } from "next/cache";
 import {
   AdminCard,
@@ -45,6 +46,7 @@ export default async function AdminSettingsPage({
 
   async function saveAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     function s(name: string): string | null {
       const v = formData.get(name);
       if (v === null) return null;

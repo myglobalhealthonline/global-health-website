@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
@@ -46,6 +47,7 @@ export default async function AdminNewPagePage({ searchParams }: PageProps) {
 
   async function createPageAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const body = parsePageBody(formData);
     const result = await postAdminPage(body);
     if (!result.ok) {

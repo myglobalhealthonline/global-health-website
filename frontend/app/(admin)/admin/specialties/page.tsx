@@ -12,6 +12,7 @@
  */
 
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { Heart, MoreHorizontal, Plus, Stethoscope } from "lucide-react";
@@ -131,6 +132,7 @@ export default async function AdminCategoriesMatrixPage({
   // ── Server action: toggle a category for a specific country ──
   async function toggleCategoryAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const countryId = String(formData.get("countryId") ?? "").trim();
     const slug = String(formData.get("slug") ?? "").trim();
     const name = String(formData.get("name") ?? "").trim();

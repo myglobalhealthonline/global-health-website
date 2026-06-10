@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -109,6 +110,7 @@ export default async function AdminServiceDetailPage({
 
   async function deactivateServiceAction() {
     "use server";
+    await requireAdminAction();
     const updateResult = await deleteAdminService(id);
     if (!updateResult.ok) {
       redirect(
@@ -125,6 +127,7 @@ export default async function AdminServiceDetailPage({
 
   async function deleteServiceAction() {
     "use server";
+    await requireAdminAction();
     const deleteResult = await purgeAdminService(id);
     if (!deleteResult.ok) {
       redirect(

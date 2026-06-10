@@ -1,4 +1,5 @@
 import { revalidatePath, revalidateTag } from "next/cache";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { Edit3, Eye, Plus } from "lucide-react";
 import { fetchAdminCountries, purgeAdminCountry } from "@/lib/admin/admin-api";
@@ -30,6 +31,7 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
 
   async function deleteCountryAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const id = String(formData.get("id") ?? "").trim();
     const deleteResult = await purgeAdminCountry(id);
     if (!deleteResult.ok) {

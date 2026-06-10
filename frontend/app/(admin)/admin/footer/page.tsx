@@ -1,4 +1,5 @@
 import { revalidatePath, revalidateTag } from "next/cache";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import {
   fetchAdminCountries,
@@ -58,6 +59,7 @@ export default async function AdminFooterPage({
 
   async function saveFooterAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const raw = String(formData.get("payload") ?? "");
     let body: unknown;
     try {

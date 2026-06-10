@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 import {
@@ -38,6 +39,7 @@ export function DoctorRegistrationsCard({
 
   async function saveRegistration(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const countryId = String(formData.get("countryId") ?? "");
     const chamberEntity = String(formData.get("chamberEntity") ?? "").trim() || null;
     const registrationNumber =

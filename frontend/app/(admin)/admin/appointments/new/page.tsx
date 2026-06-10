@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -146,6 +147,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
    */
   async function createManualAppointmentAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
 
     const readStr = (key: string): string => (formData.get(key)?.toString() ?? "").trim();
     const readOpt = (key: string): string | null => {

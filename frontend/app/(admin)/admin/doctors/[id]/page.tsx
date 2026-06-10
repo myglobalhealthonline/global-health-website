@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { ArrowLeft, Mail, RefreshCw } from "lucide-react";
@@ -37,6 +38,7 @@ export default async function AdminDoctorDetailPage({
 
   async function deactivateDoctorAction() {
     "use server";
+    await requireAdminAction();
     const updateResult = await deleteAdminDoctor(id);
     if (!updateResult.ok) {
       redirect(`/admin/doctors/${id}?error=${encodeURIComponent(updateResult.message)}`);
@@ -52,6 +54,7 @@ export default async function AdminDoctorDetailPage({
 
   async function deleteDoctorAction() {
     "use server";
+    await requireAdminAction();
     const deleteResult = await purgeAdminDoctor(id);
     if (!deleteResult.ok) {
       redirect(`/admin/doctors/${id}?error=${encodeURIComponent(deleteResult.message)}`);
@@ -63,6 +66,7 @@ export default async function AdminDoctorDetailPage({
 
   async function toggleFeaturedAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const next = formData.get("next") === "true";
     const res = await setAdminDoctorFeatured(id, next);
     if (!res.ok) {
@@ -81,6 +85,7 @@ export default async function AdminDoctorDetailPage({
 
   async function inviteDoctorAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const email = String(formData.get("email") ?? "").trim();
     const fullName = String(formData.get("fullName") ?? "").trim();
     if (!email) {

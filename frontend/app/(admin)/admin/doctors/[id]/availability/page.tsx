@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ArrowLeft, Trash2 } from "lucide-react";
@@ -57,6 +58,7 @@ export default async function AdminDoctorAvailabilityPage({
 
   async function createAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     try {
       const weekday = Number(formData.get("weekday"));
       const startMinute = hhmmToMinutes(String(formData.get("startTime") ?? ""));
@@ -96,6 +98,7 @@ export default async function AdminDoctorAvailabilityPage({
 
   async function deleteAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const availabilityId = String(formData.get("availabilityId") ?? "");
     if (!availabilityId) {
       redirect(`/admin/doctors/${id}/availability?error=Missing+id`);

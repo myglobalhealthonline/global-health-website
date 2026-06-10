@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -103,6 +104,7 @@ export default async function AdminAppointmentDetailPage({
 
   async function updateStatusAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
 
     const nextStatus = String(formData.get("status") ?? "").trim();
     if (!nextStatus) {
@@ -148,6 +150,7 @@ export default async function AdminAppointmentDetailPage({
   // to a proper ISO with offset before sending to the backend.
   async function scheduleCallAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
 
     const rawSlot = String(formData.get("scheduledAt") ?? "").trim();
     const rawUrl = String(formData.get("meetingUrl") ?? "").trim();

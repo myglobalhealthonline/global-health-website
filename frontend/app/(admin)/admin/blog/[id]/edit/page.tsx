@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidateTag, revalidatePath } from "next/cache";
 import { ArrowLeft, ExternalLink, Trash2 } from "lucide-react";
@@ -56,6 +57,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
 
   async function updateBlogAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const body = parseBlogBody(formData);
     const updated = await patchAdminBlogPost(id, body);
     if (!updated.ok) {
@@ -67,6 +69,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
 
   async function deleteBlogAction() {
     "use server";
+    await requireAdminAction();
     const before = await fetchAdminBlogPostById(id);
     const deleted = await purgeAdminBlogPost(id);
     if (!deleted.ok) {

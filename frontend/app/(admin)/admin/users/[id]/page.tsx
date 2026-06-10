@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -60,6 +61,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
 
   async function toggleActiveAction() {
     "use server";
+    await requireAdminAction();
     const res = await patchAdminUser(id, { isActive: !user.isActive });
     if (!res.ok) {
       redirect(`/admin/users/${id}?error=${encodeURIComponent(res.message)}`);
@@ -73,6 +75,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
 
   async function changeRoleAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const role = String(formData.get("role") ?? "") as AdminUserRole;
     if (role !== "PATIENT" && role !== "ADMIN" && role !== "DOCTOR") {
       redirect(`/admin/users/${id}?error=${encodeURIComponent("Invalid role")}`);
@@ -88,6 +91,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
   // when role=DOCTOR — the doctor portal queries scope by doctorId.
   async function linkDoctorAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const raw = String(formData.get("doctorId") ?? "").trim();
     const doctorId = raw === "" ? null : raw;
     const res = await patchAdminUser(id, { doctorId });
@@ -103,6 +107,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
 
   async function resetPasswordAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const password = String(formData.get("password") ?? "").trim();
     if (password.length < 8) {
       redirect(

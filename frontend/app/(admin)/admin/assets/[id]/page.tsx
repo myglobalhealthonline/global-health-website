@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -64,6 +65,7 @@ export default async function AdminAssetDetailPage({
 
   async function deactivateAssetAction() {
     "use server";
+    await requireAdminAction();
     const updateResult = await deleteAdminAsset(id);
     if (!updateResult.ok) {
       redirect(`/admin/assets/${id}?error=${encodeURIComponent(updateResult.message)}`);
@@ -75,6 +77,7 @@ export default async function AdminAssetDetailPage({
 
   async function deleteAssetAction() {
     "use server";
+    await requireAdminAction();
     const deleteResult = await purgeAdminAsset(id);
     if (!deleteResult.ok) {
       redirect(`/admin/assets/${id}?error=${encodeURIComponent(deleteResult.message)}`);

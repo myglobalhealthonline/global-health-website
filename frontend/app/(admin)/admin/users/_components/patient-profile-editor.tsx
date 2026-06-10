@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import {
   type AdminPatientProfileDto,
@@ -26,6 +27,7 @@ export function PatientProfileEditor({
 }) {
   async function saveProfile(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const text = (key: string) => {
       const raw = formData.get(key);
       if (raw === null) return undefined;

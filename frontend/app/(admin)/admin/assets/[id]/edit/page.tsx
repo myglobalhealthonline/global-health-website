@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { AssetFields } from "../../_components/asset-fields";
@@ -97,6 +98,7 @@ export default async function AdminEditAssetPage({
 
   async function updateAssetAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
 
     const raw = parseAssetBodyFromForm(formData);
     const body = {

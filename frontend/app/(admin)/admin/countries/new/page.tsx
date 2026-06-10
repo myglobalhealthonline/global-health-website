@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { CountryFields } from "../_components/country-fields";
@@ -43,6 +44,7 @@ export default async function AdminNewCountryPage({ searchParams }: PageProps) {
 
   async function createCountryAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
 
     const supportedLocales = parseSupportedLocales(formData);
     const domains = parseDomainsFromForm(formData);

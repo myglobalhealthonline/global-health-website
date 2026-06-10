@@ -19,6 +19,7 @@
  */
 
 import { cookies } from "next/headers";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidatePath, revalidateTag } from "next/cache";
 import {
@@ -173,6 +174,7 @@ export default async function AdminCountryFeaturesPage({ searchParams }: PagePro
 
   async function toggleFeatureAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const countryId = String(formData.get("countryId") ?? "").trim();
     const key = String(formData.get("featureKey") ?? "").trim();
     const currentlyOn = formData.get("currentlyOn") === "true";

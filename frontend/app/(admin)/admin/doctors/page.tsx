@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Edit3, Eye, Plus } from "lucide-react";
@@ -114,6 +115,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
 
   async function deleteDoctorAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const id = String(formData.get("id") ?? "").trim();
     const result = await purgeAdminDoctor(id);
     if (!result.ok) {

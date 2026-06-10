@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
@@ -85,6 +86,7 @@ export default async function AdminEditHealthTestPage({
 
   async function updateAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const parsed = parseHealthTestBodyFromForm(formData, defaultLocale);
     if (!parsed.ok)
       redirect(`/admin/health-tests/${id}/edit?error=${encodeURIComponent(parsed.error)}`);

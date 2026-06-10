@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
@@ -71,6 +72,7 @@ export default async function AdminHealthTestDetailPage({
 
   async function deactivateAction() {
     "use server";
+    await requireAdminAction();
     const updateResult = await deleteAdminHealthTest(id);
     if (!updateResult.ok)
       redirect(`/admin/health-tests/${id}?error=${encodeURIComponent(updateResult.message)}`);
@@ -83,6 +85,7 @@ export default async function AdminHealthTestDetailPage({
 
   async function deleteAction() {
     "use server";
+    await requireAdminAction();
     const deleteResult = await purgeAdminHealthTest(id);
     if (!deleteResult.ok)
       redirect(`/admin/health-tests/${id}?error=${encodeURIComponent(deleteResult.message)}`);

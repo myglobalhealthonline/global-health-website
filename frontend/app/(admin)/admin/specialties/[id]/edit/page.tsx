@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import {
@@ -84,6 +85,7 @@ export default async function AdminSpecialtyEditPage({
 
   async function updateSpecialtyAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const translations = parseLocaleTranslations(formData, ["name", "cardSummary"]);
     const base = translations.find((t) => t.locale === defaultLocale.toUpperCase());
     const body = {

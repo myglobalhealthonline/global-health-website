@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { ArrowLeft, Trash2 } from "lucide-react";
@@ -69,6 +70,7 @@ export default async function AdminEditPagePage({ params, searchParams }: PagePr
 
   async function updatePageAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const body = parsePageBody(formData);
     const result = await patchAdminPage(id, body);
     if (!result.ok) {
@@ -89,6 +91,7 @@ export default async function AdminEditPagePage({ params, searchParams }: PagePr
 
   async function deletePageAction() {
     "use server";
+    await requireAdminAction();
     // Capture the page details before delete so we can bust the right tag.
     const before = await fetchAdminPageById(id);
     const result = await purgeAdminPage(id);

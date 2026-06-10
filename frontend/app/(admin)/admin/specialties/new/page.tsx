@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { fetchAdminCountries, postAdminSpecialty } from "@/lib/admin/admin-api";
@@ -46,6 +47,7 @@ export default async function AdminSpecialtyNewPage({ searchParams }: PageProps)
 
   async function createSpecialtyAction(formData: FormData) {
     "use server";
+    await requireAdminAction();
     const countryId = String(formData.get("countryId") ?? "").trim();
     const name = String(formData.get("name") ?? "").trim();
     const cardSummary = String(formData.get("cardSummary") ?? "").trim() || null;
