@@ -38,32 +38,34 @@ const accountPaymentsRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
-      const payments = await prisma.payment.findMany({
-        where: {
-          appointment: { userId: authUser.id },
-        },
-        orderBy: { createdAt: "desc" },
-        select: {
-          id: true,
-          status: true,
-          amountCents: true,
-          currencyCode: true,
-          rawEventType: true,
-          stripePaymentIntentId: true,
-          createdAt: true,
-          appointment: {
-            select: {
-              id: true,
-              consultationType: true,
-              countryCode: true,
-              createdAt: true,
-              service: { select: { name: true } },
-              doctor: { select: { fullName: true } },
+      const where = { appointment: { userId: authUser.id } };
+      const [total, payments] = await Promise.all([
+        prisma.payment.count({ where }),
+        prisma.payment.findMany({
+          where,
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            status: true,
+            amountCents: true,
+            currencyCode: true,
+            rawEventType: true,
+            stripePaymentIntentId: true,
+            createdAt: true,
+            appointment: {
+              select: {
+                id: true,
+                consultationType: true,
+                countryCode: true,
+                createdAt: true,
+                service: { select: { name: true } },
+                doctor: { select: { fullName: true } },
+              },
             },
           },
-        },
-        take: 100,
-      });
+          take: 100,
+        }),
+      ]);
 
       const items = payments.map((p) => ({
         id: p.id,
@@ -81,7 +83,7 @@ const accountPaymentsRoute: FastifyPluginAsync = async (app) => {
         stripePaymentIntentId: p.stripePaymentIntentId ?? null,
       }));
 
-      return okResponse({ items });
+      return okResponse({ items, total, truncated: total > items.length });
     } catch (error) {
       const normalized = normalizeDbError(error, "Could not load payment history");
       if (normalized instanceof DatabaseUnavailableError) {
