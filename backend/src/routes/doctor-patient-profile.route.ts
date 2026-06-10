@@ -11,7 +11,7 @@ import {
 } from "../modules/patient-profile/patient-profile.service.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
-import { logAccess } from "../lib/access-log.js";
+import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 const stringField = (max: number) =>
   z.string().trim().max(max).nullable().optional();
@@ -72,16 +72,28 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
       try {
         const profile = await prisma.patientProfile.findUnique({ where: { email } });
         if (profile) {
-          await logAccess({
-            patientProfileId: profile.id,
-            globalHealthNumber: profile.globalHealthNumber,
-            accessedByUserId: auth.userId,
-            accessedByRole: "DOCTOR",
-            accessedResourceType: "PATIENT_PROFILE",
-            accessAction: "VIEW",
-            ipAddress: request.ip,
-            userAgent: request.headers["user-agent"] ?? null,
-          });
+          // Central guard: authorizes + logs (MedicalAccessLog) + alerts as a
+          // side effect. In shadow mode it never blocks; in enforce mode a
+          // denied decision throws MedicalAccessDeniedError → 403.
+          try {
+            await guardMedicalRead(
+              request,
+              { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+              {
+                patientProfileId: profile.id,
+                resourceType: "SENSITIVE_PROFILE",
+                accessAction: "VIEWED",
+                relatedAppointmentId: hasAppt.id,
+              },
+            );
+          } catch (guardError) {
+            if (guardError instanceof MedicalAccessDeniedError) {
+              return reply
+                .status(403)
+                .send(errorResponse("Access to this medical record is not permitted"));
+            }
+            throw guardError;
+          }
         }
         return okResponse({
           profile: serializeProfile(profile, { includeAlerts: true }),

@@ -19,6 +19,7 @@ import {
 import { getObject, streamToNodeReadable } from "../services/object-storage.js";
 import { VerificationStatus } from "@prisma/client";
 import { logAccess } from "../lib/access-log.js";
+import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 const stringField = (max: number) =>
   z.string().trim().max(max).nullable().optional();
@@ -76,16 +77,27 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           return reply.status(404).send(errorResponse("Patient profile not found"));
         }
         const actor = await resolveOptionalAuthUser(request);
-        await logAccess({
-          patientProfileId: profile.id,
-          globalHealthNumber: profile.globalHealthNumber,
-          accessedByUserId: actor?.id ?? null,
-          accessedByRole: "ADMIN",
-          accessedResourceType: "PATIENT_PROFILE",
-          accessAction: "VIEW",
-          ipAddress: request.ip,
-          userAgent: request.headers["user-agent"] ?? null,
-        });
+        // Central guard: logs the access + enforces LOCAL_ADMIN folder scope
+        // (in enforce mode) and raises alerts on out-of-scope reads. Shadow
+        // mode logs only and never blocks.
+        try {
+          await guardMedicalRead(
+            request,
+            { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+            {
+              patientProfileId: profile.id,
+              resourceType: "SENSITIVE_PROFILE",
+              accessAction: "VIEWED",
+            },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply
+              .status(403)
+              .send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
+        }
         return okResponse({
           profile: serializeProfile(profile, { includeAlerts: true }),
         });
