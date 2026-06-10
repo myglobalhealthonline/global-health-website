@@ -29,7 +29,10 @@ const ALLOWED_MIME = new Set([
 const MAX_BYTES = 10 * 1024 * 1024;
 
 const patientUploadRoute: FastifyPluginAsync = async (app) => {
-  app.get("/api/public/patient-upload", async (request, reply) => {
+  app.get(
+    "/api/public/patient-upload",
+    { config: { rateLimit: { max: 30, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
     const token = (request.query as { token?: string }).token?.trim();
     if (!token) return reply.status(400).send(errorResponse("token is required"));
     const verified = verifyPatientUploadToken(token);
@@ -45,9 +48,13 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
       fullName: profile?.fullName ?? null,
       appointmentId: verified.appointmentId,
     });
-  });
+    },
+  );
 
-  app.post("/api/public/patient-upload", async (request, reply) => {
+  app.post(
+    "/api/public/patient-upload",
+    { config: { rateLimit: { max: 20, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
     if (!isMediaStorageConfigured()) {
       return reply.status(503).send(errorResponse("Upload storage is not configured"));
     }
@@ -128,7 +135,8 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not upload file"));
     }
-  });
+    },
+  );
 
   app.post<{ Params: { email: string } }>(
     "/api/doctor/patients/:email/upload-link",

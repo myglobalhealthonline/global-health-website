@@ -35,8 +35,7 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
           Payment received
         </h1>
         <p className="gh-body mt-3 max-w-md" style={{ color: "var(--color-text-muted)" }}>
-          Thanks{order?.fullName ? `, ${order.fullName.split(" ")[0]}` : ""}. Your
-          order is confirmed — a receipt has been emailed to you.
+          Thanks. Your order is confirmed — a receipt has been emailed to you.
         </p>
       </div>
 

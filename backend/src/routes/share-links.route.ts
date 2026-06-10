@@ -140,14 +140,14 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
             consultation: {
               include: {
                 appointment: {
+                  // Public share link is for a referring clinician — it
+                  // exposes the clinical note, NOT patient contact PII.
+                  // email / phone / dateOfBirth are deliberately omitted.
                   select: {
                     fullName: true,
-                    email: true,
-                    phone: true,
                     consultationType: true,
                     countryCode: true,
                     scheduledAt: true,
-                    dateOfBirth: true,
                     createdAt: true,
                   },
                 },
@@ -183,7 +183,6 @@ const shareLinksRoute: FastifyPluginAsync = async (app) => {
             appointment: {
               ...c.appointment,
               scheduledAt: c.appointment.scheduledAt?.toISOString() ?? null,
-              dateOfBirth: c.appointment.dateOfBirth?.toISOString() ?? null,
               createdAt: c.appointment.createdAt.toISOString(),
             },
           },

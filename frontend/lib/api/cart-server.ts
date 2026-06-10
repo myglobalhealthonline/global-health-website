@@ -86,7 +86,6 @@ export type OrderReceipt = {
   subtotalCents: number;
   shippingCents: number;
   totalCents: number;
-  fullName: string;
   items: { id: string; kind: string; name: string; quantity: number; lineTotalCents: number }[];
   paidAt: string | null;
   createdAt: string;

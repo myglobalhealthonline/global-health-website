@@ -14,7 +14,10 @@ import { errorResponse } from "../utils/response.js";
 const PHI_PREFIXES = ["clinical/", "patient-upload/"] as const;
 
 const mediaPublicRoute: FastifyPluginAsync = async (app) => {
-  app.get("/api/media/*", async (request, reply) => {
+  app.get(
+    "/api/media/*",
+    { config: { rateLimit: { max: 300, timeWindow: "1 minute" } } },
+    async (request, reply) => {
     if (!isMediaStorageConfigured()) {
       return reply.status(503).send(errorResponse("Media storage is not configured"));
     }
@@ -55,7 +58,8 @@ const mediaPublicRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected media error"));
     }
-  });
+    },
+  );
 };
 
 export default mediaPublicRoute;

@@ -23,13 +23,11 @@ type AuditInput = {
 
 function resolveIp(request?: FastifyRequest): string | null {
   if (!request) return null;
-  const forwarded = request.headers["x-forwarded-for"];
-  if (typeof forwarded === "string") {
-    return forwarded.split(",")[0]?.trim() || null;
-  }
-  if (Array.isArray(forwarded) && forwarded.length > 0) {
-    return forwarded[0]?.split(",")[0]?.trim() || null;
-  }
+  // Use Fastify's resolved client IP. With `trustProxy: 1` (set in app.ts)
+  // this is the real client address derived from the single trusted edge
+  // proxy hop — never a value the client can spoof by injecting its own
+  // X-Forwarded-For chain. Parsing the raw header here would trust the
+  // left-most (client-claimed) entry and defeat audit forensics.
   return request.ip ?? null;
 }
 

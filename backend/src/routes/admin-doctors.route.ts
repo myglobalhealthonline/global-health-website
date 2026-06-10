@@ -373,6 +373,21 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
     }
 
     try {
+      // Refuse to hard-delete a doctor that still has appointments — purging
+      // would orphan or cascade-delete clinical history. The admin must
+      // reassign/close those appointments first.
+      const appointmentCount = await prisma.appointment.count({
+        where: { doctorId: params.data.id },
+      });
+      if (appointmentCount > 0) {
+        return reply
+          .status(409)
+          .send(
+            errorResponse(
+              `Cannot delete: this doctor has ${appointmentCount} appointment(s). Reassign or remove them first.`,
+            ),
+          );
+      }
       const deleted = await purgeAdminDoctor(params.data.id);
       if (!deleted) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));

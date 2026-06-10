@@ -39,21 +39,35 @@ export async function buildApp() {
     .filter(Boolean);
   const isProd = env.NODE_ENV === "production";
 
+  const isLocalhostOrigin = (origin: string): boolean =>
+    /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(origin);
+
   await app.register(cors, {
     origin: (origin, callback) => {
+      // Same-origin / non-browser requests (no Origin header) are allowed.
       if (!origin) {
         callback(null, true);
         return;
       }
-      if (!isProd) {
+      // Local development tooling is always allowed.
+      if (isLocalhostOrigin(origin)) {
         callback(null, true);
         return;
       }
-      if (allowedOrigins.length === 0) {
+      // When an allowlist is configured, enforce it in EVERY environment
+      // (prod, staging, preview) — not just production. This stops an
+      // internet-reachable non-prod deployment from accepting credentialed
+      // cross-origin requests from arbitrary sites.
+      if (allowedOrigins.length > 0) {
+        callback(null, allowedOrigins.includes(origin));
+        return;
+      }
+      // No allowlist configured: allow in local dev, deny in production.
+      if (isProd) {
         callback(new Error("CORS origin denied"), false);
         return;
       }
-      callback(null, allowedOrigins.includes(origin));
+      callback(null, true);
     },
     credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],

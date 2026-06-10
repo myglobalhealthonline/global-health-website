@@ -362,7 +362,6 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             subtotalCents: true,
             shippingCents: true,
             totalCents: true,
-            fullName: true,
             paidAt: true,
             createdAt: true,
             items: {
@@ -371,6 +370,10 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           },
         });
         if (!order) return reply.status(404).send(errorResponse("Order not found"));
+        // This endpoint is UNAUTHENTICATED (guest-checkout support), keyed
+        // only on the order CUID. It must not return PII — name, email,
+        // phone and address are deliberately omitted. Authenticated reads
+        // go through the patient order endpoint.
         return okResponse({
           id: order.id,
           status: order.status,
@@ -379,7 +382,6 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           subtotalCents: order.subtotalCents,
           shippingCents: order.shippingCents,
           totalCents: order.totalCents,
-          fullName: order.fullName,
           items: order.items,
           paidAt: order.paidAt?.toISOString() ?? null,
           createdAt: order.createdAt.toISOString(),

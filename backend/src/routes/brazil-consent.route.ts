@@ -1,4 +1,4 @@
-import type { FastifyPluginAsync, FastifyRequest } from "fastify";
+import type { FastifyPluginAsync } from "fastify";
 import { z } from "zod";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -9,33 +9,6 @@ import {
   submitBrazilConsent,
 } from "../modules/brazil-consent/brazil-consent.service.js";
 import { verifyBrazilConsentToken } from "../modules/brazil-consent/brazil-consent-link.service.js";
-
-// Per-(appointment,IP) sliding window. Anyone with an appointmentId can hit
-// the public submit endpoint, which creates a Stripe session and DB row.
-// 5 submissions / 10 min is comfortably above legitimate retry traffic
-// (form errors, abandoned checkouts) and stops trivial spam loops.
-const SUBMIT_WINDOW_MS = 10 * 60 * 1000;
-const SUBMIT_MAX = 5;
-const submitHits = new Map<string, number[]>();
-
-function isRateLimited(key: string): boolean {
-  const now = Date.now();
-  const hits = (submitHits.get(key) ?? []).filter((t) => now - t < SUBMIT_WINDOW_MS);
-  hits.push(now);
-  submitHits.set(key, hits);
-  if (submitHits.size > 2000) {
-    for (const [k, v] of submitHits) {
-      if (!v.some((t) => now - t < SUBMIT_WINDOW_MS)) submitHits.delete(k);
-    }
-  }
-  return hits.length > SUBMIT_MAX;
-}
-
-function clientIp(request: FastifyRequest): string {
-  const fwd = request.headers["x-forwarded-for"];
-  if (typeof fwd === "string" && fwd) return fwd.split(",")[0].trim();
-  return request.ip || "unknown";
-}
 
 const submitSchema = z.object({
   appointmentId: z.string().min(1),
@@ -51,7 +24,10 @@ const submitSchema = z.object({
 });
 
 const brazilConsentRoute: FastifyPluginAsync = async (app) => {
-  app.get("/api/public/brazil-consent", async (request, reply) => {
+  app.get(
+    "/api/public/brazil-consent",
+    { config: { rateLimit: { max: 30, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
     const query = request.query as { appointmentId?: string; token?: string };
     const appointmentId = query.appointmentId;
     if (!appointmentId?.trim()) {
@@ -93,9 +69,13 @@ const brazilConsentRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not load consent form"));
     }
-  });
+    },
+  );
 
-  app.post("/api/public/brazil-consent/submit", async (request, reply) => {
+  app.post(
+    "/api/public/brazil-consent/submit",
+    { config: { rateLimit: { max: 5, timeWindow: "10 minutes" } } },
+    async (request, reply) => {
     const body = submitSchema.safeParse(request.body ?? {});
     if (!body.success) {
       return reply.status(400).send(errorResponse("Invalid submission", body.error.flatten()));
@@ -103,12 +83,6 @@ const brazilConsentRoute: FastifyPluginAsync = async (app) => {
     const tokenCheck = verifyBrazilConsentToken(body.data.appointmentId, body.data.token);
     if (!tokenCheck.ok) {
       return reply.status(401).send(errorResponse(tokenCheck.message));
-    }
-    const rlKey = `${body.data.appointmentId}|${clientIp(request)}`;
-    if (isRateLimited(rlKey)) {
-      return reply
-        .status(429)
-        .send(errorResponse("Too many submissions, please wait a few minutes and try again."));
     }
     try {
       const result = await submitBrazilConsent(body.data);
@@ -135,7 +109,8 @@ const brazilConsentRoute: FastifyPluginAsync = async (app) => {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not submit consent"));
     }
-  });
+    },
+  );
 
   app.get<{ Params: { id: string } }>(
     "/api/doctor/appointments/:id/brazil-consent",
