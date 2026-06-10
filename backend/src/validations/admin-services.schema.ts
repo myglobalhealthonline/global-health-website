@@ -321,3 +321,14 @@ export const serviceFaqReorderBodySchema = z.object({
 export type ServiceFaqCreateBody = z.infer<typeof serviceFaqCreateBodySchema>;
 export type ServiceFaqUpdateBody = z.infer<typeof serviceFaqUpdateBodySchema>;
 export type ServiceFaqReorderBody = z.infer<typeof serviceFaqReorderBodySchema>;
+
+const reorderItemSchema = z.object({
+  id: z.string().trim().min(1).max(64),
+  sortOrder: z.number().int().min(0).max(9999),
+});
+
+export const bulkReorderBodySchema = z.object({
+  items: z.array(reorderItemSchema).min(1).max(200),
+});
+
+export type BulkReorderBody = z.infer<typeof bulkReorderBodySchema>;

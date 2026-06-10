@@ -124,6 +124,7 @@ const adminDoctorInclude = {
   assignedServices: {
     where: { isActive: true, status: "active" },
     select: {
+      serviceId: true,
       service: {
         select: { kind: true },
       },

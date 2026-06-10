@@ -25,6 +25,8 @@ import {
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   createManualBooking,
+  DoctorNotAssignedToServiceError,
+  DoctorNotAvailableInCountryError,
   DoctorNotFoundError,
   ServiceNotFoundError,
   ServicePriceMissingError,
@@ -52,6 +54,7 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         countryCode: query.data.countryCode,
         consultationType: query.data.consultationType,
         search: query.data.search,
+        doctorName: query.data.doctorName,
       });
       return okResponse(data);
     } catch (error) {
@@ -108,6 +111,15 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       }
       if (error instanceof DoctorNotFoundError) {
         return reply.status(404).send(errorResponse(error.message));
+      }
+      // Anti-tamper: the doctor exists but isn't bookable for this
+      // country/service combination. Rejected server-side even if the
+      // admin UI is bypassed.
+      if (
+        error instanceof DoctorNotAvailableInCountryError ||
+        error instanceof DoctorNotAssignedToServiceError
+      ) {
+        return reply.status(422).send(errorResponse(error.message));
       }
       if (error instanceof ServicePriceMissingError) {
         return reply.status(422).send(errorResponse(error.message));

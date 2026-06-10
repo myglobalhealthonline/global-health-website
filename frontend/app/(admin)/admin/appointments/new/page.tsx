@@ -135,6 +135,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       id: d.id,
       fullName: d.fullName,
       title: d.title,
+      serviceIds: d.assignedServices.map((a) => a.serviceId),
     }));
   const clinics =
     clinicsResult.ok && Array.isArray(clinicsResult.data.clinics)
@@ -144,6 +145,8 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
           city: c.city ?? null,
         }))
       : [];
+  const countryName =
+    countries.find((c) => c.code === countryCode)?.name ?? countryCode.toUpperCase();
 
   /**
    * Server action. Posts to the new backend route, then redirects to
@@ -178,14 +181,11 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       },
       serviceId: readStr("serviceId"),
       doctorId: readOpt("doctorId"),
-      scheduledAt: (() => {
-        const raw = readOpt("scheduledAt");
-        if (!raw) return null;
-        // <input type="datetime-local"> yields "YYYY-MM-DDTHH:mm" with
-        // no timezone — append :00Z so the backend parses it as UTC.
-        // Admins are warned in the form copy.
-        return raw.length >= 16 && !raw.endsWith("Z") ? `${raw}:00Z` : raw;
-      })(),
+      // <input type="datetime-local"> yields a naive "YYYY-MM-DDTHH:mm"
+      // (no timezone). Send it as-is: the backend interprets it in the
+      // country's clinic timezone (DST-aware) and stores UTC. Do NOT
+      // append :00Z here — that would wrongly pin the wall-clock to UTC.
+      scheduledAt: readOpt("scheduledAt"),
       consultationMode,
       clinicId: consultationMode === "IN_PERSON" ? readOpt("clinicId") : null,
       locationAddress: consultationMode === "IN_PERSON" ? readOpt("locationAddress") : null,
@@ -276,7 +276,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Service *</span>
-              <select name="serviceId" className="gh-select" required defaultValue="">
+              <select id="gh-service-select" name="serviceId" className="gh-select" required defaultValue="">
                 <option value="" disabled>
                   Select…
                 </option>
@@ -297,16 +297,29 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
             </label>
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Doctor</span>
-              <select name="doctorId" className="gh-select" defaultValue="">
+              <select id="gh-doctor-select" name="doctorId" className="gh-select" defaultValue="">
                 <option value="">— Unassigned —</option>
                 {doctors.map((d) => (
-                  <option key={d.id} value={d.id}>
+                  <option
+                    key={d.id}
+                    value={d.id}
+                    data-service-ids={d.serviceIds.join(",")}
+                  >
                     {(d.title ? `${d.title} ` : "") + d.fullName}
                   </option>
                 ))}
               </select>
+              <span className="text-[12px] text-[var(--color-text-muted)]">
+                Filtered to doctors assigned to the selected service. Others rejected on save.
+              </span>
             </label>
-            <Field label="Scheduled at (UTC)" name="scheduledAt" type="datetime-local" />
+            <label className="flex flex-col gap-1.5">
+              <span className="gh-field-label">Scheduled at</span>
+              <input type="datetime-local" name="scheduledAt" className="gh-input" />
+              <span className="text-[12px] text-[var(--color-text-muted)]">
+                Entered in {countryName} clinic local time (DST-aware). Stored as UTC.
+              </span>
+            </label>
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Consultation mode *</span>
               <select name="consultationMode" className="gh-select" required defaultValue="ONLINE">
@@ -344,6 +357,28 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
             their own password (recommended) or sign in immediately with a unique temporary password.
           </p>
         </AdminCard>
+
+        {/* Live doctor filter: hide options whose serviceIds don't include
+            the selected service. Runs after hydration with no React state. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){
+  var svc=document.getElementById('gh-service-select');
+  var doc=document.getElementById('gh-doctor-select');
+  if(!svc||!doc)return;
+  function filter(){
+    var id=svc.value;
+    var opts=doc.querySelectorAll('option[data-service-ids]');
+    opts.forEach(function(o){
+      var ids=o.getAttribute('data-service-ids');
+      o.hidden=id!==''&&ids!==''&&(','+ids+',').indexOf(','+id+',')===-1;
+    });
+    if(doc.options[doc.selectedIndex]&&doc.options[doc.selectedIndex].hidden)doc.value='';
+  }
+  svc.addEventListener('change',filter);
+})();`,
+          }}
+        />
 
         <div className="flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
           <button type="submit" className="gh-btn gh-btn-primary">

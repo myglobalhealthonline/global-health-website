@@ -69,6 +69,22 @@ export const adminBlogQuerySchema = z.object({
     (v) => (v === "" || v === undefined || v === null ? undefined : v),
     localeCodeSchema.optional(),
   ),
+  countryId: z
+    .string()
+    .trim()
+    .max(64)
+    .optional()
+    .transform((v) => (v === "" || v === undefined ? undefined : v)),
+  authorDisplayName: z
+    .string()
+    .trim()
+    .max(160)
+    .optional()
+    .transform((v) => (v === "" || v === undefined ? undefined : v)),
+  hasTranslation: z
+    .string()
+    .optional()
+    .transform((v) => (v === "true" ? true : v === "false" ? false : undefined)),
   search: z
     .string()
     .trim()
@@ -81,6 +97,26 @@ export type AdminBlogQuery = z.infer<typeof adminBlogQuerySchema>;
 
 export const blogIdParamsSchema = z.object({
   id: z.string().trim().min(1),
+});
+
+export const blogTranslationParamsSchema = z.object({
+  id: z.string().trim().min(1),
+  locale: z.string().trim().min(2).max(10),
+});
+
+export const blogTranslationBodySchema = z.object({
+  title: z.string().trim().min(1).max(240),
+  slug: blogSlugSchema,
+  excerpt: optionalNullableString(600),
+  content: z.string().max(200000).optional().nullable(),
+  seoTitle: optionalNullableString(180),
+  seoDesc: optionalNullableString(320),
+});
+
+export type BlogTranslationBody = z.infer<typeof blogTranslationBodySchema>;
+
+export const blogPostCountriesBodySchema = z.object({
+  countryIds: z.array(z.string().trim().min(1).max(64)).max(50),
 });
 
 export const publicBlogParamsSchema = z.object({

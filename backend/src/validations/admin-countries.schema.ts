@@ -1,4 +1,4 @@
-import { LocaleCode } from "@prisma/client";
+import { LocaleCode, LegalDocumentType } from "@prisma/client";
 import { z } from "zod";
 
 const localeValues = Object.values(LocaleCode) as [LocaleCode, ...LocaleCode[]];
@@ -160,3 +160,58 @@ export const adminCountryUpdateBodySchema = z
   });
 
 export type AdminCountryUpdateBody = z.infer<typeof adminCountryUpdateBodySchema>;
+
+const urlOrEmpty = z.string().trim().max(2048).url().or(z.literal("")).optional().nullable();
+const emailOrEmpty = z.string().trim().max(320).email().or(z.literal("")).optional().nullable();
+const textField = z.string().trim().max(2000).optional().nullable();
+
+export const countryLegalProfileBodySchema = z.object({
+  legalCompanyName: textField,
+  legalAddress: textField,
+  publicPhones: z.array(z.string().trim().max(50)).max(10).optional(),
+  publicEmails: z.array(z.string().trim().email().max(320)).max(10).optional(),
+  supportEmail: emailOrEmpty,
+  billingEmail: emailOrEmpty,
+  companyRegistrationNumber: textField,
+  taxVatNumber: textField,
+  medicalRegistrationNumber: textField,
+  healthcareLicenseDetails: textField,
+  regulatorName: textField,
+  regulatorWebsite: urlOrEmpty,
+  companyRegistryUrl: urlOrEmpty,
+  medicalRegulatorUrl: urlOrEmpty,
+  healthcareAuthorityUrl: urlOrEmpty,
+  dataProtectionAuthorityUrl: urlOrEmpty,
+  disputeResolutionUrl: urlOrEmpty,
+  consumerProtectionUrl: urlOrEmpty,
+  dataProtectionLawName: textField,
+  dataProtectionPolicyTitle: textField,
+  dpoName: textField,
+  dpoEmail: emailOrEmpty,
+  disputeBodyName: textField,
+  disputeEmail: emailOrEmpty,
+  disputePhone: textField,
+  disputeProcessText: z.string().trim().max(5000).optional().nullable(),
+  legalJurisdictionText: z.string().trim().max(5000).optional().nullable(),
+  consumerRightsText: z.string().trim().max(5000).optional().nullable(),
+});
+
+export type CountryLegalProfileBody = z.infer<typeof countryLegalProfileBodySchema>;
+
+const legalDocumentTypeValues = Object.values(LegalDocumentType) as [LegalDocumentType, ...LegalDocumentType[]];
+
+export const countryLegalDocumentBodySchema = z.object({
+  type: z.enum(legalDocumentTypeValues),
+  title: z.string().trim().min(1).max(300),
+  content: z.string().trim().max(500000).optional().nullable(),
+  pdfPath: z.string().trim().max(1000).optional().nullable(),
+  isPublished: z.boolean().optional().default(false),
+  locale: z.string().trim().min(2).max(10).optional().default("en"),
+});
+
+export type CountryLegalDocumentBody = z.infer<typeof countryLegalDocumentBodySchema>;
+
+export const legalDocumentIdParamsSchema = z.object({
+  id: z.string().trim().min(1),
+  docId: z.string().trim().min(1),
+});

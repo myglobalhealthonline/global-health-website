@@ -419,6 +419,99 @@ export async function purgeAdminCountry(id: string) {
   });
 }
 
+// ── CountryLegalProfile ──────────────────────────────────────────────────────
+
+export type CountryLegalProfileDto = {
+  id: string;
+  countryId: string;
+  legalCompanyName: string | null;
+  legalAddress: string | null;
+  publicPhones: string[];
+  publicEmails: string[];
+  supportEmail: string | null;
+  billingEmail: string | null;
+  companyRegistrationNumber: string | null;
+  taxVatNumber: string | null;
+  medicalRegistrationNumber: string | null;
+  healthcareLicenseDetails: string | null;
+  regulatorName: string | null;
+  regulatorWebsite: string | null;
+  companyRegistryUrl: string | null;
+  medicalRegulatorUrl: string | null;
+  healthcareAuthorityUrl: string | null;
+  dataProtectionAuthorityUrl: string | null;
+  disputeResolutionUrl: string | null;
+  consumerProtectionUrl: string | null;
+  dataProtectionLawName: string | null;
+  dataProtectionPolicyTitle: string | null;
+  dpoName: string | null;
+  dpoEmail: string | null;
+  disputeBodyName: string | null;
+  disputeEmail: string | null;
+  disputePhone: string | null;
+  disputeProcessText: string | null;
+  legalJurisdictionText: string | null;
+  consumerRightsText: string | null;
+};
+
+export async function fetchAdminCountryLegalProfile(countryId: string) {
+  return adminRequest<{ legalProfile: CountryLegalProfileDto | null }>(
+    `/api/admin/countries/${countryId}/legal`,
+  );
+}
+
+export async function putAdminCountryLegalProfile(countryId: string, body: unknown) {
+  return adminRequest<{ legalProfile: CountryLegalProfileDto }>(
+    `/api/admin/countries/${countryId}/legal`,
+    { method: "PUT", body },
+  );
+}
+
+// ── CountryLegalDocument ─────────────────────────────────────────────────────
+
+export type LegalDocumentType =
+  | "TERMS_OF_SERVICE"
+  | "PRIVACY_POLICY"
+  | "COOKIE_POLICY"
+  | "GDPR_NOTICE"
+  | "DATA_PROCESSING_AGREEMENT"
+  | "REFUND_POLICY"
+  | "MEDICAL_DISCLAIMER"
+  | "ACCESSIBILITY_STATEMENT";
+
+export type CountryLegalDocumentDto = {
+  id: string;
+  countryId: string;
+  type: LegalDocumentType;
+  title: string;
+  content: string | null;
+  pdfPath: string | null;
+  isPublished: boolean;
+  publishedAt: string | null;
+  locale: string;
+  version: number;
+};
+
+export async function fetchAdminCountryLegalDocuments(countryId: string) {
+  return adminRequest<{ documents: CountryLegalDocumentDto[] }>(
+    `/api/admin/countries/${countryId}/legal-documents`,
+  );
+}
+
+export async function putAdminCountryLegalDocument(countryId: string, body: unknown) {
+  return adminRequest<{ document: CountryLegalDocumentDto }>(
+    `/api/admin/countries/${countryId}/legal-documents`,
+    { method: "PUT", body },
+  );
+}
+
+export async function deleteAdminCountryLegalDocument(countryId: string, docId: string) {
+  return adminRequest<Record<string, never>>(
+    `/api/admin/countries/${countryId}/legal-documents/${docId}`,
+    { method: "DELETE" },
+  );
+}
+
 export type AdminSpecialtyTranslationDto = {
   id: string;
   locale: string;
@@ -624,6 +717,24 @@ export async function purgeAdminSpecialty(id: string) {
   });
 }
 
+export async function patchAdminServicesReorder(
+  items: Array<{ id: string; sortOrder: number }>,
+) {
+  return adminRequest<Record<string, never>>("/api/admin/services/reorder", {
+    method: "PATCH",
+    body: { items },
+  });
+}
+
+export async function patchAdminSpecialtiesReorder(
+  items: Array<{ id: string; sortOrder: number }>,
+) {
+  return adminRequest<Record<string, never>>("/api/admin/specialties/reorder", {
+    method: "PATCH",
+    body: { items },
+  });
+}
+
 export async function postAdminService(body: unknown) {
   return adminRequest<AdminServiceDetailPayload>("/api/admin/services", {
     method: "POST",
@@ -781,8 +892,10 @@ export type AdminDoctorDto = {
     country: { id: string; code: string; name: string; slug: string; defaultLocale: string };
   }>;
   specialties: AdminDoctorSpecialtyLinkDto[];
-  /** Active service assignments — used for consultation-type column on list. */
+  /** Active service assignments — used for consultation-type column and
+   *  manual-booking doctor filter. serviceId enables client-side narrowing. */
   assignedServices: Array<{
+    serviceId: string;
     service: { kind: AdminServiceKind };
   }>;
   assets: AdminDoctorAssetDto[];
@@ -1694,6 +1807,28 @@ export type AdminBlogLocale = "EN" | "PT" | "ES" | "CS" | "RO" | "DE";
 
 export const ADMIN_BLOG_LOCALES: AdminBlogLocale[] = ["EN", "PT", "ES", "CS", "RO", "DE"];
 
+export type BlogTranslationDto = {
+  id: string;
+  postId: string;
+  locale: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string | null;
+  seoTitle: string | null;
+  seoDesc: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type BlogPostCountryDto = {
+  id: string;
+  postId: string;
+  countryId: string;
+  country: { id: string; code: string; name: string };
+  createdAt: string;
+};
+
 export type AdminBlogDto = {
   id: string;
   slug: string;
@@ -1714,6 +1849,8 @@ export type AdminBlogDto = {
   updatedAt: string;
   country: { id: string; code: string; slug: string; name: string } | null;
   coverAsset: { id: string; path: string; altText: string | null } | null;
+  translations: BlogTranslationDto[];
+  countries: BlogPostCountryDto[];
 };
 
 type AdminBlogListPayload = {
@@ -1761,7 +1898,32 @@ export async function purgeAdminBlogPost(id: string) {
   });
 }
 
+export async function fetchAdminBlogTranslations(postId: string) {
+  return adminRequest<{ translations: BlogTranslationDto[] }>(
+    `/api/admin/blog/${postId}/translations`,
+  );
+}
 
+export async function putAdminBlogTranslation(postId: string, locale: string, body: unknown) {
+  return adminRequest<{ translation: BlogTranslationDto }>(
+    `/api/admin/blog/${postId}/translations/${locale}`,
+    { method: "PUT", body },
+  );
+}
+
+export async function deleteAdminBlogTranslation(postId: string, locale: string) {
+  return adminRequest<Record<string, never>>(
+    `/api/admin/blog/${postId}/translations/${locale}`,
+    { method: "DELETE" },
+  );
+}
+
+export async function putAdminBlogPostCountries(postId: string, countryIds: string[]) {
+  return adminRequest<Record<string, never>>(
+    `/api/admin/blog/${postId}/countries`,
+    { method: "PUT", body: { countryIds } },
+  );
+}
 
 /* ─────────────────────────────────────────────────────────────
    Per-country footer (admin) — backed by /api/admin/countries/:id/footer

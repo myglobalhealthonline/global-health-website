@@ -19,6 +19,11 @@ export class BlogCountryNotFoundError extends Error {
 const adminBlogInclude = {
   country: { select: { id: true, code: true, slug: true, name: true } },
   coverAsset: { select: { id: true, kind: true, key: true, path: true, altText: true } },
+  translations: { orderBy: { locale: "asc" as const } },
+  countries: {
+    include: { country: { select: { id: true, code: true, name: true } } },
+    orderBy: { createdAt: "asc" as const },
+  },
 } satisfies Prisma.BlogPostInclude;
 
 export type AdminBlogRecord = Prisma.BlogPostGetPayload<{ include: typeof adminBlogInclude }>;
@@ -73,6 +78,15 @@ function buildAdminBlogWhere(query: AdminBlogQuery): Prisma.BlogPostWhereInput {
   const where: Prisma.BlogPostWhereInput = {};
   if (query.status) where.status = query.status;
   if (query.locale) where.locale = query.locale;
+  if (query.countryId) where.countryId = query.countryId;
+  if (query.authorDisplayName) {
+    where.authorDisplayName = { contains: query.authorDisplayName, mode: "insensitive" };
+  }
+  if (query.hasTranslation === true) {
+    where.translations = { some: {} };
+  } else if (query.hasTranslation === false) {
+    where.translations = { none: {} };
+  }
   const term = query.search?.trim();
   if (term && term.length > 0) {
     where.OR = [
@@ -235,6 +249,74 @@ export async function disableAdminBlogPost(id: string): Promise<AdminBlogRecord 
     });
   } catch (error) {
     throw normalizeDbError(error, "Blog data is unavailable");
+  }
+}
+
+// ── BlogTranslation ───────────────────────────────────────────────────────────
+
+export async function listBlogTranslations(postId: string) {
+  try {
+    return await prisma.blogTranslation.findMany({
+      where: { postId },
+      orderBy: { locale: "asc" },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Blog translations unavailable");
+  }
+}
+
+export async function upsertBlogTranslation(
+  postId: string,
+  locale: string,
+  data: {
+    title: string;
+    slug: string;
+    excerpt?: string | null;
+    content?: string | null;
+    seoTitle?: string | null;
+    seoDesc?: string | null;
+  },
+) {
+  try {
+    return await prisma.blogTranslation.upsert({
+      where: { postId_locale: { postId, locale } },
+      create: { postId, locale, ...data },
+      update: data,
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not save blog translation");
+  }
+}
+
+export async function deleteBlogTranslation(postId: string, locale: string): Promise<boolean> {
+  const existing = await prisma.blogTranslation.findUnique({
+    where: { postId_locale: { postId, locale } },
+    select: { id: true },
+  });
+  if (!existing) return false;
+  try {
+    await prisma.blogTranslation.delete({ where: { id: existing.id } });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Could not delete blog translation");
+  }
+}
+
+// ── BlogPostCountry ───────────────────────────────────────────────────────────
+
+export async function setBlogPostCountries(postId: string, countryIds: string[]): Promise<void> {
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.blogPostCountry.deleteMany({ where: { postId } });
+      if (countryIds.length > 0) {
+        await tx.blogPostCountry.createMany({
+          data: countryIds.map((countryId) => ({ postId, countryId })),
+          skipDuplicates: true,
+        });
+      }
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not update blog post countries");
   }
 }
 

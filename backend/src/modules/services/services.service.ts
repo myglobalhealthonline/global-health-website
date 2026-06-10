@@ -980,3 +980,33 @@ export async function getPublicServiceBySlug(slug: string, countryCode?: string)
     throw normalizeDbError(error, "Service data is unavailable");
   }
 }
+
+export async function reorderAdminServices(
+  items: Array<{ id: string; sortOrder: number }>,
+): Promise<void> {
+  if (items.length === 0) return;
+  try {
+    await prisma.$transaction(
+      items.map(({ id, sortOrder }) =>
+        prisma.service.update({ where: { id }, data: { sortOrder } }),
+      ),
+    );
+  } catch (error) {
+    throw normalizeDbError(error, "Could not reorder services");
+  }
+}
+
+export async function reorderAdminSpecialties(
+  items: Array<{ id: string; sortOrder: number }>,
+): Promise<void> {
+  if (items.length === 0) return;
+  try {
+    await prisma.$transaction(
+      items.map(({ id, sortOrder }) =>
+        prisma.specialty.update({ where: { id }, data: { sortOrder } }),
+      ),
+    );
+  } catch (error) {
+    throw normalizeDbError(error, "Could not reorder specialties");
+  }
+}

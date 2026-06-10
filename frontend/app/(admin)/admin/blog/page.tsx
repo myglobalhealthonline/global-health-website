@@ -1,5 +1,5 @@
-import { Edit3, Plus } from "lucide-react";
-import { fetchAdminBlogPosts, type AdminBlogDto } from "@/lib/admin/admin-api";
+import { Edit3, Languages, Plus } from "lucide-react";
+import { fetchAdminBlogPosts, fetchAdminCountries, type AdminBlogDto } from "@/lib/admin/admin-api";
 import {
   AdminCard,
   AdminTable,
@@ -41,8 +41,15 @@ export default async function AdminBlogListPage({
   const filters = {
     status: spRead(sp, "status"),
     search: spRead(sp, "search"),
+    countryId: spRead(sp, "countryId"),
+    authorDisplayName: spRead(sp, "authorDisplayName"),
+    hasTranslation: spRead(sp, "hasTranslation"),
   };
-  const result = await fetchAdminBlogPosts(filters);
+  const [result, countriesResult] = await Promise.all([
+    fetchAdminBlogPosts(filters),
+    fetchAdminCountries(),
+  ]);
+  const countries = countriesResult.ok ? countriesResult.data.countries : [];
 
   return (
     <>
@@ -65,7 +72,7 @@ export default async function AdminBlogListPage({
               name="search"
               defaultValue={filters.search ?? ""}
               placeholder="Title, slug or category"
-              className="mt-1 min-w-[220px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+              className="mt-1 min-w-[180px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
             />
           </label>
           <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
@@ -78,6 +85,42 @@ export default async function AdminBlogListPage({
               <option value="">Any status</option>
               <option value="PUBLISHED">Published</option>
               <option value="DRAFT">Draft</option>
+            </select>
+          </label>
+          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+            Country
+            <select
+              name="countryId"
+              defaultValue={filters.countryId ?? ""}
+              className="mt-1 min-w-[120px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+            >
+              <option value="">Any country</option>
+              {countries.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+            Author
+            <input
+              name="authorDisplayName"
+              defaultValue={filters.authorDisplayName ?? ""}
+              placeholder="Author name"
+              className="mt-1 min-w-[140px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+            />
+          </label>
+          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
+            Translations
+            <select
+              name="hasTranslation"
+              defaultValue={filters.hasTranslation ?? ""}
+              className="mt-1 min-w-[140px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+            >
+              <option value="">Any</option>
+              <option value="true">Has translations</option>
+              <option value="false">No translations</option>
             </select>
           </label>
           <Btn type="submit" variant="secondary" size="sm">
@@ -107,9 +150,9 @@ export default async function AdminBlogListPage({
             <AdminTable>
               <Thead>
                 <Th>Title</Th>
-                <Th>Slug</Th>
                 <Th>Category</Th>
                 <Th>Lang</Th>
+                <Th>Translations</Th>
                 <Th>Status</Th>
                 <Th>Published</Th>
                 <Th align="right">Actions</Th>
@@ -117,16 +160,22 @@ export default async function AdminBlogListPage({
               <tbody>
                 {result.data.items.map((p: AdminBlogDto) => (
                   <Tr key={p.id}>
-                    <Td>
+                    <Td style={{ minWidth: 240 }}>
                       <span className="line-clamp-1 max-w-[280px] font-semibold">{p.title}</span>
-                    </Td>
-                    <Td>
-                      <span className="line-clamp-1 max-w-[200px] text-[var(--color-text-muted)]">
-                        {p.slug}
-                      </span>
+                      <span className="block font-mono text-[11px] text-[var(--color-text-muted)]">{p.slug}</span>
                     </Td>
                     <Td>{p.category ?? "—"}</Td>
                     <Td>{p.locale}</Td>
+                    <Td>
+                      {p.translations.length > 0 ? (
+                        <span className="inline-flex items-center gap-1 text-[12px] text-[var(--color-text-muted)]">
+                          <Languages className="size-3" aria-hidden />
+                          {p.translations.length}
+                        </span>
+                      ) : (
+                        <span className="text-[12px] text-[var(--color-text-muted)]">—</span>
+                      )}
+                    </Td>
                     <Td>
                       <Pill tone={p.status === "PUBLISHED" ? "published" : "draft"}>
                         {p.isActive ? p.status : "INACTIVE"}

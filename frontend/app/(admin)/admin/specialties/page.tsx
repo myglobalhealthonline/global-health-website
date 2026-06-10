@@ -21,6 +21,7 @@ import {
   fetchAdminCountries,
   fetchAdminSpecialties,
   patchAdminSpecialty,
+  patchAdminSpecialtiesReorder,
   postAdminSpecialty,
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../_components/flag-badge";
@@ -65,13 +66,14 @@ type GridRow = {
 };
 
 type PageProps = {
-  searchParams?: Promise<{ success?: string; error?: string }>;
+  searchParams?: Promise<{ success?: string; error?: string; sortCountryId?: string }>;
 };
 
 export default async function AdminCategoriesMatrixPage({
   searchParams,
 }: PageProps) {
   const sp = searchParams ? await searchParams : {};
+  const sortCountryId = sp.sortCountryId?.trim() ?? null;
   const countriesResult = await fetchAdminCountries();
 
   if (!countriesResult.ok) {
@@ -129,6 +131,32 @@ export default async function AdminCategoriesMatrixPage({
     a.name.localeCompare(b.name),
   );
 
+  // ── Server action: bulk sort-order save for one country's specialties ──
+  async function reorderSpecialtiesAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const raw = String(formData.get("_reorderItems") ?? "");
+    let parsed: Array<{ id: string; sortOrder: number }>;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      redirect(`/admin/specialties?error=${encodeURIComponent("Invalid sort data")}`);
+    }
+    const items = parsed.map((item) => ({
+      id: item.id,
+      sortOrder: Math.max(
+        0,
+        Math.min(9999, parseInt(String(formData.get(`order_${item.id}`) ?? item.sortOrder), 10) || 0),
+      ),
+    }));
+    const result = await patchAdminSpecialtiesReorder(items);
+    if (!result.ok) {
+      redirect(`/admin/specialties?error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath("/admin/specialties");
+    redirect(`/admin/specialties?success=Sort+order+saved`);
+  }
+
   // ── Server action: toggle a category for a specific country ──
   async function toggleCategoryAction(formData: FormData) {
     "use server";
@@ -173,6 +201,15 @@ export default async function AdminCategoriesMatrixPage({
     revalidatePath("/admin/specialties");
     redirect(`/admin/specialties?success=${encodeURIComponent("Updated")}`);
   }
+
+  // Fetch specialties for the sort-order panel when a country is selected.
+  const sortCountry = sortCountryId ? countries.find((c) => c.id === sortCountryId) ?? null : null;
+  const sortSpecialties =
+    sortCountryId
+      ? await fetchAdminSpecialties(sortCountryId).then((r) =>
+          r.ok ? r.data.specialties.slice().sort((a, b) => a.sortOrder - b.sortOrder) : [],
+        )
+      : [];
 
   return (
     <>
@@ -326,6 +363,73 @@ export default async function AdminCategoriesMatrixPage({
             </tbody>
           </AdminTable>
         </div>
+      </AdminCard>
+
+      {/* Sort-order editor — pick a country to manage per-country specialty order */}
+      <AdminCard className="mt-6">
+        <h3 className="text-[15px] font-bold text-[var(--color-text-primary)]">Sort order</h3>
+        <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          Choose a country to set the display order of its categories. Lower number = appears first.
+        </p>
+        <form method="get" className="mt-3 flex flex-wrap items-end gap-3">
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">Country</span>
+            <select
+              name="sortCountryId"
+              defaultValue={sortCountryId ?? ""}
+              className="gh-select min-w-[200px]"
+            >
+              <option value="">Select country…</option>
+              {countries.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button type="submit" className="gh-btn gh-btn-soft">
+            Load
+          </button>
+        </form>
+
+        {sortCountry && sortSpecialties.length > 0 ? (
+          <form action={reorderSpecialtiesAction} className="mt-5">
+            <input
+              type="hidden"
+              name="_reorderItems"
+              value={JSON.stringify(
+                sortSpecialties.map((s) => ({ id: s.id, sortOrder: s.sortOrder })),
+              )}
+            />
+            <p className="mb-3 text-[13px] font-semibold text-[var(--color-text-body)]">
+              {sortCountry.name}
+            </p>
+            <div className="grid gap-2">
+              {sortSpecialties.map((s) => (
+                <div key={s.id} className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    name={`order_${s.id}`}
+                    defaultValue={s.sortOrder}
+                    min={0}
+                    max={9999}
+                    className="gh-input w-20 text-right font-mono text-[13px]"
+                  />
+                  <span className="text-[13px] text-[var(--color-text-body)]">{s.name}</span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4">
+              <button type="submit" className="gh-btn gh-btn-primary">
+                Save order
+              </button>
+            </div>
+          </form>
+        ) : sortCountry && sortSpecialties.length === 0 ? (
+          <p className="mt-3 text-[13px] text-[var(--color-text-muted)]">
+            No categories enabled for {sortCountry.name} yet.
+          </p>
+        ) : null}
       </AdminCard>
 
       <p className="mt-6 text-[12px] text-[var(--color-text-muted)]">

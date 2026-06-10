@@ -295,6 +295,9 @@ export type ListAppointmentsOptions = {
   countryCode?: string;
   consultationType?: string;
   search?: string;
+  /** Case-insensitive substring on the assigned doctor's full name (and
+   *  linked login email). Excludes appointments with no doctor. */
+  doctorName?: string;
 };
 
 export type ListAppointmentsResult = {
@@ -376,6 +379,24 @@ function buildAppointmentWhereClause(options: ListAppointmentsOptions): Prisma.S
       strpos(lower(a."fullName"), lower(${term})) > 0
       OR strpos(lower(a."email"), lower(${term})) > 0
       OR strpos(lower(coalesce(a."phone", '')), lower(${term})) > 0
+    )`);
+  }
+
+  // Doctor-name filter. Self-contained subquery on a."doctorId" (NOT the
+  // joined `d` alias) so the same WHERE works in both the COUNT query
+  // (no JOIN) and the SELECT query. Matches the doctor's full name and,
+  // when a login account is linked, their email. A NULL doctorId never
+  // satisfies `IN (...)`, so undoctored appointments drop out — exactly
+  // what "filter by doctor" means.
+  const dn = options.doctorName?.trim();
+  if (dn && dn.length > 0) {
+    const term = dn.slice(0, 120);
+    parts.push(Prisma.sql`a."doctorId" IN (
+      SELECT d2."id"
+      FROM "Doctor" d2
+      LEFT JOIN "User" u2 ON u2."doctorId" = d2."id"
+      WHERE strpos(lower(d2."fullName"), lower(${term})) > 0
+         OR strpos(lower(coalesce(u2."email", '')), lower(${term})) > 0
     )`);
   }
 

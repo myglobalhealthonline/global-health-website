@@ -17,6 +17,7 @@ import {
   upsertPatientProfileByEmail,
 } from "../patient-profile/patient-profile.service.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { zonedDateTimeStringToUtc } from "../doctor-availability/timezone.js";
 
 /**
  * Admin walk-in / phone-in booking pipeline. The patient may or may
@@ -54,6 +55,36 @@ export class DoctorNotFoundError extends Error {
   constructor() {
     super("Doctor not found.");
     this.name = "DoctorNotFoundError";
+  }
+}
+
+/**
+ * The doctor exists but is not bookable for the selected country —
+ * either inactive, or not listed on that country's roster (neither the
+ * primary `Doctor.countryId` nor an active `DoctorCountry` link). Raised
+ * so the booking is rejected server-side even when the admin UI is
+ * bypassed.
+ */
+export class DoctorNotAvailableInCountryError extends Error {
+  constructor() {
+    super(
+      "Selected doctor is not active in the chosen country. Pick a doctor assigned to this country.",
+    );
+    this.name = "DoctorNotAvailableInCountryError";
+  }
+}
+
+/**
+ * The doctor is in the country but is not an active, approved provider
+ * for the selected service (no active `ServiceDoctor` row with
+ * status = 'active'). Mirrors the public consult flow's doctor filter.
+ */
+export class DoctorNotAssignedToServiceError extends Error {
+  constructor() {
+    super(
+      "Selected doctor is not assigned to this service. Pick a doctor bookable for the chosen service.",
+    );
+    this.name = "DoctorNotAssignedToServiceError";
   }
 }
 
@@ -135,6 +166,10 @@ export async function createManualBooking(
       name: true,
       basePriceCents: true,
       currencyCode: true,
+      countryId: true,
+      country: {
+        select: { bookingSetting: { select: { timezone: true } } },
+      },
     },
   });
   if (!service) {
@@ -145,13 +180,45 @@ export async function createManualBooking(
     throw new ServicePriceMissingError();
   }
 
+  // Clinic timezone for the country (falls back to UTC). Drives the
+  // wall-clock → UTC conversion of the admin-entered scheduledAt below,
+  // so a slot booked as "14:00" lands on the correct UTC instant for the
+  // country (DST-aware via luxon).
+  const clinicTimeZone = service.country?.bookingSetting?.timezone ?? "UTC";
+
   let doctorName: string | null = null;
   if (input.doctorId) {
+    // Validate the doctor is actually bookable for THIS country + service.
+    // Enforced here (not just in the UI) so a manipulated payload can't
+    // assign an unrelated / inactive / unapproved doctor. Mirrors the
+    // public consult flow's filter: active doctor + on the country roster
+    // + active 'active'-status ServiceDoctor row.
     const doc = await prisma.doctor.findUnique({
       where: { id: input.doctorId },
-      select: { fullName: true },
+      select: {
+        fullName: true,
+        active: true,
+        countryId: true,
+        additionalCountries: {
+          where: { countryId: service.countryId, active: true },
+          select: { id: true },
+        },
+        assignedServices: {
+          where: { serviceId: service.id, isActive: true, status: "active" },
+          select: { id: true },
+        },
+      },
     });
     if (!doc) throw new DoctorNotFoundError();
+
+    const inCountry =
+      doc.countryId === service.countryId || doc.additionalCountries.length > 0;
+    if (!doc.active || !inCountry) {
+      throw new DoctorNotAvailableInCountryError();
+    }
+    if (doc.assignedServices.length === 0) {
+      throw new DoctorNotAssignedToServiceError();
+    }
     doctorName = doc.fullName.trim() || doc.fullName;
   }
 
@@ -241,10 +308,13 @@ export async function createManualBooking(
   );
 
   const appointmentId = randomUUID();
-  const scheduledAt =
-    input.scheduledAt && input.scheduledAt.length > 0
-      ? new Date(input.scheduledAt)
-      : null;
+  // Interpret the admin's wall-clock input in the clinic timezone. A naive
+  // "2026-07-15T14:00" becomes the right UTC instant for the country; a
+  // value that already carries an offset/Z is honored as-is. Stored in UTC.
+  const scheduledAt = zonedDateTimeStringToUtc(
+    input.scheduledAt ?? null,
+    clinicTimeZone,
+  );
   try {
     await prisma.appointment.create({
       data: {

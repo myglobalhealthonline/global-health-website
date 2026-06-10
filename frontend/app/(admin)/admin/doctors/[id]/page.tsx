@@ -251,7 +251,21 @@ export default async function AdminDoctorDetailPage({
                   )
                 }
               />
-              <FieldRow label="WhatsApp" value={d.whatsappNumber ?? "—"} />
+              <FieldRow
+                label="WhatsApp"
+                value={
+                  d.whatsappNumber ? (
+                    <span className="flex items-center gap-2">
+                      <span>{d.whatsappNumber}</span>
+                      <span className="inline-block rounded border border-[var(--color-border)] bg-[var(--color-background-soft)] px-1.5 py-px text-[10px] font-semibold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
+                        Internal
+                      </span>
+                    </span>
+                  ) : (
+                    "—"
+                  )
+                }
+              />
               <FieldRow
                 label="Languages"
                 value={d.languages.length > 0 ? d.languages.join(", ") : "—"}
@@ -330,8 +344,11 @@ export default async function AdminDoctorDetailPage({
             {d.loginUser ? (
               <div className="grid gap-3">
                 <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3 text-[13px]">
-                  <p className="font-semibold text-[var(--color-text-primary)]">
-                    {d.loginUser.email}
+                  <p className="flex items-center gap-2 font-semibold text-[var(--color-text-primary)]">
+                    <span>{d.loginUser.email}</span>
+                    <span className="inline-block rounded border border-[var(--color-border)] bg-[var(--color-background)] px-1.5 py-px text-[10px] font-semibold uppercase tracking-[0.06em] text-[var(--color-text-muted)]">
+                      Internal
+                    </span>
                   </p>
                   <p className="text-[11.5px] text-[var(--color-text-muted)]">
                     {d.loginUser.emailVerifiedAt

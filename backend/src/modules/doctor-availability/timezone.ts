@@ -101,6 +101,32 @@ export function utcToClinicMinuteOfDay(utc: Date, timeZone: string): number {
 }
 
 /**
+ * Parse an admin-entered scheduling string into a UTC instant.
+ *
+ * A *naive* wall-clock string (no offset / no `Z`, e.g. `"2026-07-15T14:00"`
+ * from an `<input type="datetime-local">`) is interpreted in the given clinic
+ * timezone — so an admin booking "14:00" for an Irish clinic stores the
+ * matching UTC instant (13:00Z in summer, 14:00Z in winter), DST-correct via
+ * luxon. A string that already carries an offset / `Z` is unambiguous: luxon
+ * keeps the instant and only the representation zone changes, so `.toUTC()`
+ * returns the same moment — this keeps the legacy ISO-with-offset contract
+ * working.
+ *
+ * Returns `null` for an empty or unparseable value so callers can treat the
+ * slot as unscheduled rather than persisting an Invalid Date.
+ */
+export function zonedDateTimeStringToUtc(
+  value: string | null | undefined,
+  timeZone: string,
+): Date | null {
+  if (!value || value.trim().length === 0) return null;
+  const zone = isValidTimeZone(timeZone) ? timeZone : "utc";
+  const dt = DateTime.fromISO(value.trim(), { zone });
+  if (!dt.isValid) return null;
+  return dt.toUTC().toJSDate();
+}
+
+/**
  * Enumerate every clinic-local calendar day overlapping [fromUtc, toUtc],
  * padded ±1 day at each edge. The padding matters: a clinic-local day's
  * slots can land on a UTC instant just outside the requested range because

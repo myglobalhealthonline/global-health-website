@@ -55,6 +55,7 @@ function buildFilterQuery(
     countryCode: spRead(sp, "countryCode"),
     consultationType: spRead(sp, "consultationType"),
     search: spRead(sp, "search"),
+    doctorName: spRead(sp, "doctorName"),
   };
 }
 
@@ -216,6 +217,17 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
                 name="search"
                 defaultValue={filters.search ?? ""}
                 placeholder="Name, email, phone"
+                className="gh-input min-w-0"
+                maxLength={120}
+              />
+            </label>
+            <label className="flex min-w-0 flex-col gap-1.5">
+              <span className="gh-field-label">Doctor</span>
+              <input
+                type="search"
+                name="doctorName"
+                defaultValue={filters.doctorName ?? ""}
+                placeholder="Doctor name or email"
                 className="gh-input min-w-0"
                 maxLength={120}
               />

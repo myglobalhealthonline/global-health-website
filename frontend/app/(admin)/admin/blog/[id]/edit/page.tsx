@@ -2,14 +2,18 @@ import Link from "next/link";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidateTag, revalidatePath } from "next/cache";
-import { ArrowLeft, ExternalLink, Trash2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, Languages, Plus, Trash2 } from "lucide-react";
 import {
   fetchAdminBlogPostById,
+  fetchAdminCountries,
   patchAdminBlogPost,
   purgeAdminBlogPost,
+  putAdminBlogTranslation,
+  deleteAdminBlogTranslation,
+  putAdminBlogPostCountries,
 } from "@/lib/admin/admin-api";
 import { PUBLIC_BLOG_TAG } from "@/lib/content/get-public-blog";
-import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
+import { AdminCard, Btn, PageHeader, Pill } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 import { BlogFields } from "../../_components/blog-fields";
 import { parseBlogBody, validateBlogBody } from "../../_components/blog-form-parse";
@@ -18,7 +22,7 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ error?: string; success?: string }>;
+  searchParams?: Promise<{ error?: string; success?: string; editLocale?: string }>;
 };
 
 function bustBlogCaches(slug: string) {
@@ -30,8 +34,12 @@ function bustBlogCaches(slug: string) {
 export default async function AdminEditBlogPage({ params, searchParams }: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
+  const editLocale = messages.editLocale?.trim() ?? null;
 
-  const result = await fetchAdminBlogPostById(id);
+  const [result, countriesResult] = await Promise.all([
+    fetchAdminBlogPostById(id),
+    fetchAdminCountries(),
+  ]);
   if (!result.ok) {
     return (
       <>
@@ -54,6 +62,10 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
   }
 
   const post = result.data.post;
+  const allCountries = countriesResult.ok ? countriesResult.data.countries : [];
+  const assignedCountryIds = new Set(post.countries.map((c) => c.countryId));
+  const translations = post.translations;
+  const editTranslation = editLocale ? translations.find((t) => t.locale === editLocale) ?? null : null;
 
   async function updateBlogAction(formData: FormData) {
     "use server";
@@ -81,6 +93,53 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
     }
     if (before.ok) bustBlogCaches(before.data.post.slug);
     redirect(`/admin/blog?success=${encodeURIComponent("Post deleted")}`);
+  }
+
+  async function saveTranslationAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const locale = (formData.get("locale") as string)?.trim();
+    const title = (formData.get("tr_title") as string)?.trim();
+    const slug = (formData.get("tr_slug") as string)?.trim();
+    const excerpt = (formData.get("tr_excerpt") as string)?.trim() || null;
+    const content = (formData.get("tr_content") as string)?.trim() || null;
+    const seoTitle = (formData.get("tr_seoTitle") as string)?.trim() || null;
+    const seoDesc = (formData.get("tr_seoDesc") as string)?.trim() || null;
+    if (!locale || !title || !slug) {
+      redirect(`/admin/blog/${id}/edit?error=Locale%2C+title+and+slug+required`);
+    }
+    const result = await putAdminBlogTranslation(id, locale, { title, slug, excerpt, content, seoTitle, seoDesc });
+    if (!result.ok) {
+      redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath(`/admin/blog/${id}/edit`);
+    redirect(`/admin/blog/${id}/edit?success=${encodeURIComponent(`Translation (${locale}) saved`)}`);
+  }
+
+  async function deleteTranslationAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const locale = (formData.get("locale") as string)?.trim();
+    if (!locale) redirect(`/admin/blog/${id}/edit?error=Missing+locale`);
+    const result = await deleteAdminBlogTranslation(id, locale);
+    if (!result.ok) {
+      redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath(`/admin/blog/${id}/edit`);
+    redirect(`/admin/blog/${id}/edit?success=${encodeURIComponent(`Translation (${locale}) deleted`)}`);
+  }
+
+  async function saveCountriesAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const raw = formData.getAll("countryIds") as string[];
+    const countryIds = raw.filter(Boolean);
+    const result = await putAdminBlogPostCountries(id, countryIds);
+    if (!result.ok) {
+      redirect(`/admin/blog/${id}/edit?error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath(`/admin/blog/${id}/edit`);
+    redirect(`/admin/blog/${id}/edit?success=Countries+updated`);
   }
 
   return (
@@ -144,6 +203,166 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
           </Btn>
         </div>
       </form>
+
+      {/* Translations section */}
+      <AdminCard className="mt-6">
+        <div className="flex items-center gap-2">
+          <Languages className="size-4 text-[var(--color-text-muted)]" aria-hidden />
+          <h3
+            className="m-0 text-[var(--color-text-primary)]"
+            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+          >
+            Translations
+          </h3>
+          {translations.length > 0 ? (
+            <Pill tone="brand">{translations.length}</Pill>
+          ) : null}
+        </div>
+        <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          Add locale-specific title, slug, and content for this post.
+        </p>
+
+        {translations.length > 0 ? (
+          <div className="mt-3 grid gap-2">
+            {translations.map((t) => (
+              <div
+                key={t.locale}
+                className="flex items-center justify-between rounded-md bg-[var(--color-background-soft)] px-3 py-2"
+              >
+                <div>
+                  <span className="inline-block font-mono text-[12px] font-bold text-[var(--color-text-primary)]">
+                    {t.locale.toUpperCase()}
+                  </span>
+                  <span className="ml-2 text-[13px] text-[var(--color-text-body)]">{t.title}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/admin/blog/${id}/edit?editLocale=${t.locale}`}
+                    className="gh-btn gh-btn-soft text-[12px]"
+                  >
+                    Edit
+                  </Link>
+                  <form action={deleteTranslationAction} className="inline">
+                    <input type="hidden" name="locale" value={t.locale} />
+                    <button
+                      type="submit"
+                      className="gh-btn gh-btn-danger text-[12px]"
+                      aria-label={`Delete ${t.locale} translation`}
+                    >
+                      <Trash2 className="size-3" aria-hidden />
+                    </button>
+                  </form>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {editLocale ? (
+          <form action={saveTranslationAction} className="mt-4 grid gap-4">
+            <input type="hidden" name="locale" value={editLocale} />
+            <h4 className="m-0 text-[14px] font-bold text-[var(--color-text-primary)]">
+              {editTranslation ? "Edit" : "Add"} translation: {editLocale.toUpperCase()}
+            </h4>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">Title *</span>
+                <input type="text" name="tr_title" defaultValue={editTranslation?.title ?? ""} className="gh-input" required />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">Slug *</span>
+                <input type="text" name="tr_slug" defaultValue={editTranslation?.slug ?? ""} className="gh-input" required />
+              </label>
+            </div>
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">Excerpt</span>
+              <textarea name="tr_excerpt" rows={2} defaultValue={editTranslation?.excerpt ?? ""} className="gh-input" />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">Content (HTML)</span>
+              <textarea name="tr_content" rows={12} defaultValue={editTranslation?.content ?? ""} className="gh-input resize-y font-mono text-[12px]" />
+            </label>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">SEO title</span>
+                <input type="text" name="tr_seoTitle" defaultValue={editTranslation?.seoTitle ?? ""} className="gh-input" />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">SEO description</span>
+                <input type="text" name="tr_seoDesc" defaultValue={editTranslation?.seoDesc ?? ""} className="gh-input" />
+              </label>
+            </div>
+            <div className="flex items-center gap-3">
+              <button type="submit" className="gh-btn gh-btn-primary">Save translation</button>
+              <Link href={`/admin/blog/${id}/edit`} className="gh-btn gh-btn-soft">Cancel</Link>
+            </div>
+          </form>
+        ) : (
+          <div className="mt-4">
+            <p className="mb-2 text-[12px] text-[var(--color-text-muted)]">
+              Add a new locale (e.g. <code>fr</code>, <code>de</code>, <code>pt</code>):
+            </p>
+            <form action="/admin/blog" method="get" className="flex flex-wrap items-end gap-2">
+              {/* Redirect via GET ?editLocale= */}
+              <input type="hidden" name="placeholder" value="1" />
+              <input
+                type="text"
+                id="newLocaleInput"
+                placeholder="fr"
+                maxLength={10}
+                className="gh-input w-24"
+                name="_localeInput"
+              />
+              <Link
+                href={`/admin/blog/${id}/edit?editLocale=`}
+                className="gh-btn gh-btn-soft inline-flex items-center gap-1"
+              >
+                <Plus className="size-3" aria-hidden />
+                Add locale
+              </Link>
+            </form>
+            <p className="mt-2 text-[11px] text-[var(--color-text-muted)]">
+              Tip: append <code>?editLocale=fr</code> to the URL to open a specific locale editor.
+            </p>
+          </div>
+        )}
+      </AdminCard>
+
+      {/* Countries multi-select */}
+      {allCountries.length > 0 ? (
+        <AdminCard className="mt-4">
+          <h3
+            className="m-0 text-[var(--color-text-primary)]"
+            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+          >
+            Country visibility
+          </h3>
+          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+            Which countries this post is visible in. Leave all unchecked for global.
+          </p>
+          <form action={saveCountriesAction} className="mt-4">
+            <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+              {allCountries.map((c) => (
+                <label key={c.id} className="flex items-center gap-2 text-[13px]">
+                  <input
+                    type="checkbox"
+                    name="countryIds"
+                    value={c.id}
+                    defaultChecked={assignedCountryIds.has(c.id)}
+                    className="size-4"
+                  />
+                  {c.name}
+                </label>
+              ))}
+            </div>
+            <div className="mt-4">
+              <button type="submit" className="gh-btn gh-btn-primary">
+                Save country visibility
+              </button>
+            </div>
+          </form>
+        </AdminCard>
+      ) : null}
     </>
   );
 }

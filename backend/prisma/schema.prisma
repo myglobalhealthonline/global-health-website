@@ -296,6 +296,7 @@ model Country {
   pricingPlans               PricingPlan[]
   assets                     Asset[]
   blogPosts                  BlogPost[]
+  blogPostCountries          BlogPostCountry[]
   faqs                       Faq[]
   contentPages               ContentPage[]
   badges                     Badge[]
@@ -306,6 +307,8 @@ model Country {
   /// Access model controlling which doctors can access patient files in this country.
   accessModel                CountryAccessModel   @default(PLATFORM)
   dataPolicy                 CountryDataPolicy?
+  legalProfile               CountryLegalProfile?
+  legalDocuments             CountryLegalDocument[]
   createdAt                  DateTime             @default(now())
   updatedAt                  DateTime             @updatedAt
 }
@@ -1678,13 +1681,46 @@ model BlogPost {
   lastReviewedAt      DateTime?
   editorialChecklist  Json?
   isActive            Boolean       @default(true)
-  country             Country?      @relation(fields: [countryId], references: [id], onDelete: SetNull)
-  coverAsset          Asset?        @relation("BlogPostCover", fields: [coverAssetId], references: [id], onDelete: SetNull)
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
+  country             Country?          @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  coverAsset          Asset?            @relation("BlogPostCover", fields: [coverAssetId], references: [id], onDelete: SetNull)
+  translations        BlogTranslation[]
+  countries           BlogPostCountry[]
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
 
   @@unique([slug, locale, countryId])
   @@index([countryId, status, locale])
+}
+
+model BlogTranslation {
+  id        String   @id @default(cuid())
+  postId    String
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  locale    String
+  title     String
+  slug      String
+  excerpt   String?
+  content   String?
+  seoTitle  String?
+  seoDesc   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([postId, locale])
+  @@index([postId])
+}
+
+model BlogPostCountry {
+  id        String   @id @default(cuid())
+  postId    String
+  post      BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  countryId String
+  country   Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([postId, countryId])
+  @@index([postId])
+  @@index([countryId])
 }
 
 model Faq {
@@ -2354,6 +2390,84 @@ model CountryDataPolicy {
   country               Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
+}
+
+/// Per-country legal entity, registration, and dispute-resolution details.
+model CountryLegalProfile {
+  id                         String   @id @default(cuid())
+  countryId                  String   @unique
+  country                    Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  // Company / contact
+  legalCompanyName           String?
+  legalAddress               String?
+  publicPhones               String[] @default([])
+  publicEmails               String[] @default([])
+  supportEmail               String?
+  billingEmail               String?
+
+  // Registration / regulatory
+  companyRegistrationNumber  String?
+  taxVatNumber               String?
+  medicalRegistrationNumber  String?
+  healthcareLicenseDetails   String?
+  regulatorName              String?
+  regulatorWebsite           String?
+
+  // Legal backlinks
+  companyRegistryUrl         String?
+  medicalRegulatorUrl        String?
+  healthcareAuthorityUrl     String?
+  dataProtectionAuthorityUrl String?
+  disputeResolutionUrl       String?
+  consumerProtectionUrl      String?
+
+  // Data-protection naming (overrides hardcoded "GDPR")
+  dataProtectionLawName      String?  @default("GDPR")
+  dataProtectionPolicyTitle  String?
+  dpoName                    String?
+  dpoEmail                   String?
+
+  // Dispute resolution
+  disputeBodyName            String?
+  disputeEmail               String?
+  disputePhone               String?
+  disputeProcessText         String?
+  legalJurisdictionText      String?
+  consumerRightsText         String?
+
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+}
+
+enum LegalDocumentType {
+  TERMS_OF_SERVICE
+  PRIVACY_POLICY
+  COOKIE_POLICY
+  GDPR_NOTICE
+  DATA_PROCESSING_AGREEMENT
+  REFUND_POLICY
+  MEDICAL_DISCLAIMER
+  ACCESSIBILITY_STATEMENT
+}
+
+/// Per-country legal documents (rich text and/or PDF).
+model CountryLegalDocument {
+  id          String            @id @default(cuid())
+  countryId   String
+  country     Country           @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  type        LegalDocumentType
+  title       String
+  content     String?
+  pdfPath     String?
+  isPublished Boolean           @default(false)
+  publishedAt DateTime?
+  locale      String            @default("en")
+  version     Int               @default(1)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@unique([countryId, type, locale])
 }
 
 /// Patient GDPR data deletion request. Medical records that must be retained

@@ -9,6 +9,10 @@ import {
   listAdminBlogPosts,
   purgeAdminBlogPost,
   updateAdminBlogPost,
+  listBlogTranslations,
+  upsertBlogTranslation,
+  deleteBlogTranslation,
+  setBlogPostCountries,
 } from "../modules/blog/blog.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
@@ -16,6 +20,9 @@ import {
   adminBlogQuerySchema,
   adminBlogUpdateBodySchema,
   blogIdParamsSchema,
+  blogTranslationParamsSchema,
+  blogTranslationBodySchema,
+  blogPostCountriesBodySchema,
 } from "../validations/admin-blog.schema.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -148,6 +155,89 @@ const adminBlogRoute: FastifyPluginAsync = async (app) => {
       return okResponse({ deleted: true });
     } catch (error) {
       return handleBlogWriteError(app, reply, error);
+    }
+  });
+
+  // ── BlogTranslation ────────────────────────────────────────────────────────
+
+  app.get("/api/admin/blog/:id/translations", async (request, reply) => {
+    const params = blogIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid blog id", params.error.flatten()));
+    }
+    try {
+      const translations = await listBlogTranslations(params.data.id);
+      return okResponse({ translations });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected translation error"));
+    }
+  });
+
+  app.put("/api/admin/blog/:id/translations/:locale", async (request, reply) => {
+    const params = blogTranslationParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid params", params.error.flatten()));
+    }
+    const body = blogTranslationBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid translation payload", body.error.flatten()));
+    }
+    try {
+      const translation = await upsertBlogTranslation(params.data.id, params.data.locale, body.data);
+      return okResponse({ translation }, "Translation saved");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected translation error"));
+    }
+  });
+
+  app.delete("/api/admin/blog/:id/translations/:locale", async (request, reply) => {
+    const params = blogTranslationParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid params", params.error.flatten()));
+    }
+    try {
+      const deleted = await deleteBlogTranslation(params.data.id, params.data.locale);
+      if (!deleted) {
+        return reply.status(404).send(errorResponse("Translation not found"));
+      }
+      return okResponse({}, "Translation deleted");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected translation error"));
+    }
+  });
+
+  // ── BlogPostCountry ────────────────────────────────────────────────────────
+
+  app.put("/api/admin/blog/:id/countries", async (request, reply) => {
+    const params = blogIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid blog id", params.error.flatten()));
+    }
+    const body = blogPostCountriesBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid countries payload", body.error.flatten()));
+    }
+    try {
+      await setBlogPostCountries(params.data.id, body.data.countryIds);
+      return okResponse({}, "Countries updated");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected error updating countries"));
     }
   });
 };

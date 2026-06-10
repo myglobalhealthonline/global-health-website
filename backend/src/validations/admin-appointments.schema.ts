@@ -134,6 +134,18 @@ export const adminAppointmentsQuerySchema = z.object({
     .max(120)
     .optional()
     .transform((value) => (value === undefined || value === "" ? undefined : value)),
+  /**
+   * Free-text doctor filter. Matched (case-insensitive substring) against
+   * the assigned doctor's full name and — when linked — the doctor's login
+   * email. Composes with every other filter via AND. Appointments with no
+   * assigned doctor are excluded when this is set.
+   */
+  doctorName: z
+    .string()
+    .trim()
+    .max(120)
+    .optional()
+    .transform((value) => (value === undefined || value === "" ? undefined : value)),
 });
 
 /**
@@ -162,9 +174,21 @@ export const createManualAppointmentBodySchema = z
       .strict(),
     serviceId: z.string().trim().min(1).max(60),
     doctorId: z.string().trim().min(1).max(60).optional().nullable(),
+    // Accept either a naive clinic-local wall-clock string from an
+    // <input type="datetime-local"> ("2026-07-15T14:00") OR a full
+    // ISO-with-offset string (legacy callers). The service interprets a
+    // naive value in the country's clinic timezone; an offset value is
+    // honored as the absolute instant it already encodes.
     scheduledAt: z
-      .string()
-      .datetime({ offset: true })
+      .union([
+        z.string().datetime({ offset: true }),
+        z
+          .string()
+          .regex(
+            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/,
+            "scheduledAt must be an ISO date-time",
+          ),
+      ])
       .optional()
       .nullable(),
     consultationMode: z.enum(["ONLINE", "IN_PERSON"]).default("ONLINE"),

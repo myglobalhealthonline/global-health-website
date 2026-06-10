@@ -118,6 +118,12 @@ export default async function AdminCountryDetailPage({
             <Pill tone={isActive ? "published" : "inactive"}>
               {isActive ? "Active" : "Inactive"}
             </Pill>
+            <Btn href={`/admin/countries/${id}/legal`} variant="soft" size="md">
+              Legal profile
+            </Btn>
+            <Btn href={`/admin/countries/${id}/legal-documents`} variant="soft" size="md">
+              Legal docs
+            </Btn>
             <Btn href={`/admin/countries/${id}/edit`} variant="primary" size="md">
               Edit
             </Btn>

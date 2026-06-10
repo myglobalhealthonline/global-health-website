@@ -12,6 +12,8 @@ import {
   listSpecialtiesForAdminCountry,
   purgeAdminService,
   purgeAdminSpecialty,
+  reorderAdminServices,
+  reorderAdminSpecialties,
   ServiceCountryNotFoundError,
   ServiceKindInvalidError,
   ServiceSpecialtyInvalidError,
@@ -26,6 +28,7 @@ import {
   adminSpecialtyCreateBodySchema,
   adminSpecialtiesQuerySchema,
   adminSpecialtyUpdateBodySchema,
+  bulkReorderBodySchema,
   serviceIdParamsSchema,
   serviceFaqIdParamsSchema,
   serviceFaqCreateBodySchema,
@@ -375,6 +378,40 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected FAQ error"));
+    }
+  });
+
+  app.patch("/api/admin/services/reorder", async (request, reply) => {
+    const body = bulkReorderBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid reorder payload", body.error.flatten()));
+    }
+    try {
+      await reorderAdminServices(body.data.items);
+      return okResponse({}, "Services reordered");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not reorder services"));
+    }
+  });
+
+  app.patch("/api/admin/specialties/reorder", async (request, reply) => {
+    const body = bulkReorderBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid reorder payload", body.error.flatten()));
+    }
+    try {
+      await reorderAdminSpecialties(body.data.items);
+      return okResponse({}, "Specialties reordered");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not reorder specialties"));
     }
   });
 

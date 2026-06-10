@@ -4,6 +4,8 @@ import { prisma } from "../../db/prisma.js";
 import type {
   AdminCountryCreateBody,
   AdminCountryUpdateBody,
+  CountryLegalProfileBody,
+  CountryLegalDocumentBody,
 } from "../../validations/admin-countries.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 
@@ -308,5 +310,80 @@ export async function purgeAdminCountry(id: string): Promise<boolean> {
     return true;
   } catch (error) {
     throw normalizeDbError(error, "Countries data is unavailable");
+  }
+}
+
+// ── CountryLegalProfile ────────────────────────────────────────────────────
+
+export async function getCountryLegalProfile(countryId: string) {
+  try {
+    return await prisma.countryLegalProfile.findUnique({ where: { countryId } });
+  } catch (error) {
+    throw normalizeDbError(error, "Legal profile unavailable");
+  }
+}
+
+export async function upsertCountryLegalProfile(countryId: string, data: CountryLegalProfileBody) {
+  try {
+    return await prisma.countryLegalProfile.upsert({
+      where: { countryId },
+      create: { countryId, ...data },
+      update: data,
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not save legal profile");
+  }
+}
+
+// ── CountryLegalDocument ───────────────────────────────────────────────────
+
+export async function listCountryLegalDocuments(countryId: string) {
+  try {
+    return await prisma.countryLegalDocument.findMany({
+      where: { countryId },
+      orderBy: [{ type: "asc" }, { locale: "asc" }],
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Legal documents unavailable");
+  }
+}
+
+export async function getCountryLegalDocument(countryId: string, type: string, locale: string) {
+  try {
+    return await prisma.countryLegalDocument.findUnique({
+      where: { countryId_type_locale: { countryId, type: type as never, locale } },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Legal document unavailable");
+  }
+}
+
+export async function upsertCountryLegalDocument(countryId: string, data: CountryLegalDocumentBody) {
+  try {
+    return await prisma.countryLegalDocument.upsert({
+      where: { countryId_type_locale: { countryId, type: data.type, locale: data.locale } },
+      create: { countryId, ...data },
+      update: {
+        title: data.title,
+        content: data.content,
+        pdfPath: data.pdfPath,
+        isPublished: data.isPublished,
+        publishedAt: data.isPublished ? new Date() : null,
+        version: { increment: 1 },
+      },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not save legal document");
+  }
+}
+
+export async function deleteCountryLegalDocument(id: string): Promise<boolean> {
+  const existing = await prisma.countryLegalDocument.findUnique({ where: { id }, select: { id: true } });
+  if (!existing) return false;
+  try {
+    await prisma.countryLegalDocument.delete({ where: { id } });
+    return true;
+  } catch (error) {
+    throw normalizeDbError(error, "Could not delete legal document");
   }
 }
