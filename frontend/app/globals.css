@@ -158,12 +158,20 @@
 }
 
 html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
   -moz-tab-size: 4;
   tab-size: 4;
   scroll-behavior: smooth;
   margin: 0;
+}
+@supports not (text-size-adjust: 100%) {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+}
+@supports (text-size-adjust: 100%) {
+  html {
+    text-size-adjust: 100%;
+  }
 }
 
 body {
