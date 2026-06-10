@@ -51,6 +51,9 @@ FROM node:22-bookworm-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# Railway injects HOSTNAME; Next standalone uses it for bind address.
+# Force all-interface binding so the edge proxy can reach the container.
+ENV HOSTNAME=0.0.0.0
 
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
