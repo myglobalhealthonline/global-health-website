@@ -17,7 +17,9 @@ jobs:
       NODE_ENV: test
       DATABASE_URL: postgresql://user:pass@localhost:5432/db?schema=public
       AUTH_JWT_SECRET: ci-only-placeholder-secret-min-32-characters-long
-      CRON_SECRET: ci-cron-secret
+      # CRON_SECRET schema requires >= 16 chars; a shorter value fails Zod
+      # validation at env.ts load time (ZodError before tests can skip).
+      CRON_SECRET: ci-cron-secret-placeholder-min-16
     steps:
       - uses: actions/checkout@v4
 
