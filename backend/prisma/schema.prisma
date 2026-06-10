@@ -257,10 +257,10 @@ model CountryDomain {
 
   // "At most one primary domain per country" is enforced by a partial
   // unique index (CountryDomain_one_primary_per_country) applied in
-  // ensure-schema. Prisma can't express a partial (WHERE) index here, so
-  // the old @@unique([countryId, isPrimary]) — which wrongly capped
-  // non-primary domains at one per country — is intentionally removed.
-  @@index([countryId])
+  // migration 20260610150000_align_schema_with_production. Prisma can't
+  // express a partial (WHERE) index here. The plain countryId index and
+  // the old @@unique([countryId, isPrimary]) are intentionally absent —
+  // the partial unique index supersedes both.
 }
 
 model Clinic {
@@ -352,6 +352,8 @@ model Doctor {
   /// overrides them per locale. fullName + qualifications are NOT
   /// translated (proper name + credentials stay single).
   translations                DoctorTranslation[]
+  /// Medical notes this doctor has authored on patient appointments.
+  authoredMedicalNotes        MedicalNote[]         @relation("MedicalNoteAuthor")
   createdAt                   DateTime              @default(now())
   updatedAt                   DateTime              @updatedAt
 
@@ -572,6 +574,8 @@ model Service {
   /// peak price and slots outside it the off-peak price; otherwise the
   /// flat basePriceCents applies. See ServicePeakPricing.
   peakPricing           ServicePeakPricing?
+  /// Admin-managed FAQ entries for this service's public detail page.
+  faqs                  ServiceFaq[]
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
 
@@ -874,6 +878,13 @@ enum PaymentStatus {
   FAILED
 }
 
+enum VerificationStatus {
+  NOT_VERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
 enum AppointmentStatus {
   REQUEST_RECEIVED
   UNDER_REVIEW
@@ -1076,12 +1087,47 @@ model PatientProfile {
   /// Optional link to a brand-side PricingPlan the patient is enrolled
   /// in. Drives plan-aware behaviour on /account/profile and (later)
   /// invoice copy. Null = pay-as-you-go.
-  pricingPlanId      String?
-  pricingPlan        PricingPlan? @relation(fields: [pricingPlanId], references: [id], onDelete: SetNull)
-  createdAt          DateTime     @default(now())
-  updatedAt          DateTime     @updatedAt
+  pricingPlanId               String?
+  pricingPlan                 PricingPlan?                  @relation(fields: [pricingPlanId], references: [id], onDelete: SetNull)
+  /// Unique patient identifier across all records. Format: GH-YYYY-000001.
+  /// Issued atomically at registration. Never reused. Never editable by patient or admin.
+  globalHealthNumber          String?                       @unique
+  /// Insurance details (optional — never blocks booking or registration).
+  insuranceProviderName       String?
+  /// AES-256-GCM encrypted (same phi:v1: envelope as nationalIdNumber).
+  insurancePolicyNumber       String?
+  /// S3 storageKey for the uploaded insurance card/document. Never a public URL.
+  insuranceDocumentKey        String?
+  insuranceDocumentStatus     VerificationStatus            @default(NOT_VERIFIED)
+  insuranceAdminNotes         String?
+  /// ID verification fields — admin-managed; patient uploads doc, admin sets status.
+  idVerificationStatus        VerificationStatus            @default(NOT_VERIFIED)
+  idDocumentKey               String?
+  idDocumentBackKey           String?
+  idDocumentType              String?
+  idDocumentNumber            String?
+  idDocumentIssuingCountry    String?
+  idDocumentExpiryDate        DateTime?
+  idVerificationAdminNotes    String?
+  idVerificationReviewedBy    String?
+  idVerificationReviewedAt    DateTime?
+  /// Phone / email verification. Email status mirrors User.emailVerifiedAt.
+  phoneVerificationStatus     VerificationStatus            @default(NOT_VERIFIED)
+  phoneVerifiedAt             DateTime?
+  emailVerificationStatus     VerificationStatus            @default(NOT_VERIFIED)
+  emailVerifiedAt             DateTime?
+  /// Stripe customer — set when first subscription or payment method is attached.
+  stripeCustomerId            String?                       @unique
+  /// Relations to new patient-linked tables.
+  nationalityDocuments        PatientNationalityDocument[]
+  medicalDocuments            MedicalDocument[]
+  consents                    PatientConsent[]
+  medicalAccessLogs           MedicalAccessLog[]
+  createdAt                   DateTime                      @default(now())
+  updatedAt                   DateTime                      @updatedAt
 
   @@index([pricingPlanId])
+  @@index([globalHealthNumber])
 }
 
 model GeneratedDocument {
@@ -1113,6 +1159,7 @@ model MedicalNote {
   createdByDoctorId String
   createdByName     String
   appointment       Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  createdByDoctor   Doctor      @relation("MedicalNoteAuthor", fields: [createdByDoctorId], references: [id], onDelete: Restrict, onUpdate: Cascade)
   createdAt         DateTime    @default(now())
 
   @@index([patientEmail, createdAt])
@@ -1339,7 +1386,7 @@ model Order {
 
   @@index([userId, createdAt])
   @@index([status, createdAt])
-  @@index([appointmentIds], type: Gin)
+  @@index([appointmentIds], type: Gin, map: "Order_appointmentIds_gin_idx")
 }
 
 model OrderItem {
@@ -1906,4 +1953,145 @@ model ConsultationMessage {
   createdAt     DateTime       @default(now())
 
   @@index([appointmentId, createdAt])
+}
+
+/// Per-service FAQ entries managed by admin. Distinct from the global country-scoped Faq model
+/// (which is for site-wide FAQ pages). ServiceFaq is for the FAQ section on each service detail page.
+model ServiceFaq {
+  id        String   @id @default(cuid())
+  serviceId String
+  question  String
+  answer    String
+  sortOrder Int      @default(0)
+  isVisible Boolean  @default(true)
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([serviceId, isVisible, sortOrder])
+}
+
+/// Patient nationality / identity documents. Max 2 per patient (slot 1 and slot 2).
+/// slotNumber is constrained to 1 or 2 via service-layer guard (no DB enum needed).
+model PatientNationalityDocument {
+  id                 String             @id @default(cuid())
+  patientProfileId   String
+  globalHealthNumber String?
+  slotNumber         Int                // 1 or 2 only — enforced in service layer
+  nationalityCountry String
+  documentType       String             // passport | id_card | residence_card | nicop | cnic | other
+  /// AES-256-GCM encrypted (phi:v1: envelope).
+  documentNumber     String?
+  frontFileKey       String?            // S3 storageKey — never public URL
+  backFileKey        String?
+  expiryDate         DateTime?
+  verificationStatus VerificationStatus @default(NOT_VERIFIED)
+  adminNotes         String?
+  reviewedByAdminId  String?
+  reviewedAt         DateTime?
+  patientProfile     PatientProfile     @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  @@unique([patientProfileId, slotNumber])
+  @@index([patientProfileId])
+}
+
+/// Generic medical document. Covers patient uploads, doctor uploads, exam requests,
+/// consultation summaries, prescription PDFs — anything attached to a patient's medical file.
+/// visibleToPatient controls what the patient portal shows.
+model MedicalDocument {
+  id                    String   @id @default(cuid())
+  patientProfileId      String
+  globalHealthNumber    String?
+  uploadedByUserId      String?
+  uploadedByRole        String   // PATIENT | DOCTOR | ADMIN | SYSTEM
+  documentType          String   // REPORT | EXAM_REQUEST | EXAM_RESULT | CONSULT_SUMMARY | PRESCRIPTION | OTHER
+  title                 String
+  description           String?
+  fileKey               String   // S3 storageKey — never public URL
+  fileName              String
+  mimetype              String
+  byteSize              Int
+  relatedAppointmentId  String?
+  relatedConsultationId String?
+  visibleToPatient      Boolean  @default(false)
+  patientProfile        PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([patientProfileId, documentType])
+  @@index([patientProfileId, visibleToPatient])
+  @@index([relatedAppointmentId])
+}
+
+/// Append-only GDPR consent history. Latest row per (patientProfileId, consentType) = current state.
+/// Never update or delete rows — only append.
+model PatientConsent {
+  id                 String   @id @default(cuid())
+  patientProfileId   String
+  globalHealthNumber String?
+  /// STORE_MEDICAL | SHARE_WITH_DOCTOR | MARKETING | THIRD_PARTY_LAB | NOTIFICATIONS | FOLLOW_UP
+  consentType        String
+  consentValue       Boolean
+  consentVersion     String?
+  /// PATIENT_PORTAL | ADMIN | SYSTEM | BOOKING_FORM
+  source             String   @default("PATIENT_PORTAL")
+  changedByUserId    String?
+  changedByRole      String?
+  patientProfile     PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  createdAt          DateTime @default(now())  // append-only — no updatedAt
+
+  @@index([patientProfileId, consentType, createdAt])
+}
+
+/// Read-only medical access log. Immutable audit trail of who accessed a patient's
+/// medical information and when. Never update or delete. Patient-facing (distinct from AuditLog).
+model MedicalAccessLog {
+  id                    String   @id @default(cuid())
+  patientProfileId      String
+  globalHealthNumber    String?
+  accessedByUserId      String?
+  accessedByRole        String   // DOCTOR | ADMIN | SUPER_ADMIN | STAFF | PATIENT | SYSTEM
+  accessedByName        String?
+  /// MEDICAL_DOC | CONSULT_NOTE | PRESCRIPTION | EXAM_REQUEST | EXAM_RESULT | ID_DOC | NATIONALITY_DOC | SENSITIVE_PROFILE | INSURANCE_DOC
+  accessedResourceType  String
+  accessedResourceId    String?
+  /// VIEWED | DOWNLOADED | UPLOADED | UPDATED
+  accessAction          String
+  accessReason          String?
+  relatedAppointmentId  String?
+  ipAddress             String?
+  userAgent             String?
+  patientProfile        PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  createdAt             DateTime @default(now())  // read-only — no updatedAt
+
+  @@index([patientProfileId, createdAt])
+  @@index([patientProfileId, accessedByRole])
+}
+
+// ─── Bootstrap tracking tables ───────────────────────────────────────────────
+// These tables are managed outside of Prisma migrations (ensure-schema.ts).
+// They are modelled here so Prisma does not attempt to DROP them during
+// `migrate dev` / `migrate diff` runs.
+
+/// GHN counter: one row per calendar year. Incremented atomically with
+/// SELECT ... FOR UPDATE to generate monotonic global health numbers.
+/// Created by ensure-schema.ts; modelled here so Prisma knows it exists.
+model GhnCounter {
+  year    String @id
+  lastSeq BigInt @default(0) @map("last_seq")
+
+  @@map("ghn_counter")
+}
+
+/// Tracks which ensure-schema.ts patches have been applied to a database.
+/// Bootstrap-only — not used by application business logic. Will be removed
+/// once ensure-schema.ts is fully retired in favour of Prisma migrations.
+model EnsureSchemaPatch {
+  name      String   @id
+  appliedAt DateTime @default(now())
+
+  @@map("_EnsureSchemaPatches")
+  @@ignore
 }
