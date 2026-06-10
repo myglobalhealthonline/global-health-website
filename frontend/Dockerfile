@@ -30,6 +30,21 @@ COPY . .
 RUN corepack enable && corepack prepare pnpm@10.33.2 --activate \
   && pnpm run build
 
+# turbopack.root points at the monorepo parent, so Next may nest standalone
+# output under the package name (standalone/frontend/). In a flat layout,
+# server.js sits directly in standalone/. Normalize to a single path.
+RUN STANDALONE=/app/.next/standalone; \
+  if [ -f "$STANDALONE/server.js" ]; then \
+    cp -a "$STANDALONE" /app/standalone_out; \
+  elif [ -f "$STANDALONE/frontend/server.js" ]; then \
+    cp -a "$STANDALONE/frontend" /app/standalone_out; \
+  else \
+    echo "ERROR: server.js not found in standalone output"; \
+    find "$STANDALONE" -maxdepth 4 -name server.js 2>/dev/null || true; \
+    ls -laR "$STANDALONE" 2>/dev/null || true; \
+    exit 1; \
+  fi
+
 # ── Stage 3: production runner (minimal) ─────────────────────────────────────
 FROM node:22-bookworm-slim AS runner
 
@@ -40,11 +55,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
 
-# next.config.ts output:"standalone" bundles all required node_modules into
-# .next/standalone — no separate node_modules install needed here.
-# outputFileTracingRoot is NOT set, so Next emits server.js directly into
-# .next/standalone/ (no package-name subdirectory). Copy the whole dir.
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+# standalone_out is normalized in the builder stage so server.js is always
+# at the image root regardless of monorepo nesting.
+COPY --from=builder --chown=nextjs:nodejs /app/standalone_out ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
