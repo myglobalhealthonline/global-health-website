@@ -102,6 +102,11 @@ const envSchema = z.object({
    *  Run scripts/encrypt-phi-backfill.ts once after setting it. */
   PHI_ENCRYPTION_KEY: z.string().trim().min(16).optional(),
 
+  /** HMAC key for blind-index hashing of encrypted PHI fields (email, phone, name+dob).
+   *  Must be distinct from PHI_ENCRYPTION_KEY. Min 32 chars.
+   *  Without this key, duplicate-patient detection via hashed fields is disabled. */
+  BLIND_INDEX_KEY: z.string().trim().min(32).optional(),
+
   WASENDER_API_TOKEN: z.string().trim().min(1).optional(),
   WASENDER_GAP_MS: z.coerce.number().int().min(0).default(5500).optional(),
 
@@ -125,6 +130,20 @@ const DEV_JWT_FALLBACK = "dev-only-change-this-auth-jwt-secret-min-32";
 if (parsed.NODE_ENV === "production" && parsed.AUTH_JWT_SECRET === DEV_JWT_FALLBACK) {
   throw new Error(
     "AUTH_JWT_SECRET is the dev default in production. Set a real value (openssl rand -base64 48).",
+  );
+}
+
+// C9: hard-fail in production if the seed admin email matches the one that
+// was exposed in the public git repo / dev .env file. That account's
+// password must be rotated before going live.
+const EXPOSED_SEED_EMAIL = "kinghassaan99@gmail.com";
+if (
+  parsed.NODE_ENV === "production" &&
+  process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase() === EXPOSED_SEED_EMAIL
+) {
+  throw new Error(
+    `SEED_ADMIN_EMAIL is set to the exposed dev email (${EXPOSED_SEED_EMAIL}) in production. ` +
+      "Rotate the admin account password via the admin panel and remove this env var from Railway.",
   );
 }
 

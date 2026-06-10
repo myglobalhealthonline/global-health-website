@@ -5,7 +5,7 @@ import { errorResponse } from "./response.js";
 
 export type AuthedUserPayload = {
   sub: string;
-  role: "PATIENT" | "ADMIN" | "DOCTOR";
+  role: "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN";
   email: string;
 };
 

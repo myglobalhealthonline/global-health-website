@@ -47,6 +47,8 @@ enum UserRole {
   /// patients + appointments. Linked to a Doctor profile via
   /// `User.doctorId` (one-to-one).
   DOCTOR
+  LOCAL_ADMIN  // country-scoped admin — accesses only allowedCountryFolders
+  SUPER_ADMIN  // same as ADMIN; explicit superuser role
 }
 
 enum PageKey {
@@ -182,6 +184,73 @@ enum AuditAction {
   USER_PASSWORD_RESET
   PATIENT_PROFILE_UPDATED
   ENTITY_PURGED
+  TWO_FACTOR_ENABLED
+  TWO_FACTOR_DISABLED
+  TWO_FACTOR_VERIFIED
+  TWO_FACTOR_FAILED
+  ACCOUNT_LOCKED
+  CONSENT_UPDATED
+  MEDICAL_ACCESS_CONSENT_CHANGED
+  ID_VERIFICATION_SUBMITTED
+  ID_VERIFICATION_UPDATED
+  MEDICAL_ACCESS_REQUEST_CREATED
+  MEDICAL_ACCESS_REQUEST_APPROVED
+  MEDICAL_ACCESS_REQUEST_DENIED
+  MEDICAL_ACCESS_GRANT_EXPIRED
+  CONFIDENTIALITY_AGREEMENT_ACCEPTED
+  SECURITY_ALERT_CREATED
+  SECURITY_ALERT_RESOLVED
+  DATA_DELETION_REQUESTED
+  DATA_DELETION_REVIEWED
+  PATIENT_MERGED
+  PATIENT_ANONYMIZED
+  CONTACT_CHANGE_REQUESTED
+  CONTACT_CHANGE_CONFIRMED
+}
+
+enum CountryAccessModel {
+  /// PT, CZ, IE — country clinic model: approved country doctors can access
+  /// patient files for continuity of care when patient has consented.
+  CLINIC
+  /// BR, ES, RO — platform model: only the assigned appointment doctor
+  /// can access the patient file by default.
+  PLATFORM
+}
+
+enum AdminScope {
+  LOCAL   // can access only allowedCountryFolders
+  GLOBAL  // can access all country folders
+  SUPER   // global access + compliance/security override
+}
+
+enum MedicalAccessRequestStatus {
+  PENDING
+  APPROVED
+  DENIED
+  EXPIRED
+  REVOKED
+}
+
+enum SecurityAlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum SecurityAlertStatus {
+  OPEN
+  REVIEWING
+  RESOLVED
+  FALSE_POSITIVE
+}
+
+enum DataDeletionStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  PARTIALLY_COMPLETED
+  COMPLETED
+  REJECTED
 }
 
 model Currency {
@@ -234,6 +303,9 @@ model Country {
   consultationSetting        ConsultationSetting?
   bookingSetting             BookingSetting?
   footer                     CountryFooter?
+  /// Access model controlling which doctors can access patient files in this country.
+  accessModel                CountryAccessModel   @default(PLATFORM)
+  dataPolicy                 CountryDataPolicy?
   createdAt                  DateTime             @default(now())
   updatedAt                  DateTime             @updatedAt
 }
@@ -354,6 +426,7 @@ model Doctor {
   translations                DoctorTranslation[]
   /// Medical notes this doctor has authored on patient appointments.
   authoredMedicalNotes        MedicalNote[]         @relation("MedicalNoteAuthor")
+  confidentialityAgreements   DoctorConfidentialityAgreement[]
   createdAt                   DateTime              @default(now())
   updatedAt                   DateTime              @updatedAt
 
@@ -1126,6 +1199,35 @@ model PatientProfile {
   medicalDocuments            MedicalDocument[]
   consents                    PatientConsent[]
   medicalAccessLogs           MedicalAccessLog[]
+  /// Country folder this patient's medical record belongs to.
+  originCountryCode           String?
+  countryFolderCode           String?
+  currentCountryCode          String?
+  /// Latest medical data access consent level.
+  /// Values: DIRECT_ONLY | COUNTRY_CLINIC | GLOBAL_NETWORK
+  medicalAccessConsentLevel   String?
+  /// HMAC blind-index columns for dedup matching on encrypted fields.
+  /// Never decrypt these; only compare hashes for collision detection.
+  emailHash                   String?
+  phoneHash                   String?
+  nameDobHash                 String?
+  /// Automated ID verification provider and result.
+  idVerificationProvider      String?
+  idVerificationProviderRef   String?
+  idVerificationConfidence    Float?
+  idVerificationRawResult     Json?
+  idVerificationWebhookAt     DateTime?
+  /// One-patient-one-file: merge state.
+  isMerged                    Boolean                       @default(false)
+  mergedIntoPatientId         String?
+  mergedAt                    DateTime?
+  mergedByAdminId             String?
+  anonymizedAt                DateTime?
+  /// Relations added in Phase 2.
+  mergeLogs                   PatientMergeLog[]             @relation("PatientMergeSource")
+  contactChangeLogs           PatientContactChangeLog[]
+  medicalAccessRequests       MedicalAccessRequest[]
+  deletionRequests            DataDeletionRequest[]
   createdAt                   DateTime                      @default(now())
   updatedAt                   DateTime                      @updatedAt
 
@@ -1510,6 +1612,17 @@ model User {
   /// posts, share-link mints…). actor=null entries are SYSTEM events.
   auditEvents             AuditLog[]
   patientProfile          PatientProfile?
+  /// Admin country scope — only relevant when role=LOCAL_ADMIN.
+  adminScope              AdminScope?
+  /// Country codes this LOCAL_ADMIN can access. Empty = no access (should not happen).
+  allowedCountryFolders   String[]                 @default([])
+  /// TOTP / 2FA. Secret is stored AES-256-GCM encrypted (same phi:v1: envelope).
+  twoFactorEnabled        Boolean                  @default(false)
+  twoFactorSecret         String?
+  twoFactorBackupCodes    String[]                 @default([])
+  twoFactorVerifiedAt     DateTime?
+  twoFactorEnabledAt      DateTime?
+  medicalAccessRequests   MedicalAccessRequest[]   @relation("MedicalAccessRequestReviewer")
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
 }
@@ -1903,6 +2016,9 @@ model AuditLog {
   entityId    String
   metadata    Json?
   ipAddress   String?
+  userAgent   String?
+  countryDetected String?
+  loginSessionId  String?
   actorUser   User?       @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
   createdAt   DateTime    @default(now())
 
@@ -2066,11 +2182,200 @@ model MedicalAccessLog {
   relatedAppointmentId  String?
   ipAddress             String?
   userAgent             String?
+  patientCountryFolder  String?
+  actorCountry          String?
+  consentLevelUsed      String?
+  isAbnormal            Boolean  @default(false)
+  abnormalReason        String?
+  loginSessionId        String?
   patientProfile        PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
   createdAt             DateTime @default(now())  // read-only — no updatedAt
 
   @@index([patientProfileId, createdAt])
   @@index([patientProfileId, accessedByRole])
+}
+
+/// Versioned consent text registry. Booking and portal reference the active
+/// version so we can prove the exact wording a patient saw.
+model ConsentDocument {
+  id            String   @id @default(cuid())
+  /// Matches PatientConsent.consentType values.
+  consentKey    String
+  version       String
+  locale        LocaleCode @default(EN)
+  bodyText      String
+  effectiveFrom DateTime @default(now())
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  @@unique([consentKey, version, locale])
+  @@index([consentKey, isActive])
+}
+
+/// Doctor must accept this before accessing any patient records.
+model DoctorConfidentialityAgreement {
+  id               String   @id @default(cuid())
+  doctorId         String
+  agreementVersion String
+  accepted         Boolean  @default(false)
+  acceptedAt       DateTime?
+  ipAddress        String?
+  userAgent        String?
+  doctor           Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  createdAt        DateTime @default(now())
+
+  @@index([doctorId, accepted])
+}
+
+/// Doctor in country X requesting access to a patient file in country Y.
+model MedicalAccessRequest {
+  id                       String                     @id @default(cuid())
+  patientProfileId         String
+  globalHealthNumber       String?
+  requestingDoctorId       String?
+  requestingUserId         String?
+  requestingDoctorCountry  String?
+  patientOriginCountry     String?
+  requestedAccessScope     String
+  reason                   String
+  status                   MedicalAccessRequestStatus @default(PENDING)
+  requestedAt              DateTime                   @default(now())
+  approvedAt               DateTime?
+  deniedAt                 DateTime?
+  expiresAt                DateTime?
+  patientResponseIp        String?
+  reviewedByUserId         String?
+  patient                  PatientProfile             @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  reviewedByUser           User?                      @relation("MedicalAccessRequestReviewer", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+  grants                   MedicalAccessGrant[]
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+
+  @@index([patientProfileId, status])
+  @@index([requestingDoctorId, status])
+}
+
+/// Time-boxed access capability minted when a MedicalAccessRequest is approved.
+/// The assertMedicalAccess guard checks live grants before allowing cross-country access.
+model MedicalAccessGrant {
+  id                    String               @id @default(cuid())
+  accessRequestId       String
+  patientProfileId      String
+  grantedToUserId       String
+  grantedToRole         String
+  scope                 String
+  expiresAt             DateTime
+  revokedAt             DateTime?
+  accessRequest         MedicalAccessRequest @relation(fields: [accessRequestId], references: [id], onDelete: Cascade)
+  createdAt             DateTime             @default(now())
+
+  @@index([patientProfileId, grantedToUserId, expiresAt])
+  @@index([grantedToUserId, expiresAt])
+}
+
+/// Abnormal access / suspicious activity alert. Raised by assertMedicalAccess
+/// and the login audit pipeline. Routed to relevant local/global admins.
+model SecurityAlert {
+  id                 String               @id @default(cuid())
+  severity           SecurityAlertSeverity
+  alertType          String
+  patientId          String?
+  globalHealthNumber String?
+  actorId            String?
+  actorRole          String?
+  countryFolder      String?
+  description        String
+  /// JSON blob with extra context (ip, userAgent, resourceType, etc.)
+  details            Json?
+  dedupeKey          String?
+  status             SecurityAlertStatus  @default(OPEN)
+  resolvedAt         DateTime?
+  resolvedByAdminId  String?
+  relatedAccessLogId String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  @@index([status, severity, createdAt])
+  @@index([patientId, createdAt])
+  @@index([actorId, createdAt])
+  @@index([dedupeKey])
+}
+
+/// Audit log for patient email / phone changes.
+model PatientContactChangeLog {
+  id               String         @id @default(cuid())
+  patientProfileId String
+  globalHealthNumber String?
+  changedById      String?
+  changedByRole    String
+  fieldChanged     String         // EMAIL | PHONE
+  oldValue         String?
+  newValue         String?
+  reason           String?
+  ipAddress        String?
+  patient          PatientProfile @relation(fields: [patientProfileId], references: [id], onDelete: Cascade)
+  createdAt        DateTime       @default(now())
+
+  @@index([patientProfileId, createdAt])
+}
+
+/// Tracks patient profile merges. Both full JSON snapshots are saved before
+/// any FK re-pointing so the merge is reversible by an admin.
+model PatientMergeLog {
+  id                          String         @id @default(cuid())
+  primaryPatientId            String
+  duplicatePatientId          String
+  globalHealthNumberPrimary   String?
+  globalHealthNumberDuplicate String?
+  mergedByAdminId             String?
+  reason                      String?
+  /// Full JSON snapshot of both records taken before merge.
+  primarySnapshot             Json?
+  duplicateSnapshot           Json?
+  patientInformed             Boolean        @default(false)
+  primaryPatient              PatientProfile @relation("PatientMergeSource", fields: [primaryPatientId], references: [id], onDelete: Restrict)
+  createdAt                   DateTime       @default(now())
+
+  @@index([primaryPatientId])
+  @@index([duplicatePatientId])
+}
+
+/// Per-country configurable data retention and storage residency policy.
+model CountryDataPolicy {
+  id                    String   @id @default(cuid())
+  countryId             String   @unique
+  countryCode           String   @unique
+  retentionYears        Int      @default(10)
+  /// EU | BR | US | Other
+  storageRegion         String   @default("EU")
+  requiresLocalStorage  Boolean  @default(false)
+  legalNotes            String?
+  isActive              Boolean  @default(true)
+  country               Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+/// Patient GDPR data deletion request. Medical records that must be retained
+/// under local law are anonymized rather than deleted.
+model DataDeletionRequest {
+  id                        String             @id @default(cuid())
+  patientProfileId          String
+  globalHealthNumber        String?
+  requestStatus             DataDeletionStatus @default(SUBMITTED)
+  requestedAt               DateTime           @default(now())
+  reviewedByAdminId         String?
+  reviewedAt                DateTime?
+  legalReasonForRetention   String?
+  completedAt               DateTime?
+  patientNotificationSent   Boolean            @default(false)
+  notes                     String?
+  patient                   PatientProfile     @relation(fields: [patientProfileId], references: [id], onDelete: Restrict)
+  createdAt                 DateTime           @default(now())
+  updatedAt                 DateTime           @updatedAt
+
+  @@index([patientProfileId, requestStatus])
+  @@index([requestStatus, createdAt])
 }
 
 // ─── Bootstrap tracking tables ───────────────────────────────────────────────

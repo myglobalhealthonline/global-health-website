@@ -31,7 +31,7 @@ import {
   resetPasswordBodySchema,
 } from "../validations/auth.schema.js";
 import { env } from "../config/env.js";
-import { authCookieOptions, signAuthToken } from "../utils/auth-session.js";
+import { authCookieOptions, signAuthToken, signPending2faToken } from "../utils/auth-session.js";
 import { requireAuth } from "../utils/require-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
@@ -100,7 +100,15 @@ const authRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid login payload", body.error.flatten()));
     }
     try {
-      const user = await loginUser(body.data);
+      const result = await loginUser(body.data);
+
+      // 2FA gate — password correct but TOTP still required.
+      if (result.twoFactorEnabled) {
+        const pendingToken = signPending2faToken(result.user.id);
+        return okResponse({ needs2fa: true, pendingToken }, "2FA required");
+      }
+
+      const { user } = result;
       const token = signAuthToken({ sub: user.id, role: user.role, email: user.email });
       reply.setCookie(env.AUTH_COOKIE_NAME, token, authCookieOptions());
 

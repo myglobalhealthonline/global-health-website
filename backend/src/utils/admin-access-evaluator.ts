@@ -5,14 +5,14 @@ export type AdminAccessResult =
   | { ok: false; status: 401 | 403 | 503; message: string };
 
 export type EvaluateAdminAccessInput = {
-  sessionRole: "PATIENT" | "ADMIN" | "DOCTOR" | null;
+  sessionRole: "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN" | null;
   authorizationHeader: string | undefined;
   expectedToken: string | undefined;
   tokenFallbackEnabled: boolean;
 };
 
 export function evaluateAdminAccess(input: EvaluateAdminAccessInput): AdminAccessResult {
-  if (input.sessionRole === "ADMIN") {
+  if (input.sessionRole === "ADMIN" || input.sessionRole === "SUPER_ADMIN" || input.sessionRole === "LOCAL_ADMIN") {
     return { ok: true, method: "session" };
   }
   if (input.sessionRole === "PATIENT" || input.sessionRole === "DOCTOR") {

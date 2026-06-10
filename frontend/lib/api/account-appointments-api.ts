@@ -101,6 +101,22 @@ export async function fetchTrustpilotReminder(): Promise<TrustpilotReminderData>
   }
 }
 
+export async function fetchAccountGhn(): Promise<string | null> {
+  const apiUrl = getBackendOrigin();
+  if (!apiUrl) return null;
+  const cookieHeader = await buildCookieHeader();
+  try {
+    const res = await fetch(`${apiUrl}/api/account/profile`, {
+      headers: cookieHeader ? { cookie: cookieHeader } : undefined,
+      cache: "no-store",
+    });
+    const json = (await res.json()) as { ok?: boolean; data?: { profile?: { globalHealthNumber?: string | null } } };
+    return json.ok ? (json.data?.profile?.globalHealthNumber ?? null) : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchPatientUnreadMessageCount(): Promise<number> {
   const apiUrl = getBackendOrigin();
   if (!apiUrl) return 0;

@@ -1,0 +1,313 @@
+import { prisma } from "../../db/prisma.js";
+import { normalizeDbError } from "../shared/db-errors.js";
+import {
+  computeEmailBlindIndex,
+  computePhoneBlindIndex,
+  computeNameDobBlindIndex,
+} from "../../lib/blind-index.js";
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+async function recordAudit(params: {
+  actorUserId?: string | null;
+  actorRole?: string | null;
+  action: string;
+  entityType: string;
+  entityId: string;
+  metadata?: Record<string, unknown>;
+}): Promise<void> {
+  try {
+    await (prisma as unknown as {
+      auditLog: { create: (args: unknown) => Promise<unknown> };
+    }).auditLog.create({
+      data: {
+        actorUserId: params.actorUserId ?? null,
+        actorRole: params.actorRole ?? null,
+        action: params.action as never,
+        entityType: params.entityType,
+        entityId: params.entityId,
+        metadata: params.metadata ?? null,
+      },
+    });
+  } catch {
+    // Fire-and-forget — never block the main path.
+  }
+}
+
+// ─── Public API ───────────────────────────────────────────────────────────────
+
+/**
+ * Find potential duplicates for a patient profile using blind indexes.
+ * Matches on emailHash, phoneHash, or nameDobHash.
+ */
+export async function findPotentialDuplicates(
+  patientProfileId: string,
+): Promise<
+  Array<{
+    patientProfileId: string;
+    globalHealthNumber: string | null;
+    fullName: string | null;
+    email: string;
+    matchReasons: string[];
+  }>
+> {
+  try {
+    const source = await prisma.patientProfile.findUnique({
+      where: { id: patientProfileId },
+      select: {
+        email: true,
+        fullName: true,
+        phone: true,
+        dateOfBirth: true,
+        // Phase 2 blind-index columns accessed via the Prisma `select` path.
+        // They exist on the model once the Phase 2 migration is applied.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        ...(true as unknown as Record<string, boolean>),
+      },
+    });
+
+    if (!source) {
+      throw new Error(`PatientProfile ${patientProfileId} not found`);
+    }
+
+    // Re-derive the blind indexes from the source row's plain values.
+    const emailHash = computeEmailBlindIndex(source.email);
+    const phoneHash = source.phone ? computePhoneBlindIndex(source.phone) : null;
+
+    const dobIso =
+      (source as unknown as { dateOfBirth?: Date | null }).dateOfBirth
+        ? (source as unknown as { dateOfBirth: Date }).dateOfBirth
+            .toISOString()
+            .slice(0, 10)
+        : null;
+    const nameDobHash =
+      source.fullName && dobIso
+        ? computeNameDobBlindIndex(source.fullName, dobIso)
+        : null;
+
+    // Build OR filter on whichever hashes we have.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const orClauses: Record<string, unknown>[] = [];
+    if (emailHash) orClauses.push({ emailHash });
+    if (phoneHash) orClauses.push({ phoneHash });
+    if (nameDobHash) orClauses.push({ nameDobHash });
+
+    if (orClauses.length === 0) {
+      return [];
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const candidates: Array<{
+      id: string;
+      globalHealthNumber: string | null;
+      fullName: string | null;
+      email: string;
+      emailHash: string | null;
+      phoneHash: string | null;
+      nameDobHash: string | null;
+      isMerged: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }> = await (prisma as any).patientProfile.findMany({
+      where: {
+        AND: [
+          { id: { not: patientProfileId } },
+          { isMerged: false },
+          { OR: orClauses },
+        ],
+      },
+      select: {
+        id: true,
+        globalHealthNumber: true,
+        fullName: true,
+        email: true,
+        emailHash: true,
+        phoneHash: true,
+        nameDobHash: true,
+        isMerged: true,
+      },
+    });
+
+    return candidates.map((c) => {
+      const matchReasons: string[] = [];
+      if (emailHash && c.emailHash === emailHash) matchReasons.push("email");
+      if (phoneHash && c.phoneHash === phoneHash) matchReasons.push("phone");
+      if (nameDobHash && c.nameDobHash === nameDobHash) matchReasons.push("name_dob");
+
+      return {
+        patientProfileId: c.id,
+        globalHealthNumber: c.globalHealthNumber,
+        fullName: c.fullName,
+        email: c.email,
+        matchReasons,
+      };
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not find potential duplicates");
+  }
+}
+
+/**
+ * Admin merges a duplicate patient into a primary patient.
+ * Runs inside a Prisma transaction. Re-points all FK references.
+ * Marks the duplicate as merged and audits both patient records.
+ */
+export async function mergePatients(params: {
+  primaryPatientId: string;
+  duplicatePatientId: string;
+  adminId: string;
+  reason: string;
+}): Promise<void> {
+  const { primaryPatientId, duplicatePatientId, adminId, reason } = params;
+
+  try {
+    // Pre-fetch both records for the JSON snapshot (outside tx — read-only,
+    // and we need them before the transaction modifies the duplicate).
+    const [primarySnapshot, duplicateSnapshot] = await Promise.all([
+      prisma.patientProfile.findUniqueOrThrow({ where: { id: primaryPatientId } }),
+      prisma.patientProfile.findUniqueOrThrow({ where: { id: duplicatePatientId } }),
+    ]);
+
+    await prisma.$transaction(async (tx) => {
+      // ── 1. Write the merge log with both snapshots ───────────────────────
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (tx as any).patientMergeLog.create({
+        data: {
+          primaryPatientId,
+          duplicatePatientId,
+          mergedByAdminId: adminId,
+          reason,
+          primarySnapshot: primarySnapshot as object,
+          duplicateSnapshot: duplicateSnapshot as object,
+        },
+      });
+
+      // ── 2. Re-point FK references duplicate → primary ────────────────────
+
+      // Appointment.userId — email column stays on the appointment row.
+      await tx.appointment.updateMany({
+        where: { userId: duplicateSnapshot.userId ?? undefined },
+        data: { userId: primarySnapshot.userId ?? null },
+      });
+
+      // MedicalDocument
+      await tx.medicalDocument.updateMany({
+        where: { patientProfileId: duplicatePatientId },
+        data: { patientProfileId: primaryPatientId },
+      });
+
+      // MedicalNote — patientEmail column stays as-is on the note row.
+      // We do NOT touch patientEmail; it is a historical snapshot.
+      // (No FK from MedicalNote to PatientProfile — joined by email, not id.)
+
+      // PatientConsent
+      await tx.patientConsent.updateMany({
+        where: { patientProfileId: duplicatePatientId },
+        data: { patientProfileId: primaryPatientId },
+      });
+
+      // MedicalAccessLog
+      await tx.medicalAccessLog.updateMany({
+        where: { patientProfileId: duplicatePatientId },
+        data: { patientProfileId: primaryPatientId },
+      });
+
+      // PatientNationalityDocument
+      await tx.patientNationalityDocument.updateMany({
+        where: { patientProfileId: duplicatePatientId },
+        data: { patientProfileId: primaryPatientId },
+      });
+
+      // PatientContactChangeLog (Phase 2 model)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (tx as any).patientContactChangeLog.updateMany({
+        where: { patientProfileId: duplicatePatientId },
+        data: { patientProfileId: primaryPatientId },
+      });
+
+      // MedicalAccessRequest (Phase 2 model)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (tx as any).medicalAccessRequest.updateMany({
+        where: { patientProfileId: duplicatePatientId },
+        data: { patientProfileId: primaryPatientId },
+      });
+
+      // DataDeletionRequest (Phase 2 model)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (tx as any).dataDeletionRequest.updateMany({
+        where: { patientProfileId: duplicatePatientId },
+        data: { patientProfileId: primaryPatientId },
+      });
+
+      // ── 3. Mark the duplicate as merged ─────────────────────────────────
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (tx as any).patientProfile.update({
+        where: { id: duplicatePatientId },
+        data: {
+          isMerged: true,
+          mergedIntoPatientId: primaryPatientId,
+          mergedAt: new Date(),
+          mergedByAdminId: adminId,
+        },
+      });
+    });
+
+    // ── 4. Audit both records (fire-and-forget) ────────────────────────────
+    await recordAudit({
+      actorUserId: adminId,
+      actorRole: "ADMIN",
+      action: "PATIENT_MERGED",
+      entityType: "PatientProfile",
+      entityId: primaryPatientId,
+      metadata: {
+        duplicatePatientId,
+        reason,
+      },
+    });
+    await recordAudit({
+      actorUserId: adminId,
+      actorRole: "ADMIN",
+      action: "PATIENT_MERGED",
+      entityType: "PatientProfile",
+      entityId: duplicatePatientId,
+      metadata: {
+        mergedIntoPrimaryPatientId: primaryPatientId,
+        reason,
+      },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Could not merge patients");
+  }
+}
+
+/**
+ * Return the merge status for a patient profile.
+ */
+export async function getMergeStatus(patientProfileId: string): Promise<{
+  isMerged: boolean;
+  mergedIntoPatientId: string | null;
+  mergedAt: Date | null;
+}> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const profile = await (prisma as any).patientProfile.findUnique({
+      where: { id: patientProfileId },
+      select: {
+        isMerged: true,
+        mergedIntoPatientId: true,
+        mergedAt: true,
+      },
+    });
+
+    if (!profile) {
+      return { isMerged: false, mergedIntoPatientId: null, mergedAt: null };
+    }
+
+    return {
+      isMerged: profile.isMerged ?? false,
+      mergedIntoPatientId: profile.mergedIntoPatientId ?? null,
+      mergedAt: profile.mergedAt ?? null,
+    };
+  } catch (error) {
+    throw normalizeDbError(error, "Could not get merge status");
+  }
+}

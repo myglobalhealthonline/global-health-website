@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
 
+export type UserRoleType = "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN";
+
 type AuthTokenPayload = {
   sub: string;
-  role: "PATIENT" | "ADMIN" | "DOCTOR";
+  role: UserRoleType;
   email: string;
 };
 
@@ -25,14 +27,43 @@ export function verifyAuthToken(token: string): AuthTokenPayload | null {
     const sub = decoded.sub;
     const role = decoded.role;
     const email = decoded.email;
+    const validRoles: UserRoleType[] = ["PATIENT", "ADMIN", "DOCTOR", "LOCAL_ADMIN", "SUPER_ADMIN"];
     if (
       typeof sub !== "string" ||
-      (role !== "PATIENT" && role !== "ADMIN" && role !== "DOCTOR") ||
+      !validRoles.includes(role as UserRoleType) ||
       typeof email !== "string"
     ) {
       return null;
     }
     return { sub, role, email };
+  } catch {
+    return null;
+  }
+}
+
+// ─── Pending-2FA token ──────────────────────────────────────────────────────
+// Short-lived (5 min), not a session. Issued on successful password check when
+// 2FA is enabled. The /api/auth/2fa/verify-login endpoint consumes it and
+// issues a full auth cookie on TOTP success.
+
+export function signPending2faToken(userId: string): string {
+  return jwt.sign({ sub: userId, pending2fa: true }, env.AUTH_JWT_SECRET, {
+    expiresIn: "5m",
+    issuer: "global-health-backend",
+    audience: "global-health-website",
+  });
+}
+
+export function verifyPending2faToken(token: string): { userId: string } | null {
+  try {
+    const decoded = jwt.verify(token, env.AUTH_JWT_SECRET, {
+      issuer: "global-health-backend",
+      audience: "global-health-website",
+    });
+    if (!decoded || typeof decoded !== "object") return null;
+    const { sub, pending2fa } = decoded as Record<string, unknown>;
+    if (typeof sub !== "string" || pending2fa !== true) return null;
+    return { userId: sub };
   } catch {
     return null;
   }

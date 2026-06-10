@@ -26,13 +26,13 @@ A scalable healthcare platform rebuilt from the existing Wix website into a clea
 | Review invite system | ✅ Live |
 | Audit log | ✅ Live |
 
-## Known open items (requiring dedicated sprint)
+## Known open items
 
-| Item | Severity | Description |
-|------|----------|-------------|
-| C8 | Critical | Schema migration drift — `ensure-schema.ts` runtime patches not yet baselined into Prisma migrations |
-| C9 | Critical | Rotate production credentials (Railway Postgres, S3, Stripe webhook, Deepgram) |
-| H18 | High | Government IDs / PHI stored as plaintext — application-layer encryption pending |
+| Item | Severity | Description | Status |
+|------|----------|-------------|--------|
+| C8 | Critical | Schema migration drift — `ensure-schema.ts` boot DDL | ✅ Fixed — PATCHES emptied; baseline migration in `20260610150000` |
+| C9 | Critical | Rotate production credentials (Railway Postgres, S3, Stripe, JWT secret) | ⚠️ Operational — see `docs/security/credential-rotation.md` |
+| H18 | High | Government IDs / PHI stored as plaintext | ✅ Fixed — AES-256-GCM in `phi-crypto.ts`; run `encrypt-phi-backfill.ts` once after setting `PHI_ENCRYPTION_KEY` |
 
 Current implementation status (HISTORICAL — retained for git blame purposes):
 - public frontend is stable and fallback-safe

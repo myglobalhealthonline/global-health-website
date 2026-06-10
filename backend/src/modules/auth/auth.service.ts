@@ -167,7 +167,7 @@ export async function claimGuestOrdersForUser(
   }
 }
 
-export async function loginUser(input: LoginBody) {
+export async function loginUser(input: LoginBody): Promise<{ user: SafeUser; twoFactorEnabled: boolean }> {
   const email = input.email.toLowerCase();
   try {
     const user = await prisma.user.findUnique({ where: { email } });
@@ -178,7 +178,8 @@ export async function loginUser(input: LoginBody) {
     if (!ok) {
       throw new AuthInvalidCredentialsError();
     }
-    return toSafeUser(user);
+    const twoFactorEnabled = Boolean((user as Record<string, unknown>).twoFactorEnabled);
+    return { user: toSafeUser(user), twoFactorEnabled };
   } catch (error) {
     if (error instanceof AuthInvalidCredentialsError) throw error;
     throw normalizeDbError(error, "Authentication is temporarily unavailable");

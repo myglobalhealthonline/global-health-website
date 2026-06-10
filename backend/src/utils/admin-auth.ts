@@ -5,10 +5,10 @@ import { verifyAuthToken } from "./auth-session.js";
 
 export async function verifyAdminAccess(request: FastifyRequest): Promise<AdminAccessResult> {
   // JWT role must be read for DOCTOR sessions — resolveOptionalAuthUser only loads PATIENT/ADMIN.
-  let sessionRole: "PATIENT" | "ADMIN" | "DOCTOR" | null = null;
+  let sessionRole: "PATIENT" | "ADMIN" | "DOCTOR" | "LOCAL_ADMIN" | "SUPER_ADMIN" | null = null;
   const cookieToken = request.cookies[env.AUTH_COOKIE_NAME];
   const payload = cookieToken ? verifyAuthToken(cookieToken) : null;
-  if (payload?.role === "ADMIN" || payload?.role === "DOCTOR" || payload?.role === "PATIENT") {
+  if (payload?.role) {
     sessionRole = payload.role;
   }
   return evaluateAdminAccess({

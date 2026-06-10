@@ -11,7 +11,7 @@ import {
   UserRound,
   Video,
 } from "lucide-react";
-import { fetchAccountAppointments, fetchTrustpilotReminder } from "@/lib/api/account-appointments-api";
+import { fetchAccountAppointments, fetchTrustpilotReminder, fetchAccountGhn } from "@/lib/api/account-appointments-api";
 import { fetchAccountPayments } from "@/lib/api/account-payments-api";
 import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
 import { getServerAuthUser } from "@/lib/api/server-auth";
@@ -40,12 +40,13 @@ const ACTIVE_STATUSES = new Set([
 export default async function AccountOverviewPage() {
   const user = await getServerAuthUser();
 
-  const [apptRes, payRes, bookHref, locale, trustpilot] = await Promise.all([
+  const [apptRes, payRes, bookHref, locale, trustpilot, ghn] = await Promise.all([
     fetchAccountAppointments(),
     fetchAccountPayments(),
     resolveBookConsultationHref(),
     getPageLocale(),
     fetchTrustpilotReminder(),
+    fetchAccountGhn(),
   ]);
   const { account: a } = loadLocaleBundle(locale);
 
@@ -91,7 +92,18 @@ export default async function AccountOverviewPage() {
       <PageHeader
         eyebrow={a.dashboard.welcome}
         title={user?.fullName || user?.email || "My account"}
-        description={a.dashboard.subtitle}
+        description={
+          ghn ? (
+            <span>
+              {a.dashboard.subtitle}{" "}
+              <code className="rounded bg-[var(--color-surface-raised)] px-1.5 py-0.5 text-xs font-bold">
+                {ghn}
+              </code>
+            </span>
+          ) : (
+            a.dashboard.subtitle
+          )
+        }
       />
 
       {/* ── Stat tiles ─────────────────────────────────────────────── */}

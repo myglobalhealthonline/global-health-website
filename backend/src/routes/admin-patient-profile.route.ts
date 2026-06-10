@@ -481,6 +481,73 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       }
     },
   );
+
+  // ─── Admin: patient payment history ────────────────────────────────────────
+
+  app.get<{ Params: { email: string } }>(
+    "/api/admin/patients/:email/payments",
+    async (request, reply) => {
+      let email: string;
+      try {
+        email = decodeURIComponent(request.params.email).trim().toLowerCase();
+      } catch {
+        return reply.status(400).send(errorResponse("Invalid email param"));
+      }
+      try {
+        const profile = await prisma.patientProfile.findUnique({
+          where: { email },
+          select: { id: true },
+        });
+        if (!profile) return reply.status(404).send(errorResponse("Patient not found"));
+
+        const payments = await prisma.payment.findMany({
+          where: { appointment: { email: { equals: email, mode: "insensitive" } } },
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            status: true,
+            amountCents: true,
+            currencyCode: true,
+            rawEventType: true,
+            stripePaymentIntentId: true,
+            createdAt: true,
+            appointment: {
+              select: {
+                id: true,
+                consultationType: true,
+                countryCode: true,
+                createdAt: true,
+                service: { select: { name: true } },
+                doctor: { select: { fullName: true } },
+              },
+            },
+          },
+          take: 200,
+        });
+
+        const items = payments.map((p) => ({
+          id: p.id,
+          appointmentId: p.appointment.id,
+          consultationType: p.appointment.consultationType,
+          countryCode: p.appointment.countryCode,
+          serviceName: p.appointment.service?.name ?? null,
+          doctorName: p.appointment.doctor?.fullName ?? null,
+          status: p.status,
+          amountCents: p.amountCents,
+          currencyCode: p.currencyCode,
+          eventType: p.rawEventType,
+          bookedAt: p.appointment.createdAt.toISOString(),
+          paidAt: p.createdAt.toISOString(),
+          stripePaymentIntentId: p.stripePaymentIntentId ?? null,
+        }));
+
+        return okResponse({ items, total: items.length });
+      } catch (error) {
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not load payment history"));
+      }
+    },
+  );
 };
 
 export default adminPatientProfileRoute;

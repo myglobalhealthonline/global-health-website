@@ -12,6 +12,10 @@ const CONSENT_TYPES = [
   "THIRD_PARTY_LAB",
   "NOTIFICATIONS",
   "FOLLOW_UP",
+  // Phase 2: medical access scope consents
+  "MEDICAL_ACCESS_DIRECT",
+  "MEDICAL_ACCESS_COUNTRY_CLINIC",
+  "MEDICAL_ACCESS_GLOBAL_NETWORK",
 ] as const;
 
 type ConsentType = (typeof CONSENT_TYPES)[number];
@@ -40,6 +44,18 @@ const CONSENT_LABELS: Record<ConsentType, { label: string; description: string }
   FOLLOW_UP: {
     label: "Follow-up & prescription processing",
     description: "Allow our team to contact you for follow-up care and prescription renewals.",
+  },
+  MEDICAL_ACCESS_DIRECT: {
+    label: "Direct provider access",
+    description: "Allow the doctor assigned to your consultation to access your medical records.",
+  },
+  MEDICAL_ACCESS_COUNTRY_CLINIC: {
+    label: "Country clinic access",
+    description: "Allow doctors in your registered country clinic to access your medical records for coordinated care.",
+  },
+  MEDICAL_ACCESS_GLOBAL_NETWORK: {
+    label: "Global network access",
+    description: "Allow MyGlobalHealth network doctors worldwide to access your records for second opinions and specialist referrals.",
   },
 };
 
