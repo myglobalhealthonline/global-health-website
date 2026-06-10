@@ -172,6 +172,32 @@ const PATCHES: { name: string; sql: string }[] = [
     `,
   },
   {
+    name: "AuditAction.userAndProfileEvents",
+    sql: `
+      DO $$ BEGIN
+        ALTER TYPE "AuditAction" ADD VALUE IF NOT EXISTS 'USER_UPDATED';
+        ALTER TYPE "AuditAction" ADD VALUE IF NOT EXISTS 'USER_ROLE_CHANGED';
+        ALTER TYPE "AuditAction" ADD VALUE IF NOT EXISTS 'USER_PASSWORD_RESET';
+        ALTER TYPE "AuditAction" ADD VALUE IF NOT EXISTS 'PATIENT_PROFILE_UPDATED';
+      EXCEPTION
+        WHEN duplicate_object THEN NULL;
+      END $$;
+    `,
+  },
+  {
+    name: "MedicalNote.createdByDoctorId.fk",
+    sql: `
+      DO $$ BEGIN
+        ALTER TABLE "MedicalNote"
+          ADD CONSTRAINT "MedicalNote_createdByDoctorId_fkey"
+          FOREIGN KEY ("createdByDoctorId") REFERENCES "Doctor"("id")
+          ON DELETE RESTRICT ON UPDATE CASCADE;
+      EXCEPTION
+        WHEN duplicate_object THEN NULL;
+      END $$;
+    `,
+  },
+  {
     name: "MedicalNote.table",
     sql: `
       CREATE TABLE IF NOT EXISTS "MedicalNote" (

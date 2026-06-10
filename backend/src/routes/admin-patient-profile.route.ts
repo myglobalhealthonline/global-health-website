@@ -101,8 +101,20 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
             ? { dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null }
             : {}),
         });
+        const actor = await resolveOptionalAuthUser(request);
+        // Always audit the edit. Record only the changed FIELD NAMES, never
+        // the values — the values are PHI/PII and must not land in the audit
+        // log. The alert-specific event below keeps its existing shape.
+        recordAudit({
+          actorUserId: actor?.id ?? null,
+          actorRole: actor?.role ?? "ADMIN",
+          action: "PATIENT_PROFILE_UPDATED",
+          entityType: "PatientProfile",
+          entityId: profile?.id ?? email,
+          metadata: { email, changedFields: Object.keys(body.data) },
+          request,
+        }).catch(() => {});
         if (alertChanges.statusAlert || alertChanges.clinicAlert) {
-          const actor = await resolveOptionalAuthUser(request);
           recordAudit({
             actorUserId: actor?.id ?? null,
             actorRole: actor?.role ?? "ADMIN",

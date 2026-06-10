@@ -5,6 +5,8 @@ import { UserRole } from "@prisma/client";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError, normalizeDbError } from "../modules/shared/db-errors.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
+import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 /**
@@ -218,6 +220,10 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
             );
         }
       }
+      const before = await prisma.user.findUnique({
+        where: { id: params.data.id },
+        select: { role: true },
+      });
       const updated = await prisma.user.update({
         where: { id: params.data.id },
         data: {
@@ -235,6 +241,22 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
           updatedAt: true,
         },
       });
+      const actor = await resolveOptionalAuthUser(request);
+      const roleChanged = body.data.role !== undefined && before?.role !== updated.role;
+      recordAudit({
+        actorUserId: actor?.id,
+        actorRole: "ADMIN",
+        action: roleChanged ? "USER_ROLE_CHANGED" : "USER_UPDATED",
+        entityType: "User",
+        entityId: updated.id,
+        metadata: {
+          email: updated.email,
+          ...(roleChanged ? { roleFrom: before?.role, roleTo: updated.role } : {}),
+          ...(body.data.isActive !== undefined ? { isActive: updated.isActive } : {}),
+          ...(body.data.doctorId !== undefined ? { doctorLinked: Boolean(updated.doctorId) } : {}),
+        },
+        request,
+      }).catch(() => {});
       return okResponse({
         user: { ...updated, updatedAt: updated.updatedAt.toISOString() },
       });
@@ -269,6 +291,15 @@ const adminUsersRoute: FastifyPluginAsync = async (app) => {
         where: { userId: params.data.id, usedAt: null },
         data: { usedAt: new Date() },
       });
+      const actor = await resolveOptionalAuthUser(request);
+      recordAudit({
+        actorUserId: actor?.id,
+        actorRole: "ADMIN",
+        action: "USER_PASSWORD_RESET",
+        entityType: "User",
+        entityId: params.data.id,
+        request,
+      }).catch(() => {});
       return okResponse({ reset: true }, "Password updated");
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
