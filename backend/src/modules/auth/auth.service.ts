@@ -5,6 +5,10 @@ import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import type { LoginBody, RegisterBody } from "../../validations/auth.schema.js";
 import { generateGlobalHealthNumber } from "../../lib/global-health-number.js";
+import {
+  computeEmailBlindIndex,
+  computePhoneBlindIndex,
+} from "../../lib/blind-index.js";
 
 export type SafeUser = {
   id: string;
@@ -95,6 +99,14 @@ export async function registerPatient(input: RegisterBody) {
         phone: input.phone?.trim() || null,
         globalHealthNumber: ghn,
         emailVerificationStatus: VerificationStatus.NOT_VERIFIED,
+        // Blind indexes for duplicate detection. No-op (null) until
+        // BLIND_INDEX_KEY is configured. nameDobHash is left null here —
+        // DOB isn't collected at registration; it backfills on profile update.
+        emailHash: computeEmailBlindIndex(email),
+        phoneHash: input.phone?.trim()
+          ? computePhoneBlindIndex(input.phone.trim())
+          : null,
+        nameDobHash: null,
       },
       update: {
         userId: user.id,

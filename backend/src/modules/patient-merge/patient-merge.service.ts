@@ -59,10 +59,6 @@ export async function findPotentialDuplicates(
         fullName: true,
         phone: true,
         dateOfBirth: true,
-        // Phase 2 blind-index columns accessed via the Prisma `select` path.
-        // They exist on the model once the Phase 2 migration is applied.
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ...(true as unknown as Record<string, boolean>),
       },
     });
 
@@ -74,12 +70,9 @@ export async function findPotentialDuplicates(
     const emailHash = computeEmailBlindIndex(source.email);
     const phoneHash = source.phone ? computePhoneBlindIndex(source.phone) : null;
 
-    const dobIso =
-      (source as unknown as { dateOfBirth?: Date | null }).dateOfBirth
-        ? (source as unknown as { dateOfBirth: Date }).dateOfBirth
-            .toISOString()
-            .slice(0, 10)
-        : null;
+    const dobIso = source.dateOfBirth
+      ? source.dateOfBirth.toISOString().slice(0, 10)
+      : null;
     const nameDobHash =
       source.fullName && dobIso
         ? computeNameDobBlindIndex(source.fullName, dobIso)
@@ -96,18 +89,7 @@ export async function findPotentialDuplicates(
       return [];
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const candidates: Array<{
-      id: string;
-      globalHealthNumber: string | null;
-      fullName: string | null;
-      email: string;
-      emailHash: string | null;
-      phoneHash: string | null;
-      nameDobHash: string | null;
-      isMerged: boolean;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    }> = await (prisma as any).patientProfile.findMany({
+    const candidates = await prisma.patientProfile.findMany({
       where: {
         AND: [
           { id: { not: patientProfileId } },
@@ -169,8 +151,7 @@ export async function mergePatients(params: {
 
     await prisma.$transaction(async (tx) => {
       // ── 1. Write the merge log with both snapshots ───────────────────────
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (tx as any).patientMergeLog.create({
+      await tx.patientMergeLog.create({
         data: {
           primaryPatientId,
           duplicatePatientId,
@@ -183,11 +164,15 @@ export async function mergePatients(params: {
 
       // ── 2. Re-point FK references duplicate → primary ────────────────────
 
-      // Appointment.userId — email column stays on the appointment row.
-      await tx.appointment.updateMany({
-        where: { userId: duplicateSnapshot.userId ?? undefined },
-        data: { userId: primarySnapshot.userId ?? null },
-      });
+      // Appointment.userId — only re-point when the duplicate actually has a
+      // userId. If userId is null/undefined, where: { userId: undefined }
+      // would make Prisma ignore the filter and corrupt every appointment row.
+      if (duplicateSnapshot.userId) {
+        await tx.appointment.updateMany({
+          where: { userId: duplicateSnapshot.userId },
+          data: { userId: primarySnapshot.userId ?? null },
+        });
+      }
 
       // MedicalDocument
       await tx.medicalDocument.updateMany({
@@ -218,29 +203,31 @@ export async function mergePatients(params: {
       });
 
       // PatientContactChangeLog (Phase 2 model)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (tx as any).patientContactChangeLog.updateMany({
+      await tx.patientContactChangeLog.updateMany({
         where: { patientProfileId: duplicatePatientId },
         data: { patientProfileId: primaryPatientId },
       });
 
       // MedicalAccessRequest (Phase 2 model)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (tx as any).medicalAccessRequest.updateMany({
+      await tx.medicalAccessRequest.updateMany({
         where: { patientProfileId: duplicatePatientId },
         data: { patientProfileId: primaryPatientId },
       });
 
       // DataDeletionRequest (Phase 2 model)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (tx as any).dataDeletionRequest.updateMany({
+      await tx.dataDeletionRequest.updateMany({
+        where: { patientProfileId: duplicatePatientId },
+        data: { patientProfileId: primaryPatientId },
+      });
+
+      // MedicalAccessGrant (Phase 2 model — was missing)
+      await tx.medicalAccessGrant.updateMany({
         where: { patientProfileId: duplicatePatientId },
         data: { patientProfileId: primaryPatientId },
       });
 
       // ── 3. Mark the duplicate as merged ─────────────────────────────────
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (tx as any).patientProfile.update({
+      await tx.patientProfile.update({
         where: { id: duplicatePatientId },
         data: {
           isMerged: true,
@@ -288,8 +275,7 @@ export async function getMergeStatus(patientProfileId: string): Promise<{
   mergedAt: Date | null;
 }> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const profile = await (prisma as any).patientProfile.findUnique({
+    const profile = await prisma.patientProfile.findUnique({
       where: { id: patientProfileId },
       select: {
         isMerged: true,

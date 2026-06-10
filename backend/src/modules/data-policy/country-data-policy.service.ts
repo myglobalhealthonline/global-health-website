@@ -242,6 +242,11 @@ export async function anonymizePatient(params: {
         idDocumentNumber: null,
         insurancePolicyNumber: null,
         preferredPharmacy: null,
+        // Identity wiped → drop the blind indexes derived from it so this
+        // anonymized row can't surface as a duplicate. emailHash stays
+        // because email is intentionally preserved (GHN-linked record).
+        phoneHash: null,
+        nameDobHash: null,
         // Phase 2 column — cast via `as any` until migration is applied.
         ...(true
           ? ({

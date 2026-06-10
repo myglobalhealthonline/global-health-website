@@ -1,4 +1,6 @@
 import { prisma } from "../db/prisma.js";
+import { env } from "../config/env.js";
+import { alertUnauthorizedAccess } from "../modules/security-alerts/security-alert.service.js";
 
 /**
  * Medical Access Guard — §22 of the repo security plan.
@@ -7,8 +9,16 @@ import { prisma } from "../db/prisma.js";
  * returning any PHI. This function:
  *   1. Runs access checks in priority order (first match wins).
  *   2. Writes a MedicalAccessLog row as a side effect (always).
- *   3. Creates a SecurityAlert for denied or abnormal access.
- *   4. Throws MedicalAccessDeniedError if access is not granted.
+ *   3. Raises a SecurityAlert for denied or abnormal access.
+ *   4. Throws MedicalAccessDeniedError if access is denied AND enforcement is on.
+ *
+ * ── Shadow vs Enforce ──────────────────────────────────────────────────────
+ * Controlled by env.MEDICAL_ACCESS_ENFORCE:
+ *   - false (default, SHADOW): a denied decision is still logged + alerted, but
+ *     the guard returns { allowed:false } WITHOUT throwing — the caller proceeds.
+ *     Lets the guard ship into a live system and build the audit trail before
+ *     staff enroll 2FA / sign confidentiality / consent rows are backfilled.
+ *   - true (ENFORCE): a denied decision throws MedicalAccessDeniedError.
  *
  * DB calls are individually wrapped in try/catch so a missing table
  * (during migrations) or a transient DB error never crashes a legitimate
@@ -36,6 +46,8 @@ export type AccessResource = {
   globalHealthNumber?: string | null;
   patientCountryFolder?: string | null;
   resourceType: string;
+  /** VIEWED | DOWNLOADED | UPLOADED | UPDATED — required by MedicalAccessLog. */
+  accessAction?: string;
   resourceId?: string | null;
   relatedAppointmentId?: string | null;
 };
@@ -68,6 +80,20 @@ export class MedicalAccessDeniedError extends Error {
   }
 }
 
+/**
+ * Resolve a denied decision according to the enforcement mode.
+ *  - ENFORCE: throw MedicalAccessDeniedError (caller returns 403).
+ *  - SHADOW (default): return the deny result without throwing, so the caller
+ *    proceeds. The access + alert have already been logged by the time this is
+ *    called — shadow mode only suppresses the block, never the audit trail.
+ */
+function denyDecision(result: AccessResult): AccessResult {
+  if (env.MEDICAL_ACCESS_ENFORCE) {
+    throw new MedicalAccessDeniedError(result.denyReason ?? "ACCESS_DENIED");
+  }
+  return result;
+}
+
 // ---------------------------------------------------------------------------
 // Internal helpers
 // ---------------------------------------------------------------------------
@@ -85,21 +111,24 @@ async function getPatientUserId(patientProfileId: string): Promise<string | null
   }
 }
 
-/** Check whether the patient has an active consent of the given type. */
+/**
+ * Check whether the patient currently consents to the given access type.
+ *
+ * PatientConsent is APPEND-ONLY: there is no `isActive` flag. The current
+ * state for a (patientProfileId, consentType) pair is the most recent row's
+ * `consentValue`. A withdrawal is a newer row with consentValue=false.
+ */
 async function hasActiveConsent(
   patientProfileId: string,
   consentType: string,
 ): Promise<boolean> {
   try {
-    const consent = await (prisma as any).patientConsent.findFirst({
-      where: {
-        patientProfileId,
-        consentType,
-        isActive: true,
-      },
-      select: { id: true },
+    const latest = await prisma.patientConsent.findFirst({
+      where: { patientProfileId, consentType },
+      orderBy: { createdAt: "desc" },
+      select: { consentValue: true },
     });
-    return consent !== null;
+    return latest?.consentValue === true;
   } catch {
     return false;
   }
@@ -138,22 +167,21 @@ async function doctorHasActiveAppointment(
   }
 }
 
-/** Check the MedicalAccessGrant table for a live cross-country grant. */
+/** Check the MedicalAccessGrant table for a live cross-country grant.
+ *  A grant is live when it is not revoked (revokedAt IS NULL) and not expired.
+ *  `expiresAt` is a required column on the schema (never null). */
 async function hasLiveGrant(
   actorUserId: string,
   patientProfileId: string,
 ): Promise<boolean> {
   try {
     const now = new Date();
-    const grant = await (prisma as any).medicalAccessGrant.findFirst({
+    const grant = await prisma.medicalAccessGrant.findFirst({
       where: {
         grantedToUserId: actorUserId,
         patientProfileId,
-        isRevoked: false,
-        OR: [
-          { expiresAt: null },
-          { expiresAt: { gt: now } },
-        ],
+        revokedAt: null,
+        expiresAt: { gt: now },
       },
       select: { id: true },
     });
@@ -169,12 +197,10 @@ async function getCountryAccessModel(
 ): Promise<string | null> {
   try {
     // countryFolder stores the country code (e.g. "GB", "BR").
-    // Cast through any: the generated client may lag the schema if prisma
-    // generate hasn't been re-run after adding accessModel.
-    const country = await (prisma.country.findFirst as any)({
+    const country = await prisma.country.findFirst({
       where: { code: countryFolder },
       select: { accessModel: true },
-    }) as { accessModel: string } | null;
+    });
     return country?.accessModel ?? null;
   } catch {
     return null;
@@ -191,7 +217,7 @@ async function writeMedicalAccessLog(
   isAbnormal: boolean,
 ): Promise<void> {
   try {
-    await (prisma as any).medicalAccessLog.create({
+    await prisma.medicalAccessLog.create({
       data: {
         patientProfileId: ctx.resource.patientProfileId,
         globalHealthNumber: ctx.resource.globalHealthNumber ?? null,
@@ -200,15 +226,19 @@ async function writeMedicalAccessLog(
         accessedByName: ctx.actor.name,
         accessedResourceType: ctx.resource.resourceType,
         accessedResourceId: ctx.resource.resourceId ?? null,
+        accessAction: ctx.resource.accessAction ?? "VIEWED",
         relatedAppointmentId: ctx.resource.relatedAppointmentId ?? null,
         accessReason: ctx.reason ?? null,
         ipAddress: ctx.ipAddress ?? null,
         userAgent: ctx.userAgent ?? null,
+        patientCountryFolder: ctx.resource.patientCountryFolder ?? null,
+        actorCountry: ctx.actor.countryCode ?? null,
         loginSessionId: ctx.loginSessionId ?? null,
-        accessGranted: result.allowed,
         consentLevelUsed: result.consentLevelUsed ?? null,
-        denyReason: result.denyReason ?? null,
         isAbnormal,
+        // No `accessGranted` / `denyReason` columns exist; surface the deny
+        // reason via abnormalReason so denied attempts are explainable in the log.
+        abnormalReason: result.allowed ? null : (result.denyReason ?? null),
       },
     });
   } catch {
@@ -216,21 +246,29 @@ async function writeMedicalAccessLog(
   }
 }
 
+/** Raise a deduped, schema-correct SecurityAlert via the security-alert service
+ *  (which carries severity/description/dedupeKey and matches the SecurityAlert
+ *  model). dedupeKey is actor+patient+day-scoped inside the service, preventing
+ *  alert storms on repeated denials. */
 async function writeSecurityAlert(
   ctx: AccessContext,
   alertType: string,
-  detail: string,
+  description: string,
 ): Promise<void> {
   try {
-    await (prisma as any).securityAlert.create({
-      data: {
+    await alertUnauthorizedAccess({
+      actorId: ctx.actor.userId,
+      actorRole: ctx.actor.role,
+      patientId: ctx.resource.patientProfileId,
+      globalHealthNumber: ctx.resource.globalHealthNumber ?? null,
+      countryFolder: ctx.resource.patientCountryFolder ?? null,
+      description,
+      details: {
         alertType,
-        userId: ctx.actor.userId,
-        patientProfileId: ctx.resource.patientProfileId,
-        detail,
+        resourceType: ctx.resource.resourceType,
+        resourceId: ctx.resource.resourceId ?? null,
         ipAddress: ctx.ipAddress ?? null,
         userAgent: ctx.userAgent ?? null,
-        resolved: false,
       },
     });
   } catch {
@@ -245,18 +283,12 @@ async function writeSecurityAlert(
 function detectAbnormal(ctx: AccessContext, result: AccessResult): boolean {
   const { actor, resource } = ctx;
 
-  // Doctor accessed with no direct appointment relationship and no grant
+  // Genuine anomaly: actor has an explicit country-folder scope and the
+  // patient's folder is NOT in it, yet access still resolved. (Consent-based
+  // clinic/global/grant access is NORMAL and intentionally not flagged here —
+  // flagging it produced alert storms on every legitimate consented read.)
   if (
-    actor.role === "DOCTOR" &&
     result.allowed &&
-    result.consentLevelUsed !== "DIRECT_ONLY" &&
-    result.consentLevelUsed !== "CROSS_COUNTRY_GRANT"
-  ) {
-    return true;
-  }
-
-  // Actor's assigned country folders don't include the patient's folder
-  if (
     resource.patientCountryFolder &&
     actor.allowedCountryFolders &&
     actor.allowedCountryFolders.length > 0 &&
@@ -319,7 +351,7 @@ export async function assertMedicalAccess(
       "UNAUTHORIZED_ACCESS_ATTEMPT",
       `Patient ${actor.userId} attempted to access records for ${resource.patientProfileId}`,
     );
-    throw new MedicalAccessDeniedError(result.denyReason!);
+    return denyDecision(result);
   }
 
   // ------------------------------------------------------------------
@@ -346,7 +378,7 @@ export async function assertMedicalAccess(
       "UNAUTHORIZED_ACCESS_ATTEMPT",
       `LOCAL_ADMIN ${actor.userId} accessed patient outside allowed folders (${folder ?? "unknown"})`,
     );
-    throw new MedicalAccessDeniedError(result.denyReason!);
+    return denyDecision(result);
   }
 
   // ------------------------------------------------------------------
@@ -362,14 +394,14 @@ export async function assertMedicalAccess(
         "UNAUTHORIZED_ACCESS_ATTEMPT",
         `Doctor ${actor.userId} attempted record access without confidentiality agreement`,
       );
-      throw new MedicalAccessDeniedError(result.denyReason!);
+      return denyDecision(result);
     }
 
     // 4b. Must have completed 2FA (normal deny, no alert)
     if (!actor.twoFactorVerifiedAt) {
       result = { allowed: false, denyReason: "DOCTOR_2FA_REQUIRED" };
       await writeMedicalAccessLog(ctx, result, false);
-      throw new MedicalAccessDeniedError(result.denyReason!);
+      return denyDecision(result);
     }
 
     // 4c. Direct consent + active appointment
@@ -443,7 +475,7 @@ export async function assertMedicalAccess(
       "UNAUTHORIZED_ACCESS_ATTEMPT",
       `Doctor ${actor.userId} (doctorId=${actor.doctorId ?? "unknown"}) failed all access checks for patient ${resource.patientProfileId}`,
     );
-    throw new MedicalAccessDeniedError(result.denyReason!);
+    return denyDecision(result);
   }
 
   // ------------------------------------------------------------------
@@ -451,5 +483,5 @@ export async function assertMedicalAccess(
   // ------------------------------------------------------------------
   result = { allowed: false, denyReason: "ROLE_NOT_PERMITTED" };
   await writeMedicalAccessLog(ctx, result, false);
-  throw new MedicalAccessDeniedError(result.denyReason!);
+  return denyDecision(result);
 }

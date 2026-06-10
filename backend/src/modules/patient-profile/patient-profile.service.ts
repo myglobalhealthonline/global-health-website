@@ -5,6 +5,23 @@ import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { encryptPhiFields, decryptPhiFields } from "../../lib/crypto/phi-crypto.js";
 import { generateGlobalHealthNumber } from "../../lib/global-health-number.js";
+import {
+  computeEmailBlindIndex,
+  computePhoneBlindIndex,
+  computeNameDobBlindIndex,
+} from "../../lib/blind-index.js";
+
+/**
+ * Compute the nameDob blind index from a (fullName, dob) pair. Returns null
+ * unless BOTH are present — a half-identity isn't a usable dedup key.
+ */
+function nameDobHashFor(
+  fullName: string | null | undefined,
+  dob: Date | null | undefined,
+): string | null {
+  if (!fullName || !dob) return null;
+  return computeNameDobBlindIndex(fullName, dob);
+}
 
 export async function upsertPatientProfileByEmail(
   input: {
@@ -65,7 +82,7 @@ export async function upsertPatientProfileByEmail(
     let ghn: string | null = null;
     const existing = await prisma.patientProfile.findUnique({
       where: { email },
-      select: { globalHealthNumber: true },
+      select: { globalHealthNumber: true, fullName: true, dateOfBirth: true },
     });
     if (!existing) {
       try {
@@ -75,15 +92,30 @@ export async function upsertPatientProfileByEmail(
       }
     }
 
+    // ── Blind-index recomputation (no-op until BLIND_INDEX_KEY is set) ──
+    // CREATE: all incoming values are authoritative.
+    const createFullName = input.fullName?.trim() || null;
+    const createPhone = input.phone?.trim() || null;
+    const createDob = input.dateOfBirth ?? null;
+    // UPDATE: merge incoming partials over the stored row so nameDobHash can
+    // be derived even when only one of fullName/dob is in this patch.
+    const mergedFullName =
+      input.fullName !== undefined ? input.fullName?.trim() || null : existing?.fullName ?? null;
+    const mergedDob =
+      input.dateOfBirth !== undefined ? input.dateOfBirth ?? null : existing?.dateOfBirth ?? null;
+
     const profile = await prisma.patientProfile.upsert({
       where: { email },
       create: {
         email,
         userId: user.role === UserRole.PATIENT ? user.id : null,
-        fullName: input.fullName?.trim() || null,
-        phone: input.phone?.trim() || null,
-        dateOfBirth: input.dateOfBirth ?? null,
+        fullName: createFullName,
+        phone: createPhone,
+        dateOfBirth: createDob,
         ...(ghn ? { globalHealthNumber: ghn } : {}),
+        emailHash: computeEmailBlindIndex(email),
+        phoneHash: createPhone ? computePhoneBlindIndex(createPhone) : null,
+        nameDobHash: nameDobHashFor(createFullName, createDob),
       },
       update: {
         userId: user.role === UserRole.PATIENT ? user.id : undefined,
@@ -92,6 +124,13 @@ export async function upsertPatientProfileByEmail(
         ...(input.dateOfBirth !== undefined ? { dateOfBirth: input.dateOfBirth } : {}),
         // Backfill GHN for profiles that existed before this feature shipped.
         ...(!existing?.globalHealthNumber && ghn ? { globalHealthNumber: ghn } : {}),
+        // Recompute affected blind indexes when the source field changes.
+        ...(input.phone !== undefined
+          ? { phoneHash: createPhone ? computePhoneBlindIndex(createPhone) : null }
+          : {}),
+        ...(input.fullName !== undefined || input.dateOfBirth !== undefined
+          ? { nameDobHash: nameDobHashFor(mergedFullName, mergedDob) }
+          : {}),
       },
     });
 
@@ -201,11 +240,30 @@ export async function applyPatientProfileUpdate(
   }
   const before = await prisma.patientProfile.findUnique({
     where: { email },
-    select: { statusAlert: true, clinicAlert: true },
+    select: {
+      statusAlert: true,
+      clinicAlert: true,
+      fullName: true,
+      dateOfBirth: true,
+    },
   });
   // Encrypt the government-ID fields before they touch the DB (no-op when
   // PHI_ENCRYPTION_KEY is unset). The returned row is decrypted below.
+  // fullName/phone/dateOfBirth are NOT PHI-encrypted, so the plaintext on
+  // `input` is what's used to derive the blind indexes below.
   const writeInput = encryptPhiFields(input);
+
+  // ── Blind-index recomputation (no-op until BLIND_INDEX_KEY is set) ──
+  const createFullName = input.fullName ?? options.fallbackFullName ?? null;
+  const createPhone = input.phone ?? options.fallbackPhone ?? null;
+  const createDob = input.dateOfBirth ?? null;
+  // For update, merge the incoming partial over the stored row so nameDobHash
+  // can be derived when only one of fullName/dateOfBirth is being changed.
+  const mergedFullName =
+    "fullName" in input ? input.fullName ?? null : before?.fullName ?? null;
+  const mergedDob =
+    "dateOfBirth" in input ? input.dateOfBirth ?? null : before?.dateOfBirth ?? null;
+
   try {
     const profile = await prisma.patientProfile.upsert({
       where: { email },
@@ -214,8 +272,23 @@ export async function applyPatientProfileUpdate(
         fullName: writeInput.fullName ?? options.fallbackFullName ?? null,
         phone: writeInput.phone ?? options.fallbackPhone ?? null,
         ...writeInput,
+        emailHash: computeEmailBlindIndex(email),
+        phoneHash: createPhone ? computePhoneBlindIndex(createPhone) : null,
+        nameDobHash: nameDobHashFor(createFullName, createDob),
       },
-      update: writeInput,
+      update: {
+        ...writeInput,
+        ...("phone" in input
+          ? {
+              phoneHash: input.phone
+                ? computePhoneBlindIndex(input.phone)
+                : null,
+            }
+          : {}),
+        ...("fullName" in input || "dateOfBirth" in input
+          ? { nameDobHash: nameDobHashFor(mergedFullName, mergedDob) }
+          : {}),
+      },
     });
     const alertChanges: WriteOutcome["alertChanges"] = {};
     if ("statusAlert" in input && (before?.statusAlert ?? null) !== (input.statusAlert ?? null)) {

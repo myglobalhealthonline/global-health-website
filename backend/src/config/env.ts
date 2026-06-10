@@ -107,6 +107,18 @@ const envSchema = z.object({
    *  Without this key, duplicate-patient detection via hashed fields is disabled. */
   BLIND_INDEX_KEY: z.string().trim().min(32).optional(),
 
+  /** Medical access guard enforcement mode.
+   *  - unset / "false" (default): SHADOW mode — assertMedicalAccess logs every
+   *    access + raises alerts on would-be-denials, but NEVER blocks. Lets the
+   *    guard ship into a live system and build the audit trail before staff
+   *    have enrolled 2FA / signed confidentiality / consent rows are backfilled.
+   *  - "true": ENFORCE mode — denied access throws and the caller returns 403.
+   *  Flip to "true" only after the Wave-0 backfill (confidentiality agreements,
+   *  2FA enrollment, consent migration) is complete. */
+  MEDICAL_ACCESS_ENFORCE: z
+    .union([z.literal("true"), z.literal("false"), z.boolean()])
+    .optional(),
+
   WASENDER_API_TOKEN: z.string().trim().min(1).optional(),
   WASENDER_GAP_MS: z.coerce.number().int().min(0).default(5500).optional(),
 
@@ -158,7 +170,12 @@ const adminTokenFallbackEnabled =
     ? parsed.NODE_ENV === "development"
     : parsed.ADMIN_TOKEN_FALLBACK_ENABLED === true || parsed.ADMIN_TOKEN_FALLBACK_ENABLED === "true";
 
+// Default OFF (shadow mode). Must be explicitly opted into with "true".
+const medicalAccessEnforce =
+  parsed.MEDICAL_ACCESS_ENFORCE === true || parsed.MEDICAL_ACCESS_ENFORCE === "true";
+
 export const env = {
   ...parsed,
   ADMIN_TOKEN_FALLBACK_ENABLED: adminTokenFallbackEnabled,
+  MEDICAL_ACCESS_ENFORCE: medicalAccessEnforce,
 };
