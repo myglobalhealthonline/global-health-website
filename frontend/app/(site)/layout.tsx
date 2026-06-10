@@ -29,17 +29,22 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
       ? (headerCountry as CountryCode)
       : undefined;
 
-  const [{ common, navigation }, assets, authUser, countriesMerged] = await Promise.all([
-    getSiteContext({
-      explicitCountryCode: runtimeCountry,
-      headerLocale: requestHeaders.get("x-gh-locale"),
-      acceptLanguageHeader: requestHeaders.get("accept-language"),
-      cookieLocale: cookieStore.get("gh_locale")?.value ?? null,
-    }),
-    getPublicAssetsNormalized(),
-    getServerAuthUser(),
-    getPublicCountriesMerged(),
-  ]);
+  // runtimeCountry is known here, so the per-country footer fetch can run
+  // in the same parallel batch instead of as an extra serial round-trip
+  // after it (one less hop on every (site) page's TTFB).
+  const [{ common, navigation }, assets, authUser, countriesMerged, activeFooter] =
+    await Promise.all([
+      getSiteContext({
+        explicitCountryCode: runtimeCountry,
+        headerLocale: requestHeaders.get("x-gh-locale"),
+        acceptLanguageHeader: requestHeaders.get("accept-language"),
+        cookieLocale: cookieStore.get("gh_locale")?.value ?? null,
+      }),
+      getPublicAssetsNormalized(),
+      getServerAuthUser(),
+      getPublicCountriesMerged(),
+      runtimeCountry ? getCountryFooter(runtimeCountry) : Promise.resolve(null),
+    ]);
 
   const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO_LIGHT;
   const footerDecorImage = resolveFooterCtaDecorAsset(assets);
@@ -63,15 +68,12 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
     if (c.enabledFeatures) countryFeatures[c.code] = c.enabledFeatures;
   }
 
-  // Per-country footer override (admin-managed). Only the active
-  // country's row is fetched — SiteFooter doesn't render footers for
-  // other countries, so requesting all 5 every layout render would
-  // burn 4 round-trips for data nothing reads. Outside a country
-  // scope (entry gate / global pages) we skip the fetch entirely
-  // and SiteFooter falls back to its defaults.
-  const activeFooter = runtimeCountry
-    ? await getCountryFooter(runtimeCountry)
-    : null;
+  // Per-country footer override (admin-managed). Only the active country's
+  // row is fetched (in the Promise.all above) — SiteFooter doesn't render
+  // footers for other countries, so requesting all 5 every layout render
+  // would burn 4 round-trips for data nothing reads. Outside a country
+  // scope (entry gate / global pages) the fetch is skipped and SiteFooter
+  // falls back to its defaults.
   const countryFooters: Record<string, typeof activeFooter> = {};
   if (runtimeCountry) {
     countryFooters[runtimeCountry.toLowerCase()] = activeFooter;

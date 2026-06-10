@@ -40,7 +40,30 @@ export async function getSetting<T = unknown>(key: string): Promise<T | null> {
   }
 }
 
+// Allowlist of keys the Setting table is permitted to hold. The Setting
+// table is a generic key/value store; without an allowlist a future caller
+// (or a bug) could write to an arbitrary key that influences app behaviour.
+// Exact keys plus a small set of dynamic prefixes (e.g. per-country
+// featured-doctor rows keyed `featured_doctor:<code>`).
+const WRITABLE_SETTING_KEYS = new Set<string>([
+  "review.trustpilot.businessUnitId",
+  "review.trustpilot.aggregate",
+  "review.google.placeId",
+  "review.google.aggregate",
+  "review.doctify.clinicId",
+  "review.doctify.aggregate",
+  "review.primaryProvider",
+]);
+const WRITABLE_SETTING_PREFIXES = ["featured_doctor:"];
+
+function assertWritableKey(key: string): void {
+  if (WRITABLE_SETTING_KEYS.has(key)) return;
+  if (WRITABLE_SETTING_PREFIXES.some((p) => key.startsWith(p))) return;
+  throw new Error(`Refusing to write to unrecognised setting key: ${key}`);
+}
+
 export async function upsertSetting(key: string, value: unknown): Promise<void> {
+  assertWritableKey(key);
   try {
     await prisma.setting.upsert({
       where: { key },
@@ -53,6 +76,7 @@ export async function upsertSetting(key: string, value: unknown): Promise<void> 
 }
 
 export async function deleteSetting(key: string): Promise<void> {
+  assertWritableKey(key);
   try {
     await prisma.setting.delete({ where: { key } }).catch(() => undefined);
   } catch (error) {
