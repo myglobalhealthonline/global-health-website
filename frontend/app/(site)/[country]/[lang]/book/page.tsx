@@ -156,7 +156,7 @@ export default async function CountryLangBookPage({
 
       <PageHero
         countryCode={config.code}
-        countryLabel={`${config.name} · Book online`}
+        countryLabel={`${config.name} Medical Clinic · Book online`}
         titleLead="Book your online"
         titleAccent="consultation."
         lede={
