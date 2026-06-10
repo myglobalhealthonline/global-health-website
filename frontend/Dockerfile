@@ -42,7 +42,8 @@ RUN addgroup --system --gid 1001 nodejs \
 
 # next.config.ts output:"standalone" bundles all required node_modules into
 # .next/standalone — no separate node_modules install needed here.
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+# Package name is "frontend", so Next nests the trace at standalone/frontend/.
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone/frontend ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
