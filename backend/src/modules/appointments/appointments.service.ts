@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { Prisma } from "@prisma/client";
+import { Prisma, AppointmentStatus as PrismaAppointmentStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import type { BookingInput } from "../../validations/booking.schema.js";
 import type { AppointmentStatus } from "../../validations/admin-appointments.schema.js";
@@ -306,6 +306,30 @@ export type ListAppointmentsResult = {
   };
 };
 
+// Shared column select reused by all admin-facing single-row and list queries.
+// Keeping it in one place ensures every code path reads the same fields and
+// avoids the repetition that made $queryRawUnsafe necessary before.
+const ADMIN_APPT_SELECT = {
+  id: true,
+  countryCode: true,
+  consultationType: true,
+  fullName: true,
+  email: true,
+  phone: true,
+  notes: true,
+  status: true,
+  scheduledAt: true,
+  meetingUrl: true,
+  paymentStatus: true,
+  amountCents: true,
+  currencyCode: true,
+  consultationMode: true,
+  clinicId: true,
+  locationAddress: true,
+  createdAt: true,
+  updatedAt: true,
+} as const;
+
 function toAdminAppointment(record: AppointmentRecord): AdminAppointmentDetail {
   return {
     id: record.id,
@@ -440,36 +464,12 @@ export async function listAppointments(options: ListAppointmentsOptions): Promis
 
 export async function getAppointmentById(id: string): Promise<AdminAppointmentDetail | null> {
   try {
-    const rows = await prisma.$queryRawUnsafe<AppointmentRecord[]>(
-      `
-        SELECT
-          "id",
-          "countryCode",
-          "consultationType",
-          "fullName",
-          "email",
-          "phone",
-          "notes",
-          "status",
-          "scheduledAt",
-          "meetingUrl",
-          "paymentStatus",
-          "amountCents",
-          "currencyCode",
-          "consultationMode",
-          "clinicId",
-          "locationAddress",
-          "createdAt",
-          "updatedAt"
-        FROM "Appointment"
-        WHERE "id" = $1
-        LIMIT 1
-      `,
-      id,
-    );
-
-    if (rows.length === 0) return null;
-    return toAdminAppointment(rows[0]);
+    const row = await prisma.appointment.findUnique({
+      where: { id },
+      select: ADMIN_APPT_SELECT,
+    });
+    if (!row) return null;
+    return toAdminAppointment(row as AppointmentRecord);
   } catch (error) {
     throw normalizeDbError(error, "Appointments are temporarily unavailable");
   }
@@ -480,80 +480,24 @@ export async function updateAppointmentStatus(
   status: AppointmentStatus,
 ): Promise<AdminAppointmentDetail | null> {
   try {
-    const currentRows = await prisma.$queryRawUnsafe<AppointmentRecord[]>(
-      `
-        SELECT
-          "id",
-          "countryCode",
-          "consultationType",
-          "fullName",
-          "email",
-          "phone",
-          "notes",
-          "status",
-          "scheduledAt",
-          "meetingUrl",
-          "paymentStatus",
-          "amountCents",
-          "currencyCode",
-          "consultationMode",
-          "clinicId",
-          "locationAddress",
-          "createdAt",
-          "updatedAt"
-        FROM "Appointment"
-        WHERE "id" = $1
-        LIMIT 1
-      `,
-      id,
-    );
-
-    if (currentRows.length === 0) return null;
-
-    const current = currentRows[0];
-    if (current.status === status) {
-      return toAdminAppointment(current);
+    const current = await prisma.appointment.findUnique({
+      where: { id },
+      select: { status: true },
+    });
+    if (!current) return null;
+    if ((current.status as string) === status) {
+      return getAppointmentById(id);
     }
-
-    assertValidStatusTransition(current.status, status);
-
-    const completedAtClause =
-      status === "COMPLETED" ? ', "consultationCompletedAt" = NOW()' : "";
-
-    const rows = await prisma.$queryRawUnsafe<AppointmentRecord[]>(
-      `
-        UPDATE "Appointment"
-        -- status is a Postgres enum ("AppointmentStatus"); cast the text
-        -- bind param explicitly so this works whether the column is still
-        -- text (pre-conversion boot) or already the enum.
-        SET "status" = $2::"AppointmentStatus", "updatedAt" = NOW()${completedAtClause}
-        WHERE "id" = $1
-        RETURNING
-          "id",
-          "countryCode",
-          "consultationType",
-          "fullName",
-          "email",
-          "phone",
-          "notes",
-          "status",
-          "scheduledAt",
-          "meetingUrl",
-          "paymentStatus",
-          "amountCents",
-          "currencyCode",
-          "consultationMode",
-          "clinicId",
-          "locationAddress",
-          "createdAt",
-          "updatedAt"
-      `,
-      id,
-      status,
-    );
-
-    if (rows.length === 0) return null;
-    return toAdminAppointment(rows[0]);
+    assertValidStatusTransition(current.status as AppointmentStatus, status);
+    await prisma.appointment.update({
+      where: { id },
+      data: {
+        status: status as PrismaAppointmentStatus,
+        updatedAt: new Date(),
+        ...(status === "COMPLETED" ? { consultationCompletedAt: new Date() } : {}),
+      },
+    });
+    return getAppointmentById(id);
   } catch (error) {
     if (
       error instanceof InvalidAppointmentStatusTransitionError ||
@@ -567,47 +511,25 @@ export async function updateAppointmentStatus(
 
 export async function listAppointmentsForUser(userId: string): Promise<AccountAppointmentListItem[]> {
   try {
-    const rows = await prisma.$queryRawUnsafe<AppointmentRecord[]>(
-      `
-        SELECT
-          a."id",
-          a."countryCode",
-          a."consultationType",
-          a."fullName",
-          a."email",
-          a."phone",
-          a."notes",
-          a."status",
-          a."scheduledAt",
-          a."meetingUrl",
-          a."paymentStatus",
-          a."amountCents",
-          a."currencyCode",
-          a."consultationMode",
-          a."clinicId",
-          a."locationAddress",
-          a."patientTimezone",
-          a."createdAt",
-          a."updatedAt",
-          c."name" AS "clinicName",
-          c."city" AS "clinicCity"
-        FROM "Appointment" a
-        LEFT JOIN "Clinic" c ON c."id" = a."clinicId"
-        WHERE a."userId" = $1
-        ORDER BY a."createdAt" DESC
-        LIMIT 200
-      `,
-      userId,
-    );
+    const rows = await prisma.appointment.findMany({
+      where: { userId },
+      select: {
+        ...ADMIN_APPT_SELECT,
+        patientTimezone: true,
+        clinic: { select: { name: true, city: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+    });
 
     return rows.map((row) => ({
       id: row.id,
       countryCode: row.countryCode,
       consultationType: row.consultationType,
-      status: row.status,
+      status: row.status as string,
       scheduledAt: row.scheduledAt ? row.scheduledAt.toISOString() : null,
       meetingUrl: row.meetingUrl,
-      paymentStatus: row.paymentStatus,
+      paymentStatus: row.paymentStatus as string,
       amountCents: row.amountCents,
       currencyCode: row.currencyCode,
       createdAt: row.createdAt.toISOString(),
@@ -617,8 +539,8 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
       phone: row.phone,
       notesPreview: row.notes ? row.notes.slice(0, 140) : null,
       consultationMode: row.consultationMode,
-      clinicName: row.clinicName ?? null,
-      clinicCity: row.clinicCity ?? null,
+      clinicName: row.clinic?.name ?? null,
+      clinicCity: row.clinic?.city ?? null,
       locationAddress: row.locationAddress,
       patientTimezone: row.patientTimezone ?? null,
     }));
@@ -632,41 +554,29 @@ export async function getAppointmentForUser(
   userId: string,
 ): Promise<AccountAppointmentDetail | null> {
   try {
-    const rows = await prisma.$queryRawUnsafe<AppointmentRecord[]>(
-      `
-        SELECT
-          "id",
-          "countryCode",
-          "consultationType",
-          "fullName",
-          "email",
-          "phone",
-          "notes",
-          "status",
-          "scheduledAt",
-          "meetingUrl",
-          "paymentStatus",
-          "amountCents",
-          "currencyCode",
-          "consultationMode",
-          "clinicId",
-          "locationAddress",
-          "createdAt",
-          "updatedAt"
-        FROM "Appointment"
-        WHERE "id" = $1 AND "userId" = $2
-        LIMIT 1
-      `,
-      id,
-      userId,
-    );
-    if (rows.length === 0) return null;
-    const row = rows[0];
+    const row = await prisma.appointment.findFirst({
+      where: { id, userId },
+      select: {
+        id: true,
+        countryCode: true,
+        consultationType: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        notes: true,
+        status: true,
+        scheduledAt: true,
+        meetingUrl: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    if (!row) return null;
     return {
       id: row.id,
       countryCode: row.countryCode,
       consultationType: row.consultationType,
-      status: row.status,
+      status: row.status as string,
       scheduledAt: row.scheduledAt ? row.scheduledAt.toISOString() : null,
       meetingUrl: row.meetingUrl,
       createdAt: row.createdAt.toISOString(),
