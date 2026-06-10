@@ -60,7 +60,7 @@ export const adminDoctorsQuerySchema = z.object({
 export type AdminDoctorsQuery = z.infer<typeof adminDoctorsQuerySchema>;
 
 export const doctorIdParamsSchema = z.object({
-  id: z.string().trim().min(1),
+  id: z.string().trim().min(1).max(64),
 });
 
 const nullableTrimmed = (max: number) =>

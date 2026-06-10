@@ -38,6 +38,9 @@ export async function notifyAdmins(
     | "DOCUMENT_UPLOADED",
   payload: NotificationPayload,
 ): Promise<void> {
+  // Notifies at most 20 active admins. This is a safety cap, not a business
+  // rule — if the admin team ever grows beyond 20, raise this `take` (or
+  // batch) so later admins still receive in-portal notifications.
   const admins = await prisma.user.findMany({
     where: { role: "ADMIN", isActive: true },
     select: { id: true },

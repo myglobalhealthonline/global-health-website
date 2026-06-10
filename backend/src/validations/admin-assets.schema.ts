@@ -59,7 +59,7 @@ export const adminAssetsQuerySchema = z.object({
 export type AdminAssetsQuery = z.infer<typeof adminAssetsQuerySchema>;
 
 export const assetIdParamsSchema = z.object({
-  id: z.string().trim().min(1),
+  id: z.string().trim().min(1).max(64),
 });
 
 const adminAssetFieldsSchema = z.object({
