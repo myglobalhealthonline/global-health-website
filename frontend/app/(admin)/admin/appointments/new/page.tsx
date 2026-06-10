@@ -1,6 +1,12 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
+
+/** Short-lived httpOnly cookie that carries the manual-booking recovery
+ *  details (temp password, invite + payment links) to the detail page,
+ *  so these secrets never appear in the URL / server logs / history. */
+export const MANUAL_BOOKING_COOKIE = "gh_manual_booking";
 import { ArrowLeft } from "lucide-react";
 import {
   fetchAdminClinicsByCountryCode,
@@ -194,14 +200,27 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
     }
 
     const data = result.data;
-    const qs = new URLSearchParams({
-      manualBooked: "1",
-      tempPassword: data.tempPassword ?? "",
-      setPasswordUrl: data.setPasswordUrl,
-      paymentUrl: data.paymentUrl ?? "",
-      emailQueued: data.emailQueued ? "1" : "0",
-    });
-    redirect(`/admin/appointments/${data.appointmentId}?${qs.toString()}`);
+    // Carry the recovery secrets in a short-lived httpOnly cookie instead of
+    // the redirect URL — a temp password in the query string ends up in
+    // browser history, the Referer header, and server access logs.
+    const jar = await cookies();
+    jar.set(
+      MANUAL_BOOKING_COOKIE,
+      JSON.stringify({
+        tempPassword: data.tempPassword ?? "",
+        setPasswordUrl: data.setPasswordUrl,
+        paymentUrl: data.paymentUrl ?? "",
+        emailQueued: data.emailQueued ? "1" : "0",
+      }),
+      {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: "/admin/appointments",
+        maxAge: 120,
+      },
+    );
+    redirect(`/admin/appointments/${data.appointmentId}?manualBooked=1`);
   }
 
   return (

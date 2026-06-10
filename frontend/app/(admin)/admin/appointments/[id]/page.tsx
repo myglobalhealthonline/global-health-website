@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -84,15 +85,18 @@ type PageProps = {
   searchParams?: Promise<{
     error?: string;
     success?: string;
-    /** Recovery banner after admin-initiated manual booking — carries
-     *  the freshly-generated temp password + invite link so the admin
-     *  can read them out if the patient says the email didn't arrive. */
+    /** Set after admin-initiated manual booking. The actual recovery
+     *  secrets (temp password + invite/payment links) are read from a
+     *  short-lived httpOnly cookie, NOT the URL. */
     manualBooked?: string;
-    tempPassword?: string;
-    setPasswordUrl?: string;
-    paymentUrl?: string;
-    emailQueued?: string;
   }>;
+};
+
+type ManualBookingRecovery = {
+  tempPassword: string;
+  setPasswordUrl: string;
+  paymentUrl: string;
+  emailQueued: string;
 };
 
 export default async function AdminAppointmentDetailPage({
@@ -101,6 +105,19 @@ export default async function AdminAppointmentDetailPage({
 }: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
+  // Read manual-booking recovery secrets from the short-lived httpOnly
+  // cookie set by the create action (never from the URL).
+  let manualBooking: ManualBookingRecovery | null = null;
+  if (messages.manualBooked === "1") {
+    const raw = (await cookies()).get("gh_manual_booking")?.value;
+    if (raw) {
+      try {
+        manualBooking = JSON.parse(raw) as ManualBookingRecovery;
+      } catch {
+        manualBooking = null;
+      }
+    }
+  }
   const [result, internalMessagesResult] = await Promise.all([
     fetchAdminAppointmentById(id),
     fetchAdminInternalMessages(id),
@@ -310,20 +327,20 @@ export default async function AdminAppointmentDetailPage({
         </p>
       ) : null}
 
-      {messages.manualBooked === "1" ? (
+      {manualBooking ? (
         <div className="mb-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border-strong)] bg-[var(--color-background-soft)] px-4 py-3 text-sm">
           <p className="font-bold text-[var(--color-text-primary)]">
             Manual booking created.
-            {messages.emailQueued === "1"
+            {manualBooking.emailQueued === "1"
               ? " Patient email queued."
               : " ⚠ Email send failed — copy the details below and share manually."}
           </p>
           <dl className="mt-2 grid gap-1 text-[13px] text-[var(--color-text-body)]">
-            {messages.tempPassword ? (
+            {manualBooking.tempPassword ? (
               <div>
                 <dt className="inline font-semibold">Temp password:</dt>{" "}
                 <code className="rounded bg-[var(--color-background-page)] px-2 py-0.5 font-mono">
-                  {messages.tempPassword}
+                  {manualBooking.tempPassword}
                 </code>
               </div>
             ) : (
@@ -332,27 +349,27 @@ export default async function AdminAppointmentDetailPage({
                 Share the set-password URL below if they need to reset.
               </div>
             )}
-            {safeHttpUrl(messages.setPasswordUrl) ? (
+            {safeHttpUrl(manualBooking.setPasswordUrl) ? (
               <div className="break-all">
                 <dt className="inline font-semibold">Set-password URL (7d):</dt>{" "}
                 <a
                   className="text-[var(--color-primary)] underline"
-                  href={safeHttpUrl(messages.setPasswordUrl)!}
+                  href={safeHttpUrl(manualBooking.setPasswordUrl)!}
                   rel="noopener noreferrer"
                 >
-                  {messages.setPasswordUrl}
+                  {manualBooking.setPasswordUrl}
                 </a>
               </div>
             ) : null}
-            {safeHttpUrl(messages.paymentUrl) ? (
+            {safeHttpUrl(manualBooking.paymentUrl) ? (
               <div className="break-all">
                 <dt className="inline font-semibold">Stripe payment URL:</dt>{" "}
                 <a
                   className="text-[var(--color-primary)] underline"
-                  href={safeHttpUrl(messages.paymentUrl)!}
+                  href={safeHttpUrl(manualBooking.paymentUrl)!}
                   rel="noopener noreferrer"
                 >
-                  {messages.paymentUrl}
+                  {manualBooking.paymentUrl}
                 </a>
               </div>
             ) : (

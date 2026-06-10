@@ -15,8 +15,11 @@ RUN apt-get update \
 
 COPY package.json pnpm-lock.yaml ./
 
+# Reproducible install — the standalone frontend/pnpm-lock.yaml is committed
+# and kept in sync with frontend/package.json. --frozen-lockfile fails the
+# build if they drift instead of silently resolving new versions.
 RUN corepack enable && corepack prepare pnpm@10.33.2 --activate \
-  && pnpm install --no-frozen-lockfile
+  && pnpm install --frozen-lockfile --ignore-workspace
 
 COPY . .
 

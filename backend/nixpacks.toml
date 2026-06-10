@@ -33,11 +33,13 @@ aptPkgs = [
 
 [phases.install]
 cmds = [
-  # Monorepo: the pnpm-lock.yaml lives at the repo root, but Railway builds
-  # this service with Root Directory = backend, so the lockfile isn't in the
-  # build context. --frozen-lockfile therefore fails (ERR_PNPM_NO_LOCKFILE).
-  # Use --no-frozen-lockfile (the proven-good value before 459c71d).
-  "pnpm install --no-frozen-lockfile",
+  # Railway builds this service with Root Directory = backend, so the root
+  # workspace lockfile isn't in the build context. A committed, standalone
+  # backend/pnpm-lock.yaml (generated with --ignore-workspace, kept in sync
+  # with backend/package.json) makes the install reproducible:
+  # --frozen-lockfile fails the build on drift instead of silently resolving
+  # new caret-range versions into production.
+  "pnpm install --frozen-lockfile --ignore-workspace",
   "npx playwright install chromium",
 ]
 
