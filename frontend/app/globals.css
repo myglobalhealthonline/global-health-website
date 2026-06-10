@@ -27,6 +27,11 @@
 }
 
 :root {
+  --font-manrope: "Aptos", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-plus-jakarta: var(--font-manrope);
+  --font-display: var(--font-manrope);
+  --font-geist-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
   /* ── Brand (EXACT values from Manual da Marca) ────────────
    * Source: Global Health Manual da Marca PDF page 1. The previous
    * tokens drifted off-spec (forest at #1B4D3E vs brand #1D4B36, no
