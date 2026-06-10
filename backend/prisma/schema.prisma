@@ -1407,6 +1407,16 @@ model Payment {
   @@index([appointmentId])
 }
 
+/// Idempotency ledger for Stripe webhook events that don't write a Payment
+/// row (e.g. cart-order checkouts, which have no appointmentId). One row per
+/// processed event id; the webhook handler dedupes against it on retry.
+model ProcessedWebhookEvent {
+  id            String   @id @default(cuid())
+  stripeEventId String   @unique
+  eventType     String
+  createdAt     DateTime @default(now())
+}
+
 model User {
   id                      String                   @id @default(cuid())
   email                   String                   @unique

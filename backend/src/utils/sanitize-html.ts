@@ -89,6 +89,10 @@ export function sanitizeBlogHtml(input: string | null | undefined): string | nul
     allowedTags: BLOG_ALLOWED_TAGS,
     // We allow <style> for designed articles; safe because output renders in
     // an isolated Shadow DOM and scripts are stripped. No <script> is allowed.
+    // The containment contract lives at the render site: the frontend wraps
+    // this HTML in `.gh-article-body` and `scope-blog-html.ts` rewrites every
+    // <style> into `@scope (.gh-article-body) { … }`. If that render-side
+    // scoping is ever removed, `<style>` here stops being safe.
     allowVulnerableTags: true,
     allowedAttributes: {
       "*": [...BLOG_COMMON_ATTRS, "aria-label", "aria-hidden", "aria-labelledby", "aria-describedby"],

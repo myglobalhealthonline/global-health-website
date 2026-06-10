@@ -220,11 +220,17 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
       // Idempotency: have we recorded this event already? Stripe retries on
       // 5xx responses, so we must be safe to receive the same event twice.
       try {
-        const seen = await prisma.payment.findUnique({
-          where: { stripeEventId: event.id },
-          select: { id: true },
-        });
-        if (seen) {
+        const [seenPayment, seenEvent] = await Promise.all([
+          prisma.payment.findUnique({
+            where: { stripeEventId: event.id },
+            select: { id: true },
+          }),
+          prisma.processedWebhookEvent.findUnique({
+            where: { stripeEventId: event.id },
+            select: { id: true },
+          }),
+        ]);
+        if (seenPayment || seenEvent) {
           return okResponse({ received: true, deduped: true });
         }
       } catch (error) {
@@ -524,6 +530,14 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                       : null,
                   appointmentIds,
                 },
+              });
+              // Record the event id so a Stripe retry dedupes at the top of
+              // the handler. The order branch can't write a Payment row (that
+              // requires an appointmentId), so it records here instead. Only
+              // reached on first processing — a retry short-circuits on the
+              // order's PAID status above before getting here.
+              await tx.processedWebhookEvent.create({
+                data: { stripeEventId: event.id, eventType },
               });
               return false;
             });

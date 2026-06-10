@@ -260,6 +260,22 @@ const PATCHES: { name: string; sql: string }[] = [
     `,
   },
   {
+    // M34: idempotency ledger for webhook events that don't write a Payment
+    // row (cart-order checkouts). Additive.
+    name: "ProcessedWebhookEvent.table-2026-06",
+    sql: `
+      CREATE TABLE IF NOT EXISTS "ProcessedWebhookEvent" (
+        "id" TEXT NOT NULL,
+        "stripeEventId" TEXT NOT NULL,
+        "eventType" TEXT NOT NULL,
+        "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT "ProcessedWebhookEvent_pkey" PRIMARY KEY ("id")
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS "ProcessedWebhookEvent_stripeEventId_key"
+        ON "ProcessedWebhookEvent"("stripeEventId");
+    `,
+  },
+  {
     // M14: the old @@unique([countryId, isPrimary]) wrongly allowed only ONE
     // non-primary domain per country. Replace it with a partial unique index
     // that enforces just "at most one primary per country".
