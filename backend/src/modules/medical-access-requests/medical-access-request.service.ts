@@ -49,8 +49,7 @@ export async function createAccessRequest(params: {
   reason: string;
 }): Promise<{ requestId: string; status: "PENDING" }> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const record = await (prisma as any).medicalAccessRequest.create({
+    const record = await prisma.medicalAccessRequest.create({
       data: {
         patientProfileId: params.patientProfileId,
         requestingDoctorId: params.requestingDoctorId,
@@ -66,7 +65,7 @@ export async function createAccessRequest(params: {
     await recordAudit({
       actorUserId: params.requestingUserId,
       actorRole: "DOCTOR",
-      action: "ACCESS_REQUEST_CREATED",
+      action: "MEDICAL_ACCESS_REQUEST_CREATED",
       entityType: "MedicalAccessRequest",
       entityId: record.id,
       metadata: {
@@ -96,29 +95,30 @@ export async function respondToAccessRequest(params: {
   try {
     const newStatus = params.approved ? "APPROVED" : "DENIED";
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const request = await (prisma as any).medicalAccessRequest.update({
+    const request = await prisma.medicalAccessRequest.update({
       where: { id: params.requestId },
       data: {
         status: newStatus,
-        respondedAt: new Date(),
+        ...(params.approved ? { approvedAt: new Date() } : { deniedAt: new Date() }),
         patientResponseIp: params.patientResponseIp ?? null,
       },
       select: {
         id: true,
         patientProfileId: true,
         requestingUserId: true,
+        requestedAccessScope: true,
       },
     });
 
     if (params.approved) {
       const expiresAt = new Date(Date.now() + ACCESS_GRANT_DAYS * 24 * 60 * 60 * 1000);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (prisma as any).medicalAccessGrant.create({
+      await prisma.medicalAccessGrant.create({
         data: {
           accessRequestId: params.requestId,
           patientProfileId: request.patientProfileId,
-          grantedToUserId: request.requestingUserId,
+          grantedToUserId: request.requestingUserId ?? "",
+          grantedToRole: "DOCTOR",
+          scope: request.requestedAccessScope,
           expiresAt,
         },
       });
@@ -127,7 +127,7 @@ export async function respondToAccessRequest(params: {
     await recordAudit({
       actorUserId: null,
       actorRole: "PATIENT",
-      action: params.approved ? "ACCESS_REQUEST_APPROVED" : "ACCESS_REQUEST_DENIED",
+      action: params.approved ? "MEDICAL_ACCESS_REQUEST_APPROVED" : "MEDICAL_ACCESS_REQUEST_DENIED",
       entityType: "MedicalAccessRequest",
       entityId: params.requestId,
       metadata: {
@@ -148,8 +148,7 @@ export async function listPendingRequestsForPatient(
   patientProfileId: string,
 ): Promise<unknown[]> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return await (prisma as any).medicalAccessRequest.findMany({
+    return await prisma.medicalAccessRequest.findMany({
       where: {
         patientProfileId,
         status: "PENDING",
@@ -168,8 +167,7 @@ export async function listRequestsByDoctor(
   doctorId: string,
 ): Promise<unknown[]> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return await (prisma as any).medicalAccessRequest.findMany({
+    return await prisma.medicalAccessRequest.findMany({
       where: { requestingDoctorId: doctorId },
       orderBy: { createdAt: "desc" },
     });
@@ -190,7 +188,6 @@ export async function listAllRequests(opts: {
   const limit = opts.limit ?? 50;
   const offset = opts.offset ?? 0;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const where: Record<string, unknown> = {};
   if (opts.status) {
     where.status = opts.status;
@@ -200,17 +197,14 @@ export async function listAllRequests(opts: {
   }
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [requests, total] = await (prisma as any).$transaction([
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (prisma as any).medicalAccessRequest.findMany({
+    const [requests, total] = await prisma.$transaction([
+      prisma.medicalAccessRequest.findMany({
         where,
         orderBy: { createdAt: "desc" },
         take: limit,
         skip: offset,
       }),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (prisma as any).medicalAccessRequest.count({ where }),
+      prisma.medicalAccessRequest.count({ where }),
     ]);
 
     return { requests, total };
@@ -228,8 +222,7 @@ export async function hasLiveGrant(
   patientProfileId: string,
 ): Promise<boolean> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const grant = await (prisma as any).medicalAccessGrant.findFirst({
+    const grant = await prisma.medicalAccessGrant.findFirst({
       where: {
         grantedToUserId: doctorUserId,
         patientProfileId,
