@@ -147,14 +147,17 @@ Single reference for **this repository** (marketing site + `/admin` operations t
 - **`Doctor`** in the database = **marketing/directory content** (name, title, specialties, bio, imagery, country, public service links)
 - **Not** a website login, dashboard, appointment-management account, or portal user inside this app
 
-### Doctor portal (deferred)
+### Doctor portal (~~deferred~~ SHIPPED)
 
-- Clinical staff tools and doctor authentication → **separate portal**, outside this repo — **no doctor login, dashboard, or portal routes** here
+> **Superseded:** the doctor portal (`/doctor`) is live in this repo — doctor login, dashboard, availability, consultation notes, generated documents. The text below described the original out-of-scope plan.
 
-### Payments (deferred)
+- ~~Clinical staff tools and doctor authentication → separate portal, outside this repo~~
 
-- Money flows are **patient/user** concerns later — **not implemented now**
-- Intended flow: request → optional online pay → **payment status** tracked → **admin** sees booking + payment picture → **payment does not automatically mean appointment confirmed**; explicit clinic/admin confirmation remains required
+### Payments (~~deferred~~ SHIPPED)
+
+> **Superseded:** Stripe checkout + webhooks are live (idempotent, server-authoritative amounts). The text below described the original deferred plan.
+
+- Flow: cart → Stripe checkout → webhook marks paid → **admin** sees booking + payment picture → **payment does not automatically mean appointment confirmed**; explicit clinic/admin confirmation remains required
 
 ---
 
@@ -1719,7 +1722,9 @@ Before switching from Wix:
 
 ## Phase 7 Production Readiness
 
-This phase focuses on launch hardening and deployment QA (no payment build, no doctor portal, no `DOCTOR` role, no public route redesign).
+> **Superseded:** payments, the doctor portal, and the `DOCTOR` role all shipped after this plan was written. See "What is shipped" at the top.
+
+This phase focused on launch hardening and deployment QA.
 
 ### Environment baseline
 
@@ -1731,8 +1736,8 @@ This phase focuses on launch hardening and deployment QA (no payment build, no d
 - Frontend QA matrix: `frontend/docs/launch-readiness-checklist.md`
 - Backend deployment/security checks: `backend/docs/deployment-checklist.md`
 
-### Deferred items (explicit)
+### ~~Deferred items (explicit)~~ — all shipped since
 
-- Payment implementation is intentionally skipped.
-- Doctor portal is intentionally excluded from this repository.
-- Password reset email delivery remains placeholder-safe.
+- ~~Payment implementation is intentionally skipped.~~ → Stripe live.
+- ~~Doctor portal is intentionally excluded from this repository.~~ → `/doctor` live.
+- ~~Password reset email delivery remains placeholder-safe.~~ → hashed-token reset + email live.

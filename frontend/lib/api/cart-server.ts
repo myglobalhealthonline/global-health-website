@@ -5,6 +5,30 @@ import { getBackendOrigin } from "@/lib/server/backend-origin";
 import type { Cart, OrderDetail, OrderListItem } from "./cart-types";
 import type { AdminOrderRow } from "@/app/(admin)/admin/orders/_components/admin-orders-table";
 
+// H22: validate the admin-orders response at the boundary instead of casting
+// `unknown[]` straight to AdminOrderRow[]. A backend shape change now surfaces
+// as a handled error rather than a runtime crash deep in the table component.
+// Hand-rolled guard (frontend has no zod dependency).
+function isAdminOrderRow(v: unknown): v is AdminOrderRow {
+  if (typeof v !== "object" || v === null) return false;
+  const o = v as Record<string, unknown>;
+  return (
+    typeof o.id === "string" &&
+    typeof o.status === "string" &&
+    typeof o.paymentStatus === "string" &&
+    typeof o.email === "string" &&
+    typeof o.fullName === "string" &&
+    typeof o.countryCode === "string" &&
+    typeof o.currencyCode === "string" &&
+    typeof o.totalCents === "number" &&
+    typeof o.itemCount === "number" &&
+    (o.meetingUrl === null || typeof o.meetingUrl === "string") &&
+    typeof o.hasConsultation === "boolean" &&
+    (o.paidAt === null || typeof o.paidAt === "string") &&
+    typeof o.createdAt === "string"
+  );
+}
+
 type Result<T> =
   | { ok: true; data: T }
   | { ok: false; message: string; status?: number };
@@ -130,17 +154,24 @@ export async function fetchAdminOrders(
       headers: { cookie: await cookieHeader() },
       cache: "no-store",
     });
-    const json = (await res.json()) as {
-      ok?: boolean;
-      data?: { items: AdminOrderRow[]; nextCursor?: string | null };
-      message?: string;
+    const json: unknown = await res.json();
+    const obj = (typeof json === "object" && json !== null ? json : {}) as {
+      ok?: unknown;
+      data?: { items?: unknown; nextCursor?: unknown };
+      message?: unknown;
     };
-    if (!res.ok || !json.ok || !json.data || !Array.isArray(json.data.items)) {
-      return { ok: false, status: res.status, message: json.message ?? "Failed" };
+    if (!res.ok || obj.ok !== true || !obj.data || !Array.isArray(obj.data.items)) {
+      const message = typeof obj.message === "string" ? obj.message : "Failed";
+      return { ok: false, status: res.status, message };
     }
+    if (!obj.data.items.every(isAdminOrderRow)) {
+      return { ok: false, status: res.status, message: "Unexpected orders response" };
+    }
+    const nextCursor =
+      typeof obj.data.nextCursor === "string" ? obj.data.nextCursor : null;
     return {
       ok: true,
-      data: { items: json.data.items, nextCursor: json.data.nextCursor ?? null },
+      data: { items: obj.data.items, nextCursor },
     };
   } catch {
     return { ok: false, message: "Backend unavailable" };

@@ -49,3 +49,33 @@ jobs:
 
       - name: Test (frontend)
         run: pnpm --filter frontend test
+
+  # H29: the root install above validates the workspace lockfile, but Railway
+  # deploys backend + frontend as standalone packages with their own committed
+  # lockfiles (`--frozen-lockfile --ignore-workspace`). Those child lockfiles
+  # are NOT exercised by the workspace install, so drift between a child
+  # package.json and its standalone lockfile would pass CI and fail only at
+  # deploy time. This job runs the exact standalone install the deploy does,
+  # catching that drift here instead.
+  standalone-lockfiles:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Verify standalone lockfile is in sync (${{ matrix.package }})
+        working-directory: ${{ matrix.package }}
+        # Mirrors backend/nixpacks.toml + frontend/Dockerfile. --frozen-lockfile
+        # fails if the standalone lockfile doesn't match package.json.
+        run: pnpm install --frozen-lockfile --ignore-workspace --ignore-scripts
