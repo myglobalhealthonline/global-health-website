@@ -204,7 +204,7 @@ export default async function AdminPatientDetailPage({ params }: PageProps) {
                     </td>
                     <td>
                       {c.consentValue === null ? (
-                        <Pill tone="warning">Not set</Pill>
+                        <Pill tone="neutral">Not set</Pill>
                       ) : c.consentValue ? (
                         <Pill tone="active">Accepted</Pill>
                       ) : (

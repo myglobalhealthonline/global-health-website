@@ -140,10 +140,10 @@ enum VerificationStatus { NOT_VERIFIED PENDING VERIFIED REJECTED }
 - Existing doctors keep their `languages` array as-is (empty = excluded from language-filtered booking until admin assigns — document this; see Sprint 7).
 
 ### Acceptance gate
-- [ ] Migration applies clean on fresh DB **and** on a copy of prod data; all existing profiles backfilled with a unique GHN.
-- [ ] `ensure-schema.ts` matches; `prisma generate` + backend `tsc` pass.
-- [ ] New registration issues a unique GHN atomically (concurrency test: N parallel registrations → N distinct GHNs, zero collisions).
-- [ ] Branch merged to base **before** any S1+ sprint starts.
+- [x] Migration applies clean on fresh DB **and** on a copy of prod data; all existing profiles backfilled with a unique GHN.
+- [x] `ensure-schema.ts` matches; `prisma generate` + backend `tsc` pass.
+- [x] New registration issues a unique GHN atomically (concurrency test: N parallel registrations → N distinct GHNs, zero collisions).
+- [x] Branch merged to base **before** any S1+ sprint starts.
 
 ---
 
@@ -165,10 +165,10 @@ enum VerificationStatus { NOT_VERIFIED PENDING VERIFIED REJECTED }
 - Public: accordion near page bottom; only active FAQs; **section hidden entirely when zero visible FAQs**; works desktop + mobile.
 
 ### Acceptance (§1, §17-FAQ)
-- [ ] Admin creates FAQ for Service A without affecting Service B.
-- [ ] Public service page shows only that service's visible FAQs, in `sortOrder`.
-- [ ] Disabled FAQ does not appear publicly.
-- [ ] Empty FAQ → no blank space (section gone).
+- [x] Admin creates FAQ for Service A without affecting Service B.
+- [x] Public service page shows only that service's visible FAQs, in `sortOrder`.
+- [x] Disabled FAQ does not appear publicly.
+- [x] Empty FAQ → no blank space (section gone).
 
 ---
 
@@ -197,10 +197,10 @@ enum VerificationStatus { NOT_VERIFIED PENDING VERIFIED REJECTED }
 - Every patient read resolves `auth userId → PatientProfile`; never trust client-supplied patient id.
 
 ### Acceptance (§17-Insurance, §17-Verification, §17-Dual Nationality, §3/§4/§6)
-- [ ] Patient saves profile without insurance; can add insurance later; admin views insurance doc.
-- [ ] Verification status cards show for ID/phone/email; patient uploads ID; admin updates status + sees rejection reason.
-- [ ] GHN shown in patient + admin views; admin search by GHN works.
-- [ ] Patient adds Nationality 1, optionally Nationality 2; **cannot exceed 2**; admin views both; docs private.
+- [x] Patient saves profile without insurance; can add insurance later; admin views insurance doc.
+- [x] Verification status cards show for ID/phone/email; patient uploads ID; admin updates status + sees rejection reason.
+- [x] GHN shown in patient + admin views; admin search by GHN works.
+- [x] Patient adds Nationality 1, optionally Nationality 2; **cannot exceed 2**; admin views both; docs private.
 
 ---
 
@@ -227,11 +227,11 @@ enum VerificationStatus { NOT_VERIFIED PENDING VERIFIED REJECTED }
 - Patient sees own + `visibleToPatient` only; doctor restricted to authorized appointments; **short-lived signed S3 URLs** behind access check.
 
 ### Acceptance (§9, §17-Medical Documents)
-- [ ] Patient uploads + downloads own reports.
-- [ ] Doctor uploads results + creates downloadable exam requests.
-- [ ] Patient downloads doctor-uploaded exam request.
-- [ ] Docs linked to correct patient; private + access-controlled.
-- [ ] Every view/download is access-logged (verified once S4 lands).
+- [x] Patient uploads + downloads own reports.
+- [x] Doctor uploads results + creates downloadable exam requests.
+- [x] Patient downloads doctor-uploaded exam request.
+- [x] Docs linked to correct patient; private + access-controlled.
+- [x] Every view/download is access-logged (verified once S4 lands).
 
 ---
 
@@ -255,9 +255,9 @@ Who (name), role, datetime, **general** resource type, related appointment/consu
 - Logs **read-only** — no update/delete code path; not editable by normal admins.
 
 ### Acceptance (§7, §17-Access History)
-- [ ] Doctor + admin viewing a medical file creates a log row.
-- [ ] Patient sees own access history; cannot see another patient's.
-- [ ] Logs immutable.
+- [x] Doctor + admin viewing a medical file creates a log row.
+- [x] Patient sees own access history; cannot see another patient's.
+- [x] Logs immutable.
 
 ---
 
@@ -277,10 +277,10 @@ Who (name), role, datetime, **general** resource type, related appointment/consu
 - **No automatic service blocking** (deferred per decision 4c) — save + log + flag/notify admin only. Keep flexible for future blocking logic.
 
 ### Acceptance (§8, §17-GDPR)
-- [ ] Patient views + updates consent choices with last-updated + explanation.
-- [ ] Full history stored (never overwritten).
-- [ ] Admin views consent status + history + policy version + withdrawal flag.
-- [ ] No automatic blocking added.
+- [x] Patient views + updates consent choices with last-updated + explanation.
+- [x] Full history stored (never overwritten).
+- [x] Admin views consent status + history + policy version + withdrawal flag.
+- [x] No automatic blocking added.
 
 ---
 
@@ -307,9 +307,9 @@ Patient payment history, linked appointment, status, invoice/receipt download, p
 - Scope every query by `auth userId → PatientProfile`. **Never** expose another patient's payment. Admin path separately gated.
 
 ### Acceptance (§2, §17-Payments)
-- [ ] Patient sees own payments only; downloads available receipts/invoices.
-- [ ] Missing invoice does not crash the page.
-- [ ] Admin views any patient's payment history.
+- [x] Patient sees own payments only; downloads available receipts/invoices.
+- [x] Missing invoice does not crash the page.
+- [x] Admin views any patient's payment history.
 
 ---
 
@@ -331,12 +331,12 @@ Patient payment history, linked appointment, status, invoice/receipt download, p
 > **Backfill note (§15):** existing doctors with empty `languages` are excluded from language-filtered booking until admin assigns. Document this. (Optional fallback: default existing doctors to English-only — only if business requires it.)
 
 ### Acceptance (§11, §14, §17-Language Booking)
-- [ ] Language dropdown present; service-page entry preselects service.
-- [ ] Doctors filtered correctly by service + language + availability.
-- [ ] Slots shown only for matching doctors.
-- [ ] Appointment stores consultation language; checkout preserves it.
-- [ ] No-doctor-available message works.
-- [ ] Admin manages doctor languages.
+- [x] Language dropdown present; service-page entry preselects service.
+- [x] Doctors filtered correctly by service + language + availability.
+- [x] Slots shown only for matching doctors.
+- [x] Appointment stores consultation language; checkout preserves it.
+- [x] No-doctor-available message works.
+- [x] Admin manages doctor languages.
 
 ---
 
@@ -355,9 +355,9 @@ Patient payment history, linked appointment, status, invoice/receipt download, p
 - Copy example: "How was your consultation? Leave us a review on Trustpilot." Button: "Review us on Trustpilot."
 
 ### Acceptance (§10, §17-Trustpilot)
-- [ ] CTA appears on dashboard + completed-consult page for 3 days post-completion.
-- [ ] CTA hidden after 3 days and for non-completed consults.
-- [ ] Button links to Trustpilot; no review-status tracking added.
+- [x] CTA appears on dashboard + completed-consult page for 3 days post-completion.
+- [x] CTA hidden after 3 days and for non-completed consults.
+- [x] Button links to Trustpilot; no review-status tracking added.
 
 ---
 
@@ -390,9 +390,9 @@ Cards/sections, no clutter, mobile-responsive. Status badges: Verified=green, Pe
 - **80% coverage** target on new service-layer code.
 
 ### Acceptance (§17 + §19 final outcome)
-- [ ] Unified portal nav across patient/doctor/admin per spec.
-- [ ] Full §17 testing checklist passes.
-- [ ] Permissions matrix holds end-to-end; sensitive admin actions audit-logged.
+- [x] Unified portal nav across patient/doctor/admin per spec.
+- [x] Full §17 testing checklist passes.
+- [x] Permissions matrix holds end-to-end; sensitive admin actions audit-logged.
 
 ---
 
@@ -424,13 +424,13 @@ Agree these signatures **before** coding the dependent sprints (lets S2/S3/S5 pr
 
 After all sprints:
 
-- [ ] Each service page has its own admin-managed FAQ section.
-- [ ] Patient portal shows payment history + invoice/receipt downloads.
-- [ ] Patient profile includes insurance details + ID/phone/email verification status + dual-nationality docs.
-- [ ] Every patient has a Global Health Number generated at registration; searchable by admin; shown to doctor/patient where relevant.
-- [ ] Patient + doctor upload/download medical documents; doctor creates downloadable exam requests.
-- [ ] Patient sees who accessed their medical info and when (immutable logs).
-- [ ] Patient manages GDPR consent; full history preserved; admin views it.
-- [ ] Trustpilot reminder/link shows 3 days after a completed consultation only.
-- [ ] Booking supports consultation-language filtering; appointment stores the language.
-- [ ] Admin, doctor, and patient records are linked cleanly and securely.
+- [x] Each service page has its own admin-managed FAQ section.
+- [x] Patient portal shows payment history + invoice/receipt downloads.
+- [x] Patient profile includes insurance details + ID/phone/email verification status + dual-nationality docs.
+- [x] Every patient has a Global Health Number generated at registration; searchable by admin; shown to doctor/patient where relevant.
+- [x] Patient + doctor upload/download medical documents; doctor creates downloadable exam requests.
+- [x] Patient sees who accessed their medical info and when (immutable logs).
+- [x] Patient manages GDPR consent; full history preserved; admin views it.
+- [x] Trustpilot reminder/link shows 3 days after a completed consultation only.
+- [x] Booking supports consultation-language filtering; appointment stores the language.
+- [x] Admin, doctor, and patient records are linked cleanly and securely.

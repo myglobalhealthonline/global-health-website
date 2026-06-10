@@ -13,12 +13,12 @@ function readParam(sp: SearchParams, key: string): string | undefined {
   return undefined;
 }
 
-function verificationTone(status: VerificationStatus): "active" | "inactive" | "pending" | "warning" {
+function verificationTone(status: VerificationStatus): "active" | "inactive" | "pending" | "neutral" {
   switch (status) {
     case "VERIFIED": return "active";
     case "REJECTED": return "inactive";
     case "PENDING": return "pending";
-    default: return "warning";
+    default: return "neutral";
   }
 }
 
