@@ -596,6 +596,7 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
         LEFT JOIN "Clinic" c ON c."id" = a."clinicId"
         WHERE a."userId" = $1
         ORDER BY a."createdAt" DESC
+        LIMIT 200
       `,
       userId,
     );

@@ -96,6 +96,9 @@ export async function listAssets() {
         country: true,
         doctor: true,
       },
+      // Safety cap — assets back media pickers; an unbounded scan with full
+      // relation includes is a latency/memory risk as the table grows.
+      take: 1000,
     });
   } catch (error) {
     throw normalizeDbError(error, "Assets data is unavailable");

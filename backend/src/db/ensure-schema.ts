@@ -138,6 +138,40 @@ const PATCHES: { name: string; sql: string }[] = [
     `,
   },
   {
+    name: "performance-indexes-2026-06",
+    sql: `
+      -- Appointment is the hottest table; every query path filters on one
+      -- of these columns. Without indexes they are sequential scans that
+      -- get slower with every booking.
+      CREATE INDEX IF NOT EXISTS "Appointment_userId_idx"
+        ON "Appointment"("userId");
+      CREATE INDEX IF NOT EXISTS "Appointment_email_idx"
+        ON "Appointment"("email");
+      CREATE INDEX IF NOT EXISTS "Appointment_doctorId_idx"
+        ON "Appointment"("doctorId");
+      CREATE INDEX IF NOT EXISTS "Appointment_status_createdAt_idx"
+        ON "Appointment"("status", "createdAt");
+      -- Order.appointmentIds is an array filtered with array-overlap in the
+      -- consultation-history load — needs a GIN index to avoid a seq scan.
+      CREATE INDEX IF NOT EXISTS "Order_appointmentIds_gin_idx"
+        ON "Order" USING GIN ("appointmentIds");
+      -- Bulk token expiry on account delete / admin reset scans by userId.
+      CREATE INDEX IF NOT EXISTS "PasswordResetToken_userId_idx"
+        ON "PasswordResetToken"("userId");
+      -- Public blog + FAQ listings filter by country/locale/status.
+      CREATE INDEX IF NOT EXISTS "BlogPost_countryId_status_locale_idx"
+        ON "BlogPost"("countryId", "status", "locale");
+      CREATE INDEX IF NOT EXISTS "Faq_countryId_locale_isActive_idx"
+        ON "Faq"("countryId", "locale", "isActive");
+      -- Junction tables: index the non-leading FK so reverse lookups
+      -- (doctors-for-specialty, countries-for-doctor) don't seq scan.
+      CREATE INDEX IF NOT EXISTS "DoctorSpecialty_specialtyId_idx"
+        ON "DoctorSpecialty"("specialtyId");
+      CREATE INDEX IF NOT EXISTS "DoctorCountry_doctorId_idx"
+        ON "DoctorCountry"("doctorId");
+    `,
+  },
+  {
     name: "MedicalNote.table",
     sql: `
       CREATE TABLE IF NOT EXISTS "MedicalNote" (

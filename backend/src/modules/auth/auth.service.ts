@@ -246,13 +246,18 @@ export async function exportUserData(id: string) {
   try {
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user || !user.isActive) return null;
+    // Safety caps — a GDPR export must not become an OOM/DoS vector for a
+    // long-lived account. 5000 rows comfortably covers any real patient
+    // history; beyond that, paginated export would be needed.
     const appointments = await prisma.appointment.findMany({
       where: { userId: id },
       orderBy: { createdAt: "desc" },
+      take: 5000,
     });
     const payments = await prisma.payment.findMany({
       where: { appointment: { userId: id } },
       orderBy: { createdAt: "desc" },
+      take: 5000,
     });
     return {
       exportedAt: new Date().toISOString(),
