@@ -1,7 +1,7 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
 
 type ApiClientOptions = {
-  method?: "GET" | "POST";
+  method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
   body?: unknown;
   cache?: RequestCache;
   credentials?: RequestCredentials;

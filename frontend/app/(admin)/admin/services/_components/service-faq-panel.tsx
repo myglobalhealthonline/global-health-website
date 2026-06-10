@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import type { AdminServiceFaqDto } from "@/lib/admin/admin-api";
 import {
+  type AdminServiceFaqDto,
   createAdminServiceFaq,
   updateAdminServiceFaq,
   deleteAdminServiceFaq,
   reorderAdminServiceFaqs,
-} from "@/lib/admin/admin-api";
+} from "@/lib/api/admin-service-faq-api";
 
 type Props = {
   serviceId: string;
