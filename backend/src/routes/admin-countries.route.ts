@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import { recordEntityPurge } from "../modules/audit/audit.service.js";
 import { Prisma } from "@prisma/client";
 import {
   CountryCurrencyNotFoundError,
@@ -163,6 +164,7 @@ const adminCountriesRoute: FastifyPluginAsync = async (app) => {
       if (!deleted) {
         return reply.status(404).send(errorResponse("Country not found"));
       }
+      recordEntityPurge(request, "Country", params.data.id);
       return okResponse({}, "Country deleted");
     } catch (error) {
       return handleCountriesWriteError(app, reply, error);

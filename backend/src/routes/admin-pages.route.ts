@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import { recordEntityPurge } from "../modules/audit/audit.service.js";
 import { Prisma } from "@prisma/client";
 import {
   createAdminPage,
@@ -144,6 +145,7 @@ const adminPagesRoute: FastifyPluginAsync = async (app) => {
       if (!ok) {
         return reply.status(404).send(errorResponse("Page not found"));
       }
+      recordEntityPurge(request, "Page", params.data.id);
       return okResponse({ deleted: true });
     } catch (error) {
       return handlePageWriteError(app, reply, error);

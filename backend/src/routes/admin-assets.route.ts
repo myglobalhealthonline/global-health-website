@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import { recordEntityPurge } from "../modules/audit/audit.service.js";
 import { Prisma } from "@prisma/client";
 import {
   AssetAltRequiredError,
@@ -159,6 +160,7 @@ const adminAssetsRoute: FastifyPluginAsync = async (app) => {
       if (!deleted) {
         return reply.status(404).send(errorResponse("Asset not found"));
       }
+      recordEntityPurge(request, "Asset", params.data.id);
       return okResponse({}, "Asset deleted");
     } catch (error) {
       return handleAssetWriteError(app, reply, error);

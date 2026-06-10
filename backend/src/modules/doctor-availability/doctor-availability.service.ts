@@ -144,6 +144,7 @@ export async function listOpenSlotsForDoctor(
   toUtc: Date,
 ): Promise<PublicSlot[]> {
   try {
+    await releaseExpiredHeldSlots(doctorId);
     await ensureSlotsForRange(doctorId, fromUtc, toUtc);
     const rows = await prisma.doctorTimeSlot.findMany({
       where: {
@@ -309,6 +310,7 @@ export async function listOpenSlotsForDoctorAndService(
   toUtc: Date,
 ): Promise<PublicSlot[]> {
   try {
+    await releaseExpiredHeldSlots(doctorId);
     await ensureServiceSlotsForRange(
       doctorId,
       serviceDurationMinutes,
@@ -383,6 +385,29 @@ export async function releaseDoctorSlot(slotId: string): Promise<void> {
     `);
   } catch (error) {
     throw normalizeDbError(error, "Doctor slot release failed");
+  }
+}
+
+/**
+ * Return slots stuck in HELD past the cart-hold grace window back to OPEN.
+ * Cart holds expire after ~10 min (CartItem.heldUntil); without this sweep
+ * an abandoned cart would leave its slot HELD — and therefore permanently
+ * unbookable — because the public reader only surfaces OPEN slots. Run from
+ * the slot readers so an expired hold is reclaimed the next time anyone
+ * looks at the doctor's availability. 15-min grace stays clear of an
+ * in-progress 10-min checkout.
+ */
+export async function releaseExpiredHeldSlots(doctorId: string): Promise<void> {
+  try {
+    await prisma.$executeRaw(Prisma.sql`
+      UPDATE "DoctorTimeSlot"
+      SET "status" = 'OPEN', "updatedAt" = NOW()
+      WHERE "doctorId" = ${doctorId}
+        AND "status" = 'HELD'
+        AND "updatedAt" < NOW() - INTERVAL '15 minutes'
+    `);
+  } catch (error) {
+    throw normalizeDbError(error, "Doctor availability is unavailable");
   }
 }
 

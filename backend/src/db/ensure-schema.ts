@@ -179,6 +179,7 @@ const PATCHES: { name: string; sql: string }[] = [
         ALTER TYPE "AuditAction" ADD VALUE IF NOT EXISTS 'USER_ROLE_CHANGED';
         ALTER TYPE "AuditAction" ADD VALUE IF NOT EXISTS 'USER_PASSWORD_RESET';
         ALTER TYPE "AuditAction" ADD VALUE IF NOT EXISTS 'PATIENT_PROFILE_UPDATED';
+        ALTER TYPE "AuditAction" ADD VALUE IF NOT EXISTS 'ENTITY_PURGED';
       EXCEPTION
         WHEN duplicate_object THEN NULL;
       END $$;

@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import { recordEntityPurge } from "../modules/audit/audit.service.js";
 import { Prisma } from "@prisma/client";
 import {
   BlogCountryNotFoundError,
@@ -143,6 +144,7 @@ const adminBlogRoute: FastifyPluginAsync = async (app) => {
       if (!ok) {
         return reply.status(404).send(errorResponse("Blog post not found"));
       }
+      recordEntityPurge(request, "BlogPost", params.data.id);
       return okResponse({ deleted: true });
     } catch (error) {
       return handleBlogWriteError(app, reply, error);

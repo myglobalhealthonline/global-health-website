@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import { recordEntityPurge } from "../modules/audit/audit.service.js";
 import { Prisma } from "@prisma/client";
 import {
   createAdminSpecialty,
@@ -162,6 +163,7 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       if (!deleted) {
         return reply.status(404).send(errorResponse("Specialty not found"));
       }
+      recordEntityPurge(request, "Specialty", params.data.id);
       return okResponse({}, "Specialty deleted");
     } catch (error) {
       return handleServiceWriteError(app, reply, error);
@@ -275,6 +277,7 @@ const adminServicesRoute: FastifyPluginAsync = async (app) => {
       if (!deleted) {
         return reply.status(404).send(errorResponse("Service not found"));
       }
+      recordEntityPurge(request, "Service", params.data.id);
       return okResponse({}, "Service deleted");
     } catch (error) {
       return handleServiceWriteError(app, reply, error);

@@ -1,9 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
-import {
-  deleteSetting,
-  getPublicReviewConfig,
-  upsertSetting,
-} from "../modules/settings/settings.service.js";
+import { Prisma } from "@prisma/client";
+import { prisma } from "../db/prisma.js";
+import { getPublicReviewConfig } from "../modules/settings/settings.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -44,29 +42,35 @@ const adminSettingsRoute: FastifyPluginAsync = async (app) => {
     try {
       const body = parsed.data;
       const now = new Date().toISOString();
-      const tasks: Array<Promise<unknown>> = [];
+      // Build the writes as lazy Prisma ops and run them in ONE transaction so
+      // a partial failure can't leave the review config half-updated. All keys
+      // are the hardcoded review.* constants below (the Setting allowlist).
+      // deleteMany (not delete) is used so removing an absent key is a no-op
+      // rather than aborting the transaction with P2025.
+      const ops: Prisma.PrismaPromise<unknown>[] = [];
+
+      function setKey(key: string, value: Prisma.InputJsonValue) {
+        ops.push(
+          prisma.setting.upsert({
+            where: { key },
+            create: { key, value },
+            update: { value },
+          }),
+        );
+      }
+      function clearKey(key: string) {
+        ops.push(prisma.setting.deleteMany({ where: { key } }));
+      }
 
       function applyId(key: string, value: string | null | undefined) {
         if (value === undefined) return;
-        if (value === null || value.trim() === "") {
-          tasks.push(deleteSetting(key));
-        } else {
-          tasks.push(upsertSetting(key, value.trim()));
-        }
+        if (value === null || value.trim() === "") clearKey(key);
+        else setKey(key, value.trim());
       }
       function applyAggregate(key: string, value: { rating: number; count: number; updatedAt?: string } | null | undefined) {
         if (value === undefined) return;
-        if (value === null) {
-          tasks.push(deleteSetting(key));
-        } else {
-          tasks.push(
-            upsertSetting(key, {
-              rating: value.rating,
-              count: value.count,
-              updatedAt: value.updatedAt ?? now,
-            }),
-          );
-        }
+        if (value === null) clearKey(key);
+        else setKey(key, { rating: value.rating, count: value.count, updatedAt: value.updatedAt ?? now });
       }
 
       applyId("review.trustpilot.businessUnitId", body.trustpilot?.businessUnitId);
@@ -76,14 +80,11 @@ const adminSettingsRoute: FastifyPluginAsync = async (app) => {
       applyId("review.doctify.clinicId", body.doctify?.clinicId);
       applyAggregate("review.doctify.aggregate", body.doctify?.aggregate);
       if (body.primaryProvider !== undefined) {
-        if (body.primaryProvider === null) {
-          tasks.push(deleteSetting("review.primaryProvider"));
-        } else {
-          tasks.push(upsertSetting("review.primaryProvider", body.primaryProvider));
-        }
+        if (body.primaryProvider === null) clearKey("review.primaryProvider");
+        else setKey("review.primaryProvider", body.primaryProvider);
       }
 
-      await Promise.all(tasks);
+      await prisma.$transaction(ops);
       const config = await getPublicReviewConfig();
       return okResponse(config, "Review settings saved");
     } catch (error) {

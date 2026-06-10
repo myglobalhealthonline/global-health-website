@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import { recordEntityPurge } from "../modules/audit/audit.service.js";
 import { Prisma } from "@prisma/client";
 import {
   createAdminHealthTest,
@@ -150,6 +151,7 @@ const adminHealthTestsRoute: FastifyPluginAsync = async (app) => {
       if (!deleted) {
         return reply.status(404).send(errorResponse("Health test not found"));
       }
+      recordEntityPurge(request, "HealthTest", params.data.id);
       return okResponse({}, "Health test deleted");
     } catch (error) {
       return handleWriteError(app, reply, error);

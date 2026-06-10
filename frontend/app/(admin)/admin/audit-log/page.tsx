@@ -30,6 +30,7 @@ const ACTION_LABEL: Record<string, string> = {
   USER_ROLE_CHANGED: "User role changed",
   USER_PASSWORD_RESET: "User password reset (admin)",
   PATIENT_PROFILE_UPDATED: "Patient profile updated",
+  ENTITY_PURGED: "Entity permanently deleted",
 };
 
 const ACTION_TONE: Record<string, string> = {

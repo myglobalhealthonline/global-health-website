@@ -32,6 +32,26 @@ function resolveIp(request?: FastifyRequest): string | null {
 }
 
 /**
+ * Convenience wrapper: record a hard-delete (purge) of an admin entity.
+ * Fire-and-forget — never blocks or fails the request.
+ */
+export function recordEntityPurge(
+  request: FastifyRequest,
+  entityType: string,
+  entityId: string,
+  metadata?: Record<string, unknown>,
+): void {
+  recordAudit({
+    actorRole: "ADMIN",
+    action: "ENTITY_PURGED",
+    entityType,
+    entityId,
+    ...(metadata ? { metadata } : {}),
+    request,
+  }).catch(() => {});
+}
+
+/**
  * Record an audit event. Returns a promise that resolves either way;
  * callers should `.catch()` and log instead of awaiting on the critical
  * path.
