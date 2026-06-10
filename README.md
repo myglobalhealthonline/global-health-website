@@ -21,7 +21,7 @@ A scalable healthcare platform rebuilt from the existing Wix website into a clea
 | Appointment scheduling + reminders | ✅ Live |
 | PHI media gating (clinical + patient-upload prefixes) | ✅ Live |
 | JWT edge auth (proxy stamps x-gh-role, no backend round-trip on public pages) | ✅ Live |
-| CI (typecheck + lint + tests on push/PR) | ✅ Live |
+| CI (typecheck + lint + backend tests with Postgres + frontend tests + standalone lockfile drift check on push/PR) | ✅ Live |
 | Multi-stage Docker + Next standalone output | ✅ Live |
 | Review invite system | ✅ Live |
 | Audit log | ✅ Live |

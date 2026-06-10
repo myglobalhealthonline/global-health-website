@@ -7,57 +7,110 @@ on:
     branches: [main]
 
 jobs:
-  verify:
+  # ── Typecheck + Lint ─────────────────────────────────────────────────────
+  # Fast gate: no DB required. Fails early on type errors or lint warnings
+  # before the heavier test jobs start.
+  check:
+    name: Typecheck & Lint
     runs-on: ubuntu-latest
-    # Dummy values so Prisma client / config validation don't throw at
-    # import time. The current test suite is unit/schema-level and does not
-    # require a live database; if integration tests are added, provision a
-    # Postgres service container here.
-    env:
-      NODE_ENV: test
-      DATABASE_URL: postgresql://user:pass@localhost:5432/db?schema=public
-      AUTH_JWT_SECRET: ci-only-placeholder-secret-min-32-characters-long
-      # CRON_SECRET schema requires >= 16 chars; a shorter value fails Zod
-      # validation at env.ts load time (ZodError before tests can skip).
-      CRON_SECRET: ci-cron-secret-placeholder-min-16
     steps:
       - uses: actions/checkout@v4
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 10.33.2
+          version: "10.33.2"
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: pnpm
+          node-version: "22"
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate Prisma client
-        run: pnpm --filter backend db:generate
-
-      - name: Typecheck
+      - name: Typecheck (frontend + backend)
         run: pnpm typecheck
 
-      - name: Lint (frontend)
+      - name: Lint (frontend + backend)
         run: pnpm lint
 
-      - name: Test (backend)
+  # ── Backend Tests ─────────────────────────────────────────────────────────
+  # Spins up a real Postgres instance so all 14 backend tests run —
+  # including the two integration tests (auth audit hook, doctor-services)
+  # that self-skip when no DB is reachable.
+  test-backend:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gh_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/gh_test
+      # Zod schema requires >= 16 chars for CRON_SECRET.
+      CRON_SECRET: ci-cron-placeholder-min-16
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "10.33.2"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Apply migrations
+        run: pnpm db:deploy
+
+      - name: Run backend tests
         run: pnpm --filter backend test
 
-      - name: Test (frontend)
+  # ── Frontend Tests ────────────────────────────────────────────────────────
+  test-frontend:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "10.33.2"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run frontend tests
         run: pnpm --filter frontend test
 
-  # H29: the root install above validates the workspace lockfile, but Railway
-  # deploys backend + frontend as standalone packages with their own committed
-  # lockfiles (`--frozen-lockfile --ignore-workspace`). Those child lockfiles
-  # are NOT exercised by the workspace install, so drift between a child
-  # package.json and its standalone lockfile would pass CI and fail only at
-  # deploy time. This job runs the exact standalone install the deploy does,
-  # catching that drift here instead.
+  # ── Standalone lockfile drift ─────────────────────────────────────────────
+  # Railway deploys backend + frontend as standalone packages using their own
+  # committed lockfiles (--frozen-lockfile --ignore-workspace). Those child
+  # lockfiles are NOT exercised by the workspace install above, so drift
+  # between a child package.json and its standalone lockfile would pass CI and
+  # fail only at deploy time. This job catches that drift here instead.
   standalone-lockfiles:
+    name: Standalone lockfile (${{ matrix.package }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -68,14 +121,15 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 10.33.2
+          version: "10.33.2"
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: "22"
 
-      - name: Verify standalone lockfile is in sync (${{ matrix.package }})
+      - name: Verify standalone lockfile is in sync
         working-directory: ${{ matrix.package }}
-        # Mirrors backend/nixpacks.toml + frontend/Dockerfile. --frozen-lockfile
-        # fails if the standalone lockfile doesn't match package.json.
+        # Mirrors backend/nixpacks.toml + frontend/Dockerfile exactly.
+        # --frozen-lockfile fails if the standalone lockfile doesn't match
+        # package.json, catching deploy-time failures in CI.
         run: pnpm install --frozen-lockfile --ignore-workspace --ignore-scripts
