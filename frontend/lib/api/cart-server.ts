@@ -3,6 +3,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import type { Cart, OrderDetail, OrderListItem } from "./cart-types";
+import type { AdminOrderRow } from "@/app/(admin)/admin/orders/_components/admin-orders-table";
 
 type Result<T> =
   | { ok: true; data: T }
@@ -117,23 +118,30 @@ export async function fetchOrderReceipt(id: string): Promise<Result<OrderReceipt
   }
 }
 
-export async function fetchAdminOrders(): Promise<Result<{ items: unknown[] }>> {
+export async function fetchAdminOrders(
+  cursor?: string,
+): Promise<Result<{ items: AdminOrderRow[]; nextCursor: string | null }>> {
   const backend = getBackendOrigin();
   if (!backend) return { ok: false, message: "Backend not configured" };
   try {
-    const res = await fetch(`${backend}/api/admin/orders`, {
+    const qs = new URLSearchParams({ limit: "50" });
+    if (cursor) qs.set("cursor", cursor);
+    const res = await fetch(`${backend}/api/admin/orders?${qs.toString()}`, {
       headers: { cookie: await cookieHeader() },
       cache: "no-store",
     });
     const json = (await res.json()) as {
       ok?: boolean;
-      data?: { items: unknown[] };
+      data?: { items: AdminOrderRow[]; nextCursor?: string | null };
       message?: string;
     };
-    if (!res.ok || !json.ok || !json.data) {
+    if (!res.ok || !json.ok || !json.data || !Array.isArray(json.data.items)) {
       return { ok: false, status: res.status, message: json.message ?? "Failed" };
     }
-    return { ok: true, data: json.data };
+    return {
+      ok: true,
+      data: { items: json.data.items, nextCursor: json.data.nextCursor ?? null },
+    };
   } catch {
     return { ok: false, message: "Backend unavailable" };
   }
