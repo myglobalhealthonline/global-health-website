@@ -1,4 +1,5 @@
 import { prisma } from "../../db/prisma.js";
+import { decryptPhiFields } from "../../lib/crypto/phi-crypto.js";
 import { getDoctorRegistrationByCountryCode } from "../doctor-registrations/doctor-registrations.service.js";
 import {
   buildAddressLines,
@@ -93,7 +94,7 @@ export async function resolveAppointmentDocumentSource(
     registrationLine = `Registration (${appt.countryCode}): not on file`;
   }
 
-  const patientProfile = await prisma.patientProfile.findUnique({
+  const patientProfileRaw = await prisma.patientProfile.findUnique({
     where: { email: appt.email.toLowerCase() },
     select: {
       nationalIdNumber: true,
@@ -107,6 +108,9 @@ export async function resolveAppointmentDocumentSource(
       dateOfBirth: true,
     },
   });
+  // Decrypt the government-ID fields before they're rendered into documents
+  // (passthrough on legacy plaintext / when encryption is off).
+  const patientProfile = patientProfileRaw ? decryptPhiFields(patientProfileRaw) : null;
 
   const patientIdLine = buildPatientIdLine(appt.countryCode, patientProfile);
   const address = buildAddressBlock(appt, patientProfile);

@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { UserRole } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { encryptPhiFields, decryptPhiFields } from "../../lib/crypto/phi-crypto.js";
 
 export async function upsertPatientProfileByEmail(
   input: {
@@ -184,16 +185,19 @@ export async function applyPatientProfileUpdate(
     where: { email },
     select: { statusAlert: true, clinicAlert: true },
   });
+  // Encrypt the government-ID fields before they touch the DB (no-op when
+  // PHI_ENCRYPTION_KEY is unset). The returned row is decrypted below.
+  const writeInput = encryptPhiFields(input);
   try {
     const profile = await prisma.patientProfile.upsert({
       where: { email },
       create: {
         email,
-        fullName: input.fullName ?? options.fallbackFullName ?? null,
-        phone: input.phone ?? options.fallbackPhone ?? null,
-        ...input,
+        fullName: writeInput.fullName ?? options.fallbackFullName ?? null,
+        phone: writeInput.phone ?? options.fallbackPhone ?? null,
+        ...writeInput,
       },
-      update: input,
+      update: writeInput,
     });
     const alertChanges: WriteOutcome["alertChanges"] = {};
     if ("statusAlert" in input && (before?.statusAlert ?? null) !== (input.statusAlert ?? null)) {
@@ -218,12 +222,15 @@ export function serializeProfile(
   options: { includeAlerts: boolean },
 ) {
   if (!profile) return null;
-  const { statusAlert, clinicAlert, ...rest } = profile;
+  // Decrypt the government-ID fields for output (passthrough on legacy
+  // plaintext / when encryption is off).
+  const decrypted = decryptPhiFields(profile);
+  const { statusAlert, clinicAlert, ...rest } = decrypted;
   return {
     ...rest,
     ...(options.includeAlerts ? { statusAlert, clinicAlert } : {}),
-    dateOfBirth: profile.dateOfBirth?.toISOString() ?? null,
-    createdAt: profile.createdAt.toISOString(),
-    updatedAt: profile.updatedAt.toISOString(),
+    dateOfBirth: decrypted.dateOfBirth?.toISOString() ?? null,
+    createdAt: decrypted.createdAt.toISOString(),
+    updatedAt: decrypted.updatedAt.toISOString(),
   };
 }

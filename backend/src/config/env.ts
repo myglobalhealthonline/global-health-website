@@ -95,6 +95,13 @@ const envSchema = z.object({
 
   PATIENT_UPLOAD_LINK_SECRET: z.string().trim().min(16).optional(),
 
+  /** Application-layer encryption key for the most sensitive PatientProfile
+   *  fields (national/tax/passport IDs). When set, those columns are stored
+   *  AES-256-GCM encrypted; when unset, encryption is OFF (plaintext, current
+   *  behaviour). Losing this key after enabling means losing those fields.
+   *  Run scripts/encrypt-phi-backfill.ts once after setting it. */
+  PHI_ENCRYPTION_KEY: z.string().trim().min(16).optional(),
+
   WASENDER_API_TOKEN: z.string().trim().min(1).optional(),
   WASENDER_GAP_MS: z.coerce.number().int().min(0).default(5500).optional(),
 
