@@ -30,20 +30,20 @@ COPY . .
 RUN corepack enable && corepack prepare pnpm@10.33.2 --activate \
   && pnpm run build
 
-# turbopack.root points at the monorepo parent, so Next may nest standalone
-# output under the package name (standalone/frontend/). In a flat layout,
-# server.js sits directly in standalone/. Normalize to a single path.
+# Next can emit standalone server.js at either:
+# - .next/standalone/server.js
+# - .next/standalone/<dir>/server.js (e.g. app/, frontend/) in monorepos.
+# Normalize both layouts so runtime always has /app/server.js.
 RUN STANDALONE=/app/.next/standalone; \
-  if [ -f "$STANDALONE/server.js" ]; then \
-    cp -a "$STANDALONE" /app/standalone_out; \
-  elif [ -f "$STANDALONE/frontend/server.js" ]; then \
-    cp -a "$STANDALONE/frontend" /app/standalone_out; \
-  else \
+  SERVER_JS="$(find "$STANDALONE" -maxdepth 2 -type f -name server.js | head -n 1)"; \
+  if [ -z "$SERVER_JS" ]; then \
     echo "ERROR: server.js not found in standalone output"; \
     find "$STANDALONE" -maxdepth 4 -name server.js 2>/dev/null || true; \
     ls -laR "$STANDALONE" 2>/dev/null || true; \
     exit 1; \
-  fi
+  fi; \
+  SERVER_DIR="$(dirname "$SERVER_JS")"; \
+  cp -a "$SERVER_DIR"/. /app/standalone_out
 
 # ── Stage 3: production runner (minimal) ─────────────────────────────────────
 FROM node:22-bookworm-slim AS runner
