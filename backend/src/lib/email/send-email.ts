@@ -53,16 +53,25 @@ export type SendEmailResult =
   | { ok: true; id: null; mode: "log"; reason: string }
   | { ok: false; mode: "gmail" | "sendgrid" | "log"; message: string };
 
+/** Mask an email so logs never carry a full patient address. */
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!domain) return "***";
+  const head = local.slice(0, 1);
+  return `${head}***@${domain}`;
+}
+
 function logEmailInstead(input: SendEmailInput, reason: string): SendEmailResult {
+  // No email provider configured. Log only non-PII metadata — recipient is
+  // masked and the body is NOT logged. Email bodies contain patient names,
+  // reset links and appointment details that must not land in log streams.
   // eslint-disable-next-line no-console
   console.log(
     "[email:log]",
     JSON.stringify(
       {
-        to: input.to,
+        to: maskEmail(input.to),
         subject: input.subject,
-        replyTo: input.replyTo,
-        text: input.text.slice(0, 500),
         reason,
       },
       null,

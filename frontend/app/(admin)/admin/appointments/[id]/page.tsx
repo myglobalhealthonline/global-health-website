@@ -33,6 +33,13 @@ export const dynamic = "force-dynamic";
 // now does the ISO→local-input formatting in the browser so the prefill
 // matches the admin's wall clock, not the Node server's timezone.)
 
+/** Only allow http(s) URLs as hrefs — these come from query params, so a
+ *  `javascript:`/`data:` URI must never be rendered as a clickable link. */
+function safeHttpUrl(url: string | undefined | null): string | null {
+  if (!url) return null;
+  return /^https?:\/\//i.test(url) ? url : null;
+}
+
 function formatDate(dateIso: string) {
   const date = new Date(dateIso);
   if (Number.isNaN(date.getTime())) return dateIso;
@@ -325,23 +332,25 @@ export default async function AdminAppointmentDetailPage({
                 Share the set-password URL below if they need to reset.
               </div>
             )}
-            {messages.setPasswordUrl ? (
+            {safeHttpUrl(messages.setPasswordUrl) ? (
               <div className="break-all">
                 <dt className="inline font-semibold">Set-password URL (7d):</dt>{" "}
                 <a
                   className="text-[var(--color-primary)] underline"
-                  href={messages.setPasswordUrl}
+                  href={safeHttpUrl(messages.setPasswordUrl)!}
+                  rel="noopener noreferrer"
                 >
                   {messages.setPasswordUrl}
                 </a>
               </div>
             ) : null}
-            {messages.paymentUrl ? (
+            {safeHttpUrl(messages.paymentUrl) ? (
               <div className="break-all">
                 <dt className="inline font-semibold">Stripe payment URL:</dt>{" "}
                 <a
                   className="text-[var(--color-primary)] underline"
-                  href={messages.paymentUrl}
+                  href={safeHttpUrl(messages.paymentUrl)!}
+                  rel="noopener noreferrer"
                 >
                   {messages.paymentUrl}
                 </a>

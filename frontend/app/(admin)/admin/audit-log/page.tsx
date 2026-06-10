@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { fetchAdminAuditLog } from "@/lib/admin/admin-api";
 import { AdminCard, PageHeader } from "../_components/atoms";
 
@@ -25,6 +26,10 @@ const ACTION_LABEL: Record<string, string> = {
   LOGOUT: "Logout",
   LOGIN_FAILED: "Login failed",
   PATIENT_ALERT_UPDATED: "Patient alert updated",
+  USER_UPDATED: "User updated",
+  USER_ROLE_CHANGED: "User role changed",
+  USER_PASSWORD_RESET: "User password reset (admin)",
+  PATIENT_PROFILE_UPDATED: "Patient profile updated",
 };
 
 const ACTION_TONE: Record<string, string> = {
@@ -227,11 +232,37 @@ export default async function AdminAuditLogPage({
               </tbody>
             </table>
             {result.data.pagination.totalPages > 1 ? (
-              <div className="border-t border-[var(--color-border)] px-3 py-2 text-[12px] text-[var(--color-text-muted)]">
-                Page {result.data.pagination.page} of{" "}
-                {result.data.pagination.totalPages} ·{" "}
-                {result.data.pagination.total} events total
-              </div>
+              (() => {
+                const { page: cur, totalPages } = result.data.pagination;
+                const linkFor = (p: number) => {
+                  const qs = new URLSearchParams();
+                  if (action) qs.set("action", action);
+                  if (entityType) qs.set("entityType", entityType);
+                  if (entityId) qs.set("entityId", entityId);
+                  if (actorUserId) qs.set("actorUserId", actorUserId);
+                  qs.set("page", String(p));
+                  return `/admin/audit-log?${qs.toString()}`;
+                };
+                return (
+                  <div className="flex items-center justify-between gap-3 border-t border-[var(--color-border)] px-3 py-2 text-[12px] text-[var(--color-text-muted)]">
+                    <span>
+                      Page {cur} of {totalPages} · {result.data.pagination.total} events total
+                    </span>
+                    <span className="flex gap-2">
+                      {cur > 1 ? (
+                        <Link href={linkFor(cur - 1)} className="font-semibold underline">
+                          ← Prev
+                        </Link>
+                      ) : null}
+                      {cur < totalPages ? (
+                        <Link href={linkFor(cur + 1)} className="font-semibold underline">
+                          Next →
+                        </Link>
+                      ) : null}
+                    </span>
+                  </div>
+                );
+              })()
             ) : null}
           </div>
         )}
