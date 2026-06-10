@@ -51,8 +51,11 @@ preview-*.html.artifact.json
 # Generated PDF/DOCX QA output and local unzip inspection
 /backend/test-output/
 
-# Alex Brush TTF is copied on postinstall (see assets/fonts/README.md)
+# Alex Brush is OFL-licensed and vendored in-repo so it always reaches prod
+# (build-time network fetch was deliberately removed — see 234ed325). Any
+# OTHER .ttf stays ignored; the postinstall sync still allows local overrides.
 /backend/assets/fonts/*.ttf
+!/backend/assets/fonts/AlexBrush-Regular.ttf
 
 # Large design-reference archives (Figma/Stitch exports). Keep them
 # out of the repo — they're 24 MB each and not consumed at build time.
