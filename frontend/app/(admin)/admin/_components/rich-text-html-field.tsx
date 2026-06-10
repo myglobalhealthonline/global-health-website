@@ -10,6 +10,15 @@ type Props = {
   initialValue?: string | null;
 };
 
+// execCommand is deprecated but no cross-browser contenteditable API replaces it.
+// Wrapper centralises the suppressed-deprecation surface area.
+// Track: https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand
+// eslint-disable-next-line @typescript-eslint/no-deprecated
+function execRichText(command: string, value?: string) {
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
+  document.execCommand(command, false, value ?? "");
+}
+
 const COLORS = [
   { label: "Dark", value: "#1d4b36" },
   { label: "Body", value: "#333333" },
@@ -166,7 +175,7 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
     // The sanitizer still tolerates both, but inline styles render reliably
     // across every browser and survive the sanitization round-trip.
     try {
-      document.execCommand("styleWithCSS", false, "true");
+      execRichText("styleWithCSS", "true");
     } catch {
       // Older browsers / browsers with execCommand stubs will ignore this.
     }
@@ -211,7 +220,7 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
     if (!editorRef.current) return;
     editorRef.current.focus();
     restoreSelection();
-    document.execCommand(command, false, value);
+    execRichText(command, value);
     // Only sync the hidden input. Calling `rewriteEditor: true` here would
     // replace the editor's innerHTML mid-edit and wipe the formatting the
     // browser just applied (plus collapse the cursor). The sanitizer runs

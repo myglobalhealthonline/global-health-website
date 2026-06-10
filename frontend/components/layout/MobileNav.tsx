@@ -23,7 +23,6 @@ import { Menu, User, X, Check, Languages } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { SiteNavigationData } from "@/data/navigation";
-import type { AuthUser } from "@/lib/api/auth-api";
 import { DEFAULT_BRAND_LOGO } from "@/lib/content/brand-logo";
 import type { CountryConfig } from "@/data/countries";
 import {
@@ -50,7 +49,7 @@ export function MobileNav({
   siteName: string;
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
-  authUser?: AuthUser | null;
+  authUser?: { role: string } | null;
   countryFeatures?: Record<string, string[] | undefined>;
   bookHref: string;
   countries: CountryConfig[];

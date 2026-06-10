@@ -193,18 +193,17 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         : body.data.locationAddress;
 
     try {
-      // Snapshot the pre-update values so we can detect whether the slot or
-      // URL actually changed. Without this guard the email re-fires every
-      // time the admin saves the form, even on unrelated edits.
-      const before = await getAppointmentById(params.data.id);
-      // Also snapshot the previous doctor + timeSlot so we can fire a
-      // notification on doctor change AND release the slot on reschedule.
-      const beforeSnapshot = before
-        ? await prisma.appointment.findUnique({
-            where: { id: params.data.id },
-            select: { doctorId: true, timeSlotId: true },
-          })
-        : null;
+      // Snapshot the pre-update state and the previous doctor+slot in
+      // parallel. Without the before-snapshot guard the email re-fires
+      // on every admin save even for unrelated edits; the slot snapshot
+      // lets us release the booked slot on reschedule and detect doctor changes.
+      const [before, beforeSnapshot] = await Promise.all([
+        getAppointmentById(params.data.id),
+        prisma.appointment.findUnique({
+          where: { id: params.data.id },
+          select: { doctorId: true, timeSlotId: true },
+        }),
+      ]);
       const beforeDoctorId = beforeSnapshot?.doctorId ?? null;
 
       // Reschedule guard: if scheduledAt is changing AND a slot is
@@ -242,23 +241,16 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       // For IN_PERSON consults, refuse to land the patch in a state with
       // no location source. Compute the *post-patch* mode (in case admin
       // is flipping ONLINE→IN_PERSON in this same request) and check
-      // location accordingly.
-      const modeRow = await prisma.appointment.findUnique({
-        where: { id: params.data.id },
-        select: {
-          consultationMode: true,
-          clinicId: true,
-          locationAddress: true,
-        },
-      });
+      // location accordingly. `before` already contains these fields via
+      // AdminAppointmentDetail, so no extra DB read is needed.
       const finalMode =
-        consultationModeInput ?? modeRow?.consultationMode ?? "ONLINE";
+        consultationModeInput ?? before?.consultationMode ?? "ONLINE";
       if (finalMode === "IN_PERSON") {
         const finalClinicId =
-          clinicIdInput === undefined ? modeRow?.clinicId ?? null : clinicIdInput;
+          clinicIdInput === undefined ? before?.clinicId ?? null : clinicIdInput;
         const finalLocationAddress =
           locationAddressInput === undefined
-            ? modeRow?.locationAddress ?? null
+            ? before?.locationAddress ?? null
             : locationAddressInput;
         if (!finalClinicId && !finalLocationAddress) {
           return reply

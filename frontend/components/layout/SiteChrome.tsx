@@ -7,7 +7,6 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { EMERGENCY_NOTICE } from "@/lib/constants";
 import type { SiteNavigationData } from "@/data/navigation";
-import type { AuthUser } from "@/lib/api/auth-api";
 import type { CountryConfig } from "@/data/countries";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
 
@@ -17,7 +16,7 @@ type Props = {
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
   footerDecorImage?: { src: string; alt: string };
-  authUser?: AuthUser | null;
+  authUser?: { role: string } | null;
   countryFeatures?: Record<string, string[] | undefined>;
   /** Per-country footer overrides keyed by lowercase country code.
    *  Missing or null entries fall back to the global defaults. */

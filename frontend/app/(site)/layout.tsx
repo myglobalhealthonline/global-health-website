@@ -3,7 +3,6 @@ import { cookies, headers } from "next/headers";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { CartProvider } from "@/components/cart/CartContext";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { getCountryFooter } from "@/lib/content/get-country-footers";
@@ -29,10 +28,14 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
       ? (headerCountry as CountryCode)
       : undefined;
 
+  // Role stamped by the edge proxy via local JWT decode — no backend round-trip.
+  const roleHeader = requestHeaders.get("x-gh-role");
+  const authUser: { role: string } | null = roleHeader ? { role: roleHeader } : null;
+
   // runtimeCountry is known here, so the per-country footer fetch can run
   // in the same parallel batch instead of as an extra serial round-trip
   // after it (one less hop on every (site) page's TTFB).
-  const [{ common, navigation }, assets, authUser, countriesMerged, activeFooter] =
+  const [{ common, navigation }, assets, countriesMerged, activeFooter] =
     await Promise.all([
       getSiteContext({
         explicitCountryCode: runtimeCountry,
@@ -41,7 +44,6 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         cookieLocale: cookieStore.get("gh_locale")?.value ?? null,
       }),
       getPublicAssetsNormalized(),
-      getServerAuthUser(),
       getPublicCountriesMerged(),
       runtimeCountry ? getCountryFooter(runtimeCountry) : Promise.resolve(null),
     ]);

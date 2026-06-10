@@ -259,7 +259,14 @@ export async function generateAppointmentDocument(input: {
     healthPortalLabel: portal?.label ?? null,
   };
   } catch (err) {
-    await deleteObject(storageKey).catch(() => {});
+    await deleteObject(storageKey).catch((cleanupErr) => {
+      // Log but don't mask the original error — orphaned S3 object at
+      // storageKey will need manual cleanup if this fires.
+      console.error("[generated-documents] S3 cleanup failed after DB error", {
+        storageKey,
+        cleanupErr,
+      });
+    });
     throw err;
   }
 }

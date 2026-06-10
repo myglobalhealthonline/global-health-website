@@ -200,6 +200,16 @@ export async function proxy(request: NextRequest) {
   requestHeaders.set("x-gh-locale", context.locale);
   requestHeaders.set("x-gh-pathname", pathname);
 
+  // Stamp the authenticated role so the site layout can render the nav
+  // without making a backend HTTP round-trip on every public page.
+  // Local JWT decode — no I/O. Layout falls back to null on missing header.
+  const session = await resolveSession(request);
+  if (session.kind === "ok" && session.role) {
+    requestHeaders.set("x-gh-role", session.role);
+  } else {
+    requestHeaders.delete("x-gh-role");
+  }
+
   return NextResponse.next({
     request: {
       headers: requestHeaders,

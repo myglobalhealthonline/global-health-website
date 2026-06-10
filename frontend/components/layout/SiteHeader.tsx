@@ -22,7 +22,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { SiteNavigationData } from "@/data/navigation";
-import type { AuthUser } from "@/lib/api/auth-api";
 import { type CountryCode, type CountryConfig } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
@@ -117,7 +116,7 @@ export function SiteHeader({
   siteName: string;
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
-  authUser?: AuthUser | null;
+  authUser?: { role: string } | null;
   countryFeatures?: Record<string, string[] | undefined>;
   initialLastCountry?: { slug: string; lang: string } | null;
   countries: CountryConfig[];
