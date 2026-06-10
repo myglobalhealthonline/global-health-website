@@ -241,29 +241,60 @@ export async function deleteOwnAccount(id: string): Promise<void> {
   }
 }
 
+// GDPR export paging. We page in bounded batches (so a long-lived account
+// can't OOM the process) but page all the way to completion instead of
+// silently dropping older rows. A very high ceiling guards against a
+// pathological/abusive volume; if it is ever hit the export is flagged
+// `partial: true` so the result is never an incomplete payload masquerading
+// as complete.
+const EXPORT_BATCH = 1000;
+const EXPORT_HARD_CEILING = 100_000;
+
+async function pageAll<T extends { id: string }>(
+  fetchBatch: (cursor: string | undefined) => Promise<T[]>,
+): Promise<{ rows: T[]; truncated: boolean }> {
+  const rows: T[] = [];
+  let cursor: string | undefined;
+  for (;;) {
+    if (rows.length >= EXPORT_HARD_CEILING) return { rows, truncated: true };
+    const batch = await fetchBatch(cursor);
+    rows.push(...batch);
+    if (batch.length < EXPORT_BATCH) return { rows, truncated: false };
+    cursor = batch[batch.length - 1].id;
+  }
+}
+
 /** GDPR data-export: dump everything we hold about a user as JSON. */
 export async function exportUserData(id: string) {
   try {
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user || !user.isActive) return null;
-    // Safety caps — a GDPR export must not become an OOM/DoS vector for a
-    // long-lived account. 5000 rows comfortably covers any real patient
-    // history; beyond that, paginated export would be needed.
-    const appointments = await prisma.appointment.findMany({
-      where: { userId: id },
-      orderBy: { createdAt: "desc" },
-      take: 5000,
-    });
-    const payments = await prisma.payment.findMany({
-      where: { appointment: { userId: id } },
-      orderBy: { createdAt: "desc" },
-      take: 5000,
-    });
+
+    const appointments = await pageAll((cursor) =>
+      prisma.appointment.findMany({
+        where: { userId: id },
+        orderBy: { id: "desc" },
+        take: EXPORT_BATCH,
+        ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+      }),
+    );
+    const payments = await pageAll((cursor) =>
+      prisma.payment.findMany({
+        where: { appointment: { userId: id } },
+        orderBy: { id: "desc" },
+        take: EXPORT_BATCH,
+        ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+      }),
+    );
+
     return {
       exportedAt: new Date().toISOString(),
+      // True only if a row count exceeded EXPORT_HARD_CEILING — the export
+      // is explicitly marked incomplete rather than silently truncated.
+      partial: appointments.truncated || payments.truncated,
       user: toSafeUser(user),
-      appointments,
-      payments,
+      appointments: appointments.rows,
+      payments: payments.rows,
     };
   } catch (error) {
     throw normalizeDbError(error, "Could not export user data");

@@ -185,19 +185,6 @@ const PATCHES: { name: string; sql: string }[] = [
     `,
   },
   {
-    name: "MedicalNote.createdByDoctorId.fk",
-    sql: `
-      DO $$ BEGIN
-        ALTER TABLE "MedicalNote"
-          ADD CONSTRAINT "MedicalNote_createdByDoctorId_fkey"
-          FOREIGN KEY ("createdByDoctorId") REFERENCES "Doctor"("id")
-          ON DELETE RESTRICT ON UPDATE CASCADE;
-      EXCEPTION
-        WHEN duplicate_object THEN NULL;
-      END $$;
-    `,
-  },
-  {
     name: "MedicalNote.table",
     sql: `
       CREATE TABLE IF NOT EXISTS "MedicalNote" (
@@ -220,6 +207,18 @@ const PATCHES: { name: string; sql: string }[] = [
           ADD CONSTRAINT "MedicalNote_appointmentId_fkey"
           FOREIGN KEY ("appointmentId") REFERENCES "Appointment"("id")
           ON DELETE CASCADE ON UPDATE CASCADE;
+      EXCEPTION
+        WHEN duplicate_object THEN NULL;
+      END $$;
+      -- createdByDoctorId FK — folded into the table patch so it always
+      -- runs AFTER the table exists (a separate earlier patch could run
+      -- before this one on a fresh DB, fail with "relation does not exist",
+      -- and leave the column unconstrained until a later restart).
+      DO $$ BEGIN
+        ALTER TABLE "MedicalNote"
+          ADD CONSTRAINT "MedicalNote_createdByDoctorId_fkey"
+          FOREIGN KEY ("createdByDoctorId") REFERENCES "Doctor"("id")
+          ON DELETE RESTRICT ON UPDATE CASCADE;
       EXCEPTION
         WHEN duplicate_object THEN NULL;
       END $$;
