@@ -23,13 +23,14 @@ import {
  */
 
 const adminCountryFooterRoute: FastifyPluginAsync = async (app) => {
+  app.addHook("onRequest", async (request, reply) => {
+    const auth = await verifyAdminAccess(request);
+    if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+  });
+
   app.get<{ Params: { countryId: string } }>(
     "/api/admin/countries/:countryId/footer",
     async (request, reply) => {
-      const auth = await verifyAdminAccess(request);
-      if (!auth.ok) {
-        return reply.status(auth.status).send(errorResponse(auth.message));
-      }
       try {
         // Single round-trip: pull the country + its (optional) footer
         // in one Prisma call. Null country = 404; null footer = first
@@ -66,10 +67,6 @@ const adminCountryFooterRoute: FastifyPluginAsync = async (app) => {
   app.put<{ Params: { countryId: string } }>(
     "/api/admin/countries/:countryId/footer",
     async (request, reply) => {
-      const auth = await verifyAdminAccess(request);
-      if (!auth.ok) {
-        return reply.status(auth.status).send(errorResponse(auth.message));
-      }
       const parsed = countryFooterUpsertSchema.safeParse(request.body);
       if (!parsed.success) {
         return reply

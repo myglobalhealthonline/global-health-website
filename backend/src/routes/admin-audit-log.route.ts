@@ -28,9 +28,12 @@ const listQuerySchema = z.object({
 });
 
 const adminAuditLogRoute: FastifyPluginAsync = async (app) => {
+  app.addHook("onRequest", async (request, reply) => {
+    const auth = await verifyAdminAccess(request);
+    if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+  });
+
   app.get("/api/admin/audit-log", async (request, reply) => {
-    const admin = await verifyAdminAccess(request);
-    if (!admin.ok) return reply.status(admin.status).send(errorResponse(admin.message));
     const q = listQuerySchema.safeParse(request.query);
     if (!q.success) {
       return reply.status(400).send(errorResponse("Invalid query", q.error.flatten()));
@@ -84,6 +87,8 @@ const adminAuditLogRoute: FastifyPluginAsync = async (app) => {
           pageSize,
           total,
           totalPages: total === 0 ? 0 : Math.ceil(total / pageSize),
+          hasPrev: page > 1,
+          hasNext: page < (total === 0 ? 0 : Math.ceil(total / pageSize)),
         },
       });
     } catch (error) {

@@ -36,6 +36,9 @@ export default function VerifyEmailPage() {
     if (!token || ranRef.current) return;
     ranRef.current = true;
     async function verify() {
+      // Read locale directly at call time — avoids a stale closure on the
+      // `locale` state which is "en" at mount and updates asynchronously.
+      const currentLocale = readClientLocale();
       try {
         // Same-origin proxy at /api/auth/verify-email — going direct
         // to `${apiBase}/...` would 1) require CORS preflight, 2) not
@@ -48,7 +51,7 @@ export default function VerifyEmailPage() {
           body: JSON.stringify({ token }),
         });
         const json = (await res.json()) as { ok?: boolean; message?: string };
-        const t = loadLocaleBundle(locale).auth.verifyEmail;
+        const t = loadLocaleBundle(currentLocale).auth.verifyEmail;
         if (res.ok && json.ok) {
           setStatus("ok");
           setMessage(json.message ?? t.verified);
@@ -57,17 +60,12 @@ export default function VerifyEmailPage() {
           setMessage(json.message ?? t.failed);
         }
       } catch (err) {
-        const t = loadLocaleBundle(locale).auth.verifyEmail;
+        const t = loadLocaleBundle(currentLocale).auth.verifyEmail;
         setStatus("error");
         setMessage(err instanceof Error ? err.message : t.failed);
       }
     }
     void verify();
-    // Intentionally keyed on `token` only — the ranRef guard runs this once
-    // on mount. `locale` is read inside but deliberately omitted (adding it
-    // would not re-run due to the guard). Proper locale threading is tracked
-    // separately (server-prop, to avoid the first-paint "en" flash).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const t = loadLocaleBundle(locale).auth.verifyEmail;

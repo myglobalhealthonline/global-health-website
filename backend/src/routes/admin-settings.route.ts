@@ -13,11 +13,12 @@ import { reviewSettingsSchema } from "../validations/admin-settings.schema.js";
  * value is explicitly `null`.
  */
 const adminSettingsRoute: FastifyPluginAsync = async (app) => {
-  app.get("/api/admin/settings/reviews", async (request, reply) => {
+  app.addHook("onRequest", async (request, reply) => {
     const auth = await verifyAdminAccess(request);
-    if (!auth.ok) {
-      return reply.status(auth.status).send(errorResponse(auth.message));
-    }
+    if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+  });
+
+  app.get("/api/admin/settings/reviews", async (request, reply) => {
     try {
       const config = await getPublicReviewConfig();
       return okResponse(config);
@@ -31,10 +32,6 @@ const adminSettingsRoute: FastifyPluginAsync = async (app) => {
   });
 
   app.patch("/api/admin/settings/reviews", async (request, reply) => {
-    const auth = await verifyAdminAccess(request);
-    if (!auth.ok) {
-      return reply.status(auth.status).send(errorResponse(auth.message));
-    }
     const parsed = reviewSettingsSchema.safeParse(request.body);
     if (!parsed.success) {
       return reply.status(400).send(errorResponse("Invalid review settings", parsed.error.flatten()));

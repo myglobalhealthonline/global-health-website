@@ -35,11 +35,14 @@ async function primaryCountryCode(doctorId: string): Promise<string | null> {
 }
 
 const adminFeaturedDoctorRoute: FastifyPluginAsync = async (app) => {
+  app.addHook("onRequest", async (request, reply) => {
+    const auth = await verifyAdminAccess(request);
+    if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+  });
+
   app.get<{ Params: { id: string } }>(
     "/api/admin/doctors/:id/featured",
     async (request, reply) => {
-      const auth = await verifyAdminAccess(request);
-      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       if (!idParam.safeParse(request.params.id).success) {
         return reply.status(400).send(errorResponse("Invalid doctor id"));
       }
@@ -61,8 +64,6 @@ const adminFeaturedDoctorRoute: FastifyPluginAsync = async (app) => {
   app.put<{ Params: { id: string } }>(
     "/api/admin/doctors/:id/featured",
     async (request, reply) => {
-      const auth = await verifyAdminAccess(request);
-      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
       if (!idParam.safeParse(request.params.id).success) {
         return reply.status(400).send(errorResponse("Invalid doctor id"));
       }

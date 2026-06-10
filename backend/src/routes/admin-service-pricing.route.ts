@@ -16,13 +16,14 @@ import { peakPricingSchema } from "../validations/admin-service-pricing.schema.j
  *   PUT /api/admin/services/:id/peak-pricing  → upserted config
  */
 const adminServicePricingRoute: FastifyPluginAsync = async (app) => {
+  app.addHook("onRequest", async (request, reply) => {
+    const auth = await verifyAdminAccess(request);
+    if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+  });
+
   app.get<{ Params: { id: string } }>(
     "/api/admin/services/:id/peak-pricing",
     async (request, reply) => {
-      const auth = await verifyAdminAccess(request);
-      if (!auth.ok) {
-        return reply.status(auth.status).send(errorResponse(auth.message));
-      }
       try {
         const config = await getServicePeakConfig(request.params.id);
         return okResponse({ config });
@@ -39,10 +40,6 @@ const adminServicePricingRoute: FastifyPluginAsync = async (app) => {
   app.put<{ Params: { id: string } }>(
     "/api/admin/services/:id/peak-pricing",
     async (request, reply) => {
-      const auth = await verifyAdminAccess(request);
-      if (!auth.ok) {
-        return reply.status(auth.status).send(errorResponse(auth.message));
-      }
       const parsed = peakPricingSchema.safeParse(request.body);
       if (!parsed.success) {
         return reply
