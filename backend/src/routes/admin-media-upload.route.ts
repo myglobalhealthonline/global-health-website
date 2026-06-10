@@ -65,12 +65,14 @@ function buildPublicMediaUrl(request: { protocol: string; hostname: string }, ke
 }
 
 const adminMediaUploadRoute: FastifyPluginAsync = async (app) => {
-  app.post("/api/admin/media/upload", async (request, reply) => {
+  app.addHook("onRequest", async (request, reply) => {
     const auth = await verifyAdminAccess(request);
     if (!auth.ok) {
       return reply.status(auth.status).send(errorResponse(auth.message));
     }
+  });
 
+  app.post("/api/admin/media/upload", async (request, reply) => {
     if (!isMediaStorageConfigured()) {
       return reply.status(503).send(errorResponse("Object storage is not configured"));
     }
