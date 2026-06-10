@@ -167,7 +167,7 @@ export function MobileNav({
             {sectionLinks.length > 0 ? (
               <section className="mb-6">
                 <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
-                  {activeCountry?.name} clinic
+                  {activeCountry?.name ? `${activeCountry.name} clinic` : "Clinic"}
                 </p>
                 <ul className="flex flex-col gap-1">
                   {sectionLinks.map((item) => (
