@@ -702,69 +702,34 @@ export async function scheduleAppointment(
     locationAddress?: string | null;
   },
 ): Promise<AdminAppointmentDetail | null> {
-  const sets: string[] = [];
-  const args: unknown[] = [id];
-  if (input.scheduledAt !== undefined) {
-    args.push(input.scheduledAt);
-    sets.push(`"scheduledAt" = $${args.length}`);
-  }
-  if (input.meetingUrl !== undefined) {
-    args.push(input.meetingUrl);
-    sets.push(`"meetingUrl" = $${args.length}`);
-  }
-  if (input.doctorId !== undefined) {
-    args.push(input.doctorId);
-    sets.push(`"doctorId" = $${args.length}`);
-  }
-  if (input.consultationMode !== undefined) {
-    args.push(input.consultationMode);
-    // Cast keeps the prepared statement honest about the enum target.
-    sets.push(`"consultationMode" = $${args.length}::"ConsultationMode"`);
-  }
-  if (input.clinicId !== undefined) {
-    args.push(input.clinicId);
-    sets.push(`"clinicId" = $${args.length}`);
-  }
+  // Build the update payload from only the provided fields. Unchecked input
+  // lets us set the scalar relation FKs (doctorId, clinicId) directly. Using
+  // the typed ORM update removes the hand-built SQL SET clause entirely so a
+  // future field addition can never become a string-interpolation injection
+  // sink.
+  const data: Prisma.AppointmentUncheckedUpdateInput = {};
+  if (input.scheduledAt !== undefined) data.scheduledAt = input.scheduledAt;
+  if (input.meetingUrl !== undefined) data.meetingUrl = input.meetingUrl;
+  if (input.doctorId !== undefined) data.doctorId = input.doctorId;
+  if (input.consultationMode !== undefined) data.consultationMode = input.consultationMode;
+  if (input.clinicId !== undefined) data.clinicId = input.clinicId;
   if (input.locationAddress !== undefined) {
     // Normalise empty string to null so DB columns stay consistent
     // ("no override" should be NULL, not "").
-    args.push(input.locationAddress === "" ? null : input.locationAddress);
-    sets.push(`"locationAddress" = $${args.length}`);
+    data.locationAddress = input.locationAddress === "" ? null : input.locationAddress;
   }
-  if (sets.length === 0) {
+  if (Object.keys(data).length === 0) {
     return getAppointmentById(id);
   }
   try {
-    const rows = await prisma.$queryRawUnsafe<AppointmentRecord[]>(
-      `
-        UPDATE "Appointment"
-        SET ${sets.join(", ")}, "updatedAt" = NOW()
-        WHERE "id" = $1
-        RETURNING
-          "id",
-          "countryCode",
-          "consultationType",
-          "fullName",
-          "email",
-          "phone",
-          "notes",
-          "status",
-          "scheduledAt",
-          "meetingUrl",
-          "paymentStatus",
-          "amountCents",
-          "currencyCode",
-          "consultationMode",
-          "clinicId",
-          "locationAddress",
-          "createdAt",
-          "updatedAt"
-      `,
-      ...args,
-    );
-    if (rows.length === 0) return null;
-    return toAdminAppointment(rows[0]);
+    await prisma.appointment.update({ where: { id }, data });
+    return getAppointmentById(id);
   } catch (error) {
+    // P2025 = record to update not found — preserve the previous
+    // null-on-missing contract instead of surfacing a 500.
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      return null;
+    }
     throw normalizeDbError(error, "Appointments are temporarily unavailable");
   }
 }
