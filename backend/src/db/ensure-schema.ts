@@ -224,6 +224,52 @@ const PATCHES: { name: string; sql: string }[] = [
       END $$;
     `,
   },
+  {
+    // H17: convert Appointment.status from free-text to a real enum so the
+    // DB rejects invalid status values (the app transition guard is the
+    // only check today; raw-SQL updates bypass it). Runs at boot before the
+    // server serves, so the column is the enum by the time any query runs.
+    // The whole patch is one statement string → an implicit transaction, so
+    // it is atomic. Re-running is safe: CREATE TYPE is guarded, and casting
+    // an already-enum column with col::"AppointmentStatus" is a no-op.
+    name: "Appointment.status.enum-2026-06",
+    sql: `
+      DO $$ BEGIN
+        CREATE TYPE "AppointmentStatus" AS ENUM (
+          'REQUEST_RECEIVED', 'UNDER_REVIEW', 'CONTACTED', 'CANCELLED', 'COMPLETED'
+        );
+      EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+      ALTER TABLE "Appointment" ALTER COLUMN "status" DROP DEFAULT;
+      ALTER TABLE "Appointment"
+        ALTER COLUMN "status" TYPE "AppointmentStatus"
+        USING "status"::"AppointmentStatus";
+      ALTER TABLE "Appointment" ALTER COLUMN "status" SET DEFAULT 'REQUEST_RECEIVED';
+    `,
+  },
+  {
+    // H17: Order.paymentStatus → existing PaymentStatus enum. All writes go
+    // through Prisma already; this just enforces the type at the DB.
+    name: "Order.paymentStatus.enum-2026-06",
+    sql: `
+      ALTER TABLE "Order" ALTER COLUMN "paymentStatus" DROP DEFAULT;
+      ALTER TABLE "Order"
+        ALTER COLUMN "paymentStatus" TYPE "PaymentStatus"
+        USING "paymentStatus"::"PaymentStatus";
+      ALTER TABLE "Order" ALTER COLUMN "paymentStatus" SET DEFAULT 'UNPAID';
+    `,
+  },
+  {
+    // M14: the old @@unique([countryId, isPrimary]) wrongly allowed only ONE
+    // non-primary domain per country. Replace it with a partial unique index
+    // that enforces just "at most one primary per country".
+    name: "CountryDomain.one-primary-per-country-2026-06",
+    sql: `
+      ALTER TABLE "CountryDomain"
+        DROP CONSTRAINT IF EXISTS "CountryDomain_countryId_isPrimary_key";
+      CREATE UNIQUE INDEX IF NOT EXISTS "CountryDomain_one_primary_per_country"
+        ON "CountryDomain"("countryId") WHERE "isPrimary" = true;
+    `,
+  },
 ];
 
 export async function ensureSchema(log: {

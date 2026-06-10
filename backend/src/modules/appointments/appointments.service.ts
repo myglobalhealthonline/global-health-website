@@ -331,7 +331,9 @@ function buildAppointmentWhereClause(options: ListAppointmentsOptions): Prisma.S
   const parts: Prisma.Sql[] = [];
 
   if (options.status) {
-    parts.push(Prisma.sql`"status" = ${options.status}`);
+    // Compare as text so this is valid whether "status" is the enum
+    // ("AppointmentStatus") or still text during the conversion boot.
+    parts.push(Prisma.sql`"status"::text = ${options.status}`);
   }
   if (options.countryCode) {
     parts.push(Prisma.sql`"countryCode" = ${options.countryCode}`);
@@ -507,7 +509,10 @@ export async function updateAppointmentStatus(
     const rows = await prisma.$queryRawUnsafe<AppointmentRecord[]>(
       `
         UPDATE "Appointment"
-        SET "status" = $2, "updatedAt" = NOW()${completedAtClause}
+        -- status is a Postgres enum ("AppointmentStatus"); cast the text
+        -- bind param explicitly so this works whether the column is still
+        -- text (pre-conversion boot) or already the enum.
+        SET "status" = $2::"AppointmentStatus", "updatedAt" = NOW()${completedAtClause}
         WHERE "id" = $1
         RETURNING
           "id",

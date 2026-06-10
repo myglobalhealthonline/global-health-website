@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -184,7 +185,7 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
     const toUtc = to ? new Date(`${to}T23:59:59.999Z`) : undefined;
     const openWindowStart = new Date(Date.now() - 30 * 60 * 60 * 1000);
     try {
-      const where = {
+      const where: Prisma.AppointmentWhereInput = {
         doctorId: auth.doctorId,
         ...(status ? { status } : {}),
         ...(consultationType ? { consultationType } : {}),

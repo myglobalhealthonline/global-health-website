@@ -254,7 +254,12 @@ model CountryDomain {
   isPrimary Boolean @default(false)
   country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
 
-  @@unique([countryId, isPrimary])
+  // "At most one primary domain per country" is enforced by a partial
+  // unique index (CountryDomain_one_primary_per_country) applied in
+  // ensure-schema. Prisma can't express a partial (WHERE) index here, so
+  // the old @@unique([countryId, isPrimary]) — which wrongly capped
+  // non-primary domains at one per country — is intentionally removed.
+  @@index([countryId])
 }
 
 model Clinic {
@@ -830,6 +835,14 @@ enum PaymentStatus {
   FAILED
 }
 
+enum AppointmentStatus {
+  REQUEST_RECEIVED
+  UNDER_REVIEW
+  CONTACTED
+  CANCELLED
+  COMPLETED
+}
+
 model Appointment {
   id                        String                    @id @default(cuid())
   userId                    String?
@@ -844,7 +857,7 @@ model Appointment {
   dateOfBirth               DateTime?
   notes                     String?
   consentAccepted           Boolean
-  status                    String                    @default("REQUEST_RECEIVED")
+  status                    AppointmentStatus         @default(REQUEST_RECEIVED)
   // Optional link to the catalogue Service that was booked. Populated when
   // the booking form passes ?service=<slug>; null for free-text bookings.
   serviceId                 String?
@@ -1266,7 +1279,7 @@ model Order {
   shippingCents         Int         @default(0)
   totalCents            Int
   status                OrderStatus @default(PENDING)
-  paymentStatus         String      @default("UNPAID")
+  paymentStatus         PaymentStatus @default(UNPAID)
   stripeSessionId       String?     @unique
   stripePaymentIntentId String?     @unique
   paidAt                DateTime?
