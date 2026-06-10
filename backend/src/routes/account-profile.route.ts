@@ -18,7 +18,7 @@ import {
   NationalityNotFoundError,
 } from "../services/patient-nationality.service.js";
 import { encryptPhi, decryptPhi } from "../lib/crypto/phi-crypto.js";
-import { logAccess } from "../lib/access-log.js";
+import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 import {
   putObject,
   isMediaStorageConfigured,
@@ -181,14 +181,11 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       });
       if (!row) return reply.status(404).send(errorResponse("Profile not found"));
 
-      await logAccess({
-        patientProfileId: profile.id,
-        globalHealthNumber: profile.globalHealthNumber,
-        accessedByUserId: request.authUser!.sub,
-        accessedByRole: "PATIENT",
-        accessedResourceType: "InsuranceDetails",
-        accessAction: "VIEW",
-      });
+      await guardMedicalRead(
+        request,
+        { userId: request.authUser!.sub, role: "PATIENT" },
+        { patientProfileId: profile.id, resourceType: "INSURANCE_DOC", accessAction: "VIEWED" },
+      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
 
       return okResponse({
         insurance: {
@@ -357,14 +354,11 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       });
       if (!row) return reply.status(404).send(errorResponse("Profile not found"));
 
-      await logAccess({
-        patientProfileId: profile.id,
-        globalHealthNumber: profile.globalHealthNumber,
-        accessedByUserId: request.authUser!.sub,
-        accessedByRole: "PATIENT",
-        accessedResourceType: "VerificationStatus",
-        accessAction: "VIEW",
-      });
+      await guardMedicalRead(
+        request,
+        { userId: request.authUser!.sub, role: "PATIENT" },
+        { patientProfileId: profile.id, resourceType: "VERIFICATION_STATUS", accessAction: "VIEWED" },
+      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
 
       return okResponse({ verification: row });
     } catch (error) {
@@ -382,14 +376,11 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
     try {
       const docs = await listNationalityDocuments(profile.id);
 
-      await logAccess({
-        patientProfileId: profile.id,
-        globalHealthNumber: profile.globalHealthNumber,
-        accessedByUserId: request.authUser!.sub,
-        accessedByRole: "PATIENT",
-        accessedResourceType: "NationalityDocuments",
-        accessAction: "VIEW",
-      });
+      await guardMedicalRead(
+        request,
+        { userId: request.authUser!.sub, role: "PATIENT" },
+        { patientProfileId: profile.id, resourceType: "NATIONALITY_DOC", accessAction: "VIEWED" },
+      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
 
       return okResponse({ nationalityDocuments: docs });
     } catch (error) {
@@ -533,14 +524,11 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       const key = side === "back" ? row?.idDocumentBackKey : row?.idDocumentKey;
       if (!key) return reply.status(404).send(errorResponse("Document not found"));
 
-      await logAccess({
-        patientProfileId: profile.id,
-        globalHealthNumber: profile.globalHealthNumber,
-        accessedByUserId: request.authUser!.sub,
-        accessedByRole: "PATIENT",
-        accessedResourceType: "IDDocument",
-        accessAction: "DOWNLOAD",
-      });
+      await guardMedicalRead(
+        request,
+        { userId: request.authUser!.sub, role: "PATIENT" },
+        { patientProfileId: profile.id, resourceType: "ID_DOC", accessAction: "DOWNLOADED" },
+      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
 
       const obj = await getObject(key);
       const stream = streamToNodeReadable(obj.Body);
@@ -574,14 +562,11 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       const key = side === "back" ? doc?.backFileKey : doc?.frontFileKey;
       if (!key) return reply.status(404).send(errorResponse("Document not found"));
 
-      await logAccess({
-        patientProfileId: profile.id,
-        globalHealthNumber: profile.globalHealthNumber,
-        accessedByUserId: request.authUser!.sub,
-        accessedByRole: "PATIENT",
-        accessedResourceType: "NationalityDocument",
-        accessAction: "DOWNLOAD",
-      });
+      await guardMedicalRead(
+        request,
+        { userId: request.authUser!.sub, role: "PATIENT" },
+        { patientProfileId: profile.id, resourceType: "NATIONALITY_DOC", accessAction: "DOWNLOADED" },
+      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
 
       const obj = await getObject(key);
       const stream = streamToNodeReadable(obj.Body);

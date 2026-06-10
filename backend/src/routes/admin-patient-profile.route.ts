@@ -18,7 +18,6 @@ import {
 } from "../services/patient-nationality.service.js";
 import { getObject, streamToNodeReadable } from "../services/object-storage.js";
 import { VerificationStatus } from "@prisma/client";
-import { logAccess } from "../lib/access-log.js";
 import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
 
 const stringField = (max: number) =>
@@ -330,16 +329,18 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
 
         const docs = await listNationalityDocuments(profile.id);
         const actor = await resolveOptionalAuthUser(request);
-        await logAccess({
-          patientProfileId: profile.id,
-          globalHealthNumber: profile.globalHealthNumber,
-          accessedByUserId: actor?.id ?? null,
-          accessedByRole: "ADMIN",
-          accessedResourceType: "NationalityDocuments",
-          accessAction: "VIEW",
-          ipAddress: request.ip,
-          userAgent: request.headers["user-agent"] ?? null,
-        });
+        try {
+          await guardMedicalRead(
+            request,
+            { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+            { patientProfileId: profile.id, resourceType: "NATIONALITY_DOC", accessAction: "VIEWED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
+        }
         return okResponse({ nationalityDocuments: docs });
       } catch (error) {
         app.log.error(error);
@@ -420,29 +421,31 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       }
       const side = ((request.query as { side?: string }).side ?? "front") === "back" ? "back" : "front";
 
-      try {
-        const row = await prisma.patientProfile.findUnique({
-          where: { email },
-          select: { id: true, globalHealthNumber: true, idDocumentKey: true, idDocumentBackKey: true },
-        });
-        const key = side === "back" ? row?.idDocumentBackKey : row?.idDocumentKey;
-        if (!key) return reply.status(404).send(errorResponse("Document not found"));
+      const row = await prisma.patientProfile.findUnique({
+        where: { email },
+        select: { id: true, idDocumentKey: true, idDocumentBackKey: true },
+      });
+      const key = side === "back" ? row?.idDocumentBackKey : row?.idDocumentKey;
+      if (!key) return reply.status(404).send(errorResponse("Document not found"));
 
+      const actor = await resolveOptionalAuthUser(request);
+      try {
+        await guardMedicalRead(
+          request,
+          { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+          { patientProfileId: row!.id, resourceType: "ID_DOC", accessAction: "DOWNLOADED" },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+        }
+        throw guardError;
+      }
+
+      try {
         const obj = await getObject(key);
         const stream = streamToNodeReadable(obj.Body);
         if (!stream) return reply.status(404).send(errorResponse("Document not found"));
-
-        const actor = await resolveOptionalAuthUser(request);
-        await logAccess({
-          patientProfileId: row!.id,
-          globalHealthNumber: row!.globalHealthNumber,
-          accessedByUserId: actor?.id ?? null,
-          accessedByRole: "ADMIN",
-          accessedResourceType: "IdDocument",
-          accessAction: "DOWNLOAD",
-          ipAddress: request.ip,
-          userAgent: request.headers["user-agent"] ?? null,
-        });
         void reply.header("Content-Type", obj.ContentType ?? "application/octet-stream");
         void reply.header("Cache-Control", "private, no-store");
         return reply.send(stream);
@@ -462,28 +465,30 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       } catch {
         return reply.status(400).send(errorResponse("Invalid email param"));
       }
-      try {
-        const row = await prisma.patientProfile.findUnique({
-          where: { email },
-          select: { id: true, globalHealthNumber: true, insuranceDocumentKey: true },
-        });
-        if (!row?.insuranceDocumentKey) return reply.status(404).send(errorResponse("Document not found"));
+      const row = await prisma.patientProfile.findUnique({
+        where: { email },
+        select: { id: true, insuranceDocumentKey: true },
+      });
+      if (!row?.insuranceDocumentKey) return reply.status(404).send(errorResponse("Document not found"));
 
+      const actor = await resolveOptionalAuthUser(request);
+      try {
+        await guardMedicalRead(
+          request,
+          { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+          { patientProfileId: row.id, resourceType: "INSURANCE_DOC", accessAction: "DOWNLOADED" },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+        }
+        throw guardError;
+      }
+
+      try {
         const obj = await getObject(row.insuranceDocumentKey);
         const stream = streamToNodeReadable(obj.Body);
         if (!stream) return reply.status(404).send(errorResponse("Document not found"));
-
-        const actor = await resolveOptionalAuthUser(request);
-        await logAccess({
-          patientProfileId: row.id,
-          globalHealthNumber: row.globalHealthNumber,
-          accessedByUserId: actor?.id ?? null,
-          accessedByRole: "ADMIN",
-          accessedResourceType: "InsuranceDocument",
-          accessAction: "DOWNLOAD",
-          ipAddress: request.ip,
-          userAgent: request.headers["user-agent"] ?? null,
-        });
         void reply.header("Content-Type", obj.ContentType ?? "application/octet-stream");
         void reply.header("Cache-Control", "private, no-store");
         return reply.send(stream);

@@ -6,7 +6,8 @@ import { requireAuth } from "../utils/require-auth.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { getObject, isMediaStorageConfigured, putObject, streamToNodeReadable } from "../services/object-storage.js";
-import { logAccess } from "../lib/access-log.js";
+import { guardMedicalRead, MedicalAccessDeniedError } from "../utils/guard-medical-read.js";
+import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import {
   createMedicalDocument,
@@ -83,14 +84,11 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
 
       try {
         const docs = await listPatientMedicalDocuments(profile.id, documentTypes);
-        await logAccess({
-          patientProfileId: profile.id,
-          globalHealthNumber: profile.globalHealthNumber,
-          accessedByUserId: request.authUser.sub,
-          accessedByRole: "PATIENT",
-          accessedResourceType: "MedicalDocuments",
-          accessAction: "VIEW",
-        });
+        await guardMedicalRead(
+          request,
+          { userId: request.authUser.sub, role: "PATIENT" },
+          { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "VIEWED" },
+        ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
         return okResponse({ documents: docs.map(serializeDoc) });
       } catch (error) {
         app.log.error(error);
@@ -191,15 +189,11 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
         const doc = await getPatientAccessibleDocument(profile.id, request.params.id);
         if (!doc) return reply.status(404).send(errorResponse("Document not found"));
 
-        await logAccess({
-          patientProfileId: profile.id,
-          globalHealthNumber: profile.globalHealthNumber,
-          accessedByUserId: request.authUser.sub,
-          accessedByRole: "PATIENT",
-          accessedResourceType: "MedicalDocument",
-          accessedResourceId: doc.id,
-          accessAction: "DOWNLOAD",
-        });
+        await guardMedicalRead(
+          request,
+          { userId: request.authUser.sub, role: "PATIENT" },
+          { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "DOWNLOADED", resourceId: doc.id },
+        ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
 
         const obj = await getObject(doc.fileKey);
         const stream = streamToNodeReadable(obj.Body);
@@ -241,6 +235,20 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
         });
         if (!profile) return reply.status(404).send(errorResponse("Patient not found"));
 
+        const actor = await resolveOptionalAuthUser(request);
+        try {
+          await guardMedicalRead(
+            request,
+            { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+            { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "VIEWED" },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
+        }
+
         const docs = await listMedicalDocumentsAdmin(profile.id);
         return okResponse({ documents: docs.map(serializeDoc) });
       } catch (error) {
@@ -256,12 +264,26 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       const auth = await verifyAdminAccess(request);
       if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
 
-      try {
-        const doc = await prisma.medicalDocument.findUnique({
-          where: { id: request.params.id },
-        });
-        if (!doc) return reply.status(404).send(errorResponse("Document not found"));
+      const doc = await prisma.medicalDocument.findUnique({
+        where: { id: request.params.id },
+      });
+      if (!doc) return reply.status(404).send(errorResponse("Document not found"));
 
+      const actor = await resolveOptionalAuthUser(request);
+      try {
+        await guardMedicalRead(
+          request,
+          { userId: actor?.id ?? "", role: actor?.role ?? "ADMIN" },
+          { patientProfileId: doc.patientProfileId, resourceType: "MEDICAL_DOC", accessAction: "DOWNLOADED", resourceId: doc.id },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+        }
+        throw guardError;
+      }
+
+      try {
         const obj = await getObject(doc.fileKey);
         const stream = streamToNodeReadable(obj.Body);
         if (!stream) return reply.status(404).send(errorResponse("File not found in storage"));
