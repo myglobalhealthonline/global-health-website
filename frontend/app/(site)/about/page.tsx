@@ -17,7 +17,7 @@ export default async function AboutPage() {
   const { about } = loadLocaleBundle(locale);
 
   return (
-    <main>
+    <section>
       {/* DARK — hero */}
       <PageHero
         countryLabel={about.hero_eyebrow}
@@ -168,7 +168,7 @@ export default async function AboutPage() {
           </ul>
         </div>
       </section>
-    </main>
+    </section>
   );
 }
 

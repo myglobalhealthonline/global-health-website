@@ -56,7 +56,7 @@ export default async function FAQPage() {
   ];
 
   return (
-    <main>
+    <section>
       <JsonLd data={faqJsonLd(FAQ_GROUPS.flatMap((group) => group.items))} />
 
       <PageHero
@@ -121,6 +121,6 @@ export default async function FAQPage() {
           </div>
         </div>
       </section>
-    </main>
+    </section>
   );
 }

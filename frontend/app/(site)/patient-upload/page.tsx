@@ -88,10 +88,10 @@ function PatientUploadForm() {
 
 export default function PatientUploadPage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16">
+    <section className="mx-auto max-w-3xl px-4 py-16">
       <Suspense fallback={<p className="text-center text-sm">Loading…</p>}>
         <PatientUploadForm />
       </Suspense>
-    </main>
+    </section>
   );
 }

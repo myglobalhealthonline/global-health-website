@@ -239,7 +239,7 @@ export function BookingFormTemplate({
   }
 
   return (
-    <main style={{ background: "var(--color-background-dark)" }}>
+    <section style={{ background: "var(--color-background-dark)" }}>
       {/* HERO */}
       <section
         className="relative isolate overflow-hidden"
@@ -669,7 +669,7 @@ export function BookingFormTemplate({
           </aside>
         </div>
       </section>
-    </main>
+    </section>
   );
 }
 

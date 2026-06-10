@@ -171,7 +171,7 @@ function BrazilConsentForm() {
 
 export default function BrazilConsentPage() {
   return (
-    <main className="gh-section-tight mx-auto max-w-3xl px-4">
+    <section className="gh-section-tight mx-auto max-w-3xl px-4">
       <Suspense
         fallback={
           <p className="text-center text-sm text-[var(--color-text-muted)]">
@@ -181,6 +181,6 @@ export default function BrazilConsentPage() {
       >
         <BrazilConsentForm />
       </Suspense>
-    </main>
+    </section>
   );
 }

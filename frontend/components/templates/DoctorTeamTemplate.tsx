@@ -71,7 +71,7 @@ export function DoctorTeamTemplate({
   const paged = doctors.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
 
   return (
-    <main style={{ background: "var(--color-background-dark)" }}>
+    <section style={{ background: "var(--color-background-dark)" }}>
       <PageHero
         countryLabel={`${countryName} · ${i18n?.theTeamBadge ?? "The team"}`}
         titleLead={i18n?.heroTitleLead ?? "Doctors who"}
@@ -226,6 +226,6 @@ export function DoctorTeamTemplate({
           </div>
         </section>
       ) : null}
-    </main>
+    </section>
   );
 }

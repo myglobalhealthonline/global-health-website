@@ -46,7 +46,7 @@ export default async function TermsPage() {
       </section>
 
       {/* Prose body — light for readability */}
-      <main
+      <section
         className="mx-auto max-w-3xl px-5 md:px-10"
         style={{ padding: "clamp(48px,6vw,80px) 20px" }}
       >
@@ -143,7 +143,7 @@ export default async function TermsPage() {
             </p>
           </section>
         </div>
-      </main>
+      </section>
     </>
   );
 }

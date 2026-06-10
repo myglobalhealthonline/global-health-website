@@ -17,7 +17,7 @@ export default async function ContactPage() {
   const { contact } = loadLocaleBundle(locale);
 
   return (
-    <main>
+    <section>
       {/* DARK — hero */}
       <PageHero
         countryLabel={contact.hero_eyebrow}
@@ -113,6 +113,6 @@ export default async function ContactPage() {
           </div>
         </div>
       </section>
-    </main>
+    </section>
   );
 }

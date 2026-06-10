@@ -124,7 +124,7 @@ export default async function BlogPostPage({ params }: Props) {
 
       {/* Article body — full-width; the article's own HTML controls its
           inner layout/width. */}
-      <main
+      <section
         className="mx-auto max-w-[var(--container-width)]"
         style={{ background: "var(--color-background-page)", padding: "clamp(48px,6vw,80px) clamp(20px,4vw,40px)" }}
       >
@@ -135,7 +135,7 @@ export default async function BlogPostPage({ params }: Props) {
           className="gh-article-body"
           dangerouslySetInnerHTML={{ __html: scopeBlogHtml(post.body) }}
         />
-      </main>
+      </section>
 
       {/* Dark CTA block — matches luxury language of the rest of the site */}
       <section

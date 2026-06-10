@@ -74,7 +74,7 @@ export function DoctorProfileTemplate({
   const backHref = hero.secondaryCta?.href;
 
   return (
-    <main className="bg-[var(--color-background-page)]">
+    <section className="bg-[var(--color-background-page)]">
 
       {/* ── HERO — dark forest, medical cross pattern, split layout ── */}
       <section
@@ -483,6 +483,6 @@ export function DoctorProfileTemplate({
         </div>
       </section>
 
-    </main>
+    </section>
   );
 }

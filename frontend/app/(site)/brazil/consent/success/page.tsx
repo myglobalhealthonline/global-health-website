@@ -1,6 +1,6 @@
 export default function BrazilConsentSuccessPage() {
   return (
-    <main className="mx-auto max-w-lg px-4 py-16 text-center">
+    <section className="mx-auto max-w-lg px-4 py-16 text-center">
       <div className="gh-card p-8">
         <h1 className="text-xl font-bold text-[var(--color-text-primary)]">
           Pagamento recebido
@@ -9,6 +9,6 @@ export default function BrazilConsentSuccessPage() {
           Obrigado. O seu consentimento Brasil foi registado com sucesso.
         </p>
       </div>
-    </main>
+    </section>
   );
 }

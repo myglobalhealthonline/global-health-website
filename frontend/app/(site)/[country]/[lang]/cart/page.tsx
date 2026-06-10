@@ -91,9 +91,9 @@ export default function CartPage() {
 
   if (loading) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         <p className="gh-body-sm">Loading cart…</p>
-      </main>
+      </section>
     );
   }
 
@@ -107,7 +107,7 @@ export default function CartPage() {
             { label: "Cart" },
           ]}
         />
-        <main className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
           <div
             className="flex flex-col items-center rounded-[var(--radius-card)] border border-dashed px-6 py-16 text-center"
             style={{ borderColor: "var(--color-border-strong)", background: "var(--color-background-soft)" }}
@@ -122,7 +122,7 @@ export default function CartPage() {
               <ArrowRight className="size-4" aria-hidden />
             </Link>
           </div>
-        </main>
+        </section>
       </>
     );
   }
@@ -145,7 +145,7 @@ export default function CartPage() {
           { label: "Cart" },
         ]}
       />
-      <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
       <h1 className="gh-h1">Your cart</h1>
       <p className="gh-body-sm mt-2">
         {cart.itemCount} item{cart.itemCount === 1 ? "" : "s"} ·{" "}
@@ -253,7 +253,7 @@ export default function CartPage() {
           </p>
         </aside>
       </div>
-    </main>
+    </section>
     </>
   );
 }

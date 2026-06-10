@@ -32,8 +32,8 @@ export default function LegacyCheckoutSuccessRedirect() {
   }, [loading, cart.countryCode, params, router]);
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6 lg:px-8">
       <p className="text-sm text-slate-500">Confirming your payment…</p>
-    </main>
+    </section>
   );
 }

@@ -113,10 +113,10 @@ function ReviewRateForm() {
 
 export default function ReviewRatePage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16">
+    <section className="mx-auto max-w-3xl px-4 py-16">
       <Suspense fallback={<p className="text-center text-sm">Loading…</p>}>
         <ReviewRateForm />
       </Suspense>
-    </main>
+    </section>
   );
 }

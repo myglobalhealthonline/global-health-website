@@ -109,9 +109,9 @@ export default function CheckoutPage() {
 
   if (loading || !authLoaded) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         <p className="gh-body-sm">Loading…</p>
-      </main>
+      </section>
     );
   }
 
@@ -136,7 +136,7 @@ export default function CheckoutPage() {
   );
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
       <Link href={cartHref} className="gh-link mb-4 inline-flex items-center gap-1.5 text-sm">
         <ArrowLeft className="size-4" aria-hidden />
         Back to cart
@@ -300,7 +300,7 @@ export default function CheckoutPage() {
           </dl>
         </aside>
       </div>
-    </main>
+    </section>
   );
 }
 

@@ -23,7 +23,7 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
   const doctorsHref = `/${country}/${lang}/doctors`;
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="flex flex-col items-center text-center">
         <div
           className="inline-flex size-16 items-center justify-center rounded-full"
@@ -95,6 +95,6 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
           Continue shopping
         </Link>
       </div>
-    </main>
+    </section>
   );
 }

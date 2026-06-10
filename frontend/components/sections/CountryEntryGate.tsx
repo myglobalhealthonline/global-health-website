@@ -145,7 +145,7 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
       </div>
 
       {/* Body */}
-      <main className={`${styles.body} relative flex flex-1 items-center`}>
+      <section className={`${styles.body} relative flex flex-1 items-center`}>
         <div className={`${styles.content} w-full`}>
           {step === 0 ? (
             <>
@@ -264,7 +264,7 @@ export function CountryEntryGate({ countries, countryMeta }: Props) {
             </>
           ) : null}
         </div>
-      </main>
+      </section>
 
       {/* Footer */}
       <footer className={`${styles.footer} relative flex flex-wrap justify-between gap-4`}>

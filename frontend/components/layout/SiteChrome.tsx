@@ -42,6 +42,9 @@ export function SiteChrome({
 
   return (
     <>
+      <a href="#main-content" className="gh-skip-link">
+        Skip to content
+      </a>
       {isGatewayHome ? null : (
         <SiteHeader
           siteName={siteName}
