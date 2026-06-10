@@ -3,11 +3,13 @@ const { Client } = require("pg");
 
 async function main() {
   const email = process.argv[2];
-  const password = process.argv[3];
-  const fullName = process.argv[4] || "Admin User";
+  // Password comes from the environment, NOT argv — a CLI arg lands in shell
+  // history and the process list (visible to other users via `ps`).
+  const password = process.env.ADMIN_INIT_PASSWORD;
+  const fullName = process.argv[3] || "Admin User";
 
   if (!email || !password) {
-    throw new Error("Usage: node scripts/create-admin-user.js <email> <password> [fullName]");
+    throw new Error("Usage: ADMIN_INIT_PASSWORD=<password> node scripts/create-admin-user.js <email> [fullName]");
   }
 
   const passwordHash = await bcrypt.hash(password, 12);

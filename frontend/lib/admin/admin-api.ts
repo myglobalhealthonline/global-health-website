@@ -207,11 +207,13 @@ async function adminRequest<T>(
 ): Promise<AdminApiResponse<T>> {
   const allCookies = (await cookies()).getAll();
   const validCookies = allCookies.filter((entry) => VALID_COOKIE_NAME.test(entry.name));
-  if (validCookies.length !== allCookies.length) {
+  if (validCookies.length !== allCookies.length && process.env.NODE_ENV !== "production") {
+    // Dev-only diagnostic — this is a stale-localhost-cookie hint, not a
+    // production concern, so don't spam prod logs on every request.
     const dropped = allCookies
       .filter((entry) => !VALID_COOKIE_NAME.test(entry.name))
       .map((entry) => entry.name.slice(0, 40));
-     
+
     console.warn(
       `[admin-api] Dropped ${dropped.length} malformed cookie(s) before forwarding to backend. ` +
         "Clear localhost cookies in DevTools to remove them from your browser.",
