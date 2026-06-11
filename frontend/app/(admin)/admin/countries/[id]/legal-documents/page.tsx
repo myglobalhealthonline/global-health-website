@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, FileText, Plus, Trash2 } from "lucide-react";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { countryLegalCacheTag } from "@/lib/content/get-country-legal";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import {
   adminUploadFile,
@@ -108,6 +109,7 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
       redirect(`/admin/countries/${id}/legal-documents?error=${encodeURIComponent(result.message)}`);
     }
     revalidatePath(`/admin/countries/${id}/legal-documents`);
+    revalidateTag(countryLegalCacheTag(c.code), "max");
     redirect(`/admin/countries/${id}/legal-documents?success=${encodeURIComponent(`${DOCUMENT_TYPE_LABELS[type as LegalDocumentType] ?? type} saved`)}`);
   }
 
@@ -121,6 +123,7 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
       redirect(`/admin/countries/${id}/legal-documents?error=${encodeURIComponent(result.message)}`);
     }
     revalidatePath(`/admin/countries/${id}/legal-documents`);
+    revalidateTag(countryLegalCacheTag(c.code), "max");
     redirect(`/admin/countries/${id}/legal-documents?success=Document+deleted`);
   }
 
@@ -265,6 +268,9 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
                 className="gh-input resize-y font-mono text-[12px]"
                 placeholder="<p>Legal document content…</p>"
               />
+              <p className="m-0 text-[11px] text-[var(--color-text-muted)]">
+                Provide content here or attach a PDF below — at least one is required.
+              </p>
             </label>
             <div className="flex flex-col gap-1">
               <span className="gh-field-label">PDF attachment (optional, max 10 MB)</span>

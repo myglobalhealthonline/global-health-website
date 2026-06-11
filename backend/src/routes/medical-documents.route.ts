@@ -167,6 +167,13 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
           byteSize: fileBuffer.length,
           visibleToPatient: true,
         });
+
+        await guardMedicalRead(
+          request,
+          { userId: request.authUser.sub, role: "PATIENT" },
+          { patientProfileId: profile.id, resourceType: "MEDICAL_DOC", accessAction: "UPLOADED", resourceId: doc.id },
+        ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+
         return okResponse({ document: serializeDoc(doc) }, "Document uploaded");
       } catch (error) {
         app.log.error(error);
@@ -330,6 +337,27 @@ const medicalDocumentsRoute: FastifyPluginAsync = async (app) => {
       });
       if (!sharedAppt) {
         return reply.status(403).send(errorResponse("No shared appointment with this patient"));
+      }
+
+      // Central guard: authorize before writing into the patient's record;
+      // logs the upload (MedicalAccessLog) as a side effect. Enforce mode
+      // blocks the write with 403; shadow mode only logs.
+      try {
+        await guardMedicalRead(
+          request,
+          { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+          {
+            patientProfileId: profile.id,
+            resourceType: "MEDICAL_DOC",
+            accessAction: "UPLOADED",
+            relatedAppointmentId: sharedAppt.id,
+          },
+        );
+      } catch (guardError) {
+        if (guardError instanceof MedicalAccessDeniedError) {
+          return reply.status(403).send(errorResponse("Access to this medical record is not permitted"));
+        }
+        throw guardError;
       }
 
       let fileBuffer: Buffer | null = null;

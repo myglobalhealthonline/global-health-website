@@ -5,6 +5,7 @@ import {
   isInReviewQueue,
   isVisibleInHistory,
   ABSENCE_DEFAULT_REASON,
+  absenceDefaultReason,
 } from "./document-template-utils.js";
 
 describe("formatExamsNotes", () => {
@@ -45,5 +46,17 @@ describe("review queue and history", () => {
 describe("ABSENCE_DEFAULT_REASON", () => {
   it("is GDPR default", () => {
     assert.equal(ABSENCE_DEFAULT_REASON, "Medical Confidentiality (GDPR)");
+  });
+});
+
+describe("absenceDefaultReason", () => {
+  it("uses the country's data-protection law name", () => {
+    assert.equal(absenceDefaultReason("LGPD"), "Medical Confidentiality (LGPD)");
+  });
+
+  it("falls back to GDPR when missing or blank", () => {
+    assert.equal(absenceDefaultReason(null), "Medical Confidentiality (GDPR)");
+    assert.equal(absenceDefaultReason(undefined), "Medical Confidentiality (GDPR)");
+    assert.equal(absenceDefaultReason("   "), "Medical Confidentiality (GDPR)");
   });
 });

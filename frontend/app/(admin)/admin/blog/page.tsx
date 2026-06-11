@@ -66,34 +66,26 @@ export default async function AdminBlogListPage({
 
       <AdminCard padding={16}>
         <form action="/admin/blog" className="flex flex-wrap items-end gap-3 px-2 py-1" method="get">
-          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
-            Search
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label text-[12px]">Search</span>
             <input
               name="search"
               defaultValue={filters.search ?? ""}
               placeholder="Title, slug or category"
-              className="mt-1 min-w-[180px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+              className="gh-input min-w-[180px]"
             />
           </label>
-          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
-            Status
-            <select
-              name="status"
-              defaultValue={filters.status ?? ""}
-              className="mt-1 min-w-[120px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
-            >
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label text-[12px]">Status</span>
+            <select name="status" defaultValue={filters.status ?? ""} className="gh-select min-w-[140px]">
               <option value="">Any status</option>
               <option value="PUBLISHED">Published</option>
               <option value="DRAFT">Draft</option>
             </select>
           </label>
-          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
-            Country
-            <select
-              name="countryId"
-              defaultValue={filters.countryId ?? ""}
-              className="mt-1 min-w-[120px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
-            >
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label text-[12px]">Country</span>
+            <select name="countryId" defaultValue={filters.countryId ?? ""} className="gh-select min-w-[150px]">
               <option value="">Any country</option>
               {countries.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -102,33 +94,35 @@ export default async function AdminBlogListPage({
               ))}
             </select>
           </label>
-          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
-            Author
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label text-[12px]">Author</span>
             <input
               name="authorDisplayName"
               defaultValue={filters.authorDisplayName ?? ""}
               placeholder="Author name"
-              className="mt-1 min-w-[140px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+              className="gh-input min-w-[140px]"
             />
           </label>
-          <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
-            Translations
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label text-[12px]">Translations</span>
             <select
               name="hasTranslation"
               defaultValue={filters.hasTranslation ?? ""}
-              className="mt-1 min-w-[140px] rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+              className="gh-select min-w-[150px]"
             >
               <option value="">Any</option>
               <option value="true">Has translations</option>
               <option value="false">No translations</option>
             </select>
           </label>
-          <Btn type="submit" variant="secondary" size="sm">
-            Apply
-          </Btn>
-          <Btn href="/admin/blog" variant="ghost" size="sm">
-            Clear
-          </Btn>
+          <div className="flex items-center gap-2 pb-0.5">
+            <Btn type="submit" variant="secondary" size="sm">
+              Apply
+            </Btn>
+            <Btn href="/admin/blog" variant="ghost" size="sm">
+              Clear
+            </Btn>
+          </div>
         </form>
       </AdminCard>
 

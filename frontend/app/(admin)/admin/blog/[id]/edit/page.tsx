@@ -302,28 +302,24 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
             <p className="mb-2 text-[12px] text-[var(--color-text-muted)]">
               Add a new locale (e.g. <code>fr</code>, <code>de</code>, <code>pt</code>):
             </p>
-            <form action="/admin/blog" method="get" className="flex flex-wrap items-end gap-2">
-              {/* Redirect via GET ?editLocale= */}
-              <input type="hidden" name="placeholder" value="1" />
+            {/* Plain GET form — submitting reloads this page with ?editLocale=<value>,
+                which opens the translation editor for that locale. */}
+            <form action={`/admin/blog/${id}/edit`} method="get" className="flex flex-wrap items-center gap-2">
               <input
                 type="text"
-                id="newLocaleInput"
+                name="editLocale"
                 placeholder="fr"
                 maxLength={10}
+                pattern="[a-zA-Z]{2}(-[a-zA-Z]{2})?"
+                title="Locale code, e.g. fr or pt-br"
+                required
                 className="gh-input w-24"
-                name="_localeInput"
               />
-              <Link
-                href={`/admin/blog/${id}/edit?editLocale=`}
-                className="gh-btn gh-btn-soft inline-flex items-center gap-1"
-              >
+              <button type="submit" className="gh-btn gh-btn-soft inline-flex items-center gap-1">
                 <Plus className="size-3" aria-hidden />
                 Add locale
-              </Link>
+              </button>
             </form>
-            <p className="mt-2 text-[11px] text-[var(--color-text-muted)]">
-              Tip: append <code>?editLocale=fr</code> to the URL to open a specific locale editor.
-            </p>
           </div>
         )}
       </AdminCard>
@@ -331,14 +327,22 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
       {/* Countries multi-select */}
       {allCountries.length > 0 ? (
         <AdminCard className="mt-4">
-          <h3
-            className="m-0 text-[var(--color-text-primary)]"
-            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-          >
-            Country visibility
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            >
+              Country visibility
+            </h3>
+            <Pill tone={assignedCountryIds.size === 0 ? "brand" : "published"}>
+              {assignedCountryIds.size === 0
+                ? "Global — all countries"
+                : `${assignedCountryIds.size} ${assignedCountryIds.size === 1 ? "country" : "countries"}`}
+            </Pill>
+          </div>
           <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
-            Which countries this post is visible in. Leave all unchecked for global.
+            Which countries this post is visible in. Leaving all boxes unchecked makes the post
+            global — it shows in every country.
           </p>
           <form action={saveCountriesAction} className="mt-4">
             <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">

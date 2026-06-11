@@ -1,9 +1,9 @@
 import type { FastifyPluginAsync } from "fastify";
 import { randomUUID } from "node:crypto";
-import { env } from "../config/env.js";
 import { putObject, isMediaStorageConfigured } from "../services/object-storage.js";
 import { sanitizeOriginalFilename } from "../utils/media-key.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
+import { buildPublicMediaUrl } from "../utils/public-media-url.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 // SVG is intentionally excluded. SVGs are XML and can carry inline
@@ -60,17 +60,6 @@ function sniffFileMime(buf: Buffer): string | null {
     if (brand === "avif" || brand === "avis") return "image/avif";
   }
   return null;
-}
-
-function buildPublicMediaUrl(request: { protocol: string; hostname: string }, key: string): string {
-  const configured = env.PUBLIC_MEDIA_ORIGIN?.trim().replace(/\/+$/, "");
-  const path = `/api/media/${key.split("/").map(encodeURIComponent).join("/")}`;
-  if (configured) {
-    return `${configured}${path}`;
-  }
-  const proto = request.protocol;
-  const host = request.hostname;
-  return `${proto}://${host}${path}`;
 }
 
 const adminMediaUploadRoute: FastifyPluginAsync = async (app) => {

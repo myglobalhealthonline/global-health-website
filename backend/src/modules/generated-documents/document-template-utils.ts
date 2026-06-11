@@ -31,7 +31,20 @@ export function formatDateDdMmYyyy(value: string | Date | null | undefined): str
   return `${day}/${month}/${year}`;
 }
 
-export const ABSENCE_DEFAULT_REASON = "Medical Confidentiality (GDPR)";
+export const DEFAULT_DATA_PROTECTION_LAW = "GDPR";
+
+/**
+ * Default reason printed on absence certificates when the doctor leaves the
+ * field blank. The data-protection law name is country-configurable via
+ * CountryLegalProfile.dataProtectionLawName (e.g. "LGPD" for Brazil);
+ * falls back to GDPR when the country has no legal profile.
+ */
+export function absenceDefaultReason(dataProtectionLawName?: string | null): string {
+  const law = (dataProtectionLawName ?? "").trim() || DEFAULT_DATA_PROTECTION_LAW;
+  return `Medical Confidentiality (${law})`;
+}
+
+export const ABSENCE_DEFAULT_REASON = absenceDefaultReason();
 
 /** Document types that appear in Review & Send queue. */
 export const REVIEW_QUEUE_TYPES: GeneratedDocumentType[] = [

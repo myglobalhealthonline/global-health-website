@@ -267,6 +267,13 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
           insuranceDocumentStatus: "PENDING",
         },
       });
+
+      await guardMedicalRead(
+        request,
+        { userId: request.authUser!.sub, role: "PATIENT" },
+        { patientProfileId: profile.id, resourceType: "INSURANCE_DOC", accessAction: "UPLOADED" },
+      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+
       return okResponse({ uploaded: true }, "Insurance document uploaded");
     } catch (error) {
       app.log.error(error);
@@ -324,6 +331,13 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
       if (idDocumentType) data.idDocumentType = idDocumentType;
 
       await prisma.patientProfile.update({ where: { id: profile.id }, data });
+
+      await guardMedicalRead(
+        request,
+        { userId: request.authUser!.sub, role: "PATIENT" },
+        { patientProfileId: profile.id, resourceType: "ID_DOC", accessAction: "UPLOADED" },
+      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+
       return okResponse({ uploaded: true, side }, `ID document (${side}) uploaded`);
     } catch (error) {
       app.log.error(error);
@@ -501,6 +515,13 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
         where: { patientProfileId_slotNumber: { patientProfileId: profile.id, slotNumber: slotRaw } },
         data,
       });
+
+      await guardMedicalRead(
+        request,
+        { userId: request.authUser!.sub, role: "PATIENT" },
+        { patientProfileId: profile.id, resourceType: "NATIONALITY_DOC", accessAction: "UPLOADED" },
+      ).catch((e) => { if (!(e instanceof MedicalAccessDeniedError)) throw e; });
+
       return okResponse({ uploaded: true, side, slot: slotRaw }, "Document uploaded");
     } catch (error) {
       app.log.error(error);

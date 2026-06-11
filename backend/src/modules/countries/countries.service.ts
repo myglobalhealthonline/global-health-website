@@ -387,3 +387,98 @@ export async function deleteCountryLegalDocument(id: string): Promise<boolean> {
     throw normalizeDbError(error, "Could not delete legal document");
   }
 }
+
+// ── Public legal reads (visitor-facing) ─────────────────────────────────────
+
+/** Fields of CountryLegalProfile that are safe to show on the public site.
+ *  Excludes internal-only contacts (billingEmail). */
+const PUBLIC_LEGAL_PROFILE_SELECT = {
+  legalCompanyName: true,
+  legalAddress: true,
+  publicPhones: true,
+  publicEmails: true,
+  supportEmail: true,
+  companyRegistrationNumber: true,
+  taxVatNumber: true,
+  medicalRegistrationNumber: true,
+  healthcareLicenseDetails: true,
+  regulatorName: true,
+  regulatorWebsite: true,
+  companyRegistryUrl: true,
+  medicalRegulatorUrl: true,
+  healthcareAuthorityUrl: true,
+  dataProtectionAuthorityUrl: true,
+  disputeResolutionUrl: true,
+  consumerProtectionUrl: true,
+  dataProtectionLawName: true,
+  dataProtectionPolicyTitle: true,
+  dpoName: true,
+  dpoEmail: true,
+  disputeBodyName: true,
+  disputeEmail: true,
+  disputePhone: true,
+  disputeProcessText: true,
+  legalJurisdictionText: true,
+  consumerRightsText: true,
+} satisfies Prisma.CountryLegalProfileSelect;
+
+/** Legal profile + published document index for one active country. */
+export async function getPublicCountryLegal(code: string) {
+  try {
+    return await prisma.country.findFirst({
+      where: { code: { equals: code, mode: "insensitive" }, isActive: true },
+      select: {
+        code: true,
+        name: true,
+        legalProfile: { select: PUBLIC_LEGAL_PROFILE_SELECT },
+        legalDocuments: {
+          where: { isPublished: true },
+          select: {
+            type: true,
+            title: true,
+            locale: true,
+            version: true,
+            publishedAt: true,
+            updatedAt: true,
+            pdfPath: true,
+          },
+          orderBy: [{ type: "asc" }, { locale: "asc" }],
+        },
+      },
+    });
+  } catch (error) {
+    throw normalizeDbError(error, "Legal information unavailable");
+  }
+}
+
+/** One published legal document with locale fallback: exact match → "en" →
+ *  any published locale. Returns null when the country is inactive/unknown
+ *  or no published document of that type exists. */
+export async function getPublicCountryLegalDocument(
+  code: string,
+  type: CountryLegalDocumentBody["type"],
+  locale: string,
+) {
+  try {
+    const country = await prisma.country.findFirst({
+      where: { code: { equals: code, mode: "insensitive" }, isActive: true },
+      select: { id: true, code: true, name: true },
+    });
+    if (!country) return null;
+
+    const candidates = await prisma.countryLegalDocument.findMany({
+      where: { countryId: country.id, type, isPublished: true },
+      orderBy: { locale: "asc" },
+    });
+    if (candidates.length === 0) return null;
+
+    const wanted = locale.trim().toLowerCase();
+    const doc =
+      candidates.find((d) => d.locale.toLowerCase() === wanted) ??
+      candidates.find((d) => d.locale.toLowerCase() === "en") ??
+      candidates[0];
+    return { country: { code: country.code, name: country.name }, document: doc };
+  } catch (error) {
+    throw normalizeDbError(error, "Legal document unavailable");
+  }
+}

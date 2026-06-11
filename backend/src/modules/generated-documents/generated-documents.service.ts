@@ -10,7 +10,7 @@ import {
 import { sendGeneratedDocumentEmail } from "../../lib/email/templates.js";
 import { resolveAppointmentDocumentSource } from "./appointment-document-source.js";
 import {
-  ABSENCE_DEFAULT_REASON,
+  absenceDefaultReason,
   formatDateDdMmYyyy,
   formatExamsNotes,
   isInReviewQueue,
@@ -44,6 +44,7 @@ function buildTemplateContext(input: {
   address: string;
   birthDate: string;
   fields?: Record<string, string>;
+  dataProtectionLawName?: string | null;
 }): Record<string, unknown> {
   const consultationDate = input.appt.scheduledAt
     ? formatDateDdMmYyyy(input.appt.scheduledAt)
@@ -72,7 +73,7 @@ function buildTemplateContext(input: {
   if (input.documentType === "ABSENCE_CERTIFICATE") {
     base.startDate = f.startDate ? formatDateDdMmYyyy(f.startDate) : "";
     base.endDate = f.endDate ? formatDateDdMmYyyy(f.endDate) : "";
-    base.reason = (f.reason ?? "").trim() || ABSENCE_DEFAULT_REASON;
+    base.reason = (f.reason ?? "").trim() || absenceDefaultReason(input.dataProtectionLawName);
   }
 
   if (input.documentType === "PRESCRIPTION") {
@@ -140,6 +141,18 @@ export async function generateAppointmentDocument(input: {
       ? customLabel
       : TITLES[input.documentType];
 
+  // Absence certificates print a default confidentiality reason that names
+  // the data-protection law. That name is per-country (GDPR, LGPD, …) and
+  // configured on CountryLegalProfile by the admin.
+  let dataProtectionLawName: string | null = null;
+  if (input.documentType === "ABSENCE_CERTIFICATE" && appt.countryCode) {
+    const country = await prisma.country.findFirst({
+      where: { code: { equals: appt.countryCode, mode: "insensitive" } },
+      select: { legalProfile: { select: { dataProtectionLawName: true } } },
+    });
+    dataProtectionLawName = country?.legalProfile?.dataProtectionLawName ?? null;
+  }
+
   const templateContext = buildTemplateContext({
     documentType: input.documentType,
     title,
@@ -150,6 +163,7 @@ export async function generateAppointmentDocument(input: {
     address,
     birthDate,
     fields: input.fields,
+    dataProtectionLawName,
   });
 
   const templateData: Record<string, string> = {

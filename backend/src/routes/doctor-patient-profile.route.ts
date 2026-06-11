@@ -130,6 +130,36 @@ const doctorPatientProfileRoute: FastifyPluginAsync = async (app) => {
       if (!appt) {
         return reply.status(404).send(errorResponse("Patient not found"));
       }
+
+      // Central guard: authorize the profile edit before writing; logs the
+      // UPDATED action (MedicalAccessLog) as a side effect. Skipped when the
+      // profile doesn't exist yet (first write creates it from appointment
+      // fallbacks — nothing to guard until the record exists).
+      const existingProfile = await prisma.patientProfile.findUnique({
+        where: { email },
+        select: { id: true },
+      });
+      if (existingProfile) {
+        try {
+          await guardMedicalRead(
+            request,
+            { userId: auth.userId, role: auth.role, doctorId: auth.doctorId },
+            {
+              patientProfileId: existingProfile.id,
+              resourceType: "SENSITIVE_PROFILE",
+              accessAction: "UPDATED",
+            },
+          );
+        } catch (guardError) {
+          if (guardError instanceof MedicalAccessDeniedError) {
+            return reply
+              .status(403)
+              .send(errorResponse("Access to this medical record is not permitted"));
+          }
+          throw guardError;
+        }
+      }
+
       try {
         const { dateOfBirth, ...rest } = body.data;
         const { profile, alertChanges } = await applyPatientProfileUpdate(

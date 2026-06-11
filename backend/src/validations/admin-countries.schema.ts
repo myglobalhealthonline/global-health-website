@@ -200,14 +200,28 @@ export type CountryLegalProfileBody = z.infer<typeof countryLegalProfileBodySche
 
 const legalDocumentTypeValues = Object.values(LegalDocumentType) as [LegalDocumentType, ...LegalDocumentType[]];
 
-export const countryLegalDocumentBodySchema = z.object({
-  type: z.enum(legalDocumentTypeValues),
-  title: z.string().trim().min(1).max(300),
-  content: z.string().trim().max(500000).optional().nullable(),
-  pdfPath: z.string().trim().max(1000).optional().nullable(),
-  isPublished: z.boolean().optional().default(false),
-  locale: z.string().trim().min(2).max(10).optional().default("en"),
-});
+export const countryLegalDocumentBodySchema = z
+  .object({
+    type: z.enum(legalDocumentTypeValues),
+    title: z.string().trim().min(1).max(300),
+    content: z.string().trim().max(500000).optional().nullable(),
+    pdfPath: z.string().trim().max(1000).optional().nullable(),
+    isPublished: z.boolean().optional().default(false),
+    locale: z.string().trim().min(2).max(10).optional().default("en"),
+  })
+  .superRefine((data, ctx) => {
+    // A legal document with neither rich-text content nor a PDF would render
+    // as an empty public page — require at least one body source.
+    const hasContent = Boolean(data.content && data.content.length > 0);
+    const hasPdf = Boolean(data.pdfPath && data.pdfPath.length > 0);
+    if (!hasContent && !hasPdf) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Provide rich-text content or a PDF attachment (at least one)",
+        path: ["content"],
+      });
+    }
+  });
 
 export type CountryLegalDocumentBody = z.infer<typeof countryLegalDocumentBodySchema>;
 

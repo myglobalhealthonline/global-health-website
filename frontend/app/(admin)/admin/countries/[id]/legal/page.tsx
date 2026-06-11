@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { countryLegalCacheTag } from "@/lib/content/get-country-legal";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import {
   fetchAdminCountryById,
@@ -97,6 +98,7 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
       redirect(`/admin/countries/${id}/legal?error=${encodeURIComponent(result.message)}`);
     }
     revalidatePath(`/admin/countries/${id}/legal`);
+    revalidateTag(countryLegalCacheTag(c.code), "max");
     redirect(`/admin/countries/${id}/legal?success=Legal+profile+saved`);
   }
 
