@@ -1,7 +1,8 @@
 "use client";
 
 import type React from "react";
-import { Clock, Tag, Stethoscope, FlaskConical } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Clock, Tag, Stethoscope, FlaskConical } from "lucide-react";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import type { CartItemKind } from "@/lib/api/cart-types";
 
@@ -37,6 +38,10 @@ type CartServiceCardProps = {
   lowStock?: number | null;
   /** Icon variant */
   iconVariant?: "stethoscope" | "flask";
+  /** When set, a "Learn more" link to the detail page renders beside the
+   *  Add-to-cart button (two-CTA mode for health-test cards). */
+  detailHref?: string;
+  detailLabel?: string;
   i18n?: CartI18n;
 };
 
@@ -55,6 +60,8 @@ export function CartServiceCard({
   soldOut = false,
   lowStock,
   iconVariant = "stethoscope",
+  detailHref,
+  detailLabel = "Learn more",
   i18n,
 }: CartServiceCardProps) {
   const soldOutLabel = i18n?.soldOut ?? "Sold out";
@@ -160,7 +167,20 @@ export function CartServiceCard({
               </div>
             ) : null}
 
-            <div className="mt-5">
+            <div className="mt-5 space-y-2.5">
+              {detailHref ? (
+                <Link
+                  href={detailHref}
+                  className="inline-flex w-full items-center justify-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-200 hover:text-white"
+                  style={{
+                    border: "1px solid rgba(255,255,255,0.20)",
+                    color: "rgba(255,255,255,0.85)",
+                  }}
+                >
+                  {detailLabel}
+                  <ArrowRight className="size-4" aria-hidden />
+                </Link>
+              ) : null}
               {soldOut ? (
                 <button
                   type="button"
@@ -252,7 +272,20 @@ export function CartServiceCard({
           </div>
         ) : null}
 
-        <div className="mt-auto pt-5">
+        <div className="mt-auto space-y-2.5 pt-5">
+          {detailHref ? (
+            <Link
+              href={detailHref}
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-200 hover:text-white"
+              style={{
+                border: "1px solid rgba(255,255,255,0.20)",
+                color: "rgba(255,255,255,0.85)",
+              }}
+            >
+              {detailLabel}
+              <ArrowRight className="size-4" aria-hidden />
+            </Link>
+          ) : null}
           {soldOut ? (
             <button
               type="button"

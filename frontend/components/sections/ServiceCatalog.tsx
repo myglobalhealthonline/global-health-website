@@ -29,8 +29,14 @@ export type ServiceCatalogItem = {
   price: number | null;
   currency?: string;
   dur: string;
+  /** Single-CTA target (category tiles, or legacy). Whole tile links here. */
   href: string;
   imageSrc?: string | null;
+  /** Two-CTA mode (consultation tiles): "Learn more" → detailHref opens the
+   *  service detail page; "Book" → bookHref enters the consult flow. When both
+   *  are set the tile renders two buttons instead of a single whole-tile link. */
+  detailHref?: string;
+  bookHref?: string;
 };
 
 /**
@@ -286,6 +292,38 @@ export function ServiceCatalog({
   );
 }
 
+/** Two-CTA footer for consultation tiles — sits above the tile-wide overlay
+ *  link via z-index. "Learn more" → detail page, "Book" → consult flow. */
+function TileActions({
+  detailHref,
+  bookHref,
+  bookLabel,
+}: {
+  detailHref: string;
+  bookHref: string;
+  bookLabel: string;
+}) {
+  return (
+    <div className="relative z-10 mt-4 flex flex-wrap items-center gap-2.5">
+      <Link
+        href={detailHref}
+        className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-[length:var(--text-meta)] font-semibold transition-colors duration-200 hover:text-white focus-visible:outline-none"
+        style={{ border: "1px solid rgba(255,255,255,0.20)", color: "rgba(255,255,255,0.80)" }}
+      >
+        Learn more
+        <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+      </Link>
+      <Link
+        href={bookHref}
+        className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-[length:var(--text-meta)] font-bold transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-[0.98] focus-visible:outline-none"
+        style={{ background: "var(--color-brand-accent)", color: "#0a1f14" }}
+      >
+        {bookLabel}
+      </Link>
+    </div>
+  );
+}
+
 function ServiceTile({
   service: s,
   variant,
@@ -298,12 +336,24 @@ function ServiceTile({
   const isFeatured = variant === "featured";
   const symbol = currencySymbol(s.currency);
   const tileImageSrc = s.imageSrc ?? DEFAULT_SERVICE_IMAGES[s.type];
+  const twoButton = Boolean(s.detailHref && s.bookHref);
+  // Tile-wide overlay target: detail page in two-CTA mode, else the legacy href.
+  const overlayHref = twoButton ? s.detailHref! : s.href;
+  const bookLabel = s.type === "test" ? i18n.orderKit : i18n.bookConsultation;
+  // Overlay link — sibling of the footer buttons (no nested anchors).
+  const overlay = (
+    <Link
+      href={overlayHref}
+      aria-label={twoButton ? `Learn more: ${s.title}` : s.title}
+      className="absolute inset-0 z-[1] rounded-[var(--radius-card)] focus:outline-none"
+      tabIndex={twoButton ? -1 : 0}
+    />
+  );
 
   /* ── Featured card — horizontal layout: image left | content right ── */
   if (isFeatured) {
     return (
-      <Link
-        href={s.href}
+      <div
         className={cn(
           "group relative overflow-hidden text-left",
           "rounded-[var(--radius-card)]",
@@ -318,6 +368,7 @@ function ServiceTile({
           minHeight: 260,
         }}
       >
+        {overlay}
         {/* Image — fills full height of row */}
         <div className="relative overflow-hidden" style={{ minHeight: 200 }}>
           {tileImageSrc ? (
@@ -365,7 +416,7 @@ function ServiceTile({
         </div>
 
         {/* Content */}
-        <div className="flex flex-col justify-between p-6 lg:p-8">
+        <div className="relative flex flex-col justify-between p-6 lg:p-8">
           <div>
             <h3
               className="font-extrabold tracking-[-0.02em] leading-tight text-[length:var(--text-h2)]"
@@ -413,39 +464,42 @@ function ServiceTile({
               </div>
             </div>
 
-            <span
-              className="
-                mt-4 inline-flex items-center justify-between gap-2
-                w-full rounded-full px-5 py-3
-                text-[length:var(--text-meta)] font-semibold
-                transition-all duration-200
-                group-hover:bg-[var(--color-brand-accent)]
-                motion-reduce:transition-none
-              "
-              style={{
-                border: "1px solid rgba(255,255,255,0.18)",
-                color: "rgba(255,255,255,0.70)",
-              }}
-            >
-              <span className="group-hover:text-[#0a1f14] transition-colors duration-200">
-                {s.type === "test" ? i18n.orderKit : i18n.bookConsultation}
+            {twoButton ? (
+              <TileActions detailHref={s.detailHref!} bookHref={s.bookHref!} bookLabel={bookLabel} />
+            ) : (
+              <span
+                className="
+                  mt-4 inline-flex items-center justify-between gap-2
+                  w-full rounded-full px-5 py-3
+                  text-[length:var(--text-meta)] font-semibold
+                  transition-all duration-200
+                  group-hover:bg-[var(--color-brand-accent)]
+                  motion-reduce:transition-none
+                "
+                style={{
+                  border: "1px solid rgba(255,255,255,0.18)",
+                  color: "rgba(255,255,255,0.70)",
+                }}
+              >
+                <span className="group-hover:text-[#0a1f14] transition-colors duration-200">
+                  {s.type === "test" ? i18n.orderKit : i18n.bookConsultation}
+                </span>
+                <ArrowUpRight
+                  className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#0a1f14] motion-reduce:group-hover:translate-x-0"
+                  strokeWidth={1.5}
+                  aria-hidden
+                />
               </span>
-              <ArrowUpRight
-                className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#0a1f14] motion-reduce:group-hover:translate-x-0"
-                strokeWidth={1.5}
-                aria-hidden
-              />
-            </span>
+            )}
           </div>
         </div>
-      </Link>
+      </div>
     );
   }
 
   /* ── Default card — vertical stack ── */
   return (
-    <Link
-      href={s.href}
+    <div
       className={cn(
         "group relative flex h-full flex-col overflow-hidden text-left",
         "rounded-[var(--radius-card)]",
@@ -455,6 +509,7 @@ function ServiceTile({
       )}
       style={GLASS_CARD_STYLE}
     >
+      {overlay}
       {/* Top: inset photo or icon tile */}
       {tileImageSrc ? (
         <div className="p-2.5 pb-0">
@@ -578,6 +633,6 @@ function ServiceTile({
           </span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

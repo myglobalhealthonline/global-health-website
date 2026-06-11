@@ -120,6 +120,10 @@ export default async function AdminEditHealthTestPage({
     // edits surface immediately on /{slug}/{lang}/tests.
     const updated = result.data.healthTest;
     revalidateTag(SITE_CACHE_TAGS.countryHealthTests(updated.country.code), "max");
+    // Bust the public test detail page (/{country}/{lang}/tests/{testSlug}).
+    if (updated.slug) {
+      revalidateTag(SITE_CACHE_TAGS.healthTestBySlug(updated.slug), "max");
+    }
     const slug = COUNTRY_CODE_TO_SLUG[updated.country.code as keyof typeof COUNTRY_CODE_TO_SLUG];
     if (slug) revalidatePath(`/${slug}/[lang]/tests`, "page");
     revalidatePath("/admin/health-tests");

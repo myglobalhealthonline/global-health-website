@@ -949,10 +949,21 @@ export async function purgeAdminService(id: string): Promise<boolean> {
   }
 }
 
-/** Public: resolve a service by slug + country code; include visible FAQs. */
-export async function getPublicServiceBySlug(slug: string, countryCode?: string) {
+/**
+ * Public: resolve a service by slug + country code; include visible FAQs.
+ * When `locale` is supplied the display fields (name, summary, hero copy,
+ * detailBody, cta, seo) are merged to that language (requested → country
+ * default → base), mirroring `listServicesByCountry`. The raw `translations`
+ * array is stripped and a `resolvedLocale` is added. Returns null when no
+ * matching row exists.
+ */
+export async function getPublicServiceBySlug(
+  slug: string,
+  countryCode?: string,
+  locale?: LocaleCode,
+) {
   try {
-    return await prisma.service.findFirst({
+    const row = await prisma.service.findFirst({
       where: {
         slug,
         isActive: true,
@@ -976,6 +987,12 @@ export async function getPublicServiceBySlug(slug: string, countryCode?: string)
         translations: { select: serviceTranslationSelect },
       },
     });
+    if (!row) return null;
+    return mergeServiceTranslation(
+      row,
+      locale ?? row.country.defaultLocale,
+      row.country.defaultLocale,
+    );
   } catch (error) {
     throw normalizeDbError(error, "Service data is unavailable");
   }

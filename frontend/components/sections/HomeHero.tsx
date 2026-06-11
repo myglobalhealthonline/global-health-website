@@ -77,28 +77,29 @@ export function HomeHero({
       style={{ background: "#0F2E25", minHeight: "100svh" }}
     >
       {/* ── Base layer: hero photo, full-bleed ── */}
-      <Image
-        src={heroPhotoSrc}
-        alt=""
-        aria-hidden
-        fill
-        priority
-        unoptimized={unoptimizedHeroPhoto}
-        className="object-cover object-center"
-        sizes="100vw"
-        style={{ zIndex: 0 }}
-      />
+      <div className="gh-medical-pattern-layer absolute inset-0" style={{ zIndex: 0 }}>
+        <Image
+          src={heroPhotoSrc}
+          alt=""
+          aria-hidden
+          fill
+          priority
+          unoptimized={unoptimizedHeroPhoto}
+          className="object-cover object-center"
+          sizes="100vw"
+        />
+      </div>
 
       {/* ── Green forest overlay — uniform tint so photo looks faded/green-cast ── */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0"
+        className="gh-medical-pattern-layer pointer-events-none absolute inset-0"
         style={{
           zIndex: 1,
-          background: `
-            radial-gradient(ellipse 900px 600px at 100% -10%, rgba(176,241,34,0.07), transparent 50%),
-            radial-gradient(ellipse 700px 900px at -5% 115%, rgba(0,0,0,0.25), transparent 55%),
-            rgba(11,36,28,0.72)
+          backgroundColor: "rgba(11,36,28,0.88)",
+          backgroundImage: `
+            radial-gradient(ellipse 900px 600px at 100% -10%, rgba(176,241,34,0.08), transparent 50%),
+            radial-gradient(ellipse 700px 900px at -5% 115%, rgba(0,0,0,0.20), transparent 55%)
           `,
         }}
       />
@@ -106,7 +107,7 @@ export function HomeHero({
       {/* ── Watermark — sits above overlay, below content ── */}
       <div
         aria-hidden
-        className="gh2-watermark pointer-events-none absolute bottom-[-0.06em] left-[-0.04em] select-none"
+        className="gh-medical-pattern-layer gh2-watermark pointer-events-none absolute bottom-[-0.06em] left-[-0.04em] select-none"
         style={{ fontSize: "clamp(7rem, 21vw, 19rem)", zIndex: 2 }}
       >
         {countryName}
@@ -319,7 +320,7 @@ export function HomeHero({
 
       <div
         aria-hidden
-        className="absolute bottom-0 left-0 right-0 h-px"
+        className="gh-medical-pattern-layer absolute bottom-0 left-0 right-0 h-px"
         style={{ background: "rgba(255,255,255,0.06)", zIndex: 4 }}
       />
 

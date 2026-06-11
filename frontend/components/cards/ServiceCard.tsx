@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Clock, Tag, Stethoscope } from "lucide-react";
+import { ArrowRight, CalendarDays, Clock, Tag, Stethoscope } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 type ServiceCardProps = {
-  href: string;
+  /** Single-CTA mode: whole card links here. Optional when detailHref is set. */
+  href?: string;
   title: string;
   description: string;
   duration?: string;
@@ -15,7 +16,62 @@ type ServiceCardProps = {
   imageSrc?: string | null;
   /** When true, renders as a dark glass card matching the dark luxury theme. */
   dark?: boolean;
+  /** Two-CTA mode: "Learn more" → detailHref, "Book" → bookHref. When both
+   *  are set the card surface links to detailHref and a footer renders two
+   *  explicit buttons. Falls back to single-CTA `href` mode otherwise. */
+  detailHref?: string;
+  bookHref?: string;
+  bookLabel?: string;
 };
+
+/** Footer actions for two-CTA mode. Sits above the card-wide overlay link
+ *  via z-index so each button's own navigation fires. */
+function TwoActions({
+  detailHref,
+  bookHref,
+  learnLabel,
+  bookLabel,
+  dark,
+}: {
+  detailHref: string;
+  bookHref: string;
+  learnLabel: string;
+  bookLabel: string;
+  dark: boolean;
+}) {
+  return (
+    <div className="relative z-10 mt-5 flex flex-wrap items-center gap-2.5">
+      <Link
+        href={detailHref}
+        className={cn(
+          "inline-flex flex-1 items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none",
+          dark
+            ? "text-[rgba(255,255,255,0.85)] hover:text-white"
+            : "text-[var(--color-brand-primary)] hover:opacity-80",
+        )}
+        style={{
+          border: dark ? "1px solid rgba(255,255,255,0.20)" : "1px solid var(--color-border)",
+        }}
+      >
+        {learnLabel}
+        <ArrowRight className="size-4" aria-hidden />
+      </Link>
+      <Link
+        href={bookHref}
+        className={cn(
+          "inline-flex flex-1 items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-bold transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-[0.98] focus-visible:outline-none",
+        )}
+        style={{
+          background: dark ? "var(--color-brand-accent)" : "var(--color-brand-primary)",
+          color: dark ? "#0a1f14" : "#ffffff",
+        }}
+      >
+        <CalendarDays className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
+        {bookLabel}
+      </Link>
+    </div>
+  );
+}
 
 export function ServiceCard({
   href,
@@ -27,21 +83,40 @@ export function ServiceCard({
   className,
   imageSrc,
   dark = false,
+  detailHref,
+  bookHref,
+  bookLabel = "Book",
 }: ServiceCardProps) {
+  const twoButton = Boolean(detailHref && bookHref);
+  // Card-wide overlay target: detail page in two-CTA mode, else the legacy href.
+  const overlayHref = twoButton ? detailHref! : href;
+  const learnLabel = ctaLabel ?? "Learn more";
+
+  // Card-wide overlay link — a sibling (not parent) of the footer buttons so
+  // there are no nested anchors. In single-CTA mode it is the only link.
+  const overlay = overlayHref ? (
+    <Link
+      href={overlayHref}
+      aria-label={`${learnLabel}: ${title}`}
+      className="absolute inset-0 z-[1] rounded-[var(--radius-card)] focus:outline-none"
+      tabIndex={twoButton ? -1 : 0}
+    />
+  ) : null;
+
   if (dark) {
     // Full-bleed immersive card when image is present
     if (imageSrc) {
       return (
-        <Link
-          href={href}
+        <article
           className={cn(
             "group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)]",
             "transition-[transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
-            "hover:-translate-y-1 focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+            "hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0",
             className,
           )}
           style={{ minHeight: 400 }}
         >
+          {overlay}
           {/* Background image */}
           <div className="absolute inset-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -112,35 +187,44 @@ export function ServiceCard({
                 </div>
               ) : null}
 
-              {/* CTA pill */}
-              <div
-                className="mt-5 inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-[background-color,color] duration-200 group-hover:bg-white group-hover:text-[var(--color-brand-primary)]"
-                style={{
-                  background: "rgba(255,255,255,0.10)",
-                  border: "1px solid rgba(255,255,255,0.18)",
-                  color: "rgba(255,255,255,0.90)",
-                }}
-              >
-                {ctaLabel ?? "Learn more"}
-                <ArrowRight
-                  className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
-                  aria-hidden
+              {twoButton ? (
+                <TwoActions
+                  detailHref={detailHref!}
+                  bookHref={bookHref!}
+                  learnLabel={learnLabel}
+                  bookLabel={bookLabel}
+                  dark
                 />
-              </div>
+              ) : (
+                /* CTA pill */
+                <div
+                  className="mt-5 inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-[background-color,color] duration-200 group-hover:bg-white group-hover:text-[var(--color-brand-primary)]"
+                  style={{
+                    background: "rgba(255,255,255,0.10)",
+                    border: "1px solid rgba(255,255,255,0.18)",
+                    color: "rgba(255,255,255,0.90)",
+                  }}
+                >
+                  {learnLabel}
+                  <ArrowRight
+                    className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
+                    aria-hidden
+                  />
+                </div>
+              )}
             </div>
           </div>
-        </Link>
+        </article>
       );
     }
 
     // Glass card — no image
     return (
-      <Link
-        href={href}
+      <article
         className={cn(
-          "group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)]",
+          "group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)]",
           "transition-[transform,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          "hover:-translate-y-0.5 focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+          "hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0",
           className,
         )}
         style={{
@@ -148,7 +232,8 @@ export function ServiceCard({
           border: "1px solid rgba(255,255,255,0.09)",
         }}
       >
-        <div className="flex h-full flex-col p-6 sm:p-7">
+        {overlay}
+        <div className="relative flex h-full flex-col p-6 sm:p-7">
           <h3
             className="text-lg font-bold tracking-[-0.01em] transition-colors duration-200 group-hover:text-[var(--color-brand-accent)]"
             style={{ color: "rgba(255,255,255,0.88)" }}
@@ -183,27 +268,37 @@ export function ServiceCard({
             ) : null}
           </div>
 
-          <div
-            className="mt-5 flex items-center gap-2 text-sm font-semibold transition-colors duration-200 group-hover:text-[var(--color-brand-accent)]"
-            style={{ color: "rgba(255,255,255,0.55)" }}
-          >
-            <span>{ctaLabel ?? "Learn more"}</span>
-            <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" aria-hidden />
-          </div>
+          {twoButton ? (
+            <TwoActions
+              detailHref={detailHref!}
+              bookHref={bookHref!}
+              learnLabel={learnLabel}
+              bookLabel={bookLabel}
+              dark
+            />
+          ) : (
+            <div
+              className="mt-5 flex items-center gap-2 text-sm font-semibold transition-colors duration-200 group-hover:text-[var(--color-brand-accent)]"
+              style={{ color: "rgba(255,255,255,0.55)" }}
+            >
+              <span>{learnLabel}</span>
+              <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" aria-hidden />
+            </div>
+          )}
         </div>
-      </Link>
+      </article>
     );
   }
 
   // Light (default)
   return (
-    <Link
-      href={href}
+    <article
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)] transition-all duration-200 hover:border-[var(--color-brand-primary)]/20 hover:shadow-[var(--shadow-card-hover)]",
+        "group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)] transition-all duration-200 hover:border-[var(--color-brand-primary)]/20 hover:shadow-[var(--shadow-card-hover)]",
         className,
       )}
     >
+      {overlay}
       {imageSrc ? (
         <div
           className="relative w-full overflow-hidden"
@@ -213,7 +308,7 @@ export function ServiceCard({
           <img src={imageSrc} alt={title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         </div>
       ) : null}
-      <div className="flex h-full flex-col p-6 sm:p-7">
+      <div className="relative flex h-full flex-col p-6 sm:p-7">
         <h3 className="text-lg font-bold text-[var(--color-text-primary)] transition-colors group-hover:text-[var(--color-brand-primary)]">
           {title}
         </h3>
@@ -236,11 +331,21 @@ export function ServiceCard({
           ) : null}
         </div>
 
-        <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-[var(--color-brand-primary)]">
-          <span>{ctaLabel ?? "Learn More"}</span>
-          <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" aria-hidden />
-        </div>
+        {twoButton ? (
+          <TwoActions
+            detailHref={detailHref!}
+            bookHref={bookHref!}
+            learnLabel={learnLabel}
+            bookLabel={bookLabel}
+            dark={false}
+          />
+        ) : (
+          <div className="mt-5 flex items-center gap-2 text-sm font-semibold text-[var(--color-brand-primary)]">
+            <span>{learnLabel}</span>
+            <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0" aria-hidden />
+          </div>
+        )}
       </div>
-    </Link>
+    </article>
   );
 }

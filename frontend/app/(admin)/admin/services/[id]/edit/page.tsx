@@ -331,6 +331,10 @@ export default async function AdminEditServicePage({
       revalidateTag(SITE_CACHE_TAGS.countryServices(saved.country.code), "max");
       revalidateTag(SITE_CACHE_TAGS.countryDoctors(saved.country.code), "max");
     }
+    // Bust the public service detail page (/{country}/{lang}/services/{slug}).
+    if (saved.slug) {
+      revalidateTag(SITE_CACHE_TAGS.serviceBySlug(saved.slug), "max");
+    }
     revalidateTag(SITE_CACHE_TAGS.globalServices(), "max");
 
     redirect(

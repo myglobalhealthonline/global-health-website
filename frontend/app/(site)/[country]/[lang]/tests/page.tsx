@@ -175,6 +175,7 @@ export default async function HealthTestsPage({
                     resultsTimeline={t.resultsTimeline}
                     startingPrice={priceLabel}
                     ctaLabel={`Add to cart · ${priceLabel}`}
+                    detailHref={`/${slug}/${lang}/tests/${t.slug}`}
                     soldOut={soldOut}
                     lowStock={lowStock}
                     iconVariant="flask"

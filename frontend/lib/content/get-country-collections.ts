@@ -2,7 +2,9 @@ import { cache } from "react";
 import {
   fetchDoctorsByCountry,
   fetchHealthTestsByCountry,
+  fetchHealthTestDetail,
   fetchPlansByCountry,
+  fetchServiceDetail,
   fetchServicesByCountry,
   fetchSpecialtiesByCountry,
 } from "@/lib/api/site-content-api";
@@ -47,6 +49,54 @@ export type CountryHealthTestCard = {
   /** null = unlimited inventory; 0 = sold out; <=5 surfaces a "Only N
    *  left" badge on the public card. */
   stock: number | null;
+};
+
+export type ServiceFaq = { id: string; question: string; answer: string };
+
+/** Full service detail (admin CMS content) for the public service page. */
+export type CountryServiceDetail = {
+  id: string;
+  slug: string;
+  name: string;
+  summary: string;
+  kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY";
+  heroTitle: string | null;
+  heroDescription: string | null;
+  /** Sanitized rich HTML authored in admin. Safe for scoped innerHTML. */
+  detailBody: string | null;
+  ctaLabel: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  durationMinutes: number | null;
+  basePriceCents: number | null;
+  currencyCode: string | null;
+  specialtyName: string | null;
+  imageSrc: string | null;
+  gallery: string[];
+  faqs: ServiceFaq[];
+};
+
+/** Full health-test detail (admin CMS content) for the public test page. */
+export type CountryHealthTestDetail = {
+  id: string;
+  slug: string;
+  title: string;
+  shortDescription: string | null;
+  detailIntro: string | null;
+  heroButtonLabel: string | null;
+  sampleType: string | null;
+  resultsTimeline: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  priceCents: number;
+  currencyCode: string;
+  stock: number | null;
+  imageSrc: string | null;
+  gallery: string[];
+  whatThisTestCovers: string[];
+  whyGetTested: string[];
+  /** Admin "extra sections" JSON — array of { title, body } when authored. */
+  extraSections: Array<{ title: string; body: string }>;
 };
 
 export type CountryPricingPlanCard = {
@@ -318,6 +368,139 @@ export const getCountryHealthTests = cache(async (
     });
   }
   return out;
+});
+
+function readStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((v): v is string => typeof v === "string" && v.trim().length > 0);
+}
+
+function resolveGallery(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  const out: string[] = [];
+  for (const p of value) {
+    if (typeof p !== "string") continue;
+    const resolved = resolveTrustedAssetUrl(p);
+    if (resolved) out.push(resolved);
+  }
+  return out;
+}
+
+/** Parse the admin `extraSections` JSON into a list of titled prose blocks.
+ *  Tolerates either { title, body } or { heading, content } shapes; skips
+ *  entries without renderable text. */
+function readExtraSections(value: unknown): Array<{ title: string; body: string }> {
+  if (!Array.isArray(value)) return [];
+  const out: Array<{ title: string; body: string }> = [];
+  for (const entry of value) {
+    if (!entry || typeof entry !== "object") continue;
+    const r = entry as Record<string, unknown>;
+    const title =
+      typeof r.title === "string" ? r.title : typeof r.heading === "string" ? r.heading : "";
+    const body =
+      typeof r.body === "string" ? r.body : typeof r.content === "string" ? r.content : "";
+    if (!body.trim() && !title.trim()) continue;
+    out.push({ title, body });
+  }
+  return out;
+}
+
+function readFaqs(value: unknown): ServiceFaq[] {
+  if (!Array.isArray(value)) return [];
+  const out: ServiceFaq[] = [];
+  for (const entry of value) {
+    if (!entry || typeof entry !== "object") continue;
+    const r = entry as Record<string, unknown>;
+    if (typeof r.question !== "string" || typeof r.answer !== "string") continue;
+    out.push({
+      id: typeof r.id === "string" ? r.id : r.question,
+      question: r.question,
+      answer: r.answer,
+    });
+  }
+  return out;
+}
+
+/** Single service detail (admin CMS content) for the public service page.
+ *  Returns null when the slug doesn't resolve for this country. */
+export const getCountryServiceDetail = cache(async (
+  countryCode: string,
+  slug: string,
+  locale?: string,
+): Promise<CountryServiceDetail | null> => {
+  const res = await fetchServiceDetail(slug, countryCode, locale);
+  if (!res.ok) {
+    logPublicContentFallback(`service-detail:${countryCode}:${slug}`, res.message);
+    return null;
+  }
+  const row = res.data.service;
+  if (!row || typeof row !== "object") return null;
+  const r = row as Record<string, unknown>;
+  if (typeof r.id !== "string" || typeof r.slug !== "string" || typeof r.name !== "string") {
+    return null;
+  }
+  const kind = typeof r.kind === "string" ? r.kind : "GENERAL";
+  return {
+    id: r.id,
+    slug: r.slug,
+    name: r.name,
+    summary: typeof r.summary === "string" ? r.summary : "",
+    kind: kind as CountryServiceDetail["kind"],
+    heroTitle: typeof r.heroTitle === "string" ? r.heroTitle : null,
+    heroDescription: typeof r.heroDescription === "string" ? r.heroDescription : null,
+    detailBody: typeof r.detailBody === "string" ? r.detailBody : null,
+    ctaLabel: typeof r.ctaLabel === "string" ? r.ctaLabel : null,
+    seoTitle: typeof r.seoTitle === "string" ? r.seoTitle : null,
+    seoDescription: typeof r.seoDescription === "string" ? r.seoDescription : null,
+    durationMinutes: typeof r.durationMinutes === "number" ? r.durationMinutes : null,
+    basePriceCents: typeof r.basePriceCents === "number" ? r.basePriceCents : null,
+    currencyCode: typeof r.currencyCode === "string" ? r.currencyCode : null,
+    specialtyName: readSpecialtyName(r.specialty),
+    imageSrc: pickImagePath(row) ?? null,
+    gallery: resolveGallery(r.galleryImagePaths),
+    faqs: readFaqs(r.faqs),
+  };
+});
+
+/** Single health-test detail (admin CMS content) for the public test page.
+ *  Returns null when the slug doesn't resolve for this country. */
+export const getCountryHealthTestDetail = cache(async (
+  countryCode: string,
+  slug: string,
+  locale?: string,
+): Promise<CountryHealthTestDetail | null> => {
+  const res = await fetchHealthTestDetail(slug, countryCode, locale);
+  if (!res.ok) {
+    logPublicContentFallback(`health-test-detail:${countryCode}:${slug}`, res.message);
+    return null;
+  }
+  const row = res.data.healthTest;
+  if (!row || typeof row !== "object") return null;
+  const r = row as Record<string, unknown>;
+  if (typeof r.id !== "string" || typeof r.slug !== "string" || typeof r.title !== "string") {
+    return null;
+  }
+  const imagePath = typeof r.productImagePath === "string" ? r.productImagePath : null;
+  return {
+    id: r.id,
+    slug: r.slug,
+    title: r.title,
+    shortDescription: typeof r.shortDescription === "string" ? r.shortDescription : null,
+    detailIntro: typeof r.detailIntro === "string" ? r.detailIntro : null,
+    heroButtonLabel: typeof r.heroButtonLabel === "string" ? r.heroButtonLabel : null,
+    sampleType: typeof r.sampleType === "string" ? r.sampleType : null,
+    resultsTimeline: typeof r.resultsTimeline === "string" ? r.resultsTimeline : null,
+    seoTitle: typeof r.seoTitle === "string" ? r.seoTitle : null,
+    seoDescription: typeof r.seoDescription === "string" ? r.seoDescription : null,
+    priceCents: typeof r.priceCents === "number" ? r.priceCents : 0,
+    currencyCode: typeof r.currencyCode === "string" ? r.currencyCode : "EUR",
+    stock: typeof r.stock === "number" ? r.stock : null,
+    imageSrc: imagePath ? resolveTrustedAssetUrl(imagePath) ?? null : null,
+    gallery: resolveGallery(r.galleryImagePaths),
+    whatThisTestCovers: readStringArray(r.whatThisTestCovers),
+    whyGetTested: readStringArray(r.whyGetTested),
+    extraSections: readExtraSections(r.extraSections),
+  };
 });
 
 /** Active pricing plans for a country. Drives /[country]/[lang]/plans. */

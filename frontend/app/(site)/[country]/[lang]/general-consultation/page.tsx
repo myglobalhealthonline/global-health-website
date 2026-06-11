@@ -149,9 +149,11 @@ export default async function CountryLangGeneralConsultationPage({
   const serviceItems = services.map((s) => ({
     title: s.name,
     description: s.summary,
-    // Pickslot page lets the patient choose doctor + time, then adds
-    // the consultation to the cart with the selected timeSlotId.
-    href: buildBookHref({ country: slug, lang, service: s.slug }),
+    // Two CTAs: "Learn more" opens the read-only service detail page;
+    // "Book" enters the consult doctor-pick flow (cart-first booking).
+    detailHref: `/${slug}/${lang}/services/${s.slug}`,
+    bookHref: `/${slug}/${lang}/consult/${s.slug}`,
+    bookLabel: c.doctors.bookAppointment,
     serviceType: "general" as const,
     duration: formatDuration(s.durationMinutes),
     startingPrice: formatPrice(s.basePriceCents, s.currencyCode),

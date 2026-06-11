@@ -190,6 +190,44 @@ export async function listHealthTestsByCountry(countryCode: string, locale?: Loc
   }
 }
 
+/**
+ * Public: resolve a single health test by slug (+ optional country code) for
+ * the public detail page. Display fields merge to the requested locale via
+ * `mergeHealthTestTranslation` (requested → country default → base). Base-row
+ * arrays/JSON (`whatThisTestCovers`, `whyGetTested`, `extraSections`,
+ * `galleryImagePaths`, `productImagePath`) are returned untranslated. Returns
+ * null when no active matching row exists.
+ */
+export async function getPublicHealthTestBySlug(
+  slug: string,
+  countryCode?: string,
+  locale?: LocaleCode,
+) {
+  try {
+    const row = await prisma.healthTest.findFirst({
+      where: {
+        slug,
+        isActive: true,
+        ...(countryCode
+          ? { country: { code: { equals: countryCode, mode: "insensitive" } } }
+          : {}),
+      },
+      include: {
+        country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true } },
+        translations: { select: healthTestTranslationSelect },
+      },
+    });
+    if (!row) return null;
+    return mergeHealthTestTranslation(
+      row,
+      locale ?? row.country.defaultLocale,
+      row.country.defaultLocale,
+    );
+  } catch (error) {
+    throw normalizeDbError(error, "Health test data is unavailable");
+  }
+}
+
 export async function listAdminHealthTests(query: AdminHealthTestsQuery): Promise<ListAdminHealthTestsResult> {
   const page = Math.max(1, query.page);
   const pageSize = Math.min(100, Math.max(1, query.pageSize));

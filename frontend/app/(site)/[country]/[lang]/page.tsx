@@ -104,7 +104,7 @@ function initialsFromName(name: string): string {
 
 function mapServiceToCatalogItem(
   s: CountryServiceCard,
-  ctaHref: string,
+  hrefs: { detailHref: string; bookHref: string },
 ): ServiceCatalogItem {
   return {
     type: s.kind === "GENERAL" ? "general" : "specialist",
@@ -113,7 +113,11 @@ function mapServiceToCatalogItem(
     price: s.basePriceCents == null ? null : Math.round(s.basePriceCents / 100),
     currency: s.currencyCode ?? "EUR",
     dur: s.durationMinutes != null ? `${s.durationMinutes} min` : "—",
-    href: ctaHref,
+    // "Learn more" → service detail page; "Book" → consult doctor-pick.
+    // `href` kept as the single-CTA fallback (= book) for safety.
+    href: hrefs.bookHref,
+    detailHref: hrefs.detailHref,
+    bookHref: hrefs.bookHref,
     imageSrc: s.imageSrc ?? null,
   };
 }
@@ -184,10 +188,16 @@ export default async function CountryLangHomePage({
   const testsHref = `/${slug}/${lang}/tests`;
   const serviceCatalogItems: ServiceCatalogItem[] = [
     ...generalServices.map((s) =>
-      mapServiceToCatalogItem(s, buildBookHref({ country: slug, lang, service: s.slug })),
+      mapServiceToCatalogItem(s, {
+        detailHref: `/${slug}/${lang}/services/${s.slug}`,
+        bookHref: `/${slug}/${lang}/consult/${s.slug}`,
+      }),
     ),
     ...specialistServices.map((s) =>
-      mapServiceToCatalogItem(s, buildBookHref({ country: slug, lang, service: s.slug })),
+      mapServiceToCatalogItem(s, {
+        detailHref: `/${slug}/${lang}/services/${s.slug}`,
+        bookHref: `/${slug}/${lang}/consult/${s.slug}`,
+      }),
     ),
     ...(isCountryFeatureEnabled(config, "online-prescriptions") && prescriptionServices.length > 0
       ? (() => {

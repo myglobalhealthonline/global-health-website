@@ -8,7 +8,12 @@ import { Container } from "@/components/layout/Container";
 type Item = {
   title: string;
   description: string;
-  href: string;
+  /** Single-CTA mode (legacy). Prefer detailHref + bookHref for two buttons. */
+  href?: string;
+  /** Two-CTA mode: "Learn more" → detailHref, "Book" → bookHref. */
+  detailHref?: string;
+  bookHref?: string;
+  bookLabel?: string;
   serviceType?: "general" | "specialist";
   audience?: string;
   duration?: string;
@@ -152,7 +157,11 @@ export function ServicesGrid({
         {/* Card grid */}
         <div className={useFeaturedFirst ? "gh-card-grid gh-card-grid--featured" : "gh-card-grid"}>
           {paged.map((item) => (
-            <ServiceCard key={item.href} {...item} dark={isDark} />
+            <ServiceCard
+              key={item.detailHref ?? item.href ?? item.title}
+              {...item}
+              dark={isDark}
+            />
           ))}
         </div>
       </Container>

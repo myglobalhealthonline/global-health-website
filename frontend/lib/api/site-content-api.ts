@@ -34,8 +34,10 @@ export const SITE_CACHE_TAGS = {
     locale ? `country:${code}:specialties:${locale}` : `country:${code}:specialties`,
   countryServices: (code: string, locale?: string) =>
     locale ? `country:${code}:services:${locale}` : `country:${code}:services`,
+  serviceBySlug: (slug: string) => `service:${slug}`,
   countryHealthTests: (code: string, locale?: string) =>
     locale ? `country:${code}:health-tests:${locale}` : `country:${code}:health-tests`,
+  healthTestBySlug: (slug: string) => `health-test:${slug}`,
   countryPlans: (code: string) => `country:${code}:plans`,
   countryPage: (code: string, pageKey: string, locale: string) =>
     `country:${code}:pages:${pageKey}:${locale}`,
@@ -277,6 +279,52 @@ export async function fetchServicesByCountry(
         ]
       : [SITE_CACHE_TAGS.countryServices(countryCode)],
   });
+}
+
+/** Single service detail (admin CMS content) for the public detail page. */
+export async function fetchServiceDetail(
+  slug: string,
+  countryCode: string,
+  locale?: string,
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+) {
+  const upper = toBackendLocale(locale);
+  const params = new URLSearchParams({ countryCode });
+  if (upper) params.set("locale", upper);
+  return apiRequest<{ service: unknown }>(
+    `/api/services/${encodeURIComponent(slug)}?${params.toString()}`,
+    {
+      timeoutMs,
+      revalidate: REVALIDATE_SECONDS,
+      tags: [
+        SITE_CACHE_TAGS.serviceBySlug(slug),
+        SITE_CACHE_TAGS.countryServices(countryCode),
+      ],
+    },
+  );
+}
+
+/** Single health-test detail (admin CMS content) for the public detail page. */
+export async function fetchHealthTestDetail(
+  slug: string,
+  countryCode: string,
+  locale?: string,
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+) {
+  const upper = toBackendLocale(locale);
+  const params = new URLSearchParams({ countryCode });
+  if (upper) params.set("locale", upper);
+  return apiRequest<{ healthTest: unknown }>(
+    `/api/health-tests/${encodeURIComponent(slug)}?${params.toString()}`,
+    {
+      timeoutMs,
+      revalidate: REVALIDATE_SECONDS,
+      tags: [
+        SITE_CACHE_TAGS.healthTestBySlug(slug),
+        SITE_CACHE_TAGS.countryHealthTests(countryCode),
+      ],
+    },
+  );
 }
 
 export type ServiceFaqItem = {
