@@ -12,12 +12,11 @@
  */
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { ChevronDown, Check } from "lucide-react";
 import { type CountryCode, type CountryConfig } from "@/data/countries";
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
-import { swapCountryInPath } from "@/lib/routing/path-rewrites";
+import { parseSitePath, swapCountryInPath } from "@/lib/routing/path-rewrites";
 import { useCart } from "@/components/cart/CartContext";
 import { Flag } from "@/components/ui/Flag";
 
@@ -29,7 +28,6 @@ export function CountrySwitcher({
   countries: CountryConfig[];
 }) {
   const pathname = usePathname();
-  const router = useRouter();
   const { cart, clear } = useCart();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -38,17 +36,23 @@ export function CountrySwitcher({
   // different country mid-flow would either silently mismatch pricing
   // or get rejected at checkout. Intercept and confirm; clear the cart
   // on accept so the new country starts fresh.
+  //
+  // Always HARD-navigates (window.location.href, not <Link>/router.push):
+  // client-side nav preserves the shared (site)/layout.tsx, so the
+  // navbar/footer would keep rendering in the previous country's language
+  // until a full reload. Also syncs the gh_locale cookie to the language
+  // the target URL will render in — otherwise a stale cookie (e.g. "pt"
+  // from a Portugal visit) leaks the old language back into global pages.
   function handleSwitch(
     nextHref: string,
     nextCountryCode: CountryCode,
-    e: React.MouseEvent,
+    nextLang: string,
   ) {
     if (
       cart.itemCount > 0 &&
       cart.countryCode &&
       cart.countryCode.toUpperCase() !== nextCountryCode.toUpperCase()
     ) {
-      e.preventDefault();
       const proceed = window.confirm(
         `Your cart has ${cart.itemCount} item${
           cart.itemCount === 1 ? "" : "s"
@@ -56,11 +60,10 @@ export function CountrySwitcher({
       );
       if (!proceed) return;
       void clear();
-      setOpen(false);
-      router.push(nextHref);
-      return;
     }
     setOpen(false);
+    document.cookie = `gh_locale=${nextLang}; path=/; max-age=31536000; SameSite=Lax`;
+    window.location.href = nextHref;
   }
 
   useEffect(() => {
@@ -113,30 +116,40 @@ export function CountrySwitcher({
             {countries.map((c) => {
               const isActive = c.code === activeCountryCode;
               const slug = COUNTRY_CODE_TO_SLUG[c.code];
+              // Keep the visitor's current language when the target
+              // country supports it; otherwise fall back to the target
+              // country's default locale. This makes country switching
+              // language-stable instead of silently resetting the
+              // visitor's choice on every switch.
+              const current = pathname || "/";
+              const currentLang = parseSitePath(current).lang;
+              const nextLang = (
+                currentLang &&
+                (c.supportedLocales as string[]).includes(currentLang)
+                  ? currentLang
+                  : c.defaultLocale
+              ).toLowerCase();
               // On country-scoped paths (/{country}/{lang}/...) swap
               // the country segment in place. On global paths
               // (/about, /blog, /faq, /contact, /) there's nothing to
-              // swap — route straight to the country home in its
-              // default locale. swapCountryInPath returns the input
-              // unchanged on global paths, so detect that and route
-              // to the country home instead.
-              const current = pathname || "/";
-              const swapped = swapCountryInPath(current, slug, c.defaultLocale);
+              // swap — route straight to the country home.
+              // swapCountryInPath returns the input unchanged on global
+              // paths, so detect that and route to the country home.
+              const swapped = swapCountryInPath(current, slug, nextLang);
               const href =
-                swapped === current
-                  ? `/${slug}/${c.defaultLocale.toLowerCase()}`
-                  : swapped;
+                swapped === current ? `/${slug}/${nextLang}` : swapped;
               return (
                 <li key={c.code}>
-                  <Link
-                    href={href}
-                    onClick={(e) => handleSwitch(href, c.code, e)}
+                  <button
+                    type="button"
+                    onClick={() => handleSwitch(href, c.code, nextLang)}
                     role="menuitem"
-                    className="flex items-center justify-between gap-3"
+                    className="flex w-full cursor-pointer items-center justify-between gap-3"
                     style={{
                       padding: "9px 12px",
                       borderRadius: 8,
-                      textDecoration: "none",
+                      border: "none",
+                      textAlign: "left",
                       background: isActive
                         ? "var(--color-background-soft)"
                         : "transparent",
@@ -155,7 +168,7 @@ export function CountrySwitcher({
                         className="size-3.5 text-[var(--color-brand-primary)]"
                       />
                     ) : null}
-                  </Link>
+                  </button>
                 </li>
               );
             })}

@@ -59,6 +59,17 @@ export function MobileNav({
   const activeCountryCode = parsed.country
     ? countryCodeFromSlug(parsed.country)
     : null;
+
+  // Country/language switches HARD-navigate (window.location.href) and sync
+  // the gh_locale cookie. Client-side nav (<Link>) preserves the shared
+  // (site)/layout.tsx, leaving the navbar/footer in the previous language;
+  // a stale cookie leaks the old language back into global pages.
+  function switchTo(href: string, nextLang: string | null) {
+    if (nextLang) {
+      document.cookie = `gh_locale=${nextLang}; path=/; max-age=31536000; SameSite=Lax`;
+    }
+    window.location.href = href;
+  }
   const activeCountry = activeCountryCode ? (countries.find((c) => c.code === activeCountryCode) ?? null) : null;
   const activeLang = parsed.lang ?? activeCountry?.defaultLocale ?? null;
 
@@ -193,13 +204,24 @@ export function MobileNav({
                 {countries.map((c) => {
                   const isActive = c.code === activeCountryCode;
                   const slug = COUNTRY_CODE_TO_SLUG[c.code];
-                  const href = swapCountryInPath(pathname, slug, c.defaultLocale);
+                  // Keep the visitor's language when the target country
+                  // supports it; otherwise the target's default.
+                  const nextLang = (
+                    parsed.lang &&
+                    (c.supportedLocales as string[]).includes(parsed.lang)
+                      ? parsed.lang
+                      : c.defaultLocale
+                  ).toLowerCase();
+                  const swapped = swapCountryInPath(pathname, slug, nextLang);
+                  const href =
+                    swapped === pathname ? `/${slug}/${nextLang}` : swapped;
                   return (
                     <li key={c.code}>
                       <Dialog.Close asChild>
-                        <Link
-                          href={href}
-                          className="flex items-center justify-between rounded-[14px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                        <button
+                          type="button"
+                          onClick={() => switchTo(href, nextLang)}
+                          className="flex w-full cursor-pointer items-center justify-between rounded-[14px] px-3 py-3 text-left text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                         >
                           <span className="inline-flex items-center gap-3">
                             <Flag code={c.code} size="md" />
@@ -211,7 +233,7 @@ export function MobileNav({
                               aria-hidden
                             />
                           ) : null}
-                        </Link>
+                        </button>
                       </Dialog.Close>
                     </li>
                   );
@@ -232,9 +254,10 @@ export function MobileNav({
                     return (
                       <li key={loc}>
                         <Dialog.Close asChild>
-                          <Link
-                            href={href}
-                            className="flex items-center justify-between rounded-[14px] px-3 py-3 text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+                          <button
+                            type="button"
+                            onClick={() => switchTo(href, loc)}
+                            className="flex w-full cursor-pointer items-center justify-between rounded-[14px] px-3 py-3 text-left text-[17px] font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
                           >
                             <span className="inline-flex items-center gap-2">
                               <span className="uppercase text-[var(--color-text-muted)] text-[14px]">
@@ -248,7 +271,7 @@ export function MobileNav({
                                 aria-hidden
                               />
                             ) : null}
-                          </Link>
+                          </button>
                         </Dialog.Close>
                       </li>
                     );
