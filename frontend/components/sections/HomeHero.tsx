@@ -74,7 +74,7 @@ export function HomeHero({
     <section
       aria-labelledby="hero-title"
       className="gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden"
-      style={{ background: "#0F2E25" }}
+      style={{ background: "#0F2E25", minHeight: "100svh" }}
     >
       {/* ── Base layer: hero photo, full-bleed ── */}
       <Image
@@ -89,23 +89,16 @@ export function HomeHero({
         style={{ zIndex: 0 }}
       />
 
-      {/* ── Green forest overlay — strong left (text), fades right (photo shows) ── */}
+      {/* ── Green forest overlay — uniform tint so photo looks faded/green-cast ── */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           zIndex: 1,
           background: `
-            radial-gradient(ellipse 900px 600px at 100% -10%, rgba(176,241,34,0.09), transparent 52%),
-            radial-gradient(ellipse 600px 800px at -5% 110%, rgba(0,0,0,0.30), transparent 55%),
-            linear-gradient(to right,
-              rgba(11,36,28,0.97) 0%,
-              rgba(11,36,28,0.92) 25%,
-              rgba(11,36,28,0.72) 48%,
-              rgba(11,36,28,0.40) 68%,
-              rgba(11,36,28,0.18) 85%,
-              rgba(11,36,28,0.08) 100%
-            )
+            radial-gradient(ellipse 900px 600px at 100% -10%, rgba(176,241,34,0.07), transparent 50%),
+            radial-gradient(ellipse 700px 900px at -5% 115%, rgba(0,0,0,0.25), transparent 55%),
+            rgba(11,36,28,0.72)
           `,
         }}
       />
@@ -122,7 +115,7 @@ export function HomeHero({
       {/* ── Content ── */}
       <div
         className="gh-home-hero-grid relative mx-auto grid max-w-[var(--container-width)] items-center gap-12 px-5 py-14 md:px-10 lg:gap-16 lg:py-16"
-        style={{ minHeight: "calc(100svh - var(--header-height))", zIndex: 3 }}
+        style={{ minHeight: "calc(100svh - var(--header-height, 72px))", zIndex: 3 }}
       >
         {/* ── LEFT — text column ── */}
         <div className="flex max-w-[760px] flex-col py-10 lg:py-20">
