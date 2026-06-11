@@ -12,6 +12,7 @@ import {
   resolveSiteLogoAsset,
 } from "@/lib/content/merge-ireland-home-media";
 import { getSiteContext } from "@/lib/content/get-site-context";
+import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { getCountryByCode, type CountryCode } from "@/data/countries";
 import {
   organizationJsonLd,
@@ -50,6 +51,18 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
 
   const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO_LIGHT;
   const footerDecorImage = resolveFooterCtaDecorAsset(assets);
+
+  // Same locale resolution the nav copy uses — passed to the header so the
+  // language switcher displays the locale the page actually rendered in
+  // (URL lang > gh_locale cookie > Accept-Language), instead of guessing
+  // from the last-country cookie on global pages like /about and /blog.
+  const currentLocale = resolveLocale({
+    headerLocale: requestHeaders.get("x-gh-locale"),
+    cookieLocale: cookieStore.get("gh_locale")?.value,
+    acceptLanguageHeader: requestHeaders.get("accept-language"),
+    countryDefaultLocale:
+      runtimeCountry ? getCountryByCode(runtimeCountry)?.defaultLocale : undefined,
+  });
 
   // Read the gh-last-country cookie server-side so the header renders
   // the remembered country + lang on the first paint. Without this,
@@ -93,6 +106,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         countryFooters={countryFooters}
         initialLastCountry={initialLastCountry}
         countries={countriesMerged}
+        currentLocale={currentLocale}
       >
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
         {children}

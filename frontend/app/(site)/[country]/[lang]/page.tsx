@@ -377,6 +377,9 @@ export default async function CountryLangHomePage({
         ]}
       />
 
+      {/* Hero H1 intentionally not CMS-overridable per country: the brand
+          headline stays identical everywhere and translates only with the
+          language (t.countryHero). */}
       <HomeHero
         countryCode={config.code}
         countryName={config.name}
@@ -385,7 +388,7 @@ export default async function CountryLangHomePage({
         bookHref={page?.ctaHref ?? bookHref}
         totalDoctorsAcrossEurope={totalDoctorsAcrossEurope}
         liveDoctors={liveDoctors}
-        heroTitle={page?.heroTitle ?? null}
+        heroTitle={null}
         heroSubtitle={page?.heroSubtitle ?? null}
         heroImageSrc={page?.heroImageSrc ?? null}
         ctaLabel={page?.ctaLabel ?? null}

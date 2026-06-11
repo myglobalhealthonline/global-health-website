@@ -8,6 +8,7 @@ import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { EMERGENCY_NOTICE } from "@/lib/constants";
 import type { SiteNavigationData } from "@/data/navigation";
 import type { CountryConfig } from "@/data/countries";
+import type { LocaleCode } from "@/lib/i18n/types";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
 
 type Props = {
@@ -23,6 +24,8 @@ type Props = {
   countryFooters?: Record<string, PublicCountryFooter | null>;
   initialLastCountry?: { slug: string; lang: string } | null;
   countries: CountryConfig[];
+  /** Locale the server actually rendered this request in. */
+  currentLocale?: LocaleCode;
 };
 
 export function SiteChrome({
@@ -35,6 +38,7 @@ export function SiteChrome({
   countryFooters,
   initialLastCountry,
   countries,
+  currentLocale,
 }: Props) {
   const pathname = usePathname();
   const isGatewayHome = pathname === "/";
@@ -53,6 +57,7 @@ export function SiteChrome({
           countryFeatures={countryFeatures}
           initialLastCountry={initialLastCountry}
           countries={countries}
+          currentLocale={currentLocale}
         />
       )}
       <main id="main-content" className="grow">

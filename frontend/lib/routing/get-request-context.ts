@@ -1,9 +1,17 @@
-﻿import { resolveLocale } from "@/lib/i18n/resolve-locale";
+﻿import { countries } from "@/data/countries";
+import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
 import { getEnabledDomainConfig } from "@/lib/routing/domain-map";
 import { matchLegacyRoute } from "@/lib/routing/legacy-route-map";
 import { resolveCountry } from "@/lib/routing/resolve-country";
 import type { RequestRoutingContext } from "@/lib/routing/types";
+
+// Country URL segments (both code and slug forms, e.g. "pt"/"portugal").
+// Several country codes (pt, es, ro, de, cs→cz) collide with locale codes,
+// so a first path segment that names a country must never be read as a lang.
+const countryPathSegments = new Set(
+  countries.flatMap((c) => [c.code.toLowerCase(), c.slug.toLowerCase()]),
+);
 
 function normalizePathname(pathname?: string | null): string {
   if (!pathname) return "/";
@@ -12,16 +20,26 @@ function normalizePathname(pathname?: string | null): string {
 
 function getLocaleFromPath(pathname: string): string | null {
   const segments = pathname.split("/").filter(Boolean);
-  // URL shape can be /{lang}/... (lang-first) or /{country}/{lang}/...
-  // (the standard /{country}/{lang} App Router pattern). Check both the
-  // first and second segments so the proxy correctly stamps x-gh-locale
-  // as the URL locale rather than falling back to the cookie.
-  for (const seg of segments.slice(0, 2)) {
-    const lower = seg?.toLowerCase();
-    if (lower && supportedLocaleCodes.includes(lower as LocaleCode)) {
-      return lower;
-    }
+  const first = segments[0]?.toLowerCase();
+  const second = segments[1]?.toLowerCase();
+
+  // /{country}/{lang}/... — lang lives in the SECOND segment. Check it
+  // first: country codes like "pt" double as locale codes, so matching
+  // the first segment would stamp Portuguese for /pt/en/doctors.
+  if (second && supportedLocaleCodes.includes(second as LocaleCode)) {
+    return second;
   }
+
+  // /{lang}/... lang-first legacy shape — only when the first segment
+  // isn't a country code/slug.
+  if (
+    first &&
+    supportedLocaleCodes.includes(first as LocaleCode) &&
+    !countryPathSegments.has(first)
+  ) {
+    return first;
+  }
+
   return null;
 }
 

@@ -112,6 +112,7 @@ export function SiteHeader({
   countryFeatures,
   initialLastCountry,
   countries,
+  currentLocale,
 }: {
   siteName: string;
   navigation: SiteNavigationData;
@@ -120,6 +121,8 @@ export function SiteHeader({
   countryFeatures?: Record<string, string[] | undefined>;
   initialLastCountry?: { slug: string; lang: string } | null;
   countries: CountryConfig[];
+  /** Locale the server rendered this request in (URL > cookie > Accept-Language). */
+  currentLocale?: LocaleCode;
 }) {
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
@@ -141,10 +144,13 @@ export function SiteHeader({
     ? (countries.find((c) => c.code === activeCountryCode) ?? null)
     : null;
 
-  // Lang: URL > cookie > active country's default > "en".
+  // Lang: URL > server-resolved locale (gh_locale cookie / Accept-Language)
+  // > last-country cookie > active country's default > "en". The server
+  // locale keeps the switcher in sync with what the page actually rendered
+  // in on global pages (/about, /blog) where there's no [lang] segment.
   const activeLang = (
     parsed.lang ??
-    (urlCountryCode ? null : lastCountry?.lang) ??
+    (urlCountryCode ? null : (currentLocale ?? lastCountry?.lang)) ??
     activeCountry?.defaultLocale ??
     "en"
   ) as LocaleCode;
