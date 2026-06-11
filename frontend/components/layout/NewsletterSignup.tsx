@@ -59,23 +59,14 @@ export function NewsletterSignup({ countryCode, locale, i18n }: Props) {
 
   return (
     <div>
-      <p
-        className="m-0 inline-flex items-center gap-2 uppercase text-white"
-        style={{
-          fontSize: 11,
-          fontWeight: 700,
-          letterSpacing: "0.18em",
-          marginBottom: 14,
-        }}
-      >
+      <p className="gh-footer-groupHeading m-0 inline-flex items-center gap-2 uppercase text-white">
         <span
           aria-hidden
-          className="inline-block h-3 w-[3px] rounded-full"
-          style={{ background: "var(--color-brand-accent)" }}
+          className="gh-footer-groupAccent inline-block h-3 w-[3px] rounded-full"
         />
         {i18n?.stayInformed ?? "Stay informed"}
       </p>
-      <p style={{ fontSize: 13, lineHeight: 1.5, maxWidth: 280 }}>
+      <p className="gh-newsletter-desc">
         {i18n?.newsletterDesc ?? "Quarterly updates on new countries, doctors, and health topics. No spam."}
       </p>
       <form onSubmit={onSubmit} className="mt-3 flex gap-2">
@@ -108,11 +99,9 @@ export function NewsletterSignup({ countryCode, locale, i18n }: Props) {
       </form>
       {message ? (
         <p
-          className="mt-2"
-          style={{
-            fontSize: 12,
-            color: status === "ok" ? "var(--color-accent)" : "rgba(255,180,180,0.9)",
-          }}
+          className={`gh-newsletter-status mt-2 ${
+            status === "ok" ? "gh-newsletter-statusOk" : "gh-newsletter-statusError"
+          }`}
         >
           {message}
         </p>

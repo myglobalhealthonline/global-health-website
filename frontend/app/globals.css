@@ -162,9 +162,6 @@ html {
   tab-size: 4;
   scroll-behavior: smooth;
   margin: 0;
-  -webkit-text-size-adjust: 100%;
-  -moz-text-size-adjust: 100%;
-  text-size-adjust: 100%;
 }
 
 body {
@@ -520,6 +517,40 @@ img {
   justify-self: end;
 }
 
+.gh-header-authLink {
+  min-height: 44px;
+  align-items: center;
+  text-decoration: none;
+}
+
+.gh-header-bookCta {
+  min-height: 44px;
+  text-decoration: none;
+}
+
+.gh-header-bookCtaMobile {
+  min-height: 40px;
+  text-decoration: none;
+}
+
+.gh-newsletter-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+.gh-newsletter-status {
+  font-size: 12px;
+}
+
+.gh-newsletter-statusOk {
+  color: var(--color-accent);
+}
+
+.gh-newsletter-statusError {
+  color: rgba(255, 180, 180, 0.9);
+}
+
 .gh-footer-brandLink {
   text-decoration: none;
 }
@@ -557,8 +588,64 @@ img {
 }
 
 .gh-footer-navLink {
+  display: inline-block;
   font-size: 14px;
   text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 200ms ease-out, transform 200ms ease-out;
+}
+
+.gh-footer-navLink:hover,
+.gh-footer-navLink:focus-visible {
+  color: #fff;
+  transform: translateX(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-footer-navLink {
+    transition: none;
+  }
+
+  .gh-footer-navLink:hover {
+    transform: none;
+  }
+}
+
+.gh-footer-socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+  transition: transform 200ms ease-out, color 200ms ease-out, border-color 200ms ease-out;
+}
+
+.gh-footer-socialLink:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-brand-accent);
+  color: #fff;
+}
+
+.gh-footer-socialLink:active {
+  transform: scale(0.95);
+}
+
+.gh-footer-socialLink:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(176, 241, 34, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-footer-socialLink {
+    transition: none;
+  }
+
+  .gh-footer-socialLink:hover {
+    transform: none;
+  }
 }
 
 .gh-footer-disclaimer {
@@ -576,6 +663,12 @@ img {
 .gh-footer-legalLink {
   color: inherit;
   text-decoration: none;
+  transition: color 200ms ease-out;
+}
+
+.gh-footer-legalLink:hover,
+.gh-footer-legalLink:focus-visible {
+  color: #fff;
 }
 
 .gh-footer-watermark {

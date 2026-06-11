@@ -211,7 +211,7 @@ export function SiteFooter({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="inline-flex size-9 items-center justify-center rounded-full border border-white/15 text-white/70 transition-[transform,color,border-color] duration-200 hover:-translate-y-0.5 hover:border-[var(--color-brand-accent)] hover:text-white active:scale-95 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.5)]"
+                    className="gh-footer-socialLink"
                   >
                     <Icon className="size-4" />
                   </a>
@@ -253,8 +253,7 @@ export function SiteFooter({
                   const isExternal =
                     item.external === true ||
                     /^(https?:|mailto:|tel:)/i.test(item.href);
-                  const linkClass =
-                    "gh-footer-navLink inline-block text-[rgba(255,255,255,0.70)] transition-[color,transform] duration-200 hover:translate-x-0.5 hover:text-white focus-visible:text-white focus-visible:outline-none motion-reduce:transition-none";
+                  const linkClass = "gh-footer-navLink focus-visible:outline-none";
                   const newTab = item.external === true;
                   return (
                     <li key={item.label + item.href}>
@@ -291,7 +290,7 @@ export function SiteFooter({
           <span className="flex gap-3">
             <Link
               href="/privacy"
-              className="gh-footer-legalLink transition-colors hover:text-white focus-visible:text-white focus-visible:outline-none"
+              className="gh-footer-legalLink focus-visible:outline-none"
             >
               {navigation.footerPrivacyLink}
             </Link>
