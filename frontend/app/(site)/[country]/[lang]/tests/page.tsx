@@ -24,6 +24,8 @@ import { RichBodySection } from "@/components/sections/RichBodySection";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { CartServiceCard } from "@/components/cards/CartServiceCard";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type Params = { country: string; lang: string };
 
@@ -83,14 +85,15 @@ export default async function HealthTestsPage({
   ]);
 
   const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const t = c.testsPage;
   // Cart-first booking: hero/final CTA points at the tests grid below.
   const bookHref = "#tests";
   // Provider-first defaults per Google Ads "restricted services" guidance.
   // Lab-test pages also fall under restricted scope when copy emphasises
   // the kit/sample/process. Anchor on the reviewing clinician instead.
   const heroSubtitle =
-    page?.heroSubtitle ??
-    `Lab-quality test results reviewed by a doctor registered to practise in ${config.name}.`;
+    page?.heroSubtitle ?? t.heroSubtitle.replace("{country}", config.name);
 
   return (
     <>
@@ -103,16 +106,16 @@ export default async function HealthTestsPage({
       />
 
       <PageHero
-        watermark="Lab tests"
+        watermark={t.watermark}
         countryCode={config.code}
-        countryLabel={`${config.name} · Lab tests reviewed by doctors`}
-        titleLead="Lab results,"
-        titleAccent="reviewed by"
-        titleTrail="our doctors."
+        countryLabel={t.countryLabel.replace("{country}", config.name)}
+        titleLead={t.titleLead}
+        titleAccent={t.titleAccent}
+        titleTrail={t.titleTrail}
         lede={heroSubtitle}
-        ctaLabel="Browse tests"
+        ctaLabel={t.ctaLabel}
         ctaHref={bookHref}
-        secondaryLabel="Meet our doctors"
+        secondaryLabel={t.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
         heroImage={{
           src: "/images/stock/tests.jpg",
@@ -126,10 +129,10 @@ export default async function HealthTestsPage({
 
       <TrustRibbon
         items={[
-          { v: "Lab-quality", l: "results", icon: "sparkles" },
-          { v: "Doctor", l: "reviewed", icon: "doctor" },
-          { v: "Home", l: "sample kits", icon: "shield" },
-          { v: "GDPR", l: "compliant", icon: "lock" },
+          { v: t.trustLabQualityValue, l: t.trustLabQualityLabel, icon: "sparkles" },
+          { v: t.trustDoctorValue, l: t.trustDoctorLabel, icon: "doctor" },
+          { v: t.trustHomeValue, l: t.trustHomeLabel, icon: "shield" },
+          { v: t.trustGdprValue, l: t.trustGdprLabel, icon: "lock" },
         ]}
       />
 
@@ -148,7 +151,7 @@ export default async function HealthTestsPage({
               className="text-[11px] font-bold uppercase tracking-[0.2em]"
               style={{ color: "var(--color-brand-accent)" }}
             >
-              Reviewed by our doctors
+              {t.reviewedEyebrow}
             </p>
             <h2
               className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.02]"
@@ -157,7 +160,9 @@ export default async function HealthTestsPage({
                 color: "rgba(255,255,255,0.92)",
               }}
             >
-              {items.length} {items.length === 1 ? "test" : "tests"} available
+              {t.availableHeading
+                .replace("{count}", String(items.length))
+                .replace("{unit}", items.length === 1 ? t.testSingular : t.testPlural)}
             </h2>
             <div className="mt-12 gh-card-grid">
               {items.map((t) => {
@@ -197,7 +202,7 @@ export default async function HealthTestsPage({
         >
           <div className="mx-auto max-w-3xl px-5 md:px-10 text-center">
             <p style={{ color: "rgba(255,255,255,0.55)" }}>
-              Home health tests for {config.name} are coming soon.
+              {t.comingSoon.replace("{country}", config.name)}
             </p>
           </div>
         </section>

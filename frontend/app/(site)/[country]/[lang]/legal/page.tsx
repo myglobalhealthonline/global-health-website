@@ -12,21 +12,26 @@ import {
 } from "@/lib/content/get-country-legal";
 import { SITE_NAME } from "@/lib/constants";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
+import type { CommonLocale, LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const revalidate = 300;
 
 type Params = { country: string; lang: string };
+type LegalT = CommonLocale["legalPage"];
 
-const TYPE_LABELS: Record<LegalDocumentType, string> = {
-  TERMS_OF_SERVICE: "Terms of Service",
-  PRIVACY_POLICY: "Privacy Policy",
-  COOKIE_POLICY: "Cookie Policy",
-  GDPR_NOTICE: "Data Protection Notice",
-  DATA_PROCESSING_AGREEMENT: "Data Processing Agreement",
-  REFUND_POLICY: "Refund Policy",
-  MEDICAL_DISCLAIMER: "Medical Disclaimer",
-  ACCESSIBILITY_STATEMENT: "Accessibility Statement",
-};
+function legalTypeLabels(t: LegalT): Record<LegalDocumentType, string> {
+  return {
+    TERMS_OF_SERVICE: t.typeTermsOfService,
+    PRIVACY_POLICY: t.typePrivacyPolicy,
+    COOKIE_POLICY: t.typeCookiePolicy,
+    GDPR_NOTICE: t.typeGdprNotice,
+    DATA_PROCESSING_AGREEMENT: t.typeDataProcessingAgreement,
+    REFUND_POLICY: t.typeRefundPolicy,
+    MEDICAL_DISCLAIMER: t.typeMedicalDisclaimer,
+    ACCESSIBILITY_STATEMENT: t.typeAccessibilityStatement,
+  };
+}
 
 const DATE_FMT = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
@@ -77,7 +82,7 @@ function LinkRow({ label, href }: { label: string; href: string | null }) {
   );
 }
 
-function CompanySection({ profile, countryName }: { profile: PublicLegalProfile; countryName: string }) {
+function CompanySection({ profile, countryName, t }: { profile: PublicLegalProfile; countryName: string; t: LegalT }) {
   const hasCompanyFacts =
     profile.legalCompanyName ||
     profile.legalAddress ||
@@ -88,13 +93,13 @@ function CompanySection({ profile, countryName }: { profile: PublicLegalProfile;
     profile.regulatorName;
 
   const oversightLinks = [
-    { label: "Company registry", href: profile.companyRegistryUrl },
-    { label: "Medical regulator", href: profile.medicalRegulatorUrl },
-    { label: "Healthcare authority", href: profile.healthcareAuthorityUrl },
-    { label: "Data protection authority", href: profile.dataProtectionAuthorityUrl },
-    { label: "Dispute resolution platform", href: profile.disputeResolutionUrl },
-    { label: "Consumer protection", href: profile.consumerProtectionUrl },
-    { label: profile.regulatorName ?? "Regulator", href: profile.regulatorWebsite },
+    { label: t.linkCompanyRegistry, href: profile.companyRegistryUrl },
+    { label: t.linkMedicalRegulator, href: profile.medicalRegulatorUrl },
+    { label: t.linkHealthcareAuthority, href: profile.healthcareAuthorityUrl },
+    { label: t.linkDataProtectionAuthority, href: profile.dataProtectionAuthorityUrl },
+    { label: t.linkDisputeResolution, href: profile.disputeResolutionUrl },
+    { label: t.linkConsumerProtection, href: profile.consumerProtectionUrl },
+    { label: profile.regulatorName ?? t.regulatorFallback, href: profile.regulatorWebsite },
   ].filter((l) => l.href);
 
   const hasDispute =
@@ -108,23 +113,23 @@ function CompanySection({ profile, countryName }: { profile: PublicLegalProfile;
       {hasCompanyFacts ? (
         <section>
           <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-            Company information
+            {t.companyInformation}
           </h2>
           <dl className="mt-4 space-y-3">
-            <InfoRow label="Legal name" value={profile.legalCompanyName} />
-            <InfoRow label="Registered address" value={profile.legalAddress} />
-            <InfoRow label="Registration number" value={profile.companyRegistrationNumber} />
-            <InfoRow label="Tax / VAT number" value={profile.taxVatNumber} />
-            <InfoRow label="Medical registration" value={profile.medicalRegistrationNumber} />
-            <InfoRow label="Healthcare licence" value={profile.healthcareLicenseDetails} />
-            <InfoRow label="Regulator" value={profile.regulatorName} />
-            <InfoRow label="Support email" value={profile.supportEmail} />
+            <InfoRow label={t.legalName} value={profile.legalCompanyName} />
+            <InfoRow label={t.registeredAddress} value={profile.legalAddress} />
+            <InfoRow label={t.registrationNumber} value={profile.companyRegistrationNumber} />
+            <InfoRow label={t.taxVatNumber} value={profile.taxVatNumber} />
+            <InfoRow label={t.medicalRegistration} value={profile.medicalRegistrationNumber} />
+            <InfoRow label={t.healthcareLicence} value={profile.healthcareLicenseDetails} />
+            <InfoRow label={t.regulator} value={profile.regulatorName} />
+            <InfoRow label={t.supportEmail} value={profile.supportEmail} />
             <InfoRow
-              label="Phone"
+              label={t.phone}
               value={profile.publicPhones.length > 0 ? profile.publicPhones.join(" · ") : null}
             />
             <InfoRow
-              label="Email"
+              label={t.email}
               value={profile.publicEmails.length > 0 ? profile.publicEmails.join(" · ") : null}
             />
           </dl>
@@ -134,12 +139,12 @@ function CompanySection({ profile, countryName }: { profile: PublicLegalProfile;
       {profile.dataProtectionLawName || profile.dpoName || profile.dpoEmail ? (
         <section>
           <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-            Data protection
+            {t.dataProtection}
           </h2>
           <dl className="mt-4 space-y-3">
-            <InfoRow label="Applicable law" value={profile.dataProtectionLawName} />
-            <InfoRow label="Data protection officer" value={profile.dpoName} />
-            <InfoRow label="DPO contact" value={profile.dpoEmail} />
+            <InfoRow label={t.applicableLaw} value={profile.dataProtectionLawName} />
+            <InfoRow label={t.dataProtectionOfficer} value={profile.dpoName} />
+            <InfoRow label={t.dpoContact} value={profile.dpoEmail} />
           </dl>
         </section>
       ) : null}
@@ -147,7 +152,7 @@ function CompanySection({ profile, countryName }: { profile: PublicLegalProfile;
       {oversightLinks.length > 0 ? (
         <section>
           <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-            Regulators and oversight
+            {t.regulatorsOversight}
           </h2>
           <ul className="mt-4 list-inside list-disc space-y-2">
             {oversightLinks.map((l) => (
@@ -160,12 +165,12 @@ function CompanySection({ profile, countryName }: { profile: PublicLegalProfile;
       {hasDispute ? (
         <section>
           <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-            Disputes and complaints
+            {t.disputesComplaints}
           </h2>
           <dl className="mt-4 space-y-3">
-            <InfoRow label="Dispute body" value={profile.disputeBodyName} />
-            <InfoRow label="Email" value={profile.disputeEmail} />
-            <InfoRow label="Phone" value={profile.disputePhone} />
+            <InfoRow label={t.disputeBody} value={profile.disputeBodyName} />
+            <InfoRow label={t.email} value={profile.disputeEmail} />
+            <InfoRow label={t.phone} value={profile.disputePhone} />
           </dl>
           {profile.disputeProcessText ? (
             <p className="mt-3 text-[15px] leading-relaxed text-[var(--color-text-body)]">
@@ -201,6 +206,10 @@ export default async function CountryLegalIndexPage({
   if (!config) notFound();
   if (!isSupportedLocale(lang)) notFound();
 
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const t = c.legalPage;
+  const typeLabels = legalTypeLabels(t);
+
   const legal = await getCountryLegal(code);
 
   // Deduplicate per type (a document may exist in several locales) — prefer
@@ -223,11 +232,11 @@ export default async function CountryLegalIndexPage({
   return (
     <>
       <GH2CompactHero
-        eyebrow={`${config.name} · Legal`}
-        title="Legal"
-        accent="information."
-        watermark="Legal"
-        body={`Legal documents, company registration and regulatory details for ${SITE_NAME} in ${config.name}.`}
+        eyebrow={t.heroEyebrow.replace("{country}", config.name)}
+        title={t.heroTitle}
+        accent={t.heroAccent}
+        watermark={t.heroWatermark}
+        body={t.heroBody.replace("{site}", SITE_NAME).replace("{country}", config.name)}
       />
 
       <section
@@ -238,7 +247,7 @@ export default async function CountryLegalIndexPage({
           {documents.length > 0 ? (
             <section>
               <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-                Legal documents
+                {t.legalDocuments}
               </h2>
               <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                 {documents.map(([type, doc]) => (
@@ -249,14 +258,14 @@ export default async function CountryLegalIndexPage({
                       style={{ boxShadow: "0 1px 3px rgba(15,46,37,0.08), 0 4px 12px rgba(15,46,37,0.04)" }}
                     >
                       <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-muted)]">
-                        {TYPE_LABELS[type]}
+                        {typeLabels[type]}
                       </span>
                       <span className="mt-1 text-[16px] font-bold text-[var(--color-text-primary)] group-hover:underline group-hover:underline-offset-2">
                         {doc.title}
                       </span>
                       <span className="mt-2 text-[12px] text-[var(--color-text-muted)]">
-                        Updated {DATE_FMT.format(new Date(doc.updatedAt))}
-                        {doc.hasPdf ? " · PDF available" : ""}
+                        {t.updated.replace("{date}", DATE_FMT.format(new Date(doc.updatedAt)))}
+                        {doc.hasPdf ? t.pdfAvailable : ""}
                       </span>
                     </Link>
                   </li>
@@ -266,30 +275,30 @@ export default async function CountryLegalIndexPage({
           ) : (
             <section>
               <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
-                Legal documents
+                {t.legalDocuments}
               </h2>
               <p className="mt-3 text-[15px] leading-relaxed text-[var(--color-text-body)]">
-                Country-specific legal documents are being prepared. In the meantime, our{" "}
+                {t.docsEmptyLead}{" "}
                 <Link
                   href="/privacy"
                   className="font-medium text-[var(--color-brand-primary)] underline underline-offset-2"
                 >
-                  privacy notice
+                  {t.privacyNoticeLink}
                 </Link>{" "}
-                and{" "}
+                {t.andWord}{" "}
                 <Link
                   href="/terms"
                   className="font-medium text-[var(--color-brand-primary)] underline underline-offset-2"
                 >
-                  terms of service
+                  {t.termsLink}
                 </Link>{" "}
-                apply.
+                {t.applyWord}
               </p>
             </section>
           )}
 
           {legal?.profile ? (
-            <CompanySection profile={legal.profile} countryName={config.name} />
+            <CompanySection profile={legal.profile} countryName={config.name} t={t} />
           ) : null}
         </div>
       </section>

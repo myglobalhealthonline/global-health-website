@@ -216,7 +216,7 @@ export default async function ConsultPage({
                   color: "rgba(255,255,255,0.70)",
                 }}
               >
-                {service.durationMinutes} min
+                {service.durationMinutes} {c.extra.minSuffix}
               </span>
             ) : null}
             <span
@@ -277,7 +277,7 @@ export default async function ConsultPage({
           <ServiceIntro body={detail.intro} theme="light" />
           {detail.covers ? (
             <ChecklistSection
-              eyebrow="What it covers"
+              eyebrow={c.extra.consultWhatItCovers}
               title={detail.covers.title}
               intro={detail.covers.intro}
               items={detail.covers.items}
@@ -314,10 +314,10 @@ export default async function ConsultPage({
       {/* Dynamic service FAQs from the admin CMS — shown when no authored
           static detail content is present (or always if admin adds them). */}
       {!detail && dynamicFaqs.length > 0 && !selectedDoctorSlug ? (
-        <FAQSection title="Frequently Asked Questions" items={dynamicFaqs} />
+        <FAQSection title={c.extra.consultFaqTitle} items={dynamicFaqs} />
       ) : null}
       {detail && dynamicFaqs.length > 0 && !selectedDoctorSlug ? (
-        <FAQSection title="More Questions" items={dynamicFaqs} />
+        <FAQSection title={c.extra.consultMoreQuestions} items={dynamicFaqs} />
       ) : null}
     </>
   );

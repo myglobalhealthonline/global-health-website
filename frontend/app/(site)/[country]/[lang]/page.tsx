@@ -105,14 +105,15 @@ function initialsFromName(name: string): string {
 function mapServiceToCatalogItem(
   s: CountryServiceCard,
   hrefs: { detailHref: string; bookHref: string },
+  labels: { general: string; specialist: string; min: string },
 ): ServiceCatalogItem {
   return {
     type: s.kind === "GENERAL" ? "general" : "specialist",
     title: s.name,
-    tag: s.kind === "GENERAL" ? "General" : "Specialist",
+    tag: s.kind === "GENERAL" ? labels.general : labels.specialist,
     price: s.basePriceCents == null ? null : Math.round(s.basePriceCents / 100),
     currency: s.currencyCode ?? "EUR",
-    dur: s.durationMinutes != null ? `${s.durationMinutes} min` : "—",
+    dur: s.durationMinutes != null ? `${s.durationMinutes} ${labels.min}` : "—",
     // "Learn more" → service detail page; "Book" → consult doctor-pick.
     // `href` kept as the single-CTA fallback (= book) for safety.
     href: hrefs.bookHref,
@@ -150,7 +151,7 @@ export default async function CountryLangHomePage({
   params: Promise<Params>;
 }) {
   const { country: slug, lang } = await params;
-  const { home: t, services: tServices } = loadLocaleBundle(lang as LocaleCode);
+  const { home: t, services: tServices, common: cc } = loadLocaleBundle(lang as LocaleCode);
   const code = countryCodeFromSlug(slug);
   if (!code) notFound();
   const config = await getPublicCountryByCode(code);
@@ -186,18 +187,23 @@ export default async function CountryLangHomePage({
 
   const prescriptionsHref = `/${slug}/${lang}/prescriptions`;
   const testsHref = `/${slug}/${lang}/tests`;
+  const catalogLabels = {
+    general: cc.homeCatalog.tagGeneral,
+    specialist: cc.homeCatalog.tagSpecialist,
+    min: cc.extra.minSuffix,
+  };
   const serviceCatalogItems: ServiceCatalogItem[] = [
     ...generalServices.map((s) =>
       mapServiceToCatalogItem(s, {
         detailHref: `/${slug}/${lang}/services/${s.slug}`,
         bookHref: `/${slug}/${lang}/consult/${s.slug}`,
-      }),
+      }, catalogLabels),
     ),
     ...specialistServices.map((s) =>
       mapServiceToCatalogItem(s, {
         detailHref: `/${slug}/${lang}/services/${s.slug}`,
         bookHref: `/${slug}/${lang}/consult/${s.slug}`,
-      }),
+      }, catalogLabels),
     ),
     ...(isCountryFeatureEnabled(config, "online-prescriptions") && prescriptionServices.length > 0
       ? (() => {
@@ -211,12 +217,12 @@ export default async function CountryLangHomePage({
           return [
             mapCategoryTile({
               type: "prescription",
-              title: "Repeat Prescription Request",
-              tag: "Prescription",
+              title: cc.navigation.repeatPrescription,
+              tag: cc.homeCatalog.tagPrescription,
               price: minRx != null ? Math.round(minRx / 100) : null,
               currency: rxCurrency,
-              dur: `${prescriptionServices.length} service${
-                prescriptionServices.length === 1 ? "" : "s"
+              dur: `${prescriptionServices.length} ${
+                prescriptionServices.length === 1 ? cc.homeCatalog.serviceSingular : cc.homeCatalog.servicePlural
               }`,
               href: prescriptionsHref,
               imageSrc: rxImage,
@@ -236,11 +242,11 @@ export default async function CountryLangHomePage({
           return [
             mapCategoryTile({
               type: "test",
-              title: "Lab Test Booking",
-              tag: "Lab tests",
+              title: cc.navigation.labTests,
+              tag: cc.homeCatalog.tagTests,
               price: Math.round(minTest / 100),
               currency: testCurrency,
-              dur: `${healthTests.length} test${healthTests.length === 1 ? "" : "s"}`,
+              dur: `${healthTests.length} ${healthTests.length === 1 ? cc.homeCatalog.testSingular : cc.homeCatalog.testPlural}`,
               href: testsHref,
               imageSrc: testImage,
             }),
@@ -278,7 +284,7 @@ export default async function CountryLangHomePage({
     : countryDoctors
   ).map((d) => ({
     name: d.fullName,
-    title: d.specialties.length > 0 ? d.specialties[0] : d.title || "Doctor",
+    title: d.specialties.length > 0 ? d.specialties[0] : d.title || cc.homeCatalog.doctorFallback,
     imcRegistration: d.imcRegistration,
     medicalRegistrationUrl: d.medicalRegistrationUrl,
     country: code,
@@ -312,7 +318,7 @@ export default async function CountryLangHomePage({
       icon: "lock",
     },
     {
-      v: "Live",
+      v: cc.homeCatalog.trustLive,
       l: t.trust.slots,
       icon: "sparkles",
     },

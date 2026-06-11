@@ -42,12 +42,9 @@ type SearchParams = {
 
 type Notice = { tone: "info" | "warning"; message: string } | null;
 
-const STEPS = [
-  { n: 1, label: "Service" },
-  { n: 2, label: "Doctor" },
-  { n: 3, label: "Time" },
-  { n: 4, label: "Details" },
-] as const;
+const STEPS = [{ n: 1 }, { n: 2 }, { n: 3 }, { n: 4 }] as const;
+
+type BookT = import("@/lib/i18n/types").CommonLocale["bookPage"];
 
 export async function generateStaticParams(): Promise<Params[]> {
   return countries.map((c) => ({
@@ -93,6 +90,7 @@ export default async function CountryLangBookPage({
   if (!code || !config || !isSupportedLocale(lang)) notFound();
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const bf = c.bookingForm;
+  const bp = c.bookPage;
 
   const serviceSlugParam = firstParam(sp.service);
   const serviceIdParam = firstParam(sp.serviceId);
@@ -130,17 +128,9 @@ export default async function CountryLangBookPage({
 
   let notice: Notice = null;
   if ((serviceSlugParam || serviceIdParam) && !selectedService) {
-    notice = {
-      tone: "warning",
-      message:
-        "That service is not available for this country right now. Choose another service to continue.",
-    };
+    notice = { tone: "warning", message: bp.serviceUnavailable };
   } else if (doctorSlugParam && !requestedDoctor) {
-    notice = {
-      tone: "warning",
-      message:
-        "That clinician profile is not available in this country right now. Choose a service to continue.",
-    };
+    notice = { tone: "warning", message: bp.clinicianUnavailable };
   }
 
   return (
@@ -154,8 +144,8 @@ export default async function CountryLangBookPage({
       />
 
       <GH2FlowHeader
-        title="Book your consultation"
-        subtitle={`${config.name} medical clinic. Choose a service, clinician, time, and patient details.`}
+        title={bp.title}
+        subtitle={bp.subtitle.replace("{country}", config.name)}
         activeStep={currentStep}
       />
 
@@ -168,12 +158,11 @@ export default async function CountryLangBookPage({
             <aside className="lg:sticky lg:top-24 lg:self-start">
               <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)]">
                 <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
-                  Booking steps
+                  {bp.bookingSteps}
                 </p>
-                <StepIndicator current={currentStep} />
+                <StepIndicator current={currentStep} bp={bp} />
                 <p className="mt-5 text-sm leading-relaxed text-[var(--color-text-muted)]">
-                  Appointments are subject to clinician availability. You will
-                  receive confirmation after completing your booking.
+                  {bp.availabilityNote}
                 </p>
               </div>
             </aside>
@@ -187,6 +176,8 @@ export default async function CountryLangBookPage({
                   services={servicesForRequestedDoctor}
                   requestedDoctor={requestedDoctor}
                   allServicesCount={services.length}
+                  bp={bp}
+                  minSuffix={c.extra.minSuffix}
                 />
               ) : (
                 <SelectedServiceFlow
@@ -199,6 +190,7 @@ export default async function CountryLangBookPage({
                   slotId={slotParam}
                   itemKind={itemKind}
                   bf={bf}
+                  bp={bp}
                 />
               )}
             </div>
@@ -219,6 +211,7 @@ async function SelectedServiceFlow({
   slotId,
   itemKind,
   bf,
+  bp,
 }: {
   code: string;
   country: string;
@@ -229,6 +222,7 @@ async function SelectedServiceFlow({
   slotId: string | null;
   itemKind: "GENERAL_CONSULTATION" | "SPECIALIST_CONSULTATION";
   bf: import("@/lib/i18n/types").CommonLocale["bookingForm"];
+  bp: BookT;
 }) {
   const assignedDoctorIds = new Set(service.assignedDoctorIds);
   const serviceDoctors =
@@ -246,17 +240,17 @@ async function SelectedServiceFlow({
     return (
       <div className="grid gap-6">
         <BookingSectionHeader
-          eyebrow="Step 2"
-          title={`Choose a clinician for ${service.name}`}
-          description="Only clinicians assigned to this service are shown here."
+          eyebrow={bp.step2}
+          title={bp.chooseClinicianFor.replace("{service}", service.name)}
+          description={bp.onlyAssigned}
         />
         {doctorSlug ? (
           <InlineNotice
             notice={{
               tone: "warning",
               message: requestedDoctorExists
-                ? "That clinician is not assigned to this service right now. Choose another clinician to continue."
-                : "That clinician is not available in this country right now. Choose another clinician to continue.",
+                ? bp.clinicianNotAssigned
+                : bp.clinicianNotInCountry,
             }}
           />
         ) : null}
@@ -265,6 +259,7 @@ async function SelectedServiceFlow({
           lang={lang}
           service={service}
           doctors={serviceDoctors}
+          bp={bp}
         />
       </div>
     );
@@ -281,15 +276,15 @@ async function SelectedServiceFlow({
   return (
     <div className="grid gap-6">
       <BookingSectionHeader
-        eyebrow="Steps 3 and 4"
-        title="Pick a time and add patient details"
-        description="Times are shown in the clinic timezone. The appointment is added to your cart before checkout."
+        eyebrow={bp.steps34}
+        title={bp.pickTimeDetails}
+        description={bp.timesShown}
       />
       <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
         <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-5">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
-              Selected consultation
+              {bp.selectedConsultation}
             </p>
             <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.025em] text-[var(--color-text-primary)]">
               {service.name}
@@ -302,33 +297,29 @@ async function SelectedServiceFlow({
             href={buildBookHref({ country, lang })}
             className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
           >
-            Change service
+            {bp.changeService}
           </Link>
         </header>
 
         {!slotIsValid ? (
           <InlineNotice
-            notice={{
-              tone: "warning",
-              message:
-                "The slot from your link is no longer open. The next available slot is selected below.",
-            }}
+            notice={{ tone: "warning", message: bp.slotNoLongerOpen }}
           />
         ) : null}
 
         {slots.length === 0 ? (
           <div className="mt-6 rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-5">
             <p className="font-semibold text-[var(--color-text-primary)]">
-              No open slots in the next 14 days.
+              {bp.noOpenSlots}
             </p>
             <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-              Check back soon or choose another clinician for {service.name}.
+              {bp.checkBackClinician.replace("{service}", service.name)}
             </p>
             <Link
               href={buildBookHref({ country, lang, service: service.slug })}
               className="gh2-btn-lime mt-5"
             >
-              Pick another clinician
+              {bp.pickAnotherClinician}
             </Link>
           </div>
         ) : (
@@ -354,36 +345,40 @@ function ServicePicker({
   services,
   requestedDoctor,
   allServicesCount,
+  bp,
+  minSuffix,
 }: {
   country: string;
   lang: string;
   services: CountryServiceCard[];
   requestedDoctor: CountryDoctorCard | null;
   allServicesCount: number;
+  bp: BookT;
+  minSuffix: string;
 }) {
   return (
     <div className="grid gap-6">
       <BookingSectionHeader
-        eyebrow="Step 1"
+        eyebrow={bp.step1}
         title={
           requestedDoctor
-            ? `Choose a service with ${requestedDoctor.fullName}`
-            : "Choose what you need"
+            ? bp.chooseServiceWith.replace("{doctor}", requestedDoctor.fullName)
+            : bp.chooseWhatYouNeed
         }
-        description="General and specialist services are shown only when enabled for your country."
+        description={bp.servicesEnabledNote}
       />
       {services.length === 0 ? (
         <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 text-center shadow-[var(--shadow-card)]">
           <p className="font-semibold text-[var(--color-text-primary)]">
             {allServicesCount === 0
-              ? "No bookable services are available right now."
-              : "This clinician has no bookable public services right now."}
+              ? bp.noBookableServices
+              : bp.clinicianNoServices}
           </p>
           <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-            Browse the clinician directory or check again soon.
+            {bp.browseDirectory}
           </p>
           <Link href={`/${country}/${lang}/doctors`} className="gh2-btn-lime mt-5">
-            Browse doctors
+            {bp.browseDoctors}
           </Link>
         </div>
       ) : (
@@ -398,6 +393,8 @@ function ServicePicker({
                 service: service.slug,
                 doctor: requestedDoctor?.slug,
               })}
+              bp={bp}
+              minSuffix={minSuffix}
             />
           ))}
         </div>
@@ -411,30 +408,32 @@ function DoctorPicker({
   lang,
   service,
   doctors,
+  bp,
 }: {
   country: string;
   lang: string;
   service: CountryServiceCard;
   doctors: CountryDoctorCard[];
+  bp: BookT;
 }) {
   if (doctors.length === 0) {
     return (
       <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 text-center shadow-[var(--shadow-card)]">
         <p className="font-semibold text-[var(--color-text-primary)]">
-          No clinicians are assigned to this service yet.
+          {bp.noCliniciansAssigned}
         </p>
         <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-          Browse all doctors or choose another service.
+          {bp.browseAllOrChoose}
         </p>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
           <Link href={`/${country}/${lang}/doctors`} className="gh2-btn-lime">
-            Browse doctors
+            {bp.browseDoctors}
           </Link>
           <Link
             href={buildBookHref({ country, lang })}
             className="rounded-full border border-[var(--color-border)] px-5 py-3 text-sm font-semibold text-[var(--color-brand-primary)]"
           >
-            Change service
+            {bp.changeService}
           </Link>
         </div>
       </div>
@@ -461,7 +460,7 @@ function DoctorPicker({
               service: service.slug,
               doctor: doctor.slug,
             })}
-            ctaLabel="View profile"
+            ctaLabel={bp.viewProfile}
           />
         </li>
       ))}
@@ -472,9 +471,13 @@ function DoctorPicker({
 function ServiceChoiceCard({
   service,
   href,
+  bp,
+  minSuffix,
 }: {
   service: CountryServiceCard;
   href: string;
+  bp: BookT;
+  minSuffix: string;
 }) {
   return (
     <Link
@@ -501,11 +504,11 @@ function ServiceChoiceCard({
             ) : (
               <Stethoscope className="size-3.5" aria-hidden />
             )}
-            {service.kind === "SPECIALIST" ? "Specialist" : "General"}
+            {service.kind === "SPECIALIST" ? bp.tagSpecialist : bp.tagGeneral}
           </span>
           {service.durationMinutes ? (
             <span className="text-xs font-semibold text-[var(--color-text-muted)]">
-              {service.durationMinutes} min
+              {service.durationMinutes} {minSuffix}
             </span>
           ) : null}
         </div>
@@ -536,7 +539,8 @@ function ServiceChoiceCard({
   );
 }
 
-function StepIndicator({ current }: { current: number }) {
+function StepIndicator({ current, bp }: { current: number; bp: BookT }) {
+  const labels = [bp.stepService, bp.stepDoctor, bp.stepTime, bp.stepDetails];
   return (
     <ol className="mt-5 grid gap-3">
       {STEPS.map((step) => {
@@ -560,7 +564,7 @@ function StepIndicator({ current }: { current: number }) {
                   : "text-sm font-semibold text-[var(--color-text-muted)]"
               }
             >
-              {step.label}
+              {labels[step.n - 1]}
             </span>
           </li>
         );

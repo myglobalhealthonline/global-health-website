@@ -24,6 +24,8 @@ import { RichBodySection } from "@/components/sections/RichBodySection";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type Params = { country: string; lang: string };
 
@@ -90,6 +92,8 @@ export default async function PrescriptionsPage({
   ]);
 
   const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const t = c.prescriptionsPage;
   const bookHref = "#prescriptions";
   const fallbackHref = `/${slug}/${lang}/doctors`;
 
@@ -105,9 +109,8 @@ export default async function PrescriptionsPage({
   // "Get a prescription" / "delivered electronically" copy was flagged
   // as an outcome-claim. Pivot to clinician-led language.
   const heroSubtitle =
-    page?.heroSubtitle ??
-    `Doctors registered to practise in ${config.name} who review repeat prescription requests for established patients.`;
-  const ctaLabel = page?.ctaLabel ?? "Meet the doctors";
+    page?.heroSubtitle ?? t.heroSubtitle.replace("{country}", config.name);
+  const ctaLabel = page?.ctaLabel ?? t.ctaLabel;
 
   return (
     <>
@@ -121,14 +124,14 @@ export default async function PrescriptionsPage({
 
       <PageHero
         countryCode={config.code}
-        countryLabel={`${config.name} · Doctors handling repeat prescriptions`}
-        titleLead="Meet our"
-        titleAccent="licensed"
-        titleTrail="prescribers."
+        countryLabel={t.countryLabel.replace("{country}", config.name)}
+        titleLead={t.titleLead}
+        titleAccent={t.titleAccent}
+        titleTrail={t.titleTrail}
         lede={heroSubtitle}
         ctaLabel={ctaLabel}
         ctaHref={bookHref}
-        secondaryLabel="Browse all doctors"
+        secondaryLabel={t.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
         heroImage={{
           src: "/images/stock/prescriptions.jpg",
@@ -143,19 +146,22 @@ export default async function PrescriptionsPage({
 
       <TrustRibbon
         items={[
-          { v: "Licensed", l: "doctors", icon: "doctor" },
-          { v: "Clinician", l: "reviewed", icon: "shield" },
-          { v: "GDPR", l: "compliant", icon: "lock" },
-          { v: "EU", l: "registered", icon: "globe" },
+          { v: t.trustLicensedValue, l: t.trustLicensedLabel, icon: "doctor" },
+          { v: t.trustClinicianValue, l: t.trustClinicianLabel, icon: "shield" },
+          { v: t.trustGdprValue, l: t.trustGdprLabel, icon: "lock" },
+          { v: t.trustEuValue, l: t.trustEuLabel, icon: "globe" },
         ]}
       />
 
       {serviceItems.length > 0 ? (
         <div id="prescriptions" className="scroll-mt-24">
           <ServicesGrid
-            eyebrow="Practice areas"
-            title="Repeat prescription consultations"
-            intro={`${serviceItems.length} repeat-prescription ${serviceItems.length === 1 ? "consultation" : "consultations"} available in our ${config.name} network. Profiles update as the team grows.`}
+            eyebrow={t.practiceAreas}
+            title={t.consultationsTitle}
+            intro={t.consultationsIntro
+              .replace("{count}", String(serviceItems.length))
+              .replace("{unit}", serviceItems.length === 1 ? t.consultationSingular : t.consultationPlural)
+              .replace("{country}", config.name)}
             items={serviceItems}
             variant="dark"
           />
@@ -171,9 +177,7 @@ export default async function PrescriptionsPage({
         >
           <div className="mx-auto max-w-3xl px-5 md:px-10 text-center">
             <p style={{ color: "rgba(255,255,255,0.55)" }}>
-              Repeat prescription review for {config.name} is rolling out soon.
-              In the meantime, browse our general practitioners — repeat
-              prescription review is part of the regular care they offer.
+              {t.comingSoon.replace("{country}", config.name)}
             </p>
           </div>
         </section>

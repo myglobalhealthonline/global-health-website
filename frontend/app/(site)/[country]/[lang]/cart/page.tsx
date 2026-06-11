@@ -26,6 +26,10 @@ import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import { CART_ITEM_MAX_QTY, type CartItem } from "@/lib/api/cart-types";
+import type { CommonLocale, LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+
+type CartT = CommonLocale["cartPage"];
 
 /** Live "Xm Ys" countdown until a consultation slot hold expires. */
 function useCountdown(heldUntil: string | null): string | null {
@@ -44,15 +48,25 @@ function useCountdown(heldUntil: string | null): string | null {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-const KIND_META: Record<
-  CartItem["kind"],
-  { label: string; icon: typeof Stethoscope }
-> = {
-  GENERAL_CONSULTATION: { label: "Consultation", icon: Stethoscope },
-  SPECIALIST_CONSULTATION: { label: "Specialist consultation", icon: Stethoscope },
-  HEALTH_TEST: { label: "Health test", icon: FlaskConical },
-  PRESCRIPTION_SERVICE: { label: "Online prescription", icon: Pill },
+const KIND_ICON: Record<CartItem["kind"], typeof Stethoscope> = {
+  GENERAL_CONSULTATION: Stethoscope,
+  SPECIALIST_CONSULTATION: Stethoscope,
+  HEALTH_TEST: FlaskConical,
+  PRESCRIPTION_SERVICE: Pill,
 };
+
+function kindLabel(kind: CartItem["kind"], t: CartT): string {
+  switch (kind) {
+    case "GENERAL_CONSULTATION":
+      return t.kindGeneral;
+    case "SPECIALIST_CONSULTATION":
+      return t.kindSpecialist;
+    case "HEALTH_TEST":
+      return t.kindTest;
+    case "PRESCRIPTION_SERVICE":
+      return t.kindPrescription;
+  }
+}
 
 export default function CartPage() {
   const router = useRouter();
@@ -85,6 +99,8 @@ export default function CartPage() {
   const lang = params?.lang ?? "";
   const countryHome = countrySlug && lang ? `/${countrySlug}/${lang}` : "/";
   const checkoutHref = countrySlug && lang ? `/${countrySlug}/${lang}/checkout` : "/checkout";
+  const t = loadLocaleBundle((lang || "en") as LocaleCode).common.cartPage;
+  const steps = [t.stepCart, t.stepCheckout, t.stepPayment];
 
   // Show "slot expired" banner when server tells us it swept
   // reservations. The setState is conditional on a derived server
@@ -110,10 +126,10 @@ export default function CartPage() {
   if (loading) {
     return (
       <>
-        <GH2FlowHeader title="Your cart" activeStep={1} steps={["Cart", "Checkout", "Payment"]} />
+        <GH2FlowHeader title={t.title} activeStep={1} steps={steps} />
         <section className="bg-[var(--color-background-soft)] px-5 py-12">
           <div className="mx-auto max-w-5xl">
-            <p className="gh-body-sm">Loading cart...</p>
+            <p className="gh-body-sm">{t.loading}</p>
           </div>
         </section>
       </>
@@ -123,19 +139,19 @@ export default function CartPage() {
   if (cart.items.length === 0) {
     return (
       <>
-        <GH2FlowHeader title="Your cart" activeStep={1} steps={["Cart", "Checkout", "Payment"]} />
+        <GH2FlowHeader title={t.title} activeStep={1} steps={steps} />
         <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
           <div
             className="mx-auto flex max-w-3xl flex-col items-center rounded-[var(--radius-card)] border border-dashed bg-white px-6 py-16 text-center shadow-[var(--shadow-card)]"
             style={{ borderColor: "var(--color-border-strong)" }}
           >
             <span aria-hidden className="gh2-index text-[4rem] leading-none text-[rgba(29,75,54,0.16)]">00</span>
-            <h1 className="gh-h3 mt-4">Your cart is empty</h1>
+            <h1 className="gh-h3 mt-4">{t.emptyTitle}</h1>
             <p className="gh-body-sm mt-2 max-w-md">
-              Browse our consultations and health tests to get started.
+              {t.emptyBody}
             </p>
             <Link href={countryHome} className="gh2-btn-lime mt-6">
-              Start shopping
+              {t.startShopping}
               <ArrowRight className="size-4" aria-hidden />
             </Link>
           </div>
@@ -155,20 +171,20 @@ export default function CartPage() {
 
   return (
     <>
-      <GH2FlowHeader title="Your cart" activeStep={1} steps={["Cart", "Checkout", "Payment"]} />
+      <GH2FlowHeader title={t.title} activeStep={1} steps={steps} />
       <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[var(--container-width)]">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h1 className="gh-h2">Your cart</h1>
+              <h1 className="gh-h2">{t.title}</h1>
               <p className="gh-body-sm mt-2">
-                {cart.itemCount} item{cart.itemCount === 1 ? "" : "s"} ·{" "}
-                {cart.countryCode.toUpperCase()} · paid in {cart.currencyCode}
+                {cart.itemCount} {cart.itemCount === 1 ? t.itemSingular : t.itemPlural} ·{" "}
+                {cart.countryCode.toUpperCase()} · {t.paidIn} {cart.currencyCode}
               </p>
             </div>
             <Link href={countryHome} className="gh-link inline-flex items-center gap-1.5 text-sm">
               <ArrowLeft className="size-4" aria-hidden />
-              Continue shopping
+              {t.continueShopping}
             </Link>
           </div>
 
@@ -178,7 +194,7 @@ export default function CartPage() {
               className="gh-status-success mt-5 flex items-center gap-2 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm font-semibold"
             >
               <CheckCircle2 className="size-4 shrink-0" aria-hidden />
-              <span>Added to your cart.</span>
+              <span>{t.addedToCart}</span>
             </div>
           ) : null}
 
@@ -186,16 +202,17 @@ export default function CartPage() {
             <div className="gh-status-warning mt-5 flex items-start gap-2 rounded-[var(--radius-card-sm)] px-3 py-2.5 text-sm">
               <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
               <span>
-                {expiredFlash} consultation reservation{expiredFlash === 1 ? "" : "s"}{" "}
-                expired (10-minute hold) and {expiredFlash === 1 ? "was" : "were"}
-                {" "}released. Pick a new slot to continue.
+                {(expiredFlash === 1 ? t.expiredSingular : t.expiredPlural).replace(
+                  "{count}",
+                  String(expiredFlash),
+                )}
               </span>
               <button
                 type="button"
                 onClick={() => setExpiredFlash(0)}
                 className="ml-auto rounded p-0.5 transition-colors hover:bg-black/5"
                 style={{ color: "var(--color-status-warning-text)" }}
-                aria-label="Dismiss"
+                aria-label={t.dismiss}
               >
                 ×
               </button>
@@ -211,6 +228,7 @@ export default function CartPage() {
                     key={item.id}
                     item={item}
                     currency={cart.currencyCode}
+                    t={t}
                     onIncrease={() => void update(item.id, item.quantity + 1)}
                     onDecrease={() =>
                       item.quantity > 1 && void update(item.id, item.quantity - 1)
@@ -231,7 +249,7 @@ export default function CartPage() {
                   style={{ color: "var(--color-status-error)" }}
                 >
                   <Trash2 className="size-3.5" aria-hidden />
-                  Clear cart
+                  {t.clearCart}
                 </button>
               </div>
             </div>
@@ -241,11 +259,13 @@ export default function CartPage() {
               className="gh-card self-start p-6 lg:sticky lg:top-[calc(var(--header-height)+16px)]"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
-              <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>Order summary</h2>
+              <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>{t.orderSummary}</h2>
               <dl className="mt-4 space-y-2.5 text-sm">
                 <div className="flex justify-between">
                   <dt style={{ color: "var(--color-text-muted)" }}>
-                    Subtotal ({cart.itemCount} item{cart.itemCount === 1 ? "" : "s"})
+                    {t.subtotalItems
+                      .replace("{count}", String(cart.itemCount))
+                      .replace("{unit}", cart.itemCount === 1 ? t.itemSingular : t.itemPlural)}
                   </dt>
                   <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-text-primary)" }}>
                     {formatPrice(cart.subtotalCents, cart.currencyCode)}
@@ -253,7 +273,7 @@ export default function CartPage() {
                 </div>
                 {shippingCents > 0 ? (
                   <div className="flex justify-between">
-                    <dt style={{ color: "var(--color-text-muted)" }}>Shipping</dt>
+                    <dt style={{ color: "var(--color-text-muted)" }}>{t.shipping}</dt>
                     <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-text-primary)" }}>
                       {formatPrice(shippingCents, cart.currencyCode)}
                     </dd>
@@ -263,7 +283,7 @@ export default function CartPage() {
                   className="flex items-baseline justify-between border-t pt-3"
                   style={{ borderColor: "var(--color-border)" }}
                 >
-                  <dt className="text-base font-bold" style={{ color: "var(--color-text-primary)" }}>Total</dt>
+                  <dt className="text-base font-bold" style={{ color: "var(--color-text-primary)" }}>{t.total}</dt>
                   <dd
                     className="text-xl font-extrabold tracking-[-0.02em] [font-variant-numeric:tabular-nums]"
                     style={{ color: "var(--color-text-primary)" }}
@@ -277,7 +297,7 @@ export default function CartPage() {
                 onClick={() => router.push(checkoutHref)}
                 className="gh2-btn-lime mt-6 w-full justify-center"
               >
-                Continue to checkout
+                {t.continueToCheckout}
                 <ArrowRight className="size-4" aria-hidden />
               </button>
 
@@ -287,9 +307,9 @@ export default function CartPage() {
                 style={{ borderColor: "var(--color-border)", color: "var(--color-text-muted)" }}
               >
                 {[
-                  { icon: ShieldCheck, label: "Secure checkout powered by Stripe" },
-                  { icon: Lock, label: "We never store your card details" },
-                  { icon: CalendarCheck, label: "Instant confirmation by email" },
+                  { icon: ShieldCheck, label: t.trustSecure },
+                  { icon: Lock, label: t.trustNoStore },
+                  { icon: CalendarCheck, label: t.trustInstant },
                 ].map(({ icon: Icon, label }) => (
                   <li key={label} className="flex items-center gap-2.5">
                     <Icon className="size-4 shrink-0" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
@@ -311,19 +331,22 @@ function CartItemRow({
   onIncrease,
   onDecrease,
   onRemove,
+  t,
 }: {
   item: CartItem;
   currency: string;
   onIncrease: () => void;
   onDecrease: () => void;
   onRemove: () => void;
+  t: CartT;
 }) {
   const isConsult =
     item.kind === "GENERAL_CONSULTATION" ||
     item.kind === "SPECIALIST_CONSULTATION";
   const countdown = useCountdown(item.heldUntil);
   const atMax = item.quantity >= CART_ITEM_MAX_QTY;
-  const { label: kindLabel, icon: KindIcon } = KIND_META[item.kind];
+  const KindIcon = KIND_ICON[item.kind];
+  const itemKindLabel = kindLabel(item.kind, t);
 
   return (
     <li className="flex gap-4 p-5 sm:gap-5">
@@ -346,9 +369,9 @@ function CartItemRow({
               {item.name}
             </p>
             <p className="mt-1 text-xs" style={{ color: "var(--color-text-muted)" }}>
-              {kindLabel}
+              {itemKindLabel}
               {" · "}
-              {formatPrice(item.unitPriceCents, currency)} each
+              {formatPrice(item.unitPriceCents, currency)} {t.each}
             </p>
           </div>
           <p
@@ -385,7 +408,7 @@ function CartItemRow({
                 <span className="font-semibold">{item.patient.fullName}</span>
                 {item.patient.bookingForOther ? (
                   <span className="gh-badge gh-badge-warning px-1.5 py-0.5 text-[10px] uppercase tracking-wide">
-                    Booked for them
+                    {t.bookedForThem}
                   </span>
                 ) : null}
               </p>
@@ -403,13 +426,13 @@ function CartItemRow({
           >
             <Clock className="size-3" aria-hidden />
             {countdown === "expired"
-              ? "Hold released — pick another slot"
-              : `Slot reserved for ${countdown}`}
+              ? t.holdReleased
+              : t.slotReserved.replace("{time}", countdown)}
           </p>
         ) : null}
         {!isConsult && atMax ? (
           <p className="mt-2 text-[11.5px] font-semibold" style={{ color: "var(--color-status-warning-text)" }}>
-            Max {CART_ITEM_MAX_QTY} per item
+            {t.maxPerItem.replace("{max}", String(CART_ITEM_MAX_QTY))}
           </p>
         ) : null}
 
@@ -420,7 +443,7 @@ function CartItemRow({
               className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
               style={{ background: "var(--color-background-soft)", color: "var(--color-text-muted)" }}
             >
-              1 booking
+              {t.oneBooking}
             </span>
           ) : (
             <div
@@ -431,7 +454,7 @@ function CartItemRow({
                 type="button"
                 onClick={onDecrease}
                 disabled={item.quantity <= 1}
-                aria-label="Decrease quantity"
+                aria-label={t.decreaseQuantity}
                 className="inline-flex size-8 items-center justify-center rounded-full transition-colors hover:bg-[var(--color-background-soft)] disabled:opacity-30"
                 style={{ color: "var(--color-text-body)" }}
               >
@@ -447,8 +470,8 @@ function CartItemRow({
                 type="button"
                 onClick={onIncrease}
                 disabled={atMax}
-                aria-label="Increase quantity"
-                title={atMax ? `Max ${CART_ITEM_MAX_QTY} per item` : undefined}
+                aria-label={t.increaseQuantity}
+                title={atMax ? t.maxPerItem.replace("{max}", String(CART_ITEM_MAX_QTY)) : undefined}
                 className="inline-flex size-8 items-center justify-center rounded-full transition-colors hover:bg-[var(--color-background-soft)] disabled:opacity-30"
                 style={{ color: "var(--color-text-body)" }}
               >
@@ -460,12 +483,12 @@ function CartItemRow({
           <button
             type="button"
             onClick={onRemove}
-            aria-label={`Remove ${item.name}`}
+            aria-label={t.removeAria.replace("{name}", item.name)}
             className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold transition-colors hover:bg-[var(--color-status-error-bg)]"
             style={{ color: "var(--color-status-error)" }}
           >
             <Trash2 className="size-3.5" aria-hidden />
-            Remove
+            {t.remove}
           </button>
         </div>
       </div>

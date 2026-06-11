@@ -31,6 +31,8 @@ import {
 } from "@/components/sections/ServiceContentSections";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type Params = { country: string; lang: string; testSlug: string };
 
@@ -100,26 +102,33 @@ export default async function HealthTestDetailPage({
   const backHref = `/${country}/${lang}/tests`;
   const intro = stripHtml(detail.detailIntro) ?? stripHtml(detail.shortDescription);
 
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const t = c.testDetailPage;
+
   // Product spec rows — only render rows with real data.
   const specs = [
-    detail.sampleType ? { icon: Droplets, label: "Sample type", value: detail.sampleType } : null,
-    detail.resultsTimeline ? { icon: Clock, label: "Results in", value: detail.resultsTimeline } : null,
-    { icon: Stethoscope, label: "Reviewed by", value: `Doctors registered in ${config.name}` },
-    { icon: Package, label: "Delivery", value: "Test kit shipped to your address" },
+    detail.sampleType ? { icon: Droplets, label: t.specSampleType, value: detail.sampleType } : null,
+    detail.resultsTimeline ? { icon: Clock, label: t.specResultsIn, value: detail.resultsTimeline } : null,
+    { icon: Stethoscope, label: t.specReviewedBy, value: t.specReviewedByValue.replace("{country}", config.name) },
+    { icon: Package, label: t.specDelivery, value: t.specDeliveryValue },
   ].filter(Boolean) as Array<{ icon: typeof Clock; label: string; value: string }>;
 
+  const sampleSuffix = detail.sampleType ? ` (${detail.sampleType.toLowerCase()})` : "";
+  const timelineSuffix = detail.resultsTimeline
+    ? t.step3Timeline.replace("{timeline}", detail.resultsTimeline.toLowerCase())
+    : "";
   const steps = [
     {
-      title: "Order your test online",
-      body: "Add the test to your cart and check out securely. Your test kit is shipped to your address.",
+      title: t.step1Title,
+      body: t.step1Body,
     },
     {
-      title: "Provide your sample",
-      body: `Follow the simple instructions included with your test${detail.sampleType ? ` (${detail.sampleType.toLowerCase()})` : ""}.`,
+      title: t.step2Title,
+      body: t.step2Body.replace("{sample}", sampleSuffix),
     },
     {
-      title: "Doctor-reviewed results",
-      body: `Your results are reviewed by a doctor registered in ${config.name}${detail.resultsTimeline ? ` — typically ready in ${detail.resultsTimeline.toLowerCase()}` : ""}.`,
+      title: t.step3Title,
+      body: t.step3Body.replace("{country}", config.name).replace("{timeline}", timelineSuffix),
     },
   ];
 
@@ -149,7 +158,7 @@ export default async function HealthTestDetailPage({
             style={{ color: "var(--color-text-muted)" }}
           >
             <ArrowLeft className="size-4" aria-hidden />
-            All lab tests
+            {t.backToTests}
           </Link>
 
           <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(380px,1fr)_1.15fr] lg:gap-14">
@@ -185,7 +194,7 @@ export default async function HealthTestDetailPage({
                   style={{ background: "var(--color-brand-primary)", color: "#ffffff", boxShadow: "0 2px 8px rgba(29,75,54,0.30)" }}
                 >
                   <ShieldCheck className="size-3.5" aria-hidden />
-                  Doctor reviewed
+                  {t.doctorReviewed}
                 </span>
               </div>
 
@@ -219,7 +228,7 @@ export default async function HealthTestDetailPage({
                   className="text-[11px] font-bold uppercase tracking-[0.22em]"
                   style={{ color: "var(--color-brand-primary)" }}
                 >
-                  At-home health test
+                  {t.eyebrow}
                 </span>
               </p>
 
@@ -248,12 +257,12 @@ export default async function HealthTestDetailPage({
                   {priceLabel}
                 </span>
                 <span className="text-sm font-medium" style={{ color: "var(--color-text-muted)" }}>
-                  incl. doctor review
+                  {t.inclDoctorReview}
                 </span>
                 {lowStock != null ? (
-                  <span className="gh-badge gh-badge-warning">Only {lowStock} left</span>
+                  <span className="gh-badge gh-badge-warning">{t.onlyLeft.replace("{count}", String(lowStock))}</span>
                 ) : null}
-                {soldOut ? <span className="gh-badge gh-badge-error">Sold out</span> : null}
+                {soldOut ? <span className="gh-badge gh-badge-error">{t.soldOut}</span> : null}
               </div>
 
               {/* Spec rows */}
@@ -293,13 +302,13 @@ export default async function HealthTestDetailPage({
                     className="inline-flex h-14 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full px-6 text-[15px] font-bold"
                     style={{ background: "var(--color-background-panel)", color: "var(--color-text-placeholder)" }}
                   >
-                    Sold out
+                    {t.soldOut}
                   </button>
                 ) : (
                   <AddToCartButton
                     kind="HEALTH_TEST"
                     healthTestId={detail.id}
-                    label={detail.heroButtonLabel ?? `Add to cart · ${priceLabel}`}
+                    label={detail.heroButtonLabel ?? t.addToCart.replace("{price}", priceLabel)}
                     className="gh2-btn-lime w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
                   />
                 )}
@@ -309,8 +318,8 @@ export default async function HealthTestDetailPage({
                   style={{ color: "var(--color-text-muted)" }}
                 >
                   {[
-                    { icon: Lock, label: "Secure Stripe checkout" },
-                    { icon: CalendarCheck, label: "Order confirmation by email" },
+                    { icon: Lock, label: t.secureCheckout },
+                    { icon: CalendarCheck, label: t.orderConfirmation },
                   ].map(({ icon: Icon, label }) => (
                     <span key={label} className="inline-flex items-center gap-1.5 text-xs font-medium">
                       <Icon className="size-3.5" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
@@ -326,8 +335,8 @@ export default async function HealthTestDetailPage({
 
       {detail.whatThisTestCovers.length > 0 ? (
         <ChecklistSection
-          eyebrow="What this test covers"
-          title={`Inside the ${detail.title}`}
+          eyebrow={t.whatCoversEyebrow}
+          title={t.insideTitle.replace("{title}", detail.title)}
           items={detail.whatThisTestCovers}
           theme="light"
         />
@@ -335,16 +344,16 @@ export default async function HealthTestDetailPage({
 
       {detail.whyGetTested.length > 0 ? (
         <WhyChooseSection
-          eyebrow="Why get tested"
-          title="Reasons to take this test"
+          eyebrow={t.whyEyebrow}
+          title={t.whyTitle}
           items={detail.whyGetTested}
           theme="soft"
         />
       ) : null}
 
       <ProcessStepsSection
-        eyebrow="How it works"
-        title="From order to results"
+        eyebrow={t.howEyebrow}
+        title={t.howTitle}
         steps={steps}
         theme="light"
       />
@@ -353,7 +362,7 @@ export default async function HealthTestDetailPage({
         sec.body.trim() ? (
           <ImportantInfoSection
             key={`${sec.title}-${i}`}
-            title={sec.title || "Good to know"}
+            title={sec.title || t.goodToKnow}
             paragraphs={sec.body.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean)}
             theme={i % 2 === 0 ? "soft" : "light"}
           />
@@ -361,9 +370,7 @@ export default async function HealthTestDetailPage({
       )}
 
       <MedicalDisclaimer
-        paragraphs={[
-          `Test results are reviewed by a doctor registered to practise in ${config.name}. This page is general information and is not a substitute for professional medical advice, diagnosis or treatment.`,
-        ]}
+        paragraphs={[t.disclaimer.replace("{country}", config.name)]}
       />
     </>
   );

@@ -28,6 +28,8 @@ import {
   ProcessStepsSection,
 } from "@/components/sections/ServiceContentSections";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 type Params = { country: string; lang: string; serviceSlug: string };
 
@@ -39,14 +41,19 @@ function stripHtml(value: string | null): string | null {
 }
 
 /** Back-link target = the listing this service belongs to, by kind. */
-function listingPath(kind: string, country: string, lang: string): { href: string; label: string } {
+function listingPath(
+  kind: string,
+  country: string,
+  lang: string,
+  labels: { specialist: string; prescription: string; general: string },
+): { href: string; label: string } {
   if (kind === "SPECIALIST") {
-    return { href: `/${country}/${lang}/specialist-consultation`, label: "All specialist consultations" };
+    return { href: `/${country}/${lang}/specialist-consultation`, label: labels.specialist };
   }
   if (kind === "PRESCRIPTION") {
-    return { href: `/${country}/${lang}/prescriptions`, label: "All prescriptions" };
+    return { href: `/${country}/${lang}/prescriptions`, label: labels.prescription };
   }
-  return { href: `/${country}/${lang}/general-consultation`, label: "All consultations" };
+  return { href: `/${country}/${lang}/general-consultation`, label: labels.general };
 }
 
 export async function generateMetadata({
@@ -96,7 +103,14 @@ export default async function ServiceDetailPage({
   const detail = await getCountryServiceDetail(code, serviceSlug, lang);
   if (!detail) notFound();
 
-  const back = listingPath(detail.kind, country, lang);
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const t = c.serviceDetailPage;
+
+  const back = listingPath(detail.kind, country, lang, {
+    specialist: t.backSpecialist,
+    prescription: t.backPrescription,
+    general: t.backGeneral,
+  });
   const bookHref = `/${country}/${lang}/consult/${serviceSlug}`;
   const heading = detail.heroTitle ?? detail.name;
   const lede = stripHtml(detail.heroDescription) ?? stripHtml(detail.summary);
@@ -105,31 +119,31 @@ export default async function ServiceDetailPage({
     detail.basePriceCents != null
       ? formatPriceRounded(detail.basePriceCents, detail.currencyCode)
       : null;
-  const bookLabel = detail.ctaLabel ?? "Book this service";
+  const bookLabel = detail.ctaLabel ?? t.bookLabel;
 
   // Platform-level facts only — clinical specifics live in the admin-authored
   // detailBody, never in hardcoded copy.
   const included = [
-    `Consultation with a doctor registered to practise in ${config.name}`,
-    "Secure video appointment — no travel, no waiting room",
-    "Choose a time that suits you from live availability",
-    "Booking confirmation and receipt sent to your email",
-    "Pay securely online — payments processed by Stripe",
-    "Your details handled with strict medical confidentiality",
+    t.included1.replace("{country}", config.name),
+    t.included2,
+    t.included3,
+    t.included4,
+    t.included5,
+    t.included6,
   ];
 
   const steps = [
     {
-      title: "Pick your doctor & time",
-      body: `Browse available doctors for ${detail.name} in ${config.name} and choose a slot from their live calendar.`,
+      title: t.step1Title,
+      body: t.step1Body.replace("{service}", detail.name).replace("{country}", config.name),
     },
     {
-      title: "Confirm & pay securely",
-      body: "Add your details and complete payment through our secure Stripe checkout. Your slot is reserved instantly.",
+      title: t.step2Title,
+      body: t.step2Body,
     },
     {
-      title: "Meet your doctor online",
-      body: "Join the secure video consultation at your appointment time and get clear advice on your next steps.",
+      title: t.step3Title,
+      body: t.step3Body,
     },
   ];
 
@@ -174,7 +188,7 @@ export default async function ServiceDetailPage({
                   01
                 </span>
                 <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
-                  {detail.specialtyName ?? (detail.kind === "SPECIALIST" ? "Specialist care" : "Online consultation")}
+                  {detail.specialtyName ?? (detail.kind === "SPECIALIST" ? t.eyebrowSpecialist : t.eyebrowOnline)}
                 </span>
               </p>
 
@@ -200,9 +214,9 @@ export default async function ServiceDetailPage({
                 style={{ borderColor: "rgba(255,255,255,0.10)" }}
               >
                 {[
-                  { icon: ShieldCheck, label: `Registered doctors · ${config.name}` },
-                  { icon: Video, label: "Secure video consultation" },
-                  { icon: Lock, label: "Confidential & GDPR-compliant" },
+                  { icon: ShieldCheck, label: t.trustRegistered.replace("{country}", config.name) },
+                  { icon: Video, label: t.trustVideo },
+                  { icon: Lock, label: t.trustConfidential },
                 ].map(({ icon: Icon, label }) => (
                   <span
                     key={label}
@@ -245,7 +259,7 @@ export default async function ServiceDetailPage({
 
                 <div className="p-6 sm:p-7">
                   <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]">
-                    Book online
+                    {t.bookOnline}
                   </p>
 
                   <div className="mt-3 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
@@ -253,11 +267,11 @@ export default async function ServiceDetailPage({
                       className="font-extrabold tracking-[-0.03em] [font-variant-numeric:tabular-nums]"
                       style={{ fontSize: "clamp(1.9rem,3vw,2.5rem)", color: "rgba(255,255,255,0.95)" }}
                     >
-                      {priceLabel ?? "Price varies"}
+                      {priceLabel ?? t.priceVaries}
                     </span>
                     {priceLabel ? (
                       <span className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.45)" }}>
-                        per consultation
+                        {t.perConsultation}
                       </span>
                     ) : null}
                   </div>
@@ -265,11 +279,11 @@ export default async function ServiceDetailPage({
                   <ul className="mt-5 space-y-3 border-t pt-5" style={{ borderColor: "rgba(255,255,255,0.10)" }}>
                     {[
                       detail.durationMinutes != null
-                        ? { icon: Clock, label: `${detail.durationMinutes}-minute appointment` }
+                        ? { icon: Clock, label: t.minuteAppointment.replace("{count}", String(detail.durationMinutes)) }
                         : null,
-                      { icon: Stethoscope, label: `Doctor registered in ${config.name}` },
-                      { icon: CalendarCheck, label: "Instant confirmation by email" },
-                      { icon: FileText, label: "Consultation summary included" },
+                      { icon: Stethoscope, label: t.doctorRegistered.replace("{country}", config.name) },
+                      { icon: CalendarCheck, label: t.instantConfirmation },
+                      { icon: FileText, label: t.summaryIncluded },
                     ]
                       .filter((row): row is { icon: typeof Clock; label: string } => row !== null)
                       .map(({ icon: Icon, label }) => (
@@ -297,7 +311,7 @@ export default async function ServiceDetailPage({
                     style={{ color: "rgba(255,255,255,0.40)" }}
                   >
                     <Lock className="size-3" aria-hidden />
-                    Secure checkout · payments processed by Stripe
+                    {t.secureCheckoutFooter}
                   </p>
                 </div>
               </div>
@@ -308,16 +322,16 @@ export default async function ServiceDetailPage({
 
       {/* What you get */}
       <WhyChooseSection
-        eyebrow="What's included"
-        title={`Everything in your ${detail.name.toLowerCase()}`}
+        eyebrow={t.whatsIncluded}
+        title={t.everythingIn.replace("{service}", detail.name.toLowerCase())}
         items={included}
         theme="light"
       />
 
       {/* How it works */}
       <ProcessStepsSection
-        eyebrow="How it works"
-        title="Booked and seen in three steps"
+        eyebrow={t.howItWorks}
+        title={t.threeSteps}
         steps={steps}
         theme="soft"
       />
@@ -333,7 +347,7 @@ export default async function ServiceDetailPage({
         >
           <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em]" style={{ color: "var(--color-brand-primary)" }}>
-              About this service
+              {t.aboutService}
             </p>
             <div className="gh-article-body mt-8 max-w-[76ch]" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
           </div>
@@ -375,7 +389,7 @@ export default async function ServiceDetailPage({
       ) : null}
 
       {detail.faqs.length > 0 ? (
-        <FAQSection title="Frequently Asked Questions" items={detail.faqs} />
+        <FAQSection title={t.faqTitle} items={detail.faqs} />
       ) : null}
 
       {/* Closing booking band */}
@@ -394,18 +408,18 @@ export default async function ServiceDetailPage({
                   02
                 </span>
                 <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
-                  Ready when you are
+                  {t.readyEyebrow}
                 </span>
               </p>
               <h2
                 className="mt-5 font-extrabold leading-[1.0] tracking-[-0.035em]"
                 style={{ fontSize: "clamp(2rem,4vw,3.4rem)", color: "rgba(255,255,255,0.95)", maxWidth: "18ch" }}
               >
-                Book {detail.name} in {config.name}
+                {t.bookHeading.replace("{service}", detail.name).replace("{country}", config.name)}
               </h2>
               <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
-                {priceLabel ? `From ${priceLabel} · ` : ""}
-                Live availability — pick a doctor and a time that suits you.
+                {priceLabel ? t.fromPricePrefix.replace("{price}", priceLabel) : ""}
+                {t.liveAvailability}
               </p>
             </div>
             <div className="flex lg:justify-end">
@@ -419,9 +433,7 @@ export default async function ServiceDetailPage({
       </section>
 
       <MedicalDisclaimer
-        paragraphs={[
-          `Information on this page is general and is not a substitute for professional medical advice, diagnosis or treatment. Book a consultation to discuss your situation with a doctor registered to practise in ${config.name}.`,
-        ]}
+        paragraphs={[t.disclaimer.replace("{country}", config.name)]}
       />
     </>
   );

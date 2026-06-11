@@ -21,6 +21,8 @@ import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import type { CartItem } from "@/lib/api/cart-types";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 const KIND_ICON: Record<CartItem["kind"], typeof Stethoscope> = {
   GENERAL_CONSULTATION: Stethoscope,
@@ -72,6 +74,9 @@ export default function CheckoutPage() {
   const cartHref = countrySlug && lang ? `/${countrySlug}/${lang}/cart` : "/cart";
   const returnTo =
     countrySlug && lang ? `/${countrySlug}/${lang}/checkout` : "/checkout";
+  const common = loadLocaleBundle((lang || "en") as LocaleCode).common;
+  const t = common.checkoutPage;
+  const steps = [common.cartPage.stepCart, common.cartPage.stepCheckout, common.cartPage.stepPayment];
 
   // Payer defaults — prefer signed-in account, then fall back to the
   // first consultation line's patient snapshot. Guests booking purely
@@ -130,10 +135,10 @@ export default function CheckoutPage() {
   if (loading || !authLoaded) {
     return (
       <>
-        <GH2FlowHeader title="Checkout" activeStep={2} steps={["Cart", "Checkout", "Payment"]} />
+        <GH2FlowHeader title={t.title} activeStep={2} steps={steps} />
         <section className="bg-[var(--color-background-soft)] px-5 py-12">
           <div className="mx-auto max-w-5xl">
-            <p className="gh-body-sm">Loading...</p>
+            <p className="gh-body-sm">{t.loading}</p>
           </div>
         </section>
       </>
@@ -163,18 +168,18 @@ export default function CheckoutPage() {
   return (
     <>
       <GH2FlowHeader
-        title="Checkout"
+        title={t.title}
         subtitle={needsShipping
-          ? `Shipping in ${cart.countryCode.toUpperCase()} · paid in ${cart.currencyCode}`
-          : `Online services · paid in ${cart.currencyCode}`}
+          ? t.subtitleShipping.replace("{country}", cart.countryCode.toUpperCase()).replace("{currency}", cart.currencyCode)
+          : t.subtitleOnline.replace("{currency}", cart.currencyCode)}
         activeStep={2}
-        steps={["Cart", "Checkout", "Payment"]}
+        steps={steps}
       />
       <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
         <div className="mx-auto max-w-[var(--container-width)]">
           <Link href={cartHref} className="gh-link inline-flex items-center gap-1.5 text-sm">
             <ArrowLeft className="size-4" aria-hidden />
-            Back to cart
+            {t.backToCart}
           </Link>
 
           <div className="mt-6 grid items-start gap-8 lg:grid-cols-[1fr_380px]">
@@ -189,24 +194,23 @@ export default function CheckoutPage() {
                   01
                 </span>
                 <div>
-                  <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>Payer contact</h2>
+                  <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>{t.payerContact}</h2>
                   <p className="gh-body-sm mt-1" style={{ fontSize: "0.8rem" }}>
-                    Receipts and booking confirmations go here. Patient details for
-                    each consultation were captured on the booking page.
+                    {t.payerNote}
                   </p>
                 </div>
               </div>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 <Field
                   name="fullName"
-                  label="Full name"
+                  label={t.fullName}
                   required
                   defaultValue={defaults.fullName}
                   autoComplete="name"
                 />
                 <Field
                   name="email"
-                  label="Email"
+                  label={t.email}
                   type="email"
                   required
                   autoComplete="email"
@@ -214,7 +218,7 @@ export default function CheckoutPage() {
                 />
                 <Field
                   name="phone"
-                  label="Phone (optional)"
+                  label={t.phoneOptional}
                   type="tel"
                   autoComplete="tel"
                   defaultValue={defaults.phone}
@@ -230,7 +234,7 @@ export default function CheckoutPage() {
                     className="text-[11px] font-bold uppercase tracking-[0.14em]"
                     style={{ color: "var(--color-brand-primary)" }}
                   >
-                    Consultations in this order
+                    {t.consultationsInOrder}
                   </p>
                   <ul className="mt-3 space-y-3">
                     {consultationLines.map((line) => (
@@ -245,10 +249,10 @@ export default function CheckoutPage() {
                         <div className="mt-1.5 grid gap-x-6 gap-y-1 text-[13px] sm:grid-cols-2">
                           <span className="inline-flex items-center gap-2" style={{ color: "var(--color-text-body)" }}>
                             <User className="size-3.5 shrink-0" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
-                            {line.patient?.fullName ?? "Patient name missing"}
+                            {line.patient?.fullName ?? t.patientNameMissing}
                             {line.patient?.bookingForOther ? (
                               <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-                                (on their behalf)
+                                {t.onTheirBehalf}
                               </span>
                             ) : null}
                           </span>
@@ -269,9 +273,9 @@ export default function CheckoutPage() {
                     ))}
                   </ul>
                   <p className="mt-3 text-xs" style={{ color: "var(--color-text-muted)" }}>
-                    Need to change a patient?{" "}
+                    {t.needChangePatient}{" "}
                     <Link href={cartHref} className="gh-link">
-                      Edit the cart line
+                      {t.editCartLine}
                     </Link>
                     .
                   </p>
@@ -288,26 +292,26 @@ export default function CheckoutPage() {
                       02
                     </span>
                     <div>
-                      <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>Shipping address</h2>
+                      <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>{t.shippingAddress}</h2>
                       <p className="gh-body-sm mt-1" style={{ fontSize: "0.8rem" }}>
-                        Your test kit is delivered to this address.
+                        {t.shippingNote}
                       </p>
                     </div>
                   </div>
                   <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                    <Field name="shipName" label="Recipient name" required />
+                    <Field name="shipName" label={t.recipientName} required />
                     <Field
                       name="shipCountryCode"
-                      label="Country code (ISO)"
+                      label={t.countryCodeIso}
                       required
                       defaultValue={cart.countryCode.toUpperCase()}
                       maxLength={4}
                       uppercase
                     />
-                    <Field name="shipLine1" label="Address line 1" required full />
-                    <Field name="shipLine2" label="Address line 2 (optional)" full />
-                    <Field name="shipCity" label="City" required />
-                    <Field name="shipPostalCode" label="Postal code" required />
+                    <Field name="shipLine1" label={t.addressLine1} required full />
+                    <Field name="shipLine2" label={t.addressLine2} full />
+                    <Field name="shipCity" label={t.city} required />
+                    <Field name="shipPostalCode" label={t.postalCode} required />
                   </div>
                 </>
               ) : null}
@@ -328,14 +332,14 @@ export default function CheckoutPage() {
                 ) : (
                   <Lock className="size-4" aria-hidden />
                 )}
-                {submitting ? "Redirecting to Stripe…" : `Pay ${formatPrice(total, cart.currencyCode)} securely`}
+                {submitting ? t.redirecting : t.paySecurely.replace("{amount}", formatPrice(total, cart.currencyCode))}
               </button>
               <p
                 className="mt-3 flex items-center gap-1.5 text-xs"
                 style={{ color: "var(--color-text-muted)" }}
               >
                 <ShieldCheck className="size-3.5 shrink-0" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
-                You will be redirected to Stripe to complete payment. We never store your card details.
+                {t.redirectNote}
               </p>
             </form>
 
@@ -345,7 +349,7 @@ export default function CheckoutPage() {
               style={{ boxShadow: "var(--shadow-card)" }}
             >
               <div className="p-6">
-                <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>Order summary</h2>
+                <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>{t.orderSummary}</h2>
                 <ul className="mt-4 divide-y" style={{ borderColor: "var(--color-border)" }}>
                   {cart.items.map((i) => {
                     const Icon = KIND_ICON[i.kind];
@@ -388,14 +392,14 @@ export default function CheckoutPage() {
                 </ul>
                 <dl className="mt-4 space-y-2 border-t pt-4 text-sm" style={{ borderColor: "var(--color-border)" }}>
                   <div className="flex justify-between">
-                    <dt style={{ color: "var(--color-text-muted)" }}>Subtotal</dt>
+                    <dt style={{ color: "var(--color-text-muted)" }}>{t.subtotal}</dt>
                     <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-text-primary)" }}>
                       {formatPrice(cart.subtotalCents, cart.currencyCode)}
                     </dd>
                   </div>
                   {shippingCents > 0 ? (
                     <div className="flex justify-between">
-                      <dt style={{ color: "var(--color-text-muted)" }}>Shipping</dt>
+                      <dt style={{ color: "var(--color-text-muted)" }}>{t.shipping}</dt>
                       <dd className="font-semibold [font-variant-numeric:tabular-nums]" style={{ color: "var(--color-text-primary)" }}>
                         {formatPrice(shippingCents, cart.currencyCode)}
                       </dd>
@@ -405,7 +409,7 @@ export default function CheckoutPage() {
                     className="flex items-baseline justify-between border-t pt-3"
                     style={{ borderColor: "var(--color-border)" }}
                   >
-                    <dt className="text-base font-bold" style={{ color: "var(--color-text-primary)" }}>Total</dt>
+                    <dt className="text-base font-bold" style={{ color: "var(--color-text-primary)" }}>{t.total}</dt>
                     <dd
                       className="text-xl font-extrabold tracking-[-0.02em] [font-variant-numeric:tabular-nums]"
                       style={{ color: "var(--color-text-primary)" }}
@@ -423,8 +427,8 @@ export default function CheckoutPage() {
               >
                 <ul className="space-y-2 text-[13px]" style={{ color: "var(--color-text-muted)" }}>
                   {[
-                    { icon: ShieldCheck, label: "Secure payment powered by Stripe" },
-                    { icon: Lock, label: "Encrypted — card details never stored" },
+                    { icon: ShieldCheck, label: t.trustSecure },
+                    { icon: Lock, label: t.trustEncrypted },
                   ].map(({ icon: Icon, label }) => (
                     <li key={label} className="flex items-center gap-2.5">
                       <Icon className="size-4 shrink-0" style={{ color: "var(--color-brand-primary)" }} aria-hidden />

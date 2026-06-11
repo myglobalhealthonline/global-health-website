@@ -12,6 +12,8 @@ import {
 import { sanitizePageBodyHtml } from "@/lib/content/sanitize-page-body";
 import { SITE_NAME } from "@/lib/constants";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
+import type { LocaleCode } from "@/lib/i18n/types";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
 export const revalidate = 300;
 
@@ -66,15 +68,17 @@ export default async function CountryLegalDocumentPage({
   // slips past the editor.
   const safeHtml = sanitizePageBodyHtml(document.content);
   const updatedLabel = DATE_FMT.format(new Date(document.publishedAt ?? document.updatedAt));
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const t = c.legalDocPage;
 
   return (
     <>
       <GH2CompactHero
-        eyebrow={`${config.name} · Legal`}
+        eyebrow={t.heroEyebrow.replace("{country}", config.name)}
         title={document.title}
         accent=""
-        watermark="Legal"
-        meta={<p className="gh2-index">Version {document.version} · Last updated {updatedLabel}</p>}
+        watermark={t.heroWatermark}
+        meta={<p className="gh2-index">{t.meta.replace("{version}", String(document.version)).replace("{date}", updatedLabel)}</p>}
       />
 
       <section
@@ -87,7 +91,7 @@ export default async function CountryLegalDocumentPage({
             className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
           >
             <ArrowLeft className="size-3.5" aria-hidden />
-            All legal documents
+            {t.backToAll}
           </Link>
           {document.pdfUrl ? (
             <a
@@ -97,7 +101,7 @@ export default async function CountryLegalDocumentPage({
               className="gh2-btn-lime"
             >
               <FileDown className="size-4" aria-hidden />
-              Download PDF
+              {t.downloadPdf}
             </a>
           ) : null}
         </div>
@@ -109,7 +113,7 @@ export default async function CountryLegalDocumentPage({
           />
         ) : document.pdfUrl ? (
           <p className="text-[15px] leading-relaxed text-[var(--color-text-body)]">
-            This document is provided as a PDF. Use the download button above to read it.
+            {t.pdfOnly}
           </p>
         ) : null}
       </section>

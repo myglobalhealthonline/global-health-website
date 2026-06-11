@@ -30,11 +30,13 @@ export function LanguageFilteredDoctors({
   lang,
   service,
   doctors,
+  bp,
 }: {
   country: string;
   lang: string;
   service: CountryServiceCard;
   doctors: CountryDoctorCard[];
+  bp: import("@/lib/i18n/types").CommonLocale["bookPage"];
 }) {
   const allLanguages = useMemo(() => {
     const set = new Set<string>();
@@ -60,20 +62,20 @@ export function LanguageFilteredDoctors({
     return (
       <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 text-center shadow-[var(--shadow-card)]">
         <p className="font-semibold text-[var(--color-text-primary)]">
-          No clinicians are assigned to this service yet.
+          {bp.noCliniciansAssigned}
         </p>
         <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-          Browse all doctors or choose another service.
+          {bp.browseAllOrChoose}
         </p>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
           <Link href={`/${country}/${lang}/doctors`} className="gh2-btn-lime">
-            Browse doctors
+            {bp.browseDoctors}
           </Link>
           <Link
             href={buildBookHref({ country, lang })}
             className="rounded-full border border-[var(--color-border)] px-5 py-3 text-sm font-semibold text-[var(--color-brand-primary)]"
           >
-            Change service
+            {bp.changeService}
           </Link>
         </div>
       </div>
@@ -85,7 +87,7 @@ export function LanguageFilteredDoctors({
       {allLanguages.length > 1 && (
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm font-medium text-[var(--color-text-muted)]">
-            Language:
+            {bp.languageLabel}
           </span>
           <button
             type="button"
@@ -96,7 +98,7 @@ export function LanguageFilteredDoctors({
                 : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-background-soft)]"
             }`}
           >
-            All
+            {bp.languageAll}
           </button>
           {allLanguages.map((l) => (
             <button
@@ -118,18 +120,17 @@ export function LanguageFilteredDoctors({
       {filtered.length === 0 ? (
         <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-6 text-center shadow-[var(--shadow-card)]">
           <p className="font-semibold text-[var(--color-text-primary)]">
-            No doctors are currently available for this service in{" "}
-            {languageLabel(selectedLanguage)}.
+            {bp.noForLanguage.replace("{language}", languageLabel(selectedLanguage))}
           </p>
           <p className="mt-2 text-sm text-[var(--color-text-muted)]">
-            Please choose another language or check again later.
+            {bp.chooseAnotherLanguage}
           </p>
           <button
             type="button"
             onClick={() => setSelectedLanguage("all")}
             className="mt-4 text-sm font-semibold text-[var(--color-brand-primary)] hover:underline"
           >
-            Show all languages
+            {bp.showAllLanguages}
           </button>
         </div>
       ) : (
@@ -152,7 +153,7 @@ export function LanguageFilteredDoctors({
                   service: service.slug,
                   doctor: doctor.slug,
                 })}
-                ctaLabel="View profile"
+                ctaLabel={bp.viewProfile}
               />
             </li>
           ))}
