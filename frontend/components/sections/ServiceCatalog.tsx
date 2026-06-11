@@ -293,7 +293,9 @@ export function ServiceCatalog({
 }
 
 /** Two-CTA footer for consultation tiles — sits above the tile-wide overlay
- *  link via z-index. "Learn more" → detail page, "Book" → consult flow. */
+ *  link via z-index. "Learn more" → detail page, "Book" → consult flow.
+ *  Buttons mirror the site-wide CTA pair: lime primary with glow + outline
+ *  secondary that fills on hover. */
 function TileActions({
   detailHref,
   bookHref,
@@ -304,19 +306,22 @@ function TileActions({
   bookLabel: string;
 }) {
   return (
-    <div className="relative z-10 mt-4 flex flex-wrap items-center gap-2.5">
+    <div className="relative z-10 mt-4 grid grid-cols-2 gap-2.5">
       <Link
         href={detailHref}
-        className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-[length:var(--text-meta)] font-semibold transition-colors duration-200 hover:text-white focus-visible:outline-none"
-        style={{ border: "1px solid rgba(255,255,255,0.20)", color: "rgba(255,255,255,0.80)" }}
+        className="inline-flex h-11 items-center justify-center gap-1.5 rounded-full border border-white/25 bg-white/[0.06] px-3 text-[13px] font-bold tracking-[-0.005em] text-white/90 transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)] focus-visible:outline-none"
       >
         Learn more
-        <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+        <ArrowUpRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
       </Link>
       <Link
         href={bookHref}
-        className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-[length:var(--text-meta)] font-bold transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-[0.98] focus-visible:outline-none"
-        style={{ background: "var(--color-brand-accent)", color: "#0a1f14" }}
+        className="inline-flex h-11 items-center justify-center gap-1.5 rounded-full px-3 text-[13px] font-extrabold tracking-[-0.005em] transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+        style={{
+          background: "var(--color-brand-accent)",
+          color: "#0a1f14",
+          boxShadow: "0 8px 24px rgba(176,241,34,0.22)",
+        }}
       >
         {bookLabel}
       </Link>
@@ -608,29 +613,33 @@ function ServiceTile({
             </div>
           </div>
 
-          <span
-            className="
-              mt-4 inline-flex items-center justify-between gap-2
-              w-full rounded-full px-4 py-2.5
-              text-[length:var(--text-meta)] font-semibold
-              transition-all duration-200
-              group-hover:bg-[var(--color-brand-accent)]
-              motion-reduce:transition-none
-            "
-            style={{
-              border: "1px solid rgba(255,255,255,0.18)",
-              color: "rgba(255,255,255,0.70)",
-            }}
-          >
-            <span className="group-hover:text-[#0a1f14] transition-colors duration-200">
-              {s.type === "test" ? i18n.orderKit : i18n.bookConsultation}
+          {twoButton ? (
+            <TileActions detailHref={s.detailHref!} bookHref={s.bookHref!} bookLabel={bookLabel} />
+          ) : (
+            <span
+              className="
+                mt-4 inline-flex items-center justify-between gap-2
+                w-full rounded-full px-4 py-2.5
+                text-[length:var(--text-meta)] font-semibold
+                transition-all duration-200
+                group-hover:bg-[var(--color-brand-accent)]
+                motion-reduce:transition-none
+              "
+              style={{
+                border: "1px solid rgba(255,255,255,0.18)",
+                color: "rgba(255,255,255,0.70)",
+              }}
+            >
+              <span className="group-hover:text-[#0a1f14] transition-colors duration-200">
+                {s.type === "test" ? i18n.orderKit : i18n.bookConsultation}
+              </span>
+              <ArrowUpRight
+                className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#0a1f14] motion-reduce:group-hover:translate-x-0"
+                strokeWidth={1.5}
+                aria-hidden
+              />
             </span>
-            <ArrowUpRight
-              className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#0a1f14] motion-reduce:group-hover:translate-x-0"
-              strokeWidth={1.5}
-              aria-hidden
-            />
-          </span>
+          )}
         </div>
       </div>
     </div>

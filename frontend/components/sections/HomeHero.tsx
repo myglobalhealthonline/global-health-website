@@ -4,6 +4,7 @@ import { ArrowRight, ShieldCheck, Stethoscope, Clock } from "lucide-react";
 import type { CountryCode } from "@/data/countries";
 import { Flag } from "@/components/ui/Flag";
 import { HeroReveal } from "@/components/motion/HeroReveal";
+import styles from "./HomeHero.module.css";
 
 export type LiveDoctorItem = {
   name: string;
@@ -21,8 +22,6 @@ export type HomeHeroI18n = {
   trustAvailability: string;
   trustAppointments: string;
   available: string;
-  secureOnlineCare: string;
-  fromHome: string;
   openCalendars: string;
   doctorsAcrossEurope: string;
   consultingIn: string;
@@ -73,11 +72,10 @@ export function HomeHero({
   return (
     <section
       aria-labelledby="hero-title"
-      className="gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden"
-      style={{ background: "#0F2E25", minHeight: "100svh" }}
+      className={`${styles.root} gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden`}
     >
       {/* ── Base layer: hero photo, full-bleed ── */}
-      <div className="gh-medical-pattern-layer absolute inset-0" style={{ zIndex: 0 }}>
+      <div className={`${styles.photoLayer} gh-medical-pattern-layer absolute inset-0`}>
         <Image
           src={heroPhotoSrc}
           alt=""
@@ -93,51 +91,33 @@ export function HomeHero({
       {/* ── Green forest overlay — uniform tint so photo looks faded/green-cast ── */}
       <div
         aria-hidden
-        className="gh-medical-pattern-layer pointer-events-none absolute inset-0"
-        style={{
-          zIndex: 1,
-          backgroundColor: "rgba(11,36,28,0.88)",
-          backgroundImage: `
-            radial-gradient(ellipse 900px 600px at 100% -10%, rgba(176,241,34,0.08), transparent 50%),
-            radial-gradient(ellipse 700px 900px at -5% 115%, rgba(0,0,0,0.20), transparent 55%)
-          `,
-        }}
+        className={`${styles.tintOverlay} gh-medical-pattern-layer pointer-events-none absolute inset-0`}
       />
 
       {/* ── Watermark — sits above overlay, below content ── */}
       <div
         aria-hidden
-        className="gh-medical-pattern-layer gh2-watermark pointer-events-none absolute bottom-[-0.06em] left-[-0.04em] select-none"
-        style={{ fontSize: "clamp(7rem, 21vw, 19rem)", zIndex: 2 }}
+        className={`${styles.watermark} gh-medical-pattern-layer gh2-watermark pointer-events-none absolute bottom-[-0.06em] left-[-0.04em] select-none`}
       >
         {countryName}
       </div>
 
       {/* ── Content ── */}
       <div
-        className="gh-home-hero-grid relative mx-auto grid max-w-[var(--container-width)] items-center gap-12 px-5 py-14 md:px-10 lg:gap-16 lg:py-16"
-        style={{ minHeight: "calc(100svh - var(--header-height, 72px))", zIndex: 3 }}
+        className={`${styles.grid} relative mx-auto grid max-w-[var(--container-width)] items-center gap-12 px-5 pb-14 pt-[calc(var(--header-height)+3.5rem)] md:px-10 lg:gap-16 lg:pb-16 lg:pt-[calc(var(--header-height)+4rem)]`}
       >
         {/* ── LEFT — text column ── */}
         <div className="flex max-w-[760px] flex-col py-10 lg:py-20">
           <HeroReveal delay={0}>
             <div className="mb-9 flex flex-wrap items-center gap-3">
               <span
-                className="inline-flex items-center gap-2.5 rounded-full py-1.5 pl-2 pr-4 text-[11px] font-bold uppercase tracking-[0.18em] text-white/85"
-                style={{
-                  background: "rgba(255,255,255,0.06)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                }}
+                className={`${styles.countryBadge} inline-flex items-center gap-2.5 rounded-full py-1.5 pl-2 pr-4 text-[11px] font-bold uppercase tracking-[0.18em] text-white/85`}
               >
                 <Flag code={countryCode} size="sm" />
                 {countryName}
               </span>
               <span
-                className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-accent)]"
-                style={{
-                  background: "rgba(176,241,34,0.08)",
-                  border: "1px solid rgba(176,241,34,0.20)",
-                }}
+                className={`${styles.availableBadge} inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-accent)]`}
               >
                 <span aria-hidden className="gh-pulse-dot !size-1.5" />
                 {doctorCount} {i18n?.available ?? "available"}
@@ -146,22 +126,13 @@ export function HomeHero({
           </HeroReveal>
 
           <HeroReveal delay={130}>
-            <h1
-              id="hero-title"
-              className="max-w-[13ch] text-white"
-              style={{
-                fontSize: "clamp(3rem, 7vw + 0.75rem, 6rem)",
-                fontWeight: 800,
-                lineHeight: 0.94,
-                letterSpacing: "-0.045em",
-              }}
-            >
+            <h1 id="hero-title" className={`${styles.title} max-w-[13ch] text-white`}>
               {displayHeroTitle ? (
                 displayHeroTitle
               ) : (
                 <>
                   {i18n?.titleMain ?? "Medicine Anytime"}{" "}
-                  <span className="gh2-underline" style={{ color: "var(--color-brand-accent)" }}>
+                  <span className={`${styles.titleAccent} gh2-underline`}>
                     {i18n?.titleAccent ?? "Anywhere."}
                     <svg aria-hidden viewBox="0 0 220 14" fill="none" preserveAspectRatio="none">
                       <path
@@ -179,8 +150,7 @@ export function HomeHero({
 
           <HeroReveal delay={240}>
             <p
-              className="mt-8 max-w-[46ch] text-[length:var(--text-body-lg)] leading-relaxed"
-              style={{ color: "rgba(255,255,255,0.72)" }}
+              className={`${styles.subtitle} mt-8 max-w-[46ch] text-[length:var(--text-body-lg)] leading-relaxed`}
             >
               {displayHeroSubtitle ??
                 (i18n?.subtitle ??
@@ -207,16 +177,12 @@ export function HomeHero({
           </HeroReveal>
 
           <HeroReveal delay={430}>
-            <div
-              className="mt-12 pt-7"
-              style={{ borderTop: "1px solid rgba(255,255,255,0.10)" }}
-            >
+            <div className={`${styles.trustDivider} mt-12 pt-7`}>
               <ul className="flex flex-wrap gap-x-9 gap-y-3">
                 {trustItems.map(({ icon: Icon, label }) => (
                   <li
                     key={label}
-                    className="inline-flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.13em]"
-                    style={{ color: "rgba(255,255,255,0.55)" }}
+                    className={`${styles.trustItem} inline-flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.13em]`}
                   >
                     <Icon
                       className="size-3.5 text-[var(--color-brand-accent)]"
@@ -231,47 +197,15 @@ export function HomeHero({
           </HeroReveal>
         </div>
 
-        {/* ── RIGHT — floating chips over visible photo (desktop only) ── */}
+        {/* ── RIGHT — availability panel over visible photo (desktop only) ── */}
         <HeroReveal delay={380} className="relative hidden min-h-[600px] lg:block">
-          {/* Floating chip — top */}
-          <div
-            className="absolute -left-5 top-16 inline-flex items-center gap-3 rounded-2xl px-4 py-3"
-            style={{
-              background: "rgba(255,255,255,0.92)",
-              border: "1px solid rgba(255,255,255,0.45)",
-              boxShadow: "0 18px 60px rgba(0,0,0,0.22)",
-              color: "var(--color-brand-primary)",
-            }}
-          >
-            <span className="inline-flex size-9 items-center justify-center rounded-xl bg-[var(--color-brand-primary)] text-white">
-              <Stethoscope className="size-4" strokeWidth={1.7} aria-hidden />
-            </span>
-            <span className="text-[12px] font-bold leading-tight">
-              {i18n?.secureOnlineCare ?? "Secure online care"}
-              <span className="block text-[10px] font-semibold text-[var(--color-text-muted)]">
-                {i18n?.fromHome ?? "From home"}
-              </span>
-            </span>
-          </div>
-
-          {/* Availability ticket */}
           {doctorsForPanel.length > 0 ? (
             <aside
               aria-label="Doctors available now"
-              className="absolute -bottom-8 -left-9 flex w-[300px] flex-col"
-              style={{
-                border: "1px solid rgba(255,255,255,0.14)",
-                borderRadius: 22,
-                background: "rgba(13,38,30,0.80)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                boxShadow: "0 24px 70px rgba(0,0,0,0.30)",
-                padding: "22px",
-              }}
+              className={`${styles.availabilityPanel} absolute -bottom-8 -left-9 flex w-[300px] flex-col`}
             >
               <p
-                className="mb-4 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em]"
-                style={{ color: "var(--color-brand-accent)" }}
+                className={`${styles.panelEyebrow} mb-4 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em]`}
               >
                 <span aria-hidden className="gh-pulse-dot !size-1.5" />
                 {i18n?.openCalendars ?? "Open calendars"}
@@ -282,32 +216,36 @@ export function HomeHero({
                   <li key={d.name} className="flex items-center gap-3">
                     <AvatarBubble name={d.name} imageSrc={d.imageSrc} />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13px] font-bold" style={{ color: "rgba(255,255,255,0.88)" }}>
+                      <p className={`${styles.doctorName} truncate text-[13px] font-bold`}>
                         {d.name}
                       </p>
-                      <p className="truncate text-[11px]" style={{ color: "rgba(255,255,255,0.60)" }}>
+                      <p className={`${styles.doctorRole} truncate text-[11px]`}>
                         {d.role}
                       </p>
                     </div>
                     <span
                       aria-hidden
-                      className="size-1.5 shrink-0 rounded-full"
-                      style={{ background: "var(--color-brand-accent)" }}
+                      className={`${styles.doctorDot} size-1.5 shrink-0 rounded-full`}
                     />
                   </li>
                 ))}
               </ul>
 
-              <div className="mt-4 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.09)" }}>
-                <p className="mb-4 text-[11px] leading-relaxed" style={{ color: "rgba(255,255,255,0.42)" }}>
-                  {(i18n?.doctorsAcrossEurope ?? "{count} doctors across Europe").replace("{count}", String(totalDoctorsAcrossEurope))}
+              <div className={`${styles.panelDivider} mt-4 pt-4`}>
+                <p className={`${styles.panelMeta} mb-4 text-[11px] leading-relaxed`}>
+                  {(i18n?.doctorsAcrossEurope ?? "{count} doctors across Europe").replace(
+                    "{count}",
+                    String(totalDoctorsAcrossEurope),
+                  )}
                   <br />
-                  {(i18n?.consultingIn ?? "Consulting in {lang}").replace("{lang}", languageLabel)}
+                  {(i18n?.consultingIn ?? "Consulting in {lang}").replace(
+                    "{lang}",
+                    languageLabel,
+                  )}
                 </p>
                 <Link
                   href={bookHref}
-                  className="flex w-full items-center justify-center gap-2 rounded-full py-3 text-[13px] font-bold text-white transition-colors duration-200 hover:bg-white/10 motion-reduce:transition-none"
-                  style={{ border: "1px solid rgba(255,255,255,0.20)" }}
+                  className={`${styles.panelBookBtn} flex w-full items-center justify-center gap-2 rounded-full py-3 text-[13px] font-bold text-white transition-colors duration-200 hover:bg-white/10 motion-reduce:transition-none`}
                 >
                   {i18n?.bookNow ?? "Book now"}
                   <ArrowRight className="size-3.5" strokeWidth={1.5} aria-hidden />
@@ -320,20 +258,8 @@ export function HomeHero({
 
       <div
         aria-hidden
-        className="gh-medical-pattern-layer absolute bottom-0 left-0 right-0 h-px"
-        style={{ background: "rgba(255,255,255,0.06)", zIndex: 4 }}
+        className={`${styles.bottomRule} gh-medical-pattern-layer absolute bottom-0 left-0 right-0 h-px`}
       />
-
-      <style>{`
-        .gh-home-hero-grid {
-          grid-template-columns: minmax(0, 1fr);
-        }
-        @media (min-width: 1024px) {
-          .gh-home-hero-grid {
-            grid-template-columns: minmax(0, 1.02fr) minmax(420px, 0.76fr);
-          }
-        }
-      `}</style>
     </section>
   );
 }
@@ -355,8 +281,7 @@ function AvatarBubble({ name, imageSrc }: { name: string; imageSrc?: string | nu
     return (
       <span
         aria-hidden
-        className="relative inline-flex size-10 shrink-0 overflow-hidden rounded-full"
-        style={{ border: "1px solid rgba(255,255,255,0.20)" }}
+        className={`${styles.avatarImage} relative inline-flex size-10 shrink-0 overflow-hidden rounded-full`}
       >
         <Image
           src={src}
@@ -372,12 +297,7 @@ function AvatarBubble({ name, imageSrc }: { name: string; imageSrc?: string | nu
   return (
     <span
       aria-hidden
-      className="inline-flex size-10 shrink-0 items-center justify-center rounded-full text-[11px] font-bold tracking-tight"
-      style={{
-        background: "rgba(255,255,255,0.07)",
-        color: "rgba(255,255,255,0.70)",
-        border: "1px solid rgba(255,255,255,0.10)",
-      }}
+      className={`${styles.avatarFallback} inline-flex size-10 shrink-0 items-center justify-center rounded-full text-[11px] font-bold tracking-tight`}
     >
       {initials}
     </span>

@@ -231,6 +231,7 @@ export default async function CountryLangDoctorsPage({
             <div key="featured-spotlight" className="mb-10">
               <FeaturedDoctor
                 standalone={false}
+                dark={false}
                 doctor={{
                   name: featured.fullName,
                   title: featured.title,

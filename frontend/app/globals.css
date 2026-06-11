@@ -496,12 +496,9 @@ img {
   position: sticky;
   top: 0;
   z-index: 40;
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  backdrop-filter: blur(20px) saturate(180%);
-  /* Translucent brand forest — matches the gh2 hero's top tone so the
-   * header melts into the hero, while the blur reads on scroll. */
-  background-color: rgba(29, 75, 54, 0.88);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  /* Match SiteFooter shell — same forest gradient + hairline border. */
+  background: linear-gradient(180deg, #0f2e25 0%, #0b241c 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Site footer grid — replaces SiteFooter.tsx inline <style> block.

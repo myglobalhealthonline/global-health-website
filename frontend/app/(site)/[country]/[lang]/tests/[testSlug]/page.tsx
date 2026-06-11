@@ -1,7 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, FlaskConical } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarCheck,
+  Clock,
+  Droplets,
+  FlaskConical,
+  Lock,
+  Package,
+  ShieldCheck,
+  Stethoscope,
+} from "lucide-react";
 import { getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -16,12 +26,21 @@ import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import {
   ChecklistSection,
   WhyChooseSection,
+  ProcessStepsSection,
   ImportantInfoSection,
 } from "@/components/sections/ServiceContentSections";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 
 type Params = { country: string; lang: string; testSlug: string };
+
+/** Admin detailIntro may arrive as rich HTML — flatten to plain text for
+ *  the lede paragraph (and meta description). */
+function stripHtml(value: string | null): string | null {
+  if (!value) return value;
+  const text = value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return text.length > 0 ? text : null;
+}
 
 export async function generateMetadata({
   params,
@@ -39,7 +58,9 @@ export async function generateMetadata({
   // test title lets the layout template append the brand once.
   const title = detail.seoTitle ?? detail.title;
   const description =
-    detail.seoDescription ?? detail.shortDescription ?? `Lab-quality ${detail.title}, reviewed by a doctor.`;
+    detail.seoDescription ??
+    stripHtml(detail.shortDescription) ??
+    `Lab-quality ${detail.title}, reviewed by a doctor.`;
   const url = `${getSiteUrl()}/${country}/${lang}/tests/${testSlug}`;
   return {
     title: detail.seoTitle ? { absolute: title } : title,
@@ -51,10 +72,10 @@ export async function generateMetadata({
 }
 
 /**
- * Read-only health-test detail page (admin CMS content). "Learn more" on a
- * lab-test card lands here; surfaces the admin-authored intro, "what this
- * test covers", "why get tested", extra sections and gallery, with an
- * Add-to-cart CTA (cart-first — no doctor pick for tests).
+ * Health-test product page (admin CMS content). "Learn more" on a lab-test
+ * card lands here. Product-style layout: image panel + buy box with specs
+ * and add-to-cart, then "what's covered", "why get tested", how-it-works,
+ * admin extra sections. Cart-first — no doctor pick for tests.
  */
 export default async function HealthTestDetailPage({
   params,
@@ -74,8 +95,33 @@ export default async function HealthTestDetailPage({
   if (!detail) notFound();
 
   const soldOut = detail.stock !== null && detail.stock <= 0;
+  const lowStock = !soldOut && detail.stock !== null && detail.stock <= 5 ? detail.stock : null;
   const priceLabel = formatPriceRounded(detail.priceCents, detail.currencyCode);
   const backHref = `/${country}/${lang}/tests`;
+  const intro = stripHtml(detail.detailIntro) ?? stripHtml(detail.shortDescription);
+
+  // Product spec rows — only render rows with real data.
+  const specs = [
+    detail.sampleType ? { icon: Droplets, label: "Sample type", value: detail.sampleType } : null,
+    detail.resultsTimeline ? { icon: Clock, label: "Results in", value: detail.resultsTimeline } : null,
+    { icon: Stethoscope, label: "Reviewed by", value: `Doctors registered in ${config.name}` },
+    { icon: Package, label: "Delivery", value: "Test kit shipped to your address" },
+  ].filter(Boolean) as Array<{ icon: typeof Clock; label: string; value: string }>;
+
+  const steps = [
+    {
+      title: "Order your test online",
+      body: "Add the test to your cart and check out securely. Your test kit is shipped to your address.",
+    },
+    {
+      title: "Provide your sample",
+      body: `Follow the simple instructions included with your test${detail.sampleType ? ` (${detail.sampleType.toLowerCase()})` : ""}.`,
+    },
+    {
+      title: "Doctor-reviewed results",
+      body: `Your results are reviewed by a doctor registered in ${config.name}${detail.resultsTimeline ? ` — typically ready in ${detail.resultsTimeline.toLowerCase()}` : ""}.`,
+    },
+  ];
 
   return (
     <>
@@ -88,85 +134,164 @@ export default async function HealthTestDetailPage({
         ])}
       />
 
-      {/* Dark hero — test context + image */}
+      {/* Product hero — light, image panel + buy box */}
       <section
-        className="relative isolate overflow-hidden"
         style={{
-          background: "var(--color-background-dark)",
-          padding: "clamp(56px,7vw,96px) 0 clamp(40px,5vw,64px)",
-          borderBottom: "1px solid rgba(255,255,255,0.07)",
+          background: "var(--color-background-soft)",
+          padding: "clamp(40px,5vw,64px) 0 clamp(48px,6vw,80px)",
+          borderBottom: "1px solid rgba(29,75,54,0.10)",
         }}
       >
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <Link
             href={backHref}
-            className="inline-flex items-center gap-1.5 text-[12.5px] font-medium uppercase tracking-[0.12em] transition-colors hover:text-white"
-            style={{ color: "rgba(255,255,255,0.50)" }}
+            className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] transition-colors hover:text-[var(--color-brand-primary)]"
+            style={{ color: "var(--color-text-muted)" }}
           >
             <ArrowLeft className="size-4" aria-hidden />
             All lab tests
           </Link>
 
-          <div className="mt-8 grid items-center gap-10 lg:grid-cols-[1.3fr_1fr]">
+          <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(380px,1fr)_1.15fr] lg:gap-14">
+            {/* Left — product image panel */}
             <div>
-              <div className="flex items-center gap-2">
-                <FlaskConical className="size-4" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
-                <p
-                  className="text-[11px] font-bold uppercase tracking-[0.2em]"
-                  style={{ color: "var(--color-brand-accent)" }}
+              <div
+                className="relative overflow-hidden rounded-[var(--radius-card)] bg-white"
+                style={{
+                  aspectRatio: "4 / 3",
+                  border: "1px solid var(--color-border)",
+                  boxShadow: "var(--shadow-card)",
+                }}
+              >
+                {detail.imageSrc ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={detail.imageSrc}
+                    alt={detail.title}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center">
+                    <span
+                      className="inline-flex size-20 items-center justify-center rounded-full"
+                      style={{ background: "var(--color-brand-mint-dim)" }}
+                    >
+                      <FlaskConical className="size-9" style={{ color: "var(--color-brand-primary)" }} strokeWidth={1.5} aria-hidden />
+                    </span>
+                  </div>
+                )}
+                <span
+                  className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.08em]"
+                  style={{ background: "var(--color-brand-primary)", color: "#ffffff", boxShadow: "0 2px 8px rgba(29,75,54,0.30)" }}
                 >
-                  Reviewed by our doctors
-                </p>
+                  <ShieldCheck className="size-3.5" aria-hidden />
+                  Doctor reviewed
+                </span>
               </div>
 
+              {detail.gallery.length > 0 ? (
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  {detail.gallery.slice(0, 3).map((src, i) => (
+                    <div
+                      key={src}
+                      className="overflow-hidden rounded-[var(--radius-card-sm)] bg-white"
+                      style={{ aspectRatio: "4 / 3", border: "1px solid var(--color-border)" }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={src}
+                        alt={`${detail.title} — image ${i + 1}`}
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+
+            {/* Right — buy box */}
+            <div>
+              <p className="flex items-center gap-3">
+                <span aria-hidden className="gh2-index" style={{ color: "rgba(29,75,54,0.40)" }}>
+                  01
+                </span>
+                <span
+                  className="text-[11px] font-bold uppercase tracking-[0.22em]"
+                  style={{ color: "var(--color-brand-primary)" }}
+                >
+                  At-home health test
+                </span>
+              </p>
+
               <h1
-                className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
-                style={{ fontSize: "clamp(2rem, 4.5vw + 0.5rem, 4rem)", color: "rgba(255,255,255,0.95)" }}
+                className="mt-4 font-extrabold leading-[1.02] tracking-[-0.035em]"
+                style={{ fontSize: "clamp(2rem,4vw,3.4rem)", color: "var(--color-text-primary)", maxWidth: "18ch" }}
               >
                 {detail.title}
               </h1>
 
-              {detail.detailIntro ?? detail.shortDescription ? (
+              {intro ? (
                 <p
-                  className="mt-3 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed"
-                  style={{ color: "rgba(255,255,255,0.50)" }}
+                  className="mt-4 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed"
+                  style={{ color: "var(--color-text-muted)" }}
                 >
-                  {detail.detailIntro ?? detail.shortDescription}
+                  {intro}
                 </p>
               ) : null}
 
-              <div className="mt-5 flex flex-wrap items-center gap-3">
+              {/* Price */}
+              <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <span
-                  className="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold"
-                  style={{ background: "rgba(176,241,34,0.12)", color: "var(--color-brand-accent)" }}
+                  className="font-extrabold tracking-[-0.03em] [font-variant-numeric:tabular-nums]"
+                  style={{ fontSize: "clamp(2rem,3.5vw,2.75rem)", color: "var(--color-text-primary)" }}
                 >
                   {priceLabel}
                 </span>
-                {detail.sampleType ? (
-                  <span
-                    className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
-                    style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.70)" }}
-                  >
-                    Sample: {detail.sampleType}
-                  </span>
+                <span className="text-sm font-medium" style={{ color: "var(--color-text-muted)" }}>
+                  incl. doctor review
+                </span>
+                {lowStock != null ? (
+                  <span className="gh-badge gh-badge-warning">Only {lowStock} left</span>
                 ) : null}
-                {detail.resultsTimeline ? (
-                  <span
-                    className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
-                    style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.70)" }}
-                  >
-                    Results: {detail.resultsTimeline}
-                  </span>
-                ) : null}
+                {soldOut ? <span className="gh-badge gh-badge-error">Sold out</span> : null}
               </div>
 
-              <div className="mt-8 max-w-xs">
+              {/* Spec rows */}
+              <dl
+                className="mt-6 grid gap-px overflow-hidden rounded-[var(--radius-card)] sm:grid-cols-2"
+                style={{ background: "var(--color-border)", border: "1px solid var(--color-border)" }}
+              >
+                {specs.map(({ icon: Icon, label, value }) => (
+                  <div key={label} className="flex items-start gap-3 bg-white p-4">
+                    <span
+                      className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-[10px]"
+                      style={{ background: "var(--color-brand-mint-dim)" }}
+                    >
+                      <Icon className="size-4" style={{ color: "var(--color-brand-primary)" }} strokeWidth={1.8} aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <dt
+                        className="text-[10.5px] font-bold uppercase tracking-[0.12em]"
+                        style={{ color: "var(--color-text-muted)" }}
+                      >
+                        {label}
+                      </dt>
+                      <dd className="mt-0.5 text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
+                        {value}
+                      </dd>
+                    </div>
+                  </div>
+                ))}
+              </dl>
+
+              {/* Add to cart */}
+              <div className="mt-7 max-w-md">
                 {soldOut ? (
                   <button
                     type="button"
                     disabled
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold cursor-not-allowed"
-                    style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.25)" }}
+                    className="inline-flex h-14 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full px-6 text-[15px] font-bold"
+                    style={{ background: "var(--color-background-panel)", color: "var(--color-text-placeholder)" }}
                   >
                     Sold out
                   </button>
@@ -175,26 +300,26 @@ export default async function HealthTestDetailPage({
                     kind="HEALTH_TEST"
                     healthTestId={detail.id}
                     label={detail.heroButtonLabel ?? `Add to cart · ${priceLabel}`}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-[background-color,color] duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ background: "var(--color-brand-accent)", color: "#0a1f14" }}
+                    className="gh2-btn-lime w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
                   />
                 )}
+
+                <div
+                  className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2"
+                  style={{ color: "var(--color-text-muted)" }}
+                >
+                  {[
+                    { icon: Lock, label: "Secure Stripe checkout" },
+                    { icon: CalendarCheck, label: "Order confirmation by email" },
+                  ].map(({ icon: Icon, label }) => (
+                    <span key={label} className="inline-flex items-center gap-1.5 text-xs font-medium">
+                      <Icon className="size-3.5" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
+                      {label}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
-
-            {detail.imageSrc ? (
-              <div
-                className="overflow-hidden rounded-[var(--radius-card)]"
-                style={{ aspectRatio: "4 / 3", border: "1px solid rgba(255,255,255,0.09)" }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={detail.imageSrc}
-                  alt={detail.title}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              </div>
-            ) : null}
           </div>
         </div>
       </section>
@@ -204,7 +329,7 @@ export default async function HealthTestDetailPage({
           eyebrow="What this test covers"
           title={`Inside the ${detail.title}`}
           items={detail.whatThisTestCovers}
-          theme="soft"
+          theme="light"
         />
       ) : null}
 
@@ -213,9 +338,16 @@ export default async function HealthTestDetailPage({
           eyebrow="Why get tested"
           title="Reasons to take this test"
           items={detail.whyGetTested}
-          theme="light"
+          theme="soft"
         />
       ) : null}
+
+      <ProcessStepsSection
+        eyebrow="How it works"
+        title="From order to results"
+        steps={steps}
+        theme="light"
+      />
 
       {detail.extraSections.map((sec, i) =>
         sec.body.trim() ? (
@@ -227,30 +359,6 @@ export default async function HealthTestDetailPage({
           />
         ) : null,
       )}
-
-      {/* Gallery */}
-      {detail.gallery.length > 0 ? (
-        <section style={{ background: "var(--color-background-soft)", padding: "clamp(40px,5vw,72px) 0" }}>
-          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {detail.gallery.map((src, i) => (
-                <div
-                  key={src}
-                  className="overflow-hidden rounded-[var(--radius-card)]"
-                  style={{ aspectRatio: "4 / 3", background: "var(--color-background-page)" }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={src}
-                    alt={`${detail.title} — image ${i + 1}`}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : null}
 
       <MedicalDisclaimer
         paragraphs={[

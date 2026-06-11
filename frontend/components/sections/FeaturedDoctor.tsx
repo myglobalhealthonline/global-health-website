@@ -1,16 +1,20 @@
 "use client";
 
 /**
- * Featured doctor spotlight — dark luxury version.
- * Forest-night canvas, glass card, lime accent CTAs.
+ * Featured doctor spotlight.
+ *
+ * Theme-aware: `dark` (default) renders the forest-glass card for dark
+ * sections (homepage team band); `dark={false}` renders a white elevated
+ * card for light sections (doctors directory spotlight).
  *
  * Two rendering modes:
- * - default (standalone=true): wraps in its own <section>
+ * - default (standalone=true): wraps in its own dark <section>
  * - asCard (standalone=false): card only, no section wrapper
  */
 
+import type { CSSProperties } from "react";
 import Image from "next/image";
-import { ArrowRight, Globe, Phone, ShieldCheck } from "lucide-react";
+import { ArrowRight, Globe, Phone, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { toDoctorBioPlainText } from "@/lib/content/doctor-bio-format";
 import {
@@ -43,9 +47,12 @@ type DoctorSpotlightProps = {
 export function FeaturedDoctor({
   doctor,
   standalone = true,
+  dark = true,
 }: {
   doctor: DoctorSpotlightProps;
   standalone?: boolean;
+  /** Surface theme — must match the section the card sits on. */
+  dark?: boolean;
 }) {
   const trimmedImage = doctor.imageSrc?.trim();
   const hasImage = Boolean(trimmedImage);
@@ -95,13 +102,27 @@ export function FeaturedDoctor({
       : null,
   ].filter((x): x is { url: string; Icon: BrandIcon; label: string } => x !== null);
 
+  // Theme tokens — scoped per card so both variants share one markup tree.
+  const ink = dark ? "rgba(255,255,255,0.92)" : "var(--color-text-primary)";
+  const body = dark ? "rgba(255,255,255,0.65)" : "var(--color-text-body)";
+  const faint = dark ? "rgba(255,255,255,0.48)" : "var(--color-text-muted)";
+  const line = dark ? "rgba(255,255,255,0.15)" : "rgba(29,75,54,0.18)";
+  const iconAccent = dark ? "var(--color-brand-accent)" : "var(--color-brand-primary)";
+
+  const surfaceStyle: CSSProperties = dark
+    ? { borderRadius: "var(--radius-card)" }
+    : {
+        borderRadius: "var(--radius-card)",
+        background: "#ffffff",
+        border: "1px solid rgba(29,75,54,0.12)",
+        boxShadow: "var(--shadow-elevated)",
+      };
+
   const card = (
     <>
       <div
-        className="gh-featured-card gh-glass-card overflow-hidden"
-        style={{
-          borderRadius: "var(--radius-card)",
-        }}
+        className={`gh-featured-card overflow-hidden ${dark ? "gh-glass-card" : ""}`}
+        style={surfaceStyle}
       >
         {/* Portrait */}
         <div
@@ -130,15 +151,32 @@ export function FeaturedDoctor({
               {initials}
             </div>
           )}
-          {/* Right-edge fade into card body on desktop */}
-          <div
-            aria-hidden
-            className="absolute inset-y-0 right-0 w-16 hidden sm:block"
+
+          {/* "Featured" ribbon — lime, ties the spotlight to the brand accent */}
+          <span
+            className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10.5px] font-bold uppercase tracking-[0.1em]"
             style={{
-              background:
-                "linear-gradient(90deg, transparent 0%, rgba(15,46,37,0.60) 100%)",
+              background: "var(--color-brand-accent)",
+              color: "#0a1f14",
+              boxShadow: "0 2px 10px rgba(176,241,34,0.35)",
             }}
-          />
+          >
+            <Sparkles className="size-3.5" strokeWidth={2} aria-hidden />
+            Featured doctor
+          </span>
+
+          {/* Right-edge fade into card body on desktop (dark surface only —
+              on white the hard edge reads cleaner). */}
+          {dark ? (
+            <div
+              aria-hidden
+              className="absolute inset-y-0 right-0 w-16 hidden sm:block"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent 0%, rgba(15,46,37,0.60) 100%)",
+              }}
+            />
+          ) : null}
         </div>
 
         {/* Info column */}
@@ -147,11 +185,19 @@ export function FeaturedDoctor({
             {/* Specialty tag */}
             <span
               className="inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.1em]"
-              style={{
-                background: "rgba(176,241,34,0.10)",
-                border: "1px solid rgba(176,241,34,0.18)",
-                color: "var(--color-brand-accent)",
-              }}
+              style={
+                dark
+                  ? {
+                      background: "rgba(176,241,34,0.10)",
+                      border: "1px solid rgba(176,241,34,0.18)",
+                      color: "var(--color-brand-accent)",
+                    }
+                  : {
+                      background: "var(--color-brand-mint-dim)",
+                      border: "1px solid rgba(29,75,54,0.15)",
+                      color: "var(--color-brand-primary)",
+                    }
+              }
             >
               {doctor.title}
             </span>
@@ -159,7 +205,7 @@ export function FeaturedDoctor({
             {/* Name */}
             <h3
               className="mt-3 font-extrabold tracking-[-0.03em] leading-tight text-[length:var(--text-h2)]"
-              style={{ color: "rgba(255,255,255,0.92)" }}
+              style={{ color: ink }}
             >
               {doctor.name}
             </h3>
@@ -170,7 +216,7 @@ export function FeaturedDoctor({
                 <span className="inline-flex items-center gap-1.5 text-[13px]">
                   <ShieldCheck
                     className="size-4 shrink-0"
-                    style={{ color: "var(--color-brand-accent)" }}
+                    style={{ color: iconAccent }}
                     strokeWidth={1.5}
                     aria-hidden
                   />
@@ -180,15 +226,12 @@ export function FeaturedDoctor({
                       target="_blank"
                       rel="noopener noreferrer"
                       className="font-semibold transition-opacity hover:opacity-75 motion-reduce:transition-none"
-                      style={{ color: "rgba(255,255,255,0.65)" }}
+                      style={{ color: body }}
                     >
                       {doctor.imcRegistration}
                     </a>
                   ) : (
-                    <span
-                      className="font-semibold"
-                      style={{ color: "rgba(255,255,255,0.65)" }}
-                    >
+                    <span className="font-semibold" style={{ color: body }}>
                       {doctor.imcRegistration}
                     </span>
                   )}
@@ -198,14 +241,11 @@ export function FeaturedDoctor({
               <span className="inline-flex items-center gap-1.5 text-[13px]">
                 <Globe
                   className="size-4 shrink-0"
-                  style={{ color: "var(--color-brand-accent)" }}
+                  style={{ color: iconAccent }}
                   strokeWidth={1.5}
                   aria-hidden
                 />
-                <span
-                  className="font-semibold"
-                  style={{ color: "rgba(255,255,255,0.65)" }}
-                >
+                <span className="font-semibold" style={{ color: body }}>
                   {languageList}
                 </span>
               </span>
@@ -215,38 +255,41 @@ export function FeaturedDoctor({
             {bioPreview ? (
               <p
                 className="mt-5 line-clamp-3 text-[length:var(--text-body)] leading-relaxed"
-                style={{ color: "rgba(255,255,255,0.48)", maxWidth: "52ch" }}
+                style={{ color: faint, maxWidth: "52ch" }}
               >
                 {bioPreview}
               </p>
             ) : null}
           </div>
 
-          {/* CTAs */}
-          <div className="mt-7 flex flex-wrap items-center gap-3">
+          {/* CTAs — site-wide pair: lime primary w/ glow + outline secondary */}
+          <div className="mt-7 flex flex-wrap items-center gap-2.5">
             {bookHref ? (
               <Link
                 href={bookHref}
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-[13.5px] font-bold transition-[background-color,transform] duration-200 hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]/40 motion-reduce:transition-none"
-                style={{ background: "var(--color-brand-accent)", color: "#0a1f14" }}
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+                style={{
+                  background: "var(--color-brand-accent)",
+                  color: "#0a1f14",
+                  boxShadow: "0 8px 24px rgba(176,241,34,0.25)",
+                }}
               >
                 Book with {firstName}
                 <ArrowRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
               </Link>
             ) : null}
 
-            {/* Call / WhatsApp pill — outline lime, opens wa.me in a new
-                tab. Only renders when the doctor has a WhatsApp number. */}
+            {/* Call / WhatsApp — outline that fills on hover. */}
             {whatsappHref ? (
               <a
                 href={whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border-[1.5px] px-5 py-[11px] text-[13px] font-semibold transition-colors duration-200 hover:bg-[rgba(176,241,34,0.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]/40 motion-reduce:transition-none"
-                style={{
-                  borderColor: "rgba(176,241,34,0.40)",
-                  color: "var(--color-brand-accent)",
-                }}
+                className={`inline-flex h-12 items-center justify-center gap-2 rounded-full border px-5 text-sm font-bold tracking-[-0.005em] transition-[background-color,color,border-color] duration-200 focus-visible:outline-none motion-reduce:transition-none ${
+                  dark
+                    ? "border-white/25 bg-white/[0.06] text-white/90 hover:bg-white hover:text-[var(--color-brand-primary)]"
+                    : "border-[var(--color-border-strong)] text-[var(--color-brand-primary)] hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white"
+                }`}
                 aria-label={`Call ${firstName} on WhatsApp`}
               >
                 <Phone className="size-4 shrink-0" strokeWidth={1.7} aria-hidden />
@@ -257,10 +300,14 @@ export function FeaturedDoctor({
             {profileHref ? (
               <Link
                 href={profileHref}
-                className="inline-flex items-center gap-1.5 text-[13px] font-semibold transition-opacity hover:opacity-70 motion-reduce:transition-none"
-                style={{ color: "rgba(255,255,255,0.48)" }}
+                className={`inline-flex h-12 items-center justify-center gap-1.5 rounded-full border px-5 text-sm font-bold tracking-[-0.005em] transition-[background-color,color,border-color] duration-200 focus-visible:outline-none motion-reduce:transition-none ${
+                  dark
+                    ? "border-white/25 bg-white/[0.06] text-white/90 hover:bg-white hover:text-[var(--color-brand-primary)]"
+                    : "border-[var(--color-border-strong)] text-[var(--color-brand-primary)] hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white"
+                }`}
               >
                 View profile
+                <ArrowRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
               </Link>
             ) : null}
           </div>
@@ -275,11 +322,8 @@ export function FeaturedDoctor({
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`${doctor.name} on ${label}`}
-                  className="inline-flex size-9 items-center justify-center rounded-full border transition-colors duration-200 hover:bg-[rgba(176,241,34,0.10)] motion-reduce:transition-none"
-                  style={{
-                    borderColor: "rgba(255,255,255,0.15)",
-                    color: "rgba(255,255,255,0.65)",
-                  }}
+                  className="inline-flex size-9 items-center justify-center rounded-full border transition-colors duration-200 hover:bg-[var(--color-brand-primary)] hover:text-white motion-reduce:transition-none"
+                  style={{ borderColor: line, color: dark ? "rgba(255,255,255,0.65)" : "var(--color-brand-primary)" }}
                 >
                   <Icon className="size-4" />
                 </a>

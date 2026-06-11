@@ -112,8 +112,9 @@ export function DoctorCard({
     <article
       className={`
         group relative flex flex-col overflow-hidden ${dark ? "gh-glass-card" : "bg-white"}
-        transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
+        transition-[transform,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
         hover:-translate-y-[3px]
+        ${dark ? "" : "hover:border-[rgba(29,75,54,0.22)] hover:shadow-[var(--shadow-card-hover)]"}
         motion-reduce:transition-none motion-reduce:hover:translate-y-0
         focus-within:ring-2 focus-within:ring-[var(--color-brand-primary)]/30
       `}
@@ -279,21 +280,25 @@ export function DoctorCard({
         {/* ── Actions ── */}
         <div className="mt-5 space-y-2">
 
-          {/* Row 1 — primary book + phone (only when bookingHref provided) */}
+          {/* Row 1 — primary book + phone (only when bookingHref provided).
+              Matches the site-wide primary CTA: glow shadow + hover lift. */}
           {bookHref ? (
             <div className="flex items-center gap-2">
               <Link
                 href={bookHref}
-                className="relative z-20 inline-flex flex-1 items-center justify-center gap-2 rounded-full text-[13.5px] font-bold text-white transition-[background-color,transform] duration-200 hover:opacity-90 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+                className="relative z-20 inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full px-4 text-[13.5px] font-extrabold tracking-[-0.005em] text-white transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                 style={{
                   background: "var(--color-brand-primary)",
-                  padding: "11px 16px",
-                  minHeight: 46,
+                  boxShadow: "0 6px 18px rgba(29,75,54,0.25)",
                 }}
               >
                 <CalendarDays className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
                 Book Appointment
-                <ArrowRight className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
+                <ArrowRight
+                  className="size-[15px] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
+                  strokeWidth={1.8}
+                  aria-hidden
+                />
               </Link>
 
               {whatsappHref ? (
@@ -301,7 +306,7 @@ export function DoctorCard({
                   href={whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative z-20 inline-flex size-[46px] shrink-0 items-center justify-center rounded-full border-[1.5px] border-[color:var(--dc-line)] bg-transparent text-[color:var(--dc-ink)] transition-colors duration-200 hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+                  className="relative z-20 inline-flex size-12 shrink-0 items-center justify-center rounded-full border-[1.5px] border-[color:var(--dc-line)] bg-transparent text-[color:var(--dc-ink)] transition-colors duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
                   aria-label="Contact on WhatsApp"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -311,11 +316,12 @@ export function DoctorCard({
             </div>
           ) : null}
 
-          {/* Row 2 — secondary outline → profile */}
+          {/* Row 2 — secondary outline → profile. Fills solid on hover
+              (site-wide outline-button behaviour). */}
           {profileHref ? (
             <Link
               href={profileHref}
-              className="relative z-20 inline-flex w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 py-[9px] text-[13px] font-semibold text-[color:var(--dc-ink)] transition-colors duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[color:var(--dc-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+              className="relative z-20 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 text-[13px] font-bold tracking-[-0.005em] text-[color:var(--dc-ink)] transition-[background-color,color,border-color] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
             >
               {ctaLabel}
               <ArrowRight className="size-[14px] shrink-0" strokeWidth={1.8} aria-hidden />

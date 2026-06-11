@@ -85,107 +85,99 @@ export function CartServiceCard({
   if (hasImage) {
     return (
       <article
-        className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)]"
-        style={{ minHeight: 400 }}
+        className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] gh2-card motion-reduce:transition-none"
+        style={{
+          background: "rgba(255,255,255,0.045)",
+          border: "1px solid rgba(255,255,255,0.11)",
+          backdropFilter: "blur(18px)",
+          WebkitBackdropFilter: "blur(18px)",
+        }}
       >
-        {/* Full-bleed background image */}
-        <div className="absolute inset-0">
+        {/* Product photo */}
+        <div className="relative overflow-hidden" style={{ aspectRatio: "16 / 10" }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={trimmed!}
             alt={title}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           />
           <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(175deg, rgba(10,31,20,0.50) 0%, rgba(10,31,20,0.75) 45%, rgba(8,22,15,0.96) 100%)",
-            }}
+            aria-hidden
+            className="absolute inset-x-0 bottom-0 h-16"
+            style={{ background: "linear-gradient(180deg, transparent 0%, rgba(13,38,30,0.55) 100%)" }}
           />
-        </div>
-
-        {/* Content */}
-        <div className="relative flex h-full flex-col p-6 sm:p-7">
-          {/* Icon circle */}
+          {/* Price chip — top-right overlay */}
+          {startingPrice ? (
+            <span
+              className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold"
+              style={{
+                background: "var(--color-brand-accent)",
+                color: "#0a1f14",
+                boxShadow: "0 2px 10px rgba(176,241,34,0.35)",
+              }}
+            >
+              <Tag className="size-3.5" aria-hidden />
+              {startingPrice}
+            </span>
+          ) : null}
+          {/* Icon circle — bottom-left overlay */}
           <span
-            className="inline-flex size-11 items-center justify-center rounded-full"
+            className="absolute bottom-3 left-3 inline-flex size-10 items-center justify-center rounded-full"
             style={{
-              background: "rgba(255,255,255,0.10)",
+              background: "rgba(10,31,20,0.65)",
               border: "1px solid rgba(255,255,255,0.18)",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
             }}
           >
-            <Icon className="size-5 text-white" strokeWidth={1.5} aria-hidden />
+            <Icon className="size-[18px] text-white" strokeWidth={1.5} aria-hidden />
           </span>
+        </div>
 
-          {/* Text + CTA pushed to bottom */}
-          <div className="mt-auto pt-8">
-            <h3
-              className="text-2xl font-extrabold tracking-[-0.02em] leading-tight"
-              style={{ color: "rgba(255,255,255,0.95)" }}
+        {/* Body */}
+        <div className="relative flex flex-1 flex-col p-5 sm:p-6">
+          <h3
+            className="text-xl font-extrabold tracking-[-0.02em] leading-tight"
+            style={{ color: "rgba(255,255,255,0.95)" }}
+          >
+            {title}
+          </h3>
+          {description ? (
+            <p
+              className="mt-2 text-sm leading-relaxed line-clamp-2"
+              style={{ color: "rgba(255,255,255,0.55)" }}
             >
-              {title}
-            </h3>
-            {description ? (
-              <p
-                className="mt-2 text-sm leading-relaxed line-clamp-3"
-                style={{ color: "rgba(255,255,255,0.52)" }}
-              >
-                {description}
-              </p>
-            ) : null}
+              {description}
+            </p>
+          ) : null}
 
-            {chips.length > 0 ? (
-              <div className="mt-4 flex flex-wrap items-center gap-2.5">
-                {chips.map((c) =>
-                  c.type === "price" ? (
-                    <span
-                      key={c.label}
-                      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold"
-                      style={{
-                        background: "rgba(176,241,34,0.14)",
-                        color: "var(--color-brand-accent)",
-                      }}
-                    >
-                      <Tag className="size-3.5" aria-hidden />
-                      {c.label}
-                    </span>
-                  ) : (
-                    <span
-                      key={c.label}
-                      className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold"
-                      style={{
-                        background: "rgba(255,255,255,0.10)",
-                        color: "rgba(255,255,255,0.75)",
-                      }}
-                    >
-                      <Clock className="size-3.5" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
-                      {c.label}
-                    </span>
-                  )
-                )}
-              </div>
-            ) : null}
+          {chips.length > 0 ? (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {chips
+                .filter((c) => c.type !== "price")
+                .map((c) => (
+                  <span
+                    key={c.label}
+                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold"
+                    style={{
+                      background: "rgba(255,255,255,0.08)",
+                      color: "rgba(255,255,255,0.75)",
+                    }}
+                  >
+                    <Clock className="size-3.5" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
+                    {c.label}
+                  </span>
+                ))}
+            </div>
+          ) : null}
 
-            <div className="mt-5 space-y-2.5">
-              {detailHref ? (
-                <Link
-                  href={detailHref}
-                  className="inline-flex w-full items-center justify-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-200 hover:text-white"
-                  style={{
-                    border: "1px solid rgba(255,255,255,0.20)",
-                    color: "rgba(255,255,255,0.85)",
-                  }}
-                >
-                  {detailLabel}
-                  <ArrowRight className="size-4" aria-hidden />
-                </Link>
-              ) : null}
+          <div className="mt-auto pt-6">
+            <div className="space-y-2.5">
               {soldOut ? (
                 <button
                   type="button"
                   disabled
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold cursor-not-allowed"
+                  className="inline-flex h-12 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold"
                   style={{
                     background: "rgba(255,255,255,0.06)",
                     color: "rgba(255,255,255,0.25)",
@@ -200,14 +192,23 @@ export function CartServiceCard({
                   serviceId={serviceId}
                   label={buttonLabel}
                   i18n={i18n}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full px-5 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                   style={{
-                    background: "rgba(255,255,255,0.10)",
-                    border: "1px solid rgba(255,255,255,0.18)",
-                    color: "rgba(255,255,255,0.90)",
+                    background: "var(--color-brand-accent)",
+                    color: "#0a1f14",
+                    boxShadow: "0 8px 24px rgba(176,241,34,0.22)",
                   } as React.CSSProperties}
                 />
               )}
+              {detailHref ? (
+                <Link
+                  href={detailHref}
+                  className="inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full border border-white/25 bg-white/[0.06] px-5 text-sm font-bold tracking-[-0.005em] text-white/90 transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)]"
+                >
+                  {detailLabel}
+                  <ArrowRight className="size-4 shrink-0" aria-hidden />
+                </Link>
+              ) : null}
             </div>
           </div>
         </div>
@@ -272,25 +273,12 @@ export function CartServiceCard({
           </div>
         ) : null}
 
-        <div className="mt-auto space-y-2.5 pt-5">
-          {detailHref ? (
-            <Link
-              href={detailHref}
-              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors duration-200 hover:text-white"
-              style={{
-                border: "1px solid rgba(255,255,255,0.20)",
-                color: "rgba(255,255,255,0.85)",
-              }}
-            >
-              {detailLabel}
-              <ArrowRight className="size-4" aria-hidden />
-            </Link>
-          ) : null}
+        <div className="mt-auto space-y-2.5 pt-6">
           {soldOut ? (
             <button
               type="button"
               disabled
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold cursor-not-allowed"
+              className="inline-flex h-12 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold"
               style={{
                 background: "rgba(255,255,255,0.06)",
                 color: "rgba(255,255,255,0.25)",
@@ -305,14 +293,23 @@ export function CartServiceCard({
               serviceId={serviceId}
               label={buttonLabel}
               i18n={i18n}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-bold transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full px-5 text-sm font-extrabold tracking-[-0.005em] transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               style={{
-                background: "rgba(255,255,255,0.10)",
-                border: "1px solid rgba(255,255,255,0.18)",
-                color: "rgba(255,255,255,0.90)",
+                background: "var(--color-brand-accent)",
+                color: "#0a1f14",
+                boxShadow: "0 8px 24px rgba(176,241,34,0.22)",
               } as React.CSSProperties}
             />
           )}
+          {detailHref ? (
+            <Link
+              href={detailHref}
+              className="inline-flex h-12 w-full items-center justify-center gap-1.5 rounded-full border border-white/25 bg-white/[0.06] px-5 text-sm font-bold tracking-[-0.005em] text-white/90 transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)]"
+            >
+              {detailLabel}
+              <ArrowRight className="size-4 shrink-0" aria-hidden />
+            </Link>
+          ) : null}
         </div>
       </div>
     </article>
