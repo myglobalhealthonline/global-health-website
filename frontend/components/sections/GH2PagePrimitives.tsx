@@ -75,7 +75,7 @@ export function GH2CompactHero({
 }) {
   return (
     <section
-      className="gh2-hero relative isolate overflow-hidden"
+      className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
       style={{
         padding: "clamp(56px,7vw,96px) 0 clamp(40px,5vw,64px)",
         borderBottom: "1px solid rgba(255,255,255,0.07)",

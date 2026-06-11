@@ -38,7 +38,7 @@ export function PageHero({
   watermark,
 }: PageHeroProps) {
   const hasRightColumn = Boolean(rightSlot || heroImage);
-  const watermarkText = watermark ?? titleAccent.replace(/[^\p{L}\p{N}\s-]/gu, "");
+  const watermarkText = watermark ?? countryLabel ?? "";
 
   return (
     <section
