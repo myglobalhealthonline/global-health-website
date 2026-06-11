@@ -236,7 +236,9 @@
     "consultWhatItCovers": "O que abrange",
     "consultFaqTitle": "Perguntas Frequentes",
     "consultMoreQuestions": "Mais Perguntas",
-    "minSuffix": "min"
+    "minSuffix": "min",
+    "aConsultation": "uma consulta",
+    "everythingIncluded": "Tudo na sua consulta"
   },
   "testsPage": {
     "watermark": "Análises laboratoriais",
@@ -290,6 +292,7 @@
     "step3Title": "Resultados revistos por médico",
     "step3Body": "Os seus resultados são revistos por um médico registado em {country}{timeline}.",
     "step3Timeline": " — normalmente prontos em {timeline}",
+    "ctaHeading": "Encomende o seu {title} hoje",
     "goodToKnow": "Bom saber",
     "disclaimer": "Os resultados das análises são revistos por um médico registado para exercer em {country}. Esta página contém informação geral e não substitui aconselhamento, diagnóstico ou tratamento médico profissional."
   },

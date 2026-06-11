@@ -237,7 +237,9 @@
     "consultWhatItCovers": "What it covers",
     "consultFaqTitle": "Frequently Asked Questions",
     "consultMoreQuestions": "More Questions",
-    "minSuffix": "min"
+    "minSuffix": "min",
+    "aConsultation": "a consultation",
+    "everythingIncluded": "Everything in your consultation"
   },
   "testsPage": {
     "watermark": "Lab tests",
@@ -291,6 +293,7 @@
     "step3Title": "Doctor-reviewed results",
     "step3Body": "Your results are reviewed by a doctor registered in {country}{timeline}.",
     "step3Timeline": " — typically ready in {timeline}",
+    "ctaHeading": "Order your {title} today",
     "goodToKnow": "Good to know",
     "disclaimer": "Test results are reviewed by a doctor registered to practise in {country}. This page is general information and is not a substitute for professional medical advice, diagnosis or treatment."
   },

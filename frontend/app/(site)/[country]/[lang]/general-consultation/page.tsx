@@ -14,6 +14,7 @@ import {
   ServiceIntro,
   ChecklistSection,
   WhyChooseSection,
+  ProcessStepsSection,
 } from "@/components/sections/ServiceContentSections";
 import { getGpHubContent } from "@/lib/content/ireland-service-content";
 import { countries, getCountryByCode } from "@/data/countries";
@@ -105,6 +106,7 @@ export default async function CountryLangGeneralConsultationPage({
 
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const gp = c.gpPage;
+  const sd = c.serviceDetailPage;
 
   // Honor the per-country `general-consultations` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
@@ -240,24 +242,11 @@ export default async function CountryLangGeneralConsultationPage({
         </section>
       ) : null}
 
-      <RichBodySection html={page?.body} theme="light" />
+      {/* 1 — What this is: short authored positioning intro (when present). */}
+      {gpHub ? <ServiceIntro body={gpHub.intro} theme="light" /> : null}
 
-      {gpHub ? (
-        <>
-          <ServiceIntro body={gpHub.intro} theme="light" />
-          <ChecklistSection
-            eyebrow="Who it's for"
-            title={gpHub.whoFor.title}
-            intro={gpHub.whoFor.intro}
-            items={gpHub.whoFor.items}
-            theme="soft"
-          />
-        </>
-      ) : null}
-
-      <ReviewBadge countryName={config.name} />
-
-      {/* Service cards — auto from Service rows where kind=GENERAL, country=X */}
+      {/* 2 — The product: bookable GP consultations, straight after the hero
+          so the offer is visible before any supporting copy. */}
       {serviceItems.length > 0 ? (
         <div id="services" className="scroll-mt-24">
           <ServicesGrid
@@ -273,7 +262,38 @@ export default async function CountryLangGeneralConsultationPage({
         </div>
       ) : null}
 
-      {/* Doctor cards — auto from Doctor rows for this country */}
+      {/* 3 — How booking works: the same 3-step flow used on service
+          detail pages, with the generic "a consultation" noun. */}
+      <ProcessStepsSection
+        eyebrow={sd.howItWorks}
+        title={sd.threeSteps}
+        steps={[
+          {
+            title: sd.step1Title,
+            body: sd.step1Body
+              .replace("{service}", c.extra.aConsultation)
+              .replace("{country}", config.name),
+          },
+          { title: sd.step2Title, body: sd.step2Body },
+          { title: sd.step3Title, body: sd.step3Body },
+        ]}
+        theme="soft"
+      />
+
+      {/* 4 — Who it's for (authored hub copy, when present). */}
+      {gpHub ? (
+        <ChecklistSection
+          eyebrow="Who it's for"
+          title={gpHub.whoFor.title}
+          intro={gpHub.whoFor.intro}
+          items={gpHub.whoFor.items}
+          theme="light"
+        />
+      ) : null}
+
+      {/* 5 — Trust: review badge, then the clinicians behind the service. */}
+      <ReviewBadge countryName={config.name} />
+
       {doctorItems.length > 0 ? (
         <DoctorsSection
           title={gp.doctorsSectionTitle.replace("{country}", config.name)}
@@ -283,16 +303,36 @@ export default async function CountryLangGeneralConsultationPage({
         />
       ) : null}
 
+      {/* 6 — Why book here: authored copy when present, otherwise the
+          platform-level "what's included" facts. */}
       {gpHub ? (
-        <>
-          <WhyChooseSection
-            title={gpHub.whyChoose.title}
-            items={gpHub.whyChoose.items}
-            theme="light"
-          />
-          <FAQSection title={gp.faqTitle} items={gpHub.faq} />
-        </>
-      ) : null}
+        <WhyChooseSection
+          title={gpHub.whyChoose.title}
+          items={gpHub.whyChoose.items}
+          theme="soft"
+        />
+      ) : (
+        <WhyChooseSection
+          eyebrow={sd.whatsIncluded}
+          title={c.extra.everythingIncluded}
+          items={[
+            sd.included1.replace("{country}", config.name),
+            sd.included2,
+            sd.included3,
+            sd.included4,
+            sd.included5,
+            sd.included6,
+          ]}
+          theme="soft"
+        />
+      )}
+
+      {/* 7 — Admin-edited rich body (SEO/long-form) sits below the
+          conversion path instead of interrupting it. */}
+      <RichBodySection html={page?.body} theme="light" />
+
+      {/* 8 — FAQs + closing CTA. */}
+      {gpHub ? <FAQSection title={gp.faqTitle} items={gpHub.faq} /> : null}
 
       <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
       <StickyBookingCTA href={ctaHref} />

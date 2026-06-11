@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, CheckCircle2, Stethoscope, UserRound } from "lucide-react";
+import { ArrowRight, CheckCircle2, Lock, ShieldCheck, Stethoscope, UserRound, Video } from "lucide-react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
@@ -164,6 +164,22 @@ export default async function CountryLangBookPage({
                 <p className="mt-5 text-sm leading-relaxed text-[var(--color-text-muted)]">
                   {bp.availabilityNote}
                 </p>
+                {/* Trust signals — same platform facts as the service pages. */}
+                <ul className="mt-5 grid gap-2.5 border-t border-[var(--color-border)] pt-5">
+                  {[
+                    { icon: ShieldCheck, label: c.serviceDetailPage.trustRegistered.replace("{country}", config.name) },
+                    { icon: Video, label: c.serviceDetailPage.trustVideo },
+                    { icon: Lock, label: c.serviceDetailPage.trustConfidential },
+                  ].map(({ icon: Icon, label }) => (
+                    <li
+                      key={label}
+                      className="flex items-center gap-2.5 text-[13px] font-medium text-[var(--color-text-body)]"
+                    >
+                      <Icon className="size-4 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
+                      {label}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </aside>
 
@@ -524,10 +540,10 @@ function ServiceChoiceCard({
           <span className="text-sm font-semibold text-[var(--color-text-body)]">
             {service.basePriceCents != null
               ? formatPriceRounded(service.basePriceCents, service.currencyCode)
-              : "Price varies"}
+              : bp.priceVaries}
           </span>
           <span className="inline-flex items-center gap-1 text-sm font-bold text-[var(--color-brand-primary)]">
-            Continue
+            {bp.continue}
             <ArrowRight
               className="size-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
               aria-hidden

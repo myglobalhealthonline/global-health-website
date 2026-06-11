@@ -15,7 +15,13 @@ import {
 import { getCountryByCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
-import { getCountryServiceDetail } from "@/lib/content/get-country-collections";
+import {
+  getCountryDoctors,
+  getCountryServiceDetail,
+  getCountryServices,
+} from "@/lib/content/get-country-collections";
+import { buildBookHref } from "@/lib/routing/book-href";
+import { DoctorCard } from "@/components/cards/DoctorCard";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { SITE_NAME } from "@/lib/constants";
@@ -105,6 +111,20 @@ export default async function ServiceDetailPage({
 
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const t = c.serviceDetailPage;
+
+  // Clinicians assigned to this service — surfaced as a credibility strip
+  // ahead of the FAQs (mirrors the doctor-profile "services offered" link).
+  const [generals, specialists, allDoctors] = await Promise.all([
+    getCountryServices(code, "GENERAL", lang),
+    getCountryServices(code, "SPECIALIST", lang),
+    getCountryDoctors(code, lang),
+  ]);
+  const serviceCard =
+    generals.find((s) => s.slug === serviceSlug) ??
+    specialists.find((s) => s.slug === serviceSlug);
+  const assignedIds = new Set(serviceCard?.assignedDoctorIds ?? []);
+  const assignedDoctors =
+    assignedIds.size > 0 ? allDoctors.filter((d) => assignedIds.has(d.id)).slice(0, 3) : [];
 
   const back = listingPath(detail.kind, country, lang, {
     specialist: t.backSpecialist,
@@ -384,6 +404,60 @@ export default async function ServiceDetailPage({
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* Who you'll see — clinicians assigned to this service. */}
+      {assignedDoctors.length > 0 ? (
+        <section
+          style={{
+            background: "var(--color-background-soft)",
+            padding: "clamp(56px,7vw,104px) 0",
+            borderTop: "1px solid rgba(29,75,54,0.10)",
+          }}
+        >
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <header>
+              <h2
+                className="max-w-[20ch] font-extrabold leading-[1.05] tracking-[-0.03em]"
+                style={{ fontSize: "clamp(1.9rem,3.5vw,2.8rem)", color: "var(--color-text-primary)" }}
+              >
+                {(detail.kind === "SPECIALIST"
+                  ? c.specialistPage.doctorsSectionTitle
+                  : c.gpPage.doctorsSectionTitle
+                ).replace("{country}", config.name)}
+              </h2>
+              <p className="mt-3 max-w-[58ch] text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+                {detail.kind === "SPECIALIST"
+                  ? c.specialistPage.doctorsSectionIntro
+                  : c.gpPage.doctorsSectionIntro}
+              </p>
+            </header>
+            <ul className="mt-10 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+              {assignedDoctors.map((d) => (
+                <li key={d.id}>
+                  <DoctorCard
+                    name={d.fullName}
+                    title={d.title}
+                    imcRegistration={d.imcRegistration}
+                    medicalRegistrationUrl={d.medicalRegistrationUrl}
+                    languages={d.languages}
+                    whatsappNumber={d.whatsappNumber}
+                    bio={d.bio ?? ""}
+                    imageSrc={d.imageSrc ?? null}
+                    href={`/${country}/${lang}/doctors/${d.slug}`}
+                    bookingHref={buildBookHref({
+                      country,
+                      lang,
+                      service: serviceSlug,
+                      doctor: d.slug,
+                    })}
+                    ctaLabel={c.doctors.viewProfile}
+                  />
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       ) : null}

@@ -236,7 +236,9 @@
     "consultWhatItCovers": "Ce include",
     "consultFaqTitle": "Întrebări frecvente",
     "consultMoreQuestions": "Mai multe întrebări",
-    "minSuffix": "min"
+    "minSuffix": "min",
+    "aConsultation": "o consultație",
+    "everythingIncluded": "Tot ce include consultația"
   },
   "testsPage": {
     "watermark": "Analize de laborator",
@@ -290,6 +292,7 @@
     "step3Title": "Rezultate verificate de medic",
     "step3Body": "Rezultatele tale sunt verificate de un medic înregistrat în {country}{timeline}.",
     "step3Timeline": " — de obicei gata în {timeline}",
+    "ctaHeading": "Comandă {title} astăzi",
     "goodToKnow": "Bine de știut",
     "disclaimer": "Rezultatele testelor sunt verificate de un medic înregistrat pentru a profesa în {country}. Această pagină conține informații generale și nu înlocuiește sfatul, diagnosticul sau tratamentul medical profesional."
   },

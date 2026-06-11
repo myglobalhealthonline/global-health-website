@@ -8,6 +8,10 @@ import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
 import { ReviewBadge } from "@/components/sections/ReviewBadge";
+import {
+  WhyChooseSection,
+  ProcessStepsSection,
+} from "@/components/sections/ServiceContentSections";
 import { countries, getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -91,6 +95,7 @@ export default async function CountryLangSpecialistConsultationPage({
 
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const sp = c.specialistPage;
+  const sd = c.serviceDetailPage;
 
   // Honor the per-country `specialist-consultations` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
@@ -207,11 +212,7 @@ export default async function CountryLangSpecialistConsultationPage({
         </section>
       ) : null}
 
-      <RichBodySection html={page?.body} theme="light" />
-
-      <ReviewBadge countryName={config.name} />
-
-      {/* Specialist service cards — auto from Service rows kind=SPECIALIST.
+      {/* 1 — The product: specialist consultations straight after the hero.
           Specialty = the category each consultation falls under, shown as a
           tag on the card (not a separate section). */}
       {serviceItems.length > 0 ? (
@@ -226,7 +227,26 @@ export default async function CountryLangSpecialistConsultationPage({
         </div>
       ) : null}
 
-      {/* Doctor cards — only specialists shown here */}
+      {/* 2 — How booking works: shared 3-step flow. */}
+      <ProcessStepsSection
+        eyebrow={sd.howItWorks}
+        title={sd.threeSteps}
+        steps={[
+          {
+            title: sd.step1Title,
+            body: sd.step1Body
+              .replace("{service}", c.extra.aConsultation)
+              .replace("{country}", config.name),
+          },
+          { title: sd.step2Title, body: sd.step2Body },
+          { title: sd.step3Title, body: sd.step3Body },
+        ]}
+        theme="soft"
+      />
+
+      {/* 3 — Trust: review badge, then the specialists themselves. */}
+      <ReviewBadge countryName={config.name} />
+
       {doctorItems.length > 0 ? (
         <DoctorsSection
           title={sp.doctorsSectionTitle.replace("{country}", config.name)}
@@ -235,6 +255,25 @@ export default async function CountryLangSpecialistConsultationPage({
           theme="light"
         />
       ) : null}
+
+      {/* 4 — What's included: platform-level facts that apply to every
+          specialist consultation. */}
+      <WhyChooseSection
+        eyebrow={sd.whatsIncluded}
+        title={c.extra.everythingIncluded}
+        items={[
+          sd.included1.replace("{country}", config.name),
+          sd.included2,
+          sd.included3,
+          sd.included4,
+          sd.included5,
+          sd.included6,
+        ]}
+        theme="soft"
+      />
+
+      {/* 5 — Admin-edited rich body below the conversion path. */}
+      <RichBodySection html={page?.body} theme="light" />
 
       <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
       <StickyBookingCTA href={ctaHref} />

@@ -236,7 +236,9 @@
     "consultWhatItCovers": "Was abgedeckt wird",
     "consultFaqTitle": "Häufig gestellte Fragen",
     "consultMoreQuestions": "Weitere Fragen",
-    "minSuffix": "Min."
+    "minSuffix": "Min.",
+    "aConsultation": "eine Konsultation",
+    "everythingIncluded": "Alles in Ihrer Konsultation"
   },
   "testsPage": {
     "watermark": "Labortests",
@@ -290,6 +292,7 @@
     "step3Title": "Von Ärzten geprüfte Ergebnisse",
     "step3Body": "Ihre Ergebnisse werden von einem in {country} zugelassenen Arzt geprüft{timeline}.",
     "step3Timeline": " — in der Regel fertig in {timeline}",
+    "ctaHeading": "Bestellen Sie {title} noch heute",
     "goodToKnow": "Gut zu wissen",
     "disclaimer": "Die Testergebnisse werden von einem in {country} zur Berufsausübung zugelassenen Arzt geprüft. Diese Seite enthält allgemeine Informationen und ersetzt keine professionelle medizinische Beratung, Diagnose oder Behandlung."
   },

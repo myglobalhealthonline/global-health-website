@@ -239,6 +239,8 @@ export type CommonLocale = {
     consultFaqTitle: string;
     consultMoreQuestions: string;
     minSuffix: string;
+    aConsultation: string;
+    everythingIncluded: string;
   };
   testsPage: {
     watermark: string;
@@ -292,6 +294,7 @@ export type CommonLocale = {
     step3Title: string;
     step3Body: string;
     step3Timeline: string;
+    ctaHeading: string;
     goodToKnow: string;
     disclaimer: string;
   };

@@ -236,7 +236,9 @@
     "consultWhatItCovers": "Co zahrnuje",
     "consultFaqTitle": "Často kladené otázky",
     "consultMoreQuestions": "Další otázky",
-    "minSuffix": "min"
+    "minSuffix": "min",
+    "aConsultation": "konzultaci",
+    "everythingIncluded": "Vše ve vaší konzultaci"
   },
   "testsPage": {
     "watermark": "Laboratorní testy",
@@ -290,6 +292,7 @@
     "step3Title": "Výsledky posouzené lékařem",
     "step3Body": "Vaše výsledky posoudí lékař registrovaný v {country}{timeline}.",
     "step3Timeline": " — obvykle připraveno za {timeline}",
+    "ctaHeading": "Objednejte si {title} ještě dnes",
     "goodToKnow": "Dobré vědět",
     "disclaimer": "Výsledky testů posuzuje lékař registrovaný k výkonu praxe v {country}. Tato stránka obsahuje obecné informace a nenahrazuje odbornou lékařskou radu, diagnózu ani léčbu."
   },

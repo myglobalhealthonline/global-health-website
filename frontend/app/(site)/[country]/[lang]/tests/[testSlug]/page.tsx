@@ -30,6 +30,7 @@ import {
   ImportantInfoSection,
 } from "@/components/sections/ServiceContentSections";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -104,6 +105,8 @@ export default async function HealthTestDetailPage({
 
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const t = c.testDetailPage;
+  const tp = c.testsPage;
+  const sd = c.serviceDetailPage;
 
   // Product spec rows — only render rows with real data.
   const specs = [
@@ -358,6 +361,16 @@ export default async function HealthTestDetailPage({
         theme="light"
       />
 
+      {/* Trust/credibility band — same signals as the tests listing. */}
+      <TrustRibbon
+        items={[
+          { v: tp.trustLabQualityValue, l: tp.trustLabQualityLabel, icon: "sparkles" },
+          { v: tp.trustDoctorValue, l: tp.trustDoctorLabel, icon: "doctor" },
+          { v: tp.trustHomeValue, l: tp.trustHomeLabel, icon: "shield" },
+          { v: tp.trustGdprValue, l: tp.trustGdprLabel, icon: "lock" },
+        ]}
+      />
+
       {detail.extraSections.map((sec, i) =>
         sec.body.trim() ? (
           <ImportantInfoSection
@@ -368,6 +381,54 @@ export default async function HealthTestDetailPage({
           />
         ) : null,
       )}
+
+      {/* Closing CTA band — mirror of the service detail booking band. */}
+      <section
+        className="gh2-hero relative isolate overflow-hidden"
+        style={{
+          padding: "clamp(56px,7vw,96px) 0",
+          borderTop: "1px solid rgba(255,255,255,0.07)",
+        }}
+      >
+        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <div className="grid items-end gap-8 lg:grid-cols-[1.6fr_1fr]">
+            <div>
+              <p className="flex items-center gap-3">
+                <span aria-hidden className="gh2-index" style={{ color: "rgba(176,241,34,0.50)" }}>
+                  02
+                </span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
+                  {sd.readyEyebrow}
+                </span>
+              </p>
+              <h2
+                className="mt-5 font-extrabold leading-[1.0] tracking-[-0.035em]"
+                style={{ fontSize: "clamp(2rem,4vw,3.4rem)", color: "rgba(255,255,255,0.95)", maxWidth: "20ch" }}
+              >
+                {t.ctaHeading.replace("{title}", detail.title)}
+              </h2>
+              <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
+                {sd.fromPricePrefix.replace("{price}", priceLabel)}
+                {t.inclDoctorReview}
+              </p>
+            </div>
+            <div className="flex lg:justify-end">
+              {soldOut ? (
+                <Link href={backHref} className="gh2-btn-ghost">
+                  {t.backToTests}
+                </Link>
+              ) : (
+                <AddToCartButton
+                  kind="HEALTH_TEST"
+                  healthTestId={detail.id}
+                  label={t.addToCart.replace("{price}", priceLabel)}
+                  className="gh2-btn-lime"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
 
       <MedicalDisclaimer
         paragraphs={[t.disclaimer.replace("{country}", config.name)]}

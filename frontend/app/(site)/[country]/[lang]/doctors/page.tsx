@@ -226,6 +226,7 @@ export default async function CountryLangDoctorsPage({
         bookingHref={buildBookHref({ country: slug, lang })}
         bookingLabel={common.doctors.bookAppointment}
         i18n={common.doctors}
+        showBottomCta
         spotlight={
           featured ? (
             <div key="featured-spotlight" className="mb-10">

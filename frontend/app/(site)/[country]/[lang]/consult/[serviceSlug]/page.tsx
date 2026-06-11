@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CalendarClock } from "lucide-react";
+import { ArrowLeft, CalendarClock, Lock, ShieldCheck, Video } from "lucide-react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { getCountryByCode } from "@/data/countries";
 import { countryCodeFromSlug } from "@/lib/routing/country-slug";
@@ -100,6 +100,7 @@ export default async function ConsultPage({
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const cp = c.consultPage;
   const bf = c.bookingForm;
+  const sd = c.serviceDetailPage;
 
   // Resolve the service. It can be either GENERAL or SPECIALIST kind.
   // Pass the route locale so display fields resolve to the viewing
@@ -226,6 +227,27 @@ export default async function ConsultPage({
               {config.name}
             </span>
           </div>
+
+          {/* Trust meta row — same signals as the service landing page. */}
+          <div
+            className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 border-t pt-5"
+            style={{ borderColor: "rgba(255,255,255,0.10)" }}
+          >
+            {[
+              { icon: ShieldCheck, label: sd.trustRegistered.replace("{country}", config.name) },
+              { icon: Video, label: sd.trustVideo },
+              { icon: Lock, label: sd.trustConfidential },
+            ].map(({ icon: Icon, label }) => (
+              <span
+                key={label}
+                className="inline-flex items-center gap-2 text-[13px] font-medium"
+                style={{ color: "rgba(255,255,255,0.65)" }}
+              >
+                <Icon className="size-4 shrink-0" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
+                {label}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -258,6 +280,8 @@ export default async function ConsultPage({
               serviceSlug={serviceSlug}
               doctors={doctors}
               cp={cp}
+              headerEyebrow={cp.pickDoctor}
+              headerTitle={c.bookPage.chooseClinicianFor.replace("{service}", service.name)}
             />
           )}
 
@@ -308,6 +332,41 @@ export default async function ConsultPage({
           ) : null}
           <FAQSection title={c.gpPage.faqTitle} items={detail.faq} />
           <MedicalDisclaimer paragraphs={detail.disclaimerFull} />
+        </>
+      ) : null}
+
+      {/* Services without authored long-form copy still get the standard
+          conversion structure: what's included + how booking works. */}
+      {!detail && !selectedDoctorSlug ? (
+        <>
+          <WhyChooseSection
+            eyebrow={sd.whatsIncluded}
+            title={sd.everythingIn.replace("{service}", service.name.toLowerCase())}
+            items={[
+              sd.included1.replace("{country}", config.name),
+              sd.included2,
+              sd.included3,
+              sd.included4,
+              sd.included5,
+              sd.included6,
+            ]}
+            theme="light"
+          />
+          <ProcessStepsSection
+            eyebrow={sd.howItWorks}
+            title={sd.threeSteps}
+            steps={[
+              {
+                title: sd.step1Title,
+                body: sd.step1Body
+                  .replace("{service}", service.name)
+                  .replace("{country}", config.name),
+              },
+              { title: sd.step2Title, body: sd.step2Body },
+              { title: sd.step3Title, body: sd.step3Body },
+            ]}
+            theme="soft"
+          />
         </>
       ) : null}
 
@@ -466,12 +525,16 @@ function DoctorListMode({
   serviceSlug,
   doctors,
   cp,
+  headerEyebrow,
+  headerTitle,
 }: {
   country: string;
   lang: string;
   serviceSlug: string;
   doctors: Awaited<ReturnType<typeof getCountryDoctors>>;
   cp: import("@/lib/i18n/types").CommonLocale["consultPage"];
+  headerEyebrow: string;
+  headerTitle: string;
 }) {
   if (doctors.length === 0) {
     return (
@@ -499,10 +562,18 @@ function DoctorListMode({
   }
 
   return (
-    <div className="mt-6 grid gap-6">
-      <p className="text-sm text-[var(--color-text-muted)]">
-        {cp.pickClinician}
-      </p>
+    <div className="grid gap-8">
+      <header>
+        <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+          {headerEyebrow}
+        </p>
+        <h2 className="mt-2 max-w-[20ch] text-[clamp(1.75rem,3.5vw,2.6rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-[var(--color-text-primary)]">
+          {headerTitle}
+        </h2>
+        <p className="mt-3 max-w-[58ch] text-sm leading-relaxed text-[var(--color-text-muted)]">
+          {cp.pickClinician}
+        </p>
+      </header>
       <ul className="grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
         {doctors.map((d) => (
           <li key={d.id}>
