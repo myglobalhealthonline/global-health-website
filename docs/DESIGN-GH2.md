@@ -2,7 +2,8 @@
 
 **Status: AUTHORITATIVE.** This document supersedes `docs/DESIGN.md` wherever they conflict.
 It defines the design language shipped on the country homepage (`/[country]/[lang]`, June 2026)
-and is the spec for restyling **every other public page** to match.
+and is the spec for restyling **every other public page** to match. §8 defines the page
+archetypes; §9 maps **every route on the website** to an archetype with page-specific notes.
 
 Reference implementation (read these before styling anything):
 
@@ -281,7 +282,218 @@ Hero-style status pills: 999px, 1px hairline border, frosted on dark
 
 ---
 
-## 7. Banned (instant review-fail)
+## 7. Page archetypes
+
+Every page on the site is one of these eight shapes. Build the archetype once, reuse it.
+§9 assigns each route its archetype.
+
+### A — Landing (homepage)
+Already shipped — the reference implementation. Full atmospheric hero, watermark, arch
+portrait, 6 indexed sections, dark/light rhythm, FinalCTA closer.
+
+### B — Service category page
+(GP appointment, See a specialist, Repeat prescription, Lab tests.)
+
+1. **Hero band** — `.gh2-hero` canvas, shallower than homepage
+   (`padding: clamp(72px,9vw,128px) 0 clamp(48px,6vw,80px)`). Watermark = service name
+   (e.g. "GP"). Index `01` + eyebrow (e.g. `GENERAL PRACTICE`). H1 with one accent word.
+   Sub-copy ≤ 44ch. CTA pair (lime "Book now" + ghost "How it works"). Right side desktop:
+   arch photo (`.gh2-arch` + `.gh2-arch-frame`) OR a frosted info ticket (price-from,
+   duration, availability pill with `.gh2-live-dot`).
+2. **Trust strip** (light, index `02`) — 3–4 hairline columns: price from / duration /
+   availability / certification. TrustRibbon light pattern.
+3. **Service/option grid** (dark night-gradient, index `03`) — white-glass `gh2-card`s.
+   Each card: inset 14px photo (if any), title, 2-line description, price + duration in
+   `.gh2-index` mono, frosted chips for tags, arrow affordance. If page has only ONE
+   bookable service, replace grid with a single editorial split: arch photo left, details +
+   `.gh2-btn-lime` right.
+4. **How-it-works rows** (light, index `04`) — reuse `HowItWorksNarrative` pattern,
+   3 steps specific to this service.
+5. **FAQ rows** (light, index `05`, optional) — editorial step-row pattern without arrows;
+   ghost numeral + question + answer. Hairline-separated. No accordion cards.
+6. **Closer CTA** (dark `168deg` gradient, index `06`) — slim FinalCTA variant: headline +
+   CTA pair. No live stat needed (homepage owns that).
+
+### C — Detail page
+(Doctor profile, service detail `/consult/[serviceSlug]`, blog post.)
+
+1. **Compact dark header band** — NOT a full hero. `linear-gradient(172deg, #1D4B36 0%, #15382A 100%)`,
+   `padding: clamp(56px,7vw,96px) 0 clamp(40px,5vw,64px)`. Contains: breadcrumb
+   (12px, `rgba(255,255,255,0.45)`, lime hover), then the identity row:
+   - **Doctor:** arch portrait (~180px, `.gh2-arch`, lime frame) left; name as H1
+     (`clamp(2rem,4vw,3.2rem)`), specialty eyebrow in lime caps, registration/IMC number in
+     `.gh2-index` mono, country + languages as frosted pills, live availability pill.
+   - **Service:** category eyebrow, H1 with accent word, price + duration in mono, CTA pair.
+   - **Blog post:** category eyebrow + index, H1, author + date in mono, read-time pill.
+2. **Body** — light, two-column `lg:grid-cols-[1fr_minmax(280px,0.45fr)]`. Main column:
+   prose (H2s get small index+eyebrow markers `01`, `02`… scoped to the page), 17px body,
+   `max-width: 68ch`. Aside column: sticky booking/summary card (white, hairline border,
+   `var(--shadow-card)`, `.gh2-btn-lime` full-width, key facts on hairline rows).
+3. **Related items** (light or dark, last index) — 3-up `gh2-card` grid linking to
+   siblings (other doctors, related services, more posts).
+
+### D — Directory / listing page
+(Doctors index, blog index.)
+
+1. **Compact dark header band** (as C.1) — H1 + result count in `.gh2-index` mono
+   ("`14` doctors available"), search/filter controls ON the band: frosted inputs
+   (`rgba(255,255,255,0.08)` + blur, 999px, white text, lime focus ring).
+2. **Results** — light section. Cards: white, hairline border, `gh2-card` hover.
+   Doctor cards: arch-cropped portrait (small `.gh2-arch`), name, specialty caps label,
+   languages as chips, next-available slot in mono, forest outline "View profile" +
+   lime "Book". Blog cards: 14px-rounded image, category chip, title, date in mono.
+   Grid `sm:grid-cols-2 lg:grid-cols-3`; first/featured item MAY span 2 columns
+   (editorial bento) — never a uniform soup.
+3. Empty state: centered ghost numeral `00`, muted copy, ghost CTA back to booking.
+4. Pagination/load-more: ghost pill buttons; active page = forest fill.
+
+### E — Flow page (transactional)
+(Book `/book`, cart, checkout.)
+
+Function over atmosphere — but still branded:
+
+1. **Slim dark strip** instead of hero: `#1D4B36 → #15382A` gradient,
+   `padding: 28px 0 24px`. Contains H1 (smaller: `clamp(1.6rem,3vw,2.2rem)`) + step
+   indicator: steps numbered in `.gh2-index` mono (`01 Service → 02 Doctor → 03 Time → 04 Details`),
+   active step lime, done steps white/60, future white/30, connected by 1px hairlines.
+2. **Body** — `var(--color-background-soft)` page, white panels (`var(--radius-card)`,
+   hairline border, `--shadow-card`). Two-column: main flow left, sticky order summary
+   right (`lg:grid-cols-[1fr_minmax(300px,0.42fr)]`). Summary card: items on hairline
+   rows, totals row `2px` forest rule, lime submit button.
+3. Selectable options (service cards, time slots): white cards, hairline border; selected
+   state = forest 2px border + mint `#EDF2E2` wash + lime check dot. Time slots: 999px
+   pill chips, selected = forest fill white text.
+4. Forms per §5.6. Trust footer row: certification badges + lock icon, muted.
+
+### F — Status / confirmation page
+(Checkout success, cancelled, consent success, verify-email.)
+
+Single centered column, `max-width: 560px`, on `--color-background-soft`, full-height
+centered. White card: 999px icon disc (success = lime disc + `#0a1f14` check + one
+`gh2-ring` pulse on load; cancelled/error = `#EDF2E2` disc + forest icon — NEVER red fills,
+error text uses `#B91C1C` sparingly), H2, muted copy, reference/order number in
+`.gh2-index` mono on a hairline row, lime primary action + ghost secondary.
+Cancelled pages: ghost "Try again" primary, text-link "Contact support".
+
+### G — Content / legal page
+(About, FAQ, contact, privacy, terms, legal hub + `/legal/[type]`.)
+
+1. **Compact dark header band** (C.1 shape): index `01`, eyebrow (`COMPANY`, `LEGAL`,
+   `SUPPORT`…), H1 with accent word, optional watermark word behind.
+2. **Body** — light, `max-width: 72ch` prose for legal/about text. H2s carry small mono
+   index markers. Legal docs: effective-date + version in `.gh2-index` on a hairline row
+   under the band; sticky table-of-contents aside on desktop
+   (`lg:grid-cols-[minmax(220px,0.3fr)_1fr]`, links muted → forest active with lime dot).
+3. **FAQ**: editorial Q rows (ghost numeral + question + answer), hairline-separated,
+   grouped by topic with indexed group headers. No accordions unless count > 15 per group;
+   if accordion needed, summary row styled as `.gh2-step` (arrow rotates 90°, no boxes).
+4. **Contact**: asymmetric split — left sticky headline + contact channels on hairline
+   rows (email/phone in mono), right white form card (§5.6). Closer: NOT another CTA —
+   footer suffices.
+5. **Legal hub** (`/legal`): document list as editorial rows — ghost index, doc title,
+   effective date in mono, arrow affordance (`.gh2-step` hover).
+
+### H — Auth page
+(Login, register, forgot/reset password, verify-email form states.)
+
+Split-screen desktop, `lg:grid-cols-[1fr_1fr]`:
+- **Left panel** (hidden < lg): `.gh2-hero` gradient, watermark wordmark, one trust line +
+  3 hairline mini-stats (reuse TrustRibbon dark column pattern, smaller). Pure brand.
+- **Right panel**: white, centered `max-width: 420px` form. Logo top, H2
+  (`clamp(1.6rem,2.5vw,2rem)`, one accent word ok), fields per §5.6, lime submit
+  (full-width `.gh2-btn-lime`), muted alt-action links (forest, underline on hover).
+Mobile: right panel only, slim dark strip with logo on top.
+
+### I — Gateway (`/` country picker)
+`.gh2-hero` full-viewport canvas, "Global Health" watermark, H1 with accent word,
+country cards as white-glass `gh2-card`s in a grid: flag, country name extrabold,
+doctor count in lime mono, languages as chips, arrow affordance. Below: marquee of
+countries (CountryMarquee pattern). No other sections — the gate has one job.
+
+---
+
+## 8. Route-by-route map (complete website)
+
+Status legend: ✅ shipped · 🔁 restyle to archetype · 🚫 out of scope (functional surface).
+
+### 8.1 Global pages `(site)`
+
+| Route | Archetype | Notes |
+|---|---|---|
+| `/` | I | Country gateway. Watermark "Global Health". |
+| `/about` | G | Add team band reuse (homepage `04` team pattern) mid-page; stats row (TrustRibbon light). |
+| `/faq` | G | Editorial Q rows grouped by topic; search input (frosted, on dark band). |
+| `/contact` | G | Split layout per G.4. |
+| `/privacy` | G | Prose + sticky ToC. |
+| `/terms` | G | Prose + sticky ToC. |
+| `/blog` | D | Featured post spans 2 cols (bento). Category filter = pill rail (SectionNav-style). |
+| `/blog/[slug]` | C | Blog variant of C.1; cover image inset 14px below band, NOT full-bleed. Related posts 3-up. |
+| `/cart` | E | Global cart variant — same body as country cart. |
+| `/checkout` + `/checkout/success` + `/checkout/cancelled` | E / F / F | |
+| `/brazil/consent` | E | Single-panel consent form, slim dark strip, white form card. LGPD seriousness: no playful copy. |
+| `/brazil/consent/success` | F | |
+| `/patient-upload` | E | Slim strip + single white upload card; file dropzone = dashed `rgba(29,75,54,0.25)` border, mint wash on dragover, lime progress bar. |
+| `/reviews/rate` | E | Slim strip + white card; star control = forest outline stars, lime fill on select, scale pop on tap. |
+
+### 8.2 Auth pages `(auth)`
+
+| Route | Archetype | Notes |
+|---|---|---|
+| `/login` | H | |
+| `/register` | H | Multi-field; group fields with 13px caps section labels. |
+| `/forgot-password` | H | Single field — keep left brand panel. |
+| `/reset-password` | H | |
+| `/verify-email` | H → F | Form state = H; post-verify confirmation = F card inside right panel. |
+
+### 8.3 Country-scoped pages `/[country]/[lang]/…`
+
+| Route | Archetype | Notes |
+|---|---|---|
+| `/` (country home) | A | ✅ Shipped. Reference implementation. |
+| `/gp-appointment` (→ `general-consultation/page.tsx`) | B | Watermark "GP". Eyebrow `GENERAL PRACTICE`. |
+| `/see-a-specialist` (→ `specialist-consultation/page.tsx`) | B | Specialty grid = white-glass cards; per-specialty doctor counts in mono. |
+| `/repeat-prescription-request` (→ `prescriptions/page.tsx`) | B | Mind Google-Ads copy constraints (GP-only positioning — see prescription-scrub notes). |
+| `/lab-tests` (→ `tests/page.tsx`) | B | Test cards: biomarker count in mono, sample-type chip. |
+| `/consult/[serviceSlug]` | C | Service detail variant; sticky booking aside. |
+| `/doctors` | D | Filter rail on dark band (specialty, language, availability). |
+| `/doctors/[doctorSlug]` | C | Doctor variant; bio prose + credentials on hairline rows + availability calendar in aside card. |
+| `/book` | E | THE core flow. 4-step indicator per E.1. Slot pills per E.3. |
+| `/cart` | E | |
+| `/checkout` + `success` + `cancelled` | E / F / F | Success: `gh2-ring` pulse on check disc, appointment details on hairline rows. |
+| `/legal` | G | Legal hub rows per G.5. |
+| `/legal/[type]` | G | Prose + ToC + effective-date mono row. |
+| `/[country]` (no lang) | — | Redirect only. No UI. |
+
+Marketing aliases (`/online-doctor-visit`, `/specialist-appointment`, `/repeat-prescription`,
+`/book-online`, `/sick-certificate` etc. in `next.config.ts`) resolve to the routes above —
+styling the canonical page covers them.
+
+### 8.4 Out of scope 🚫
+
+| Surface | Why |
+|---|---|
+| `/admin/**` | Internal tool. Keep functional admin UI. |
+| `/doctor/**` (doctor portal) | Internal tool. |
+| `/account/**` (patient portal) | Separate portal design pass — do not touch in this rollout. |
+| `/print/**` | Print stylesheets — paper, not brand atmosphere. |
+| `/share/consults/[token]` | Clinical document view — legibility first; MAY adopt tokens (forest headings, hairlines) but no dark sections, no watermarks. |
+
+### 8.5 Shared components to restyle once (used across archetypes)
+
+| Component | Used by | Treatment |
+|---|---|---|
+| Breadcrumbs | C, D, G | 12px, white/45 on dark bands, mono `/` separators, lime hover. |
+| Pagination | D | Ghost pills, forest fill active. |
+| Filter/search inputs on dark bands | B, D | Frosted: `rgba(255,255,255,0.08)` + blur, 999px, lime focus ring. |
+| Form fields (light) | E, G, H | §5.6: white, 12px radius, forest focus ring. |
+| Toasts/alerts | all | White card + hairline, 4px left rule: lime = success, forest = info, `#B91C1C` = error (text stays forest/ink). |
+| Loading skeletons | D, E | `#EDF2E2` shimmer on light; `rgba(255,255,255,0.06)` on dark. |
+| Empty states | D, E | Ghost `00` numeral + muted copy + ghost CTA. |
+| Modal/dialog | E | White, `--radius-card`, `--shadow-elevated`, dark scrim `rgba(11,36,28,0.55)` + blur(4px). |
+
+---
+
+## 9. Banned (instant review-fail)
 
 - Flat `#1D4B36` backgrounds for atmospheric sections (use night gradients).
 - Old dark-glass cards (`rgba(15,46,37,…)` fills) — replaced by white-glass.
@@ -294,8 +506,9 @@ Hero-style status pills: 999px, 1px hairline border, frosted on dark
 
 ---
 
-## 8. Checklist per page
+## 10. Checklist per page
 
+- [ ] Page built to its assigned archetype from §8 (look the route up first)
 - [ ] First section starts forest-dark under the translucent header
 - [ ] Hero: watermark + `01` index + eyebrow + one-accent-word H1
 - [ ] All section headers use the index+eyebrow pattern, sequential from 01
