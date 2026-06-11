@@ -50,9 +50,6 @@ export function FinalCTA({
           className="mb-12 flex items-center justify-between pt-6 md:mb-20"
           style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
         >
-          <span aria-hidden className="gh2-index" style={{ color: "rgba(176,241,34,0.50)" }}>
-            06
-          </span>
           <span
             className="text-[11px] font-bold tracking-[0.22em] uppercase"
             style={{ color: "rgba(255,255,255,0.35)" }}

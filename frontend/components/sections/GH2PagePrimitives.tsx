@@ -21,13 +21,6 @@ export function GH2SectionHeader({
     <div>
       <p className="flex items-center gap-3">
         <span
-          aria-hidden
-          className="gh2-index"
-          style={{ color: dark ? "rgba(176,241,34,0.50)" : "rgba(29,75,54,0.40)" }}
-        >
-          {index}
-        </span>
-        <span
           className="text-[11px] font-bold uppercase tracking-[0.22em]"
           style={{ color: dark ? "var(--color-brand-accent)" : "var(--color-brand-primary)" }}
         >
@@ -107,9 +100,6 @@ export function GH2CompactHero({
           </Link>
         ) : null}
         <p className="flex items-center gap-3">
-          <span aria-hidden className="gh2-index" style={{ color: "rgba(176,241,34,0.50)" }}>
-            01
-          </span>
           <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
             {eyebrow}
           </span>

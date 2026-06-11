@@ -413,9 +413,6 @@ export default async function CountryLangHomePage({
           <div className="mb-12 md:mb-16">
             <div className="flex flex-wrap items-baseline justify-between gap-4">
               <span className="flex items-center gap-3">
-                <span aria-hidden className="gh2-index" style={{ color: "rgba(176,241,34,0.50)" }}>
-                  04
-                </span>
                 <span
                   style={{
                     fontSize: 11,

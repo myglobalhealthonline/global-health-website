@@ -72,13 +72,6 @@ export function HowItWorksNarrative({
           <div>
             <p className="flex items-center gap-3">
               <span
-                aria-hidden
-                className="gh2-index"
-                style={{ color: isLight ? "rgba(29,75,54,0.40)" : "rgba(176,241,34,0.50)" }}
-              >
-                05
-              </span>
-              <span
                 className="text-[11px] font-bold tracking-[0.22em] uppercase"
                 style={{ color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
               >

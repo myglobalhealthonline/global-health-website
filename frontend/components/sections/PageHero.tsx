@@ -64,9 +64,6 @@ export function PageHero({
           <div>
             {countryCode || countryLabel ? (
               <p className="flex flex-wrap items-center gap-3">
-                <span aria-hidden className="gh2-index" style={{ color: "rgba(176,241,34,0.50)" }}>
-                  {index}
-                </span>
                 {countryCode ? <Flag code={countryCode} size="sm" /> : null}
                 {countryLabel ? (
                   <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">

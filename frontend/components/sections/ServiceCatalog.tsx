@@ -155,9 +155,6 @@ export function ServiceCatalog({
         <header className="grid items-end gap-8 lg:grid-cols-[1fr_auto] mb-12 md:mb-16">
           <div>
             <p className="flex items-center gap-3">
-              <span aria-hidden className="gh2-index" style={{ color: "rgba(176,241,34,0.50)" }}>
-                02
-              </span>
               <span
                 className="text-[11px] font-bold tracking-[0.2em] uppercase"
                 style={{ color: "var(--color-brand-accent)" }}
