@@ -25,6 +25,7 @@ const CACHE_HEADER = "public, max-age=300, s-maxage=300, stale-while-revalidate=
 const legalPublicRoute: FastifyPluginAsync = async (app) => {
   app.get<{ Params: { code: string } }>(
     "/api/countries/:code/legal",
+    { config: { rateLimit: { max: 200, timeWindow: "1 minute" } } },
     async (request, reply) => {
       reply.header("Cache-Control", CACHE_HEADER);
       try {
@@ -53,6 +54,7 @@ const legalPublicRoute: FastifyPluginAsync = async (app) => {
 
   app.get<{ Params: { code: string; type: string }; Querystring: { locale?: string } }>(
     "/api/countries/:code/legal-documents/:type",
+    { config: { rateLimit: { max: 200, timeWindow: "1 minute" } } },
     async (request, reply) => {
       reply.header("Cache-Control", CACHE_HEADER);
 

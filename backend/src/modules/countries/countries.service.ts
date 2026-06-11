@@ -468,6 +468,18 @@ export async function getPublicCountryLegalDocument(
 
     const candidates = await prisma.countryLegalDocument.findMany({
       where: { countryId: country.id, type, isPublished: true },
+      // Explicit select keeps internal fields (id, countryId) out of the
+      // public payload even if a future route spreads the document object.
+      select: {
+        type: true,
+        title: true,
+        content: true,
+        pdfPath: true,
+        locale: true,
+        version: true,
+        publishedAt: true,
+        updatedAt: true,
+      },
       orderBy: { locale: "asc" },
     });
     if (candidates.length === 0) return null;

@@ -268,6 +268,9 @@ const accountProfileRoute: FastifyPluginAsync = async (app) => {
         },
       });
 
+      // Log-only by design: a patient's own-record access is never blocked
+      // (even in enforce mode), so the guard runs after the write to record
+      // only uploads that actually happened.
       await guardMedicalRead(
         request,
         { userId: request.authUser!.sub, role: "PATIENT" },
