@@ -103,6 +103,7 @@ export default async function HealthTestsPage({
       />
 
       <PageHero
+        watermark="Lab tests"
         countryCode={config.code}
         countryLabel={`${config.name} · Lab tests reviewed by doctors`}
         titleLead="Lab results,"

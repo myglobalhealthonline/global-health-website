@@ -173,6 +173,7 @@ export default async function CountryLangSpecialistConsultationPage({
       />
 
       <PageHero
+        watermark="Specialists"
         countryCode={config.code}
         countryLabel={sp.countryLabel.replace("{country}", config.name)}
         titleLead={sp.heroLead}

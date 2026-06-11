@@ -20,6 +20,7 @@ export default async function AboutPage() {
     <section>
       {/* DARK — hero */}
       <PageHero
+        watermark="About"
         countryLabel={about.hero_eyebrow}
         titleLead={about.hero_title_lead}
         titleAccent={about.hero_title_accent}

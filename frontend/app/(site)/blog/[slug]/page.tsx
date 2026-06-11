@@ -41,7 +41,7 @@ export default async function BlogPostPage({ params }: Props) {
         eyebrow={post.category}
         title={post.title}
         accent=""
-        watermark="Article"
+        watermark="Blog"
         body={post.excerpt}
         backHref="/blog"
         backLabel="All articles"

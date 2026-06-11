@@ -202,6 +202,7 @@ export default async function CountryLangGeneralConsultationPage({
       ) : null}
 
       <PageHero
+        watermark="GP consultation"
         countryCode={config.code}
         countryLabel={
           gpHub

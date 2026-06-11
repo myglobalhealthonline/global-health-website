@@ -20,6 +20,7 @@ export default async function ContactPage() {
     <section>
       {/* DARK — hero */}
       <PageHero
+        watermark="Contact"
         countryLabel={contact.hero_eyebrow}
         titleLead={contact.hero_title_lead}
         titleAccent={contact.hero_title_accent}

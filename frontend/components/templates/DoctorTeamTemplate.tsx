@@ -73,6 +73,7 @@ export function DoctorTeamTemplate({
   return (
     <section style={{ background: "var(--color-background-soft)" }}>
       <PageHero
+        watermark="Doctors"
         countryLabel={`${countryName} · ${i18n?.theTeamBadge ?? "The team"}`}
         titleLead={i18n?.heroTitleLead ?? "Doctors who"}
         titleAccent={i18n?.heroTitleAccent ?? "actually"}
