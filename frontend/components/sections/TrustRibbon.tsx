@@ -51,6 +51,7 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
 
   return (
     <section
+      className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
       style={{
         background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         borderBottom: `1px solid ${hairline}`,

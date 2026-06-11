@@ -57,6 +57,7 @@ export function HowItWorksNarrative({
   return (
     <section
       id="how-it-works"
+      className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
       style={{
         background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         padding: "clamp(64px,8vw,120px) 0",

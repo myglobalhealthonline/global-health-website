@@ -28,6 +28,7 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
 
   return (
     <section
+      className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
       style={{
         background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
         borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",

@@ -79,6 +79,7 @@ export function ServicesGrid({
 
   return (
     <section
+      className={isDark ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" : ""}
       style={
         isDark
           ? {

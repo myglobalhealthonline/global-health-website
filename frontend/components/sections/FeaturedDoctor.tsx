@@ -353,6 +353,7 @@ export function FeaturedDoctor({
   if (standalone) {
     return (
       <section
+        className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
         style={{
           background: "var(--color-background-dark)",
           borderTop: "1px solid rgba(255,255,255,0.06)",
