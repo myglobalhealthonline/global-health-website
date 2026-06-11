@@ -182,7 +182,7 @@ export function SiteHeader({
       : "/";
 
   return (
-    <header className="gh-header-sticky w-full">
+    <header className="gh-site-shell gh-header-sticky w-full">
       <div
         className="
           mx-auto grid items-center
@@ -195,8 +195,7 @@ export function SiteHeader({
         {/* Brand */}
         <Link
           href={activeCountry && parsed.lang ? `/${parsed.country}/${parsed.lang}` : "/"}
-          className="inline-flex items-center"
-          style={{ textDecoration: "none" }}
+          className="gh-header-brandLink inline-flex items-center"
           aria-label={siteName || "Global Health"}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -208,15 +207,12 @@ export function SiteHeader({
         </Link>
 
         {/* Section tabs — only inside a country */}
-        <div className="hidden md:flex" style={{ justifySelf: "center" }}>
+        <div className="gh-header-navCenter hidden md:flex">
           {sectionItems.length > 0 ? <SectionNav items={sectionItems} variant="dark" /> : null}
         </div>
 
         {/* Right — switchers + auth + CTA */}
-        <div
-          className="flex items-center gap-2.5"
-          style={{ justifySelf: "end" }}
-        >
+        <div className="gh-header-actions flex items-center gap-2.5">
           <div className="hidden md:flex md:items-center md:gap-2">
             <CountrySwitcher activeCountryCode={activeCountryCode} countries={countries} />
             <LanguageSwitcher

@@ -4,7 +4,6 @@ import { ArrowRight, ShieldCheck, Stethoscope, Clock } from "lucide-react";
 import type { CountryCode } from "@/data/countries";
 import { Flag } from "@/components/ui/Flag";
 import { HeroReveal } from "@/components/motion/HeroReveal";
-import styles from "./HomeHero.module.css";
 
 export type LiveDoctorItem = {
   name: string;
@@ -72,10 +71,10 @@ export function HomeHero({
   return (
     <section
       aria-labelledby="hero-title"
-      className={`${styles.root} gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden`}
+      className="gh-home-hero-root gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden"
     >
       {/* ── Base layer: hero photo, full-bleed ── */}
-      <div className={`${styles.photoLayer} gh-medical-pattern-layer absolute inset-0`}>
+      <div className="gh-home-hero-photoLayer gh-medical-pattern-layer absolute inset-0">
         <Image
           src={heroPhotoSrc}
           alt=""
@@ -91,34 +90,28 @@ export function HomeHero({
       {/* ── Green forest overlay — uniform tint so photo looks faded/green-cast ── */}
       <div
         aria-hidden
-        className={`${styles.tintOverlay} gh-medical-pattern-layer pointer-events-none absolute inset-0`}
+        className="gh-home-hero-tintOverlay gh-medical-pattern-layer pointer-events-none absolute inset-0"
       />
 
       {/* ── Watermark — sits above overlay, below content ── */}
       <div
         aria-hidden
-        className={`${styles.watermark} gh-medical-pattern-layer gh2-watermark pointer-events-none absolute bottom-[-0.06em] left-[-0.04em] select-none`}
+        className="gh-home-hero-watermark gh-medical-pattern-layer gh2-watermark pointer-events-none absolute bottom-[-0.06em] left-[-0.04em] select-none"
       >
         {countryName}
       </div>
 
       {/* ── Content ── */}
-      <div
-        className={`${styles.grid} relative mx-auto grid max-w-[var(--container-width)] items-center gap-12 px-5 pb-14 pt-[calc(var(--header-height)+3.5rem)] md:px-10 lg:gap-16 lg:pb-16 lg:pt-[calc(var(--header-height)+4rem)]`}
-      >
+      <div className="gh-home-hero-grid relative mx-auto grid max-w-[var(--container-width)] items-center gap-12 px-5 pb-14 pt-[calc(var(--header-height)+3.5rem)] md:px-10 lg:gap-16 lg:pb-16 lg:pt-[calc(var(--header-height)+4rem)]">
         {/* ── LEFT — text column ── */}
         <div className="flex max-w-[760px] flex-col py-10 lg:py-20">
           <HeroReveal delay={0}>
             <div className="mb-9 flex flex-wrap items-center gap-3">
-              <span
-                className={`${styles.countryBadge} inline-flex items-center gap-2.5 rounded-full py-1.5 pl-2 pr-4 text-[11px] font-bold uppercase tracking-[0.18em] text-white/85`}
-              >
+              <span className="gh-home-hero-countryBadge inline-flex items-center gap-2.5 rounded-full py-1.5 pl-2 pr-4 text-[11px] font-bold uppercase tracking-[0.18em] text-white/85">
                 <Flag code={countryCode} size="sm" />
                 {countryName}
               </span>
-              <span
-                className={`${styles.availableBadge} inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-accent)]`}
-              >
+              <span className="gh-home-hero-availableBadge inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-accent)]">
                 <span aria-hidden className="gh-pulse-dot !size-1.5" />
                 {doctorCount} {i18n?.available ?? "available"}
               </span>
@@ -126,13 +119,13 @@ export function HomeHero({
           </HeroReveal>
 
           <HeroReveal delay={130}>
-            <h1 id="hero-title" className={`${styles.title} max-w-[13ch] text-white`}>
+            <h1 id="hero-title" className="gh-home-hero-title max-w-[13ch] text-white">
               {displayHeroTitle ? (
                 displayHeroTitle
               ) : (
                 <>
                   {i18n?.titleMain ?? "Medicine Anytime"}{" "}
-                  <span className={`${styles.titleAccent} gh2-underline`}>
+                  <span className="gh-home-hero-titleAccent gh2-underline">
                     {i18n?.titleAccent ?? "Anywhere."}
                     <svg aria-hidden viewBox="0 0 220 14" fill="none" preserveAspectRatio="none">
                       <path
@@ -149,9 +142,7 @@ export function HomeHero({
           </HeroReveal>
 
           <HeroReveal delay={240}>
-            <p
-              className={`${styles.subtitle} mt-8 max-w-[46ch] text-[length:var(--text-body-lg)] leading-relaxed`}
-            >
+            <p className="gh-home-hero-subtitle mt-8 max-w-[46ch] text-[length:var(--text-body-lg)] leading-relaxed">
               {displayHeroSubtitle ??
                 (i18n?.subtitle ??
                   "Choose a service, select an open time, and speak with licensed clinicians registered with national medical councils across Europe.")}
@@ -177,12 +168,12 @@ export function HomeHero({
           </HeroReveal>
 
           <HeroReveal delay={430}>
-            <div className={`${styles.trustDivider} mt-12 pt-7`}>
+            <div className="gh-home-hero-trustDivider mt-12 pt-7">
               <ul className="flex flex-wrap gap-x-9 gap-y-3">
                 {trustItems.map(({ icon: Icon, label }) => (
                   <li
                     key={label}
-                    className={`${styles.trustItem} inline-flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.13em]`}
+                    className="gh-home-hero-trustItem inline-flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.13em]"
                   >
                     <Icon
                       className="size-3.5 text-[var(--color-brand-accent)]"
@@ -202,11 +193,9 @@ export function HomeHero({
           {doctorsForPanel.length > 0 ? (
             <aside
               aria-label="Doctors available now"
-              className={`${styles.availabilityPanel} absolute -bottom-8 -left-9 flex w-[300px] flex-col`}
+              className="gh-home-hero-availabilityPanel absolute -bottom-8 -left-9 flex w-[300px] flex-col"
             >
-              <p
-                className={`${styles.panelEyebrow} mb-4 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em]`}
-              >
+              <p className="gh-home-hero-panelEyebrow mb-4 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em]">
                 <span aria-hidden className="gh-pulse-dot !size-1.5" />
                 {i18n?.openCalendars ?? "Open calendars"}
               </p>
@@ -216,23 +205,23 @@ export function HomeHero({
                   <li key={d.name} className="flex items-center gap-3">
                     <AvatarBubble name={d.name} imageSrc={d.imageSrc} />
                     <div className="min-w-0 flex-1">
-                      <p className={`${styles.doctorName} truncate text-[13px] font-bold`}>
+                      <p className="gh-home-hero-doctorName truncate text-[13px] font-bold">
                         {d.name}
                       </p>
-                      <p className={`${styles.doctorRole} truncate text-[11px]`}>
+                      <p className="gh-home-hero-doctorRole truncate text-[11px]">
                         {d.role}
                       </p>
                     </div>
                     <span
                       aria-hidden
-                      className={`${styles.doctorDot} size-1.5 shrink-0 rounded-full`}
+                      className="gh-home-hero-doctorDot size-1.5 shrink-0 rounded-full"
                     />
                   </li>
                 ))}
               </ul>
 
-              <div className={`${styles.panelDivider} mt-4 pt-4`}>
-                <p className={`${styles.panelMeta} mb-4 text-[11px] leading-relaxed`}>
+              <div className="gh-home-hero-panelDivider mt-4 pt-4">
+                <p className="gh-home-hero-panelMeta mb-4 text-[11px] leading-relaxed">
                   {(i18n?.doctorsAcrossEurope ?? "{count} doctors across Europe").replace(
                     "{count}",
                     String(totalDoctorsAcrossEurope),
@@ -245,7 +234,7 @@ export function HomeHero({
                 </p>
                 <Link
                   href={bookHref}
-                  className={`${styles.panelBookBtn} flex w-full items-center justify-center gap-2 rounded-full py-3 text-[13px] font-bold text-white transition-colors duration-200 hover:bg-white/10 motion-reduce:transition-none`}
+                  className="gh-home-hero-panelBookBtn flex w-full items-center justify-center gap-2 rounded-full py-3 text-[13px] font-bold text-white transition-colors duration-200 hover:bg-white/10 motion-reduce:transition-none"
                 >
                   {i18n?.bookNow ?? "Book now"}
                   <ArrowRight className="size-3.5" strokeWidth={1.5} aria-hidden />
@@ -258,7 +247,7 @@ export function HomeHero({
 
       <div
         aria-hidden
-        className={`${styles.bottomRule} gh-medical-pattern-layer absolute bottom-0 left-0 right-0 h-px`}
+        className="gh-home-hero-bottomRule gh-medical-pattern-layer absolute bottom-0 left-0 right-0 h-px"
       />
     </section>
   );
@@ -281,7 +270,7 @@ function AvatarBubble({ name, imageSrc }: { name: string; imageSrc?: string | nu
     return (
       <span
         aria-hidden
-        className={`${styles.avatarImage} relative inline-flex size-10 shrink-0 overflow-hidden rounded-full`}
+        className="gh-home-hero-avatarImage relative inline-flex size-10 shrink-0 overflow-hidden rounded-full"
       >
         <Image
           src={src}
@@ -297,7 +286,7 @@ function AvatarBubble({ name, imageSrc }: { name: string; imageSrc?: string | nu
   return (
     <span
       aria-hidden
-      className={`${styles.avatarFallback} inline-flex size-10 shrink-0 items-center justify-center rounded-full text-[11px] font-bold tracking-tight`}
+      className="gh-home-hero-avatarFallback inline-flex size-10 shrink-0 items-center justify-center rounded-full text-[11px] font-bold tracking-tight"
     >
       {initials}
     </span>

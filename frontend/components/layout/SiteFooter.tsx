@@ -164,56 +164,35 @@ export function SiteFooter({
     override?.copyrightLine ?? `© ${year} ${siteName || "Global Health"}`;
 
   return (
-    <footer
-      className="relative overflow-hidden"
-      style={{
-        background: "linear-gradient(180deg, #0F2E25 0%, #0B241C 100%)",
-        color: "rgba(255,255,255,0.70)",
-        padding: "clamp(56px,7vw,88px) 0 0",
-        borderTop: "1px solid rgba(255,255,255,0.08)",
-      }}
-    >
-      <div
-        className="relative z-[1] mx-auto"
-        style={{ maxWidth: 1320, padding: "0 clamp(20px, 4vw, 40px)" }}
-      >
+    <footer className="gh-site-shell gh-footer-shell relative overflow-hidden">
+      <div className="gh-footer-inner relative z-[1] mx-auto">
         <div className="gh-footer-grid grid gap-x-8 gap-y-10">
           <div>
             <Link
               href="/"
-              className="inline-flex items-center"
-              style={{ textDecoration: "none" }}
+              className="gh-footer-brandLink inline-flex items-center"
               aria-label={siteName || "Global Health"}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logos/global-health-light.png"
                 alt={siteName || "Global Health"}
-                style={{ height: 38, width: "auto" }}
+                className="gh-footer-logo"
               />
             </Link>
-            <p
-              className="mt-4 whitespace-pre-line"
-              style={{ fontSize: 14, lineHeight: 1.6, maxWidth: 320 }}
-            >
+            <p className="gh-footer-tagline mt-4 whitespace-pre-line">
               {tagline}
             </p>
-            <div
-              className="mt-4 flex flex-col gap-1"
-              style={{ fontSize: 13, color: "rgba(255,255,255,0.50)" }}
-            >
+            <div className="gh-footer-contact mt-4 flex flex-col gap-1">
               {contactEmail ? (
-                <a
-                  href={`mailto:${contactEmail}`}
-                  style={{ color: "inherit", textDecoration: "none" }}
-                >
+                <a href={`mailto:${contactEmail}`} className="gh-footer-contactLink">
                   {contactEmail}
                 </a>
               ) : null}
               {contactPhone ? (
                 <a
                   href={`tel:${contactPhone.replace(/[^0-9+]/g, "")}`}
-                  style={{ color: "inherit", textDecoration: "none" }}
+                  className="gh-footer-contactLink"
                 >
                   {contactPhone}
                 </a>
@@ -257,19 +236,10 @@ export function SiteFooter({
 
           {groups.map((group) => (
             <div key={group.h}>
-              <p
-                className="m-0 inline-flex items-center gap-2 uppercase text-white"
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: "0.18em",
-                  marginBottom: 14,
-                }}
-              >
+              <p className="gh-footer-groupHeading m-0 inline-flex items-center gap-2 uppercase text-white">
                 <span
                   aria-hidden
-                  className="inline-block h-3 w-[3px] rounded-full"
-                  style={{ background: "var(--color-brand-accent)" }}
+                  className="gh-footer-groupAccent inline-block h-3 w-[3px] rounded-full"
                 />
                 {group.h}
               </p>
@@ -283,8 +253,8 @@ export function SiteFooter({
                   const isExternal =
                     item.external === true ||
                     /^(https?:|mailto:|tel:)/i.test(item.href);
-                  const linkClass = "inline-block text-[rgba(255,255,255,0.70)] transition-[color,transform] duration-200 hover:translate-x-0.5 hover:text-white focus-visible:text-white focus-visible:outline-none motion-reduce:transition-none";
-                  const linkStyle = { fontSize: 14, textDecoration: "none" } as const;
+                  const linkClass =
+                    "gh-footer-navLink inline-block text-[rgba(255,255,255,0.70)] transition-[color,transform] duration-200 hover:translate-x-0.5 hover:text-white focus-visible:text-white focus-visible:outline-none motion-reduce:transition-none";
                   const newTab = item.external === true;
                   return (
                     <li key={item.label + item.href}>
@@ -294,12 +264,11 @@ export function SiteFooter({
                           target={newTab ? "_blank" : undefined}
                           rel={newTab ? "noopener noreferrer" : undefined}
                           className={linkClass}
-                          style={linkStyle}
                         >
                           {item.label}
                         </a>
                       ) : (
-                        <Link href={item.href} className={linkClass} style={linkStyle}>
+                        <Link href={item.href} className={linkClass}>
                           {item.label}
                         </Link>
                       )}
@@ -311,28 +280,19 @@ export function SiteFooter({
           ))}
         </div>
 
-        <p
-          className="mt-12 max-w-[980px] text-sm leading-relaxed"
-          style={{ color: "rgba(255,255,255,0.58)" }}
-        >
+        <p className="gh-footer-disclaimer mt-12 max-w-[980px] text-sm leading-relaxed">
           {navigation.footerDisclaimer}
         </p>
 
-        <div
-          className="flex flex-wrap justify-between gap-3"
-          style={{
-            marginTop: 40,
-            paddingTop: 24,
-            borderTop: "1px solid rgba(255,255,255,0.10)",
-            fontSize: 12,
-            color: "rgba(255,255,255,0.65)",
-          }}
-        >
+        <div className="gh-footer-copyrightBar flex flex-wrap justify-between gap-3">
           <span suppressHydrationWarning>
             {copyrightPrefix} · {navigation.footerCopyrightSuffix}
           </span>
           <span className="flex gap-3">
-            <Link href="/privacy" className="transition-colors hover:text-white focus-visible:text-white focus-visible:outline-none" style={{ color: "inherit", textDecoration: "none" }}>
+            <Link
+              href="/privacy"
+              className="gh-footer-legalLink transition-colors hover:text-white focus-visible:text-white focus-visible:outline-none"
+            >
               {navigation.footerPrivacyLink}
             </Link>
             <span aria-hidden>·</span>
@@ -345,11 +305,7 @@ export function SiteFooter({
           Echoes the hero's country-name watermark; pure atmosphere. */}
       <div
         aria-hidden
-        className="gh2-watermark pointer-events-none relative z-0 mt-10 text-center"
-        style={{
-          fontSize: "clamp(3.25rem, 10.5vw, 9.5rem)",
-          marginBottom: "-0.18em",
-        }}
+        className="gh-footer-watermark gh2-watermark pointer-events-none relative z-0 mt-10 text-center"
       >
         {siteName || "Global Health"}
       </div>

@@ -162,16 +162,9 @@ html {
   tab-size: 4;
   scroll-behavior: smooth;
   margin: 0;
-}
-@supports not (text-size-adjust: 100%) {
-  html {
-    -webkit-text-size-adjust: 100%;
-  }
-}
-@supports (text-size-adjust: 100%) {
-  html {
-    text-size-adjust: 100%;
-  }
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -492,13 +485,224 @@ img {
   .gh-pulse-dot { animation: none; }
 }
 
+/* Shared dark chrome shell — header + footer use the same forest gradient. */
+.gh-site-shell {
+  background: linear-gradient(180deg, #0f2e25 0%, #0b241c 100%);
+}
+
 .gh-header-sticky {
   position: sticky;
   top: 0;
   z-index: 40;
-  /* Match SiteFooter shell — same forest gradient + hairline border. */
-  background: linear-gradient(180deg, #0f2e25 0%, #0b241c 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gh-footer-shell {
+  color: rgba(255, 255, 255, 0.7);
+  padding: clamp(56px, 7vw, 88px) 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gh-footer-inner {
+  max-width: 1320px;
+  padding: 0 clamp(20px, 4vw, 40px);
+}
+
+.gh-header-brandLink {
+  text-decoration: none;
+}
+
+.gh-header-navCenter {
+  justify-self: center;
+}
+
+.gh-header-actions {
+  justify-self: end;
+}
+
+.gh-footer-brandLink {
+  text-decoration: none;
+}
+
+.gh-footer-logo {
+  height: 38px;
+  width: auto;
+}
+
+.gh-footer-tagline {
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 320px;
+}
+
+.gh-footer-contact {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.gh-footer-contactLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.gh-footer-groupHeading {
+  margin-bottom: 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.gh-footer-groupAccent {
+  background: var(--color-brand-accent);
+}
+
+.gh-footer-navLink {
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.gh-footer-disclaimer {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.gh-footer-copyrightBar {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.gh-footer-legalLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.gh-footer-watermark {
+  font-size: clamp(3.25rem, 10.5vw, 9.5rem);
+  margin-bottom: -0.18em;
+}
+
+/* Country home hero — full-bleed photo + forest tint */
+.gh-home-hero-root {
+  background: #0f2e25;
+  min-height: 100svh;
+  margin-top: calc(-1 * var(--header-height));
+}
+
+.gh-home-hero-photoLayer {
+  z-index: 0;
+}
+
+.gh-home-hero-tintOverlay {
+  z-index: 1;
+  background-color: rgba(11, 36, 28, 0.88);
+  background-image:
+    radial-gradient(ellipse 900px 600px at 100% -10%, rgba(176, 241, 34, 0.08), transparent 50%),
+    radial-gradient(ellipse 700px 900px at -5% 115%, rgba(0, 0, 0, 0.2), transparent 55%);
+}
+
+.gh-home-hero-watermark {
+  z-index: 2;
+  font-size: clamp(7rem, 21vw, 19rem);
+}
+
+.gh-home-hero-grid {
+  z-index: 3;
+  min-height: 100svh;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1024px) {
+  .gh-home-hero-grid {
+    grid-template-columns: minmax(0, 1.02fr) minmax(420px, 0.76fr);
+  }
+}
+
+.gh-home-hero-countryBadge {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.gh-home-hero-availableBadge {
+  background: rgba(176, 241, 34, 0.08);
+  border: 1px solid rgba(176, 241, 34, 0.2);
+}
+
+.gh-home-hero-title {
+  font-size: clamp(3rem, 7vw + 0.75rem, 6rem);
+  font-weight: 800;
+  line-height: 0.94;
+  letter-spacing: -0.045em;
+}
+
+.gh-home-hero-titleAccent {
+  color: var(--color-brand-accent);
+}
+
+.gh-home-hero-subtitle {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.gh-home-hero-trustDivider {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gh-home-hero-trustItem {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.gh-home-hero-availabilityPanel {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 22px;
+  background: rgba(13, 38, 30, 0.8);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+  padding: 22px;
+}
+
+.gh-home-hero-panelEyebrow {
+  color: var(--color-brand-accent);
+}
+
+.gh-home-hero-doctorName {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.gh-home-hero-doctorRole {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.gh-home-hero-doctorDot {
+  background: var(--color-brand-accent);
+}
+
+.gh-home-hero-panelDivider {
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.gh-home-hero-panelMeta {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.gh-home-hero-panelBookBtn {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gh-home-hero-bottomRule {
+  z-index: 4;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.gh-home-hero-avatarImage {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gh-home-hero-avatarFallback {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Site footer grid — replaces SiteFooter.tsx inline <style> block.
@@ -1546,6 +1750,7 @@ img {
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 0.78;
+  -webkit-user-select: none;
   user-select: none;
   white-space: nowrap;
 }
