@@ -4,6 +4,8 @@ import { prisma } from "../db/prisma.js";
 import { requireAuth } from "../utils/require-auth.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
+import { generateGlobalHealthNumber } from "../lib/global-health-number.js";
+import { computeEmailBlindIndex } from "../lib/blind-index.js";
 
 const CONSENT_TYPES = [
   "STORE_MEDICAL",
@@ -95,6 +97,62 @@ async function getLatestConsents(patientProfileId: string) {
   });
 }
 
+/** Consent catalog with all values unset — returned when a patient has no
+ *  PatientProfile yet so the Privacy tab still renders the toggles instead
+ *  of an empty panel. */
+function emptyConsentCatalog() {
+  return CONSENT_TYPES.map((type) => {
+    const meta = CONSENT_LABELS[type];
+    return {
+      consentType: type,
+      label: meta.label,
+      description: meta.description,
+      consentValue: null,
+      consentVersion: null,
+      lastUpdatedAt: null,
+    };
+  });
+}
+
+/** Find the caller's PatientProfile, creating a minimal one (with a Global
+ *  Health Number) when it is missing. Every patient must have a profile so
+ *  the portal's medical surfaces work; legacy accounts that predate
+ *  registration-time profile creation are healed lazily here. */
+async function resolveOrCreatePatientProfile(
+  userId: string,
+  email: string,
+): Promise<{ id: string; globalHealthNumber: string | null }> {
+  const existing = await prisma.patientProfile.findUnique({
+    where: { email },
+    select: { id: true, globalHealthNumber: true },
+  });
+  if (existing) return existing;
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { fullName: true, phone: true },
+  });
+
+  let ghn: string | null = null;
+  try {
+    ghn = await generateGlobalHealthNumber();
+  } catch {
+    ghn = null; // Counter unavailable — a backfill job assigns one later.
+  }
+
+  return prisma.patientProfile.create({
+    data: {
+      email,
+      userId,
+      fullName: user?.fullName ?? email,
+      phone: user?.phone ?? null,
+      globalHealthNumber: ghn,
+      emailHash: computeEmailBlindIndex(email),
+    },
+    select: { id: true, globalHealthNumber: true },
+  });
+}
+
 const consentsRoute: FastifyPluginAsync = async (app) => {
   // ─── Patient: read latest ─────────────────────────────────────────────────
 
@@ -109,7 +167,9 @@ const consentsRoute: FastifyPluginAsync = async (app) => {
         where: { email: request.authUser.email },
         select: { id: true },
       });
-      if (!profile) return reply.status(404).send(errorResponse("Profile not found"));
+      // No profile yet (legacy account) — return the unset catalog so the
+      // Privacy tab renders its toggles. Saving creates the profile.
+      if (!profile) return okResponse({ consents: emptyConsentCatalog() });
 
       try {
         const consents = await getLatestConsents(profile.id);
@@ -149,11 +209,16 @@ const consentsRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid consent data"));
       }
 
-      const profile = await prisma.patientProfile.findUnique({
-        where: { email: request.authUser.email },
-        select: { id: true, globalHealthNumber: true },
-      });
-      if (!profile) return reply.status(404).send(errorResponse("Profile not found"));
+      let profile: { id: string; globalHealthNumber: string | null };
+      try {
+        profile = await resolveOrCreatePatientProfile(
+          request.authUser.sub,
+          request.authUser.email,
+        );
+      } catch (error) {
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not save consents"));
+      }
 
       try {
         await prisma.patientConsent.createMany({

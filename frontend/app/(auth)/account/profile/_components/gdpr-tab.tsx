@@ -20,6 +20,11 @@ const CONSENT_TYPES = [
   "THIRD_PARTY_LAB",
   "NOTIFICATIONS",
   "FOLLOW_UP",
+  // Phase 2 medical-access scope consents — must match the backend
+  // CONSENT_TYPES so toggling them on this tab actually saves.
+  "MEDICAL_ACCESS_DIRECT",
+  "MEDICAL_ACCESS_COUNTRY_CLINIC",
+  "MEDICAL_ACCESS_GLOBAL_NETWORK",
 ] as const;
 
 function statusLabel(val: boolean | null): { text: string; cls: string } {

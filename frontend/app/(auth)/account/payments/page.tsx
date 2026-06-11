@@ -103,7 +103,7 @@ export default async function AccountPaymentsPage() {
                     </span>
                     {p.doctorName && (
                       <span className="block text-xs text-[var(--color-text-muted)]">
-                        Dr. {p.doctorName}
+                        {/^dr\.?\s/i.test(p.doctorName) ? p.doctorName : `Dr. ${p.doctorName}`}
                       </span>
                     )}
                     <span className="block text-xs text-[var(--color-text-muted)]">
