@@ -76,81 +76,97 @@ export function DoctorProfileTemplate({
   return (
     <section className="bg-[var(--color-background-page)]">
 
-      {/* ── HERO — dark forest, medical cross pattern, split layout ── */}
+      {/* ── HERO — full-bleed 50/50 split with gradient fade ── */}
       <section
-        className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
-        style={{
-          padding: "clamp(48px,6vw,80px) 0 clamp(56px,7vw,96px)",
-        }}
+        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
+        style={{ background: "#0F2E25" }}
       >
-        {/* Lime radial glow — top-right */}
         <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10"
-          style={{
-            background:
-              "radial-gradient(ellipse 900px 600px at 100% -15%, rgba(176,241,34,0.13), transparent 55%)",
-          }}
-        />
+          className="grid lg:grid-cols-2"
+          style={{ minHeight: "min(100vh, 880px)" }}
+        >
 
-        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <div className="grid items-center gap-10 lg:grid-cols-[420px_1fr] lg:gap-16 xl:grid-cols-[460px_1fr] xl:gap-20">
+          {/* ── LEFT — full-height image with gradient fades ── */}
+          <div
+            className="relative overflow-hidden"
+            style={{ minHeight: "clamp(360px, 60vw, 880px)" }}
+          >
+            {profileImageSrc ? (
+              <Image
+                src={profileImageSrc}
+                alt={profile.name}
+                fill
+                sizes="(min-width:1024px) 50vw, 100vw"
+                priority
+                className="object-cover object-top"
+                unoptimized={
+                  /^https?:\/\//i.test(profileImageSrc) ||
+                  profileImageSrc.startsWith("/api/media/")
+                }
+              />
+            ) : (
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(160deg, rgba(176,241,34,0.08) 0%, rgba(15,46,37,0.60) 100%)",
+                }}
+              />
+            )}
 
-            {/* ── LEFT — portrait ── */}
+            {/* Bottom fade — readability on mobile where content sits below */}
             <div
-              className="relative overflow-hidden"
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0"
               style={{
-                borderRadius: "999px 999px 28px 28px",
-                border: "1px solid rgba(255,255,255,0.10)",
-                background: "rgba(255,255,255,0.03)",
-                aspectRatio: "3 / 4",
+                height: "45%",
+                background:
+                  "linear-gradient(to top, rgba(6,26,18,0.88) 0%, rgba(6,26,18,0.40) 45%, transparent 100%)",
               }}
-            >
-              {profileImageSrc ? (
-                <Image
-                  src={profileImageSrc}
-                  alt={profile.name}
-                  fill
-                  sizes="(min-width:1280px) 460px, (min-width:1024px) 420px, 100vw"
-                  priority
-                  className="object-cover object-top"
-                  unoptimized={
-                    /^https?:\/\//i.test(profileImageSrc) ||
-                    profileImageSrc.startsWith("/api/media/")
-                  }
-                />
-              ) : (
-                /* placeholder gradient when no image */
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(160deg, rgba(176,241,34,0.08) 0%, rgba(29,75,54,0.30) 100%)",
-                  }}
-                />
-              )}
+            />
 
-              {/* Bottom name card overlay */}
-              {profileImageSrc ? (
-                <div
-                  className="absolute bottom-0 left-0 right-0 px-5 py-4"
-                  style={{
-                    background:
-                      "linear-gradient(0deg, rgba(8,22,15,0.82) 0%, rgba(8,22,15,0.55) 70%, transparent 100%)",
-                  }}
-                >
-                  <p className="text-[13px] font-medium" style={{ color: "rgba(255,255,255,0.55)" }}>
-                    {profile.title}
-                  </p>
-                  <p className="mt-0.5 text-[15px] font-bold" style={{ color: "rgba(255,255,255,0.92)" }}>
-                    {profile.name}
-                  </p>
-                </div>
-              ) : null}
-            </div>
+            {/* Right-edge fade — image bleeds into content on desktop */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 hidden lg:block"
+              style={{
+                width: "38%",
+                background:
+                  "linear-gradient(to right, rgba(15,46,37,0) 0%, rgba(15,46,37,0.30) 30%, rgba(15,46,37,0.72) 65%, #0F2E25 100%)",
+              }}
+            />
 
-            {/* ── RIGHT — info ── */}
-            <div>
+            {/* Name card — visible on mobile (hidden on desktop, right column owns it) */}
+            {profileImageSrc ? (
+              <div
+                className="absolute bottom-0 left-0 right-0 px-6 pb-6 lg:hidden"
+              >
+                <p className="text-[12px] font-semibold uppercase tracking-[0.18em]" style={{ color: "var(--color-brand-accent)" }}>
+                  {profile.title}
+                </p>
+                <p className="mt-1 text-[1.35rem] font-extrabold tracking-[-0.02em]" style={{ color: "rgba(255,255,255,0.95)" }}>
+                  {profile.name}
+                </p>
+              </div>
+            ) : null}
+          </div>
+
+          {/* ── RIGHT — content column ── */}
+          <div
+            className="relative flex flex-col justify-center px-8 py-12 md:px-12 lg:px-16 lg:py-20"
+            style={{ background: "#0F2E25" }}
+          >
+            {/* Lime radial glow — top-right of content area */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(ellipse 600px 500px at 110% -10%, rgba(176,241,34,0.11), transparent 60%)",
+              }}
+            />
+
+            <div className="relative">
               {/* Nav links */}
               <div className="flex flex-wrap items-center gap-2">
                 {backHref ? (
@@ -185,16 +201,16 @@ export function DoctorProfileTemplate({
               <h1
                 className="mt-6 font-extrabold tracking-[-0.03em] leading-[1.0]"
                 style={{
-                  fontSize: "clamp(2.4rem, 4.5vw + 0.5rem, 4.2rem)",
+                  fontSize: "clamp(2.2rem, 3.5vw + 0.5rem, 3.8rem)",
                   color: "rgba(255,255,255,0.95)",
                 }}
               >
                 {profile.name}
               </h1>
 
-              {/* Role — lime green */}
+              {/* Role — lime */}
               <p
-                className="mt-3 text-[1.1rem] font-semibold"
+                className="mt-3 text-[1rem] font-semibold uppercase tracking-[0.12em]"
                 style={{ color: "var(--color-brand-accent)" }}
               >
                 {profile.title}
@@ -203,8 +219,8 @@ export function DoctorProfileTemplate({
               {/* Description */}
               {hero.description ? (
                 <p
-                  className="mt-4 max-w-[46ch] text-[15px] leading-relaxed"
-                  style={{ color: "rgba(255,255,255,0.72)" }}
+                  className="mt-4 text-[15px] leading-relaxed"
+                  style={{ color: "rgba(255,255,255,0.65)", maxWidth: "44ch" }}
                 >
                   {hero.description}
                 </p>
@@ -229,7 +245,7 @@ export function DoctorProfileTemplate({
                 </div>
               ) : null}
 
-              {/* Metadata chips — horizontal */}
+              {/* Metadata chips */}
               <div className="mt-6 flex flex-wrap gap-2.5">
                 {profile.country ? (
                   <MetaChip
@@ -253,7 +269,10 @@ export function DoctorProfileTemplate({
 
               {/* Registration number */}
               {profile.imcRegistration ? (
-                <p className="mt-6 text-[13px]" style={{ color: "rgba(255,255,255,0.45)" }}>
+                <p
+                  className="mt-5 text-[13px]"
+                  style={{ color: "rgba(255,255,255,0.45)" }}
+                >
                   <span style={{ color: "rgba(255,255,255,0.28)" }}>Registration No.</span>{" "}
                   <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>
                     {profile.imcRegistration}
@@ -263,47 +282,30 @@ export function DoctorProfileTemplate({
 
               {/* CTA buttons */}
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                {/* Primary — lime, dark text */}
-                <Link
-                  href={hero.primaryCta.href}
-                  className="gh2-btn-lime"
-                >
+                <Link href={hero.primaryCta.href} className="gh2-btn-lime">
                   <CalendarDays className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
                   {hero.primaryCta.label}
                 </Link>
 
-                {/* Secondary — outlined */}
                 {profile.medicalRegistrationUrl ? (
                   <a
                     href={profile.medicalRegistrationUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full text-[14.5px] font-semibold transition-[background-color] duration-200 hover:bg-white/10"
-                    style={{
-                      border: "1.5px solid rgba(255,255,255,0.22)",
-                      color: "rgba(255,255,255,0.85)",
-                      padding: "12px 22px",
-                    }}
+                    className="gh2-btn-ghost"
                   >
                     <ExternalLink className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
                     Medical registration
                   </a>
                 ) : hero.secondaryCta ? (
-                  <Link
-                    href={hero.secondaryCta.href}
-                    className="inline-flex items-center gap-2 rounded-full text-[14.5px] font-semibold transition-[background-color] duration-200 hover:bg-white/10"
-                    style={{
-                      border: "1.5px solid rgba(255,255,255,0.22)",
-                      color: "rgba(255,255,255,0.85)",
-                      padding: "12px 22px",
-                    }}
-                  >
+                  <Link href={hero.secondaryCta.href} className="gh2-btn-ghost">
                     {hero.secondaryCta.label}
                   </Link>
                 ) : null}
               </div>
             </div>
           </div>
+
         </div>
       </section>
 
