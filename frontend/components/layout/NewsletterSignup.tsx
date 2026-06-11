@@ -60,23 +60,17 @@ export function NewsletterSignup({ countryCode, locale, i18n }: Props) {
   return (
     <div>
       <p className="gh-footer-groupHeading m-0 inline-flex items-center gap-2 uppercase text-white">
-        <span
-          aria-hidden
-          className="gh-footer-groupAccent inline-block h-3 w-[3px] rounded-full"
-        />
+        <span aria-hidden className="gh-footer-groupAccent gh-newsletter-accentBar" />
         {i18n?.stayInformed ?? "Stay informed"}
       </p>
       <p className="gh-newsletter-desc">
         {i18n?.newsletterDesc ?? "Quarterly updates on new countries, doctors, and health topics. No spam."}
       </p>
-      <form onSubmit={onSubmit} className="mt-3 flex gap-2">
-        <label className="flex-1">
+      <form onSubmit={onSubmit} className="gh-newsletter-form">
+        <label className="gh-newsletter-label">
           <span className="sr-only">Email</span>
-          <div className="relative">
-            <Mail
-              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/40"
-              aria-hidden
-            />
+          <div className="gh-newsletter-inputWrap">
+            <Mail className="gh-newsletter-inputIcon" aria-hidden />
             <input
               type="email"
               value={email}
@@ -85,26 +79,19 @@ export function NewsletterSignup({ countryCode, locale, i18n }: Props) {
               required
               maxLength={254}
               disabled={status === "loading"}
-              className="w-full rounded-lg border border-white/20 bg-white/10 py-2 pl-9 pr-3 text-sm text-white placeholder-white/40 focus:border-white/40 focus:outline-none focus:ring-0"
+              className="gh-newsletter-input"
             />
           </div>
         </label>
-        <button
-          type="submit"
-          disabled={status === "loading"}
-          className="shrink-0 rounded-lg bg-white px-4 py-2 text-sm font-bold text-[var(--color-brand-primary)] shadow-[0_2px_8px_rgba(15,46,37,0.18)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(15,46,37,0.30)] active:translate-y-0 active:scale-[0.98] disabled:opacity-60 motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)]"
-        >
+        <button type="submit" disabled={status === "loading"} className="gh-newsletter-submit">
           {status === "loading" ? "…" : (i18n?.subscribe ?? "Subscribe")}
         </button>
       </form>
-      {message ? (
-        <p
-          className={`gh-newsletter-status mt-2 ${
-            status === "ok" ? "gh-newsletter-statusOk" : "gh-newsletter-statusError"
-          }`}
-        >
-          {message}
-        </p>
+      {message && status === "ok" ? (
+        <p className="gh-newsletter-status gh-newsletter-statusOk">{message}</p>
+      ) : null}
+      {message && status === "error" ? (
+        <p className="gh-newsletter-status gh-newsletter-statusError">{message}</p>
       ) : null}
     </div>
   );
