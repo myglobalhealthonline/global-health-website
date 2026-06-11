@@ -165,15 +165,16 @@ export function SiteFooter({
 
   return (
     <footer
+      className="relative overflow-hidden"
       style={{
-        background: "var(--color-background-dark)",
+        background: "linear-gradient(180deg, #0F2E25 0%, #0B241C 100%)",
         color: "rgba(255,255,255,0.70)",
-        padding: "48px 0 24px",
-        borderTop: "1px solid rgba(176,241,34,0.16)",
+        padding: "clamp(56px,7vw,88px) 0 0",
+        borderTop: "1px solid rgba(255,255,255,0.08)",
       }}
     >
       <div
-        className="mx-auto"
+        className="relative z-[1] mx-auto"
         style={{ maxWidth: 1320, padding: "0 clamp(20px, 4vw, 40px)" }}
       >
         <div className="gh-footer-grid grid gap-x-8 gap-y-10">
@@ -340,6 +341,18 @@ export function SiteFooter({
         </div>
       </div>
 
+      {/* Outlined wordmark closer — cropped at the page's bottom edge.
+          Echoes the hero's country-name watermark; pure atmosphere. */}
+      <div
+        aria-hidden
+        className="gh2-watermark pointer-events-none relative z-0 mt-10 text-center"
+        style={{
+          fontSize: "clamp(3.25rem, 10.5vw, 9.5rem)",
+          marginBottom: "-0.18em",
+        }}
+      >
+        {siteName || "Global Health"}
+      </div>
     </footer>
   );
 }

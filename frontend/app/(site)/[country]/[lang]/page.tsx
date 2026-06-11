@@ -383,12 +383,18 @@ export default async function CountryLangHomePage({
       />
       <CountryMarquee countries={marqueeCountries} />
       <RichBodySection html={page?.body} theme="light" />
-      <TrustRibbon items={trustItems} />
+      <TrustRibbon items={trustItems} theme="light" />
       <ReviewBadge countryName={config.name} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
       <StatsBand items={statsItems} theme="light" i18n={t.statsBand} />
       {/* ── Team section — featured card + full grid under one heading ── */}
-      <section className="relative" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <section
+        className="relative gh-medical-pattern gh-medical-pattern-dark"
+        style={{
+          background: "linear-gradient(178deg, #12342A 0%, #0F2E25 100%)",
+          borderTop: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
         <div
           className="mx-auto px-5 md:px-10 gh-section"
           style={{ maxWidth: "var(--container-width)" }}
@@ -396,16 +402,21 @@ export default async function CountryLangHomePage({
           {/* Shared heading */}
           <div className="mb-12 md:mb-16">
             <div className="flex flex-wrap items-baseline justify-between gap-4">
-              <span
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  letterSpacing: "0.20em",
-                  textTransform: "uppercase",
-                  color: "var(--color-brand-accent)",
-                }}
-              >
-                {t.team.eyebrow}
+              <span className="flex items-center gap-3">
+                <span aria-hidden className="gh2-index" style={{ color: "rgba(176,241,34,0.50)" }}>
+                  04
+                </span>
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    letterSpacing: "0.20em",
+                    textTransform: "uppercase",
+                    color: "var(--color-brand-accent)",
+                  }}
+                >
+                  {t.team.eyebrow}
+                </span>
               </span>
               <span
                 className="text-[11px] font-bold uppercase tracking-[0.14em] [font-variant-numeric:tabular-nums]"

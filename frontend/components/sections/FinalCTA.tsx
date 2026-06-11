@@ -1,3 +1,9 @@
+/**
+ * Final CTA — the page's second and last dark moment.
+ * Deep-night canvas, single lime bloom, expanding "Live" ring stat
+ * left, oversized headline + CTAs right. Bookends the hero.
+ */
+
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
@@ -25,23 +31,12 @@ export function FinalCTA({
 }) {
   return (
     <section
-      className="
-        relative overflow-hidden
-        bg-[var(--color-background-dark)]
-        gh-medical-pattern gh-medical-pattern-dark
-      "
+      className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
+      style={{
+        background:
+          "radial-gradient(900px 560px at 92% -12%, rgba(176,241,34,0.10), transparent 60%), linear-gradient(168deg, #15382A 0%, #0F2E25 60%, #0B241C 100%)",
+      }}
     >
-      {/* Lime atmospheric glow — toned to 10% max so it reads as warmth,
-        * not a spotlight. Single source, top-right. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 800px 500px at 95% -10%, rgba(176, 241, 34, 0.10), transparent 60%)",
-        }}
-      />
-
       <div
         className="
           relative z-[1]
@@ -50,34 +45,45 @@ export function FinalCTA({
           gh-section
         "
       >
-        {/* Top rule */}
-        <div aria-hidden style={{ borderTop: "1px solid rgba(255,255,255,0.08)", marginBottom: "clamp(48px,6vw,80px)" }} />
+        {/* Top rule with index */}
+        <div
+          className="mb-12 flex items-center justify-between pt-6 md:mb-20"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+        >
+          <span aria-hidden className="gh2-index" style={{ color: "rgba(176,241,34,0.50)" }}>
+            06
+          </span>
+          <span
+            className="text-[11px] font-bold tracking-[0.22em] uppercase"
+            style={{ color: "rgba(255,255,255,0.35)" }}
+          >
+            {i18n?.eyebrow ?? "Subject to availability"}
+          </span>
+        </div>
 
         {/* Main grid */}
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-20 items-end">
-          {/* Left — oversized lime stat */}
+        <div className="grid items-end gap-12 lg:grid-cols-[1fr_1.25fr] lg:gap-20">
+          {/* Left — oversized "Live" stat with expanding ring */}
           <RevealOnScroll delay={0}>
             <div>
-              <p
-                className="text-[11px] font-bold tracking-[0.22em] uppercase mb-3"
-                style={{ color: "rgba(255,255,255,0.32)" }}
-              >
-                {i18n?.eyebrow ?? "Subject to availability"}
+              <p className="flex items-center gap-5">
+                <span aria-hidden className="gh2-live-dot mt-2 shrink-0" />
+                <span
+                  className="font-extrabold leading-none tracking-[-0.05em] [font-variant-numeric:tabular-nums]"
+                  style={{
+                    fontSize: "clamp(5rem,13vw,9.5rem)",
+                    color: "var(--color-brand-accent)",
+                  }}
+                >
+                  {i18n?.liveLabel ?? "Live"}
+                </span>
               </p>
               <p
-                className="font-extrabold leading-none tracking-[-0.05em] [font-variant-numeric:tabular-nums]"
-                style={{
-                  fontSize: "clamp(5rem,13vw,9rem)",
-                  color: "var(--color-brand-accent)",
-                }}
-              >
-                {i18n?.liveLabel ?? "Live"}
-              </p>
-              <p
-                className="mt-5 font-bold tracking-[-0.02em]"
+                className="mt-6 font-bold tracking-[-0.02em]"
                 style={{
                   fontSize: "clamp(1.1rem,2vw,1.5rem)",
                   color: "rgba(255,255,255,0.55)",
+                  maxWidth: "24ch",
                 }}
               >
                 {i18n?.calendarLine ?? "Choose from open clinician calendars."}
@@ -88,43 +94,46 @@ export function FinalCTA({
           {/* Right — headline + CTAs */}
           <RevealOnScroll delay={150}>
             <div>
-            <h2
-              className="font-extrabold tracking-[-0.035em] leading-[1.02]"
-              style={{
-                fontSize: "clamp(2rem,4vw,3.25rem)",
-                color: "rgba(255,255,255,0.95)",
-              }}
-            >
-              {i18n?.headlinePre ?? "Book care with a"}{" "}
-              <span style={{ color: "var(--color-brand-accent)" }}>
-                {i18n?.headlineAccent ?? "clinician"}
-              </span>{" "}
-              {i18n?.headlinePost ?? "you choose."}
-            </h2>
-            <p
-              className="mt-6 leading-relaxed"
-              style={{
-                fontSize: "var(--text-body-lg)",
-                color: "rgba(255,255,255,0.52)",
-                maxWidth: "50ch",
-              }}
-            >
-              {i18n?.body ??
-                "Browse licensed doctors registered with national medical councils across Europe, then choose an open appointment time where availability is shown."}
-            </p>
-
-            <div className="mt-9 flex flex-wrap gap-3">
-              <Link href={primaryHref} className="gh-btn gh-btn-ghost-dark">
-                {i18n?.primaryCta ?? "Book Appointment"}
-                <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
-              </Link>
-              <Link
-                href={secondaryHref}
-                className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 border border-white/20 bg-transparent text-sm font-semibold text-white/75 hover:bg-white/08 hover:border-white/38 transition-colors duration-200 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              <h2
+                className="font-extrabold tracking-[-0.04em] leading-[0.98]"
+                style={{
+                  fontSize: "clamp(2.25rem,4.5vw,4rem)",
+                  color: "rgba(255,255,255,0.95)",
+                }}
               >
-                {i18n?.secondaryCta ?? "View doctors"}
-              </Link>
-            </div>
+                {i18n?.headlinePre ?? "Book care with a"}{" "}
+                <span style={{ color: "var(--color-brand-accent)" }}>
+                  {i18n?.headlineAccent ?? "clinician"}
+                </span>{" "}
+                {i18n?.headlinePost ?? "you choose."}
+              </h2>
+              <p
+                className="mt-6 leading-relaxed"
+                style={{
+                  fontSize: "var(--text-body-lg)",
+                  color: "rgba(255,255,255,0.52)",
+                  maxWidth: "50ch",
+                }}
+              >
+                {i18n?.body ??
+                  "Browse licensed doctors registered with national medical councils across Europe, then choose an open appointment time where availability is shown."}
+              </p>
+
+              <div className="mt-10 flex flex-wrap gap-3">
+                <Link
+                  href={primaryHref}
+                  className="gh2-btn-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-accent)]/60"
+                >
+                  {i18n?.primaryCta ?? "Book Appointment"}
+                  <ArrowUpRight className="size-4" strokeWidth={2} aria-hidden />
+                </Link>
+                <Link
+                  href={secondaryHref}
+                  className="gh2-btn-ghost focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                >
+                  {i18n?.secondaryCta ?? "View doctors"}
+                </Link>
+              </div>
             </div>
           </RevealOnScroll>
         </div>

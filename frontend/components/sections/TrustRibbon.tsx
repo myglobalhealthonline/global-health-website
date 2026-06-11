@@ -1,7 +1,9 @@
 /**
- * Trust ribbon — dark luxury version.
- * Forest-night canvas, lime oversized values, white/40 labels,
- * lime icon circles.
+ * Trust ribbon — clinical editorial version.
+ * Four credential columns separated by vertical hairlines, each with a
+ * mono index, an icon tile, an oversized tabular value, and a caps
+ * label. Light by default on the country homepage; dark variant kept
+ * for legacy callers.
  */
 
 import {
@@ -45,61 +47,71 @@ export function TrustRibbon({ items, theme = "dark" }: { items?: TrustRibbonItem
   const list = items && items.length > 0 ? items : FALLBACK_ITEMS;
   const isLight = theme === "light";
 
+  const hairline = isLight ? "rgba(29,75,54,0.12)" : "rgba(255,255,255,0.08)";
+
   return (
     <section
       style={{
         background: isLight ? "var(--color-background-soft)" : "var(--color-background-dark)",
-        borderBottom: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",
-        padding: "clamp(48px,6vw,80px) 0",
+        borderBottom: `1px solid ${hairline}`,
+        padding: "clamp(48px,6vw,88px) 0",
       }}
     >
-      <div
-        className="mx-auto max-w-[var(--container-width)] px-5 md:px-10"
-      >
+      <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <RevealOnScroll
           stagger
-          className="grid gap-y-10 gap-x-6 grid-cols-2 lg:grid-cols-4"
-          style={{
-            borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.07)",
-            paddingTop: "clamp(40px,5vw,56px)",
-          }}
+          className="grid grid-cols-2 lg:grid-cols-4"
+          style={{ borderTop: `1px solid ${hairline}` }}
         >
-            {list.map((it, i) => {
-              const Icon = ICONS[it.icon ?? inferIcon(it.l)];
-              return (
-                <div
-                  key={`${it.v}-${it.l}`}
-                  className={`flex flex-col gap-3 ${i > 0 ? "lg:pl-6" : ""}`}
-                  role="listitem"
-                >
+          {list.map((it, i) => {
+            const Icon = ICONS[it.icon ?? inferIcon(it.l)];
+            return (
+              <div
+                key={`${it.v}-${it.l}`}
+                className={`flex flex-col gap-5 px-1 pt-8 lg:px-8 lg:pt-10 ${
+                  i % 2 === 1 ? "border-l pl-6" : ""
+                } ${i === 2 ? "lg:border-l" : ""}`}
+                style={{ borderColor: hairline }}
+                role="listitem"
+              >
+                <div className="flex items-center justify-between">
                   <span
-                    className="inline-flex size-10 items-center justify-center rounded-full"
+                    className="inline-flex size-11 items-center justify-center rounded-[14px]"
                     style={{
-                      background: isLight ? "rgba(29,75,54,0.08)" : "rgba(176,241,34,0.10)",
-                      border: isLight ? "1px solid rgba(29,75,54,0.20)" : "1px solid rgba(176,241,34,0.18)",
+                      background: isLight ? "rgba(143,176,33,0.14)" : "rgba(176,241,34,0.10)",
                       color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
                     }}
                   >
-                    <Icon className="size-4" strokeWidth={1.5} aria-hidden />
+                    <Icon className="size-[18px]" strokeWidth={1.6} aria-hidden />
                   </span>
+                  <span
+                    aria-hidden
+                    className="gh2-index"
+                    style={{ color: isLight ? "rgba(29,75,54,0.35)" : "rgba(255,255,255,0.30)" }}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <div>
                   <p
                     className="font-extrabold tracking-[-0.04em] leading-none [font-variant-numeric:tabular-nums]"
                     style={{
-                      fontSize: "clamp(1.75rem,3vw,2.5rem)",
+                      fontSize: "clamp(2rem,3.4vw,3rem)",
                       color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
                     }}
                   >
                     {it.v}
                   </p>
                   <p
-                    className="text-[11px] font-bold uppercase tracking-[0.14em]"
+                    className="mt-3 text-[11px] font-bold uppercase tracking-[0.14em]"
                     style={{ color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.42)" }}
                   >
                     {it.l}
                   </p>
                 </div>
-              );
-            })}
+              </div>
+            );
+          })}
         </RevealOnScroll>
       </div>
     </section>

@@ -1,4 +1,11 @@
+/**
+ * How it works — clinical editorial version.
+ * Full-width step rows divided by hairlines: ghost numeral | title +
+ * body | arrow affordance. Hover tints the row and fills the arrow.
+ */
+
 import { ArrowRight } from "lucide-react";
+import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
 export type HowItWorksI18n = {
   eyebrow: string;
@@ -21,6 +28,7 @@ export function HowItWorksNarrative({
   i18n?: HowItWorksI18n;
 }) {
   const isLight = theme === "light";
+  const hairline = isLight ? "rgba(29,75,54,0.14)" : "rgba(255,255,255,0.10)";
 
   const steps = [
     {
@@ -60,18 +68,27 @@ export function HowItWorksNarrative({
         style={{ maxWidth: "var(--container-width)" }}
       >
         {/* Header */}
-        <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
+        <div className="mb-12 flex flex-wrap items-end justify-between gap-6 md:mb-16">
           <div>
-            <p
-              className="text-[11px] font-bold tracking-[0.22em] uppercase"
-              style={{ color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
-            >
-              {i18n?.eyebrow ?? "How it works"}
+            <p className="flex items-center gap-3">
+              <span
+                aria-hidden
+                className="gh2-index"
+                style={{ color: isLight ? "rgba(29,75,54,0.40)" : "rgba(176,241,34,0.50)" }}
+              >
+                05
+              </span>
+              <span
+                className="text-[11px] font-bold tracking-[0.22em] uppercase"
+                style={{ color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)" }}
+              >
+                {i18n?.eyebrow ?? "How it works"}
+              </span>
             </p>
             <h2
-              className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
+              className="mt-5 font-extrabold tracking-[-0.035em] leading-[1.0]"
               style={{
-                fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)",
+                fontSize: "clamp(2.1rem, 4vw + 0.5rem, 3.6rem)",
                 color: isLight ? "var(--color-text-primary)" : "rgba(255,255,255,0.95)",
                 maxWidth: "22ch",
               }}
@@ -95,113 +112,64 @@ export function HowItWorksNarrative({
           </p>
         </div>
 
-        {/* Steps — 3 cards with connector */}
-        <div className={isLight ? "gh-hiw-grid-light" : "gh-hiw-grid"}>
-          {steps.map((s, i) => (
-            <div key={s.n} className={isLight ? "gh-hiw-item-light" : "gh-hiw-item"}>
-              {/* Card */}
-              <div
-                className={isLight ? "gh-hiw-card-light flex flex-col h-full" : "gh-hiw-card flex flex-col h-full"}
+        {/* Step rows */}
+        <RevealOnScroll stagger style={{ borderBottom: `1px solid ${hairline}` }}>
+          {steps.map((s) => (
+            <div
+              key={s.n}
+              className="gh2-step grid items-center gap-x-8 gap-y-4 rounded-xl px-2 py-9 md:grid-cols-[minmax(96px,140px)_1fr_auto] md:px-6 md:py-12"
+              style={{ borderTop: `1px solid ${hairline}` }}
+            >
+              {/* Ghost numeral */}
+              <span
+                aria-hidden
+                className="select-none font-extrabold leading-none tracking-[-0.05em] [font-variant-numeric:tabular-nums]"
                 style={{
-                  background: isLight ? "rgba(255,255,255,0.80)" : "rgba(255,255,255,0.03)",
-                  border: isLight ? "1px solid rgba(29,75,54,0.12)" : "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: "var(--radius-card)",
-                  padding: "clamp(28px,3vw,40px)",
-                  transition: "border-color 0.2s, background 0.2s",
-                  boxShadow: isLight ? "0 2px 16px rgba(29,75,54,0.06)" : "none",
+                  fontSize: "clamp(3.25rem,7vw,5.5rem)",
+                  color: isLight ? "rgba(29,75,54,0.14)" : "rgba(176,241,34,0.22)",
                 }}
               >
-                {/* Step number */}
-                <span
-                  className="font-extrabold leading-none tracking-[-0.04em] [font-variant-numeric:tabular-nums] select-none"
-                  style={{
-                    fontSize: "clamp(3rem,6vw,5rem)",
-                    color: isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)",
-                    opacity: 0.9,
-                  }}
-                  aria-hidden
-                >
-                  {s.n}
-                </span>
+                {s.n}
+              </span>
 
-                {/* Text */}
-                <div className="mt-6 flex-1">
-                  <h3
-                    className="font-extrabold tracking-[-0.02em] leading-tight"
-                    style={{
-                      fontSize: "clamp(1.2rem,2vw,1.5rem)",
-                      color: isLight ? "var(--color-text-primary)" : "rgba(255,255,255,0.92)",
-                    }}
-                  >
-                    {s.title}
-                  </h3>
-                  <p
-                    className="mt-3 leading-relaxed"
-                    style={{
-                      fontSize: "var(--text-body)",
-                      color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.55)",
-                      maxWidth: "34ch",
-                    }}
-                  >
-                    {s.lede}
-                  </p>
-                </div>
+              {/* Copy */}
+              <div>
+                <h3
+                  className="font-extrabold tracking-[-0.02em] leading-tight"
+                  style={{
+                    fontSize: "clamp(1.3rem,2.2vw,1.75rem)",
+                    color: isLight ? "var(--color-text-primary)" : "rgba(255,255,255,0.92)",
+                  }}
+                >
+                  {s.title}
+                </h3>
+                <p
+                  className="mt-2.5 leading-relaxed"
+                  style={{
+                    fontSize: "var(--text-body)",
+                    color: isLight ? "var(--color-text-muted)" : "rgba(255,255,255,0.55)",
+                    maxWidth: "58ch",
+                  }}
+                >
+                  {s.lede}
+                </p>
               </div>
 
-              {/* Connector arrow — hidden after last item */}
-              {i < steps.length - 1 ? (
-                <div
-                  className={isLight ? "gh-hiw-connector-light" : "gh-hiw-connector"}
-                  aria-hidden
-                >
-                  <ArrowRight
-                    style={{ color: isLight ? "rgba(29,75,54,0.30)" : "rgba(176,241,34,0.35)" }}
-                    strokeWidth={1.5}
-                  />
-                </div>
-              ) : null}
+              {/* Arrow affordance — fills forest on row hover */}
+              <span
+                aria-hidden
+                className="gh2-step-arrow hidden size-12 items-center justify-center rounded-full md:inline-flex"
+                style={{
+                  border: `1px solid ${hairline}`,
+                  color: isLight ? "var(--color-brand-primary)" : "rgba(255,255,255,0.70)",
+                }}
+              >
+                <ArrowRight className="size-5" strokeWidth={1.6} />
+              </span>
             </div>
           ))}
-        </div>
+        </RevealOnScroll>
       </div>
-
-      <style>{`
-        .gh-hiw-grid, .gh-hiw-grid-light {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 16px;
-        }
-        .gh-hiw-item, .gh-hiw-item-light {
-          display: contents;
-        }
-        .gh-hiw-connector, .gh-hiw-connector-light {
-          display: none;
-        }
-        @media (min-width: 900px) {
-          .gh-hiw-grid, .gh-hiw-grid-light {
-            grid-template-columns: 1fr auto 1fr auto 1fr;
-            align-items: stretch;
-            gap: 0;
-          }
-          .gh-hiw-item, .gh-hiw-item-light {
-            display: contents;
-          }
-          .gh-hiw-connector, .gh-hiw-connector-light {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 8px;
-          }
-          .gh-hiw-card:hover {
-            background: rgba(176,241,34,0.05) !important;
-            border-color: rgba(176,241,34,0.18) !important;
-          }
-          .gh-hiw-card-light:hover {
-            background: rgba(255,255,255,0.95) !important;
-            border-color: rgba(29,75,54,0.25) !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }

@@ -1,7 +1,8 @@
 /**
- * Edge-to-edge marquee — dark luxury version.
- * Forest-night canvas, lime doctor counts, white/60 country names.
- * Acts as a thin separator between hero and content sections.
+ * Edge-to-edge coverage marquee — editorial XL version.
+ * Oversized country names in extrabold, lime doctor counts as
+ * superscripts, medical-cross separators. The closing band of the
+ * page's dark opening movement (hero → marquee → light sections).
  */
 
 import { Flag } from "@/components/ui/Flag";
@@ -23,7 +24,7 @@ export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
       aria-label="Countries we serve"
       className="relative overflow-hidden"
       style={{
-        background: "var(--color-background-dark)",
+        background: "#0F2E25",
         borderTop: "1px solid rgba(255,255,255,0.06)",
         borderBottom: "1px solid rgba(255,255,255,0.06)",
       }}
@@ -33,59 +34,47 @@ export function CountryMarquee({ countries }: { countries: MarqueeCountry[] }) {
         aria-hidden
         className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24"
         style={{
-          background:
-            "linear-gradient(90deg, var(--color-background-dark) 0%, transparent 100%)",
+          background: "linear-gradient(90deg, #0F2E25 0%, transparent 100%)",
         }}
       />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24"
         style={{
-          background:
-            "linear-gradient(270deg, var(--color-background-dark) 0%, transparent 100%)",
+          background: "linear-gradient(270deg, #0F2E25 0%, transparent 100%)",
         }}
       />
 
-      <div className="gh-marquee py-4 md:py-5">
-        <ul className="gh-marquee-track flex shrink-0 items-center gap-10 md:gap-14 whitespace-nowrap pr-10 md:pr-14">
+      <div className="gh-marquee py-6 md:py-7">
+        <ul className="gh-marquee-track flex shrink-0 items-center gap-12 md:gap-16 whitespace-nowrap pr-12 md:pr-16">
           {items.map((c, i) => (
-            <li
-              key={`${c.code}-${i}`}
-              className="inline-flex items-center gap-3"
-            >
-              <Flag code={c.code as string} size="md" />
+            <li key={`${c.code}-${i}`} className="inline-flex items-baseline gap-4">
+              <Flag code={c.code as string} size="lg" className="self-center" />
               <span
-                className="font-semibold tracking-[-0.015em]"
+                className="font-extrabold tracking-[-0.03em]"
                 style={{
-                  fontSize: "clamp(0.875rem,1.5vw+0.3rem,1.05rem)",
-                  color: "rgba(255,255,255,0.65)",
+                  fontSize: "clamp(1.25rem, 2.2vw + 0.4rem, 1.9rem)",
+                  color: "rgba(255,255,255,0.82)",
                 }}
               >
                 {c.name}
               </span>
               <span
-                className="font-bold [font-variant-numeric:tabular-nums]"
-                style={{
-                  fontSize: "var(--text-meta)",
-                  color: "var(--color-brand-accent)",
-                }}
+                className="gh2-index"
+                style={{ color: "var(--color-brand-accent)" }}
               >
-                {c.doctorCount}
-                <span
-                  className="ml-1 uppercase tracking-[0.1em]"
-                  style={{
-                    fontSize: "var(--text-eyebrow)",
-                    color: "rgba(255,255,255,0.35)",
-                  }}
-                >
+                {String(c.doctorCount).padStart(2, "0")}
+                <span className="ml-1" style={{ color: "rgba(255,255,255,0.32)" }}>
                   {c.doctorCount === 1 ? "doctor" : "doctors"}
                 </span>
               </span>
               <span
                 aria-hidden
-                className="inline-block size-1 rounded-full"
-                style={{ background: "rgba(255,255,255,0.12)" }}
-              />
+                className="ml-6 self-center text-[14px] font-light"
+                style={{ color: "rgba(176,241,34,0.30)" }}
+              >
+                ✚
+              </span>
             </li>
           ))}
         </ul>

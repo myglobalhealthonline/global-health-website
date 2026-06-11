@@ -498,7 +498,9 @@ img {
   z-index: 40;
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   backdrop-filter: blur(20px) saturate(180%);
-  background-color: var(--color-background-dark);
+  /* Translucent brand forest — matches the gh2 hero's top tone so the
+   * header melts into the hero, while the blur reads on scroll. */
+  background-color: rgba(29, 75, 54, 0.88);
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
@@ -1038,8 +1040,8 @@ img {
  * featured-doctor spotlight, and the dark doctor cards all read as the
  * same material as the hero card. */
 .gh-glass-card {
-  background: rgba(15, 46, 37, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
@@ -1521,6 +1523,176 @@ img {
 .gh-service-tile:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-card-hover);
+}
+
+/* ════════════════════════════════════════════════════════════════
+ * Country homepage redesign system — "clinical editorial" (gh2-*)
+ * Deep forest-night atmosphere, arch portrait motif, mono section
+ * indices, hairline grid. Scoped under gh2- so it never collides
+ * with legacy gh- utilities.
+ * ════════════════════════════════════════════════════════════════ */
+
+/* Hero canvas — starts at the header's brand forest so the sticky
+ * header melts into the section, then deepens to night at the fold.
+ * One mint bloom upper-right (the page's single hero glow). */
+.gh2-hero {
+  background:
+    radial-gradient(1100px 720px at 82% -8%, rgba(176, 241, 34, 0.09), transparent 55%),
+    radial-gradient(900px 640px at -12% 112%, rgba(0, 0, 0, 0.35), transparent 60%),
+    linear-gradient(172deg, #1D4B36 0%, #15382A 44%, #0F2E25 100%);
+}
+
+/* Giant outlined watermark — atmosphere layer, never reads as copy. */
+.gh2-watermark {
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.055);
+  color: transparent;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.78;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* Arch — the signature shape. Rounded chapel top, soft base. */
+.gh2-arch {
+  border-radius: 999px 999px 28px 28px;
+}
+.gh2-arch-frame {
+  position: absolute;
+  inset: -14px;
+  border: 1px solid rgba(176, 241, 34, 0.22);
+  border-radius: 999px 999px 36px 36px;
+  pointer-events: none;
+}
+
+/* Mono section index — "01", "02"… pairs with the eyebrow. */
+.gh2-index {
+  font-family: var(--font-geist-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Big CTAs */
+.gh2-btn-lime {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 56px;
+  padding: 0 30px;
+  border-radius: 999px;
+  background: var(--color-brand-accent);
+  color: #0a1f14;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  box-shadow: 0 8px 30px rgba(176, 241, 34, 0.22);
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 200ms ease-out, filter 200ms ease-out;
+}
+.gh2-btn-lime:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow: 0 14px 40px rgba(176, 241, 34, 0.32);
+}
+.gh2-btn-lime:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.gh2-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 56px;
+  padding: 0 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  transition: background-color 200ms ease-out, border-color 200ms ease-out;
+}
+.gh2-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Dark service card — lift + lime border bloom on hover. */
+.gh2-card {
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 200ms ease-out, box-shadow 300ms ease-out;
+}
+.gh2-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(176, 241, 34, 0.35) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh2-card:hover { transform: none; }
+}
+
+/* Photo zoom on card hover — compositor-friendly. */
+.gh2-zoom img {
+  transition: transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gh2-zoom:hover img {
+  transform: scale(1.05);
+}
+
+/* Live ring — expanding lime pulse for the "Live" closer stat. */
+@keyframes gh2-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(176, 241, 34, 0.35); }
+  70%  { box-shadow: 0 0 0 16px rgba(176, 241, 34, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(176, 241, 34, 0); }
+}
+.gh2-live-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--color-brand-accent);
+  animation: gh2-ring 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+/* Editorial step rows (How it works) */
+.gh2-step {
+  transition: background-color 240ms ease-out;
+}
+.gh2-step:hover {
+  background: rgba(29, 75, 54, 0.045);
+}
+.gh2-step .gh2-step-arrow {
+  transition: background-color 240ms ease-out, color 240ms ease-out,
+    transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gh2-step:hover .gh2-step-arrow {
+  background: var(--color-brand-primary);
+  color: #fff;
+  transform: translateX(4px);
+}
+
+/* Hand-drawn underline for the hero accent word. */
+.gh2-underline {
+  position: relative;
+  display: inline-block;
+}
+.gh2-underline > svg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.14em;
+  width: 100%;
+  height: 0.22em;
+  overflow: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh2-live-dot { animation: none; }
+  .gh2-zoom:hover img { transform: none; }
+  .gh2-btn-lime:hover { transform: none; }
+  .gh2-step:hover .gh2-step-arrow { transform: none; }
 }
 
 /* Reduced motion */

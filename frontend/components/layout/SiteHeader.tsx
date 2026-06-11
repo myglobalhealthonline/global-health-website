@@ -248,18 +248,17 @@ export function SiteHeader({
             </Link>
           )}
 
-          {/* Primary CTA. White pill, forest ink, lime arrow accent (lime is
-              accent-only, never a fill). Tactile: lifts on hover, pushes on
-              active. */}
+          {/* Primary CTA — gh2 lime pill: dark ink, lime glow, lift on
+              hover, push on active. Mirrors the hero's gh2-btn-lime. */}
           <Link
             href={bookHref}
             aria-label="Book an appointment"
-            className="group hidden items-center justify-center gap-1.5 rounded-full bg-[var(--color-brand-accent)] pl-5 pr-4 py-3 text-sm font-bold text-[var(--color-brand-primary)] shadow-[0_2px_8px_rgba(15,46,37,0.18)] transition-[transform,box-shadow] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:shadow-[0_10px_28px_rgba(15,46,37,0.32)] active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)] md:inline-flex"
+            className="group hidden items-center justify-center gap-1.5 rounded-full bg-[var(--color-brand-accent)] pl-5 pr-4 py-3 text-sm font-extrabold tracking-[-0.01em] text-[#0a1f14] shadow-[0_4px_16px_rgba(176,241,34,0.22)] transition-[transform,box-shadow,filter] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_30px_rgba(176,241,34,0.32)] active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)] md:inline-flex"
             style={{ minHeight: 44, textDecoration: "none" }}
           >
             {navigation.navBookAppointment}
             <ArrowUpRight
-              className="size-4 text-[var(--color-brand-primary)] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none"
+              className="size-4 text-[#0a1f14] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none"
               strokeWidth={2.5}
               aria-hidden
             />
@@ -268,11 +267,11 @@ export function SiteHeader({
           <Link
             href={bookHref}
             aria-label="Book an appointment"
-            className="inline-flex items-center justify-center gap-1 rounded-full bg-[var(--color-brand-accent)] px-4 py-2.5 text-sm font-bold text-[var(--color-brand-primary)] shadow-[0_2px_8px_rgba(15,46,37,0.18)] transition-transform duration-200 active:scale-[0.97] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)] md:hidden"
+            className="inline-flex items-center justify-center gap-1 rounded-full bg-[var(--color-brand-accent)] px-4 py-2.5 text-sm font-extrabold tracking-[-0.01em] text-[#0a1f14] shadow-[0_4px_16px_rgba(176,241,34,0.22)] transition-transform duration-200 active:scale-[0.97] motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)] md:hidden"
             style={{ minHeight: 40, textDecoration: "none" }}
           >
             {navigation.navBookShort}
-            <ArrowUpRight className="size-3.5 text-[var(--color-brand-primary)]" strokeWidth={2.5} aria-hidden />
+            <ArrowUpRight className="size-3.5 text-[#0a1f14]" strokeWidth={2.5} aria-hidden />
           </Link>
 
           {/* Mobile drawer trigger */}

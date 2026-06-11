@@ -40,8 +40,8 @@ export type ServiceCatalogItem = {
  * here because the featured tile spreads it with an extra `minHeight`.
  */
 const GLASS_CARD_STYLE = {
-  background: "rgba(15, 46, 37, 0.72)",
-  border: "1px solid rgba(255, 255, 255, 0.14)",
+  background: "rgba(255, 255, 255, 0.045)",
+  border: "1px solid rgba(255, 255, 255, 0.11)",
   backdropFilter: "blur(18px)",
   WebkitBackdropFilter: "blur(18px)",
   boxShadow: "0 18px 50px rgba(0, 0, 0, 0.22)",
@@ -138,9 +138,9 @@ export function ServiceCatalog({
   return (
     <section
       id="services"
-      className="scroll-mt-24"
+      className="scroll-mt-24 gh-medical-pattern gh-medical-pattern-dark"
       style={{
-        background: "var(--color-background-dark)",
+        background: "linear-gradient(178deg, #12342A 0%, #0F2E25 100%)",
         padding: "clamp(64px,8vw,120px) 0",
       }}
     >
@@ -148,15 +148,20 @@ export function ServiceCatalog({
         {/* Header */}
         <header className="grid items-end gap-8 lg:grid-cols-[1fr_auto] mb-12 md:mb-16">
           <div>
-            <p
-              className="text-[11px] font-bold tracking-[0.2em] uppercase"
-              style={{ color: "var(--color-brand-accent)" }}
-            >
-              {i18n.eyebrow}
+            <p className="flex items-center gap-3">
+              <span aria-hidden className="gh2-index" style={{ color: "rgba(176,241,34,0.50)" }}>
+                02
+              </span>
+              <span
+                className="text-[11px] font-bold tracking-[0.2em] uppercase"
+                style={{ color: "var(--color-brand-accent)" }}
+              >
+                {i18n.eyebrow}
+              </span>
             </p>
             <h2
-              className="mt-4 max-w-[18ch] font-extrabold tracking-[-0.03em] leading-[1.02] text-white"
-              style={{ fontSize: "clamp(2rem, 4vw + 0.5rem, 3.5rem)" }}
+              className="mt-5 max-w-[18ch] font-extrabold tracking-[-0.035em] leading-[1.0] text-white"
+              style={{ fontSize: "clamp(2.1rem, 4.2vw + 0.5rem, 3.75rem)" }}
             >
               {i18n.headline}
             </h2>
@@ -302,11 +307,9 @@ function ServiceTile({
         className={cn(
           "group relative overflow-hidden text-left",
           "rounded-[var(--radius-card)]",
-          "transition-[transform,box-shadow,border-color] duration-300",
-          "ease-[cubic-bezier(0.16,1,0.3,1)]",
-          "hover:-translate-y-0.5",
+          "gh2-card gh2-zoom",
           "focus-visible:outline-none",
-          "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+          "motion-reduce:transition-none",
           // Horizontal grid: image 40% | content 60%
           "grid grid-cols-1 sm:grid-cols-[2fr_3fr]",
         )}
@@ -446,29 +449,38 @@ function ServiceTile({
       className={cn(
         "group relative flex h-full flex-col overflow-hidden text-left",
         "rounded-[var(--radius-card)]",
-        "transition-[transform,box-shadow,border-color] duration-300",
-        "ease-[cubic-bezier(0.16,1,0.3,1)]",
-        "hover:-translate-y-0.5",
+        "gh2-card gh2-zoom",
         "focus-visible:outline-none",
-        "motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+        "motion-reduce:transition-none",
       )}
       style={GLASS_CARD_STYLE}
     >
-      {/* Top: image or icon tile */}
+      {/* Top: inset photo or icon tile */}
       {tileImageSrc ? (
-        <div className="relative overflow-hidden" style={{ height: 160 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={tileImageSrc}
-            alt={`${s.title} telemedicine consultation`}
-            className="block h-full w-full object-cover"
-          />
-          <span
-            className="absolute right-3 top-3 uppercase rounded-full px-2.5 py-1 text-[10px] font-bold tracking-[0.08em]"
-            style={{ background: "rgba(0,0,0,0.55)", color: "rgba(255,255,255,0.80)" }}
+        <div className="p-2.5 pb-0">
+          <div
+            className="relative overflow-hidden rounded-[14px]"
+            style={{ height: 168 }}
           >
-            {s.tag}
-          </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={tileImageSrc}
+              alt={`${s.title} telemedicine consultation`}
+              className="block h-full w-full object-cover"
+            />
+            <span
+              className="absolute right-3 top-3 uppercase rounded-full px-2.5 py-1 text-[10px] font-bold tracking-[0.08em]"
+              style={{
+                background: "rgba(10,31,20,0.65)",
+                border: "1px solid rgba(255,255,255,0.14)",
+                color: "rgba(255,255,255,0.85)",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+              }}
+            >
+              {s.tag}
+            </span>
+          </div>
         </div>
       ) : (
         <div
