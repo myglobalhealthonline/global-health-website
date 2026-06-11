@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ArrowLeft, FileText, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, FileText, Plus, Trash2 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import {
+  adminUploadFile,
   fetchAdminCountryById,
   fetchAdminCountryLegalDocuments,
   putAdminCountryLegalDocument,
@@ -78,15 +79,27 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
     const title = (formData.get("title") as string)?.trim();
     const content = (formData.get("content") as string)?.trim() || null;
     const isPublished = formData.get("isPublished") === "on";
+    const existingPdfPath = (formData.get("existingPdfPath") as string) || null;
 
     if (!type || !title) {
       redirect(`/admin/countries/${id}/legal-documents?error=Title+required`);
+    }
+
+    let pdfPath = existingPdfPath;
+    const pdfFile = formData.get("pdfFile") as File | null;
+    if (pdfFile && pdfFile.size > 0) {
+      const upload = await adminUploadFile(pdfFile);
+      if (!upload.ok) {
+        redirect(`/admin/countries/${id}/legal-documents?error=${encodeURIComponent(`PDF upload failed: ${upload.message}`)}`);
+      }
+      pdfPath = upload.data.key;
     }
 
     const result = await putAdminCountryLegalDocument(id, {
       type,
       title,
       content,
+      pdfPath,
       isPublished,
       locale: "en",
     });
@@ -230,8 +243,9 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
           >
             {editDoc ? "Edit" : "Create"}: {DOCUMENT_TYPE_LABELS[editType as LegalDocumentType] ?? editType}
           </h3>
-          <form action={saveDocumentAction} className="mt-4 grid gap-4">
+          <form action={saveDocumentAction} className="mt-4 grid gap-4" encType="multipart/form-data">
             <input type="hidden" name="type" value={editType} />
+            <input type="hidden" name="existingPdfPath" value={editDoc?.pdfPath ?? ""} />
             <label className="flex flex-col gap-1">
               <span className="gh-field-label">Title</span>
               <input
@@ -252,6 +266,33 @@ export default async function CountryLegalDocumentsPage({ params, searchParams }
                 placeholder="<p>Legal document content…</p>"
               />
             </label>
+            <div className="flex flex-col gap-1">
+              <span className="gh-field-label">PDF attachment (optional, max 10 MB)</span>
+              {editDoc?.pdfPath ? (
+                <div className="mb-1 flex items-center gap-2 text-[12px] text-[var(--color-text-muted)]">
+                  <FileText className="size-3.5 shrink-0" aria-hidden />
+                  <span className="truncate font-mono">{editDoc.pdfPath}</span>
+                  <a
+                    href={`/api/media/${editDoc.pdfPath.split("/").map(encodeURIComponent).join("/")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-1 inline-flex items-center gap-0.5 hover:underline"
+                    aria-label="Open current PDF"
+                  >
+                    <ExternalLink className="size-3" aria-hidden /> View
+                  </a>
+                </div>
+              ) : null}
+              <input
+                type="file"
+                name="pdfFile"
+                accept="application/pdf"
+                className="text-[13px] text-[var(--color-text-body)]"
+              />
+              <p className="text-[11px] text-[var(--color-text-muted)]">
+                Leave empty to keep the existing PDF. Uploading a new file replaces it.
+              </p>
+            </div>
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"

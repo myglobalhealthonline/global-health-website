@@ -271,6 +271,39 @@ async function adminRequest<T>(
   }
 }
 
+export async function adminUploadFile(
+  file: File,
+): Promise<AdminApiResponse<{ key: string; publicUrl: string }>> {
+  const allCookies = (await cookies()).getAll();
+  const validCookies = allCookies.filter((entry) => VALID_COOKIE_NAME.test(entry.name));
+  const cookieHeader = validCookies.map((e) => `${e.name}=${e.value}`).join("; ");
+  const token = getAdminApiToken();
+  const tokenFallbackEnabled = isAdminTokenFallbackEnabled();
+
+  const body = new FormData();
+  body.append("file", file);
+
+  try {
+    const headers: Record<string, string> = {};
+    if (cookieHeader) headers.cookie = cookieHeader;
+    if (!cookieHeader && tokenFallbackEnabled && token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetch(`${getAdminApiBaseUrl()}/api/admin/media/upload`, {
+      method: "POST",
+      headers,
+      body,
+      cache: "no-store",
+    });
+    const json = (await response.json()) as { ok?: boolean; message?: string; data?: { key: string; publicUrl: string } };
+    if (!response.ok || !json.ok) {
+      return { ok: false, message: json.message ?? "Upload failed", status: response.status };
+    }
+    return { ok: true, data: json.data as { key: string; publicUrl: string }, message: json.message };
+  } catch {
+    return { ok: false, message: "Admin backend is unavailable" };
+  }
+}
+
 export async function fetchAdminAppointments(query?: Record<string, string | undefined>) {
   const params = new URLSearchParams();
   if (query) {

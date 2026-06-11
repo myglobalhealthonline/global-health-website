@@ -12,7 +12,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 // If we ever want to ship SVG support, run files through a sanitizer
 // (e.g. DOMPurify with the SVG profile) and serve them with a strict
 // Content-Security-Policy that forbids inline script.
-const ALLOWED_MIME = new Set([
+const ALLOWED_IMAGE_MIME = new Set([
   "image/jpeg",
   "image/png",
   "image/webp",
@@ -20,14 +20,23 @@ const ALLOWED_MIME = new Set([
   "image/avif",
 ]);
 
+const ALLOWED_MIME = new Set([...ALLOWED_IMAGE_MIME, "application/pdf"]);
+
+const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+const PDF_MAX_BYTES = 10 * 1024 * 1024;
+
 /**
- * Sniff the real image type from the leading bytes. The client-supplied
+ * Sniff the real file type from leading bytes. The client-supplied
  * Content-Type is not trusted — an attacker can label an HTML/SVG/script
  * payload as image/jpeg. Returns the detected MIME or null if the buffer
- * is not one of the allowed raster formats.
+ * is not one of the allowed types.
  */
-function sniffImageMime(buf: Buffer): string | null {
+function sniffFileMime(buf: Buffer): string | null {
   if (buf.length < 12) return null;
+  // PDF: %PDF (25 50 44 46)
+  if (buf[0] === 0x25 && buf[1] === 0x50 && buf[2] === 0x44 && buf[3] === 0x46) {
+    return "application/pdf";
+  }
   // JPEG: FF D8 FF
   if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return "image/jpeg";
   // PNG: 89 50 4E 47 0D 0A 1A 0A
@@ -88,22 +97,28 @@ const adminMediaUploadRoute: FastifyPluginAsync = async (app) => {
     }
 
     const buffer = await file.toBuffer();
-    const maxBytes = 5 * 1024 * 1024;
+    const isPdf = declaredMime === "application/pdf";
+    const maxBytes = isPdf ? PDF_MAX_BYTES : IMAGE_MAX_BYTES;
     if (buffer.length > maxBytes) {
-      return reply.status(413).send(errorResponse("File too large (max 5MB)"));
+      return reply
+        .status(413)
+        .send(errorResponse(`File too large (max ${isPdf ? "10" : "5"}MB)`));
     }
 
-    // Verify the actual bytes are a real raster image and ignore the
-    // client-declared Content-Type for storage — this stops an HTML/SVG/
-    // script payload mislabelled as image/jpeg from being stored and later
-    // served as that type (stored XSS).
-    const sniffedMime = sniffImageMime(buffer);
+    // Verify the actual bytes match the declared type — stops a script/HTML
+    // payload mislabelled as image/jpeg or application/pdf from being stored
+    // and later served with a trusted Content-Type (stored XSS / phishing).
+    const sniffedMime = sniffFileMime(buffer);
     if (!sniffedMime || !ALLOWED_MIME.has(sniffedMime)) {
-      return reply.status(415).send(errorResponse("File content is not a supported image"));
+      return reply.status(415).send(errorResponse("File content does not match declared type"));
+    }
+    if (sniffedMime !== declaredMime) {
+      return reply.status(415).send(errorResponse("File content does not match declared type"));
     }
 
     const safeName = sanitizeOriginalFilename(file.filename ?? "upload");
-    const key = `media/${randomUUID()}-${safeName}`;
+    const prefix = isPdf ? "documents" : "media";
+    const key = `${prefix}/${randomUUID()}-${safeName}`;
 
     try {
       await putObject(key, buffer, sniffedMime);
