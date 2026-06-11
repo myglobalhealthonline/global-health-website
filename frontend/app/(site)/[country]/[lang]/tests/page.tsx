@@ -135,7 +135,7 @@ export default async function HealthTestsPage({
       {items.length > 0 ? (
         <section
           id="tests"
-          className="scroll-mt-24"
+          className="scroll-mt-24 relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
           style={{
             background: "var(--color-background-dark)",
             padding: "clamp(64px,8vw,120px) 0",
@@ -187,6 +187,7 @@ export default async function HealthTestsPage({
         </section>
       ) : (
         <section
+          className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
           style={{
             background: "var(--color-background-dark)",
             padding: "clamp(48px,6vw,80px) 0",

@@ -35,6 +35,7 @@ export async function ReviewBadge({
   return (
     <section
       aria-label="Patient reviews"
+      className={isLight ? "" : "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"}
       style={{
         background: isLight ? "var(--color-background-page)" : "var(--color-background-dark)",
         borderTop: isLight ? "1px solid rgba(29,75,54,0.10)" : "1px solid rgba(255,255,255,0.06)",

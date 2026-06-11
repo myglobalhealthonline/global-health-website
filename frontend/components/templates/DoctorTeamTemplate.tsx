@@ -203,7 +203,7 @@ export function DoctorTeamTemplate({
       </section>
 
       {showBottomCta ? (
-        <section className="gh-section" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <section className="gh-section relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="gh-container">
             <div className="grid items-end gap-10 lg:grid-cols-[1.6fr_1fr]">
               <h2

@@ -145,6 +145,7 @@ export function GH2FlowHeader({
 }) {
   return (
     <section
+      className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
       style={{
         background: "linear-gradient(172deg, #1D4B36 0%, #15382A 100%)",
         padding: "28px 0 24px",

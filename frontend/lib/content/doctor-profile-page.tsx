@@ -202,7 +202,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
       {hasServices ? (
         <section
           id="services"
-          className="scroll-mt-24"
+          className="scroll-mt-24 relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
           style={{
             background: "var(--color-background-dark)",
             padding: "clamp(64px,8vw,120px) 0",
@@ -263,7 +263,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
       ) : (
         <section
           id="services"
-          className="scroll-mt-24"
+          className="scroll-mt-24 relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
           style={{
             background: "var(--color-background-dark)",
             padding: "clamp(48px,6vw,80px) 0",

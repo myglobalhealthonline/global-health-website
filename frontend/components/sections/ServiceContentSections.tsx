@@ -74,7 +74,7 @@ export function ServiceIntro({
   theme?: Theme;
 }) {
   return (
-    <section style={sectionStyle(theme)}>
+    <section className={isDark(theme) ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" : ""} style={sectionStyle(theme)}>
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <p
@@ -112,7 +112,7 @@ export function ChecklistSection({
 }) {
   const dark = isDark(theme);
   return (
-    <section style={sectionStyle(theme)}>
+    <section className={isDark(theme) ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" : ""} style={sectionStyle(theme)}>
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <SectionTitle theme={theme}>{title}</SectionTitle>
@@ -183,7 +183,7 @@ export function WhyChooseSection({
 }) {
   const dark = isDark(theme);
   return (
-    <section style={sectionStyle(theme)}>
+    <section className={isDark(theme) ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" : ""} style={sectionStyle(theme)}>
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <SectionTitle theme={theme}>{title}</SectionTitle>
@@ -239,7 +239,7 @@ export function ProcessStepsSection({
 }) {
   const dark = isDark(theme);
   return (
-    <section style={sectionStyle(theme)}>
+    <section className={isDark(theme) ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" : ""} style={sectionStyle(theme)}>
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <Eyebrow theme={theme}>{eyebrow}</Eyebrow>
         <SectionTitle theme={theme}>{title}</SectionTitle>
@@ -305,7 +305,7 @@ export function ImportantInfoSection({
   theme?: Theme;
 }) {
   return (
-    <section style={sectionStyle(theme)}>
+    <section className={isDark(theme) ? "relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark" : ""} style={sectionStyle(theme)}>
       <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
         <div
           className="rounded-[var(--radius-card)] p-6 sm:p-8 lg:p-10"

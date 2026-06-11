@@ -138,7 +138,7 @@ export default async function ConsultPage({
 
       {/* Dark hero — service context */}
       <section
-        className="relative isolate overflow-hidden"
+        className="relative isolate overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
         style={{
           background: "var(--color-background-dark)",
           padding: "clamp(56px,7vw,96px) 0 clamp(40px,5vw,64px)",

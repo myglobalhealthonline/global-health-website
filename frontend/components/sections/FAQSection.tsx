@@ -13,6 +13,7 @@ type FAQSectionProps = {
 export function FAQSection({ title = "FAQs", items }: FAQSectionProps) {
   return (
     <section
+      className="relative overflow-hidden gh-medical-pattern gh-medical-pattern-dark"
       style={{
         background: "var(--color-background-dark)",
         padding: "clamp(64px,8vw,120px) 0",
