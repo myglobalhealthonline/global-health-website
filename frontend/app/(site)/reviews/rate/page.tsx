@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { fetchReviewForm, submitReviewForm } from "@/lib/api/public-api";
+import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 
 const RATING_KEYS = [
   "overallSatisfaction",
@@ -103,7 +104,7 @@ function ReviewRateForm() {
             </select>
           </label>
         ))}
-        <button type="submit" disabled={pending} className="gh-btn gh-btn-primary w-full">
+        <button type="submit" disabled={pending} className="gh2-btn-lime w-full justify-center disabled:opacity-60">
           {pending ? "Sending…" : locale?.submit}
         </button>
       </form>
@@ -113,10 +114,13 @@ function ReviewRateForm() {
 
 export default function ReviewRatePage() {
   return (
-    <section className="mx-auto max-w-3xl px-4 py-16">
+    <>
+    <GH2FlowHeader title="Rate your care" subtitle="Share feedback on your consultation experience." activeStep={1} steps={["Ratings", "Submit"]} />
+    <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
       <Suspense fallback={<p className="text-center text-sm">Loading…</p>}>
         <ReviewRateForm />
       </Suspense>
     </section>
+    </>
   );
 }

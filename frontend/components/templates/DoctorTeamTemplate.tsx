@@ -71,7 +71,7 @@ export function DoctorTeamTemplate({
   const paged = doctors.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
 
   return (
-    <section style={{ background: "var(--color-background-dark)" }}>
+    <section style={{ background: "var(--color-background-soft)" }}>
       <PageHero
         countryLabel={`${countryName} · ${i18n?.theTeamBadge ?? "The team"}`}
         titleLead={i18n?.heroTitleLead ?? "Doctors who"}
@@ -99,7 +99,7 @@ export function DoctorTeamTemplate({
       />
 
       {/* GRID — light soft section, DoctorCard components */}
-      <section className="gh-section" style={{ background: "var(--color-background-dark)", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <section className="gh-section" style={{ background: "var(--color-background-soft)", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
         <div className="gh-container">
           {/* Featured-doctor spotlight (admin-chosen) above the filters. */}
           {spotlight}
@@ -112,11 +112,11 @@ export function DoctorTeamTemplate({
             <div className="mx-auto max-w-[480px] text-center">
               <h2
                 className="gh-display text-[2rem]"
-                style={{ fontWeight: 800, color: "rgba(255,255,255,0.92)" }}
+                style={{ fontWeight: 800, color: "var(--color-text-primary)" }}
               >
                 {i18n?.onboardingTitle ?? "Onboarding clinicians."}
               </h2>
-              <p className="mt-4 text-[15px]" style={{ color: "rgba(255,255,255,0.65)" }}>
+              <p className="mt-4 text-[15px]" style={{ color: "var(--color-text-muted)" }}>
                 {(i18n?.onboardingBodyTemplate ?? "Our {country} medical team is being verified. Check back soon — or book with our cross-border specialists.").replace("{country}", countryName)}
               </p>
               <Link
@@ -133,7 +133,7 @@ export function DoctorTeamTemplate({
                 <div className="mb-6 flex items-center justify-end gap-2">
                   <span
                     className="text-[11px] font-bold tabular-nums"
-                    style={{ color: "rgba(255,255,255,0.55)" }}
+                    style={{ color: "var(--color-text-muted)" }}
                   >
                     {safePage + 1} / {totalPages}
                   </span>
@@ -146,9 +146,9 @@ export function DoctorTeamTemplate({
                       safePage === 0
                         ? { opacity: 0.3, borderColor: "currentColor" }
                         : {
-                            backgroundColor: "var(--color-brand-accent)",
-                            borderColor: "var(--color-brand-accent)",
-                            color: "var(--color-brand-primary)",
+                            backgroundColor: "var(--color-brand-primary)",
+                            borderColor: "var(--color-brand-primary)",
+                            color: "white",
                           }
                     }
                   >
@@ -165,9 +165,9 @@ export function DoctorTeamTemplate({
                       safePage === totalPages - 1
                         ? { opacity: 0.3, borderColor: "currentColor" }
                         : {
-                            backgroundColor: "var(--color-brand-accent)",
-                            borderColor: "var(--color-brand-accent)",
-                            color: "var(--color-brand-primary)",
+                            backgroundColor: "var(--color-brand-primary)",
+                            borderColor: "var(--color-brand-primary)",
+                            color: "white",
                           }
                     }
                   >
@@ -193,7 +193,6 @@ export function DoctorTeamTemplate({
                       href={d.href}
                       bookingHref={d.bookingHref ?? bookingHref}
                       ctaLabel={d.ctaLabel ?? "View profile"}
-                      dark
                     />
                   </li>
                 ))}

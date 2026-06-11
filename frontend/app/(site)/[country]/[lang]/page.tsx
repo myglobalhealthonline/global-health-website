@@ -180,8 +180,8 @@ export default async function CountryLangHomePage({
 
   const totalDoctorsAcrossEurope = allDoctors.length;
 
-  const prescriptionsHref = `/${slug}/${lang}/repeat-prescription-request`;
-  const testsHref = `/${slug}/${lang}/lab-tests`;
+  const prescriptionsHref = `/${slug}/${lang}/prescriptions`;
+  const testsHref = `/${slug}/${lang}/tests`;
   const serviceCatalogItems: ServiceCatalogItem[] = [
     ...generalServices.map((s) =>
       mapServiceToCatalogItem(s, buildBookHref({ country: slug, lang, service: s.slug })),

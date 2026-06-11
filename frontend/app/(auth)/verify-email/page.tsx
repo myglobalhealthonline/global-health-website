@@ -7,6 +7,7 @@ import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
+import { GH2AuthShell } from "@/components/sections/GH2PagePrimitives";
 
 type Status = "pending" | "verifying" | "ok" | "error";
 
@@ -71,15 +72,19 @@ export default function VerifyEmailPage() {
   const t = loadLocaleBundle(locale).auth.verifyEmail;
 
   return (
-    <div className="min-h-screen bg-[var(--color-background-soft)] px-4 py-16">
-      <div className="gh-admin-card mx-auto max-w-md rounded-2xl border border-[var(--color-border)] p-8 shadow-sm">
+    <GH2AuthShell
+      eyebrow="Email verification"
+      title="Confirm your"
+      accent="account."
+      body="Verification keeps patient records and booking updates tied to the right email address."
+    >
         {status === "pending" ? (
           <>
             <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{t.title}</h1>
             <p className="mt-3 text-sm text-[var(--color-text-muted)]">{t.body}</p>
             <Link
               href="/login"
-              className="mt-6 inline-flex rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800"
+              className="gh2-btn-lime mt-6"
             >
               {t.goToSignIn}
             </Link>
@@ -88,19 +93,21 @@ export default function VerifyEmailPage() {
 
         {status === "verifying" ? (
           <div className="flex items-center gap-3">
-            <Loader2 aria-hidden className="size-5 animate-spin text-emerald-700" />
+            <Loader2 aria-hidden className="size-5 animate-spin text-[var(--color-brand-primary)]" />
             <p className="text-sm text-[var(--color-text-body)]">{t.verifying}</p>
           </div>
         ) : null}
 
         {status === "ok" ? (
           <>
-            <CheckCircle2 aria-hidden className="size-10 text-emerald-700" />
+            <span className="inline-flex size-14 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-[#0a1f14]">
+              <CheckCircle2 aria-hidden className="size-8" />
+            </span>
             <h1 className="mt-4 text-2xl font-bold text-[var(--color-text-primary)]">{t.verified}</h1>
             <p className="mt-2 text-sm text-[var(--color-text-muted)]">{message}</p>
             <Link
               href="/account"
-              className="mt-6 inline-flex rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800"
+              className="gh2-btn-lime mt-6"
             >
               {t.goToAccount}
             </Link>
@@ -109,19 +116,20 @@ export default function VerifyEmailPage() {
 
         {status === "error" ? (
           <>
-            <XCircle aria-hidden className="size-10 text-rose-600" />
+            <span className="inline-flex size-14 items-center justify-center rounded-full bg-[var(--color-background-panel)] text-[var(--color-brand-primary)]">
+              <XCircle aria-hidden className="size-8" />
+            </span>
             <h1 className="mt-4 text-2xl font-bold text-[var(--color-text-primary)]">{t.failed}</h1>
             <p className="mt-2 text-sm text-[var(--color-text-muted)]">{message}</p>
             <p className="mt-3 text-sm text-[var(--color-text-muted)]">{t.failedBody}</p>
             <Link
               href="/login"
-              className="mt-6 inline-flex rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800"
+              className="gh2-btn-lime mt-6"
             >
               {t.goToSignIn}
             </Link>
           </>
         ) : null}
-      </div>
-    </div>
+    </GH2AuthShell>
   );
 }

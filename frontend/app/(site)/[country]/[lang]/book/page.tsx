@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, CheckCircle2, Stethoscope, UserRound } from "lucide-react";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { PageHero } from "@/components/sections/PageHero";
+import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { countries, getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -16,7 +16,7 @@ import {
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
 import { getServiceDoctorAvailability } from "@/lib/content/get-doctor-availability";
-import { getPublicPage, isSupportedLocale, type PublicLocale } from "@/lib/content/get-public-page";
+import { isSupportedLocale } from "@/lib/content/get-public-page";
 import {
   COUNTRY_CODE_TO_SLUG,
   countryCodeFromSlug,
@@ -103,13 +103,11 @@ export default async function CountryLangBookPage({
   const generalEnabled = isCountryFeatureEnabled(overlay, "general-consultations");
   const specialistEnabled = isCountryFeatureEnabled(overlay, "specialist-consultations");
 
-  const [{ record: homePage }, generalServicesRaw, specialistServicesRaw, doctors] =
-    await Promise.all([
-      getPublicPage(code, "HOME", lang as PublicLocale),
-      generalEnabled ? getCountryServices(code, "GENERAL", lang) : Promise.resolve([]),
-      specialistEnabled ? getCountryServices(code, "SPECIALIST", lang) : Promise.resolve([]),
-      getCountryDoctors(code, lang),
-    ]);
+  const [generalServicesRaw, specialistServicesRaw, doctors] = await Promise.all([
+    generalEnabled ? getCountryServices(code, "GENERAL", lang) : Promise.resolve([]),
+    specialistEnabled ? getCountryServices(code, "SPECIALIST", lang) : Promise.resolve([]),
+    getCountryDoctors(code, lang),
+  ]);
 
   const services = [...generalServicesRaw, ...specialistServicesRaw];
   const selectedService =
@@ -155,29 +153,10 @@ export default async function CountryLangBookPage({
         ])}
       />
 
-      <PageHero
-        countryCode={config.code}
-        countryLabel={`${config.name} Medical Clinic · Book online`}
-        titleLead="Book your online"
-        titleAccent="consultation."
-        lede={
-          <>
-            Medicine Anytime Anywhere. Choose a service, select a time that works
-            for you, and speak with a healthcare professional online.
-          </>
-        }
-        ctaLabel="Start booking"
-        ctaHref="#booking"
-        secondaryLabel="View doctors"
-        secondaryHref={`/${slug}/${lang}/doctors`}
-        rightSlot={
-          <BookingHeroPanel
-            countryName={config.name}
-            doctorCount={doctors.length}
-            serviceCount={services.length}
-            imageSrc={homePage?.heroImageSrc ?? "/images/stock/book.jpg"}
-          />
-        }
+      <GH2FlowHeader
+        title="Book your consultation"
+        subtitle={`${config.name} medical clinic. Choose a service, clinician, time, and patient details.`}
+        activeStep={currentStep}
       />
 
       <section
@@ -347,7 +326,7 @@ async function SelectedServiceFlow({
             </p>
             <Link
               href={buildBookHref({ country, lang, service: service.slug })}
-              className="gh-btn gh-btn-primary mt-5"
+              className="gh2-btn-lime mt-5"
             >
               Pick another clinician
             </Link>
@@ -403,7 +382,7 @@ function ServicePicker({
           <p className="mt-2 text-sm text-[var(--color-text-muted)]">
             Browse the clinician directory or check again soon.
           </p>
-          <Link href={`/${country}/${lang}/doctors`} className="gh-btn gh-btn-primary mt-5">
+          <Link href={`/${country}/${lang}/doctors`} className="gh2-btn-lime mt-5">
             Browse doctors
           </Link>
         </div>
@@ -448,7 +427,7 @@ function DoctorPicker({
           Browse all doctors or choose another service.
         </p>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
-          <Link href={`/${country}/${lang}/doctors`} className="gh-btn gh-btn-primary">
+          <Link href={`/${country}/${lang}/doctors`} className="gh2-btn-lime">
             Browse doctors
           </Link>
           <Link
@@ -587,57 +566,6 @@ function StepIndicator({ current }: { current: number }) {
         );
       })}
     </ol>
-  );
-}
-
-function BookingHeroPanel({
-  countryName,
-  doctorCount,
-  serviceCount,
-  imageSrc,
-}: {
-  countryName: string;
-  doctorCount: number;
-  serviceCount: number;
-  imageSrc: string;
-}) {
-  return (
-    <div className="overflow-hidden rounded-[var(--radius-card)] border border-white/12 bg-white/[0.04] shadow-[0_18px_50px_rgba(0,0,0,0.22)]">
-      <div className="relative aspect-[4/3]">
-        <Image
-          src={imageSrc}
-          alt={`Patient booking a telemedicine consultation in ${countryName} from home`}
-          fill
-          sizes="420px"
-          className="object-cover"
-          priority
-          unoptimized={/^https?:\/\//i.test(imageSrc) || imageSrc.startsWith("/api/media/")}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(15,46,37,0.92)] via-[rgba(15,46,37,0.28)] to-transparent" />
-        <div className="absolute bottom-4 left-4 right-4">
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-accent)]">
-            Medicine Anytime Anywhere
-          </p>
-          <p className="mt-2 text-lg font-extrabold leading-tight text-white">
-            {countryName} appointments, guided from service to slot.
-          </p>
-        </div>
-      </div>
-      <dl className="grid grid-cols-2 divide-x divide-white/10 border-t border-white/10">
-        <div className="p-4">
-          <dt className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/45">
-            Clinicians
-          </dt>
-          <dd className="mt-1 text-2xl font-extrabold text-white">{doctorCount}</dd>
-        </div>
-        <div className="p-4">
-          <dt className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/45">
-            Services
-          </dt>
-          <dd className="mt-1 text-2xl font-extrabold text-white">{serviceCount}</dd>
-        </div>
-      </dl>
-    </div>
   );
 }
 

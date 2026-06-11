@@ -137,7 +137,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={state === "loading"}
-        className="gh-btn gh-btn-primary disabled:opacity-60"
+        className="gh2-btn-lime disabled:opacity-60"
       >
         {state === "loading" && <Loader2 className="size-4 animate-spin" aria-hidden />}
         {state === "loading" ? "Sending…" : "Send message"}

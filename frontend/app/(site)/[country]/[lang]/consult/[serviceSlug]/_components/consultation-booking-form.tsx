@@ -649,7 +649,7 @@ export function ConsultationBookingForm({
       <button
         type="submit"
         disabled={pending || !authLoaded}
-        className="gh-btn gh-btn-primary w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+        className="gh2-btn-lime w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
         {pending ? i18n.addingToCart : i18n.continueToCart}

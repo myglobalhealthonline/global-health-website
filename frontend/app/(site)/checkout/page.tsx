@@ -3,13 +3,10 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/components/cart/CartContext";
+import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { getCountryByCode, type CountryCode } from "@/data/countries";
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 
-/**
- * Legacy `/checkout` URL. Canonical lives at
- * `/[country]/[lang]/checkout`. Bounce based on the cart's country.
- */
 export default function LegacyCheckoutRedirect() {
   const router = useRouter();
   const { cart, loading } = useCart();
@@ -28,8 +25,13 @@ export default function LegacyCheckoutRedirect() {
   }, [loading, cart.countryCode, router]);
 
   return (
-    <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8" style={{ minHeight: "60vh", background: "var(--color-background-dark)" }}>
-      <p className="text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>Opening checkout…</p>
-    </section>
+    <>
+      <GH2FlowHeader title="Opening checkout" activeStep={2} steps={["Cart", "Checkout", "Payment"]} />
+      <section className="bg-[var(--color-background-soft)] px-5 py-12">
+        <div className="mx-auto max-w-5xl">
+          <p className="text-sm text-[var(--color-text-muted)]">Opening checkout...</p>
+        </div>
+      </section>
+    </>
   );
 }

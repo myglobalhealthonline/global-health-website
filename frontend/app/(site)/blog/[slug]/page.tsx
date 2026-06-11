@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Clock, User, Calendar } from "lucide-react";
+import { Clock, User, Calendar } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
 import { getBlogPost } from "@/lib/content/get-public-blog";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
+import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -36,61 +37,16 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <>
-      {/* Dark hero header */}
-      <section
-        className="relative overflow-hidden"
-        style={{
-          background: "var(--color-background-dark)",
-          padding: "clamp(56px,7vw,96px) 0 clamp(48px,6vw,80px)",
-          borderBottom: "1px solid rgba(255,255,255,0.07)",
-        }}
-      >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 700px 400px at 90% -10%, rgba(176,241,34,0.09), transparent 55%)",
-          }}
-        />
-        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <Link
-            href="/blog"
-            className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium transition-opacity hover:opacity-80"
-            style={{ color: "rgba(255,255,255,0.70)" }}
-          >
-            <ArrowLeft className="size-4" aria-hidden />
-            All articles
-          </Link>
-
-          <p
-            className="mt-6 text-[11px] font-bold uppercase tracking-[0.2em]"
-            style={{ color: "var(--color-brand-accent)" }}
-          >
-            {post.category}
-          </p>
-
-          <h1
-            className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.05]"
-            style={{
-              fontSize: "clamp(1.85rem,4vw,3rem)",
-              color: "rgba(255,255,255,0.93)",
-            }}
-          >
-            {post.title}
-          </h1>
-
-          <p
-            className="mt-4 max-w-[60ch] text-[length:var(--text-body-lg)] leading-relaxed"
-            style={{ color: "rgba(255,255,255,0.72)" }}
-          >
-            {post.excerpt}
-          </p>
-
-          <div
-            className="mt-6 flex flex-wrap items-center gap-5 text-sm"
-            style={{ color: "rgba(255,255,255,0.62)" }}
-          >
+      <GH2CompactHero
+        eyebrow={post.category}
+        title={post.title}
+        accent=""
+        watermark="Article"
+        body={post.excerpt}
+        backHref="/blog"
+        backLabel="All articles"
+        meta={
+          <div className="flex flex-wrap items-center gap-5 text-sm normal-case tracking-normal font-sans">
             <span className="flex items-center gap-1.5">
               <User className="size-4" aria-hidden />
               {post.author}
@@ -104,8 +60,8 @@ export default async function BlogPostPage({ params }: Props) {
               {post.readingTime} min read
             </span>
           </div>
-        </div>
-      </section>
+        }
+      />
 
       {/* Cover image banner */}
       {post.coverImageSrc ? (
@@ -176,7 +132,7 @@ export default async function BlogPostPage({ params }: Props) {
             </div>
             <Link
               href="/"
-              className="gh-btn gh-btn-accent lg:justify-self-end"
+              className="gh2-btn-lime lg:justify-self-end"
             >
               Book consultation
             </Link>

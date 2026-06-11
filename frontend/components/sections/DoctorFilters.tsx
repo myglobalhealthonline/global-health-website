@@ -45,8 +45,9 @@ export function DoctorFilters({
     <div
       className="mb-10 rounded-[var(--radius-card)] p-5 sm:p-6"
       style={{
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.09)",
+        background: "rgba(255,255,255,0.78)",
+        border: "1px solid var(--color-border)",
+        boxShadow: "var(--shadow-card)",
       }}
     >
       <div className="flex flex-col gap-4">
@@ -54,7 +55,7 @@ export function DoctorFilters({
           <div key={group.heading} className="flex flex-wrap items-center gap-2">
             <span
               className="mr-1 text-[11px] font-bold uppercase tracking-[0.16em]"
-              style={{ color: "var(--color-brand-accent)", minWidth: 64 }}
+              style={{ color: "var(--color-brand-primary)", minWidth: 64 }}
             >
               {group.heading}
             </span>
@@ -72,9 +73,9 @@ export function DoctorFilters({
                         color: "#0a1f14",
                       }
                     : {
-                        background: "rgba(255,255,255,0.04)",
-                        color: "rgba(255,255,255,0.78)",
-                        border: "1px solid rgba(255,255,255,0.14)",
+                        background: "white",
+                        color: "var(--color-brand-primary)",
+                        border: "1px solid rgba(29,75,54,0.18)",
                       }
                 }
               >
@@ -90,7 +91,7 @@ export function DoctorFilters({
               href={clearHref}
               scroll={false}
               className="text-[12px] font-semibold underline decoration-dotted underline-offset-2 transition-opacity hover:opacity-70"
-              style={{ color: "rgba(255,255,255,0.55)" }}
+              style={{ color: "var(--color-text-muted)" }}
             >
               {clearLabel ?? "Clear all filters"}
             </Link>

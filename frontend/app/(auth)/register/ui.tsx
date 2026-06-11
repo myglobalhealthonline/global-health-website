@@ -54,7 +54,7 @@ export function RegisterFormFallback({ i18n = DEFAULT_I18N }: { i18n?: RegisterI
         <div className="h-4 w-24 rounded bg-[var(--color-border)]/40" />
         <div className="h-11 animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
       </div>
-      <div className="gh-btn gh-btn-primary mt-1 animate-pulse opacity-60">{i18n.createAccount}</div>
+      <div className="gh2-btn-lime mt-1 animate-pulse justify-center opacity-60">{i18n.createAccount}</div>
     </form>
   );
 }
@@ -185,7 +185,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
         {i18n.termsNotice}
       </p>
 
-      <button type="submit" className="gh-btn gh-btn-primary mt-1" disabled={loading}>
+      <button type="submit" className="gh2-btn-lime mt-1 w-full justify-center disabled:opacity-60" disabled={loading}>
         {loading ? i18n.creating : i18n.createAccount}
       </button>
 

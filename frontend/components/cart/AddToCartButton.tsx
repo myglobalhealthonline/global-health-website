@@ -79,7 +79,7 @@ export function AddToCartButton({
         disabled={pending}
         className={
           className ??
-          "gh-btn gh-btn-accent w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+          "gh2-btn-lime w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
         }
         style={style}
       >

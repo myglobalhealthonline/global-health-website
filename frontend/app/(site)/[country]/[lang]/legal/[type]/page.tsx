@@ -11,6 +11,7 @@ import {
 } from "@/lib/content/get-country-legal";
 import { sanitizePageBodyHtml } from "@/lib/content/sanitize-page-body";
 import { SITE_NAME } from "@/lib/constants";
+import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
 
 export const revalidate = 300;
 
@@ -68,32 +69,13 @@ export default async function CountryLegalDocumentPage({
 
   return (
     <>
-      {/* Dark header — matches /privacy and /terms */}
-      <section
-        style={{
-          background: "var(--color-background-dark)",
-          padding: "clamp(56px,7vw,96px) 0 clamp(40px,5vw,64px)",
-          borderBottom: "1px solid rgba(255,255,255,0.07)",
-        }}
-      >
-        <div className="mx-auto max-w-3xl px-5 md:px-10">
-          <p
-            className="text-[11px] font-bold uppercase tracking-[0.2em]"
-            style={{ color: "var(--color-brand-accent)" }}
-          >
-            {config.name} · Legal
-          </p>
-          <h1
-            className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
-            style={{ fontSize: "clamp(2.2rem,5vw,4rem)", color: "rgba(255,255,255,0.95)" }}
-          >
-            {document.title}
-          </h1>
-          <p className="mt-3 text-sm" style={{ color: "rgba(255,255,255,0.65)" }}>
-            Version {document.version} · Last updated {updatedLabel}
-          </p>
-        </div>
-      </section>
+      <GH2CompactHero
+        eyebrow={`${config.name} · Legal`}
+        title={document.title}
+        accent=""
+        watermark="Legal"
+        meta={<p className="gh2-index">Version {document.version} · Last updated {updatedLabel}</p>}
+      />
 
       <section
         className="mx-auto max-w-3xl px-5 md:px-10"
@@ -112,8 +94,7 @@ export default async function CountryLegalDocumentPage({
               href={document.pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[13px] font-bold text-white transition-colors"
-              style={{ background: "var(--color-brand-primary)" }}
+              className="gh2-btn-lime"
             >
               <FileDown className="size-4" aria-hidden />
               Download PDF

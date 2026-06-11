@@ -56,7 +56,7 @@ export function ForgotPasswordForm({ i18n = DEFAULT_I18N }: { i18n?: ForgotPassw
         />
       </div>
 
-      <button type="submit" className="gh-btn gh-btn-primary" disabled={loading}>
+      <button type="submit" className="gh2-btn-lime w-full justify-center disabled:opacity-60" disabled={loading}>
         {loading ? i18n.submitting : i18n.requestReset}
       </button>
 

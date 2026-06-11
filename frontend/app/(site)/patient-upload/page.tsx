@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { fetchPatientUploadInfo, uploadPatientFile } from "@/lib/api/public-api";
+import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 
 function PatientUploadForm() {
   const searchParams = useSearchParams();
@@ -76,7 +77,7 @@ function PatientUploadForm() {
           <button
             type="submit"
             disabled={pending}
-            className="gh-btn gh-btn-primary mt-4 w-full"
+            className="gh2-btn-lime mt-4 w-full justify-center disabled:opacity-60"
           >
             {pending ? "Uploading…" : "Upload"}
           </button>
@@ -88,10 +89,13 @@ function PatientUploadForm() {
 
 export default function PatientUploadPage() {
   return (
-    <section className="mx-auto max-w-3xl px-4 py-16">
+    <>
+    <GH2FlowHeader title="Upload medical files" subtitle="Secure file transfer for an existing appointment request." activeStep={1} steps={["Upload", "Review"]} />
+    <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
       <Suspense fallback={<p className="text-center text-sm">Loading…</p>}>
         <PatientUploadForm />
       </Suspense>
     </section>
+    </>
   );
 }

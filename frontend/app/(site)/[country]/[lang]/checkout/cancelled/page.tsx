@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { XCircle } from "lucide-react";
+import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
 
 export const dynamic = "force-dynamic";
 
@@ -14,33 +14,17 @@ export default async function CheckoutCancelledPage({
   const cartHref = `/${country}/${lang}/cart`;
   const homeHref = `/${country}/${lang}`;
   return (
-    <section className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="flex flex-col items-center text-center">
-        <div
-          className="inline-flex size-16 items-center justify-center rounded-full"
-          style={{ background: "var(--color-status-warning-bg)", color: "var(--color-status-warning-text)" }}
-        >
-          <XCircle className="size-10" aria-hidden />
-        </div>
-        <h1 className="gh-h1 mt-6">
-          Payment cancelled
-        </h1>
-        <p className="gh-body mt-3 max-w-md" style={{ color: "var(--color-text-muted)" }}>
-          No charge was made. Your cart is still saved — you can return whenever
-          you&apos;re ready.
-        </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link href={cartHref} className="gh-btn gh-btn-primary">
-            Back to cart
-          </Link>
-          <Link href="/account" className="gh-btn gh-btn-outline">
-            Manage account
-          </Link>
-          <Link href={homeHref} className="gh-btn gh-btn-outline">
-            Keep shopping
-          </Link>
-        </div>
-      </div>
-    </section>
+    <GH2StatusPage
+      status="cancelled"
+      title="Payment cancelled"
+      body="No charge was made. Your cart is still saved and you can return when you are ready."
+    >
+      <Link href={cartHref} className="gh2-btn-lime">
+        Back to cart
+      </Link>
+      <Link href={homeHref} className="rounded-full border border-[rgba(29,75,54,0.25)] px-6 py-4 text-sm font-semibold text-[var(--color-brand-primary)] hover:bg-[rgba(29,75,54,0.06)]">
+        Keep shopping
+      </Link>
+    </GH2StatusPage>
   );
 }

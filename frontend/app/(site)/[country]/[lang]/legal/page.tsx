@@ -11,6 +11,7 @@ import {
   type PublicLegalProfile,
 } from "@/lib/content/get-country-legal";
 import { SITE_NAME } from "@/lib/constants";
+import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
 
 export const revalidate = 300;
 
@@ -221,33 +222,13 @@ export default async function CountryLegalIndexPage({
 
   return (
     <>
-      {/* Dark header — matches /privacy and /terms */}
-      <section
-        style={{
-          background: "var(--color-background-dark)",
-          padding: "clamp(56px,7vw,96px) 0 clamp(40px,5vw,64px)",
-          borderBottom: "1px solid rgba(255,255,255,0.07)",
-        }}
-      >
-        <div className="mx-auto max-w-3xl px-5 md:px-10">
-          <p
-            className="text-[11px] font-bold uppercase tracking-[0.2em]"
-            style={{ color: "var(--color-brand-accent)" }}
-          >
-            {config.name}
-          </p>
-          <h1
-            className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.02]"
-            style={{ fontSize: "clamp(2.2rem,5vw,4rem)", color: "rgba(255,255,255,0.95)" }}
-          >
-            Legal information
-          </h1>
-          <p className="mt-3 text-sm" style={{ color: "rgba(255,255,255,0.65)" }}>
-            Legal documents, company registration and regulatory details for {SITE_NAME} in{" "}
-            {config.name}.
-          </p>
-        </div>
-      </section>
+      <GH2CompactHero
+        eyebrow={`${config.name} · Legal`}
+        title="Legal"
+        accent="information."
+        watermark="Legal"
+        body={`Legal documents, company registration and regulatory details for ${SITE_NAME} in ${config.name}.`}
+      />
 
       <section
         className="mx-auto max-w-3xl px-5 md:px-10"

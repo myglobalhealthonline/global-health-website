@@ -6,6 +6,7 @@ import {
   fetchBrazilConsentForm,
   submitBrazilConsent,
 } from "@/lib/api/public-api";
+import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 
 function BrazilConsentForm() {
   const searchParams = useSearchParams();
@@ -160,7 +161,7 @@ function BrazilConsentForm() {
               consulta médica e processamento de pagamento.
             </span>
           </label>
-          <button type="submit" disabled={pending} className="gh-btn gh-btn-primary">
+          <button type="submit" disabled={pending} className="gh2-btn-lime justify-center disabled:opacity-60">
             {pending ? "A processar…" : "Submeter e pagar"}
           </button>
         </form>
@@ -171,7 +172,9 @@ function BrazilConsentForm() {
 
 export default function BrazilConsentPage() {
   return (
-    <section className="gh-section-tight mx-auto max-w-3xl px-4">
+    <>
+    <GH2FlowHeader title="Medical consent" subtitle="LGPD consent and payment processing." activeStep={1} steps={["Consent", "Payment"]} />
+    <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
       <Suspense
         fallback={
           <p className="text-center text-sm text-[var(--color-text-muted)]">
@@ -182,5 +185,6 @@ export default function BrazilConsentPage() {
         <BrazilConsentForm />
       </Suspense>
     </section>
+    </>
   );
 }

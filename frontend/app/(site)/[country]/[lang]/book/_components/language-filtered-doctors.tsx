@@ -66,7 +66,7 @@ export function LanguageFilteredDoctors({
           Browse all doctors or choose another service.
         </p>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
-          <Link href={`/${country}/${lang}/doctors`} className="gh-btn gh-btn-primary">
+          <Link href={`/${country}/${lang}/doctors`} className="gh2-btn-lime">
             Browse doctors
           </Link>
           <Link

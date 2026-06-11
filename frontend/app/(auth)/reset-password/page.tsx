@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { resolveLocale } from "@/lib/i18n/resolve-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
+import { GH2AuthShell } from "@/components/sections/GH2PagePrimitives";
 
 function readClientLocale(): LocaleCode {
   try {
@@ -93,8 +94,12 @@ export default function ResetPasswordPage() {
   const submitLabel = isInvite ? t.inviteSubmit : t.resetSubmit;
 
   return (
-    <div className="min-h-screen bg-[var(--color-background-soft)] px-4 py-16">
-      <div className="gh-admin-card mx-auto max-w-md rounded-2xl border border-[var(--color-border)] p-8 shadow-sm">
+    <GH2AuthShell
+      eyebrow={isInvite ? "Clinician onboarding" : "Account recovery"}
+      title={isInvite ? "Set access" : "Reset access"}
+      accent="securely."
+      body={subhead}
+    >
         <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">{heading}</h1>
         <p className="mt-2 text-sm text-[var(--color-text-muted)]">{subhead}</p>
 
@@ -146,7 +151,7 @@ export default function ResetPasswordPage() {
             <button
               type="submit"
               disabled={busy}
-              className="inline-flex rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+              className="gh2-btn-lime disabled:opacity-60"
             >
               {busy ? t.saving : submitLabel}
             </button>
@@ -161,7 +166,6 @@ export default function ResetPasswordPage() {
             ) : null}
           </form>
         )}
-      </div>
-    </div>
+    </GH2AuthShell>
   );
 }

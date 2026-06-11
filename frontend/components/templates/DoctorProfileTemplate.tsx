@@ -78,9 +78,8 @@ export function DoctorProfileTemplate({
 
       {/* ── HERO — dark forest, medical cross pattern, split layout ── */}
       <section
-        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
+        className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
         style={{
-          background: "var(--color-background-dark)",
           padding: "clamp(48px,6vw,80px) 0 clamp(56px,7vw,96px)",
         }}
       >
@@ -101,7 +100,7 @@ export function DoctorProfileTemplate({
             <div
               className="relative overflow-hidden"
               style={{
-                borderRadius: 28,
+                borderRadius: "999px 999px 28px 28px",
                 border: "1px solid rgba(255,255,255,0.10)",
                 background: "rgba(255,255,255,0.03)",
                 aspectRatio: "3 / 4",
@@ -267,12 +266,7 @@ export function DoctorProfileTemplate({
                 {/* Primary — lime, dark text */}
                 <Link
                   href={hero.primaryCta.href}
-                  className="inline-flex items-center gap-2 rounded-full text-[14.5px] font-bold transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-[0.98]"
-                  style={{
-                    background: "var(--color-brand-accent)",
-                    color: "var(--color-brand-primary)",
-                    padding: "13px 24px",
-                  }}
+                  className="gh2-btn-lime"
                 >
                   <CalendarDays className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
                   {hero.primaryCta.label}
@@ -316,8 +310,8 @@ export function DoctorProfileTemplate({
       {/* ── BODY — long-form bio + sticky booking ── */}
       <section
         style={{
-          background: "var(--color-background-dark)",
-          borderTop: "1px solid rgba(255,255,255,0.06)",
+          background: "var(--color-background-soft)",
+          borderTop: "1px solid rgba(29,75,54,0.10)",
           padding: "clamp(56px,7vw,96px) 0",
         }}
       >
@@ -325,7 +319,7 @@ export function DoctorProfileTemplate({
           <article>
             <p
               className="text-[11px] font-bold uppercase tracking-[0.22em]"
-              style={{ color: "var(--color-brand-accent)" }}
+              style={{ color: "var(--color-brand-primary)" }}
             >
               Profile
             </p>
@@ -333,7 +327,7 @@ export function DoctorProfileTemplate({
               className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.05]"
               style={{
                 fontSize: "clamp(1.85rem,3.5vw,2.75rem)",
-                color: "rgba(255,255,255,0.95)",
+                color: "var(--color-text-primary)",
               }}
             >
               About {profile.name.split(" ").slice(0, 2).join(" ")}
@@ -341,7 +335,7 @@ export function DoctorProfileTemplate({
             <div
               className="mt-8 text-[16px] leading-[1.85] [&_p]:mt-5 [&_p:first-child]:mt-0 [&_a]:underline [&_a]:underline-offset-2"
               style={{
-                color: "rgba(255,255,255,0.68)",
+                color: "var(--color-text-body)",
               }}
               dangerouslySetInnerHTML={{ __html: safeBio }}
             />
@@ -349,20 +343,20 @@ export function DoctorProfileTemplate({
             {profile.qualifications.length > 0 ? (
               <div
                 className="mt-14 pt-10"
-                style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+                style={{ borderTop: "1px solid rgba(29,75,54,0.12)" }}
               >
                 <p
                   className="text-[11px] font-bold uppercase tracking-[0.22em]"
-                  style={{ color: "var(--color-brand-accent)" }}
+                  style={{ color: "var(--color-brand-primary)" }}
                 >
                   Qualifications
                 </p>
-                <ul className="mt-6 space-y-3 text-[15px] leading-[1.7]" style={{ color: "rgba(255,255,255,0.65)" }}>
+                <ul className="mt-6 space-y-3 text-[15px] leading-[1.7]" style={{ color: "var(--color-text-body)" }}>
                   {profile.qualifications.map((q) => (
                     <li key={q} className="flex items-start gap-3">
                       <span
                         className="mt-2.5 h-1 w-1 shrink-0 rounded-full"
-                        style={{ background: "var(--color-brand-accent)" }}
+                        style={{ background: "#8FB021" }}
                       />
                       <span>{q}</span>
                     </li>
@@ -376,8 +370,8 @@ export function DoctorProfileTemplate({
                 className="mt-12 overflow-hidden p-6"
                 style={{
                   borderRadius: "var(--radius-card)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid var(--color-border)",
+                  background: "white",
                 }}
               >
                 <iframe
@@ -395,36 +389,32 @@ export function DoctorProfileTemplate({
               className="p-8 md:p-10"
               style={{
                 borderRadius: "var(--radius-card)",
-                border: "1px solid rgba(176,241,34,0.18)",
-                background: "rgba(176,241,34,0.04)",
+                border: "1px solid var(--color-border)",
+                background: "white",
+                boxShadow: "var(--shadow-card)",
               }}
             >
               <span
                 className="text-[11px] font-bold uppercase tracking-[0.22em]"
-                style={{ color: "var(--color-brand-accent)" }}
+                style={{ color: "var(--color-brand-primary)" }}
               >
                 Book this clinician
               </span>
               <h3
                 className="mt-4 font-extrabold tracking-[-0.03em] leading-[1.1]"
-                style={{ fontSize: "clamp(1.4rem,2.5vw,1.85rem)", color: "rgba(255,255,255,0.95)" }}
+                style={{ fontSize: "clamp(1.4rem,2.5vw,1.85rem)", color: "var(--color-text-primary)" }}
               >
                 Open video slots, subject to availability.
               </h3>
               <p
                 className="mt-4 text-[14.5px] leading-[1.7]"
-                style={{ color: "rgba(255,255,255,0.55)" }}
+                style={{ color: "var(--color-text-muted)" }}
               >
                 You&apos;ll receive a calendar invite immediately after booking — no back-and-forth.
               </p>
               <Link
                 href={hero.primaryCta.href}
-                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full text-[14.5px] font-bold transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-[0.98] focus-visible:outline-none"
-                style={{
-                  background: "var(--color-brand-accent)",
-                  color: "#0a1f14",
-                  padding: "14px 24px",
-                }}
+                className="gh2-btn-lime mt-8 w-full justify-center"
               >
                 {hero.primaryCta.label}
                 <ArrowUpRight className="h-4 w-4" aria-hidden />
@@ -437,7 +427,7 @@ export function DoctorProfileTemplate({
       {/* ── Bottom CTA ── */}
       <section
         style={{
-          background: "var(--color-background-dark)",
+          background: "linear-gradient(168deg, #15382A 0%, #0F2E25 55%, #0B241C 100%)",
           borderTop: "1px solid rgba(255,255,255,0.06)",
           padding: "clamp(40px,5vw,64px) 0",
         }}
@@ -469,12 +459,7 @@ export function DoctorProfileTemplate({
             </div>
             <Link
               href={bottomCta.ctaHref}
-              className="inline-flex items-center justify-center gap-2 rounded-full text-[14.5px] font-bold transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-[0.98] lg:justify-self-end"
-              style={{
-                background: "var(--color-brand-accent)",
-                color: "#0a1f14",
-                padding: "14px 28px",
-              }}
+              className="gh2-btn-lime lg:justify-self-end"
             >
               {bottomCta.ctaLabel}
               <ArrowUpRight className="h-4 w-4" aria-hidden />

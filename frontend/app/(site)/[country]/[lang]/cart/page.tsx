@@ -10,11 +10,10 @@ import {
   Clock,
   Minus,
   Plus,
-  ShoppingCart,
   Trash2,
 } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import { CART_ITEM_MAX_QTY } from "@/lib/api/cart-types";
@@ -91,33 +90,32 @@ export default function CartPage() {
 
   if (loading) {
     return (
-      <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-        <p className="gh-body-sm">Loading cart…</p>
-      </section>
+      <>
+        <GH2FlowHeader title="Your cart" activeStep={1} steps={["Cart", "Checkout", "Payment"]} />
+        <section className="bg-[var(--color-background-soft)] px-5 py-12">
+          <div className="mx-auto max-w-5xl">
+            <p className="gh-body-sm">Loading cart...</p>
+          </div>
+        </section>
+      </>
     );
   }
 
   if (cart.items.length === 0) {
     return (
       <>
-        <Breadcrumbs
-          items={[
-            { label: "Home", href: "/" },
-            { label: countrySlug.toUpperCase(), href: countryHome },
-            { label: "Cart" },
-          ]}
-        />
-        <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+        <GH2FlowHeader title="Your cart" activeStep={1} steps={["Cart", "Checkout", "Payment"]} />
+        <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
           <div
-            className="flex flex-col items-center rounded-[var(--radius-card)] border border-dashed px-6 py-16 text-center"
-            style={{ borderColor: "var(--color-border-strong)", background: "var(--color-background-soft)" }}
+            className="mx-auto flex max-w-3xl flex-col items-center rounded-[var(--radius-card)] border border-dashed bg-white px-6 py-16 text-center shadow-[var(--shadow-card)]"
+            style={{ borderColor: "var(--color-border-strong)" }}
           >
-            <ShoppingCart className="size-10" style={{ color: "var(--color-border-strong)" }} aria-hidden />
+            <span aria-hidden className="gh2-index text-[4rem] leading-none text-[rgba(29,75,54,0.16)]">00</span>
             <h1 className="gh-h3 mt-4">Your cart is empty</h1>
             <p className="gh-body-sm mt-2 max-w-md">
               Browse our consultations and health tests to get started.
             </p>
-            <Link href={countryHome} className="gh-btn gh-btn-primary mt-6">
+            <Link href={countryHome} className="gh2-btn-lime mt-6">
               Start shopping
               <ArrowRight className="size-4" aria-hidden />
             </Link>
@@ -138,14 +136,9 @@ export default function CartPage() {
 
   return (
     <>
-      <Breadcrumbs
-        items={[
-          { label: "Home", href: "/" },
-          { label: countrySlug.toUpperCase(), href: countryHome },
-          { label: "Cart" },
-        ]}
-      />
-      <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      <GH2FlowHeader title="Your cart" activeStep={1} steps={["Cart", "Checkout", "Payment"]} />
+      <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
+      <div className="mx-auto max-w-[var(--container-width)]">
       <h1 className="gh-h1">Your cart</h1>
       <p className="gh-body-sm mt-2">
         {cart.itemCount} item{cart.itemCount === 1 ? "" : "s"} ·{" "}
@@ -243,7 +236,7 @@ export default function CartPage() {
           <button
             type="button"
             onClick={() => router.push(checkoutHref)}
-            className="gh-btn gh-btn-primary mt-6 w-full"
+            className="gh2-btn-lime mt-6 w-full justify-center"
           >
             Checkout
             <ArrowRight className="size-4" aria-hidden />
@@ -252,6 +245,7 @@ export default function CartPage() {
             Payment is processed by Stripe. We never store your card details.
           </p>
         </aside>
+      </div>
       </div>
     </section>
     </>

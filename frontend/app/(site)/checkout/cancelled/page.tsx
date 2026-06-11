@@ -3,15 +3,10 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCart } from "@/components/cart/CartContext";
+import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
 import { getCountryByCode, type CountryCode } from "@/data/countries";
 import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
 
-/**
- * Legacy Stripe cancel URL. New checkout sessions always send a
- * country-scoped `returnTo`, but in-flight sessions before this
- * change may still land here — bounce them to the canonical
- * `/[country]/[lang]/checkout/cancelled`, preserving `orderId`.
- */
 export default function LegacyCheckoutCancelledRedirect() {
   const router = useRouter();
   const params = useSearchParams();
@@ -32,8 +27,6 @@ export default function LegacyCheckoutCancelledRedirect() {
   }, [loading, cart.countryCode, params, router]);
 
   return (
-    <section className="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6 lg:px-8">
-      <p className="text-sm text-slate-500">Returning to cart…</p>
-    </section>
+    <GH2StatusPage status="cancelled" title="Returning to cart" body="We are opening your country-specific cart page." />
   );
 }

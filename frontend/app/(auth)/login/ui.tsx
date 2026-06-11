@@ -48,7 +48,7 @@ export function LoginFormFallback({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n })
         <div className="h-4 w-20 rounded bg-[var(--color-border)]/40" />
         <div className="h-11 animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
       </div>
-      <div className={`${styles.submitBtn} gh-btn gh-btn-primary mt-1 animate-pulse opacity-60`}>
+      <div className="gh2-btn-lime mt-1 animate-pulse justify-center opacity-60">
         {i18n.signIn}
       </div>
     </form>
@@ -159,11 +159,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
         {i18n.rememberMe}
       </label>
 
-      <button
-        type="submit"
-        className={`${styles.submitBtn} gh-btn gh-btn-primary mt-1`}
-        disabled={loading}
-      >
+      <button type="submit" className="gh2-btn-lime mt-1 w-full justify-center disabled:opacity-60" disabled={loading}>
         {loading ? i18n.signingIn : i18n.signIn}
       </button>
 

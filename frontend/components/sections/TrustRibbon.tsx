@@ -43,7 +43,7 @@ const FALLBACK_ITEMS: TrustRibbonItem[] = [
   { v: "GDPR", l: "Compliant by default", icon: "lock" },
 ];
 
-export function TrustRibbon({ items, theme = "dark" }: { items?: TrustRibbonItem[]; theme?: "dark" | "light" }) {
+export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonItem[]; theme?: "dark" | "light" }) {
   const list = items && items.length > 0 ? items : FALLBACK_ITEMS;
   const isLight = theme === "light";
 

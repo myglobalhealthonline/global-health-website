@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
+import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { startCheckout } from "@/lib/api/cart-client";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { formatPrice } from "@/lib/format-currency";
@@ -109,9 +110,14 @@ export default function CheckoutPage() {
 
   if (loading || !authLoaded) {
     return (
-      <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-        <p className="gh-body-sm">Loading…</p>
-      </section>
+      <>
+        <GH2FlowHeader title="Checkout" activeStep={2} steps={["Cart", "Checkout", "Payment"]} />
+        <section className="bg-[var(--color-background-soft)] px-5 py-12">
+          <div className="mx-auto max-w-5xl">
+            <p className="gh-body-sm">Loading...</p>
+          </div>
+        </section>
+      </>
     );
   }
 
@@ -136,17 +142,21 @@ export default function CheckoutPage() {
   );
 
   return (
-    <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+    <>
+    <GH2FlowHeader
+      title="Checkout"
+      subtitle={needsShipping
+        ? `Shipping in ${cart.countryCode.toUpperCase()} · paid in ${cart.currencyCode}`
+        : `Online services · paid in ${cart.currencyCode}`}
+      activeStep={2}
+      steps={["Cart", "Checkout", "Payment"]}
+    />
+    <section className="bg-[var(--color-background-soft)] px-5 py-12 sm:py-16">
+      <div className="mx-auto max-w-[var(--container-width)]">
       <Link href={cartHref} className="gh-link mb-4 inline-flex items-center gap-1.5 text-sm">
         <ArrowLeft className="size-4" aria-hidden />
         Back to cart
       </Link>
-      <h1 className="gh-h1">Checkout</h1>
-      <p className="gh-body-sm mt-2">
-        {needsShipping
-          ? `Shipping in ${cart.countryCode.toUpperCase()} · paid in ${cart.currencyCode}`
-          : `Online services · paid in ${cart.currencyCode}`}
-      </p>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_340px]">
         <form
@@ -249,7 +259,7 @@ export default function CheckoutPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="gh-btn gh-btn-primary mt-6 disabled:opacity-60"
+            className="gh2-btn-lime mt-6 disabled:opacity-60"
           >
             {submitting ? (
               <Loader2 className="size-4 animate-spin" aria-hidden />
@@ -300,7 +310,9 @@ export default function CheckoutPage() {
           </dl>
         </aside>
       </div>
+      </div>
     </section>
+    </>
   );
 }
 

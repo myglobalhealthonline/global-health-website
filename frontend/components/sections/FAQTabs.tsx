@@ -83,48 +83,29 @@ export function FAQTabs({ groups }: { groups: FAQGroup[] }) {
             {active.title}
           </h2>
 
-          <div
-            className="mt-8"
-            style={{ borderTop: "1px solid rgba(29,75,54,0.10)" }}
-          >
-            {active.items.map((item) => (
-              <details
+          <div className="mt-8" style={{ borderTop: "1px solid rgba(29,75,54,0.12)" }}>
+            {active.items.map((item, index) => (
+              <article
                 key={item.question}
-                className="group"
-                style={{ borderBottom: "1px solid rgba(29,75,54,0.10)" }}
+                className="grid gap-5 py-7 sm:grid-cols-[90px_1fr]"
+                style={{ borderBottom: "1px solid rgba(29,75,54,0.12)" }}
               >
-                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 py-5">
-                  <span
-                    className="text-base font-semibold transition-colors group-hover:text-[var(--color-brand-primary)]"
-                    style={{ color: "var(--color-text-primary)" }}
-                  >
-                    {item.question}
-                  </span>
-                  <span
-                    className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none"
-                    style={{
-                      border: "1px solid rgba(29,75,54,0.20)",
-                      color: "var(--color-brand-primary)",
-                      background: "rgba(29,75,54,0.06)",
-                    }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                      <path
-                        d="M7 1V13M1 7H13"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </span>
-                </summary>
-                <p
-                  className="pb-5 max-w-[62ch] text-sm leading-relaxed"
-                  style={{ color: "var(--color-text-muted)" }}
+                <span
+                  aria-hidden
+                  className="select-none font-extrabold leading-none tracking-[-0.05em]"
+                  style={{ fontSize: "clamp(3rem,7vw,5rem)", color: "rgba(29,75,54,0.10)" }}
                 >
-                  {item.answer}
-                </p>
-              </details>
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h3 className="text-lg font-extrabold tracking-[-0.02em] text-[var(--color-text-primary)]">
+                    {item.question}
+                  </h3>
+                  <p className="mt-3 max-w-[62ch] text-sm leading-relaxed text-[var(--color-text-muted)]">
+                    {item.answer}
+                  </p>
+                </div>
+              </article>
             ))}
           </div>
         </div>
