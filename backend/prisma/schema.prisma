@@ -301,6 +301,7 @@ model Country {
   faqs                       Faq[]
   contentPages               ContentPage[]
   badges                     Badge[]
+  partners                   Partner[]
   reviews                    Review[]
   consultationSetting        ConsultationSetting?
   bookingSetting             BookingSetting?
@@ -931,6 +932,7 @@ model Asset {
   specialty           Specialty?    @relation(fields: [specialtyId], references: [id], onDelete: Cascade)
   service             Service?      @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   badges              Badge[]
+  partners            Partner[]
   blogPostCovers      BlogPost[]    @relation("BlogPostCover")
   contentPageHeroes   ContentPage[] @relation("ContentPageHero")
   contentPageOgImages ContentPage[] @relation("ContentPageOg")
@@ -951,6 +953,25 @@ model Badge {
   asset     Asset?   @relation(fields: [assetId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+/// A partner organisation shown in the per-country "Our partners" marquee on
+/// the country home page. Admin-managed: logo (optional Asset), display name,
+/// and an outbound website link. `sortOrder` controls marquee order.
+model Partner {
+  id         String   @id @default(cuid())
+  countryId  String
+  assetId    String?
+  name       String
+  websiteUrl String?
+  sortOrder  Int      @default(0)
+  active     Boolean  @default(true)
+  country    Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  asset      Asset?   @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([countryId, active])
 }
 
 model ConsultationSetting {

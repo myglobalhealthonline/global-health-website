@@ -241,6 +241,21 @@ export async function fetchHealthTestsByCountry(
   });
 }
 
+export async function fetchPartnersByCountry(
+  countryCode: string,
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+) {
+  return apiRequest<unknown[]>(
+    `/api/countries/${encodeURIComponent(countryCode)}/partners`,
+    {
+      timeoutMs,
+      revalidate: REVALIDATE_SECONDS,
+      // Busted from the admin partners page after an edit.
+      tags: [`country-partners:${countryCode.toLowerCase()}`],
+    },
+  );
+}
+
 export async function fetchPlansByCountry(
   countryCode: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,

@@ -568,6 +568,44 @@ export async function fetchAdminDoctorCredentials(doctorId: string) {
   );
 }
 
+// ── Partners (per-country "Our partners" marquee) ───────────────────────────
+
+export type AdminPartnerDto = {
+  id: string;
+  countryId: string;
+  name: string;
+  websiteUrl: string | null;
+  logoPath: string | null;
+  sortOrder: number;
+  active: boolean;
+};
+
+export async function fetchAdminPartners(countryId: string) {
+  return adminRequest<{ partners: AdminPartnerDto[] }>(
+    `/api/admin/partners?countryId=${encodeURIComponent(countryId)}`,
+  );
+}
+
+export async function createAdminPartner(body: unknown) {
+  return adminRequest<{ partner: AdminPartnerDto }>(`/api/admin/partners`, {
+    method: "POST",
+    body,
+  });
+}
+
+export async function updateAdminPartner(id: string, body: unknown) {
+  return adminRequest<{ partner: AdminPartnerDto }>(`/api/admin/partners/${id}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export async function deleteAdminPartner(id: string) {
+  return adminRequest<{ deleted: boolean }>(`/api/admin/partners/${id}`, {
+    method: "DELETE",
+  });
+}
+
 // ── Doctor payout bank details ───────────────────────────────────────────────
 
 export type AdminDoctorBankDto = {
