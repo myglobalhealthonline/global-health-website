@@ -115,14 +115,41 @@ export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy 
   ];
 
   return (
-    <div className={`${styles.root} relative flex min-h-screen flex-col overflow-hidden text-white`}>
-      <div aria-hidden className={`${styles.pattern} pointer-events-none absolute inset-0`} />
-      <div aria-hidden className={`${styles.blooms} pointer-events-none absolute inset-0`} />
+    <div className={`${styles.root} relative flex min-h-[100dvh] flex-col overflow-x-hidden text-white`}>
+      <div aria-hidden className={styles.backgroundLayer}>
+        <picture>
+          <source
+            media="(max-width: 767px)"
+            srcSet="/images/hero/country-entry-clinic-hero-mobile-1080.avif"
+            type="image/avif"
+          />
+          <source
+            media="(max-width: 767px)"
+            srcSet="/images/hero/country-entry-clinic-hero-mobile-1080.webp"
+            type="image/webp"
+          />
+          <source srcSet="/images/hero/country-entry-clinic-hero-2560.avif" type="image/avif" />
+          <source srcSet="/images/hero/country-entry-clinic-hero-2560.webp" type="image/webp" />
+          <img
+            src="/images/hero/country-entry-clinic-hero-2560.webp"
+            alt=""
+            width={2560}
+            height={1440}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className={styles.backgroundImage}
+          />
+        </picture>
+      </div>
+      <div aria-hidden className={`${styles.tint} pointer-events-none fixed inset-0`} />
+      <div aria-hidden className={`${styles.pattern} pointer-events-none fixed inset-0`} />
+      <div aria-hidden className={`${styles.blooms} pointer-events-none fixed inset-0`} />
 
       {/* Header — brand + tagline */}
       <header className={`${styles.header} relative flex items-center justify-between`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logos/global-health-light.png" alt="Global Health" style={{ height: 44, width: "auto" }} />
+        <img src="/logos/global-health-light.png" alt="Global Health" className={styles.logo} />
         <p className={`${styles.tagline} hidden uppercase sm:block`}>{copy.eyebrow}</p>
       </header>
 
