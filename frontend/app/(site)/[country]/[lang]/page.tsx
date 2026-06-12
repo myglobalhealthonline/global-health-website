@@ -283,6 +283,24 @@ export default async function CountryLangHomePage({
       imageSrc: d.imageSrc,
     }));
 
+  // Hero quick-book wizard data: bookable doctors + the consultations they are
+  // assigned to. Only doctors with at least one assigned service can be booked.
+  const wizardServices = [...generalServices, ...specialistServices].map((s) => ({
+    id: s.id,
+    slug: s.slug,
+    name: s.name,
+    durationMinutes: s.durationMinutes,
+  }));
+  const wizardDoctors = countryDoctors
+    .filter((d) => d.assignedServiceIds.length > 0)
+    .map((d) => ({
+      slug: d.slug,
+      name: d.fullName,
+      role: d.specialties.length > 0 ? `${d.specialties[0]}, ${config.name}` : config.name,
+      imageSrc: d.imageSrc ?? null,
+      serviceIds: d.assignedServiceIds,
+    }));
+
   // Promote one doctor into the FeaturedDoctor section to break the
   // monotony of the DoctorWall grid (Phase 1 audit finding). Picks the
   // first doctor with both a bio and an image — those are the rows
@@ -453,6 +471,13 @@ export default async function CountryLangHomePage({
         bookHref={page?.ctaHref ?? bookHref}
         totalDoctorsAcrossEurope={totalDoctorsAcrossEurope}
         liveDoctors={liveDoctors}
+        wizard={{
+          doctors: wizardDoctors,
+          services: wizardServices,
+          countryCode: code,
+          countrySlug: slug,
+          lang,
+        }}
         heroTitle={null}
         heroSubtitle={page?.heroSubtitle ?? null}
         heroImageSrc={page?.heroImageSrc ?? null}

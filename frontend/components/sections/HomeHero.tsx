@@ -4,11 +4,24 @@ import { ArrowRight, ShieldCheck, Stethoscope, Clock } from "lucide-react";
 import type { CountryCode } from "@/data/countries";
 import { Flag } from "@/components/ui/Flag";
 import { HeroReveal } from "@/components/motion/HeroReveal";
+import {
+  HeroBookingWizard,
+  type WizardDoctor,
+  type WizardService,
+} from "@/components/sections/HeroBookingWizard";
 
 export type LiveDoctorItem = {
   name: string;
   role: string;
   imageSrc?: string | null;
+};
+
+export type HeroWizardData = {
+  doctors: WizardDoctor[];
+  services: WizardService[];
+  countryCode: string;
+  countrySlug: string;
+  lang: string;
 };
 
 export type HomeHeroI18n = {
@@ -35,6 +48,7 @@ export function HomeHero({
   bookHref,
   totalDoctorsAcrossEurope,
   liveDoctors,
+  wizard,
   heroTitle,
   heroSubtitle,
   heroImageSrc,
@@ -48,6 +62,7 @@ export function HomeHero({
   bookHref: string;
   totalDoctorsAcrossEurope: number;
   liveDoctors?: LiveDoctorItem[];
+  wizard?: HeroWizardData;
   heroTitle?: string | null;
   heroSubtitle?: string | null;
   heroImageSrc?: string | null;
@@ -190,9 +205,20 @@ export function HomeHero({
           </HeroReveal>
         </div>
 
-        {/* ── RIGHT — availability panel over visible photo (desktop only) ── */}
+        {/* ── RIGHT — quick-book wizard (falls back to the static panel) ── */}
         <HeroReveal delay={380} className="relative hidden min-h-[600px] lg:block">
-          {doctorsForPanel.length > 0 ? (
+          {wizard && wizard.doctors.length > 0 ? (
+            <div className="gh-home-hero-availabilityPanel absolute -bottom-8 -left-9">
+              <HeroBookingWizard
+                doctors={wizard.doctors}
+                services={wizard.services}
+                countryCode={wizard.countryCode}
+                countrySlug={wizard.countrySlug}
+                lang={wizard.lang}
+                bookHref={bookHref}
+              />
+            </div>
+          ) : doctorsForPanel.length > 0 ? (
             <aside
               aria-label="Doctors available now"
               className="gh-home-hero-availabilityPanel absolute -bottom-8 -left-9 flex w-[300px] flex-col"
