@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   ArrowLeft,
   CalendarCheck,
+  Check,
   Clock,
   Droplets,
   FlaskConical,
@@ -121,201 +122,252 @@ export default async function HealthTestDetailPage({
         ])}
       />
 
-      {/* Test hero — full-viewport 50/50: image left, buy panel right */}
-      <section
-        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
-        style={{ background: "#0F2E25" }}
-      >
-        <div className="grid lg:grid-cols-2" style={{ minHeight: "min(100vh, 880px)" }}>
-
-          {/* LEFT — full-bleed test image */}
-          <div
-            className="relative overflow-hidden"
-            style={{ minHeight: "clamp(300px, 50vw, 880px)" }}
+      {/* Test product page — e-commerce layout: image left, buy info right */}
+      <section style={{ background: "var(--color-background-soft)", borderBottom: "1px solid rgba(29,75,54,0.08)" }}>
+        <div
+          className="mx-auto max-w-[var(--container-width)] px-5 md:px-10"
+          style={{ paddingTop: "clamp(40px,5vw,72px)", paddingBottom: "clamp(48px,6vw,88px)" }}
+        >
+          <Link
+            href={backHref}
+            className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] transition-colors hover:text-[var(--color-brand-primary)]"
+            style={{ color: "var(--color-text-muted)" }}
           >
-            {detail.imageSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={detail.imageSrc}
-                alt={detail.title}
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  objectPosition: "center",
-                }}
-              />
-            ) : (
+            <ArrowLeft className="size-4" aria-hidden />
+            {t.backToTests}
+          </Link>
+
+          <div className="mt-8 grid items-start gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
+
+            {/* LEFT — product image + gallery */}
+            <div>
               <div
-                className="absolute inset-0 flex items-center justify-center"
-                style={{ background: "linear-gradient(135deg, #0d2a1f 0%, #1a3d2b 100%)" }}
+                className="overflow-hidden rounded-[var(--radius-card)]"
+                style={{
+                  background: "#ffffff",
+                  boxShadow: "0 2px 32px rgba(29,75,54,0.09)",
+                  border: "1px solid rgba(29,75,54,0.07)",
+                }}
               >
-                <FlaskConical
-                  className="size-20"
-                  style={{ color: "rgba(176,241,34,0.30)" }}
-                  strokeWidth={1.2}
-                  aria-hidden
-                />
+                {detail.imageSrc ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={detail.imageSrc}
+                    alt={detail.title}
+                    style={{
+                      width: "100%",
+                      aspectRatio: "4 / 3",
+                      objectFit: "contain",
+                      padding: "clamp(16px,5%,40px)",
+                      display: "block",
+                    }}
+                  />
+                ) : (
+                  <div
+                    className="flex items-center justify-center"
+                    style={{ aspectRatio: "4 / 3", background: "rgba(29,75,54,0.03)" }}
+                  >
+                    <FlaskConical
+                      className="size-24"
+                      style={{ color: "var(--color-brand-primary)", opacity: 0.22 }}
+                      strokeWidth={1.2}
+                      aria-hidden
+                    />
+                  </div>
+                )}
               </div>
-            )}
-            {/* Doctor Reviewed badge — overlaid on the image */}
-            <span
-              className="absolute left-5 top-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.08em]"
-              style={{ background: "var(--color-brand-primary)", color: "#ffffff", boxShadow: "0 2px 8px rgba(0,0,0,0.30)" }}
-            >
-              <ShieldCheck className="size-3.5" aria-hidden />
-              {t.doctorReviewed}
-            </span>
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0"
-              style={{
-                height: "55%",
-                background:
-                  "linear-gradient(to top, rgba(6,26,18,0.90) 0%, rgba(6,26,18,0.40) 45%, transparent 100%)",
-              }}
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-y-0 right-0 hidden lg:block"
-              style={{
-                width: "38%",
-                background:
-                  "linear-gradient(to right, rgba(15,46,37,0) 0%, rgba(15,46,37,0.75) 70%, #0F2E25 100%)",
-              }}
-            />
-          </div>
 
-          {/* RIGHT — test info + buy panel */}
-          <div
-            className="relative flex flex-col justify-start overflow-y-auto px-8 py-10 md:px-12 lg:px-14 lg:py-14"
-            style={{ background: "#0F2E25" }}
-          >
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(ellipse 600px 500px at 110% -10%, rgba(176,241,34,0.11), transparent 60%)",
-              }}
-            />
+              {/* Gallery thumbnails */}
+              {detail.gallery.length > 0 ? (
+                <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+                  {detail.imageSrc ? (
+                    <div
+                      className="shrink-0 overflow-hidden rounded-[10px]"
+                      style={{
+                        width: 72,
+                        height: 72,
+                        background: "#ffffff",
+                        border: "2px solid var(--color-brand-accent)",
+                        boxShadow: "0 1px 8px rgba(29,75,54,0.10)",
+                      }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={detail.imageSrc}
+                        alt=""
+                        style={{ width: "100%", height: "100%", objectFit: "contain", padding: 4 }}
+                      />
+                    </div>
+                  ) : null}
+                  {detail.gallery.map((src, i) => (
+                    <div
+                      key={i}
+                      className="shrink-0 overflow-hidden rounded-[10px]"
+                      style={{
+                        width: 72,
+                        height: 72,
+                        background: "#ffffff",
+                        border: "1px solid rgba(29,75,54,0.12)",
+                        boxShadow: "0 1px 8px rgba(29,75,54,0.06)",
+                      }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={src}
+                        alt={`${detail.title} view ${i + 2}`}
+                        style={{ width: "100%", height: "100%", objectFit: "contain", padding: 4 }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
 
-            <div className="relative">
-              <Link
-                href={backHref}
-                className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] transition-colors hover:text-[var(--color-brand-accent)]"
-                style={{ color: "rgba(255,255,255,0.40)" }}
-              >
-                <ArrowLeft className="size-4" aria-hidden />
-                {t.backToTests}
-              </Link>
-
-              <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: "var(--color-brand-accent)" }}>
-                {t.eyebrow}
-              </p>
+            {/* RIGHT — product info + buy */}
+            <div>
+              {/* Badge row */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.10em]"
+                  style={{ background: "rgba(176,241,34,0.18)", color: "var(--color-brand-primary)" }}
+                >
+                  <ShieldCheck className="size-3.5" aria-hidden />
+                  {t.doctorReviewed}
+                </span>
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.10em]"
+                  style={{ background: "rgba(29,75,54,0.07)", color: "var(--color-brand-primary)" }}
+                >
+                  <FlaskConical className="size-3.5" aria-hidden />
+                  {t.eyebrow}
+                </span>
+              </div>
 
               <h1
-                className="mt-4 font-extrabold leading-[1.0] tracking-[-0.035em]"
-                style={{ fontSize: "clamp(2rem,3.5vw+0.5rem,3.5rem)", color: "rgba(255,255,255,0.95)", maxWidth: "20ch" }}
+                className="mt-4 font-extrabold leading-[1.05] tracking-[-0.03em]"
+                style={{ fontSize: "clamp(1.75rem,3vw,2.6rem)", color: "var(--color-text-primary)" }}
               >
                 {detail.title}
               </h1>
 
               {intro ? (
                 <p
-                  className="mt-4 max-w-[48ch] leading-relaxed"
-                  style={{ fontSize: "var(--text-body-lg)", color: "rgba(255,255,255,0.58)" }}
+                  className="mt-3 max-w-[52ch] leading-relaxed"
+                  style={{ fontSize: "var(--text-body-lg)", color: "var(--color-text-muted)" }}
                 >
                   {intro}
                 </p>
               ) : null}
 
-              {/* Compact spec chips */}
-              <div className="mt-6 flex flex-wrap gap-2">
-                {specs.map(({ icon: Icon, label, value }) => (
+              {/* Spec chips */}
+              <div className="mt-5 flex flex-wrap gap-2">
+                {specs.map(({ icon: Icon, value }) => (
                   <span
-                    key={label}
-                    className="inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-medium"
-                    style={{
-                      background: "rgba(255,255,255,0.07)",
-                      border: "1px solid rgba(255,255,255,0.12)",
-                      color: "rgba(255,255,255,0.80)",
-                    }}
+                    key={value}
+                    className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[13px] font-medium"
+                    style={{ background: "rgba(29,75,54,0.07)", color: "var(--color-brand-primary)" }}
                   >
-                    <Icon className="size-3.5 shrink-0" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.8} aria-hidden />
+                    <Icon className="size-3.5 shrink-0" strokeWidth={1.8} aria-hidden />
                     {value}
                   </span>
                 ))}
               </div>
 
-              {/* Buy panel */}
-              <div
-                className="mt-6 overflow-hidden rounded-[20px]"
-                style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  backdropFilter: "blur(18px)",
-                  boxShadow: "0 24px 60px rgba(0,0,0,0.35)",
-                }}
-              >
-                <div className="p-6">
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <span
-                      className="font-extrabold tracking-[-0.03em] [font-variant-numeric:tabular-nums]"
-                      style={{ fontSize: "clamp(1.9rem,3vw,2.5rem)", color: "rgba(255,255,255,0.95)" }}
-                    >
-                      {priceLabel}
-                    </span>
-                    <span className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.45)" }}>
-                      {t.inclDoctorReview}
-                    </span>
-                    {lowStock != null ? (
-                      <span className="gh-badge gh-badge-warning">{t.onlyLeft.replace("{count}", String(lowStock))}</span>
-                    ) : null}
-                    {soldOut ? <span className="gh-badge gh-badge-error">{t.soldOut}</span> : null}
-                  </div>
-
-                  <div className="mt-5">
-                    {soldOut ? (
-                      <button
-                        type="button"
-                        disabled
-                        className="inline-flex h-14 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full px-6 text-[15px] font-bold"
-                        style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.35)" }}
+              {/* What's covered — preview */}
+              {detail.whatThisTestCovers.length > 0 ? (
+                <ul
+                  className="mt-6 space-y-2.5 border-t pt-6"
+                  style={{ borderColor: "rgba(29,75,54,0.10)" }}
+                >
+                  {detail.whatThisTestCovers.slice(0, 5).map((item, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span
+                        className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full"
+                        style={{ background: "rgba(176,241,34,0.22)" }}
                       >
-                        {t.soldOut}
-                      </button>
-                    ) : (
-                      <AddToCartButton
-                        kind="HEALTH_TEST"
-                        healthTestId={detail.id}
-                        label={detail.heroButtonLabel ?? t.addToCart.replace("{price}", priceLabel)}
-                        className="gh2-btn-lime w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
-                      />
-                    )}
-                  </div>
-
-                  <div
-                    className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2"
-                    style={{ color: "rgba(255,255,255,0.38)" }}
-                  >
-                    {[
-                      { icon: Lock, label: t.secureCheckout },
-                      { icon: CalendarCheck, label: t.orderConfirmation },
-                    ].map(({ icon: Icon, label }) => (
-                      <span key={label} className="inline-flex items-center gap-1.5 text-xs font-medium">
-                        <Icon className="size-3.5" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
-                        {label}
+                        <Check
+                          className="size-3"
+                          style={{ color: "var(--color-brand-primary)" }}
+                          strokeWidth={2.5}
+                          aria-hidden
+                        />
                       </span>
-                    ))}
-                  </div>
+                      <span className="text-sm leading-snug" style={{ color: "var(--color-text-secondary, var(--color-text-primary))" }}>
+                        {item}
+                      </span>
+                    </li>
+                  ))}
+                  {detail.whatThisTestCovers.length > 5 ? (
+                    <li
+                      className="pl-8 text-sm font-medium"
+                      style={{ color: "var(--color-brand-primary)", opacity: 0.65 }}
+                    >
+                      +{detail.whatThisTestCovers.length - 5} more biomarkers below ↓
+                    </li>
+                  ) : null}
+                </ul>
+              ) : null}
+
+              {/* Price + CTA */}
+              <div
+                className="mt-6 border-t pt-6"
+                style={{ borderColor: "rgba(29,75,54,0.10)" }}
+              >
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span
+                    className="font-extrabold tracking-[-0.035em] [font-variant-numeric:tabular-nums]"
+                    style={{ fontSize: "clamp(2rem,3vw,2.6rem)", color: "var(--color-text-primary)" }}
+                  >
+                    {priceLabel}
+                  </span>
+                  <span className="text-sm font-medium" style={{ color: "var(--color-text-muted)" }}>
+                    {t.inclDoctorReview}
+                  </span>
+                  {lowStock != null ? (
+                    <span className="gh-badge gh-badge-warning">{t.onlyLeft.replace("{count}", String(lowStock))}</span>
+                  ) : null}
+                  {soldOut ? <span className="gh-badge gh-badge-error">{t.soldOut}</span> : null}
+                </div>
+
+                <div className="mt-4">
+                  {soldOut ? (
+                    <button
+                      type="button"
+                      disabled
+                      className="inline-flex h-14 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full px-6 text-[15px] font-bold"
+                      style={{ background: "rgba(0,0,0,0.06)", color: "rgba(0,0,0,0.35)" }}
+                    >
+                      {t.soldOut}
+                    </button>
+                  ) : (
+                    <AddToCartButton
+                      kind="HEALTH_TEST"
+                      healthTestId={detail.id}
+                      label={detail.heroButtonLabel ?? t.addToCart.replace("{price}", priceLabel)}
+                      className="gh2-btn-lime w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
+                    />
+                  )}
+                </div>
+
+                <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+                  {[
+                    { icon: Lock, label: t.secureCheckout },
+                    { icon: CalendarCheck, label: t.orderConfirmation },
+                  ].map(({ icon: Icon, label }) => (
+                    <span
+                      key={label}
+                      className="inline-flex items-center gap-1.5 text-xs font-medium"
+                      style={{ color: "var(--color-text-muted)" }}
+                    >
+                      <Icon className="size-3.5" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
+                      {label}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
-          </div>
 
+          </div>
         </div>
       </section>
 
