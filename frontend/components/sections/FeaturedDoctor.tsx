@@ -14,7 +14,7 @@
 
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { ArrowRight, ArrowUpRight, Globe, Phone, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Globe, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { toDoctorBioPlainText } from "@/lib/content/doctor-bio-format";
 import {
@@ -88,10 +88,8 @@ export function FeaturedDoctor({
 
   // WhatsApp deep link — strip non-digits, drop the leading +, same as
   // DoctorCard so the two surfaces resolve identical wa.me URLs.
-  const whatsappDigits = doctor.whatsappNumber?.replace(/[^\d+]/g, "");
-  const whatsappHref = whatsappDigits
-    ? `https://wa.me/${whatsappDigits.replace("+", "")}`
-    : null;
+  // Doctor phone (WhatsApp) is clinic↔clinician contact only — never shown on
+  // the public spotlight (the public API no longer sends the number either).
 
   // Social icon row — only the URLs the admin actually set render.
   const socialLinks: Array<{ url: string; Icon: BrandIcon; label: string }> = [
@@ -299,23 +297,6 @@ export function FeaturedDoctor({
               </Link>
             ) : null}
 
-            {/* Call / WhatsApp — outline that fills on hover. */}
-            {whatsappHref ? (
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`inline-flex h-12 items-center justify-center gap-2 rounded-full border px-5 text-sm font-bold tracking-[-0.005em] transition-[background-color,color,border-color] duration-200 focus-visible:outline-none motion-reduce:transition-none ${
-                  dark
-                    ? "border-white/25 bg-white/[0.06] text-white/90 hover:bg-white hover:text-[var(--color-brand-primary)]"
-                    : "border-[var(--color-border-strong)] text-[var(--color-brand-primary)] hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white"
-                }`}
-                aria-label={`Call ${firstName} on WhatsApp`}
-              >
-                <Phone className="size-4 shrink-0" strokeWidth={1.7} aria-hidden />
-                Call
-              </a>
-            ) : null}
 
             {profileHref ? (
               <Link

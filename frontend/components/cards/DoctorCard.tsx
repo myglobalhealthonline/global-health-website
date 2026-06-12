@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Globe, ShieldCheck, Phone, CalendarDays, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Globe, ShieldCheck, CalendarDays, ArrowRight, ArrowUpRight } from "lucide-react";
 import {
   IconInstagram,
   IconFacebook,
@@ -85,7 +85,6 @@ export function DoctorCard({
   credentials = [],
   country,
   languages = [],
-  whatsappNumber,
   instagramUrl,
   facebookUrl,
   linkedinUrl,
@@ -102,10 +101,8 @@ export function DoctorCard({
   const src = trimmedImage ?? "";
   const unoptimized = /^https?:\/\//i.test(src) || src.startsWith("/api/media/");
   const initialsLabel = initials?.trim() || nameToInitials(name);
-  const whatsappDigits = whatsappNumber?.replace(/[^\d+]/g, "");
-  const whatsappHref = whatsappDigits
-    ? `https://wa.me/${whatsappDigits.replace("+", "")}`
-    : null;
+  // Doctor phone (WhatsApp) is clinic↔clinician contact only — never shown on
+  // public cards (the public API no longer sends the number either).
   const profileHref = href;
   const bookHref = bookingHref ?? null;
 
@@ -360,19 +357,6 @@ export function DoctorCard({
                   aria-hidden
                 />
               </Link>
-
-              {whatsappHref ? (
-                <a
-                  href={whatsappHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="relative z-20 inline-flex size-12 shrink-0 items-center justify-center rounded-full border-[1.5px] border-[color:var(--dc-line)] bg-transparent text-[color:var(--dc-ink)] transition-colors duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
-                  aria-label="Contact on WhatsApp"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Phone className="size-4" strokeWidth={1.6} />
-                </a>
-              ) : null}
             </div>
           ) : null}
 
@@ -399,20 +383,6 @@ export function DoctorCard({
             </Link>
           ) : null}
 
-          {/* When there's no booking CTA and no profile CTA fell through,
-              render a single phone shortcut if available so the card
-              still has an action. */}
-          {!bookHref && !profileHref && whatsappHref ? (
-            <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="relative z-20 inline-flex w-full items-center justify-center gap-2 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 py-[9px] text-[13px] font-semibold text-[color:var(--dc-ink)] hover:bg-[color:var(--dc-hover)]"
-            >
-              <Phone className="size-4" strokeWidth={1.6} aria-hidden />
-              WhatsApp
-            </a>
-          ) : null}
 
           {/* Social row — only renders when at least one URL is set.
               Sits below the action stack so the primary book CTA stays

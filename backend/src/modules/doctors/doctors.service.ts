@@ -189,7 +189,9 @@ export async function listDoctors(locale?: LocaleCode) {
     // Each doctor merges to the requested locale, falling back to their own
     // country's default locale (then base columns). Same id either way.
     return rows.map((d) =>
-      mergeDoctorTranslation(d, locale ?? d.country.defaultLocale, d.country.defaultLocale),
+      stripPrivateContact(
+        mergeDoctorTranslation(d, locale ?? d.country.defaultLocale, d.country.defaultLocale),
+      ),
     );
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
@@ -283,7 +285,7 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
         d.country.defaultLocale,
       );
       return {
-        ...overrideImcRegistrationFromCountry(merged, countryCode),
+        ...stripPrivateContact(overrideImcRegistrationFromCountry(merged, countryCode)),
         isFeatured: d.id === featuredId,
       };
     });
@@ -298,6 +300,20 @@ type DoctorCredentialRow = {
   bodyUrl: string | null;
   countryCode: string | null;
 };
+
+/**
+ * Strip clinic-private contact details from a PUBLIC doctor payload. A
+ * doctor's phone (WhatsApp) number is for clinic↔clinician contact only and
+ * must never appear on public pages or in the public API. (The doctor's email
+ * lives on the linked User record, which these public reads never select — so
+ * email is already admin/clinic-only.)
+ */
+function stripPrivateContact<T extends { whatsappNumber?: string | null }>(
+  doctor: T,
+): Omit<T, "whatsappNumber"> {
+  const { whatsappNumber: _omit, ...rest } = doctor;
+  return rest;
+}
 
 /**
  * Phase 2 shim: the legacy `Doctor.imcRegistration` column is gone.
@@ -439,7 +455,7 @@ export async function getDoctorByCountryAndSlug(
       locale ?? doctor.country.defaultLocale,
       doctor.country.defaultLocale,
     );
-    return overrideImcRegistrationFromCountry(merged, countryCode);
+    return stripPrivateContact(overrideImcRegistrationFromCountry(merged, countryCode));
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }
