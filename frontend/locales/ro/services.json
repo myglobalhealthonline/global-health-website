@@ -12,10 +12,10 @@
     "nextServices": "Servicii următoare",
     "filters": {
       "all": "Toate",
-      "general": "General",
+      "general": "Medic de familie",
       "specialist": "Specialist",
       "prescription": "Rețete",
-      "test": "Teste acasă"
+      "test": "Teste de laborator"
     }
   }
 }

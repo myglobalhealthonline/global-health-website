@@ -12,10 +12,10 @@
     "nextServices": "Další služby",
     "filters": {
       "all": "Vše",
-      "general": "Obecná péče",
-      "specialist": "Specialista",
+      "general": "Navštívit lékaře",
+      "specialist": "Navštívit specialistu",
       "prescription": "Předpisy",
-      "test": "Domácí testy"
+      "test": "Laboratorní testy"
     }
   }
 }

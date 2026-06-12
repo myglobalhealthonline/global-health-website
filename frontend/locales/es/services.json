@@ -12,10 +12,10 @@
     "nextServices": "Próximos servicios",
     "filters": {
       "all": "Todos",
-      "general": "General",
-      "specialist": "Especialista",
+      "general": "Ver médico",
+      "specialist": "Ver especialista",
       "prescription": "Recetas",
-      "test": "Tests en casa"
+      "test": "Pruebas de laboratorio"
     }
   }
 }

@@ -12,10 +12,10 @@
     "nextServices": "Next services",
     "filters": {
       "all": "All",
-      "general": "General",
-      "specialist": "Specialist",
+      "general": "See a GP",
+      "specialist": "See a Specialist",
       "prescription": "Prescriptions",
-      "test": "Home tests"
+      "test": "Lab Tests"
     }
   }
 }

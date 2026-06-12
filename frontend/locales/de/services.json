@@ -12,10 +12,10 @@
     "nextServices": "Nächste Dienste",
     "filters": {
       "all": "Alle",
-      "general": "Allgemein",
-      "specialist": "Spezialist",
+      "general": "Zum Hausarzt",
+      "specialist": "Zum Facharzt",
       "prescription": "Rezepte",
-      "test": "Heimtests"
+      "test": "Labortests"
     }
   }
 }
