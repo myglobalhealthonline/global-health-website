@@ -1,0 +1,306 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useRef, type CSSProperties } from "react";
+import createGlobe from "cobe";
+
+export type GlobeMarker = {
+  id: string;
+  location: [number, number];
+  label: string;
+};
+
+export type GlobeArc = {
+  id: string;
+  from: [number, number];
+  to: [number, number];
+};
+
+type GlobeProps = {
+  markers?: GlobeMarker[];
+  arcs?: GlobeArc[];
+  className?: string;
+  markerColor?: [number, number, number];
+  baseColor?: [number, number, number];
+  arcColor?: [number, number, number];
+  glowColor?: [number, number, number];
+  dark?: number;
+  mapBrightness?: number;
+  markerSize?: number;
+  markerElevation?: number;
+  arcWidth?: number;
+  arcHeight?: number;
+  speed?: number;
+  initialPhi?: number;
+  theta?: number;
+  diffuse?: number;
+  mapSamples?: number;
+  scale?: number;
+};
+
+type AnchorStyle = CSSProperties & {
+  positionAnchor?: string;
+};
+
+export function Globe({
+  markers = [],
+  arcs = [],
+  className = "",
+  markerColor = [0.69, 0.95, 0.13],
+  baseColor = [0.08, 0.23, 0.18],
+  arcColor = [0.69, 0.95, 0.13],
+  glowColor = [0.08, 0.22, 0.17],
+  dark = 0.92,
+  mapBrightness = 5.8,
+  markerSize = 0.045,
+  markerElevation = 0.035,
+  arcWidth = 0.55,
+  arcHeight = 0.32,
+  speed = 0.003,
+  initialPhi = 0,
+  theta = 0.25,
+  diffuse = 1.5,
+  mapSamples = 16000,
+  scale = 1,
+}: GlobeProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pointerInteracting = useRef<{ x: number; y: number } | null>(null);
+  const lastPointer = useRef<{ x: number; y: number; t: number } | null>(null);
+  const dragOffset = useRef({ phi: 0, theta: 0 });
+  const velocity = useRef({ phi: 0, theta: 0 });
+  const phiOffsetRef = useRef(0);
+  const thetaOffsetRef = useRef(0);
+  const isPausedRef = useRef(false);
+  const reducedMotionRef = useRef(false);
+
+  const cobeMarkers = useMemo(
+    () =>
+      markers.map((m) => ({
+        id: m.id,
+        location: m.location,
+        size: markerSize,
+      })),
+    [markerSize, markers],
+  );
+
+  const cobeArcs = useMemo(
+    () =>
+      arcs.map((a) => ({
+        id: a.id,
+        from: a.from,
+        to: a.to,
+      })),
+    [arcs],
+  );
+
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    pointerInteracting.current = { x: e.clientX, y: e.clientY };
+    isPausedRef.current = true;
+    if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
+  }, []);
+
+  const handlePointerMove = useCallback((e: PointerEvent) => {
+    if (!pointerInteracting.current) return;
+    const deltaX = e.clientX - pointerInteracting.current.x;
+    const deltaY = e.clientY - pointerInteracting.current.y;
+    dragOffset.current = { phi: deltaX / 300, theta: deltaY / 1000 };
+
+    const now = Date.now();
+    if (lastPointer.current) {
+      const dt = Math.max(now - lastPointer.current.t, 1);
+      const maxVelocity = 0.15;
+      velocity.current = {
+        phi: Math.max(-maxVelocity, Math.min(maxVelocity, ((e.clientX - lastPointer.current.x) / dt) * 0.3)),
+        theta: Math.max(-maxVelocity, Math.min(maxVelocity, ((e.clientY - lastPointer.current.y) / dt) * 0.08)),
+      };
+    }
+    lastPointer.current = { x: e.clientX, y: e.clientY, t: now };
+  }, []);
+
+  const handlePointerUp = useCallback(() => {
+    if (pointerInteracting.current) {
+      phiOffsetRef.current += dragOffset.current.phi;
+      thetaOffsetRef.current += dragOffset.current.theta;
+      dragOffset.current = { phi: 0, theta: 0 };
+      lastPointer.current = null;
+    }
+    pointerInteracting.current = null;
+    isPausedRef.current = false;
+    if (canvasRef.current) canvasRef.current.style.cursor = "grab";
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerup", handlePointerUp, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+    };
+  }, [handlePointerMove, handlePointerUp]);
+
+  useEffect(() => {
+    reducedMotionRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }, []);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    let globe: ReturnType<typeof createGlobe> | null = null;
+    let animationId = 0;
+    let resizeObserver: ResizeObserver | null = null;
+    let phi = initialPhi;
+
+    function render() {
+      if (!globe) return;
+      if (!isPausedRef.current && !reducedMotionRef.current) {
+        phi += speed;
+        if (Math.abs(velocity.current.phi) > 0.0001 || Math.abs(velocity.current.theta) > 0.0001) {
+          phiOffsetRef.current += velocity.current.phi;
+          thetaOffsetRef.current += velocity.current.theta;
+          velocity.current.phi *= 0.95;
+          velocity.current.theta *= 0.95;
+        }
+      }
+
+      const thetaMin = -0.4;
+      const thetaMax = 0.4;
+      if (thetaOffsetRef.current < thetaMin) {
+        thetaOffsetRef.current += (thetaMin - thetaOffsetRef.current) * 0.1;
+      } else if (thetaOffsetRef.current > thetaMax) {
+        thetaOffsetRef.current += (thetaMax - thetaOffsetRef.current) * 0.1;
+      }
+
+      globe.update({
+        phi: phi + phiOffsetRef.current + dragOffset.current.phi,
+        theta: theta + thetaOffsetRef.current + dragOffset.current.theta,
+        dark,
+        mapBrightness,
+        markerColor,
+        baseColor,
+        arcColor,
+        glowColor,
+        markers: cobeMarkers,
+        arcs: cobeArcs,
+      });
+      animationId = window.requestAnimationFrame(render);
+    }
+
+    function init() {
+      if (globe || !canvasRef.current) return;
+      const width = canvasRef.current.offsetWidth;
+      if (width === 0) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      globe = createGlobe(canvasRef.current, {
+        devicePixelRatio: dpr,
+        width,
+        height: width,
+        phi: initialPhi,
+        theta,
+        dark,
+        diffuse,
+        mapSamples,
+        mapBrightness,
+        baseColor,
+        markerColor,
+        glowColor,
+        markerElevation,
+        markers: cobeMarkers,
+        arcs: cobeArcs,
+        arcColor,
+        arcWidth,
+        arcHeight,
+        scale,
+      });
+      render();
+      window.setTimeout(() => {
+        if (canvasRef.current) canvasRef.current.style.opacity = "1";
+      }, 120);
+    }
+
+    if (canvas.offsetWidth > 0) {
+      init();
+    } else {
+      resizeObserver = new ResizeObserver((entries) => {
+        if (entries[0]?.contentRect.width) {
+          resizeObserver?.disconnect();
+          init();
+        }
+      });
+      resizeObserver.observe(canvas);
+    }
+
+    return () => {
+      resizeObserver?.disconnect();
+      window.cancelAnimationFrame(animationId);
+      globe?.destroy();
+    };
+  }, [
+    arcColor,
+    arcHeight,
+    arcWidth,
+    baseColor,
+    cobeArcs,
+    cobeMarkers,
+    dark,
+    diffuse,
+    glowColor,
+    initialPhi,
+    mapBrightness,
+    mapSamples,
+    markerColor,
+    markerElevation,
+    scale,
+    speed,
+    theta,
+  ]);
+
+  return (
+    <div className={`relative aspect-square select-none ${className}`}>
+      <canvas
+        ref={canvasRef}
+        onPointerDown={handlePointerDown}
+        style={{
+          width: "100%",
+          height: "100%",
+          cursor: "grab",
+          opacity: 0,
+          transition: "opacity 1.2s ease",
+          borderRadius: "50%",
+          touchAction: "none",
+        }}
+      />
+      {markers.map((m) => (
+        <div
+          key={m.id}
+          style={
+            {
+              position: "absolute",
+              positionAnchor: `--cobe-${m.id}`,
+              bottom: "anchor(top)",
+              left: "anchor(center)",
+              translate: "-50% 0",
+              marginBottom: 8,
+              padding: "3px 7px",
+              borderRadius: 999,
+              background: "rgba(8, 33, 27, 0.86)",
+              border: "1px solid rgba(176, 241, 34, 0.35)",
+              color: "#ffffff",
+              fontSize: "0.62rem",
+              fontWeight: 800,
+              letterSpacing: "0.08em",
+              lineHeight: 1,
+              textTransform: "uppercase",
+              whiteSpace: "nowrap",
+              pointerEvents: "none",
+              opacity: `var(--cobe-visible-${m.id}, 0)`,
+              filter: `blur(calc((1 - var(--cobe-visible-${m.id}, 0)) * 8px))`,
+              transition: "opacity 0.8s, filter 0.8s",
+            } satisfies AnchorStyle
+          }
+        >
+          {m.label}
+        </div>
+      ))}
+    </div>
+  );
+}

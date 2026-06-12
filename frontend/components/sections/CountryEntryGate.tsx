@@ -14,13 +14,13 @@
  * default locale when it doesn't support the detected one).
  */
 
-import { useEffect } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ShieldCheck, Lock, Globe2, FileCheck2 } from "lucide-react";
+import { ArrowRight, ShieldCheck, Lock, Globe2, FileCheck2, Search } from "lucide-react";
 import type { CountryConfig } from "@/data/countries";
 import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
 import { countrySlug, registerCountrySlugs } from "@/lib/routing/country-slug";
-import { HeroReveal } from "@/components/motion/HeroReveal";
+import { Globe, type GlobeArc, type GlobeMarker } from "@/components/ui/cobe-globe";
 import styles from "./CountryEntryGate.module.css";
 
 export type EntryGateCopy = {
@@ -30,6 +30,9 @@ export type EntryGateCopy = {
   subheadline: string;
   selectTitle: string;
   selectHint: string;
+  motto: string;
+  searchPlaceholder: string;
+  noCountryResults: string;
   continueTo: string;
   doctor: string;
   doctors: string;
@@ -51,14 +54,47 @@ type Props = {
   copy: EntryGateCopy;
 };
 
+type EntryRevealProps = {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+  style?: CSSProperties;
+};
+
+function HeroReveal({ children, className = "", style }: EntryRevealProps) {
+  return (
+    <div className={className} style={style}>
+      {children}
+    </div>
+  );
+}
+
 // Seeded-country codes use internal short codes that don't all match ISO
 // 3166-1 alpha-2 (`sp` for Spain, `rm` for Romania). Alias only the mismatches.
 const FLAG_CODE_ALIAS: Record<string, string> = { sp: "es", rm: "ro" };
+const COUNTRY_LOCATIONS: Record<string, [number, number]> = {
+  br: [-14.235, -51.9253],
+  cz: [49.8175, 15.473],
+  de: [51.1657, 10.4515],
+  es: [40.4637, -3.7492],
+  ie: [53.1424, -7.6921],
+  pt: [39.3999, -8.2245],
+  rm: [45.9432, 24.9668],
+  ro: [45.9432, 24.9668],
+  sp: [40.4637, -3.7492],
+};
+const FALLBACK_COUNTRY_LOCATION: [number, number] = [50.2, 9.1];
 
 function flagClassForCode(code: string): string {
   const normalized = code.toLowerCase();
   const iso = FLAG_CODE_ALIAS[normalized] ?? normalized;
   return `fi fi-${iso}`;
+}
+
+function locationForCountry(country: CountryConfig): [number, number] {
+  const normalized = country.code.toLowerCase();
+  const iso = FLAG_CODE_ALIAS[normalized] ?? normalized;
+  return COUNTRY_LOCATIONS[normalized] ?? COUNTRY_LOCATIONS[iso] ?? FALLBACK_COUNTRY_LOCATION;
 }
 
 /** First supported locale among the browser's preference list, or null. */
@@ -76,6 +112,7 @@ function matchNavigatorLocale(): LocaleCode | null {
 
 export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy }: Props) {
   const router = useRouter();
+  const [countryQuery, setCountryQuery] = useState("");
 
   // Replay the slug registry so client slug helpers resolve admin-added codes.
   registerCountrySlugs(countries);
@@ -113,6 +150,35 @@ export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy 
     { icon: Globe2, label: copy.trustLocal },
     { icon: FileCheck2, label: copy.trustGdpr },
   ];
+
+  const globeMarkers = useMemo<GlobeMarker[]>(
+    () =>
+      countries.map((country) => ({
+        id: country.code.replace(/[^a-z0-9_-]/gi, "-"),
+        label: country.label || country.name,
+        location: locationForCountry(country),
+      })),
+    [countries],
+  );
+
+  const globeArcs = useMemo<GlobeArc[]>(() => {
+    const [origin, ...destinations] = globeMarkers;
+    if (!origin) return [];
+    return destinations.map((marker) => ({
+      id: `${origin.id}-${marker.id}`,
+      from: origin.location,
+      to: marker.location,
+    }));
+  }, [globeMarkers]);
+
+  const filteredCountries = useMemo(() => {
+    const normalizedQuery = countryQuery.trim().toLowerCase();
+    if (!normalizedQuery) return countries;
+    return countries.filter((country) => {
+      const haystack = `${country.name} ${country.label} ${country.code} ${country.slug}`.toLowerCase();
+      return haystack.includes(normalizedQuery);
+    });
+  }, [countries, countryQuery]);
 
   return (
     <div className={`${styles.root} relative flex min-h-[100dvh] flex-col overflow-x-hidden text-white`}>
@@ -188,15 +254,37 @@ export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy 
             {/* Right — country selection panel */}
             <HeroReveal delay={260} className="min-w-0">
               <div className={styles.selectPanel}>
-                <span aria-hidden className={styles.panelGlobe}>
-                  <Globe2 strokeWidth={0.6} />
-                </span>
-                <div className="relative">
+                <div aria-hidden className={styles.globeStage}>
+                  <Globe
+                    markers={globeMarkers}
+                    arcs={globeArcs}
+                    className={styles.countryGlobe}
+                    initialPhi={-0.58}
+                    theta={0.24}
+                    speed={0.0026}
+                    markerSize={0.05}
+                    arcHeight={0.22}
+                    scale={1.06}
+                  />
+                </div>
+                <div className={styles.panelBody}>
+                  <p className={styles.motto}>{copy.motto}</p>
                   <h2 className={styles.selectTitle}>{copy.selectTitle}</h2>
                   <p className={styles.selectHint}>{copy.selectHint}</p>
 
-                  <div className={`${styles.countryGrid} mt-7 grid gap-3`}>
-                    {countries.map((c, i) => {
+                  <label className={styles.searchBox}>
+                    <Search className="size-4" aria-hidden />
+                    <span className="sr-only">{copy.searchPlaceholder}</span>
+                    <input
+                      type="search"
+                      value={countryQuery}
+                      onChange={(event) => setCountryQuery(event.target.value)}
+                      placeholder={copy.searchPlaceholder}
+                    />
+                  </label>
+
+                  <div className={styles.countryScroller}>
+                    {filteredCountries.map((c, i) => {
                       const meta = countryMeta?.[c.code];
                       const flagCls = flagClassForCode(c.code);
                       const count = meta?.doctors;
@@ -205,10 +293,10 @@ export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy 
                           <button
                             type="button"
                             onClick={() => enter(c)}
-                            className={`${styles.countryCard} flex flex-col gap-4 text-left text-white`}
+                            className={`${styles.countryCard} ${styles.countryRow} flex text-left text-white`}
                             style={{ width: "100%" }}
                           >
-                            <div className="flex items-center gap-3">
+                            <div className="flex min-w-0 flex-1 items-center gap-3">
                               <span className={`${styles.flagWrap} inline-flex items-center justify-center`}>
                                 <span aria-hidden className={`${flagCls} ${styles.flagIcon} inline-block`} />
                               </span>
@@ -232,6 +320,9 @@ export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy 
                         </HeroReveal>
                       );
                     })}
+                    {filteredCountries.length === 0 ? (
+                      <p className={styles.noResults}>{copy.noCountryResults}</p>
+                    ) : null}
                   </div>
                 </div>
               </div>

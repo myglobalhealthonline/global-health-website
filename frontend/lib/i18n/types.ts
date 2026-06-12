@@ -110,10 +110,13 @@ export type CommonLocale = {
     eyebrow: string;
     headline: string;
     headlineAccent: string;
-    subheadline: string;
-    selectTitle: string;
-    selectHint: string;
-    continueTo: string;
+      subheadline: string;
+      selectTitle: string;
+      selectHint: string;
+      motto: string;
+      searchPlaceholder: string;
+      noCountryResults: string;
+      continueTo: string;
     doctor: string;
     doctors: string;
     trustLicensed: string;
