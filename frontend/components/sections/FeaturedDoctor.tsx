@@ -14,7 +14,7 @@
 
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import { ArrowRight, Globe, Phone, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Globe, Phone, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { toDoctorBioPlainText } from "@/lib/content/doctor-bio-format";
 import {
@@ -224,20 +224,27 @@ export function FeaturedDoctor({
                     strokeWidth={1.5}
                     aria-hidden
                   />
-                  <span className="font-semibold" style={{ color: body }}>
-                    {doctor.imcRegistration}
-                    {doctor.registrationDivision ? ` · ${doctor.registrationDivision}` : ""}
-                  </span>
                   {doctor.verificationUrl ?? doctor.medicalRegistrationUrl ? (
                     <a
                       href={doctor.verificationUrl ?? doctor.medicalRegistrationUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold underline underline-offset-2 transition-opacity hover:opacity-75 motion-reduce:transition-none"
-                      style={{ color: iconAccent }}
+                      aria-label="Verify registration on the official register"
+                      className="inline-flex items-center gap-1 font-semibold underline underline-offset-2 transition-opacity hover:opacity-75 motion-reduce:transition-none"
+                      style={{ color: body }}
                     >
-                      Verify ↗
+                      {doctor.imcRegistration}
+                      <ArrowUpRight className="size-[15px]" strokeWidth={2} aria-hidden style={{ color: iconAccent }} />
                     </a>
+                  ) : (
+                    <span className="font-semibold" style={{ color: body }}>
+                      {doctor.imcRegistration}
+                    </span>
+                  )}
+                  {doctor.registrationDivision ? (
+                    <span className="font-semibold" style={{ color: body }}>
+                      · {doctor.registrationDivision}
+                    </span>
                   ) : null}
                 </span>
               )}

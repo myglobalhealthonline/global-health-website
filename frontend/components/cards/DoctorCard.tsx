@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Globe, ShieldCheck, Phone, CalendarDays, ArrowRight } from "lucide-react";
+import { Globe, ShieldCheck, Phone, CalendarDays, ArrowRight, ArrowUpRight } from "lucide-react";
 import {
   IconInstagram,
   IconFacebook,
@@ -240,28 +240,28 @@ export function DoctorCard({
                 >
                   Registration{registrationVerified ? " · Verified" : ""}
                 </p>
-                <p
-                  className="text-[13px] font-semibold"
-                  style={{ color: "var(--dc-ink)" }}
-                >
-                  {imcRegistration}
-                </p>
-                {registrationDivision ? (
-                  <p className="text-[12px]" style={{ color: "var(--dc-muted)" }}>
-                    {registrationDivision}
-                  </p>
-                ) : null}
                 {verificationUrl || medicalRegistrationUrl ? (
                   <a
                     href={verificationUrl ?? medicalRegistrationUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative z-20 mt-0.5 inline-flex items-center gap-1 text-[12px] font-semibold underline underline-offset-2 transition-opacity hover:opacity-75"
+                    aria-label="Verify registration on the official register"
+                    className="relative z-20 inline-flex items-center gap-1 text-[13px] font-semibold underline underline-offset-2 transition-opacity hover:opacity-70"
                     style={{ color: "var(--dc-ink)" }}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    Verify registration ↗
+                    {imcRegistration}
+                    <ArrowUpRight className="size-[14px]" strokeWidth={2} aria-hidden />
                   </a>
+                ) : (
+                  <p className="text-[13px] font-semibold" style={{ color: "var(--dc-ink)" }}>
+                    {imcRegistration}
+                  </p>
+                )}
+                {registrationDivision ? (
+                  <p className="text-[12px]" style={{ color: "var(--dc-muted)" }}>
+                    {registrationDivision}
+                  </p>
                 ) : null}
               </div>
             </div>
