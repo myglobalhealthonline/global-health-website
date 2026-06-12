@@ -150,7 +150,7 @@ export function HeroBookingWizard({
 
   return (
     <div
-      className="gh-hero-wizard relative flex w-[400px] flex-col overflow-hidden rounded-[24px]"
+      className="gh-hero-wizard relative flex w-[480px] flex-col overflow-hidden rounded-[26px]"
       style={{
         background: "rgba(8, 33, 27, 0.82)",
         border: "1px solid rgba(255,255,255,0.12)",
@@ -159,12 +159,12 @@ export function HeroBookingWizard({
       }}
     >
       {/* Consultation image banner + step header */}
-      <div className="relative h-[104px] w-full shrink-0">
+      <div className="relative h-[150px] w-full shrink-0">
         <Image
           src="/images/stock/book.jpg"
           alt=""
           fill
-          sizes="400px"
+          sizes="480px"
           className="object-cover object-[center_30%]"
         />
         <div
@@ -175,9 +175,9 @@ export function HeroBookingWizard({
               "linear-gradient(180deg, rgba(8,33,27,0.30) 0%, rgba(8,33,27,0.55) 55%, rgba(8,33,27,0.94) 100%)",
           }}
         />
-        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between px-5 pb-3">
-          <span className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]">
-            <CalendarClock className="size-3.5" strokeWidth={1.8} aria-hidden />
+        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between px-6 pb-4">
+          <span className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]">
+            <CalendarClock className="size-4" strokeWidth={1.8} aria-hidden />
             {t.eyebrow}
           </span>
           <span className="flex items-center gap-1.5">
@@ -193,7 +193,7 @@ export function HeroBookingWizard({
         </div>
       </div>
 
-      <div className="flex flex-col p-5">
+      <div className="flex flex-col p-6">
 
       {/* Breadcrumb of choices */}
       {(doctor || service) && step > 1 ? (
@@ -225,8 +225,8 @@ export function HeroBookingWizard({
       {/* STEP 1 — doctor */}
       {step === 1 ? (
         <>
-          <p className="mb-2.5 text-[13px] font-bold text-white">{t.stepDoctor}</p>
-          <ul className="flex max-h-[244px] flex-col gap-1.5 overflow-y-auto pr-1">
+          <p className="mb-2.5 text-[15px] font-bold text-white">{t.stepDoctor}</p>
+          <ul className="flex max-h-[320px] flex-col gap-1.5 overflow-y-auto pr-1">
             {doctors.map((d) => (
               <li key={d.slug}>
                 <button
@@ -236,8 +236,8 @@ export function HeroBookingWizard({
                 >
                   <Avatar name={d.name} imageSrc={d.imageSrc} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[13px] font-bold text-white">{d.name}</span>
-                    <span className="block truncate text-[11px] text-white/55">{d.role}</span>
+                    <span className="block truncate text-[14.5px] font-bold text-white">{d.name}</span>
+                    <span className="block truncate text-[12px] text-white/55">{d.role}</span>
                   </span>
                   <ArrowRight className="size-4 shrink-0 text-[var(--color-brand-accent)]" strokeWidth={1.8} aria-hidden />
                 </button>
@@ -254,7 +254,7 @@ export function HeroBookingWizard({
           {doctorServices.length === 0 ? (
             <p className="py-4 text-[12.5px] text-white/60">{t.noConsultations}</p>
           ) : (
-            <ul className="flex max-h-[244px] flex-col gap-1.5 overflow-y-auto pr-1">
+            <ul className="flex max-h-[320px] flex-col gap-1.5 overflow-y-auto pr-1">
               {doctorServices.map((s) => (
                 <li key={s.id}>
                   <button
@@ -263,7 +263,7 @@ export function HeroBookingWizard({
                     className="flex w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-left transition-colors hover:border-[var(--color-brand-accent)]/45 hover:bg-white/[0.08]"
                   >
                     <span className="min-w-0">
-                      <span className="block truncate text-[13px] font-bold text-white">{s.name}</span>
+                      <span className="block truncate text-[14.5px] font-bold text-white">{s.name}</span>
                       {s.durationMinutes ? (
                         <span className="block text-[11px] text-white/55">
                           {s.durationMinutes} {t.minSuffix}
@@ -291,7 +291,7 @@ export function HeroBookingWizard({
           ) : slots.length === 0 ? (
             <p className="py-4 text-[12.5px] text-white/60">{t.noSlots}</p>
           ) : (
-            <div className="flex max-h-[252px] flex-col gap-3 overflow-y-auto pr-1">
+            <div className="flex max-h-[330px] flex-col gap-3 overflow-y-auto pr-1">
               {slotsByDay.map((day) => (
                 <div key={day.key}>
                   <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-white/45">
@@ -311,9 +311,9 @@ export function HeroBookingWizard({
                           disabled={routing}
                           onClick={() => pickSlot(slot)}
                           title={isPeak ? "Peak time" : undefined}
-                          className="group/slot inline-flex min-w-[70px] flex-col items-center gap-0.5 rounded-lg border border-white/12 bg-white/[0.05] px-2.5 py-1.5 text-white transition-colors hover:border-[var(--color-brand-accent)] hover:bg-[var(--color-brand-accent)] hover:text-[var(--color-background-dark)] disabled:opacity-50"
+                          className="group/slot inline-flex min-w-[84px] flex-col items-center gap-0.5 rounded-lg border border-white/12 bg-white/[0.05] px-2.5 py-1.5 text-white transition-colors hover:border-[var(--color-brand-accent)] hover:bg-[var(--color-brand-accent)] hover:text-[var(--color-background-dark)] disabled:opacity-50"
                         >
-                          <span className="inline-flex items-center gap-1 text-[12.5px] font-bold leading-none">
+                          <span className="inline-flex items-center gap-1 text-[13.5px] font-bold leading-none">
                             {fmtTime(slot.startAt, clinicTz)}
                             {isPeak ? (
                               <span
@@ -323,7 +323,7 @@ export function HeroBookingWizard({
                             ) : null}
                           </span>
                           {price ? (
-                            <span className="text-[10.5px] font-semibold leading-none text-[var(--color-brand-accent)] group-hover/slot:text-[var(--color-background-dark)]">
+                            <span className="text-[11.5px] font-semibold leading-none text-[var(--color-brand-accent)] group-hover/slot:text-[var(--color-background-dark)]">
                               {price}
                             </span>
                           ) : null}
@@ -363,7 +363,7 @@ function StepHeader({ label, onBack, backLabel }: { label: string; onBack: () =>
       >
         <ArrowLeft className="size-3.5" strokeWidth={1.8} aria-hidden />
       </button>
-      <p className="text-[13px] font-bold text-white">{label}</p>
+      <p className="text-[15px] font-bold text-white">{label}</p>
     </div>
   );
 }
@@ -380,14 +380,14 @@ function Avatar({ name, imageSrc }: { name: string; imageSrc?: string | null }) 
   if (src) {
     const unoptimized = /^https?:\/\//i.test(src) || src.startsWith("/api/media/");
     return (
-      <span className="relative size-9 shrink-0 overflow-hidden rounded-full">
-        <Image src={src} alt={name} fill sizes="36px" unoptimized={unoptimized} className="object-cover" />
+      <span className="relative size-11 shrink-0 overflow-hidden rounded-full">
+        <Image src={src} alt={name} fill sizes="44px" unoptimized={unoptimized} className="object-cover" />
       </span>
     );
   }
   return (
     <span
-      className="grid size-9 shrink-0 place-items-center rounded-full text-[12px] font-extrabold text-white"
+      className="grid size-11 shrink-0 place-items-center rounded-full text-[12px] font-extrabold text-white"
       style={{ background: "rgba(255,255,255,0.12)" }}
     >
       {initials || "·"}

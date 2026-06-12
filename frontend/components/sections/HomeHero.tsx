@@ -206,9 +206,9 @@ export function HomeHero({
         </div>
 
         {/* ── RIGHT — quick-book wizard (falls back to the static panel) ── */}
-        <HeroReveal delay={380} className="relative hidden min-h-[600px] lg:block">
+        <HeroReveal delay={380} className="relative hidden min-h-[660px] lg:block">
           {wizard && wizard.doctors.length > 0 ? (
-            <div className="gh-home-hero-availabilityPanel absolute -bottom-8 -left-9">
+            <div className="gh-home-hero-availabilityPanel absolute -bottom-8 -left-16 xl:-left-20">
               <HeroBookingWizard
                 doctors={wizard.doctors}
                 services={wizard.services}
