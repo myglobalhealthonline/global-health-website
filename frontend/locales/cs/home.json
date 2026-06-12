@@ -29,7 +29,10 @@
     "body": "Každá konzultace probíhá s někým registrovaným tam, kde se nacházíte. Žádná call centra, žádné neznámé tváře — lékař na obrazovce je lékař z profilu.",
     "registeredSingular": "registrovaný lékař",
     "registeredPlural": "registrovaní lékaři",
-    "ctaView": "Zobrazit profil"
+    "ctaView": "Zobrazit profil",
+    "filterAll": "Vše",
+    "filterGP": "Praktický lékař",
+    "filterSpecialist": "Specialista"
   },
   "trust": {
     "licensedSingular": "Licencovaný lékař",

@@ -29,7 +29,10 @@
     "body": "Cada consulta es con alguien colegiado donde estás. Sin call centres, sin rotación de desconocidos — el médico en pantalla es el médico del perfil.",
     "registeredSingular": "clínico registrado",
     "registeredPlural": "clínicos registrados",
-    "ctaView": "Ver perfil"
+    "ctaView": "Ver perfil",
+    "filterAll": "Todos",
+    "filterGP": "Ver médico",
+    "filterSpecialist": "Especialista"
   },
   "trust": {
     "licensedSingular": "Médico colegiado",

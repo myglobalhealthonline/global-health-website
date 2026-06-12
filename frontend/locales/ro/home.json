@@ -29,7 +29,10 @@
     "body": "Fiecare consultație este cu cineva autorizat acolo unde vă aflați. Fără call centre, fără rotație de necunoscuți — medicul de pe ecran este medicul din profil.",
     "registeredSingular": "medic înregistrat",
     "registeredPlural": "medici înregistrați",
-    "ctaView": "Vezi profilul"
+    "ctaView": "Vezi profilul",
+    "filterAll": "Toate",
+    "filterGP": "Medic de familie",
+    "filterSpecialist": "Specialist"
   },
   "trust": {
     "licensedSingular": "Medic licențiat",

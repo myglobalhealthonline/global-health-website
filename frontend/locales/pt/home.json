@@ -29,7 +29,10 @@
     "body": "Cada consulta é com alguém licenciado no seu país. Sem call centres, sem rotatividade de desconhecidos — o médico no ecrã é o médico no perfil.",
     "registeredSingular": "clínico registado",
     "registeredPlural": "clínicos registados",
-    "ctaView": "Ver perfil"
+    "ctaView": "Ver perfil",
+    "filterAll": "Todos",
+    "filterGP": "Ver médico",
+    "filterSpecialist": "Especialista"
   },
   "trust": {
     "licensedSingular": "Médico licenciado",

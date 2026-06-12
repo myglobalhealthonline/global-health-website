@@ -7,7 +7,7 @@ import {
   ServiceCatalog,
   type ServiceCatalogItem,
 } from "@/components/sections/ServiceCatalog";
-import { DoctorsSection } from "@/components/sections/DoctorsSection";
+import { DoctorCarousel, type DoctorCarouselItem } from "@/components/sections/DoctorCarousel";
 import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { CountryMarquee, type MarqueeCountry } from "@/components/sections/CountryMarquee";
 import { StatsBand, type StatBandItem } from "@/components/sections/StatsBand";
@@ -284,32 +284,36 @@ export default async function CountryLangHomePage({
   const featuredDoctor =
     countryDoctors.find((d) => d.bio && d.bio.trim().length > 0 && d.imageSrc) ??
     null;
-  // Team grid uses the canonical DoctorsSection in `bare` mode (no section
-  // wrapper) so the homepage owns the heading + featured card above it.
-  // "View profile" routes to the doctor's profile where the visitor picks a
-  // service (cart-first booking flow).
-  const teamDoctorItems = (featuredDoctor
+  const generalServiceIdSet = new Set(generalServices.map((s) => s.id));
+  const specialistServiceIdSet = new Set(specialistServices.map((s) => s.id));
+
+  const teamDoctorItems: DoctorCarouselItem[] = (featuredDoctor
     ? countryDoctors.filter((d) => d.id !== featuredDoctor.id)
     : countryDoctors
-  ).map((d) => ({
-    name: d.fullName,
-    title: d.specialties.length > 0 ? d.specialties[0] : d.title || cc.homeCatalog.doctorFallback,
-    imcRegistration: d.imcRegistration,
-    registrationDivision: d.registrationDivision,
-    registrationVerified: d.registrationVerified,
-    credentials: d.credentials,
-    medicalRegistrationUrl: d.medicalRegistrationUrl,
-    verificationUrl: verifyUrl,
-    country: code,
-    languages: d.languages,
-    whatsappNumber: d.whatsappNumber,
-    bio: "",
-    imageSrc: d.imageSrc,
-    initials: initialsFromName(d.fullName),
-    href: `/${slug}/${lang}/doctors/${d.slug}`,
-    bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
-    ctaLabel: t.team.ctaView,
-  }));
+  ).map((d) => {
+    const isGP = d.assignedServiceIds.some((id) => generalServiceIdSet.has(id));
+    const isSpecialist = d.assignedServiceIds.some((id) => specialistServiceIdSet.has(id));
+    return {
+      kind: isGP ? "gp" : isSpecialist ? "specialist" : undefined,
+      name: d.fullName,
+      title: d.specialties.length > 0 ? d.specialties[0] : d.title || cc.homeCatalog.doctorFallback,
+      imcRegistration: d.imcRegistration,
+      registrationDivision: d.registrationDivision,
+      registrationVerified: d.registrationVerified,
+      credentials: d.credentials,
+      medicalRegistrationUrl: d.medicalRegistrationUrl,
+      verificationUrl: verifyUrl,
+      country: code,
+      languages: d.languages,
+      whatsappNumber: d.whatsappNumber,
+      bio: "",
+      imageSrc: d.imageSrc,
+      initials: initialsFromName(d.fullName),
+      href: `/${slug}/${lang}/doctors/${d.slug}`,
+      bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
+      ctaLabel: t.team.ctaView,
+    };
+  });
 
   // Regulator-specific trust tile when the country has authority data
   // (Ireland → IMC registry; Portugal → ERS provider registration E179287).
@@ -527,8 +531,15 @@ export default async function CountryLangHomePage({
             </div>
           ) : null}
 
-          {/* Rest of the team grid — canonical DoctorsSection (bare) */}
-          <DoctorsSection doctors={teamDoctorItems} theme="light" bare />
+          {/* Doctor carousel — 3 at a time, GP/Specialist filter tabs, prev/next arrows */}
+          <DoctorCarousel
+            doctors={teamDoctorItems}
+            i18n={{
+              filterAll: t.team.filterAll,
+              filterGP: t.team.filterGP,
+              filterSpecialist: t.team.filterSpecialist,
+            }}
+          />
         </div>
       </section>
       {countryTrust ? (

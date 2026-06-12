@@ -29,7 +29,10 @@
     "body": "Every consultation is with someone licensed where you are. No call centres, no rota of strangers — the doctor on screen is the doctor on the profile.",
     "registeredSingular": "registered clinician",
     "registeredPlural": "registered clinicians",
-    "ctaView": "View profile"
+    "ctaView": "View profile",
+    "filterAll": "All",
+    "filterGP": "See a GP",
+    "filterSpecialist": "Specialist"
   },
   "trust": {
     "licensedSingular": "Licensed doctor",

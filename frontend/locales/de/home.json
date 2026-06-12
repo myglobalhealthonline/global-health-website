@@ -29,7 +29,10 @@
     "body": "Jede Konsultation findet mit jemandem statt, der dort zugelassen ist, wo Sie sich befinden. Keine Call-Center, keine wechselnden Unbekannten — der Arzt auf dem Bildschirm ist der Arzt im Profil.",
     "registeredSingular": "registrierter Arzt",
     "registeredPlural": "registrierte Ärzte",
-    "ctaView": "Profil ansehen"
+    "ctaView": "Profil ansehen",
+    "filterAll": "Alle",
+    "filterGP": "Hausarzt",
+    "filterSpecialist": "Facharzt"
   },
   "trust": {
     "licensedSingular": "Zugelassener Arzt",
