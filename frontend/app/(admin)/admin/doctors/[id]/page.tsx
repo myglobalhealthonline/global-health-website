@@ -11,6 +11,7 @@ import {
   fetchAdminDoctorFeatured,
   fetchAdminDoctorRegistrations,
   fetchAdminDoctorCredentials,
+  fetchAdminDoctorBank,
   postAdminDoctorInvite,
   purgeAdminDoctor,
   setAdminDoctorFeatured,
@@ -27,7 +28,7 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ success?: string; error?: string }>;
+  searchParams?: Promise<{ success?: string; error?: string; revealBank?: string }>;
 };
 
 export default async function AdminDoctorDetailPage({
@@ -152,6 +153,11 @@ export default async function AdminDoctorDetailPage({
     : [];
   const credentialsResult = await fetchAdminDoctorCredentials(id);
   const credentials = credentialsResult.ok ? credentialsResult.data.credentials : [];
+  // Payout bank details. `?revealBank=1` fetches + audits the full IBAN for
+  // finance; default view is masked.
+  const revealBank = messages.revealBank === "1";
+  const bankResult = await fetchAdminDoctorBank(id, revealBank);
+  const bank = bankResult.ok ? bankResult.data.bank : null;
   // Primary country + any additional country listings — admin can issue
   // a registration for any of these.
   const associatedCountries = [
@@ -342,6 +348,56 @@ export default async function AdminDoctorDetailPage({
             rows={credentials}
             associatedCountries={associatedCountries}
           />
+
+          <AdminCard>
+            <h3 className={cardTitleClass}>Payout bank details</h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Entered by the doctor in their portal. The IBAN is stored
+              encrypted; revealing the full number is logged.
+            </p>
+            {bank && (bank.ibanSet || bank.accountHolder || bank.bic) ? (
+              <dl className="grid gap-3">
+                <div>
+                  <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    Account holder
+                  </dt>
+                  <dd className="mt-1 text-[14px] text-[var(--color-text-primary)]">
+                    {bank.accountHolder ?? "—"}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    IBAN
+                  </dt>
+                  <dd className="mt-1 font-mono text-[14px] text-[var(--color-text-primary)]">
+                    {revealBank && bank.iban
+                      ? bank.iban
+                      : bank.ibanMasked ?? "—"}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    BIC / SWIFT
+                  </dt>
+                  <dd className="mt-1 font-mono text-[14px] text-[var(--color-text-primary)]">
+                    {bank.bic ?? "—"}
+                  </dd>
+                </div>
+                {bank.ibanSet && !revealBank ? (
+                  <a
+                    href={`/admin/doctors/${d.id}?revealBank=1`}
+                    className="gh-btn gh-btn-soft mt-1 w-fit"
+                  >
+                    Reveal full IBAN (logged)
+                  </a>
+                ) : null}
+              </dl>
+            ) : (
+              <p className="text-[13px] text-[var(--color-text-muted)]">
+                The doctor has not added payout bank details yet.
+              </p>
+            )}
+          </AdminCard>
         </div>
 
         <div className="grid gap-4 self-start">

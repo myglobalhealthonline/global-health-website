@@ -59,6 +59,14 @@ export type DoctorMe = {
     }>;
     specialties: Array<{ specialty: { name: string; slug: string } }>;
     profileImagePath: string | null;
+    /** Masked payout bank details — the full IBAN never leaves the server. */
+    bank: {
+      accountHolder: string | null;
+      bic: string | null;
+      ibanLast4: string | null;
+      ibanMasked: string | null;
+      ibanSet: boolean;
+    };
   };
   stats: {
     todayCount: number;

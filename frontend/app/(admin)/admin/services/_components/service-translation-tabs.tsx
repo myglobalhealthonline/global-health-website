@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { RichTextHtmlField } from "@/app/(admin)/admin/_components/rich-text-html-field";
 
 export type ServiceTranslationInitial = {
   locale: string;
@@ -205,16 +206,12 @@ export function ServiceTranslationTabs({
               />
             </label>
 
-            <label className="flex flex-col gap-2">
-              <span className="gh-field-label">Detail body (HTML)</span>
-              <textarea
-                name={`tr_${l.code}_detailBody`}
-                rows={6}
-                className="gh-input min-w-0 resize-y font-mono text-xs"
-                defaultValue={v.detailBody ?? ""}
-                placeholder="<p>Rich description shown on the service detail page.</p>"
-              />
-            </label>
+            <RichTextHtmlField
+              name={`tr_${l.code}_detailBody`}
+              label="Detail body"
+              initialValue={v.detailBody ?? ""}
+              helperText="Rich description shown on the service detail page. Select text, then apply heading, bold, italic, underline, colour, bullet or numbered lists — same tools as the doctor bio."
+            />
           </div>
         );
       })}

@@ -27,6 +27,11 @@ type Initial = {
   languages: string[];
   whatsappNumber: string;
   profileImagePath: string | null;
+  bankAccountHolder: string;
+  bankBic: string;
+  /** Masked IBAN ("•••• 1234") when one is on file, else null. */
+  bankIbanMasked: string | null;
+  bankIbanSet: boolean;
 };
 
 /**
@@ -61,6 +66,11 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
     canonicalizeLanguages(initial.languages),
   );
   const [whatsappNumber, setWhatsappNumber] = useState(initial.whatsappNumber);
+  const [bankAccountHolder, setBankAccountHolder] = useState(initial.bankAccountHolder);
+  const [bankBic, setBankBic] = useState(initial.bankBic);
+  // The full IBAN never leaves the server. This field starts blank; typing a
+  // new value replaces the stored IBAN, leaving it blank keeps the current one.
+  const [bankIban, setBankIban] = useState("");
   const [photoPath, setPhotoPath] = useState<string | null>(
     initial.profileImagePath,
   );
@@ -136,6 +146,10 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
         .filter(Boolean),
       languages: languages.map((l) => l.trim()).filter(Boolean),
       whatsappNumber: whatsappNumber.trim() || null,
+      bankAccountHolder: bankAccountHolder.trim() || null,
+      bankBic: bankBic.trim() || null,
+      // Only send the IBAN when the doctor typed a new one — blank = keep current.
+      ...(bankIban.trim() ? { bankIban: bankIban.trim() } : {}),
     };
     startTransition(async () => {
       try {
@@ -156,6 +170,7 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
           return;
         }
         setMessage({ kind: "success", text: json.message ?? "Profile updated" });
+        setBankIban("");
         router.refresh();
       } catch {
         setMessage({ kind: "error", text: "Network error — try again" });
@@ -258,6 +273,77 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
               className="gh-btn gh-btn-primary"
             >
               {pending ? "Saving…" : "Save changes"}
+            </button>
+          </div>
+        </section>
+
+        {/* Payout / bank details — private, never shown on the public profile */}
+        <section className="gh-card p-6">
+          <h3
+            className="m-0 text-[var(--color-text-primary)]"
+            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+          >
+            Payout details
+          </h3>
+          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+            Your bank details for receiving payments. Private — never shown on
+            your public profile. Your IBAN is stored encrypted.
+          </p>
+
+          <div className="mt-4 flex flex-col gap-4">
+            <label className="flex flex-col gap-2">
+              <span className="gh-field-label">Account holder name</span>
+              <input
+                className="gh-input min-w-0"
+                value={bankAccountHolder}
+                onChange={(e) => setBankAccountHolder(e.target.value)}
+                maxLength={160}
+                placeholder="Name as it appears on the account"
+              />
+            </label>
+
+            <label className="flex flex-col gap-2">
+              <span className="gh-field-label">IBAN</span>
+              <input
+                className="gh-input min-w-0 font-mono"
+                value={bankIban}
+                onChange={(e) => setBankIban(e.target.value)}
+                maxLength={42}
+                autoComplete="off"
+                spellCheck={false}
+                inputMode="text"
+                placeholder={
+                  initial.bankIbanSet
+                    ? `On file: ${initial.bankIbanMasked ?? "•••• ••••"} — leave blank to keep`
+                    : "IE29 AIBK 9311 5212 3456 78"
+                }
+              />
+              <span className="text-xs text-[var(--color-text-muted)]">
+                {initial.bankIbanSet
+                  ? "An IBAN is on file. Type a new one only to replace it."
+                  : "Enter your full IBAN. It is stored encrypted and shown masked afterwards."}
+              </span>
+            </label>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="flex flex-col gap-2">
+                <span className="gh-field-label">BIC / SWIFT (optional)</span>
+                <input
+                  className="gh-input min-w-0 font-mono"
+                  value={bankBic}
+                  onChange={(e) => setBankBic(e.target.value)}
+                  maxLength={16}
+                  autoComplete="off"
+                  spellCheck={false}
+                  placeholder="AIBKIE2D"
+                />
+              </label>
+            </div>
+          </div>
+
+          <div className="mt-5 flex justify-end">
+            <button type="submit" disabled={pending} className="gh-btn gh-btn-primary">
+              {pending ? "Saving…" : "Save payout details"}
             </button>
           </div>
         </section>

@@ -170,6 +170,7 @@ enum AuditAction {
   DOCTOR_PURGED
   DOCTOR_PHOTO_UPDATED
   DOCTOR_PHOTO_REMOVED
+  DOCTOR_BANK_VIEWED
   APPOINTMENT_CREATED
   APPOINTMENT_PAYMENT_UPDATED
   TIMESLOT_RELEASED
@@ -445,10 +446,37 @@ model Doctor {
   /// Medical notes this doctor has authored on patient appointments.
   authoredMedicalNotes        MedicalNote[]         @relation("MedicalNoteAuthor")
   confidentialityAgreements   DoctorConfidentialityAgreement[]
+  /// Doctor-entered payout bank details (IBAN encrypted at rest). 1:1.
+  bankAccount                 DoctorBankAccount?
   createdAt                   DateTime              @default(now())
   updatedAt                   DateTime              @updatedAt
 
   @@unique([countryId, slug])
+}
+
+/// Doctor payout bank details. The doctor enters these in their own portal
+/// so finance can process payments. The IBAN is stored ENCRYPTED at rest
+/// (AES-256-GCM `phi:v1:` envelope via encryptPhi) — never as plaintext when
+/// PHI_ENCRYPTION_KEY is set. `ibanLast4` is kept separately so the doctor +
+/// admin UIs can show a masked value without decrypting; the full IBAN is
+/// decrypted only when finance actually processes a payout (admin-only,
+/// audited). Kept off all public/admin doctor payloads — read via the
+/// dedicated bank endpoints only.
+model DoctorBankAccount {
+  id            String   @id @default(cuid())
+  doctorId      String   @unique
+  doctor        Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  /// Name on the bank account (may differ from the doctor's display name).
+  accountHolder String?
+  /// AES-256-GCM encrypted IBAN (`phi:v1:` envelope). Plaintext only when
+  /// encryption is disabled (no key) — same contract as other PHI fields.
+  ibanEncrypted String?
+  /// Last 4 chars of the IBAN for masked display (no decrypt needed).
+  ibanLast4     String?
+  /// Optional BIC / SWIFT.
+  bic           String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 /// Confirmed professional credential held by a doctor, beyond the core
@@ -698,30 +726,51 @@ model Service {
   @@unique([countryId, slug])
 }
 
-/// Admin-defined fixed peak-hour pricing for a single service (v1: one
-/// daily window applied to every day). The peak window is expressed as a
-/// clinic-local minute-of-day range (matching DoctorAvailability's
-/// startMinute/endMinute convention). The window end is EXCLUSIVE, so a
-/// window of 18:00–22:00 means a 22:00 slot is off-peak.
+/// Admin-defined fixed peak-hour pricing for a single service. The peak
+/// PRICE is one value (peakPriceCents) applied across ONE OR MORE peak
+/// windows (`windows`). A slot is peak when its clinic-local start falls
+/// inside ANY window; otherwise it is off-peak. Windows are clinic-local
+/// minute-of-day ranges with an EXCLUSIVE end (18:00–22:00 → 22:00 = off-peak).
 ///
 /// Price authority lives in peak-pricing.service.ts; this row is just the
-/// stored config. When `enabled` is false or no row exists, the service's
-/// flat basePriceCents is charged.
+/// stored config. When `enabled` is false, no row exists, or there are no
+/// windows, the service's flat basePriceCents is charged.
+///
+/// `peakStartMinute`/`peakEndMinute` are LEGACY (the original single window)
+/// — kept nullable for backward-compat + backfilled into `windows`; the
+/// pricing logic reads `windows` only.
 model ServicePeakPricing {
-  id                String   @id @default(cuid())
-  serviceId         String   @unique
-  service           Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  enabled           Boolean  @default(false)
-  /// Clinic-local minute-of-day, 0..1439 (inclusive start of peak window).
-  peakStartMinute   Int
-  /// Clinic-local minute-of-day, 1..1440 (exclusive end of peak window).
-  peakEndMinute     Int
+  id                String              @id @default(cuid())
+  serviceId         String              @unique
+  service           Service             @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  enabled           Boolean             @default(false)
+  /// LEGACY single-window columns — superseded by `windows`. Nullable.
+  peakStartMinute   Int?
+  peakEndMinute     Int?
   peakPriceCents    Int
   offPeakPriceCents Int
   /// ISO-4217 code; defaults to the service/country currency in the admin UI.
   currencyCode      String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  windows           ServicePeakWindow[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+}
+
+/// One peak-hour window for a service's peak pricing. Multiple windows can
+/// share the same peak price (e.g. 11:00–12:00 AND 16:00–17:00). Clinic-local
+/// minute-of-day; `endMinute` is EXCLUSIVE and must be greater than `startMinute`.
+model ServicePeakWindow {
+  id          String             @id @default(cuid())
+  pricingId   String
+  pricing     ServicePeakPricing @relation(fields: [pricingId], references: [id], onDelete: Cascade)
+  /// Clinic-local minute-of-day, 0..1439 (inclusive start).
+  startMinute Int
+  /// Clinic-local minute-of-day, 1..1440 (exclusive end).
+  endMinute   Int
+  sortOrder   Int                @default(0)
+  createdAt   DateTime           @default(now())
+
+  @@index([pricingId])
 }
 
 /// Per-locale display content for a Service. One stable Service record per

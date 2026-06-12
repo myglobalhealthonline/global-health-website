@@ -1,24 +1,32 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import type { ServicePeakPricing } from "@prisma/client";
-import { computeSlotPrice } from "./peak-pricing.service.js";
+import { computeSlotPrice, type PeakPricingConfig, type PeakWindow } from "./peak-pricing.service.js";
 import { utcToClinicMinuteOfDay } from "../doctor-availability/timezone.js";
 
-/** Build a config row with sensible defaults (18:00–22:00, €49 / €39, EUR). */
+/** Build a config (one 18:00–22:00 window, €49 / €39, EUR) + optional overrides. */
 function makeConfig(
-  overrides: Partial<ServicePeakPricing> = {},
-): ServicePeakPricing {
+  overrides: Partial<PeakPricingConfig> = {},
+  windows: PeakWindow[] = [{ startMinute: 18 * 60, endMinute: 22 * 60 }],
+): PeakPricingConfig {
   return {
     id: "cfg_test",
     serviceId: "svc_test",
     enabled: true,
-    peakStartMinute: 18 * 60, // 1080
-    peakEndMinute: 22 * 60, // 1320
+    peakStartMinute: null,
+    peakEndMinute: null,
     peakPriceCents: 4900,
     offPeakPriceCents: 3900,
     currencyCode: "EUR",
     createdAt: new Date(0),
     updatedAt: new Date(0),
+    windows: windows.map((w, i) => ({
+      id: `w${i}`,
+      pricingId: "cfg_test",
+      startMinute: w.startMinute,
+      endMinute: w.endMinute,
+      sortOrder: i,
+      createdAt: new Date(0),
+    })),
     ...overrides,
   };
 }
@@ -128,6 +136,33 @@ describe("computeSlotPrice", () => {
       slotStartUtc: new Date("2026-07-15T17:30:00Z"),
     });
     assert.equal(r.currencyCode, "EUR");
+  });
+
+  it("treats a slot inside ANY of multiple windows as peak", () => {
+    // Two windows: 11:00–12:00 and 16:00–17:00 (Dublin local).
+    const config = makeConfig({}, [
+      { startMinute: 11 * 60, endMinute: 12 * 60 },
+      { startMinute: 16 * 60, endMinute: 17 * 60 },
+    ]);
+    // 11:30 Dublin summer = 10:30Z → inside window 1.
+    const w1 = computeSlotPrice({ ...BASE, config, slotStartUtc: new Date("2026-07-15T10:30:00Z") });
+    // 16:30 Dublin summer = 15:30Z → inside window 2.
+    const w2 = computeSlotPrice({ ...BASE, config, slotStartUtc: new Date("2026-07-15T15:30:00Z") });
+    // 14:00 Dublin summer = 13:00Z → between windows → off-peak.
+    const gap = computeSlotPrice({ ...BASE, config, slotStartUtc: new Date("2026-07-15T13:00:00Z") });
+    assert.equal(w1.pricingType, "PEAK");
+    assert.equal(w2.pricingType, "PEAK");
+    assert.equal(gap.pricingType, "OFF_PEAK");
+  });
+
+  it("returns STANDARD when enabled but there are no windows", () => {
+    const r = computeSlotPrice({
+      ...BASE,
+      config: makeConfig({}, []),
+      slotStartUtc: new Date("2026-07-15T17:30:00Z"),
+    });
+    assert.equal(r.pricingType, "STANDARD");
+    assert.equal(r.unitPriceCents, 4500);
   });
 
   it("classifies the same wall-clock peak slot consistently across DST", () => {

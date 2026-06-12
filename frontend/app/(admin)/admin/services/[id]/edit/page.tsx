@@ -189,17 +189,30 @@ export default async function AdminEditServicePage({
 
     let body: {
       enabled: boolean;
-      peakStartMinute: number;
-      peakEndMinute: number;
       peakPriceCents: number;
       offPeakPriceCents: number;
       currencyCode: string;
+      windows: Array<{ startMinute: number; endMinute: number }>;
     };
     try {
-      const peakStartMinute = hhmmToMinutes(String(formData.get("peakStart") ?? ""));
-      const peakEndMinute = hhmmToMinutes(String(formData.get("peakEnd") ?? ""));
-      if (peakEndMinute <= peakStartMinute) {
-        return redirectError("Peak end must be after peak start.");
+      const enabled = formData.get("enabled") === "on";
+      // One peakStart/peakEnd pair per window row (repeated form fields).
+      const starts = formData.getAll("peakStart").map(String);
+      const ends = formData.getAll("peakEnd").map(String);
+      const windows: Array<{ startMinute: number; endMinute: number }> = [];
+      for (let i = 0; i < Math.max(starts.length, ends.length); i += 1) {
+        const startRaw = (starts[i] ?? "").trim();
+        const endRaw = (ends[i] ?? "").trim();
+        if (!startRaw && !endRaw) continue; // skip blank row
+        const startMinute = hhmmToMinutes(startRaw);
+        const endMinute = hhmmToMinutes(endRaw);
+        if (endMinute <= startMinute) {
+          return redirectError(`Window ${i + 1}: end must be after start.`);
+        }
+        windows.push({ startMinute, endMinute });
+      }
+      if (enabled && windows.length === 0) {
+        return redirectError("Add at least one peak window.");
       }
       const currencyCode = String(formData.get("currencyCode") ?? "")
         .trim()
@@ -208,12 +221,11 @@ export default async function AdminEditServicePage({
         return redirectError("Currency must be a 3-letter code like EUR.");
       }
       body = {
-        enabled: formData.get("enabled") === "on",
-        peakStartMinute,
-        peakEndMinute,
+        enabled,
         peakPriceCents: priceToCents(String(formData.get("peakPrice") ?? "")),
         offPeakPriceCents: priceToCents(String(formData.get("offPeakPrice") ?? "")),
         currencyCode,
+        windows,
       };
     } catch (err) {
       return redirectError(

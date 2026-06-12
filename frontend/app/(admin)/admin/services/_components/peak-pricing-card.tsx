@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+import { Plus, Trash2 } from "lucide-react";
 import { AdminCard } from "../../_components/atoms";
 import type { AdminPeakPricingDto } from "@/lib/admin/admin-api";
 
@@ -19,17 +23,30 @@ type Props = {
   error?: string;
 };
 
+type WindowRow = { start: string; end: string };
+
 const labelClass =
   "block text-xs font-semibold text-[var(--color-text-body)] mb-1";
 const inputClass =
   "block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40";
 
+function initialWindows(config: AdminPeakPricingDto | null): WindowRow[] {
+  if (config?.windows && config.windows.length > 0) {
+    return config.windows.map((w) => ({
+      start: minutesToHHMM(w.startMinute),
+      end: minutesToHHMM(w.endMinute),
+    }));
+  }
+  return [{ start: "18:00", end: "22:00" }];
+}
+
 /**
  * Admin card for a consultation service's fixed peak-hour pricing.
  *
- * Times are entered as wall-clock (clinic timezone) and posted as minute-of-day.
- * Prices are decimal amounts posted and stored as integer cents. The window
- * end is exclusive (18:00–22:00 → a 22:00 slot is off-peak).
+ * One peak price applies across one or more clinic-local windows — add as many
+ * as you need (e.g. 11:00–12:00 AND 16:00–17:00). Times are wall-clock (clinic
+ * timezone), posted as minute-of-day; the window end is exclusive (18:00–22:00
+ * → a 22:00 slot is off-peak). Prices are decimals, stored as integer cents.
  */
 export function PeakPricingCard({
   action,
@@ -38,6 +55,18 @@ export function PeakPricingCard({
   success,
   error,
 }: Props) {
+  const [windows, setWindows] = useState<WindowRow[]>(() => initialWindows(config));
+
+  function updateWindow(i: number, patch: Partial<WindowRow>) {
+    setWindows((rows) => rows.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
+  }
+  function addWindow() {
+    setWindows((rows) => [...rows, { start: "09:00", end: "10:00" }]);
+  }
+  function removeWindow(i: number) {
+    setWindows((rows) => (rows.length <= 1 ? rows : rows.filter((_, idx) => idx !== i)));
+  }
+
   return (
     <AdminCard>
       <h3
@@ -47,9 +76,11 @@ export function PeakPricingCard({
         Peak-hour pricing
       </h3>
       <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-        Charge more during busy hours. When enabled, booking slots inside the
-        window show the peak price; all other slots show the off-peak price.
-        Times are in the clinic timezone. The end time is exclusive.
+        Charge more during busy hours. When enabled, booking slots inside any
+        peak window show the peak price; all other slots show the off-peak
+        price. Add multiple windows if your busy hours are split (e.g.
+        11:00–12:00 and 16:00–17:00). Times are in the clinic timezone. The end
+        time is exclusive.
       </p>
 
       {success ? (
@@ -74,33 +105,64 @@ export function PeakPricingCard({
           Enable peak-hour pricing for this service
         </label>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        {/* Peak windows — repeater */}
+        <div className="flex flex-col gap-3">
+          <span className={labelClass}>Peak windows</span>
+          {windows.map((w, i) => (
+            <div key={i} className="flex items-end gap-3">
+              <div className="flex-1">
+                <label className={labelClass} htmlFor={`peakStart-${i}`}>
+                  {i === 0 ? "Peak start" : `Start ${i + 1}`}
+                </label>
+                <input
+                  id={`peakStart-${i}`}
+                  type="time"
+                  name="peakStart"
+                  required
+                  value={w.start}
+                  onChange={(e) => updateWindow(i, { start: e.target.value })}
+                  className={inputClass}
+                />
+              </div>
+              <div className="flex-1">
+                <label className={labelClass} htmlFor={`peakEnd-${i}`}>
+                  {i === 0 ? "Peak end (exclusive)" : `End ${i + 1} (exclusive)`}
+                </label>
+                <input
+                  id={`peakEnd-${i}`}
+                  type="time"
+                  name="peakEnd"
+                  required
+                  value={w.end}
+                  onChange={(e) => updateWindow(i, { end: e.target.value })}
+                  className={inputClass}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => removeWindow(i)}
+                disabled={windows.length <= 1}
+                aria-label="Remove window"
+                className="gh-btn gh-btn-soft mb-0.5 inline-flex items-center disabled:opacity-40"
+              >
+                <Trash2 className="size-3.5" aria-hidden />
+              </button>
+            </div>
+          ))}
           <div>
-            <label className={labelClass} htmlFor="peakStart">
-              Peak start
-            </label>
-            <input
-              id="peakStart"
-              type="time"
-              name="peakStart"
-              required
-              defaultValue={minutesToHHMM(config?.peakStartMinute ?? 18 * 60)}
-              className={inputClass}
-            />
+            <button
+              type="button"
+              onClick={addWindow}
+              className="gh-btn gh-btn-soft inline-flex items-center gap-1.5"
+            >
+              <Plus className="size-3.5" aria-hidden />
+              Add window
+            </button>
           </div>
-          <div>
-            <label className={labelClass} htmlFor="peakEnd">
-              Peak end (exclusive)
-            </label>
-            <input
-              id="peakEnd"
-              type="time"
-              name="peakEnd"
-              required
-              defaultValue={minutesToHHMM(config?.peakEndMinute ?? 22 * 60)}
-              className={inputClass}
-            />
-          </div>
+        </div>
+
+        {/* Prices + currency — one set for all windows */}
+        <div className="grid gap-4 sm:grid-cols-3">
           <div>
             <label className={labelClass} htmlFor="peakPrice">
               Peak price
@@ -111,9 +173,7 @@ export function PeakPricingCard({
               inputMode="decimal"
               name="peakPrice"
               placeholder="49.00"
-              defaultValue={
-                config ? (config.peakPriceCents / 100).toFixed(2) : ""
-              }
+              defaultValue={config ? (config.peakPriceCents / 100).toFixed(2) : ""}
               className={inputClass}
             />
           </div>
@@ -127,9 +187,7 @@ export function PeakPricingCard({
               inputMode="decimal"
               name="offPeakPrice"
               placeholder="39.00"
-              defaultValue={
-                config ? (config.offPeakPriceCents / 100).toFixed(2) : ""
-              }
+              defaultValue={config ? (config.offPeakPriceCents / 100).toFixed(2) : ""}
               className={inputClass}
             />
           </div>

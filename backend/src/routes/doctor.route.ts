@@ -6,6 +6,14 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { sanitizeRichHtml } from "../utils/sanitize-html.js";
+import { encryptPhi } from "../lib/crypto/phi-crypto.js";
+import {
+  ibanLast4,
+  isValidBic,
+  isValidIban,
+  maskIban,
+  normalizeIban,
+} from "../utils/iban.js";
 import {
   listDoctorSelectableServices,
   saveDoctorServiceSelections,
@@ -81,6 +89,23 @@ const profilePatchBodySchema = z
     qualifications: z.array(z.string().trim().min(1).max(200)).max(20).optional(),
     languages: z.array(z.string().trim().min(1).max(64)).max(20).optional(),
     whatsappNumber: z.string().trim().max(32).nullable().optional(),
+    // Payout bank details (doctor-managed). bankIban is only sent when the
+    // doctor types a new one — the client never receives the full IBAN back,
+    // so a blank field means "keep current" (omitted from the payload).
+    bankAccountHolder: z.string().trim().max(160).nullable().optional(),
+    bankBic: z
+      .string()
+      .trim()
+      .max(16)
+      .nullable()
+      .optional()
+      .refine((v) => v == null || v === "" || isValidBic(v), { message: "Invalid BIC/SWIFT" }),
+    bankIban: z
+      .string()
+      .trim()
+      .max(42)
+      .optional()
+      .refine((v) => v == null || v === "" || isValidIban(v), { message: "Invalid IBAN" }),
   })
   .strict()
   .refine((d) => Object.keys(d).length > 0, {
@@ -125,6 +150,10 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
             select: { path: true },
             take: 1,
           },
+          // Payout bank details — return masked only (never the full IBAN).
+          bankAccount: {
+            select: { accountHolder: true, ibanLast4: true, bic: true, ibanEncrypted: true },
+          },
         },
       });
       if (!doctor) {
@@ -160,10 +189,19 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         }),
       ]);
 
+      const { bankAccount, ...doctorRest } = doctor;
       return okResponse({
         doctor: {
-          ...doctor,
+          ...doctorRest,
           profileImagePath: doctor.assets[0]?.path ?? null,
+          // Masked payout details — full IBAN never leaves the server.
+          bank: {
+            accountHolder: bankAccount?.accountHolder ?? null,
+            bic: bankAccount?.bic ?? null,
+            ibanLast4: bankAccount?.ibanLast4 ?? null,
+            ibanMasked: maskIban(bankAccount?.ibanLast4),
+            ibanSet: Boolean(bankAccount?.ibanEncrypted),
+          },
         },
         stats: { todayCount, weekCount, totalActive },
       });
@@ -395,6 +433,33 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           whatsappNumber: true,
         },
       });
+
+      // Payout bank details live on the separate DoctorBankAccount table so
+      // the encrypted IBAN never rides along on the public/admin doctor
+      // payloads. Upsert only the fields the doctor actually submitted.
+      const { bankAccountHolder, bankBic, bankIban } = body.data;
+      const touchesBank =
+        bankAccountHolder !== undefined ||
+        bankBic !== undefined ||
+        (typeof bankIban === "string" && bankIban.trim() !== "");
+      if (touchesBank) {
+        const ibanProvided = typeof bankIban === "string" && bankIban.trim() !== "";
+        const normalizedIban = ibanProvided ? normalizeIban(bankIban) : null;
+        const bankData = {
+          ...(bankAccountHolder !== undefined && { accountHolder: bankAccountHolder }),
+          ...(bankBic !== undefined && { bic: bankBic ? bankBic.toUpperCase() : null }),
+          ...(ibanProvided && {
+            ibanEncrypted: encryptPhi(normalizedIban),
+            ibanLast4: ibanLast4(normalizedIban),
+          }),
+        };
+        await prisma.doctorBankAccount.upsert({
+          where: { doctorId: auth.doctorId },
+          create: { doctorId: auth.doctorId, ...bankData },
+          update: bankData,
+        });
+      }
+
       return okResponse({ doctor: updated }, "Profile updated");
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {

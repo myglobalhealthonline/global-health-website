@@ -568,6 +568,27 @@ export async function fetchAdminDoctorCredentials(doctorId: string) {
   );
 }
 
+// ── Doctor payout bank details ───────────────────────────────────────────────
+
+export type AdminDoctorBankDto = {
+  accountHolder: string | null;
+  bic: string | null;
+  ibanLast4: string | null;
+  ibanMasked: string | null;
+  ibanSet: boolean;
+  /** Full decrypted IBAN — only present when fetched with reveal=true (audited). */
+  iban?: string | null;
+};
+
+/** Read a doctor's payout bank details. `reveal` returns the full IBAN and is
+ *  audited server-side (DOCTOR_BANK_VIEWED) — use only when processing a payout. */
+export async function fetchAdminDoctorBank(doctorId: string, reveal = false) {
+  const qs = reveal ? "?reveal=1" : "";
+  return adminRequest<{ bank: AdminDoctorBankDto }>(
+    `/api/admin/doctors/${doctorId}/bank${qs}`,
+  );
+}
+
 export async function createAdminDoctorCredential(doctorId: string, body: unknown) {
   return adminRequest<{ credential: AdminDoctorCredentialDto }>(
     `/api/admin/doctors/${doctorId}/credentials`,
@@ -881,11 +902,14 @@ export type AdminPeakPricingDto = {
   id: string;
   serviceId: string;
   enabled: boolean;
-  peakStartMinute: number;
-  peakEndMinute: number;
+  /** Legacy single-window columns (nullable, superseded by `windows`). */
+  peakStartMinute: number | null;
+  peakEndMinute: number | null;
   peakPriceCents: number;
   offPeakPriceCents: number;
   currencyCode: string;
+  /** One or more peak windows (clinic-local minute-of-day). */
+  windows: Array<{ startMinute: number; endMinute: number }>;
 };
 
 export async function fetchAdminServicePeakPricing(id: string) {

@@ -111,6 +111,10 @@ export default async function DoctorProfilePage() {
           languages: doctor.languages,
           whatsappNumber: doctor.whatsappNumber ?? "",
           profileImagePath: doctor.profileImagePath ?? null,
+          bankAccountHolder: doctor.bank.accountHolder ?? "",
+          bankBic: doctor.bank.bic ?? "",
+          bankIbanMasked: doctor.bank.ibanMasked,
+          bankIbanSet: doctor.bank.ibanSet,
         }}
       />
     </>
