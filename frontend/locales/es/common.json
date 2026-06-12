@@ -85,6 +85,23 @@
     "description": "Accede al hub de tu clínica local, perfiles del equipo y consultas.",
     "enterClinic": "Entrar a la clínica"
   },
+  "entryGate": {
+    "eyebrow": "Clínica Médica Online",
+    "headline": "Médicos colegiados y atención online,",
+    "headlineAccent": "en tu país.",
+    "subheadline": "Accede a médicos colegiados, consultas online, recetas, derivaciones y apoyo médico, estés donde estés.",
+    "selectTitle": "Selecciona el país donde necesitas atención médica",
+    "selectHint": "Te conectamos con médicos registrados en tu país.",
+    "continueTo": "Continuar a {country}",
+    "doctor": "médico",
+    "doctors": "médicos",
+    "trustLicensed": "Profesionales médicos colegiados",
+    "trustSecure": "Consultas online seguras",
+    "trustLocal": "Atención sanitaria específica del país",
+    "trustGdpr": "Atención conforme al RGPD",
+    "euProvider": "Proveedor de telemedicina registrado en la UE",
+    "gdprNote": "Conforme al RGPD · Médicos registrados localmente"
+  },
   "cta": {
     "primaryBooking": "Reservar Online"
   },

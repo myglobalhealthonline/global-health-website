@@ -105,6 +105,23 @@ export type CommonLocale = {
     description: string;
     enterClinic: string;
   };
+  entryGate: {
+    eyebrow: string;
+    headline: string;
+    headlineAccent: string;
+    subheadline: string;
+    selectTitle: string;
+    selectHint: string;
+    continueTo: string;
+    doctor: string;
+    doctors: string;
+    trustLicensed: string;
+    trustSecure: string;
+    trustLocal: string;
+    trustGdpr: string;
+    euProvider: string;
+    gdprNote: string;
+  };
   cta: {
     primaryBooking: string;
   };

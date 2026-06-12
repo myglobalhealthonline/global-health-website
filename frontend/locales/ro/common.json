@@ -85,6 +85,23 @@
     "description": "Accesați hub-ul clinicii locale, profilurile echipei și consultațiile.",
     "enterClinic": "Intră în clinică"
   },
+  "entryGate": {
+    "eyebrow": "Clinică medicală online",
+    "headline": "Medici autorizați și îngrijire online,",
+    "headlineAccent": "în țara ta.",
+    "subheadline": "Accesează medici autorizați, consultații online, rețete, trimiteri și sprijin medical — oriunde te-ai afla.",
+    "selectTitle": "Selectează țara în care ai nevoie de îngrijire medicală",
+    "selectHint": "Te conectăm cu medici înregistrați în țara ta.",
+    "continueTo": "Continuă către {country}",
+    "doctor": "medic",
+    "doctors": "medici",
+    "trustLicensed": "Profesioniști medicali autorizați",
+    "trustSecure": "Consultații online securizate",
+    "trustLocal": "Servicii medicale specifice țării",
+    "trustGdpr": "Îngrijire conformă cu GDPR",
+    "euProvider": "Furnizor de telemedicină înregistrat în UE",
+    "gdprNote": "Conform GDPR · Medici înregistrați local"
+  },
   "cta": {
     "primaryBooking": "Programează online"
   },

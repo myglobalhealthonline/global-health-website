@@ -85,6 +85,23 @@
     "description": "Přistupte k vašemu místnímu centru kliniky, profilům týmu a konzultacím.",
     "enterClinic": "Vstoupit do kliniky"
   },
+  "entryGate": {
+    "eyebrow": "Online lékařská klinika",
+    "headline": "Licencovaní lékaři a online péče,",
+    "headlineAccent": "ve vaší zemi.",
+    "subheadline": "Získejte přístup k licencovaným lékařům, online konzultacím, receptům, doporučením a lékařské podpoře — ať jste kdekoli.",
+    "selectTitle": "Vyberte zemi, ve které potřebujete lékařskou péči",
+    "selectHint": "Propojíme vás s lékaři registrovanými ve vaší zemi.",
+    "continueTo": "Pokračovat do {country}",
+    "doctor": "lékař",
+    "doctors": "lékaři",
+    "trustLicensed": "Licencovaní zdravotničtí odborníci",
+    "trustSecure": "Bezpečné online konzultace",
+    "trustLocal": "Zdravotní péče specifická pro danou zemi",
+    "trustGdpr": "Péče v souladu s GDPR",
+    "euProvider": "Poskytovatel telemedicíny registrovaný v EU",
+    "gdprNote": "V souladu s GDPR · Lékaři registrovaní lokálně"
+  },
   "cta": {
     "primaryBooking": "Rezervovat online"
   },

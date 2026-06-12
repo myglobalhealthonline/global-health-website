@@ -85,6 +85,23 @@
     "description": "Zugang zu Ihrem lokalen Kliniken-Hub, Teamprofile und Beratungen.",
     "enterClinic": "Zur Klinik"
   },
+  "entryGate": {
+    "eyebrow": "Online-Arztpraxis",
+    "headline": "Zugelassene Ärzte und Online-Versorgung,",
+    "headlineAccent": "in Ihrem Land.",
+    "subheadline": "Zugang zu zugelassenen Ärzten, Online-Sprechstunden, Rezepten, Überweisungen und medizinischer Unterstützung — wo immer Sie sind.",
+    "selectTitle": "Wählen Sie das Land, in dem Sie medizinische Versorgung benötigen",
+    "selectHint": "Wir verbinden Sie mit in Ihrem Land registrierten Ärzten.",
+    "continueTo": "Weiter zu {country}",
+    "doctor": "Arzt",
+    "doctors": "Ärzte",
+    "trustLicensed": "Zugelassene medizinische Fachkräfte",
+    "trustSecure": "Sichere Online-Sprechstunden",
+    "trustLocal": "Länderspezifische Gesundheitsversorgung",
+    "trustGdpr": "DSGVO-konforme Versorgung",
+    "euProvider": "In der EU registrierter Telemedizin-Anbieter",
+    "gdprNote": "DSGVO-konform · Ärzte lokal registriert"
+  },
   "cta": {
     "primaryBooking": "Online buchen"
   },

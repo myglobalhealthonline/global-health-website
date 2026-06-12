@@ -85,6 +85,23 @@
     "description": "Aceda ao hub da sua clínica local, perfis da equipa e consultas.",
     "enterClinic": "Entrar na clínica"
   },
+  "entryGate": {
+    "eyebrow": "Clínica Médica Online",
+    "headline": "Médicos licenciados e cuidados online,",
+    "headlineAccent": "no seu país.",
+    "subheadline": "Aceda a médicos licenciados, consultas online, receitas, referenciações e apoio médico — onde quer que esteja.",
+    "selectTitle": "Selecione o país onde precisa de cuidados médicos",
+    "selectHint": "Ligamo-lo a médicos registados no seu país.",
+    "continueTo": "Continuar para {country}",
+    "doctor": "médico",
+    "doctors": "médicos",
+    "trustLicensed": "Profissionais médicos licenciados",
+    "trustSecure": "Consultas online seguras",
+    "trustLocal": "Cuidados de saúde específicos do país",
+    "trustGdpr": "Cuidados conformes com o RGPD",
+    "euProvider": "Prestador de telemedicina registado na UE",
+    "gdprNote": "Conforme com o RGPD · Médicos registados localmente"
+  },
   "cta": {
     "primaryBooking": "Marcar Online"
   },

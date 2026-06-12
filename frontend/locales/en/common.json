@@ -86,6 +86,23 @@
     "description": "Access your local clinic hub, team profiles, and consultations.",
     "enterClinic": "Enter clinic"
   },
+  "entryGate": {
+    "eyebrow": "Online Medical Clinic",
+    "headline": "Licensed doctors and online care,",
+    "headlineAccent": "in your country.",
+    "subheadline": "Access licensed doctors, online consultations, prescriptions, referrals and medical support — wherever you are.",
+    "selectTitle": "Select the country where you need medical care",
+    "selectHint": "We connect you with doctors registered in your country.",
+    "continueTo": "Continue to {country}",
+    "doctor": "doctor",
+    "doctors": "doctors",
+    "trustLicensed": "Licensed medical professionals",
+    "trustSecure": "Secure online consultations",
+    "trustLocal": "Country-specific healthcare",
+    "trustGdpr": "GDPR-compliant care",
+    "euProvider": "EU-registered telemedicine provider",
+    "gdprNote": "GDPR compliant · Doctors registered locally"
+  },
   "cta": {
     "primaryBooking": "Book Online"
   },

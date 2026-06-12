@@ -1,63 +1,59 @@
 "use client";
 
 /**
- * Two-step landing page: pick country → pick language → enter site.
+ * Entry / country-selection screen — the first thing a visitor sees at "/".
  *
- * Mirrors `ui_kits/website/Landing.jsx` from the design bundle line-by-line:
- *   • Forest-night background with medical-pattern texture + radial blooms
- *   • Top header: mint "g" mark + wordmark + "MEDICINE WITHOUT BORDERS"
- *   • 3-step pager (Country · Language · Enter) with active+done states
- *   • Step 0: "Where are you?" + country card grid
- *   • Step 1: "Choose your language" + language card grid with "Hello." in each
- *   • Footer: copyright + GDPR note
+ * Reads like the front desk of an online medical clinic, not a settings page:
+ *   • Brand + medical-clinic headline + supporting copy + trust signals (left)
+ *   • "Select the country where you need medical care" + country cards (right)
+ *
+ * Language is detected automatically server-side (Accept-Language → gh_locale
+ * cookie) and passed in as `detectedLocale` + translated `copy` — there is NO
+ * manual language step. Picking a country navigates straight into that
+ * country's site in the detected language (falling back to the country's
+ * default locale when it doesn't support the detected one).
  */
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ShieldCheck, Lock, Globe2, FileCheck2 } from "lucide-react";
 import type { CountryConfig } from "@/data/countries";
-import type { LocaleCode } from "@/lib/i18n/types";
+import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
 import { countrySlug, registerCountrySlugs } from "@/lib/routing/country-slug";
 import { HeroReveal } from "@/components/motion/HeroReveal";
 import styles from "./CountryEntryGate.module.css";
 
+export type EntryGateCopy = {
+  eyebrow: string;
+  headline: string;
+  headlineAccent: string;
+  subheadline: string;
+  selectTitle: string;
+  selectHint: string;
+  continueTo: string;
+  doctor: string;
+  doctors: string;
+  trustLicensed: string;
+  trustSecure: string;
+  trustLocal: string;
+  trustGdpr: string;
+  euProvider: string;
+  gdprNote: string;
+};
+
 type Props = {
   countries: CountryConfig[];
-  /**
-   * Per-country live counts from the DB, keyed by country code (e.g. "ie").
-   * Caller computes this server-side. Pass an empty object to suppress the
-   * "N doctors" line on each card.
-   */
+  /** Per-country live doctor counts keyed by country code (e.g. "ie"). */
   countryMeta?: Record<string, { doctors?: number }>;
+  /** Browser-detected locale, resolved server-side. */
+  detectedLocale: LocaleCode;
+  /** Entry-gate copy already translated to `detectedLocale`. */
+  copy: EntryGateCopy;
 };
 
-const LANG_NAMES: Record<LocaleCode, string> = {
-  en: "English",
-  pt: "Português",
-  es: "Español",
-  cs: "Čeština",
-  ro: "Română",
-  de: "Deutsch",
-};
-
-const LANG_HELLO: Record<LocaleCode, string> = {
-  en: "Hello.",
-  pt: "Olá.",
-  es: "Hola.",
-  cs: "Ahoj.",
-  ro: "Salut.",
-  de: "Hallo.",
-};
-
-// Seeded-country codes use internal short codes that don't all match
-// ISO 3166-1 alpha-2 (`sp` for Spain, `rm` for Romania). Alias only
-// the mismatches; everything else passes through, which means admin-
-// added countries that use a real ISO2 code (`uk`, `de`, …) get the
-// right flag without a code change.
-const FLAG_CODE_ALIAS: Record<string, string> = {
-  sp: "es",
-  rm: "ro",
-};
+// Seeded-country codes use internal short codes that don't all match ISO
+// 3166-1 alpha-2 (`sp` for Spain, `rm` for Romania). Alias only the mismatches.
+const FLAG_CODE_ALIAS: Record<string, string> = { sp: "es", rm: "ro" };
 
 function flagClassForCode(code: string): string {
   const normalized = code.toLowerCase();
@@ -65,216 +61,164 @@ function flagClassForCode(code: string): string {
   return `fi fi-${iso}`;
 }
 
-export function CountryEntryGate({ countries, countryMeta }: Props) {
-  const router = useRouter();
-  const [step, setStep] = useState<0 | 1>(0);
-  const [countryCode, setCountryCode] = useState<string | null>(null);
+/** First supported locale among the browser's preference list, or null. */
+function matchNavigatorLocale(): LocaleCode | null {
+  if (typeof navigator === "undefined") return null;
+  const prefs = navigator.languages?.length ? navigator.languages : [navigator.language];
+  for (const raw of prefs) {
+    const base = raw?.split("-")[0]?.toLowerCase();
+    if (base && (supportedLocaleCodes as readonly string[]).includes(base)) {
+      return base as LocaleCode;
+    }
+  }
+  return null;
+}
 
-  // Client-side: replay the registry so client-component slug helpers
-  // resolve admin-added codes the same way server pages do.
+export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy }: Props) {
+  const router = useRouter();
+
+  // Replay the slug registry so client slug helpers resolve admin-added codes.
   registerCountrySlugs(countries);
 
-  const chosenCountry = countries.find((c) => c.code === countryCode) ?? null;
+  // Persist the detected language so country pages + return visits stay
+  // consistent (no flicker). Client fallback to navigator.languages when the
+  // cookie hasn't been set yet — server detection (Accept-Language) is primary.
+  useEffect(() => {
+    try {
+      const hasCookie = /(?:^|;\s*)gh_locale=/.test(document.cookie);
+      if (!hasCookie) {
+        const loc = matchNavigatorLocale() ?? detectedLocale;
+        document.cookie = `gh_locale=${loc}; path=/; max-age=31536000; SameSite=Lax`;
+      }
+    } catch {
+      /* cookie unavailable — server-detected locale still applies */
+    }
+  }, [detectedLocale]);
 
-  function pickCountry(code: string) {
-    setCountryCode(code);
-    setStep(1);
-  }
-
-  function enter(lang: LocaleCode) {
-    if (!chosenCountry) return;
-    const slug = chosenCountry.slug || countrySlug(chosenCountry.code);
-    // Navigate directly to /{slug}/{lang} — query ?lang= can mis-resolve with [lang] routes (→ /ireland/services/en 404).
+  function enter(country: CountryConfig) {
+    const slug = country.slug || countrySlug(country.code);
+    // Use the detected language when the country offers it, else its default.
+    const lang = (
+      country.supportedLocales?.includes(detectedLocale)
+        ? detectedLocale
+        : country.defaultLocale ?? "en"
+    ) as LocaleCode;
+    // Navigate directly to /{slug}/{lang} — ?lang= can mis-resolve with [lang].
     router.push(`/${slug}/${lang}`);
   }
 
-  function book(lang: LocaleCode) {
-    if (!chosenCountry) return;
-    const slug = chosenCountry.slug || countrySlug(chosenCountry.code);
-    router.push(`/${slug}/${lang}/book`);
-  }
-
-  const steps = [
-    { n: 1, label: "Country" },
-    { n: 2, label: "Language" },
-    { n: 3, label: "Enter" },
+  const trust = [
+    { icon: ShieldCheck, label: copy.trustLicensed },
+    { icon: Lock, label: copy.trustSecure },
+    { icon: Globe2, label: copy.trustLocal },
+    { icon: FileCheck2, label: copy.trustGdpr },
   ];
 
   return (
     <div className={`${styles.root} relative flex min-h-screen flex-col overflow-hidden text-white`}>
-      {/* Medical-pattern texture */}
       <div aria-hidden className={`${styles.pattern} pointer-events-none absolute inset-0`} />
       <div aria-hidden className={`${styles.blooms} pointer-events-none absolute inset-0`} />
 
-      {/* Top — wordmark + eyebrow */}
+      {/* Header — brand + tagline */}
       <header className={`${styles.header} relative flex items-center justify-between`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logos/global-health-light.png"
-          alt="Global Health"
-          style={{ height: 48, width: "auto" }}
-        />
-        <p className={`${styles.tagline} uppercase`}>Medicine anytime anywhere</p>
+        <img src="/logos/global-health-light.png" alt="Global Health" style={{ height: 44, width: "auto" }} />
+        <p className={`${styles.tagline} hidden uppercase sm:block`}>{copy.eyebrow}</p>
       </header>
 
-      {/* Step pager */}
-      <div className={`${styles.pagerWrap} relative w-full`}>
-        <ol className={`${styles.stepList} flex gap-8`}>
-          {steps.map((s, i) => {
-            const isCurrent = i === step;
-            const isDone = i < step;
-            const stepClass = isCurrent
-              ? styles.stepItemCurrent
-              : isDone
-                ? styles.stepItemDone
-                : styles.stepItemPending;
-            return (
-              <li key={s.n} className={`${styles.stepItem} inline-flex items-center gap-2.5 ${stepClass}`}>
-                <span
-                  className={`${styles.stepBadge} inline-flex items-center justify-center ${
-                    isDone ? styles.stepBadgeDone : ""
-                  }`}
-                >
-                  {isDone ? "✓" : s.n}
-                </span>
-                {s.label}
-              </li>
-            );
-          })}
-        </ol>
-      </div>
-
-      {/* Body */}
+      {/* Body — two-column clinic hero */}
       <section className={`${styles.body} relative flex flex-1 items-center`}>
         <div className={`${styles.content} w-full`}>
-          {step === 0 ? (
-            <>
-              <HeroReveal key="step0-h1" delay={0}>
-              <h1
-                className={`${styles.heroTitle} ${styles.heroTitleCountry} text-white`}
-              >
-                Where are <span className={styles.heroHighlight}>you</span>?
-              </h1>
+          <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+            {/* Left — clinic intro + trust */}
+            <div className="min-w-0">
+              <HeroReveal delay={0}>
+                <span className={styles.eyebrow}>{copy.eyebrow}</span>
               </HeroReveal>
-              <HeroReveal key="step0-lead" delay={80}>
-              <p className={`${styles.heroLead}`}>
-                We connect you with doctors registered in your country. Pick yours to continue.
-              </p>
+              <HeroReveal delay={90}>
+                <h1 className={`${styles.heroTitle} text-white`}>
+                  {copy.headline}{" "}
+                  <span className={styles.heroHighlight}>{copy.headlineAccent}</span>
+                </h1>
               </HeroReveal>
+              <HeroReveal delay={200}>
+                <p className={styles.heroLead}>{copy.subheadline}</p>
+              </HeroReveal>
+              <HeroReveal delay={300}>
+                <ul className={styles.trustList}>
+                  {trust.map((t) => (
+                    <li key={t.label} className={styles.trustItem}>
+                      <span className={styles.trustIcon}>
+                        <t.icon className="size-[15px]" strokeWidth={1.8} aria-hidden />
+                      </span>
+                      {t.label}
+                    </li>
+                  ))}
+                </ul>
+              </HeroReveal>
+            </div>
 
-              <div className={`${styles.countryGrid} mt-14 grid gap-3`}>
-                {countries.map((c, i) => {
-                  const meta = countryMeta?.[c.code];
-                  const flagCls = flagClassForCode(c.code);
-                  return (
-                    <HeroReveal key={`step0-country-${c.code}`} delay={i * 60 + 160}>
-                    <button
-                      type="button"
-                      onClick={() => pickCountry(c.code)}
-                      className={`${styles.countryCard} gh-landing-card flex flex-col gap-4 text-left text-white`}
-                      style={{ width: "100%" }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className={`${styles.flagWrap} inline-flex items-center justify-center`}>
-                          <span
-                            aria-hidden
-                            className={`${flagCls} ${styles.flagIcon} inline-block`}
-                          />
-                        </span>
-                        <div className="min-w-0 flex-1">
-                          <p className={`${styles.countryName} text-white`}>{c.name}</p>
-                        </div>
-                      </div>
-                      <div className={`${styles.cardFooter} flex items-center justify-between`}>
-                        <span className={styles.cardMeta}>
-                          <strong className={`${styles.cardMetaStrong} text-white`}>
-                            {meta?.doctors ?? "—"}
-                          </strong>{" "}
-                          {meta?.doctors === 1 ? "doctor" : "doctors"}
-                        </span>
-                        <span className={`${styles.cardEnter} inline-flex items-center gap-1`}>
-                          Enter <ArrowRight className="size-3.5" aria-hidden />
-                        </span>
-                      </div>
-                    </button>
-                    </HeroReveal>
-                  );
-                })}
+            {/* Right — country selection panel */}
+            <HeroReveal delay={260} className="min-w-0">
+              <div className={styles.selectPanel}>
+                <span aria-hidden className={styles.panelGlobe}>
+                  <Globe2 strokeWidth={0.6} />
+                </span>
+                <div className="relative">
+                  <h2 className={styles.selectTitle}>{copy.selectTitle}</h2>
+                  <p className={styles.selectHint}>{copy.selectHint}</p>
+
+                  <div className={`${styles.countryGrid} mt-7 grid gap-3`}>
+                    {countries.map((c, i) => {
+                      const meta = countryMeta?.[c.code];
+                      const flagCls = flagClassForCode(c.code);
+                      const count = meta?.doctors;
+                      return (
+                        <HeroReveal key={c.code} delay={i * 55 + 340}>
+                          <button
+                            type="button"
+                            onClick={() => enter(c)}
+                            className={`${styles.countryCard} flex flex-col gap-4 text-left text-white`}
+                            style={{ width: "100%" }}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className={`${styles.flagWrap} inline-flex items-center justify-center`}>
+                                <span aria-hidden className={`${flagCls} ${styles.flagIcon} inline-block`} />
+                              </span>
+                              <div className="min-w-0 flex-1">
+                                <p className={`${styles.countryName} text-white`}>{c.name}</p>
+                                {typeof count === "number" ? (
+                                  <p className={styles.cardMeta}>
+                                    <strong className={styles.cardMetaStrong}>{count}</strong>{" "}
+                                    {count === 1 ? copy.doctor : copy.doctors}
+                                  </p>
+                                ) : null}
+                              </div>
+                            </div>
+                            <div className={`${styles.cardFooter} flex items-center justify-between`}>
+                              <span className={styles.cardEnter}>
+                                {copy.continueTo.replace("{country}", c.name)}
+                              </span>
+                              <ArrowRight className={`${styles.cardArrow} size-4`} aria-hidden />
+                            </div>
+                          </button>
+                        </HeroReveal>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </>
-          ) : null}
-
-          {step === 1 && chosenCountry ? (
-            <>
-              <button
-                type="button"
-                onClick={() => {
-                  setStep(0);
-                  setCountryCode(null);
-                }}
-                className={`${styles.backButton} inline-flex items-center gap-2 text-white`}
-              >
-                <ArrowRight className={`${styles.backIcon} size-3.5`} aria-hidden />
-                Change country · {chosenCountry.name}
-              </button>
-
-              <HeroReveal key="step1-h1" delay={0}>
-              <h1
-                className={`${styles.heroTitle} ${styles.heroTitleLanguage} text-white`}
-              >
-                Choose your <span className={styles.heroHighlight}>language</span>
-              </h1>
-              </HeroReveal>
-              <HeroReveal key="step1-lead" delay={80}>
-              <p className={`${styles.heroLead}`}>
-                Your consultation, your care, and the website — all in the language you
-                pick.
-              </p>
-              </HeroReveal>
-
-              <div className={`${styles.languageGrid} mt-12 grid gap-3`}>
-                {chosenCountry.supportedLocales.map((l, idx) => (
-                  <HeroReveal key={`step1-lang-${l}`} delay={idx * 80 + 160}>
-                  <button
-                    type="button"
-                    onClick={() => enter(l)}
-                    className={`${styles.languageCard} gh-landing-card flex items-center justify-between gap-4 text-left text-white`}
-                    style={{ width: "100%" }}
-                  >
-                    <div>
-                      <p className={`${styles.langHello} text-white`}>{LANG_HELLO[l]}</p>
-                      <p className={styles.langMeta}>
-                        {LANG_NAMES[l]} · {l.toUpperCase()}
-                      </p>
-                    </div>
-                    <ArrowRight className={`${styles.langArrow} size-[18px]`} aria-hidden />
-                  </button>
-                  </HeroReveal>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => book((chosenCountry.defaultLocale ?? "en") as LocaleCode)}
-                className={`${styles.bookButton} inline-flex items-center justify-center gap-2 text-white`}
-              >
-                Book appointment in {chosenCountry.name}
-                <ArrowRight className="size-4" aria-hidden />
-              </button>
-            </>
-          ) : null}
+            </HeroReveal>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
       <footer className={`${styles.footer} relative flex flex-wrap justify-between gap-4`}>
         <span suppressHydrationWarning>
-          © {new Date().getFullYear()} Global Health · EU-registered telemedicine provider
+          © {new Date().getFullYear()} Global Health · {copy.euProvider}
         </span>
-        <span>
-          GDPR compliant · Doctors registered locally in {countries.length}{" "}
-          {countries.length === 1 ? "country" : "countries"}
-        </span>
+        <span>{copy.gdprNote}</span>
       </footer>
     </div>
   );
