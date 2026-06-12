@@ -26,8 +26,11 @@ import { buildBookHref } from "@/lib/routing/book-href";
 import {
   breadcrumbJsonLd,
   medicalBusinessJsonLd,
+  organizationJsonLd,
+  websiteJsonLd,
 } from "@/lib/seo/structured-data";
 import { getSiteUrl } from "@/lib/seo/site-url";
+import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
   getPublicPage,
@@ -38,12 +41,14 @@ import {
   getCountryDoctors,
   getCountryHealthTests,
   getCountryServices,
+  getCountryPartners,
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
 import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
+import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -75,12 +80,13 @@ export async function generateMetadata({
 
   const { record: page } = await getPublicPage(code, "HOME", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}`;
-  const title = page?.seoTitle ?? `${config.name} Online Clinic | ${SITE_NAME}`;
+  const title =
+    page?.seoTitle ?? `${config.name} — registered doctors and specialists`;
   const description =
     page?.seoDescription ??
-    `Book a licensed online doctor consultation in ${config.name}.`;
+    `Licensed doctors and specialists registered to practise in ${config.name}. View profiles, credentials, specialties and languages.`;
   return {
-    title,
+    title: resolveBrandTitle(title),
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "") },
     openGraph: {
@@ -171,6 +177,7 @@ export default async function CountryLangHomePage({
     healthTests,
     allDoctors,
     countryTrust,
+    countryPartners,
   ] =
     await Promise.all([
       getPublicPage(code, "HOME", lang as PublicLocale),
@@ -181,6 +188,7 @@ export default async function CountryLangHomePage({
       getCountryHealthTests(code, lang),
       getPublicDoctorsNormalized(lang),
       getCountryTrust(code),
+      getCountryPartners(code),
     ]);
 
   // Country regulator's public verification page (medicalcouncil.ie /
@@ -405,6 +413,12 @@ export default async function CountryLangHomePage({
     <>
       <JsonLd
         data={[
+          organizationJsonLd(
+            countryTrust
+              ? countryTrust.authorityLinks.filter((l) => l.showInSchema).map((l) => l.url)
+              : [],
+          ),
+          websiteJsonLd(),
           medicalBusinessJsonLd({
             name: config.name,
             url: countryUrl,
@@ -546,6 +560,7 @@ export default async function CountryLangHomePage({
       {countryTrust ? (
         <VerifiedProfessionals trust={countryTrust} locale={lang} />
       ) : null}
+      <PartnersMarquee partners={countryPartners} />
       <HowItWorksNarrative theme="light" i18n={t.howItWorks} />
       <FinalCTA primaryHref={bookHref} secondaryHref={doctorsHref} i18n={t.finalCta} />
       <StickyBookingCTA href={bookHref} />

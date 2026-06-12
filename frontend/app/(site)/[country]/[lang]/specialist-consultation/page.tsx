@@ -17,6 +17,7 @@ import {
 } from "@/lib/routing/country-slug";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { getSiteUrl } from "@/lib/seo/site-url";
+import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { breadcrumbJsonLd, medicalProcedureJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
@@ -54,12 +55,12 @@ export async function generateMetadata({
 
   const { record: page } = await getPublicPage(code, "SPECIALIST_CONSULTATION", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/see-a-specialist`;
-  const title = page?.seoTitle ?? `See a Specialist in ${config.name} · ${SITE_NAME}`;
+  const title = page?.seoTitle ?? `Specialists registered in ${config.name}`;
   const description =
     page?.seoDescription ??
     `Specialists registered to practise in ${config.name}. Cardiology, dermatology, nutrition, and more.`;
   return {
-    title,
+    title: resolveBrandTitle(title),
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/see-a-specialist") },
     openGraph: { type: "website", siteName: SITE_NAME, title, description, url },

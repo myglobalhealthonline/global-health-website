@@ -25,6 +25,7 @@ import {
 } from "@/lib/routing/country-slug";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { getSiteUrl } from "@/lib/seo/site-url";
+import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { breadcrumbJsonLd, medicalProcedureJsonLd, faqJsonLd } from "@/lib/seo/structured-data";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
@@ -64,16 +65,16 @@ export async function generateMetadata({
   const hub = getGpHubContent(code);
   const url = `${getSiteUrl()}/${country}/${lang}/gp-appointment`;
   const title =
-    page?.seoTitle ?? hub?.seoTitle ?? `Book a GP Appointment in ${config.name} · ${SITE_NAME}`;
+    page?.seoTitle ?? hub?.seoTitle ?? `General practitioners registered in ${config.name}`;
   const description =
     page?.seoDescription ??
     hub?.seoDescription ??
-    `General practitioners registered to practise in ${config.name}.`;
-  // The authored hub title already carries the "| Global Health" brand, so
-  // bypass the layout's "%s · Global Health" template to avoid doubling it.
-  const useAbsoluteTitle = !page?.seoTitle && !!hub;
+    `General practitioners registered to practise in ${config.name}. View credentials and languages, then book a consultation.`;
   return {
-    title: useAbsoluteTitle ? { absolute: title } : title,
+    // resolveBrandTitle returns an absolute title when the (CMS- or hub-)
+    // authored title already contains the brand, so the layout's
+    // "%s · Global Health" template never doubles it.
+    title: resolveBrandTitle(title),
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/gp-appointment") },
     openGraph: { type: "website", siteName: SITE_NAME, title, description, url },

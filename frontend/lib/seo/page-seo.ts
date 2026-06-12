@@ -213,6 +213,18 @@ export const ROUTE_SEO: Record<string, RouteSeo> = {
   },
 };
 
+/**
+ * Avoid doubling the brand in the document title. The root layout applies a
+ * `%s · Global Health` title template, so a CMS-authored title that ALREADY
+ * contains the site name (e.g. "Ireland Online Clinic | Global Health") would
+ * render as "Ireland Online Clinic | Global Health · Global Health". When the
+ * brand is already present we return an absolute title to bypass the template;
+ * otherwise we pass the string through so the template appends the brand once.
+ */
+export function resolveBrandTitle(raw: string): string | { absolute: string } {
+  return raw.toLowerCase().includes(SITE_NAME.toLowerCase()) ? { absolute: raw } : raw;
+}
+
 /** Resolve SEO row by exact pathname, returning sane fallbacks if absent. */
 export function getRouteSeo(pathname: string): RouteSeo {
   return (

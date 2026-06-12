@@ -15,7 +15,8 @@ import {
 } from "@/lib/routing/country-slug";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { getSiteUrl } from "@/lib/seo/site-url";
-import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
+import { breadcrumbJsonLd, physicianJsonLd } from "@/lib/seo/structured-data";
+import { resolveBrandTitle } from "@/lib/seo/page-seo";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import {
   getPublicPage,
@@ -69,12 +70,13 @@ export async function generateMetadata({
 
   const { record: page } = await getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale);
   const url = `${getSiteUrl()}/${country}/${lang}/doctors`;
-  const title = page?.seoTitle ?? `${config.name} doctors · ${SITE_NAME}`;
+  const title =
+    page?.seoTitle ?? `${config.name} — registered doctors and specialists`;
   const description =
     page?.seoDescription ??
-    `Meet the doctors licensed in ${config.name} and available for online consultations.`;
+    `Doctors and specialists registered to practise in ${config.name}. Browse profiles by specialty and language.`;
   return {
-    title,
+    title: resolveBrandTitle(title),
     description,
     alternates: { canonical: url, languages: hreflangAlternates(config, "/doctors") },
     openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
@@ -199,6 +201,35 @@ export default async function CountryLangDoctorsPage({
 
   const hasActive = filterLangs.length > 0 || filterSpecs.length > 0;
 
+  // Physician ItemList schema — one Physician node per registered doctor in
+  // this country, built from the same data the cards render. This is the
+  // E-E-A-T signal Google and AI models read to identify and cite named
+  // licensed practitioners. Regulator (recognizedBy) comes from country trust.
+  const schemaRegulator = countryTrust?.regulator?.name
+    ? { name: countryTrust.regulator.name, url: countryTrust.regulator.url }
+    : null;
+  const physicianItemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: doctors.map((d, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: physicianJsonLd({
+        name: d.fullName,
+        title: d.title,
+        countryName: config.name,
+        url: `/${slug}/${lang}/doctors/${d.slug}`,
+        imageSrc: d.imageSrc ?? undefined,
+        languages: d.languages,
+        registrationNumber: d.registrationNumber ?? null,
+        chamber: d.registrationChamber ?? null,
+        division: d.registrationDivision ?? null,
+        regulator: schemaRegulator,
+        credentials: d.credentials,
+      }),
+    })),
+  };
+
   const filterGroups: FilterGroup[] = [
     {
       heading: common.doctors.filterSpeaks,
@@ -223,11 +254,14 @@ export default async function CountryLangDoctorsPage({
   return (
     <>
       <JsonLd
-        data={breadcrumbJsonLd([
-          { name: "Home", url: "/" },
-          { name: config.name, url: `/${slug}/${lang}` },
-          { name: "Doctors", url: `/${slug}/${lang}/doctors` },
-        ])}
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", url: "/" },
+            { name: config.name, url: `/${slug}/${lang}` },
+            { name: "Doctors", url: `/${slug}/${lang}/doctors` },
+          ]),
+          physicianItemListJsonLd,
+        ]}
       />
       <DoctorTeamTemplate
         countryName={config.name}
