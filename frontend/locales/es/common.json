@@ -131,7 +131,8 @@
     "filterSpecialty": "Especialidad",
     "clearFilters": "Limpiar filtros",
     "viewProfile": "Ver perfil",
-    "bookAppointment": "Reservar cita"
+    "bookAppointment": "Reservar cita",
+    "pickTime": "Elegir hora"
   },
   "cookie": {
     "title": "Consentimiento de cookies",
@@ -547,6 +548,7 @@
     "noCliniciansAssigned": "Aún no hay profesionales clínicos asignados a este servicio.",
     "browseAllOrChoose": "Consulta todos los médicos o elige otro servicio.",
     "viewProfile": "Ver perfil",
+    "pickTime": "Elegir hora",
     "tagSpecialist": "Especialista",
     "tagGeneral": "General",
     "priceVaries": "El precio varía",

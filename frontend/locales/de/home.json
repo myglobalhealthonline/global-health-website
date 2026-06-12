@@ -32,7 +32,8 @@
     "ctaView": "Profil ansehen",
     "filterAll": "Alle",
     "filterGP": "Hausarzt",
-    "filterSpecialist": "Facharzt"
+    "filterSpecialist": "Facharzt",
+    "pickTime": "Zeit wählen"
   },
   "trust": {
     "licensedSingular": "Zugelassener Arzt",

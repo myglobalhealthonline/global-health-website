@@ -32,7 +32,8 @@
     "ctaView": "View profile",
     "filterAll": "All",
     "filterGP": "See a GP",
-    "filterSpecialist": "Specialist"
+    "filterSpecialist": "Specialist",
+    "pickTime": "Pick a time"
   },
   "trust": {
     "licensedSingular": "Licensed doctor",

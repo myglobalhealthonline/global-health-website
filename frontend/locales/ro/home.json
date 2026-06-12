@@ -32,7 +32,8 @@
     "ctaView": "Vezi profilul",
     "filterAll": "Toate",
     "filterGP": "Medic de familie",
-    "filterSpecialist": "Specialist"
+    "filterSpecialist": "Specialist",
+    "pickTime": "Alegeți o oră"
   },
   "trust": {
     "licensedSingular": "Medic licențiat",

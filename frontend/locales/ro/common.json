@@ -131,7 +131,8 @@
     "filterSpecialty": "Specialitate",
     "clearFilters": "Șterge filtrele",
     "viewProfile": "Vezi profilul",
-    "bookAppointment": "Programează consultație"
+    "bookAppointment": "Programează consultație",
+    "pickTime": "Alegeți o oră"
   },
   "cookie": {
     "title": "Consimțământ cookie",
@@ -547,6 +548,7 @@
     "noCliniciansAssigned": "Niciun clinician nu este încă alocat acestui serviciu.",
     "browseAllOrChoose": "Răsfoiește toți medicii sau alege un alt serviciu.",
     "viewProfile": "Vezi profilul",
+    "pickTime": "Alegeți o oră",
     "tagSpecialist": "Specialitate",
     "tagGeneral": "General",
     "priceVaries": "Prețul variază",

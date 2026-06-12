@@ -174,6 +174,7 @@ export default async function CountryLangDoctorsPage({
     href: `/${slug}/${lang}/doctors/${d.slug}`,
     bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
     ctaLabel: common.doctors.viewProfile,
+    bookLabel: common.doctors.pickTime,
   }));
 
   // Build a toggle href: flips one token in its param while preserving

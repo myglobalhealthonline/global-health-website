@@ -66,6 +66,7 @@ type DoctorCardProps = {
    *  the profile page. */
   bookingHref?: string;
   ctaLabel?: string;
+  bookLabel?: string;
   /** Dark variant — forest-glass surface + light text, for dark sections
    *  (doctors directory, dark DoctorsSection). Defaults to the original
    *  white card for light sections (DoctorWall, consult page). */
@@ -93,6 +94,7 @@ export function DoctorCard({
   href,
   bookingHref,
   ctaLabel = "View profile",
+  bookLabel = "Pick a time",
   dark = false,
 }: DoctorCardProps) {
   const trimmedImage = imageSrc?.trim();
@@ -338,12 +340,12 @@ export function DoctorCard({
         {/* ── Actions ── */}
         <div className="mt-5 space-y-2">
 
-          {/* Row 1 — primary book + phone (only when bookingHref provided).
-              Matches the site-wide primary CTA: glow shadow + hover lift. */}
-          {bookHref ? (
+          {/* Row 1 — primary green → profile (patient reviews doctor first).
+              When both profile and booking hrefs exist, this is the main CTA. */}
+          {profileHref && bookHref ? (
             <div className="flex items-center gap-2">
               <Link
-                href={bookHref}
+                href={profileHref}
                 className="relative z-20 inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full px-4 text-[13.5px] font-extrabold tracking-[-0.005em] text-white transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
                 style={{
                   background: "var(--color-brand-primary)",
@@ -374,9 +376,20 @@ export function DoctorCard({
             </div>
           ) : null}
 
-          {/* Row 2 — secondary outline → profile. Fills solid on hover
-              (site-wide outline-button behaviour). */}
-          {profileHref ? (
+          {/* Row 2 — outline → direct slot picker (skip profile, choose time now).
+              Only renders when bookHref present; label supplied by caller via bookLabel. */}
+          {bookHref ? (
+            <Link
+              href={bookHref}
+              className="relative z-20 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 text-[13px] font-bold tracking-[-0.005em] text-[color:var(--dc-ink)] transition-[background-color,color,border-color] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+            >
+              {bookLabel}
+              <ArrowRight className="size-[14px] shrink-0" strokeWidth={1.8} aria-hidden />
+            </Link>
+          ) : null}
+
+          {/* Single CTA — profile only, no booking href. */}
+          {!bookHref && profileHref ? (
             <Link
               href={profileHref}
               className="relative z-20 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 text-[13px] font-bold tracking-[-0.005em] text-[color:var(--dc-ink)] transition-[background-color,color,border-color] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"

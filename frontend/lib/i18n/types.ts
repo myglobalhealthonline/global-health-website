@@ -99,6 +99,7 @@ export type CommonLocale = {
     clearFilters: string;
     viewProfile: string;
     bookAppointment: string;
+    pickTime: string;
   };
   countrySelector: {
     title: string;
@@ -549,6 +550,7 @@ export type CommonLocale = {
     noCliniciansAssigned: string;
     browseAllOrChoose: string;
     viewProfile: string;
+    pickTime: string;
     tagSpecialist: string;
     tagGeneral: string;
     priceVaries: string;

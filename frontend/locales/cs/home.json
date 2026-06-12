@@ -32,7 +32,8 @@
     "ctaView": "Zobrazit profil",
     "filterAll": "Vše",
     "filterGP": "Praktický lékař",
-    "filterSpecialist": "Specialista"
+    "filterSpecialist": "Specialista",
+    "pickTime": "Vybrat čas"
   },
   "trust": {
     "licensedSingular": "Licencovaný lékař",

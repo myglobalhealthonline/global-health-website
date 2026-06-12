@@ -538,6 +538,7 @@ export default async function CountryLangHomePage({
               filterAll: t.team.filterAll,
               filterGP: t.team.filterGP,
               filterSpecialist: t.team.filterSpecialist,
+              pickTime: t.team.pickTime,
             }}
           />
         </div>

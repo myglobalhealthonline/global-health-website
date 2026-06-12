@@ -477,6 +477,7 @@ function DoctorPicker({
               doctor: doctor.slug,
             })}
             ctaLabel={bp.viewProfile}
+            bookLabel={bp.pickTime}
           />
         </li>
       ))}

@@ -32,7 +32,8 @@
     "ctaView": "Ver perfil",
     "filterAll": "Todos",
     "filterGP": "Ver médico",
-    "filterSpecialist": "Especialista"
+    "filterSpecialist": "Especialista",
+    "pickTime": "Elegir hora"
   },
   "trust": {
     "licensedSingular": "Médico colegiado",

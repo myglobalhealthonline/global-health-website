@@ -31,6 +31,7 @@ type DoctorCarouselProps = {
     filterAll: string;
     filterGP: string;
     filterSpecialist: string;
+    pickTime: string;
   };
 };
 
@@ -145,6 +146,7 @@ export function DoctorCarousel({ doctors, i18n }: DoctorCarouselProps) {
           <DoctorCard
             key={doctor.href ?? `${doctor.name}-${doctor.title}`}
             {...doctor}
+            bookLabel={i18n.pickTime}
             dark={false}
           />
         ))}

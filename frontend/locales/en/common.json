@@ -132,7 +132,8 @@
     "filterSpecialty": "Specialty",
     "clearFilters": "Clear all filters",
     "viewProfile": "View profile",
-    "bookAppointment": "Book appointment"
+    "bookAppointment": "Book appointment",
+    "pickTime": "Pick a time"
   },
   "cookie": {
     "title": "Cookie consent",
@@ -548,6 +549,7 @@
     "noCliniciansAssigned": "No clinicians are assigned to this service yet.",
     "browseAllOrChoose": "Browse all doctors or choose another service.",
     "viewProfile": "View profile",
+    "pickTime": "Pick a time",
     "tagSpecialist": "Specialist",
     "tagGeneral": "General",
     "priceVaries": "Price varies",

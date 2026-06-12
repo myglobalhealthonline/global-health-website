@@ -30,6 +30,7 @@ type Doctor = {
   href?: string;
   bookingHref?: string;
   ctaLabel?: string;
+  bookLabel?: string;
 };
 
 export type DoctorTeamI18n = {
@@ -202,6 +203,7 @@ export function DoctorTeamTemplate({
                       href={d.href}
                       bookingHref={d.bookingHref ?? bookingHref}
                       ctaLabel={d.ctaLabel ?? "View profile"}
+                      bookLabel={d.bookLabel}
                     />
                   </li>
                 ))}

@@ -131,7 +131,8 @@
     "filterSpecialty": "Specializace",
     "clearFilters": "Vymazat filtry",
     "viewProfile": "Zobrazit profil",
-    "bookAppointment": "Rezervovat konzultaci"
+    "bookAppointment": "Rezervovat konzultaci",
+    "pickTime": "Vybrat čas"
   },
   "cookie": {
     "title": "Souhlas s cookies",
@@ -547,6 +548,7 @@
     "noCliniciansAssigned": "K této službě zatím nejsou přiřazeni žádní lékaři.",
     "browseAllOrChoose": "Procházejte všechny lékaře nebo si vyberte jinou službu.",
     "viewProfile": "Zobrazit profil",
+    "pickTime": "Vybrat čas",
     "tagSpecialist": "Specializované",
     "tagGeneral": "Praktické",
     "priceVaries": "Cena se liší",
