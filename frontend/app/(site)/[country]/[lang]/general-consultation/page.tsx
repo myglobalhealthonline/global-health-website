@@ -217,6 +217,7 @@ export default async function CountryLangGeneralConsultationPage({
         ctaHref={ctaHref}
         secondaryLabel={gp.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
+        variant="immersive"
         heroImage={{
           src: "/images/stock/gp.jpg",
           alt: `General practitioner available for an online consultation in ${config.name}`,

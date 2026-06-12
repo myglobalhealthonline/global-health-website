@@ -106,6 +106,7 @@ export default async function HealthTestsPage({
       />
 
       <PageHero
+        variant="immersive"
         watermark={t.watermark}
         countryCode={config.code}
         countryLabel={t.countryLabel.replace("{country}", config.name)}

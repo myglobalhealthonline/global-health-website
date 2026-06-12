@@ -140,61 +140,104 @@ export default async function ServiceDetailPage({
         <JsonLd data={faqJsonLd(detail.faqs.map((f) => ({ question: f.question, answer: f.answer })))} />
       ) : null}
 
-      {/* Hero — gh2 dark, content left + sticky booking panel right */}
+      {/* Hero — full-viewport 50/50 split: image left, content + booking right */}
       <section
-        className="gh2-hero relative isolate overflow-hidden"
-        style={{
-          padding: "clamp(56px,7vw,96px) 0 clamp(48px,6vw,80px)",
-          borderBottom: "1px solid rgba(255,255,255,0.07)",
-        }}
+        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
+        style={{ background: "#0F2E25" }}
       >
-        {detail.specialtyName ? (
+        <div className="grid lg:grid-cols-2" style={{ minHeight: "min(100vh, 880px)" }}>
+
+          {/* LEFT — full-bleed service image */}
           <div
-            aria-hidden
-            className="gh2-watermark pointer-events-none absolute -right-[0.08em] bottom-[-0.18em] select-none"
-            style={{ fontSize: "clamp(4.5rem,12vw,11rem)" }}
+            className="relative overflow-hidden"
+            style={{ minHeight: "clamp(300px, 50vw, 880px)" }}
           >
-            {detail.specialtyName}
+            {detail.imageSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={detail.imageSrc}
+                alt={detail.name}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                }}
+              />
+            ) : (
+              <div
+                className="absolute inset-0"
+                style={{ background: "linear-gradient(135deg, #0d2a1f 0%, #1a3d2b 100%)" }}
+              />
+            )}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0"
+              style={{
+                height: "55%",
+                background:
+                  "linear-gradient(to top, rgba(6,26,18,0.90) 0%, rgba(6,26,18,0.40) 45%, transparent 100%)",
+              }}
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 hidden lg:block"
+              style={{
+                width: "38%",
+                background:
+                  "linear-gradient(to right, rgba(15,46,37,0) 0%, rgba(15,46,37,0.75) 70%, #0F2E25 100%)",
+              }}
+            />
           </div>
-        ) : null}
 
-        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <Link
-            href={back.href}
-            className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-white/45 transition-colors hover:text-[var(--color-brand-accent)]"
+          {/* RIGHT — service content + booking panel */}
+          <div
+            className="relative flex flex-col justify-start overflow-y-auto px-8 py-10 md:px-12 lg:px-14 lg:py-14"
+            style={{ background: "#0F2E25" }}
           >
-            <ArrowLeft className="size-4" aria-hidden />
-            {back.label}
-          </Link>
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(ellipse 600px 500px at 110% -10%, rgba(176,241,34,0.11), transparent 60%)",
+              }}
+            />
 
-          <div className="mt-8 grid gap-10 lg:grid-cols-[1.35fr_minmax(340px,1fr)] lg:gap-14">
-            {/* Left — service context */}
-            <div>
-              <p className="flex items-center gap-3">
-                <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
-                  {detail.specialtyName ?? (detail.kind === "SPECIALIST" ? t.eyebrowSpecialist : t.eyebrowOnline)}
-                </span>
+            <div className="relative">
+              <Link
+                href={back.href}
+                className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] transition-colors hover:text-[var(--color-brand-accent)]"
+                style={{ color: "rgba(255,255,255,0.40)" }}
+              >
+                <ArrowLeft className="size-4" aria-hidden />
+                {back.label}
+              </Link>
+
+              <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: "var(--color-brand-accent)" }}>
+                {detail.specialtyName ?? (detail.kind === "SPECIALIST" ? t.eyebrowSpecialist : t.eyebrowOnline)}
               </p>
 
               <h1
-                className="mt-5 font-extrabold leading-[1.0] tracking-[-0.035em]"
-                style={{ fontSize: "clamp(2.2rem,4.5vw,4rem)", color: "rgba(255,255,255,0.95)", maxWidth: "16ch" }}
+                className="mt-4 font-extrabold leading-[1.0] tracking-[-0.035em]"
+                style={{ fontSize: "clamp(2rem,3.5vw+0.5rem,3.5rem)", color: "rgba(255,255,255,0.95)", maxWidth: "16ch" }}
               >
                 {heading}
               </h1>
 
               {lede ? (
                 <p
-                  className="mt-5 max-w-[48ch] text-[length:var(--text-body-lg)] leading-relaxed"
-                  style={{ color: "rgba(255,255,255,0.58)" }}
+                  className="mt-4 max-w-[48ch] leading-relaxed"
+                  style={{ fontSize: "var(--text-body-lg)", color: "rgba(255,255,255,0.58)" }}
                 >
                   {lede}
                 </p>
               ) : null}
 
-              {/* Trust meta row */}
               <div
-                className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-t pt-5"
+                className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 border-t pt-5"
                 style={{ borderColor: "rgba(255,255,255,0.10)" }}
               >
                 {[
@@ -212,12 +255,10 @@ export default async function ServiceDetailPage({
                   </span>
                 ))}
               </div>
-            </div>
 
-            {/* Right — sticky booking panel */}
-            <aside className="lg:sticky lg:top-[calc(var(--header-height)+16px)] lg:self-start">
+              {/* Booking card — image omitted, left column is the visual */}
               <div
-                className="overflow-hidden rounded-[24px]"
+                className="mt-6 overflow-hidden rounded-[20px]"
                 style={{
                   background: "rgba(255,255,255,0.05)",
                   border: "1px solid rgba(255,255,255,0.12)",
@@ -225,23 +266,7 @@ export default async function ServiceDetailPage({
                   boxShadow: "0 24px 60px rgba(0,0,0,0.35)",
                 }}
               >
-                {detail.imageSrc ? (
-                  <div className="relative" style={{ aspectRatio: "16 / 8" }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={detail.imageSrc}
-                      alt={detail.name}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                    <div
-                      aria-hidden
-                      className="absolute inset-0"
-                      style={{ background: "linear-gradient(180deg, rgba(10,31,20,0.10) 0%, rgba(10,31,20,0.55) 100%)" }}
-                    />
-                  </div>
-                ) : null}
-
-                <div className="p-6 sm:p-7">
+                <div className="p-6">
                   <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]">
                     {t.bookOnline}
                   </p>
@@ -299,8 +324,9 @@ export default async function ServiceDetailPage({
                   </p>
                 </div>
               </div>
-            </aside>
+            </div>
           </div>
+
         </div>
       </section>
 

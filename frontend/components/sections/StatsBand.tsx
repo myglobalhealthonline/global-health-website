@@ -89,13 +89,6 @@ export function StatsBand({ items, theme = "dark", i18n }: { items: StatBandItem
               className="flex flex-col gap-3 pt-6"
               style={{ borderTop: `2px solid ${i === 0 ? (isLight ? "var(--color-brand-primary)" : "var(--color-brand-accent)") : hairline}` }}
             >
-              <span
-                aria-hidden
-                className="gh2-index"
-                style={{ color: isLight ? "rgba(29,75,54,0.35)" : "rgba(255,255,255,0.30)" }}
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
               <dd
                 className="font-extrabold leading-none tracking-[-0.045em] [font-variant-numeric:tabular-nums]"
                 style={{

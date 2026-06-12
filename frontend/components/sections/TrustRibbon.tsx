@@ -85,13 +85,6 @@ export function TrustRibbon({ items, theme = "light" }: { items?: TrustRibbonIte
                   >
                     <Icon className="size-[18px]" strokeWidth={1.6} aria-hidden />
                   </span>
-                  <span
-                    aria-hidden
-                    className="gh2-index"
-                    style={{ color: isLight ? "rgba(29,75,54,0.35)" : "rgba(255,255,255,0.30)" }}
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
                 </div>
                 <div>
                   <p

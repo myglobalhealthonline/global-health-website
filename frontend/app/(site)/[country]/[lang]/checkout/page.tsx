@@ -188,17 +188,11 @@ export default function CheckoutPage() {
               className="gh-card p-6 sm:p-8"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
-              {/* 01 — Payer contact */}
-              <div className="flex items-start gap-3">
-                <span aria-hidden className="gh2-index mt-1" style={{ color: "rgba(29,75,54,0.40)" }}>
-                  01
-                </span>
-                <div>
-                  <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>{t.payerContact}</h2>
-                  <p className="gh-body-sm mt-1" style={{ fontSize: "0.8rem" }}>
-                    {t.payerNote}
-                  </p>
-                </div>
+              <div>
+                <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>{t.payerContact}</h2>
+                <p className="gh-body-sm mt-1" style={{ fontSize: "0.8rem" }}>
+                  {t.payerNote}
+                </p>
               </div>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 <Field
@@ -285,18 +279,13 @@ export default function CheckoutPage() {
               {needsShipping ? (
                 <>
                   <div
-                    className="mt-8 flex items-start gap-3 border-t pt-7"
+                    className="mt-8 border-t pt-7"
                     style={{ borderColor: "var(--color-border)" }}
                   >
-                    <span aria-hidden className="gh2-index mt-1" style={{ color: "rgba(29,75,54,0.40)" }}>
-                      02
-                    </span>
-                    <div>
-                      <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>{t.shippingAddress}</h2>
-                      <p className="gh-body-sm mt-1" style={{ fontSize: "0.8rem" }}>
-                        {t.shippingNote}
-                      </p>
-                    </div>
+                    <h2 className="gh-h3" style={{ fontSize: "1.2rem" }}>{t.shippingAddress}</h2>
+                    <p className="gh-body-sm mt-1" style={{ fontSize: "0.8rem" }}>
+                      {t.shippingNote}
+                    </p>
                   </div>
                   <div className="mt-5 grid gap-4 sm:grid-cols-2">
                     <Field name="shipName" label={t.recipientName} required />

@@ -184,6 +184,7 @@ export default async function CountryLangSpecialistConsultationPage({
         ctaHref={ctaHref}
         secondaryLabel={sp.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
+        variant="immersive"
         heroImage={{
           src: "/images/stock/specialist.jpg",
           alt: `Specialist available for an online consultation in ${config.name}`,

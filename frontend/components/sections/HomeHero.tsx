@@ -110,6 +110,8 @@ export function HomeHero({
               <span className="gh-home-hero-countryBadge inline-flex items-center gap-2.5 rounded-full py-1.5 pl-2 pr-4 text-[11px] font-bold uppercase tracking-[0.18em] text-white/85">
                 <Flag code={countryCode} size="sm" />
                 {countryName}
+                <span className="opacity-40">·</span>
+                <span>Medical Clinic</span>
               </span>
               <span className="gh-home-hero-availableBadge inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-brand-accent)]">
                 <span aria-hidden className="gh-pulse-dot !size-1.5" />

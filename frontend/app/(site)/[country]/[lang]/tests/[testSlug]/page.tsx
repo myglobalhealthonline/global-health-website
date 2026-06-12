@@ -121,176 +121,201 @@ export default async function HealthTestDetailPage({
         ])}
       />
 
-      {/* Test hero — dark editorial, matching service-page design system */}
+      {/* Test hero — full-viewport 50/50: image left, buy panel right */}
       <section
-        className="gh2-hero relative isolate overflow-hidden"
-        style={{ padding: "clamp(56px,7vw,100px) 0" }}
+        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
+        style={{ background: "#0F2E25" }}
       >
-        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-          <Link
-            href={backHref}
-            className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] transition-opacity hover:opacity-100"
-            style={{ color: "rgba(255,255,255,0.40)" }}
-          >
-            <ArrowLeft className="size-4" aria-hidden />
-            {t.backToTests}
-          </Link>
+        <div className="grid lg:grid-cols-2" style={{ minHeight: "min(100vh, 880px)" }}>
 
-          <div className="mt-10 grid gap-10 lg:grid-cols-[1.25fr_1fr] lg:items-start">
-            {/* Left — eyebrow, title, intro, spec grid */}
-            <div>
-              <p className="flex items-center gap-3">
-                <span
-                  className="text-[11px] font-bold uppercase tracking-[0.22em]"
-                  style={{ color: "var(--color-brand-accent)" }}
-                >
-                  {t.eyebrow}
-                </span>
+          {/* LEFT — full-bleed test image */}
+          <div
+            className="relative overflow-hidden"
+            style={{ minHeight: "clamp(300px, 50vw, 880px)" }}
+          >
+            {detail.imageSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={detail.imageSrc}
+                alt={detail.title}
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                }}
+              />
+            ) : (
+              <div
+                className="absolute inset-0 flex items-center justify-center"
+                style={{ background: "linear-gradient(135deg, #0d2a1f 0%, #1a3d2b 100%)" }}
+              >
+                <FlaskConical
+                  className="size-20"
+                  style={{ color: "rgba(176,241,34,0.30)" }}
+                  strokeWidth={1.2}
+                  aria-hidden
+                />
+              </div>
+            )}
+            {/* Doctor Reviewed badge — overlaid on the image */}
+            <span
+              className="absolute left-5 top-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.08em]"
+              style={{ background: "var(--color-brand-primary)", color: "#ffffff", boxShadow: "0 2px 8px rgba(0,0,0,0.30)" }}
+            >
+              <ShieldCheck className="size-3.5" aria-hidden />
+              {t.doctorReviewed}
+            </span>
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0"
+              style={{
+                height: "55%",
+                background:
+                  "linear-gradient(to top, rgba(6,26,18,0.90) 0%, rgba(6,26,18,0.40) 45%, transparent 100%)",
+              }}
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 hidden lg:block"
+              style={{
+                width: "38%",
+                background:
+                  "linear-gradient(to right, rgba(15,46,37,0) 0%, rgba(15,46,37,0.75) 70%, #0F2E25 100%)",
+              }}
+            />
+          </div>
+
+          {/* RIGHT — test info + buy panel */}
+          <div
+            className="relative flex flex-col justify-start overflow-y-auto px-8 py-10 md:px-12 lg:px-14 lg:py-14"
+            style={{ background: "#0F2E25" }}
+          >
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(ellipse 600px 500px at 110% -10%, rgba(176,241,34,0.11), transparent 60%)",
+              }}
+            />
+
+            <div className="relative">
+              <Link
+                href={backHref}
+                className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] transition-colors hover:text-[var(--color-brand-accent)]"
+                style={{ color: "rgba(255,255,255,0.40)" }}
+              >
+                <ArrowLeft className="size-4" aria-hidden />
+                {t.backToTests}
+              </Link>
+
+              <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: "var(--color-brand-accent)" }}>
+                {t.eyebrow}
               </p>
 
               <h1
-                className="mt-4 font-extrabold leading-[1.02] tracking-[-0.035em]"
-                style={{ fontSize: "clamp(2rem,4vw,3.4rem)", color: "rgba(255,255,255,0.95)", maxWidth: "20ch" }}
+                className="mt-4 font-extrabold leading-[1.0] tracking-[-0.035em]"
+                style={{ fontSize: "clamp(2rem,3.5vw+0.5rem,3.5rem)", color: "rgba(255,255,255,0.95)", maxWidth: "20ch" }}
               >
                 {detail.title}
               </h1>
 
               {intro ? (
                 <p
-                  className="mt-4 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed"
-                  style={{ color: "rgba(255,255,255,0.58)" }}
+                  className="mt-4 max-w-[48ch] leading-relaxed"
+                  style={{ fontSize: "var(--text-body-lg)", color: "rgba(255,255,255,0.58)" }}
                 >
                   {intro}
                 </p>
               ) : null}
 
-              <dl
-                className="mt-8 grid gap-px overflow-hidden rounded-[var(--radius-card)] sm:grid-cols-2"
-                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.09)" }}
-              >
+              {/* Compact spec chips */}
+              <div className="mt-6 flex flex-wrap gap-2">
                 {specs.map(({ icon: Icon, label, value }) => (
-                  <div
+                  <span
                     key={label}
-                    className="flex items-start gap-3 p-4"
-                    style={{ background: "rgba(255,255,255,0.03)" }}
+                    className="inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-medium"
+                    style={{
+                      background: "rgba(255,255,255,0.07)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                      color: "rgba(255,255,255,0.80)",
+                    }}
                   >
-                    <span
-                      className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-[10px]"
-                      style={{ background: "rgba(176,241,34,0.12)" }}
-                    >
-                      <Icon className="size-4" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.8} aria-hidden />
-                    </span>
-                    <div className="min-w-0">
-                      <dt
-                        className="text-[10.5px] font-bold uppercase tracking-[0.12em]"
-                        style={{ color: "rgba(255,255,255,0.38)" }}
-                      >
-                        {label}
-                      </dt>
-                      <dd className="mt-0.5 text-sm font-semibold" style={{ color: "rgba(255,255,255,0.85)" }}>
-                        {value}
-                      </dd>
-                    </div>
-                  </div>
+                    <Icon className="size-3.5 shrink-0" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.8} aria-hidden />
+                    {value}
+                  </span>
                 ))}
-              </dl>
-            </div>
-
-            {/* Right — floating buy card */}
-            <div
-              className="overflow-hidden rounded-[var(--radius-card)]"
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.09)",
-                boxShadow: "0 8px 40px rgba(0,0,0,0.30)",
-              }}
-            >
-              {/* Image panel */}
-              <div className="relative overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
-                {detail.imageSrc ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={detail.imageSrc}
-                    alt={detail.title}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                ) : (
-                  <div
-                    className="flex h-full items-center justify-center"
-                    style={{ background: "rgba(255,255,255,0.04)" }}
-                  >
-                    <FlaskConical
-                      className="size-14"
-                      style={{ color: "rgba(176,241,34,0.45)" }}
-                      strokeWidth={1.3}
-                      aria-hidden
-                    />
-                  </div>
-                )}
-                <span
-                  className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.08em]"
-                  style={{ background: "var(--color-brand-primary)", color: "#ffffff", boxShadow: "0 2px 8px rgba(0,0,0,0.30)" }}
-                >
-                  <ShieldCheck className="size-3.5" aria-hidden />
-                  {t.doctorReviewed}
-                </span>
               </div>
 
-              {/* Price + CTA */}
-              <div className="p-6">
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <span
-                    className="font-extrabold tracking-[-0.03em] [font-variant-numeric:tabular-nums]"
-                    style={{ fontSize: "clamp(1.75rem,3vw,2.25rem)", color: "rgba(255,255,255,0.95)" }}
-                  >
-                    {priceLabel}
-                  </span>
-                  <span className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.45)" }}>
-                    {t.inclDoctorReview}
-                  </span>
-                  {lowStock != null ? (
-                    <span className="gh-badge gh-badge-warning">{t.onlyLeft.replace("{count}", String(lowStock))}</span>
-                  ) : null}
-                  {soldOut ? <span className="gh-badge gh-badge-error">{t.soldOut}</span> : null}
-                </div>
-
-                <div className="mt-5">
-                  {soldOut ? (
-                    <button
-                      type="button"
-                      disabled
-                      className="inline-flex h-14 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full px-6 text-[15px] font-bold"
-                      style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.35)" }}
+              {/* Buy panel */}
+              <div
+                className="mt-6 overflow-hidden rounded-[20px]"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  backdropFilter: "blur(18px)",
+                  boxShadow: "0 24px 60px rgba(0,0,0,0.35)",
+                }}
+              >
+                <div className="p-6">
+                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <span
+                      className="font-extrabold tracking-[-0.03em] [font-variant-numeric:tabular-nums]"
+                      style={{ fontSize: "clamp(1.9rem,3vw,2.5rem)", color: "rgba(255,255,255,0.95)" }}
                     >
-                      {t.soldOut}
-                    </button>
-                  ) : (
-                    <AddToCartButton
-                      kind="HEALTH_TEST"
-                      healthTestId={detail.id}
-                      label={detail.heroButtonLabel ?? t.addToCart.replace("{price}", priceLabel)}
-                      className="gh2-btn-lime w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
-                    />
-                  )}
-                </div>
-
-                <div
-                  className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2"
-                  style={{ color: "rgba(255,255,255,0.38)" }}
-                >
-                  {[
-                    { icon: Lock, label: t.secureCheckout },
-                    { icon: CalendarCheck, label: t.orderConfirmation },
-                  ].map(({ icon: Icon, label }) => (
-                    <span key={label} className="inline-flex items-center gap-1.5 text-xs font-medium">
-                      <Icon className="size-3.5" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
-                      {label}
+                      {priceLabel}
                     </span>
-                  ))}
+                    <span className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.45)" }}>
+                      {t.inclDoctorReview}
+                    </span>
+                    {lowStock != null ? (
+                      <span className="gh-badge gh-badge-warning">{t.onlyLeft.replace("{count}", String(lowStock))}</span>
+                    ) : null}
+                    {soldOut ? <span className="gh-badge gh-badge-error">{t.soldOut}</span> : null}
+                  </div>
+
+                  <div className="mt-5">
+                    {soldOut ? (
+                      <button
+                        type="button"
+                        disabled
+                        className="inline-flex h-14 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full px-6 text-[15px] font-bold"
+                        style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.35)" }}
+                      >
+                        {t.soldOut}
+                      </button>
+                    ) : (
+                      <AddToCartButton
+                        kind="HEALTH_TEST"
+                        healthTestId={detail.id}
+                        label={detail.heroButtonLabel ?? t.addToCart.replace("{price}", priceLabel)}
+                        className="gh2-btn-lime w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
+                      />
+                    )}
+                  </div>
+
+                  <div
+                    className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2"
+                    style={{ color: "rgba(255,255,255,0.38)" }}
+                  >
+                    {[
+                      { icon: Lock, label: t.secureCheckout },
+                      { icon: CalendarCheck, label: t.orderConfirmation },
+                    ].map(({ icon: Icon, label }) => (
+                      <span key={label} className="inline-flex items-center gap-1.5 text-xs font-medium">
+                        <Icon className="size-3.5" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
+                        {label}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+
         </div>
       </section>
 

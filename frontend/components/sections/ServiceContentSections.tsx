@@ -257,17 +257,6 @@ export function ProcessStepsSection({
                 boxShadow: dark ? "none" : "0 1px 12px rgba(29,75,54,0.05)",
               }}
             >
-              <span
-                className="font-extrabold leading-none tracking-[-0.04em] [font-variant-numeric:tabular-nums]"
-                style={{
-                  fontSize: "clamp(2.5rem,4vw,3.5rem)",
-                  color: dark ? "var(--color-brand-accent)" : "var(--color-brand-primary)",
-                  opacity: 0.9,
-                }}
-                aria-hidden
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
               <h3
                 className="mt-5 font-extrabold tracking-[-0.02em] leading-tight"
                 style={{
