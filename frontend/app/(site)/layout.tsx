@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { getPublicAssetsNormalized } from "@/lib/content/get-public-assets";
 import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { getCountryFooter } from "@/lib/content/get-country-footers";
+import { getCountryTrust } from "@/lib/content/get-country-trust";
 import { DEFAULT_BRAND_LOGO_LIGHT } from "@/lib/content/brand-logo";
 import {
   resolveFooterCtaDecorAsset,
@@ -36,7 +37,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   // runtimeCountry is known here, so the per-country footer fetch can run
   // in the same parallel batch instead of as an extra serial round-trip
   // after it (one less hop on every (site) page's TTFB).
-  const [{ common, navigation }, assets, countriesMerged, activeFooter] =
+  const [{ common, navigation }, assets, countriesMerged, activeFooter, activeTrust] =
     await Promise.all([
       getSiteContext({
         explicitCountryCode: runtimeCountry,
@@ -47,7 +48,15 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
       getPublicAssetsNormalized(),
       getPublicCountriesMerged(),
       runtimeCountry ? getCountryFooter(runtimeCountry) : Promise.resolve(null),
+      runtimeCountry ? getCountryTrust(runtimeCountry) : Promise.resolve(null),
     ]);
+
+  // Organization `sameAs` — the active country's official authorities (IMC,
+  // ERS, OM, DPC, CNPD…). This is the JSON-LD authority signal that earns
+  // AI-search citation. Outside a country scope it stays empty.
+  const organizationSameAs = activeTrust
+    ? activeTrust.authorityLinks.filter((l) => l.showInSchema).map((l) => l.url)
+    : [];
 
   const brandLogo = resolveSiteLogoAsset(assets) ?? DEFAULT_BRAND_LOGO_LIGHT;
   const footerDecorImage = resolveFooterCtaDecorAsset(assets);
@@ -104,11 +113,12 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         authUser={authUser}
         countryFeatures={countryFeatures}
         countryFooters={countryFooters}
+        countryTrust={activeTrust}
         initialLastCountry={initialLastCountry}
         countries={countriesMerged}
         currentLocale={currentLocale}
       >
-        <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
+        <JsonLd data={[organizationJsonLd(organizationSameAs), websiteJsonLd()]} />
         {children}
       </SiteChrome>
     </CartProvider>

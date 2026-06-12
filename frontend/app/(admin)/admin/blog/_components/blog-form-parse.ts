@@ -34,6 +34,8 @@ export function parseBlogBody(formData: FormData) {
     body: String(formData.get("body") ?? ""),
     category: get("category"),
     authorDisplayName: get("authorDisplayName"),
+    authorDoctorId: get("authorDoctorId"),
+    reviewerDoctorId: get("reviewerDoctorId"),
     seoTitle: get("seoTitle"),
     seoDescription: get("seoDescription"),
     coverImagePath: get("coverImagePath"),

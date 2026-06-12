@@ -6,6 +6,7 @@ import { ArrowLeft, ExternalLink, Languages, Plus, Trash2 } from "lucide-react";
 import {
   fetchAdminBlogPostById,
   fetchAdminCountries,
+  fetchAdminDoctors,
   patchAdminBlogPost,
   purgeAdminBlogPost,
   putAdminBlogTranslation,
@@ -36,10 +37,14 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
   const messages = searchParams ? await searchParams : {};
   const editLocale = messages.editLocale?.trim() ?? null;
 
-  const [result, countriesResult] = await Promise.all([
+  const [result, countriesResult, doctorsResult] = await Promise.all([
     fetchAdminBlogPostById(id),
     fetchAdminCountries(),
+    fetchAdminDoctors({ pageSize: "200" }),
   ]);
+  const doctors = doctorsResult.ok
+    ? doctorsResult.data.items.map((d) => ({ id: d.id, fullName: d.fullName }))
+    : [];
   if (!result.ok) {
     return (
       <>
@@ -193,7 +198,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
       ) : null}
 
       <form action={updateBlogAction} className="mt-6 flex flex-col gap-6">
-        <BlogFields post={post} />
+        <BlogFields post={post} doctors={doctors} />
         <div className="flex items-center justify-end gap-2">
           <Btn href="/admin/blog" variant="ghost" size="md">
             Cancel

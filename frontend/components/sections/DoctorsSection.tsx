@@ -15,7 +15,11 @@ type DoctorItem = {
   name: string;
   title: string;
   imcRegistration?: string;
+  registrationDivision?: string;
+  registrationVerified?: boolean;
+  credentials?: Array<{ label: string; bodyName: string; bodyUrl?: string }>;
   medicalRegistrationUrl?: string;
+  verificationUrl?: string;
   country?: string;
   languages?: string[];
   whatsappNumber?: string;

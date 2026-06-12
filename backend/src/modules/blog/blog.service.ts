@@ -165,6 +165,8 @@ export async function createAdminBlogPost(input: AdminBlogCreateBody): Promise<A
         category: input.category ?? null,
         authorDisplayName: input.authorDisplayName ?? null,
         reviewerDisplayName: input.reviewerDisplayName ?? null,
+        authorDoctorId: input.authorDoctorId ?? null,
+        reviewerDoctorId: input.reviewerDoctorId ?? null,
         seoTitle: input.seoTitle ?? null,
         seoDescription: input.seoDescription ?? null,
         countryId: input.countryId ?? null,
@@ -222,6 +224,8 @@ export async function updateAdminBlogPost(
         ...(body.reviewerDisplayName !== undefined && {
           reviewerDisplayName: body.reviewerDisplayName,
         }),
+        ...(body.authorDoctorId !== undefined && { authorDoctorId: body.authorDoctorId }),
+        ...(body.reviewerDoctorId !== undefined && { reviewerDoctorId: body.reviewerDoctorId }),
         ...(body.seoTitle !== undefined && { seoTitle: body.seoTitle }),
         ...(body.seoDescription !== undefined && { seoDescription: body.seoDescription }),
         ...(body.countryId !== undefined && { countryId: body.countryId }),
@@ -340,6 +344,18 @@ export async function purgeAdminBlogPost(id: string): Promise<boolean> {
 
 // ── Public read ──────────────────────────────────────────────────────
 
+/** Named clinician linked as a blog post's author / clinical reviewer.
+ *  Carries the council registration so the Article schema can emit a
+ *  Physician author/reviewedBy block (the E-E-A-T citation signal). */
+export type PublicBlogDoctor = {
+  name: string;
+  slug: string;
+  countryCode: string | null;
+  countrySlug: string | null;
+  registrationNumber: string | null;
+  chamberEntity: string | null;
+};
+
 export type PublicBlogPost = {
   slug: string;
   title: string;
@@ -347,12 +363,45 @@ export type PublicBlogPost = {
   body: string;
   category: string | null;
   author: string | null;
+  reviewer: string | null;
   publishedAt: string | null;
   coverImageUrl: string | null;
   coverImageAlt: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
+  authorDoctor: PublicBlogDoctor | null;
+  reviewerDoctor: PublicBlogDoctor | null;
 };
+
+type BlogDoctorRow = {
+  fullName: string;
+  slug: string;
+  country: { code: string; slug: string } | null;
+  additionalCountries: Array<{
+    registrationNumber: string | null;
+    chamberEntity: string | null;
+    country: { code: string };
+  }>;
+};
+
+/** Flatten a linked doctor, preferring the registration for the doctor's
+ *  own primary country, falling back to the first registration on file. */
+function toBlogDoctor(row: BlogDoctorRow | null): PublicBlogDoctor | null {
+  if (!row) return null;
+  const primaryCode = row.country?.code ?? null;
+  const reg =
+    row.additionalCountries.find((r) => r.country.code === primaryCode) ??
+    row.additionalCountries[0] ??
+    null;
+  return {
+    name: row.fullName,
+    slug: row.slug,
+    countryCode: primaryCode,
+    countrySlug: row.country?.slug ?? null,
+    registrationNumber: reg?.registrationNumber ?? null,
+    chamberEntity: reg?.chamberEntity ?? null,
+  };
+}
 
 function toPublicBlogPost(row: {
   slug: string;
@@ -361,11 +410,14 @@ function toPublicBlogPost(row: {
   body: string;
   category: string | null;
   authorDisplayName: string | null;
+  reviewerDisplayName: string | null;
   publishedAt: Date | null;
   createdAt: Date;
   coverAsset: { path: string; altText: string | null } | null;
   seoTitle: string | null;
   seoDescription: string | null;
+  authorDoctor: BlogDoctorRow | null;
+  reviewerDoctor: BlogDoctorRow | null;
 }): PublicBlogPost {
   return {
     slug: row.slug,
@@ -374,13 +426,32 @@ function toPublicBlogPost(row: {
     body: row.body,
     category: row.category,
     author: row.authorDisplayName,
+    reviewer: row.reviewerDisplayName,
     publishedAt: (row.publishedAt ?? row.createdAt).toISOString(),
     coverImageUrl: row.coverAsset?.path ?? null,
     coverImageAlt: row.coverAsset?.altText ?? null,
     seoTitle: row.seoTitle,
     seoDescription: row.seoDescription,
+    authorDoctor: toBlogDoctor(row.authorDoctor),
+    reviewerDoctor: toBlogDoctor(row.reviewerDoctor),
   };
 }
+
+/** Doctor projection for a blog author/reviewer — name, profile slug, and
+ *  per-country registrations (so the Article schema can pick the right one). */
+const blogDoctorSelect = {
+  fullName: true,
+  slug: true,
+  country: { select: { code: true, slug: true } },
+  additionalCountries: {
+    where: { active: true, registrationNumber: { not: null } },
+    select: {
+      registrationNumber: true,
+      chamberEntity: true,
+      country: { select: { code: true } },
+    },
+  },
+} satisfies Prisma.DoctorSelect;
 
 const publicBlogSelect = {
   slug: true,
@@ -389,11 +460,14 @@ const publicBlogSelect = {
   body: true,
   category: true,
   authorDisplayName: true,
+  reviewerDisplayName: true,
   publishedAt: true,
   createdAt: true,
   coverAsset: { select: { path: true, altText: true } },
   seoTitle: true,
   seoDescription: true,
+  authorDoctor: { select: blogDoctorSelect },
+  reviewerDoctor: { select: blogDoctorSelect },
 } satisfies Prisma.BlogPostSelect;
 
 export async function getPublicBlogPosts(locale?: LocaleCode): Promise<PublicBlogPost[]> {

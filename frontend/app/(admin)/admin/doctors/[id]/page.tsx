@@ -10,6 +10,7 @@ import {
   fetchAdminDoctorById,
   fetchAdminDoctorFeatured,
   fetchAdminDoctorRegistrations,
+  fetchAdminDoctorCredentials,
   postAdminDoctorInvite,
   purgeAdminDoctor,
   setAdminDoctorFeatured,
@@ -20,6 +21,7 @@ import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
 import { DoctorRegistrationsCard } from "../_components/registrations-card";
+import { DoctorCredentialsCard } from "../_components/doctor-credentials-card";
 
 export const dynamic = "force-dynamic";
 
@@ -148,6 +150,8 @@ export default async function AdminDoctorDetailPage({
   const registrations = registrationsResult.ok
     ? registrationsResult.data.registrations
     : [];
+  const credentialsResult = await fetchAdminDoctorCredentials(id);
+  const credentials = credentialsResult.ok ? credentialsResult.data.credentials : [];
   // Primary country + any additional country listings — admin can issue
   // a registration for any of these.
   const associatedCountries = [
@@ -330,6 +334,12 @@ export default async function AdminDoctorDetailPage({
           <DoctorRegistrationsCard
             doctorId={d.id}
             rows={registrations}
+            associatedCountries={associatedCountries}
+          />
+
+          <DoctorCredentialsCard
+            doctorId={d.id}
+            rows={credentials}
             associatedCountries={associatedCountries}
           />
         </div>

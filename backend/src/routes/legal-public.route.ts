@@ -35,6 +35,7 @@ const legalPublicRoute: FastifyPluginAsync = async (app) => {
         return okResponse({
           country: { code: country.code, name: country.name },
           profile: country.legalProfile,
+          authorityLinks: country.authorityLinks,
           documents: country.legalDocuments.map((d) => ({
             type: d.type,
             title: d.title,

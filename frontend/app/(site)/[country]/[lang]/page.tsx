@@ -42,6 +42,8 @@ import {
 } from "@/lib/content/get-country-collections";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
+import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
+import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -168,6 +170,7 @@ export default async function CountryLangHomePage({
     prescriptionServices,
     healthTests,
     allDoctors,
+    countryTrust,
   ] =
     await Promise.all([
       getPublicPage(code, "HOME", lang as PublicLocale),
@@ -177,7 +180,13 @@ export default async function CountryLangHomePage({
       getCountryServices(code, "PRESCRIPTION", lang),
       getCountryHealthTests(code, lang),
       getPublicDoctorsNormalized(lang),
+      getCountryTrust(code),
     ]);
+
+  // Country regulator's public verification page (medicalcouncil.ie /
+  // ordemdosmedicos.pt) — every doctor card links here so patients can
+  // verify the named clinician against the official register.
+  const verifyUrl = doctorVerificationUrl(countryTrust) ?? undefined;
 
   // Null out CMS content when the page entry is disabled or the "pages"
   // feature is toggled off — structural sections still render with defaults.
@@ -286,7 +295,11 @@ export default async function CountryLangHomePage({
     name: d.fullName,
     title: d.specialties.length > 0 ? d.specialties[0] : d.title || cc.homeCatalog.doctorFallback,
     imcRegistration: d.imcRegistration,
+    registrationDivision: d.registrationDivision,
+    registrationVerified: d.registrationVerified,
+    credentials: d.credentials,
     medicalRegistrationUrl: d.medicalRegistrationUrl,
+    verificationUrl: verifyUrl,
     country: code,
     languages: d.languages,
     whatsappNumber: d.whatsappNumber,
@@ -297,6 +310,23 @@ export default async function CountryLangHomePage({
     bookingHref: buildBookHref({ country: slug, lang, doctor: d.slug }),
     ctaLabel: t.team.ctaView,
   }));
+
+  // Regulator-specific trust tile when the country has authority data
+  // (Ireland → IMC registry; Portugal → ERS provider registration E179287).
+  // Falls back to the generic GDPR tile elsewhere.
+  const regulatorAbbrev =
+    countryTrust?.authorityLinks.find(
+      (l) => l.category === "MEDICAL_REGULATOR" || l.category === "DOCTOR_REGISTRY",
+    )?.abbreviation ?? null;
+  const regulatorTile: TrustRibbonItem = countryTrust?.providerRegistration?.number
+    ? {
+        v: countryTrust.providerRegistration.number,
+        l: countryTrust.providerRegistration.label ?? t.trust.gdpr,
+        icon: "shield",
+      }
+    : regulatorAbbrev
+      ? { v: regulatorAbbrev, l: t.trust.gdpr, icon: "shield" }
+      : { v: "GDPR", l: t.trust.gdpr, icon: "lock" };
 
   const trustItems: TrustRibbonItem[] = [
     {
@@ -312,11 +342,7 @@ export default async function CountryLangHomePage({
       l: t.trust.markets,
       icon: "globe",
     },
-    {
-      v: "GDPR",
-      l: t.trust.gdpr,
-      icon: "lock",
-    },
+    regulatorTile,
     {
       v: cc.homeCatalog.trustLive,
       l: t.trust.slots,
@@ -375,7 +401,22 @@ export default async function CountryLangHomePage({
     <>
       <JsonLd
         data={[
-          medicalBusinessJsonLd({ name: config.name, url: countryUrl }),
+          medicalBusinessJsonLd({
+            name: config.name,
+            url: countryUrl,
+            identifier: countryTrust?.providerRegistration?.number
+              ? {
+                  label: countryTrust.providerRegistration.label,
+                  value: countryTrust.providerRegistration.number,
+                }
+              : null,
+            sameAs: countryTrust
+              ? countryTrust.authorityLinks.filter((l) => l.showInSchema).map((l) => l.url)
+              : [],
+            regulator: countryTrust?.regulator?.name
+              ? { name: countryTrust.regulator.name, url: countryTrust.regulator.url }
+              : null,
+          }),
           breadcrumbJsonLd([
             { name: "Home", url: "/" },
             { name: config.name, url: `/${slug}/${lang}` },
@@ -465,7 +506,11 @@ export default async function CountryLangHomePage({
                   // these the card already renders behind a shield icon
                   // but they were never passed through.
                   imcRegistration: featuredDoctor.imcRegistration,
+                  registrationDivision: featuredDoctor.registrationDivision,
+                  registrationVerified: featuredDoctor.registrationVerified,
                   medicalRegistrationUrl: featuredDoctor.medicalRegistrationUrl,
+                  verificationUrl: verifyUrl,
+                  credentials: featuredDoctor.credentials,
                   languages: featuredDoctor.languages,
                   bio: featuredDoctor.bio ?? "",
                   imageSrc: featuredDoctor.imageSrc ?? null,
@@ -486,6 +531,9 @@ export default async function CountryLangHomePage({
           <DoctorsSection doctors={teamDoctorItems} theme="light" bare />
         </div>
       </section>
+      {countryTrust ? (
+        <VerifiedProfessionals trust={countryTrust} locale={lang} />
+      ) : null}
       <HowItWorksNarrative theme="light" i18n={t.howItWorks} />
       <FinalCTA primaryHref={bookHref} secondaryHref={doctorsHref} i18n={t.finalCta} />
       <StickyBookingCTA href={bookHref} />

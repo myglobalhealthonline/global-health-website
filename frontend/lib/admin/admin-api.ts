@@ -469,6 +469,12 @@ export type CountryLegalProfileDto = {
   healthcareLicenseDetails: string | null;
   regulatorName: string | null;
   regulatorWebsite: string | null;
+  providerRegistrationLabel: string | null;
+  providerRegistrationNumber: string | null;
+  providerRegistrationUrl: string | null;
+  emergencyNumber: string | null;
+  emergencyNotice: string | null;
+  nonEmergencyHealthLine: string | null;
   companyRegistryUrl: string | null;
   medicalRegulatorUrl: string | null;
   healthcareAuthorityUrl: string | null;
@@ -497,6 +503,89 @@ export async function putAdminCountryLegalProfile(countryId: string, body: unkno
   return adminRequest<{ legalProfile: CountryLegalProfileDto }>(
     `/api/admin/countries/${countryId}/legal`,
     { method: "PUT", body },
+  );
+}
+
+// ── CountryAuthorityLink ─────────────────────────────────────────────────────
+
+export type AdminAuthorityLinkDto = {
+  id: string;
+  countryId: string;
+  name: string;
+  abbreviation: string | null;
+  url: string;
+  category: string;
+  description: string | null;
+  showInFooter: boolean;
+  showInSchema: boolean;
+  sortOrder: number;
+  isActive: boolean;
+};
+
+export async function fetchAdminAuthorityLinks(countryId: string) {
+  return adminRequest<{ authorityLinks: AdminAuthorityLinkDto[] }>(
+    `/api/admin/countries/${countryId}/authority-links`,
+  );
+}
+
+export async function createAdminAuthorityLink(countryId: string, body: unknown) {
+  return adminRequest<{ authorityLink: AdminAuthorityLinkDto }>(
+    `/api/admin/countries/${countryId}/authority-links`,
+    { method: "POST", body },
+  );
+}
+
+export async function updateAdminAuthorityLink(countryId: string, linkId: string, body: unknown) {
+  return adminRequest<{ authorityLink: AdminAuthorityLinkDto }>(
+    `/api/admin/countries/${countryId}/authority-links/${linkId}`,
+    { method: "PATCH", body },
+  );
+}
+
+export async function deleteAdminAuthorityLink(countryId: string, linkId: string) {
+  return adminRequest<{ deleted: boolean }>(
+    `/api/admin/countries/${countryId}/authority-links/${linkId}`,
+    { method: "DELETE" },
+  );
+}
+
+// ── DoctorCredential ─────────────────────────────────────────────────────────
+
+export type AdminDoctorCredentialDto = {
+  id: string;
+  doctorId: string;
+  countryCode: string | null;
+  label: string;
+  bodyName: string;
+  bodyUrl: string | null;
+  sortOrder: number;
+  isActive: boolean;
+};
+
+export async function fetchAdminDoctorCredentials(doctorId: string) {
+  return adminRequest<{ credentials: AdminDoctorCredentialDto[] }>(
+    `/api/admin/doctors/${doctorId}/credentials`,
+  );
+}
+
+export async function createAdminDoctorCredential(doctorId: string, body: unknown) {
+  return adminRequest<{ credential: AdminDoctorCredentialDto }>(
+    `/api/admin/doctors/${doctorId}/credentials`,
+    { method: "POST", body },
+  );
+}
+
+export async function updateAdminDoctorCredential(doctorId: string, credentialId: string, body: unknown) {
+  return adminRequest<{ credential: AdminDoctorCredentialDto }>(
+    `/api/admin/doctors/${doctorId}/credentials/${credentialId}`,
+    { method: "PATCH", body },
+  );
+}
+
+export async function deleteAdminDoctorCredential(doctorId: string, credentialId: string) {
+  return adminRequest<{ deleted: boolean }>(
+    `/api/admin/doctors/${doctorId}/credentials/${credentialId}`,
+    { method: "DELETE" },
   );
 }
 
@@ -954,6 +1043,7 @@ export type AdminDoctorRegistrationDto = {
   countryName: string;
   chamberEntity: string | null;
   registrationNumber: string | null;
+  division: string | null;
   isVerified: boolean;
   verifiedAt: string | null;
   active: boolean;
@@ -1083,6 +1173,7 @@ export async function patchAdminDoctorRegistration(
   body: {
     chamberEntity?: string | null;
     registrationNumber?: string | null;
+    division?: string | null;
     isVerified?: boolean;
   },
 ) {
@@ -1873,6 +1964,8 @@ export type AdminBlogDto = {
   category: string | null;
   authorDisplayName: string | null;
   reviewerDisplayName: string | null;
+  authorDoctorId: string | null;
+  reviewerDoctorId: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
   countryId: string | null;

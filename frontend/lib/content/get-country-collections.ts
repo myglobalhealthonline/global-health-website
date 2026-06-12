@@ -132,6 +132,17 @@ export type CountryDoctorCard = {
   /** Formatted as "CHAMBER | NUMBER" (e.g. "IMC | 523449") when both
    *  fields are set on the DoctorCountry row, otherwise just the number. */
   imcRegistration?: string;
+  /** Raw registration number + chamber (e.g. "523449", "IMC") — unformatted,
+   *  for schema/identifier use. `imcRegistration` is the display string. */
+  registrationNumber?: string;
+  registrationChamber?: string;
+  /** Register division/scope (IMC General/Specialist Division) where set. */
+  registrationDivision?: string;
+  /** Admin-verified registration flag (sighted documentation). */
+  registrationVerified?: boolean;
+  /** Confirmed extra professional credentials (FRCP, SPC fellowship, …)
+   *  scoped to this country. Only admin-confirmed entries. */
+  credentials?: Array<{ label: string; bodyName: string; bodyUrl?: string }>;
   medicalRegistrationUrl?: string;
   whatsappNumber?: string;
   /** Optional social profile URLs surfaced on doctor cards + clinic
@@ -304,6 +315,21 @@ export const getCountryDoctors = cache(async (
         : regNum
       : undefined;
 
+    const registrationDivision =
+      typeof r.registrationDivision === "string" && r.registrationDivision.trim()
+        ? r.registrationDivision.trim()
+        : undefined;
+    const credentials = Array.isArray(r.credentials)
+      ? r.credentials
+          .filter((c): c is Record<string, unknown> => Boolean(c) && typeof c === "object")
+          .map((c) => ({
+            label: typeof c.label === "string" ? c.label : "",
+            bodyName: typeof c.bodyName === "string" ? c.bodyName : "",
+            bodyUrl: typeof c.bodyUrl === "string" ? c.bodyUrl : undefined,
+          }))
+          .filter((c) => c.label && c.bodyName)
+      : [];
+
     out.push({
       id: r.id,
       slug: r.slug,
@@ -316,6 +342,11 @@ export const getCountryDoctors = cache(async (
       assignedServiceIds,
       isFeatured: r.isFeatured === true,
       ...(imcRegistration ? { imcRegistration } : {}),
+      ...(regNum ? { registrationNumber: regNum } : {}),
+      ...(chamberEntity ? { registrationChamber: chamberEntity } : {}),
+      ...(registrationDivision ? { registrationDivision } : {}),
+      ...(r.registrationVerified === true ? { registrationVerified: true } : {}),
+      ...(credentials.length > 0 ? { credentials } : {}),
       ...(typeof r.medicalRegistrationUrl === "string" && r.medicalRegistrationUrl.trim()
         ? { medicalRegistrationUrl: r.medicalRegistrationUrl.trim() }
         : {}),

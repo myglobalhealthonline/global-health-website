@@ -8,14 +8,17 @@ import { getSiteUrl } from "@/lib/seo/site-url";
 
 const SITE_URL = getSiteUrl();
 
-export function organizationJsonLd() {
+export function organizationJsonLd(sameAs: string[] = []) {
   return {
     "@context": "https://schema.org",
     "@type": "MedicalOrganization",
     name: SITE_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/images/logo.png`,
-    sameAs: [],
+    // Official regulators / authorities the provider is registered with or
+    // operates under. This is the AI-search authority signal — populated per
+    // active country from CountryAuthorityLink rows (showInSchema).
+    sameAs,
     areaServed: [
       { "@type": "Country", name: "Ireland" },
       { "@type": "Country", name: "Portugal" },
@@ -60,6 +63,60 @@ export function faqJsonLd(items: Array<{ question: string; answer: string }>) {
   };
 }
 
+export type SchemaRegulator = { name: string; url?: string | null };
+export type SchemaCredential = {
+  label: string;
+  bodyName: string;
+  bodyUrl?: string | null;
+};
+
+/**
+ * Build the `hasCredential` array for a Physician: the primary council
+ * registration (recognisedBy the regulator) plus any confirmed extra
+ * credentials (FRCP, fellowships) each recognisedBy their issuing body.
+ * Returns undefined when there is nothing verified to assert — we never
+ * emit empty/speculative credential claims.
+ */
+function buildHasCredential(input: {
+  registrationNumber?: string | null;
+  chamber?: string | null;
+  division?: string | null;
+  regulator?: SchemaRegulator | null;
+  credentials?: SchemaCredential[];
+}): Array<Record<string, unknown>> | undefined {
+  const out: Array<Record<string, unknown>> = [];
+  if (input.registrationNumber) {
+    out.push({
+      "@type": "EducationalOccupationalCredential",
+      credentialCategory: "Medical registration",
+      name: [input.chamber, input.registrationNumber].filter(Boolean).join(" "),
+      ...(input.division ? { competencyRequired: input.division } : {}),
+      ...(input.regulator
+        ? {
+            recognizedBy: {
+              "@type": "Organization",
+              name: input.regulator.name,
+              ...(input.regulator.url ? { url: input.regulator.url } : {}),
+            },
+          }
+        : {}),
+    });
+  }
+  for (const cred of input.credentials ?? []) {
+    out.push({
+      "@type": "EducationalOccupationalCredential",
+      credentialCategory: "Professional credential",
+      name: cred.label,
+      recognizedBy: {
+        "@type": "Organization",
+        name: cred.bodyName,
+        ...(cred.bodyUrl ? { url: cred.bodyUrl } : {}),
+      },
+    });
+  }
+  return out.length > 0 ? out : undefined;
+}
+
 export function physicianJsonLd(doc: {
   name: string;
   title?: string | null;
@@ -67,7 +124,13 @@ export function physicianJsonLd(doc: {
   url: string;
   imageSrc?: string;
   languages?: string[];
+  registrationNumber?: string | null;
+  chamber?: string | null;
+  division?: string | null;
+  regulator?: SchemaRegulator | null;
+  credentials?: SchemaCredential[];
 }) {
+  const hasCredential = buildHasCredential(doc);
   return {
     "@context": "https://schema.org",
     "@type": "Physician",
@@ -77,10 +140,35 @@ export function physicianJsonLd(doc: {
     image: doc.imageSrc,
     knowsLanguage: doc.languages,
     areaServed: doc.countryName,
+    ...(doc.registrationNumber
+      ? {
+          identifier: {
+            "@type": "PropertyValue",
+            propertyID: doc.chamber ?? "Medical registration",
+            value: doc.registrationNumber,
+          },
+        }
+      : {}),
+    ...(hasCredential ? { hasCredential } : {}),
+    ...(doc.regulator
+      ? {
+          memberOf: {
+            "@type": "Organization",
+            name: doc.regulator.name,
+            ...(doc.regulator.url ? { url: doc.regulator.url } : {}),
+          },
+        }
+      : {}),
   };
 }
 
-export function medicalBusinessJsonLd(country: { name: string; url: string }) {
+export function medicalBusinessJsonLd(country: {
+  name: string;
+  url: string;
+  identifier?: { label?: string | null; value: string } | null;
+  sameAs?: string[];
+  regulator?: SchemaRegulator | null;
+}) {
   return {
     "@context": "https://schema.org",
     "@type": "MedicalBusiness",
@@ -88,6 +176,66 @@ export function medicalBusinessJsonLd(country: { name: string; url: string }) {
     url: country.url.startsWith("http") ? country.url : `${SITE_URL}${country.url}`,
     medicalSpecialty: ["GeneralPractice", "Cardiology", "Dermatology", "Psychiatry"],
     areaServed: { "@type": "Country", name: country.name },
+    ...(country.identifier
+      ? {
+          identifier: {
+            "@type": "PropertyValue",
+            propertyID: country.identifier.label ?? "Healthcare provider registration",
+            value: country.identifier.value,
+          },
+        }
+      : {}),
+    ...(country.sameAs && country.sameAs.length > 0 ? { sameAs: country.sameAs } : {}),
+    ...(country.regulator
+      ? {
+          memberOf: {
+            "@type": "Organization",
+            name: country.regulator.name,
+            ...(country.regulator.url ? { url: country.regulator.url } : {}),
+          },
+        }
+      : {}),
+  };
+}
+
+/**
+ * Schema.org `Article` for a clinically-reviewed blog post. `author` and
+ * `reviewedBy` carry the named Physician with their council registration +
+ * recognisedBy authority — the difference between anonymous content and
+ * content AI search engines treat as clinically authoritative.
+ */
+export function articleJsonLd(input: {
+  title: string;
+  description?: string | null;
+  url: string;
+  datePublished?: string | null;
+  imageSrc?: string | null;
+  authorName?: string | null;
+  authorPhysician?: Parameters<typeof physicianJsonLd>[0] | null;
+  reviewerPhysician?: Parameters<typeof physicianJsonLd>[0] | null;
+}) {
+  const author = input.authorPhysician
+    ? physicianJsonLd(input.authorPhysician)
+    : input.authorName
+      ? { "@type": "Person", name: input.authorName }
+      : { "@type": "Organization", name: SITE_NAME };
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.title,
+    ...(input.description ? { description: input.description } : {}),
+    url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
+    ...(input.imageSrc ? { image: input.imageSrc } : {}),
+    ...(input.datePublished ? { datePublished: input.datePublished } : {}),
+    author,
+    ...(input.reviewerPhysician
+      ? { reviewedBy: physicianJsonLd(input.reviewerPhysician) }
+      : {}),
+    publisher: {
+      "@type": "MedicalOrganization",
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
   };
 }
 

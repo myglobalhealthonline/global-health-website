@@ -7,10 +7,12 @@ import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import {
   fetchAdminCountryById,
   fetchAdminCountryLegalProfile,
+  fetchAdminAuthorityLinks,
   putAdminCountryLegalProfile,
 } from "@/lib/admin/admin-api";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 import { FlagBadge } from "../../../_components/flag-badge";
+import { AuthorityLinksManager } from "./_authority-links-manager";
 
 export const dynamic = "force-dynamic";
 
@@ -23,10 +25,12 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
   const { id } = await params;
   const sp = searchParams ? await searchParams : {};
 
-  const [countryRes, profileRes] = await Promise.all([
+  const [countryRes, profileRes, authorityRes] = await Promise.all([
     fetchAdminCountryById(id),
     fetchAdminCountryLegalProfile(id),
+    fetchAdminAuthorityLinks(id),
   ]);
+  const authorityLinks = authorityRes.ok ? authorityRes.data.authorityLinks : [];
 
   if (!countryRes.ok) {
     return (
@@ -75,6 +79,12 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
       healthcareLicenseDetails: str("healthcareLicenseDetails"),
       regulatorName: str("regulatorName"),
       regulatorWebsite: str("regulatorWebsite"),
+      providerRegistrationLabel: str("providerRegistrationLabel"),
+      providerRegistrationNumber: str("providerRegistrationNumber"),
+      providerRegistrationUrl: str("providerRegistrationUrl"),
+      emergencyNumber: str("emergencyNumber"),
+      emergencyNotice: str("emergencyNotice"),
+      nonEmergencyHealthLine: str("nonEmergencyHealthLine"),
       companyRegistryUrl: str("companyRegistryUrl"),
       medicalRegulatorUrl: str("medicalRegulatorUrl"),
       healthcareAuthorityUrl: str("healthcareAuthorityUrl"),
@@ -183,6 +193,12 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
             <Field label="Medical registration number" name="medicalRegistrationNumber" defaultValue={p?.medicalRegistrationNumber} />
             <Field label="Regulator name" name="regulatorName" defaultValue={p?.regulatorName} />
             <Field label="Regulator website" name="regulatorWebsite" type="url" defaultValue={p?.regulatorWebsite} />
+            <Field label="Provider registration label" name="providerRegistrationLabel" defaultValue={p?.providerRegistrationLabel} placeholder="Registado na Entidade Reguladora da Saúde" />
+            <Field label="Provider registration number" name="providerRegistrationNumber" defaultValue={p?.providerRegistrationNumber} placeholder="E179287" />
+            <Field label="Provider registration URL" name="providerRegistrationUrl" type="url" defaultValue={p?.providerRegistrationUrl} />
+            <Field label="Emergency number" name="emergencyNumber" defaultValue={p?.emergencyNumber ?? "112"} placeholder="112" />
+            <Field label="Emergency notice" name="emergencyNotice" defaultValue={p?.emergencyNotice} placeholder="In a medical emergency call 112 immediately…" />
+            <Field label="Non-emergency health line" name="nonEmergencyHealthLine" defaultValue={p?.nonEmergencyHealthLine} placeholder="SNS 24: 1414" />
           </div>
           <div className="mt-4">
             <TextareaField
@@ -260,6 +276,10 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
           </button>
         </div>
       </form>
+
+      <div className="mt-4">
+        <AuthorityLinksManager countryId={id} countryCode={c.code} rows={authorityLinks} />
+      </div>
     </>
   );
 }

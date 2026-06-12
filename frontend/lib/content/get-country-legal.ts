@@ -51,6 +51,12 @@ export type PublicLegalProfile = {
   healthcareLicenseDetails: string | null;
   regulatorName: string | null;
   regulatorWebsite: string | null;
+  providerRegistrationLabel: string | null;
+  providerRegistrationNumber: string | null;
+  providerRegistrationUrl: string | null;
+  emergencyNumber: string | null;
+  emergencyNotice: string | null;
+  nonEmergencyHealthLine: string | null;
   companyRegistryUrl: string | null;
   medicalRegulatorUrl: string | null;
   healthcareAuthorityUrl: string | null;
@@ -79,9 +85,20 @@ export type PublicLegalDocumentSummary = {
   hasPdf: boolean;
 };
 
+export type PublicAuthorityLink = {
+  name: string;
+  abbreviation: string | null;
+  url: string;
+  category: string;
+  description: string | null;
+  showInFooter: boolean;
+  showInSchema: boolean;
+};
+
 export type PublicCountryLegal = {
   country: { code: string; name: string };
   profile: PublicLegalProfile | null;
+  authorityLinks?: PublicAuthorityLink[];
   documents: PublicLegalDocumentSummary[];
 };
 

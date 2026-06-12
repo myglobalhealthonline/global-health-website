@@ -404,6 +404,12 @@ const PUBLIC_LEGAL_PROFILE_SELECT = {
   healthcareLicenseDetails: true,
   regulatorName: true,
   regulatorWebsite: true,
+  providerRegistrationLabel: true,
+  providerRegistrationNumber: true,
+  providerRegistrationUrl: true,
+  emergencyNumber: true,
+  emergencyNotice: true,
+  nonEmergencyHealthLine: true,
   companyRegistryUrl: true,
   medicalRegulatorUrl: true,
   healthcareAuthorityUrl: true,
@@ -422,7 +428,25 @@ const PUBLIC_LEGAL_PROFILE_SELECT = {
   consumerRightsText: true,
 } satisfies Prisma.CountryLegalProfileSelect;
 
-/** Legal profile + published document index for one active country. */
+/** Public projection of a CountryAuthorityLink row (official regulator /
+ *  authority with its verification URL). */
+const PUBLIC_AUTHORITY_LINK_SELECT = {
+  name: true,
+  abbreviation: true,
+  url: true,
+  category: true,
+  description: true,
+  showInFooter: true,
+  showInSchema: true,
+} satisfies Prisma.CountryAuthorityLinkSelect;
+
+const publicAuthorityLinksArgs = {
+  where: { isActive: true },
+  orderBy: [{ sortOrder: "asc" as const }, { name: "asc" as const }],
+  select: PUBLIC_AUTHORITY_LINK_SELECT,
+} satisfies Prisma.Country$authorityLinksArgs;
+
+/** Legal profile + published document index + authority links for one active country. */
 export async function getPublicCountryLegal(code: string) {
   try {
     return await prisma.country.findFirst({
@@ -431,6 +455,7 @@ export async function getPublicCountryLegal(code: string) {
         code: true,
         name: true,
         legalProfile: { select: PUBLIC_LEGAL_PROFILE_SELECT },
+        authorityLinks: publicAuthorityLinksArgs,
         legalDocuments: {
           where: { isPublished: true },
           select: {
@@ -492,5 +517,64 @@ export async function getPublicCountryLegalDocument(
     return { country: { code: country.code, name: country.name }, document: doc };
   } catch (error) {
     throw normalizeDbError(error, "Legal document unavailable");
+  }
+}
+
+/**
+ * Lightweight trust payload for the footer trust bar + Organization/
+ * MedicalBusiness schema. SSR'd by the Next layout for every public page in
+ * a `/[country]/[lang]/*` scope, so it is intentionally minimal: provider
+ * registration (ERS for Portugal), emergency signposting, and the country's
+ * official authority links. Returns null when the country is unknown/inactive.
+ */
+export async function getPublicCountryTrust(code: string) {
+  try {
+    const country = await prisma.country.findFirst({
+      where: { code: { equals: code, mode: "insensitive" }, isActive: true },
+      select: {
+        code: true,
+        name: true,
+        legalProfile: {
+          select: {
+            regulatorName: true,
+            regulatorWebsite: true,
+            providerRegistrationLabel: true,
+            providerRegistrationNumber: true,
+            providerRegistrationUrl: true,
+            emergencyNumber: true,
+            emergencyNotice: true,
+            nonEmergencyHealthLine: true,
+            dataProtectionLawName: true,
+          },
+        },
+        authorityLinks: publicAuthorityLinksArgs,
+      },
+    });
+    if (!country) return null;
+    const p = country.legalProfile;
+    return {
+      country: { code: country.code, name: country.name },
+      regulator:
+        p?.regulatorName || p?.regulatorWebsite
+          ? { name: p.regulatorName, url: p.regulatorWebsite }
+          : null,
+      providerRegistration:
+        p?.providerRegistrationNumber || p?.providerRegistrationLabel
+          ? {
+              label: p.providerRegistrationLabel,
+              number: p.providerRegistrationNumber,
+              url: p.providerRegistrationUrl,
+            }
+          : null,
+      emergency: {
+        number: p?.emergencyNumber ?? "112",
+        notice: p?.emergencyNotice ?? null,
+        nonEmergencyLine: p?.nonEmergencyHealthLine ?? null,
+      },
+      dataProtectionLawName: p?.dataProtectionLawName ?? "GDPR",
+      authorityLinks: country.authorityLinks,
+    };
+  } catch (error) {
+    throw normalizeDbError(error, "Trust information unavailable");
   }
 }

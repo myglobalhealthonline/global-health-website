@@ -44,6 +44,7 @@ export function DoctorRegistrationsCard({
     const chamberEntity = String(formData.get("chamberEntity") ?? "").trim() || null;
     const registrationNumber =
       String(formData.get("registrationNumber") ?? "").trim() || null;
+    const division = String(formData.get("division") ?? "").trim() || null;
     const isVerified = formData.get("isVerified") === "on";
     if (!countryId) {
       redirect(
@@ -55,6 +56,7 @@ export function DoctorRegistrationsCard({
     const result = await patchAdminDoctorRegistration(doctorId, countryId, {
       chamberEntity,
       registrationNumber,
+      division,
       isVerified,
     });
     if (!result.ok) {
@@ -121,7 +123,7 @@ export function DoctorRegistrationsCard({
                     </span>
                   )}
                 </div>
-                <div className="grid gap-2 sm:grid-cols-[110px_1fr_auto] sm:items-end">
+                <div className="grid gap-2 sm:grid-cols-[100px_1fr_1fr_auto] sm:items-end">
                   <label className="flex flex-col gap-1">
                     <span className="gh-field-label">Chamber</span>
                     <input
@@ -140,6 +142,17 @@ export function DoctorRegistrationsCard({
                       name="registrationNumber"
                       maxLength={64}
                       defaultValue={row?.registrationNumber ?? ""}
+                      className="gh-input"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1">
+                    <span className="gh-field-label">Division</span>
+                    <input
+                      type="text"
+                      name="division"
+                      maxLength={120}
+                      defaultValue={row?.division ?? ""}
+                      placeholder={country.code.toUpperCase() === "IE" ? "General Division" : ""}
                       className="gh-input"
                     />
                   </label>

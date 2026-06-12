@@ -6,6 +6,9 @@ import { HtmlBodyField } from "./html-body-field";
 type Props = {
   post?: AdminBlogDto | null;
   isCreate?: boolean;
+  /** Doctors selectable as the article's named author / clinical reviewer.
+   *  Linking a doctor emits the Article author/reviewedBy Physician schema. */
+  doctors?: Array<{ id: string; fullName: string }>;
 };
 
 const inputClass =
@@ -13,7 +16,7 @@ const inputClass =
 
 const labelClass = "block text-[12px] font-semibold text-[var(--color-text-muted)]";
 
-export function BlogFields({ post, isCreate }: Props) {
+export function BlogFields({ post, isCreate, doctors = [] }: Props) {
   return (
     <div className="flex flex-col gap-6">
       <AdminCard padding={0}>
@@ -75,6 +78,37 @@ export function BlogFields({ post, isCreate }: Props) {
               defaultValue={post?.authorDisplayName ?? ""}
               className={inputClass}
             />
+          </label>
+        </div>
+      </AdminCard>
+
+      <AdminCard padding={0}>
+        <SectionHeader
+          title="Clinical attribution"
+          description="Link a registered doctor as the named author / clinical reviewer. Drives the Article author/reviewedBy Physician schema (E-E-A-T)."
+        />
+        <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
+          <label className={labelClass}>
+            Author doctor
+            <select name="authorDoctorId" defaultValue={post?.authorDoctorId ?? ""} className={inputClass}>
+              <option value="">— None —</option>
+              {doctors.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.fullName}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className={labelClass}>
+            Reviewer doctor
+            <select name="reviewerDoctorId" defaultValue={post?.reviewerDoctorId ?? ""} className={inputClass}>
+              <option value="">— None —</option>
+              {doctors.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.fullName}
+                </option>
+              ))}
+            </select>
           </label>
         </div>
       </AdminCard>

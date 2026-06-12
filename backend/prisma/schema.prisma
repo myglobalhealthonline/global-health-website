@@ -309,6 +309,11 @@ model Country {
   dataPolicy                 CountryDataPolicy?
   legalProfile               CountryLegalProfile?
   legalDocuments             CountryLegalDocument[]
+  /// Official medical / regulatory / consumer authorities for this market
+  /// (IMC, ERS, OM, HSE, DPC, CNPD, Livro de Reclamações…). Drives the
+  /// footer trust bar, Organization/MedicalBusiness `sameAs`, the legal
+  /// hub list and naturally-placed authority references on content pages.
+  authorityLinks             CountryAuthorityLink[]
   createdAt                  DateTime             @default(now())
   updatedAt                  DateTime             @updatedAt
 }
@@ -427,6 +432,16 @@ model Doctor {
   /// overrides them per locale. fullName + qualifications are NOT
   /// translated (proper name + credentials stay single).
   translations                DoctorTranslation[]
+  /// Confirmed extra professional credentials (FRCP, MICGP, fellowships…)
+  /// with their recognising body + verification URL. Powers profile
+  /// display + Physician `hasCredential`/`recognizedBy` schema. Only
+  /// admin-confirmed entries — never speculative "board-certified" copy.
+  credentials                 DoctorCredential[]
+  /// Blog posts where this doctor is the named author / clinical reviewer
+  /// (inverse of BlogPost.authorDoctorId / reviewerDoctorId). Drives
+  /// Article author/reviewedBy Physician schema for E-E-A-T.
+  authoredBlogPosts           BlogPost[]            @relation("BlogAuthorDoctor")
+  reviewedBlogPosts           BlogPost[]            @relation("BlogReviewerDoctor")
   /// Medical notes this doctor has authored on patient appointments.
   authoredMedicalNotes        MedicalNote[]         @relation("MedicalNoteAuthor")
   confidentialityAgreements   DoctorConfidentialityAgreement[]
@@ -434,6 +449,27 @@ model Doctor {
   updatedAt                   DateTime              @updatedAt
 
   @@unique([countryId, slug])
+}
+
+/// Confirmed professional credential held by a doctor, beyond the core
+/// council registration (which lives on DoctorCountry). e.g. "FRCP" issued
+/// by the Royal College of Physicians of Ireland, "MICGP" by the ICGP.
+/// `countryCode` optionally scopes the credential to one market; null =
+/// show on every roster the doctor appears on.
+model DoctorCredential {
+  id          String   @id @default(cuid())
+  doctorId    String
+  countryCode String?
+  label       String
+  bodyName    String
+  bodyUrl     String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  doctor      Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([doctorId])
 }
 
 /// Per-locale display content for a Doctor. One stable Doctor record per
@@ -528,6 +564,10 @@ model DoctorCountry {
   chamberEntity      String?
   /// Doctor's license number issued by `chamberEntity` for this country.
   registrationNumber String?
+  /// Register division/scope where applicable (e.g. Irish Medical Council
+  /// "General Division" / "Specialist Division"). Surfaced on doctor cards
+  /// and profiles so patients see the exact register, not just a number.
+  division           String?
   /// Admin marks the registration verified after sighting documentation;
   /// PDFs print "(unverified)" if `isVerified = false` so clinicians
   /// don't accidentally issue Rx under an unconfirmed credential.
@@ -1674,6 +1714,13 @@ model BlogPost {
   category            String?
   authorDisplayName   String?
   reviewerDisplayName String?
+  /// Optional link to a real Doctor as the named author / clinical reviewer.
+  /// When set, the public Article schema emits a Physician author/reviewedBy
+  /// block with the doctor's council registration + recognisedBy authority,
+  /// which is what earns AI-search citation authority. Free-text display
+  /// names above remain the fallback when no doctor is linked.
+  authorDoctorId      String?
+  reviewerDoctorId    String?
   coverAssetId        String?
   seoTitle            String?
   seoDescription      String?
@@ -1682,6 +1729,8 @@ model BlogPost {
   editorialChecklist  Json?
   isActive            Boolean       @default(true)
   country             Country?          @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  authorDoctor        Doctor?           @relation("BlogAuthorDoctor", fields: [authorDoctorId], references: [id], onDelete: SetNull)
+  reviewerDoctor      Doctor?           @relation("BlogReviewerDoctor", fields: [reviewerDoctorId], references: [id], onDelete: SetNull)
   coverAsset          Asset?            @relation("BlogPostCover", fields: [coverAssetId], references: [id], onDelete: SetNull)
   translations        BlogTranslation[]
   countries           BlogPostCountry[]
@@ -2414,6 +2463,21 @@ model CountryLegalProfile {
   regulatorName              String?
   regulatorWebsite           String?
 
+  // Provider-level healthcare registration shown prominently in the footer
+  // trust bar (e.g. Portugal ERS: "Registado na Entidade Reguladora da
+  // Saúde" / "E179287" / ers.pt). Ireland has no equivalent provider
+  // registration so these stay null there.
+  providerRegistrationLabel  String?
+  providerRegistrationNumber String?
+  providerRegistrationUrl    String?
+
+  // Emergency + non-emergency health signposting for the footer trust bar
+  // and medical disclaimers. `emergencyNumber` defaults to the EU-wide 112;
+  // `nonEmergencyHealthLine` carries lines like "SNS 24: 1414" (Portugal).
+  emergencyNumber            String?  @default("112")
+  emergencyNotice            String?
+  nonEmergencyHealthLine     String?
+
   // Legal backlinks
   companyRegistryUrl         String?
   medicalRegulatorUrl        String?
@@ -2438,6 +2502,48 @@ model CountryLegalProfile {
 
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
+}
+
+/// Category of an official authority so the frontend can group + place links
+/// correctly (footer trust bar, mental-health helplines on psychiatry pages,
+/// medicines body on prescription pages, etc.) and so schema `sameAs` only
+/// includes genuine regulators.
+enum AuthorityCategory {
+  MEDICAL_REGULATOR
+  DOCTOR_REGISTRY
+  HEALTH_AUTHORITY
+  DATA_PROTECTION
+  MEDICINES
+  PROFESSIONAL_BODY
+  CONSUMER_PROTECTION
+  MENTAL_HEALTH
+  COMPLAINTS
+  EMERGENCY
+  OTHER
+}
+
+/// One official medical / regulatory / consumer authority for a country, with
+/// its public verification URL. Replaces the single-slot URL fields on
+/// CountryLegalProfile for the many-authority markets (Ireland, Portugal).
+model CountryAuthorityLink {
+  id           String            @id @default(cuid())
+  countryId    String
+  country      Country           @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  name         String
+  abbreviation String?
+  url          String
+  category     AuthorityCategory @default(OTHER)
+  description  String?
+  /// Show in the persistent footer trust bar (mandatory regulators only).
+  showInFooter Boolean           @default(false)
+  /// Include in Organization/MedicalBusiness JSON-LD `sameAs`.
+  showInSchema Boolean           @default(true)
+  sortOrder    Int               @default(0)
+  isActive     Boolean           @default(true)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([countryId, isActive])
 }
 
 enum LegalDocumentType {

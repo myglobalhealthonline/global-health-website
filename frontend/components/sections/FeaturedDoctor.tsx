@@ -28,7 +28,11 @@ type DoctorSpotlightProps = {
   name: string;
   title: string;
   imcRegistration?: string;
+  registrationDivision?: string;
+  registrationVerified?: boolean;
   medicalRegistrationUrl?: string;
+  verificationUrl?: string;
+  credentials?: Array<{ label: string; bodyName: string; bodyUrl?: string }>;
   languages?: string[];
   bio: string;
   imageSrc?: string | null;
@@ -220,21 +224,30 @@ export function FeaturedDoctor({
                     strokeWidth={1.5}
                     aria-hidden
                   />
-                  {doctor.medicalRegistrationUrl ? (
+                  <span className="font-semibold" style={{ color: body }}>
+                    {doctor.imcRegistration}
+                    {doctor.registrationDivision ? ` · ${doctor.registrationDivision}` : ""}
+                  </span>
+                  {doctor.verificationUrl ?? doctor.medicalRegistrationUrl ? (
                     <a
-                      href={doctor.medicalRegistrationUrl}
+                      href={doctor.verificationUrl ?? doctor.medicalRegistrationUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-semibold transition-opacity hover:opacity-75 motion-reduce:transition-none"
-                      style={{ color: body }}
+                      className="font-semibold underline underline-offset-2 transition-opacity hover:opacity-75 motion-reduce:transition-none"
+                      style={{ color: iconAccent }}
                     >
-                      {doctor.imcRegistration}
+                      Verify ↗
                     </a>
-                  ) : (
-                    <span className="font-semibold" style={{ color: body }}>
-                      {doctor.imcRegistration}
-                    </span>
-                  )}
+                  ) : null}
+                </span>
+              )}
+
+              {(doctor.credentials ?? []).length > 0 && (
+                <span className="inline-flex items-center gap-1.5 text-[13px]">
+                  <Sparkles className="size-4 shrink-0" style={{ color: iconAccent }} strokeWidth={1.5} aria-hidden />
+                  <span className="font-semibold" style={{ color: body }}>
+                    {(doctor.credentials ?? []).map((c) => c.label).join(" · ")}
+                  </span>
                 </span>
               )}
 

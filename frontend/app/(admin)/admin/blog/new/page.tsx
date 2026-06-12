@@ -3,7 +3,7 @@ import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
 import { revalidateTag } from "next/cache";
 import { ArrowLeft } from "lucide-react";
-import { postAdminBlogPost } from "@/lib/admin/admin-api";
+import { postAdminBlogPost, fetchAdminDoctors } from "@/lib/admin/admin-api";
 import { PUBLIC_BLOG_TAG } from "@/lib/content/get-public-blog";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
 import { BlogFields } from "../_components/blog-fields";
@@ -17,6 +17,10 @@ type PageProps = {
 
 export default async function AdminNewBlogPage({ searchParams }: PageProps) {
   const messages = searchParams ? await searchParams : {};
+  const doctorsRes = await fetchAdminDoctors({ pageSize: "200" });
+  const doctors = doctorsRes.ok
+    ? doctorsRes.data.items.map((d) => ({ id: d.id, fullName: d.fullName }))
+    : [];
 
   async function createBlogAction(formData: FormData) {
     "use server";
@@ -55,7 +59,7 @@ export default async function AdminNewBlogPage({ searchParams }: PageProps) {
       ) : null}
 
       <form action={createBlogAction} className="mt-6 flex flex-col gap-6">
-        <BlogFields isCreate />
+        <BlogFields isCreate doctors={doctors} />
         <div className="flex items-center justify-end gap-2">
           <Btn href="/admin/blog" variant="ghost" size="md">
             Cancel

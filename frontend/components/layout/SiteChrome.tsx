@@ -5,11 +5,13 @@ import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import { CountryTrustBar } from "@/components/sections/CountryTrustBar";
 import { EMERGENCY_NOTICE } from "@/lib/constants";
 import type { SiteNavigationData } from "@/data/navigation";
 import type { CountryConfig } from "@/data/countries";
 import type { LocaleCode } from "@/lib/i18n/types";
 import type { PublicCountryFooter } from "@/lib/content/get-country-footers";
+import type { CountryTrust } from "@/lib/content/get-country-trust";
 
 type Props = {
   children: ReactNode;
@@ -22,6 +24,10 @@ type Props = {
   /** Per-country footer overrides keyed by lowercase country code.
    *  Missing or null entries fall back to the global defaults. */
   countryFooters?: Record<string, PublicCountryFooter | null>;
+  /** Active country's medical-authority trust signals. When present the
+   *  footer renders the country trust bar (regulator, provider registration,
+   *  emergency) instead of the generic emergency disclaimer. */
+  countryTrust?: CountryTrust | null;
   initialLastCountry?: { slug: string; lang: string } | null;
   countries: CountryConfig[];
   /** Locale the server actually rendered this request in. */
@@ -36,6 +42,7 @@ export function SiteChrome({
   authUser,
   countryFeatures,
   countryFooters,
+  countryTrust,
   initialLastCountry,
   countries,
   currentLocale,
@@ -63,7 +70,9 @@ export function SiteChrome({
       <main id="main-content" className="grow">
         {children}
       </main>
-      {isGatewayHome ? null : (
+      {isGatewayHome ? null : countryTrust ? (
+        <CountryTrustBar trust={countryTrust} locale={currentLocale} />
+      ) : (
         <aside
           aria-label="Medical disclaimer"
           style={{

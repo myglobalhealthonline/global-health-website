@@ -300,6 +300,51 @@ export default async function CountryLegalIndexPage({
           {legal?.profile ? (
             <CompanySection profile={legal.profile} countryName={config.name} t={t} />
           ) : null}
+
+          {legal?.authorityLinks && legal.authorityLinks.length > 0 ? (
+            <section>
+              <h2 className="text-xl font-extrabold tracking-[-0.01em] text-[var(--color-text-primary)]">
+                Regulatory &amp; professional authorities
+              </h2>
+              <p className="mt-2 text-[15px] text-[var(--color-text-muted)]">
+                Official bodies governing {config.name} medical practice, data protection and
+                consumer rights. You can verify our registrations directly with each authority.
+              </p>
+              <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                {legal.authorityLinks.map((a) => (
+                  <li key={a.url}>
+                    <a
+                      href={a.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-[var(--color-brand-primary)] underline underline-offset-2"
+                    >
+                      {a.abbreviation ? `${a.name} (${a.abbreviation})` : a.name}
+                    </a>
+                    {a.description ? (
+                      <span className="block text-[13px] text-[var(--color-text-muted)]">{a.description}</span>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          {legal?.profile?.emergencyNotice || legal?.profile?.nonEmergencyHealthLine ? (
+            <section
+              className="rounded-2xl p-5"
+              style={{ background: "var(--color-background-soft)", border: "1px solid rgba(29,75,54,0.12)" }}
+            >
+              <h2 className="text-[15px] font-extrabold uppercase tracking-[0.08em] text-[var(--color-brand-primary)]">
+                Emergencies
+              </h2>
+              <p className="mt-2 text-[15px] text-[var(--color-text-body)]">
+                {legal.profile.emergencyNotice ??
+                  `In a medical emergency call ${legal.profile.emergencyNumber ?? "112"} immediately. Online consultations are not suitable for emergencies.`}
+                {legal.profile.nonEmergencyHealthLine ? ` · ${legal.profile.nonEmergencyHealthLine}` : ""}
+              </p>
+            </section>
+          ) : null}
         </div>
       </section>
     </>

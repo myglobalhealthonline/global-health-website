@@ -3,6 +3,7 @@ import { prisma } from "../../db/prisma.js";
 export type DoctorRegistrationInput = {
   chamberEntity?: string | null;
   registrationNumber?: string | null;
+  division?: string | null;
   isVerified?: boolean;
 };
 
@@ -14,6 +15,7 @@ export type DoctorRegistrationRow = {
   countryName: string;
   chamberEntity: string | null;
   registrationNumber: string | null;
+  division: string | null;
   isVerified: boolean;
   verifiedAt: string | null;
   active: boolean;
@@ -39,6 +41,7 @@ export async function listDoctorRegistrations(
       countryId: true,
       chamberEntity: true,
       registrationNumber: true,
+      division: true,
       isVerified: true,
       verifiedAt: true,
       active: true,
@@ -54,6 +57,7 @@ export async function listDoctorRegistrations(
     countryName: r.country.name,
     chamberEntity: r.chamberEntity,
     registrationNumber: r.registrationNumber,
+    division: r.division,
     isVerified: r.isVerified,
     verifiedAt: r.verifiedAt?.toISOString() ?? null,
     active: r.active,
@@ -95,6 +99,7 @@ export async function upsertDoctorRegistration(
 
   const chamberEntity = normalizeString(input.chamberEntity, 64);
   const registrationNumber = normalizeString(input.registrationNumber, 64);
+  const division = normalizeString(input.division, 120);
 
   // Only stamp verifiedAt when transitioning *to* verified — keeps the
   // historical stamp stable if admin re-edits the same row without
@@ -120,6 +125,7 @@ export async function upsertDoctorRegistration(
     update: {
       chamberEntity,
       registrationNumber,
+      division,
       isVerified,
       verifiedAt,
       // Re-activate the row when a registration is set. Profile-save
@@ -134,6 +140,7 @@ export async function upsertDoctorRegistration(
       countryId,
       chamberEntity,
       registrationNumber,
+      division,
       isVerified,
       verifiedAt,
       active: true,
@@ -144,6 +151,7 @@ export async function upsertDoctorRegistration(
       countryId: true,
       chamberEntity: true,
       registrationNumber: true,
+      division: true,
       isVerified: true,
       verifiedAt: true,
       active: true,
@@ -158,6 +166,7 @@ export async function upsertDoctorRegistration(
     countryName: country.name,
     chamberEntity: saved.chamberEntity,
     registrationNumber: saved.registrationNumber,
+    division: saved.division,
     isVerified: saved.isVerified,
     verifiedAt: saved.verifiedAt?.toISOString() ?? null,
     active: saved.active,
@@ -181,6 +190,7 @@ export async function getDoctorRegistrationByCountryCode(
       countryId: true,
       chamberEntity: true,
       registrationNumber: true,
+      division: true,
       isVerified: true,
       verifiedAt: true,
       active: true,
@@ -196,6 +206,7 @@ export async function getDoctorRegistrationByCountryCode(
     countryName: row.country.name,
     chamberEntity: row.chamberEntity,
     registrationNumber: row.registrationNumber,
+    division: row.division,
     isVerified: row.isVerified,
     verifiedAt: row.verifiedAt?.toISOString() ?? null,
     active: row.active,

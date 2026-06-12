@@ -12,7 +12,11 @@ type Doctor = {
   name: string;
   title: string;
   imcRegistration?: string;
+  registrationDivision?: string;
+  registrationVerified?: boolean;
+  credentials?: Array<{ label: string; bodyName: string; bodyUrl?: string }>;
   medicalRegistrationUrl?: string;
+  verificationUrl?: string;
   country?: string;
   languages?: string[];
   whatsappNumber?: string;
@@ -183,7 +187,11 @@ export function DoctorTeamTemplate({
                       name={d.name}
                       title={d.title}
                       imcRegistration={d.imcRegistration}
+                      registrationDivision={d.registrationDivision}
+                      registrationVerified={d.registrationVerified}
+                      credentials={d.credentials}
                       medicalRegistrationUrl={d.medicalRegistrationUrl}
+                      verificationUrl={d.verificationUrl}
                       languages={d.languages}
                       whatsappNumber={d.whatsappNumber}
                       instagramUrl={d.instagramUrl}

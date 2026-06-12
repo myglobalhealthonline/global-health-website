@@ -31,7 +31,17 @@ type DoctorCardProps = {
   name: string;
   title: string;
   imcRegistration?: string;
+  /** Register division/scope (IMC General/Specialist Division). */
+  registrationDivision?: string;
+  /** Admin-verified registration (sighted documentation). */
+  registrationVerified?: boolean;
   medicalRegistrationUrl?: string;
+  /** Country regulator's public verification page (medicalcouncil.ie,
+   *  ordemdosmedicos.pt). Preferred over medicalRegistrationUrl for the
+   *  "Verify" link so every card points patients at the official register. */
+  verificationUrl?: string;
+  /** Confirmed extra professional credentials (FRCP, fellowships). */
+  credentials?: Array<{ label: string; bodyName: string; bodyUrl?: string }>;
   country?: string;
   languages?: string[];
   whatsappNumber?: string;
@@ -67,7 +77,11 @@ export function DoctorCard({
   name,
   title,
   imcRegistration,
+  registrationDivision,
+  registrationVerified,
   medicalRegistrationUrl,
+  verificationUrl,
+  credentials = [],
   country,
   languages = [],
   whatsappNumber,
@@ -224,27 +238,71 @@ export function DoctorCard({
                   className="text-[10.5px] font-bold uppercase tracking-[0.13em]"
                   style={{ color: "var(--dc-muted)" }}
                 >
-                  Registration
+                  Registration{registrationVerified ? " · Verified" : ""}
                 </p>
-                {medicalRegistrationUrl ? (
+                <p
+                  className="text-[13px] font-semibold"
+                  style={{ color: "var(--dc-ink)" }}
+                >
+                  {imcRegistration}
+                </p>
+                {registrationDivision ? (
+                  <p className="text-[12px]" style={{ color: "var(--dc-muted)" }}>
+                    {registrationDivision}
+                  </p>
+                ) : null}
+                {verificationUrl || medicalRegistrationUrl ? (
                   <a
-                    href={medicalRegistrationUrl}
+                    href={verificationUrl ?? medicalRegistrationUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="relative z-20 text-[13px] font-semibold transition-opacity hover:opacity-75"
+                    className="relative z-20 mt-0.5 inline-flex items-center gap-1 text-[12px] font-semibold underline underline-offset-2 transition-opacity hover:opacity-75"
                     style={{ color: "var(--dc-ink)" }}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {imcRegistration}
+                    Verify registration ↗
                   </a>
-                ) : (
-                  <p
-                    className="text-[13px] font-semibold"
-                    style={{ color: "var(--dc-ink)" }}
-                  >
-                    {imcRegistration}
-                  </p>
-                )}
+                ) : null}
+              </div>
+            </div>
+          ) : null}
+
+          {credentials.length > 0 ? (
+            <div className="flex items-start gap-3">
+              <IconBox>
+                <ShieldCheck
+                  className="size-[15px]"
+                  style={{ color: "var(--dc-ink)" }}
+                  strokeWidth={1.6}
+                  aria-hidden
+                />
+              </IconBox>
+              <div className="min-w-0">
+                <p
+                  className="text-[10.5px] font-bold uppercase tracking-[0.13em]"
+                  style={{ color: "var(--dc-muted)" }}
+                >
+                  Credentials
+                </p>
+                <ul className="space-y-0.5">
+                  {credentials.map((c) => (
+                    <li key={c.label} className="text-[13px] font-semibold" style={{ color: "var(--dc-ink)" }}>
+                      {c.bodyUrl ? (
+                        <a
+                          href={c.bodyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="relative z-20 underline underline-offset-2 transition-opacity hover:opacity-75"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {c.label}
+                        </a>
+                      ) : (
+                        c.label
+                      )}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           ) : null}

@@ -3,7 +3,7 @@ import type { LocaleCode } from "@/lib/i18n/types";
 
 export type CountryRuntimeContext = {
   country: CountryConfig;
-  reason: "domain" | "legacy-path" | "fallback";
+  reason: "path-slug" | "domain" | "legacy-path" | "fallback";
 };
 
 export type ResolveCountryInput = {

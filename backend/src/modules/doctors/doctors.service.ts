@@ -243,9 +243,18 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
           select: {
             chamberEntity: true,
             registrationNumber: true,
+            division: true,
             isVerified: true,
           },
           take: 1,
+        },
+        // Confirmed extra credentials (FRCP, MICGP, fellowships) scoped to
+        // this country or global (countryCode null). Drives profile display
+        // + Physician hasCredential/recognizedBy schema.
+        credentials: {
+          where: { isActive: true },
+          orderBy: [{ sortOrder: "asc" }, { label: "asc" }],
+          select: { label: true, bodyName: true, bodyUrl: true, countryCode: true },
         },
         // Services the doctor is bookable for in this country. Doctor
         // profile page uses this to scope the service list shown next
@@ -274,7 +283,7 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
         d.country.defaultLocale,
       );
       return {
-        ...overrideImcRegistrationFromCountry(merged),
+        ...overrideImcRegistrationFromCountry(merged, countryCode),
         isFeatured: d.id === featuredId,
       };
     });
@@ -283,26 +292,56 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
   }
 }
 
+type DoctorCredentialRow = {
+  label: string;
+  bodyName: string;
+  bodyUrl: string | null;
+  countryCode: string | null;
+};
+
 /**
  * Phase 2 shim: the legacy `Doctor.imcRegistration` column is gone.
  * Every public payload that used to surface it now gets the value
  * computed from `DoctorCountry.registrationNumber` for the country
  * being viewed. Frontend display code stays on the legacy field name
  * — only the data source moved.
+ *
+ * Trust-authority extension: also surfaces the chamber (IMC/OM/…), the
+ * register division (IMC General/Specialist), the verified flag, and the
+ * doctor's confirmed extra credentials filtered to this country (or global).
  */
 function overrideImcRegistrationFromCountry<
   T extends {
     additionalCountries?: Array<{
       chamberEntity: string | null;
       registrationNumber: string | null;
+      division?: string | null;
       isVerified: boolean;
     }>;
+    credentials?: DoctorCredentialRow[];
   },
->(doctor: T): T & { imcRegistration: string | null } {
+>(
+  doctor: T,
+  countryCode: string,
+): T & {
+  imcRegistration: string | null;
+  registrationChamber: string | null;
+  registrationDivision: string | null;
+  registrationVerified: boolean;
+  credentials: DoctorCredentialRow[];
+} {
   const link = doctor.additionalCountries?.[0];
+  const code = countryCode.toUpperCase();
+  const credentials = (doctor.credentials ?? []).filter(
+    (c) => !c.countryCode || c.countryCode.toUpperCase() === code,
+  );
   return {
     ...doctor,
     imcRegistration: link?.registrationNumber ?? null,
+    registrationChamber: link?.chamberEntity ?? null,
+    registrationDivision: link?.division ?? null,
+    registrationVerified: link?.isVerified ?? false,
+    credentials,
   };
 }
 
@@ -354,9 +393,18 @@ export async function getDoctorByCountryAndSlug(
           select: {
             chamberEntity: true,
             registrationNumber: true,
+            division: true,
             isVerified: true,
           },
           take: 1,
+        },
+        // Confirmed extra credentials (FRCP, MICGP, fellowships) scoped to
+        // this country or global (countryCode null). Drives profile display
+        // + Physician hasCredential/recognizedBy schema.
+        credentials: {
+          where: { isActive: true },
+          orderBy: [{ sortOrder: "asc" }, { label: "asc" }],
+          select: { label: true, bodyName: true, bodyUrl: true, countryCode: true },
         },
         // Active service assignments scoped to the country being viewed.
         assignedServices: {
@@ -391,7 +439,7 @@ export async function getDoctorByCountryAndSlug(
       locale ?? doctor.country.defaultLocale,
       doctor.country.defaultLocale,
     );
-    return overrideImcRegistrationFromCountry(merged);
+    return overrideImcRegistrationFromCountry(merged, countryCode);
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }

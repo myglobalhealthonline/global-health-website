@@ -30,7 +30,13 @@ type DoctorProfileTemplateProps = {
     specialties: string[];
     imageLabel: string;
     imcRegistration?: string;
+    registrationChamber?: string;
+    registrationDivision?: string;
+    registrationVerified?: boolean;
     medicalRegistrationUrl?: string;
+    verificationUrl?: string;
+    regulatorName?: string | null;
+    credentials?: Array<{ label: string; bodyName: string; bodyUrl?: string }>;
   };
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
   profileImageSrc?: string;
@@ -267,17 +273,30 @@ export function DoctorProfileTemplate({
                 ) : null}
               </div>
 
-              {/* Registration number */}
+              {/* Registration: regulator + number + division + verified */}
               {profile.imcRegistration ? (
-                <p
-                  className="mt-5 text-[13px]"
-                  style={{ color: "rgba(255,255,255,0.45)" }}
-                >
-                  <span style={{ color: "rgba(255,255,255,0.28)" }}>Registration No.</span>{" "}
-                  <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>
-                    {profile.imcRegistration}
-                  </span>
-                </p>
+                <div className="mt-5 space-y-1 text-[13px]" style={{ color: "rgba(255,255,255,0.45)" }}>
+                  <p>
+                    <span style={{ color: "rgba(255,255,255,0.28)" }}>
+                      {profile.regulatorName ? `Registered with ${profile.regulatorName}` : "Registration No."}
+                      {profile.registrationVerified ? " · Verified" : ""}
+                    </span>{" "}
+                    <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>
+                      {profile.imcRegistration}
+                    </span>
+                    {profile.registrationDivision ? (
+                      <span style={{ color: "rgba(255,255,255,0.55)" }}> · {profile.registrationDivision}</span>
+                    ) : null}
+                  </p>
+                  {(profile.credentials ?? []).length > 0 ? (
+                    <p>
+                      <span style={{ color: "rgba(255,255,255,0.28)" }}>Credentials:</span>{" "}
+                      <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>
+                        {(profile.credentials ?? []).map((c) => c.label).join(" · ")}
+                      </span>
+                    </p>
+                  ) : null}
+                </div>
               ) : null}
 
               {/* CTA buttons */}
@@ -287,15 +306,15 @@ export function DoctorProfileTemplate({
                   {hero.primaryCta.label}
                 </Link>
 
-                {profile.medicalRegistrationUrl ? (
+                {profile.verificationUrl ?? profile.medicalRegistrationUrl ? (
                   <a
-                    href={profile.medicalRegistrationUrl}
+                    href={profile.verificationUrl ?? profile.medicalRegistrationUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="gh2-btn-ghost"
                   >
                     <ExternalLink className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
-                    Medical registration
+                    Verify registration
                   </a>
                 ) : hero.secondaryCta ? (
                   <Link href={hero.secondaryCta.href} className="gh2-btn-ghost">

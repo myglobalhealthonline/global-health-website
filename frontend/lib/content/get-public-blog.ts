@@ -18,10 +18,23 @@ export type BlogListItem = {
   coverImageAlt: string | null;
 };
 
+/** Named clinician linked as a post's author / clinical reviewer. */
+export type BlogDoctor = {
+  name: string;
+  slug: string;
+  countryCode: string | null;
+  countrySlug: string | null;
+  registrationNumber: string | null;
+  chamberEntity: string | null;
+};
+
 export type BlogPostFull = BlogListItem & {
   body: string;
   seoTitle: string | null;
   seoDescription: string | null;
+  reviewer: string | null;
+  authorDoctor: BlogDoctor | null;
+  reviewerDoctor: BlogDoctor | null;
 };
 
 type ApiBlogPost = {
@@ -31,14 +44,33 @@ type ApiBlogPost = {
   body?: unknown;
   category?: unknown;
   author?: unknown;
+  reviewer?: unknown;
   publishedAt?: unknown;
   coverImageUrl?: unknown;
   coverImageAlt?: unknown;
   seoTitle?: unknown;
   seoDescription?: unknown;
+  authorDoctor?: unknown;
+  reviewerDoctor?: unknown;
 };
 
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
+
+function normalizeBlogDoctor(raw: unknown): BlogDoctor | null {
+  if (!raw || typeof raw !== "object") return null;
+  const r = raw as Record<string, unknown>;
+  const name = str(r.name);
+  const slug = str(r.slug);
+  if (!name || !slug) return null;
+  return {
+    name,
+    slug,
+    countryCode: str(r.countryCode) || null,
+    countrySlug: str(r.countrySlug) || null,
+    registrationNumber: str(r.registrationNumber) || null,
+    chamberEntity: str(r.chamberEntity) || null,
+  };
+}
 
 /** Rough reading-time estimate from the HTML body (200 wpm, min 1). */
 function readingTimeFromHtml(html: string): number {
@@ -67,6 +99,9 @@ function normalizeApiPost(raw: ApiBlogPost): BlogPostFull | null {
     coverImageAlt: str(raw.coverImageAlt) || null,
     seoTitle: str(raw.seoTitle) || null,
     seoDescription: str(raw.seoDescription) || null,
+    reviewer: str(raw.reviewer) || null,
+    authorDoctor: normalizeBlogDoctor(raw.authorDoctor),
+    reviewerDoctor: normalizeBlogDoctor(raw.reviewerDoctor),
   };
 }
 

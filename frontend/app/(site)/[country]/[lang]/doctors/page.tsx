@@ -5,6 +5,8 @@ import { FeaturedDoctor } from "@/components/sections/FeaturedDoctor";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { countries, getCountryByCode } from "@/data/countries";
 import { getCountryDoctors } from "@/lib/content/get-country-collections";
+import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
+import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import {
@@ -102,10 +104,12 @@ export default async function CountryLangDoctorsPage({
 
   const { common } = loadLocaleBundle(lang as LocaleCode);
 
-  const [doctors, { record: rawPage, disabled: pageDisabled }] = await Promise.all([
+  const [doctors, { record: rawPage, disabled: pageDisabled }, countryTrust] = await Promise.all([
     getCountryDoctors(code, lang),
     getPublicPage(code, "DOCTORS_INDEX", lang as PublicLocale),
+    getCountryTrust(code),
   ]);
+  const verifyUrl = doctorVerificationUrl(countryTrust) ?? undefined;
 
   const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
 
@@ -155,7 +159,11 @@ export default async function CountryLangDoctorsPage({
     name: d.fullName,
     title: d.title,
     imcRegistration: d.imcRegistration,
+    registrationDivision: d.registrationDivision,
+    registrationVerified: d.registrationVerified,
+    credentials: d.credentials,
     medicalRegistrationUrl: d.medicalRegistrationUrl,
+    verificationUrl: verifyUrl,
     languages: d.languages,
     whatsappNumber: d.whatsappNumber,
     instagramUrl: d.instagramUrl,
@@ -237,7 +245,11 @@ export default async function CountryLangDoctorsPage({
                   name: featured.fullName,
                   title: featured.title,
                   imcRegistration: featured.imcRegistration,
+                  registrationDivision: featured.registrationDivision,
+                  registrationVerified: featured.registrationVerified,
                   medicalRegistrationUrl: featured.medicalRegistrationUrl,
+                  verificationUrl: verifyUrl,
+                  credentials: featured.credentials,
                   languages: featured.languages,
                   bio: featured.bio ?? "",
                   imageSrc: featured.imageSrc ?? null,
@@ -262,6 +274,7 @@ export default async function CountryLangDoctorsPage({
           />
         }
       />
+      {countryTrust ? <VerifiedProfessionals trust={countryTrust} locale={lang} /> : null}
       <RichBodySection html={page?.body} />
     </>
   );

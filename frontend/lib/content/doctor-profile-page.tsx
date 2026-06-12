@@ -18,7 +18,10 @@ import { buildBookHref } from "@/lib/routing/book-href";
 import {
   getCountryDoctors,
   getCountryServices,
+  type CountryDoctorCard,
 } from "@/lib/content/get-country-collections";
+import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
+import type { CountryTrust } from "@/lib/content/get-country-trust";
 import { formatPriceRounded } from "@/lib/format-currency";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -124,13 +127,18 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
     currencyCode: string | null;
     imageSrc: string | null;
   }> = [];
+  let profileDoc: CountryDoctorCard | undefined;
+  let countryTrust: CountryTrust | null = null;
   if (code) {
-    const [doctors, generals, specialists] = await Promise.all([
+    const [doctors, generals, specialists, trust] = await Promise.all([
       getCountryDoctors(code, lang),
       getCountryServices(code, "GENERAL", lang),
       getCountryServices(code, "SPECIALIST", lang),
+      getCountryTrust(code),
     ]);
+    countryTrust = trust;
     const doc = doctors.find((d) => d.slug === doctorSlug);
+    profileDoc = doc;
     if (doc) {
       const assigned = new Set(doc.assignedServiceIds);
       for (const s of [...generals, ...specialists]) {
@@ -138,6 +146,13 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
       }
     }
   }
+
+  // Regulator + verification URL for this market — drives the Physician
+  // schema recognizedBy block and the profile's "Verify registration" link.
+  const regulator = countryTrust?.regulator?.name
+    ? { name: countryTrust.regulator.name, url: countryTrust.regulator.url }
+    : null;
+  const verifyUrl = doctorVerificationUrl(countryTrust) ?? data.profile.medicalRegistrationUrl ?? undefined;
 
   const hasServices = assignedServices.length > 0;
   // First-name-only label so the CTA reads as "Pick a time with Anna"
@@ -156,6 +171,15 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
 
   const templateData = {
     ...data,
+    profile: {
+      ...data.profile,
+      registrationChamber: profileDoc?.registrationChamber,
+      registrationDivision: profileDoc?.registrationDivision,
+      registrationVerified: profileDoc?.registrationVerified,
+      verificationUrl: verifyUrl,
+      credentials: profileDoc?.credentials,
+      regulatorName: regulator?.name ?? null,
+    },
     hero: {
       ...data.hero,
       primaryCta: {
@@ -184,6 +208,11 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
             url: profileHref,
             imageSrc: data.profileImageSrc,
             languages: data.profile.languages,
+            registrationNumber: profileDoc?.registrationNumber ?? null,
+            chamber: profileDoc?.registrationChamber ?? null,
+            division: profileDoc?.registrationDivision ?? null,
+            regulator,
+            credentials: profileDoc?.credentials,
           }),
           breadcrumbJsonLd([
             { name: "Home", url: "/" },

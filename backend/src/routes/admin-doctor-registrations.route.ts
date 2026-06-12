@@ -26,6 +26,7 @@ const upsertBodySchema = z
   .object({
     chamberEntity: z.string().trim().max(64).optional().nullable(),
     registrationNumber: z.string().trim().max(64).optional().nullable(),
+    division: z.string().trim().max(120).optional().nullable(),
     isVerified: z.boolean().optional(),
   })
   .strict();

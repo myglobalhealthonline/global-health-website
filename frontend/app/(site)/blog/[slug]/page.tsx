@@ -1,13 +1,35 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Clock, User, Calendar } from "lucide-react";
+import { Clock, User, Calendar, BadgeCheck } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
-import { getBlogPost } from "@/lib/content/get-public-blog";
+import { getBlogPost, type BlogDoctor } from "@/lib/content/get-public-blog";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { GH2CompactHero } from "@/components/sections/GH2PagePrimitives";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { articleJsonLd } from "@/lib/seo/structured-data";
+import { getSiteUrl } from "@/lib/seo/site-url";
+import { getCountryTrust } from "@/lib/content/get-country-trust";
 
 type Props = { params: Promise<{ slug: string }> };
+
+/** Build a Physician schema input for a blog author/reviewer doctor, with the
+ *  recognisedBy regulator resolved from the doctor's country trust data. */
+async function blogPhysicianInput(doctor: BlogDoctor | null) {
+  if (!doctor) return null;
+  const trust = doctor.countryCode ? await getCountryTrust(doctor.countryCode) : null;
+  const profileUrl =
+    doctor.countrySlug ? `/${doctor.countrySlug}/en/doctors/${doctor.slug}` : `/blog`;
+  return {
+    name: doctor.name,
+    url: profileUrl,
+    registrationNumber: doctor.registrationNumber,
+    chamber: doctor.chamberEntity,
+    regulator: trust?.regulator?.name
+      ? { name: trust.regulator.name, url: trust.regulator.url }
+      : null,
+  };
+}
 
 export async function generateStaticParams() {
   // All posts are admin-managed (DB) and render on demand.
@@ -35,8 +57,33 @@ export default async function BlogPostPage({ params }: Props) {
     year: "numeric",
   });
 
+  const [authorPhysician, reviewerPhysician] = await Promise.all([
+    blogPhysicianInput(post.authorDoctor),
+    blogPhysicianInput(post.reviewerDoctor),
+  ]);
+
+  // "Clinically reviewed by Dr X" — prefer the linked reviewer doctor (with
+  // a profile link), fall back to the free-text reviewer name.
+  const reviewerName = post.reviewerDoctor?.name ?? post.reviewer;
+  const reviewerHref =
+    post.reviewerDoctor?.countrySlug
+      ? `/${post.reviewerDoctor.countrySlug}/en/doctors/${post.reviewerDoctor.slug}`
+      : null;
+
   return (
     <>
+      <JsonLd
+        data={articleJsonLd({
+          title: post.title,
+          description: post.seoDescription ?? post.excerpt,
+          url: `${getSiteUrl()}/blog/${post.slug}`,
+          datePublished: post.publishedAt,
+          imageSrc: post.coverImageSrc,
+          authorName: post.author,
+          authorPhysician,
+          reviewerPhysician,
+        })}
+      />
       <GH2CompactHero
         eyebrow={post.category}
         title={post.title}
@@ -59,6 +106,19 @@ export default async function BlogPostPage({ params }: Props) {
               <Clock className="size-4" aria-hidden />
               {post.readingTime} min read
             </span>
+            {reviewerName ? (
+              <span className="flex items-center gap-1.5">
+                <BadgeCheck className="size-4" aria-hidden />
+                Clinically reviewed by{" "}
+                {reviewerHref ? (
+                  <Link href={reviewerHref} className="underline underline-offset-2">
+                    {reviewerName}
+                  </Link>
+                ) : (
+                  reviewerName
+                )}
+              </span>
+            ) : null}
           </div>
         }
       />
