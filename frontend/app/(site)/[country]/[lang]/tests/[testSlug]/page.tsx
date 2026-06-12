@@ -26,7 +26,6 @@ import { breadcrumbJsonLd } from "@/lib/seo/structured-data";
 import {
   ChecklistSection,
   WhyChooseSection,
-  ProcessStepsSection,
   ImportantInfoSection,
 } from "@/components/sections/ServiceContentSections";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
@@ -74,12 +73,7 @@ export async function generateMetadata({
   };
 }
 
-/**
- * Health-test product page (admin CMS content). "Learn more" on a lab-test
- * card lands here. Product-style layout: image panel + buy box with specs
- * and add-to-cart, then "what's covered", "why get tested", how-it-works,
- * admin extra sections. Cart-first — no doctor pick for tests.
- */
+/** Health-test product page. Dark editorial hero → CMS content sections → CTA. Cart-first — no doctor pick. */
 export default async function HealthTestDetailPage({
   params,
 }: {
@@ -116,25 +110,6 @@ export default async function HealthTestDetailPage({
     { icon: Package, label: t.specDelivery, value: t.specDeliveryValue },
   ].filter(Boolean) as Array<{ icon: typeof Clock; label: string; value: string }>;
 
-  const sampleSuffix = detail.sampleType ? ` (${detail.sampleType.toLowerCase()})` : "";
-  const timelineSuffix = detail.resultsTimeline
-    ? t.step3Timeline.replace("{timeline}", detail.resultsTimeline.toLowerCase())
-    : "";
-  const steps = [
-    {
-      title: t.step1Title,
-      body: t.step1Body,
-    },
-    {
-      title: t.step2Title,
-      body: t.step2Body.replace("{sample}", sampleSuffix),
-    },
-    {
-      title: t.step3Title,
-      body: t.step3Body.replace("{country}", config.name).replace("{timeline}", timelineSuffix),
-    },
-  ];
-
   return (
     <>
       <JsonLd
@@ -146,35 +121,92 @@ export default async function HealthTestDetailPage({
         ])}
       />
 
-      {/* Product hero — light, image panel + buy box */}
+      {/* Test hero — dark editorial, matching service-page design system */}
       <section
-        style={{
-          background: "var(--color-background-soft)",
-          padding: "clamp(40px,5vw,64px) 0 clamp(48px,6vw,80px)",
-          borderBottom: "1px solid rgba(29,75,54,0.10)",
-        }}
+        className="gh2-hero relative isolate overflow-hidden"
+        style={{ padding: "clamp(56px,7vw,100px) 0" }}
       >
-        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+        <div className="relative mx-auto max-w-[var(--container-width)] px-5 md:px-10">
           <Link
             href={backHref}
-            className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] transition-colors hover:text-[var(--color-brand-primary)]"
-            style={{ color: "var(--color-text-muted)" }}
+            className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] transition-opacity hover:opacity-100"
+            style={{ color: "rgba(255,255,255,0.40)" }}
           >
             <ArrowLeft className="size-4" aria-hidden />
             {t.backToTests}
           </Link>
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(380px,1fr)_1.15fr] lg:gap-14">
-            {/* Left — product image panel */}
+          <div className="mt-10 grid gap-10 lg:grid-cols-[1.25fr_1fr] lg:items-start">
+            {/* Left — eyebrow, title, intro, spec grid */}
             <div>
-              <div
-                className="relative overflow-hidden rounded-[var(--radius-card)] bg-white"
-                style={{
-                  aspectRatio: "4 / 3",
-                  border: "1px solid var(--color-border)",
-                  boxShadow: "var(--shadow-card)",
-                }}
+              <p className="flex items-center gap-3">
+                <span
+                  className="text-[11px] font-bold uppercase tracking-[0.22em]"
+                  style={{ color: "var(--color-brand-accent)" }}
+                >
+                  {t.eyebrow}
+                </span>
+              </p>
+
+              <h1
+                className="mt-4 font-extrabold leading-[1.02] tracking-[-0.035em]"
+                style={{ fontSize: "clamp(2rem,4vw,3.4rem)", color: "rgba(255,255,255,0.95)", maxWidth: "20ch" }}
               >
+                {detail.title}
+              </h1>
+
+              {intro ? (
+                <p
+                  className="mt-4 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed"
+                  style={{ color: "rgba(255,255,255,0.58)" }}
+                >
+                  {intro}
+                </p>
+              ) : null}
+
+              <dl
+                className="mt-8 grid gap-px overflow-hidden rounded-[var(--radius-card)] sm:grid-cols-2"
+                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.09)" }}
+              >
+                {specs.map(({ icon: Icon, label, value }) => (
+                  <div
+                    key={label}
+                    className="flex items-start gap-3 p-4"
+                    style={{ background: "rgba(255,255,255,0.03)" }}
+                  >
+                    <span
+                      className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-[10px]"
+                      style={{ background: "rgba(176,241,34,0.12)" }}
+                    >
+                      <Icon className="size-4" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.8} aria-hidden />
+                    </span>
+                    <div className="min-w-0">
+                      <dt
+                        className="text-[10.5px] font-bold uppercase tracking-[0.12em]"
+                        style={{ color: "rgba(255,255,255,0.38)" }}
+                      >
+                        {label}
+                      </dt>
+                      <dd className="mt-0.5 text-sm font-semibold" style={{ color: "rgba(255,255,255,0.85)" }}>
+                        {value}
+                      </dd>
+                    </div>
+                  </div>
+                ))}
+              </dl>
+            </div>
+
+            {/* Right — floating buy card */}
+            <div
+              className="overflow-hidden rounded-[var(--radius-card)]"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.09)",
+                boxShadow: "0 8px 40px rgba(0,0,0,0.30)",
+              }}
+            >
+              {/* Image panel */}
+              <div className="relative overflow-hidden" style={{ aspectRatio: "16 / 9" }}>
                 {detail.imageSrc ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
@@ -183,149 +215,75 @@ export default async function HealthTestDetailPage({
                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center">
-                    <span
-                      className="inline-flex size-20 items-center justify-center rounded-full"
-                      style={{ background: "var(--color-brand-mint-dim)" }}
-                    >
-                      <FlaskConical className="size-9" style={{ color: "var(--color-brand-primary)" }} strokeWidth={1.5} aria-hidden />
-                    </span>
+                  <div
+                    className="flex h-full items-center justify-center"
+                    style={{ background: "rgba(255,255,255,0.04)" }}
+                  >
+                    <FlaskConical
+                      className="size-14"
+                      style={{ color: "rgba(176,241,34,0.45)" }}
+                      strokeWidth={1.3}
+                      aria-hidden
+                    />
                   </div>
                 )}
                 <span
                   className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.08em]"
-                  style={{ background: "var(--color-brand-primary)", color: "#ffffff", boxShadow: "0 2px 8px rgba(29,75,54,0.30)" }}
+                  style={{ background: "var(--color-brand-primary)", color: "#ffffff", boxShadow: "0 2px 8px rgba(0,0,0,0.30)" }}
                 >
                   <ShieldCheck className="size-3.5" aria-hidden />
                   {t.doctorReviewed}
                 </span>
               </div>
 
-              {detail.gallery.length > 0 ? (
-                <div className="mt-4 grid grid-cols-3 gap-3">
-                  {detail.gallery.slice(0, 3).map((src, i) => (
-                    <div
-                      key={src}
-                      className="overflow-hidden rounded-[var(--radius-card-sm)] bg-white"
-                      style={{ aspectRatio: "4 / 3", border: "1px solid var(--color-border)" }}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={src}
-                        alt={`${detail.title} — image ${i + 1}`}
-                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-
-            {/* Right — buy box */}
-            <div>
-              <p className="flex items-center gap-3">
-                <span aria-hidden className="gh2-index" style={{ color: "rgba(29,75,54,0.40)" }}>
-                  01
-                </span>
-                <span
-                  className="text-[11px] font-bold uppercase tracking-[0.22em]"
-                  style={{ color: "var(--color-brand-primary)" }}
-                >
-                  {t.eyebrow}
-                </span>
-              </p>
-
-              <h1
-                className="mt-4 font-extrabold leading-[1.02] tracking-[-0.035em]"
-                style={{ fontSize: "clamp(2rem,4vw,3.4rem)", color: "var(--color-text-primary)", maxWidth: "18ch" }}
-              >
-                {detail.title}
-              </h1>
-
-              {intro ? (
-                <p
-                  className="mt-4 max-w-[52ch] text-[length:var(--text-body-lg)] leading-relaxed"
-                  style={{ color: "var(--color-text-muted)" }}
-                >
-                  {intro}
-                </p>
-              ) : null}
-
-              {/* Price */}
-              <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <span
-                  className="font-extrabold tracking-[-0.03em] [font-variant-numeric:tabular-nums]"
-                  style={{ fontSize: "clamp(2rem,3.5vw,2.75rem)", color: "var(--color-text-primary)" }}
-                >
-                  {priceLabel}
-                </span>
-                <span className="text-sm font-medium" style={{ color: "var(--color-text-muted)" }}>
-                  {t.inclDoctorReview}
-                </span>
-                {lowStock != null ? (
-                  <span className="gh-badge gh-badge-warning">{t.onlyLeft.replace("{count}", String(lowStock))}</span>
-                ) : null}
-                {soldOut ? <span className="gh-badge gh-badge-error">{t.soldOut}</span> : null}
-              </div>
-
-              {/* Spec rows */}
-              <dl
-                className="mt-6 grid gap-px overflow-hidden rounded-[var(--radius-card)] sm:grid-cols-2"
-                style={{ background: "var(--color-border)", border: "1px solid var(--color-border)" }}
-              >
-                {specs.map(({ icon: Icon, label, value }) => (
-                  <div key={label} className="flex items-start gap-3 bg-white p-4">
-                    <span
-                      className="mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-[10px]"
-                      style={{ background: "var(--color-brand-mint-dim)" }}
-                    >
-                      <Icon className="size-4" style={{ color: "var(--color-brand-primary)" }} strokeWidth={1.8} aria-hidden />
-                    </span>
-                    <div className="min-w-0">
-                      <dt
-                        className="text-[10.5px] font-bold uppercase tracking-[0.12em]"
-                        style={{ color: "var(--color-text-muted)" }}
-                      >
-                        {label}
-                      </dt>
-                      <dd className="mt-0.5 text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>
-                        {value}
-                      </dd>
-                    </div>
-                  </div>
-                ))}
-              </dl>
-
-              {/* Add to cart */}
-              <div className="mt-7 max-w-md">
-                {soldOut ? (
-                  <button
-                    type="button"
-                    disabled
-                    className="inline-flex h-14 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full px-6 text-[15px] font-bold"
-                    style={{ background: "var(--color-background-panel)", color: "var(--color-text-placeholder)" }}
+              {/* Price + CTA */}
+              <div className="p-6">
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span
+                    className="font-extrabold tracking-[-0.03em] [font-variant-numeric:tabular-nums]"
+                    style={{ fontSize: "clamp(1.75rem,3vw,2.25rem)", color: "rgba(255,255,255,0.95)" }}
                   >
-                    {t.soldOut}
-                  </button>
-                ) : (
-                  <AddToCartButton
-                    kind="HEALTH_TEST"
-                    healthTestId={detail.id}
-                    label={detail.heroButtonLabel ?? t.addToCart.replace("{price}", priceLabel)}
-                    className="gh2-btn-lime w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
-                  />
-                )}
+                    {priceLabel}
+                  </span>
+                  <span className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.45)" }}>
+                    {t.inclDoctorReview}
+                  </span>
+                  {lowStock != null ? (
+                    <span className="gh-badge gh-badge-warning">{t.onlyLeft.replace("{count}", String(lowStock))}</span>
+                  ) : null}
+                  {soldOut ? <span className="gh-badge gh-badge-error">{t.soldOut}</span> : null}
+                </div>
+
+                <div className="mt-5">
+                  {soldOut ? (
+                    <button
+                      type="button"
+                      disabled
+                      className="inline-flex h-14 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full px-6 text-[15px] font-bold"
+                      style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.35)" }}
+                    >
+                      {t.soldOut}
+                    </button>
+                  ) : (
+                    <AddToCartButton
+                      kind="HEALTH_TEST"
+                      healthTestId={detail.id}
+                      label={detail.heroButtonLabel ?? t.addToCart.replace("{price}", priceLabel)}
+                      className="gh2-btn-lime w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
+                    />
+                  )}
+                </div>
 
                 <div
                   className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2"
-                  style={{ color: "var(--color-text-muted)" }}
+                  style={{ color: "rgba(255,255,255,0.38)" }}
                 >
                   {[
                     { icon: Lock, label: t.secureCheckout },
                     { icon: CalendarCheck, label: t.orderConfirmation },
                   ].map(({ icon: Icon, label }) => (
                     <span key={label} className="inline-flex items-center gap-1.5 text-xs font-medium">
-                      <Icon className="size-3.5" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
+                      <Icon className="size-3.5" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
                       {label}
                     </span>
                   ))}
@@ -335,6 +293,17 @@ export default async function HealthTestDetailPage({
           </div>
         </div>
       </section>
+
+      {/* Trust/credibility band — anchored immediately below the buy box
+          so credentials appear before users scroll into content. */}
+      <TrustRibbon
+        items={[
+          { v: tp.trustLabQualityValue, l: tp.trustLabQualityLabel, icon: "sparkles" },
+          { v: tp.trustDoctorValue, l: tp.trustDoctorLabel, icon: "doctor" },
+          { v: tp.trustHomeValue, l: tp.trustHomeLabel, icon: "shield" },
+          { v: tp.trustGdprValue, l: tp.trustGdprLabel, icon: "lock" },
+        ]}
+      />
 
       {detail.whatThisTestCovers.length > 0 ? (
         <ChecklistSection
@@ -353,23 +322,6 @@ export default async function HealthTestDetailPage({
           theme="soft"
         />
       ) : null}
-
-      <ProcessStepsSection
-        eyebrow={t.howEyebrow}
-        title={t.howTitle}
-        steps={steps}
-        theme="light"
-      />
-
-      {/* Trust/credibility band — same signals as the tests listing. */}
-      <TrustRibbon
-        items={[
-          { v: tp.trustLabQualityValue, l: tp.trustLabQualityLabel, icon: "sparkles" },
-          { v: tp.trustDoctorValue, l: tp.trustDoctorLabel, icon: "doctor" },
-          { v: tp.trustHomeValue, l: tp.trustHomeLabel, icon: "shield" },
-          { v: tp.trustGdprValue, l: tp.trustGdprLabel, icon: "lock" },
-        ]}
-      />
 
       {detail.extraSections.map((sec, i) =>
         sec.body.trim() ? (
@@ -394,9 +346,6 @@ export default async function HealthTestDetailPage({
           <div className="grid items-end gap-8 lg:grid-cols-[1.6fr_1fr]">
             <div>
               <p className="flex items-center gap-3">
-                <span aria-hidden className="gh2-index" style={{ color: "rgba(176,241,34,0.50)" }}>
-                  02
-                </span>
                 <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
                   {sd.readyEyebrow}
                 </span>

@@ -29,10 +29,6 @@ import { formatPriceRounded } from "@/lib/format-currency";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqJsonLd } from "@/lib/seo/structured-data";
 import { FAQSection } from "@/components/sections/FAQSection";
-import {
-  WhyChooseSection,
-  ProcessStepsSection,
-} from "@/components/sections/ServiceContentSections";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -91,10 +87,7 @@ export async function generateMetadata({
 }
 
 /**
- * Service landing page (admin CMS content). "Learn more" on a service card
- * lands here. Layout: dark gh2 hero with a sticky booking panel, "what you
- * get" benefit grid, 3-step how-it-works, the admin-authored rich detail
- * body, gallery, FAQs, and a closing booking band.
+ * Service landing page. Hero → admin detailBody → assigned doctors → FAQs → CTA.
  */
 export default async function ServiceDetailPage({
   params,
@@ -141,32 +134,6 @@ export default async function ServiceDetailPage({
       : null;
   const bookLabel = detail.ctaLabel ?? t.bookLabel;
 
-  // Platform-level facts only — clinical specifics live in the admin-authored
-  // detailBody, never in hardcoded copy.
-  const included = [
-    t.included1.replace("{country}", config.name),
-    t.included2,
-    t.included3,
-    t.included4,
-    t.included5,
-    t.included6,
-  ];
-
-  const steps = [
-    {
-      title: t.step1Title,
-      body: t.step1Body.replace("{service}", detail.name).replace("{country}", config.name),
-    },
-    {
-      title: t.step2Title,
-      body: t.step2Body,
-    },
-    {
-      title: t.step3Title,
-      body: t.step3Body,
-    },
-  ];
-
   return (
     <>
       {detail.faqs.length > 0 ? (
@@ -204,9 +171,6 @@ export default async function ServiceDetailPage({
             {/* Left — service context */}
             <div>
               <p className="flex items-center gap-3">
-                <span aria-hidden className="gh2-index" style={{ color: "rgba(176,241,34,0.50)" }}>
-                  01
-                </span>
                 <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
                   {detail.specialtyName ?? (detail.kind === "SPECIALIST" ? t.eyebrowSpecialist : t.eyebrowOnline)}
                 </span>
@@ -340,27 +304,11 @@ export default async function ServiceDetailPage({
         </div>
       </section>
 
-      {/* What you get */}
-      <WhyChooseSection
-        eyebrow={t.whatsIncluded}
-        title={t.everythingIn.replace("{service}", detail.name.toLowerCase())}
-        items={included}
-        theme="light"
-      />
-
-      {/* How it works */}
-      <ProcessStepsSection
-        eyebrow={t.howItWorks}
-        title={t.threeSteps}
-        steps={steps}
-        theme="soft"
-      />
-
-      {/* Admin-authored rich detail body — sanitized on save, CSS-scoped. */}
+      {/* Admin-authored rich detail body */}
       {bodyHtml ? (
         <section
           style={{
-            background: "var(--color-background-page)",
+            background: "var(--color-background-soft)",
             padding: "clamp(56px,7vw,104px) 0",
             borderTop: "1px solid rgba(29,75,54,0.10)",
           }}
@@ -370,40 +318,6 @@ export default async function ServiceDetailPage({
               {t.aboutService}
             </p>
             <div className="gh-article-body mt-8 max-w-[76ch]" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
-          </div>
-        </section>
-      ) : null}
-
-      {/* Gallery */}
-      {detail.gallery.length > 0 ? (
-        <section
-          style={{
-            background: "var(--color-background-soft)",
-            padding: "clamp(48px,6vw,80px) 0",
-            borderTop: "1px solid rgba(29,75,54,0.10)",
-          }}
-        >
-          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {detail.gallery.map((src, i) => (
-                <div
-                  key={src}
-                  className="overflow-hidden rounded-[var(--radius-card)]"
-                  style={{
-                    aspectRatio: "4 / 3",
-                    background: "var(--color-background-page)",
-                    border: "1px solid var(--color-border)",
-                  }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={src}
-                    alt={`${detail.name} — image ${i + 1}`}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                </div>
-              ))}
-            </div>
           </div>
         </section>
       ) : null}
@@ -478,9 +392,6 @@ export default async function ServiceDetailPage({
           <div className="grid items-end gap-8 lg:grid-cols-[1.6fr_1fr]">
             <div>
               <p className="flex items-center gap-3">
-                <span aria-hidden className="gh2-index" style={{ color: "rgba(176,241,34,0.50)" }}>
-                  02
-                </span>
                 <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--color-brand-accent)]">
                   {t.readyEyebrow}
                 </span>

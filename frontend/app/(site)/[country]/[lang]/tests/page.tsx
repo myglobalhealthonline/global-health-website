@@ -21,7 +21,6 @@ import {
 } from "@/lib/content/get-public-page";
 import { getCountryHealthTests } from "@/lib/content/get-country-collections";
 import { RichBodySection } from "@/components/sections/RichBodySection";
-import { ProcessStepsSection } from "@/components/sections/ServiceContentSections";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { CartServiceCard } from "@/components/cards/CartServiceCard";
@@ -88,7 +87,6 @@ export default async function HealthTestsPage({
   const page = (pageDisabled || !isCountryFeatureEnabled(overlay, "pages")) ? null : rawPage;
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const t = c.testsPage;
-  const td = c.testDetailPage;
   // Cart-first booking: hero/final CTA points at the tests grid below.
   const bookHref = "#tests";
   // Provider-first defaults per Google Ads "restricted services" guidance.
@@ -208,24 +206,6 @@ export default async function HealthTestsPage({
           </div>
         </section>
       )}
-
-      {/* How it works — generic order → sample → results flow, shared
-          copy with the test detail pages. */}
-      <ProcessStepsSection
-        eyebrow={td.howEyebrow}
-        title={td.howTitle}
-        steps={[
-          { title: td.step1Title, body: td.step1Body },
-          { title: td.step2Title, body: td.step2Body.replace("{sample}", "") },
-          {
-            title: td.step3Title,
-            body: td.step3Body
-              .replace("{country}", config.name)
-              .replace("{timeline}", ""),
-          },
-        ]}
-        theme="light"
-      />
 
       {/* Admin-edited rich body from ContentPage (HEALTH_TESTS). */}
       <RichBodySection html={page?.body} theme="light" />

@@ -14,7 +14,6 @@ import {
   ServiceIntro,
   ChecklistSection,
   WhyChooseSection,
-  ProcessStepsSection,
 } from "@/components/sections/ServiceContentSections";
 import { getGpHubContent } from "@/lib/content/ireland-service-content";
 import { countries, getCountryByCode } from "@/data/countries";
@@ -106,7 +105,6 @@ export default async function CountryLangGeneralConsultationPage({
 
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const gp = c.gpPage;
-  const sd = c.serviceDetailPage;
 
   // Honor the per-country `general-consultations` toggle from /admin/country-features.
   const overlay = await getPublicCountryByCode(code);
@@ -262,25 +260,7 @@ export default async function CountryLangGeneralConsultationPage({
         </div>
       ) : null}
 
-      {/* 3 — How booking works: the same 3-step flow used on service
-          detail pages, with the generic "a consultation" noun. */}
-      <ProcessStepsSection
-        eyebrow={sd.howItWorks}
-        title={sd.threeSteps}
-        steps={[
-          {
-            title: sd.step1Title,
-            body: sd.step1Body
-              .replace("{service}", c.extra.aConsultation)
-              .replace("{country}", config.name),
-          },
-          { title: sd.step2Title, body: sd.step2Body },
-          { title: sd.step3Title, body: sd.step3Body },
-        ]}
-        theme="soft"
-      />
-
-      {/* 4 — Who it's for (authored hub copy, when present). */}
+      {/* Who it's for (authored hub copy, when present). */}
       {gpHub ? (
         <ChecklistSection
           eyebrow="Who it's for"
@@ -303,29 +283,13 @@ export default async function CountryLangGeneralConsultationPage({
         />
       ) : null}
 
-      {/* 6 — Why book here: authored copy when present, otherwise the
-          platform-level "what's included" facts. */}
       {gpHub ? (
         <WhyChooseSection
           title={gpHub.whyChoose.title}
           items={gpHub.whyChoose.items}
           theme="soft"
         />
-      ) : (
-        <WhyChooseSection
-          eyebrow={sd.whatsIncluded}
-          title={c.extra.everythingIncluded}
-          items={[
-            sd.included1.replace("{country}", config.name),
-            sd.included2,
-            sd.included3,
-            sd.included4,
-            sd.included5,
-            sd.included6,
-          ]}
-          theme="soft"
-        />
-      )}
+      ) : null}
 
       {/* 7 — Admin-edited rich body (SEO/long-form) sits below the
           conversion path instead of interrupting it. */}

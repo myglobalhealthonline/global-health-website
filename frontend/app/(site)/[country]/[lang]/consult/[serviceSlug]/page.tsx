@@ -335,41 +335,6 @@ export default async function ConsultPage({
         </>
       ) : null}
 
-      {/* Services without authored long-form copy still get the standard
-          conversion structure: what's included + how booking works. */}
-      {!detail && !selectedDoctorSlug ? (
-        <>
-          <WhyChooseSection
-            eyebrow={sd.whatsIncluded}
-            title={sd.everythingIn.replace("{service}", service.name.toLowerCase())}
-            items={[
-              sd.included1.replace("{country}", config.name),
-              sd.included2,
-              sd.included3,
-              sd.included4,
-              sd.included5,
-              sd.included6,
-            ]}
-            theme="light"
-          />
-          <ProcessStepsSection
-            eyebrow={sd.howItWorks}
-            title={sd.threeSteps}
-            steps={[
-              {
-                title: sd.step1Title,
-                body: sd.step1Body
-                  .replace("{service}", service.name)
-                  .replace("{country}", config.name),
-              },
-              { title: sd.step2Title, body: sd.step2Body },
-              { title: sd.step3Title, body: sd.step3Body },
-            ]}
-            theme="soft"
-          />
-        </>
-      ) : null}
-
       {/* Dynamic service FAQs from the admin CMS — shown when no authored
           static detail content is present (or always if admin adds them). */}
       {!detail && dynamicFaqs.length > 0 && !selectedDoctorSlug ? (
