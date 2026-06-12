@@ -102,7 +102,7 @@ const DEFAULT_I18N: ServiceCatalogI18n = {
   bookConsultation: "Book consultation",
   prevServices: "Previous services",
   nextServices: "Next services",
-  filters: { all: "All", general: "General", specialist: "Specialist", prescription: "Prescriptions", test: "Home tests" },
+  filters: { all: "All", general: "See a GP", specialist: "See a Specialist", prescription: "Prescriptions", test: "Lab Tests" },
 };
 
 export function ServiceCatalog({
