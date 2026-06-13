@@ -120,7 +120,24 @@ export default async function CountryLangBookPage({
     ? services.filter((service) => service.assignedDoctorIds.includes(requestedDoctor.id))
     : services;
 
-  const currentStep = !selectedService ? 1 : requestedDoctorAssigned ? 3 : 2;
+  // The booking flow is bidirectional: a patient can arrive doctor-first
+  // (from a doctor card → ?doctor=) and then pick service + time, or
+  // service-first and then pick doctor + time. Both converge on Time →
+  // Details. The stepper reflects whichever order the patient actually took
+  // so step 1 always matches the choice they already made.
+  const doctorFirst = Boolean(requestedDoctor) && (!selectedService || requestedDoctorAssigned);
+  const stepLabels = doctorFirst
+    ? [bp.stepDoctor, bp.stepService, bp.stepTime, bp.stepDetails]
+    : [bp.stepService, bp.stepDoctor, bp.stepTime, bp.stepDetails];
+  const currentStep = doctorFirst
+    ? !selectedService
+      ? 2 // doctor chosen; now choosing the service
+      : 3 // doctor + service chosen; now choosing the time
+    : !selectedService
+      ? 1
+      : requestedDoctorAssigned
+        ? 3
+        : 2;
   const itemKind =
     selectedService?.kind === "SPECIALIST"
       ? "SPECIALIST_CONSULTATION"
@@ -147,6 +164,7 @@ export default async function CountryLangBookPage({
         title={bp.title}
         subtitle={bp.subtitle.replace("{country}", config.name)}
         activeStep={currentStep}
+        steps={stepLabels}
       />
 
       <section
@@ -160,7 +178,7 @@ export default async function CountryLangBookPage({
                 <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
                   {bp.bookingSteps}
                 </p>
-                <StepIndicator current={currentStep} bp={bp} />
+                <StepIndicator current={currentStep} labels={stepLabels} />
                 <p className="mt-5 text-sm leading-relaxed text-[var(--color-text-muted)]">
                   {bp.availabilityNote}
                 </p>
@@ -375,7 +393,7 @@ function ServicePicker({
   return (
     <div className="grid gap-6">
       <BookingSectionHeader
-        eyebrow={bp.step1}
+        eyebrow={requestedDoctor ? bp.step2 : bp.step1}
         title={
           requestedDoctor
             ? bp.chooseServiceWith.replace("{doctor}", requestedDoctor.fullName)
@@ -556,8 +574,7 @@ function ServiceChoiceCard({
   );
 }
 
-function StepIndicator({ current, bp }: { current: number; bp: BookT }) {
-  const labels = [bp.stepService, bp.stepDoctor, bp.stepTime, bp.stepDetails];
+function StepIndicator({ current, labels }: { current: number; labels: string[] }) {
   return (
     <ol className="mt-5 grid gap-3">
       {STEPS.map((step) => {
