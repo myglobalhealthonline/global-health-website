@@ -22,11 +22,15 @@ export function DocumentsReviewSendPanel({
   appointmentId,
   onDocumentsChange,
   onEditDraft,
+  open,
+  onOpenChange,
 }: {
   appointmentId: string;
   onDocumentsChange?: () => void;
   /** Open generate modal on a specific tab to edit draft fields */
   onEditDraft?: (doc: GeneratedDoc) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }) {
   const [queue, setQueue] = useState<GeneratedDoc[]>([]);
   const [history, setHistory] = useState<GeneratedDoc[]>([]);
@@ -125,9 +129,13 @@ export function DocumentsReviewSendPanel({
 
   return (
     <HistorySection
+      id="doctor-review-send-panel"
       title="Review & send"
       count={queue.length > 0 ? queue.length : undefined}
-      defaultOpen={queue.length > 0}
+      pendingDot
+      defaultOpen={false}
+      open={open}
+      onOpenChange={onOpenChange}
     >
       <div className="p-4">
         {error ? (

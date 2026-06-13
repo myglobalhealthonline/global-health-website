@@ -16,6 +16,7 @@ import {
   postAdminManualBooking,
 } from "@/lib/admin/admin-api";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
+import { ManualBookingDoctorFilter } from "../_components/manual-booking-doctor-filter";
 
 export const dynamic = "force-dynamic";
 
@@ -358,27 +359,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
           </p>
         </AdminCard>
 
-        {/* Live doctor filter: hide options whose serviceIds don't include
-            the selected service. Runs after hydration with no React state. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){
-  var svc=document.getElementById('gh-service-select');
-  var doc=document.getElementById('gh-doctor-select');
-  if(!svc||!doc)return;
-  function filter(){
-    var id=svc.value;
-    var opts=doc.querySelectorAll('option[data-service-ids]');
-    opts.forEach(function(o){
-      var ids=o.getAttribute('data-service-ids');
-      o.hidden=id!==''&&ids!==''&&(','+ids+',').indexOf(','+id+',')===-1;
-    });
-    if(doc.options[doc.selectedIndex]&&doc.options[doc.selectedIndex].hidden)doc.value='';
-  }
-  svc.addEventListener('change',filter);
-})();`,
-          }}
-        />
+        <ManualBookingDoctorFilter />
 
         <div className="flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
           <button type="submit" className="gh-btn gh-btn-primary">

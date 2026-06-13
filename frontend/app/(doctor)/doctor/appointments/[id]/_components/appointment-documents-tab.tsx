@@ -7,6 +7,7 @@ import {
   doctorApiErrorMessage,
   parseDoctorApiJson,
 } from "@/lib/doctor-api-client";
+import { DOCTOR_FOCUS_REVIEW_SEND_EVENT } from "@/lib/doctor-appointment-ui";
 import {
   formatConsultationTypeLabel,
   formatOrderRef,
@@ -66,6 +67,7 @@ export function AppointmentDocumentsTab({
   const [loadingGenerated, setLoadingGenerated] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [panelsRefreshKey, setPanelsRefreshKey] = useState(0);
+  const [reviewSendOpen, setReviewSendOpen] = useState(false);
 
   const session: SessionMeta = useMemo(() => {
     const { sessionDate, sessionTime } = formatSessionParts(scheduledAt, createdAt);
@@ -108,6 +110,22 @@ export function AppointmentDocumentsTab({
     setPanelsRefreshKey((k) => k + 1);
   }, [loadGenerated]);
 
+  const focusReviewSend = useCallback(() => {
+    setReviewSendOpen(true);
+    setPanelsRefreshKey((k) => k + 1);
+    window.requestAnimationFrame(() => {
+      document
+        .getElementById("doctor-review-send-panel")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, []);
+
+  useEffect(() => {
+    const handler = () => focusReviewSend();
+    window.addEventListener(DOCTOR_FOCUS_REVIEW_SEND_EVENT, handler);
+    return () => window.removeEventListener(DOCTOR_FOCUS_REVIEW_SEND_EVENT, handler);
+  }, [focusReviewSend]);
+
   useEffect(() => {
     void loadGenerated();
   }, [loadGenerated]);
@@ -145,6 +163,8 @@ export function AppointmentDocumentsTab({
         key={panelsRefreshKey}
         appointmentId={appointmentId}
         onDocumentsChange={refreshAll}
+        open={reviewSendOpen}
+        onOpenChange={setReviewSendOpen}
       />
 
       <AppointmentMedicalNotesSection
@@ -156,14 +176,14 @@ export function AppointmentDocumentsTab({
       {loadingGenerated ? (
         <p className="text-[13px] text-[var(--color-text-muted)]">Loading generated documents…</p>
       ) : generated.length === 0 ? (
-        <HistorySection title="Generated documents" count={0} defaultOpen>
+        <HistorySection title="Generated documents" count={0} defaultOpen={false}>
           <p className="px-4 py-3 text-[13px] text-[var(--color-text-muted)]">
             No PDFs yet. Use <strong>Generate documents</strong> to create exams, prescriptions, or
             absence certificates.
           </p>
         </HistorySection>
       ) : (
-        <HistorySection title="Generated documents" count={generated.length}>
+        <HistorySection title="Generated documents" count={generated.length} defaultOpen={false}>
           <DocTypeGroup
             title="Exams prescriptions"
             rows={byType("EXAMS_PRESCRIPTION")}
@@ -183,7 +203,7 @@ export function AppointmentDocumentsTab({
         </HistorySection>
       )}
 
-      <HistorySection title="Uploaded files" count={uploads.length}>
+      <HistorySection title="Uploaded files" count={uploads.length} defaultOpen={false}>
         {uploads.length === 0 ? (
           <p className="px-4 py-3 text-[13px] text-[var(--color-text-muted)]">
             No uploaded files yet.

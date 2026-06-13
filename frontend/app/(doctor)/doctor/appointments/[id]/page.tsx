@@ -95,12 +95,10 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
   const submissions = submissionsRes.ok ? submissionsRes.data.items : [];
   const templates = templatesRes.ok ? templatesRes.data.items : [];
   const documents = documentsRes.ok ? documentsRes.data.items : [];
-  const generatedDocCount = generatedDocsRes.ok ? generatedDocsRes.data.items.length : 0;
+  const pendingSendCount = generatedDocsRes.ok ? generatedDocsRes.data.queue.length : 0;
   const doctorName = meRes.ok ? meRes.data.doctor.fullName : "Doctor";
   const documentsTabBadge =
-    documents.length + generatedDocCount > 0
-      ? String(documents.length + generatedDocCount)
-      : null;
+    pendingSendCount > 0 ? String(pendingSendCount) : null;
   const prescriptions = prescriptionsRes.ok ? prescriptionsRes.data.items : [];
   const consultationMode = appointment.consultationMode ?? "ONLINE";
   const followUpFromId = appointment.followUpFromAppointmentId ?? null;
@@ -643,6 +641,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             id: "documents",
             label: "Documents",
             badge: documentsTabBadge,
+            badgeAlert: Boolean(documentsTabBadge),
             panel: (
               <section className="gh-card p-6">
                 <h3

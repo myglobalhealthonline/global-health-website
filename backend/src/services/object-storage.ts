@@ -72,6 +72,8 @@ function getClient(): S3Client {
     client = new S3Client({
       region: env.S3_REGION!,
       endpoint: env.S3_ENDPOINT!,
+      // Railway / Scaleway / MinIO buckets require path-style URLs.
+      forcePathStyle: true,
       credentials: {
         accessKeyId: env.S3_ACCESS_KEY_ID!,
         secretAccessKey: env.S3_SECRET_ACCESS_KEY!,

@@ -45,17 +45,32 @@ const TABLE_HEAD =
 export function HistorySection({
   title,
   count,
-  defaultOpen = true,
+  defaultOpen = false,
+  open: controlledOpen,
+  onOpenChange,
+  pendingDot,
+  id,
   children,
 }: {
   title: string;
   count?: number;
   defaultOpen?: boolean;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** Amber dot with unsent count (Review & send). */
+  pendingDot?: boolean;
+  id?: string;
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
+  const [internalOpen, setInternalOpen] = useState(defaultOpen);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = (next: boolean) => {
+    onOpenChange?.(next);
+    if (controlledOpen === undefined) setInternalOpen(next);
+  };
+
   return (
-    <section className="overflow-hidden rounded-md border border-[var(--color-border)]">
+    <section id={id} className="overflow-hidden rounded-md border border-[var(--color-border)]">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -64,7 +79,14 @@ export function HistorySection({
         <span className="flex items-center gap-2">
           {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}
           {title}
-          {count !== undefined ? (
+          {pendingDot && count !== undefined && count > 0 ? (
+            <span
+              className="inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-amber-400 px-1 text-[10px] font-extrabold leading-none text-[#0a281f]"
+              aria-label={`${count} to send`}
+            >
+              {count}
+            </span>
+          ) : count !== undefined ? (
             <span className="text-[12px] font-semibold opacity-90">({count})</span>
           ) : null}
         </span>
@@ -207,7 +229,7 @@ export function DocTypeGroup({
   rows: GeneratedDocTableRow[];
   session: SessionMeta;
 }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   if (rows.length === 0) return null;
   return (
     <div className="border-t border-[var(--color-border)]">

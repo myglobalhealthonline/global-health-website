@@ -94,7 +94,7 @@ export function AppointmentMedicalNotesSection({
   }
 
   return (
-    <HistorySection title="Medical notes" count={notes.length}>
+    <HistorySection title="Medical notes" count={notes.length} defaultOpen>
       <div className="border-b border-[var(--color-border)] p-4">
         <label className="flex flex-col gap-1">
           <span className="gh-field-label">Add medical note</span>

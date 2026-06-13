@@ -7,6 +7,10 @@ import {
   parseDoctorApiJson,
 } from "@/lib/doctor-api-client";
 import {
+  focusDoctorReviewSend,
+  openDoctorPdfInNewTab,
+} from "@/lib/doctor-appointment-ui";
+import {
   ChevronRight,
   ClipboardList,
   FileText,
@@ -149,8 +153,10 @@ export function ConsultationDocumentsModal({
           ? `/api/doctor/documents/generated/${json.data.document.id}/pdf`
           : null);
       if (pdfUrl) {
-        window.open(pdfUrl, "_blank", "noopener,noreferrer");
+        openDoctorPdfInNewTab(pdfUrl);
       }
+      onClose();
+      focusDoctorReviewSend();
       if (type === "PRESCRIPTION") {
         if (json.data?.healthPortalUrl) {
           setSuccess(
@@ -162,8 +168,8 @@ export function ConsultationDocumentsModal({
       } else if (type === "EXAMS_PRESCRIPTION" || type === "ABSENCE_CERTIFICATE") {
         setSuccess(
           pdfUrl
-            ? "PDF opened — use Review & send on the Documents tab when ready."
-            : "Document generated — use Review & send on the Documents tab.",
+            ? "PDF opened in a new tab — review and send below when ready."
+            : "Document generated — open Review & send below.",
         );
       } else {
         setSuccess(pdfUrl ? "PDF generated and opened." : "Document generated.");

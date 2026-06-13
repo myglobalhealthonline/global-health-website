@@ -62,7 +62,8 @@ export function Globe({
   mapSamples = 16000,
   scale = 1,
 }: GlobeProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const pointerInteracting = useRef<{ x: number; y: number } | null>(null);
   const lastPointer = useRef<{ x: number; y: number; t: number } | null>(null);
   const dragOffset = useRef({ phi: 0, theta: 0 });
@@ -92,7 +93,7 @@ export function Globe({
     [arcs],
   );
 
-  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+  const handlePointerDown = useCallback((e: PointerEvent) => {
     pointerInteracting.current = { x: e.clientX, y: e.clientY };
     isPausedRef.current = true;
     if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
@@ -142,9 +143,23 @@ export function Globe({
   }, []);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    const canvas = canvasRef.current;
+    // Cobe reparents the canvas into its own wrapper. React must not own the
+    // canvas node or unmount throws removeChild NotFoundError.
+    const canvas = document.createElement("canvas");
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.cursor = "grab";
+    canvas.style.opacity = "0";
+    canvas.style.transition = "opacity 1.2s ease";
+    canvas.style.borderRadius = "50%";
+    canvas.style.touchAction = "none";
+    canvas.addEventListener("pointerdown", handlePointerDown);
+    container.prepend(canvas);
+    canvasRef.current = canvas;
+
     let globe: ReturnType<typeof createGlobe> | null = null;
     let animationId = 0;
     let resizeObserver: ResizeObserver | null = null;
@@ -190,7 +205,7 @@ export function Globe({
       const width = canvasRef.current.offsetWidth;
       if (width === 0) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      globe = createGlobe(canvasRef.current, {
+      globe = createGlobe(canvas, {
         devicePixelRatio: dpr,
         width,
         height: width,
@@ -213,7 +228,7 @@ export function Globe({
       });
       render();
       window.setTimeout(() => {
-        if (canvasRef.current) canvasRef.current.style.opacity = "1";
+        canvas.style.opacity = "1";
       }, 120);
     }
 
@@ -226,13 +241,16 @@ export function Globe({
           init();
         }
       });
-      resizeObserver.observe(canvas);
+      resizeObserver.observe(container);
     }
 
     return () => {
       resizeObserver?.disconnect();
       window.cancelAnimationFrame(animationId);
       globe?.destroy();
+      canvas.removeEventListener("pointerdown", handlePointerDown);
+      canvas.remove();
+      canvasRef.current = null;
     };
   }, [
     arcColor,
@@ -252,23 +270,14 @@ export function Globe({
     scale,
     speed,
     theta,
+    handlePointerDown,
   ]);
 
   return (
-    <div className={`relative aspect-square select-none ${className}`}>
-      <canvas
-        ref={canvasRef}
-        onPointerDown={handlePointerDown}
-        style={{
-          width: "100%",
-          height: "100%",
-          cursor: "grab",
-          opacity: 0,
-          transition: "opacity 1.2s ease",
-          borderRadius: "50%",
-          touchAction: "none",
-        }}
-      />
+    <div
+      ref={containerRef}
+      className={`relative aspect-square select-none ${className}`}
+    >
       {markers.map((m) => (
         <div
           key={m.id}

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { DOCTOR_FOCUS_REVIEW_SEND_EVENT } from "@/lib/doctor-appointment-ui";
 
 /**
  * Tab strip for the doctor appointment workspace.
@@ -19,6 +20,8 @@ export type AppointmentTab = {
   label: string;
   /** Optional badge string (e.g. unread count, "draft", "signed"). */
   badge?: string | null;
+  /** Amber dot styling for pending-send counts. */
+  badgeAlert?: boolean;
   panel: ReactNode;
 };
 
@@ -34,6 +37,16 @@ export function AppointmentTabs({
       ? initialTabId
       : tabs[0]?.id ?? "",
   );
+
+  useEffect(() => {
+    const handler = () => {
+      if (tabs.some((t) => t.id === "documents")) {
+        setActive("documents");
+      }
+    };
+    window.addEventListener(DOCTOR_FOCUS_REVIEW_SEND_EVENT, handler);
+    return () => window.removeEventListener(DOCTOR_FOCUS_REVIEW_SEND_EVENT, handler);
+  }, [tabs]);
 
   return (
     <div>
@@ -69,10 +82,12 @@ export function AppointmentTabs({
               {tab.label}
               {tab.badge ? (
                 <span
-                  className={`inline-flex items-center rounded-full px-1.5 text-[10px] font-bold uppercase tracking-[0.08em] ${
-                    isActive
-                      ? "bg-[var(--color-brand-primary)] text-white"
-                      : "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
+                  className={`inline-flex min-w-[1.125rem] items-center justify-center rounded-full px-1 text-[10px] font-extrabold leading-none ${
+                    tab.badgeAlert
+                      ? "bg-amber-400 text-[#0a281f]"
+                      : isActive
+                        ? "bg-[var(--color-brand-primary)] text-white"
+                        : "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
                   }`}
                   style={{ minWidth: 18, height: 16, lineHeight: "14px", justifyContent: "center" }}
                 >
