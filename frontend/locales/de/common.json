@@ -523,7 +523,7 @@
     "title": "Buchen Sie Ihre Beratung",
     "subtitle": "{country} Arztpraxis. Wählen Sie einen Service, Arzt, Zeit und Patientendaten.",
     "bookingSteps": "Buchungsschritte",
-    "availabilityNote": "Termine sind von der Verfügbarkeit des Arztes abhängig. Sie erhalten eine Bestätigung, nachdem Sie Ihre Buchung abgeschlossen haben.",
+    "availabilityNote": "Die meisten Termine werden innerhalb weniger Minuten bestätigt. Wir senden Ihnen die Bestätigung per E-Mail, sobald Ihre Buchung abgeschlossen ist.",
     "serviceUnavailable": "Dieser Service ist derzeit für dieses Land nicht verfügbar. Wählen Sie einen anderen Service, um fortzufahren.",
     "clinicianUnavailable": "Dieses Arztprofil ist derzeit in diesem Land nicht verfügbar. Wählen Sie einen Service, um fortzufahren.",
     "step2": "Schritt 2",

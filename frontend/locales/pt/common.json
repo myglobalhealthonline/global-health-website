@@ -523,7 +523,7 @@
     "title": "Marque a sua consulta",
     "subtitle": "Clínica médica em {country}. Escolha um serviço, clínico, hora e dados do doente.",
     "bookingSteps": "Passos da marcação",
-    "availabilityNote": "As consultas estão sujeitas à disponibilidade do clínico. Receberá a confirmação após concluir a sua marcação.",
+    "availabilityNote": "A maioria das consultas é confirmada em poucos minutos. Enviaremos a confirmação por email assim que concluir a sua marcação.",
     "serviceUnavailable": "Esse serviço não está disponível para este país neste momento. Escolha outro serviço para continuar.",
     "clinicianUnavailable": "Esse perfil de clínico não está disponível neste país neste momento. Escolha um serviço para continuar.",
     "step2": "Passo 2",

@@ -33,6 +33,8 @@ export type WizardService = {
   slug: string;
   name: string;
   durationMinutes: number | null;
+  basePriceCents?: number | null;
+  currencyCode?: string | null;
 };
 
 export type HeroWizardI18n = {
@@ -47,6 +49,8 @@ export type HeroWizardI18n = {
   loading: string;
   minSuffix: string;
   browseAll: string;
+  priceFrom: string;
+  reassure: string;
 };
 
 type Slot = {
@@ -69,6 +73,8 @@ const DEFAULT_I18N: HeroWizardI18n = {
   loading: "Finding open times…",
   minSuffix: "min",
   browseAll: "Browse all doctors",
+  priceFrom: "from",
+  reassure: "Most appointments confirmed within minutes.",
 };
 
 export function HeroBookingWizard({
@@ -204,6 +210,7 @@ export function HeroBookingWizard({
               onClick={() => setStep(1)}
               className="inline-flex items-center gap-1 rounded-full bg-white/[0.07] px-2 py-0.5 font-semibold text-white hover:bg-white/[0.12]"
             >
+              <Check className="size-3 text-[var(--color-brand-accent)]" strokeWidth={2.5} aria-hidden />
               {firstName(doctor.name)}
             </button>
           ) : null}
@@ -215,6 +222,7 @@ export function HeroBookingWizard({
                 onClick={() => doctor && setStep(2)}
                 className="inline-flex items-center gap-1 rounded-full bg-white/[0.07] px-2 py-0.5 font-semibold text-white hover:bg-white/[0.12]"
               >
+                <Check className="size-3 text-[var(--color-brand-accent)]" strokeWidth={2.5} aria-hidden />
                 {service.name}
               </button>
             </>
@@ -264,11 +272,21 @@ export function HeroBookingWizard({
                   >
                     <span className="min-w-0">
                       <span className="block truncate text-[14.5px] font-bold text-white">{s.name}</span>
-                      {s.durationMinutes ? (
-                        <span className="block text-[11px] text-white/55">
-                          {s.durationMinutes} {t.minSuffix}
-                        </span>
-                      ) : null}
+                      <span className="mt-0.5 flex items-center gap-1.5 text-[11.5px] text-white/55">
+                        {s.durationMinutes ? (
+                          <span>
+                            {s.durationMinutes} {t.minSuffix}
+                          </span>
+                        ) : null}
+                        {s.durationMinutes && typeof s.basePriceCents === "number" ? (
+                          <span aria-hidden className="opacity-40">·</span>
+                        ) : null}
+                        {typeof s.basePriceCents === "number" ? (
+                          <span className="font-semibold text-[var(--color-brand-accent)]">
+                            {t.priceFrom} {formatPriceRounded(s.basePriceCents, s.currencyCode)}
+                          </span>
+                        ) : null}
+                      </span>
                     </span>
                     <ArrowRight className="size-4 shrink-0 text-[var(--color-brand-accent)]" strokeWidth={1.8} aria-hidden />
                   </button>
@@ -338,10 +356,16 @@ export function HeroBookingWizard({
         </>
       ) : null}
 
+      {/* Positive reassurance — set expectations before the patient commits */}
+      <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-[11.5px] font-medium text-white/55">
+        <Check className="size-3.5 shrink-0 text-[var(--color-brand-accent)]" strokeWidth={2.2} aria-hidden />
+        {t.reassure}
+      </p>
+
       {/* Footer — browse-all escape hatch */}
       <a
         href={bookHref}
-        className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-full border border-white/15 py-2.5 text-[12px] font-bold text-white/80 transition-colors hover:bg-white/10"
+        className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-full border border-white/15 py-2.5 text-[12px] font-bold text-white/80 transition-colors hover:bg-white/10"
       >
         {routing ? <Check className="size-3.5" aria-hidden /> : null}
         {t.browseAll}

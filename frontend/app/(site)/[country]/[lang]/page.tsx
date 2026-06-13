@@ -290,6 +290,8 @@ export default async function CountryLangHomePage({
     slug: s.slug,
     name: s.name,
     durationMinutes: s.durationMinutes,
+    basePriceCents: s.basePriceCents ?? null,
+    currencyCode: s.currencyCode ?? null,
   }));
   const wizardDoctors = countryDoctors
     .filter((d) => d.assignedServiceIds.length > 0)

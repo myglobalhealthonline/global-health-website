@@ -523,7 +523,7 @@
     "title": "Reserva tu consulta",
     "subtitle": "Clínica médica de {country}. Elige un servicio, profesional clínico, hora y datos del paciente.",
     "bookingSteps": "Pasos de la reserva",
-    "availabilityNote": "Las citas están sujetas a la disponibilidad del profesional clínico. Recibirás la confirmación tras completar tu reserva.",
+    "availabilityNote": "La mayoría de las citas se confirman en cuestión de minutos. Te enviaremos la confirmación por email en cuanto completes tu reserva.",
     "serviceUnavailable": "Ese servicio no está disponible para este país en este momento. Elige otro servicio para continuar.",
     "clinicianUnavailable": "Ese perfil de profesional clínico no está disponible en este país en este momento. Elige un servicio para continuar.",
     "step2": "Paso 2",

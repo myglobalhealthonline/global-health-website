@@ -167,7 +167,17 @@ export function GH2FlowHeader({
               </p>
             ) : null}
           </div>
-          <ol className="flex flex-wrap items-center gap-2 lg:justify-end">
+          {/* Compact step indicator for narrow screens — the full stepper
+              wraps and compresses below ~640px, so collapse it to a single
+              legible "Step n / total · Label" line on mobile. */}
+          <p className="flex items-center gap-2 text-[13px] font-semibold sm:hidden">
+            <span className="gh2-index" style={{ color: "var(--color-brand-accent)" }}>
+              {String(activeStep).padStart(2, "0")}
+            </span>
+            <span style={{ color: "rgba(255,255,255,0.45)" }}>/ {String(steps.length).padStart(2, "0")}</span>
+            <span style={{ color: "var(--color-brand-accent)" }}>{steps[activeStep - 1]}</span>
+          </p>
+          <ol className="hidden flex-wrap items-center gap-2 sm:flex lg:justify-end">
             {steps.map((step, index) => {
               const n = index + 1;
               const done = n < activeStep;

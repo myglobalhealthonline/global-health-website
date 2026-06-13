@@ -523,7 +523,7 @@
     "title": "Objednejte si konzultaci",
     "subtitle": "{country} lékařská klinika. Vyberte si službu, lékaře, čas a údaje pacienta.",
     "bookingSteps": "Kroky rezervace",
-    "availabilityNote": "Schůzky podléhají dostupnosti lékaře. Po dokončení rezervace obdržíte potvrzení.",
+    "availabilityNote": "Většina schůzek je potvrzena během několika minut. Potvrzení vám zašleme e-mailem ihned po dokončení rezervace.",
     "serviceUnavailable": "Tato služba není pro tuto zemi momentálně dostupná. Pokračujte výběrem jiné služby.",
     "clinicianUnavailable": "Profil tohoto lékaře není v této zemi momentálně dostupný. Pokračujte výběrem služby.",
     "step2": "Krok 2",

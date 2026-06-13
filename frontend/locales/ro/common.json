@@ -523,7 +523,7 @@
     "title": "Programează-ți consultația",
     "subtitle": "Clinică medicală din {country}. Alege un serviciu, un clinician, o oră și detaliile pacientului.",
     "bookingSteps": "Pașii programării",
-    "availabilityNote": "Programările sunt condiționate de disponibilitatea clinicianului. Vei primi o confirmare după finalizarea programării.",
+    "availabilityNote": "Majoritatea programărilor sunt confirmate în câteva minute. Îți vom trimite confirmarea prin email imediat ce finalizezi programarea.",
     "serviceUnavailable": "Acest serviciu nu este disponibil pentru această țară în acest moment. Alege un alt serviciu pentru a continua.",
     "clinicianUnavailable": "Acest profil de clinician nu este disponibil în această țară în acest moment. Alege un serviciu pentru a continua.",
     "step2": "Pasul 2",
