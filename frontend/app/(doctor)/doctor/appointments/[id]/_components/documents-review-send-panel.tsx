@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState, useTransition } from "react";
-import { Pencil, Send, Trash2 } from "lucide-react";
+import { Eye, Pencil, Send, Trash2 } from "lucide-react";
 import {
   doctorApiErrorMessage,
   parseDoctorApiJson,
@@ -9,7 +9,7 @@ import {
 import { HistorySection } from "@/app/(doctor)/doctor/_components/doctor-document-tables";
 import { GENERATED_DOCUMENT_TYPE_LABELS } from "@/lib/doctor-session-display";
 
-type GeneratedDoc = {
+export type ReviewQueueDoc = {
   id: string;
   documentType: string;
   fileName: string;
@@ -27,13 +27,13 @@ export function DocumentsReviewSendPanel({
 }: {
   appointmentId: string;
   onDocumentsChange?: () => void;
-  /** Open generate modal on a specific tab to edit draft fields */
-  onEditDraft?: (doc: GeneratedDoc) => void;
+  /** Open generate modal on the correct tab with draft fields pre-filled. */
+  onEditDraft: (doc: ReviewQueueDoc) => void;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
-  const [queue, setQueue] = useState<GeneratedDoc[]>([]);
-  const [history, setHistory] = useState<GeneratedDoc[]>([]);
+  const [queue, setQueue] = useState<ReviewQueueDoc[]>([]);
+  const [history, setHistory] = useState<ReviewQueueDoc[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [patientEmail, setPatientEmail] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +47,7 @@ export function DocumentsReviewSendPanel({
     ]);
     const docsJson = await parseDoctorApiJson<{
       ok?: boolean;
-      data?: { queue?: GeneratedDoc[]; history?: GeneratedDoc[] };
+      data?: { queue?: ReviewQueueDoc[]; history?: ReviewQueueDoc[] };
     }>(docsRes);
     if (docsJson?.ok && docsJson.data) {
       setQueue(docsJson.data.queue ?? []);
@@ -73,8 +73,8 @@ export function DocumentsReviewSendPanel({
     void load();
   }, [load]);
 
-  function sendSelected() {
-    const ids = [...selected].filter((id) => queue.some((q) => q.id === id));
+  function sendDocuments(documentIds: string[]) {
+    const ids = documentIds.filter((id) => queue.some((q) => q.id === id));
     if (ids.length === 0) return;
     setError(null);
     setSuccess(null);
@@ -112,10 +112,18 @@ export function DocumentsReviewSendPanel({
         return;
       }
       setSelected(new Set());
-      setSuccess(`Sent ${sent} document(s) to ${patientEmail ?? "patient"}.`);
+      setSuccess(
+        sent === 1
+          ? `Sent 1 document to ${patientEmail ?? "patient"}.`
+          : `Sent ${sent} documents to ${patientEmail ?? "patient"}.`,
+      );
       await load();
       onDocumentsChange?.();
     });
+  }
+
+  function sendSelected() {
+    sendDocuments([...selected]);
   }
 
   function remove(id: string) {
@@ -151,13 +159,13 @@ export function DocumentsReviewSendPanel({
 
         {queue.length === 0 ? (
           <p className="text-[13px] text-[var(--color-text-muted)]">
-            No documents waiting to send. Generate an exams or absence PDF, then return here to
-            email the patient.
+            No documents waiting to send. Generate an exams prescription, medicine prescription,
+            or absence certificate, then return here to review, edit, and email the patient.
           </p>
         ) : (
           <>
             <p className="mb-3 text-[13px] text-[var(--color-text-muted)]">
-              Preview each PDF, then send selected documents to the patient by email.
+              Review each PDF, edit if needed, then send to the patient by email.
             </p>
             <div className="mb-3 flex justify-end">
               <button
@@ -192,24 +200,30 @@ export function DocumentsReviewSendPanel({
                       {row.fileName}
                     </span>
                   </label>
-                  <div className="flex shrink-0 items-center gap-1">
+                  <div className="flex shrink-0 flex-wrap items-center gap-1">
                     <a
                       href={`/api/doctor/documents/generated/${row.id}/pdf`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
                     >
-                      View
+                      <Eye className="size-3" aria-hidden /> Review
                     </a>
-                    {onEditDraft ? (
-                      <button
-                        type="button"
-                        onClick={() => onEditDraft(row)}
-                        className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
-                      >
-                        <Pencil className="size-3" aria-hidden /> Edit
-                      </button>
-                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => onEditDraft(row)}
+                      className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                    >
+                      <Pencil className="size-3" aria-hidden /> Edit
+                    </button>
+                    <button
+                      type="button"
+                      disabled={pending}
+                      onClick={() => sendDocuments([row.id])}
+                      className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                    >
+                      <Send className="size-3" aria-hidden /> Send
+                    </button>
                     <button
                       type="button"
                       onClick={() => remove(row.id)}

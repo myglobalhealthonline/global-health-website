@@ -165,3 +165,22 @@ export function streamToNodeReadable(body: GetObjectCommandOutput["Body"]): Read
   }
   return null;
 }
+
+/** Read an object body into a buffer (S3 SDK v3 ChecksumStream + local files). */
+export async function readObjectBodyToBuffer(
+  body: GetObjectCommandOutput["Body"],
+): Promise<Buffer | null> {
+  if (!body) return null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sdk = body as any;
+  if (typeof sdk.transformToByteArray === "function") {
+    return Buffer.from(await sdk.transformToByteArray());
+  }
+  const readable = streamToNodeReadable(body);
+  if (!readable) return null;
+  const chunks: Buffer[] = [];
+  for await (const chunk of readable) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+  return Buffer.concat(chunks);
+}

@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { DocumentsReviewSendPanel } from "./documents-review-send-panel";
+import { FileText } from "lucide-react";
+import { DocumentsReviewSendPanel, type ReviewQueueDoc } from "./documents-review-send-panel";
 import type { DoctorDocumentDto } from "@/lib/api/doctor-api";
 import {
   doctorApiErrorMessage,
@@ -24,7 +25,12 @@ import {
   UploadedFilesTable,
   type UploadDocTableRow,
 } from "@/app/(doctor)/doctor/_components/doctor-document-tables";
-import { ConsultationDocumentsTrigger } from "./consultation-documents-section";
+import {
+  ConsultationDocumentsModal,
+  tabForGeneratedDocumentType,
+  type ConsultationDocTabId,
+  type EditDraftDoc,
+} from "./consultation-documents-modal";
 import { DocumentUploadForm } from "./document-upload-form";
 import { AppointmentMedicalNotesSection } from "./appointment-medical-notes-section";
 
@@ -63,11 +69,15 @@ export function AppointmentDocumentsTab({
   initialUploads: DoctorDocumentDto[];
 }) {
   const [uploads, setUploads] = useState<DoctorDocumentDto[]>(initialUploads);
-  const [generated, setGenerated] = useState<GeneratedDoc[]>([]);
+  const [generatedHistory, setGeneratedHistory] = useState<GeneratedDoc[]>([]);
+  const [generatedTotal, setGeneratedTotal] = useState(0);
   const [loadingGenerated, setLoadingGenerated] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [panelsRefreshKey, setPanelsRefreshKey] = useState(0);
   const [reviewSendOpen, setReviewSendOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTab, setModalTab] = useState<ConsultationDocTabId>("overview");
+  const [editDraft, setEditDraft] = useState<EditDraftDoc | null>(null);
 
   const session: SessionMeta = useMemo(() => {
     const { sessionDate, sessionTime } = formatSessionParts(scheduledAt, createdAt);
@@ -88,7 +98,7 @@ export function AppointmentDocumentsTab({
     );
     const json = await parseDoctorApiJson<{
       ok?: boolean;
-      data?: { items?: GeneratedDoc[] };
+      data?: { items?: GeneratedDoc[]; history?: GeneratedDoc[] };
       message?: string;
     }>(res);
     if (!json) {
@@ -101,9 +111,30 @@ export function AppointmentDocumentsTab({
       setLoadingGenerated(false);
       return;
     }
-    setGenerated(json.data.items ?? []);
+    setGeneratedHistory(json.data.history ?? []);
+    setGeneratedTotal(json.data.items?.length ?? 0);
     setLoadingGenerated(false);
   }, [appointmentId]);
+
+  const openDocumentsModal = useCallback(
+    (tab: ConsultationDocTabId = "overview", draft: EditDraftDoc | null = null) => {
+      setModalTab(tab);
+      setEditDraft(draft);
+      setModalOpen(true);
+    },
+    [],
+  );
+
+  const handleEditDraft = useCallback(
+    (doc: ReviewQueueDoc) => {
+      openDocumentsModal(tabForGeneratedDocumentType(doc.documentType), {
+        id: doc.id,
+        documentType: doc.documentType,
+        metadata: doc.metadata,
+      });
+    },
+    [openDocumentsModal],
+  );
 
   const refreshAll = useCallback(() => {
     void loadGenerated();
@@ -131,7 +162,7 @@ export function AppointmentDocumentsTab({
   }, [loadGenerated]);
 
   const byType = (type: string) =>
-    generated.filter((d) => d.documentType === type).map(toGeneratedTableRow);
+    generatedHistory.filter((d) => d.documentType === type).map(toGeneratedTableRow);
 
   const uploadRows: UploadDocTableRow[] = uploads.map((u) => ({
     id: u.id,
@@ -140,7 +171,7 @@ export function AppointmentDocumentsTab({
     viewUrl: u.url || `/api/doctor/documents/${u.id}/download`,
   }));
 
-  const docCount = generated.length + uploads.length;
+  const docCount = generatedTotal + uploads.length;
 
   return (
     <div className="mt-4 grid gap-4">
@@ -148,12 +179,26 @@ export function AppointmentDocumentsTab({
         <p className="text-[13px] text-[var(--color-text-muted)]">
           Generated PDFs and uploaded files for this appointment ({docCount} total).
         </p>
-        <ConsultationDocumentsTrigger
-          appointmentId={appointmentId}
+        <button
+          type="button"
+          onClick={() => openDocumentsModal()}
           className="gh-btn gh-btn-primary text-sm"
-          onDocumentsChange={refreshAll}
-        />
+        >
+          <FileText className="size-3.5" aria-hidden /> Generate documents
+        </button>
       </div>
+
+      <ConsultationDocumentsModal
+        appointmentId={appointmentId}
+        open={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setEditDraft(null);
+        }}
+        initialTab={modalTab}
+        editDraft={editDraft}
+        onDocumentsChange={refreshAll}
+      />
 
       {loadError ? (
         <p className="gh-status-warning rounded-md border px-3 py-2 text-[12.5px]">{loadError}</p>
@@ -163,6 +208,7 @@ export function AppointmentDocumentsTab({
         key={panelsRefreshKey}
         appointmentId={appointmentId}
         onDocumentsChange={refreshAll}
+        onEditDraft={handleEditDraft}
         open={reviewSendOpen}
         onOpenChange={setReviewSendOpen}
       />
@@ -175,15 +221,15 @@ export function AppointmentDocumentsTab({
 
       {loadingGenerated ? (
         <p className="text-[13px] text-[var(--color-text-muted)]">Loading generated documents…</p>
-      ) : generated.length === 0 ? (
+      ) : generatedHistory.length === 0 ? (
         <HistorySection title="Generated documents" count={0} defaultOpen={false}>
           <p className="px-4 py-3 text-[13px] text-[var(--color-text-muted)]">
-            No PDFs yet. Use <strong>Generate documents</strong> to create exams, prescriptions, or
-            absence certificates.
+            No sent PDFs yet. Use <strong>Generate documents</strong> to create exams, prescriptions, or
+            absence certificates — drafts appear in Review &amp; send until emailed.
           </p>
         </HistorySection>
       ) : (
-        <HistorySection title="Generated documents" count={generated.length} defaultOpen={false}>
+        <HistorySection title="Generated documents" count={generatedHistory.length} defaultOpen={false}>
           <DocTypeGroup
             title="Exams prescriptions"
             rows={byType("EXAMS_PRESCRIPTION")}

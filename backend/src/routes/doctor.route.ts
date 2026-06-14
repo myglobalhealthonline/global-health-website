@@ -18,6 +18,7 @@ import {
   listDoctorSelectableServices,
   saveDoctorServiceSelections,
 } from "../modules/doctor-services/doctor-services.service.js";
+import { normalizeDoctorWhatsAppForStorage } from "../lib/whatsapp/resolve-doctor-contact.js";
 
 /**
  * Doctor portal API. Every endpoint here is scoped to the logged-in
@@ -409,6 +410,10 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         .send(errorResponse("Invalid profile update", body.error.flatten()));
     }
     try {
+      const doctorCountry = await prisma.doctor.findUnique({
+        where: { id: auth.doctorId },
+        select: { country: { select: { code: true } } },
+      });
       const updated = await prisma.doctor.update({
         where: { id: auth.doctorId },
         data: {
@@ -421,7 +426,10 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           }),
           ...(body.data.languages !== undefined && { languages: body.data.languages }),
           ...(body.data.whatsappNumber !== undefined && {
-            whatsappNumber: body.data.whatsappNumber,
+            whatsappNumber: normalizeDoctorWhatsAppForStorage(
+              body.data.whatsappNumber,
+              doctorCountry?.country.code,
+            ),
           }),
         },
         select: {

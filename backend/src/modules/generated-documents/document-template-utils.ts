@@ -46,10 +46,11 @@ export function absenceDefaultReason(dataProtectionLawName?: string | null): str
 
 export const ABSENCE_DEFAULT_REASON = absenceDefaultReason();
 
-/** Document types that appear in Review & Send queue. */
+/** Document types that appear in Review & Send queue until emailed to the patient. */
 export const REVIEW_QUEUE_TYPES: GeneratedDocumentType[] = [
   "EXAMS_PRESCRIPTION",
   "ABSENCE_CERTIFICATE",
+  "PRESCRIPTION",
   "OTHER",
 ];
 
@@ -57,11 +58,11 @@ export function isInReviewQueue(documentType: GeneratedDocumentType, sentToPatie
   return REVIEW_QUEUE_TYPES.includes(documentType) && sentToPatient === false;
 }
 
-/** History visibility per spec. */
+/** Sent documents appear in appointment/patient history lists. */
 export function isVisibleInHistory(
   documentType: GeneratedDocumentType,
   sentToPatient: boolean,
 ): boolean {
-  if (documentType === "PRESCRIPTION") return true;
+  void documentType;
   return sentToPatient === true;
 }

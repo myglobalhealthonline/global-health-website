@@ -23,6 +23,67 @@ import { type DocumentContext } from "./document-context-banner";
 
 export type ConsultationDocTabId = "overview" | "exams" | "medicine" | "absence";
 
+export type EditDraftDoc = {
+  id: string;
+  documentType: string;
+  metadata?: Record<string, string> | null;
+};
+
+export function tabForGeneratedDocumentType(documentType: string): ConsultationDocTabId {
+  switch (documentType) {
+    case "EXAMS_PRESCRIPTION":
+      return "exams";
+    case "PRESCRIPTION":
+      return "medicine";
+    case "ABSENCE_CERTIFICATE":
+      return "absence";
+    default:
+      return "overview";
+  }
+}
+
+function applyEditDraftToForm(
+  draft: EditDraftDoc,
+  setters: {
+    setEditingDocId: (id: string) => void;
+    setTab: (tab: ConsultationDocTabId) => void;
+    setExams: (v: string) => void;
+    setExamsNotes: (v: string) => void;
+    setMeds: (v: string[]) => void;
+    setPharmacy: (v: string) => void;
+    setStartDate: (v: string) => void;
+    setEndDate: (v: string) => void;
+    setAbsenceReason: (v: string) => void;
+  },
+) {
+  const meta = draft.metadata ?? {};
+  setters.setEditingDocId(draft.id);
+  setters.setTab(tabForGeneratedDocumentType(draft.documentType));
+
+  if (draft.documentType === "EXAMS_PRESCRIPTION") {
+    setters.setExams(meta.exams ?? "");
+    setters.setExamsNotes(meta.notes ?? "");
+    return;
+  }
+
+  if (draft.documentType === "PRESCRIPTION") {
+    const medLines: string[] = [];
+    for (let i = 1; i <= 7; i++) {
+      const m = meta[`medication${i}`]?.trim();
+      if (m) medLines.push(m);
+    }
+    setters.setMeds(medLines.length > 0 ? medLines : [""]);
+    setters.setPharmacy(meta.pharmacy ?? "");
+    return;
+  }
+
+  if (draft.documentType === "ABSENCE_CERTIFICATE") {
+    setters.setStartDate(meta.startDate ?? "");
+    setters.setEndDate(meta.endDate ?? "");
+    setters.setAbsenceReason(meta.reason ?? "");
+  }
+}
+
 const TABS: { id: ConsultationDocTabId; label: string }[] = [
   { id: "overview", label: "Overview" },
   { id: "exams", label: "Exams" },
@@ -35,12 +96,15 @@ export function ConsultationDocumentsModal({
   open,
   onClose,
   initialTab,
+  editDraft,
   onDocumentsChange,
 }: {
   appointmentId: string;
   open: boolean;
   onClose: () => void;
   initialTab?: ConsultationDocTabId;
+  /** Pre-fill form fields when editing a draft from Review & send. */
+  editDraft?: EditDraftDoc | null;
   onDocumentsChange?: () => void;
 }) {
   const [tab, setTab] = useState<ConsultationDocTabId>(initialTab ?? "overview");
@@ -91,7 +155,28 @@ export function ConsultationDocumentsModal({
     setError(null);
     setSuccess(null);
     void loadContext();
-    if (initialTab) setTab(initialTab);
+    if (editDraft) {
+      applyEditDraftToForm(editDraft, {
+        setEditingDocId,
+        setTab,
+        setExams,
+        setExamsNotes,
+        setMeds,
+        setPharmacy,
+        setStartDate,
+        setEndDate,
+        setAbsenceReason,
+      });
+    } else {
+      setEditingDocId(null);
+      setExams("");
+      setExamsNotes("");
+      setMeds([""]);
+      setStartDate("");
+      setEndDate("");
+      setAbsenceReason("");
+      if (initialTab) setTab(initialTab);
+    }
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
@@ -102,9 +187,12 @@ export function ConsultationDocumentsModal({
       document.body.style.overflow = prev;
       window.removeEventListener("keydown", onKey);
     };
-  }, [open, loadContext, initialTab, onClose]);
+  }, [open, loadContext, initialTab, editDraft, onClose]);
 
-  if (!open || !mounted) return null;
+  useEffect(() => {
+    if (!open || editDraft || !context?.patient.pharmacy) return;
+    setPharmacy((prev) => prev || context.patient.pharmacy || "");
+  }, [open, editDraft, context?.patient.pharmacy]);
 
   function buildFields(
     type: string,
@@ -157,15 +245,17 @@ export function ConsultationDocumentsModal({
       }
       onClose();
       focusDoctorReviewSend();
-      if (type === "PRESCRIPTION") {
-        if (json.data?.healthPortalUrl) {
-          setSuccess(
-            `PDF opened. Submit via ${json.data.healthPortalLabel ?? "national portal"}.`,
-          );
-        } else {
-          setSuccess("PDF generated and opened in a new tab.");
-        }
-      } else if (type === "EXAMS_PRESCRIPTION" || type === "ABSENCE_CERTIFICATE") {
+      if (type === "PRESCRIPTION" && json.data?.healthPortalUrl) {
+        setSuccess(
+          pdfUrl
+            ? `PDF opened — review and send below, then submit via ${json.data.healthPortalLabel ?? "national portal"}.`
+            : "Document generated — review and send below.",
+        );
+      } else if (
+        type === "PRESCRIPTION" ||
+        type === "EXAMS_PRESCRIPTION" ||
+        type === "ABSENCE_CERTIFICATE"
+      ) {
         setSuccess(
           pdfUrl
             ? "PDF opened in a new tab — review and send below when ready."
@@ -322,7 +412,7 @@ export function ConsultationDocumentsModal({
                 <OverviewCard
                   icon={Pill}
                   title="Medicine prescription"
-                  description="Up to 7 lines — opens PDF for national portal."
+                  description="Up to 7 lines — review and send, or submit via national portal."
                   onClick={() => setTab("medicine")}
                 />
                 <OverviewCard
@@ -379,8 +469,8 @@ export function ConsultationDocumentsModal({
           {tab === "medicine" ? (
             <div className="space-y-3">
               <p className="text-sm text-[var(--color-text-muted)]">
-                PDF for reference — submit via your national health portal (not emailed to
-                patient).
+                PDF for the patient record — review and send by email below, or submit via your
+                national health portal when required.
               </p>
               {meds.map((m, i) => (
                 <input
@@ -428,7 +518,7 @@ export function ConsultationDocumentsModal({
                 ) : (
                   <FileText className="size-3.5" aria-hidden />
                 )}
-                Generate &amp; open PDF
+                Generate PDF
               </button>
             </div>
           ) : null}
@@ -486,7 +576,7 @@ export function ConsultationDocumentsModal({
     </div>
   );
 
-  return createPortal(modal, document.body);
+  return mounted && open ? createPortal(modal, document.body) : null;
 }
 
 function OverviewCard({

@@ -22,16 +22,20 @@ describe("formatExamsNotes", () => {
 });
 
 describe("review queue and history", () => {
-  it("prescription is not in review queue", () => {
-    assert.equal(isInReviewQueue("PRESCRIPTION", false), false);
+  it("prescription draft is in review queue", () => {
+    assert.equal(isInReviewQueue("PRESCRIPTION", false), true);
   });
 
   it("exams draft is in review queue", () => {
     assert.equal(isInReviewQueue("EXAMS_PRESCRIPTION", false), true);
   });
 
-  it("prescription always visible in history", () => {
-    assert.equal(isVisibleInHistory("PRESCRIPTION", false), true);
+  it("unsent prescription hidden from history", () => {
+    assert.equal(isVisibleInHistory("PRESCRIPTION", false), false);
+  });
+
+  it("sent prescription visible in history", () => {
+    assert.equal(isVisibleInHistory("PRESCRIPTION", true), true);
   });
 
   it("unsent exams hidden from history", () => {

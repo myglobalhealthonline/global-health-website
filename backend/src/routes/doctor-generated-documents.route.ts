@@ -223,7 +223,11 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
       try {
         const result = await getGeneratedDocumentFile(auth.doctorId, request.params.id);
         if (result === "not_found") return reply.status(404).send(errorResponse("Document not found"));
-        if (!result) return reply.status(404).send(errorResponse("PDF file not found in storage"));
+        if (!result) {
+          return reply
+            .status(404)
+            .send(errorResponse("PDF file missing — please generate the document again"));
+        }
         reply.header("Content-Type", "application/pdf");
         reply.header(
           "Content-Disposition",

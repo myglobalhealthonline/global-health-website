@@ -51,6 +51,12 @@ preview-*.html.artifact.json
 # Generated PDF/DOCX QA output and local unzip inspection
 /backend/test-output/
 
+# Ad-hoc local diagnostic scripts (keep ops scripts like backfill/purge)
+/backend/scripts/test-*.mjs
+/backend/scripts/check-generated-doc-storage.mjs
+/backend/scripts/list-appointment-generated-docs.mjs
+/backend/scripts/test-automation-flow.ts
+
 # Alex Brush is OFL-licensed and vendored in-repo so it always reaches prod
 # (build-time network fetch was deliberately removed — see 234ed325). Any
 # OTHER .ttf stays ignored; the postinstall sync still allows local overrides.

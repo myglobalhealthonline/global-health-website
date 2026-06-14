@@ -248,8 +248,11 @@ export function Globe({
       resizeObserver?.disconnect();
       window.cancelAnimationFrame(animationId);
       globe?.destroy();
+      globe = null;
       canvas.removeEventListener("pointerdown", handlePointerDown);
-      canvas.remove();
+      if (canvas.isConnected) {
+        canvas.remove();
+      }
       canvasRef.current = null;
     };
   }, [
@@ -274,10 +277,8 @@ export function Globe({
   ]);
 
   return (
-    <div
-      ref={containerRef}
-      className={`relative aspect-square select-none ${className}`}
-    >
+    <div className={`relative aspect-square select-none ${className}`}>
+      <div ref={containerRef} className="absolute inset-0" aria-hidden />
       {markers.map((m) => (
         <div
           key={m.id}

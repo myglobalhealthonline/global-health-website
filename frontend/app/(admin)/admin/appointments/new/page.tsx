@@ -235,7 +235,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
       <PageHeader
         eyebrow="Operations"
         title="New manual booking"
-        description="Fill in the patient's details — we create their portal account, email them a Stripe payment link AND a set-password / temp-password combo."
+        description="Fill in the patient's details — we create their portal account, send the branded reservation email (payment + portal access), and show recovery links for the admin."
         actions={
           <Btn href="/admin/appointments/new" variant="ghost">
             Change country

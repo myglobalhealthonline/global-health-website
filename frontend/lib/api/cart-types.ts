@@ -93,6 +93,7 @@ export const HOLD_TTL_MS = 10 * 60 * 1000;
 
 export type OrderListItem = {
   id: string;
+  orderNumber?: string | null;
   status: string;
   paymentStatus: string;
   countryCode: string;
@@ -116,6 +117,7 @@ export type OrderItem = {
 
 export type OrderDetail = {
   id: string;
+  orderNumber?: string | null;
   status: string;
   paymentStatus: string;
   countryCode: string;

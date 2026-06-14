@@ -68,11 +68,11 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
 
   /**
    * Admin-initiated manual appointment creation. Walks the full
-   * pipeline (patient User + temp password + Stripe Checkout +
-   * portal-invite email) via `createManualBooking`. Body shape lives
-   * in `createManualAppointmentBodySchema`; response carries the
-   * temp password + set-password URL so the admin can read them out
-   * to the patient if the email is delayed.
+   * pipeline (patient User + temp password + Stripe Checkout + branded
+   * reservation email) via `createManualBooking`. Body shape lives in
+   * `createManualAppointmentBodySchema`; response carries the temp
+   * password + set-password URL so the admin can share them if email
+   * delivery fails.
    */
   app.post("/api/admin/appointments", async (request, reply) => {
     const body = createManualAppointmentBodySchema.safeParse(request.body);

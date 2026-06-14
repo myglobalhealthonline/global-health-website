@@ -1,10 +1,11 @@
 import type { GeneratedDocument, GeneratedDocumentType } from "@prisma/client";
+import { randomUUID } from "node:crypto";
 import { prisma } from "../../db/prisma.js";
 import {
   putObject,
   deleteObject,
   getObject,
-  streamToNodeReadable,
+  readObjectBodyToBuffer,
   isMediaStorageConfigured,
 } from "../../services/object-storage.js";
 import { sendGeneratedDocumentEmail } from "../../lib/email/templates.js";
@@ -26,6 +27,38 @@ const TITLES: Record<GeneratedDocumentType, string> = {
   PRESCRIPTION: "Medical prescription",
   OTHER: "Document",
 };
+
+/** Serialize generate per appointment + type (LibreOffice can take 10–15s). */
+const generateMutexByKey = new Map<string, { tail: Promise<void> }>();
+
+function generateLockKey(appointmentId: string, documentType: GeneratedDocumentType): string {
+  return `${appointmentId}:${documentType}`;
+}
+
+async function withGenerateLock<T>(
+  appointmentId: string,
+  documentType: GeneratedDocumentType,
+  fn: () => Promise<T>,
+): Promise<T> {
+  const key = generateLockKey(appointmentId, documentType);
+  let slot = generateMutexByKey.get(key);
+  if (!slot) {
+    slot = { tail: Promise.resolve() };
+    generateMutexByKey.set(key, slot);
+  }
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const prev = slot.tail;
+  slot.tail = prev.then(() => gate, () => gate);
+  await prev;
+  try {
+    return await fn();
+  } finally {
+    release();
+  }
+}
 
 function buildTemplateContext(input: {
   documentType: GeneratedDocumentType;
@@ -102,6 +135,18 @@ export async function generateAppointmentDocument(input: {
     throw new Error("Document storage is not configured");
   }
 
+  return withGenerateLock(input.appointmentId, input.documentType, () =>
+    generateAppointmentDocumentUnlocked(input),
+  );
+}
+
+async function generateAppointmentDocumentUnlocked(input: {
+  appointmentId: string;
+  doctorId: string;
+  documentType: GeneratedDocumentType;
+  fields?: Record<string, string>;
+  editDocumentId?: string;
+}) {
   const source = await resolveAppointmentDocumentSource(
     input.appointmentId,
     input.doctorId,
@@ -191,6 +236,10 @@ export async function generateAppointmentDocument(input: {
     pdfBuffer = await renderDocumentPdf(appt.countryCode, input.documentType, templateContext);
   }
 
+  if (!pdfBuffer?.length) {
+    throw new Error("PDF generation produced an empty file");
+  }
+
   const slugBase =
     input.documentType === "OTHER" && customLabel
       ? customLabel
@@ -200,13 +249,10 @@ export async function generateAppointmentDocument(input: {
           .slice(0, 40) || "document"
       : input.documentType.toLowerCase().replace(/_/g, "-");
   const fileName = `${slugBase}-${appt.id.slice(0, 8)}.pdf`;
-  const storageKey = `generated/${input.doctorId}/${appt.id}/${fileName}`;
+  const storageKey = `generated/${input.doctorId}/${appt.id}/${randomUUID()}/${fileName}`;
 
   await putObject(storageKey, pdfBuffer, "application/pdf");
 
-  // The S3 object is written before the DB row. If any DB step below throws,
-  // delete the now-orphaned object so storage doesn't leak a file nothing
-  // references.
   try {
   if (input.editDocumentId) {
     const existing = await prisma.generatedDocument.findFirst({
@@ -218,7 +264,7 @@ export async function generateAppointmentDocument(input: {
       },
     });
     if (existing) {
-      await deleteObject(existing.storageKey).catch(() => {});
+      const previousStorageKey = existing.storageKey;
       const row = await prisma.generatedDocument.update({
         where: { id: existing.id },
         data: {
@@ -227,6 +273,9 @@ export async function generateAppointmentDocument(input: {
           metadata: input.fields ? (input.fields as object) : undefined,
         },
       });
+      if (previousStorageKey !== storageKey) {
+        await deleteObject(previousStorageKey).catch(() => {});
+      }
       const portal = getHealthPortalForCountry(appt.countryCode);
       return {
         row,
@@ -234,22 +283,6 @@ export async function generateAppointmentDocument(input: {
         healthPortalUrl: portal?.url ?? null,
         healthPortalLabel: portal?.label ?? null,
       };
-    }
-  }
-
-  if (input.documentType !== "OTHER" && !input.editDocumentId) {
-    const existing = await prisma.generatedDocument.findFirst({
-      where: {
-        appointmentId: appt.id,
-        documentType: input.documentType,
-        sentToPatient: false,
-      },
-      orderBy: { createdAt: "desc" },
-    });
-
-    if (existing) {
-      await deleteObject(existing.storageKey).catch(() => {});
-      await prisma.generatedDocument.delete({ where: { id: existing.id } });
     }
   }
 
@@ -264,6 +297,24 @@ export async function generateAppointmentDocument(input: {
       metadata: input.fields ? (input.fields as object) : undefined,
     },
   });
+
+  if (input.documentType !== "OTHER" && !input.editDocumentId) {
+    const prior = await prisma.generatedDocument.findMany({
+      where: {
+        appointmentId: appt.id,
+        documentType: input.documentType,
+        sentToPatient: false,
+        id: { not: row.id },
+      },
+      select: { id: true, storageKey: true },
+    });
+    await Promise.all(
+      prior.map(async (old) => {
+        await deleteObject(old.storageKey).catch(() => {});
+        await prisma.generatedDocument.delete({ where: { id: old.id } }).catch(() => {});
+      }),
+    );
+  }
 
   const portal = getHealthPortalForCountry(appt.countryCode);
   return {
@@ -299,6 +350,7 @@ export async function listGeneratedDocuments(appointmentId: string, doctorId: st
     select: { id: true },
   });
   if (!appt) return null;
+  await purgeOrphanGeneratedDocuments(appointmentId);
   const rows = await prisma.generatedDocument.findMany({
     where: { appointmentId },
     orderBy: { createdAt: "desc" },
@@ -307,18 +359,38 @@ export async function listGeneratedDocuments(appointmentId: string, doctorId: st
 }
 
 async function readStorageToBuffer(storageKey: string): Promise<Buffer | null> {
-  try {
-    const obj = await getObject(storageKey);
-    const readable = streamToNodeReadable(obj.Body);
-    if (!readable) return null;
-    const chunks: Buffer[] = [];
-    for await (const chunk of readable) {
-      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const obj = await getObject(storageKey);
+      const buffer = await readObjectBodyToBuffer(obj.Body);
+      if (buffer?.length) return buffer;
+    } catch {
+      /* retry */
     }
-    return Buffer.concat(chunks);
-  } catch {
-    return null;
+    if (attempt < 2) {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+    }
   }
+  return null;
+}
+
+/** Remove DB rows whose PDF object is missing from storage (legacy regenerate bug). */
+export async function purgeOrphanGeneratedDocuments(appointmentId: string): Promise<number> {
+  const rows = await prisma.generatedDocument.findMany({
+    where: { appointmentId },
+    select: { id: true, storageKey: true, createdAt: true },
+  });
+  const graceMs = 30_000;
+  const now = Date.now();
+  let removed = 0;
+  for (const row of rows) {
+    if (now - row.createdAt.getTime() < graceMs) continue;
+    const buffer = await readStorageToBuffer(row.storageKey);
+    if (buffer) continue;
+    await prisma.generatedDocument.delete({ where: { id: row.id } }).catch(() => {});
+    removed += 1;
+  }
+  return removed;
 }
 
 export async function sendGeneratedDocuments(
@@ -338,7 +410,6 @@ export async function sendGeneratedDocuments(
       appointmentId,
       doctorId,
       sentToPatient: false,
-      documentType: { not: "PRESCRIPTION" },
     },
   });
 

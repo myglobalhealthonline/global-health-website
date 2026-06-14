@@ -1,6 +1,10 @@
 import { prisma } from "../../db/prisma.js";
 import { decryptPhiFields } from "../../lib/crypto/phi-crypto.js";
-import { getDoctorRegistrationByCountryCode } from "../doctor-registrations/doctor-registrations.service.js";
+import { formatDoctorForDocument } from "../../lib/doctor-name.js";
+import {
+  formatRegistrationLine,
+  resolveDoctorRegistrationForAppointment,
+} from "../../lib/doctor-registration-display.js";
 import {
   buildAddressLines,
   buildPatientIdLine,
@@ -78,21 +82,13 @@ export async function resolveAppointmentDocumentSource(
     select: { name: true },
   });
 
-  const doctorName = appt.doctor?.fullName?.trim() || "Global Health";
+  const doctorName = formatDoctorForDocument(appt.doctor?.fullName?.trim() || "Global Health");
 
-  const registration = await getDoctorRegistrationByCountryCode(doctorId, appt.countryCode);
-  let registrationLine: string;
-  let registrationVerified = false;
-  let registrationMissing = true;
-  if (registration?.registrationNumber && registration?.chamberEntity) {
-    registrationMissing = false;
-    registrationVerified = Boolean(registration.isVerified);
-    registrationLine = registrationVerified
-      ? `${registration.chamberEntity}: ${registration.registrationNumber}`
-      : `${registration.chamberEntity}: ${registration.registrationNumber} (unverified)`;
-  } else {
-    registrationLine = `Registration (${appt.countryCode}): not on file`;
-  }
+  const registration = await resolveDoctorRegistrationForAppointment(doctorId, appt.countryCode);
+  const formatted = formatRegistrationLine(registration, appt.countryCode);
+  const registrationLine = formatted.line;
+  const registrationVerified = formatted.verified;
+  const registrationMissing = formatted.missing;
 
   const patientProfileRaw = await prisma.patientProfile.findUnique({
     where: { email: appt.email.toLowerCase() },

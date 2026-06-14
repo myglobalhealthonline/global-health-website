@@ -6,6 +6,7 @@ import { AdminCard, PageHeader, Pill, SectionHeader } from "@/components/portal-
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
+import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -39,7 +40,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
       </Link>
 
       <PageHeader
-        eyebrow={`Order #${order.id.slice(-8)}`}
+        eyebrow={`Order #${formatOrderDisplayId(order)}`}
         title={
           <span className="inline-flex items-center gap-3">
             {formatPrice(order.totalCents, order.currencyCode)}

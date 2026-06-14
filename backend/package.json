@@ -18,7 +18,8 @@
         "db:migrate": "prisma migrate dev",
         "db:deploy": "prisma migrate deploy",
         "db:studio": "prisma studio",
-        "generate:docs": "node --import tsx scripts/generate-test-documents.mjs"
+        "generate:docs": "node --import tsx scripts/generate-test-documents.mjs",
+        "test:automation": "node --import tsx scripts/test-automation-flow.ts"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.1043.0",

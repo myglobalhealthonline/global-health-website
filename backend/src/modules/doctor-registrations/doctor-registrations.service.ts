@@ -1,4 +1,5 @@
 import { prisma } from "../../db/prisma.js";
+import { defaultChamberEntityForCountry } from "../../lib/doctor-registration-display.js";
 
 export type DoctorRegistrationInput = {
   chamberEntity?: string | null;
@@ -97,9 +98,11 @@ export async function upsertDoctorRegistration(
     throw new DoctorOrCountryNotFoundError();
   }
 
-  const chamberEntity = normalizeString(input.chamberEntity, 64);
   const registrationNumber = normalizeString(input.registrationNumber, 64);
   const division = normalizeString(input.division, 120);
+  let chamberEntity =
+    normalizeString(input.chamberEntity, 64) ??
+    (registrationNumber ? defaultChamberEntityForCountry(country.code) : null);
 
   // Only stamp verifiedAt when transitioning *to* verified — keeps the
   // historical stamp stable if admin re-edits the same row without

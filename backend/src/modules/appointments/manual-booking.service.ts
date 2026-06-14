@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { randomBytes, randomUUID } from "node:crypto";
-import { PaymentStatus } from "@prisma/client";
+import { CartItemKind, PaymentStatus, ServiceKind } from "@prisma/client";
 import type { FastifyRequest } from "fastify";
 import { prisma } from "../../db/prisma.js";
 import { env } from "../../config/env.js";
@@ -9,7 +9,7 @@ import {
   isStripeConfigured,
 } from "../../lib/stripe/client.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
-import { sendManualBookingEmail } from "../../lib/email/templates.js";
+import { generateOrderNumber } from "../../lib/order-number.js";
 import { issuePasswordResetToken } from "../auth/auth.service.js";
 import { recordAudit } from "../audit/audit.service.js";
 import {
@@ -18,6 +18,8 @@ import {
 } from "../patient-profile/patient-profile.service.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { zonedDateTimeStringToUtc } from "../doctor-availability/timezone.js";
+import { startPrePaymentFlow } from "../automation/pre-payment-flow.service.js";
+import { persistOrderPortalAccess } from "../automation/resolve-order-portal-access.service.js";
 
 /**
  * Admin walk-in / phone-in booking pipeline. The patient may or may
@@ -32,9 +34,10 @@ import { zonedDateTimeStringToUtc } from "../doctor-availability/timezone.js";
  *     7-day invite-style reset token so they have a one-click path
  *     in if they've forgotten their password.
  *
- * The Stripe Checkout Session + email are best-effort: failure
- * doesn't roll back the appointment — the admin UI surfaces both URLs
- * in a recovery banner so the booking is recoverable by hand.
+ * The Stripe Checkout Session is best-effort: failure doesn't roll back
+ * the appointment — the admin UI surfaces the payment URL in a recovery
+ * banner so the booking is recoverable by hand. Pre-payment automation
+ * (WhatsApp, reservation email, reminders, cancellation) runs via Order.
  */
 
 export class ServicePriceMissingError extends Error {
@@ -125,6 +128,7 @@ export type CreateManualBookingInput = {
 
 export type CreateManualBookingResult = {
   appointmentId: string;
+  orderId: string;
   patientUserId: string;
   paymentUrl: string | null;
   paymentSessionId: string | null;
@@ -146,6 +150,12 @@ function parseDateOfBirth(raw: string | null | undefined): Date | null {
   return new Date(`${raw.slice(0, 10)}T00:00:00.000Z`);
 }
 
+function consultationCartKind(serviceKind: ServiceKind): CartItemKind {
+  return serviceKind === ServiceKind.SPECIALIST
+    ? CartItemKind.SPECIALIST_CONSULTATION
+    : CartItemKind.GENERAL_CONSULTATION;
+}
+
 export async function createManualBooking(
   input: CreateManualBookingInput,
 ): Promise<CreateManualBookingResult> {
@@ -164,8 +174,10 @@ export async function createManualBooking(
     select: {
       id: true,
       name: true,
+      kind: true,
       basePriceCents: true,
       currencyCode: true,
+      durationMinutes: true,
       countryId: true,
       country: {
         select: { bookingSetting: { select: { timezone: true } } },
@@ -186,7 +198,6 @@ export async function createManualBooking(
   // country (DST-aware via luxon).
   const clinicTimeZone = service.country?.bookingSetting?.timezone ?? "UTC";
 
-  let doctorName: string | null = null;
   if (input.doctorId) {
     // Validate the doctor is actually bookable for THIS country + service.
     // Enforced here (not just in the UI) so a manipulated payload can't
@@ -219,7 +230,6 @@ export async function createManualBooking(
     if (doc.assignedServices.length === 0) {
       throw new DoctorNotAssignedToServiceError();
     }
-    doctorName = doc.fullName.trim() || doc.fullName;
   }
 
   // Reject IN_PERSON without a venue up-front (route Zod also enforces
@@ -349,10 +359,65 @@ export async function createManualBooking(
     throw normalizeDbError(error, "Could not create manual appointment");
   }
 
-  // Stripe + email are best-effort. Failures log via the request's
-  // pino logger when available and surface to the admin UI via the
-  // null `paymentUrl` / `emailQueued: false` flags — admin then has
-  // the recovery banner to act on by hand.
+  let timeSlotId: string | null = null;
+  if (input.doctorId && scheduledAt) {
+    const durationMs = (service.durationMinutes ?? 30) * 60 * 1000;
+    const slot = await prisma.doctorTimeSlot.create({
+      data: {
+        doctorId: input.doctorId,
+        startAt: scheduledAt,
+        endAt: new Date(scheduledAt.getTime() + durationMs),
+        status: "HELD",
+      },
+    });
+    timeSlotId = slot.id;
+    await prisma.appointment.update({
+      where: { id: appointmentId },
+      data: { timeSlotId: slot.id },
+    });
+  }
+
+  const orderNumber = await generateOrderNumber();
+  const order = await prisma.order.create({
+    data: {
+      orderNumber,
+      userId,
+      email,
+      fullName,
+      phone: input.patient.phone?.trim() || null,
+      countryCode: input.countryCode.toLowerCase(),
+      currencyCode: service.currencyCode ?? "EUR",
+      subtotalCents: amountCents,
+      totalCents: amountCents,
+      appointmentIds: [appointmentId],
+      items: {
+        create: {
+          kind: consultationCartKind(service.kind),
+          serviceId: service.id,
+          name: service.name,
+          unitPriceCents: amountCents,
+          quantity: 1,
+          lineTotalCents: amountCents,
+          doctorId: input.doctorId ?? null,
+          timeSlotId,
+          appointmentId,
+          patientFullName: fullName,
+          patientEmail: email,
+          patientPhone: input.patient.phone?.trim() || null,
+          patientDateOfBirth: dob,
+          patientNotes: input.notes?.trim() || null,
+          patientTimezone: clinicTimeZone,
+          patientAddressCountryCode:
+            input.patient.addressCountryCode?.trim().toLowerCase() || null,
+          patientConsentAcceptedAt: new Date(),
+        },
+      },
+    },
+  });
+
+  // Stripe is best-effort. Failures log via the request's pino logger when
+  // available and surface to the admin UI via null `paymentUrl` — admin then
+  // has the recovery banner to act on by hand.
   let paymentUrl: string | null = null;
   let paymentSessionId: string | null = null;
   if (isStripeConfigured()) {
@@ -361,13 +426,13 @@ export async function createManualBooking(
       const baseUrl =
         env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
       const returnBase = input.returnTo ?? "/account/bookings";
-      const successUrl = `${baseUrl}${returnBase}?booking=${appointmentId}&payment=ok`;
-      const cancelUrl = `${baseUrl}${returnBase}?booking=${appointmentId}&payment=cancelled`;
+      const successUrl = `${baseUrl}${returnBase}?orderId=${order.id}&payment=ok&session_id={CHECKOUT_SESSION_ID}`;
+      const cancelUrl = `${baseUrl}${returnBase}?orderId=${order.id}&payment=cancelled`;
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
         payment_method_types: ["card"],
         customer_email: email,
-        client_reference_id: appointmentId,
+        client_reference_id: order.id,
         line_items: [
           {
             quantity: 1,
@@ -384,6 +449,8 @@ export async function createManualBooking(
         success_url: successUrl,
         cancel_url: cancelUrl,
         metadata: {
+          kind: "order",
+          orderId: order.id,
           appointmentId,
           countryCode: input.countryCode,
           source: "admin_manual",
@@ -391,6 +458,10 @@ export async function createManualBooking(
       });
       paymentUrl = session.url ?? null;
       paymentSessionId = session.id ?? null;
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { stripeSessionId: paymentSessionId, paymentStatus: PaymentStatus.PENDING },
+      });
       await prisma.appointment.update({
         where: { id: appointmentId },
         data: {
@@ -408,23 +479,21 @@ export async function createManualBooking(
 
   let emailQueued = false;
   try {
-    await sendManualBookingEmail({
-      to: email,
-      patientName: fullName,
-      doctorName,
-      serviceName: service.name,
-      scheduledAt,
-      paymentUrl: paymentUrl ?? absoluteSiteUrl(`/account/bookings`),
+    await persistOrderPortalAccess(order.id, {
       setPasswordUrl,
-      // Reusing patients keep their existing password — only NEW
-      // accounts get a printed temp password in the email body.
       tempPassword: created ? tempPassword : null,
+    });
+    await startPrePaymentFlow(order.id, paymentUrl, {
+      portal: {
+        setPasswordUrl,
+        tempPassword: created ? tempPassword : null,
+      },
     });
     emailQueued = true;
   } catch (err) {
     input.request?.log.warn(
-      { err, appointmentId },
-      "[manual-booking] Email send failed",
+      { err, appointmentId, orderId: order.id },
+      "[manual-booking] Pre-payment automation failed",
     );
   }
 
@@ -442,6 +511,7 @@ export async function createManualBooking(
       serviceId: service.id,
       doctorId: input.doctorId ?? null,
       consultationMode: input.consultationMode,
+      orderId: order.id,
       stripeSessionId: paymentSessionId,
     },
     request: input.request,
@@ -449,6 +519,7 @@ export async function createManualBooking(
 
   return {
     appointmentId,
+    orderId: order.id,
     patientUserId: userId,
     paymentUrl,
     paymentSessionId,

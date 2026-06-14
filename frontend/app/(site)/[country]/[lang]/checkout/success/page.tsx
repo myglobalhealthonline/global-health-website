@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
-import { fetchOrderReceipt } from "@/lib/api/cart-server";
+import { SyncOrderPaymentOnReturn } from "@/components/payments/SyncOrderPaymentOnReturn";
+import { fetchOrderReceipt, syncOrderPaymentServer } from "@/lib/api/cart-server";
 import { formatPrice } from "@/lib/format-currency";
+import { formatOrderDisplayId } from "@/lib/format-order-display";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -10,12 +13,21 @@ export const dynamic = "force-dynamic";
 type Params = { country: string; lang: string };
 type Props = {
   params: Promise<Params>;
-  searchParams: Promise<{ orderId?: string }>;
+  searchParams: Promise<{ orderId?: string; session_id?: string; payment?: string }>;
 };
 
 export default async function CheckoutSuccessPage({ params, searchParams }: Props) {
   const { country, lang } = await params;
-  const { orderId } = await searchParams;
+  const { orderId, session_id: stripeSessionId, payment } = await searchParams;
+  let paymentSynced = false;
+  if (payment !== "cancelled") {
+    const sync = await syncOrderPaymentServer({
+      orderId: orderId?.trim(),
+      stripeSessionId: stripeSessionId?.trim(),
+      source: "country-checkout-success",
+    });
+    paymentSynced = sync.ok;
+  }
   const orderRes = orderId ? await fetchOrderReceipt(orderId) : null;
   const order = orderRes?.ok ? orderRes.data : null;
   const homeHref = `/${country}/${lang}`;
@@ -23,14 +35,18 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
   const t = loadLocaleBundle(lang as LocaleCode).common.checkoutStatus;
 
   return (
-    <GH2StatusPage
+    <>
+      <Suspense fallback={null}>
+        <SyncOrderPaymentOnReturn skipIfSynced={paymentSynced} />
+      </Suspense>
+      <GH2StatusPage
       status="success"
       title={t.successTitle}
       body={t.successBody}
       reference={
         order ? (
           <div>
-            <p>{t.orderRef.replace("{id}", order.id.slice(-8))}</p>
+            <p>{t.orderRef.replace("{id}", formatOrderDisplayId(order))}</p>
             <ul className="mt-4 space-y-3 normal-case tracking-normal text-[13px] font-sans text-[var(--color-text-body)]">
               {order.items.map((item) => (
                 <li key={item.id} className="flex justify-between gap-4">
@@ -71,5 +87,6 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
         {t.continueShopping}
       </Link>
     </GH2StatusPage>
+    </>
   );
 }

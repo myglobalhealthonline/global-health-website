@@ -142,6 +142,44 @@ export async function fetchOrderReceipt(id: string): Promise<Result<OrderReceipt
   }
 }
 
+/** Server-side fallback when Stripe webhook did not reach the backend. */
+export async function syncOrderPaymentServer(input: {
+  orderId?: string;
+  stripeSessionId?: string;
+  source?: string;
+}): Promise<{ ok: boolean; code?: string }> {
+  const backend = getBackendOrigin();
+  if (!backend) return { ok: false };
+  const payload =
+    input.orderId?.trim()
+      ? { orderId: input.orderId.trim() }
+      : input.stripeSessionId?.trim()
+        ? { stripeSessionId: input.stripeSessionId.trim() }
+        : null;
+  if (!payload) return { ok: false };
+
+  try {
+    const res = await fetch(`${backend}/api/payments/sync-order`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      cache: "no-store",
+    });
+    const json = (await res.json()) as {
+      ok?: boolean;
+      data?: { ok?: boolean; code?: string };
+    };
+    const ok = Boolean(res.ok && json.ok && json.data?.ok);
+    // #region agent log
+    fetch('http://127.0.0.1:7835/ingest/b6dd0b3b-c589-4acc-8726-e91e7b7039d1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'694d12'},body:JSON.stringify({sessionId:'694d12',hypothesisId:'A',location:'cart-server.ts:syncOrderPaymentServer',message:'server sync result',data:{source:input.source??'unknown',payload,httpStatus:res.status,ok,code:json.data?.code??null},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
+    if (!ok) return { ok: false, code: json.data?.code };
+    return { ok: true, code: json.data?.code };
+  } catch {
+    return { ok: false };
+  }
+}
+
 export async function fetchAdminOrders(
   cursor?: string,
 ): Promise<Result<{ items: AdminOrderRow[]; nextCursor: string | null }>> {

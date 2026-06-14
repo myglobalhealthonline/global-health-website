@@ -1,11 +1,13 @@
 import { env } from "../../config/env.js";
+import { sendAutomationEmail } from "../../modules/automation/send-automation-notification.js";
+import { formatOrderDisplayId } from "../../modules/automation/automation-catalog.js";
 import { absoluteSiteUrl, sendEmail } from "./send-email.js";
 import { createBrazilConsentToken } from "../../modules/brazil-consent/brazil-consent-link.service.js";
 
 /** Shared, minimal transactional email shell — works in plain-text clients
  *  and renders neatly in HTML clients. Avoid heavy inline CSS so the message
  *  doesn't trip aggressive spam filters. */
-function wrapHtml(title: string, bodyHtml: string): string {
+export function wrapHtml(title: string, bodyHtml: string): string {
   return `<!doctype html><html><body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:560px;margin:32px auto;padding:0 16px;color:#0F2E25;">
   <h2 style="color:#1B4D3E;margin:0 0 16px;">${escapeHtml(title)}</h2>
   ${bodyHtml}
@@ -210,19 +212,20 @@ export async function sendAppointmentReminderEmail(opts: {
     ? `<p style="margin:16px 0;font-size:14px;color:#1B4D3E;">📍 ${escapeHtml(where)}</p>`
     : "";
 
-  return sendEmail({
-    to: opts.to,
-    subject: `Reminder: your appointment tomorrow — ${opts.consultationType}`,
-    text: `Hi ${opts.fullName},
+  return sendAutomationEmail(
+    {
+      to: opts.to,
+      subject: `Reminder: your appointment tomorrow — ${opts.consultationType}`,
+      text: `Hi ${opts.fullName},
 
 Quick reminder — your ${opts.consultationType} is tomorrow at ${formatted}.
 
 ${whereText}${joinText}${earlyTipText} Reply to this email if you need to reschedule.
 
 — Global Health`,
-    html: wrapHtml(
-      "Your appointment is tomorrow",
-      `<p>Hi ${escapeHtml(opts.fullName)},</p>
+      html: wrapHtml(
+        "Your appointment is tomorrow",
+        `<p>Hi ${escapeHtml(opts.fullName)},</p>
        <p>Quick reminder — your <strong>${escapeHtml(opts.consultationType)}</strong> is tomorrow at:</p>
        <p style="margin:16px 0;font-size:18px;font-weight:700;color:#1B4D3E;">
          <time datetime="${escapeHtml(localHint)}">${escapeHtml(formatted)}</time>
@@ -230,8 +233,10 @@ ${whereText}${joinText}${earlyTipText} Reply to this email if you need to resche
        ${whereHtml}
        ${ctaHtml}
        <p>${earlyTipText} Reply if you need to reschedule.</p>`,
-    ),
-  });
+      ),
+    },
+    { recordLabel: "appointment_reminder_24h" },
+  );
 }
 
 export async function sendContactFormEmail(opts: {
@@ -261,6 +266,7 @@ export async function sendOrderConfirmationEmail(opts: {
   to: string;
   fullName: string;
   orderId: string;
+  orderNumber?: string | null;
   totalLabel: string;
   items: { name: string; quantity: number; lineLabel: string }[];
   shipAddress?: {
@@ -272,7 +278,7 @@ export async function sendOrderConfirmationEmail(opts: {
     countryCode: string;
   } | null;
 }) {
-  const shortId = opts.orderId.slice(-8);
+  const shortId = formatOrderDisplayId({ id: opts.orderId, orderNumber: opts.orderNumber });
   const itemLines = opts.items
     .map((i) => `  - ${i.name} × ${i.quantity}  ${i.lineLabel}`)
     .join("\n");
@@ -340,10 +346,11 @@ export async function sendAbandonedCartEmail(opts: {
   itemCount: number;
   totalLabel: string;
 }) {
-  return sendEmail({
-    to: opts.to,
-    subject: `Your cart is waiting — Global Health`,
-    text: `Hi ${opts.fullName},
+  return sendAutomationEmail(
+    {
+      to: opts.to,
+      subject: `Your cart is waiting — Global Health`,
+      text: `Hi ${opts.fullName},
 
 You left ${opts.itemCount} item${opts.itemCount === 1 ? "" : "s"} in your cart (${opts.totalLabel}).
 
@@ -352,9 +359,9 @@ Pick up where you left off — your cart is saved for you.
 https://myglobalhealth.online/cart
 
 — Global Health`,
-    html: wrapHtml(
-      "Your cart is waiting",
-      `<p>Hi ${escapeHtml(opts.fullName)},</p>
+      html: wrapHtml(
+        "Your cart is waiting",
+        `<p>Hi ${escapeHtml(opts.fullName)},</p>
        <p>You left <strong>${opts.itemCount} item${opts.itemCount === 1 ? "" : "s"}</strong> in your cart (${escapeHtml(opts.totalLabel)}).</p>
        <p style="margin:24px 0;">
          <a href="${absoluteSiteUrl("/cart")}"
@@ -366,8 +373,10 @@ https://myglobalhealth.online/cart
          Reservations for consultation slots time out after 10 minutes,
          so please complete checkout soon if you have a slot held.
        </p>`,
-    ),
-  });
+      ),
+    },
+    { recordLabel: "abandoned_cart" },
+  );
 }
 
 export async function sendBookingConfirmationEmail(opts: {
@@ -420,17 +429,20 @@ export async function sendReviewInviteEmail(opts: {
   link: string;
   localeTitle: string;
 }) {
-  return sendEmail({
-    to: opts.to,
-    subject: `${opts.localeTitle} — Global Health`,
-    text: `Hi ${opts.patientName},\n\nWe would love your feedback on your recent visit:\n\n${opts.link}\n\n— Global Health`,
-    html: wrapHtml(
-      opts.localeTitle,
-      `<p>Hi ${escapeHtml(opts.patientName)},</p>
+  return sendAutomationEmail(
+    {
+      to: opts.to,
+      subject: `${opts.localeTitle} — Global Health`,
+      text: `Hi ${opts.patientName},\n\nWe would love your feedback on your recent visit:\n\n${opts.link}\n\n— Global Health`,
+      html: wrapHtml(
+        opts.localeTitle,
+        `<p>Hi ${escapeHtml(opts.patientName)},</p>
        <p>We would love your feedback on your recent visit.</p>
        <p style="margin:24px 0;"><a href="${opts.link}" style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">Leave a review</a></p>`,
-    ),
-  });
+      ),
+    },
+    { recordLabel: "review_invite" },
+  );
 }
 
 export async function sendGeneratedDocumentEmail(opts: {
@@ -459,109 +471,6 @@ export async function sendGeneratedDocumentEmail(opts: {
   });
 }
 
-/**
- * Sent when admin creates an appointment on the patient's behalf
- * (walk-in / phone-in). Single email, two CTAs:
- *   1) pay the consultation fee via Stripe Checkout
- *   2) access the patient portal — either via a 7-day set-password
- *      invite link, OR with a uniquely-generated temporary password
- *      they're forced to rotate on first login.
- *
- * Mirrors the doctor-invite pattern for the portal CTA so the consent
- * + bounce profile stays the same across all "admin created an
- * account for you" flows.
- */
-export async function sendManualBookingEmail(opts: {
-  to: string;
-  patientName: string;
-  doctorName: string | null;
-  serviceName: string;
-  scheduledAt: Date | null;
-  paymentUrl: string;
-  setPasswordUrl: string;
-  /** Plain-text temp password. Null when the patient already had
-   *  an account — we don't print a fresh password they'd have to
-   *  reconcile against their existing one. The set-password URL is
-   *  always present as the recovery path. */
-  tempPassword: string | null;
-}) {
-  const greeting = opts.patientName?.trim() || "there";
-  const doctorLine = opts.doctorName
-    ? ` with ${opts.doctorName}`
-    : "";
-  const slotLine = opts.scheduledAt
-    ? `Scheduled for ${opts.scheduledAt.toUTCString()}.`
-    : "Our team will follow up with the exact slot.";
-  const localHint = opts.scheduledAt?.toISOString() ?? "";
-  const slotHtml = opts.scheduledAt
-    ? `<p style="margin:16px 0;font-size:16px;font-weight:600;color:#1B4D3E;">
-         📅 <time datetime="${escapeHtml(localHint)}">${escapeHtml(opts.scheduledAt.toUTCString())}</time>
-       </p>`
-    : `<p style="margin:16px 0;font-size:14px;color:#737373;">Our team will follow up to confirm the exact slot.</p>`;
-
-  return sendEmail({
-    to: opts.to,
-    subject: `Your appointment is booked — pay & access your portal`,
-    text: `Hi ${greeting},
-
-Our team booked a ${opts.serviceName}${doctorLine} for you. ${slotLine}
-
-To finish:
-
-1) Pay your consultation fee:
-   ${opts.paymentUrl}
-
-2) Access your patient portal — choose one:
-   • Set your own password (recommended, link valid 7 days):
-     ${opts.setPasswordUrl}${opts.tempPassword ? `
-   • Or sign in now with your temporary password: ${opts.tempPassword}
-     (you'll be asked to change it on first login).` : `
-   • If you already have an account, sign in with your existing password.`}
-
-Reply to this email if anything looks off.
-
-— Global Health`,
-    html: wrapHtml(
-      "Your appointment is booked",
-      `<p>Hi ${escapeHtml(greeting)},</p>
-       <p>Our team booked a <strong>${escapeHtml(opts.serviceName)}</strong>${doctorLine ? ` with <strong>${escapeHtml(opts.doctorName ?? "")}</strong>` : ""} for you.</p>
-       ${slotHtml}
-
-       <h3 style="margin:32px 0 8px;color:#1B4D3E;">1. Pay for your consultation</h3>
-       <p>Secure checkout — we'll confirm the booking automatically once payment lands.</p>
-       <p style="margin:16px 0 28px;">
-         <a href="${escapeHtml(opts.paymentUrl)}"
-            style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">
-           Pay now
-         </a>
-       </p>
-
-       <h3 style="margin:24px 0 8px;color:#1B4D3E;">2. Access your patient portal</h3>
-       <p>Two ways to get in — pick whichever feels easier:</p>
-       <p style="margin:16px 0;">
-         <a href="${escapeHtml(opts.setPasswordUrl)}"
-            style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">
-           Set your password
-         </a>
-         <span style="font-size:13px;color:#737373;margin-left:8px;">recommended · link valid 7 days</span>
-       </p>
-       ${opts.tempPassword
-         ? `<p style="margin:16px 0;font-size:14px;color:#374151;">
-              Or sign in right now with this temporary password
-              (you'll be asked to change it on first login):<br/>
-              <code style="display:inline-block;margin-top:6px;padding:8px 12px;background:#F1F1EF;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:1px;">${escapeHtml(opts.tempPassword)}</code>
-            </p>`
-         : `<p style="margin:16px 0;font-size:14px;color:#374151;">
-              If you already have an account, sign in with your existing password.
-            </p>`}
-
-       <p style="margin-top:32px;font-size:13px;color:#737373;">
-         If you didn't expect this booking, reply to this email and
-         we'll sort it out.
-       </p>`,
-    ),
-  });
-}
 
 export async function sendPatientUploadLinkEmail(opts: {
   to: string;

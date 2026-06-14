@@ -7,6 +7,7 @@ import {
   isStripeConfigured,
 } from "../lib/stripe/client.js";
 import { env } from "../config/env.js";
+import { generateOrderNumber } from "../lib/order-number.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
@@ -21,6 +22,7 @@ import {
   computeSlotPrice,
   getServicePeakConfig,
 } from "../modules/pricing/peak-pricing.service.js";
+import { startPrePaymentFlow } from "../modules/automation/pre-payment-flow.service.js";
 
 /**
  * Orders + checkout.
@@ -210,9 +212,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         }
 
         // Create Order + OrderItems in one tx so a partial state is impossible
+        const orderNumber = await generateOrderNumber();
         const order = await prisma.$transaction(async (tx) => {
           const created = await tx.order.create({
             data: {
+              orderNumber,
               userId: userId ?? null,
               email: body.data.email,
               fullName: body.data.fullName,
@@ -303,8 +307,8 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         const baseUrl =
           env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
         const returnBase = body.data.returnTo ?? "/checkout";
-        const successUrl = `${baseUrl}${returnBase}/success?orderId=${order.id}`;
-        const cancelUrl = `${baseUrl}${returnBase}/cancelled?orderId=${order.id}`;
+        const successUrl = `${baseUrl}${returnBase}/success?orderId=${order.id}&payment=ok&session_id={CHECKOUT_SESSION_ID}`;
+        const cancelUrl = `${baseUrl}${returnBase}/cancelled?orderId=${order.id}&payment=cancelled`;
 
         const session = await stripe.checkout.sessions.create({
           mode: "payment",
@@ -324,6 +328,10 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         await prisma.order.update({
           where: { id: order.id },
           data: { stripeSessionId: session.id, paymentStatus: "PENDING" },
+        });
+
+        void startPrePaymentFlow(order.id, session.url ?? null).catch((err) => {
+          app.log.warn({ err, orderId: order.id }, "Pre-payment flow start failed");
         });
 
         // Clear the cart (items moved to order)
@@ -373,6 +381,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       return okResponse({
         items: orders.map((o) => ({
           id: o.id,
+          orderNumber: o.orderNumber,
           status: o.status,
           paymentStatus: o.paymentStatus,
           countryCode: o.countryCode,
@@ -412,6 +421,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           where: { id: params.data.id },
           select: {
             id: true,
+            orderNumber: true,
             status: true,
             paymentStatus: true,
             currencyCode: true,
@@ -432,6 +442,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         // go through the patient order endpoint.
         return okResponse({
           id: order.id,
+          orderNumber: order.orderNumber,
           status: order.status,
           paymentStatus: order.paymentStatus,
           currencyCode: order.currencyCode,
@@ -481,6 +492,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         if (!order) return reply.status(404).send(errorResponse("Order not found"));
         return okResponse({
           id: order.id,
+          orderNumber: order.orderNumber,
           status: order.status,
           paymentStatus: order.paymentStatus,
           countryCode: order.countryCode,
@@ -554,6 +566,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   { email: { contains: q, mode: "insensitive" } },
                   { fullName: { contains: q, mode: "insensitive" } },
                   { id: { contains: q } },
+                  { orderNumber: { contains: q, mode: "insensitive" } },
                 ],
               }
             : {}),
@@ -602,6 +615,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
       return okResponse({
         items: page.map((o) => ({
           id: o.id,
+          orderNumber: o.orderNumber,
           status: o.status,
           paymentStatus: o.paymentStatus,
           email: o.email,
@@ -668,6 +682,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         // crossing the wire.
         return okResponse({
           id: order.id,
+          orderNumber: order.orderNumber,
           status: order.status,
           paymentStatus: order.paymentStatus,
           countryCode: order.countryCode,

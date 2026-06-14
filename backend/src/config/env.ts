@@ -89,6 +89,10 @@ const envSchema = z.object({
    *  Generate with: openssl rand -base64 32. */
   CRON_SECRET: z.string().trim().min(16).optional(),
 
+  /** Inbox that receives a duplicate of every automation email (internal record).
+   *  Defaults to globalhealth@myglobalhealth.online when unset. */
+  AUTOMATION_OFFICIAL_EMAIL: z.string().trim().email().optional(),
+
   BRAZIL_BOOKING_URL: z.string().trim().url().optional(),
   BRAZIL_CONSENT_NOTIFY_EMAIL: z.string().trim().email().optional(),
   BRAZIL_CONSENT_DOCTOR_PHONE: z.string().trim().optional(),
@@ -119,8 +123,15 @@ const envSchema = z.object({
     .union([z.literal("true"), z.literal("false"), z.boolean()])
     .optional(),
 
+  /** Full WaSender send-message URL (e.g. https://wasenderapi.com/api/send-message). */
+  WA_API_URL: z.string().trim().url().optional(),
+  /** Authorization header value — `Bearer <token>` or raw token. */
+  WA_AUTH: z.string().trim().min(1).optional(),
+  /** @deprecated Prefer WA_AUTH — kept for backward compatibility. */
   WASENDER_API_TOKEN: z.string().trim().min(1).optional(),
-  WASENDER_GAP_MS: z.coerce.number().int().min(0).default(5500).optional(),
+  /** Minimum gap between WhatsApp sends (default 6s). */
+  /** Minimum ms between WaSender API calls (global queue — enforced floor 6s in wasender.ts). */
+  WASENDER_GAP_MS: z.coerce.number().int().min(0).default(6000).optional(),
 
   REVIEW_FORM_WEBHOOK_SECRET: z.string().trim().min(1).optional(),
 

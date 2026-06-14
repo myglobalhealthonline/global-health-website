@@ -159,7 +159,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   // not "Pick a time with Dr. Anna Garcia Lopez". Falls back to the
   // generic label when we can't extract a first name.
   const firstName = data.profile.name
-    .replace(/^(Dr\.?|Prof\.?|Mr\.?|Mrs\.?|Ms\.?)\s+/i, "")
+    .replace(/^(Dr\.?|Dra\.?|Prof\.?|Mr\.?|Mrs\.?|Ms\.?)\s+/i, "")
     .split(" ")[0]
     ?.trim();
   const primaryCtaHref = fallbackBookHref;

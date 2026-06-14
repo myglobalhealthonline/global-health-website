@@ -10,7 +10,7 @@ import {
 import { env } from "../config/env.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
-import { sendOrderConfirmationEmail } from "../lib/email/templates.js";
+import { completeOrderPaymentFromCheckoutSession, syncOrderPaymentFromStripe, syncOrderPaymentFromStripeSession } from "../modules/orders/complete-order-payment.service.js";
 
 const createCheckoutBodySchema = z.object({
   appointmentId: z.string().trim().min(8).max(40),
@@ -34,6 +34,15 @@ function paymentsDisabled(reply: FastifyReply) {
     .status(503)
     .send(errorResponse("Payments not configured. Set STRIPE_SECRET_KEY to enable."));
 }
+
+const syncOrderBodySchema = z
+  .object({
+    orderId: z.string().trim().min(8).max(40).optional(),
+    stripeSessionId: z.string().trim().min(8).max(200).optional(),
+  })
+  .refine((data) => Boolean(data.orderId || data.stripeSessionId), {
+    message: "orderId or stripeSessionId is required",
+  });
 
 const paymentsRoute: FastifyPluginAsync = async (app) => {
   /**
@@ -169,6 +178,39 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
   });
 
   /**
+   * Sync order payment from Stripe when the webhook did not fire
+   * (local dev without `stripe listen`, or transient webhook failure).
+   * Safe to call repeatedly — idempotent when already PAID.
+   */
+  app.post("/api/payments/sync-order", async (request, reply) => {
+    if (!isStripeConfigured()) {
+      return paymentsDisabled(reply);
+    }
+    const body = syncOrderBodySchema.safeParse(request.body ?? {});
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("orderId or stripeSessionId is required"));
+    }
+    try {
+      const result = body.data.orderId
+        ? await syncOrderPaymentFromStripe(body.data.orderId, app.log)
+        : await syncOrderPaymentFromStripeSession(body.data.stripeSessionId!, app.log);
+      // #region agent log
+      fetch('http://127.0.0.1:7835/ingest/b6dd0b3b-c589-4acc-8726-e91e7b7039d1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'694d12'},body:JSON.stringify({sessionId:'694d12',hypothesisId:'B',location:'payments.route.ts:sync-order',message:'sync-order result',data:{orderId:body.data.orderId??null,stripeSessionId:body.data.stripeSessionId??null,result},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
+      if (!result.ok && result.code === "NOT_FOUND") {
+        return reply.status(404).send(errorResponse("Order not found"));
+      }
+      return okResponse(result);
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not sync order payment"));
+    }
+  });
+
+  /**
    * Stripe webhook receiver. Verifies the signature against
    * STRIPE_WEBHOOK_SECRET, then processes the events we care about:
    *   - checkout.session.completed       → mark appointment PAID
@@ -274,329 +316,21 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
               return okResponse({ received: true });
             }
 
-            // Mark paid + (if any consultation items) mint Appointments
-            const orderAlreadyPaid = await prisma.$transaction(async (tx) => {
-              const order = await tx.order.findUnique({
-                where: { id: orderId },
-                include: { items: true },
-              });
-              if (!order) return true;
-              // Idempotency gate: Stripe retries on 5xx, network blips, and
-              // duplicate-delivery sweeps. The appointment branch writes a
-              // `Payment` row keyed by `event.id` which the top-of-handler
-              // dedupe short-circuits on. The order branch never wrote one,
-              // so a retry used to re-decrement stock + re-send the email.
-              // Bail out as soon as we see the order is already PAID.
-              if (order.paymentStatus === "PAID" || order.status === "PAID") {
-                return true;
-              }
+            const result = await completeOrderPaymentFromCheckoutSession(
+              orderId,
+              {
+                id: session.id,
+                payment_intent:
+                  typeof session.payment_intent === "string" ? session.payment_intent : null,
+                client_reference_id: session.client_reference_id,
+                metadata: session.metadata ?? undefined,
+              },
+              { stripeEventId: event.id, eventType },
+              app.log,
+            );
 
-              const consultationItems = order.items.filter(
-                (i) =>
-                  i.kind === "GENERAL_CONSULTATION" ||
-                  i.kind === "SPECIALIST_CONSULTATION",
-              );
-
-              // Decrement health-test stock. Null stock = unlimited (skip).
-              // Uses `decrement` operator so it's race-safe at the DB level.
-              // We assert `count === 1` on each updateMany — if zero
-              // rows updated it means another paid order beat us to
-              // the inventory (or the row was deleted), and we log it
-              // as an oversell that ops needs to reconcile. We do NOT
-              // throw and abort the webhook tx: Stripe already took
-              // the patient's money, the order is PAID, and rolling
-              // back here would leave the payment without an order
-              // record. Better to record the discrepancy + ship the
-              // alert downstream.
-              const healthTestItems = order.items.filter(
-                (i) => i.kind === "HEALTH_TEST" && i.healthTestId,
-              );
-              for (const item of healthTestItems) {
-                if (!item.healthTestId) continue;
-                try {
-                  const result = await tx.healthTest.updateMany({
-                    where: {
-                      id: item.healthTestId,
-                      stock: { not: null, gte: item.quantity },
-                    },
-                    data: { stock: { decrement: item.quantity } },
-                  });
-                  if (result.count !== 1) {
-                    // Either the test is null-stock (unlimited) or the
-                    // decrement was refused for lack of inventory.
-                    // Re-read the row to tell the difference.
-                    const fresh = await tx.healthTest.findUnique({
-                      where: { id: item.healthTestId },
-                      select: { stock: true },
-                    });
-                    if (fresh && fresh.stock !== null) {
-                      app.log.error(
-                        {
-                          orderId,
-                          healthTestId: item.healthTestId,
-                          requested: item.quantity,
-                          remaining: fresh.stock,
-                        },
-                        "OVERSELL: paid order item exceeds available stock — needs manual reconciliation",
-                      );
-                    }
-                  }
-                } catch (decErr) {
-                  app.log.warn(
-                    { err: decErr, healthTestId: item.healthTestId, qty: item.quantity },
-                    "Stock decrement failed",
-                  );
-                }
-              }
-
-              const appointmentIds: string[] = [];
-              for (const item of consultationItems) {
-                if (!item.timeSlotId || !item.doctorId || !item.serviceId) {
-                  app.log.warn(
-                    { orderId, itemId: item.id },
-                    "Consultation order item missing slot/doctor/service",
-                  );
-                  continue;
-                }
-                // Claim slot (atomic) — accept HELD (cart reservation)
-                // or OPEN (defensive fallback). Skip if already BOOKED
-                // or BLOCKED so we don't overwrite real bookings.
-                try {
-                  const claim = await tx.doctorTimeSlot.updateMany({
-                    where: {
-                      id: item.timeSlotId,
-                      status: { in: ["HELD", "OPEN"] },
-                    },
-                    data: { status: "BOOKED" },
-                  });
-                  if (claim.count === 0) {
-                    app.log.warn(
-                      { orderId, itemId: item.id, slotId: item.timeSlotId },
-                      "Slot already claimed by someone else — appointment skipped",
-                    );
-                    continue;
-                  }
-                  const slot = await tx.doctorTimeSlot.findUniqueOrThrow({
-                    where: { id: item.timeSlotId },
-                  });
-                  const consultationType =
-                    item.kind === "SPECIALIST_CONSULTATION" ? "specialist" : "general";
-                  // Prefer patient intake from the order line (collected
-                  // on the consult page). Fall back to the order-level
-                  // payer details when the line is missing them (legacy
-                  // carts created before the cart-first flow shipped).
-                  const aptFullName = item.patientFullName ?? order.fullName;
-                  const aptEmail = item.patientEmail ?? order.email;
-                  const aptPhone = item.patientPhone ?? order.phone;
-                  const aptDob = item.patientDateOfBirth ?? null;
-                  const aptNotes = item.patientNotes ?? null;
-                  const aptConsent = item.patientConsentAcceptedAt
-                    ? true
-                    : true; // schema requires boolean; we treat presence-on-line as confirmed
-                  const apt = await tx.appointment.create({
-                    data: {
-                      userId: order.userId,
-                      countryCode: order.countryCode,
-                      consultationType,
-                      fullName: aptFullName,
-                      email: aptEmail,
-                      phone: aptPhone,
-                      dateOfBirth: aptDob,
-                      notes: aptNotes,
-                      consentAccepted: aptConsent,
-                      status: "REQUEST_RECEIVED",
-                      serviceId: item.serviceId,
-                      doctorId: item.doctorId,
-                      timeSlotId: item.timeSlotId,
-                      scheduledAt: slot.startAt,
-                      amountCents: item.unitPriceCents,
-                      currencyCode: order.currencyCode,
-                      paymentStatus: "PAID",
-                      paidAt: new Date(),
-                      consultationMode: "ONLINE",
-                      // New booking snapshot — mint with the timezone,
-                      // structured address, country-specific ID, and dual
-                      // GDPR consents captured at add-to-cart time. Falls
-                      // back to null on legacy carts that pre-date the
-                      // new columns.
-                      patientTimezone: item.patientTimezone,
-                      addressLine1: item.patientAddressLine1,
-                      addressLine2: item.patientAddressLine2,
-                      addressCity: item.patientAddressCity,
-                      addressPostalCode: item.patientAddressPostalCode,
-                      addressCountryCode: item.patientAddressCountryCode,
-                      gdprConsentClinic: item.patientGdprConsentClinic,
-                      gdprConsentPlatform: item.patientGdprConsentPlatform,
-                      gdprConsentedAt: item.patientGdprConsentedAt,
-                    },
-                  });
-                  await tx.orderItem.update({
-                    where: { id: item.id },
-                    data: { appointmentId: apt.id },
-                  });
-                  appointmentIds.push(apt.id);
-
-                  // Upsert PatientProfile so the national ID, address,
-                  // and identity fields captured at booking persist in
-                  // their canonical home. Appointment doesn't have a
-                  // nationalIdNumber column (it lives on PatientProfile
-                  // by design), so without this upsert the CNP/NIF/PPS
-                  // collected at booking would silently drop.
-                  //
-                  // Email is unique on PatientProfile. Existing rows are
-                  // only patched on fields that are currently null — we
-                  // never overwrite values the patient already set from
-                  // /account/profile, since the per-booking snapshot is
-                  // the SOURCE OF TRUTH only on first capture.
-                  if (aptEmail && (
-                    item.patientNationalIdNumber ||
-                    item.patientAddressLine1 ||
-                    item.patientAddressCity
-                  )) {
-                    try {
-                      const existing = await tx.patientProfile.findUnique({
-                        where: { email: aptEmail.toLowerCase() },
-                        select: {
-                          nationalIdNumber: true,
-                          addressLine1: true,
-                          addressLine2: true,
-                          addressCity: true,
-                          addressPostalCode: true,
-                          addressCountryCode: true,
-                        },
-                      });
-                      const fill = <T>(existingVal: T | null, snapshotVal: T | null): T | null =>
-                        existingVal ?? snapshotVal ?? null;
-                      await tx.patientProfile.upsert({
-                        where: { email: aptEmail.toLowerCase() },
-                        update: {
-                          // Only fill nulls — never overwrite.
-                          nationalIdNumber: fill(
-                            existing?.nationalIdNumber ?? null,
-                            item.patientNationalIdNumber,
-                          ),
-                          addressLine1: fill(existing?.addressLine1 ?? null, item.patientAddressLine1),
-                          addressLine2: fill(existing?.addressLine2 ?? null, item.patientAddressLine2),
-                          addressCity: fill(existing?.addressCity ?? null, item.patientAddressCity),
-                          addressPostalCode: fill(
-                            existing?.addressPostalCode ?? null,
-                            item.patientAddressPostalCode,
-                          ),
-                          addressCountryCode: fill(
-                            existing?.addressCountryCode ?? null,
-                            item.patientAddressCountryCode,
-                          ),
-                        },
-                        create: {
-                          email: aptEmail.toLowerCase(),
-                          fullName: aptFullName,
-                          phone: aptPhone,
-                          dateOfBirth: aptDob,
-                          nationalIdNumber: item.patientNationalIdNumber,
-                          addressLine1: item.patientAddressLine1,
-                          addressLine2: item.patientAddressLine2,
-                          addressCity: item.patientAddressCity,
-                          addressPostalCode: item.patientAddressPostalCode,
-                          addressCountryCode: item.patientAddressCountryCode,
-                        },
-                      });
-                    } catch (profileErr) {
-                      // Profile upsert is best-effort — the appointment
-                      // already minted successfully. Log + continue so a
-                      // schema mismatch doesn't kill payment webhook idempotency.
-                      app.log.warn(
-                        { err: profileErr, email: aptEmail },
-                        "PatientProfile upsert failed after appointment mint",
-                      );
-                    }
-                  }
-                } catch (err) {
-                  app.log.error(
-                    { err, orderId, itemId: item.id },
-                    "Failed to mint appointment for consultation item",
-                  );
-                }
-              }
-
-              await tx.order.update({
-                where: { id: orderId },
-                data: {
-                  status: "PAID",
-                  paymentStatus: "PAID",
-                  paidAt: new Date(),
-                  stripePaymentIntentId:
-                    typeof session.payment_intent === "string"
-                      ? session.payment_intent
-                      : null,
-                  appointmentIds,
-                },
-              });
-              // Record the event id so a Stripe retry dedupes at the top of
-              // the handler. The order branch can't write a Payment row (that
-              // requires an appointmentId), so it records here instead. Only
-              // reached on first processing — a retry short-circuits on the
-              // order's PAID status above before getting here.
-              await tx.processedWebhookEvent.create({
-                data: { stripeEventId: event.id, eventType },
-              });
-              return false;
-            });
-
-            // Skip the email + return when this was a Stripe retry of an
-            // already-paid order. Prevents duplicate confirmation emails.
-            if (orderAlreadyPaid) {
+            if (result.alreadyPaid) {
               return okResponse({ received: true, deduped: true });
-            }
-
-            // Send order confirmation email (best-effort, non-blocking)
-            try {
-              const paidOrder = await prisma.order.findUnique({
-                where: { id: orderId },
-                include: { items: true },
-              });
-              if (paidOrder) {
-                const currency = paidOrder.currencyCode || "EUR";
-                const fmt = (cents: number) => {
-                  const code = currency.toUpperCase();
-                  const symbol =
-                    code === "EUR" ? "€" : code === "CZK" ? "Kč " : code === "BRL" ? "R$" : `${code} `;
-                  return `${symbol}${(cents / 100).toFixed(2)}`;
-                };
-                await sendOrderConfirmationEmail({
-                  to: paidOrder.email,
-                  fullName: paidOrder.fullName,
-                  orderId: paidOrder.id,
-                  totalLabel: fmt(paidOrder.totalCents),
-                  items: paidOrder.items.map((i) => ({
-                    name: i.name,
-                    quantity: i.quantity,
-                    lineLabel: fmt(i.lineTotalCents),
-                  })),
-                  shipAddress: paidOrder.shipName
-                    ? {
-                        name: paidOrder.shipName,
-                        line1: paidOrder.shipLine1 ?? "",
-                        line2: paidOrder.shipLine2,
-                        city: paidOrder.shipCity ?? "",
-                        postalCode: paidOrder.shipPostalCode ?? "",
-                        countryCode: paidOrder.shipCountryCode ?? "",
-                      }
-                    : null,
-                });
-              }
-            } catch (emailErr) {
-              app.log.warn({ err: emailErr, orderId }, "Order confirmation email failed");
-            }
-
-            // Consultation orders: create Google Meet link + calendar event
-            // (best-effort — payment is already recorded).
-            try {
-              const { autoProvisionOrderMeetOnPaid } = await import(
-                "../modules/admin-orders/generate-order-meet-link.service.js"
-              );
-              await autoProvisionOrderMeetOnPaid(orderId, app.log);
-            } catch (meetErr) {
-              app.log.warn({ err: meetErr, orderId }, "Order Meet auto-provision import failed");
             }
 
             return okResponse({ received: true });

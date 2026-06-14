@@ -5,11 +5,11 @@ export const GENERATED_DOCUMENT_TYPE_LABELS: Record<string, string> = {
   OTHER: "Other",
 };
 
-export function formatOrderRef(appointmentId: string, orderId?: string | null): string {
-  if (orderId) {
-    const digits = orderId.replace(/\D/g, "");
-    if (digits.length >= 4) return digits.slice(-6);
-    return orderId.slice(-8).toUpperCase();
+export function formatOrderRef(appointmentId: string, orderRef?: string | null): string {
+  if (orderRef?.trim()) {
+    const trimmed = orderRef.trim();
+    if (trimmed.startsWith("ORD-")) return trimmed;
+    return trimmed.slice(-8).toUpperCase();
   }
   const fromAppt = appointmentId.replace(/\D/g, "");
   if (fromAppt.length >= 4) return fromAppt.slice(-6);

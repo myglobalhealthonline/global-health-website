@@ -12,6 +12,7 @@ import {
 } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
+import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { AdminOrderActions } from "./_components/order-actions";
 import { OrderMeetLinkDisplay } from "../_components/order-meet-link-display";
 
@@ -21,6 +22,7 @@ type Props = { params: Promise<{ id: string }> };
 
 type AdminOrder = {
   id: string;
+  orderNumber?: string | null;
   userId: string | null;
   email: string;
   fullName: string;
@@ -113,7 +115,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
       <PageHeader
         eyebrow={
           <span className="inline-flex items-center gap-2">
-            <ShoppingBag className="size-3.5" aria-hidden /> Order #{order.id.slice(-8)}
+            <ShoppingBag className="size-3.5" aria-hidden /> Order #{formatOrderDisplayId(order)}
           </span>
         }
         title={formatPrice(order.totalCents, order.currencyCode)}

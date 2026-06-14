@@ -5,6 +5,7 @@ import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "@/components/po
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
+import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -67,7 +68,7 @@ export default async function AccountOrdersPage() {
                 >
                   <div className="min-w-0 flex-1">
                     <p className="font-mono text-xs text-[var(--color-text-muted)]">
-                      #{o.id.slice(-8)}
+                      #{formatOrderDisplayId(o)}
                     </p>
                     <p className="mt-1 flex flex-wrap items-center gap-2 text-sm">
                       <span className="font-semibold text-[var(--color-text-primary)]">

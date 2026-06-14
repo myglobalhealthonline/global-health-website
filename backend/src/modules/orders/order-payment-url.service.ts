@@ -1,0 +1,98 @@
+import { env } from "../../config/env.js";
+import { prisma } from "../../db/prisma.js";
+import { getStripeClient, isStripeConfigured } from "../../lib/stripe/client.js";
+
+function isSessionOpen(session: {
+  status: string | null;
+  url: string | null;
+  expires_at: number | null;
+}): boolean {
+  return (
+    session.status === "open" &&
+    Boolean(session.url?.trim()) &&
+    (!session.expires_at || session.expires_at * 1000 > Date.now())
+  );
+}
+
+/**
+ * Returns a working Stripe Checkout URL for an unpaid order.
+ * Reuses an open session when possible; creates a fresh session when the
+ * original has expired (Stripe sessions expire after ~24h).
+ */
+export async function resolveOrderPaymentUrl(
+  orderId: string,
+  overrideUrl?: string | null,
+): Promise<string> {
+  if (overrideUrl?.trim()) return overrideUrl.trim();
+  if (!isStripeConfigured()) return "";
+
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { items: true },
+  });
+  if (!order || order.items.length === 0) return "";
+
+  const stripe = getStripeClient();
+
+  if (order.stripeSessionId) {
+    try {
+      const existing = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
+      if (isSessionOpen(existing) && existing.url) {
+        return existing.url;
+      }
+    } catch {
+      // Stale session id — create a new one below.
+    }
+  }
+
+  try {
+    const currency = order.currencyCode.toLowerCase();
+    const lineItems = order.items.map((item) => ({
+      quantity: item.quantity,
+      price_data: {
+        currency,
+        unit_amount: item.unitPriceCents,
+        product_data: { name: item.name },
+      },
+    }));
+
+    if (order.shippingCents > 0) {
+      lineItems.push({
+        quantity: 1,
+        price_data: {
+          currency,
+          unit_amount: order.shippingCents,
+          product_data: { name: "Shipping" },
+        },
+      });
+    }
+
+    const baseUrl = env.PUBLIC_SITE_URL?.replace(/\/+$/, "") ?? "http://localhost:3000";
+    const successUrl = `${baseUrl}/checkout/success?orderId=${order.id}&payment=ok&session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${baseUrl}/checkout/cancelled?orderId=${order.id}&payment=cancelled`;
+
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      payment_method_types: ["card"],
+      customer_email: order.email,
+      client_reference_id: order.id,
+      line_items: lineItems,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      metadata: {
+        kind: "order",
+        orderId: order.id,
+        countryCode: order.countryCode,
+      },
+    });
+
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { stripeSessionId: session.id, paymentStatus: "PENDING" },
+    });
+
+    return session.url?.trim() ?? "";
+  } catch {
+    return "";
+  }
+}

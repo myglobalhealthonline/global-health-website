@@ -16,10 +16,12 @@ import {
 } from "@/components/portal-atoms";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
+import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { OrderMeetLinkDisplay } from "./order-meet-link-display";
 
 export type AdminOrderRow = {
   id: string;
+  orderNumber?: string | null;
   status: string;
   paymentStatus: string;
   email: string;
@@ -189,7 +191,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                       href={`/admin/orders/${o.id}`}
                       className="font-mono text-xs text-[var(--color-brand-primary)] hover:underline"
                     >
-                      #{o.id.slice(-8)}
+                      #{formatOrderDisplayId(o)}
                     </Link>
                   </Td>
                   <Td>

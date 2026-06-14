@@ -37,7 +37,7 @@ export function ReportsCsvButton({ data }: { data: DoctorReportsDto }) {
     a.download = `doctor-report-${data.range.from.slice(0, 10)}_to_${data.range.to.slice(0, 10)}.csv`;
     document.body.appendChild(a);
     a.click();
-    document.body.removeChild(a);
+    a.remove();
     URL.revokeObjectURL(url);
   }
 

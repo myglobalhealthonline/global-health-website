@@ -1,5 +1,6 @@
 import { CartItemKind, OrderStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
+import { formatDoctorForDocument } from "../../lib/doctor-name.js";
 import {
   createMeetLinkForAppointment,
   isGoogleMeetConfigured,
@@ -141,7 +142,9 @@ export async function generateOrderMeetLink(
     if (appointment) {
       startAt = appointment.scheduledAt ?? appointment.timeSlot?.startAt ?? null;
       endAt = appointment.timeSlot?.endAt ?? null;
-      if (appointment.doctor?.fullName) doctorName = appointment.doctor.fullName;
+      if (appointment.doctor?.fullName) {
+        doctorName = formatDoctorForDocument(appointment.doctor.fullName);
+      }
       if (appointment.service?.name) serviceTitle = appointment.service.name;
       patientEmail =
         consultItem.patientEmail?.trim() ||
@@ -165,7 +168,9 @@ export async function generateOrderMeetLink(
     if (slot) {
       startAt = slot.startAt;
       endAt = slot.endAt;
-      if (slot.doctor?.fullName) doctorName = slot.doctor.fullName;
+      if (slot.doctor?.fullName) {
+        doctorName = formatDoctorForDocument(slot.doctor.fullName);
+      }
       doctorId = slot.doctorId;
       doctorEmail = slot.doctor?.loginUser?.email?.trim().toLowerCase() ?? null;
     }
@@ -214,6 +219,16 @@ export async function generateOrderMeetLink(
     }
   });
 
+  if (orderIsPaidForMeet(order)) {
+    const { startPostPaymentFlow } = await import("../automation/post-payment-flow.service.js");
+    await startPostPaymentFlow(orderId).catch(() => undefined);
+  }
+
+  const { post_sendMeetingLinkNotifications } = await import(
+    "../automation/post-payment-flow.service.js"
+  );
+  await post_sendMeetingLinkNotifications(orderId).catch(() => undefined);
+
   return { ok: true, meetLink, serviceTitle: eventTitle };
 }
 
@@ -236,6 +251,14 @@ export async function autoProvisionOrderMeetOnPaid(
     }
     if (result.skipped) {
       log?.info({ orderId, meetLink: result.meetLink }, "Order already has Meet link — calendar unchanged");
+      const { ensureOrderPaidAutomations } = await import(
+        "../orders/complete-order-payment.service.js"
+      );
+      await ensureOrderPaidAutomations(orderId, {
+        info: log?.info ?? (() => {}),
+        warn: log?.warn ?? (() => {}),
+        error: () => {},
+      });
       return;
     }
     log?.info(

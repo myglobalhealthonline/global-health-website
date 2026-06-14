@@ -9,30 +9,39 @@ import {
   uploadFileTypeLabel,
 } from "./consultation-history-display.js";
 
+type OrderRef = { id: string; orderNumber: string | null };
+
 async function loadOrderRefsByAppointmentId(
   appointmentIds: string[],
-): Promise<Map<string, string>> {
-  const map = new Map<string, string>();
+): Promise<Map<string, OrderRef>> {
+  const map = new Map<string, OrderRef>();
   if (appointmentIds.length === 0) return map;
 
   const [orders, orderItems] = await Promise.all([
     prisma.order.findMany({
       where: { appointmentIds: { hasSome: appointmentIds } },
-      select: { id: true, appointmentIds: true },
+      select: { id: true, orderNumber: true, appointmentIds: true },
     }),
     prisma.orderItem.findMany({
       where: { appointmentId: { in: appointmentIds } },
-      select: { appointmentId: true, orderId: true },
+      select: { appointmentId: true, order: { select: { id: true, orderNumber: true } } },
     }),
   ]);
 
   for (const o of orders) {
     for (const aid of o.appointmentIds) {
-      if (appointmentIds.includes(aid)) map.set(aid, o.id);
+      if (appointmentIds.includes(aid)) {
+        map.set(aid, { id: o.id, orderNumber: o.orderNumber });
+      }
     }
   }
   for (const item of orderItems) {
-    if (item.appointmentId) map.set(item.appointmentId, item.orderId);
+    if (item.appointmentId) {
+      map.set(item.appointmentId, {
+        id: item.order.id,
+        orderNumber: item.order.orderNumber,
+      });
+    }
   }
   return map;
 }

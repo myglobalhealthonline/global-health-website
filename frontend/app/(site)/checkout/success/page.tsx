@@ -1,32 +1,33 @@
-"use client";
+import { Suspense } from "react";
+import { syncOrderPaymentServer } from "@/lib/api/cart-server";
+import { LegacyCheckoutSuccessClient } from "./LegacyCheckoutSuccessClient";
 
-import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCart } from "@/components/cart/CartContext";
-import { GH2StatusPage } from "@/components/sections/GH2PagePrimitives";
-import { getCountryByCode, type CountryCode } from "@/data/countries";
-import { COUNTRY_CODE_TO_SLUG } from "@/lib/routing/country-slug";
+export const dynamic = "force-dynamic";
 
-export default function LegacyCheckoutSuccessRedirect() {
-  const router = useRouter();
-  const params = useSearchParams();
-  const { cart, loading } = useCart();
+type Props = {
+  searchParams: Promise<{ orderId?: string; session_id?: string; payment?: string }>;
+};
 
-  useEffect(() => {
-    if (loading) return;
-    const code = cart.countryCode?.toLowerCase() as CountryCode | undefined;
-    const config = code ? getCountryByCode(code) : null;
-    const qs = params?.toString();
-    if (config) {
-      const slug = COUNTRY_CODE_TO_SLUG[config.code] ?? config.code;
-      const lang = (config.defaultLocale ?? "en").toLowerCase();
-      router.replace(`/${slug}/${lang}/checkout/success${qs ? `?${qs}` : ""}`);
-    } else {
-      router.replace("/");
-    }
-  }, [loading, cart.countryCode, params, router]);
+export default async function LegacyCheckoutSuccessPage({ searchParams }: Props) {
+  const { orderId, session_id: stripeSessionId, payment } = await searchParams;
+  const trimmedOrderId = orderId?.trim();
+  let paymentSynced = false;
+
+  if (payment !== "cancelled") {
+    const sync = await syncOrderPaymentServer({
+      orderId: trimmedOrderId,
+      stripeSessionId: stripeSessionId?.trim(),
+      source: "legacy-checkout-success",
+    });
+    paymentSynced = sync.ok;
+  }
 
   return (
-    <GH2StatusPage status="loading" title="Confirming payment" body="We are opening your country-specific confirmation page." />
+    <Suspense fallback={null}>
+      <LegacyCheckoutSuccessClient
+        orderId={trimmedOrderId}
+        paymentSynced={paymentSynced}
+      />
+    </Suspense>
   );
 }

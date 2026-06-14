@@ -86,7 +86,9 @@ function unwrapElement(element: HTMLElement) {
   while (element.firstChild) {
     parent.insertBefore(element.firstChild, element);
   }
-  parent.removeChild(element);
+  if (element.parentNode === parent) {
+    parent.removeChild(element);
+  }
 }
 
 function sanitizeEditorHtml(html: string) {

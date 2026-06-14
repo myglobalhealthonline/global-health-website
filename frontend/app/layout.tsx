@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import { SITE_NAME } from "@/lib/constants";
+import { getRootHtmlLang } from "@/lib/i18n/get-root-html-lang";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { CookieBanner } from "@/components/compliance/CookieBanner";
 // SVG flags via the `flag-icons` package. Loaded at the root so both
@@ -26,23 +26,19 @@ export const metadata: Metadata = {
   },
 };
 
-// Map a full locale code (e.g. "pt-br") to a base BCP-47 lang for the
-// <html lang> attribute. The proxy stamps x-gh-locale on every request.
-function htmlLang(localeHeader: string | null): string {
-  const base = (localeHeader ?? "en").split("-")[0].toLowerCase();
-  const supported = new Set(["en", "pt", "es", "cs", "ro", "de"]);
-  return supported.has(base) ? base : "en";
-}
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const lang = htmlLang((await headers()).get("x-gh-locale"));
+  const lang = await getRootHtmlLang();
   return (
-    <html lang={lang} className="h-full antialiased">
-      <body className="min-h-full flex flex-col">
+    <html
+      lang={lang}
+      className="h-full antialiased"
+      suppressHydrationWarning
+    >
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         {children}
         <CookieBanner />
       </body>

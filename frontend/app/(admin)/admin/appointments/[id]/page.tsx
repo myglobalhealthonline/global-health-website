@@ -332,8 +332,8 @@ export default async function AdminAppointmentDetailPage({
           <p className="font-bold text-[var(--color-text-primary)]">
             Manual booking created.
             {manualBooking.emailQueued === "1"
-              ? " Patient email queued."
-              : " ⚠ Email send failed — copy the details below and share manually."}
+              ? " Pre-payment automation started (WhatsApp + reservation email)."
+              : " Automation failed — copy the details below and share manually."}
           </p>
           <dl className="mt-2 grid gap-1 text-[13px] text-[var(--color-text-body)]">
             {manualBooking.tempPassword ? (

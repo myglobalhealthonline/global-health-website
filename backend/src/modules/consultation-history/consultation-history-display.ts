@@ -1,4 +1,5 @@
 import type { GeneratedDocumentType } from "@prisma/client";
+import { formatOrderDisplayId } from "../automation/automation-catalog.js";
 import { formatDateDdMmYyyy } from "../generated-documents/document-template-utils.js";
 
 export const GENERATED_DOCUMENT_TYPE_LABELS: Record<GeneratedDocumentType, string> = {
@@ -23,12 +24,16 @@ export function formatSessionParts(
   return { sessionDate, sessionTime, sessionIso };
 }
 
-/** Human-readable order reference (legacy dashboards showed a short numeric id). */
-export function formatOrderRef(appointmentId: string, orderId?: string | null): string {
-  if (orderId) {
-    const digits = orderId.replace(/\D/g, "");
-    if (digits.length >= 4) return digits.slice(-6);
-    return orderId.slice(-8).toUpperCase();
+/** Human-readable order reference. */
+export function formatOrderRef(
+  appointmentId: string,
+  order?: { id: string; orderNumber?: string | null } | string | null,
+): string {
+  if (order && typeof order === "object") {
+    return formatOrderDisplayId(order);
+  }
+  if (typeof order === "string") {
+    return formatOrderDisplayId(order);
   }
   const fromAppt = appointmentId.replace(/\D/g, "");
   if (fromAppt.length >= 4) return fromAppt.slice(-6);

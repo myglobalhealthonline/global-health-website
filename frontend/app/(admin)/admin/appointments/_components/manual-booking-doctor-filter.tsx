@@ -13,8 +13,9 @@ export function ManualBookingDoctorFilter() {
       const serviceId = serviceSelect!.value;
       const options = doctorSelect!.querySelectorAll("option[data-service-ids]");
       options.forEach((option) => {
+        const el = option as HTMLOptionElement;
         const ids = option.getAttribute("data-service-ids");
-        option.hidden =
+        el.hidden =
           serviceId !== "" &&
           ids !== "" &&
           !(`,` + ids + `,`).includes(`,` + serviceId + `,`);

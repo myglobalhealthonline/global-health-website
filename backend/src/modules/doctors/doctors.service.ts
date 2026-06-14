@@ -11,6 +11,8 @@ import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
 import { resolveTranslation } from "../shared/resolve-translation.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
 import { getFeaturedDoctorId } from "./featured-doctor.service.js";
+import { normalizeDoctorWhatsAppForStorage } from "../../lib/whatsapp/resolve-doctor-contact.js";
+import { defaultChamberEntityForCountry } from "../../lib/doctor-registration-display.js";
 
 /** Display fields a DoctorTranslation overrides. */
 const doctorTranslationSelect = {
@@ -96,6 +98,39 @@ export class DoctorSpecialtyInvalidError extends Error {
 
 /** Create/update sync assets + M:N countries; default 5s Prisma timeout is too low on Windows dev. */
 const ADMIN_DOCTOR_TX_OPTIONS = { maxWait: 10_000, timeout: 20_000 } as const;
+
+async function syncLegacyImcRegistrationToPrimaryCountry(
+  tx: Prisma.TransactionClient,
+  doctorId: string,
+  countryId: string,
+  imcRegistration: string | null | undefined,
+): Promise<void> {
+  const number = imcRegistration?.trim();
+  if (!number) return;
+
+  const country = await tx.country.findUnique({
+    where: { id: countryId },
+    select: { code: true },
+  });
+  if (!country) return;
+
+  const chamberEntity = defaultChamberEntityForCountry(country.code);
+  await tx.doctorCountry.upsert({
+    where: { doctorId_countryId: { doctorId, countryId } },
+    update: {
+      registrationNumber: number,
+      chamberEntity,
+      active: true,
+    },
+    create: {
+      doctorId,
+      countryId,
+      registrationNumber: number,
+      chamberEntity,
+      active: true,
+    },
+  });
+}
 
 const adminDoctorInclude = {
   country: {
@@ -706,6 +741,10 @@ async function syncAdditionalCountries(
 export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<AdminDoctorRecord> {
   await assertCountryExists(input.countryId);
   await assertSpecialtiesForCountry(input.specialtyIds, input.countryId);
+  const primaryCountry = await prisma.country.findUnique({
+    where: { id: input.countryId },
+    select: { code: true },
+  });
 
   try {
     const doctor = await prisma.$transaction(async (tx) => {
@@ -723,7 +762,10 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
           // are saved via /api/admin/doctors/:id/registrations/:countryId.
           medicalRegistrationUrl: input.medicalRegistrationUrl ?? null,
           qualifications: input.qualifications ?? [],
-          whatsappNumber: input.whatsappNumber ?? null,
+          whatsappNumber: normalizeDoctorWhatsAppForStorage(
+            input.whatsappNumber,
+            primaryCountry?.code,
+          ),
           instagramUrl: input.instagramUrl ?? null,
           facebookUrl: input.facebookUrl ?? null,
           linkedinUrl: input.linkedinUrl ?? null,
@@ -776,6 +818,13 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
       if (input.translations !== undefined) {
         await upsertDoctorTranslations(tx, created.id, input.countryId, input.translations);
       }
+
+      await syncLegacyImcRegistrationToPrimaryCountry(
+        tx,
+        created.id,
+        input.countryId,
+        input.imcRegistration,
+      );
 
       return tx.doctor.findUniqueOrThrow({
         where: { id: created.id },
@@ -835,6 +884,16 @@ export async function updateAdminDoctor(
     await assertSpecialtiesForCountry(nextSpecialtyIds, nextCountryId);
   }
 
+  const nextCountryCode =
+    countryChanging && body.countryId
+      ? (
+          await prisma.country.findUnique({
+            where: { id: body.countryId },
+            select: { code: true },
+          })
+        )?.code ?? existing.country.code
+      : existing.country.code;
+
   try {
     const result = await prisma.$transaction(async (tx) => {
       const updated = await tx.doctor.update({
@@ -850,7 +909,12 @@ export async function updateAdminDoctor(
           // live on DoctorCountry rows now.
           ...(body.medicalRegistrationUrl !== undefined && { medicalRegistrationUrl: body.medicalRegistrationUrl }),
           ...(body.qualifications !== undefined && { qualifications: body.qualifications }),
-          ...(body.whatsappNumber !== undefined && { whatsappNumber: body.whatsappNumber }),
+          ...(body.whatsappNumber !== undefined && {
+            whatsappNumber: normalizeDoctorWhatsAppForStorage(
+              body.whatsappNumber,
+              nextCountryCode,
+            ),
+          }),
           ...(body.instagramUrl !== undefined && { instagramUrl: body.instagramUrl }),
           ...(body.facebookUrl !== undefined && { facebookUrl: body.facebookUrl }),
           ...(body.linkedinUrl !== undefined && { linkedinUrl: body.linkedinUrl }),
@@ -889,6 +953,15 @@ export async function updateAdminDoctor(
         effectiveCountryId,
         body.additionalCountryIds,
       );
+
+      if (body.imcRegistration !== undefined) {
+        await syncLegacyImcRegistrationToPrimaryCountry(
+          tx,
+          id,
+          effectiveCountryId,
+          body.imcRegistration,
+        );
+      }
 
       // When the primary country changed, repoint the existing portrait
       // Asset.countryId so country-scoped admin asset queries don't keep
