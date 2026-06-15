@@ -16,7 +16,12 @@ import {
   postAdminManualBooking,
 } from "@/lib/admin/admin-api";
 import { AdminCard, Btn, PageHeader } from "../../_components/atoms";
-import { ManualBookingDoctorFilter } from "../_components/manual-booking-doctor-filter";
+import { ManualBookingForm } from "../_components/manual-booking-form";
+import { dialCodeForCountry } from "@/lib/phone/dial-codes";
+import {
+  hasErrors,
+  validateManualBooking,
+} from "@/lib/admin/manual-booking-validation";
 
 export const dynamic = "force-dynamic";
 
@@ -126,6 +131,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
     .filter((s) => s.isActive)
     .map((s) => ({
       id: s.id,
+      slug: s.slug,
       name: s.name,
       basePriceCents: s.basePriceCents,
       currencyCode: s.currencyCode,
@@ -134,6 +140,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
     .filter((d) => d.active)
     .map((d) => ({
       id: d.id,
+      slug: d.slug,
       fullName: d.fullName,
       title: d.title,
       serviceIds: d.assignedServices.map((a) => a.serviceId),
@@ -166,12 +173,41 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
     };
 
     const consultationMode = (readStr("consultationMode") as "ONLINE" | "IN_PERSON") || "ONLINE";
+    const serviceId = readStr("serviceId");
+    const doctorId = readStr("doctorId");
+    const timeSlotId = readStr("timeSlotId");
+    const phone = readStr("phone");
+    const clinicId = consultationMode === "IN_PERSON" ? readOpt("clinicId") : null;
+    const locationAddress =
+      consultationMode === "IN_PERSON" ? readOpt("locationAddress") : null;
+
+    // Hard guard — re-validate server-side even though the client already
+    // gated. A disabled/bypassed client must NOT be able to create a patient
+    // account, a payment link, or fire any email/WhatsApp. Bail BEFORE the
+    // backend call when anything required is missing or malformed.
+    const validation = validateManualBooking({
+      fullName: readStr("fullName"),
+      email: readStr("email"),
+      phone,
+      serviceId,
+      doctorId,
+      timeSlotId,
+      consultationMode,
+      clinicId: clinicId ?? "",
+      locationAddress: locationAddress ?? "",
+    });
+    if (hasErrors(validation)) {
+      const message = Object.values(validation)[0] ?? "Please complete all required fields.";
+      redirect(
+        `/admin/appointments/new?countryCode=${encodeURIComponent(countryCode ?? "")}&error=${encodeURIComponent(message)}`,
+      );
+    }
 
     const result = await postAdminManualBooking({
       patient: {
         email: readStr("email"),
         fullName: readStr("fullName"),
-        phone: readOpt("phone"),
+        phone,
         dateOfBirth: readOpt("dateOfBirth"),
         nationalIdNumber: readOpt("nationalIdNumber"),
         taxIdNumber: readOpt("taxIdNumber"),
@@ -180,16 +216,14 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
         addressCity: readOpt("addressCity"),
         addressCountryCode: readOpt("addressCountryCode"),
       },
-      serviceId: readStr("serviceId"),
-      doctorId: readOpt("doctorId"),
-      // <input type="datetime-local"> yields a naive "YYYY-MM-DDTHH:mm"
-      // (no timezone). Send it as-is: the backend interprets it in the
-      // country's clinic timezone (DST-aware) and stores UTC. Do NOT
-      // append :00Z here — that would wrongly pin the wall-clock to UTC.
-      scheduledAt: readOpt("scheduledAt"),
+      serviceId,
+      doctorId,
+      // The appointment time is the picked slot's instant — the backend
+      // claims this OPEN slot and derives scheduledAt from it.
+      timeSlotId,
       consultationMode,
-      clinicId: consultationMode === "IN_PERSON" ? readOpt("clinicId") : null,
-      locationAddress: consultationMode === "IN_PERSON" ? readOpt("locationAddress") : null,
+      clinicId,
+      locationAddress,
       notes: readOpt("notes"),
       countryCode: readStr("countryCode"),
     });
@@ -249,163 +283,15 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
         </p>
       ) : null}
 
-      <form action={createManualAppointmentAction} className="flex flex-col gap-6">
-        <input type="hidden" name="countryCode" value={countryCode} />
-
-        <AdminCard>
-          <h2 className="text-[15px] font-bold text-[var(--color-text-primary)]">Patient</h2>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
-            Existing accounts with this email are reused; otherwise a new patient User is created with a unique
-            temporary password.
-          </p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <Field label="Full name" name="fullName" required maxLength={120} />
-            <Field label="Email" name="email" type="email" required maxLength={254} />
-            <Field label="Phone" name="phone" type="tel" maxLength={40} />
-            <Field label="Date of birth" name="dateOfBirth" type="date" />
-            <Field label="National ID number" name="nationalIdNumber" maxLength={64} />
-            <Field label="Tax ID (NIF / PPS / CPF)" name="taxIdNumber" maxLength={64} />
-            <Field label="Passport number" name="passportNumber" maxLength={64} />
-            <Field label="Address line 1" name="addressLine1" maxLength={200} />
-            <Field label="City" name="addressCity" maxLength={100} />
-            <Field label="Address country code" name="addressCountryCode" maxLength={8} placeholder="ie / pt / es…" />
-          </div>
-        </AdminCard>
-
-        <AdminCard>
-          <h2 className="text-[15px] font-bold text-[var(--color-text-primary)]">Appointment</h2>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5">
-              <span className="gh-field-label">Service *</span>
-              <select id="gh-service-select" name="serviceId" className="gh-select" required defaultValue="">
-                <option value="" disabled>
-                  Select…
-                </option>
-                {services.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                    {s.basePriceCents != null && s.currencyCode
-                      ? ` — ${(s.basePriceCents / 100).toFixed(2)} ${s.currencyCode}`
-                      : ""}
-                  </option>
-                ))}
-              </select>
-              {services.length === 0 ? (
-                <span className="text-[12px] text-[var(--color-text-muted)]">
-                  No active services for this country.
-                </span>
-              ) : null}
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="gh-field-label">Doctor</span>
-              <select id="gh-doctor-select" name="doctorId" className="gh-select" defaultValue="">
-                <option value="">— Unassigned —</option>
-                {doctors.map((d) => (
-                  <option
-                    key={d.id}
-                    value={d.id}
-                    data-service-ids={d.serviceIds.join(",")}
-                  >
-                    {(d.title ? `${d.title} ` : "") + d.fullName}
-                  </option>
-                ))}
-              </select>
-              <span className="text-[12px] text-[var(--color-text-muted)]">
-                Filtered to doctors assigned to the selected service. Others rejected on save.
-              </span>
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="gh-field-label">Scheduled at</span>
-              <input type="datetime-local" name="scheduledAt" className="gh-input" />
-              <span className="text-[12px] text-[var(--color-text-muted)]">
-                Entered in {countryName} clinic local time (DST-aware). Stored as UTC.
-              </span>
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="gh-field-label">Consultation mode *</span>
-              <select name="consultationMode" className="gh-select" required defaultValue="ONLINE">
-                <option value="ONLINE">Online (telemedicine)</option>
-                <option value="IN_PERSON">In-person</option>
-              </select>
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="gh-field-label">Clinic (in-person)</span>
-              <select name="clinicId" className="gh-select" defaultValue="">
-                <option value="">— None —</option>
-                {clinics.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                    {c.city ? `, ${c.city}` : ""}
-                  </option>
-                ))}
-              </select>
-              <span className="text-[12px] text-[var(--color-text-muted)]">
-                Or use the free-text address below. Provide one or the other for IN_PERSON, not both.
-              </span>
-            </label>
-            <Field
-              label="Location address (in-person, free text)"
-              name="locationAddress"
-              maxLength={500}
-            />
-            <label className="flex flex-col gap-1.5 sm:col-span-2">
-              <span className="gh-field-label">Notes</span>
-              <textarea name="notes" className="gh-input" rows={3} maxLength={2000} />
-            </label>
-          </div>
-          <p className="mt-2 text-[12px] text-[var(--color-text-muted)]">
-            The patient&apos;s email will include a Stripe payment link AND a set-password invite — they can either set
-            their own password (recommended) or sign in immediately with a unique temporary password.
-          </p>
-        </AdminCard>
-
-        <ManualBookingDoctorFilter />
-
-        <div className="flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
-          <button type="submit" className="gh-btn gh-btn-primary">
-            Create booking &amp; email patient
-          </button>
-          <Link
-            href="/admin/appointments"
-            className="text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
-          >
-            Cancel
-          </Link>
-        </div>
-      </form>
-    </>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = "text",
-  required = false,
-  maxLength,
-  placeholder,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  required?: boolean;
-  maxLength?: number;
-  placeholder?: string;
-}) {
-  return (
-    <label className="flex flex-col gap-1.5">
-      <span className="gh-field-label">
-        {label}
-        {required ? " *" : ""}
-      </span>
-      <input
-        type={type}
-        name={name}
-        className="gh-input"
-        required={required}
-        maxLength={maxLength}
-        placeholder={placeholder}
+      <ManualBookingForm
+        countryCode={countryCode}
+        countryName={countryName}
+        services={services}
+        doctors={doctors}
+        clinics={clinics}
+        defaultDialCode={dialCodeForCountry(countryCode)}
+        action={createManualAppointmentAction}
       />
-    </label>
+    </>
   );
 }

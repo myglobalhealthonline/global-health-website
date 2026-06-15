@@ -342,8 +342,11 @@ export type CreateManualAppointmentInput = {
     addressCountryCode?: string | null;
   };
   serviceId: string;
-  doctorId?: string | null;
-  scheduledAt?: string | null;
+  /** Required — the assigned doctor whose open slot is being booked. */
+  doctorId: string;
+  /** Required — id of the doctor's OPEN time slot to claim. The backend
+   *  derives scheduledAt from the slot's start time. */
+  timeSlotId: string;
   consultationMode: "ONLINE" | "IN_PERSON";
   clinicId?: string | null;
   locationAddress?: string | null;

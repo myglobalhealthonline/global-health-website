@@ -185,7 +185,17 @@ export const createManualAppointmentBodySchema = z
       .object({
         email: z.string().trim().toLowerCase().email("Invalid patient email").max(254),
         fullName: z.string().trim().min(2).max(120),
-        phone: z.string().trim().max(40).optional().nullable(),
+        // Required + international format. The admin form builds this from a
+        // dial-code dropdown + national number, so it always arrives as
+        // "+<code> <number>" (e.g. "+353 871234567"). Spaces are tolerated;
+        // WhatsApp/SMS normalization strips them downstream.
+        phone: z
+          .string()
+          .trim()
+          .regex(
+            /^\+[1-9]\d{0,3}[\s-]?\d{6,14}$/,
+            "Phone must include a country code, e.g. +353 871234567",
+          ),
         dateOfBirth: z.string().trim().max(40).optional().nullable(),
         nationalIdNumber: z.string().trim().max(64).optional().nullable(),
         taxIdNumber: z.string().trim().max(64).optional().nullable(),
@@ -196,24 +206,13 @@ export const createManualAppointmentBodySchema = z
       })
       .strict(),
     serviceId: z.string().trim().min(1).max(60),
-    doctorId: z.string().trim().min(1).max(60).optional().nullable(),
-    // Accept either a naive clinic-local wall-clock string from an
-    // <input type="datetime-local"> ("2026-07-15T14:00") OR a full
-    // ISO-with-offset string (legacy callers). The service interprets a
-    // naive value in the country's clinic timezone; an offset value is
-    // honored as the absolute instant it already encodes.
-    scheduledAt: z
-      .union([
-        z.string().datetime({ offset: true }),
-        z
-          .string()
-          .regex(
-            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?$/,
-            "scheduledAt must be an ISO date-time",
-          ),
-      ])
-      .optional()
-      .nullable(),
+    // Doctor is now required: a manual booking always claims one of the
+    // doctor's real open slots, so there is always an assigned doctor.
+    doctorId: z.string().trim().min(1).max(60),
+    // Id of the doctor's OPEN DoctorTimeSlot the admin picked. The service
+    // claims it (OPEN → HELD) and derives scheduledAt from the slot — the
+    // admin no longer types a free-text time.
+    timeSlotId: z.string().trim().min(1).max(120),
     consultationMode: z.enum(["ONLINE", "IN_PERSON"]).default("ONLINE"),
     clinicId: z.string().trim().min(1).max(60).optional().nullable(),
     locationAddress: z.string().trim().max(500).optional().nullable(),

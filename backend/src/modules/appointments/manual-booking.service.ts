@@ -17,7 +17,11 @@ import {
   upsertPatientProfileByEmail,
 } from "../patient-profile/patient-profile.service.js";
 import { normalizeDbError } from "../shared/db-errors.js";
-import { zonedDateTimeStringToUtc } from "../doctor-availability/timezone.js";
+import { resolveDoctorTimeZone } from "../doctor-availability/doctor-availability.service.js";
+import {
+  computeSlotPrice,
+  getServicePeakConfig,
+} from "../pricing/peak-pricing.service.js";
 import { startPrePaymentFlow } from "../automation/pre-payment-flow.service.js";
 import { persistOrderPortalAccess } from "../automation/resolve-order-portal-access.service.js";
 
@@ -91,6 +95,22 @@ export class DoctorNotAssignedToServiceError extends Error {
   }
 }
 
+/**
+ * The chosen DoctorTimeSlot can't be claimed: it doesn't exist, belongs
+ * to a different doctor, already in the past, or was taken (HELD/BOOKED)
+ * by another booking between the picker loading and submit. Raised so the
+ * admin re-picks an open slot instead of silently double-booking. Claimed
+ * up-front, before any patient/order/email side-effect runs.
+ */
+export class SlotNotAvailableError extends Error {
+  constructor() {
+    super(
+      "That time slot is no longer available. Refresh and pick another open slot.",
+    );
+    this.name = "SlotNotAvailableError";
+  }
+}
+
 export type CreateManualBookingInput = {
   /** Admin user id — recorded in audit metadata + as the row author.
    *  Null when the caller authenticated via ADMIN_API_TOKEN (no User
@@ -110,9 +130,12 @@ export type CreateManualBookingInput = {
     addressCountryCode?: string | null;
   };
   serviceId: string;
-  doctorId?: string | null;
-  /** ISO datetime string, or omit to leave the slot un-scheduled. */
-  scheduledAt?: string | null;
+  /** Required — the assigned doctor whose open slot is being booked. */
+  doctorId: string;
+  /** Required — id of the doctor's OPEN DoctorTimeSlot to claim. The
+   *  appointment's scheduledAt is derived from the slot's startAt; the
+   *  admin no longer types a free-text time. */
+  timeSlotId: string;
   consultationMode: "ONLINE" | "IN_PERSON";
   clinicId?: string | null;
   locationAddress?: string | null;
@@ -164,6 +187,12 @@ export async function createManualBooking(
   if (!email || !fullName) {
     throw new Error("Patient email + full name are required");
   }
+  if (!input.doctorId) {
+    throw new DoctorNotFoundError();
+  }
+  if (!input.timeSlotId) {
+    throw new SlotNotAvailableError();
+  }
 
   const service = await prisma.service.findFirst({
     where: {
@@ -187,15 +216,16 @@ export async function createManualBooking(
   if (!service) {
     throw new ServiceNotFoundError();
   }
-  const amountCents = service.basePriceCents;
-  if (amountCents == null || amountCents <= 0) {
+  if (service.basePriceCents == null || service.basePriceCents <= 0) {
     throw new ServicePriceMissingError();
   }
+  // Base price; overridden below with the slot's peak/off-peak price so a
+  // manual booking is charged exactly what the public picker would show.
+  let amountCents = service.basePriceCents;
 
-  // Clinic timezone for the country (falls back to UTC). Drives the
-  // wall-clock → UTC conversion of the admin-entered scheduledAt below,
-  // so a slot booked as "14:00" lands on the correct UTC instant for the
-  // country (DST-aware via luxon).
+  // Clinic timezone for the country (falls back to UTC). The appointment
+  // time now comes from the picked slot (already UTC), so this is only
+  // snapshotted onto the order's CartItem as the patient timezone.
   const clinicTimeZone = service.country?.bookingSetting?.timezone ?? "UTC";
 
   if (input.doctorId) {
@@ -241,6 +271,49 @@ export async function createManualBooking(
         "In-person appointments need a clinic or a location address.",
       );
     }
+  }
+
+  // Claim the chosen slot BEFORE any patient/order/email side-effect, so a
+  // stale or taken slot fails the whole booking cleanly. Atomic, mirrors the
+  // public cart claim: only an OPEN, future slot owned by this doctor flips
+  // to HELD; the payment webhook later flips HELD → BOOKED. A race-loser or
+  // a hand-crafted payload pointing at a foreign/past slot updates 0 rows.
+  const slotClaim = await prisma.doctorTimeSlot.updateMany({
+    where: {
+      id: input.timeSlotId,
+      doctorId: input.doctorId,
+      status: "OPEN",
+      startAt: { gt: new Date() },
+    },
+    data: { status: "HELD" },
+  });
+  if (slotClaim.count === 0) {
+    throw new SlotNotAvailableError();
+  }
+  const slot = await prisma.doctorTimeSlot.findUnique({
+    where: { id: input.timeSlotId },
+    select: { startAt: true },
+  });
+  if (!slot) {
+    throw new SlotNotAvailableError();
+  }
+  // scheduledAt is the slot's UTC instant — no more free-text wall-clock.
+  const scheduledAt = slot.startAt;
+
+  // Apply peak / off-peak pricing for the picked slot so the manual price
+  // matches the public picker + checkout summary. Falls through to the base
+  // price when the service has no enabled peak config.
+  const peakConfig = await getServicePeakConfig(service.id);
+  if (peakConfig?.enabled) {
+    const tz = await resolveDoctorTimeZone(input.doctorId);
+    const priced = computeSlotPrice({
+      config: peakConfig,
+      basePriceCents: amountCents,
+      fallbackCurrency: service.currencyCode ?? "EUR",
+      slotStartUtc: scheduledAt,
+      clinicTimezone: tz,
+    });
+    amountCents = priced.unitPriceCents;
   }
 
   // Generate the temp credential up-front so a brand-new User is
@@ -318,13 +391,6 @@ export async function createManualBooking(
   );
 
   const appointmentId = randomUUID();
-  // Interpret the admin's wall-clock input in the clinic timezone. A naive
-  // "2026-07-15T14:00" becomes the right UTC instant for the country; a
-  // value that already carries an offset/Z is honored as-is. Stored in UTC.
-  const scheduledAt = zonedDateTimeStringToUtc(
-    input.scheduledAt ?? null,
-    clinicTimeZone,
-  );
   try {
     await prisma.appointment.create({
       data: {
@@ -340,8 +406,11 @@ export async function createManualBooking(
         consentAccepted: true,
         status: "REQUEST_RECEIVED",
         serviceId: service.id,
-        doctorId: input.doctorId || null,
+        doctorId: input.doctorId,
         scheduledAt,
+        // Link the claimed slot now; the payment webhook later flips it
+        // HELD → BOOKED. 1:1 with DoctorTimeSlot via Appointment.timeSlotId.
+        timeSlotId: input.timeSlotId,
         consultationMode: input.consultationMode,
         clinicId:
           input.consultationMode === "IN_PERSON" ? input.clinicId || null : null,
@@ -357,24 +426,6 @@ export async function createManualBooking(
     });
   } catch (error) {
     throw normalizeDbError(error, "Could not create manual appointment");
-  }
-
-  let timeSlotId: string | null = null;
-  if (input.doctorId && scheduledAt) {
-    const durationMs = (service.durationMinutes ?? 30) * 60 * 1000;
-    const slot = await prisma.doctorTimeSlot.create({
-      data: {
-        doctorId: input.doctorId,
-        startAt: scheduledAt,
-        endAt: new Date(scheduledAt.getTime() + durationMs),
-        status: "HELD",
-      },
-    });
-    timeSlotId = slot.id;
-    await prisma.appointment.update({
-      where: { id: appointmentId },
-      data: { timeSlotId: slot.id },
-    });
   }
 
   const orderNumber = await generateOrderNumber();
@@ -398,8 +449,8 @@ export async function createManualBooking(
           unitPriceCents: amountCents,
           quantity: 1,
           lineTotalCents: amountCents,
-          doctorId: input.doctorId ?? null,
-          timeSlotId,
+          doctorId: input.doctorId,
+          timeSlotId: input.timeSlotId,
           appointmentId,
           patientFullName: fullName,
           patientEmail: email,

@@ -31,6 +31,7 @@ import {
   DoctorNotFoundError,
   ServiceNotFoundError,
   ServicePriceMissingError,
+  SlotNotAvailableError,
 } from "../modules/appointments/manual-booking.service.js";
 import {
   adminUpdateAppointment,
@@ -100,8 +101,8 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
         adminUserId,
         patient: body.data.patient,
         serviceId: body.data.serviceId,
-        doctorId: body.data.doctorId ?? null,
-        scheduledAt: body.data.scheduledAt ?? null,
+        doctorId: body.data.doctorId,
+        timeSlotId: body.data.timeSlotId,
         consultationMode: body.data.consultationMode,
         clinicId: body.data.clinicId ?? null,
         locationAddress: body.data.locationAddress ?? null,
@@ -129,6 +130,11 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       }
       if (error instanceof ServicePriceMissingError) {
         return reply.status(422).send(errorResponse(error.message));
+      }
+      // Slot taken / stale between picker load and submit → 409 so the
+      // admin re-picks instead of double-booking.
+      if (error instanceof SlotNotAvailableError) {
+        return reply.status(409).send(errorResponse(error.message));
       }
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));

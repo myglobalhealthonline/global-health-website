@@ -1,10 +1,16 @@
-/** ISO country code → E.164 calling prefix (no +). */
+/** ISO country code → E.164 calling prefix (no +).
+ *  Includes the app's non-ISO market codes (`sp` = Spain, `rm` = Romania)
+ *  alongside their ISO equivalents (`es`, `ro`) so normalization works
+ *  whichever code a booking carries. */
 export const DIAL_CODES: Record<string, string> = {
   ie: "353",
   pt: "351",
   ro: "40",
+  rm: "40",
   cz: "420",
   es: "34",
+  sp: "34",
+  mt: "356",
   pk: "92",
   br: "55",
   uk: "44",
