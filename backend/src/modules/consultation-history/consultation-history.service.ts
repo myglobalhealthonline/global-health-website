@@ -62,7 +62,7 @@ function mapGeneratedRow(
     };
     doctor: { fullName: string };
   },
-  orderRefByAppointment: Map<string, string>,
+  orderRefByAppointment: Map<string, OrderRef>,
 ) {
   const { sessionDate, sessionTime, sessionIso } = formatSessionParts(
     d.appointment.scheduledAt,
