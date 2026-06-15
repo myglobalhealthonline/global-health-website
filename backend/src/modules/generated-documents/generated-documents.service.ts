@@ -14,6 +14,7 @@ import {
   absenceDefaultReason,
   formatDateDdMmYyyy,
   formatExamsNotes,
+  isEmailSendable,
   isInReviewQueue,
   isVisibleInHistory,
 } from "./document-template-utils.js";
@@ -411,7 +412,7 @@ export async function sendGeneratedDocuments(
       doctorId,
       sentToPatient: false,
     },
-  });
+  }).then((rows) => rows.filter((d) => isEmailSendable(d.documentType)));
 
   let sent = 0;
   const errors: string[] = [];

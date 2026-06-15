@@ -24,11 +24,14 @@ export function emuToTwips(emu: number): number {
   return Math.round(emu * EMU_TO_TWIPS);
 }
 
+/** Body font for spacing paragraphs (must match docx-xml-builder). */
+const BODY_FONT = process.platform === "win32" ? "Calibri" : "Carlito";
+
 /** Empty paragraphs with exact single-line height. */
 export function buildLineGapXml(lineCount: number): string {
   const linePara =
     `<w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="${LINE_TWIPS}" w:lineRule="exact"/>` +
-    `<w:rPr><w:sz w:val="${FONT_SIZE_BODY_HP}"/><w:szCs w:val="${FONT_SIZE_BODY_HP}"/></w:rPr></w:pPr></w:p>`;
+    `<w:rPr><w:rFonts w:ascii="${BODY_FONT}" w:hAnsi="${BODY_FONT}"/><w:sz w:val="${FONT_SIZE_BODY_HP}"/><w:szCs w:val="${FONT_SIZE_BODY_HP}"/></w:rPr></w:pPr></w:p>`;
   return linePara.repeat(lineCount);
 }
 

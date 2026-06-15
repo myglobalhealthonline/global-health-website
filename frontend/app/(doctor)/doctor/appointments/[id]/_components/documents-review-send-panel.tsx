@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { Eye, Pencil, Send, Trash2 } from "lucide-react";
 import {
   doctorApiErrorMessage,
@@ -17,6 +17,14 @@ export type ReviewQueueDoc = {
   createdAt: string;
   metadata?: Record<string, string> | null;
 };
+
+function canEmailDocument(documentType: string): boolean {
+  return (
+    documentType === "EXAMS_PRESCRIPTION" ||
+    documentType === "ABSENCE_CERTIFICATE" ||
+    documentType === "OTHER"
+  );
+}
 
 export function DocumentsReviewSendPanel({
   appointmentId,
@@ -40,6 +48,11 @@ export function DocumentsReviewSendPanel({
   const [success, setSuccess] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
+  const sendableQueue = useMemo(
+    () => queue.filter((row) => canEmailDocument(row.documentType)),
+    [queue],
+  );
+
   const load = useCallback(async () => {
     const [docsRes, ctxRes] = await Promise.all([
       fetch(`/api/doctor/appointments/${appointmentId}/documents-generated`),
@@ -55,7 +68,8 @@ export function DocumentsReviewSendPanel({
       setSelected((prev) => {
         const next = new Set<string>();
         for (const id of prev) {
-          if ((docsJson.data!.queue ?? []).some((q) => q.id === id)) next.add(id);
+          const row = (docsJson.data!.queue ?? []).find((q) => q.id === id);
+          if (row && canEmailDocument(row.documentType)) next.add(id);
         }
         return next;
       });
@@ -74,8 +88,10 @@ export function DocumentsReviewSendPanel({
   }, [load]);
 
   function sendDocuments(documentIds: string[]) {
-    const ids = documentIds.filter((id) => queue.some((q) => q.id === id));
-    if (ids.length === 0) return;
+    const sendIds = documentIds.filter((id) =>
+      sendableQueue.some((q) => q.id === id),
+    );
+    if (sendIds.length === 0) return;
     setError(null);
     setSuccess(null);
     startTransition(async () => {
@@ -84,7 +100,7 @@ export function DocumentsReviewSendPanel({
         {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ documentIds: ids }),
+          body: JSON.stringify({ documentIds: sendIds }),
         },
       );
       const json = await parseDoctorApiJson<{
@@ -159,82 +175,94 @@ export function DocumentsReviewSendPanel({
 
         {queue.length === 0 ? (
           <p className="text-[13px] text-[var(--color-text-muted)]">
-            No documents waiting to send. Generate an exams prescription, medicine prescription,
-            or absence certificate, then return here to review, edit, and email the patient.
+            No documents waiting. Generate an exams prescription, medicine prescription, or
+            absence certificate, then return here to review and edit before sending.
           </p>
         ) : (
           <>
             <p className="mb-3 text-[13px] text-[var(--color-text-muted)]">
-              Review each PDF, edit if needed, then send to the patient by email.
+              Review and edit each PDF. Email send is available for exams and absence certificates
+              only — medicine prescriptions are for your records and national portal submission.
             </p>
-            <div className="mb-3 flex justify-end">
-              <button
-                type="button"
-                disabled={pending || selected.size === 0}
-                onClick={sendSelected}
-                className="gh-btn gh-btn-primary text-sm"
-              >
-                <Send className="size-3.5" aria-hidden />
-                {pending ? "Sending…" : "Send selected"}
-              </button>
-            </div>
-            <ul className="divide-y divide-[var(--color-border)] rounded-md border border-[var(--color-border)]">
-              {queue.map((row) => (
-                <li
-                  key={row.id}
-                  className="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-[13px]"
+            {sendableQueue.length > 0 ? (
+              <div className="mb-3 flex justify-end">
+                <button
+                  type="button"
+                  disabled={pending || selected.size === 0}
+                  onClick={sendSelected}
+                  className="gh-btn gh-btn-primary text-sm"
                 >
-                  <label className="flex min-w-0 flex-1 items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={selected.has(row.id)}
-                      onChange={(e) => {
-                        const next = new Set(selected);
-                        if (e.target.checked) next.add(row.id);
-                        else next.delete(row.id);
-                        setSelected(next);
-                      }}
-                    />
-                    <span className="truncate">
-                      {GENERATED_DOCUMENT_TYPE_LABELS[row.documentType] ?? row.documentType} ·{" "}
-                      {row.fileName}
-                    </span>
-                  </label>
-                  <div className="flex shrink-0 flex-wrap items-center gap-1">
-                    <a
-                      href={`/api/doctor/documents/generated/${row.id}/pdf`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
-                    >
-                      <Eye className="size-3" aria-hidden /> Review
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => onEditDraft(row)}
-                      className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
-                    >
-                      <Pencil className="size-3" aria-hidden /> Edit
-                    </button>
-                    <button
-                      type="button"
-                      disabled={pending}
-                      onClick={() => sendDocuments([row.id])}
-                      className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
-                    >
-                      <Send className="size-3" aria-hidden /> Send
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => remove(row.id)}
-                      className="p-1 text-[var(--color-text-muted)] hover:text-red-700"
-                      aria-label="Delete"
-                    >
-                      <Trash2 className="size-4" />
-                    </button>
-                  </div>
-                </li>
-              ))}
+                  <Send className="size-3.5" aria-hidden />
+                  {pending ? "Sending…" : "Send selected"}
+                </button>
+              </div>
+            ) : null}
+            <ul className="divide-y divide-[var(--color-border)] rounded-md border border-[var(--color-border)]">
+              {queue.map((row) => {
+                const sendable = canEmailDocument(row.documentType);
+                return (
+                  <li
+                    key={row.id}
+                    className="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-[13px]"
+                  >
+                    <label className="flex min-w-0 flex-1 items-center gap-2">
+                      {sendable ? (
+                        <input
+                          type="checkbox"
+                          checked={selected.has(row.id)}
+                          onChange={(e) => {
+                            const next = new Set(selected);
+                            if (e.target.checked) next.add(row.id);
+                            else next.delete(row.id);
+                            setSelected(next);
+                          }}
+                        />
+                      ) : (
+                        <span className="inline-block w-4 shrink-0" aria-hidden />
+                      )}
+                      <span className="truncate">
+                        {GENERATED_DOCUMENT_TYPE_LABELS[row.documentType] ?? row.documentType} ·{" "}
+                        {row.fileName}
+                      </span>
+                    </label>
+                    <div className="flex shrink-0 flex-wrap items-center gap-1">
+                      <a
+                        href={`/api/doctor/documents/generated/${row.id}/pdf`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                      >
+                        <Eye className="size-3" aria-hidden /> Review
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => onEditDraft(row)}
+                        className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                      >
+                        <Pencil className="size-3" aria-hidden /> Edit
+                      </button>
+                      {sendable ? (
+                        <button
+                          type="button"
+                          disabled={pending}
+                          onClick={() => sendDocuments([row.id])}
+                          className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                        >
+                          <Send className="size-3" aria-hidden /> Send
+                        </button>
+                      ) : null}
+                      <button
+                        type="button"
+                        onClick={() => remove(row.id)}
+                        className="p-1 text-[var(--color-text-muted)] hover:text-red-700"
+                        aria-label="Delete"
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </>
         )}

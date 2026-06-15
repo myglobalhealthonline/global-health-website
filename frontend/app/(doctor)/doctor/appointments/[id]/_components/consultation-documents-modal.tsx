@@ -248,14 +248,16 @@ export function ConsultationDocumentsModal({
       if (type === "PRESCRIPTION" && json.data?.healthPortalUrl) {
         setSuccess(
           pdfUrl
-            ? `PDF opened — review and send below, then submit via ${json.data.healthPortalLabel ?? "national portal"}.`
-            : "Document generated — review and send below.",
+            ? `PDF opened — review below, then submit via ${json.data.healthPortalLabel ?? "national portal"}.`
+            : "Document generated — review below when ready.",
         );
-      } else if (
-        type === "PRESCRIPTION" ||
-        type === "EXAMS_PRESCRIPTION" ||
-        type === "ABSENCE_CERTIFICATE"
-      ) {
+      } else if (type === "PRESCRIPTION") {
+        setSuccess(
+          pdfUrl
+            ? "PDF opened in a new tab — review below when ready."
+            : "Document generated — open Review & send below.",
+        );
+      } else if (type === "EXAMS_PRESCRIPTION" || type === "ABSENCE_CERTIFICATE") {
         setSuccess(
           pdfUrl
             ? "PDF opened in a new tab — review and send below when ready."

@@ -13,7 +13,7 @@ import { SIGNATURE_FONT } from "./docx-alex-brush-font.js";
 const BRAND_COLOR = "1D4B36";
 const MUTED_COLOR = "4A4A4A";
 /** Calibri ships with Word/LibreOffice; renders consistently in PDF export. */
-const FONT = "Calibri";
+const FONT = process.platform === "win32" ? "Calibri" : "Carlito";
 const SIZE_BODY = String(FONT_SIZE_BODY_HP); // 17pt
 const SIZE_SMALL = "32"; // 16pt
 const SIZE_SIGNATURE = "36"; // 18pt Alex Brush signature

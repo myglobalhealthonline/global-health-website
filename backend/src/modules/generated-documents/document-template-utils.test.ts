@@ -2,6 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
   formatExamsNotes,
+  isEmailSendable,
   isInReviewQueue,
   isVisibleInHistory,
   ABSENCE_DEFAULT_REASON,
@@ -31,7 +32,7 @@ describe("review queue and history", () => {
   });
 
   it("unsent prescription hidden from history", () => {
-    assert.equal(isVisibleInHistory("PRESCRIPTION", false), false);
+    assert.equal(isVisibleInHistory("PRESCRIPTION", false), true);
   });
 
   it("sent prescription visible in history", () => {
@@ -44,6 +45,15 @@ describe("review queue and history", () => {
 
   it("sent exams visible in history", () => {
     assert.equal(isVisibleInHistory("EXAMS_PRESCRIPTION", true), true);
+  });
+
+  it("prescription is not email sendable", () => {
+    assert.equal(isEmailSendable("PRESCRIPTION"), false);
+  });
+
+  it("exams and absence are email sendable", () => {
+    assert.equal(isEmailSendable("EXAMS_PRESCRIPTION"), true);
+    assert.equal(isEmailSendable("ABSENCE_CERTIFICATE"), true);
   });
 });
 

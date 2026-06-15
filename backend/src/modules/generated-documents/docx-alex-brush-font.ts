@@ -160,10 +160,48 @@ export function installAlexBrushForLibreOffice(): string | null {
 
 export function writeFontconfigForLibreOffice(workDir: string, fontDir: string): string {
   const confPath = path.join(workDir, "fonts.conf");
-  const dirUri = fontDir.replace(/\\/g, "/");
+  const dirs: string[] = [];
+
+  if (process.platform === "win32") {
+    const windir = process.env.WINDIR ?? "C:\\Windows";
+    dirs.push(
+      path.join(windir, "Fonts"),
+      path.join(process.env.LOCALAPPDATA ?? "", "Microsoft", "Windows", "Fonts"),
+    );
+  } else {
+    dirs.push(
+      "/usr/share/fonts",
+      "/usr/local/share/fonts",
+      "/usr/share/fonts/truetype",
+      "/usr/share/fonts/truetype/liberation",
+      "/usr/share/fonts/truetype/carlito",
+      "/usr/share/fonts/truetype/dejavu",
+    );
+  }
+
+  dirs.push(fontDir);
+
+  const uniqueDirs = [...new Set(dirs.map((d) => d.replace(/\\/g, "/")))]
+    .map((d) => `  <dir>${d}</dir>`)
+    .join("\n");
+
+  // Calibri is referenced in generated XML; map to metric-compatible fonts on Linux.
+  const calibriAlias =
+    process.platform === "win32"
+      ? ""
+      : `
+  <alias binding="strong">
+    <family>Calibri</family>
+    <prefer><family>Carlito</family></prefer>
+  </alias>
+  <alias binding="strong">
+    <family>Calibri</family>
+    <prefer><family>Liberation Sans</family></prefer>
+  </alias>`;
+
   fs.writeFileSync(
     confPath,
-    `<?xml version="1.0"?>\n<!DOCTYPE fontconfig SYSTEM "fonts.dtd">\n<fontconfig><dir>${dirUri}</dir></fontconfig>\n`,
+    `<?xml version="1.0"?>\n<!DOCTYPE fontconfig SYSTEM "fonts.dtd">\n<fontconfig>\n${uniqueDirs}${calibriAlias}\n</fontconfig>\n`,
   );
   return confPath;
 }

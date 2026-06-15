@@ -54,15 +54,26 @@ export const REVIEW_QUEUE_TYPES: GeneratedDocumentType[] = [
   "OTHER",
 ];
 
+/** Subset of review queue documents that can be emailed to the patient. */
+export const EMAIL_SEND_QUEUE_TYPES: GeneratedDocumentType[] = [
+  "EXAMS_PRESCRIPTION",
+  "ABSENCE_CERTIFICATE",
+  "OTHER",
+];
+
 export function isInReviewQueue(documentType: GeneratedDocumentType, sentToPatient: boolean): boolean {
   return REVIEW_QUEUE_TYPES.includes(documentType) && sentToPatient === false;
 }
 
-/** Sent documents appear in appointment/patient history lists. */
+export function isEmailSendable(documentType: GeneratedDocumentType): boolean {
+  return EMAIL_SEND_QUEUE_TYPES.includes(documentType);
+}
+
+/** Sent documents (or medicine prescriptions) appear in appointment/patient history lists. */
 export function isVisibleInHistory(
   documentType: GeneratedDocumentType,
   sentToPatient: boolean,
 ): boolean {
-  void documentType;
+  if (documentType === "PRESCRIPTION") return true;
   return sentToPatient === true;
 }
