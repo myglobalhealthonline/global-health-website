@@ -26,6 +26,10 @@ export type GenerateOrderMeetLinkResult =
 type ProvisionOptions = {
   /** When true, skip if the order already has a meetingUrl. Used on payment webhook. */
   skipIfExists?: boolean;
+  /** When true, create a new Meet link even if one already exists (admin reschedule). */
+  forceRegenerate?: boolean;
+  /** When true, do not trigger post-payment automation side effects. */
+  skipSideEffects?: boolean;
 };
 
 export function orderHasConsultationItem(items: { kind: CartItemKind }[]): boolean {
@@ -97,7 +101,11 @@ export async function generateOrderMeetLink(
     return { ok: false, code: "NOT_FOUND", message: "Order not found" };
   }
 
-  if (options.skipIfExists && order.meetingUrl?.trim()) {
+  if (
+    !options.forceRegenerate &&
+    options.skipIfExists &&
+    order.meetingUrl?.trim()
+  ) {
     const existingTitle =
       order.items.find((item) => CONSULTATION_KINDS.includes(item.kind))?.name ?? "Consultation";
     return {
@@ -219,15 +227,17 @@ export async function generateOrderMeetLink(
     }
   });
 
-  if (orderIsPaidForMeet(order)) {
-    const { startPostPaymentFlow } = await import("../automation/post-payment-flow.service.js");
-    await startPostPaymentFlow(orderId).catch(() => undefined);
-  }
+  if (!options.skipSideEffects) {
+    if (orderIsPaidForMeet(order)) {
+      const { startPostPaymentFlow } = await import("../automation/post-payment-flow.service.js");
+      await startPostPaymentFlow(orderId).catch(() => undefined);
+    }
 
-  const { post_sendMeetingLinkNotifications } = await import(
-    "../automation/post-payment-flow.service.js"
-  );
-  await post_sendMeetingLinkNotifications(orderId).catch(() => undefined);
+    const { post_sendMeetingLinkNotifications } = await import(
+      "../automation/post-payment-flow.service.js"
+    );
+    await post_sendMeetingLinkNotifications(orderId).catch(() => undefined);
+  }
 
   return { ok: true, meetLink, serviceTitle: eventTitle };
 }

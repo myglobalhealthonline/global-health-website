@@ -20,6 +20,8 @@ export type PostPaymentMessageContext = {
   meetingLinkDisplay: string;
   orderNumber: string;
   totalLabel: string;
+  /** Admin-entered reason when an appointment is updated after booking. */
+  changeReason?: string;
 };
 
 export function formatMeetingLinkDisplay(url: string): string {
@@ -68,7 +70,7 @@ Your booking has now been confirmed.
 Appointment Details:
 📌 Service: ${ctx.serviceName}
 👤 Doctor: ${ctx.doctorName}
-📅 Date: ${ctx.appointmentDate}
+📅 Date & Time: ${ctx.appointmentDateTime}
 We will send your meeting link shortly.
 Global Health Team`,
     pt: `Olá ${ctx.patientName},
@@ -77,7 +79,7 @@ A sua marcação foi confirmada.
 Detalhes da consulta:
 📌 Serviço: ${ctx.serviceName}
 👤 Médico: ${ctx.doctorName}
-📅 Data: ${ctx.appointmentDate}
+📅 Data și ora: ${ctx.appointmentDateTime}
 Enviaremos o link da reunião em breve.
 Equipa Global Health`,
     ro: `Bună ${ctx.patientName},
@@ -86,7 +88,7 @@ Programarea dumneavoastră a fost confirmată.
 Detalii consultație:
 📌 Serviciu: ${ctx.serviceName}
 👤 Medic: ${ctx.doctorName}
-📅 Data: ${ctx.appointmentDate}
+📅 Data și ora: ${ctx.appointmentDateTime}
 Linkul de meeting va fi trimis în curând.
 Echipa Global Health`,
     cs: `Dobrý den ${ctx.patientName},
@@ -95,7 +97,7 @@ Vaše rezervace byla potvrzena.
 Detaily konzultace:
 📌 Služba: ${ctx.serviceName}
 👤 Lékař: ${ctx.doctorName}
-📅 Datum: ${ctx.appointmentDate}
+📅 Datum a čas: ${ctx.appointmentDateTime}
 Odkaz na setkání vám brzy zašleme.
 Tým Global Health`,
     es: `Hola ${ctx.patientName},
@@ -104,7 +106,7 @@ Su reserva ha sido confirmada.
 Detalles de la cita:
 📌 Servicio: ${ctx.serviceName}
 👤 Doctor: ${ctx.doctorName}
-📅 Fecha: ${ctx.appointmentDate}
+📅 Fecha y hora: ${ctx.appointmentDateTime}
 Enviaremos el enlace de la reunión en breve.
 Equipo Global Health`,
   });
@@ -121,7 +123,7 @@ Payment has been received.
 Booking is now fully confirmed.
 Patient: ${ctx.patientName}
 Service: ${ctx.serviceName}
-Date: ${ctx.appointmentDate}
+Date & time: ${ctx.appointmentDateTime}
 Meeting link generation in progress.
 Global Health Team`,
     pt: `Olá ${ctx.doctorName},
@@ -129,7 +131,7 @@ Pagamento recebido.
 Marcação totalmente confirmada.
 Paciente: ${ctx.patientName}
 Serviço: ${ctx.serviceName}
-Data: ${ctx.appointmentDate}
+Data e hora: ${ctx.appointmentDateTime}
 Geração do link de reunião em curso.
 Equipa Global Health`,
     ro: `Bună ziua ${ctx.doctorName},
@@ -137,7 +139,7 @@ Plata a fost primită.
 Programarea este acum confirmată.
 Pacient: ${ctx.patientName}
 Serviciu: ${ctx.serviceName}
-Data: ${ctx.appointmentDate}
+Data e hora: ${ctx.appointmentDateTime}
 Generarea linkului de meeting este în curs.
 Echipa Global Health`,
     cs: `Dobrý den ${ctx.doctorName},
@@ -145,7 +147,7 @@ Platba byla přijata.
 Rezervace je nyní plně potvrzena.
 Pacient: ${ctx.patientName}
 Služba: ${ctx.serviceName}
-Datum: ${ctx.appointmentDate}
+Datum a čas: ${ctx.appointmentDateTime}
 Generování odkazu na setkání probíhá.
 Tým Global Health`,
     es: `Hola ${ctx.doctorName},
@@ -153,7 +155,7 @@ Pago recibido.
 Reserva confirmada.
 Paciente: ${ctx.patientName}
 Servicio: ${ctx.serviceName}
-Fecha: ${ctx.appointmentDate}
+Fecha y hora: ${ctx.appointmentDateTime}
 Generación del enlace de reunión en curso.
 Equipo Global Health`,
   });
@@ -171,7 +173,7 @@ Your booking has now been confirmed.
 Appointment Details:
 📌 Service: ${ctx.serviceName}
 👤 Doctor: ${ctx.doctorName}
-📅 Date: ${ctx.appointmentDate}
+📅 Date & Time: ${ctx.appointmentDateTime}
 💻 Meeting Link: ${ctx.meetingLinkDisplay}
 Please join a few minutes before your appointment.
 Global Health Team`,
@@ -181,7 +183,7 @@ A sua marcação foi confirmada.
 Detalhes da consulta:
 📌 Serviço: ${ctx.serviceName}
 👤 Médico: ${ctx.doctorName}
-📅 Data: ${ctx.appointmentDate}
+📅 Data și ora: ${ctx.appointmentDateTime}
 💻 Link da reunião: ${ctx.meetingLinkDisplay}
 Por favor entre alguns minutos antes da consulta.
 Equipa Global Health`,
@@ -191,7 +193,7 @@ Programarea dumneavoastră a fost confirmată.
 Detalii consultație:
 📌 Serviciu: ${ctx.serviceName}
 👤 Medic: ${ctx.doctorName}
-📅 Data: ${ctx.appointmentDate}
+📅 Data și ora: ${ctx.appointmentDateTime}
 💻 Link meeting: ${ctx.meetingLinkDisplay}
 Vă rugăm să intrați cu câteva minute înainte.
 Echipa Global Health`,
@@ -201,7 +203,7 @@ Vaše rezervace byla potvrzena.
 Detaily konzultace:
 📌 Služba: ${ctx.serviceName}
 👤 Lékař: ${ctx.doctorName}
-📅 Datum: ${ctx.appointmentDate}
+📅 Datum a čas: ${ctx.appointmentDateTime}
 💻 Odkaz na setkání: ${ctx.meetingLinkDisplay}
 Připojte se prosím několik minut předem.
 Tým Global Health`,
@@ -211,7 +213,7 @@ Su reserva ha sido confirmada.
 Detalles de la cita:
 📌 Servicio: ${ctx.serviceName}
 👤 Doctor: ${ctx.doctorName}
-📅 Fecha: ${ctx.appointmentDate}
+📅 Fecha y hora: ${ctx.appointmentDateTime}
 💻 Enlace de reunión: ${ctx.meetingLinkDisplay}
 Únase unos minutos antes de su cita.
 Equipo Global Health`,
@@ -228,7 +230,7 @@ export function doctorWhatsAppMeetingLink(
 You have a confirmed consultation.
 Patient: ${ctx.patientName}
 Service: ${ctx.serviceName}
-Date: ${ctx.appointmentDate}
+Date & time: ${ctx.appointmentDateTime}
 Meeting Link: ${ctx.meetingLinkDisplay}
 Please be available 5 minutes before start time.
 Global Health Team`,
@@ -236,7 +238,7 @@ Global Health Team`,
 Tem uma consulta confirmada.
 Paciente: ${ctx.patientName}
 Serviço: ${ctx.serviceName}
-Data: ${ctx.appointmentDate}
+Data e hora: ${ctx.appointmentDateTime}
 Link da reunião: ${ctx.meetingLinkDisplay}
 Esteja disponível 5 minutos antes do início.
 Equipa Global Health`,
@@ -244,7 +246,7 @@ Equipa Global Health`,
 Aveți o consultație confirmată.
 Pacient: ${ctx.patientName}
 Serviciu: ${ctx.serviceName}
-Data: ${ctx.appointmentDate}
+Data e hora: ${ctx.appointmentDateTime}
 Link meeting: ${ctx.meetingLinkDisplay}
 Vă rugăm să fiți disponibil cu 5 minute înainte.
 Echipa Global Health`,
@@ -252,7 +254,7 @@ Echipa Global Health`,
 máte potvrzenou konzultaci.
 Pacient: ${ctx.patientName}
 Služba: ${ctx.serviceName}
-Datum: ${ctx.appointmentDate}
+Datum a čas: ${ctx.appointmentDateTime}
 Odkaz na setkání: ${ctx.meetingLinkDisplay}
 Buďte prosím k dispozici 5 minut před začátkem.
 Tým Global Health`,
@@ -260,7 +262,7 @@ Tým Global Health`,
 Tiene una consulta confirmada.
 Paciente: ${ctx.patientName}
 Servicio: ${ctx.serviceName}
-Fecha: ${ctx.appointmentDate}
+Fecha y hora: ${ctx.appointmentDateTime}
 Enlace de reunión: ${ctx.meetingLinkDisplay}
 Esté disponible 5 minutos antes del inicio.
 Equipo Global Health`,
@@ -276,27 +278,27 @@ export function patientWhatsAppOneHourReminder(
     en: `Reminder
 Your consultation begins in 1 hour.
 Doctor: ${ctx.doctorName}
-Date: ${ctx.appointmentDate}
+Date & time: ${ctx.appointmentDateTime}
 Meeting Link: ${ctx.meetingLinkDisplay}`,
     pt: `Lembrete
 A sua consulta começa dentro de 1 hora.
 Médico: ${ctx.doctorName}
-Data: ${ctx.appointmentDate}
+Data e hora: ${ctx.appointmentDateTime}
 Link da reunião: ${ctx.meetingLinkDisplay}`,
     ro: `Memento
 Consultația începe peste 1 oră.
 Medic: ${ctx.doctorName}
-Data: ${ctx.appointmentDate}
+Data e hora: ${ctx.appointmentDateTime}
 Link meeting: ${ctx.meetingLinkDisplay}`,
     cs: `Připomínka
 Vaše konzultace začíná za 1 hodinu.
 Lékař: ${ctx.doctorName}
-Datum: ${ctx.appointmentDate}
+Datum a čas: ${ctx.appointmentDateTime}
 Odkaz na setkání: ${ctx.meetingLinkDisplay}`,
     es: `Recordatorio
 Su consulta comienza en 1 hora.
 Doctor: ${ctx.doctorName}
-Fecha: ${ctx.appointmentDate}
+Fecha y hora: ${ctx.appointmentDateTime}
 Enlace de reunión: ${ctx.meetingLinkDisplay}`,
   });
 }
@@ -436,6 +438,189 @@ export function doctorEmailSubjectSessionStart(lang: Lang): string {
     ro: "Consultația începe peste 5 minute",
     cs: "Konzultace začíná za 5 minut",
     es: "La consulta comienza en 5 minutos",
+  });
+}
+
+function reasonBlock(ctx: PostPaymentMessageContext, lang: Lang): string {
+  const reason = ctx.changeReason?.trim();
+  if (!reason) return "";
+  return t(lang, {
+    en: `Reason for change: ${reason}`,
+    pt: `Motivo da alteração: ${reason}`,
+    ro: `Motivul modificării: ${reason}`,
+    cs: `Důvod změny: ${reason}`,
+    es: `Motivo del cambio: ${reason}`,
+  });
+}
+
+/** Admin update — patient WhatsApp with new slot/doctor and reason. */
+export function patientWhatsAppAppointmentUpdated(
+  ctx: PostPaymentMessageContext,
+  lang: Lang,
+): string {
+  const reason = reasonBlock(ctx, lang);
+  const reasonLine = reason ? `\n${reason}` : "";
+  return t(lang, {
+    en: `Hi ${ctx.patientName},
+Your appointment has been updated.
+Appointment Details:
+📌 Service: ${ctx.serviceName}
+👤 Doctor: ${ctx.doctorName}
+📅 Date & Time: ${ctx.appointmentDateTime}
+💻 Meeting Link: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+Global Health Team`,
+    pt: `Olá ${ctx.patientName},
+A sua consulta foi atualizada.
+Detalhes da consulta:
+📌 Serviço: ${ctx.serviceName}
+👤 Médico: ${ctx.doctorName}
+📅 Data e hora: ${ctx.appointmentDateTime}
+💻 Link da reunião: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+Equipa Global Health`,
+    ro: `Bună ${ctx.patientName},
+Programarea dumneavoastră a fost actualizată.
+Detalii consultație:
+📌 Serviciu: ${ctx.serviceName}
+👤 Medic: ${ctx.doctorName}
+📅 Data și ora: ${ctx.appointmentDateTime}
+💻 Link meeting: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+Echipa Global Health`,
+    cs: `Dobrý den ${ctx.patientName},
+vaše konzultace byla aktualizována.
+Detaily konzultace:
+📌 Služba: ${ctx.serviceName}
+👤 Lékař: ${ctx.doctorName}
+📅 Datum a čas: ${ctx.appointmentDateTime}
+💻 Odkaz na setkání: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+Tým Global Health`,
+    es: `Hola ${ctx.patientName},
+Su cita ha sido actualizada.
+Detalles de la cita:
+📌 Servicio: ${ctx.serviceName}
+👤 Doctor: ${ctx.doctorName}
+📅 Fecha y hora: ${ctx.appointmentDateTime}
+💻 Enlace de reunión: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+Equipo Global Health`,
+  });
+}
+
+/** Admin update — new/continuing doctor WhatsApp. */
+export function doctorWhatsAppAppointmentUpdated(
+  ctx: PostPaymentMessageContext,
+  lang: Lang,
+): string {
+  const reason = reasonBlock(ctx, lang);
+  const reasonLine = reason ? `\n${reason}` : "";
+  return t(lang, {
+    en: `Hello ${ctx.doctorName},
+An appointment has been updated.
+Patient: ${ctx.patientName}
+Service: ${ctx.serviceName}
+Date & time: ${ctx.appointmentDateTime}
+Meeting Link: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+Global Health Team`,
+    pt: `Olá ${ctx.doctorName},
+Uma consulta foi atualizada.
+Paciente: ${ctx.patientName}
+Serviço: ${ctx.serviceName}
+Data e hora: ${ctx.appointmentDateTime}
+Link da reunião: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+Equipa Global Health`,
+    ro: `Bună ziua ${ctx.doctorName},
+O programare a fost actualizată.
+Pacient: ${ctx.patientName}
+Serviciu: ${ctx.serviceName}
+Data și ora: ${ctx.appointmentDateTime}
+Link meeting: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+Echipa Global Health`,
+    cs: `Dobrý den ${ctx.doctorName},
+konzultace byla aktualizována.
+Pacient: ${ctx.patientName}
+Služba: ${ctx.serviceName}
+Datum a čas: ${ctx.appointmentDateTime}
+Odkaz na setkání: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+Tým Global Health`,
+    es: `Hola ${ctx.doctorName},
+Una cita ha sido actualizada.
+Paciente: ${ctx.patientName}
+Servicio: ${ctx.serviceName}
+Fecha y hora: ${ctx.appointmentDateTime}
+Enlace de reunión: ${ctx.meetingLinkDisplay || "—"}${reasonLine}
+Equipo Global Health`,
+  });
+}
+
+/** Admin update — previous doctor reassignment WhatsApp. */
+export function doctorWhatsAppAppointmentReassigned(
+  ctx: PostPaymentMessageContext,
+  lang: Lang,
+): string {
+  const reason = reasonBlock(ctx, lang);
+  const reasonLine = reason ? `\n${reason}` : "";
+  return t(lang, {
+    en: `Hello ${ctx.doctorName},
+An appointment has been reassigned to another doctor.
+Patient: ${ctx.patientName}
+Service: ${ctx.serviceName}
+Previous date & time: ${ctx.appointmentDateTime}${reasonLine}
+Global Health Team`,
+    pt: `Olá ${ctx.doctorName},
+Uma consulta foi reatribuída a outro médico.
+Paciente: ${ctx.patientName}
+Serviço: ${ctx.serviceName}
+Data e hora anterior: ${ctx.appointmentDateTime}${reasonLine}
+Equipa Global Health`,
+    ro: `Bună ziua ${ctx.doctorName},
+O programare a fost realocată altui medic.
+Pacient: ${ctx.patientName}
+Serviciu: ${ctx.serviceName}
+Data și ora anterioară: ${ctx.appointmentDateTime}${reasonLine}
+Echipa Global Health`,
+    cs: `Dobrý den ${ctx.doctorName},
+konzultace byla přeřazena jinému lékaři.
+Pacient: ${ctx.patientName}
+Služba: ${ctx.serviceName}
+Předchozí datum a čas: ${ctx.appointmentDateTime}${reasonLine}
+Tým Global Health`,
+    es: `Hola ${ctx.doctorName},
+Una cita ha sido reasignada a otro doctor.
+Paciente: ${ctx.patientName}
+Servicio: ${ctx.serviceName}
+Fecha y hora anterior: ${ctx.appointmentDateTime}${reasonLine}
+Equipo Global Health`,
+  });
+}
+
+export function patientEmailSubjectAppointmentUpdated(
+  ctx: PostPaymentMessageContext,
+  lang: Lang,
+): string {
+  return t(lang, {
+    en: `Order #${ctx.orderNumber} Updated`,
+    pt: `Pedido #${ctx.orderNumber} Atualizado`,
+    ro: `Comandă #${ctx.orderNumber} Actualizată`,
+    cs: `Objednávka #${ctx.orderNumber} Aktualizována`,
+    es: `Pedido #${ctx.orderNumber} Actualizado`,
+  });
+}
+
+export function doctorEmailSubjectAppointmentUpdated(lang: Lang): string {
+  return t(lang, {
+    en: "Appointment Updated",
+    pt: "Consulta atualizada",
+    ro: "Programare actualizată",
+    cs: "Konzultace aktualizována",
+    es: "Cita actualizada",
+  });
+}
+
+export function doctorEmailSubjectAppointmentReassigned(lang: Lang): string {
+  return t(lang, {
+    en: "Appointment Reassigned",
+    pt: "Consulta reatribuída",
+    ro: "Programare realocată",
+    cs: "Konzultace přeřazena",
+    es: "Cita reasignada",
   });
 }
 

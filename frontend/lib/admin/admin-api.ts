@@ -92,6 +92,7 @@ type AdminAppointmentDetailPayload = {
     consultationMode: string | null;
     clinicId: string | null;
     locationAddress: string | null;
+    doctorId: string | null;
     createdAt: string;
     updatedAt: string;
   };
@@ -399,6 +400,28 @@ export async function patchAdminAppointmentSchedule(
   // admin success toast.
   return adminRequest<AdminAppointmentDetailPayload & { emailed?: boolean }>(
     `/api/admin/appointments/${id}/schedule`,
+    { method: "PATCH", body: input },
+  );
+}
+
+export type AdminAppointmentUpdateResult = {
+  appointment: AdminAppointmentDetailPayload["appointment"];
+  orderId: string | null;
+  meetingUrl: string | null;
+  notificationsSent: boolean;
+};
+
+/** Change consultation date/time and/or doctor from the admin order page. */
+export async function patchAdminAppointmentUpdate(
+  id: string,
+  input: {
+    scheduledAt?: string | null;
+    doctorId?: string | null;
+    changeReason: string;
+  },
+) {
+  return adminRequest<AdminAppointmentUpdateResult>(
+    `/api/admin/appointments/${id}/update`,
     { method: "PATCH", body: input },
   );
 }

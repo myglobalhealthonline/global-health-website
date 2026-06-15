@@ -11,7 +11,8 @@ export type PostPaymentEmailVariant =
   | "payment_confirmed"
   | "meeting_link"
   | "one_hour"
-  | "session_start";
+  | "session_start"
+  | "appointment_updated";
 
 const WHATSAPP_URL = "https://wa.me/353894715849";
 const WHATSAPP_DISPLAY = "+353 89 471 5849";
@@ -81,6 +82,13 @@ function labels(lang: Lang) {
       cs: "Máte-li dotazy, kontaktujte nás na",
       es: "Si tiene alguna pregunta, contáctenos en",
     }),
+    reasonForChange: t(lang, {
+      en: "Reason for change",
+      pt: "Motivo da alteração",
+      ro: "Motivul modificării",
+      cs: "Důvod změny",
+      es: "Motivo del cambio",
+    }),
     whatsappLead: t(lang, {
       en: "or message us on WhatsApp",
       pt: "ou envie uma mensagem pelo WhatsApp",
@@ -134,6 +142,15 @@ function labels(lang: Lang) {
 }
 
 function statusHeading(lang: Lang, variant: PostPaymentEmailVariant): string {
+  if (variant === "appointment_updated") {
+    return t(lang, {
+      en: "UPDATED",
+      pt: "ATUALIZADO",
+      ro: "ACTUALIZAT",
+      cs: "AKTUALIZOVÁNO",
+      es: "ACTUALIZADO",
+    });
+  }
   if (variant === "one_hour" || variant === "session_start") {
     return t(lang, {
       en: "REMINDER",
@@ -153,6 +170,15 @@ function statusHeading(lang: Lang, variant: PostPaymentEmailVariant): string {
 }
 
 function introCopy(lang: Lang, variant: PostPaymentEmailVariant): string {
+  if (variant === "appointment_updated") {
+    return t(lang, {
+      en: "Your appointment details have been updated. Please review the new date, doctor, and meeting link below.",
+      pt: "Os detalhes da sua consulta foram atualizados. Reveja a nova data, médico e link abaixo.",
+      ro: "Detaliile programării au fost actualizate. Verificați noua dată, medicul și linkul de mai jos.",
+      cs: "Detaily vaší konzultace byly aktualizovány. Zkontrolujte nové datum, lékaře a odkaz níže.",
+      es: "Los detalles de su cita han sido actualizados. Revise la nueva fecha, doctor y enlace a continuación.",
+    });
+  }
   if (variant === "payment_confirmed") {
     return t(lang, {
       en: "Payment received successfully. Your consultation has been confirmed. Meeting link will be sent shortly.",
@@ -218,13 +244,17 @@ export function buildPostPaymentPatientEmailHtml(
   const greeting = `${L.dear} ${esc(ctx.patientName)}`;
   const intro = introCopy(lang, variant);
   const showPrice = variant === "payment_confirmed" || variant === "meeting_link";
-  const showMeetLink = variant === "meeting_link" || variant === "one_hour" || variant === "session_start";
+  const showMeetLink =
+    variant === "meeting_link" ||
+    variant === "one_hour" ||
+    variant === "session_start" ||
+    variant === "appointment_updated";
   const showDoctor = variant !== "session_start";
-  const showService = variant === "payment_confirmed" || variant === "meeting_link";
-  const dateValue =
-    variant === "payment_confirmed" || variant === "meeting_link"
-      ? ctx.appointmentDateTime
-      : ctx.appointmentDate;
+  const showService =
+    variant === "payment_confirmed" ||
+    variant === "meeting_link" ||
+    variant === "appointment_updated";
+  const dateValue = ctx.appointmentDateTime;
 
   const rows = [
     `<tr><td style="width:38%;vertical-align:top;"><b>${L.orderNo}:</b></td><td>#${esc(ctx.orderNumber)}</td></tr>`,
@@ -241,6 +271,11 @@ export function buildPostPaymentPatientEmailHtml(
   }
   if (showMeetLink && ctx.meetingLink) {
     rows.push(buildMeetLinkRow(lang, ctx));
+  }
+  if (variant === "appointment_updated" && ctx.changeReason?.trim()) {
+    rows.push(
+      `<tr><td><b>${L.reasonForChange}:</b></td><td>${esc(ctx.changeReason.trim())}</td></tr>`,
+    );
   }
 
   const actionBlock =
@@ -303,21 +338,33 @@ export function buildPostPaymentPatientEmailText(
   const L = labels(lang);
   const intro = introCopy(lang, variant);
   const lines = [`${ctx.patientName},`, "", intro, ""];
-  if (variant === "payment_confirmed" || variant === "meeting_link") {
+  if (
+    variant === "payment_confirmed" ||
+    variant === "meeting_link" ||
+    variant === "appointment_updated"
+  ) {
     lines.push(
       `${L.orderNo}: #${ctx.orderNumber}`,
       `${L.dateTime}: ${ctx.appointmentDateTime}`,
       `${L.doctor}: ${ctx.doctorName}`,
       `${L.service}: ${ctx.serviceName}`,
-      `${L.price}: ${ctx.totalLabel}`,
     );
-    if (variant === "meeting_link" && ctx.meetingLink) {
+    if (variant !== "appointment_updated") {
+      lines.push(`${L.price}: ${ctx.totalLabel}`);
+    }
+    if (
+      (variant === "meeting_link" || variant === "appointment_updated") &&
+      ctx.meetingLink
+    ) {
       lines.push(`${L.meetingLink}: ${ctx.meetingLink}`);
+    }
+    if (variant === "appointment_updated" && ctx.changeReason?.trim()) {
+      lines.push(`${L.reasonForChange}: ${ctx.changeReason.trim()}`);
     }
   } else if (variant === "one_hour") {
     lines.push(
       `${L.doctor}: ${ctx.doctorName}`,
-      `${L.dateTime}: ${ctx.appointmentDate}`,
+      `${L.dateTime}: ${ctx.appointmentDateTime}`,
       `${L.meetingLink}: ${ctx.meetingLink}`,
     );
   } else {
@@ -333,7 +380,7 @@ export function buildPostPaymentPatientEmailText(
 export function buildPostPaymentDoctorEmailHtml(
   ctx: PostPaymentMessageContext,
   lang: Lang,
-  variant: "meeting_link" | "one_hour" | "session_start",
+  variant: "meeting_link" | "one_hour" | "session_start" | "appointment_updated" | "appointment_reassigned",
 ): string {
   const L = labels(lang);
   const service =
@@ -344,22 +391,46 @@ export function buildPostPaymentDoctorEmailHtml(
   const rows: string[] = [
     `<tr><td style="width:38%;"><b>${L.patient}:</b></td><td>${esc(ctx.patientName)}</td></tr>`,
   ];
-  if (variant === "meeting_link") {
+  if (variant === "meeting_link" || variant === "appointment_updated") {
     rows.push(
       `<tr><td><b>Email:</b></td><td>${esc(ctx.patientEmail)}</td></tr>`,
       `<tr><td><b>Phone:</b></td><td>${esc(ctx.patientPhone || "—")}</td></tr>`,
       `<tr><td><b>${L.service}:</b></td><td>${esc(service)}</td></tr>`,
       `<tr><td><b>${L.dateTime}:</b></td><td>${esc(ctx.appointmentDateTime)}</td></tr>`,
     );
+  } else if (variant === "appointment_reassigned") {
+    rows.push(
+      `<tr><td><b>${L.service}:</b></td><td>${esc(service)}</td></tr>`,
+      `<tr><td><b>${L.dateTime}:</b></td><td>${esc(ctx.appointmentDateTime)}</td></tr>`,
+    );
   } else if (variant === "one_hour") {
     rows.push(
       `<tr><td><b>${L.service}:</b></td><td>${esc(service)}</td></tr>`,
-      `<tr><td><b>${L.startTime}:</b></td><td>${esc(ctx.appointmentDate)}</td></tr>`,
+      `<tr><td><b>${L.startTime}:</b></td><td>${esc(ctx.appointmentDateTime)}</td></tr>`,
     );
   }
-  if (ctx.meetingLink) {
+  if (ctx.meetingLink && variant !== "appointment_reassigned") {
     rows.push(
       `<tr><td><b>${L.meetingLink}:</b></td><td><a href="${esc(ctx.meetingLink)}" style="color:#2d4f3d;">${esc(ctx.meetingLinkDisplay)}</a></td></tr>`,
+    );
+  }
+  if (
+    (variant === "appointment_updated" || variant === "appointment_reassigned") &&
+    ctx.changeReason?.trim()
+  ) {
+    rows.push(
+      `<tr><td><b>${L.reasonForChange}:</b></td><td>${esc(ctx.changeReason.trim())}</td></tr>`,
+    );
+  }
+  if (variant === "appointment_reassigned") {
+    rows.push(
+      `<tr><td colspan="2" style="padding-top:12px;">${t(lang, {
+        en: "This appointment has been reassigned to another doctor.",
+        pt: "Esta consulta foi reatribuída a outro médico.",
+        ro: "Această programare a fost realocată altui medic.",
+        cs: "Tato konzultace byla přeřazena jinému lékaři.",
+        es: "Esta cita ha sido reasignada a otro doctor.",
+      })}</td></tr>`,
     );
   }
   if (variant === "session_start") {
@@ -384,7 +455,7 @@ export function buildPostPaymentDoctorEmailHtml(
 export function buildPostPaymentDoctorEmailText(
   ctx: PostPaymentMessageContext,
   lang: Lang,
-  variant: "meeting_link" | "one_hour" | "session_start",
+  variant: "meeting_link" | "one_hour" | "session_start" | "appointment_updated" | "appointment_reassigned",
 ): string {
   const L = labels(lang);
   const service =
@@ -392,18 +463,29 @@ export function buildPostPaymentDoctorEmailText(
       ? serviceNameForDoctorReminder(ctx.serviceName)
       : ctx.serviceName;
   const lines: string[] = [`${L.patient}: ${ctx.patientName}`];
-  if (variant === "meeting_link") {
+  if (variant === "meeting_link" || variant === "appointment_updated") {
     lines.push(
       `Email: ${ctx.patientEmail}`,
       `Phone: ${ctx.patientPhone || "—"}`,
       `${L.service}: ${service}`,
       `${L.dateTime}: ${ctx.appointmentDateTime}`,
     );
+  } else if (variant === "appointment_reassigned") {
+    lines.push(`${L.service}: ${service}`, `${L.dateTime}: ${ctx.appointmentDateTime}`);
   } else if (variant === "one_hour") {
-    lines.push(`${L.service}: ${service}`, `${L.startTime}: ${ctx.appointmentDate}`);
+    lines.push(`${L.service}: ${service}`, `${L.startTime}: ${ctx.appointmentDateTime}`);
   }
-  if (ctx.meetingLink) {
+  if (ctx.meetingLink && variant !== "appointment_reassigned") {
     lines.push(`${L.meetingLink}: ${ctx.meetingLink}`);
+  }
+  if (
+    (variant === "appointment_updated" || variant === "appointment_reassigned") &&
+    ctx.changeReason?.trim()
+  ) {
+    lines.push(`${L.reasonForChange}: ${ctx.changeReason.trim()}`);
+  }
+  if (variant === "appointment_reassigned") {
+    lines.push("This appointment has been reassigned to another doctor.");
   }
   if (variant === "session_start") {
     lines.push("Consultation starts in 5 minutes.");

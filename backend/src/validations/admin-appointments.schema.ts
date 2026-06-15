@@ -112,6 +112,29 @@ export const scheduleAppointmentBodySchema = z
 
 export type ScheduleAppointmentBody = z.infer<typeof scheduleAppointmentBodySchema>;
 
+/**
+ * Admin order-page appointment update (doctor + time only). Requires a
+ * reason shown in patient/doctor notifications. At least one of
+ * `scheduledAt` or `doctorId` must be sent; the route/service rejects
+ * no-op saves where neither value differs from the current row.
+ */
+export const updateAppointmentBodySchema = z
+  .object({
+    scheduledAt: z
+      .union([z.string().datetime({ offset: true }), z.null()])
+      .optional(),
+    doctorId: z.union([z.string().trim().min(8).max(40), z.null()]).optional(),
+    changeReason: z.string().trim().min(10, "Reason must be at least 10 characters").max(500),
+  })
+  .refine(
+    (data) => data.scheduledAt !== undefined || data.doctorId !== undefined,
+    {
+      message: "Provide at least scheduledAt or doctorId",
+    },
+  );
+
+export type UpdateAppointmentBody = z.infer<typeof updateAppointmentBodySchema>;
+
 /** Query string for GET /api/admin/appointments (pagination + filters). */
 export const adminAppointmentsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),

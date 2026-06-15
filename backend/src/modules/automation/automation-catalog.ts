@@ -37,6 +37,15 @@ export const AUTOMATION_CATALOG: AutomationDefinition[] = [
     maxStages: 4,
   },
   {
+    key: "appointment_update",
+    name: "Appointment update (admin)",
+    flow: "Consultation order",
+    description:
+      "When an admin changes the consultation date/time or doctor from the order page, patient and doctor(s) receive branded email and WhatsApp with the reason, updated slot, and a fresh Meet link when applicable.",
+    channels: ["whatsapp", "email", "portal"],
+    maxStages: 1,
+  },
+  {
     key: "appointment_reminder_24h",
     name: "Appointment reminder (24h before)",
     flow: "Confirmed appointment",

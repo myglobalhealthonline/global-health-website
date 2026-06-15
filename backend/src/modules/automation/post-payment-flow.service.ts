@@ -32,7 +32,6 @@ import {
   doctorWhatsAppMeetingLink,
   doctorWhatsAppOneHourReminder,
   doctorWhatsAppSessionStart,
-  formatAppointmentDateOnly,
   formatDeadline,
   formatMeetingLinkDisplay,
   patientEmailSubjectConfirmed,
@@ -145,7 +144,7 @@ async function loadPostPaymentContext(orderId: string) {
     serviceName: primary.name,
     doctorName,
     appointmentDate: appointmentStart
-      ? formatAppointmentDateOnly(appointmentStart, primary.patientTimezone, lang)
+      ? formatDeadline(appointmentStart, primary.patientTimezone, lang)
       : pendingAppointmentDateLabel(lang),
     appointmentDateTime: appointmentStart
       ? formatDeadline(appointmentStart, primary.patientTimezone, lang)

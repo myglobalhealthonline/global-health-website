@@ -20,6 +20,7 @@ import {
   appointmentIdParamsSchema,
   createManualAppointmentBodySchema,
   scheduleAppointmentBodySchema,
+  updateAppointmentBodySchema,
   updateAppointmentStatusBodySchema,
 } from "../validations/admin-appointments.schema.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -31,6 +32,11 @@ import {
   ServiceNotFoundError,
   ServicePriceMissingError,
 } from "../modules/appointments/manual-booking.service.js";
+import {
+  adminUpdateAppointment,
+  AppointmentNotFoundError,
+  NoAppointmentChangesError,
+} from "../modules/appointments/admin-update-appointment.service.js";
 
 const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
   app.addHook("onRequest", async (request, reply) => {
@@ -352,6 +358,66 @@ const adminAppointmentsRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Unexpected admin schedule error"));
+    }
+  });
+
+  /**
+   * Admin order-page update: change consultation time and/or doctor with a
+   * required reason. Sends branded patient/doctor notifications and
+   * regenerates the Meet link on paid online orders when needed.
+   */
+  app.patch("/api/admin/appointments/:id/update", async (request, reply) => {
+    const params = appointmentIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid admin appointment id", params.error.flatten()));
+    }
+    const body = updateAppointmentBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid appointment update payload", body.error.flatten()));
+    }
+
+    const scheduledAtInput =
+      body.data.scheduledAt === undefined
+        ? undefined
+        : body.data.scheduledAt === null
+          ? null
+          : new Date(body.data.scheduledAt);
+    const doctorIdInput = body.data.doctorId ?? undefined;
+
+    const actor = await resolveOptionalAuthUser(request);
+    const adminUserId: string | null = actor?.role === "ADMIN" ? actor.id : null;
+
+    try {
+      const result = await adminUpdateAppointment({
+        appointmentId: params.data.id,
+        scheduledAt: scheduledAtInput,
+        doctorId: doctorIdInput,
+        changeReason: body.data.changeReason,
+        adminUserId,
+        request,
+      });
+      return okResponse(result, "Appointment updated");
+    } catch (error) {
+      if (error instanceof AppointmentNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      if (error instanceof NoAppointmentChangesError) {
+        return reply.status(422).send(errorResponse(error.message));
+      }
+      if (error instanceof DoctorNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      if (
+        error instanceof DoctorNotAvailableInCountryError ||
+        error instanceof DoctorNotAssignedToServiceError
+      ) {
+        return reply.status(422).send(errorResponse(error.message));
+      }
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected admin appointment update error"));
     }
   });
 

@@ -104,7 +104,7 @@ Equipa Global Health`,
 Vă mulțumim pentru programarea la Global Health. Consultația a fost rezervată.
 📌 Serviciu: ${ctx.serviceName}
 👤 Medic: ${ctx.doctorName}
-📅 Data: ${ctx.appointmentDate}
+📅 Data și ora: ${ctx.appointmentDate}
 💳 Plată: ${ctx.paymentLink}
 ⚠️ IMPORTANT — plata până la ${ctx.deadline}, altfel rezervarea poate fi anulată.
 Echipa Global Health`,
@@ -112,7 +112,7 @@ Echipa Global Health`,
 děkujeme za rezervaci u Global Health. Termín byl rezervován.
 📌 Služba: ${ctx.serviceName}
 👤 Lékař: ${ctx.doctorName}
-📅 Datum: ${ctx.appointmentDate}
+📅 Datum a čas: ${ctx.appointmentDate}
 💳 Platba: ${ctx.paymentLink}
 ⚠️ DŮLEŽITÉ — platba do ${ctx.deadline}, jinak může být rezervace zrušena.
 Tým Global Health`,
@@ -120,7 +120,7 @@ Tým Global Health`,
 Gracias por reservar con Global Health. Su cita ha sido reservada.
 📌 Servicio: ${ctx.serviceName}
 👤 Doctor: ${ctx.doctorName}
-📅 Fecha: ${ctx.appointmentDate}
+📅 Fecha y hora: ${ctx.appointmentDate}
 💳 Pago: ${ctx.paymentLink}
 ⚠️ IMPORTANTE — pago antes de ${ctx.deadline} o la reserva puede cancelarse.
 Equipo Global Health`,

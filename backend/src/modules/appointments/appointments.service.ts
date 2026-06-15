@@ -200,6 +200,7 @@ type AppointmentRecord = {
   consultationMode: string | null;
   clinicId: string | null;
   locationAddress: string | null;
+  doctorId?: string | null;
   /** IANA tz captured at booking time. Surfaced on the patient + doctor
    *  views so scheduledAt renders in the patient's local time. */
   patientTimezone?: string | null;
@@ -242,6 +243,7 @@ export type AdminAppointmentDetail = {
   consultationMode: string | null;
   clinicId: string | null;
   locationAddress: string | null;
+  doctorId: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -330,6 +332,7 @@ const ADMIN_APPT_SELECT = {
   consultationMode: true,
   clinicId: true,
   locationAddress: true,
+  doctorId: true,
   createdAt: true,
   updatedAt: true,
 } as const;
@@ -352,6 +355,7 @@ function toAdminAppointment(record: AppointmentRecord): AdminAppointmentDetail {
     consultationMode: record.consultationMode,
     clinicId: record.clinicId,
     locationAddress: record.locationAddress,
+    doctorId: record.doctorId ?? null,
     createdAt: record.createdAt.toISOString(),
     updatedAt: record.updatedAt.toISOString(),
   };

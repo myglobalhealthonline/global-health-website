@@ -15,10 +15,14 @@ import { formatPrice } from "@/lib/format-currency";
 import { formatOrderDisplayId } from "@/lib/format-order-display";
 import { AdminOrderActions } from "./_components/order-actions";
 import { OrderMeetLinkDisplay } from "../_components/order-meet-link-display";
+import { UpdateAppointmentPanel } from "./_components/update-appointment-panel";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ id: string }> };
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams?: Promise<{ error?: string; success?: string }>;
+};
 
 type AdminOrder = {
   id: string;
@@ -88,8 +92,9 @@ function statusTone(status: string): PillTone {
   return "neutral";
 }
 
-export default async function AdminOrderDetailPage({ params }: Props) {
+export default async function AdminOrderDetailPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const sp = searchParams ? await searchParams : {};
   const order = await fetchAdminOrder(id);
   if (!order) notFound();
 
@@ -101,6 +106,12 @@ export default async function AdminOrderDetailPage({ params }: Props) {
   const hasConsultation = order.items.some(
     (i) => i.kind === "GENERAL_CONSULTATION" || i.kind === "SPECIALIST_CONSULTATION",
   );
+  const consultationAppointmentId =
+    order.items.find(
+      (i) =>
+        (i.kind === "GENERAL_CONSULTATION" || i.kind === "SPECIALIST_CONSULTATION") &&
+        i.appointmentId,
+    )?.appointmentId ?? null;
 
   return (
     <>
@@ -200,6 +211,17 @@ export default async function AdminOrderDetailPage({ params }: Props) {
         </div>
 
         <aside className="grid gap-4 self-start">
+          {hasConsultation && consultationAppointmentId ? (
+            <UpdateAppointmentPanel
+              appointmentId={consultationAppointmentId}
+              orderId={order.id}
+              countryCode={order.countryCode}
+              returnPath={`/admin/orders/${order.id}`}
+              error={sp.error}
+              success={sp.success}
+            />
+          ) : null}
+
           {hasConsultation ? (
             <AdminCard padding={0}>
               <SectionHeader title="Google Meet" />
