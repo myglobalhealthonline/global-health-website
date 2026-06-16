@@ -16,11 +16,19 @@ import {
   trimBodyLeadingEmptyParagraphs,
 } from "./docx-xml-builder.js";
 import { applyDocumentFooterLayout } from "./docx-footer-inline.js";
+import { injectQrBlock } from "./docx-qr-inline.js";
 import {
   ensureAlexBrushFont,
   installAlexBrushForLibreOffice,
   writeFontconfigForLibreOffice,
 } from "./docx-alex-brush-font.js";
+
+/** Per-prescription QR engraving for exams prescriptions (optional). */
+export type DocxQrOptions = {
+  pngBuffer: Buffer;
+  title: string;
+  instruction: string;
+};
 
 const execFileAsync = promisify(execFile);
 
@@ -67,6 +75,7 @@ export function fillDocxBuffer(
   countryCode: string,
   documentType: GeneratedDocumentType,
   data: Record<string, string>,
+  qr?: DocxQrOptions,
 ): Buffer {
   const prefix = templatePrefixForCountry(countryCode);
   if (!prefix) throw new Error(`No DOCX template prefix for country ${countryCode}`);
@@ -82,6 +91,13 @@ export function fillDocxBuffer(
   }
   let filled = fillDocxXml(documentXml.asText(), profile, documentType, data);
   filled = trimBodyLeadingEmptyParagraphs(filled);
+  // QR sits before the footer gap so it prints just above the footer band.
+  if (qr) {
+    filled = injectQrBlock(zip, filled, qr.pngBuffer, {
+      title: qr.title,
+      instruction: qr.instruction,
+    });
+  }
   filled = applyDocumentFooterLayout(zip, filled);
   zip.file("word/document.xml", filled);
   ensureAlexBrushFont(zip);
@@ -145,6 +161,7 @@ export async function renderDocxTemplatePdf(
   countryCode: string,
   documentType: GeneratedDocumentType,
   data: Record<string, string>,
+  qr?: DocxQrOptions,
 ): Promise<Buffer | null> {
   const templatePath = resolveDocxTemplatePath(countryCode, documentType);
   if (!templatePath) return null;
@@ -157,6 +174,6 @@ export async function renderDocxTemplatePdf(
   }
 
   const templateBuffer = await readFile(templatePath);
-  const filled = fillDocxBuffer(templateBuffer, countryCode, documentType, data);
+  const filled = fillDocxBuffer(templateBuffer, countryCode, documentType, data, qr);
   return convertDocxToPdfWithLibreOffice(filled);
 }

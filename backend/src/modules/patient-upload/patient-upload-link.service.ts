@@ -30,6 +30,8 @@ export type PatientUploadTokenClaims = {
   email: string;
   appointmentId: string;
   doctorId: string;
+  /** When set, binds the link to one exams prescription (v3 layout). */
+  documentId?: string;
 };
 
 export function createPatientUploadToken(claims: PatientUploadTokenClaims): {
@@ -39,13 +41,17 @@ export function createPatientUploadToken(claims: PatientUploadTokenClaims): {
   const normalizedEmail = claims.email.trim().toLowerCase();
   const appointmentId = claims.appointmentId.trim();
   const doctorId = claims.doctorId.trim();
+  const documentId = claims.documentId?.trim();
   if (!normalizedEmail || !appointmentId || !doctorId) {
     throw new Error("email, appointmentId and doctorId are required");
   }
   const exp = Date.now() + TOKEN_TTL_MS;
   const nonce = randomBytes(8).toString("hex");
-  // v2 layout: version|email|appointmentId|doctorId|exp|nonce|sig
-  const body = `v2|${normalizedEmail}|${appointmentId}|${doctorId}|${exp}|${nonce}`;
+  // v3 layout (per-prescription): v3|email|appointmentId|doctorId|documentId|exp|nonce|sig
+  // v2 layout (per-appointment):  v2|email|appointmentId|doctorId|exp|nonce|sig
+  const body = documentId
+    ? `v3|${normalizedEmail}|${appointmentId}|${doctorId}|${documentId}|${exp}|${nonce}`
+    : `v2|${normalizedEmail}|${appointmentId}|${doctorId}|${exp}|${nonce}`;
   const sig = sign(body);
   return {
     token: Buffer.from(`${body}|${sig}`).toString("base64url"),
@@ -56,35 +62,70 @@ export function createPatientUploadToken(claims: PatientUploadTokenClaims): {
 export function verifyPatientUploadToken(
   token: string,
 ):
-  | { ok: true; email: string; appointmentId: string; doctorId: string }
+  | {
+      ok: true;
+      email: string;
+      appointmentId: string;
+      doctorId: string;
+      documentId?: string;
+    }
   | { ok: false; message: string } {
   try {
     const raw = Buffer.from(token, "base64url").toString("utf8");
     const parts = raw.split("|");
-    if (parts.length !== 7 || parts[0] !== "v2") {
-      return { ok: false, message: "Invalid upload link" };
+    const version = parts[0];
+
+    if (version === "v3") {
+      if (parts.length !== 8) return { ok: false, message: "Invalid upload link" };
+      const [, email, appointmentId, doctorId, documentId, expStr, nonce, sig] = parts;
+      const body = `v3|${email}|${appointmentId}|${doctorId}|${documentId}|${expStr}|${nonce}`;
+      const check = verifySignedBody(body, sig, expStr);
+      if (!check.ok) return check;
+      return {
+        ok: true,
+        email: email.trim().toLowerCase(),
+        appointmentId,
+        doctorId,
+        documentId,
+      };
     }
-    const [, email, appointmentId, doctorId, expStr, nonce, sig] = parts;
-    const body = `v2|${email}|${appointmentId}|${doctorId}|${expStr}|${nonce}`;
-    const expected = sign(body);
-    const a = Buffer.from(sig);
-    const b = Buffer.from(expected);
-    if (a.length !== b.length || !timingSafeEqual(a, b)) {
-      return { ok: false, message: "Invalid upload link" };
+
+    if (version === "v2") {
+      if (parts.length !== 7) return { ok: false, message: "Invalid upload link" };
+      const [, email, appointmentId, doctorId, expStr, nonce, sig] = parts;
+      const body = `v2|${email}|${appointmentId}|${doctorId}|${expStr}|${nonce}`;
+      const check = verifySignedBody(body, sig, expStr);
+      if (!check.ok) return check;
+      return {
+        ok: true,
+        email: email.trim().toLowerCase(),
+        appointmentId,
+        doctorId,
+      };
     }
-    const exp = Number(expStr);
-    if (!Number.isFinite(exp) || Date.now() > exp) {
-      return { ok: false, message: "Upload link has expired" };
-    }
-    return {
-      ok: true,
-      email: email.trim().toLowerCase(),
-      appointmentId,
-      doctorId,
-    };
+
+    return { ok: false, message: "Invalid upload link" };
   } catch {
     return { ok: false, message: "Invalid upload link" };
   }
+}
+
+function verifySignedBody(
+  body: string,
+  sig: string,
+  expStr: string,
+): { ok: true } | { ok: false; message: string } {
+  const expected = sign(body);
+  const a = Buffer.from(sig);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    return { ok: false, message: "Invalid upload link" };
+  }
+  const exp = Number(expStr);
+  if (!Number.isFinite(exp) || Date.now() > exp) {
+    return { ok: false, message: "Upload link has expired" };
+  }
+  return { ok: true };
 }
 
 export function buildPatientUploadUrl(token: string): string {

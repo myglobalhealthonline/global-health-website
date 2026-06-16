@@ -111,14 +111,31 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
       const storageKey = `patient-upload/${verified.email}/${randomUUID()}-${safeName}`;
       await putObject(storageKey, fileBuffer, mimetype);
 
+      // v3 tokens bind the upload to the exact exams prescription it answers —
+      // tag the file so the doctor sees which prescription it belongs to.
+      let label = `Patient upload: ${safeName}`;
+      let sourceGeneratedDocumentId: string | undefined;
+      if (verified.documentId) {
+        const rx = await prisma.generatedDocument.findFirst({
+          where: { id: verified.documentId, appointmentId: appt.id },
+          select: { id: true, prescriptionNumber: true },
+        });
+        if (rx) {
+          sourceGeneratedDocumentId = rx.id;
+          const n = rx.prescriptionNumber != null ? ` #${rx.prescriptionNumber}` : "";
+          label = `Exam result (prescription${n}): ${safeName}`;
+        }
+      }
+
       const doc = await prisma.appointmentDocument.create({
         data: {
           appointmentId: appt.id,
           doctorId: appt.doctorId,
-          label: `Patient upload: ${safeName}`,
+          label,
           storageKey,
           mimetype,
           byteSize: fileBuffer.length,
+          ...(sourceGeneratedDocumentId ? { sourceGeneratedDocumentId } : {}),
         },
       });
 

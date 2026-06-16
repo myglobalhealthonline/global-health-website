@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
-import { Eye, Pencil, Send, Trash2 } from "lucide-react";
+import { Eye, Pencil, QrCode, Send, Trash2 } from "lucide-react";
 import {
   doctorApiErrorMessage,
   parseDoctorApiJson,
@@ -16,6 +16,8 @@ export type ReviewQueueDoc = {
   sentToPatient: boolean;
   createdAt: string;
   metadata?: Record<string, string> | null;
+  prescriptionNumber?: number | null;
+  hasUploadLink?: boolean;
 };
 
 function canEmailDocument(documentType: string): boolean {
@@ -24,6 +26,17 @@ function canEmailDocument(documentType: string): boolean {
     documentType === "ABSENCE_CERTIFICATE" ||
     documentType === "OTHER"
   );
+}
+
+/** Exams prescriptions carry a per-prescription patient-upload link + QR. */
+function hasUploadLink(documentType: string): boolean {
+  return documentType === "EXAMS_PRESCRIPTION";
+}
+
+/** "Exams prescription #2" when a prescription number is present. */
+function docRowLabel(row: ReviewQueueDoc): string {
+  const base = GENERATED_DOCUMENT_TYPE_LABELS[row.documentType] ?? row.documentType;
+  return row.prescriptionNumber != null ? `${base} #${row.prescriptionNumber}` : base;
 }
 
 export function DocumentsReviewSendPanel({
@@ -151,6 +164,39 @@ export function DocumentsReviewSendPanel({
     });
   }
 
+  function sendUploadLink(id: string) {
+    setError(null);
+    setSuccess(null);
+    startTransition(async () => {
+      const res = await fetch(
+        `/api/doctor/documents/generated/${id}/send-upload-link`,
+        { method: "POST" },
+      );
+      const json = await parseDoctorApiJson<{
+        ok?: boolean;
+        message?: string;
+        data?: { deliveryWarnings?: string[] };
+      }>(res);
+      if (!res.ok || !json?.ok) {
+        setError(doctorApiErrorMessage(res, json, "Could not send the upload link."));
+        return;
+      }
+      const warnings = json.data?.deliveryWarnings ?? [];
+      if (warnings.length > 0) {
+        const labels = warnings
+          .map((w) =>
+            w === "no-phone" ? "no phone on file" : w === "whatsapp" ? "WhatsApp" : w,
+          )
+          .join(", ");
+        setSuccess(`Upload link sent, but some channels failed: ${labels}.`);
+      } else {
+        setSuccess(
+          `Upload link sent to ${patientEmail ?? "patient"} via email + WhatsApp.`,
+        );
+      }
+    });
+  }
+
   return (
     <HistorySection
       id="doctor-review-send-panel"
@@ -221,8 +267,7 @@ export function DocumentsReviewSendPanel({
                         <span className="inline-block w-4 shrink-0" aria-hidden />
                       )}
                       <span className="truncate">
-                        {GENERATED_DOCUMENT_TYPE_LABELS[row.documentType] ?? row.documentType} ·{" "}
-                        {row.fileName}
+                        {docRowLabel(row)} · {row.fileName}
                       </span>
                     </label>
                     <div className="flex shrink-0 flex-wrap items-center gap-1">
@@ -251,6 +296,17 @@ export function DocumentsReviewSendPanel({
                           <Send className="size-3" aria-hidden /> Send
                         </button>
                       ) : null}
+                      {hasUploadLink(row.documentType) ? (
+                        <button
+                          type="button"
+                          disabled={pending}
+                          onClick={() => sendUploadLink(row.id)}
+                          className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                          title="Email + WhatsApp the patient this prescription's upload link"
+                        >
+                          <QrCode className="size-3" aria-hidden /> Send upload link
+                        </button>
+                      ) : null}
                       <button
                         type="button"
                         onClick={() => remove(row.id)}
@@ -274,15 +330,26 @@ export function DocumentsReviewSendPanel({
             </h4>
             <ul className="mt-2 space-y-1 text-[13px] text-[var(--color-text-muted)]">
               {history.map((row) => (
-                <li key={row.id}>
+                <li key={row.id} className="flex flex-wrap items-center gap-2">
                   <a
                     href={`/api/doctor/documents/generated/${row.id}/pdf`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-semibold text-[var(--color-brand-primary)] hover:underline"
                   >
-                    {row.fileName}
+                    {docRowLabel(row)} · {row.fileName}
                   </a>
+                  {hasUploadLink(row.documentType) ? (
+                    <button
+                      type="button"
+                      disabled={pending}
+                      onClick={() => sendUploadLink(row.id)}
+                      className="gh-btn gh-btn-soft px-2 py-0.5 text-[11px]"
+                      title="Email + WhatsApp the patient this prescription's upload link"
+                    >
+                      <QrCode className="size-3" aria-hidden /> Send upload link
+                    </button>
+                  ) : null}
                 </li>
               ))}
             </ul>

@@ -11,6 +11,7 @@ import {
   getGeneratedDocumentFile,
   listGeneratedDocuments,
   sendGeneratedDocuments,
+  sendGeneratedDocumentUploadLink,
 } from "../modules/generated-documents/generated-documents.service.js";
 
 const baseFields = z.record(z.string()).optional();
@@ -63,6 +64,8 @@ function mapDocRow(r: {
   sentToPatient: boolean;
   createdAt: Date;
   metadata: unknown;
+  prescriptionNumber?: number | null;
+  uploadToken?: string | null;
 }) {
   const metadata =
     r.metadata && typeof r.metadata === "object" && !Array.isArray(r.metadata)
@@ -75,6 +78,8 @@ function mapDocRow(r: {
     sentToPatient: r.sentToPatient,
     createdAt: r.createdAt.toISOString(),
     metadata,
+    prescriptionNumber: r.prescriptionNumber ?? null,
+    hasUploadLink: Boolean(r.uploadToken),
   };
 }
 
@@ -152,6 +157,8 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
                 fileName: row.fileName,
                 sentToPatient: row.sentToPatient,
                 createdAt: row.createdAt.toISOString(),
+                prescriptionNumber: row.prescriptionNumber ?? null,
+                hasUploadLink: Boolean(row.uploadToken),
               },
               pdfUrl,
               healthPortalUrl,
@@ -211,6 +218,36 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not send documents"));
+      }
+    },
+  );
+
+  app.post<{ Params: { id: string } }>(
+    "/api/doctor/documents/generated/:id/send-upload-link",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      try {
+        const result = await sendGeneratedDocumentUploadLink(auth.doctorId, request.params.id);
+        if (!result.ok) {
+          return reply.status(result.status).send(errorResponse(result.message));
+        }
+        return okResponse(
+          {
+            link: result.link,
+            expiresAt: result.expiresAt.toISOString(),
+            deliveryWarnings: result.deliveryWarnings.length
+              ? result.deliveryWarnings
+              : undefined,
+          },
+          "Upload link sent",
+        );
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not send upload link"));
       }
     },
   );

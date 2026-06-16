@@ -1359,6 +1359,11 @@ model GeneratedDocument {
   storageKey    String
   sentToPatient Boolean               @default(false)
   metadata      Json?
+  /// Per-appointment sequential stamp; only set for EXAMS_PRESCRIPTION.
+  prescriptionNumber   Int?
+  /// Per-prescription patient-upload link (v3 token). EXAMS_PRESCRIPTION only.
+  uploadToken          String?
+  uploadTokenExpiresAt DateTime?
   appointment   Appointment           @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
   doctor        Doctor                @relation(fields: [doctorId], references: [id], onDelete: Restrict)
   createdAt     DateTime              @default(now())
@@ -2251,6 +2256,9 @@ model AppointmentDocument {
   storageKey    String
   mimetype      String
   byteSize      Int
+  /// When a patient uploads via a per-prescription QR/link, the exams
+  /// prescription (GeneratedDocument) this upload answers.
+  sourceGeneratedDocumentId String?
   appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
   doctor        Doctor      @relation(fields: [doctorId], references: [id], onDelete: Restrict)
   createdAt     DateTime    @default(now())

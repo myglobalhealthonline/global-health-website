@@ -8,7 +8,8 @@ import {
   readObjectBodyToBuffer,
   isMediaStorageConfigured,
 } from "../../services/object-storage.js";
-import { sendGeneratedDocumentEmail } from "../../lib/email/templates.js";
+import { sendGeneratedDocumentEmail, sendPatientUploadLinkEmail } from "../../lib/email/templates.js";
+import { sendWhatsAppText } from "../../lib/whatsapp/wasender.js";
 import { resolveAppointmentDocumentSource } from "./appointment-document-source.js";
 import {
   absenceDefaultReason,
@@ -19,8 +20,13 @@ import {
   isVisibleInHistory,
 } from "./document-template-utils.js";
 import { getHealthPortalForCountry } from "./country-portals.js";
-import { renderDocxTemplatePdf } from "./docx-document-renderer.js";
+import { renderDocxTemplatePdf, type DocxQrOptions } from "./docx-document-renderer.js";
 import { renderDocumentPdf } from "./html-document-renderer.js";
+import { qrPngBuffer, qrDataUrl } from "./qr-code.js";
+import {
+  buildPatientUploadUrl,
+  createPatientUploadToken,
+} from "../patient-upload/patient-upload-link.service.js";
 
 const TITLES: Record<GeneratedDocumentType, string> = {
   ABSENCE_CERTIFICATE: "Medical absence certificate",
@@ -123,6 +129,69 @@ function buildTemplateContext(input: {
   }
 
   return base;
+}
+
+type ExamUploadArtifacts = {
+  documentId: string;
+  prescriptionNumber: number;
+  link: string;
+  token: string;
+  expiresAt: Date;
+  pngBuffer: Buffer;
+  dataUrl: string;
+};
+
+/**
+ * For exams prescriptions only: settle the document id + per-appointment
+ * sequential number, mint a v3 (per-prescription) upload token, and render the
+ * link as QR (PNG for DOCX, data URL for HTML). Returns null for other types.
+ */
+async function buildExamUploadArtifacts(input: {
+  documentType: GeneratedDocumentType;
+  appointmentId: string;
+  doctorId: string;
+  patientEmail: string;
+  editDocumentId?: string;
+}): Promise<ExamUploadArtifacts | null> {
+  if (input.documentType !== "EXAMS_PRESCRIPTION") return null;
+
+  let existing: { id: string; prescriptionNumber: number | null } | null = null;
+  if (input.editDocumentId) {
+    existing = await prisma.generatedDocument.findFirst({
+      where: {
+        id: input.editDocumentId,
+        appointmentId: input.appointmentId,
+        doctorId: input.doctorId,
+        sentToPatient: false,
+      },
+      select: { id: true, prescriptionNumber: true },
+    });
+  }
+
+  const documentId = existing?.id ?? randomUUID();
+  let prescriptionNumber = existing?.prescriptionNumber ?? null;
+  if (prescriptionNumber == null) {
+    // sentCount + 1 — stable across redraws of the live draft, locks on send.
+    const sentCount = await prisma.generatedDocument.count({
+      where: {
+        appointmentId: input.appointmentId,
+        documentType: "EXAMS_PRESCRIPTION",
+        sentToPatient: true,
+      },
+    });
+    prescriptionNumber = sentCount + 1;
+  }
+
+  const { token, expiresAt } = createPatientUploadToken({
+    email: input.patientEmail,
+    appointmentId: input.appointmentId,
+    doctorId: input.doctorId,
+    documentId,
+  });
+  const link = buildPatientUploadUrl(token);
+  const [pngBuffer, dataUrl] = await Promise.all([qrPngBuffer(link), qrDataUrl(link)]);
+
+  return { documentId, prescriptionNumber, link, token, expiresAt, pngBuffer, dataUrl };
 }
 
 export async function generateAppointmentDocument(input: {
@@ -229,8 +298,32 @@ async function generateAppointmentDocumentUnlocked(input: {
     reason: (templateContext.reason as string) ?? "",
   };
 
+  // Exams prescriptions get a unique, numbered patient-upload link engraved as
+  // a QR code so the patient can scan it and send their results back. The link
+  // is bound to THIS document id, so we settle the id (+ number) before render.
+  const upload = await buildExamUploadArtifacts({
+    documentType: input.documentType,
+    appointmentId: appt.id,
+    doctorId: input.doctorId,
+    patientEmail: appt.email,
+    editDocumentId: input.editDocumentId,
+  });
+  let qr: DocxQrOptions | undefined;
+  if (upload) {
+    qr = {
+      pngBuffer: upload.pngBuffer,
+      title: `Upload your exam results — Prescription #${upload.prescriptionNumber}`,
+      instruction:
+        "Scan this QR code with your phone camera to securely upload your test results. Link valid 7 days.",
+    };
+    templateContext.qrDataUrl = upload.dataUrl;
+    templateContext.uploadLink = upload.link;
+    templateContext.uploadInstructions = qr.instruction;
+    templateContext.prescriptionNumber = upload.prescriptionNumber;
+  }
+
   let pdfBuffer =
-    (await renderDocxTemplatePdf(appt.countryCode, input.documentType, templateData)) ??
+    (await renderDocxTemplatePdf(appt.countryCode, input.documentType, templateData, qr)) ??
     null;
 
   if (!pdfBuffer) {
@@ -249,7 +342,8 @@ async function generateAppointmentDocumentUnlocked(input: {
           .replace(/^-+|-+$/g, "")
           .slice(0, 40) || "document"
       : input.documentType.toLowerCase().replace(/_/g, "-");
-  const fileName = `${slugBase}-${appt.id.slice(0, 8)}.pdf`;
+  const numberSuffix = upload ? `-${upload.prescriptionNumber}` : "";
+  const fileName = `${slugBase}${numberSuffix}-${appt.id.slice(0, 8)}.pdf`;
   const storageKey = `generated/${input.doctorId}/${appt.id}/${randomUUID()}/${fileName}`;
 
   await putObject(storageKey, pdfBuffer, "application/pdf");
@@ -272,6 +366,13 @@ async function generateAppointmentDocumentUnlocked(input: {
           fileName,
           storageKey,
           metadata: input.fields ? (input.fields as object) : undefined,
+          ...(upload
+            ? {
+                prescriptionNumber: upload.prescriptionNumber,
+                uploadToken: upload.token,
+                uploadTokenExpiresAt: upload.expiresAt,
+              }
+            : {}),
         },
       });
       if (previousStorageKey !== storageKey) {
@@ -289,6 +390,9 @@ async function generateAppointmentDocumentUnlocked(input: {
 
   const row = await prisma.generatedDocument.create({
     data: {
+      // Exams prescriptions pin an explicit id so the QR/upload-link token
+      // minted before render binds to the same row.
+      ...(upload ? { id: upload.documentId } : {}),
       appointmentId: appt.id,
       doctorId: input.doctorId,
       patientEmail: appt.email,
@@ -296,6 +400,13 @@ async function generateAppointmentDocumentUnlocked(input: {
       fileName,
       storageKey,
       metadata: input.fields ? (input.fields as object) : undefined,
+      ...(upload
+        ? {
+            prescriptionNumber: upload.prescriptionNumber,
+            uploadToken: upload.token,
+            uploadTokenExpiresAt: upload.expiresAt,
+          }
+        : {}),
     },
   });
 
@@ -457,6 +568,79 @@ export async function sendGeneratedDocuments(
   }
 
   return { sentCount: sent, errors, attempted: docs.length };
+}
+
+/**
+ * Send an exams prescription's per-prescription upload link to the patient via
+ * email + WhatsApp. Reuses the stored v3 token; re-mints + persists if expired.
+ */
+export async function sendGeneratedDocumentUploadLink(doctorId: string, documentId: string) {
+  const doc = await prisma.generatedDocument.findFirst({
+    where: { id: documentId, doctorId },
+  });
+  if (!doc) return { ok: false as const, status: 404, message: "Document not found" };
+  if (doc.documentType !== "EXAMS_PRESCRIPTION") {
+    return {
+      ok: false as const,
+      status: 400,
+      message: "Upload links are only available for exams prescriptions",
+    };
+  }
+
+  const appt = await prisma.appointment.findFirst({
+    where: { id: doc.appointmentId, doctorId },
+    select: { id: true, fullName: true, email: true, phone: true },
+  });
+  if (!appt) return { ok: false as const, status: 404, message: "Appointment not found" };
+
+  let token = doc.uploadToken;
+  let expiresAt = doc.uploadTokenExpiresAt;
+  const expired = !token || !expiresAt || expiresAt.getTime() < Date.now();
+  if (expired) {
+    const minted = createPatientUploadToken({
+      email: appt.email,
+      appointmentId: appt.id,
+      doctorId,
+      documentId: doc.id,
+    });
+    token = minted.token;
+    expiresAt = minted.expiresAt;
+    await prisma.generatedDocument.update({
+      where: { id: doc.id },
+      data: { uploadToken: token, uploadTokenExpiresAt: expiresAt },
+    });
+  }
+
+  const link = buildPatientUploadUrl(token!);
+  const numberLabel = doc.prescriptionNumber != null ? ` #${doc.prescriptionNumber}` : "";
+  const deliveryWarnings: string[] = [];
+
+  try {
+    const res = await sendPatientUploadLinkEmail({
+      to: appt.email,
+      patientName: appt.fullName,
+      link,
+    });
+    if (!res.ok || res.mode === "log") deliveryWarnings.push("email");
+  } catch {
+    deliveryWarnings.push("email");
+  }
+
+  if (appt.phone) {
+    try {
+      const wa = await sendWhatsAppText({
+        to: appt.phone,
+        message: `Upload your exam results for prescription${numberLabel} securely:\n${link}`,
+      });
+      if (!wa.ok && !wa.skipped) deliveryWarnings.push("whatsapp");
+    } catch {
+      deliveryWarnings.push("whatsapp");
+    }
+  } else {
+    deliveryWarnings.push("no-phone");
+  }
+
+  return { ok: true as const, link, expiresAt: expiresAt!, deliveryWarnings };
 }
 
 export async function getGeneratedDocumentFile(
