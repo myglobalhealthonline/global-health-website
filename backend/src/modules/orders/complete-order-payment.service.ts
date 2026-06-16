@@ -47,9 +47,6 @@ export async function completeOrderPaymentFromCheckoutSession(
   log: PaymentLog = noopLog,
 ): Promise<CompleteOrderPaymentResult> {
   const { alreadyPaid } = await markOrderPaidFromStripeSession(orderId, session, opts, log);
-  // #region agent log
-  fetch('http://127.0.0.1:7835/ingest/b6dd0b3b-c589-4acc-8726-e91e7b7039d1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'694d12'},body:JSON.stringify({sessionId:'694d12',hypothesisId:'B',location:'complete-order-payment.service.ts:complete',message:'markOrderPaid done',data:{orderId,alreadyPaid,stripeEventId:opts.stripeEventId},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
 
   if (alreadyPaid) {
     await ensureOrderPaidAutomations(orderId, log);
@@ -426,9 +423,6 @@ export async function ensureOrderPaidAutomations(
   const hasConsult =
     Boolean(paidOrder && orderHasConsultationItem(paidOrder.items)) ||
     (paidOrder?.appointmentIds.length ?? 0) > 0;
-  // #region agent log
-  fetch('http://127.0.0.1:7835/ingest/b6dd0b3b-c589-4acc-8726-e91e7b7039d1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'694d12'},body:JSON.stringify({sessionId:'694d12',hypothesisId:'C',location:'complete-order-payment.service.ts:ensureOrderPaidAutomations',message:'automation branch',data:{orderId,hasConsult,itemKinds:paidOrder?.items.map(i=>i.kind)??[],paymentStatus:paidOrder?.paymentStatus,status:paidOrder?.status,sendShopConfirmation:opts?.sendShopConfirmation??false,postPaymentStage:paidOrder?.postPaymentStage??null,hasMeetingUrl:Boolean(paidOrder?.meetingUrl?.trim())},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   if (!paidOrder || !orderIsPaidForMeet(paidOrder)) return;
 
   if (hasConsult) {
@@ -464,9 +458,6 @@ export async function ensureOrderPaidAutomations(
         where: { id: orderId },
         select: { meetingUrl: true, postPaymentStage: true },
       });
-      // #region agent log
-      fetch('http://127.0.0.1:7835/ingest/b6dd0b3b-c589-4acc-8726-e91e7b7039d1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'694d12'},body:JSON.stringify({sessionId:'694d12',hypothesisId:'D',location:'complete-order-payment.service.ts:afterAutoProvision',message:'after autoProvision',data:{orderId,hasMeetingUrl:Boolean(afterMeet?.meetingUrl?.trim()),postPaymentStage:afterMeet?.postPaymentStage??null},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
     } catch (meetErr) {
       log.warn({ err: meetErr, orderId }, "Order Meet auto-provision import failed");
     }
@@ -475,9 +466,6 @@ export async function ensureOrderPaidAutomations(
 
   if (!opts?.sendShopConfirmation) return;
 
-  // #region agent log
-  fetch('http://127.0.0.1:7835/ingest/b6dd0b3b-c589-4acc-8726-e91e7b7039d1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'694d12'},body:JSON.stringify({sessionId:'694d12',hypothesisId:'C',location:'complete-order-payment.service.ts:shopEmail',message:'sending shop confirmation email',data:{orderId,itemKinds:paidOrder.items.map(i=>i.kind)},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   try {
     await sendShopOrderConfirmationEmail(paidOrder, log);
   } catch (emailErr) {

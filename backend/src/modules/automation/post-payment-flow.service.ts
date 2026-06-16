@@ -327,9 +327,6 @@ export async function post_sendPaymentConfirmation(orderId: string) {
 /** Flow 2 — meeting link generated (patient + doctor WhatsApp and email). */
 export async function post_sendMeetingLinkNotifications(orderId: string) {
   let loaded = await loadPostPaymentContext(orderId);
-  // #region agent log
-  fetch('http://127.0.0.1:7835/ingest/b6dd0b3b-c589-4acc-8726-e91e7b7039d1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'694d12'},body:JSON.stringify({sessionId:'694d12',hypothesisId:'E',location:'post-payment-flow.service.ts:post_sendMeetingLinkNotifications',message:'entry',data:{orderId,hasContext:Boolean(loaded),hasMeetingLink:Boolean(loaded?.ctx.meetingLink),postPaymentStage:loaded?.order.postPaymentStage??null,paymentStatus:loaded?.order.paymentStatus??null},timestamp:Date.now()})}).catch(()=>{});
-  // #endregion
   if (!loaded) return;
   if (loaded.order.paymentStatus !== "PAID" && loaded.order.status !== "PAID") return;
 
