@@ -1611,6 +1611,7 @@ model Order {
   paymentStatus         PaymentStatus @default(UNPAID)
   stripeSessionId       String?     @unique
   stripePaymentIntentId String?     @unique
+  stripeInvoiceId       String?     @unique
   paidAt                DateTime?
   /// Shipping address — collected at checkout for product orders.
   shipName              String?

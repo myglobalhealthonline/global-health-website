@@ -319,6 +319,7 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           line_items: lineItems,
           success_url: successUrl,
           cancel_url: cancelUrl,
+          invoice_creation: { enabled: true },
           metadata: {
             kind: "order",
             orderId: order.id,

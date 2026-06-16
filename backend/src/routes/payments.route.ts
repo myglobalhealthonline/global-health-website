@@ -322,6 +322,8 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                 id: session.id,
                 payment_intent:
                   typeof session.payment_intent === "string" ? session.payment_intent : null,
+                invoice:
+                  typeof session.invoice === "string" ? session.invoice : null,
                 client_reference_id: session.client_reference_id,
                 metadata: session.metadata ?? undefined,
               },

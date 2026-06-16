@@ -24,6 +24,7 @@ async function sendPaymentWebhookToMake(
       shipLine1: true,
       shipCity: true,
       shipPostalCode: true,
+      stripeInvoiceId: true,
       items: { select: { name: true }, take: 1 },
     },
   });
@@ -51,6 +52,7 @@ async function sendPaymentWebhookToMake(
     vat_id: profile?.taxIdNumber?.trim() ?? "",
     invoice_id: invoiceId,
     invoice_number: invoiceNumber,
+    stripe_invoice_id: order.stripeInvoiceId ?? null,
   };
 
   const res = await fetch(MAKE_INVOICE_WEBHOOK_URL, {

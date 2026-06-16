@@ -499,6 +499,7 @@ export async function createManualBooking(
         ],
         success_url: successUrl,
         cancel_url: cancelUrl,
+        invoice_creation: { enabled: true },
         metadata: {
           kind: "order",
           orderId: order.id,

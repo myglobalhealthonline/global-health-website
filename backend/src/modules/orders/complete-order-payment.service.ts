@@ -17,6 +17,7 @@ export type PaymentLog = {
 export type CheckoutSessionSnapshot = {
   id: string;
   payment_intent?: string | null;
+  invoice?: string | null;
   client_reference_id?: string | null;
   metadata?: Record<string, string> | null;
 };
@@ -97,6 +98,8 @@ async function markOrderPaidFromStripeSession(
         paidAt: new Date(),
         stripePaymentIntentId:
           typeof session.payment_intent === "string" ? session.payment_intent : null,
+        stripeInvoiceId:
+          typeof session.invoice === "string" ? session.invoice : null,
       },
     });
 
@@ -182,6 +185,8 @@ async function fulfillPaidOrderFromCheckoutSession(
             paidAt: new Date(),
             stripePaymentIntentId:
               typeof session.payment_intent === "string" ? session.payment_intent : null,
+            stripeInvoiceId:
+              typeof session.invoice === "string" ? session.invoice : null,
           },
         });
         if (!appointmentIds.includes(item.appointmentId)) {
@@ -211,6 +216,8 @@ async function fulfillPaidOrderFromCheckoutSession(
               paidAt: new Date(),
               stripePaymentIntentId:
                 typeof session.payment_intent === "string" ? session.payment_intent : null,
+              stripeInvoiceId:
+                typeof session.invoice === "string" ? session.invoice : null,
             },
           });
         }
@@ -518,6 +525,8 @@ export async function syncOrderPaymentFromStripe(
       id: session.id,
       payment_intent:
         typeof session.payment_intent === "string" ? session.payment_intent : null,
+      invoice:
+        typeof session.invoice === "string" ? session.invoice : null,
       client_reference_id: session.client_reference_id,
       metadata: (session.metadata ?? undefined) as Record<string, string> | undefined,
     },
