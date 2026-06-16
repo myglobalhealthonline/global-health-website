@@ -3,6 +3,7 @@ import { invoicePrefix, generateInvoiceNumber } from "../../lib/invoice-number.j
 import { sendInvoiceEmail } from "../../lib/email/templates.js";
 import { absoluteSiteUrl } from "../../lib/email/send-email.js";
 import type { PaymentLog } from "../orders/complete-order-payment.service.js";
+import { buildInvoicePdfData, renderInvoicePdfBuffer } from "./invoice-pdf.js";
 
 const MAKE_INVOICE_WEBHOOK_URL =
   process.env.MAKE_INVOICE_WEBHOOK_URL ??
@@ -10,6 +11,7 @@ const MAKE_INVOICE_WEBHOOK_URL =
 
 async function sendPaymentWebhookToMake(
   orderId: string,
+  invoiceId: string,
   invoiceNumber: string,
   log: PaymentLog,
 ): Promise<void> {
@@ -37,9 +39,6 @@ async function sendPaymentWebhookToMake(
     },
   });
 
-  const taxIdRaw = profile?.taxIdNumber?.trim() ?? "";
-  const vatId = taxIdRaw.length === 9 ? taxIdRaw : "";
-
   const payload = {
     customer_name: order.fullName,
     customer_email: order.email,
@@ -49,7 +48,8 @@ async function sendPaymentWebhookToMake(
     customer_address_city: order.shipCity ?? profile?.addressCity ?? "",
     total: order.totalCents / 100,
     service_name: order.items[0]?.name ?? "Medical Consultation",
-    vat_id: vatId,
+    vat_id: profile?.taxIdNumber?.trim() ?? "",
+    invoice_id: invoiceId,
     invoice_number: invoiceNumber,
   };
 
@@ -132,9 +132,20 @@ export async function generateInvoiceForOrder(
   log.info({ orderId, invoiceNumber, invoiceId: invoice.id }, "Invoice created");
 
   // Fire-and-forget — webhook failure must never block invoice creation.
-  sendPaymentWebhookToMake(orderId, invoiceNumber, log).catch((err) => {
+  sendPaymentWebhookToMake(orderId, invoice.id, invoiceNumber, log).catch((err) => {
     log.warn({ err, orderId, invoiceNumber }, "Make.com invoice webhook failed");
   });
+
+  // Generate PDF to attach to the email (non-blocking failure).
+  let pdfBuffer: Buffer | undefined;
+  try {
+    const pdfData = await buildInvoicePdfData(orderId, invoiceNumber, invoice.generatedAt.toISOString());
+    if (pdfData) {
+      pdfBuffer = (await renderInvoicePdfBuffer(pdfData)) ?? undefined;
+    }
+  } catch (err) {
+    log.warn({ err, orderId }, "Invoice PDF generation failed — sending link-only email");
+  }
 
   // Send email to patient.
   const invoiceUrl = absoluteSiteUrl(`/print/order-invoices/${invoice.id}`);
@@ -145,6 +156,7 @@ export async function generateInvoiceForOrder(
       invoiceNumber,
       invoiceUrl,
       countryCode: order.countryCode.toLowerCase(),
+      pdfBuffer,
     });
     await prisma.invoice.update({
       where: { id: invoice.id },

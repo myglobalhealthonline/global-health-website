@@ -511,7 +511,7 @@ export async function createManualBooking(
       paymentSessionId = session.id ?? null;
       await prisma.order.update({
         where: { id: order.id },
-        data: { stripeSessionId: paymentSessionId, paymentStatus: PaymentStatus.PENDING },
+        data: { stripeSessionId: paymentSessionId, paymentStatus: PaymentStatus.PENDING, stripeCheckoutUrl: paymentUrl },
       });
       await prisma.appointment.update({
         where: { id: appointmentId },

@@ -524,6 +524,7 @@ export async function sendInvoiceEmail(opts: {
   invoiceNumber: string;
   invoiceUrl: string;
   countryCode: string;
+  pdfBuffer?: Buffer;
 }) {
   const cc = opts.countryCode.toLowerCase();
   const subjectTemplate = INVOICE_EMAIL_SUBJECT[cc] ?? INVOICE_EMAIL_SUBJECT.ie;
@@ -552,6 +553,15 @@ export async function sendInvoiceEmail(opts: {
        </p>
        <p style="font-size:12px;color:#737373;">Invoice reference: ${escapeHtml(opts.invoiceNumber)}</p>`,
     ),
+    attachments: opts.pdfBuffer
+      ? [
+          {
+            filename: `invoice-${opts.invoiceNumber}.pdf`,
+            content: opts.pdfBuffer,
+            contentType: "application/pdf",
+          },
+        ]
+      : undefined,
   });
 }
 

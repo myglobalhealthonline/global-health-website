@@ -26,6 +26,8 @@ const LABELS: Record<string, Record<string, string>> = {
     footer: "Global Health · Medicine Anytime Anywhere",
     company: "Global Health · Registered in Ireland · CRO No. 910267",
     address: "6-9 Trinity Street, Dublin 2, D02 EY47, Ireland",
+    taxId: "Tax ID",
+    consultationDate: "Consultation date",
   },
   cz: {
     invoice: "Faktura",
@@ -42,6 +44,8 @@ const LABELS: Record<string, Record<string, string>> = {
     footer: "Global Health · Medicine Anytime Anywhere",
     company: "Global Health · Registrováno v Irsku · CRO č. 910267",
     address: "Irsko",
+    taxId: "DIČ",
+    consultationDate: "Datum konzultace",
   },
   sp: {
     invoice: "Factura",
@@ -58,6 +62,8 @@ const LABELS: Record<string, Record<string, string>> = {
     footer: "Global Health · Medicine Anytime Anywhere",
     company: "Global Health · Registrado en Irlanda · N.º CRO 910267",
     address: "Irlanda",
+    taxId: "NIF",
+    consultationDate: "Fecha de consulta",
   },
   rm: {
     invoice: "Factură",
@@ -74,6 +80,8 @@ const LABELS: Record<string, Record<string, string>> = {
     footer: "Global Health · Medicine Anytime Anywhere",
     company: "Global Health · Înregistrată în Irlanda · CRO Nr. 910267",
     address: "Irlanda",
+    taxId: "CUI",
+    consultationDate: "Data consultației",
   },
 };
 
@@ -117,6 +125,8 @@ type InvoiceDetail = {
     shippingCents: number;
     paymentStatus: string;
     paidAt: string | null;
+    taxIdNumber: string | null;
+    consultationDate: string | null;
     items: {
       id: string;
       kind: string;
@@ -318,6 +328,21 @@ export default async function PrintOrderInvoicePage({
           <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>{order.email}</p>
           {order.phone ? (
             <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>{order.phone}</p>
+          ) : null}
+          {order.taxIdNumber ? (
+            <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>
+              {L.taxId}: {order.taxIdNumber}
+            </p>
+          ) : null}
+          {order.consultationDate ? (
+            <p style={{ margin: "2px 0 0", fontSize: 12, color: "#555" }}>
+              {L.consultationDate}:{" "}
+              {new Date(order.consultationDate).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}
+            </p>
           ) : null}
         </div>
       </div>

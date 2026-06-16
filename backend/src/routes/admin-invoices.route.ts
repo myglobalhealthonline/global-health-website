@@ -198,6 +198,23 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
           }
         }
 
+        // PatientProfile — taxpayer ID
+        const profile = await prisma.patientProfile.findUnique({
+          where: { email: invoice.order.email.toLowerCase() },
+          select: { taxIdNumber: true },
+        });
+
+        // Consultation date from the appointment
+        const consultApptId = consultItem?.appointmentId ?? null;
+        let consultationDate: string | null = null;
+        if (consultApptId) {
+          const appt = await prisma.appointment.findUnique({
+            where: { id: consultApptId },
+            select: { scheduledAt: true },
+          });
+          consultationDate = appt?.scheduledAt?.toISOString() ?? null;
+        }
+
         return okResponse({
           invoice: {
             id: invoice.id,
@@ -219,6 +236,8 @@ const adminInvoicesRoute: FastifyPluginAsync = async (app) => {
             shippingCents: invoice.order.shippingCents,
             paymentStatus: invoice.order.paymentStatus,
             paidAt: invoice.order.paidAt?.toISOString() ?? null,
+            taxIdNumber: profile?.taxIdNumber ?? null,
+            consultationDate,
             items: invoice.order.items.map((i) => ({
               id: i.id,
               kind: i.kind,
