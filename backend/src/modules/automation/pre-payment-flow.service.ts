@@ -398,6 +398,15 @@ async function notifyDoctorOnBooking(
         error: err instanceof Error ? err.message : String(err),
       });
     }
+  } else {
+    await createAutomationRun({
+      automationKey: `${baseKey}_email`,
+      orderId,
+      channel: "email",
+      status: "SKIPPED",
+      summary: "Doctor email — new booking (no login email — link a portal login user to this doctor in admin)",
+      executedAt: new Date(),
+    });
   }
 
   const { notifyDoctor } = await import("../notifications/notify.service.js");
