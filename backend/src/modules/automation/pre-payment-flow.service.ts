@@ -464,13 +464,11 @@ export async function startPrePaymentFlow(
   const baseKey = automationBaseKey(plan.flow);
   const stageKey = `${baseKey}_stage_1`;
 
-  await notifyDoctorOnBooking(orderId, primary.doctorId, ctx, lang);
-
-  // For website self-service orders the customer just completed checkout and
-  // doesn't need an immediate "please pay" notification. For manual bookings
-  // (portal options are always provided) we send the reservation WhatsApp + email.
+  // For website self-service orders skip all stage-1 notifications (patient + doctor).
+  // Manual bookings (portal options always provided) send reservation alerts to both.
   const isManualBooking = Boolean(opts?.portal);
   if (isManualBooking) {
+    await notifyDoctorOnBooking(orderId, primary.doctorId, ctx, lang);
     await sendWhatsApp(
       stageKey,
       orderId,
