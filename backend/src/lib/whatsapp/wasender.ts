@@ -179,6 +179,12 @@ export async function sendWhatsAppText(opts: {
       postWhatsAppMessage(auth, apiTo, opts.message, e164, opts.to, normalized.countryUsed),
     );
 
+  function extractErrMessage(err: unknown): string {
+    if (!(err instanceof Error)) return "WaSender request failed";
+    const cause = (err as { cause?: { code?: string } }).cause;
+    return cause?.code ? `${err.message} (${cause.code})` : err.message;
+  }
+
   try {
     let result = await sendOnce();
     if (!result.ok && result.message && isRateLimitMessage(result.message)) {
@@ -186,28 +192,42 @@ export async function sendWhatsAppText(opts: {
     }
     return result;
   } catch (err) {
-    const message = err instanceof Error ? err.message : "WaSender request failed";
+    const msg1 = extractErrMessage(err);
+    // wait 10 s before first retry — longer than the 6 s lock gap
+    await new Promise((r) => setTimeout(r, 10_000));
     try {
       const retry = await sendOnce();
       if (!retry.ok) {
         return {
           ...retry,
-          message: `${retry.message ?? "WaSender failed"} (after retry: ${message})`,
+          message: `${retry.message ?? "WaSender failed"} (after retry: ${msg1})`,
         };
       }
       return retry;
     } catch (retryErr) {
-      return {
-        ok: false,
-        message:
-          retryErr instanceof Error
-            ? `${message}; retry: ${retryErr.message}`
-            : message,
-        to: e164,
-        apiTo,
-        raw: opts.to,
-        countryUsed: normalized.countryUsed,
-      };
+      const msg2 = extractErrMessage(retryErr);
+      // second retry after another 20 s
+      await new Promise((r) => setTimeout(r, 20_000));
+      try {
+        const retry2 = await sendOnce();
+        if (!retry2.ok) {
+          return {
+            ...retry2,
+            message: `${retry2.message ?? "WaSender failed"} (after 2 retries: ${msg1}; ${msg2})`,
+          };
+        }
+        return retry2;
+      } catch (retry2Err) {
+        const msg3 = extractErrMessage(retry2Err);
+        return {
+          ok: false,
+          message: `${msg1}; retry1: ${msg2}; retry2: ${msg3}`,
+          to: e164,
+          apiTo,
+          raw: opts.to,
+          countryUsed: normalized.countryUsed,
+        };
+      }
     }
   }
 }
