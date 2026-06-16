@@ -294,6 +294,7 @@ async function fulfillPaidOrderFromCheckoutSession(
           where: { email: aptEmail.toLowerCase() },
           select: {
             nationalIdNumber: true,
+            taxIdNumber: true,
             addressLine1: true,
             addressLine2: true,
             addressCity: true,
@@ -310,6 +311,7 @@ async function fulfillPaidOrderFromCheckoutSession(
               existing?.nationalIdNumber ?? null,
               item.patientNationalIdNumber,
             ),
+            taxIdNumber: fill(existing?.taxIdNumber ?? null, item.patientNationalIdNumber),
             addressLine1: fill(existing?.addressLine1 ?? null, item.patientAddressLine1),
             addressLine2: fill(existing?.addressLine2 ?? null, item.patientAddressLine2),
             addressCity: fill(existing?.addressCity ?? null, item.patientAddressCity),
@@ -328,6 +330,7 @@ async function fulfillPaidOrderFromCheckoutSession(
             phone: aptPhone,
             dateOfBirth: aptDob,
             nationalIdNumber: item.patientNationalIdNumber,
+            taxIdNumber: item.patientNationalIdNumber,
             addressLine1: item.patientAddressLine1,
             addressLine2: item.patientAddressLine2,
             addressCity: item.patientAddressCity,
