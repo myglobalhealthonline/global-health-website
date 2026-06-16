@@ -374,6 +374,7 @@ async function generateAppointmentDocumentUnlocked(input: {
         pngBuffer: cert.pngBuffer,
         title: "Verify this certificate",
         instruction: `Certificate ID: ${cert.certificateId}`,
+        compact: true,
       };
     }
   }

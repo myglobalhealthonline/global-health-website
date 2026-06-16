@@ -15,7 +15,7 @@ import {
   injectProfessionalLayout,
   trimBodyLeadingEmptyParagraphs,
 } from "./docx-xml-builder.js";
-import { applyDocumentFooterLayout } from "./docx-footer-inline.js";
+import { applyDocumentFooterLayout, buildCountryAddressFrameXml } from "./docx-footer-inline.js";
 import { injectQrBlock } from "./docx-qr-inline.js";
 import {
   ensureAlexBrushFont,
@@ -28,6 +28,8 @@ export type DocxQrOptions = {
   pngBuffer: Buffer;
   title: string;
   instruction: string;
+  /** Use smaller (85px) QR + reduced text — avoids blank 2nd page on short documents. */
+  compact?: boolean;
 };
 
 const execFileAsync = promisify(execFile);
@@ -70,11 +72,6 @@ function fillDocxXml(
   return injectProfessionalLayout(xml, profile, documentType, data);
 }
 
-const COUNTRY_FOOTER_ADDRESSES: Record<string, string> = {
-  IR: "Trinity Street 6-9 Dublin 2, D02 EY47 Ireland",
-  PT: "Rua Brincos de Princesa 13 · 2710-683 Sintra · Portugal · Tel.: 919990810",
-};
-
 export function fillDocxBuffer(
   templateBuffer: Buffer,
   countryCode: string,
@@ -101,10 +98,21 @@ export function fillDocxBuffer(
     filled = injectQrBlock(zip, filled, qr.pngBuffer, {
       title: qr.title,
       instruction: qr.instruction,
+      compact: qr.compact,
     });
   }
-  const countryAddress = COUNTRY_FOOTER_ADDRESSES[countryCode.toUpperCase()];
-  filled = applyDocumentFooterLayout(zip, filled, countryAddress);
+  // Compact QR (cert auth) needs fewer gap lines to avoid a blank 2nd page.
+  const gapLines = qr?.compact ? 2 : undefined;
+  filled = applyDocumentFooterLayout(zip, filled, gapLines);
+  // IR/PT: overlay the clinic address as an absolutely-positioned white text frame
+  // inside the footer green band. Other countries: no-op.
+  const addrFrame = buildCountryAddressFrameXml(countryCode);
+  if (addrFrame) {
+    const sectIdx = filled.indexOf("<w:sectPr");
+    if (sectIdx >= 0) {
+      filled = filled.slice(0, sectIdx) + addrFrame + filled.slice(sectIdx);
+    }
+  }
   zip.file("word/document.xml", filled);
   ensureAlexBrushFont(zip);
 

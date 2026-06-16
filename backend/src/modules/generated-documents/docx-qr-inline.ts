@@ -20,6 +20,8 @@ const REL_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relation
 
 /** 1px = 9525 EMU. ~130px square keeps the code crisp without crowding the footer. */
 const QR_EMU = 130 * 9525;
+/** Compact variant (certificate auth QR) — smaller to avoid blank 2nd page. */
+const QR_EMU_COMPACT = 85 * 9525;
 
 /** Global Health brand — forest green (Word hex without #). */
 const BRAND_COLOR = "1D4B36";
@@ -49,14 +51,14 @@ function centeredRunPara(text: string, opts: { bold?: boolean; color: string; si
   );
 }
 
-function qrImageParagraph(): string {
+function qrImageParagraph(emu: number): string {
   const ns = 'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"';
   const picNs = 'xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
   return (
     `<w:p><w:pPr><w:jc w:val="left"/><w:spacing w:before="80" w:after="20"/></w:pPr>` +
     `<w:r><w:rPr><w:noProof/></w:rPr><w:drawing>` +
     `<wp:inline distT="0" distB="0" distL="0" distR="0">` +
-    `<wp:extent cx="${QR_EMU}" cy="${QR_EMU}"/>` +
+    `<wp:extent cx="${emu}" cy="${emu}"/>` +
     `<wp:effectExtent l="0" t="0" r="0" b="0"/>` +
     `<wp:docPr id="900" name="ExamUploadQR" descr="Scan to upload exam results"/>` +
     `<wp:cNvGraphicFramePr><a:graphicFrameLocks ${ns} noChangeAspect="1"/></wp:cNvGraphicFramePr>` +
@@ -65,7 +67,7 @@ function qrImageParagraph(): string {
     `<pic:nvPicPr><pic:cNvPr id="900" name="ExamUploadQR" descr="Scan to upload exam results"/>` +
     `<pic:cNvPicPr/></pic:nvPicPr>` +
     `<pic:blipFill><a:blip r:embed="${REL_ID}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>` +
-    `<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${QR_EMU}" cy="${QR_EMU}"/></a:xfrm>` +
+    `<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${emu}" cy="${emu}"/></a:xfrm>` +
     `<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>` +
     `</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`
   );
@@ -103,7 +105,7 @@ export function injectQrBlock(
   zip: PizZip,
   documentXml: string,
   pngBuffer: Buffer,
-  opts: { title: string; instruction: string },
+  opts: { title: string; instruction: string; compact?: boolean },
 ): string {
   const sectIdx = documentXml.indexOf("<w:sectPr");
   if (sectIdx < 0) return documentXml;
@@ -112,10 +114,13 @@ export function injectQrBlock(
   ensurePngContentType(zip);
   ensureImageRelationship(zip);
 
+  const emu = opts.compact ? QR_EMU_COMPACT : QR_EMU;
+  const titleSize = opts.compact ? "20" : SIZE_TITLE; // 10pt compact vs 13pt full
+  const bodySize = opts.compact ? "16" : SIZE_BODY;   // 8pt compact vs 10pt full
   const block =
-    qrImageParagraph() +
-    centeredRunPara(opts.title, { bold: true, color: BRAND_COLOR, size: SIZE_TITLE }) +
-    centeredRunPara(opts.instruction, { color: MUTED_COLOR, size: SIZE_BODY });
+    qrImageParagraph(emu) +
+    centeredRunPara(opts.title, { bold: true, color: BRAND_COLOR, size: titleSize }) +
+    centeredRunPara(opts.instruction, { color: MUTED_COLOR, size: bodySize });
 
   return documentXml.slice(0, sectIdx) + block + documentXml.slice(sectIdx);
 }

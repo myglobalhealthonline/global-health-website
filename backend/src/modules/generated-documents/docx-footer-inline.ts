@@ -1,21 +1,41 @@
 import type PizZip from "pizzip";
-import { buildLineGapXml, FOOTER_GAP_LINES, LINE_TWIPS } from "./docx-page-layout.js";
+import { buildLineGapXml, FOOTER_GAP_LINES } from "./docx-page-layout.js";
 
 /** Standard A4 portrait (integer twips). Custom heights cause a blank 2nd page in LibreOffice. */
 const A4_WIDTH_TWIPS = 11909;
 const A4_HEIGHT_TWIPS = 16834;
 
 const BODY_FONT = process.platform === "win32" ? "Calibri" : "Carlito";
-const BRAND_COLOR = "1D4B36";
 
-function normalizeSectionProperties(sectPrXml: string): string {
-  return sectPrXml
-    .replace(/<w:pgSz[^/]*\/>/, `<w:pgSz w:w="${A4_WIDTH_TWIPS}" w:h="${A4_HEIGHT_TWIPS}" w:orient="portrait"/>`)
-    .replace(/w:footer="[^"]+"/, 'w:footer="0"')
-    .replace(/w:header="[^"]+"/, 'w:header="850"')
-    .replace(/w:top="[^"]+"/, 'w:top="1440"')
-    .replace(/w:bottom="[^"]+"/, 'w:bottom="720"');
-}
+/**
+ * Footer band starts at ~14771 twips (261mm) from page top (A4 height minus 36mm image).
+ * The address frame is placed ~mid-band so white text appears visibly inside the green band.
+ *
+ * IR — single line; PT — 4 lines (OOXML line breaks within one frame paragraph).
+ * x ≈ 6300 twips (just past the page centre, in the right-side contacts area).
+ * y ≈ 15500 twips (≈ 273mm from top, ≈ 12mm into the 36mm footer band).
+ */
+const COUNTRY_FRAME_ADDRESSES: Record<
+  string,
+  { lines: string[]; x: number; y: number; szHp: string }
+> = {
+  IR: {
+    lines: ["Trinity Street 6-9 Dublin 2, D02 EY47 Ireland"],
+    x: 6300,
+    y: 15500,
+    szHp: "14", // 7pt
+  },
+  PT: {
+    lines: [
+      "Rua Brincos de Princesa 13",
+      "2710-683 Sintra, Portugal",
+      "Tel.: 919990810",
+    ],
+    x: 6300,
+    y: 15300,
+    szHp: "13", // 6.5pt
+  },
+};
 
 function escapeXml(text: string): string {
   return text
@@ -24,39 +44,75 @@ function escapeXml(text: string): string {
     .replace(/>/g, "&gt;");
 }
 
-function buildAddressLinePara(text: string): string {
-  const SIZE_HP = "18"; // 9pt
-  return (
-    `<w:p><w:pPr><w:jc w:val="center"/>` +
-    `<w:spacing w:before="0" w:after="0" w:line="${LINE_TWIPS}" w:lineRule="exact"/></w:pPr>` +
-    `<w:r><w:rPr>` +
+/**
+ * Build a page-anchored frame paragraph (absolutely positioned, no text flow impact)
+ * that places white address text inside the footer band.
+ * Returns empty string for countries that need no overlay.
+ */
+export function buildCountryAddressFrameXml(countryCode: string): string {
+  const cfg = COUNTRY_FRAME_ADDRESSES[countryCode.toUpperCase()];
+  if (!cfg) return "";
+
+  const { lines, x, y, szHp } = cfg;
+  // Width: ~47mm — enough for the longest line without overflowing the right margin.
+  const W = 2700;
+  const rPr =
     `<w:rFonts w:ascii="${BODY_FONT}" w:hAnsi="${BODY_FONT}" w:cs="${BODY_FONT}"/>` +
-    `<w:sz w:val="${SIZE_HP}"/><w:szCs w:val="${SIZE_HP}"/>` +
-    `<w:color w:val="${BRAND_COLOR}"/>` +
-    `</w:rPr><w:t>${escapeXml(text)}</w:t></w:r></w:p>`
+    `<w:sz w:val="${szHp}"/><w:szCs w:val="${szHp}"/>` +
+    `<w:color w:val="FFFFFF"/><w:rtl w:val="0"/>`;
+  const framePr =
+    `<w:framePr w:w="${W}" w:hSpace="0" w:vSpace="0"` +
+    ` w:wrap="none" w:hAnchor="page" w:vAnchor="page"` +
+    ` w:x="${x}" w:y="${y}"/>`;
+
+  const runs: string[] = [];
+  lines.forEach((line, i) => {
+    if (i > 0) {
+      // line break between subsequent lines
+      runs.push(`<w:r><w:rPr>${rPr}</w:rPr><w:br w:type="textWrapping"/></w:r>`);
+    }
+    runs.push(
+      `<w:r><w:rPr>${rPr}</w:rPr><w:t xml:space="preserve">${escapeXml(line)}</w:t></w:r>`,
+    );
+  });
+
+  return (
+    `<w:p><w:pPr>${framePr}` +
+    `<w:spacing w:before="0" w:after="0" w:line="200" w:lineRule="exact"/>` +
+    `<w:jc w:val="left"/>` +
+    `<w:rPr>${rPr}</w:rPr></w:pPr>` +
+    runs.join("") +
+    `</w:p>`
   );
+}
+
+function normalizeSectionProperties(sectPrXml: string): string {
+  return sectPrXml
+    .replace(
+      /<w:pgSz[^/]*\/>/,
+      `<w:pgSz w:w="${A4_WIDTH_TWIPS}" w:h="${A4_HEIGHT_TWIPS}" w:orient="portrait"/>`,
+    )
+    .replace(/w:footer="[^"]+"/, 'w:footer="0"')
+    .replace(/w:header="[^"]+"/, 'w:header="850"')
+    .replace(/w:top="[^"]+"/, 'w:top="1440"')
+    .replace(/w:bottom="[^"]+"/, 'w:bottom="720"');
 }
 
 /**
  * Footer graphic stays in word/footer1.xml only.
- * Blank lines before the footer band; full A4 page (no custom page height).
- * When countryAddress is provided, the last blank line is replaced by a small
- * address paragraph so total visual height stays the same.
+ * Inserts blank gap lines before the footer band; full A4 page size.
+ * Pass gapLines to override the default (e.g. 2 when a compact QR is already present).
  */
 export function applyDocumentFooterLayout(
   _zip: PizZip,
   documentXml: string,
-  countryAddress?: string,
+  gapLines?: number,
 ): string {
   const sectIdx = documentXml.indexOf("<w:sectPr");
   if (sectIdx < 0) return documentXml;
 
   const beforeSect = documentXml.slice(0, sectIdx);
   const sectPr = normalizeSectionProperties(documentXml.slice(sectIdx));
-
-  const gap = countryAddress
-    ? buildLineGapXml(FOOTER_GAP_LINES - 1) + buildAddressLinePara(countryAddress)
-    : buildLineGapXml(FOOTER_GAP_LINES);
-
+  const gap = buildLineGapXml(gapLines ?? FOOTER_GAP_LINES);
   return beforeSect + gap + sectPr;
 }
