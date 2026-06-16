@@ -395,6 +395,61 @@ export function reminderMessage(
   };
 }
 
+export function doctorWhatsAppCancelled(ctx: PrePaymentMessageContext, lang: Lang): string {
+  return t(lang, {
+    en: `Hello ${ctx.doctorName},
+The reservation for the following consultation has been cancelled due to non-payment.
+Patient: ${ctx.patientName}
+Service: ${ctx.serviceName}
+Date & time: ${ctx.appointmentDate}
+Order: #${ctx.orderNumber}
+The time slot has been released.
+Global Health Team`,
+    pt: `Olá ${ctx.doctorName},
+A reserva da seguinte consulta foi cancelada por falta de pagamento.
+Paciente: ${ctx.patientName}
+Serviço: ${ctx.serviceName}
+Data e hora: ${ctx.appointmentDate}
+Pedido: #${ctx.orderNumber}
+O horário foi libertado.
+Equipa Global Health`,
+    ro: `Bună ziua ${ctx.doctorName},
+Rezervarea pentru consultația de mai jos a fost anulată din cauza neplății.
+Pacient: ${ctx.patientName}
+Serviciu: ${ctx.serviceName}
+Data și ora: ${ctx.appointmentDate}
+Comandă: #${ctx.orderNumber}
+Intervalul orar a fost eliberat.
+Echipa Global Health`,
+    cs: `Dobrý den ${ctx.doctorName},
+Rezervace následující konzultace byla zrušena z důvodu neuhrazení platby.
+Pacient: ${ctx.patientName}
+Služba: ${ctx.serviceName}
+Datum a čas: ${ctx.appointmentDate}
+Objednávka: #${ctx.orderNumber}
+Časový slot byl uvolněn.
+Tým Global Health`,
+    es: `Hola ${ctx.doctorName},
+La reserva de la siguiente consulta ha sido cancelada por falta de pago.
+Paciente: ${ctx.patientName}
+Servicio: ${ctx.serviceName}
+Fecha y hora: ${ctx.appointmentDate}
+Pedido: #${ctx.orderNumber}
+El horario ha sido liberado.
+Equipo Global Health`,
+  });
+}
+
+export function doctorEmailSubjectCancelled(lang: Lang): string {
+  return t(lang, {
+    en: "Consultation Cancelled — Non-payment",
+    pt: "Consulta cancelada — falta de pagamento",
+    ro: "Consultație anulată — neplată",
+    cs: "Konzultace zrušena — nezaplacení",
+    es: "Consulta cancelada — falta de pago",
+  });
+}
+
 export function formatDeadline(
   date: Date,
   timeZone?: string | null,

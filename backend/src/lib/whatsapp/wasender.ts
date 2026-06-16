@@ -125,6 +125,7 @@ async function postWhatsAppMessage(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ to: apiTo, text: message }),
+    signal: AbortSignal.timeout(15_000),
   });
   if (!res.ok) {
     const body = await res.text().catch(() => "");

@@ -28,7 +28,9 @@ import {
   appendPatientPortalWhatsApp,
   reminderMessage,
   doctorEmailSubjectBooking,
+  doctorEmailSubjectCancelled,
   doctorWhatsAppBookingReceived,
+  doctorWhatsAppCancelled,
   type PrePaymentMessageContext,
 } from "./pre-payment-messages.js";
 import {
@@ -455,25 +457,31 @@ export async function startPrePaymentFlow(
 
   await notifyDoctorOnBooking(orderId, primary.doctorId, ctx, lang);
 
-  await sendWhatsApp(
-    stageKey,
-    orderId,
-    o.phone,
-    appendPatientPortalWhatsApp(patientWhatsAppInitial(ctx, lang), portal, lang),
-    "Patient WhatsApp — reservation",
-    phoneHints,
-  );
-  await sendPatientEmail(
-    stageKey,
-    orderId,
-    o.email,
-    lang,
-    ctx,
-    "Patient email — payment required",
-    "initial",
-    undefined,
-    portal,
-  );
+  // For website self-service orders the customer just completed checkout and
+  // doesn't need an immediate "please pay" notification. For manual bookings
+  // (portal options are always provided) we send the reservation WhatsApp + email.
+  const isManualBooking = Boolean(opts?.portal);
+  if (isManualBooking) {
+    await sendWhatsApp(
+      stageKey,
+      orderId,
+      o.phone,
+      appendPatientPortalWhatsApp(patientWhatsAppInitial(ctx, lang), portal, lang),
+      "Patient WhatsApp — reservation",
+      phoneHints,
+    );
+    await sendPatientEmail(
+      stageKey,
+      orderId,
+      o.email,
+      lang,
+      ctx,
+      "Patient email — payment required",
+      "initial",
+      undefined,
+      portal,
+    );
+  }
 
   if (portal?.tempPassword) {
     await markOrderPortalTempPasswordSent(orderId);
@@ -493,7 +501,7 @@ async function executeReminderStage(
 ) {
   const loaded = await loadOrderContext(orderId, paymentUrl);
   if (!loaded) return;
-  const { order, lang, ctx, phoneHints, portal } = loaded;
+  const { order, primary, doctor, lang, ctx, phoneHints, portal } = loaded;
   const baseKey = automationBaseKey(flow);
   const stageKey = `${baseKey}_stage_${stage}`;
   const cancelStage = prePaymentCancelStage(flow);
@@ -512,6 +520,52 @@ async function executeReminderStage(
       "cancelled",
       msg.subject,
     );
+
+    // Notify doctor that the reservation was cancelled
+    if (primary.doctorId) {
+      const doctorContact = await resolveDoctorContact(primary.doctorId);
+      const cancelKey = `${stageKey}_doctor`;
+      if (doctorContact?.whatsappNumber) {
+        await sendWhatsApp(
+          `${cancelKey}_whatsapp`,
+          orderId,
+          doctorContact.whatsappNumber,
+          doctorWhatsAppCancelled(ctx, lang),
+          "Doctor WhatsApp — reservation cancelled",
+          doctorContact.whatsappHints,
+        );
+      }
+      if (doctorContact?.loginEmail) {
+        const run = await createAutomationRun({
+          automationKey: `${cancelKey}_email`,
+          orderId,
+          channel: "email",
+          recipient: doctorContact.loginEmail,
+          summary: "Doctor email — reservation cancelled",
+          status: "RUNNING",
+        });
+        try {
+          const body = doctorWhatsAppCancelled(ctx, lang);
+          await sendAutomationEmail(
+            {
+              to: doctorContact.loginEmail,
+              subject: doctorEmailSubjectCancelled(lang),
+              text: body,
+              html: `<div style="font-family:Georgia,serif;line-height:1.6;white-space:pre-wrap;">${body.replace(/\n/g, "<br/>")}</div>`,
+            },
+            { recordLabel: ctx.orderNumber },
+          );
+          await finishAutomationRun(run.id, { status: "SUCCESS", summary: "Doctor email — reservation cancelled" });
+        } catch (err) {
+          await finishAutomationRun(run.id, {
+            status: "FAILED",
+            summary: "Doctor email — reservation cancelled",
+            error: err instanceof Error ? err.message : String(err),
+          });
+        }
+      }
+    }
+
     await cancelPrePaymentOrder(orderId);
     return;
   }
