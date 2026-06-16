@@ -25,6 +25,7 @@ export const DIAL_OPTIONS: DialOption[] = [
   { key: "mt", dial: "356", label: "Malta" },
   { key: "br", dial: "55", label: "Brazil" },
   { key: "gb", dial: "44", label: "United Kingdom" },
+  { key: "pk", dial: "92", label: "Pakistan" },
 ];
 
 /** Both the app code and the ISO code resolve to a dial code. */
@@ -40,6 +41,7 @@ const DIAL_BY_CODE: Record<string, string> = {
   br: "55",
   gb: "44",
   uk: "44",
+  pk: "92",
 };
 
 /** App primary market — the default dial code when a country can't be mapped. */
