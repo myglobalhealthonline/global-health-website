@@ -27,6 +27,13 @@
     <p class="field-row"><span class="field-label">Registration:</span> <span class="field-value">{{registrationNumber}}</span></p>
     <p class="signature-line"><span class="sig-label">Prescriber signature:</span><span class="sig-name">{{doctorName}}</span></p>
   </div>
+  {{#if qrDataUrl}}
+  <div style="margin:0 0 8px;display:flex;flex-direction:column;align-items:center;gap:4px;">
+    <img src="{{qrDataUrl}}" style="width:100px;height:100px;" alt="Certificate QR" />
+    <p style="margin:0;font-size:10px;color:#1D4B36;">Certificate ID: <strong>{{certificateId}}</strong></p>
+    <p style="margin:0;font-size:9px;color:#4A4A4A;">Scan to verify authenticity at globalhealth.com</p>
+  </div>
+  {{/if}}
   <div class="footer-gap" aria-hidden="true"></div>
 </body>
 </html>

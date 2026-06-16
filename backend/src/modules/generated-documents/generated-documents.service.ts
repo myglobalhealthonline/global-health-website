@@ -215,12 +215,12 @@ async function buildCertificateArtifacts(
   documentType: GeneratedDocumentType,
   editDocumentId?: string,
 ): Promise<CertificateArtifacts | null> {
-  if (documentType !== "CUSTOM_CERTIFICATE") return null;
+  if (documentType !== "CUSTOM_CERTIFICATE" && documentType !== "ABSENCE_CERTIFICATE") return null;
 
   let certificateId: string;
   if (editDocumentId) {
     const existing = await prisma.generatedDocument.findFirst({
-      where: { id: editDocumentId, documentType: "CUSTOM_CERTIFICATE", sentToPatient: false },
+      where: { id: editDocumentId, documentType, sentToPatient: false },
       select: { certificateId: true },
     });
     certificateId = existing?.certificateId ?? randomUUID();
@@ -362,11 +362,20 @@ async function generateAppointmentDocumentUnlocked(input: {
     templateContext.prescriptionNumber = upload.prescriptionNumber;
   }
 
-  // Custom certificates embed a QR that links to a public verification page.
+  // Absence certificates and custom certificates embed a QR linking to a
+  // public verification page. Absence certs also get the PNG injected into
+  // the DOCX (same path as exam-prescription QR).
   const cert = await buildCertificateArtifacts(input.documentType, input.editDocumentId);
   if (cert) {
     templateContext.certificateId = cert.certificateId;
     templateContext.qrDataUrl = cert.dataUrl;
+    if (input.documentType === "ABSENCE_CERTIFICATE") {
+      qr = {
+        pngBuffer: cert.pngBuffer,
+        title: "Verify this certificate",
+        instruction: `Certificate ID: ${cert.certificateId}`,
+      };
+    }
   }
 
   let pdfBuffer =
