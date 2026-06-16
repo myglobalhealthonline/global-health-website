@@ -290,6 +290,9 @@ async function sendPatientEmail(
   }
 }
 
+const WHATSAPP_CONTACT_FOOTER =
+  "\n\nReply here or reach us out at globalhealth@myglobalhealth.online";
+
 async function sendWhatsApp(
   automationKey: string,
   orderId: string,
@@ -317,7 +320,11 @@ async function sendWhatsApp(
     summary,
     status: "RUNNING",
   });
-  const result = await sendWhatsAppText({ to, message, hints: phoneHints });
+  const result = await sendWhatsAppText({
+    to,
+    message: message + WHATSAPP_CONTACT_FOOTER,
+    hints: phoneHints,
+  });
   const jidMissing = result.message?.toLowerCase().includes("jid does not exist");
   if (!result.ok && !result.skipped) {
     await finishAutomationRun(run.id, {

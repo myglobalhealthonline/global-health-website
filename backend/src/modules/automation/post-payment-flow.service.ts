@@ -173,6 +173,9 @@ async function loadPostPaymentContext(orderId: string) {
   };
 }
 
+const WHATSAPP_CONTACT_FOOTER =
+  "\n\nReply here or reach us out at globalhealth@myglobalhealth.online";
+
 async function sendWhatsApp(
   automationKey: string,
   orderId: string,
@@ -200,7 +203,11 @@ async function sendWhatsApp(
     summary,
     status: "RUNNING",
   });
-  const result = await sendWhatsAppText({ to, message, hints: phoneHints });
+  const result = await sendWhatsAppText({
+    to,
+    message: message + WHATSAPP_CONTACT_FOOTER,
+    hints: phoneHints,
+  });
   const jidMissing = result.message?.toLowerCase().includes("jid does not exist");
   if (!result.ok && !result.skipped) {
     await finishAutomationRun(run.id, {
@@ -339,6 +346,14 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
   if (loaded.order.postPaymentStage >= POST_PAYMENT_STAGE_MEETING_LINK) return;
   if (!loaded.ctx.meetingLink) return;
 
+  // Atomic stage claim — prevents duplicate notifications when cron and direct
+  // call (from ensureOrderPaidAutomations) fire simultaneously for website orders.
+  const claimed = await prisma.order.updateMany({
+    where: { id: orderId, postPaymentStage: POST_PAYMENT_STAGE_PAID },
+    data: { postPaymentStage: POST_PAYMENT_STAGE_MEETING_LINK },
+  });
+  if (claimed.count === 0) return;
+
   const { order, primary, doctorContact, doctorEmail, lang, ctx, phoneHints, portal } = loaded;
   const baseKey = "post_payment_meeting_link";
 
@@ -424,10 +439,6 @@ export async function post_sendMeetingLinkNotifications(orderId: string) {
     });
   }
 
-  await prisma.order.update({
-    where: { id: orderId },
-    data: { postPaymentStage: POST_PAYMENT_STAGE_MEETING_LINK },
-  });
 }
 
 /** Re-send meeting-link WhatsApp only (e.g. after fixing phone format). */
