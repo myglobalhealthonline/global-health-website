@@ -480,12 +480,37 @@ export async function sendPatientUploadLinkEmail(opts: {
   return sendEmail({
     to: opts.to,
     subject: "Upload your medical files — Global Health",
-    text: `Hi ${opts.patientName},\n\nUse this secure link to upload files for your doctor (expires in 7 days):\n\n${opts.link}\n\n— Global Health`,
+    text: `Hi ${opts.patientName},\n\nUse this secure link to upload your exam results for your doctor:\n\n${opts.link}\n\n— Global Health`,
     html: wrapHtml(
       "Upload your files",
       `<p>Hi ${escapeHtml(opts.patientName)},</p>
-       <p>Use this secure link to upload files for your doctor. The link expires in 7 days.</p>
+       <p>Use this secure link to upload your exam results for your doctor.</p>
        <p style="margin:24px 0;"><a href="${opts.link}" style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">Upload files</a></p>`,
+    ),
+  });
+}
+
+export async function sendDoctorPatientUploadNotificationEmail(opts: {
+  to: string;
+  doctorName: string;
+  patientName: string;
+  patientEmail: string;
+  fileLabel: string;
+}) {
+  return sendEmail({
+    to: opts.to,
+    subject: `Patient uploaded exam results — ${opts.patientName}`,
+    text:
+      `Hi ${opts.doctorName},\n\n` +
+      `${opts.patientName} (${opts.patientEmail}) has uploaded a file via their exam prescription link:\n\n` +
+      `${opts.fileLabel}\n\n` +
+      `Log in to the doctor dashboard to review the file.\n\n— Global Health`,
+    html: wrapHtml(
+      "Patient uploaded exam results",
+      `<p>Hi ${escapeHtml(opts.doctorName)},</p>
+       <p><strong>${escapeHtml(opts.patientName)}</strong> (${escapeHtml(opts.patientEmail)}) has uploaded a file via their exam prescription link:</p>
+       <p style="background:#f4f7f5;border-left:4px solid #1B4D3E;padding:10px 14px;border-radius:4px;">${escapeHtml(opts.fileLabel)}</p>
+       <p>Log in to the doctor dashboard to review the file.</p>`,
     ),
   });
 }

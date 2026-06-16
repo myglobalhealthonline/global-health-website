@@ -43,7 +43,7 @@ function centeredRunPara(text: string, opts: { bold?: boolean; color: string; si
     (opts.bold ? `<w:b w:val="1"/><w:bCs w:val="1"/>` : "") +
     `<w:color w:val="${opts.color}"/><w:rtl w:val="0"/>`;
   return (
-    `<w:p><w:pPr><w:jc w:val="center"/>` +
+    `<w:p><w:pPr><w:jc w:val="left"/>` +
     `<w:spacing w:before="40" w:after="40" w:line="240" w:lineRule="auto"/></w:pPr>` +
     `<w:r><w:rPr>${rPr}</w:rPr><w:t xml:space="preserve">${escapeXml(text)}</w:t></w:r></w:p>`
   );
@@ -53,7 +53,7 @@ function qrImageParagraph(): string {
   const ns = 'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"';
   const picNs = 'xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
   return (
-    `<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="80" w:after="20"/></w:pPr>` +
+    `<w:p><w:pPr><w:jc w:val="left"/><w:spacing w:before="80" w:after="20"/></w:pPr>` +
     `<w:r><w:rPr><w:noProof/></w:rPr><w:drawing>` +
     `<wp:inline distT="0" distB="0" distL="0" distR="0">` +
     `<wp:extent cx="${QR_EMU}" cy="${QR_EMU}"/>` +
@@ -113,8 +113,8 @@ export function injectQrBlock(
   ensureImageRelationship(zip);
 
   const block =
-    centeredRunPara(opts.title, { bold: true, color: BRAND_COLOR, size: SIZE_TITLE }) +
     qrImageParagraph() +
+    centeredRunPara(opts.title, { bold: true, color: BRAND_COLOR, size: SIZE_TITLE }) +
     centeredRunPara(opts.instruction, { color: MUTED_COLOR, size: SIZE_BODY });
 
   return documentXml.slice(0, sectIdx) + block + documentXml.slice(sectIdx);

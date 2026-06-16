@@ -70,6 +70,11 @@ function fillDocxXml(
   return injectProfessionalLayout(xml, profile, documentType, data);
 }
 
+const COUNTRY_FOOTER_ADDRESSES: Record<string, string> = {
+  IR: "Trinity Street 6-9 Dublin 2, D02 EY47 Ireland",
+  PT: "Rua Brincos de Princesa 13 · 2710-683 Sintra · Portugal · Tel.: 919990810",
+};
+
 export function fillDocxBuffer(
   templateBuffer: Buffer,
   countryCode: string,
@@ -98,7 +103,8 @@ export function fillDocxBuffer(
       instruction: qr.instruction,
     });
   }
-  filled = applyDocumentFooterLayout(zip, filled);
+  const countryAddress = COUNTRY_FOOTER_ADDRESSES[countryCode.toUpperCase()];
+  filled = applyDocumentFooterLayout(zip, filled, countryAddress);
   zip.file("word/document.xml", filled);
   ensureAlexBrushFont(zip);
 

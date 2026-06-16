@@ -354,7 +354,7 @@ async function generateAppointmentDocumentUnlocked(input: {
       pngBuffer: upload.pngBuffer,
       title: `Upload your exam results — Prescription #${upload.prescriptionNumber}`,
       instruction:
-        "Scan this QR code with your phone camera to securely upload your test results. Link valid 7 days.",
+        "Scan this QR code with your phone camera to securely upload your test results.",
     };
     templateContext.qrDataUrl = upload.dataUrl;
     templateContext.uploadLink = upload.link;

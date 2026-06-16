@@ -1,7 +1,7 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { env } from "../../config/env.js";
 
-const TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const TOKEN_TTL_MS = 100 * 365 * 24 * 60 * 60 * 1000;
 const DEV_JWT_FALLBACK = "dev-only-change-this-auth-jwt-secret-min-32";
 
 // Derive a sub-key from AUTH_JWT_SECRET when no dedicated secret is set, so

@@ -16,7 +16,10 @@ import {
   verifyPatientUploadToken,
 } from "../modules/patient-upload/patient-upload-link.service.js";
 import { upsertPatientProfileByEmail } from "../modules/patient-profile/patient-profile.service.js";
-import { sendPatientUploadLinkEmail } from "../lib/email/templates.js";
+import {
+  sendPatientUploadLinkEmail,
+  sendDoctorPatientUploadNotificationEmail,
+} from "../lib/email/templates.js";
 import { sendWhatsAppText } from "../lib/whatsapp/wasender.js";
 
 const ALLOWED_MIME = new Set([
@@ -101,7 +104,7 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
           doctorId: verified.doctorId,
           email: { equals: verified.email, mode: "insensitive" },
         },
-        select: { id: true, doctorId: true },
+        select: { id: true, doctorId: true, fullName: true },
       });
       if (!appt?.doctorId) {
         return reply.status(404).send(errorResponse("No appointment found for this patient"));
@@ -138,6 +141,48 @@ const patientUploadRoute: FastifyPluginAsync = async (app) => {
           ...(sourceGeneratedDocumentId ? { sourceGeneratedDocumentId } : {}),
         },
       });
+
+      // Notify doctor — fire-and-forget, never fail the upload response.
+      void (async () => {
+        try {
+          const [doctorUser, doctor] = await Promise.all([
+            prisma.user.findFirst({
+              where: { doctorId: appt.doctorId },
+              select: { email: true },
+            }),
+            prisma.doctor.findUnique({
+              where: { id: appt.doctorId! },
+              select: { fullName: true, whatsappNumber: true },
+            }),
+          ]);
+
+          const patientDisplayName = appt.fullName ?? verified.email;
+          const doctorName = doctor?.fullName ?? "Doctor";
+
+          if (doctorUser?.email) {
+            await sendDoctorPatientUploadNotificationEmail({
+              to: doctorUser.email,
+              doctorName,
+              patientName: patientDisplayName,
+              patientEmail: verified.email,
+              fileLabel: label,
+            }).catch((err) => app.log.warn({ err }, "patient-upload: doctor email notification failed"));
+          }
+
+          if (doctor?.whatsappNumber) {
+            const wa = await sendWhatsAppText({
+              to: doctor.whatsappNumber,
+              message:
+                `Patient upload received — ${patientDisplayName} uploaded exam results:\n${label}`,
+            });
+            if (!wa.ok && !wa.skipped) {
+              app.log.warn({ wa }, "patient-upload: doctor whatsapp notification failed");
+            }
+          }
+        } catch (err) {
+          app.log.warn({ err }, "patient-upload: doctor notification threw");
+        }
+      })();
 
       return reply.status(201).send(
         okResponse(
