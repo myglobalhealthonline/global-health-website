@@ -1,6 +1,10 @@
 import Link from "next/link";
-import { Zap } from "lucide-react";
-import { fetchAdminAutomationCatalog, fetchAdminAutomationRuns } from "@/lib/admin/admin-api";
+import { Zap, ArrowLeft, ChevronRight } from "lucide-react";
+import {
+  fetchAdminAutomationCatalog,
+  fetchAdminAutomationRuns,
+  fetchAdminAutomationOrders,
+} from "@/lib/admin/admin-api";
 import { AdminCard, PageHeader } from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +25,35 @@ const STATUS_TONE: Record<string, string> = {
   CANCELLED: "bg-violet-100 text-violet-800",
 };
 
+const PAYMENT_TONE: Record<string, string> = {
+  PAID: "bg-emerald-100 text-emerald-800",
+  UNPAID: "bg-amber-100 text-amber-900",
+  FAILED: "bg-rose-100 text-rose-800",
+  PENDING: "bg-slate-200 text-slate-700",
+};
+
+function StatusBadge({ status }: { status: string }) {
+  return (
+    <span
+      className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+        STATUS_TONE[status] ?? "bg-slate-100 text-slate-700"
+      }`}
+    >
+      {status}
+    </span>
+  );
+}
+
+function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+
 export default async function AdminAutomationPage({
   searchParams,
 }: {
@@ -28,18 +61,251 @@ export default async function AdminAutomationPage({
 }) {
   const sp = searchParams ? await searchParams : {};
   const page = Number(pick(sp, "page") ?? "1") || 1;
+  const orderId = pick(sp, "orderId");
   const automationKey = pick(sp, "automationKey");
 
-  const [runsRes, catalogRes] = await Promise.all([
-    fetchAdminAutomationRuns({ page, pageSize: 50, automationKey }),
+  // ── Order detail view ──────────────────────────────────────────────────────
+  if (orderId) {
+    const [runsRes, catalogRes] = await Promise.all([
+      fetchAdminAutomationRuns({ orderId, pageSize: 200 }),
+      fetchAdminAutomationCatalog(),
+    ]);
+
+    const runs = runsRes.ok ? runsRes.data.items : [];
+    const catalog = catalogRes.ok ? catalogRes.data.items : [];
+
+    // Group runs by automationKey (preserving insertion order = chronological)
+    const groups = new Map<string, typeof runs>();
+    for (const run of runs) {
+      const key = run.automationKey;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(run);
+    }
+
+    const firstRun = runs[0];
+    const orderNumber = firstRun?.orderNumber ?? orderId.slice(-8).toUpperCase();
+    const orderEmail = firstRun?.orderEmail;
+    const paymentStatus = firstRun?.orderPaymentStatus;
+
+    return (
+      <>
+        <PageHeader
+          eyebrow={
+            <Link
+              href="/admin/automation"
+              className="inline-flex items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            >
+              <ArrowLeft className="size-3" />
+              All orders
+            </Link>
+          }
+          title={`Order ${orderNumber}`}
+          description={[orderEmail, paymentStatus].filter(Boolean).join(" · ")}
+        />
+
+        {!runsRes.ok ? (
+          <AdminCard>
+            <p className="text-sm text-rose-700">Could not load runs: {runsRes.message}</p>
+          </AdminCard>
+        ) : runs.length === 0 ? (
+          <AdminCard>
+            <p className="text-sm text-[var(--color-text-muted)]">No automation runs for this order.</p>
+          </AdminCard>
+        ) : (
+          <div className="space-y-4">
+            {Array.from(groups.entries()).map(([key, groupRuns]) => {
+              const catalogEntry = catalog.find(
+                (c) => key === c.key || key.startsWith(`${c.key}_`),
+              );
+              const name = groupRuns[0]?.automationName ?? key;
+              const flow = groupRuns[0]?.flow ?? "—";
+              const hasFailed = groupRuns.some((r) => r.status === "FAILED");
+
+              return (
+                <AdminCard key={key} padding={0}>
+                  <div className="flex items-start justify-between border-b border-[var(--color-border)] px-5 py-3">
+                    <div>
+                      <p className="text-[13px] font-bold text-[var(--color-text-primary)]">
+                        {name}
+                        {hasFailed && (
+                          <span className="ml-2 inline-block rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-700">
+                            has failures
+                          </span>
+                        )}
+                      </p>
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
+                        {flow}
+                      </p>
+                    </div>
+                    <span className="text-[11px] text-[var(--color-text-muted)]">
+                      {groupRuns.length} run{groupRuns.length === 1 ? "" : "s"}
+                    </span>
+                  </div>
+                  <div className="divide-y divide-[var(--color-border)]">
+                    {groupRuns.map((run) => (
+                      <div
+                        key={run.id}
+                        className="grid grid-cols-[1fr_80px_80px_160px] items-start gap-3 px-5 py-3 text-[13px]"
+                      >
+                        <div>
+                          <p className="text-[var(--color-text-primary)]">
+                            {run.summary ?? "—"}
+                          </p>
+                          {run.recipient && (
+                            <p className="mt-0.5 truncate text-[11px] text-[var(--color-text-muted)]">
+                              → {run.recipient}
+                            </p>
+                          )}
+                          {run.error && (
+                            <p className="mt-0.5 text-[11px] text-rose-700">{run.error}</p>
+                          )}
+                        </div>
+                        <p className="capitalize text-[var(--color-text-muted)]">
+                          {run.channel ?? "—"}
+                        </p>
+                        <StatusBadge status={run.status} />
+                        <p className="text-right text-[var(--color-text-muted)]">
+                          {timeAgo(run.createdAt)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </AdminCard>
+              );
+            })}
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // ── automationKey filter view (from catalog "View runs") ───────────────────
+  if (automationKey) {
+    const [runsRes, catalogRes] = await Promise.all([
+      fetchAdminAutomationRuns({ page, pageSize: 50, automationKey }),
+      fetchAdminAutomationCatalog(),
+    ]);
+
+    const runs = runsRes.ok ? runsRes.data.items : [];
+    const total = runsRes.ok ? runsRes.data.total : 0;
+    const catalog = catalogRes.ok ? catalogRes.data.items : [];
+    const pageSize = runsRes.ok ? runsRes.data.pageSize : 50;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    const catalogEntry = catalog.find((c) => automationKey.startsWith(c.key));
+
+    return (
+      <>
+        <PageHeader
+          eyebrow={
+            <Link
+              href="/admin/automation"
+              className="inline-flex items-center gap-1 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+            >
+              <ArrowLeft className="size-3" />
+              All orders
+            </Link>
+          }
+          title={catalogEntry?.name ?? automationKey}
+          description={`${total} run${total === 1 ? "" : "s"} matching key prefix`}
+        />
+
+        <AdminCard padding={0}>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[860px] text-[13px]">
+              <thead>
+                <tr className="border-b border-[var(--color-border)] text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                  <th className="px-4 py-2">When</th>
+                  <th className="px-4 py-2">Order</th>
+                  <th className="px-4 py-2">Channel</th>
+                  <th className="px-4 py-2">Status</th>
+                  <th className="px-4 py-2">Summary</th>
+                </tr>
+              </thead>
+              <tbody>
+                {runs.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-8 text-center text-[var(--color-text-muted)]">
+                      No runs yet for this automation.
+                    </td>
+                  </tr>
+                ) : (
+                  runs.map((row) => (
+                    <tr key={row.id} className="border-b border-[var(--color-border)] align-top">
+                      <td className="whitespace-nowrap px-4 py-3 text-[var(--color-text-muted)]">
+                        {timeAgo(row.createdAt)}
+                      </td>
+                      <td className="px-4 py-3">
+                        {row.orderId ? (
+                          <Link
+                            href={`/admin/automation?orderId=${encodeURIComponent(row.orderId)}`}
+                            className="font-semibold text-[var(--color-brand-primary)] hover:underline"
+                          >
+                            {row.orderNumber}
+                          </Link>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                      <td className="px-4 py-3 capitalize">{row.channel ?? "—"}</td>
+                      <td className="px-4 py-3">
+                        <StatusBadge status={row.status} />
+                        {row.error && (
+                          <p className="mt-1 max-w-[200px] text-[11px] text-rose-700">{row.error}</p>
+                        )}
+                      </td>
+                      <td className="max-w-[260px] px-4 py-3 text-[var(--color-text-muted)]">
+                        {row.summary ?? "—"}
+                        {row.recipient && (
+                          <p className="mt-0.5 truncate text-[11px]">→ {row.recipient}</p>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex items-center justify-between px-5 py-4 text-[13px]">
+            {page > 1 ? (
+              <Link
+                href={`/admin/automation?page=${page - 1}&automationKey=${encodeURIComponent(automationKey)}`}
+                className="font-semibold underline"
+              >
+                ← Previous
+              </Link>
+            ) : (
+              <span />
+            )}
+            <span className="text-[var(--color-text-muted)]">
+              Page {page} of {totalPages}
+            </span>
+            {page < totalPages ? (
+              <Link
+                href={`/admin/automation?page=${page + 1}&automationKey=${encodeURIComponent(automationKey)}`}
+                className="font-semibold underline"
+              >
+                Next →
+              </Link>
+            ) : (
+              <span />
+            )}
+          </div>
+        </AdminCard>
+      </>
+    );
+  }
+
+  // ── Default: orders list + catalog ─────────────────────────────────────────
+  const [ordersRes, catalogRes] = await Promise.all([
+    fetchAdminAutomationOrders({ page, pageSize: 25 }),
     fetchAdminAutomationCatalog(),
   ]);
 
-  const runs = runsRes.ok ? runsRes.data.items : [];
-  const total = runsRes.ok ? runsRes.data.total : 0;
+  const orders = ordersRes.ok ? ordersRes.data.items : [];
+  const ordersTotal = ordersRes.ok ? ordersRes.data.total : 0;
   const catalog = catalogRes.ok ? catalogRes.data.items : [];
-  const pageSize = runsRes.ok ? runsRes.data.pageSize : 50;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const pageSize = 25;
+  const totalPages = Math.max(1, Math.ceil(ordersTotal / pageSize));
 
   return (
     <>
@@ -50,21 +316,106 @@ export default async function AdminAutomationPage({
           </span>
         }
         title="Automation"
-        description="WhatsApp, email, and cron steps for booking and payment flows. Latest runs appear first."
+        description="Booking and payment notification sequences by order. Click an order to see its full run history."
       />
 
-      {!runsRes.ok ? (
+      {!ordersRes.ok ? (
         <AdminCard>
           <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
-            Could not load automation runs: {runsRes.message}
+            Could not load automation data: {ordersRes.message}
           </p>
         </AdminCard>
       ) : null}
 
+      {/* Orders list */}
+      <AdminCard padding={0} className="mb-6">
+        <div className="border-b border-[var(--color-border)] px-5 py-4">
+          <h2 className="text-[15px] font-bold text-[var(--color-text-primary)]">Orders</h2>
+          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+            {ordersTotal} order{ordersTotal === 1 ? "" : "s"} with automation activity · most recent first
+          </p>
+        </div>
+
+        {orders.length === 0 ? (
+          <div className="px-5 py-10 text-center text-[13px] text-[var(--color-text-muted)]">
+            No automation runs yet.
+          </div>
+        ) : (
+          <div className="divide-y divide-[var(--color-border)]">
+            {orders.map((order) => (
+              <Link
+                key={order.orderId}
+                href={`/admin/automation?orderId=${encodeURIComponent(order.orderId)}`}
+                className="flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-[var(--color-bg-subtle)]"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[14px] font-bold text-[var(--color-text-primary)]">
+                      {order.orderNumber}
+                    </span>
+                    {order.paymentStatus && (
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                          PAYMENT_TONE[order.paymentStatus] ?? "bg-slate-100 text-slate-700"
+                        }`}
+                      >
+                        {order.paymentStatus}
+                      </span>
+                    )}
+                    {order.failedRuns > 0 && (
+                      <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-700">
+                        {order.failedRuns} failed
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-0.5 truncate text-[12px] text-[var(--color-text-muted)]">
+                    {[order.fullName, order.email].filter(Boolean).join(" · ")}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-3 text-right">
+                  <div>
+                    <p className="text-[12px] font-semibold text-[var(--color-text-primary)]">
+                      {order.totalRuns} run{order.totalRuns === 1 ? "" : "s"}
+                    </p>
+                    {order.lastRunAt && (
+                      <p className="text-[11px] text-[var(--color-text-muted)]">
+                        {timeAgo(order.lastRunAt)}
+                      </p>
+                    )}
+                  </div>
+                  <ChevronRight className="size-4 text-[var(--color-text-muted)]" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        <div className="flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-[13px]">
+          {page > 1 ? (
+            <Link href={`/admin/automation?page=${page - 1}`} className="font-semibold underline">
+              ← Previous
+            </Link>
+          ) : (
+            <span />
+          )}
+          <span className="text-[var(--color-text-muted)]">
+            Page {page} of {totalPages}
+          </span>
+          {page < totalPages ? (
+            <Link href={`/admin/automation?page=${page + 1}`} className="font-semibold underline">
+              Next →
+            </Link>
+          ) : (
+            <span />
+          )}
+        </div>
+      </AdminCard>
+
+      {/* Catalog */}
       <AdminCard className="mb-6">
         <h2 className="text-[15px] font-bold text-[var(--color-text-primary)]">Automation catalog</h2>
         <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
-          Registered flows — filter the log below by key prefix.
+          Registered flows — click "View runs" to filter the log by key prefix.
         </p>
         <div className="mt-4 grid gap-3 lg:grid-cols-2">
           {catalog.map((item) => (
@@ -94,123 +445,6 @@ export default async function AdminAutomationPage({
               </p>
             </div>
           ))}
-        </div>
-      </AdminCard>
-
-      <AdminCard padding={0}>
-        <div className="border-b border-[var(--color-border)] px-5 py-4">
-          <h2 className="text-[15px] font-bold text-[var(--color-text-primary)]">Run log</h2>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
-            {total} run{total === 1 ? "" : "s"}
-            {automationKey ? ` · filtered by ${automationKey}` : ""}
-            {automationKey ? (
-              <>
-                {" "}
-                ·{" "}
-                <Link href="/admin/automation" className="font-semibold underline">
-                  Clear filter
-                </Link>
-              </>
-            ) : null}
-          </p>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[960px] text-[13px]">
-            <thead>
-              <tr className="border-b border-[var(--color-border)] text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                <th className="px-4 py-2">When</th>
-                <th className="px-4 py-2">Automation</th>
-                <th className="px-4 py-2">Order</th>
-                <th className="px-4 py-2">Channel</th>
-                <th className="px-4 py-2">Status</th>
-                <th className="px-4 py-2">Summary</th>
-              </tr>
-            </thead>
-            <tbody>
-              {runs.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-[var(--color-text-muted)]">
-                    No automation runs yet.
-                  </td>
-                </tr>
-              ) : (
-                runs.map((row) => (
-                  <tr key={row.id} className="border-b border-[var(--color-border)] align-top">
-                    <td className="whitespace-nowrap px-4 py-3 text-[var(--color-text-muted)]">
-                      {new Date(row.createdAt).toLocaleString()}
-                    </td>
-                    <td className="px-4 py-3">
-                      <p className="font-semibold text-[var(--color-text-primary)]">{row.automationName}</p>
-                      <p className="text-[11px] text-[var(--color-text-muted)]">{row.flow}</p>
-                    </td>
-                    <td className="px-4 py-3">
-                      {row.orderId ? (
-                        <>
-                          <Link
-                            href={`/admin/orders?cursor=${encodeURIComponent(row.orderId)}`}
-                            className="font-semibold text-[var(--color-brand-primary)] hover:underline"
-                          >
-                            #{row.orderNumber}
-                          </Link>
-                          {row.orderPaymentStatus ? (
-                            <p className="text-[11px] text-[var(--color-text-muted)]">
-                              {row.orderPaymentStatus}
-                            </p>
-                          ) : null}
-                        </>
-                      ) : (
-                        "—"
-                      )}
-                    </td>
-                    <td className="px-4 py-3 capitalize">{row.channel ?? "—"}</td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
-                          STATUS_TONE[row.status] ?? "bg-slate-100 text-slate-700"
-                        }`}
-                      >
-                        {row.status}
-                      </span>
-                      {row.error ? (
-                        <p className="mt-1 max-w-[220px] text-[11px] text-rose-700">{row.error}</p>
-                      ) : null}
-                    </td>
-                    <td className="max-w-[280px] px-4 py-3 text-[var(--color-text-muted)]">
-                      {row.summary ?? "—"}
-                      {row.recipient ? (
-                        <p className="mt-1 truncate text-[11px]">→ {row.recipient}</p>
-                      ) : null}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-        <div className="flex items-center justify-between px-5 py-4 text-[13px]">
-          {page > 1 ? (
-            <Link
-              href={`/admin/automation?page=${page - 1}${automationKey ? `&automationKey=${encodeURIComponent(automationKey)}` : ""}`}
-              className="font-semibold underline"
-            >
-              ← Previous
-            </Link>
-          ) : (
-            <span />
-          )}
-          <span className="text-[var(--color-text-muted)]">
-            Page {page} of {totalPages}
-          </span>
-          {page < totalPages ? (
-            <Link
-              href={`/admin/automation?page=${page + 1}${automationKey ? `&automationKey=${encodeURIComponent(automationKey)}` : ""}`}
-              className="font-semibold underline"
-            >
-              Next →
-            </Link>
-          ) : (
-            <span />
-          )}
         </div>
       </AdminCard>
     </>

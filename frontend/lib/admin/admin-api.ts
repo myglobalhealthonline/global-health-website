@@ -1313,6 +1313,18 @@ export async function fetchAdminAuditLog(query?: {
   }>(qs ? `/api/admin/audit-log?${qs}` : "/api/admin/audit-log");
 }
 
+export type AdminAutomationOrderRow = {
+  orderId: string;
+  orderNumber: string;
+  email: string | null;
+  fullName: string | null;
+  paymentStatus: string | null;
+  orderStatus: string | null;
+  totalRuns: number;
+  failedRuns: number;
+  lastRunAt: string | null;
+};
+
 export type AdminAutomationCatalogItem = {
   key: string;
   name: string;
@@ -1345,6 +1357,19 @@ export type AdminAutomationRunRow = {
 
 export async function fetchAdminAutomationCatalog() {
   return adminRequest<{ items: AdminAutomationCatalogItem[] }>("/api/admin/automation/catalog");
+}
+
+export async function fetchAdminAutomationOrders(query?: { page?: number; pageSize?: number }) {
+  const params = new URLSearchParams();
+  if (query?.page) params.set("page", String(query.page));
+  if (query?.pageSize) params.set("pageSize", String(query.pageSize));
+  const qs = params.toString();
+  return adminRequest<{
+    items: AdminAutomationOrderRow[];
+    total: number;
+    page: number;
+    pageSize: number;
+  }>(qs ? `/api/admin/automation/orders?${qs}` : "/api/admin/automation/orders");
 }
 
 export async function fetchAdminAutomationRuns(query?: {
