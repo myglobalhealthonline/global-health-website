@@ -1,0 +1,200 @@
+import Link from "next/link";
+import { Receipt, ExternalLink } from "lucide-react";
+import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { cookies } from "next/headers";
+import { AdminCard, PageHeader } from "@/components/portal-atoms";
+import { formatPrice } from "@/lib/format-currency";
+import { formatAppDate } from "@/lib/format-datetime";
+
+export const dynamic = "force-dynamic";
+
+type InvoiceRow = {
+  id: string;
+  invoiceNumber: string;
+  countryCode: string;
+  generatedAt: string;
+  emailSentAt: string | null;
+  emailSentTo: string | null;
+  orderId: string;
+  orderNumber: string | null;
+  fullName: string;
+  email: string;
+  totalCents: number;
+  currencyCode: string;
+  paymentStatus: string;
+};
+
+async function fetchAdminInvoices(
+  cursor?: string,
+): Promise<{ items: InvoiceRow[]; nextCursor: string | null }> {
+  const backend = getBackendOrigin();
+  if (!backend) return { items: [], nextCursor: null };
+  const store = await cookies();
+  const cookieHeader = store
+    .getAll()
+    .map((c) => `${c.name}=${c.value}`)
+    .join("; ");
+  const qs = new URLSearchParams({ limit: "50" });
+  if (cursor) qs.set("cursor", cursor);
+  try {
+    const res = await fetch(`${backend}/api/admin/invoices?${qs.toString()}`, {
+      headers: cookieHeader ? { cookie: cookieHeader } : undefined,
+      cache: "no-store",
+    });
+    if (!res.ok) return { items: [], nextCursor: null };
+    const json = (await res.json()) as {
+      ok?: boolean;
+      data?: { items: InvoiceRow[]; nextCursor: string | null };
+    };
+    if (!json.ok || !json.data) return { items: [], nextCursor: null };
+    return json.data;
+  } catch {
+    return { items: [], nextCursor: null };
+  }
+}
+
+const COUNTRY_FLAG: Record<string, string> = {
+  ie: "🇮🇪",
+  cz: "🇨🇿",
+  sp: "🇪🇸",
+  rm: "🇷🇴",
+};
+
+export default async function AdminInvoicesPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ cursor?: string }>;
+}) {
+  const { cursor } = searchParams ? await searchParams : {};
+  const { items, nextCursor } = await fetchAdminInvoices(cursor);
+
+  return (
+    <>
+      <PageHeader
+        eyebrow={
+          <span className="inline-flex items-center gap-2">
+            <Receipt className="size-3.5" aria-hidden /> Commerce
+          </span>
+        }
+        title="Invoices"
+        description="Auto-generated invoices for paid orders. Portugal orders are excluded. Click View to open the printable invoice."
+      />
+
+      <AdminCard padding={0}>
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[860px] text-[13px]">
+            <thead>
+              <tr className="border-b border-[var(--color-border)] text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                <th className="px-4 py-3">Invoice #</th>
+                <th className="px-4 py-3">Order</th>
+                <th className="px-4 py-3">Patient</th>
+                <th className="px-4 py-3">Country</th>
+                <th className="px-4 py-3 text-right">Amount</th>
+                <th className="px-4 py-3">Generated</th>
+                <th className="px-4 py-3">Emailed</th>
+                <th className="px-4 py-3 text-right" />
+              </tr>
+            </thead>
+            <tbody>
+              {items.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="px-4 py-12 text-center text-[13px] text-[var(--color-text-muted)]"
+                  >
+                    No invoices yet. They are generated automatically when orders are paid.
+                  </td>
+                </tr>
+              ) : (
+                items.map((inv) => (
+                  <tr
+                    key={inv.id}
+                    className="border-b border-[var(--color-border)] hover:bg-[var(--color-bg-subtle)]"
+                  >
+                    <td className="px-4 py-3">
+                      <span className="font-mono text-[13px] font-bold text-[var(--color-text-primary)]">
+                        {inv.invoiceNumber}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <Link
+                        href={`/admin/orders/${inv.orderId}`}
+                        className="font-mono text-xs text-[var(--color-brand-primary)] hover:underline"
+                      >
+                        {inv.orderNumber ?? inv.orderId.slice(0, 8)}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3">
+                      <p className="font-semibold text-[var(--color-text-primary)]">
+                        {inv.fullName}
+                      </p>
+                      <p className="text-[11px] text-[var(--color-text-muted)]">{inv.email}</p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="text-base">
+                        {COUNTRY_FLAG[inv.countryCode.toLowerCase()] ?? ""}
+                      </span>{" "}
+                      <span className="text-[12px] uppercase text-[var(--color-text-muted)]">
+                        {inv.countryCode.toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <span className="font-semibold text-[var(--color-text-primary)]">
+                        {formatPrice(inv.totalCents, inv.currencyCode)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-[var(--color-text-muted)]">
+                      {formatAppDate(inv.generatedAt)}
+                    </td>
+                    <td className="px-4 py-3">
+                      {inv.emailSentAt ? (
+                        <span className="inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800">
+                          Sent
+                        </span>
+                      ) : (
+                        <span className="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-800">
+                          Pending
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Link
+                        href={`/print/order-invoices/${inv.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
+                      >
+                        <ExternalLink className="size-3" aria-hidden />
+                        View
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-[13px]">
+          {cursor ? (
+            <Link href="/admin/invoices" className="font-semibold underline">
+              ← First page
+            </Link>
+          ) : (
+            <span />
+          )}
+          {nextCursor ? (
+            <Link
+              href={`/admin/invoices?cursor=${encodeURIComponent(nextCursor)}`}
+              className="font-semibold underline"
+            >
+              Next page →
+            </Link>
+          ) : (
+            <span className="text-[var(--color-text-muted)]">No more invoices</span>
+          )}
+        </div>
+      </AdminCard>
+    </>
+  );
+}

@@ -416,6 +416,14 @@ export async function ensureOrderPaidAutomations(
 ) {
   await stopPrePaymentFlowOnPaid(orderId).catch(() => undefined);
 
+  // Generate invoice (skips Portugal automatically; idempotent).
+  try {
+    const { generateInvoiceForOrder } = await import("../invoices/generate-invoice.service.js");
+    await generateInvoiceForOrder(orderId, log);
+  } catch (invoiceErr) {
+    log.warn({ err: invoiceErr, orderId }, "Invoice generation failed — order still paid");
+  }
+
   const paidOrder = await prisma.order.findUnique({
     where: { id: orderId },
     include: { items: true },

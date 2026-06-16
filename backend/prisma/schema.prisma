@@ -1637,6 +1637,10 @@ model Order {
   patientPortalTempPasswordSent Boolean          @default(false)
   automationRuns            AutomationRun[]
   items                 OrderItem[]
+  /// Invoice generated for this order (null for Portugal or pre-invoice orders).
+  invoice               Invoice?
+  /// Stripe Checkout URL cached for admin copy-paste. Refreshed by resolveOrderPaymentUrl.
+  stripeCheckoutUrl     String?
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
 
@@ -2756,6 +2760,31 @@ model OrderCounter {
   lastSeq Int @default(0) @map("last_seq")
 
   @@map("order_counter")
+}
+
+/// Per-country monotonic counter for invoice numbers (IE-00001, CZ-00001, etc.).
+/// Incremented atomically with raw SQL UPDATE … RETURNING (same pattern as order_counter).
+model InvoiceCounter {
+  countryCode String @id
+  lastSeq     Int    @default(0) @map("last_seq")
+
+  @@map("invoice_counter")
+}
+
+/// Invoice generated from a paid Order. One invoice per order (Portugal excluded).
+/// invoiceNumber is the human-facing reference: IE-00001, CZ-00001, SP-00001, RO-00001.
+model Invoice {
+  id            String   @id @default(cuid())
+  invoiceNumber String   @unique
+  orderId       String   @unique
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  countryCode   String
+  generatedAt   DateTime @default(now())
+  emailSentAt   DateTime?
+  emailSentTo   String?
+
+  @@map("invoices")
+  @@index([countryCode, generatedAt(sort: Desc)])
 }
 
 /// Tracks which ensure-schema.ts patches have been applied to a database.

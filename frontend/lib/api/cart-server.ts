@@ -24,6 +24,8 @@ function isAdminOrderRow(v: unknown): v is AdminOrderRow {
     typeof o.itemCount === "number" &&
     (o.meetingUrl === null || typeof o.meetingUrl === "string") &&
     typeof o.hasConsultation === "boolean" &&
+    (o.invoiceId === null || o.invoiceId === undefined || typeof o.invoiceId === "string") &&
+    (o.stripeCheckoutUrl === null || o.stripeCheckoutUrl === undefined || typeof o.stripeCheckoutUrl === "string") &&
     (o.paidAt === null || typeof o.paidAt === "string") &&
     typeof o.createdAt === "string"
   );

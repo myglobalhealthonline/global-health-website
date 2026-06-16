@@ -490,6 +490,71 @@ export async function sendPatientUploadLinkEmail(opts: {
   });
 }
 
+const INVOICE_EMAIL_SUBJECT: Record<string, string> = {
+  ie: "Your invoice {invoiceNumber} — Global Health",
+  cz: "Vaše faktura {invoiceNumber} — Global Health",
+  sp: "Su factura {invoiceNumber} — Global Health",
+  rm: "Factura dvs. {invoiceNumber} — Global Health",
+};
+
+const INVOICE_EMAIL_HEADING: Record<string, string> = {
+  ie: "Your invoice",
+  cz: "Vaše faktura",
+  sp: "Su factura",
+  rm: "Factura dvs.",
+};
+
+const INVOICE_EMAIL_BODY: Record<string, string> = {
+  ie: "Your invoice is ready. Click the button below to view and download it.",
+  cz: "Vaše faktura je připravena. Klikněte na tlačítko níže pro zobrazení a stažení.",
+  sp: "Su factura está lista. Haga clic en el botón de abajo para verla y descargarla.",
+  rm: "Factura dvs. este gata. Faceți clic pe butonul de mai jos pentru a o vizualiza și descărca.",
+};
+
+const INVOICE_EMAIL_CTA: Record<string, string> = {
+  ie: "View invoice",
+  cz: "Zobrazit fakturu",
+  sp: "Ver factura",
+  rm: "Vizualizați factura",
+};
+
+export async function sendInvoiceEmail(opts: {
+  to: string;
+  fullName: string;
+  invoiceNumber: string;
+  invoiceUrl: string;
+  countryCode: string;
+}) {
+  const cc = opts.countryCode.toLowerCase();
+  const subjectTemplate = INVOICE_EMAIL_SUBJECT[cc] ?? INVOICE_EMAIL_SUBJECT.ie;
+  const subject = subjectTemplate.replace("{invoiceNumber}", opts.invoiceNumber);
+  const heading = INVOICE_EMAIL_HEADING[cc] ?? INVOICE_EMAIL_HEADING.ie;
+  const body = INVOICE_EMAIL_BODY[cc] ?? INVOICE_EMAIL_BODY.ie;
+  const cta = INVOICE_EMAIL_CTA[cc] ?? INVOICE_EMAIL_CTA.ie;
+
+  return sendEmail({
+    to: opts.to,
+    subject,
+    text: `Hi ${opts.fullName},\n\n${body}\n\n${opts.invoiceUrl}\n\n— Global Health`,
+    html: wrapHtml(
+      `${heading} · ${escapeHtml(opts.invoiceNumber)}`,
+      `<p>Hi ${escapeHtml(opts.fullName)},</p>
+       <p>${body}</p>
+       <p style="margin:24px 0;">
+         <a href="${escapeHtml(opts.invoiceUrl)}"
+            style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">
+           ${cta}
+         </a>
+       </p>
+       <p style="font-size:13px;color:#737373;">
+         Or paste this URL into your browser:<br/>
+         <a href="${escapeHtml(opts.invoiceUrl)}">${escapeHtml(opts.invoiceUrl)}</a>
+       </p>
+       <p style="font-size:12px;color:#737373;">Invoice reference: ${escapeHtml(opts.invoiceNumber)}</p>`,
+    ),
+  });
+}
+
 export async function sendDoctorPatientUploadNotificationEmail(opts: {
   to: string;
   doctorName: string;
