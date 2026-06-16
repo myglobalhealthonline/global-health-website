@@ -1,11 +1,5 @@
-import { execFile } from "node:child_process";
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import path from "node:path";
-import { promisify } from "node:util";
 import { prisma } from "../../db/prisma.js";
-
-const execFileAsync = promisify(execFile);
+import { htmlToPdfBuffer } from "../generated-documents/html-document-renderer.js";
 
 // ── i18n labels ───────────────────────────────────────────────────────────────
 
@@ -274,50 +268,12 @@ ${doctorBlock}
 </html>`;
 }
 
-// ── soffice ───────────────────────────────────────────────────────────────────
-
-async function resolveSofficeBinary(): Promise<string | null> {
-  const candidates = [
-    process.env.LIBREOFFICE_PATH,
-    "soffice",
-    "libreoffice",
-    "C:\\Program Files\\LibreOffice\\program\\soffice.exe",
-    "C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe",
-  ].filter((b): b is string => Boolean(b));
-  for (const bin of candidates) {
-    try {
-      await execFileAsync(bin, ["--version"]);
-      return bin;
-    } catch {
-      /* next */
-    }
-  }
-  return null;
-}
-
 export async function renderInvoicePdfBuffer(data: InvoicePdfData): Promise<Buffer | null> {
-  const soffice = await resolveSofficeBinary();
-  if (!soffice) return null;
-
-  const html = buildInvoiceHtml(data);
-  const workDir = await mkdtemp(path.join(tmpdir(), "gh-inv-"));
-  const htmlPath = path.join(workDir, "invoice.html");
   try {
-    await writeFile(htmlPath, html, "utf-8");
-    await execFileAsync(soffice, [
-      "--headless",
-      "--norestore",
-      "--convert-to",
-      "pdf",
-      "--outdir",
-      workDir,
-      htmlPath,
-    ]);
-    return await readFile(path.join(workDir, "invoice.pdf"));
+    const html = buildInvoiceHtml(data);
+    return await htmlToPdfBuffer(html);
   } catch {
     return null;
-  } finally {
-    await rm(workDir, { recursive: true, force: true }).catch(() => {});
   }
 }
 

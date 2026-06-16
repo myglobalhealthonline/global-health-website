@@ -584,7 +584,7 @@ async function executeReminderStage(
     stageKey,
     orderId,
     order.phone,
-    appendPatientPortalWhatsApp(msg.whatsapp, portal, lang),
+    msg.whatsapp,
     `Patient WhatsApp — reminder ${stage}`,
     phoneHints,
   );

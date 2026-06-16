@@ -489,7 +489,7 @@ export async function post_sendOneHourReminder(orderId: string) {
     `${baseKey}_patient_whatsapp`,
     orderId,
     order.phone,
-    appendPatientPortalWhatsApp(patientWhatsAppOneHourReminder(ctx, lang), portal, lang),
+    patientWhatsAppOneHourReminder(ctx, lang),
     "Patient WhatsApp — 1 hour reminder",
     phoneHints,
   );
@@ -574,7 +574,7 @@ export async function post_sendFiveMinuteReminder(orderId: string) {
     `${baseKey}_patient_whatsapp`,
     orderId,
     order.phone,
-    appendPatientPortalWhatsApp(patientWhatsAppSessionStart(ctx, lang), portal, lang),
+    patientWhatsAppSessionStart(ctx, lang),
     "Patient WhatsApp — 5 minute reminder",
     phoneHints,
   );

@@ -289,6 +289,7 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
             id: string;
             client_reference_id?: string | null;
             payment_intent?: string | null;
+            invoice?: string | null;
             amount_total?: number | null;
             currency?: string | null;
             metadata?: Record<string, string>;

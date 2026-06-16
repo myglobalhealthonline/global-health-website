@@ -185,8 +185,6 @@ async function fulfillPaidOrderFromCheckoutSession(
             paidAt: new Date(),
             stripePaymentIntentId:
               typeof session.payment_intent === "string" ? session.payment_intent : null,
-            stripeInvoiceId:
-              typeof session.invoice === "string" ? session.invoice : null,
           },
         });
         if (!appointmentIds.includes(item.appointmentId)) {
@@ -216,8 +214,6 @@ async function fulfillPaidOrderFromCheckoutSession(
               paidAt: new Date(),
               stripePaymentIntentId:
                 typeof session.payment_intent === "string" ? session.payment_intent : null,
-              stripeInvoiceId:
-                typeof session.invoice === "string" ? session.invoice : null,
             },
           });
         }

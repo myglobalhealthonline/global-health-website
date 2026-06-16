@@ -527,32 +527,116 @@ export async function sendInvoiceEmail(opts: {
   pdfBuffer?: Buffer;
 }) {
   const cc = opts.countryCode.toLowerCase();
-  const subjectTemplate = INVOICE_EMAIL_SUBJECT[cc] ?? INVOICE_EMAIL_SUBJECT.ie;
+  const subjectTemplate = INVOICE_EMAIL_SUBJECT[cc] ?? INVOICE_EMAIL_SUBJECT.ie!;
   const subject = subjectTemplate.replace("{invoiceNumber}", opts.invoiceNumber);
-  const heading = INVOICE_EMAIL_HEADING[cc] ?? INVOICE_EMAIL_HEADING.ie;
-  const body = INVOICE_EMAIL_BODY[cc] ?? INVOICE_EMAIL_BODY.ie;
-  const cta = INVOICE_EMAIL_CTA[cc] ?? INVOICE_EMAIL_CTA.ie;
+  const heading = INVOICE_EMAIL_HEADING[cc] ?? INVOICE_EMAIL_HEADING.ie!;
+  const body = INVOICE_EMAIL_BODY[cc] ?? INVOICE_EMAIL_BODY.ie!;
+  const cta = INVOICE_EMAIL_CTA[cc] ?? INVOICE_EMAIL_CTA.ie!;
+
+  const { resolveEmailLogoUrl } = await import("./resolve-email-logo-url.js");
+  const logoSrc = await resolveEmailLogoUrl();
+
+  const WHATSAPP_URL = "https://wa.me/353894715849";
+  const WHATSAPP_DISPLAY = "+353 89 471 5849";
+  const SUPPORT_EMAIL = "globalhealth@myglobalhealth.online";
+
+  const dear = cc === "cz"
+    ? "Vážený/á"
+    : cc === "sp"
+      ? "Estimado/a"
+      : cc === "rm"
+        ? "Stimate"
+        : "Dear";
+  const contactLead = cc === "cz"
+    ? "Máte-li dotazy, kontaktujte nás na"
+    : cc === "sp"
+      ? "Si tiene alguna pregunta, contáctenos en"
+      : cc === "rm"
+        ? "Dacă aveți întrebări, contactați-ne la"
+        : "If you have any questions, feel free to contact us at";
+  const whatsappLead = cc === "cz"
+    ? "nebo nám napište na WhatsApp"
+    : cc === "sp"
+      ? "o envíenos un mensaje por WhatsApp"
+      : cc === "rm"
+        ? "sau trimiteți-ne un mesaj pe WhatsApp"
+        : "or message us on WhatsApp";
+  const signOff = cc === "cz"
+    ? "S pozdravem,"
+    : cc === "sp"
+      ? "Saludos cordiales,"
+      : cc === "rm"
+        ? "Cu stimă,"
+        : "Warm regards,";
+  const team = cc === "cz"
+    ? "Tým Global Health"
+    : cc === "sp"
+      ? "El equipo de Global Health"
+      : cc === "rm"
+        ? "Echipa Global Health"
+        : "The Global Health Team";
+  const orPaste = cc === "cz"
+    ? "Nebo vložte tuto adresu URL do svého prohlížeče:"
+    : cc === "sp"
+      ? "O pegue esta URL en su navegador:"
+      : cc === "rm"
+        ? "Sau inserați acest URL în browser:"
+        : "Or paste this URL into your browser:";
+
+  const html = `<div style="background-color:#f4f1ea;padding:20px;font-family:Georgia,'Times New Roman',serif;color:#333;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="background-color:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);max-width:100%;">
+    <tr>
+      <td align="center" style="background-color:#2d4f3d;padding:30px;">
+        <img src="${escapeHtml(logoSrc)}" alt="Global Health" width="180" style="display:block;max-width:180px;height:auto;" />
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding:25px 20px;border-bottom:1px solid #eeeeee;">
+        <h2 style="color:#2d4f3d;letter-spacing:2px;margin:0;font-size:22px;font-weight:700;">
+          ${escapeHtml(opts.invoiceNumber)} &nbsp;·&nbsp; ${escapeHtml(heading.toUpperCase())}
+        </h2>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:40px;line-height:1.6;font-size:15px;">
+        <p style="margin:0 0 16px;">${dear} ${escapeHtml(opts.fullName)},</p>
+        <p style="margin:0 0 20px;">${body}</p>
+        <p style="margin:28px 0;text-align:center;">
+          <a href="${escapeHtml(opts.invoiceUrl)}"
+             style="background-color:#2d4f3d;color:#ffffff;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:16px;display:inline-block;">
+            ${cta}
+          </a>
+        </p>
+        <p style="font-size:13px;color:#737373;">
+          ${orPaste}<br/>
+          <a href="${escapeHtml(opts.invoiceUrl)}" style="color:#2d4f3d;">${escapeHtml(opts.invoiceUrl)}</a>
+        </p>
+        <p style="font-size:12px;color:#737373;margin-top:16px;">Invoice reference: ${escapeHtml(opts.invoiceNumber)}</p>
+        <p style="font-size:14px;color:#444;margin:24px 0 0;">
+          ${contactLead}
+          <a href="mailto:${SUPPORT_EMAIL}" style="color:#2d4f3d;">${SUPPORT_EMAIL}</a>
+          ${whatsappLead}
+          <a href="${WHATSAPP_URL}" style="color:#2d4f3d;font-weight:bold;">${WHATSAPP_DISPLAY}</a>.
+        </p>
+        <p style="margin:28px 0 0;font-size:14px;">
+          ${signOff}<br/>
+          <b>${team}</b>
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" style="padding:24px;background-color:#fafaf8;border-top:1px solid #eeeeee;font-size:12px;color:#777;">
+        <a href="https://www.myglobalhealth.online" style="color:#2d4f3d;text-decoration:none;font-weight:bold;">www.myglobalhealth.online</a>
+      </td>
+    </tr>
+  </table>
+</div>`;
 
   return sendEmail({
     to: opts.to,
     subject,
-    text: `Hi ${opts.fullName},\n\n${body}\n\n${opts.invoiceUrl}\n\n— Global Health`,
-    html: wrapHtml(
-      `${heading} · ${escapeHtml(opts.invoiceNumber)}`,
-      `<p>Hi ${escapeHtml(opts.fullName)},</p>
-       <p>${body}</p>
-       <p style="margin:24px 0;">
-         <a href="${escapeHtml(opts.invoiceUrl)}"
-            style="background:#1B4D3E;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;">
-           ${cta}
-         </a>
-       </p>
-       <p style="font-size:13px;color:#737373;">
-         Or paste this URL into your browser:<br/>
-         <a href="${escapeHtml(opts.invoiceUrl)}">${escapeHtml(opts.invoiceUrl)}</a>
-       </p>
-       <p style="font-size:12px;color:#737373;">Invoice reference: ${escapeHtml(opts.invoiceNumber)}</p>`,
-    ),
+    text: `${dear} ${opts.fullName},\n\n${body}\n\n${opts.invoiceUrl}\n\nInvoice reference: ${opts.invoiceNumber}\n\n${signOff}\n${team}`,
+    html,
     attachments: opts.pdfBuffer
       ? [
           {
