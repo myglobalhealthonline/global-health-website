@@ -381,16 +381,52 @@ async function generateAppointmentDocumentUnlocked(input: {
     throw new Error("PDF generation produced an empty file");
   }
 
-  const slugBase =
+  // Sequential number for this doc type on this appointment (01, 02 …).
+  // EXAMS_PRESCRIPTION reuses the already-computed prescriptionNumber.
+  // All other types count existing rows of the same type (excluding the
+  // current edit target so a redraw keeps the same number).
+  let docSeqNumber: number;
+  if (upload) {
+    docSeqNumber = upload.prescriptionNumber;
+  } else {
+    const existingCount = await prisma.generatedDocument.count({
+      where: {
+        appointmentId: appt.id,
+        documentType: input.documentType,
+        ...(input.editDocumentId ? { id: { not: input.editDocumentId } } : {}),
+      },
+    });
+    docSeqNumber = existingCount + 1;
+  }
+  const seqSuffix = String(docSeqNumber).padStart(2, "0");
+
+  // Patient name slug (preserves case, safe for filenames and HTTP headers).
+  const patientSlug = appt.fullName
+    .replace(/[^a-zA-Z0-9\s]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .slice(0, 40) || "patient";
+
+  // Human-readable doc type label for the filename.
+  const DOC_TYPE_FILENAME: Record<string, string> = {
+    EXAMS_PRESCRIPTION: "exam-prescription",
+    PRESCRIPTION: "medicine-prescription",
+    ABSENCE_CERTIFICATE: "absence-certificate",
+    OTHER: "document",
+    CUSTOM_CERTIFICATE: "certificate",
+  };
+  const certNameForFile =
+    input.documentType === "CUSTOM_CERTIFICATE"
+      ? (input.fields?.certificateName ?? "").trim()
+      : "";
+  const docTypeLabel =
     input.documentType === "OTHER" && customLabel
-      ? customLabel
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, "")
-          .slice(0, 40) || "document"
-      : input.documentType.toLowerCase().replace(/_/g, "-");
-  const numberSuffix = upload ? `-${upload.prescriptionNumber}` : "";
-  const fileName = `${slugBase}${numberSuffix}-${appt.id.slice(0, 8)}.pdf`;
+      ? customLabel.replace(/[^a-zA-Z0-9\s]/g, "").trim().replace(/\s+/g, "-").slice(0, 40) || "document"
+      : input.documentType === "CUSTOM_CERTIFICATE" && certNameForFile
+        ? certNameForFile.replace(/[^a-zA-Z0-9\s]/g, "").trim().replace(/\s+/g, "-").slice(0, 40)
+        : (DOC_TYPE_FILENAME[input.documentType] ?? input.documentType.toLowerCase().replace(/_/g, "-"));
+
+  const fileName = `${patientSlug}-${docTypeLabel}-${seqSuffix}.pdf`;
   const storageKey = `generated/${input.doctorId}/${appt.id}/${randomUUID()}/${fileName}`;
 
   await putObject(storageKey, pdfBuffer, "application/pdf");
