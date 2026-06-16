@@ -663,8 +663,8 @@ export async function runPostPaymentReminderCron() {
   const now = new Date();
   const oneHourWindowStart = new Date(now.getTime() + 55 * MS_MINUTE);
   const oneHourWindowEnd = new Date(now.getTime() + 65 * MS_MINUTE);
-  const fiveMinWindowStart = new Date(now.getTime() + 4 * MS_MINUTE);
-  const fiveMinWindowEnd = new Date(now.getTime() + 6 * MS_MINUTE);
+  const fiveMinWindowStart = new Date(now.getTime() + 0 * MS_MINUTE);
+  const fiveMinWindowEnd = new Date(now.getTime() + 8 * MS_MINUTE);
 
   const paidOrders = await prisma.order.findMany({
     where: {
