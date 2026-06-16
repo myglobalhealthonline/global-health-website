@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
-import { Eye, Pencil, QrCode, Send, Trash2 } from "lucide-react";
+import { Check, Eye, Pencil, QrCode, Send, Trash2 } from "lucide-react";
 import {
   doctorApiErrorMessage,
   parseDoctorApiJson,
@@ -24,8 +24,13 @@ function canEmailDocument(documentType: string): boolean {
   return (
     documentType === "EXAMS_PRESCRIPTION" ||
     documentType === "ABSENCE_CERTIFICATE" ||
-    documentType === "OTHER"
+    documentType === "OTHER" ||
+    documentType === "CUSTOM_CERTIFICATE"
   );
+}
+
+function canFinalize(documentType: string): boolean {
+  return documentType === "PRESCRIPTION";
 }
 
 /** Exams prescriptions carry a per-prescription patient-upload link + QR. */
@@ -197,6 +202,22 @@ export function DocumentsReviewSendPanel({
     });
   }
 
+  function finalizeDocument(id: string) {
+    setError(null);
+    setSuccess(null);
+    startTransition(async () => {
+      const res = await fetch(`/api/doctor/documents/generated/${id}/finalize`, { method: "POST" });
+      const json = await parseDoctorApiJson<{ ok?: boolean; message?: string }>(res);
+      if (!res.ok || !json?.ok) {
+        setError(doctorApiErrorMessage(res, json, "Could not finalize the prescription."));
+        return;
+      }
+      setSuccess("Medicine prescription finalized and moved to history.");
+      await load();
+      onDocumentsChange?.();
+    });
+  }
+
   return (
     <HistorySection
       id="doctor-review-send-panel"
@@ -294,6 +315,17 @@ export function DocumentsReviewSendPanel({
                           className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
                         >
                           <Send className="size-3" aria-hidden /> Send
+                        </button>
+                      ) : null}
+                      {canFinalize(row.documentType) ? (
+                        <button
+                          type="button"
+                          disabled={pending}
+                          onClick={() => finalizeDocument(row.id)}
+                          className="gh-btn gh-btn-soft px-2 py-1 text-[11px]"
+                          title="Mark as finalized — moves to history"
+                        >
+                          <Check className="size-3" aria-hidden /> Finalize
                         </button>
                       ) : null}
                       {hasUploadLink(row.documentType) ? (

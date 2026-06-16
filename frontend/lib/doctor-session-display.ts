@@ -3,6 +3,7 @@ export const GENERATED_DOCUMENT_TYPE_LABELS: Record<string, string> = {
   ABSENCE_CERTIFICATE: "Absence certificate",
   PRESCRIPTION: "Medicine prescription",
   OTHER: "Other",
+  CUSTOM_CERTIFICATE: "Custom certificate",
 };
 
 export function formatOrderRef(appointmentId: string, orderRef?: string | null): string {

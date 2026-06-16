@@ -5,6 +5,7 @@ export const TEMPLATE_FILE_BY_TYPE: Record<GeneratedDocumentType, string> = {
   ABSENCE_CERTIFICATE: "absence-certificate.html",
   PRESCRIPTION: "prescription.html",
   OTHER: "other.html",
+  CUSTOM_CERTIFICATE: "custom-certificate.html",
 };
 
 /** Join newline-separated exams with ", " and append optional notes (spec). */
@@ -46,12 +47,13 @@ export function absenceDefaultReason(dataProtectionLawName?: string | null): str
 
 export const ABSENCE_DEFAULT_REASON = absenceDefaultReason();
 
-/** Document types that appear in Review & Send queue until emailed to the patient. */
+/** Document types that appear in Review & Send queue until emailed/finalized. */
 export const REVIEW_QUEUE_TYPES: GeneratedDocumentType[] = [
   "EXAMS_PRESCRIPTION",
   "ABSENCE_CERTIFICATE",
   "PRESCRIPTION",
   "OTHER",
+  "CUSTOM_CERTIFICATE",
 ];
 
 /** Subset of review queue documents that can be emailed to the patient. */
@@ -59,6 +61,7 @@ export const EMAIL_SEND_QUEUE_TYPES: GeneratedDocumentType[] = [
   "EXAMS_PRESCRIPTION",
   "ABSENCE_CERTIFICATE",
   "OTHER",
+  "CUSTOM_CERTIFICATE",
 ];
 
 export function isInReviewQueue(documentType: GeneratedDocumentType, sentToPatient: boolean): boolean {
@@ -69,11 +72,10 @@ export function isEmailSendable(documentType: GeneratedDocumentType): boolean {
   return EMAIL_SEND_QUEUE_TYPES.includes(documentType);
 }
 
-/** Sent documents (or medicine prescriptions) appear in appointment/patient history lists. */
+/** Documents appear in history once sent or (for PRESCRIPTION) once finalized. */
 export function isVisibleInHistory(
   documentType: GeneratedDocumentType,
   sentToPatient: boolean,
 ): boolean {
-  if (documentType === "PRESCRIPTION") return true;
   return sentToPatient === true;
 }

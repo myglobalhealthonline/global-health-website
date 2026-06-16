@@ -23,6 +23,7 @@ import {
   getServicePeakConfig,
 } from "../modules/pricing/peak-pricing.service.js";
 import { startPrePaymentFlow } from "../modules/automation/pre-payment-flow.service.js";
+import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
 
 /**
  * Orders + checkout.

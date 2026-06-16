@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{certificateName}}</title>
+  {{{styles}}}
+  <style>
+    .cert-verify-block {
+      margin-top: 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .cert-qr {
+      width: 120px;
+      height: 120px;
+      display: block;
+    }
+    .cert-id-label {
+      margin: 0;
+      font-size: 9pt;
+      color: #4a4a4a;
+    }
+    .cert-instructions {
+      margin: 0;
+      font-size: 8pt;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand">Global Health</div>
+    <h1>{{certificateName}}</h1>
+  </div>
+  <div class="patient-card">
+    <p class="field-row"><span class="field-label">Patient name:</span> <span class="field-value">{{patientName}}</span></p>
+    {{#if patientIdLine}}<p class="field-row"><span class="field-label">ID:</span> <span class="field-value">{{patientIdLine}}</span></p>{{/if}}
+    {{#if birthDate}}<p class="field-row"><span class="field-label">Date of birth:</span> <span class="field-value">{{birthDate}}</span></p>{{/if}}
+    {{#if address}}<p class="field-row"><span class="field-label">Address:</span> <span class="field-value">{{address}}</span></p>{{/if}}
+    <p class="field-row"><span class="field-label">Consultation date:</span> <span class="field-value">{{consultationDate}}</span></p>
+  </div>
+  <div class="patient-body-gap" aria-hidden="true"></div>
+  <p class="section-title">Certificate details</p>
+  {{#if singleDate}}<p class="field-row"><span class="field-label">Date:</span> <span class="field-value">{{singleDate}}</span></p>{{/if}}
+  {{#if startDate}}<p class="field-row"><span class="field-label">From:</span> <span class="field-value">{{startDate}}</span></p>{{/if}}
+  {{#if endDate}}<p class="field-row"><span class="field-label">To:</span> <span class="field-value">{{endDate}}</span></p>{{/if}}
+  {{#if reason}}<p class="field-row"><span class="field-label">Reason:</span> <span class="field-value">{{reason}}</span></p>{{/if}}
+  <div class="signature-block">
+    <p class="field-row"><span class="field-label">Doctor:</span> <span class="field-value">{{doctorName}}</span></p>
+    <p class="field-row"><span class="field-label">Registration:</span> <span class="field-value">{{registrationNumber}}</span></p>
+    <p class="signature-line"><span class="sig-label">Signature:</span><span class="sig-name">{{doctorName}}</span></p>
+  </div>
+  {{#if qrDataUrl}}
+  <div class="cert-verify-block">
+    <img src="{{qrDataUrl}}" class="cert-qr" alt="Certificate verification QR" />
+    <p class="cert-id-label">Certificate ID: <strong>{{certificateId}}</strong></p>
+    <p class="cert-instructions">Scan to verify this certificate at globalhealth.com</p>
+  </div>
+  {{/if}}
+  <div class="footer-gap" aria-hidden="true"></div>
+</body>
+</html>

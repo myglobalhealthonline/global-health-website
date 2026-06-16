@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { type DocumentContext } from "./document-context-banner";
 
-export type ConsultationDocTabId = "overview" | "exams" | "medicine" | "absence";
+export type ConsultationDocTabId = "overview" | "exams" | "medicine" | "absence" | "certificate";
 
 export type EditDraftDoc = {
   id: string;
@@ -37,6 +37,8 @@ export function tabForGeneratedDocumentType(documentType: string): ConsultationD
       return "medicine";
     case "ABSENCE_CERTIFICATE":
       return "absence";
+    case "CUSTOM_CERTIFICATE":
+      return "certificate";
     default:
       return "overview";
   }
@@ -54,6 +56,12 @@ function applyEditDraftToForm(
     setStartDate: (v: string) => void;
     setEndDate: (v: string) => void;
     setAbsenceReason: (v: string) => void;
+    setCertName: (v: string) => void;
+    setCertDateMode: (v: "single" | "range") => void;
+    setCertSingleDate: (v: string) => void;
+    setCertStartDate: (v: string) => void;
+    setCertEndDate: (v: string) => void;
+    setCertReason: (v: string) => void;
   },
 ) {
   const meta = draft.metadata ?? {};
@@ -81,6 +89,16 @@ function applyEditDraftToForm(
     setters.setStartDate(meta.startDate ?? "");
     setters.setEndDate(meta.endDate ?? "");
     setters.setAbsenceReason(meta.reason ?? "");
+    return;
+  }
+
+  if (draft.documentType === "CUSTOM_CERTIFICATE") {
+    setters.setCertName(meta.certificateName ?? "");
+    setters.setCertDateMode(meta.singleDate ? "single" : "range");
+    setters.setCertSingleDate(meta.singleDate ?? "");
+    setters.setCertStartDate(meta.startDate ?? "");
+    setters.setCertEndDate(meta.endDate ?? "");
+    setters.setCertReason(meta.reason ?? "");
   }
 }
 
@@ -89,6 +107,7 @@ const TABS: { id: ConsultationDocTabId; label: string }[] = [
   { id: "exams", label: "Exams" },
   { id: "medicine", label: "Prescription" },
   { id: "absence", label: "Absence" },
+  { id: "certificate", label: "Certificate" },
 ];
 
 export function ConsultationDocumentsModal({
@@ -123,6 +142,12 @@ export function ConsultationDocumentsModal({
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [absenceReason, setAbsenceReason] = useState("");
+  const [certName, setCertName] = useState("");
+  const [certDateMode, setCertDateMode] = useState<"single" | "range">("single");
+  const [certSingleDate, setCertSingleDate] = useState("");
+  const [certStartDate, setCertStartDate] = useState("");
+  const [certEndDate, setCertEndDate] = useState("");
+  const [certReason, setCertReason] = useState("");
 
   const loadContext = useCallback(async () => {
     setContextLoading(true);
@@ -166,6 +191,12 @@ export function ConsultationDocumentsModal({
         setStartDate,
         setEndDate,
         setAbsenceReason,
+        setCertName,
+        setCertDateMode,
+        setCertSingleDate,
+        setCertStartDate,
+        setCertEndDate,
+        setCertReason,
       });
     } else {
       setEditingDocId(null);
@@ -175,6 +206,12 @@ export function ConsultationDocumentsModal({
       setStartDate("");
       setEndDate("");
       setAbsenceReason("");
+      setCertName("");
+      setCertDateMode("single");
+      setCertSingleDate("");
+      setCertStartDate("");
+      setCertEndDate("");
+      setCertReason("");
       if (initialTab) setTab(initialTab);
     }
     const prev = document.body.style.overflow;
@@ -257,7 +294,7 @@ export function ConsultationDocumentsModal({
             ? "PDF opened in a new tab — review below when ready."
             : "Document generated — open Review & send below.",
         );
-      } else if (type === "EXAMS_PRESCRIPTION" || type === "ABSENCE_CERTIFICATE") {
+      } else if (type === "EXAMS_PRESCRIPTION" || type === "ABSENCE_CERTIFICATE" || type === "CUSTOM_CERTIFICATE") {
         setSuccess(
           pdfUrl
             ? "PDF opened in a new tab — review and send below when ready."
@@ -304,6 +341,30 @@ export function ConsultationDocumentsModal({
       endDate: endDate.trim(),
       ...(absenceReason.trim() ? { reason: absenceReason.trim() } : {}),
     });
+  }
+
+  function generateCertificate() {
+    if (!certName.trim()) {
+      setError("Certificate name is required.");
+      return;
+    }
+    if (certDateMode === "single" && !certSingleDate.trim()) {
+      setError("Date is required.");
+      return;
+    }
+    if (certDateMode === "range" && !certEndDate.trim()) {
+      setError("End date is required.");
+      return;
+    }
+    const fields: Record<string, string> = { certificateName: certName.trim() };
+    if (certDateMode === "single" && certSingleDate.trim()) {
+      fields.singleDate = certSingleDate.trim();
+    } else {
+      if (certStartDate.trim()) fields.startDate = certStartDate.trim();
+      if (certEndDate.trim()) fields.endDate = certEndDate.trim();
+    }
+    if (certReason.trim()) fields.reason = certReason.trim();
+    void generate("CUSTOM_CERTIFICATE", fields);
   }
 
   const modal = (
@@ -391,7 +452,7 @@ export function ConsultationDocumentsModal({
             </div>
           ) : null}
 
-          {(tab === "exams" || tab === "medicine" || tab === "absence") && !contextLoading ? (
+          {(tab === "exams" || tab === "medicine" || tab === "absence" || tab === "certificate") && !contextLoading ? (
             <p className="mb-3 text-xs text-[var(--color-text-muted)]">
               Patient and prescriber details from records are applied to the PDF automatically
               — enter clinical content only.
@@ -422,6 +483,12 @@ export function ConsultationDocumentsModal({
                   title="Absence certificate"
                   description="Unfit for work dates — send from Documents tab after review."
                   onClick={() => setTab("absence")}
+                />
+                <OverviewCard
+                  icon={FileText}
+                  title="Custom certificate"
+                  description="Fully customisable certificate with QR authentication — set title, date, and reason."
+                  onClick={() => setTab("certificate")}
                 />
               </div>
               <p className="text-xs text-[var(--color-text-muted)]">
@@ -562,6 +629,109 @@ export function ConsultationDocumentsModal({
                 type="button"
                 disabled={pending}
                 onClick={generateAbsence}
+                className="gh-btn gh-btn-primary text-sm"
+              >
+                {pending ? (
+                  <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                ) : (
+                  <FileText className="size-3.5" aria-hidden />
+                )}
+                Generate PDF
+              </button>
+            </div>
+          ) : null}
+
+          {tab === "certificate" ? (
+            <div className="space-y-3">
+              <p className="text-xs text-[var(--color-text-muted)]">
+                A QR code for authenticity verification is embedded automatically. Scan it to
+                confirm the certificate ID matches the one on the document.
+              </p>
+              <label className="block text-sm font-semibold">
+                Certificate name <span className="text-red-600">*</span>
+              </label>
+              <input
+                type="text"
+                value={certName}
+                onChange={(e) => setCertName(e.target.value)}
+                placeholder="e.g. Medical Certificate, Fitness Certificate"
+                className="gh-input w-full"
+              />
+              <label className="block text-sm font-semibold">Date type</label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setCertDateMode("single")}
+                  className={`rounded-md px-3 py-1.5 text-xs font-semibold ${
+                    certDateMode === "single"
+                      ? "bg-[var(--color-brand-primary)] text-white"
+                      : "border border-[var(--color-border)] text-[var(--color-text-muted)]"
+                  }`}
+                >
+                  Single day
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCertDateMode("range")}
+                  className={`rounded-md px-3 py-1.5 text-xs font-semibold ${
+                    certDateMode === "range"
+                      ? "bg-[var(--color-brand-primary)] text-white"
+                      : "border border-[var(--color-border)] text-[var(--color-text-muted)]"
+                  }`}
+                >
+                  Date range
+                </button>
+              </div>
+              {certDateMode === "single" ? (
+                <div>
+                  <label className="text-sm font-semibold">
+                    Date <span className="text-red-600">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={certSingleDate}
+                    onChange={(e) => setCertSingleDate(e.target.value)}
+                    className="gh-input mt-1 w-full"
+                    required
+                  />
+                </div>
+              ) : (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <div>
+                    <label className="text-sm font-semibold">From</label>
+                    <input
+                      type="date"
+                      value={certStartDate}
+                      onChange={(e) => setCertStartDate(e.target.value)}
+                      className="gh-input mt-1 w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-semibold">
+                      To <span className="text-red-600">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      value={certEndDate}
+                      onChange={(e) => setCertEndDate(e.target.value)}
+                      className="gh-input mt-1 w-full"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+              <label className="block text-sm font-semibold">Reason (optional)</label>
+              <textarea
+                value={certReason}
+                onChange={(e) => setCertReason(e.target.value)}
+                rows={2}
+                placeholder="Purpose or reason for the certificate"
+                className="gh-input w-full"
+              />
+              <button
+                type="button"
+                disabled={pending}
+                onClick={generateCertificate}
                 className="gh-btn gh-btn-primary text-sm"
               >
                 {pending ? (

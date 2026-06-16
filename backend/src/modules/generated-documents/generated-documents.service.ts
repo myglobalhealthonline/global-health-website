@@ -1,6 +1,7 @@
 import type { GeneratedDocument, GeneratedDocumentType } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import { prisma } from "../../db/prisma.js";
+import { env } from "../../config/env.js";
 import {
   putObject,
   deleteObject,
@@ -33,6 +34,7 @@ const TITLES: Record<GeneratedDocumentType, string> = {
   EXAMS_PRESCRIPTION: "Examinations prescription",
   PRESCRIPTION: "Medical prescription",
   OTHER: "Document",
+  CUSTOM_CERTIFICATE: "Medical certificate",
 };
 
 /** Serialize generate per appointment + type (LibreOffice can take 10–15s). */
@@ -128,6 +130,14 @@ function buildTemplateContext(input: {
     base.body = f.body?.trim() ?? "";
   }
 
+  if (input.documentType === "CUSTOM_CERTIFICATE") {
+    base.certificateName = f.certificateName?.trim() || "Medical Certificate";
+    base.singleDate = f.singleDate ? formatDateDdMmYyyy(f.singleDate) : "";
+    base.startDate = f.startDate ? formatDateDdMmYyyy(f.startDate) : "";
+    base.endDate = f.endDate ? formatDateDdMmYyyy(f.endDate) : "";
+    base.reason = f.reason?.trim() ?? "";
+  }
+
   return base;
 }
 
@@ -192,6 +202,36 @@ async function buildExamUploadArtifacts(input: {
   const [pngBuffer, dataUrl] = await Promise.all([qrPngBuffer(link), qrDataUrl(link)]);
 
   return { documentId, prescriptionNumber, link, token, expiresAt, pngBuffer, dataUrl };
+}
+
+type CertificateArtifacts = {
+  certificateId: string;
+  verifyUrl: string;
+  pngBuffer: Buffer;
+  dataUrl: string;
+};
+
+async function buildCertificateArtifacts(
+  documentType: GeneratedDocumentType,
+  editDocumentId?: string,
+): Promise<CertificateArtifacts | null> {
+  if (documentType !== "CUSTOM_CERTIFICATE") return null;
+
+  let certificateId: string;
+  if (editDocumentId) {
+    const existing = await prisma.generatedDocument.findFirst({
+      where: { id: editDocumentId, documentType: "CUSTOM_CERTIFICATE", sentToPatient: false },
+      select: { certificateId: true },
+    });
+    certificateId = existing?.certificateId ?? randomUUID();
+  } else {
+    certificateId = randomUUID();
+  }
+
+  const base = (env.PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+  const verifyUrl = `${base}/verify/certificate/${certificateId}`;
+  const [pngBuffer, dataUrl] = await Promise.all([qrPngBuffer(verifyUrl), qrDataUrl(verifyUrl)]);
+  return { certificateId, verifyUrl, pngBuffer, dataUrl };
 }
 
 export async function generateAppointmentDocument(input: {
@@ -322,6 +362,13 @@ async function generateAppointmentDocumentUnlocked(input: {
     templateContext.prescriptionNumber = upload.prescriptionNumber;
   }
 
+  // Custom certificates embed a QR that links to a public verification page.
+  const cert = await buildCertificateArtifacts(input.documentType, input.editDocumentId);
+  if (cert) {
+    templateContext.certificateId = cert.certificateId;
+    templateContext.qrDataUrl = cert.dataUrl;
+  }
+
   let pdfBuffer =
     (await renderDocxTemplatePdf(appt.countryCode, input.documentType, templateData, qr)) ??
     null;
@@ -373,6 +420,7 @@ async function generateAppointmentDocumentUnlocked(input: {
                 uploadTokenExpiresAt: upload.expiresAt,
               }
             : {}),
+          ...(cert ? { certificateId: cert.certificateId } : {}),
         },
       });
       if (previousStorageKey !== storageKey) {
@@ -407,6 +455,7 @@ async function generateAppointmentDocumentUnlocked(input: {
             uploadTokenExpiresAt: upload.expiresAt,
           }
         : {}),
+      ...(cert ? { certificateId: cert.certificateId } : {}),
     },
   });
 
@@ -533,13 +582,17 @@ export async function sendGeneratedDocuments(
       errors.push(`${doc.fileName}: PDF file missing from storage`);
       continue;
     }
-    const meta = (doc.metadata ?? null) as { customLabel?: unknown } | null;
+    const meta = (doc.metadata ?? null) as { customLabel?: unknown; certificateName?: unknown } | null;
     const customLabel =
       typeof meta?.customLabel === "string" ? meta.customLabel.trim() : "";
+    const certName =
+      typeof meta?.certificateName === "string" ? meta.certificateName.trim() : "";
     const documentLabel =
       doc.documentType === "OTHER" && customLabel
         ? customLabel
-        : TITLES[doc.documentType];
+        : doc.documentType === "CUSTOM_CERTIFICATE" && certName
+          ? certName
+          : TITLES[doc.documentType];
     const result = await sendGeneratedDocumentEmail({
       to: appt.email,
       patientName: appt.fullName,
@@ -666,5 +719,27 @@ export async function deleteGeneratedDocument(doctorId: string, documentId: stri
   }
   await deleteObject(doc.storageKey).catch(() => {});
   await prisma.generatedDocument.delete({ where: { id: doc.id } });
+  return { ok: true as const };
+}
+
+/**
+ * Mark a medicine prescription as finalized (moves it from Review & send queue
+ * to history). No email is sent — prescriptions are for records / national portal.
+ */
+export async function finalizeGeneratedDocument(doctorId: string, documentId: string) {
+  const doc = await prisma.generatedDocument.findFirst({
+    where: { id: documentId, doctorId },
+  });
+  if (!doc) return { ok: false as const, status: 404, message: "Document not found" };
+  if (doc.documentType !== "PRESCRIPTION") {
+    return { ok: false as const, status: 400, message: "Only medicine prescriptions can be finalized this way" };
+  }
+  if (doc.sentToPatient) {
+    return { ok: false as const, status: 409, message: "Document is already finalized" };
+  }
+  await prisma.generatedDocument.update({
+    where: { id: doc.id },
+    data: { sentToPatient: true },
+  });
   return { ok: true as const };
 }

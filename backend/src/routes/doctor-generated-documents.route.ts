@@ -6,6 +6,7 @@ import { errorResponse, okResponse } from "../utils/response.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   deleteGeneratedDocument,
+  finalizeGeneratedDocument,
   generateAppointmentDocument,
   getAppointmentDocumentContext,
   getGeneratedDocumentFile,
@@ -51,6 +52,22 @@ const generateSchema = z
         path: ["fields", "exams"],
       });
     }
+    if (data.type === GeneratedDocumentType.CUSTOM_CERTIFICATE) {
+      if (!data.fields?.certificateName?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "certificateName is required for custom certificates",
+          path: ["fields", "certificateName"],
+        });
+      }
+      if (!data.fields?.endDate?.trim() && !data.fields?.singleDate?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Provide singleDate or endDate for custom certificates",
+          path: ["fields", "singleDate"],
+        });
+      }
+    }
   });
 
 const sendSchema = z.object({
@@ -66,6 +83,7 @@ function mapDocRow(r: {
   metadata: unknown;
   prescriptionNumber?: number | null;
   uploadToken?: string | null;
+  certificateId?: string | null;
 }) {
   const metadata =
     r.metadata && typeof r.metadata === "object" && !Array.isArray(r.metadata)
@@ -80,6 +98,7 @@ function mapDocRow(r: {
     metadata,
     prescriptionNumber: r.prescriptionNumber ?? null,
     hasUploadLink: Boolean(r.uploadToken),
+    certificateId: r.certificateId ?? null,
   };
 }
 
@@ -159,6 +178,7 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
                 createdAt: row.createdAt.toISOString(),
                 prescriptionNumber: row.prescriptionNumber ?? null,
                 hasUploadLink: Boolean(row.uploadToken),
+                certificateId: row.certificateId ?? null,
               },
               pdfUrl,
               healthPortalUrl,
@@ -248,6 +268,27 @@ const doctorGeneratedDocumentsRoute: FastifyPluginAsync = async (app) => {
         }
         app.log.error(error);
         return reply.status(500).send(errorResponse("Could not send upload link"));
+      }
+    },
+  );
+
+  app.post<{ Params: { id: string } }>(
+    "/api/doctor/documents/generated/:id/finalize",
+    async (request, reply) => {
+      const auth = await verifyDoctorAccess(request);
+      if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
+      try {
+        const result = await finalizeGeneratedDocument(auth.doctorId, request.params.id);
+        if (!result.ok) {
+          return reply.status(result.status).send(errorResponse(result.message));
+        }
+        return okResponse({ finalized: true });
+      } catch (error) {
+        if (error instanceof DatabaseUnavailableError) {
+          return reply.status(503).send(errorResponse(error.message));
+        }
+        app.log.error(error);
+        return reply.status(500).send(errorResponse("Could not finalize document"));
       }
     },
   );
