@@ -60,13 +60,7 @@ const generateSchema = z
           path: ["fields", "certificateName"],
         });
       }
-      if (!data.fields?.endDate?.trim() && !data.fields?.singleDate?.trim()) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Provide singleDate or endDate for custom certificates",
-          path: ["fields", "singleDate"],
-        });
-      }
+      // Date is optional — certificates may be issued without a date ("no date" mode).
     }
   });
 

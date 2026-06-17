@@ -143,7 +143,7 @@ export function ConsultationDocumentsModal({
   const [endDate, setEndDate] = useState("");
   const [absenceReason, setAbsenceReason] = useState("");
   const [certName, setCertName] = useState("");
-  const [certDateMode, setCertDateMode] = useState<"single" | "range">("single");
+  const [certDateMode, setCertDateMode] = useState<"single" | "range" | "none">("single");
   const [certSingleDate, setCertSingleDate] = useState("");
   const [certStartDate, setCertStartDate] = useState("");
   const [certEndDate, setCertEndDate] = useState("");
@@ -359,7 +359,7 @@ export function ConsultationDocumentsModal({
     const fields: Record<string, string> = { certificateName: certName.trim() };
     if (certDateMode === "single" && certSingleDate.trim()) {
       fields.singleDate = certSingleDate.trim();
-    } else {
+    } else if (certDateMode === "range") {
       if (certStartDate.trim()) fields.startDate = certStartDate.trim();
       if (certEndDate.trim()) fields.endDate = certEndDate.trim();
     }
@@ -681,11 +681,22 @@ export function ConsultationDocumentsModal({
                 >
                   Date range
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setCertDateMode("none")}
+                  className={`rounded-md px-3 py-1.5 text-xs font-semibold ${
+                    certDateMode === "none"
+                      ? "bg-[var(--color-brand-primary)] text-white"
+                      : "border border-[var(--color-border)] text-[var(--color-text-muted)]"
+                  }`}
+                >
+                  No date
+                </button>
               </div>
               {certDateMode === "single" ? (
                 <div>
                   <label className="text-sm font-semibold">
-                    Date <span className="text-red-600">*</span>
+                    From <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="date"
@@ -695,7 +706,7 @@ export function ConsultationDocumentsModal({
                     required
                   />
                 </div>
-              ) : (
+              ) : certDateMode === "range" ? (
                 <div className="grid gap-2 sm:grid-cols-2">
                   <div>
                     <label className="text-sm font-semibold">From</label>
@@ -719,7 +730,7 @@ export function ConsultationDocumentsModal({
                     />
                   </div>
                 </div>
-              )}
+              ) : null}
               <label className="block text-sm font-semibold">Reason (optional)</label>
               <textarea
                 value={certReason}
