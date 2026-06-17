@@ -20,6 +20,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     taxId: "Tax ID",
     consultationDate: "Consultation date",
     invoiceRef: "Invoice reference",
+    legalFooter: "Healthcare services exempt from VAT under the Value-Added Tax Consolidation Act 2010, Section 61 and Schedule 1, Paragraph 23.\n\nTerms\nGlobal Health is a trading name registered under Global Guest. All transactions conducted under the Global Health brand are legally processed under the business registration and tax details of Global Guest.",
   },
   cz: {
     invoice: "Faktura",
@@ -37,6 +38,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     taxId: "DIČ",
     consultationDate: "Datum konzultace",
     invoiceRef: "Číslo faktury",
+    legalFooter: "Osvobození od DPH\nZdravotní služby jsou osvobozeny od DPH v souladu se zákonem č. 235/2004 Sb., o dani z přidané hodnoty, § 58 (osvobození zdravotních služeb).\n\nPodmínky\nGlobal Health je obchodní značka společnosti Global Guest. Veškeré transakce prováděné pod značkou Global Health jsou právně zpracovávány v rámci obchodní registrace a daňových údajů společnosti Global Guest.",
   },
   sp: {
     invoice: "Factura",
@@ -54,6 +56,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     taxId: "NIF",
     consultationDate: "Fecha de consulta",
     invoiceRef: "Referencia de factura",
+    legalFooter: "Los servicios sanitarios están exentos de IVA de conformidad con la Ley de Consolidación del Impuesto sobre el Valor Añadido de 2010, Sección 61 y Anexo 1, Párrafo 23. El IVA no es aplicable, ya que el proveedor aún no está registrado a efectos de IVA en Irlanda, de acuerdo con la Ley de Consolidación del IVA de 2010.\n\nTérminos\nGlobal Health es un nombre comercial registrado bajo Global Guest. Todas las transacciones realizadas bajo la marca Global Health se procesan legalmente conforme al registro comercial y a los datos fiscales de Global Guest.",
   },
   rm: {
     invoice: "Factură",
@@ -71,6 +74,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     taxId: "CUI",
     consultationDate: "Data consultației",
     invoiceRef: "Referință factură",
+    legalFooter: "Serviciile de sănătate sunt scutite de TVA conform Legii consolidării TVA din 2010, Secțiunea 61 și Anexa 1, Paragraful 23. TVA-ul nu se aplică, deoarece furnizorul nu este încă înregistrat pentru TVA în Irlanda, conform Legii consolidării TVA din 2010.\n\nTermeni\nGlobal Health este un nume comercial înregistrat sub Global Guest. Toate tranzacțiile efectuate sub marca Global Health sunt procesate legal în baza înregistrării comerciale și a detaliilor fiscale ale Global Guest.",
   },
 };
 
@@ -260,8 +264,18 @@ ${doctorBlock}
 </p>
 
 <!-- Footer -->
-<div style="margin-top:48px;padding-top:16px;border-top:1px solid #e5e5e3;font-size:11px;color:#888888;text-align:center;">
-  Global Health · Medicine Anytime Anywhere
+<div style="margin-top:48px;padding-top:16px;border-top:1px solid #e5e5e3;">
+  ${
+    L.legalFooter
+      ? `<div style="font-size:10px;color:#666666;line-height:1.6;margin-bottom:16px;">${
+          L.legalFooter
+            .split("\n\n")
+            .map((para) => `<p style="margin:0 0 8px;">${esc(para).replace(/\n/g, "<br>")}</p>`)
+            .join("")
+        }</div>`
+      : ""
+  }
+  <div style="font-size:11px;color:#888888;text-align:center;">Global Health · Medicine Anytime Anywhere</div>
 </div>
 
 </body>
