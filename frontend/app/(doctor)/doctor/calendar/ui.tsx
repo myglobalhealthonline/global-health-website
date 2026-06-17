@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CalendarOff, Lock, Unlock } from "lucide-react";
+import { CalendarOff, CalendarPlus, Lock, Plus, Unlock } from "lucide-react";
 import { Btn } from "@/components/portal-atoms";
 import {
   bulkBlockSlots,
+  createAvailabilityWindow,
   fetchAvailabilityRangeClient,
   toggleSlotStatus,
 } from "@/lib/api/doctor-availability-client";
@@ -22,9 +23,29 @@ import {
   monthGridRangeIso,
   todayKey,
   zonedDayRangeUtc,
+  zonedLocalDateTimeToUtc,
 } from "@/components/calendar/calendar-utils";
 
 const TZ_STORAGE_KEY = "gh-doctor-cal-tz";
+const SLOT_DURATIONS = [15, 20, 30, 45, 60];
+
+function timeToMinutes(t: string): number {
+  const [h, m] = t.split(":").map(Number);
+  return (h || 0) * 60 + (m || 0);
+}
+
+/** Distinct weekdays (0=Sun..6=Sat) that occur in [fromDate, toDate]. */
+function weekdaysInRange(fromDate: string, toDate: string): number[] {
+  const set = new Set<number>();
+  const start = Date.parse(`${fromDate}T00:00:00Z`);
+  const end = Date.parse(`${toDate}T00:00:00Z`);
+  if (Number.isNaN(start) || Number.isNaN(end)) return [];
+  for (let t = start; t <= end; t += 86400000) {
+    set.add(new Date(t).getUTCDay());
+    if (set.size === 7) break;
+  }
+  return [...set];
+}
 
 function slotsToItems(slots: DoctorTimeSlotView[]): CalendarItem[] {
   return slots.map((s) => ({
@@ -77,10 +98,18 @@ export function DoctorCalendarUI({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Range time-off form
+  // Range time-off form (datetime-local — date + time)
   const [offFrom, setOffFrom] = useState("");
   const [offTo, setOffTo] = useState("");
   const [offReason, setOffReason] = useState("");
+
+  // Add-availability form (date range + daily time window + slot length).
+  // Authored in the clinic timezone, like all availability windows.
+  const [addFromDate, setAddFromDate] = useState("");
+  const [addToDate, setAddToDate] = useState("");
+  const [addStart, setAddStart] = useState("09:00");
+  const [addEnd, setAddEnd] = useState("17:00");
+  const [addDuration, setAddDuration] = useState(30);
 
   // Restore persisted display timezone (must be one the doctor is allowed).
   useEffect(() => {
@@ -184,19 +213,24 @@ export function DoctorCalendarUI({
 
   async function onRangeTimeOff(action: "BLOCK" | "UNBLOCK") {
     if (!offFrom || !offTo) {
-      setError("Pick a start and end date for the time off.");
+      setError("Pick a start and end date/time for the time off.");
       return;
     }
-    if (offFrom > offTo) {
-      setError("End date must be on or after start date.");
+    if (offFrom >= offTo) {
+      setError("End must be after start.");
+      return;
+    }
+    const fromUtc = zonedLocalDateTimeToUtc(offFrom, tz);
+    const toUtc = zonedLocalDateTimeToUtc(offTo, tz);
+    if (!fromUtc || !toUtc) {
+      setError("Invalid date/time.");
       return;
     }
     setError(null);
     setBusy(true);
-    const { fromIso, toIso } = zonedDayRangeUtc(offFrom, offTo, tz);
     const res = await bulkBlockSlots({
-      fromUtc: fromIso,
-      toUtc: toIso,
+      fromUtc,
+      toUtc,
       action,
       reason: action === "BLOCK" ? offReason.trim() || "Time off" : undefined,
     });
@@ -207,6 +241,58 @@ export function DoctorCalendarUI({
       setOffReason("");
     } else {
       setError(res.message);
+    }
+    setBusy(false);
+  }
+
+  // Add availability over a date range with a daily time window. Creates a
+  // bounded recurring window per weekday in the range (effectiveFrom/Until =
+  // the dates) so the public site generates bookable slots sized to whatever
+  // each consultation type needs.
+  async function onAddAvailability() {
+    if (!addFromDate || !addToDate) {
+      setError("Pick a start and end date.");
+      return;
+    }
+    if (addFromDate > addToDate) {
+      setError("End date must be on or after start date.");
+      return;
+    }
+    const startMin = timeToMinutes(addStart);
+    const endMin = timeToMinutes(addEnd);
+    if (endMin <= startMin) {
+      setError("End time must be after start time.");
+      return;
+    }
+    const weekdays = weekdaysInRange(addFromDate, addToDate);
+    if (weekdays.length === 0) {
+      setError("Invalid date range.");
+      return;
+    }
+    setError(null);
+    setBusy(true);
+    const effectiveFrom = `${addFromDate}T00:00:00.000Z`;
+    const effectiveUntil = `${addToDate}T23:59:59.999Z`;
+    let failed: string | null = null;
+    for (const weekday of weekdays) {
+      const res = await createAvailabilityWindow({
+        weekday,
+        startMinute: startMin,
+        endMinute: endMin,
+        slotDurationMinutes: addDuration,
+        effectiveFrom,
+        effectiveUntil,
+      });
+      if (!res.ok) {
+        failed = res.message;
+        break;
+      }
+    }
+    if (failed) setError(failed);
+    else {
+      await refetchMonth();
+      setAddFromDate("");
+      setAddToDate("");
     }
     setBusy(false);
   }
@@ -313,67 +399,152 @@ export function DoctorCalendarUI({
         </div>
       </div>
 
-      {/* Date-range time off (vacation / leave) */}
-      <div className="gh-card p-4">
-        <div className="flex items-center gap-2">
-          <CalendarOff className="size-4 text-[var(--color-text-muted)]" aria-hidden />
-          <h3 className="text-sm font-bold text-[var(--color-text-primary)]">Time off</h3>
-        </div>
-        <p className="mt-1 text-xs text-[var(--color-text-muted)]">
-          Block every open slot across a date range — for holidays or leave.
-          Booked appointments are never touched. Times in {tz}.
-        </p>
-        <div className="mt-3 flex flex-wrap items-end gap-3">
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="gh-field-label">From</span>
-            <input
-              type="date"
-              value={offFrom}
-              onChange={(e) => setOffFrom(e.target.value)}
-              className="gh-input h-10"
-            />
-          </label>
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="gh-field-label">To</span>
-            <input
-              type="date"
-              value={offTo}
-              onChange={(e) => setOffTo(e.target.value)}
-              className="gh-input h-10"
-            />
-          </label>
-          <label className="flex min-w-[160px] flex-1 flex-col gap-1 text-sm">
-            <span className="gh-field-label">Reason (optional)</span>
-            <input
-              type="text"
-              value={offReason}
-              maxLength={200}
-              placeholder="Holiday"
-              onChange={(e) => setOffReason(e.target.value)}
-              className="gh-input h-10"
-            />
-          </label>
-          <div className="flex gap-2">
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* Add availability over a date + time range */}
+        <div className="gh-card p-4">
+          <div className="flex items-center gap-2">
+            <CalendarPlus className="size-4 text-[var(--color-text-muted)]" aria-hidden />
+            <h3 className="text-sm font-bold text-[var(--color-text-primary)]">
+              Add availability
+            </h3>
+          </div>
+          <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+            You&apos;re available on these dates, during these hours. Slots are
+            generated and shown on the website, sized to each consultation&apos;s
+            length. Times in {clinicTimezone} (clinic time).
+          </p>
+          <div className="mt-3 grid gap-3">
+            <div className="grid grid-cols-2 gap-2">
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="gh-field-label">From date</span>
+                <input
+                  type="date"
+                  value={addFromDate}
+                  onChange={(e) => setAddFromDate(e.target.value)}
+                  className="gh-input h-10"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="gh-field-label">To date</span>
+                <input
+                  type="date"
+                  value={addToDate}
+                  onChange={(e) => setAddToDate(e.target.value)}
+                  className="gh-input h-10"
+                />
+              </label>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="gh-field-label">From time</span>
+                <input
+                  type="time"
+                  value={addStart}
+                  onChange={(e) => setAddStart(e.target.value)}
+                  className="gh-input h-10"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="gh-field-label">To time</span>
+                <input
+                  type="time"
+                  value={addEnd}
+                  onChange={(e) => setAddEnd(e.target.value)}
+                  className="gh-input h-10"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="gh-field-label">Slot length</span>
+                <select
+                  className="gh-select h-10"
+                  value={addDuration}
+                  onChange={(e) => setAddDuration(Number(e.target.value))}
+                >
+                  {SLOT_DURATIONS.map((d) => (
+                    <option key={d} value={d}>
+                      {d} min
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
             <Btn
               type="button"
               size="sm"
               variant="primary"
               disabled={busy}
-              onClick={() => onRangeTimeOff("BLOCK")}
-              iconLeft={<Lock className="size-3.5" />}
+              onClick={onAddAvailability}
+              iconLeft={<Plus className="size-3.5" />}
             >
-              Block range
+              Add availability
             </Btn>
-            <Btn
-              type="button"
-              size="sm"
-              variant="ghost"
-              disabled={busy}
-              onClick={() => onRangeTimeOff("UNBLOCK")}
-              iconLeft={<Unlock className="size-3.5" />}
-            >
-              Re-open
-            </Btn>
+          </div>
+        </div>
+
+        {/* Date + time range time off (vacation / leave) */}
+        <div className="gh-card p-4">
+          <div className="flex items-center gap-2">
+            <CalendarOff className="size-4 text-[var(--color-text-muted)]" aria-hidden />
+            <h3 className="text-sm font-bold text-[var(--color-text-primary)]">Time off</h3>
+          </div>
+          <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+            Block open slots across a date and time range — for holidays or
+            leave. Booked appointments are never touched. Times in {tz}.
+          </p>
+          <div className="mt-3 grid gap-3">
+            <div className="grid grid-cols-2 gap-2">
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="gh-field-label">From</span>
+                <input
+                  type="datetime-local"
+                  value={offFrom}
+                  onChange={(e) => setOffFrom(e.target.value)}
+                  className="gh-input h-10"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="gh-field-label">To</span>
+                <input
+                  type="datetime-local"
+                  value={offTo}
+                  onChange={(e) => setOffTo(e.target.value)}
+                  className="gh-input h-10"
+                />
+              </label>
+            </div>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="gh-field-label">Reason (optional)</span>
+              <input
+                type="text"
+                value={offReason}
+                maxLength={200}
+                placeholder="Holiday"
+                onChange={(e) => setOffReason(e.target.value)}
+                className="gh-input h-10"
+              />
+            </label>
+            <div className="flex gap-2">
+              <Btn
+                type="button"
+                size="sm"
+                variant="primary"
+                disabled={busy}
+                onClick={() => onRangeTimeOff("BLOCK")}
+                iconLeft={<Lock className="size-3.5" />}
+              >
+                Block range
+              </Btn>
+              <Btn
+                type="button"
+                size="sm"
+                variant="ghost"
+                disabled={busy}
+                onClick={() => onRangeTimeOff("UNBLOCK")}
+                iconLeft={<Unlock className="size-3.5" />}
+              >
+                Re-open
+              </Btn>
+            </div>
           </div>
         </div>
       </div>

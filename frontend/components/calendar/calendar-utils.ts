@@ -160,6 +160,21 @@ function tzOffsetMinutes(date: Date, tz: string): number {
   return Math.round((asUtc - date.getTime()) / 60000);
 }
 
+/** Convert a wall-clock `datetime-local` value ("YYYY-MM-DDTHH:mm") read in
+ *  `tz` into a UTC ISO instant. Empty/invalid input returns "". */
+export function zonedLocalDateTimeToUtc(local: string, tz: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(local);
+  if (!m) return "";
+  const y = Number(m[1]);
+  const mo = Number(m[2]);
+  const d = Number(m[3]);
+  const h = Number(m[4]);
+  const mi = Number(m[5]);
+  const guess = Date.UTC(y, mo - 1, d, h, mi, 0);
+  const offset = tzOffsetMinutes(new Date(guess), tz);
+  return new Date(guess - offset * 60000).toISOString();
+}
+
 /** UTC instant of local midnight on `dayKey` in `tz`. */
 function zonedDayStartUtc(dayKey: string, tz: string): Date {
   const [y, m, d] = dayKey.split("-").map(Number);
