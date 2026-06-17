@@ -3,11 +3,13 @@ import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
+  bulkSetSlotBlockInRange,
   createAdminAvailability,
   deleteAdminAvailability,
   ensureSlotsForRange,
   listAdminAvailability,
   resolveDoctorTimeZone,
+  resolveDoctorTimeZones,
 } from "../modules/doctor-availability/doctor-availability.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
@@ -28,9 +30,28 @@ import { verifyDoctorAccess } from "../utils/doctor-auth.js";
  * detail page (existing flow).
  */
 
+const MAX_RANGE_MS = 120 * 24 * 60 * 60 * 1000;
+
 const querySchema = z.object({
   days: z.coerce.number().int().min(1).max(60).default(14),
+  // Optional explicit UTC window for the calendar (a visible month ± padding).
+  // When both are present they win over `days`.
+  from: z.string().datetime().optional(),
+  to: z.string().datetime().optional(),
 });
+
+const bulkBlockBodySchema = z
+  .object({
+    fromUtc: z.string().datetime(),
+    toUtc: z.string().datetime(),
+    action: z.enum(["BLOCK", "UNBLOCK"]),
+    reason: z.string().max(200).optional(),
+  })
+  .strict()
+  .refine((d) => new Date(d.toUtc) > new Date(d.fromUtc), {
+    message: "toUtc must be after fromUtc",
+    path: ["toUtc"],
+  });
 
 const createBodySchema = z
   .object({
@@ -71,18 +92,30 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
       }
 
       try {
-        const now = new Date();
-        const fromUtc = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const toUtc = new Date(
-          fromUtc.getTime() + query.data.days * 24 * 60 * 60 * 1000,
-        );
+        // Calendar passes an explicit from/to window (a visible month);
+        // the legacy availability page passes `days` (next-N-days list).
+        let fromUtc: Date;
+        let toUtc: Date;
+        if (query.data.from && query.data.to) {
+          fromUtc = new Date(query.data.from);
+          toUtc = new Date(query.data.to);
+          if (toUtc.getTime() - fromUtc.getTime() > MAX_RANGE_MS) {
+            toUtc = new Date(fromUtc.getTime() + MAX_RANGE_MS);
+          }
+        } else {
+          const now = new Date();
+          fromUtc = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          toUtc = new Date(
+            fromUtc.getTime() + query.data.days * 24 * 60 * 60 * 1000,
+          );
+        }
 
         // Ensure DoctorTimeSlot rows are materialised so doctors can see
         // (and block) upcoming slots even before any patient hits the
         // public availability endpoint.
         await ensureSlotsForRange(auth.doctorId, fromUtc, toUtc);
 
-        const [windows, slots, clinicTimezone] = await Promise.all([
+        const [windows, slots, clinicTimezone, availableTimezones] = await Promise.all([
           listAdminAvailability(auth.doctorId),
           prisma.doctorTimeSlot.findMany({
             where: {
@@ -95,9 +128,11 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
               startAt: true,
               endAt: true,
               status: true,
+              blockReason: true,
             },
           }),
           resolveDoctorTimeZone(auth.doctorId),
+          resolveDoctorTimeZones(auth.doctorId),
         ]);
 
         return okResponse({
@@ -107,8 +142,10 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
             startAt: s.startAt.toISOString(),
             endAt: s.endAt.toISOString(),
             status: s.status,
+            blockReason: s.blockReason,
           })),
           clinicTimezone,
+          availableTimezones,
         });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
@@ -252,6 +289,41 @@ const doctorSelfAvailabilityRoute: FastifyPluginAsync = async (app) => {
       }
     },
   );
+
+  // ── Bulk block / unblock a UTC range (whole-day / vacation time-off) ──
+  // Blocks every OPEN slot in [fromUtc, toUtc) (materialising any missing
+  // recurring slots first) or re-opens BLOCKED ones. BOOKED/HELD untouched.
+  app.post("/api/doctor/time-slots/bulk-block", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) {
+      return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+    const body = bulkBlockBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid time-off request", body.error.flatten()));
+    }
+
+    try {
+      const fromUtc = new Date(body.data.fromUtc);
+      const toUtc = new Date(body.data.toUtc);
+      const result = await bulkSetSlotBlockInRange(
+        auth.doctorId,
+        fromUtc,
+        toUtc,
+        body.data.action,
+        body.data.reason ?? null,
+      );
+      return okResponse({ updated: result.updated, action: body.data.action });
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not update time-off"));
+    }
+  });
 };
 
 export default doctorSelfAvailabilityRoute;

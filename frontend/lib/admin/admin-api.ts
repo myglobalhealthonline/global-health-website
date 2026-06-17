@@ -323,6 +323,49 @@ export const fetchAdminAppointmentById = cache(async (id: string) => {
   return adminRequest<AdminAppointmentDetailPayload>(`/api/admin/appointments/${id}`);
 });
 
+export type AdminCalendarSlot = {
+  id: string;
+  doctorId: string;
+  doctorName: string;
+  startAt: string;
+  endAt: string;
+  status: string;
+  blockReason: string | null;
+};
+
+export type AdminCalendarConsultation = {
+  id: string;
+  doctorId: string | null;
+  doctorName: string | null;
+  patientName: string;
+  consultationType: string;
+  status: string;
+  scheduledAt: string;
+  meetingUrl: string | null;
+  countryCode: string;
+};
+
+export type AdminCalendarPayload = {
+  slots: AdminCalendarSlot[];
+  consultations: AdminCalendarConsultation[];
+};
+
+/** Cross-doctor calendar aggregate (read-only). `from`/`to` are ISO UTC
+ *  instants; the optional filters narrow to one doctor / type / country. */
+export async function fetchAdminCalendar(query: {
+  from: string;
+  to: string;
+  doctorId?: string;
+  consultationType?: string;
+  countryCode?: string;
+}) {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (value !== undefined && value !== "") params.set(key, value);
+  }
+  return adminRequest<AdminCalendarPayload>(`/api/admin/calendar?${params.toString()}`);
+}
+
 /** Body for POST /api/admin/appointments — admin-initiated manual
  *  appointment creation. Server upserts the patient User, generates a
  *  unique temp password, and emails both a Stripe payment link AND a

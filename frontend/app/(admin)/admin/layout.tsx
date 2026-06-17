@@ -49,6 +49,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   const sections = [
     // Global
     { href: "/admin", label: "Dashboard" },
+    { href: "/admin/calendar", label: "Calendar" },
     { href: "/admin/countries", label: "Countries" },
     { href: "/admin/specialties", label: "Categories" },
     { href: "/admin/doctors", label: "Doctors" },

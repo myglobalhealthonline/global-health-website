@@ -19,10 +19,28 @@ async function cookieHeader(): Promise<string> {
 export async function fetchDoctorAvailability(
   days = 14,
 ): Promise<Result<DoctorAvailabilityResponse>> {
+  return fetchDoctorAvailabilityRaw(`days=${days}`);
+}
+
+/**
+ * Calendar variant — fetch availability for an explicit UTC window (the
+ * visible month ± padding) rather than the next-N-days list.
+ */
+export async function fetchDoctorAvailabilityRange(
+  fromIso: string,
+  toIso: string,
+): Promise<Result<DoctorAvailabilityResponse>> {
+  const qs = `from=${encodeURIComponent(fromIso)}&to=${encodeURIComponent(toIso)}`;
+  return fetchDoctorAvailabilityRaw(qs);
+}
+
+async function fetchDoctorAvailabilityRaw(
+  qs: string,
+): Promise<Result<DoctorAvailabilityResponse>> {
   const backend = getBackendOrigin();
   if (!backend) return { ok: false, message: "Backend not configured" };
   try {
-    const res = await fetch(`${backend}/api/doctor/availability?days=${days}`, {
+    const res = await fetch(`${backend}/api/doctor/availability?${qs}`, {
       headers: { cookie: await cookieHeader() },
       cache: "no-store",
     });

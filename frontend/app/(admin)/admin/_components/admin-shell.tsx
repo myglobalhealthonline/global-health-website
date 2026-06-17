@@ -4,6 +4,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  CalendarRange,
   ChevronDown,
   ChevronRight,
   FileText,
@@ -44,6 +45,7 @@ type SetCountryPreferenceAction = (slug: string) => Promise<void>;
 // per the reference (admin-portal-reference Shell.jsx).
 const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin": LayoutDashboard,
+  "/admin/calendar": CalendarRange,
   "/admin/countries": Globe2,
   "/admin/specialties": Tags,
   "/admin/doctors": UserRound,
@@ -61,6 +63,7 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
 // (dim when "All countries" is selected).
 const GLOBAL_HREFS = new Set([
   "/admin",
+  "/admin/calendar",
   "/admin/countries",
   "/admin/doctors",
   "/admin/blog",
@@ -107,6 +110,7 @@ const HREF_TO_FEATURE_KEY: Record<string, string> = {
 
 const ORDER: Record<string, number> = {
   "/admin": 0,
+  "/admin/calendar": 0.5,
   "/admin/countries": 1,
   "/admin/specialties": 2,
   "/admin/doctors": 3,

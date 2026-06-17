@@ -28,6 +28,9 @@ export type AccountAppointment = {
   /** IANA tz the patient was in at booking time. Used to render
    *  scheduledAt in their local time on the bookings list + emails. */
   patientTimezone?: string | null;
+  /** Assigned doctor's full name (null until a doctor is assigned). Shown on
+   *  the patient calendar so they know who they're meeting. */
+  doctorName?: string | null;
 };
 
 type ApiResult<T> =

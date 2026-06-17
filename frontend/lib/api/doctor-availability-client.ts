@@ -1,6 +1,9 @@
 "use client";
 
-import type { AvailabilityWindow } from "./doctor-availability-types";
+import type {
+  AvailabilityWindow,
+  DoctorAvailabilityResponse,
+} from "./doctor-availability-types";
 
 type Result<T> =
   | { ok: true; data: T; message?: string }
@@ -45,6 +48,21 @@ export async function deleteAvailabilityWindow(
   return { ok: true, data: null };
 }
 
+/** Client-side fetch of the availability window for a calendar month
+ *  (same-origin proxy → backend). Used when the doctor navigates months. */
+export async function fetchAvailabilityRangeClient(
+  fromIso: string,
+  toIso: string,
+): Promise<Result<DoctorAvailabilityResponse>> {
+  const qs = `from=${encodeURIComponent(fromIso)}&to=${encodeURIComponent(toIso)}`;
+  const res = await fetch(`/api/doctor/availability?${qs}`, { cache: "no-store" });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json?.ok || !json.data) {
+    return { ok: false, message: json?.message ?? "Could not load availability" };
+  }
+  return { ok: true, data: json.data };
+}
+
 export async function toggleSlotStatus(
   slotId: string,
   status: "OPEN" | "BLOCKED",
@@ -57,6 +75,29 @@ export async function toggleSlotStatus(
   const json = await res.json().catch(() => ({}));
   if (!res.ok || !json?.ok) {
     return { ok: false, message: json?.message ?? "Could not update slot" };
+  }
+  return { ok: true, data: json.data };
+}
+
+/**
+ * Block (or re-open) every OPEN/BLOCKED slot in a UTC range — the doctor
+ * calendar's "block whole day / time-off" control. `fromUtc`/`toUtc` are ISO
+ * instants; the backend materialises missing recurring slots before blocking.
+ */
+export async function bulkBlockSlots(input: {
+  fromUtc: string;
+  toUtc: string;
+  action: "BLOCK" | "UNBLOCK";
+  reason?: string;
+}): Promise<Result<{ updated: number; action: "BLOCK" | "UNBLOCK" }>> {
+  const res = await fetch("/api/doctor/time-slots/bulk-block", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok || !json?.ok) {
+    return { ok: false, message: json?.message ?? "Could not update time-off" };
   }
   return { ok: true, data: json.data };
 }

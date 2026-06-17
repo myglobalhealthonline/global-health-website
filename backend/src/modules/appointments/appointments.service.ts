@@ -273,6 +273,9 @@ export type AccountAppointmentListItem = {
   /** IANA tz captured at booking time. Used by the patient portal to
    *  render scheduledAt in the patient's own zone. */
   patientTimezone: string | null;
+  /** Assigned doctor's full name (null when no doctor is assigned yet).
+   *  Surfaced so the patient calendar can show who they're meeting. */
+  doctorName: string | null;
 };
 
 export type AccountAppointmentDetail = {
@@ -543,6 +546,7 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
         ...ADMIN_APPT_SELECT,
         patientTimezone: true,
         clinic: { select: { name: true, city: true } },
+        doctor: { select: { fullName: true } },
       },
       orderBy: { createdAt: "desc" },
       take: 200,
@@ -569,6 +573,7 @@ export async function listAppointmentsForUser(userId: string): Promise<AccountAp
       clinicCity: row.clinic?.city ?? null,
       locationAddress: row.locationAddress,
       patientTimezone: row.patientTimezone ?? null,
+      doctorName: row.doctor?.fullName ?? null,
     }));
   } catch (error) {
     throw normalizeDbError(error, "Appointments are temporarily unavailable");

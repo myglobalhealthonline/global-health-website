@@ -55,6 +55,87 @@ export async function resolveDoctorTimeZone(doctorId: string): Promise<string> {
 }
 
 /**
+ * Every clinic timezone a doctor can be viewed in: their primary country's
+ * `bookingSetting.timezone` first, followed by each additional country they're
+ * rostered in (`Doctor.additionalCountries`). Deduped + validated. Drives the
+ * doctor calendar's display-only timezone switcher — availability is still
+ * authored in the primary clinic zone (`resolveDoctorTimeZone`); this just
+ * lists the zones a multi-country doctor may want to *read* their day in.
+ */
+export async function resolveDoctorTimeZones(doctorId: string): Promise<string[]> {
+  const row = await prisma.doctor.findUnique({
+    where: { id: doctorId },
+    select: {
+      country: { select: { bookingSetting: { select: { timezone: true } } } },
+      additionalCountries: {
+        select: {
+          country: { select: { bookingSetting: { select: { timezone: true } } } },
+        },
+      },
+    },
+  });
+  const zones: string[] = [];
+  const push = (tz: string | null | undefined) => {
+    if (tz && isValidTimeZone(tz) && !zones.includes(tz)) zones.push(tz);
+  };
+  push(row?.country?.bookingSetting?.timezone);
+  for (const ac of row?.additionalCountries ?? []) {
+    push(ac.country?.bookingSetting?.timezone);
+  }
+  if (zones.length === 0) zones.push("UTC");
+  return zones;
+}
+
+/**
+ * Bulk block (or unblock) a doctor's slots across a UTC range — the
+ * "whole day / vacation" control on the doctor calendar.
+ *
+ * BLOCK: materialises slots for the range first (so a day with no concrete
+ * rows yet still gets blocked), then flips every OPEN slot in [fromUtc, toUtc)
+ * to BLOCKED with the given reason. BOOKED/HELD are left untouched — those are
+ * real appointments/cart holds and must be cancelled through their own flow.
+ *
+ * UNBLOCK: flips BLOCKED slots in the range back to OPEN and clears the reason.
+ * Returns the number of slots changed.
+ */
+export async function bulkSetSlotBlockInRange(
+  doctorId: string,
+  fromUtc: Date,
+  toUtc: Date,
+  action: "BLOCK" | "UNBLOCK",
+  reason?: string | null,
+): Promise<{ updated: number }> {
+  if (toUtc <= fromUtc) return { updated: 0 };
+  try {
+    if (action === "BLOCK") {
+      // Make sure recurring-window slots exist before we block the span,
+      // otherwise a not-yet-materialised day would silently stay bookable.
+      await ensureSlotsForRange(doctorId, fromUtc, toUtc);
+      const result = await prisma.doctorTimeSlot.updateMany({
+        where: {
+          doctorId,
+          status: "OPEN",
+          startAt: { gte: fromUtc, lt: toUtc },
+        },
+        data: { status: "BLOCKED", blockReason: reason ?? null },
+      });
+      return { updated: result.count };
+    }
+    const result = await prisma.doctorTimeSlot.updateMany({
+      where: {
+        doctorId,
+        status: "BLOCKED",
+        startAt: { gte: fromUtc, lt: toUtc },
+      },
+      data: { status: "OPEN", blockReason: null },
+    });
+    return { updated: result.count };
+  } catch (error) {
+    throw normalizeDbError(error, "Could not update availability");
+  }
+}
+
+/**
  * Ensure DoctorTimeSlot rows exist for every window across the requested
  * date range. Idempotent — uses `createMany({ skipDuplicates: true })`
  * against the `@@unique([doctorId, startAt])` index. Doctors with no

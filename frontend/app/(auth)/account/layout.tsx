@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   CalendarDays,
+  CalendarRange,
   CreditCard,
   FileText,
   History,
@@ -55,6 +56,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   const sections: PortalNavItem[] = [
     { href: "/account", label: a.nav.overview, icon: <LayoutDashboard className="size-4" aria-hidden /> },
     { href: "/account/bookings", label: a.nav.myBookings, icon: <CalendarDays className="size-4" aria-hidden />, badge: unreadMessages },
+    { href: "/account/calendar", label: "Calendar", icon: <CalendarRange className="size-4" aria-hidden /> },
     { href: "/account/orders", label: a.nav.myOrders, icon: <ShoppingBag className="size-4" aria-hidden /> },
     { href: "/account/prescriptions", label: a.nav.prescriptions, icon: <PillBottle className="size-4" aria-hidden /> },
     { href: "/account/medical-files", label: "Medical files", icon: <FileText className="size-4" aria-hidden /> },
