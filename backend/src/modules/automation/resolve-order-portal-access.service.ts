@@ -53,6 +53,7 @@ export async function resolveOrderPortalAccess(
     select: {
       userId: true,
       email: true,
+      fullName: true,
       patientPortalSetPasswordUrl: true,
       patientPortalTempPassword: true,
       patientPortalTempPasswordSent: true,
@@ -62,13 +63,40 @@ export async function resolveOrderPortalAccess(
 
   const signInUrl = absoluteSiteUrl("/login");
   let setPasswordUrl = order.patientPortalSetPasswordUrl?.trim() || null;
+  let userId = order.userId;
 
-  if (!setPasswordUrl && order.userId) {
-    setPasswordUrl = await issueSetPasswordUrl(order.userId);
+  if (!setPasswordUrl && userId) {
+    setPasswordUrl = await issueSetPasswordUrl(userId);
     await prisma.order.update({
       where: { id: orderId },
       data: { patientPortalSetPasswordUrl: setPasswordUrl },
     });
+  }
+
+  // Website guest orders (no userId, no persisted setPasswordUrl): provision
+  // a portal account so the patient gets a real set-password link in both
+  // the appointment confirmation email and WhatsApp message.
+  if (!setPasswordUrl && !userId && order.email) {
+    try {
+      const { upsertPatientProfileByEmail } = await import(
+        "../patient-profile/patient-profile.service.js"
+      );
+      const { userId: newUserId } = await upsertPatientProfileByEmail({
+        email: order.email,
+        fullName: order.fullName ?? undefined,
+      });
+      if (newUserId) {
+        userId = newUserId;
+        await prisma.order.update({ where: { id: orderId }, data: { userId: newUserId } });
+        setPasswordUrl = await issueSetPasswordUrl(newUserId);
+        await prisma.order.update({
+          where: { id: orderId },
+          data: { patientPortalSetPasswordUrl: setPasswordUrl },
+        });
+      }
+    } catch {
+      // Provisioning failure is non-fatal — fall back to sign-in URL only.
+    }
   }
 
   const includeTemp =
