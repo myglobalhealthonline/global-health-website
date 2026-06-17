@@ -83,6 +83,11 @@ export function DoctorBioRichTextField({ initialValue }: Props) {
   function exec(command: string, value?: string) {
     if (!editorRef.current) return;
     editorRef.current.focus();
+    // Emit inline `style` spans (allowed by the bio sanitizer) instead of
+    // legacy `<font>` tags. Without this, foreColor/fontName/fontSize produce
+    // `<font>` elements that the server-side sanitizer strips — so colour,
+    // font, and size formatting silently disappear when the bio is saved.
+    execRichText("styleWithCSS", "true");
     execRichText(command, value);
     syncToHidden();
     updateActiveFormats();

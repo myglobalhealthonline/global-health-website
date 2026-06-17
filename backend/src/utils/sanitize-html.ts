@@ -164,7 +164,13 @@ export function sanitizeRichHtml(input: string | null | undefined): string | nul
         "font-weight": [/^\d{3}$/, /^(normal|bold|bolder|lighter)$/],
         "font-style": [/^(normal|italic|oblique)$/],
         "font-family": [/^[a-zA-Z0-9\s,'"-]+$/],
-        "font-size": [/^\d{1,3}(px|pt|em|rem|%)$/],
+        // Numeric units plus the CSS keyword sizes that contentEditable's
+        // execCommand("fontSize", 1-7) emits (e.g. "large", "x-large"). Without
+        // the keyword branch the rich-text size control is stripped on save.
+        "font-size": [
+          /^\d{1,3}(px|pt|em|rem|%)$/,
+          /^(xx-small|x-small|small|medium|large|x-large|xx-large|xxx-large|smaller|larger)$/,
+        ],
         "text-align": [/^(left|right|center|justify|start|end)$/],
         "text-decoration": [/^(none|underline|line-through|overline)$/],
         "line-height": [/^[\d.]+$/, /^[\d.]+(px|em|rem|%)$/],
