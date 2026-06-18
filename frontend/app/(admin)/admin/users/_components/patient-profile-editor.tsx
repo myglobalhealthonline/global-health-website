@@ -6,6 +6,7 @@ import {
   patchAdminPatientProfile,
 } from "@/lib/admin/admin-api";
 import { AdminCard } from "../../_components/atoms";
+import { PhoneField } from "@/components/forms/phone-field";
 
 /**
  * Admin-side editor for the PatientProfile row. Rendered on the user
@@ -111,12 +112,10 @@ export function PatientProfileEditor({
               defaultValue={profile?.fullName ?? ""}
               maxLength={200}
             />
-            <Field
-              label="Phone"
-              name="phone"
-              defaultValue={profile?.phone ?? ""}
-              maxLength={40}
-            />
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">Phone</span>
+              <PhoneField name="phone" defaultValue={profile?.phone ?? ""} />
+            </label>
             <Field
               label="Date of birth (ISO)"
               name="dateOfBirth"

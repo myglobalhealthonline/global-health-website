@@ -7,6 +7,7 @@ import {
   submitBrazilConsent,
 } from "@/lib/api/public-api";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
+import { PhoneField } from "@/components/forms/phone-field";
 
 function BrazilConsentForm() {
   const searchParams = useSearchParams();
@@ -127,7 +128,7 @@ function BrazilConsentForm() {
           </label>
           <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--color-text-primary)]">
             Telefone
-            <input name="phone" defaultValue={prefill.phone} className="gh-input" />
+            <PhoneField name="phone" defaultValue={prefill.phone} defaultDial="55" />
           </label>
           <label className="flex flex-col gap-1.5 text-sm font-medium text-[var(--color-text-primary)]">
             Farmácia

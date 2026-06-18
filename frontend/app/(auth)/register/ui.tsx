@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { registerUser } from "@/lib/api/auth-api";
+import { PhoneField } from "@/components/forms/phone-field";
 
 type RegisterI18n = {
   title: string;
@@ -142,14 +143,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
         <label htmlFor="register-phone" className="gh-field-label">
           {i18n.phoneLabel} <span className="text-[var(--color-text-muted)]">{i18n.phoneOptional}</span>
         </label>
-        <input
-          id="register-phone"
-          name="phone"
-          type="tel"
-          className="gh-input"
-          placeholder={i18n.phonePlaceholder}
-          autoComplete="tel"
-        />
+        <PhoneField id="register-phone" name="phone" placeholder={i18n.phonePlaceholder} />
       </div>
 
       <div className="grid gap-2">

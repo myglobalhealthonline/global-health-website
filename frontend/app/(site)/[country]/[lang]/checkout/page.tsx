@@ -18,6 +18,8 @@ import { useCart } from "@/components/cart/CartContext";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { startCheckout } from "@/lib/api/cart-client";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
+import { PhoneField } from "@/components/forms/phone-field";
+import { dialCodeForCountrySlug } from "@/lib/phone/dial-codes";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import type { CartItem } from "@/lib/api/cart-types";
@@ -210,13 +212,16 @@ export default function CheckoutPage() {
                   autoComplete="email"
                   defaultValue={defaults.email}
                 />
-                <Field
-                  name="phone"
-                  label={t.phoneOptional}
-                  type="tel"
-                  autoComplete="tel"
-                  defaultValue={defaults.phone}
-                />
+                <label className="flex min-w-0 flex-col gap-1.5">
+                  <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-text-muted)" }}>
+                    {t.phoneOptional}
+                  </span>
+                  <PhoneField
+                    name="phone"
+                    defaultValue={defaults.phone}
+                    defaultDial={dialCodeForCountrySlug(countrySlug)}
+                  />
+                </label>
               </div>
 
               {consultationLines.length > 0 ? (

@@ -8,6 +8,8 @@ import type { CartItemKind } from "@/lib/api/cart-types";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { formatPriceRounded } from "@/lib/format-currency";
+import { PhoneField } from "@/components/forms/phone-field";
+import { dialCodeForCountrySlug } from "@/lib/phone/dial-codes";
 import type { CommonLocale } from "@/lib/i18n/types";
 
 type Slot = {
@@ -477,13 +479,14 @@ export function ConsultationBookingForm({
           </label>
           <label className="block">
             <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.phone}</span>
-            <input
-              type="tel"
+            <PhoneField
               name="phone"
-              maxLength={40}
-              placeholder="+353 89 …"
               defaultValue={defaults.phone}
-              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+              defaultDial={dialCodeForCountrySlug(params?.country)}
+              placeholder="871234567"
+              className="mt-1 flex gap-2"
+              selectClassName="block rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-2 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+              inputClassName="block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
           </label>
           <label className="block">

@@ -37,13 +37,8 @@ const EMAIL_RE = /^\S+@\S+\.\S+$/;
 // manual phone schema so client + server agree on what's valid.
 const PHONE_RE = /^\+[1-9]\d{0,3}[\s-]?\d{6,14}$/;
 
-/** Build the stored phone value from a dial code + national number. */
-export function combinePhone(dial: string, national: string): string {
-  const d = dial.trim().replace(/^\+/, "");
-  const n = national.trim();
-  if (!n) return "";
-  return `+${d} ${n}`;
-}
+// combinePhone moved to the shared phone module (reused by every phone field).
+export { combinePhone } from "@/lib/phone/dial-codes";
 
 export function validateManualBooking(
   values: ManualBookingValues,

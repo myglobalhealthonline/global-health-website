@@ -14,6 +14,7 @@ import { NationalityTab } from "./_components/nationality-tab";
 import { GdprPreferencesTab } from "./_components/gdpr-tab";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { readClientLocale } from "@/lib/i18n/get-client-locale";
+import { PhoneField } from "@/components/forms/phone-field";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 type Tab = "personal" | "insurance" | "verification" | "nationality" | "privacy";
@@ -170,13 +171,13 @@ export default function AccountProfilePage() {
 
               <label className="block">
                 <span className="gh-field-label">{a.profile.phoneLabel}</span>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                <PhoneField
+                  key={user?.id ?? "anon"}
+                  name="phone"
+                  defaultValue={phone}
+                  onChange={setPhone}
                   placeholder={a.profile.phonePlaceholder}
-                  maxLength={40}
-                  className="gh-input mt-1 min-w-0"
+                  className="mt-1 flex gap-2"
                 />
                 <p className="mt-1 text-xs text-[var(--color-text-muted)]">
                   {a.profile.phoneNote}
