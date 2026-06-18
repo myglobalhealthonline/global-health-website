@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { countryLegalCacheTag } from "@/lib/content/get-country-legal";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
+import { PhoneField } from "@/components/forms/phone-field";
 import {
   fetchAdminCountryById,
   fetchAdminCountryLegalProfile,
@@ -246,7 +247,10 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <Field label="Dispute body name" name="disputeBodyName" defaultValue={p?.disputeBodyName} />
             <Field label="Dispute email" name="disputeEmail" type="email" defaultValue={p?.disputeEmail} />
-            <Field label="Dispute phone" name="disputePhone" defaultValue={p?.disputePhone} />
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">Dispute phone</span>
+              <PhoneField name="disputePhone" defaultValue={p?.disputePhone ?? ""} />
+            </label>
           </div>
           <div className="mt-4 grid gap-4">
             <TextareaField

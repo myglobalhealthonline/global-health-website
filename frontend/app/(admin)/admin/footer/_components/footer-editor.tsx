@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { AdminCountryFooterDto } from "@/lib/admin/admin-api";
 import { AdminCard, Btn } from "../../_components/atoms";
+import { PhoneField } from "@/components/forms/phone-field";
 
 /**
  * Per-country footer editor.
@@ -244,13 +245,12 @@ export function FooterEditor({ initial, saveAction }: Props) {
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
               Phone
             </span>
-            <input
-              type="tel"
-              value={state.contactPhone}
-              onChange={(e) => update("contactPhone", e.target.value)}
-              maxLength={60}
-              placeholder="+353 1 555 0123"
-              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+            <PhoneField
+              defaultValue={state.contactPhone}
+              onChange={(v) => update("contactPhone", v)}
+              className="mt-1 flex gap-2"
+              selectClassName="block rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+              inputClassName="block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
           </label>
           <label className="block sm:col-span-2">

@@ -1,6 +1,7 @@
 import type { AdminCountryDto, AdminDoctorDto, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
 import { LanguageMultiSelect } from "./language-multiselect";
 import { DoctorTranslationTabs } from "./doctor-translation-tabs";
+import { PhoneField } from "@/components/forms/phone-field";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
@@ -200,11 +201,10 @@ export function DoctorFields({
 
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">WhatsApp number</span>
-          <input
+          <PhoneField
             name="whatsappNumber"
-            className="gh-input min-w-0 sm:max-w-sm"
             defaultValue={initial?.whatsappNumber ?? ""}
-            placeholder="e.g. +353871234567"
+            className="flex min-w-0 gap-2 sm:max-w-sm"
           />
         </label>
 

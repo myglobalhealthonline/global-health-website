@@ -4,6 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, Trash2 } from "lucide-react";
 import { DoctorBioRichTextField } from "@/app/(admin)/admin/doctors/_components/doctor-bio-rich-text-field";
+import { PhoneField } from "@/components/forms/phone-field";
 import {
   LanguagePicker,
   canonicalizeLanguages,
@@ -242,12 +243,10 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="flex flex-col gap-2">
                 <span className="gh-field-label">WhatsApp number</span>
-                <input
-                  className="gh-input min-w-0"
-                  value={whatsappNumber}
-                  onChange={(e) => setWhatsappNumber(e.target.value)}
-                  maxLength={32}
-                  placeholder="+353871234567"
+                <PhoneField
+                  defaultValue={whatsappNumber}
+                  onChange={setWhatsappNumber}
+                  className="flex min-w-0 gap-2"
                 />
                 <span className="text-xs text-[var(--color-text-muted)]">
                   Optional. Patients can message you directly when set.
