@@ -343,19 +343,19 @@ export function DoctorCard({
 
         {/* ── Actions ── */}
         {primaryLabel && bookHref ? (
-          /* Compact inline row — matches ServiceChoiceCard style on booking page */
-          <div className="mt-5 flex items-center justify-end gap-2">
+          /* Compact inline row — booking page: View + Continue pinned to bottom */
+          <div className="mt-auto flex items-center gap-2 pt-5">
             {profileHref ? (
               <Link
                 href={profileHref}
-                className="relative z-20 inline-flex h-9 items-center justify-center rounded-full border border-[color:var(--dc-line)] px-4 text-sm font-bold text-[color:var(--dc-ink)] transition-colors hover:border-[var(--color-brand-primary)]/40 hover:bg-[var(--color-brand-primary)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+                className="relative z-20 inline-flex h-9 flex-1 items-center justify-center rounded-full border border-[color:var(--dc-line)] px-4 text-sm font-bold text-[color:var(--dc-ink)] transition-colors hover:border-[var(--color-brand-primary)]/40 hover:bg-[var(--color-brand-primary)]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
               >
                 {ctaLabel}
               </Link>
             ) : null}
             <Link
               href={bookHref}
-              className="relative z-20 inline-flex h-9 items-center justify-center gap-1 rounded-full px-4 text-sm font-bold text-white transition-[filter] hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+              className="relative z-20 inline-flex h-9 flex-1 items-center justify-center gap-1 rounded-full px-4 text-sm font-bold text-white transition-[filter] hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
               style={{ background: "var(--color-brand-primary)" }}
             >
               {primaryLabel}
@@ -364,7 +364,7 @@ export function DoctorCard({
           </div>
         ) : (
           /* Default stacked layout — full-width buttons for non-booking contexts */
-          <div className="mt-5 space-y-2">
+          <div className="mt-auto space-y-2 pt-5">
             {bookHref ? (
               <Link
                 href={bookHref}
