@@ -135,8 +135,19 @@ export async function listBlogPosts(): Promise<BlogListItem[]> {
   }));
 }
 
-/** Full post for the detail page; null when the slug is unknown. */
+/** Full post for the detail page; null when the slug is unknown or unavailable.
+ *  Fetches the single post directly via /api/blog/:slug so the detail page
+ *  has its own Data-Cache entry independent of the all-posts list. */
 export async function getBlogPost(slug: string): Promise<BlogPostFull | null> {
-  const posts = await fetchPublishedPosts();
-  return posts.find((p) => p.slug === slug) ?? null;
+  const res = await apiRequest<{ post?: ApiBlogPost }>(`/api/blog/${encodeURIComponent(slug)}`, {
+    revalidate: 300,
+    tags: [PUBLIC_BLOG_TAG],
+  });
+  if (!res.ok) {
+    // Fall back to the all-posts list (handles the case where the backend
+    // supports listing but the single-post endpoint is unavailable).
+    const posts = await fetchPublishedPosts();
+    return posts.find((p) => p.slug === slug) ?? null;
+  }
+  return res.data?.post ? normalizeApiPost(res.data.post) : null;
 }
