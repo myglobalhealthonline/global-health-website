@@ -100,7 +100,7 @@ export default async function PrescriptionsPage({
   const serviceItems = services.map((s) => ({
     title: s.name,
     description: s.summary ?? "",
-    href: `/${slug}/${lang}/consult/${encodeURIComponent(s.slug)}`,
+    href: `/${slug}/${lang}/services/${encodeURIComponent(s.slug)}`,
     duration: formatDuration(s.durationMinutes),
     startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
     imageSrc: s.imageSrc ?? null,
