@@ -209,13 +209,13 @@ export default async function CountryLangHomePage({
     ...generalServices.map((s) =>
       mapServiceToCatalogItem(s, {
         detailHref: `/${slug}/${lang}/services/${s.slug}`,
-        bookHref: `/${slug}/${lang}/consult/${s.slug}`,
+        bookHref: buildBookHref({ country: slug, lang, service: s.slug }),
       }, catalogLabels),
     ),
     ...specialistServices.map((s) =>
       mapServiceToCatalogItem(s, {
         detailHref: `/${slug}/${lang}/services/${s.slug}`,
-        bookHref: `/${slug}/${lang}/consult/${s.slug}`,
+        bookHref: buildBookHref({ country: slug, lang, service: s.slug }),
       }, catalogLabels),
     ),
     ...(isCountryFeatureEnabled(config, "online-prescriptions") && prescriptionServices.length > 0
