@@ -362,17 +362,14 @@ function ServiceTile({
           "gh2-card gh2-zoom",
           "focus-visible:outline-none",
           "motion-reduce:transition-none",
-          // Horizontal grid: image 40% | content 60%
-          "grid grid-cols-1 sm:grid-cols-[2fr_3fr]",
+          // Horizontal grid: image 40% | content 60% — only on desktop
+          "grid grid-cols-1 lg:grid-cols-[2fr_3fr]",
         )}
-        style={{
-          ...GLASS_CARD_STYLE,
-          minHeight: 260,
-        }}
+        style={GLASS_CARD_STYLE}
       >
         {overlay}
-        {/* Image — fills full height of row */}
-        <div className="relative overflow-hidden" style={{ minHeight: 200 }}>
+        {/* Image — aspect ratio on mobile/tablet, fills grid height on desktop */}
+        <div className="relative overflow-hidden aspect-[16/10] lg:aspect-auto">
           {tileImageSrc ? (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -384,7 +381,7 @@ function ServiceTile({
               {/* Subtle right-edge fade into card body */}
               <div
                 aria-hidden
-                className="absolute inset-y-0 right-0 w-16 hidden sm:block"
+                className="absolute inset-y-0 right-0 w-16 hidden lg:block"
                 style={{
                   background:
                     "linear-gradient(90deg, transparent 0%, rgba(15,46,37,0.55) 100%)",
