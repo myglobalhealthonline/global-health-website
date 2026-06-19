@@ -67,6 +67,8 @@ type DoctorCardProps = {
   bookingHref?: string;
   ctaLabel?: string;
   bookLabel?: string;
+  /** Override the primary button label (default: "Book with {firstName}"). */
+  primaryLabel?: string;
   /** Dark variant — forest-glass surface + light text, for dark sections
    *  (doctors directory, dark DoctorsSection). Defaults to the original
    *  white card for light sections (DoctorWall, consult page). */
@@ -94,6 +96,8 @@ export function DoctorCard({
   bookingHref,
   ctaLabel = "View profile",
   bookLabel = "Pick a time",
+  /** Override the primary button label (default: "Book with {firstName}"). */
+  primaryLabel,
   dark = false,
 }: DoctorCardProps) {
   const trimmedImage = imageSrc?.trim();
@@ -127,7 +131,7 @@ export function DoctorCard({
   return (
     <article
       className={`
-        group relative flex flex-col overflow-hidden ${dark ? "gh-glass-card" : "bg-white"}
+        group relative flex h-full flex-col overflow-hidden ${dark ? "gh-glass-card" : "bg-white"}
         transition-[transform,box-shadow,border-color] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
         hover:-translate-y-[3px]
         ${dark ? "" : "hover:border-[rgba(29,75,54,0.22)] hover:shadow-[var(--shadow-card-hover)]"}
@@ -351,7 +355,7 @@ export function DoctorCard({
               }}
             >
               <CalendarDays className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
-              Book with {firstName}
+              {primaryLabel ?? `Book with ${firstName}`}
               <ArrowRight
                 className="size-[15px] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
                 strokeWidth={1.8}
