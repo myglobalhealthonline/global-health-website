@@ -33,17 +33,16 @@ type DoctorOption = {
 
 type ClinicOption = { id: string; name: string; city: string | null };
 
-/** A distinct existing patient under the typed email — returned by
+/** A distinct existing patient matching the typed email — returned by
  *  /api/admin/patients/by-email and offered in the email-field dropdown. */
 type PatientOption = {
+  email: string;
   fullName: string;
   dateOfBirth: string | null;
   phone: string | null;
   appointmentCount: number;
   lastBookedAt: string | null;
 };
-
-const EMAIL_LOOKUP_RE = /^\S+@\S+\.\S+$/;
 
 type Slot = {
   id: string;
@@ -208,15 +207,15 @@ export function ManualBookingForm({
     return map;
   }, [slots, clinicTimezone]);
 
-  // Debounced lookup of existing patients for the typed email. Only fires
-  // once the value looks like a full email; aborts in-flight requests so the
-  // last keystroke wins.
+  // Debounced substring lookup of existing patients as the admin types the
+  // email. Fires once there are at least 2 characters; aborts in-flight
+  // requests so the last keystroke wins.
   useEffect(() => {
     const value = email.trim();
     const controller = new AbortController();
     const timer = setTimeout(() => {
-      // Not a full email yet — clear any stale matches and skip the fetch.
-      if (!EMAIL_LOOKUP_RE.test(value)) {
+      // Too short to search — clear any stale matches and skip the fetch.
+      if (value.length < 2) {
         setPatientOptions([]);
         setLookupLoading(false);
         return;
@@ -253,6 +252,7 @@ export function ManualBookingForm({
 
   // Prefill the patient identity fields from a chosen existing patient.
   function selectPatient(p: PatientOption) {
+    setEmail(p.email);
     setFullName(p.fullName);
     setDateOfBirth(p.dateOfBirth ?? "");
     if (p.phone) {
@@ -350,12 +350,12 @@ export function ManualBookingForm({
                 ) : (
                   <>
                     <p className="border-b border-[var(--color-border)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
-                      {patientOptions.length} existing patient
-                      {patientOptions.length === 1 ? "" : "s"} with this email — pick one to prefill
+                      {patientOptions.length} matching patient
+                      {patientOptions.length === 1 ? "" : "s"} — pick one to prefill
                     </p>
                     {patientOptions.map((p, i) => (
                       <button
-                        key={`${p.fullName}-${p.dateOfBirth ?? ""}-${i}`}
+                        key={`${p.email}-${p.fullName}-${p.dateOfBirth ?? ""}-${i}`}
                         type="button"
                         // Keep input focus so onBlur doesn't close before click.
                         onMouseDown={(e) => e.preventDefault()}
@@ -365,6 +365,7 @@ export function ManualBookingForm({
                         <span className="text-[13px] font-semibold text-[var(--color-text-primary)]">
                           {p.fullName}
                         </span>
+                        <span className="text-[12px] text-[var(--color-text-muted)]">{p.email}</span>
                         <span className="text-[12px] text-[var(--color-text-muted)]">
                           {[
                             p.dateOfBirth ? `DOB ${p.dateOfBirth}` : null,

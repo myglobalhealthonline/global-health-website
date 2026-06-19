@@ -222,13 +222,15 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  // ─── Existing patients for an exact email (manual-booking typeahead) ────────
-  // A single account email can have booked MORE THAN ONE distinct person
-  // (e.g. a parent booking for themselves and a child). Those people are not
-  // separate PatientProfile rows — the profile is unique per email — so we
-  // reconstruct the distinct patients from this email's Appointment history,
-  // de-duplicated by (fullName, dateOfBirth). The registered profile holder
-  // is included too, so a patient who registered but never booked still shows.
+  // ─── Existing-patient typeahead for manual booking ─────────────────────────
+  // The admin types part of an email; we substring-match it (case-insensitive)
+  // and return the distinct patients behind the matching emails. A single
+  // account email can have booked MORE THAN ONE distinct person (e.g. a parent
+  // booking for themselves and a child); those people are not separate
+  // PatientProfile rows (the profile is unique per email), so we reconstruct
+  // the distinct patients from Appointment history, de-duplicated by
+  // (email, fullName, dateOfBirth). Registered profile holders are included
+  // too, so a patient who registered but never booked still shows.
   app.get("/api/admin/patients/by-email", async (request, reply) => {
     const query = z
       .object({ email: z.string().trim().max(254) })
@@ -236,41 +238,45 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
     if (!query.success) {
       return reply.status(400).send(errorResponse("Invalid query", query.error.flatten()));
     }
-    const email = query.data.email.toLowerCase();
-    // Don't query on partial input — wait until it actually looks like an email.
-    if (!email || !email.includes("@")) {
+    const q = query.data.email.toLowerCase();
+    // Need at least a couple of characters before searching — a 1-char
+    // substring would match almost every patient.
+    if (q.length < 2) {
       return okResponse({ patients: [] });
     }
 
     try {
-      const [appointments, profile] = await Promise.all([
+      const [appointments, profiles] = await Promise.all([
         prisma.appointment.findMany({
-          where: { email: { equals: email, mode: "insensitive" } },
-          select: { fullName: true, dateOfBirth: true, phone: true, createdAt: true },
+          where: { email: { contains: q, mode: "insensitive" } },
+          select: { email: true, fullName: true, dateOfBirth: true, phone: true, createdAt: true },
           orderBy: { createdAt: "desc" },
-          take: 200,
+          take: 300,
         }),
-        prisma.patientProfile.findUnique({
-          where: { email },
-          select: { fullName: true, dateOfBirth: true, phone: true },
+        prisma.patientProfile.findMany({
+          where: { email: { contains: q, mode: "insensitive" } },
+          select: { email: true, fullName: true, dateOfBirth: true, phone: true },
+          take: 50,
         }),
       ]);
 
       type Agg = {
+        email: string;
         fullName: string;
         dateOfBirth: Date | null;
         phone: string | null;
         appointmentCount: number;
         lastBookedAt: Date | null;
       };
-      const keyOf = (name: string, dob: Date | null) =>
-        `${name.trim().toLowerCase()}|${dob ? dob.toISOString().slice(0, 10) : ""}`;
+      const keyOf = (email: string, name: string, dob: Date | null) =>
+        `${email.trim().toLowerCase()}|${name.trim().toLowerCase()}|${dob ? dob.toISOString().slice(0, 10) : ""}`;
       const byKey = new Map<string, Agg>();
 
       for (const a of appointments) {
         const name = a.fullName?.trim();
-        if (!name) continue;
-        const key = keyOf(name, a.dateOfBirth);
+        const email = a.email?.trim();
+        if (!name || !email) continue;
+        const key = keyOf(email, name, a.dateOfBirth);
         const existing = byKey.get(key);
         if (existing) {
           existing.appointmentCount += 1;
@@ -280,6 +286,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           }
         } else {
           byKey.set(key, {
+            email: email.toLowerCase(),
             fullName: name,
             dateOfBirth: a.dateOfBirth ?? null,
             phone: a.phone ?? null,
@@ -289,11 +296,15 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         }
       }
 
-      if (profile?.fullName?.trim()) {
-        const key = keyOf(profile.fullName, profile.dateOfBirth);
+      for (const profile of profiles) {
+        const name = profile.fullName?.trim();
+        const email = profile.email?.trim();
+        if (!name || !email) continue;
+        const key = keyOf(email, name, profile.dateOfBirth);
         if (!byKey.has(key)) {
           byKey.set(key, {
-            fullName: profile.fullName.trim(),
+            email: email.toLowerCase(),
+            fullName: name,
             dateOfBirth: profile.dateOfBirth ?? null,
             phone: profile.phone ?? null,
             appointmentCount: 0,
@@ -304,7 +315,9 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
 
       const patients = [...byKey.values()]
         .sort((a, b) => (b.lastBookedAt?.getTime() ?? 0) - (a.lastBookedAt?.getTime() ?? 0))
+        .slice(0, 20)
         .map((p) => ({
+          email: p.email,
           fullName: p.fullName,
           dateOfBirth: p.dateOfBirth ? p.dateOfBirth.toISOString().slice(0, 10) : null,
           phone: p.phone,
