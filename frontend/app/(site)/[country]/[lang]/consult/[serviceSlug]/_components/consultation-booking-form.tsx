@@ -452,6 +452,11 @@ export function ConsultationBookingForm({
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
               {i18n.patientFullName}
             </span>
+            {bookingForOther ? (
+              <span className="block mt-0.5 text-[11px] font-medium text-[var(--color-brand-primary)]">
+                for selected patient
+              </span>
+            ) : null}
             <input
               type="text"
               name="fullName"
@@ -464,6 +469,11 @@ export function ConsultationBookingForm({
           </label>
           <label className="block">
             <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.email}</span>
+            {bookingForOther ? (
+              <span className="block mt-0.5 text-[11px] font-medium text-[var(--color-brand-primary)]">
+                for selected patient
+              </span>
+            ) : null}
             <input
               type="email"
               name="email"
@@ -479,6 +489,11 @@ export function ConsultationBookingForm({
           </label>
           <label className="block">
             <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.phone}</span>
+            {bookingForOther ? (
+              <span className="block mt-0.5 text-[11px] font-medium text-[var(--color-brand-primary)]">
+                for selected patient
+              </span>
+            ) : null}
             <PhoneField
               name="phone"
               defaultValue={defaults.phone}
