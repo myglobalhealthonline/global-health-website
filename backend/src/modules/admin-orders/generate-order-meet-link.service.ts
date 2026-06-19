@@ -129,7 +129,6 @@ export async function generateOrderMeetLink(
   let endAt: Date | null = null;
   let doctorName = "Doctor";
   let serviceTitle = consultItem.name;
-  let patientEmail = consultItem.patientEmail?.trim() || order.email.trim();
   let doctorId = consultItem.doctorId;
   let doctorEmail: string | null = null;
 
@@ -154,10 +153,6 @@ export async function generateOrderMeetLink(
         doctorName = formatDoctorForDocument(appointment.doctor.fullName);
       }
       if (appointment.service?.name) serviceTitle = appointment.service.name;
-      patientEmail =
-        consultItem.patientEmail?.trim() ||
-        appointment.email?.trim() ||
-        order.email.trim();
       doctorId = appointment.doctorId ?? doctorId;
       doctorEmail = appointment.doctor?.loginUser?.email?.trim().toLowerCase() ?? null;
     }
@@ -200,7 +195,7 @@ export async function generateOrderMeetLink(
     endAt = new Date(startAt.getTime() + 30 * 60 * 1000);
   }
 
-  const attendeeEmails = uniqueEmails(patientEmail, doctorEmail);
+  const attendeeEmails = uniqueEmails(doctorEmail);
 
   const eventTitle = `${serviceTitle} with ${doctorName}`;
   const meetLink = await createMeetLinkForAppointment({

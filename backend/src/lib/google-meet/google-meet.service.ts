@@ -72,7 +72,7 @@ function toGoogleDateTime(date: Date): string {
  * Creates an OPEN Google Meet space and a calendar event titled with
  * `serviceTitle`. The Meet join URL is in the description and location.
  * When `attendeeEmails` are provided, Google sends calendar invites to
- * doctor and patient (`sendUpdates=all`).
+ * those attendees (`sendUpdates=all`).
  */
 export async function createMeetLinkForAppointment(input: {
   startTime: Date;
