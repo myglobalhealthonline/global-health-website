@@ -153,7 +153,8 @@ export function LanguageFilteredDoctors({
                   service: service.slug,
                   doctor: doctor.slug,
                 })}
-                ctaLabel={bp.viewProfile}
+                primaryLabel={bp.continue}
+                ctaLabel="View"
               />
             </li>
           ))}
