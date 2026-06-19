@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -115,8 +115,14 @@ export function ConsultationBookingForm({
   }, []);
 
   const defaults = useMemo(() => {
-    if (!me) {
-      return { fullName: "", email: "", phone: "", dateOfBirth: "" };
+    if (!me || bookingForOther) {
+      // Guest, or signed-in user booking for someone else.
+      return {
+        fullName: "",
+        email: me?.email ?? "",
+        phone: "",
+        dateOfBirth: "",
+      };
     }
     return {
       fullName: me.fullName ?? "",
@@ -124,7 +130,7 @@ export function ConsultationBookingForm({
       phone: me.phone ?? "",
       dateOfBirth: me.dateOfBirth ? me.dateOfBirth.slice(0, 10) : "",
     };
-  }, [me]);
+  }, [me, bookingForOther]);
 
   // Group slots by local day for display.
   const grouped = useMemo(() => {
@@ -155,9 +161,6 @@ export function ConsultationBookingForm({
     const phone = String(form.get("phone") ?? "").trim();
     const dateOfBirth = String(form.get("dateOfBirth") ?? "").trim();
     const notes = String(form.get("notes") ?? "").trim();
-    const patientOtherName = bookingForOther ? String(form.get("patientOtherName") ?? "").trim() : "";
-    const patientOtherPhone = bookingForOther ? String(form.get("patientOtherPhone") ?? "").trim() : "";
-    const patientOtherDob = bookingForOther ? String(form.get("patientOtherDob") ?? "").trim() : "";
     const nationalIdNumber = String(form.get("nationalIdNumber") ?? "").trim();
     const addressLine1 = String(form.get("addressLine1") ?? "").trim();
     const addressLine2 = String(form.get("addressLine2") ?? "").trim();
@@ -168,12 +171,8 @@ export function ConsultationBookingForm({
     const gdprConsentClinic = form.get("gdprConsentClinic") === "on";
     const gdprConsentPlatform = form.get("gdprConsentPlatform") === "on";
 
-    if (!bookingForOther && fullName.length < 2) {
+    if (fullName.length < 2) {
       setError(i18n.enterFullName);
-      return;
-    }
-    if (bookingForOther && patientOtherName.length < 2) {
-      setError("Enter the patient’s full name.");
       return;
     }
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
@@ -211,10 +210,10 @@ export function ConsultationBookingForm({
         doctorId,
         timeSlotId: selectedSlotId,
         patient: {
-          fullName: bookingForOther ? patientOtherName : fullName,
+          fullName,
           email,
-          phone: (bookingForOther ? patientOtherPhone || phone : phone) || undefined,
-          dateOfBirth: (bookingForOther ? patientOtherDob : dateOfBirth) || undefined,
+          phone: phone || undefined,
+          dateOfBirth: dateOfBirth || undefined,
           notes: notes || undefined,
           consentAccepted: true,
           bookingForOther,
@@ -431,13 +430,10 @@ export function ConsultationBookingForm({
         ) : null}
       </div>
 
-      {/* 2. Patient details — prefilled from account when signed in.
-        * When bookingForOther, these fields remain the logged-in user's
-        * contact/notification details. A separate sub-section collects
-        * the actual patient (person being treated). */}
+      {/* 2. Patient details — prefilled from account when signed in. */}
       <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
         <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-          {bookingForOther ? "Your contact details" : i18n.patientDetails}
+          {i18n.patientDetails}
         </legend>
         {me ? (
           <label className="mt-1 flex items-center gap-2 text-sm text-[var(--color-text-body)]">
@@ -452,26 +448,32 @@ export function ConsultationBookingForm({
         ) : null}
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {!bookingForOther ? (
-            <label className="block">
-              <span className="text-xs font-semibold text-[var(--color-text-body)]">
-                {i18n.patientFullName}
-              </span>
-              <input
-                type="text"
-                name="fullName"
-                required
-                minLength={2}
-                maxLength={120}
-                defaultValue={defaults.fullName}
-                className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-              />
-            </label>
-          ) : null}
-          <label className={`block${bookingForOther ? " sm:col-span-2" : ""}`}>
+          <label className="block">
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
-              {bookingForOther ? "Your email (for confirmation)" : i18n.email}
+              {i18n.patientFullName}
             </span>
+            {bookingForOther ? (
+              <span className="block mt-0.5 text-[11px] font-medium text-[var(--color-brand-primary)]">
+                for selected patient
+              </span>
+            ) : null}
+            <input
+              type="text"
+              name="fullName"
+              required
+              minLength={2}
+              maxLength={120}
+              defaultValue={defaults.fullName}
+              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+            />
+          </label>
+          <label className="block">
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.email}</span>
+            {bookingForOther ? (
+              <span className="block mt-0.5 text-[11px] font-medium text-[var(--color-brand-primary)]">
+                for selected patient
+              </span>
+            ) : null}
             <input
               type="email"
               name="email"
@@ -485,100 +487,37 @@ export function ConsultationBookingForm({
               </p>
             ) : null}
           </label>
-          {!bookingForOther ? (
-            <label className="block">
-              <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.phone}</span>
-              <PhoneField
-                name="phone"
-                defaultValue={defaults.phone}
-                defaultDial={dialCodeForCountrySlug(params?.country)}
-                placeholder="871234567"
-                className="mt-1 flex gap-2"
-                selectClassName="block rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-2 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-                inputClassName="block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-              />
-            </label>
-          ) : null}
-          {!bookingForOther ? (
-            <label className="block">
-              <span className="text-xs font-semibold text-[var(--color-text-body)]">
-                {i18n.dateOfBirth}
+          <label className="block">
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.phone}</span>
+            {bookingForOther ? (
+              <span className="block mt-0.5 text-[11px] font-medium text-[var(--color-brand-primary)]">
+                for selected patient
               </span>
-              <input
-                type="date"
-                name="dateOfBirth"
-                max={maxDob}
-                defaultValue={defaults.dateOfBirth}
-                suppressHydrationWarning
-                className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-              />
-            </label>
-          ) : null}
+            ) : null}
+            <PhoneField
+              name="phone"
+              defaultValue={defaults.phone}
+              defaultDial={dialCodeForCountrySlug(params?.country)}
+              placeholder="871234567"
+              className="mt-1 flex gap-2"
+              selectClassName="block rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-2 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+              inputClassName="block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+            />
+          </label>
+          <label className="block">
+            <span className="text-xs font-semibold text-[var(--color-text-body)]">
+              {i18n.dateOfBirth}
+            </span>
+            <input
+              type="date"
+              name="dateOfBirth"
+              max={maxDob}
+              defaultValue={defaults.dateOfBirth}
+              suppressHydrationWarning
+              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+            />
+          </label>
         </div>
-
-        {/* Patient being treated — shown only when booking for someone else.
-          * Name is required; email + phone are optional (e.g. a child may
-          * not have their own email or phone number). */}
-        {bookingForOther ? (
-          <div className="mt-5 rounded-[var(--radius-card)] border border-[var(--color-brand-primary)]/20 bg-[var(--color-background-soft)] p-4">
-            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
-              Patient being treated
-            </p>
-            <div className="mt-3 grid gap-4 sm:grid-cols-2">
-              <label className="block sm:col-span-2">
-                <span className="text-xs font-semibold text-[var(--color-text-body)]">
-                  Patient full name
-                </span>
-                <input
-                  type="text"
-                  name="patientOtherName"
-                  required
-                  minLength={2}
-                  maxLength={120}
-                  className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-                />
-              </label>
-              <label className="block">
-                <span className="text-xs font-semibold text-[var(--color-text-body)]">
-                  Patient email{" "}
-                  <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
-                </span>
-                <input
-                  type="email"
-                  name="patientOtherEmail"
-                  className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-                />
-              </label>
-              <label className="block">
-                <span className="text-xs font-semibold text-[var(--color-text-body)]">
-                  Patient phone{" "}
-                  <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
-                </span>
-                <PhoneField
-                  name="patientOtherPhone"
-                  defaultDial={dialCodeForCountrySlug(params?.country)}
-                  placeholder="871234567"
-                  className="mt-1 flex gap-2"
-                  selectClassName="block rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-2 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-                  inputClassName="block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-                />
-              </label>
-              <label className="block">
-                <span className="text-xs font-semibold text-[var(--color-text-body)]">
-                  Date of birth{" "}
-                  <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
-                </span>
-                <input
-                  type="date"
-                  name="patientOtherDob"
-                  max={maxDob}
-                  suppressHydrationWarning
-                  className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-                />
-              </label>
-            </div>
-          </div>
-        ) : null}
 
         <label className="mt-4 block">
           <span className="text-xs font-semibold text-[var(--color-text-body)]">
