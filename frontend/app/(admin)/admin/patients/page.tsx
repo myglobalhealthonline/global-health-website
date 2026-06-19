@@ -37,10 +37,7 @@ export default async function AdminPatientsPage({
   const email = readParam(sp, "email");
   const page = Number(readParam(sp, "page") ?? "1") || 1;
 
-  const hasQuery = Boolean(ghn || email);
-  const result = hasQuery
-    ? await fetchAdminPatients({ ghn, email, page: String(page), pageSize: "25" })
-    : null;
+  const result = await fetchAdminPatients({ ghn, email, page: String(page), pageSize: "25" });
 
   const items: AdminPatientSearchItem[] = result?.ok ? result.data.items : [];
   const pagination = result?.ok ? result.data.pagination : null;
@@ -50,7 +47,7 @@ export default async function AdminPatientsPage({
       <PageHeader
         eyebrow="Global"
         title="Patients"
-        description="Search by Global Health Number or email to view a patient's full record."
+        description="All registered patients — filter by Global Health Number or email."
       />
 
       <AdminCard padding={0}>
@@ -79,11 +76,7 @@ export default async function AdminPatientsPage({
           </button>
         </form>
 
-        {!hasQuery ? (
-          <p className="px-6 py-10 text-center text-sm text-[var(--color-text-muted)]">
-            Enter a GHN or email above to search for patients.
-          </p>
-        ) : result && !result.ok ? (
+        {result && !result.ok ? (
           <p className="px-6 py-10 text-center text-sm text-[var(--color-status-warning-text)]">
             {result.message}
           </p>

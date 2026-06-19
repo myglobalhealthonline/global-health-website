@@ -190,9 +190,6 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid query", query.error.flatten()));
     }
     const { ghn, email, page, pageSize } = query.data;
-    if (!ghn && !email) {
-      return reply.status(400).send(errorResponse("Provide ghn or email"));
-    }
     try {
       const where: Record<string, unknown> = {};
       if (ghn) where.globalHealthNumber = { contains: ghn, mode: "insensitive" };
