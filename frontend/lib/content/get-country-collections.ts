@@ -77,6 +77,8 @@ export type CountryServiceDetail = {
   faqs: ServiceFaq[];
 };
 
+export type HealthTestFaqItem = { id: string; question: string; answer: string };
+
 /** Full health-test detail (admin CMS content) for the public test page. */
 export type CountryHealthTestDetail = {
   id: string;
@@ -98,6 +100,7 @@ export type CountryHealthTestDetail = {
   whyGetTested: string[];
   /** Admin "extra sections" JSON — array of { title, body } when authored. */
   extraSections: Array<{ title: string; body: string }>;
+  faqs: HealthTestFaqItem[];
 };
 
 export type CountryPricingPlanCard = {
@@ -564,8 +567,21 @@ export const getCountryHealthTestDetail = cache(async (
     whatThisTestCovers: readStringArray(r.whatThisTestCovers),
     whyGetTested: readStringArray(r.whyGetTested),
     extraSections: readExtraSections(r.extraSections),
+    faqs: readHealthTestFaqs(r.faqs),
   };
 });
+
+function readHealthTestFaqs(raw: unknown): HealthTestFaqItem[] {
+  if (!Array.isArray(raw)) return [];
+  const out: HealthTestFaqItem[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    const i = item as Record<string, unknown>;
+    if (typeof i.id !== "string" || typeof i.question !== "string" || typeof i.answer !== "string") continue;
+    out.push({ id: i.id, question: i.question, answer: i.answer });
+  }
+  return out;
+}
 
 /** Active pricing plans for a country. Drives /[country]/[lang]/plans. */
 export const getCountryPlans = cache(async (

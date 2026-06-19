@@ -215,6 +215,11 @@ export async function getPublicHealthTestBySlug(
       include: {
         country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true } },
         translations: { select: healthTestTranslationSelect },
+        faqs: {
+          where: { isVisible: true },
+          orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+          select: { id: true, question: true, answer: true, sortOrder: true },
+        },
       },
     });
     if (!row) return null;

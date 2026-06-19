@@ -31,6 +31,7 @@ import {
 } from "@/components/sections/ServiceContentSections";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
+import { FAQSection } from "@/components/sections/FAQSection";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -410,6 +411,13 @@ export default async function HealthTestDetailPage({
           />
         ) : null,
       )}
+
+      {detail.faqs.length > 0 ? (
+        <FAQSection
+          title="Frequently asked questions"
+          items={detail.faqs}
+        />
+      ) : null}
 
       {/* Closing CTA band — mirror of the service detail booking band. */}
       <section

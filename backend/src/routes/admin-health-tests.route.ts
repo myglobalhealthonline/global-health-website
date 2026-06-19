@@ -12,11 +12,25 @@ import {
   purgeAdminHealthTest,
   updateAdminHealthTest,
 } from "../modules/health-tests/health-tests.service.js";
+import {
+  createHealthTestFaq,
+  deleteHealthTestFaq,
+  HealthTestFaqHealthTestNotFoundError,
+  HealthTestFaqMaxLimitError,
+  HealthTestFaqNotFoundError,
+  listHealthTestFaqs,
+  reorderHealthTestFaqs,
+  updateHealthTestFaq,
+} from "../modules/health-tests/health-test-faq.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   adminHealthTestCreateBodySchema,
   adminHealthTestsQuerySchema,
   adminHealthTestUpdateBodySchema,
+  healthTestFaqCreateBodySchema,
+  healthTestFaqIdParamsSchema,
+  healthTestFaqReorderBodySchema,
+  healthTestFaqUpdateBodySchema,
   healthTestIdParamsSchema,
 } from "../validations/admin-health-tests.schema.js";
 import { verifyAdminAccess } from "../utils/admin-auth.js";
@@ -155,6 +169,105 @@ const adminHealthTestsRoute: FastifyPluginAsync = async (app) => {
       return okResponse({}, "Health test deleted");
     } catch (error) {
       return handleWriteError(app, reply, error);
+    }
+  });
+
+  // ─── Health Test FAQs ─────────────────────────────────────────────────────
+
+  app.get("/api/admin/health-tests/:id/faqs", async (request, reply) => {
+    const params = healthTestIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid health test id", params.error.flatten()));
+    }
+    try {
+      const faqs = await listHealthTestFaqs(params.data.id);
+      return okResponse({ faqs });
+    } catch (error) {
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected FAQ error"));
+    }
+  });
+
+  app.post("/api/admin/health-tests/:id/faqs", async (request, reply) => {
+    const params = healthTestIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid health test id", params.error.flatten()));
+    }
+    const body = healthTestFaqCreateBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid FAQ payload", body.error.flatten()));
+    }
+    try {
+      const faq = await createHealthTestFaq(params.data.id, body.data);
+      return reply.status(201).send({ success: true, data: { faq } });
+    } catch (error) {
+      if (error instanceof HealthTestFaqHealthTestNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      if (error instanceof HealthTestFaqMaxLimitError) {
+        return reply.status(422).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected FAQ error"));
+    }
+  });
+
+  app.patch("/api/admin/health-tests/:id/faqs/reorder", async (request, reply) => {
+    const params = healthTestIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid health test id", params.error.flatten()));
+    }
+    const body = healthTestFaqReorderBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid reorder payload", body.error.flatten()));
+    }
+    try {
+      const faqs = await reorderHealthTestFaqs(params.data.id, body.data.orderedIds);
+      return okResponse({ faqs }, "FAQs reordered");
+    } catch (error) {
+      if (error instanceof HealthTestFaqNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected FAQ error"));
+    }
+  });
+
+  app.patch("/api/admin/health-tests/:id/faqs/:faqId", async (request, reply) => {
+    const params = healthTestFaqIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid params", params.error.flatten()));
+    }
+    const body = healthTestFaqUpdateBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply.status(400).send(errorResponse("Invalid FAQ update", body.error.flatten()));
+    }
+    try {
+      const faq = await updateHealthTestFaq(params.data.faqId, body.data);
+      return okResponse({ faq }, "FAQ updated");
+    } catch (error) {
+      if (error instanceof HealthTestFaqNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected FAQ error"));
+    }
+  });
+
+  app.delete("/api/admin/health-tests/:id/faqs/:faqId", async (request, reply) => {
+    const params = healthTestFaqIdParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid params", params.error.flatten()));
+    }
+    try {
+      await deleteHealthTestFaq(params.data.faqId);
+      return okResponse({}, "FAQ deleted");
+    } catch (error) {
+      if (error instanceof HealthTestFaqNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Unexpected FAQ error"));
     }
   });
 };

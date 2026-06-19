@@ -121,3 +121,34 @@ export const adminHealthTestUpdateBodySchema = adminHealthTestBaseObject
   .superRefine((value, ctx) => validateUniqueLocales(value.translations, ctx));
 
 export type AdminHealthTestUpdateBody = z.infer<typeof adminHealthTestUpdateBodySchema>;
+
+// ─── Health Test FAQ schemas ──────────────────────────────────────────────────
+
+export const healthTestFaqIdParamsSchema = z.object({
+  id: z.string().trim().min(1),
+  faqId: z.string().trim().min(1),
+});
+
+export const healthTestFaqCreateBodySchema = z.object({
+  question: z.string().trim().min(1).max(500),
+  answer: z.string().trim().min(1).max(5000),
+  sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
+  isVisible: z.boolean().optional(),
+});
+
+export const healthTestFaqUpdateBodySchema = z
+  .object({
+    question: z.string().trim().min(1).max(500).optional(),
+    answer: z.string().trim().min(1).max(5000).optional(),
+    sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
+    isVisible: z.boolean().optional(),
+  })
+  .refine((v) => Object.keys(v).length > 0, "No fields to update");
+
+export const healthTestFaqReorderBodySchema = z.object({
+  orderedIds: z.array(z.string().trim().min(1)).min(1).max(50),
+});
+
+export type HealthTestFaqCreateBody = z.infer<typeof healthTestFaqCreateBodySchema>;
+export type HealthTestFaqUpdateBody = z.infer<typeof healthTestFaqUpdateBodySchema>;
+export type HealthTestFaqReorderBody = z.infer<typeof healthTestFaqReorderBodySchema>;

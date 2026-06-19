@@ -6,11 +6,13 @@ import { ArrowLeft } from "lucide-react";
 import {
   deleteAdminHealthTest,
   fetchAdminHealthTestById,
+  fetchAdminHealthTestFaqs,
   purgeAdminHealthTest,
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
+import { HealthTestFaqPanel } from "../_components/health-test-faq-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -45,7 +47,10 @@ export default async function AdminHealthTestDetailPage({
 }: PageProps) {
   const { id } = await params;
   const messages = searchParams ? await searchParams : {};
-  const result = await fetchAdminHealthTestById(id);
+  const [result, faqsResult] = await Promise.all([
+    fetchAdminHealthTestById(id),
+    fetchAdminHealthTestFaqs(id),
+  ]);
 
   if (!result.ok) {
     return (
@@ -220,6 +225,12 @@ export default async function AdminHealthTestDetailPage({
               </ul>
             </AdminCard>
           ) : null}
+          <AdminCard>
+            <HealthTestFaqPanel
+              healthTestId={test.id}
+              initialFaqs={faqsResult.ok ? faqsResult.data.faqs : []}
+            />
+          </AdminCard>
         </div>
 
         <div className="grid gap-4 self-start">

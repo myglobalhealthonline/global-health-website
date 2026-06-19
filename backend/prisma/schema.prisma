@@ -883,6 +883,7 @@ model HealthTest {
   /// a translation row overrides them for a given locale. Operational
   /// fields (price, currency, stock, slug, images) are NOT translated.
   translations       HealthTestTranslation[]
+  faqs               HealthTestFaq[]
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
 
@@ -2315,6 +2316,22 @@ model ServiceFaq {
   updatedAt DateTime @updatedAt
 
   @@index([serviceId, isVisible, sortOrder])
+}
+
+/// Per-health-test FAQ entries managed by admin. Mirrors ServiceFaq but scoped
+/// to the health-test detail page FAQ accordion.
+model HealthTestFaq {
+  id            String      @id @default(cuid())
+  healthTestId  String
+  question      String
+  answer        String
+  sortOrder     Int         @default(0)
+  isVisible     Boolean     @default(true)
+  healthTest    HealthTest  @relation(fields: [healthTestId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([healthTestId, isVisible, sortOrder])
 }
 
 /// Patient nationality / identity documents. Max 2 per patient (slot 1 and slot 2).

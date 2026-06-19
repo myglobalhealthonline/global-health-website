@@ -1935,6 +1935,23 @@ export async function purgeAdminHealthTest(id: string) {
   });
 }
 
+export type AdminHealthTestFaqDto = {
+  id: string;
+  healthTestId: string;
+  question: string;
+  answer: string;
+  sortOrder: number;
+  isVisible: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export async function fetchAdminHealthTestFaqs(healthTestId: string) {
+  return adminRequest<{ faqs: AdminHealthTestFaqDto[] }>(
+    `/api/admin/health-tests/${healthTestId}/faqs`,
+  );
+}
+
 export type AdminAssetKind = "IMAGE" | "ICON" | "LOGO" | "BADGE" | "SOCIAL";
 
 export type AdminAssetDto = {
