@@ -39,7 +39,6 @@ import {
 } from "@/lib/content/get-public-page";
 import {
   getCountryDoctors,
-  getCountryHealthTests,
   getCountryServices,
   getCountryPartners,
   type CountryServiceCard,
@@ -174,7 +173,6 @@ export default async function CountryLangHomePage({
     generalServices,
     specialistServices,
     prescriptionServices,
-    healthTests,
     allDoctors,
     countryTrust,
     countryPartners,
@@ -185,7 +183,6 @@ export default async function CountryLangHomePage({
       getCountryServices(code, "GENERAL", lang),
       getCountryServices(code, "SPECIALIST", lang),
       getCountryServices(code, "PRESCRIPTION", lang),
-      getCountryHealthTests(code, lang),
       getPublicDoctorsNormalized(lang),
       getCountryTrust(code),
       getCountryPartners(code),
@@ -203,7 +200,6 @@ export default async function CountryLangHomePage({
   const totalDoctorsAcrossEurope = allDoctors.length;
 
   const prescriptionsHref = `/${slug}/${lang}/prescriptions`;
-  const testsHref = `/${slug}/${lang}/tests`;
   const catalogLabels = {
     general: cc.homeCatalog.tagGeneral,
     specialist: cc.homeCatalog.tagSpecialist,
@@ -243,29 +239,6 @@ export default async function CountryLangHomePage({
               }`,
               href: prescriptionsHref,
               imageSrc: rxImage,
-            }),
-          ];
-        })()
-      : []),
-    ...(isCountryFeatureEnabled(config, "health-tests") && healthTests.length > 0
-      ? (() => {
-          // Cheapest health test price across the catalogue
-          const minTest = healthTests.reduce<number>(
-            (acc, t) => Math.min(acc, t.priceCents),
-            healthTests[0]?.priceCents ?? 0,
-          );
-          const testImage = healthTests.find((t) => t.imageSrc)?.imageSrc ?? null;
-          const testCurrency = healthTests[0]?.currencyCode ?? "EUR";
-          return [
-            mapCategoryTile({
-              type: "test",
-              title: cc.navigation.labTests,
-              tag: cc.homeCatalog.tagTests,
-              price: Math.round(minTest / 100),
-              currency: testCurrency,
-              dur: `${healthTests.length} ${healthTests.length === 1 ? cc.homeCatalog.testSingular : cc.homeCatalog.testPlural}`,
-              href: testsHref,
-              imageSrc: testImage,
             }),
           ];
         })()
@@ -402,8 +375,7 @@ export default async function CountryLangHomePage({
   const totalServicesAcrossEurope =
     generalServices.length +
     specialistServices.length +
-    prescriptionServices.length +
-    healthTests.length;
+    prescriptionServices.length;
   const statsItems: StatBandItem[] = [
     {
       value: String(totalDoctorsAcrossEurope),
