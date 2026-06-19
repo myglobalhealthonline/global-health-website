@@ -303,17 +303,17 @@ function TileActions({
   bookLabel: string;
 }) {
   return (
-    <div className="relative z-10 mt-4 grid grid-cols-2 gap-2.5">
+    <div className="relative z-10 mt-4 flex gap-2.5">
       <Link
         href={detailHref}
-        className="inline-flex h-11 items-center justify-center gap-1.5 rounded-full border border-white/25 bg-white/[0.06] px-3 text-[13px] font-bold tracking-[-0.005em] text-white/90 transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)] focus-visible:outline-none"
+        className="inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-full border border-white/25 bg-white/[0.06] px-3 text-[13px] font-bold tracking-[-0.005em] whitespace-nowrap text-white/90 transition-[background-color,color] duration-200 hover:bg-white hover:text-[var(--color-brand-primary)] focus-visible:outline-none"
       >
         Learn more
         <ArrowUpRight className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
       </Link>
       <Link
         href={bookHref}
-        className="inline-flex h-11 items-center justify-center gap-1.5 rounded-full px-3 text-[13px] font-extrabold tracking-[-0.005em] transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+        className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-full px-3 text-[13px] font-extrabold tracking-[-0.005em] whitespace-nowrap transition-[transform,filter] duration-200 hover:-translate-y-0.5 hover:brightness-105 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0"
         style={{
           background: "var(--color-brand-accent)",
           color: "#0a1f14",
