@@ -4,7 +4,6 @@
  * body | arrow affordance. Hover tints the row and fills the arrow.
  */
 
-import { ArrowRight } from "lucide-react";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
 export type HowItWorksI18n = {
@@ -111,7 +110,7 @@ export function HowItWorksNarrative({
           {steps.map((s) => (
             <div
               key={s.n}
-              className="gh2-step grid items-center gap-x-8 gap-y-4 rounded-xl px-2 py-9 md:grid-cols-[minmax(96px,140px)_1fr_auto] md:px-6 md:py-12"
+              className="gh2-step grid items-center gap-x-8 gap-y-4 rounded-xl px-2 py-9 md:grid-cols-[minmax(96px,140px)_1fr] md:px-6 md:py-12"
               style={{ borderTop: `1px solid ${hairline}` }}
             >
               {/* Ghost numeral */}
@@ -149,17 +148,6 @@ export function HowItWorksNarrative({
                 </p>
               </div>
 
-              {/* Arrow affordance — fills forest on row hover */}
-              <span
-                aria-hidden
-                className="gh2-step-arrow hidden size-12 items-center justify-center rounded-full md:inline-flex"
-                style={{
-                  border: `1px solid ${hairline}`,
-                  color: isLight ? "var(--color-brand-primary)" : "rgba(255,255,255,0.70)",
-                }}
-              >
-                <ArrowRight className="size-5" strokeWidth={1.6} />
-              </span>
             </div>
           ))}
         </RevealOnScroll>
