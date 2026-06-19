@@ -128,7 +128,7 @@ export default async function CountryLangSpecialistConsultationPage({
     // Two CTAs: "Learn more" opens the read-only service detail page;
     // "Book" enters the consult doctor-pick flow (cart-first booking).
     detailHref: `/${slug}/${lang}/services/${s.slug}`,
-    bookHref: `/${slug}/${lang}/consult/${s.slug}`,
+    bookHref: buildBookHref({ country: slug, lang, service: s.slug }),
     bookLabel: c.doctors.bookAppointment,
     serviceType: "specialist" as const,
     audience: s.specialtyName ?? undefined,
