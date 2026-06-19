@@ -500,7 +500,7 @@ function DoctorPicker({
               doctor: doctor.slug,
             })}
             primaryLabel={bp.continue}
-            ctaLabel={bp.viewProfile}
+            ctaLabel="View"
           />
         </li>
       ))}
@@ -570,7 +570,7 @@ function ServiceChoiceCard({
               href={viewHref}
               className="inline-flex h-9 items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-bold text-[var(--color-brand-primary)] transition-colors hover:border-[var(--color-brand-primary)]/40 hover:bg-[var(--color-background-soft)]"
             >
-              {bp.viewProfile}
+              View
             </Link>
             <Link
               href={href}
