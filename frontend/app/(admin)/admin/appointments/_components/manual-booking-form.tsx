@@ -42,6 +42,12 @@ type PatientOption = {
   phone: string | null;
   appointmentCount: number;
   lastBookedAt: string | null;
+  nationalIdNumber: string | null;
+  taxIdNumber: string | null;
+  passportNumber: string | null;
+  addressLine1: string | null;
+  addressCity: string | null;
+  addressCountryCode: string | null;
 };
 
 type Slot = {
@@ -91,6 +97,14 @@ export function ManualBookingForm({
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [dialCode, setDialCode] = useState(defaultDialCode);
   const [phoneNational, setPhoneNational] = useState("");
+
+  // Controlled so picking an existing patient can prefill them.
+  const [nationalIdNumber, setNationalIdNumber] = useState("");
+  const [taxIdNumber, setTaxIdNumber] = useState("");
+  const [passportNumber, setPassportNumber] = useState("");
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressCity, setAddressCity] = useState("");
+  const [addressCountryCode, setAddressCountryCode] = useState("");
 
   // Existing-patient typeahead for the email field. Multiple distinct people
   // can share one account email, so the dropdown lets the admin pick the
@@ -260,6 +274,12 @@ export function ManualBookingForm({
       setDialCode(parts.dial);
       setPhoneNational(parts.national);
     }
+    setNationalIdNumber(p.nationalIdNumber ?? "");
+    setTaxIdNumber(p.taxIdNumber ?? "");
+    setPassportNumber(p.passportNumber ?? "");
+    setAddressLine1(p.addressLine1 ?? "");
+    setAddressCity(p.addressCity ?? "");
+    setAddressCountryCode(p.addressCountryCode ?? "");
     setShowPatientMenu(false);
   }
 
@@ -428,16 +448,48 @@ export function ManualBookingForm({
             />
           </label>
 
-          <Field label="National ID number" name="nationalIdNumber" maxLength={64} />
-          <Field label="Tax ID (NIF / PPS / CPF)" name="taxIdNumber" maxLength={64} />
-          <Field label="Passport number" name="passportNumber" maxLength={64} />
-          <Field label="Address line 1" name="addressLine1" maxLength={200} />
-          <Field label="City" name="addressCity" maxLength={100} />
+          <Field
+            label="National ID number"
+            name="nationalIdNumber"
+            maxLength={64}
+            value={nationalIdNumber}
+            onChange={setNationalIdNumber}
+          />
+          <Field
+            label="Tax ID (NIF / PPS / CPF)"
+            name="taxIdNumber"
+            maxLength={64}
+            value={taxIdNumber}
+            onChange={setTaxIdNumber}
+          />
+          <Field
+            label="Passport number"
+            name="passportNumber"
+            maxLength={64}
+            value={passportNumber}
+            onChange={setPassportNumber}
+          />
+          <Field
+            label="Address line 1"
+            name="addressLine1"
+            maxLength={200}
+            value={addressLine1}
+            onChange={setAddressLine1}
+          />
+          <Field
+            label="City"
+            name="addressCity"
+            maxLength={100}
+            value={addressCity}
+            onChange={setAddressCity}
+          />
           <Field
             label="Address country code"
             name="addressCountryCode"
             maxLength={8}
             placeholder="ie / pt / es…"
+            value={addressCountryCode}
+            onChange={setAddressCountryCode}
           />
         </div>
       </AdminCard>
@@ -759,16 +811,30 @@ function Field({
   name,
   maxLength,
   placeholder,
+  value,
+  onChange,
 }: {
   label: string;
   name: string;
   maxLength?: number;
   placeholder?: string;
+  /** When provided the input is controlled (so it can be prefilled). */
+  value?: string;
+  onChange?: (value: string) => void;
 }) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="gh-field-label">{label}</span>
-      <input type="text" name={name} className="gh-input" maxLength={maxLength} placeholder={placeholder} />
+      <input
+        type="text"
+        name={name}
+        className="gh-input"
+        maxLength={maxLength}
+        placeholder={placeholder}
+        {...(value !== undefined
+          ? { value, onChange: (e) => onChange?.(e.target.value) }
+          : {})}
+      />
     </label>
   );
 }
