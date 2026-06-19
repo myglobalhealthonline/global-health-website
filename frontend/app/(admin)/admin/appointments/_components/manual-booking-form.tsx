@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 import { AdminCard } from "../../_components/atoms";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { formatPriceRounded } from "@/lib/format-currency";
-import { DIAL_OPTIONS } from "@/lib/phone/dial-codes";
+import { DIAL_OPTIONS, splitPhone } from "@/lib/phone/dial-codes";
 import {
   combinePhone,
   hasErrors,
@@ -32,6 +32,18 @@ type DoctorOption = {
 };
 
 type ClinicOption = { id: string; name: string; city: string | null };
+
+/** A distinct existing patient under the typed email — returned by
+ *  /api/admin/patients/by-email and offered in the email-field dropdown. */
+type PatientOption = {
+  fullName: string;
+  dateOfBirth: string | null;
+  phone: string | null;
+  appointmentCount: number;
+  lastBookedAt: string | null;
+};
+
+const EMAIL_LOOKUP_RE = /^\S+@\S+\.\S+$/;
 
 type Slot = {
   id: string;
@@ -77,8 +89,16 @@ export function ManualBookingForm({
 }: Props) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [dialCode, setDialCode] = useState(defaultDialCode);
   const [phoneNational, setPhoneNational] = useState("");
+
+  // Existing-patient typeahead for the email field. Multiple distinct people
+  // can share one account email, so the dropdown lets the admin pick the
+  // right one and prefill name / DOB / phone instead of re-typing.
+  const [patientOptions, setPatientOptions] = useState<PatientOption[]>([]);
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [showPatientMenu, setShowPatientMenu] = useState(false);
 
   const [serviceId, setServiceId] = useState("");
   const [doctorId, setDoctorId] = useState("");
@@ -188,6 +208,61 @@ export function ManualBookingForm({
     return map;
   }, [slots, clinicTimezone]);
 
+  // Debounced lookup of existing patients for the typed email. Only fires
+  // once the value looks like a full email; aborts in-flight requests so the
+  // last keystroke wins.
+  useEffect(() => {
+    const value = email.trim();
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      // Not a full email yet — clear any stale matches and skip the fetch.
+      if (!EMAIL_LOOKUP_RE.test(value)) {
+        setPatientOptions([]);
+        setLookupLoading(false);
+        return;
+      }
+      void (async () => {
+        setLookupLoading(true);
+        try {
+          const res = await fetch(
+            `/api/admin/patients/by-email?email=${encodeURIComponent(value)}`,
+            { signal: controller.signal },
+          );
+          const json = (await res.json()) as {
+            ok?: boolean;
+            data?: { patients?: PatientOption[] };
+          };
+          if (controller.signal.aborted) return;
+          setPatientOptions(
+            res.ok && json.ok && Array.isArray(json.data?.patients)
+              ? json.data!.patients!
+              : [],
+          );
+        } catch {
+          if (!controller.signal.aborted) setPatientOptions([]);
+        } finally {
+          if (!controller.signal.aborted) setLookupLoading(false);
+        }
+      })();
+    }, 300);
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
+  }, [email]);
+
+  // Prefill the patient identity fields from a chosen existing patient.
+  function selectPatient(p: PatientOption) {
+    setFullName(p.fullName);
+    setDateOfBirth(p.dateOfBirth ?? "");
+    if (p.phone) {
+      const parts = splitPhone(p.phone, defaultDialCode);
+      setDialCode(parts.dial);
+      setPhoneNational(parts.national);
+    }
+    setShowPatientMenu(false);
+  }
+
   const combinedPhone = combinePhone(dialCode, phoneNational);
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -246,18 +321,67 @@ export function ManualBookingForm({
             {errors.fullName ? <FieldError msg={errors.fullName} /> : null}
           </label>
 
-          <label className="flex flex-col gap-1.5">
+          <label className="relative flex flex-col gap-1.5">
             <span className="gh-field-label">Email *</span>
             <input
               type="email"
               name="email"
               className="gh-input"
               maxLength={254}
+              autoComplete="off"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setShowPatientMenu(true);
+              }}
+              onFocus={() => setShowPatientMenu(true)}
+              // Delay so a click on a menu option registers before close.
+              onBlur={() => setTimeout(() => setShowPatientMenu(false), 150)}
               aria-invalid={Boolean(errors.email)}
             />
             {errors.email ? <FieldError msg={errors.email} /> : null}
+            {showPatientMenu && (lookupLoading || patientOptions.length > 0) ? (
+              <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-20 max-h-64 overflow-auto rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] shadow-lg">
+                {lookupLoading ? (
+                  <div className="flex items-center gap-2 px-3 py-2 text-[12px] text-[var(--color-text-muted)]">
+                    <Loader2 className="size-3.5 animate-spin" aria-hidden /> Searching existing
+                    patients…
+                  </div>
+                ) : (
+                  <>
+                    <p className="border-b border-[var(--color-border)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                      {patientOptions.length} existing patient
+                      {patientOptions.length === 1 ? "" : "s"} with this email — pick one to prefill
+                    </p>
+                    {patientOptions.map((p, i) => (
+                      <button
+                        key={`${p.fullName}-${p.dateOfBirth ?? ""}-${i}`}
+                        type="button"
+                        // Keep input focus so onBlur doesn't close before click.
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => selectPatient(p)}
+                        className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left hover:bg-[var(--color-brand-primary)]/10"
+                      >
+                        <span className="text-[13px] font-semibold text-[var(--color-text-primary)]">
+                          {p.fullName}
+                        </span>
+                        <span className="text-[12px] text-[var(--color-text-muted)]">
+                          {[
+                            p.dateOfBirth ? `DOB ${p.dateOfBirth}` : null,
+                            p.phone,
+                            p.appointmentCount > 0
+                              ? `${p.appointmentCount} booking${p.appointmentCount === 1 ? "" : "s"}`
+                              : "no bookings yet",
+                          ]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </span>
+                      </button>
+                    ))}
+                  </>
+                )}
+              </div>
+            ) : null}
           </label>
 
           <label className="flex flex-col gap-1.5">
@@ -294,7 +418,13 @@ export function ManualBookingForm({
 
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Date of birth</span>
-            <input type="date" name="dateOfBirth" className="gh-input" />
+            <input
+              type="date"
+              name="dateOfBirth"
+              className="gh-input"
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
+            />
           </label>
 
           <Field label="National ID number" name="nationalIdNumber" maxLength={64} />
