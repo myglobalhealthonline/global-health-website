@@ -578,16 +578,25 @@ function ServiceChoiceCard({
   );
 }
 
-function StepIndicator({ current, labels }: { current: number; labels: string[] }) {
+function StepIndicator({
+  current,
+  labels,
+  values,
+}: {
+  current: number;
+  labels: string[];
+  values: (string | null)[];
+}) {
   return (
     <ol className="mt-5 grid gap-3">
       {STEPS.map((step) => {
         const complete = step.n < current;
         const active = step.n === current;
+        const value = values[step.n - 1] ?? null;
         return (
-          <li key={step.n} className="flex items-center gap-3">
+          <li key={step.n} className="flex items-start gap-3">
             <span
-              className={`inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+              className={`mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                 complete || active
                   ? "bg-[var(--color-brand-primary)] text-white"
                   : "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
@@ -595,14 +604,19 @@ function StepIndicator({ current, labels }: { current: number; labels: string[] 
             >
               {complete ? <CheckCircle2 className="size-4" aria-hidden /> : step.n}
             </span>
-            <span
-              className={
-                active
-                  ? "text-sm font-bold text-[var(--color-text-primary)]"
-                  : "text-sm font-semibold text-[var(--color-text-muted)]"
-              }
-            >
-              {labels[step.n - 1]}
+            <span className="flex flex-col">
+              <span
+                className={
+                  active
+                    ? "text-sm font-bold text-[var(--color-text-primary)]"
+                    : "text-sm font-semibold text-[var(--color-text-muted)]"
+                }
+              >
+                {labels[step.n - 1]}
+              </span>
+              {value ? (
+                <span className="text-xs leading-snug text-[var(--color-text-muted)]">{value}</span>
+              ) : null}
             </span>
           </li>
         );
