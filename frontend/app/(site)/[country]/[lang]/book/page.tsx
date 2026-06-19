@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -126,9 +126,10 @@ export default async function CountryLangBookPage({
   // Details. The stepper reflects whichever order the patient actually took
   // so step 1 always matches the choice they already made.
   const doctorFirst = Boolean(requestedDoctor) && (!selectedService || requestedDoctorAssigned);
-  const stepLabels = doctorFirst
-    ? [bp.stepDoctor, bp.stepService, bp.stepTime, bp.stepDetails]
-    : [bp.stepService, bp.stepDoctor, bp.stepTime, bp.stepDetails];
+
+  const stepValues: (string | null)[] = doctorFirst
+    ? [requestedDoctor?.fullName ?? null, selectedService?.name ?? null, null, null]
+    : [selectedService?.name ?? null, requestedDoctor?.fullName ?? null, null, null];
   const currentStep = doctorFirst
     ? !selectedService
       ? 2 // doctor chosen; now choosing the service
@@ -178,7 +179,7 @@ export default async function CountryLangBookPage({
                 <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
                   {bp.bookingSteps}
                 </p>
-                <StepIndicator current={currentStep} labels={stepLabels} />
+                <StepIndicator current={currentStep} labels={stepLabels} values={stepValues} />
                 <p className="mt-5 text-sm leading-relaxed text-[var(--color-text-muted)]">
                   {bp.availabilityNote}
                 </p>
