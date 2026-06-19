@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -157,6 +157,7 @@ export function ConsultationBookingForm({
     const notes = String(form.get("notes") ?? "").trim();
     const patientOtherName = bookingForOther ? String(form.get("patientOtherName") ?? "").trim() : "";
     const patientOtherPhone = bookingForOther ? String(form.get("patientOtherPhone") ?? "").trim() : "";
+    const patientOtherDob = bookingForOther ? String(form.get("patientOtherDob") ?? "").trim() : "";
     const nationalIdNumber = String(form.get("nationalIdNumber") ?? "").trim();
     const addressLine1 = String(form.get("addressLine1") ?? "").trim();
     const addressLine2 = String(form.get("addressLine2") ?? "").trim();
@@ -213,7 +214,7 @@ export function ConsultationBookingForm({
           fullName: bookingForOther ? patientOtherName : fullName,
           email,
           phone: (bookingForOther ? patientOtherPhone || phone : phone) || undefined,
-          dateOfBirth: dateOfBirth || undefined,
+          dateOfBirth: (bookingForOther ? patientOtherDob : dateOfBirth) || undefined,
           notes: notes || undefined,
           consentAccepted: true,
           bookingForOther,
@@ -451,21 +452,23 @@ export function ConsultationBookingForm({
         ) : null}
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <label className="block">
-            <span className="text-xs font-semibold text-[var(--color-text-body)]">
-              {i18n.patientFullName}
-            </span>
-            <input
-              type="text"
-              name="fullName"
-              required={!bookingForOther}
-              minLength={2}
-              maxLength={120}
-              defaultValue={defaults.fullName}
-              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-            />
-          </label>
-          <label className="block">
+          {!bookingForOther ? (
+            <label className="block">
+              <span className="text-xs font-semibold text-[var(--color-text-body)]">
+                {i18n.patientFullName}
+              </span>
+              <input
+                type="text"
+                name="fullName"
+                required
+                minLength={2}
+                maxLength={120}
+                defaultValue={defaults.fullName}
+                className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+              />
+            </label>
+          ) : null}
+          <label className={`block${bookingForOther ? " sm:col-span-2" : ""}`}>
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
               {bookingForOther ? "Your email (for confirmation)" : i18n.email}
             </span>
@@ -482,31 +485,35 @@ export function ConsultationBookingForm({
               </p>
             ) : null}
           </label>
-          <label className="block">
-            <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.phone}</span>
-            <PhoneField
-              name="phone"
-              defaultValue={defaults.phone}
-              defaultDial={dialCodeForCountrySlug(params?.country)}
-              placeholder="871234567"
-              className="mt-1 flex gap-2"
-              selectClassName="block rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-2 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-              inputClassName="block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-            />
-          </label>
-          <label className="block">
-            <span className="text-xs font-semibold text-[var(--color-text-body)]">
-              {i18n.dateOfBirth}
-            </span>
-            <input
-              type="date"
-              name="dateOfBirth"
-              max={maxDob}
-              defaultValue={defaults.dateOfBirth}
-              suppressHydrationWarning
-              className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
-            />
-          </label>
+          {!bookingForOther ? (
+            <label className="block">
+              <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.phone}</span>
+              <PhoneField
+                name="phone"
+                defaultValue={defaults.phone}
+                defaultDial={dialCodeForCountrySlug(params?.country)}
+                placeholder="871234567"
+                className="mt-1 flex gap-2"
+                selectClassName="block rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-2 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+                inputClassName="block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+              />
+            </label>
+          ) : null}
+          {!bookingForOther ? (
+            <label className="block">
+              <span className="text-xs font-semibold text-[var(--color-text-body)]">
+                {i18n.dateOfBirth}
+              </span>
+              <input
+                type="date"
+                name="dateOfBirth"
+                max={maxDob}
+                defaultValue={defaults.dateOfBirth}
+                suppressHydrationWarning
+                className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+              />
+            </label>
+          ) : null}
         </div>
 
         {/* Patient being treated — shown only when booking for someone else.
@@ -554,6 +561,19 @@ export function ConsultationBookingForm({
                   className="mt-1 flex gap-2"
                   selectClassName="block rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-2 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
                   inputClassName="block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+                />
+              </label>
+              <label className="block">
+                <span className="text-xs font-semibold text-[var(--color-text-body)]">
+                  Date of birth{" "}
+                  <span className="text-[11px] font-normal text-[var(--color-text-muted)]">(optional)</span>
+                </span>
+                <input
+                  type="date"
+                  name="patientOtherDob"
+                  max={maxDob}
+                  suppressHydrationWarning
+                  className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
                 />
               </label>
             </div>
