@@ -431,6 +431,7 @@ function ServicePicker({
                 service: service.slug,
                 doctor: requestedDoctor?.slug,
               })}
+              viewHref={`/${country}/${lang}/services/${service.slug}`}
               bp={bp}
               minSuffix={minSuffix}
             />
@@ -498,8 +499,8 @@ function DoctorPicker({
               service: service.slug,
               doctor: doctor.slug,
             })}
+            primaryLabel={bp.continue}
             ctaLabel={bp.viewProfile}
-            bookLabel={bp.pickTime}
           />
         </li>
       ))}
@@ -510,19 +511,18 @@ function DoctorPicker({
 function ServiceChoiceCard({
   service,
   href,
+  viewHref,
   bp,
   minSuffix,
 }: {
   service: CountryServiceCard;
   href: string;
+  viewHref: string;
   bp: BookT;
   minSuffix: string;
 }) {
   return (
-    <Link
-      href={href}
-      className="group grid min-h-[220px] overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)] transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-[var(--color-brand-primary)]/25 hover:shadow-[var(--shadow-card-hover)]"
-    >
+    <div className="grid min-h-[220px] overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white shadow-[var(--shadow-card)]">
       {service.imageSrc ? (
         <div className="relative min-h-[150px] overflow-hidden">
           <Image
@@ -559,22 +559,30 @@ function ServiceChoiceCard({
             {service.summary}
           </p>
         ) : null}
-        <div className="mt-auto flex items-center justify-between gap-4 pt-5">
+        <div className="mt-auto flex items-center gap-2.5 pt-5">
           <span className="text-sm font-semibold text-[var(--color-text-body)]">
             {service.basePriceCents != null
               ? formatPriceRounded(service.basePriceCents, service.currencyCode)
               : bp.priceVaries}
           </span>
-          <span className="inline-flex items-center gap-1 text-sm font-bold text-[var(--color-brand-primary)]">
-            {bp.continue}
-            <ArrowRight
-              className="size-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
-              aria-hidden
-            />
-          </span>
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <Link
+              href={viewHref}
+              className="inline-flex h-9 items-center justify-center rounded-full border border-[var(--color-border)] px-4 text-sm font-bold text-[var(--color-brand-primary)] transition-colors hover:border-[var(--color-brand-primary)]/40 hover:bg-[var(--color-background-soft)]"
+            >
+              {bp.viewProfile}
+            </Link>
+            <Link
+              href={href}
+              className="inline-flex h-9 items-center justify-center gap-1 rounded-full bg-[var(--color-brand-primary)] px-4 text-sm font-bold text-white transition-[filter] hover:brightness-110"
+            >
+              {bp.continue}
+              <ArrowRight className="size-3.5 shrink-0" aria-hidden />
+            </Link>
+          </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
