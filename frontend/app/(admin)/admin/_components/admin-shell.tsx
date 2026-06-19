@@ -187,9 +187,11 @@ function initials(name: string, email: string): string {
 
 function humanizeSegment(seg: string, countries: CountryPickerOption[]): string {
   if (!seg) return "";
-  const country = countries.find((c) => c.slug === seg || c.code.toLowerCase() === seg.toLowerCase());
+  const decoded = decodeURIComponent(seg);
+  const country = countries.find((c) => c.slug === decoded || c.code.toLowerCase() === decoded.toLowerCase());
   if (country) return country.name;
-  return seg.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  if (decoded.includes("@")) return decoded;
+  return decoded.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function useBreadcrumbs(pathname: string, countries: CountryPickerOption[]) {
