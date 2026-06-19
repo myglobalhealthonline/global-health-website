@@ -255,10 +255,48 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         }),
         prisma.patientProfile.findMany({
           where: { email: { contains: q, mode: "insensitive" } },
-          select: { email: true, fullName: true, dateOfBirth: true, phone: true },
+          select: {
+            email: true,
+            fullName: true,
+            dateOfBirth: true,
+            phone: true,
+            nationalIdNumber: true,
+            taxIdNumber: true,
+            passportNumber: true,
+            addressLine1: true,
+            addressCity: true,
+            addressCountryCode: true,
+          },
           take: 50,
         }),
       ]);
+
+      // PatientProfile is unique per email, so its ID / address fields are
+      // shared by every distinct person booked under that email. Index them
+      // by email to attach to each returned patient.
+      const profileByEmail = new Map<
+        string,
+        {
+          nationalIdNumber: string | null;
+          taxIdNumber: string | null;
+          passportNumber: string | null;
+          addressLine1: string | null;
+          addressCity: string | null;
+          addressCountryCode: string | null;
+        }
+      >();
+      for (const profile of profiles) {
+        const email = profile.email?.trim().toLowerCase();
+        if (!email) continue;
+        profileByEmail.set(email, {
+          nationalIdNumber: profile.nationalIdNumber ?? null,
+          taxIdNumber: profile.taxIdNumber ?? null,
+          passportNumber: profile.passportNumber ?? null,
+          addressLine1: profile.addressLine1 ?? null,
+          addressCity: profile.addressCity ?? null,
+          addressCountryCode: profile.addressCountryCode ?? null,
+        });
+      }
 
       type Agg = {
         email: string;
@@ -313,6 +351,14 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
         }
       }
 
+      const emptyProfile = {
+        nationalIdNumber: null,
+        taxIdNumber: null,
+        passportNumber: null,
+        addressLine1: null,
+        addressCity: null,
+        addressCountryCode: null,
+      };
       const patients = [...byKey.values()]
         .sort((a, b) => (b.lastBookedAt?.getTime() ?? 0) - (a.lastBookedAt?.getTime() ?? 0))
         .slice(0, 20)
@@ -323,6 +369,7 @@ const adminPatientProfileRoute: FastifyPluginAsync = async (app) => {
           phone: p.phone,
           appointmentCount: p.appointmentCount,
           lastBookedAt: p.lastBookedAt ? p.lastBookedAt.toISOString() : null,
+          ...(profileByEmail.get(p.email) ?? emptyProfile),
         }));
 
       return okResponse({ patients });
