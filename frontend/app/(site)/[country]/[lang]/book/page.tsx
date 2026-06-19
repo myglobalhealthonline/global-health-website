@@ -130,6 +130,9 @@ export default async function CountryLangBookPage({
   const stepValues: (string | null)[] = doctorFirst
     ? [requestedDoctor?.fullName ?? null, selectedService?.name ?? null, null, null]
     : [selectedService?.name ?? null, requestedDoctor?.fullName ?? null, null, null];
+  const stepLabels: string[] = doctorFirst
+    ? [bp.stepDoctor, bp.stepService, bp.stepTime, bp.stepDetails]
+    : [bp.stepService, bp.stepDoctor, bp.stepTime, bp.stepDetails];
   const currentStep = doctorFirst
     ? !selectedService
       ? 2 // doctor chosen; now choosing the service
