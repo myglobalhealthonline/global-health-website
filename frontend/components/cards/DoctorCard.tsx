@@ -105,6 +105,9 @@ export function DoctorCard({
   // public cards (the public API no longer sends the number either).
   const profileHref = href;
   const bookHref = bookingHref ?? null;
+  const firstName = name
+    .replace(/^Dr\.?\s*/i, "")
+    .split(/\s+/)[0] ?? name;
 
   // Card palette as root-scoped CSS vars so descendants (text, icons,
   // borders) recolor for the dark variant without per-element prop
@@ -337,48 +340,33 @@ export function DoctorCard({
         {/* ── Actions ── */}
         <div className="mt-5 space-y-2">
 
-          {/* Row 1 — primary green → profile (patient reviews doctor first).
-              When both profile and booking hrefs exist, this is the main CTA. */}
-          {profileHref && bookHref ? (
-            <div className="flex items-center gap-2">
-              <Link
-                href={profileHref}
-                className="relative z-20 inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full px-4 text-[13.5px] font-extrabold tracking-[-0.005em] text-white transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
-                style={{
-                  background: "var(--color-brand-primary)",
-                  boxShadow: "0 6px 18px rgba(29,75,54,0.25)",
-                }}
-              >
-                <CalendarDays className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
-                Book Appointment
-                <ArrowRight
-                  className="size-[15px] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
-                  strokeWidth={1.8}
-                  aria-hidden
-                />
-              </Link>
-            </div>
-          ) : null}
-
-          {/* Row 2 — outline → direct slot picker (skip profile, choose time now).
-              Only renders when bookHref present; label supplied by caller via bookLabel. */}
+          {/* Primary — solid green → booking. */}
           {bookHref ? (
             <Link
               href={bookHref}
-              className="relative z-20 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 text-[13px] font-bold tracking-[-0.005em] text-[color:var(--dc-ink)] transition-[background-color,color,border-color] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
+              className="relative z-20 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full px-4 text-[13.5px] font-extrabold tracking-[-0.005em] text-white transition-[transform,box-shadow,filter] duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+              style={{
+                background: "var(--color-brand-primary)",
+                boxShadow: "0 6px 18px rgba(29,75,54,0.25)",
+              }}
             >
-              {bookLabel}
-              <ArrowRight className="size-[14px] shrink-0" strokeWidth={1.8} aria-hidden />
+              <CalendarDays className="size-[15px] shrink-0" strokeWidth={1.8} aria-hidden />
+              Book with {firstName}
+              <ArrowRight
+                className="size-[15px] shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"
+                strokeWidth={1.8}
+                aria-hidden
+              />
             </Link>
           ) : null}
 
-          {/* Single CTA — profile only, no booking href. */}
-          {!bookHref && profileHref ? (
+          {/* Secondary — outline → profile. */}
+          {profileHref ? (
             <Link
               href={profileHref}
               className="relative z-20 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-full border-[1.5px] border-[color:var(--dc-line)] px-4 text-[13px] font-bold tracking-[-0.005em] text-[color:var(--dc-ink)] transition-[background-color,color,border-color] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-brand-primary)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]/40"
             >
-              {ctaLabel}
+              {bookHref ? "View Profile" : ctaLabel}
               <ArrowRight className="size-[14px] shrink-0" strokeWidth={1.8} aria-hidden />
             </Link>
           ) : null}
