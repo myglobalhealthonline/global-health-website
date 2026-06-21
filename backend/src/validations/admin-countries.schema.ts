@@ -125,6 +125,9 @@ export const COUNTRY_FEATURE_KEYS = [
   "online-prescriptions",
   "health-tests",
   "appointments",
+  // Monthly subscription plans (Wave 0). Strict opt-in — a country only
+  // offers subscriptions when this key is explicitly added (§36.15).
+  "subscriptions",
 ] as const;
 
 const countryFeatureKeySchema = z.enum(COUNTRY_FEATURE_KEYS);
