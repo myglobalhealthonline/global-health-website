@@ -26,7 +26,7 @@ function isAdminTokenFallbackEnabled() {
   return raw === "true";
 }
 
-type AdminApiResponse<T> =
+export type AdminApiResponse<T> =
   | { ok: true; data: T; message?: string }
   | { ok: false; message: string; status?: number };
 
@@ -201,7 +201,7 @@ type AdminCurrenciesListPayload = {
 // poison any future admin save.
 const VALID_COOKIE_NAME = /^[!#$%&'*+\-.0-9A-Z^_`a-z|~]+$/;
 
-async function adminRequest<T>(
+export async function adminRequest<T>(
   path: string,
   init?: {
     method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";

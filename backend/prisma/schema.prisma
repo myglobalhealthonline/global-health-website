@@ -208,6 +208,26 @@ enum AuditAction {
   PATIENT_ANONYMIZED
   CONTACT_CHANGE_REQUESTED
   CONTACT_CHANGE_CONFIRMED
+  // --- Subscriptions (Wave 0, §24) ---
+  SUBSCRIPTION_CREATED
+  SUBSCRIPTION_UPDATED
+  SUBSCRIPTION_CANCELED
+  SUBSCRIPTION_REFUNDED
+  PLAN_CREATED
+  PLAN_UPDATED
+  PLAN_DEACTIVATED
+  PLAN_REORDERED
+  PLAN_CONSULTATION_RULE_SET
+  PERK_RULE_SET
+  PERK_UNLOCKED
+  PERK_MANUALLY_APPROVED
+  CONSULTATION_CREDIT_GRANTED
+  CONSULTATION_CREDIT_CONSUMED
+  CONSULTATION_CREDIT_CLAWED_BACK
+  WELLNESS_CREDIT_EARNED
+  WELLNESS_CREDIT_REDEEMED
+  WELLNESS_CREDIT_CLAWED_BACK
+  HEALTH_TEST_REDEEMED
 }
 
 enum CountryAccessModel {
@@ -722,10 +742,16 @@ model Service {
   peakPricing           ServicePeakPricing?
   /// Admin-managed FAQ entries for this service's public detail page.
   faqs                  ServiceFaq[]
+  /// Subscription plan rules that reference this service (§20).
+  planConsultationRules PlanConsultationRule[]
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
 
   @@unique([countryId, slug])
+  /// FK target for PlanConsultationRule.(serviceId, countryId) composite FK
+  /// (raw SQL in the migration) — guarantees the linked service is in the
+  /// plan's country (§36.10).
+  @@unique([id, countryId])
 }
 
 /// Admin-defined fixed peak-hour pricing for a single service. The peak
@@ -825,22 +851,59 @@ model ServiceDoctor {
 }
 
 model PricingPlan {
-  id              String           @id @default(cuid())
-  countryId       String
-  slug            String
-  name            String
-  description     String?
-  priceCents      Int
-  currencyCode    String
-  interval        String
-  isActive        Boolean          @default(true)
-  country         Country          @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  /// Patients enrolled in this plan (inverse of PatientProfile.pricingPlanId).
-  patientProfiles PatientProfile[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id                         String                        @id @default(cuid())
+  countryId                  String
+  slug                       String
+  name                       String
+  shortDescription           String?
+  /// Renamed from legacy `description` in the Wave 0 migration.
+  longDescription            String?
+  /// Renamed from legacy `priceCents`. The monthly subscription price.
+  monthlyPriceCents          Int
+  currencyCode               String
+  /// Renamed from legacy String `interval`. Only MONTHLY for now.
+  billingInterval            BillingInterval               @default(MONTHLY)
+  isActive                   Boolean                       @default(true)
+  displayOrder               Int                           @default(0)
+  isFeatured                 Boolean                       @default(false)
+  badgeLabel                 String?
+  notesTerms                 String?
+  /// GP/general consultation credits granted each paid month. Single
+  /// source the snapshot/grant reads (§20). Essential 1, Comprehensive 2,
+  /// Premium 3.
+  monthlyConsultationCredits Int                           @default(0)
+  /// Wellness credits earned per paid month. Premium-only by config
+  /// (only the Premium plan sets this > 0). §10/D12.
+  wellnessCreditsPerMonth    Int                           @default(0)
+  /// Family usage allowed on this plan. Seeded false in v1 (family is
+  /// Wave 5 — D20); flipped on by the future family migration.
+  familyEnabled              Boolean                       @default(false)
+  /// VAT treatment for this plan's country. Default EXEMPT (medical
+  /// telemedicine). Accountant confirms per country at go-live — D21.
+  vatMode                    VatMode                       @default(EXEMPT)
+  vatRatePct                 Float?
+  /// Stripe Product (one per plan) + current immutable Price. A price edit
+  /// creates a NEW Price + archives the old one (§22); existing subscribers
+  /// stay on their snapshotted price (grandfathered, D22).
+  stripeProductId            String?
+  stripePriceId              String?
+  country                    Country                       @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  /// Legacy soft link (inverse of PatientProfile.pricingPlanId).
+  /// Deprecated in favour of UserSubscription — kept one release (§32.6).
+  patientProfiles            PatientProfile[]
+  consultationRules          PlanConsultationRule[]
+  perkRules                  PlanPerkRule[]
+  healthTestRules            HealthTestKitRedemptionRule[]
+  translations               PlanTranslation[]
+  subscriptions              UserSubscription[]
+  stripePrices               PlanStripePrice[]
+  createdAt                  DateTime                      @default(now())
+  updatedAt                  DateTime                      @updatedAt
 
   @@unique([countryId, slug])
+  /// FK target for PlanConsultationRule.(planId, countryId) composite FK
+  /// (raw SQL in the migration) — proves rule.country == plan.country.
+  @@unique([id, countryId])
 }
 
 model HealthTest {
@@ -884,6 +947,9 @@ model HealthTest {
   /// fields (price, currency, stock, slug, images) are NOT translated.
   translations       HealthTestTranslation[]
   faqs               HealthTestFaq[]
+  /// Subscription redemption rules + redemption records (§20).
+  redemptionRules    HealthTestKitRedemptionRule[]
+  redemptions        HealthTestRedemption[]
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
 
@@ -1639,6 +1705,9 @@ model Order {
   patientPortalTempPasswordSent Boolean          @default(false)
   automationRuns            AutomationRun[]
   items                 OrderItem[]
+  /// Wellness-credit health-kit redemption fulfilled by this order, if any
+  /// (a €0 kit line + postage in shippingCents — §11).
+  healthTestRedemption  HealthTestRedemption?
   /// Invoice generated for this order (null for Portugal or pre-invoice orders).
   invoice               Invoice?
   /// Stripe Checkout URL cached for admin copy-paste. Refreshed by resolveOrderPaymentUrl.
@@ -1795,6 +1864,9 @@ model User {
   /// posts, share-link mints…). actor=null entries are SYSTEM events.
   auditEvents             AuditLog[]
   patientProfile          PatientProfile?
+  /// Subscriptions owned by this user (§20). One active at a time —
+  /// enforced by a raw-SQL partial unique on userId for active statuses.
+  subscriptions           UserSubscription[]
   /// Admin country scope — only relevant when role=LOCAL_ADMIN.
   adminScope              AdminScope?
   /// Country codes this LOCAL_ADMIN can access. Empty = no access (should not happen).
@@ -2814,4 +2886,357 @@ model EnsureSchemaPatch {
 
   @@map("_EnsureSchemaPatches")
   @@ignore
+}
+
+// ============================================================================
+// SUBSCRIPTIONS (Wave 0) — see docs/plans/subscription-plan-implementation.md
+// §20 schema checklist. Composite FKs + partial-unique indexes that Prisma
+// cannot express are added as RAW SQL in the migration (commented there).
+// ============================================================================
+
+enum BillingInterval {
+  MONTHLY
+}
+
+enum VatMode {
+  EXEMPT
+  STANDARD
+}
+
+enum SubscriptionStatus {
+  INCOMPLETE
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  PAUSED
+}
+
+enum CreditKind {
+  CONSULTATION
+  WELLNESS
+}
+
+enum PlanDiscountMode {
+  NONE
+  PERCENT
+  FIXED
+}
+
+enum ConsultationLedgerReason {
+  MONTHLY_GRANT
+  RESET_EXPIRE
+  RESERVED
+  CONSUMED
+  RELEASED
+  ADJUSTMENT
+  CLAWBACK
+}
+
+enum WellnessLedgerReason {
+  MONTHLY_EARN
+  RESERVED
+  REDEEMED
+  RELEASED
+  ADJUSTMENT
+  CLAWBACK
+}
+
+enum PerkKey {
+  SPECIALIST_DISCOUNT
+  FAMILY_USAGE
+  WELLNESS_REDEMPTION
+  TEST_KIT_REDEMPTION
+  HIGHER_DISCOUNT_TIER
+}
+
+enum PerkUnlockMode {
+  MONTH_1
+  AFTER_PAID_MONTHS
+  MANUAL_APPROVAL
+  NOT_AVAILABLE
+}
+
+enum PerkGrantStatus {
+  PENDING
+  APPROVED
+  DENIED
+  AUTO
+}
+
+enum RedemptionStatus {
+  REQUESTED
+  APPROVED
+  FULFILLED
+  CANCELED
+}
+
+/// Per-locale display copy for a plan. Base columns on PricingPlan are the
+/// default-locale fallback (matches HealthTestTranslation pattern). §20.
+model PlanTranslation {
+  id               String      @id @default(cuid())
+  planId           String
+  locale           LocaleCode
+  name             String
+  shortDescription String?
+  longDescription  String?
+  notesTerms       String?
+  plan             PricingPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, locale])
+}
+
+/// Links a plan to an existing per-country Service with credit/discount/unlock
+/// config. `serviceId` → Service (D16, no ConsultationType entity). `countryId`
+/// is copied from plan.countryId; two RAW-SQL composite FKs ((serviceId,
+/// countryId)→Service and (planId, countryId)→PricingPlan) make cross-country
+/// corruption structurally impossible (§36.10). PRESCRIPTION services are
+/// rejected at the API (§36.11).
+model PlanConsultationRule {
+  id                  String           @id @default(cuid())
+  planId              String
+  /// Always == plan.countryId (app-enforced + composite-FK enforced).
+  countryId           String
+  serviceId           String
+  isIncluded          Boolean          @default(false)
+  usesCredits         Boolean          @default(false)
+  creditsPerUse       Int              @default(1)
+  discountMode        PlanDiscountMode @default(NONE)
+  discountPercent     Float?
+  fixedPriceCents     Int?
+  unlockAfterPaidMonths Int            @default(0)
+  familyUsable        Boolean          @default(false)
+  isActive            Boolean          @default(true)
+  plan                PricingPlan      @relation(fields: [planId], references: [id], onDelete: Cascade)
+  service             Service          @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  @@unique([planId, serviceId])
+  @@index([countryId])
+}
+
+/// Per-plan perk unlock rule. Manual-approval STATE is per-subscriber on
+/// SubscriptionPerkGrant — NOT here (§36.13).
+model PlanPerkRule {
+  id                    String         @id @default(cuid())
+  planId                String
+  perkKey               PerkKey
+  unlockMode            PerkUnlockMode @default(MONTH_1)
+  unlockAfterPaidMonths Int?
+  plan                  PricingPlan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  @@unique([planId, perkKey])
+}
+
+/// Per-plan health-test redemption rule. Active subscription is ALWAYS
+/// required (D6 — no toggle). §11/§20.
+model HealthTestKitRedemptionRule {
+  id                    String      @id @default(cuid())
+  planId                String
+  healthTestId          String
+  requiredWellnessCredits Int
+  unlockAfterPaidMonths Int         @default(0)
+  isActive              Boolean     @default(true)
+  plan                  PricingPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  healthTest            HealthTest  @relation(fields: [healthTestId], references: [id], onDelete: Cascade)
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  @@unique([planId, healthTestId])
+}
+
+/// A user's subscription. Pricing + grants read `planSnapshot` (D18), not the
+/// live plan. One active per user — RAW-SQL partial unique on userId for
+/// active statuses (§36.8).
+model UserSubscription {
+  id                        String                     @id @default(cuid())
+  userId                    String
+  patientProfileId          String?
+  planId                    String
+  countryCode               String
+  status                    SubscriptionStatus         @default(INCOMPLETE)
+  stripeSubscriptionId      String?                    @unique
+  stripeCustomerId          String?
+  /// Grandfathered Price this sub is billed on (may differ from the plan's
+  /// current stripePriceId) — D22.
+  stripePriceId             String?
+  currentPeriodStart        DateTime?
+  currentPeriodEnd          DateTime?
+  paidMonthsCount           Int                        @default(0)
+  cancelAtPeriodEnd         Boolean                    @default(false)
+  /// Scheduled (next-cycle) plan change — Q10=B.
+  pendingPlanId             String?
+  pendingStripePriceId      String?
+  pendingChangeEffectiveAt  DateTime?
+  stripeSubscriptionScheduleId String?
+  /// Resolved plan terms captured at subscribe + each renewal (D18/§36.16).
+  planSnapshot              Json?
+  snapshotVersion           Int                        @default(0)
+  startedAt                 DateTime?
+  canceledAt                DateTime?
+  user                      User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan                      PricingPlan                @relation(fields: [planId], references: [id])
+  balances                  SubscriptionCreditBalance[]
+  consultationLedger        ConsultationCreditLedger[]
+  wellnessLedger            WellnessCreditLedger[]
+  perkGrants                SubscriptionPerkGrant[]
+  redemptions               HealthTestRedemption[]
+  invoices                  SubscriptionInvoice[]
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+
+  @@index([userId])
+  @@index([planId])
+  @@index([status])
+}
+
+/// Live balance counter — the SOLE spend authority (§36.1). Mutated via atomic
+/// conditional UPDATE; the ledger is the audit trail.
+model SubscriptionCreditBalance {
+  id                 String           @id @default(cuid())
+  userSubscriptionId String
+  kind               CreditKind
+  balance            Int              @default(0)
+  subscription       UserSubscription @relation(fields: [userSubscriptionId], references: [id], onDelete: Cascade)
+  updatedAt          DateTime         @updatedAt
+
+  @@unique([userSubscriptionId, kind])
+}
+
+/// Append-only consultation-credit ledger (audit). `balanceAfterHint` is
+/// advisory; the counter is authority. Reservation lifecycle: RESERVED(-1) →
+/// terminal CONSUMED(0) | RELEASED(+1). RAW-SQL partial unique on reservationId
+/// WHERE reason IN ('CONSUMED','RELEASED') enforces commit/release exclusivity.
+model ConsultationCreditLedger {
+  id                 String                   @id @default(cuid())
+  userSubscriptionId String
+  userId             String
+  deltaCredits       Int
+  reason             ConsultationLedgerReason
+  balanceAfterHint   Int?
+  reservationId      String?
+  orderItemId        String?
+  serviceId          String?
+  /// Cart-first path only — never the manual appointments.route.ts path (§36.17).
+  appointmentId      String?
+  reservedUntil      DateTime?
+  billingPeriodStart DateTime?
+  idempotencyKey     String                   @unique
+  subscription       UserSubscription         @relation(fields: [userSubscriptionId], references: [id], onDelete: Cascade)
+  createdAt          DateTime                 @default(now())
+
+  @@index([userSubscriptionId, reason])
+  @@index([reservationId])
+}
+
+/// Append-only wellness-credit ledger. No monthly reset/expiry (D13). Earned
+/// only on Premium (D12). Reservation lifecycle mirrors consultation; RAW-SQL
+/// partial unique on reservationId WHERE reason IN ('REDEEMED','RELEASED').
+model WellnessCreditLedger {
+  id                 String               @id @default(cuid())
+  userSubscriptionId String
+  userId             String
+  deltaCredits       Int
+  reason             WellnessLedgerReason
+  balanceAfterHint   Int?
+  /// = HealthTestRedemption.id for a reservation group.
+  reservationId      String?
+  reservedUntil      DateTime?
+  healthTestId       String?
+  redemptionId       String?
+  idempotencyKey     String               @unique
+  subscription       UserSubscription     @relation(fields: [userSubscriptionId], references: [id], onDelete: Cascade)
+  createdAt          DateTime             @default(now())
+
+  @@index([userSubscriptionId, reason])
+  @@index([reservationId])
+}
+
+/// Per-subscriber perk grant (manual-approval state lives here, not on the
+/// plan rule — §36.13).
+model SubscriptionPerkGrant {
+  id                 String           @id @default(cuid())
+  userSubscriptionId String
+  perkKey            PerkKey
+  status             PerkGrantStatus  @default(PENDING)
+  approvedByAdminId  String?
+  approvedAt         DateTime?
+  subscription       UserSubscription @relation(fields: [userSubscriptionId], references: [id], onDelete: Cascade)
+  createdAt          DateTime         @default(now())
+
+  @@unique([userSubscriptionId, perkKey])
+  @@index([status])
+}
+
+/// Wellness-credit health-kit redemption. Reuses Order/OrderItem for
+/// fulfilment (€0 kit line + postage in Order.shippingCents). §11.
+model HealthTestRedemption {
+  id                  String           @id @default(cuid())
+  userId              String
+  userSubscriptionId  String
+  healthTestId        String
+  orderId             String?          @unique
+  wellnessCreditsSpent Int
+  status              RedemptionStatus @default(REQUESTED)
+  subscription        UserSubscription @relation(fields: [userSubscriptionId], references: [id], onDelete: Cascade)
+  healthTest          HealthTest       @relation(fields: [healthTestId], references: [id])
+  order               Order?           @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  createdAt           DateTime         @default(now())
+
+  @@index([userId])
+  @@index([status])
+}
+
+/// Account-page mirror of Stripe-hosted subscription invoices. Stripe is the
+/// system of record (§38.1) — this only renders /account/payments.
+model SubscriptionInvoice {
+  id                 String           @id @default(cuid())
+  userSubscriptionId String
+  stripeInvoiceId    String           @unique
+  number             String?
+  amountPaidCents    Int
+  currency           String
+  taxCents           Int              @default(0)
+  periodStart        DateTime?
+  hostedInvoiceUrl   String?
+  pdfUrl             String?
+  status             String?
+  subscription       UserSubscription @relation(fields: [userSubscriptionId], references: [id], onDelete: Cascade)
+  createdAt          DateTime         @default(now())
+
+  @@index([userSubscriptionId])
+}
+
+/// Audit trail of immutable Stripe Price versions per plan (§22). Optional but
+/// recommended for reconciliation.
+model PlanStripePrice {
+  id            String      @id @default(cuid())
+  planId        String
+  stripePriceId String      @unique
+  amountCents   Int
+  currency      String
+  active        Boolean     @default(true)
+  plan          PricingPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  archivedAt    DateTime?
+
+  @@index([planId])
+}
+
+/// Family member under a primary account. Wave 5 (D20) — table created now,
+/// seeded off; the flow ships later.
+model FamilyMember {
+  id               String    @id @default(cuid())
+  primaryUserId    String
+  patientProfileId String?
+  fullName         String
+  email            String?
+  dateOfBirth      DateTime?
+  relationship     String?
+  canUseCredits    Boolean   @default(false)
+  createdAt        DateTime  @default(now())
+
+  @@index([primaryUserId])
 }

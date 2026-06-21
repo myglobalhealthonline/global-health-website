@@ -24,6 +24,12 @@ import {
 } from "../modules/pricing/peak-pricing.service.js";
 import { startPrePaymentFlow } from "../modules/automation/pre-payment-flow.service.js";
 import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
+import { completeOrderPaymentFromCheckoutSession } from "../modules/orders/complete-order-payment.service.js";
+import {
+  commitOrderCreditReservations,
+  linkReservationsToOrderItems,
+  reserveAndPriceConsultations,
+} from "../modules/subscriptions/checkout-pricing.service.js";
 
 /**
  * Orders + checkout.
@@ -98,12 +104,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
     "/api/cart/checkout",
     { config: { rateLimit: { max: 20, timeWindow: "1 hour" } } },
     async (request, reply) => {
-      if (!isStripeConfigured()) {
-        return reply
-          .status(503)
-          .send(errorResponse("Payments not configured. Set STRIPE_SECRET_KEY."));
-      }
-
+      // Stripe is gated below — only required when the order total is > 0.
+      // Fully credit-covered (€0) consultation orders confirm without Stripe
+      // (§36.3), so we don't hard-block here anymore.
       const body = checkoutBodySchema.safeParse(request.body);
       if (!body.success) {
         return reply.status(400).send(errorResponse("Invalid checkout data", body.error.flatten()));
@@ -174,10 +177,6 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
         const effectiveUnitPrice = (i: { id: string; unitPriceCents: number }) =>
           effectivePriceByItemId.get(i.id) ?? i.unitPriceCents;
 
-        const subtotalCents = cart.items.reduce(
-          (s, i) => s + effectiveUnitPrice(i) * i.quantity,
-          0,
-        );
         // Per-item shipping snapshot, summed across every line. Online
         // consultations carry shippingCents=0, so a cart of just
         // consultations totals to subtotal. Physical items (health
@@ -186,7 +185,6 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
           (s, i) => s + (i.shippingCents ?? 0) * i.quantity,
           0,
         );
-        const totalCents = subtotalCents + shippingCents;
         const currency = cart.currencyCode.toLowerCase();
 
         // Shipping address gate. HEALTH_TEST kits get posted to the
@@ -214,7 +212,36 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
 
         // Create Order + OrderItems in one tx so a partial state is impossible
         const orderNumber = await generateOrderNumber();
-        const order = await prisma.$transaction(async (tx) => {
+        const txResult = await prisma.$transaction(async (tx) => {
+          // Subscription pricing (§21): logged-in users only (D15). Reserves
+          // credits / applies discounts on consultation lines inside the tx so
+          // a reservation rolls back with the order.
+          const planResult = userId
+            ? await reserveAndPriceConsultations(tx, {
+                userId,
+                countryCode: cart.countryCode,
+                items: cart.items.map((i) => ({
+                  id: i.id,
+                  kind: i.kind,
+                  serviceId: i.serviceId,
+                  unitPriceCents: effectiveUnitPrice(i),
+                })),
+                peakPriceByItemId: effectivePriceByItemId,
+              })
+            : {
+                subscriptionId: null,
+                lines: new Map<
+                  string,
+                  { finalUnitPriceCents: number; creditCovered: boolean; reservationId?: string }
+                >(),
+              };
+          const finalUnitPrice = (i: { id: string; unitPriceCents: number }) =>
+            planResult.lines.get(i.id)?.finalUnitPriceCents ?? effectiveUnitPrice(i);
+          const subtotalCents = cart.items.reduce(
+            (s, i) => s + finalUnitPrice(i) * i.quantity,
+            0,
+          );
+          const totalCents = subtotalCents + shippingCents;
           const created = await tx.order.create({
             data: {
               orderNumber,
@@ -241,9 +268,9 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   healthTestId: i.healthTestId,
                   serviceId: i.serviceId,
                   name: i.name,
-                  unitPriceCents: effectiveUnitPrice(i),
+                  unitPriceCents: finalUnitPrice(i),
                   quantity: i.quantity,
-                  lineTotalCents: effectiveUnitPrice(i) * i.quantity,
+                  lineTotalCents: finalUnitPrice(i) * i.quantity,
                   timeSlotId: i.timeSlotId,
                   doctorId: i.doctorId,
                   // Patient intake snapshot: carry the cart-page form
@@ -274,8 +301,54 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             },
             include: { items: true },
           });
-          return created;
+          // Link each reservation to its OrderItem (consultation lines carry a
+          // unique timeSlotId) so commit/release can find them by order.
+          const cartToOrderItem = new Map<string, string>();
+          for (const ci of cart.items) {
+            if (!ci.timeSlotId) continue;
+            const oi = created.items.find((o) => o.timeSlotId === ci.timeSlotId);
+            if (oi) cartToOrderItem.set(ci.id, oi.id);
+          }
+          await linkReservationsToOrderItems(tx, planResult.lines, cartToOrderItem);
+          return { order: created, subtotalCents, totalCents };
         });
+        const order = txResult.order;
+        const subtotalCents = txResult.subtotalCents;
+        const totalCents = txResult.totalCents;
+
+        // ── €0 fully-credit order → confirm without Stripe (§36.3) ────
+        // No charge exists, so commit the credit reservations now and run the
+        // normal paid-order fulfilment (appointment minting) via a synthetic
+        // session. The commit is idempotent and mutually exclusive with the
+        // release sweep.
+        if (totalCents === 0) {
+          await commitOrderCreditReservations(order.id);
+          await completeOrderPaymentFromCheckoutSession(
+            order.id,
+            {
+              id: `free_${order.id}`,
+              payment_intent: null,
+              invoice: null,
+              client_reference_id: order.id,
+              metadata: { kind: "order", orderId: order.id, countryCode: cart.countryCode },
+            },
+            { stripeEventId: `free_${order.id}`, eventType: "free_order" },
+            app.log,
+          );
+          await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
+          await prisma.cart.update({
+            where: { id: cart.id },
+            data: { countryCode: "", currencyCode: "", abandonedEmailSentAt: null },
+          });
+          return okResponse({ orderId: order.id, url: null, free: true });
+        }
+
+        // Paid order → Stripe is required from here on.
+        if (!isStripeConfigured()) {
+          return reply
+            .status(503)
+            .send(errorResponse("Payments not configured. Set STRIPE_SECRET_KEY."));
+        }
 
         // Build Stripe line_items (one per cart item + a shipping line)
         const stripe = getStripeClient();
@@ -286,14 +359,18 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
             unit_amount: number;
             product_data: { name: string };
           };
-        }> = order.items.map((i) => ({
-          quantity: i.quantity,
-          price_data: {
-            currency,
-            unit_amount: i.unitPriceCents,
-            product_data: { name: i.name },
-          },
-        }));
+        }> = order.items
+          // Credit-covered (€0) lines carry no Stripe line-item; paid lines
+          // proceed (mixed-cart rule, §36.17).
+          .filter((i) => i.unitPriceCents > 0)
+          .map((i) => ({
+            quantity: i.quantity,
+            price_data: {
+              currency,
+              unit_amount: i.unitPriceCents,
+              product_data: { name: i.name },
+            },
+          }));
         if (shippingCents > 0) {
           lineItems.push({
             quantity: 1,

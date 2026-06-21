@@ -11,6 +11,18 @@ import { env } from "../config/env.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { completeOrderPaymentFromCheckoutSession, syncOrderPaymentFromStripe, syncOrderPaymentFromStripeSession } from "../modules/orders/complete-order-payment.service.js";
+import {
+  handleSubscriptionEvent,
+  isSubscriptionEvent,
+} from "../modules/subscriptions/subscription-webhook.service.js";
+import {
+  commitRedemption,
+  releaseRedemption,
+} from "../modules/subscriptions/redemption.service.js";
+import {
+  commitOrderCreditReservations,
+  releaseOrderCreditReservations,
+} from "../modules/subscriptions/checkout-pricing.service.js";
 
 const createCheckoutBodySchema = z.object({
   appointmentId: z.string().trim().min(8).max(40),
@@ -194,9 +206,6 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
       const result = body.data.orderId
         ? await syncOrderPaymentFromStripe(body.data.orderId, app.log)
         : await syncOrderPaymentFromStripeSession(body.data.stripeSessionId!, app.log);
-      // #region agent log
-      fetch('http://127.0.0.1:7835/ingest/b6dd0b3b-c589-4acc-8726-e91e7b7039d1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'694d12'},body:JSON.stringify({sessionId:'694d12',hypothesisId:'B',location:'payments.route.ts:sync-order',message:'sync-order result',data:{orderId:body.data.orderId??null,stripeSessionId:body.data.stripeSessionId??null,result},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
       if (!result.ok && result.code === "NOT_FOUND") {
         return reply.status(404).send(errorResponse("Order not found"));
       }
@@ -281,10 +290,39 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
 
       const eventType = event.type;
       try {
+        // ── Subscription events (§25.3) ─────────────────────────
+        // Branch recurring-billing events to the subscription handler before
+        // the one-off order/appointment logic below. The handler is
+        // ordering-tolerant and idempotent (period-keyed grants).
+        const minimalEvent = {
+          id: event.id,
+          type: event.type,
+          data: { object: event.data.object as unknown as Record<string, unknown> },
+        };
+        if (isSubscriptionEvent(minimalEvent)) {
+          const subResult = await handleSubscriptionEvent(minimalEvent);
+          if (!subResult.handled) {
+            // Out-of-order (sub not linked yet) — 500 so Stripe retries.
+            return reply
+              .status(500)
+              .send(errorResponse("Subscription webhook deferred for retry"));
+          }
+          return okResponse({ received: true, detail: subResult.detail });
+        }
+
         if (
           eventType === "checkout.session.completed" ||
           eventType === "checkout.session.async_payment_succeeded"
         ) {
+          // ── Redemption shipping payment (§11) ─────────────────
+          const redemptionSession = event.data.object as {
+            metadata?: Record<string, string>;
+          };
+          if (redemptionSession.metadata?.kind === "redemption") {
+            const redemptionId = redemptionSession.metadata?.redemptionId;
+            if (redemptionId) await commitRedemption(redemptionId);
+            return okResponse({ received: true });
+          }
           const session = event.data.object as {
             id: string;
             client_reference_id?: string | null;
@@ -335,6 +373,12 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
             if (result.alreadyPaid) {
               return okResponse({ received: true, deduped: true });
             }
+
+            // Commit any subscription credit reservations on this order — the
+            // charge succeeded, so RESERVED → CONSUMED (§36.3). Idempotent.
+            await commitOrderCreditReservations(orderId).catch((err) => {
+              app.log.error({ err, orderId }, "Commit order credit reservations failed");
+            });
 
             return okResponse({ received: true });
           }
@@ -391,6 +435,11 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
             client_reference_id?: string | null;
             metadata?: Record<string, string>;
           };
+          if (session.metadata?.kind === "redemption") {
+            const redemptionId = session.metadata?.redemptionId;
+            if (redemptionId) await releaseRedemption(redemptionId);
+            return okResponse({ received: true });
+          }
           if (session.metadata?.kind === "order") {
             const orderId =
               session.client_reference_id ?? session.metadata?.orderId ?? null;
@@ -417,6 +466,11 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
                       ]
                     : []),
                 ]);
+                // Release any subscription credit reservations on the
+                // abandoned order (RESERVED → RELEASED, credit restored).
+                await releaseOrderCreditReservations(orderId).catch((err) => {
+                  app.log.error({ err, orderId }, "Release order credit reservations failed");
+                });
               }
             }
             return okResponse({ received: true });

@@ -1,6 +1,5 @@
 ﻿import { countries, type CountryConfig } from "@/data/countries";
 import { doctors } from "@/data/doctors";
-import { pricingPlans } from "@/data/pricing-plans";
 import { services } from "@/data/services";
 import type { LocaleCode } from "@/lib/i18n/types";
 
@@ -27,7 +26,9 @@ export async function getCountryContent(country: CountryConfig): Promise<Country
     supportedLocales: country.supportedLocales,
     services,
     doctors,
-    pricingPlans,
+    // Subscription plans are per-country runtime data now (get-country-plans.ts);
+    // the static site-context fallback carries none.
+    pricingPlans: [],
     badges: [],
     assets: [],
   };

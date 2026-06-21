@@ -1,0 +1,58 @@
+{
+  "common": {
+    "greeting": "Dobrý den, {name},",
+    "signoff": "— Tým Global Health",
+    "manageCta": "Spravovat členství",
+    "rewardsCta": "Zobrazit wellness odměny",
+    "dashboardCta": "Přejít na váš přehled"
+  },
+  "perks": {
+    "SPECIALIST_DISCOUNT": "Sleva na konzultaci se specialistou",
+    "HIGHER_DISCOUNT_TIER": "Vyšší úroveň slevy u specialisty",
+    "WELLNESS_REDEMPTION": "Uplatnění wellness testovací sady",
+    "TEST_KIT_REDEMPTION": "Uplatnění domácí testovací sady",
+    "FAMILY_USAGE": "Využití pro rodinného příslušníka"
+  },
+  "confirmed": {
+    "subject": "Vaše členství {plan} je nyní aktivní",
+    "title": "Vítejte v plánu {plan}",
+    "p1": "Vaše měsíční členství v online zdravotní péči je aktivní. Můžete si ihned objednat online/video konzultace a využívat své členské výhody.",
+    "p2": "Tento měsíc máte k dispozici {credits} kreditů na online konzultace."
+  },
+  "renewed": {
+    "subject": "Vaše členství {plan} bylo obnoveno — kredity na tento měsíc jsou připraveny",
+    "title": "Vaše měsíční kredity jsou připsány",
+    "p1": "Děkujeme, že zůstáváte s námi. Vaše členství {plan} bylo úspěšně obnoveno.",
+    "p2": "Na nový měsíc jsme vám připsali {credits} kreditů na online konzultace. Nevyužité kredity se nepřevádějí, proto je co nejlépe využijte."
+  },
+  "perkUnlocked": {
+    "subject": "Právě se odemkla nová členská výhoda",
+    "title": "Výhoda odemčena",
+    "p1": "Dobrá zpráva — výhoda {perk} je nyní ve vašem plánu dostupná po {months} zaplacených měsících.",
+    "p2": "Přihlaste se ke svému účtu a začněte ji využívat."
+  },
+  "wellnessEarned": {
+    "subject": "Získali jste wellness kredit",
+    "title": "Wellness kredit získán",
+    "p1": "Tento měsíc jste získali {credits} wellness kreditů. Nyní máte celkem {balance}.",
+    "p2": "Nasbírejte dostatek wellness kreditů a uplatněte je za některou z dostupných domácích zdravotních testovacích sad — platíte pouze poštovné."
+  },
+  "redemptionConfirmed": {
+    "subject": "Uplatnění vaší sady je potvrzeno",
+    "title": "Uplatnění potvrzeno",
+    "p1": "Potvrdili jsme uplatnění sady {kit}. Vaše wellness kredity byly použity.",
+    "p2": "Doručení můžete sledovat v objednávkách svého účtu."
+  },
+  "reminder": {
+    "subject": "Vaše členství se brzy obnoví",
+    "title": "Připomenutí obnovení",
+    "p1": "Připomínáme, že vaše členství {plan} se obnoví dne {date} za obvyklou měsíční cenu.",
+    "p2": "Není potřeba nic dělat — vaše platební metoda bude automaticky zatížena. Kdykoli můžete provést změnu nebo zrušení."
+  },
+  "canceled": {
+    "subject": "Vaše členství bylo zrušeno",
+    "title": "Členství zrušeno",
+    "p1": "Vaše členství {plan} je zrušeno a již se nebude obnovovat.",
+    "p2": "Vaše výhody pokračují do {date}. Kdykoli se rádi opět uvidíme."
+  }
+}

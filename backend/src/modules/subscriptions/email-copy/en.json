@@ -1,0 +1,58 @@
+{
+  "common": {
+    "greeting": "Hi {name},",
+    "signoff": "— The Global Health team",
+    "manageCta": "Manage membership",
+    "rewardsCta": "View wellness rewards",
+    "dashboardCta": "Go to your dashboard"
+  },
+  "perks": {
+    "SPECIALIST_DISCOUNT": "Specialist consultation discount",
+    "HIGHER_DISCOUNT_TIER": "Higher specialist discount tier",
+    "WELLNESS_REDEMPTION": "Wellness test-kit redemption",
+    "TEST_KIT_REDEMPTION": "Home test-kit redemption",
+    "FAMILY_USAGE": "Family member usage"
+  },
+  "confirmed": {
+    "subject": "Your {plan} membership is now active",
+    "title": "Welcome to {plan}",
+    "p1": "Your monthly online healthcare membership is active. You can book online/video consultations and use your member benefits right away.",
+    "p2": "You have {credits} online consultation credit(s) available this month."
+  },
+  "renewed": {
+    "subject": "Your {plan} renewed — this month's credits are ready",
+    "title": "Your monthly credits are in",
+    "p1": "Thanks for staying with us. Your {plan} membership renewed successfully.",
+    "p2": "We've added {credits} online consultation credit(s) for the new month. Unused credits don't roll over, so make the most of them."
+  },
+  "perkUnlocked": {
+    "subject": "A new member perk just unlocked",
+    "title": "Perk unlocked",
+    "p1": "Good news — {perk} is now available on your plan after {months} paid month(s).",
+    "p2": "Sign in to your account to start using it."
+  },
+  "wellnessEarned": {
+    "subject": "You earned a wellness credit",
+    "title": "Wellness credit earned",
+    "p1": "You earned {credits} wellness credit(s) this month. You now have {balance} in total.",
+    "p2": "Collect enough wellness credits to redeem an eligible home health test kit — postage only."
+  },
+  "redemptionConfirmed": {
+    "subject": "Your kit redemption is confirmed",
+    "title": "Redemption confirmed",
+    "p1": "We've confirmed your redemption of {kit}. Your wellness credits have been applied.",
+    "p2": "You can track delivery from your account orders."
+  },
+  "reminder": {
+    "subject": "Your membership renews soon",
+    "title": "Renewal reminder",
+    "p1": "A reminder that your {plan} membership renews on {date} at the usual monthly price.",
+    "p2": "No action is needed — your payment method will be charged automatically. You can change or cancel anytime."
+  },
+  "canceled": {
+    "subject": "Your membership has been cancelled",
+    "title": "Membership cancelled",
+    "p1": "Your {plan} membership is cancelled and won't renew again.",
+    "p2": "Your benefits continue until {date}. You're welcome back anytime."
+  }
+}

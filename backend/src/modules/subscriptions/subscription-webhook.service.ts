@@ -1,0 +1,452 @@
+import type { SubscriptionStatus } from "@prisma/client";
+import { prisma } from "../../db/prisma.js";
+import { recordAudit } from "../audit/audit.service.js";
+import { clawbackCredits, getBalance } from "../credits/credit-balance.service.js";
+import { clawbackKey } from "../credits/credit-keys.js";
+import { processInvoicePaid, type BillingReason } from "./subscription-grant.service.js";
+import { writeSubscriptionInvoice } from "./subscription-invoice.service.js";
+import {
+  notifyPerkUnlocked,
+  notifySubscriptionConfirmed,
+  notifySubscriptionRenewed,
+  notifyWellnessEarned,
+} from "./subscription-emails.service.js";
+
+/**
+ * Subscription webhook side-effects (§25.3/§36.2/§38.7). The dispatch entry
+ * `handleSubscriptionEvent` is called by payments.route.ts for live events AND
+ * by tests with CANNED Stripe fixtures (no keys/signature needed).
+ *
+ * Event ordering is tolerant: status writes are monotonic, the period-keyed
+ * grant is the idempotency backstop, and a ProcessedWebhookEvent row dedupes
+ * exact event-id retries.
+ */
+
+export interface MinimalStripeEvent {
+  id: string;
+  type: string;
+  data: { object: Record<string, unknown> };
+}
+
+export interface SubscriptionEventResult {
+  handled: boolean;
+  detail?: string;
+}
+
+const SUBSCRIPTION_EVENT_TYPES = new Set([
+  "checkout.session.completed",
+  "customer.subscription.created",
+  "customer.subscription.updated",
+  "customer.subscription.deleted",
+  "invoice.payment_succeeded",
+  "invoice.payment_failed",
+  "invoice.payment_action_required",
+  "invoice.finalization_failed",
+  "charge.refunded",
+  "charge.dispute.created",
+]);
+
+/** True when the route should hand this event to the subscription handler. */
+export function isSubscriptionEvent(event: MinimalStripeEvent): boolean {
+  if (!SUBSCRIPTION_EVENT_TYPES.has(event.type)) return false;
+  const obj = event.data.object;
+  // checkout.session is a subscription event only in subscription mode.
+  if (event.type === "checkout.session.completed") {
+    return obj.mode === "subscription" || obj.kind === "subscription" ||
+      (obj.metadata as Record<string, string> | undefined)?.kind === "subscription";
+  }
+  return true;
+}
+
+export async function handleSubscriptionEvent(
+  event: MinimalStripeEvent,
+): Promise<SubscriptionEventResult> {
+  // Exact event-id dedupe (retries). Period-keyed grant covers same-period
+  // duplicate invoices with different event ids.
+  const already = await prisma.processedWebhookEvent.findUnique({
+    where: { stripeEventId: event.id },
+    select: { id: true },
+  });
+  if (already) return { handled: true, detail: "deduped" };
+
+  let result: SubscriptionEventResult;
+  switch (event.type) {
+    case "checkout.session.completed":
+      result = await onCheckoutCompleted(event);
+      break;
+    case "customer.subscription.created":
+    case "customer.subscription.updated":
+      result = await onSubscriptionSynced(event);
+      break;
+    case "customer.subscription.deleted":
+      result = await onSubscriptionDeleted(event);
+      break;
+    case "invoice.payment_succeeded":
+      result = await onInvoicePaid(event);
+      break;
+    case "invoice.payment_failed":
+      result = await onInvoiceFailed(event);
+      break;
+    case "invoice.payment_action_required":
+    case "invoice.finalization_failed":
+      result = { handled: true, detail: "sca_required_no_cancel" };
+      break;
+    case "charge.refunded":
+    case "charge.dispute.created":
+      result = await onRefundOrDispute(event);
+      break;
+    default:
+      result = { handled: false, detail: "ignored" };
+  }
+
+  if (result.handled) {
+    await prisma.processedWebhookEvent
+      .create({ data: { stripeEventId: event.id, eventType: event.type } })
+      .catch(() => {
+        // A concurrent retry may have inserted it first — safe to ignore.
+      });
+  }
+  return result;
+}
+
+// ── handlers ────────────────────────────────────────────────────────────────
+
+async function onCheckoutCompleted(
+  event: MinimalStripeEvent,
+): Promise<SubscriptionEventResult> {
+  const obj = event.data.object;
+  const metadata = (obj.metadata as Record<string, string> | undefined) ?? {};
+  const internalSubId = metadata.internalSubId ?? null;
+  const stripeSubscriptionId = str(obj.subscription);
+  const stripeCustomerId = str(obj.customer);
+  if (!internalSubId || !stripeSubscriptionId) {
+    return { handled: true, detail: "missing-ids" };
+  }
+
+  const sub = await prisma.userSubscription.findUnique({ where: { id: internalSubId } });
+  if (!sub) return { handled: true, detail: "sub-not-found" };
+
+  // Link Stripe ids; status stays INCOMPLETE until the first invoice is paid.
+  await prisma.userSubscription.update({
+    where: { id: sub.id },
+    data: {
+      stripeSubscriptionId,
+      stripeCustomerId: stripeCustomerId ?? sub.stripeCustomerId,
+    },
+  });
+  await recordAudit({
+    action: "SUBSCRIPTION_CREATED",
+    entityType: "UserSubscription",
+    entityId: sub.id,
+    actorUserId: sub.userId,
+    metadata: { stripeSubscriptionId },
+  });
+  return { handled: true, detail: "linked" };
+}
+
+async function onSubscriptionSynced(
+  event: MinimalStripeEvent,
+): Promise<SubscriptionEventResult> {
+  const obj = event.data.object;
+  const stripeSubscriptionId = str(obj.id);
+  if (!stripeSubscriptionId) return { handled: true, detail: "no-id" };
+  const sub = await prisma.userSubscription.findUnique({
+    where: { stripeSubscriptionId },
+  });
+  if (!sub) return { handled: true, detail: "sub-not-found" };
+
+  const stripeStatus = mapStripeStatus(str(obj.status));
+  const cancelAtPeriodEnd = Boolean(obj.cancel_at_period_end);
+  const periodEnd = unixToDate(obj.current_period_end);
+  const periodStart = unixToDate(obj.current_period_start);
+
+  // Monotonic guard (§38.7): never resurrect a CANCELED sub from a stale event,
+  // and never rewind the period.
+  if (sub.status === "CANCELED" && stripeStatus !== "CANCELED") {
+    return { handled: true, detail: "stale-ignored" };
+  }
+  if (periodStart && sub.currentPeriodStart && periodStart < sub.currentPeriodStart) {
+    return { handled: true, detail: "stale-period" };
+  }
+
+  // Don't downgrade ACTIVE→INCOMPLETE on a late created/updated echo.
+  const nextStatus =
+    sub.status === "ACTIVE" && stripeStatus === "INCOMPLETE" ? "ACTIVE" : stripeStatus;
+
+  await prisma.userSubscription.update({
+    where: { id: sub.id },
+    data: {
+      status: nextStatus,
+      cancelAtPeriodEnd,
+      ...(periodEnd ? { currentPeriodEnd: periodEnd } : {}),
+    },
+  });
+  return { handled: true, detail: `synced:${nextStatus}` };
+}
+
+async function onSubscriptionDeleted(
+  event: MinimalStripeEvent,
+): Promise<SubscriptionEventResult> {
+  const stripeSubscriptionId = str(event.data.object.id);
+  if (!stripeSubscriptionId) return { handled: true, detail: "no-id" };
+  const sub = await prisma.userSubscription.findUnique({
+    where: { stripeSubscriptionId },
+  });
+  if (!sub) return { handled: true, detail: "sub-not-found" };
+  await prisma.userSubscription.update({
+    where: { id: sub.id },
+    data: { status: "CANCELED", canceledAt: sub.canceledAt ?? new Date() },
+  });
+  await recordAudit({
+    action: "SUBSCRIPTION_CANCELED",
+    entityType: "UserSubscription",
+    entityId: sub.id,
+    actorUserId: sub.userId,
+    metadata: { reason: "stripe_deleted" },
+  });
+  return { handled: true, detail: "canceled" };
+}
+
+async function onInvoicePaid(event: MinimalStripeEvent): Promise<SubscriptionEventResult> {
+  const inv = event.data.object;
+  const stripeSubscriptionId = resolveInvoiceSubscriptionId(inv);
+  const billingReason = str(inv.billing_reason);
+  if (!stripeSubscriptionId || !isGrantingReason(billingReason)) {
+    return { handled: true, detail: "non-granting-invoice" };
+  }
+  const amountPaid = num(inv.amount_paid) ?? 0;
+  const { periodStart, periodEnd } = resolveInvoicePeriod(inv);
+  if (!periodStart || !periodEnd) {
+    return { handled: true, detail: "no-period" };
+  }
+
+  const grant = await processInvoicePaid({
+    stripeSubscriptionId,
+    periodStart,
+    periodEnd,
+    billingReason: billingReason as BillingReason,
+    amountPaid,
+  });
+
+  // Mirror the Stripe-hosted invoice for the account page (§38.1).
+  if (grant.subscriptionId) {
+    await writeSubscriptionInvoice({
+      userSubscriptionId: grant.subscriptionId,
+      stripeInvoiceId: str(inv.id) ?? `${event.id}-inv`,
+      number: str(inv.number),
+      amountPaidCents: amountPaid,
+      currency: str(inv.currency) ?? "eur",
+      taxCents: num(inv.tax) ?? 0,
+      periodStart,
+      hostedInvoiceUrl: str(inv.hosted_invoice_url),
+      pdfUrl: str(inv.invoice_pdf),
+      status: str(inv.status),
+    });
+  }
+
+  if (!grant.handled) return { handled: false, detail: "sub-not-linked-yet" };
+
+  if (grant.granted && grant.subscriptionId && grant.userId) {
+    fireGrantAudits(grant.subscriptionId, grant.userId, grant);
+    fireSubscriptionEmails(grant.subscriptionId, billingReason, grant);
+  }
+  return { handled: true, detail: grant.granted ? "granted" : "duplicate-period" };
+}
+
+/**
+ * Patient subscription emails (§30) — fire-and-forget, never blocks the money
+ * path. First paid invoice → confirmation; each renewal → renewal+credits;
+ * plus wellness-earned and per-perk-unlocked when those happen this cycle.
+ * No failed-payment email here (Stripe owns dunning, §38.5).
+ */
+function fireSubscriptionEmails(
+  subscriptionId: string,
+  billingReason: string | null,
+  grant: Awaited<ReturnType<typeof processInvoicePaid>>,
+): void {
+  const credits = grant.consultationCreditsGranted ?? 0;
+  const swallow = () => {};
+  if (billingReason === "subscription_create") {
+    void notifySubscriptionConfirmed(subscriptionId, credits).catch(swallow);
+  } else {
+    void notifySubscriptionRenewed(subscriptionId, credits).catch(swallow);
+  }
+  if ((grant.wellnessCreditsGranted ?? 0) > 0) {
+    void notifyWellnessEarned(subscriptionId, grant.wellnessCreditsGranted ?? 0).catch(swallow);
+  }
+  for (const perkKey of grant.newlyUnlockedPerks) {
+    void notifyPerkUnlocked(subscriptionId, perkKey).catch(swallow);
+  }
+}
+
+function fireGrantAudits(
+  subscriptionId: string,
+  userId: string,
+  grant: Awaited<ReturnType<typeof processInvoicePaid>>,
+): void {
+  void recordAudit({
+    action: "CONSULTATION_CREDIT_GRANTED",
+    entityType: "UserSubscription",
+    entityId: subscriptionId,
+    actorUserId: userId,
+    metadata: { credits: grant.consultationCreditsGranted ?? 0 },
+  });
+  if ((grant.wellnessCreditsGranted ?? 0) > 0) {
+    void recordAudit({
+      action: "WELLNESS_CREDIT_EARNED",
+      entityType: "UserSubscription",
+      entityId: subscriptionId,
+      actorUserId: userId,
+      metadata: { credits: grant.wellnessCreditsGranted ?? 0 },
+    });
+  }
+  for (const perkKey of grant.newlyUnlockedPerks) {
+    void recordAudit({
+      action: "PERK_UNLOCKED",
+      entityType: "UserSubscription",
+      entityId: subscriptionId,
+      actorUserId: userId,
+      metadata: { perkKey },
+    });
+  }
+}
+
+async function onInvoiceFailed(event: MinimalStripeEvent): Promise<SubscriptionEventResult> {
+  const stripeSubscriptionId = resolveInvoiceSubscriptionId(event.data.object);
+  if (!stripeSubscriptionId) return { handled: true, detail: "no-sub" };
+  const sub = await prisma.userSubscription.findUnique({
+    where: { stripeSubscriptionId },
+  });
+  if (!sub) return { handled: true, detail: "sub-not-found" };
+  // PAST_DUE, no credits. Stripe owns dunning (§38.5). Benefits persist to
+  // currentPeriodEnd (Q5=A) — handled by the eligibility predicate.
+  if (sub.status === "ACTIVE" || sub.status === "INCOMPLETE") {
+    await prisma.userSubscription.update({
+      where: { id: sub.id },
+      data: { status: "PAST_DUE" },
+    });
+  }
+  return { handled: true, detail: "past_due" };
+}
+
+async function onRefundOrDispute(event: MinimalStripeEvent): Promise<SubscriptionEventResult> {
+  const obj = event.data.object;
+  const stripeCustomerId = str(obj.customer);
+  const isDispute = event.type === "charge.dispute.created";
+  if (!stripeCustomerId) return { handled: true, detail: "no-customer" };
+
+  const sub = await prisma.userSubscription.findFirst({
+    where: { stripeCustomerId },
+    orderBy: { createdAt: "desc" },
+  });
+  if (!sub) return { handled: true, detail: "sub-not-found" };
+
+  // Was a consultation credit used this period? (policy-violation flag, §36.5).
+  const creditUsedThisPeriod = sub.currentPeriodStart
+    ? Boolean(
+        await prisma.consultationCreditLedger.findFirst({
+          where: {
+            userSubscriptionId: sub.id,
+            reason: "CONSUMED",
+            billingPeriodStart: sub.currentPeriodStart,
+          },
+          select: { id: true },
+        }),
+      )
+    : false;
+
+  await prisma.$transaction(async (tx) => {
+    const unusedConsultation = await getBalance(sub.id, "CONSULTATION");
+    if (unusedConsultation > 0) {
+      await clawbackCredits(tx, {
+        userSubscriptionId: sub.id,
+        userId: sub.userId,
+        kind: "CONSULTATION",
+        amount: unusedConsultation,
+        idempotencyKey: clawbackKey(sub.id, event.id, "CONSULTATION"),
+      });
+    }
+    await tx.userSubscription.update({
+      where: { id: sub.id },
+      data: {
+        status: "CANCELED",
+        canceledAt: sub.canceledAt ?? new Date(),
+        paidMonthsCount: Math.max(0, sub.paidMonthsCount - 1),
+      },
+    });
+  });
+
+  void recordAudit({
+    action: isDispute ? "SUBSCRIPTION_UPDATED" : "SUBSCRIPTION_REFUNDED",
+    entityType: "UserSubscription",
+    entityId: sub.id,
+    actorUserId: sub.userId,
+    metadata: {
+      event: event.type,
+      policyViolation: creditUsedThisPeriod,
+      flaggedForReview: isDispute || creditUsedThisPeriod,
+    },
+  });
+  void recordAudit({
+    action: "CONSULTATION_CREDIT_CLAWED_BACK",
+    entityType: "UserSubscription",
+    entityId: sub.id,
+    actorUserId: sub.userId,
+    metadata: { event: event.type },
+  });
+
+  return { handled: true, detail: creditUsedThisPeriod ? "clawback+violation" : "clawback" };
+}
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+function isGrantingReason(reason: string | null): boolean {
+  return reason === "subscription_create" || reason === "subscription_cycle";
+}
+
+function mapStripeStatus(status: string | null): SubscriptionStatus {
+  switch (status) {
+    case "active":
+    case "trialing":
+      return "ACTIVE";
+    case "past_due":
+    case "unpaid":
+      return "PAST_DUE";
+    case "canceled":
+      return "CANCELED";
+    case "paused":
+      return "PAUSED";
+    default:
+      return "INCOMPLETE";
+  }
+}
+
+function resolveInvoiceSubscriptionId(inv: Record<string, unknown>): string | null {
+  const direct = str(inv.subscription);
+  if (direct) return direct;
+  // Newer API nests it under parent.subscription_details.subscription.
+  const parent = inv.parent as Record<string, unknown> | undefined;
+  const details = parent?.subscription_details as Record<string, unknown> | undefined;
+  return str(details?.subscription);
+}
+
+function resolveInvoicePeriod(inv: Record<string, unknown>): {
+  periodStart: Date | null;
+  periodEnd: Date | null;
+} {
+  const lines = inv.lines as { data?: Array<Record<string, unknown>> } | undefined;
+  const linePeriod = lines?.data?.[0]?.period as Record<string, unknown> | undefined;
+  const start = unixToDate(linePeriod?.start) ?? unixToDate(inv.period_start);
+  const end = unixToDate(linePeriod?.end) ?? unixToDate(inv.period_end);
+  return { periodStart: start, periodEnd: end };
+}
+
+function str(v: unknown): string | null {
+  return typeof v === "string" && v.length > 0 ? v : null;
+}
+function num(v: unknown): number | null {
+  return typeof v === "number" ? v : null;
+}
+function unixToDate(v: unknown): Date | null {
+  return typeof v === "number" && v > 0 ? new Date(v * 1000) : null;
+}

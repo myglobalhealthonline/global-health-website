@@ -1,0 +1,58 @@
+{
+  "common": {
+    "greeting": "Hola {name}:",
+    "signoff": "— El equipo de Global Health",
+    "manageCta": "Gestionar membresía",
+    "rewardsCta": "Ver recompensas de bienestar",
+    "dashboardCta": "Ir a su panel"
+  },
+  "perks": {
+    "SPECIALIST_DISCOUNT": "Descuento en consultas con especialistas",
+    "HIGHER_DISCOUNT_TIER": "Nivel de descuento superior en especialistas",
+    "WELLNESS_REDEMPTION": "Canje de kit de pruebas de bienestar",
+    "TEST_KIT_REDEMPTION": "Canje de kit de pruebas a domicilio",
+    "FAMILY_USAGE": "Uso por familiares"
+  },
+  "confirmed": {
+    "subject": "Su membresía {plan} ya está activa",
+    "title": "Le damos la bienvenida a {plan}",
+    "p1": "Su membresía mensual de atención sanitaria en línea está activa. Puede reservar consultas en línea o por videollamada y utilizar sus ventajas de socio de inmediato.",
+    "p2": "Dispone de {credits} crédito(s) de consulta en línea este mes."
+  },
+  "renewed": {
+    "subject": "Su {plan} se ha renovado: los créditos de este mes están listos",
+    "title": "Sus créditos mensuales ya están disponibles",
+    "p1": "Gracias por seguir con nosotros. Su membresía {plan} se ha renovado correctamente.",
+    "p2": "Hemos añadido {credits} crédito(s) de consulta en línea para el nuevo mes. Los créditos no utilizados no se acumulan, así que aprovéchelos al máximo."
+  },
+  "perkUnlocked": {
+    "subject": "Se ha desbloqueado una nueva ventaja de socio",
+    "title": "Ventaja desbloqueada",
+    "p1": "Buenas noticias: {perk} ya está disponible en su plan tras {months} mes(es) de pago.",
+    "p2": "Inicie sesión en su cuenta para empezar a utilizarla."
+  },
+  "wellnessEarned": {
+    "subject": "Ha obtenido un crédito de bienestar",
+    "title": "Crédito de bienestar obtenido",
+    "p1": "Ha obtenido {credits} crédito(s) de bienestar este mes. Ahora dispone de {balance} en total.",
+    "p2": "Acumule suficientes créditos de bienestar para canjear un kit de pruebas de salud a domicilio admisible: solo paga el envío."
+  },
+  "redemptionConfirmed": {
+    "subject": "Su canje de kit está confirmado",
+    "title": "Canje confirmado",
+    "p1": "Hemos confirmado su canje de {kit}. Sus créditos de bienestar se han aplicado.",
+    "p2": "Puede seguir la entrega desde los pedidos de su cuenta."
+  },
+  "reminder": {
+    "subject": "Su membresía se renueva próximamente",
+    "title": "Recordatorio de renovación",
+    "p1": "Le recordamos que su membresía {plan} se renueva el {date} al precio mensual habitual.",
+    "p2": "No es necesario que haga nada: se realizará el cargo automáticamente en su método de pago. Puede modificarla o cancelarla en cualquier momento."
+  },
+  "canceled": {
+    "subject": "Su membresía se ha cancelado",
+    "title": "Membresía cancelada",
+    "p1": "Su membresía {plan} se ha cancelado y no se volverá a renovar.",
+    "p2": "Sus ventajas continúan hasta el {date}. Le esperamos de vuelta cuando quiera."
+  }
+}

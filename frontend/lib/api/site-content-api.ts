@@ -258,16 +258,20 @@ export async function fetchPartnersByCountry(
 
 export async function fetchPlansByCountry(
   countryCode: string,
+  locale?: string,
   timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
 ) {
-  return apiRequest<unknown[]>(
-    `/api/countries/${encodeURIComponent(countryCode)}/plans`,
-    {
-      timeoutMs,
-      revalidate: REVALIDATE_SECONDS,
-      tags: [SITE_CACHE_TAGS.countryPlans(countryCode)],
-    },
-  );
+  const upper = toBackendLocale(locale);
+  const url = upper
+    ? `/api/countries/${encodeURIComponent(countryCode)}/plans?locale=${upper}`
+    : `/api/countries/${encodeURIComponent(countryCode)}/plans`;
+  return apiRequest<{ plans: unknown[] }>(url, {
+    timeoutMs,
+    revalidate: REVALIDATE_SECONDS,
+    tags: upper
+      ? [SITE_CACHE_TAGS.countryPlans(countryCode), `${SITE_CACHE_TAGS.countryPlans(countryCode)}:${upper}`]
+      : [SITE_CACHE_TAGS.countryPlans(countryCode)],
+  });
 }
 
 export async function fetchServicesByCountry(
