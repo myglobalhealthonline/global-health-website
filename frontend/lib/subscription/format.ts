@@ -52,3 +52,26 @@ export function progressPercent(value: number, target: number): number {
 export function creditsUsed(granted: number, remaining: number): number {
   return Math.min(granted, Math.max(0, granted - remaining));
 }
+
+export type PerkStatus = "unlocked" | "locked" | "manual";
+
+/**
+ * Resolve a perk's unlock state for the dashboard from its rule + the
+ * subscriber's paid-months count. Data-driven (§36.17): the gate is the rule's
+ * own `unlockAfterPaidMonths`, never a hardcoded 2.
+ */
+export function perkStatus(
+  perk: { unlockMode: string; unlockAfterPaidMonths: number | null },
+  paidMonths: number,
+): PerkStatus {
+  switch (perk.unlockMode) {
+    case "MONTH_1":
+      return "unlocked";
+    case "AFTER_PAID_MONTHS":
+      return paidMonths >= (perk.unlockAfterPaidMonths ?? 0) ? "unlocked" : "locked";
+    case "MANUAL_APPROVAL":
+      return "manual";
+    default:
+      return "locked";
+  }
+}

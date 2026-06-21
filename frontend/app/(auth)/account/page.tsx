@@ -28,6 +28,7 @@ import {
 import { Star } from "lucide-react";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
+import { SubscriptionDashboard } from "./_components/SubscriptionDashboard";
 
 export const dynamic = "force-dynamic";
 
@@ -240,6 +241,9 @@ export default async function AccountOverviewPage() {
           </AdminCard>
         </div>
       ) : null}
+
+      {/* ── Subscription dashboard (renders nothing for non-subscribers) ── */}
+      <SubscriptionDashboard locale={locale} />
 
       {/* ── Main grid: Recent bookings + Quick actions ────────────── */}
       <div className="mt-6 grid gap-4 lg:grid-cols-3">

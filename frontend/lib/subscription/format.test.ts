@@ -3,6 +3,7 @@ import {
   creditsUsed,
   formatPerkUnlockNote,
   interpolate,
+  perkStatus,
   pluralTemplate,
   progressPercent,
   progressRatio,
@@ -64,6 +65,20 @@ describe("progressRatio / progressPercent", () => {
   });
   it("rounds percent", () => {
     expect(progressPercent(1, 3)).toBe(33);
+  });
+});
+
+describe("perkStatus", () => {
+  it("MONTH_1 is always unlocked", () => {
+    expect(perkStatus({ unlockMode: "MONTH_1", unlockAfterPaidMonths: null }, 0)).toBe("unlocked");
+  });
+  it("AFTER_PAID_MONTHS gates on the rule's own month count", () => {
+    expect(perkStatus({ unlockMode: "AFTER_PAID_MONTHS", unlockAfterPaidMonths: 2 }, 1)).toBe("locked");
+    expect(perkStatus({ unlockMode: "AFTER_PAID_MONTHS", unlockAfterPaidMonths: 2 }, 2)).toBe("unlocked");
+    expect(perkStatus({ unlockMode: "AFTER_PAID_MONTHS", unlockAfterPaidMonths: 3 }, 2)).toBe("locked");
+  });
+  it("MANUAL_APPROVAL is its own state", () => {
+    expect(perkStatus({ unlockMode: "MANUAL_APPROVAL", unlockAfterPaidMonths: null }, 9)).toBe("manual");
   });
 });
 
