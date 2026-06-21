@@ -46,7 +46,7 @@ export function SubscribeForm(props: SubscribeFormProps) {
     setError(null);
     const res = await startSubscription(props.planId, "/account/membership");
     if (res.ok && res.data.checkoutUrl) {
-      window.location.href = res.data.checkoutUrl;
+      window.location.assign(res.data.checkoutUrl);
       return;
     }
     setSubmitting(false);

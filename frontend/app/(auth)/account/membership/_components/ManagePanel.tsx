@@ -83,7 +83,7 @@ export function ManagePanel(props: ManagePanelProps) {
     setNotice(null);
     const res = await getBillingPortalUrl("/account/membership");
     if (res.ok && res.data.portalUrl) {
-      window.location.href = res.data.portalUrl;
+      window.location.assign(res.data.portalUrl);
       return;
     }
     setBusy(null);

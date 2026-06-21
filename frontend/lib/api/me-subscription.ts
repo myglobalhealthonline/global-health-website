@@ -85,6 +85,14 @@ async function meRequest<T>(
   }
 }
 
+export function getRedemptions(): Promise<MeResult<RedemptionsView>> {
+  return meRequest("redemptions");
+}
+
+export function getCredits(): Promise<MeResult<CreditsView>> {
+  return meRequest("credits");
+}
+
 export function startSubscription(planId: string, returnTo?: string): Promise<MeResult<{ checkoutUrl: string }>> {
   return meRequest("subscription", { method: "POST", body: { planId, ...(returnTo ? { returnTo } : {}) } });
 }

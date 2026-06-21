@@ -33,6 +33,7 @@ import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { KitRedemptionCallout } from "@/components/subscription/KitRedemptionCallout";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -99,7 +100,7 @@ export default async function HealthTestDetailPage({
   const backHref = `/${country}/${lang}/tests`;
   const intro = stripHtml(detail.detailIntro) ?? stripHtml(detail.shortDescription);
 
-  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const { common: c, subscription } = loadLocaleBundle(lang as LocaleCode);
   const t = c.testDetailPage;
   const tp = c.testsPage;
   const sd = c.serviceDetailPage;
@@ -463,6 +464,12 @@ export default async function HealthTestDetailPage({
           </div>
         </div>
       </section>
+
+      {/* Wellness-credit redemption — renders only for eligible subscribers. */}
+      <KitRedemptionCallout
+        healthTestId={detail.id}
+        copy={subscription.redeem.onTestPage}
+      />
 
       <MedicalDisclaimer
         paragraphs={[t.disclaimer.replace("{country}", config.name)]}
