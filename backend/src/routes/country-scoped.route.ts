@@ -12,6 +12,7 @@ import {
 } from "../modules/services/services.service.js";
 import { listHealthTestsByCountry } from "../modules/health-tests/health-tests.service.js";
 import { listPartnersByCountry } from "../modules/partners/partners.service.js";
+import { listPublicPlansByCountry } from "../modules/plans/public-plans.service.js";
 import { getPublicCountryByCode } from "../modules/countries/countries.service.js";
 import {
   listOpenSlotsForDoctorAndService,
@@ -187,6 +188,30 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
       return okResponse(items);
     } catch (error) {
       return handleError(app, reply, error, "Unexpected health-tests error");
+    }
+  });
+
+  app.get("/api/countries/:countryCode/plans", async (request, reply) => {
+    applyPublicCache(reply);
+    const params = countryParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
+    }
+    const query = collectionLocaleQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.status(400).send(errorResponse("Invalid plans query", query.error.flatten()));
+    }
+    try {
+      // Subscriptions is strict opt-in (§36.15). A country that hasn't enabled
+      // it 404s the pricing surface — defence in depth alongside the frontend
+      // feature gate and POST /api/me/subscription.
+      const result = await listPublicPlansByCountry(params.data.countryCode, query.data.locale);
+      if (!result.enabled) {
+        return reply.status(404).send(errorResponse("Subscriptions are not available in this country"));
+      }
+      return okResponse({ plans: result.plans });
+    } catch (error) {
+      return handleError(app, reply, error, "Unexpected plans error");
     }
   });
 
