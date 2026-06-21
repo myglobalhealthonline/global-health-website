@@ -4,6 +4,7 @@ import { getBillingPort } from "../billing/billing.factory.js";
 import { syncPlanStripePrice } from "../billing/price-sync.service.js";
 import { isSubscriptionsEnabled } from "./feature-gate.js";
 import { captureSnapshot } from "./plan-snapshot.service.js";
+import { notifySubscriptionCanceled } from "./subscription-emails.service.js";
 import type { Prisma } from "@prisma/client";
 
 /**
@@ -149,6 +150,8 @@ export async function cancelSubscription(
     where: { id: sub.id },
     data: { cancelAtPeriodEnd: true, canceledAt: new Date() },
   });
+  // Cancellation confirmation email (§30) — fire-and-forget.
+  void notifySubscriptionCanceled(sub.id, sub.currentPeriodEnd);
   return { status: sub.status, currentPeriodEnd: sub.currentPeriodEnd };
 }
 

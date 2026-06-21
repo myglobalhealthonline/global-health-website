@@ -12,6 +12,7 @@ import {
 import { asPlanSnapshot } from "./plan-snapshot.js";
 import { isPerkUnlocked } from "./pricing-resolver.js";
 import { isRedemptionEligible } from "./subscription-eligibility.js";
+import { notifyRedemptionConfirmed } from "./subscription-emails.service.js";
 
 /**
  * Wellness-credit health-kit redemption (§11). Shipping-only paid checkout:
@@ -358,6 +359,8 @@ export async function commitRedemption(redemptionId: string): Promise<void> {
       actorUserId: redemption.userId,
       metadata: { healthTestId: redemption.healthTestId },
     });
+    // Redemption confirmation email (§30) — fire-and-forget.
+    void notifyRedemptionConfirmed(redemptionId);
   }
 }
 

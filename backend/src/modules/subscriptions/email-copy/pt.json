@@ -1,0 +1,58 @@
+{
+  "common": {
+    "greeting": "Olá {name},",
+    "signoff": "— A equipa da Global Health",
+    "manageCta": "Gerir subscrição",
+    "rewardsCta": "Ver recompensas de bem-estar",
+    "dashboardCta": "Ir para o seu painel"
+  },
+  "perks": {
+    "SPECIALIST_DISCOUNT": "Desconto em consulta de especialidade",
+    "HIGHER_DISCOUNT_TIER": "Escalão de desconto de especialidade superior",
+    "WELLNESS_REDEMPTION": "Resgate de kit de teste de bem-estar",
+    "TEST_KIT_REDEMPTION": "Resgate de kit de teste ao domicílio",
+    "FAMILY_USAGE": "Utilização por familiares"
+  },
+  "confirmed": {
+    "subject": "A sua subscrição {plan} está agora ativa",
+    "title": "Bem-vindo ao {plan}",
+    "p1": "A sua subscrição mensal de cuidados de saúde online está ativa. Pode marcar consultas online/por vídeo e utilizar os seus benefícios de membro de imediato.",
+    "p2": "Tem {credits} crédito(s) de consulta online disponível(eis) este mês."
+  },
+  "renewed": {
+    "subject": "A sua subscrição {plan} foi renovada — os créditos deste mês estão prontos",
+    "title": "Os seus créditos mensais chegaram",
+    "p1": "Obrigado por continuar connosco. A sua subscrição {plan} foi renovada com sucesso.",
+    "p2": "Adicionámos {credits} crédito(s) de consulta online para o novo mês. Os créditos não utilizados não transitam, por isso aproveite-os ao máximo."
+  },
+  "perkUnlocked": {
+    "subject": "Acabou de desbloquear um novo benefício de membro",
+    "title": "Benefício desbloqueado",
+    "p1": "Boas notícias — {perk} está agora disponível no seu plano após {months} mês(es) pago(s).",
+    "p2": "Inicie sessão na sua conta para começar a utilizá-lo."
+  },
+  "wellnessEarned": {
+    "subject": "Ganhou um crédito de bem-estar",
+    "title": "Crédito de bem-estar ganho",
+    "p1": "Ganhou {credits} crédito(s) de bem-estar este mês. Tem agora {balance} no total.",
+    "p2": "Acumule créditos de bem-estar suficientes para resgatar um kit de teste de saúde ao domicílio elegível — apenas paga os portes."
+  },
+  "redemptionConfirmed": {
+    "subject": "O resgate do seu kit está confirmado",
+    "title": "Resgate confirmado",
+    "p1": "Confirmámos o resgate de {kit}. Os seus créditos de bem-estar foram aplicados.",
+    "p2": "Pode acompanhar a entrega nas encomendas da sua conta."
+  },
+  "reminder": {
+    "subject": "A sua subscrição será renovada em breve",
+    "title": "Lembrete de renovação",
+    "p1": "Lembramos que a sua subscrição {plan} será renovada a {date} ao preço mensal habitual.",
+    "p2": "Não é necessária qualquer ação — o seu método de pagamento será debitado automaticamente. Pode alterar ou cancelar a qualquer momento."
+  },
+  "canceled": {
+    "subject": "A sua subscrição foi cancelada",
+    "title": "Subscrição cancelada",
+    "p1": "A sua subscrição {plan} está cancelada e não voltará a ser renovada.",
+    "p2": "Os seus benefícios mantêm-se até {date}. Estará sempre bem-vindo de volta."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "common": {
+    "greeting": "Bună ziua {name},",
+    "signoff": "— Echipa Global Health",
+    "manageCta": "Gestionați abonamentul",
+    "rewardsCta": "Vedeți recompensele de wellness",
+    "dashboardCta": "Accesați tabloul de bord"
+  },
+  "perks": {
+    "SPECIALIST_DISCOUNT": "Reducere la consultația de specialitate",
+    "HIGHER_DISCOUNT_TIER": "Nivel superior de reducere pentru specialiști",
+    "WELLNESS_REDEMPTION": "Revendicare kit de testare wellness",
+    "TEST_KIT_REDEMPTION": "Revendicare kit de testare la domiciliu",
+    "FAMILY_USAGE": "Utilizare de către membrii familiei"
+  },
+  "confirmed": {
+    "subject": "Abonamentul dumneavoastră {plan} este acum activ",
+    "title": "Bun venit la {plan}",
+    "p1": "Abonamentul dumneavoastră lunar de asistență medicală online este activ. Puteți programa consultații online/video și puteți folosi imediat beneficiile de membru.",
+    "p2": "Aveți {credits} credit(e) de consultație online disponibil(e) în această lună."
+  },
+  "renewed": {
+    "subject": "Abonamentul dumneavoastră {plan} s-a reînnoit — creditele acestei luni sunt pregătite",
+    "title": "Creditele dumneavoastră lunare au sosit",
+    "p1": "Vă mulțumim că rămâneți alături de noi. Abonamentul dumneavoastră {plan} s-a reînnoit cu succes.",
+    "p2": "Am adăugat {credits} credit(e) de consultație online pentru luna nouă. Creditele nefolosite nu se reportează, așa că folosiți-le la maximum."
+  },
+  "perkUnlocked": {
+    "subject": "Un nou beneficiu de membru tocmai s-a deblocat",
+    "title": "Beneficiu deblocat",
+    "p1": "Vești bune — {perk} este acum disponibil în planul dumneavoastră după {months} lună(i) plătită(e).",
+    "p2": "Conectați-vă la contul dumneavoastră pentru a începe să îl folosiți."
+  },
+  "wellnessEarned": {
+    "subject": "Ați obținut un credit de wellness",
+    "title": "Credit de wellness obținut",
+    "p1": "Ați obținut {credits} credit(e) de wellness în această lună. Acum aveți {balance} în total.",
+    "p2": "Adunați suficiente credite de wellness pentru a revendica un kit eligibil de testare a sănătății la domiciliu — doar costul de expediere."
+  },
+  "redemptionConfirmed": {
+    "subject": "Revendicarea kitului dumneavoastră este confirmată",
+    "title": "Revendicare confirmată",
+    "p1": "Am confirmat revendicarea dumneavoastră pentru {kit}. Creditele dumneavoastră de wellness au fost aplicate.",
+    "p2": "Puteți urmări livrarea din comenzile contului dumneavoastră."
+  },
+  "reminder": {
+    "subject": "Abonamentul dumneavoastră se reînnoiește în curând",
+    "title": "Memento de reînnoire",
+    "p1": "Vă reamintim că abonamentul dumneavoastră {plan} se reînnoiește pe {date} la prețul lunar obișnuit.",
+    "p2": "Nu este necesară nicio acțiune — metoda dumneavoastră de plată va fi debitată automat. Puteți modifica sau anula oricând."
+  },
+  "canceled": {
+    "subject": "Abonamentul dumneavoastră a fost anulat",
+    "title": "Abonament anulat",
+    "p1": "Abonamentul dumneavoastră {plan} este anulat și nu se va mai reînnoi.",
+    "p2": "Beneficiile dumneavoastră continuă până pe {date}. Sunteți oricând binevenit(ă) înapoi."
+  }
+}

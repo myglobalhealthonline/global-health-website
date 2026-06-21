@@ -5,6 +5,12 @@ import { clawbackCredits, getBalance } from "../credits/credit-balance.service.j
 import { clawbackKey } from "../credits/credit-keys.js";
 import { processInvoicePaid, type BillingReason } from "./subscription-grant.service.js";
 import { writeSubscriptionInvoice } from "./subscription-invoice.service.js";
+import {
+  notifyPerkUnlocked,
+  notifySubscriptionConfirmed,
+  notifySubscriptionRenewed,
+  notifyWellnessEarned,
+} from "./subscription-emails.service.js";
 
 /**
  * Subscription webhook side-effects (§25.3/§36.2/§38.7). The dispatch entry
@@ -242,8 +248,34 @@ async function onInvoicePaid(event: MinimalStripeEvent): Promise<SubscriptionEve
 
   if (grant.granted && grant.subscriptionId && grant.userId) {
     fireGrantAudits(grant.subscriptionId, grant.userId, grant);
+    fireSubscriptionEmails(grant.subscriptionId, billingReason, grant);
   }
   return { handled: true, detail: grant.granted ? "granted" : "duplicate-period" };
+}
+
+/**
+ * Patient subscription emails (§30) — fire-and-forget, never blocks the money
+ * path. First paid invoice → confirmation; each renewal → renewal+credits;
+ * plus wellness-earned and per-perk-unlocked when those happen this cycle.
+ * No failed-payment email here (Stripe owns dunning, §38.5).
+ */
+function fireSubscriptionEmails(
+  subscriptionId: string,
+  billingReason: string | null,
+  grant: Awaited<ReturnType<typeof processInvoicePaid>>,
+): void {
+  const credits = grant.consultationCreditsGranted ?? 0;
+  if (billingReason === "subscription_create") {
+    void notifySubscriptionConfirmed(subscriptionId, credits);
+  } else {
+    void notifySubscriptionRenewed(subscriptionId, credits);
+  }
+  if ((grant.wellnessCreditsGranted ?? 0) > 0) {
+    void notifyWellnessEarned(subscriptionId, grant.wellnessCreditsGranted ?? 0);
+  }
+  for (const perkKey of grant.newlyUnlockedPerks) {
+    void notifyPerkUnlocked(subscriptionId, perkKey);
+  }
 }
 
 function fireGrantAudits(

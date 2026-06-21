@@ -1,0 +1,58 @@
+{
+  "common": {
+    "greeting": "Hallo {name},",
+    "signoff": "— Ihr Global-Health-Team",
+    "manageCta": "Mitgliedschaft verwalten",
+    "rewardsCta": "Wellness-Prämien ansehen",
+    "dashboardCta": "Zu Ihrem Dashboard"
+  },
+  "perks": {
+    "SPECIALIST_DISCOUNT": "Rabatt auf Facharztberatung",
+    "HIGHER_DISCOUNT_TIER": "Höhere Facharzt-Rabattstufe",
+    "WELLNESS_REDEMPTION": "Einlösung eines Wellness-Testkits",
+    "TEST_KIT_REDEMPTION": "Einlösung eines Heim-Testkits",
+    "FAMILY_USAGE": "Nutzung durch Familienmitglieder"
+  },
+  "confirmed": {
+    "subject": "Ihre {plan}-Mitgliedschaft ist jetzt aktiv",
+    "title": "Willkommen bei {plan}",
+    "p1": "Ihre monatliche Online-Gesundheitsmitgliedschaft ist aktiv. Sie können sofort Online-/Videoberatungen buchen und Ihre Mitgliedervorteile nutzen.",
+    "p2": "Ihnen stehen diesen Monat {credits} Guthaben für Online-Beratung(en) zur Verfügung."
+  },
+  "renewed": {
+    "subject": "Ihr {plan} wurde verlängert — das Guthaben dieses Monats ist bereit",
+    "title": "Ihr monatliches Guthaben ist da",
+    "p1": "Vielen Dank, dass Sie bei uns bleiben. Ihre {plan}-Mitgliedschaft wurde erfolgreich verlängert.",
+    "p2": "Wir haben {credits} Guthaben für Online-Beratung(en) für den neuen Monat hinzugefügt. Nicht genutztes Guthaben wird nicht übertragen, nutzen Sie es daher optimal."
+  },
+  "perkUnlocked": {
+    "subject": "Ein neuer Mitgliedervorteil wurde gerade freigeschaltet",
+    "title": "Vorteil freigeschaltet",
+    "p1": "Gute Nachrichten — {perk} ist nach {months} bezahlten Monat(en) jetzt in Ihrem Tarif verfügbar.",
+    "p2": "Melden Sie sich in Ihrem Konto an, um ihn zu nutzen."
+  },
+  "wellnessEarned": {
+    "subject": "Sie haben ein Wellness-Guthaben erhalten",
+    "title": "Wellness-Guthaben erhalten",
+    "p1": "Sie haben diesen Monat {credits} Wellness-Guthaben erhalten. Sie haben jetzt insgesamt {balance}.",
+    "p2": "Sammeln Sie genügend Wellness-Guthaben, um ein berechtigtes Heim-Gesundheitstestkit einzulösen — nur gegen Versandkosten."
+  },
+  "redemptionConfirmed": {
+    "subject": "Ihre Kit-Einlösung ist bestätigt",
+    "title": "Einlösung bestätigt",
+    "p1": "Wir haben Ihre Einlösung von {kit} bestätigt. Ihr Wellness-Guthaben wurde angerechnet.",
+    "p2": "Sie können die Lieferung über die Bestellungen in Ihrem Konto verfolgen."
+  },
+  "reminder": {
+    "subject": "Ihre Mitgliedschaft wird bald verlängert",
+    "title": "Erinnerung an die Verlängerung",
+    "p1": "Eine Erinnerung, dass Ihre {plan}-Mitgliedschaft am {date} zum üblichen monatlichen Preis verlängert wird.",
+    "p2": "Es ist nichts weiter zu tun — Ihre Zahlungsmethode wird automatisch belastet. Sie können jederzeit Änderungen vornehmen oder kündigen."
+  },
+  "canceled": {
+    "subject": "Ihre Mitgliedschaft wurde gekündigt",
+    "title": "Mitgliedschaft gekündigt",
+    "p1": "Ihre {plan}-Mitgliedschaft ist gekündigt und wird nicht erneut verlängert.",
+    "p2": "Ihre Vorteile bleiben bis zum {date} bestehen. Sie sind jederzeit wieder herzlich willkommen."
+  }
+}
