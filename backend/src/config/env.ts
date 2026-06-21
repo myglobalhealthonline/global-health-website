@@ -79,6 +79,12 @@ const envSchema = z.object({
   STRIPE_SECRET_KEY: z.string().trim().min(1).optional(),
   STRIPE_WEBHOOK_SECRET: z.string().trim().min(1).optional(),
 
+  /** Subscription billing provider. `fake` (default) = in-memory port, no
+   *  Stripe keys needed (dev/test). `stripe` = real Stripe Subscriptions —
+   *  only honoured when STRIPE_SECRET_KEY is also set, else falls back to
+   *  fake. See modules/billing/billing.factory.ts. */
+  BILLING_DRIVER: z.enum(["fake", "stripe"]).optional(),
+
   /** Google Places API key — when set, the reviews-config endpoint
    *  refreshes the Google aggregate in the background (24h TTL).
    *  Without it the admin-entered aggregate is used as-is. */
