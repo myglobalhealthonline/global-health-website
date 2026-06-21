@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type {
   BillingPort,
   BillingPriceRef,
@@ -32,7 +33,11 @@ export class FakeBillingPort implements BillingPort {
 
   private nextId(prefix: string): string {
     this.seq += 1;
-    return `${prefix}_fake_${this.seq}`;
+    // seq keeps per-run ordering readable; the uuid suffix guarantees GLOBAL
+    // uniqueness so persisted fake ids never collide with rows from a prior
+    // run (the @unique stripePriceId constraint would otherwise make an upsert
+    // hit an unrelated existing row).
+    return `${prefix}_fake_${this.seq}_${randomUUID().slice(0, 8)}`;
   }
 
   async ensureProduct(input: EnsureProductInput): Promise<BillingProductRef> {
