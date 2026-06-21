@@ -360,7 +360,7 @@ export async function commitRedemption(redemptionId: string): Promise<void> {
       metadata: { healthTestId: redemption.healthTestId },
     });
     // Redemption confirmation email (§30) — fire-and-forget.
-    void notifyRedemptionConfirmed(redemptionId);
+    void notifyRedemptionConfirmed(redemptionId).catch(() => {});
   }
 }
 

@@ -151,7 +151,7 @@ export async function cancelSubscription(
     data: { cancelAtPeriodEnd: true, canceledAt: new Date() },
   });
   // Cancellation confirmation email (§30) — fire-and-forget.
-  void notifySubscriptionCanceled(sub.id, sub.currentPeriodEnd);
+  void notifySubscriptionCanceled(sub.id, sub.currentPeriodEnd).catch(() => {});
   return { status: sub.status, currentPeriodEnd: sub.currentPeriodEnd };
 }
 

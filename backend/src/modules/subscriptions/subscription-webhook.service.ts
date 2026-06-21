@@ -265,16 +265,17 @@ function fireSubscriptionEmails(
   grant: Awaited<ReturnType<typeof processInvoicePaid>>,
 ): void {
   const credits = grant.consultationCreditsGranted ?? 0;
+  const swallow = () => {};
   if (billingReason === "subscription_create") {
-    void notifySubscriptionConfirmed(subscriptionId, credits);
+    void notifySubscriptionConfirmed(subscriptionId, credits).catch(swallow);
   } else {
-    void notifySubscriptionRenewed(subscriptionId, credits);
+    void notifySubscriptionRenewed(subscriptionId, credits).catch(swallow);
   }
   if ((grant.wellnessCreditsGranted ?? 0) > 0) {
-    void notifyWellnessEarned(subscriptionId, grant.wellnessCreditsGranted ?? 0);
+    void notifyWellnessEarned(subscriptionId, grant.wellnessCreditsGranted ?? 0).catch(swallow);
   }
   for (const perkKey of grant.newlyUnlockedPerks) {
-    void notifyPerkUnlocked(subscriptionId, perkKey);
+    void notifyPerkUnlocked(subscriptionId, perkKey).catch(swallow);
   }
 }
 
