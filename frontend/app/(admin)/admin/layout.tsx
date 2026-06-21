@@ -61,6 +61,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/automation", label: "Automation" },
     { href: "/admin/invoices", label: "Invoices" },
     { href: "/admin/newsletter", label: "Newsletter" },
+    { href: "/admin/subscriptions", label: "Subscriptions" },
     { href: "/admin/audit-log", label: "Audit log" },
     { href: "/admin/settings", label: "Settings" },
     // Country-scoped — "Pages" first as the visibility controller.
@@ -81,6 +82,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/specialist-consultations", label: "Specialist consultations" },
     { href: "/admin/online-prescriptions", label: "Prescriptions" },
     { href: "/admin/health-tests", label: "Health tests" },
+    { href: "/admin/plans", label: "Plans" },
     { href: "/admin/appointments", label: "Appointments" },
   ];
 

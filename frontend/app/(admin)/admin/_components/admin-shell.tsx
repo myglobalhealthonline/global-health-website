@@ -7,6 +7,7 @@ import {
   CalendarRange,
   ChevronDown,
   ChevronRight,
+  CreditCard,
   FileText,
   Globe2,
   ImageIcon,
@@ -57,6 +58,7 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/pages": FileText,
   "/admin/services": Stethoscope,
   "/admin/blog": Newspaper,
+  "/admin/subscriptions": CreditCard,
 };
 
 // Global = admin-wide ops; Country = items scoped to a single country
@@ -72,11 +74,13 @@ const GLOBAL_HREFS = new Set([
   "/admin/users",
   "/admin/orders",
   "/admin/newsletter",
+  "/admin/subscriptions",
   "/admin/audit-log",
   "/admin/settings",
 ]);
 
 const COUNTRY_HREFS = new Set([
+  "/admin/plans",
   "/admin/country-features",
   "/admin/country-home",
   "/admin/country-content",
@@ -118,6 +122,7 @@ const ORDER: Record<string, number> = {
   "/admin/users": 5,
   "/admin/orders": 6,
   "/admin/newsletter": 7,
+  "/admin/subscriptions": 7.5,
   "/admin/audit-log": 8,
   "/admin/settings": 9,
   "/admin/country-features": 0,
@@ -130,6 +135,7 @@ const ORDER: Record<string, number> = {
   "/admin/specialist-consultations": 7,
   "/admin/online-prescriptions": 8,
   "/admin/health-tests": 9,
+  "/admin/plans": 9.5,
   "/admin/appointments": 10,
 };
 
