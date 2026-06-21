@@ -206,9 +206,6 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
       const result = body.data.orderId
         ? await syncOrderPaymentFromStripe(body.data.orderId, app.log)
         : await syncOrderPaymentFromStripeSession(body.data.stripeSessionId!, app.log);
-      // #region agent log
-      fetch('http://127.0.0.1:7835/ingest/b6dd0b3b-c589-4acc-8726-e91e7b7039d1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'694d12'},body:JSON.stringify({sessionId:'694d12',hypothesisId:'B',location:'payments.route.ts:sync-order',message:'sync-order result',data:{orderId:body.data.orderId??null,stripeSessionId:body.data.stripeSessionId??null,result},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
       if (!result.ok && result.code === "NOT_FOUND") {
         return reply.status(404).send(errorResponse("Order not found"));
       }
