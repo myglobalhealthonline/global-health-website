@@ -2,7 +2,7 @@ import "server-only";
 
 import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
-import type { CreditsView, RedemptionsView, SubscriptionView } from "./me-subscription";
+import type { CreditsView, InvoicesView, RedemptionsView, SubscriptionView } from "./me-subscription";
 
 /**
  * Server-side reads of the patient `/api/me/*` surface for account pages.
@@ -45,4 +45,8 @@ export function getServerCredits(): Promise<CreditsView | null> {
 
 export function getServerRedemptions(): Promise<RedemptionsView | null> {
   return meServerGet<RedemptionsView>("redemptions");
+}
+
+export function getServerInvoices(): Promise<InvoicesView | null> {
+  return meServerGet<InvoicesView>("invoices");
 }

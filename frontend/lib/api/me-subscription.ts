@@ -53,6 +53,23 @@ export interface RedemptionsView {
   kits: RedemptionKit[];
 }
 
+export interface SubscriptionInvoiceView {
+  id: string;
+  number: string | null;
+  amountPaidCents: number;
+  currency: string;
+  taxCents: number;
+  periodStart: string | null;
+  hostedInvoiceUrl: string | null;
+  pdfUrl: string | null;
+  status: string | null;
+  createdAt: string;
+}
+
+export interface InvoicesView {
+  invoices: SubscriptionInvoiceView[];
+}
+
 async function meRequest<T>(
   path: string,
   options: { method?: "GET" | "POST"; body?: unknown } = {},

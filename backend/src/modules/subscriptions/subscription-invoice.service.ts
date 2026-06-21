@@ -20,6 +20,58 @@ export interface WriteSubscriptionInvoiceInput {
   status: string | null;
 }
 
+export interface SubscriptionInvoiceView {
+  id: string;
+  number: string | null;
+  amountPaidCents: number;
+  currency: string;
+  taxCents: number;
+  periodStart: string | null;
+  hostedInvoiceUrl: string | null;
+  pdfUrl: string | null;
+  status: string | null;
+  createdAt: string;
+}
+
+/**
+ * The patient's subscription invoices (Sprint 3, account → payments mirror).
+ * Read-only; scoped to the owning user via the subscription relation.
+ */
+export async function listUserSubscriptionInvoices(
+  userId: string,
+): Promise<{ invoices: SubscriptionInvoiceView[] }> {
+  const rows = await prisma.subscriptionInvoice.findMany({
+    where: { subscription: { userId } },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      number: true,
+      amountPaidCents: true,
+      currency: true,
+      taxCents: true,
+      periodStart: true,
+      hostedInvoiceUrl: true,
+      pdfUrl: true,
+      status: true,
+      createdAt: true,
+    },
+  });
+  return {
+    invoices: rows.map((r) => ({
+      id: r.id,
+      number: r.number,
+      amountPaidCents: r.amountPaidCents,
+      currency: r.currency,
+      taxCents: r.taxCents,
+      periodStart: r.periodStart?.toISOString() ?? null,
+      hostedInvoiceUrl: r.hostedInvoiceUrl,
+      pdfUrl: r.pdfUrl,
+      status: r.status,
+      createdAt: r.createdAt.toISOString(),
+    })),
+  };
+}
+
 export async function writeSubscriptionInvoice(
   input: WriteSubscriptionInvoiceInput,
 ): Promise<void> {

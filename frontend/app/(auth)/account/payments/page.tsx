@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CreditCard, ExternalLink } from "lucide-react";
 import { fetchAccountPayments, type AccountPayment } from "@/lib/api/account-payments-api";
+import { getServerInvoices } from "@/lib/api/me-subscription-server";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
@@ -20,13 +21,31 @@ const STATUS_PILL: Record<AccountPayment["status"], string> = {
 };
 
 export default async function AccountPaymentsPage() {
-  const [result, locale] = await Promise.all([
+  const [result, invoicesData, locale] = await Promise.all([
     fetchAccountPayments(),
+    getServerInvoices(),
     getPageLocale(),
   ]);
-  const { account: a } = loadLocaleBundle(locale);
+  const { account: a, subscription } = loadLocaleBundle(locale);
   const items = result.ok ? result.data.items : [];
   const unavailable = result.ok ? null : result.message;
+  const invoices = invoicesData?.invoices ?? [];
+  const inv = subscription.invoice;
+
+  const invoiceStatusLabel = (status: string | null): string => {
+    switch ((status ?? "").toLowerCase()) {
+      case "paid":
+        return inv.status_paid;
+      case "open":
+        return inv.status_open;
+      case "void":
+        return inv.status_void;
+      case "uncollectible":
+        return inv.status_uncollectible;
+      default:
+        return status ?? "";
+    }
+  };
 
   const statusLabel: Record<AccountPayment["status"], string> = {
     PAID: a.payments.statusPaid,
@@ -59,7 +78,7 @@ export default async function AccountPaymentsPage() {
         </div>
       ) : null}
 
-      {items.length === 0 && !unavailable ? (
+      {items.length === 0 && invoices.length === 0 && !unavailable ? (
         <div className="gh-card flex flex-col items-center p-10 text-center">
           <div className="inline-flex size-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
             <CreditCard aria-hidden className="size-6" />
@@ -128,6 +147,68 @@ export default async function AccountPaymentsPage() {
             </tbody>
           </table>
         </div>
+      ) : null}
+
+      {invoices.length > 0 ? (
+        <section className="mt-8">
+          <h3 className="mb-3 text-sm font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+            {inv.heading}
+          </h3>
+          <div className="gh-card overflow-hidden p-0">
+            <table className="w-full text-sm">
+              <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wide text-[var(--color-text-muted)]">
+                <tr>
+                  <th className="px-4 py-3 font-semibold">{inv.colDate}</th>
+                  <th className="px-4 py-3 font-semibold">{inv.colDescription}</th>
+                  <th className="px-4 py-3 font-semibold">{inv.colAmount}</th>
+                  <th className="px-4 py-3 font-semibold">{inv.colStatus}</th>
+                  <th className="px-4 py-3 text-right font-semibold">{inv.viewInvoice}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--color-border)]">
+                {invoices.map((row) => {
+                  const receiptUrl = row.hostedInvoiceUrl ?? row.pdfUrl;
+                  return (
+                    <tr key={row.id}>
+                      <td className="px-4 py-3 text-[var(--color-text-primary)]">
+                        {formatAppDate(row.periodStart ?? row.createdAt)}
+                      </td>
+                      <td className="px-4 py-3 text-[var(--color-text-primary)]">
+                        <span className="block font-semibold">{inv.membershipPayment}</span>
+                        {row.number ? (
+                          <span className="block text-xs text-[var(--color-text-muted)]">{row.number}</span>
+                        ) : null}
+                      </td>
+                      <td className="px-4 py-3 font-semibold text-[var(--color-text-primary)]">
+                        {formatPrice(row.amountPaidCents, row.currency)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800">
+                          {invoiceStatusLabel(row.status)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        {receiptUrl ? (
+                          <a
+                            href={receiptUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-brand-primary)] hover:underline"
+                          >
+                            {inv.viewInvoice}
+                            <ExternalLink className="size-3.5" aria-hidden />
+                          </a>
+                        ) : (
+                          <span className="text-xs text-[var(--color-text-muted)]">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
       ) : null}
     </>
   );
