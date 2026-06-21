@@ -43,7 +43,13 @@ adjustCredits(input: { userSubscriptionId: string; kind: 'CONSULTATION'|'WELLNES
 | `GET /api/me/redemptions` | `{ kits: [{ healthTestId, name, requiredWellnessCredits, progress, eligible, reason? }] }` |
 | `POST /api/me/redemptions` | `{ redemptionId, checkoutUrl?, status }` (checkoutUrl absent when `shippingCents=0`) |
 
-Envelope: existing repo pattern `{ data, error, meta }`. All require auth (D15). Error codes: `NOT_ELIGIBLE`, `INSUFFICIENT_CREDITS`, `OUT_OF_STOCK`, `NO_ACTIVE_SUBSCRIPTION`.
+Envelope (CORRECTED in Sprint 1 — the real repo helpers): **`okResponse(data)` → `{ ok: true, message, data }`** and **`errorResponse(message, code?)` → `{ ok: false, message, ... }`**. The earlier `{ data, error, meta }` note was wrong — **Sprint 2 & 3 MUST use `okResponse`/`errorResponse`** to match Sprint 1 + the rest of the repo. All require auth (D15). Error codes: `NOT_ELIGIBLE`, `INSUFFICIENT_CREDITS`, `OUT_OF_STOCK`, `NO_ACTIVE_SUBSCRIPTION`.
+
+> **Gotcha (Sprint 1 learnings — Sprint 2/3 heed these):**
+> - **Country codes are stored lowercase** (`ie`, `pt`) — compare case-insensitively; never assume uppercase.
+> - Webhook business logic is `handleSubscriptionEvent(event)` — tests POST canned Stripe fixtures directly; no real keys.
+> - `BILLING_DRIVER` unset → fake billing (dev/test default). Real Stripe is behind the flag.
+> - Tests run against the **`.env` DB** with per-fixture cleanup; don't leave orphans.
 
 ## Admin REST (Sprint 2, listed for Sprint 1/3 awareness)
 `/api/admin/plans*`, `/api/admin/plans/:id/consultation-rules|perks|health-test-rules|translations`, `/api/admin/subscription-perk-grants*`, `/api/admin/subscriptions*`. All gated by `MANAGE_SUBSCRIPTIONS`, audited.
