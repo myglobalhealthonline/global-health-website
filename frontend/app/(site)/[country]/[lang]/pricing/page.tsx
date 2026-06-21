@@ -46,9 +46,10 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 
 /** Auth-aware subscribe CTA (D15 — no guest). Logged-in patients go straight to
  *  the confirm screen; anonymous visitors are routed to login and resumed back
- *  onto the same subscribe action via `?next`. */
-function subscribeHref(planId: string, isAuthenticated: boolean): string {
-  const target = `/account/subscribe?plan=${encodeURIComponent(planId)}`;
+ *  onto the same subscribe action via `?next`. Country + lang ride along so the
+ *  account-area confirm screen can resolve the plan from the right catalogue. */
+function subscribeHref(planId: string, countryCode: string, lang: string, isAuthenticated: boolean): string {
+  const target = `/account/subscribe?plan=${encodeURIComponent(planId)}&country=${encodeURIComponent(countryCode)}&lang=${encodeURIComponent(lang)}`;
   return isAuthenticated ? target : `/login?next=${encodeURIComponent(target)}`;
 }
 
@@ -127,7 +128,7 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
                   plan={plan}
                   t={t}
                   note={subscription.note}
-                  ctaHref={subscribeHref(plan.id, isAuthenticated)}
+                  ctaHref={subscribeHref(plan.id, code, lang, isAuthenticated)}
                 />
               ))}
             </div>

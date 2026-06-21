@@ -12,6 +12,9 @@ export interface SubscriptionView {
     monthlyPriceCents: number;
     currencyCode: string;
   } | null;
+  /** Plan country (lowercase). Lets the patient manage UI resolve sibling
+   *  plans for upgrade/downgrade against the right country catalogue. */
+  countryCode: string | null;
   status: string;
   currentPeriodEnd: string | null;
   paidMonthsCount: number;
@@ -44,6 +47,7 @@ export async function getSubscriptionView(userId: string): Promise<SubscriptionV
 
   return {
     plan: sub.plan,
+    countryCode: sub.countryCode ?? null,
     status: sub.status,
     currentPeriodEnd: sub.currentPeriodEnd?.toISOString() ?? null,
     paidMonthsCount: sub.paidMonthsCount,
