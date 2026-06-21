@@ -41,15 +41,19 @@ describe("credit-balance money races", () => {
     const fx = await makeSubscriptionFixture(prisma, "race", { consultationBalance: 1 });
     try {
       const reserveOnce = (reservationId: string) =>
-        prisma.$transaction((tx) =>
-          svc.reserveCredits(tx, {
-            userSubscriptionId: fx.subscriptionId,
-            userId: fx.userId,
-            kind: "CONSULTATION",
-            amount: 1,
-            reservationId,
-            reservedUntil: new Date(Date.now() + 900_000),
-          }),
+        prisma.$transaction(
+          (tx) =>
+            svc.reserveCredits(tx, {
+              userSubscriptionId: fx.subscriptionId,
+              userId: fx.userId,
+              kind: "CONSULTATION",
+              amount: 1,
+              reservationId,
+              reservedUntil: new Date(Date.now() + 900_000),
+            }),
+          // Generous waits so the two concurrent txns can both acquire a
+          // pool slot even under heavy parallel-suite/coverage load.
+          { maxWait: 20_000, timeout: 20_000 },
         );
 
       const [a, b] = await Promise.all([reserveOnce("res-a"), reserveOnce("res-b")]);
@@ -194,15 +198,17 @@ describe("credit-balance money races", () => {
     const fx = await makeSubscriptionFixture(prisma, "wellrace", { wellnessBalance: 6 });
     try {
       const reserveSix = (reservationId: string) =>
-        prisma.$transaction((tx) =>
-          svc.reserveCredits(tx, {
-            userSubscriptionId: fx.subscriptionId,
-            userId: fx.userId,
-            kind: "WELLNESS",
-            amount: 6,
-            reservationId,
-            reservedUntil: new Date(Date.now() + 900_000),
-          }),
+        prisma.$transaction(
+          (tx) =>
+            svc.reserveCredits(tx, {
+              userSubscriptionId: fx.subscriptionId,
+              userId: fx.userId,
+              kind: "WELLNESS",
+              amount: 6,
+              reservationId,
+              reservedUntil: new Date(Date.now() + 900_000),
+            }),
+          { maxWait: 20_000, timeout: 20_000 },
         );
       const [a, b] = await Promise.all([reserveSix("well-a"), reserveSix("well-b")]);
       assert.equal([a, b].filter(Boolean).length, 1, "only one 6-credit redemption wins");

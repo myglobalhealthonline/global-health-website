@@ -28,6 +28,25 @@ export interface MakeFixtureOptions {
   stripeSubscriptionId?: string;
   stripeCustomerId?: string;
   planSnapshot?: unknown;
+  /** Add "subscriptions" to the country's enabledFeatures (strict opt-in gate). */
+  enableSubscriptions?: boolean;
+}
+
+/** The repo's default feature set + optional "subscriptions" opt-in. */
+function featuresFor(enableSubscriptions: boolean | undefined): string[] {
+  const base = [
+    "country-home",
+    "country-content",
+    "pages",
+    "footer",
+    "services",
+    "general-consultations",
+    "specialist-consultations",
+    "online-prescriptions",
+    "health-tests",
+    "appointments",
+  ];
+  return enableSubscriptions ? [...base, "subscriptions"] : base;
 }
 
 let counter = 0;
@@ -54,6 +73,7 @@ export async function makeSubscriptionFixture(
       generalConsultationPath: `/gen-${uniq}`,
       specialistConsultationPath: `/spec-${uniq}`,
       currencyId: currency.id,
+      enabledFeatures: featuresFor(opts.enableSubscriptions),
     },
   });
   const user = await prisma.user.create({
@@ -104,14 +124,26 @@ export async function makeSubscriptionFixture(
   }
 
   const cleanup = async (): Promise<void> => {
-    await prisma.consultationCreditLedger.deleteMany({ where: { userSubscriptionId: sub.id } });
-    await prisma.wellnessCreditLedger.deleteMany({ where: { userSubscriptionId: sub.id } });
-    await prisma.subscriptionCreditBalance.deleteMany({ where: { userSubscriptionId: sub.id } });
-    await prisma.healthTestRedemption.deleteMany({ where: { userSubscriptionId: sub.id } });
-    await prisma.subscriptionInvoice.deleteMany({ where: { userSubscriptionId: sub.id } });
-    await prisma.subscriptionPerkGrant.deleteMany({ where: { userSubscriptionId: sub.id } });
-    await prisma.userSubscription.deleteMany({ where: { id: sub.id } });
-    await prisma.pricingPlan.deleteMany({ where: { id: plan.id } });
+    // User/country-scoped so tests that create extra subscriptions, plans,
+    // redemptions, or orders during the run are fully torn down.
+    const subs = await prisma.userSubscription.findMany({
+      where: { userId: user.id },
+      select: { id: true },
+    });
+    const subIds = subs.map((s) => s.id);
+    await prisma.consultationCreditLedger.deleteMany({ where: { userId: user.id } });
+    await prisma.wellnessCreditLedger.deleteMany({ where: { userId: user.id } });
+    await prisma.subscriptionCreditBalance.deleteMany({
+      where: { userSubscriptionId: { in: subIds } },
+    });
+    await prisma.subscriptionInvoice.deleteMany({ where: { userSubscriptionId: { in: subIds } } });
+    await prisma.subscriptionPerkGrant.deleteMany({ where: { userSubscriptionId: { in: subIds } } });
+    await prisma.healthTestRedemption.deleteMany({ where: { userId: user.id } });
+    await prisma.order.deleteMany({ where: { userId: user.id } });
+    await prisma.userSubscription.deleteMany({ where: { userId: user.id } });
+    await prisma.healthTest.deleteMany({ where: { countryId: country.id } });
+    await prisma.planStripePrice.deleteMany({ where: { plan: { countryId: country.id } } });
+    await prisma.pricingPlan.deleteMany({ where: { countryId: country.id } });
     await prisma.user.deleteMany({ where: { id: user.id } });
     await prisma.country.deleteMany({ where: { id: country.id } });
     await prisma.currency.deleteMany({ where: { id: currency.id } });
