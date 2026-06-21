@@ -172,9 +172,6 @@ export async function syncOrderPaymentServer(input: {
       data?: { ok?: boolean; code?: string };
     };
     const ok = Boolean(res.ok && json.ok && json.data?.ok);
-    // #region agent log
-    fetch('http://127.0.0.1:7835/ingest/b6dd0b3b-c589-4acc-8726-e91e7b7039d1',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'694d12'},body:JSON.stringify({sessionId:'694d12',hypothesisId:'A',location:'cart-server.ts:syncOrderPaymentServer',message:'server sync result',data:{source:input.source??'unknown',payload,httpStatus:res.status,ok,code:json.data?.code??null},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     if (!ok) return { ok: false, code: json.data?.code };
     return { ok: true, code: json.data?.code };
   } catch {
