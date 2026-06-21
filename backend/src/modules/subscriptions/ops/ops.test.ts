@@ -157,4 +157,37 @@ describe("subscription ops", () => {
       await fx.cleanup();
     }
   });
+
+  it("renewal reminder: only ACTIVE, non-cancelling subs inside the 24h window", async (t) => {
+    if (skip()) return t.skip();
+    // Far-future dates so no real/seed subscription collides with the global count.
+    const now = new Date("2099-01-12T12:00:00Z");
+    const inWindow = new Date("2099-01-15T12:00:00Z"); // now + 3 days → in [now+3d, now+4d)
+    const outOfWindow = new Date("2099-02-01T00:00:00Z"); // weeks away → excluded
+
+    const due = await makeSubscriptionFixture(prisma, "rem-due", { status: "ACTIVE" });
+    const cancelling = await makeSubscriptionFixture(prisma, "rem-cancel", { status: "ACTIVE" });
+    const future = await makeSubscriptionFixture(prisma, "rem-future", { status: "ACTIVE" });
+    try {
+      await prisma.userSubscription.update({
+        where: { id: due.subscriptionId },
+        data: { currentPeriodEnd: inWindow, cancelAtPeriodEnd: false },
+      });
+      await prisma.userSubscription.update({
+        where: { id: cancelling.subscriptionId },
+        data: { currentPeriodEnd: inWindow, cancelAtPeriodEnd: true }, // cancelling → skip
+      });
+      await prisma.userSubscription.update({
+        where: { id: future.subscriptionId },
+        data: { currentPeriodEnd: outOfWindow, cancelAtPeriodEnd: false }, // out of window
+      });
+
+      const { remindersSent } = await sweep.sendDueRenewalReminders(now);
+      assert.equal(remindersSent, 1, "exactly the one in-window, non-cancelling sub");
+    } finally {
+      await due.cleanup();
+      await cancelling.cleanup();
+      await future.cleanup();
+    }
+  });
 });

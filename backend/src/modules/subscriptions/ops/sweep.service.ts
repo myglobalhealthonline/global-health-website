@@ -1,6 +1,7 @@
 import { prisma } from "../../../db/prisma.js";
 import { releaseReservation } from "../../credits/credit-balance.service.js";
 import { releaseRedemption } from "../redemption.service.js";
+import { notifyRenewalReminder } from "../subscription-emails.service.js";
 
 /**
  * Ops sweeps (§28/§39). Fail-CLOSED: any error throws (the repo cron is
@@ -8,6 +9,7 @@ import { releaseRedemption } from "../redemption.service.js";
  */
 
 const CANCEL_GRACE_DAYS = 14;
+const RENEWAL_REMINDER_DAYS_BEFORE = 3;
 
 /**
  * Release reservations whose checkout was terminally abandoned (order CANCELLED
@@ -88,4 +90,43 @@ export async function cancelAfterGrace(now = new Date()): Promise<{ canceled: nu
     data: { status: "CANCELED", canceledAt: now },
   });
   return { canceled: result.count };
+}
+
+/**
+ * Renewal reminder (§28/§30): email ACTIVE subscribers ~RENEWAL_REMINDER_DAYS_BEFORE
+ * days before their next charge. The match window is exactly 24h wide, so a cron
+ * that runs this **once a day** emails each subscriber exactly once per period —
+ * no schema dedup field needed (schema is frozen). Subscribers set to cancel at
+ * period end are skipped. Best-effort: a failed email never aborts the batch.
+ *
+ * IMPORTANT: must be scheduled DAILY, not on the 5-minute ops tick — see
+ * `POST /api/cron/subscriptions/daily`.
+ */
+export async function sendDueRenewalReminders(
+  now = new Date(),
+): Promise<{ remindersSent: number }> {
+  const windowStart = new Date(
+    now.getTime() + RENEWAL_REMINDER_DAYS_BEFORE * 24 * 60 * 60 * 1000,
+  );
+  const windowEnd = new Date(windowStart.getTime() + 24 * 60 * 60 * 1000);
+  const due = await prisma.userSubscription.findMany({
+    where: {
+      status: "ACTIVE",
+      cancelAtPeriodEnd: false,
+      currentPeriodEnd: { gte: windowStart, lt: windowEnd },
+    },
+    select: { id: true, currentPeriodEnd: true },
+  });
+
+  let remindersSent = 0;
+  for (const sub of due) {
+    if (!sub.currentPeriodEnd) continue;
+    try {
+      await notifyRenewalReminder(sub.id, sub.currentPeriodEnd);
+      remindersSent += 1;
+    } catch {
+      // best-effort — one bad recipient never aborts the batch
+    }
+  }
+  return { remindersSent };
 }
