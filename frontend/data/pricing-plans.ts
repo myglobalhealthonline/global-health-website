@@ -1,2 +1,50 @@
-/** Plans & pricing content. */
-export const pricingPlans = [] as const;
+/**
+ * Subscription plan content is per-country and resolved at runtime from the
+ * public plans API (`GET /api/countries/:code/plans`), not a static list — see
+ * `lib/content/get-country-plans.ts`. This module owns the shared TypeScript
+ * contract the pricing UI renders against (mirror of the backend
+ * `PublicPlanView`, contracts.md / §36.14).
+ */
+
+export type PerkKey =
+  | "SPECIALIST_DISCOUNT"
+  | "FAMILY_USAGE"
+  | "WELLNESS_REDEMPTION"
+  | "TEST_KIT_REDEMPTION"
+  | "HIGHER_DISCOUNT_TIER";
+
+export type PerkUnlockMode = "MONTH_1" | "AFTER_PAID_MONTHS" | "MANUAL_APPROVAL" | "NOT_AVAILABLE";
+
+export interface PublicPlanPerk {
+  perkKey: PerkKey;
+  unlockMode: PerkUnlockMode;
+  unlockAfterPaidMonths: number | null;
+}
+
+export interface PublicPlanWellnessKit {
+  healthTestId: string;
+  name: string;
+  slug: string;
+  requiredWellnessCredits: number;
+  unlockAfterPaidMonths: number;
+}
+
+export interface PublicPlan {
+  id: string;
+  slug: string;
+  name: string;
+  shortDescription: string | null;
+  longDescription: string | null;
+  badgeLabel: string | null;
+  isFeatured: boolean;
+  displayOrder: number;
+  monthlyPriceCents: number;
+  currencyCode: string;
+  billingInterval: string;
+  monthlyConsultationCredits: number;
+  wellnessCreditsPerMonth: number;
+  /** Soonest "after N paid months" gate; null hides the universal note. */
+  perkUnlockMonths: number | null;
+  perks: PublicPlanPerk[];
+  wellnessKits: PublicPlanWellnessKit[];
+}

@@ -4,7 +4,6 @@ import {
   fetchHealthTestsByCountry,
   fetchPartnersByCountry,
   fetchHealthTestDetail,
-  fetchPlansByCountry,
   fetchServiceDetail,
   fetchServicesByCountry,
   fetchSpecialtiesByCountry,
@@ -101,16 +100,6 @@ export type CountryHealthTestDetail = {
   /** Admin "extra sections" JSON — array of { title, body } when authored. */
   extraSections: Array<{ title: string; body: string }>;
   faqs: HealthTestFaqItem[];
-};
-
-export type CountryPricingPlanCard = {
-  id: string;
-  slug: string;
-  name: string;
-  description: string | null;
-  priceCents: number;
-  currencyCode: string;
-  interval: string;
 };
 
 export type CountrySpecialtyCard = {
@@ -583,31 +572,7 @@ function readHealthTestFaqs(raw: unknown): HealthTestFaqItem[] {
   return out;
 }
 
-/** Active pricing plans for a country. Drives /[country]/[lang]/plans. */
-export const getCountryPlans = cache(async (
-  countryCode: string,
-): Promise<CountryPricingPlanCard[]> => {
-  const res = await fetchPlansByCountry(countryCode);
-  if (!res.ok) {
-    logPublicContentFallback(`country-plans:${countryCode}`, res.message);
-    return [];
-  }
-  const out: CountryPricingPlanCard[] = [];
-  for (const row of res.data) {
-    if (!row || typeof row !== "object") continue;
-    const r = row as Record<string, unknown>;
-    if (typeof r.id !== "string" || typeof r.slug !== "string") continue;
-    if (typeof r.name !== "string") continue;
-    if (r.isActive === false) continue;
-    out.push({
-      id: r.id,
-      slug: r.slug,
-      name: r.name,
-      description: typeof r.description === "string" ? r.description : null,
-      priceCents: typeof r.priceCents === "number" ? r.priceCents : 0,
-      currencyCode: typeof r.currencyCode === "string" ? r.currencyCode : "EUR",
-      interval: typeof r.interval === "string" ? r.interval : "month",
-    });
-  }
-  return out;
-});
+// Subscription plan cards moved to `lib/content/get-country-plans.ts` (Sprint 3)
+// against the Wave-0 PricingPlan shape (monthlyPriceCents / billingInterval /
+// per-rule unlockAfterPaidMonths). The legacy reader here targeted the old
+// pre-rename columns and a `/plans` route that never shipped — removed.

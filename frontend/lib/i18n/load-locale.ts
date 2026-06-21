@@ -64,6 +64,13 @@ import csAccount from "@/locales/cs/account.json";
 import roAccount from "@/locales/ro/account.json";
 import deAccount from "@/locales/de/account.json";
 
+import enSubscription from "@/locales/en/subscription.json";
+import ptSubscription from "@/locales/pt/subscription.json";
+import esSubscription from "@/locales/es/subscription.json";
+import csSubscription from "@/locales/cs/subscription.json";
+import roSubscription from "@/locales/ro/subscription.json";
+import deSubscription from "@/locales/de/subscription.json";
+
 const homeByLocale = { en: enHome, pt: ptHome, es: esHome, cs: csHome, ro: roHome, de: deHome } as const;
 const servicesByLocale = { en: enServices, pt: ptServices, es: esServices, cs: csServices, ro: roServices, de: deServices } as const;
 const faqByLocale = { en: enFaq, pt: ptFaq, es: esFaq, cs: csFaq, ro: roFaq, de: deFaq } as const;
@@ -73,6 +80,7 @@ const aboutByLocale = { en: enAbout, pt: ptAbout, es: esAbout, cs: csAbout, ro: 
 const contactByLocale = { en: enContact, pt: ptContact, es: esContact, cs: csContact, ro: roContact, de: deContact } as const;
 const authByLocale = { en: enAuth, pt: ptAuth, es: esAuth, cs: csAuth, ro: roAuth, de: deAuth } as const;
 const accountByLocale = { en: enAccount, pt: ptAccount, es: esAccount, cs: csAccount, ro: roAccount, de: deAccount } as const;
+const subscriptionByLocale = { en: enSubscription, pt: ptSubscription, es: esSubscription, cs: csSubscription, ro: roSubscription, de: deSubscription } as const;
 
 export function loadLocaleBundle(locale: LocaleCode) {
   return {
@@ -86,5 +94,6 @@ export function loadLocaleBundle(locale: LocaleCode) {
     contact: contactByLocale[locale] ?? contactByLocale.en,
     auth: authByLocale[locale] ?? authByLocale.en,
     account: accountByLocale[locale] ?? accountByLocale.en,
+    subscription: subscriptionByLocale[locale] ?? subscriptionByLocale.en,
   };
 }
