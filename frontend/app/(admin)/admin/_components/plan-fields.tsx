@@ -18,14 +18,18 @@ const PLAN_TYPE_LABEL: Record<PlanType, string> = {
 };
 const DEFAULT_CREDITS: Record<PlanType, number> = { ESSENTIAL: 1, COMPREHENSIVE: 2, PREMIUM: 3 };
 
+/** Small muted helper line under a field. */
+function Help({ children }: { children: React.ReactNode }) {
+  return <span className="text-xs leading-snug text-[var(--color-text-muted)]">{children}</span>;
+}
+
 /**
  * Shared plan create/edit fields. Pure presentational server component — the
  * parent form's server action reads these via parsePlanForm. Price is shown in
  * major currency units; the action converts to cents.
  *
  * Plan type is fixed: chosen at create (passed in), shown read-only on edit.
- * Wellness credits + (in the edit page) the health-test card show ONLY for
- * PREMIUM — wellness is strictly Premium-only.
+ * Wellness credits show ONLY for PREMIUM — wellness is strictly Premium-only.
  */
 export function PlanFields({ countries, initial, pinnedCountryId, planType }: Props) {
   const pinId = pinnedCountryId ?? initial?.countryId;
@@ -36,23 +40,26 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
 
   return (
     <div className="flex flex-col gap-6">
-      {pinId && pinned ? (
-        <div>
-          <span className="gh-field-label">Country</span>
-          <p className="mt-1 text-[var(--color-text-primary)]">
-            {pinned.name} ({pinned.code.toUpperCase()})
-          </p>
-          <input type="hidden" name="countryId" value={pinId} />
-        </div>
-      ) : null}
+      {/* Country + plan type: fixed facts shown as read-only chips. */}
+      <div className="flex flex-wrap gap-x-10 gap-y-4">
+        {pinId && pinned ? (
+          <div>
+            <span className="gh-field-label">Country</span>
+            <p className="mt-1 text-[var(--color-text-primary)]">
+              {pinned.name} ({pinned.code.toUpperCase()})
+            </p>
+            <input type="hidden" name="countryId" value={pinId} />
+          </div>
+        ) : null}
 
-      {/* Plan type — fixed (chosen at create, immutable after). */}
-      <div>
-        <span className="gh-field-label">Plan type</span>
-        <p className="mt-1 font-semibold text-[var(--color-text-primary)]">
-          {PLAN_TYPE_LABEL[effectiveType]}
-        </p>
-        <input type="hidden" name="planType" value={effectiveType} />
+        <div>
+          <span className="gh-field-label">Plan type</span>
+          <p className="mt-1 font-semibold text-[var(--color-text-primary)]">
+            {PLAN_TYPE_LABEL[effectiveType]}
+          </p>
+          <Help>Fixed — can&apos;t be changed after the plan is created.</Help>
+          <input type="hidden" name="planType" value={effectiveType} />
+        </div>
       </div>
 
       {!pinId ? (
@@ -70,54 +77,59 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Slug</span>
+        <label className="flex flex-col gap-1.5">
+          <span className="gh-field-label">Plan name</span>
+          <input name="name" className="gh-input min-w-0" required defaultValue={initial?.name} placeholder="e.g. Essential Care" />
+          <Help>Shown as the card title to customers.</Help>
+        </label>
+        <label className="flex flex-col gap-1.5">
+          <span className="gh-field-label">URL id (slug)</span>
           <input
             name="slug"
             className="gh-input min-w-0 font-mono text-sm"
             required
             defaultValue={initial?.slug}
-            placeholder="e.g. essential-care"
+            placeholder="essential-care"
           />
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Plan name</span>
-          <input name="name" className="gh-input min-w-0" required defaultValue={initial?.name} />
+          <Help>Used in the web address. Lowercase, dashes-between-words. Leave as-is unless you know you need to change it.</Help>
         </label>
       </div>
 
-      <label className="flex flex-col gap-2">
+      <label className="flex flex-col gap-1.5">
         <span className="gh-field-label">Short description</span>
         <input
           name="shortDescription"
           className="gh-input min-w-0"
           defaultValue={initial?.shortDescription ?? ""}
-          placeholder="One-line card summary"
+          placeholder="e.g. Affordable monthly access to online GP care."
         />
+        <Help>One line shown under the title on the pricing card.</Help>
       </label>
 
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Long description</span>
+      <label className="flex flex-col gap-1.5">
+        <span className="gh-field-label">Long description (optional)</span>
         <textarea
           name="longDescription"
           className="gh-textarea min-w-0"
           rows={3}
           defaultValue={initial?.longDescription ?? ""}
+          placeholder="Optional. Most cards don't need this."
         />
       </label>
 
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Notes &amp; terms</span>
+      <label className="flex flex-col gap-1.5">
+        <span className="gh-field-label">Notes &amp; terms (optional)</span>
         <textarea
           name="notesTerms"
           className="gh-textarea min-w-0"
           rows={2}
           defaultValue={initial?.notesTerms ?? ""}
+          placeholder="Optional small print shown under the card."
         />
       </label>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <label className="flex flex-col gap-2">
+        <label className="flex flex-col gap-1.5">
           <span className="gh-field-label">Monthly price</span>
           <input
             name="monthlyPrice"
@@ -129,8 +141,9 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
             defaultValue={priceMajor}
             placeholder="20.00"
           />
+          <Help>What a member pays each month.</Help>
         </label>
-        <label className="flex flex-col gap-2">
+        <label className="flex flex-col gap-1.5">
           <span className="gh-field-label">Currency</span>
           <input
             name="currencyCode"
@@ -139,9 +152,10 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
             maxLength={8}
             defaultValue={initial?.currencyCode ?? "EUR"}
           />
+          <Help>3-letter code, e.g. EUR.</Help>
         </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Display order</span>
+        <label className="flex flex-col gap-1.5">
+          <span className="gh-field-label">Order on pricing page</span>
           <input
             name="displayOrder"
             className="gh-input min-w-0"
@@ -149,12 +163,13 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
             min="0"
             defaultValue={initial?.displayOrder ?? 0}
           />
+          <Help>Lower number shows first.</Help>
         </label>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">GP / general consultation credits / month</span>
+        <label className="flex flex-col gap-1.5">
+          <span className="gh-field-label">GP visits included / month</span>
           <input
             name="monthlyConsultationCredits"
             className="gh-input min-w-0"
@@ -162,9 +177,10 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
             min="0"
             defaultValue={initial?.monthlyConsultationCredits ?? DEFAULT_CREDITS[effectiveType]}
           />
+          <Help>How many online GP consultations a member gets each month.</Help>
         </label>
         {isPremium ? (
-          <label className="flex flex-col gap-2">
+          <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Wellness credits / month</span>
             <input
               name="wellnessCreditsPerMonth"
@@ -173,6 +189,7 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
               min="0"
               defaultValue={initial?.wellnessCreditsPerMonth ?? 1}
             />
+            <Help>Used to claim home health-test kits (set those up below).</Help>
           </label>
         ) : (
           // Non-Premium: wellness is forced to 0 server-side; send an explicit 0.
@@ -180,29 +197,26 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
         )}
       </div>
 
-      <label className="flex flex-col gap-2">
-        <span className="gh-field-label">Badge label (optional)</span>
+      <label className="flex flex-col gap-1.5">
+        <span className="gh-field-label">Badge (optional)</span>
         <input
           name="badgeLabel"
           className="gh-input min-w-0"
           defaultValue={initial?.badgeLabel ?? ""}
           placeholder="e.g. Most popular"
         />
+        <Help>Small ribbon shown on the card corner.</Help>
       </label>
 
-      <div className="flex flex-wrap gap-6">
+      <div className="flex flex-wrap gap-6 border-t border-[var(--color-border)] pt-5">
         <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]">
           <input type="checkbox" name="isFeatured" className="size-4" defaultChecked={initial?.isFeatured ?? false} />
-          Featured / recommended
-        </label>
-        <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-muted)]">
-          <input type="checkbox" name="familyEnabled" className="size-4" defaultChecked={initial?.familyEnabled ?? false} />
-          Family enabled (Wave 5 — keep off)
+          Highlight this plan (recommended)
         </label>
         {initial ? (
           <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]">
             <input type="checkbox" name="isActive" className="size-4" defaultChecked={initial.isActive} />
-            Active
+            Visible to customers
           </label>
         ) : null}
       </div>

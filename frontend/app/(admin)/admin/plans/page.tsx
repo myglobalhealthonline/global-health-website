@@ -92,9 +92,9 @@ export default async function AdminPlansPage() {
           <AdminTable>
             <Thead>
               <Th>Plan</Th>
-              <Th>Price</Th>
-              <Th>GP / wellness</Th>
-              <Th>Rules</Th>
+              <Th>Price / mo</Th>
+              <Th>Credits (GP / wellness)</Th>
+              <Th>What&apos;s set up</Th>
               <Th>Subscribers</Th>
               <Th>Status</Th>
               <Th>Actions</Th>
@@ -120,7 +120,10 @@ export default async function AdminPlansPage() {
                     {plan.monthlyConsultationCredits} / {plan.wellnessCreditsPerMonth}
                   </Td>
                   <Td>
-                    {plan._count.consultationRules}c · {plan._count.perkRules}p · {plan._count.healthTestRules}h
+                    <span className="text-[13px] text-[var(--color-text-muted)]">
+                      {plan._count.consultationRules} visits · {plan._count.perkRules} perks
+                      {plan._count.healthTestRules > 0 ? ` · ${plan._count.healthTestRules} kits` : ""}
+                    </span>
                   </Td>
                   <Td>{plan._count.subscriptions}</Td>
                   <Td>

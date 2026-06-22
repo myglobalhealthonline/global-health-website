@@ -84,8 +84,8 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
       <>
         <PageHeader
           eyebrow="Subscriptions"
-          title="New plan"
-          description="Choose the plan tier. Type is fixed after creation."
+          title="New plan — choose a tier"
+          description="Pick the plan tier. This sets the defaults and which sections appear, and can't be changed after the plan is created."
           actions={
             <Btn href="/admin/plans" variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
               Cancel
@@ -139,8 +139,8 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
       </Link>
       <PageHeader
         eyebrow="Subscriptions"
-        title="New plan"
-        description="Set price + credits. On save a Stripe Price is created — the save fails if that sync errors."
+        title="New plan — basics & price"
+        description="Fill in the name, price, and what's included. Billing is set up automatically when you save. You'll add doctor visits, perks, and card text on the next screen."
         actions={
           <Btn href="/admin/plans" variant="ghost">
             Cancel

@@ -33,6 +33,12 @@ const PERK_KEYS = [
 ] as const;
 const UNLOCK_MODES = ["MONTH_1", "AFTER_PAID_MONTHS", "MANUAL_APPROVAL", "NOT_AVAILABLE"] as const;
 
+const PLAN_TYPE_LABEL: Record<string, string> = {
+  ESSENTIAL: "Essential Care",
+  COMPREHENSIVE: "Comprehensive Care",
+  PREMIUM: "Premium Wellness Care",
+};
+
 // Human-readable labels so the admin sees plain English, not raw enum keys.
 const PERK_LABELS: Record<string, string> = {
   SPECIALIST_DISCOUNT: "Specialist discount",
@@ -288,7 +294,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
       <PageHeader
         eyebrow="Subscriptions"
         title={plan.name}
-        description={`${plan.country.name} · ${plan.slug} · Stripe Price ${plan.stripePriceId ?? "—"}`}
+        description={`${PLAN_TYPE_LABEL[plan.planType] ?? plan.planType} plan for ${plan.country.name}. Edit each section below, then press its Save button — changes go live straight away.`}
         actions={
           <Btn href={`/admin/plans/new?countryId=${encodeURIComponent(plan.countryId)}`} variant="ghost">
             New plan
@@ -303,10 +309,30 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">{sp.error}</p>
       ) : null}
 
+      {/* Plain-language orientation so a non-technical admin knows what each
+          section below is for. */}
+      <AdminCard className="mb-6" style={{ background: "linear-gradient(180deg, var(--color-background-soft) 0%, #FCFDF8 100%)" }}>
+        <p className="text-[13px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
+          What each section does
+        </p>
+        <ul className="mt-3 flex flex-col gap-2 text-sm text-[var(--color-text-body)]">
+          <li><span className="font-semibold">Basics &amp; price</span> — the name, monthly price, and how many GP visits are included.</li>
+          <li><span className="font-semibold">Doctor visits &amp; discounts</span> — which consultations the plan covers and what members pay for each.</li>
+          <li><span className="font-semibold">Extra benefits (perks)</span> — optional bonuses that switch on after a few paid months.</li>
+          {plan.planType === "PREMIUM" ? (
+            <li><span className="font-semibold">Home test kits</span> — kits members can claim with wellness credits.</li>
+          ) : null}
+          <li><span className="font-semibold">Pricing card text</span> — exactly what customers read on the card, per language.</li>
+        </ul>
+        <p className="mt-3 text-xs text-[var(--color-text-muted)]">
+          Each section saves on its own — press the button inside it. Existing subscribers keep their current terms until renewal.
+        </p>
+      </AdminCard>
+
       <div className="flex flex-col gap-6">
         {/* Plan fields */}
         <AdminCard padding={0}>
-          <SectionHeader title="Plan details" description="Price, credits, and badges. A price change re-syncs the Stripe Price." />
+          <SectionHeader title="Basics & price" description="Name, monthly price, and what's included each month. Saving updates billing automatically." />
           <form action={updatePlanAction} className="flex flex-col gap-8 p-6">
             <PlanFields countries={countries} initial={plan} pinnedCountryId={plan.countryId} />
             <div className="border-t border-[var(--color-border)] pt-6">
@@ -320,8 +346,8 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         {/* Consultation rules */}
         <AdminCard padding={0}>
           <SectionHeader
-            title="Consultation rules"
-            description="Link services (GP / specialist) with credit, discount, fixed-price and unlock config. Prescription services are excluded."
+            title="Doctor visits & discounts"
+            description="Which consultations this plan covers and what members pay for each. GP visits are usually covered by the monthly allowance; specialist visits usually get a discount. Prescriptions are never included."
           />
           <div className="p-6">
             {plan.consultationRules.length === 0 ? (
@@ -367,11 +393,15 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 ))}
               </ul>
             )}
+            <p className="mb-4 rounded-[var(--radius-card-sm)] bg-[var(--color-background-soft)] px-4 py-3 text-[13px] text-[var(--color-text-body)]">
+              <span className="font-semibold">Add or update a visit:</span> 1) pick the service, 2) choose what members pay,
+              3) (optional) set when it unlocks. Re-adding the same service updates it.
+            </p>
             <form action={addConsultationRuleAction} className="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <label className="flex flex-col gap-1.5 lg:col-span-2">
-                <span className="gh-field-label">Service</span>
+                <span className="gh-field-label">Service (consultation)</span>
                 <select name="serviceId" className="gh-select min-w-0" required defaultValue="">
-                  <option value="">Select service…</option>
+                  <option value="">Select a service…</option>
                   {services.map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.name} ({SERVICE_KIND_LABELS[s.kind] ?? s.kind})
@@ -379,46 +409,54 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                   ))}
                 </select>
               </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Discount</span>
+              <label className="flex flex-col gap-1.5 lg:col-span-2">
+                <span className="gh-field-label">What members pay</span>
                 <select name="discountMode" className="gh-select min-w-0" defaultValue="NONE">
-                  <option value="NONE">None (standard price)</option>
-                  <option value="PERCENT">Percent %</option>
+                  <option value="NONE">Full price (no discount)</option>
+                  <option value="PERCENT">Percent discount</option>
                   <option value="FIXED">Fixed price</option>
-                  <option value="FREE">Free (100% off)</option>
-                  <option value="UNAVAILABLE">Not available under plan</option>
+                  <option value="FREE">Free (included)</option>
+                  <option value="UNAVAILABLE">Not available on this plan</option>
                 </select>
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Credits / use</span>
-                <input name="creditsPerUse" type="number" min="1" defaultValue="1" className="gh-input min-w-0" />
-              </label>
-              <label className="flex flex-col gap-1.5">
                 <span className="gh-field-label">Discount %</span>
-                <input name="discountPercent" type="number" min="0" max="100" step="0.01" className="gh-input min-w-0" />
+                <input name="discountPercent" type="number" min="0" max="100" step="0.01" className="gh-input min-w-0" placeholder="e.g. 10" />
+                <span className="text-xs text-[var(--color-text-muted)]">Only if &ldquo;Percent discount&rdquo;.</span>
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Fixed price (major)</span>
-                <input name="fixedPrice" type="number" min="0" step="0.01" className="gh-input min-w-0" />
+                <span className="gh-field-label">Fixed price</span>
+                <input name="fixedPrice" type="number" min="0" step="0.01" className="gh-input min-w-0" placeholder="e.g. 15.00" />
+                <span className="text-xs text-[var(--color-text-muted)]">Only if &ldquo;Fixed price&rdquo;.</span>
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Unlock after months</span>
+                <span className="gh-field-label">Credits used per visit</span>
+                <input name="creditsPerUse" type="number" min="1" defaultValue="1" className="gh-input min-w-0" />
+                <span className="text-xs text-[var(--color-text-muted)]">If it uses the monthly allowance.</span>
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="gh-field-label">Unlock after (months)</span>
                 <input name="unlockAfterPaidMonths" type="number" min="0" defaultValue="0" className="gh-input min-w-0" />
+                <span className="text-xs text-[var(--color-text-muted)]">0 = available right away.</span>
               </label>
-              <div className="flex flex-col gap-2 pt-1 text-sm">
-                <label className="flex items-center gap-2" title="Free as part of the plan">
-                  <input type="checkbox" name="isIncluded" className="size-4" /> Included (free with plan)
+              <div className="flex flex-col gap-2 pt-1 text-sm lg:col-span-2">
+                <span className="gh-field-label">Covered by the plan?</span>
+                <label className="flex items-center gap-2" title="Free as part of the plan — no extra charge">
+                  <input type="checkbox" name="isIncluded" className="size-4" /> Included free with the plan
                 </label>
                 <label className="flex items-center gap-2" title="Each visit spends from the monthly credit allowance">
-                  <input type="checkbox" name="usesCredits" className="size-4" /> Uses monthly credits
+                  <input type="checkbox" name="usesCredits" className="size-4" /> Spends from the monthly visit allowance
                 </label>
                 <label className="flex items-center gap-2" title="Family members on the plan can use this">
-                  <input type="checkbox" name="familyUsable" className="size-4" /> Family members can use
+                  <input type="checkbox" name="familyUsable" className="size-4" /> Family members can use it
                 </label>
+                <span className="text-xs text-[var(--color-text-muted)]">
+                  Tip: GP visits are usually &ldquo;included&rdquo; + &ldquo;spends from allowance&rdquo;. Specialist visits usually use a discount above instead.
+                </span>
               </div>
               <div className="lg:col-span-4">
                 <button type="submit" className="gh-btn gh-btn-secondary">
-                  Add / update rule
+                  Add / update visit
                 </button>
               </div>
             </form>
@@ -427,7 +465,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
 
         {/* Perk rules */}
         <AdminCard padding={0}>
-          <SectionHeader title="Perk unlock rules" description="When each perk unlocks. Manual approval is per-subscriber via the Subscriptions queue." />
+          <SectionHeader title="Extra benefits (perks)" description="Optional bonuses (e.g. a bigger specialist discount) that switch on automatically once a member has paid for a set number of months." />
           <div className="p-6">
             {plan.perkRules.length === 0 ? (
               <p className="mb-4 text-sm text-[var(--color-text-muted)]">No perk rules yet.</p>
@@ -462,9 +500,9 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
             )}
             <form action={addPerkAction} className="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Perk</span>
+                <span className="gh-field-label">Benefit</span>
                 <select name="perkKey" className="gh-select min-w-0" required defaultValue="">
-                  <option value="">Select perk…</option>
+                  <option value="">Select a benefit…</option>
                   {PERK_KEYS.map((k) => (
                     <option key={k} value={k}>
                       {PERK_LABELS[k] ?? k}
@@ -473,7 +511,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 </select>
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Unlock mode</span>
+                <span className="gh-field-label">When it switches on</span>
                 <select name="unlockMode" className="gh-select min-w-0" defaultValue="MONTH_1">
                   {UNLOCK_MODES.map((m) => (
                     <option key={m} value={m}>
@@ -483,12 +521,13 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 </select>
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Unlock after months</span>
+                <span className="gh-field-label">After how many months</span>
                 <input name="unlockAfterPaidMonths" type="number" min="0" defaultValue="2" className="gh-input min-w-0" />
+                <span className="text-xs text-[var(--color-text-muted)]">Only used with &ldquo;After N paid months&rdquo;.</span>
               </label>
               <div>
                 <button type="submit" className="gh-btn gh-btn-secondary">
-                  Add / update perk
+                  Add / update benefit
                 </button>
               </div>
             </form>
@@ -498,7 +537,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         {/* Health-test redemption rules — Premium only (wellness is strictly Premium). */}
         {plan.planType === "PREMIUM" ? (
         <AdminCard padding={0}>
-          <SectionHeader title="Health-test redemption rules" description="Wellness-credit redemption per kit. Active subscription is always required (D6)." />
+          <SectionHeader title="Home test kits (Premium)" description="Home test kits a member can claim using their monthly wellness credits. They must have an active subscription." />
           <div className="p-6">
             {plan.healthTestRules.length === 0 ? (
               <p className="mb-4 text-sm text-[var(--color-text-muted)]">No redemption rules yet.</p>
@@ -532,9 +571,9 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
             )}
             <form action={addHealthTestRuleAction} className="grid items-end gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <label className="flex flex-col gap-1.5 lg:col-span-2">
-                <span className="gh-field-label">Health test kit</span>
+                <span className="gh-field-label">Test kit</span>
                 <select name="healthTestId" className="gh-select min-w-0" required defaultValue="">
-                  <option value="">Select kit…</option>
+                  <option value="">Select a kit…</option>
                   {healthTests.map((h) => (
                     <option key={h.id} value={h.id}>
                       {h.title}
@@ -543,16 +582,18 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 </select>
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Required wellness credits</span>
+                <span className="gh-field-label">Wellness credits to claim</span>
                 <input name="requiredWellnessCredits" type="number" min="1" defaultValue="6" className="gh-input min-w-0" />
+                <span className="text-xs text-[var(--color-text-muted)]">How many credits a member spends for this kit.</span>
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="gh-field-label">Unlock after months</span>
+                <span className="gh-field-label">Unlock after (months)</span>
                 <input name="unlockAfterPaidMonths" type="number" min="0" defaultValue="0" className="gh-input min-w-0" />
+                <span className="text-xs text-[var(--color-text-muted)]">0 = available right away.</span>
               </label>
               <div className="lg:col-span-4">
                 <button type="submit" className="gh-btn gh-btn-secondary">
-                  Add / update redemption rule
+                  Add / update kit
                 </button>
               </div>
             </form>
@@ -562,7 +603,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
 
         {/* Translations — tabbed per-locale editor, single save (mirrors Services). */}
         <AdminCard padding={0}>
-          <SectionHeader title="Content &amp; translations" description="Per-locale plan copy + public-card bullets. One save covers all languages." />
+          <SectionHeader title="Pricing card text" description="Exactly what customers read on the card — name, description, and bullet points — in each language. One save covers all languages." />
           <form action={saveTranslationsAction} className="flex flex-col gap-6 p-6">
             <PlanTranslationTabs
               locales={localeTabs}
@@ -594,8 +635,8 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         {/* Preview */}
         <AdminCard padding={0}>
           <SectionHeader
-            title="Plan preview"
-            description="Resolved plan as a subscriber sees it (translations applied)."
+            title="Preview"
+            description="How the plan looks to a customer once saved. Click a language to preview it."
             right={
               <div className="flex gap-1.5">
                 {locales.map((locale) => (
