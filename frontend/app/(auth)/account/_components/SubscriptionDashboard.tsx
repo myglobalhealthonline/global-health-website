@@ -11,6 +11,8 @@ import { getCountryPlans } from "@/lib/content/get-country-plans";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
 import {
+  creditReasonLabel,
+  formatCreditDelta,
   interpolate,
   perkStatus,
   pluralTemplate,
@@ -104,6 +106,14 @@ export async function SubscriptionDashboard({ locale }: { locale: LocaleCode }) 
             {priceLabel} {subscription.pricing.perMonth}
             {nextBilling ? ` · ${interpolate(t.nextBilling, { date: nextBilling })}` : ""}
           </p>
+          {sub.paidMonthsCount > 0 ? (
+            <p className="mt-0.5 text-xs" style={{ color: "var(--color-text-muted)" }}>
+              {interpolate(
+                pluralTemplate(sub.paidMonthsCount, t.memberMonthsSingular, t.memberMonths),
+                { months: sub.paidMonthsCount },
+              )}
+            </p>
+          ) : null}
           <Link
             href="/account/membership"
             className="mt-4 inline-flex text-sm font-semibold underline"
@@ -227,6 +237,51 @@ export async function SubscriptionDashboard({ locale }: { locale: LocaleCode }) 
                 </li>
               );
             })}
+          </ul>
+        </AdminCard>
+      ) : null}
+
+      {/* Credit activity (provenance — §4d): shows whether each change was
+          earned, reset, reserved, used, redeemed, released, manually adjusted,
+          or clawed back, so a manual admin adjustment is always visible. */}
+      {credits && credits.ledger.length > 0 ? (
+        <AdminCard className="mt-4">
+          <div className="flex items-center gap-2.5">
+            <CreditCard className="size-4" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
+            <p className="text-[11px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--color-text-muted)" }}>
+              {t.activityTitle}
+            </p>
+          </div>
+          <ul className="mt-3">
+            {credits.ledger.slice(0, 8).map((entry, i) => (
+              <li
+                key={i}
+                className="flex items-center justify-between gap-3 border-t py-2.5 text-sm first:border-t-0"
+                style={{ borderColor: "var(--color-border)" }}
+              >
+                <div className="flex items-center gap-2.5">
+                  {entry.kind === "WELLNESS" ? (
+                    <Sparkles className="size-4 shrink-0" style={{ color: "var(--color-accent)" }} aria-hidden />
+                  ) : (
+                    <Stethoscope className="size-4 shrink-0" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
+                  )}
+                  <span style={{ color: "var(--color-text-primary)" }}>
+                    {creditReasonLabel(entry.reason, t as Record<string, string>)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span
+                    className="font-semibold tabular-nums"
+                    style={{ color: entry.deltaCredits >= 0 ? "var(--color-brand-primary)" : "#b3261e" }}
+                  >
+                    {formatCreditDelta(entry.deltaCredits)}
+                  </span>
+                  <span className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+                    {formatAppDate(entry.createdAt)}
+                  </span>
+                </div>
+              </li>
+            ))}
           </ul>
         </AdminCard>
       ) : null}

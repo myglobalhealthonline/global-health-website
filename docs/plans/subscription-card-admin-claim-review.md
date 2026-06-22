@@ -58,10 +58,15 @@ P0 core **implemented + verified** (backend/frontend typecheck clean; schema, ne
   - **§4c** Per-row inline adjust forms removed from the table; replaced by a single de-emphasized **"Support override"** panel (required reason + confirm step + audit). `GET /api/admin/subscriptions` returns `capabilities.canAdjustCredits` (currently always `true` for admins — kept so the UI can re-gate if tiers are ever introduced).
   - **The "admins shouldn't freely edit balances" control is therefore friction + audit, not a role gate** — the only achievable model with a single admin tier. If a stricter lock is wanted later, options are master-token-only or an env-flag toggle (see §8 D-1).
 
-Deferred (tracked, not done this pass):
-- **§4d (patient-facing provenance) + §1b** credit-activity ledger view — P1; the note currently lives in the audit trail, not on the ledger row (no migration taken).
-- **§3a** Confirm/create the external Railway crons (operator action — uncheckable from code).
-- All of **§6** (checkout subscription selection UX) — P1.
+### P1 status (2026-06-23)
+
+- ✅ **§1b + §4d (patient provenance) — DONE.** Patient dashboard now renders a **Recent credit activity** list from the already-fetched `/api/me/credits` ledger, with a data-driven label per reason (Monthly credits / Previous month reset / Reserved / Used for consultation / Redeemed for kit / Released back / **Manual adjustment** / Clawed back), a kind icon (GP vs wellness), signed delta, and date. So a manual admin adjustment is always visible to the patient. New i18n keys added to all 6 locales (en authored; others mirror en pending translation — no per-key fallback exists). Helpers `creditReasonLabel`/`formatCreditDelta` unit-tested.
+- ✅ **§1c — DONE.** "Member for N paid months" shown on the dashboard plan card (data-driven from `paidMonthsCount`).
+- ✅ **§3a — RESOLVED by prior commit `0c068e21`** (`internal-scheduler.ts` ticks sweep+cancel-grace 5 m, reconciliation hourly, renewal reminders 24 h in-process; the token-gated `/api/cron/subscriptions[/daily]` HTTP endpoints remain for an external scheduler). No operator cron strictly required for the jobs to run.
+
+Deferred (tracked, not done):
+- **§4d admin-side** ledger/provenance on the admin subscriber detail — the admin API returns balances only, not the ledger; needs a small read addition. (Patient-side provenance is done.)
+- All of **§6** (checkout subscription selection UX) — next P1 slice. Keystone `previewConsultationPricing` (read-only, reuses the already-pure `resolveConsultationPrice`) + coverage badges + guest prompt.
 
 ---
 

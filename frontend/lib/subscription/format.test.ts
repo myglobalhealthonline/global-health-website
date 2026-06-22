@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  creditReasonLabel,
   creditsUsed,
+  formatCreditDelta,
   formatPerkUnlockNote,
   interpolate,
   perkStatus,
@@ -89,5 +91,27 @@ describe("creditsUsed", () => {
   });
   it("clamps when remaining exceeds granted (manual adjustments)", () => {
     expect(creditsUsed(2, 5)).toBe(0);
+  });
+});
+
+describe("creditReasonLabel", () => {
+  const labels = {
+    reason_MONTHLY_GRANT: "Monthly credits added",
+    reason_ADJUSTMENT: "Manual adjustment",
+  };
+  it("maps a known reason via the copy map", () => {
+    expect(creditReasonLabel("MONTHLY_GRANT", labels)).toBe("Monthly credits added");
+    expect(creditReasonLabel("ADJUSTMENT", labels)).toBe("Manual adjustment");
+  });
+  it("humanises an unmapped reason instead of showing the raw enum", () => {
+    expect(creditReasonLabel("RESET_EXPIRE", labels)).toBe("reset expire");
+  });
+});
+
+describe("formatCreditDelta", () => {
+  it("signs positive and negative deltas with a real minus glyph", () => {
+    expect(formatCreditDelta(2)).toBe("+2");
+    expect(formatCreditDelta(-1)).toBe("−1");
+    expect(formatCreditDelta(0)).toBe("0");
   });
 });

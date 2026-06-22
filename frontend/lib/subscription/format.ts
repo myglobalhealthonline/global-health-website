@@ -53,6 +53,23 @@ export function creditsUsed(granted: number, remaining: number): number {
   return Math.min(granted, Math.max(0, granted - remaining));
 }
 
+/**
+ * Human label for a credit-ledger `reason` (provenance — §4d). Reads the
+ * data-driven `reason_<REASON>` copy map so the patient can see whether credits
+ * were earned, reset, reserved, consumed, redeemed, released, manually adjusted,
+ * or clawed back. Falls back to a humanised reason for any unmapped value.
+ */
+export function creditReasonLabel(reason: string, labels: Record<string, string>): string {
+  return labels[`reason_${reason}`] ?? reason.replace(/_/g, " ").toLowerCase();
+}
+
+/** Signed credit delta for display: "+2" / "−1" (real minus glyph), "0" for 0. */
+export function formatCreditDelta(delta: number): string {
+  if (delta > 0) return `+${delta}`;
+  if (delta < 0) return `−${Math.abs(delta)}`;
+  return "0";
+}
+
 export type PerkStatus = "unlocked" | "locked" | "manual";
 
 /**
