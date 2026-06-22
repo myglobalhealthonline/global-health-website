@@ -1,6 +1,4 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import type { AdminScope } from "@prisma/client";
-import { prisma } from "../db/prisma.js";
 import { env } from "../config/env.js";
 import { verifyAdminAccess } from "./admin-auth.js";
 import type { AdminAccessResult } from "./admin-access-evaluator.js";
@@ -8,18 +6,19 @@ import { verifyAuthToken, type UserRoleType } from "./auth-session.js";
 import { errorResponse } from "./response.js";
 
 /**
- * MANAGE_SUBSCRIPTIONS scope (§25.1). Plan/billing management touches money +
- * subscriber data, so it requires the dedicated super-admin scope — NOT generic
- * admin access. The repo has no `MANAGE_SUBSCRIPTIONS` column; §25.1 maps it onto
- * the super-admin tier, which this codebase models as `User.adminScope === SUPER`
- * (the AdminScope enum) — or the explicit `SUPER_ADMIN` role. The master admin
- * token fallback is the platform superuser key (dev/automation), so it counts as
- * super-admin-equivalent.
+ * MANAGE_SUBSCRIPTIONS — plan/billing management for the subscription admin
+ * surfaces (plans, rules, perks, subscriber list, manual credit adjustments).
  *
- * NOTE (provisioning): no super-admin is seeded by default. Grant a billing
- * admin access by setting `User.adminScope = 'SUPER'` (their `role` stays
- * `ADMIN` so the admin UI layout still admits them). Until then, only the token
- * fallback (dev) passes.
+ * This deployment has a SINGLE admin tier (roles: admin, doctor, patient — no
+ * super-admin). `verifyAdminAccess` already proves the caller is an admin, so
+ * every authenticated admin holds MANAGE_SUBSCRIPTIONS. There is intentionally
+ * no `adminScope === SUPER` elevation: it would lock out the only admins, since
+ * `adminScope` is provisioned only for the (unused) LOCAL_ADMIN role.
+ *
+ * Sensitive money actions (manual balance adjustment) are NOT separated by a
+ * non-existent super tier — they are protected by friction instead: a hidden
+ * "Support override" panel, a mandatory written reason, a confirm step, and a
+ * full audit row (§4).
  *
  * On success the result carries the resolved admin actor so mutation handlers
  * can audit (§24) and stamp `adjustCredits.actorAdminId` without re-querying.
@@ -28,28 +27,23 @@ export type ManageSubscriptionsResult =
   | { ok: true; method: "session" | "token_fallback"; actorUserId: string | null; actorRole: string }
   | { ok: false; status: 401 | 403 | 503; message: string };
 
-export const MANAGE_SUBSCRIPTIONS_FORBIDDEN =
-  "Super admin access (MANAGE_SUBSCRIPTIONS) is required";
+export const MANAGE_SUBSCRIPTIONS_FORBIDDEN = "Admin access is required";
 
 /**
- * Pure elevation rule (unit-testable): given the base admin-access decision and
- * the resolved session role + DB admin scope, decide whether the caller holds
- * MANAGE_SUBSCRIPTIONS. Grants on token fallback, SUPER_ADMIN role, or SUPER scope.
+ * Pure elevation rule (unit-testable): any successful admin base decision
+ * (session or master-token fallback) holds MANAGE_SUBSCRIPTIONS. A failed base
+ * decision (non-admin / unauthenticated) is propagated unchanged.
  */
 export function elevateToManageSubscriptions(
   base: AdminAccessResult,
   sessionRole: UserRoleType | null,
   actorUserId: string | null,
-  adminScope: AdminScope | null,
 ): ManageSubscriptionsResult {
   if (!base.ok) return base;
   if (base.method === "token_fallback") {
-    return { ok: true, method: "token_fallback", actorUserId: null, actorRole: "SUPER_ADMIN" };
+    return { ok: true, method: "token_fallback", actorUserId: null, actorRole: "ADMIN" };
   }
-  if (sessionRole === "SUPER_ADMIN" || adminScope === "SUPER") {
-    return { ok: true, method: "session", actorUserId, actorRole: sessionRole ?? "ADMIN" };
-  }
-  return { ok: false, status: 403, message: MANAGE_SUBSCRIPTIONS_FORBIDDEN };
+  return { ok: true, method: "session", actorUserId, actorRole: sessionRole ?? "ADMIN" };
 }
 
 export async function verifyManageSubscriptionsAccess(
@@ -58,21 +52,12 @@ export async function verifyManageSubscriptionsAccess(
   const base = await verifyAdminAccess(request);
   if (!base.ok) return base;
   if (base.method === "token_fallback") {
-    return elevateToManageSubscriptions(base, null, null, null);
+    return elevateToManageSubscriptions(base, null, null);
   }
-  // Session admin — resolve the user's role + adminScope from the DB (the JWT
-  // carries only `role`, never `adminScope`).
+  // Session admin — resolve the actor id + role from the JWT for audit stamping.
   const cookieToken = request.cookies[env.AUTH_COOKIE_NAME];
   const payload = cookieToken ? verifyAuthToken(cookieToken) : null;
-  let adminScope: AdminScope | null = null;
-  if (payload?.sub) {
-    const user = await prisma.user.findUnique({
-      where: { id: payload.sub },
-      select: { adminScope: true },
-    });
-    adminScope = user?.adminScope ?? null;
-  }
-  return elevateToManageSubscriptions(base, payload?.role ?? null, payload?.sub ?? null, adminScope);
+  return elevateToManageSubscriptions(base, payload?.role ?? null, payload?.sub ?? null);
 }
 
 export type ManageSubscriptionsAuthOk = Extract<ManageSubscriptionsResult, { ok: true }>;

@@ -83,9 +83,6 @@ describe("admin plan-management routes", () => {
         passwordHash: "x",
         fullName: "Super Admin",
         role: "SUPER_ADMIN",
-        // SUPER scope is required for the stricter balance-adjustment guard (§4);
-        // the role alone gates only plan configuration.
-        adminScope: "SUPER",
       },
     });
     const genericAdmin = await prisma.user.create({
@@ -145,10 +142,10 @@ describe("admin plan-management routes", () => {
     assert.equal(res.statusCode, 401);
   });
 
-  it("rejects a generic ADMIN (no MANAGE_SUBSCRIPTIONS) → 403", async (t) => {
+  it("allows any admin to manage subscriptions (single admin tier) → 200", async (t) => {
     if (!app) return t.skip();
     const res = await app.inject({ method: "GET", url: "/api/admin/plans", cookies: adminCookie });
-    assert.equal(res.statusCode, 403);
+    assert.equal(res.statusCode, 200, res.body);
   });
 
   it("creates a plan, syncs a Stripe Price, and writes a PLAN_CREATED audit row", async (t) => {
