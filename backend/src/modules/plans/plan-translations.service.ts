@@ -36,6 +36,7 @@ export async function upsertPlanTranslation(
     shortDescription: body.shortDescription,
     longDescription: body.longDescription,
     notesTerms: body.notesTerms,
+    features: body.features ?? [],
   };
   try {
     return await prisma.planTranslation.upsert({

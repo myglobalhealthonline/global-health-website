@@ -86,6 +86,9 @@ function parsePlan(row: unknown): PublicPlan | null {
     billingInterval: str(r.billingInterval) || "MONTHLY",
     monthlyConsultationCredits: int(r.monthlyConsultationCredits),
     wellnessCreditsPerMonth: int(r.wellnessCreditsPerMonth),
+    features: Array.isArray(r.features)
+      ? r.features.filter((f): f is string => typeof f === "string" && f.trim() !== "")
+      : [],
     perkUnlockMonths: nullableInt(r.perkUnlockMonths),
     perks: Array.isArray(r.perks)
       ? r.perks.map(parsePerk).filter((p): p is PublicPlanPerk => p !== null)

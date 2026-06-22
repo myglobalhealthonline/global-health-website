@@ -18,6 +18,7 @@ import {
 } from "@/lib/admin/plans-api";
 import { parsePlanForm } from "@/lib/admin/plan-form-parse";
 import { PlanFields } from "../../../_components/plan-fields";
+import { PlanTranslationTabs } from "../../../_components/plan-translation-tabs";
 import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 
@@ -66,9 +67,11 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
     ? countriesResult.data.countries.find((c) => c.id === plan.countryId)
     : undefined;
   // Locale tabs: country default + any enabled CountryLocale (matches the CMS pattern).
-  const localeSet = new Set<string>([(countryRow?.defaultLocale ?? "EN").toUpperCase()]);
+  const defaultLocale = (countryRow?.defaultLocale ?? "EN").toUpperCase();
+  const localeSet = new Set<string>([defaultLocale]);
   for (const l of countryRow?.countryLocales ?? []) localeSet.add(l.locale.toUpperCase());
   const locales = Array.from(localeSet);
+  const localeTabs = locales.map((code) => ({ code, isDefault: code === defaultLocale }));
 
   // §36.11: never offer a PRESCRIPTION service in the plan picker.
   const services = (servicesResult.ok ? servicesResult.data.items : []).filter(
@@ -186,20 +189,33 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
     revalidatePath(`/admin/plans/${id}/edit`);
   }
 
-  async function saveTranslationAction(formData: FormData) {
+  // Bulk-save all locale tabs in one submit (mirrors the Service CMS). Reads
+  // `tr_<LOCALE>_<field>` for each locale; a blank name → skip (that language
+  // falls back to the default). `features` is one bullet per line.
+  async function saveTranslationsAction(formData: FormData) {
     "use server";
     await requireAdminAction();
-    const locale = String(formData.get("locale") ?? "");
-    const body = {
-      name: String(formData.get("name") ?? "").trim(),
-      shortDescription: (String(formData.get("shortDescription") ?? "").trim() || null) as string | null,
-      longDescription: (String(formData.get("longDescription") ?? "").trim() || null) as string | null,
-      notesTerms: (String(formData.get("notesTerms") ?? "").trim() || null) as string | null,
-    };
-    const result = await putAdminPlanTranslation(id, locale, body);
+    const errors: string[] = [];
+    for (const locale of locales) {
+      const name = String(formData.get(`tr_${locale}_name`) ?? "").trim();
+      if (!name) continue;
+      const features = String(formData.get(`tr_${locale}_features`) ?? "")
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const body = {
+        name,
+        shortDescription: String(formData.get(`tr_${locale}_shortDescription`) ?? "").trim() || null,
+        longDescription: String(formData.get(`tr_${locale}_longDescription`) ?? "").trim() || null,
+        notesTerms: String(formData.get(`tr_${locale}_notesTerms`) ?? "").trim() || null,
+        features,
+      };
+      const result = await putAdminPlanTranslation(id, locale, body);
+      if (!result.ok) errors.push(`${locale}: ${result.message}`);
+    }
     revalidatePath(`/admin/plans/${id}/edit`);
     redirect(
-      `/admin/plans/${id}/edit?${result.ok ? `success=${encodeURIComponent(`${locale} translation saved`)}` : `error=${encodeURIComponent(result.message)}`}`,
+      `/admin/plans/${id}/edit?${errors.length ? `error=${encodeURIComponent(errors.join("; "))}` : "success=Translations+saved"}`,
     );
   }
 
@@ -482,44 +498,34 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         </AdminCard>
         ) : null}
 
-        {/* Translations */}
+        {/* Translations — tabbed per-locale editor, single save (mirrors Services). */}
         <AdminCard padding={0}>
-          <SectionHeader title="Translations" description="Per-locale plan copy. Base columns are the default-locale fallback." />
-          <div className="flex flex-col gap-6 p-6">
-            {locales.map((locale) => {
-              const tr = plan.translations.find((t) => t.locale.toUpperCase() === locale);
-              return (
-                <form key={locale} action={saveTranslationAction} className="flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
-                  <input type="hidden" name="locale" value={locale} />
-                  <div className="flex items-center gap-2">
-                    <Pill tone="brand">{locale}</Pill>
-                    {tr ? <span className="text-xs text-[var(--color-text-muted)]">saved</span> : null}
-                  </div>
-                  <label className="flex flex-col gap-1.5">
-                    <span className="gh-field-label">Name</span>
-                    <input name="name" className="gh-input min-w-0" required defaultValue={tr?.name ?? ""} />
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span className="gh-field-label">Short description</span>
-                    <input name="shortDescription" className="gh-input min-w-0" defaultValue={tr?.shortDescription ?? ""} />
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span className="gh-field-label">Long description</span>
-                    <textarea name="longDescription" rows={2} className="gh-textarea min-w-0" defaultValue={tr?.longDescription ?? ""} />
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span className="gh-field-label">Notes &amp; terms</span>
-                    <textarea name="notesTerms" rows={2} className="gh-textarea min-w-0" defaultValue={tr?.notesTerms ?? ""} />
-                  </label>
-                  <div>
-                    <button type="submit" className="gh-btn gh-btn-secondary">
-                      Save {locale}
-                    </button>
-                  </div>
-                </form>
-              );
-            })}
-          </div>
+          <SectionHeader title="Content &amp; translations" description="Per-locale plan copy + public-card bullets. One save covers all languages." />
+          <form action={saveTranslationsAction} className="flex flex-col gap-6 p-6">
+            <PlanTranslationTabs
+              locales={localeTabs}
+              defaultLocale={defaultLocale}
+              initialTranslations={plan.translations.map((t) => ({
+                locale: t.locale,
+                name: t.name,
+                shortDescription: t.shortDescription,
+                longDescription: t.longDescription,
+                notesTerms: t.notesTerms,
+                features: t.features ?? [],
+              }))}
+              baseFallback={{
+                name: plan.name,
+                shortDescription: plan.shortDescription,
+                longDescription: plan.longDescription,
+                notesTerms: plan.notesTerms,
+              }}
+            />
+            <div className="border-t border-[var(--color-border)] pt-6">
+              <button type="submit" className="gh-btn gh-btn-primary">
+                Save translations
+              </button>
+            </div>
+          </form>
         </AdminCard>
 
         {/* Preview */}

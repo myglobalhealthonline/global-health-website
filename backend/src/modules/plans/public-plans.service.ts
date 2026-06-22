@@ -48,6 +48,9 @@ export interface PublicPlanView {
   billingInterval: string;
   monthlyConsultationCredits: number;
   wellnessCreditsPerMonth: number;
+  /** Admin-edited "Includes" bullets for the resolved locale. Empty → the card
+   *  renders its auto-generated default bullets (§12). */
+  features: string[];
   /** Soonest "after N paid months" unlock across gated perk/consultation rules,
    *  or null when nothing is gated (hide the universal note). Data-driven. */
   perkUnlockMonths: number | null;
@@ -115,6 +118,7 @@ function serializePublicPlan(plan: PublicPlanRecord, requested: LocaleCode, defa
     billingInterval: plan.billingInterval,
     monthlyConsultationCredits: plan.monthlyConsultationCredits,
     wellnessCreditsPerMonth: plan.wellnessCreditsPerMonth,
+    features: tr?.features ?? [],
     perkUnlockMonths: derivePerkUnlockMonths(plan),
     perks: plan.perkRules.map((p) => ({
       perkKey: p.perkKey,

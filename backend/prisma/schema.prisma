@@ -2990,6 +2990,11 @@ model PlanTranslation {
   shortDescription String?
   longDescription  String?
   notesTerms       String?
+  /// Admin-editable public card "Includes" bullets for this locale. When
+  /// non-empty, these REPLACE the auto-generated bullets on the pricing card;
+  /// when empty, the card falls back to the data-driven defaults. Display-only
+  /// (never affects billing/credits/eligibility — §12).
+  features         String[]    @default([])
   plan             PricingPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
 
   @@unique([planId, locale])

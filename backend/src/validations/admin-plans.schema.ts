@@ -169,6 +169,13 @@ export const adminPlanTranslationBodySchema = z.object({
   shortDescription: nullableTrimmedString(500),
   longDescription: nullableTrimmedString(5000),
   notesTerms: nullableTrimmedString(5000),
+  // Public-card "Includes" bullets for this locale (display-only). Empty array
+  // → card uses the auto-generated defaults.
+  features: z
+    .array(z.string().trim().min(1).max(200))
+    .max(20)
+    .optional()
+    .default([]),
 });
 
 // ─── Admin subscriptions view + adjust-credits (§36.15) ───────────────────────

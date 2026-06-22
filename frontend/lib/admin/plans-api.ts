@@ -86,6 +86,7 @@ export type AdminPlanTranslation = {
   shortDescription: string | null;
   longDescription: string | null;
   notesTerms: string | null;
+  features: string[];
 };
 
 export type AdminPlanDetail = AdminPlanListItem & {

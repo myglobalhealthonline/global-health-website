@@ -43,6 +43,9 @@ export interface PublicPlan {
   billingInterval: string;
   monthlyConsultationCredits: number;
   wellnessCreditsPerMonth: number;
+  /** Admin-edited "Includes" bullets (resolved locale). Empty → card uses its
+   *  auto-generated defaults. */
+  features: string[];
   /** Soonest "after N paid months" gate; null hides the universal note. */
   perkUnlockMonths: number | null;
   perks: PublicPlanPerk[];

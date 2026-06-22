@@ -40,13 +40,16 @@ export function PricingPlanCard({ plan, t, note, ctaHref }: PricingPlanCardProps
   const perkNote = formatPerkUnlockNote(plan.perkUnlockMonths, note);
   const badge = featured ? t.featuredBadge : plan.badgeLabel;
 
-  const features = [
+  // Admin-edited bullets (resolved locale) win when present; else the
+  // auto-generated defaults (§12).
+  const autoFeatures = [
     creditsLine,
     t.secureLine,
     t.bookingLine,
     t.specialistLine,
     ...(wellnessLine ? [wellnessLine, t.wellnessRedeemLine] : []),
   ];
+  const features = plan.features.length > 0 ? plan.features : autoFeatures;
 
   return (
     <article
