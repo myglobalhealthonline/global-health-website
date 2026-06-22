@@ -34,7 +34,7 @@ const currencyCodeSchema = z
   .transform((v) => v.toUpperCase());
 
 export const billingIntervalSchema = z.enum(["MONTHLY"]);
-export const vatModeSchema = z.enum(["EXEMPT", "STANDARD"]);
+export const planTypeSchema = z.enum(["ESSENTIAL", "COMPREHENSIVE", "PREMIUM"]);
 export const planDiscountModeSchema = z.enum(["NONE", "PERCENT", "FIXED"]);
 export const perkKeySchema = z.enum([
   "SPECIALIST_DISCOUNT",
@@ -69,17 +69,11 @@ export const adminPlansQuerySchema = z.object({
   }, z.boolean().optional()),
 });
 
-const vatRefinement = <T extends { vatMode?: string; vatRatePct?: number | null }>(schema: z.ZodType<T>) =>
-  schema.refine(
-    (data) =>
-      data.vatMode !== "STANDARD" ||
-      (typeof data.vatRatePct === "number" && data.vatRatePct > 0 && data.vatRatePct <= 100),
-    { message: "vatRatePct (0-100) is required when vatMode is STANDARD", path: ["vatRatePct"] },
-  );
-
 const planCreateBase = z.object({
   countryId: z.string().trim().min(1),
   slug: planSlugSchema,
+  // Plan tier — chosen at create, immutable after (omitted from the update schema).
+  planType: planTypeSchema,
   name: z.string().trim().min(1).max(200),
   shortDescription: nullableTrimmedString(500),
   longDescription: nullableTrimmedString(5000),
@@ -94,18 +88,16 @@ const planCreateBase = z.object({
   monthlyConsultationCredits: z.coerce.number().int().min(0).default(0),
   wellnessCreditsPerMonth: z.coerce.number().int().min(0).default(0),
   familyEnabled: z.boolean().default(false),
-  vatMode: vatModeSchema.default("EXEMPT"),
-  vatRatePct: z.coerce.number().min(0).max(100).optional().nullable(),
 });
+// NOTE: VAT removed from these plans (no vatMode/vatRatePct input). The service
+// layer forces vatMode=EXEMPT on every write and checkout sets automaticTax=false.
 
-export const adminPlanCreateBodySchema = vatRefinement(planCreateBase);
+export const adminPlanCreateBodySchema = planCreateBase;
 
-export const adminPlanUpdateBodySchema = vatRefinement(
-  planCreateBase
-    .omit({ countryId: true, slug: true })
-    .extend({ slug: planSlugSchema })
-    .partial(),
-);
+export const adminPlanUpdateBodySchema = planCreateBase
+  .omit({ countryId: true, slug: true, planType: true })
+  .extend({ slug: planSlugSchema })
+  .partial();
 
 export const planReorderBodySchema = z.object({
   items: z

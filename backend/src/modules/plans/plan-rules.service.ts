@@ -29,6 +29,13 @@ export class RuleCrossCountryError extends Error {
   }
 }
 
+export class RuleServiceInactiveError extends Error {
+  constructor() {
+    super("Inactive services cannot be linked to a subscription plan");
+    this.name = "RuleServiceInactiveError";
+  }
+}
+
 export class RuleHealthTestNotFoundError extends Error {
   constructor() {
     super("Health test not found");
@@ -77,11 +84,12 @@ export async function setConsultationRule(planId: string, body: AdminConsultatio
   const planCountryId = await loadPlanCountry(planId);
   const service = await prisma.service.findUnique({
     where: { id: body.serviceId },
-    select: { id: true, countryId: true, kind: true },
+    select: { id: true, countryId: true, kind: true, isActive: true },
   });
   if (!service) throw new RuleServiceNotFoundError();
   if (service.kind === "PRESCRIPTION") throw new RulePrescriptionExcludedError();
   if (service.countryId !== planCountryId) throw new RuleCrossCountryError();
+  if (!service.isActive) throw new RuleServiceInactiveError();
 
   const data = {
     isIncluded: body.isIncluded,

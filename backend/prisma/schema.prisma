@@ -854,6 +854,10 @@ model PricingPlan {
   id                         String                        @id @default(cuid())
   countryId                  String
   slug                       String
+  /// Plan tier template. Chosen at create, immutable after. Drives default GP
+  /// credits (1/2/3) and whether the admin shows wellness/health-kit sections
+  /// (Premium-only). Existing rows backfilled by slug in the migration.
+  planType                   PlanType                      @default(COMPREHENSIVE)
   name                       String
   shortDescription           String?
   /// Renamed from legacy `description` in the Wave 0 migration.
@@ -2896,6 +2900,12 @@ model EnsureSchemaPatch {
 
 enum BillingInterval {
   MONTHLY
+}
+
+enum PlanType {
+  ESSENTIAL
+  COMPREHENSIVE
+  PREMIUM
 }
 
 enum VatMode {

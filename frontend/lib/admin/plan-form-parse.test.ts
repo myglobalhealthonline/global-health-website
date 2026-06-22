@@ -9,6 +9,7 @@ function form(entries: Record<string, string>): FormData {
 
 const valid = {
   countryId: "c-ie",
+  planType: "ESSENTIAL",
   slug: "essential-care",
   name: "Essential Care",
   monthlyPrice: "20.00",
@@ -39,8 +40,21 @@ describe("parsePlanForm", () => {
       expect(res.data.countryId).toBe("c-ie");
       expect(res.data.monthlyConsultationCredits).toBe(1);
       expect(res.data.isActive).toBe(true);
-      expect(res.data.vatMode).toBe("EXEMPT");
+      expect(res.data.planType).toBe("ESSENTIAL");
     }
+  });
+
+  it("requires a valid plan type on create", () => {
+    const fd = form({ ...valid });
+    fd.delete("planType");
+    expect(parsePlanForm(fd, { includeCountry: true }).ok).toBe(false);
+    expect(parsePlanForm(form({ ...valid, planType: "BOGUS" }), { includeCountry: true }).ok).toBe(false);
+  });
+
+  it("omits plan type on update (immutable)", () => {
+    const res = parsePlanForm(form({ ...valid, planType: "PREMIUM" }));
+    expect(res.ok).toBe(true);
+    if (res.ok) expect(res.data.planType).toBeUndefined();
   });
 
   it("requires a country when includeCountry is set", () => {
@@ -55,16 +69,6 @@ describe("parsePlanForm", () => {
     fd.delete("monthlyPrice");
     const res = parsePlanForm(fd, { includeCountry: true });
     expect(res.ok).toBe(false);
-  });
-
-  it("requires vatRatePct when vatMode is STANDARD", () => {
-    const res = parsePlanForm(form({ ...valid, vatMode: "STANDARD" }), { includeCountry: true });
-    expect(res.ok).toBe(false);
-    const ok = parsePlanForm(form({ ...valid, vatMode: "STANDARD", vatRatePct: "23" }), {
-      includeCountry: true,
-    });
-    expect(ok.ok).toBe(true);
-    if (ok.ok) expect(ok.data.vatRatePct).toBe(23);
   });
 
   it("reads checkbox booleans (on) and omits country for update", () => {

@@ -108,8 +108,9 @@ function planWriteData(input: AdminPlanCreateBody | AdminPlanUpdateBody) {
       wellnessCreditsPerMonth: input.wellnessCreditsPerMonth,
     }),
     ...(input.familyEnabled !== undefined && { familyEnabled: input.familyEnabled }),
-    ...(input.vatMode !== undefined && { vatMode: input.vatMode }),
-    ...(input.vatRatePct !== undefined && { vatRatePct: input.vatRatePct }),
+    // VAT removed from these plans — always force EXEMPT, never persist a rate.
+    vatMode: "EXEMPT" as const,
+    vatRatePct: null,
   };
 }
 
@@ -126,6 +127,7 @@ export async function createAdminPlan(input: AdminPlanCreateBody): Promise<Admin
       data: {
         countryId: input.countryId,
         slug: input.slug,
+        planType: input.planType,
         name: input.name,
         shortDescription: input.shortDescription,
         longDescription: input.longDescription,
@@ -138,10 +140,13 @@ export async function createAdminPlan(input: AdminPlanCreateBody): Promise<Admin
         badgeLabel: input.badgeLabel,
         notesTerms: input.notesTerms,
         monthlyConsultationCredits: input.monthlyConsultationCredits,
-        wellnessCreditsPerMonth: input.wellnessCreditsPerMonth,
+        // Wellness is strictly Premium-only — force 0 on Essential/Comprehensive.
+        wellnessCreditsPerMonth:
+          input.planType === "PREMIUM" ? input.wellnessCreditsPerMonth : 0,
         familyEnabled: input.familyEnabled,
-        vatMode: input.vatMode,
-        vatRatePct: input.vatRatePct ?? null,
+        // VAT removed — always EXEMPT, no rate.
+        vatMode: "EXEMPT",
+        vatRatePct: null,
       },
       select: { id: true },
     });

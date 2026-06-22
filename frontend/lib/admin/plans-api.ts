@@ -7,6 +7,7 @@ import { adminRequest, type AdminApiResponse } from "./admin-api";
  * `adminRequest` cookie/token forwarding from admin-api.ts.
  */
 
+export type PlanType = "ESSENTIAL" | "COMPREHENSIVE" | "PREMIUM";
 export type PlanDiscountMode = "NONE" | "PERCENT" | "FIXED";
 export type PerkKey =
   | "SPECIALIST_DISCOUNT"
@@ -24,6 +25,7 @@ export type AdminPlanListItem = {
   id: string;
   countryId: string;
   slug: string;
+  planType: PlanType;
   name: string;
   shortDescription: string | null;
   monthlyPriceCents: number;
@@ -36,8 +38,6 @@ export type AdminPlanListItem = {
   monthlyConsultationCredits: number;
   wellnessCreditsPerMonth: number;
   familyEnabled: boolean;
-  vatMode: "EXEMPT" | "STANDARD";
-  vatRatePct: number | null;
   stripePriceId: string | null;
   country: AdminPlanCountry;
   _count: { consultationRules: number; perkRules: number; healthTestRules: number; subscriptions: number };

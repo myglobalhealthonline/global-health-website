@@ -125,7 +125,8 @@ export async function startSubscription(
     priceId: stripePriceId,
     successUrl: `${siteBase()}${returnBase}?subscription=ok`,
     cancelUrl: `${siteBase()}${returnBase}?subscription=cancelled`,
-    automaticTax: plan.vatMode === "STANDARD",
+    // VAT removed from subscription plans — never apply Stripe Tax (no tax line).
+    automaticTax: false,
     metadata: { kind: "subscription", internalSubId: sub.id, userId: input.userId },
   });
 
