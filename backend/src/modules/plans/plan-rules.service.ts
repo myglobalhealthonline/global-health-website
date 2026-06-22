@@ -115,14 +115,20 @@ export async function setConsultationRule(planId: string, body: AdminConsultatio
   }
 }
 
-/** Deactivate a consultation rule (soft — §25.1). Returns false if absent. */
-export async function deactivateConsultationRule(planId: string, serviceId: string): Promise<boolean> {
+/**
+ * Hard-delete a consultation rule. Safe for existing subscribers: pricing +
+ * grants read the frozen `planSnapshot` (D18), never the live rule, and no
+ * other table FK-references this row. To keep a service on the plan but mark it
+ * unavailable, save a rule with `isActive=false` instead of removing it.
+ * Returns false if absent.
+ */
+export async function deleteConsultationRule(planId: string, serviceId: string): Promise<boolean> {
   const rule = await prisma.planConsultationRule.findUnique({
     where: { planId_serviceId: { planId, serviceId } },
     select: { id: true },
   });
   if (!rule) return false;
-  await prisma.planConsultationRule.update({ where: { id: rule.id }, data: { isActive: false } });
+  await prisma.planConsultationRule.delete({ where: { id: rule.id } });
   return true;
 }
 
@@ -202,13 +208,17 @@ export async function setHealthTestRule(planId: string, body: AdminHealthTestRul
   }
 }
 
-/** Deactivate a health-test redemption rule (soft — §25.1). */
-export async function deactivateHealthTestRule(planId: string, healthTestId: string): Promise<boolean> {
+/**
+ * Hard-delete a health-test redemption rule. Same safety rationale as
+ * {@link deleteConsultationRule}: subscribers read the snapshot, nothing
+ * FK-references this row. Returns false if absent.
+ */
+export async function deleteHealthTestRule(planId: string, healthTestId: string): Promise<boolean> {
   const rule = await prisma.healthTestKitRedemptionRule.findUnique({
     where: { planId_healthTestId: { planId, healthTestId } },
     select: { id: true },
   });
   if (!rule) return false;
-  await prisma.healthTestKitRedemptionRule.update({ where: { id: rule.id }, data: { isActive: false } });
+  await prisma.healthTestKitRedemptionRule.delete({ where: { id: rule.id } });
   return true;
 }

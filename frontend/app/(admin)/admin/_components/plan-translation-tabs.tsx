@@ -18,6 +18,8 @@ type BaseFallback = {
   shortDescription: string | null;
   longDescription: string | null;
   notesTerms: string | null;
+  /** Seed bullets for the default-locale tab when no translation row exists. */
+  features: string[];
 };
 
 type Props = {
@@ -64,7 +66,7 @@ export function PlanTranslationTabs({ locales, defaultLocale, initialTranslation
   function valuesFor(code: string): Omit<PlanTranslationInitial, "locale"> {
     const found = initialTranslations.find((t) => t.locale.toUpperCase() === code);
     if (found) return found;
-    if (code === upperDefault) return { ...baseFallback, features: [] };
+    if (code === upperDefault) return { ...baseFallback };
     return EMPTY;
   }
 
@@ -137,12 +139,13 @@ export function PlanTranslationTabs({ locales, defaultLocale, initialTranslation
             </label>
 
             <label className="flex flex-col gap-2">
-              <span className="gh-field-label">Plan note</span>
+              <span className="gh-field-label">Notes &amp; terms (fine print under the card)</span>
               <textarea
                 name={`tr_${l.code}_notesTerms`}
                 rows={2}
                 className="gh-textarea min-w-0"
                 defaultValue={v.notesTerms ?? ""}
+                placeholder="Optional small print, e.g. cancellation or eligibility notes"
               />
             </label>
 

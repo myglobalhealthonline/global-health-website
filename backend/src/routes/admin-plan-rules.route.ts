@@ -3,8 +3,8 @@ import { recordAudit } from "../modules/audit/audit.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { PlanNotFoundError } from "../modules/plans/plans.service.js";
 import {
-  deactivateConsultationRule,
-  deactivateHealthTestRule,
+  deleteConsultationRule,
+  deleteHealthTestRule,
   deletePerkRule,
   listConsultationRules,
   listHealthTestRules,
@@ -96,7 +96,7 @@ const adminPlanRulesRoute: FastifyPluginAsync = async (app) => {
     const params = planServiceRuleParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid rule params"));
     try {
-      const removed = await deactivateConsultationRule(params.data.id, params.data.serviceId);
+      const removed = await deleteConsultationRule(params.data.id, params.data.serviceId);
       if (!removed) return reply.status(404).send(errorResponse("Consultation rule not found"));
       recordAudit({
         actorUserId: auth.actorUserId,
@@ -104,10 +104,10 @@ const adminPlanRulesRoute: FastifyPluginAsync = async (app) => {
         action: "PLAN_CONSULTATION_RULE_SET",
         entityType: "PlanConsultationRule",
         entityId: `${params.data.id}:${params.data.serviceId}`,
-        metadata: { planId: params.data.id, serviceId: params.data.serviceId, deactivated: true },
+        metadata: { planId: params.data.id, serviceId: params.data.serviceId, deleted: true },
         request,
       }).catch(() => {});
-      return okResponse({}, "Consultation rule deactivated");
+      return okResponse({}, "Consultation rule removed");
     } catch (error) {
       return handleRuleError(app, reply, error);
     }
@@ -224,7 +224,7 @@ const adminPlanRulesRoute: FastifyPluginAsync = async (app) => {
     const params = planHealthTestRuleParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid rule params"));
     try {
-      const removed = await deactivateHealthTestRule(params.data.id, params.data.healthTestId);
+      const removed = await deleteHealthTestRule(params.data.id, params.data.healthTestId);
       if (!removed) return reply.status(404).send(errorResponse("Health-test rule not found"));
       recordAudit({
         actorUserId: auth.actorUserId,
@@ -232,10 +232,10 @@ const adminPlanRulesRoute: FastifyPluginAsync = async (app) => {
         action: "PLAN_UPDATED",
         entityType: "HealthTestKitRedemptionRule",
         entityId: `${params.data.id}:${params.data.healthTestId}`,
-        metadata: { planId: params.data.id, healthTestId: params.data.healthTestId, deactivated: true },
+        metadata: { planId: params.data.id, healthTestId: params.data.healthTestId, deleted: true },
         request,
       }).catch(() => {});
-      return okResponse({}, "Health-test rule deactivated");
+      return okResponse({}, "Health-test rule removed");
     } catch (error) {
       return handleRuleError(app, reply, error);
     }

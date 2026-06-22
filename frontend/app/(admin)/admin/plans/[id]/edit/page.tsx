@@ -33,6 +33,55 @@ const PERK_KEYS = [
 ] as const;
 const UNLOCK_MODES = ["MONTH_1", "AFTER_PAID_MONTHS", "MANUAL_APPROVAL", "NOT_AVAILABLE"] as const;
 
+// Human-readable labels so the admin sees plain English, not raw enum keys.
+const PERK_LABELS: Record<string, string> = {
+  SPECIALIST_DISCOUNT: "Specialist discount",
+  FAMILY_USAGE: "Family usage",
+  WELLNESS_REDEMPTION: "Wellness redemption",
+  TEST_KIT_REDEMPTION: "Test-kit redemption",
+  HIGHER_DISCOUNT_TIER: "Higher discount tier",
+};
+const UNLOCK_MODE_LABELS: Record<string, string> = {
+  MONTH_1: "Immediately (from month 1)",
+  AFTER_PAID_MONTHS: "After N paid months",
+  MANUAL_APPROVAL: "Manual admin approval",
+  NOT_AVAILABLE: "Not available",
+};
+const SERVICE_KIND_LABELS: Record<string, string> = {
+  GENERAL: "General",
+  SPECIALIST: "Specialist",
+  PRESCRIPTION: "Prescription",
+};
+
+/**
+ * Sensible default "Includes" bullets derived from the plan, used to pre-fill
+ * the English tab so the admin has a concrete editable starting point (instead
+ * of a blank box). Mirrors the public card's auto bullets.
+ */
+function defaultPlanFeatures(p: {
+  monthlyConsultationCredits: number;
+  wellnessCreditsPerMonth: number;
+  planType: string;
+  consultationRules: Array<{ service: { kind: string }; isActive: boolean; discountMode: string }>;
+}): string[] {
+  const gp = p.monthlyConsultationCredits;
+  const out = [
+    `${gp} online GP consultation credit${gp === 1 ? "" : "s"} each month`,
+    "Secure online and video consultations",
+    "Online booking and access to your records",
+  ];
+  const hasSpecialistDiscount = p.consultationRules.some(
+    (r) => r.service.kind === "SPECIALIST" && r.isActive && r.discountMode !== "NONE",
+  );
+  if (hasSpecialistDiscount) out.push("Discounts on selected specialist consultations");
+  if (p.planType === "PREMIUM" && p.wellnessCreditsPerMonth > 0) {
+    const w = p.wellnessCreditsPerMonth;
+    out.push(`${w} wellness credit${w === 1 ? "" : "s"} each month`);
+    out.push("Redeem wellness credits for home health-test kits");
+  }
+  return out;
+}
+
 type PageProps = {
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ success?: string; error?: string; previewLocale?: string }>;
@@ -140,8 +189,11 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
   async function removeConsultationRuleAction(formData: FormData) {
     "use server";
     await requireAdminAction();
-    await deleteAdminPlanConsultationRule(id, String(formData.get("serviceId") ?? ""));
+    const result = await deleteAdminPlanConsultationRule(id, String(formData.get("serviceId") ?? ""));
     revalidatePath(`/admin/plans/${id}/edit`);
+    redirect(
+      `/admin/plans/${id}/edit?${result.ok ? "success=Consultation+rule+removed" : `error=${encodeURIComponent(result.message)}`}`,
+    );
   }
 
   async function addPerkAction(formData: FormData) {
@@ -163,8 +215,11 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
   async function removePerkAction(formData: FormData) {
     "use server";
     await requireAdminAction();
-    await deleteAdminPlanPerk(id, String(formData.get("perkKey") ?? ""));
+    const result = await deleteAdminPlanPerk(id, String(formData.get("perkKey") ?? ""));
     revalidatePath(`/admin/plans/${id}/edit`);
+    redirect(
+      `/admin/plans/${id}/edit?${result.ok ? "success=Perk+rule+removed" : `error=${encodeURIComponent(result.message)}`}`,
+    );
   }
 
   async function addHealthTestRuleAction(formData: FormData) {
@@ -185,8 +240,11 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
   async function removeHealthTestRuleAction(formData: FormData) {
     "use server";
     await requireAdminAction();
-    await deleteAdminPlanHealthTestRule(id, String(formData.get("healthTestId") ?? ""));
+    const result = await deleteAdminPlanHealthTestRule(id, String(formData.get("healthTestId") ?? ""));
     revalidatePath(`/admin/plans/${id}/edit`);
+    redirect(
+      `/admin/plans/${id}/edit?${result.ok ? "success=Redemption+rule+removed" : `error=${encodeURIComponent(result.message)}`}`,
+    );
   }
 
   // Bulk-save all locale tabs in one submit (mirrors the Service CMS). Reads
@@ -277,7 +335,9 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                   >
                     <div className="flex flex-wrap items-center gap-2 text-sm">
                       <span className="font-semibold text-[var(--color-text-primary)]">{rule.service.name}</span>
-                      <Pill tone={rule.service.kind === "SPECIALIST" ? "brand" : "neutral"}>{rule.service.kind}</Pill>
+                      <Pill tone={rule.service.kind === "SPECIALIST" ? "brand" : "neutral"}>
+                        {SERVICE_KIND_LABELS[rule.service.kind] ?? rule.service.kind}
+                      </Pill>
                       {rule.isIncluded ? <Pill tone="active">Included</Pill> : null}
                       {rule.usesCredits ? <Pill tone="published">{rule.creditsPerUse} credit/use</Pill> : null}
                       {rule.discountMode === "PERCENT" && rule.discountPercent === 100 ? (
@@ -297,7 +357,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                     <form action={removeConsultationRuleAction}>
                       <input type="hidden" name="serviceId" value={rule.serviceId} />
                       <ConfirmDeleteButton
-                        message={`Deactivate the rule for "${rule.service.name}"?`}
+                        message={`Remove the rule for "${rule.service.name}"? This deletes it from the plan.`}
                         className="text-[13px] font-semibold text-[var(--color-status-error-text)] hover:underline"
                       >
                         Remove
@@ -314,7 +374,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                   <option value="">Select service…</option>
                   {services.map((s) => (
                     <option key={s.id} value={s.id}>
-                      {s.name} ({s.kind})
+                      {s.name} ({SERVICE_KIND_LABELS[s.kind] ?? s.kind})
                     </option>
                   ))}
                 </select>
@@ -346,14 +406,14 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 <input name="unlockAfterPaidMonths" type="number" min="0" defaultValue="0" className="gh-input min-w-0" />
               </label>
               <div className="flex flex-col gap-2 pt-1 text-sm">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" name="isIncluded" className="size-4" /> Included
+                <label className="flex items-center gap-2" title="Free as part of the plan">
+                  <input type="checkbox" name="isIncluded" className="size-4" /> Included (free with plan)
                 </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" name="usesCredits" className="size-4" /> Uses credits
+                <label className="flex items-center gap-2" title="Each visit spends from the monthly credit allowance">
+                  <input type="checkbox" name="usesCredits" className="size-4" /> Uses monthly credits
                 </label>
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" name="familyUsable" className="size-4" /> Family usable
+                <label className="flex items-center gap-2" title="Family members on the plan can use this">
+                  <input type="checkbox" name="familyUsable" className="size-4" /> Family members can use
                 </label>
               </div>
               <div className="lg:col-span-4">
@@ -379,8 +439,10 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                     className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-2.5 text-sm"
                   >
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-semibold text-[var(--color-text-primary)]">{perk.perkKey}</span>
-                      <Pill tone="neutral">{perk.unlockMode}</Pill>
+                      <span className="font-semibold text-[var(--color-text-primary)]">
+                        {PERK_LABELS[perk.perkKey] ?? perk.perkKey}
+                      </span>
+                      <Pill tone="neutral">{UNLOCK_MODE_LABELS[perk.unlockMode] ?? perk.unlockMode}</Pill>
                       {perk.unlockMode === "AFTER_PAID_MONTHS" ? (
                         <Pill tone="draft">@ {perk.unlockAfterPaidMonths}mo</Pill>
                       ) : null}
@@ -388,7 +450,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                     <form action={removePerkAction}>
                       <input type="hidden" name="perkKey" value={perk.perkKey} />
                       <ConfirmDeleteButton
-                        message={`Remove the ${perk.perkKey} perk rule?`}
+                        message={`Remove the "${PERK_LABELS[perk.perkKey] ?? perk.perkKey}" perk rule?`}
                         className="text-[13px] font-semibold text-[var(--color-status-error-text)] hover:underline"
                       >
                         Remove
@@ -405,7 +467,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                   <option value="">Select perk…</option>
                   {PERK_KEYS.map((k) => (
                     <option key={k} value={k}>
-                      {k}
+                      {PERK_LABELS[k] ?? k}
                     </option>
                   ))}
                 </select>
@@ -415,7 +477,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 <select name="unlockMode" className="gh-select min-w-0" defaultValue="MONTH_1">
                   {UNLOCK_MODES.map((m) => (
                     <option key={m} value={m}>
-                      {m}
+                      {UNLOCK_MODE_LABELS[m] ?? m}
                     </option>
                   ))}
                 </select>
@@ -458,7 +520,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                     <form action={removeHealthTestRuleAction}>
                       <input type="hidden" name="healthTestId" value={rule.healthTestId} />
                       <ConfirmDeleteButton
-                        message={`Deactivate the redemption rule for "${rule.healthTest.title}"?`}
+                        message={`Remove the redemption rule for "${rule.healthTest.title}"? This deletes it from the plan.`}
                         className="text-[13px] font-semibold text-[var(--color-status-error-text)] hover:underline"
                       >
                         Remove
@@ -518,6 +580,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                 shortDescription: plan.shortDescription,
                 longDescription: plan.longDescription,
                 notesTerms: plan.notesTerms,
+                features: defaultPlanFeatures(plan),
               }}
             />
             <div className="border-t border-[var(--color-border)] pt-6">
