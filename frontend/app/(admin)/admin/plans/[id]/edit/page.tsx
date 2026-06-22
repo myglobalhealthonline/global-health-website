@@ -19,6 +19,7 @@ import {
 import { parsePlanForm } from "@/lib/admin/plan-form-parse";
 import { PlanFields } from "../../../_components/plan-fields";
 import { PlanTranslationTabs } from "../../../_components/plan-translation-tabs";
+import { PlanEditTabs } from "../../../_components/plan-edit-tabs";
 import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "../../../_components/atoms";
 import { ConfirmDeleteButton } from "../../../_components/confirm-delete-button";
 
@@ -309,30 +310,19 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">{sp.error}</p>
       ) : null}
 
-      {/* Plain-language orientation so a non-technical admin knows what each
-          section below is for. */}
-      <AdminCard className="mb-6" style={{ background: "linear-gradient(180deg, var(--color-background-soft) 0%, #FCFDF8 100%)" }}>
-        <p className="text-[13px] font-bold uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
-          What each section does
-        </p>
-        <ul className="mt-3 flex flex-col gap-2 text-sm text-[var(--color-text-body)]">
-          <li><span className="font-semibold">Basics &amp; price</span> — the name, monthly price, and how many GP visits are included.</li>
-          <li><span className="font-semibold">Doctor visits &amp; discounts</span> — which consultations the plan covers and what members pay for each.</li>
-          <li><span className="font-semibold">Extra benefits (perks)</span> — optional bonuses that switch on after a few paid months.</li>
-          {plan.planType === "PREMIUM" ? (
-            <li><span className="font-semibold">Home test kits</span> — kits members can claim with wellness credits.</li>
-          ) : null}
-          <li><span className="font-semibold">Pricing card text</span> — exactly what customers read on the card, per language.</li>
-        </ul>
-        <p className="mt-3 text-xs text-[var(--color-text-muted)]">
-          Each section saves on its own — press the button inside it. Existing subscribers keep their current terms until renewal.
-        </p>
-      </AdminCard>
+      <p className="mb-4 text-sm text-[var(--color-text-muted)]">
+        Set up the plan one tab at a time. Each tab saves on its own — press the button inside it.
+        Existing subscribers keep their current terms until renewal.
+      </p>
 
-      <div className="flex flex-col gap-6">
-        {/* Plan fields */}
-        <AdminCard padding={0}>
-          <SectionHeader title="Basics & price" description="Name, monthly price, and what's included each month. Saving updates billing automatically." />
+      <PlanEditTabs
+        tabs={[
+          {
+            id: "basics",
+            label: "Basics & price",
+            content: (
+              <AdminCard padding={0}>
+                <SectionHeader title="Basics & price" description="Name, monthly price, and what's included each month. Saving updates billing automatically." />
           <form action={updatePlanAction} className="flex flex-col gap-8 p-6">
             <PlanFields countries={countries} initial={plan} pinnedCountryId={plan.countryId} />
             <div className="border-t border-[var(--color-border)] pt-6">
@@ -341,12 +331,16 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
               </button>
             </div>
           </form>
-        </AdminCard>
-
-        {/* Consultation rules */}
-        <AdminCard padding={0}>
-          <SectionHeader
-            title="Doctor visits & discounts"
+              </AdminCard>
+            ),
+          },
+          {
+            id: "visits",
+            label: "Doctor visits",
+            content: (
+              <AdminCard padding={0}>
+                <SectionHeader
+                  title="Doctor visits & discounts"
             description="Which consultations this plan covers and what members pay for each. GP visits are usually covered by the monthly allowance; specialist visits usually get a discount. Prescriptions are never included."
           />
           <div className="p-6">
@@ -461,11 +455,15 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
               </div>
             </form>
           </div>
-        </AdminCard>
-
-        {/* Perk rules */}
-        <AdminCard padding={0}>
-          <SectionHeader title="Extra benefits (perks)" description="Optional bonuses (e.g. a bigger specialist discount) that switch on automatically once a member has paid for a set number of months." />
+              </AdminCard>
+            ),
+          },
+          {
+            id: "perks",
+            label: "Extra benefits",
+            content: (
+              <AdminCard padding={0}>
+                <SectionHeader title="Extra benefits (perks)" description="Optional bonuses (e.g. a bigger specialist discount) that switch on automatically once a member has paid for a set number of months." />
           <div className="p-6">
             {plan.perkRules.length === 0 ? (
               <p className="mb-4 text-sm text-[var(--color-text-muted)]">No perk rules yet.</p>
@@ -532,12 +530,17 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
               </div>
             </form>
           </div>
-        </AdminCard>
-
-        {/* Health-test redemption rules — Premium only (wellness is strictly Premium). */}
-        {plan.planType === "PREMIUM" ? (
-        <AdminCard padding={0}>
-          <SectionHeader title="Home test kits (Premium)" description="Home test kits a member can claim using their monthly wellness credits. They must have an active subscription." />
+              </AdminCard>
+            ),
+          },
+          // Home test kits — Premium only (wellness is strictly Premium).
+          ...(plan.planType === "PREMIUM"
+            ? [{
+                id: "kits",
+                label: "Home test kits",
+                content: (
+              <AdminCard padding={0}>
+                <SectionHeader title="Home test kits (Premium)" description="Home test kits a member can claim using their monthly wellness credits. They must have an active subscription." />
           <div className="p-6">
             {plan.healthTestRules.length === 0 ? (
               <p className="mb-4 text-sm text-[var(--color-text-muted)]">No redemption rules yet.</p>
@@ -598,12 +601,16 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
               </div>
             </form>
           </div>
-        </AdminCard>
-        ) : null}
-
-        {/* Translations — tabbed per-locale editor, single save (mirrors Services). */}
-        <AdminCard padding={0}>
-          <SectionHeader title="Pricing card text" description="Exactly what customers read on the card — name, description, and bullet points — in each language. One save covers all languages." />
+              </AdminCard>
+                ),
+              }]
+            : []),
+          {
+            id: "text",
+            label: "Pricing card text",
+            content: (
+              <AdminCard padding={0}>
+                <SectionHeader title="Pricing card text" description="Exactly what customers read on the card — name, description, and bullet points — in each language. One save covers all languages." />
           <form action={saveTranslationsAction} className="flex flex-col gap-6 p-6">
             <PlanTranslationTabs
               locales={localeTabs}
@@ -630,12 +637,16 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
               </button>
             </div>
           </form>
-        </AdminCard>
-
-        {/* Preview */}
-        <AdminCard padding={0}>
-          <SectionHeader
-            title="Preview"
+              </AdminCard>
+            ),
+          },
+          {
+            id: "preview",
+            label: "Preview",
+            content: (
+              <AdminCard padding={0}>
+                <SectionHeader
+                  title="Preview"
             description="How the plan looks to a customer once saved. Click a language to preview it."
             right={
               <div className="flex gap-1.5">
@@ -675,8 +686,11 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
               <p className="text-sm text-[var(--color-text-muted)]">Could not load preview: {previewResult.message}</p>
             )}
           </div>
-        </AdminCard>
-      </div>
+              </AdminCard>
+            ),
+          },
+        ]}
+      />
     </>
   );
 }

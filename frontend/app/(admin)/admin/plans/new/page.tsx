@@ -126,7 +126,7 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
       redirect(`/admin/plans/new?${qs}&error=${encodeURIComponent(result.message)}`);
     }
     revalidatePath("/admin/plans");
-    redirect(`/admin/plans/${result.data.plan.id}/edit?success=${encodeURIComponent("Plan created — Stripe Price synced")}`);
+    redirect(`/admin/plans/${result.data.plan.id}/edit?success=${encodeURIComponent("Plan created — billing set up. Now add doctor visits, perks, and card text below.")}`);
   }
 
   return (
