@@ -9,7 +9,6 @@ import {
   deleteAdminPlanHealthTestRule,
   deleteAdminPlanPerk,
   fetchAdminPlanById,
-  fetchAdminPlanPreview,
   patchAdminPlan,
   postAdminPlanConsultationRule,
   postAdminPlanHealthTestRule,
@@ -17,6 +16,10 @@ import {
   putAdminPlanTranslation,
 } from "@/lib/admin/plans-api";
 import { parsePlanForm } from "@/lib/admin/plan-form-parse";
+import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import type { LocaleCode } from "@/lib/i18n/types";
+import type { PublicPlan } from "@/data/pricing-plans";
+import { PricingPlanCard } from "@/app/(site)/[country]/[lang]/pricing/_components/PricingPlanCard";
 import { PlanFields } from "../../../_components/plan-fields";
 import { PlanTranslationTabs } from "../../../_components/plan-translation-tabs";
 import { PlanEditTabs } from "../../../_components/plan-edit-tabs";
@@ -135,8 +138,59 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
   );
   const healthTests = healthTestsResult.ok ? healthTestsResult.data.items : [];
 
-  const previewLocale = sp.previewLocale;
-  const previewResult = await fetchAdminPlanPreview(plan.id, previewLocale);
+  // Live card preview — build the real PublicPlan shape from the current plan +
+  // the chosen locale, then render the SAME PricingPlanCard the public site uses
+  // (mirrors serializePublicPlan / derivePerkUnlockMonths). Built from local
+  // data so it's always fresh and works even for inactive/unsaved plans.
+  const previewLocaleUpper = (sp.previewLocale ?? defaultLocale).toUpperCase();
+  const previewLang = previewLocaleUpper.toLowerCase() as LocaleCode;
+  const { subscription: previewBundle } = loadLocaleBundle(previewLang);
+  const previewTr =
+    plan.translations.find((t) => t.locale.toUpperCase() === previewLocaleUpper) ??
+    plan.translations.find((t) => t.locale.toUpperCase() === defaultLocale.toUpperCase());
+  const previewUnlockMonths = (() => {
+    const months: number[] = [];
+    for (const pk of plan.perkRules) {
+      if (pk.unlockMode === "AFTER_PAID_MONTHS" && pk.unlockAfterPaidMonths && pk.unlockAfterPaidMonths > 0) {
+        months.push(pk.unlockAfterPaidMonths);
+      }
+    }
+    for (const r of plan.consultationRules) {
+      if (r.isActive && r.unlockAfterPaidMonths > 0) months.push(r.unlockAfterPaidMonths);
+    }
+    return months.length ? Math.min(...months) : null;
+  })();
+  const previewPlan: PublicPlan = {
+    id: plan.id,
+    slug: plan.slug,
+    name: previewTr?.name ?? plan.name,
+    shortDescription: previewTr?.shortDescription ?? plan.shortDescription,
+    longDescription: previewTr?.longDescription ?? plan.longDescription,
+    badgeLabel: plan.badgeLabel,
+    isFeatured: plan.isFeatured,
+    displayOrder: plan.displayOrder,
+    monthlyPriceCents: plan.monthlyPriceCents,
+    currencyCode: plan.currencyCode,
+    billingInterval: plan.billingInterval,
+    monthlyConsultationCredits: plan.monthlyConsultationCredits,
+    wellnessCreditsPerMonth: plan.wellnessCreditsPerMonth,
+    features: previewTr?.features ?? [],
+    perkUnlockMonths: previewUnlockMonths,
+    perks: plan.perkRules.map((pk) => ({
+      perkKey: pk.perkKey,
+      unlockMode: pk.unlockMode,
+      unlockAfterPaidMonths: pk.unlockAfterPaidMonths,
+    })),
+    wellnessKits: plan.healthTestRules
+      .filter((r) => r.isActive)
+      .map((r) => ({
+        healthTestId: r.healthTestId,
+        name: r.healthTest.title,
+        slug: r.healthTest.slug,
+        requiredWellnessCredits: r.requiredWellnessCredits,
+        unlockAfterPaidMonths: r.unlockAfterPaidMonths,
+      })),
+  };
 
   // ── Server actions ─────────────────────────────────────────────────────────
   async function updatePlanAction(formData: FormData) {
@@ -316,6 +370,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
       </p>
 
       <PlanEditTabs
+        defaultTabId={sp.previewLocale ? "preview" : undefined}
         tabs={[
           {
             id: "basics",
@@ -663,28 +718,21 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
             }
           />
           <div id="preview" className="p-6">
-            {previewResult.ok ? (
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-bold text-[var(--color-text-primary)]">{previewResult.data.preview.name}</h3>
-                  <Pill tone="neutral">{previewResult.data.preview.resolvedLocale}</Pill>
-                </div>
-                <p className="text-2xl font-extrabold text-[var(--color-brand-primary)]">
-                  {(plan.monthlyPriceCents / 100).toFixed(2)} {plan.currencyCode} <span className="text-sm font-medium text-[var(--color-text-muted)]">/ month</span>
-                </p>
-                {previewResult.data.preview.shortDescription ? (
-                  <p className="text-sm text-[var(--color-text-body)]">{previewResult.data.preview.shortDescription}</p>
-                ) : null}
-                {previewResult.data.preview.longDescription ? (
-                  <p className="text-sm text-[var(--color-text-muted)]">{previewResult.data.preview.longDescription}</p>
-                ) : null}
-                <p className="text-sm text-[var(--color-text-muted)]">
-                  {plan.monthlyConsultationCredits} GP credit(s)/month · {plan.wellnessCreditsPerMonth} wellness/month
-                </p>
+            <p className="mb-4 text-xs text-[var(--color-text-muted)]">
+              This is the exact card customers see on the pricing page, in{" "}
+              <span className="font-semibold">{previewLocaleUpper}</span>.
+              Showing {previewPlan.features.length > 0 ? "your custom bullets" : "the default bullets (no custom bullets set in Pricing card text)"}.
+            </p>
+            <div className="flex justify-center rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-6 sm:p-10">
+              <div className="w-full max-w-sm">
+                <PricingPlanCard plan={previewPlan} t={previewBundle.pricing} note={previewBundle.note} ctaHref="#" />
               </div>
-            ) : (
-              <p className="text-sm text-[var(--color-text-muted)]">Could not load preview: {previewResult.message}</p>
-            )}
+            </div>
+            {!plan.isActive ? (
+              <p className="mt-3 text-xs text-[var(--color-status-error-text)]">
+                Note: this plan is set to hidden (not visible to customers). The card above is how it would look once you make it visible.
+              </p>
+            ) : null}
           </div>
               </AdminCard>
             ),

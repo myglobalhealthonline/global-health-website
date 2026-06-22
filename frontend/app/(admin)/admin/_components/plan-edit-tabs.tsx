@@ -10,8 +10,10 @@ export type PlanTab = { id: string; label: string; content: ReactNode };
  * server-action forms inside each panel keep working. All panels stay mounted
  * (inactive ones `hidden`) so switching tabs never loses unsaved input.
  */
-export function PlanEditTabs({ tabs }: { tabs: PlanTab[] }) {
-  const [active, setActive] = useState(tabs[0]?.id ?? "");
+export function PlanEditTabs({ tabs, defaultTabId }: { tabs: PlanTab[]; defaultTabId?: string }) {
+  const initial =
+    defaultTabId && tabs.some((t) => t.id === defaultTabId) ? defaultTabId : tabs[0]?.id ?? "";
+  const [active, setActive] = useState(initial);
 
   return (
     <div className="flex flex-col gap-5">
