@@ -290,6 +290,19 @@ export async function postAdminAdjustCredits(subscriptionId: string, body: unkno
   );
 }
 
+export type AdminCreditLedgerEntry = {
+  kind: "CONSULTATION" | "WELLNESS";
+  deltaCredits: number;
+  reason: string;
+  createdAt: string;
+};
+
+export async function fetchAdminSubscriptionLedger(subscriptionId: string) {
+  return adminRequest<{ ledger: AdminCreditLedgerEntry[] }>(
+    `/api/admin/subscriptions/${subscriptionId}/ledger`,
+  );
+}
+
 // ─── Perk-grant queue ────────────────────────────────────────────────────────
 
 export async function fetchAdminPerkGrants(status = "PENDING") {

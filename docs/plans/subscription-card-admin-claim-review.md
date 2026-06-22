@@ -66,9 +66,12 @@ P0 core **implemented + verified** (backend/frontend typecheck clean; schema, ne
 
 - ✅ **§6a/§6b/§6d — DONE (2026-06-23).** Read-only `previewConsultationPricing` (sibling of `reserveAndPriceConsultations`, reuses the pure `resolveConsultationPrice`, reserves NOTHING) + new `GET /api/me/cart-preview`. Peak-price recompute extracted to a shared `computeEffectivePrices` (used by both checkout and preview, so the preview can't drift from the charge). Cart page now shows a **PlanCoverage** panel: per-consultation badge (Included €0 / Plan discount / Not covered), total saved, and credits-left — for subscribers; a **login prompt** for guests (401); a **subscribe-&-save upsell** for logged-in non-subscribers. Coverage i18n added to all 6 locales. Tests: 2 new preview cases prove dry-run (counter untouched) + NOT_COVERED.
 
-Deferred (tracked, not done):
-- **§4d admin-side** ledger/provenance on the admin subscriber view — the admin API returns balances only; needs a small read endpoint. (Patient-side provenance is done.)
-- **§6c** subscribe-in-funnel ("subscribe then return to checkout") — P2.
+- ✅ **§4d admin-side — DONE (2026-06-23).** New `GET /api/admin/subscriptions/:id/ledger` (reuses the patient credits read model) + a lazy per-subscriber **"View activity"** expander in the admin subscriptions table, with the same reason labels (incl. **Manual adjustment**). An admin can now see how a balance was reached and that an override was recorded.
+
+Remaining (P2, by choice):
+- **§6c** subscribe-in-funnel ("subscribe then return to checkout") — deferred P2; the cart upsell links to the membership/subscribe page instead.
+
+**All P0 + P1 from this review are now complete.** Only the P2 in-funnel subscribe upsell and translation of the new en-authored i18n keys remain.
 
 ---
 

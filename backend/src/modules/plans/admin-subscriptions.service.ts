@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { normalizeDbError } from "../shared/db-errors.js";
 import { adjustCredits, adjustmentKey } from "../credits/credit-balance.service.js";
+import { getCreditsView } from "../credits/credits-read.service.js";
 import type { AdminSubscriptionsQuery } from "../../validations/admin-plans.schema.js";
 
 export class SubscriptionNotFoundError extends Error {
@@ -53,6 +54,24 @@ export async function listAdminSubscriptions(
   } catch (error) {
     throw normalizeDbError(error, "Subscriptions data is unavailable");
   }
+}
+
+/**
+ * Recent credit-ledger entries for one subscription (§4d admin provenance).
+ * Reuses the patient credits read model so the admin sees the same merged
+ * consultation + wellness history (earned / reset / reserved / consumed /
+ * redeemed / released / manually adjusted / clawed back).
+ */
+export async function getAdminSubscriptionLedger(
+  subscriptionId: string,
+): Promise<{ ledger: Awaited<ReturnType<typeof getCreditsView>>["ledger"] }> {
+  const sub = await prisma.userSubscription.findUnique({
+    where: { id: subscriptionId },
+    select: { id: true, currentPeriodStart: true },
+  });
+  if (!sub) throw new SubscriptionNotFoundError();
+  const view = await getCreditsView(sub.id, sub.currentPeriodStart);
+  return { ledger: view.ledger };
 }
 
 export type AdminAdjustCreditsInput = {

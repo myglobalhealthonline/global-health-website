@@ -24,6 +24,7 @@ import {
 } from "../_components/atoms";
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { SubscriptionHealthPanel } from "../_components/subscription-health-panel";
+import { AdminSubscriberLedger } from "../_components/subscriber-ledger";
 
 export const dynamic = "force-dynamic";
 
@@ -200,6 +201,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                       </Td>
                       <Td>
                         {balanceOf(sub.balances, "CONSULTATION")} / {balanceOf(sub.balances, "WELLNESS")}
+                        <AdminSubscriberLedger subscriptionId={sub.id} />
                       </Td>
                     </Tr>
                   ))}

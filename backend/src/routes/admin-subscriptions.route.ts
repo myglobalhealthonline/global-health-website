@@ -3,6 +3,7 @@ import { recordAudit } from "../modules/audit/audit.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import {
   adminAdjustSubscriptionCredits,
+  getAdminSubscriptionLedger,
   listAdminSubscriptions,
   SubscriptionNotFoundError,
 } from "../modules/plans/admin-subscriptions.service.js";
@@ -48,6 +49,17 @@ const adminSubscriptionsRoute: FastifyPluginAsync = async (app) => {
       // kept so the UI can gate the panel if tiers are introduced later.
       const result = await listAdminSubscriptions(query.data);
       return okResponse({ ...result, capabilities: { canAdjustCredits: true } });
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  app.get("/api/admin/subscriptions/:id/ledger", async (request, reply) => {
+    if (!(await requireManageSubscriptions(request, reply))) return;
+    const params = subscriptionIdParamsSchema.safeParse(request.params);
+    if (!params.success) return reply.status(400).send(errorResponse("Invalid subscription id"));
+    try {
+      return okResponse(await getAdminSubscriptionLedger(params.data.id));
     } catch (error) {
       return handleError(app, reply, error);
     }
