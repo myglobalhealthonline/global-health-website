@@ -97,19 +97,36 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
   async function addConsultationRuleAction(formData: FormData) {
     "use server";
     await requireAdminAction();
-    const discountMode = String(formData.get("discountMode") ?? "NONE");
+    // UI choice maps onto backend fields (no enum change): FREE → PERCENT/100,
+    // UNAVAILABLE → isActive:false (excluded from the snapshot → standard price).
+    const choice = String(formData.get("discountMode") ?? "NONE");
+    let discountMode = "NONE";
+    let discountPercent: number | null = null;
+    let fixedPriceCents: number | null = null;
+    let isActive = true;
+    if (choice === "PERCENT") {
+      discountMode = "PERCENT";
+      discountPercent = Number(formData.get("discountPercent") ?? 0) || 0;
+    } else if (choice === "FIXED") {
+      discountMode = "FIXED";
+      fixedPriceCents = Math.round(Number(formData.get("fixedPrice") ?? 0) * 100);
+    } else if (choice === "FREE") {
+      discountMode = "PERCENT";
+      discountPercent = 100;
+    } else if (choice === "UNAVAILABLE") {
+      isActive = false;
+    }
     const body = {
       serviceId: String(formData.get("serviceId") ?? ""),
       isIncluded: formData.get("isIncluded") === "on",
       usesCredits: formData.get("usesCredits") === "on",
       creditsPerUse: Number(formData.get("creditsPerUse") ?? 1) || 1,
       discountMode,
-      discountPercent: discountMode === "PERCENT" ? Number(formData.get("discountPercent") ?? 0) : null,
-      fixedPriceCents:
-        discountMode === "FIXED" ? Math.round(Number(formData.get("fixedPrice") ?? 0) * 100) : null,
+      discountPercent,
+      fixedPriceCents,
       unlockAfterPaidMonths: Number(formData.get("unlockAfterPaidMonths") ?? 0) || 0,
       familyUsable: formData.get("familyUsable") === "on",
-      isActive: true,
+      isActive,
     };
     const result = await postAdminPlanConsultationRule(id, body);
     revalidatePath(`/admin/plans/${id}/edit`);
@@ -215,7 +232,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
       <div className="flex flex-col gap-6">
         {/* Plan fields */}
         <AdminCard padding={0}>
-          <SectionHeader title="Plan details" description="Price, credits, VAT, and badges. A price change re-syncs the Stripe Price." />
+          <SectionHeader title="Plan details" description="Price, credits, and badges. A price change re-syncs the Stripe Price." />
           <form action={updatePlanAction} className="flex flex-col gap-8 p-6">
             <PlanFields countries={countries} initial={plan} pinnedCountryId={plan.countryId} />
             <div className="border-t border-[var(--color-border)] pt-6">
@@ -247,7 +264,9 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                       <Pill tone={rule.service.kind === "SPECIALIST" ? "brand" : "neutral"}>{rule.service.kind}</Pill>
                       {rule.isIncluded ? <Pill tone="active">Included</Pill> : null}
                       {rule.usesCredits ? <Pill tone="published">{rule.creditsPerUse} credit/use</Pill> : null}
-                      {rule.discountMode !== "NONE" ? (
+                      {rule.discountMode === "PERCENT" && rule.discountPercent === 100 ? (
+                        <Pill tone="active">Free (100%)</Pill>
+                      ) : rule.discountMode !== "NONE" ? (
                         <Pill tone="pending">
                           {rule.discountMode === "PERCENT"
                             ? `${rule.discountPercent ?? 0}% off`
@@ -257,7 +276,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
                       {rule.unlockAfterPaidMonths > 0 ? (
                         <Pill tone="draft">unlock @ {rule.unlockAfterPaidMonths}mo</Pill>
                       ) : null}
-                      {!rule.isActive ? <Pill tone="inactive">inactive</Pill> : null}
+                      {!rule.isActive ? <Pill tone="inactive">not available</Pill> : null}
                     </div>
                     <form action={removeConsultationRuleAction}>
                       <input type="hidden" name="serviceId" value={rule.serviceId} />
@@ -287,9 +306,11 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
               <label className="flex flex-col gap-1.5">
                 <span className="gh-field-label">Discount</span>
                 <select name="discountMode" className="gh-select min-w-0" defaultValue="NONE">
-                  <option value="NONE">None</option>
+                  <option value="NONE">None (standard price)</option>
                   <option value="PERCENT">Percent %</option>
                   <option value="FIXED">Fixed price</option>
+                  <option value="FREE">Free (100% off)</option>
+                  <option value="UNAVAILABLE">Not available under plan</option>
                 </select>
               </label>
               <label className="flex flex-col gap-1.5">
@@ -396,7 +417,8 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
           </div>
         </AdminCard>
 
-        {/* Health-test redemption rules */}
+        {/* Health-test redemption rules — Premium only (wellness is strictly Premium). */}
+        {plan.planType === "PREMIUM" ? (
         <AdminCard padding={0}>
           <SectionHeader title="Health-test redemption rules" description="Wellness-credit redemption per kit. Active subscription is always required (D6)." />
           <div className="p-6">
@@ -458,6 +480,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
             </form>
           </div>
         </AdminCard>
+        ) : null}
 
         {/* Translations */}
         <AdminCard padding={0}>

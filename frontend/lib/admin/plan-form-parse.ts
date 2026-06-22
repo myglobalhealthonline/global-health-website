@@ -4,8 +4,12 @@
  * currency units (e.g. 20.00) and converted to integer cents here.
  */
 
+export type PlanType = "ESSENTIAL" | "COMPREHENSIVE" | "PREMIUM";
+
 export type PlanFormBody = {
   countryId?: string;
+  /** Set only on create (plan type is immutable after). */
+  planType?: PlanType;
   slug: string;
   name: string;
   shortDescription: string | null;
@@ -19,10 +23,10 @@ export type PlanFormBody = {
   isFeatured: boolean;
   badgeLabel: string | null;
   familyEnabled: boolean;
-  vatMode: "EXEMPT" | "STANDARD";
-  vatRatePct: number | null;
   isActive: boolean;
 };
+
+const PLAN_TYPES: readonly PlanType[] = ["ESSENTIAL", "COMPREHENSIVE", "PREMIUM"];
 
 export type ParsePlanResult =
   | { ok: true; data: PlanFormBody }
@@ -74,14 +78,6 @@ export function parsePlanForm(
   const currencyCode = str(fd, "currencyCode").toUpperCase();
   if (currencyCode.length < 3) return { ok: false, error: "Currency code is required" };
 
-  const vatModeRaw = str(fd, "vatMode");
-  const vatMode = vatModeRaw === "STANDARD" ? "STANDARD" : "EXEMPT";
-  const vatRatePctRaw = str(fd, "vatRatePct");
-  const vatRatePct = vatRatePctRaw === "" ? null : Number.parseFloat(vatRatePctRaw);
-  if (vatMode === "STANDARD" && (vatRatePct === null || !Number.isFinite(vatRatePct) || vatRatePct <= 0)) {
-    return { ok: false, error: "VAT rate (%) is required when VAT mode is STANDARD" };
-  }
-
   const data: PlanFormBody = {
     slug,
     name,
@@ -96,15 +92,18 @@ export function parsePlanForm(
     isFeatured: bool(fd, "isFeatured"),
     badgeLabel: nullable(fd, "badgeLabel"),
     familyEnabled: bool(fd, "familyEnabled"),
-    vatMode,
-    vatRatePct: vatMode === "STANDARD" ? vatRatePct : null,
     isActive: fd.has("isActive") ? bool(fd, "isActive") : true,
   };
 
+  // Plan type is chosen at create (immutable after). Required when creating.
   if (opts.includeCountry) {
     const countryId = str(fd, "countryId");
     if (countryId === "") return { ok: false, error: "Country is required" };
     data.countryId = countryId;
+
+    const planType = str(fd, "planType") as PlanType;
+    if (!PLAN_TYPES.includes(planType)) return { ok: false, error: "Plan type is required" };
+    data.planType = planType;
   }
 
   return { ok: true, data };

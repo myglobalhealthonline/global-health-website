@@ -15,6 +15,7 @@ import {
   RuleCrossCountryError,
   RuleHealthTestNotFoundError,
   RulePrescriptionExcludedError,
+  RuleServiceInactiveError,
   RuleServiceNotFoundError,
 } from "../modules/plans/plan-rules.service.js";
 import {
@@ -34,7 +35,8 @@ function handleRuleError(app: { log: { error: (e: unknown) => void } }, reply: F
     error instanceof RuleServiceNotFoundError ||
     error instanceof RuleHealthTestNotFoundError ||
     error instanceof RulePrescriptionExcludedError ||
-    error instanceof RuleCrossCountryError
+    error instanceof RuleCrossCountryError ||
+    error instanceof RuleServiceInactiveError
   ) {
     return reply.status(400).send(errorResponse(error.message));
   }

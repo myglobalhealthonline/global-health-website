@@ -10,6 +10,7 @@ import {
 
 const planBase = {
   countryId: "c-ie",
+  planType: "ESSENTIAL" as const,
   slug: "essential-care",
   name: "Essential Care",
   monthlyPriceCents: 2000,
@@ -21,9 +22,18 @@ describe("adminPlanCreateBodySchema", () => {
     const parsed = adminPlanCreateBodySchema.parse(planBase);
     assert.equal(parsed.currencyCode, "EUR");
     assert.equal(parsed.billingInterval, "MONTHLY");
-    assert.equal(parsed.vatMode, "EXEMPT");
+    assert.equal(parsed.planType, "ESSENTIAL");
     assert.equal(parsed.monthlyConsultationCredits, 0);
     assert.equal(parsed.familyEnabled, false);
+  });
+
+  it("requires a plan type", () => {
+    const { planType: _omit, ...noType } = planBase;
+    assert.equal(adminPlanCreateBodySchema.safeParse(noType).success, false);
+    assert.equal(
+      adminPlanCreateBodySchema.safeParse({ ...planBase, planType: "BOGUS" }).success,
+      false,
+    );
   });
 
   it("rejects negative consultation credits", () => {
@@ -40,13 +50,6 @@ describe("adminPlanCreateBodySchema", () => {
       wellnessCreditsPerMonth: -2,
     });
     assert.equal(result.success, false);
-  });
-
-  it("requires vatRatePct when vatMode is STANDARD", () => {
-    const missing = adminPlanCreateBodySchema.safeParse({ ...planBase, vatMode: "STANDARD" });
-    assert.equal(missing.success, false);
-    const ok = adminPlanCreateBodySchema.safeParse({ ...planBase, vatMode: "STANDARD", vatRatePct: 23 });
-    assert.equal(ok.success, true);
   });
 
   it("rejects an uppercase/invalid slug", () => {

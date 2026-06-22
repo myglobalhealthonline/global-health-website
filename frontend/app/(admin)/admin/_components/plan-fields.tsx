@@ -1,4 +1,4 @@
-import type { AdminPlanDetail } from "@/lib/admin/plans-api";
+import type { AdminPlanDetail, PlanType } from "@/lib/admin/plans-api";
 
 type CountryOpt = { id: string; code: string; name: string };
 
@@ -7,17 +7,32 @@ type Props = {
   initial?: AdminPlanDetail | null;
   /** When set, the country is fixed (create-with-country or edit). */
   pinnedCountryId?: string;
+  /** Plan tier — passed on create (chosen first), read from `initial` on edit. */
+  planType?: PlanType;
 };
+
+const PLAN_TYPE_LABEL: Record<PlanType, string> = {
+  ESSENTIAL: "Essential Care",
+  COMPREHENSIVE: "Comprehensive Care",
+  PREMIUM: "Premium Wellness Care",
+};
+const DEFAULT_CREDITS: Record<PlanType, number> = { ESSENTIAL: 1, COMPREHENSIVE: 2, PREMIUM: 3 };
 
 /**
  * Shared plan create/edit fields. Pure presentational server component — the
  * parent form's server action reads these via parsePlanForm. Price is shown in
  * major currency units; the action converts to cents.
+ *
+ * Plan type is fixed: chosen at create (passed in), shown read-only on edit.
+ * Wellness credits + (in the edit page) the health-test card show ONLY for
+ * PREMIUM — wellness is strictly Premium-only.
  */
-export function PlanFields({ countries, initial, pinnedCountryId }: Props) {
+export function PlanFields({ countries, initial, pinnedCountryId, planType }: Props) {
   const pinId = pinnedCountryId ?? initial?.countryId;
   const pinned = pinId ? countries.find((c) => c.id === pinId) : undefined;
   const priceMajor = initial ? (initial.monthlyPriceCents / 100).toFixed(2) : "";
+  const effectiveType: PlanType = planType ?? initial?.planType ?? "COMPREHENSIVE";
+  const isPremium = effectiveType === "PREMIUM";
 
   return (
     <div className="flex flex-col gap-6">
@@ -29,7 +44,18 @@ export function PlanFields({ countries, initial, pinnedCountryId }: Props) {
           </p>
           <input type="hidden" name="countryId" value={pinId} />
         </div>
-      ) : (
+      ) : null}
+
+      {/* Plan type — fixed (chosen at create, immutable after). */}
+      <div>
+        <span className="gh-field-label">Plan type</span>
+        <p className="mt-1 font-semibold text-[var(--color-text-primary)]">
+          {PLAN_TYPE_LABEL[effectiveType]}
+        </p>
+        <input type="hidden" name="planType" value={effectiveType} />
+      </div>
+
+      {!pinId ? (
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Country</span>
           <select name="countryId" className="gh-select min-w-0" required defaultValue="">
@@ -41,7 +67,7 @@ export function PlanFields({ countries, initial, pinnedCountryId }: Props) {
             ))}
           </select>
         </label>
-      )}
+      ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-2">
@@ -134,41 +160,24 @@ export function PlanFields({ countries, initial, pinnedCountryId }: Props) {
             className="gh-input min-w-0"
             type="number"
             min="0"
-            defaultValue={initial?.monthlyConsultationCredits ?? 0}
+            defaultValue={initial?.monthlyConsultationCredits ?? DEFAULT_CREDITS[effectiveType]}
           />
         </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Wellness credits / month (Premium only)</span>
-          <input
-            name="wellnessCreditsPerMonth"
-            className="gh-input min-w-0"
-            type="number"
-            min="0"
-            defaultValue={initial?.wellnessCreditsPerMonth ?? 0}
-          />
-        </label>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">VAT mode</span>
-          <select name="vatMode" className="gh-select min-w-0" defaultValue={initial?.vatMode ?? "EXEMPT"}>
-            <option value="EXEMPT">Exempt (medical)</option>
-            <option value="STANDARD">Standard</option>
-          </select>
-        </label>
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">VAT rate % (when standard)</span>
-          <input
-            name="vatRatePct"
-            className="gh-input min-w-0"
-            type="number"
-            min="0"
-            max="100"
-            step="0.01"
-            defaultValue={initial?.vatRatePct ?? ""}
-          />
-        </label>
+        {isPremium ? (
+          <label className="flex flex-col gap-2">
+            <span className="gh-field-label">Wellness credits / month</span>
+            <input
+              name="wellnessCreditsPerMonth"
+              className="gh-input min-w-0"
+              type="number"
+              min="0"
+              defaultValue={initial?.wellnessCreditsPerMonth ?? 1}
+            />
+          </label>
+        ) : (
+          // Non-Premium: wellness is forced to 0 server-side; send an explicit 0.
+          <input type="hidden" name="wellnessCreditsPerMonth" value="0" />
+        )}
       </div>
 
       <label className="flex flex-col gap-2">
