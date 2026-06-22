@@ -16,14 +16,20 @@ import { SubscribeForm } from "./_components/SubscribeForm";
 
 export const metadata: Metadata = { title: "Confirm membership", robots: { index: false } };
 
-type Search = { plan?: string; country?: string; lang?: string };
+type Search = { plan?: string; country?: string; lang?: string; returnTo?: string };
+
+/** Accept only safe in-site relative paths for a post-subscribe return (§6c). */
+function safeReturnTo(value: string | undefined): string | undefined {
+  return value && /^\/[a-zA-Z0-9/_-]*$/.test(value) ? value : undefined;
+}
 
 export default async function SubscribeConfirmPage({
   searchParams,
 }: {
   searchParams: Promise<Search>;
 }) {
-  const { plan: planId, country: countryParam, lang: langParam } = await searchParams;
+  const { plan: planId, country: countryParam, lang: langParam, returnTo: returnToRaw } = await searchParams;
+  const returnTo = safeReturnTo(returnToRaw);
 
   // If the patient is already actively subscribed, send them to manage instead
   // of letting them start a second membership (one active sub per user).
@@ -104,6 +110,7 @@ export default async function SubscribeConfirmPage({
         secureNote={t.secureNote}
         errorLabel={t.error}
         planSummaryLabel={t.planSummary}
+        returnTo={returnTo}
       />
     </>
   );

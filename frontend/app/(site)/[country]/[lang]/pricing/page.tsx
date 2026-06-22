@@ -49,13 +49,34 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
  *  the confirm screen; anonymous visitors are routed to login and resumed back
  *  onto the same subscribe action via `?next`. Country + lang ride along so the
  *  account-area confirm screen can resolve the plan from the right catalogue. */
-function subscribeHref(planId: string, countryCode: string, lang: string, isAuthenticated: boolean): string {
-  const target = `/account/subscribe?plan=${encodeURIComponent(planId)}&country=${encodeURIComponent(countryCode)}&lang=${encodeURIComponent(lang)}`;
+function subscribeHref(
+  planId: string,
+  countryCode: string,
+  lang: string,
+  isAuthenticated: boolean,
+  returnTo?: string,
+): string {
+  const base = `/account/subscribe?plan=${encodeURIComponent(planId)}&country=${encodeURIComponent(countryCode)}&lang=${encodeURIComponent(lang)}`;
+  // `returnTo` (e.g. the cart) rides through so the post-payment Stripe redirect
+  // lands back in the checkout funnel with benefits applied (§6c).
+  const target = returnTo ? `${base}&returnTo=${encodeURIComponent(returnTo)}` : base;
   return isAuthenticated ? target : `/login?next=${encodeURIComponent(target)}`;
 }
 
-export default async function PricingPage({ params }: { params: Promise<Params> }) {
-  const { country: slug, lang } = await params;
+/** Accept only safe in-site relative paths for a post-subscribe return. */
+function safeReturnTo(value: string | undefined): string | undefined {
+  return value && /^\/[a-zA-Z0-9/_-]*$/.test(value) ? value : undefined;
+}
+
+export default async function PricingPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<Params>;
+  searchParams: Promise<{ returnTo?: string }>;
+}) {
+  const [{ country: slug, lang }, { returnTo: returnToRaw }] = await Promise.all([params, searchParams]);
+  const returnTo = safeReturnTo(returnToRaw);
   const code = countryCodeFromSlug(slug);
   if (!code) notFound();
   const config = getCountryByCode(code);
@@ -130,7 +151,7 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
                   plan={plan}
                   t={t}
                   note={subscription.note}
-                  ctaHref={subscribeHref(plan.id, code, lang, isAuthenticated)}
+                  ctaHref={subscribeHref(plan.id, code, lang, isAuthenticated, returnTo)}
                 />
               ))}
             </div>

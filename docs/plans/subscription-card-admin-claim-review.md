@@ -68,10 +68,10 @@ P0 core **implemented + verified** (backend/frontend typecheck clean; schema, ne
 
 - ✅ **§4d admin-side — DONE (2026-06-23).** New `GET /api/admin/subscriptions/:id/ledger` (reuses the patient credits read model) + a lazy per-subscriber **"View activity"** expander in the admin subscriptions table, with the same reason labels (incl. **Manual adjustment**). An admin can now see how a balance was reached and that an override was recorded.
 
-Remaining (P2, by choice):
-- **§6c** subscribe-in-funnel ("subscribe then return to checkout") — deferred P2; the cart upsell links to the membership/subscribe page instead.
+- ✅ **§6c — DONE (2026-06-23).** Subscribe-in-funnel: a `returnTo` now threads through the cart upsell → pricing page → `/account/subscribe` → `SubscribeForm` → Stripe, so after the subscription payment the patient lands back on the cart with benefits applied (coverage panel re-fetches). `returnTo` is validated to safe in-site relative paths at both server boundaries; default stays `/account/membership` for the normal subscribe path.
+- ✅ **i18n — DONE.** All new `dashboard`-activity + `coverage` keys translated into de/ro/cs/es/pt (were en-mirrors).
 
-**All P0 + P1 from this review are now complete.** Only the P2 in-funnel subscribe upsell and translation of the new en-authored i18n keys remain.
+**All P0, P1, and P2 items from this review are now complete and pushed to `main`.** The only standing follow-up is operational, not code: confirm the Railway/host env has `CRON_SECRET` set if the external cron endpoints are used (the in-process scheduler already runs the jobs).
 
 ---
 

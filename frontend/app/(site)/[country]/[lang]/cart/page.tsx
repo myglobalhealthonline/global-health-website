@@ -263,7 +263,7 @@ export default function CartPage() {
               <PlanCoverage
                 lang={lang}
                 loginHref={`/login?next=${encodeURIComponent(`${countryHome}/cart`)}`}
-                plansHref="/account/membership"
+                plansHref={`${countryHome}/pricing?returnTo=${encodeURIComponent(`${countryHome}/cart`)}`}
                 itemNames={Object.fromEntries(cart.items.map((i) => [i.id, i.name]))}
               />
               <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>{t.orderSummary}</h2>

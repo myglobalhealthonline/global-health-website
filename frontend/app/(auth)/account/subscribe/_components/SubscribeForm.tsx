@@ -22,6 +22,10 @@ export interface SubscribeFormProps {
   secureNote: string;
   errorLabel: string;
   planSummaryLabel: string;
+  /** Where Stripe returns after the subscription payment. Defaults to the manage
+   *  screen; the cart→subscribe funnel passes the cart path so benefits show
+   *  there immediately (§6c). */
+  returnTo?: string;
 }
 
 /**
@@ -44,7 +48,7 @@ export function SubscribeForm(props: SubscribeFormProps) {
     }
     setSubmitting(true);
     setError(null);
-    const res = await startSubscription(props.planId, "/account/membership");
+    const res = await startSubscription(props.planId, props.returnTo ?? "/account/membership");
     if (res.ok && res.data.checkoutUrl) {
       window.location.assign(res.data.checkoutUrl);
       return;
