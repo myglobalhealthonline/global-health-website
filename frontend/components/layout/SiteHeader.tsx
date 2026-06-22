@@ -87,6 +87,11 @@ function sectionNavForCountryLang(
   if (servicesChildren.length > 0) {
     items.push({ label: nav.navServices, children: servicesChildren });
   }
+  // Strict opt-in (not the loose `enabled`): only show Plans where the country
+  // explicitly enabled subscriptions, else the link would 404 (§36.15).
+  if (features?.includes("subscriptions")) {
+    items.push({ href: `${base}/pricing`, label: nav.navPlans });
+  }
   items.push({ href: "/blog", label: nav.navBlog });
   items.push({ href: "/about", label: nav.navAbout });
   items.push({ href: "/contact", label: nav.navContact });

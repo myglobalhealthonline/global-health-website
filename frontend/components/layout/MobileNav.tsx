@@ -122,6 +122,15 @@ export function MobileNav({
                 },
               ]
             : []),
+          // Strict opt-in: only where subscriptions is explicitly enabled (§36.15).
+          ...(activeFeatures?.includes("subscriptions")
+            ? [
+                {
+                  href: `/${parsed.country}/${parsed.lang}/pricing`,
+                  label: navigation.navPlans,
+                },
+              ]
+            : []),
           { href: `/${parsed.country}/${parsed.lang}#how-it-works`, label: navigation.navHowItWorks },
           { href: "/about", label: navigation.navAbout },
           { href: "/contact", label: navigation.navContact },

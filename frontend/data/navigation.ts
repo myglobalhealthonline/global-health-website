@@ -31,6 +31,7 @@ export type SiteNavigationData = {
   navHome: string;
   navDoctors: string;
   navServices: string;
+  navPlans: string;
   navBlog: string;
   navAbout: string;
   navFaq: string;
@@ -161,6 +162,7 @@ export function buildSiteNavigationData(
     navHome: copy.navigation.home,
     navDoctors: copy.navigation.doctors,
     navServices: copy.navigation.services,
+    navPlans: copy.navigation.plansPricing,
     navBlog: copy.navigation.blog,
     navAbout: copy.navigation.about,
     navFaq: copy.navigation.faq,
