@@ -17,11 +17,6 @@ import {
   orderHasConsultationItem,
   orderNeedsAutoMeetLink,
 } from "../modules/admin-orders/generate-order-meet-link.service.js";
-import { resolveDoctorTimeZone } from "../modules/doctor-availability/doctor-availability.service.js";
-import {
-  computeSlotPrice,
-  getServicePeakConfig,
-} from "../modules/pricing/peak-pricing.service.js";
 import { startPrePaymentFlow } from "../modules/automation/pre-payment-flow.service.js";
 import { resolveOrderPaymentUrl } from "../modules/orders/order-payment-url.service.js";
 import { completeOrderPaymentFromCheckoutSession } from "../modules/orders/complete-order-payment.service.js";
@@ -30,6 +25,7 @@ import {
   linkReservationsToOrderItems,
   reserveAndPriceConsultations,
 } from "../modules/subscriptions/checkout-pricing.service.js";
+import { computeEffectivePrices } from "../modules/orders/effective-pricing.service.js";
 
 /**
  * Orders + checkout.
@@ -128,52 +124,11 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
 
         // Anti-manipulation gate: re-derive the price of every consultation
         // line from the CURRENT peak-pricing config and the slot's own
-        // clinic-local start time. The cart snapshot (i.unitPriceCents) is
-        // display-only and could be stale (admin changed prices) or forged;
-        // the amount we record on the Order and charge via Stripe must be the
-        // server-recomputed one. Non-consultation items keep their snapshot.
-        const effectivePriceByItemId = new Map<string, number>();
-        await Promise.all(
-          cart.items.map(async (i) => {
-            const isConsultation =
-              i.kind === "GENERAL_CONSULTATION" ||
-              i.kind === "SPECIALIST_CONSULTATION";
-            if (
-              !isConsultation ||
-              !i.serviceId ||
-              !i.doctorId ||
-              !i.timeSlotId
-            ) {
-              return;
-            }
-            const [svc, slot, config] = await Promise.all([
-              prisma.service.findUnique({
-                where: { id: i.serviceId },
-                select: {
-                  basePriceCents: true,
-                  currencyCode: true,
-                  country: { select: { currency: { select: { code: true } } } },
-                },
-              }),
-              prisma.doctorTimeSlot.findUnique({
-                where: { id: i.timeSlotId },
-                select: { startAt: true },
-              }),
-              getServicePeakConfig(i.serviceId),
-            ]);
-            if (!svc || svc.basePriceCents == null || !slot) return;
-            const tz = await resolveDoctorTimeZone(i.doctorId);
-            const priced = computeSlotPrice({
-              config,
-              basePriceCents: svc.basePriceCents,
-              fallbackCurrency:
-                svc.currencyCode ?? svc.country.currency.code,
-              slotStartUtc: slot.startAt,
-              clinicTimezone: tz,
-            });
-            effectivePriceByItemId.set(i.id, priced.unitPriceCents);
-          }),
-        );
+        // clinic-local start time (shared with the read-only price preview).
+        // The cart snapshot (i.unitPriceCents) is display-only and could be
+        // stale (admin changed prices) or forged; the amount we record on the
+        // Order and charge via Stripe must be the server-recomputed one.
+        const effectivePriceByItemId = await computeEffectivePrices(cart.items);
         const effectiveUnitPrice = (i: { id: string; unitPriceCents: number }) =>
           effectivePriceByItemId.get(i.id) ?? i.unitPriceCents;
 

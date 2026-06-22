@@ -4,7 +4,7 @@ import { prisma } from "../../db/prisma.js";
 import { recordAudit } from "../audit/audit.service.js";
 import { commitReservation, releaseReservation, reserveCredits } from "../credits/credit-balance.service.js";
 import { asPlanSnapshot } from "./plan-snapshot.js";
-import { resolveConsultationPrice } from "./pricing-resolver.js";
+import { resolveConsultationPrice, type PriceMode } from "./pricing-resolver.js";
 import { isBenefitEligible } from "./subscription-eligibility.js";
 
 /**
@@ -132,6 +132,144 @@ export async function reserveAndPriceConsultations(
   }
 
   return { subscriptionId: sub.id, lines };
+}
+
+export type CoverageMode = PriceMode | "NOT_COVERED";
+
+export interface CoverageLine {
+  itemId: string;
+  serviceId: string | null;
+  mode: CoverageMode;
+  basePriceCents: number;
+  finalUnitPriceCents: number;
+  creditsUsed: number;
+  savedCents: number;
+}
+
+export interface CartCoverage {
+  subscriptionId: string | null;
+  planName: string | null;
+  consultationCreditsRemaining: number;
+  lines: CoverageLine[];
+  totalBaseCents: number;
+  totalFinalCents: number;
+  totalSavedCents: number;
+}
+
+/**
+ * Read-only price preview (§6a) — the dry-run sibling of
+ * `reserveAndPriceConsultations`. Runs the SAME pure resolver per consultation
+ * line but reserves NOTHING and writes NOTHING, so the cart/checkout UI can show
+ * coverage + savings BEFORE paying. The authoritative price is still recomputed
+ * (and credits reserved) at checkout, so any drift here is display-only.
+ *
+ * Returns an empty coverage (subscriptionId null) for non-subscribers so the
+ * caller can show a "subscribe & save" upsell.
+ */
+export async function previewConsultationPricing(input: {
+  userId: string;
+  countryCode: string;
+  items: CheckoutCartItem[];
+  peakPriceByItemId: Map<string, number>;
+  now?: Date;
+}): Promise<CartCoverage> {
+  const now = input.now ?? new Date();
+  const empty: CartCoverage = {
+    subscriptionId: null,
+    planName: null,
+    consultationCreditsRemaining: 0,
+    lines: [],
+    totalBaseCents: 0,
+    totalFinalCents: 0,
+    totalSavedCents: 0,
+  };
+
+  const sub = await prisma.userSubscription.findFirst({
+    where: {
+      userId: input.userId,
+      countryCode: input.countryCode,
+      status: { in: ["ACTIVE", "PAST_DUE"] },
+    },
+    orderBy: { createdAt: "desc" },
+    include: { plan: { select: { name: true } } },
+  });
+  if (
+    !sub ||
+    !isBenefitEligible({
+      status: sub.status,
+      cancelAtPeriodEnd: sub.cancelAtPeriodEnd,
+      currentPeriodEnd: sub.currentPeriodEnd,
+      now,
+    })
+  ) {
+    return empty;
+  }
+
+  const snapshot = asPlanSnapshot(sub.planSnapshot);
+  if (!snapshot) return { ...empty, subscriptionId: sub.id, planName: sub.plan.name };
+
+  const balanceRow = await prisma.subscriptionCreditBalance.findUnique({
+    where: { userSubscriptionId_kind: { userSubscriptionId: sub.id, kind: "CONSULTATION" } },
+  });
+  let creditsAvailable = balanceRow?.balance ?? 0;
+
+  const lines: CoverageLine[] = [];
+  let totalBaseCents = 0;
+  let totalFinalCents = 0;
+
+  for (const item of input.items) {
+    if (!CONSULTATION_KINDS.has(item.kind) || !item.serviceId) continue;
+    const basePriceCents = input.peakPriceByItemId.get(item.id) ?? item.unitPriceCents;
+    const rule = snapshot.consultationRules.find((r) => r.serviceId === item.serviceId) ?? null;
+
+    if (!rule) {
+      lines.push({
+        itemId: item.id,
+        serviceId: item.serviceId,
+        mode: "NOT_COVERED",
+        basePriceCents,
+        finalUnitPriceCents: basePriceCents,
+        creditsUsed: 0,
+        savedCents: 0,
+      });
+      totalBaseCents += basePriceCents;
+      totalFinalCents += basePriceCents;
+      continue;
+    }
+
+    const resolved = resolveConsultationPrice({
+      rule,
+      basePriceCents,
+      creditsAvailable,
+      paidMonthsCount: sub.paidMonthsCount,
+    });
+    let creditsUsed = 0;
+    if (resolved.mode === "CREDIT") {
+      creditsUsed = resolved.creditsToReserve;
+      creditsAvailable -= creditsUsed;
+    }
+    lines.push({
+      itemId: item.id,
+      serviceId: item.serviceId,
+      mode: resolved.mode,
+      basePriceCents,
+      finalUnitPriceCents: resolved.unitPriceCents,
+      creditsUsed,
+      savedCents: Math.max(0, basePriceCents - resolved.unitPriceCents),
+    });
+    totalBaseCents += basePriceCents;
+    totalFinalCents += resolved.unitPriceCents;
+  }
+
+  return {
+    subscriptionId: sub.id,
+    planName: sub.plan.name,
+    consultationCreditsRemaining: creditsAvailable,
+    lines,
+    totalBaseCents,
+    totalFinalCents,
+    totalSavedCents: Math.max(0, totalBaseCents - totalFinalCents),
+  };
 }
 
 /** After order.create, link each RESERVED row to its OrderItem (for commit). */

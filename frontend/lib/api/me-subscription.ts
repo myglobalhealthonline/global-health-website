@@ -110,6 +110,35 @@ export function getCredits(): Promise<MeResult<CreditsView>> {
   return meRequest("credits");
 }
 
+export type CartCoverageMode = "CREDIT" | "FIXED" | "PERCENT" | "NORMAL" | "NOT_COVERED";
+
+export interface CartCoverageLine {
+  itemId: string;
+  serviceId: string | null;
+  mode: CartCoverageMode;
+  basePriceCents: number;
+  finalUnitPriceCents: number;
+  creditsUsed: number;
+  savedCents: number;
+}
+
+export interface CartCoverageView {
+  subscriptionId: string | null;
+  planName: string | null;
+  currencyCode: string | null;
+  consultationCreditsRemaining: number;
+  lines: CartCoverageLine[];
+  totalBaseCents: number;
+  totalFinalCents: number;
+  totalSavedCents: number;
+}
+
+/** Read-only subscription coverage for the patient's current cart (§6).
+ *  Guests get a 401 (handled by the caller as a "log in to use benefits"). */
+export function getCartPreview(): Promise<MeResult<CartCoverageView>> {
+  return meRequest("cart-preview");
+}
+
 export function startSubscription(planId: string, returnTo?: string): Promise<MeResult<{ checkoutUrl: string }>> {
   return meRequest("subscription", { method: "POST", body: { planId, ...(returnTo ? { returnTo } : {}) } });
 }

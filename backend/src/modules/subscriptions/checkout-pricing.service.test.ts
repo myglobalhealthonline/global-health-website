@@ -12,6 +12,7 @@ loadEnv({ path: join(__dirname, "../../..", ".env") });
 describe("checkout pricing engine", () => {
   let prisma: Awaited<typeof import("../../db/prisma.js")>["prisma"];
   let reserveAndPriceConsultations: typeof import("./checkout-pricing.service.js")["reserveAndPriceConsultations"];
+  let previewConsultationPricing: typeof import("./checkout-pricing.service.js")["previewConsultationPricing"];
   let getBalance: typeof import("../credits/credit-balance.service.js")["getBalance"];
   let makeSubscriptionFixture: typeof import("./test-support.js")["makeSubscriptionFixture"];
   let bootError: unknown = null;
@@ -21,6 +22,8 @@ describe("checkout pricing engine", () => {
       prisma = (await import("../../db/prisma.js")).prisma;
       reserveAndPriceConsultations = (await import("./checkout-pricing.service.js"))
         .reserveAndPriceConsultations;
+      previewConsultationPricing = (await import("./checkout-pricing.service.js"))
+        .previewConsultationPricing;
       getBalance = (await import("../credits/credit-balance.service.js")).getBalance;
       makeSubscriptionFixture = (await import("./test-support.js")).makeSubscriptionFixture;
       await prisma.$queryRawUnsafe("SELECT 1");
@@ -159,6 +162,57 @@ describe("checkout pricing engine", () => {
       const i2 = result.lines.get("i2");
       assert.ok(!i2 || i2.finalUnitPriceCents === 5000);
       assert.equal(await getBalance(fx.subscriptionId, "CONSULTATION"), 0, "only one credit spent");
+    } finally {
+      await fx.cleanup();
+    }
+  });
+
+  it("preview (§6): reports CREDIT coverage + savings but reserves NOTHING", async (t) => {
+    if (skip()) return t.skip();
+    const fx = await makeSubscriptionFixture(prisma, "px-preview", {
+      status: "ACTIVE",
+      consultationBalance: 1,
+      planSnapshot: snapshot({ isIncluded: true, usesCredits: true, creditsPerUse: 1 }),
+    });
+    try {
+      const coverage = await previewConsultationPricing({
+        userId: fx.userId,
+        countryCode: fx.countryCode,
+        items: [{ id: "i1", kind: "GENERAL_CONSULTATION", serviceId: "svc-x", unitPriceCents: 5000 }],
+        peakPriceByItemId: new Map([["i1", 5000]]),
+      });
+      const line = coverage.lines.find((l) => l.itemId === "i1");
+      assert.equal(line?.mode, "CREDIT");
+      assert.equal(line?.finalUnitPriceCents, 0);
+      assert.equal(line?.savedCents, 5000);
+      assert.equal(line?.creditsUsed, 1);
+      assert.equal(coverage.totalSavedCents, 5000);
+      assert.equal(coverage.consultationCreditsRemaining, 0, "simulated decrement only");
+      // The dry-run property: the authoritative counter is untouched.
+      assert.equal(await getBalance(fx.subscriptionId, "CONSULTATION"), 1, "preview reserved nothing");
+    } finally {
+      await fx.cleanup();
+    }
+  });
+
+  it("preview (§6): a service with no rule is NOT_COVERED at full price", async (t) => {
+    if (skip()) return t.skip();
+    const fx = await makeSubscriptionFixture(prisma, "px-preview-uncov", {
+      status: "ACTIVE",
+      consultationBalance: 0,
+      planSnapshot: snapshot({ serviceId: "svc-other", isIncluded: true, usesCredits: true }),
+    });
+    try {
+      const coverage = await previewConsultationPricing({
+        userId: fx.userId,
+        countryCode: fx.countryCode,
+        items: [{ id: "i1", kind: "GENERAL_CONSULTATION", serviceId: "svc-x", unitPriceCents: 5000 }],
+        peakPriceByItemId: new Map([["i1", 5000]]),
+      });
+      const line = coverage.lines.find((l) => l.itemId === "i1");
+      assert.equal(line?.mode, "NOT_COVERED");
+      assert.equal(line?.finalUnitPriceCents, 5000);
+      assert.equal(coverage.totalSavedCents, 0);
     } finally {
       await fx.cleanup();
     }

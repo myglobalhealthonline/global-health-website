@@ -64,9 +64,11 @@ P0 core **implemented + verified** (backend/frontend typecheck clean; schema, ne
 - ✅ **§1c — DONE.** "Member for N paid months" shown on the dashboard plan card (data-driven from `paidMonthsCount`).
 - ✅ **§3a — RESOLVED by prior commit `0c068e21`** (`internal-scheduler.ts` ticks sweep+cancel-grace 5 m, reconciliation hourly, renewal reminders 24 h in-process; the token-gated `/api/cron/subscriptions[/daily]` HTTP endpoints remain for an external scheduler). No operator cron strictly required for the jobs to run.
 
+- ✅ **§6a/§6b/§6d — DONE (2026-06-23).** Read-only `previewConsultationPricing` (sibling of `reserveAndPriceConsultations`, reuses the pure `resolveConsultationPrice`, reserves NOTHING) + new `GET /api/me/cart-preview`. Peak-price recompute extracted to a shared `computeEffectivePrices` (used by both checkout and preview, so the preview can't drift from the charge). Cart page now shows a **PlanCoverage** panel: per-consultation badge (Included €0 / Plan discount / Not covered), total saved, and credits-left — for subscribers; a **login prompt** for guests (401); a **subscribe-&-save upsell** for logged-in non-subscribers. Coverage i18n added to all 6 locales. Tests: 2 new preview cases prove dry-run (counter untouched) + NOT_COVERED.
+
 Deferred (tracked, not done):
-- **§4d admin-side** ledger/provenance on the admin subscriber detail — the admin API returns balances only, not the ledger; needs a small read addition. (Patient-side provenance is done.)
-- All of **§6** (checkout subscription selection UX) — next P1 slice. Keystone `previewConsultationPricing` (read-only, reuses the already-pure `resolveConsultationPrice`) + coverage badges + guest prompt.
+- **§4d admin-side** ledger/provenance on the admin subscriber view — the admin API returns balances only; needs a small read endpoint. (Patient-side provenance is done.)
+- **§6c** subscribe-in-funnel ("subscribe then return to checkout") — P2.
 
 ---
 

@@ -22,6 +22,7 @@ import {
   User,
 } from "lucide-react";
 import { useCart } from "@/components/cart/CartContext";
+import { PlanCoverage } from "@/components/cart/PlanCoverage";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
@@ -259,6 +260,12 @@ export default function CartPage() {
               className="gh-card self-start p-6 lg:sticky lg:top-[calc(var(--header-height)+16px)]"
               style={{ boxShadow: "var(--shadow-card)" }}
             >
+              <PlanCoverage
+                lang={lang}
+                loginHref={`/login?next=${encodeURIComponent(`${countryHome}/cart`)}`}
+                plansHref="/account/membership"
+                itemNames={Object.fromEntries(cart.items.map((i) => [i.id, i.name]))}
+              />
               <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>{t.orderSummary}</h2>
               <dl className="mt-4 space-y-2.5 text-sm">
                 <div className="flex justify-between">

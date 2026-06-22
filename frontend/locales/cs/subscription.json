@@ -108,6 +108,19 @@
       "completePayment": "Dokončit ověření platby"
     }
   },
+  "coverage": {
+    "title": "Your plan",
+    "guestPrompt": "Log in to use your plan credits and discounts.",
+    "login": "Log in",
+    "upsellTitle": "Save with a membership",
+    "upsell": "Subscribe to get GP consultation credits and member discounts.",
+    "viewPlans": "View plans",
+    "included": "Included with your plan",
+    "discounted": "Plan discount",
+    "notCovered": "Not covered by your plan",
+    "youSave": "You save {amount} with your plan",
+    "creditsLeft": "{count} consultation credits left after this"
+  },
   "dashboard": {
     "memberMonths": "Member for {months} paid months",
     "memberMonthsSingular": "Member for {months} paid month",
