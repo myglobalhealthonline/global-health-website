@@ -1,4 +1,19 @@
 {
+  "howItWorks": {
+    "eyebrow": "Planos de saúde",
+    "title": "A sua saúde, o seu caminho",
+    "subtitle": "Planos de saúde online",
+    "lede": "Uma vasta gama de profissionais especializados para cuidar de todos os aspetos da sua saúde",
+    "availability": "Apenas Irlanda",
+    "stepLabel": "Passo {n}",
+    "steps": [
+      { "title": "Escolha o plano perfeito para si", "body": "Selecione o plano de saúde que se adapta ao seu estilo de vida e às suas necessidades — Essential, Comprehensive ou Premium Wellness." },
+      { "title": "Inscreva-se com facilidade", "body": "Crie a sua conta em minutos e comece a sua subscrição mensal segura, sem complicações." },
+      { "title": "Marque a sua consulta a qualquer hora", "body": "Marque uma consulta online quando lhe der jeito — de dia ou à noite, a partir de qualquer dispositivo." },
+      { "title": "Sem taxas de marcação adicionais", "body": "O seu plano mensal cobre a marcação — sem custos surpresa para agendar uma consulta." },
+      { "title": "Fale com um médico a partir de qualquer lugar", "body": "Fale com o seu médico por videochamada segura, a partir de casa, do trabalho ou em viagem." }
+    ]
+  },
   "note": {
     "universal": "As vantagens selecionadas são desbloqueadas após {months} meses pagos.",
     "universalSingular": "As vantagens selecionadas são desbloqueadas após {months} mês pago.",

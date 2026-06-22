@@ -1,4 +1,19 @@
 {
+  "howItWorks": {
+    "eyebrow": "Gesundheitspläne",
+    "title": "Ihre Gesundheit, Ihr Weg",
+    "subtitle": "Online-Gesundheitspläne",
+    "lede": "Ein breites Spektrum an spezialisierten Fachkräften, die sich um alle Aspekte Ihrer Gesundheit kümmern",
+    "availability": "Nur Irland",
+    "stepLabel": "Schritt {n}",
+    "steps": [
+      { "title": "Wählen Sie Ihren perfekten Plan", "body": "Wählen Sie den Gesundheitsplan, der zu Ihrem Lebensstil und Ihren Bedürfnissen passt — Essential, Comprehensive oder Premium Wellness." },
+      { "title": "Einfach anmelden", "body": "Erstellen Sie Ihr Konto in wenigen Minuten und starten Sie Ihre sichere monatliche Mitgliedschaft ganz unkompliziert." },
+      { "title": "Vereinbaren Sie jederzeit Ihren Termin", "body": "Buchen Sie eine Online-Beratung, wann immer es Ihnen passt — tagsüber oder abends, von jedem Gerät." },
+      { "title": "Keine zusätzlichen Buchungsgebühren", "body": "Ihr Monatsplan deckt die Buchung ab — keine versteckten Gebühren für die Terminvereinbarung." },
+      { "title": "Verbinden Sie sich von überall mit einem Arzt", "body": "Treffen Sie Ihren Arzt per sicherem Video — von zu Hause, der Arbeit oder unterwegs." }
+    ]
+  },
   "note": {
     "universal": "Ausgewählte Vorteile werden nach {months} bezahlten Monaten freigeschaltet.",
     "universalSingular": "Ausgewählte Vorteile werden nach {months} bezahltem Monat freigeschaltet.",

@@ -16,6 +16,7 @@ import { getServerAuthUser } from "@/lib/api/server-auth";
 import { SITE_NAME } from "@/lib/constants";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
+import { interpolate } from "@/lib/subscription/format";
 import { PricingPlanCard } from "./_components/PricingPlanCard";
 
 type Params = { country: string; lang: string };
@@ -71,6 +72,7 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
   const isAuthenticated = Boolean(user);
   const { subscription } = loadLocaleBundle(lang as LocaleCode);
   const t = subscription.pricing;
+  const hiw = subscription.howItWorks;
 
   return (
     <>
@@ -155,6 +157,74 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
           <p className="mt-10 text-center text-xs" style={{ color: "var(--color-text-muted)" }}>
             {t.onlineOnlyNote}
           </p>
+        </div>
+      </section>
+
+      {/* How it works — 5-step onboarding overview (subscriptions are IE-only). */}
+      <section style={{ background: "var(--color-background-page)", padding: "clamp(64px,8vw,120px) 0" }}>
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <div className="mx-auto max-w-2xl text-center">
+            <p
+              className="text-[11px] font-bold uppercase tracking-[0.2em]"
+              style={{ color: "var(--color-brand-primary)" }}
+            >
+              {hiw.eyebrow}
+            </p>
+            <h2
+              className="mt-3 font-extrabold tracking-[-0.03em] leading-[1.04]"
+              style={{ fontSize: "clamp(2rem,4vw + 0.5rem,3.25rem)", color: "var(--color-text-primary)" }}
+            >
+              {hiw.title}
+            </h2>
+            <p className="mt-3 text-lg font-semibold" style={{ color: "var(--color-brand-primary)" }}>
+              {hiw.subtitle}
+            </p>
+            <p className="mt-4 text-base leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+              {hiw.lede}
+            </p>
+            <span
+              className="mt-6 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em]"
+              style={{ borderColor: "var(--color-border)", color: "var(--color-text-muted)" }}
+            >
+              <span
+                aria-hidden
+                style={{ width: 6, height: 6, borderRadius: 999, background: "var(--color-brand-accent)" }}
+              />
+              {hiw.availability}
+            </span>
+          </div>
+
+          <ol className="mx-auto mt-14 grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {hiw.steps.map((step, i) => (
+              <li
+                key={i}
+                className="group relative flex flex-col rounded-[var(--radius-card)] border p-7 transition-transform duration-300 hover:-translate-y-0.5"
+                style={{ borderColor: "var(--color-border)", background: "var(--color-background-page)" }}
+              >
+                <span
+                  className="font-extrabold tracking-[-0.04em]"
+                  style={{ fontSize: "2.75rem", lineHeight: 1, color: "var(--color-brand-accent)" }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <p
+                  className="mt-2 text-[11px] font-bold uppercase tracking-[0.16em]"
+                  style={{ color: "var(--color-text-muted)" }}
+                >
+                  {interpolate(hiw.stepLabel, { n: i + 1 })}
+                </p>
+                <h3
+                  className="mt-3 font-bold tracking-[-0.01em]"
+                  style={{ fontSize: "1.125rem", color: "var(--color-text-primary)" }}
+                >
+                  {step.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+                  {step.body}
+                </p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
     </>

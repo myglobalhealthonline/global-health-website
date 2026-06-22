@@ -1,4 +1,19 @@
 {
+  "howItWorks": {
+    "eyebrow": "Planuri de sănătate",
+    "title": "Sănătatea ta, drumul tău",
+    "subtitle": "Planuri de sănătate online",
+    "lede": "O gamă largă de profesioniști specializați care au grijă de toate aspectele sănătății tale",
+    "availability": "Doar Irlanda",
+    "stepLabel": "Pasul {n}",
+    "steps": [
+      { "title": "Alege planul perfect pentru tine", "body": "Alege planul de sănătate care se potrivește stilului tău de viață și nevoilor tale — Essential, Comprehensive sau Premium Wellness." },
+      { "title": "Înscrie-te cu ușurință", "body": "Creează-ți contul în câteva minute și începe abonamentul lunar securizat, fără bătăi de cap." },
+      { "title": "Programează-ți consultația oricând", "body": "Rezervă o consultație online când îți convine — zi sau seară, de pe orice dispozitiv." },
+      { "title": "Fără taxe suplimentare de programare", "body": "Planul tău lunar acoperă programarea — fără costuri-surpriză pentru a stabili o consultație." },
+      { "title": "Conectează-te cu un medic de oriunde", "body": "Vorbește cu medicul tău prin video securizat, de acasă, de la muncă sau în călătorie." }
+    ]
+  },
   "note": {
     "universal": "Avantajele selectate se deblochează după {months} luni plătite.",
     "universalSingular": "Avantajele selectate se deblochează după {months} lună plătită.",

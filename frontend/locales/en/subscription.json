@@ -1,4 +1,19 @@
 {
+  "howItWorks": {
+    "eyebrow": "Health plans",
+    "title": "Your Health, Your Path",
+    "subtitle": "Online Health Plans",
+    "lede": "A wide range of specialized professionals to take care of all aspects of your health",
+    "availability": "Only Ireland",
+    "stepLabel": "Step {n}",
+    "steps": [
+      { "title": "Choose Your Perfect Plan", "body": "Select the health plan that fits your lifestyle and needs — Essential, Comprehensive, or Premium Wellness." },
+      { "title": "Sign Up with Ease", "body": "Create your account in minutes and start your secure monthly membership with no hassle." },
+      { "title": "Schedule Your Appointment Anytime", "body": "Book an online consultation whenever it suits you — day or evening, from any device." },
+      { "title": "No Additional Scheduling Fees", "body": "Your monthly plan covers your booking — no surprise charges to schedule a consultation." },
+      { "title": "Connect with a Doctor from Anywhere", "body": "Meet your doctor by secure video from home, work or while travelling." }
+    ]
+  },
   "note": {
     "universal": "Selected perks unlock after {months} paid months.",
     "universalSingular": "Selected perks unlock after {months} paid month.",

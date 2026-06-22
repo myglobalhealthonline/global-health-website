@@ -1,4 +1,19 @@
 {
+  "howItWorks": {
+    "eyebrow": "Zdravotní plány",
+    "title": "Vaše zdraví, vaše cesta",
+    "subtitle": "Online zdravotní plány",
+    "lede": "Široká nabídka specializovaných odborníků, kteří se postarají o všechny aspekty vašeho zdraví",
+    "availability": "Pouze Irsko",
+    "stepLabel": "Krok {n}",
+    "steps": [
+      { "title": "Vyberte si ideální plán", "body": "Vyberte si zdravotní plán, který odpovídá vašemu životnímu stylu a potřebám — Essential, Comprehensive nebo Premium Wellness." },
+      { "title": "Snadná registrace", "body": "Vytvořte si účet během několika minut a začněte své bezpečné měsíční členství bez starostí." },
+      { "title": "Objednejte se kdykoli", "body": "Objednejte se na online konzultaci, kdy se vám to hodí — ve dne i večer, z jakéhokoli zařízení." },
+      { "title": "Žádné další poplatky za objednání", "body": "Váš měsíční plán pokrývá objednání — žádné nečekané poplatky za sjednání konzultace." },
+      { "title": "Spojte se s lékařem odkudkoli", "body": "Spojte se se svým lékařem přes zabezpečené video z domova, z práce nebo na cestách." }
+    ]
+  },
   "note": {
     "universal": "Vybrané výhody se odemknou po {months} zaplacených měsících.",
     "universalSingular": "Vybrané výhody se odemknou po {months} zaplaceném měsíci.",
