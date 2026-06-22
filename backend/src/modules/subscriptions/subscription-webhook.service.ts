@@ -1,10 +1,10 @@
 import type { SubscriptionStatus } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { recordAudit } from "../audit/audit.service.js";
-import { clawbackCredits, getBalance } from "../credits/credit-balance.service.js";
-import { clawbackKey } from "../credits/credit-keys.js";
 import { processInvoicePaid, type BillingReason } from "./subscription-grant.service.js";
 import { writeSubscriptionInvoice } from "./subscription-invoice.service.js";
+import { reconcileRefund } from "./refund.service.js";
+import { emitOpsAlert } from "./ops/ops-alert.js";
 import {
   notifyPerkUnlocked,
   notifySubscriptionConfirmed,
@@ -89,7 +89,7 @@ export async function handleSubscriptionEvent(
       break;
     case "invoice.payment_action_required":
     case "invoice.finalization_failed":
-      result = { handled: true, detail: "sca_required_no_cancel" };
+      result = await onScaRequired(event);
       break;
     case "charge.refunded":
     case "charge.dispute.created":
@@ -329,6 +329,43 @@ async function onInvoiceFailed(event: MinimalStripeEvent): Promise<SubscriptionE
   return { handled: true, detail: "past_due" };
 }
 
+/**
+ * SCA / 3-D-Secure authentication required on a renewal (§38.2). NOT a hard fail
+ * — never cancel. Stripe owns the hosted authentication email (it sends the
+ * customer the auth link). We surface it for ops visibility + audit so a stuck
+ * off-session renewal isn't silent. The patient also sees the action-required
+ * state on their account return screen.
+ */
+async function onScaRequired(event: MinimalStripeEvent): Promise<SubscriptionEventResult> {
+  const obj = event.data.object;
+  const stripeCustomerId = str(obj.customer);
+  const hostedUrl = str((obj as { hosted_invoice_url?: unknown }).hosted_invoice_url);
+  const sub = stripeCustomerId
+    ? await prisma.userSubscription.findFirst({
+        where: { stripeCustomerId },
+        orderBy: { createdAt: "desc" },
+        select: { id: true, userId: true },
+      })
+    : null;
+
+  if (sub) {
+    void recordAudit({
+      action: "SUBSCRIPTION_UPDATED",
+      entityType: "UserSubscription",
+      entityId: sub.id,
+      actorUserId: sub.userId,
+      metadata: { event: event.type, scaRequired: true, hostedInvoiceUrl: hostedUrl || null },
+    });
+  }
+  void emitOpsAlert({
+    severity: "warning",
+    title: "Subscription renewal needs customer authentication (SCA)",
+    detail: `${event.type} — Stripe is sending the auth link; renewal pending until completed`,
+    context: { subscriptionId: sub?.id ?? null, hostedInvoiceUrl: hostedUrl || null },
+  });
+  return { handled: true, detail: "sca_required_no_cancel" };
+}
+
 async function onRefundOrDispute(event: MinimalStripeEvent): Promise<SubscriptionEventResult> {
   const obj = event.data.object;
   const stripeCustomerId = str(obj.customer);
@@ -338,64 +375,28 @@ async function onRefundOrDispute(event: MinimalStripeEvent): Promise<Subscriptio
   const sub = await prisma.userSubscription.findFirst({
     where: { stripeCustomerId },
     orderBy: { createdAt: "desc" },
+    select: { id: true },
   });
   if (!sub) return { handled: true, detail: "sub-not-found" };
 
-  // Was a consultation credit used this period? (policy-violation flag, §36.5).
-  const creditUsedThisPeriod = sub.currentPeriodStart
-    ? Boolean(
-        await prisma.consultationCreditLedger.findFirst({
-          where: {
-            userSubscriptionId: sub.id,
-            reason: "CONSUMED",
-            billingPeriodStart: sub.currentPeriodStart,
-          },
-          select: { id: true },
-        }),
-      )
-    : false;
+  // 7-day window check from the charge.created epoch (UTC) — a Dashboard refund
+  // can bypass our pre-refund guard, so flag a breach for ops review (§36.5).
+  const created = (obj as { created?: unknown }).created;
+  const sevenDayBreach =
+    !isDispute && typeof created === "number"
+      ? Date.now() - created * 1000 > 7 * 24 * 60 * 60 * 1000
+      : false;
 
-  await prisma.$transaction(async (tx) => {
-    const unusedConsultation = await getBalance(sub.id, "CONSULTATION");
-    if (unusedConsultation > 0) {
-      await clawbackCredits(tx, {
-        userSubscriptionId: sub.id,
-        userId: sub.userId,
-        kind: "CONSULTATION",
-        amount: unusedConsultation,
-        idempotencyKey: clawbackKey(sub.id, event.id, "CONSULTATION"),
-      });
-    }
-    await tx.userSubscription.update({
-      where: { id: sub.id },
-      data: {
-        status: "CANCELED",
-        canceledAt: sub.canceledAt ?? new Date(),
-        paidMonthsCount: Math.max(0, sub.paidMonthsCount - 1),
-      },
-    });
+  // Idempotent clawback (consultation + this-month wellness) + CANCEL + audit +
+  // ops alert on violation. Shared with the admin/patient refund action.
+  const result = await reconcileRefund({
+    subscriptionId: sub.id,
+    reasonKey: event.id,
+    source: "webhook",
+    isDispute,
+    sevenDayBreach,
   });
-
-  void recordAudit({
-    action: isDispute ? "SUBSCRIPTION_UPDATED" : "SUBSCRIPTION_REFUNDED",
-    entityType: "UserSubscription",
-    entityId: sub.id,
-    actorUserId: sub.userId,
-    metadata: {
-      event: event.type,
-      policyViolation: creditUsedThisPeriod,
-      flaggedForReview: isDispute || creditUsedThisPeriod,
-    },
-  });
-  void recordAudit({
-    action: "CONSULTATION_CREDIT_CLAWED_BACK",
-    entityType: "UserSubscription",
-    entityId: sub.id,
-    actorUserId: sub.userId,
-    metadata: { event: event.type },
-  });
-
-  return { handled: true, detail: creditUsedThisPeriod ? "clawback+violation" : "clawback" };
+  return { handled: true, detail: result.policyViolation ? "clawback+violation" : "clawback" };
 }
 
 // ── helpers ──────────────────────────────────────────────────────────────────

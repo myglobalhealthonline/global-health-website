@@ -143,8 +143,26 @@ export async function commitReservation(tx: Tx, input: TerminalInput): Promise<T
   if (existing === "release") return "already_released";
 
   const reason = input.kind === "CONSULTATION" ? "CONSUMED" : "REDEEMED";
+  // Copy the RESERVED row's period/links onto the terminal row so the CONSUMED
+  // row carries billingPeriodStart (the §36.5 "credit used this period" / refund
+  // guard keys on it) — a terminal row without it makes that check always false.
+  let extra: TerminalExtra = {};
+  if (input.kind === "CONSULTATION") {
+    const reserved = await tx.consultationCreditLedger.findFirst({
+      where: { reservationId: input.reservationId, reason: "RESERVED" },
+      select: { billingPeriodStart: true, serviceId: true, appointmentId: true, orderItemId: true },
+    });
+    if (reserved) {
+      extra = {
+        billingPeriodStart: reserved.billingPeriodStart,
+        serviceId: reserved.serviceId,
+        appointmentId: reserved.appointmentId,
+        orderItemId: reserved.orderItemId,
+      };
+    }
+  }
   try {
-    await createTerminalRow(tx, input, reason, 0);
+    await createTerminalRow(tx, input, reason, 0, extra);
     return "committed";
   } catch (err) {
     if (isUniqueViolation(err)) {
@@ -204,11 +222,19 @@ async function findTerminal(
   return row.reason === "REDEEMED" ? "commit" : "release";
 }
 
+interface TerminalExtra {
+  billingPeriodStart?: Date | null;
+  serviceId?: string | null;
+  appointmentId?: string | null;
+  orderItemId?: string | null;
+}
+
 async function createTerminalRow(
   tx: Tx,
   input: TerminalInput,
   reason: string,
   delta: number,
+  extra: TerminalExtra = {},
 ): Promise<void> {
   const isCommit = reason === "CONSUMED" || reason === "REDEEMED";
   const key = isCommit ? commitKey(input.reservationId) : releaseKey(input.reservationId);
@@ -221,7 +247,14 @@ async function createTerminalRow(
   };
   if (input.kind === "CONSULTATION") {
     await tx.consultationCreditLedger.create({
-      data: { ...base, reason: reason as "CONSUMED" | "RELEASED" },
+      data: {
+        ...base,
+        reason: reason as "CONSUMED" | "RELEASED",
+        billingPeriodStart: extra.billingPeriodStart ?? null,
+        serviceId: extra.serviceId ?? null,
+        appointmentId: extra.appointmentId ?? null,
+        orderItemId: extra.orderItemId ?? null,
+      },
     });
   } else {
     await tx.wellnessCreditLedger.create({

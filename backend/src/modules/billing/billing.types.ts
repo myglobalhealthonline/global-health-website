@@ -107,6 +107,11 @@ export interface BillingPort {
   /** Flag the subscription to cancel at the end of the current period. */
   cancelAtPeriodEnd(subscriptionId: string): Promise<void>;
 
+  /** Refund the most recent paid invoice's charge for a subscription. Returns
+   *  `{ refunded:false }` when no charge is found or the driver has no provider
+   *  (fake) — the caller then reconciles credits/state inline (§36.5). */
+  refundLatestPayment(subscriptionId: string): Promise<{ refunded: boolean }>;
+
   /** Schedule a next-cycle price/plan change (Q10=B, no proration). */
   schedulePlanChange(
     input: SchedulePlanChangeInput,

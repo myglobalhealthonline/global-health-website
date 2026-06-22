@@ -11,6 +11,7 @@ import {
   startSubscription,
 } from "../modules/subscriptions/subscription.service.js";
 import { getSubscriptionView } from "../modules/subscriptions/subscription-read.service.js";
+import { RefundError, refundSubscription } from "../modules/subscriptions/refund.service.js";
 
 /**
  * Patient subscription lifecycle API (Phase 1, contracts.md). All routes
@@ -125,6 +126,21 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
+  app.post(
+    "/api/me/subscription/refund",
+    { config: { rateLimit: { max: 5, timeWindow: "1 hour" } } },
+    async (request, reply) => {
+      const user = await requirePatient(request, reply);
+      if (!user) return;
+      try {
+        const result = await refundSubscription({ userId: user.id, actorUserId: user.id });
+        return okResponse(result, "Refund issued");
+      } catch (err) {
+        return handleError(reply, err, app);
+      }
+    },
+  );
+
   app.get("/api/me/subscription/portal", async (request, reply) => {
     const user = await requirePatient(request, reply);
     if (!user) return;
@@ -147,6 +163,15 @@ function handleError(
     return reply
       .status(statusForError(err.code))
       .send(errorResponse(err.message, { code: err.code }));
+  }
+  if (err instanceof RefundError) {
+    const status =
+      err.code === "NO_SUBSCRIPTION" || err.code === "NO_PAID_PERIOD"
+        ? 404
+        : err.code === "PROVIDER_FAILED"
+          ? 502
+          : 403; // OUTSIDE_WINDOW / CREDIT_USED — policy denial
+    return reply.status(status).send(errorResponse(err.message, { code: err.code }));
   }
   if (err instanceof DatabaseUnavailableError) {
     return reply.status(503).send(errorResponse(err.message));

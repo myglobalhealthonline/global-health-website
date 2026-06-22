@@ -12,11 +12,21 @@ import {
   subscriptionIdParamsSchema,
 } from "../validations/admin-plans.schema.js";
 import { requireManageSubscriptions } from "../utils/manage-subscriptions-auth.js";
+import { RefundError, refundSubscription } from "../modules/subscriptions/refund.service.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 function handleError(app: { log: { error: (e: unknown) => void } }, reply: FastifyReply, error: unknown) {
   if (error instanceof SubscriptionNotFoundError) {
     return reply.status(404).send(errorResponse(error.message));
+  }
+  if (error instanceof RefundError) {
+    const status =
+      error.code === "NO_SUBSCRIPTION" || error.code === "NO_PAID_PERIOD"
+        ? 404
+        : error.code === "PROVIDER_FAILED"
+          ? 502
+          : 403;
+    return reply.status(status).send(errorResponse(error.message, { code: error.code }));
   }
   if (error instanceof DatabaseUnavailableError) {
     return reply.status(503).send(errorResponse(error.message));
@@ -89,6 +99,25 @@ const adminSubscriptionsRoute: FastifyPluginAsync = async (app) => {
         request,
       }).catch(() => {});
       return okResponse({ balance: result.balance }, "Credits adjusted");
+    } catch (error) {
+      return handleError(app, reply, error);
+    }
+  });
+
+  // Issue a refund (D17 guard runs first; reconciliation claws back unused
+  // credits + cancels). reconcileRefund records the SUBSCRIPTION_REFUNDED audit
+  // with the admin as actor.
+  app.post("/api/admin/subscriptions/:id/refund", async (request, reply) => {
+    const auth = await requireManageSubscriptions(request, reply);
+    if (!auth) return;
+    const params = subscriptionIdParamsSchema.safeParse(request.params);
+    if (!params.success) return reply.status(400).send(errorResponse("Invalid subscription id"));
+    try {
+      const result = await refundSubscription({
+        subscriptionId: params.data.id,
+        actorUserId: auth.actorUserId,
+      });
+      return okResponse(result, "Refund issued");
     } catch (error) {
       return handleError(app, reply, error);
     }

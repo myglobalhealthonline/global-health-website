@@ -25,18 +25,46 @@ export interface SubscriptionHealthReport {
 }
 
 export async function runReconciliation(now = new Date()): Promise<SubscriptionHealthReport> {
-  const [invariantAlerts, priceSyncFailures, drift] = await Promise.all([
+  const [invariantAlerts, priceSyncFailures, drift, missingGrants] = await Promise.all([
     checkLedgerBalanceInvariant(),
     checkPriceSyncFailures(),
     checkStripeDrift(),
+    checkMissingGrants(),
   ]);
   const unswept = await checkUnsweptReservations(now);
   return {
     lastReconciliationAt: now.toISOString(),
     drift,
-    invariantAlerts: [...invariantAlerts, ...unswept],
+    invariantAlerts: [...invariantAlerts, ...unswept, ...missingGrants],
     priceSyncFailures,
   };
+}
+
+/**
+ * Invoice-grant coverage (§39): an ACTIVE subscription that has paid ≥1 month
+ * must have at least one MONTHLY_GRANT consultation-ledger row — otherwise a
+ * month-1 grant silently never happened and no other check would catch it.
+ */
+async function checkMissingGrants(): Promise<InvariantAlert[]> {
+  const subs = await prisma.userSubscription.findMany({
+    where: { status: "ACTIVE", paidMonthsCount: { gt: 0 } },
+    select: { id: true },
+    take: 1000,
+  });
+  if (subs.length === 0) return [];
+  const granted = await prisma.consultationCreditLedger.groupBy({
+    by: ["userSubscriptionId"],
+    where: { reason: "MONTHLY_GRANT", userSubscriptionId: { in: subs.map((s) => s.id) } },
+    _count: { _all: true },
+  });
+  const grantedSet = new Set(granted.map((g) => g.userSubscriptionId));
+  return subs
+    .filter((s) => !grantedSet.has(s.id))
+    .map((s) => ({
+      subscriptionId: s.id,
+      kind: "missing_grant",
+      detail: "ACTIVE with paidMonthsCount>0 but no MONTHLY_GRANT ledger row",
+    }));
 }
 
 /** Assert counter balance == SUM(ledger deltaCredits) per (sub, kind) (§39). */
@@ -119,7 +147,7 @@ async function checkStripeDrift(): Promise<DriftEntry[]> {
   const subs = await prisma.userSubscription.findMany({
     where: { status: { in: ["ACTIVE", "PAST_DUE"] }, stripeSubscriptionId: { not: null } },
     take: 200,
-    select: { id: true, status: true, stripeSubscriptionId: true },
+    select: { id: true, status: true, stripeSubscriptionId: true, currentPeriodEnd: true },
   });
   const drift: DriftEntry[] = [];
   for (const sub of subs) {
@@ -128,9 +156,19 @@ async function checkStripeDrift(): Promise<DriftEntry[]> {
       drift.push({ subscriptionId: sub.id, field: "existence", db: sub.status, stripe: null });
       continue;
     }
-    const liveCanceled = live.status === "canceled";
-    if (liveCanceled && sub.status !== "CANCELED") {
+    if (live.status === "canceled" && sub.status !== "CANCELED") {
       drift.push({ subscriptionId: sub.id, field: "status", db: sub.status, stripe: live.status });
+    }
+    // Period-end drift (§39): tolerate <1 min skew, flag real divergence.
+    const dbEnd = sub.currentPeriodEnd?.getTime() ?? null;
+    const liveEnd = live.currentPeriodEnd?.getTime() ?? null;
+    if (dbEnd != null && liveEnd != null && Math.abs(dbEnd - liveEnd) > 60_000) {
+      drift.push({
+        subscriptionId: sub.id,
+        field: "currentPeriodEnd",
+        db: sub.currentPeriodEnd?.toISOString() ?? null,
+        stripe: live.currentPeriodEnd?.toISOString() ?? null,
+      });
     }
   }
   return drift;

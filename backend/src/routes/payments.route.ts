@@ -15,6 +15,7 @@ import {
   handleSubscriptionEvent,
   isSubscriptionEvent,
 } from "../modules/subscriptions/subscription-webhook.service.js";
+import { emitOpsAlert } from "../modules/subscriptions/ops/ops-alert.js";
 import {
   commitRedemption,
   releaseRedemption,
@@ -559,6 +560,13 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
           return reply.status(503).send(errorResponse(error.message));
         }
         app.log.error({ err: error, eventType }, "Webhook processing failed");
+        // Realtime ops alert (§39) — a dropped subscription event can skip a
+        // grant or a cancel; never let it fail silently.
+        void emitOpsAlert({
+          severity: "critical",
+          title: "Payment webhook processing failed",
+          detail: `${eventType}: ${error instanceof Error ? error.message : String(error)}`,
+        });
         // Return 500 so Stripe retries — better than silently dropping the event.
         return reply.status(500).send(errorResponse("Webhook processing failed"));
       }

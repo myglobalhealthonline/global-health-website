@@ -109,6 +109,29 @@ export class StripeBillingPort implements BillingPort {
     });
   }
 
+  async refundLatestPayment(subscriptionId: string): Promise<{ refunded: boolean }> {
+    const stripe = getStripeClient();
+    const sub = await stripe.subscriptions.retrieve(subscriptionId, {
+      expand: ["latest_invoice.payment_intent"],
+    });
+    // Resolve the charge defensively across Stripe API versions (invoice.charge
+    // was removed in favour of payment_intent.latest_charge on newer versions).
+    const inv = (sub as unknown as { latest_invoice?: unknown }).latest_invoice;
+    let chargeId: string | null = null;
+    if (inv && typeof inv === "object") {
+      const i = inv as { charge?: unknown; payment_intent?: unknown };
+      if (typeof i.charge === "string") {
+        chargeId = i.charge;
+      } else if (i.payment_intent && typeof i.payment_intent === "object") {
+        const pi = i.payment_intent as { latest_charge?: unknown };
+        if (typeof pi.latest_charge === "string") chargeId = pi.latest_charge;
+      }
+    }
+    if (!chargeId) return { refunded: false };
+    await stripe.refunds.create({ charge: chargeId });
+    return { refunded: true };
+  }
+
   async schedulePlanChange(
     input: SchedulePlanChangeInput,
   ): Promise<{ scheduleId: string | null }> {

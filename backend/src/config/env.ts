@@ -95,6 +95,11 @@ const envSchema = z.object({
    *  Generate with: openssl rand -base64 32. */
   CRON_SECRET: z.string().trim().min(16).optional(),
 
+  /** Optional ops-alert webhook (Slack/Discord/generic). When set, money/ops
+   *  reconciliation findings + subscription webhook failures POST a JSON
+   *  {text,severity,...} here. Unset → alerts are logged only (§39). */
+  OPS_ALERT_WEBHOOK: z.string().url().optional(),
+
   /** Inbox that receives a duplicate of every automation email (internal record).
    *  Defaults to globalhealth@myglobalhealth.online when unset. */
   AUTOMATION_OFFICIAL_EMAIL: z.string().trim().email().optional(),
