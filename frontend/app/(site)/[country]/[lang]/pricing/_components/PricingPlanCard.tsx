@@ -19,10 +19,12 @@ export interface PricingPlanCardProps {
 }
 
 /**
- * Presentational pricing card (gh2 system, light surface). Featured plans get
- * a lime accent ring + badge. All copy is localized; the perk-unlock note is
- * data-driven from `plan.perkUnlockMonths` (§36.17). Family is intentionally
- * NOT shown (Wave 5, D20).
+ * Presentational pricing card (gh2 system, light surface). Featured plans get a
+ * lime accent ring, top bar + badge and sit slightly raised. Rows use reserved
+ * heights (badge / title / description) so price, divider and the "Includes"
+ * list line up across cards of different content length. All copy is localized;
+ * the perk-unlock note is data-driven from `plan.perkUnlockMonths` (§36.17).
+ * Family is intentionally NOT shown (Wave 5, D20).
  */
 export function PricingPlanCard({ plan, t, note, ctaHref }: PricingPlanCardProps) {
   const featured = plan.isFeatured;
@@ -53,40 +55,65 @@ export function PricingPlanCard({ plan, t, note, ctaHref }: PricingPlanCardProps
 
   return (
     <article
-      className="group relative flex flex-col rounded-[var(--radius-card)] bg-[var(--color-background-page)] p-7 transition-all duration-300 focus-within:-translate-y-0.5 hover:-translate-y-0.5"
+      className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-background-page)] p-7 transition-all duration-300 focus-within:-translate-y-1 hover:-translate-y-1 lg:p-8"
       style={{
         border: featured
           ? "1.5px solid var(--color-brand-accent)"
           : "1px solid var(--color-border)",
         boxShadow: featured
-          ? "0 18px 40px -24px rgba(15,46,37,0.35)"
+          ? "0 24px 50px -28px rgba(15,46,37,0.45)"
           : "0 1px 2px rgba(15,46,37,0.04)",
+        backgroundImage: featured
+          ? "linear-gradient(180deg, rgba(176,241,34,0.07) 0%, rgba(176,241,34,0) 32%)"
+          : undefined,
       }}
     >
-      {badge ? (
+      {/* Top accent bar — featured only */}
+      {featured ? (
         <span
-          className="absolute right-6 top-6 inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em]"
-          style={
-            featured
-              ? { background: "var(--color-brand-accent)", color: "#0F2E25" }
-              : { background: "var(--color-background-soft)", color: "var(--color-text-muted)" }
-          }
-        >
-          {badge}
-        </span>
+          aria-hidden
+          className="absolute inset-x-0 top-0 h-1"
+          style={{ background: "linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-accent))" }}
+        />
       ) : null}
 
+      {/* Badge row — reserved height on every card so titles align. */}
+      <div className="mb-4 flex min-h-[1.75rem] items-start">
+        {badge ? (
+          <span
+            className="inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em]"
+            style={
+              featured
+                ? { background: "var(--color-brand-accent)", color: "#0F2E25" }
+                : {
+                    background: "var(--color-background-soft)",
+                    color: "var(--color-text-muted)",
+                    border: "1px solid var(--color-border)",
+                  }
+            }
+          >
+            {badge}
+          </span>
+        ) : null}
+      </div>
+
+      {/* Plan name — reserve 2 lines so the price row lines up across cards. */}
       <h3
-        className="font-extrabold tracking-[-0.02em]"
-        style={{ fontSize: "clamp(1.25rem,1.4vw + 0.6rem,1.6rem)", color: "var(--color-text-primary)" }}
+        className="flex items-start font-extrabold tracking-[-0.02em]"
+        style={{
+          fontSize: "clamp(1.2rem,1.1vw + 0.7rem,1.45rem)",
+          lineHeight: 1.2,
+          minHeight: "2.4em",
+          color: "var(--color-text-primary)",
+        }}
       >
         {plan.name}
       </h3>
 
-      <p className="mt-4 flex items-baseline gap-1.5">
+      <p className="mt-3 flex items-baseline gap-1.5">
         <span
           className="font-extrabold tracking-[-0.04em]"
-          style={{ fontSize: "clamp(2.4rem,2vw + 1.6rem,3rem)", color: "var(--color-text-primary)" }}
+          style={{ fontSize: "clamp(2.6rem,2vw + 1.8rem,3.25rem)", color: "var(--color-text-primary)" }}
         >
           {price}
         </span>
@@ -95,48 +122,57 @@ export function PricingPlanCard({ plan, t, note, ctaHref }: PricingPlanCardProps
         </span>
       </p>
 
-      {plan.shortDescription ? (
-        <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
-          {plan.shortDescription}
-        </p>
-      ) : null}
+      {/* Short description — reserve 2 lines so dividers align. */}
+      <p
+        className="mt-3 text-sm leading-relaxed"
+        style={{ color: "var(--color-text-muted)", minHeight: "2.8em" }}
+      >
+        {plan.shortDescription}
+      </p>
 
       <div className="my-6 h-px w-full" style={{ background: "var(--color-border)" }} />
 
       <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--color-text-muted)" }}>
         {t.includesHeading}
       </p>
-      <ul className="mt-4 flex flex-col gap-3">
+      <ul className="mt-4 flex flex-col gap-3.5">
         {features.map((line, i) => (
-          <li key={i} className="flex items-start gap-2.5 text-sm" style={{ color: "var(--color-text-primary)" }}>
-            <Check
-              className="mt-0.5 size-4 shrink-0"
-              strokeWidth={2.5}
-              style={{ color: "var(--color-brand-primary)" }}
+          <li key={i} className="flex items-start gap-3 text-sm" style={{ color: "var(--color-text-primary)" }}>
+            <span
               aria-hidden
-            />
-            <span>{line}</span>
+              className="mt-px flex size-5 shrink-0 items-center justify-center rounded-full"
+              style={{ background: "rgba(176,241,34,0.20)" }}
+            >
+              <Check className="size-3" strokeWidth={3.25} style={{ color: "var(--color-brand-primary)" }} />
+            </span>
+            <span className="leading-snug">{line}</span>
           </li>
         ))}
       </ul>
 
-      {perkNote ? (
-        <p className="mt-5 text-xs leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
-          {perkNote}
-        </p>
-      ) : null}
-
+      {/* Bottom cluster — pinned to the card foot so cards of different bullet
+          counts keep their CTA aligned. */}
       <div className="mt-auto pt-7">
+        {perkNote ? (
+          <p className="mb-5 text-xs leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+            {perkNote}
+          </p>
+        ) : null}
         <Link
           href={ctaHref}
+          aria-label={interpolate(t.choosePlan, { plan: plan.name })}
           className={
             featured
               ? "gh2-btn-lime w-full justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.45)]"
               : "gh-btn gh-btn-primary w-full justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-brand-primary)]"
           }
         >
-          {interpolate(t.choosePlan, { plan: plan.name })}
-          <ArrowUpRight className="size-4" strokeWidth={1.75} aria-hidden />
+          {t.chooseCta}
+          <ArrowUpRight
+            className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            strokeWidth={1.75}
+            aria-hidden
+          />
         </Link>
         <p className="mt-3 text-center text-[11px]" style={{ color: "var(--color-text-muted)" }}>
           {t.onlineOnlyNote}

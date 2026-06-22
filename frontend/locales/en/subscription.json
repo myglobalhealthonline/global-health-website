@@ -48,6 +48,7 @@
     "specialistLine": "Discounts on selected specialist consultations, where applicable",
     "wellnessRedeemLine": "Collect wellness credits toward eligible home health test kits",
     "choosePlan": "Choose {plan}",
+    "chooseCta": "Choose this plan",
     "viewDetails": "Plan details",
     "onlineOnlyNote": "Online/video consultations only — no in-person visits and no prescriptions.",
     "empty": {
