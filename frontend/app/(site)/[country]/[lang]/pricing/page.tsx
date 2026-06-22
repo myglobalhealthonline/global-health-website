@@ -194,36 +194,61 @@ export default async function PricingPage({ params }: { params: Promise<Params> 
             </span>
           </div>
 
-          <ol className="mx-auto mt-14 grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {hiw.steps.map((step, i) => (
-              <li
-                key={i}
-                className="group relative flex flex-col rounded-[var(--radius-card)] border p-7 transition-transform duration-300 hover:-translate-y-0.5"
-                style={{ borderColor: "var(--color-border)", background: "var(--color-background-page)" }}
-              >
-                <span
-                  className="font-extrabold tracking-[-0.04em]"
-                  style={{ fontSize: "2.75rem", lineHeight: 1, color: "var(--color-brand-accent)" }}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <p
-                  className="mt-2 text-[11px] font-bold uppercase tracking-[0.16em]"
-                  style={{ color: "var(--color-text-muted)" }}
-                >
-                  {interpolate(hiw.stepLabel, { n: i + 1 })}
-                </p>
-                <h3
-                  className="mt-3 font-bold tracking-[-0.01em]"
-                  style={{ fontSize: "1.125rem", color: "var(--color-text-primary)" }}
-                >
-                  {step.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
-                  {step.body}
-                </p>
-              </li>
-            ))}
+          <ol className="mx-auto mt-16 grid max-w-6xl grid-cols-1 gap-y-12 lg:grid-cols-5 lg:gap-x-6">
+            {hiw.steps.map((step, i) => {
+              const last = i === hiw.steps.length - 1;
+              return (
+                <li key={i} className="group relative flex flex-col items-center px-2 text-center">
+                  {/* Connector rail — horizontal on desktop, vertical on mobile.
+                      Sits behind the node; the node's bg-coloured ring masks it. */}
+                  {!last ? (
+                    <>
+                      <span
+                        aria-hidden
+                        className="absolute left-1/2 top-7 hidden h-px w-[calc(100%+1.5rem)] lg:block"
+                        style={{ background: "var(--color-border)" }}
+                      />
+                      <span
+                        aria-hidden
+                        className="absolute left-1/2 top-14 -bottom-12 block w-px -translate-x-1/2 lg:hidden"
+                        style={{ background: "var(--color-border)" }}
+                      />
+                    </>
+                  ) : null}
+
+                  <span
+                    className="relative z-10 flex size-14 items-center justify-center rounded-full text-base font-extrabold transition-transform duration-300 group-hover:scale-110"
+                    style={{
+                      background: "linear-gradient(135deg, var(--color-brand-primary) 0%, #2A6B4E 100%)",
+                      color: "var(--color-brand-accent)",
+                      boxShadow:
+                        "0 0 0 4px var(--color-background-page), 0 8px 18px -8px rgba(15,46,37,0.45)",
+                    }}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  <p
+                    className="mt-5 text-[11px] font-bold uppercase tracking-[0.18em]"
+                    style={{ color: "var(--color-brand-primary)" }}
+                  >
+                    {interpolate(hiw.stepLabel, { n: i + 1 })}
+                  </p>
+                  <h3
+                    className="mt-2 font-bold tracking-[-0.01em]"
+                    style={{ fontSize: "1.0625rem", lineHeight: 1.3, color: "var(--color-text-primary)" }}
+                  >
+                    {step.title}
+                  </h3>
+                  <p
+                    className="mx-auto mt-2 max-w-[16rem] text-sm leading-relaxed lg:max-w-none"
+                    style={{ color: "var(--color-text-muted)" }}
+                  >
+                    {step.body}
+                  </p>
+                </li>
+              );
+            })}
           </ol>
         </div>
       </section>
