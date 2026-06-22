@@ -25,7 +25,7 @@ export interface SubscriptionView {
 /** The patient's current subscription, or null. Includes CANCELED for display. */
 export async function getSubscriptionView(userId: string): Promise<SubscriptionView | null> {
   const sub = await prisma.userSubscription.findFirst({
-    where: { userId, status: { in: ["ACTIVE", "PAST_DUE", "INCOMPLETE", "CANCELED"] } },
+    where: { userId, status: { in: ["ACTIVE", "PAST_DUE", "INCOMPLETE", "CANCELED", "PAUSED"] } },
     orderBy: { createdAt: "desc" },
     include: {
       plan: { select: { id: true, slug: true, name: true, monthlyPriceCents: true, currencyCode: true } },

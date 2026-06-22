@@ -478,7 +478,18 @@ const paymentsRoute: FastifyPluginAsync = async (app) => {
           // Non-order expirations fall through to the legacy path below
           return okResponse({ received: true });
         } else if (eventType === "checkout.session.async_payment_failed") {
-          const session = event.data.object as { id: string; client_reference_id?: string | null };
+          const session = event.data.object as {
+            id: string;
+            client_reference_id?: string | null;
+            metadata?: Record<string, string>;
+          };
+          // Redemption shipping payment failed → release the held wellness
+          // credits + stock immediately instead of waiting for the 24h expiry.
+          if (session.metadata?.kind === "redemption") {
+            const redemptionId = session.metadata?.redemptionId;
+            if (redemptionId) await releaseRedemption(redemptionId);
+            return okResponse({ received: true });
+          }
           const appointmentId = session.client_reference_id ?? null;
           // No appointmentId → we can't link a Payment row to anything
           // meaningful. Previously we wrote `appointmentId: ""` which

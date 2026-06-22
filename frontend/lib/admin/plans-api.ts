@@ -278,6 +278,8 @@ export async function fetchAdminSubscriptions(query?: Record<string, string | un
   return adminRequest<{
     items: AdminSubscriptionListItem[];
     pagination: { page: number; pageSize: number; total: number; totalPages: number };
+    /** Whether the current caller may manually adjust balances (SUPER scope). */
+    capabilities: { canAdjustCredits: boolean };
   }>(withQuery("/api/admin/subscriptions", query));
 }
 

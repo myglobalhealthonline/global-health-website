@@ -127,18 +127,37 @@ describe("adminAdjustCreditsBodySchema", () => {
     const result = adminAdjustCreditsBodySchema.safeParse({
       kind: "CONSULTATION",
       delta: 0,
+      note: "valid reason text",
       requestId: "req-1",
     });
     assert.equal(result.success, false);
   });
 
-  it("accepts a signed delta with a requestId", () => {
+  it("rejects a missing or too-short reason note", () => {
+    const missing = adminAdjustCreditsBodySchema.safeParse({
+      kind: "CONSULTATION",
+      delta: 2,
+      requestId: "req-n",
+    });
+    assert.equal(missing.success, false);
+    const tooShort = adminAdjustCreditsBodySchema.safeParse({
+      kind: "CONSULTATION",
+      delta: 2,
+      note: "short",
+      requestId: "req-n",
+    });
+    assert.equal(tooShort.success, false);
+  });
+
+  it("accepts a signed delta with a requestId and reason note", () => {
     const parsed = adminAdjustCreditsBodySchema.parse({
       kind: "WELLNESS",
       delta: -3,
+      note: "support: corrected duplicate grant",
       requestId: "req-2",
     });
     assert.equal(parsed.reason, "ADJUSTMENT");
     assert.equal(parsed.delta, -3);
+    assert.equal(parsed.note, "support: corrected duplicate grant");
   });
 });

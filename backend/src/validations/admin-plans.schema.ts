@@ -201,6 +201,12 @@ export const adminAdjustCreditsBodySchema = z.object({
   kind: creditKindSchema,
   delta: z.coerce.number().int().refine((n) => n !== 0, { message: "delta must be non-zero" }),
   reason: z.enum(["ADJUSTMENT", "CLAWBACK"]).default("ADJUSTMENT"),
+  /**
+   * Mandatory free-text justification for this manual balance edit (§4). The
+   * enum `reason` is the category; this is the human "why". Persisted to the
+   * audit metadata so every override is explainable after the fact.
+   */
+  note: z.string().trim().min(8, "A reason of at least 8 characters is required").max(500),
   /** Client-supplied idempotency token → key `admin:{adminId}:{requestId}` (§36.15). */
   requestId: z.string().trim().min(1).max(120),
 });

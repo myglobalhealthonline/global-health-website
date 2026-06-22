@@ -171,6 +171,17 @@ export async function startRedemption(
 
   const kit = await prisma.healthTest.findUnique({ where: { id: input.healthTestId } });
   if (!kit) throw new RedemptionError("NOT_REDEEMABLE", "Kit not found");
+  // Defensive country-integrity guard: the kit must belong to the same country
+  // as the subscriber's plan. Plan-scoped snapshots normally prevent a foreign
+  // kit ever reaching here, so this only trips on admin misconfiguration — it is
+  // NOT a shipping-address restriction (patients may ship kits anywhere).
+  const plan = await prisma.pricingPlan.findUnique({
+    where: { id: sub.planId },
+    select: { countryId: true },
+  });
+  if (plan && kit.countryId !== plan.countryId) {
+    throw new RedemptionError("NOT_REDEEMABLE", "Kit is not available in your plan's country");
+  }
   if (kit.stock === 0) throw new RedemptionError("OUT_OF_STOCK", "Out of stock");
 
   const shippingCents = kit.shippingCents ?? 0;

@@ -83,6 +83,9 @@ describe("admin plan-management routes", () => {
         passwordHash: "x",
         fullName: "Super Admin",
         role: "SUPER_ADMIN",
+        // SUPER scope is required for the stricter balance-adjustment guard (§4);
+        // the role alone gates only plan configuration.
+        adminScope: "SUPER",
       },
     });
     const genericAdmin = await prisma.user.create({
@@ -114,6 +117,8 @@ describe("admin plan-management routes", () => {
     return {
       countryId: countryAId,
       slug,
+      // planType is required at create (chosen once, immutable after).
+      planType: "ESSENTIAL",
       name: "Essential Care",
       monthlyPriceCents: 2000,
       currencyCode: "eur",
@@ -235,7 +240,13 @@ describe("admin plan-management routes", () => {
       data: { userId: user.id, planId, countryCode: "ie", status: "ACTIVE" },
     });
     try {
-      const body = { kind: "CONSULTATION", delta: 2, reason: "ADJUSTMENT", requestId: `req-${uniq}` };
+      const body = {
+        kind: "CONSULTATION",
+        delta: 2,
+        reason: "ADJUSTMENT",
+        note: "support: goodwill credit for outage",
+        requestId: `req-${uniq}`,
+      };
       const first = await app.inject({
         method: "POST",
         url: `/api/admin/subscriptions/${sub.id}/adjust-credits`,

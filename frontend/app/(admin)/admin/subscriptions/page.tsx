@@ -68,6 +68,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
       kind: String(formData.get("kind") ?? "CONSULTATION"),
       delta: Number(formData.get("delta") ?? 0),
       reason: String(formData.get("reason") ?? "ADJUSTMENT"),
+      note: String(formData.get("note") ?? ""),
       requestId: String(formData.get("requestId") ?? "") || randomUUID(),
     };
     const result = await postAdminAdjustCredits(subscriptionId, body);
@@ -174,7 +175,6 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                   <Th>Plan</Th>
                   <Th>Status</Th>
                   <Th>Credits (GP / wellness)</Th>
-                  <Th>Adjust credits</Th>
                 </Thead>
                 <tbody>
                   {subsResult.data.items.map((sub) => (
@@ -201,36 +201,6 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                       <Td>
                         {balanceOf(sub.balances, "CONSULTATION")} / {balanceOf(sub.balances, "WELLNESS")}
                       </Td>
-                      <Td>
-                        <form action={adjustCreditsAction} className="flex flex-wrap items-end gap-2">
-                          <input type="hidden" name="subscriptionId" value={sub.id} />
-                          <input type="hidden" name="requestId" value={randomUUID()} />
-                          <select name="kind" className="gh-select" defaultValue="CONSULTATION" style={{ minWidth: 120 }}>
-                            <option value="CONSULTATION">Consultation</option>
-                            <option value="WELLNESS">Wellness</option>
-                          </select>
-                          <input
-                            name="delta"
-                            type="number"
-                            className="gh-input"
-                            style={{ width: 80 }}
-                            placeholder="±"
-                            required
-                          />
-                          <select name="reason" className="gh-select" defaultValue="ADJUSTMENT" style={{ minWidth: 120 }}>
-                            <option value="ADJUSTMENT">Adjustment</option>
-                            <option value="CLAWBACK">Clawback</option>
-                          </select>
-                          <ConfirmDeleteButton
-                            message={`Adjust credits for ${sub.user.email}? This writes an audited ledger entry.`}
-                            className="gh-btn gh-btn-secondary"
-                            ariaLabel="Apply credit adjustment"
-                            style={{ minHeight: 36, padding: "0 14px" }}
-                          >
-                            Apply
-                          </ConfirmDeleteButton>
-                        </form>
-                      </Td>
                     </Tr>
                   ))}
                 </tbody>
@@ -238,6 +208,77 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
             )}
           </div>
         </AdminCard>
+
+        {/* Support override — manual balance adjustment. Hidden unless the caller
+            holds the dedicated SUPER-scope permission (§4); the backend rejects
+            the action regardless, but hiding keeps it out of normal admin flow. */}
+        {subsResult.ok && subsResult.data.capabilities?.canAdjustCredits ? (
+          <AdminCard padding={0}>
+            <SectionHeader
+              title="Support override — manual balance adjustment"
+              description="Elevated SUPER-admin action. Directly edits one subscriber's earned consultation or wellness balance. Routine credits come from plan rules and renewals — use this only for verified finance/support cases. Every change is audited and requires a written reason."
+            />
+            <div className="p-6">
+              {subsResult.data.items.length === 0 ? (
+                <p className="text-sm text-[var(--color-text-muted)]">
+                  No subscribers in the current view to adjust. Filter the list above first.
+                </p>
+              ) : (
+                <form action={adjustCreditsAction} className="flex flex-wrap items-end gap-3">
+                  <input type="hidden" name="requestId" value={randomUUID()} />
+                  <label className="flex flex-col gap-1 text-xs text-[var(--color-text-muted)]">
+                    <span>Subscriber</span>
+                    <select name="subscriptionId" className="gh-select" required style={{ minWidth: 240 }}>
+                      {subsResult.data.items.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {(s.user.fullName ?? s.user.email)} — {s.plan.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="flex flex-col gap-1 text-xs text-[var(--color-text-muted)]">
+                    <span>Kind</span>
+                    <select name="kind" className="gh-select" defaultValue="CONSULTATION" style={{ minWidth: 130 }}>
+                      <option value="CONSULTATION">Consultation</option>
+                      <option value="WELLNESS">Wellness</option>
+                    </select>
+                  </label>
+                  <label className="flex flex-col gap-1 text-xs text-[var(--color-text-muted)]">
+                    <span>Delta</span>
+                    <input name="delta" type="number" className="gh-input" style={{ width: 90 }} placeholder="±" required />
+                  </label>
+                  <label className="flex flex-col gap-1 text-xs text-[var(--color-text-muted)]">
+                    <span>Category</span>
+                    <select name="reason" className="gh-select" defaultValue="ADJUSTMENT" style={{ minWidth: 130 }}>
+                      <option value="ADJUSTMENT">Adjustment</option>
+                      <option value="CLAWBACK">Clawback</option>
+                    </select>
+                  </label>
+                  <label className="flex flex-col gap-1 text-xs text-[var(--color-text-muted)]" style={{ flex: "1 1 260px" }}>
+                    <span>Reason (required, audited)</span>
+                    <input
+                      name="note"
+                      type="text"
+                      className="gh-input"
+                      minLength={8}
+                      maxLength={500}
+                      required
+                      placeholder="Why is this adjustment being made?"
+                    />
+                  </label>
+                  <ConfirmDeleteButton
+                    message="Apply this manual balance adjustment? It writes an audited ledger entry and cannot be silently undone."
+                    className="gh-btn gh-btn-secondary"
+                    ariaLabel="Apply credit adjustment"
+                    style={{ minHeight: 36, padding: "0 14px" }}
+                  >
+                    Apply override
+                  </ConfirmDeleteButton>
+                </form>
+              )}
+            </div>
+          </AdminCard>
+        ) : null}
       </div>
     </>
   );

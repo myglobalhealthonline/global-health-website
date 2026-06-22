@@ -12,6 +12,10 @@ import {
   subscriptionIdParamsSchema,
 } from "../validations/admin-plans.schema.js";
 import { requireManageSubscriptions } from "../utils/manage-subscriptions-auth.js";
+import {
+  requireManageAdjustments,
+  verifyManageAdjustmentsAccess,
+} from "../utils/manage-subscription-adjustments-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 
 function handleError(app: { log: { error: (e: unknown) => void } }, reply: FastifyReply, error: unknown) {
@@ -33,14 +37,19 @@ const adminSubscriptionsRoute: FastifyPluginAsync = async (app) => {
       return reply.status(400).send(errorResponse("Invalid subscriptions query", query.error.flatten()));
     }
     try {
-      return okResponse(await listAdminSubscriptions(query.data));
+      // Expose whether THIS caller may manually adjust balances so the admin UI
+      // can hide the override panel from billing admins who lack SUPER scope.
+      const adjustAuth = await verifyManageAdjustmentsAccess(request);
+      const result = await listAdminSubscriptions(query.data);
+      return okResponse({ ...result, capabilities: { canAdjustCredits: adjustAuth.ok } });
     } catch (error) {
       return handleError(app, reply, error);
     }
   });
 
   app.post("/api/admin/subscriptions/:id/adjust-credits", async (request, reply) => {
-    const auth = await requireManageSubscriptions(request, reply);
+    // Stricter than plan management: balance edits need SUPER scope (§4).
+    const auth = await requireManageAdjustments(request, reply);
     if (!auth) return;
     const params = subscriptionIdParamsSchema.safeParse(request.params);
     if (!params.success) return reply.status(400).send(errorResponse("Invalid subscription id"));
@@ -75,6 +84,7 @@ const adminSubscriptionsRoute: FastifyPluginAsync = async (app) => {
           kind: body.data.kind,
           delta: body.data.delta,
           reason: body.data.reason,
+          note: body.data.note,
           requestId: body.data.requestId,
           balanceAfter: result.balance,
         },
