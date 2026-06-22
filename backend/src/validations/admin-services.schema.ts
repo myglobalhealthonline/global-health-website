@@ -56,7 +56,10 @@ const imagePathFieldSchema = z.preprocess(
 
 export const adminServicesQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
-  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  // Clamp oversized requests to 100 instead of rejecting them — callers (e.g.
+  // dropdowns) pass a large pageSize to mean "all"; the service layer also caps
+  // at 100. Rejecting here previously 400'd the whole request → empty dropdowns.
+  pageSize: z.coerce.number().int().min(1).default(20).transform((n) => Math.min(n, 100)),
   kind: z.preprocess(
     (v) => (v === "" || v === undefined || v === null ? undefined : v),
     serviceKindSchema.optional(),

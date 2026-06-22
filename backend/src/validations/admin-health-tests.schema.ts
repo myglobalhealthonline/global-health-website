@@ -25,7 +25,8 @@ const extraSectionSchema = z.object({
 
 export const adminHealthTestsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
-  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  // Clamp oversized requests to 100 instead of rejecting (see admin-services.schema).
+  pageSize: z.coerce.number().int().min(1).default(20).transform((n) => Math.min(n, 100)),
   countryId: z.preprocess((v) => (v === "" || v === undefined || v === null ? undefined : v), z.string().trim().min(1).optional()),
   countryCode: z.preprocess((v) => (v === "" || v === undefined || v === null ? undefined : v), z.string().trim().min(1).max(8).optional()),
   isActive: z.preprocess((v) => {
