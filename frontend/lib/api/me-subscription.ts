@@ -72,7 +72,7 @@ export interface InvoicesView {
 
 async function meRequest<T>(
   path: string,
-  options: { method?: "GET" | "POST"; body?: unknown } = {},
+  options: { method?: "GET" | "POST" | "PATCH"; body?: unknown } = {},
 ): Promise<MeResult<T>> {
   try {
     const hasBody = options.body !== undefined;
@@ -137,6 +137,32 @@ export interface CartCoverageView {
  *  Guests get a 401 (handled by the caller as a "log in to use benefits"). */
 export function getCartPreview(): Promise<MeResult<CartCoverageView>> {
   return meRequest("cart-preview");
+}
+
+/** Patient in-app notifications (§30). Payload carries pre-localized copy. */
+export interface NotificationItem {
+  id: string;
+  type: string;
+  payload: { title?: string; body?: string; href?: string } | null;
+  readAt: string | null;
+  createdAt: string;
+}
+
+export interface NotificationsView {
+  items: NotificationItem[];
+  unreadCount: number;
+}
+
+export function getNotifications(): Promise<MeResult<NotificationsView>> {
+  return meRequest("notifications");
+}
+
+export function markNotificationRead(id: string): Promise<MeResult<{ updated: number }>> {
+  return meRequest(`notifications/${id}/read`, { method: "PATCH" });
+}
+
+export function markAllNotificationsRead(): Promise<MeResult<{ updated: number }>> {
+  return meRequest("notifications/read-all", { method: "POST" });
 }
 
 export function startSubscription(planId: string, returnTo?: string): Promise<MeResult<{ checkoutUrl: string }>> {

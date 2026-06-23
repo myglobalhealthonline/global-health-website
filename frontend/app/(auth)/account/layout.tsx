@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
+  Bell,
   CalendarDays,
   CalendarRange,
   CreditCard,
@@ -19,6 +20,8 @@ import { PortalShell, type PortalNavItem } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 import { resolveBookConsultationHref } from "@/lib/api/last-booking-country";
 import { fetchPatientUnreadMessageCount } from "@/lib/api/account-appointments-api";
+import { getServerNotifications } from "@/lib/api/me-subscription-server";
+import type { NotificationPopoverItem } from "@/components/NotificationPopover";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -46,15 +49,28 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   // `/` (the country picker) every time, forcing them to repick Ireland
   // / Portugal / etc. on every booking. Now we route them straight to
   // the country they last booked in.
-  const [bookHref, unreadMessages, locale] = await Promise.all([
+  const [bookHref, unreadMessages, locale, notifications] = await Promise.all([
     resolveBookConsultationHref(),
     fetchPatientUnreadMessageCount(),
     getPageLocale(),
+    getServerNotifications(),
   ]);
   const { account: a } = loadLocaleBundle(locale);
 
+  // Map in-app notification rows → bell items. Payload carries the already-
+  // localized { title, body, href } written by the subscription dispatchers.
+  const notificationItems: NotificationPopoverItem[] = (notifications?.items ?? []).map((n) => ({
+    id: n.id,
+    title: n.payload?.title ?? "Notification",
+    body: n.payload?.body ?? null,
+    href: n.payload?.href ?? null,
+    createdAt: n.createdAt,
+    readAt: n.readAt,
+  }));
+
   const sections: PortalNavItem[] = [
     { href: "/account", label: a.nav.overview, icon: <LayoutDashboard className="size-4" aria-hidden /> },
+    { href: "/account/notifications", label: "Notifications", icon: <Bell className="size-4" aria-hidden />, badge: notifications?.unreadCount ?? 0 },
     { href: "/account/bookings", label: a.nav.myBookings, icon: <CalendarDays className="size-4" aria-hidden />, badge: unreadMessages },
     { href: "/account/calendar", label: "Calendar", icon: <CalendarRange className="size-4" aria-hidden /> },
     { href: "/account/orders", label: a.nav.myOrders, icon: <ShoppingBag className="size-4" aria-hidden /> },
@@ -77,6 +93,9 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       rootBreadcrumb={a.portal.sectionLabel}
       signOutAction={logoutAction}
       accountHref="/account/profile"
+      notifications={notificationItems}
+      notificationsUnreadCount={notifications?.unreadCount ?? 0}
+      notificationsViewAllHref="/account/notifications"
     >
       {children}
     </PortalShell>

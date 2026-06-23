@@ -19,19 +19,28 @@ const ROUTE_TABLE: Record<string, Set<string>> = {
     "credits",
     "redemptions",
     "invoices",
+    "cart-preview",
+    "notifications",
   ]),
   POST: new Set([
     "subscription",
     "subscription/change",
     "subscription/cancel",
     "redemptions",
+    "notifications/read-all",
   ]),
 };
 
+/** Dynamic (id-bearing) paths allowed per method, matched by pattern. */
+const PATTERN_TABLE: Record<string, RegExp[]> = {
+  PATCH: [/^notifications\/[^/]+\/read$/],
+};
+
 function isAllowed(method: string, segments: string[]): boolean {
+  const joined = segments.join("/");
   const set = ROUTE_TABLE[method];
-  if (!set) return false;
-  return set.has(segments.join("/"));
+  if (set?.has(joined)) return true;
+  return (PATTERN_TABLE[method] ?? []).some((re) => re.test(joined));
 }
 
 async function proxyMe(request: NextRequest, segments: string[]) {
@@ -76,6 +85,11 @@ export async function GET(request: NextRequest, ctx: { params: Promise<{ path: s
 }
 
 export async function POST(request: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
+  const { path } = await ctx.params;
+  return proxyMe(request, path ?? []);
+}
+
+export async function PATCH(request: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
   const { path } = await ctx.params;
   return proxyMe(request, path ?? []);
 }

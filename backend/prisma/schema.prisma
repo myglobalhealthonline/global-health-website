@@ -103,6 +103,15 @@ enum NotificationType {
   EXAM_REQUESTED
   FORM_SUBMITTED
   DOCUMENT_UPLOADED
+  // Patient subscription/plan in-app notifications (§30). Payload carries a
+  // pre-localized { title, body, href } so the bell + list render directly.
+  SUBSCRIPTION_CONFIRMED
+  SUBSCRIPTION_RENEWED
+  SUBSCRIPTION_CANCELED
+  SUBSCRIPTION_RENEWAL_REMINDER
+  SUBSCRIPTION_PERK_UNLOCKED
+  WELLNESS_CREDITS_EARNED
+  KIT_REDEMPTION_CONFIRMED
 }
 
 /// Exam lifecycle.

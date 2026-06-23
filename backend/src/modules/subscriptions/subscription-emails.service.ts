@@ -1,4 +1,4 @@
-import { LocaleCode } from "@prisma/client";
+import { LocaleCode, type NotificationType } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { absoluteSiteUrl, sendEmail } from "../../lib/email/send-email.js";
 import { wrapHtml } from "../../lib/email/templates.js";
@@ -12,16 +12,17 @@ import roCopy from "./email-copy/ro.json";
 import deCopy from "./email-copy/de.json";
 
 /**
- * Patient subscription notification channel (§30). Email is the patient
- * channel — the in-app `Notification` model is doctor-only and its
- * `NotificationType` enum is frozen (no patient values), so we don't write
- * in-app rows here. All copy is localized to the subscriber's country default
- * locale across every active locale. NO failed-payment/dunning email — Stripe
- * owns that (§38.5).
+ * Patient subscription notification channel (§30). TWO channels, both
+ * best-effort: (1) localized email, (2) an in-app `Notification` row for the
+ * patient bell/center. The NotificationType enum now carries patient
+ * subscription values, and the row's payload stores the already-localized
+ * { title, body, href } so the frontend renders it directly. All copy is
+ * localized to the subscriber's country default locale. NO failed-payment/
+ * dunning notification — Stripe owns that (§38.5).
  *
  * Every dispatcher is fire-and-forget safe: it resolves the recipient, builds
- * the localized message, sends it, and swallows/logs failures so a mail hiccup
- * never breaks the webhook money path.
+ * the localized message, sends the email + writes the in-app row, and
+ * swallows/logs failures so a hiccup never breaks the webhook money path.
  */
 
 type EmailBundle = typeof enCopy;
@@ -68,6 +69,7 @@ function formatDate(date: Date, locale: LocaleCode): string {
 }
 
 interface Recipient {
+  userId: string;
   email: string;
   fullName: string;
   locale: LocaleCode;
@@ -80,7 +82,7 @@ async function loadRecipient(subscriptionId: string): Promise<Recipient | null> 
     where: { id: subscriptionId },
     select: {
       countryCode: true,
-      user: { select: { email: true, fullName: true } },
+      user: { select: { id: true, email: true, fullName: true } },
       plan: { select: { name: true } },
     },
   });
@@ -95,11 +97,33 @@ async function loadRecipient(subscriptionId: string): Promise<Recipient | null> 
     if (country?.defaultLocale) locale = country.defaultLocale;
   }
   return {
+    userId: sub.user.id,
     email: sub.user.email,
     fullName: sub.user.fullName,
     locale,
     planName: sub.plan?.name ?? "your plan",
   };
+}
+
+/**
+ * Write a patient in-app notification row. Best-effort — an in-app failure must
+ * never break the webhook/money path (mirrors the email dispatch). The payload
+ * carries the already-localized title/body + a relative href for the bell/list.
+ */
+async function writeInApp(
+  userId: string,
+  type: NotificationType,
+  title: string,
+  body: string,
+  href: string,
+): Promise<void> {
+  try {
+    await prisma.notification.create({
+      data: { recipientUserId: userId, type, payload: { title, body, href } },
+    });
+  } catch {
+    // swallow — in-app notification is non-critical
+  }
 }
 
 interface BuiltEmail {
@@ -146,6 +170,13 @@ export async function notifySubscriptionConfirmed(subscriptionId: string, credit
     ],
     cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/membership") },
   });
+  await writeInApp(
+    r.userId,
+    "SUBSCRIPTION_CONFIRMED",
+    interpolate(c.confirmed.title, { plan: r.planName }),
+    interpolate(c.confirmed.p2, { credits }),
+    "/account/membership",
+  );
 }
 
 export async function notifySubscriptionRenewed(subscriptionId: string, credits: number): Promise<void> {
@@ -163,6 +194,13 @@ export async function notifySubscriptionRenewed(subscriptionId: string, credits:
     ],
     cta: { label: c.common.dashboardCta, href: absoluteSiteUrl("/account") },
   });
+  await writeInApp(
+    r.userId,
+    "SUBSCRIPTION_RENEWED",
+    c.renewed.title,
+    interpolate(c.renewed.p2, { credits }),
+    "/account",
+  );
 }
 
 export async function notifyPerkUnlocked(subscriptionId: string, perkKey: string): Promise<void> {
@@ -188,6 +226,13 @@ export async function notifyPerkUnlocked(subscriptionId: string, perkKey: string
     ],
     cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/membership") },
   });
+  await writeInApp(
+    r.userId,
+    "SUBSCRIPTION_PERK_UNLOCKED",
+    c.perkUnlocked.title,
+    interpolate(c.perkUnlocked.p1, { perk: perkLabel, months }),
+    "/account/membership",
+  );
 }
 
 export async function notifyWellnessEarned(subscriptionId: string, credits: number): Promise<void> {
@@ -206,6 +251,13 @@ export async function notifyWellnessEarned(subscriptionId: string, credits: numb
     ],
     cta: { label: c.common.rewardsCta, href: absoluteSiteUrl("/account/rewards") },
   });
+  await writeInApp(
+    r.userId,
+    "WELLNESS_CREDITS_EARNED",
+    c.wellnessEarned.title,
+    interpolate(c.wellnessEarned.p1, { credits, balance }),
+    "/account/rewards",
+  );
 }
 
 export async function notifyRedemptionConfirmed(redemptionId: string): Promise<void> {
@@ -231,6 +283,13 @@ export async function notifyRedemptionConfirmed(redemptionId: string): Promise<v
     ],
     cta: { label: c.common.dashboardCta, href: absoluteSiteUrl("/account/orders") },
   });
+  await writeInApp(
+    r.userId,
+    "KIT_REDEMPTION_CONFIRMED",
+    c.redemptionConfirmed.title,
+    interpolate(c.redemptionConfirmed.p1, { kit: redemption.healthTest?.title ?? "your kit" }),
+    "/account/orders",
+  );
 }
 
 export async function notifyRenewalReminder(subscriptionId: string, renewalDate: Date): Promise<void> {
@@ -248,6 +307,13 @@ export async function notifyRenewalReminder(subscriptionId: string, renewalDate:
     ],
     cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/membership") },
   });
+  await writeInApp(
+    r.userId,
+    "SUBSCRIPTION_RENEWAL_REMINDER",
+    c.reminder.title,
+    interpolate(c.reminder.p1, { plan: r.planName, date: formatDate(renewalDate, r.locale) }),
+    "/account/membership",
+  );
 }
 
 export async function notifySubscriptionCanceled(subscriptionId: string, periodEnd: Date | null): Promise<void> {
@@ -266,4 +332,11 @@ export async function notifySubscriptionCanceled(subscriptionId: string, periodE
     ],
     cta: { label: c.common.manageCta, href: absoluteSiteUrl("/account/membership") },
   });
+  await writeInApp(
+    r.userId,
+    "SUBSCRIPTION_CANCELED",
+    c.canceled.title,
+    interpolate(c.canceled.p1, { plan: r.planName }),
+    "/account/membership",
+  );
 }
