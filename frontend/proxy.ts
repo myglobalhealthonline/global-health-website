@@ -39,7 +39,7 @@ function getJwtSecretKey(): Uint8Array | null {
 
 type SessionRole = "PATIENT" | "ADMIN" | "DOCTOR";
 type SessionLookup =
-  | { kind: "ok"; role: SessionRole | null }
+  | { kind: "ok"; role: SessionRole | null; email: string | null }
   | { kind: "misconfigured" };
 
 function isSessionRole(value: unknown): value is SessionRole {
@@ -59,7 +59,7 @@ async function resolveSession(request: NextRequest): Promise<SessionLookup> {
     return { kind: "misconfigured" };
   }
   const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
-  if (!token) return { kind: "ok", role: null };
+  if (!token) return { kind: "ok", role: null, email: null };
   try {
     const { payload } = await jwtVerify(token, key, {
       issuer: JWT_ISSUER,
@@ -68,9 +68,10 @@ async function resolveSession(request: NextRequest): Promise<SessionLookup> {
     return {
       kind: "ok",
       role: isSessionRole(payload.role) ? payload.role : null,
+      email: typeof payload.email === "string" ? payload.email : null,
     };
   } catch {
-    return { kind: "ok", role: null };
+    return { kind: "ok", role: null, email: null };
   }
 }
 
@@ -208,6 +209,14 @@ export async function proxy(request: NextRequest) {
     requestHeaders.set("x-gh-role", session.role);
   } else {
     requestHeaders.delete("x-gh-role");
+  }
+  // Stamp the email too so the header can render a personal avatar
+  // (initial) without a backend round-trip. Always set-or-delete so a
+  // client-supplied x-gh-email can never be trusted (same guard as role).
+  if (session.kind === "ok" && session.email) {
+    requestHeaders.set("x-gh-email", session.email);
+  } else {
+    requestHeaders.delete("x-gh-email");
   }
 
   return NextResponse.next({

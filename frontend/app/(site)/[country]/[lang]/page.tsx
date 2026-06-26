@@ -15,7 +15,6 @@ import { HowItWorksNarrative } from "@/components/sections/HowItWorksNarrative";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
-import { ReviewBadge } from "@/components/sections/ReviewBadge";
 import { countries } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import {
@@ -462,7 +461,6 @@ export default async function CountryLangHomePage({
       <CountryMarquee countries={marqueeCountries} />
       <RichBodySection html={page?.body} theme="light" />
       <TrustRibbon items={trustItems} theme="light" />
-      <ReviewBadge countryName={config.name} theme="light" />
       <ServiceCatalog services={serviceCatalogItems} i18n={tServices.catalog} />
       <StatsBand items={statsItems} theme="light" i18n={t.statsBand} />
       {/* ── Team section — featured card + full grid under one heading ── */}

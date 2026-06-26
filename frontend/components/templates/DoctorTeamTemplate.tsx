@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { PageHero } from "@/components/sections/PageHero";
+import { DoctorsHero } from "@/components/sections/DoctorsHero";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 
 const PAGE_SIZE = 6;
@@ -77,26 +77,21 @@ export function DoctorTeamTemplate({
 
   return (
     <section style={{ background: "var(--color-background-soft)" }}>
-      <PageHero
-        watermark="Doctors"
-        countryLabel={`${countryName} · ${i18n?.theTeamBadge ?? "The team"}`}
+      <DoctorsHero
+        countryName={countryName}
+        eyebrow={`${countryName} · ${i18n?.theTeamBadge ?? "The team"}`}
         titleLead={i18n?.heroTitleLead ?? "Doctors who"}
         titleAccent={i18n?.heroTitleAccent ?? "actually"}
         titleTrail={i18n?.heroTitleTrail ?? "pick up."}
-        lede={
-          <>
-            {(i18n?.heroLedeTemplate ?? "Every clinician below is licensed in {country}, vetted for online care, and reviewed by patients after each consultation.").replace("{country}", countryName)}
-            <br />
-            <span className="text-white/55">
-              {doctors.length}{" "}
-              {doctors.length === 1
-                ? (i18n?.heroAvailableSingular ?? "licensed clinician available")
-                : (i18n?.heroAvailablePlural ?? "licensed clinicians available")}
-            </span>
-          </>
+        lede={(i18n?.heroLedeTemplate ?? "Every clinician below is licensed in {country}, vetted for online care, and reviewed by patients after each consultation.").replace("{country}", countryName)}
+        availableCount={doctors.length}
+        availableLabel={
+          doctors.length === 1
+            ? (i18n?.heroAvailableSingular ?? "licensed clinician available")
+            : (i18n?.heroAvailablePlural ?? "licensed clinicians available")
         }
-        ctaLabel={bookingLabel}
-        ctaHref={bookingHref}
+        primaryCta={{ label: bookingLabel, href: bookingHref }}
+        secondaryCta={{ label: "View Doctors", href: "#doctor-grid" }}
         heroImage={{
           src: "/images/stock/doctors.jpg",
           alt: `Doctors available for online consultations in ${countryName}`,
@@ -105,7 +100,7 @@ export function DoctorTeamTemplate({
       />
 
       {/* GRID — light soft section, DoctorCard components */}
-      <section className="gh-section" style={{ background: "var(--color-background-soft)", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
+      <section id="doctor-grid" className="gh-section" style={{ scrollMarginTop: "96px", background: "var(--color-background-soft)", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
         <div className="gh-container">
           {/* Featured-doctor spotlight (admin-chosen) above the filters. */}
           {spotlight}

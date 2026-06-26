@@ -30,9 +30,13 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
       ? (headerCountry as CountryCode)
       : undefined;
 
-  // Role stamped by the edge proxy via local JWT decode — no backend round-trip.
+  // Role + email stamped by the edge proxy via local JWT decode — no backend
+  // round-trip. Email drives the header's personal avatar (initial only).
   const roleHeader = requestHeaders.get("x-gh-role");
-  const authUser: { role: string } | null = roleHeader ? { role: roleHeader } : null;
+  const emailHeader = requestHeaders.get("x-gh-email");
+  const authUser: { role: string; email: string | null } | null = roleHeader
+    ? { role: roleHeader, email: emailHeader }
+    : null;
 
   // runtimeCountry is known here, so the per-country footer fetch can run
   // in the same parallel batch instead of as an extra serial round-trip

@@ -69,11 +69,14 @@ export function SectionNav({
       aria-label="Section navigation"
       className="hidden items-center md:flex"
       style={{
-        gap: 4,
-        background: isDark ? "rgba(255,255,255,0.05)" : "var(--color-background-soft)",
-        padding: 4,
+        gap: isDark ? 2 : 4,
+        // Dark variant rides directly on the header's glass pill — no
+        // nested rail, so the links read as part of the capsule (only the
+        // active tab shows its own pill). Light variant keeps the rail.
+        background: isDark ? "transparent" : "var(--color-background-soft)",
+        padding: isDark ? 0 : 4,
         borderRadius: 999,
-        border: isDark ? "1px solid rgba(255,255,255,0.10)" : "1px solid var(--color-border)",
+        border: isDark ? "none" : "1px solid var(--color-border)",
         width: "fit-content",
       }}
     >
@@ -149,7 +152,13 @@ export function SectionNav({
             aria-current={active ? "page" : undefined}
           >
             {active ? <ActiveDot /> : null}
-            {item.label}
+            {active && isDark ? (
+              <span className="border-b-2 border-[var(--color-brand-accent)] pb-px">
+                {item.label}
+              </span>
+            ) : (
+              item.label
+            )}
           </Link>
         );
       })}

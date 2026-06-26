@@ -2060,6 +2060,55 @@ img {
   transform: translateX(4px);
 }
 
+/* Emerald glass — deep forest-night frosted panel. Darker, more
+ * saturated than .gh-glass-card (which is white-tinted). Used by the
+ * doctors hero floating info cards + trust cards so they read as cut
+ * from the same material as the section, with a faint lime hairline. */
+.gh-glass-emerald {
+  background: rgba(8, 42, 32, 0.72);
+  border: 1px solid rgba(176, 241, 34, 0.16);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.34);
+}
+
+/* Dotted-grid atmosphere layer — faint tech dots, masked to fade out
+ * so it never competes with the headline. Pair with an inline mask if
+ * a directional fade is wanted. */
+.gh-dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1.6px);
+  background-size: 22px 22px;
+}
+
+/* Soft idle float for hero info cards — slower + shorter travel than
+ * .animate-float so overlapping cards drift gently out of phase via
+ * per-card animation-delay. Killed under reduced-motion. */
+@keyframes gh-floaty {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-9px); }
+}
+.gh-floaty {
+  animation: gh-floaty 5.5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh-floaty { animation: none; }
+}
+
+/* Hero accent glow — the lime headline word gets a soft bloom + a very
+ * slow pulse so "actually" feels alive without distracting. */
+@keyframes gh-accent-pulse {
+  0%, 100% { text-shadow: 0 0 22px rgba(176, 241, 34, 0.30); }
+  50%      { text-shadow: 0 0 34px rgba(176, 241, 34, 0.50); }
+}
+.gh-accent-glow {
+  color: var(--color-brand-accent);
+  text-shadow: 0 0 24px rgba(176, 241, 34, 0.34);
+  animation: gh-accent-pulse 4.5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh-accent-glow { animation: none; }
+}
+
 /* Hand-drawn underline for the hero accent word. */
 .gh2-underline {
   position: relative;
