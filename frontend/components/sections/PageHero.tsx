@@ -19,6 +19,11 @@ export type PageHeroProps = {
   heroImage?: { src: string; alt: string; priority?: boolean };
   index?: string;
   watermark?: string;
+  /** Optional icon trailing the secondary CTA label (immersive variant). */
+  secondaryIcon?: ReactNode;
+  /** Compact trust/feature cards rendered under the CTAs (immersive
+   *  variant only). Pass 2–3 for the lab-tests-style hero. */
+  trustCards?: Array<{ icon: ReactNode; title: string; subtitle: string }>;
   /** "immersive": full-viewport 50/50 — image fills left column, content right. */
   variant?: "default" | "immersive";
 };
@@ -38,6 +43,8 @@ export function PageHero({
   heroImage,
   index = "01",
   watermark,
+  secondaryIcon,
+  trustCards,
   variant = "default",
 }: PageHeroProps) {
   if (variant === "immersive") {
@@ -46,7 +53,10 @@ export function PageHero({
         className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
         style={{ background: "#0F2E25" }}
       >
-        <div className="grid lg:grid-cols-2" style={{ minHeight: "min(100vh, 880px)" }}>
+        <div
+          className="grid lg:grid-cols-2"
+          style={{ minHeight: "min(calc(100svh - var(--header-height)), 940px)" }}
+        >
 
           {/* LEFT — full-bleed image */}
           <div
@@ -108,16 +118,28 @@ export function PageHero({
                   "radial-gradient(ellipse 600px 500px at 110% -10%, rgba(176,241,34,0.11), transparent 60%)",
               }}
             />
+            {/* Dotted-grid atmosphere — faint, masked to the upper-right */}
+            <div
+              aria-hidden
+              className="gh-dot-grid pointer-events-none absolute inset-0"
+              style={{
+                opacity: 0.5,
+                maskImage:
+                  "radial-gradient(620px 460px at 92% 8%, #000 0%, transparent 70%)",
+                WebkitMaskImage:
+                  "radial-gradient(620px 460px at 92% 8%, #000 0%, transparent 70%)",
+              }}
+            />
 
-            <div className="relative">
+            <div className="relative" style={{ maxWidth: 620 }}>
               {countryCode || countryLabel ? (
-                <div className="mb-6 flex flex-wrap items-center gap-2">
+                <div className="mb-7 flex flex-wrap items-center gap-2">
                   <span
-                    className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em]"
+                    className="inline-flex items-center gap-2.5 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.16em]"
                     style={{
-                      background: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.12)",
-                      color: "rgba(255,255,255,0.65)",
+                      background: "rgba(7,38,30,0.75)",
+                      border: "1px solid rgba(176,241,34,0.22)",
+                      color: "rgba(255,255,255,0.78)",
                     }}
                   >
                     {countryCode ? <Flag code={countryCode} size="sm" /> : null}
@@ -127,11 +149,11 @@ export function PageHero({
               ) : null}
 
               <h1
-                className="font-extrabold leading-[1.0] tracking-[-0.035em]"
+                className="font-extrabold leading-[0.98] tracking-[-0.035em]"
                 style={{
-                  fontSize: "clamp(2.4rem, 3.5vw + 0.5rem, 4rem)",
-                  color: "rgba(255,255,255,0.95)",
-                  maxWidth: "16ch",
+                  fontSize: "clamp(2.75rem, 3vw + 2rem, 4.75rem)",
+                  color: "rgba(255,255,255,0.96)",
+                  maxWidth: "13ch",
                 }}
               >
                 {titleLead}{" "}
@@ -141,7 +163,7 @@ export function PageHero({
 
               {lede ? (
                 <p
-                  className="mt-5 leading-relaxed"
+                  className="mt-6 leading-relaxed"
                   style={{
                     maxWidth: "44ch",
                     fontSize: "var(--text-body-lg)",
@@ -153,14 +175,20 @@ export function PageHero({
               ) : null}
 
               {(ctaHref && ctaLabel) || (secondaryHref && secondaryLabel) ? (
-                <div className="mt-10 flex flex-wrap items-center gap-3">
+                <div className="mt-8 flex flex-wrap items-center gap-3">
                   {ctaHref && ctaLabel ? (
                     <Link
                       href={ctaHref}
-                      className="gh2-btn-lime focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.45)]"
+                      className="gh2-btn-lime pr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.45)]"
                     >
                       {ctaLabel}
-                      <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+                      <span
+                        aria-hidden
+                        className="ml-1 inline-flex size-7 items-center justify-center rounded-full"
+                        style={{ background: "rgba(10,31,20,0.16)" }}
+                      >
+                        <ArrowUpRight className="size-4" strokeWidth={2} />
+                      </span>
                     </Link>
                   ) : null}
                   {secondaryHref && secondaryLabel ? (
@@ -169,9 +197,34 @@ export function PageHero({
                       className="gh2-btn-ghost focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
                     >
                       {secondaryLabel}
+                      {secondaryIcon}
                     </Link>
                   ) : null}
                 </div>
+              ) : null}
+
+              {trustCards && trustCards.length > 0 ? (
+                <ul className="mt-7 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+                  {trustCards.map((card) => (
+                    <li
+                      key={card.title}
+                      className="gh-glass-emerald rounded-xl px-3.5 py-3"
+                    >
+                      <span
+                        className="inline-flex size-8 items-center justify-center rounded-lg text-[var(--color-brand-accent)]"
+                        style={{ background: "rgba(176,241,34,0.12)" }}
+                      >
+                        {card.icon}
+                      </span>
+                      <span className="mt-2 block text-[13px] font-bold leading-tight text-white">
+                        {card.title}
+                      </span>
+                      <span className="mt-0.5 block text-[11.5px] leading-snug text-white/55">
+                        {card.subtitle}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               ) : null}
             </div>
           </div>
