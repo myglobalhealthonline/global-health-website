@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AlertCircle, CheckCircle2, CreditCard, Loader2 } from "lucide-react";
 import {
+  cancelScheduledChange,
   cancelSubscription,
   changePlan,
   getBillingPortalUrl,
@@ -17,6 +18,8 @@ export interface PlanOption {
   id: string;
   name: string;
   priceLabel: string;
+  /** Monthly price in cents — to label each option as an upgrade or downgrade. */
+  priceCents: number;
 }
 
 // The manage copy bundle (subscription.manage) — passed verbatim from the
@@ -30,6 +33,8 @@ export interface ManagePanelProps {
   status: string;
   planName: string;
   priceLabel: string;
+  /** Current plan monthly price in cents — to classify changes up/down. */
+  currentPriceCents: number;
   nextBillingLabel: string | null;
   cancelAtPeriodEnd: boolean;
   pendingChangePlanName: string | null;
@@ -59,7 +64,7 @@ function statusMeta(status: string, t: ManageCopy): { tone: PillTone; label: str
 export function ManagePanel(props: ManagePanelProps) {
   const { t } = props;
   const router = useRouter();
-  const [busy, setBusy] = useState<null | "portal" | "cancel" | "change">(null);
+  const [busy, setBusy] = useState<null | "portal" | "cancel" | "change" | "cancelChange">(null);
   const [notice, setNotice] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<string>("");
 
@@ -107,6 +112,14 @@ export function ManagePanel(props: ManagePanelProps) {
 
   async function doChange() {
     if (!selectedPlan) return;
+    const opt = props.planOptions.find((p) => p.id === selectedPlan);
+    // Confirm the deferred change up-front, showing the exact effective date —
+    // the next billing date — so it's clear nothing changes (or is charged) today.
+    const confirmMsg = interpolate(t.changeConfirm, {
+      plan: opt?.name ?? "",
+      date: props.nextBillingLabel ?? "",
+    });
+    if (!window.confirm(confirmMsg)) return;
     setBusy("change");
     setNotice(null);
     const res = await changePlan(selectedPlan);
@@ -115,6 +128,19 @@ export function ManagePanel(props: ManagePanelProps) {
       const date = res.data.pendingChangeEffectiveAt ? formatAppDate(res.data.pendingChangeEffectiveAt) : "";
       setNotice({ kind: "ok", text: interpolate(t.changeScheduled, { date }) });
       setSelectedPlan("");
+      router.refresh();
+    } else {
+      setNotice({ kind: "error", text: res.message });
+    }
+  }
+
+  async function doCancelChange() {
+    setBusy("cancelChange");
+    setNotice(null);
+    const res = await cancelScheduledChange();
+    setBusy(null);
+    if (res.ok) {
+      setNotice({ kind: "ok", text: t.changeCanceled });
       router.refresh();
     } else {
       setNotice({ kind: "error", text: res.message });
@@ -190,9 +216,23 @@ export function ManagePanel(props: ManagePanelProps) {
           </p>
         ) : null}
         {props.pendingChangePlanName && props.pendingChangeDate ? (
-          <p className="mt-4 text-sm" style={{ color: "var(--color-text-body)" }}>
-            {interpolate(t.pendingChange, { plan: props.pendingChangePlanName, date: props.pendingChangeDate })}
-          </p>
+          <div
+            className="mt-4 rounded-[10px] p-3"
+            style={{ background: "var(--color-background-soft)", border: "1px solid var(--color-border)" }}
+          >
+            <p className="text-sm" style={{ color: "var(--color-text-body)" }}>
+              {interpolate(t.pendingChange, { plan: props.pendingChangePlanName, date: props.pendingChangeDate })}
+            </p>
+            <button
+              type="button"
+              onClick={doCancelChange}
+              disabled={busy === "cancelChange"}
+              className="mt-2 text-xs font-semibold underline disabled:opacity-60"
+              style={{ color: "var(--color-brand-primary)" }}
+            >
+              {busy === "cancelChange" ? t.cancelingChange : t.cancelChange}
+            </button>
+          </div>
         ) : null}
       </AdminCard>
 
@@ -213,7 +253,11 @@ export function ManagePanel(props: ManagePanelProps) {
       {canChange ? (
         <AdminCard>
           <p className="text-sm font-semibold" style={{ color: "var(--color-text-primary)" }}>{t.upgrade}</p>
-          <p className="mt-1 text-xs" style={{ color: "var(--color-text-muted)" }}>{t.changeNote}</p>
+          <p className="mt-1 text-xs" style={{ color: "var(--color-text-muted)" }}>
+            {props.nextBillingLabel
+              ? interpolate(t.changeEffective, { date: props.nextBillingLabel })
+              : t.changeNote}
+          </p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <select
               value={selectedPlan}
@@ -224,7 +268,7 @@ export function ManagePanel(props: ManagePanelProps) {
               <option value="">{t.change}…</option>
               {props.planOptions.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.name} — {p.priceLabel}
+                  {p.priceCents > props.currentPriceCents ? t.upgradeLabel : t.downgradeLabel}: {p.name} — {p.priceLabel}
                 </option>
               ))}
             </select>

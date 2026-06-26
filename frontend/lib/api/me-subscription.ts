@@ -204,6 +204,11 @@ export function changePlan(planId: string): Promise<MeResult<{ pendingChangeEffe
   return meRequest("subscription/change", { method: "POST", body: { planId } });
 }
 
+/** Undo a scheduled next-cycle plan change — keep the current plan. */
+export function cancelScheduledChange(): Promise<MeResult<{ canceled: boolean }>> {
+  return meRequest("subscription/cancel-change", { method: "POST" });
+}
+
 export function cancelSubscription(): Promise<MeResult<{ status: string; currentPeriodEnd: string | null }>> {
   return meRequest("subscription/cancel", { method: "POST" });
 }
