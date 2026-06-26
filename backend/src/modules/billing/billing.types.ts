@@ -100,6 +100,15 @@ export interface BillingPort {
     input: CreateSubscriptionCheckoutInput,
   ): Promise<{ url: string; sessionId: string }>;
 
+  /** Cancel every active/incomplete subscription currently on the customer.
+   *  Called right before opening a fresh subscription Checkout so a customer can
+   *  never accumulate two paid subscriptions (a duplicate or abandoned checkout
+   *  otherwise leaves an orphan active subscription at the provider that our DB
+   *  never tracks). Returns how many were canceled. No-op on the fake driver. */
+  cancelActiveSubscriptionsForCustomer(
+    customerId: string,
+  ): Promise<{ canceled: number }>;
+
   createBillingPortalSession(
     input: BillingPortalInput,
   ): Promise<{ url: string }>;

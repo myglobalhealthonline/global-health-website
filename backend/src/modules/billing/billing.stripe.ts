@@ -90,6 +90,25 @@ export class StripeBillingPort implements BillingPort {
     return { url: session.url ?? "", sessionId: session.id };
   }
 
+  async cancelActiveSubscriptionsForCustomer(
+    customerId: string,
+  ): Promise<{ canceled: number }> {
+    const stripe = getStripeClient();
+    const existing = await stripe.subscriptions.list({
+      customer: customerId,
+      status: "all",
+      limit: 100,
+    });
+    const cancelable = existing.data.filter((s) =>
+      ["active", "trialing", "past_due", "incomplete", "unpaid"].includes(s.status),
+    );
+    for (const s of cancelable) {
+      // Best-effort — a concurrent cancel / natural expiry is fine to swallow.
+      await stripe.subscriptions.cancel(s.id).catch(() => {});
+    }
+    return { canceled: cancelable.length };
+  }
+
   async createBillingPortalSession(input: {
     customerId: string;
     returnUrl: string;
