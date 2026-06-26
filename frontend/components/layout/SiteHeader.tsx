@@ -143,7 +143,7 @@ export function SiteHeader({
   // condenses into a floating rounded pill once the page scrolls.
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -211,32 +211,50 @@ export function SiteHeader({
 
   return (
     <header
-      className="gh-site-shell gh-header-sticky w-full"
-      style={{ borderBottomColor: "transparent" }}
+      className="gh-header-sticky w-full"
+      style={{
+        // Dark chrome forest — the same #0f2e25 the footer (gh-site-shell)
+        // uses. Solid at the top, fades to transparent once scrolled so no
+        // full-width bar sits behind the floating pill.
+        backgroundColor: scrolled ? "transparent" : "#0f2e25",
+        borderBottomColor: "transparent",
+        transition: "background-color 450ms ease",
+      }}
     >
       <div
-        className="mx-auto w-full max-w-[1280px] px-4 md:px-6"
-        style={{ paddingBlock: 12 }}
+        className="mx-auto w-full px-3 md:px-4"
+        style={{ paddingBlock: 10 }}
       >
-        {/* Floating rounded pill — constant height + side edges in every
-            state. Only its shadow deepens once the page scrolls. */}
+        {/* Ryzon-style morph: a full-width transparent bar across the top of
+            the page that condenses into a floating rounded pill (side edges,
+            glass, shadow) once the page scrolls. Height stays constant — only
+            width / radius / surface change, so nothing reflows. */}
         <div
-          className="grid items-center grid-cols-[auto_1fr_auto] gap-4 md:gap-6 rounded-full border border-white/12 px-4 md:px-6"
+          className="grid items-center grid-cols-[auto_1fr_auto] gap-4 md:gap-6 px-4 md:px-6"
           style={{
-            paddingBlock: 12,
-            background: "rgba(255,255,255,0.05)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
-            boxShadow: scrolled
-              ? "0 14px 40px rgba(0,0,0,0.34)"
-              : "0 6px 22px rgba(0,0,0,0.20)",
-            transition: "box-shadow 300ms ease",
+            maxWidth: scrolled ? 1360 : 1760,
+            marginInline: "auto",
+            paddingBlock: 10,
+            borderRadius: scrolled ? 999 : 0,
+            // Same #0f2e25 dark chrome as the top bar + footer, so the full
+            // and collapsed navbar are one colour. Opaque, stays readable
+            // floating over the light section below.
+            background: scrolled ? "#0f2e25" : "transparent",
+            // No border in either state (the expanded bar has none) and a
+            // soft, light shadow — so the collapsed pill reads as the exact
+            // same flat forest, not a darker, lime-edged capsule.
+            border: "1px solid transparent",
+            boxShadow: scrolled ? "0 8px 24px rgba(0,0,0,0.18)" : "none",
+            backdropFilter: "none",
+            WebkitBackdropFilter: "none",
+            transition:
+              "max-width 500ms cubic-bezier(0.16,1,0.3,1), border-radius 500ms ease, background-color 450ms ease, border-color 450ms ease, box-shadow 450ms ease",
           }}
         >
         {/* Brand */}
         <Link
           href={activeCountry && parsed.lang ? `/${parsed.country}/${parsed.lang}` : "/"}
-          className="gh-header-brandLink inline-flex items-center"
+          className="gh-header-brandLink inline-flex shrink-0 min-w-max items-center"
           aria-label={siteName || "Global Health"}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}

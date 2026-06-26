@@ -158,7 +158,7 @@ export function DoctorsHero({
       <div
         className="relative z-[1] mx-auto flex max-w-[var(--container-width)] flex-col justify-center px-5 md:px-10"
         style={{
-          minHeight: "calc(100svh - 80px)",
+          minHeight: "calc(100svh - var(--header-height))",
           paddingTop: "clamp(20px,3.5vw,40px)",
           paddingBottom: "clamp(20px,3.5vw,40px)",
         }}

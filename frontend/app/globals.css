@@ -160,7 +160,10 @@
 html {
   -moz-tab-size: 4;
   tab-size: 4;
-  scroll-behavior: smooth;
+  /* No global `scroll-behavior: smooth` — it makes the App Router's
+   * scroll-to-top animate (and sometimes stop short), leaving pages
+   * opening mid-scroll with the hero hidden under the sticky header.
+   * ScrollToTop snaps to 0 on every route change instead. */
   margin: 0;
 }
 
