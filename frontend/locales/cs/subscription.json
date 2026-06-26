@@ -119,7 +119,10 @@
     "discounted": "Sleva plánu",
     "notCovered": "Není zahrnuto ve vašem plánu",
     "youSave": "Ušetříte {amount} se svým plánem",
-    "creditsLeft": "Poté zbývá {count} kreditů na konzultace"
+    "creditsLeft": "Poté zbývá {count} kreditů na konzultace",
+    "locked": "Not yet unlocked",
+    "familyUnavailable": "Family usage not available",
+    "notEnoughCredits": "Not enough credits"
   },
   "dashboard": {
     "memberMonths": "Členem už {months} placených měsíců",

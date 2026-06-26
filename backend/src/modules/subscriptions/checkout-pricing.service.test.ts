@@ -73,7 +73,7 @@ describe("checkout pricing engine", () => {
         reserveAndPriceConsultations(tx, {
           userId: fx.userId,
           countryCode: fx.countryCode,
-          items: [{ id: "i1", kind: "GENERAL_CONSULTATION", serviceId: "svc-x", unitPriceCents: 5000 }],
+          items: [{ id: "i1", kind: "GENERAL_CONSULTATION", serviceId: "svc-x", unitPriceCents: 5000, benefitSelection: "USE_PLAN_CREDIT" }],
           peakPriceByItemId: new Map([["i1", 5000]]),
         }),
       );
@@ -99,7 +99,7 @@ describe("checkout pricing engine", () => {
         reserveAndPriceConsultations(tx, {
           userId: fx.userId,
           countryCode: fx.countryCode,
-          items: [{ id: "i1", kind: "SPECIALIST_CONSULTATION", serviceId: "svc-x", unitPriceCents: 7999 }],
+          items: [{ id: "i1", kind: "SPECIALIST_CONSULTATION", serviceId: "svc-x", unitPriceCents: 7999, benefitSelection: "USE_PLAN_DISCOUNT" }],
           peakPriceByItemId: new Map([["i1", 7999]]),
         }),
       );
@@ -148,8 +148,8 @@ describe("checkout pricing engine", () => {
           userId: fx.userId,
           countryCode: fx.countryCode,
           items: [
-            { id: "i1", kind: "GENERAL_CONSULTATION", serviceId: "svc-x", unitPriceCents: 5000 },
-            { id: "i2", kind: "GENERAL_CONSULTATION", serviceId: "svc-x", unitPriceCents: 5000 },
+            { id: "i1", kind: "GENERAL_CONSULTATION", serviceId: "svc-x", unitPriceCents: 5000, benefitSelection: "USE_PLAN_CREDIT" },
+            { id: "i2", kind: "GENERAL_CONSULTATION", serviceId: "svc-x", unitPriceCents: 5000, benefitSelection: "USE_PLAN_CREDIT" },
           ],
           peakPriceByItemId: new Map([
             ["i1", 5000],
@@ -178,7 +178,7 @@ describe("checkout pricing engine", () => {
       const coverage = await previewConsultationPricing({
         userId: fx.userId,
         countryCode: fx.countryCode,
-        items: [{ id: "i1", kind: "GENERAL_CONSULTATION", serviceId: "svc-x", unitPriceCents: 5000 }],
+        items: [{ id: "i1", kind: "GENERAL_CONSULTATION", serviceId: "svc-x", unitPriceCents: 5000, benefitSelection: "USE_PLAN_CREDIT" }],
         peakPriceByItemId: new Map([["i1", 5000]]),
       });
       const line = coverage.lines.find((l) => l.itemId === "i1");

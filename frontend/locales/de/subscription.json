@@ -119,7 +119,10 @@
     "discounted": "Tarifrabatt",
     "notCovered": "Nicht in Ihrem Tarif enthalten",
     "youSave": "Sie sparen {amount} mit Ihrem Tarif",
-    "creditsLeft": "{count} Beratungsguthaben danach übrig"
+    "creditsLeft": "{count} Beratungsguthaben danach übrig",
+    "locked": "Not yet unlocked",
+    "familyUnavailable": "Family usage not available",
+    "notEnoughCredits": "Not enough credits"
   },
   "dashboard": {
     "memberMonths": "Mitglied seit {months} bezahlten Monaten",

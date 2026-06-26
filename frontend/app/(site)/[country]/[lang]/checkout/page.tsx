@@ -20,6 +20,7 @@ import { startCheckout } from "@/lib/api/cart-client";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
 import { PhoneField } from "@/components/forms/phone-field";
 import { dialCodeForCountrySlug } from "@/lib/phone/dial-codes";
+import { PlanCoverage } from "@/components/cart/PlanCoverage";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
 import type { CartItem } from "@/lib/api/cart-types";
@@ -343,6 +344,15 @@ export default function CheckoutPage() {
               style={{ boxShadow: "var(--shadow-card)" }}
             >
               <div className="p-6">
+                {/* Read-only subscription coverage: which lines use a credit /
+                    discount, the beneficiary, and total saved. Reserves nothing
+                    — checkout recomputes authoritatively. */}
+                <PlanCoverage
+                  lang={lang}
+                  loginHref={`/login?next=${encodeURIComponent(returnTo)}`}
+                  plansHref={`${countrySlug && lang ? `/${countrySlug}/${lang}` : ""}/pricing?returnTo=${encodeURIComponent(returnTo)}`}
+                  itemNames={Object.fromEntries(cart.items.map((i) => [i.id, i.name]))}
+                />
                 <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>{t.orderSummary}</h2>
                 <ul className="mt-4 divide-y" style={{ borderColor: "var(--color-border)" }}>
                   {cart.items.map((i) => {

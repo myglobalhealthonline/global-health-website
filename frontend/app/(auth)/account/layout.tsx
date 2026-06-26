@@ -14,6 +14,7 @@ import {
   ShoppingBag,
   Stethoscope,
   UserRound,
+  Users,
 } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { PortalShell, type PortalNavItem } from "@/components/portal-shell";
@@ -76,6 +77,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     { href: "/account/orders", label: a.nav.myOrders, icon: <ShoppingBag className="size-4" aria-hidden /> },
     { href: "/account/prescriptions", label: a.nav.prescriptions, icon: <PillBottle className="size-4" aria-hidden /> },
     { href: "/account/medical-files", label: "Medical files", icon: <FileText className="size-4" aria-hidden /> },
+    { href: "/account/family", label: "Family members", icon: <Users className="size-4" aria-hidden /> },
     { href: "/account/access-history", label: "Access history", icon: <History className="size-4" aria-hidden /> },
     { href: "/account/payments", label: a.nav.payments, icon: <CreditCard className="size-4" aria-hidden /> },
     { href: "/account/profile", label: a.nav.profile, icon: <UserRound className="size-4" aria-hidden /> },

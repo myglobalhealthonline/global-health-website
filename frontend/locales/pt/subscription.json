@@ -119,7 +119,10 @@
     "discounted": "Desconto do plano",
     "notCovered": "Não incluído no seu plano",
     "youSave": "Poupa {amount} com o seu plano",
-    "creditsLeft": "{count} créditos de consulta restantes depois disto"
+    "creditsLeft": "{count} créditos de consulta restantes depois disto",
+    "locked": "Not yet unlocked",
+    "familyUnavailable": "Family usage not available",
+    "notEnoughCredits": "Not enough credits"
   },
   "dashboard": {
     "memberMonths": "Membro há {months} meses pagos",

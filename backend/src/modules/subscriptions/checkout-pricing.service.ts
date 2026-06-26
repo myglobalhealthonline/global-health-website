@@ -3,8 +3,18 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../db/prisma.js";
 import { recordAudit } from "../audit/audit.service.js";
 import { commitReservation, releaseReservation, reserveCredits } from "../credits/credit-balance.service.js";
-import { asPlanSnapshot } from "./plan-snapshot.js";
-import { resolveConsultationPrice, type PriceMode } from "./pricing-resolver.js";
+import { asPlanSnapshot, type SnapshotConsultationRule } from "./plan-snapshot.js";
+import {
+  eligibleBenefitSelections,
+  resolveConsultationPrice,
+  type BenefitSelection,
+  type CoverageReason,
+  type PriceMode,
+} from "./pricing-resolver.js";
+import {
+  resolveFamilyEligibility,
+  type FamilyIneligibleReason,
+} from "./family-eligibility.js";
 import { isBenefitEligible } from "./subscription-eligibility.js";
 
 /**
@@ -22,6 +32,10 @@ export interface CheckoutCartItem {
   kind: string;
   serviceId: string | null;
   unitPriceCents: number;
+  /** Per-line benefit choice. Defaults to PAY_NORMAL when absent (never reserves). */
+  benefitSelection?: BenefitSelection;
+  /** Dependent the line is booked for, or null for self-use. */
+  familyMemberId?: string | null;
 }
 
 export interface PlanLine {
@@ -36,6 +50,48 @@ export interface ApplyPricingResult {
 }
 
 const CONSULTATION_KINDS = new Set(["GENERAL_CONSULTATION", "SPECIALIST_CONSULTATION"]);
+
+/** Loaded dependent rows keyed by id; the primaryUserId filter is the spoof guard. */
+type FamilyMemberLite = { id: string; primaryUserId: string; canUseCredits: boolean; fullName: string };
+
+/**
+ * Batch-load the dependents referenced by a cart's `familyMemberId`s, scoped to
+ * the logged-in user. A foreign / removed id simply won't appear in the map →
+ * the eligibility gate returns NOT_OWNED and the line prices NORMAL.
+ */
+async function loadFamilyMembers(
+  client: Pick<Prisma.TransactionClient, "familyMember">,
+  ids: string[],
+  userId: string,
+): Promise<Map<string, FamilyMemberLite>> {
+  const unique = Array.from(new Set(ids.filter((id): id is string => Boolean(id))));
+  if (unique.length === 0) return new Map();
+  const rows = await client.familyMember.findMany({
+    where: { id: { in: unique }, primaryUserId: userId },
+    select: { id: true, primaryUserId: true, canUseCredits: true, fullName: true },
+  });
+  return new Map(rows.map((r) => [r.id, r]));
+}
+
+/**
+ * Compute the family-eligibility gate for a single line from already-loaded
+ * data. `forFamilyMember` is true only when the line carries a familyMemberId.
+ */
+function lineFamilyEligibility(
+  familyMemberId: string | null | undefined,
+  members: Map<string, FamilyMemberLite>,
+  userId: string,
+  snapshotFamilyEnabled: boolean,
+  rule: SnapshotConsultationRule | null,
+) {
+  return resolveFamilyEligibility({
+    forFamilyMember: Boolean(familyMemberId),
+    userId,
+    member: familyMemberId ? members.get(familyMemberId) ?? null : null,
+    snapshotFamilyEnabled,
+    ruleFamilyUsable: rule?.familyUsable ?? false,
+  });
+}
 
 /**
  * Resolve + reserve plan pricing for a cart's consultation lines. Must run
@@ -79,6 +135,13 @@ export async function reserveAndPriceConsultations(
   const snapshot = asPlanSnapshot(sub.planSnapshot);
   if (!snapshot) return { subscriptionId: sub.id, lines };
 
+  // Server-side spoof guard: load only the dependents owned by this user.
+  const members = await loadFamilyMembers(
+    tx,
+    input.items.map((i) => i.familyMemberId ?? null).filter((id): id is string => Boolean(id)),
+    input.userId,
+  );
+
   // Local mirror of the live consultation counter so two credit lines in the
   // same cart don't both attempt to spend the last credit.
   const balanceRow = await tx.subscriptionCreditBalance.findUnique({
@@ -92,12 +155,23 @@ export async function reserveAndPriceConsultations(
     const rule = snapshot.consultationRules.find((r) => r.serviceId === item.serviceId) ?? null;
     if (!rule) continue;
 
+    const benefitSelection: BenefitSelection = item.benefitSelection ?? "PAY_NORMAL";
+    const familyEligible = lineFamilyEligibility(
+      item.familyMemberId,
+      members,
+      input.userId,
+      snapshot.familyEnabled,
+      rule,
+    ).eligible;
+
     const basePriceCents = input.peakPriceByItemId.get(item.id) ?? item.unitPriceCents;
     const resolved = resolveConsultationPrice({
       rule,
       basePriceCents,
       creditsAvailable,
       paidMonthsCount: sub.paidMonthsCount,
+      benefitSelection,
+      familyEligible,
     });
 
     if (resolved.mode === "CREDIT") {
@@ -117,12 +191,16 @@ export async function reserveAndPriceConsultations(
         lines.set(item.id, { finalUnitPriceCents: 0, creditCovered: true, reservationId });
         continue;
       }
-      // Lost the race — fall back to discount/normal (no credit).
+      // Lost the race — re-resolve at zero balance. Per D7, USE_PLAN_CREDIT
+      // never silently switches to a discount, so this resolves to NORMAL
+      // (NOT_ENOUGH_CREDITS); no credit reserved.
       const fallback = resolveConsultationPrice({
         rule,
         basePriceCents,
         creditsAvailable: 0,
         paidMonthsCount: sub.paidMonthsCount,
+        benefitSelection,
+        familyEligible,
       });
       lines.set(item.id, { finalUnitPriceCents: fallback.unitPriceCents, creditCovered: false });
       continue;
@@ -136,6 +214,9 @@ export async function reserveAndPriceConsultations(
 
 export type CoverageMode = PriceMode | "NOT_COVERED";
 
+/** Per-line preview reason — superset of the resolver reason plus NOT_OWNED. */
+export type CoverageLineReason = CoverageReason | FamilyIneligibleReason;
+
 export interface CoverageLine {
   itemId: string;
   serviceId: string | null;
@@ -144,6 +225,16 @@ export interface CoverageLine {
   finalUnitPriceCents: number;
   creditsUsed: number;
   savedCents: number;
+  /** The benefit currently selected on this line. */
+  selection: BenefitSelection;
+  /** Why the line resolved as it did (so the UI can warn vs. silently charge). */
+  reason: CoverageLineReason;
+  /** Only the selections this line can honour — drives the cart's selector. */
+  eligibleSelections: BenefitSelection[];
+  /** Dependent the line targets (null = self). */
+  familyMemberId: string | null;
+  /** Display name of the dependent (null = self / unknown). */
+  familyMemberName: string | null;
 }
 
 export interface CartCoverage {
@@ -208,6 +299,12 @@ export async function previewConsultationPricing(input: {
   const snapshot = asPlanSnapshot(sub.planSnapshot);
   if (!snapshot) return { ...empty, subscriptionId: sub.id, planName: sub.plan.name };
 
+  const members = await loadFamilyMembers(
+    prisma,
+    input.items.map((i) => i.familyMemberId ?? null).filter((id): id is string => Boolean(id)),
+    input.userId,
+  );
+
   const balanceRow = await prisma.subscriptionCreditBalance.findUnique({
     where: { userSubscriptionId_kind: { userSubscriptionId: sub.id, kind: "CONSULTATION" } },
   });
@@ -221,6 +318,9 @@ export async function previewConsultationPricing(input: {
     if (!CONSULTATION_KINDS.has(item.kind) || !item.serviceId) continue;
     const basePriceCents = input.peakPriceByItemId.get(item.id) ?? item.unitPriceCents;
     const rule = snapshot.consultationRules.find((r) => r.serviceId === item.serviceId) ?? null;
+    const selection: BenefitSelection = item.benefitSelection ?? "PAY_NORMAL";
+    const familyMemberId = item.familyMemberId ?? null;
+    const familyMemberName = familyMemberId ? members.get(familyMemberId)?.fullName ?? null : null;
 
     if (!rule) {
       lines.push({
@@ -231,23 +331,42 @@ export async function previewConsultationPricing(input: {
         finalUnitPriceCents: basePriceCents,
         creditsUsed: 0,
         savedCents: 0,
+        selection,
+        reason: "NOT_COVERED",
+        eligibleSelections: ["PAY_NORMAL"],
+        familyMemberId,
+        familyMemberName,
       });
       totalBaseCents += basePriceCents;
       totalFinalCents += basePriceCents;
       continue;
     }
 
+    const family = lineFamilyEligibility(
+      familyMemberId,
+      members,
+      input.userId,
+      snapshot.familyEnabled,
+      rule,
+    );
     const resolved = resolveConsultationPrice({
       rule,
       basePriceCents,
       creditsAvailable,
       paidMonthsCount: sub.paidMonthsCount,
+      benefitSelection: selection,
+      familyEligible: family.eligible,
     });
     let creditsUsed = 0;
     if (resolved.mode === "CREDIT") {
       creditsUsed = resolved.creditsToReserve;
       creditsAvailable -= creditsUsed;
     }
+    // Prefer the specific family reason (NOT_OWNED / MEMBER_NOT_ALLOWED / …)
+    // over the resolver's generic FAMILY_UNAVAILABLE so the UI can be precise.
+    const reason: CoverageLineReason = !family.eligible
+      ? family.reason ?? resolved.reason
+      : resolved.reason;
     lines.push({
       itemId: item.id,
       serviceId: item.serviceId,
@@ -256,6 +375,15 @@ export async function previewConsultationPricing(input: {
       finalUnitPriceCents: resolved.unitPriceCents,
       creditsUsed,
       savedCents: Math.max(0, basePriceCents - resolved.unitPriceCents),
+      selection,
+      reason,
+      eligibleSelections: eligibleBenefitSelections({
+        rule,
+        paidMonthsCount: sub.paidMonthsCount,
+        familyEligible: family.eligible,
+      }),
+      familyMemberId,
+      familyMemberName,
     });
     totalBaseCents += basePriceCents;
     totalFinalCents += resolved.unitPriceCents;

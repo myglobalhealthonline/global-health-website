@@ -81,7 +81,12 @@ export async function listConsultationRules(planId: string) {
  * NOT be a PRESCRIPTION service.
  */
 export async function setConsultationRule(planId: string, body: AdminConsultationRuleBody) {
-  const planCountryId = await loadPlanCountry(planId);
+  const plan = await prisma.pricingPlan.findUnique({
+    where: { id: planId },
+    select: { countryId: true, planType: true, familyEnabled: true },
+  });
+  if (!plan) throw new PlanNotFoundError();
+  const planCountryId = plan.countryId;
   const service = await prisma.service.findUnique({
     where: { id: body.serviceId },
     select: { id: true, countryId: true, kind: true, isActive: true },
@@ -91,6 +96,12 @@ export async function setConsultationRule(planId: string, body: AdminConsultatio
   if (service.countryId !== planCountryId) throw new RuleCrossCountryError();
   if (!service.isActive) throw new RuleServiceInactiveError();
 
+  // Family usage is impossible unless the plan is PREMIUM AND family is enabled
+  // on it. Force familyUsable=false otherwise so a rule on a non-family plan can
+  // never enter a future snapshot as family-usable (§ appointment-claim G4,
+  // defense in depth — snapshot.familyEnabled also blocks it at claim time).
+  const familyAllowed = plan.planType === "PREMIUM" && plan.familyEnabled;
+
   const data = {
     isIncluded: body.isIncluded,
     usesCredits: body.usesCredits,
@@ -99,7 +110,7 @@ export async function setConsultationRule(planId: string, body: AdminConsultatio
     discountPercent: body.discountMode === "PERCENT" ? body.discountPercent ?? null : null,
     fixedPriceCents: body.discountMode === "FIXED" ? body.fixedPriceCents ?? null : null,
     unlockAfterPaidMonths: body.unlockAfterPaidMonths,
-    familyUsable: body.familyUsable,
+    familyUsable: familyAllowed ? body.familyUsable : false,
     isActive: body.isActive,
   };
 

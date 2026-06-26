@@ -11,6 +11,7 @@ import {
   updateAdminPlan,
   PlanCountryNotFoundError,
   PlanPriceSyncError,
+  PlanFamilyNotPremiumError,
 } from "../modules/plans/plans.service.js";
 import {
   getPlanPreview,
@@ -33,7 +34,11 @@ import { requireManageSubscriptions } from "../utils/manage-subscriptions-auth.j
 import { errorResponse, okResponse } from "../utils/response.js";
 
 function handlePlanWriteError(app: { log: { error: (e: unknown) => void } }, reply: FastifyReply, error: unknown) {
-  if (error instanceof PlanCountryNotFoundError || error instanceof LocaleNotSupportedError) {
+  if (
+    error instanceof PlanCountryNotFoundError ||
+    error instanceof LocaleNotSupportedError ||
+    error instanceof PlanFamilyNotPremiumError
+  ) {
     return reply.status(400).send(errorResponse(error.message));
   }
   if (error instanceof PlanNotFoundError) {

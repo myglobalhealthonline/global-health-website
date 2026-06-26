@@ -56,6 +56,39 @@ describe("adminPlanCreateBodySchema", () => {
     const result = adminPlanCreateBodySchema.safeParse({ ...planBase, slug: "Essential Care" });
     assert.equal(result.success, false);
   });
+
+  it("rejects familyEnabled=true on a non-PREMIUM plan (§ appointment-claim G4)", () => {
+    const essential = adminPlanCreateBodySchema.safeParse({
+      ...planBase,
+      planType: "ESSENTIAL",
+      familyEnabled: true,
+    });
+    assert.equal(essential.success, false);
+    const comprehensive = adminPlanCreateBodySchema.safeParse({
+      ...planBase,
+      planType: "COMPREHENSIVE",
+      familyEnabled: true,
+    });
+    assert.equal(comprehensive.success, false);
+  });
+
+  it("accepts familyEnabled=true on a PREMIUM plan", () => {
+    const result = adminPlanCreateBodySchema.safeParse({
+      ...planBase,
+      planType: "PREMIUM",
+      familyEnabled: true,
+    });
+    assert.equal(result.success, true);
+  });
+
+  it("accepts familyEnabled=false on any tier", () => {
+    const result = adminPlanCreateBodySchema.safeParse({
+      ...planBase,
+      planType: "ESSENTIAL",
+      familyEnabled: false,
+    });
+    assert.equal(result.success, true);
+  });
 });
 
 describe("adminConsultationRuleBodySchema", () => {

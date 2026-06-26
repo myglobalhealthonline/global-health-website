@@ -180,6 +180,8 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   kind: i.kind,
                   serviceId: i.serviceId,
                   unitPriceCents: effectiveUnitPrice(i),
+                  benefitSelection: i.benefitSelection,
+                  familyMemberId: i.familyMemberId,
                 })),
                 peakPriceByItemId: effectivePriceByItemId,
               })
@@ -239,6 +241,10 @@ const ordersRoute: FastifyPluginAsync = async (app) => {
                   patientNotes: i.patientNotes,
                   patientConsentAcceptedAt: i.patientConsentAcceptedAt,
                   bookingForOther: i.bookingForOther,
+                  // Per-line benefit choice + family target → carried for audit
+                  // (which lines drew on a credit/discount, for which dependent).
+                  benefitSelection: i.benefitSelection,
+                  familyMemberId: i.familyMemberId,
                   // Carry the new booking snapshot through to the order
                   // item; the payment webhook reads it to mint Appointment.
                   patientNationalIdNumber: i.patientNationalIdNumber,

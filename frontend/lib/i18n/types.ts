@@ -253,6 +253,12 @@ export type CommonLocale = {
     acceptConsent: string;
     acceptClinicConsent: string;
     acceptPlatformConsent: string;
+    /** Family-member targeting (§ appointment-claim, Premium family usage). */
+    whoIsThisFor: string;
+    forMe: string;
+    forFamilyMember: string;
+    manageFamily: string;
+    familyBenefitNote: string;
   };
   extra: {
     specialistsWatermark: string;
@@ -467,6 +473,15 @@ export type CommonLocale = {
     increaseQuantity: string;
     removeAria: string;
     remove: string;
+    /** Per-line subscription benefit selector (§ appointment-claim). */
+    benefitLabel: string;
+    payNormally: string;
+    usePlanCredit: string;
+    usePlanDiscount: string;
+    /** "For {name}" beneficiary line on a family-booked consultation. */
+    benefitFor: string;
+    /** Warning under the selector when USE_PLAN_CREDIT has no credits left. */
+    notEnoughCreditsHint: string;
   };
   checkoutPage: {
     title: string;

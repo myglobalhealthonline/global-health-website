@@ -250,7 +250,12 @@
     "enterValidEmail": "Geben Sie eine gültige E-Mail-Adresse ein.",
     "acceptConsent": "Sie müssen der Einwilligung zustimmen, um fortzufahren.",
     "acceptClinicConsent": "Sie müssen der Datenweitergabe an die behandelnde Klinik zustimmen.",
-    "acceptPlatformConsent": "Sie müssen der Datenverarbeitung durch die Plattform zustimmen."
+    "acceptPlatformConsent": "Sie müssen der Datenverarbeitung durch die Plattform zustimmen.",
+    "whoIsThisFor": "Who is this booking for?",
+    "forMe": "Myself",
+    "forFamilyMember": "A family member",
+    "manageFamily": "Manage family members",
+    "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible."
   },
   "extra": {
     "specialistsWatermark": "Fachärzte",
@@ -464,7 +469,13 @@
     "decreaseQuantity": "Menge verringern",
     "increaseQuantity": "Menge erhöhen",
     "removeAria": "{name} entfernen",
-    "remove": "Entfernen"
+    "remove": "Entfernen",
+    "benefitLabel": "Plan benefit",
+    "payNormally": "Pay normally",
+    "usePlanCredit": "Use a credit",
+    "usePlanDiscount": "Use discount",
+    "benefitFor": "For {name}",
+    "notEnoughCreditsHint": "No credits left — this consultation will be charged at full price."
   },
   "checkoutPage": {
     "title": "Kasse",

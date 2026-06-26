@@ -112,6 +112,20 @@ export function getCredits(): Promise<MeResult<CreditsView>> {
 
 export type CartCoverageMode = "CREDIT" | "FIXED" | "PERCENT" | "NORMAL" | "NOT_COVERED";
 
+export type BenefitSelection = "PAY_NORMAL" | "USE_PLAN_CREDIT" | "USE_PLAN_DISCOUNT";
+
+/** Per-line preview reason — why the line resolved to its price. */
+export type CartCoverageReason =
+  | "COVERED"
+  | "NOT_COVERED"
+  | "LOCKED"
+  | "NOT_ENOUGH_CREDITS"
+  | "FAMILY_UNAVAILABLE"
+  | "NOT_OWNED"
+  | "FAMILY_NOT_ENABLED"
+  | "SERVICE_NOT_FAMILY_USABLE"
+  | "MEMBER_NOT_ALLOWED";
+
 export interface CartCoverageLine {
   itemId: string;
   serviceId: string | null;
@@ -120,6 +134,16 @@ export interface CartCoverageLine {
   finalUnitPriceCents: number;
   creditsUsed: number;
   savedCents: number;
+  /** The benefit currently selected on this line. */
+  selection: BenefitSelection;
+  /** Why this line resolved as it did (drives warning chips). */
+  reason: CartCoverageReason;
+  /** Only the selections this line can honour — drives the cart selector. */
+  eligibleSelections: BenefitSelection[];
+  /** Dependent the line targets (null = self). */
+  familyMemberId: string | null;
+  /** Display name of the dependent (null = self / unknown). */
+  familyMemberName: string | null;
 }
 
 export interface CartCoverageView {

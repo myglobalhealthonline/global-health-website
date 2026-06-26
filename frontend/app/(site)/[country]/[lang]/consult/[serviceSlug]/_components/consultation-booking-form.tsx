@@ -3,9 +3,11 @@
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
 import { useCart } from "@/components/cart/CartContext";
 import type { CartItemKind } from "@/lib/api/cart-types";
 import { fetchCurrentUser, type AuthUser } from "@/lib/api/auth-api";
+import { listFamilyMembers, type FamilyMember } from "@/lib/api/family-client";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { PhoneField } from "@/components/forms/phone-field";
@@ -100,19 +102,40 @@ export function ConsultationBookingForm({
   const [me, setMe] = useState<AuthUser | null>(null);
   const [authLoaded, setAuthLoaded] = useState(false);
   const [bookingForOther, setBookingForOther] = useState(false);
+  // Approved dependents the logged-in patient can book for (Premium family
+  // usage). Only those approved to use plan benefits (canUseCredits) appear.
+  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
+  const [selectedFamilyId, setSelectedFamilyId] = useState("");
 
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       const res = await fetchCurrentUser();
       if (cancelled) return;
-      if (res.ok) setMe(res.data.user);
+      if (res.ok) {
+        setMe(res.data.user);
+        // Pull the patient's approved family list so they can book for a
+        // dependent and apply the plan benefit. Best-effort — failure just
+        // hides the selector.
+        const fam = await listFamilyMembers();
+        if (!cancelled && fam.ok) setFamilyMembers(fam.data.items);
+      }
       setAuthLoaded(true);
     })();
     return () => {
       cancelled = true;
     };
   }, []);
+
+  const approvedMembers = useMemo(
+    () => familyMembers.filter((m) => m.canUseCredits),
+    [familyMembers],
+  );
+  const selectedMember =
+    approvedMembers.find((m) => m.id === selectedFamilyId) ?? null;
+  // "Treating someone other than the account holder" — either the manual
+  // free-text toggle OR an approved family member chosen from the dropdown.
+  const treatingOther = bookingForOther || Boolean(selectedMember);
 
   const defaults = useMemo(() => {
     if (!me) {
@@ -168,11 +191,11 @@ export function ConsultationBookingForm({
     const gdprConsentClinic = form.get("gdprConsentClinic") === "on";
     const gdprConsentPlatform = form.get("gdprConsentPlatform") === "on";
 
-    if (!bookingForOther && fullName.length < 2) {
+    if (!selectedMember && !bookingForOther && fullName.length < 2) {
       setError(i18n.enterFullName);
       return;
     }
-    if (bookingForOther && patientOtherName.length < 2) {
+    if (!selectedMember && bookingForOther && patientOtherName.length < 2) {
       setError("Enter the patient’s full name.");
       return;
     }
@@ -205,19 +228,39 @@ export function ConsultationBookingForm({
     }
 
     startTransition(async () => {
+      // Resolve the patient identity. A selected family member's identity
+      // comes from the approved dependent row; otherwise the manual
+      // free-text "someone else" fields, otherwise the account holder.
+      const patientName = selectedMember
+        ? selectedMember.fullName
+        : bookingForOther
+          ? patientOtherName
+          : fullName;
+      const patientDob = selectedMember
+        ? selectedMember.dateOfBirth?.slice(0, 10) || undefined
+        : (bookingForOther ? patientOtherDob : dateOfBirth) || undefined;
+      const patientPhoneVal = selectedMember
+        ? phone || undefined
+        : (bookingForOther ? patientOtherPhone || phone : phone) || undefined;
+
       const res = await add({
         kind,
         serviceId,
         doctorId,
         timeSlotId: selectedSlotId,
+        // Premium family usage — the line targets an approved dependent and
+        // pre-selects the credit benefit (server re-verifies eligibility).
+        ...(selectedMember
+          ? { familyMemberId: selectedMember.id, benefitSelection: "USE_PLAN_CREDIT" as const }
+          : {}),
         patient: {
-          fullName: bookingForOther ? patientOtherName : fullName,
+          fullName: patientName,
           email,
-          phone: (bookingForOther ? patientOtherPhone || phone : phone) || undefined,
-          dateOfBirth: (bookingForOther ? patientOtherDob : dateOfBirth) || undefined,
+          phone: patientPhoneVal,
+          dateOfBirth: patientDob,
           notes: notes || undefined,
           consentAccepted: true,
-          bookingForOther,
+          bookingForOther: treatingOther,
           nationalIdNumber: nationalIdNumber || undefined,
           patientTimezone,
           addressLine1: addressLine1 || undefined,
@@ -238,7 +281,7 @@ export function ConsultationBookingForm({
       // here — if the backend's slow, the patient still gets redirected
       // to /cart in normal time. Failure is non-fatal; they can fill it
       // in later from /account/profile.
-      if (me && !bookingForOther && nationalIdNumber) {
+      if (me && !treatingOther && nationalIdNumber) {
         void fetch("/api/account/profile", {
           method: "PATCH",
           credentials: "include",
@@ -274,7 +317,7 @@ export function ConsultationBookingForm({
   // toggle "Booking for someone else" or refresh. Including the user
   // identity in the key forces a clean remount once auth resolves so
   // the prefilled defaults actually appear.
-  const formKey = `${bookingForOther ? "other" : "self"}:${me?.id ?? (authLoaded ? "guest" : "loading")}`;
+  const formKey = `${treatingOther ? "other" : "self"}:${selectedFamilyId || "none"}:${me?.id ?? (authLoaded ? "guest" : "loading")}`;
 
   return (
     <form
@@ -437,10 +480,55 @@ export function ConsultationBookingForm({
         * the actual patient (person being treated). */}
       <fieldset className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 sm:p-6">
         <legend className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-          {bookingForOther ? "Your contact details" : i18n.patientDetails}
+          {treatingOther ? "Your contact details" : i18n.patientDetails}
         </legend>
-        {me ? (
-          <label className="mt-1 flex items-center gap-2 text-sm text-[var(--color-text-body)]">
+
+        {/* Family-member targeting — book for an approved dependent and apply
+          * the plan benefit. Shown only to logged-in patients with at least
+          * one approved family member. */}
+        {me && approvedMembers.length > 0 ? (
+          <div className="mt-1">
+            <label className="block">
+              <span className="text-xs font-semibold text-[var(--color-text-body)]">
+                {i18n.whoIsThisFor}
+              </span>
+              <select
+                value={selectedFamilyId}
+                onChange={(e) => {
+                  setSelectedFamilyId(e.target.value);
+                  // The dropdown and the manual toggle are mutually exclusive.
+                  if (e.target.value) setBookingForOther(false);
+                }}
+                className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
+              >
+                <option value="">{i18n.forMe}</option>
+                {approvedMembers.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.fullName}
+                    {m.relationship ? ` (${m.relationship})` : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {selectedMember ? (
+              <p className="mt-1.5 text-xs text-[var(--color-text-muted)]">
+                {i18n.familyBenefitNote}
+              </p>
+            ) : null}
+            <Link
+              href="/account/family"
+              className="mt-1 inline-block text-xs font-semibold underline"
+              style={{ color: "var(--color-brand-primary)" }}
+            >
+              {i18n.manageFamily}
+            </Link>
+          </div>
+        ) : null}
+
+        {/* Manual "someone else" path — only when not targeting a saved
+          * family member (the two mechanisms are mutually exclusive). */}
+        {me && !selectedMember ? (
+          <label className="mt-2 flex items-center gap-2 text-sm text-[var(--color-text-body)]">
             <input
               type="checkbox"
               checked={bookingForOther}
@@ -452,7 +540,7 @@ export function ConsultationBookingForm({
         ) : null}
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {!bookingForOther ? (
+          {!treatingOther ? (
             <label className="block">
               <span className="text-xs font-semibold text-[var(--color-text-body)]">
                 {i18n.patientFullName}
@@ -468,9 +556,9 @@ export function ConsultationBookingForm({
               />
             </label>
           ) : null}
-          <label className={`block${bookingForOther ? " sm:col-span-2" : ""}`}>
+          <label className={`block${treatingOther ? " sm:col-span-2" : ""}`}>
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
-              {bookingForOther ? "Your email (for confirmation)" : i18n.email}
+              {treatingOther ? "Your email (for confirmation)" : i18n.email}
             </span>
             <input
               type="email"
@@ -479,13 +567,13 @@ export function ConsultationBookingForm({
               defaultValue={defaults.email}
               className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
-            {bookingForOther ? (
+            {treatingOther ? (
               <p className="mt-1 text-xs text-[var(--color-text-muted)]">
                 {i18n.bookingConfirmationsNote}
               </p>
             ) : null}
           </label>
-          {!bookingForOther ? (
+          {!treatingOther ? (
             <label className="block">
               <span className="text-xs font-semibold text-[var(--color-text-body)]">{i18n.phone}</span>
               <PhoneField
@@ -499,7 +587,7 @@ export function ConsultationBookingForm({
               />
             </label>
           ) : null}
-          {!bookingForOther ? (
+          {!treatingOther ? (
             <label className="block">
               <span className="text-xs font-semibold text-[var(--color-text-body)]">
                 {i18n.dateOfBirth}

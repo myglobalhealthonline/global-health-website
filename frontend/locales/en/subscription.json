@@ -119,7 +119,10 @@
     "discounted": "Plan discount",
     "notCovered": "Not covered by your plan",
     "youSave": "You save {amount} with your plan",
-    "creditsLeft": "{count} consultation credits left after this"
+    "creditsLeft": "{count} consultation credits left after this",
+    "locked": "Not yet unlocked",
+    "familyUnavailable": "Family usage not available",
+    "notEnoughCredits": "Not enough credits"
   },
   "dashboard": {
     "memberMonths": "Member for {months} paid months",

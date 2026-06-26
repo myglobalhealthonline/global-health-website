@@ -250,7 +250,12 @@
     "enterValidEmail": "Zadejte platnou e-mailovou adresu.",
     "acceptConsent": "Před pokračováním musíte přijmout souhlas.",
     "acceptClinicConsent": "Musíte souhlasit se sdílením dat s ošetřující klinikou.",
-    "acceptPlatformConsent": "Musíte souhlasit se zpracováním dat platformou."
+    "acceptPlatformConsent": "Musíte souhlasit se zpracováním dat platformou.",
+    "whoIsThisFor": "Who is this booking for?",
+    "forMe": "Myself",
+    "forFamilyMember": "A family member",
+    "manageFamily": "Manage family members",
+    "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible."
   },
   "extra": {
     "specialistsWatermark": "Specialisté",
@@ -464,7 +469,13 @@
     "decreaseQuantity": "Snížit množství",
     "increaseQuantity": "Zvýšit množství",
     "removeAria": "Odebrat {name}",
-    "remove": "Odebrat"
+    "remove": "Odebrat",
+    "benefitLabel": "Plan benefit",
+    "payNormally": "Pay normally",
+    "usePlanCredit": "Use a credit",
+    "usePlanDiscount": "Use discount",
+    "benefitFor": "For {name}",
+    "notEnoughCreditsHint": "No credits left — this consultation will be charged at full price."
   },
   "checkoutPage": {
     "title": "Pokladna",
