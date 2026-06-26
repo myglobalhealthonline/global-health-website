@@ -18,6 +18,7 @@ export type PublicPartner = {
   id: string;
   name: string;
   websiteUrl: string | null;
+  type: string | null;
   logoPath: string | null;
   sortOrder: number;
 };
@@ -32,6 +33,7 @@ function toPublic(p: PartnerRow): PublicPartner {
     id: p.id,
     name: p.name,
     websiteUrl: p.websiteUrl,
+    type: p.type,
     logoPath: p.asset?.path ?? null,
     sortOrder: p.sortOrder,
   };
@@ -44,6 +46,7 @@ function toAdmin(p: PartnerRow): AdminPartner {
 export type PartnerWriteInput = {
   name?: string;
   websiteUrl?: string | null;
+  type?: string | null;
   /** Uploaded media path; undefined = leave logo as-is, null/"" = clear it. */
   logoImagePath?: string | null;
   sortOrder?: number;
@@ -128,6 +131,7 @@ export async function createPartner(
         countryId,
         name: input.name,
         websiteUrl: input.websiteUrl ?? null,
+        type: input.type ?? null,
         sortOrder: input.sortOrder ?? 0,
         active: input.active ?? true,
         assetId,
@@ -163,6 +167,7 @@ export async function updatePartner(
       data: {
         ...(input.name !== undefined && { name: input.name }),
         ...(input.websiteUrl !== undefined && { websiteUrl: input.websiteUrl }),
+        ...(input.type !== undefined && { type: input.type }),
         ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
         ...(input.active !== undefined && { active: input.active }),
         ...(input.logoImagePath !== undefined && { assetId }),

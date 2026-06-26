@@ -645,6 +645,7 @@ export type AdminPartnerDto = {
   countryId: string;
   name: string;
   websiteUrl: string | null;
+  type: string | null;
   logoPath: string | null;
   sortOrder: number;
   active: boolean;

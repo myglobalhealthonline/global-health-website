@@ -47,7 +47,8 @@ import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
 import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
-import { PartnersMarquee } from "@/components/sections/PartnersMarquee";
+import { CertificationBadges } from "@/components/sections/CertificationBadges";
+import { PartnersClients } from "@/components/sections/PartnersClients";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -559,7 +560,8 @@ export default async function CountryLangHomePage({
       {countryTrust ? (
         <VerifiedProfessionals trust={countryTrust} locale={lang} />
       ) : null}
-      <PartnersMarquee partners={countryPartners} />
+      <CertificationBadges trust={countryTrust} countryName={config.name} />
+      <PartnersClients partners={countryPartners} countryName={config.name} />
       <HowItWorksNarrative theme="light" i18n={t.howItWorks} />
       <FinalCTA primaryHref={bookHref} secondaryHref={doctorsHref} i18n={t.finalCta} />
       <StickyBookingCTA href={bookHref} />
