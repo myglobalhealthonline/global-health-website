@@ -16,7 +16,6 @@ import {
   Mail,
   Menu,
   Newspaper,
-  Settings,
   ShoppingBag,
   Stethoscope,
   Tags,
@@ -54,7 +53,6 @@ const GLOBAL_ICONS: Record<string, LucideIcon> = {
   "/admin/users": Users,
   "/admin/newsletter": Mail,
   "/admin/orders": ShoppingBag,
-  "/admin/settings": Settings,
   "/admin/pages": FileText,
   "/admin/services": Stethoscope,
   "/admin/blog": Newspaper,
@@ -76,7 +74,6 @@ const GLOBAL_HREFS = new Set([
   "/admin/newsletter",
   "/admin/subscriptions",
   "/admin/audit-log",
-  "/admin/settings",
 ]);
 
 const COUNTRY_HREFS = new Set([
@@ -124,7 +121,6 @@ const ORDER: Record<string, number> = {
   "/admin/newsletter": 7,
   "/admin/subscriptions": 7.5,
   "/admin/audit-log": 8,
-  "/admin/settings": 9,
   "/admin/country-features": 0,
   "/admin/country-home": 1,
   "/admin/country-content": 2,
@@ -501,13 +497,6 @@ export function AdminShell({
                         {user.role}
                       </p>
                       <nav className="mt-2 flex flex-col gap-0.5">
-                        <Link
-                          href="/admin/settings"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="rounded-md px-2 py-1.5 text-sm font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
-                        >
-                          Account
-                        </Link>
                         <Link
                           href="/"
                           onClick={() => setUserMenuOpen(false)}

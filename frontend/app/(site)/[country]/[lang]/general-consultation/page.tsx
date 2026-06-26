@@ -7,7 +7,6 @@ import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
-import { ReviewBadge } from "@/components/sections/ReviewBadge";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import {
@@ -273,9 +272,7 @@ export default async function CountryLangGeneralConsultationPage({
         />
       ) : null}
 
-      {/* 5 — Trust: review badge, then the clinicians behind the service. */}
-      <ReviewBadge countryName={config.name} />
-
+      {/* 5 — The clinicians behind the service. */}
       {doctorItems.length > 0 ? (
         <DoctorsSection
           title={gp.doctorsSectionTitle.replace("{country}", config.name)}
