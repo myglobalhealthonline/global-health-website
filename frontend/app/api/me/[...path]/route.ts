@@ -25,6 +25,7 @@ const ROUTE_TABLE: Record<string, Set<string>> = {
   POST: new Set([
     "subscription",
     "subscription/change",
+    "subscription/cancel-change",
     "subscription/cancel",
     "subscription/dev-activate",
     "redemptions",

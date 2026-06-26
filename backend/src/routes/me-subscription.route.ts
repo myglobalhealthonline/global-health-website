@@ -5,6 +5,7 @@ import { resolveOptionalAuthUser } from "../utils/request-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import {
   SubscriptionServiceError,
+  cancelScheduledChange,
   cancelSubscription,
   changePlan,
   devActivateSubscription,
@@ -118,6 +119,20 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
       return handleError(reply, err, app);
     }
   });
+
+  app.post(
+    "/api/me/subscription/cancel-change",
+    { config: { rateLimit: { max: 10, timeWindow: "1 hour" } } },
+    async (request, reply) => {
+      const user = await requirePatient(request, reply);
+      if (!user) return;
+      try {
+        return okResponse(await cancelScheduledChange(user.id));
+      } catch (err) {
+        return handleError(reply, err, app);
+      }
+    },
+  );
 
   app.post(
     "/api/me/subscription/cancel",

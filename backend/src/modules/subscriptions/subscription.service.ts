@@ -226,6 +226,43 @@ export async function changePlan(
   return { pendingChangeEffectiveAt: sub.currentPeriodEnd };
 }
 
+/**
+ * Undo a scheduled next-cycle plan change (big-tech parity — "keep my current
+ * plan"). Reverts the Stripe subscription item back to the current price and
+ * clears the pending-change fields so the patient stays on their plan.
+ */
+export async function cancelScheduledChange(
+  userId: string,
+): Promise<{ canceled: boolean }> {
+  const sub = await prisma.userSubscription.findFirst({
+    where: { userId, status: { in: ["ACTIVE", "PAST_DUE"] } },
+    orderBy: { createdAt: "desc" },
+  });
+  if (!sub) {
+    throw new SubscriptionServiceError("NO_ACTIVE_SUBSCRIPTION", "No active subscription");
+  }
+  if (!sub.pendingPlanId) {
+    return { canceled: false };
+  }
+  // Revert the provider subscription back to the current (original) price.
+  if (sub.stripeSubscriptionId && sub.stripePriceId) {
+    await getBillingPort().schedulePlanChange({
+      subscriptionId: sub.stripeSubscriptionId,
+      newPriceId: sub.stripePriceId,
+    });
+  }
+  await prisma.userSubscription.update({
+    where: { id: sub.id },
+    data: {
+      pendingPlanId: null,
+      pendingStripePriceId: null,
+      pendingChangeEffectiveAt: null,
+      stripeSubscriptionScheduleId: null,
+    },
+  });
+  return { canceled: true };
+}
+
 /** Billing-portal URL for self-serve cancel / payment-method update. */
 export async function getBillingPortalUrl(
   userId: string,
