@@ -49,6 +49,9 @@
     "wellnessRedeemLine": "Acumule créditos de bem-estar para kits de testes de saúde ao domicílio elegíveis",
     "choosePlan": "Escolher {plan}",
     "chooseCta": "Escolher este plano",
+    "currentPlan": "Plano atual",
+    "managePlan": "Gerir plano",
+    "switchToThisPlan": "Mudar para este plano",
     "viewDetails": "Detalhes do plano",
     "onlineOnlyNote": "Apenas consultas online/por vídeo — sem consultas presenciais e sem prescrições.",
     "empty": {
@@ -119,7 +122,10 @@
     "discounted": "Desconto do plano",
     "notCovered": "Não incluído no seu plano",
     "youSave": "Poupa {amount} com o seu plano",
-    "creditsLeft": "{count} créditos de consulta restantes depois disto"
+    "creditsLeft": "{count} créditos de consulta restantes depois disto",
+    "locked": "Not yet unlocked",
+    "familyUnavailable": "Family usage not available",
+    "notEnoughCredits": "Not enough credits"
   },
   "dashboard": {
     "memberMonths": "Membro há {months} meses pagos",

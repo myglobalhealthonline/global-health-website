@@ -13,6 +13,7 @@ import { hreflangAlternates } from "@/lib/seo/hreflang";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { getCountryPlans } from "@/lib/content/get-country-plans";
 import { getServerAuthUser } from "@/lib/api/server-auth";
+import { getServerSubscription } from "@/lib/api/me-subscription-server";
 import { SITE_NAME } from "@/lib/constants";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -89,8 +90,23 @@ export default async function PricingPage({
   const overlay = await getPublicCountryByCode(code);
   if (!isCountryFeatureEnabled(overlay, "subscriptions")) notFound();
 
-  const [plans, user] = await Promise.all([getCountryPlans(code, lang), getServerAuthUser()]);
+  const [plans, user, sub] = await Promise.all([
+    getCountryPlans(code, lang),
+    getServerAuthUser(),
+    getServerSubscription(),
+  ]);
   const isAuthenticated = Boolean(user);
+  // Mark the active plan only when the subscription is live AND belongs to the
+  // country being viewed (plans are per-country, so a sub elsewhere must not
+  // flag a card or block a purchase here). PAST_DUE still counts as "current".
+  const activeSub =
+    sub &&
+    (sub.status === "ACTIVE" || sub.status === "PAST_DUE") &&
+    sub.countryCode?.toLowerCase() === code.toLowerCase()
+      ? sub
+      : null;
+  const activePlanId = activeSub?.plan?.id ?? null;
+  const hasActiveSub = Boolean(activeSub);
   const { subscription } = loadLocaleBundle(lang as LocaleCode);
   const t = subscription.pricing;
   const hiw = subscription.howItWorks;
@@ -152,6 +168,9 @@ export default async function PricingPage({
                   t={t}
                   note={subscription.note}
                   ctaHref={subscribeHref(plan.id, code, lang, isAuthenticated, returnTo)}
+                  isCurrentPlan={plan.id === activePlanId}
+                  hasActiveSub={hasActiveSub}
+                  manageHref="/account/membership"
                 />
               ))}
             </div>

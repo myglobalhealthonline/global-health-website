@@ -66,4 +66,64 @@ describe("setConsultationRule guards", () => {
       await fx.cleanup();
     }
   });
+
+  it("forces familyUsable=false on a non-PREMIUM / non-family plan (§ G4)", async (t) => {
+    if (skip()) return t.skip();
+    const tag = `r${randomUUID().slice(0, 5)}`;
+    const fx = await makeSubscriptionFixture(prisma, tag, {
+      planType: "COMPREHENSIVE",
+      familyEnabled: false,
+    });
+    const svc = await prisma.service.create({
+      data: { countryId: fx.countryId, kind: "GENERAL", slug: `gp-${tag}`, name: "GP", isActive: true },
+      select: { id: true },
+    });
+    try {
+      const saved = await rules.setConsultationRule(fx.planId, {
+        serviceId: svc.id,
+        isIncluded: true,
+        usesCredits: true,
+        creditsPerUse: 1,
+        discountMode: "NONE",
+        unlockAfterPaidMonths: 0,
+        familyUsable: true, // requested, must be forced false
+        isActive: true,
+      } as never);
+      assert.equal(saved.familyUsable, false, "familyUsable forced false off a family plan");
+    } finally {
+      await prisma.planConsultationRule.deleteMany({ where: { planId: fx.planId } });
+      await prisma.service.deleteMany({ where: { id: svc.id } });
+      await fx.cleanup();
+    }
+  });
+
+  it("persists familyUsable=true on a PREMIUM family-enabled plan", async (t) => {
+    if (skip()) return t.skip();
+    const tag = `r${randomUUID().slice(0, 5)}`;
+    const fx = await makeSubscriptionFixture(prisma, tag, {
+      planType: "PREMIUM",
+      familyEnabled: true,
+    });
+    const svc = await prisma.service.create({
+      data: { countryId: fx.countryId, kind: "GENERAL", slug: `gp-${tag}`, name: "GP", isActive: true },
+      select: { id: true },
+    });
+    try {
+      const saved = await rules.setConsultationRule(fx.planId, {
+        serviceId: svc.id,
+        isIncluded: true,
+        usesCredits: true,
+        creditsPerUse: 1,
+        discountMode: "NONE",
+        unlockAfterPaidMonths: 0,
+        familyUsable: true,
+        isActive: true,
+      } as never);
+      assert.equal(saved.familyUsable, true, "familyUsable kept on a Premium family plan");
+    } finally {
+      await prisma.planConsultationRule.deleteMany({ where: { planId: fx.planId } });
+      await prisma.service.deleteMany({ where: { id: svc.id } });
+      await fx.cleanup();
+    }
+  });
 });

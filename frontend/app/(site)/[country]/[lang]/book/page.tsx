@@ -28,6 +28,7 @@ import { hreflangAlternates } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { ConsultationBookingForm } from "../consult/[serviceSlug]/_components/consultation-booking-form";
+import { SlotPickerStep } from "../consult/[serviceSlug]/_components/slot-picker-step";
 import { LanguageFilteredDoctors } from "./_components/language-filtered-doctors";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -133,7 +134,7 @@ export default async function CountryLangBookPage({
   const stepLabels: string[] = doctorFirst
     ? [bp.stepDoctor, bp.stepService, bp.stepTime, bp.stepDetails]
     : [bp.stepService, bp.stepDoctor, bp.stepTime, bp.stepDetails];
-  const currentStep = doctorFirst
+  const baseStep = doctorFirst
     ? !selectedService
       ? 2 // doctor chosen; now choosing the service
       : 3 // doctor + service chosen; now choosing the time
@@ -142,6 +143,8 @@ export default async function CountryLangBookPage({
       : requestedDoctorAssigned
         ? 3
         : 2;
+  // A chosen slot (?slot=) means the patient has moved to the Details step (4).
+  const currentStep = baseStep === 3 && slotParam ? 4 : baseStep;
   const itemKind =
     selectedService?.kind === "SPECIALIST"
       ? "SPECIALIST_CONSULTATION"
@@ -309,14 +312,18 @@ async function SelectedServiceFlow({
     selectedDoctor.slug,
     14,
   );
-  const slotIsValid = slotId ? slots.some((slot) => slot.id === slotId) : true;
+  // Slot is confirmed only when ?slot= is set AND still open. Until then the
+  // patient is on the TIME step (slot picker); once confirmed, the DETAILS
+  // step (the form). A stale ?slot= falls back to the time step with a notice.
+  const slotConfirmed = Boolean(slotId) && slots.some((slot) => slot.id === slotId);
+  const slotStale = Boolean(slotId) && !slotConfirmed;
 
   return (
     <div className="grid gap-6">
       <BookingSectionHeader
-        eyebrow={bp.steps34}
-        title={bp.pickTimeDetails}
-        description={bp.timesShown}
+        eyebrow={slotConfirmed ? bp.stepDetails : bp.stepTime}
+        title={slotConfirmed ? bp.detailsTitle : bp.pickTime}
+        description={slotConfirmed ? bp.detailsDesc : bp.timesShown}
       />
       <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
         <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-5">
@@ -339,7 +346,7 @@ async function SelectedServiceFlow({
           </Link>
         </header>
 
-        {!slotIsValid ? (
+        {slotStale ? (
           <InlineNotice
             notice={{ tone: "warning", message: bp.slotNoLongerOpen }}
           />
@@ -360,17 +367,39 @@ async function SelectedServiceFlow({
               {bp.pickAnotherClinician}
             </Link>
           </div>
+        ) : !slotConfirmed ? (
+          // Step 3 — TIME only. Picking a time writes ?slot= and advances.
+          <div className="mt-6">
+            <SlotPickerStep
+              country={country}
+              lang={lang}
+              serviceSlug={service.slug}
+              doctorSlug={selectedDoctor.slug}
+              slots={slots}
+              clinicTimezone={clinicTimezone}
+              i18n={bf}
+            />
+          </div>
         ) : (
-          <ConsultationBookingForm
-            doctorId={selectedDoctor.id}
-            doctorName={selectedDoctor.fullName}
-            serviceId={service.id}
-            kind={itemKind}
-            slots={slots}
-            clinicTimezone={clinicTimezone}
-            initialSlotId={slotId}
-            i18n={bf}
-          />
+          // Step 4 — DETAILS. Slot is fixed (shown as a summary in the form).
+          <div className="mt-6">
+            <ConsultationBookingForm
+              doctorId={selectedDoctor.id}
+              doctorName={selectedDoctor.fullName}
+              serviceId={service.id}
+              kind={itemKind}
+              slots={slots}
+              clinicTimezone={clinicTimezone}
+              initialSlotId={slotId}
+              changeTimeHref={buildBookHref({
+                country,
+                lang,
+                service: service.slug,
+                doctor: selectedDoctor.slug,
+              })}
+              i18n={bf}
+            />
+          </div>
         )}
       </div>
     </div>

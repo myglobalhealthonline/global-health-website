@@ -23,8 +23,12 @@ export async function syncPlanStripePrice(
     throw new Error(`syncPlanStripePrice: plan ${planId} not found`);
   }
 
-  // 1. Ensure a Product exists for this plan.
-  let stripeProductId = plan.stripeProductId;
+  // 1. Ensure a Product exists for this plan. Treat any leftover fake-driver id
+  //    (from before BILLING_DRIVER=stripe) as missing so we mint a real one.
+  let stripeProductId =
+    plan.stripeProductId && !plan.stripeProductId.includes("_fake_")
+      ? plan.stripeProductId
+      : null;
   if (!stripeProductId) {
     const product = await billing.ensureProduct({ planId: plan.id, name: plan.name });
     stripeProductId = product.productId;
@@ -39,7 +43,9 @@ export async function syncPlanStripePrice(
     activePrice != null &&
     activePrice.amountCents === plan.monthlyPriceCents &&
     activePrice.currency.toLowerCase() === plan.currencyCode.toLowerCase() &&
-    plan.stripePriceId === activePrice.stripePriceId;
+    plan.stripePriceId === activePrice.stripePriceId &&
+    // A fake-driver price never exists in real Stripe — force a re-create.
+    !activePrice.stripePriceId.includes("_fake_");
 
   if (amountMatches && stripeProductId === plan.stripeProductId) {
     return { stripeProductId, stripePriceId: plan.stripePriceId! };

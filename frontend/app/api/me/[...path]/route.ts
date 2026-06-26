@@ -26,6 +26,7 @@ const ROUTE_TABLE: Record<string, Set<string>> = {
     "subscription",
     "subscription/change",
     "subscription/cancel",
+    "subscription/dev-activate",
     "redemptions",
     "notifications/read-all",
   ]),

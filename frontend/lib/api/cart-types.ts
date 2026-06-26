@@ -4,6 +4,9 @@ export type CartItemKind =
   | "GENERAL_CONSULTATION"
   | "SPECIALIST_CONSULTATION";
 
+/** Per-consultation-line subscription benefit choice (§ appointment-claim). */
+export type BenefitSelection = "PAY_NORMAL" | "USE_PLAN_CREDIT" | "USE_PLAN_DISCOUNT";
+
 export type CartItem = {
   id: string;
   kind: CartItemKind;
@@ -38,6 +41,12 @@ export type CartItem = {
     consentAcceptedAt: string | null;
     bookingForOther: boolean;
   } | null;
+  /** Per-line subscription benefit choice (consultation lines). */
+  benefitSelection: BenefitSelection;
+  /** Approved dependent this line is booked for, or null for self. */
+  familyMemberId: string | null;
+  /** Display name of the dependent resolved by the backend. Null = self. */
+  familyMemberName: string | null;
 };
 
 /** Patient intake payload sent on POST /api/cart/items for

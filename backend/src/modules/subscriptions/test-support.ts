@@ -15,6 +15,8 @@ export interface SubscriptionFixture {
   userId: string;
   planId: string;
   subscriptionId: string;
+  /** Ids of any FamilyMember rows created via `opts.familyMembers`. */
+  familyMemberIds: string[];
   cleanup: () => Promise<void>;
 }
 
@@ -28,6 +30,12 @@ export interface MakeFixtureOptions {
   stripeSubscriptionId?: string;
   stripeCustomerId?: string;
   planSnapshot?: unknown;
+  /** Plan tier (drives the Premium-only family/wellness guards). */
+  planType?: "ESSENTIAL" | "COMPREHENSIVE" | "PREMIUM";
+  /** Plan-level family-usage flag (Premium-only by guard). */
+  familyEnabled?: boolean;
+  /** Approved/unapproved dependents to create for the primary user. */
+  familyMembers?: Array<{ canUseCredits: boolean; fullName?: string; email?: string }>;
   /** Add "subscriptions" to the country's enabledFeatures (strict opt-in gate). */
   enableSubscriptions?: boolean;
 }
@@ -89,6 +97,8 @@ export async function makeSubscriptionFixture(
       countryId: country.id,
       slug: `plan-${uniq}`,
       name: `Plan ${uniq}`,
+      planType: opts.planType ?? "COMPREHENSIVE",
+      familyEnabled: opts.familyEnabled ?? false,
       monthlyPriceCents: 4900,
       currencyCode: currency.code,
       monthlyConsultationCredits: opts.monthlyConsultationCredits ?? 3,
@@ -123,6 +133,21 @@ export async function makeSubscriptionFixture(
     });
   }
 
+  const familyMemberIds: string[] = [];
+  if (opts.familyMembers?.length) {
+    for (const [idx, fm] of opts.familyMembers.entries()) {
+      const created = await prisma.familyMember.create({
+        data: {
+          primaryUserId: user.id,
+          fullName: fm.fullName ?? `Dependent ${idx + 1} ${uniq}`,
+          email: fm.email ?? null,
+          canUseCredits: fm.canUseCredits,
+        },
+      });
+      familyMemberIds.push(created.id);
+    }
+  }
+
   const cleanup = async (): Promise<void> => {
     // User/country-scoped so tests that create extra subscriptions, plans,
     // redemptions, or orders during the run are fully torn down.
@@ -140,6 +165,7 @@ export async function makeSubscriptionFixture(
     await prisma.subscriptionPerkGrant.deleteMany({ where: { userSubscriptionId: { in: subIds } } });
     await prisma.healthTestRedemption.deleteMany({ where: { userId: user.id } });
     await prisma.order.deleteMany({ where: { userId: user.id } });
+    await prisma.familyMember.deleteMany({ where: { primaryUserId: user.id } });
     await prisma.userSubscription.deleteMany({ where: { userId: user.id } });
     await prisma.healthTest.deleteMany({ where: { countryId: country.id } });
     await prisma.planStripePrice.deleteMany({ where: { plan: { countryId: country.id } } });
@@ -156,6 +182,7 @@ export async function makeSubscriptionFixture(
     userId: user.id,
     planId: plan.id,
     subscriptionId: sub.id,
+    familyMemberIds,
     cleanup,
   };
 }

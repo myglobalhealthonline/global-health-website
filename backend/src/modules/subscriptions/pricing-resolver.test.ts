@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  eligibleBenefitSelections,
   isPerkUnlocked,
   percentDiscountAmountCents,
   resolveConsultationPrice,
+  type BenefitSelection,
+  type ResolvePriceInput,
 } from "./pricing-resolver.js";
 import type { SnapshotConsultationRule } from "./plan-snapshot.js";
 
@@ -24,6 +27,20 @@ function rule(
   };
 }
 
+/** Build a resolver input with explicit selection + self-use defaults. */
+function input(
+  overrides: Partial<ResolvePriceInput> & { benefitSelection: BenefitSelection },
+): ResolvePriceInput {
+  return {
+    rule: rule(),
+    basePriceCents: 5000,
+    creditsAvailable: 0,
+    paidMonthsCount: 5,
+    familyEligible: true,
+    ...overrides,
+  };
+}
+
 describe("percentDiscountAmountCents (§38.3 round-half-up)", () => {
   it("rounds fractional cents half-up", () => {
     // 10% of 7999 = 799.9 → 800
@@ -39,94 +56,238 @@ describe("percentDiscountAmountCents (§38.3 round-half-up)", () => {
   });
 });
 
-describe("resolveConsultationPrice priority (§21)", () => {
-  it("no rule → NORMAL (base)", () => {
-    const r = resolveConsultationPrice({
-      rule: null,
-      basePriceCents: 5000,
-      creditsAvailable: 3,
-      paidMonthsCount: 5,
+describe("resolveConsultationPrice — explicit selection (§ appointment-claim)", () => {
+  it("no rule → NORMAL / NOT_COVERED", () => {
+    const r = resolveConsultationPrice(
+      input({ rule: null, basePriceCents: 5000, creditsAvailable: 3, benefitSelection: "USE_PLAN_CREDIT" }),
+    );
+    assert.deepEqual(r, {
+      mode: "NORMAL",
+      unitPriceCents: 5000,
+      creditsToReserve: 0,
+      reason: "NOT_COVERED",
     });
-    assert.deepEqual(r, { mode: "NORMAL", unitPriceCents: 5000, creditsToReserve: 0 });
   });
 
-  it("included + credit available → CREDIT €0, reserve creditsPerUse", () => {
-    const r = resolveConsultationPrice({
-      rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1 }),
-      basePriceCents: 5000,
-      creditsAvailable: 1,
-      paidMonthsCount: 0,
-    });
-    assert.deepEqual(r, { mode: "CREDIT", unitPriceCents: 0, creditsToReserve: 1 });
-  });
-
-  it("included but NOT enough credits → falls through to discount/normal", () => {
-    const r = resolveConsultationPrice({
-      rule: rule({
-        isIncluded: true,
-        usesCredits: true,
-        creditsPerUse: 2,
-        discountMode: "PERCENT",
-        discountPercent: 10,
+  it("PAY_NORMAL never consumes a credit even when a credit rule + credits exist", () => {
+    const r = resolveConsultationPrice(
+      input({
+        rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1 }),
+        creditsAvailable: 5,
+        benefitSelection: "PAY_NORMAL",
       }),
-      basePriceCents: 8000,
-      creditsAvailable: 1,
-      paidMonthsCount: 5,
+    );
+    assert.deepEqual(r, {
+      mode: "NORMAL",
+      unitPriceCents: 5000,
+      creditsToReserve: 0,
+      reason: "NOT_COVERED",
     });
-    assert.equal(r.mode, "PERCENT");
-    assert.equal(r.unitPriceCents, 7200);
   });
 
-  it("FIXED beats PERCENT (priority order)", () => {
-    const r = resolveConsultationPrice({
-      rule: rule({ discountMode: "FIXED", fixedPriceCents: 6000, discountPercent: 50 }),
-      basePriceCents: 8000,
-      creditsAvailable: 0,
-      paidMonthsCount: 5,
+  it("USE_PLAN_CREDIT + includable + enough → CREDIT €0, reserve creditsPerUse", () => {
+    const r = resolveConsultationPrice(
+      input({
+        rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1 }),
+        creditsAvailable: 1,
+        paidMonthsCount: 0,
+        benefitSelection: "USE_PLAN_CREDIT",
+      }),
+    );
+    assert.deepEqual(r, {
+      mode: "CREDIT",
+      unitPriceCents: 0,
+      creditsToReserve: 1,
+      reason: "COVERED",
     });
-    assert.deepEqual(r, { mode: "FIXED", unitPriceCents: 6000, creditsToReserve: 0 });
   });
 
-  it("FIXED never exceeds base", () => {
-    const r = resolveConsultationPrice({
-      rule: rule({ discountMode: "FIXED", fixedPriceCents: 9000 }),
-      basePriceCents: 8000,
-      creditsAvailable: 0,
-      paidMonthsCount: 5,
+  it("USE_PLAN_CREDIT + NOT enough credits → NORMAL / NOT_ENOUGH_CREDITS (never silently discounts, D7)", () => {
+    const r = resolveConsultationPrice(
+      input({
+        rule: rule({
+          isIncluded: true,
+          usesCredits: true,
+          creditsPerUse: 2,
+          discountMode: "PERCENT",
+          discountPercent: 10,
+        }),
+        basePriceCents: 8000,
+        creditsAvailable: 1,
+        benefitSelection: "USE_PLAN_CREDIT",
+      }),
+    );
+    assert.equal(r.mode, "NORMAL");
+    assert.equal(r.unitPriceCents, 8000);
+    assert.equal(r.reason, "NOT_ENOUGH_CREDITS");
+  });
+
+  it("USE_PLAN_CREDIT on a non-credit rule → NORMAL / NOT_COVERED", () => {
+    const r = resolveConsultationPrice(
+      input({
+        rule: rule({ discountMode: "PERCENT", discountPercent: 20 }),
+        basePriceCents: 8000,
+        benefitSelection: "USE_PLAN_CREDIT",
+      }),
+    );
+    assert.equal(r.mode, "NORMAL");
+    assert.equal(r.reason, "NOT_COVERED");
+  });
+
+  it("USE_PLAN_DISCOUNT: FIXED beats PERCENT", () => {
+    const r = resolveConsultationPrice(
+      input({
+        rule: rule({ discountMode: "FIXED", fixedPriceCents: 6000, discountPercent: 50 }),
+        basePriceCents: 8000,
+        benefitSelection: "USE_PLAN_DISCOUNT",
+      }),
+    );
+    assert.deepEqual(r, {
+      mode: "FIXED",
+      unitPriceCents: 6000,
+      creditsToReserve: 0,
+      reason: "COVERED",
     });
+  });
+
+  it("USE_PLAN_DISCOUNT: FIXED never exceeds base", () => {
+    const r = resolveConsultationPrice(
+      input({
+        rule: rule({ discountMode: "FIXED", fixedPriceCents: 9000 }),
+        basePriceCents: 8000,
+        benefitSelection: "USE_PLAN_DISCOUNT",
+      }),
+    );
     assert.equal(r.unitPriceCents, 8000);
   });
 
-  it("PERCENT applies rounded discount", () => {
-    const r = resolveConsultationPrice({
-      rule: rule({ discountMode: "PERCENT", discountPercent: 10 }),
-      basePriceCents: 7999,
-      creditsAvailable: 0,
-      paidMonthsCount: 5,
-    });
+  it("USE_PLAN_DISCOUNT: PERCENT applies rounded discount", () => {
+    const r = resolveConsultationPrice(
+      input({
+        rule: rule({ discountMode: "PERCENT", discountPercent: 10 }),
+        basePriceCents: 7999,
+        benefitSelection: "USE_PLAN_DISCOUNT",
+      }),
+    );
     // 7999 - round(799.9)=800 → 7199
-    assert.deepEqual(r, { mode: "PERCENT", unitPriceCents: 7199, creditsToReserve: 0 });
+    assert.deepEqual(r, {
+      mode: "PERCENT",
+      unitPriceCents: 7199,
+      creditsToReserve: 0,
+      reason: "COVERED",
+    });
   });
 
-  it("rule gated below unlockAfterPaidMonths → NORMAL", () => {
-    const r = resolveConsultationPrice({
-      rule: rule({ discountMode: "PERCENT", discountPercent: 20, unlockAfterPaidMonths: 2 }),
-      basePriceCents: 8000,
-      creditsAvailable: 0,
-      paidMonthsCount: 1,
-    });
-    assert.deepEqual(r, { mode: "NORMAL", unitPriceCents: 8000, creditsToReserve: 0 });
+  it("USE_PLAN_DISCOUNT never takes a credit branch (specialist parity, req #7)", () => {
+    const r = resolveConsultationPrice(
+      input({
+        rule: rule({
+          isIncluded: true,
+          usesCredits: true,
+          creditsPerUse: 1,
+          discountMode: "PERCENT",
+          discountPercent: 20,
+        }),
+        creditsAvailable: 9,
+        basePriceCents: 8000,
+        benefitSelection: "USE_PLAN_DISCOUNT",
+      }),
+    );
+    assert.equal(r.mode, "PERCENT");
+    assert.equal(r.creditsToReserve, 0);
   });
 
-  it("rule unlocks exactly at threshold", () => {
-    const r = resolveConsultationPrice({
-      rule: rule({ discountMode: "PERCENT", discountPercent: 20, unlockAfterPaidMonths: 2 }),
-      basePriceCents: 8000,
-      creditsAvailable: 0,
-      paidMonthsCount: 2,
+  it("below unlockAfterPaidMonths → NORMAL / LOCKED", () => {
+    const r = resolveConsultationPrice(
+      input({
+        rule: rule({ discountMode: "PERCENT", discountPercent: 20, unlockAfterPaidMonths: 2 }),
+        basePriceCents: 8000,
+        paidMonthsCount: 1,
+        benefitSelection: "USE_PLAN_DISCOUNT",
+      }),
+    );
+    assert.deepEqual(r, {
+      mode: "NORMAL",
+      unitPriceCents: 8000,
+      creditsToReserve: 0,
+      reason: "LOCKED",
     });
+  });
+
+  it("unlocks exactly at threshold", () => {
+    const r = resolveConsultationPrice(
+      input({
+        rule: rule({ discountMode: "PERCENT", discountPercent: 20, unlockAfterPaidMonths: 2 }),
+        basePriceCents: 8000,
+        paidMonthsCount: 2,
+        benefitSelection: "USE_PLAN_DISCOUNT",
+      }),
+    );
     assert.equal(r.mode, "PERCENT");
     assert.equal(r.unitPriceCents, 6400);
+  });
+
+  it("family-ineligible line → NORMAL / FAMILY_UNAVAILABLE regardless of selection", () => {
+    const r = resolveConsultationPrice(
+      input({
+        rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1 }),
+        creditsAvailable: 5,
+        familyEligible: false,
+        benefitSelection: "USE_PLAN_CREDIT",
+      }),
+    );
+    assert.equal(r.mode, "NORMAL");
+    assert.equal(r.reason, "FAMILY_UNAVAILABLE");
+    assert.equal(r.creditsToReserve, 0);
+  });
+});
+
+describe("eligibleBenefitSelections", () => {
+  it("PAY_NORMAL only when no rule", () => {
+    assert.deepEqual(
+      eligibleBenefitSelections({ rule: null, paidMonthsCount: 5, familyEligible: true }),
+      ["PAY_NORMAL"],
+    );
+  });
+  it("PAY_NORMAL only when family-ineligible", () => {
+    assert.deepEqual(
+      eligibleBenefitSelections({
+        rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1 }),
+        paidMonthsCount: 5,
+        familyEligible: false,
+      }),
+      ["PAY_NORMAL"],
+    );
+  });
+  it("credit rule → PAY_NORMAL + USE_PLAN_CREDIT", () => {
+    assert.deepEqual(
+      eligibleBenefitSelections({
+        rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1 }),
+        paidMonthsCount: 5,
+        familyEligible: true,
+      }),
+      ["PAY_NORMAL", "USE_PLAN_CREDIT"],
+    );
+  });
+  it("discount rule → PAY_NORMAL + USE_PLAN_DISCOUNT", () => {
+    assert.deepEqual(
+      eligibleBenefitSelections({
+        rule: rule({ discountMode: "FIXED", fixedPriceCents: 6000 }),
+        paidMonthsCount: 5,
+        familyEligible: true,
+      }),
+      ["PAY_NORMAL", "USE_PLAN_DISCOUNT"],
+    );
+  });
+  it("locked rule → PAY_NORMAL only", () => {
+    assert.deepEqual(
+      eligibleBenefitSelections({
+        rule: rule({ isIncluded: true, usesCredits: true, creditsPerUse: 1, unlockAfterPaidMonths: 3 }),
+        paidMonthsCount: 1,
+        familyEligible: true,
+      }),
+      ["PAY_NORMAL"],
+    );
   });
 });
 

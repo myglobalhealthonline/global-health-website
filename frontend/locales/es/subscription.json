@@ -49,6 +49,9 @@
     "wellnessRedeemLine": "Acumule créditos de bienestar para kits de análisis de salud a domicilio aptos",
     "choosePlan": "Elegir {plan}",
     "chooseCta": "Elegir este plan",
+    "currentPlan": "Plan actual",
+    "managePlan": "Gestionar plan",
+    "switchToThisPlan": "Cambiar a este plan",
     "viewDetails": "Detalles del plan",
     "onlineOnlyNote": "Solo consultas online/por videollamada: sin visitas presenciales y sin recetas.",
     "empty": {
@@ -119,7 +122,10 @@
     "discounted": "Descuento del plan",
     "notCovered": "No incluido en tu plan",
     "youSave": "Ahorras {amount} con tu plan",
-    "creditsLeft": "{count} créditos de consulta restantes después de esto"
+    "creditsLeft": "{count} créditos de consulta restantes después de esto",
+    "locked": "Not yet unlocked",
+    "familyUnavailable": "Family usage not available",
+    "notEnoughCredits": "Not enough credits"
   },
   "dashboard": {
     "memberMonths": "Miembro desde hace {months} meses pagados",

@@ -1613,6 +1613,16 @@ model Cart {
   @@index([updatedAt, abandonedEmailSentAt])
 }
 
+/// Per-consultation-line benefit choice (§ appointment-claim). PAY_NORMAL is the
+/// safe default: a line never consumes a credit unless the user explicitly chose
+/// USE_PLAN_CREDIT. USE_PLAN_DISCOUNT applies an eligible fixed/percent discount
+/// only, never a credit.
+enum BenefitSelection {
+  PAY_NORMAL
+  USE_PLAN_CREDIT
+  USE_PLAN_DISCOUNT
+}
+
 model CartItem {
   id                       String       @id @default(cuid())
   cartId                   String
@@ -1653,6 +1663,16 @@ model CartItem {
   /// `true` when the visitor toggled "Booking for someone else" on the
   /// consult form. We still keep account DOB intact in that case.
   bookingForOther          Boolean      @default(false)
+  /// Per-line subscription benefit choice. Default PAY_NORMAL never
+  /// consumes a credit; the pricing engine only reserves a credit when the
+  /// user explicitly picks USE_PLAN_CREDIT and the line is eligible.
+  benefitSelection         BenefitSelection @default(PAY_NORMAL)
+  /// Approved dependent this consultation is booked for (Premium family
+  /// usage). Null = booking for the account holder. The FK proves the
+  /// member is a real row; ownership (primaryUserId == cart user) is
+  /// re-checked server-side at add-to-cart, preview, and checkout.
+  familyMemberId           String?
+  familyMember             FamilyMember? @relation(fields: [familyMemberId], references: [id], onDelete: SetNull)
   /// Patient identity + address + GDPR snapshot captured at add-to-cart
   /// time so the post-payment webhook can mint the Appointment without
   /// asking again at checkout. Mirrors the new Appointment columns added
@@ -1786,6 +1806,13 @@ model OrderItem {
   patientNotes             String?
   patientConsentAcceptedAt DateTime?
   bookingForOther          Boolean      @default(false)
+  /// Per-line benefit choice copied from the CartItem at checkout — kept
+  /// for audit (which lines used a credit/discount vs paid normally).
+  benefitSelection         BenefitSelection @default(PAY_NORMAL)
+  /// Approved dependent this order line was booked for (Premium family
+  /// usage). Copied from the CartItem at checkout for audit + portal.
+  familyMemberId           String?
+  familyMember             FamilyMember? @relation(fields: [familyMemberId], references: [id], onDelete: SetNull)
   /// Mirror of the CartItem snapshot columns added in the booking-fields
   /// migration. The payment webhook reads these to mint the Appointment
   /// with the right timezone, address, ID number, and dual GDPR consent
@@ -3261,6 +3288,10 @@ model FamilyMember {
   relationship     String?
   canUseCredits    Boolean   @default(false)
   createdAt        DateTime  @default(now())
+  /// Cart/order consultation lines booked for this dependent (Premium
+  /// family usage). SetNull on delete keeps historical order lines intact.
+  cartItems        CartItem[]
+  orderItems       OrderItem[]
 
   @@index([primaryUserId])
 }

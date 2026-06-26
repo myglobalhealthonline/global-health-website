@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import {
@@ -26,7 +26,8 @@ import { PlanCoverage } from "@/components/cart/PlanCoverage";
 import { GH2FlowHeader } from "@/components/sections/GH2PagePrimitives";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDateTimeShort } from "@/lib/format-datetime";
-import { CART_ITEM_MAX_QTY, type CartItem } from "@/lib/api/cart-types";
+import { CART_ITEM_MAX_QTY, type BenefitSelection, type CartItem } from "@/lib/api/cart-types";
+import { getCartPreview, type CartCoverageLine } from "@/lib/api/me-subscription";
 import type { CommonLocale, LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -73,8 +74,20 @@ export default function CartPage() {
   const router = useRouter();
   const params = useParams<{ country: string; lang: string }>();
   const searchParams = useSearchParams();
-  const { cart, loading, update, remove, clear, refresh } = useCart();
+  const { cart, loading, update, patchItem, remove, clear, refresh } = useCart();
   const [expiredFlash, setExpiredFlash] = useState(0);
+  // Per-line subscription coverage (eligible selections + the resolved price
+  // reason) for the benefit selector. Fetched from the read-only preview;
+  // `coverageNonce` also forces the PlanCoverage panel to re-fetch in sync.
+  const [coverageLines, setCoverageLines] = useState<Record<string, CartCoverageLine>>({});
+  const [coverageNonce, setCoverageNonce] = useState(0);
+  const [benefitError, setBenefitError] = useState<string | null>(null);
+  const loadCoverage = useCallback(async () => {
+    const res = await getCartPreview();
+    setCoverageLines(
+      res.ok ? Object.fromEntries(res.data.lines.map((l) => [l.itemId, l])) : {},
+    );
+  }, []);
   // `?added=1` arrives from the consult booking form so the patient
   // gets explicit positive feedback after add-to-cart. Auto-clears
   // after 4s and the URL is rewritten without the flag so a refresh
@@ -123,6 +136,29 @@ export default function CartPage() {
     const id = setInterval(() => void refresh(), 30_000);
     return () => clearInterval(id);
   }, [cart.items, refresh]);
+
+  // Load per-line coverage whenever the set of items changes (add/remove).
+  // Synchronizing client state with a server fetch — same intentional pattern
+  // as the cart refresh effects above; the strict rule can't infer it.
+  const itemIdsKey = cart.items.map((i) => i.id).join(",");
+  useEffect(() => {
+    void loadCoverage(); // eslint-disable-line react-hooks/set-state-in-effect
+  }, [loadCoverage, itemIdsKey]);
+
+  // Change a consultation line's benefit choice → persist + re-sync coverage.
+  const onSelectBenefit = useCallback(
+    async (itemId: string, selection: BenefitSelection) => {
+      setBenefitError(null);
+      const res = await patchItem(itemId, { benefitSelection: selection });
+      if (!res.ok) {
+        setBenefitError(res.message ?? null);
+        return;
+      }
+      setCoverageNonce((n) => n + 1);
+      await loadCoverage();
+    },
+    [patchItem, loadCoverage],
+  );
 
   if (loading) {
     return (
@@ -230,6 +266,8 @@ export default function CartPage() {
                     item={item}
                     currency={cart.currencyCode}
                     t={t}
+                    coverageLine={coverageLines[item.id]}
+                    onSelectBenefit={(sel) => void onSelectBenefit(item.id, sel)}
                     onIncrease={() => void update(item.id, item.quantity + 1)}
                     onDecrease={() =>
                       item.quantity > 1 && void update(item.id, item.quantity - 1)
@@ -265,7 +303,13 @@ export default function CartPage() {
                 loginHref={`/login?next=${encodeURIComponent(`${countryHome}/cart`)}`}
                 plansHref={`${countryHome}/pricing?returnTo=${encodeURIComponent(`${countryHome}/cart`)}`}
                 itemNames={Object.fromEntries(cart.items.map((i) => [i.id, i.name]))}
+                refreshKey={coverageNonce}
               />
+              {benefitError ? (
+                <p className="mb-4 text-[13px] font-semibold" style={{ color: "var(--color-status-error)" }}>
+                  {benefitError}
+                </p>
+              ) : null}
               <h2 className="gh-h3" style={{ fontSize: "1.125rem" }}>{t.orderSummary}</h2>
               <dl className="mt-4 space-y-2.5 text-sm">
                 <div className="flex justify-between">
@@ -332,9 +376,17 @@ export default function CartPage() {
   );
 }
 
+const BENEFIT_LABEL: Record<BenefitSelection, keyof CartT> = {
+  PAY_NORMAL: "payNormally",
+  USE_PLAN_CREDIT: "usePlanCredit",
+  USE_PLAN_DISCOUNT: "usePlanDiscount",
+};
+
 function CartItemRow({
   item,
   currency,
+  coverageLine,
+  onSelectBenefit,
   onIncrease,
   onDecrease,
   onRemove,
@@ -342,6 +394,8 @@ function CartItemRow({
 }: {
   item: CartItem;
   currency: string;
+  coverageLine?: CartCoverageLine;
+  onSelectBenefit: (selection: BenefitSelection) => void;
   onIncrease: () => void;
   onDecrease: () => void;
   onRemove: () => void;
@@ -354,6 +408,10 @@ function CartItemRow({
   const atMax = item.quantity >= CART_ITEM_MAX_QTY;
   const KindIcon = KIND_ICON[item.kind];
   const itemKindLabel = kindLabel(item.kind, t);
+  // Offer the benefit selector only when the plan actually gives this line a
+  // real choice (more than just "pay normally"). Driven by the server preview.
+  const options = coverageLine?.eligibleSelections ?? [];
+  const showSelector = isConsult && options.length > 1;
 
   return (
     <li className="flex gap-4 p-5 sm:gap-5">
@@ -418,6 +476,57 @@ function CartItemRow({
                     {t.bookedForThem}
                   </span>
                 ) : null}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
+        {/* Beneficiary — when this line is booked for an approved dependent. */}
+        {isConsult && item.familyMemberName ? (
+          <p className="mt-2 text-[12px]" style={{ color: "var(--color-text-muted)" }}>
+            {t.benefitFor.replace("{name}", item.familyMemberName)}
+          </p>
+        ) : null}
+
+        {/* Per-line benefit selector — only when the plan offers a real choice. */}
+        {showSelector ? (
+          <div className="mt-3">
+            <p className="text-[11px] font-bold uppercase tracking-[0.1em]" style={{ color: "var(--color-text-muted)" }}>
+              {t.benefitLabel}
+            </p>
+            <div
+              role="radiogroup"
+              aria-label={t.benefitLabel}
+              className="mt-1.5 inline-flex flex-wrap gap-1.5"
+            >
+              {options.map((opt) => {
+                const active = item.benefitSelection === opt;
+                return (
+                  <button
+                    key={opt}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => onSelectBenefit(opt)}
+                    className="rounded-full px-3 py-1 text-[12px] font-semibold transition-colors"
+                    style={
+                      active
+                        ? { background: "var(--color-brand-primary)", color: "#fff" }
+                        : {
+                            background: "var(--color-background-soft)",
+                            color: "var(--color-text-body)",
+                            border: "1px solid var(--color-border)",
+                          }
+                    }
+                  >
+                    {t[BENEFIT_LABEL[opt]]}
+                  </button>
+                );
+              })}
+            </div>
+            {coverageLine?.reason === "NOT_ENOUGH_CREDITS" ? (
+              <p className="mt-1.5 text-[11.5px] font-semibold" style={{ color: "var(--color-status-warning-text)" }}>
+                {t.notEnoughCreditsHint}
               </p>
             ) : null}
           </div>

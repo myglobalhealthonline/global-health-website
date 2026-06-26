@@ -250,7 +250,17 @@
     "enterValidEmail": "Introduce una dirección de correo electrónico válida.",
     "acceptConsent": "Debes aceptar el consentimiento para continuar.",
     "acceptClinicConsent": "Debes consentir en compartir tus datos con la clínica tratante.",
-    "acceptPlatformConsent": "Debes consentir en el procesamiento de tus datos por la plataforma."
+    "acceptPlatformConsent": "Debes consentir en el procesamiento de tus datos por la plataforma.",
+    "whoIsThisFor": "Who is this booking for?",
+    "forMe": "Myself",
+    "forFamilyMember": "A family member",
+    "manageFamily": "Manage family members",
+    "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible.",
+    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member.",
+    "selectedTime": "Hora seleccionada",
+    "changeTime": "Cambiar hora",
+    "saveAddressToProfile": "Guardar esta dirección en mi perfil",
+    "pickTimeToContinue": "Elige una hora para continuar con tus datos."
   },
   "extra": {
     "specialistsWatermark": "Especialistas",
@@ -464,7 +474,13 @@
     "decreaseQuantity": "Reducir cantidad",
     "increaseQuantity": "Aumentar cantidad",
     "removeAria": "Eliminar {name}",
-    "remove": "Eliminar"
+    "remove": "Eliminar",
+    "benefitLabel": "Plan benefit",
+    "payNormally": "Pay normally",
+    "usePlanCredit": "Use a credit",
+    "usePlanDiscount": "Use discount",
+    "benefitFor": "For {name}",
+    "notEnoughCreditsHint": "No credits left — this consultation will be charged at full price."
   },
   "checkoutPage": {
     "title": "Pago",
@@ -533,6 +549,8 @@
     "clinicianNotInCountry": "Ese profesional clínico no está disponible en este país en este momento. Elige otro profesional clínico para continuar.",
     "steps34": "Pasos 3 y 4",
     "pickTimeDetails": "Elige una hora y añade los datos del paciente",
+    "detailsTitle": "Añade tus datos",
+    "detailsDesc": "Indícanos para quién es la cita y confirma tus datos de contacto y dirección.",
     "timesShown": "Las horas se muestran en la zona horaria de la clínica. La cita se añade a tu carrito antes del pago.",
     "selectedConsultation": "Consulta seleccionada",
     "changeService": "Cambiar servicio",

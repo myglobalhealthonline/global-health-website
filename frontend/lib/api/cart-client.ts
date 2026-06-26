@@ -1,6 +1,6 @@
 "use client";
 
-import type { Cart, CartItemKind, CartItemPatientInput } from "./cart-types";
+import type { BenefitSelection, Cart, CartItemKind, CartItemPatientInput } from "./cart-types";
 
 type Result<T> =
   | { ok: true; data: T; message?: string }
@@ -40,6 +40,10 @@ export type AddItemInput = {
   /** Patient intake — required for GENERAL_CONSULTATION /
    *  SPECIALIST_CONSULTATION (the consult-page form collects it). */
   patient?: CartItemPatientInput;
+  /** Per-line benefit choice. Default PAY_NORMAL never consumes a credit. */
+  benefitSelection?: BenefitSelection;
+  /** Approved dependent to book for (Premium family usage). */
+  familyMemberId?: string;
 };
 
 export async function addToCart(input: AddItemInput): Promise<Result<Cart>> {
@@ -50,14 +54,24 @@ export async function addToCart(input: AddItemInput): Promise<Result<Cart>> {
   });
 }
 
+/** Cart-line patch — any subset. Backend rejects an empty body. */
+export type UpdateItemInput = {
+  quantity?: number;
+  benefitSelection?: BenefitSelection;
+  /** `null` clears the family target (book for self); a string targets a dependent. */
+  familyMemberId?: string | null;
+};
+
 export async function updateCartItem(
   itemId: string,
-  quantity: number,
+  patch: number | UpdateItemInput,
 ): Promise<Result<Cart>> {
+  // Back-compat: a bare number is treated as a quantity update.
+  const body: UpdateItemInput = typeof patch === "number" ? { quantity: patch } : patch;
   return cartFetch<Cart>(`/api/cart/items/${itemId}`, {
     method: "PATCH",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ quantity }),
+    body: JSON.stringify(body),
   });
 }
 
