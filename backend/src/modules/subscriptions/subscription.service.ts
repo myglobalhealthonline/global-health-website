@@ -78,17 +78,25 @@ export async function startSubscription(
     );
   }
 
-  // Ensure the plan has a Stripe Price (sync on demand if not yet synced).
+  // Ensure the plan has a Stripe Price. Re-sync when missing OR when it's a
+  // stale fake-driver id left over from before BILLING_DRIVER=stripe — those
+  // ids don't exist in real Stripe and would 400 at checkout.
   let stripePriceId = plan.stripePriceId;
-  if (!stripePriceId) {
+  if (!stripePriceId || stripePriceId.includes("_fake_")) {
     ({ stripePriceId } = await syncPlanStripePrice(plan.id));
   }
 
+  // Never reuse a fake-driver customer id on the real Stripe driver — mint a
+  // fresh real customer instead (the subscription row is updated with it below).
+  const reusableCustomerId =
+    existing?.stripeCustomerId && !existing.stripeCustomerId.includes("_fake_")
+      ? existing.stripeCustomerId
+      : null;
   const customer = await billing.findOrCreateCustomer({
     userId: input.userId,
     email: input.email,
     name: input.fullName,
-    existingCustomerId: existing?.stripeCustomerId ?? null,
+    existingCustomerId: reusableCustomerId,
   });
 
   const snapshot = await captureSnapshot(plan.id, 0);
@@ -186,7 +194,7 @@ export async function changePlan(
   }
 
   let newPriceId = newPlan.stripePriceId;
-  if (!newPriceId) {
+  if (!newPriceId || newPriceId.includes("_fake_")) {
     ({ stripePriceId: newPriceId } = await syncPlanStripePrice(newPlan.id));
   }
 
