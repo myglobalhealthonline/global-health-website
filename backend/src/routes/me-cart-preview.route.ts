@@ -45,6 +45,8 @@ const meCartPreviewRoute: FastifyPluginAsync = async (app) => {
           kind: i.kind,
           serviceId: i.serviceId,
           unitPriceCents: i.unitPriceCents,
+          benefitSelection: i.benefitSelection,
+          familyMemberId: i.familyMemberId,
         })),
         peakPriceByItemId,
       });

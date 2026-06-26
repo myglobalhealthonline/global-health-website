@@ -15,6 +15,7 @@ import {
   removeCartItem as apiRemove,
   updateCartItem as apiUpdate,
   type AddItemInput,
+  type UpdateItemInput,
 } from "@/lib/api/cart-client";
 import type { Cart } from "@/lib/api/cart-types";
 
@@ -33,6 +34,9 @@ type CartContextValue = {
   refresh: () => Promise<void>;
   add: (input: AddItemInput) => Promise<{ ok: boolean; message?: string; conflict?: string }>;
   update: (itemId: string, qty: number) => Promise<void>;
+  /** Patch a line's benefit selection / family target. Returns the error
+   *  message (if any) so callers can surface ownership/validation failures. */
+  patchItem: (itemId: string, patch: UpdateItemInput) => Promise<{ ok: boolean; message?: string }>;
   remove: (itemId: string) => Promise<void>;
   clear: () => Promise<void>;
 };
@@ -73,6 +77,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (res.ok) setCart(res.data);
   }, []);
 
+  const patchItem = useCallback<CartContextValue["patchItem"]>(async (itemId, patch) => {
+    const res = await apiUpdate(itemId, patch);
+    if (res.ok) {
+      setCart(res.data);
+      return { ok: true };
+    }
+    return { ok: false, message: res.message };
+  }, []);
+
   const remove = useCallback<CartContextValue["remove"]>(async (itemId) => {
     const res = await apiRemove(itemId);
     if (res.ok) setCart(res.data);
@@ -84,7 +97,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <CartContext.Provider value={{ cart, loading, refresh, add, update, remove, clear }}>
+    <CartContext.Provider value={{ cart, loading, refresh, add, update, patchItem, remove, clear }}>
       {children}
     </CartContext.Provider>
   );

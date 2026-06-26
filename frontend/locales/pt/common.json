@@ -250,7 +250,17 @@
     "enterValidEmail": "Introduza um endereço de email válido.",
     "acceptConsent": "Deve aceitar o consentimento para continuar.",
     "acceptClinicConsent": "Deve consentir na partilha dos seus dados com a clínica tratante.",
-    "acceptPlatformConsent": "Deve consentir no tratamento dos seus dados pela plataforma."
+    "acceptPlatformConsent": "Deve consentir no tratamento dos seus dados pela plataforma.",
+    "whoIsThisFor": "Who is this booking for?",
+    "forMe": "Myself",
+    "forFamilyMember": "A family member",
+    "manageFamily": "Manage family members",
+    "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible.",
+    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member.",
+    "selectedTime": "Hora selecionada",
+    "changeTime": "Alterar hora",
+    "saveAddressToProfile": "Guardar esta morada no meu perfil",
+    "pickTimeToContinue": "Escolha uma hora para continuar com os seus dados."
   },
   "extra": {
     "specialistsWatermark": "Especialistas",
@@ -464,7 +474,13 @@
     "decreaseQuantity": "Diminuir quantidade",
     "increaseQuantity": "Aumentar quantidade",
     "removeAria": "Remover {name}",
-    "remove": "Remover"
+    "remove": "Remover",
+    "benefitLabel": "Plan benefit",
+    "payNormally": "Pay normally",
+    "usePlanCredit": "Use a credit",
+    "usePlanDiscount": "Use discount",
+    "benefitFor": "For {name}",
+    "notEnoughCreditsHint": "No credits left — this consultation will be charged at full price."
   },
   "checkoutPage": {
     "title": "Finalizar compra",
@@ -533,6 +549,8 @@
     "clinicianNotInCountry": "Esse clínico não está disponível neste país neste momento. Escolha outro clínico para continuar.",
     "steps34": "Passos 3 e 4",
     "pickTimeDetails": "Escolha uma hora e adicione os dados do doente",
+    "detailsTitle": "Adicione os seus dados",
+    "detailsDesc": "Diga-nos para quem é a consulta e confirme os seus dados de contacto e morada.",
     "timesShown": "As horas são apresentadas no fuso horário da clínica. A consulta é adicionada ao seu carrinho antes de finalizar a compra.",
     "selectedConsultation": "Consulta selecionada",
     "changeService": "Alterar serviço",

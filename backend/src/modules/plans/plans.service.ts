@@ -30,6 +30,14 @@ export class PlanPriceSyncError extends Error {
   }
 }
 
+/** familyEnabled was set true on a non-PREMIUM plan (§ appointment-claim G4). */
+export class PlanFamilyNotPremiumError extends Error {
+  constructor() {
+    super("familyEnabled is only allowed on PREMIUM plans");
+    this.name = "PlanFamilyNotPremiumError";
+  }
+}
+
 const adminPlanInclude = {
   country: { select: { id: true, code: true, name: true } },
   consultationRules: {
@@ -143,7 +151,10 @@ export async function createAdminPlan(input: AdminPlanCreateBody): Promise<Admin
         // Wellness is strictly Premium-only — force 0 on Essential/Comprehensive.
         wellnessCreditsPerMonth:
           input.planType === "PREMIUM" ? input.wellnessCreditsPerMonth : 0,
-        familyEnabled: input.familyEnabled,
+        // Family usage is Premium-only too — force false on other tiers (the
+        // create schema refine already rejects familyEnabled=true here, this is
+        // belt-and-suspenders mirroring the wellness guard).
+        familyEnabled: input.planType === "PREMIUM" ? input.familyEnabled : false,
         // VAT removed — always EXEMPT, no rate.
         vatMode: "EXEMPT",
         vatRatePct: null,
@@ -179,9 +190,15 @@ export async function updateAdminPlan(
 ): Promise<AdminPlanRecord | null> {
   const existing = await prisma.pricingPlan.findUnique({
     where: { id },
-    select: { id: true, monthlyPriceCents: true, currencyCode: true },
+    select: { id: true, monthlyPriceCents: true, currencyCode: true, planType: true },
   });
   if (!existing) return null;
+
+  // Premium-only family guard (§ appointment-claim G4). planType is immutable
+  // and read from the row, so a forged body can't bypass this.
+  if (body.familyEnabled === true && existing.planType !== "PREMIUM") {
+    throw new PlanFamilyNotPremiumError();
+  }
 
   const priceChanged =
     (body.monthlyPriceCents !== undefined && body.monthlyPriceCents !== existing.monthlyPriceCents) ||

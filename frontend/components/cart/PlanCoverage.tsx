@@ -27,11 +27,15 @@ export function PlanCoverage({
   loginHref,
   plansHref,
   itemNames,
+  refreshKey,
 }: {
   lang: string;
   loginHref: string;
   plansHref: string;
   itemNames: Record<string, string>;
+  /** Bump to force a re-fetch (e.g. after the cart page changes a line's
+   *  benefit selection) so the savings + per-line state stay in sync. */
+  refreshKey?: number;
 }) {
   const t = loadLocaleBundle((lang || "en") as LocaleCode).subscription.coverage;
   const [state, setState] = useState<CoverageState>({ kind: "loading" });
@@ -49,7 +53,7 @@ export function PlanCoverage({
     return () => {
       active = false;
     };
-  }, []);
+  }, [refreshKey]);
 
   if (state.kind === "loading" || state.kind === "hidden") return null;
 
@@ -99,10 +103,26 @@ export function PlanCoverage({
     );
   }
 
-  const badge = (mode: CartCoverageView["lines"][number]["mode"]): { label: string; tone: string } => {
-    if (mode === "CREDIT") return { label: t.included, tone: "var(--color-brand-primary)" };
-    if (mode === "FIXED" || mode === "PERCENT") return { label: t.discounted, tone: "var(--color-brand-primary)" };
-    return { label: t.notCovered, tone: "var(--color-text-muted)" };
+  const badge = (line: CartCoverageView["lines"][number]): { label: string; tone: string } => {
+    if (line.mode === "CREDIT") return { label: t.included, tone: "var(--color-brand-primary)" };
+    if (line.mode === "FIXED" || line.mode === "PERCENT")
+      return { label: t.discounted, tone: "var(--color-brand-primary)" };
+    // NORMAL / NOT_COVERED — explain WHY so the buyer can act (warning tone).
+    const warn = "var(--color-status-warning-text)";
+    switch (line.reason) {
+      case "LOCKED":
+        return { label: t.locked, tone: warn };
+      case "NOT_ENOUGH_CREDITS":
+        return { label: t.notEnoughCredits, tone: warn };
+      case "FAMILY_UNAVAILABLE":
+      case "NOT_OWNED":
+      case "FAMILY_NOT_ENABLED":
+      case "SERVICE_NOT_FAMILY_USABLE":
+      case "MEMBER_NOT_ALLOWED":
+        return { label: t.familyUnavailable, tone: warn };
+      default:
+        return { label: t.notCovered, tone: "var(--color-text-muted)" };
+    }
   };
 
   return (
@@ -122,11 +142,16 @@ export function PlanCoverage({
 
       <ul className="mt-3 space-y-2">
         {v.lines.map((line) => {
-          const b = badge(line.mode);
+          const b = badge(line);
           return (
             <li key={line.itemId} className="flex items-center justify-between gap-3 text-[13px]">
               <span className="min-w-0 truncate" style={{ color: "var(--color-text-body)" }}>
                 {itemNames[line.itemId] ?? "—"}
+                {line.familyMemberName ? (
+                  <span className="ml-1.5 text-[11px]" style={{ color: "var(--color-text-muted)" }}>
+                    · {line.familyMemberName}
+                  </span>
+                ) : null}
               </span>
               <span className="flex shrink-0 items-center gap-2">
                 <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: "var(--color-background-soft)", color: b.tone }}>

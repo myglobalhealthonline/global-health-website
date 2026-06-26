@@ -49,6 +49,9 @@
     "wellnessRedeemLine": "Strângeți credite de wellness pentru kituri eligibile de teste de sănătate la domiciliu",
     "choosePlan": "Alegeți {plan}",
     "chooseCta": "Alege acest plan",
+    "currentPlan": "Planul curent",
+    "managePlan": "Gestionează planul",
+    "switchToThisPlan": "Schimbă la acest plan",
     "viewDetails": "Detalii plan",
     "onlineOnlyNote": "Doar consultații online/video — fără vizite în persoană și fără prescripții medicale.",
     "empty": {
@@ -119,7 +122,10 @@
     "discounted": "Reducere de plan",
     "notCovered": "Neinclus în planul tău",
     "youSave": "Economisești {amount} cu planul tău",
-    "creditsLeft": "{count} credite de consultație rămase după aceasta"
+    "creditsLeft": "{count} credite de consultație rămase după aceasta",
+    "locked": "Not yet unlocked",
+    "familyUnavailable": "Family usage not available",
+    "notEnoughCredits": "Not enough credits"
   },
   "dashboard": {
     "memberMonths": "Membru de {months} luni plătite",

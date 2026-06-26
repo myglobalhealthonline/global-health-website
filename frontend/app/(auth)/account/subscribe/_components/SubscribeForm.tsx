@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Check, Loader2, Lock } from "lucide-react";
-import { startSubscription } from "@/lib/api/me-subscription";
+import { devActivateSubscription, startSubscription } from "@/lib/api/me-subscription";
 
 export interface SubscribeFormProps {
   planId: string;
@@ -48,9 +48,36 @@ export function SubscribeForm(props: SubscribeFormProps) {
     }
     setSubmitting(true);
     setError(null);
-    const res = await startSubscription(props.planId, props.returnTo ?? "/account/membership");
+    const returnTo = props.returnTo ?? "/account/membership";
+    const res = await startSubscription(props.planId, returnTo);
     if (res.ok && res.data.checkoutUrl) {
-      window.location.assign(res.data.checkoutUrl);
+      const url = res.data.checkoutUrl;
+      // The fake billing driver (local/dev) has no payable hosted checkout — it
+      // returns a fake-billing.local URL. Activate the subscription directly and
+      // land on the portal instead of navigating to a dead host. Production
+      // returns a real Stripe Checkout URL, which we follow as normal. Match the
+      // host exactly (not substring) so a real URL carrying that text in a query
+      // param can't divert the flow — and the dev-activate route 403s in prod.
+      let isFakeCheckout = false;
+      try {
+        isFakeCheckout = new URL(url).hostname === "fake-billing.local";
+      } catch {
+        isFakeCheckout = false;
+      }
+      if (isFakeCheckout) {
+        // Test/dev billing has no hosted checkout — activate directly. Only
+        // land on the portal if it actually activated; otherwise surface an
+        // error rather than bouncing to an INCOMPLETE membership.
+        const activated = await devActivateSubscription();
+        if (activated.ok) {
+          window.location.assign(`${returnTo}?subscription=ok`);
+        } else {
+          setSubmitting(false);
+          setError(activated.message || props.errorLabel);
+        }
+        return;
+      }
+      window.location.assign(url);
       return;
     }
     setSubmitting(false);

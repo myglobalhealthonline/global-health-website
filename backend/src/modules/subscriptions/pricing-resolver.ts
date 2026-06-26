@@ -10,11 +10,33 @@ import type { SnapshotConsultationRule, SnapshotPerkRule } from "./plan-snapshot
 
 export type PriceMode = "CREDIT" | "FIXED" | "PERCENT" | "NORMAL";
 
+/**
+ * Per-consultation-line benefit choice (§ appointment-claim). PAY_NORMAL never
+ * consumes a credit; USE_PLAN_CREDIT applies an included credit only;
+ * USE_PLAN_DISCOUNT applies a fixed/percent discount only (never a credit).
+ */
+export type BenefitSelection = "PAY_NORMAL" | "USE_PLAN_CREDIT" | "USE_PLAN_DISCOUNT";
+
+/**
+ * Why a line resolved to the price it did — surfaced in the read-only preview
+ * so the UI can explain coverage. NORMAL prices carry a distinct reason
+ * (LOCKED / NOT_ENOUGH_CREDITS / FAMILY_UNAVAILABLE / NOT_COVERED) so the
+ * cart can warn instead of silently charging full price.
+ */
+export type CoverageReason =
+  | "COVERED"
+  | "NOT_COVERED"
+  | "LOCKED"
+  | "NOT_ENOUGH_CREDITS"
+  | "FAMILY_UNAVAILABLE";
+
 export interface ResolvedPrice {
   mode: PriceMode;
   unitPriceCents: number;
   /** Credits to atomically reserve when mode === "CREDIT" (else 0). */
   creditsToReserve: number;
+  /** Why this price was chosen (display/anti-tamper diagnostics). */
+  reason: CoverageReason;
 }
 
 export interface ResolvePriceInput {
@@ -26,6 +48,17 @@ export interface ResolvePriceInput {
   creditsAvailable: number;
   /** Subscriber's paid-month count (gates rule application + perks). */
   paidMonthsCount: number;
+  /**
+   * The line's explicit benefit choice. There is NO auto-apply: a line only
+   * gets a credit/discount when the user picked it (default PAY_NORMAL).
+   */
+  benefitSelection: BenefitSelection;
+  /**
+   * Whether the beneficiary is allowed to use the plan benefit. `true` for
+   * self-use; for a family member the service computes the full gate first
+   * (ownership + Premium + familyEnabled + familyUsable + canUseCredits).
+   */
+  familyEligible: boolean;
 }
 
 /**
@@ -41,71 +74,116 @@ export function percentDiscountAmountCents(
 }
 
 /**
- * Resolve the price for a consultation line under a subscription.
+ * Resolve the price for a consultation line under a subscription, honouring the
+ * line's EXPLICIT benefit choice (§ appointment-claim). There is no auto-apply:
  *
- * Priority (§21):
- *   1. included + uses credits + enough credits → CREDIT (€0, reserve N)
- *   2. discountMode FIXED → fixedPriceCents
- *   3. discountMode PERCENT → base − round(base*pct/100)
- *   4. else → NORMAL (base)
+ *   - !familyEligible           → NORMAL (FAMILY_UNAVAILABLE) — a family line
+ *                                 that fails the gate is never benefit-priced.
+ *   - PAY_NORMAL                → NORMAL (NOT_COVERED) — never reserves a credit.
+ *   - below unlockAfterPaidMonths → NORMAL (LOCKED).
+ *   - USE_PLAN_CREDIT           → CREDIT (€0, reserve N) when the rule is an
+ *                                 includable credit rule and enough credits;
+ *                                 else NORMAL (NOT_ENOUGH_CREDITS / NOT_COVERED).
+ *                                 NEVER falls back to a discount the user didn't
+ *                                 pick (D7).
+ *   - USE_PLAN_DISCOUNT         → FIXED then PERCENT (never a credit); else
+ *                                 NORMAL (NOT_COVERED).
  *
- * The whole rule only applies once `paidMonthsCount >= rule.unlockAfterPaidMonths`
- * (perk-gated discounts / inclusion). Below the threshold, NORMAL price applies.
+ * Pure — the atomic credit reserve happens at the call site only when this
+ * returns mode === "CREDIT".
  */
 export function resolveConsultationPrice(input: ResolvePriceInput): ResolvedPrice {
-  const { rule, basePriceCents, creditsAvailable, paidMonthsCount } = input;
-  const normal: ResolvedPrice = {
+  const {
+    rule,
+    basePriceCents,
+    creditsAvailable,
+    paidMonthsCount,
+    benefitSelection,
+    familyEligible,
+  } = input;
+  const normal = (reason: CoverageReason): ResolvedPrice => ({
     mode: "NORMAL",
     unitPriceCents: basePriceCents,
     creditsToReserve: 0,
-  };
+    reason,
+  });
 
-  if (!rule) return normal;
-  if (paidMonthsCount < rule.unlockAfterPaidMonths) return normal;
+  if (!rule) return normal("NOT_COVERED");
+  // Family gate (or self-use) decided by the caller — a failing family line is
+  // never benefit-priced regardless of the selection.
+  if (!familyEligible) return normal("FAMILY_UNAVAILABLE");
+  // Explicit pay-normal: never reserve, never discount.
+  if (benefitSelection === "PAY_NORMAL") return normal("NOT_COVERED");
+  // Perk-unlock gate (§9) applies to credit + discount alike.
+  if (paidMonthsCount < rule.unlockAfterPaidMonths) return normal("LOCKED");
 
-  // 1. Credit → €0
-  if (
-    rule.isIncluded &&
-    rule.usesCredits &&
-    rule.creditsPerUse > 0 &&
-    creditsAvailable >= rule.creditsPerUse
-  ) {
+  if (benefitSelection === "USE_PLAN_CREDIT") {
+    const isCreditRule = rule.isIncluded && rule.usesCredits && rule.creditsPerUse > 0;
+    if (!isCreditRule) return normal("NOT_COVERED");
+    if (creditsAvailable < rule.creditsPerUse) return normal("NOT_ENOUGH_CREDITS");
     return {
       mode: "CREDIT",
       unitPriceCents: 0,
       creditsToReserve: rule.creditsPerUse,
+      reason: "COVERED",
     };
   }
 
-  // 2. Fixed discounted price
+  // USE_PLAN_DISCOUNT — fixed then percent, never a credit.
   if (rule.discountMode === "FIXED" && rule.fixedPriceCents != null) {
     // Never charge MORE than the base via a misconfigured fixed price.
     return {
       mode: "FIXED",
       unitPriceCents: Math.min(rule.fixedPriceCents, basePriceCents),
       creditsToReserve: 0,
+      reason: "COVERED",
     };
   }
-
-  // 3. Percentage discount
   if (
     rule.discountMode === "PERCENT" &&
     rule.discountPercent != null &&
     rule.discountPercent > 0
   ) {
-    const discount = percentDiscountAmountCents(
-      basePriceCents,
-      rule.discountPercent,
-    );
+    const discount = percentDiscountAmountCents(basePriceCents, rule.discountPercent);
     return {
       mode: "PERCENT",
       unitPriceCents: Math.max(0, basePriceCents - discount),
       creditsToReserve: 0,
+      reason: "COVERED",
     };
   }
 
-  // 4. Normal
-  return normal;
+  return normal("NOT_COVERED");
+}
+
+/**
+ * Which benefit selections a line actually supports — drives the cart's
+ * segmented selector so it only offers options the rule can honour. PAY_NORMAL
+ * is always available. Credit/discount require the rule to be unlocked and the
+ * beneficiary to be family-eligible. USE_PLAN_CREDIT is offered whenever the
+ * rule is an includable credit rule (even at zero balance — the line then warns
+ * NOT_ENOUGH_CREDITS rather than hiding the option).
+ */
+export function eligibleBenefitSelections(input: {
+  rule: SnapshotConsultationRule | null;
+  paidMonthsCount: number;
+  familyEligible: boolean;
+}): BenefitSelection[] {
+  const out: BenefitSelection[] = ["PAY_NORMAL"];
+  const { rule, paidMonthsCount, familyEligible } = input;
+  if (!rule || !familyEligible) return out;
+  if (paidMonthsCount < rule.unlockAfterPaidMonths) return out;
+
+  if (rule.isIncluded && rule.usesCredits && rule.creditsPerUse > 0) {
+    out.push("USE_PLAN_CREDIT");
+  }
+  const hasDiscount =
+    (rule.discountMode === "FIXED" && rule.fixedPriceCents != null) ||
+    (rule.discountMode === "PERCENT" &&
+      rule.discountPercent != null &&
+      rule.discountPercent > 0);
+  if (hasDiscount) out.push("USE_PLAN_DISCOUNT");
+  return out;
 }
 
 /**

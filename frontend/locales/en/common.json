@@ -250,7 +250,17 @@
     "enterValidEmail": "Enter a valid email address.",
     "acceptConsent": "You need to accept the consent statement to continue.",
     "acceptClinicConsent": "You need to consent to sharing your data with the treating clinic.",
-    "acceptPlatformConsent": "You need to consent to platform processing of your data."
+    "acceptPlatformConsent": "You need to consent to platform processing of your data.",
+    "whoIsThisFor": "Who is this booking for?",
+    "forMe": "Myself",
+    "forFamilyMember": "A family member",
+    "manageFamily": "Manage family members",
+    "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible.",
+    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member.",
+    "selectedTime": "Selected time",
+    "changeTime": "Change time",
+    "saveAddressToProfile": "Save this address to my profile",
+    "pickTimeToContinue": "Pick a time to continue to your details."
   },
   "extra": {
     "specialistsWatermark": "Specialists",
@@ -464,7 +474,13 @@
     "decreaseQuantity": "Decrease quantity",
     "increaseQuantity": "Increase quantity",
     "removeAria": "Remove {name}",
-    "remove": "Remove"
+    "remove": "Remove",
+    "benefitLabel": "Plan benefit",
+    "payNormally": "Pay normally",
+    "usePlanCredit": "Use a credit",
+    "usePlanDiscount": "Use discount",
+    "benefitFor": "For {name}",
+    "notEnoughCreditsHint": "No credits left — this consultation will be charged at full price."
   },
   "checkoutPage": {
     "title": "Checkout",
@@ -533,6 +549,8 @@
     "clinicianNotInCountry": "That clinician is not available in this country right now. Choose another clinician to continue.",
     "steps34": "Steps 3 and 4",
     "pickTimeDetails": "Pick a time and add patient details",
+    "detailsTitle": "Add your details",
+    "detailsDesc": "Tell us who the appointment is for and confirm your contact and address details.",
     "timesShown": "Times are shown in the clinic timezone. The appointment is added to your cart before checkout.",
     "selectedConsultation": "Selected consultation",
     "changeService": "Change service",

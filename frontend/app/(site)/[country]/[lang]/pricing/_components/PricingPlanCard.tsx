@@ -16,6 +16,12 @@ export interface PricingPlanCardProps {
   t: PricingCopy;
   note: NoteCopy;
   ctaHref: string;
+  /** True when this card is the viewer's active subscription (Req 1). */
+  isCurrentPlan?: boolean;
+  /** True when the viewer has any active subscription in this country. */
+  hasActiveSub?: boolean;
+  /** Where "Manage plan" / "Switch to this plan" route (the portal). */
+  manageHref?: string;
 }
 
 /**
@@ -26,7 +32,15 @@ export interface PricingPlanCardProps {
  * the perk-unlock note is data-driven from `plan.perkUnlockMonths` (§36.17).
  * Family is intentionally NOT shown (Wave 5, D20).
  */
-export function PricingPlanCard({ plan, t, note, ctaHref }: PricingPlanCardProps) {
+export function PricingPlanCard({
+  plan,
+  t,
+  note,
+  ctaHref,
+  isCurrentPlan = false,
+  hasActiveSub = false,
+  manageHref = "/account/membership",
+}: PricingPlanCardProps) {
   const featured = plan.isFeatured;
   const price = formatPrice(plan.monthlyPriceCents, plan.currencyCode, { maximumFractionDigits: 0 });
   const credits = plan.monthlyConsultationCredits;
@@ -57,10 +71,12 @@ export function PricingPlanCard({ plan, t, note, ctaHref }: PricingPlanCardProps
     <article
       className="group relative flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-background-page)] p-7 transition-all duration-300 focus-within:-translate-y-1 hover:-translate-y-1 lg:p-8"
       style={{
-        border: featured
-          ? "1.5px solid var(--color-brand-accent)"
-          : "1px solid var(--color-border)",
-        boxShadow: featured
+        border: isCurrentPlan
+          ? "1.5px solid var(--color-brand-primary)"
+          : featured
+            ? "1.5px solid var(--color-brand-accent)"
+            : "1px solid var(--color-border)",
+        boxShadow: featured || isCurrentPlan
           ? "0 24px 50px -28px rgba(15,46,37,0.45)"
           : "0 1px 2px rgba(15,46,37,0.04)",
         backgroundImage: featured
@@ -77,9 +93,18 @@ export function PricingPlanCard({ plan, t, note, ctaHref }: PricingPlanCardProps
         />
       ) : null}
 
-      {/* Badge row — reserved height on every card so titles align. */}
+      {/* Badge row — reserved height on every card so titles align. The
+          "Current plan" marker (Req 1) takes priority over featured/admin badges. */}
       <div className="mb-4 flex min-h-[1.75rem] items-start">
-        {badge ? (
+        {isCurrentPlan ? (
+          <span
+            className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em]"
+            style={{ background: "var(--color-brand-primary)", color: "#fff" }}
+          >
+            <Check className="size-3" strokeWidth={3.25} aria-hidden />
+            {t.currentPlan}
+          </span>
+        ) : badge ? (
           <span
             className="inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em]"
             style={
@@ -158,22 +183,51 @@ export function PricingPlanCard({ plan, t, note, ctaHref }: PricingPlanCardProps
             {perkNote}
           </p>
         ) : null}
-        <Link
-          href={ctaHref}
-          aria-label={interpolate(t.choosePlan, { plan: plan.name })}
-          className={
-            featured
-              ? "gh2-btn-lime w-full justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.45)]"
-              : "gh-btn gh-btn-primary w-full justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-brand-primary)]"
-          }
-        >
-          {t.chooseCta}
-          <ArrowUpRight
-            className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-            strokeWidth={1.75}
-            aria-hidden
-          />
-        </Link>
+        {isCurrentPlan ? (
+          <div className="flex flex-col gap-2.5">
+            {/* Active plan — not re-purchasable. Route to the portal to manage. */}
+            <span
+              aria-disabled="true"
+              className="gh-btn w-full cursor-default justify-center gap-1.5"
+              style={{
+                background: "var(--color-background-soft)",
+                color: "var(--color-text-muted)",
+                border: "1px solid var(--color-border)",
+              }}
+            >
+              <Check className="size-4" strokeWidth={3} aria-hidden />
+              {t.currentPlan}
+            </span>
+            <Link
+              href={manageHref}
+              className="text-center text-xs font-semibold underline-offset-2 hover:underline"
+              style={{ color: "var(--color-brand-primary)" }}
+            >
+              {t.managePlan}
+            </Link>
+          </div>
+        ) : (
+          // With another active plan, a card offers a next-cycle SWITCH (handled
+          // in the portal), never a second purchase. No sub → normal subscribe.
+          <Link
+            href={hasActiveSub ? manageHref : ctaHref}
+            aria-label={
+              hasActiveSub ? t.switchToThisPlan : interpolate(t.choosePlan, { plan: plan.name })
+            }
+            className={
+              featured
+                ? "gh2-btn-lime w-full justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.45)]"
+                : "gh-btn gh-btn-primary w-full justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--color-brand-primary)]"
+            }
+          >
+            {hasActiveSub ? t.switchToThisPlan : t.chooseCta}
+            <ArrowUpRight
+              className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              strokeWidth={1.75}
+              aria-hidden
+            />
+          </Link>
+        )}
         <p className="mt-3 text-center text-[11px]" style={{ color: "var(--color-text-muted)" }}>
           {t.onlineOnlyNote}
         </p>

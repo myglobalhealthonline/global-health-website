@@ -250,7 +250,17 @@
     "enterValidEmail": "Zadejte platnou e-mailovou adresu.",
     "acceptConsent": "Před pokračováním musíte přijmout souhlas.",
     "acceptClinicConsent": "Musíte souhlasit se sdílením dat s ošetřující klinikou.",
-    "acceptPlatformConsent": "Musíte souhlasit se zpracováním dat platformou."
+    "acceptPlatformConsent": "Musíte souhlasit se zpracováním dat platformou.",
+    "whoIsThisFor": "Who is this booking for?",
+    "forMe": "Myself",
+    "forFamilyMember": "A family member",
+    "manageFamily": "Manage family members",
+    "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible.",
+    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member.",
+    "selectedTime": "Vybraný čas",
+    "changeTime": "Změnit čas",
+    "saveAddressToProfile": "Uložit tuto adresu do mého profilu",
+    "pickTimeToContinue": "Vyberte čas a pokračujte k údajům."
   },
   "extra": {
     "specialistsWatermark": "Specialisté",
@@ -464,7 +474,13 @@
     "decreaseQuantity": "Snížit množství",
     "increaseQuantity": "Zvýšit množství",
     "removeAria": "Odebrat {name}",
-    "remove": "Odebrat"
+    "remove": "Odebrat",
+    "benefitLabel": "Plan benefit",
+    "payNormally": "Pay normally",
+    "usePlanCredit": "Use a credit",
+    "usePlanDiscount": "Use discount",
+    "benefitFor": "For {name}",
+    "notEnoughCreditsHint": "No credits left — this consultation will be charged at full price."
   },
   "checkoutPage": {
     "title": "Pokladna",
@@ -533,6 +549,8 @@
     "clinicianNotInCountry": "Tento lékař není v této zemi momentálně dostupný. Pokračujte výběrem jiného lékaře.",
     "steps34": "Kroky 3 a 4",
     "pickTimeDetails": "Vyberte si čas a doplňte údaje pacienta",
+    "detailsTitle": "Zadejte své údaje",
+    "detailsDesc": "Sdělte nám, pro koho je schůzka, a potvrďte své kontaktní a adresní údaje.",
     "timesShown": "Časy jsou zobrazeny v časovém pásmu kliniky. Schůzka se přidá do vašeho košíku před pokladnou.",
     "selectedConsultation": "Vybraná konzultace",
     "changeService": "Změnit službu",

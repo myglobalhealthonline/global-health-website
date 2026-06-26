@@ -86,7 +86,7 @@ describe("order credit reservation commit/release", () => {
       const result = await cp.reserveAndPriceConsultations(tx, {
         userId: fx.userId,
         countryCode: fx.countryCode,
-        items: [{ id: orderItemId, kind: "GENERAL_CONSULTATION", serviceId: "svc-x", unitPriceCents: 5000 }],
+        items: [{ id: orderItemId, kind: "GENERAL_CONSULTATION", serviceId: "svc-x", unitPriceCents: 5000, benefitSelection: "USE_PLAN_CREDIT" }],
         peakPriceByItemId: new Map([[orderItemId, 5000]]),
       });
       assert.equal(result.lines.get(orderItemId)?.creditCovered, true, "credit reserved");

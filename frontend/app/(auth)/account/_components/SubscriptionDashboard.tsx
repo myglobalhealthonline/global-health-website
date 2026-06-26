@@ -28,7 +28,19 @@ import { AdminCard, Pill, type PillTone } from "@/components/portal-atoms";
  * months" copy is data-driven (§36.17). Renders nothing for non-subscribers so
  * the existing dashboard is unchanged.
  */
-export async function SubscriptionDashboard({ locale }: { locale: LocaleCode }) {
+/**
+ * `embedded` renders the benefit detail WITHOUT the plan summary card or the
+ * section heading — used on the Membership page, where `ManagePanel` already
+ * shows the plan, status, billing date and lifecycle actions. The default
+ * (overview dashboard) is unchanged.
+ */
+export async function SubscriptionDashboard({
+  locale,
+  embedded = false,
+}: {
+  locale: LocaleCode;
+  embedded?: boolean;
+}) {
   const [sub, credits, redemptions] = await Promise.all([
     getServerSubscription(),
     getServerCredits(),
@@ -80,12 +92,15 @@ export async function SubscriptionDashboard({ locale }: { locale: LocaleCode }) 
 
   return (
     <section className="mt-6">
-      <h2 className="mb-3 text-[13px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--color-text-muted)" }}>
-        {t.heading}
-      </h2>
+      {embedded ? null : (
+        <h2 className="mb-3 text-[13px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--color-text-muted)" }}>
+          {t.heading}
+        </h2>
+      )}
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        {/* Plan */}
+      <div className={embedded ? "grid gap-4 sm:grid-cols-2" : "grid gap-4 lg:grid-cols-3"}>
+        {/* Plan — hidden when embedded (ManagePanel already shows it). */}
+        {embedded ? null : (
         <AdminCard>
           <div className="flex items-start justify-between gap-3">
             <span
@@ -122,6 +137,7 @@ export async function SubscriptionDashboard({ locale }: { locale: LocaleCode }) 
             {t.manage}
           </Link>
         </AdminCard>
+        )}
 
         {/* Consultation credits */}
         <AdminCard>

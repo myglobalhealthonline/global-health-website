@@ -49,6 +49,9 @@
     "wellnessRedeemLine": "Sammeln Sie Wellness-Guthaben für berechtigte Gesundheitstests für zu Hause",
     "choosePlan": "{plan} wählen",
     "chooseCta": "Diesen Plan wählen",
+    "currentPlan": "Aktueller Plan",
+    "managePlan": "Plan verwalten",
+    "switchToThisPlan": "Zu diesem Plan wechseln",
     "viewDetails": "Tarifdetails",
     "onlineOnlyNote": "Nur Online-/Videoberatungen — keine persönlichen Besuche und keine Verschreibungen.",
     "empty": {
@@ -119,7 +122,10 @@
     "discounted": "Tarifrabatt",
     "notCovered": "Nicht in Ihrem Tarif enthalten",
     "youSave": "Sie sparen {amount} mit Ihrem Tarif",
-    "creditsLeft": "{count} Beratungsguthaben danach übrig"
+    "creditsLeft": "{count} Beratungsguthaben danach übrig",
+    "locked": "Not yet unlocked",
+    "familyUnavailable": "Family usage not available",
+    "notEnoughCredits": "Not enough credits"
   },
   "dashboard": {
     "memberMonths": "Mitglied seit {months} bezahlten Monaten",

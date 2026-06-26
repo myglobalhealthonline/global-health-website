@@ -47,6 +47,13 @@ const dobInputSchema = z
   .max(40)
   .regex(/^\d{4}-\d{2}-\d{2}(T.*)?$/, "Invalid date of birth");
 
+/** Per-line subscription benefit choice (§ appointment-claim). */
+const benefitSelectionSchema = z.enum([
+  "PAY_NORMAL",
+  "USE_PLAN_CREDIT",
+  "USE_PLAN_DISCOUNT",
+]);
+
 const addItemBodySchema = z.object({
   kind: z.enum([
     CartItemKind.HEALTH_TEST,
@@ -61,6 +68,17 @@ const addItemBodySchema = z.object({
   /** Consultation cart items only — slot + doctor selected up front. */
   timeSlotId: z.string().min(1).max(120).optional(),
   doctorId: z.string().min(1).max(120).optional(),
+  /**
+   * Per-line benefit choice. Default PAY_NORMAL never consumes a credit; the
+   * pricing engine only reserves on an explicit USE_PLAN_CREDIT eligible line.
+   */
+  benefitSelection: benefitSelectionSchema.optional(),
+  /**
+   * Approved dependent (Premium family usage). Ownership is re-checked
+   * server-side: the member must belong to the logged-in user. Guests cannot
+   * set this.
+   */
+  familyMemberId: z.string().min(1).max(120).optional(),
   /**
    * Patient intake snapshot. REQUIRED for consultation kinds (the cart
    * route below enforces presence + consent). Ignored for product
@@ -98,9 +116,14 @@ const addItemBodySchema = z.object({
     .optional(),
 });
 
-const updateItemBodySchema = z.object({
-  quantity: z.number().int().min(1).max(5),
-});
+const updateItemBodySchema = z
+  .object({
+    quantity: z.number().int().min(1).max(5).optional(),
+    benefitSelection: benefitSelectionSchema.optional(),
+    /** Send `null` to clear (book for self), an id to target a dependent. */
+    familyMemberId: z.string().min(1).max(120).nullable().optional(),
+  })
+  .refine((d) => Object.keys(d).length > 0, { message: "Provide at least one field to update" });
 
 /** How long a consultation slot stays in the patient's cart before it
  *  auto-releases back to OPEN. Matches the typical "checkout in this
@@ -148,6 +171,12 @@ type CartItemView = {
     consentAcceptedAt: string | null;
     bookingForOther: boolean;
   } | null;
+  /** Per-line subscription benefit choice (consultation lines). */
+  benefitSelection: "PAY_NORMAL" | "USE_PLAN_CREDIT" | "USE_PLAN_DISCOUNT";
+  /** Approved dependent this line is booked for, or null for self. */
+  familyMemberId: string | null;
+  /** Display name of the dependent (looked up at serialize time). Null = self. */
+  familyMemberName: string | null;
 };
 
 type CartView = {
@@ -181,7 +210,9 @@ async function serializeFreshCart(
 ): Promise<CartView> {
   const cart = await loadFullCart(cartId);
   if (!cart) return { ...EMPTY_CART, expiredHolds };
-  const enrich = await enrichConsultationLines(cart.items);
+  // `cart.userId` is the binding for a logged-in patient's cart (null for a
+  // guest cookie cart) — it scopes the family-name lookup to the owner.
+  const enrich = await enrichConsultationLines(cart.items, cart.userId);
   return serializeCart(cart, expiredHolds, enrich);
 }
 
@@ -274,17 +305,33 @@ async function readBookingSettings(countryCode: string) {
  * back to nulls so a missing doctor row (e.g. recently deactivated)
  * doesn't blow up the cart endpoint.
  */
-async function enrichConsultationLines(items: { doctorId: string | null; timeSlotId: string | null }[]) {
+async function enrichConsultationLines(
+  items: { doctorId: string | null; timeSlotId: string | null; familyMemberId: string | null }[],
+  /** Owner of the cart. Family-member names are resolved ONLY for the owner —
+   *  never for guests — and the query is scoped by primaryUserId so a stale /
+   *  foreign familyMemberId can never disclose another account's dependent. */
+  userId: string | null,
+) {
   const doctorIds = Array.from(
     new Set(items.map((i) => i.doctorId).filter((id): id is string => Boolean(id))),
   );
   const slotIds = Array.from(
     new Set(items.map((i) => i.timeSlotId).filter((id): id is string => Boolean(id))),
   );
-  if (doctorIds.length === 0 && slotIds.length === 0) {
-    return { doctorById: new Map<string, string>(), slotById: new Map<string, Date>() };
+  // Guests own no dependents — skip the family lookup entirely for them.
+  const familyIds = userId
+    ? Array.from(
+        new Set(items.map((i) => i.familyMemberId).filter((id): id is string => Boolean(id))),
+      )
+    : [];
+  if (doctorIds.length === 0 && slotIds.length === 0 && familyIds.length === 0) {
+    return {
+      doctorById: new Map<string, string>(),
+      slotById: new Map<string, Date>(),
+      familyById: new Map<string, string>(),
+    };
   }
-  const [doctors, slots] = await Promise.all([
+  const [doctors, slots, family] = await Promise.all([
     doctorIds.length
       ? prisma.doctor.findMany({
           where: { id: { in: doctorIds } },
@@ -297,10 +344,17 @@ async function enrichConsultationLines(items: { doctorId: string | null; timeSlo
           select: { id: true, startAt: true },
         })
       : Promise.resolve([]),
+    familyIds.length && userId
+      ? prisma.familyMember.findMany({
+          where: { id: { in: familyIds }, primaryUserId: userId },
+          select: { id: true, fullName: true },
+        })
+      : Promise.resolve([]),
   ]);
   const doctorById = new Map(doctors.map((d) => [d.id, d.fullName]));
   const slotById = new Map(slots.map((s) => [s.id, s.startAt]));
-  return { doctorById, slotById };
+  const familyById = new Map(family.map((f) => [f.id, f.fullName]));
+  return { doctorById, slotById, familyById };
 }
 
 /**
@@ -457,6 +511,15 @@ async function mergeCarts(sourceId: string, targetId: string) {
           patientNotes: item.patientNotes,
           patientConsentAcceptedAt: item.patientConsentAcceptedAt,
           bookingForOther: item.bookingForOther,
+          // Carry the per-line benefit choice across the merge. The benefit is
+          // only ever applied for an active subscriber at checkout, so this is
+          // harmless on its own.
+          benefitSelection: item.benefitSelection,
+          // SECURITY: never carry a familyMemberId across a merge. The source
+          // is a guest cookie cart whose items were added without an
+          // authenticated ownership check, so a crafted/foreign id could ride
+          // in. The owner can re-select an approved dependent on the cart page.
+          familyMemberId: null,
         },
       });
     }
@@ -470,6 +533,7 @@ function serializeCart(
   enrich?: {
     doctorById: Map<string, string>;
     slotById: Map<string, Date>;
+    familyById: Map<string, string>;
   },
 ): CartView {
   if (!cart) return { ...EMPTY_CART, expiredHolds };
@@ -507,6 +571,11 @@ function serializeCart(
               : null,
             bookingForOther: i.bookingForOther,
           }
+        : null,
+      benefitSelection: i.benefitSelection,
+      familyMemberId: i.familyMemberId,
+      familyMemberName: i.familyMemberId
+        ? enrich?.familyById.get(i.familyMemberId) ?? null
         : null,
     };
   });
@@ -556,7 +625,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       if (!body.success) {
         return reply.status(400).send(errorResponse("Invalid item", body.error.flatten()));
       }
-      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient } =
+      const { kind, healthTestId, serviceId, quantity, timeSlotId, doctorId, patient, benefitSelection, familyMemberId } =
         body.data;
       const qty = quantity ?? 1;
 
@@ -796,6 +865,30 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       // Resolve cart
       let { cart, userId, cookieToken } = await resolveActiveCart(request, reply);
 
+      // Family-member targeting (Premium family usage). Only a logged-in
+      // patient can book for an approved dependent, and the dependent MUST
+      // belong to them — this is the server-side spoof guard (the pricing
+      // engine re-checks ownership again at preview + checkout). Guests get a
+      // 401 so the UI can prompt login.
+      let familyMember:
+        | { id: string; fullName: string; email: string | null; dateOfBirth: Date | null }
+        | null = null;
+      if (familyMemberId) {
+        if (!userId) {
+          return reply
+            .status(401)
+            .send(errorResponse("Log in to book for a family member"));
+        }
+        const fm = await prisma.familyMember.findFirst({
+          where: { id: familyMemberId, primaryUserId: userId },
+          select: { id: true, fullName: true, email: true, dateOfBirth: true },
+        });
+        if (!fm) {
+          return reply.status(403).send(errorResponse("Family member not found"));
+        }
+        familyMember = fm;
+      }
+
       // Create cart on first add
       if (!cart) {
         if (userId) {
@@ -907,13 +1000,21 @@ const cartRoute: FastifyPluginAsync = async (app) => {
             timeSlotId: timeSlotId ?? null,
             doctorId: doctorId ?? null,
             heldUntil,
+            // Per-line benefit choice (default PAY_NORMAL never reserves a
+            // credit) + the approved dependent this line is booked for. Both are
+            // consultation-only concepts — products always pay normally with no
+            // beneficiary, regardless of what the client sent.
+            benefitSelection: isConsultation ? benefitSelection ?? "PAY_NORMAL" : "PAY_NORMAL",
+            familyMemberId: isConsultation ? familyMember?.id ?? null : null,
             // Consultation patient snapshot. Stamped here so cart →
             // order → webhook can mint the Appointment without
-            // collecting any of this at checkout.
-            patientFullName: patient?.fullName ?? null,
-            patientEmail: patient?.email ?? null,
+            // collecting any of this at checkout. When booking for a family
+            // member, fall back to the member's identity if the client didn't
+            // supply explicit patient fields.
+            patientFullName: patient?.fullName ?? familyMember?.fullName ?? null,
+            patientEmail: patient?.email ?? familyMember?.email ?? null,
             patientPhone: patient?.phone ? patient.phone : null,
-            patientDateOfBirth: patientDob,
+            patientDateOfBirth: patientDob ?? familyMember?.dateOfBirth ?? null,
             patientNotes: patient?.notes ? patient.notes : null,
             patientConsentAcceptedAt: patient?.consentAccepted ? new Date() : null,
             bookingForOther: patient?.bookingForOther ?? false,
@@ -961,7 +1062,7 @@ const cartRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid body", body.error.flatten()));
       }
 
-      const { cart } = await resolveActiveCart(request, reply);
+      const { cart, userId } = await resolveActiveCart(request, reply);
       if (!cart) return reply.status(404).send(errorResponse("Cart not found"));
 
       // Sweep expired holds before mutating
@@ -976,15 +1077,45 @@ const cartRoute: FastifyPluginAsync = async (app) => {
       const isConsultation =
         item.kind === "GENERAL_CONSULTATION" ||
         item.kind === "SPECIALIST_CONSULTATION";
-      if (isConsultation && body.data.quantity !== 1) {
+      if (isConsultation && body.data.quantity !== undefined && body.data.quantity !== 1) {
         return reply
           .status(400)
           .send(errorResponse("Consultation items are unique per slot"));
       }
 
+      // Re-check family-member ownership when (re)targeting a dependent. Same
+      // spoof guard as add-to-cart: the member must belong to the logged-in
+      // user. `null` clears the target (book for self).
+      let familyTargetUpdate: { familyMemberId: string | null } | undefined;
+      if (body.data.familyMemberId !== undefined) {
+        if (body.data.familyMemberId === null) {
+          familyTargetUpdate = { familyMemberId: null };
+        } else {
+          if (!userId) {
+            return reply
+              .status(401)
+              .send(errorResponse("Log in to book for a family member"));
+          }
+          const fm = await prisma.familyMember.findFirst({
+            where: { id: body.data.familyMemberId, primaryUserId: userId },
+            select: { id: true },
+          });
+          if (!fm) {
+            return reply.status(403).send(errorResponse("Family member not found"));
+          }
+          familyTargetUpdate = { familyMemberId: fm.id };
+        }
+      }
+
       await prisma.cartItem.update({
         where: { id: item.id },
-        data: { quantity: body.data.quantity },
+        data: {
+          ...(body.data.quantity !== undefined ? { quantity: body.data.quantity } : {}),
+          ...(body.data.benefitSelection !== undefined
+            ? { benefitSelection: body.data.benefitSelection }
+            : {}),
+          ...(familyTargetUpdate ?? {}),
+        },
       });
       return okResponse(await serializeFreshCart(sweptCart.id, expired));
     },

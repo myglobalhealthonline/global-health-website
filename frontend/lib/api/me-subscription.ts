@@ -112,6 +112,20 @@ export function getCredits(): Promise<MeResult<CreditsView>> {
 
 export type CartCoverageMode = "CREDIT" | "FIXED" | "PERCENT" | "NORMAL" | "NOT_COVERED";
 
+export type BenefitSelection = "PAY_NORMAL" | "USE_PLAN_CREDIT" | "USE_PLAN_DISCOUNT";
+
+/** Per-line preview reason — why the line resolved to its price. */
+export type CartCoverageReason =
+  | "COVERED"
+  | "NOT_COVERED"
+  | "LOCKED"
+  | "NOT_ENOUGH_CREDITS"
+  | "FAMILY_UNAVAILABLE"
+  | "NOT_OWNED"
+  | "FAMILY_NOT_ENABLED"
+  | "SERVICE_NOT_FAMILY_USABLE"
+  | "MEMBER_NOT_ALLOWED";
+
 export interface CartCoverageLine {
   itemId: string;
   serviceId: string | null;
@@ -120,6 +134,16 @@ export interface CartCoverageLine {
   finalUnitPriceCents: number;
   creditsUsed: number;
   savedCents: number;
+  /** The benefit currently selected on this line. */
+  selection: BenefitSelection;
+  /** Why this line resolved as it did (drives warning chips). */
+  reason: CartCoverageReason;
+  /** Only the selections this line can honour — drives the cart selector. */
+  eligibleSelections: BenefitSelection[];
+  /** Dependent the line targets (null = self). */
+  familyMemberId: string | null;
+  /** Display name of the dependent (null = self / unknown). */
+  familyMemberName: string | null;
 }
 
 export interface CartCoverageView {
@@ -167,6 +191,13 @@ export function markAllNotificationsRead(): Promise<MeResult<{ updated: number }
 
 export function startSubscription(planId: string, returnTo?: string): Promise<MeResult<{ checkoutUrl: string }>> {
   return meRequest("subscription", { method: "POST", body: { planId, ...(returnTo ? { returnTo } : {}) } });
+}
+
+/** DEV / LOCAL only — activate the just-created subscription when the fake
+ *  billing driver returned a non-payable checkout URL (no Stripe webhook fires
+ *  locally). Returns 403 in production, where Stripe is the sole activator. */
+export function devActivateSubscription(): Promise<MeResult<{ activated: boolean; status: string }>> {
+  return meRequest("subscription/dev-activate", { method: "POST" });
 }
 
 export function changePlan(planId: string): Promise<MeResult<{ pendingChangeEffectiveAt: string | null }>> {

@@ -7,6 +7,7 @@ import {
   SubscriptionServiceError,
   cancelSubscription,
   changePlan,
+  devActivateSubscription,
   getBillingPortalUrl,
   startSubscription,
 } from "../modules/subscriptions/subscription.service.js";
@@ -21,7 +22,10 @@ import { RefundError, refundSubscription } from "../modules/subscriptions/refund
 const returnToSchema = z
   .string()
   .trim()
-  .regex(/^\/[a-z0-9/-]*$/i)
+  // In-site relative path only (leading slash, no protocol/host). Underscore is
+  // allowed to match the frontend `safeReturnTo` regex so valid returnTo values
+  // aren't silently dropped server-side.
+  .regex(/^\/[a-z0-9/_-]*$/i)
   .max(200)
   .optional();
 
@@ -97,7 +101,10 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
-  app.post("/api/me/subscription/change", async (request, reply) => {
+  app.post(
+    "/api/me/subscription/change",
+    { config: { rateLimit: { max: 10, timeWindow: "1 hour" } } },
+    async (request, reply) => {
     const user = await requirePatient(request, reply);
     if (!user) return;
     const body = changeBodySchema.safeParse(request.body);
@@ -112,7 +119,10 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.post("/api/me/subscription/cancel", async (request, reply) => {
+  app.post(
+    "/api/me/subscription/cancel",
+    { config: { rateLimit: { max: 10, timeWindow: "1 hour" } } },
+    async (request, reply) => {
     const user = await requirePatient(request, reply);
     if (!user) return;
     try {
@@ -141,7 +151,10 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
-  app.get("/api/me/subscription/portal", async (request, reply) => {
+  app.get(
+    "/api/me/subscription/portal",
+    { config: { rateLimit: { max: 30, timeWindow: "1 hour" } } },
+    async (request, reply) => {
     const user = await requirePatient(request, reply);
     if (!user) return;
     const query = portalQuerySchema.safeParse(request.query);
@@ -152,6 +165,24 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
       return handleError(reply, err, app);
     }
   });
+
+  // DEV/LOCAL ONLY — simulate a paid first invoice so the fake-driver subscribe
+  // flow actually activates (no Stripe webhook fires locally). Hard-gated to the
+  // fake billing driver in the service: returns 403 NOT_ELIGIBLE under Stripe.
+  app.post(
+    "/api/me/subscription/dev-activate",
+    { config: { rateLimit: { max: 5, timeWindow: "1 hour" } } },
+    async (request, reply) => {
+      const user = await requirePatient(request, reply);
+      if (!user) return;
+      try {
+        const result = await devActivateSubscription(user.id);
+        return okResponse(result, "Subscription activated");
+      } catch (err) {
+        return handleError(reply, err, app);
+      }
+    },
+  );
 };
 
 function handleError(

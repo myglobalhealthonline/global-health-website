@@ -49,6 +49,9 @@
     "wellnessRedeemLine": "Collect wellness credits toward eligible home health test kits",
     "choosePlan": "Choose {plan}",
     "chooseCta": "Choose this plan",
+    "currentPlan": "Current plan",
+    "managePlan": "Manage plan",
+    "switchToThisPlan": "Switch to this plan",
     "viewDetails": "Plan details",
     "onlineOnlyNote": "Online/video consultations only — no in-person visits and no prescriptions.",
     "empty": {
@@ -119,7 +122,10 @@
     "discounted": "Plan discount",
     "notCovered": "Not covered by your plan",
     "youSave": "You save {amount} with your plan",
-    "creditsLeft": "{count} consultation credits left after this"
+    "creditsLeft": "{count} consultation credits left after this",
+    "locked": "Not yet unlocked",
+    "familyUnavailable": "Family usage not available",
+    "notEnoughCredits": "Not enough credits"
   },
   "dashboard": {
     "memberMonths": "Member for {months} paid months",

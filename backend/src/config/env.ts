@@ -85,6 +85,19 @@ const envSchema = z.object({
    *  fake. See modules/billing/billing.factory.ts. */
   BILLING_DRIVER: z.enum(["fake", "stripe"]).optional(),
 
+  /** DEV / TEST ONLY — let the fake billing driver "complete" a subscription
+   *  without a real payment (replays the webhook sequence) so the subscribe flow
+   *  can be exercised end-to-end on a test deployment that has no Stripe keys.
+   *  Has effect ONLY when BILLING_DRIVER is unset/"fake"; once BILLING_DRIVER=
+   *  "stripe" it is ignored (real Stripe is the sole activator). Locally
+   *  (NODE_ENV !== "production") test-activation is always on; set this to
+   *  "true" to also enable it on a non-prod test/staging deployment.
+   *  NEVER set "true" on a real customer production — it would let a user
+   *  self-grant a free subscription (and its credits) without paying. */
+  ALLOW_TEST_SUBSCRIPTION_ACTIVATION: z
+    .union([z.literal("true"), z.literal("false"), z.boolean()])
+    .optional(),
+
   /** Google Places API key — when set, the reviews-config endpoint
    *  refreshes the Google aggregate in the background (24h TTL).
    *  Without it the admin-entered aggregate is used as-is. */

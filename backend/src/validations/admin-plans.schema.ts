@@ -92,7 +92,14 @@ const planCreateBase = z.object({
 // NOTE: VAT removed from these plans (no vatMode/vatRatePct input). The service
 // layer forces vatMode=EXEMPT on every write and checkout sets automaticTax=false.
 
-export const adminPlanCreateBodySchema = planCreateBase;
+// Family usage is Premium-only (§ appointment-claim, req #6/#13). The create
+// schema can self-refine because planType is present; the update schema omits
+// planType (immutable) so its guard lives in the service layer where the
+// existing planType is fetched.
+export const adminPlanCreateBodySchema = planCreateBase.refine(
+  (d) => !d.familyEnabled || d.planType === "PREMIUM",
+  { message: "familyEnabled is only allowed on PREMIUM plans", path: ["familyEnabled"] },
+);
 
 export const adminPlanUpdateBodySchema = planCreateBase
   .omit({ countryId: true, slug: true, planType: true })
