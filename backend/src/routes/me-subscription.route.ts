@@ -22,7 +22,10 @@ import { RefundError, refundSubscription } from "../modules/subscriptions/refund
 const returnToSchema = z
   .string()
   .trim()
-  .regex(/^\/[a-z0-9/-]*$/i)
+  // In-site relative path only (leading slash, no protocol/host). Underscore is
+  // allowed to match the frontend `safeReturnTo` regex so valid returnTo values
+  // aren't silently dropped server-side.
+  .regex(/^\/[a-z0-9/_-]*$/i)
   .max(200)
   .optional();
 
@@ -98,7 +101,10 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
-  app.post("/api/me/subscription/change", async (request, reply) => {
+  app.post(
+    "/api/me/subscription/change",
+    { config: { rateLimit: { max: 10, timeWindow: "1 hour" } } },
+    async (request, reply) => {
     const user = await requirePatient(request, reply);
     if (!user) return;
     const body = changeBodySchema.safeParse(request.body);
@@ -113,7 +119,10 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.post("/api/me/subscription/cancel", async (request, reply) => {
+  app.post(
+    "/api/me/subscription/cancel",
+    { config: { rateLimit: { max: 10, timeWindow: "1 hour" } } },
+    async (request, reply) => {
     const user = await requirePatient(request, reply);
     if (!user) return;
     try {
@@ -142,7 +151,10 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
-  app.get("/api/me/subscription/portal", async (request, reply) => {
+  app.get(
+    "/api/me/subscription/portal",
+    { config: { rateLimit: { max: 30, timeWindow: "1 hour" } } },
+    async (request, reply) => {
     const user = await requirePatient(request, reply);
     if (!user) return;
     const query = portalQuerySchema.safeParse(request.query);
@@ -159,7 +171,7 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
   // fake billing driver in the service: returns 403 NOT_ELIGIBLE under Stripe.
   app.post(
     "/api/me/subscription/dev-activate",
-    { config: { rateLimit: { max: 20, timeWindow: "1 hour" } } },
+    { config: { rateLimit: { max: 5, timeWindow: "1 hour" } } },
     async (request, reply) => {
       const user = await requirePatient(request, reply);
       if (!user) return;

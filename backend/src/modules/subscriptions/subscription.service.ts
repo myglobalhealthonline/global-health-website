@@ -247,10 +247,13 @@ export async function getBillingPortalUrl(
 export async function devActivateSubscription(
   userId: string,
 ): Promise<{ activated: boolean; status: string }> {
-  if (getBillingPort().driver !== "fake") {
+  // Double-gated: the fake driver is the dev/test default, and we additionally
+  // refuse under NODE_ENV=production so a misconfigured prod (fake driver left
+  // on) can never mint a free subscription. Stripe is the sole activator in prod.
+  if (getBillingPort().driver !== "fake" || env.NODE_ENV === "production") {
     throw new SubscriptionServiceError(
       "NOT_ELIGIBLE",
-      "Dev activation is only available with the fake billing driver",
+      "Dev activation is unavailable",
     );
   }
 

@@ -55,8 +55,16 @@ export function SubscribeForm(props: SubscribeFormProps) {
       // The fake billing driver (local/dev) has no payable hosted checkout — it
       // returns a fake-billing.local URL. Activate the subscription directly and
       // land on the portal instead of navigating to a dead host. Production
-      // returns a real Stripe Checkout URL, which we follow as normal.
-      if (url.includes("fake-billing.local")) {
+      // returns a real Stripe Checkout URL, which we follow as normal. Match the
+      // host exactly (not substring) so a real URL carrying that text in a query
+      // param can't divert the flow — and the dev-activate route 403s in prod.
+      let isFakeCheckout = false;
+      try {
+        isFakeCheckout = new URL(url).hostname === "fake-billing.local";
+      } catch {
+        isFakeCheckout = false;
+      }
+      if (isFakeCheckout) {
         await devActivateSubscription();
         window.location.assign(`${returnTo}?subscription=ok`);
         return;
