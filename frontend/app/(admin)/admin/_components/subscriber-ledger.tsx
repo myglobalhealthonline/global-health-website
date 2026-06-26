@@ -1,10 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import {
-  fetchAdminSubscriptionLedger,
-  type AdminCreditLedgerEntry,
-} from "@/lib/admin/plans-api";
+
+/**
+ * Client-safe local type. Mirrors `AdminCreditLedgerEntry` in
+ * lib/admin/plans-api.ts — that module is `server-only` (it forwards cookies
+ * via next/headers), so it MUST NOT be imported into this client component.
+ * The data is fetched over the same-origin `/api/admin/*` proxy instead.
+ */
+type AdminCreditLedgerEntry = {
+  kind: "CONSULTATION" | "WELLNESS";
+  deltaCredits: number;
+  reason: string;
+  createdAt: string;
+};
 
 /** Admin-side credit provenance (§4d). English-only (internal admin UI). */
 const REASON_LABELS: Record<string, string> = {
@@ -40,8 +49,25 @@ export function AdminSubscriberLedger({ subscriptionId }: { subscriptionId: stri
     setOpen(next);
     if (next && state.status === "idle") {
       setState({ status: "loading" });
-      const res = await fetchAdminSubscriptionLedger(subscriptionId);
-      setState(res.ok ? { status: "ready", rows: res.data.ledger } : { status: "error", message: res.message });
+      // Same-origin admin proxy — the httpOnly admin cookie rides along
+      // automatically (matches the other admin client components).
+      try {
+        const res = await fetch(`/api/admin/subscriptions/${subscriptionId}/ledger`, {
+          cache: "no-store",
+        });
+        const json = (await res.json().catch(() => ({}))) as {
+          ok?: boolean;
+          message?: string;
+          data?: { ledger?: AdminCreditLedgerEntry[] };
+        };
+        if (!res.ok || !json?.ok) {
+          setState({ status: "error", message: json?.message ?? "Failed to load activity" });
+          return;
+        }
+        setState({ status: "ready", rows: json.data?.ledger ?? [] });
+      } catch {
+        setState({ status: "error", message: "Could not reach the server" });
+      }
     }
   }
 
