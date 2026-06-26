@@ -53,6 +53,7 @@ export default async function MembershipPage({
       id: p.id,
       name: p.name,
       priceLabel: formatPrice(p.monthlyPriceCents, p.currencyCode, { maximumFractionDigits: 0 }),
+      priceCents: p.monthlyPriceCents,
     }));
 
   const priceLabel = formatPrice(sub.plan.monthlyPriceCents, sub.plan.currencyCode, {
@@ -72,6 +73,7 @@ export default async function MembershipPage({
         status={sub.status}
         planName={sub.plan.name}
         priceLabel={priceLabel}
+        currentPriceCents={sub.plan.monthlyPriceCents}
         nextBillingLabel={nextBillingLabel}
         cancelAtPeriodEnd={sub.cancelAtPeriodEnd}
         pendingChangePlanName={sub.pendingChange?.planName ?? null}
