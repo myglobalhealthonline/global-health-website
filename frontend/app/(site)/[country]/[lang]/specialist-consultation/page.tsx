@@ -7,7 +7,6 @@ import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
 import { RichBodySection } from "@/components/sections/RichBodySection";
-import { ReviewBadge } from "@/components/sections/ReviewBadge";
 import { countries, getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -222,10 +221,7 @@ export default async function CountryLangSpecialistConsultationPage({
         </div>
       ) : null}
 
-      {/* Trust then team: review badge anchored directly above the
-          doctor cards so credibility and faces appear together. */}
-      <ReviewBadge countryName={config.name} />
-
+      {/* The clinicians behind the service. */}
       {doctorItems.length > 0 ? (
         <DoctorsSection
           title={sp.doctorsSectionTitle.replace("{country}", config.name)}

@@ -19,7 +19,7 @@ type Props = {
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
   footerDecorImage?: { src: string; alt: string };
-  authUser?: { role: string } | null;
+  authUser?: { role: string; email?: string | null } | null;
   countryFeatures?: Record<string, string[] | undefined>;
   /** Per-country footer overrides keyed by lowercase country code.
    *  Missing or null entries fall back to the global defaults. */

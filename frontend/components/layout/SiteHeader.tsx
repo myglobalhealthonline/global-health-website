@@ -28,13 +28,13 @@ import { supportedLocaleCodes, type LocaleCode } from "@/lib/i18n/types";
 import { parseSitePath } from "@/lib/routing/path-rewrites";
 import { buildBookHref } from "@/lib/routing/book-href";
 import { rememberCountry, useLastCountry } from "@/lib/routing/last-country";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CountrySwitcher } from "@/components/layout/CountrySwitcher";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { SectionNav, type SectionNavItem } from "@/components/layout/SectionNav";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { CartIcon } from "@/components/cart/CartIcon";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Bell } from "lucide-react";
 
 function sectionNavForCountryLang(
   countrySlug: string,
@@ -98,6 +98,13 @@ function sectionNavForCountryLang(
   return items;
 }
 
+/** First letter of the user's email, uppercased — the avatar glyph.
+ *  Falls back to a neutral dot when no email is available. */
+function initialFromEmail(email?: string | null): string {
+  const ch = email?.trim()?.[0];
+  return ch ? ch.toUpperCase() : "•";
+}
+
 /** Outside-a-country nav: no per-country service links. */
 function sectionNavGlobal(nav: SiteNavigationData): SectionNavItem[] {
   return [
@@ -122,7 +129,7 @@ export function SiteHeader({
   siteName: string;
   navigation: SiteNavigationData;
   brandLogo?: { src: string; alt: string };
-  authUser?: { role: string } | null;
+  authUser?: { role: string; email?: string | null } | null;
   countryFeatures?: Record<string, string[] | undefined>;
   initialLastCountry?: { slug: string; lang: string } | null;
   countries: CountryConfig[];
@@ -131,6 +138,16 @@ export function SiteHeader({
 }) {
   const pathname = usePathname() || "/";
   const parsed = parseSitePath(pathname);
+
+  // Scroll-reactive chrome: a full-width bar at the very top that
+  // condenses into a floating rounded pill once the page scrolls.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Country resolution priority:
   // 1) URL segment (`/[country]/[lang]/...`) — authoritative when set
@@ -193,16 +210,29 @@ export function SiteHeader({
       : "/";
 
   return (
-    <header className="gh-site-shell gh-header-sticky w-full">
+    <header
+      className="gh-site-shell gh-header-sticky w-full"
+      style={{ borderBottomColor: "transparent" }}
+    >
       <div
-        className="
-          mx-auto grid items-center
-          max-w-[1320px]
-          px-5 md:px-10 py-3
-          grid-cols-[auto_1fr_auto]
-          gap-6
-        "
+        className="mx-auto w-full max-w-[1280px] px-4 md:px-6"
+        style={{ paddingBlock: 12 }}
       >
+        {/* Floating rounded pill — constant height + side edges in every
+            state. Only its shadow deepens once the page scrolls. */}
+        <div
+          className="grid items-center grid-cols-[auto_1fr_auto] gap-4 md:gap-6 rounded-full border border-white/12 px-4 md:px-6"
+          style={{
+            paddingBlock: 12,
+            background: "rgba(255,255,255,0.05)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
+            boxShadow: scrolled
+              ? "0 14px 40px rgba(0,0,0,0.34)"
+              : "0 6px 22px rgba(0,0,0,0.20)",
+            transition: "box-shadow 300ms ease",
+          }}
+        >
         {/* Brand */}
         <Link
           href={activeCountry && parsed.lang ? `/${parsed.country}/${parsed.lang}` : "/"}
@@ -237,19 +267,46 @@ export function SiteHeader({
 
           <CartIcon variant="dark" />
 
+          {/* Notifications — links to the account inbox (or sign-in). The
+              lime dot is the signature live-status accent. */}
+          <Link
+            href={authUser ? "/account/notifications" : "/login"}
+            aria-label="Notifications"
+            className="relative hidden size-9 items-center justify-center rounded-full text-white/85 transition-colors duration-200 hover:bg-white/12 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 md:inline-flex"
+          >
+            <Bell className="size-4" strokeWidth={2} aria-hidden />
+            <span
+              aria-hidden
+              className="absolute right-1.5 top-1.5 size-2 rounded-full ring-2 ring-[#0e2c22]"
+              style={{ background: "var(--color-brand-accent)" }}
+            />
+          </Link>
+
           {!authUser ? (
             <Link
               href="/login"
-              className="gh-header-authLink hidden rounded-full px-2 text-sm font-semibold text-white/70 transition-colors hover:text-white active:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 md:inline-flex"
+              className="gh-header-authLink hidden whitespace-nowrap rounded-full px-2 text-sm font-semibold text-white/70 transition-colors hover:text-white active:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 md:inline-flex"
             >
               {navigation.headerAuthLink.label}
             </Link>
           ) : (
             <Link
-              href={authUser.role === "ADMIN" ? "/admin" : "/account"}
-              className="gh-header-authLink hidden rounded-full px-2 text-sm font-semibold text-white/70 transition-colors hover:text-white active:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 md:inline-flex"
+              href={
+                authUser.role === "ADMIN"
+                  ? "/admin"
+                  : authUser.role === "DOCTOR"
+                    ? "/doctor"
+                    : "/account"
+              }
+              aria-label={
+                authUser.email
+                  ? `Your account (${authUser.email})`
+                  : "Your account"
+              }
+              title={authUser.email ?? undefined}
+              className="group hidden size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-[13px] font-extrabold leading-none text-white transition-[background-color,border-color,transform] duration-200 hover:border-[var(--color-brand-accent)] hover:bg-white/[0.16] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.5)] md:inline-flex"
             >
-              {authUser.role === "ADMIN" ? "Admin" : "Account"}
+              {initialFromEmail(authUser.email)}
             </Link>
           )}
 
@@ -258,7 +315,7 @@ export function SiteHeader({
           <Link
             href={bookHref}
             aria-label="Book an appointment"
-            className="gh-header-bookCta group hidden items-center justify-center gap-1.5 rounded-full bg-[var(--color-brand-accent)] pl-5 pr-4 py-3 text-sm font-extrabold tracking-[-0.01em] text-[#0a1f14] shadow-[0_4px_16px_rgba(176,241,34,0.22)] transition-[transform,box-shadow,filter] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_30px_rgba(176,241,34,0.32)] active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)] md:inline-flex"
+            className="gh-header-bookCta group hidden shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-[var(--color-brand-accent)] pl-5 pr-4 py-3 text-sm font-extrabold tracking-[-0.01em] text-[#0a1f14] shadow-[0_4px_16px_rgba(176,241,34,0.22)] transition-[transform,box-shadow,filter] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_30px_rgba(176,241,34,0.32)] active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)] md:inline-flex"
           >
             {navigation.navBookAppointment}
             <ArrowUpRight
@@ -289,6 +346,7 @@ export function SiteHeader({
               countries={countries}
             />
           </div>
+        </div>
         </div>
       </div>
     </header>
