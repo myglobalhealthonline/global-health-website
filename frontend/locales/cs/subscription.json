@@ -49,6 +49,9 @@
     "wellnessRedeemLine": "Sbírejte wellness kredity na nárokové domácí sady zdravotních testů",
     "choosePlan": "Vybrat {plan}",
     "chooseCta": "Vybrat tento plán",
+    "currentPlan": "Aktuální plán",
+    "managePlan": "Spravovat plán",
+    "switchToThisPlan": "Přejít na tento plán",
     "viewDetails": "Podrobnosti plánu",
     "onlineOnlyNote": "Pouze online/video konzultace — žádné osobní návštěvy a žádné předpisy.",
     "empty": {

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Check, Loader2, Lock } from "lucide-react";
-import { startSubscription } from "@/lib/api/me-subscription";
+import { devActivateSubscription, startSubscription } from "@/lib/api/me-subscription";
 
 export interface SubscribeFormProps {
   planId: string;
@@ -48,9 +48,20 @@ export function SubscribeForm(props: SubscribeFormProps) {
     }
     setSubmitting(true);
     setError(null);
-    const res = await startSubscription(props.planId, props.returnTo ?? "/account/membership");
+    const returnTo = props.returnTo ?? "/account/membership";
+    const res = await startSubscription(props.planId, returnTo);
     if (res.ok && res.data.checkoutUrl) {
-      window.location.assign(res.data.checkoutUrl);
+      const url = res.data.checkoutUrl;
+      // The fake billing driver (local/dev) has no payable hosted checkout — it
+      // returns a fake-billing.local URL. Activate the subscription directly and
+      // land on the portal instead of navigating to a dead host. Production
+      // returns a real Stripe Checkout URL, which we follow as normal.
+      if (url.includes("fake-billing.local")) {
+        await devActivateSubscription();
+        window.location.assign(`${returnTo}?subscription=ok`);
+        return;
+      }
+      window.location.assign(url);
       return;
     }
     setSubmitting(false);

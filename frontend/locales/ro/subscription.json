@@ -49,6 +49,9 @@
     "wellnessRedeemLine": "Strângeți credite de wellness pentru kituri eligibile de teste de sănătate la domiciliu",
     "choosePlan": "Alegeți {plan}",
     "chooseCta": "Alege acest plan",
+    "currentPlan": "Planul curent",
+    "managePlan": "Gestionează planul",
+    "switchToThisPlan": "Schimbă la acest plan",
     "viewDetails": "Detalii plan",
     "onlineOnlyNote": "Doar consultații online/video — fără vizite în persoană și fără prescripții medicale.",
     "empty": {

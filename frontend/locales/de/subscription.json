@@ -49,6 +49,9 @@
     "wellnessRedeemLine": "Sammeln Sie Wellness-Guthaben für berechtigte Gesundheitstests für zu Hause",
     "choosePlan": "{plan} wählen",
     "chooseCta": "Diesen Plan wählen",
+    "currentPlan": "Aktueller Plan",
+    "managePlan": "Plan verwalten",
+    "switchToThisPlan": "Zu diesem Plan wechseln",
     "viewDetails": "Tarifdetails",
     "onlineOnlyNote": "Nur Online-/Videoberatungen — keine persönlichen Besuche und keine Verschreibungen.",
     "empty": {

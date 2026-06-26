@@ -49,6 +49,9 @@
     "wellnessRedeemLine": "Collect wellness credits toward eligible home health test kits",
     "choosePlan": "Choose {plan}",
     "chooseCta": "Choose this plan",
+    "currentPlan": "Current plan",
+    "managePlan": "Manage plan",
+    "switchToThisPlan": "Switch to this plan",
     "viewDetails": "Plan details",
     "onlineOnlyNote": "Online/video consultations only — no in-person visits and no prescriptions.",
     "empty": {

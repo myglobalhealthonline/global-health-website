@@ -259,6 +259,7 @@ export type CommonLocale = {
     forFamilyMember: string;
     manageFamily: string;
     familyBenefitNote: string;
+    familyBenefitUnavailable: string;
   };
   extra: {
     specialistsWatermark: string;

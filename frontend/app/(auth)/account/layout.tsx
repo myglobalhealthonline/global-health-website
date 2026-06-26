@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
+  BadgeCheck,
   Bell,
   CalendarDays,
   CalendarRange,
@@ -71,6 +72,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
 
   const sections: PortalNavItem[] = [
     { href: "/account", label: a.nav.overview, icon: <LayoutDashboard className="size-4" aria-hidden /> },
+    { href: "/account/membership", label: "Membership", icon: <BadgeCheck className="size-4" aria-hidden /> },
     { href: "/account/notifications", label: "Notifications", icon: <Bell className="size-4" aria-hidden />, badge: notifications?.unreadCount ?? 0 },
     { href: "/account/bookings", label: a.nav.myBookings, icon: <CalendarDays className="size-4" aria-hidden />, badge: unreadMessages },
     { href: "/account/calendar", label: "Calendar", icon: <CalendarRange className="size-4" aria-hidden /> },

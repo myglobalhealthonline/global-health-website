@@ -5,6 +5,7 @@ import { syncPlanStripePrice } from "../billing/price-sync.service.js";
 import { isSubscriptionsEnabled } from "./feature-gate.js";
 import { captureSnapshot } from "./plan-snapshot.service.js";
 import { notifySubscriptionCanceled } from "./subscription-emails.service.js";
+import { handleSubscriptionEvent } from "./subscription-webhook.service.js";
 import type { Prisma } from "@prisma/client";
 
 /**
@@ -227,4 +228,106 @@ export async function getBillingPortalUrl(
     returnUrl: `${siteBase()}${returnTo ?? "/account"}`,
   });
   return { portalUrl: url };
+}
+
+/**
+ * DEV / LOCAL ONLY — activate a freshly-created subscription without a real
+ * payment. The fake billing driver has no hosted checkout, so a new sub would
+ * sit INCOMPLETE forever (no Stripe webhook ever fires) and the patient gets
+ * bounced back to the portal with nothing active. This reproduces the EXACT
+ * production webhook sequence — checkout.session.completed → subscription
+ * active → first invoice paid — by posting canned events through the SAME
+ * handler the live Stripe webhook uses, so the subscriber lands on an ACTIVE
+ * plan with first-period credits granted.
+ *
+ * Hard-gated to the fake driver: under `BILLING_DRIVER=stripe` (production)
+ * this throws NOT_ELIGIBLE and the route returns 403, so it can never grant a
+ * free subscription in production — Stripe remains the sole activator there.
+ */
+export async function devActivateSubscription(
+  userId: string,
+): Promise<{ activated: boolean; status: string }> {
+  if (getBillingPort().driver !== "fake") {
+    throw new SubscriptionServiceError(
+      "NOT_ELIGIBLE",
+      "Dev activation is only available with the fake billing driver",
+    );
+  }
+
+  const sub = await prisma.userSubscription.findFirst({
+    where: { userId, status: { in: ["INCOMPLETE", "PAST_DUE"] } },
+    orderBy: { createdAt: "desc" },
+  });
+  if (!sub) {
+    const active = await prisma.userSubscription.findFirst({
+      where: { userId, status: "ACTIVE" },
+      orderBy: { createdAt: "desc" },
+      select: { id: true },
+    });
+    if (active) return { activated: false, status: "ACTIVE" };
+    throw new SubscriptionServiceError("NO_ACTIVE_SUBSCRIPTION", "No subscription to activate");
+  }
+
+  const snapshot = sub.planSnapshot as unknown as {
+    monthlyPriceCents?: number;
+    currencyCode?: string;
+  } | null;
+  const amountPaid = snapshot?.monthlyPriceCents ?? 2000;
+  const currency = (snapshot?.currencyCode ?? "eur").toLowerCase();
+  const stripeSubscriptionId = sub.stripeSubscriptionId ?? `sub_fake_${sub.id}`;
+  const stripeCustomerId = sub.stripeCustomerId ?? `cus_fake_${sub.id}`;
+  const now = Math.floor(Date.now() / 1000);
+  const periodEnd = now + 30 * 24 * 60 * 60;
+
+  // 1) Link the provider ids (status stays INCOMPLETE).
+  await handleSubscriptionEvent({
+    id: `evt_devactivate_checkout_${sub.id}`,
+    type: "checkout.session.completed",
+    data: {
+      object: {
+        mode: "subscription",
+        subscription: stripeSubscriptionId,
+        customer: stripeCustomerId,
+        metadata: { kind: "subscription", internalSubId: sub.id, userId: sub.userId },
+      },
+    },
+  });
+  // 2) Subscription goes active + sets the billing period.
+  await handleSubscriptionEvent({
+    id: `evt_devactivate_subcreated_${sub.id}`,
+    type: "customer.subscription.created",
+    data: {
+      object: {
+        id: stripeSubscriptionId,
+        status: "active",
+        cancel_at_period_end: false,
+        current_period_start: now,
+        current_period_end: periodEnd,
+      },
+    },
+  });
+  // 3) First invoice paid → grant first-period credits + mirror the invoice.
+  await handleSubscriptionEvent({
+    id: `evt_devactivate_invoice_${sub.id}`,
+    type: "invoice.payment_succeeded",
+    data: {
+      object: {
+        id: `in_fake_${sub.id}`,
+        subscription: stripeSubscriptionId,
+        customer: stripeCustomerId,
+        billing_reason: "subscription_create",
+        amount_paid: amountPaid,
+        currency,
+        period_start: now,
+        period_end: periodEnd,
+        lines: { data: [{ period: { start: now, end: periodEnd } }] },
+      },
+    },
+  });
+
+  const refreshed = await prisma.userSubscription.findUnique({
+    where: { id: sub.id },
+    select: { status: true },
+  });
+  return { activated: true, status: refreshed?.status ?? "ACTIVE" };
 }

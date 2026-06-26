@@ -539,6 +539,23 @@ export function ConsultationBookingForm({
           </label>
         ) : null}
 
+        {/* Plan-benefit clarification (Req 5): booking for someone else is always
+          * allowed (pay-as-you-go), but applying the plan's GP credits/discounts
+          * to another person needs a family-enabled plan + an approved member.
+          * Shown only when they opt into "someone else" with no such member. */}
+        {me && bookingForOther && approvedMembers.length === 0 ? (
+          <p className="mt-2 text-xs text-[var(--color-text-muted)]">
+            {i18n.familyBenefitUnavailable}{" "}
+            <Link
+              href="/account/family"
+              className="font-semibold underline"
+              style={{ color: "var(--color-brand-primary)" }}
+            >
+              {i18n.manageFamily}
+            </Link>
+          </p>
+        ) : null}
+
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {!treatingOther ? (
             <label className="block">

@@ -9,6 +9,7 @@ import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
 import { PageHeader } from "@/components/portal-atoms";
 import { ManagePanel, type PlanOption } from "./_components/ManagePanel";
+import { SubscriptionDashboard } from "../_components/SubscriptionDashboard";
 
 export const metadata: Metadata = { title: "Your membership", robots: { index: false } };
 
@@ -79,6 +80,10 @@ export default async function MembershipPage({
         returnState={returnState ?? null}
         pricingHref={pricingHref}
       />
+      {/* Consolidated benefits: GP credits remaining, wellness, discount perks
+          and their unlock conditions (Req 3). Reuses the dashboard widgets;
+          `embedded` hides its plan card since ManagePanel shows that above. */}
+      <SubscriptionDashboard locale={locale} embedded />
     </>
   );
 }

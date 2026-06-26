@@ -7,6 +7,7 @@ import {
   SubscriptionServiceError,
   cancelSubscription,
   changePlan,
+  devActivateSubscription,
   getBillingPortalUrl,
   startSubscription,
 } from "../modules/subscriptions/subscription.service.js";
@@ -152,6 +153,24 @@ const meSubscriptionRoute: FastifyPluginAsync = async (app) => {
       return handleError(reply, err, app);
     }
   });
+
+  // DEV/LOCAL ONLY — simulate a paid first invoice so the fake-driver subscribe
+  // flow actually activates (no Stripe webhook fires locally). Hard-gated to the
+  // fake billing driver in the service: returns 403 NOT_ELIGIBLE under Stripe.
+  app.post(
+    "/api/me/subscription/dev-activate",
+    { config: { rateLimit: { max: 20, timeWindow: "1 hour" } } },
+    async (request, reply) => {
+      const user = await requirePatient(request, reply);
+      if (!user) return;
+      try {
+        const result = await devActivateSubscription(user.id);
+        return okResponse(result, "Subscription activated");
+      } catch (err) {
+        return handleError(reply, err, app);
+      }
+    },
+  );
 };
 
 function handleError(

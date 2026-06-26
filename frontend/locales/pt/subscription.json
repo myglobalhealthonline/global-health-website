@@ -49,6 +49,9 @@
     "wellnessRedeemLine": "Acumule créditos de bem-estar para kits de testes de saúde ao domicílio elegíveis",
     "choosePlan": "Escolher {plan}",
     "chooseCta": "Escolher este plano",
+    "currentPlan": "Plano atual",
+    "managePlan": "Gerir plano",
+    "switchToThisPlan": "Mudar para este plano",
     "viewDetails": "Detalhes do plano",
     "onlineOnlyNote": "Apenas consultas online/por vídeo — sem consultas presenciais e sem prescrições.",
     "empty": {

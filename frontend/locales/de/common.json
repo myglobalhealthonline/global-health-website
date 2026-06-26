@@ -255,7 +255,8 @@
     "forMe": "Myself",
     "forFamilyMember": "A family member",
     "manageFamily": "Manage family members",
-    "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible."
+    "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible.",
+    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member."
   },
   "extra": {
     "specialistsWatermark": "Fachärzte",

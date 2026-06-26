@@ -193,6 +193,13 @@ export function startSubscription(planId: string, returnTo?: string): Promise<Me
   return meRequest("subscription", { method: "POST", body: { planId, ...(returnTo ? { returnTo } : {}) } });
 }
 
+/** DEV / LOCAL only — activate the just-created subscription when the fake
+ *  billing driver returned a non-payable checkout URL (no Stripe webhook fires
+ *  locally). Returns 403 in production, where Stripe is the sole activator. */
+export function devActivateSubscription(): Promise<MeResult<{ activated: boolean; status: string }>> {
+  return meRequest("subscription/dev-activate", { method: "POST" });
+}
+
 export function changePlan(planId: string): Promise<MeResult<{ pendingChangeEffectiveAt: string | null }>> {
   return meRequest("subscription/change", { method: "POST", body: { planId } });
 }

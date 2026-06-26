@@ -49,6 +49,9 @@
     "wellnessRedeemLine": "Acumule créditos de bienestar para kits de análisis de salud a domicilio aptos",
     "choosePlan": "Elegir {plan}",
     "chooseCta": "Elegir este plan",
+    "currentPlan": "Plan actual",
+    "managePlan": "Gestionar plan",
+    "switchToThisPlan": "Cambiar a este plan",
     "viewDetails": "Detalles del plan",
     "onlineOnlyNote": "Solo consultas online/por videollamada: sin visitas presenciales y sin recetas.",
     "empty": {
