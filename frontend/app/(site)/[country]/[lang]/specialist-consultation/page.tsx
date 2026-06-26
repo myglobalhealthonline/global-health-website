@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { PageHero } from "@/components/sections/PageHero";
+import { ServiceHero } from "@/components/sections/ServiceHero";
+import { Stethoscope, ShieldCheck, Lock, Star } from "lucide-react";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -172,24 +173,57 @@ export default async function CountryLangSpecialistConsultationPage({
         })}
       />
 
-      <PageHero
-        watermark={c.extra.specialistsWatermark}
+      <ServiceHero
         countryCode={config.code}
         countryLabel={sp.countryLabel.replace("{country}", config.name)}
         titleLead={sp.heroLead}
         titleAccent={sp.heroAccent}
         titleTrail={sp.heroTrail}
         lede={heroSubtitle}
-        ctaLabel={ctaLabel}
-        ctaHref={ctaHref}
-        secondaryLabel={sp.secondaryLabel}
-        secondaryHref={`/${slug}/${lang}/doctors`}
-        variant="immersive"
+        primaryCta={{ label: ctaLabel, href: ctaHref }}
+        secondaryCta={{
+          label: sp.secondaryLabel,
+          href: `/${slug}/${lang}/doctors`,
+        }}
         heroImage={{
           src: "/images/stock/specialist.jpg",
           alt: `Specialist available for an online consultation in ${config.name}`,
           priority: true,
         }}
+        featureCards={[
+          {
+            icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: sp.hero.feature1Title,
+            subtitle: sp.hero.feature1Subtitle,
+          },
+          {
+            icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: sp.hero.feature2Title.replace("{country}", config.name),
+            subtitle: sp.hero.feature2Subtitle.replace("{country}", config.name),
+          },
+          {
+            icon: <Lock className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: sp.hero.feature3Title,
+            subtitle: sp.hero.feature3Subtitle,
+          },
+        ]}
+        trustStats={[
+          {
+            icon: <ShieldCheck className="size-5" strokeWidth={2} aria-hidden />,
+            title: sp.hero.stat1Title.replace("{country}", config.name),
+            subtitle: sp.hero.stat1Subtitle.replace("{country}", config.name),
+          },
+          {
+            icon: <Star className="size-5" strokeWidth={2} aria-hidden />,
+            title: sp.hero.stat2Title.replace("{country}", config.name),
+            subtitle: sp.hero.stat2Subtitle.replace("{country}", config.name),
+          },
+          {
+            icon: <Lock className="size-5" strokeWidth={2} aria-hidden />,
+            title: sp.hero.stat3Title.replace("{country}", config.name),
+            subtitle: sp.hero.stat3Subtitle.replace("{country}", config.name),
+          },
+        ]}
       />
 
       {page?.heroImageSrc ? (

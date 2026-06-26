@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
-import { PageHero } from "@/components/sections/PageHero";
+import { ServiceHero } from "@/components/sections/ServiceHero";
+import { MessageCircle, ShieldCheck, Clock, Star, Lock } from "lucide-react";
 import { DoctorsSection } from "@/components/sections/DoctorsSection";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { StickyBookingCTA } from "@/components/sections/StickyBookingCTA";
@@ -201,8 +202,7 @@ export default async function CountryLangGeneralConsultationPage({
         <JsonLd data={faqJsonLd(gpHub.faq)} />
       ) : null}
 
-      <PageHero
-        watermark="GP consultation"
+      <ServiceHero
         countryCode={config.code}
         countryLabel={
           gpHub
@@ -213,16 +213,55 @@ export default async function CountryLangGeneralConsultationPage({
         titleAccent={heroAccent}
         titleTrail={heroTrail}
         lede={heroSubtitle}
-        ctaLabel={ctaLabel}
-        ctaHref={ctaHref}
-        secondaryLabel={gp.secondaryLabel}
-        secondaryHref={`/${slug}/${lang}/doctors`}
-        variant="immersive"
+        primaryCta={{ label: ctaLabel, href: ctaHref }}
+        secondaryCta={{
+          label: gp.secondaryLabel,
+          href: `/${slug}/${lang}/doctors`,
+        }}
         heroImage={{
           src: "/images/stock/gp.jpg",
           alt: `General practitioner available for an online consultation in ${config.name}`,
           priority: true,
         }}
+        featureCards={[
+          {
+            icon: <MessageCircle className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: gp.hero.feature1Title,
+            subtitle: gp.hero.feature1Subtitle,
+          },
+          {
+            icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: gp.hero.feature2Title,
+            subtitle: gp.hero.feature2Subtitle,
+          },
+          {
+            icon: <Clock className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: gp.hero.feature3Title,
+            subtitle: gp.hero.feature3Subtitle,
+          },
+        ]}
+        badge={{
+          title: gp.hero.badgeTitle,
+          subtitle: gp.hero.badgeSubtitle,
+          accent: gp.hero.badgeAccent,
+        }}
+        trustStats={[
+          {
+            icon: <ShieldCheck className="size-5" strokeWidth={2} aria-hidden />,
+            title: gp.hero.stat1Title.replace("{country}", config.name),
+            subtitle: gp.hero.stat1Subtitle.replace("{country}", config.name),
+          },
+          {
+            icon: <Star className="size-5" strokeWidth={2} aria-hidden />,
+            title: gp.hero.stat2Title.replace("{country}", config.name),
+            subtitle: gp.hero.stat2Subtitle.replace("{country}", config.name),
+          },
+          {
+            icon: <Lock className="size-5" strokeWidth={2} aria-hidden />,
+            title: gp.hero.stat3Title.replace("{country}", config.name),
+            subtitle: gp.hero.stat3Subtitle.replace("{country}", config.name),
+          },
+        ]}
       />
 
       {page?.heroImageSrc ? (

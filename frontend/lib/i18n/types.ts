@@ -170,6 +170,23 @@ export type CommonLocale = {
     doctorsSectionTitle: string;
     doctorsSectionIntro: string;
     faqTitle: string;
+    hero: {
+      badgeTitle: string;
+      badgeSubtitle: string;
+      badgeAccent: string;
+      feature1Title: string;
+      feature1Subtitle: string;
+      feature2Title: string;
+      feature2Subtitle: string;
+      feature3Title: string;
+      feature3Subtitle: string;
+      stat1Title: string;
+      stat1Subtitle: string;
+      stat2Title: string;
+      stat2Subtitle: string;
+      stat3Title: string;
+      stat3Subtitle: string;
+    };
   };
   specialistPage: {
     heroTitle: string;
@@ -184,6 +201,20 @@ export type CommonLocale = {
     specialistConsultationsIntro: string;
     doctorsSectionTitle: string;
     doctorsSectionIntro: string;
+    hero: {
+      feature1Title: string;
+      feature1Subtitle: string;
+      feature2Title: string;
+      feature2Subtitle: string;
+      feature3Title: string;
+      feature3Subtitle: string;
+      stat1Title: string;
+      stat1Subtitle: string;
+      stat2Title: string;
+      stat2Subtitle: string;
+      stat3Title: string;
+      stat3Subtitle: string;
+    };
   };
   consultPage: {
     backToConsultations: string;

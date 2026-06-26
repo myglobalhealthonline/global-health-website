@@ -167,11 +167,28 @@
     "consultations": "consultații",
     "doctorsSectionTitle": "Medici în {country}",
     "doctorsSectionIntro": "Medici de familie autorizați disponibili pentru consultații online. Fiecare profil listează calificări, limbi și înregistrare.",
-    "faqTitle": "Întrebări frecvente"
+    "faqTitle": "Întrebări frecvente",
+    "hero": {
+      "badgeTitle": "Sănătatea ta. Prioritatea noastră.",
+      "badgeSubtitle": "Îngrijire sigură, privată și",
+      "badgeAccent": "coordonată de medici.",
+      "feature1Title": "Vorbește cu un medic de familie",
+      "feature1Subtitle": "Consultă un medic de familie înregistrat din confortul casei tale.",
+      "feature2Title": "Sigur și confidențial",
+      "feature2Subtitle": "Conversațiile tale sunt private, securizate și criptate.",
+      "feature3Title": "Programări rapide",
+      "feature3Subtitle": "Programează-te când îți convine, inclusiv în aceeași zi.",
+      "stat1Title": "Înregistrați în {country}",
+      "stat1Subtitle": "Toți medicii de familie sunt înregistrați pentru a profesa în {country}.",
+      "stat2Title": "Evaluare 4,8/5",
+      "stat2Subtitle": "Din peste 2000 de recenzii verificate ale pacienților.",
+      "stat3Title": "Apreciați de mii de oameni",
+      "stat3Subtitle": "Alătură-te miilor de pacienți din {country}."
+    }
   },
   "specialistPage": {
     "heroTitle": "Cunoaște specialiștii noștri",
-    "heroSubtitle": "Specialiști înregistrați pentru a practica în {country}.",
+    "heroSubtitle": "Specialiști înregistrați pentru a profesa în {country}, disponibili pentru consultații online sigure.",
     "heroLead": "Cunoaște",
     "heroAccent": "înregistrații",
     "heroTrail": "specialiști.",
@@ -181,7 +198,21 @@
     "specialistConsultationsTitle": "Consultații cu specialiști disponibile",
     "specialistConsultationsIntro": "Profilurile se actualizează pe măsura schimbărilor în rețea.",
     "doctorsSectionTitle": "Specialiști în {country}",
-    "doctorsSectionIntro": "Specialiști înregistrați la consiliile medicale naționale."
+    "doctorsSectionIntro": "Specialiști înregistrați la consiliile medicale naționale.",
+    "hero": {
+      "feature1Title": "Îngrijire de specialitate",
+      "feature1Subtitle": "Conectează-te cu specialiști experimentați online.",
+      "feature2Title": "Înregistrați în {country}",
+      "feature2Subtitle": "Medici înregistrați pentru a profesa în {country}.",
+      "feature3Title": "Consultații sigure",
+      "feature3Subtitle": "Private, confidențiale și ușor de programat.",
+      "stat1Title": "Înregistrați în {country}",
+      "stat1Subtitle": "Toți specialiștii sunt înregistrați pentru a profesa în {country}.",
+      "stat2Title": "Evaluare 4,8/5",
+      "stat2Subtitle": "Din peste 2000 de recenzii verificate ale pacienților.",
+      "stat3Title": "Apreciați de mii de oameni",
+      "stat3Subtitle": "Alătură-te miilor de pacienți din {country}."
+    }
   },
   "consultPage": {
     "backToConsultations": "Înapoi la consultații",

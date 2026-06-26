@@ -167,11 +167,28 @@
     "consultations": "consultas",
     "doctorsSectionTitle": "Médicos em {country}",
     "doctorsSectionIntro": "Clínicos gerais licenciados disponíveis para consultas online. Cada perfil lista qualificações, idiomas e registo.",
-    "faqTitle": "Perguntas frequentes"
+    "faqTitle": "Perguntas frequentes",
+    "hero": {
+      "badgeTitle": "A sua saúde. A nossa prioridade.",
+      "badgeSubtitle": "Cuidados seguros, privados e",
+      "badgeAccent": "liderados por médicos.",
+      "feature1Title": "Fale com um clínico geral",
+      "feature1Subtitle": "Consulte um clínico geral registado no conforto da sua casa.",
+      "feature2Title": "Seguro e confidencial",
+      "feature2Subtitle": "As suas conversas são privadas, seguras e encriptadas.",
+      "feature3Title": "Marcações rápidas",
+      "feature3Subtitle": "Marque consultas que lhe convêm, incluindo no próprio dia.",
+      "stat1Title": "Registados em {country}",
+      "stat1Subtitle": "Todos os clínicos gerais estão registados para exercer em {country}.",
+      "stat2Title": "Avaliação de 4,8/5",
+      "stat2Subtitle": "De mais de 2000 avaliações verificadas de pacientes.",
+      "stat3Title": "Confiança de milhares",
+      "stat3Subtitle": "Junte-se a milhares de pacientes em {country}."
+    }
   },
   "specialistPage": {
     "heroTitle": "Conheça os nossos especialistas",
-    "heroSubtitle": "Especialistas registados para exercer em {country}.",
+    "heroSubtitle": "Especialistas registados para exercer em {country}, disponíveis para consultas online seguras.",
     "heroLead": "Conheça os nossos",
     "heroAccent": "registados",
     "heroTrail": "especialistas.",
@@ -181,7 +198,21 @@
     "specialistConsultationsTitle": "Consultas de especialidade disponíveis",
     "specialistConsultationsIntro": "Perfis actualizados à medida que a equipa cresce.",
     "doctorsSectionTitle": "Especialistas em {country}",
-    "doctorsSectionIntro": "Especialistas registados nos conselhos médicos nacionais."
+    "doctorsSectionIntro": "Especialistas registados nos conselhos médicos nacionais.",
+    "hero": {
+      "feature1Title": "Cuidados especializados",
+      "feature1Subtitle": "Conecte-se com especialistas experientes online.",
+      "feature2Title": "Registados em {country}",
+      "feature2Subtitle": "Médicos registados para exercer em {country}.",
+      "feature3Title": "Consultas seguras",
+      "feature3Subtitle": "Privadas, confidenciais e fáceis de marcar.",
+      "stat1Title": "Registados em {country}",
+      "stat1Subtitle": "Todos os especialistas estão registados para exercer em {country}.",
+      "stat2Title": "Avaliação de 4,8/5",
+      "stat2Subtitle": "De mais de 2000 avaliações verificadas de pacientes.",
+      "stat3Title": "Confiança de milhares",
+      "stat3Subtitle": "Junte-se a milhares de pacientes em {country}."
+    }
   },
   "consultPage": {
     "backToConsultations": "Voltar às consultas",

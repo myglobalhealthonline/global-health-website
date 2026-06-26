@@ -167,11 +167,28 @@
     "consultations": "consultas",
     "doctorsSectionTitle": "Médicos en {country}",
     "doctorsSectionIntro": "Médicos de cabecera autorizados disponibles para consultas online. Cada perfil incluye cualificaciones, idiomas y número de colegiado.",
-    "faqTitle": "Preguntas frecuentes"
+    "faqTitle": "Preguntas frecuentes",
+    "hero": {
+      "badgeTitle": "Tu salud. Nuestra prioridad.",
+      "badgeSubtitle": "Atención segura, privada y",
+      "badgeAccent": "dirigida por médicos.",
+      "feature1Title": "Habla con un médico de cabecera",
+      "feature1Subtitle": "Consulta con un médico de cabecera colegiado desde la comodidad de tu casa.",
+      "feature2Title": "Seguro y confidencial",
+      "feature2Subtitle": "Tus conversaciones son privadas, seguras y cifradas.",
+      "feature3Title": "Citas rápidas",
+      "feature3Subtitle": "Reserva citas que se adapten a ti, incluso el mismo día.",
+      "stat1Title": "Colegiados en {country}",
+      "stat1Subtitle": "Todos los médicos de cabecera están colegiados para ejercer en {country}.",
+      "stat2Title": "Valoración de 4,8/5",
+      "stat2Subtitle": "De más de 2000 reseñas verificadas de pacientes.",
+      "stat3Title": "La confianza de miles",
+      "stat3Subtitle": "Únete a miles de pacientes en {country}."
+    }
   },
   "specialistPage": {
     "heroTitle": "Conoce a nuestros especialistas",
-    "heroSubtitle": "Especialistas registrados para ejercer en {country}.",
+    "heroSubtitle": "Especialistas colegiados para ejercer en {country}, disponibles para consultas en línea seguras.",
     "heroLead": "Conoce a nuestros",
     "heroAccent": "registrados",
     "heroTrail": "especialistas.",
@@ -181,7 +198,21 @@
     "specialistConsultationsTitle": "Consultas con especialistas disponibles",
     "specialistConsultationsIntro": "Los perfiles se actualizan a medida que el equipo crece.",
     "doctorsSectionTitle": "Especialistas en {country}",
-    "doctorsSectionIntro": "Especialistas registrados en los colegios médicos nacionales."
+    "doctorsSectionIntro": "Especialistas registrados en los colegios médicos nacionales.",
+    "hero": {
+      "feature1Title": "Atención especializada",
+      "feature1Subtitle": "Conecta con especialistas con experiencia en línea.",
+      "feature2Title": "Colegiados en {country}",
+      "feature2Subtitle": "Médicos colegiados para ejercer en {country}.",
+      "feature3Title": "Consultas seguras",
+      "feature3Subtitle": "Privadas, confidenciales y fáciles de reservar.",
+      "stat1Title": "Colegiados en {country}",
+      "stat1Subtitle": "Todos los especialistas están colegiados para ejercer en {country}.",
+      "stat2Title": "Valoración de 4,8/5",
+      "stat2Subtitle": "De más de 2000 reseñas verificadas de pacientes.",
+      "stat3Title": "La confianza de miles",
+      "stat3Subtitle": "Únete a miles de pacientes en {country}."
+    }
   },
   "consultPage": {
     "backToConsultations": "Volver a consultas",
