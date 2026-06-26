@@ -1045,6 +1045,9 @@ model Partner {
   assetId    String?
   name       String
   websiteUrl String?
+  /** Relationship label shown on the public tile, e.g. "Healthcare Partner",
+   *  "Diagnostic Partner", "Client". Free text; null = no label. */
+  type       String?
   sortOrder  Int      @default(0)
   active     Boolean  @default(true)
   country    Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)

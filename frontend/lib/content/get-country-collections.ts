@@ -398,6 +398,7 @@ export type CountryPartnerCard = {
   id: string;
   name: string;
   websiteUrl: string | null;
+  type: string | null;
   logoSrc: string | null;
 };
 
@@ -420,6 +421,7 @@ export const getCountryPartners = cache(async (
       id: r.id,
       name: r.name,
       websiteUrl: typeof r.websiteUrl === "string" ? r.websiteUrl : null,
+      type: typeof r.type === "string" && r.type.trim() ? r.type : null,
       logoSrc: logoPath ? resolveTrustedAssetUrl(logoPath) ?? null : null,
     });
   }
