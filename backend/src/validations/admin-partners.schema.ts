@@ -9,6 +9,7 @@ export const partnerCreateBodySchema = z
     countryId: z.string().trim().min(1),
     name: z.string().trim().min(1).max(200),
     websiteUrl: z.string().trim().url().max(500).optional().nullable(),
+    type: z.string().trim().max(80).optional().nullable(),
     logoImagePath: z.string().trim().max(2000).optional().nullable(),
     sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
     active: z.boolean().optional(),

@@ -112,6 +112,17 @@ function PartnerFields({ partner }: { partner: AdminPartnerDto | null }) {
             className="gh-input"
           />
         </label>
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Type / relationship</span>
+          <input
+            type="text"
+            name="type"
+            maxLength={80}
+            defaultValue={partner?.type ?? ""}
+            placeholder="e.g. Healthcare Partner · Diagnostic Partner · Client"
+            className="gh-input"
+          />
+        </label>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Sort order</span>
