@@ -74,7 +74,12 @@ export function authCookieOptions() {
   const domain = env.AUTH_COOKIE_DOMAIN?.trim();
   return {
     httpOnly: true,
-    sameSite: "strict" as const,
+    // "lax" (not "strict") so the session cookie is still sent on a top-level
+    // GET navigation back from an external site — e.g. returning from Stripe
+    // Checkout to /account/membership. With "strict" the browser withholds the
+    // cookie on that cross-site return, so the patient lands logged out. "lax"
+    // still withholds it on cross-site POSTs / subresource requests (CSRF-safe).
+    sameSite: "lax" as const,
     secure,
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
