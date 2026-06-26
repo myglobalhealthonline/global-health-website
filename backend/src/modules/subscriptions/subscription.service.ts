@@ -128,6 +128,13 @@ export async function startSubscription(
     });
   }
 
+  // We only reach here when the user has NO active subscription in our DB, so
+  // any subscription still live on the Stripe customer is an orphan from an
+  // abandoned/duplicate checkout. Cancel it before opening a fresh Checkout so
+  // the customer can never end up paying for two (single-active-sub must hold
+  // at the provider too, not just in our row). No-op on the fake driver.
+  await billing.cancelActiveSubscriptionsForCustomer(customer.customerId);
+
   const returnBase = input.returnTo ?? "/account";
   const checkout = await billing.createSubscriptionCheckout({
     customerId: customer.customerId,
