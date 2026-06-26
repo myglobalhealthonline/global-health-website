@@ -65,8 +65,16 @@ export function SubscribeForm(props: SubscribeFormProps) {
         isFakeCheckout = false;
       }
       if (isFakeCheckout) {
-        await devActivateSubscription();
-        window.location.assign(`${returnTo}?subscription=ok`);
+        // Test/dev billing has no hosted checkout — activate directly. Only
+        // land on the portal if it actually activated; otherwise surface an
+        // error rather than bouncing to an INCOMPLETE membership.
+        const activated = await devActivateSubscription();
+        if (activated.ok) {
+          window.location.assign(`${returnTo}?subscription=ok`);
+        } else {
+          setSubmitting(false);
+          setError(activated.message || props.errorLabel);
+        }
         return;
       }
       window.location.assign(url);

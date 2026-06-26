@@ -247,14 +247,19 @@ export async function getBillingPortalUrl(
 export async function devActivateSubscription(
   userId: string,
 ): Promise<{ activated: boolean; status: string }> {
-  // Double-gated: the fake driver is the dev/test default, and we additionally
-  // refuse under NODE_ENV=production so a misconfigured prod (fake driver left
-  // on) can never mint a free subscription. Stripe is the sole activator in prod.
-  if (getBillingPort().driver !== "fake" || env.NODE_ENV === "production") {
-    throw new SubscriptionServiceError(
-      "NOT_ELIGIBLE",
-      "Dev activation is unavailable",
-    );
+  // Gated to the fake billing driver (the dev/test adapter — never real money).
+  // Locally it's always allowed; on a production-grade deploy it's OFF unless
+  // ALLOW_TEST_SUBSCRIPTION_ACTIVATION is explicitly set, so a customer prod
+  // can't let users self-grant free subscriptions. The moment BILLING_DRIVER=
+  // "stripe" (real keys), this is unreachable — Stripe becomes the sole activator.
+  const testActivationFlag =
+    env.ALLOW_TEST_SUBSCRIPTION_ACTIVATION === "true" ||
+    env.ALLOW_TEST_SUBSCRIPTION_ACTIVATION === true;
+  const testActivationAllowed =
+    getBillingPort().driver === "fake" &&
+    (env.NODE_ENV !== "production" || testActivationFlag);
+  if (!testActivationAllowed) {
+    throw new SubscriptionServiceError("NOT_ELIGIBLE", "Dev activation is unavailable");
   }
 
   const sub = await prisma.userSubscription.findFirst({
