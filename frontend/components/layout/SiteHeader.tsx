@@ -213,12 +213,17 @@ export function SiteHeader({
     <header
       className="gh-header-sticky w-full"
       style={{
-        // Dark chrome forest — the same #0f2e25 the footer (gh-site-shell)
-        // uses. Solid at the top, fades to transparent once scrolled so no
-        // full-width bar sits behind the floating pill.
-        backgroundColor: scrolled ? "transparent" : "#0f2e25",
-        borderBottomColor: "transparent",
-        transition: "background-color 450ms ease",
+        // Expanded: full-width glass bar in the shared --gh-chrome (same glass
+        // recipe as the footer + the collapsed pill) — translucent + blur.
+        // Transparent once scrolled so the navbar condenses to JUST the
+        // floating pill — no full-width bar under it.
+        backgroundColor: scrolled ? "transparent" : "var(--gh-chrome)",
+        backdropFilter: scrolled ? "none" : "blur(var(--gh-chrome-blur))",
+        WebkitBackdropFilter: scrolled ? "none" : "blur(var(--gh-chrome-blur))",
+        borderBottomColor: scrolled ? "transparent" : "rgba(167, 243, 11, 0.22)",
+        boxShadow: scrolled ? "none" : "var(--gh-chrome-shadow)",
+        transition:
+          "background-color 300ms ease, backdrop-filter 300ms ease, border-color 300ms ease, box-shadow 300ms ease",
       }}
     >
       <div
@@ -236,19 +241,17 @@ export function SiteHeader({
             marginInline: "auto",
             paddingBlock: 10,
             borderRadius: scrolled ? 999 : 0,
-            // Same #0f2e25 dark chrome as the top bar + footer, so the full
-            // and collapsed navbar are one colour. Opaque, stays readable
-            // floating over the light section below.
-            background: scrolled ? "#0f2e25" : "transparent",
-            // No border in either state (the expanded bar has none) and a
-            // soft, light shadow — so the collapsed pill reads as the exact
-            // same flat forest, not a darker, lime-edged capsule.
-            border: "1px solid transparent",
-            boxShadow: scrolled ? "0 8px 24px rgba(0,0,0,0.18)" : "none",
-            backdropFilter: "none",
-            WebkitBackdropFilter: "none",
+            // Collapsed pill: glass --gh-chrome — same translucent fill + blur
+            // as the expanded bar and the footer, so all chrome is one
+            // glassmorphic recipe. Lime hairline + drop shadow + inset
+            // highlight keep it reading as a distinct floating capsule.
+            background: scrolled ? "var(--gh-chrome)" : "transparent",
+            border: scrolled ? "var(--gh-chrome-border)" : "1px solid transparent",
+            boxShadow: scrolled ? "var(--gh-chrome-shadow)" : "none",
+            backdropFilter: scrolled ? "blur(var(--gh-chrome-blur))" : "none",
+            WebkitBackdropFilter: scrolled ? "blur(var(--gh-chrome-blur))" : "none",
             transition:
-              "max-width 500ms cubic-bezier(0.16,1,0.3,1), border-radius 500ms ease, background-color 450ms ease, border-color 450ms ease, box-shadow 450ms ease",
+              "max-width 500ms cubic-bezier(0.16,1,0.3,1), border-radius 500ms ease, background-color 450ms ease, border-color 450ms ease, box-shadow 450ms ease, backdrop-filter 450ms ease",
           }}
         >
         {/* Brand */}
@@ -265,14 +268,15 @@ export function SiteHeader({
           />
         </Link>
 
-        {/* Section tabs — only inside a country */}
-        <div className="gh-header-navCenter hidden md:flex">
+        {/* Section tabs — only inside a country. Desktop-only (lg+); tablet
+            and below collapse into the MobileNav drawer. */}
+        <div className="gh-header-navCenter hidden lg:flex">
           {sectionItems.length > 0 ? <SectionNav items={sectionItems} variant="dark" /> : null}
         </div>
 
         {/* Right — switchers + auth + CTA */}
         <div className="gh-header-actions flex items-center gap-2.5">
-          <div className="hidden md:flex md:items-center md:gap-2">
+          <div className="hidden lg:flex lg:items-center lg:gap-2">
             <CountrySwitcher activeCountryCode={activeCountryCode} countries={countries} />
             <LanguageSwitcher
               currentLang={activeLang}
@@ -290,7 +294,7 @@ export function SiteHeader({
           <Link
             href={authUser ? "/account/notifications" : "/login"}
             aria-label="Notifications"
-            className="relative hidden size-9 items-center justify-center rounded-full text-white/85 transition-colors duration-200 hover:bg-white/12 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 md:inline-flex"
+            className="relative hidden size-9 items-center justify-center rounded-full text-white/85 transition-colors duration-200 hover:bg-white/12 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 lg:inline-flex"
           >
             <Bell className="size-4" strokeWidth={2} aria-hidden />
             <span
@@ -303,7 +307,7 @@ export function SiteHeader({
           {!authUser ? (
             <Link
               href="/login"
-              className="gh-header-authLink hidden whitespace-nowrap rounded-full px-2 text-sm font-semibold text-white/70 transition-colors hover:text-white active:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 md:inline-flex"
+              className="gh-header-authLink hidden whitespace-nowrap rounded-full px-2 text-sm font-semibold text-white/70 transition-colors hover:text-white active:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 lg:inline-flex"
             >
               {navigation.headerAuthLink.label}
             </Link>
@@ -322,7 +326,7 @@ export function SiteHeader({
                   : "Your account"
               }
               title={authUser.email ?? undefined}
-              className="group hidden size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-[13px] font-extrabold leading-none text-white transition-[background-color,border-color,transform] duration-200 hover:border-[var(--color-brand-accent)] hover:bg-white/[0.16] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.5)] md:inline-flex"
+              className="group hidden size-9 items-center justify-center rounded-full border border-white/15 bg-white/10 text-[13px] font-extrabold leading-none text-white transition-[background-color,border-color,transform] duration-200 hover:border-[var(--color-brand-accent)] hover:bg-white/[0.16] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:rgba(176,241,34,0.5)] lg:inline-flex"
             >
               {initialFromEmail(authUser.email)}
             </Link>
@@ -333,7 +337,7 @@ export function SiteHeader({
           <Link
             href={bookHref}
             aria-label="Book an appointment"
-            className="gh-header-bookCta group hidden shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-[var(--color-brand-accent)] pl-5 pr-4 py-3 text-sm font-extrabold tracking-[-0.01em] text-[#0a1f14] shadow-[0_4px_16px_rgba(176,241,34,0.22)] transition-[transform,box-shadow,filter] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_30px_rgba(176,241,34,0.32)] active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)] md:inline-flex"
+            className="gh-header-bookCta group hidden shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-[var(--color-brand-accent)] pl-5 pr-4 py-3 text-sm font-extrabold tracking-[-0.01em] text-[#0a1f14] shadow-[0_4px_16px_rgba(176,241,34,0.22)] transition-[transform,box-shadow,filter] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:brightness-105 hover:shadow-[0_10px_30px_rgba(176,241,34,0.32)] active:translate-y-0 active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-background-dark)] lg:inline-flex"
           >
             {navigation.navBookAppointment}
             <ArrowUpRight
@@ -352,8 +356,8 @@ export function SiteHeader({
             <ArrowUpRight className="size-3.5 text-[#0a1f14]" strokeWidth={2.5} aria-hidden />
           </Link>
 
-          {/* Mobile drawer trigger */}
-          <div className="md:hidden">
+          {/* Mobile + tablet drawer trigger — shown below lg (incl. iPad). */}
+          <div className="lg:hidden">
             <MobileNav
               siteName={siteName}
               navigation={navigation}

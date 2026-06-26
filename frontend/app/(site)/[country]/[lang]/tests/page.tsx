@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ShieldCheck, Clock, MapPin, Users } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
 import { PageHero } from "@/components/sections/PageHero";
@@ -118,6 +119,24 @@ export default async function HealthTestsPage({
         ctaHref={bookHref}
         secondaryLabel={t.secondaryLabel}
         secondaryHref={`/${slug}/${lang}/doctors`}
+        secondaryIcon={<Users className="size-4" strokeWidth={1.75} aria-hidden />}
+        trustCards={[
+          {
+            icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: "Doctor-reviewed",
+            subtitle: "Every result reviewed by a registered doctor.",
+          },
+          {
+            icon: <Clock className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: "Fast results",
+            subtitle: "Most results in 24–48 hours.",
+          },
+          {
+            icon: <MapPin className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: `Registered in ${config.name}`,
+            subtitle: `Our doctors are registered to practise in ${config.name}.`,
+          },
+        ]}
         heroImage={{
           src: "/images/stock/tests.jpg",
           alt: `Lab-quality home health test results reviewed by a doctor in ${config.name}`,
