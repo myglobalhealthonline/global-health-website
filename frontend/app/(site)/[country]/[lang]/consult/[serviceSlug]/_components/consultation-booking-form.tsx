@@ -32,10 +32,21 @@ type Props = {
   /** Clinic timezone the slots are in. Patient sees clinic-local times so
    *  "09:00" reads the same to patient, doctor, and clinic. */
   clinicTimezone?: string;
-  /** Optional deep-link slot id. Used by /book and /consult when the
-   *  server has already verified the service + doctor context. */
+  /** The slot confirmed on the time step (the URL's `?slot=`). On the details
+   *  step it is fixed — shown as a summary, not re-picked here. */
   initialSlotId?: string | null;
+  /** Link back to the time step (same /book URL without `?slot=`). */
+  changeTimeHref: string;
   i18n: CommonLocale["bookingForm"];
+};
+
+/** Saved patient profile fields we prefill on the details step (req #2). */
+type ProfileAddress = {
+  addressLine1: string | null;
+  addressLine2: string | null;
+  addressCity: string | null;
+  addressPostalCode: string | null;
+  nationalIdNumber: string | null;
 };
 
 /**
@@ -64,6 +75,7 @@ export function ConsultationBookingForm({
   slots,
   clinicTimezone,
   initialSlotId,
+  changeTimeHref,
   i18n,
 }: Props) {
   const router = useRouter();
@@ -81,21 +93,13 @@ export function ConsultationBookingForm({
     : tz;
 
   const nationalIdLabel = idLabelForCountrySlug(params?.country);
-  const initialSlot =
+  // Slot is fixed on the details step — chosen on the previous (time) step and
+  // carried in the URL. Resolve it for the summary; never re-pick here.
+  const selectedSlot =
     (initialSlotId ? slots.find((slot) => slot.id === initialSlotId) : undefined) ??
     slots[0] ??
     null;
-
-  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(
-    initialSlot?.id ?? null,
-  );
-  // Date-first UX — pick the day, then the times for that day render
-  // below. Defaults to the day of the pre-selected slot (which is the
-  // first slot in the list), so the panel is never empty on first
-  // render.
-  const [selectedDay, setSelectedDay] = useState<string | null>(
-    initialSlot ? formatAppDate(initialSlot.startAt, tz) : null,
-  );
+  const selectedSlotId = selectedSlot?.id ?? null;
 
   // Auth + prefill state. We render the form unconditionally so guests
   // can still book — when signed in we fill the defaults from /api/auth/me.
@@ -106,6 +110,12 @@ export function ConsultationBookingForm({
   // usage). Only those approved to use plan benefits (canUseCredits) appear.
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
   const [selectedFamilyId, setSelectedFamilyId] = useState("");
+  // Saved profile (address + national ID) so we don't ask for it again (req #2).
+  const [profile, setProfile] = useState<ProfileAddress | null>(null);
+  const [profileLoaded, setProfileLoaded] = useState(false);
+  // Default ON (offer to save) until we learn the profile already has an
+  // address; flipped in the profile fetch below.
+  const [saveAddress, setSaveAddress] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -119,8 +129,34 @@ export function ConsultationBookingForm({
         // hides the selector.
         const fam = await listFamilyMembers();
         if (!cancelled && fam.ok) setFamilyMembers(fam.data.items);
+        // Pull the saved profile so the address + national ID prefill from the
+        // account instead of being re-typed (req #2). Best-effort.
+        try {
+          const pr = await fetch("/api/account/profile", { credentials: "include" });
+          if (!cancelled && pr.ok) {
+            const json = (await pr.json()) as { data?: { profile?: Record<string, string | null> | null } };
+            const p = json?.data?.profile ?? null;
+            if (p) {
+              setProfile({
+                addressLine1: p.addressLine1 ?? null,
+                addressLine2: p.addressLine2 ?? null,
+                addressCity: p.addressCity ?? null,
+                addressPostalCode: p.addressPostalCode ?? null,
+                nationalIdNumber: p.nationalIdNumber ?? null,
+              });
+              // Already on file → nothing new to store, so default the save
+              // checkbox off; otherwise leave it on to capture the new address.
+              if (p.addressLine1) setSaveAddress(false);
+            }
+          }
+        } catch {
+          /* best-effort prefill — booking still works without it */
+        }
       }
-      setAuthLoaded(true);
+      if (!cancelled) {
+        setProfileLoaded(true);
+        setAuthLoaded(true);
+      }
     })();
     return () => {
       cancelled = true;
@@ -137,29 +173,20 @@ export function ConsultationBookingForm({
   // free-text toggle OR an approved family member chosen from the dropdown.
   const treatingOther = bookingForOther || Boolean(selectedMember);
 
-  const defaults = useMemo(() => {
-    if (!me) {
-      return { fullName: "", email: "", phone: "", dateOfBirth: "" };
-    }
-    return {
-      fullName: me.fullName ?? "",
-      email: me.email ?? "",
-      phone: me.phone ?? "",
-      dateOfBirth: me.dateOfBirth ? me.dateOfBirth.slice(0, 10) : "",
-    };
-  }, [me]);
-
-  // Group slots by local day for display.
-  const grouped = useMemo(() => {
-    const map = new Map<string, Slot[]>();
-    for (const s of slots) {
-      const day = formatAppDate(s.startAt, tz);
-      const list = map.get(day) ?? [];
-      list.push(s);
-      map.set(day, list);
-    }
-    return map;
-  }, [slots, tz]);
+  const defaults = useMemo(
+    () => ({
+      fullName: me?.fullName ?? "",
+      email: me?.email ?? "",
+      phone: me?.phone ?? "",
+      dateOfBirth: me?.dateOfBirth ? me.dateOfBirth.slice(0, 10) : "",
+      nationalIdNumber: profile?.nationalIdNumber ?? "",
+      addressLine1: profile?.addressLine1 ?? "",
+      addressLine2: profile?.addressLine2 ?? "",
+      addressCity: profile?.addressCity ?? "",
+      addressPostalCode: profile?.addressPostalCode ?? "",
+    }),
+    [me, profile],
+  );
 
   const maxDob = new Date().toISOString().slice(0, 10);
 
@@ -276,18 +303,27 @@ export function ConsultationBookingForm({
         setError(res.message ?? "Could not add to cart");
         return;
       }
-      // Persist the national ID onto the logged-in patient's
-      // PatientProfile in the background. We deliberately don't `await`
-      // here — if the backend's slow, the patient still gets redirected
-      // to /cart in normal time. Failure is non-fatal; they can fill it
-      // in later from /account/profile.
-      if (me && !treatingOther && nationalIdNumber) {
-        void fetch("/api/account/profile", {
-          method: "PATCH",
-          credentials: "include",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ nationalIdNumber }),
-        }).catch(() => {});
+      // Persist national ID + (opted-in) address onto the logged-in patient's
+      // PatientProfile in the background. Not awaited — the redirect to /cart
+      // shouldn't wait on it; failure is non-fatal (editable later in profile).
+      if (me && !treatingOther) {
+        const profilePatch: Record<string, string> = {};
+        if (nationalIdNumber) profilePatch.nationalIdNumber = nationalIdNumber;
+        if (saveAddress && addressLine1) {
+          profilePatch.addressLine1 = addressLine1;
+          if (addressLine2) profilePatch.addressLine2 = addressLine2;
+          if (addressCity) profilePatch.addressCity = addressCity;
+          if (addressPostalCode) profilePatch.addressPostalCode = addressPostalCode;
+          if (addressCountryCode) profilePatch.addressCountryCode = addressCountryCode;
+        }
+        if (Object.keys(profilePatch).length > 0) {
+          void fetch("/api/account/profile", {
+            method: "PATCH",
+            credentials: "include",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify(profilePatch),
+          }).catch(() => {});
+        }
       }
       const country = params?.country ?? "";
       const lang = params?.lang ?? "";
@@ -317,7 +353,7 @@ export function ConsultationBookingForm({
   // toggle "Booking for someone else" or refresh. Including the user
   // identity in the key forces a clean remount once auth resolves so
   // the prefilled defaults actually appear.
-  const formKey = `${treatingOther ? "other" : "self"}:${selectedFamilyId || "none"}:${me?.id ?? (authLoaded ? "guest" : "loading")}`;
+  const formKey = `${treatingOther ? "other" : "self"}:${selectedFamilyId || "none"}:${me?.id ?? (authLoaded ? "guest" : "loading")}:${profileLoaded ? "p" : "-"}`;
 
   return (
     <form
@@ -325,154 +361,30 @@ export function ConsultationBookingForm({
       onSubmit={onSubmit}
       className="mt-6 grid gap-6"
     >
-      {/* 1. Slot picker — two-step: pick the day, then the times for
-        * that day render below in a clean morning/afternoon/evening
-        * grouped grid. Replaces the previous "wall of chips with day
-        * headers" pattern which was overwhelming when 5+ days had 6+
-        * slots each. */}
-      <div>
-        <div className="flex items-baseline justify-between gap-3">
-          <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-            {i18n.pickDate}
-          </p>
-          <p className="text-xs text-[var(--color-text-muted)]">
-            {i18n.daysAvailable
-              .replace("{count}", String(grouped.size))
-              .replace("{day}", grouped.size === 1 ? i18n.day : i18n.days)
-              .replace("{tz}", tzLabel)}
-          </p>
-        </div>
-
-        {/* Date pills row — horizontally scrollable so 14 days fit on
-          * mobile without wrapping into a chaotic stack. Each pill:
-          * weekday short, day number big, slot count tiny. */}
-        <div
-          role="tablist"
-          aria-label="Available dates"
-          className="mt-3 -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]"
-        >
-          {Array.from(grouped.entries()).map(([day, daySlots]) => {
-            const isActive = selectedDay === day;
-            const firstSlotAt = daySlots[0]?.startAt;
-            const date = firstSlotAt ? new Date(firstSlotAt) : null;
-            // Render compact: "Mon" on top, "12" big, "Aug" small.
-            const weekday = date
-              ? date.toLocaleDateString(undefined, { weekday: "short", timeZone: tz })
-              : "";
-            const dayNum = date
-              ? date.toLocaleDateString(undefined, { day: "numeric", timeZone: tz })
-              : "";
-            const month = date
-              ? date.toLocaleDateString(undefined, { month: "short", timeZone: tz })
-              : "";
-            return (
-              <button
-                key={day}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                onClick={() => {
-                  setSelectedDay(day);
-                  // Auto-select the first slot of the new day so the
-                  // submit button never sits disabled after a date pick.
-                  const first = daySlots[0];
-                  if (first) setSelectedSlotId(first.id);
-                }}
-                disabled={pending}
-                className={
-                  isActive
-                    ? "flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border-2 border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white px-4 py-3 min-w-[68px] shadow-[var(--shadow-card)]"
-                    : "flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-body)] px-4 py-3 min-w-[68px] transition-[border-color,background-color,transform] duration-200 hover:border-[var(--color-border-strong)] hover:bg-[var(--color-background-soft)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
-                }
-              >
-                <span
-                  className={
-                    isActive
-                      ? "text-[10px] font-bold uppercase tracking-[0.12em] text-white/80"
-                      : "text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]"
-                  }
-                >
-                  {weekday}
-                </span>
-                <span
-                  className={
-                    isActive
-                      ? "text-2xl font-bold leading-none [font-variant-numeric:tabular-nums] text-white"
-                      : "text-2xl font-bold leading-none [font-variant-numeric:tabular-nums] text-[var(--color-text-primary)]"
-                  }
-                >
-                  {dayNum}
-                </span>
-                <span
-                  className={
-                    isActive
-                      ? "text-[10px] font-semibold uppercase tracking-[0.1em] text-white/70"
-                      : "text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--color-text-muted)]"
-                  }
-                >
-                  {month}
-                </span>
-                <span
-                  className={
-                    isActive
-                      ? "mt-1 text-[10px] font-semibold text-white/80"
-                      : "mt-1 text-[10px] font-semibold text-[var(--color-brand-primary)]"
-                  }
-                >
-                  {daySlots.length} {daySlots.length === 1 ? i18n.slotSingular : i18n.slotPlural}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Time grid for the active day. Buttons in a responsive
-          * grid (2 cols on mobile, 4 on lg) so they look like a
-          * proper picker, not a sloppy wrap. */}
-        {selectedDay ? (
-          <div className="mt-6">
+      {/* Selected time summary — the slot was confirmed on the previous
+        * (time) step. This details step never re-picks it; "Change time"
+        * returns to the time step (same URL without ?slot=). */}
+      {selectedSlot ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+          <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
-              {i18n.pickTimeOn.replace("{date}", selectedDay)}
+              {i18n.selectedTime}
             </p>
-            <div
-              role="tabpanel"
-              aria-label={`Times on ${selectedDay}`}
-              className="mt-3 grid gap-2 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
-            >
-              {(grouped.get(selectedDay) ?? []).map((s) => {
-                const isSelected = selectedSlotId === s.id;
-                return (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => setSelectedSlotId(s.id)}
-                    disabled={pending}
-                    aria-pressed={isSelected}
-                    className={
-                      isSelected
-                        ? "inline-flex flex-col items-center justify-center rounded-xl border-2 border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white px-3 py-2.5 text-sm font-semibold [font-variant-numeric:tabular-nums] shadow-[var(--shadow-card)]"
-                        : "inline-flex flex-col items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-primary)] px-3 py-2.5 text-sm font-semibold [font-variant-numeric:tabular-nums] transition-[border-color,background-color,transform] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
-                    }
-                  >
-                    <span>{formatAppTime(s.startAt, tz)}</span>
-                    {typeof s.priceCents === "number" ? (
-                      <span
-                        className={
-                          isSelected
-                            ? "mt-0.5 text-xs font-medium text-white/85"
-                            : "mt-0.5 text-xs font-medium text-[var(--color-text-muted)]"
-                        }
-                      >
-                        {formatPriceRounded(s.priceCents, s.currencyCode ?? "EUR")}
-                      </span>
-                    ) : null}
-                  </button>
-                );
-              })}
-            </div>
+            <p className="mt-1 text-sm font-semibold text-[var(--color-text-primary)]">
+              {formatAppDate(selectedSlot.startAt, tz)} · {formatAppTime(selectedSlot.startAt, tz)} ({tzLabel})
+              {typeof selectedSlot.priceCents === "number"
+                ? ` · ${formatPriceRounded(selectedSlot.priceCents, selectedSlot.currencyCode ?? "EUR")}`
+                : ""}
+            </p>
           </div>
-        ) : null}
-      </div>
+          <Link
+            href={changeTimeHref}
+            className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-page)]"
+          >
+            {i18n.changeTime}
+          </Link>
+        </div>
+      ) : null}
 
       {/* 2. Patient details — prefilled from account when signed in.
         * When bookingForOther, these fields remain the logged-in user's
@@ -693,6 +605,7 @@ export function ConsultationBookingForm({
             type="text"
             name="nationalIdNumber"
             maxLength={64}
+            defaultValue={defaults.nationalIdNumber}
             className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
           />
           <p className="mt-1 text-xs text-[var(--color-text-muted)]">
@@ -748,6 +661,7 @@ export function ConsultationBookingForm({
               name="addressLine1"
               maxLength={120}
               autoComplete="address-line1"
+              defaultValue={defaults.addressLine1}
               className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
           </label>
@@ -760,6 +674,7 @@ export function ConsultationBookingForm({
               name="addressLine2"
               maxLength={120}
               autoComplete="address-line2"
+              defaultValue={defaults.addressLine2}
               className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
           </label>
@@ -770,6 +685,7 @@ export function ConsultationBookingForm({
               name="addressCity"
               maxLength={80}
               autoComplete="address-level2"
+              defaultValue={defaults.addressCity}
               className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
           </label>
@@ -782,10 +698,26 @@ export function ConsultationBookingForm({
               name="addressPostalCode"
               maxLength={20}
               autoComplete="postal-code"
+              defaultValue={defaults.addressPostalCode}
               className="mt-1 block w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm text-[var(--color-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)]/40"
             />
           </label>
         </div>
+
+        {/* Save the entered address back to the profile (req #2). Shown only
+          * to a signed-in patient booking for themselves. Defaults on when the
+          * profile had no address, off when it was prefilled (already saved). */}
+        {me && !treatingOther ? (
+          <label className="mt-4 flex items-center gap-2 text-sm text-[var(--color-text-body)]">
+            <input
+              type="checkbox"
+              checked={saveAddress}
+              onChange={(e) => setSaveAddress(e.target.checked)}
+              className="size-4 rounded border-[var(--color-border)]"
+            />
+            {i18n.saveAddressToProfile}
+          </label>
+        ) : null}
       </fieldset>
 
       {/* 4. GDPR — two independent required checkboxes per legal review.
@@ -832,7 +764,7 @@ export function ConsultationBookingForm({
 
       <button
         type="submit"
-        disabled={pending || !authLoaded}
+        disabled={pending || !authLoaded || !selectedSlotId}
         className="gh2-btn-lime w-full justify-center disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}

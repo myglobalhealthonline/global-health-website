@@ -256,7 +256,11 @@
     "forFamilyMember": "A family member",
     "manageFamily": "Manage family members",
     "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible.",
-    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member."
+    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member.",
+    "selectedTime": "Ora selectată",
+    "changeTime": "Schimbă ora",
+    "saveAddressToProfile": "Salvează această adresă în profilul meu",
+    "pickTimeToContinue": "Alegeți o oră pentru a continua cu detaliile."
   },
   "extra": {
     "specialistsWatermark": "Specialiști",
@@ -545,6 +549,8 @@
     "clinicianNotInCountry": "Acest clinician nu este disponibil în această țară în acest moment. Alege un alt clinician pentru a continua.",
     "steps34": "Pașii 3 și 4",
     "pickTimeDetails": "Alege o oră și adaugă detaliile pacientului",
+    "detailsTitle": "Adaugă detaliile",
+    "detailsDesc": "Spune-ne pentru cine este programarea și confirmă datele de contact și adresa.",
     "timesShown": "Orele sunt afișate în fusul orar al clinicii. Programarea este adăugată în coșul tău înainte de finalizarea comenzii.",
     "selectedConsultation": "Consultația selectată",
     "changeService": "Schimbă serviciul",

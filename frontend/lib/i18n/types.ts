@@ -260,6 +260,10 @@ export type CommonLocale = {
     manageFamily: string;
     familyBenefitNote: string;
     familyBenefitUnavailable: string;
+    selectedTime: string;
+    changeTime: string;
+    saveAddressToProfile: string;
+    pickTimeToContinue: string;
   };
   extra: {
     specialistsWatermark: string;
@@ -551,6 +555,8 @@ export type CommonLocale = {
     clinicianNotInCountry: string;
     steps34: string;
     pickTimeDetails: string;
+    detailsTitle: string;
+    detailsDesc: string;
     timesShown: string;
     selectedConsultation: string;
     changeService: string;

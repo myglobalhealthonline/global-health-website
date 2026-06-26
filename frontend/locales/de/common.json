@@ -256,7 +256,11 @@
     "forFamilyMember": "A family member",
     "manageFamily": "Manage family members",
     "familyBenefitNote": "Your plan benefit will apply if this service and member are eligible.",
-    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member."
+    "familyBenefitUnavailable": "Booking for someone else is available, but using your plan's GP credits or discounts for a family member needs a family-enabled plan with an approved member.",
+    "selectedTime": "Gewählte Zeit",
+    "changeTime": "Zeit ändern",
+    "saveAddressToProfile": "Diese Adresse in meinem Profil speichern",
+    "pickTimeToContinue": "Wählen Sie eine Zeit, um mit Ihren Angaben fortzufahren."
   },
   "extra": {
     "specialistsWatermark": "Fachärzte",
@@ -545,6 +549,8 @@
     "clinicianNotInCountry": "Dieser Arzt ist derzeit in diesem Land nicht verfügbar. Wählen Sie einen anderen Arzt, um fortzufahren.",
     "steps34": "Schritte 3 und 4",
     "pickTimeDetails": "Wählen Sie eine Zeit und fügen Sie Patientendaten hinzu",
+    "detailsTitle": "Ihre Angaben",
+    "detailsDesc": "Sagen Sie uns, für wen der Termin ist, und bestätigen Sie Ihre Kontakt- und Adressdaten.",
     "timesShown": "Die Zeiten werden in der Zeitzone der Praxis angezeigt. Der Termin wird vor dem Checkout zu Ihrem Warenkorb hinzugefügt.",
     "selectedConsultation": "Ausgewählte Beratung",
     "changeService": "Service ändern",
