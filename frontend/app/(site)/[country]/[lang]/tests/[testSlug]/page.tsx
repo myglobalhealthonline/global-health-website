@@ -3,8 +3,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
-  CalendarCheck,
-  Check,
   Clock,
   Droplets,
   FlaskConical,
@@ -124,256 +122,305 @@ export default async function HealthTestDetailPage({
         ])}
       />
 
-      {/* Test product page — e-commerce layout: image left, buy info right */}
-      <section style={{ background: "var(--color-background-soft)", borderBottom: "1px solid rgba(29,75,54,0.08)" }}>
-        <div
-          className="mx-auto max-w-[var(--container-width)] px-5 md:px-10"
-          style={{ paddingTop: "clamp(40px,5vw,72px)", paddingBottom: "clamp(48px,6vw,88px)" }}
-        >
-          <Link
-            href={backHref}
-            className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] transition-colors hover:text-[var(--color-brand-primary)]"
-            style={{ color: "var(--color-text-muted)" }}
-          >
-            <ArrowLeft className="size-4" aria-hidden />
-            {t.backToTests}
-          </Link>
+      {/* ── Hero — full-viewport 50/50 split: image left, content + product card right ── */}
+      <section
+        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
+        style={{ background: "#031F18", height: "calc(100svh - var(--header-height))", minHeight: 620 }}
+      >
+        <div className="grid h-full lg:grid-cols-2">
 
-          <div className="mt-8 grid items-start gap-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
-
-            {/* LEFT — product image + gallery */}
-            <div>
-              <div
-                className="overflow-hidden rounded-[var(--radius-card)]"
+          {/* ── LEFT — full-bleed test image ──────────────────────────── */}
+          <div className="relative h-full overflow-hidden">
+            {detail.imageSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={detail.imageSrc}
+                alt={detail.title}
                 style={{
-                  background: "#ffffff",
-                  boxShadow: "0 2px 32px rgba(29,75,54,0.09)",
-                  border: "1px solid rgba(29,75,54,0.07)",
+                  position: "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center top",
                 }}
+              />
+            ) : (
+              <div
+                className="absolute inset-0 flex items-center justify-center"
+                style={{ background: "linear-gradient(135deg, #0a2218 0%, #173528 100%)" }}
               >
-                {detail.imageSrc ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={detail.imageSrc}
-                    alt={detail.title}
-                    style={{
-                      width: "100%",
-                      aspectRatio: "4 / 3",
-                      objectFit: "contain",
-                      padding: "clamp(16px,5%,40px)",
-                      display: "block",
-                    }}
-                  />
-                ) : (
-                  <div
-                    className="flex items-center justify-center"
-                    style={{ aspectRatio: "4 / 3", background: "rgba(29,75,54,0.03)" }}
-                  >
-                    <FlaskConical
-                      className="size-24"
-                      style={{ color: "var(--color-brand-primary)", opacity: 0.22 }}
-                      strokeWidth={1.2}
-                      aria-hidden
-                    />
-                  </div>
-                )}
+                <FlaskConical
+                  className="size-40 opacity-[0.10]"
+                  style={{ color: "var(--color-brand-accent)" }}
+                  strokeWidth={0.9}
+                  aria-hidden
+                />
               </div>
+            )}
+            {/* Dark green wash */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0"
+              style={{ background: "rgba(3,31,24,0.22)", mixBlendMode: "multiply" }}
+            />
+            {/* Bottom vignette */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0"
+              style={{
+                height: "50%",
+                background:
+                  "linear-gradient(to top, rgba(3,31,24,0.88) 0%, rgba(3,31,24,0.32) 50%, transparent 100%)",
+              }}
+            />
+            {/* Right-edge bleed → seamless merge into content column */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 hidden lg:block"
+              style={{
+                width: "44%",
+                background:
+                  "linear-gradient(to right, transparent 0%, rgba(3,31,24,0.60) 45%, rgba(3,31,24,0.92) 75%, #031F18 100%)",
+              }}
+            />
+          </div>
 
-              {/* Gallery thumbnails */}
-              {detail.gallery.length > 0 ? (
-                <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-                  {detail.imageSrc ? (
-                    <div
-                      className="shrink-0 overflow-hidden rounded-[10px]"
-                      style={{
-                        width: 72,
-                        height: 72,
-                        background: "#ffffff",
-                        border: "2px solid var(--color-brand-accent)",
-                        boxShadow: "0 1px 8px rgba(29,75,54,0.10)",
-                      }}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={detail.imageSrc}
-                        alt=""
-                        style={{ width: "100%", height: "100%", objectFit: "contain", padding: 4 }}
-                      />
-                    </div>
-                  ) : null}
-                  {detail.gallery.map((src, i) => (
-                    <div
-                      key={i}
-                      className="shrink-0 overflow-hidden rounded-[10px]"
-                      style={{
-                        width: 72,
-                        height: 72,
-                        background: "#ffffff",
-                        border: "1px solid rgba(29,75,54,0.12)",
-                        boxShadow: "0 1px 8px rgba(29,75,54,0.06)",
-                      }}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={src}
-                        alt={`${detail.title} view ${i + 2}`}
-                        style={{ width: "100%", height: "100%", objectFit: "contain", padding: 4 }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-            </div>
+          {/* ── RIGHT — content + product card ──────────────────────── */}
+          <div
+            className="relative flex h-full flex-col justify-center overflow-y-auto px-8 py-6 md:px-12 lg:px-14 lg:py-8"
+            style={{ background: "#031F18" }}
+          >
+            {/* 1 — gradient depth */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0"
+              style={{
+                background:
+                  "radial-gradient(circle at 88% 14%, rgba(22,89,64,0.30), transparent 42%)," +
+                  "radial-gradient(circle at 12% 88%, rgba(2,18,13,0.55), transparent 44%)," +
+                  "linear-gradient(135deg, #062b21 0%, #031F18 50%, #02140e 100%)",
+              }}
+            />
+            {/* 2 — technical lime grid */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(176,241,34,0.045) 1px, transparent 1px)," +
+                  "linear-gradient(90deg, rgba(176,241,34,0.045) 1px, transparent 1px)",
+                backgroundSize: "52px 52px",
+                maskImage:
+                  "radial-gradient(130% 130% at 80% 18%, #000 0%, rgba(0,0,0,0.40) 52%, transparent 88%)",
+                WebkitMaskImage:
+                  "radial-gradient(130% 130% at 80% 18%, #000 0%, rgba(0,0,0,0.40) 52%, transparent 88%)",
+              }}
+            />
+            {/* 3 — dot texture */}
+            <div
+              aria-hidden
+              className="gh-dot-grid pointer-events-none absolute inset-0 z-0"
+              style={{
+                opacity: 0.55,
+                maskImage:
+                  "radial-gradient(700px 540px at 86% 12%, #000 0%, transparent 70%)",
+                WebkitMaskImage:
+                  "radial-gradient(700px 540px at 86% 12%, #000 0%, transparent 70%)",
+              }}
+            />
+            {/* 4 — lime ambient glow behind card */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0"
+              style={{
+                background:
+                  "radial-gradient(ellipse 560px 480px at 72% 64%, rgba(176,241,34,0.10), transparent 62%)," +
+                  "radial-gradient(ellipse 640px 540px at 112% -8%, rgba(176,241,34,0.11), transparent 60%)",
+              }}
+            />
+            {/* 5 — faint plus symbols */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+              style={{ top: "-2%", right: "5%", fontSize: "190px", color: "rgba(176,241,34,0.055)" }}
+            >+</span>
+            <span
+              aria-hidden
+              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+              style={{ bottom: "8%", right: "10%", fontSize: "78px", color: "rgba(176,241,34,0.045)" }}
+            >+</span>
 
-            {/* RIGHT — product info + buy */}
-            <div>
-              {/* Badge row */}
-              <div className="flex flex-wrap items-center gap-2">
-                <span
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.10em]"
-                  style={{ background: "rgba(176,241,34,0.18)", color: "var(--color-brand-primary)" }}
-                >
-                  <ShieldCheck className="size-3.5" aria-hidden />
-                  {t.doctorReviewed}
-                </span>
-                <span
-                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-[0.10em]"
-                  style={{ background: "rgba(29,75,54,0.07)", color: "var(--color-brand-primary)" }}
-                >
-                  <FlaskConical className="size-3.5" aria-hidden />
-                  {t.eyebrow}
-                </span>
-              </div>
+            {/* Content */}
+            <div className="relative z-10" style={{ maxWidth: 680 }}>
+              {/* Back link */}
+              <Link
+                href={backHref}
+                className="inline-flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-[0.18em] transition-colors hover:text-[var(--color-brand-accent)]"
+                style={{ color: "rgba(255,255,255,0.35)" }}
+              >
+                <ArrowLeft className="size-3.5" aria-hidden />
+                {t.backToTests}
+              </Link>
 
+              {/* Eyebrow */}
+              <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: "var(--color-brand-accent)" }}>
+                {t.eyebrow}
+              </p>
+
+              {/* Title */}
               <h1
-                className="mt-4 font-extrabold leading-[1.05] tracking-[-0.03em]"
-                style={{ fontSize: "clamp(1.75rem,3vw,2.6rem)", color: "var(--color-text-primary)" }}
+                className="mt-2.5 font-extrabold leading-[1.02] tracking-[-0.038em]"
+                style={{
+                  fontSize: "clamp(1.9rem, 2.2vw + 0.9rem, 3.4rem)",
+                  color: "#F5FFF8",
+                  maxWidth: "16ch",
+                }}
               >
                 {detail.title}
               </h1>
 
+              {/* Lede */}
               {intro ? (
                 <p
-                  className="mt-3 max-w-[52ch] leading-relaxed"
-                  style={{ fontSize: "var(--text-body-lg)", color: "var(--color-text-muted)" }}
+                  className="mt-3 leading-relaxed"
+                  style={{
+                    maxWidth: "46ch",
+                    fontSize: "clamp(0.9rem, 0.6vw + 0.65rem, 1.05rem)",
+                    color: "#B8C9C2",
+                  }}
                 >
                   {intro}
                 </p>
               ) : null}
 
-              {/* Spec chips */}
-              <div className="mt-5 flex flex-wrap gap-2">
-                {specs.map(({ icon: Icon, value }) => (
-                  <span
-                    key={value}
-                    className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[13px] font-medium"
-                    style={{ background: "rgba(29,75,54,0.07)", color: "var(--color-brand-primary)" }}
-                  >
-                    <Icon className="size-3.5 shrink-0" strokeWidth={1.8} aria-hidden />
-                    {value}
+              {/* Trust row */}
+              <div
+                className="mt-4 flex flex-wrap items-center gap-y-2 border-t pt-4"
+                style={{ borderColor: "rgba(255,255,255,0.10)" }}
+              >
+                {[
+                  { icon: ShieldCheck, label: t.doctorReviewed },
+                  { icon: Stethoscope, label: tp.trustLabQualityLabel },
+                  { icon: Package, label: tp.trustHomeLabel },
+                ].map(({ icon: Icon, label }, i) => (
+                  <span key={label} className="flex items-center">
+                    {i > 0 ? (
+                      <span
+                        aria-hidden
+                        className="mx-5 hidden h-4 w-px sm:block"
+                        style={{ background: "rgba(255,255,255,0.14)" }}
+                      />
+                    ) : null}
+                    <span
+                      className="inline-flex items-center gap-2 text-[13px] font-medium"
+                      style={{ color: "rgba(255,255,255,0.68)" }}
+                    >
+                      <Icon
+                        className="size-4 shrink-0"
+                        style={{ color: "var(--color-brand-accent)" }}
+                        strokeWidth={1.75}
+                        aria-hidden
+                      />
+                      {label}
+                    </span>
                   </span>
                 ))}
               </div>
 
-              {/* What's covered — preview */}
-              {detail.whatThisTestCovers.length > 0 ? (
-                <ul
-                  className="mt-6 space-y-2.5 border-t pt-6"
-                  style={{ borderColor: "rgba(29,75,54,0.10)" }}
-                >
-                  {detail.whatThisTestCovers.slice(0, 5).map((item, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <span
-                        className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full"
-                        style={{ background: "rgba(176,241,34,0.22)" }}
-                      >
-                        <Check
-                          className="size-3"
-                          style={{ color: "var(--color-brand-primary)" }}
-                          strokeWidth={2.5}
-                          aria-hidden
-                        />
-                      </span>
-                      <span className="text-sm leading-snug" style={{ color: "var(--color-text-secondary, var(--color-text-primary))" }}>
-                        {item}
-                      </span>
-                    </li>
-                  ))}
-                  {detail.whatThisTestCovers.length > 5 ? (
-                    <li
-                      className="pl-8 text-sm font-medium"
-                      style={{ color: "var(--color-brand-primary)", opacity: 0.65 }}
-                    >
-                      +{detail.whatThisTestCovers.length - 5} more biomarkers below ↓
-                    </li>
-                  ) : null}
-                </ul>
-              ) : null}
-
-              {/* Price + CTA */}
+              {/* ── Product card ─────────────────────────────────────── */}
               <div
-                className="mt-6 border-t pt-6"
-                style={{ borderColor: "rgba(29,75,54,0.10)" }}
+                className="mt-4 rounded-[22px]"
+                style={{
+                  background: "rgba(5,34,27,0.78)",
+                  border: "1px solid rgba(176,241,34,0.18)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  boxShadow: "0 24px 64px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.06)",
+                }}
               >
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <span
-                    className="font-extrabold tracking-[-0.035em] [font-variant-numeric:tabular-nums]"
-                    style={{ fontSize: "clamp(2rem,3vw,2.6rem)", color: "var(--color-text-primary)" }}
-                  >
-                    {priceLabel}
-                  </span>
-                  <span className="text-sm font-medium" style={{ color: "var(--color-text-muted)" }}>
-                    {t.inclDoctorReview}
-                  </span>
-                  {lowStock != null ? (
-                    <span className="gh-badge gh-badge-warning">{t.onlyLeft.replace("{count}", String(lowStock))}</span>
-                  ) : null}
-                  {soldOut ? <span className="gh-badge gh-badge-error">{t.soldOut}</span> : null}
-                </div>
+                <div className="p-5 md:p-6">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: "var(--color-brand-accent)" }}>
+                    {t.eyebrow}
+                  </p>
 
-                <div className="mt-4">
-                  {soldOut ? (
-                    <button
-                      type="button"
-                      disabled
-                      className="inline-flex h-14 w-full cursor-not-allowed items-center justify-center gap-2 rounded-full px-6 text-[15px] font-bold"
-                      style={{ background: "rgba(0,0,0,0.06)", color: "rgba(0,0,0,0.35)" }}
-                    >
-                      {t.soldOut}
-                    </button>
-                  ) : (
-                    <AddToCartButton
-                      kind="HEALTH_TEST"
-                      healthTestId={detail.id}
-                      label={detail.heroButtonLabel ?? t.addToCart.replace("{price}", priceLabel)}
-                      className="gh2-btn-lime w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
-                    />
-                  )}
-                </div>
-
-                <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
-                  {[
-                    { icon: Lock, label: t.secureCheckout },
-                    { icon: CalendarCheck, label: t.orderConfirmation },
-                  ].map(({ icon: Icon, label }) => (
+                  <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
                     <span
-                      key={label}
-                      className="inline-flex items-center gap-1.5 text-xs font-medium"
-                      style={{ color: "var(--color-text-muted)" }}
+                      className="font-extrabold tracking-[-0.04em] [font-variant-numeric:tabular-nums]"
+                      style={{ fontSize: "clamp(1.75rem,2.6vw,2.4rem)", color: "#F5FFF8" }}
                     >
-                      <Icon className="size-3.5" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
-                      {label}
+                      {priceLabel}
                     </span>
-                  ))}
+                    <span className="text-[14px] font-medium" style={{ color: "rgba(255,255,255,0.42)" }}>
+                      {t.inclDoctorReview}
+                    </span>
+                    {lowStock != null ? (
+                      <span className="gh-badge gh-badge-warning">{t.onlyLeft.replace("{count}", String(lowStock))}</span>
+                    ) : null}
+                    {soldOut ? <span className="gh-badge gh-badge-error">{t.soldOut}</span> : null}
+                  </div>
+
+                  <ul className="mt-3 border-t" style={{ borderColor: "rgba(255,255,255,0.09)" }}>
+                    {specs.map(({ icon: Icon, label, value }) => (
+                      <li
+                        key={value}
+                        className="flex items-center gap-3 border-b py-2.5"
+                        style={{ borderColor: "rgba(255,255,255,0.07)" }}
+                      >
+                        <span
+                          className="inline-flex size-7 shrink-0 items-center justify-center rounded-[8px]"
+                          style={{ background: "rgba(176,241,34,0.13)", border: "1px solid rgba(176,241,34,0.18)" }}
+                        >
+                          <Icon
+                            className="size-3.5"
+                            style={{ color: "var(--color-brand-accent)" }}
+                            strokeWidth={1.75}
+                            aria-hidden
+                          />
+                        </span>
+                        <span className="text-[13.5px] font-medium" style={{ color: "rgba(255,255,255,0.82)" }}>
+                          {label}: {value}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-4">
+                    {soldOut ? (
+                      <button
+                        type="button"
+                        disabled
+                        className="inline-flex h-[52px] w-full cursor-not-allowed items-center justify-center gap-2 rounded-[12px] px-6 text-[15px] font-bold"
+                        style={{ background: "rgba(0,0,0,0.06)", color: "rgba(0,0,0,0.35)" }}
+                      >
+                        {t.soldOut}
+                      </button>
+                    ) : (
+                      <AddToCartButton
+                        kind="HEALTH_TEST"
+                        healthTestId={detail.id}
+                        label={detail.heroButtonLabel ?? t.addToCart.replace("{price}", priceLabel)}
+                        className="gh2-btn-lime h-[52px] w-full justify-center rounded-[12px] disabled:cursor-not-allowed disabled:opacity-60"
+                      />
+                    )}
+                  </div>
+
+                  <p
+                    className="mt-3 flex items-center justify-center gap-1.5 text-center text-[11.5px]"
+                    style={{ color: "rgba(255,255,255,0.35)" }}
+                  >
+                    <Lock className="size-3" aria-hidden />
+                    {t.secureCheckout}
+                  </p>
                 </div>
               </div>
             </div>
-
           </div>
+
         </div>
       </section>
 
-      {/* Trust/credibility band — anchored immediately below the buy box
+      {/* Trust/credibility band — anchored immediately below the hero
           so credentials appear before users scroll into content. */}
       <TrustRibbon
         items={[

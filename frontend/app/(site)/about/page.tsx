@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, ShieldCheck, Stethoscope, Globe2, Clock } from "lucide-react";
+import Image from "next/image";
+import { ArrowUpRight, ShieldCheck, Stethoscope, Globe2, Clock, BadgeCheck, Users } from "lucide-react";
 import { SITE_NAME } from "@/lib/constants";
 import { PageHero } from "@/components/sections/PageHero";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
@@ -29,11 +30,24 @@ export default async function AboutPage() {
         ctaHref="/"
         secondaryLabel={about.hero_secondary}
         secondaryHref="/contact"
-        heroImage={{
-          src: "/images/stock/about.jpg",
-          alt: "Telemedicine care team reviewing a secure digital health dashboard",
-          priority: true,
-        }}
+        trustCards={[
+          {
+            icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: "Locally licensed",
+            subtitle: "Registered in your country",
+          },
+          {
+            icon: <Clock className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: "Pay after the call",
+            subtitle: "No upfront fees",
+          },
+          {
+            icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: "GDPR by default",
+            subtitle: "EU data centres",
+          },
+        ]}
+        rightSlot={<AboutArchPanel />}
       />
 
       {/* LIGHT — three pillars */}
@@ -170,6 +184,74 @@ export default async function AboutPage() {
         </div>
       </section>
     </section>
+  );
+}
+
+function AboutArchPanel() {
+  return (
+    <div className="relative mx-auto max-w-[440px]">
+      <div aria-hidden className="gh2-arch-frame" />
+      <div className="gh2-arch gh2-zoom relative aspect-[4/4.7] overflow-hidden border border-white/10 bg-white/[0.045]">
+        <Image
+          src="/images/stock/about.jpg"
+          alt="Telemedicine care team reviewing a secure digital health dashboard"
+          fill
+          priority
+          sizes="(min-width: 1024px) 440px, 100vw"
+          className="object-cover object-center"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-t from-[rgba(8,42,32,0.62)] via-transparent to-transparent"
+        />
+      </div>
+
+      {/* Floating — Five countries */}
+      <div
+        className="gh-glass-emerald gh-floaty absolute -right-6 top-[12%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
+        style={{ maxWidth: 232, animationDelay: "0s" }}
+      >
+        <Globe2 className="size-5 shrink-0 text-[var(--color-brand-accent)]" strokeWidth={1.75} aria-hidden />
+        <span className="min-w-0">
+          <span className="block text-[13px] font-bold leading-tight text-white">5 European countries</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">Ireland, Portugal & more</span>
+        </span>
+      </div>
+
+      {/* Floating — Verified doctors */}
+      <div
+        className="gh-glass-emerald gh-floaty absolute -right-4 top-[56%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
+        style={{ maxWidth: 232, animationDelay: "1.4s" }}
+      >
+        <span
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg text-[var(--color-brand-accent)]"
+          style={{ background: "rgba(176,241,34,0.12)" }}
+        >
+          <BadgeCheck className="size-4" strokeWidth={2} aria-hidden />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-[13px] font-bold leading-tight text-white">Verified doctors</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">Locally licensed per country</span>
+        </span>
+      </div>
+
+      {/* Floating — No waiting rooms */}
+      <div
+        className="gh-glass-emerald gh-floaty absolute -left-8 bottom-[5%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
+        style={{ maxWidth: 232, animationDelay: "0.7s" }}
+      >
+        <span
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg text-[var(--color-brand-accent)]"
+          style={{ background: "rgba(176,241,34,0.12)" }}
+        >
+          <Users className="size-4" strokeWidth={2} aria-hidden />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-[13px] font-bold leading-tight text-white">No waiting rooms</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">Medicine anytime, anywhere</span>
+        </span>
+      </div>
+    </div>
   );
 }
 

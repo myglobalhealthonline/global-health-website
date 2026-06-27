@@ -140,18 +140,15 @@ export default async function ServiceDetailPage({
         <JsonLd data={faqJsonLd(detail.faqs.map((f) => ({ question: f.question, answer: f.answer })))} />
       ) : null}
 
-      {/* Hero — full-viewport 50/50 split: image left, content + booking right */}
+      {/* ── Hero — full-viewport 50/50 split: image left, content + booking right ── */}
       <section
         className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
-        style={{ background: "#0F2E25" }}
+        style={{ background: "#031F18", height: "calc(100svh - var(--header-height))", minHeight: 620 }}
       >
-        <div className="grid lg:grid-cols-2" style={{ minHeight: "min(100vh, 880px)" }}>
+        <div className="grid h-full lg:grid-cols-2">
 
-          {/* LEFT — full-bleed service image */}
-          <div
-            className="relative overflow-hidden"
-            style={{ minHeight: "clamp(300px, 50vw, 880px)" }}
-          >
+          {/* ── LEFT — full-bleed service image ────────────────────────────── */}
+          <div className="relative h-full overflow-hidden">
             {detail.imageSrc ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -163,129 +160,226 @@ export default async function ServiceDetailPage({
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  objectPosition: "center",
+                  objectPosition: "center top",
                 }}
               />
             ) : (
               <div
                 className="absolute inset-0"
-                style={{ background: "linear-gradient(135deg, #0d2a1f 0%, #1a3d2b 100%)" }}
+                style={{ background: "linear-gradient(135deg, #0a2218 0%, #173528 100%)" }}
               />
             )}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0"
-              style={{
-                height: "55%",
-                background:
-                  "linear-gradient(to top, rgba(6,26,18,0.90) 0%, rgba(6,26,18,0.40) 45%, transparent 100%)",
-              }}
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-y-0 right-0 hidden lg:block"
-              style={{
-                width: "38%",
-                background:
-                  "linear-gradient(to right, rgba(15,46,37,0) 0%, rgba(15,46,37,0.75) 70%, #0F2E25 100%)",
-              }}
-            />
-          </div>
-
-          {/* RIGHT — service content + booking panel */}
-          <div
-            className="relative flex flex-col justify-start overflow-y-auto px-8 py-10 md:px-12 lg:px-14 lg:py-14"
-            style={{ background: "#0F2E25" }}
-          >
+            {/* Dark green wash — preserves skin tones, kills harsh hospital blues */}
             <div
               aria-hidden
               className="pointer-events-none absolute inset-0"
               style={{
-                background:
-                  "radial-gradient(ellipse 600px 500px at 110% -10%, rgba(176,241,34,0.11), transparent 60%)",
+                background: "rgba(3,31,24,0.22)",
+                mixBlendMode: "multiply",
               }}
             />
+            {/* Bottom vignette */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0"
+              style={{
+                height: "50%",
+                background:
+                  "linear-gradient(to top, rgba(3,31,24,0.88) 0%, rgba(3,31,24,0.32) 50%, transparent 100%)",
+              }}
+            />
+            {/* Right-edge bleed → seamless merge into content column */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 hidden lg:block"
+              style={{
+                width: "44%",
+                background:
+                  "linear-gradient(to right, transparent 0%, rgba(3,31,24,0.60) 45%, rgba(3,31,24,0.92) 75%, #031F18 100%)",
+              }}
+            />
+          </div>
 
-            <div className="relative">
+          {/* ── RIGHT — service content + booking panel ─────────────────────── */}
+          <div
+            className="relative flex h-full flex-col justify-center overflow-y-auto px-8 py-6 md:px-12 lg:px-14 lg:py-8"
+            style={{ background: "#031F18" }}
+          >
+            {/* Atmospheric layers */}
+            {/* 1 — gradient depth */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0"
+              style={{
+                background:
+                  "radial-gradient(circle at 88% 14%, rgba(22,89,64,0.30), transparent 42%)," +
+                  "radial-gradient(circle at 12% 88%, rgba(2,18,13,0.55), transparent 44%)," +
+                  "linear-gradient(135deg, #062b21 0%, #031F18 50%, #02140e 100%)",
+              }}
+            />
+            {/* 2 — technical lime grid */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(176,241,34,0.045) 1px, transparent 1px)," +
+                  "linear-gradient(90deg, rgba(176,241,34,0.045) 1px, transparent 1px)",
+                backgroundSize: "52px 52px",
+                maskImage:
+                  "radial-gradient(130% 130% at 80% 18%, #000 0%, rgba(0,0,0,0.40) 52%, transparent 88%)",
+                WebkitMaskImage:
+                  "radial-gradient(130% 130% at 80% 18%, #000 0%, rgba(0,0,0,0.40) 52%, transparent 88%)",
+              }}
+            />
+            {/* 3 — dot texture */}
+            <div
+              aria-hidden
+              className="gh-dot-grid pointer-events-none absolute inset-0 z-0"
+              style={{
+                opacity: 0.55,
+                maskImage:
+                  "radial-gradient(700px 540px at 86% 12%, #000 0%, transparent 70%)",
+                WebkitMaskImage:
+                  "radial-gradient(700px 540px at 86% 12%, #000 0%, transparent 70%)",
+              }}
+            />
+            {/* 4 — lime ambient glow behind card */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0"
+              style={{
+                background:
+                  "radial-gradient(ellipse 560px 480px at 72% 64%, rgba(176,241,34,0.10), transparent 62%)," +
+                  "radial-gradient(ellipse 640px 540px at 112% -8%, rgba(176,241,34,0.11), transparent 60%)",
+              }}
+            />
+            {/* 5 — faint medical plus symbols */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+              style={{ top: "-2%", right: "5%", fontSize: "190px", color: "rgba(176,241,34,0.055)" }}
+            >+</span>
+            <span
+              aria-hidden
+              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+              style={{ bottom: "8%", right: "10%", fontSize: "78px", color: "rgba(176,241,34,0.045)" }}
+            >+</span>
+
+            {/* Content */}
+            <div className="relative z-10" style={{ maxWidth: 680 }}>
+              {/* Back link */}
               <Link
                 href={back.href}
-                className="inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] transition-colors hover:text-[var(--color-brand-accent)]"
-                style={{ color: "rgba(255,255,255,0.40)" }}
+                className="inline-flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-[0.18em] transition-colors hover:text-[var(--color-brand-accent)]"
+                style={{ color: "rgba(255,255,255,0.35)" }}
               >
-                <ArrowLeft className="size-4" aria-hidden />
+                <ArrowLeft className="size-3.5" aria-hidden />
                 {back.label}
               </Link>
 
-              <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.22em]" style={{ color: "var(--color-brand-accent)" }}>
+              {/* Eyebrow */}
+              <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: "var(--color-brand-accent)" }}>
                 {detail.specialtyName ?? (detail.kind === "SPECIALIST" ? t.eyebrowSpecialist : t.eyebrowOnline)}
               </p>
 
+              {/* Title */}
               <h1
-                className="mt-4 font-extrabold leading-[1.0] tracking-[-0.035em]"
-                style={{ fontSize: "clamp(2rem,3.5vw+0.5rem,3.5rem)", color: "rgba(255,255,255,0.95)", maxWidth: "16ch" }}
+                className="mt-2.5 font-extrabold leading-[1.02] tracking-[-0.038em]"
+                style={{
+                  fontSize: "clamp(1.9rem, 2.2vw + 0.9rem, 3.4rem)",
+                  color: "#F5FFF8",
+                  maxWidth: "16ch",
+                }}
               >
                 {heading}
               </h1>
 
+              {/* Lede */}
               {lede ? (
                 <p
-                  className="mt-4 max-w-[48ch] leading-relaxed"
-                  style={{ fontSize: "var(--text-body-lg)", color: "rgba(255,255,255,0.58)" }}
+                  className="mt-3 leading-relaxed"
+                  style={{
+                    maxWidth: "46ch",
+                    fontSize: "clamp(0.9rem, 0.6vw + 0.65rem, 1.05rem)",
+                    color: "#B8C9C2",
+                  }}
                 >
                   {lede}
                 </p>
               ) : null}
 
+              {/* Trust row */}
               <div
-                className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 border-t pt-5"
+                className="mt-4 flex flex-wrap items-center gap-y-2 border-t pt-4"
                 style={{ borderColor: "rgba(255,255,255,0.10)" }}
               >
                 {[
                   { icon: ShieldCheck, label: t.trustRegistered.replace("{country}", config.name) },
                   { icon: Video, label: t.trustVideo },
                   { icon: Lock, label: t.trustConfidential },
-                ].map(({ icon: Icon, label }) => (
-                  <span
-                    key={label}
-                    className="inline-flex items-center gap-2 text-[13px] font-medium"
-                    style={{ color: "rgba(255,255,255,0.65)" }}
-                  >
-                    <Icon className="size-4 shrink-0" style={{ color: "var(--color-brand-accent)" }} aria-hidden />
-                    {label}
+                ].map(({ icon: Icon, label }, i) => (
+                  <span key={label} className="flex items-center">
+                    {i > 0 ? (
+                      <span
+                        aria-hidden
+                        className="mx-5 hidden h-4 w-px sm:block"
+                        style={{ background: "rgba(255,255,255,0.14)" }}
+                      />
+                    ) : null}
+                    <span
+                      className="inline-flex items-center gap-2 text-[13px] font-medium"
+                      style={{ color: "rgba(255,255,255,0.68)" }}
+                    >
+                      <Icon
+                        className="size-4 shrink-0"
+                        style={{ color: "var(--color-brand-accent)" }}
+                        strokeWidth={1.75}
+                        aria-hidden
+                      />
+                      {label}
+                    </span>
                   </span>
                 ))}
               </div>
 
-              {/* Booking card — image omitted, left column is the visual */}
+              {/* ── Booking card ─────────────────────────────────────────────── */}
               <div
-                className="mt-6 overflow-hidden rounded-[20px]"
+                className="mt-4 rounded-[22px]"
                 style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  backdropFilter: "blur(18px)",
-                  boxShadow: "0 24px 60px rgba(0,0,0,0.35)",
+                  background: "rgba(5,34,27,0.78)",
+                  border: "1px solid rgba(176,241,34,0.18)",
+                  backdropFilter: "blur(20px)",
+                  WebkitBackdropFilter: "blur(20px)",
+                  boxShadow: "0 24px 64px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.06)",
                 }}
               >
-                <div className="p-6">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--color-brand-accent)]">
+                <div className="p-5 md:p-6">
+                  {/* Card label */}
+                  <p className="text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: "var(--color-brand-accent)" }}>
                     {t.bookOnline}
                   </p>
 
-                  <div className="mt-3 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+                  {/* Price row */}
+                  <div className="mt-2.5 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
                     <span
-                      className="font-extrabold tracking-[-0.03em] [font-variant-numeric:tabular-nums]"
-                      style={{ fontSize: "clamp(1.9rem,3vw,2.5rem)", color: "rgba(255,255,255,0.95)" }}
+                      className="font-extrabold tracking-[-0.04em] [font-variant-numeric:tabular-nums]"
+                      style={{ fontSize: "clamp(1.75rem,2.6vw,2.4rem)", color: "#F5FFF8" }}
                     >
                       {priceLabel ?? t.priceVaries}
                     </span>
                     {priceLabel ? (
-                      <span className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.45)" }}>
+                      <span className="text-[14px] font-medium" style={{ color: "rgba(255,255,255,0.42)" }}>
                         {t.perConsultation}
                       </span>
                     ) : null}
                   </div>
 
-                  <ul className="mt-5 space-y-3 border-t pt-5" style={{ borderColor: "rgba(255,255,255,0.10)" }}>
+                  {/* Feature list */}
+                  <ul
+                    className="mt-3 border-t"
+                    style={{ borderColor: "rgba(255,255,255,0.09)" }}
+                  >
                     {[
                       detail.durationMinutes != null
                         ? { icon: Clock, label: t.minuteAppointment.replace("{count}", String(detail.durationMinutes)) }
@@ -296,28 +390,49 @@ export default async function ServiceDetailPage({
                     ]
                       .filter((row): row is { icon: typeof Clock; label: string } => row !== null)
                       .map(({ icon: Icon, label }) => (
-                        <li key={label} className="flex items-center gap-3">
+                        <li
+                          key={label}
+                          className="flex items-center gap-3 border-b py-2.5"
+                          style={{ borderColor: "rgba(255,255,255,0.07)" }}
+                        >
                           <span
-                            className="inline-flex size-8 shrink-0 items-center justify-center rounded-[10px]"
-                            style={{ background: "rgba(176,241,34,0.12)" }}
+                            className="inline-flex size-7 shrink-0 items-center justify-center rounded-[8px]"
+                            style={{ background: "rgba(176,241,34,0.13)", border: "1px solid rgba(176,241,34,0.18)" }}
                           >
-                            <Icon className="size-4" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.8} aria-hidden />
+                            <Icon
+                              className="size-3.5"
+                              style={{ color: "var(--color-brand-accent)" }}
+                              strokeWidth={1.75}
+                              aria-hidden
+                            />
                           </span>
-                          <span className="text-[14px] font-medium" style={{ color: "rgba(255,255,255,0.80)" }}>
+                          <span className="text-[13.5px] font-medium" style={{ color: "rgba(255,255,255,0.82)" }}>
                             {label}
                           </span>
                         </li>
                       ))}
                   </ul>
 
-                  <Link href={bookHref} className="gh2-btn-lime mt-6 w-full justify-center">
+                  {/* CTA */}
+                  <Link
+                    href={bookHref}
+                    className="mt-4 flex w-full items-center justify-center gap-2.5 rounded-[12px] font-bold transition-all"
+                    style={{
+                      height: 52,
+                      background: "var(--color-brand-accent)",
+                      color: "#0a1f14",
+                      fontSize: "clamp(14px,1vw,16px)",
+                      boxShadow: "0 4px 24px rgba(176,241,34,0.28)",
+                    }}
+                  >
                     {bookLabel}
-                    <ArrowRight className="size-4" aria-hidden />
+                    <ArrowRight className="size-4" strokeWidth={2.5} aria-hidden />
                   </Link>
 
+                  {/* Secure checkout note */}
                   <p
-                    className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs"
-                    style={{ color: "rgba(255,255,255,0.40)" }}
+                    className="mt-3 flex items-center justify-center gap-1.5 text-center text-[11.5px]"
+                    style={{ color: "rgba(255,255,255,0.35)" }}
                   >
                     <Lock className="size-3" aria-hidden />
                     {t.secureCheckoutFooter}
