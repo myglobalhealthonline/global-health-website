@@ -167,11 +167,28 @@
     "consultations": "consultations",
     "doctorsSectionTitle": "Doctors in {country}",
     "doctorsSectionIntro": "Licensed GPs available for online consultations. Each profile lists qualifications, languages, and registration.",
-    "faqTitle": "Frequently asked questions"
+    "faqTitle": "Frequently asked questions",
+    "hero": {
+      "badgeTitle": "Your health. Our priority.",
+      "badgeSubtitle": "Safe, private and",
+      "badgeAccent": "doctor-led care.",
+      "feature1Title": "Talk to a GP",
+      "feature1Subtitle": "Consult with a registered GP from the comfort of your home.",
+      "feature2Title": "Safe & confidential",
+      "feature2Subtitle": "Your conversations are private, secure and encrypted.",
+      "feature3Title": "Quick appointments",
+      "feature3Subtitle": "Book appointments that suit you, including same-day slots.",
+      "stat1Title": "Registered in {country}",
+      "stat1Subtitle": "All GPs are registered to practise in {country}.",
+      "stat2Title": "4.8/5 patient rating",
+      "stat2Subtitle": "From 2,000+ verified patient reviews.",
+      "stat3Title": "Trusted by thousands",
+      "stat3Subtitle": "Join thousands of patients across {country}."
+    }
   },
   "specialistPage": {
     "heroTitle": "Meet our specialists",
-    "heroSubtitle": "Specialists registered to practise in {country}.",
+    "heroSubtitle": "Specialists registered to practise in {country}, available for secure online consultations.",
     "heroLead": "Meet our",
     "heroAccent": "registered",
     "heroTrail": "specialists.",
@@ -181,7 +198,21 @@
     "specialistConsultationsTitle": "Specialist consultations available",
     "specialistConsultationsIntro": "Profiles update as the team adds or retires clinicians in our network.",
     "doctorsSectionTitle": "Specialists in {country}",
-    "doctorsSectionIntro": "Specialists registered with national medical councils."
+    "doctorsSectionIntro": "Specialists registered with national medical councils.",
+    "hero": {
+      "feature1Title": "Specialist care",
+      "feature1Subtitle": "Connect with experienced specialists online.",
+      "feature2Title": "Registered in {country}",
+      "feature2Subtitle": "Doctors registered to practise in {country}.",
+      "feature3Title": "Secure consultations",
+      "feature3Subtitle": "Private, confidential, and easy to book.",
+      "stat1Title": "Registered in {country}",
+      "stat1Subtitle": "All specialists are registered to practise in {country}.",
+      "stat2Title": "4.8/5 patient rating",
+      "stat2Subtitle": "From 2,000+ verified patient reviews.",
+      "stat3Title": "Trusted by thousands",
+      "stat3Subtitle": "Join thousands of patients across {country}."
+    }
   },
   "consultPage": {
     "backToConsultations": "Back to consultations",
@@ -292,7 +323,21 @@
     "testSingular": "test",
     "testPlural": "tests",
     "availableHeading": "{count} {unit} available",
-    "comingSoon": "Home health tests for {country} are coming soon."
+    "comingSoon": "Home health tests for {country} are coming soon.",
+    "hero": {
+      "feature1Title": "Doctor-reviewed",
+      "feature1Subtitle": "Every result reviewed by a registered doctor.",
+      "feature2Title": "Fast results",
+      "feature2Subtitle": "Most results in 24–48 hours.",
+      "feature3Title": "Registered in {country}",
+      "feature3Subtitle": "Our doctors are registered to practise in {country}.",
+      "stat1Title": "Doctor-reviewed results",
+      "stat1Subtitle": "Every result is reviewed by a registered doctor.",
+      "stat2Title": "Fast turnaround",
+      "stat2Subtitle": "Most results are available within 24–48 hours.",
+      "stat3Title": "Secure and private",
+      "stat3Subtitle": "Your health information is handled confidentially."
+    }
   },
   "testDetailPage": {
     "backToTests": "All lab tests",

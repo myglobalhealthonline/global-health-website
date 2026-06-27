@@ -167,11 +167,28 @@
     "consultations": "Konsultationen",
     "doctorsSectionTitle": "Ärzte in {country}",
     "doctorsSectionIntro": "Zugelassene Allgemeinmediziner für Online-Konsultationen. Jedes Profil enthält Qualifikationen, Sprachen und Zulassung.",
-    "faqTitle": "Häufig gestellte Fragen"
+    "faqTitle": "Häufig gestellte Fragen",
+    "hero": {
+      "badgeTitle": "Ihre Gesundheit. Unsere Priorität.",
+      "badgeSubtitle": "Sichere, private und",
+      "badgeAccent": "ärztlich geführte Versorgung.",
+      "feature1Title": "Sprechen Sie mit einem Hausarzt",
+      "feature1Subtitle": "Konsultieren Sie einen registrierten Hausarzt bequem von zu Hause aus.",
+      "feature2Title": "Sicher und vertraulich",
+      "feature2Subtitle": "Ihre Gespräche sind privat, sicher und verschlüsselt.",
+      "feature3Title": "Schnelle Termine",
+      "feature3Subtitle": "Buchen Sie Termine, die zu Ihnen passen – auch am selben Tag.",
+      "stat1Title": "Registriert in {country}",
+      "stat1Subtitle": "Alle Hausärzte sind zur Ausübung in {country} registriert.",
+      "stat2Title": "Bewertung 4,8/5",
+      "stat2Subtitle": "Aus über 2000 verifizierten Patientenbewertungen.",
+      "stat3Title": "Von Tausenden vertraut",
+      "stat3Subtitle": "Schließen Sie sich Tausenden Patienten in {country} an."
+    }
   },
   "specialistPage": {
     "heroTitle": "Lernen Sie unsere Spezialisten kennen",
-    "heroSubtitle": "Spezialisten, die in {country} zugelassen sind.",
+    "heroSubtitle": "Fachärzte, die zur Ausübung in {country} registriert sind, verfügbar für sichere Online-Konsultationen.",
     "heroLead": "Lernen Sie unsere",
     "heroAccent": "zugelassenen",
     "heroTrail": "Spezialisten kennen.",
@@ -181,7 +198,21 @@
     "specialistConsultationsTitle": "Verfügbare Spezialisten-Konsultationen",
     "specialistConsultationsIntro": "Profile werden aktualisiert, wenn das Netzwerk Änderungen vornimmt.",
     "doctorsSectionTitle": "Spezialisten in {country}",
-    "doctorsSectionIntro": "Spezialisten, die bei nationalen Ärztekammern registriert sind."
+    "doctorsSectionIntro": "Spezialisten, die bei nationalen Ärztekammern registriert sind.",
+    "hero": {
+      "feature1Title": "Fachärztliche Versorgung",
+      "feature1Subtitle": "Vernetzen Sie sich online mit erfahrenen Fachärzten.",
+      "feature2Title": "Registriert in {country}",
+      "feature2Subtitle": "Ärzte, die zur Ausübung in {country} registriert sind.",
+      "feature3Title": "Sichere Konsultationen",
+      "feature3Subtitle": "Privat, vertraulich und einfach zu buchen.",
+      "stat1Title": "Registriert in {country}",
+      "stat1Subtitle": "Alle Fachärzte sind zur Ausübung in {country} registriert.",
+      "stat2Title": "Bewertung 4,8/5",
+      "stat2Subtitle": "Aus über 2000 verifizierten Patientenbewertungen.",
+      "stat3Title": "Von Tausenden vertraut",
+      "stat3Subtitle": "Schließen Sie sich Tausenden Patienten in {country} an."
+    }
   },
   "consultPage": {
     "backToConsultations": "Zurück zu Konsultationen",
@@ -292,7 +323,21 @@
     "testSingular": "Test",
     "testPlural": "Tests",
     "availableHeading": "{count} {unit} verfügbar",
-    "comingSoon": "Gesundheitstests für zu Hause in {country} sind bald verfügbar."
+    "comingSoon": "Gesundheitstests für zu Hause in {country} sind bald verfügbar.",
+    "hero": {
+      "feature1Title": "Ärztlich geprüft",
+      "feature1Subtitle": "Jedes Ergebnis wird von einem registrierten Arzt geprüft.",
+      "feature2Title": "Schnelle Ergebnisse",
+      "feature2Subtitle": "Die meisten Ergebnisse in 24–48 Stunden.",
+      "feature3Title": "Registriert in {country}",
+      "feature3Subtitle": "Unsere Ärzte sind zur Ausübung in {country} registriert.",
+      "stat1Title": "Ärztlich geprüfte Ergebnisse",
+      "stat1Subtitle": "Jedes Ergebnis wird von einem registrierten Arzt geprüft.",
+      "stat2Title": "Schnelle Bearbeitung",
+      "stat2Subtitle": "Die meisten Ergebnisse sind innerhalb von 24–48 Stunden verfügbar.",
+      "stat3Title": "Sicher und privat",
+      "stat3Subtitle": "Ihre Gesundheitsdaten werden vertraulich behandelt."
+    }
   },
   "testDetailPage": {
     "backToTests": "Alle Labortests",

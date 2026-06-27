@@ -167,11 +167,28 @@
     "consultations": "konzultace",
     "doctorsSectionTitle": "Lékaři v {country}",
     "doctorsSectionIntro": "Licencovaní praktičtí lékaři pro online konzultace. Každý profil uvádí kvalifikace, jazyky a registraci.",
-    "faqTitle": "Často kladené otázky"
+    "faqTitle": "Často kladené otázky",
+    "hero": {
+      "badgeTitle": "Vaše zdraví. Naše priorita.",
+      "badgeSubtitle": "Bezpečná, soukromá a",
+      "badgeAccent": "lékaři vedená péče.",
+      "feature1Title": "Promluvte si s praktickým lékařem",
+      "feature1Subtitle": "Konzultujte s registrovaným praktickým lékařem z pohodlí domova.",
+      "feature2Title": "Bezpečné a důvěrné",
+      "feature2Subtitle": "Vaše konverzace jsou soukromé, zabezpečené a šifrované.",
+      "feature3Title": "Rychlé objednání",
+      "feature3Subtitle": "Objednejte se na termín, který vám vyhovuje, i ve stejný den.",
+      "stat1Title": "Registrováni v {country}",
+      "stat1Subtitle": "Všichni praktičtí lékaři jsou registrováni k výkonu praxe v {country}.",
+      "stat2Title": "Hodnocení 4,8/5",
+      "stat2Subtitle": "Z více než 2000 ověřených hodnocení pacientů.",
+      "stat3Title": "Důvěřují nám tisíce",
+      "stat3Subtitle": "Přidejte se k tisícům pacientů v {country}."
+    }
   },
   "specialistPage": {
     "heroTitle": "Poznejte naše specialisty",
-    "heroSubtitle": "Specialisté registrovaní k výkonu praxe v {country}.",
+    "heroSubtitle": "Specialisté registrovaní k výkonu praxe v {country}, dostupní pro bezpečné online konzultace.",
     "heroLead": "Poznejte naše",
     "heroAccent": "registrované",
     "heroTrail": "specialisty.",
@@ -181,7 +198,21 @@
     "specialistConsultationsTitle": "Dostupné konzultace se specialistou",
     "specialistConsultationsIntro": "Profily se aktualizují podle změn v síti.",
     "doctorsSectionTitle": "Specialisté v {country}",
-    "doctorsSectionIntro": "Specialisté registrovaní u národních lékařských rad."
+    "doctorsSectionIntro": "Specialisté registrovaní u národních lékařských rad.",
+    "hero": {
+      "feature1Title": "Specializovaná péče",
+      "feature1Subtitle": "Spojte se se zkušenými specialisty online.",
+      "feature2Title": "Registrováni v {country}",
+      "feature2Subtitle": "Lékaři registrovaní k výkonu praxe v {country}.",
+      "feature3Title": "Bezpečné konzultace",
+      "feature3Subtitle": "Soukromé, důvěrné a snadno objednatelné.",
+      "stat1Title": "Registrováni v {country}",
+      "stat1Subtitle": "Všichni specialisté jsou registrováni k výkonu praxe v {country}.",
+      "stat2Title": "Hodnocení 4,8/5",
+      "stat2Subtitle": "Z více než 2000 ověřených hodnocení pacientů.",
+      "stat3Title": "Důvěřují nám tisíce",
+      "stat3Subtitle": "Přidejte se k tisícům pacientů v {country}."
+    }
   },
   "consultPage": {
     "backToConsultations": "Zpět na konzultace",
@@ -292,7 +323,21 @@
     "testSingular": "test",
     "testPlural": "testů",
     "availableHeading": "{count} {unit} k dispozici",
-    "comingSoon": "Domácí zdravotní testy pro {country} budou brzy k dispozici."
+    "comingSoon": "Domácí zdravotní testy pro {country} budou brzy k dispozici.",
+    "hero": {
+      "feature1Title": "Posouzeno lékařem",
+      "feature1Subtitle": "Každý výsledek posuzuje registrovaný lékař.",
+      "feature2Title": "Rychlé výsledky",
+      "feature2Subtitle": "Většina výsledků do 24–48 hodin.",
+      "feature3Title": "Registrováni v {country}",
+      "feature3Subtitle": "Naši lékaři jsou registrováni k výkonu praxe v {country}.",
+      "stat1Title": "Výsledky posouzené lékařem",
+      "stat1Subtitle": "Každý výsledek posuzuje registrovaný lékař.",
+      "stat2Title": "Rychlé vyřízení",
+      "stat2Subtitle": "Většina výsledků je k dispozici do 24–48 hodin.",
+      "stat3Title": "Bezpečné a soukromé",
+      "stat3Subtitle": "S vašimi zdravotními údaji nakládáme důvěrně."
+    }
   },
   "testDetailPage": {
     "backToTests": "Všechny laboratorní testy",
