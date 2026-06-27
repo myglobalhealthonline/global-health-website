@@ -309,7 +309,7 @@ export function PageHero({
     >
       <div
         aria-hidden
-        className="gh2-watermark pointer-events-none absolute -right-[0.06em] bottom-[-0.16em] z-0 select-none"
+        className="gh2-watermark gh-medical-pattern-layer pointer-events-none -right-[0.06em] bottom-[-0.16em] select-none"
         style={{ fontSize: "clamp(5rem,14vw,13rem)" }}
       >
         {watermarkText}
