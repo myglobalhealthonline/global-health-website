@@ -46,6 +46,18 @@ type DoctorProfileTemplateProps = {
   bookingCtaImage?: { src: string; alt: string };
   showReviewScore?: boolean;
   doctifyWidgetUrl?: string;
+  t?: {
+    backToTeam?: string;
+    doctorProfileLabel?: string;
+    registeredIn?: string;
+    onlineConsultAvailable?: string;
+    verifiedProfile?: string;
+    verifyRegistration?: string;
+    primaryCareConsults?: string;
+    languagesLabel?: string;
+    availabilityLabel?: string;
+    onlineAppointments?: string;
+  };
 };
 
 /* ─── Component ──────────────────────────────────────────────────────────── */
@@ -55,6 +67,7 @@ export function DoctorProfileTemplate({
   bottomCta,
   profileImageSrc,
   doctifyWidgetUrl,
+  t,
 }: DoctorProfileTemplateProps) {
   const safeBio = sanitizeDoctorBioHtml(profile.bio);
   const backHref = hero.secondaryCta?.href;
@@ -257,7 +270,7 @@ export function DoctorProfileTemplate({
                     }}
                   >
                     <ArrowLeft className="size-3.5 shrink-0" strokeWidth={2} />
-                    Back to {profile.country} team
+                    {(t?.backToTeam ?? "Back to {country} team").replace("{country}", profile.country)}
                   </Link>
                 ) : null}
                 <span
@@ -269,7 +282,7 @@ export function DoctorProfileTemplate({
                   }}
                 >
                   <User className="size-3.5 shrink-0" strokeWidth={1.8} aria-hidden />
-                  Doctor Profile
+                  {t?.doctorProfileLabel ?? "Doctor Profile"}
                 </span>
               </div>
 
@@ -353,9 +366,9 @@ export function DoctorProfileTemplate({
                 style={{ borderColor: "rgba(255,255,255,0.10)" }}
               >
                 {[
-                  { Icon: ShieldCheck, label: `Registered in ${profile.country}` },
-                  { Icon: Video, label: "Online consultation available" },
-                  { Icon: BadgeCheck, label: "Verified profile" },
+                  { Icon: ShieldCheck, label: (t?.registeredIn ?? "Registered in {country}").replace("{country}", profile.country) },
+                  { Icon: Video, label: t?.onlineConsultAvailable ?? "Online consultation available" },
+                  { Icon: BadgeCheck, label: t?.verifiedProfile ?? "Verified profile" },
                 ].map(({ Icon, label }, i) => (
                   <span key={label} className="flex items-center">
                     {i > 0 ? (
@@ -400,7 +413,7 @@ export function DoctorProfileTemplate({
                     className="gh2-btn-ghost"
                   >
                     <ExternalLink className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
-                    Verify registration
+                    {t?.verifyRegistration ?? "Verify registration"}
                   </a>
                 ) : hero.secondaryCta ? (
                   <Link href={hero.secondaryCta.href} className="gh2-btn-ghost">
@@ -415,17 +428,17 @@ export function DoctorProfileTemplate({
                   {
                     icon: <Stethoscope className="size-5" strokeWidth={1.6} aria-hidden />,
                     title: primarySpecialty,
-                    subtitle: "Primary care consultations",
+                    subtitle: t?.primaryCareConsults ?? "Primary care consultations",
                   },
                   {
                     icon: <Globe className="size-5" strokeWidth={1.6} aria-hidden />,
-                    title: "Languages",
+                    title: t?.languagesLabel ?? "Languages",
                     subtitle: languageList,
                   },
                   {
                     icon: <CalendarDays className="size-5" strokeWidth={1.6} aria-hidden />,
-                    title: "Availability",
-                    subtitle: "Online appointments",
+                    title: t?.availabilityLabel ?? "Availability",
+                    subtitle: t?.onlineAppointments ?? "Online appointments",
                   },
                 ].map((card) => (
                   <li

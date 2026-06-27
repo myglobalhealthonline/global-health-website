@@ -135,7 +135,20 @@
     "clearFilters": "Șterge filtrele",
     "viewProfile": "Vezi profilul",
     "bookAppointment": "Programează consultație",
-    "pickTime": "Alegeți o oră"
+    "pickTime": "Alegeți o oră",
+    "viewDoctors": "Vezi medicii",
+    "trustCard1Title": "Licențiat în {country}",
+    "trustCard1Subtitle": "Medici complet verificați",
+    "trustCard2Title": "Rating de 4,9",
+    "trustCard2Subtitle": "Din peste 2.000 de recenzii",
+    "trustCard3Title": "Disponibilitate în aceeași zi",
+    "trustCard3Subtitle": "Programări azi",
+    "floatCard1Title": "Disponibil azi",
+    "floatCard1Subtitle": "Majoritatea programărilor în 24 de ore",
+    "floatCard2Title": "Medici verificați",
+    "floatCard2Subtitle": "Verificare identitate și licență",
+    "floatCard3Title": "Consultație online",
+    "floatCard3Subtitle": "Privată, sigură și convenabilă"
   },
   "cookie": {
     "title": "Consimțământ cookie",
@@ -242,7 +255,17 @@
     "pickTime": "Alege interval",
     "noServicesAssigned": "Niciun serviciu atribuit încă.",
     "notSetupForBookings": "{name} nu este disponibil pentru rezervări online în {country}.",
-    "browseOtherClinicians": "Răsfoiește alți clinicieni"
+    "browseOtherClinicians": "Răsfoiește alți clinicieni",
+    "backToTeam": "Înapoi la echipa din {country}",
+    "doctorProfileLabel": "Profil medic",
+    "registeredIn": "Înregistrat în {country}",
+    "onlineConsultAvailable": "Consultație online disponibilă",
+    "verifiedProfile": "Profil verificat",
+    "verifyRegistration": "Verificați înregistrarea",
+    "primaryCareConsults": "Consultații de medicină primară",
+    "languagesLabel": "Limbi",
+    "availabilityLabel": "Disponibilitate",
+    "onlineAppointments": "Programări online"
   },
   "bookingForm": {
     "pickDate": "Alege data",

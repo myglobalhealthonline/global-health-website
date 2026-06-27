@@ -221,7 +221,7 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           ]),
         ]}
       />
-      <DoctorProfileTemplate {...templateData} />
+      <DoctorProfileTemplate {...templateData} t={dp} />
 
       {/* Doctor-first booking: lists the services the admin has assigned
           to this doctor. Each card routes back through the service-first

@@ -45,6 +45,19 @@ export type DoctorTeamI18n = {
   onboardingBodyTemplate: string;
   bottomCtaTitle: string;
   bottomCtaAccent: string;
+  viewDoctors?: string;
+  trustCard1Title?: string;
+  trustCard1Subtitle?: string;
+  trustCard2Title?: string;
+  trustCard2Subtitle?: string;
+  trustCard3Title?: string;
+  trustCard3Subtitle?: string;
+  floatCard1Title?: string;
+  floatCard1Subtitle?: string;
+  floatCard2Title?: string;
+  floatCard2Subtitle?: string;
+  floatCard3Title?: string;
+  floatCard3Subtitle?: string;
 };
 
 type DoctorTeamTemplateProps = {
@@ -91,7 +104,19 @@ export function DoctorTeamTemplate({
             : (i18n?.heroAvailablePlural ?? "licensed clinicians available")
         }
         primaryCta={{ label: bookingLabel, href: bookingHref }}
-        secondaryCta={{ label: "View Doctors", href: "#doctor-grid" }}
+        secondaryCta={{ label: i18n?.viewDoctors ?? "View Doctors", href: "#doctor-grid" }}
+        trustCard1Title={i18n?.trustCard1Title}
+        trustCard1Subtitle={i18n?.trustCard1Subtitle}
+        trustCard2Title={i18n?.trustCard2Title}
+        trustCard2Subtitle={i18n?.trustCard2Subtitle}
+        trustCard3Title={i18n?.trustCard3Title}
+        trustCard3Subtitle={i18n?.trustCard3Subtitle}
+        floatCard1Title={i18n?.floatCard1Title}
+        floatCard1Subtitle={i18n?.floatCard1Subtitle}
+        floatCard2Title={i18n?.floatCard2Title}
+        floatCard2Subtitle={i18n?.floatCard2Subtitle}
+        floatCard3Title={i18n?.floatCard3Title}
+        floatCard3Subtitle={i18n?.floatCard3Subtitle}
         heroImage={{
           src: "/images/stock/doctors.jpg",
           alt: `Doctors available for online consultations in ${countryName}`,
