@@ -194,9 +194,7 @@ export default async function PricingPage({
             </div>
           )}
 
-          <p className="mt-10 text-center text-xs" style={{ color: "var(--color-text-muted)" }}>
-            {t.onlineOnlyNote}
-          </p>
+
         </div>
       </section>
 

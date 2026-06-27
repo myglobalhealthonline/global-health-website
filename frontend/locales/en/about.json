@@ -29,5 +29,17 @@
   "s4_body": "Where clinically appropriate, the doctor can issue referrals, certificates, or follow-up guidance. Notes are shared after the consultation according to the service and country workflow.",
   "coverage_eyebrow": "Where we cover",
   "coverage_headline": "Five European markets and counting.",
-  "coverage_cta": "Pick your country"
+  "coverage_cta": "Pick your country",
+  "trust_card1_title": "Locally licensed",
+  "trust_card1_subtitle": "Registered in your country",
+  "trust_card2_title": "Pay after the call",
+  "trust_card2_subtitle": "No upfront fees",
+  "trust_card3_title": "GDPR by default",
+  "trust_card3_subtitle": "EU data centres",
+  "float1_title": "5 European countries",
+  "float1_subtitle": "Ireland, Portugal & more",
+  "float2_title": "Verified doctors",
+  "float2_subtitle": "Locally licensed per country",
+  "float3_title": "No waiting rooms",
+  "float3_subtitle": "Medicine anytime, anywhere"
 }

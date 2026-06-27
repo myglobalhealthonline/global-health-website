@@ -29,5 +29,17 @@
   "s4_body": "Quando clinicamente adequado, o médico pode emitir encaminhamentos, certificados ou orientações de seguimento. As notas são partilhadas após a consulta de acordo com o serviço e fluxo de trabalho do país.",
   "coverage_eyebrow": "Onde cobrimos",
   "coverage_headline": "Cinco mercados europeus e a crescer.",
-  "coverage_cta": "Escolha o seu país"
+  "coverage_cta": "Escolha o seu país",
+  "trust_card1_title": "Licenciado localmente",
+  "trust_card1_subtitle": "Registado no seu país",
+  "trust_card2_title": "Pague após a consulta",
+  "trust_card2_subtitle": "Sem taxas antecipadas",
+  "trust_card3_title": "RGPD por defeito",
+  "trust_card3_subtitle": "Centros de dados na UE",
+  "float1_title": "5 países europeus",
+  "float1_subtitle": "Irlanda, Portugal e mais",
+  "float2_title": "Médicos verificados",
+  "float2_subtitle": "Licenciados localmente por país",
+  "float3_title": "Sem salas de espera",
+  "float3_subtitle": "Medicina em qualquer hora e lugar"
 }

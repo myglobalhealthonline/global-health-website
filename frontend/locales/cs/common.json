@@ -135,7 +135,20 @@
     "clearFilters": "Vymazat filtry",
     "viewProfile": "Zobrazit profil",
     "bookAppointment": "Rezervovat konzultaci",
-    "pickTime": "Vybrat čas"
+    "pickTime": "Vybrat čas",
+    "viewDoctors": "Zobrazit lékaře",
+    "trustCard1Title": "Licencováno v {country}",
+    "trustCard1Subtitle": "Plně ověření klinikové",
+    "trustCard2Title": "Hodnocení 4,9",
+    "trustCard2Subtitle": "Z více než 2 000 recenzí",
+    "trustCard3Title": "Dostupnost ve stejný den",
+    "trustCard3Subtitle": "Termíny dnes",
+    "floatCard1Title": "K dispozici dnes",
+    "floatCard1Subtitle": "Většina termínů do 24 hodin",
+    "floatCard2Title": "Ověření lékaři",
+    "floatCard2Subtitle": "Ověření totožnosti a licence",
+    "floatCard3Title": "Online konzultace",
+    "floatCard3Subtitle": "Soukromá, bezpečná a pohodlná"
   },
   "cookie": {
     "title": "Souhlas s cookies",
@@ -242,7 +255,17 @@
     "pickTime": "Vybrat termín",
     "noServicesAssigned": "Dosud nebyly přiřazeny žádné služby.",
     "notSetupForBookings": "{name} momentálně nemá nastavené online rezervace v {country}.",
-    "browseOtherClinicians": "Prohlédnout ostatní lékaře"
+    "browseOtherClinicians": "Prohlédnout ostatní lékaře",
+    "backToTeam": "Zpět na tým v {country}",
+    "doctorProfileLabel": "Profil lékaře",
+    "registeredIn": "Registrováno v {country}",
+    "onlineConsultAvailable": "Online konzultace k dispozici",
+    "verifiedProfile": "Ověřený profil",
+    "verifyRegistration": "Ověřit registraci",
+    "primaryCareConsults": "Konzultace primární péče",
+    "languagesLabel": "Jazyky",
+    "availabilityLabel": "Dostupnost",
+    "onlineAppointments": "Online termíny"
   },
   "bookingForm": {
     "pickDate": "Vybrat datum",

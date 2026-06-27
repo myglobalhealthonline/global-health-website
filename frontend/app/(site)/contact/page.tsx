@@ -27,28 +27,28 @@ export default async function ContactPage() {
         titleAccent={contact.hero_title_accent}
         titleTrail={contact.hero_title_trail}
         lede={contact.hero_lede}
-        ctaLabel="Send a message"
+        ctaLabel={contact.hero_cta}
         ctaHref="#contact-form"
-        secondaryLabel="Book a consultation"
+        secondaryLabel={contact.hero_secondary}
         secondaryHref="/"
         trustCards={[
           {
             icon: <Mail className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "Email support",
-            subtitle: "info@myglobalhealth.online",
+            title: contact.trust_card1_title,
+            subtitle: contact.trust_card1_subtitle,
           },
           {
             icon: <Clock className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "24-hour reply",
-            subtitle: "On working days",
+            title: contact.trust_card2_title,
+            subtitle: contact.trust_card2_subtitle,
           },
           {
             icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "No bots",
-            subtitle: "Real humans, no ticket queue",
+            title: contact.trust_card3_title,
+            subtitle: contact.trust_card3_subtitle,
           },
         ]}
-        rightSlot={<ContactArchPanel />}
+        rightSlot={<ContactArchPanel locale={contact} />}
       />
 
       {/* LIGHT — contact form + reach info */}
@@ -136,7 +136,7 @@ export default async function ContactPage() {
   );
 }
 
-function ContactArchPanel() {
+function ContactArchPanel({ locale }: { locale: { float1_title: string; float1_subtitle: string; float2_title: string; float2_subtitle: string; float3_title: string; float3_subtitle: string } }) {
   return (
     <div className="relative mx-auto max-w-[440px]">
       <div aria-hidden className="gh2-arch-frame" />
@@ -165,8 +165,8 @@ function ContactArchPanel() {
           <span className="relative inline-flex size-2.5 rounded-full bg-[var(--color-brand-accent)]" />
         </span>
         <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">Usually within 24 hours</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">On working days</span>
+          <span className="block text-[13px] font-bold leading-tight text-white">{locale.float1_title}</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">{locale.float1_subtitle}</span>
         </span>
       </div>
 
@@ -182,8 +182,8 @@ function ContactArchPanel() {
           <BadgeCheck className="size-4" strokeWidth={2} aria-hidden />
         </span>
         <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">Real humans</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">No bots or ticket queues</span>
+          <span className="block text-[13px] font-bold leading-tight text-white">{locale.float2_title}</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">{locale.float2_subtitle}</span>
         </span>
       </div>
 
@@ -199,8 +199,8 @@ function ContactArchPanel() {
           <MessageSquare className="size-4" strokeWidth={2} aria-hidden />
         </span>
         <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">GDPR-safe contact</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">EU infrastructure only</span>
+          <span className="block text-[13px] font-bold leading-tight text-white">{locale.float3_title}</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">{locale.float3_subtitle}</span>
         </span>
       </div>
     </div>

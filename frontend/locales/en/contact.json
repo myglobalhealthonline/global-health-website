@@ -9,5 +9,19 @@
   "response_label": "Response time",
   "response_body": "Usually within 24 hours on working days",
   "emergency_title": "Medical emergencies",
-  "emergency_body": "If you are experiencing a medical emergency, call your local emergency services (112 in the EU) — do not use this form."
+  "emergency_body": "If you are experiencing a medical emergency, call your local emergency services (112 in the EU) — do not use this form.",
+  "hero_cta": "Send a message",
+  "hero_secondary": "Book a consultation",
+  "trust_card1_title": "Email support",
+  "trust_card1_subtitle": "We're reachable by email",
+  "trust_card2_title": "24-hour reply",
+  "trust_card2_subtitle": "On working days",
+  "trust_card3_title": "No bots",
+  "trust_card3_subtitle": "Real humans, no ticket queue",
+  "float1_title": "Usually within 24 hours",
+  "float1_subtitle": "On working days",
+  "float2_title": "Real humans",
+  "float2_subtitle": "No bots or ticket queues",
+  "float3_title": "GDPR-safe contact",
+  "float3_subtitle": "EU infrastructure only"
 }

@@ -135,7 +135,20 @@
     "clearFilters": "Limpiar filtros",
     "viewProfile": "Ver perfil",
     "bookAppointment": "Reservar cita",
-    "pickTime": "Elegir hora"
+    "pickTime": "Elegir hora",
+    "viewDoctors": "Ver médicos",
+    "trustCard1Title": "Licenciado en {country}",
+    "trustCard1Subtitle": "Médicos totalmente verificados",
+    "trustCard2Title": "Valoración de 4,9",
+    "trustCard2Subtitle": "Más de 2.000 reseñas",
+    "trustCard3Title": "Disponibilidad el mismo día",
+    "trustCard3Subtitle": "Citas hoy",
+    "floatCard1Title": "Disponible hoy",
+    "floatCard1Subtitle": "La mayoría de citas en 24 horas",
+    "floatCard2Title": "Médicos verificados",
+    "floatCard2Subtitle": "Verificación de identidad y licencia",
+    "floatCard3Title": "Consulta online",
+    "floatCard3Subtitle": "Privada, segura y conveniente"
   },
   "cookie": {
     "title": "Consentimiento de cookies",
@@ -242,7 +255,17 @@
     "pickTime": "Elegir hora",
     "noServicesAssigned": "Aún no se han asignado servicios.",
     "notSetupForBookings": "{name} no está disponible para reservas online en {country}.",
-    "browseOtherClinicians": "Ver otros médicos"
+    "browseOtherClinicians": "Ver otros médicos",
+    "backToTeam": "Volver al equipo de {country}",
+    "doctorProfileLabel": "Perfil del médico",
+    "registeredIn": "Registrado en {country}",
+    "onlineConsultAvailable": "Consulta online disponible",
+    "verifiedProfile": "Perfil verificado",
+    "verifyRegistration": "Verificar registro",
+    "primaryCareConsults": "Consultas de medicina general",
+    "languagesLabel": "Idiomas",
+    "availabilityLabel": "Disponibilidad",
+    "onlineAppointments": "Citas online"
   },
   "bookingForm": {
     "pickDate": "Elegir fecha",

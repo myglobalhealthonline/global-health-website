@@ -9,5 +9,19 @@
   "response_label": "Antwortzeit",
   "response_body": "In der Regel innerhalb von 24 Stunden an Werktagen",
   "emergency_title": "Medizinische Notfälle",
-  "emergency_body": "Wenn Sie einen medizinischen Notfall erleben, rufen Sie Ihren lokalen Notfalldienst an (112 in der EU) — verwenden Sie dieses Formular nicht."
+  "emergency_body": "Wenn Sie einen medizinischen Notfall erleben, rufen Sie Ihren lokalen Notfalldienst an (112 in der EU) — verwenden Sie dieses Formular nicht.",
+  "hero_cta": "Nachricht senden",
+  "hero_secondary": "Beratung buchen",
+  "trust_card1_title": "E-Mail-Support",
+  "trust_card1_subtitle": "Per E-Mail erreichbar",
+  "trust_card2_title": "Antwort in 24 Stunden",
+  "trust_card2_subtitle": "An Werktagen",
+  "trust_card3_title": "Keine Bots",
+  "trust_card3_subtitle": "Echte Menschen, keine Ticket-Warteschlange",
+  "float1_title": "In der Regel innerhalb von 24 Stunden",
+  "float1_subtitle": "An Werktagen",
+  "float2_title": "Echte Menschen",
+  "float2_subtitle": "Keine Bots oder Ticket-Warteschlangen",
+  "float3_title": "DSGVO-sicherer Kontakt",
+  "float3_subtitle": "Nur EU-Infrastruktur"
 }
