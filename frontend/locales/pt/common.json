@@ -323,7 +323,21 @@
     "testSingular": "análise",
     "testPlural": "análises",
     "availableHeading": "{count} {unit} disponíveis",
-    "comingSoon": "As análises de saúde ao domicílio para {country} estarão disponíveis em breve."
+    "comingSoon": "As análises de saúde ao domicílio para {country} estarão disponíveis em breve.",
+    "hero": {
+      "feature1Title": "Revisto por médicos",
+      "feature1Subtitle": "Cada resultado revisto por um médico registado.",
+      "feature2Title": "Resultados rápidos",
+      "feature2Subtitle": "A maioria dos resultados em 24–48 horas.",
+      "feature3Title": "Registados em {country}",
+      "feature3Subtitle": "Os nossos médicos estão registados para exercer em {country}.",
+      "stat1Title": "Resultados revistos por médicos",
+      "stat1Subtitle": "Cada resultado é revisto por um médico registado.",
+      "stat2Title": "Resposta rápida",
+      "stat2Subtitle": "A maioria dos resultados disponível em 24–48 horas.",
+      "stat3Title": "Seguro e privado",
+      "stat3Subtitle": "As suas informações de saúde são tratadas de forma confidencial."
+    }
   },
   "testDetailPage": {
     "backToTests": "Todas as análises laboratoriais",

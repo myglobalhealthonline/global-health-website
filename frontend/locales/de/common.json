@@ -323,7 +323,21 @@
     "testSingular": "Test",
     "testPlural": "Tests",
     "availableHeading": "{count} {unit} verfügbar",
-    "comingSoon": "Gesundheitstests für zu Hause in {country} sind bald verfügbar."
+    "comingSoon": "Gesundheitstests für zu Hause in {country} sind bald verfügbar.",
+    "hero": {
+      "feature1Title": "Ärztlich geprüft",
+      "feature1Subtitle": "Jedes Ergebnis wird von einem registrierten Arzt geprüft.",
+      "feature2Title": "Schnelle Ergebnisse",
+      "feature2Subtitle": "Die meisten Ergebnisse in 24–48 Stunden.",
+      "feature3Title": "Registriert in {country}",
+      "feature3Subtitle": "Unsere Ärzte sind zur Ausübung in {country} registriert.",
+      "stat1Title": "Ärztlich geprüfte Ergebnisse",
+      "stat1Subtitle": "Jedes Ergebnis wird von einem registrierten Arzt geprüft.",
+      "stat2Title": "Schnelle Bearbeitung",
+      "stat2Subtitle": "Die meisten Ergebnisse sind innerhalb von 24–48 Stunden verfügbar.",
+      "stat3Title": "Sicher und privat",
+      "stat3Subtitle": "Ihre Gesundheitsdaten werden vertraulich behandelt."
+    }
   },
   "testDetailPage": {
     "backToTests": "Alle Labortests",

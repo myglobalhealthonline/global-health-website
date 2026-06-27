@@ -323,7 +323,21 @@
     "testSingular": "prueba",
     "testPlural": "pruebas",
     "availableHeading": "{count} {unit} disponibles",
-    "comingSoon": "Las pruebas de salud a domicilio para {country} estarán disponibles próximamente."
+    "comingSoon": "Las pruebas de salud a domicilio para {country} estarán disponibles próximamente.",
+    "hero": {
+      "feature1Title": "Revisado por médicos",
+      "feature1Subtitle": "Cada resultado revisado por un médico colegiado.",
+      "feature2Title": "Resultados rápidos",
+      "feature2Subtitle": "La mayoría de los resultados en 24–48 horas.",
+      "feature3Title": "Colegiados en {country}",
+      "feature3Subtitle": "Nuestros médicos están colegiados para ejercer en {country}.",
+      "stat1Title": "Resultados revisados por médicos",
+      "stat1Subtitle": "Cada resultado es revisado por un médico colegiado.",
+      "stat2Title": "Respuesta rápida",
+      "stat2Subtitle": "La mayoría de los resultados disponibles en 24–48 horas.",
+      "stat3Title": "Seguro y privado",
+      "stat3Subtitle": "Tu información de salud se trata de forma confidencial."
+    }
   },
   "testDetailPage": {
     "backToTests": "Todas las pruebas de laboratorio",

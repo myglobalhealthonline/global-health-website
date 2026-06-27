@@ -323,7 +323,21 @@
     "testSingular": "analiză",
     "testPlural": "analize",
     "availableHeading": "{count} {unit} disponibile",
-    "comingSoon": "Analizele de sănătate la domiciliu pentru {country} vor fi disponibile în curând."
+    "comingSoon": "Analizele de sănătate la domiciliu pentru {country} vor fi disponibile în curând.",
+    "hero": {
+      "feature1Title": "Verificat de medici",
+      "feature1Subtitle": "Fiecare rezultat este verificat de un medic înregistrat.",
+      "feature2Title": "Rezultate rapide",
+      "feature2Subtitle": "Majoritatea rezultatelor în 24–48 de ore.",
+      "feature3Title": "Înregistrați în {country}",
+      "feature3Subtitle": "Medicii noștri sunt înregistrați pentru a profesa în {country}.",
+      "stat1Title": "Rezultate verificate de medici",
+      "stat1Subtitle": "Fiecare rezultat este verificat de un medic înregistrat.",
+      "stat2Title": "Procesare rapidă",
+      "stat2Subtitle": "Majoritatea rezultatelor sunt disponibile în 24–48 de ore.",
+      "stat3Title": "Sigur și privat",
+      "stat3Subtitle": "Informațiile tale de sănătate sunt tratate confidențial."
+    }
   },
   "testDetailPage": {
     "backToTests": "Toate analizele de laborator",

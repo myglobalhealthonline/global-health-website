@@ -327,6 +327,20 @@ export type CommonLocale = {
     testPlural: string;
     availableHeading: string;
     comingSoon: string;
+    hero: {
+      feature1Title: string;
+      feature1Subtitle: string;
+      feature2Title: string;
+      feature2Subtitle: string;
+      feature3Title: string;
+      feature3Subtitle: string;
+      stat1Title: string;
+      stat1Subtitle: string;
+      stat2Title: string;
+      stat2Subtitle: string;
+      stat3Title: string;
+      stat3Subtitle: string;
+    };
   };
   testDetailPage: {
     backToTests: string;

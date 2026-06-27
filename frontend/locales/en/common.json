@@ -323,7 +323,21 @@
     "testSingular": "test",
     "testPlural": "tests",
     "availableHeading": "{count} {unit} available",
-    "comingSoon": "Home health tests for {country} are coming soon."
+    "comingSoon": "Home health tests for {country} are coming soon.",
+    "hero": {
+      "feature1Title": "Doctor-reviewed",
+      "feature1Subtitle": "Every result reviewed by a registered doctor.",
+      "feature2Title": "Fast results",
+      "feature2Subtitle": "Most results in 24–48 hours.",
+      "feature3Title": "Registered in {country}",
+      "feature3Subtitle": "Our doctors are registered to practise in {country}.",
+      "stat1Title": "Doctor-reviewed results",
+      "stat1Subtitle": "Every result is reviewed by a registered doctor.",
+      "stat2Title": "Fast turnaround",
+      "stat2Subtitle": "Most results are available within 24–48 hours.",
+      "stat3Title": "Secure and private",
+      "stat3Subtitle": "Your health information is handled confidentially."
+    }
   },
   "testDetailPage": {
     "backToTests": "All lab tests",
