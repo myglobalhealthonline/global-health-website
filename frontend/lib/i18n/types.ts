@@ -245,6 +245,16 @@ export type CommonLocale = {
     noServicesAssigned: string;
     notSetupForBookings: string;
     browseOtherClinicians: string;
+    backToTeam: string;
+    doctorProfileLabel: string;
+    registeredIn: string;
+    onlineConsultAvailable: string;
+    verifiedProfile: string;
+    verifyRegistration: string;
+    primaryCareConsults: string;
+    languagesLabel: string;
+    availabilityLabel: string;
+    onlineAppointments: string;
   };
   bookingForm: {
     pickDate: string;
