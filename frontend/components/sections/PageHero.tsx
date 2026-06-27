@@ -104,34 +104,98 @@ export function PageHero({
             />
           </div>
 
-          {/* RIGHT — content */}
+          {/* RIGHT — content + layered premium background */}
           <div
-            className="relative flex flex-col justify-center px-8 py-12 md:px-12 lg:px-16 lg:py-20"
+            className="relative isolate flex flex-col justify-center overflow-hidden px-8 py-12 md:px-12 lg:px-16 lg:py-20"
             style={{ background: "#0F2E25" }}
           >
-            {/* Lime radial glow */}
+            {/* 1 — dark-to-green gradient depth (base) + edge vignette */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0"
+              className="pointer-events-none absolute inset-0 z-0"
               style={{
                 background:
-                  "radial-gradient(ellipse 600px 500px at 110% -10%, rgba(176,241,34,0.11), transparent 60%)",
+                  "radial-gradient(circle at 90% 12%, rgba(22,89,64,0.34), transparent 40%)," +
+                  "radial-gradient(circle at 14% 88%, rgba(3,26,20,0.55), transparent 46%)," +
+                  "linear-gradient(135deg, #0a2a20 0%, #0F2E25 46%, #06201a 100%)",
               }}
             />
-            {/* Dotted-grid atmosphere — faint, masked to the upper-right */}
+            {/* 2 — technical grid (thin lime lines) */}
             <div
               aria-hidden
-              className="gh-dot-grid pointer-events-none absolute inset-0"
+              className="pointer-events-none absolute inset-0 z-0"
               style={{
-                opacity: 0.5,
+                backgroundImage:
+                  "linear-gradient(rgba(176,241,34,0.05) 1px, transparent 1px)," +
+                  "linear-gradient(90deg, rgba(176,241,34,0.05) 1px, transparent 1px)",
+                backgroundSize: "48px 48px",
                 maskImage:
-                  "radial-gradient(620px 460px at 92% 8%, #000 0%, transparent 70%)",
+                  "radial-gradient(120% 120% at 80% 20%, #000 0%, rgba(0,0,0,0.45) 55%, transparent 90%)",
                 WebkitMaskImage:
-                  "radial-gradient(620px 460px at 92% 8%, #000 0%, transparent 70%)",
+                  "radial-gradient(120% 120% at 80% 20%, #000 0%, rgba(0,0,0,0.45) 55%, transparent 90%)",
               }}
             />
-
-            <div className="relative" style={{ maxWidth: 620 }}>
+            {/* 3 — faint dotted texture on top of the grid */}
+            <div
+              aria-hidden
+              className="gh-dot-grid pointer-events-none absolute inset-0 z-0"
+              style={{
+                opacity: 0.6,
+                maskImage:
+                  "radial-gradient(680px 520px at 88% 10%, #000 0%, transparent 72%)",
+                WebkitMaskImage:
+                  "radial-gradient(680px 520px at 88% 10%, #000 0%, transparent 72%)",
+              }}
+            />
+            {/* 4 — soft radial glow behind headline + buttons (ambient depth) */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0"
+              style={{
+                background:
+                  "radial-gradient(circle at 38% 40%, rgba(176,241,34,0.10), transparent 30%)," +
+                  "radial-gradient(circle at 72% 72%, rgba(18,120,76,0.24), transparent 38%)," +
+                  "radial-gradient(ellipse 620px 520px at 112% -8%, rgba(176,241,34,0.12), transparent 62%)",
+              }}
+            />
+            {/* 5 — large faint medical plus symbols */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+              style={{
+                top: "-2%",
+                right: "6%",
+                fontSize: "180px",
+                color: "rgba(176,241,34,0.06)",
+              }}
+            >
+              +
+            </span>
+            <span
+              aria-hidden
+              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+              style={{
+                top: "34%",
+                right: "30%",
+                fontSize: "110px",
+                color: "rgba(176,241,34,0.045)",
+              }}
+            >
+              +
+            </span>
+            <span
+              aria-hidden
+              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+              style={{
+                bottom: "8%",
+                right: "12%",
+                fontSize: "72px",
+                color: "rgba(176,241,34,0.05)",
+              }}
+            >
+              +
+            </span>
+            <div className="relative z-10" style={{ maxWidth: 620 }}>
               {countryCode || countryLabel ? (
                 <div className="mb-7 flex flex-wrap items-center gap-2">
                   <span

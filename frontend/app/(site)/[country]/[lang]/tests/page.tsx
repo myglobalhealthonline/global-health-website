@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ShieldCheck, Clock, MapPin, Users } from "lucide-react";
+import { ShieldCheck, Clock, MapPin, Lock } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { TrustRibbon } from "@/components/sections/TrustRibbon";
-import { PageHero } from "@/components/sections/PageHero";
+import { ServiceHero } from "@/components/sections/ServiceHero";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { countries, getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
@@ -106,42 +106,57 @@ export default async function HealthTestsPage({
         ])}
       />
 
-      <PageHero
-        variant="immersive"
-        watermark={t.watermark}
+      <ServiceHero
         countryCode={config.code}
         countryLabel={t.countryLabel.replace("{country}", config.name)}
         titleLead={t.titleLead}
         titleAccent={t.titleAccent}
         titleTrail={t.titleTrail}
         lede={heroSubtitle}
-        ctaLabel={t.ctaLabel}
-        ctaHref={bookHref}
-        secondaryLabel={t.secondaryLabel}
-        secondaryHref={`/${slug}/${lang}/doctors`}
-        secondaryIcon={<Users className="size-4" strokeWidth={1.75} aria-hidden />}
-        trustCards={[
-          {
-            icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "Doctor-reviewed",
-            subtitle: "Every result reviewed by a registered doctor.",
-          },
-          {
-            icon: <Clock className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "Fast results",
-            subtitle: "Most results in 24–48 hours.",
-          },
-          {
-            icon: <MapPin className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: `Registered in ${config.name}`,
-            subtitle: `Our doctors are registered to practise in ${config.name}.`,
-          },
-        ]}
+        primaryCta={{ label: t.ctaLabel, href: bookHref }}
+        secondaryCta={{
+          label: t.secondaryLabel,
+          href: `/${slug}/${lang}/doctors`,
+        }}
         heroImage={{
           src: "/images/stock/tests.jpg",
           alt: `Lab-quality home health test results reviewed by a doctor in ${config.name}`,
           priority: true,
         }}
+        featureCards={[
+          {
+            icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: t.hero.feature1Title,
+            subtitle: t.hero.feature1Subtitle,
+          },
+          {
+            icon: <Clock className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: t.hero.feature2Title,
+            subtitle: t.hero.feature2Subtitle,
+          },
+          {
+            icon: <MapPin className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: t.hero.feature3Title.replace("{country}", config.name),
+            subtitle: t.hero.feature3Subtitle.replace("{country}", config.name),
+          },
+        ]}
+        trustStats={[
+          {
+            icon: <ShieldCheck className="size-5" strokeWidth={2} aria-hidden />,
+            title: t.hero.stat1Title,
+            subtitle: t.hero.stat1Subtitle,
+          },
+          {
+            icon: <Clock className="size-5" strokeWidth={2} aria-hidden />,
+            title: t.hero.stat2Title,
+            subtitle: t.hero.stat2Subtitle,
+          },
+          {
+            icon: <Lock className="size-5" strokeWidth={2} aria-hidden />,
+            title: t.hero.stat3Title,
+            subtitle: t.hero.stat3Subtitle,
+          },
+        ]}
       />
 
       {/* Trust signals immediately under the hero, then straight into
