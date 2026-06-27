@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Fraunces } from "next/font/google";
 import {
   ArrowUpRight,
   Users,
@@ -11,15 +10,6 @@ import {
   BadgeCheck,
   Video,
 } from "lucide-react";
-
-/** Editorial display serif for the hero headline only — the warm,
- *  high-contrast face the reference design uses. Body/UI stay on the
- *  brand sans; this is scoped to the H1. */
-const headlineSerif = Fraunces({
-  subsets: ["latin"],
-  weight: ["600", "700"],
-  display: "swap",
-});
 
 /**
  * Premium doctors-page hero (clinical-editorial gh2 system).
@@ -134,7 +124,7 @@ export function DoctorsHero({
       />
       <div
         aria-hidden
-        className="gh2-watermark gh-medical-pattern-layer pointer-events-none left-[-0.04em] top-[0.04em] z-0 select-none"
+        className="gh2-watermark gh-medical-pattern-layer pointer-events-none -right-[0.06em] bottom-[-0.16em] select-none"
         style={{
           fontSize: "clamp(5rem,15vw,14rem)",
           WebkitTextStroke: "1.5px rgba(255,255,255,0.08)",
@@ -171,14 +161,13 @@ export function DoctorsHero({
             </p>
 
             <h1
-              className={`${headlineSerif.className} tracking-[-0.01em]`}
+              className="font-extrabold tracking-[-0.035em]"
               style={{
                 marginTop: 18,
                 maxWidth: "15ch",
-                lineHeight: 1.02,
-                fontWeight: 700,
-                fontSize: "clamp(2.6rem, 5.4vw, 4.6rem)",
-                color: "rgba(255,255,255,0.97)",
+                lineHeight: 1,
+                fontSize: "clamp(2.4rem, 5vw, 4.2rem)",
+                color: "rgba(255,255,255,0.95)",
               }}
             >
               {titleLead}{" "}

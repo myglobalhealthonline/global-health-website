@@ -309,20 +309,21 @@ export function PageHero({
     >
       <div
         aria-hidden
-        className="gh2-watermark pointer-events-none absolute -right-[0.06em] bottom-[-0.16em] z-0 select-none"
+        className="gh2-watermark gh-medical-pattern-layer pointer-events-none -right-[0.06em] bottom-[-0.16em] select-none"
         style={{ fontSize: "clamp(5rem,14vw,13rem)" }}
       >
         {watermarkText}
       </div>
 
       <div
-        className="relative z-[1] mx-auto max-w-[var(--container-width)] px-5 md:px-10"
+        className="relative z-[1] mx-auto flex max-w-[var(--container-width)] flex-col justify-center px-5 md:px-10"
         style={{
-          paddingTop: "clamp(72px,9vw,128px)",
-          paddingBottom: "clamp(48px,6vw,80px)",
+          minHeight: "calc(100svh - var(--header-height))",
+          paddingTop: "clamp(20px,3.5vw,40px)",
+          paddingBottom: "clamp(20px,3.5vw,40px)",
         }}
       >
-        <div className={hasRightColumn ? "grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16" : ""}>
+        <div className={hasRightColumn ? "grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14" : ""}>
           <div>
             {countryCode || countryLabel ? (
               <p className="flex flex-wrap items-center gap-3">
@@ -381,14 +382,41 @@ export function PageHero({
                     className="gh2-btn-ghost focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
                   >
                     {secondaryLabel}
+                    {secondaryIcon}
                   </Link>
                 ) : null}
               </div>
             ) : null}
+
+            {trustCards && trustCards.length > 0 ? (
+              <ul className="mt-7 grid max-w-[620px] grid-cols-1 gap-3 sm:grid-cols-3">
+                {trustCards.map((card) => (
+                  <li
+                    key={card.title}
+                    className="gh-glass-emerald flex items-center gap-3 rounded-2xl px-3.5 py-3"
+                  >
+                    <span
+                      className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl text-[var(--color-brand-accent)]"
+                      style={{ background: "rgba(176,241,34,0.12)" }}
+                    >
+                      {card.icon}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[13px] font-bold leading-tight text-white">
+                        {card.title}
+                      </span>
+                      <span className="block overflow-hidden text-[11.5px] leading-tight text-white/55" style={{ wordBreak: "break-word" }}>
+                        {card.subtitle}
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </div>
 
           {rightSlot || heroImage ? (
-            <aside className="hidden lg:block">
+            <aside className="relative hidden lg:block">
               {rightSlot ?? (heroImage ? <HeroImagePanel image={heroImage} /> : null)}
             </aside>
           ) : null}
