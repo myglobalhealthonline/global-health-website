@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { SITE_NAME } from "@/lib/constants";
+import Image from "next/image";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { PageHero } from "@/components/sections/PageHero";
-import { Mail, Clock, AlertTriangle } from "lucide-react";
+import { Mail, Clock, AlertTriangle, ShieldCheck, BadgeCheck, MessageSquare } from "lucide-react";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -26,15 +27,32 @@ export default async function ContactPage() {
         titleAccent={contact.hero_title_accent}
         titleTrail={contact.hero_title_trail}
         lede={contact.hero_lede}
-        heroImage={{
-          src: "/images/stock/contact.jpg",
-          alt: "Telehealth care coordinator supporting a patient through an online consultation platform",
-          priority: true,
-        }}
+        ctaLabel="Send a message"
+        ctaHref="#contact-form"
+        secondaryLabel="Book a consultation"
+        secondaryHref="/"
+        trustCards={[
+          {
+            icon: <Mail className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: "Email support",
+            subtitle: "info@myglobalhealth.online",
+          },
+          {
+            icon: <Clock className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: "24-hour reply",
+            subtitle: "On working days",
+          },
+          {
+            icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
+            title: "No bots",
+            subtitle: "Real humans, no ticket queue",
+          },
+        ]}
+        rightSlot={<ContactArchPanel />}
       />
 
       {/* LIGHT — contact form + reach info */}
-      <section style={{ background: "var(--color-background-soft)", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
+      <section id="contact-form" style={{ background: "var(--color-background-soft)", borderTop: "1px solid rgba(29,75,54,0.10)" }}>
         <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10 gh-section">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.6fr]">
             <aside>
@@ -115,5 +133,76 @@ export default async function ContactPage() {
         </div>
       </section>
     </section>
+  );
+}
+
+function ContactArchPanel() {
+  return (
+    <div className="relative mx-auto max-w-[440px]">
+      <div aria-hidden className="gh2-arch-frame" />
+      <div className="gh2-arch gh2-zoom relative aspect-[4/4.7] overflow-hidden border border-white/10 bg-white/[0.045]">
+        <Image
+          src="/images/stock/contact.jpg"
+          alt="Telehealth care coordinator supporting a patient through an online consultation platform"
+          fill
+          priority
+          sizes="(min-width: 1024px) 440px, 100vw"
+          className="object-cover object-center"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-t from-[rgba(8,42,32,0.62)] via-transparent to-transparent"
+        />
+      </div>
+
+      {/* Floating — 24h response */}
+      <div
+        className="gh-glass-emerald gh-floaty absolute -right-6 top-[12%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
+        style={{ maxWidth: 232, animationDelay: "0s" }}
+      >
+        <span className="relative flex size-2.5 shrink-0">
+          <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--color-brand-accent)] opacity-60" />
+          <span className="relative inline-flex size-2.5 rounded-full bg-[var(--color-brand-accent)]" />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-[13px] font-bold leading-tight text-white">Usually within 24 hours</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">On working days</span>
+        </span>
+      </div>
+
+      {/* Floating — Real humans */}
+      <div
+        className="gh-glass-emerald gh-floaty absolute -right-4 top-[56%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
+        style={{ maxWidth: 232, animationDelay: "1.4s" }}
+      >
+        <span
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg text-[var(--color-brand-accent)]"
+          style={{ background: "rgba(176,241,34,0.12)" }}
+        >
+          <BadgeCheck className="size-4" strokeWidth={2} aria-hidden />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-[13px] font-bold leading-tight text-white">Real humans</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">No bots or ticket queues</span>
+        </span>
+      </div>
+
+      {/* Floating — GDPR safe */}
+      <div
+        className="gh-glass-emerald gh-floaty absolute -left-8 bottom-[5%] z-10 flex items-center gap-2.5 rounded-2xl px-3.5 py-3"
+        style={{ maxWidth: 232, animationDelay: "0.7s" }}
+      >
+        <span
+          className="inline-flex size-7 shrink-0 items-center justify-center rounded-lg text-[var(--color-brand-accent)]"
+          style={{ background: "rgba(176,241,34,0.12)" }}
+        >
+          <MessageSquare className="size-4" strokeWidth={2} aria-hidden />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-[13px] font-bold leading-tight text-white">GDPR-safe contact</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">EU infrastructure only</span>
+        </span>
+      </div>
+    </div>
   );
 }

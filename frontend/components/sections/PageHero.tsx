@@ -381,9 +381,36 @@ export function PageHero({
                     className="gh2-btn-ghost focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
                   >
                     {secondaryLabel}
+                    {secondaryIcon}
                   </Link>
                 ) : null}
               </div>
+            ) : null}
+
+            {trustCards && trustCards.length > 0 ? (
+              <ul className="mt-7 grid max-w-[620px] grid-cols-1 gap-3 sm:grid-cols-3">
+                {trustCards.map((card) => (
+                  <li
+                    key={card.title}
+                    className="gh-glass-emerald flex items-center gap-3 rounded-2xl px-3.5 py-3"
+                  >
+                    <span
+                      className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl text-[var(--color-brand-accent)]"
+                      style={{ background: "rgba(176,241,34,0.12)" }}
+                    >
+                      {card.icon}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[13px] font-bold leading-tight text-white">
+                        {card.title}
+                      </span>
+                      <span className="block overflow-hidden text-[11.5px] leading-tight text-white/55" style={{ wordBreak: "break-word" }}>
+                        {card.subtitle}
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
             ) : null}
           </div>
 
