@@ -316,13 +316,14 @@ export function PageHero({
       </div>
 
       <div
-        className="relative z-[1] mx-auto max-w-[var(--container-width)] px-5 md:px-10"
+        className="relative z-[1] mx-auto flex max-w-[var(--container-width)] flex-col justify-center px-5 md:px-10"
         style={{
-          paddingTop: "clamp(72px,9vw,128px)",
-          paddingBottom: "clamp(48px,6vw,80px)",
+          minHeight: "calc(100svh - var(--header-height))",
+          paddingTop: "clamp(20px,3.5vw,40px)",
+          paddingBottom: "clamp(20px,3.5vw,40px)",
         }}
       >
-        <div className={hasRightColumn ? "grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16" : ""}>
+        <div className={hasRightColumn ? "grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14" : ""}>
           <div>
             {countryCode || countryLabel ? (
               <p className="flex flex-wrap items-center gap-3">
@@ -415,7 +416,7 @@ export function PageHero({
           </div>
 
           {rightSlot || heroImage ? (
-            <aside className="hidden lg:block">
+            <aside className="relative hidden lg:block">
               {rightSlot ?? (heroImage ? <HeroImagePanel image={heroImage} /> : null)}
             </aside>
           ) : null}

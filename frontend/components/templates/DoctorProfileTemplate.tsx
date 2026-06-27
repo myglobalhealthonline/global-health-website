@@ -3,12 +3,15 @@ import Link from "next/link";
 import {
   ArrowLeft,
   ArrowUpRight,
+  BadgeCheck,
   CalendarDays,
   ExternalLink,
   Globe,
   MapPin,
   ShieldCheck,
+  Stethoscope,
   User,
+  Video,
 } from "lucide-react";
 import { sanitizeDoctorBioHtml } from "@/lib/content/doctor-bio-format";
 
@@ -45,29 +48,6 @@ type DoctorProfileTemplateProps = {
   doctifyWidgetUrl?: string;
 };
 
-/* ─── Hero metadata chip ─────────────────────────────────────────────────── */
-function MetaChip({
-  icon,
-  label,
-}: {
-  icon: React.ReactNode;
-  label: string;
-}) {
-  return (
-    <span
-      className="inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-medium"
-      style={{
-        background: "rgba(255,255,255,0.07)",
-        border: "1px solid rgba(255,255,255,0.12)",
-        color: "rgba(255,255,255,0.80)",
-      }}
-    >
-      <span style={{ color: "var(--color-brand-accent)", display: "flex" }}>{icon}</span>
-      {label}
-    </span>
-  );
-}
-
 /* ─── Component ──────────────────────────────────────────────────────────── */
 export function DoctorProfileTemplate({
   hero,
@@ -78,25 +58,48 @@ export function DoctorProfileTemplate({
 }: DoctorProfileTemplateProps) {
   const safeBio = sanitizeDoctorBioHtml(profile.bio);
   const backHref = hero.secondaryCta?.href;
+  const verifyHref = profile.verificationUrl ?? profile.medicalRegistrationUrl;
+  const primarySpecialty = profile.specialties[0] ?? "General practice";
+  const languageList = profile.languages.length > 0 ? profile.languages.join(", ") : "English";
 
   return (
     <section className="bg-[var(--color-background-page)]">
 
-      {/* ── HERO — full-bleed 50/50 split with gradient fade ── */}
+      {/* ── HERO — viewport-locked 50/50 split ── */}
       <section
         className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
-        style={{ background: "#0F2E25" }}
+        style={{
+          background: "#031F18",
+          height: "calc(100svh - var(--header-height))",
+          minHeight: 620,
+        }}
       >
-        <div
-          className="grid lg:grid-cols-2"
-          style={{ minHeight: "min(100vh, 880px)" }}
-        >
+        <div className="grid h-full lg:grid-cols-2">
 
-          {/* ── LEFT — full-height image with gradient fades ── */}
-          <div
-            className="relative overflow-hidden"
-            style={{ minHeight: "clamp(360px, 60vw, 880px)" }}
-          >
+          {/* ── LEFT — full-bleed doctor portrait ── */}
+          <div className="relative h-full overflow-hidden">
+            {/* Oversized "Doctor" watermark behind portrait */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0 flex items-center overflow-hidden select-none"
+            >
+              <span
+                style={{
+                  fontSize: "clamp(5rem, 16vw, 14rem)",
+                  fontWeight: 800,
+                  WebkitTextStroke: "2px rgba(255,255,255,0.042)",
+                  color: "transparent",
+                  lineHeight: 1,
+                  letterSpacing: "-0.04em",
+                  userSelect: "none",
+                  whiteSpace: "nowrap",
+                  paddingLeft: "4%",
+                }}
+              >
+                Doctor
+              </span>
+            </div>
+
             {profileImageSrc ? (
               <Image
                 src={profileImageSrc}
@@ -105,6 +108,7 @@ export function DoctorProfileTemplate({
                 sizes="(min-width:1024px) 50vw, 100vw"
                 priority
                 className="object-cover object-top"
+                style={{ zIndex: 1 }}
                 unoptimized={
                   /^https?:\/\//i.test(profileImageSrc) ||
                   profileImageSrc.startsWith("/api/media/")
@@ -114,66 +118,133 @@ export function DoctorProfileTemplate({
               <div
                 className="absolute inset-0"
                 style={{
+                  zIndex: 1,
                   background:
-                    "linear-gradient(160deg, rgba(176,241,34,0.08) 0%, rgba(15,46,37,0.60) 100%)",
+                    "linear-gradient(160deg, rgba(176,241,34,0.08) 0%, rgba(3,31,24,0.80) 100%)",
                 }}
               />
             )}
 
-            {/* Bottom fade — readability on mobile where content sits below */}
+            {/* Subtle green wash */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0"
+              style={{ zIndex: 2, background: "rgba(3,31,24,0.22)", mixBlendMode: "multiply" }}
+            />
+            {/* Bottom vignette */}
             <div
               aria-hidden
               className="pointer-events-none absolute inset-x-0 bottom-0"
               style={{
-                height: "45%",
+                zIndex: 2,
+                height: "50%",
                 background:
-                  "linear-gradient(to top, rgba(6,26,18,0.88) 0%, rgba(6,26,18,0.40) 45%, transparent 100%)",
+                  "linear-gradient(to top, rgba(3,31,24,0.92) 0%, rgba(3,31,24,0.42) 50%, transparent 100%)",
               }}
             />
-
-            {/* Right-edge fade — image bleeds into content on desktop */}
+            {/* Right-edge bleed → content column */}
             <div
               aria-hidden
               className="pointer-events-none absolute inset-y-0 right-0 hidden lg:block"
               style={{
-                width: "38%",
+                zIndex: 2,
+                width: "44%",
                 background:
-                  "linear-gradient(to right, rgba(15,46,37,0) 0%, rgba(15,46,37,0.30) 30%, rgba(15,46,37,0.72) 65%, #0F2E25 100%)",
+                  "linear-gradient(to right, transparent 0%, rgba(3,31,24,0.55) 42%, rgba(3,31,24,0.90) 72%, #031F18 100%)",
               }}
             />
 
-            {/* Name card — visible on mobile (hidden on desktop, right column owns it) */}
+            {/* Mobile name overlay */}
             {profileImageSrc ? (
               <div
                 className="absolute bottom-0 left-0 right-0 px-6 pb-6 lg:hidden"
+                style={{ zIndex: 3 }}
               >
-                <p className="text-[12px] font-semibold uppercase tracking-[0.18em]" style={{ color: "var(--color-brand-accent)" }}>
+                <p
+                  className="text-[12px] font-bold uppercase tracking-[0.18em]"
+                  style={{ color: "var(--color-brand-accent)" }}
+                >
                   {profile.title}
                 </p>
-                <p className="mt-1 text-[1.35rem] font-extrabold tracking-[-0.02em]" style={{ color: "rgba(255,255,255,0.95)" }}>
+                <p
+                  className="mt-1 font-extrabold tracking-[-0.02em]"
+                  style={{ fontSize: "1.35rem", color: "rgba(255,255,255,0.95)" }}
+                >
                   {profile.name}
                 </p>
               </div>
             ) : null}
           </div>
 
-          {/* ── RIGHT — content column ── */}
+          {/* ── RIGHT — profile content ── */}
           <div
-            className="relative flex flex-col justify-center px-8 py-12 md:px-12 lg:px-16 lg:py-20"
-            style={{ background: "#0F2E25" }}
+            className="relative flex h-full flex-col justify-center overflow-y-auto px-8 py-6 md:px-12 lg:px-14 lg:py-8"
+            style={{ background: "#031F18" }}
           >
-            {/* Lime radial glow — top-right of content area */}
+            {/* Layer 1 — gradient depth */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0"
+              className="pointer-events-none absolute inset-0 z-0"
               style={{
                 background:
-                  "radial-gradient(ellipse 600px 500px at 110% -10%, rgba(176,241,34,0.11), transparent 60%)",
+                  "radial-gradient(circle at 88% 14%, rgba(22,89,64,0.30), transparent 42%)," +
+                  "radial-gradient(circle at 12% 88%, rgba(2,18,13,0.55), transparent 44%)," +
+                  "linear-gradient(135deg, #062b21 0%, #031F18 50%, #02140e 100%)",
               }}
             />
+            {/* Layer 2 — technical lime grid */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(167,243,11,0.045) 1px, transparent 1px)," +
+                  "linear-gradient(90deg, rgba(167,243,11,0.045) 1px, transparent 1px)",
+                backgroundSize: "52px 52px",
+                maskImage:
+                  "radial-gradient(130% 130% at 80% 18%, #000 0%, rgba(0,0,0,0.40) 52%, transparent 88%)",
+                WebkitMaskImage:
+                  "radial-gradient(130% 130% at 80% 18%, #000 0%, rgba(0,0,0,0.40) 52%, transparent 88%)",
+              }}
+            />
+            {/* Layer 3 — dot texture */}
+            <div
+              aria-hidden
+              className="gh-dot-grid pointer-events-none absolute inset-0 z-0"
+              style={{
+                opacity: 0.55,
+                maskImage:
+                  "radial-gradient(700px 540px at 86% 12%, #000 0%, transparent 70%)",
+                WebkitMaskImage:
+                  "radial-gradient(700px 540px at 86% 12%, #000 0%, transparent 70%)",
+              }}
+            />
+            {/* Layer 4 — lime ambient glow */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0"
+              style={{
+                background:
+                  "radial-gradient(ellipse 560px 480px at 72% 64%, rgba(167,243,11,0.10), transparent 62%)," +
+                  "radial-gradient(ellipse 640px 540px at 112% -8%, rgba(167,243,11,0.11), transparent 60%)",
+              }}
+            />
+            {/* Layer 5 — faint plus symbols */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+              style={{ top: "-2%", right: "5%", fontSize: "190px", color: "rgba(176,241,34,0.055)" }}
+            >+</span>
+            <span
+              aria-hidden
+              className="pointer-events-none absolute z-0 select-none font-bold leading-none"
+              style={{ bottom: "8%", right: "10%", fontSize: "78px", color: "rgba(176,241,34,0.045)" }}
+            >+</span>
 
-            <div className="relative">
-              {/* Nav links */}
+            {/* Content */}
+            <div className="relative z-10" style={{ maxWidth: 680 }}>
+
+              {/* Top nav pills */}
               <div className="flex flex-wrap items-center gap-2">
                 {backHref ? (
                   <Link
@@ -181,21 +252,20 @@ export function DoctorProfileTemplate({
                     className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12.5px] font-semibold transition-colors duration-200 hover:bg-white/10"
                     style={{
                       background: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.12)",
-                      color: "rgba(255,255,255,0.70)",
+                      border: "1px solid rgba(255,255,255,0.14)",
+                      color: "rgba(255,255,255,0.65)",
                     }}
                   >
                     <ArrowLeft className="size-3.5 shrink-0" strokeWidth={2} />
                     Back to {profile.country} team
                   </Link>
                 ) : null}
-
                 <span
                   className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12.5px] font-semibold"
                   style={{
                     background: "rgba(255,255,255,0.06)",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    color: "rgba(255,255,255,0.70)",
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    color: "rgba(255,255,255,0.65)",
                   }}
                 >
                   <User className="size-3.5 shrink-0" strokeWidth={1.8} aria-hidden />
@@ -205,19 +275,19 @@ export function DoctorProfileTemplate({
 
               {/* Name */}
               <h1
-                className="mt-6 font-extrabold tracking-[-0.03em] leading-[1.0]"
+                className="mt-5 font-extrabold tracking-[-0.038em] leading-[1.0]"
                 style={{
-                  fontSize: "clamp(2.2rem, 3.5vw + 0.5rem, 3.8rem)",
-                  color: "rgba(255,255,255,0.95)",
+                  fontSize: "clamp(2.4rem, 3.2vw + 0.8rem, 4.2rem)",
+                  color: "#F5FFF8",
                 }}
               >
                 {profile.name}
               </h1>
 
-              {/* Role — lime */}
+              {/* Role */}
               <p
-                className="mt-3 text-[1rem] font-semibold uppercase tracking-[0.12em]"
-                style={{ color: "var(--color-brand-accent)" }}
+                className="mt-2 font-bold uppercase tracking-[0.22em]"
+                style={{ fontSize: "clamp(11px, 0.9vw, 14px)", color: "var(--color-brand-accent)" }}
               >
                 {profile.title}
               </p>
@@ -225,90 +295,106 @@ export function DoctorProfileTemplate({
               {/* Description */}
               {hero.description ? (
                 <p
-                  className="mt-4 text-[15px] leading-relaxed"
-                  style={{ color: "rgba(255,255,255,0.65)", maxWidth: "44ch" }}
+                  className="mt-3 leading-relaxed"
+                  style={{
+                    maxWidth: "46ch",
+                    fontSize: "clamp(0.88rem, 0.5vw + 0.72rem, 1rem)",
+                    color: "#B8C9C2",
+                  }}
                 >
                   {hero.description}
                 </p>
               ) : null}
 
-              {/* Specialty tags */}
-              {profile.specialties.length > 0 ? (
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {profile.specialties.slice(0, 4).map((s) => (
-                    <span
-                      key={s}
-                      className="rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold"
-                      style={{
-                        background: "rgba(255,255,255,0.07)",
-                        border: "1px solid rgba(255,255,255,0.12)",
-                        color: "rgba(255,255,255,0.75)",
-                      }}
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-
-              {/* Metadata chips */}
-              <div className="mt-6 flex flex-wrap gap-2.5">
+              {/* Tag pills — specialty / country / languages */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span
+                  className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] font-medium"
+                  style={{
+                    background: "rgba(5,34,27,0.78)",
+                    border: "1px solid rgba(167,243,11,0.20)",
+                    color: "rgba(255,255,255,0.80)",
+                  }}
+                >
+                  <Stethoscope className="size-3.5 shrink-0" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.8} aria-hidden />
+                  {primarySpecialty}
+                </span>
                 {profile.country ? (
-                  <MetaChip
-                    icon={<MapPin className="size-3.5" strokeWidth={1.8} aria-hidden />}
-                    label={profile.country}
-                  />
+                  <span
+                    className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] font-medium"
+                    style={{
+                      background: "rgba(5,34,27,0.78)",
+                      border: "1px solid rgba(167,243,11,0.20)",
+                      color: "rgba(255,255,255,0.80)",
+                    }}
+                  >
+                    <MapPin className="size-3.5 shrink-0" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.8} aria-hidden />
+                    {profile.country}
+                  </span>
                 ) : null}
                 {profile.languages.length > 0 ? (
-                  <MetaChip
-                    icon={<Globe className="size-3.5" strokeWidth={1.8} aria-hidden />}
-                    label={profile.languages.join(", ")}
-                  />
-                ) : null}
-                {profile.imcRegistration ? (
-                  <MetaChip
-                    icon={<ShieldCheck className="size-3.5" strokeWidth={1.8} aria-hidden />}
-                    label={profile.imcRegistration}
-                  />
+                  <span
+                    className="inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[12.5px] font-medium"
+                    style={{
+                      background: "rgba(5,34,27,0.78)",
+                      border: "1px solid rgba(167,243,11,0.20)",
+                      color: "rgba(255,255,255,0.80)",
+                    }}
+                  >
+                    <Globe className="size-3.5 shrink-0" style={{ color: "var(--color-brand-accent)" }} strokeWidth={1.8} aria-hidden />
+                    {languageList}
+                  </span>
                 ) : null}
               </div>
 
-              {/* Registration: regulator + number + division + verified */}
-              {profile.imcRegistration ? (
-                <div className="mt-5 space-y-1 text-[13px]" style={{ color: "rgba(255,255,255,0.45)" }}>
-                  <p>
-                    <span style={{ color: "rgba(255,255,255,0.28)" }}>
-                      {profile.regulatorName ? `Registered with ${profile.regulatorName}` : "Registration No."}
-                      {profile.registrationVerified ? " · Verified" : ""}
-                    </span>{" "}
-                    <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>
-                      {profile.imcRegistration}
-                    </span>
-                    {profile.registrationDivision ? (
-                      <span style={{ color: "rgba(255,255,255,0.55)" }}> · {profile.registrationDivision}</span>
+              {/* Trust badge row */}
+              <div
+                className="mt-4 flex flex-wrap items-center gap-y-2 border-t pt-4"
+                style={{ borderColor: "rgba(255,255,255,0.10)" }}
+              >
+                {[
+                  { Icon: ShieldCheck, label: `Registered in ${profile.country}` },
+                  { Icon: Video, label: "Online consultation available" },
+                  { Icon: BadgeCheck, label: "Verified profile" },
+                ].map(({ Icon, label }, i) => (
+                  <span key={label} className="flex items-center">
+                    {i > 0 ? (
+                      <span
+                        aria-hidden
+                        className="mx-4 hidden h-4 w-px sm:block"
+                        style={{ background: "rgba(255,255,255,0.14)" }}
+                      />
                     ) : null}
-                  </p>
-                  {(profile.credentials ?? []).length > 0 ? (
-                    <p>
-                      <span style={{ color: "rgba(255,255,255,0.28)" }}>Credentials:</span>{" "}
-                      <span style={{ color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>
-                        {(profile.credentials ?? []).map((c) => c.label).join(" · ")}
-                      </span>
-                    </p>
-                  ) : null}
-                </div>
-              ) : null}
+                    <span
+                      className="inline-flex items-center gap-2 text-[12.5px] font-medium"
+                      style={{ color: "rgba(255,255,255,0.65)" }}
+                    >
+                      <Icon
+                        className="size-3.5 shrink-0"
+                        style={{ color: "var(--color-brand-accent)" }}
+                        strokeWidth={1.75}
+                        aria-hidden
+                      />
+                      {label}
+                    </span>
+                  </span>
+                ))}
+              </div>
 
               {/* CTA buttons */}
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                <Link href={hero.primaryCta.href} className="gh2-btn-lime">
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <Link
+                  href={hero.primaryCta.href}
+                  className="gh2-btn-lime"
+                  style={{ boxShadow: "0 4px 24px rgba(167,243,11,0.28)" }}
+                >
                   <CalendarDays className="size-4 shrink-0" strokeWidth={1.8} aria-hidden />
                   {hero.primaryCta.label}
                 </Link>
 
-                {profile.verificationUrl ?? profile.medicalRegistrationUrl ? (
+                {verifyHref ? (
                   <a
-                    href={profile.verificationUrl ?? profile.medicalRegistrationUrl}
+                    href={verifyHref}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="gh2-btn-ghost"
@@ -322,6 +408,61 @@ export function DoctorProfileTemplate({
                   </Link>
                 ) : null}
               </div>
+
+              {/* Detail cards */}
+              <ul className="mt-5 grid grid-cols-3 gap-2.5">
+                {[
+                  {
+                    icon: <Stethoscope className="size-5" strokeWidth={1.6} aria-hidden />,
+                    title: primarySpecialty,
+                    subtitle: "Primary care consultations",
+                  },
+                  {
+                    icon: <Globe className="size-5" strokeWidth={1.6} aria-hidden />,
+                    title: "Languages",
+                    subtitle: languageList,
+                  },
+                  {
+                    icon: <CalendarDays className="size-5" strokeWidth={1.6} aria-hidden />,
+                    title: "Availability",
+                    subtitle: "Online appointments",
+                  },
+                ].map((card) => (
+                  <li
+                    key={card.title}
+                    className="rounded-[16px] px-3.5 py-3.5"
+                    style={{
+                      background: "rgba(5,34,27,0.78)",
+                      border: "1px solid rgba(167,243,11,0.18)",
+                      backdropFilter: "blur(16px)",
+                      WebkitBackdropFilter: "blur(16px)",
+                      boxShadow:
+                        "0 8px 32px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.06)",
+                    }}
+                  >
+                    <span
+                      className="inline-flex size-8 items-center justify-center rounded-[8px]"
+                      style={{
+                        background: "rgba(167,243,11,0.13)",
+                        border: "1px solid rgba(167,243,11,0.18)",
+                        color: "var(--color-brand-accent)",
+                      }}
+                    >
+                      {card.icon}
+                    </span>
+                    <p className="mt-2.5 text-[13px] font-bold leading-tight text-white">
+                      {card.title}
+                    </p>
+                    <p
+                      className="mt-1 text-[11.5px] leading-snug"
+                      style={{ color: "rgba(255,255,255,0.50)" }}
+                    >
+                      {card.subtitle}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+
             </div>
           </div>
 
