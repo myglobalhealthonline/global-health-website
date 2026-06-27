@@ -38,7 +38,7 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     taxId: "DIČ",
     consultationDate: "Datum konzultace",
     invoiceRef: "Číslo faktury",
-    legalFooter: "Osvobození od DPH\nZdravotní služby jsou osvobozeny od DPH v souladu se zákonem č. 235/2004 Sb., o dani z přidané hodnoty, § 58 (osvobození zdravotních služeb).\n\nPodmínky\nGlobal Health je obchodní značka společnosti Global Guest. Veškeré transakce prováděné pod značkou Global Health jsou právně zpracovávány v rámci obchodní registrace a daňových údajů společnosti Global Guest.",
+    legalFooter: "Osvobození od DPH\nZdravotní služby jsou osvobozeny od DPH v souladu se zákonem č. 235/2004 Sb., o dani z přidané hodnoty, § 58 (osvobození zdravotních služeb).\n\nPodmínky\nGlobal Health je obchodní značka společnosti Global Guest. Veškeré transakce prováděné pod značkou Global Health jsou právně zpracovávány v rámci obchodní registrace a daňových údajů společnosti Global Guest.\n\nGlobal Health je obchodní značkou společnosti Global Guest s.r.o., poskytovatele zdravotních služeb zapsaného v Národním registru poskytovatelů zdravotních služeb (NRPZS) pod registračním číslem 19071680.",
   },
   sp: {
     invoice: "Factura",
@@ -75,6 +75,24 @@ const INVOICE_LABELS: Record<string, Record<string, string>> = {
     consultationDate: "Data consultației",
     invoiceRef: "Referință factură",
     legalFooter: "Serviciile de sănătate sunt scutite de TVA conform Legii consolidării TVA din 2010, Secțiunea 61 și Anexa 1, Paragraful 23. TVA-ul nu se aplică, deoarece furnizorul nu este încă înregistrat pentru TVA în Irlanda, conform Legii consolidării TVA din 2010.\n\nTermeni\nGlobal Health este un nume comercial înregistrat sub Global Guest. Toate tranzacțiile efectuate sub marca Global Health sunt procesate legal în baza înregistrării comerciale și a detaliilor fiscale ale Global Guest.",
+  },
+  pt: {
+    invoice: "Fatura",
+    from: "De",
+    billTo: "Faturado a",
+    description: "Descrição",
+    qty: "Qtd.",
+    unit: "Preço unit.",
+    total: "Total",
+    paid: "PAGO",
+    doctor: "Médico",
+    reg: "Número de registo médico",
+    company: "Global Health · Registada na Irlanda · N.º CRO 910267",
+    address: "Irlanda",
+    taxId: "NIF",
+    consultationDate: "Data da consulta",
+    invoiceRef: "Referência da fatura",
+    legalFooter: "Os serviços de saúde estão isentos de IVA nos termos da Lei de Consolidação do Imposto sobre o Valor Acrescentado de 2010, Secção 61 e Anexo 1, Parágrafo 23.\n\nCondições\nA Global Health é uma marca comercial registada sob a Global Guest. Todas as transações realizadas sob a marca Global Health são legalmente processadas ao abrigo do registo comercial e dos dados fiscais da Global Guest.\n\nA Global Health é uma marca comercial da Global Guest s.r.o., entidade prestadora de cuidados de saúde registada na Entidade Reguladora da Saúde (ERS) sob o número 179287.",
   },
 };
 

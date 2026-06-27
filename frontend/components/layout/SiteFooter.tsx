@@ -30,6 +30,11 @@ import {
 } from "@/components/ui/BrandIcons";
 import { NewsletterSignup } from "./NewsletterSignup";
 
+const REGULATORY_TEXT: Partial<Record<string, string>> = {
+  cz: "Global Health je obchodní značkou společnosti Global Guest s.r.o., poskytovatele zdravotních služeb zapsaného v Národním registru poskytovatelů zdravotních služeb (NRPZS) pod registračním číslem 19071680.",
+  pt: "A Global Health é uma marca comercial da Global Guest s.r.o., entidade prestadora de cuidados de saúde registada na Entidade Reguladora da Saúde (ERS) sob o número 179287.",
+};
+
 // Static spec for the social ribbon. Keeping it module-scoped lets the
 // component body flatMap straight into render entries without ad-hoc
 // ternary-then-filter shapes.
@@ -162,6 +167,9 @@ export function SiteFooter({
   });
   const copyrightPrefix =
     override?.copyrightLine ?? `© ${year} ${siteName || "Global Health"}`;
+  const regulatoryText = activeCountryCode
+    ? (REGULATORY_TEXT[activeCountryCode.toLowerCase()] ?? null)
+    : null;
 
   return (
     <footer className="gh-site-shell gh-footer-shell relative overflow-hidden">
@@ -282,6 +290,11 @@ export function SiteFooter({
         <p className="gh-footer-disclaimer mt-12 max-w-[980px] text-sm leading-relaxed">
           {navigation.footerDisclaimer}
         </p>
+        {regulatoryText && (
+          <p className="mt-3 max-w-[980px] text-xs leading-relaxed text-white/40">
+            {regulatoryText}
+          </p>
+        )}
 
         <div className="gh-footer-copyrightBar flex flex-wrap justify-between gap-3">
           <span suppressHydrationWarning>

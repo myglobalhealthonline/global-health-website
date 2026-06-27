@@ -93,6 +93,12 @@ function buildTemplateContext(input: {
     : formatDateDdMmYyyy(new Date());
   const currentDate = formatDateDdMmYyyy(new Date());
 
+  const COUNTRY_LEGAL_TEXT: Record<string, string> = {
+    cz: "Global Health je obchodní značkou společnosti Global Guest s.r.o., poskytovatele zdravotních služeb zapsaného v Národním registru poskytovatelů zdravotních služeb (NRPZS) pod registračním číslem 19071680.",
+    pt: "A Global Health é uma marca comercial da Global Guest s.r.o., entidade prestadora de cuidados de saúde registada na Entidade Reguladora da Saúde (ERS) sob o número 179287.",
+  };
+  const countryLegalText = COUNTRY_LEGAL_TEXT[input.appt.countryCode?.toLowerCase() ?? ""] ?? "";
+
   const base: Record<string, unknown> = {
     title: input.title,
     patientName: input.appt.fullName,
@@ -104,6 +110,7 @@ function buildTemplateContext(input: {
     doctorName: input.doctorName,
     registrationNumber: input.registrationLine,
     consultationType: input.appt.consultationType,
+    countryLegalText,
   };
 
   const f = input.fields ?? {};
@@ -211,11 +218,18 @@ type CertificateArtifacts = {
   dataUrl: string;
 };
 
+const VERIFIABLE_TYPES = new Set<GeneratedDocumentType>([
+  "CUSTOM_CERTIFICATE",
+  "ABSENCE_CERTIFICATE",
+  "PRESCRIPTION",
+  "EXAMS_PRESCRIPTION",
+]);
+
 async function buildCertificateArtifacts(
   documentType: GeneratedDocumentType,
   editDocumentId?: string,
 ): Promise<CertificateArtifacts | null> {
-  if (documentType !== "CUSTOM_CERTIFICATE" && documentType !== "ABSENCE_CERTIFICATE") return null;
+  if (!VERIFIABLE_TYPES.has(documentType)) return null;
 
   let certificateId: string;
   if (editDocumentId) {
@@ -362,13 +376,15 @@ async function generateAppointmentDocumentUnlocked(input: {
     templateContext.prescriptionNumber = upload.prescriptionNumber;
   }
 
-  // Absence certificates and custom certificates embed a QR linking to a
-  // public verification page. Absence certs also get the PNG injected into
-  // the DOCX (same path as exam-prescription QR).
+  // All verifiable document types embed a QR linking to the public verification page.
+  // Absence/custom certs: verification QR is the primary (sole) QR.
+  // Prescriptions: verification QR is compact; exams prescription keeps the upload QR as primary and adds verify QR.
   const cert = await buildCertificateArtifacts(input.documentType, input.editDocumentId);
   if (cert) {
     templateContext.certificateId = cert.certificateId;
-    templateContext.qrDataUrl = cert.dataUrl;
+    if (input.documentType === "ABSENCE_CERTIFICATE" || input.documentType === "CUSTOM_CERTIFICATE") {
+      templateContext.qrDataUrl = cert.dataUrl;
+    }
     if (input.documentType === "ABSENCE_CERTIFICATE") {
       qr = {
         pngBuffer: cert.pngBuffer,
@@ -376,6 +392,27 @@ async function generateAppointmentDocumentUnlocked(input: {
         instruction: `Certificate ID: ${cert.certificateId}`,
         compact: true,
       };
+    }
+    if (input.documentType === "PRESCRIPTION") {
+      templateContext.verifyQrDataUrl = cert.dataUrl;
+      templateContext.documentId = cert.certificateId;
+      qr = {
+        pngBuffer: cert.pngBuffer,
+        title: "Verify this prescription",
+        instruction: `Document ID: ${cert.certificateId}`,
+        compact: true,
+      };
+    }
+    if (input.documentType === "EXAMS_PRESCRIPTION") {
+      templateContext.verifyQrDataUrl = cert.dataUrl;
+      templateContext.documentId = cert.certificateId;
+      if (qr) {
+        qr.verifyQr = {
+          pngBuffer: cert.pngBuffer,
+          title: "Verify this prescription",
+          instruction: `Document ID: ${cert.certificateId}`,
+        };
+      }
     }
   }
 
