@@ -29,5 +29,17 @@
   "s4_body": "Acolo unde este clinic adecvat, medicul poate emite trimiteri, certificate sau îndrumări de urmărire. Notele sunt partajate după consultație conform fluxului de lucru al serviciului și țării.",
   "coverage_eyebrow": "Unde suntem prezenți",
   "coverage_headline": "Cinci piețe europene și în creștere.",
-  "coverage_cta": "Alegeți țara"
+  "coverage_cta": "Alegeți țara",
+  "trust_card1_title": "Licențiat local",
+  "trust_card1_subtitle": "Înregistrat în țara dumneavoastră",
+  "trust_card2_title": "Plătiți după apel",
+  "trust_card2_subtitle": "Fără taxe anticipate",
+  "trust_card3_title": "GDPR implicit",
+  "trust_card3_subtitle": "Centre de date în UE",
+  "float1_title": "5 țări europene",
+  "float1_subtitle": "Irlanda, Portugalia și altele",
+  "float2_title": "Medici verificați",
+  "float2_subtitle": "Licențiați local în fiecare țară",
+  "float3_title": "Fără săli de așteptare",
+  "float3_subtitle": "Medicină oricând și oriunde"
 }

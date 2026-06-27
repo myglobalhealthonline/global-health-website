@@ -9,5 +9,19 @@
   "response_label": "Timp de răspuns",
   "response_body": "De obicei în 24 de ore în zilele lucrătoare",
   "emergency_title": "Urgențe medicale",
-  "emergency_body": "Dacă experimentați o urgență medicală, sunați la serviciile de urgență locale (112 în UE) — nu folosiți acest formular."
+  "emergency_body": "Dacă experimentați o urgență medicală, sunați la serviciile de urgență locale (112 în UE) — nu folosiți acest formular.",
+  "hero_cta": "Trimiteți un mesaj",
+  "hero_secondary": "Rezervați o consultație",
+  "trust_card1_title": "Suport prin email",
+  "trust_card1_subtitle": "Disponibili prin email",
+  "trust_card2_title": "Răspuns în 24 de ore",
+  "trust_card2_subtitle": "În zilele lucrătoare",
+  "trust_card3_title": "Fără boți",
+  "trust_card3_subtitle": "Oameni reali, fără coadă de tichete",
+  "float1_title": "De obicei în 24 de ore",
+  "float1_subtitle": "În zilele lucrătoare",
+  "float2_title": "Oameni reali",
+  "float2_subtitle": "Fără boți sau cozi de tichete",
+  "float3_title": "Contact sigur GDPR",
+  "float3_subtitle": "Numai infrastructură UE"
 }
