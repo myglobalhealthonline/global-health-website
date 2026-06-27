@@ -369,6 +369,7 @@ async function generateAppointmentDocumentUnlocked(input: {
       title: `Upload your exam results — Prescription #${upload.prescriptionNumber}`,
       instruction:
         "Scan this QR code with your phone camera to securely upload your test results.",
+      compact: true, // exams prescription also gets a verify QR; keep both compact to fit on one page
     };
     templateContext.qrDataUrl = upload.dataUrl;
     templateContext.uploadLink = upload.link;

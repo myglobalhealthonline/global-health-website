@@ -120,8 +120,9 @@ export function fillDocxBuffer(
       filled = filled.slice(0, sectIdx) + legalPara + filled.slice(sectIdx);
     }
   }
-  // Compact QR (cert auth) needs fewer gap lines to avoid a blank 2nd page.
-  const gapLines = qr?.compact ? 2 : undefined;
+  // Reduce gap lines to avoid a blank 2nd page.
+  // Two QRs (exams prescription: upload + verify) = 1 gap line; single compact QR = 2; none = default 4.
+  const gapLines = qr?.verifyQr ? 1 : qr?.compact ? 2 : undefined;
   filled = applyDocumentFooterLayout(zip, filled, gapLines);
   // IR/PT: overlay the clinic address as an absolutely-positioned white text frame
   // inside the footer green band. Other countries: no-op.
