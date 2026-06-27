@@ -228,9 +228,7 @@ export function PricingPlanCard({
             />
           </Link>
         )}
-        <p className="mt-3 text-center text-[11px]" style={{ color: "var(--color-text-muted)" }}>
-          {t.onlineOnlyNote}
-        </p>
+
       </div>
     </article>
   );
