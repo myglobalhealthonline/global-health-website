@@ -9,5 +9,19 @@
   "response_label": "Doba odpovědi",
   "response_body": "Obvykle do 24 hodin v pracovní dny",
   "emergency_title": "Lékařské naléhavé stavy",
-  "emergency_body": "Pokud prožíváte lékařský naléhavý stav, zavolejte místní záchranné služby (112 v EU) — nepoužívejte tento formulář."
+  "emergency_body": "Pokud prožíváte lékařský naléhavý stav, zavolejte místní záchranné služby (112 v EU) — nepoužívejte tento formulář.",
+  "hero_cta": "Odeslat zprávu",
+  "hero_secondary": "Rezervovat konzultaci",
+  "trust_card1_title": "E-mailová podpora",
+  "trust_card1_subtitle": "Dostupni přes e-mail",
+  "trust_card2_title": "Odpověď do 24 hodin",
+  "trust_card2_subtitle": "V pracovní dny",
+  "trust_card3_title": "Žádné boty",
+  "trust_card3_subtitle": "Skuteční lidé, žádná fronta tiketů",
+  "float1_title": "Obvykle do 24 hodin",
+  "float1_subtitle": "V pracovní dny",
+  "float2_title": "Skuteční lidé",
+  "float2_subtitle": "Žádné boty ani fronty tiketů",
+  "float3_title": "Kontakt bezpečný z hlediska GDPR",
+  "float3_subtitle": "Pouze infrastruktura EU"
 }

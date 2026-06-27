@@ -135,7 +135,20 @@
     "clearFilters": "Filter zurücksetzen",
     "viewProfile": "Profil ansehen",
     "bookAppointment": "Termin buchen",
-    "pickTime": "Zeit wählen"
+    "pickTime": "Zeit wählen",
+    "viewDoctors": "Ärzte anzeigen",
+    "trustCard1Title": "Zugelassen in {country}",
+    "trustCard1Subtitle": "Vollständig verifizierte Kliniker",
+    "trustCard2Title": "4,9 Patientenbewertung",
+    "trustCard2Subtitle": "Aus über 2.000 Bewertungen",
+    "trustCard3Title": "Verfügbarkeit am selben Tag",
+    "trustCard3Subtitle": "Termine heute",
+    "floatCard1Title": "Heute verfügbar",
+    "floatCard1Subtitle": "Die meisten Termine in 24 Stunden",
+    "floatCard2Title": "Verifizierte Kliniker",
+    "floatCard2Subtitle": "Identitäts- und Lizenzverifizierung",
+    "floatCard3Title": "Online-Beratung",
+    "floatCard3Subtitle": "Privat, sicher und bequem"
   },
   "cookie": {
     "title": "Cookie-Einwilligung",
@@ -242,7 +255,17 @@
     "pickTime": "Zeit wählen",
     "noServicesAssigned": "Noch keine Leistungen zugewiesen.",
     "notSetupForBookings": "{name} ist derzeit nicht für Online-Buchungen in {country} eingerichtet.",
-    "browseOtherClinicians": "Andere Ärzte ansehen"
+    "browseOtherClinicians": "Andere Ärzte ansehen",
+    "backToTeam": "Zurück zum Team in {country}",
+    "doctorProfileLabel": "Arztprofil",
+    "registeredIn": "Registriert in {country}",
+    "onlineConsultAvailable": "Online-Beratung verfügbar",
+    "verifiedProfile": "Verifiziertes Profil",
+    "verifyRegistration": "Registrierung verifizieren",
+    "primaryCareConsults": "Allgemeinmedizinische Beratungen",
+    "languagesLabel": "Sprachen",
+    "availabilityLabel": "Verfügbarkeit",
+    "onlineAppointments": "Online-Termine"
   },
   "bookingForm": {
     "pickDate": "Datum wählen",

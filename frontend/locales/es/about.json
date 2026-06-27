@@ -29,5 +29,17 @@
   "s4_body": "Donde sea clínicamente apropiado, el médico puede emitir derivaciones, certificados o instrucciones de seguimiento. Las notas se comparten después de la consulta según el flujo de trabajo del servicio y el país.",
   "coverage_eyebrow": "Dónde operamos",
   "coverage_headline": "Cinco mercados europeos y contando.",
-  "coverage_cta": "Elige tu país"
+  "coverage_cta": "Elige tu país",
+  "trust_card1_title": "Licenciado localmente",
+  "trust_card1_subtitle": "Registrado en su país",
+  "trust_card2_title": "Pague después de la consulta",
+  "trust_card2_subtitle": "Sin tarifas anticipadas",
+  "trust_card3_title": "RGPD por defecto",
+  "trust_card3_subtitle": "Centros de datos en la UE",
+  "float1_title": "5 países europeos",
+  "float1_subtitle": "Irlanda, Portugal y más",
+  "float2_title": "Médicos verificados",
+  "float2_subtitle": "Licenciados localmente por país",
+  "float3_title": "Sin salas de espera",
+  "float3_subtitle": "Medicina en cualquier momento y lugar"
 }

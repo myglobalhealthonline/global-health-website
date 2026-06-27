@@ -50,6 +50,20 @@ export type DoctorsHeroProps = {
   primaryCta: CtaLink;
   secondaryCta: CtaLink;
   heroImage: { src: string; alt: string; priority?: boolean };
+  /** i18n strings for trust cards — falls back to English when absent. */
+  trustCard1Title?: string;
+  trustCard1Subtitle?: string;
+  trustCard2Title?: string;
+  trustCard2Subtitle?: string;
+  trustCard3Title?: string;
+  trustCard3Subtitle?: string;
+  /** i18n strings for floating cards — falls back to English when absent. */
+  floatCard1Title?: string;
+  floatCard1Subtitle?: string;
+  floatCard2Title?: string;
+  floatCard2Subtitle?: string;
+  floatCard3Title?: string;
+  floatCard3Subtitle?: string;
 };
 
 const ICON_TILE =
@@ -86,22 +100,34 @@ export function DoctorsHero({
   primaryCta,
   secondaryCta,
   heroImage,
+  trustCard1Title,
+  trustCard1Subtitle,
+  trustCard2Title,
+  trustCard2Subtitle,
+  trustCard3Title,
+  trustCard3Subtitle,
+  floatCard1Title,
+  floatCard1Subtitle,
+  floatCard2Title,
+  floatCard2Subtitle,
+  floatCard3Title,
+  floatCard3Subtitle,
 }: DoctorsHeroProps) {
   const trustCards: InfoCard[] = [
     {
       icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
-      title: `Licensed in ${countryName}`,
-      subtitle: "Fully verified clinicians",
+      title: (trustCard1Title ?? "Licensed in {country}").replace("{country}", countryName),
+      subtitle: trustCard1Subtitle ?? "Fully verified clinicians",
     },
     {
       icon: <Star className="size-[18px]" strokeWidth={2} aria-hidden />,
-      title: "4.9 patient rating",
-      subtitle: "From 2,000+ reviews",
+      title: trustCard2Title ?? "4.9 patient rating",
+      subtitle: trustCard2Subtitle ?? "From 2,000+ reviews",
     },
     {
       icon: <CalendarDays className="size-[18px]" strokeWidth={2} aria-hidden />,
-      title: "Same-day availability",
-      subtitle: "Appointments today",
+      title: trustCard3Title ?? "Same-day availability",
+      subtitle: trustCard3Subtitle ?? "Appointments today",
     },
   ];
 
@@ -280,8 +306,8 @@ export function DoctorsHero({
                     <span className="relative inline-flex size-2.5 rounded-full bg-[var(--color-brand-accent)]" />
                   </span>
                 }
-                title="Available today"
-                subtitle="Most appointments in 24 hours"
+                title={floatCard1Title ?? "Available today"}
+                subtitle={floatCard1Subtitle ?? "Most appointments in 24 hours"}
               />
 
               {/* Floating card — Verified clinicians (lower-right) */}
@@ -296,8 +322,8 @@ export function DoctorsHero({
                     <BadgeCheck className="size-4" strokeWidth={2} aria-hidden />
                   </span>
                 }
-                title="Verified clinicians"
-                subtitle="Identity & license verification"
+                title={floatCard2Title ?? "Verified clinicians"}
+                subtitle={floatCard2Subtitle ?? "Identity & license verification"}
               />
 
               {/* Floating card — Online consultation (bottom-left overlap) */}
@@ -312,8 +338,8 @@ export function DoctorsHero({
                     <Video className="size-4" strokeWidth={2} aria-hidden />
                   </span>
                 }
-                title="Online consultation"
-                subtitle="Private, secure & convenient"
+                title={floatCard3Title ?? "Online consultation"}
+                subtitle={floatCard3Subtitle ?? "Private, secure & convenient"}
               />
             </div>
           </aside>

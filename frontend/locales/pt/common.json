@@ -135,7 +135,20 @@
     "clearFilters": "Limpar filtros",
     "viewProfile": "Ver perfil",
     "bookAppointment": "Marcar consulta",
-    "pickTime": "Escolher horário"
+    "pickTime": "Escolher horário",
+    "viewDoctors": "Ver médicos",
+    "trustCard1Title": "Licenciado em {country}",
+    "trustCard1Subtitle": "Clínicos totalmente verificados",
+    "trustCard2Title": "Avaliação de 4,9",
+    "trustCard2Subtitle": "Mais de 2.000 avaliações",
+    "trustCard3Title": "Disponibilidade no mesmo dia",
+    "trustCard3Subtitle": "Consultas hoje",
+    "floatCard1Title": "Disponível hoje",
+    "floatCard1Subtitle": "A maioria das consultas em 24 horas",
+    "floatCard2Title": "Clínicos verificados",
+    "floatCard2Subtitle": "Verificação de identidade e licença",
+    "floatCard3Title": "Consulta online",
+    "floatCard3Subtitle": "Privada, segura e conveniente"
   },
   "cookie": {
     "title": "Consentimento de cookies",
@@ -242,7 +255,17 @@
     "pickTime": "Escolher horário",
     "noServicesAssigned": "Ainda não foram atribuídos serviços.",
     "notSetupForBookings": "{name} não está disponível para marcações online em {country}.",
-    "browseOtherClinicians": "Ver outros clínicos"
+    "browseOtherClinicians": "Ver outros clínicos",
+    "backToTeam": "Voltar à equipa de {country}",
+    "doctorProfileLabel": "Perfil do médico",
+    "registeredIn": "Registado em {country}",
+    "onlineConsultAvailable": "Consulta online disponível",
+    "verifiedProfile": "Perfil verificado",
+    "verifyRegistration": "Verificar registo",
+    "primaryCareConsults": "Consultas de clínica geral",
+    "languagesLabel": "Idiomas",
+    "availabilityLabel": "Disponibilidade",
+    "onlineAppointments": "Consultas online"
   },
   "bookingForm": {
     "pickDate": "Escolher data",

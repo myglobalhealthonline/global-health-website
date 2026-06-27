@@ -9,5 +9,19 @@
   "response_label": "Tempo de resposta",
   "response_body": "Normalmente em 24 horas nos dias úteis",
   "emergency_title": "Emergências médicas",
-  "emergency_body": "Se está a experienciar uma emergência médica, contacte os serviços de emergência locais (112 na UE) — não utilize este formulário."
+  "emergency_body": "Se está a experienciar uma emergência médica, contacte os serviços de emergência locais (112 na UE) — não utilize este formulário.",
+  "hero_cta": "Enviar mensagem",
+  "hero_secondary": "Marcar consulta",
+  "trust_card1_title": "Suporte por email",
+  "trust_card1_subtitle": "Contacto disponível por email",
+  "trust_card2_title": "Resposta em 24 horas",
+  "trust_card2_subtitle": "Nos dias úteis",
+  "trust_card3_title": "Sem bots",
+  "trust_card3_subtitle": "Pessoas reais, sem fila de tickets",
+  "float1_title": "Normalmente em 24 horas",
+  "float1_subtitle": "Nos dias úteis",
+  "float2_title": "Pessoas reais",
+  "float2_subtitle": "Sem bots ou filas de tickets",
+  "float3_title": "Contacto seguro RGPD",
+  "float3_subtitle": "Apenas infraestrutura da UE"
 }

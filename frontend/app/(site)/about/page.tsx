@@ -33,21 +33,21 @@ export default async function AboutPage() {
         trustCards={[
           {
             icon: <Stethoscope className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "Locally licensed",
-            subtitle: "Registered in your country",
+            title: about.trust_card1_title,
+            subtitle: about.trust_card1_subtitle,
           },
           {
             icon: <Clock className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "Pay after the call",
-            subtitle: "No upfront fees",
+            title: about.trust_card2_title,
+            subtitle: about.trust_card2_subtitle,
           },
           {
             icon: <ShieldCheck className="size-[18px]" strokeWidth={2} aria-hidden />,
-            title: "GDPR by default",
-            subtitle: "EU data centres",
+            title: about.trust_card3_title,
+            subtitle: about.trust_card3_subtitle,
           },
         ]}
-        rightSlot={<AboutArchPanel />}
+        rightSlot={<AboutArchPanel locale={about} />}
       />
 
       {/* LIGHT — three pillars */}
@@ -187,7 +187,7 @@ export default async function AboutPage() {
   );
 }
 
-function AboutArchPanel() {
+function AboutArchPanel({ locale }: { locale: { float1_title: string; float1_subtitle: string; float2_title: string; float2_subtitle: string; float3_title: string; float3_subtitle: string } }) {
   return (
     <div className="relative mx-auto max-w-[440px]">
       <div aria-hidden className="gh2-arch-frame" />
@@ -213,8 +213,8 @@ function AboutArchPanel() {
       >
         <Globe2 className="size-5 shrink-0 text-[var(--color-brand-accent)]" strokeWidth={1.75} aria-hidden />
         <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">5 European countries</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">Ireland, Portugal & more</span>
+          <span className="block text-[13px] font-bold leading-tight text-white">{locale.float1_title}</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">{locale.float1_subtitle}</span>
         </span>
       </div>
 
@@ -230,8 +230,8 @@ function AboutArchPanel() {
           <BadgeCheck className="size-4" strokeWidth={2} aria-hidden />
         </span>
         <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">Verified doctors</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">Locally licensed per country</span>
+          <span className="block text-[13px] font-bold leading-tight text-white">{locale.float2_title}</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">{locale.float2_subtitle}</span>
         </span>
       </div>
 
@@ -247,8 +247,8 @@ function AboutArchPanel() {
           <Users className="size-4" strokeWidth={2} aria-hidden />
         </span>
         <span className="min-w-0">
-          <span className="block text-[13px] font-bold leading-tight text-white">No waiting rooms</span>
-          <span className="block text-[11.5px] leading-tight text-white/55">Medicine anytime, anywhere</span>
+          <span className="block text-[13px] font-bold leading-tight text-white">{locale.float3_title}</span>
+          <span className="block text-[11.5px] leading-tight text-white/55">{locale.float3_subtitle}</span>
         </span>
       </div>
     </div>

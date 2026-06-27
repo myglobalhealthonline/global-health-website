@@ -135,7 +135,20 @@
     "clearFilters": "Clear all filters",
     "viewProfile": "View profile",
     "bookAppointment": "Book Consultation",
-    "pickTime": "Pick a time"
+    "pickTime": "Pick a time",
+    "viewDoctors": "View Doctors",
+    "trustCard1Title": "Licensed in {country}",
+    "trustCard1Subtitle": "Fully verified clinicians",
+    "trustCard2Title": "4.9 patient rating",
+    "trustCard2Subtitle": "From 2,000+ reviews",
+    "trustCard3Title": "Same-day availability",
+    "trustCard3Subtitle": "Appointments today",
+    "floatCard1Title": "Available today",
+    "floatCard1Subtitle": "Most appointments in 24 hours",
+    "floatCard2Title": "Verified clinicians",
+    "floatCard2Subtitle": "Identity & license verification",
+    "floatCard3Title": "Online consultation",
+    "floatCard3Subtitle": "Private, secure & convenient"
   },
   "cookie": {
     "title": "Cookie consent",
@@ -242,7 +255,17 @@
     "pickTime": "Pick a time",
     "noServicesAssigned": "No bookable services assigned yet.",
     "notSetupForBookings": "{name} isn't currently set up for online bookings in {country}.",
-    "browseOtherClinicians": "Browse other clinicians"
+    "browseOtherClinicians": "Browse other clinicians",
+    "backToTeam": "Back to {country} team",
+    "doctorProfileLabel": "Doctor Profile",
+    "registeredIn": "Registered in {country}",
+    "onlineConsultAvailable": "Online consultation available",
+    "verifiedProfile": "Verified profile",
+    "verifyRegistration": "Verify registration",
+    "primaryCareConsults": "Primary care consultations",
+    "languagesLabel": "Languages",
+    "availabilityLabel": "Availability",
+    "onlineAppointments": "Online appointments"
   },
   "bookingForm": {
     "pickDate": "Pick a date",
