@@ -26,28 +26,36 @@ export default async function Page() {
     <GH2AuthShell
       activeTab="login"
       eyebrow="Secure access"
-      title="Manage care with"
-      accent="confidence."
-      body="Sign in to continue booking, reviewing consultations, or managing the clinical network."
+      title="Your care, always"
+      accent="available."
+      body="Consult doctors, review your history, and manage appointments — all in one place."
     >
-      <h1 className="text-[clamp(1.6rem,2.5vw,2rem)] font-extrabold tracking-[-0.03em] text-[var(--color-text-primary)]">
-        {loginI18n.title}
-      </h1>
-      <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-muted)]">
-        Sessions are secured with httpOnly cookies and role-aware redirects.
-      </p>
+      <div>
+        <h1
+          className="font-extrabold tracking-[-0.03em]"
+          style={{ fontSize: "clamp(1.5rem,2.5vw,1.875rem)", color: "var(--color-text-primary)" }}
+        >
+          Welcome back
+        </h1>
+        <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+          Sign in to continue to your account.
+        </p>
+      </div>
+
       <div className="mt-7">
         <Suspense fallback={<LoginFormFallback i18n={loginI18n} />}>
           <LoginForm i18n={loginI18n} />
         </Suspense>
       </div>
-      <p className="mt-8 text-center text-sm text-[var(--color-text-muted)]">
-        Don&apos;t have an account?{" "}
+
+      <p className="mt-7 text-center text-sm" style={{ color: "var(--color-text-muted)" }}>
+        No account yet?{" "}
         <a
           href="/register"
-          className="font-semibold text-[var(--color-brand-primary)] underline-offset-4 hover:underline"
+          className="font-semibold underline-offset-4 hover:underline"
+          style={{ color: "var(--color-brand-primary)" }}
         >
-          Create one
+          Create one free
         </a>
       </p>
     </GH2AuthShell>

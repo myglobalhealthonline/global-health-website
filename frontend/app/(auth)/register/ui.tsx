@@ -108,7 +108,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-7 grid gap-5">
+    <form onSubmit={onSubmit} className="mt-7 grid gap-5" suppressHydrationWarning>
       <div className="grid gap-2">
         <label htmlFor="register-name" className="gh-field-label">
           {i18n.fullNameLabel}
@@ -175,13 +175,22 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
         </p>
       </div>
 
-      <p className="text-sm text-[var(--color-text-muted)]">
-        {i18n.termsNotice}
+      <p className="rounded-xl px-4 py-3 text-[12px] leading-relaxed" style={{ background: "var(--color-background-soft)", color: "var(--color-text-muted)" }}>
+        By continuing, you agree to our{" "}
+        <a href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>Terms</a>
+        {" "}and{" "}
+        <a href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>Privacy Policy</a>.
+        Your health data stays private.
       </p>
 
-      <button type="submit" className="gh2-btn-lime mt-1 w-full justify-center disabled:opacity-60" disabled={loading}>
-        {loading ? i18n.creating : i18n.createAccount}
-      </button>
+      <div
+        className="pt-1"
+        style={{ borderTop: "1px solid var(--color-border)" }}
+      >
+        <button type="submit" className="gh2-btn-lime w-full justify-center disabled:opacity-60" disabled={loading} style={{ width: "100%" }}>
+          {loading ? i18n.creating : i18n.createAccount}
+        </button>
+      </div>
 
       {message ? (
         <p

@@ -20,16 +20,21 @@ export default async function Page() {
     <GH2AuthShell
       activeTab="register"
       eyebrow="Patient access"
-      title="Create your"
-      accent="account."
-      body="Register to book consultations, keep receipts together, and manage patient requests securely."
+      title="Healthcare made"
+      accent="effortless."
+      body="Book consultations, receive prescriptions, and manage your family's health — all in one place."
     >
-      <h1 className="text-[clamp(1.6rem,2.5vw,2rem)] font-extrabold tracking-[-0.03em] text-[var(--color-text-primary)]">
-        {registerI18n.title}
-      </h1>
-      <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-muted)]">
-        Use an email you can access. Booking confirmations and receipts are sent there.
-      </p>
+      <div>
+        <h1
+          className="font-extrabold tracking-[-0.03em]"
+          style={{ fontSize: "clamp(1.5rem,2.5vw,1.875rem)", color: "var(--color-text-primary)" }}
+        >
+          Create your account
+        </h1>
+        <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+          Free to join. Confirmations and receipts go to your email.
+        </p>
+      </div>
       <Suspense fallback={<RegisterFormFallback i18n={registerI18n} />}>
         <RegisterForm i18n={registerI18n} />
       </Suspense>

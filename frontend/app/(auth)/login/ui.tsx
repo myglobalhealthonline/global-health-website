@@ -123,7 +123,8 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
           </label>
           <Link
             href="/forgot-password"
-            className="text-xs font-semibold text-[var(--color-brand-primary)] hover:underline"
+            className="text-xs font-semibold underline-offset-4 hover:underline"
+            style={{ color: "var(--color-brand-primary)" }}
           >
             {i18n.forgotPassword}
           </Link>
@@ -149,19 +150,31 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
         </div>
       </div>
 
-      <label className="flex items-center gap-2 text-[13px] text-[var(--color-text-body)]">
-        <input
-          type="checkbox"
-          name="remember"
-          defaultChecked
-          className={`${styles.rememberCheckbox} size-4`}
-        />
-        {i18n.rememberMe}
-      </label>
+      <div className="flex items-center justify-between">
+        <label className="flex cursor-pointer items-center gap-2 text-[13px] text-[var(--color-text-body)]">
+          <input
+            type="checkbox"
+            name="remember"
+            defaultChecked
+            className={`${styles.rememberCheckbox} size-4`}
+          />
+          {i18n.rememberMe}
+        </label>
+      </div>
 
-      <button type="submit" className="gh2-btn-lime mt-1 w-full justify-center disabled:opacity-60" disabled={loading}>
-        {loading ? i18n.signingIn : i18n.signIn}
-      </button>
+      <div
+        className="pt-1"
+        style={{ borderTop: "1px solid var(--color-border)" }}
+      >
+        <button
+          type="submit"
+          className="gh2-btn-lime w-full justify-center disabled:opacity-60"
+          disabled={loading}
+          style={{ width: "100%" }}
+        >
+          {loading ? i18n.signingIn : i18n.signIn}
+        </button>
+      </div>
 
       {message ? (
         <p
