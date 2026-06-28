@@ -501,6 +501,7 @@ export default async function ServiceDetailPage({
                     whatsappNumber={d.whatsappNumber}
                     bio={d.bio ?? ""}
                     imageSrc={d.imageSrc ?? null}
+                    country={country}
                     href={`/${country}/${lang}/doctors/${d.slug}`}
                     bookingHref={buildBookHref({
                       country,
