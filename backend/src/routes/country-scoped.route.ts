@@ -11,7 +11,6 @@ import {
   listSpecialtiesByCountry,
 } from "../modules/services/services.service.js";
 import { listHealthTestsByCountry } from "../modules/health-tests/health-tests.service.js";
-import { listPartnersByCountry } from "../modules/partners/partners.service.js";
 import { listPublicPlansByCountry } from "../modules/plans/public-plans.service.js";
 import { getPublicCountryByCode } from "../modules/countries/countries.service.js";
 import {
@@ -212,21 +211,6 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
       return okResponse({ plans: result.plans });
     } catch (error) {
       return handleError(app, reply, error, "Unexpected plans error");
-    }
-  });
-
-  app.get("/api/countries/:countryCode/partners", async (request, reply) => {
-    applyPublicCache(reply);
-    const params = countryParamsSchema.safeParse(request.params);
-    if (!params.success) {
-      return reply.status(400).send(errorResponse("Invalid country code", params.error.flatten()));
-    }
-    try {
-      if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
-      const partners = await listPartnersByCountry(params.data.countryCode);
-      return okResponse(partners);
-    } catch (error) {
-      return handleError(app, reply, error, "Unexpected partners error");
     }
   });
 

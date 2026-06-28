@@ -75,7 +75,6 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     { href: "/admin/country-features", label: "Pages" },
     { href: "/admin/pages", label: "Page content" },
     { href: "/admin/footer", label: "Footer" },
-    { href: "/admin/partners", label: "Partners & badges" },
     { href: "/admin/services", label: "Services" },
     { href: "/admin/general-consultations", label: "General consultations" },
     { href: "/admin/specialist-consultations", label: "Specialist consultations" },
