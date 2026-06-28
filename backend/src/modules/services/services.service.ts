@@ -186,7 +186,6 @@ export class SpecialtyNotFoundError extends Error {
 
 const adminServiceInclude = {
   country: { select: { id: true, code: true, name: true } },
-  specialty: true,
   assets: {
     where: { isActive: true, kind: "IMAGE" },
     orderBy: { createdAt: "asc" },
@@ -232,7 +231,6 @@ export async function listServices() {
       orderBy: [{ country: { name: "asc" } }, { kind: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
       include: {
         country: true,
-        specialty: true,
         assets: {
           where: { isActive: true, kind: "IMAGE" },
           orderBy: { createdAt: "asc" },
@@ -262,7 +260,6 @@ export async function listServicesByCountry(
         country: {
           select: { id: true, code: true, slug: true, name: true, defaultLocale: true },
         },
-        specialty: true,
         assets: {
           where: { isActive: true, kind: "IMAGE" },
           orderBy: { createdAt: "asc" },
@@ -298,20 +295,6 @@ export async function listSpecialtiesByCountry(countryCode: string, locale?: Loc
         country: {
           select: { id: true, code: true, slug: true, name: true, defaultLocale: true },
         },
-        primaryService: {
-          select: {
-            id: true,
-            slug: true,
-            name: true,
-            summary: true,
-            kind: true,
-            durationMinutes: true,
-            basePriceCents: true,
-            currencyCode: true,
-            legacyPath: true,
-            isActive: true,
-          },
-        },
         translations: { select: specialtyTranslationSelect },
       },
     });
@@ -334,36 +317,6 @@ export async function listSpecialties() {
       orderBy: [{ country: { name: "asc" } }, { sortOrder: "asc" }, { name: "asc" }],
       include: {
         country: true,
-        primaryService: {
-          select: {
-            id: true,
-            slug: true,
-            name: true,
-            summary: true,
-            kind: true,
-            durationMinutes: true,
-            basePriceCents: true,
-            currencyCode: true,
-            legacyPath: true,
-            isActive: true,
-          },
-        },
-        services: {
-          where: { isActive: true, kind: ServiceKind.SPECIALIST },
-          orderBy: [{ sortOrder: "asc" }, { name: "asc" }, { createdAt: "asc" }],
-          select: {
-            id: true,
-            slug: true,
-            name: true,
-            summary: true,
-            kind: true,
-            durationMinutes: true,
-            basePriceCents: true,
-            currencyCode: true,
-            legacyPath: true,
-            isActive: true,
-          },
-        },
         assets: {
           where: { isActive: true, kind: "IMAGE" },
           orderBy: { createdAt: "asc" },
@@ -371,46 +324,13 @@ export async function listSpecialties() {
         },
       },
     });
-    return items.map((item) => ({
-      ...item,
-      primaryService: item.primaryService?.isActive ? item.primaryService : item.services[0] ?? null,
-    }));
+    return items;
   } catch (error) {
     throw normalizeDbError(error, "Specialties data is unavailable");
   }
 }
 
 const adminSpecialtyInclude = {
-  primaryService: {
-    select: {
-      id: true,
-      slug: true,
-      name: true,
-      summary: true,
-      kind: true,
-      durationMinutes: true,
-      basePriceCents: true,
-      currencyCode: true,
-      legacyPath: true,
-      isActive: true,
-    },
-  },
-  services: {
-    where: { isActive: true, kind: ServiceKind.SPECIALIST },
-    orderBy: [{ sortOrder: "asc" }, { name: "asc" }, { createdAt: "asc" }],
-    select: {
-      id: true,
-      slug: true,
-      name: true,
-      summary: true,
-      kind: true,
-      durationMinutes: true,
-      basePriceCents: true,
-      currencyCode: true,
-      legacyPath: true,
-      isActive: true,
-    },
-  },
   assets: {
     where: { isActive: true, kind: "IMAGE" },
     orderBy: { createdAt: "asc" },
@@ -467,40 +387,14 @@ async function assertCountryExists(countryId: string): Promise<void> {
   if (!row) throw new ServiceCountryNotFoundError();
 }
 
-async function assertSpecialtyForCountry(specialtyId: string, countryId: string): Promise<void> {
-  const row = await prisma.specialty.findUnique({
-    where: { id: specialtyId },
-    select: { id: true, countryId: true },
-  });
-  if (!row) {
-    throw new ServiceSpecialtyInvalidError("Specialty not found");
-  }
-  if (row.countryId !== countryId) {
-    throw new ServiceSpecialtyInvalidError();
-  }
-}
-
-function assertServiceKindForSpecialty(kind: ServiceKind, specialtyId: string | null | undefined): void {
-  if (kind === ServiceKind.SPECIALIST && !specialtyId) {
-    throw new ServiceKindInvalidError("Specialist services require a specialty");
-  }
-  if (kind !== ServiceKind.SPECIALIST && specialtyId) {
-    throw new ServiceKindInvalidError("Only specialist services can be linked to a specialty");
-  }
-}
-
 export async function listSpecialtiesForAdminCountry(countryId: string) {
   await assertCountryExists(countryId);
   try {
-    const items = await prisma.specialty.findMany({
+    return await prisma.specialty.findMany({
       where: { countryId },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
       include: adminSpecialtyInclude,
     });
-    return items.map((item) => ({
-      ...item,
-      primaryService: item.primaryService?.isActive ? item.primaryService : item.services[0] ?? null,
-    }));
   } catch (error) {
     throw normalizeDbError(error, "Specialties data is unavailable");
   }
@@ -513,10 +407,7 @@ export async function getAdminSpecialtyById(id: string) {
       include: adminSpecialtyInclude,
     });
     if (!record) return null;
-    return {
-      ...record,
-      primaryService: record.primaryService?.isActive ? record.primaryService : record.services[0] ?? null,
-    };
+    return record;
   } catch (error) {
     throw normalizeDbError(error, "Specialty data is unavailable");
   }
@@ -546,14 +437,10 @@ export async function createAdminSpecialty(input: AdminSpecialtyCreateBody) {
     if (input.translations !== undefined) {
       await upsertSpecialtyTranslations(specialty.id, specialty.countryId, input.translations);
     }
-    const record = await prisma.specialty.findUniqueOrThrow({
+    return await prisma.specialty.findUniqueOrThrow({
       where: { id: specialty.id },
       include: adminSpecialtyInclude,
     });
-    return {
-      ...record,
-      primaryService: record.primaryService?.isActive ? record.primaryService : record.services[0] ?? null,
-    };
   } catch (error) {
     throw normalizeDbError(error, "Specialties data is unavailable");
   }
@@ -590,14 +477,10 @@ export async function updateAdminSpecialty(id: string, body: AdminSpecialtyUpdat
     if (body.translations !== undefined) {
       await upsertSpecialtyTranslations(id, existing.countryId, body.translations);
     }
-    const record = await prisma.specialty.findUniqueOrThrow({
+    return await prisma.specialty.findUniqueOrThrow({
       where: { id: specialty.id },
       include: adminSpecialtyInclude,
     });
-    return {
-      ...record,
-      primaryService: record.primaryService?.isActive ? record.primaryService : record.services[0] ?? null,
-    };
   } catch (error) {
     throw normalizeDbError(error, "Specialties data is unavailable");
   }
@@ -629,10 +512,7 @@ export async function purgeAdminSpecialty(id: string): Promise<boolean> {
   if (!existing) return false;
 
   try {
-    await prisma.$transaction(async (tx) => {
-      await tx.service.deleteMany({ where: { specialtyId: id } });
-      await tx.specialty.delete({ where: { id } });
-    });
+    await prisma.specialty.delete({ where: { id } });
     return true;
   } catch (error) {
     throw normalizeDbError(error, "Specialties data is unavailable");
@@ -650,9 +530,6 @@ function buildAdminServiceWhere(query: AdminServicesQuery): Prisma.ServiceWhereI
   }
   if (query.countryCode) {
     where.country = { code: query.countryCode };
-  }
-  if (query.specialtyId) {
-    where.specialtyId = query.specialtyId;
   }
   if (query.isActive !== undefined) {
     where.isActive = query.isActive;
@@ -784,10 +661,6 @@ export async function getAdminServiceById(id: string): Promise<AdminServiceRecor
 
 export async function createAdminService(input: AdminServiceCreateBody): Promise<AdminServiceRecord> {
   await assertCountryExists(input.countryId);
-  assertServiceKindForSpecialty(input.kind, input.specialtyId);
-  if (input.specialtyId) {
-    await assertSpecialtyForCountry(input.specialtyId, input.countryId);
-  }
 
   try {
     const service = await prisma.service.create({
@@ -807,7 +680,6 @@ export async function createAdminService(input: AdminServiceCreateBody): Promise
         ...(input.ctaLabel !== undefined && { ctaLabel: input.ctaLabel }),
         ...(input.legacyPath !== undefined && { legacyPath: input.legacyPath }),
         ...(input.sortOrder !== undefined && { sortOrder: input.sortOrder }),
-        ...(input.specialtyId !== undefined && { specialtyId: input.specialtyId }),
         ...(input.durationMinutes !== undefined && { durationMinutes: input.durationMinutes }),
         ...(input.basePriceCents !== undefined && { basePriceCents: input.basePriceCents }),
         ...(input.currencyCode !== undefined && { currencyCode: input.currencyCode }),
@@ -850,22 +722,13 @@ export async function updateAdminService(
 ): Promise<AdminServiceRecord | null> {
   const existing = await prisma.service.findUnique({
     where: { id },
-    select: { countryId: true, specialtyId: true, kind: true },
+    select: { countryId: true, kind: true },
   });
   if (!existing) return null;
 
   const nextCountryId = body.countryId ?? existing.countryId;
-  const nextKind = body.kind ?? existing.kind;
   if (body.countryId !== undefined) {
     await assertCountryExists(body.countryId);
-  }
-
-  const effectiveSpecialtyId =
-    body.specialtyId !== undefined ? body.specialtyId : existing.specialtyId;
-
-  assertServiceKindForSpecialty(nextKind, effectiveSpecialtyId);
-  if (effectiveSpecialtyId) {
-    await assertSpecialtyForCountry(effectiveSpecialtyId, nextCountryId);
   }
 
   try {
@@ -887,7 +750,6 @@ export async function updateAdminService(
         ...(body.ctaLabel !== undefined && { ctaLabel: body.ctaLabel }),
         ...(body.legacyPath !== undefined && { legacyPath: body.legacyPath }),
         ...(body.sortOrder !== undefined && { sortOrder: body.sortOrder }),
-        ...(body.specialtyId !== undefined && { specialtyId: body.specialtyId }),
         ...(body.durationMinutes !== undefined && { durationMinutes: body.durationMinutes }),
         ...(body.basePriceCents !== undefined && { basePriceCents: body.basePriceCents }),
         ...(body.currencyCode !== undefined && { currencyCode: body.currencyCode }),
@@ -973,7 +835,6 @@ export async function getPublicServiceBySlug(
         country: {
           select: { id: true, code: true, slug: true, name: true, defaultLocale: true },
         },
-        specialty: true,
         assets: {
           where: { isActive: true, kind: "IMAGE" },
           orderBy: { createdAt: "asc" },

@@ -111,7 +111,6 @@ export default async function AdminServiceDetailPage({
   }
   const kind = readServiceKind(messages.kind, service.kind);
   const meta = SERVICE_KIND_META[kind];
-  const showsCategory = kind === "SPECIALIST";
 
   async function deactivateServiceAction() {
     "use server";
@@ -204,12 +203,6 @@ export default async function AdminServiceDetailPage({
                 value={`${service.country.name} (${service.country.code.toUpperCase()})`}
               />
               <FieldRow label="Type" value={meta.singularLabel} />
-              {showsCategory ? (
-                <FieldRow
-                  label="Category"
-                  value={service.specialty?.name ?? meta.emptySpecialtyLabel}
-                />
-              ) : null}
               <FieldRow label="Sort order" value={String(service.sortOrder)} />
               <FieldRow
                 label="Duration"

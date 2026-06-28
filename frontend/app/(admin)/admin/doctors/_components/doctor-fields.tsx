@@ -85,23 +85,23 @@ export function DoctorFields({
           </span>
         </label>
 
-        {/* Categories — checkbox grid (multi-select). Each checked box
-            submits its category id under the `specialtyIds` form key,
+        {/* Specialties — checkbox grid (multi-select). Each checked box
+            submits its specialty id under the `specialtyIds` form key,
             which `parseDoctorFormData` reads via
-            `formData.getAll("specialtyIds")`. */}
+            `formData.getAll("specialtyIds")`. Drives the public doctor
+            specialty tags + filter. */}
         <fieldset className="flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
           <legend className="px-1 text-sm font-semibold text-[var(--color-text-primary)]">
-            Categories
+            Specialties
           </legend>
           <p className="text-xs text-[var(--color-text-muted)]">
-            Tick every category this doctor is eligible to consult on. The
+            Tick every specialty this doctor is eligible to consult on. The
             list is filtered to the country picked above — switch country
-            to load its categories.
+            to load its specialties.
           </p>
           {specialties.length === 0 ? (
             <p className="text-sm text-[var(--color-text-muted)]">
-              No categories exist for this country yet. Create one under{" "}
-              <span className="font-mono">/admin/specialties</span>.
+              No specialties exist for this country yet.
             </p>
           ) : (
             <div className="grid gap-2 sm:grid-cols-2">

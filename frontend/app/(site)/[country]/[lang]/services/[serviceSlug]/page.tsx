@@ -280,7 +280,7 @@ export default async function ServiceDetailPage({
 
               {/* Eyebrow */}
               <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.24em]" style={{ color: "var(--color-brand-accent)" }}>
-                {detail.specialtyName ?? (detail.kind === "SPECIALIST" ? t.eyebrowSpecialist : t.eyebrowOnline)}
+                {detail.kind === "SPECIALIST" ? t.eyebrowSpecialist : t.eyebrowOnline}
               </p>
 
               {/* Title */}

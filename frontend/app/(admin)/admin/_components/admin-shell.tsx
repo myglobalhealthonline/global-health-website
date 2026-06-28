@@ -101,7 +101,6 @@ const HREF_TO_FEATURE_KEY: Record<string, string> = {
   "/admin/country-content": "country-content",
   "/admin/pages": "pages",
   "/admin/footer": "footer",
-  "/admin/services": "services",
   "/admin/general-consultations": "general-consultations",
   "/admin/specialist-consultations": "specialist-consultations",
   "/admin/online-prescriptions": "online-prescriptions",
@@ -141,7 +140,6 @@ const LABEL_OVERRIDES: Record<string, string> = {
   "/admin/specialist-consultations": "Specialist consultations",
   "/admin/online-prescriptions": "Prescriptions",
   "/admin/health-tests": "Health tests",
-  "/admin/specialties": "Categories",
 };
 
 function partitionSections(

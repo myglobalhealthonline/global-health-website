@@ -33,7 +33,6 @@ type ParsedServiceBody = {
   translations: ParsedServiceTranslation[];
   legacyPath: string;
   sortOrder: number | undefined;
-  specialtyId: string | null;
   durationMinutes: number | undefined;
   basePriceCents: number | undefined;
   currencyCode: string;
@@ -168,7 +167,6 @@ export function parseServiceBodyFromForm(
   formData: FormData,
   defaultLocale: string,
 ): ParseServiceFormResult {
-  const specialtyRaw = String(formData.get("specialtyId") ?? "").trim();
   const priceRaw = String(formData.get("basePrice") ?? "").trim();
   const upperDefault = defaultLocale.toUpperCase();
 
@@ -195,7 +193,6 @@ export function parseServiceBodyFromForm(
         translations,
         legacyPath: String(formData.get("legacyPath") ?? "").trim(),
         sortOrder: optionalInt(formData, "sortOrder"),
-        specialtyId: specialtyRaw === "" ? null : specialtyRaw,
         durationMinutes: optionalInt(formData, "durationMinutes"),
         basePriceCents: parsePriceToCents(priceRaw),
         currencyCode: String(formData.get("currencyCode") ?? "").trim(),

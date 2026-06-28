@@ -6,7 +6,7 @@ import { Edit3, Eye, Plus } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminServices,
-  fetchAdminSpecialties,
+  patchAdminService,
   patchAdminServicesReorder,
   purgeAdminService,
 } from "@/lib/admin/admin-api";
@@ -26,7 +26,6 @@ import {
   Btn,
   IconBtn,
   PageHeader,
-  Pill,
   Td,
   Th,
   Thead,
@@ -103,7 +102,6 @@ export default async function AdminServicesPage({
     pageSize: spRead(sp, "pageSize"),
     kind,
     countryId: scopedCountryId(spRead(sp, "countryId"), activeCountry),
-    specialtyId: spRead(sp, "specialtyId"),
     isActive: spRead(sp, "isActive"),
     search: spRead(sp, "search"),
   };
@@ -140,19 +138,10 @@ export default async function AdminServicesPage({
   const { page, pageSize, total, totalPages } = pagination;
   const countries = countriesResult.data.countries;
 
-  let specialtyOptions: { id: string; name: string; slug: string }[] = [];
   const filterCountryId = filters.countryId;
-  if (kind === "SPECIALIST" && filterCountryId) {
-    const spRes = await fetchAdminSpecialties(filterCountryId);
-    if (spRes.ok) {
-      specialtyOptions = spRes.data.specialties;
-    }
-  }
-
   const statusFilter = filters.isActive ?? "";
   const successMessage = spRead(sp, "success");
   const errorMessage = spRead(sp, "error");
-  const showsCategory = kind === "SPECIALIST";
   const filterCountry = filterCountryId
     ? countries.find((c) => c.id === filterCountryId) ?? null
     : null;
@@ -168,6 +157,22 @@ export default async function AdminServicesPage({
     revalidatePath("/admin/services");
     revalidatePath(basePath);
     redirect(`${basePath}?success=Record%20deleted`);
+  }
+
+  async function toggleServiceAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const id = String(formData.get("id") ?? "").trim();
+    const next = String(formData.get("next") ?? "") === "true";
+    const result = await patchAdminService(id, { isActive: next });
+    if (!result.ok) {
+      redirect(`${basePath}?error=${encodeURIComponent(result.message)}`);
+    }
+    revalidatePath("/admin/services");
+    revalidatePath(basePath);
+    redirect(
+      `${basePath}?success=${encodeURIComponent(next ? "Service activated" : "Service deactivated")}`,
+    );
   }
 
   async function reorderServicesAction(formData: FormData) {
@@ -305,24 +310,6 @@ export default async function AdminServicesPage({
                 ))}
               </select>
             </label>
-            {kind === "SPECIALIST" ? (
-              <label className="flex min-w-0 flex-col gap-1.5">
-                <span className="gh-field-label">Category</span>
-                <select
-                  name="specialtyId"
-                  defaultValue={filters.specialtyId ?? ""}
-                  className="gh-select min-w-0"
-                  disabled={!filterCountryId}
-                >
-                  <option value="">Any</option>
-                  {specialtyOptions.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            ) : null}
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Status</span>
               <select
@@ -375,11 +362,10 @@ export default async function AdminServicesPage({
               <Th>Title</Th>
               <Th>Slug</Th>
               <Th>Country</Th>
-              {showsCategory ? <Th>Category</Th> : null}
               <Th align="right">Price</Th>
               <Th align="right">Duration</Th>
               <Th align="right">Order</Th>
-              <Th>Status</Th>
+              <Th>Active</Th>
               <Th align="right" style={{ width: 120 }}>
                 Actions
               </Th>
@@ -405,17 +391,6 @@ export default async function AdminServicesPage({
                       </span>
                     </span>
                   </Td>
-                  {showsCategory ? (
-                    <Td>
-                      <span className="text-[13px] text-[var(--color-text-body)]">
-                        {service.specialty?.name ?? (
-                          <span className="text-[var(--color-text-placeholder)]">
-                            {meta.emptySpecialtyLabel}
-                          </span>
-                        )}
-                      </span>
-                    </Td>
-                  ) : null}
                   <Td align="right">
                     <span className="font-bold text-[var(--color-text-primary)]">
                       {formatMoney(service.basePriceCents, service.currencyCode)}
@@ -434,9 +409,60 @@ export default async function AdminServicesPage({
                     </span>
                   </Td>
                   <Td>
-                    <Pill tone={service.isActive ? "published" : "draft"}>
-                      {service.isActive ? "Published" : "Draft"}
-                    </Pill>
+                    <form action={toggleServiceAction} className="inline-flex">
+                      <input type="hidden" name="id" value={service.id} />
+                      <input
+                        type="hidden"
+                        name="next"
+                        value={service.isActive ? "false" : "true"}
+                      />
+                      <button
+                        type="submit"
+                        role="switch"
+                        aria-checked={service.isActive}
+                        aria-label={`${service.isActive ? "Deactivate" : "Activate"} ${service.name}`}
+                        title={service.isActive ? "Active — click to deactivate" : "Inactive — click to activate"}
+                        className="inline-flex items-center gap-2"
+                        style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                      >
+                        <span
+                          aria-hidden
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            width: 38,
+                            height: 22,
+                            borderRadius: 999,
+                            padding: 2,
+                            justifyContent: service.isActive ? "flex-end" : "flex-start",
+                            background: service.isActive
+                              ? "var(--color-brand-primary)"
+                              : "var(--color-border-strong, var(--color-border))",
+                            transition: "background 150ms",
+                          }}
+                        >
+                          <span
+                            style={{
+                              width: 18,
+                              height: 18,
+                              borderRadius: 999,
+                              background: "#fff",
+                              boxShadow: "var(--shadow-soft)",
+                            }}
+                          />
+                        </span>
+                        <span
+                          className="text-[12px] font-semibold"
+                          style={{
+                            color: service.isActive
+                              ? "var(--color-brand-primary)"
+                              : "var(--color-text-muted)",
+                          }}
+                        >
+                          {service.isActive ? "Active" : "Inactive"}
+                        </span>
+                      </button>
+                    </form>
                   </Td>
                   <Td align="right">
                     <div className="flex justify-end gap-1.5">

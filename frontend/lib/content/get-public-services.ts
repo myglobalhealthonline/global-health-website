@@ -22,7 +22,6 @@ export type PublicServiceRecord = {
   durationMinutes: number | null;
   basePriceCents: number | null;
   currencyCode: string | null;
-  specialtyId: string | null;
   imagePath: string | null;
   editorialChecklist: Record<string, unknown> | null;
 };
@@ -76,7 +75,6 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
       : null;
   const currencyCode =
     typeof r.currencyCode === "string" && r.currencyCode.length > 0 ? r.currencyCode : null;
-  const specialtyId = typeof r.specialtyId === "string" ? r.specialtyId : null;
   const editorialChecklist =
     r.editorialChecklist && typeof r.editorialChecklist === "object"
       ? (r.editorialChecklist as Record<string, unknown>)
@@ -106,7 +104,6 @@ function normalizeService(row: unknown): PublicServiceRecord | null {
     durationMinutes,
     basePriceCents,
     currencyCode,
-    specialtyId,
     imagePath,
     editorialChecklist,
   };

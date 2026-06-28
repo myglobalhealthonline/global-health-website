@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { AdminCountryDto, AdminServiceDto, AdminServiceKind, AdminSpecialtyOptionDto } from "@/lib/admin/admin-api";
+import type { AdminCountryDto, AdminServiceDto, AdminServiceKind } from "@/lib/admin/admin-api";
 import { ManagedImageField } from "../../_components/managed-image-field";
 import { MultiImageField } from "../../_components/multi-image-field";
 import { formatServicePriceInput } from "@/lib/admin/service-form-parse";
@@ -8,7 +8,6 @@ import { ServiceTranslationTabs } from "./service-translation-tabs";
 
 type Props = {
   countries: Pick<AdminCountryDto, "id" | "code" | "name">[];
-  specialties: AdminSpecialtyOptionDto[];
   kind: AdminServiceKind;
   initial?: AdminServiceDto | null;
   pinnedCountryId?: string;
@@ -32,7 +31,6 @@ type Props = {
 
 export function ServiceFields({
   countries,
-  specialties,
   kind,
   initial,
   pinnedCountryId,
@@ -44,7 +42,6 @@ export function ServiceFields({
   const pinId = pinnedCountryId ?? (countryLocked ? initial?.countryId : undefined);
   const pinnedMeta = pinId ? countries.find((c) => c.id === pinId) : undefined;
   const meta = SERVICE_KIND_META[kind];
-  const usesSpecialty = kind === "SPECIALIST";
   const assignedDoctorIds = new Set(
     (initial?.assignedDoctors ?? []).map((row) => row.doctorId),
   );
@@ -106,22 +103,6 @@ export function ServiceFields({
           />
         </label>
       </div>
-
-      {usesSpecialty ? (
-        <label className="flex flex-col gap-2">
-          <span className="gh-field-label">Category</span>
-          <select name="specialtyId" className="gh-select min-w-0" defaultValue={initial?.specialtyId ?? ""} required>
-            <option value="">Select category</option>
-            {specialties.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name} ({s.slug}){!s.active ? " - inactive" : ""}
-              </option>
-            ))}
-          </select>
-        </label>
-      ) : (
-        <input type="hidden" name="specialtyId" value="" />
-      )}
 
       <ServiceTranslationTabs
         locales={locales}

@@ -14,7 +14,6 @@ import {
   fetchAdminServiceById,
   fetchAdminServicePeakPricing,
   fetchAdminServices,
-  fetchAdminSpecialties,
   patchAdminService,
   putAdminServicePeakPricing,
 } from "@/lib/admin/admin-api";
@@ -124,10 +123,10 @@ export default async function AdminEditServicePage({
   }
   const kind = readServiceKind(messages.kind, service.kind);
   const meta = SERVICE_KIND_META[kind];
-  const [specialtiesResult, doctorsResult] = await Promise.all([
-    fetchAdminSpecialties(service.countryId),
-    fetchAdminDoctors({ countryId: service.countryId, pageSize: "200" }),
-  ]);
+  const doctorsResult = await fetchAdminDoctors({
+    countryId: service.countryId,
+    pageSize: "200",
+  });
   const doctorOptions = doctorsResult.ok
     ? doctorsResult.data.items.map((d) => ({
         id: d.id,
@@ -137,27 +136,6 @@ export default async function AdminEditServicePage({
         active: d.active,
       }))
     : [];
-
-  if (!specialtiesResult.ok) {
-    return (
-      <>
-        <PageHeader
-          eyebrow="Services"
-          title={`Edit ${meta.singularLabel.toLowerCase()}`}
-          actions={
-            <Btn href={meta.listHref} variant="ghost" iconLeft={<ArrowLeft className="size-3.5" />}>
-              Cancel
-            </Btn>
-          }
-        />
-        <AdminCard>
-          <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
-            Could not load categories: {specialtiesResult.message}
-          </p>
-        </AdminCard>
-      </>
-    );
-  }
 
   const countries = countriesResult.data.countries.map((c) => ({
     id: c.id,
@@ -277,7 +255,6 @@ export default async function AdminEditServicePage({
       translations: raw.translations,
       legacyPath: raw.legacyPath.trim() === "" ? null : raw.legacyPath.trim(),
       sortOrder: raw.sortOrder,
-      ...(raw.specialtyId !== null ? { specialtyId: raw.specialtyId } : {}),
       durationMinutes: raw.durationMinutes,
       basePriceCents: raw.basePriceCents,
       currencyCode: raw.currencyCode.trim() === "" ? null : raw.currencyCode.trim(),
@@ -411,7 +388,6 @@ export default async function AdminEditServicePage({
           <form action={updateServiceAction} className="flex flex-col gap-8">
             <ServiceFields
               countries={countries}
-              specialties={specialtiesResult.data.specialties}
               kind={kind}
               initial={service}
               countryLocked

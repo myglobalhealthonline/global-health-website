@@ -29,7 +29,6 @@ export type DoctorSelectableServiceDto = {
   durationMinutes: number | null;
   basePriceCents: number | null;
   currencyCode: string | null;
-  specialty: { id: string; name: string; slug: string } | null;
   assignment: DoctorServiceAssignmentDto | null;
 };
 
@@ -99,7 +98,6 @@ export async function listDoctorSelectableServices(doctorId: string): Promise<{
           durationMinutes: true,
           basePriceCents: true,
           currencyCode: true,
-          specialty: { select: { id: true, name: true, slug: true } },
         },
       }),
       prisma.serviceDoctor.findMany({
@@ -257,7 +255,6 @@ export type AdminDoctorServiceRowDto = {
     basePriceCents: number | null;
     currencyCode: string | null;
     isActive: boolean;
-    specialty: { id: string; name: string; slug: string } | null;
   };
 };
 
@@ -279,7 +276,6 @@ export async function listAdminDoctorServices(
             basePriceCents: true,
             currencyCode: true,
             isActive: true,
-            specialty: { select: { id: true, name: true, slug: true } },
           },
         },
       },
@@ -353,7 +349,6 @@ export async function adminAssignServiceToDoctor(
             basePriceCents: true,
             currencyCode: true,
             isActive: true,
-            specialty: { select: { id: true, name: true, slug: true } },
           },
         },
       },
@@ -404,7 +399,6 @@ export async function adminUpdateDoctorService(
             basePriceCents: true,
             currencyCode: true,
             isActive: true,
-            specialty: { select: { id: true, name: true, slug: true } },
           },
         },
       },

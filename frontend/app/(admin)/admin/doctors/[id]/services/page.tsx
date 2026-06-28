@@ -203,9 +203,6 @@ export default async function AdminDoctorServicesPage({
                       </p>
                       <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
                         {KIND_LABELS[row.service.kind] ?? row.service.kind}
-                        {row.service.specialty
-                          ? ` · ${row.service.specialty.name}`
-                          : ""}
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
                         <Pill tone={statusTone(row.status)}>{row.status}</Pill>

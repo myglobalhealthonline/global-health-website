@@ -211,9 +211,6 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
                               service.currencyCode,
                             )}
                           </span>
-                          {service.specialty ? (
-                            <span>{service.specialty.name}</span>
-                          ) : null}
                         </span>
                         {isAdminLocked ? (
                           <span className="mt-2 block text-[12px] text-[var(--color-text-muted)]">

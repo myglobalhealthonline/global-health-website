@@ -824,7 +824,6 @@ export type AdminServiceTranslationDto = {
 export type AdminServiceDto = {
   id: string;
   countryId: string;
-  specialtyId: string | null;
   kind: AdminServiceKind;
   slug: string;
   name: string;
@@ -871,19 +870,6 @@ export type AdminServiceDto = {
   createdAt: string;
   updatedAt: string;
   country: { id: string; code: string; name: string };
-  specialty: {
-    id: string;
-    countryId: string;
-    slug: string;
-    name: string;
-    cardSummary: string | null;
-    cardThemeColor: string | null;
-    sortOrder: number;
-    primaryServiceId: string | null;
-    active: boolean;
-    createdAt: string;
-    updatedAt: string;
-  } | null;
   assets: Array<{
     id: string;
     kind: string;
@@ -1526,7 +1512,6 @@ export type AdminDoctorServiceAssignmentDto = {
     basePriceCents: number | null;
     currencyCode: string | null;
     isActive: boolean;
-    specialty: { id: string; name: string; slug: string } | null;
   };
 };
 

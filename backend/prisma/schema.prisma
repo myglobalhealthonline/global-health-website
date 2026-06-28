@@ -642,6 +642,9 @@ model DoctorCountry {
   @@index([doctorId])
 }
 
+/// Doctor specialty taxonomy. Used ONLY to tag doctors (DoctorSpecialty) and
+/// drive the public doctor specialty filter. No longer linked to services —
+/// services are categorised solely by `Service.kind` (GP vs Specialist).
 model Specialty {
   id               String            @id @default(cuid())
   countryId        String
@@ -650,12 +653,9 @@ model Specialty {
   cardSummary      String?
   cardThemeColor   String?
   sortOrder        Int               @default(0)
-  primaryServiceId String?
   active           Boolean           @default(true)
   country          Country           @relation(fields: [countryId], references: [id], onDelete: Cascade)
   doctors          DoctorSpecialty[]
-  services         Service[]         @relation("ServiceSpecialty")
-  primaryService   Service?          @relation("SpecialtyPrimaryService", fields: [primaryServiceId], references: [id], onDelete: SetNull)
   assets           Asset[]
   /// Per-locale CMS content (name, cardSummary). The base columns above
   /// stay as the default-locale copy + final fallback; a translation row
@@ -698,7 +698,6 @@ model DoctorSpecialty {
 model Service {
   id                    String                @id @default(cuid())
   countryId             String
-  specialtyId           String?
   kind                  ServiceKind           @default(GENERAL)
   slug                  String
   name                  String
@@ -728,8 +727,6 @@ model Service {
   consultationSetting   Json?
   bookingSetting        Json?
   country               Country               @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  specialty             Specialty?            @relation("ServiceSpecialty", fields: [specialtyId], references: [id])
-  primaryForSpecialties Specialty[]           @relation("SpecialtyPrimaryService")
   assets                Asset[]
   /// Inverse of `ServiceDoctor.serviceId`. Admin-controlled M:N — which
   /// doctors are bookable for this service.

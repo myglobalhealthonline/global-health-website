@@ -525,7 +525,6 @@ export type DoctorSelectableService = {
   durationMinutes: number | null;
   basePriceCents: number | null;
   currencyCode: string | null;
-  specialty: { id: string; name: string; slug: string } | null;
   assignment: DoctorServiceAssignment | null;
 };
 

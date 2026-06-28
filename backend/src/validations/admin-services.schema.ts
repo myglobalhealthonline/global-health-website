@@ -9,8 +9,6 @@ export const serviceKindSchema = z.enum([
   "HOME_DELIVERY",
 ]);
 
-const specialistOnlyKinds = new Set(["SPECIALIST"]);
-
 /** Lowercase URL segment style: letters, numbers, hyphens (no leading/trailing hyphen). */
 export const serviceSlugSchema = z
   .string()
@@ -72,10 +70,6 @@ export const adminServicesQuerySchema = z.object({
     (v) => (v === "" || v === undefined || v === null ? undefined : v),
     z.string().trim().min(1).max(8).optional(),
   ),
-  specialtyId: z.preprocess(
-    (v) => (v === "" || v === undefined || v === null ? undefined : v),
-    z.string().trim().min(1).optional(),
-  ),
   isActive: z.preprocess((v) => {
     if (v === undefined || v === null || v === "") return undefined;
     if (v === "true" || v === true) return true;
@@ -117,10 +111,6 @@ export const adminSpecialtyCreateBodySchema = z
     cardSummary: nullableTrimmedString(1000),
     cardThemeColor: nullableTrimmedString(40),
     sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
-    primaryServiceId: z.preprocess(
-      (v) => (v === "" || v === undefined || v === null ? null : v),
-      z.string().trim().min(1).nullable(),
-    ),
     imagePath: imagePathFieldSchema.optional(),
     active: z.boolean().optional(),
     translations: z.array(specialtyTranslationEntrySchema).max(6).optional(),
@@ -136,10 +126,6 @@ export const adminSpecialtyUpdateBodySchema = z
     cardSummary: nullableTrimmedString(1000),
     cardThemeColor: nullableTrimmedString(40),
     sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
-    primaryServiceId: z.preprocess(
-      (v) => (v === "" || v === undefined || v === null ? null : v),
-      z.string().trim().min(1).nullable(),
-    ).optional(),
     imagePath: imagePathFieldSchema.optional(),
     active: z.boolean().optional(),
     translations: z.array(specialtyTranslationEntrySchema).max(6).optional(),
@@ -206,10 +192,6 @@ const adminServiceBodyShape = {
   translations: z.array(serviceTranslationEntrySchema).max(6).optional(),
   legacyPath: legacyPathFieldSchema.optional(),
   sortOrder: z.coerce.number().int().min(0).max(9999).optional(),
-  specialtyId: z.preprocess(
-    (v) => (v === "" || v === undefined || v === null ? null : v),
-    z.string().trim().min(1).nullable(),
-  ),
   durationMinutes: positiveIntOrNull,
   basePriceCents: nonNegativeIntOrNull,
   currencyCode: z.preprocess(
@@ -244,31 +226,9 @@ const adminServiceBodyShape = {
   isActive: z.boolean().optional(),
 } satisfies z.ZodRawShape;
 
-function validateServiceKindRules(
-  value: { kind: "GENERAL" | "SPECIALIST" | "PRESCRIPTION" | "HEALTH_TEST" | "HOME_DELIVERY"; specialtyId?: string | null },
-  ctx: z.RefinementCtx,
-) {
-  const needsSpecialty = specialistOnlyKinds.has(value.kind);
-  if (needsSpecialty && !value.specialtyId) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "specialtyId is required for specialist services",
-      path: ["specialtyId"],
-    });
-  }
-  if (!needsSpecialty && value.specialtyId) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "specialtyId is only allowed for specialist services",
-      path: ["specialtyId"],
-    });
-  }
-}
-
 export const adminServiceCreateBodySchema = z
   .object(adminServiceBodyShape)
   .superRefine((value, ctx) => {
-    validateServiceKindRules(value, ctx);
     validateUniqueLocales(value.translations, ctx);
   });
 
@@ -282,14 +242,6 @@ export const adminServiceUpdateBodySchema = z
   .partial()
   .superRefine((value, ctx) => {
     validateUniqueLocales(value.translations, ctx);
-    if (!value.kind) return;
-    validateServiceKindRules(
-      {
-        kind: value.kind,
-        specialtyId: value.specialtyId,
-      },
-      ctx,
-    );
   });
 
 export type AdminServiceUpdateBody = z.infer<typeof adminServiceUpdateBodySchema>;

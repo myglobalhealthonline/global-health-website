@@ -29,7 +29,6 @@ export type CountryServiceCard = {
   durationMinutes: number | null;
   basePriceCents: number | null;
   currencyCode: string | null;
-  specialtyName: string | null;
   imageSrc?: string;
   /** Doctor IDs bookable for this service. Empty array = no assignment
    *  yet; the public consult flow will show "no doctors available". */
@@ -70,7 +69,6 @@ export type CountryServiceDetail = {
   durationMinutes: number | null;
   basePriceCents: number | null;
   currencyCode: string | null;
-  specialtyName: string | null;
   imageSrc: string | null;
   gallery: string[];
   faqs: ServiceFaq[];
@@ -217,7 +215,6 @@ export const getCountryServices = cache(async (
       durationMinutes: typeof r.durationMinutes === "number" ? r.durationMinutes : null,
       basePriceCents: typeof r.basePriceCents === "number" ? r.basePriceCents : null,
       currencyCode: typeof r.currencyCode === "string" ? r.currencyCode : null,
-      specialtyName: readSpecialtyName(r.specialty),
       imageSrc: pickImagePath(row),
       assignedDoctorIds,
     });
@@ -513,7 +510,6 @@ export const getCountryServiceDetail = cache(async (
     durationMinutes: typeof r.durationMinutes === "number" ? r.durationMinutes : null,
     basePriceCents: typeof r.basePriceCents === "number" ? r.basePriceCents : null,
     currencyCode: typeof r.currencyCode === "string" ? r.currencyCode : null,
-    specialtyName: readSpecialtyName(r.specialty),
     imageSrc: pickImagePath(row) ?? null,
     gallery: resolveGallery(r.galleryImagePaths),
     faqs: readFaqs(r.faqs),

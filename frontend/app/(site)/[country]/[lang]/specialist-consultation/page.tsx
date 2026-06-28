@@ -117,9 +117,6 @@ export default async function CountryLangSpecialistConsultationPage({
     buildBookHref({ country: slug, lang, service: services[0]?.slug ?? null });
 
   // Specialist service cards — auto from Service rows where kind=SPECIALIST.
-  // Each card is tagged with its specialty (the category it falls under) via
-  // `audience` — so specialties surface as labels on the consultations rather
-  // than as a separate browse section.
   // Each card links to the booking form WITH `?service=<slug>` so the
   // backend stamps catalogue price + triggers Stripe Checkout.
   const serviceItems = services.map((s) => ({
@@ -131,7 +128,7 @@ export default async function CountryLangSpecialistConsultationPage({
     bookHref: buildBookHref({ country: slug, lang, service: s.slug }),
     bookLabel: c.doctors.bookAppointment,
     serviceType: "specialist" as const,
-    audience: s.specialtyName ?? undefined,
+    audience: undefined,
     duration: formatDuration(s.durationMinutes),
     startingPrice: formatPrice(s.basePriceCents, s.currencyCode),
     imageSrc: s.imageSrc ?? null,
