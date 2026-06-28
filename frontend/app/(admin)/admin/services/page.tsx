@@ -7,7 +7,6 @@ import {
   fetchAdminCountries,
   fetchAdminServices,
   patchAdminService,
-  patchAdminServicesReorder,
   purgeAdminService,
 } from "@/lib/admin/admin-api";
 import { getActiveCountry, scopedCountryId } from "@/lib/admin/admin-scope";
@@ -173,33 +172,6 @@ export default async function AdminServicesPage({
     redirect(
       `${basePath}?success=${encodeURIComponent(next ? "Service activated" : "Service deactivated")}`,
     );
-  }
-
-  async function reorderServicesAction(formData: FormData) {
-    "use server";
-    await requireAdminAction();
-    const raw = String(formData.get("_reorderItems") ?? "");
-    let parsed: Array<{ id: string; sortOrder: number }>;
-    try {
-      parsed = JSON.parse(raw);
-    } catch {
-      redirect(`${basePath}?error=${encodeURIComponent("Invalid sort data")}`);
-    }
-    // Pick up updated values from the form fields named `order_{id}`
-    const items = parsed.map((item) => ({
-      id: item.id,
-      sortOrder: Math.max(
-        0,
-        Math.min(9999, parseInt(String(formData.get(`order_${item.id}`) ?? item.sortOrder), 10) || 0),
-      ),
-    }));
-    const result = await patchAdminServicesReorder(items);
-    if (!result.ok) {
-      redirect(`${basePath}?error=${encodeURIComponent(result.message)}`);
-    }
-    revalidatePath("/admin/services");
-    revalidatePath(basePath);
-    redirect(`${basePath}?success=Sort+order+saved`);
   }
 
   return (
@@ -532,47 +504,6 @@ export default async function AdminServicesPage({
         ) : null}
       </AdminCard>
 
-      {/* Sort-order editor — only shown when scoped to a single country so
-          the list is short enough to edit all at once. */}
-      {filterCountryId && items.length > 0 ? (
-        <AdminCard className="mt-4">
-          <h3 className="text-[15px] font-bold text-[var(--color-text-primary)]">
-            Sort order
-          </h3>
-          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
-            Lower number = appears first. Changes apply to {filterCountry?.name ?? "this country"}.
-          </p>
-          <form action={reorderServicesAction} className="mt-4">
-            <input
-              type="hidden"
-              name="_reorderItems"
-              value={JSON.stringify(items.map((s) => ({ id: s.id, sortOrder: s.sortOrder })))}
-            />
-            <div className="grid gap-2">
-              {items.map((service) => (
-                <div key={service.id} className="flex items-center gap-3">
-                  <input
-                    type="number"
-                    name={`order_${service.id}`}
-                    defaultValue={service.sortOrder}
-                    min={0}
-                    max={9999}
-                    className="gh-input w-20 text-right font-mono text-[13px]"
-                  />
-                  <span className="text-[13px] text-[var(--color-text-body)]">
-                    {service.name}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 flex gap-3">
-              <button type="submit" className="gh-btn gh-btn-primary">
-                Save order
-              </button>
-            </div>
-          </form>
-        </AdminCard>
-      ) : null}
     </>
   );
 }
