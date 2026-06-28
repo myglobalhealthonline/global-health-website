@@ -255,15 +255,18 @@ export function GH2AuthShell({
   accent,
   body,
   children,
+  activeTab,
 }: {
   eyebrow: string;
   title: string;
   accent: string;
   body: ReactNode;
   children: ReactNode;
+  activeTab?: "login" | "register";
 }) {
   return (
     <div className="min-h-screen bg-white lg:grid lg:grid-cols-[1fr_1fr]">
+      {/* Left — dark brand panel, desktop only */}
       <aside className="gh2-hero relative hidden overflow-hidden px-10 py-12 text-white lg:flex lg:flex-col lg:justify-between">
         <div aria-hidden className="gh2-watermark pointer-events-none absolute -left-8 bottom-10 text-[clamp(5rem,10vw,10rem)]">
           Global Health
@@ -292,15 +295,78 @@ export function GH2AuthShell({
           </div>
         </div>
       </aside>
-      <main className="flex min-h-screen items-center px-5 py-10">
-        <div className="mx-auto w-full max-w-[420px]">
-          <div className="mb-8 flex items-center gap-2 lg:hidden">
-            <span className="inline-flex size-9 items-center justify-center rounded-full bg-[var(--color-brand-primary)] text-white">
-              <Stethoscope className="size-4" aria-hidden />
+
+      {/* Right — form column with top navbar */}
+      <main className="flex min-h-screen flex-col">
+        {/* Auth navbar */}
+        <nav
+          className="flex items-center justify-between border-b px-5 py-3.5 lg:px-10"
+          style={{ borderColor: "var(--color-border)" }}
+        >
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2.5 text-[var(--color-text-primary)]"
+          >
+            <span
+              className="inline-flex size-8 items-center justify-center rounded-full text-white"
+              style={{ background: "var(--color-brand-primary)" }}
+            >
+              <Stethoscope className="size-3.5" aria-hidden />
             </span>
-            <span className="font-extrabold text-[var(--color-text-primary)]">Global Health</span>
+            <span className="text-[15px] font-extrabold tracking-[-0.02em]">Global Health</span>
+          </Link>
+
+          {/* Sign in / Create account tabs */}
+          <div
+            className="flex items-center gap-1 rounded-full p-1"
+            style={{ background: "var(--color-background-soft)" }}
+            role="tablist"
+            aria-label="Authentication options"
+          >
+            <Link
+              href="/login"
+              role="tab"
+              aria-selected={activeTab === "login"}
+              className="rounded-full px-4 py-1.5 text-[13px] font-semibold transition-colors"
+              style={
+                activeTab === "login"
+                  ? {
+                      background: "var(--color-brand-primary)",
+                      color: "#fff",
+                    }
+                  : {
+                      color: "var(--color-text-muted)",
+                    }
+              }
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/register"
+              role="tab"
+              aria-selected={activeTab === "register"}
+              className="rounded-full px-4 py-1.5 text-[13px] font-semibold transition-colors"
+              style={
+                activeTab === "register"
+                  ? {
+                      background: "var(--color-brand-primary)",
+                      color: "#fff",
+                    }
+                  : {
+                      color: "var(--color-text-muted)",
+                    }
+              }
+            >
+              Create account
+            </Link>
           </div>
-          {children}
+        </nav>
+
+        {/* Form content */}
+        <div className="flex flex-1 items-center px-5 py-10">
+          <div className="mx-auto w-full max-w-[420px]">
+            {children}
+          </div>
         </div>
       </main>
     </div>

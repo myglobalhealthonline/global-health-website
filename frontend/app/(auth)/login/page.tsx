@@ -24,6 +24,7 @@ export default async function Page() {
 
   return (
     <GH2AuthShell
+      activeTab="login"
       eyebrow="Secure access"
       title="Manage care with"
       accent="confidence."
@@ -40,6 +41,15 @@ export default async function Page() {
           <LoginForm i18n={loginI18n} />
         </Suspense>
       </div>
+      <p className="mt-8 text-center text-sm text-[var(--color-text-muted)]">
+        Don&apos;t have an account?{" "}
+        <a
+          href="/register"
+          className="font-semibold text-[var(--color-brand-primary)] underline-offset-4 hover:underline"
+        >
+          Create one
+        </a>
+      </p>
     </GH2AuthShell>
   );
 }

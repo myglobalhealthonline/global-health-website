@@ -18,6 +18,7 @@ export default async function Page() {
 
   return (
     <GH2AuthShell
+      activeTab="register"
       eyebrow="Patient access"
       title="Create your"
       accent="account."
