@@ -97,6 +97,7 @@ export function PortalShell({
   notificationsUnreadCount = 0,
   notificationsViewAllHref,
   notificationsEmptyMessage,
+  logoHref,
   children,
 }: {
   user: PortalShellUser;
@@ -123,6 +124,10 @@ export function PortalShell({
   notificationsViewAllHref?: string | null;
   /** Fallback text when notifications is empty. */
   notificationsEmptyMessage?: string;
+  /** Override the logo link href. Defaults to rootHref.
+   *  Patient portal passes the country homepage so clicking the logo
+   *  takes the user back to e.g. /ie/en rather than /account. */
+  logoHref?: string;
   children: ReactNode;
 }) {
   const [navOpen, setNavOpen] = useState(false);
@@ -164,7 +169,7 @@ export function PortalShell({
             className="gh-admin-sidebar-logo px-5 pb-[18px] pt-5"
             style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
           >
-            <Link href={rootHref} className="inline-flex items-center gap-2.5">
+            <Link href={logoHref ?? rootHref} className="inline-flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logos/global-health-light.png"

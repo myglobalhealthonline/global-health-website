@@ -801,6 +801,17 @@ img {
   margin-top: calc(-1 * var(--header-height));
 }
 
+/* Hero viewport cap — prevents translated text from causing page scroll on
+ * desktop. Only active at lg+ (1024px+); mobile heroes scroll naturally. */
+@media (min-width: 1024px) {
+  .gh-hero-cap {
+    max-height: calc(100svh - var(--header-height));
+  }
+  .gh-hero-cap-full {
+    max-height: 100svh;
+  }
+}
+
 .gh-home-hero-photoLayer {
   z-index: 0;
 }
