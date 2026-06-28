@@ -14,8 +14,8 @@ import type PizZip from "pizzip";
  * root of every template, so the inline image renders in LibreOffice.
  */
 
-const MEDIA_PATH = "word/media/image-qr.png";
-const REL_ID = "rIdGhQrUpload";
+const DEFAULT_MEDIA_PATH = "word/media/image-qr.png";
+const DEFAULT_REL_ID = "rIdGhQrUpload";
 const REL_TYPE = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
 
 /** 1px = 9525 EMU. ~130px square keeps the code crisp without crowding the footer. */
@@ -51,22 +51,23 @@ function centeredRunPara(text: string, opts: { bold?: boolean; color: string; si
   );
 }
 
-function qrImageParagraph(emu: number): string {
+function qrImageParagraph(emu: number, relId: string, docPrId: number): string {
   const ns = 'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"';
   const picNs = 'xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
+  const idStr = String(docPrId);
   return (
     `<w:p><w:pPr><w:jc w:val="left"/><w:spacing w:before="80" w:after="20"/></w:pPr>` +
     `<w:r><w:rPr><w:noProof/></w:rPr><w:drawing>` +
     `<wp:inline distT="0" distB="0" distL="0" distR="0">` +
     `<wp:extent cx="${emu}" cy="${emu}"/>` +
     `<wp:effectExtent l="0" t="0" r="0" b="0"/>` +
-    `<wp:docPr id="900" name="ExamUploadQR" descr="Scan to upload exam results"/>` +
+    `<wp:docPr id="${idStr}" name="GhQr${idStr}" descr="QR code"/>` +
     `<wp:cNvGraphicFramePr><a:graphicFrameLocks ${ns} noChangeAspect="1"/></wp:cNvGraphicFramePr>` +
     `<a:graphic ${ns}><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">` +
     `<pic:pic ${picNs}>` +
-    `<pic:nvPicPr><pic:cNvPr id="900" name="ExamUploadQR" descr="Scan to upload exam results"/>` +
+    `<pic:nvPicPr><pic:cNvPr id="${idStr}" name="GhQr${idStr}" descr="QR code"/>` +
     `<pic:cNvPicPr/></pic:nvPicPr>` +
-    `<pic:blipFill><a:blip r:embed="${REL_ID}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>` +
+    `<pic:blipFill><a:blip r:embed="${relId}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>` +
     `<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${emu}" cy="${emu}"/></a:xfrm>` +
     `<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>` +
     `</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`
@@ -85,13 +86,14 @@ function ensurePngContentType(zip: PizZip): void {
   zip.file("[Content_Types].xml", xml);
 }
 
-function ensureImageRelationship(zip: PizZip): void {
+function ensureImageRelationship(zip: PizZip, relId: string, mediaPath: string): void {
   const relsPath = "word/_rels/document.xml.rels";
   const rels = zip.file(relsPath);
   if (!rels) throw new Error("Invalid DOCX: missing word/_rels/document.xml.rels");
   let xml = rels.asText();
-  if (xml.includes(`Id="${REL_ID}"`)) return;
-  const rel = `<Relationship Id="${REL_ID}" Type="${REL_TYPE}" Target="media/image-qr.png"/>`;
+  if (xml.includes(`Id="${relId}"`)) return;
+  const target = mediaPath.replace(/^word\//, "");
+  const rel = `<Relationship Id="${relId}" Type="${REL_TYPE}" Target="${target}"/>`;
   xml = xml.replace("</Relationships>", `${rel}</Relationships>`);
   zip.file(relsPath, xml);
 }
@@ -100,25 +102,33 @@ function ensureImageRelationship(zip: PizZip): void {
  * Insert the QR + caption block immediately before the section properties so
  * the later footer-gap injection sits between it and the footer band, leaving
  * the QR just above the bottom footer.
+ *
+ * Pass `mediaPath` / `relId` to embed a second QR with a distinct relationship
+ * (e.g. a verification QR alongside the patient-upload QR).
  */
 export function injectQrBlock(
   zip: PizZip,
   documentXml: string,
   pngBuffer: Buffer,
-  opts: { title: string; instruction: string; compact?: boolean },
+  opts: { title: string; instruction: string; compact?: boolean; mediaPath?: string; relId?: string },
 ): string {
   const sectIdx = documentXml.indexOf("<w:sectPr");
   if (sectIdx < 0) return documentXml;
 
-  zip.file(MEDIA_PATH, pngBuffer);
+  const mediaPath = opts.mediaPath ?? DEFAULT_MEDIA_PATH;
+  const relId = opts.relId ?? DEFAULT_REL_ID;
+
+  zip.file(mediaPath, pngBuffer);
   ensurePngContentType(zip);
-  ensureImageRelationship(zip);
+  ensureImageRelationship(zip, relId, mediaPath);
 
   const emu = opts.compact ? QR_EMU_COMPACT : QR_EMU;
   const titleSize = opts.compact ? "20" : SIZE_TITLE; // 10pt compact vs 13pt full
   const bodySize = opts.compact ? "16" : SIZE_BODY;   // 8pt compact vs 10pt full
+  // Use a stable numeric id derived from the relId so two QRs don't share the same docPr id.
+  const docPrId = relId === DEFAULT_REL_ID ? 900 : 901;
   const block =
-    qrImageParagraph(emu) +
+    qrImageParagraph(emu, relId, docPrId) +
     centeredRunPara(opts.title, { bold: true, color: BRAND_COLOR, size: titleSize }) +
     centeredRunPara(opts.instruction, { color: MUTED_COLOR, size: bodySize });
 

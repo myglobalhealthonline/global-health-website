@@ -1,6 +1,41 @@
 import type PizZip from "pizzip";
 import { buildLineGapXml, FOOTER_GAP_LINES } from "./docx-page-layout.js";
 
+const COUNTRY_LEGAL_TEXTS: Partial<Record<string, { text: string; szHp: string }>> = {
+  CZ: {
+    text: "Global Health je obchodní značkou společnosti Global Guest s.r.o., poskytovatele zdravotních služeb zapsaného v Národním registru poskytovatelů zdravotních služeb (NRPZS) pod registračním číslem 19071680.",
+    szHp: "14", // 7pt
+  },
+  PT: {
+    text: "A Global Health é uma marca comercial da Global Guest s.r.o., entidade prestadora de cuidados de saúde registada na Entidade Reguladora da Saúde (ERS) sob o número 179287.",
+    szHp: "14", // 7pt
+  },
+};
+
+/**
+ * Returns a small body paragraph with the country-specific legal registration text
+ * for CZ (NRPZS) and PT (ERS). Returns empty string for all other countries.
+ * Inject this into document.xml just before <w:sectPr> so it sits above the footer band.
+ */
+export function buildCountryLegalParagraphXml(countryCode: string): string {
+  const cfg = COUNTRY_LEGAL_TEXTS[countryCode.toUpperCase()];
+  if (!cfg) return "";
+  const { text, szHp } = cfg;
+  const FONT = process.platform === "win32" ? "Calibri" : "Carlito";
+  const rPr =
+    `<w:rFonts w:ascii="${FONT}" w:hAnsi="${FONT}" w:cs="${FONT}"/>` +
+    `<w:sz w:val="${szHp}"/><w:szCs w:val="${szHp}"/>` +
+    `<w:color w:val="4A4A4A"/><w:rtl w:val="0"/>`;
+  return (
+    `<w:p><w:pPr>` +
+    `<w:spacing w:before="60" w:after="0" w:line="220" w:lineRule="auto"/>` +
+    `<w:jc w:val="left"/>` +
+    `<w:rPr>${rPr}</w:rPr></w:pPr>` +
+    `<w:r><w:rPr>${rPr}</w:rPr><w:t xml:space="preserve">${escapeXml(text)}</w:t></w:r>` +
+    `</w:p>`
+  );
+}
+
 /** Standard A4 portrait (integer twips). Custom heights cause a blank 2nd page in LibreOffice. */
 const A4_WIDTH_TWIPS = 11909;
 const A4_HEIGHT_TWIPS = 16834;

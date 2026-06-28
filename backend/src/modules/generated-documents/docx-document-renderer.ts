@@ -15,7 +15,7 @@ import {
   injectProfessionalLayout,
   trimBodyLeadingEmptyParagraphs,
 } from "./docx-xml-builder.js";
-import { applyDocumentFooterLayout, buildCountryAddressFrameXml } from "./docx-footer-inline.js";
+import { applyDocumentFooterLayout, buildCountryAddressFrameXml, buildCountryLegalParagraphXml } from "./docx-footer-inline.js";
 import { injectQrBlock } from "./docx-qr-inline.js";
 import {
   ensureAlexBrushFont,
@@ -30,6 +30,8 @@ export type DocxQrOptions = {
   instruction: string;
   /** Use smaller (85px) QR + reduced text — avoids blank 2nd page on short documents. */
   compact?: boolean;
+  /** Optional second verification QR (compact) injected below the primary QR. */
+  verifyQr?: { pngBuffer: Buffer; title: string; instruction: string };
 };
 
 const execFileAsync = promisify(execFile);
@@ -100,9 +102,27 @@ export function fillDocxBuffer(
       instruction: qr.instruction,
       compact: qr.compact,
     });
+    if (qr.verifyQr) {
+      filled = injectQrBlock(zip, filled, qr.verifyQr.pngBuffer, {
+        title: qr.verifyQr.title,
+        instruction: qr.verifyQr.instruction,
+        compact: true,
+        mediaPath: "word/media/image-qr-verify.png",
+        relId: "rIdGhQrVerify",
+      });
+    }
   }
-  // Compact QR (cert auth) needs fewer gap lines to avoid a blank 2nd page.
-  const gapLines = qr?.compact ? 2 : undefined;
+  // Country-specific legal registration text (CZ: NRPZS, PT: ERS) sits just above the QR / footer band.
+  const legalPara = buildCountryLegalParagraphXml(countryCode);
+  if (legalPara) {
+    const sectIdx = filled.indexOf("<w:sectPr");
+    if (sectIdx >= 0) {
+      filled = filled.slice(0, sectIdx) + legalPara + filled.slice(sectIdx);
+    }
+  }
+  // Reduce gap lines to avoid a blank 2nd page.
+  // Two QRs (exams prescription: upload + verify) = 1 gap line; single compact QR = 2; none = default 4.
+  const gapLines = qr?.verifyQr ? 1 : qr?.compact ? 2 : undefined;
   filled = applyDocumentFooterLayout(zip, filled, gapLines);
   // IR/PT: overlay the clinic address as an absolutely-positioned white text frame
   // inside the footer green band. Other countries: no-op.

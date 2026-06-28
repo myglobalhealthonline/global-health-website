@@ -33,16 +33,24 @@ const certificateVerifyRoute: FastifyPluginAsync = async (app) => {
           },
         });
 
-        const VERIFIED_TYPES = new Set(["CUSTOM_CERTIFICATE", "ABSENCE_CERTIFICATE"]);
+        const VERIFIED_TYPES = new Set([
+          "CUSTOM_CERTIFICATE",
+          "ABSENCE_CERTIFICATE",
+          "PRESCRIPTION",
+          "EXAMS_PRESCRIPTION",
+        ]);
         if (!doc || !VERIFIED_TYPES.has(doc.documentType)) {
           return reply.status(404).send(errorResponse("Certificate not found"));
         }
 
         const meta = (doc.metadata ?? {}) as Record<string, string>;
-        const certName =
-          doc.documentType === "ABSENCE_CERTIFICATE"
-            ? "Medical Absence Certificate"
-            : meta.certificateName?.trim() || "Medical Certificate";
+        const TYPE_LABELS: Record<string, string> = {
+          ABSENCE_CERTIFICATE: "Medical Absence Certificate",
+          CUSTOM_CERTIFICATE: meta.certificateName?.trim() || "Medical Certificate",
+          PRESCRIPTION: "Medical Prescription",
+          EXAMS_PRESCRIPTION: "Examinations Prescription",
+        };
+        const certName = TYPE_LABELS[doc.documentType] ?? "Medical Document";
         const doctorName = doc.doctor?.fullName ?? "Doctor";
         const patientName = doc.appointment?.fullName ?? "Patient";
         const consultationDate = doc.appointment?.scheduledAt

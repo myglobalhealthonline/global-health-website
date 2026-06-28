@@ -34,6 +34,16 @@
     <p class="field-row"><span class="field-label">Registration:</span> <span class="field-value">{{registrationNumber}}</span></p>
     <p class="signature-line"><span class="sig-label">Prescriber signature:</span><span class="sig-name">{{doctorName}}</span></p>
   </div>
+  {{#if verifyQrDataUrl}}
+  <div style="margin:0 0 8px;display:flex;flex-direction:column;align-items:center;gap:4px;">
+    <img src="{{verifyQrDataUrl}}" style="width:80px;height:80px;" alt="Verification QR" />
+    <p style="margin:0;font-size:10px;color:#1D4B36;">Document ID: <strong>{{documentId}}</strong></p>
+    <p style="margin:0;font-size:9px;color:#4A4A4A;">Issued: {{currentDate}} · Scan to verify</p>
+  </div>
+  {{/if}}
+  {{#if countryLegalText}}
+  <p style="margin:0 0 6px;font-size:8px;color:#4A4A4A;line-height:1.4;">{{countryLegalText}}</p>
+  {{/if}}
   <div class="footer-gap" aria-hidden="true"></div>
 </body>
 </html>
