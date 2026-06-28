@@ -50,7 +50,7 @@ export function PageHero({
   if (variant === "immersive") {
     return (
       <section
-        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden"
+        className="gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden gh-hero-cap"
         style={{ background: "#0F2E25" }}
       >
         <div
@@ -304,7 +304,7 @@ export function PageHero({
 
   return (
     <section
-      className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden text-white"
+      className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden text-white gh-hero-cap"
       style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
     >
       <div

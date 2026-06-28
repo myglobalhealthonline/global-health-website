@@ -46,7 +46,7 @@ const DEFAULT_I18N: RegisterI18n = {
 
 export function RegisterFormFallback({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
   return (
-    <form className="mt-7 grid gap-5" aria-hidden>
+    <form className="grid gap-6" aria-hidden>
       <div className="grid gap-2">
         <div className="h-4 w-28 rounded bg-[var(--color-border)]/40" />
         <div className="h-11 animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
@@ -108,7 +108,7 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-7 grid gap-5" suppressHydrationWarning>
+    <form onSubmit={onSubmit} className="grid gap-6" suppressHydrationWarning>
       <div className="grid gap-2">
         <label htmlFor="register-name" className="gh-field-label">
           {i18n.fullNameLabel}

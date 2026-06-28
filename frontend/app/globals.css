@@ -1965,6 +1965,23 @@ img {
     linear-gradient(172deg, #1D4B36 0%, #15382A 44%, #0F2E25 100%);
 }
 
+/* Auth shell — one-screen layout locked at desktop, form scrolls inside. */
+@media (min-width: 1024px) {
+  .gh2-auth-shell {
+    height: calc(100svh - var(--header-height));
+    overflow: hidden;
+  }
+  .gh2-auth-shell-left {
+    height: 100%;
+    overflow: hidden;
+  }
+  .gh2-auth-shell-right {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
 /* Giant outlined watermark — atmosphere layer, never reads as copy. */
 .gh2-watermark {
   -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.055);

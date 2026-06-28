@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import React, { Suspense } from "react";
 import Link from "next/link";
-import { Suspense } from "react";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { GH2AuthShell } from "@/components/sections/GH2PagePrimitives";
@@ -24,14 +24,14 @@ export default async function Page() {
       accent="effortless."
       body="Book consultations, receive prescriptions, and manage your family's health — all in one place."
     >
-      <div>
+      <div className="mb-7">
         <h1
-          className="font-extrabold tracking-[-0.03em]"
-          style={{ fontSize: "clamp(1.5rem,2.5vw,1.875rem)", color: "var(--color-text-primary)" }}
+          className="font-extrabold tracking-[-0.04em]"
+          style={{ fontSize: "clamp(1.9rem,3vw,2.5rem)", lineHeight: 1.05, color: "var(--color-text-primary)", textWrap: "balance" } as React.CSSProperties}
         >
           Create your account
         </h1>
-        <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+        <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
           Free to join. Confirmations and receipts go to your email.
         </p>
       </div>

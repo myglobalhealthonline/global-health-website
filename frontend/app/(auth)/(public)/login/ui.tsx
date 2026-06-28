@@ -39,7 +39,7 @@ const DEFAULT_I18N: LoginI18n = {
 
 export function LoginFormFallback({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
   return (
-    <form className="grid gap-5" aria-hidden>
+    <form className="grid gap-6" aria-hidden>
       <div className="grid gap-2">
         <div className="h-4 w-24 rounded bg-[var(--color-border)]/40" />
         <div className="h-11 animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
@@ -100,7 +100,7 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-5" suppressHydrationWarning>
+    <form onSubmit={onSubmit} className="grid gap-6" suppressHydrationWarning>
       <div className="grid gap-2">
         <label htmlFor="login-email" className="gh-field-label">
           {i18n.emailLabel}

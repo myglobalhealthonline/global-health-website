@@ -86,7 +86,7 @@ export function HomeHero({
   return (
     <section
       aria-labelledby="hero-title"
-      className="gh-home-hero-root gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden"
+      className="gh-home-hero-root gh-medical-pattern gh-medical-pattern-dark relative overflow-hidden gh-hero-cap-full"
     >
       {/* ── Base layer: hero photo, full-bleed ── */}
       <div className="gh-home-hero-photoLayer gh-medical-pattern-layer absolute inset-0">

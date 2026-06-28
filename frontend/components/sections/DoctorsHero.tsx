@@ -133,7 +133,7 @@ export function DoctorsHero({
 
   return (
     <section
-      className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden text-white"
+      className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative isolate overflow-hidden text-white gh-hero-cap"
       style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
     >
       {/* ── Atmosphere layers (behind content via .gh-medical-pattern-layer) ── */}
