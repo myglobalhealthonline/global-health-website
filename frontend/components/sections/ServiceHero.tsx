@@ -71,7 +71,7 @@ export function ServiceHero({
 }: ServiceHeroProps) {
   return (
     <section
-      className="gh-medical-pattern gh-medical-pattern-dark relative isolate flex flex-col overflow-hidden lg:min-h-[calc(100svh-var(--header-height))]"
+      className="gh-medical-pattern gh-medical-pattern-dark relative isolate flex flex-col overflow-hidden lg:min-h-[calc(100svh-var(--header-height))] gh-hero-cap"
       style={{ background: "#031F18" }}
     >
       <div className="grid lg:min-h-0 lg:flex-1 lg:grid-cols-2">

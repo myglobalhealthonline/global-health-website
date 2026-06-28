@@ -87,6 +87,10 @@ export default async function AccountLayout({ children }: { children: ReactNode 
     { href: bookHref, label: a.nav.bookConsultation, icon: <Stethoscope className="size-4" aria-hidden /> },
   ];
 
+  // Country homepage for the sidebar logo link — strip /book from bookHref.
+  // Falls back to "/" if bookHref is the generic picker.
+  const countryHomeHref = bookHref !== "/" ? bookHref.replace(/\/book$/, "") : "/";
+
   return (
     <PortalShell
       user={{ fullName: user.fullName, email: user.email, role: user.role }}
@@ -97,6 +101,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
       rootBreadcrumb={a.portal.sectionLabel}
       signOutAction={logoutAction}
       accountHref="/account/profile"
+      logoHref={countryHomeHref}
       notifications={notificationItems}
       notificationsUnreadCount={notifications?.unreadCount ?? 0}
       notificationsViewAllHref="/account/notifications"

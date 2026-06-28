@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { getServerAuthUser } from "@/lib/api/server-auth";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
@@ -30,23 +30,21 @@ export default async function Page() {
       accent="available."
       body="Consult doctors, review your history, and manage appointments — all in one place."
     >
-      <div>
+      <div className="mb-7">
         <h1
-          className="font-extrabold tracking-[-0.03em]"
-          style={{ fontSize: "clamp(1.5rem,2.5vw,1.875rem)", color: "var(--color-text-primary)" }}
+          className="font-extrabold tracking-[-0.04em]"
+          style={{ fontSize: "clamp(1.9rem,3vw,2.5rem)", lineHeight: 1.05, color: "var(--color-text-primary)", textWrap: "balance" } as React.CSSProperties}
         >
           Welcome back
         </h1>
-        <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+        <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
           Sign in to continue to your account.
         </p>
       </div>
 
-      <div className="mt-7">
-        <Suspense fallback={<LoginFormFallback i18n={loginI18n} />}>
-          <LoginForm i18n={loginI18n} />
-        </Suspense>
-      </div>
+      <Suspense fallback={<LoginFormFallback i18n={loginI18n} />}>
+        <LoginForm i18n={loginI18n} />
+      </Suspense>
 
       <p className="mt-7 text-center text-sm" style={{ color: "var(--color-text-muted)" }}>
         No account yet?{" "}

@@ -107,8 +107,8 @@
   --shadow-card:       0 1px 3px rgba(29, 75, 54, 0.08), 0 4px 12px rgba(29, 75, 54, 0.04);
   --shadow-card-hover: 0 4px 12px rgba(29, 75, 54, 0.12), 0 8px 24px rgba(29, 75, 54, 0.08);
   --shadow-elevated:   0 8px 30px rgba(29, 75, 54, 0.14), 0 2px 8px rgba(29, 75, 54, 0.08);
-  --shadow-focus:      0 0 0 3px rgba(29, 75, 54, 0.15);
-  --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.15);
+  --shadow-focus:      0 0 0 3px rgba(29, 75, 54, 0.28);
+  --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.28);
 
   /* Medical pattern tokens */
   --medical-pattern-size: 28px;
@@ -799,6 +799,17 @@ img {
   background: #0f2e25;
   min-height: 100svh;
   margin-top: calc(-1 * var(--header-height));
+}
+
+/* Hero viewport cap — prevents translated text from causing page scroll on
+ * desktop. Only active at lg+ (1024px+); mobile heroes scroll naturally. */
+@media (min-width: 1024px) {
+  .gh-hero-cap {
+    max-height: calc(100svh - var(--header-height));
+  }
+  .gh-hero-cap-full {
+    max-height: 100svh;
+  }
 }
 
 .gh-home-hero-photoLayer {
@@ -1952,6 +1963,23 @@ img {
     radial-gradient(1100px 720px at 82% -8%, rgba(176, 241, 34, 0.09), transparent 55%),
     radial-gradient(900px 640px at -12% 112%, rgba(0, 0, 0, 0.35), transparent 60%),
     linear-gradient(172deg, #1D4B36 0%, #15382A 44%, #0F2E25 100%);
+}
+
+/* Auth shell — one-screen layout locked at desktop, form scrolls inside. */
+@media (min-width: 1024px) {
+  .gh2-auth-shell {
+    height: calc(100svh - var(--header-height));
+    overflow: hidden;
+  }
+  .gh2-auth-shell-left {
+    height: 100%;
+    overflow: hidden;
+  }
+  .gh2-auth-shell-right {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
 }
 
 /* Giant outlined watermark — atmosphere layer, never reads as copy. */

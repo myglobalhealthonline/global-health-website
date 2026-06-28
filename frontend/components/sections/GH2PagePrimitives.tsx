@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, XCircle, Loader2, Stethoscope } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, XCircle, Loader2, Stethoscope, ShieldCheck, BadgeCheck, Clock } from "lucide-react";
 
 export function GH2SectionHeader({
   index,
@@ -253,128 +253,172 @@ export function GH2AuthShell({
   eyebrow,
   title,
   accent,
-  body,
   children,
   activeTab,
 }: {
   eyebrow: string;
   title: string;
   accent: string;
-  body: ReactNode;
+  body?: ReactNode;
   children: ReactNode;
   activeTab?: "login" | "register";
 }) {
+  const STATS = [
+    { value: "24/7", label: "Always on" },
+    { value: "47k+", label: "Patients" },
+    { value: "4", label: "Countries" },
+  ];
+
   return (
-    <div className="bg-[var(--color-background-soft)] lg:grid lg:grid-cols-[46%_54%]" style={{ minHeight: "calc(100dvh - 64px)" }}>
-      {/* Left — dark brand panel, desktop only */}
+    <div className="gh2-auth-shell lg:grid lg:grid-cols-[52%_48%]" style={{ minHeight: "calc(100svh - var(--header-height))" }}>
+      {/* LEFT — editorial dark panel, desktop only */}
       <aside
-        className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative hidden overflow-hidden lg:flex lg:flex-col lg:justify-between"
-        style={{ padding: "clamp(40px,5vw,64px) clamp(32px,4vw,56px)" }}
+        className="gh2-auth-shell-left gh2-hero gh-medical-pattern gh-medical-pattern-dark relative hidden overflow-hidden lg:flex lg:flex-col"
       >
-        {/* Watermark atmosphere */}
+        {/* Dot grid — masked radial fade */}
         <div
           aria-hidden
-          className="gh2-watermark pointer-events-none absolute bottom-8 -left-4 select-none"
-          style={{ fontSize: "clamp(4rem,8vw,8rem)" }}
-        >
-          Global Health
-        </div>
-
-        {/* Top logo */}
-        <Link href="/" className="relative z-10 inline-flex items-center gap-2.5 text-white">
-          <span className="inline-flex size-10 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-[#0a1f14]">
-            <Stethoscope className="size-5" aria-hidden />
-          </span>
-          <span className="text-[15px] font-extrabold tracking-[-0.02em]">Global Health</span>
-        </Link>
-
-        {/* Middle — headline block */}
-        <div className="relative z-10" style={{ maxWidth: "26ch" }}>
-          <p
-            className="gh2-index"
-            style={{ color: "var(--color-brand-accent)", marginBottom: "1.25rem" }}
-          >
-            {eyebrow}
-          </p>
-          <h2
-            className="font-extrabold leading-[0.97] tracking-[-0.04em]"
-            style={{ fontSize: "clamp(2.2rem,4.5vw,3.8rem)", color: "rgba(255,255,255,0.95)" }}
-          >
-            {title}{" "}
-            <span style={{ color: "var(--color-brand-accent)" }}>{accent}</span>
-          </h2>
-          <p
-            className="leading-relaxed"
-            style={{ marginTop: "1.25rem", fontSize: "15px", color: "rgba(255,255,255,0.52)", maxWidth: "38ch" }}
-          >
-            {body}
-          </p>
-
-          {/* Trust indicators */}
-          <div
-            className="mt-8 grid grid-cols-3 pt-6"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.09)" }}
-          >
-            {[
-              { label: "GDPR", sub: "Privacy protected" },
-              { label: "JWT", sub: "Secure sessions" },
-              { label: "24 h", sub: "Doctor response" },
-            ].map((item, i) => (
-              <div
-                key={item.label}
-                className={i > 0 ? "pl-4" : ""}
-                style={i > 0 ? { borderLeft: "1px solid rgba(255,255,255,0.09)" } : {}}
-              >
-                <p className="gh2-index" style={{ color: "var(--color-brand-accent)" }}>
-                  {item.label}
-                </p>
-                <p
-                  className="mt-1.5 font-semibold uppercase"
-                  style={{ fontSize: "10px", letterSpacing: "0.12em", color: "rgba(255,255,255,0.30)" }}
-                >
-                  {item.sub}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom trust quote */}
+          className="gh-dot-grid pointer-events-none absolute inset-0"
+          style={{ opacity: 0.38, maskImage: "radial-gradient(640px 500px at 22% 32%, #000 0%, transparent 70%)" }}
+        />
+        {/* Primary lime bloom */}
         <div
-          className="relative z-10 rounded-2xl p-5"
-          style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-          }}
+          aria-hidden
+          className="pointer-events-none absolute"
+          style={{ left: "20%", top: "12%", width: 560, height: 560, background: "radial-gradient(circle, rgba(176,241,34,0.12), transparent 60%)", filter: "blur(12px)" }}
+        />
+        {/* Secondary bloom — lower right for depth */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute"
+          style={{ right: "8%", bottom: "18%", width: 300, height: 300, background: "radial-gradient(circle, rgba(176,241,34,0.07), transparent 65%)", filter: "blur(20px)" }}
+        />
+        {/* Giant "Health" watermark */}
+        <div
+          aria-hidden
+          className="gh2-watermark pointer-events-none absolute select-none"
+          style={{ right: "-0.05em", bottom: "-0.13em", fontSize: "clamp(6rem,15vw,14rem)", WebkitTextStroke: "1.5px rgba(255,255,255,0.06)" }}
         >
-          <p style={{ fontSize: "13px", lineHeight: 1.6, color: "rgba(255,255,255,0.60)", fontStyle: "italic" }}>
-            &ldquo;Saw a specialist within the hour. No waiting room, no travel — completely changed how I manage my health.&rdquo;
-          </p>
-          <p className="mt-3 font-semibold" style={{ fontSize: "11px", letterSpacing: "0.1em", color: "rgba(255,255,255,0.30)" }}>
-            GLOBAL HEALTH PATIENT · DUBLIN
-          </p>
+          Health
+        </div>
+
+        <div
+          className="relative z-[1] flex flex-1 flex-col"
+          style={{ padding: "clamp(36px,4.5vw,56px) clamp(30px,4vw,52px)" }}
+        >
+          {/* Logo */}
+          <Link href="/" className="inline-flex items-center gap-2.5 text-white">
+            <span className="inline-flex size-10 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-[#0a1f14]">
+              <Stethoscope className="size-5" aria-hidden />
+            </span>
+            <span className="text-[15px] font-extrabold tracking-[-0.02em]">Global Health</span>
+          </Link>
+
+          {/* Headline block — grows to fill space */}
+          <div className="my-auto" style={{ maxWidth: "30ch", paddingTop: "clamp(40px,5vw,64px)", paddingBottom: "clamp(40px,5vw,64px)" }}>
+            <p
+              className="gh2-index"
+              style={{ color: "var(--color-brand-accent)", marginBottom: "1rem" }}
+            >
+              {eyebrow}
+            </p>
+            <h2
+              className="font-extrabold tracking-[-0.045em]"
+              style={{ fontSize: "clamp(2.8rem,5vw,4.4rem)", lineHeight: 0.93, color: "rgba(255,255,255,0.95)" }}
+            >
+              {title}
+              <br />
+              <span className="gh-accent-glow">{accent}</span>
+            </h2>
+
+            {/* Live pill */}
+            <div
+              className="mt-7 inline-flex items-center gap-2.5 rounded-full px-4 py-2"
+              style={{ background: "rgba(176,241,34,0.08)", border: "1px solid rgba(176,241,34,0.20)" }}
+            >
+              <span className="gh2-live-dot" style={{ width: 8, height: 8 }} />
+              <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.72)", fontWeight: 600 }}>
+                Doctors available now
+              </span>
+            </div>
+
+            {/* Editorial stat strip — replaces generic 3-card list */}
+            <dl
+              className="mt-8 grid grid-cols-3"
+              style={{ borderTop: "1px solid rgba(255,255,255,0.09)", paddingTop: "1.5rem", gap: 0 }}
+            >
+              {STATS.map((s, i) => (
+                <div
+                  key={s.value}
+                  style={i > 0 ? { borderLeft: "1px solid rgba(255,255,255,0.09)", paddingLeft: "1.25rem" } : {}}
+                >
+                  <dt
+                    className="font-extrabold tracking-[-0.03em]"
+                    style={{ fontSize: "clamp(1.5rem,2.2vw,2rem)", color: "var(--color-brand-accent)", lineHeight: 1 }}
+                  >
+                    {s.value}
+                  </dt>
+                  <dd
+                    style={{ fontSize: "10.5px", color: "rgba(255,255,255,0.36)", fontWeight: 600,
+                      letterSpacing: "0.10em", textTransform: "uppercase", marginTop: "0.4rem" }}
+                  >
+                    {s.label}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          {/* Testimonial — glass card, human identity */}
+          <div className="gh-glass-emerald rounded-2xl p-5">
+            <p style={{ fontSize: "13.5px", lineHeight: 1.65, color: "rgba(255,255,255,0.58)", fontStyle: "italic" }}>
+              &ldquo;Saw a specialist within the hour. No waiting room, no travel — completely changed how I think about healthcare.&rdquo;
+            </p>
+            <div className="mt-4 flex items-center gap-2.5">
+              <span
+                className="inline-flex size-7 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
+                style={{ background: "rgba(176,241,34,0.14)", color: "var(--color-brand-accent)" }}
+              >
+                FM
+              </span>
+              <p style={{ fontSize: "10.5px", letterSpacing: "0.09em", color: "rgba(255,255,255,0.28)", fontWeight: 600 }}>
+                FIONNUALA M · PATIENT · DUBLIN
+              </p>
+            </div>
+          </div>
         </div>
       </aside>
 
-      {/* Right — form column */}
+      {/* RIGHT — form column */}
       <main
-        className="flex flex-col items-center justify-center px-5 py-10 lg:px-10"
-        style={{ background: "#fff" }}
+        className="gh2-auth-shell-right flex flex-col items-center justify-center px-5 py-12 lg:px-12"
+        style={{ background: "#fff", minHeight: "calc(100svh - var(--header-height))" }}
       >
         <div className="w-full" style={{ maxWidth: "400px" }}>
-          {/* Mobile logo */}
-          <div className="mb-8 flex items-center gap-2 lg:hidden">
-            <span className="inline-flex size-9 items-center justify-center rounded-full bg-[var(--color-brand-primary)] text-white">
-              <Stethoscope className="size-4" aria-hidden />
-            </span>
-            <span className="font-extrabold text-[var(--color-text-primary)]">Global Health</span>
+          {/* Mobile: slim branded strip */}
+          <div className="gh2-hero gh-medical-pattern gh-medical-pattern-dark -mx-5 mb-9 flex items-center justify-between px-5 py-3.5 lg:hidden">
+            <div className="flex items-center gap-2.5">
+              <span className="inline-flex size-8 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-[#0a1f14]">
+                <Stethoscope className="size-3.5" aria-hidden />
+              </span>
+              <div>
+                <p className="text-[12px] font-extrabold leading-none text-white">Global Health</p>
+                <p className="mt-0.5" style={{ fontSize: "10.5px", color: "rgba(176,241,34,0.80)" }}>
+                  {title} {accent}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="gh2-live-dot" style={{ width: 7, height: 7 }} />
+              <span style={{ fontSize: "10px", color: "rgba(255,255,255,0.50)" }}>Live</span>
+            </div>
           </div>
 
-          {/* Tab switcher */}
+          {/* Underline tab switcher — editorial, not generic pill */}
           {activeTab ? (
             <div
-              className="mb-8 inline-flex w-full items-center rounded-xl p-1"
-              style={{ background: "var(--color-background-soft)" }}
+              className="mb-8 flex gap-6"
+              style={{ borderBottom: "1px solid var(--color-border)" }}
               role="tablist"
               aria-label="Authentication"
             >
@@ -382,12 +426,12 @@ export function GH2AuthShell({
                 href="/login"
                 role="tab"
                 aria-selected={activeTab === "login"}
-                className="flex flex-1 items-center justify-center rounded-lg py-2.5 text-[13px] font-semibold transition-all duration-200"
-                style={
-                  activeTab === "login"
-                    ? { background: "#fff", color: "var(--color-text-primary)", boxShadow: "0 1px 4px rgba(29,75,54,0.10)" }
-                    : { color: "var(--color-text-muted)" }
-                }
+                className="pb-3 text-[14px] font-bold transition-colors duration-200"
+                style={{
+                  marginBottom: "-1px",
+                  color: activeTab === "login" ? "var(--color-text-primary)" : "var(--color-text-muted)",
+                  borderBottom: activeTab === "login" ? "2px solid var(--color-brand-primary)" : "2px solid transparent",
+                }}
               >
                 Sign in
               </Link>
@@ -395,12 +439,12 @@ export function GH2AuthShell({
                 href="/register"
                 role="tab"
                 aria-selected={activeTab === "register"}
-                className="flex flex-1 items-center justify-center rounded-lg py-2.5 text-[13px] font-semibold transition-all duration-200"
-                style={
-                  activeTab === "register"
-                    ? { background: "#fff", color: "var(--color-text-primary)", boxShadow: "0 1px 4px rgba(29,75,54,0.10)" }
-                    : { color: "var(--color-text-muted)" }
-                }
+                className="pb-3 text-[14px] font-bold transition-colors duration-200"
+                style={{
+                  marginBottom: "-1px",
+                  color: activeTab === "register" ? "var(--color-text-primary)" : "var(--color-text-muted)",
+                  borderBottom: activeTab === "register" ? "2px solid var(--color-brand-primary)" : "2px solid transparent",
+                }}
               >
                 Create account
               </Link>
