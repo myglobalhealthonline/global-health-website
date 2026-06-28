@@ -2,7 +2,6 @@ import { cache } from "react";
 import {
   fetchDoctorsByCountry,
   fetchHealthTestsByCountry,
-  fetchPartnersByCountry,
   fetchHealthTestDetail,
   fetchServiceDetail,
   fetchServicesByCountry,
@@ -386,40 +385,6 @@ export const getCountryHealthTests = cache(async (
       resultsTimeline: typeof r.resultsTimeline === "string" ? r.resultsTimeline : null,
       imageSrc: imagePath ? resolveTrustedAssetUrl(imagePath) ?? null : null,
       stock: typeof r.stock === "number" ? r.stock : null,
-    });
-  }
-  return out;
-});
-
-export type CountryPartnerCard = {
-  id: string;
-  name: string;
-  websiteUrl: string | null;
-  type: string | null;
-  logoSrc: string | null;
-};
-
-/** Active partners for a country's "Our partners" marquee. */
-export const getCountryPartners = cache(async (
-  countryCode: string,
-): Promise<CountryPartnerCard[]> => {
-  const res = await fetchPartnersByCountry(countryCode);
-  if (!res.ok) {
-    logPublicContentFallback(`country-partners:${countryCode}`, res.message);
-    return [];
-  }
-  const out: CountryPartnerCard[] = [];
-  for (const row of res.data) {
-    if (!row || typeof row !== "object") continue;
-    const r = row as Record<string, unknown>;
-    if (typeof r.id !== "string" || typeof r.name !== "string") continue;
-    const logoPath = typeof r.logoPath === "string" ? r.logoPath : null;
-    out.push({
-      id: r.id,
-      name: r.name,
-      websiteUrl: typeof r.websiteUrl === "string" ? r.websiteUrl : null,
-      type: typeof r.type === "string" && r.type.trim() ? r.type : null,
-      logoSrc: logoPath ? resolveTrustedAssetUrl(logoPath) ?? null : null,
     });
   }
   return out;
