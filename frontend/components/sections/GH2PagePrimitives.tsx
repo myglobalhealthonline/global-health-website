@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, XCircle, Loader2, Stethoscope } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, XCircle, Loader2, Stethoscope, ShieldCheck, BadgeCheck, Clock } from "lucide-react";
 
 export function GH2SectionHeader({
   index,
@@ -264,89 +264,91 @@ export function GH2AuthShell({
   children: ReactNode;
   activeTab?: "login" | "register";
 }) {
+  const TRUST_CARDS = [
+    { icon: <ShieldCheck className="size-[18px]" />, title: "GDPR compliant", sub: "Your health data stays private" },
+    { icon: <BadgeCheck className="size-[18px]" />, title: "Verified clinicians", sub: "Identity and licence checked" },
+    { icon: <Clock className="size-[18px]" />, title: "24 h response", sub: "Most replies within the hour" },
+  ];
+
   return (
-    <div className="bg-[var(--color-background-soft)] lg:grid lg:grid-cols-[46%_54%]" style={{ minHeight: "calc(100dvh - 64px)" }}>
-      {/* Left — dark brand panel, desktop only */}
+    <div className="lg:grid lg:grid-cols-[52%_48%]" style={{ minHeight: "calc(100svh - var(--header-height))" }}>
+      {/* LEFT — hero-quality dark panel, desktop only */}
       <aside
         className="gh2-hero gh-medical-pattern gh-medical-pattern-dark relative hidden overflow-hidden lg:flex lg:flex-col lg:justify-between"
-        style={{ padding: "clamp(40px,5vw,64px) clamp(32px,4vw,56px)" }}
+        style={{ padding: "clamp(40px,5vw,64px) clamp(32px,4vw,56px)", minHeight: "calc(100svh - var(--header-height))" }}
       >
-        {/* Watermark atmosphere */}
+        {/* Dot grid atmosphere — masked radial so it fades toward right */}
         <div
           aria-hidden
-          className="gh2-watermark pointer-events-none absolute bottom-8 -left-4 select-none"
-          style={{ fontSize: "clamp(4rem,8vw,8rem)" }}
+          className="gh-dot-grid pointer-events-none absolute inset-0"
+          style={{ opacity: 0.45, maskImage: "radial-gradient(680px 520px at 20% 35%, #000 0%, transparent 72%)" }}
+        />
+        {/* Lime bloom radial */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute"
+          style={{ left: "28%", top: "22%", width: 520, height: 520, background: "radial-gradient(circle, rgba(176,241,34,0.13), transparent 62%)", filter: "blur(8px)" }}
+        />
+        {/* "Health" watermark — large, bottom-right */}
+        <div
+          aria-hidden
+          className="gh2-watermark pointer-events-none absolute select-none"
+          style={{ right: "-0.06em", bottom: "-0.16em", fontSize: "clamp(5rem,14vw,13rem)", WebkitTextStroke: "1.5px rgba(255,255,255,0.07)" }}
         >
-          Global Health
+          Health
         </div>
 
-        {/* Top logo */}
-        <Link href="/" className="relative z-10 inline-flex items-center gap-2.5 text-white">
+        {/* Logo */}
+        <Link href="/" className="relative z-[1] inline-flex items-center gap-2.5 text-white">
           <span className="inline-flex size-10 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-[#0a1f14]">
             <Stethoscope className="size-5" aria-hidden />
           </span>
           <span className="text-[15px] font-extrabold tracking-[-0.02em]">Global Health</span>
         </Link>
 
-        {/* Middle — headline block */}
-        <div className="relative z-10" style={{ maxWidth: "26ch" }}>
-          <p
-            className="gh2-index"
-            style={{ color: "var(--color-brand-accent)", marginBottom: "1.25rem" }}
-          >
+        {/* Middle — headline + live pill + trust cards */}
+        <div className="relative z-[1]" style={{ maxWidth: "28ch" }}>
+          <p className="gh2-index" style={{ color: "var(--color-brand-accent)", marginBottom: "1.25rem" }}>
             {eyebrow}
           </p>
           <h2
             className="font-extrabold leading-[0.97] tracking-[-0.04em]"
-            style={{ fontSize: "clamp(2.2rem,4.5vw,3.8rem)", color: "rgba(255,255,255,0.95)" }}
+            style={{ fontSize: "clamp(2.4rem,4.5vw,3.8rem)", color: "rgba(255,255,255,0.95)" }}
           >
             {title}{" "}
-            <span style={{ color: "var(--color-brand-accent)" }}>{accent}</span>
+            <span className="gh-accent-glow">{accent}</span>
           </h2>
-          <p
-            className="leading-relaxed"
-            style={{ marginTop: "1.25rem", fontSize: "15px", color: "rgba(255,255,255,0.52)", maxWidth: "38ch" }}
-          >
-            {body}
-          </p>
 
-          {/* Trust indicators */}
+          {/* Live pill */}
           <div
-            className="mt-8 grid grid-cols-3 pt-6"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.09)" }}
+            className="mt-6 inline-flex items-center gap-2.5 rounded-full px-4 py-2"
+            style={{ background: "rgba(176,241,34,0.08)", border: "1px solid rgba(176,241,34,0.20)" }}
           >
-            {[
-              { label: "GDPR", sub: "Privacy protected" },
-              { label: "JWT", sub: "Secure sessions" },
-              { label: "24 h", sub: "Doctor response" },
-            ].map((item, i) => (
-              <div
-                key={item.label}
-                className={i > 0 ? "pl-4" : ""}
-                style={i > 0 ? { borderLeft: "1px solid rgba(255,255,255,0.09)" } : {}}
-              >
-                <p className="gh2-index" style={{ color: "var(--color-brand-accent)" }}>
-                  {item.label}
-                </p>
-                <p
-                  className="mt-1.5 font-semibold uppercase"
-                  style={{ fontSize: "10px", letterSpacing: "0.12em", color: "rgba(255,255,255,0.30)" }}
-                >
-                  {item.sub}
-                </p>
-              </div>
-            ))}
+            <span className="gh2-live-dot" style={{ width: 8, height: 8 }} />
+            <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.70)", fontWeight: 600 }}>Doctors available now</span>
           </div>
+
+          {/* Glass trust cards */}
+          <ul className="mt-7 grid grid-cols-1 gap-3" aria-label="Platform guarantees">
+            {TRUST_CARDS.map((card) => (
+              <li key={card.title} className="gh-glass-emerald flex items-center gap-3 rounded-2xl px-3.5 py-3">
+                <span
+                  className="inline-flex size-9 flex-shrink-0 items-center justify-center rounded-xl"
+                  style={{ background: "rgba(176,241,34,0.12)", color: "var(--color-brand-accent)" }}
+                >
+                  {card.icon}
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-[13px] font-bold text-white">{card.title}</span>
+                  <span className="block text-[11.5px]" style={{ color: "rgba(255,255,255,0.55)" }}>{card.sub}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        {/* Bottom trust quote */}
-        <div
-          className="relative z-10 rounded-2xl p-5"
-          style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-          }}
-        >
+        {/* Bottom testimonial */}
+        <div className="gh-glass-emerald relative z-[1] rounded-2xl p-5">
           <p style={{ fontSize: "13px", lineHeight: 1.6, color: "rgba(255,255,255,0.60)", fontStyle: "italic" }}>
             &ldquo;Saw a specialist within the hour. No waiting room, no travel — completely changed how I manage my health.&rdquo;
           </p>
@@ -356,18 +358,27 @@ export function GH2AuthShell({
         </div>
       </aside>
 
-      {/* Right — form column */}
+      {/* RIGHT — form column */}
       <main
-        className="flex flex-col items-center justify-center px-5 py-10 lg:px-10"
-        style={{ background: "#fff" }}
+        className="flex flex-col items-center justify-center px-5 py-10 lg:px-12"
+        style={{ background: "#fff", minHeight: "calc(100svh - var(--header-height))" }}
       >
         <div className="w-full" style={{ maxWidth: "400px" }}>
-          {/* Mobile logo */}
-          <div className="mb-8 flex items-center gap-2 lg:hidden">
-            <span className="inline-flex size-9 items-center justify-center rounded-full bg-[var(--color-brand-primary)] text-white">
+          {/* Mobile: compact dark brand strip */}
+          <div className="gh2-hero gh-medical-pattern gh-medical-pattern-dark -mx-5 mb-8 flex items-center gap-3 px-5 py-4 lg:hidden">
+            <span className="inline-flex size-9 items-center justify-center rounded-full bg-[var(--color-brand-accent)] text-[#0a1f14]">
               <Stethoscope className="size-4" aria-hidden />
             </span>
-            <span className="font-extrabold text-[var(--color-text-primary)]">Global Health</span>
+            <div>
+              <p className="text-[13px] font-extrabold text-white">Global Health</p>
+              <p style={{ fontSize: "11.5px", color: "rgba(176,241,34,0.80)" }}>
+                {title} {accent}
+              </p>
+            </div>
+            <div className="ml-auto flex items-center gap-1.5">
+              <span className="gh2-live-dot" style={{ width: 8, height: 8 }} />
+              <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.55)" }}>Live</span>
+            </div>
           </div>
 
           {/* Tab switcher */}

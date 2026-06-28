@@ -107,8 +107,8 @@
   --shadow-card:       0 1px 3px rgba(29, 75, 54, 0.08), 0 4px 12px rgba(29, 75, 54, 0.04);
   --shadow-card-hover: 0 4px 12px rgba(29, 75, 54, 0.12), 0 8px 24px rgba(29, 75, 54, 0.08);
   --shadow-elevated:   0 8px 30px rgba(29, 75, 54, 0.14), 0 2px 8px rgba(29, 75, 54, 0.08);
-  --shadow-focus:      0 0 0 3px rgba(29, 75, 54, 0.15);
-  --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.15);
+  --shadow-focus:      0 0 0 3px rgba(29, 75, 54, 0.28);
+  --shadow-focus-error:0 0 0 3px rgba(185, 28, 28, 0.28);
 
   /* Medical pattern tokens */
   --medical-pattern-size: 28px;
