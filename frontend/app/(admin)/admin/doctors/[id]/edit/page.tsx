@@ -6,11 +6,13 @@ import { ArrowLeft } from "lucide-react";
 import { FlagBadge } from "../../../_components/flag-badge";
 import { DoctorFields } from "../../_components/doctor-fields";
 import { DoctorProfileImageField } from "../../_components/doctor-profile-image-field";
+import { DoctorCountryProfileEditor } from "../../_components/doctor-country-profile-editor";
 import { parseDoctorBodyFromForm } from "@/lib/admin/doctor-form-parse";
 import { resolveCountryLocaleTabs } from "@/lib/admin/service-form-parse";
 import {
   fetchAdminCountries,
   fetchAdminDoctorById,
+  fetchAdminDoctorMarkets,
   fetchAdminDoctors,
   fetchAdminSpecialties,
   patchAdminDoctor,
@@ -26,7 +28,7 @@ export const dynamic = "force-dynamic";
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams?: Promise<{ error?: string }>;
+  searchParams?: Promise<{ error?: string; success?: string }>;
 };
 
 export default async function AdminEditDoctorPage({
@@ -84,7 +86,11 @@ export default async function AdminEditDoctorPage({
   }
 
   const doctor = doctorResult.data.doctor;
-  const specialtiesResult = await fetchAdminSpecialties(doctor.countryId);
+  const [specialtiesResult, marketsResult] = await Promise.all([
+    fetchAdminSpecialties(doctor.countryId),
+    fetchAdminDoctorMarkets(id),
+  ]);
+  const markets = marketsResult.ok ? marketsResult.data.markets : [];
 
   if (!specialtiesResult.ok) {
     return (
@@ -120,21 +126,19 @@ export default async function AdminEditDoctorPage({
     "use server";
     await requireAdminAction();
 
+    // Title, bio and SEO are managed per country (DoctorCountryProfileEditor),
+    // not here — the main form only owns identity + routing fields, so it must
+    // not submit (and thereby wipe) the doctor-level title/bio/SEO.
     const raw = parseDoctorBodyFromForm(formData, defaultLocale);
     const body = {
       countryId: raw.countryId,
       slug: raw.slug,
       fullName: raw.fullName,
-      title: raw.title,
-      bio: raw.bio.trim() === "" ? null : raw.bio.trim(),
       medicalRegistrationUrl:
         raw.medicalRegistrationUrl === "" ? null : raw.medicalRegistrationUrl,
       qualifications: raw.qualifications,
       whatsappNumber: raw.whatsappNumber === "" ? null : raw.whatsappNumber,
       languages: raw.languages,
-      seoTitle: raw.seoTitle === "" ? null : raw.seoTitle,
-      seoDescription: raw.seoDescription === "" ? null : raw.seoDescription,
-      translations: raw.translations,
       specialtyIds: raw.specialtyIds,
       additionalCountryIds: raw.additionalCountryIds,
       profileImagePath: raw.profileImagePath === "" ? null : raw.profileImagePath,
@@ -155,8 +159,8 @@ export default async function AdminEditDoctorPage({
       Promise.resolve(
         validateAdminDoctorPayload({
           fullName: body.fullName,
-          title: body.title,
-          bio: body.bio,
+          title: doctor.title,
+          bio: doctor.bio,
           languages: body.languages,
           medicalRegistrationUrl: body.medicalRegistrationUrl,
           qualifications: body.qualifications,
@@ -166,7 +170,7 @@ export default async function AdminEditDoctorPage({
     ]);
     const duplicateIssues = existingDoctors.ok
       ? detectDuplicateTextIssues(
-          { id, title: body.fullName, description: body.bio },
+          { id, title: body.fullName, description: doctor.bio },
           existingDoctors.data.items.map((item) => ({
             id: item.id,
             title: item.fullName,
@@ -257,13 +261,24 @@ export default async function AdminEditDoctorPage({
           {messages.error}
         </p>
       ) : null}
+      {messages.success ? (
+        <p className="gh-status-success mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+          {messages.success}
+        </p>
+      ) : null}
 
       <div
         className="grid gap-4"
         style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
       >
-        {/* Main column — form */}
-        <AdminCard>
+        {/* Main column — country profile editor + identity form */}
+        <div className="grid gap-4">
+          <DoctorCountryProfileEditor
+            doctorId={id}
+            doctorSlug={doctor.slug}
+            markets={markets}
+          />
+          <AdminCard>
           <h3
             className="m-0 text-[var(--color-text-primary)]"
             style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
@@ -288,6 +303,7 @@ export default async function AdminEditDoctorPage({
               initial={doctor}
               locales={locales}
               defaultLocale={defaultLocale}
+              showTranslationTabs={false}
             />
             <div className="flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">
@@ -301,7 +317,8 @@ export default async function AdminEditDoctorPage({
               </Link>
             </div>
           </form>
-        </AdminCard>
+          </AdminCard>
+        </div>
 
         {/* Right sidebar — visibility + practicing-in */}
         <div className="grid gap-4 self-start">

@@ -663,20 +663,11 @@ export async function fetchAdminDoctorBank(doctorId: string, reveal = false) {
 export type AdminDoctorMarketTranslationDto = {
   id: string;
   locale: string;
+  title: string | null;
   bio: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
   seoKeywords: string[];
-};
-
-export type AdminDoctorMarketFaqDto = {
-  id: string;
-  locale: string;
-  question: string;
-  answer: string;
-  category: string | null;
-  sortOrder: number;
-  isActive: boolean;
 };
 
 export type AdminDoctorMarketDto = {
@@ -693,10 +684,47 @@ export type AdminDoctorMarketDto = {
   isVerified: boolean;
   verifiedAt: string | null;
   translations: AdminDoctorMarketTranslationDto[];
-  faqs: AdminDoctorMarketFaqDto[];
   bank: AdminDoctorBankDto;
   createdAt: string;
 };
+
+export type AdminDoctorFaqDto = {
+  id: string;
+  locale: string;
+  question: string;
+  answer: string;
+  category: string | null;
+  sortOrder: number;
+  isActive: boolean;
+};
+
+export type AdminDoctorFaqsDto = {
+  doctorId: string;
+  defaultLocale: string;
+  supportedLocales: Array<{ code: string; isDefault: boolean }>;
+  faqs: AdminDoctorFaqDto[];
+};
+
+export const fetchAdminDoctorFaqs = cache(async (doctorId: string) => {
+  return adminRequest<AdminDoctorFaqsDto>(`/api/admin/doctors/${doctorId}/faqs`);
+});
+
+export async function putAdminDoctorFaqs(
+  doctorId: string,
+  faqs: Array<{
+    locale: string;
+    question: string;
+    answer: string;
+    category: string | null;
+    sortOrder: number;
+    isActive: boolean;
+  }>,
+) {
+  return adminRequest<{ faqs: AdminDoctorFaqDto[] }>(
+    `/api/admin/doctors/${doctorId}/faqs`,
+    { method: "PUT", body: { faqs } },
+  );
+}
 
 export const fetchAdminDoctorMarkets = cache(async (doctorId: string) => {
   return adminRequest<{

@@ -25,13 +25,14 @@ const doctorTranslationSelect = {
 
 const doctorMarketTranslationSelect = {
   locale: true,
+  title: true,
   bio: true,
   seoTitle: true,
   seoDescription: true,
   seoKeywords: true,
 } satisfies Prisma.DoctorMarketTranslationSelect;
 
-const doctorMarketFaqSelect = {
+const doctorFaqSelect = {
   id: true,
   locale: true,
   question: true,
@@ -39,7 +40,7 @@ const doctorMarketFaqSelect = {
   category: true,
   sortOrder: true,
   isActive: true,
-} satisfies Prisma.DoctorMarketFaqSelect;
+} satisfies Prisma.DoctorFaqSelect;
 
 type DoctorDisplayBase = {
   title: string;
@@ -52,13 +53,14 @@ type DoctorTranslationRow = DoctorDisplayBase & { locale: LocaleCode };
 
 type DoctorMarketTranslationRow = {
   locale: LocaleCode;
+  title: string | null;
   bio: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
   seoKeywords: string[];
 };
 
-type DoctorMarketFaqRow = {
+type DoctorFaqRow = {
   id: string;
   locale: LocaleCode;
   question: string;
@@ -102,6 +104,7 @@ function mergeDoctorMarketTranslation<
   const { tr, resolvedLocale } = resolveTranslation(rows, requested, defaultLocale);
   return {
     ...doctor,
+    title: tr?.title ?? doctor.title,
     bio: tr?.bio ?? doctor.bio,
     seoTitle: tr?.seoTitle ?? doctor.seoTitle,
     seoDescription: tr?.seoDescription ?? doctor.seoDescription,
@@ -110,11 +113,11 @@ function mergeDoctorMarketTranslation<
   };
 }
 
-function resolveDoctorMarketFaqs(
-  faqs: DoctorMarketFaqRow[] | undefined,
+function resolveDoctorFaqs(
+  faqs: DoctorFaqRow[] | undefined,
   requested: LocaleCode,
   defaultLocale: LocaleCode,
-): DoctorMarketFaqRow[] {
+): DoctorFaqRow[] {
   const active = (faqs ?? []).filter((faq) => faq.isActive);
   const requestedRows = active.filter((faq) => faq.locale === requested);
   const rows =
@@ -355,6 +358,11 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
         country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true } },
         specialties: { include: { specialty: true } },
         translations: { select: doctorTranslationSelect },
+        faqs: {
+          where: { isActive: true },
+          orderBy: [{ sortOrder: "asc" }, { question: "asc" }],
+          select: doctorFaqSelect,
+        },
         assets: {
           where: { isActive: true, kind: AssetKind.IMAGE },
           // Deterministic newest-first ordering. The doctor portal and
@@ -388,11 +396,6 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
             division: true,
             isVerified: true,
             translations: { select: doctorMarketTranslationSelect },
-            faqs: {
-              where: { isActive: true },
-              orderBy: [{ sortOrder: "asc" }, { question: "asc" }],
-              select: doctorMarketFaqSelect,
-            },
           },
           take: 1,
         },
@@ -437,7 +440,7 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
       );
       return {
         ...stripPrivateContact(overrideImcRegistrationFromCountry(marketMerged, countryCode)),
-        faqs: resolveDoctorMarketFaqs(market?.faqs, requestedLocale, marketDefaultLocale),
+        faqs: resolveDoctorFaqs(d.faqs, requestedLocale, marketDefaultLocale),
         isFeatured: d.id === featuredId,
       };
     });
@@ -546,6 +549,11 @@ export async function getDoctorByCountryAndSlug(
         country: { select: { id: true, code: true, slug: true, name: true, defaultLocale: true } },
         specialties: { include: { specialty: true } },
         translations: { select: doctorTranslationSelect },
+        faqs: {
+          where: { isActive: true },
+          orderBy: [{ sortOrder: "asc" }, { question: "asc" }],
+          select: doctorFaqSelect,
+        },
         assets: {
           where: { isActive: true, kind: AssetKind.IMAGE },
           // Match the listing endpoint's newest-first asset ordering so
@@ -576,11 +584,6 @@ export async function getDoctorByCountryAndSlug(
             division: true,
             isVerified: true,
             translations: { select: doctorMarketTranslationSelect },
-            faqs: {
-              where: { isActive: true },
-              orderBy: [{ sortOrder: "asc" }, { question: "asc" }],
-              select: doctorMarketFaqSelect,
-            },
           },
           take: 1,
         },
@@ -632,7 +635,7 @@ export async function getDoctorByCountryAndSlug(
     );
     return {
       ...stripPrivateContact(overrideImcRegistrationFromCountry(marketMerged, countryCode)),
-      faqs: resolveDoctorMarketFaqs(market?.faqs, requestedLocale, marketDefaultLocale),
+      faqs: resolveDoctorFaqs(doctor.faqs, requestedLocale, marketDefaultLocale),
     };
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");

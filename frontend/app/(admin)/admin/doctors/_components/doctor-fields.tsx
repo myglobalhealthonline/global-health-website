@@ -13,6 +13,10 @@ type Props = {
    *  enabled locales. Always includes the default locale. */
   locales: { code: string; isDefault: boolean }[];
   defaultLocale: string;
+  /** Doctor-level title/bio/SEO language tabs. Shown on create (to bootstrap
+   *  the base translation); hidden on edit, where title/bio/SEO are managed
+   *  per country by DoctorCountryProfileEditor. Default true. */
+  showTranslationTabs?: boolean;
 };
 
 export function DoctorFields({
@@ -23,6 +27,7 @@ export function DoctorFields({
   countryLocked,
   locales,
   defaultLocale,
+  showTranslationTabs = true,
 }: Props) {
   const pinId = pinnedCountryId ?? (countryLocked ? initial?.countryId : undefined);
   const pinnedMeta = pinId ? countries.find((c) => c.id === pinId) : undefined;
@@ -156,8 +161,17 @@ export function DoctorFields({
         </div>
 
         <p className="text-xs text-[var(--color-text-muted)]">
-          Professional title, bio and SEO are now edited per language in the
-          <strong> Title, bio &amp; SEO by language</strong> section below.
+          {showTranslationTabs ? (
+            <>
+              Professional title, bio and SEO are edited per language in the
+              <strong> Title, bio &amp; SEO by language</strong> section below.
+            </>
+          ) : (
+            <>
+              Professional title, bio and SEO are edited per country in the
+              <strong> Country profile</strong> card above.
+            </>
+          )}
         </p>
 
         <label className="flex cursor-pointer items-center gap-2">
@@ -181,12 +195,14 @@ export function DoctorFields({
           </span>
         </label>
 
-        <DoctorTranslationTabs
-          locales={locales}
-          defaultLocale={defaultLocale}
-          initialTranslations={initial?.translations ?? []}
-          baseFallback={baseFallback}
-        />
+        {showTranslationTabs ? (
+          <DoctorTranslationTabs
+            locales={locales}
+            defaultLocale={defaultLocale}
+            initialTranslations={initial?.translations ?? []}
+            baseFallback={baseFallback}
+          />
+        ) : null}
 
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Qualifications</span>

@@ -6,7 +6,7 @@ import {
 } from "../../validations/doctor-market-profiles.schema.js";
 
 describe("doctor market profile validation", () => {
-  it("admin payload accepts market bio, SEO, FAQs, registration, and bank fields", () => {
+  it("admin payload accepts market title, bio, SEO, registration, and bank fields", () => {
     const result = adminDoctorMarketPatchBodySchema.safeParse({
       active: true,
       sortOrder: 2,
@@ -17,20 +17,11 @@ describe("doctor market profile validation", () => {
       translations: [
         {
           locale: "EN",
+          title: "Medical Doctor",
           bio: "<p>English market bio</p>",
           seoTitle: "Dr Smith Ireland",
           seoDescription: "Ireland profile description",
           seoKeywords: ["cardiology", "telehealth"],
-        },
-      ],
-      faqs: [
-        {
-          locale: "EN",
-          question: "Do you support Irish prescriptions?",
-          answer: "Yes.",
-          category: "Prescriptions",
-          sortOrder: 1,
-          isActive: true,
         },
       ],
       bank: {
@@ -41,6 +32,14 @@ describe("doctor market profile validation", () => {
     });
 
     assert.equal(result.success, true);
+  });
+
+  it("admin payload rejects FAQ fields (now doctor-level)", () => {
+    const result = adminDoctorMarketPatchBodySchema.safeParse({
+      translations: [{ locale: "EN", bio: "<p>bio</p>" }],
+      faqs: [{ locale: "EN", question: "Q?", answer: "A." }],
+    });
+    assert.equal(result.success, false);
   });
 
   it("doctor payload accepts only practical market fields", () => {
