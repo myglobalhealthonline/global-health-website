@@ -139,7 +139,9 @@ export default async function AdminEditDoctorPage({
       qualifications: raw.qualifications,
       whatsappNumber: raw.whatsappNumber === "" ? null : raw.whatsappNumber,
       languages: raw.languages,
-      specialtyIds: raw.specialtyIds,
+      // Specialties are not edited on this form anymore; omit specialtyIds so
+      // the backend preserves the existing assignments (it only re-syncs when
+      // specialtyIds is provided or the primary country changes).
       additionalCountryIds: raw.additionalCountryIds,
       profileImagePath: raw.profileImagePath === "" ? null : raw.profileImagePath,
       profileImageAltText:
@@ -164,7 +166,7 @@ export default async function AdminEditDoctorPage({
           languages: body.languages,
           medicalRegistrationUrl: body.medicalRegistrationUrl,
           qualifications: body.qualifications,
-          specialties: body.specialtyIds,
+          specialties: doctor.specialties.map((s) => s.specialtyId),
         }),
       ),
     ]);
@@ -271,13 +273,8 @@ export default async function AdminEditDoctorPage({
         className="grid gap-4"
         style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
       >
-        {/* Main column — country profile editor + identity form */}
+        {/* Main column — identity form, then per-country profile editor */}
         <div className="grid gap-4">
-          <DoctorCountryProfileEditor
-            doctorId={id}
-            doctorSlug={doctor.slug}
-            markets={markets}
-          />
           <AdminCard>
           <h3
             className="m-0 text-[var(--color-text-primary)]"
@@ -304,6 +301,7 @@ export default async function AdminEditDoctorPage({
               locales={locales}
               defaultLocale={defaultLocale}
               showTranslationTabs={false}
+              showSpecialties={false}
             />
             <div className="flex flex-wrap gap-3 border-t border-[var(--color-border)] pt-6">
               <button type="submit" className="gh-btn gh-btn-primary">
@@ -318,6 +316,12 @@ export default async function AdminEditDoctorPage({
             </div>
           </form>
           </AdminCard>
+
+          <DoctorCountryProfileEditor
+            doctorId={id}
+            doctorSlug={doctor.slug}
+            markets={markets}
+          />
         </div>
 
         {/* Right sidebar — visibility + practicing-in */}

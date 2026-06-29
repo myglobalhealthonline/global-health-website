@@ -17,6 +17,8 @@ type Props = {
    *  the base translation); hidden on edit, where title/bio/SEO are managed
    *  per country by DoctorCountryProfileEditor. Default true. */
   showTranslationTabs?: boolean;
+  /** Specialty checkbox grid. Shown on create; hidden on edit. Default true. */
+  showSpecialties?: boolean;
 };
 
 export function DoctorFields({
@@ -28,6 +30,7 @@ export function DoctorFields({
   locales,
   defaultLocale,
   showTranslationTabs = true,
+  showSpecialties = true,
 }: Props) {
   const pinId = pinnedCountryId ?? (countryLocked ? initial?.countryId : undefined);
   const pinnedMeta = pinId ? countries.find((c) => c.id === pinId) : undefined;
@@ -94,7 +97,8 @@ export function DoctorFields({
             submits its specialty id under the `specialtyIds` form key,
             which `parseDoctorFormData` reads via
             `formData.getAll("specialtyIds")`. Drives the public doctor
-            specialty tags + filter. */}
+            specialty tags + filter. Hidden on edit. */}
+        {showSpecialties ? (
         <fieldset className="flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
           <legend className="px-1 text-sm font-semibold text-[var(--color-text-primary)]">
             Specialties
@@ -140,6 +144,7 @@ export function DoctorFields({
             </div>
           )}
         </fieldset>
+        ) : null}
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
