@@ -230,38 +230,9 @@ function CountryForm({
           Payout details
         </h4>
         <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
-          IBAN is encrypted. Leave IBAN blank to keep the current value:{" "}
-          {market.bank.ibanMasked ?? "none on file"}.
+          Bank / IBAN is entered by the doctor in their portal — admins cannot
+          set it. {market.bank.ibanSet ? `On file: ${market.bank.ibanMasked ?? "•••• ••••"}.` : "None on file yet."}
         </p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-3">
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label">Account holder</span>
-            <input
-              name="bankAccountHolder"
-              maxLength={160}
-              defaultValue={market.bank.accountHolder ?? ""}
-              className="gh-input"
-            />
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label">BIC / SWIFT</span>
-            <input
-              name="bankBic"
-              maxLength={16}
-              defaultValue={market.bank.bic ?? ""}
-              className="gh-input font-mono"
-            />
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="gh-field-label">New IBAN</span>
-            <input
-              name="bankIban"
-              maxLength={42}
-              className="gh-input font-mono"
-              placeholder="Leave blank to keep"
-            />
-          </label>
-        </div>
       </div>
 
       <div className="mt-4 flex justify-end">
