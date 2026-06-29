@@ -550,6 +550,50 @@ model DoctorTranslation {
   @@index([doctorId])
 }
 
+model DoctorMarketTranslation {
+  id              String        @id @default(cuid())
+  doctorCountryId String
+  locale          LocaleCode
+  bio             String?
+  seoTitle        String?
+  seoDescription  String?
+  seoKeywords     String[]      @default([])
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  doctorCountry   DoctorCountry @relation(fields: [doctorCountryId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorCountryId, locale])
+  @@index([doctorCountryId])
+}
+
+model DoctorMarketFaq {
+  id              String        @id @default(cuid())
+  doctorCountryId String
+  locale          LocaleCode
+  question        String
+  answer          String
+  category        String?
+  sortOrder       Int           @default(0)
+  isActive        Boolean       @default(true)
+  doctorCountry   DoctorCountry @relation(fields: [doctorCountryId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([doctorCountryId, locale, isActive])
+}
+
+model DoctorMarketBankAccount {
+  id              String        @id @default(cuid())
+  doctorCountryId String        @unique
+  doctorCountry   DoctorCountry @relation(fields: [doctorCountryId], references: [id], onDelete: Cascade)
+  accountHolder   String?
+  ibanEncrypted   String?
+  ibanLast4       String?
+  bic             String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
 /// Doctor's recurring weekly availability window. One row = "every
 /// {weekday} from {startMinute} until {endMinute} I take patients in
 /// {slotDurationMinutes}-minute slots." Slot rows are derived from
@@ -634,6 +678,9 @@ model DoctorCountry {
   verifiedAt         DateTime?
   doctor             Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   country            Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  translations       DoctorMarketTranslation[]
+  faqs               DoctorMarketFaq[]
+  bankAccount        DoctorMarketBankAccount?
   createdAt          DateTime  @default(now())
 
   @@unique([doctorId, countryId])
@@ -1003,6 +1050,9 @@ model Asset {
   key                 String
   path                String
   altText             String?
+  title               String?
+  caption             String?
+  description         String?
   usageNote           String?
   isActive            Boolean       @default(true)
   country             Country?      @relation(fields: [countryId], references: [id], onDelete: Cascade)

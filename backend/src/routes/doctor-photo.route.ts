@@ -83,6 +83,7 @@ const doctorPhotoRoute: FastifyPluginAsync = async (app) => {
     const doctorMeta = await prisma.doctor.findUnique({
       where: { id: auth.doctorId },
       select: {
+        fullName: true,
         countryId: true,
         slug: true,
         country: { select: { code: true } },
@@ -126,12 +127,16 @@ const doctorPhotoRoute: FastifyPluginAsync = async (app) => {
             kind: "IMAGE",
             key: assetKey,
             path,
+            altText: doctorMeta.fullName,
+            title: doctorMeta.fullName,
             isActive: true,
           },
           update: {
             doctorId: auth.doctorId,
             countryId: doctorMeta.countryId,
             path,
+            altText: doctorMeta.fullName,
+            title: doctorMeta.fullName,
             isActive: true,
           },
         }),

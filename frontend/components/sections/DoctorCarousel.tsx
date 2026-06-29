@@ -19,6 +19,10 @@ export type DoctorCarouselItem = {
   whatsappNumber?: string;
   bio: string;
   imageSrc?: string | null;
+  imageAltText?: string | null;
+  imageTitle?: string | null;
+  imageCaption?: string | null;
+  imageDescription?: string | null;
   initials?: string;
   href?: string;
   bookingHref?: string;

@@ -9,6 +9,7 @@ import {
   doctorPublicProfilePath,
   fetchAdminDoctorById,
   fetchAdminDoctorFeatured,
+  fetchAdminDoctorMarkets,
   fetchAdminDoctorRegistrations,
   fetchAdminDoctorCredentials,
   fetchAdminDoctorBank,
@@ -23,6 +24,7 @@ import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
 import { ConfirmDeleteButton } from "../../_components/confirm-delete-button";
 import { DoctorRegistrationsCard } from "../_components/registrations-card";
 import { DoctorCredentialsCard } from "../_components/doctor-credentials-card";
+import { DoctorMarketsCard } from "../_components/doctor-markets-card";
 
 export const dynamic = "force-dynamic";
 
@@ -158,12 +160,14 @@ export default async function AdminDoctorDetailPage({
   const revealBank = messages.revealBank === "1";
   const bankResult = await fetchAdminDoctorBank(id, revealBank);
   const bank = bankResult.ok ? bankResult.data.bank : null;
+  const marketsResult = await fetchAdminDoctorMarkets(id);
+  const markets = marketsResult.ok ? marketsResult.data.markets : [];
   // Primary country + any additional country listings — admin can issue
   // a registration for any of these.
   const associatedCountries = [
     { id: d.country.id, code: d.country.code, name: d.country.name },
     ...d.additionalCountries
-      .filter((link) => link.active)
+      .filter((link) => link.active && link.country.id !== d.country.id)
       .map((link) => ({
         id: link.country.id,
         code: link.country.code,
@@ -336,6 +340,8 @@ export default async function AdminDoctorDetailPage({
               </p>
             )}
           </AdminCard>
+
+          <DoctorMarketsCard doctorId={d.id} doctorSlug={d.slug} markets={markets} />
 
           <DoctorRegistrationsCard
             doctorId={d.id}

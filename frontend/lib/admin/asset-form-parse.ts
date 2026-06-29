@@ -13,6 +13,9 @@ export function parseAssetBodyFromForm(formData: FormData) {
     key: String(formData.get("key") ?? "").trim(),
     path: String(formData.get("path") ?? "").trim(),
     altText: String(formData.get("altText") ?? "").trim(),
+    title: String(formData.get("title") ?? "").trim(),
+    caption: String(formData.get("caption") ?? "").trim(),
+    description: String(formData.get("description") ?? "").trim(),
     usageNote: String(formData.get("usageNote") ?? "").trim(),
     isActive: formData.get("isActive") === "on",
   };

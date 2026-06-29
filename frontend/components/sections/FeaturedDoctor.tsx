@@ -36,6 +36,10 @@ type DoctorSpotlightProps = {
   languages?: string[];
   bio: string;
   imageSrc?: string | null;
+  imageAltText?: string | null;
+  imageTitle?: string | null;
+  imageCaption?: string | null;
+  imageDescription?: string | null;
   href?: string;
   bookingHref?: string;
   /** WhatsApp contact — rendered as a "Call" pill next to the booking
@@ -134,7 +138,13 @@ export function FeaturedDoctor({
           {hasImage ? (
             <Image
               src={src}
-              alt={doctor.name}
+              alt={doctor.imageAltText?.trim() || doctor.name}
+              title={doctor.imageTitle?.trim() || undefined}
+              aria-describedby={
+                doctor.imageCaption || doctor.imageDescription
+                  ? "featured-doctor-image-seo"
+                  : undefined
+              }
               fill
               unoptimized={unoptimized}
               className="object-cover object-top"
@@ -153,6 +163,11 @@ export function FeaturedDoctor({
               {initials}
             </div>
           )}
+          {doctor.imageCaption || doctor.imageDescription ? (
+            <p id="featured-doctor-image-seo" className="sr-only">
+              {[doctor.imageCaption, doctor.imageDescription].filter(Boolean).join(" ")}
+            </p>
+          ) : null}
 
           {/* "Featured" ribbon — lime, ties the spotlight to the brand accent */}
           <span

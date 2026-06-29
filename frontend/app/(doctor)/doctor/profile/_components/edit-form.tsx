@@ -36,6 +36,24 @@ type Initial = {
   /** Masked IBAN ("•••• 1234") when one is on file, else null. */
   bankIbanMasked: string | null;
   bankIbanSet: boolean;
+  markets: Array<{
+    id: string;
+    countryId: string;
+    country: { id: string; code: string; name: string; slug: string; defaultLocale: string };
+    supportedLocales: Array<{ code: string; isDefault: boolean }>;
+    chamberEntity: string | null;
+    registrationNumber: string | null;
+    division: string | null;
+    isVerified: boolean;
+    verifiedAt: string | null;
+    translations: Array<{ locale: string; bio: string | null }>;
+    bank: {
+      accountHolder: string | null;
+      bic: string | null;
+      ibanMasked: string | null;
+      ibanSet: boolean;
+    };
+  }>;
 };
 
 type Msg = { kind: "success" | "error"; text: string };
@@ -110,13 +128,29 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
     () => canonicalizeLanguages(initial.languages),
     [initialLanguagesKey],
   );
-  const defaultLocale = initial.defaultLocale.toUpperCase();
-  const localeTabsKey = initial.supportedLocales
+  const marketOptions = initial.markets.length > 0 ? initial.markets : [];
+  const [activeMarketCountryId, setActiveMarketCountryId] = useState(
+    marketOptions[0]?.countryId ?? "",
+  );
+  const activeMarket =
+    marketOptions.find((market) => market.countryId === activeMarketCountryId) ??
+    marketOptions[0] ??
+    null;
+  const activeMarketBank = activeMarket?.bank ?? null;
+  const activeMarketHasIban = activeMarketBank?.ibanSet ?? initial.bankIbanSet;
+  const activeMarketIbanMasked =
+    activeMarketBank?.ibanMasked ?? initial.bankIbanMasked ?? "•••• ••••";
+  const defaultLocale = (
+    activeMarket?.country.defaultLocale ?? initial.defaultLocale
+  ).toUpperCase();
+  const supportedLocaleSource =
+    activeMarket?.supportedLocales ?? initial.supportedLocales;
+  const localeTabsKey = supportedLocaleSource
     .map((locale) => `${locale.code}:${locale.isDefault ? "1" : "0"}`)
     .join("|");
   const localeTabs = useMemo(() => {
     const seen = new Set<string>();
-    const tabs = initial.supportedLocales
+    const tabs = supportedLocaleSource
       .map((locale) => ({
         code: locale.code.toUpperCase(),
         isDefault: locale.isDefault || locale.code.toUpperCase() === defaultLocale,
@@ -130,7 +164,7 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
       tabs.unshift({ code: defaultLocale, isDefault: true });
     }
     return tabs.length > 0 ? tabs : [{ code: "EN", isDefault: true }];
-  }, [defaultLocale, initial.supportedLocales, localeTabsKey]);
+  }, [defaultLocale, supportedLocaleSource, localeTabsKey]);
 
   /* ── Profile form ─────────────────────────────────── */
   const [profilePending, startProfileTransition] = useTransition();
@@ -142,14 +176,23 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
   const [qualifications, setQualifications] = useState(initialQualificationsText);
   const [languages, setLanguages] = useState<string[]>(initialLanguages);
   const [whatsappNumber, setWhatsappNumber] = useState(initial.whatsappNumber);
+  const [chamberEntity, setChamberEntity] = useState(
+    activeMarket?.chamberEntity ?? "",
+  );
+  const [registrationNumber, setRegistrationNumber] = useState(
+    activeMarket?.registrationNumber ?? "",
+  );
+  const [registrationDivision, setRegistrationDivision] = useState(
+    activeMarket?.division ?? "",
+  );
 
   /* ── Payout form ──────────────────────────────────── */
   const [payoutPending, startPayoutTransition] = useTransition();
   const [payoutMsg, setPayoutMsg] = useState<Msg | null>(null);
   const [bankAccountHolder, setBankAccountHolder] = useState(
-    initial.bankAccountHolder,
+    activeMarket?.bank.accountHolder ?? initial.bankAccountHolder,
   );
-  const [bankBic, setBankBic] = useState(initial.bankBic);
+  const [bankBic, setBankBic] = useState(activeMarket?.bank.bic ?? initial.bankBic);
   const [bankIban, setBankIban] = useState("");
   const [bicFieldError, setBicFieldError] = useState<string | null>(null);
   const [ibanFieldError, setIbanFieldError] = useState<string | null>(null);
@@ -167,8 +210,11 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
     setQualifications(initialQualificationsText);
     setLanguages(initialLanguages);
     setWhatsappNumber(initial.whatsappNumber);
-    setBankAccountHolder(initial.bankAccountHolder);
-    setBankBic(initial.bankBic);
+    setChamberEntity(activeMarket?.chamberEntity ?? "");
+    setRegistrationNumber(activeMarket?.registrationNumber ?? "");
+    setRegistrationDivision(activeMarket?.division ?? "");
+    setBankAccountHolder(activeMarket?.bank.accountHolder ?? initial.bankAccountHolder);
+    setBankBic(activeMarket?.bank.bic ?? initial.bankBic);
     setBankIban("");
     setPhotoPath(initial.profileImagePath);
     setActiveBioLocale(
@@ -183,13 +229,20 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
     initial.bankAccountHolder,
     initial.bankBic,
     initial.profileImagePath,
+    activeMarket?.countryId,
+    activeMarket?.chamberEntity,
+    activeMarket?.registrationNumber,
+    activeMarket?.division,
+    activeMarket?.bank.accountHolder,
+    activeMarket?.bank.bic,
     localeTabs,
     localeTabsKey,
   ]);
 
   function initialBioForLocale(locale: string): string {
     const normalized = locale.toUpperCase();
-    const translated = initial.translations.find(
+    const sourceTranslations = activeMarket?.translations ?? initial.translations;
+    const translated = sourceTranslations.find(
       (entry) => entry.locale.toUpperCase() === normalized,
     );
     return translated?.bio ?? (normalized === defaultLocale ? initial.bio : "");
@@ -255,12 +308,8 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
       );
       return { locale: locale.code, bio };
     });
-    const defaultBio =
-      translations.find((entry) => entry.locale === defaultLocale)?.bio ?? null;
     const payload = {
       fullName: fullName.trim(),
-      bio: defaultBio,
-      translations,
       qualifications: qualifications
         .split("\n")
         .map((l) => l.trim())
@@ -268,6 +317,14 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
       languages: languages.map((l) => l.trim()).filter(Boolean),
       whatsappNumber: whatsappNumber.trim() || null,
     };
+    const marketPayload = activeMarket
+      ? {
+          translations,
+          chamberEntity: chamberEntity.trim() || null,
+          registrationNumber: registrationNumber.trim() || null,
+          division: registrationDivision.trim() || null,
+        }
+      : null;
     startProfileTransition(async () => {
       try {
         const res = await fetch("/api/doctor/profile", {
@@ -283,9 +340,32 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
           });
           return;
         }
+        if (activeMarket && marketPayload) {
+          const marketRes = await fetch(
+            `/api/doctor/profile/markets/${encodeURIComponent(activeMarket.countryId)}`,
+            {
+              method: "PATCH",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify(marketPayload),
+            },
+          );
+          const marketJson = (await marketRes.json()) as {
+            ok?: boolean;
+            message?: string;
+          };
+          if (!marketRes.ok || !marketJson.ok) {
+            setProfileMsg({
+              kind: "error",
+              text: marketJson.message ?? "Could not save market profile",
+            });
+            return;
+          }
+        }
         setProfileMsg({
           kind: "success",
-          text: json.message ?? "Profile updated",
+          text: activeMarket
+            ? "Profile and market details updated"
+            : json.message ?? "Profile updated",
         });
         router.refresh();
       } catch {
@@ -298,6 +378,10 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
   function onSubmitPayout(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPayoutMsg(null);
+    if (!activeMarket) {
+      setPayoutMsg({ kind: "error", text: "No active market is available" });
+      return;
+    }
 
     // Client-side validation before hitting the backend
     const bErr = bicError(bankBic);
@@ -315,11 +399,14 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
 
     startPayoutTransition(async () => {
       try {
-        const res = await fetch("/api/doctor/profile", {
-          method: "PATCH",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+        const res = await fetch(
+          `/api/doctor/profile/markets/${encodeURIComponent(activeMarket.countryId)}`,
+          {
+            method: "PATCH",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ bank: payload }),
+          },
+        );
         const json = (await res.json()) as { ok?: boolean; message?: string };
         if (!res.ok || !json.ok) {
           setPayoutMsg({
@@ -358,10 +445,32 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
               Public profile
             </h3>
             <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Patients see this on your doctor card and profile page.
+              Patients see this on your doctor card and profile page for the
+              selected market.
             </p>
 
             <div className="mt-4 flex flex-col gap-4">
+              {marketOptions.length > 0 ? (
+                <label className="flex flex-col gap-2">
+                  <span className="gh-field-label">Market</span>
+                  <select
+                    className="gh-input min-w-0"
+                    value={activeMarket?.countryId ?? ""}
+                    onChange={(event) => setActiveMarketCountryId(event.target.value)}
+                  >
+                    {marketOptions.map((market) => (
+                      <option key={market.countryId} value={market.countryId}>
+                        {market.country.name} ({market.country.code.toUpperCase()})
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-xs text-[var(--color-text-muted)]">
+                    Bio, registration, and payout details are saved separately
+                    for each approved market.
+                  </span>
+                </label>
+              ) : null}
+
               <label className="flex flex-col gap-2">
                 <span className="gh-field-label">Full name</span>
                 <input
@@ -459,6 +568,62 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
                   </span>
                 </label>
               </div>
+
+              {activeMarket ? (
+                <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <span className="gh-field-label">
+                        {activeMarket.country.name} registration
+                      </span>
+                      <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                        Edits are sent for admin re-verification before being
+                        treated as verified.
+                      </p>
+                    </div>
+                    <span
+                      className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
+                        activeMarket.isVerified
+                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                          : "border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-text-muted)]"
+                      }`}
+                    >
+                      {activeMarket.isVerified ? "Verified" : "Needs verification"}
+                    </span>
+                  </div>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                    <label className="flex flex-col gap-2">
+                      <span className="gh-field-label">Registration body</span>
+                      <input
+                        className="gh-input min-w-0"
+                        value={chamberEntity}
+                        onChange={(e) => setChamberEntity(e.target.value)}
+                        maxLength={64}
+                        placeholder="IMC, OM, OMC"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-2">
+                      <span className="gh-field-label">Registration number</span>
+                      <input
+                        className="gh-input min-w-0"
+                        value={registrationNumber}
+                        onChange={(e) => setRegistrationNumber(e.target.value)}
+                        maxLength={64}
+                      />
+                    </label>
+                    <label className="flex flex-col gap-2">
+                      <span className="gh-field-label">Division</span>
+                      <input
+                        className="gh-input min-w-0"
+                        value={registrationDivision}
+                        onChange={(e) => setRegistrationDivision(e.target.value)}
+                        maxLength={120}
+                        placeholder="General Division"
+                      />
+                    </label>
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             {profileMsg ? <MessageBanner msg={profileMsg} /> : null}
@@ -489,8 +654,9 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
               Payout details
             </h3>
             <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Your bank details for receiving payments. Private — never shown
-              on your public profile. Your IBAN is stored encrypted.
+              Your bank details for receiving payments in the selected market.
+              Private — never shown on your public profile. Your IBAN is stored
+              encrypted.
             </p>
 
             <div className="mt-4 flex flex-col gap-4">
@@ -519,8 +685,8 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
                   spellCheck={false}
                   inputMode="text"
                   placeholder={
-                    initial.bankIbanSet
-                      ? `On file: ${initial.bankIbanMasked ?? "•••• ••••"} — leave blank to keep`
+                    activeMarketHasIban
+                      ? `On file: ${activeMarketIbanMasked} — leave blank to keep`
                       : "IE29 AIBK 9311 5212 3456 78"
                   }
                 />
@@ -528,7 +694,7 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
                   <span className="text-xs text-red-600">{ibanFieldError}</span>
                 ) : (
                   <span className="text-xs text-[var(--color-text-muted)]">
-                    {initial.bankIbanSet
+                    {activeMarketHasIban
                       ? "An IBAN is on file. Type a new one only to replace it."
                       : "Enter your full IBAN. It is stored encrypted and shown masked afterwards."}
                   </span>
@@ -679,9 +845,9 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
             Admin-managed
           </h3>
           <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-            Country, URL slug, IMC registration, and your eligible specialties
-            stay admin-managed to keep verification + routing consistent. Ping
-            support if any of those need to change.
+            SEO fields, FAQ sections, country approvals, URL slug, and eligible
+            specialties stay admin-managed to keep verification and routing
+            consistent. Registration edits are reviewed by admin.
           </p>
         </section>
       </aside>

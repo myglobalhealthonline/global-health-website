@@ -118,6 +118,7 @@ export default async function DoctorProfilePage() {
           bankBic: doctor.bank.bic ?? "",
           bankIbanMasked: doctor.bank.ibanMasked,
           bankIbanSet: doctor.bank.ibanSet,
+          markets: doctor.markets,
         }}
       />
     </>

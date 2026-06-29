@@ -24,6 +24,15 @@ import {
   saveDoctorServiceSelections,
 } from "../modules/doctor-services/doctor-services.service.js";
 import { normalizeDoctorWhatsAppForStorage } from "../lib/whatsapp/resolve-doctor-contact.js";
+import {
+  DoctorMarketAccessDeniedError,
+  DoctorMarketNotFoundError,
+  listDoctorSelfMarkets,
+  updateDoctorSelfMarket,
+} from "../modules/doctor-market-profiles/doctor-market-profiles.service.js";
+import {
+  doctorMarketPatchBodySchema,
+} from "../validations/doctor-market-profiles.schema.js";
 
 /**
  * Doctor portal API. Every endpoint here is scoped to the logged-in
@@ -151,6 +160,10 @@ const doctorServicesBodySchema = z.object({
   serviceIds: z.array(z.string().trim().min(1)).max(100),
 });
 
+const doctorMarketCountryParamsSchema = z.object({
+  countryId: z.string().trim().min(1).max(64),
+});
+
 const doctorRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/doctor/me", async (request, reply) => {
     const auth = await verifyDoctorAccess(request);
@@ -239,6 +252,7 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           where: { doctorId: auth.doctorId, status: { notIn: ["CANCELLED", "COMPLETED"] } },
         }),
       ]);
+      const markets = await listDoctorSelfMarkets(auth.doctorId);
 
       const { bankAccount, assets, country, translations, ...doctorRest } = doctor;
       const supportedLocales = supportedDoctorLocales(country);
@@ -273,6 +287,7 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
             ibanMasked: maskIban(bankAccount?.ibanLast4),
             ibanSet: Boolean(bankAccount?.ibanEncrypted),
           },
+          markets,
         },
         stats: { todayCount, weekCount, totalActive },
       });
@@ -667,6 +682,60 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not update profile"));
+    }
+  });
+
+  app.patch("/api/doctor/profile/markets/:countryId", async (request, reply) => {
+    const auth = await verifyDoctorAccess(request);
+    if (!auth.ok) {
+      return reply.status(auth.status).send(errorResponse(auth.message));
+    }
+    const params = doctorMarketCountryParamsSchema.safeParse(request.params);
+    if (!params.success) {
+      return reply.status(400).send(errorResponse("Invalid market", params.error.flatten()));
+    }
+    const body = doctorMarketPatchBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid market profile update", body.error.flatten()));
+    }
+
+    try {
+      const market = await updateDoctorSelfMarket(
+        auth.doctorId,
+        params.data.countryId,
+        body.data,
+      );
+      recordAudit({
+        actorUserId: auth.userId,
+        actorRole: "DOCTOR",
+        action: "DOCTOR_UPDATED",
+        entityType: "Doctor",
+        entityId: auth.doctorId,
+        metadata: {
+          marketCountryId: params.data.countryId,
+          changed: Object.keys(body.data),
+          registrationNeedsReverification:
+            body.data.chamberEntity !== undefined ||
+            body.data.registrationNumber !== undefined ||
+            body.data.division !== undefined,
+        },
+        request,
+      }).catch(() => {});
+      return okResponse({ market }, "Market profile updated");
+    } catch (error) {
+      if (error instanceof DoctorMarketAccessDeniedError) {
+        return reply.status(403).send(errorResponse(error.message));
+      }
+      if (error instanceof DoctorMarketNotFoundError) {
+        return reply.status(404).send(errorResponse(error.message));
+      }
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply.status(500).send(errorResponse("Could not update market profile"));
     }
   });
 

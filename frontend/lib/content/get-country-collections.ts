@@ -29,6 +29,10 @@ export type CountryServiceCard = {
   basePriceCents: number | null;
   currencyCode: string | null;
   imageSrc?: string;
+  imageAltText?: string;
+  imageTitle?: string;
+  imageCaption?: string;
+  imageDescription?: string;
   /** Doctor IDs bookable for this service. Empty array = no assignment
    *  yet; the public consult flow will show "no doctors available". */
   assignedDoctorIds: string[];
@@ -116,6 +120,10 @@ export type CountryDoctorCard = {
   languages: string[];
   specialties: string[];
   imageSrc?: string;
+  imageAltText?: string;
+  imageTitle?: string;
+  imageCaption?: string;
+  imageDescription?: string;
   /** Service IDs the doctor is bookable for, in admin-defined sort
    *  order. Empty array means no current ServiceDoctor assignments. */
   assignedServiceIds: string[];
@@ -153,7 +161,15 @@ function readSpecialtyName(row: unknown): string | null {
   return typeof r.name === "string" ? r.name : null;
 }
 
-function pickImagePath(row: unknown): string | undefined {
+function pickImage(row: unknown):
+  | {
+      src: string;
+      altText?: string;
+      title?: string;
+      caption?: string;
+      description?: string;
+    }
+  | undefined {
   const assets = (row as { assets?: unknown }).assets;
   if (!Array.isArray(assets)) return undefined;
   // Backend orders active profile images newest-first. Trust that order
@@ -161,13 +177,38 @@ function pickImagePath(row: unknown): string | undefined {
   // canonical admin key.
   for (const a of assets) {
     if (!a || typeof a !== "object") continue;
-    const rec = a as { kind?: unknown; path?: unknown };
+    const rec = a as {
+      kind?: unknown;
+      path?: unknown;
+      altText?: unknown;
+      title?: unknown;
+      caption?: unknown;
+      description?: unknown;
+    };
     if (rec.kind !== "IMAGE" || typeof rec.path !== "string") continue;
     const resolved = resolveTrustedAssetUrl(rec.path);
     if (!resolved) continue;
-    return resolved;
+    return {
+      src: resolved,
+      ...(typeof rec.altText === "string" && rec.altText.trim()
+        ? { altText: rec.altText.trim() }
+        : {}),
+      ...(typeof rec.title === "string" && rec.title.trim()
+        ? { title: rec.title.trim() }
+        : {}),
+      ...(typeof rec.caption === "string" && rec.caption.trim()
+        ? { caption: rec.caption.trim() }
+        : {}),
+      ...(typeof rec.description === "string" && rec.description.trim()
+        ? { description: rec.description.trim() }
+        : {}),
+    };
   }
   return undefined;
+}
+
+function pickImagePath(row: unknown): string | undefined {
+  return pickImage(row)?.src;
 }
 
 /** Services for a country, filtered by kind. Skips inactive rows. When a
@@ -199,6 +240,7 @@ export const getCountryServices = cache(async (
         if (typeof id === "string" && id.length > 0) assignedDoctorIds.push(id);
       }
     }
+    const image = pickImage(row);
     out.push({
       id: r.id,
       slug: r.slug,
@@ -208,7 +250,11 @@ export const getCountryServices = cache(async (
       durationMinutes: typeof r.durationMinutes === "number" ? r.durationMinutes : null,
       basePriceCents: typeof r.basePriceCents === "number" ? r.basePriceCents : null,
       currencyCode: typeof r.currencyCode === "string" ? r.currencyCode : null,
-      imageSrc: pickImagePath(row),
+      imageSrc: image?.src,
+      ...(image?.altText ? { imageAltText: image.altText } : {}),
+      ...(image?.title ? { imageTitle: image.title } : {}),
+      ...(image?.caption ? { imageCaption: image.caption } : {}),
+      ...(image?.description ? { imageDescription: image.description } : {}),
       assignedDoctorIds,
     });
   }
@@ -312,6 +358,7 @@ export const getCountryDoctors = cache(async (
           }))
           .filter((c) => c.label && c.bodyName)
       : [];
+    const image = pickImage(row);
 
     out.push({
       id: r.id,
@@ -321,7 +368,11 @@ export const getCountryDoctors = cache(async (
       bio: typeof r.bio === "string" ? r.bio : null,
       languages,
       specialties,
-      imageSrc: pickImagePath(row),
+      imageSrc: image?.src,
+      ...(image?.altText ? { imageAltText: image.altText } : {}),
+      ...(image?.title ? { imageTitle: image.title } : {}),
+      ...(image?.caption ? { imageCaption: image.caption } : {}),
+      ...(image?.description ? { imageDescription: image.description } : {}),
       assignedServiceIds,
       isFeatured: r.isFeatured === true,
       ...(imcRegistration ? { imcRegistration } : {}),

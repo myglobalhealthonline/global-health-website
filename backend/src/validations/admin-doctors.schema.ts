@@ -141,6 +141,10 @@ const adminDoctorBaseObject = z.object({
    */
   additionalCountryIds: z.array(z.string().trim().min(1)).optional(),
   profileImagePath: profileImageRefSchema.optional(),
+  profileImageAltText: nullableTrimmed(500),
+  profileImageTitle: nullableTrimmed(500),
+  profileImageCaption: nullableTrimmed(1000),
+  profileImageDescription: nullableTrimmed(2000),
   active: z.boolean().optional(),
   /**
    * Per-doctor RBAC flag for the manual-entry CTA in their portal.

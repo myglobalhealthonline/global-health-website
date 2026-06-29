@@ -61,6 +61,10 @@ export function parseDoctorBodyFromForm(formData: FormData, defaultLocale: strin
     additionalCountryIds,
     translations,
     profileImagePath: String(formData.get("profileImagePath") ?? "").trim(),
+    profileImageAltText: String(formData.get("profileImageAltText") ?? "").trim(),
+    profileImageTitle: String(formData.get("profileImageTitle") ?? "").trim(),
+    profileImageCaption: String(formData.get("profileImageCaption") ?? "").trim(),
+    profileImageDescription: String(formData.get("profileImageDescription") ?? "").trim(),
     active: formData.get("active") === "on",
     canCreateManualAppointments:
       formData.get("canCreateManualAppointments") === "on",
