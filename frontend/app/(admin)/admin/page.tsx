@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import {
   CalendarClock,
   ChevronRight,
+  ClipboardCheck,
   Eye,
   FileText,
   Globe2,
@@ -17,6 +18,7 @@ import {
   fetchAdminCountries,
   fetchAdminDoctors,
   fetchAdminPages,
+  fetchAdminPendingServiceRequests,
   fetchAdminServices,
   type AdminPageDto,
 } from "@/lib/admin/admin-api";
@@ -92,12 +94,18 @@ export default async function AdminDashboardPage() {
     ? { countryId: activeCountry.id }
     : {};
 
-  const [doctorsRes, servicesRes, appointmentsRes, pagesRes] = await Promise.all([
-    fetchAdminDoctors(scopeQuery),
-    fetchAdminServices(scopeQuery),
-    fetchAdminAppointments(activeCountry ? { countryCode: activeCountry.code } : undefined),
-    fetchAdminPages({ ...scopeQuery, pageSize: "100" }),
-  ]);
+  const [doctorsRes, servicesRes, appointmentsRes, pagesRes, approvalsRes] =
+    await Promise.all([
+      fetchAdminDoctors(scopeQuery),
+      fetchAdminServices(scopeQuery),
+      fetchAdminAppointments(activeCountry ? { countryCode: activeCountry.code } : undefined),
+      fetchAdminPages({ ...scopeQuery, pageSize: "100" }),
+      fetchAdminPendingServiceRequests(
+        activeCountry ? { countryCode: activeCountry.code } : undefined,
+      ),
+    ]);
+
+  const pendingApprovals = approvalsRes.ok ? approvalsRes.data.count : 0;
 
   const doctorsTotal = doctorsRes.ok ? doctorsRes.data.pagination.total : 0;
   const doctorsActive = doctorsRes.ok
@@ -294,6 +302,18 @@ export default async function AdminDashboardPage() {
           icon={<CalendarClock className="size-[18px]" aria-hidden />}
           tone={pendingAppointments > 0 ? "accent" : "neutral"}
           href="/admin/appointments"
+        />
+        <StatCard
+          label="Approval requests"
+          value={pendingApprovals}
+          hint={
+            pendingApprovals > 0
+              ? `${pendingApprovals} new request${pendingApprovals === 1 ? "" : "s"}`
+              : "All clear"
+          }
+          icon={<ClipboardCheck className="size-[18px]" aria-hidden />}
+          tone={pendingApprovals > 0 ? "accent" : "neutral"}
+          href="/admin/doctors"
         />
       </section>
 

@@ -32,6 +32,7 @@ import {
   adminRemoveDoctorService,
   adminUpdateDoctorService,
   listAdminDoctorServices,
+  listPendingDoctorServiceRequests,
   type ServiceDoctorStatus,
 } from "../modules/doctor-services/doctor-services.service.js";
 import { z } from "zod";
@@ -72,6 +73,10 @@ const adminDoctorServicePatchBodySchema = z.object({
 const serviceDoctorIdParamsSchema = z.object({
   id: z.string().trim().min(1),
   serviceDoctorId: z.string().trim().min(1),
+});
+
+const pendingServiceRequestsQuerySchema = z.object({
+  countryCode: z.string().trim().min(1).max(8).optional(),
 });
 
 const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
@@ -384,6 +389,34 @@ const adminDoctorsRoute: FastifyPluginAsync = async (app) => {
       }
       app.log.error(error);
       return reply.status(500).send(errorResponse("Could not send invite"));
+    }
+  });
+
+  /**
+   * Pending doctor-initiated service requests awaiting approval. Drives the
+   * admin alert badge + notification feed. `countryCode` scopes the queue to
+   * one country; omit for the global queue.
+   */
+  app.get("/api/admin/doctor-service-requests", async (request, reply) => {
+    const query = pendingServiceRequestsQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid query", query.error.flatten()));
+    }
+    try {
+      const data = await listPendingDoctorServiceRequests({
+        countryCode: query.data.countryCode ?? null,
+      });
+      return okResponse(data);
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply
+        .status(500)
+        .send(errorResponse("Could not load pending service requests"));
     }
   });
 
