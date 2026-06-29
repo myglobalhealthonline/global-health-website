@@ -164,7 +164,7 @@ export function FeaturedDoctor({
             }}
           >
             <Sparkles className="size-3.5" strokeWidth={2} aria-hidden />
-            Featured doctor
+            Clinical Director
           </span>
 
           {/* Right-edge fade into card body on desktop (dark surface only —
