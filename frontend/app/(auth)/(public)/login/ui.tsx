@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
 import { loginUser } from "@/lib/api/auth-api";
 import styles from "./login.module.css";
 
@@ -39,16 +39,16 @@ const DEFAULT_I18N: LoginI18n = {
 
 export function LoginFormFallback({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
   return (
-    <form className="grid gap-6" aria-hidden>
+    <form className="grid gap-5" aria-hidden>
       <div className="grid gap-2">
         <div className="h-4 w-24 rounded bg-[var(--color-border)]/40" />
-        <div className="h-11 animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
+        <div className="h-[52px] animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
       </div>
       <div className="grid gap-2">
         <div className="h-4 w-20 rounded bg-[var(--color-border)]/40" />
-        <div className="h-11 animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
+        <div className="h-[52px] animate-pulse rounded-[var(--radius-input)] bg-[var(--color-border)]/30" />
       </div>
-      <div className="gh2-btn-lime mt-1 animate-pulse justify-center opacity-60">
+      <div className="gh2-btn-lime mt-2 animate-pulse justify-center opacity-60">
         {i18n.signIn}
       </div>
     </form>
@@ -100,22 +100,30 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-6" suppressHydrationWarning>
+    <form onSubmit={onSubmit} className="grid gap-5" suppressHydrationWarning>
+      {/* Email */}
       <div className="grid gap-2">
         <label htmlFor="login-email" className="gh-field-label">
           {i18n.emailLabel}
         </label>
-        <input
-          id="login-email"
-          name="email"
-          type="email"
-          className="gh-input"
-          placeholder={i18n.emailPlaceholder}
-          required
-          autoComplete="email"
-        />
+        <div className="relative">
+          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2" style={{ color: "#9BB0A4" }}>
+            <Mail className="size-[17px]" aria-hidden />
+          </span>
+          <input
+            id="login-email"
+            name="email"
+            type="email"
+            className="gh-input"
+            style={{ paddingLeft: "2.75rem" }}
+            placeholder={i18n.emailPlaceholder}
+            required
+            autoComplete="email"
+          />
+        </div>
       </div>
 
+      {/* Password */}
       <div className="grid gap-2">
         <div className="flex items-center justify-between">
           <label htmlFor="login-password" className="gh-field-label">
@@ -130,11 +138,15 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
           </Link>
         </div>
         <div className="relative">
+          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2" style={{ color: "#9BB0A4" }}>
+            <Lock className="size-[17px]" aria-hidden />
+          </span>
           <input
             id="login-password"
             name="password"
             type={showPassword ? "text" : "password"}
             className="gh-input pr-12"
+            style={{ paddingLeft: "2.75rem" }}
             placeholder={i18n.passwordPlaceholder}
             required
             autoComplete="current-password"
@@ -150,31 +162,27 @@ export function LoginForm({ i18n = DEFAULT_I18N }: { i18n?: LoginI18n }) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <label className="flex cursor-pointer items-center gap-2 text-[13px] text-[var(--color-text-body)]">
-          <input
-            type="checkbox"
-            name="remember"
-            defaultChecked
-            className={`${styles.rememberCheckbox} size-4`}
-          />
-          {i18n.rememberMe}
-        </label>
-      </div>
+      {/* Remember me */}
+      <label className="flex cursor-pointer items-center gap-2 text-[13px] text-[var(--color-text-body)]">
+        <input
+          type="checkbox"
+          name="remember"
+          defaultChecked
+          className={`${styles.rememberCheckbox} size-4`}
+        />
+        {i18n.rememberMe}
+      </label>
 
-      <div
-        className="pt-1"
-        style={{ borderTop: "1px solid var(--color-border)" }}
+      {/* Submit */}
+      <button
+        type="submit"
+        className="gh2-btn-lime mt-1 w-full justify-center disabled:opacity-60"
+        disabled={loading}
+        style={{ width: "100%" }}
       >
-        <button
-          type="submit"
-          className="gh2-btn-lime w-full justify-center disabled:opacity-60"
-          disabled={loading}
-          style={{ width: "100%" }}
-        >
-          {loading ? i18n.signingIn : i18n.signIn}
-        </button>
-      </div>
+        {loading ? i18n.signingIn : i18n.signIn}
+        {!loading && <ArrowRight className="ml-1.5 size-4 shrink-0" aria-hidden />}
+      </button>
 
       {message ? (
         <p

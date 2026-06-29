@@ -26,36 +26,25 @@ export default async function Page() {
     <GH2AuthShell
       activeTab="login"
       eyebrow="Secure access"
-      title="Your care, always"
-      accent="available."
-      body="Consult doctors, review your history, and manage appointments — all in one place."
+      title="Manage care with"
+      accent="confidence."
+      body="Sign in to continue booking, reviewing consultations, and managing the clinical network."
     >
-      <div className="mb-7">
+      <div className="mb-6 text-center">
         <h1
           className="font-extrabold tracking-[-0.04em]"
-          style={{ fontSize: "clamp(1.9rem,3vw,2.5rem)", lineHeight: 1.05, color: "var(--color-text-primary)", textWrap: "balance" } as React.CSSProperties}
+          style={{ fontSize: "clamp(1.75rem,3vw,2.25rem)", lineHeight: 1.1, color: "#0D3A28" } as React.CSSProperties}
         >
           Welcome back
         </h1>
-        <p className="mt-2 text-sm leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
-          Sign in to continue to your account.
+        <p className="mt-2 text-sm leading-relaxed" style={{ color: "#7A9A83" }}>
+          Sign in to your Global Health account
         </p>
       </div>
 
       <Suspense fallback={<LoginFormFallback i18n={loginI18n} />}>
         <LoginForm i18n={loginI18n} />
       </Suspense>
-
-      <p className="mt-7 text-center text-sm" style={{ color: "var(--color-text-muted)" }}>
-        No account yet?{" "}
-        <a
-          href="/register"
-          className="font-semibold underline-offset-4 hover:underline"
-          style={{ color: "var(--color-brand-primary)" }}
-        >
-          Create one free
-        </a>
-      </p>
     </GH2AuthShell>
   );
 }
