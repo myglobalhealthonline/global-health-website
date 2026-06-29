@@ -1,0 +1,323 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { RichTextHtmlField } from "@/app/(admin)/admin/_components/rich-text-html-field";
+import type { AdminDoctorMarketDto } from "@/lib/admin/admin-api";
+
+/**
+ * Per-country doctor profile editor. The profile is managed by country
+ * (outer tabs, shown only when the doctor practices in 2+ countries) and by
+ * language (inner tabs) — title, bio and SEO save per country+locale, with
+ * registration and payout per country. Saves through the `saveMarket` server
+ * action passed from the parent (one country at a time).
+ */
+
+type SaveAction = (formData: FormData) => void | Promise<void>;
+
+const LOCALE_LABELS: Record<string, string> = {
+  EN: "English",
+  PT: "Portuguese",
+  ES: "Spanish",
+  CS: "Czech",
+  RO: "Romanian",
+  DE: "German",
+};
+
+function localeLabel(code: string): string {
+  return LOCALE_LABELS[code.toUpperCase()] ?? code.toUpperCase();
+}
+
+function translationFor(market: AdminDoctorMarketDto, locale: string) {
+  const normalized = locale.toUpperCase();
+  return (
+    market.translations.find((entry) => entry.locale.toUpperCase() === normalized) ?? null
+  );
+}
+
+function localeTabsFor(market: AdminDoctorMarketDto) {
+  const defaultLocale = market.country.defaultLocale.toUpperCase();
+  const seen = new Set<string>();
+  const tabs = (market.supportedLocales.length
+    ? market.supportedLocales
+    : [{ code: defaultLocale, isDefault: true }]
+  )
+    .map((locale) => ({
+      code: locale.code.toUpperCase(),
+      isDefault: locale.isDefault || locale.code.toUpperCase() === defaultLocale,
+    }))
+    .filter((locale) => {
+      if (seen.has(locale.code)) return false;
+      seen.add(locale.code);
+      return true;
+    });
+  if (!seen.has(defaultLocale)) tabs.unshift({ code: defaultLocale, isDefault: true });
+  return tabs.length > 0 ? tabs : [{ code: defaultLocale, isDefault: true }];
+}
+
+function CountryForm({
+  market,
+  saveMarket,
+}: {
+  market: AdminDoctorMarketDto;
+  saveMarket: SaveAction;
+}) {
+  const localeTabs = useMemo(() => localeTabsFor(market), [market]);
+  const [activeLocale, setActiveLocale] = useState(
+    localeTabs.find((l) => l.isDefault)?.code ?? localeTabs[0].code,
+  );
+  const localeCsv = localeTabs.map((l) => l.code).join(",");
+
+  return (
+    <form
+      action={saveMarket}
+      className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
+    >
+      <input type="hidden" name="countryId" value={market.countryId} />
+      <input type="hidden" name="countryCode" value={market.country.code} />
+      <input type="hidden" name="locales" value={localeCsv} />
+
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="m-0 text-[15px] font-bold text-[var(--color-text-primary)]">
+            {market.country.name} ({market.country.code.toUpperCase()})
+          </p>
+          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+            Default locale: {market.country.defaultLocale}
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3 text-[13px]">
+          <label className="inline-flex items-center gap-2">
+            <input name="active" type="checkbox" defaultChecked={market.active} />
+            Active
+          </label>
+          <label className="inline-flex items-center gap-2">
+            <input name="isVerified" type="checkbox" defaultChecked={market.isVerified} />
+            Registration verified
+          </label>
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-[90px_1fr_1fr_90px]">
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Sort</span>
+          <input
+            name="sortOrder"
+            type="number"
+            min={0}
+            max={1000}
+            defaultValue={market.sortOrder}
+            className="gh-input"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Registration body</span>
+          <input
+            name="chamberEntity"
+            maxLength={64}
+            defaultValue={market.chamberEntity ?? ""}
+            className="gh-input"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Registration number</span>
+          <input
+            name="registrationNumber"
+            maxLength={64}
+            defaultValue={market.registrationNumber ?? ""}
+            className="gh-input"
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Division</span>
+          <input
+            name="division"
+            maxLength={120}
+            defaultValue={market.division ?? ""}
+            className="gh-input"
+          />
+        </label>
+      </div>
+
+      {/* Language tabs */}
+      <div role="tablist" className="mt-5 flex flex-wrap gap-1.5">
+        {localeTabs.map((locale) => {
+          const selected = locale.code === activeLocale;
+          return (
+            <button
+              key={locale.code}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() => setActiveLocale(locale.code)}
+              className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
+                selected
+                  ? "bg-[var(--color-brand-primary)] text-white"
+                  : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+              }`}
+            >
+              {localeLabel(locale.code)}
+              {locale.isDefault ? " · default" : ""}
+            </button>
+          );
+        })}
+      </div>
+
+      {localeTabs.map((locale) => {
+        const code = locale.code;
+        const translation = translationFor(market, code);
+        return (
+          <div
+            key={code}
+            role="tabpanel"
+            hidden={code !== activeLocale}
+            className="mt-4 grid gap-3"
+          >
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">
+                Professional title{locale.isDefault ? " *" : ""}
+              </span>
+              <input
+                name={`title_${code}`}
+                maxLength={160}
+                defaultValue={translation?.title ?? ""}
+                required={locale.isDefault}
+                className="gh-input"
+                placeholder="Medical Doctor"
+              />
+            </label>
+            <RichTextHtmlField
+              name={`bio_${code}`}
+              label="Bio"
+              initialValue={translation?.bio ?? ""}
+            />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">SEO title</span>
+                <input
+                  name={`seoTitle_${code}`}
+                  maxLength={160}
+                  defaultValue={translation?.seoTitle ?? ""}
+                  className="gh-input"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="gh-field-label">SEO keywords</span>
+                <input
+                  name={`seoKeywords_${code}`}
+                  maxLength={500}
+                  defaultValue={(translation?.seoKeywords ?? []).join(", ")}
+                  className="gh-input"
+                  placeholder="cardiology, telehealth"
+                />
+              </label>
+            </div>
+            <label className="flex flex-col gap-1">
+              <span className="gh-field-label">Meta description</span>
+              <textarea
+                name={`seoDescription_${code}`}
+                rows={2}
+                maxLength={320}
+                defaultValue={translation?.seoDescription ?? ""}
+                className="gh-input resize-y"
+              />
+            </label>
+          </div>
+        );
+      })}
+
+      <div className="mt-4 rounded-md border border-[var(--color-border)] bg-[var(--color-background)] p-3">
+        <h4 className="m-0 text-[13px] font-bold text-[var(--color-text-primary)]">
+          Payout details
+        </h4>
+        <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+          IBAN is encrypted. Leave IBAN blank to keep the current value:{" "}
+          {market.bank.ibanMasked ?? "none on file"}.
+        </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">Account holder</span>
+            <input
+              name="bankAccountHolder"
+              maxLength={160}
+              defaultValue={market.bank.accountHolder ?? ""}
+              className="gh-input"
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">BIC / SWIFT</span>
+            <input
+              name="bankBic"
+              maxLength={16}
+              defaultValue={market.bank.bic ?? ""}
+              className="gh-input font-mono"
+            />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="gh-field-label">New IBAN</span>
+            <input
+              name="bankIban"
+              maxLength={42}
+              className="gh-input font-mono"
+              placeholder="Leave blank to keep"
+            />
+          </label>
+        </div>
+      </div>
+
+      <div className="mt-4 flex justify-end">
+        <button type="submit" className="gh-btn gh-btn-primary">
+          Save {market.country.name}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+export function CountryProfileTabs({
+  markets,
+  saveMarket,
+}: {
+  markets: AdminDoctorMarketDto[];
+  saveMarket: SaveAction;
+}) {
+  const [activeCountryId, setActiveCountryId] = useState(markets[0]?.countryId ?? "");
+  const multiCountry = markets.length > 1;
+  const activeMarket =
+    markets.find((m) => m.countryId === activeCountryId) ?? markets[0] ?? null;
+
+  if (!activeMarket) return null;
+
+  return (
+    <div className="grid gap-4">
+      {multiCountry ? (
+        <div role="tablist" aria-label="Countries" className="flex flex-wrap gap-2">
+          {markets.map((market) => {
+            const selected = market.countryId === activeMarket.countryId;
+            return (
+              <button
+                key={market.countryId}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => setActiveCountryId(market.countryId)}
+                className={`inline-flex items-center gap-2 rounded-md border px-4 py-2 text-[13.5px] font-semibold transition-colors ${
+                  selected
+                    ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)]/[0.06] text-[var(--color-brand-primary)]"
+                    : "border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+                }`}
+              >
+                {market.country.name}
+                <span className="text-[11px] font-bold uppercase tracking-[0.06em] opacity-70">
+                  {market.country.code}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {/* Remount the form per active country so defaults refresh on switch. */}
+      <CountryForm key={activeMarket.countryId} market={activeMarket} saveMarket={saveMarket} />
+    </div>
+  );
+}

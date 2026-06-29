@@ -31,7 +31,6 @@ const doctorMarketInclude = {
     },
   },
   translations: { orderBy: { locale: "asc" as const } },
-  faqs: { orderBy: [{ sortOrder: "asc" as const }, { question: "asc" as const }] },
   bankAccount: true,
 } satisfies Prisma.DoctorCountryInclude;
 
@@ -107,19 +106,11 @@ function mapMarket(row: DoctorMarketRow, revealBank = false) {
     translations: row.translations.map((entry) => ({
       id: entry.id,
       locale: entry.locale,
+      title: entry.title,
       bio: entry.bio,
       seoTitle: entry.seoTitle,
       seoDescription: entry.seoDescription,
       seoKeywords: entry.seoKeywords,
-    })),
-    faqs: row.faqs.map((faq) => ({
-      id: faq.id,
-      locale: faq.locale,
-      question: faq.question,
-      answer: faq.answer,
-      category: faq.category,
-      sortOrder: faq.sortOrder,
-      isActive: faq.isActive,
     })),
     bank: mapBank(row.bankAccount, revealBank),
     createdAt: row.createdAt.toISOString(),
@@ -195,10 +186,7 @@ export async function updateAdminDoctorMarket(
   input: AdminDoctorMarketPatchBody,
 ) {
   try {
-    await assertLocales(countryId, [
-      ...(input.translations?.map((entry) => entry.locale) ?? []),
-      ...(input.faqs?.map((entry) => entry.locale) ?? []),
-    ]);
+    await assertLocales(countryId, input.translations?.map((entry) => entry.locale) ?? []);
     const updated = await prisma.$transaction(async (tx) => {
       const [doctor, country] = await Promise.all([
         tx.doctor.findUnique({ where: { id: doctorId }, select: { id: true } }),
@@ -248,34 +236,19 @@ export async function updateAdminDoctorMarket(
             create: {
               doctorCountryId: row.id,
               locale: entry.locale,
+              title: entry.title ?? null,
               bio: entry.bio == null ? null : sanitizeRichHtml(entry.bio),
               seoTitle: entry.seoTitle ?? null,
               seoDescription: entry.seoDescription ?? null,
               seoKeywords: entry.seoKeywords,
             },
             update: {
+              title: entry.title ?? null,
               bio: entry.bio == null ? null : sanitizeRichHtml(entry.bio),
               seoTitle: entry.seoTitle ?? null,
               seoDescription: entry.seoDescription ?? null,
               seoKeywords: entry.seoKeywords,
             },
-          });
-        }
-      }
-
-      if (input.faqs) {
-        await tx.doctorMarketFaq.deleteMany({ where: { doctorCountryId: row.id } });
-        if (input.faqs.length > 0) {
-          await tx.doctorMarketFaq.createMany({
-            data: input.faqs.map((faq) => ({
-              doctorCountryId: row.id,
-              locale: faq.locale,
-              question: faq.question,
-              answer: faq.answer,
-              category: faq.category ?? null,
-              sortOrder: faq.sortOrder,
-              isActive: faq.isActive,
-            })),
           });
         }
       }

@@ -464,6 +464,8 @@ model Doctor {
   /// overrides them per locale. fullName + qualifications are NOT
   /// translated (proper name + credentials stay single).
   translations                DoctorTranslation[]
+  /// Doctor-level FAQ entries (per locale), shown on every country profile.
+  faqs                        DoctorFaq[]
   /// Confirmed extra professional credentials (FRCP, MICGP, fellowships…)
   /// with their recognising body + verification URL. Powers profile
   /// display + Physician `hasCredential`/`recognizedBy` schema. Only
@@ -554,6 +556,7 @@ model DoctorMarketTranslation {
   id              String        @id @default(cuid())
   doctorCountryId String
   locale          LocaleCode
+  title           String?
   bio             String?
   seoTitle        String?
   seoDescription  String?
@@ -566,20 +569,22 @@ model DoctorMarketTranslation {
   @@index([doctorCountryId])
 }
 
-model DoctorMarketFaq {
-  id              String        @id @default(cuid())
-  doctorCountryId String
-  locale          LocaleCode
-  question        String
-  answer          String
-  category        String?
-  sortOrder       Int           @default(0)
-  isActive        Boolean       @default(true)
-  doctorCountry   DoctorCountry @relation(fields: [doctorCountryId], references: [id], onDelete: Cascade)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+/// Doctor-level FAQ, one set per doctor with per-locale entries. Shown on
+/// every country's public profile (resolved requested -> default locale).
+model DoctorFaq {
+  id        String     @id @default(cuid())
+  doctorId  String
+  locale    LocaleCode
+  question  String
+  answer    String
+  category  String?
+  sortOrder Int        @default(0)
+  isActive  Boolean    @default(true)
+  doctor    Doctor     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
-  @@index([doctorCountryId, locale, isActive])
+  @@index([doctorId, locale, isActive])
 }
 
 model DoctorMarketBankAccount {
@@ -679,7 +684,6 @@ model DoctorCountry {
   doctor             Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   country            Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
   translations       DoctorMarketTranslation[]
-  faqs               DoctorMarketFaq[]
   bankAccount        DoctorMarketBankAccount?
   createdAt          DateTime  @default(now())
 

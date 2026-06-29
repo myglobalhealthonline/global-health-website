@@ -22,6 +22,7 @@ export const doctorMarketParamsSchema = z.object({
 export const adminDoctorMarketTranslationSchema = z
   .object({
     locale: localeCodeSchema,
+    title: nullableTrimmed(160),
     bio: nullableTrimmed(12000),
     seoTitle: nullableTrimmed(160),
     seoDescription: nullableTrimmed(320),
@@ -30,18 +31,6 @@ export const adminDoctorMarketTranslationSchema = z
       .max(20)
       .optional()
       .default([]),
-  })
-  .strict();
-
-export const adminDoctorMarketFaqSchema = z
-  .object({
-    id: z.string().trim().min(1).max(64).optional(),
-    locale: localeCodeSchema,
-    question: z.string().trim().min(1).max(500),
-    answer: z.string().trim().min(1).max(4000),
-    category: nullableTrimmed(120),
-    sortOrder: z.coerce.number().int().min(0).max(1000).default(0),
-    isActive: z.boolean().default(true),
   })
   .strict();
 
@@ -85,7 +74,6 @@ export const adminDoctorMarketPatchBodySchema = z
     division: nullableTrimmed(120),
     isVerified: z.boolean().optional(),
     translations: z.array(adminDoctorMarketTranslationSchema).max(6).optional(),
-    faqs: z.array(adminDoctorMarketFaqSchema).max(50).optional(),
     bank: bankInputSchema.optional(),
   })
   .strict()
