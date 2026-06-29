@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowUpRight, CheckCircle2, XCircle, Loader2, Stethoscope, ShieldCheck, BadgeCheck, Clock, Lock, Globe, ChevronDown } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, XCircle, Loader2, Stethoscope, ShieldCheck, BadgeCheck, Clock, Lock } from "lucide-react";
 
 export function GH2SectionHeader({
   index,
@@ -271,7 +271,7 @@ export function GH2AuthShell({
   ];
 
   return (
-    <div className="grid min-h-svh grid-cols-1 lg:grid-cols-2">
+    <div className="grid grid-cols-1 lg:grid-cols-2" style={{ height: "100svh", overflow: "hidden" }}>
 
       {/* ── LEFT — brand panel (desktop only) ──────────────────────── */}
       <aside
@@ -343,18 +343,9 @@ export function GH2AuthShell({
 
       {/* ── RIGHT — form panel ────────────────────────────────────── */}
       <main
-        className="relative flex min-h-svh flex-col items-center justify-center px-5 py-14"
+        className="relative flex flex-col items-center justify-center overflow-y-auto px-5 py-6"
         style={{ background: "#F5F8F5" }}
       >
-        {/* Language selector */}
-        <div
-          style={{ position: "absolute", top: 20, right: 24, display: "inline-flex", alignItems: "center", gap: 6, padding: "7px 14px", borderRadius: 999, background: "#fff", border: "1px solid #DDE6DF", fontSize: 13, fontWeight: 600, color: "#2D4A3E", boxShadow: "0 1px 4px rgba(0,0,0,0.07)", cursor: "pointer", userSelect: "none" }}
-        >
-          <Globe style={{ width: 14, height: 14 }} aria-hidden />
-          <span>EN</span>
-          <ChevronDown style={{ width: 12, height: 12, opacity: 0.55 }} aria-hidden />
-        </div>
-
         <div className="w-full" style={{ maxWidth: 500 }}>
           {/* Mobile brand strip */}
           <div
