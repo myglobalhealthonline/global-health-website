@@ -162,8 +162,6 @@ export function DoctorProfileImageField({
         role="button"
         tabIndex={0}
         onClick={() => {
-          // Clicking the empty tile opens the picker. Clicking the
-          // with-image tile is a no-op (use Replace / Remove explicitly).
           if (!busy && !hasImage) fileRef.current?.click();
         }}
         onKeyDown={(e) => {
@@ -178,13 +176,12 @@ export function DoctorProfileImageField({
         style={{
           aspectRatio: "1 / 1",
           width: "100%",
+          maxWidth: 240,
           borderRadius: 16,
           background: hasImage
             ? "var(--color-background-soft)"
             : "linear-gradient(135deg, var(--color-brand-primary), var(--color-accent))",
           fontFamily: "var(--font-display)",
-          fontSize: 48,
-          fontWeight: 800,
           cursor: hasImage ? "default" : busy ? "wait" : "pointer",
         }}
       >
@@ -202,7 +199,17 @@ export function DoctorProfileImageField({
             }}
           />
         ) : (
-          <span>{initialsFor(fullName)}</span>
+          <div className="flex flex-col items-center gap-2" style={{ opacity: busy ? 0.6 : 1 }}>
+            <Upload aria-hidden className="size-8" style={{ opacity: 0.8 }} />
+            <span style={{ fontSize: 13, fontWeight: 600, opacity: 0.85 }}>
+              {busy ? "Uploading…" : "Upload photo"}
+            </span>
+            {fullName ? (
+              <span style={{ fontSize: 28, fontWeight: 800, opacity: 0.4, letterSpacing: "-0.02em" }}>
+                {initialsFor(fullName)}
+              </span>
+            ) : null}
+          </div>
         )}
 
         {/* Overlay actions — top-right, always visible. */}
