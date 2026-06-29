@@ -21,8 +21,10 @@ describe("public country plans route", () => {
   let currencyId = "";
   let enabledCountryId = "";
   let disabledCountryId = "";
+  let inactiveCountryId = "";
   let enabledCode = "";
   let disabledCode = "";
+  let inactiveCode = "";
 
   before(async () => {
     try {
@@ -40,6 +42,7 @@ describe("public country plans route", () => {
 
     enabledCode = `on${uniq}`.slice(0, 8).toLowerCase();
     disabledCode = `off${uniq}`.slice(0, 8).toLowerCase();
+    inactiveCode = `ia${uniq}`.slice(0, 8).toLowerCase();
 
     const enabled = await prisma.country.create({
       data: {
@@ -67,8 +70,23 @@ describe("public country plans route", () => {
         enabledFeatures: ["services"], // explicitly omits subscriptions
       },
     });
+    const inactive = await prisma.country.create({
+      data: {
+        code: inactiveCode,
+        name: `Plans Inactive ${uniq}`,
+        slug: `plans-inactive-${uniq}`.toLowerCase(),
+        legacyHomePath: `/ia-${uniq}`,
+        teamPath: `/ia-tm-${uniq}`,
+        generalConsultationPath: `/ia-gn-${uniq}`,
+        specialistConsultationPath: `/ia-sp-${uniq}`,
+        currencyId: currency.id,
+        enabledFeatures: ["subscriptions"],
+        isActive: false,
+      },
+    });
     enabledCountryId = enabled.id;
     disabledCountryId = disabled.id;
+    inactiveCountryId = inactive.id;
 
     const active = await prisma.pricingPlan.create({
       data: {
@@ -106,8 +124,12 @@ describe("public country plans route", () => {
 
   after(async () => {
     if (!app) return;
-    await prisma.pricingPlan.deleteMany({ where: { countryId: { in: [enabledCountryId, disabledCountryId] } } });
-    await prisma.country.deleteMany({ where: { id: { in: [enabledCountryId, disabledCountryId] } } });
+    await prisma.pricingPlan.deleteMany({
+      where: { countryId: { in: [enabledCountryId, disabledCountryId, inactiveCountryId] } },
+    });
+    await prisma.country.deleteMany({
+      where: { id: { in: [enabledCountryId, disabledCountryId, inactiveCountryId] } },
+    });
     await prisma.currency.deleteMany({ where: { id: currencyId } });
     await app.close();
   });
@@ -115,6 +137,12 @@ describe("public country plans route", () => {
   it("404s a country without the subscriptions flag", async (t) => {
     if (!app) return t.skip();
     const res = await app.inject({ method: "GET", url: `/api/countries/${disabledCode}/plans` });
+    assert.equal(res.statusCode, 404);
+  });
+
+  it("404s an inactive country even when subscriptions is enabled", async (t) => {
+    if (!app) return t.skip();
+    const res = await app.inject({ method: "GET", url: `/api/countries/${inactiveCode}/plans` });
     assert.equal(res.statusCode, 404);
   });
 

@@ -146,7 +146,7 @@ export async function listPublicPlansByCountry(
   let country: { id: string; defaultLocale: LocaleCode; enabledFeatures: string[] } | null;
   try {
     country = await prisma.country.findFirst({
-      where: { code: { equals: countryCode, mode: "insensitive" } },
+      where: { code: { equals: countryCode, mode: "insensitive" }, isActive: true },
       select: { id: true, defaultLocale: true, enabledFeatures: true },
     });
   } catch (error) {

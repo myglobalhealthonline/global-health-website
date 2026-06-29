@@ -16,7 +16,7 @@ export const domainMap: Record<string, DomainConfig> = {
   "globalhealth.pt": { countryCode: "pt", defaultLocale: "pt", enabled: true },
   "ie.myglobalhealth.online": { countryCode: "ie", defaultLocale: "en", enabled: true },
   "pt.myglobalhealth.online": { countryCode: "pt", defaultLocale: "pt", enabled: true },
-  "es.myglobalhealth.online": { countryCode: "sp", defaultLocale: "es", enabled: true },
+  "es.myglobalhealth.online": { countryCode: "es", defaultLocale: "es", enabled: true },
   "cz.myglobalhealth.online": { countryCode: "cz", defaultLocale: "cs", enabled: true },
   "ro.myglobalhealth.online": { countryCode: "rm", defaultLocale: "ro", enabled: true },
 

@@ -493,6 +493,7 @@ export async function sendPatientUploadLinkEmail(opts: {
 const INVOICE_EMAIL_SUBJECT: Record<string, string> = {
   ie: "Your invoice {invoiceNumber} — Global Health",
   cz: "Vaše faktura {invoiceNumber} — Global Health",
+  es: "Su factura {invoiceNumber} — Global Health",
   sp: "Su factura {invoiceNumber} — Global Health",
   rm: "Factura dvs. {invoiceNumber} — Global Health",
 };
@@ -500,6 +501,7 @@ const INVOICE_EMAIL_SUBJECT: Record<string, string> = {
 const INVOICE_EMAIL_HEADING: Record<string, string> = {
   ie: "Your invoice",
   cz: "Vaše faktura",
+  es: "Su factura",
   sp: "Su factura",
   rm: "Factura dvs.",
 };
@@ -507,6 +509,7 @@ const INVOICE_EMAIL_HEADING: Record<string, string> = {
 const INVOICE_EMAIL_BODY: Record<string, string> = {
   ie: "Your invoice is ready. Click the button below to view and download it.",
   cz: "Vaše faktura je připravena. Klikněte na tlačítko níže pro zobrazení a stažení.",
+  es: "Su factura está lista. Haga clic en el botón de abajo para verla y descargarla.",
   sp: "Su factura está lista. Haga clic en el botón de abajo para verla y descargarla.",
   rm: "Factura dvs. este gata. Faceți clic pe butonul de mai jos pentru a o vizualiza și descărca.",
 };
@@ -514,6 +517,7 @@ const INVOICE_EMAIL_BODY: Record<string, string> = {
 const INVOICE_EMAIL_CTA: Record<string, string> = {
   ie: "View invoice",
   cz: "Zobrazit fakturu",
+  es: "Ver factura",
   sp: "Ver factura",
   rm: "Vizualizați factura",
 };
@@ -527,6 +531,7 @@ export async function sendInvoiceEmail(opts: {
   pdfBuffer?: Buffer;
 }) {
   const cc = opts.countryCode.toLowerCase();
+  const isSpanish = cc === "es" || cc === "sp";
   const subjectTemplate = INVOICE_EMAIL_SUBJECT[cc] ?? INVOICE_EMAIL_SUBJECT.ie!;
   const subject = subjectTemplate.replace("{invoiceNumber}", opts.invoiceNumber);
   const heading = INVOICE_EMAIL_HEADING[cc] ?? INVOICE_EMAIL_HEADING.ie!;
@@ -542,42 +547,42 @@ export async function sendInvoiceEmail(opts: {
 
   const dear = cc === "cz"
     ? "Vážený/á"
-    : cc === "sp"
+    : isSpanish
       ? "Estimado/a"
       : cc === "rm"
         ? "Stimate"
         : "Dear";
   const contactLead = cc === "cz"
     ? "Máte-li dotazy, kontaktujte nás na"
-    : cc === "sp"
+    : isSpanish
       ? "Si tiene alguna pregunta, contáctenos en"
       : cc === "rm"
         ? "Dacă aveți întrebări, contactați-ne la"
         : "If you have any questions, feel free to contact us at";
   const whatsappLead = cc === "cz"
     ? "nebo nám napište na WhatsApp"
-    : cc === "sp"
+    : isSpanish
       ? "o envíenos un mensaje por WhatsApp"
       : cc === "rm"
         ? "sau trimiteți-ne un mesaj pe WhatsApp"
         : "or message us on WhatsApp";
   const signOff = cc === "cz"
     ? "S pozdravem,"
-    : cc === "sp"
+    : isSpanish
       ? "Saludos cordiales,"
       : cc === "rm"
         ? "Cu stimă,"
         : "Warm regards,";
   const team = cc === "cz"
     ? "Tým Global Health"
-    : cc === "sp"
+    : isSpanish
       ? "El equipo de Global Health"
       : cc === "rm"
         ? "Echipa Global Health"
         : "The Global Health Team";
   const orPaste = cc === "cz"
     ? "Nebo vložte tuto adresu URL do svého prohlížeče:"
-    : cc === "sp"
+    : isSpanish
       ? "O pegue esta URL en su navegador:"
       : cc === "rm"
         ? "Sau inserați acest URL în browser:"

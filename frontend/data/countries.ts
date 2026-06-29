@@ -2,7 +2,7 @@
 
 /**
  * Internal short code for a country. Originally a literal union for the
- * five seeded markets (`ie | pt | sp | cz | rm`); widened to `string` so
+ * five seeded markets (`ie | pt | es | cz | rm`); widened to `string` so
  * admins can spin up new countries via `/admin/countries` and have them
  * surface across the public site without a code release.
  *
@@ -81,7 +81,7 @@ export const countries: CountryConfig[] = [
     specialistPath: "/specialty-pt",
   },
   {
-    code: "sp",
+    code: "es",
     name: "Spain",
     label: "ES",
     slug: "spain",

@@ -17,6 +17,10 @@ describe("docx template resolution", () => {
     assert.equal(templatePrefixForCountry("sp"), "ES");
   });
 
+  it("maps es to ES prefix", () => {
+    assert.equal(templatePrefixForCountry("es"), "ES");
+  });
+
   it("builds expected filenames", () => {
     assert.equal(
       docxFilename("PT", "EXAMS_PRESCRIPTION"),

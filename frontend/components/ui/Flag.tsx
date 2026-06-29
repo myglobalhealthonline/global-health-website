@@ -3,9 +3,8 @@ import { cn } from "@/lib/utils/cn";
 /**
  * Country flag atom. Replaces a 5-row `FLAG_CLASS` lookup that lived
  * inline in CountrySwitcher / MobileNav / DoctorWall / HomeHero — same
- * mapping repeated four times, drifting independently. The internal
- * `code` is the project's country-code dialect (`sp` → Spain, `rm` →
- * Romania); the rendered class is the ISO-3166 code consumed by
+ * mapping repeated four times, drifting independently. The rendered
+ * class is the ISO-3166 code consumed by
  * `flag-icons`.
  */
 

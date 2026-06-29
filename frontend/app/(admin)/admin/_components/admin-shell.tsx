@@ -105,6 +105,7 @@ const HREF_TO_FEATURE_KEY: Record<string, string> = {
   "/admin/specialist-consultations": "specialist-consultations",
   "/admin/online-prescriptions": "online-prescriptions",
   "/admin/health-tests": "health-tests",
+  "/admin/plans": "subscriptions",
   "/admin/appointments": "appointments",
 };
 

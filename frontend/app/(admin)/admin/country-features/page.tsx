@@ -24,6 +24,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath, revalidateTag } from "next/cache";
 import {
   Calendar,
+  CreditCard,
   FileText,
   Heart,
   PanelBottom,
@@ -122,7 +123,16 @@ const FEATURE_META: FeatureMeta[] = [
     icon: Calendar,
     href: "/admin/appointments",
   },
+  {
+    key: "subscriptions",
+    label: "Plans",
+    description: "Monthly subscription plans shown on the public pricing page.",
+    icon: CreditCard,
+    href: "/admin/plans",
+  },
 ];
+
+const COUNTRY_FEATURE_KEY_SET = new Set<string>(COUNTRY_FEATURE_KEYS);
 
 type PageProps = {
   searchParams?: Promise<{ success?: string; error?: string }>;
@@ -202,7 +212,11 @@ export default async function AdminCountryFeaturesPage({ searchParams }: PagePro
     if (currentlyOn) current.delete(key);
     else current.add(key);
 
-    const next = [...COUNTRY_FEATURE_KEYS].filter((k) => current.has(k));
+    const orderedKnown = [...COUNTRY_FEATURE_KEYS].filter((k) => current.has(k));
+    const passthrough = (target.enabledFeatures ?? []).filter(
+      (k) => !COUNTRY_FEATURE_KEY_SET.has(k),
+    );
+    const next = [...orderedKnown, ...passthrough];
 
     const res = await patchAdminCountry(countryId, { enabledFeatures: next });
     if (!res.ok) {

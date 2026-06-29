@@ -178,6 +178,7 @@ export const COUNTRY_FEATURE_KEYS = [
   "online-prescriptions",
   "health-tests",
   "appointments",
+  "subscriptions",
 ] as const;
 export type CountryFeatureKey = (typeof COUNTRY_FEATURE_KEYS)[number];
 
