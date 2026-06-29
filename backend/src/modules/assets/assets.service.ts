@@ -91,7 +91,7 @@ export async function listAssets() {
   try {
     return await prisma.asset.findMany({
       where: { isActive: true },
-      orderBy: [{ kind: "asc" }, { key: "asc" }],
+      orderBy: [{ updatedAt: "desc" }, { kind: "asc" }, { key: "asc" }],
       include: {
         country: true,
         doctor: true,

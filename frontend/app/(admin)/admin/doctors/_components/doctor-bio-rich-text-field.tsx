@@ -60,9 +60,11 @@ export function DoctorBioRichTextField({ initialValue }: Props) {
     if (!editorRef.current) return;
     if (!value) {
       editorRef.current.innerHTML = "<p><br/></p>";
+      if (hiddenRef.current) hiddenRef.current.value = "";
       return;
     }
     editorRef.current.innerHTML = value;
+    if (hiddenRef.current) hiddenRef.current.value = value;
   }, [initialValue]);
 
   function syncToHidden() {

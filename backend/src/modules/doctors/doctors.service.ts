@@ -217,7 +217,10 @@ export async function listDoctors(locale?: LocaleCode) {
             specialty: true,
           },
         },
-        assets: true,
+        assets: {
+          where: { isActive: true, kind: AssetKind.IMAGE },
+          orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
+        },
         translations: { select: doctorTranslationSelect },
       },
     });
@@ -262,13 +265,10 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
         translations: { select: doctorTranslationSelect },
         assets: {
           where: { isActive: true, kind: AssetKind.IMAGE },
-          // Deterministic ordering — without an explicit orderBy the
-          // listing endpoint and the detail endpoint can pick different
-          // images for the same doctor (Postgres row order is
-          // unspecified). createdAt ASC means whichever image was
-          // uploaded first wins on both surfaces — same portrait
-          // everywhere.
-          orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+          // Deterministic newest-first ordering. The doctor portal and
+          // admin image flows both update the canonical profile asset, so
+          // updatedAt DESC makes the latest confirmed profile image win.
+          orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
           select: { id: true, kind: true, key: true, path: true, altText: true },
         },
         // Per-market registration row. The single DoctorCountry record
@@ -431,10 +431,9 @@ export async function getDoctorByCountryAndSlug(
         translations: { select: doctorTranslationSelect },
         assets: {
           where: { isActive: true, kind: AssetKind.IMAGE },
-          // Match the listing endpoint's asset ordering so the same
-          // doctor renders the same portrait on /{country}/{lang}/doctors
-          // and on /{country}/{lang}/doctors/{slug}.
-          orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+          // Match the listing endpoint's newest-first asset ordering so
+          // the same doctor renders the same portrait on list and detail.
+          orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
           select: { id: true, kind: true, key: true, path: true, altText: true },
         },
         // Per-market registration row for this country (see Phase 2

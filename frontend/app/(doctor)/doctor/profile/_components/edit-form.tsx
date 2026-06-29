@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, Trash2 } from "lucide-react";
 import { DoctorBioRichTextField } from "@/app/(admin)/admin/doctors/_components/doctor-bio-rich-text-field";
@@ -79,17 +79,19 @@ function ibanError(raw: string): string | null {
 
 export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
   const router = useRouter();
+  const initialQualificationsText = initial.qualifications.join("\n");
+  const initialLanguagesKey = initial.languages.join("\u0000");
+  const initialLanguages = useMemo(
+    () => canonicalizeLanguages(initial.languages),
+    [initialLanguagesKey],
+  );
 
   /* ── Profile form ─────────────────────────────────── */
   const [profilePending, startProfileTransition] = useTransition();
   const [profileMsg, setProfileMsg] = useState<Msg | null>(null);
   const [fullName, setFullName] = useState(initial.fullName);
-  const [qualifications, setQualifications] = useState(
-    initial.qualifications.join("\n"),
-  );
-  const [languages, setLanguages] = useState<string[]>(() =>
-    canonicalizeLanguages(initial.languages),
-  );
+  const [qualifications, setQualifications] = useState(initialQualificationsText);
+  const [languages, setLanguages] = useState<string[]>(initialLanguages);
   const [whatsappNumber, setWhatsappNumber] = useState(initial.whatsappNumber);
 
   /* ── Payout form ──────────────────────────────────── */
@@ -110,6 +112,26 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
   );
   const [photoError, setPhotoError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setFullName(initial.fullName);
+    setQualifications(initialQualificationsText);
+    setLanguages(initialLanguages);
+    setWhatsappNumber(initial.whatsappNumber);
+    setBankAccountHolder(initial.bankAccountHolder);
+    setBankBic(initial.bankBic);
+    setBankIban("");
+    setPhotoPath(initial.profileImagePath);
+  }, [
+    initial.fullName,
+    initialQualificationsText,
+    initialLanguages,
+    initialLanguagesKey,
+    initial.whatsappNumber,
+    initial.bankAccountHolder,
+    initial.bankBic,
+    initial.profileImagePath,
+  ]);
 
   /* ── Photo handlers ──────────────────────────────── */
   function uploadPhoto(file: File) {
@@ -317,7 +339,8 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
                 <label className="flex flex-col gap-2">
                   <span className="gh-field-label">WhatsApp number</span>
                   <PhoneField
-                    defaultValue={whatsappNumber}
+                    key={initial.whatsappNumber}
+                    defaultValue={initial.whatsappNumber}
                     onChange={setWhatsappNumber}
                     className="flex min-w-0 gap-2"
                   />
