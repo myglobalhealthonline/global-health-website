@@ -31,6 +31,29 @@ const CATEGORIES = [
  * footer trust bar; `showInSchema` includes it in Organization/MedicalBusiness
  * `sameAs`. Drives the footer trust bar + legal hub + JSON-LD authority signal.
  */
+// Module-scope helpers. These MUST NOT be closures captured by the inline
+// `"use server"` actions below — Next serializes each action (it is passed to a
+// client <form>), and a captured non-action function is not serializable
+// ("Functions cannot be passed directly to Client Components").
+function readAuthorityBody(formData: FormData) {
+  return {
+    name: String(formData.get("name") ?? "").trim(),
+    abbreviation: String(formData.get("abbreviation") ?? "").trim() || null,
+    url: String(formData.get("url") ?? "").trim(),
+    category: String(formData.get("category") ?? "OTHER"),
+    description: String(formData.get("description") ?? "").trim() || null,
+    showInFooter: formData.get("showInFooter") === "on",
+    showInSchema: formData.get("showInSchema") === "on",
+    sortOrder: Number(formData.get("sortOrder") ?? 0) || 0,
+  };
+}
+
+function bustAuthorityCaches(countryId: string, countryCode: string) {
+  revalidatePath(`/admin/countries/${countryId}/legal`);
+  revalidateTag(countryLegalCacheTag(countryCode), "max");
+  revalidateTag(`country-trust:${countryCode.toLowerCase()}`, "max");
+}
+
 export function AuthorityLinksManager({
   countryId,
   countryCode,
@@ -42,35 +65,16 @@ export function AuthorityLinksManager({
 }) {
   const base = `/admin/countries/${countryId}/legal`;
 
-  function bust() {
-    revalidatePath(base);
-    revalidateTag(countryLegalCacheTag(countryCode), "max");
-    revalidateTag(`country-trust:${countryCode.toLowerCase()}`, "max");
-  }
-
-  function readBody(formData: FormData) {
-    return {
-      name: String(formData.get("name") ?? "").trim(),
-      abbreviation: String(formData.get("abbreviation") ?? "").trim() || null,
-      url: String(formData.get("url") ?? "").trim(),
-      category: String(formData.get("category") ?? "OTHER"),
-      description: String(formData.get("description") ?? "").trim() || null,
-      showInFooter: formData.get("showInFooter") === "on",
-      showInSchema: formData.get("showInSchema") === "on",
-      sortOrder: Number(formData.get("sortOrder") ?? 0) || 0,
-    };
-  }
-
   async function addLink(formData: FormData) {
     "use server";
     await requireAdminAction();
-    const body = readBody(formData);
+    const body = readAuthorityBody(formData);
     if (!body.name || !body.url) {
       redirect(`${base}?error=${encodeURIComponent("Authority name and URL are required")}`);
     }
     const result = await createAdminAuthorityLink(countryId, body);
     if (!result.ok) redirect(`${base}?error=${encodeURIComponent(result.message)}`);
-    bust();
+    bustAuthorityCaches(countryId, countryCode);
     redirect(`${base}?success=${encodeURIComponent("Authority link added")}`);
   }
 
@@ -78,13 +82,13 @@ export function AuthorityLinksManager({
     "use server";
     await requireAdminAction();
     const linkId = String(formData.get("linkId") ?? "");
-    const body = readBody(formData);
+    const body = readAuthorityBody(formData);
     if (!linkId || !body.name || !body.url) {
       redirect(`${base}?error=${encodeURIComponent("Authority name and URL are required")}`);
     }
     const result = await updateAdminAuthorityLink(countryId, linkId, body);
     if (!result.ok) redirect(`${base}?error=${encodeURIComponent(result.message)}`);
-    bust();
+    bustAuthorityCaches(countryId, countryCode);
     redirect(`${base}?success=${encodeURIComponent("Authority link saved")}`);
   }
 
@@ -96,7 +100,7 @@ export function AuthorityLinksManager({
       const result = await deleteAdminAuthorityLink(countryId, linkId);
       if (!result.ok) redirect(`${base}?error=${encodeURIComponent(result.message)}`);
     }
-    bust();
+    bustAuthorityCaches(countryId, countryCode);
     redirect(`${base}?success=${encodeURIComponent("Authority link removed")}`);
   }
 
