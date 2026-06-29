@@ -107,6 +107,9 @@ export default async function DoctorProfilePage() {
         initial={{
           fullName: doctor.fullName,
           bio: doctor.bio ?? "",
+          defaultLocale: doctor.country.defaultLocale,
+          supportedLocales: doctor.supportedLocales,
+          translations: doctor.translations,
           qualifications: doctor.qualifications,
           languages: doctor.languages,
           whatsappNumber: doctor.whatsappNumber ?? "",
