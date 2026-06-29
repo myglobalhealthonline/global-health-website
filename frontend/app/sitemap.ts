@@ -4,6 +4,7 @@ import { countrySlug } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
 import { fetchLandingSlugs } from "@/lib/api/site-content-api";
+import { hreflangRegion } from "@/lib/seo/hreflang";
 
 /**
  * Phase 1 sitemap. Emits only canonical, indexable routes.
@@ -45,19 +46,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // SEO landing pages — published condition/audience pages per country.
   // Indexed here (Rule 6) but deliberately absent from nav + listing pages.
+  // One entry per enabled locale, each carrying hreflang alternates so Google
+  // indexes the translated variants and understands they are the same page.
   for (const country of countries) {
     try {
       const res = await fetchLandingSlugs(country.code);
       if (!res.ok) continue;
       const slug = `/${country.slug || countrySlug(country.code)}`;
-      const lang = (country.defaultLocale ?? "en").toLowerCase();
+      const defaultLang = (country.defaultLocale ?? "en").toLowerCase();
+      const region = hreflangRegion(country.code);
+      const langs =
+        country.supportedLocales && country.supportedLocales.length > 0
+          ? country.supportedLocales.map((l) => l.toLowerCase())
+          : [defaultLang];
       for (const page of res.data.landingPages) {
-        urls.push({
-          url: `${base}${slug}/${lang}/health/${page.slug}`,
-          lastModified: page.updatedAt,
-          changeFrequency: "monthly",
-          priority: 0.6,
-        });
+        const languages: Record<string, string> = {};
+        for (const lang of langs) {
+          languages[`${lang}-${region}`] = `${base}${slug}/${lang}/health/${page.slug}`;
+        }
+        languages["x-default"] = `${base}${slug}/${defaultLang}/health/${page.slug}`;
+        for (const lang of langs) {
+          urls.push({
+            url: `${base}${slug}/${lang}/health/${page.slug}`,
+            lastModified: page.updatedAt,
+            changeFrequency: "monthly",
+            priority: 0.6,
+            alternates: { languages },
+          });
+        }
       }
     } catch {
       // Landing list unavailable for this country — skip, keep the rest.

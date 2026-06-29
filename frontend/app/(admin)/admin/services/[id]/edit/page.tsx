@@ -473,6 +473,7 @@ export default async function AdminEditServicePage({
           </p>
           <ServiceLinksPanel
             defaultLocale={defaultLocale}
+            locales={locales.map((l) => ({ code: l.code, isDefault: l.isDefault }))}
             services={linkTargetServices}
             initial={initialLinks}
             action={saveServiceLinksAction}

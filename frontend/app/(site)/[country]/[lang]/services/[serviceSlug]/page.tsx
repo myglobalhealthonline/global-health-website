@@ -24,6 +24,7 @@ import { buildBookHref } from "@/lib/routing/book-href";
 import { DoctorCard } from "@/components/cards/DoctorCard";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { getSiteUrl } from "@/lib/seo/site-url";
+import { hreflangAlternates } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -67,6 +68,7 @@ export async function generateMetadata({
   const { country, lang, serviceSlug } = await params;
   const code = countryCodeFromSlug(country);
   if (!code || !isSupportedLocale(lang)) return { title: SITE_NAME };
+  const config = getCountryByCode(code);
 
   const detail = await getCountryServiceDetail(code, serviceSlug, lang);
   if (!detail) return { title: SITE_NAME };
@@ -81,7 +83,10 @@ export async function generateMetadata({
   return {
     title: detail.seoTitle ? { absolute: title } : title,
     description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      ...(config ? { languages: hreflangAlternates(config, `/services/${serviceSlug}`) } : {}),
+    },
     openGraph: { type: "website", siteName: SITE_NAME, title, description, url },
     twitter: { card: "summary_large_image", title, description },
   };

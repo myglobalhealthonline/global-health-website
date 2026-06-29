@@ -6,6 +6,7 @@ import { isSupportedLocale } from "@/lib/content/get-public-page";
 import { getCountryLandingPage } from "@/lib/content/get-country-collections";
 import { scopeBlogHtml } from "@/lib/content/scope-blog-html";
 import { getSiteUrl } from "@/lib/seo/site-url";
+import { hreflangAlternates } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +21,7 @@ export async function generateMetadata({
   const { country, lang, slug } = await params;
   const code = countryCodeFromSlug(country);
   if (!code || !isSupportedLocale(lang)) return { title: SITE_NAME };
+  const config = getCountryByCode(code);
   const page = await getCountryLandingPage(code, slug, lang);
   if (!page) return { title: SITE_NAME };
   const title = page.seoTitle ?? page.title;
@@ -28,7 +30,10 @@ export async function generateMetadata({
   return {
     title: page.seoTitle ? { absolute: title } : title,
     description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      ...(config ? { languages: hreflangAlternates(config, `/health/${slug}`) } : {}),
+    },
     openGraph: { type: "article", siteName: SITE_NAME, title, description, url },
     twitter: { card: "summary_large_image", title, description },
   };
