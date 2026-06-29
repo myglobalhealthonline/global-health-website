@@ -11,14 +11,14 @@ import {
 } from "@/components/forms/LanguagePicker";
 
 /**
- * Doctor self-edit profile form. Only mutates the fields the doctor is
- * trusted to manage themselves — country, slug, IMC registration, and
- * the specialty list are admin-managed because they affect public
- * routing and verification copy.
+ * Doctor self-edit profile form. Split into two independent forms so that
+ * bank-field validation can never block a public-profile save:
  *
- * POSTs to the same-origin proxy at `/api/doctor/profile` (Railway
- * cookies don't traverse subdomains, so a direct backend call would
- * be unauthenticated).
+ *  1. Profile form  — fullName, bio, qualifications, languages, whatsapp
+ *  2. Payout form   — bankAccountHolder, bankBic, bankIban
+ *
+ * Each form sends only its own fields to PATCH /api/doctor/profile, so
+ * a bad BIC in the payout section can't prevent a name change from saving.
  */
 
 type Initial = {
@@ -35,15 +35,8 @@ type Initial = {
   bankIbanSet: boolean;
 };
 
-/**
- * Mirrors the admin doctor image field's path resolver. Photo paths come
- * back from the backend as `/api/media/<key>` — a same-origin path that
- * relies on a Next.js proxy route to reach the backend. On Railway that
- * proxy adds a serverless hop on every photo load; resolving directly to
- * `${NEXT_PUBLIC_API_URL}/api/media/<key>` skips it and lets the browser
- * hit the backend straight away, matching how the admin portal renders
- * doctor photos (proven working there).
- */
+type Msg = { kind: "success" | "error"; text: string };
+
 function resolvePhotoSrc(path: string | null): string | null {
   if (!path) return null;
   if (/^https?:\/\//i.test(path)) return path;
@@ -54,33 +47,71 @@ function resolvePhotoSrc(path: string | null): string | null {
   return path;
 }
 
+function MessageBanner({ msg }: { msg: Msg }) {
+  return (
+    <p
+      className={`${
+        msg.kind === "success" ? "gh-status-success" : "gh-status-warning"
+      } mt-4 rounded-md border px-4 py-3 text-sm`}
+    >
+      {msg.text}
+    </p>
+  );
+}
+
+/** BIC: 6 letters + 2 alphanumeric + optional 3 alphanumeric (8 or 11 chars). */
+const BIC_RE = /^[A-Za-z]{6}[A-Za-z0-9]{2}([A-Za-z0-9]{3})?$/;
+
+function bicError(raw: string): string | null {
+  const v = raw.trim().replace(/\s/g, "");
+  if (!v) return null;
+  return BIC_RE.test(v) ? null : "Must be 8 or 11 characters, e.g. AIBKIE2D";
+}
+
+function ibanError(raw: string): string | null {
+  const v = raw.trim().replace(/\s/g, "");
+  if (!v) return null;
+  if (v.length < 15 || v.length > 34) return "IBAN must be 15–34 characters";
+  if (!/^[A-Za-z]{2}\d{2}[A-Za-z0-9]+$/.test(v))
+    return "Must start with 2-letter country code then digits";
+  return null;
+}
+
 export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
   const router = useRouter();
-  const [pending, startTransition] = useTransition();
-  const [photoPending, startPhotoTransition] = useTransition();
+
+  /* ── Profile form ─────────────────────────────────── */
+  const [profilePending, startProfileTransition] = useTransition();
+  const [profileMsg, setProfileMsg] = useState<Msg | null>(null);
   const [fullName, setFullName] = useState(initial.fullName);
   const [qualifications, setQualifications] = useState(
     initial.qualifications.join("\n"),
   );
-  // Canonical labels picked from the shared registry (not free text).
   const [languages, setLanguages] = useState<string[]>(() =>
     canonicalizeLanguages(initial.languages),
   );
   const [whatsappNumber, setWhatsappNumber] = useState(initial.whatsappNumber);
-  const [bankAccountHolder, setBankAccountHolder] = useState(initial.bankAccountHolder);
+
+  /* ── Payout form ──────────────────────────────────── */
+  const [payoutPending, startPayoutTransition] = useTransition();
+  const [payoutMsg, setPayoutMsg] = useState<Msg | null>(null);
+  const [bankAccountHolder, setBankAccountHolder] = useState(
+    initial.bankAccountHolder,
+  );
   const [bankBic, setBankBic] = useState(initial.bankBic);
-  // The full IBAN never leaves the server. This field starts blank; typing a
-  // new value replaces the stored IBAN, leaving it blank keeps the current one.
   const [bankIban, setBankIban] = useState("");
+  const [bicFieldError, setBicFieldError] = useState<string | null>(null);
+  const [ibanFieldError, setIbanFieldError] = useState<string | null>(null);
+
+  /* ── Photo ────────────────────────────────────────── */
+  const [photoPending, startPhotoTransition] = useTransition();
   const [photoPath, setPhotoPath] = useState<string | null>(
     initial.profileImagePath,
   );
   const [photoError, setPhotoError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [message, setMessage] = useState<
-    { kind: "success" | "error"; text: string } | null
-  >(null);
 
+  /* ── Photo handlers ──────────────────────────────── */
   function uploadPhoto(file: File) {
     setPhotoError(null);
     if (file.size > 5 * 1024 * 1024) {
@@ -129,13 +160,11 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
     });
   }
 
-  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+  /* ── Profile submit ──────────────────────────────── */
+  function onSubmitProfile(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setMessage(null);
-    // Bio is owned by the rich-text editor (contentEditable + hidden
-    // input named "bio"). Read it from the form rather than React
-    // state so HTML markup the editor produces makes it through
-    // unchanged.
+    setProfileMsg(null);
+    // Bio lives in a contentEditable + hidden input named "bio"
     const formData = new FormData(event.currentTarget);
     const bio = String(formData.get("bio") ?? "").trim();
     const payload = {
@@ -143,216 +172,283 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
       bio: bio || null,
       qualifications: qualifications
         .split("\n")
-        .map((line) => line.trim())
+        .map((l) => l.trim())
         .filter(Boolean),
       languages: languages.map((l) => l.trim()).filter(Boolean),
       whatsappNumber: whatsappNumber.trim() || null,
-      bankAccountHolder: bankAccountHolder.trim() || null,
-      bankBic: bankBic.trim() || null,
-      // Only send the IBAN when the doctor typed a new one — blank = keep current.
-      ...(bankIban.trim() ? { bankIban: bankIban.trim() } : {}),
     };
-    startTransition(async () => {
+    startProfileTransition(async () => {
       try {
         const res = await fetch("/api/doctor/profile", {
           method: "PATCH",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(payload),
         });
-        const json = (await res.json()) as {
-          ok?: boolean;
-          message?: string;
-        };
+        const json = (await res.json()) as { ok?: boolean; message?: string };
         if (!res.ok || !json.ok) {
-          setMessage({
+          setProfileMsg({
             kind: "error",
             text: json.message ?? "Could not save profile",
           });
           return;
         }
-        setMessage({ kind: "success", text: json.message ?? "Profile updated" });
-        setBankIban("");
+        setProfileMsg({
+          kind: "success",
+          text: json.message ?? "Profile updated",
+        });
         router.refresh();
       } catch {
-        setMessage({ kind: "error", text: "Network error — try again" });
+        setProfileMsg({ kind: "error", text: "Network error — try again" });
       }
     });
   }
 
+  /* ── Payout submit ───────────────────────────────── */
+  function onSubmitPayout(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPayoutMsg(null);
+
+    // Client-side validation before hitting the backend
+    const bErr = bicError(bankBic);
+    const iErr = ibanError(bankIban);
+    setBicFieldError(bErr);
+    setIbanFieldError(iErr);
+    if (bErr || iErr) return;
+
+    const payload: Record<string, string | null> = {
+      bankAccountHolder: bankAccountHolder.trim() || null,
+      bankBic: bankBic.trim() || null,
+    };
+    // Only send IBAN when the doctor typed a new one — blank = keep current
+    if (bankIban.trim()) payload.bankIban = bankIban.trim();
+
+    startPayoutTransition(async () => {
+      try {
+        const res = await fetch("/api/doctor/profile", {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const json = (await res.json()) as { ok?: boolean; message?: string };
+        if (!res.ok || !json.ok) {
+          setPayoutMsg({
+            kind: "error",
+            text: json.message ?? "Could not save payout details",
+          });
+          return;
+        }
+        setPayoutMsg({ kind: "success", text: "Payout details saved" });
+        setBankIban("");
+        router.refresh();
+      } catch {
+        setPayoutMsg({ kind: "error", text: "Network error — try again" });
+      }
+    });
+  }
+
+  /* ── Render ─────────────────────────────────────── */
   return (
-    <form
-      onSubmit={onSubmit}
+    <div
       className="grid gap-4"
       style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
     >
       <div className="grid gap-4">
-        <section className="gh-card p-6">
-          <h3
-            className="m-0 text-[var(--color-text-primary)]"
-            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-          >
-            Public profile
-          </h3>
-          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-            Patients see this on your doctor card and profile page.
-          </p>
+        {/* ── Public profile form ─────────────────── */}
+        <form onSubmit={onSubmitProfile}>
+          <section className="gh-card p-6">
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 16,
+                fontWeight: 800,
+              }}
+            >
+              Public profile
+            </h3>
+            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Patients see this on your doctor card and profile page.
+            </p>
 
-          <div className="mt-4 flex flex-col gap-4">
-            <label className="flex flex-col gap-2">
-              <span className="gh-field-label">Full name</span>
-              <input
-                className="gh-input min-w-0"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                maxLength={200}
-                required
-              />
-            </label>
-
-            <div className="flex flex-col gap-2">
-              <span className="gh-field-label">Bio</span>
-              <DoctorBioRichTextField initialValue={initial.bio} />
-              <span className="text-xs text-[var(--color-text-muted)]">
-                Rich text. Headings, bold, italics, lists, and link colour
-                are preserved on your public profile.
-              </span>
-            </div>
-
-            <label className="flex flex-col gap-2">
-              <span className="gh-field-label">Qualifications</span>
-              <textarea
-                className="gh-input min-h-[8rem] min-w-0 resize-y"
-                value={qualifications}
-                onChange={(e) => setQualifications(e.target.value)}
-                placeholder={"MB BCh BAO\nMRCPI\nFellowship in Cardiology"}
-              />
-              <span className="text-xs text-[var(--color-text-muted)]">
-                One per line. Shown as a bullet list on your public profile.
-              </span>
-            </label>
-
-            <div className="flex flex-col gap-2">
-              <span className="gh-field-label">Languages</span>
-              <LanguagePicker selected={languages} onChange={setLanguages} />
-              <span className="text-xs text-[var(--color-text-muted)]">
-                Pick from the list so languages stay consistent on your
-                public profile + doctor cards.
-              </span>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 flex flex-col gap-4">
               <label className="flex flex-col gap-2">
-                <span className="gh-field-label">WhatsApp number</span>
-                <PhoneField
-                  defaultValue={whatsappNumber}
-                  onChange={setWhatsappNumber}
-                  className="flex min-w-0 gap-2"
+                <span className="gh-field-label">Full name</span>
+                <input
+                  className="gh-input min-w-0"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  maxLength={200}
+                  required
+                />
+              </label>
+
+              <div className="flex flex-col gap-2">
+                <span className="gh-field-label">Bio</span>
+                <DoctorBioRichTextField initialValue={initial.bio} />
+                <span className="text-xs text-[var(--color-text-muted)]">
+                  Rich text. Headings, bold, italics, lists, and link colour
+                  are preserved on your public profile.
+                </span>
+              </div>
+
+              <label className="flex flex-col gap-2">
+                <span className="gh-field-label">Qualifications</span>
+                <textarea
+                  className="gh-input min-h-[8rem] min-w-0 resize-y"
+                  value={qualifications}
+                  onChange={(e) => setQualifications(e.target.value)}
+                  placeholder={"MB BCh BAO\nMRCPI\nFellowship in Cardiology"}
                 />
                 <span className="text-xs text-[var(--color-text-muted)]">
-                  Optional. Patients can message you directly when set.
+                  One per line. Shown as a bullet list on your public profile.
                 </span>
               </label>
+
+              <div className="flex flex-col gap-2">
+                <span className="gh-field-label">Languages</span>
+                <LanguagePicker selected={languages} onChange={setLanguages} />
+                <span className="text-xs text-[var(--color-text-muted)]">
+                  Pick from the list so languages stay consistent on your
+                  public profile + doctor cards.
+                </span>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="flex flex-col gap-2">
+                  <span className="gh-field-label">WhatsApp number</span>
+                  <PhoneField
+                    defaultValue={whatsappNumber}
+                    onChange={setWhatsappNumber}
+                    className="flex min-w-0 gap-2"
+                  />
+                  <span className="text-xs text-[var(--color-text-muted)]">
+                    Optional. Patients can message you directly when set.
+                  </span>
+                </label>
+              </div>
             </div>
-          </div>
 
-          {message ? (
-            <p
-              className={`${
-                message.kind === "success" ? "gh-status-success" : "gh-status-warning"
-              } mt-4 rounded-md border px-4 py-3 text-sm`}
+            {profileMsg ? <MessageBanner msg={profileMsg} /> : null}
+
+            <div className="mt-5 flex justify-end">
+              <button
+                type="submit"
+                disabled={profilePending}
+                className="gh-btn gh-btn-primary"
+              >
+                {profilePending ? "Saving…" : "Save changes"}
+              </button>
+            </div>
+          </section>
+        </form>
+
+        {/* ── Payout / bank details form ───────────── */}
+        <form onSubmit={onSubmitPayout}>
+          <section className="gh-card p-6">
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: 16,
+                fontWeight: 800,
+              }}
             >
-              {message.text}
+              Payout details
+            </h3>
+            <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
+              Your bank details for receiving payments. Private — never shown
+              on your public profile. Your IBAN is stored encrypted.
             </p>
-          ) : null}
 
-          <div className="mt-5 flex justify-end">
-            <button
-              type="submit"
-              disabled={pending}
-              className="gh-btn gh-btn-primary"
-            >
-              {pending ? "Saving…" : "Save changes"}
-            </button>
-          </div>
-        </section>
-
-        {/* Payout / bank details — private, never shown on the public profile */}
-        <section className="gh-card p-6">
-          <h3
-            className="m-0 text-[var(--color-text-primary)]"
-            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
-          >
-            Payout details
-          </h3>
-          <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-            Your bank details for receiving payments. Private — never shown on
-            your public profile. Your IBAN is stored encrypted.
-          </p>
-
-          <div className="mt-4 flex flex-col gap-4">
-            <label className="flex flex-col gap-2">
-              <span className="gh-field-label">Account holder name</span>
-              <input
-                className="gh-input min-w-0"
-                value={bankAccountHolder}
-                onChange={(e) => setBankAccountHolder(e.target.value)}
-                maxLength={160}
-                placeholder="Name as it appears on the account"
-              />
-            </label>
-
-            <label className="flex flex-col gap-2">
-              <span className="gh-field-label">IBAN</span>
-              <input
-                className="gh-input min-w-0 font-mono"
-                value={bankIban}
-                onChange={(e) => setBankIban(e.target.value)}
-                maxLength={42}
-                autoComplete="off"
-                spellCheck={false}
-                inputMode="text"
-                placeholder={
-                  initial.bankIbanSet
-                    ? `On file: ${initial.bankIbanMasked ?? "•••• ••••"} — leave blank to keep`
-                    : "IE29 AIBK 9311 5212 3456 78"
-                }
-              />
-              <span className="text-xs text-[var(--color-text-muted)]">
-                {initial.bankIbanSet
-                  ? "An IBAN is on file. Type a new one only to replace it."
-                  : "Enter your full IBAN. It is stored encrypted and shown masked afterwards."}
-              </span>
-            </label>
-
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="mt-4 flex flex-col gap-4">
               <label className="flex flex-col gap-2">
-                <span className="gh-field-label">BIC / SWIFT (optional)</span>
+                <span className="gh-field-label">Account holder name</span>
                 <input
-                  className="gh-input min-w-0 font-mono"
-                  value={bankBic}
-                  onChange={(e) => setBankBic(e.target.value)}
-                  maxLength={16}
-                  autoComplete="off"
-                  spellCheck={false}
-                  placeholder="AIBKIE2D"
+                  className="gh-input min-w-0"
+                  value={bankAccountHolder}
+                  onChange={(e) => setBankAccountHolder(e.target.value)}
+                  maxLength={160}
+                  placeholder="Name as it appears on the account"
                 />
               </label>
-            </div>
-          </div>
 
-          <div className="mt-5 flex justify-end">
-            <button type="submit" disabled={pending} className="gh-btn gh-btn-primary">
-              {pending ? "Saving…" : "Save payout details"}
-            </button>
-          </div>
-        </section>
+              <label className="flex flex-col gap-2">
+                <span className="gh-field-label">IBAN</span>
+                <input
+                  className="gh-input min-w-0 font-mono"
+                  value={bankIban}
+                  onChange={(e) => {
+                    setBankIban(e.target.value);
+                    setIbanFieldError(null);
+                  }}
+                  maxLength={42}
+                  autoComplete="off"
+                  spellCheck={false}
+                  inputMode="text"
+                  placeholder={
+                    initial.bankIbanSet
+                      ? `On file: ${initial.bankIbanMasked ?? "•••• ••••"} — leave blank to keep`
+                      : "IE29 AIBK 9311 5212 3456 78"
+                  }
+                />
+                {ibanFieldError ? (
+                  <span className="text-xs text-red-600">{ibanFieldError}</span>
+                ) : (
+                  <span className="text-xs text-[var(--color-text-muted)]">
+                    {initial.bankIbanSet
+                      ? "An IBAN is on file. Type a new one only to replace it."
+                      : "Enter your full IBAN. It is stored encrypted and shown masked afterwards."}
+                  </span>
+                )}
+              </label>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="flex flex-col gap-2">
+                  <span className="gh-field-label">BIC / SWIFT (optional)</span>
+                  <input
+                    className="gh-input min-w-0 font-mono"
+                    value={bankBic}
+                    onChange={(e) => {
+                      setBankBic(e.target.value);
+                      setBicFieldError(null);
+                    }}
+                    maxLength={16}
+                    autoComplete="off"
+                    spellCheck={false}
+                    placeholder="AIBKIE2D"
+                  />
+                  {bicFieldError ? (
+                    <span className="text-xs text-red-600">{bicFieldError}</span>
+                  ) : null}
+                </label>
+              </div>
+            </div>
+
+            {payoutMsg ? <MessageBanner msg={payoutMsg} /> : null}
+
+            <div className="mt-5 flex justify-end">
+              <button
+                type="submit"
+                disabled={payoutPending}
+                className="gh-btn gh-btn-primary"
+              >
+                {payoutPending ? "Saving…" : "Save payout details"}
+              </button>
+            </div>
+          </section>
+        </form>
       </div>
 
+      {/* ── Sidebar: photo + admin-managed ───────── */}
       <aside className="grid gap-4 self-start">
         <section className="gh-card p-6">
           <h3
             className="m-0 text-[var(--color-text-primary)]"
-            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 16,
+              fontWeight: 800,
+            }}
           >
             Profile photo
           </h3>
@@ -378,7 +474,8 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
                 <span
                   className="text-[28px] font-bold"
                   style={{
-                    background: "linear-gradient(135deg, #1d4b36 0%, #b0f122 100%)",
+                    background:
+                      "linear-gradient(135deg, #1d4b36 0%, #b0f122 100%)",
                     WebkitBackgroundClip: "text",
                     backgroundClip: "text",
                     color: "transparent",
@@ -440,18 +537,21 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
         <section className="gh-card p-6">
           <h3
             className="m-0 text-[var(--color-text-primary)]"
-            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 16,
+              fontWeight: 800,
+            }}
           >
             Admin-managed
           </h3>
           <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-            Country, URL slug, IMC registration, and your eligible
-            specialties stay admin-managed to keep verification +
-            routing consistent. Ping support if any of those need to
-            change.
+            Country, URL slug, IMC registration, and your eligible specialties
+            stay admin-managed to keep verification + routing consistent. Ping
+            support if any of those need to change.
           </p>
         </section>
       </aside>
-    </form>
+    </div>
   );
 }

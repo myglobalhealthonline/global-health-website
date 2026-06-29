@@ -444,28 +444,39 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
 
       // Payout bank details live on the separate DoctorBankAccount table so
       // the encrypted IBAN never rides along on the public/admin doctor
-      // payloads. Upsert only the fields the doctor actually submitted.
+      // payloads. Only write fields that carry an actual non-empty value so
+      // a blank field never silently wipes existing bank details.
       const { bankAccountHolder, bankBic, bankIban } = body.data;
-      const touchesBank =
-        bankAccountHolder !== undefined ||
-        bankBic !== undefined ||
-        (typeof bankIban === "string" && bankIban.trim() !== "");
-      if (touchesBank) {
-        const ibanProvided = typeof bankIban === "string" && bankIban.trim() !== "";
-        const normalizedIban = ibanProvided ? normalizeIban(bankIban) : null;
-        const bankData = {
-          ...(bankAccountHolder !== undefined && { accountHolder: bankAccountHolder }),
-          ...(bankBic !== undefined && { bic: bankBic ? bankBic.toUpperCase() : null }),
-          ...(ibanProvided && {
-            ibanEncrypted: encryptPhi(normalizedIban),
-            ibanLast4: ibanLast4(normalizedIban),
-          }),
-        };
-        await prisma.doctorBankAccount.upsert({
-          where: { doctorId: auth.doctorId },
-          create: { doctorId: auth.doctorId, ...bankData },
-          update: bankData,
-        });
+      const ibanProvided = typeof bankIban === "string" && bankIban.trim() !== "";
+      const normalizedIban = ibanProvided ? normalizeIban(bankIban) : null;
+
+      const bankData: Record<string, string | null> = {};
+      if (typeof bankAccountHolder === "string" && bankAccountHolder.trim() !== "") {
+        bankData.accountHolder = bankAccountHolder.trim();
+      }
+      if (typeof bankBic === "string" && bankBic.trim() !== "") {
+        bankData.bic = bankBic.trim().toUpperCase();
+      }
+      if (ibanProvided && normalizedIban) {
+        bankData.ibanEncrypted = encryptPhi(normalizedIban);
+        bankData.ibanLast4 = ibanLast4(normalizedIban);
+      }
+
+      // Only touch the bank table when there is something meaningful to write
+      if (Object.keys(bankData).length > 0) {
+        try {
+          await prisma.doctorBankAccount.upsert({
+            where: { doctorId: auth.doctorId },
+            create: { doctorId: auth.doctorId, ...bankData },
+            update: bankData,
+          });
+        } catch (bankError) {
+          app.log.error(bankError, "Bank account upsert failed for doctor %s", auth.doctorId);
+          return okResponse(
+            { doctor: updated },
+            "Profile updated — bank details could not be saved, please try again",
+          );
+        }
       }
 
       return okResponse({ doctor: updated }, "Profile updated");
