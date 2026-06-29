@@ -62,7 +62,8 @@ export function DoctorCountryProfileEditor({ doctorId, doctorSlug, markets }: Pr
       seoKeywords: keywordsFromCsv(formData.get(`seoKeywords_${locale}`)),
     }));
 
-    const bankIban = cleanString(formData.get("bankIban"));
+    // Payout / IBAN is doctor-owned (entered in the doctor portal). Admins
+    // never submit bank details from here.
     const body = {
       active: formData.get("active") === "on",
       sortOrder: Number(formData.get("sortOrder") ?? 0),
@@ -71,11 +72,6 @@ export function DoctorCountryProfileEditor({ doctorId, doctorSlug, markets }: Pr
       division: cleanString(formData.get("division")),
       isVerified: formData.get("isVerified") === "on",
       translations,
-      bank: {
-        accountHolder: cleanString(formData.get("bankAccountHolder")),
-        bic: cleanString(formData.get("bankBic")),
-        ...(bankIban ? { iban: bankIban } : {}),
-      },
     };
 
     const result = await patchAdminDoctorMarket(doctorId, countryId, body);

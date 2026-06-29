@@ -6,7 +6,7 @@ import {
 } from "../../validations/doctor-market-profiles.schema.js";
 
 describe("doctor market profile validation", () => {
-  it("admin payload accepts market title, bio, SEO, registration, and bank fields", () => {
+  it("admin payload accepts market title, bio, SEO, and registration fields", () => {
     const result = adminDoctorMarketPatchBodySchema.safeParse({
       active: true,
       sortOrder: 2,
@@ -24,14 +24,17 @@ describe("doctor market profile validation", () => {
           seoKeywords: ["cardiology", "telehealth"],
         },
       ],
-      bank: {
-        accountHolder: "Jane Smith",
-        iban: "IE29AIBK93115212345678",
-        bic: "AIBKIE2D",
-      },
     });
 
     assert.equal(result.success, true);
+  });
+
+  it("admin payload rejects bank fields (payout is doctor-owned)", () => {
+    const result = adminDoctorMarketPatchBodySchema.safeParse({
+      translations: [{ locale: "EN", bio: "<p>bio</p>" }],
+      bank: { accountHolder: "Jane Smith", iban: "IE29AIBK93115212345678" },
+    });
+    assert.equal(result.success, false);
   });
 
   it("admin payload rejects FAQ fields (now doctor-level)", () => {

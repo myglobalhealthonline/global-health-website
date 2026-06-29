@@ -74,7 +74,6 @@ export const adminDoctorMarketPatchBodySchema = z
     division: nullableTrimmed(120),
     isVerified: z.boolean().optional(),
     translations: z.array(adminDoctorMarketTranslationSchema).max(6).optional(),
-    bank: bankInputSchema.optional(),
   })
   .strict()
   .refine((d) => Object.keys(d).length > 0, {

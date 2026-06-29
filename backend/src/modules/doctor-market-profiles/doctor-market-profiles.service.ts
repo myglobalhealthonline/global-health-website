@@ -134,7 +134,7 @@ async function ensurePrimaryMarketRow(
 }
 
 function bankDataFromInput(
-  bank: AdminDoctorMarketPatchBody["bank"] | DoctorMarketPatchBody["bank"],
+  bank: DoctorMarketPatchBody["bank"],
 ): Record<string, string | null> {
   if (!bank) return {};
   const data: Record<string, string | null> = {};
@@ -253,14 +253,8 @@ export async function updateAdminDoctorMarket(
         }
       }
 
-      const bankData = bankDataFromInput(input.bank);
-      if (Object.keys(bankData).length > 0) {
-        await tx.doctorMarketBankAccount.upsert({
-          where: { doctorCountryId: row.id },
-          create: { doctorCountryId: row.id, ...bankData },
-          update: bankData,
-        });
-      }
+      // Payout / IBAN is doctor-owned (set via the doctor portal). Admins do
+      // not write bank details here.
 
       return tx.doctorCountry.findUniqueOrThrow({
         where: { id: row.id },
