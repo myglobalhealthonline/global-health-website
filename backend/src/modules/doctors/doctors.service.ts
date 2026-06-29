@@ -248,7 +248,8 @@ const adminDoctorInclude = {
     },
   },
   assets: {
-    where: { kind: AssetKind.IMAGE },
+    where: { kind: AssetKind.IMAGE, isActive: true },
+    orderBy: [{ updatedAt: "desc" as const }, { id: "desc" as const }],
     select: {
       id: true,
       kind: true,

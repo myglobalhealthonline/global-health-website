@@ -120,7 +120,14 @@ function ibanError(raw: string): string | null {
   return null;
 }
 
-export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
+export function DoctorProfileEditForm({
+  initial,
+  activeCountryId,
+}: {
+  initial: Initial;
+  /** Country whose profile this page edits. Resolved from the route. */
+  activeCountryId: string | null;
+}) {
   const router = useRouter();
   const initialQualificationsText = initial.qualifications.join("\n");
   const initialLanguagesKey = initial.languages.join("\u0000");
@@ -129,13 +136,11 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
     [initialLanguagesKey],
   );
   const marketOptions = initial.markets.length > 0 ? initial.markets : [];
-  const [activeMarketCountryId, setActiveMarketCountryId] = useState(
-    marketOptions[0]?.countryId ?? "",
-  );
   const activeMarket =
-    marketOptions.find((market) => market.countryId === activeMarketCountryId) ??
+    marketOptions.find((market) => market.countryId === activeCountryId) ??
     marketOptions[0] ??
     null;
+  const activeCountryName = activeMarket?.country.name ?? null;
   const activeMarketBank = activeMarket?.bank ?? null;
   const activeMarketHasIban = activeMarketBank?.ibanSet ?? initial.bankIbanSet;
   const activeMarketIbanMasked =
@@ -356,7 +361,7 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
           if (!marketRes.ok || !marketJson.ok) {
             setProfileMsg({
               kind: "error",
-              text: marketJson.message ?? "Could not save market profile",
+              text: marketJson.message ?? "Could not save country profile",
             });
             return;
           }
@@ -364,7 +369,7 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
         setProfileMsg({
           kind: "success",
           text: activeMarket
-            ? "Profile and market details updated"
+            ? `Profile and ${activeCountryName ?? "country"} details updated`
             : json.message ?? "Profile updated",
         });
         router.refresh();
@@ -379,7 +384,7 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
     event.preventDefault();
     setPayoutMsg(null);
     if (!activeMarket) {
-      setPayoutMsg({ kind: "error", text: "No active market is available" });
+      setPayoutMsg({ kind: "error", text: "No active country is available" });
       return;
     }
 
@@ -445,32 +450,12 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
               Public profile
             </h3>
             <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Patients see this on your doctor card and profile page for the
-              selected market.
+              {activeCountryName
+                ? `Patients see this on your ${activeCountryName} doctor card and profile page. Bio, registration, and payout details are saved per country.`
+                : "Patients see this on your doctor card and profile page."}
             </p>
 
             <div className="mt-4 flex flex-col gap-4">
-              {marketOptions.length > 0 ? (
-                <label className="flex flex-col gap-2">
-                  <span className="gh-field-label">Market</span>
-                  <select
-                    className="gh-input min-w-0"
-                    value={activeMarket?.countryId ?? ""}
-                    onChange={(event) => setActiveMarketCountryId(event.target.value)}
-                  >
-                    {marketOptions.map((market) => (
-                      <option key={market.countryId} value={market.countryId}>
-                        {market.country.name} ({market.country.code.toUpperCase()})
-                      </option>
-                    ))}
-                  </select>
-                  <span className="text-xs text-[var(--color-text-muted)]">
-                    Bio, registration, and payout details are saved separately
-                    for each approved market.
-                  </span>
-                </label>
-              ) : null}
-
               <label className="flex flex-col gap-2">
                 <span className="gh-field-label">Full name</span>
                 <input
@@ -654,7 +639,9 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
               Payout details
             </h3>
             <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
-              Your bank details for receiving payments in the selected market.
+              {activeCountryName
+                ? `Your bank details for receiving payments in ${activeCountryName}.`
+                : "Your bank details for receiving payments."}{" "}
               Private — never shown on your public profile. Your IBAN is stored
               encrypted.
             </p>
