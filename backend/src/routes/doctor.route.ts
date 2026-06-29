@@ -6,6 +6,7 @@ import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { sanitizeRichHtml } from "../utils/sanitize-html.js";
+import { recordAudit } from "../modules/audit/audit.service.js";
 import { encryptPhi } from "../lib/crypto/phi-crypto.js";
 import {
   ibanLast4,
@@ -149,6 +150,7 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           assets: {
             where: { kind: "IMAGE", isActive: true },
             select: { path: true },
+            orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
             take: 1,
           },
           // Payout bank details — return masked only (never the full IBAN).
@@ -410,52 +412,94 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         .send(errorResponse("Invalid profile update", body.error.flatten()));
     }
     try {
-      const doctorCountry = await prisma.doctor.findUnique({
+      const doctorMeta = await prisma.doctor.findUnique({
         where: { id: auth.doctorId },
-        select: { country: { select: { code: true } } },
-      });
-      const updated = await prisma.doctor.update({
-        where: { id: auth.doctorId },
-        data: {
-          ...(body.data.fullName !== undefined && { fullName: body.data.fullName }),
-          ...(body.data.bio !== undefined && {
-            bio: sanitizeRichHtml(body.data.bio),
-          }),
-          ...(body.data.qualifications !== undefined && {
-            qualifications: body.data.qualifications,
-          }),
-          ...(body.data.languages !== undefined && { languages: body.data.languages }),
-          ...(body.data.whatsappNumber !== undefined && {
-            whatsappNumber: normalizeDoctorWhatsAppForStorage(
-              body.data.whatsappNumber,
-              doctorCountry?.country.code,
-            ),
-          }),
-        },
         select: {
-          id: true,
-          fullName: true,
-          bio: true,
-          qualifications: true,
-          languages: true,
-          whatsappNumber: true,
+          slug: true,
+          title: true,
+          seoTitle: true,
+          seoDescription: true,
+          country: {
+            select: { id: true, code: true, defaultLocale: true },
+          },
+          additionalCountries: {
+            select: { country: { select: { code: true } } },
+          },
         },
+      });
+      if (!doctorMeta) {
+        return reply.status(404).send(errorResponse("Doctor profile not found"));
+      }
+      const updated = await prisma.$transaction(async (tx) => {
+        const updatedDoctor = await tx.doctor.update({
+          where: { id: auth.doctorId },
+          data: {
+            ...(body.data.fullName !== undefined && { fullName: body.data.fullName }),
+            ...(body.data.bio !== undefined && {
+              bio: sanitizeRichHtml(body.data.bio),
+            }),
+            ...(body.data.qualifications !== undefined && {
+              qualifications: body.data.qualifications,
+            }),
+            ...(body.data.languages !== undefined && { languages: body.data.languages }),
+            ...(body.data.whatsappNumber !== undefined && {
+              whatsappNumber: normalizeDoctorWhatsAppForStorage(
+                body.data.whatsappNumber,
+                doctorMeta.country.code,
+              ),
+            }),
+          },
+          select: {
+            id: true,
+            fullName: true,
+            bio: true,
+            qualifications: true,
+            languages: true,
+            whatsappNumber: true,
+          },
+        });
+
+        if (body.data.bio !== undefined) {
+          await tx.doctorTranslation.upsert({
+            where: {
+              doctorId_locale: {
+                doctorId: auth.doctorId,
+                locale: doctorMeta.country.defaultLocale,
+              },
+            },
+            create: {
+              doctorId: auth.doctorId,
+              locale: doctorMeta.country.defaultLocale,
+              title: doctorMeta.title,
+              bio: updatedDoctor.bio,
+              seoTitle: doctorMeta.seoTitle,
+              seoDescription: doctorMeta.seoDescription,
+            },
+            update: {
+              bio: updatedDoctor.bio,
+            },
+          });
+        }
+
+        return updatedDoctor;
       });
 
       // Payout bank details live on the separate DoctorBankAccount table so
       // the encrypted IBAN never rides along on the public/admin doctor
-      // payloads. Only write fields that carry an actual non-empty value so
-      // a blank field never silently wipes existing bank details.
+      // payloads. IBAN blank still means "keep current"; account holder and
+      // BIC blanks clear the corresponding optional field.
       const { bankAccountHolder, bankBic, bankIban } = body.data;
       const ibanProvided = typeof bankIban === "string" && bankIban.trim() !== "";
       const normalizedIban = ibanProvided ? normalizeIban(bankIban) : null;
 
       const bankData: Record<string, string | null> = {};
-      if (typeof bankAccountHolder === "string" && bankAccountHolder.trim() !== "") {
-        bankData.accountHolder = bankAccountHolder.trim();
+      if (bankAccountHolder !== undefined) {
+        const value = bankAccountHolder?.trim() ?? "";
+        bankData.accountHolder = value === "" ? null : value;
       }
-      if (typeof bankBic === "string" && bankBic.trim() !== "") {
-        bankData.bic = bankBic.trim().toUpperCase();
+      if (bankBic !== undefined) {
+        const value = bankBic?.trim() ?? "";
+        bankData.bic = value === "" ? null : value.toUpperCase();
       }
       if (ibanProvided && normalizedIban) {
         bankData.ibanEncrypted = encryptPhi(normalizedIban);
@@ -479,7 +523,29 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         }
       }
 
-      return okResponse({ doctor: updated }, "Profile updated");
+      recordAudit({
+        actorUserId: auth.userId,
+        actorRole: "DOCTOR",
+        action: "DOCTOR_UPDATED",
+        entityType: "Doctor",
+        entityId: auth.doctorId,
+        metadata: { changed: Object.keys(body.data) },
+        request,
+      }).catch(() => {});
+
+      return okResponse(
+        {
+          doctor: updated,
+          cache: {
+            countryCode: doctorMeta.country.code,
+            slug: doctorMeta.slug,
+            additionalCountryCodes: doctorMeta.additionalCountries.map(
+              (link) => link.country.code,
+            ),
+          },
+        },
+        "Profile updated",
+      );
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));

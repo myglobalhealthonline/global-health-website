@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
+import { revalidateDoctorProfileCacheFromApiText } from "@/lib/server/revalidate-doctor-profile";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,9 @@ export async function PATCH(request: NextRequest) {
     cache: "no-store",
   });
   const text = await upstream.text();
+  if (upstream.ok) {
+    revalidateDoctorProfileCacheFromApiText(text);
+  }
   return new NextResponse(text, {
     status: upstream.status,
     headers: {

@@ -32,6 +32,10 @@ function buildMediaPath(key: string): string {
   return `/api/media/${key.split("/").map(encodeURIComponent).join("/")}`;
 }
 
+function doctorProfileImageKey(doctorId: string): string {
+  return `doctor-${doctorId}-profile`;
+}
+
 function buildPublicMediaUrl(
   request: { protocol: string; hostname: string },
   key: string,
@@ -72,33 +76,62 @@ const doctorPhotoRoute: FastifyPluginAsync = async (app) => {
     }
 
     const safeName = sanitizeOriginalFilename(file.filename ?? "doctor.png");
-    const key = `media/doctors/${auth.doctorId}/${randomUUID()}-${safeName}`;
+    const storageKey = `media/doctors/${auth.doctorId}/${randomUUID()}-${safeName}`;
+    const assetKey = doctorProfileImageKey(auth.doctorId);
+    const path = buildMediaPath(storageKey);
+
+    const doctorMeta = await prisma.doctor.findUnique({
+      where: { id: auth.doctorId },
+      select: {
+        countryId: true,
+        slug: true,
+        country: { select: { code: true } },
+        additionalCountries: {
+          select: { country: { select: { code: true } } },
+        },
+      },
+    });
+    if (!doctorMeta) {
+      return reply.status(404).send(errorResponse("Doctor profile not found"));
+    }
 
     try {
-      await putObject(key, buffer, mimetype);
+      await putObject(storageKey, buffer, mimetype);
     } catch (error) {
       app.log.error(error);
       return reply.status(500).send(errorResponse("Upload failed"));
     }
 
     try {
-      // Replace any prior active asset so the public roster picks the
-      // newest image without manual admin cleanup.
+      // Keep one canonical profile-image Asset row per doctor. Public
+      // selectors and admin edits already understand this key, so doctor
+      // uploads must update it instead of creating a competing UUID asset.
       await prisma.$transaction([
         prisma.asset.updateMany({
           where: {
             doctorId: auth.doctorId,
             kind: "IMAGE",
             isActive: true,
+            NOT: { key: assetKey },
           },
           data: { isActive: false },
         }),
-        prisma.asset.create({
-          data: {
+        prisma.asset.upsert({
+          where: {
+            kind_key: { kind: "IMAGE", key: assetKey },
+          },
+          create: {
             doctorId: auth.doctorId,
+            countryId: doctorMeta.countryId,
             kind: "IMAGE",
-            key,
-            path: buildMediaPath(key),
+            key: assetKey,
+            path,
+            isActive: true,
+          },
+          update: {
+            doctorId: auth.doctorId,
+            countryId: doctorMeta.countryId,
+            path,
             isActive: true,
           },
         }),
@@ -117,13 +150,25 @@ const doctorPhotoRoute: FastifyPluginAsync = async (app) => {
       action: "DOCTOR_PHOTO_UPDATED",
       entityType: "Doctor",
       entityId: auth.doctorId,
-      metadata: { key, byteSize: buffer.length },
+      metadata: { key: assetKey, storageKey, byteSize: buffer.length },
       request,
     }).catch(() => {});
 
-    const publicUrl = buildPublicMediaUrl(request, key);
+    const publicUrl = buildPublicMediaUrl(request, storageKey);
     return okResponse(
-      { key, publicUrl, path: buildMediaPath(key) },
+      {
+        key: assetKey,
+        storageKey,
+        publicUrl,
+        path,
+        cache: {
+          countryCode: doctorMeta.country.code,
+          slug: doctorMeta.slug,
+          additionalCountryCodes: doctorMeta.additionalCountries.map(
+            (link) => link.country.code,
+          ),
+        },
+      },
       "Profile photo updated",
     );
   });
@@ -132,6 +177,19 @@ const doctorPhotoRoute: FastifyPluginAsync = async (app) => {
     const auth = await verifyDoctorAccess(request);
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
     try {
+      const doctorMeta = await prisma.doctor.findUnique({
+        where: { id: auth.doctorId },
+        select: {
+          slug: true,
+          country: { select: { code: true } },
+          additionalCountries: {
+            select: { country: { select: { code: true } } },
+          },
+        },
+      });
+      if (!doctorMeta) {
+        return reply.status(404).send(errorResponse("Doctor profile not found"));
+      }
       const result = await prisma.asset.updateMany({
         where: {
           doctorId: auth.doctorId,
@@ -150,7 +208,16 @@ const doctorPhotoRoute: FastifyPluginAsync = async (app) => {
           request,
         }).catch(() => {});
       }
-      return okResponse({ removed: result.count });
+      return okResponse({
+        removed: result.count,
+        cache: {
+          countryCode: doctorMeta.country.code,
+          slug: doctorMeta.slug,
+          additionalCountryCodes: doctorMeta.additionalCountries.map(
+            (link) => link.country.code,
+          ),
+        },
+      });
     } catch (error) {
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));

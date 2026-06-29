@@ -156,24 +156,18 @@ function readSpecialtyName(row: unknown): string | null {
 function pickImagePath(row: unknown): string | undefined {
   const assets = (row as { assets?: unknown }).assets;
   if (!Array.isArray(assets)) return undefined;
-  // Match `profileImageFromRow` in get-public-doctors.ts: prefer the
-  // asset whose key matches the "-profile" convention, else fall back
-  // to the first image (now ordered deterministically by backend).
-  // Identical logic on both pickers so /doctors index + doctor detail
-  // + home DoctorWall all render the same portrait per doctor.
-  let firstImage: string | undefined;
+  // Backend orders active profile images newest-first. Trust that order
+  // so a newer doctor-uploaded photo cannot be overridden by an older
+  // canonical admin key.
   for (const a of assets) {
     if (!a || typeof a !== "object") continue;
-    const rec = a as { kind?: unknown; path?: unknown; key?: unknown };
+    const rec = a as { kind?: unknown; path?: unknown };
     if (rec.kind !== "IMAGE" || typeof rec.path !== "string") continue;
     const resolved = resolveTrustedAssetUrl(rec.path);
     if (!resolved) continue;
-    if (typeof rec.key === "string" && /-profile$/i.test(rec.key)) {
-      return resolved;
-    }
-    if (!firstImage) firstImage = resolved;
+    return resolved;
   }
-  return firstImage;
+  return undefined;
 }
 
 /** Services for a country, filtered by kind. Skips inactive rows. When a
