@@ -73,17 +73,18 @@ export default async function AdminDoctorDetailPage({
     "use server";
     await requireAdminAction();
     const next = formData.get("next") === "true";
-    const res = await setAdminDoctorFeatured(id, next);
+    const countryCode = formData.get("countryCode")?.toString() || undefined;
+    const res = await setAdminDoctorFeatured(id, next, countryCode);
     if (!res.ok) {
       redirect(`/admin/doctors/${id}?error=${encodeURIComponent(res.message)}`);
     }
-    // Public /doctors lists need to re-pick the spotlight doctor.
     revalidateTag(SITE_CACHE_TAGS.globalDoctors(), "max");
+    const code = res.data?.countryCode?.toUpperCase() ?? countryCode?.toUpperCase() ?? "";
     redirect(
       `/admin/doctors/${id}?success=${encodeURIComponent(
         next
-          ? "Doctor set as the featured spotlight on the public Doctors page"
-          : "Doctor removed from the featured spotlight",
+          ? `Clinical Director set for ${code}`
+          : `Clinical Director removed for ${code}`,
       )}`,
     );
   }
@@ -143,9 +144,9 @@ export default async function AdminDoctorDetailPage({
   const profileImage = d.assets[0]?.path ?? null;
   const isActive = d.active;
 
-  // Featured state (stored in the Setting table, not on the doctor row).
+  // Featured state per country (stored in Setting table, not on the doctor row).
   const featuredResult = await fetchAdminDoctorFeatured(id);
-  const isFeatured = featuredResult.ok ? featuredResult.data.featured : false;
+  const featuredCountries = featuredResult.ok ? featuredResult.data.featuredCountries : [];
 
   // Fetched in parallel with the doctor row above would be cleaner, but
   // the page already does serial reads — keep the simple sequencing.
@@ -197,20 +198,28 @@ export default async function AdminDoctorDetailPage({
             <Pill tone={isActive ? "published" : "inactive"}>
               {isActive ? "Active" : "Inactive"}
             </Pill>
-            {isFeatured ? <Pill tone="brand">Clinical Director</Pill> : null}
-            {/* Featured spotlight toggle — one featured doctor per country.
-                Promotes this doctor into the FeaturedDoctor card at the
-                top of the public /doctors page. */}
-            <form action={toggleFeaturedAction}>
-              <input type="hidden" name="next" value={isFeatured ? "false" : "true"} />
-              <Btn
-                type="submit"
-                variant={isFeatured ? "secondary" : "ghost"}
-                iconLeft={<Star className="size-3.5" aria-hidden />}
-              >
-                {isFeatured ? "Remove Clinical Director" : "Set Clinical Director"}
-              </Btn>
-            </form>
+            {featuredCountries.length > 0 ? (
+              <Pill tone="brand">
+                Clinical Director{featuredCountries.length > 1 ? ` (${featuredCountries.map((c) => c.toUpperCase()).join(", ")})` : ` (${featuredCountries[0]!.toUpperCase()})`}
+              </Pill>
+            ) : null}
+            {/* Per-country Clinical Director toggles — one per country the doctor is listed in. */}
+            {associatedCountries.map((country) => {
+              const isFeaturedHere = featuredCountries.map((c) => c.toLowerCase()).includes(country.code.toLowerCase());
+              return (
+                <form key={country.code} action={toggleFeaturedAction}>
+                  <input type="hidden" name="next" value={isFeaturedHere ? "false" : "true"} />
+                  <input type="hidden" name="countryCode" value={country.code} />
+                  <Btn
+                    type="submit"
+                    variant={isFeaturedHere ? "secondary" : "ghost"}
+                    iconLeft={<Star className="size-3.5" aria-hidden />}
+                  >
+                    {isFeaturedHere ? `Remove Director (${country.code.toUpperCase()})` : `Set Director (${country.code.toUpperCase()})`}
+                  </Btn>
+                </form>
+              );
+            })}
             <Btn href={`/admin/doctors/${id}/availability`} variant="ghost">
               Availability
             </Btn>
