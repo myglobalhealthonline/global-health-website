@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, Trash2 } from "lucide-react";
-import { DoctorBioRichTextField } from "@/app/(admin)/admin/doctors/_components/doctor-bio-rich-text-field";
+import { RichTextHtmlField } from "@/app/(admin)/admin/_components/rich-text-html-field";
 import { PhoneField } from "@/components/forms/phone-field";
 import {
   LanguagePicker,
@@ -24,6 +24,9 @@ import {
 type Initial = {
   fullName: string;
   bio: string;
+  defaultLocale: string;
+  supportedLocales: Array<{ code: string; isDefault: boolean }>;
+  translations: Array<{ locale: string; bio: string | null }>;
   qualifications: string[];
   languages: string[];
   whatsappNumber: string;
@@ -59,6 +62,18 @@ function MessageBanner({ msg }: { msg: Msg }) {
   );
 }
 
+function localeLabel(code: string): string {
+  const labels: Record<string, string> = {
+    EN: "English",
+    PT: "Portuguese",
+    ES: "Spanish",
+    CS: "Czech",
+    RO: "Romanian",
+    DE: "German",
+  };
+  return labels[code.toUpperCase()] ?? code.toUpperCase();
+}
+
 /** BIC: 6 letters + 2 alphanumeric + optional 3 alphanumeric (8 or 11 chars). */
 const BIC_RE = /^[A-Za-z]{6}[A-Za-z0-9]{2}([A-Za-z0-9]{3})?$/;
 
@@ -85,10 +100,34 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
     () => canonicalizeLanguages(initial.languages),
     [initialLanguagesKey],
   );
+  const defaultLocale = initial.defaultLocale.toUpperCase();
+  const localeTabsKey = initial.supportedLocales
+    .map((locale) => `${locale.code}:${locale.isDefault ? "1" : "0"}`)
+    .join("|");
+  const localeTabs = useMemo(() => {
+    const seen = new Set<string>();
+    const tabs = initial.supportedLocales
+      .map((locale) => ({
+        code: locale.code.toUpperCase(),
+        isDefault: locale.isDefault || locale.code.toUpperCase() === defaultLocale,
+      }))
+      .filter((locale) => {
+        if (seen.has(locale.code)) return false;
+        seen.add(locale.code);
+        return true;
+      });
+    if (!seen.has(defaultLocale)) {
+      tabs.unshift({ code: defaultLocale, isDefault: true });
+    }
+    return tabs.length > 0 ? tabs : [{ code: "EN", isDefault: true }];
+  }, [defaultLocale, initial.supportedLocales, localeTabsKey]);
 
   /* ── Profile form ─────────────────────────────────── */
   const [profilePending, startProfileTransition] = useTransition();
   const [profileMsg, setProfileMsg] = useState<Msg | null>(null);
+  const [activeBioLocale, setActiveBioLocale] = useState(
+    localeTabs.find((locale) => locale.isDefault)?.code ?? localeTabs[0].code,
+  );
   const [fullName, setFullName] = useState(initial.fullName);
   const [qualifications, setQualifications] = useState(initialQualificationsText);
   const [languages, setLanguages] = useState<string[]>(initialLanguages);
@@ -122,6 +161,9 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
     setBankBic(initial.bankBic);
     setBankIban("");
     setPhotoPath(initial.profileImagePath);
+    setActiveBioLocale(
+      localeTabs.find((locale) => locale.isDefault)?.code ?? localeTabs[0].code,
+    );
   }, [
     initial.fullName,
     initialQualificationsText,
@@ -131,7 +173,17 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
     initial.bankAccountHolder,
     initial.bankBic,
     initial.profileImagePath,
+    localeTabs,
+    localeTabsKey,
   ]);
+
+  function initialBioForLocale(locale: string): string {
+    const normalized = locale.toUpperCase();
+    const translated = initial.translations.find(
+      (entry) => entry.locale.toUpperCase() === normalized,
+    );
+    return translated?.bio ?? (normalized === defaultLocale ? initial.bio : "");
+  }
 
   /* ── Photo handlers ──────────────────────────────── */
   function uploadPhoto(file: File) {
@@ -186,12 +238,17 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
   function onSubmitProfile(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setProfileMsg(null);
-    // Bio lives in a contentEditable + hidden input named "bio"
     const formData = new FormData(event.currentTarget);
-    const bio = String(formData.get("bio") ?? "").trim();
+    const translations = localeTabs.map((locale) => {
+      const bio = String(formData.get(`bio_${locale.code}`) ?? "").trim();
+      return { locale: locale.code, bio: bio || null };
+    });
+    const defaultBio =
+      translations.find((entry) => entry.locale === defaultLocale)?.bio ?? null;
     const payload = {
       fullName: fullName.trim(),
-      bio: bio || null,
+      bio: defaultBio,
+      translations,
       qualifications: qualifications
         .split("\n")
         .map((l) => l.trim())
@@ -304,14 +361,7 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
                 />
               </label>
 
-              <div className="flex flex-col gap-2">
-                <span className="gh-field-label">Bio</span>
-                <DoctorBioRichTextField initialValue={initial.bio} />
-                <span className="text-xs text-[var(--color-text-muted)]">
-                  Rich text. Headings, bold, italics, lists, and link colour
-                  are preserved on your public profile.
-                </span>
-              </div>
+              <DoctorBioRichTextField initialValue={initial.bio} />
 
               <label className="flex flex-col gap-2">
                 <span className="gh-field-label">Qualifications</span>
