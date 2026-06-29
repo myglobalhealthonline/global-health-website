@@ -26,12 +26,19 @@ import {
 const featuredBodySchema = z.object({ featured: z.boolean() });
 const idParam = z.string().trim().min(1).max(64);
 
-async function primaryCountryCode(doctorId: string): Promise<string | null> {
+/** Returns primary country code + all additional country codes for a doctor. */
+async function allCountryCodes(doctorId: string): Promise<{ primary: string | null; all: string[] }> {
   const row = await prisma.doctor.findUnique({
     where: { id: doctorId },
-    select: { country: { select: { code: true } } },
+    select: {
+      country: { select: { code: true } },
+      additionalCountries: { select: { country: { select: { code: true } } } },
+    },
   });
-  return row?.country.code ?? null;
+  if (!row) return { primary: null, all: [] };
+  const primary = row.country.code;
+  const additional = row.additionalCountries.map((ac) => ac.country.code);
+  return { primary, all: [primary, ...additional] };
 }
 
 const adminFeaturedDoctorRoute: FastifyPluginAsync = async (app) => {
@@ -40,6 +47,7 @@ const adminFeaturedDoctorRoute: FastifyPluginAsync = async (app) => {
     if (!auth.ok) return reply.status(auth.status).send(errorResponse(auth.message));
   });
 
+  // Returns all country codes where this doctor is the Clinical Director.
   app.get<{ Params: { id: string } }>(
     "/api/admin/doctors/:id/featured",
     async (request, reply) => {
@@ -47,10 +55,14 @@ const adminFeaturedDoctorRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid doctor id"));
       }
       try {
-        const code = await primaryCountryCode(request.params.id);
-        if (!code) return reply.status(404).send(errorResponse("Doctor not found"));
-        const featuredId = await getFeaturedDoctorId(code);
-        return okResponse({ featured: featuredId === request.params.id });
+        const { all } = await allCountryCodes(request.params.id);
+        if (!all.length) return reply.status(404).send(errorResponse("Doctor not found"));
+        const featuredCountries: string[] = [];
+        for (const code of all) {
+          const featuredId = await getFeaturedDoctorId(code);
+          if (featuredId === request.params.id) featuredCountries.push(code);
+        }
+        return okResponse({ featuredCountries });
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {
           return reply.status(503).send(errorResponse(error.message));
@@ -61,6 +73,9 @@ const adminFeaturedDoctorRoute: FastifyPluginAsync = async (app) => {
     },
   );
 
+  // Set/clear Clinical Director for a specific country the doctor belongs to.
+  // Body: { featured: boolean, countryCode?: string }
+  // countryCode defaults to the doctor's primary country when omitted.
   app.put<{ Params: { id: string } }>(
     "/api/admin/doctors/:id/featured",
     async (request, reply) => {
@@ -72,14 +87,22 @@ const adminFeaturedDoctorRoute: FastifyPluginAsync = async (app) => {
         return reply.status(400).send(errorResponse("Invalid body", parsed.error.flatten()));
       }
       try {
-        const code = await primaryCountryCode(request.params.id);
-        if (!code) return reply.status(404).send(errorResponse("Doctor not found"));
+        const { primary, all } = await allCountryCodes(request.params.id);
+        if (!primary) return reply.status(404).send(errorResponse("Doctor not found"));
+
+        const requestedCode = (request.body as Record<string, unknown>)?.countryCode;
+        const code =
+          requestedCode && typeof requestedCode === "string"
+            ? requestedCode.toLowerCase().trim()
+            : primary;
+
+        if (!all.map((c) => c.toLowerCase()).includes(code)) {
+          return reply.status(400).send(errorResponse("Doctor is not listed in that country"));
+        }
+
         if (parsed.data.featured) {
           await setFeaturedDoctor(code, request.params.id);
         } else {
-          // Only clear if THIS doctor is the current featured one — don't
-          // wipe another doctor's feature flag by toggling an un-featured
-          // doctor off.
           const current = await getFeaturedDoctorId(code);
           if (current === request.params.id) await setFeaturedDoctor(code, null);
         }
@@ -94,8 +117,8 @@ const adminFeaturedDoctorRoute: FastifyPluginAsync = async (app) => {
           request,
         }).catch(() => {});
         return okResponse(
-          { featured: parsed.data.featured },
-          parsed.data.featured ? "Doctor featured" : "Doctor unfeatured",
+          { featured: parsed.data.featured, countryCode: code },
+          parsed.data.featured ? "Doctor set as Clinical Director" : "Doctor removed as Clinical Director",
         );
       } catch (error) {
         if (error instanceof DatabaseUnavailableError) {

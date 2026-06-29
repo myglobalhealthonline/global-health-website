@@ -1312,19 +1312,23 @@ export async function deleteAdminDoctor(id: string) {
   });
 }
 
-/** Is this doctor the featured one for its country? (drives the toggle). */
+/** Returns all country codes where this doctor is the Clinical Director. */
 export async function fetchAdminDoctorFeatured(id: string) {
-  return adminRequest<{ featured: boolean }>(
+  return adminRequest<{ featuredCountries: string[] }>(
     `/api/admin/doctors/${id}/featured`,
   );
 }
 
-/** Set/clear the featured doctor for its country. Setting one featured
- *  replaces the previous one (one featured doctor per country). */
-export async function setAdminDoctorFeatured(id: string, featured: boolean) {
-  return adminRequest<{ featured: boolean }>(
+/** Set/clear Clinical Director for a specific country the doctor belongs to.
+ *  countryCode defaults to the doctor's primary country when omitted. */
+export async function setAdminDoctorFeatured(
+  id: string,
+  featured: boolean,
+  countryCode?: string,
+) {
+  return adminRequest<{ featured: boolean; countryCode: string }>(
     `/api/admin/doctors/${id}/featured`,
-    { method: "PUT", body: { featured } },
+    { method: "PUT", body: { featured, ...(countryCode ? { countryCode } : {}) } },
   );
 }
 
