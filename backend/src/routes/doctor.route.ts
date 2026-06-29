@@ -21,6 +21,7 @@ import {
 } from "../utils/iban.js";
 import {
   listDoctorSelectableServices,
+  saveDoctorServiceSelections,
 } from "../modules/doctor-services/doctor-services.service.js";
 import { normalizeDoctorWhatsAppForStorage } from "../lib/whatsapp/resolve-doctor-contact.js";
 
@@ -145,6 +146,10 @@ function normalizeProfileTranslations(
     entry.locale === defaultLocale ? { ...entry, bio: defaultBio } : entry,
   );
 }
+
+const doctorServicesBodySchema = z.object({
+  serviceIds: z.array(z.string().trim().min(1)).max(100),
+});
 
 const doctorRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/doctor/me", async (request, reply) => {
@@ -701,21 +706,36 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
-  // Service assignment is admin-only. Doctors can view their assigned
-  // services (GET above) but may not self-select — the admin controls
-  // which services each doctor is qualified to provide.
+  // Doctors self-select the services they want to provide. New
+  // selections are recorded as `pending` and surfaced to admins for
+  // approval (admin approve -> active, reject -> rejected). Admin-set
+  // assignments can never be overridden or removed by the doctor.
   app.post("/api/doctor/services", async (request, reply) => {
     const auth = await verifyDoctorAccess(request);
     if (!auth.ok) {
       return reply.status(auth.status).send(errorResponse(auth.message));
     }
-    return reply
-      .status(403)
-      .send(
-        errorResponse(
-          "Services are assigned by an administrator. Contact admin to change your service list.",
-        ),
+    const body = doctorServicesBodySchema.safeParse(request.body);
+    if (!body.success) {
+      return reply
+        .status(400)
+        .send(errorResponse("Invalid service selection", body.error.flatten()));
+    }
+    try {
+      const data = await saveDoctorServiceSelections(
+        auth.doctorId,
+        body.data.serviceIds,
       );
+      return okResponse(data, "Service selections saved");
+    } catch (error) {
+      if (error instanceof DatabaseUnavailableError) {
+        return reply.status(503).send(errorResponse(error.message));
+      }
+      app.log.error(error);
+      return reply
+        .status(500)
+        .send(errorResponse("Could not save service selections"));
+    }
   });
 };
 
