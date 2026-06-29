@@ -1,7 +1,7 @@
 /**
  * App country code → international dial code, for the manual-booking phone
- * picker. Keyed by the app's OWN country codes (note: Spain = "sp",
- * Romania = "rm") plus ISO aliases ("es"/"ro") so a lookup never misses.
+ * picker. Keyed by the app's country codes plus legacy aliases ("sp"/"rm")
+ * so older records still resolve.
  *
  * Phones are always stored as "+<dial> <national>" (e.g. "+353 871234567")
  * so downstream WhatsApp/SMS normalization is unambiguous.
@@ -20,7 +20,7 @@ export const DIAL_OPTIONS: DialOption[] = [
   { key: "ie", dial: "353", label: "Ireland" },
   { key: "cz", dial: "420", label: "Czechia" },
   { key: "pt", dial: "351", label: "Portugal" },
-  { key: "sp", dial: "34", label: "Spain" },
+  { key: "es", dial: "34", label: "Spain" },
   { key: "rm", dial: "40", label: "Romania" },
   { key: "mt", dial: "356", label: "Malta" },
   { key: "br", dial: "55", label: "Brazil" },

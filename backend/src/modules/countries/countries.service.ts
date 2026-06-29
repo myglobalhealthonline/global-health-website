@@ -40,7 +40,7 @@ export function isUniqueConstraintViolation(error: unknown): boolean {
 }
 
 /**
- * Lookup an active country by 2-letter code (`ie`, `pt`, `sp`, `cz`, `rm`).
+ * Lookup an active country by code (`ie`, `pt`, `es`, `cz`, `rm`; legacy aliases may exist).
  * Used by country-scoped public routes to 404 when an unknown code is
  * supplied instead of returning a misleading empty list.
  */

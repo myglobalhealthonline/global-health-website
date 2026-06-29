@@ -69,8 +69,8 @@ function HeroReveal({ children, className = "", style }: EntryRevealProps) {
   );
 }
 
-// Seeded-country codes use internal short codes that don't all match ISO
-// 3166-1 alpha-2 (`sp` for Spain, `rm` for Romania). Alias only the mismatches.
+// Legacy country codes do not all match ISO 3166-1 alpha-2 (`sp` for Spain,
+// `rm` for Romania). Alias only the mismatches.
 const FLAG_CODE_ALIAS: Record<string, string> = { sp: "es", rm: "ro" };
 const COUNTRY_LOCATIONS: Record<string, [number, number]> = {
   br: [-14.235, -51.9253],

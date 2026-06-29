@@ -4,7 +4,7 @@ import { env } from "../config/env.js";
 /**
  * Sequential invoice number generator, one counter per country.
  *
- * Format: {PREFIX}-{NNNNN}  e.g. IE-00001, CZ-00001, SP-00001, RO-00001
+ * Format: {PREFIX}-{NNNNN}  e.g. IE-00001, CZ-00001, ES-00001, RO-00001
  *
  * Uses atomic UPDATE … RETURNING on invoice_counter so parallel payments
  * never produce duplicate numbers. Same pattern as order-number.ts.
@@ -13,6 +13,7 @@ import { env } from "../config/env.js";
 const COUNTRY_PREFIX: Record<string, string> = {
   ie: "IE",
   cz: "CZ",
+  es: "ES",
   sp: "SP",
   rm: "RO",
 };

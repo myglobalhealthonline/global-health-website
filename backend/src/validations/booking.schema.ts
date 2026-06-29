@@ -95,6 +95,11 @@ export const bookingSchema = z.object({
 
 export type BookingInput = z.infer<typeof bookingSchema>;
 
+const isSpanishNationalId = (raw: string): boolean => {
+  const s = raw.replace(/\s+/g, "").toUpperCase();
+  return /^\d{8}[A-Z]$/.test(s) || /^[XYZ]\d{7}[A-Z]$/.test(s);
+};
+
 /**
  * Country-specific national-ID validators. Keyed by lowercase country
  * code matching `Country.code`. Each entry returns true if the supplied
@@ -122,12 +127,13 @@ export const NATIONAL_ID_VALIDATORS: Record<
     valid: (raw) => /^\d{9}$/.test(raw.replace(/\s+/g, "")),
   },
   // Spain — DNI (8 digits + letter) or NIE (X/Y/Z + 7 digits + letter).
+  es: {
+    label: "DNI / NIE",
+    valid: isSpanishNationalId,
+  },
   sp: {
     label: "DNI / NIE",
-    valid: (raw) => {
-      const s = raw.replace(/\s+/g, "").toUpperCase();
-      return /^\d{8}[A-Z]$/.test(s) || /^[XYZ]\d{7}[A-Z]$/.test(s);
-    },
+    valid: isSpanishNationalId,
   },
   // Czechia — Rodné číslo: 9 or 10 digits, optionally split by `/`.
   cz: {

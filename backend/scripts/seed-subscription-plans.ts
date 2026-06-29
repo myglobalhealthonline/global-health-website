@@ -74,6 +74,13 @@ async function main(): Promise<void> {
     console.error(`[seed] country ${code} not found — nothing seeded`);
     return;
   }
+  if (!country.enabledFeatures.includes("subscriptions")) {
+    await prisma.country.update({
+      where: { id: country.id },
+      data: { enabledFeatures: [...country.enabledFeatures, "subscriptions"] },
+    });
+    console.log(`[seed] enabled subscriptions feature for ${code}`);
+  }
   const currencyCode = country.currency.code;
   console.log(`[seed] seeding ${PLAN_SEEDS.length} plans for ${code} (${currencyCode})`);
 
