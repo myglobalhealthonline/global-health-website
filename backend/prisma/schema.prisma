@@ -757,6 +757,7 @@ model Service {
   summary               String?
   seoTitle              String?
   seoDescription        String?
+  seoKeywords           String[]              @default([])
   heroTitle             String?
   heroDescription       String?
   detailBody            String?

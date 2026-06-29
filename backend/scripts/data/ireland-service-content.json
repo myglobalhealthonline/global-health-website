@@ -33,6 +33,14 @@
         "question": "What languages are consultations available in?",
         "answer": "Consultations are available in English, Portuguese, Spanish, Czech, and Romanian, subject to doctor availability."
       }
+    ],
+    "seoKeywords": [
+      "online doctor Ireland",
+      "see a doctor online Ireland",
+      "video GP consultation",
+      "online medical consultation Ireland",
+      "telehealth Ireland",
+      "online doctor consultation"
     ]
   },
   {
@@ -65,6 +73,13 @@
         "question": "How quickly will I receive my certificate?",
         "answer": "Where a certificate is issued, it will be provided digitally following your consultation on the same day."
       }
+    ],
+    "seoKeywords": [
+      "sick leave certificate Ireland",
+      "sick note Ireland",
+      "medical certificate Ireland",
+      "doctor sick note online Ireland",
+      "sick cert Ireland"
     ]
   },
   {
@@ -97,6 +112,13 @@
         "question": "How quickly will I receive any documentation following my consultation?",
         "answer": "Any clinical documentation will be issued digitally following your consultation on the same day, where clinically appropriate and at the doctor's discretion."
       }
+    ],
+    "seoKeywords": [
+      "repeat prescription Ireland",
+      "ongoing care review Ireland",
+      "repeat consultation Ireland",
+      "continue treatment online Ireland",
+      "medication review Ireland"
     ]
   },
   {
@@ -133,6 +155,13 @@
         "question": "Is this service suitable for children with chronic conditions?",
         "answer": "Yes. Family Medicine consultations are appropriate for patients of all ages, including children managing ongoing conditions such as asthma, eczema, or diabetes."
       }
+    ],
+    "seoKeywords": [
+      "chronic disease management Ireland",
+      "chronic condition GP Ireland",
+      "family medicine consultation Ireland",
+      "ongoing medical care Ireland",
+      "long term condition doctor Ireland"
     ]
   },
   {
@@ -169,6 +198,13 @@
         "question": "What age is this service suitable for?",
         "answer": "Men's health concerns can present at any adult age. ED, for example, affects men as young as their twenties — often with psychological or lifestyle causes at that age. Our service is appropriate for adult men of all ages."
       }
+    ],
+    "seoKeywords": [
+      "men's health consultation Ireland",
+      "erectile dysfunction doctor Ireland",
+      "testosterone assessment Ireland",
+      "online men's health doctor Ireland",
+      "ED consultation Ireland"
     ]
   },
   {
@@ -209,6 +245,14 @@
         "question": "Can I discuss postnatal mental health concerns?",
         "answer": "Yes. Postnatal mood concerns including postnatal depression and anxiety are appropriate for assessment at GP level. Your doctor will conduct a full assessment and advise on appropriate support — including specialist referral where indicated."
       }
+    ],
+    "seoKeywords": [
+      "women's health consultation Ireland",
+      "online gynaecology Ireland",
+      "contraception consultation Ireland",
+      "menopause doctor online Ireland",
+      "PCOS doctor Ireland",
+      "women's health doctor online Ireland"
     ]
   },
   {
@@ -253,6 +297,15 @@
         "question": "Do I need to know which specialist or test I need before booking?",
         "answer": "No. If you are unsure what you need, book this consultation and describe your concern. Your doctor will assess your symptoms and advise on the most clinically appropriate referral or investigation pathway."
       }
+    ],
+    "seoKeywords": [
+      "GP referral Ireland",
+      "specialist referral Ireland",
+      "blood test referral Ireland",
+      "MRI referral Ireland",
+      "medical tests Ireland",
+      "diagnostic investigation Ireland",
+      "private referral letter Ireland"
     ]
   },
   {
@@ -293,6 +346,14 @@
         "question": "What languages are consultations available in?",
         "answer": "English, Portuguese, Spanish, Czech, and Romanian — subject to doctor availability."
       }
+    ],
+    "seoKeywords": [
+      "paediatric consultation Ireland",
+      "online doctor for children Ireland",
+      "child health consultation Ireland",
+      "paediatric GP Ireland",
+      "kids doctor online Ireland",
+      "children's doctor online Ireland"
     ]
   },
   {
@@ -333,6 +394,14 @@
         "question": "Is this service suitable for adolescents?",
         "answer": "Weight management consultations are primarily designed for adults. For adolescents, weight and metabolic concerns should be assessed through our Paediatric GP Consultation in the first instance, where your doctor will advise on appropriate referral if specialist input is needed."
       }
+    ],
+    "seoKeywords": [
+      "medical weight loss Ireland",
+      "weight management consultation Ireland",
+      "GLP-1 assessment Ireland",
+      "obesity medicine Ireland",
+      "doctor led weight loss Ireland",
+      "Ozempic assessment Ireland"
     ]
   },
   {
@@ -373,6 +442,14 @@
         "question": "Do I need to have had imaging done before booking?",
         "answer": "No. Bring any existing imaging or clinical letters if you have them — your doctor will review them in full. If you have not had imaging, your doctor will assess whether it is clinically indicated and request it where appropriate."
       }
+    ],
+    "seoKeywords": [
+      "musculoskeletal assessment Ireland",
+      "back pain doctor Ireland",
+      "joint pain consultation Ireland",
+      "online pain assessment Ireland",
+      "sciatica doctor online Ireland",
+      "physiotherapy referral Ireland"
     ]
   },
   {
@@ -417,6 +494,14 @@
         "question": "How is ADHD assessed through this service?",
         "answer": "This service provides initial ADHD screening at GP level using validated screening tools. Formal ADHD diagnosis requires specialist assessment — your GP will advise on the appropriate referral pathway if screening indicates this is warranted."
       }
+    ],
+    "seoKeywords": [
+      "mental health consultation Ireland",
+      "anxiety doctor Ireland",
+      "depression consultation Ireland",
+      "online mental health assessment Ireland",
+      "GP mental health Ireland",
+      "stress and anxiety doctor online Ireland"
     ]
   },
   {
@@ -461,6 +546,14 @@
         "question": "What if I have already started my travel health preparation elsewhere?",
         "answer": "Bring any existing vaccination records, travel health letters, or clinical documentation to your consultation. Your doctor will review these in full and advise on what additional preparation is needed for your specific itinerary."
       }
+    ],
+    "seoKeywords": [
+      "travel health consultation Ireland",
+      "travel doctor Ireland",
+      "pre-travel health assessment Ireland",
+      "malaria advice Ireland",
+      "travel vaccines Ireland",
+      "online travel health Ireland"
     ]
   },
   {
@@ -497,7 +590,8 @@
         "question": "What if I am considering multiple procedures?",
         "answer": "Your doctor can discuss multiple planned procedures in a single consultation — assessing the combined risk profile, appropriate sequencing, and any interactions between planned treatments."
       }
-    ]
+    ],
+    "seoKeywords": []
   },
   {
     "slug": "hair-loss-consultation",
@@ -537,6 +631,14 @@
         "question": "At what age is this service appropriate?",
         "answer": "Hair loss can begin in the twenties for both men and women. This service is appropriate for any adult experiencing hair loss or thinning regardless of age. Adolescent hair loss should be assessed through our Paediatric GP Consultation in the first instance."
       }
+    ],
+    "seoKeywords": [
+      "hair loss consultation Ireland",
+      "hair loss doctor Ireland",
+      "alopecia treatment Ireland",
+      "male pattern baldness doctor Ireland",
+      "female hair loss doctor Ireland",
+      "hair thinning consultation Ireland"
     ]
   },
   {
@@ -581,6 +683,15 @@
         "question": "What if my rash is spreading rapidly or I feel unwell alongside it?",
         "answer": "A rapidly spreading rash accompanied by fever, difficulty breathing, facial swelling, or feeling seriously unwell is a medical emergency. Call 999 or attend your nearest emergency department immediately — do not wait for a video consultation."
       }
+    ],
+    "seoKeywords": [
+      "skin consultation Ireland",
+      "online dermatology Ireland",
+      "skin condition doctor Ireland",
+      "eczema doctor online Ireland",
+      "acne consultation Ireland",
+      "rash doctor Ireland",
+      "dermatology referral Ireland"
     ]
   },
   {
@@ -625,6 +736,13 @@
         "question": "How is this different from a standard Medical Consultation?",
         "answer": "A standard Acute Medical Consultation is for assessing new or current symptoms. A Second Opinion Consultation is specifically structured around reviewing an existing diagnosis, clinical letter, or management plan — with dedicated time for document review, clinical reasoning discussion, and evidence-based assessment of what you have been told. It is a different clinical task that requires a different structure."
       }
+    ],
+    "seoKeywords": [
+      "second opinion doctor Ireland",
+      "medical second opinion Ireland",
+      "second opinion consultation Ireland",
+      "independent doctor opinion Ireland",
+      "online second opinion Ireland"
     ]
   },
   {
@@ -669,6 +787,14 @@
         "question": "What if my concern turns out to be an emergency during the consultation?",
         "answer": "If your cardiologist determines that your presentation requires emergency assessment, you will be directed to your nearest emergency department immediately. Patient safety is always the clinical priority."
       }
+    ],
+    "seoKeywords": [
+      "cardiology consultation Ireland",
+      "online cardiologist Ireland",
+      "heart specialist online Ireland",
+      "cardiovascular consultation Ireland",
+      "ECG review online Ireland",
+      "heart condition second opinion Ireland"
     ]
   },
   {
@@ -713,6 +839,14 @@
         "question": "What if my difficulties require more intensive support than outpatient psychology?",
         "answer": "If your presentation requires more intensive support — including day hospital, inpatient care, or specialist services — your psychologist will advise clearly and coordinate appropriate referral. Your safety and clinical appropriateness of care always take priority."
       }
+    ],
+    "seoKeywords": [
+      "psychology consultation Ireland",
+      "online psychologist Ireland",
+      "CORU registered psychologist Ireland",
+      "CBT online Ireland",
+      "psychological assessment Ireland",
+      "anxiety psychologist Ireland"
     ]
   },
   {
@@ -757,6 +891,14 @@
         "question": "Is this service suitable for adolescents?",
         "answer": "Psychiatric consultations for patients under 18 require specific clinical considerations and parental or guardian consent. Complex adolescent psychiatric presentations may be more appropriately managed through CAMHS (Child and Adolescent Mental Health Services). Your psychiatrist will advise on suitability and the appropriate care pathway during the initial assessment."
       }
+    ],
+    "seoKeywords": [
+      "psychiatry consultation Ireland",
+      "online psychiatrist Ireland",
+      "psychiatric assessment Ireland",
+      "mental health specialist Ireland",
+      "ADHD psychiatrist Ireland",
+      "bipolar disorder psychiatrist Ireland"
     ]
   },
   {
@@ -801,6 +943,14 @@
         "question": "What languages are consultations available in?",
         "answer": "English, Portuguese, Spanish, Czech, and Romanian — subject to consultant availability."
       }
+    ],
+    "seoKeywords": [
+      "paediatric consultant Ireland",
+      "online paediatrician Ireland",
+      "child specialist consultation Ireland",
+      "paediatric second opinion Ireland",
+      "developmental paediatrician Ireland",
+      "chronic condition child specialist Ireland"
     ]
   },
   {
@@ -845,6 +995,15 @@
         "question": "What if I need blood tests to assess my nutritional status?",
         "answer": "Where nutritional blood tests are clinically indicated — ferritin, vitamin D, B12, zinc, or others — your nutritionist will advise on appropriate testing. Investigation requests can be coordinated through our GP Referral & Diagnostic Investigation service."
       }
+    ],
+    "seoKeywords": [
+      "nutrition consultation Ireland",
+      "online nutritionist Ireland",
+      "nutritionist consultation Ireland",
+      "nutrition specialist Ireland",
+      "diet consultation Ireland",
+      "sports nutritionist Ireland",
+      "gut health nutritionist Ireland"
     ]
   },
   {
@@ -889,6 +1048,15 @@
         "question": "Is this service suitable for children?",
         "answer": "Paediatric physiotherapy — including developmental motor concerns, sports injuries in young athletes, and respiratory conditions — can be assessed through this service. Consultations for children are conducted with a parent or caregiver present throughout."
       }
+    ],
+    "seoKeywords": [
+      "physiotherapy consultation Ireland",
+      "online physiotherapist Ireland",
+      "CORU registered physiotherapist Ireland",
+      "physio consultation online Ireland",
+      "back pain physiotherapist Ireland",
+      "sports physiotherapy Ireland",
+      "pelvic floor physiotherapy Ireland"
     ]
   },
   {
@@ -933,6 +1101,15 @@
         "question": "Is this service suitable for children with neurological conditions?",
         "answer": "Paediatric neurological concerns are best assessed through our Paediatric Specialist Consultation in the first instance, where our consultant paediatrician can assess the presentation and coordinate paediatric neurology referral where indicated. Adult neurology consultations are primarily designed for patients aged 18 and over."
       }
+    ],
+    "seoKeywords": [
+      "neurology consultation Ireland",
+      "online neurologist Ireland",
+      "neurologist second opinion Ireland",
+      "migraine specialist Ireland",
+      "epilepsy consultation Ireland",
+      "neuropathy specialist Ireland",
+      "movement disorder neurologist Ireland"
     ]
   }
 ]

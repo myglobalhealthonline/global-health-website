@@ -34,6 +34,7 @@ type Entry = {
   heroDescription: string;
   detailBodyHtml: string;
   faqs: Faq[];
+  seoKeywords?: string[];
 };
 
 const APPLY = process.argv.includes("--apply");
@@ -117,6 +118,7 @@ async function main() {
           data: {
             seoTitle: e.seoTitle,
             seoDescription: e.seoDescription,
+            seoKeywords: e.seoKeywords ?? [],
             heroTitle: e.heroTitle,
             heroDescription: e.heroDescription,
             detailBody,
@@ -146,6 +148,7 @@ async function main() {
             name: e.heroTitle.slice(0, 200),
             seoTitle: e.seoTitle,
             seoDescription: e.seoDescription,
+            seoKeywords: e.seoKeywords ?? [],
             heroTitle: e.heroTitle,
             heroDescription: e.heroDescription,
             detailBody,

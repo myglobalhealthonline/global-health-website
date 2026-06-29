@@ -114,6 +114,7 @@ export type CountryServiceDetail = {
   ctaLabel: string | null;
   seoTitle: string | null;
   seoDescription: string | null;
+  seoKeywords: string[];
   durationMinutes: number | null;
   basePriceCents: number | null;
   currencyCode: string | null;
@@ -563,6 +564,9 @@ export const getCountryServiceDetail = cache(async (
     ctaLabel: typeof r.ctaLabel === "string" ? r.ctaLabel : null,
     seoTitle: typeof r.seoTitle === "string" ? r.seoTitle : null,
     seoDescription: typeof r.seoDescription === "string" ? r.seoDescription : null,
+    seoKeywords: Array.isArray(r.seoKeywords)
+      ? r.seoKeywords.filter((x): x is string => typeof x === "string")
+      : [],
     durationMinutes: typeof r.durationMinutes === "number" ? r.durationMinutes : null,
     basePriceCents: typeof r.basePriceCents === "number" ? r.basePriceCents : null,
     currencyCode: typeof r.currencyCode === "string" ? r.currencyCode : null,

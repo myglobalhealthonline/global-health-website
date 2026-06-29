@@ -28,7 +28,11 @@ import { hreflangAlternates } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { faqJsonLd } from "@/lib/seo/structured-data";
+import {
+  faqJsonLd,
+  medicalClinicServiceJsonLd,
+  medicalSpecialtyForService,
+} from "@/lib/seo/structured-data";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
@@ -83,6 +87,7 @@ export async function generateMetadata({
   return {
     title: detail.seoTitle ? { absolute: title } : title,
     description,
+    ...(detail.seoKeywords.length > 0 ? { keywords: detail.seoKeywords } : {}),
     alternates: {
       canonical: url,
       ...(config ? { languages: hreflangAlternates(config, `/services/${serviceSlug}`) } : {}),
@@ -160,6 +165,17 @@ export default async function ServiceDetailPage({
       {detail.faqs.length > 0 ? (
         <JsonLd data={faqJsonLd(detail.faqs.map((f) => ({ question: f.question, answer: f.answer })))} />
       ) : null}
+      <JsonLd
+        data={medicalClinicServiceJsonLd({
+          serviceName: detail.name,
+          description:
+            stripHtml(detail.heroDescription) ?? stripHtml(detail.summary) ?? detail.name,
+          specialty: medicalSpecialtyForService(detail.kind, detail.slug),
+          countryName: config.name,
+          url: `/${country}/${lang}/services/${serviceSlug}`,
+          bookingUrl: bookHref,
+        })}
+      />
 
       {/* ── Hero — full-viewport 50/50 split: image left, content + booking right ── */}
       <section

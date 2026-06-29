@@ -274,6 +274,67 @@ export function medicalProcedureJsonLd(input: {
   };
 }
 
+/** Best-guess Schema.org MedicalSpecialty for a service, from its slug/kind.
+ *  Falls back to PrimaryCare for general GP services. */
+export function medicalSpecialtyForService(kind: string, slug: string): string {
+  const s = slug.toLowerCase();
+  const map: Array<[RegExp, string]> = [
+    [/cardio/, "Cardiovascular"],
+    [/neuro/, "Neurologic"],
+    [/derma|skin/, "Dermatology"],
+    [/psychiatr/, "Psychiatric"],
+    [/psycholog|mental/, "Psychiatric"],
+    [/paediatr|pediatr/, "Pediatric"],
+    [/nutrition|diet/, "Nutrition"],
+    [/physio|musculoskeletal|pain|orthop/, "PhysicalMedicine"],
+    [/gastro/, "Gastroenterologic"],
+    [/endocrin|diabet|weight|thyroid/, "Endocrine"],
+    [/pneumo|respiratory|pulmon/, "Pulmonary"],
+    [/rheumat/, "Rheumatologic"],
+    [/uro|mens-health/, "Urologic"],
+    [/gyn|womens-health/, "Gynecologic"],
+    [/onco/, "Oncologic"],
+  ];
+  for (const [re, val] of map) if (re.test(s)) return val;
+  return "PrimaryCare";
+}
+
+/**
+ * Schema.org `MedicalClinic` for a service page, carrying the page's
+ * `medicalSpecialty` and the bookable consultation as `availableService`
+ * (a MedicalProcedure with a ReserveAction). Emitted alongside FAQPage so the
+ * page advertises `MedicalClinic + MedicalSpecialty + FAQPage` per the SEO spec.
+ */
+export function medicalClinicServiceJsonLd(input: {
+  serviceName: string;
+  description: string;
+  specialty: string;
+  countryName: string;
+  url: string;
+  bookingUrl: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "MedicalClinic",
+    name: `${SITE_NAME} · ${input.countryName}`,
+    url: input.url.startsWith("http") ? input.url : `${SITE_URL}${input.url}`,
+    medicalSpecialty: input.specialty,
+    areaServed: { "@type": "Country", name: input.countryName },
+    availableService: {
+      "@type": "MedicalProcedure",
+      name: input.serviceName,
+      ...(input.description ? { description: input.description } : {}),
+      howPerformed: "Secure video consultation with a registered clinician.",
+      potentialAction: {
+        "@type": "ReserveAction",
+        target: input.bookingUrl.startsWith("http")
+          ? input.bookingUrl
+          : `${SITE_URL}${input.bookingUrl}`,
+      },
+    },
+  };
+}
+
 type AnyLd = Record<string, unknown>;
 
 /** Serialise one or many JSON-LD payloads safely (escapes `</`). */
