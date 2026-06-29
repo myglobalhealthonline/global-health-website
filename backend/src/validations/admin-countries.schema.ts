@@ -219,14 +219,16 @@ export const countryLegalDocumentBodySchema = z
     locale: z.string().trim().min(2).max(10).optional().default("en"),
   })
   .superRefine((data, ctx) => {
-    // A legal document with neither rich-text content nor a PDF would render
-    // as an empty public page — require at least one body source.
+    // A PUBLISHED legal document with neither rich-text content nor a PDF
+    // would render as an empty public page — require a body to publish.
+    // Drafts may be created with just a title and filled in later.
+    if (!data.isPublished) return;
     const hasContent = Boolean(data.content && data.content.length > 0);
     const hasPdf = Boolean(data.pdfPath && data.pdfPath.length > 0);
     if (!hasContent && !hasPdf) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Provide rich-text content or a PDF attachment (at least one)",
+        message: "Add rich-text content or a PDF attachment before publishing",
         path: ["content"],
       });
     }

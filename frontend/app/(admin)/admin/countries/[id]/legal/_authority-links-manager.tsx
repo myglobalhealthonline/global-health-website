@@ -169,7 +169,15 @@ function LinkFields({ row }: { row: AdminAuthorityLinkDto | null }) {
       </label>
       <label className="flex flex-col gap-1 sm:col-span-2">
         <span className="gh-field-label">URL</span>
-        <input type="url" name="url" maxLength={500} defaultValue={row?.url ?? ""} className="gh-input" />
+        <input
+          type="text"
+          inputMode="url"
+          name="url"
+          maxLength={500}
+          defaultValue={row?.url ?? ""}
+          placeholder="https://www.medicalcouncil.ie"
+          className="gh-input"
+        />
       </label>
       <label className="flex flex-col gap-1">
         <span className="gh-field-label">Category</span>

@@ -37,6 +37,7 @@ export const LANGUAGES: readonly LanguageEntry[] = [
   { code: "ur", label: "Urdu", aliases: ["اردو"] },
   { code: "pa", label: "Punjabi", aliases: ["ਪੰਜਾਬੀ", "panjabi"] },
   { code: "ar", label: "Arabic", aliases: ["العربية"] },
+  { code: "he", label: "Hebrew", aliases: ["עברית", "ivrit", "iw"] },
   { code: "fa", label: "Persian", aliases: ["farsi", "فارسی", "dari"] },
   { code: "ru", label: "Russian", aliases: ["русский", "russkiy"] },
   { code: "uk", label: "Ukrainian", aliases: ["українська"] },

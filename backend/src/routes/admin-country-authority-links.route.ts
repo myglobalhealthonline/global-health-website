@@ -29,7 +29,25 @@ const createSchema = z
   .object({
     name: z.string().trim().min(1).max(200),
     abbreviation: z.string().trim().max(32).optional().nullable(),
-    url: z.string().trim().url().max(500),
+    // Be lenient about a missing scheme — admins routinely paste
+    // "www.medicalcouncil.ie". Normalize to https:// then validate.
+    url: z
+      .string()
+      .trim()
+      .min(1)
+      .max(500)
+      .transform((v) => (/^https?:\/\//i.test(v) ? v : `https://${v}`))
+      .refine(
+        (v) => {
+          try {
+            new URL(v);
+            return true;
+          } catch {
+            return false;
+          }
+        },
+        { message: "Invalid URL" },
+      ),
     category: z.enum(categoryValues),
     description: z.string().trim().max(500).optional().nullable(),
     showInFooter: z.boolean().optional(),
