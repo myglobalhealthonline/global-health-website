@@ -54,6 +54,8 @@ export type DoctorMe = {
     languages: string[];
     whatsappNumber: string | null;
     country: { code: string; name: string; slug: string; defaultLocale: string };
+    supportedLocales: Array<{ code: string; isDefault: boolean }>;
+    translations: Array<{ locale: string; bio: string | null }>;
     additionalCountries: Array<{
       country: { code: string; name: string; slug: string };
     }>;

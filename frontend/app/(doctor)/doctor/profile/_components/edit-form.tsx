@@ -50,6 +50,16 @@ function resolvePhotoSrc(path: string | null): string | null {
   return path;
 }
 
+function normalizeBioPayload(html: string): string | null {
+  const trimmed = html.trim();
+  if (!trimmed) return null;
+  const root = document.createElement("div");
+  root.innerHTML = trimmed;
+  const text = (root.textContent ?? "").replace(/\u00a0/g, " ").trim();
+  const hasMeaningfulMedia = root.querySelector("img") !== null;
+  return text || hasMeaningfulMedia ? trimmed : null;
+}
+
 function MessageBanner({ msg }: { msg: Msg }) {
   return (
     <p
@@ -240,8 +250,10 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
     setProfileMsg(null);
     const formData = new FormData(event.currentTarget);
     const translations = localeTabs.map((locale) => {
-      const bio = String(formData.get(`bio_${locale.code}`) ?? "").trim();
-      return { locale: locale.code, bio: bio || null };
+      const bio = normalizeBioPayload(
+        String(formData.get(`bio_${locale.code}`) ?? ""),
+      );
+      return { locale: locale.code, bio };
     });
     const defaultBio =
       translations.find((entry) => entry.locale === defaultLocale)?.bio ?? null;
@@ -361,7 +373,55 @@ export function DoctorProfileEditForm({ initial }: { initial: Initial }) {
                 />
               </label>
 
-              <DoctorBioRichTextField initialValue={initial.bio} />
+              <div className="flex flex-col gap-3">
+                <div>
+                  <span className="gh-field-label">Bio by language</span>
+                  <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                    The public website reads these localized bios first. Blank
+                    non-default languages fall back to the default language.
+                  </p>
+                </div>
+                <div role="tablist" className="flex flex-wrap gap-1.5">
+                  {localeTabs.map((locale) => {
+                    const selected = locale.code === activeBioLocale;
+                    return (
+                      <button
+                        key={locale.code}
+                        type="button"
+                        role="tab"
+                        aria-selected={selected}
+                        onClick={() => setActiveBioLocale(locale.code)}
+                        className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
+                          selected
+                            ? "bg-[var(--color-brand-primary)] text-white"
+                            : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+                        }`}
+                      >
+                        {localeLabel(locale.code)}
+                        {locale.isDefault ? " - default" : ""}
+                      </button>
+                    );
+                  })}
+                </div>
+                {localeTabs.map((locale) => (
+                  <div
+                    key={locale.code}
+                    role="tabpanel"
+                    hidden={locale.code !== activeBioLocale}
+                  >
+                    <RichTextHtmlField
+                      name={`bio_${locale.code}`}
+                      label={`${localeLabel(locale.code)} bio`}
+                      initialValue={initialBioForLocale(locale.code)}
+                      helperText={
+                        locale.isDefault
+                          ? "Default bio used when a translated bio is blank."
+                          : "Leave blank to use the default language bio."
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
 
               <label className="flex flex-col gap-2">
                 <span className="gh-field-label">Qualifications</span>
