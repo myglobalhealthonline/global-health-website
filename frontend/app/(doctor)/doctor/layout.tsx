@@ -15,7 +15,11 @@ import {
   Users,
 } from "lucide-react";
 import { getServerAuthUser } from "@/lib/api/server-auth";
-import { fetchDoctorNotifications, fetchDoctorUnreadMessageCount } from "@/lib/api/doctor-api";
+import {
+  fetchDoctorMe,
+  fetchDoctorNotifications,
+  fetchDoctorUnreadMessageCount,
+} from "@/lib/api/doctor-api";
 import { PortalShell, type PortalNavItem } from "@/components/portal-shell";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/cookie";
 
@@ -59,9 +63,10 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
     createdAt: string;
     readAt: string | null;
   }[] = [];
-  const [notif, unreadMessages] = await Promise.all([
+  const [notif, unreadMessages, me] = await Promise.all([
     fetchDoctorNotifications(false),
     fetchDoctorUnreadMessageCount(),
+    fetchDoctorMe(),
   ]);
   if (notif.ok) {
     unreadCount = notif.data.unreadCount;
@@ -77,6 +82,19 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       };
     });
   }
+
+  // One "Profile" link, unless the doctor practices in 2+ countries — then
+  // give each its own entry ("Profile (Ireland)", "Profile (Portugal)") so
+  // they can jump straight to that country's editor.
+  const activeMarkets = me.ok ? me.data.doctor.markets.filter((m) => m.active) : [];
+  const profileItems: PortalNavItem[] =
+    activeMarkets.length >= 2
+      ? activeMarkets.map((m) => ({
+          href: `/doctor/profile/${m.country.slug}`,
+          label: `Profile (${m.country.name})`,
+          icon: <UserCog className="size-4" aria-hidden />,
+        }))
+      : [{ href: "/doctor/profile", label: "Profile", icon: <UserCog className="size-4" aria-hidden /> }];
 
   const sections: PortalNavItem[] = [
     { href: "/doctor", label: "Overview", icon: <LayoutDashboard className="size-4" aria-hidden /> },
@@ -94,7 +112,7 @@ export default async function DoctorLayout({ children }: { children: ReactNode }
       icon: <Bell className="size-4" aria-hidden />,
       badge: unreadCount,
     },
-    { href: "/doctor/profile", label: "Profile", icon: <UserCog className="size-4" aria-hidden /> },
+    ...profileItems,
   ];
 
   return (

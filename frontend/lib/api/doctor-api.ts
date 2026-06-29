@@ -554,6 +554,9 @@ export type DoctorSelectableService = {
   durationMinutes: number | null;
   basePriceCents: number | null;
   currencyCode: string | null;
+  countryId: string;
+  countryName: string;
+  countryCode: string;
   assignment: DoctorServiceAssignment | null;
 };
 

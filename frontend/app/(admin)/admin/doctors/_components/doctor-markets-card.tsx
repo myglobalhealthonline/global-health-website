@@ -130,18 +130,18 @@ export function DoctorMarketsCard({ doctorId, doctorSlug, markets }: Props) {
   return (
     <AdminCard>
       <h3 className="m-0 [font-family:var(--font-display)] text-base font-extrabold text-[var(--color-text-primary)]">
-        Market profiles
+        Country profiles
       </h3>
       <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
-        Country-specific public bio, SEO, FAQs, registration, and payout
-        details. Doctor portal edits can update bio, registration, and payout;
-        SEO and FAQs stay admin-only.
+        Per-country public bio, SEO, FAQs, registration, and payout details.
+        Doctor portal edits can update bio, registration, and payout; SEO and
+        FAQs stay admin-only.
       </p>
 
       {markets.length === 0 ? (
         <p className="text-[13px] text-[var(--color-text-muted)]">
-          No market rows exist yet. Save the doctor edit page once to generate
-          the primary market row.
+          No country rows exist yet. Save the doctor edit page once to generate
+          the primary country row.
         </p>
       ) : (
         <div className="grid gap-4">

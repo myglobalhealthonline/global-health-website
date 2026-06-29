@@ -88,13 +88,33 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
   );
   const [selected, setSelected] = useState<Set<string>>(initialSelected);
 
+  // Distinct countries this doctor can offer services in. A doctor listed
+  // in 2+ countries sees services split by country (an outer tab bar) before
+  // the per-kind tabs; a single-country doctor sees the flat kind view.
+  const countries = useMemo(() => {
+    const map = new Map<string, { id: string; name: string; code: string }>();
+    for (const s of items) {
+      if (!map.has(s.countryId)) {
+        map.set(s.countryId, { id: s.countryId, name: s.countryName, code: s.countryCode });
+      }
+    }
+    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
+  }, [items]);
+  const multiCountry = countries.length > 1;
+  const [activeCountryId, setActiveCountryId] = useState(countries[0]?.id ?? "");
+
+  const scopedItems = useMemo(
+    () => (multiCountry ? items.filter((s) => s.countryId === activeCountryId) : items),
+    [items, multiCountry, activeCountryId],
+  );
+
   const grouped = useMemo(
     () =>
       KIND_ORDER.map((kind) => ({
         kind,
-        services: items.filter((s) => s.kind === kind),
+        services: scopedItems.filter((s) => s.kind === kind),
       })).filter((g) => g.services.length > 0),
-    [items],
+    [scopedItems],
   );
 
   const [activeTab, setActiveTab] = useState<Kind>(
@@ -207,6 +227,50 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
         </div>
       ) : null}
 
+      {/* Country tabs (only when the doctor practices in 2+ countries) */}
+      {multiCountry ? (
+        <div
+          role="tablist"
+          aria-label="Countries"
+          className="flex flex-wrap gap-2"
+        >
+          {countries.map((country) => {
+            const countrySelected = items.filter(
+              (s) => s.countryId === country.id && selected.has(s.id),
+            ).length;
+            const isActive = country.id === activeCountryId;
+            return (
+              <button
+                key={country.id}
+                role="tab"
+                type="button"
+                aria-selected={isActive}
+                onClick={() => setActiveCountryId(country.id)}
+                className={`inline-flex items-center gap-2 rounded-[var(--radius-card-sm)] border px-4 py-2 text-[13.5px] font-semibold transition-colors ${
+                  isActive
+                    ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)]/[0.06] text-[var(--color-brand-primary)]"
+                    : "border-[var(--color-border-subtle)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
+                }`}
+              >
+                {country.name}
+                <span className="text-[11px] font-bold uppercase tracking-[0.06em] opacity-70">
+                  {country.code}
+                </span>
+                <span
+                  className={`ml-0.5 inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-bold ${
+                    isActive
+                      ? "bg-[var(--color-brand-primary)] text-white"
+                      : "bg-[var(--color-border-subtle)] text-[var(--color-text-muted)]"
+                  }`}
+                >
+                  {countrySelected}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+
       {/* Tabs */}
       <div
         role="tablist"
@@ -216,7 +280,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
         {grouped.map(({ kind, services }) => {
           const meta = KIND_META[kind];
           const selectedCount = services.filter((s) => selected.has(s.id)).length;
-          const isActive = kind === activeTab;
+          const isActive = kind === (activeGroup?.kind ?? activeTab);
           return (
             <button
               key={kind}

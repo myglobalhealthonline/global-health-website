@@ -98,6 +98,8 @@ export async function listDoctorSelectableServices(doctorId: string): Promise<{
           durationMinutes: true,
           basePriceCents: true,
           currencyCode: true,
+          countryId: true,
+          country: { select: { name: true, code: true } },
         },
       }),
       prisma.serviceDoctor.findMany({
@@ -127,8 +129,10 @@ export async function listDoctorSelectableServices(doctorId: string): Promise<{
 
     return {
       approvalRequired,
-      items: services.map((s) => ({
+      items: services.map(({ country, ...s }) => ({
         ...s,
+        countryName: country.name,
+        countryCode: country.code,
         assignment: assignmentByServiceId.get(s.id) ?? null,
       })),
     };
