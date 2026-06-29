@@ -193,7 +193,7 @@ export default async function AdminDoctorDetailPage({
             <Pill tone={isActive ? "published" : "inactive"}>
               {isActive ? "Active" : "Inactive"}
             </Pill>
-            {isFeatured ? <Pill tone="brand">Featured</Pill> : null}
+            {isFeatured ? <Pill tone="brand">Clinical Director</Pill> : null}
             {/* Featured spotlight toggle — one featured doctor per country.
                 Promotes this doctor into the FeaturedDoctor card at the
                 top of the public /doctors page. */}
@@ -204,7 +204,7 @@ export default async function AdminDoctorDetailPage({
                 variant={isFeatured ? "secondary" : "ghost"}
                 iconLeft={<Star className="size-3.5" aria-hidden />}
               >
-                {isFeatured ? "Unfeature" : "Feature"}
+                {isFeatured ? "Remove Clinical Director" : "Set Clinical Director"}
               </Btn>
             </form>
             <Btn href={`/admin/doctors/${id}/availability`} variant="ghost">
