@@ -21,6 +21,8 @@ import {
   type CountryDoctorCard,
 } from "@/lib/content/get-country-collections";
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
+import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
+import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
 import type { CountryTrust } from "@/lib/content/get-country-trust";
 import { formatPriceRounded } from "@/lib/format-currency";
 import type { LocaleCode } from "@/lib/i18n/types";
@@ -119,6 +121,14 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
   // doctor card; we filter the country's GENERAL + SPECIALIST service
   // pool to that set so the patient sees one card per bookable service.
   const code = countryCodeFromSlug(slug);
+  // Short medical disclaimer (admin-authored, per country). Doctor profiles
+  // show the lead line + a link through to the full disclaimer.
+  const { short: doctorDisclaimer } = code
+    ? await getCountryDisclaimer(code, lang)
+    : { short: null };
+  const doctorDisclaimerLead = doctorDisclaimer
+    ? (doctorDisclaimer.split(/\n\s*\n/)[0] ?? doctorDisclaimer)
+    : null;
   const assignedServices: Array<{
     id: string;
     slug: string;
@@ -336,6 +346,25 @@ export async function renderDoctorProfilePage(params: Promise<DoctorProfileRoute
           </div>
         </section>
       )}
+      {doctorDisclaimerLead ? (
+        <section
+          style={{
+            background: "var(--color-background-soft)",
+            padding: "clamp(28px,4vw,48px) 0",
+          }}
+        >
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <MedicalDisclaimer
+              variant="short"
+              text={doctorDisclaimerLead}
+              link={{
+                href: `/${slug}/${lang}/legal/medical-disclaimer`,
+                label: "Read the full medical disclaimer",
+              }}
+            />
+          </div>
+        </section>
+      ) : null}
       <StickyBookingCTA href={fallbackBookHref} label={dp.bookWithDoctor.replace("{name}", firstName ?? data.profile.name)} />
     </>
   );

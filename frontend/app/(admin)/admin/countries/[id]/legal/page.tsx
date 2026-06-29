@@ -11,9 +11,11 @@ import {
   fetchAdminAuthorityLinks,
   putAdminCountryLegalProfile,
 } from "@/lib/admin/admin-api";
+import { resolveCountryLocaleTabs } from "@/lib/admin/service-form-parse";
 import { AdminCard, Btn, PageHeader } from "../../../_components/atoms";
 import { FlagBadge } from "../../../_components/flag-badge";
 import { AuthorityLinksManager } from "./_authority-links-manager";
+import { DisclaimerTranslationTabs } from "./_disclaimer-translation-tabs";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +50,8 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
 
   const c = countryRes.data.country;
   const p = profileRes.ok ? (profileRes.data.legalProfile ?? null) : null;
+  const { locales: disclaimerLocales, defaultLocale: disclaimerDefaultLocale } =
+    resolveCountryLocaleTabs(c);
 
   async function saveLegalProfileAction(formData: FormData) {
     "use server";
@@ -56,6 +60,34 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
     function str(key: string) {
       const v = formData.get(key);
       return typeof v === "string" && v.trim() !== "" ? v.trim() : null;
+    }
+
+    // Medical-disclaimer tabs submit `tr_<LOCALE>_shortDisclaimer` /
+    // `tr_<LOCALE>_fullDisclaimer`. The default-locale tab seeds the base
+    // columns; every other locale becomes a per-locale override (the backend
+    // removes rows whose fields are both blank).
+    const upperDefault = disclaimerDefaultLocale.toUpperCase();
+    const trLocales = new Set<string>();
+    for (const key of formData.keys()) {
+      const m = /^tr_([A-Za-z]{2,})_(short|full)Disclaimer$/.exec(key);
+      if (m) trLocales.add(m[1].toUpperCase());
+    }
+    let baseShortDisclaimer: string | null = null;
+    let baseFullDisclaimer: string | null = null;
+    const disclaimerTranslations: Array<{
+      locale: string;
+      shortDisclaimer: string | null;
+      fullDisclaimer: string | null;
+    }> = [];
+    for (const loc of trLocales) {
+      const short = str(`tr_${loc}_shortDisclaimer`);
+      const full = str(`tr_${loc}_fullDisclaimer`);
+      if (loc === upperDefault) {
+        baseShortDisclaimer = short;
+        baseFullDisclaimer = full;
+      } else {
+        disclaimerTranslations.push({ locale: loc, shortDisclaimer: short, fullDisclaimer: full });
+      }
     }
 
     function strArr(key: string): string[] {
@@ -102,6 +134,9 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
       disputeProcessText: str("disputeProcessText"),
       legalJurisdictionText: str("legalJurisdictionText"),
       consumerRightsText: str("consumerRightsText"),
+      shortDisclaimer: baseShortDisclaimer,
+      fullDisclaimer: baseFullDisclaimer,
+      disclaimerTranslations,
     };
 
     const result = await putAdminCountryLegalProfile(id, body);
@@ -151,6 +186,30 @@ export default async function CountryLegalProfilePage({ params, searchParams }: 
       ) : null}
 
       <form action={saveLegalProfileAction} className="grid gap-4">
+        {/* Medical Disclaimer */}
+        <AdminCard>
+          <SectionTitle>Medical Disclaimer</SectionTitle>
+          <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
+            Country-specific medical/legal disclaimer copy, per language. The
+            short version is embedded on service pages, the GP listing, the
+            booking consent step and doctor profiles; the full version is shown
+            on the standalone legal page and linked from the footer. The{" "}
+            <span className="font-semibold">default-language</span> tab is the
+            fallback — other languages use it when a field is left blank.
+          </p>
+          <div className="mt-4">
+            <DisclaimerTranslationTabs
+              locales={disclaimerLocales}
+              defaultLocale={disclaimerDefaultLocale}
+              baseFallback={{
+                shortDisclaimer: p?.shortDisclaimer ?? null,
+                fullDisclaimer: p?.fullDisclaimer ?? null,
+              }}
+              initialTranslations={p?.disclaimerTranslations ?? []}
+            />
+          </div>
+        </AdminCard>
+
         {/* Company & Contact */}
         <AdminCard>
           <SectionTitle>Company &amp; Contact</SectionTitle>

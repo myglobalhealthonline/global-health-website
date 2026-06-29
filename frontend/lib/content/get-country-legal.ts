@@ -73,7 +73,26 @@ export type PublicLegalProfile = {
   disputeProcessText: string | null;
   legalJurisdictionText: string | null;
   consumerRightsText: string | null;
+  shortDisclaimer: string | null;
+  fullDisclaimer: string | null;
+  /** Per-locale overrides; each field falls back to the base column above. */
+  disclaimerTranslations: Array<{
+    locale: string;
+    shortDisclaimer: string | null;
+    fullDisclaimer: string | null;
+  }>;
 };
+
+/** Split a stored disclaimer (paragraphs separated by blank lines) into the
+ *  string[] the <MedicalDisclaimer> "full" variant expects. Empty/whitespace
+ *  yields []. */
+export function disclaimerParagraphs(text: string | null | undefined): string[] {
+  if (!text) return [];
+  return text
+    .split(/\n\s*\n/)
+    .map((p) => p.replace(/\s*\n\s*/g, " ").trim())
+    .filter(Boolean);
+}
 
 export type PublicLegalDocumentSummary = {
   type: LegalDocumentType;
@@ -115,6 +134,30 @@ export type PublicLegalDocument = {
     pdfUrl: string | null;
   };
 };
+
+/** Convenience: the short + full medical disclaimer for a country in a given
+ *  locale, ready to feed <MedicalDisclaimer>. Resolves the per-locale override
+ *  with field-level fallback to the default-locale base columns. `short` is the
+ *  raw stored text (blank-line paragraphs; the short variant splits it);
+ *  `fullParagraphs` is split for the full variant. Both empty when nothing is
+ *  set — callers fall back to their existing i18n copy. */
+export async function getCountryDisclaimer(
+  code: string,
+  locale?: string,
+): Promise<{ short: string | null; fullParagraphs: string[] }> {
+  const legal = await getCountryLegal(code);
+  const profile = legal?.profile ?? null;
+  if (!profile) return { short: null, fullParagraphs: [] };
+
+  const wanted = locale?.toUpperCase();
+  const tr = wanted
+    ? profile.disclaimerTranslations?.find((t) => t.locale.toUpperCase() === wanted)
+    : undefined;
+
+  const short = (tr?.shortDisclaimer ?? profile.shortDisclaimer)?.trim() || null;
+  const full = tr?.fullDisclaimer ?? profile.fullDisclaimer;
+  return { short, fullParagraphs: disclaimerParagraphs(full) };
+}
 
 export async function getCountryLegal(code: string): Promise<PublicCountryLegal | null> {
   const result = await apiRequest<PublicCountryLegal>(

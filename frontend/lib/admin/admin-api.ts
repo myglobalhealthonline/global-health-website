@@ -562,6 +562,13 @@ export type CountryLegalProfileDto = {
   disputeProcessText: string | null;
   legalJurisdictionText: string | null;
   consumerRightsText: string | null;
+  shortDisclaimer: string | null;
+  fullDisclaimer: string | null;
+  disclaimerTranslations: Array<{
+    locale: string;
+    shortDisclaimer: string | null;
+    fullDisclaimer: string | null;
+  }>;
 };
 
 export async function fetchAdminCountryLegalProfile(countryId: string) {

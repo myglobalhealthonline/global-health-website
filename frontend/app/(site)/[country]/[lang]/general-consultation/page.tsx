@@ -16,6 +16,7 @@ import {
   WhyChooseSection,
 } from "@/components/sections/ServiceContentSections";
 import { getGpHubContent } from "@/lib/content/ireland-service-content";
+import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { countries, getCountryByCode } from "@/data/countries";
 import { getPublicCountryByCode } from "@/lib/content/get-public-countries";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
@@ -122,6 +123,10 @@ export default async function CountryLangGeneralConsultationPage({
   // reshapes the hero headline and adds the marketing / FAQ / disclaimer
   // sections below the doctor + service grids.
   const gpHub = getGpHubContent(code);
+
+  // Country-specific short medical disclaimer (admin-authored). Replaces the
+  // legacy Ireland-only hardcoded copy where set; falls back to it otherwise.
+  const { short: gpShortDisclaimer } = await getCountryDisclaimer(code, lang);
 
   // Provider-first defaults per Google Ads "restricted services" guidance.
   // Admin can override via the ContentPage row when localised copy lands.
@@ -339,7 +344,20 @@ export default async function CountryLangGeneralConsultationPage({
       <FinalCTA primaryHref={ctaHref} secondaryHref={`/${slug}/${lang}/doctors`} />
       <StickyBookingCTA href={ctaHref} />
 
-      {gpHub ? <MedicalDisclaimer paragraphs={gpHub.disclaimerFull} /> : null}
+      {gpShortDisclaimer ? (
+        <section
+          style={{
+            background: "var(--color-background-soft)",
+            padding: "clamp(28px,4vw,48px) 0",
+          }}
+        >
+          <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+            <MedicalDisclaimer variant="short" text={gpShortDisclaimer} />
+          </div>
+        </section>
+      ) : gpHub ? (
+        <MedicalDisclaimer paragraphs={gpHub.disclaimerFull} />
+      ) : null}
     </>
   );
 }

@@ -9,6 +9,7 @@
  * marketing band. Content is passed in (see ireland-service-content.ts).
  */
 
+import Link from "next/link";
 import { ShieldAlert } from "lucide-react";
 
 type FullProps = {
@@ -20,15 +21,21 @@ type FullProps = {
 
 type ShortProps = {
   variant: "short";
-  /** A single compact notice line. */
+  /** Compact notice. Paragraphs may be separated by blank lines. */
   text: string;
   title?: string;
+  /** Optional trailing link to the full disclaimer (e.g. doctor profiles). */
+  link?: { href: string; label: string };
 };
 
 export type MedicalDisclaimerProps = FullProps | ShortProps;
 
 export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
   if (props.variant === "short") {
+    const paragraphs = props.text
+      .split(/\n\s*\n/)
+      .map((p) => p.replace(/\s*\n\s*/g, " ").trim())
+      .filter(Boolean);
     return (
       <div
         role="note"
@@ -43,15 +50,32 @@ export function MedicalDisclaimer(props: MedicalDisclaimerProps) {
           style={{ color: "var(--color-brand-primary)" }}
           aria-hidden
         />
-        <p
-          className="text-xs leading-relaxed"
+        <div
+          className="space-y-2 text-xs leading-relaxed"
           style={{ color: "var(--color-text-muted)" }}
         >
-          <span className="font-semibold text-[var(--color-text-body)]">
-            {props.title ?? "Medical disclaimer."}{" "}
-          </span>
-          {props.text}
-        </p>
+          {paragraphs.map((para, i) => (
+            <p key={i}>
+              {i === 0 ? (
+                <span className="font-semibold text-[var(--color-text-body)]">
+                  {props.title ?? "Medical disclaimer."}{" "}
+                </span>
+              ) : null}
+              {para}
+            </p>
+          ))}
+          {props.link ? (
+            <p>
+              <Link
+                href={props.link.href}
+                className="font-semibold underline underline-offset-2"
+                style={{ color: "var(--color-brand-primary)" }}
+              >
+                {props.link.label}
+              </Link>
+            </p>
+          ) : null}
+        </div>
       </div>
     );
   }

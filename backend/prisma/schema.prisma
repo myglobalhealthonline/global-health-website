@@ -2917,8 +2917,38 @@ model CountryLegalProfile {
   legalJurisdictionText      String?
   consumerRightsText         String?
 
+  // Medical disclaimers. Two reusable copies edited per country in the admin
+  // legal profile. `shortDisclaimer` is the condensed version embedded on
+  // service pages, the GP listing, the booking flow consent step and doctor
+  // profiles. `fullDisclaimer` is the long-form text shown on the standalone
+  // /legal page and linked from the footer. Both are plain multi-paragraph
+  // text (paragraphs separated by blank lines). These base columns hold the
+  // country's DEFAULT-locale copy and act as the fallback; per-locale overrides
+  // live in `disclaimerTranslations`. Null until an admin fills them in.
+  shortDisclaimer            String?
+  fullDisclaimer             String?
+  disclaimerTranslations     CountryDisclaimerTranslation[]
+
   createdAt                  DateTime @default(now())
   updatedAt                  DateTime @updatedAt
+}
+
+/// Per-locale override of the medical disclaimers. One row per (legal profile,
+/// locale). Mirrors ServiceTranslation: each field falls back to the base
+/// CountryLegalProfile column (default-locale copy) when null/absent, so a
+/// translation row may fill just one field. Only non-default locales need rows.
+model CountryDisclaimerTranslation {
+  id              String              @id @default(cuid())
+  legalProfileId  String
+  locale          LocaleCode
+  shortDisclaimer String?
+  fullDisclaimer  String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  legalProfile    CountryLegalProfile @relation(fields: [legalProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([legalProfileId, locale])
+  @@index([legalProfileId])
 }
 
 /// Category of an official authority so the frontend can group + place links

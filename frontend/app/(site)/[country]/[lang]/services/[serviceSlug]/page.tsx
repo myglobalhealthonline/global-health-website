@@ -35,6 +35,7 @@ import {
 } from "@/lib/seo/structured-data";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import { getCountryDisclaimer } from "@/lib/content/get-country-legal";
 import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
@@ -115,6 +116,11 @@ export default async function ServiceDetailPage({
 
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const t = c.serviceDetailPage;
+
+  // Country-specific short medical disclaimer (admin-authored, per country);
+  // falls back to the generic translated line when not set.
+  const { short: shortDisclaimer } = await getCountryDisclaimer(code, lang);
+  const disclaimerText = shortDisclaimer ?? t.disclaimer.replace("{country}", config.name);
 
   // Clinicians assigned to this service — surfaced as a credibility strip
   // ahead of the FAQs (mirrors the doctor-profile "services offered" link).
@@ -565,6 +571,18 @@ export default async function ServiceDetailPage({
         <FAQSection title={t.faqTitle} items={detail.faqs} />
       ) : null}
 
+      {/* Short medical disclaimer — between FAQ and the closing booking CTA */}
+      <section
+        style={{
+          background: "var(--color-background-soft)",
+          padding: "clamp(28px,4vw,48px) 0",
+        }}
+      >
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          <MedicalDisclaimer variant="short" text={disclaimerText} />
+        </div>
+      </section>
+
       {/* Closing booking band */}
       <section
         className="gh2-hero relative isolate overflow-hidden"
@@ -602,9 +620,6 @@ export default async function ServiceDetailPage({
         </div>
       </section>
 
-      <MedicalDisclaimer
-        paragraphs={[t.disclaimer.replace("{country}", config.name)]}
-      />
     </>
   );
 }

@@ -137,7 +137,12 @@ export function SiteFooter({
     { label: navigation.footerTermsOfService, href: "/terms" },
     // Country-scoped legal hub (admin-authored CountryLegalDocument pages).
     // Only shown inside a country scope — there is no global variant.
-    ...(careBase ? [{ label: "Legal information", href: `${careBase}/legal` }] : []),
+    ...(careBase
+      ? [
+          { label: "Legal information", href: `${careBase}/legal` },
+          { label: "Medical disclaimer", href: `${careBase}/legal/medical-disclaimer` },
+        ]
+      : []),
   ];
 
   // Built-in groups stay auto-derived (Care + Clinics from features,

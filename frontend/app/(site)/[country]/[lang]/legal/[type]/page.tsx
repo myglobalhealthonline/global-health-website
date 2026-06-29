@@ -7,6 +7,7 @@ import { countryCodeFromSlug } from "@/lib/routing/country-slug";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import {
   getCountryLegalDocument,
+  getCountryDisclaimer,
   legalTypeFromSlug,
 } from "@/lib/content/get-country-legal";
 import { sanitizePageBodyHtml } from "@/lib/content/sanitize-page-body";
@@ -38,7 +39,20 @@ export async function generateMetadata({
     return { title: SITE_NAME };
   }
   const result = await getCountryLegalDocument(code, legalType, lang);
-  if (!result) return { title: SITE_NAME };
+  if (!result) {
+    // Mirror the page's medical-disclaimer fallback so the standalone page
+    // still has a real title when only the profile field is set.
+    if (legalType === "MEDICAL_DISCLAIMER") {
+      const { fullParagraphs } = await getCountryDisclaimer(code, lang);
+      if (fullParagraphs.length > 0) {
+        return {
+          title: `Medical Disclaimer — ${config.name}`,
+          description: `Medical disclaimer for ${SITE_NAME} in ${config.name}.`,
+        };
+      }
+    }
+    return { title: SITE_NAME };
+  }
   return {
     title: `${result.document.title} — ${config.name}`,
     description: `${result.document.title} for ${SITE_NAME} in ${config.name}.`,
@@ -60,25 +74,46 @@ export default async function CountryLegalDocumentPage({
   if (!legalType) notFound();
 
   const result = await getCountryLegalDocument(code, legalType, lang);
-  if (!result) notFound();
-  const { document } = result;
+
+  // Medical-disclaimer fallback: when no published CountryLegalDocument exists,
+  // render the per-country CountryLegalProfile.fullDisclaimer (admin "Medical
+  // Disclaimer" section). A published document still wins where present (e.g.
+  // Ireland's richer HTML), so this only fills the gap for markets that only
+  // have the profile field. Keeps the standalone page + footer/doctor links
+  // resolving instead of 404ing.
+  const disclaimerParagraphs =
+    !result && legalType === "MEDICAL_DISCLAIMER"
+      ? (await getCountryDisclaimer(code, lang)).fullParagraphs
+      : [];
+
+  if (!result && disclaimerParagraphs.length === 0) notFound();
+
+  const { common: c } = loadLocaleBundle(lang as LocaleCode);
+  const t = c.legalDocPage;
 
   // Render-time sanitization is the security boundary: admin-authored HTML
   // must never execute script in a visitor's browser, even if a payload
   // slips past the editor.
-  const safeHtml = sanitizePageBodyHtml(document.content);
-  const updatedLabel = DATE_FMT.format(new Date(document.publishedAt ?? document.updatedAt));
-  const { common: c } = loadLocaleBundle(lang as LocaleCode);
-  const t = c.legalDocPage;
+  const safeHtml = result ? sanitizePageBodyHtml(result.document.content) : null;
+  const title = result ? result.document.title : "Medical Disclaimer";
+  const pdfUrl = result?.document.pdfUrl ?? null;
+  const metaLine = result
+    ? t.meta
+        .replace("{version}", String(result.document.version))
+        .replace(
+          "{date}",
+          DATE_FMT.format(new Date(result.document.publishedAt ?? result.document.updatedAt)),
+        )
+    : null;
 
   return (
     <>
       <GH2CompactHero
         eyebrow={t.heroEyebrow.replace("{country}", config.name)}
-        title={document.title}
+        title={title}
         accent=""
         watermark={t.heroWatermark}
-        meta={<p className="gh2-index">{t.meta.replace("{version}", String(document.version)).replace("{date}", updatedLabel)}</p>}
+        meta={metaLine ? <p className="gh2-index">{metaLine}</p> : undefined}
       />
 
       <section
@@ -93,9 +128,9 @@ export default async function CountryLegalDocumentPage({
             <ArrowLeft className="size-3.5" aria-hidden />
             {t.backToAll}
           </Link>
-          {document.pdfUrl ? (
+          {pdfUrl ? (
             <a
-              href={document.pdfUrl}
+              href={pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="gh2-btn-lime"
@@ -111,7 +146,13 @@ export default async function CountryLegalDocumentPage({
             className="gh-legal-prose space-y-4 text-base leading-relaxed text-[var(--color-text-body)] [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-extrabold [&_h2]:tracking-[-0.01em] [&_h2]:text-[var(--color-text-primary)] [&_h3]:mt-6 [&_h3]:text-lg [&_h3]:font-bold [&_h3]:text-[var(--color-text-primary)] [&_a]:font-medium [&_a]:text-[var(--color-brand-primary)] [&_a]:underline [&_a]:underline-offset-2 [&_ul]:list-inside [&_ul]:list-disc [&_ul]:space-y-1 [&_ol]:list-inside [&_ol]:list-decimal [&_ol]:space-y-1"
             dangerouslySetInnerHTML={{ __html: safeHtml }}
           />
-        ) : document.pdfUrl ? (
+        ) : disclaimerParagraphs.length > 0 ? (
+          <div className="gh-legal-prose space-y-4 text-base leading-relaxed text-[var(--color-text-body)]">
+            {disclaimerParagraphs.map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
+        ) : pdfUrl ? (
           <p className="text-[15px] leading-relaxed text-[var(--color-text-body)]">
             {t.pdfOnly}
           </p>

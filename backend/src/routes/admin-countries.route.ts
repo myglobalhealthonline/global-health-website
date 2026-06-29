@@ -18,6 +18,7 @@ import {
   deleteCountryLegalDocument,
 } from "../modules/countries/countries.service.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
+import { LocaleNotSupportedError } from "../modules/shared/locale-support.js";
 import {
   adminCountryCreateBodySchema,
   adminCountryUpdateBodySchema,
@@ -210,6 +211,9 @@ const adminCountriesRoute: FastifyPluginAsync = async (app) => {
       const legalProfile = await upsertCountryLegalProfile(params.data.id, body.data);
       return okResponse({ legalProfile }, "Legal profile saved");
     } catch (error) {
+      if (error instanceof LocaleNotSupportedError) {
+        return reply.status(400).send(errorResponse(error.message));
+      }
       if (error instanceof DatabaseUnavailableError) {
         return reply.status(503).send(errorResponse(error.message));
       }

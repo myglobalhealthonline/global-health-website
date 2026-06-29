@@ -168,6 +168,16 @@ const urlOrEmpty = z.string().trim().max(2048).url().or(z.literal("")).optional(
 const emailOrEmpty = z.string().trim().max(320).email().or(z.literal("")).optional().nullable();
 const textField = z.string().trim().max(2000).optional().nullable();
 
+/** One per-locale override of the disclaimers. Both fields nullable — a row may
+ *  fill just one (the other falls back to the default-locale base column). */
+const disclaimerTranslationEntrySchema = z.object({
+  locale: localeCodeSchema,
+  shortDisclaimer: z.string().trim().max(5000).optional().nullable(),
+  fullDisclaimer: z.string().trim().max(20000).optional().nullable(),
+});
+
+export type DisclaimerTranslationInput = z.infer<typeof disclaimerTranslationEntrySchema>;
+
 export const countryLegalProfileBodySchema = z.object({
   legalCompanyName: textField,
   legalAddress: textField,
@@ -203,6 +213,29 @@ export const countryLegalProfileBodySchema = z.object({
   disputeProcessText: z.string().trim().max(5000).optional().nullable(),
   legalJurisdictionText: z.string().trim().max(5000).optional().nullable(),
   consumerRightsText: z.string().trim().max(5000).optional().nullable(),
+  // Default-locale copy + fallback for the two disclaimers.
+  shortDisclaimer: z.string().trim().max(5000).optional().nullable(),
+  fullDisclaimer: z.string().trim().max(20000).optional().nullable(),
+  // Per-locale overrides. One entry per non-default locale; each field falls
+  // back to the base column above when null.
+  disclaimerTranslations: z
+    .array(disclaimerTranslationEntrySchema)
+    .max(6)
+    .optional()
+    .superRefine((translations, ctx) => {
+      if (!translations) return;
+      const seen = new Set<LocaleCode>();
+      translations.forEach((t, i) => {
+        if (seen.has(t.locale)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "disclaimerTranslations must not contain duplicate locales",
+            path: [i, "locale"],
+          });
+        }
+        seen.add(t.locale);
+      });
+    }),
 });
 
 export type CountryLegalProfileBody = z.infer<typeof countryLegalProfileBodySchema>;

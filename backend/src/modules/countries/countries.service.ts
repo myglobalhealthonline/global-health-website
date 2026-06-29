@@ -8,6 +8,8 @@ import type {
   CountryLegalDocumentBody,
 } from "../../validations/admin-countries.schema.js";
 import { normalizeDbError } from "../shared/db-errors.js";
+import { assertLocaleSupported, LocaleNotSupportedError } from "../shared/locale-support.js";
+import type { DisclaimerTranslationInput } from "../../validations/admin-countries.schema.js";
 
 export class CountryCurrencyNotFoundError extends Error {
   constructor() {
@@ -317,20 +319,64 @@ export async function purgeAdminCountry(id: string): Promise<boolean> {
 
 export async function getCountryLegalProfile(countryId: string) {
   try {
-    return await prisma.countryLegalProfile.findUnique({ where: { countryId } });
+    return await prisma.countryLegalProfile.findUnique({
+      where: { countryId },
+      include: { disclaimerTranslations: true },
+    });
   } catch (error) {
     throw normalizeDbError(error, "Legal profile unavailable");
   }
 }
 
+/** Upsert per-locale disclaimer overrides. Additive per submitted locale; an
+ *  entry whose fields are both empty removes the row so that locale falls back
+ *  to the default-locale base columns. Locale must be enabled for the country
+ *  (or be its default) — throws LocaleNotSupportedError otherwise. */
+async function upsertDisclaimerTranslations(
+  countryId: string,
+  legalProfileId: string,
+  translations: DisclaimerTranslationInput[],
+): Promise<void> {
+  await Promise.all(
+    translations.map((entry) => assertLocaleSupported(countryId, entry.locale)),
+  );
+  await prisma.$transaction(
+    translations.map((entry) => {
+      const shortDisclaimer = entry.shortDisclaimer ?? null;
+      const fullDisclaimer = entry.fullDisclaimer ?? null;
+      if (!shortDisclaimer && !fullDisclaimer) {
+        return prisma.countryDisclaimerTranslation.deleteMany({
+          where: { legalProfileId, locale: entry.locale },
+        });
+      }
+      const row = { shortDisclaimer, fullDisclaimer };
+      return prisma.countryDisclaimerTranslation.upsert({
+        where: { legalProfileId_locale: { legalProfileId, locale: entry.locale } },
+        create: { legalProfileId, locale: entry.locale, ...row },
+        update: row,
+      });
+    }),
+  );
+}
+
 export async function upsertCountryLegalProfile(countryId: string, data: CountryLegalProfileBody) {
+  const { disclaimerTranslations, ...profileData } = data;
   try {
-    return await prisma.countryLegalProfile.upsert({
+    const profile = await prisma.countryLegalProfile.upsert({
       where: { countryId },
-      create: { countryId, ...data },
-      update: data,
+      create: { countryId, ...profileData },
+      update: profileData,
+    });
+    if (disclaimerTranslations !== undefined) {
+      await upsertDisclaimerTranslations(countryId, profile.id, disclaimerTranslations);
+    }
+    return await prisma.countryLegalProfile.findUniqueOrThrow({
+      where: { id: profile.id },
+      include: { disclaimerTranslations: true },
     });
   } catch (error) {
+    // Locale-support rejection is a client error (400), not a DB failure.
+    if (error instanceof LocaleNotSupportedError) throw error;
     throw normalizeDbError(error, "Could not save legal profile");
   }
 }
@@ -426,6 +472,11 @@ const PUBLIC_LEGAL_PROFILE_SELECT = {
   disputeProcessText: true,
   legalJurisdictionText: true,
   consumerRightsText: true,
+  shortDisclaimer: true,
+  fullDisclaimer: true,
+  disclaimerTranslations: {
+    select: { locale: true, shortDisclaimer: true, fullDisclaimer: true },
+  },
 } satisfies Prisma.CountryLegalProfileSelect;
 
 /** Public projection of a CountryAuthorityLink row (official regulator /
