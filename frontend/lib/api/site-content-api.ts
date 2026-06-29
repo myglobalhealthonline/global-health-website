@@ -308,6 +308,32 @@ export async function fetchServiceDetail(
   );
 }
 
+/** Published SEO landing slugs for a country (feeds the sitemap). */
+export async function fetchLandingSlugs(
+  countryCode: string,
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+) {
+  return apiRequest<{ landingPages: Array<{ slug: string; updatedAt: string }> }>(
+    `/api/public/countries/${encodeURIComponent(countryCode)}/landing-pages`,
+    { timeoutMs, revalidate: REVALIDATE_SECONDS, tags: [`landing:${countryCode}`] },
+  );
+}
+
+/** One published SEO landing page resolved to a locale. */
+export async function fetchLandingPage(
+  slug: string,
+  countryCode: string,
+  locale?: string,
+  timeoutMs = PUBLIC_CONTENT_FETCH_TIMEOUT_MS,
+) {
+  const upper = toBackendLocale(locale);
+  const params = upper ? `?locale=${upper}` : "";
+  return apiRequest<{ page: unknown }>(
+    `/api/public/countries/${encodeURIComponent(countryCode)}/landing-pages/${encodeURIComponent(slug)}${params}`,
+    { timeoutMs, revalidate: REVALIDATE_SECONDS, tags: [`landing:${countryCode}:${slug}`] },
+  );
+}
+
 /** Single health-test detail (admin CMS content) for the public detail page. */
 export async function fetchHealthTestDetail(
   slug: string,

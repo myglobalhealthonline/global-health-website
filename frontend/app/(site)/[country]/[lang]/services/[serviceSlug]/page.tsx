@@ -30,6 +30,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { faqJsonLd } from "@/lib/seo/structured-data";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { MedicalDisclaimer } from "@/components/sections/MedicalDisclaimer";
+import { ServiceLinkedBody } from "@/components/sections/ServiceLinkedBody";
 import type { LocaleCode } from "@/lib/i18n/types";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 
@@ -128,6 +129,21 @@ export default async function ServiceDetailPage({
   const heading = detail.heroTitle ?? detail.name;
   const lede = stripHtml(detail.heroDescription) ?? stripHtml(detail.summary);
   const bodyHtml = detail.detailBody ? scopeBlogHtml(detail.detailBody) : null;
+  // Resolve internal-link callouts to concrete hrefs (same-country service slug
+  // → /services/<slug>; else explicit href). Drops any that resolve nowhere.
+  const resolvedLinks = detail.links
+    .map((l) => ({
+      id: l.id,
+      type: l.type,
+      anchorSlot: l.anchorSlot,
+      heading: l.heading,
+      body: l.body,
+      ctaLabel: l.ctaLabel,
+      href: l.targetSlug
+        ? `/${country}/${lang}/services/${l.targetSlug}`
+        : l.targetHref ?? "",
+    }))
+    .filter((l) => l.href !== "");
   const priceLabel =
     detail.basePriceCents != null
       ? formatPriceRounded(detail.basePriceCents, detail.currencyCode)
@@ -458,7 +474,13 @@ export default async function ServiceDetailPage({
             <p className="text-[11px] font-bold uppercase tracking-[0.2em]" style={{ color: "var(--color-brand-primary)" }}>
               {t.aboutService}
             </p>
-            <div className="gh-article-body mt-8 max-w-[76ch]" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+            {resolvedLinks.length > 0 ? (
+              <div className="mt-8">
+                <ServiceLinkedBody bodyHtml={bodyHtml} links={resolvedLinks} />
+              </div>
+            ) : (
+              <div className="gh-article-body mt-8 max-w-[76ch]" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+            )}
           </div>
         </section>
       ) : null}

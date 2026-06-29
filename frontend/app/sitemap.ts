@@ -3,6 +3,7 @@ import { getPublicCountriesMerged } from "@/lib/content/get-public-countries";
 import { countrySlug } from "@/lib/routing/country-slug";
 import { getSiteUrl } from "@/lib/seo/site-url";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
+import { fetchLandingSlugs } from "@/lib/api/site-content-api";
 
 /**
  * Phase 1 sitemap. Emits only canonical, indexable routes.
@@ -40,6 +41,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
       { url: `${base}${slug}/${lang}/book`, changeFrequency: "weekly", priority: 0.85 },
     );
+  }
+
+  // SEO landing pages — published condition/audience pages per country.
+  // Indexed here (Rule 6) but deliberately absent from nav + listing pages.
+  for (const country of countries) {
+    try {
+      const res = await fetchLandingSlugs(country.code);
+      if (!res.ok) continue;
+      const slug = `/${country.slug || countrySlug(country.code)}`;
+      const lang = (country.defaultLocale ?? "en").toLowerCase();
+      for (const page of res.data.landingPages) {
+        urls.push({
+          url: `${base}${slug}/${lang}/health/${page.slug}`,
+          lastModified: page.updatedAt,
+          changeFrequency: "monthly",
+          priority: 0.6,
+        });
+      }
+    } catch {
+      // Landing list unavailable for this country — skip, keep the rest.
+    }
   }
 
   // Static legal / global pages.

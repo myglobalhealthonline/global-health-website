@@ -13,10 +13,13 @@ import {
   fetchAdminDoctors,
   fetchAdminServiceById,
   fetchAdminServicePeakPricing,
+  fetchAdminServiceLinks,
   fetchAdminServices,
   patchAdminService,
+  putAdminServiceLinks,
   putAdminServicePeakPricing,
 } from "@/lib/admin/admin-api";
+import { ServiceLinksPanel } from "../../_components/service-links-panel";
 import { PeakPricingCard } from "../../_components/peak-pricing-card";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { readServiceKind, SERVICE_KIND_META } from "@/lib/admin/service-kind";
@@ -34,6 +37,7 @@ type PageProps = {
   params: Promise<{ id: string }>;
   searchParams?: Promise<{
     error?: string;
+    success?: string;
     kind?: string;
     peakSuccess?: string;
     peakError?: string;
@@ -135,6 +139,18 @@ export default async function AdminEditServicePage({
         title: d.title,
         active: d.active,
       }))
+    : [];
+
+  // Internal-link callouts + candidate same-country target services.
+  const [linksResult, sameCountryServices] = await Promise.all([
+    fetchAdminServiceLinks(id),
+    fetchAdminServices({ countryId: service.countryId, pageSize: "250" }),
+  ]);
+  const initialLinks = linksResult.ok ? linksResult.data.links : [];
+  const linkTargetServices = sameCountryServices.ok
+    ? sameCountryServices.data.items
+        .filter((s) => s.id !== id)
+        .map((s) => ({ id: s.id, name: s.name, slug: s.slug }))
     : [];
 
   const countries = countriesResult.data.countries.map((c) => ({
@@ -335,6 +351,35 @@ export default async function AdminEditServicePage({
     );
   }
 
+  async function saveServiceLinksAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    let body: unknown;
+    try {
+      body = JSON.parse(String(formData.get("payload") ?? '{"links":[]}'));
+    } catch {
+      redirect(
+        `/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent("Invalid links payload")}`,
+      );
+    }
+    const result = await putAdminServiceLinks(id, body);
+    if (!result.ok) {
+      redirect(
+        `/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&error=${encodeURIComponent(result.message)}`,
+      );
+    }
+    if (service.country?.code) {
+      revalidateTag(SITE_CACHE_TAGS.countryServices(service.country.code), "max");
+    }
+    if (service.slug) {
+      revalidateTag(SITE_CACHE_TAGS.serviceBySlug(service.slug), "max");
+    }
+    revalidateTag(SITE_CACHE_TAGS.globalServices(), "max");
+    redirect(
+      `/admin/services/${id}/edit?kind=${encodeURIComponent(kind)}&success=${encodeURIComponent("Internal links saved")}`,
+    );
+  }
+
   return (
     <>
       <Link
@@ -369,12 +414,18 @@ export default async function AdminEditServicePage({
           {messages.error}
         </p>
       ) : null}
+      {messages.success ? (
+        <p className="gh-status-success mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+          {messages.success}
+        </p>
+      ) : null}
 
       <div
         className="grid gap-4"
         style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
       >
-        {/* Main column — form */}
+        {/* Main column — form + internal links */}
+        <div className="grid gap-4">
         <AdminCard>
           <h3
             className="m-0 text-[var(--color-text-primary)]"
@@ -408,6 +459,26 @@ export default async function AdminEditServicePage({
             </div>
           </form>
         </AdminCard>
+
+        <AdminCard>
+          <h3
+            className="m-0 text-[var(--color-text-primary)]"
+            style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+          >
+            Internal links
+          </h3>
+          <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+            Contextual callout boxes to other services (SEO internal-linking). Up
+            to four show per page, ordered upgrade → entry → referral → complementary.
+          </p>
+          <ServiceLinksPanel
+            defaultLocale={defaultLocale}
+            services={linkTargetServices}
+            initial={initialLinks}
+            action={saveServiceLinksAction}
+          />
+        </AdminCard>
+        </div>
 
         {/* Right sidebar — cover image + visibility */}
         <div className="grid gap-4 self-start">

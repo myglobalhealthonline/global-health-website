@@ -346,6 +346,8 @@ model Country {
   /// footer trust bar, Organization/MedicalBusiness `sameAs`, the legal
   /// hub list and naturally-placed authority references on content pages.
   authorityLinks             CountryAuthorityLink[]
+  /// SEO landing pages (condition / audience marketing pages) for this market.
+  seoLandingPages            SeoLandingPage[]
   createdAt                  DateTime             @default(now())
   updatedAt                  DateTime             @updatedAt
 }
@@ -799,6 +801,10 @@ model Service {
   peakPricing           ServicePeakPricing?
   /// Admin-managed FAQ entries for this service's public detail page.
   faqs                  ServiceFaq[]
+  /// Contextual internal-link callouts shown ON this page (upgrade/entry/etc).
+  sourceLinks           ServiceLink[]         @relation("SourceLinks")
+  /// Callouts on OTHER pages that point AT this service.
+  targetLinks           ServiceLink[]         @relation("TargetLinks")
   /// Subscription plan rules that reference this service (§20).
   planConsultationRules PlanConsultationRule[]
   createdAt             DateTime              @default(now())
@@ -809,6 +815,91 @@ model Service {
   /// (raw SQL in the migration) — guarantees the linked service is in the
   /// plan's country (§36.10).
   @@unique([id, countryId])
+}
+
+/// Type of a contextual internal-link callout, in render-priority order:
+/// UPGRADE (GP -> specialist) > ENTRY (specialist -> GP) > REFERRAL > COMPLEMENTARY.
+enum ServiceLinkType {
+  UPGRADE
+  ENTRY
+  REFERRAL
+  COMPLEMENTARY
+}
+
+/// One contextual internal-link callout shown on `source` service's public
+/// detail page, pointing at another service (`target`) or an arbitrary href.
+/// Drives the SEO internal-linking structure (upgrade/entry/referral paths).
+model ServiceLink {
+  id              String                   @id @default(cuid())
+  sourceServiceId String
+  targetServiceId String?
+  /// Used when the callout points somewhere without a Service row (e.g. an
+  /// SEO landing page). Ignored when targetServiceId is set.
+  targetHref      String?
+  type            ServiceLinkType
+  /// Lower renders first within the same type. Caps to 4 boxes per page.
+  priority        Int                      @default(0)
+  isActive        Boolean                  @default(true)
+  /// Optional placement token; when present and matched by a `{{link:<slot>}}`
+  /// marker in the page body, the callout renders inline at that point.
+  anchorSlot      String?
+  source          Service                  @relation("SourceLinks", fields: [sourceServiceId], references: [id], onDelete: Cascade)
+  target          Service?                 @relation("TargetLinks", fields: [targetServiceId], references: [id], onDelete: SetNull)
+  translations    ServiceLinkTranslation[]
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+
+  @@index([sourceServiceId, isActive, priority])
+}
+
+/// Per-locale copy for a ServiceLink callout (heading + body + CTA anchor text).
+model ServiceLinkTranslation {
+  id            String      @id @default(cuid())
+  serviceLinkId String
+  locale        LocaleCode
+  heading       String
+  body          String?
+  ctaLabel      String
+  serviceLink   ServiceLink @relation(fields: [serviceLinkId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([serviceLinkId, locale])
+}
+
+/// Standalone SEO landing page for a country (condition/audience pages such as
+/// hypertension, diabetes, expat-healthcare). Indexed in the sitemap but kept
+/// out of the main nav + service-listing pages. Rendered under a fixed prefix
+/// route to avoid colliding with service slug rewrites.
+model SeoLandingPage {
+  id           String                    @id @default(cuid())
+  countryId    String
+  slug         String
+  isPublished  Boolean                   @default(false)
+  sortOrder    Int                       @default(0)
+  country      Country                   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  translations SeoLandingPageTranslation[]
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+
+  @@unique([countryId, slug])
+  @@index([countryId, isPublished])
+}
+
+/// Per-locale content for an SEO landing page.
+model SeoLandingPageTranslation {
+  id               String         @id @default(cuid())
+  landingPageId    String
+  locale           LocaleCode
+  title            String
+  seoTitle         String?
+  seoDescription   String?
+  bodyHtml         String?
+  landingPage      SeoLandingPage @relation(fields: [landingPageId], references: [id], onDelete: Cascade)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@unique([landingPageId, locale])
 }
 
 /// Admin-defined fixed peak-hour pricing for a single service. The peak

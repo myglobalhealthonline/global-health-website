@@ -1103,6 +1103,82 @@ export async function fetchAdminServiceFaqs(serviceId: string) {
   );
 }
 
+// ── Service internal-link callouts ───────────────────────────────────────────
+export type AdminServiceLinkType = "UPGRADE" | "ENTRY" | "REFERRAL" | "COMPLEMENTARY";
+
+export type AdminServiceLinkTranslationDto = {
+  id: string;
+  locale: string;
+  heading: string;
+  body: string | null;
+  ctaLabel: string;
+};
+
+export type AdminServiceLinkDto = {
+  id: string;
+  type: AdminServiceLinkType;
+  targetServiceId: string | null;
+  targetHref: string | null;
+  targetSlug: string | null;
+  targetName: string | null;
+  priority: number;
+  isActive: boolean;
+  anchorSlot: string | null;
+  translations: AdminServiceLinkTranslationDto[];
+};
+
+export const fetchAdminServiceLinks = cache(async (serviceId: string) => {
+  return adminRequest<{ serviceId: string; links: AdminServiceLinkDto[] }>(
+    `/api/admin/services/${serviceId}/links`,
+  );
+});
+
+export async function putAdminServiceLinks(serviceId: string, body: unknown) {
+  return adminRequest<{ links: AdminServiceLinkDto[] }>(
+    `/api/admin/services/${serviceId}/links`,
+    { method: "PUT", body },
+  );
+}
+
+// ── SEO landing pages ────────────────────────────────────────────────────────
+export type AdminLandingTranslationDto = {
+  id: string;
+  locale: string;
+  title: string;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  bodyHtml: string | null;
+};
+
+export type AdminLandingPageDto = {
+  id: string;
+  countryId: string;
+  slug: string;
+  isPublished: boolean;
+  sortOrder: number;
+  translations: AdminLandingTranslationDto[];
+};
+
+export const fetchAdminCountryLandingPages = cache(async (countryId: string) => {
+  return adminRequest<{ countryId: string; pages: AdminLandingPageDto[] }>(
+    `/api/admin/countries/${countryId}/landing-pages`,
+  );
+});
+
+export async function putAdminCountryLandingPage(countryId: string, body: unknown) {
+  return adminRequest<{ page: AdminLandingPageDto }>(
+    `/api/admin/countries/${countryId}/landing-pages`,
+    { method: "PUT", body },
+  );
+}
+
+export async function deleteAdminCountryLandingPage(countryId: string, pageId: string) {
+  return adminRequest<Record<string, never>>(
+    `/api/admin/countries/${countryId}/landing-pages/${pageId}`,
+    { method: "DELETE" },
+  );
+}
+
 export async function createAdminServiceFaq(
   serviceId: string,
   body: { question: string; answer: string; isVisible?: boolean },

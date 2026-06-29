@@ -124,6 +124,9 @@ export default async function AdminCountryDetailPage({
             <Btn href={`/admin/countries/${id}/legal-documents`} variant="soft" size="md">
               Legal docs
             </Btn>
+            <Btn href={`/admin/countries/${id}/landing-pages`} variant="soft" size="md">
+              SEO pages
+            </Btn>
             <Btn href={`/admin/countries/${id}/edit`} variant="primary" size="md">
               Edit
             </Btn>

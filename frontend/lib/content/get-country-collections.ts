@@ -3,6 +3,7 @@ import {
   fetchDoctorsByCountry,
   fetchHealthTestsByCountry,
   fetchHealthTestDetail,
+  fetchLandingPage,
   fetchServiceDetail,
   fetchServicesByCountry,
   fetchSpecialtiesByCountry,
@@ -55,6 +56,50 @@ export type CountryHealthTestCard = {
 
 export type ServiceFaq = { id: string; question: string; answer: string };
 
+/** Contextual internal-link callout shown on a service page. */
+export type ServiceLinkItem = {
+  id: string;
+  type: "UPGRADE" | "ENTRY" | "REFERRAL" | "COMPLEMENTARY";
+  anchorSlot: string | null;
+  heading: string;
+  body: string | null;
+  ctaLabel: string;
+  /** Same-country target service slug (frontend builds the URL). */
+  targetSlug: string | null;
+  /** Explicit href fallback (e.g. an SEO landing page). */
+  targetHref: string | null;
+};
+
+function readServiceLinks(value: unknown): ServiceLinkItem[] {
+  if (!Array.isArray(value)) return [];
+  const types = new Set(["UPGRADE", "ENTRY", "REFERRAL", "COMPLEMENTARY"]);
+  return value.flatMap((raw) => {
+    if (!raw || typeof raw !== "object") return [];
+    const r = raw as Record<string, unknown>;
+    if (
+      typeof r.id !== "string" ||
+      typeof r.type !== "string" ||
+      !types.has(r.type) ||
+      typeof r.heading !== "string" ||
+      typeof r.ctaLabel !== "string"
+    ) {
+      return [];
+    }
+    return [
+      {
+        id: r.id,
+        type: r.type as ServiceLinkItem["type"],
+        anchorSlot: typeof r.anchorSlot === "string" ? r.anchorSlot : null,
+        heading: r.heading,
+        body: typeof r.body === "string" ? r.body : null,
+        ctaLabel: r.ctaLabel,
+        targetSlug: typeof r.targetSlug === "string" ? r.targetSlug : null,
+        targetHref: typeof r.targetHref === "string" ? r.targetHref : null,
+      },
+    ];
+  });
+}
+
 /** Full service detail (admin CMS content) for the public service page. */
 export type CountryServiceDetail = {
   id: string;
@@ -75,6 +120,7 @@ export type CountryServiceDetail = {
   imageSrc: string | null;
   gallery: string[];
   faqs: ServiceFaq[];
+  links: ServiceLinkItem[];
 };
 
 export type HealthTestFaqItem = { id: string; question: string; answer: string };
@@ -523,6 +569,39 @@ export const getCountryServiceDetail = cache(async (
     imageSrc: pickImagePath(row) ?? null,
     gallery: resolveGallery(r.galleryImagePaths),
     faqs: readFaqs(r.faqs),
+    links: readServiceLinks(r.links),
+  };
+});
+
+/** SEO landing page (condition/audience marketing page) for the public site. */
+export type CountryLandingPage = {
+  slug: string;
+  title: string;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  bodyHtml: string | null;
+};
+
+export const getCountryLandingPage = cache(async (
+  countryCode: string,
+  slug: string,
+  locale?: string,
+): Promise<CountryLandingPage | null> => {
+  const res = await fetchLandingPage(slug, countryCode, locale);
+  if (!res.ok) {
+    logPublicContentFallback(`landing:${countryCode}:${slug}`, res.message);
+    return null;
+  }
+  const p = res.data.page;
+  if (!p || typeof p !== "object") return null;
+  const r = p as Record<string, unknown>;
+  if (typeof r.slug !== "string" || typeof r.title !== "string") return null;
+  return {
+    slug: r.slug,
+    title: r.title,
+    seoTitle: typeof r.seoTitle === "string" ? r.seoTitle : null,
+    seoDescription: typeof r.seoDescription === "string" ? r.seoDescription : null,
+    bodyHtml: typeof r.bodyHtml === "string" ? r.bodyHtml : null,
   };
 });
 

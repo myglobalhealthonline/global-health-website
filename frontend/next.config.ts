@@ -134,6 +134,42 @@ const nextConfig: NextConfig = {
           source: "/:country/:lang/lab-tests/:slug",
           destination: "/:country/:lang/tests/:slug",
         },
+        // Ireland internal-linking slug migration — expose the new GP service
+        // slugs as clean top-level URLs (e.g. /ireland/en/acute-medical-consultation)
+        // that render the generic service detail template. The matching
+        // Service.slug rows must exist per country for the page to resolve.
+        {
+          source: "/:country/:lang/acute-medical-consultation",
+          destination: "/:country/:lang/services/acute-medical-consultation",
+        },
+        {
+          source: "/:country/:lang/chronic-disease-consultation",
+          destination: "/:country/:lang/services/chronic-disease-consultation",
+        },
+        {
+          source: "/:country/:lang/musculoskeletal-pain-assessment",
+          destination: "/:country/:lang/services/musculoskeletal-pain-assessment",
+        },
+        {
+          source: "/:country/:lang/mens-health-consultation",
+          destination: "/:country/:lang/services/mens-health-consultation",
+        },
+        {
+          source: "/:country/:lang/treatment-review",
+          destination: "/:country/:lang/services/treatment-review",
+        },
+        {
+          source: "/:country/:lang/referral-and-investigations",
+          destination: "/:country/:lang/services/referral-and-investigations",
+        },
+        {
+          source: "/:country/:lang/sick-certificate-ireland",
+          destination: "/:country/:lang/services/sick-certificate-ireland",
+        },
+        {
+          source: "/:country/:lang/respiratory-infections",
+          destination: "/:country/:lang/services/respiratory-infections",
+        },
       ],
     };
   },
@@ -193,6 +229,55 @@ const nextConfig: NextConfig = {
       {
         source: "/:country/:lang/repeat-prescription",
         destination: "/:country/:lang/repeat-prescription-request",
+        permanent: true,
+      },
+      // Ireland internal-linking slug migration (per the internal-linking spec).
+      // Old indexed/bookmarked slugs → new canonical slugs. Country/lang kept.
+      // NOTE: `erectyle` and `respiractory` are spelled as in the live old URLs
+      // (typos preserved on the FROM side on purpose).
+      {
+        source: "/:country/:lang/medical-consultation",
+        destination: "/:country/:lang/acute-medical-consultation",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/family-medicine-consultation",
+        destination: "/:country/:lang/chronic-disease-consultation",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/pain-management-consultation",
+        destination: "/:country/:lang/musculoskeletal-pain-assessment",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/erectyle-dysfunction-consultation",
+        destination: "/:country/:lang/mens-health-consultation",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/treatment-refill",
+        destination: "/:country/:lang/treatment-review",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/referral-consultation",
+        destination: "/:country/:lang/referral-and-investigations",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/self-referral",
+        destination: "/:country/:lang/referral-and-investigations",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/respiractory-infections",
+        destination: "/:country/:lang/respiratory-infections",
+        permanent: true,
+      },
+      {
+        source: "/:country/:lang/sick-leave",
+        destination: "/:country/:lang/sick-certificate-ireland",
         permanent: true,
       },
     ];

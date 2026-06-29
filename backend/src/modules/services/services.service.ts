@@ -13,6 +13,7 @@ import { normalizeDbError } from "../shared/db-errors.js";
 import { sanitizeRichHtml } from "../../utils/sanitize-html.js";
 import { resolveTranslation } from "../shared/resolve-translation.js";
 import { assertLocaleSupported } from "../shared/locale-support.js";
+import { resolveServiceLinksForPage } from "../service-links/service-links.service.js";
 
 /** Display fields a ServiceTranslation can override, plus the locale key. */
 const serviceTranslationSelect = {
@@ -849,11 +850,18 @@ export async function getPublicServiceBySlug(
       },
     });
     if (!row) return null;
-    return mergeServiceTranslation(
+    const merged = mergeServiceTranslation(
       row,
       locale ?? row.country.defaultLocale,
       row.country.defaultLocale,
     );
+    // Contextual internal-link callouts (locale-merged, capped at 4).
+    const links = await resolveServiceLinksForPage(
+      row.id,
+      merged.resolvedLocale,
+      row.country.defaultLocale,
+    );
+    return { ...merged, links };
   } catch (error) {
     throw normalizeDbError(error, "Service data is unavailable");
   }
