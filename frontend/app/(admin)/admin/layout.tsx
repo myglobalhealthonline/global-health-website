@@ -2,8 +2,12 @@ import type { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getServerAuthUser } from "@/lib/api/server-auth";
-import { fetchAdminCountries } from "@/lib/admin/admin-api";
+import {
+  fetchAdminCountries,
+  fetchAdminPendingServiceRequests,
+} from "@/lib/admin/admin-api";
 import { AdminShell } from "./_components/admin-shell";
+import type { NotificationPopoverItem } from "@/components/NotificationPopover";
 import {
   COUNTRY_PREF_COOKIE,
   type CountryPickerOption,
@@ -107,6 +111,37 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     // ignore — shell still renders
   }
 
+  // Pending approval requests → topbar bell feed + sidebar count badge.
+  // Scoped to the active country (matches the rest of the portal); global
+  // when no country is selected. Best-effort: a failure leaves the shell
+  // with an empty caught-up state.
+  let notifications:
+    | { items: NotificationPopoverItem[]; unreadCount: number }
+    | undefined;
+  let navBadges: Record<string, number> | undefined;
+  try {
+    const res = await fetchAdminPendingServiceRequests(
+      activeCountry ? { countryCode: activeCountry.code } : undefined,
+    );
+    if (res.ok) {
+      const { count, items } = res.data;
+      navBadges = { "/admin/doctors": count };
+      notifications = {
+        unreadCount: count,
+        items: items.slice(0, 8).map((r) => ({
+          id: r.id,
+          title: `${r.doctorName} requested ${r.serviceName}`,
+          body: `${serviceKindLabel(r.serviceKind)} · ${r.countryName} — awaiting approval`,
+          href: `/admin/doctors/${r.doctorId}/services`,
+          createdAt: r.createdAt,
+          readAt: null,
+        })),
+      };
+    }
+  } catch {
+    // ignore — bell falls back to the empty state
+  }
+
   return (
     <AdminShell
       user={{ fullName: user.fullName, email: user.email, role: user.role }}
@@ -115,8 +150,23 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       sections={sections}
       signOutAction={logoutAdminAction}
       setCountryPreferenceAction={setCountryPreferenceAction}
+      notifications={notifications}
+      navBadges={navBadges}
     >
       {children}
     </AdminShell>
   );
+}
+
+function serviceKindLabel(kind: string): string {
+  switch (kind) {
+    case "GENERAL":
+      return "GP consultation";
+    case "SPECIALIST":
+      return "Specialist consultation";
+    case "PRESCRIPTION":
+      return "Prescription";
+    default:
+      return "Service";
+  }
 }

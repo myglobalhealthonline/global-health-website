@@ -236,6 +236,82 @@ export async function saveDoctorServiceSelections(
   }
 }
 
+export type PendingDoctorServiceRequestDto = {
+  /** ServiceDoctor row id. */
+  id: string;
+  doctorId: string;
+  doctorName: string;
+  doctorSlug: string;
+  serviceId: string;
+  serviceName: string;
+  serviceKind: ServiceKind;
+  countryCode: string;
+  countryName: string;
+  createdAt: string;
+};
+
+/**
+ * Pending doctor-initiated service requests awaiting admin approval.
+ * Powers the admin alert badge / notification feed. Optionally scoped to
+ * a single country (by code) so a country-scoped admin only sees their
+ * own queue; omit `countryCode` for the global queue.
+ */
+export async function listPendingDoctorServiceRequests(opts?: {
+  countryCode?: string | null;
+}): Promise<{ count: number; items: PendingDoctorServiceRequestDto[] }> {
+  try {
+    const countryCode = opts?.countryCode?.trim() || null;
+    const rows = await prisma.serviceDoctor.findMany({
+      where: {
+        status: "pending",
+        selectedBy: "doctor",
+        ...(countryCode
+          ? {
+              doctor: {
+                country: { code: { equals: countryCode, mode: "insensitive" } },
+              },
+            }
+          : {}),
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        doctorId: true,
+        serviceId: true,
+        createdAt: true,
+        doctor: {
+          select: {
+            fullName: true,
+            slug: true,
+            country: { select: { code: true, name: true } },
+          },
+        },
+        service: { select: { name: true, kind: true } },
+      },
+    });
+
+    const items: PendingDoctorServiceRequestDto[] = rows.map((r) => ({
+      id: r.id,
+      doctorId: r.doctorId,
+      doctorName: r.doctor.fullName,
+      doctorSlug: r.doctor.slug,
+      serviceId: r.serviceId,
+      serviceName: r.service.name,
+      serviceKind: r.service.kind,
+      countryCode: r.doctor.country.code,
+      countryName: r.doctor.country.name,
+      createdAt: r.createdAt.toISOString(),
+    }));
+
+    return { count: items.length, items };
+  } catch (error) {
+    throw normalizeDbError(
+      error,
+      "Pending doctor service requests are unavailable",
+    );
+  }
+}
+
 export type AdminDoctorServiceRowDto = {
   id: string;
   serviceId: string;

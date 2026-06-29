@@ -1183,6 +1183,43 @@ export const fetchAdminDoctorById = cache(async (id: string) => {
   return adminRequest<AdminDoctorDetailPayload>(`/api/admin/doctors/${id}`);
 });
 
+export type AdminPendingServiceRequest = {
+  id: string;
+  doctorId: string;
+  doctorName: string;
+  doctorSlug: string;
+  serviceId: string;
+  serviceName: string;
+  serviceKind: string;
+  countryCode: string;
+  countryName: string;
+  createdAt: string;
+};
+
+type AdminPendingServiceRequestsPayload = {
+  count: number;
+  items: AdminPendingServiceRequest[];
+};
+
+/** Pending doctor-initiated service requests awaiting admin approval. */
+export async function fetchAdminPendingServiceRequests(
+  query?: Record<string, string | undefined>,
+) {
+  const params = new URLSearchParams();
+  if (query) {
+    for (const [key, value] of Object.entries(query)) {
+      if (value !== undefined && value !== "") {
+        params.set(key, value);
+      }
+    }
+  }
+  const qs = params.toString();
+  const path = qs
+    ? `/api/admin/doctor-service-requests?${qs}`
+    : "/api/admin/doctor-service-requests";
+  return adminRequest<AdminPendingServiceRequestsPayload>(path);
+}
+
 export async function postAdminDoctor(body: unknown) {
   return adminRequest<AdminDoctorDetailPayload>("/api/admin/doctors", {
     method: "POST",

@@ -28,7 +28,10 @@ import { Toaster } from "sonner";
 import { CountryPicker } from "./country-picker";
 import type { CountryPickerOption } from "./country-picker-constants";
 import { FlagBadge } from "./flag-badge";
-import { NotificationPopover } from "@/components/NotificationPopover";
+import {
+  NotificationPopover,
+  type NotificationPopoverItem,
+} from "@/components/NotificationPopover";
 
 export type AdminShellUser = {
   fullName: string;
@@ -222,6 +225,8 @@ export function AdminShell({
   sections,
   signOutAction,
   setCountryPreferenceAction,
+  notifications,
+  navBadges,
   children,
 }: {
   user: AdminShellUser;
@@ -230,6 +235,10 @@ export function AdminShell({
   sections: Section[];
   signOutAction: SignOutAction;
   setCountryPreferenceAction: SetCountryPreferenceAction;
+  /** Topbar bell feed. Defaults to an empty caught-up state. */
+  notifications?: { items: NotificationPopoverItem[]; unreadCount: number };
+  /** Sidebar count badges keyed by href (e.g. pending approvals on Doctors). */
+  navBadges?: Record<string, number>;
   children: ReactNode;
 }) {
   const [navOpen, setNavOpen] = useState(false);
@@ -309,6 +318,7 @@ export function AdminShell({
                       icon={<Icon className="size-4" aria-hidden />}
                       label={section.label}
                       active={isActive(section.href)}
+                      badge={navBadges?.[section.href]}
                       onNavigate={() => setNavOpen(false)}
                     />
                   );
@@ -436,13 +446,17 @@ export function AdminShell({
                   </div>
                 ) : null}
 
-              {/* Notification bell — admin feed isn't wired yet, so we
-                  show the popover with an empty-state message. */}
+              {/* Notification bell — surfaces pending approval requests
+                  (doctor service selections awaiting review). */}
               <NotificationPopover
-                items={[]}
-                unreadCount={0}
-                viewAllHref={null}
-                emptyMessage="No admin notifications yet. The audit log is the source of truth for now."
+                items={notifications?.items ?? []}
+                unreadCount={notifications?.unreadCount ?? 0}
+                viewAllHref={
+                  notifications && notifications.unreadCount > 0
+                    ? "/admin/doctors"
+                    : null
+                }
+                emptyMessage="You're all caught up. New approval requests will appear here."
               />
 
               {/* User menu */}
@@ -606,12 +620,14 @@ function SidebarItem({
   icon,
   label,
   active,
+  badge,
   onNavigate,
 }: {
   href: string;
   icon: ReactNode;
   label: string;
   active: boolean;
+  badge?: number;
   onNavigate: () => void;
 }) {
   return (
@@ -659,6 +675,25 @@ function SidebarItem({
         {icon}
       </span>
       <span className="truncate">{label}</span>
+      {badge && badge > 0 ? (
+        <span
+          className="ml-auto inline-flex shrink-0 items-center justify-center"
+          aria-label={`${badge} pending`}
+          style={{
+            minWidth: 18,
+            height: 18,
+            padding: "0 6px",
+            borderRadius: 999,
+            fontSize: 11,
+            fontWeight: 800,
+            lineHeight: 1,
+            color: "#0a1f14",
+            background: "var(--color-accent)",
+          }}
+        >
+          {badge > 99 ? "99+" : badge}
+        </span>
+      ) : null}
     </Link>
   );
 }
