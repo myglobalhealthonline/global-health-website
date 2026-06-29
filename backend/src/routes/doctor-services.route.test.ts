@@ -61,7 +61,7 @@ describe("doctor services route — auth + validation", () => {
     assert.equal(res.statusCode, 403);
   });
 
-  it("rejects invalid POST body", async (t) => {
+  it("forbids doctor self-selecting services (admin-only)", async (t) => {
     if (!app) {
       t.skip(`buildApp() failed: ${describeError(bootError)}`);
       return;
@@ -114,9 +114,9 @@ describe("doctor services route — auth + validation", () => {
         method: "POST",
         url: "/api/doctor/services",
         cookies: { [env.AUTH_COOKIE_NAME]: token },
-        payload: { serviceIds: "not-an-array" },
+        payload: { serviceIds: [] },
       });
-      assert.equal(res.statusCode, 400);
+      assert.equal(res.statusCode, 403);
     } finally {
       await prisma.user.delete({ where: { id: user.id } }).catch(() => {});
       await prisma.doctor.delete({ where: { id: doctor.id } }).catch(() => {});

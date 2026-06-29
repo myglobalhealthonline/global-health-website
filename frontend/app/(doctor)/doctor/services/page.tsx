@@ -37,7 +37,7 @@ export default async function DoctorServicesPage() {
           </span>
         }
         title="My services"
-        description="Choose the GP, specialist, and prescription services you are qualified to provide. Patients can only book you for services you have selected."
+        description="The GP, specialist, and prescription services you are cleared to provide. Your administrator manages this list — services marked Active are bookable by patients."
       />
 
       <DoctorServiceSelectionForm

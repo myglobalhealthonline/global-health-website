@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from "fastify";
-import { Prisma } from "@prisma/client";
+import { Prisma, type LocaleCode } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
@@ -7,6 +7,10 @@ import { verifyDoctorAccess } from "../utils/doctor-auth.js";
 import { errorResponse, okResponse } from "../utils/response.js";
 import { sanitizeRichHtml } from "../utils/sanitize-html.js";
 import { recordAudit } from "../modules/audit/audit.service.js";
+import {
+  profilePatchBodySchema,
+  type DoctorProfilePatchBody,
+} from "../validations/doctor-profile.schema.js";
 import { encryptPhi } from "../lib/crypto/phi-crypto.js";
 import {
   ibanLast4,
@@ -17,7 +21,6 @@ import {
 } from "../utils/iban.js";
 import {
   listDoctorSelectableServices,
-  saveDoctorServiceSelections,
 } from "../modules/doctor-services/doctor-services.service.js";
 import { normalizeDoctorWhatsAppForStorage } from "../lib/whatsapp/resolve-doctor-contact.js";
 
@@ -84,7 +87,7 @@ const listAppointmentsQuerySchema = z.object({
   pageSize: z.coerce.number().int().min(1).max(100).default(25),
 });
 
-const profilePatchBodySchema = z
+const legacyProfilePatchBodySchema = z
   .object({
     fullName: z.string().trim().min(1).max(200).optional(),
     bio: z.string().trim().max(12000).nullable().optional(),
@@ -114,9 +117,34 @@ const profilePatchBodySchema = z
     message: "Provide at least one field to update",
   });
 
-const doctorServicesBodySchema = z.object({
-  serviceIds: z.array(z.string().trim().min(1)).max(100),
-});
+type DoctorProfileCountryLocales = {
+  defaultLocale: LocaleCode;
+  countryLocales: Array<{ locale: LocaleCode }>;
+};
+
+function supportedDoctorLocales(country: DoctorProfileCountryLocales): LocaleCode[] {
+  const seen = new Set<LocaleCode>([country.defaultLocale]);
+  for (const row of country.countryLocales) {
+    seen.add(row.locale);
+  }
+  return Array.from(seen);
+}
+
+function normalizeProfileTranslations(
+  body: DoctorProfilePatchBody,
+  defaultLocale: LocaleCode,
+): Array<{ locale: LocaleCode; bio: string | null }> | undefined {
+  if (!body.translations) return undefined;
+  const sanitized = body.translations.map((entry) => ({
+    locale: entry.locale,
+    bio: sanitizeRichHtml(entry.bio),
+  }));
+  if (body.bio === undefined) return sanitized;
+  const defaultBio = sanitizeRichHtml(body.bio);
+  return sanitized.map((entry) =>
+    entry.locale === defaultLocale ? { ...entry, bio: defaultBio } : entry,
+  );
+}
 
 const doctorRoute: FastifyPluginAsync = async (app) => {
   app.get("/api/doctor/me", async (request, reply) => {
@@ -138,7 +166,18 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           qualifications: true,
           languages: true,
           whatsappNumber: true,
-          country: { select: { code: true, name: true, slug: true, defaultLocale: true } },
+          country: {
+            select: {
+              code: true,
+              name: true,
+              slug: true,
+              defaultLocale: true,
+              countryLocales: {
+                select: { locale: true, isDefault: true },
+                orderBy: [{ isDefault: "desc" }, { locale: "asc" }],
+              },
+            },
+          },
           additionalCountries: {
             include: {
               country: { select: { code: true, name: true, slug: true } },
@@ -156,6 +195,10 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           // Payout bank details — return masked only (never the full IBAN).
           bankAccount: {
             select: { accountHolder: true, ibanLast4: true, bic: true, ibanEncrypted: true },
+          },
+          translations: {
+            select: { locale: true, bio: true },
+            orderBy: { locale: "asc" },
           },
         },
       });
@@ -192,11 +235,31 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
         }),
       ]);
 
-      const { bankAccount, ...doctorRest } = doctor;
+      const { bankAccount, assets, country, translations, ...doctorRest } = doctor;
+      const supportedLocales = supportedDoctorLocales(country);
+      const translationByLocale = new Map(
+        translations.map((entry) => [entry.locale, entry.bio]),
+      );
       return okResponse({
         doctor: {
           ...doctorRest,
-          profileImagePath: doctor.assets[0]?.path ?? null,
+          country: {
+            code: country.code,
+            name: country.name,
+            slug: country.slug,
+            defaultLocale: country.defaultLocale,
+          },
+          supportedLocales: supportedLocales.map((code) => ({
+            code,
+            isDefault: code === country.defaultLocale,
+          })),
+          translations: supportedLocales.map((code) => ({
+            locale: code,
+            bio:
+              translationByLocale.get(code) ??
+              (code === country.defaultLocale ? doctor.bio : null),
+          })),
+          profileImagePath: assets[0]?.path ?? null,
           // Masked payout details — full IBAN never leaves the server.
           bank: {
             accountHolder: bankAccount?.accountHolder ?? null,
@@ -420,24 +483,53 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           seoTitle: true,
           seoDescription: true,
           country: {
-            select: { id: true, code: true, defaultLocale: true },
+            select: {
+              id: true,
+              code: true,
+              defaultLocale: true,
+              countryLocales: { select: { locale: true } },
+            },
           },
           additionalCountries: {
             select: { country: { select: { code: true } } },
+          },
+          translations: {
+            select: {
+              locale: true,
+              title: true,
+              seoTitle: true,
+              seoDescription: true,
+            },
           },
         },
       });
       if (!doctorMeta) {
         return reply.status(404).send(errorResponse("Doctor profile not found"));
       }
+      const supportedLocales = new Set(supportedDoctorLocales(doctorMeta.country));
+      const translationUpdates = normalizeProfileTranslations(
+        body.data,
+        doctorMeta.country.defaultLocale,
+      );
+      const unsupportedLocale = translationUpdates?.find(
+        (entry) => !supportedLocales.has(entry.locale),
+      );
+      if (unsupportedLocale) {
+        return reply
+          .status(400)
+          .send(errorResponse("Locale is not enabled for this doctor profile"));
+      }
+      const defaultTranslationBio = translationUpdates?.find(
+        (entry) => entry.locale === doctorMeta.country.defaultLocale,
+      )?.bio;
+      const nextBaseBio =
+        body.data.bio !== undefined ? sanitizeRichHtml(body.data.bio) : defaultTranslationBio;
       const updated = await prisma.$transaction(async (tx) => {
         const updatedDoctor = await tx.doctor.update({
           where: { id: auth.doctorId },
           data: {
             ...(body.data.fullName !== undefined && { fullName: body.data.fullName }),
-            ...(body.data.bio !== undefined && {
-              bio: sanitizeRichHtml(body.data.bio),
-            }),
+            ...(nextBaseBio !== undefined && { bio: nextBaseBio }),
             ...(body.data.qualifications !== undefined && {
               qualifications: body.data.qualifications,
             }),
@@ -459,24 +551,42 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
           },
         });
 
-        if (body.data.bio !== undefined) {
+        const existingTranslations = new Map(
+          doctorMeta.translations.map((entry) => [entry.locale, entry]),
+        );
+        const rowsToUpsert =
+          translationUpdates ??
+          (nextBaseBio !== undefined
+            ? [{ locale: doctorMeta.country.defaultLocale, bio: updatedDoctor.bio }]
+            : []);
+
+        for (const entry of rowsToUpsert) {
+          const existing = existingTranslations.get(entry.locale);
           await tx.doctorTranslation.upsert({
             where: {
               doctorId_locale: {
                 doctorId: auth.doctorId,
-                locale: doctorMeta.country.defaultLocale,
+                locale: entry.locale,
               },
             },
             create: {
               doctorId: auth.doctorId,
-              locale: doctorMeta.country.defaultLocale,
-              title: doctorMeta.title,
-              bio: updatedDoctor.bio,
-              seoTitle: doctorMeta.seoTitle,
-              seoDescription: doctorMeta.seoDescription,
+              locale: entry.locale,
+              title: existing?.title ?? doctorMeta.title,
+              bio: entry.bio,
+              seoTitle:
+                existing?.seoTitle ??
+                (entry.locale === doctorMeta.country.defaultLocale
+                  ? doctorMeta.seoTitle
+                  : null),
+              seoDescription:
+                existing?.seoDescription ??
+                (entry.locale === doctorMeta.country.defaultLocale
+                  ? doctorMeta.seoDescription
+                  : null),
             },
             update: {
-              bio: updatedDoctor.bio,
+              bio: entry.bio,
             },
           });
         }
@@ -591,32 +701,21 @@ const doctorRoute: FastifyPluginAsync = async (app) => {
     }
   });
 
+  // Service assignment is admin-only. Doctors can view their assigned
+  // services (GET above) but may not self-select — the admin controls
+  // which services each doctor is qualified to provide.
   app.post("/api/doctor/services", async (request, reply) => {
     const auth = await verifyDoctorAccess(request);
     if (!auth.ok) {
       return reply.status(auth.status).send(errorResponse(auth.message));
     }
-    const body = doctorServicesBodySchema.safeParse(request.body);
-    if (!body.success) {
-      return reply
-        .status(400)
-        .send(errorResponse("Invalid service selection", body.error.flatten()));
-    }
-    try {
-      const data = await saveDoctorServiceSelections(
-        auth.doctorId,
-        body.data.serviceIds,
+    return reply
+      .status(403)
+      .send(
+        errorResponse(
+          "Services are assigned by an administrator. Contact admin to change your service list.",
+        ),
       );
-      return okResponse(data, "Service selections saved");
-    } catch (error) {
-      if (error instanceof DatabaseUnavailableError) {
-        return reply.status(503).send(errorResponse(error.message));
-      }
-      app.log.error(error);
-      return reply
-        .status(500)
-        .send(errorResponse("Could not save service selections"));
-    }
   });
 };
 
