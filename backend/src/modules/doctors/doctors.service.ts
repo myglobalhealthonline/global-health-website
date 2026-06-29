@@ -664,37 +664,52 @@ async function assertSpecialtiesForCountry(specialtyIds: string[], countryId: st
 }
 
 function buildAdminDoctorWhere(query: AdminDoctorsQuery): Prisma.DoctorWhereInput {
-  const where: Prisma.DoctorWhereInput = {};
+  const andClauses: Prisma.DoctorWhereInput[] = [];
 
   if (query.countryId) {
-    where.countryId = query.countryId;
+    andClauses.push({
+      OR: [
+        { countryId: query.countryId },
+        { additionalCountries: { some: { countryId: query.countryId } } },
+      ],
+    });
   }
   if (query.countryCode) {
-    where.country = { code: query.countryCode };
+    andClauses.push({
+      OR: [
+        { country: { code: query.countryCode } },
+        { additionalCountries: { some: { country: { code: query.countryCode } } } },
+      ],
+    });
   }
+
   if (query.serviceKind) {
-    where.assignedServices = {
-      some: {
-        isActive: true,
-        status: "active",
-        service: { kind: query.serviceKind, isActive: true },
+    andClauses.push({
+      assignedServices: {
+        some: {
+          isActive: true,
+          status: "active",
+          service: { kind: query.serviceKind, isActive: true },
+        },
       },
-    };
+    });
   }
   if (query.isActive !== undefined) {
-    where.active = query.isActive;
+    andClauses.push({ active: query.isActive });
   }
 
   const term = query.search?.trim();
   if (term && term.length > 0) {
-    where.OR = [
-      { fullName: { contains: term, mode: "insensitive" } },
-      { title: { contains: term, mode: "insensitive" } },
-      { bio: { contains: term, mode: "insensitive" } },
-    ];
+    andClauses.push({
+      OR: [
+        { fullName: { contains: term, mode: "insensitive" } },
+        { title: { contains: term, mode: "insensitive" } },
+        { bio: { contains: term, mode: "insensitive" } },
+      ],
+    });
   }
 
-  return where;
+  return andClauses.length === 0 ? {} : andClauses.length === 1 ? andClauses[0]! : { AND: andClauses };
 }
 
 export async function listAdminDoctors(query: AdminDoctorsQuery): Promise<ListAdminDoctorsResult> {
