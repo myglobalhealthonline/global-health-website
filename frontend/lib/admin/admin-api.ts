@@ -660,6 +660,74 @@ export async function fetchAdminDoctorBank(doctorId: string, reveal = false) {
   );
 }
 
+export type AdminDoctorMarketTranslationDto = {
+  id: string;
+  locale: string;
+  bio: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  seoKeywords: string[];
+};
+
+export type AdminDoctorMarketFaqDto = {
+  id: string;
+  locale: string;
+  question: string;
+  answer: string;
+  category: string | null;
+  sortOrder: number;
+  isActive: boolean;
+};
+
+export type AdminDoctorMarketDto = {
+  id: string;
+  doctorId: string;
+  countryId: string;
+  active: boolean;
+  sortOrder: number;
+  country: { id: string; code: string; name: string; slug: string; defaultLocale: string };
+  supportedLocales: Array<{ code: string; isDefault: boolean }>;
+  chamberEntity: string | null;
+  registrationNumber: string | null;
+  division: string | null;
+  isVerified: boolean;
+  verifiedAt: string | null;
+  translations: AdminDoctorMarketTranslationDto[];
+  faqs: AdminDoctorMarketFaqDto[];
+  bank: AdminDoctorBankDto;
+  createdAt: string;
+};
+
+export const fetchAdminDoctorMarkets = cache(async (doctorId: string) => {
+  return adminRequest<{
+    doctorId: string;
+    primaryCountryId: string;
+    markets: AdminDoctorMarketDto[];
+  }>(`/api/admin/doctors/${doctorId}/markets`);
+});
+
+export async function patchAdminDoctorMarket(
+  doctorId: string,
+  countryId: string,
+  body: unknown,
+) {
+  return adminRequest<{ market: AdminDoctorMarketDto }>(
+    `/api/admin/doctors/${doctorId}/markets/${countryId}`,
+    { method: "PATCH", body },
+  );
+}
+
+export async function fetchAdminDoctorMarketBank(
+  doctorId: string,
+  countryId: string,
+  reveal = false,
+) {
+  const qs = reveal ? "?reveal=1" : "";
+  return adminRequest<{ bank: AdminDoctorBankDto }>(
+    `/api/admin/doctors/${doctorId}/markets/${countryId}/bank${qs}`,
+  );
+}
+
 export async function createAdminDoctorCredential(doctorId: string, body: unknown) {
   return adminRequest<{ credential: AdminDoctorCredentialDto }>(
     `/api/admin/doctors/${doctorId}/credentials`,
@@ -1054,6 +1122,10 @@ export type AdminDoctorAssetDto = {
   kind: string;
   key: string;
   path: string;
+  altText: string | null;
+  title: string | null;
+  caption: string | null;
+  description: string | null;
 };
 
 export type AdminDoctorTranslationDto = {
@@ -1947,6 +2019,9 @@ export type AdminAssetDto = {
   key: string;
   path: string;
   altText: string | null;
+  title: string | null;
+  caption: string | null;
+  description: string | null;
   usageNote: string | null;
   isActive: boolean;
   createdAt: string;

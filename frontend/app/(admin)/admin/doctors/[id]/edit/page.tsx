@@ -138,6 +138,14 @@ export default async function AdminEditDoctorPage({
       specialtyIds: raw.specialtyIds,
       additionalCountryIds: raw.additionalCountryIds,
       profileImagePath: raw.profileImagePath === "" ? null : raw.profileImagePath,
+      profileImageAltText:
+        raw.profileImageAltText === "" ? null : raw.profileImageAltText,
+      profileImageTitle:
+        raw.profileImageTitle === "" ? null : raw.profileImageTitle,
+      profileImageCaption:
+        raw.profileImageCaption === "" ? null : raw.profileImageCaption,
+      profileImageDescription:
+        raw.profileImageDescription === "" ? null : raw.profileImageDescription,
       active: raw.active,
       canCreateManualAppointments: raw.canCreateManualAppointments,
     };
@@ -314,6 +322,10 @@ export default async function AdminEditDoctorPage({
                 via HTML5 form-association on its hidden input. */}
             <DoctorProfileImageField
               initialPath={doctor.assets[0]?.path ?? ""}
+              initialAltText={doctor.assets[0]?.altText ?? ""}
+              initialTitle={doctor.assets[0]?.title ?? ""}
+              initialCaption={doctor.assets[0]?.caption ?? ""}
+              initialDescription={doctor.assets[0]?.description ?? ""}
               fullName={doctor.fullName}
               formId="doctor-edit-form"
             />

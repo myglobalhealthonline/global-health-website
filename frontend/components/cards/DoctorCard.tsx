@@ -53,6 +53,10 @@ type DoctorCardProps = {
   linkedinUrl?: string | null;
   bio: string;
   imageSrc?: string | null;
+  imageAltText?: string | null;
+  imageTitle?: string | null;
+  imageCaption?: string | null;
+  imageDescription?: string | null;
   /** Initials fallback shown when imageSrc is missing. Without it the card
    *  falls back to a single stock SVG for every photo-less doctor. */
   initials?: string;
@@ -91,6 +95,10 @@ export function DoctorCard({
   facebookUrl,
   linkedinUrl,
   imageSrc,
+  imageAltText,
+  imageTitle,
+  imageCaption,
+  imageDescription,
   initials,
   href,
   bookingHref,
@@ -168,7 +176,11 @@ export function DoctorCard({
         {hasImage ? (
           <Image
             src={src}
-            alt={name}
+            alt={imageAltText?.trim() || name}
+            title={imageTitle?.trim() || undefined}
+            aria-describedby={
+              imageCaption || imageDescription ? `${nameToInitials(name)}-image-seo` : undefined
+            }
             fill
             sizes="(min-width:1024px) 360px, (min-width:768px) 50vw, 100vw"
             unoptimized={unoptimized}
@@ -187,6 +199,11 @@ export function DoctorCard({
             {initialsLabel}
           </div>
         )}
+        {imageCaption || imageDescription ? (
+          <p id={`${nameToInitials(name)}-image-seo`} className="sr-only">
+            {[imageCaption, imageDescription].filter(Boolean).join(" ")}
+          </p>
+        ) : null}
 
         {/* Country flag chip — top-left overlay */}
         {country ? (

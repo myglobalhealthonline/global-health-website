@@ -23,6 +23,24 @@ const doctorTranslationSelect = {
   seoDescription: true,
 } satisfies Prisma.DoctorTranslationSelect;
 
+const doctorMarketTranslationSelect = {
+  locale: true,
+  bio: true,
+  seoTitle: true,
+  seoDescription: true,
+  seoKeywords: true,
+} satisfies Prisma.DoctorMarketTranslationSelect;
+
+const doctorMarketFaqSelect = {
+  id: true,
+  locale: true,
+  question: true,
+  answer: true,
+  category: true,
+  sortOrder: true,
+  isActive: true,
+} satisfies Prisma.DoctorMarketFaqSelect;
+
 type DoctorDisplayBase = {
   title: string;
   bio: string | null;
@@ -31,6 +49,24 @@ type DoctorDisplayBase = {
 };
 
 type DoctorTranslationRow = DoctorDisplayBase & { locale: LocaleCode };
+
+type DoctorMarketTranslationRow = {
+  locale: LocaleCode;
+  bio: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  seoKeywords: string[];
+};
+
+type DoctorMarketFaqRow = {
+  id: string;
+  locale: LocaleCode;
+  question: string;
+  answer: string;
+  category: string | null;
+  sortOrder: number;
+  isActive: boolean;
+};
 
 /**
  * Merge a doctor's base title/bio/SEO with the best translation for the
@@ -52,6 +88,40 @@ function mergeDoctorTranslation<
     seoDescription: tr?.seoDescription ?? doctor.seoDescription,
     resolvedLocale,
   };
+}
+
+function mergeDoctorMarketTranslation<
+  S extends DoctorDisplayBase,
+>(
+  doctor: S,
+  marketTranslations: DoctorMarketTranslationRow[] | undefined,
+  requested: LocaleCode,
+  defaultLocale: LocaleCode,
+): S & { resolvedMarketLocale: LocaleCode; seoKeywords: string[] } {
+  const rows = marketTranslations ?? [];
+  const { tr, resolvedLocale } = resolveTranslation(rows, requested, defaultLocale);
+  return {
+    ...doctor,
+    bio: tr?.bio ?? doctor.bio,
+    seoTitle: tr?.seoTitle ?? doctor.seoTitle,
+    seoDescription: tr?.seoDescription ?? doctor.seoDescription,
+    seoKeywords: tr?.seoKeywords ?? [],
+    resolvedMarketLocale: resolvedLocale,
+  };
+}
+
+function resolveDoctorMarketFaqs(
+  faqs: DoctorMarketFaqRow[] | undefined,
+  requested: LocaleCode,
+  defaultLocale: LocaleCode,
+): DoctorMarketFaqRow[] {
+  const active = (faqs ?? []).filter((faq) => faq.isActive);
+  const requestedRows = active.filter((faq) => faq.locale === requested);
+  const rows =
+    requestedRows.length > 0
+      ? requestedRows
+      : active.filter((faq) => faq.locale === defaultLocale);
+  return rows.sort((a, b) => a.sortOrder - b.sortOrder || a.question.localeCompare(b.question));
 }
 
 /** Upsert one DoctorTranslation row per entry, keyed (doctorId, locale).
@@ -132,6 +202,18 @@ async function syncLegacyImcRegistrationToPrimaryCountry(
   });
 }
 
+async function ensurePrimaryDoctorCountry(
+  tx: Prisma.TransactionClient,
+  doctorId: string,
+  countryId: string,
+): Promise<void> {
+  await tx.doctorCountry.upsert({
+    where: { doctorId_countryId: { doctorId, countryId } },
+    create: { doctorId, countryId, active: true },
+    update: { active: true },
+  });
+}
+
 const adminDoctorInclude = {
   country: {
     select: {
@@ -167,7 +249,16 @@ const adminDoctorInclude = {
   },
   assets: {
     where: { kind: AssetKind.IMAGE },
-    select: { id: true, kind: true, key: true, path: true },
+    select: {
+      id: true,
+      kind: true,
+      key: true,
+      path: true,
+      altText: true,
+      title: true,
+      caption: true,
+      description: true,
+    },
   },
   /**
    * Linked login user (User.doctorId one-to-one). Powers the
@@ -269,7 +360,16 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
           // admin image flows both update the canonical profile asset, so
           // updatedAt DESC makes the latest confirmed profile image win.
           orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
-          select: { id: true, kind: true, key: true, path: true, altText: true },
+          select: {
+            id: true,
+            kind: true,
+            key: true,
+            path: true,
+            altText: true,
+            title: true,
+            caption: true,
+            description: true,
+          },
         },
         // Per-market registration row. The single DoctorCountry record
         // for the country being viewed replaces the legacy
@@ -278,10 +378,20 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
         additionalCountries: {
           where: { country: { code: countryCode } },
           select: {
+            id: true,
+            countryId: true,
+            active: true,
+            country: { select: { id: true, code: true, name: true, defaultLocale: true } },
             chamberEntity: true,
             registrationNumber: true,
             division: true,
             isVerified: true,
+            translations: { select: doctorMarketTranslationSelect },
+            faqs: {
+              where: { isActive: true },
+              orderBy: [{ sortOrder: "asc" }, { question: "asc" }],
+              select: doctorMarketFaqSelect,
+            },
           },
           take: 1,
         },
@@ -314,13 +424,19 @@ export async function listDoctorsByCountry(countryCode: string, locale?: LocaleC
     // this row out into the FeaturedDoctor spotlight.
     const featuredId = await getFeaturedDoctorId(countryCode);
     return rows.map((d) => {
-      const merged = mergeDoctorTranslation(
-        d,
-        locale ?? d.country.defaultLocale,
-        d.country.defaultLocale,
+      const market = d.additionalCountries[0];
+      const marketDefaultLocale = market?.country.defaultLocale ?? d.country.defaultLocale;
+      const requestedLocale = locale ?? marketDefaultLocale;
+      const merged = mergeDoctorTranslation(d, requestedLocale, marketDefaultLocale);
+      const marketMerged = mergeDoctorMarketTranslation(
+        merged,
+        market?.translations,
+        requestedLocale,
+        marketDefaultLocale,
       );
       return {
-        ...stripPrivateContact(overrideImcRegistrationFromCountry(merged, countryCode)),
+        ...stripPrivateContact(overrideImcRegistrationFromCountry(marketMerged, countryCode)),
+        faqs: resolveDoctorMarketFaqs(market?.faqs, requestedLocale, marketDefaultLocale),
         isFeatured: d.id === featuredId,
       };
     });
@@ -434,17 +550,36 @@ export async function getDoctorByCountryAndSlug(
           // Match the listing endpoint's newest-first asset ordering so
           // the same doctor renders the same portrait on list and detail.
           orderBy: [{ updatedAt: "desc" }, { id: "desc" }],
-          select: { id: true, kind: true, key: true, path: true, altText: true },
+          select: {
+            id: true,
+            kind: true,
+            key: true,
+            path: true,
+            altText: true,
+            title: true,
+            caption: true,
+            description: true,
+          },
         },
         // Per-market registration row for this country (see Phase 2
         // note on overrideImcRegistrationFromCountry below).
         additionalCountries: {
           where: { country: { code: countryCode } },
           select: {
+            id: true,
+            countryId: true,
+            active: true,
+            country: { select: { id: true, code: true, name: true, defaultLocale: true } },
             chamberEntity: true,
             registrationNumber: true,
             division: true,
             isVerified: true,
+            translations: { select: doctorMarketTranslationSelect },
+            faqs: {
+              where: { isActive: true },
+              orderBy: [{ sortOrder: "asc" }, { question: "asc" }],
+              select: doctorMarketFaqSelect,
+            },
           },
           take: 1,
         },
@@ -484,12 +619,20 @@ export async function getDoctorByCountryAndSlug(
       },
     });
     if (!doctor) return null;
-    const merged = mergeDoctorTranslation(
-      doctor,
-      locale ?? doctor.country.defaultLocale,
-      doctor.country.defaultLocale,
+    const market = doctor.additionalCountries[0];
+    const marketDefaultLocale = market?.country.defaultLocale ?? doctor.country.defaultLocale;
+    const requestedLocale = locale ?? marketDefaultLocale;
+    const merged = mergeDoctorTranslation(doctor, requestedLocale, marketDefaultLocale);
+    const marketMerged = mergeDoctorMarketTranslation(
+      merged,
+      market?.translations,
+      requestedLocale,
+      marketDefaultLocale,
     );
-    return stripPrivateContact(overrideImcRegistrationFromCountry(merged, countryCode));
+    return {
+      ...stripPrivateContact(overrideImcRegistrationFromCountry(marketMerged, countryCode)),
+      faqs: resolveDoctorMarketFaqs(market?.faqs, requestedLocale, marketDefaultLocale),
+    };
   } catch (error) {
     throw normalizeDbError(error, "Doctors data is unavailable");
   }
@@ -598,6 +741,12 @@ async function syncProfileImageAsset(
   doctorId: string,
   countryId: string,
   profileImagePath: string | null | undefined,
+  imageSeo?: {
+    profileImageAltText?: string | null;
+    profileImageTitle?: string | null;
+    profileImageCaption?: string | null;
+    profileImageDescription?: string | null;
+  },
 ): Promise<void> {
   const key = doctorProfileImageKey(doctorId);
 
@@ -645,12 +794,28 @@ async function syncProfileImageAsset(
         path: profileImagePath,
         doctorId,
         countryId,
+        altText: imageSeo?.profileImageAltText ?? null,
+        title: imageSeo?.profileImageTitle ?? null,
+        caption: imageSeo?.profileImageCaption ?? null,
+        description: imageSeo?.profileImageDescription ?? null,
         isActive: true,
       },
       update: {
         path: profileImagePath,
         doctorId,
         countryId,
+        ...(imageSeo?.profileImageAltText !== undefined && {
+          altText: imageSeo.profileImageAltText,
+        }),
+        ...(imageSeo?.profileImageTitle !== undefined && {
+          title: imageSeo.profileImageTitle,
+        }),
+        ...(imageSeo?.profileImageCaption !== undefined && {
+          caption: imageSeo.profileImageCaption,
+        }),
+        ...(imageSeo?.profileImageDescription !== undefined && {
+          description: imageSeo.profileImageDescription,
+        }),
         isActive: true,
       },
     }),
@@ -681,10 +846,9 @@ async function syncAdditionalCountries(
   additionalCountryIds: string[] | undefined,
 ): Promise<void> {
   if (additionalCountryIds === undefined) return;
-  // Never insert the primary country into the join table — it's tracked
-  // by Doctor.countryId already.
+  // DoctorCountry is the canonical market row, including the primary country.
   const desired = new Set(
-    additionalCountryIds.filter((id) => id !== primaryCountryId),
+    [primaryCountryId, ...additionalCountryIds],
   );
   const existing = await tx.doctorCountry.findMany({
     where: { doctorId },
@@ -796,17 +960,26 @@ export async function createAdminDoctor(input: AdminDoctorCreateBody): Promise<A
             path,
             doctorId: created.id,
             countryId: input.countryId,
+            altText: input.profileImageAltText ?? null,
+            title: input.profileImageTitle ?? null,
+            caption: input.profileImageCaption ?? null,
+            description: input.profileImageDescription ?? null,
           },
           update: {
             path,
             doctorId: created.id,
             countryId: input.countryId,
+            altText: input.profileImageAltText ?? null,
+            title: input.profileImageTitle ?? null,
+            caption: input.profileImageCaption ?? null,
+            description: input.profileImageDescription ?? null,
           },
         });
       }
 
       // Multi-country listings — the M:N join only carries additional
       // countries; the primary one lives on Doctor.countryId.
+      await ensurePrimaryDoctorCountry(tx, created.id, input.countryId);
       await syncAdditionalCountries(
         tx,
         created.id,
@@ -940,7 +1113,8 @@ export async function updateAdminDoctor(
       }
 
       const effectiveCountryId = updated.countryId;
-      await syncProfileImageAsset(id, effectiveCountryId, body.profileImagePath);
+      await ensurePrimaryDoctorCountry(tx, id, effectiveCountryId);
+      await syncProfileImageAsset(id, effectiveCountryId, body.profileImagePath, body);
 
       if (body.translations !== undefined) {
         await upsertDoctorTranslations(tx, id, effectiveCountryId, body.translations);

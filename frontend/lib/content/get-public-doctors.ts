@@ -39,6 +39,8 @@ export type PublicDoctorRecord = {
   bio: string | null;
   seoTitle?: string;
   seoDescription?: string;
+  seoKeywords?: string[];
+  faqs?: Array<{ id: string; question: string; answer: string; category?: string | null }>;
   imcRegistration?: string;
   medicalRegistrationUrl?: string;
   qualifications?: string[];
@@ -50,6 +52,10 @@ export type PublicDoctorRecord = {
   specialties: string[];
   /** Resolved safe URL/path for Next/Image when the API returns a profile asset. */
   profileImageSrc?: string;
+  profileImageAltText?: string;
+  profileImageTitle?: string;
+  profileImageCaption?: string;
+  profileImageDescription?: string;
   editorialChecklist?: Record<string, unknown>;
 };
 
@@ -63,7 +69,15 @@ function readCountry(row: unknown): { code: CountryCode; name: string; teamPath:
   return { code, name, teamPath };
 }
 
-function profileImageFromRow(row: unknown): string | undefined {
+function profileImageFromRow(row: unknown):
+  | {
+      src: string;
+      altText?: string;
+      title?: string;
+      caption?: string;
+      description?: string;
+    }
+  | undefined {
   const assets = (row as { assets?: unknown }).assets;
   if (!Array.isArray(assets)) return undefined;
   // Backend orders active profile images newest-first. Trust that order
@@ -71,13 +85,52 @@ function profileImageFromRow(row: unknown): string | undefined {
   // canonical admin key.
   for (const a of assets) {
     if (!a || typeof a !== "object") continue;
-    const rec = a as { kind?: unknown; path?: unknown };
+    const rec = a as {
+      kind?: unknown;
+      path?: unknown;
+      altText?: unknown;
+      title?: unknown;
+      caption?: unknown;
+      description?: unknown;
+    };
     if (rec.kind !== "IMAGE" || typeof rec.path !== "string") continue;
     const url = resolveTrustedAssetUrl(rec.path);
     if (!url) continue;
-    return url;
+    return {
+      src: url,
+      ...(typeof rec.altText === "string" && rec.altText.trim()
+        ? { altText: rec.altText.trim() }
+        : {}),
+      ...(typeof rec.title === "string" && rec.title.trim()
+        ? { title: rec.title.trim() }
+        : {}),
+      ...(typeof rec.caption === "string" && rec.caption.trim()
+        ? { caption: rec.caption.trim() }
+        : {}),
+      ...(typeof rec.description === "string" && rec.description.trim()
+        ? { description: rec.description.trim() }
+        : {}),
+    };
   }
   return undefined;
+}
+
+function readDoctorFaqs(row: unknown): PublicDoctorRecord["faqs"] {
+  const faqs = (row as { faqs?: unknown }).faqs;
+  if (!Array.isArray(faqs)) return undefined;
+  const out: NonNullable<PublicDoctorRecord["faqs"]> = [];
+  for (const faq of faqs) {
+    if (!faq || typeof faq !== "object") continue;
+    const f = faq as Record<string, unknown>;
+    if (typeof f.question !== "string" || typeof f.answer !== "string") continue;
+    out.push({
+      id: typeof f.id === "string" ? f.id : f.question,
+      question: f.question,
+      answer: f.answer,
+      category: typeof f.category === "string" ? f.category : null,
+    });
+  }
+  return out.length > 0 ? out : undefined;
 }
 
 function specialtyNames(row: unknown): string[] {
@@ -96,7 +149,7 @@ function specialtyNames(row: unknown): string[] {
   return names;
 }
 
-function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
+export function normalizePublicDoctorRecord(row: unknown): PublicDoctorRecord | null {
   if (!row || typeof row !== "object") return null;
   const r = row as Record<string, unknown>;
   const id = typeof r.id === "string" ? r.id : null;
@@ -115,6 +168,12 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
     typeof r.seoDescription === "string" && r.seoDescription.trim() !== ""
       ? r.seoDescription.trim()
       : undefined;
+  const seoKeywords = Array.isArray(r.seoKeywords)
+    ? r.seoKeywords
+        .filter((v): v is string => typeof v === "string")
+        .map((v) => v.trim())
+        .filter(Boolean)
+    : undefined;
   const imcRegistration =
     typeof r.imcRegistration === "string" && r.imcRegistration.trim() !== ""
       ? r.imcRegistration.trim()
@@ -139,7 +198,8 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
         .map((v) => v.trim())
         .filter(Boolean)
     : undefined;
-  const profileImageSrc = profileImageFromRow(row);
+  const profileImage = profileImageFromRow(row);
+  const faqs = readDoctorFaqs(row);
   const editorialChecklist =
     r.editorialChecklist && typeof r.editorialChecklist === "object"
       ? (r.editorialChecklist as Record<string, unknown>)
@@ -153,6 +213,8 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
     bio,
     ...(seoTitle ? { seoTitle } : {}),
     ...(seoDescription ? { seoDescription } : {}),
+    ...(seoKeywords && seoKeywords.length > 0 ? { seoKeywords } : {}),
+    ...(faqs ? { faqs } : {}),
     ...(imcRegistration ? { imcRegistration } : {}),
     ...(medicalRegistrationUrl ? { medicalRegistrationUrl } : {}),
     ...(qualifications && qualifications.length > 0 ? { qualifications } : {}),
@@ -162,7 +224,13 @@ function normalizeDoctor(row: unknown): PublicDoctorRecord | null {
     countryName: country.name,
     teamPath: country.teamPath,
     specialties: specialtyNames(row),
-    ...(profileImageSrc ? { profileImageSrc } : {}),
+    ...(profileImage?.src ? { profileImageSrc: profileImage.src } : {}),
+    ...(profileImage?.altText ? { profileImageAltText: profileImage.altText } : {}),
+    ...(profileImage?.title ? { profileImageTitle: profileImage.title } : {}),
+    ...(profileImage?.caption ? { profileImageCaption: profileImage.caption } : {}),
+    ...(profileImage?.description
+      ? { profileImageDescription: profileImage.description }
+      : {}),
     ...(editorialChecklist ? { editorialChecklist } : {}),
   };
 }
@@ -177,7 +245,7 @@ export const getPublicDoctorsNormalized = cache(
 
     const out: PublicDoctorRecord[] = [];
     for (const row of res.data) {
-      const n = normalizeDoctor(row);
+      const n = normalizePublicDoctorRecord(row);
       if (n) out.push(n);
     }
     return out;

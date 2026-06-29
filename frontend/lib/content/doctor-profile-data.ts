@@ -1,4 +1,9 @@
-import { getPublicDoctorBySlug, parseLanguagesFromDoctorBio } from "@/lib/content/get-public-doctors";
+import {
+  getPublicDoctorBySlug,
+  normalizePublicDoctorRecord,
+  parseLanguagesFromDoctorBio,
+} from "@/lib/content/get-public-doctors";
+import { fetchDoctorByCountryAndSlug } from "@/lib/api/site-content-api";
 import { resolveDoctorProfileImageUrl } from "@/lib/content/get-public-assets";
 
 export type DoctorProfilePageData = {
@@ -21,7 +26,13 @@ export type DoctorProfilePageData = {
     medicalRegistrationUrl?: string;
     seoTitle?: string;
     seoDescription?: string;
+    seoKeywords?: string[];
+    faqs?: Array<{ id: string; question: string; answer: string; category?: string | null }>;
     editorialChecklist?: Record<string, unknown>;
+    imageAltText?: string;
+    imageTitle?: string;
+    imageCaption?: string;
+    imageDescription?: string;
   };
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
   /** Local public-folder path from CMS asset when safe (same-origin relative path). */
@@ -100,12 +111,19 @@ export function getDoctorProfileData(doctorSlug: string): DoctorProfilePageData 
 export async function resolveDoctorProfilePageData(
   doctorSlug: string,
   locale?: string,
+  countryCode?: string,
 ): Promise<DoctorProfilePageData> {
   const base = getDoctorProfileData(doctorSlug);
-  const [backend, profileImageSrc] = await Promise.all([
+  const [countryScopedDoctor, globalDoctor, profileImageSrc] = await Promise.all([
+    countryCode
+      ? fetchDoctorByCountryAndSlug(countryCode, doctorSlug, locale).then((res) =>
+          res.ok ? normalizePublicDoctorRecord(res.data.doctor) : undefined,
+        )
+      : Promise.resolve(undefined),
     getPublicDoctorBySlug(doctorSlug, locale),
     resolveDoctorProfileImageUrl(doctorSlug),
   ]);
+  const backend = countryScopedDoctor ?? globalDoctor;
 
   if (!backend) {
     const out: DoctorProfilePageData = profileImageSrc ? { ...base, profileImageSrc } : { ...base };
@@ -143,12 +161,25 @@ export async function resolveDoctorProfilePageData(
       ...(backend.medicalRegistrationUrl ? { medicalRegistrationUrl: backend.medicalRegistrationUrl } : {}),
       ...(backend.seoTitle ? { seoTitle: backend.seoTitle } : {}),
       ...(backend.seoDescription ? { seoDescription: backend.seoDescription } : {}),
+      ...(backend.seoKeywords ? { seoKeywords: backend.seoKeywords } : {}),
+      ...(backend.faqs ? { faqs: backend.faqs } : {}),
       ...(backend.editorialChecklist ? { editorialChecklist: backend.editorialChecklist } : {}),
+      imageAltText: backend.profileImageAltText ?? backend.fullName,
+      ...(backend.profileImageTitle ? { imageTitle: backend.profileImageTitle } : {}),
+      ...(backend.profileImageCaption ? { imageCaption: backend.profileImageCaption } : {}),
+      ...(backend.profileImageDescription
+        ? { imageDescription: backend.profileImageDescription }
+        : {}),
     },
   };
 
-  if (profileImageSrc) {
-    out.bookingCtaImage = { src: profileImageSrc, alt: backend.fullName };
+  const resolvedImageSrc = backend.profileImageSrc ?? profileImageSrc;
+  if (resolvedImageSrc) {
+    out.profileImageSrc = resolvedImageSrc;
+    out.bookingCtaImage = {
+      src: resolvedImageSrc,
+      alt: backend.profileImageAltText ?? backend.fullName,
+    };
   }
 
   return out;

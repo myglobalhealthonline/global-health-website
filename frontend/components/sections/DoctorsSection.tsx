@@ -25,6 +25,10 @@ type DoctorItem = {
   whatsappNumber?: string;
   bio: string;
   imageSrc?: string | null;
+  imageAltText?: string | null;
+  imageTitle?: string | null;
+  imageCaption?: string | null;
+  imageDescription?: string | null;
   /** Initials fallback when imageSrc is missing (DoctorCard derives from
    *  name if omitted). */
   initials?: string;

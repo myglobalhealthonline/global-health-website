@@ -40,6 +40,11 @@ type DoctorProfileTemplateProps = {
     verificationUrl?: string;
     regulatorName?: string | null;
     credentials?: Array<{ label: string; bodyName: string; bodyUrl?: string }>;
+    faqs?: Array<{ id: string; question: string; answer: string; category?: string | null }>;
+    imageAltText?: string;
+    imageTitle?: string;
+    imageCaption?: string;
+    imageDescription?: string;
   };
   bottomCta: { title: string; description: string; ctaLabel: string; ctaHref: string };
   profileImageSrc?: string;
@@ -116,7 +121,13 @@ export function DoctorProfileTemplate({
             {profileImageSrc ? (
               <Image
                 src={profileImageSrc}
-                alt={profile.name}
+                alt={profile.imageAltText ?? profile.name}
+                title={profile.imageTitle ?? undefined}
+                aria-describedby={
+                  profile.imageCaption || profile.imageDescription
+                    ? "doctor-profile-image-description"
+                    : undefined
+                }
                 fill
                 sizes="(min-width:1024px) 50vw, 100vw"
                 priority
@@ -137,6 +148,11 @@ export function DoctorProfileTemplate({
                 }}
               />
             )}
+            {profile.imageCaption || profile.imageDescription ? (
+              <p id="doctor-profile-image-description" className="sr-only">
+                {[profile.imageCaption, profile.imageDescription].filter(Boolean).join(" ")}
+              </p>
+            ) : null}
 
             {/* Subtle green wash */}
             <div
@@ -555,6 +571,36 @@ export function DoctorProfileTemplate({
                   className="h-[220px] w-full"
                   loading="lazy"
                 />
+              </div>
+            ) : null}
+
+            {profile.faqs && profile.faqs.length > 0 ? (
+              <div
+                className="mt-14 pt-10"
+                style={{ borderTop: "1px solid rgba(29,75,54,0.12)" }}
+              >
+                <p
+                  className="text-[11px] font-bold uppercase tracking-[0.22em]"
+                  style={{ color: "var(--color-brand-primary)" }}
+                >
+                  FAQs
+                </p>
+                <div className="mt-6 grid gap-3">
+                  {profile.faqs.map((faq) => (
+                    <details
+                      key={faq.id}
+                      className="rounded-[12px] border bg-white p-4"
+                      style={{ borderColor: "var(--color-border)" }}
+                    >
+                      <summary className="cursor-pointer text-[15px] font-bold text-[var(--color-text-primary)]">
+                        {faq.question}
+                      </summary>
+                      <p className="mt-3 text-[14px] leading-relaxed text-[var(--color-text-muted)]">
+                        {faq.answer}
+                      </p>
+                    </details>
+                  ))}
+                </div>
               </div>
             ) : null}
           </article>

@@ -148,6 +148,14 @@ export default async function AdminCreateDoctorPage({ searchParams }: PageProps)
       // M:N additional country listings (primary stays on Doctor.countryId).
       additionalCountryIds: raw.additionalCountryIds,
       ...(raw.profileImagePath === "" ? {} : { profileImagePath: raw.profileImagePath }),
+      profileImageAltText:
+        raw.profileImageAltText === "" ? null : raw.profileImageAltText,
+      profileImageTitle:
+        raw.profileImageTitle === "" ? null : raw.profileImageTitle,
+      profileImageCaption:
+        raw.profileImageCaption === "" ? null : raw.profileImageCaption,
+      profileImageDescription:
+        raw.profileImageDescription === "" ? null : raw.profileImageDescription,
       active: raw.active,
     };
 

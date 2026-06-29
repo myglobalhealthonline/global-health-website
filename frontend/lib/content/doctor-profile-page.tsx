@@ -40,7 +40,8 @@ export async function buildDoctorProfileMetadata(
   params: Promise<DoctorProfileRouteParams>,
 ): Promise<Metadata> {
   const { doctorSlug, countrySlug: routeCountrySlug, lang } = await params;
-  const data = await resolveDoctorProfilePageData(doctorSlug, lang);
+  const code = routeCountrySlug ? countryCodeFromSlug(routeCountrySlug) : null;
+  const data = await resolveDoctorProfilePageData(doctorSlug, lang, code ?? undefined);
   const validation = validatePublicDoctorRecord({
     fullName: data.profile.name,
     title: data.profile.title,
@@ -70,6 +71,7 @@ export async function buildDoctorProfileMetadata(
   return {
     title,
     description,
+    keywords: data.profile.seoKeywords,
     alternates: { canonical: url },
     openGraph: {
       type: "profile",
@@ -88,7 +90,8 @@ export async function buildDoctorProfileMetadata(
 
 export async function renderDoctorProfilePage(params: Promise<DoctorProfileRouteParams>) {
   const { doctorSlug, countrySlug: routeCountrySlug, lang: routeLang } = await params;
-  const data = await resolveDoctorProfilePageData(doctorSlug, routeLang);
+  const routeCode = routeCountrySlug ? countryCodeFromSlug(routeCountrySlug) : null;
+  const data = await resolveDoctorProfilePageData(doctorSlug, routeLang, routeCode ?? undefined);
   const countryNameToSlug: Record<string, string> = {
     Ireland: "ireland",
     Portugal: "portugal",

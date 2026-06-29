@@ -69,6 +69,33 @@ export type DoctorMe = {
       ibanMasked: string | null;
       ibanSet: boolean;
     };
+    markets: Array<{
+      id: string;
+      countryId: string;
+      active: boolean;
+      country: { id: string; code: string; name: string; slug: string; defaultLocale: string };
+      supportedLocales: Array<{ code: string; isDefault: boolean }>;
+      chamberEntity: string | null;
+      registrationNumber: string | null;
+      division: string | null;
+      isVerified: boolean;
+      verifiedAt: string | null;
+      translations: Array<{
+        id: string;
+        locale: string;
+        bio: string | null;
+        seoTitle: string | null;
+        seoDescription: string | null;
+        seoKeywords: string[];
+      }>;
+      bank: {
+        accountHolder: string | null;
+        bic: string | null;
+        ibanLast4: string | null;
+        ibanMasked: string | null;
+        ibanSet: boolean;
+      };
+    }>;
   };
   stats: {
     todayCount: number;

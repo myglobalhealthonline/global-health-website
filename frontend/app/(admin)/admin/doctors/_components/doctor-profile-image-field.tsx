@@ -5,6 +5,10 @@ import { Trash2, Upload } from "lucide-react";
 
 type Props = {
   initialPath?: string;
+  initialAltText?: string | null;
+  initialTitle?: string | null;
+  initialCaption?: string | null;
+  initialDescription?: string | null;
   /**
    * Optional id of the parent <form> when this component is rendered
    * outside the form element. HTML5 form-association ties the hidden
@@ -76,7 +80,15 @@ function initialsFor(name: string | undefined): string {
   );
 }
 
-export function DoctorProfileImageField({ initialPath, formId, fullName }: Props) {
+export function DoctorProfileImageField({
+  initialPath,
+  initialAltText,
+  initialTitle,
+  initialCaption,
+  initialDescription,
+  formId,
+  fullName,
+}: Props) {
   const [path, setPath] = useState(initialPath ?? "");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
@@ -252,6 +264,50 @@ export function DoctorProfileImageField({ initialPath, formId, fullName }: Props
         value={path}
         {...(formId ? { form: formId } : {})}
       />
+
+      <div className="grid gap-2">
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Alt text</span>
+          <input
+            name="profileImageAltText"
+            defaultValue={initialAltText ?? fullName ?? ""}
+            maxLength={500}
+            className="gh-input min-w-0 text-sm"
+            {...(formId ? { form: formId } : {})}
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Image title</span>
+          <input
+            name="profileImageTitle"
+            defaultValue={initialTitle ?? fullName ?? ""}
+            maxLength={500}
+            className="gh-input min-w-0 text-sm"
+            {...(formId ? { form: formId } : {})}
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Caption</span>
+          <input
+            name="profileImageCaption"
+            defaultValue={initialCaption ?? ""}
+            maxLength={1000}
+            className="gh-input min-w-0 text-sm"
+            {...(formId ? { form: formId } : {})}
+          />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="gh-field-label">Description</span>
+          <textarea
+            name="profileImageDescription"
+            defaultValue={initialDescription ?? ""}
+            rows={3}
+            maxLength={2000}
+            className="gh-input min-w-0 resize-y text-sm"
+            {...(formId ? { form: formId } : {})}
+          />
+        </label>
+      </div>
 
       {msg ? (
         <p className="text-xs text-[var(--color-status-warning-text)]">{msg}</p>

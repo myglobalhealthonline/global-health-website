@@ -98,6 +98,38 @@ export function AssetFields({ countries, doctorOptions, initial }: Props) {
         />
       </label>
 
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Image title</span>
+          <input
+            name="title"
+            className="gh-input min-w-0"
+            defaultValue={initial?.title ?? ""}
+            placeholder="Short image title for SEO"
+          />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="gh-field-label">Caption</span>
+          <input
+            name="caption"
+            className="gh-input min-w-0"
+            defaultValue={initial?.caption ?? ""}
+            placeholder="Optional visible/public caption"
+          />
+        </label>
+      </div>
+
+      <label className="flex flex-col gap-2">
+        <span className="gh-field-label">Image description</span>
+        <textarea
+          name="description"
+          rows={3}
+          className="gh-input min-w-0 resize-y"
+          defaultValue={initial?.description ?? ""}
+          placeholder="Optional longer description for accessibility and media inventory"
+        />
+      </label>
+
       <label className="flex flex-col gap-2">
         <span className="gh-field-label">Usage / location note</span>
         <textarea

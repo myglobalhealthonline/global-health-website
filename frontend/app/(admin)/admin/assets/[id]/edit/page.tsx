@@ -108,6 +108,9 @@ export default async function AdminEditAssetPage({
       key: raw.key,
       path: raw.path,
       altText: raw.altText.trim() === "" ? null : raw.altText.trim(),
+      title: raw.title.trim() === "" ? null : raw.title.trim(),
+      caption: raw.caption.trim() === "" ? null : raw.caption.trim(),
+      description: raw.description.trim() === "" ? null : raw.description.trim(),
       usageNote: raw.usageNote.trim() === "" ? null : raw.usageNote.trim(),
       isActive: raw.isActive,
     };

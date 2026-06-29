@@ -521,6 +521,10 @@ function DoctorPicker({
             whatsappNumber={doctor.whatsappNumber}
             bio={doctor.bio ?? ""}
             imageSrc={doctor.imageSrc ?? null}
+            imageAltText={doctor.imageAltText}
+            imageTitle={doctor.imageTitle}
+            imageCaption={doctor.imageCaption}
+            imageDescription={doctor.imageDescription}
             href={`/${country}/${lang}/doctors/${doctor.slug}`}
             bookingHref={buildBookHref({
               country,
