@@ -254,8 +254,8 @@ export default async function AdminDashboardPage() {
 
       {/* Stat strip — 5 up */}
       <section
-        className="mb-6 grid gap-4"
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}
+        className="mb-5 grid gap-3"
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}
       >
         <StatCard
           label="Active countries"
@@ -318,10 +318,7 @@ export default async function AdminDashboardPage() {
       </section>
 
       {/* Two-column body: activity + quick actions */}
-      <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: "minmax(0, 1.4fr) minmax(0, 1fr)" }}
-      >
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <AdminCard padding={0} className="overflow-hidden">
           <SectionHeader
             title="Recent activity"
@@ -419,7 +416,7 @@ export default async function AdminDashboardPage() {
                   style={{
                     padding: 14,
                     paddingLeft: 18,
-                    borderRadius: 12,
+                    borderRadius: 8,
                     border: "1px solid var(--color-border)",
                     background: "var(--color-background-page)",
                     textDecoration: "none",
@@ -430,9 +427,8 @@ export default async function AdminDashboardPage() {
                     style={{
                       width: 38,
                       height: 38,
-                      borderRadius: 11,
-                      background:
-                        "linear-gradient(135deg, var(--color-accent) 0%, var(--color-brand-mint) 100%)",
+                      borderRadius: 8,
+                      background: "var(--color-accent)",
                       color: "#143B30",
                       boxShadow:
                         "0 4px 12px rgba(176,241,34,0.28), inset 0 1px 0 rgba(255,255,255,0.4)",

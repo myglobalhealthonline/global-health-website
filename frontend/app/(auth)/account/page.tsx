@@ -108,7 +108,7 @@ export default async function AccountOverviewPage() {
       />
 
       {/* ── Stat tiles ─────────────────────────────────────────────── */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-[1fr_0.9fr_1.1fr]">
         <StatCard
           tone="brand"
           label={a.dashboard.openLabel}
@@ -246,8 +246,8 @@ export default async function AccountOverviewPage() {
       <SubscriptionDashboard locale={locale} />
 
       {/* ── Main grid: Recent bookings + Quick actions ────────────── */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <AdminCard padding={0} className="lg:col-span-2">
+      <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
+        <AdminCard padding={0}>
           <SectionHeader
             title={a.dashboard.recentBookings}
             right={

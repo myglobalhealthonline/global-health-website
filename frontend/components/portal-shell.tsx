@@ -141,7 +141,7 @@ export function PortalShell({
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-background-soft)]">
+    <div className="gh-portal-shell min-h-screen bg-[var(--color-background-soft)]">
       {/* Mobile overlay */}
       {navOpen ? (
         <button
@@ -156,14 +156,9 @@ export function PortalShell({
           translate; on desktop the main column gets `lg:pl-[260px]`
           so content doesn't slide under it. */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-[260px] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
+        className={`gh-portal-sidebar fixed inset-y-0 left-0 z-40 flex w-[236px] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
           navOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         }`}
-        style={{
-          background: "var(--color-background-dark)",
-          color: "rgba(255,255,255,0.85)",
-          borderRight: "1px solid rgba(255,255,255,0.06)",
-        }}
       >
           <div
             className="gh-admin-sidebar-logo px-5 pb-[18px] pt-5"
@@ -217,16 +212,10 @@ export function PortalShell({
 
       {/* Main column — offset by sidebar width on desktop so content
           doesn't slide under the fixed sidebar. */}
-      <div className="flex min-h-screen min-w-0 flex-col lg:pl-[260px]">
+      <div className="flex min-h-screen min-w-0 flex-col lg:pl-[236px]">
           {/* Top header — sticky, frosted-glass over scrolling content. */}
           <header
-            className="sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--color-border)] px-4 sm:px-7"
-            style={{
-              background: "color-mix(in srgb, var(--color-background-page) 88%, transparent)",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
-              boxShadow: "0 1px 0 var(--color-border)",
-            }}
+            className="gh-portal-topbar sticky top-0 z-20 flex h-[58px] shrink-0 items-center justify-between gap-3 border-b border-[var(--color-border)] px-4 sm:px-6"
           >
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button
@@ -370,7 +359,7 @@ export function PortalShell({
             </div>
           </header>
 
-          <main className="gh-admin-main min-w-0 flex-1 px-4 py-6 sm:px-7 sm:py-8">
+          <main className="gh-admin-main gh-portal-main min-w-0 flex-1 px-4 py-5 sm:px-6 sm:py-6">
             {children}
           </main>
         </div>
@@ -400,8 +389,7 @@ function SidebarSectionLabel({ label }: { label: string }) {
           width: 14,
           height: 2,
           borderRadius: 2,
-          background:
-            "linear-gradient(90deg, var(--color-accent) 0%, transparent 100%)",
+          background: "var(--color-brand-mint)",
         }}
       />
       <span>{label}</span>
@@ -431,11 +419,9 @@ function SidebarItem({
       className="relative flex w-full items-center gap-2.5"
       style={{
         padding: "9px 12px",
-        borderRadius: 10,
-        background: active
-          ? "linear-gradient(90deg, rgba(176,241,34,0.18) 0%, rgba(176,241,34,0.04) 100%)"
-          : "transparent",
-        color: active ? "var(--color-accent)" : "rgba(255,255,255,0.80)",
+        borderRadius: 8,
+        background: active ? "rgba(255,255,255,0.10)" : "transparent",
+        color: active ? "#D9F99D" : "rgba(255,255,255,0.80)",
         fontSize: 13,
         fontWeight: active ? 700 : 500,
         textDecoration: "none",
@@ -457,7 +443,7 @@ function SidebarItem({
             width: 3,
             height: 18,
             borderRadius: 2,
-            background: "var(--color-accent)",
+            background: "var(--color-brand-mint)",
           }}
         />
       ) : null}
@@ -469,7 +455,7 @@ function SidebarItem({
         <span
           className="inline-flex min-w-[20px] items-center justify-center rounded-full px-1.5 text-[10px] font-bold"
           style={{
-            background: "var(--color-accent)",
+            background: "#D9F99D",
             color: "var(--color-background-dark)",
           }}
         >

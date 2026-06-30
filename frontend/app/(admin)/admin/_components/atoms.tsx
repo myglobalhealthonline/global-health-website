@@ -34,27 +34,14 @@ export function PageHeader({
 }) {
   return (
     <header
-      className="relative mb-7 flex flex-wrap items-end justify-between gap-6 pl-4"
-      style={{
-        borderLeft: "3px solid transparent",
-        backgroundImage:
-          "linear-gradient(white, white), linear-gradient(180deg, var(--color-brand-primary) 0%, var(--color-accent) 100%)",
-        backgroundOrigin: "border-box",
-        backgroundClip: "padding-box, border-box",
-      }}
+      className="gh-portal-page-header relative mb-5 flex flex-wrap items-end justify-between gap-4"
     >
       <div className="min-w-0">
         {eyebrow ? (
           <p className="gh-eyebrow inline-flex items-center gap-2">
             <span
               aria-hidden
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: 999,
-                background: "var(--color-accent)",
-                boxShadow: "0 0 0 3px rgba(176,241,34,0.18)",
-              }}
+              className="gh-portal-eyebrow-dot"
             />
             {eyebrow}
           </p>
@@ -63,16 +50,16 @@ export function PageHeader({
           className="m-0 tracking-[-0.025em] text-[var(--color-text-primary)]"
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: "clamp(28px, 2.6vw, 38px)",
+            fontSize: "clamp(24px, 2.2vw, 34px)",
             fontWeight: 800,
-            lineHeight: 1.1,
+            lineHeight: 1.06,
             marginTop: eyebrow ? 10 : 0,
           }}
         >
           {title}
         </h1>
         {description ? (
-          <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-[var(--color-text-muted)]">
+          <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-[var(--color-text-muted)]">
             {description}
           </p>
         ) : null}
@@ -111,29 +98,19 @@ export function SectionHeader({
 }) {
   return (
     <div
-      className="flex items-start justify-between gap-4 border-b border-[var(--color-border)] px-5 py-4"
-      style={{
-        background:
-          "linear-gradient(180deg, var(--color-background-page) 0%, var(--color-background-soft) 100%)",
-      }}
+      className="gh-portal-section-header flex items-start justify-between gap-4 border-b border-[var(--color-border)] px-5 py-4"
     >
       <div className="min-w-0">
         <div className="flex items-center gap-2.5">
           <span
             aria-hidden
-            style={{
-              width: 3,
-              height: 16,
-              borderRadius: 2,
-              background:
-                "linear-gradient(180deg, var(--color-brand-primary), var(--color-accent))",
-            }}
+            className="gh-portal-section-rule"
           />
           <h3
             className="m-0 text-[var(--color-text-primary)]"
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: 800,
               letterSpacing: "-0.01em",
             }}
@@ -171,10 +148,9 @@ export function AdminCard({
     <div
       className={`gh-admin-card ${className}`}
       style={{
-        background:
-          "linear-gradient(180deg, var(--color-background-page) 0%, #FCFDF8 100%)",
+        background: "var(--color-background-page)",
         border: "1px solid var(--color-border)",
-        borderRadius: 16,
+        borderRadius: 12,
         boxShadow: "var(--shadow-soft)",
         padding,
         ...style,
@@ -208,18 +184,18 @@ export function StatCard({
 }) {
   const tileBg =
     tone === "brand"
-      ? "linear-gradient(135deg, var(--color-brand-primary) 0%, #2A6B4E 100%)"
+      ? "var(--color-brand-primary)"
       : tone === "accent"
-        ? "linear-gradient(135deg, var(--color-accent) 0%, var(--color-brand-mint) 100%)"
-        : "linear-gradient(135deg, #F6F8F1 0%, #EDF2E2 100%)";
+        ? "var(--color-accent)"
+        : "var(--color-background-soft)";
   const tileFg =
     tone === "brand" ? "#B0F122" : tone === "accent" ? "#143B30" : "var(--color-brand-primary)";
   const tileShadow =
     tone === "brand"
-      ? "0 6px 16px rgba(29,75,54,0.25), inset 0 1px 0 rgba(255,255,255,0.1)"
+      ? "inset 0 1px 0 rgba(255,255,255,0.12)"
       : tone === "accent"
-        ? "0 6px 16px rgba(176,241,34,0.30), inset 0 1px 0 rgba(255,255,255,0.4)"
-        : "inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(29,75,54,0.04)";
+        ? "inset 0 1px 0 rgba(255,255,255,0.45)"
+        : "inset 0 1px 0 rgba(255,255,255,0.75)";
 
   const inner = (
     <div className="relative">
@@ -229,6 +205,7 @@ export function StatCard({
           render on the same page. */}
       <span
         aria-hidden
+        className="gh-stat-decor"
         style={{
           position: "absolute",
           top: -10,
@@ -260,7 +237,7 @@ export function StatCard({
         }}
       />
       <div className="relative flex items-start justify-between" style={{ zIndex: 1 }}>
-        <p className="m-0 text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--color-text-muted)]">
+        <p className="m-0 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
           {label}
         </p>
         <span
@@ -268,7 +245,7 @@ export function StatCard({
           style={{
             width: 40,
             height: 40,
-            borderRadius: 12,
+            borderRadius: 10,
             background: tileBg,
             color: tileFg,
             boxShadow: tileShadow,
@@ -281,16 +258,12 @@ export function StatCard({
         className="relative m-0 mt-3"
         style={{
           fontFamily: "var(--font-display)",
-          fontSize: 44,
+          fontSize: 36,
           fontWeight: 800,
-          letterSpacing: "-0.03em",
+          letterSpacing: "-0.02em",
           lineHeight: 1,
-          background:
-            "linear-gradient(180deg, var(--color-text-primary) 0%, #2A5A45 100%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-          color: "transparent",
+          color: "var(--color-text-primary)",
+          fontVariantNumeric: "tabular-nums",
         }}
       >
         {value}
@@ -309,12 +282,11 @@ export function StatCard({
         href={href}
         className="gh-stat-card block"
         style={{
-          background:
-            "linear-gradient(180deg, var(--color-background-page) 0%, #FCFDF8 100%)",
+          background: "var(--color-background-page)",
           border: "1px solid var(--color-border)",
-          borderRadius: 16,
+          borderRadius: 12,
           boxShadow: "var(--shadow-soft)",
-          padding: 20,
+          padding: 18,
           textDecoration: "none",
           color: "inherit",
           position: "relative",
@@ -326,7 +298,7 @@ export function StatCard({
       </Link>
     );
   }
-  return <AdminCard padding={20}>{inner}</AdminCard>;
+  return <AdminCard padding={18}>{inner}</AdminCard>;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -345,27 +317,27 @@ export type PillTone =
 const PILL_TONES: Record<PillTone, { bg: string; fg: string; bd: string; dot?: string }> = {
   neutral: { bg: "var(--color-background-soft)", fg: "var(--color-text-body)", bd: "var(--color-border)", dot: "#9A9A9A" },
   published: {
-    bg: "linear-gradient(180deg, rgba(176,241,34,0.20) 0%, rgba(143,176,33,0.18) 100%)",
+    bg: "rgba(143,176,33,0.14)",
     fg: "var(--color-brand-primary)",
     bd: "rgba(143,176,33,0.40)",
     dot: "var(--color-brand-mint)",
   },
   draft: { bg: "#F5F5F4", fg: "#78716C", bd: "#E5E5E3", dot: "#A8A29E" },
   pending: {
-    bg: "linear-gradient(180deg, #FEF7E0 0%, #FEF3C7 100%)",
+    bg: "#FEF3C7",
     fg: "#92400E",
     bd: "#FDE68A",
     dot: "#D97706",
   },
   active: {
-    bg: "linear-gradient(180deg, #ECFDF5 0%, #DCFCE7 100%)",
+    bg: "#DCFCE7",
     fg: "#166534",
     bd: "#BBF7D0",
     dot: "#22C55E",
   },
   inactive: { bg: "#FEE2E2", fg: "#991B1B", bd: "#FECACA", dot: "#EF4444" },
   brand: {
-    bg: "linear-gradient(180deg, var(--color-brand-primary) 0%, #163826 100%)",
+    bg: "var(--color-brand-primary)",
     fg: "#B0F122",
     bd: "transparent",
     dot: "#B0F122",
@@ -434,8 +406,7 @@ export function Thead({ children }: { children: ReactNode }) {
     <thead>
       <tr
         style={{
-          background:
-            "linear-gradient(180deg, #F6F8F1 0%, #EDF2E2 100%)",
+          background: "var(--color-background-soft)",
           borderBottom: "1px solid var(--color-border-strong)",
         }}
       >

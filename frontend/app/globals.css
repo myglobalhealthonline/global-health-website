@@ -1491,14 +1491,248 @@ img {
  * brand block atmosphere instead of sitting flat on the dark surface. */
 .gh-admin-sidebar-logo {
   position: relative;
+  overflow: hidden;
 }
 .gh-admin-sidebar-logo::before {
   content: "";
   position: absolute;
-  inset: -20px -40px auto -40px;
-  height: 120px;
-  background: radial-gradient(ellipse at center top, rgba(176, 241, 34, 0.10) 0%, transparent 70%);
+  inset: 0;
+  background: rgba(255, 255, 255, 0.035);
   pointer-events: none;
+}
+
+/* Portal redesign: admin, doctor, and patient share one compact work surface. */
+.gh-portal-shell {
+  position: relative;
+  isolation: isolate;
+  background-color: #f4f6ef;
+}
+
+.gh-portal-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("/images/portal/portal-ambient-texture.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.2;
+}
+
+.gh-portal-shell::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: rgba(246, 248, 241, 0.84);
+}
+
+.gh-portal-sidebar {
+  background: rgba(18, 54, 39, 0.96);
+  color: rgba(255, 255, 255, 0.86);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 18px 0 50px rgba(20, 52, 39, 0.1);
+  overflow: hidden;
+}
+
+.gh-portal-sidebar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("/images/portal/portal-sidebar-texture.png");
+  background-size: cover;
+  background-position: left center;
+  opacity: 0.34;
+}
+
+.gh-portal-sidebar > * {
+  position: relative;
+}
+
+.gh-portal-topbar {
+  background: rgba(250, 251, 247, 0.86);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 1px 0 rgba(29, 75, 54, 0.08);
+}
+
+.gh-portal-main {
+  width: 100%;
+  max-width: 1380px;
+  margin-inline: auto;
+}
+
+.gh-portal-page-header {
+  min-height: 116px;
+  padding: 22px 24px;
+  border: 1px solid rgba(29, 75, 54, 0.1);
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.9);
+  background-image: url("/images/portal/portal-header-wash.png");
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 16px 44px rgba(29, 75, 54, 0.08);
+  overflow: hidden;
+}
+
+.gh-portal-page-header > * {
+  position: relative;
+}
+
+.gh-portal-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-brand-mint);
+  box-shadow: 0 0 0 3px rgba(143, 176, 33, 0.14);
+}
+
+.gh-portal-section-header {
+  background: rgba(250, 251, 247, 0.72);
+}
+
+.gh-portal-section-rule {
+  width: 3px;
+  height: 15px;
+  border-radius: 2px;
+  background: var(--color-brand-mint);
+}
+
+.gh-admin-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px !important;
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  box-shadow: 0 10px 32px rgba(29, 75, 54, 0.07) !important;
+}
+
+.gh-admin-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("/images/portal/portal-card-tint.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.16;
+}
+
+.gh-admin-card > * {
+  position: relative;
+}
+
+.gh-stat-card {
+  border-radius: 8px !important;
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  box-shadow: 0 10px 30px rgba(29, 75, 54, 0.06) !important;
+}
+
+.gh-stat-card .gh-stat-accent,
+.gh-admin-card .gh-stat-accent,
+.gh-stat-card .gh-stat-decor,
+.gh-admin-card .gh-stat-decor {
+  display: none !important;
+}
+
+.gh-admin-main table,
+.gh-table {
+  font-size: 13px;
+}
+
+.gh-admin-main th,
+.gh-table th {
+  padding: 10px 14px;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.gh-admin-main td,
+.gh-table td {
+  padding: 11px 14px;
+}
+
+.gh-admin-table-wrap {
+  border-radius: 0 0 8px 8px;
+}
+
+.gh-admin-row:hover {
+  background: rgba(143, 176, 33, 0.055);
+}
+
+.gh-admin-row:hover > td:first-child {
+  box-shadow: inset 2px 0 0 0 var(--color-brand-mint);
+}
+
+.gh-admin-main :where(input, select, textarea, [contenteditable="true"]) {
+  border-radius: 8px !important;
+}
+
+.gh-admin-main :where(input, select) {
+  min-height: 42px;
+}
+
+.gh-admin-main :where(button, a[role="button"], .gh-icon-btn):active {
+  transform: translateY(1px) scale(0.99);
+}
+
+.gh-admin-main :where([role="tab"], .gh-admin-nav-link) {
+  border-radius: 8px;
+}
+
+.gh-portal-tabs {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(29, 75, 54, 0.22) transparent;
+}
+
+.gh-card {
+  border-radius: 8px !important;
+  background-color: rgba(255, 255, 255, 0.88) !important;
+  box-shadow: 0 10px 32px rgba(29, 75, 54, 0.06);
+}
+
+.gh-card:hover {
+  box-shadow: 0 14px 38px rgba(29, 75, 54, 0.09);
+}
+
+.gh-btn,
+.gh-admin-main :where(button[type="submit"], a.gh-btn) {
+  border-radius: 8px !important;
+}
+
+.gh-badge,
+.gh-pill {
+  border-radius: 6px !important;
+  letter-spacing: 0.045em;
+}
+
+.gh-icon-tile,
+.gh-icon-circle {
+  border-radius: 8px !important;
+}
+
+.gh-quick-action:hover {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.gh-quick-action::before {
+  background: var(--color-brand-mint);
+}
+
+.gh-admin-sidebar-logo::before {
+  background-image: url("/images/portal/portal-sidebar-texture.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.3;
+}
+
+@media (max-width: 767px) {
+  .gh-portal-page-header {
+    min-height: auto;
+    padding: 18px;
+  }
 }
 
 /* Legacy alias — keep backward compat */

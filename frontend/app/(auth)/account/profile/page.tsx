@@ -92,7 +92,7 @@ export default function AccountProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-5xl">
       <header className="mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
           {a.profile.breadcrumb}
@@ -116,7 +116,7 @@ export default function AccountProfilePage() {
 
       {/* Tab navigation */}
       <nav
-        className="mb-6 flex gap-1 overflow-x-auto rounded-lg bg-[var(--color-background-soft)] p-1"
+        className="gh-portal-tabs mb-5 flex gap-1 overflow-x-auto rounded-lg bg-white/70 p-1 ring-1 ring-[var(--color-border)]"
         aria-label="Profile sections"
       >
         {TABS.map((tab) => (
@@ -126,7 +126,7 @@ export default function AccountProfilePage() {
             onClick={() => setActiveTab(tab.id)}
             className={`whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === tab.id
-                ? "bg-white text-[var(--color-text-primary)] shadow-sm"
+                ? "bg-[var(--color-brand-primary)] text-white shadow-sm"
                 : "text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
             }`}
           >

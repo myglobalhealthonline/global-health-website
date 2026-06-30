@@ -92,7 +92,7 @@ export default async function DoctorOverviewPage() {
       />
 
       {/* ── Stat tiles ─────────────────────────────────────────────── */}
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-[1fr_0.9fr_1.1fr]">
         <StatCard
           tone="brand"
           label="Today"
@@ -161,8 +161,8 @@ export default async function DoctorOverviewPage() {
       ) : null}
 
       {/* ── Main grid: schedule + notifications ─────────────────── */}
-      <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <AdminCard padding={0} className="lg:col-span-2">
+      <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
+        <AdminCard padding={0}>
           <SectionHeader
             title="Today's schedule"
             description="Open or upcoming appointments scheduled today."
@@ -272,7 +272,7 @@ export default async function DoctorOverviewPage() {
       </div>
 
       {/* ── Quick links ───────────────────────────────────────────── */}
-      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+      <div className="mt-5 grid gap-3 sm:grid-cols-[1.1fr_0.9fr_1fr]">
         <QuickActionCard
           href="/doctor/patients"
           icon={<Users className="size-5" aria-hidden />}
@@ -314,7 +314,7 @@ function QuickActionCard({
       style={{
         background: "var(--color-background-page)",
         border: "1px solid var(--color-border)",
-        borderRadius: 16,
+        borderRadius: 8,
         boxShadow: "var(--shadow-soft)",
         padding: 20,
         textDecoration: "none",
