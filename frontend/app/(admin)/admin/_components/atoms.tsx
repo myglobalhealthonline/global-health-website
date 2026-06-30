@@ -557,33 +557,41 @@ export function Toggle({
   ariaLabel: string;
   formAction?: (formData: FormData) => void;
 }) {
+  const trackWidth = size * 1.75;
+  const trackHeight = size;
+  const knobSize = size - 4;
+  const padding = 2;
   return (
     <button
       type="submit"
       name={name}
       value={value}
+      role="switch"
+      aria-checked={on}
       aria-label={ariaLabel}
       formAction={formAction}
+      className="gh-admin-toggle"
       style={{
-        width: size * 1.75,
-        height: size,
+        width: trackWidth,
+        height: trackHeight,
         borderRadius: 999,
         background: on ? "var(--color-brand-primary)" : "var(--color-border-strong)",
         border: "none",
         cursor: "pointer",
-        padding: 2,
+        padding,
         position: "relative",
         transition: "background 180ms",
+        flexShrink: 0,
       }}
     >
       <span
         aria-hidden
         style={{
           position: "absolute",
-          top: 2,
-          left: on ? `calc(100% - ${size - 2}px)` : 2,
-          width: size - 4,
-          height: size - 4,
+          top: padding,
+          left: on ? trackWidth - knobSize - padding : padding,
+          width: knobSize,
+          height: knobSize,
           borderRadius: "50%",
           background: "#fff",
           boxShadow: "0 1px 3px rgba(0,0,0,0.20)",

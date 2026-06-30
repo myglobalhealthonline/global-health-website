@@ -190,6 +190,7 @@ enum AuditAction {
   PATIENT_ALERT_UPDATED
   MEET_LINK_GENERATED
   COUNTRY_FOOTER_UPDATED
+  GP_SETTINGS_UPDATED
   USER_UPDATED
   USER_ROLE_CHANGED
   USER_PASSWORD_RESET
@@ -1314,6 +1315,11 @@ model Appointment {
   /// BCP-47 language code chosen by patient at booking time (e.g. "en", "pt", "fr").
   /// Null for legacy bookings made before language selection was introduced.
   consultationLanguageCode  String?
+  /// Why this doctor was auto-assigned by the same-day GP quick-book flow
+  /// (e.g. "PRIORITY_24H", "ROTATION", "ONLY_AVAILABLE"). Null for manual /
+  /// doctor-first bookings where the patient picked the clinician. Populated
+  /// at mint from the GpAssignmentLog row keyed by timeSlotId.
+  assignmentReason          String?
   fullName                  String
   email                     String
   phone                     String?
@@ -2273,6 +2279,33 @@ model Setting {
   key       String   @id
   value     Json
   updatedAt DateTime @updatedAt
+}
+
+/// Audit trail for the same-day GP quick-book auto-assignment.
+///
+/// Written when the homepage timeslot-first flow resolves a GP doctor for a
+/// chosen language + slot (POST /api/public/gp-assign). Keyed by the claimed
+/// `timeSlotId` so the post-payment Appointment (which carries the same slot)
+/// can back-fill `consultationLanguageCode` + `assignmentReason`, and so admins
+/// can review WHY a given clinician was picked.
+///
+/// `reason` is one of: PRIORITY_24H (priority doctor inside the 24h window),
+/// ROTATION (fair round-robin pick), ONLY_AVAILABLE (single eligible doctor).
+model GpAssignmentLog {
+  id           String   @id @default(cuid())
+  /// The doctor's slot that was resolved + (subsequently) held. Unique so a
+  /// re-resolve of the same slot upserts rather than duplicates.
+  timeSlotId   String   @unique
+  doctorId     String
+  countryCode  String
+  serviceId    String
+  /// BCP-47 language the patient selected on the homepage dropdown.
+  languageCode String
+  reason       String
+  createdAt    DateTime @default(now())
+
+  @@index([countryCode, createdAt])
+  @@index([doctorId, createdAt])
 }
 
 /// Clinical SOAP note bound to a single Appointment. Created lazily —

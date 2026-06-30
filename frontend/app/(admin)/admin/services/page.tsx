@@ -394,10 +394,15 @@ export default async function AdminServicesPage({
                         aria-checked={service.isActive}
                         aria-label={`${service.isActive ? "Deactivate" : "Activate"} ${service.name}`}
                         title={service.isActive ? "Active — click to deactivate" : "Inactive — click to activate"}
-                        className="inline-flex items-center gap-2"
+                        className={`gh-admin-status-toggle ${
+                          service.isActive
+                            ? "gh-admin-status-toggle-on"
+                            : "gh-admin-status-toggle-off"
+                        } inline-flex items-center`}
                         style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
                       >
                         <span
+                          className="gh-admin-status-toggle__track"
                           aria-hidden
                           style={{
                             display: "inline-flex",
@@ -422,16 +427,6 @@ export default async function AdminServicesPage({
                               boxShadow: "var(--shadow-soft)",
                             }}
                           />
-                        </span>
-                        <span
-                          className="text-[12px] font-semibold"
-                          style={{
-                            color: service.isActive
-                              ? "var(--color-brand-primary)"
-                              : "var(--color-text-muted)",
-                          }}
-                        >
-                          {service.isActive ? "Active" : "Inactive"}
                         </span>
                       </button>
                     </form>

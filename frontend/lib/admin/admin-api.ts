@@ -1443,6 +1443,35 @@ export async function setAdminDoctorFeatured(
   );
 }
 
+/** Same-day GP quick-book config for a country (which GENERAL service the
+ *  homepage timeslot-first flow books + the priority/Tiago GP). */
+export type AdminGpSettingsPayload = {
+  countryCode: string;
+  sameDayServiceId: string | null;
+  priorityDoctorId: string | null;
+  resolvedService: { id: string; slug: string; name: string } | null;
+  generalServices: Array<{ id: string; slug: string; name: string }>;
+  gpDoctors: Array<{ id: string; fullName: string; languages: string[] }>;
+};
+
+export async function fetchAdminGpSettings(countryCode: string) {
+  return adminRequest<AdminGpSettingsPayload>(
+    `/api/admin/countries/${encodeURIComponent(countryCode)}/gp-settings`,
+  );
+}
+
+/** Set/clear the same-day GP service and/or priority doctor. Pass `null` to
+ *  clear a value; omit a field to leave it unchanged. */
+export async function updateAdminGpSettings(
+  countryCode: string,
+  body: { sameDayServiceId?: string | null; priorityDoctorId?: string | null },
+) {
+  return adminRequest<{ countryCode: string }>(
+    `/api/admin/countries/${encodeURIComponent(countryCode)}/gp-settings`,
+    { method: "PUT", body },
+  );
+}
+
 /** Mint or refresh a doctor portal invite. Idempotent — second call for
  *  the same doctor "resends" with a new token. */
 export type AdminDoctorInvitePayload = {

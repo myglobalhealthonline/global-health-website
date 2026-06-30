@@ -251,11 +251,22 @@ async function fulfillPaidOrderFromCheckoutSession(
       const aptPhone = item.patientPhone ?? order.phone;
       const aptDob = item.patientDateOfBirth ?? null;
       const aptNotes = item.patientNotes ?? null;
+      // Same-day GP quick-book audit: when this slot was auto-assigned, the
+      // GpAssignmentLog row (keyed by the slot) carries the patient's chosen
+      // consultation language + why the doctor was picked. Back-fill both onto
+      // the appointment so the doctor sees the language and admins can review
+      // the assignment. Null for doctor-first bookings (no log row).
+      const gpAssignment = await tx.gpAssignmentLog.findUnique({
+        where: { timeSlotId: item.timeSlotId },
+        select: { languageCode: true, reason: true },
+      });
       const apt = await tx.appointment.create({
         data: {
           userId: order.userId,
           countryCode: order.countryCode,
           consultationType,
+          consultationLanguageCode: gpAssignment?.languageCode ?? null,
+          assignmentReason: gpAssignment?.reason ?? null,
           fullName: aptFullName,
           email: aptEmail,
           phone: aptPhone,

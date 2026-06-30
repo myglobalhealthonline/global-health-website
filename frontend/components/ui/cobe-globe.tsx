@@ -7,6 +7,7 @@ export type GlobeMarker = {
   id: string;
   location: [number, number];
   label: string;
+  flagCode?: string;
 };
 
 export type GlobeArc = {
@@ -289,18 +290,7 @@ export function Globe({
               bottom: "anchor(top)",
               left: "anchor(center)",
               translate: "-50% 0",
-              marginBottom: 8,
-              padding: "3px 7px",
-              borderRadius: 999,
-              background: "rgba(8, 33, 27, 0.86)",
-              border: "1px solid rgba(176, 241, 34, 0.35)",
-              color: "#ffffff",
-              fontSize: "0.62rem",
-              fontWeight: 800,
-              letterSpacing: "0.08em",
-              lineHeight: 1,
-              textTransform: "uppercase",
-              whiteSpace: "nowrap",
+              marginBottom: 6,
               pointerEvents: "none",
               opacity: `var(--cobe-visible-${m.id}, 0)`,
               filter: `blur(calc((1 - var(--cobe-visible-${m.id}, 0)) * 8px))`,
@@ -308,7 +298,39 @@ export function Globe({
             } satisfies AnchorStyle
           }
         >
-          {m.label}
+          {m.flagCode ? (
+            <span
+              aria-hidden
+              className={`fi fi-${m.flagCode}`}
+              style={{
+                display: "inline-block",
+                width: 20,
+                height: 15,
+                borderRadius: 2,
+                boxShadow: "0 1px 5px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.3)",
+                overflow: "hidden",
+              }}
+            />
+          ) : (
+            <span
+              style={{
+                display: "block",
+                padding: "3px 7px",
+                borderRadius: 999,
+                background: "rgba(8, 33, 27, 0.86)",
+                border: "1px solid rgba(176, 241, 34, 0.35)",
+                color: "#ffffff",
+                fontSize: "0.62rem",
+                fontWeight: 800,
+                letterSpacing: "0.08em",
+                lineHeight: 1,
+                textTransform: "uppercase",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {m.label}
+            </span>
+          )}
         </div>
       ))}
     </div>

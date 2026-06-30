@@ -43,6 +43,7 @@ import {
 } from "@/lib/content/get-country-collections";
 import { isCountryFeatureEnabled } from "@/lib/content/country-features";
 import { getPublicDoctorsNormalized } from "@/lib/content/get-public-doctors";
+import { getGpLanguages } from "@/lib/content/get-gp-availability";
 import { getCountryTrust, doctorVerificationUrl } from "@/lib/content/get-country-trust";
 import { VerifiedProfessionals } from "@/components/sections/VerifiedProfessionals";
 import { localeDisplayName } from "@/lib/i18n/locale-display";
@@ -172,6 +173,7 @@ export default async function CountryLangHomePage({
     prescriptionServices,
     allDoctors,
     countryTrust,
+    gpLanguages,
   ] =
     await Promise.all([
       getPublicPage(code, "HOME", lang as PublicLocale),
@@ -181,6 +183,7 @@ export default async function CountryLangHomePage({
       getCountryServices(code, "PRESCRIPTION", lang),
       getPublicDoctorsNormalized(lang),
       getCountryTrust(code),
+      getGpLanguages(code),
     ]);
 
   // Country regulator's public verification page (medicalcouncil.ie /
@@ -249,26 +252,6 @@ export default async function CountryLangHomePage({
           ? `${d.specialties[0]}, ${config.name}`
           : `${d.title}, ${config.name}`,
       imageSrc: d.imageSrc,
-    }));
-
-  // Hero quick-book wizard data: bookable doctors + the consultations they are
-  // assigned to. Only doctors with at least one assigned service can be booked.
-  const wizardServices = [...generalServices, ...specialistServices].map((s) => ({
-    id: s.id,
-    slug: s.slug,
-    name: s.name,
-    durationMinutes: s.durationMinutes,
-    basePriceCents: s.basePriceCents ?? null,
-    currencyCode: s.currencyCode ?? null,
-  }));
-  const wizardDoctors = countryDoctors
-    .filter((d) => d.assignedServiceIds.length > 0)
-    .map((d) => ({
-      slug: d.slug,
-      name: d.fullName,
-      role: d.specialties.length > 0 ? `${d.specialties[0]}, ${config.name}` : config.name,
-      imageSrc: d.imageSrc ?? null,
-      serviceIds: d.assignedServiceIds,
     }));
 
   // Admin-chosen Clinical Director takes priority. Falls back to the first
@@ -442,12 +425,12 @@ export default async function CountryLangHomePage({
         bookHref={page?.ctaHref ?? bookHref}
         totalDoctorsAcrossEurope={totalDoctorsAcrossEurope}
         liveDoctors={liveDoctors}
-        wizard={{
-          doctors: wizardDoctors,
-          services: wizardServices,
+        sameDay={{
           countryCode: code,
           countrySlug: slug,
           lang,
+          languages: gpLanguages.languages,
+          configured: gpLanguages.configured,
         }}
         heroTitle={null}
         heroSubtitle={page?.heroSubtitle ?? null}

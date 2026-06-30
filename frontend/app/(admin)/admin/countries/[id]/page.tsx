@@ -8,9 +8,11 @@ import {
   deleteAdminCountry,
   fetchAdminCountryById,
   fetchAdminDoctors,
+  fetchAdminGpSettings,
   fetchAdminServices,
   fetchAdminSpecialties,
   purgeAdminCountry,
+  updateAdminGpSettings,
 } from "@/lib/admin/admin-api";
 import { FlagBadge } from "../../_components/flag-badge";
 import { AdminCard, Btn, PageHeader, Pill } from "../../_components/atoms";
@@ -95,6 +97,27 @@ export default async function AdminCountryDetailPage({
       : 0,
     totalCategories: specialtiesRes.ok ? specialtiesRes.data.specialties.length : 0,
   };
+
+  // Same-day GP quick-book config (which GENERAL service the homepage
+  // timeslot-first flow books + the priority/Tiago doctor for the 24h window).
+  const gpSettingsRes = await fetchAdminGpSettings(c.code);
+  const gp = gpSettingsRes.ok ? gpSettingsRes.data : null;
+
+  async function saveGpSettingsAction(formData: FormData) {
+    "use server";
+    await requireAdminAction();
+    const rawService = String(formData.get("sameDayServiceId") ?? "").trim();
+    const rawDoctor = String(formData.get("priorityDoctorId") ?? "").trim();
+    const res = await updateAdminGpSettings(c.code, {
+      sameDayServiceId: rawService === "" ? null : rawService,
+      priorityDoctorId: rawDoctor === "" ? null : rawDoctor,
+    });
+    if (!res.ok) {
+      redirect(`/admin/countries/${id}?error=${encodeURIComponent(res.message)}`);
+    }
+    revalidatePath(`/admin/countries/${id}`);
+    redirect(`/admin/countries/${id}?success=${encodeURIComponent("Same-day GP settings saved")}`);
+  }
 
   return (
     <>
@@ -226,6 +249,81 @@ export default async function AdminCountryDetailPage({
                   </li>
                 ))}
               </ul>
+            )}
+          </AdminCard>
+
+          {/* Same-day GP quick-book config */}
+          <AdminCard>
+            <h3
+              className="m-0 text-[var(--color-text-primary)]"
+              style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
+            >
+              Same-day GP booking
+            </h3>
+            <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
+              The homepage timeslot-first flow auto-assigns a GP. Choose which
+              GENERAL service it books and (optionally) the priority doctor who
+              gets first refusal inside the 24-hour window.
+            </p>
+            {!gp ? (
+              <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+                Could not load GP settings{gpSettingsRes.ok ? "" : `: ${gpSettingsRes.message}`}
+              </p>
+            ) : gp.generalServices.length === 0 ? (
+              <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">
+                No active GENERAL service in this country yet. Create one before
+                the same-day flow can run.
+              </p>
+            ) : (
+              <form action={saveGpSettingsAction} className="grid gap-4">
+                <label className="grid gap-1.5">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    Same-day GP service
+                  </span>
+                  <select
+                    name="sameDayServiceId"
+                    defaultValue={gp.sameDayServiceId ?? ""}
+                    className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+                  >
+                    <option value="">Auto — first GENERAL service</option>
+                    {gp.generalServices.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="grid gap-1.5">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
+                    Priority doctor (24h window)
+                  </span>
+                  <select
+                    name="priorityDoctorId"
+                    defaultValue={gp.priorityDoctorId ?? ""}
+                    className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-[14px] text-[var(--color-text-primary)]"
+                  >
+                    <option value="">None — pure rotation</option>
+                    {gp.gpDoctors.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.fullName}
+                        {d.languages.length > 0 ? ` (${d.languages.join(", ")})` : ""}
+                      </option>
+                    ))}
+                  </select>
+                  {gp.gpDoctors.length === 0 ? (
+                    <span className="text-[12px] text-[var(--color-text-muted)]">
+                      No doctors are assigned to the same-day service yet.
+                    </span>
+                  ) : null}
+                </label>
+
+                <div>
+                  <button type="submit" className="gh-btn gh-btn-primary">
+                    Save GP settings
+                  </button>
+                </div>
+              </form>
             )}
           </AdminCard>
         </div>

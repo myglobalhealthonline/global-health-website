@@ -54,7 +54,13 @@ const WRITABLE_SETTING_KEYS = new Set<string>([
   "review.doctify.aggregate",
   "review.primaryProvider",
 ]);
-const WRITABLE_SETTING_PREFIXES = ["featured_doctor:"];
+const WRITABLE_SETTING_PREFIXES = [
+  "featured_doctor:",
+  // Same-day GP quick-book config + rotation state (per country).
+  "gp_same_day_service:",
+  "gp_priority_doctor:",
+  "gp_rotation_cursor:",
+];
 
 function assertWritableKey(key: string): void {
   if (WRITABLE_SETTING_KEYS.has(key)) return;

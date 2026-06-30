@@ -1674,7 +1674,7 @@ img {
   min-height: 42px;
 }
 
-.gh-admin-main :where(button, a[role="button"], .gh-icon-btn):active {
+.gh-admin-main :where(button:not(.gh-admin-toggle):not(.gh-admin-status-toggle), a[role="button"], .gh-icon-btn):active {
   transform: translateY(1px) scale(0.99);
 }
 
@@ -1898,7 +1898,7 @@ img {
 }
 
 .gh-btn,
-.gh-admin-main :where(button[type="submit"], a.gh-btn),
+.gh-admin-main :where(button[type="submit"]:not(.gh-admin-toggle):not(.gh-admin-status-toggle), a.gh-btn),
 .gh-admin-main :where(a[class*="rounded-md"], button[class*="rounded-md"]) {
   border-radius: var(--portal-radius-sm) !important;
   transition:
@@ -1909,12 +1909,12 @@ img {
     color 170ms ease-out !important;
 }
 
-.gh-admin-main :where(.gh-btn, button[type="submit"]) {
+.gh-admin-main :where(.gh-btn, button[type="submit"]:not(.gh-admin-toggle):not(.gh-admin-status-toggle)) {
   min-height: 38px;
 }
 
 .gh-btn-primary,
-.gh-admin-main button[type="submit"]:not([class*="ghost"]):not([class*="soft"]) {
+.gh-admin-main button[type="submit"]:not([class*="ghost"]):not([class*="soft"]):not(.gh-admin-toggle):not(.gh-admin-status-toggle) {
   background: #184633 !important;
   border-color: #184633 !important;
   color: #ffffff !important;
@@ -2055,7 +2055,61 @@ img {
   }
 }
 
-/* Legacy alias — keep backward compat */
+/* Toggle switch — clean pill style, no hover background changes */
+.gh-admin-main button.gh-admin-toggle[type="submit"] {
+  min-height: unset !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  flex: 0 0 auto !important;
+  background: none !important;
+}
+
+.gh-admin-main button.gh-admin-toggle[type="submit"]:hover {
+  background: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.gh-admin-main button.gh-admin-toggle[type="submit"][aria-checked="true"] {
+  background: var(--color-brand-primary) !important;
+}
+
+.gh-admin-main button.gh-admin-toggle[type="submit"][aria-checked="false"] {
+  background: var(--color-border-strong, var(--color-border)) !important;
+}
+
+.gh-admin-main button.gh-admin-status-toggle[type="submit"] {
+  width: auto !important;
+  min-height: auto !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: inherit !important;
+  white-space: nowrap;
+}
+
+.gh-admin-main button.gh-admin-status-toggle[type="submit"]:hover {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.gh-admin-main button.gh-admin-status-toggle[type="submit"]:focus-visible,
+.gh-admin-main button.gh-admin-toggle[type="submit"]:focus-visible {
+  outline: 2px solid rgba(29, 75, 54, 0.34);
+  outline-offset: 3px;
+}
+
+.gh-admin-status-toggle__track {
+  flex: 0 0 auto;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
 .gh-icon-circle {
   display: inline-flex;
   align-items: center;

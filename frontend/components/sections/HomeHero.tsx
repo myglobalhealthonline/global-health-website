@@ -4,11 +4,7 @@ import { ArrowRight, ShieldCheck, Stethoscope, Clock } from "lucide-react";
 import type { CountryCode } from "@/data/countries";
 import { Flag } from "@/components/ui/Flag";
 import { HeroReveal } from "@/components/motion/HeroReveal";
-import {
-  HeroBookingWizard,
-  type WizardDoctor,
-  type WizardService,
-} from "@/components/sections/HeroBookingWizard";
+import { SameDayBooking } from "@/components/sections/SameDayBooking";
 
 export type LiveDoctorItem = {
   name: string;
@@ -16,12 +12,13 @@ export type LiveDoctorItem = {
   imageSrc?: string | null;
 };
 
-export type HeroWizardData = {
-  doctors: WizardDoctor[];
-  services: WizardService[];
+/** Same-day GP quick-book data for the hero panel. */
+export type SameDayHeroData = {
   countryCode: string;
   countrySlug: string;
   lang: string;
+  languages: string[];
+  configured: boolean;
 };
 
 export type HomeHeroI18n = {
@@ -48,7 +45,7 @@ export function HomeHero({
   bookHref,
   totalDoctorsAcrossEurope,
   liveDoctors,
-  wizard,
+  sameDay,
   heroTitle,
   heroSubtitle,
   heroImageSrc,
@@ -62,7 +59,7 @@ export function HomeHero({
   bookHref: string;
   totalDoctorsAcrossEurope: number;
   liveDoctors?: LiveDoctorItem[];
-  wizard?: HeroWizardData;
+  sameDay?: SameDayHeroData;
   heroTitle?: string | null;
   heroSubtitle?: string | null;
   heroImageSrc?: string | null;
@@ -73,6 +70,7 @@ export function HomeHero({
   const displayHeroSubtitle = heroSubtitle?.trim() || null;
   const displayCtaLabel = ctaLabel?.trim() || i18n?.cta || "Book Appointment";
   const doctorsForPanel = (liveDoctors ?? []).slice(0, 3);
+  const showSameDay = Boolean(sameDay?.configured && sameDay.languages.length > 0);
   const heroPhotoSrc = normalizeHeroPhoto(heroImageSrc);
   const unoptimizedHeroPhoto =
     /^https?:\/\//i.test(heroPhotoSrc) || heroPhotoSrc.startsWith("/api/media/");
@@ -203,19 +201,32 @@ export function HomeHero({
               </ul>
             </div>
           </HeroReveal>
+
+          {/* Same-day quick-book on mobile/tablet (hero panel is lg-only). */}
+          {showSameDay && sameDay ? (
+            <HeroReveal delay={300} className="mt-12 lg:hidden">
+              <SameDayBooking
+                country={sameDay.countrySlug}
+                lang={sameDay.lang}
+                countryCode={sameDay.countryCode}
+                languages={sameDay.languages}
+                configured={sameDay.configured}
+                className="max-w-none"
+              />
+            </HeroReveal>
+          ) : null}
         </div>
 
-        {/* ── RIGHT — quick-book wizard (falls back to the static panel) ── */}
+        {/* ── RIGHT — same-day GP quick-book (falls back to the static panel) ── */}
         <HeroReveal delay={380} className="relative hidden min-h-[660px] lg:block">
-          {wizard && wizard.doctors.length > 0 ? (
+          {showSameDay && sameDay ? (
             <div className="gh-home-hero-availabilityPanel absolute -bottom-8 -left-16 xl:-left-20">
-              <HeroBookingWizard
-                doctors={wizard.doctors}
-                services={wizard.services}
-                countryCode={wizard.countryCode}
-                countrySlug={wizard.countrySlug}
-                lang={wizard.lang}
-                bookHref={bookHref}
+              <SameDayBooking
+                country={sameDay.countrySlug}
+                lang={sameDay.lang}
+                countryCode={sameDay.countryCode}
+                languages={sameDay.languages}
+                configured={sameDay.configured}
               />
             </div>
           ) : doctorsForPanel.length > 0 ? (

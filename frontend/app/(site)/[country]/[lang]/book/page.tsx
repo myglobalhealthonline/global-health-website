@@ -16,6 +16,7 @@ import {
   type CountryServiceCard,
 } from "@/lib/content/get-country-collections";
 import { getServiceDoctorAvailability } from "@/lib/content/get-doctor-availability";
+import { getGpAvailability } from "@/lib/content/get-gp-availability";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import {
   COUNTRY_CODE_TO_SLUG,
@@ -39,6 +40,10 @@ type SearchParams = {
   serviceId?: string | string[];
   doctor?: string | string[];
   slot?: string | string[];
+  /** Same-day GP quick-book entry from the homepage: gp=1 + language + at. */
+  gp?: string | string[];
+  language?: string | string[];
+  at?: string | string[];
 };
 
 type Notice = { tone: "info" | "warning"; message: string } | null;
@@ -92,6 +97,28 @@ export default async function CountryLangBookPage({
   const { common: c } = loadLocaleBundle(lang as LocaleCode);
   const bf = c.bookingForm;
   const bp = c.bookPage;
+
+  // Same-day GP quick-book entry from the homepage: the patient already chose a
+  // language + time; here they only fill details. The GP is auto-assigned at
+  // submit (priority window + fair rotation) — no doctor/service picking.
+  const gpMode = firstParam(sp.gp) === "1";
+  const gpLanguage = firstParam(sp.language);
+  const gpAt = firstParam(sp.at);
+  if (gpMode && gpLanguage && gpAt) {
+    return (
+      <GpBookingFlow
+        code={code}
+        country={slug}
+        lang={lang}
+        countryName={config.name}
+        language={gpLanguage}
+        at={gpAt}
+        c={c}
+        bf={bf}
+        bp={bp}
+      />
+    );
+  }
 
   const serviceSlugParam = firstParam(sp.service);
   const serviceIdParam = firstParam(sp.serviceId);
@@ -236,6 +263,154 @@ export default async function CountryLangBookPage({
               )}
             </div>
           </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+const GP_LANGUAGE_NAMES: Record<string, string> = {
+  en: "English",
+  pt: "Portuguese",
+  es: "Spanish",
+  cs: "Czech",
+  cz: "Czech",
+  ro: "Romanian",
+  ar: "Arabic",
+  fr: "French",
+  de: "German",
+  it: "Italian",
+  pl: "Polish",
+  nl: "Dutch",
+  ru: "Russian",
+};
+
+function gpLanguageLabel(code: string): string {
+  return GP_LANGUAGE_NAMES[code.toLowerCase()] ?? code.toUpperCase();
+}
+
+/**
+ * Same-day GP details step. The patient arrives from the homepage with a chosen
+ * language + time (?gp=1&language=&at=); here they only fill patient details +
+ * consent. The concrete GP doctor + slot are resolved at submit by the
+ * ConsultationBookingForm's autoAssign mode (POST /api/public/gp-assign).
+ */
+async function GpBookingFlow({
+  code,
+  country,
+  lang,
+  countryName,
+  language,
+  at,
+  c,
+  bf,
+  bp,
+}: {
+  code: string;
+  country: string;
+  lang: string;
+  countryName: string;
+  language: string;
+  at: string;
+  c: import("@/lib/i18n/types").CommonLocale;
+  bf: import("@/lib/i18n/types").CommonLocale["bookingForm"];
+  bp: BookT;
+}) {
+  const { service, clinicTimezone, slots } = await getGpAvailability(code, language, 14);
+  const slot = slots.find((s) => s.startAt === at) ?? null;
+  const valid = Boolean(service && slot);
+  const langName = gpLanguageLabel(language);
+  const steps = ["Language", bp.stepTime, bp.stepDetails];
+  const homeHref = `/${country}/${lang}#same-day-booking`;
+
+  return (
+    <>
+      <GH2FlowHeader
+        title={bp.title}
+        subtitle={bp.subtitle.replace("{country}", countryName)}
+        activeStep={valid ? 3 : 1}
+        steps={steps}
+      />
+      <section
+        id="booking"
+        className="scroll-mt-24 bg-[var(--color-background-soft)] py-[clamp(48px,6vw,88px)]"
+      >
+        <div className="mx-auto max-w-[var(--container-width)] px-5 md:px-10">
+          {!valid || !service || !slot ? (
+            <div className="mx-auto max-w-[640px] rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-6 text-center">
+              <p className="font-semibold text-[var(--color-text-primary)]">
+                {bp.slotNoLongerOpen}
+              </p>
+              <p className="mt-2 text-sm text-[var(--color-text-muted)]">
+                {bp.checkBackClinician.replace("{service}", langName)}
+              </p>
+              <Link href={homeHref} className="gh2-btn-lime mt-5">
+                {bp.pickAnotherClinician}
+              </Link>
+            </div>
+          ) : (
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.8fr)]">
+              <aside className="lg:sticky lg:top-24 lg:self-start">
+                <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)]">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-brand-primary)]">
+                    {bp.bookingSteps}
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-body)]">
+                    {service.name} · {langName}
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-muted)]">
+                    We’ll automatically assign an available GP who speaks {langName}.
+                  </p>
+                  <ul className="mt-5 grid gap-2.5 border-t border-[var(--color-border)] pt-5">
+                    {[
+                      { icon: ShieldCheck, label: c.serviceDetailPage.trustRegistered.replace("{country}", countryName) },
+                      { icon: Video, label: c.serviceDetailPage.trustVideo },
+                      { icon: Lock, label: c.serviceDetailPage.trustConfidential },
+                    ].map(({ icon: Icon, label }) => (
+                      <li
+                        key={label}
+                        className="flex items-center gap-2.5 text-[13px] font-medium text-[var(--color-text-body)]"
+                      >
+                        <Icon className="size-4 shrink-0 text-[var(--color-brand-primary)]" aria-hidden />
+                        {label}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </aside>
+
+              <div className="min-w-0">
+                <BookingSectionHeader
+                  eyebrow={bp.stepDetails}
+                  title={bp.detailsTitle}
+                  description={bp.detailsDesc}
+                />
+                <div className="mt-6 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
+                  <ConsultationBookingForm
+                    doctorId=""
+                    doctorName={`A GP who speaks ${langName}`}
+                    serviceId={service.id}
+                    kind="GENERAL_CONSULTATION"
+                    slots={[
+                      {
+                        id: at,
+                        startAt: slot.startAt,
+                        endAt: slot.endAt,
+                        priceCents: slot.priceCents,
+                        pricingType: slot.pricingType,
+                        currencyCode: slot.currencyCode,
+                      },
+                    ]}
+                    clinicTimezone={clinicTimezone}
+                    initialSlotId={at}
+                    changeTimeHref={homeHref}
+                    autoAssign={{ country: code, language }}
+                    i18n={bf}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </>

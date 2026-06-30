@@ -37,6 +37,14 @@ type Props = {
   initialSlotId?: string | null;
   /** Link back to the time step (same /book URL without `?slot=`). */
   changeTimeHref: string;
+  /**
+   * Same-day GP quick-book mode. When set, the patient picked only a language +
+   * time on the homepage; this form resolves the concrete GP doctor + slot at
+   * submit time via POST /api/public/gp-assign (priority window + fair rotation,
+   * decided server-side) and books that. `doctorId` is a placeholder in this
+   * mode — the resolved one wins. Null/undefined = ordinary doctor-first flow.
+   */
+  autoAssign?: { country: string; language: string } | null;
   i18n: CommonLocale["bookingForm"];
 };
 
@@ -76,6 +84,7 @@ export function ConsultationBookingForm({
   clinicTimezone,
   initialSlotId,
   changeTimeHref,
+  autoAssign,
   i18n,
 }: Props) {
   const router = useRouter();
@@ -270,11 +279,47 @@ export function ConsultationBookingForm({
         ? phone || undefined
         : (bookingForOther ? patientOtherPhone || phone : phone) || undefined;
 
+      // Same-day GP mode: resolve the concrete doctor + slot now. The backend
+      // picks the GP (priority window + fair rotation); the patient never chose
+      // one. A 409 means the slot was taken between the homepage and submit.
+      let useDoctorId = doctorId;
+      let useServiceId = serviceId;
+      let useSlotId = selectedSlotId;
+      if (autoAssign) {
+        try {
+          const ar = await fetch("/api/public/gp-assign", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              country: autoAssign.country,
+              language: autoAssign.language,
+              startAt: selectedSlot?.startAt,
+            }),
+          });
+          const aj = (await ar.json()) as {
+            ok?: boolean;
+            data?: { doctorId?: string; serviceId?: string; timeSlotId?: string };
+          };
+          if (!ar.ok || !aj?.ok || !aj.data?.timeSlotId || !aj.data.doctorId) {
+            setError(
+              "That time was just taken. Please go back and pick another time.",
+            );
+            return;
+          }
+          useDoctorId = aj.data.doctorId;
+          useServiceId = aj.data.serviceId ?? serviceId;
+          useSlotId = aj.data.timeSlotId;
+        } catch {
+          setError("Could not reserve that time. Please go back and try again.");
+          return;
+        }
+      }
+
       const res = await add({
         kind,
-        serviceId,
-        doctorId,
-        timeSlotId: selectedSlotId,
+        serviceId: useServiceId,
+        doctorId: useDoctorId,
+        timeSlotId: useSlotId,
         // Premium family usage — the line targets an approved dependent and
         // pre-selects the credit benefit (server re-verifies eligibility).
         ...(selectedMember

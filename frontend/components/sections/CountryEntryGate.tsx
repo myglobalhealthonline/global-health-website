@@ -153,11 +153,16 @@ export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy 
 
   const globeMarkers = useMemo<GlobeMarker[]>(
     () =>
-      countries.map((country) => ({
-        id: country.code.replace(/[^a-z0-9_-]/gi, "-"),
-        label: country.label || country.name,
-        location: locationForCountry(country),
-      })),
+      countries.map((country) => {
+        const normalized = country.code.toLowerCase();
+        const iso = FLAG_CODE_ALIAS[normalized] ?? normalized;
+        return {
+          id: country.code.replace(/[^a-z0-9_-]/gi, "-"),
+          label: country.label || country.name,
+          flagCode: iso,
+          location: locationForCountry(country),
+        };
+      }),
     [countries],
   );
 
@@ -259,7 +264,7 @@ export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy 
                     markers={globeMarkers}
                     arcs={globeArcs}
                     className={styles.countryGlobe}
-                    initialPhi={-0.58}
+                    initialPhi={0.8}
                     theta={0.24}
                     speed={0.0026}
                     markerSize={0.05}
