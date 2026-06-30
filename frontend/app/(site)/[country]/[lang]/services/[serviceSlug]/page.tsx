@@ -141,7 +141,7 @@ export default async function ServiceDetailPage({
     prescription: t.backPrescription,
     general: t.backGeneral,
   });
-  const bookHref = `/${country}/${lang}/consult/${serviceSlug}`;
+  const bookHref = buildBookHref({ country, lang, service: serviceSlug });
   const heading = detail.heroTitle ?? detail.name;
   const lede = stripHtml(detail.heroDescription) ?? stripHtml(detail.summary);
   const bodyHtml = detail.detailBody ? scopeBlogHtml(detail.detailBody) : null;
@@ -346,6 +346,10 @@ export default async function ServiceDetailPage({
                     maxWidth: "46ch",
                     fontSize: "clamp(0.9rem, 0.6vw + 0.65rem, 1.05rem)",
                     color: "#B8C9C2",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
                   }}
                 >
                   {lede}

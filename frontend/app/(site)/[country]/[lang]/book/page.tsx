@@ -30,6 +30,7 @@ import { getSiteUrl } from "@/lib/seo/site-url";
 import { hreflangAlternates } from "@/lib/seo/hreflang";
 import { SITE_NAME } from "@/lib/constants";
 import { formatPriceRounded } from "@/lib/format-currency";
+import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { ConsultationBookingForm } from "../consult/[serviceSlug]/_components/consultation-booking-form";
 import { SlotPickerStep } from "../consult/[serviceSlug]/_components/slot-picker-step";
 import { LanguageFilteredDoctors } from "./_components/language-filtered-doctors";
@@ -162,9 +163,12 @@ export default async function CountryLangBookPage({
   const doctorFirst =
     Boolean(requestedDoctor) && !atParam && (!selectedService || requestedDoctorAssigned);
 
+  const timeValue = atParam
+    ? `${formatAppDate(atParam)} · ${formatAppTime(atParam)}`
+    : null;
   const stepValues: (string | null)[] = doctorFirst
-    ? [requestedDoctor?.fullName ?? null, selectedService?.name ?? null, null, null]
-    : [selectedService?.name ?? null, null, requestedDoctor?.fullName ?? null, null];
+    ? [requestedDoctor?.fullName ?? null, selectedService?.name ?? null, timeValue, null]
+    : [selectedService?.name ?? null, timeValue, requestedDoctor?.fullName ?? null, null];
   const stepLabels: string[] = doctorFirst
     ? [bp.stepDoctor, bp.stepService, bp.stepTime, bp.stepDetails]
     : [bp.stepService, bp.stepTime, bp.stepDoctor, bp.stepDetails];
@@ -513,7 +517,7 @@ async function SelectedServiceFlow({
     return (
       <div className="grid gap-6">
         <BookingSectionHeader eyebrow={bp.stepTime} title={bp.pickTime} description={bp.timesShown} />
-        <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
+        <div className="min-w-0 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
           <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-5">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
@@ -573,7 +577,7 @@ async function SelectedServiceFlow({
         title={slotConfirmed ? bp.detailsTitle : bp.pickTime}
         description={slotConfirmed ? bp.detailsDesc : bp.timesShown}
       />
-      <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
+      <div className="min-w-0 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
         <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-5">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
