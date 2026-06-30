@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, CalendarClock, Check, Globe, Loader2 } from "lucide-react";
+import { ArrowRight, CalendarClock, Check, ChevronDown, Globe, Loader2 } from "lucide-react";
 import { formatAppDate, formatAppTime } from "@/lib/format-datetime";
 import { formatPriceRounded } from "@/lib/format-currency";
 
@@ -137,6 +137,19 @@ export function SameDayBooking({
 }) {
   const t = { ...DEFAULT_I18N, ...i18n };
   const router = useRouter();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   // Default to English (codes vary: "en" / "english") so times load on mount
   // without the patient having to pick a language first; fall back to the first
   // offered language only when no English variant exists.
@@ -256,7 +269,7 @@ export function SameDayBooking({
 
   return (
     <div
-      className={`gh-sameday relative flex w-full max-w-[560px] flex-col overflow-hidden rounded-[26px] p-6 sm:p-7 ${className ?? ""}`}
+      className={`gh-sameday relative flex w-full max-w-[900px] flex-col overflow-hidden rounded-[26px] p-6 sm:p-8 ${className ?? ""}`}
       style={{
         background: "rgba(8, 33, 27, 0.82)",
         border: "1px solid rgba(255,255,255,0.12)",
@@ -273,25 +286,58 @@ export function SameDayBooking({
         {t.title}
       </h3>
 
-      {/* Step 1 — language */}
-      <label className="mt-5 block">
+      {/* Step 1 — language (custom dropdown — native select ignores CSS for open state) */}
+      <div className="mt-5 block">
         <span className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-white/55">
           <Globe className="size-3.5 text-[var(--color-brand-accent)]" strokeWidth={1.8} aria-hidden />
           {t.languageLabel}
         </span>
-        <select
-          value={selectedLanguage}
-          onChange={(e) => onLanguageChange(e.target.value)}
-          className="mt-2 block w-full rounded-xl border border-white/15 bg-white/[0.06] px-4 py-3 text-[15px] font-semibold text-white focus:border-[var(--color-brand-accent)]/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-accent)]/30 [&>option]:text-black"
-        >
-          <option value="">{t.languagePlaceholder}</option>
-          {languages.map((code) => (
-            <option key={code} value={code}>
-              {languageLabel(code)}
-            </option>
-          ))}
-        </select>
-      </label>
+        <div ref={dropdownRef} className="relative mt-2">
+          <button
+            type="button"
+            onClick={() => setDropdownOpen((o) => !o)}
+            className="flex w-full items-center justify-between rounded-[16px] border-2 border-[var(--color-brand-accent)]/40 bg-white/[0.08] px-5 py-3.5 text-[15px] font-semibold text-white transition-all duration-200 hover:border-[var(--color-brand-accent)]/70 hover:bg-white/[0.12] focus:border-[var(--color-brand-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-accent)]/40"
+            aria-haspopup="listbox"
+            aria-expanded={dropdownOpen}
+          >
+            <span>{selectedLanguage ? languageLabel(selectedLanguage) : t.languagePlaceholder}</span>
+            <ChevronDown
+              className={`size-4 text-[var(--color-brand-accent)] transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+              strokeWidth={2.5}
+              aria-hidden
+            />
+          </button>
+
+          {dropdownOpen && (
+            <ul
+              role="listbox"
+              className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 max-h-[240px] overflow-y-auto rounded-[16px] border border-[var(--color-brand-accent)]/30 bg-[#0a1f1a] py-1.5 shadow-[0_16px_48px_rgba(0,0,0,0.6)] [scrollbar-width:thin] [scrollbar-color:var(--color-brand-accent)_transparent]"
+            >
+              {languages.map((code) => {
+                const isSelected = selectedLanguage === code;
+                return (
+                  <li
+                    key={code}
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => {
+                      onLanguageChange(code);
+                      setDropdownOpen(false);
+                    }}
+                    className={`cursor-pointer px-5 py-2.5 text-[15px] font-semibold transition-colors duration-150 ${
+                      isSelected
+                        ? "bg-[var(--color-brand-accent)] text-[#0a1f1a]"
+                        : "text-white hover:bg-white/[0.08]"
+                    }`}
+                  >
+                    {languageLabel(code)}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
 
       {/* Step 2 — time */}
       <div className="mt-5 border-t border-white/10 pt-5">

@@ -21,6 +21,7 @@ import {
   computeSlotPrice,
   getServicePeakConfig,
 } from "../modules/pricing/peak-pricing.service.js";
+import { getServiceAggregatedAvailability } from "../modules/service-booking/service-availability.service.js";
 import { prisma } from "../db/prisma.js";
 import { DatabaseUnavailableError } from "../modules/shared/db-errors.js";
 import { errorResponse, okResponse } from "../utils/response.js";
@@ -371,6 +372,47 @@ const countryScopedRoute: FastifyPluginAsync = async (app) => {
           };
         });
         return okResponse({ slots: pricedSlots, clinicTimezone });
+      } catch (error) {
+        return handleError(app, reply, error, "Unexpected availability error");
+      }
+    },
+  );
+
+  /**
+   * Aggregated availability for a service across ALL its assigned doctors.
+   * Backs the service-first flow's TIME step (service → time → doctor): returns
+   * the de-duplicated open times plus which doctors (+ their slot) can take
+   * each time, so the next step can offer the doctor choice.
+   */
+  app.get(
+    "/api/services/:countryCode/:serviceSlug/aggregated-availability",
+    async (request, reply) => {
+      applyPublicCache(reply);
+      const params = z
+        .object({
+          countryCode: z.string().trim().min(1).max(8),
+          serviceSlug: z.string().trim().min(1).max(160),
+        })
+        .safeParse(request.params);
+      if (!params.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid availability path", params.error.flatten()));
+      }
+      const query = serviceAvailabilityQuerySchema.safeParse(request.query);
+      if (!query.success) {
+        return reply
+          .status(400)
+          .send(errorResponse("Invalid availability query", query.error.flatten()));
+      }
+      try {
+        if (!(await ensureCountryExists(params.data.countryCode, reply))) return;
+        const result = await getServiceAggregatedAvailability(
+          params.data.countryCode,
+          params.data.serviceSlug,
+          query.data.days,
+        );
+        return okResponse(result);
       } catch (error) {
         return handleError(app, reply, error, "Unexpected availability error");
       }

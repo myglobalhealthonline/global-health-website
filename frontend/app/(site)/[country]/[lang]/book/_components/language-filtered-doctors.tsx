@@ -30,12 +30,21 @@ export function LanguageFilteredDoctors({
   lang,
   service,
   doctors,
+  slotByDoctorId,
+  at,
   bp,
 }: {
   country: string;
   lang: string;
   service: CountryServiceCard;
   doctors: CountryDoctorCard[];
+  /** Service-first time→doctor step: the doctor's concrete slot at the chosen
+   *  time, keyed by doctor id. When set, each card books that exact slot so the
+   *  patient lands straight on the details step. */
+  slotByDoctorId?: Record<string, string>;
+  /** Chosen time (ISO) retained on the card href so the details step keeps the
+   *  service-first ordering. */
+  at?: string;
   bp: import("@/lib/i18n/types").CommonLocale["bookPage"];
 }) {
   const allLanguages = useMemo(() => {
@@ -156,6 +165,8 @@ export function LanguageFilteredDoctors({
                   lang,
                   service: service.slug,
                   doctor: doctor.slug,
+                  slot: slotByDoctorId?.[doctor.id] ?? null,
+                  at: at ?? null,
                 })}
                 primaryLabel={bp.continue}
                 ctaLabel="View"

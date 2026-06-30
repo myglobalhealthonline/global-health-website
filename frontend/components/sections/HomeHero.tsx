@@ -218,15 +218,16 @@ export function HomeHero({
         </div>
 
         {/* ── RIGHT — same-day GP quick-book (falls back to the static panel) ── */}
-        <HeroReveal delay={380} className="relative hidden min-h-[660px] lg:block">
+        <HeroReveal delay={380} className="relative hidden min-h-[660px] w-full lg:flex lg:items-end">
           {showSameDay && sameDay ? (
-            <div className="gh-home-hero-availabilityPanel absolute -bottom-8 -left-16 xl:-left-20">
+            <div className="gh-home-hero-availabilityPanel w-full pb-8">
               <SameDayBooking
                 country={sameDay.countrySlug}
                 lang={sameDay.lang}
                 countryCode={sameDay.countryCode}
                 languages={sameDay.languages}
                 configured={sameDay.configured}
+                className="max-w-none"
               />
             </div>
           ) : doctorsForPanel.length > 0 ? (

@@ -17,6 +17,8 @@ import {
 } from "@/lib/content/get-country-collections";
 import { getServiceDoctorAvailability } from "@/lib/content/get-doctor-availability";
 import { getGpAvailability } from "@/lib/content/get-gp-availability";
+import { getServiceAggregatedAvailability } from "@/lib/content/get-service-availability";
+import { ServiceTimePicker } from "./_components/service-time-picker";
 import { isSupportedLocale } from "@/lib/content/get-public-page";
 import {
   COUNTRY_CODE_TO_SLUG,
@@ -124,6 +126,10 @@ export default async function CountryLangBookPage({
   const serviceIdParam = firstParam(sp.serviceId);
   const doctorSlugParam = firstParam(sp.doctor);
   const slotParam = firstParam(sp.slot);
+  // Service-first time→doctor flow: ?at=<startAt> marks that a time was chosen
+  // before a clinician. Its presence also distinguishes a service-first journey
+  // from a doctor-first one even once ?doctor= has been added.
+  const atParam = firstParam(sp.at);
 
   const overlay = await getPublicCountryByCode(code);
   const generalEnabled = isCountryFeatureEnabled(overlay, "general-consultations");
@@ -148,30 +154,28 @@ export default async function CountryLangBookPage({
     ? services.filter((service) => service.assignedDoctorIds.includes(requestedDoctor.id))
     : services;
 
-  // The booking flow is bidirectional: a patient can arrive doctor-first
-  // (from a doctor card → ?doctor=) and then pick service + time, or
-  // service-first and then pick doctor + time. Both converge on Time →
-  // Details. The stepper reflects whichever order the patient actually took
-  // so step 1 always matches the choice they already made.
-  const doctorFirst = Boolean(requestedDoctor) && (!selectedService || requestedDoctorAssigned);
+  // The booking flow is bidirectional and the two orders differ:
+  //   doctor-first : Doctor → Service → Time → Details   (from a doctor card)
+  //   service-first: Service → Time → Doctor → Details   (from a service card)
+  // `?at=` (a chosen time) only ever appears in the service-first journey, so
+  // its presence forces service-first ordering even once a doctor is picked.
+  const doctorFirst =
+    Boolean(requestedDoctor) && !atParam && (!selectedService || requestedDoctorAssigned);
 
   const stepValues: (string | null)[] = doctorFirst
     ? [requestedDoctor?.fullName ?? null, selectedService?.name ?? null, null, null]
-    : [selectedService?.name ?? null, requestedDoctor?.fullName ?? null, null, null];
+    : [selectedService?.name ?? null, null, requestedDoctor?.fullName ?? null, null];
   const stepLabels: string[] = doctorFirst
     ? [bp.stepDoctor, bp.stepService, bp.stepTime, bp.stepDetails]
-    : [bp.stepService, bp.stepDoctor, bp.stepTime, bp.stepDetails];
-  const baseStep = doctorFirst
-    ? !selectedService
-      ? 2 // doctor chosen; now choosing the service
-      : 3 // doctor + service chosen; now choosing the time
-    : !selectedService
-      ? 1
-      : requestedDoctorAssigned
-        ? 3
-        : 2;
-  // A chosen slot (?slot=) means the patient has moved to the Details step (4).
-  const currentStep = baseStep === 3 && slotParam ? 4 : baseStep;
+    : [bp.stepService, bp.stepTime, bp.stepDoctor, bp.stepDetails];
+  let currentStep: number;
+  if (doctorFirst) {
+    const baseStep = !selectedService ? 2 : 3;
+    currentStep = baseStep === 3 && slotParam ? 4 : baseStep;
+  } else {
+    // Service-first: Service(1) → Time(2) → Doctor(3) → Details(4).
+    currentStep = !selectedService ? 1 : slotParam ? 4 : atParam ? 3 : 2;
+  }
   const itemKind =
     selectedService?.kind === "SPECIALIST"
       ? "SPECIALIST_CONSULTATION"
@@ -256,6 +260,7 @@ export default async function CountryLangBookPage({
                   doctors={doctors}
                   doctorSlug={doctorSlugParam}
                   slotId={slotParam}
+                  at={atParam}
                   itemKind={itemKind}
                   bf={bf}
                   bp={bp}
@@ -425,6 +430,7 @@ async function SelectedServiceFlow({
   doctors,
   doctorSlug,
   slotId,
+  at,
   itemKind,
   bf,
   bp,
@@ -436,6 +442,7 @@ async function SelectedServiceFlow({
   doctors: CountryDoctorCard[];
   doctorSlug: string | null;
   slotId: string | null;
+  at: string | null;
   itemKind: "GENERAL_CONSULTATION" | "SPECIALIST_CONSULTATION";
   bf: import("@/lib/i18n/types").CommonLocale["bookingForm"];
   bp: BookT;
@@ -449,34 +456,100 @@ async function SelectedServiceFlow({
     ? serviceDoctors.find((doctor) => doctor.slug === doctorSlug) ?? null
     : null;
 
+  // Service-first: no clinician resolved yet → TIME step, then DOCTOR step.
+  // (A doctor-first arrival with a valid assigned doctor resolves selectedDoctor
+  // above and skips this whole block.)
   if (!selectedDoctor) {
-    const requestedDoctorExists = doctorSlug
-      ? doctors.some((doctor) => doctor.slug === doctorSlug)
-      : false;
+    const agg = await getServiceAggregatedAvailability(code, service.slug, 14);
+
+    // DOCTOR step — a time was chosen (?at=): offer the doctors free then.
+    if (at) {
+      const refs = agg.doctorsByStart[at] ?? [];
+      const slotByDoctorId: Record<string, string> = {};
+      for (const ref of refs) slotByDoctorId[ref.doctorId] = ref.slotId;
+      const doctorsAtTime = serviceDoctors.filter((doctor) => slotByDoctorId[doctor.id]);
+
+      return (
+        <div className="grid gap-6">
+          <BookingSectionHeader
+            eyebrow={bp.stepDoctor}
+            title={bp.chooseClinicianFor.replace("{service}", service.name)}
+            description={bp.onlyAssigned}
+          />
+          {doctorsAtTime.length === 0 ? (
+            <div className="rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-5">
+              <p className="font-semibold text-[var(--color-text-primary)]">{bp.slotNoLongerOpen}</p>
+              <Link
+                href={buildBookHref({ country, lang, service: service.slug })}
+                className="gh2-btn-lime mt-4"
+              >
+                {bp.pickTime}
+              </Link>
+            </div>
+          ) : (
+            <>
+              <LanguageFilteredDoctors
+                country={country}
+                lang={lang}
+                service={service}
+                doctors={doctorsAtTime}
+                slotByDoctorId={slotByDoctorId}
+                at={at}
+                bp={bp}
+              />
+              <Link
+                href={buildBookHref({ country, lang, service: service.slug })}
+                className="justify-self-start rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
+              >
+                {bp.stepTime}
+              </Link>
+            </>
+          )}
+        </div>
+      );
+    }
+
+    // TIME step — no time yet: aggregated open times across all assigned doctors.
     return (
       <div className="grid gap-6">
-        <BookingSectionHeader
-          eyebrow={bp.step2}
-          title={bp.chooseClinicianFor.replace("{service}", service.name)}
-          description={bp.onlyAssigned}
-        />
-        {doctorSlug ? (
-          <InlineNotice
-            notice={{
-              tone: "warning",
-              message: requestedDoctorExists
-                ? bp.clinicianNotAssigned
-                : bp.clinicianNotInCountry,
-            }}
-          />
-        ) : null}
-        <LanguageFilteredDoctors
-          country={country}
-          lang={lang}
-          service={service}
-          doctors={serviceDoctors}
-          bp={bp}
-        />
+        <BookingSectionHeader eyebrow={bp.stepTime} title={bp.pickTime} description={bp.timesShown} />
+        <div className="rounded-[var(--radius-card)] border border-[var(--color-border)] bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
+          <header className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--color-border)] pb-5">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
+                {bp.selectedConsultation}
+              </p>
+              <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.025em] text-[var(--color-text-primary)]">
+                {service.name}
+              </h2>
+            </div>
+            <Link
+              href={buildBookHref({ country, lang })}
+              className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-brand-primary)] transition-colors hover:bg-[var(--color-background-soft)]"
+            >
+              {bp.changeService}
+            </Link>
+          </header>
+          {agg.slots.length === 0 ? (
+            <div className="mt-6 rounded-[var(--radius-card)] border border-[rgba(255,196,0,0.25)] bg-[rgba(255,196,0,0.08)] p-5">
+              <p className="font-semibold text-[var(--color-text-primary)]">{bp.noOpenSlots}</p>
+              <p className="mt-2 text-sm text-[var(--color-text-muted)]">
+                {bp.checkBackClinician.replace("{service}", service.name)}
+              </p>
+            </div>
+          ) : (
+            <div className="mt-6">
+              <ServiceTimePicker
+                country={country}
+                lang={lang}
+                serviceSlug={service.slug}
+                slots={agg.slots}
+                clinicTimezone={agg.clinicTimezone}
+                i18n={bf}
+              />
+            </div>
+          )}
+        </div>
       </div>
     );
   }
@@ -566,12 +639,13 @@ async function SelectedServiceFlow({
               slots={slots}
               clinicTimezone={clinicTimezone}
               initialSlotId={slotId}
-              changeTimeHref={buildBookHref({
-                country,
-                lang,
-                service: service.slug,
-                doctor: selectedDoctor.slug,
-              })}
+              changeTimeHref={
+                at
+                  ? // Service-first: back to the aggregated TIME step (drop doctor).
+                    buildBookHref({ country, lang, service: service.slug })
+                  : // Doctor-first: back to this doctor's time picker.
+                    buildBookHref({ country, lang, service: service.slug, doctor: selectedDoctor.slug })
+              }
               i18n={bf}
             />
           </div>

@@ -264,7 +264,7 @@ export function CountryEntryGate({ countries, countryMeta, detectedLocale, copy 
                     markers={globeMarkers}
                     arcs={globeArcs}
                     className={styles.countryGlobe}
-                    initialPhi={0.8}
+                    initialPhi={-2.34}
                     theta={0.24}
                     speed={0.0026}
                     markerSize={0.05}

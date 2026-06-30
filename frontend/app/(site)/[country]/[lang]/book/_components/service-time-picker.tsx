@@ -9,36 +9,33 @@ import { buildBookHref } from "@/lib/routing/book-href";
 import type { CommonLocale } from "@/lib/i18n/types";
 
 type Slot = {
-  id: string;
   startAt: string;
   endAt: string;
-  priceCents?: number;
+  priceCents: number;
   pricingType?: "STANDARD" | "PEAK" | "OFF_PEAK";
-  currencyCode?: string;
+  currencyCode: string;
 };
 
 type Props = {
   country: string;
   lang: string;
   serviceSlug: string;
-  doctorSlug: string;
+  /** Aggregated open times across all doctors assigned to the service. */
   slots: Slot[];
   clinicTimezone?: string;
   i18n: CommonLocale["bookingForm"];
 };
 
 /**
- * Booking step 3 — TIME ONLY. Picking a day reveals that day's times; picking
- * a time advances to step 4 (details) by writing `?slot=<id>` to the URL. The
- * patient-details / address / consent fields live on the next step, so this
- * screen stays focused on availability (the previous form mixed them in one
- * scroll, which read as "the Time tab is asking for my details").
+ * Service-first TIME step (service → time → doctor). Shows the de-duplicated
+ * open times across every doctor assigned to the service. Picking a time writes
+ * `?service=&at=<startAt>` so the next step can offer the doctors free then.
+ * Mirrors SlotPickerStep's date-pill UI but is doctor-agnostic.
  */
-export function SlotPickerStep({
+export function ServiceTimePicker({
   country,
   lang,
   serviceSlug,
-  doctorSlug,
   slots,
   clinicTimezone,
   i18n,
@@ -65,18 +62,16 @@ export function SlotPickerStep({
     firstSlot ? formatAppDate(firstSlot.startAt, tz) : null,
   );
 
-  function chooseSlot(slotId: string) {
+  function chooseTime(startAt: string) {
     startNavigate(() => {
       router.push(
-        `${buildBookHref({ country, lang, service: serviceSlug, doctor: doctorSlug, slot: slotId })}#booking`,
+        `${buildBookHref({ country, lang, service: serviceSlug, at: startAt })}#booking`,
       );
     });
   }
 
   if (slots.length === 0) {
-    return (
-      <p className="text-sm text-[var(--color-text-muted)]">{i18n.noOpenSlots}</p>
-    );
+    return <p className="text-sm text-[var(--color-text-muted)]">{i18n.noOpenSlots}</p>;
   }
 
   return (
@@ -137,31 +132,31 @@ export function SlotPickerStep({
         })}
       </div>
 
-      {/* Time grid for the active day — picking a time advances to details. */}
+      {/* Time grid for the active day — picking a time advances to doctor. */}
       {selectedDay ? (
-        <div className="mt-6 w-full overflow-hidden">
+        <div className="mt-6">
           <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
             {i18n.pickTimeOn.replace("{date}", selectedDay)}
           </p>
           <div
             role="tabpanel"
             aria-label={`Times on ${selectedDay}`}
-            className="mt-3 grid gap-2 grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 w-full"
+            className="mt-3 grid gap-2 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
           >
             {(grouped.get(selectedDay) ?? []).map((s) => (
               <button
-                key={s.id}
+                key={s.startAt}
                 type="button"
-                onClick={() => chooseSlot(s.id)}
+                onClick={() => chooseTime(s.startAt)}
                 disabled={navigating}
-                className="flex flex-col items-center justify-center gap-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-primary)] px-2 py-2 text-xs sm:text-sm font-semibold [font-variant-numeric:tabular-nums] transition-[border-color,background-color,transform] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60 min-h-[70px] sm:min-h-[80px]"
+                className="inline-flex flex-col items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-primary)] px-3 py-2.5 text-sm font-semibold [font-variant-numeric:tabular-nums] transition-[border-color,background-color,transform] duration-200 hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)] active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100 disabled:opacity-60"
               >
-                <span className="flex items-center justify-center gap-1 leading-tight">
-                  {navigating ? <Loader2 className="size-2.5 sm:size-3 animate-spin" aria-hidden /> : null}
-                  <span className="truncate">{formatAppTime(s.startAt, tz)}</span>
+                <span className="inline-flex items-center gap-1">
+                  {navigating ? <Loader2 className="size-3 animate-spin" aria-hidden /> : null}
+                  {formatAppTime(s.startAt, tz)}
                 </span>
                 {typeof s.priceCents === "number" ? (
-                  <span className="text-[10px] sm:text-xs font-medium text-[var(--color-text-muted)] line-clamp-1">
+                  <span className="mt-0.5 text-xs font-medium text-[var(--color-text-muted)]">
                     {formatPriceRounded(s.priceCents, s.currencyCode ?? "EUR")}
                   </span>
                 ) : null}
