@@ -80,7 +80,7 @@ export function SlotPickerStep({
   }
 
   return (
-    <div>
+    <div className="min-w-0">
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
           {i18n.pickDate}
@@ -97,7 +97,7 @@ export function SlotPickerStep({
       <div
         role="tablist"
         aria-label="Available dates"
-        className="mt-3 -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]"
+        className="mt-3 -mx-1 flex min-w-0 max-w-full gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]"
       >
         {Array.from(grouped.entries()).map(([day, daySlots]) => {
           const isActive = selectedDay === day;
