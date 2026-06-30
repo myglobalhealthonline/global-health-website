@@ -271,13 +271,11 @@ export default async function CountryLangHomePage({
       serviceIds: d.assignedServiceIds,
     }));
 
-  // Promote one doctor into the FeaturedDoctor section to break the
-  // monotony of the DoctorWall grid (Phase 1 audit finding). Picks the
-  // first doctor with both a bio and an image — those are the rows
-  // that actually have enough content to fill the featured layout
-  // without looking sparse. Falls back to null if no doctor qualifies;
-  // the section then doesn't render at all.
+  // Admin-chosen Clinical Director takes priority. Falls back to the first
+  // doctor with bio + image so the section still renders when no featured
+  // doctor has been set in the admin panel.
   const featuredDoctor =
+    countryDoctors.find((d) => d.isFeatured) ??
     countryDoctors.find((d) => d.bio && d.bio.trim().length > 0 && d.imageSrc) ??
     null;
   const generalServiceIdSet = new Set(generalServices.map((s) => s.id));
