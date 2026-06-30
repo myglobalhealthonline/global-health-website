@@ -41,7 +41,7 @@ function FieldRow({
   full?: boolean;
 }) {
   return (
-    <div className={full ? "sm:col-span-2" : ""}>
+    <div className={full ? "gh-admin-asset-field-row sm:col-span-2" : "gh-admin-asset-field-row"}>
       <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {label}
       </dt>
@@ -155,15 +155,12 @@ export default async function AdminAssetDetailPage({
         </p>
       ) : null}
 
-      <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
-      >
+      <div className="gh-admin-asset-layout">
         <div className="grid gap-4">
           {showPreview ? (
             <AdminCard>
               <h3 style={cardTitleStyle}>Preview</h3>
-              <div className="mt-3 rounded-md bg-[var(--color-background-soft)] p-4">
+              <div className="gh-admin-asset-preview mt-3 rounded-md bg-[var(--color-background-soft)] p-4">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={a.path}
@@ -179,7 +176,7 @@ export default async function AdminAssetDetailPage({
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Path + metadata. Files served via Railway Bucket when storage env vars are configured.
             </p>
-            <dl className="grid gap-4 sm:grid-cols-2">
+            <dl className="gh-admin-asset-detail-grid">
               <FieldRow label="Key" value={a.key} mono />
               <FieldRow label="Kind" value={a.kind} />
               <FieldRow

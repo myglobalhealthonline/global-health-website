@@ -254,7 +254,7 @@ export default async function AdminDashboardPage() {
 
       {/* Stat strip — 5 up */}
       <section
-        className="mb-5 grid gap-3"
+        className="gh-admin-dashboard-stats mb-5 grid gap-3"
         style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}
       >
         <StatCard
@@ -318,7 +318,7 @@ export default async function AdminDashboardPage() {
       </section>
 
       {/* Two-column body: activity + quick actions */}
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+      <div className="gh-admin-dashboard-body grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <AdminCard padding={0} className="overflow-hidden">
           <SectionHeader
             title="Recent activity"
@@ -351,13 +351,13 @@ export default async function AdminDashboardPage() {
               </p>
             </div>
           ) : (
-            <ul className="m-0 list-none p-0">
+            <ul className="gh-admin-activity-list m-0 list-none p-0">
               {recentActivity.map((row, i) => {
                 const isLast = i === recentActivity.length - 1;
                 return (
                   <li
                     key={row.id}
-                    className="flex items-center gap-3.5 px-5 py-3.5"
+                    className="gh-admin-activity-row flex items-center gap-3.5 px-5 py-3.5"
                     style={{
                       borderBottom: isLast ? "none" : "1px solid var(--color-border)",
                     }}
@@ -405,14 +405,14 @@ export default async function AdminDashboardPage() {
             title="Quick actions"
             description="Shortcuts to common tasks"
           />
-          <div className="grid gap-2 p-4">
+          <div className="gh-admin-quick-actions grid gap-2 p-4">
             {quickActions.map((a) => {
               const Icon = a.icon;
               return (
                 <Link
                   key={a.label}
                   href={a.href}
-                  className="gh-quick-action group flex items-center gap-3 transition-all duration-200"
+                  className="gh-admin-quick-action gh-quick-action group flex items-center gap-3 transition-all duration-200"
                   style={{
                     padding: 14,
                     paddingLeft: 18,
@@ -459,7 +459,7 @@ export default async function AdminDashboardPage() {
           One row per active country with at-a-glance counts. Clicking a flag
           jumps into that country's pages list. */}
       {!activeCountry && countryRows.length > 0 ? (
-        <AdminCard padding={0} className="mt-4 overflow-hidden">
+        <AdminCard padding={0} className="gh-admin-country-health mt-4 overflow-hidden">
           <SectionHeader
             title="Country health"
             description="Per-country counts. Click a row to scope the portal to that country."

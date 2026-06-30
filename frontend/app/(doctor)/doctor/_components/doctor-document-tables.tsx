@@ -70,7 +70,10 @@ export function HistorySection({
   };
 
   return (
-    <section id={id} className="overflow-hidden rounded-md border border-[var(--color-border)]">
+    <section
+      id={id}
+      className="gh-doctor-history-section overflow-hidden rounded-md border border-[var(--color-border)]"
+    >
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -111,7 +114,7 @@ export function GeneratedDocumentsTable({
   session: SessionMeta;
 }) {
   return (
-    <div className="overflow-x-auto">
+    <div className="gh-doctor-table-wrap overflow-x-auto">
       <table className="w-full min-w-[720px] text-[13px]">
         <thead>
           <tr className={TABLE_HEAD}>
@@ -173,7 +176,7 @@ export function UploadedFilesTable({
   session: SessionMeta;
 }) {
   return (
-    <div className="overflow-x-auto">
+    <div className="gh-doctor-table-wrap overflow-x-auto">
       <table className="w-full min-w-[720px] text-[13px]">
         <thead>
           <tr className={TABLE_HEAD}>
@@ -232,7 +235,7 @@ export function DocTypeGroup({
   const [open, setOpen] = useState(false);
   if (rows.length === 0) return null;
   return (
-    <div className="border-t border-[var(--color-border)]">
+    <div className="gh-doctor-doc-type-group border-t border-[var(--color-border)]">
       <button
         type="button"
         onClick={() => setOpen(!open)}

@@ -165,9 +165,9 @@ export function DoctorAvailabilityUI({
         </div>
       ) : null}
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
+      <div className="gh-doctor-detail-grid gh-doctor-availability-grid grid gap-4 lg:grid-cols-[1fr_360px]">
         {/* ── Concrete slots day grid ───────────────────────────── */}
-        <AdminCard padding={0}>
+        <AdminCard padding={0} className="gh-doctor-panel">
           <SectionHeader
             title="Next 14 days"
             description="Click an open slot to mark yourself busy. Click a blocked slot to re-open it. Booked slots can't be changed here — cancel the appointment first."
@@ -179,13 +179,13 @@ export function DoctorAvailabilityUI({
                 slots automatically.
               </p>
             ) : (
-              <div className="grid gap-4">
+              <div className="gh-doctor-slot-day-list grid gap-4">
                 {Array.from(slotsByDay.entries()).map(([day, daySlots]) => (
                   <div key={day}>
                     <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
                       {day}
                     </p>
-                    <div className="mt-2 flex flex-wrap gap-2">
+                    <div className="gh-doctor-slot-grid mt-2 flex flex-wrap gap-2">
                       {daySlots.map((s) => {
                         const time = new Date(s.startAt).toLocaleTimeString(
                           "en-IE",
@@ -210,7 +210,7 @@ export function DoctorAvailabilityUI({
                                   ? "Click to re-open"
                                   : "Locked by appointment"
                             }
-                            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition disabled:cursor-not-allowed ${
+                            className={`gh-doctor-slot-chip inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition disabled:cursor-not-allowed ${
                               s.status === "OPEN"
                                 ? "border-emerald-200 bg-emerald-50 text-emerald-800 hover:border-emerald-400"
                                 : s.status === "BLOCKED"
@@ -244,8 +244,8 @@ export function DoctorAvailabilityUI({
         </AdminCard>
 
         {/* ── Sidebar: windows list + add form ─────────────────── */}
-        <aside className="grid gap-4 self-start">
-          <AdminCard padding={0}>
+        <aside className="gh-doctor-side-stack grid gap-4 self-start">
+          <AdminCard padding={0} className="gh-doctor-panel">
             <SectionHeader
               title="Weekly windows"
               description="Recurring blocks the system uses to generate concrete slots."
@@ -256,11 +256,11 @@ export function DoctorAvailabilityUI({
                   No windows yet. Add your first one below.
                 </p>
               ) : (
-                <ul className="grid gap-2">
+                <ul className="gh-doctor-window-list grid gap-2">
                   {windows.map((w) => (
                     <li
                       key={w.id}
-                      className="flex items-center justify-between gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2"
+                      className="gh-doctor-window-row flex items-center justify-between gap-3 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2"
                     >
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-[var(--color-text-primary)]">
@@ -284,7 +284,7 @@ export function DoctorAvailabilityUI({
                           </p>
                         ) : null}
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="gh-doctor-window-actions flex items-center gap-2">
                         <Pill tone={w.isActive ? "active" : "neutral"}>
                           {w.isActive ? "Active" : "Paused"}
                         </Pill>
@@ -305,12 +305,12 @@ export function DoctorAvailabilityUI({
             </div>
           </AdminCard>
 
-          <AdminCard padding={0}>
+          <AdminCard padding={0} className="gh-doctor-panel">
             <SectionHeader
               title="Add window"
               description={`A weekly recurring time band — times in ${countryTimeZone} (clinic time).`}
             />
-            <form onSubmit={onAddWindow} className="grid gap-3 p-5">
+            <form onSubmit={onAddWindow} className="gh-doctor-availability-form grid gap-3 p-5">
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">Day</span>
                 <select
@@ -325,7 +325,7 @@ export function DoctorAvailabilityUI({
                   ))}
                 </select>
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="gh-doctor-time-grid grid grid-cols-2 gap-2">
                 <label className="flex flex-col gap-1 text-sm">
                   <span className="gh-field-label">From</span>
                   <input
@@ -361,7 +361,7 @@ export function DoctorAvailabilityUI({
               </label>
 
               {/* Optional effective range — leave blank for "always" */}
-              <div className="grid grid-cols-2 gap-2">
+              <div className="gh-doctor-time-grid grid grid-cols-2 gap-2">
                 <label className="flex flex-col gap-1 text-sm">
                   <span className="gh-field-label">Starts (optional)</span>
                   <input
@@ -392,7 +392,7 @@ export function DoctorAvailabilityUI({
             </form>
           </AdminCard>
 
-          <AdminCard padding={0}>
+          <AdminCard padding={0} className="gh-doctor-panel">
             <SectionHeader title="Legend" />
             <ul className="grid gap-2 p-5 text-[12px]">
               <Legend tone="open" label="Open · available to patients" />

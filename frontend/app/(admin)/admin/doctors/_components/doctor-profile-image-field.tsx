@@ -147,7 +147,7 @@ export function DoctorProfileImageField({
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="gh-admin-doctor-profile-image flex flex-col gap-2">
       {/* Hidden file input — clicked by the Upload / Replace buttons. */}
       <input
         ref={fileRef}
@@ -172,7 +172,7 @@ export function DoctorProfileImageField({
         }}
         onDragOver={(e) => e.preventDefault()}
         onDrop={onDrop}
-        className="relative grid place-items-center overflow-hidden text-white"
+        className="gh-admin-doctor-profile-image-tile relative grid place-items-center overflow-hidden text-white"
         style={{
           aspectRatio: "1 / 1",
           width: "100%",
@@ -214,7 +214,7 @@ export function DoctorProfileImageField({
 
         {/* Overlay actions — top-right, always visible. */}
         <div
-          className="absolute right-2 top-2 inline-flex gap-1.5"
+          className="gh-admin-doctor-profile-image-actions absolute right-2 top-2 inline-flex gap-1.5"
           style={{ pointerEvents: busy ? "none" : "auto" }}
         >
           <button
@@ -272,7 +272,7 @@ export function DoctorProfileImageField({
         {...(formId ? { form: formId } : {})}
       />
 
-      <div className="grid gap-2">
+      <div className="gh-admin-doctor-profile-image-fields grid gap-2">
         <label className="flex flex-col gap-1">
           <span className="gh-field-label">Alt text</span>
           <input

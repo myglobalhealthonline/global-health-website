@@ -203,9 +203,11 @@ export function SameDayBooking({
   // Same-day flow only ever offers TODAY + TOMORROW (clinic-local). Bucket the
   // returned slots into those two days and drop anything later.
   const { today, tomorrow } = useMemo(() => {
-    const DAY = 24 * 60 * 60 * 1000;
-    const todayKey = formatAppDate(new Date().toISOString(), clinicTz);
-    const tomorrowKey = formatAppDate(new Date(Date.now() + DAY).toISOString(), clinicTz);
+    const now = new Date();
+    const tomorrowDate = new Date(now);
+    tomorrowDate.setDate(now.getDate() + 1);
+    const todayKey = formatAppDate(now.toISOString(), clinicTz);
+    const tomorrowKey = formatAppDate(tomorrowDate.toISOString(), clinicTz);
     const todaySlots: Slot[] = [];
     const tomorrowSlots: Slot[] = [];
     for (const s of slots) {

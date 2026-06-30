@@ -50,8 +50,8 @@ export default async function AdminPatientsPage({
         description="All registered patients — filter by Global Health Number or email."
       />
 
-      <AdminCard padding={0}>
-        <form className="flex flex-wrap items-end gap-3 border-b border-[var(--color-border)] p-4">
+      <AdminCard padding={0} className="gh-admin-patients-list">
+        <form className="gh-admin-support-filter-row flex flex-wrap items-end gap-3 border-b border-[var(--color-border)] p-4">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Global Health Number</span>
             <input
@@ -86,7 +86,7 @@ export default async function AdminPatientsPage({
           </p>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div className="gh-admin-support-table-wrap overflow-x-auto">
               <table className="gh-table">
                 <thead>
                   <tr>
@@ -134,7 +134,7 @@ export default async function AdminPatientsPage({
             </div>
 
             {pagination && pagination.totalPages > 1 ? (
-              <div className="flex items-center justify-between border-t border-[var(--color-border)] px-4 py-3">
+              <div className="gh-admin-support-pagination flex items-center justify-between border-t border-[var(--color-border)] px-4 py-3">
                 <p className="text-sm text-[var(--color-text-muted)]">
                   {pagination.total} result{pagination.total !== 1 ? "s" : ""}
                 </p>

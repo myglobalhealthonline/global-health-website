@@ -313,7 +313,7 @@ export function ManualBookingForm({
   const errorList = Object.values(errors);
 
   return (
-    <form action={action} onSubmit={onSubmit} className="flex flex-col gap-6" noValidate>
+    <form action={action} onSubmit={onSubmit} className="gh-admin-manual-booking-form" noValidate>
       <input type="hidden" name="countryCode" value={countryCode} />
       {/* Combined phone + the picked slot are derived from React state, so
         * the server action's FormData always carries the canonical values. */}
@@ -326,7 +326,7 @@ export function ManualBookingForm({
           Existing accounts with this email are reused; otherwise a new patient User is created with a
           unique temporary password.
         </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="gh-admin-manual-booking-grid mt-4">
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Full name *</span>
             <input
@@ -361,7 +361,7 @@ export function ManualBookingForm({
             />
             {errors.email ? <FieldError msg={errors.email} /> : null}
             {showPatientMenu && (lookupLoading || patientOptions.length > 0) ? (
-              <div className="absolute left-0 right-0 top-[calc(100%+4px)] z-20 max-h-64 overflow-auto rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] shadow-lg">
+              <div className="gh-admin-manual-patient-menu absolute left-0 right-0 top-[calc(100%+4px)] z-20 max-h-64 overflow-auto rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] shadow-lg">
                 {lookupLoading ? (
                   <div className="flex items-center gap-2 px-3 py-2 text-[12px] text-[var(--color-text-muted)]">
                     <Loader2 className="size-3.5 animate-spin" aria-hidden /> Searching existing
@@ -496,7 +496,7 @@ export function ManualBookingForm({
 
       <AdminCard>
         <h2 className="text-[15px] font-bold text-[var(--color-text-primary)]">Appointment</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="gh-admin-manual-booking-grid mt-4">
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Service *</span>
             <select
@@ -616,7 +616,7 @@ export function ManualBookingForm({
 
         {/* Slot picker — date pills + time grid for the doctor's real open
           * inventory. */}
-        <div className="mt-6 border-t border-[var(--color-border)] pt-5">
+        <div className="gh-admin-manual-slot-section mt-6 border-t border-[var(--color-border)] pt-5">
           <div className="flex items-baseline justify-between gap-3">
             <span className="gh-field-label">Time slot *</span>
             {slots.length > 0 ? (
@@ -683,7 +683,7 @@ export function ManualBookingForm({
         </div>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+      <div className="gh-admin-appointment-actions border-t border-[var(--color-border)] pt-6">
         <SubmitButton />
         <Link
           href="/admin/appointments"
@@ -723,8 +723,8 @@ function SlotPicker({
 }) {
   const daySlots = selectedDay ? grouped.get(selectedDay) ?? [] : [];
   return (
-    <div className="mt-3">
-      <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]">
+    <div className="gh-admin-slot-picker mt-3">
+      <div className="gh-admin-slot-days -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:thin]">
         {Array.from(grouped.entries()).map(([day, list]) => {
           const isActive = selectedDay === day;
           const date = list[0]?.startAt ? new Date(list[0]!.startAt) : null;
@@ -745,8 +745,8 @@ function SlotPicker({
               onClick={() => onSelectDay(day, list[0]?.id ?? "")}
               className={
                 isActive
-                  ? "flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border-2 border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] px-4 py-2.5 text-white min-w-[64px]"
-                  : "flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-page)] px-4 py-2.5 text-[var(--color-text-body)] min-w-[64px] hover:border-[var(--color-border-strong)]"
+                  ? "gh-admin-slot-day gh-admin-slot-day--active flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border-2 border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] px-4 py-2.5 text-white min-w-[64px]"
+                  : "gh-admin-slot-day flex shrink-0 flex-col items-center gap-0.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-background-page)] px-4 py-2.5 text-[var(--color-text-body)] min-w-[64px] hover:border-[var(--color-border-strong)]"
               }
             >
               <span className="text-[10px] font-bold uppercase tracking-[0.12em] opacity-80">
@@ -764,7 +764,7 @@ function SlotPicker({
       </div>
 
       {selectedDay ? (
-        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="gh-admin-slot-times mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
           {daySlots.map((s) => {
             const isSelected = selectedSlotId === s.id;
             return (
@@ -775,8 +775,8 @@ function SlotPicker({
                 onClick={() => onSelectSlot(s.id)}
                 className={
                   isSelected
-                    ? "inline-flex flex-col items-center justify-center rounded-xl border-2 border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] px-3 py-2 text-sm font-semibold text-white [font-variant-numeric:tabular-nums]"
-                    : "inline-flex flex-col items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] [font-variant-numeric:tabular-nums] hover:border-[var(--color-brand-primary)]"
+                    ? "gh-admin-slot-time gh-admin-slot-time--active inline-flex flex-col items-center justify-center rounded-xl border-2 border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] px-3 py-2 text-sm font-semibold text-white [font-variant-numeric:tabular-nums]"
+                    : "gh-admin-slot-time inline-flex flex-col items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] [font-variant-numeric:tabular-nums] hover:border-[var(--color-brand-primary)]"
                 }
               >
                 <span>{formatAppTime(s.startAt, tz)}</span>

@@ -92,7 +92,7 @@ export default async function DoctorOverviewPage() {
       />
 
       {/* ── Stat tiles ─────────────────────────────────────────────── */}
-      <div className="grid gap-3 sm:grid-cols-[1fr_0.9fr_1.1fr]">
+      <div className="gh-doctor-stat-grid grid gap-3 sm:grid-cols-[1fr_0.9fr_1.1fr]">
         <StatCard
           tone="brand"
           label="Today"
@@ -117,11 +117,11 @@ export default async function DoctorOverviewPage() {
 
       {/* ── Pending-action banner ─────────────────────────────────── */}
       {missingMeetingLink.length > 0 ? (
-        <div className="mt-6">
+        <div className="gh-doctor-alert-stack mt-6">
           <AdminCard
             style={{ borderLeft: "3px solid var(--color-status-warning-text)" }}
           >
-            <div className="flex items-start gap-3">
+            <div className="gh-doctor-alert-row flex items-start gap-3">
               <AlertTriangle
                 className="size-5 shrink-0"
                 style={{ color: "var(--color-status-warning-text)" }}
@@ -137,7 +137,7 @@ export default async function DoctorOverviewPage() {
                   {missingMeetingLink.slice(0, 5).map((a) => (
                     <li
                       key={a.id}
-                      className="flex items-center justify-between gap-2 text-[13px]"
+                      className="gh-doctor-alert-list-row flex items-center justify-between gap-2 text-[13px]"
                     >
                       <span className="truncate text-[var(--color-text-primary)]">
                         {a.fullName}
@@ -161,8 +161,8 @@ export default async function DoctorOverviewPage() {
       ) : null}
 
       {/* ── Main grid: schedule + notifications ─────────────────── */}
-      <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
-        <AdminCard padding={0}>
+      <div className="gh-doctor-overview-grid mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
+        <AdminCard padding={0} className="gh-doctor-panel">
           <SectionHeader
             title="Today's schedule"
             description="Open or upcoming appointments scheduled today."
@@ -180,11 +180,11 @@ export default async function DoctorOverviewPage() {
                 .
               </p>
             ) : (
-              <ul className="divide-y divide-[var(--color-border)]">
+              <ul className="gh-doctor-schedule-list divide-y divide-[var(--color-border)]">
                 {todayAppointments.slice(0, 8).map((a) => (
                   <li
                     key={a.id}
-                    className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                    className="gh-doctor-schedule-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                   >
                     <div className="min-w-0">
                       <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
@@ -224,7 +224,7 @@ export default async function DoctorOverviewPage() {
           </div>
         </AdminCard>
 
-        <AdminCard padding={0}>
+        <AdminCard padding={0} className="gh-doctor-panel">
           <SectionHeader
             title={
               <span className="inline-flex items-center gap-2">
@@ -238,7 +238,7 @@ export default async function DoctorOverviewPage() {
                 You&apos;re caught up.
               </p>
             ) : (
-              <ul className="grid gap-3">
+              <ul className="gh-doctor-notification-mini-list grid gap-3">
                 {unreadNotifs.slice(0, 6).map((n) => (
                   <li key={n.id} className="text-[13px]">
                     <p className="font-semibold text-[var(--color-text-primary)]">
@@ -272,7 +272,7 @@ export default async function DoctorOverviewPage() {
       </div>
 
       {/* ── Quick links ───────────────────────────────────────────── */}
-      <div className="mt-5 grid gap-3 sm:grid-cols-[1.1fr_0.9fr_1fr]">
+      <div className="gh-doctor-quick-grid mt-5 grid gap-3 sm:grid-cols-[1.1fr_0.9fr_1fr]">
         <QuickActionCard
           href="/doctor/patients"
           icon={<Users className="size-5" aria-hidden />}
@@ -310,7 +310,7 @@ function QuickActionCard({
   return (
     <Link
       href={href}
-      className="block transition-all duration-150 hover:-translate-y-[1px] hover:shadow-[var(--shadow-card-hover)]"
+      className="gh-doctor-quick-card block transition-all duration-150 hover:-translate-y-[1px] hover:shadow-[var(--shadow-card-hover)]"
       style={{
         background: "var(--color-background-page)",
         border: "1px solid var(--color-border)",

@@ -252,7 +252,7 @@ export function DocumentsReviewSendPanel({
               only — medicine prescriptions are for your records and national portal submission.
             </p>
             {sendableQueue.length > 0 ? (
-              <div className="mb-3 flex justify-end">
+              <div className="gh-doctor-review-toolbar mb-3 flex justify-end">
                 <button
                   type="button"
                   disabled={pending || selected.size === 0}
@@ -264,13 +264,13 @@ export function DocumentsReviewSendPanel({
                 </button>
               </div>
             ) : null}
-            <ul className="divide-y divide-[var(--color-border)] rounded-md border border-[var(--color-border)]">
+            <ul className="gh-doctor-review-list divide-y divide-[var(--color-border)] rounded-md border border-[var(--color-border)]">
               {queue.map((row) => {
                 const sendable = canEmailDocument(row.documentType);
                 return (
                   <li
                     key={row.id}
-                    className="flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-[13px]"
+                    className="gh-doctor-review-row flex flex-wrap items-center justify-between gap-2 px-3 py-2.5 text-[13px]"
                   >
                     <label className="flex min-w-0 flex-1 items-center gap-2">
                       {sendable ? (
@@ -291,7 +291,7 @@ export function DocumentsReviewSendPanel({
                         {docRowLabel(row)} · {row.fileName}
                       </span>
                     </label>
-                    <div className="flex shrink-0 flex-wrap items-center gap-1">
+                    <div className="gh-doctor-review-actions flex shrink-0 flex-wrap items-center gap-1">
                       <a
                         href={`/api/doctor/documents/generated/${row.id}/pdf`}
                         target="_blank"
@@ -362,7 +362,7 @@ export function DocumentsReviewSendPanel({
             </h4>
             <ul className="mt-2 space-y-1 text-[13px] text-[var(--color-text-muted)]">
               {history.map((row) => (
-                <li key={row.id} className="flex flex-wrap items-center gap-2">
+                <li key={row.id} className="gh-doctor-review-history-row flex flex-wrap items-center gap-2">
                   <a
                     href={`/api/doctor/documents/generated/${row.id}/pdf`}
                     target="_blank"

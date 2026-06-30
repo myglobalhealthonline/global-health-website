@@ -78,14 +78,14 @@ export function PatientProfileEditor({
   }
 
   return (
-    <AdminCard>
+    <AdminCard className="gh-admin-patient-profile-editor">
       <h3 style={cardTitleStyle}>Patient profile</h3>
       <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
         Persistent chart keyed by email. Identity + address + clinical
         alerts visible to the assigned doctor on the patient chart.
       </p>
 
-      <form action={saveProfile} className="grid gap-6">
+      <form action={saveProfile} className="gh-admin-patient-profile-form grid gap-6">
         {profile?.statusAlert ? (
           <p
             className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-[13px] font-semibold text-red-800"
@@ -103,9 +103,9 @@ export function PatientProfileEditor({
           </p>
         ) : null}
 
-        <section>
+        <section className="gh-admin-patient-profile-section">
           <h4 style={sectionTitleStyle}>Identity</h4>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="gh-admin-support-field-grid grid gap-3 sm:grid-cols-2">
             <Field
               label="Full name"
               name="fullName"
@@ -150,9 +150,9 @@ export function PatientProfileEditor({
           </div>
         </section>
 
-        <section>
+        <section className="gh-admin-patient-profile-section">
           <h4 style={sectionTitleStyle}>Address</h4>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="gh-admin-support-field-grid grid gap-3 sm:grid-cols-2">
             <Field
               label="Line 1"
               name="addressLine1"
@@ -188,9 +188,9 @@ export function PatientProfileEditor({
           </div>
         </section>
 
-        <section>
+        <section className="gh-admin-patient-profile-section">
           <h4 style={sectionTitleStyle}>Plan &amp; pharmacy</h4>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="gh-admin-support-field-grid grid gap-3 sm:grid-cols-2">
             <Field
               label="Preferred pharmacy"
               name="preferredPharmacy"
@@ -206,7 +206,7 @@ export function PatientProfileEditor({
           ) : null}
         </section>
 
-        <section>
+        <section className="gh-admin-patient-profile-section">
           <h4 style={sectionTitleStyle}>Clinical alerts</h4>
           <p className="mb-2 text-[12px] text-[var(--color-text-muted)]">
             Visible to the doctor only (red / yellow banners on the chart).
@@ -236,9 +236,9 @@ export function PatientProfileEditor({
           </div>
         </section>
 
-        <section>
+        <section className="gh-admin-patient-profile-section">
           <h4 style={sectionTitleStyle}>Vitals</h4>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="gh-admin-support-field-grid gh-admin-support-field-grid--three grid gap-3 sm:grid-cols-3">
             <Field
               label="Weight (kg)"
               name="weightKg"

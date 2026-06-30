@@ -84,7 +84,7 @@ export function ServiceTranslationTabs({
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
+    <div className="gh-admin-service-translations">
       <header>
         <h3 className="m-0 text-sm font-bold text-[var(--color-text-primary)]">
           Content &amp; translations
@@ -97,7 +97,7 @@ export function ServiceTranslationTabs({
       </header>
 
       {/* Tab strip */}
-      <div role="tablist" className="flex flex-wrap gap-1.5">
+      <div role="tablist" className="gh-admin-service-tablist">
         {locales.map((l) => {
           const isActive = l.code === active;
           return (
@@ -107,7 +107,7 @@ export function ServiceTranslationTabs({
               role="tab"
               aria-selected={isActive}
               onClick={() => setActive(l.code)}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
+              className={`gh-admin-service-tab ${
                 isActive
                   ? "bg-[var(--color-brand-primary)] text-white"
                   : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -128,7 +128,7 @@ export function ServiceTranslationTabs({
             key={l.code}
             role="tabpanel"
             hidden={l.code !== active}
-            className="flex flex-col gap-4"
+            className="gh-admin-service-translation-panel"
           >
             <label className="flex flex-col gap-2">
               <span className="gh-field-label">
@@ -153,7 +153,7 @@ export function ServiceTranslationTabs({
               />
             </label>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="gh-admin-service-field-grid gh-admin-service-field-grid--two">
               <label className="flex flex-col gap-2">
                 <span className="gh-field-label">SEO title</span>
                 <input

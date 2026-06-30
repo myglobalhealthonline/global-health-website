@@ -44,8 +44,8 @@ export default async function AdminUsersPage({
         description="Patients + admin accounts. Search by name/email, filter by role or status."
       />
 
-      <AdminCard padding={0}>
-        <form className="flex flex-wrap items-end gap-3 border-b border-[var(--color-border)] p-4">
+      <AdminCard padding={0} className="gh-admin-users-list">
+        <form className="gh-admin-support-filter-row flex flex-wrap items-end gap-3 border-b border-[var(--color-border)] p-4">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Search</span>
             <input
@@ -85,7 +85,8 @@ export default async function AdminUsersPage({
             No users match those filters.
           </p>
         ) : (
-          <table className="w-full text-sm">
+          <div className="gh-admin-support-table-wrap overflow-x-auto">
+          <table className="w-full min-w-[820px] text-sm">
             <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
               <tr>
                 <th className="px-4 py-3 font-semibold">Email</th>
@@ -134,10 +135,11 @@ export default async function AdminUsersPage({
               ))}
             </tbody>
           </table>
+          </div>
         )}
 
         {result.ok && result.data.pagination.totalPages > 1 ? (
-          <div className="flex items-center justify-between border-t border-[var(--color-border)] px-4 py-3 text-xs text-[var(--color-text-muted)]">
+          <div className="gh-admin-support-pagination flex items-center justify-between border-t border-[var(--color-border)] px-4 py-3 text-xs text-[var(--color-text-muted)]">
             <span>
               Page {result.data.pagination.page} of{" "}
               {result.data.pagination.totalPages} ({result.data.pagination.total} users)

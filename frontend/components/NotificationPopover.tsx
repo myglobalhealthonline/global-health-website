@@ -73,7 +73,7 @@ export function NotificationPopover({
         aria-label="Notifications"
         aria-expanded={open}
         aria-haspopup="menu"
-        className="relative inline-flex size-9 items-center justify-center rounded-[10px] border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-muted)] transition hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
+        className="gh-notification-button relative inline-flex size-9 items-center justify-center rounded-[10px] border border-[var(--color-border)] bg-[var(--color-background-page)] text-[var(--color-text-muted)] transition hover:border-[var(--color-border-strong)] hover:text-[var(--color-text-primary)]"
       >
         <Bell className="size-4" aria-hidden />
         {unreadCount > 0 ? (
@@ -98,10 +98,10 @@ export function NotificationPopover({
           />
           <div
             role="menu"
-            className="absolute right-0 top-[calc(100%+8px)] z-40 w-[min(360px,calc(100vw-32px))] rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-2"
+            className="gh-notification-popover absolute right-0 top-[calc(100%+8px)] z-40 w-[min(360px,calc(100vw-32px))] rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-2"
             style={{ boxShadow: "var(--shadow-elevated)" }}
           >
-            <div className="flex items-center justify-between border-b border-[var(--color-border)] px-2 pb-2">
+            <div className="gh-notification-popover__header flex items-center justify-between border-b border-[var(--color-border)] px-2 pb-2">
               <span className="text-sm font-bold text-[var(--color-text-primary)]">
                 Notifications
               </span>
@@ -113,7 +113,7 @@ export function NotificationPopover({
             </div>
 
             {recent.length === 0 ? (
-              <p className="px-3 py-6 text-center text-sm text-[var(--color-text-muted)]">
+              <p className="gh-notification-popover__empty px-3 py-6 text-center text-sm text-[var(--color-text-muted)]">
                 {emptyMessage}
               </p>
             ) : (
@@ -147,12 +147,12 @@ export function NotificationPopover({
                         <Link
                           href={n.href}
                           onClick={() => setOpen(false)}
-                          className="block rounded-md px-3 py-2 hover:bg-[var(--color-background-soft)]"
+                          className="gh-notification-popover__item block rounded-md px-3 py-2 hover:bg-[var(--color-background-soft)]"
                         >
                           {inner}
                         </Link>
                       ) : (
-                        <div className="px-3 py-2">{inner}</div>
+                        <div className="gh-notification-popover__item px-3 py-2">{inner}</div>
                       )}
                     </li>
                   );

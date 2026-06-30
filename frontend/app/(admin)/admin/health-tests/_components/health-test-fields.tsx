@@ -43,7 +43,7 @@ export function HealthTestFields({
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="gh-admin-health-fields">
       {pinId && pinnedMeta ? (
         <div>
           <span className="gh-field-label">Country</span>
@@ -78,7 +78,7 @@ export function HealthTestFields({
         baseFallback={baseFallback}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="gh-admin-health-field-grid gh-admin-health-field-grid--two">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Price</span>
           <input type="text" inputMode="decimal" name="price" className="gh-input min-w-0" defaultValue={formatHealthTestPriceInput(initial?.priceCents)} placeholder="84.00" />
@@ -104,7 +104,7 @@ export function HealthTestFields({
         max={12}
       />
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="gh-admin-health-field-grid gh-admin-health-field-grid--three">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Stock</span>
           <input
@@ -150,7 +150,7 @@ export function HealthTestFields({
         </label>
       </div>
 
-      <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
+      <label className="gh-admin-health-active-row">
         <input type="checkbox" name="isActive" defaultChecked={initial?.isActive ?? true} className="h-4 w-4 rounded border-[var(--color-border)]" />
         Health test active
       </label>

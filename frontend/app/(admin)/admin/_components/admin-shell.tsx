@@ -533,7 +533,7 @@ export function AdminShell({
             </div>
           ) : null}
 
-          <main className="gh-admin-main gh-portal-main min-w-0 flex-1 px-3 py-4 sm:px-5 sm:py-6 xl:px-7">{children}</main>
+          <main className="gh-admin-main gh-portal-main min-w-0 flex-1">{children}</main>
         </div>
 
       <Toaster

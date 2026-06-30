@@ -155,11 +155,8 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
         </p>
       ) : null}
 
-      <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
-      >
-        <div className="grid gap-4">
+      <div className="gh-admin-user-detail-layout grid gap-4">
+        <div className="gh-admin-user-detail-main grid gap-4">
           <AdminCard>
             <h3
               className="m-0 text-[var(--color-text-primary)]"
@@ -167,7 +164,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
             >
               Profile
             </h3>
-            <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+            <dl className="gh-admin-user-facts mt-4 grid gap-4 sm:grid-cols-2">
               <Field label="Email" value={user.email} />
               <Field label="Full name" value={user.fullName} />
               <Field label="Phone" value={user.phone ?? "—"} />
@@ -188,7 +185,7 @@ export default async function AdminUserDetailPage({ params, searchParams }: Page
           ) : null}
         </div>
 
-        <div className="grid gap-4 self-start">
+        <div className="gh-admin-user-detail-side grid gap-4 self-start">
           <AdminCard>
             <h3
               className="m-0 text-[var(--color-text-primary)]"

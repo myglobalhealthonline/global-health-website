@@ -45,7 +45,7 @@ export function ReportsCsvButton({ data }: { data: DoctorReportsDto }) {
     <button
       type="button"
       onClick={download}
-      className="gh-btn gh-btn-soft text-sm"
+      className="gh-btn gh-btn-soft gh-doctor-csv-button text-sm"
     >
       <Download className="size-3.5" /> Export CSV
     </button>

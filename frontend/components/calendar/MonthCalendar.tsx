@@ -48,7 +48,7 @@ export function MonthCalendar({
   const cells = buildMonthGrid(year, month);
 
   return (
-    <div className="gh-card overflow-hidden p-0">
+    <div className="gh-calendar-panel gh-card overflow-hidden p-0">
       {/* Header — month label + nav */}
       <div className="flex items-center justify-between gap-3 border-b border-[var(--color-border)] px-4 py-3">
         <h2 className="text-base font-bold text-[var(--color-text-primary)]">
@@ -94,7 +94,7 @@ export function MonthCalendar({
       </div>
 
       {/* Day grid */}
-      <div className="grid grid-cols-7">
+      <div className="gh-calendar-grid grid grid-cols-7">
         {cells.map((cell) => {
           const items = itemsByDay.get(cell.key);
           const { consults, open, blocked, booked } = summarize(items);
@@ -106,11 +106,11 @@ export function MonthCalendar({
               key={cell.key}
               type="button"
               onClick={() => onSelectDay(cell.key)}
-              className={`relative flex min-h-[78px] flex-col items-start gap-1 border-b border-r border-[var(--color-border)] p-1.5 text-left transition sm:min-h-[92px] ${
+              className={`gh-calendar-day relative flex min-h-[78px] flex-col items-start gap-1 border-b border-r border-[var(--color-border)] p-1.5 text-left transition sm:min-h-[92px] ${
                 cell.inMonth
                   ? "bg-[var(--color-background-page)]"
-                  : "bg-[var(--color-background-soft)]"
-              } ${isSelected ? "ring-2 ring-inset ring-[var(--color-brand-primary)]" : "hover:bg-[var(--color-background-soft)]"}`}
+                  : "gh-calendar-day-outside bg-[var(--color-background-soft)]"
+              } ${isSelected ? "gh-calendar-day-selected ring-2 ring-inset ring-[var(--color-brand-primary)]" : "hover:bg-[var(--color-background-soft)]"}`}
             >
               <span
                 className={`inline-flex size-6 items-center justify-center rounded-full text-xs font-semibold ${

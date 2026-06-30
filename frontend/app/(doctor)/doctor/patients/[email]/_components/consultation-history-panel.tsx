@@ -105,7 +105,7 @@ function HistorySection({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <section className="overflow-hidden rounded-md border border-[var(--color-border)]">
+    <section className="gh-doctor-history-section overflow-hidden rounded-md border border-[var(--color-border)]">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -119,7 +119,7 @@ function HistorySection({
           ) : null}
         </span>
       </button>
-      {open ? <div className="bg-white">{children}</div> : null}
+      {open ? <div className="gh-doctor-history-body bg-white">{children}</div> : null}
     </section>
   );
 }
@@ -134,7 +134,7 @@ function DocTypeGroup({
   const [open, setOpen] = useState(true);
   if (rows.length === 0) return null;
   return (
-    <div className="border-t border-[var(--color-border)]">
+    <div className="gh-doctor-doc-group border-t border-[var(--color-border)]">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -154,7 +154,7 @@ const TABLE_HEAD =
 
 function DocumentTable({ rows }: { rows: DocRow[] }) {
   return (
-    <div className="overflow-x-auto">
+    <div className="gh-doctor-table-wrap overflow-x-auto">
       <table className="w-full min-w-[720px] text-[13px]">
         <thead>
           <tr className={TABLE_HEAD}>
@@ -203,7 +203,7 @@ function DocumentTable({ rows }: { rows: DocRow[] }) {
 
 function UploadsTable({ rows }: { rows: UploadRow[] }) {
   return (
-    <div className="overflow-x-auto">
+    <div className="gh-doctor-table-wrap overflow-x-auto">
       <table className="w-full min-w-[720px] text-[13px]">
         <thead>
           <tr className={TABLE_HEAD}>
@@ -297,10 +297,10 @@ export function ConsultationHistoryPanel({ patientEmail }: { patientEmail: strin
   const gen = data.generatedDocuments;
 
   return (
-    <div className="space-y-4">
+    <div className="gh-doctor-consultation-history space-y-4">
       {data.medicalNotes.length > 0 ? (
         <HistorySection title="Medical notes" count={data.medicalNotes.length}>
-          <div className="overflow-x-auto">
+          <div className="gh-doctor-table-wrap overflow-x-auto">
             <table className="w-full min-w-[640px] text-[13px]">
               <thead>
                 <tr className={TABLE_HEAD}>

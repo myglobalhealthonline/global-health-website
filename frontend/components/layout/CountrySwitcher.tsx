@@ -62,8 +62,9 @@ export function CountrySwitcher({
       void clear();
     }
     setOpen(false);
-    document.cookie = `gh_locale=${nextLang}; path=/; max-age=31536000; SameSite=Lax`;
-    window.location.href = nextHref;
+    // eslint-disable-next-line react-hooks/immutability -- hard navigation needs the locale cookie synced before reload.
+    globalThis.document.cookie = `gh_locale=${nextLang}; path=/; max-age=31536000; SameSite=Lax`;
+    globalThis.location.assign(nextHref);
   }
 
   useEffect(() => {

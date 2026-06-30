@@ -53,7 +53,7 @@ export default async function DoctorInvoicesPage({
 
   return (
     <>
-      <header className="mb-6">
+      <header className="gh-doctor-page-header mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
           Doctor
         </p>
@@ -67,8 +67,8 @@ export default async function DoctorInvoicesPage({
         </p>
       </header>
 
-      <div className="gh-card mb-4 p-4">
-        <form className="grid grid-cols-1 gap-3 sm:grid-cols-5">
+      <div className="gh-card gh-doctor-filter-card mb-4 p-4">
+        <form className="gh-doctor-filter-grid grid grid-cols-1 gap-3 sm:grid-cols-5">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Status</span>
             <select name="status" defaultValue={status ?? ""} className="gh-select">
@@ -98,7 +98,7 @@ export default async function DoctorInvoicesPage({
               className="gh-input"
             />
           </label>
-          <div className="sm:col-span-5 flex items-center gap-2">
+          <div className="gh-doctor-filter-actions sm:col-span-5 flex items-center gap-2">
             <button type="submit" className="gh-btn gh-btn-primary text-sm">
               Apply
             </button>
@@ -116,11 +116,12 @@ export default async function DoctorInvoicesPage({
           </p>
         </div>
       ) : result.data.items.length === 0 ? (
-        <div className="gh-card p-10 text-center text-sm text-[var(--color-text-muted)]">
+        <div className="gh-card gh-doctor-empty-state p-10 text-center text-sm text-[var(--color-text-muted)]">
           No invoices match those filters.
         </div>
       ) : (
-        <div className="gh-card p-0 overflow-hidden">
+        <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
+          <div className="gh-doctor-table-wrap overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
               <tr>
@@ -181,6 +182,7 @@ export default async function DoctorInvoicesPage({
               ))}
             </tbody>
           </table>
+          </div>
           {result.data.pagination.totalPages > 1 ? (
             <div className="border-t border-[var(--color-border)] px-4 py-3 text-xs text-[var(--color-text-muted)]">
               Page {result.data.pagination.page} of{" "}

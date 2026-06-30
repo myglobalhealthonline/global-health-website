@@ -51,7 +51,7 @@ export function EventDetailDialog({ item, tz, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-t-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 shadow-[var(--shadow-elevated)] sm:rounded-[var(--radius-card)]"
+        className="gh-calendar-dialog w-full max-w-md rounded-t-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-5 shadow-[var(--shadow-elevated)] sm:rounded-[var(--radius-card)]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">

@@ -71,7 +71,7 @@ function LogRow({ entry }: { entry: AccessLogEntry }) {
     : null;
 
   return (
-    <div className="flex items-start gap-4 border-b border-[var(--color-border)] py-3 last:border-0">
+    <div className="gh-patient-access-row flex items-start gap-4 border-b border-[var(--color-border)] py-3 last:border-0">
       <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-background-soft)]">
         <Shield className="size-4 text-[var(--color-text-muted)]" aria-hidden />
       </div>
@@ -134,8 +134,8 @@ export default function AccessHistoryPage() {
   }, [page]);
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <header className="mb-6">
+    <div className="gh-patient-page gh-patient-access-history-page">
+      <header className="gh-patient-page-header mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
           Patient portal
         </p>
@@ -148,7 +148,7 @@ export default function AccessHistoryPage() {
         </p>
       </header>
 
-      <div className="gh-card divide-y divide-[var(--color-border)] p-0">
+      <div className="gh-patient-access-card gh-card divide-y divide-[var(--color-border)] p-0">
         {!loaded ? (
           <div className="p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>
         ) : logs.length === 0 ? (

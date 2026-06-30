@@ -138,13 +138,10 @@ export default async function AdminHealthTestDetailPage({
         </p>
       ) : null}
 
-      <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
-      >
+      <div className="gh-admin-health-layout">
         <div className="grid gap-4">
           <AdminCard padding={0}>
-            <div className="bg-[var(--color-background-soft)] p-6">
+            <div className="gh-admin-health-preview bg-[var(--color-background-soft)] p-6">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={test.productImagePath}
@@ -152,7 +149,7 @@ export default async function AdminHealthTestDetailPage({
                 className="mx-auto block max-h-72 max-w-full rounded-[var(--radius-card-sm)] object-contain"
               />
             </div>
-            <div className="grid gap-4 p-6 sm:grid-cols-2">
+            <div className="gh-admin-health-detail-grid p-6">
               <FieldRow label="Slug" value={test.slug} mono />
               <FieldRow
                 label="Price"
@@ -179,7 +176,7 @@ export default async function AdminHealthTestDetailPage({
                 {test.whatThisTestCovers.map((item) => (
                   <li
                     key={item}
-                    className="flex items-start gap-2.5 rounded-md bg-[var(--color-background-soft)] px-3 py-2"
+                    className="gh-admin-health-list-item"
                   >
                     <span
                       aria-hidden
@@ -206,7 +203,7 @@ export default async function AdminHealthTestDetailPage({
                 {test.whyGetTested.map((item) => (
                   <li
                     key={item}
-                    className="flex items-start gap-2.5 rounded-md bg-[var(--color-background-soft)] px-3 py-2"
+                    className="gh-admin-health-list-item"
                   >
                     <span
                       aria-hidden

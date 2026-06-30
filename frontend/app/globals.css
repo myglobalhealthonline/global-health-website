@@ -1743,6 +1743,12 @@ img {
   --portal-line: rgba(29, 75, 54, 0.11);
   --portal-line-strong: rgba(29, 75, 54, 0.2);
   --portal-muted: #66766f;
+  --portal-sidebar-w: 272px;
+  --portal-main-max: 1500px;
+  --portal-readable-max: 1180px;
+  --portal-pad-x: clamp(14px, 2vw, 30px);
+  --portal-pad-y: clamp(16px, 2vw, 28px);
+  --portal-section-gap: clamp(14px, 1.6vw, 22px);
   --portal-radius: 10px;
   --portal-radius-sm: 8px;
   --portal-shadow: 0 14px 38px rgba(25, 68, 51, 0.075);
@@ -1787,12 +1793,18 @@ img {
 }
 
 .gh-portal-main {
-  max-width: 1500px;
+  width: min(100%, var(--portal-main-max));
+  max-width: var(--portal-main-max);
+  margin-inline: auto;
+  padding: var(--portal-pad-y) var(--portal-pad-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--portal-section-gap);
 }
 
 .gh-portal-main > .mx-auto[class*="max-w-"] {
   width: 100% !important;
-  max-width: 1180px !important;
+  max-width: var(--portal-readable-max) !important;
 }
 
 .gh-portal-main > .mx-auto[class*="max-w-2xl"],
@@ -1803,7 +1815,7 @@ img {
 .gh-portal-page-header,
 .gh-admin-main > header:not(.gh-portal-page-header) {
   min-height: 0 !important;
-  margin-bottom: 18px !important;
+  margin-bottom: 0 !important;
   padding: clamp(18px, 2vw, 26px) !important;
   border: 1px solid var(--portal-line) !important;
   border-radius: var(--portal-radius) !important;
@@ -1839,6 +1851,18 @@ img {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(253, 254, 250, 0.94) 100%) !important;
   box-shadow: var(--portal-shadow) !important;
+}
+
+.gh-portal-main > :where(section, article, form, div, header, nav) {
+  max-width: 100%;
+}
+
+.gh-portal-main > :where(.gh-admin-card, .gh-card, .gh-stat-card, .gh-portal-page-header) {
+  width: 100%;
+}
+
+.gh-portal-main > :where(.grid, .flex) {
+  min-width: 0;
 }
 
 .gh-admin-card:hover,
@@ -2018,12 +2042,18 @@ img {
 }
 
 @media (max-width: 640px) {
+  .gh-portal-shell {
+    --portal-pad-x: 12px;
+    --portal-pad-y: 14px;
+    --portal-section-gap: 12px;
+  }
+
   .gh-portal-topbar {
     height: 60px !important;
   }
 
   .gh-portal-main {
-    padding-inline: 12px !important;
+    padding: var(--portal-pad-y) var(--portal-pad-x) !important;
   }
 
   .gh-portal-page-header,
@@ -2108,6 +2138,1908 @@ img {
 .gh-admin-status-toggle__track {
   flex: 0 0 auto;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* Batch 3A: admin services route family */
+.gh-admin-service-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.85fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.gh-admin-service-form,
+.gh-admin-service-fields,
+.gh-admin-service-links,
+.gh-admin-service-peak-form,
+.gh-admin-service-translation-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.gh-admin-service-country-form {
+  display: grid;
+  grid-template-columns: minmax(220px, 360px) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.gh-admin-service-field-grid,
+.gh-admin-service-filter-grid {
+  display: grid;
+  min-width: 0;
+  gap: 14px;
+}
+
+.gh-admin-service-field-grid--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gh-admin-service-field-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gh-admin-service-filter-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.gh-admin-service-note,
+.gh-admin-service-helper {
+  border: 1px solid rgba(29, 75, 54, 0.12);
+  border-radius: var(--portal-radius-sm);
+  background: rgba(241, 245, 235, 0.72);
+  color: var(--portal-muted, var(--color-text-muted));
+}
+
+.gh-admin-service-note {
+  padding: 12px 14px;
+  font-size: 13px;
+}
+
+.gh-admin-service-helper {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.gh-admin-service-translations,
+.gh-admin-service-link-card,
+.gh-admin-service-faq__item,
+.gh-admin-service-faq-form {
+  border: 1px solid var(--portal-line, var(--color-border));
+  border-radius: var(--portal-radius);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.68);
+}
+
+.gh-admin-service-translations {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+}
+
+.gh-admin-service-tablist,
+.gh-admin-service-kind-tabs {
+  display: flex;
+  max-width: 100%;
+  gap: 6px;
+  overflow-x: auto;
+  border-radius: var(--portal-radius);
+  background: rgba(241, 245, 235, 0.88) !important;
+  padding: 5px !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gh-admin-service-tab,
+.gh-admin-service-kind-tab {
+  min-height: 32px !important;
+  flex: 0 0 auto;
+  border-radius: 8px !important;
+  border: 1px solid transparent !important;
+  padding: 7px 12px !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  white-space: nowrap;
+}
+
+.gh-admin-service-tab[aria-selected="true"],
+.gh-admin-service-kind-tab--active {
+  background: #ffffff !important;
+  color: #184633 !important;
+  box-shadow: 0 8px 18px rgba(30, 66, 51, 0.08) !important;
+}
+
+.gh-admin-service-links {
+  gap: 12px;
+}
+
+.gh-admin-service-link-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.gh-admin-service-link-grid {
+  display: grid;
+  grid-template-columns: minmax(170px, 1fr) minmax(180px, 1fr) minmax(84px, 0.45fr) minmax(120px, 0.55fr);
+  gap: 10px;
+}
+
+.gh-admin-service-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.gh-admin-service-actions--split,
+.gh-admin-service-actions--filters {
+  justify-content: space-between;
+}
+
+.gh-admin-service-actions--filters > span {
+  margin-left: auto;
+}
+
+.gh-admin-service-doctors {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gh-admin-service-doctor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.gh-admin-service-doctor-option,
+.gh-admin-service-active-row {
+  display: inline-flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: var(--portal-radius-sm);
+  border: 1px solid var(--portal-line, var(--color-border));
+  background: rgba(255, 255, 255, 0.86);
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--color-text-primary);
+}
+
+.gh-admin-service-active-row {
+  align-items: center;
+  font-weight: 700;
+}
+
+.gh-admin-service-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.gh-admin-service-facts > div,
+.gh-admin-service-details > div {
+  min-width: 0;
+  border-bottom: 1px solid rgba(29, 75, 54, 0.08);
+  padding-bottom: 9px;
+}
+
+.gh-admin-service-image-preview,
+.gh-admin-service-image-empty {
+  border: 1px solid var(--portal-line, var(--color-border));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.gh-admin-service-visibility-row {
+  gap: 14px;
+}
+
+.gh-admin-service-peak-windows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gh-admin-service-peak-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.gh-admin-service-faq__header,
+.gh-admin-service-faq__row {
+  gap: 12px;
+}
+
+.gh-admin-service-faq__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.gh-admin-service-faq__actions,
+.gh-admin-service-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.gh-admin-service-faq__item,
+.gh-admin-service-faq-form {
+  padding: 14px;
+}
+
+.gh-admin-service-table-wrap table {
+  min-width: 880px;
+}
+
+.gh-admin-service-toggle-form {
+  width: auto !important;
+}
+
+@media (max-width: 1180px) {
+  .gh-admin-service-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-service-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .gh-admin-service-country-form,
+  .gh-admin-service-field-grid--two,
+  .gh-admin-service-field-grid--three,
+  .gh-admin-service-filter-grid,
+  .gh-admin-service-link-grid,
+  .gh-admin-service-doctor-grid,
+  .gh-admin-service-details,
+  .gh-admin-service-peak-row {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-service-actions,
+  .gh-admin-service-actions--split,
+  .gh-admin-service-actions--filters,
+  .gh-admin-service-faq__header,
+  .gh-admin-service-faq__row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-admin-service-actions--filters > span {
+    margin-left: 0;
+  }
+
+  .gh-admin-service-actions :where(.gh-btn, button, a),
+  .gh-admin-service-country-form :where(.gh-btn, button),
+  .gh-admin-service-faq__actions :where(.gh-btn, button),
+  .gh-admin-service-row-actions :where(.gh-btn, button, a) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Batch 3B: admin shared controls used across route pages */
+.gh-confirm-delete-button {
+  width: 32px !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  border: 1px solid rgba(185, 28, 28, 0.2) !important;
+  border-radius: var(--portal-radius-sm) !important;
+  background: #fff7f7 !important;
+  color: #991b1b !important;
+  box-shadow: none !important;
+}
+
+.gh-confirm-delete-button:hover {
+  background: #fee2e2 !important;
+  border-color: rgba(185, 28, 28, 0.38) !important;
+}
+
+.gh-admin-scope-banner {
+  border-radius: var(--portal-radius) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.gh-admin-scope-banner--active {
+  background:
+    linear-gradient(90deg, rgba(27, 77, 62, 0.1), rgba(241, 245, 235, 0.8)) !important;
+  border-color: rgba(27, 77, 62, 0.16) !important;
+}
+
+.gh-admin-scope-banner--empty {
+  background: rgba(241, 245, 235, 0.72) !important;
+  border-color: rgba(29, 75, 54, 0.18) !important;
+}
+
+.gh-admin-media-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.gh-admin-media-dropzone,
+.gh-admin-media-empty-button,
+.gh-admin-media-thumb,
+.gh-admin-media-add-thumb {
+  border-radius: var(--portal-radius) !important;
+  border-color: var(--portal-line-strong, var(--color-border-strong)) !important;
+  background: rgba(241, 245, 235, 0.72) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.gh-admin-media-dropzone--dragging {
+  border-color: rgba(24, 70, 51, 0.48) !important;
+  background: rgba(143, 176, 33, 0.1) !important;
+}
+
+.gh-admin-media-dropzone--preview {
+  background: #ffffff !important;
+}
+
+.gh-admin-media-empty {
+  min-height: 176px;
+}
+
+.gh-admin-media-actions {
+  border-radius: 999px;
+}
+
+.gh-admin-media-actions button {
+  box-shadow: 0 10px 24px rgba(23, 61, 47, 0.18);
+}
+
+.gh-admin-media-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gh-admin-media-thumb,
+.gh-admin-media-add-thumb {
+  min-width: 0;
+}
+
+.gh-skeleton-bar {
+  background:
+    linear-gradient(90deg, rgba(241, 245, 235, 0.8), rgba(255, 255, 255, 0.9), rgba(241, 245, 235, 0.8)) !important;
+  background-size: 220% 100% !important;
+}
+
+.gh-skeleton-header,
+.gh-skeleton-section,
+.gh-skeleton-table {
+  border: 1px solid var(--portal-line, var(--color-border));
+}
+
+@media (max-width: 760px) {
+  .gh-admin-scope-banner {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-admin-media-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 390px) {
+  .gh-admin-media-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Batch 3C: admin dashboard and core navigation primitives */
+.gh-admin-dashboard-stats {
+  grid-template-columns: repeat(auto-fit, minmax(176px, 1fr)) !important;
+}
+
+.gh-admin-dashboard-body {
+  align-items: start;
+}
+
+.gh-admin-activity-row {
+  min-width: 0;
+  transition: background-color 150ms ease-out;
+}
+
+.gh-admin-activity-row:hover {
+  background: rgba(241, 245, 235, 0.58);
+}
+
+.gh-admin-quick-action {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(253, 254, 250, 0.92)) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.66);
+}
+
+.gh-admin-quick-action:hover {
+  border-color: rgba(24, 70, 51, 0.22) !important;
+  background: rgba(241, 245, 235, 0.68) !important;
+  transform: translateY(-1px);
+}
+
+.gh-admin-country-health .gh-admin-table-wrap {
+  overflow-x: auto;
+}
+
+.gh-admin-country-picker {
+  min-height: 38px;
+  border-color: var(--portal-line, var(--color-border)) !important;
+  border-radius: var(--portal-radius-sm) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: 0 8px 22px rgba(30, 66, 51, 0.06);
+}
+
+.gh-admin-country-picker:hover,
+.gh-admin-country-picker[data-state="open"] {
+  border-color: rgba(24, 70, 51, 0.28) !important;
+}
+
+.gh-admin-country-picker-menu {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  border-radius: var(--portal-radius) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 252, 247, 0.98)) !important;
+  box-shadow: var(--portal-shadow-hover, var(--shadow-elevated)) !important;
+}
+
+.gh-admin-country-picker-item {
+  border-radius: 8px !important;
+}
+
+.gh-admin-country-picker-item:hover,
+.gh-admin-country-picker-item:focus {
+  background: rgba(241, 245, 235, 0.9) !important;
+}
+
+.gh-flag-badge {
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(23, 61, 47, 0.12),
+    0 3px 8px rgba(23, 61, 47, 0.08) !important;
+}
+
+@media (max-width: 760px) {
+  .gh-portal-page-header-actions,
+  .gh-admin-activity-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-portal-page-header-actions :where(.gh-btn, a, button) {
+    width: 100%;
+  }
+
+  .gh-admin-activity-row > span:last-child {
+    margin-left: 0;
+  }
+}
+
+/* Batch 3D: admin appointments route family */
+.gh-admin-appointment-filter-grid,
+.gh-admin-manual-booking-grid,
+.gh-admin-appointment-detail-grid {
+  display: grid;
+  min-width: 0;
+  gap: 14px;
+}
+
+.gh-admin-appointment-filter-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.gh-admin-manual-booking-grid,
+.gh-admin-appointment-detail-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gh-admin-appointment-actions,
+.gh-admin-manual-booking-form,
+.gh-admin-appointment-side-form {
+  display: flex;
+  min-width: 0;
+}
+
+.gh-admin-manual-booking-form,
+.gh-admin-appointment-side-form {
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gh-admin-appointment-actions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.gh-admin-appointment-actions > span {
+  margin-left: auto;
+}
+
+.gh-admin-appointment-table-wrap table {
+  min-width: 1040px;
+}
+
+.gh-admin-appointment-field-row {
+  min-width: 0;
+  border-bottom: 1px solid rgba(29, 75, 54, 0.08);
+  padding-bottom: 10px;
+}
+
+.gh-admin-appointment-recovery {
+  border-radius: var(--portal-radius) !important;
+  background:
+    linear-gradient(90deg, rgba(241, 245, 235, 0.96), rgba(255, 255, 255, 0.96)) !important;
+  box-shadow: inset 3px 0 0 rgba(143, 176, 33, 0.42);
+}
+
+.gh-admin-appointment-chat .gh-chat-panel {
+  min-height: 360px;
+}
+
+.gh-admin-appointment-venue,
+.gh-admin-manual-slot-section {
+  border-radius: var(--portal-radius);
+  border: 1px solid var(--portal-line, var(--color-border));
+  background: rgba(241, 245, 235, 0.58);
+  padding: 14px;
+}
+
+.gh-admin-manual-patient-menu {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  border-radius: var(--portal-radius) !important;
+  box-shadow: var(--portal-shadow-hover, var(--shadow-elevated)) !important;
+}
+
+.gh-admin-slot-days {
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gh-admin-slot-day,
+.gh-admin-slot-time {
+  border-radius: var(--portal-radius-sm) !important;
+  transition:
+    transform 150ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 150ms ease-out,
+    background-color 150ms ease-out,
+    color 150ms ease-out;
+}
+
+.gh-admin-slot-day {
+  scroll-snap-align: start;
+  min-width: 68px !important;
+}
+
+.gh-admin-slot-day:hover,
+.gh-admin-slot-time:hover {
+  transform: translateY(-1px);
+}
+
+.gh-admin-slot-day--active,
+.gh-admin-slot-time--active {
+  background: #184633 !important;
+  border-color: #184633 !important;
+}
+
+.gh-admin-slot-times {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+@media (max-width: 1180px) {
+  .gh-admin-appointment-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .gh-admin-appointment-filter-grid,
+  .gh-admin-manual-booking-grid,
+  .gh-admin-appointment-detail-grid,
+  .gh-admin-slot-times {
+    grid-template-columns: 1fr !important;
+  }
+
+  .gh-admin-appointment-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-admin-appointment-actions > span {
+    margin-left: 0;
+  }
+
+  .gh-admin-appointment-actions :where(.gh-btn, button, a) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Batch 3E: admin assets route family */
+.gh-admin-asset-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.85fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.gh-admin-asset-filter-grid,
+.gh-admin-asset-field-grid,
+.gh-admin-asset-detail-grid {
+  display: grid;
+  min-width: 0;
+  gap: 14px;
+}
+
+.gh-admin-asset-filter-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.gh-admin-asset-field-grid--two,
+.gh-admin-asset-detail-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gh-admin-asset-form,
+.gh-admin-asset-fields,
+.gh-admin-asset-path-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.gh-admin-asset-country-form {
+  display: grid;
+  grid-template-columns: minmax(220px, 360px) auto auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.gh-admin-asset-actions,
+.gh-admin-asset-upload-actions,
+.gh-admin-asset-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.gh-admin-asset-actions > span {
+  margin-left: auto;
+}
+
+.gh-admin-asset-note,
+.gh-admin-asset-active-row,
+.gh-admin-asset-preview {
+  border-radius: var(--portal-radius);
+  border: 1px solid var(--portal-line, var(--color-border));
+  background: rgba(241, 245, 235, 0.66);
+}
+
+.gh-admin-asset-note {
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--portal-muted, var(--color-text-muted));
+}
+
+.gh-admin-asset-active-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.gh-admin-asset-field-row {
+  min-width: 0;
+  border-bottom: 1px solid rgba(29, 75, 54, 0.08);
+  padding-bottom: 10px;
+}
+
+.gh-admin-asset-table-wrap table {
+  min-width: 980px;
+}
+
+.gh-admin-asset-preview {
+  overflow: hidden;
+}
+
+@media (max-width: 1180px) {
+  .gh-admin-asset-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-asset-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .gh-admin-asset-filter-grid,
+  .gh-admin-asset-field-grid--two,
+  .gh-admin-asset-detail-grid,
+  .gh-admin-asset-country-form {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-asset-actions,
+  .gh-admin-asset-upload-actions,
+  .gh-admin-asset-row-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-admin-asset-actions > span {
+    margin-left: 0;
+  }
+
+  .gh-admin-asset-actions :where(.gh-btn, button, a),
+  .gh-admin-asset-upload-actions :where(.gh-btn, button, a),
+  .gh-admin-asset-row-actions :where(.gh-btn, button, a) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Batch 3F: admin blog/content editor route family */
+.gh-admin-blog-filters,
+.gh-admin-blog-field-grid,
+.gh-admin-blog-country-grid {
+  display: grid;
+  min-width: 0;
+  gap: 14px;
+}
+
+.gh-admin-blog-filters {
+  grid-template-columns: repeat(5, minmax(140px, 1fr)) auto;
+  align-items: end;
+}
+
+.gh-admin-blog-field-grid--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gh-admin-blog-field-grid--three,
+.gh-admin-blog-country-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gh-admin-blog-form,
+.gh-admin-blog-fields,
+.gh-admin-html-editor,
+.gh-admin-blog-translation-form {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gh-admin-blog-actions,
+.gh-admin-html-editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.gh-admin-blog-actions--end {
+  justify-content: flex-end;
+}
+
+.gh-admin-html-editor-preview-toggle {
+  margin-left: auto;
+}
+
+.gh-admin-blog-table-wrap {
+  overflow-x: auto;
+}
+
+.gh-admin-blog-table-wrap table {
+  min-width: 920px;
+}
+
+.gh-admin-html-editor-textarea {
+  min-height: 360px !important;
+  border-radius: var(--portal-radius-sm) !important;
+  line-height: 1.62 !important;
+}
+
+.gh-admin-html-editor-preview,
+.gh-admin-blog-translation-row,
+.gh-admin-blog-country-option {
+  border: 1px solid var(--portal-line, var(--color-border));
+  border-radius: var(--portal-radius-sm);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.gh-admin-blog-translation-list {
+  display: grid;
+  gap: 8px;
+}
+
+.gh-admin-blog-translation-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.gh-admin-blog-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.gh-admin-blog-country-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  font-size: 13px;
+}
+
+@media (max-width: 1180px) {
+  .gh-admin-blog-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gh-admin-blog-field-grid--three,
+  .gh-admin-blog-country-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .gh-admin-blog-filters,
+  .gh-admin-blog-field-grid--two,
+  .gh-admin-blog-field-grid--three,
+  .gh-admin-blog-country-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-blog-actions,
+  .gh-admin-html-editor-toolbar,
+  .gh-admin-blog-translation-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-admin-html-editor-preview-toggle {
+    margin-left: 0;
+  }
+
+  .gh-admin-blog-actions :where(.gh-btn, button, a),
+  .gh-admin-html-editor-toolbar :where(.gh-btn, button, a) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Batch 3G: admin health-tests route family */
+.gh-admin-health-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.85fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.gh-admin-health-filter-grid,
+.gh-admin-health-field-grid,
+.gh-admin-health-detail-grid {
+  display: grid;
+  min-width: 0;
+  gap: 14px;
+}
+
+.gh-admin-health-filter-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.gh-admin-health-field-grid--two,
+.gh-admin-health-detail-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gh-admin-health-field-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gh-admin-health-form,
+.gh-admin-health-fields,
+.gh-admin-health-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.gh-admin-health-country-form {
+  display: grid;
+  grid-template-columns: minmax(220px, 360px) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.gh-admin-health-actions,
+.gh-admin-health-faq__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.gh-admin-health-actions > span {
+  margin-left: auto;
+}
+
+.gh-admin-health-table-wrap table {
+  min-width: 940px;
+}
+
+.gh-admin-health-translations,
+.gh-admin-health-faq__item,
+.gh-admin-health-faq-form,
+.gh-admin-health-active-row,
+.gh-admin-health-preview,
+.gh-admin-health-list-item {
+  border: 1px solid var(--portal-line, var(--color-border));
+  border-radius: var(--portal-radius);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.gh-admin-health-translations {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+}
+
+.gh-admin-health-tablist {
+  display: flex;
+  max-width: 100%;
+  gap: 6px;
+  overflow-x: auto;
+  border-radius: var(--portal-radius);
+  background: rgba(241, 245, 235, 0.88);
+  padding: 5px;
+}
+
+.gh-admin-health-tab {
+  min-height: 32px !important;
+  flex: 0 0 auto;
+  border-radius: 8px !important;
+  padding: 7px 12px !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  white-space: nowrap;
+}
+
+.gh-admin-health-tab[aria-selected="true"] {
+  background: #184633 !important;
+  color: #ffffff !important;
+}
+
+.gh-admin-health-active-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.gh-admin-health-faq__header,
+.gh-admin-health-faq__row {
+  gap: 12px;
+}
+
+.gh-admin-health-faq__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.gh-admin-health-faq__item,
+.gh-admin-health-faq-form {
+  padding: 14px;
+}
+
+.gh-admin-health-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+@media (max-width: 1180px) {
+  .gh-admin-health-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-health-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .gh-admin-health-filter-grid,
+  .gh-admin-health-field-grid--two,
+  .gh-admin-health-field-grid--three,
+  .gh-admin-health-detail-grid,
+  .gh-admin-health-country-form {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-health-actions,
+  .gh-admin-health-faq__header,
+  .gh-admin-health-faq__row,
+  .gh-admin-health-faq__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-admin-health-actions > span {
+    margin-left: 0;
+  }
+
+  .gh-admin-health-actions :where(.gh-btn, button, a),
+  .gh-admin-health-faq__actions :where(.gh-btn, button, a) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Batch 3H: admin standalone operations pages */
+.gh-admin-ops-quick-filters,
+.gh-admin-calendar-filters,
+.gh-admin-automation-group-head,
+.gh-admin-ops-pagination {
+  min-width: 0;
+}
+
+.gh-admin-ops-filter-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.gh-admin-ops-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gh-admin-ops-table-wrap table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.gh-admin-ops-table-wrap tbody tr {
+  transition: background-color 160ms ease-out;
+}
+
+.gh-admin-ops-table-wrap tbody tr:hover {
+  background: rgba(241, 245, 235, 0.72);
+}
+
+.gh-admin-ops-badge {
+  line-height: 1.35;
+  letter-spacing: 0.035em;
+  white-space: nowrap;
+}
+
+.gh-admin-automation-run-row {
+  grid-template-columns: minmax(0, 1fr) 80px 86px minmax(120px, 160px);
+}
+
+.gh-admin-automation-order-row,
+.gh-admin-automation-catalog-card {
+  min-width: 0;
+}
+
+.gh-admin-automation-catalog-card {
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.64);
+}
+
+.gh-admin-calendar-filter-grid {
+  min-width: 0;
+}
+
+.gh-admin-calendar-filter-grid label {
+  min-width: 0;
+}
+
+.gh-admin-calendar-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  align-items: start;
+}
+
+.gh-admin-loading-state {
+  width: 100%;
+}
+
+.gh-admin-invoices-view-link {
+  border-radius: var(--portal-radius-sm, 8px) !important;
+}
+
+@media (max-width: 1024px) {
+  .gh-admin-ops-filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gh-admin-calendar-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .gh-admin-ops-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-ops-pagination,
+  .gh-admin-calendar-filters,
+  .gh-admin-automation-group-head,
+  .gh-admin-automation-order-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-admin-calendar-filter-grid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-calendar-filter-grid select,
+  .gh-admin-calendar-filters select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .gh-admin-automation-run-row {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-automation-order-row > div:last-child {
+    width: 100%;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+/* Batch 3I: admin country and market configuration surfaces */
+.gh-admin-country-detail-layout {
+  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.85fr);
+  align-items: start;
+}
+
+.gh-admin-country-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gh-admin-country-table-wrap table {
+  min-width: 820px;
+}
+
+.gh-admin-country-row-actions,
+.gh-admin-country-actions,
+.gh-admin-country-toolbar {
+  min-width: 0;
+}
+
+.gh-admin-country-form,
+.gh-admin-country-fields,
+.gh-admin-country-legal-form,
+.gh-admin-country-editor-form,
+.gh-admin-authority-links,
+.gh-admin-disclaimer-tabs {
+  min-width: 0;
+}
+
+.gh-admin-country-fieldset,
+.gh-admin-authority-row,
+.gh-admin-country-route-list > li,
+.gh-admin-country-domain-list > li {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  border-radius: var(--portal-radius-sm, 8px) !important;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.gh-admin-country-fieldset,
+.gh-admin-authority-row {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.gh-admin-country-locale-grid,
+.gh-admin-country-check-row {
+  min-width: 0;
+}
+
+.gh-admin-country-check-row {
+  align-items: flex-start;
+}
+
+.gh-admin-country-check-row input[type="checkbox"] {
+  margin-top: 2px;
+  flex: 0 0 auto;
+}
+
+.gh-admin-country-select {
+  width: 100%;
+}
+
+.gh-admin-country-select__menu {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  border-radius: var(--portal-radius, 10px) !important;
+  box-shadow: var(--portal-shadow-hover, var(--shadow-elevated)) !important;
+}
+
+.gh-admin-country-select__item {
+  min-width: 0;
+}
+
+.gh-admin-country-select__item:hover {
+  background: rgba(241, 245, 235, 0.92) !important;
+}
+
+.gh-admin-country-delete {
+  color: var(--color-status-error-text) !important;
+}
+
+.gh-admin-country-facts {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gh-admin-country-gp-form {
+  max-width: 720px;
+}
+
+.gh-admin-country-stats > div:first-child {
+  border-top: 0 !important;
+}
+
+.gh-admin-country-field-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gh-admin-country-field-grid--single {
+  grid-template-columns: 1fr;
+}
+
+.gh-admin-disclaimer-tablist {
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: var(--portal-radius);
+  background: rgba(241, 245, 235, 0.88);
+  padding: 5px;
+}
+
+.gh-admin-disclaimer-tab {
+  flex: 0 0 auto;
+  border-radius: 8px !important;
+  white-space: nowrap;
+}
+
+.gh-admin-disclaimer-tab[aria-selected="true"] {
+  background: #184633 !important;
+  color: #ffffff !important;
+}
+
+.gh-admin-disclaimer-panel textarea,
+.gh-admin-country-editor-form textarea,
+.gh-admin-country-legal-form textarea {
+  min-height: 120px;
+}
+
+.gh-admin-authority-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gh-admin-country-loading,
+.gh-admin-country-feature-summary,
+.gh-admin-country-features {
+  min-width: 0;
+}
+
+.gh-admin-country-feature-row td {
+  vertical-align: top;
+}
+
+@media (max-width: 1180px) {
+  .gh-admin-country-detail-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .gh-admin-country-actions,
+  .gh-admin-country-toolbar,
+  .gh-admin-country-row-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-admin-country-actions :where(.gh-btn, button, a),
+  .gh-admin-country-row-actions :where(.gh-icon-btn, button, a) {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .gh-admin-country-facts,
+  .gh-admin-country-field-grid,
+  .gh-admin-authority-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-country-locale-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .gh-admin-country-check-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .gh-admin-country-select__menu {
+    position: fixed !important;
+    left: var(--portal-pad-x, 16px) !important;
+    right: var(--portal-pad-x, 16px) !important;
+    width: auto !important;
+    max-height: min(460px, calc(100dvh - 96px));
+    overflow: auto;
+  }
+}
+
+/* Batch 3J: admin plans, subscriptions, and rich text editor */
+.gh-admin-plan-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gh-admin-plan-table-wrap table {
+  min-width: 900px;
+}
+
+.gh-admin-plan-row-actions,
+.gh-admin-plan-actions,
+.gh-admin-plan-country-form,
+.gh-admin-subscription-filter,
+.gh-admin-subscription-adjust-form,
+.gh-admin-subscription-approval-row {
+  min-width: 0;
+}
+
+.gh-admin-plan-type-card,
+.gh-admin-plan-fields,
+.gh-admin-plan-translations,
+.gh-admin-plan-editor,
+.gh-admin-plan-panel,
+.gh-admin-rich-text,
+.gh-admin-subscriptions,
+.gh-admin-subscription-health,
+.gh-admin-subscriber-ledger {
+  min-width: 0;
+}
+
+.gh-admin-plan-type-card,
+.gh-admin-subscription-approval-row,
+.gh-admin-subscription-health__issues,
+.gh-admin-subscriber-ledger__panel {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  border-radius: var(--portal-radius-sm, 8px) !important;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.gh-admin-plan-tablist,
+.gh-admin-plan-translation-tablist {
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: var(--portal-radius);
+  background: rgba(241, 245, 235, 0.88) !important;
+  padding: 5px !important;
+}
+
+.gh-admin-plan-tab,
+.gh-admin-plan-translation-tab {
+  flex: 0 0 auto;
+  border-radius: 8px !important;
+  white-space: nowrap;
+}
+
+.gh-admin-plan-tab[aria-selected="true"],
+.gh-admin-plan-translation-tab[aria-selected="true"] {
+  background: #184633 !important;
+  color: #ffffff !important;
+}
+
+.gh-admin-plan-field-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gh-admin-plan-field-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gh-admin-plan-checks {
+  align-items: flex-start;
+}
+
+.gh-admin-rich-text__frame {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  border-radius: var(--portal-radius, 10px) !important;
+}
+
+.gh-admin-rich-text__toolbar {
+  gap: 6px !important;
+  overflow-x: auto;
+}
+
+.gh-admin-rich-text__toolbar select,
+.gh-admin-rich-text__toolbar button {
+  flex: 0 0 auto;
+}
+
+.gh-admin-rich-text__editor {
+  min-height: 260px !important;
+  max-height: 560px;
+}
+
+.gh-admin-subscriber-ledger__panel {
+  padding: 10px;
+}
+
+.gh-admin-subscriber-ledger__list li {
+  min-width: 0;
+}
+
+.gh-admin-subscription-adjust-form > label {
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .gh-admin-plan-field-grid--three {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .gh-admin-plan-country-form,
+  .gh-admin-plan-actions,
+  .gh-admin-plan-row-actions,
+  .gh-admin-subscription-filter,
+  .gh-admin-subscription-adjust-form,
+  .gh-admin-subscription-approval-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-admin-plan-field-grid,
+  .gh-admin-plan-field-grid--three {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-plan-country-form :where(.gh-btn, button, select),
+  .gh-admin-plan-actions :where(.gh-btn, button, a),
+  .gh-admin-plan-row-actions :where(.gh-btn, button, a),
+  .gh-admin-subscription-filter :where(.gh-btn, button, select),
+  .gh-admin-subscription-adjust-form :where(.gh-btn, button, input, select) {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .gh-admin-rich-text__toolbar {
+    flex-wrap: nowrap;
+  }
+}
+
+/* Batch 3K: admin support, content, patients, users, and specialties */
+.gh-admin-support-editor,
+.gh-admin-footer-editor,
+.gh-admin-page-form,
+.gh-admin-page-fields,
+.gh-admin-specialty-form,
+.gh-admin-specialty-translations,
+.gh-admin-patient-profile-editor,
+.gh-admin-patient-profile-form,
+.gh-admin-user-detail-layout,
+.gh-admin-patient-section {
+  min-width: 0;
+}
+
+.gh-admin-support-filter-row,
+.gh-admin-support-actions,
+.gh-admin-support-pagination,
+.gh-admin-footer-link-row {
+  min-width: 0;
+}
+
+.gh-admin-support-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gh-admin-support-table-wrap table {
+  min-width: 860px;
+}
+
+.gh-admin-user-detail-layout {
+  grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.85fr);
+  align-items: start;
+}
+
+.gh-admin-user-facts,
+.gh-admin-patient-overview-grid,
+.gh-admin-support-field-grid {
+  min-width: 0;
+}
+
+.gh-admin-support-field-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gh-admin-support-field-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gh-admin-footer-column,
+.gh-admin-footer-link-row,
+.gh-admin-specialty-translations,
+.gh-admin-patient-profile-section,
+.gh-admin-patient-verification-grid > div {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  border-radius: var(--portal-radius-sm, 8px) !important;
+}
+
+.gh-admin-patient-profile-section {
+  border: 1px solid var(--portal-line, var(--color-border));
+  background: rgba(255, 255, 255, 0.88);
+  padding: 14px;
+}
+
+.gh-admin-specialty-tablist {
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: var(--portal-radius);
+  background: rgba(241, 245, 235, 0.88);
+  padding: 5px;
+}
+
+.gh-admin-specialty-tab {
+  flex: 0 0 auto;
+  border-radius: 8px !important;
+  white-space: nowrap;
+}
+
+.gh-admin-specialty-tab[aria-selected="true"] {
+  background: #184633 !important;
+  color: #ffffff !important;
+}
+
+.gh-admin-specialty-order-list > div,
+.gh-admin-patient-row {
+  min-width: 0;
+}
+
+.gh-admin-patient-row > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1180px) {
+  .gh-admin-user-detail-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .gh-admin-support-filter-row,
+  .gh-admin-support-actions,
+  .gh-admin-support-pagination,
+  .gh-admin-footer-link-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-admin-support-filter-row :where(.gh-btn, button, a, input, select),
+  .gh-admin-support-actions :where(.gh-btn, button, a),
+  .gh-admin-support-pagination :where(a, button) {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .gh-admin-support-field-grid,
+  .gh-admin-support-field-grid--three,
+  .gh-admin-patient-overview-grid,
+  .gh-admin-patient-verification-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-patient-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .gh-admin-patient-row > span:last-child {
+    text-align: left;
+  }
+}
+
+/* Batch 3L: admin order management */
+.gh-admin-orders-page,
+.gh-admin-order-table-wrap,
+.gh-admin-order-detail-layout,
+.gh-admin-order-actions,
+.gh-admin-order-appointment-panel,
+.gh-admin-order-appointment-form {
+  min-width: 0;
+}
+
+.gh-admin-order-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gh-admin-order-table-wrap table {
+  min-width: 1180px;
+}
+
+.gh-admin-order-bulkbar,
+.gh-admin-order-pagination,
+.gh-admin-order-header-actions,
+.gh-admin-order-actions__buttons {
+  min-width: 0;
+}
+
+.gh-admin-order-detail-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 340px);
+  align-items: start;
+}
+
+.gh-admin-order-items > li {
+  min-width: 0;
+}
+
+.gh-admin-order-copy-link,
+.gh-admin-order-meet-link {
+  white-space: nowrap;
+}
+
+.gh-admin-order-meet-panel {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1024px) {
+  .gh-admin-order-detail-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .gh-admin-order-bulkbar,
+  .gh-admin-order-bulkbar-actions,
+  .gh-admin-order-pagination,
+  .gh-admin-order-header-actions,
+  .gh-admin-order-actions,
+  .gh-admin-order-actions__buttons {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-admin-order-bulkbar-actions :where(button),
+  .gh-admin-order-pagination :where(a),
+  .gh-admin-order-header-actions :where(.gh-btn, button),
+  .gh-admin-order-actions__buttons :where(button),
+  .gh-admin-order-appointment-form :where(button) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Batch 2 shared portal components: notifications, calendar, chat */
+.gh-notification-button {
+  border-radius: var(--portal-radius-sm, 8px) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.gh-notification-popover {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  border-radius: var(--portal-radius, 10px) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 252, 247, 0.98)) !important;
+  box-shadow: var(--portal-shadow-hover, var(--shadow-elevated)) !important;
+}
+
+.gh-notification-popover__header {
+  padding: 10px 10px 12px !important;
+}
+
+.gh-notification-popover__item {
+  border-radius: var(--portal-radius-sm, 8px) !important;
+}
+
+.gh-notification-popover__item:hover {
+  background: rgba(241, 245, 235, 0.92) !important;
+}
+
+.gh-notification-popover__empty {
+  border-radius: var(--portal-radius-sm, 8px);
+  background: rgba(241, 245, 235, 0.72);
+}
+
+.gh-calendar-panel,
+.gh-agenda-panel,
+.gh-calendar-dialog,
+.gh-chat-panel {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  border-radius: var(--portal-radius, 10px) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(253, 254, 250, 0.95)) !important;
+  box-shadow: var(--portal-shadow, var(--shadow-soft)) !important;
+}
+
+.gh-calendar-grid {
+  min-width: 700px;
+}
+
+.gh-calendar-day {
+  min-width: 0;
+  border-color: rgba(29, 75, 54, 0.1) !important;
+}
+
+.gh-calendar-day:hover {
+  background: rgba(241, 245, 235, 0.9) !important;
+}
+
+.gh-calendar-day-selected {
+  background: rgba(233, 244, 220, 0.88) !important;
+}
+
+.gh-calendar-day-outside {
+  color: var(--portal-muted, var(--color-text-muted));
+}
+
+.gh-agenda-row {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  border-radius: var(--portal-radius-sm, 8px) !important;
+}
+
+.gh-agenda-chip {
+  border-radius: 7px !important;
+}
+
+.gh-chat-panel {
+  overflow: hidden;
+}
+
+.gh-chat-header,
+.gh-chat-compose,
+.gh-chat-pending-file,
+.gh-chat-disabled {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+}
+
+.gh-chat-body {
+  background:
+    radial-gradient(520px 240px at 18% 0%, rgba(143, 176, 33, 0.06), transparent 58%),
+    rgba(250, 252, 247, 0.68);
+}
+
+.gh-chat-bubble {
+  border-radius: 14px !important;
+  box-shadow: 0 4px 12px rgba(25, 68, 51, 0.06);
+}
+
+.gh-chat-bubble-own,
+.gh-chat-attachment-own,
+.gh-chat-send {
+  background: #184633 !important;
+  color: #fff !important;
+}
+
+.gh-chat-bubble-other,
+.gh-chat-attachment-other {
+  border-color: var(--portal-line, var(--color-border)) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  color: #263b34 !important;
+}
+
+.gh-chat-alert {
+  border-color: rgba(173, 126, 23, 0.24) !important;
+  border-radius: var(--portal-radius-sm, 8px) !important;
+  background: rgba(255, 247, 225, 0.94) !important;
+  color: #6c4b0d !important;
+}
+
+.gh-chat-empty {
+  border-radius: var(--portal-radius-sm, 8px);
+  background: rgba(255, 255, 255, 0.68);
+  padding: 12px;
+}
+
+.gh-chat-attach,
+.gh-chat-lock-button {
+  border-radius: var(--portal-radius-sm, 8px) !important;
+}
+
+.gh-language-picker {
+  min-width: 0;
+}
+
+.gh-language-picker__chip,
+.gh-language-picker__option {
+  border-radius: 7px !important;
+}
+
+.gh-language-picker__option {
+  background: rgba(255, 255, 255, 0.94) !important;
+}
+
+.gh-language-picker__option:hover {
+  background: rgba(241, 245, 235, 0.95) !important;
+}
+
+.gh-phone-field {
+  min-width: 0;
+  width: 100%;
+}
+
+.gh-phone-field__dial {
+  flex: 0 0 min(150px, 42%);
+}
+
+.gh-phone-field__number {
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  .gh-calendar-panel {
+    overflow-x: auto;
+  }
+
+  .gh-phone-field {
+    flex-wrap: wrap;
+  }
+
+  .gh-phone-field__dial,
+  .gh-phone-field__number {
+    flex: 1 1 100%;
+    max-width: 100% !important;
+  }
+
+  .gh-chat-compose {
+    align-items: stretch;
+  }
+
+  .gh-chat-compose .gh-chat-send {
+    padding-inline: 12px !important;
+  }
 }
 
 .gh-icon-circle {
@@ -2784,6 +4716,754 @@ img {
   width: 100%;
   height: 0.22em;
   overflow: visible;
+}
+
+/* Batch 3M: admin doctor management */
+.gh-admin-doctor-detail-layout {
+  grid-template-columns: minmax(0, 1.65fr) minmax(300px, 0.85fr);
+  align-items: start;
+}
+
+.gh-admin-doctor-filters,
+.gh-admin-doctor-table-card,
+.gh-admin-doctor-form-card,
+.gh-admin-doctor-country-editor,
+.gh-admin-doctor-registrations-card,
+.gh-admin-doctor-credentials-card,
+.gh-admin-doctor-faqs-card {
+  box-shadow: 0 18px 44px rgba(20, 55, 43, 0.07);
+}
+
+.gh-admin-doctor-filter-grid,
+.gh-admin-doctor-field-grid,
+.gh-admin-doctor-social-grid,
+.gh-admin-doctor-country-fields,
+.gh-admin-doctor-registration-fields {
+  min-width: 0;
+}
+
+.gh-admin-doctor-table-wrap table,
+.gh-admin-doctor-availability-table {
+  min-width: 920px;
+}
+
+.gh-admin-doctor-row-actions,
+.gh-admin-doctor-service-actions,
+.gh-admin-doctor-form-actions,
+.gh-admin-doctor-actions,
+.gh-admin-doctor-pagination,
+.gh-admin-doctor-country-form-header,
+.gh-admin-doctor-registration-header {
+  min-width: 0;
+}
+
+.gh-admin-doctor-form-section,
+.gh-admin-doctor-country-form,
+.gh-admin-doctor-credential-row,
+.gh-admin-doctor-registration-row,
+.gh-admin-doctor-service-row,
+.gh-admin-doctor-payout-note,
+.gh-admin-doctor-account-card {
+  border-color: rgba(29, 75, 54, 0.13);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(247, 250, 247, 0.74)),
+    var(--color-background-soft);
+}
+
+.gh-admin-doctor-form-section {
+  padding: clamp(16px, 2vw, 22px);
+}
+
+.gh-admin-doctor-specialty-option,
+.gh-admin-doctor-country-row,
+.gh-admin-doctor-service-row {
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.gh-admin-doctor-specialty-option:hover,
+.gh-admin-doctor-country-row:hover,
+.gh-admin-doctor-service-row:hover {
+  border-color: rgba(29, 75, 54, 0.24);
+  background: rgba(247, 250, 247, 0.88);
+}
+
+.gh-admin-doctor-tabs {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  padding-bottom: 2px;
+}
+
+.gh-admin-doctor-tabs > button {
+  white-space: nowrap;
+}
+
+.gh-admin-doctor-tab-panel,
+.gh-admin-doctor-faq-row,
+.gh-admin-doctor-profile-image-fields,
+.gh-admin-doctor-invite-form,
+.gh-admin-doctor-availability-form {
+  min-width: 0;
+}
+
+.gh-admin-doctor-profile-image-tile {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 16px 38px rgba(20, 55, 43, 0.14);
+}
+
+.gh-admin-doctor-profile-image-actions button {
+  min-width: 28px;
+}
+
+.gh-admin-doctor-availability-table th,
+.gh-admin-doctor-availability-table td {
+  padding-left: 10px;
+  padding-right: 10px;
+  white-space: nowrap;
+}
+
+.gh-admin-doctor-service-row-inner > div:first-child {
+  min-width: min(100%, 320px);
+}
+
+.gh-admin-doctor-assign-form select {
+  flex: 1 1 260px;
+}
+
+.gh-admin-doctor-assign-form .gh-btn,
+.gh-admin-doctor-country-picker .gh-btn,
+.gh-admin-doctor-form-actions .gh-btn,
+.gh-admin-doctor-actions .gh-btn {
+  min-height: 38px;
+}
+
+.gh-admin-doctor-loading {
+  min-width: 0;
+}
+
+@media (max-width: 1180px) {
+  .gh-admin-doctor-detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-doctor-side-stack {
+    order: 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .gh-admin-doctor-country-picker,
+  .gh-admin-doctor-actions,
+  .gh-admin-doctor-pagination,
+  .gh-admin-doctor-form-actions,
+  .gh-admin-doctor-service-actions,
+  .gh-admin-doctor-registration-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-admin-doctor-country-picker > *,
+  .gh-admin-doctor-actions > *,
+  .gh-admin-doctor-pagination > *,
+  .gh-admin-doctor-form-actions > *,
+  .gh-admin-doctor-service-actions > *,
+  .gh-admin-doctor-registration-header > * {
+    width: 100%;
+  }
+
+  .gh-admin-doctor-row-actions {
+    justify-content: flex-start;
+  }
+
+  .gh-admin-doctor-table-wrap,
+  .gh-admin-doctor-availability-table-wrap {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .gh-admin-doctor-faq-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .gh-admin-doctor-time-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-admin-doctor-profile-image-tile {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .gh-admin-doctor-form-section,
+  .gh-admin-doctor-country-form,
+  .gh-admin-doctor-credential-row,
+  .gh-admin-doctor-registration-row,
+  .gh-admin-doctor-service-row {
+    padding: 14px;
+  }
+
+  .gh-admin-doctor-profile-image-actions {
+    left: 8px;
+    right: 8px;
+    justify-content: space-between;
+  }
+}
+
+/* Batch 4A: doctor portal overview, lists, profile, services, availability, reports */
+.gh-doctor-panel,
+.gh-doctor-filter-card,
+.gh-doctor-table-card,
+.gh-doctor-empty-state,
+.gh-doctor-practice-context,
+.gh-doctor-profile-form-card,
+.gh-doctor-profile-photo-card,
+.gh-doctor-admin-note-card,
+.gh-doctor-template-list,
+.gh-doctor-template-form,
+.gh-doctor-patient-history-card,
+.gh-doctor-patient-profile-panel,
+.gh-doctor-summary-card,
+.gh-doctor-all-documents-card,
+.gh-doctor-report-card,
+.gh-doctor-report-tile {
+  box-shadow: 0 18px 42px rgba(20, 55, 43, 0.065);
+}
+
+.gh-doctor-detail-grid,
+.gh-doctor-overview-grid,
+.gh-doctor-availability-grid,
+.gh-doctor-profile-edit-layout,
+.gh-doctor-patient-detail-layout,
+.gh-doctor-templates-layout {
+  grid-template-columns: minmax(0, 1.62fr) minmax(300px, 0.88fr);
+  align-items: start;
+}
+
+.gh-doctor-page-header {
+  max-width: min(100%, var(--portal-readable-max));
+}
+
+.gh-doctor-stat-grid,
+.gh-doctor-quick-grid,
+.gh-doctor-report-tile-grid,
+.gh-doctor-field-grid,
+.gh-doctor-context-grid,
+.gh-doctor-service-grid,
+.gh-doctor-filter-grid {
+  min-width: 0;
+}
+
+.gh-doctor-filter-card,
+.gh-doctor-practice-context,
+.gh-doctor-service-explainer,
+.gh-doctor-service-next-step,
+.gh-doctor-registration-card,
+.gh-doctor-template-field,
+.gh-doctor-template-row,
+.gh-doctor-window-row,
+.gh-doctor-history-section,
+.gh-doctor-all-documents-card {
+  border-color: rgba(29, 75, 54, 0.13);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 250, 247, 0.78)),
+    var(--color-background-soft);
+}
+
+.gh-doctor-table-wrap table {
+  min-width: 760px;
+}
+
+.gh-doctor-mini-table td {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.gh-doctor-tabs {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  padding-bottom: 2px;
+}
+
+.gh-doctor-tabs > button {
+  white-space: nowrap;
+}
+
+.gh-doctor-quick-card,
+.gh-doctor-service-card,
+.gh-doctor-template-row,
+.gh-doctor-window-row,
+.gh-doctor-document-row {
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.gh-doctor-service-card:hover,
+.gh-doctor-template-row:hover,
+.gh-doctor-window-row:hover,
+.gh-doctor-document-row:hover {
+  border-color: rgba(29, 75, 54, 0.24);
+  box-shadow: 0 12px 28px rgba(20, 55, 43, 0.07);
+}
+
+.gh-doctor-slot-chip {
+  min-height: 34px;
+}
+
+.gh-doctor-schedule-row,
+.gh-doctor-alert-list-row,
+.gh-doctor-notification-title,
+.gh-doctor-document-row,
+.gh-doctor-window-row,
+.gh-doctor-form-actions,
+.gh-doctor-filter-actions,
+.gh-doctor-list-toolbar {
+  min-width: 0;
+}
+
+.gh-doctor-profile-photo > div:first-child {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24), 0 16px 34px rgba(20, 55, 43, 0.14);
+}
+
+.gh-doctor-csv-button {
+  min-height: 38px;
+}
+
+@media (max-width: 1180px) {
+  .gh-doctor-detail-grid,
+  .gh-doctor-overview-grid,
+  .gh-doctor-availability-grid,
+  .gh-doctor-profile-edit-layout,
+  .gh-doctor-patient-detail-layout,
+  .gh-doctor-templates-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .gh-doctor-filter-actions,
+  .gh-doctor-form-actions,
+  .gh-doctor-list-toolbar,
+  .gh-doctor-notification-title,
+  .gh-doctor-document-row,
+  .gh-doctor-alert-list-row,
+  .gh-doctor-window-row,
+  .gh-doctor-window-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-doctor-filter-actions > *,
+  .gh-doctor-form-actions > *,
+  .gh-doctor-list-toolbar > *,
+  .gh-doctor-notification-title > *,
+  .gh-doctor-document-row > *,
+  .gh-doctor-alert-list-row > *,
+  .gh-doctor-window-row > * {
+    width: 100%;
+  }
+
+  .gh-doctor-check-row {
+    align-items: center;
+  }
+
+  .gh-doctor-table-wrap {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .gh-doctor-time-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 430px) {
+  .gh-doctor-filter-card,
+  .gh-doctor-practice-context,
+  .gh-doctor-profile-form-card,
+  .gh-doctor-profile-photo-card,
+  .gh-doctor-admin-note-card,
+  .gh-doctor-template-list,
+  .gh-doctor-template-form,
+  .gh-doctor-patient-history-card,
+  .gh-doctor-patient-profile-panel,
+  .gh-doctor-summary-card,
+  .gh-doctor-all-documents-card,
+  .gh-doctor-report-card,
+  .gh-doctor-report-tile {
+    padding: 16px;
+  }
+
+  .gh-doctor-slot-grid {
+    gap: 8px;
+  }
+
+  .gh-doctor-slot-chip {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Batch 4B/4C: doctor appointment workspace and calendar */
+.gh-doctor-appointment-workspace,
+.gh-doctor-calendar {
+  min-width: 0;
+}
+
+.gh-doctor-appointment-workspace .gh-card,
+.gh-doctor-doc-modal-panel,
+.gh-doctor-calendar-form-card,
+.gh-doctor-calendar-day-card {
+  box-shadow: 0 18px 42px rgba(20, 55, 43, 0.065);
+}
+
+.gh-doctor-appointment-workspace .gh-card,
+.gh-doctor-history-section,
+.gh-doctor-review-list,
+.gh-doctor-calendar-form-card,
+.gh-doctor-calendar-day-card {
+  border-color: rgba(29, 75, 54, 0.13);
+}
+
+.gh-doctor-appointment-tablist,
+.gh-doctor-doc-modal-tabs {
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+
+.gh-doctor-appointment-tablist > button,
+.gh-doctor-doc-modal-tabs > button {
+  white-space: nowrap;
+}
+
+.gh-doctor-appointment-overview,
+.gh-doctor-calendar-main {
+  align-items: start;
+}
+
+.gh-doctor-documents-toolbar,
+.gh-doctor-review-row,
+.gh-doctor-review-history-row,
+.gh-doctor-submission-header,
+.gh-doctor-calendar-toolbar,
+.gh-doctor-calendar-day-actions,
+.gh-doctor-calendar-range-actions {
+  min-width: 0;
+}
+
+.gh-doctor-review-row {
+  background: linear-gradient(180deg, #fff, rgba(247, 250, 247, 0.76));
+}
+
+.gh-doctor-review-actions .gh-btn {
+  min-height: 30px;
+}
+
+.gh-doctor-services-used-form {
+  align-items: end;
+}
+
+.gh-doctor-calendar-main > *,
+.gh-doctor-calendar-forms > *,
+.gh-doctor-calendar-side > * {
+  min-width: 0;
+}
+
+.gh-doctor-calendar .gh-calendar-month {
+  min-width: 0;
+}
+
+.gh-doctor-calendar-legend {
+  min-width: min(100%, 320px);
+}
+
+.gh-doctor-calendar-form-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 250, 247, 0.78)),
+    var(--color-background-soft);
+}
+
+@media (max-width: 1180px) {
+  .gh-doctor-calendar-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .gh-doctor-appointment-header,
+  .gh-doctor-documents-toolbar,
+  .gh-doctor-review-row,
+  .gh-doctor-review-history-row,
+  .gh-doctor-submission-header,
+  .gh-doctor-calendar-toolbar,
+  .gh-doctor-calendar-day-actions,
+  .gh-doctor-calendar-range-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-doctor-appointment-header > *,
+  .gh-doctor-documents-toolbar > *,
+  .gh-doctor-review-row > *,
+  .gh-doctor-review-history-row > *,
+  .gh-doctor-submission-header > *,
+  .gh-doctor-calendar-toolbar > *,
+  .gh-doctor-calendar-day-actions > *,
+  .gh-doctor-calendar-range-actions > * {
+    width: 100%;
+  }
+
+  .gh-doctor-review-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .gh-doctor-review-actions .gh-btn,
+  .gh-doctor-review-actions a,
+  .gh-doctor-review-actions button {
+    justify-content: center;
+  }
+
+  .gh-doctor-doc-modal {
+    align-items: stretch;
+    padding: 10px;
+  }
+
+  .gh-doctor-doc-modal-panel {
+    max-height: calc(100vh - 20px);
+    border-radius: 10px;
+  }
+
+  .gh-doctor-doc-modal-header {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .gh-doctor-calendar-date-grid,
+  .gh-doctor-calendar-time-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 430px) {
+  .gh-doctor-appointment-workspace .gh-card,
+  .gh-doctor-doc-modal-body,
+  .gh-doctor-calendar-form-card,
+  .gh-doctor-calendar-day-card {
+    padding: 16px;
+  }
+
+  .gh-doctor-review-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .gh-doctor-appointment-tablist {
+    top: 52px;
+  }
+}
+
+/* Batch 5: patient/account portal pages and route components */
+.gh-patient-page,
+.gh-patient-calendar,
+.gh-patient-bookings-list,
+.gh-patient-doc-list,
+.gh-patient-subscription-dashboard,
+.gh-patient-manage-panel,
+.gh-patient-rewards-panel,
+.gh-patient-subscribe-form {
+  min-width: 0;
+}
+
+.gh-patient-page {
+  width: 100%;
+}
+
+.gh-patient-page-header,
+.gh-patient-overview-grid,
+.gh-patient-detail-grid,
+.gh-patient-calendar,
+.gh-patient-subscription-grid {
+  align-items: start;
+}
+
+.gh-patient-overview .gh-card,
+.gh-patient-booking-card,
+.gh-patient-doc-card,
+.gh-patient-form-card,
+.gh-patient-security-card,
+.gh-patient-family-card,
+.gh-patient-access-card,
+.gh-patient-notification-list,
+.gh-patient-prescription-card,
+.gh-patient-reward-card,
+.gh-patient-empty-state,
+.gh-patient-payments-page .gh-card,
+.gh-patient-orders-page .gh-card,
+.gh-patient-order-detail-page .gh-card,
+.gh-patient-prescriptions-page .gh-card {
+  box-shadow: 0 18px 42px rgba(20, 55, 43, 0.06);
+}
+
+.gh-patient-booking-card,
+.gh-patient-doc-card,
+.gh-patient-form-card,
+.gh-patient-security-card,
+.gh-patient-family-card,
+.gh-patient-access-card,
+.gh-patient-notification-list,
+.gh-patient-prescription-card,
+.gh-patient-reward-card,
+.gh-patient-empty-state {
+  border-color: rgba(29, 75, 54, 0.13);
+}
+
+.gh-patient-tabs {
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+
+.gh-patient-tabs > button {
+  white-space: nowrap;
+}
+
+.gh-patient-table-wrap {
+  max-width: 100%;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+
+.gh-patient-list-row,
+.gh-patient-alert-row,
+.gh-patient-booking-card-header,
+.gh-patient-booking-band,
+.gh-patient-booking-actions,
+.gh-patient-doc-card,
+.gh-patient-family-card-header,
+.gh-patient-notification-toolbar,
+.gh-patient-consent-row,
+.gh-patient-form-actions,
+.gh-patient-access-row {
+  min-width: 0;
+}
+
+.gh-patient-quick-link,
+.gh-patient-notification-row,
+.gh-patient-family-card,
+.gh-patient-prescription-card {
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.gh-patient-quick-link:hover,
+.gh-patient-notification-row:hover,
+.gh-patient-family-card:hover,
+.gh-patient-prescription-card:hover {
+  box-shadow: 0 12px 28px rgba(20, 55, 43, 0.055);
+}
+
+.gh-patient-calendar {
+  grid-template-columns: minmax(0, 1fr) 360px;
+}
+
+.gh-patient-subscription-grid > *,
+.gh-patient-detail-grid > *,
+.gh-patient-calendar > *,
+.gh-patient-overview-grid > * {
+  min-width: 0;
+}
+
+.gh-patient-manage-panel,
+.gh-patient-rewards-panel,
+.gh-patient-subscribe-form {
+  max-width: min(100%, var(--portal-readable-max));
+}
+
+.gh-patient-profile-page,
+.gh-patient-medical-files-page,
+.gh-patient-security-page,
+.gh-patient-family-page,
+.gh-patient-access-history-page {
+  max-width: min(100%, var(--portal-readable-max));
+}
+
+.gh-patient-receipt-button {
+  min-height: 28px;
+}
+
+@media (max-width: 1180px) {
+  .gh-patient-calendar,
+  .gh-patient-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .gh-patient-page-header,
+  .gh-patient-alert-row,
+  .gh-patient-list-row,
+  .gh-patient-booking-card-header,
+  .gh-patient-booking-band,
+  .gh-patient-booking-actions,
+  .gh-patient-doc-card,
+  .gh-patient-family-card-header,
+  .gh-patient-notification-toolbar,
+  .gh-patient-consent-row,
+  .gh-patient-form-actions,
+  .gh-patient-access-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gh-patient-page-header > *,
+  .gh-patient-alert-row > *,
+  .gh-patient-list-row > *,
+  .gh-patient-booking-card-header > *,
+  .gh-patient-booking-band > *,
+  .gh-patient-booking-actions > *,
+  .gh-patient-doc-card > *,
+  .gh-patient-family-card-header > *,
+  .gh-patient-notification-toolbar > *,
+  .gh-patient-consent-row > *,
+  .gh-patient-form-actions > *,
+  .gh-patient-access-row > * {
+    width: 100%;
+  }
+
+  .gh-patient-form-actions .gh-btn,
+  .gh-patient-booking-actions button,
+  .gh-patient-booking-actions a,
+  .gh-patient-list-row .gh-btn,
+  .gh-patient-doc-card button {
+    justify-content: center;
+  }
+
+  .gh-patient-table-wrap {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 430px) {
+  .gh-patient-form-card,
+  .gh-patient-booking-card,
+  .gh-patient-doc-card,
+  .gh-patient-security-card,
+  .gh-patient-family-card,
+  .gh-patient-empty-state {
+    padding: 16px;
+  }
+
+  .gh-patient-delete-modal {
+    width: calc(100% - 20px);
+    padding: 18px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

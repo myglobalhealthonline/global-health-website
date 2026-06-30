@@ -33,8 +33,8 @@ export default async function AccountCalendarPage() {
       : null;
 
   return (
-    <>
-      <header className="mb-6">
+    <div className="gh-patient-page gh-patient-calendar-page">
+      <header className="gh-patient-page-header mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
           My schedule
         </p>
@@ -50,10 +50,10 @@ export default async function AccountCalendarPage() {
       {history.ok ? (
         <PatientCalendarUI items={items} defaultTz={defaultTz} />
       ) : (
-        <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-panel)] px-5 py-4">
+        <div className="gh-patient-empty-state rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-panel)] px-5 py-4">
           <p className="text-sm text-[var(--color-text-muted)]">{history.message}</p>
         </div>
       )}
-    </>
+    </div>
   );
 }

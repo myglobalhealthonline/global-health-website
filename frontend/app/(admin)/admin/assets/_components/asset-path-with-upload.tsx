@@ -47,7 +47,7 @@ export function AssetPathWithUpload({ initialPath }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="gh-admin-asset-path-field">
       <span className="gh-field-label">Path or URL</span>
       <input
         name="path"
@@ -57,7 +57,7 @@ export function AssetPathWithUpload({ initialPath }: Props) {
         onChange={(e) => setPath(e.target.value)}
         placeholder="https://… (upload or paste) or /images/…"
       />
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="gh-admin-asset-upload-actions">
         <input
           ref={fileRef}
           type="file"

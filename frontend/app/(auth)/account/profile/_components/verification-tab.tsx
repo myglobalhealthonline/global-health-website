@@ -69,14 +69,14 @@ export function VerificationTab() {
   }
 
   if (!loaded) {
-    return <div className="gh-card p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>;
+    return <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>;
   }
 
   const v = data;
 
   return (
-    <section className="space-y-4">
-      <div className="gh-card p-6">
+    <section className="gh-patient-profile-tab space-y-4">
+      <div className="gh-patient-form-card gh-card p-6">
         <header className="mb-4 flex items-center gap-2">
           <BadgeCheck className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
           <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Verification status</h3>

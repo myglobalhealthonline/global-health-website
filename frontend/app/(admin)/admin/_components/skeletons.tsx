@@ -1,10 +1,10 @@
 function Bar({ className = "" }: { className?: string }) {
-  return <div className={`animate-pulse rounded bg-[var(--color-background-soft)] ${className}`} />;
+  return <div className={`gh-skeleton-bar animate-pulse rounded ${className}`} />;
 }
 
 export function PageHeaderSkeleton() {
   return (
-    <header className="space-y-2">
+    <header className="gh-portal-page-header gh-skeleton-header space-y-2">
       <Bar className="h-3 w-24" />
       <Bar className="h-7 w-48" />
       <Bar className="h-4 w-72" />
@@ -20,7 +20,7 @@ export function TableSkeleton({
   columns?: number;
 }) {
   return (
-    <section className="gh-card overflow-hidden p-0">
+    <section className="gh-card gh-skeleton-table overflow-hidden p-0">
       <table className="min-w-full border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-[var(--color-border)]">
@@ -49,9 +49,9 @@ export function TableSkeleton({
 
 export function FormSkeleton({ sections = 3 }: { sections?: number }) {
   return (
-    <div className="grid gap-5">
+    <div className="gh-skeleton-form grid gap-5">
       {Array.from({ length: sections }).map((_, i) => (
-        <section key={i} className="gh-card grid gap-4 p-6">
+        <section key={i} className="gh-card gh-skeleton-section grid gap-4 p-6">
           <Bar className="h-5 w-32" />
           <div className="grid gap-4 sm:grid-cols-2">
             <Bar className="h-12" />
@@ -73,7 +73,7 @@ export function ListPageSkeleton({
   columns?: number;
 }) {
   return (
-    <div className="space-y-6">
+    <div className="gh-skeleton-list space-y-6">
       <PageHeaderSkeleton />
       <TableSkeleton rows={rows} columns={columns} />
     </div>

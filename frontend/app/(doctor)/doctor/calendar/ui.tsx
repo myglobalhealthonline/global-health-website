@@ -298,10 +298,10 @@ export function DoctorCalendarUI({
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="gh-doctor-calendar grid gap-4">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--color-text-muted)]">
+      <div className="gh-doctor-calendar-toolbar flex flex-wrap items-center justify-between gap-3">
+        <div className="gh-doctor-calendar-legend flex flex-wrap items-center gap-3 text-xs text-[var(--color-text-muted)]">
           <LegendDot className="bg-emerald-500" label="Open" />
           <LegendDot className="bg-rose-400" label="Blocked" />
           <LegendDot className="bg-blue-500" label="Booked" />
@@ -321,7 +321,7 @@ export function DoctorCalendarUI({
         </div>
       ) : null}
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
+      <div className="gh-doctor-calendar-main grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
         <MonthCalendar
           year={ym.year}
           month={ym.month}
@@ -338,14 +338,14 @@ export function DoctorCalendarUI({
           }}
         />
 
-        <div className="grid gap-4 self-start">
+        <div className="gh-doctor-calendar-side grid gap-4 self-start">
           {/* Day-level block controls */}
           {selectedDay ? (
-            <div className="gh-card p-4">
+            <div className="gh-doctor-calendar-day-card gh-card p-4">
               <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
                 {dayLabel(selectedDay)}
               </p>
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="gh-doctor-calendar-day-actions mt-3 flex flex-wrap gap-2">
                 <Btn
                   type="button"
                   size="sm"
@@ -399,9 +399,9 @@ export function DoctorCalendarUI({
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="gh-doctor-calendar-forms grid gap-4 lg:grid-cols-2">
         {/* Add availability over a date + time range */}
-        <div className="gh-card p-4">
+        <div className="gh-doctor-calendar-form-card gh-card p-4">
           <div className="flex items-center gap-2">
             <CalendarPlus className="size-4 text-[var(--color-text-muted)]" aria-hidden />
             <h3 className="text-sm font-bold text-[var(--color-text-primary)]">
@@ -414,7 +414,7 @@ export function DoctorCalendarUI({
             length. Times in {clinicTimezone} (clinic time).
           </p>
           <div className="mt-3 grid gap-3">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="gh-doctor-calendar-date-grid grid grid-cols-2 gap-2">
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">From date</span>
                 <input
@@ -434,7 +434,7 @@ export function DoctorCalendarUI({
                 />
               </label>
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="gh-doctor-calendar-time-grid grid grid-cols-3 gap-2">
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">From time</span>
                 <input
@@ -482,7 +482,7 @@ export function DoctorCalendarUI({
         </div>
 
         {/* Date + time range time off (vacation / leave) */}
-        <div className="gh-card p-4">
+        <div className="gh-doctor-calendar-form-card gh-card p-4">
           <div className="flex items-center gap-2">
             <CalendarOff className="size-4 text-[var(--color-text-muted)]" aria-hidden />
             <h3 className="text-sm font-bold text-[var(--color-text-primary)]">Time off</h3>
@@ -492,7 +492,7 @@ export function DoctorCalendarUI({
             leave. Booked appointments are never touched. Times in {tz}.
           </p>
           <div className="mt-3 grid gap-3">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="gh-doctor-calendar-date-grid grid grid-cols-2 gap-2">
               <label className="flex flex-col gap-1 text-sm">
                 <span className="gh-field-label">From</span>
                 <input
@@ -523,7 +523,7 @@ export function DoctorCalendarUI({
                 className="gh-input h-10"
               />
             </label>
-            <div className="flex gap-2">
+            <div className="gh-doctor-calendar-range-actions flex gap-2">
               <Btn
                 type="button"
                 size="sm"

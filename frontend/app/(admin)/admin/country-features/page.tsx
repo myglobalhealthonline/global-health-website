@@ -242,7 +242,7 @@ export default async function AdminCountryFeaturesPage({ searchParams }: PagePro
         description={`Toggle which sidebar items appear for ${activeCountry.name}. Disabled pages stay accessible by URL — the admin just won't see them in the nav.`}
       />
 
-      <AdminCard className="mb-4">
+      <AdminCard className="gh-admin-country-feature-summary mb-4">
         <div className="flex items-center gap-3 px-1 py-1">
           <FlagBadge code={activeCountry.code} size={20} />
           <div className="min-w-0 flex-1">
@@ -267,8 +267,8 @@ export default async function AdminCountryFeaturesPage({ searchParams }: PagePro
         </p>
       ) : null}
 
-      <AdminCard padding={0} className="overflow-hidden">
-        <div className="overflow-x-auto">
+      <AdminCard padding={0} className="gh-admin-country-features overflow-hidden">
+        <div className="gh-admin-country-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Page</Th>

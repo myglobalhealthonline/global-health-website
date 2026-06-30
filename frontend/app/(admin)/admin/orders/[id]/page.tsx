@@ -132,19 +132,19 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
         title={formatPrice(order.totalCents, order.currencyCode)}
         description={`Placed ${formatAppDateTime(order.createdAt)} · ${order.countryCode.toUpperCase()}`}
         actions={
-          <div className="flex items-center gap-2">
+          <div className="gh-admin-order-header-actions flex items-center gap-2">
             <Pill tone={statusTone(order.status)}>{order.status.toLowerCase()}</Pill>
             {!isTerminal ? <AdminOrderActions orderId={order.id} status={order.status} /> : null}
           </div>
         }
       />
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
-        <div className="grid gap-4">
+      <div className="gh-admin-order-detail-layout grid gap-4 lg:grid-cols-[1fr_340px]">
+        <div className="gh-admin-order-detail-main grid gap-4">
           <AdminCard padding={0}>
             <SectionHeader title="Items" />
             <div className="p-5">
-              <ul className="divide-y divide-[var(--color-border)]">
+              <ul className="gh-admin-order-items divide-y divide-[var(--color-border)]">
                 {order.items.map((i) => (
                   <li
                     key={i.id}
@@ -210,7 +210,7 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
           </AdminCard>
         </div>
 
-        <aside className="grid gap-4 self-start">
+        <aside className="gh-admin-order-detail-side grid gap-4 self-start">
           {hasConsultation && consultationAppointmentId ? (
             <UpdateAppointmentPanel
               appointmentId={consultationAppointmentId}

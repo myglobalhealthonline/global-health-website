@@ -60,16 +60,16 @@ export function LanguagePicker({ selected, onChange, className }: Props) {
   }
 
   return (
-    <div className={`flex flex-col gap-2 ${className ?? ""}`}>
+    <div className={`gh-language-picker flex flex-col gap-2 ${className ?? ""}`}>
       {/* Selected chips */}
       {selected.length > 0 ? (
-        <div className="flex flex-wrap gap-1.5">
+        <div className="gh-language-picker__selected flex flex-wrap gap-1.5">
           {selected.map((label) => {
             const known = resolveLanguage(label) !== null;
             return (
               <span
                 key={label}
-                className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-semibold"
+                className="gh-language-picker__chip inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-semibold"
                 style={{
                   background: known ? "rgba(27,77,62,0.10)" : "rgba(217,119,6,0.10)",
                   color: known ? "var(--color-brand-primary)" : "#92400E",
@@ -109,13 +109,13 @@ export function LanguagePicker({ selected, onChange, className }: Props) {
 
       {/* Options — full list when short or searching; otherwise a hint. */}
       {query.trim() || matches.length <= 12 ? (
-        <div className="flex flex-wrap gap-1.5">
+        <div className="gh-language-picker__options flex flex-wrap gap-1.5">
           {matches.slice(0, 40).map((l) => (
             <button
               key={l.code}
               type="button"
               onClick={() => add(l.label)}
-              className="inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-background-page)] px-2.5 py-1 text-[12px] font-semibold text-[var(--color-text-body)] transition-colors hover:border-[var(--color-brand-primary)] hover:text-[var(--color-brand-primary)]"
+              className="gh-language-picker__option inline-flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-background-page)] px-2.5 py-1 text-[12px] font-semibold text-[var(--color-text-body)] transition-colors hover:border-[var(--color-brand-primary)] hover:text-[var(--color-brand-primary)]"
             >
               {l.label}
             </button>

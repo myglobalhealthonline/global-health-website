@@ -21,7 +21,7 @@ export function LanguageMultiSelect({ initial = [] }: { initial?: string[] }) {
   );
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="gh-admin-doctor-language-select flex flex-col gap-2">
       <span className="gh-field-label">Languages</span>
       {/* Hidden field consumed by doctor-form-parse.ts (comma-split). */}
       <input type="hidden" name="languagesCsv" value={selected.join(", ")} />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { registerUser } from "@/lib/api/auth-api";
@@ -177,9 +178,9 @@ export function RegisterForm({ i18n = DEFAULT_I18N }: { i18n?: RegisterI18n }) {
 
       <p className="rounded-xl px-4 py-3 text-[12px] leading-relaxed" style={{ background: "var(--color-background-soft)", color: "var(--color-text-muted)" }}>
         By continuing, you agree to our{" "}
-        <a href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>Terms</a>
+        <Link href="/terms" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>Terms</Link>
         {" "}and{" "}
-        <a href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>Privacy Policy</a>.
+        <Link href="/privacy" className="font-semibold underline-offset-2 hover:underline" style={{ color: "var(--color-brand-primary)" }}>Privacy Policy</Link>.
         Your health data stays private.
       </p>
 

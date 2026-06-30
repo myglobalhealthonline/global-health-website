@@ -109,10 +109,12 @@ export default async function AdminFooterPage({
         </div>
       ) : null}
 
+      <div className="gh-admin-support-editor">
       <FooterEditor
         initial={initialFooter}
         saveAction={saveFooterAction}
       />
+      </div>
     </>
   );
 }

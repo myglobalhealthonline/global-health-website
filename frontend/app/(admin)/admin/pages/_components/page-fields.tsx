@@ -28,13 +28,13 @@ export function PageFields({ countries, page, defaultCountryId, isCreate }: Prop
   // it can be changed via the dropdown but server-side validation will reject a duplicate.
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="gh-admin-page-fields flex flex-col gap-6">
       <AdminCard padding={0}>
         <SectionHeader
           title="Scope"
           description="Each page is uniquely identified by (country, page type, locale)."
         />
-        <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-3">
+        <div className="gh-admin-support-field-grid gh-admin-support-field-grid--three grid grid-cols-1 gap-4 p-5 sm:grid-cols-3">
           <label className={labelClass}>
             Country
             <select
@@ -96,7 +96,7 @@ export function PageFields({ countries, page, defaultCountryId, isCreate }: Prop
           title="Hero"
           description="Top-of-page headline, subheadline, supporting image, and primary CTA."
         />
-        <div className="grid grid-cols-1 gap-4 p-5">
+        <div className="gh-admin-support-field-grid grid grid-cols-1 gap-4 p-5">
           <label className={labelClass}>
             Hero title
             <input
@@ -123,7 +123,7 @@ export function PageFields({ countries, page, defaultCountryId, isCreate }: Prop
             helperText="Optional. Provide a /path or full https URL."
             initialPath={page?.heroImagePath ?? page?.heroImage?.path ?? null}
           />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="gh-admin-support-field-grid grid grid-cols-1 gap-4 sm:grid-cols-2">
             <label className={labelClass}>
               CTA label
               <input
@@ -182,7 +182,7 @@ export function PageFields({ countries, page, defaultCountryId, isCreate }: Prop
           title="SEO"
           description="Meta title, description, and Open Graph image used in social shares."
         />
-        <div className="grid grid-cols-1 gap-4 p-5">
+        <div className="gh-admin-support-field-grid grid grid-cols-1 gap-4 p-5">
           <label className={labelClass}>
             SEO title
             <input
@@ -220,7 +220,7 @@ export function PageFields({ countries, page, defaultCountryId, isCreate }: Prop
 
       <AdminCard padding={0}>
         <SectionHeader title="Publish" description="Drafts are hidden from the public site." />
-        <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
+        <div className="gh-admin-support-field-grid grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
           <label className={labelClass}>
             Status
             <select

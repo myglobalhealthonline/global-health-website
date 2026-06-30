@@ -92,8 +92,8 @@ export default function AccountProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <header className="mb-6">
+    <div className="gh-patient-page gh-patient-profile-page">
+      <header className="gh-patient-page-header mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
           {a.profile.breadcrumb}
         </p>
@@ -116,7 +116,7 @@ export default function AccountProfilePage() {
 
       {/* Tab navigation */}
       <nav
-        className="gh-portal-tabs mb-5 flex gap-1 overflow-x-auto rounded-lg bg-white/70 p-1 ring-1 ring-[var(--color-border)]"
+        className="gh-patient-tabs gh-portal-tabs mb-5 flex gap-1 overflow-x-auto rounded-lg bg-white/70 p-1 ring-1 ring-[var(--color-border)]"
         aria-label="Profile sections"
       >
         {TABS.map((tab) => (
@@ -143,7 +143,7 @@ export default function AccountProfilePage() {
               {a.profile.loading}
             </div>
           ) : (
-            <form onSubmit={onSubmit} className="gh-card space-y-4 p-6">
+            <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-4 p-6">
               <label className="block">
                 <span className="gh-field-label">{a.profile.emailLabel}</span>
                 <input

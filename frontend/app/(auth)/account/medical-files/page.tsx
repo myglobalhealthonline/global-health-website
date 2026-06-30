@@ -79,7 +79,7 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
   }
 
   return (
-    <div className="gh-card flex items-start justify-between gap-4 p-4">
+    <div className="gh-patient-doc-card gh-card flex items-start justify-between gap-4 p-4">
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium text-[var(--color-text-primary)]">{doc.title}</p>
         {doc.description && (
@@ -150,7 +150,7 @@ function UploadForm({ onUploaded }: { onUploaded: (doc: MedicalDoc) => void }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="gh-card space-y-3 p-5">
+    <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-3 p-5">
       <h4 className="font-semibold text-[var(--color-text-primary)]">Upload a report</h4>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block">
@@ -245,8 +245,8 @@ export default function MedicalFilesPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <header className="mb-6">
+    <div className="gh-patient-page gh-patient-medical-files-page">
+      <header className="gh-patient-page-header mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
           Patient portal
         </p>
@@ -260,7 +260,7 @@ export default function MedicalFilesPage() {
       </header>
 
       <nav
-        className="mb-6 flex gap-1 overflow-x-auto rounded-lg bg-[var(--color-background-soft)] p-1"
+        className="gh-patient-tabs mb-6 flex gap-1 overflow-x-auto rounded-lg bg-[var(--color-background-soft)] p-1"
         aria-label="Medical file categories"
       >
         {TABS.map((tab) => (
@@ -287,14 +287,14 @@ export default function MedicalFilesPage() {
       )}
 
       {!loaded ? (
-        <div className="gh-card p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>
+        <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>
       ) : filteredDocs.length === 0 ? (
-        <div className="gh-card p-8 text-center text-sm text-[var(--color-text-muted)]">
+        <div className="gh-patient-empty-state gh-card p-8 text-center text-sm text-[var(--color-text-muted)]">
           No{" "}
           {currentTabConfig?.label.toLowerCase() ?? "documents"} yet.
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="gh-patient-doc-list space-y-3">
           {filteredDocs.map((doc) => (
             <DocCard key={doc.id} doc={doc} />
           ))}

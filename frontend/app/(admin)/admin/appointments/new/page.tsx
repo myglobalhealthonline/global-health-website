@@ -74,7 +74,7 @@ export default async function AdminCreateManualAppointmentPage({ searchParams }:
           description="Walk-in / phone-in booking. Choose a country first — services + doctors + clinics are scoped to that country."
         />
         <AdminCard>
-          <form method="get" className="flex flex-wrap items-end gap-3">
+          <form method="get" className="gh-admin-appointment-country-form">
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select

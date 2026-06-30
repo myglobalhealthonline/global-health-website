@@ -58,8 +58,8 @@ export default async function AccountPaymentsPage() {
   };
 
   return (
-    <>
-      <header className="mb-6">
+    <div className="gh-patient-page gh-patient-payments-page">
+      <header className="gh-patient-page-header mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
           {a.payments.breadcrumb}
         </p>
@@ -79,7 +79,7 @@ export default async function AccountPaymentsPage() {
       ) : null}
 
       {items.length === 0 && invoices.length === 0 && !unavailable ? (
-        <div className="gh-card flex flex-col items-center p-10 text-center">
+        <div className="gh-patient-empty-state gh-card flex flex-col items-center p-10 text-center">
           <div className="inline-flex size-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
             <CreditCard aria-hidden className="size-6" />
           </div>
@@ -100,7 +100,8 @@ export default async function AccountPaymentsPage() {
 
       {items.length > 0 ? (
         <div className="gh-card overflow-hidden p-0">
-          <table className="w-full text-sm">
+          <div className="gh-patient-table-wrap overflow-x-auto">
+          <table className="w-full min-w-[760px] text-sm">
             <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wide text-[var(--color-text-muted)]">
               <tr>
                 <th className="px-4 py-3 font-semibold">{a.payments.colDate}</th>
@@ -146,6 +147,7 @@ export default async function AccountPaymentsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       ) : null}
 
@@ -155,7 +157,8 @@ export default async function AccountPaymentsPage() {
             {inv.heading}
           </h3>
           <div className="gh-card overflow-hidden p-0">
-            <table className="w-full text-sm">
+            <div className="gh-patient-table-wrap overflow-x-auto">
+            <table className="w-full min-w-[760px] text-sm">
               <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wide text-[var(--color-text-muted)]">
                 <tr>
                   <th className="px-4 py-3 font-semibold">{inv.colDate}</th>
@@ -207,9 +210,10 @@ export default async function AccountPaymentsPage() {
                 })}
               </tbody>
             </table>
+            </div>
           </div>
         </section>
       ) : null}
-    </>
+    </div>
   );
 }

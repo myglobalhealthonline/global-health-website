@@ -133,8 +133,8 @@ export function ServiceFaqPanel({ serviceId, initialFaqs }: Props) {
   }
 
   return (
-    <div>
-      <div className="mb-3 flex items-center justify-between">
+    <div className="gh-admin-service-faq">
+      <div className="gh-admin-service-faq__header mb-3 flex items-center justify-between">
         <h3 className="gh-admin-card-title">
           FAQs{" "}
           <span className="ml-1.5 text-[13px] font-normal text-[var(--color-text-muted)]">
@@ -181,11 +181,11 @@ export function ServiceFaqPanel({ serviceId, initialFaqs }: Props) {
         </p>
       ) : null}
 
-      <ul className="mt-3 space-y-3">
+      <ul className="gh-admin-service-faq__list mt-3 space-y-3">
         {faqs.map((faq, idx) => (
           <li
             key={faq.id}
-            className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] p-4"
+            className="gh-admin-service-faq__item"
           >
             {editingId === faq.id ? (
               <FaqForm
@@ -198,11 +198,11 @@ export function ServiceFaqPanel({ serviceId, initialFaqs }: Props) {
               />
             ) : (
               <div>
-                <div className="flex items-start justify-between gap-2">
+                <div className="gh-admin-service-faq__row">
                   <p className="text-[14px] font-semibold text-[var(--color-text-primary)]">
                     {faq.question}
                   </p>
-                  <div className="flex shrink-0 items-center gap-1">
+                  <div className="gh-admin-service-faq__actions">
                     <button
                       type="button"
                       onClick={() => handleMoveUp(idx)}
@@ -276,7 +276,7 @@ function FaqForm({
   saveLabel: string;
 }) {
   return (
-    <div className="space-y-3 rounded-[var(--radius-card-sm)] border border-[var(--color-brand-primary)] bg-[var(--color-background-page)] p-4">
+    <div className="gh-admin-service-faq-form">
       <div>
         <label
           className="mb-1 block text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]"
@@ -311,7 +311,7 @@ function FaqForm({
           placeholder="The consultation includes..."
         />
       </div>
-      <div className="flex items-center gap-2">
+      <div className="gh-admin-service-active-row">
         <input
           id="faq-visible"
           type="checkbox"
@@ -323,7 +323,7 @@ function FaqForm({
           Visible on public service page
         </label>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="gh-admin-service-actions">
         <button
           type="button"
           onClick={onSave}

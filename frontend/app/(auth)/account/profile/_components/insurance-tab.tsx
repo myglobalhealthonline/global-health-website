@@ -70,14 +70,14 @@ export function InsuranceTab() {
   }
 
   if (!loaded) {
-    return <div className="gh-card p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>;
+    return <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>;
   }
 
   const badge = STATUS_BADGE[data?.insuranceDocumentStatus ?? "NOT_VERIFIED"];
 
   return (
-    <section className="space-y-4">
-      <div className="gh-card p-6">
+    <section className="gh-patient-profile-tab space-y-4">
+      <div className="gh-patient-form-card gh-card p-6">
         <header className="mb-4 flex items-center gap-2">
           <ShieldCheck className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
           <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Insurance details</h3>
@@ -116,7 +116,7 @@ export function InsuranceTab() {
         </form>
       </div>
 
-      <div className="gh-card p-6">
+      <div className="gh-patient-form-card gh-card p-6">
         <header className="mb-3">
           <p className="gh-field-label mb-1">Insurance document</p>
           <div className="flex items-center gap-2">

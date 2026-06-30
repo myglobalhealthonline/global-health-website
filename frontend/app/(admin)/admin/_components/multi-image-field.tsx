@@ -127,7 +127,7 @@ export function MultiImageField({
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="gh-admin-media-field">
       <div className="flex items-center justify-between">
         <span className="gh-field-label">{label}</span>
         <span className="text-[11px] text-[var(--color-text-muted)]">
@@ -143,7 +143,7 @@ export function MultiImageField({
         <button
           type="button"
           onClick={addSlot}
-          className="grid place-items-center"
+          className="gh-admin-media-empty-button grid place-items-center"
           style={{
             minHeight: 140,
             borderRadius: 12,
@@ -164,14 +164,14 @@ export function MultiImageField({
           </div>
         </button>
       ) : (
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <ul className="gh-admin-media-grid">
           {paths.map((p, index) => {
             const preview = previewSrcFor(p);
             const busy = busyIndex === index;
             return (
               <li
                 key={index}
-                className="relative overflow-hidden"
+                className="gh-admin-media-thumb relative overflow-hidden"
                 style={{
                   borderRadius: 12,
                   border: "1px solid var(--color-border)",
@@ -217,7 +217,7 @@ export function MultiImageField({
 
                 {/* Hover/visible action cluster — replace + remove. */}
                 <div
-                  className="absolute right-1.5 top-1.5 inline-flex gap-1"
+                  className="gh-admin-media-actions absolute right-1.5 top-1.5 inline-flex gap-1"
                   style={{ pointerEvents: busy ? "none" : "auto" }}
                 >
                   <button
@@ -229,7 +229,7 @@ export function MultiImageField({
                       width: 28,
                       height: 28,
                       borderRadius: 999,
-                      background: "rgba(0,0,0,0.55)",
+                      background: "rgba(23, 61, 47, 0.82)",
                       color: "#fff",
                       border: "none",
                       display: "inline-flex",
@@ -249,7 +249,7 @@ export function MultiImageField({
                       width: 28,
                       height: 28,
                       borderRadius: 999,
-                      background: "rgba(0,0,0,0.55)",
+                      background: "rgba(23, 61, 47, 0.82)",
                       color: "#fff",
                       border: "none",
                       display: "inline-flex",
@@ -269,7 +269,7 @@ export function MultiImageField({
               <button
                 type="button"
                 onClick={addSlot}
-                className="grid h-full w-full place-items-center"
+                className="gh-admin-media-add-thumb grid h-full w-full place-items-center"
                 style={{
                   borderRadius: 12,
                   border: "1px dashed var(--color-border-strong)",

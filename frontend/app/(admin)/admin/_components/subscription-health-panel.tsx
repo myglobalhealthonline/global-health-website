@@ -18,7 +18,7 @@ export function SubscriptionHealthPanel({
   const allClear = driftCount === 0 && alertCount === 0 && priceFailCount === 0;
 
   return (
-    <AdminCard padding={0}>
+    <AdminCard padding={0} className="gh-admin-subscription-health">
       <SectionHeader
         title="Subscription health"
         description="Stripe ↔ DB drift, ledger ↔ counter invariants, and price-sync failures."
@@ -32,7 +32,7 @@ export function SubscriptionHealthPanel({
           )
         }
       />
-      <div className="flex flex-col gap-4 p-6">
+      <div className="gh-admin-subscription-health__body flex flex-col gap-4 p-6">
         {error ? (
           <p className="gh-status-warning rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">{error}</p>
         ) : (
@@ -92,12 +92,12 @@ function HealthSection({
   children?: React.ReactNode;
 }) {
   return (
-    <div>
+    <div className="gh-admin-subscription-health__section">
       <p className="mb-1.5 text-[13px] font-semibold text-[var(--color-text-primary)]">{title}</p>
       {empty ? (
         <p className="text-sm text-[var(--color-text-muted)]">{emptyText}</p>
       ) : (
-        <ul className="flex flex-col gap-1.5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3">
+        <ul className="gh-admin-subscription-health__issues flex flex-col gap-1.5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3">
           {children}
         </ul>
       )}

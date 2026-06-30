@@ -142,8 +142,8 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
   }
 
   return (
-    <div className="grid gap-4" style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}>
-      <div className="gh-card p-6">
+    <div className="gh-doctor-detail-grid gh-doctor-templates-layout grid gap-4">
+      <div className="gh-card gh-doctor-template-list p-6">
         <h3
           className="m-0 text-[var(--color-text-primary)]"
           style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
@@ -155,11 +155,11 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
             No templates yet. Use the form on the right.
           </p>
         ) : (
-          <ul className="mt-4 grid gap-3">
+          <ul className="gh-doctor-template-items mt-4 grid gap-3">
             {items.map((t) => (
               <li
                 key={t.id}
-                className="rounded-md border border-[var(--color-border)] bg-white p-4"
+                className="gh-doctor-template-row rounded-md border border-[var(--color-border)] bg-white p-4"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
@@ -198,7 +198,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
         )}
       </div>
 
-      <form onSubmit={create} className="gh-card p-6">
+      <form onSubmit={create} className="gh-card gh-doctor-template-form p-6">
         <h3
           className="m-0 text-[var(--color-text-primary)]"
           style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
@@ -232,7 +232,7 @@ export function FormTemplatesClient({ initial }: { initial: FormTemplateDto[] })
           {fields.map((f, i) => (
             <div
               key={i}
-              className="rounded-md border border-[var(--color-border)] p-3"
+              className="gh-doctor-template-field rounded-md border border-[var(--color-border)] p-3"
             >
               <div className="flex items-start justify-between gap-2">
                 <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">

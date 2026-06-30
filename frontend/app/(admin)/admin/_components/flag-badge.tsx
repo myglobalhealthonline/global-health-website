@@ -113,6 +113,7 @@ export function FlagBadge({
       <span
         aria-hidden
         title={lower.toUpperCase()}
+        className="gh-flag-badge gh-flag-badge--fallback"
         style={{
           display: "inline-block",
           width: Math.round(size * aspect),
@@ -128,7 +129,7 @@ export function FlagBadge({
 
   return (
     <span
-      className={`fi fi-${iso}`}
+      className={`gh-flag-badge fi fi-${iso}`}
       title={iso.toUpperCase()}
       aria-hidden
       style={{

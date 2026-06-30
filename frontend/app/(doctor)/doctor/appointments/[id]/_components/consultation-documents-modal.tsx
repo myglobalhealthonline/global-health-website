@@ -369,7 +369,7 @@ export function ConsultationDocumentsModal({
 
   const modal = (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
+      className="gh-doctor-doc-modal fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="consultation-docs-title"
@@ -380,8 +380,8 @@ export function ConsultationDocumentsModal({
         aria-label="Close dialog"
         onClick={onClose}
       />
-      <div className="relative z-10 flex max-h-[min(92vh,900px)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-[var(--color-border)] bg-white shadow-2xl">
-        <div className="flex shrink-0 items-center justify-between border-b border-[var(--color-border)] bg-white px-4 py-3">
+      <div className="gh-doctor-doc-modal-panel relative z-10 flex max-h-[min(92vh,900px)] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-[var(--color-border)] bg-white shadow-2xl">
+        <div className="gh-doctor-doc-modal-header flex shrink-0 items-center justify-between border-b border-[var(--color-border)] bg-white px-4 py-3">
           <div>
             <h2
               id="consultation-docs-title"
@@ -404,13 +404,13 @@ export function ConsultationDocumentsModal({
           </button>
         </div>
 
-        <div className="flex shrink-0 flex-wrap gap-1 border-b border-[var(--color-border)] bg-white px-3 py-2">
+        <div className="gh-doctor-doc-modal-tabs flex shrink-0 gap-1 overflow-x-auto border-b border-[var(--color-border)] bg-white px-3 py-2">
           {TABS.map((t) => (
             <button
               key={t.id}
               type="button"
               onClick={() => setTab(t.id)}
-              className={`rounded-md px-3 py-1.5 text-xs font-semibold ${
+              className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-semibold ${
                 tab === t.id
                   ? "bg-[var(--color-brand-primary)] text-white"
                   : "text-[var(--color-text-muted)] hover:bg-[var(--color-background-soft)]"
@@ -421,7 +421,7 @@ export function ConsultationDocumentsModal({
           ))}
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto bg-white p-4">
+        <div className="gh-doctor-doc-modal-body min-h-0 flex-1 overflow-y-auto bg-white p-4">
           {error ? <p className="mb-3 text-sm text-red-700">{error}</p> : null}
           {success ? <p className="mb-3 text-sm text-emerald-700">{success}</p> : null}
           {editingDocId ? (

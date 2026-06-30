@@ -165,8 +165,8 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
 
       {/* Filters */}
       <AdminCard padding={0} className="mb-4 overflow-hidden">
-        <form method="get" className="px-5 py-4">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <form method="get" className="gh-admin-asset-filters px-5 py-4">
+          <div className="gh-admin-asset-filter-grid">
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -222,7 +222,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
             </label>
           </div>
           <input type="hidden" name="page" value="1" />
-          <div className="mt-4 flex flex-wrap items-center gap-3">
+          <div className="gh-admin-asset-actions mt-4 flex flex-wrap items-center gap-3">
             <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36 }}>
               Apply filters
             </button>
@@ -243,7 +243,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
 
       {/* Table */}
       <AdminCard padding={0} className="overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="gh-admin-asset-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th style={{ width: 120 }}>Preview</Th>
@@ -301,7 +301,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
                     </Pill>
                   </Td>
                   <Td align="right">
-                    <div className="flex justify-end gap-1.5">
+                    <div className="gh-admin-asset-row-actions flex justify-end gap-1.5">
                       <IconBtn
                         ariaLabel={`View ${a.key}`}
                         href={`/admin/assets/${a.id}`}

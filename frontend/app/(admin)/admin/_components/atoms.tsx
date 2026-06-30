@@ -65,7 +65,7 @@ export function PageHeader({
         ) : null}
       </div>
       {actions ? (
-        <div className="flex flex-wrap items-center gap-2.5">{actions}</div>
+        <div className="gh-portal-page-header-actions flex flex-wrap items-center gap-2.5">{actions}</div>
       ) : null}
     </header>
   );

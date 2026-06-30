@@ -1,0 +1,466 @@
+{
+  "checkedAt": "2026-06-30T22:39:52.969Z",
+  "widths": [
+    320,
+    390,
+    768,
+    1280,
+    1920
+  ],
+  "browser": "system Chrome",
+  "summary": {
+    "redirected": 50
+  },
+  "results": [
+    {
+      "portal": "Admin",
+      "route": "/admin",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/services",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin/doctors",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor/appointments",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor/appointments",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor/appointments",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor/appointments",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor/appointments",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor/calendar",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor/calendar",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor/calendar",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor/calendar",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Doctor",
+      "route": "/doctor/calendar",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/bookings",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/bookings",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/bookings",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/bookings",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/bookings",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/profile",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/profile",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/profile",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/profile",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/profile",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/payments",
+      "width": 320,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/payments",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/payments",
+      "width": 768,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\n\nSecure access\n\nSign in\nCreate account\nWelcome back\n\nSign in to your Global Health account\n\nEMAIL ADDRESS\nPASSWORD\nForgot password?\nRemember me on this device\nSign in"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/payments",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    },
+    {
+      "portal": "Patient",
+      "route": "/account/payments",
+      "width": 1920,
+      "status": 200,
+      "finalPath": "/login",
+      "redirected": true,
+      "bodyStart": "Global Health\nSECURE ACCESS\nManage care with\nconfidence.\n\nSign in to continue booking, reviewing consultations, and managing the clinical network.\n\nGDPR\n\nPrivacy protected\n\nJWT\n\nSe"
+    }
+  ]
+}

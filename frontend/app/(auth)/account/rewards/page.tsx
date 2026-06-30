@@ -32,9 +32,9 @@ export default async function RewardsPage({ searchParams }: { searchParams: Prom
 
   if (!sub || kits.length === 0) {
     return (
-      <>
+      <div className="gh-patient-page gh-patient-rewards-page">
         <PageHeader title={t.title} description={t.subtitle} />
-        <div className="gh-card max-w-xl p-8 text-center">
+        <div className="gh-patient-empty-state gh-card max-w-xl p-8 text-center">
           <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
             {subscription.dashboard.wellnessNone}
           </p>
@@ -42,7 +42,7 @@ export default async function RewardsPage({ searchParams }: { searchParams: Prom
             {subscription.dashboard.manage}
           </Link>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -59,7 +59,7 @@ export default async function RewardsPage({ searchParams }: { searchParams: Prom
   }));
 
   return (
-    <>
+    <div className="gh-patient-page gh-patient-rewards-page">
       <PageHeader title={t.title} description={t.subtitle} />
       <RewardsPanel
         t={t}
@@ -69,6 +69,6 @@ export default async function RewardsPage({ searchParams }: { searchParams: Prom
         prefillCountry={(sub.countryCode ?? "").toUpperCase()}
         returnState={returnState ?? null}
       />
-    </>
+    </div>
   );
 }

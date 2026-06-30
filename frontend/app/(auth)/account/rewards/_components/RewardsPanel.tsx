@@ -79,7 +79,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
   }
 
   return (
-    <div className="grid max-w-3xl gap-5">
+    <div className="gh-patient-rewards-panel grid gap-5">
       {props.returnState === "ok" || confirmed ? (
         <div
           className="flex items-start gap-3 rounded-[12px] p-4 text-sm"
@@ -104,7 +104,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
         const pct = progressPercent(Math.min(props.wellnessBalance, kit.requiredWellnessCredits), kit.requiredWellnessCredits);
         const isOpen = openKit === kit.healthTestId;
         return (
-          <AdminCard key={kit.healthTestId}>
+          <AdminCard key={kit.healthTestId} className="gh-patient-reward-card">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3">
                 <span
@@ -150,7 +150,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
                     {interpolate(t.redeemCta, { count: kit.requiredWellnessCredits })}
                   </Btn>
                 ) : (
-                  <form onSubmit={(e) => onRedeem(e, kit.healthTestId)} className="grid gap-3">
+                  <form onSubmit={(e) => onRedeem(e, kit.healthTestId)} className="gh-patient-form-card grid gap-3">
                     <p className="text-xs leading-relaxed" style={{ color: "var(--color-text-muted)" }}>{t.shippingNote}</p>
                     <div className="grid gap-3 sm:grid-cols-2">
                       <input name="shipName" required minLength={2} maxLength={120} defaultValue={props.prefillName} placeholder="Full name" className="gh-input sm:col-span-2" />
@@ -163,7 +163,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
                     {error ? (
                       <p className="rounded-md px-3 py-2 text-sm" style={{ background: "#FEE2E2", color: "#991B1B" }} role="alert">{error}</p>
                     ) : null}
-                    <div className="flex items-center gap-3">
+                    <div className="gh-patient-form-actions flex items-center gap-3">
                       <button type="submit" disabled={submitting} className="gh-btn gh-btn-primary inline-flex justify-center disabled:opacity-60">
                         {submitting ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Gift className="size-4" aria-hidden />}
                         {submitting ? t.redeeming : interpolate(t.redeemCta, { count: kit.requiredWellnessCredits })}

@@ -215,7 +215,7 @@ export default async function AdminServicesPage({
           the same control twice was redundant. */}
       {showKindTabs ? (
         <div
-          className="mb-4 inline-flex items-center gap-1 border border-[var(--color-border)]"
+          className="gh-admin-service-kind-tabs mb-4 inline-flex items-center gap-1 border border-[var(--color-border)]"
           style={{
             padding: 4,
             background: "var(--color-background-soft)",
@@ -230,7 +230,9 @@ export default async function AdminServicesPage({
               <Link
                 key={option}
                 href={href}
-                className="inline-flex items-center gap-2 transition-all duration-150"
+                className={`gh-admin-service-kind-tab inline-flex items-center gap-2 transition-all duration-150 ${
+                  active ? "gh-admin-service-kind-tab--active" : ""
+                }`}
                 style={{
                   padding: "8px 14px",
                   borderRadius: 8,
@@ -264,9 +266,9 @@ export default async function AdminServicesPage({
 
       {/* Filters */}
       <AdminCard padding={0} className="mb-4 overflow-hidden">
-        <form method="get" className="px-5 py-4">
+        <form method="get" className="gh-admin-service-filters px-5 py-4">
           <input type="hidden" name="kind" value={kind} />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="gh-admin-service-filter-grid">
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -307,7 +309,7 @@ export default async function AdminServicesPage({
             </label>
           </div>
           <input type="hidden" name="page" value="1" />
-          <div className="mt-4 flex flex-wrap items-center gap-3">
+          <div className="gh-admin-service-actions gh-admin-service-actions--filters mt-4">
             <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36 }}>
               Apply filters
             </button>
@@ -328,7 +330,7 @@ export default async function AdminServicesPage({
 
       {/* Table */}
       <AdminCard padding={0} className="overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="gh-admin-service-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Title</Th>
@@ -381,7 +383,7 @@ export default async function AdminServicesPage({
                     </span>
                   </Td>
                   <Td>
-                    <form action={toggleServiceAction} className="inline-flex">
+                    <form action={toggleServiceAction} className="gh-admin-service-toggle-form inline-flex">
                       <input type="hidden" name="id" value={service.id} />
                       <input
                         type="hidden"
@@ -432,7 +434,7 @@ export default async function AdminServicesPage({
                     </form>
                   </Td>
                   <Td align="right">
-                    <div className="flex justify-end gap-1.5">
+                    <div className="gh-admin-service-row-actions flex justify-end gap-1.5">
                       <IconBtn
                         ariaLabel={`View ${service.name}`}
                         href={adminHrefForService(service)}

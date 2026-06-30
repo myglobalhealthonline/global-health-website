@@ -66,9 +66,10 @@ export function MobileNav({
   // a stale cookie leaks the old language back into global pages.
   function switchTo(href: string, nextLang: string | null) {
     if (nextLang) {
-      document.cookie = `gh_locale=${nextLang}; path=/; max-age=31536000; SameSite=Lax`;
+      // eslint-disable-next-line react-hooks/immutability -- hard navigation needs the locale cookie synced before reload.
+      globalThis.document.cookie = `gh_locale=${nextLang}; path=/; max-age=31536000; SameSite=Lax`;
     }
-    window.location.href = href;
+    globalThis.location.assign(href);
   }
   const activeCountry = activeCountryCode ? (countries.find((c) => c.code === activeCountryCode) ?? null) : null;
   const activeLang = parsed.lang ?? activeCountry?.defaultLocale ?? null;

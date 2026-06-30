@@ -70,13 +70,13 @@ function CountryForm({
   return (
     <form
       action={saveMarket}
-      className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
+      className="gh-admin-doctor-country-form rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
     >
       <input type="hidden" name="countryId" value={market.countryId} />
       <input type="hidden" name="countryCode" value={market.country.code} />
       <input type="hidden" name="locales" value={localeCsv} />
 
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="gh-admin-doctor-country-form-header flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="m-0 text-[15px] font-bold text-[var(--color-text-primary)]">
             {market.country.name} ({market.country.code.toUpperCase()})
@@ -85,7 +85,7 @@ function CountryForm({
             Default locale: {market.country.defaultLocale}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3 text-[13px]">
+        <div className="gh-admin-doctor-toggle-row flex flex-wrap items-center gap-3 text-[13px]">
           <label className="inline-flex items-center gap-2">
             <input name="active" type="checkbox" defaultChecked={market.active} />
             Active
@@ -97,7 +97,7 @@ function CountryForm({
         </div>
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-[90px_1fr_1fr_90px]">
+      <div className="gh-admin-doctor-country-fields mt-4 grid gap-3 sm:grid-cols-[90px_1fr_1fr_90px]">
         <label className="flex flex-col gap-1">
           <span className="gh-field-label">Sort</span>
           <input
@@ -139,7 +139,7 @@ function CountryForm({
       </div>
 
       {/* Language tabs */}
-      <div role="tablist" className="mt-5 flex flex-wrap gap-1.5">
+      <div role="tablist" className="gh-admin-doctor-tabs mt-5 flex flex-wrap gap-1.5">
         {localeTabs.map((locale) => {
           const selected = locale.code === activeLocale;
           return (
@@ -170,7 +170,7 @@ function CountryForm({
             key={code}
             role="tabpanel"
             hidden={code !== activeLocale}
-            className="mt-4 grid gap-3"
+            className="gh-admin-doctor-tab-panel mt-4 grid gap-3"
           >
             <label className="flex flex-col gap-1">
               <span className="gh-field-label">
@@ -190,7 +190,7 @@ function CountryForm({
               label="Bio"
               initialValue={translation?.bio ?? ""}
             />
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="gh-admin-doctor-field-grid grid gap-3 sm:grid-cols-2">
               <label className="flex flex-col gap-1">
                 <span className="gh-field-label">SEO title</span>
                 <input
@@ -225,7 +225,7 @@ function CountryForm({
         );
       })}
 
-      <div className="mt-4 rounded-md border border-[var(--color-border)] bg-[var(--color-background)] p-3">
+      <div className="gh-admin-doctor-payout-note mt-4 rounded-md border border-[var(--color-border)] bg-[var(--color-background)] p-3">
         <h4 className="m-0 text-[13px] font-bold text-[var(--color-text-primary)]">
           Payout details
         </h4>
@@ -235,7 +235,7 @@ function CountryForm({
         </p>
       </div>
 
-      <div className="mt-4 flex justify-end">
+      <div className="gh-admin-doctor-form-actions mt-4 flex justify-end">
         <button type="submit" className="gh-btn gh-btn-primary">
           Save {market.country.name}
         </button>
@@ -259,9 +259,9 @@ export function CountryProfileTabs({
   if (!activeMarket) return null;
 
   return (
-    <div className="grid gap-4">
+    <div className="gh-admin-doctor-country-tabs grid gap-4">
       {multiCountry ? (
-        <div role="tablist" aria-label="Countries" className="flex flex-wrap gap-2">
+        <div role="tablist" aria-label="Countries" className="gh-admin-doctor-tabs flex flex-wrap gap-2">
           {markets.map((market) => {
             const selected = market.countryId === activeMarket.countryId;
             return (

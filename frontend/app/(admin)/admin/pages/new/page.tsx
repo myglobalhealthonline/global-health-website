@@ -85,13 +85,13 @@ export default async function AdminNewPagePage({ searchParams }: PageProps) {
         </AdminCard>
       ) : null}
 
-      <form action={createPageAction} className="mt-6 flex flex-col gap-6">
+      <form action={createPageAction} className="gh-admin-page-form mt-6 flex flex-col gap-6">
         <PageFields
           countries={countries}
           isCreate
           defaultCountryId={messages.countryId}
         />
-        <div className="flex items-center justify-end gap-2">
+        <div className="gh-admin-support-actions flex items-center justify-end gap-2">
           <Btn href="/admin/pages" variant="ghost" size="md">
             Cancel
           </Btn>

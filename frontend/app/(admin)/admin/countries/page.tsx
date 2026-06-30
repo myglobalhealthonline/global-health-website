@@ -93,16 +93,16 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
         </p>
       ) : null}
 
-      <AdminCard padding={0} className="overflow-hidden">
+      <AdminCard padding={0} className="gh-admin-country-list overflow-hidden">
         {/* Toolbar */}
-        <div className="flex items-center gap-3 border-b border-[var(--color-border)] px-5 py-3.5">
+        <div className="gh-admin-country-toolbar flex items-center gap-3 border-b border-[var(--color-border)] px-5 py-3.5">
           <span className="text-[13px] text-[var(--color-text-muted)]">
             {rows.length} countries · {publishedCount} active
           </span>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto">
+        <div className="gh-admin-country-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Country</Th>
@@ -157,7 +157,7 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
                     </div>
                   </Td>
                   <Td align="right">
-                    <div className="flex justify-end gap-1.5">
+                    <div className="gh-admin-country-row-actions flex justify-end gap-1.5">
                       <IconBtn
                         ariaLabel={`View ${c.name}`}
                         href={`/admin/countries/${c.id}`}

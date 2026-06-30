@@ -89,7 +89,7 @@ export default async function AccountOverviewPage() {
   const emailUnverified = user && !user.emailVerifiedAt;
 
   return (
-    <>
+    <div className="gh-patient-page gh-patient-overview">
       <PageHeader
         eyebrow={a.dashboard.welcome}
         title={user?.fullName || user?.email || "My account"}
@@ -108,7 +108,7 @@ export default async function AccountOverviewPage() {
       />
 
       {/* ── Stat tiles ─────────────────────────────────────────────── */}
-      <div className="grid gap-3 sm:grid-cols-[1fr_0.9fr_1.1fr]">
+      <div className="gh-patient-stat-grid grid gap-3 sm:grid-cols-[1fr_0.9fr_1.1fr]">
         <StatCard
           tone="brand"
           label={a.dashboard.openLabel}
@@ -170,7 +170,7 @@ export default async function AccountOverviewPage() {
       {trustpilot.showCta && trustpilot.trustpilotUrl ? (
         <div className="mt-6">
           <AdminCard style={{ borderLeft: "3px solid #00b67a" }}>
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="gh-patient-alert-row flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <Star
                   className="size-5 shrink-0"
@@ -205,7 +205,7 @@ export default async function AccountOverviewPage() {
       {nextCall ? (
         <div className="mt-6">
           <AdminCard style={{ borderLeft: "3px solid var(--color-brand-primary)" }}>
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="gh-patient-alert-row flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <Clock
                   className="size-5 shrink-0 text-[var(--color-brand-primary)]"
@@ -246,7 +246,7 @@ export default async function AccountOverviewPage() {
       <SubscriptionDashboard locale={locale} />
 
       {/* ── Main grid: Recent bookings + Quick actions ────────────── */}
-      <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
+      <div className="gh-patient-overview-grid mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)]">
         <AdminCard padding={0}>
           <SectionHeader
             title={a.dashboard.recentBookings}
@@ -286,7 +286,7 @@ export default async function AccountOverviewPage() {
                 {recent.map((b) => (
                   <li
                     key={b.id}
-                    className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                    className="gh-patient-list-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                   >
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-[var(--color-text-primary)]">
@@ -369,7 +369,7 @@ export default async function AccountOverviewPage() {
           </div>
         </AdminCard>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -395,7 +395,7 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className="flex items-center justify-between gap-2 rounded-md px-3 py-2.5 transition-colors hover:bg-[var(--color-background-soft)]"
+      className="gh-patient-quick-link flex items-center justify-between gap-2 rounded-md px-3 py-2.5 transition-colors hover:bg-[var(--color-background-soft)]"
     >
       <span className="inline-flex items-center gap-2.5">
         <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">

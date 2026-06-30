@@ -71,7 +71,7 @@ export function PlanTranslationTabs({ locales, defaultLocale, initialTranslation
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="gh-admin-plan-translations flex flex-col gap-4">
       <p className="text-xs text-[var(--color-text-muted)]">
         Name, description, notes and the public-card bullets per language. The{" "}
         <span className="font-semibold">{localeLabel(upperDefault)}</span> tab is the default —
@@ -79,7 +79,7 @@ export function PlanTranslationTabs({ locales, defaultLocale, initialTranslation
       </p>
 
       {/* Tab strip */}
-      <div role="tablist" className="flex flex-wrap gap-1.5">
+      <div role="tablist" className="gh-admin-plan-translation-tablist flex flex-wrap gap-1.5">
         {locales.map((l) => {
           const isActive = l.code === active;
           return (
@@ -89,7 +89,7 @@ export function PlanTranslationTabs({ locales, defaultLocale, initialTranslation
               role="tab"
               aria-selected={isActive}
               onClick={() => setActive(l.code)}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
+              className={`gh-admin-plan-translation-tab rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
                 isActive
                   ? "bg-[var(--color-brand-primary)] text-white"
                   : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -106,7 +106,7 @@ export function PlanTranslationTabs({ locales, defaultLocale, initialTranslation
         const v = valuesFor(l.code);
         const isDefault = l.code === upperDefault;
         return (
-          <div key={l.code} role="tabpanel" hidden={l.code !== active} className="flex flex-col gap-4">
+          <div key={l.code} role="tabpanel" hidden={l.code !== active} className="gh-admin-plan-translation-panel flex flex-col gap-4">
             <label className="flex flex-col gap-2">
               <span className="gh-field-label">Plan name{isDefault ? " *" : ""}</span>
               <input

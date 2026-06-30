@@ -87,8 +87,8 @@ export default function AccountFamilyPage() {
   }, [refetch]);
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <header className="mb-6">
+    <div className="gh-patient-page gh-patient-family-page">
+      <header className="gh-patient-page-header mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
           {T.breadcrumb}
         </p>
@@ -111,17 +111,17 @@ export default function AccountFamilyPage() {
       ) : null}
 
       {loading ? (
-        <div className="mt-6 gh-card flex items-center gap-2 p-6 text-sm text-[var(--color-text-muted)]">
+        <div className="gh-patient-empty-state mt-6 gh-card flex items-center gap-2 p-6 text-sm text-[var(--color-text-muted)]">
           <Loader2 className="size-4 animate-spin" aria-hidden />
           {T.loading}
         </div>
       ) : items.length === 0 && !error ? (
-        <div className="mt-6 gh-card flex flex-col items-center gap-2 p-10 text-center">
+        <div className="gh-patient-empty-state mt-6 gh-card flex flex-col items-center gap-2 p-10 text-center">
           <Users className="size-6 text-[var(--color-text-muted)]" aria-hidden />
           <p className="text-sm text-[var(--color-text-muted)]">{T.empty}</p>
         </div>
       ) : (
-        <ul className="mt-6 space-y-3">
+        <ul className="gh-patient-family-list mt-6 space-y-3">
           {items.map((member) => (
             <li key={member.id}>
               <MemberRow member={member} onChanged={refetch} />
@@ -154,7 +154,7 @@ function AddMemberForm({ onAdded }: { onAdded: () => Promise<void> }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="gh-card space-y-4 p-6">
+      <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-4 p-6">
       <h2 className="text-sm font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
         {T.addHeading}
       </h2>
@@ -324,8 +324,8 @@ function MemberDisplay({
   }
 
   return (
-    <div className="gh-card p-4">
-      <div className="flex items-start justify-between gap-3">
+    <div className="gh-patient-family-card gh-card p-4">
+      <div className="gh-patient-family-card-header flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-sm font-bold text-[var(--color-text-primary)]">
             {member.fullName}
@@ -421,7 +421,7 @@ function EditMemberForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="gh-card space-y-4 p-4">
+      <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-4 p-4">
       <label className="block">
         <span className="gh-field-label">{T.fullName}</span>
         <input

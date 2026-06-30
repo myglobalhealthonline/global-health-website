@@ -45,7 +45,7 @@ export function DayAgenda({
   const slots = items.filter((i) => i.kind === "slot");
 
   return (
-    <div className="gh-card flex h-full flex-col p-0">
+    <div className="gh-agenda-panel gh-card flex h-full flex-col p-0">
       <div className="flex items-center gap-2 border-b border-[var(--color-border)] px-4 py-3">
         <CalendarDays className="size-4 text-[var(--color-text-muted)]" aria-hidden />
         <h3 className="text-sm font-bold text-[var(--color-text-primary)]">
@@ -73,7 +73,7 @@ export function DayAgenda({
                       <button
                         type="button"
                         onClick={() => onSelectConsultation?.(item)}
-                        className="flex w-full items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2.5 text-left transition hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)]"
+                        className="gh-agenda-row flex w-full items-center gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2.5 text-left transition hover:border-[var(--color-brand-primary)] hover:bg-[var(--color-background-soft)]"
                       >
                         <span className="inline-flex w-14 shrink-0 flex-col items-center rounded-md bg-emerald-50 px-1 py-1 text-emerald-800">
                           <span className="text-sm font-bold leading-none">
@@ -110,7 +110,7 @@ export function DayAgenda({
                   {slots.map((item) => (
                     <span
                       key={item.id}
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${slotChipClass(item.status)}`}
+                      className={`gh-agenda-chip inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${slotChipClass(item.status)}`}
                       title={item.meta?.blockReason ?? item.status}
                     >
                       <span className={item.status === "BLOCKED" ? "line-through" : ""}>

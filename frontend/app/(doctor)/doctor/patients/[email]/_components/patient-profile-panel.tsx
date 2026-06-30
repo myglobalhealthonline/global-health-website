@@ -146,7 +146,7 @@ export function PatientProfilePanel({ email }: { email: string }) {
   }
 
   return (
-    <section className="gh-card p-6">
+    <section className="gh-card gh-doctor-patient-profile-panel p-6">
       <h3 className="text-base font-bold text-[var(--color-text-primary)]">
         Patient chart
       </h3>
@@ -168,7 +168,7 @@ export function PatientProfilePanel({ email }: { email: string }) {
         </div>
       ) : null}
 
-      <form className="mt-4 grid gap-5 text-sm" onSubmit={save}>
+      <form className="gh-doctor-patient-profile-form mt-4 grid gap-5 text-sm" onSubmit={save}>
         {/* Identity (national ID / tax ID / passport) and Address sections
             intentionally hidden from the doctor portal per GDPR plan.
             They remain editable from /admin/users for staff.
@@ -213,7 +213,7 @@ export function PatientProfilePanel({ email }: { email: string }) {
         </Section>
 
         <Section title="Vitals">
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="gh-doctor-field-grid grid gap-3 sm:grid-cols-3">
             <Field
               name="weightKg"
               label="Weight (kg)"
@@ -280,7 +280,7 @@ export function PatientProfilePanel({ email }: { email: string }) {
           </div>
         </Section>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="gh-doctor-form-actions flex flex-wrap items-center gap-3">
           <button
             type="submit"
             disabled={pending}
@@ -296,7 +296,7 @@ export function PatientProfilePanel({ email }: { email: string }) {
         </div>
       </form>
 
-      <div className="mt-5 border-t border-[var(--color-border)] pt-4">
+      <div className="gh-doctor-upload-link mt-5 border-t border-[var(--color-border)] pt-4">
         <button
           type="button"
           disabled={pending}
@@ -323,7 +323,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section>
+    <section className="gh-doctor-chart-section">
       <h4 className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {title}
       </h4>

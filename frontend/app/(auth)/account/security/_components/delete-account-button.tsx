@@ -114,7 +114,7 @@ function DeleteAccountModal({
         aria-modal="true"
         aria-labelledby="delete-account-title"
         aria-describedby="delete-account-desc"
-        className="fixed left-1/2 top-1/2 z-50 w-[min(100%-2rem,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-[var(--color-border)] bg-white p-6 shadow-xl"
+          className="gh-patient-delete-modal fixed left-1/2 top-1/2 z-50 w-[min(100%-2rem,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-[var(--color-border)] bg-white p-6 shadow-xl"
       >
         <h2 id="delete-account-title" className="text-base font-bold text-[var(--color-text-primary)]">
           {i18n.deleteAccountTitle}
@@ -122,7 +122,7 @@ function DeleteAccountModal({
         <p id="delete-account-desc" className="mt-2 text-sm text-[var(--color-text-muted)]">
           {i18n.deleteWarning}
         </p>
-        <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <div className="gh-patient-form-actions mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onCancel}

@@ -10,11 +10,13 @@ type Props = {
 /** Client wrapper so the server page does not pass functions into ChatThread. */
 export function AdminAppointmentChat({ appointmentId }: Props) {
   return (
-    <ChatThread
-      appointmentId={appointmentId}
-      viewerRole="ADMIN"
-      fetcher={fetchAdminMessages}
-      poster={postAdminMessage}
-    />
+    <div className="gh-admin-appointment-chat">
+      <ChatThread
+        appointmentId={appointmentId}
+        viewerRole="ADMIN"
+        fetcher={fetchAdminMessages}
+        poster={postAdminMessage}
+      />
+    </div>
   );
 }

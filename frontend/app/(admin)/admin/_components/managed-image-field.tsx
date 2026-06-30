@@ -121,7 +121,7 @@ export function ManagedImageField({
   })();
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="gh-admin-media-field">
       <span className="gh-field-label">{label}</span>
 
       {/* Hidden text input that participates in the form submission. */}
@@ -141,7 +141,9 @@ export function ManagedImageField({
         role="button"
         tabIndex={0}
         aria-label={previewSrc ? "Image uploaded" : "Drop image here or click to upload"}
-        className="relative overflow-hidden transition-colors"
+        className={`gh-admin-media-dropzone relative overflow-hidden transition-colors ${
+          dragOver ? "gh-admin-media-dropzone--dragging" : ""
+        } ${previewSrc ? "gh-admin-media-dropzone--preview" : ""}`}
         style={{
           minHeight: 180,
           borderRadius: 12,
@@ -167,6 +169,7 @@ export function ManagedImageField({
             />
             {/* Top-right action cluster: Replace + Remove */}
             <div
+              className="gh-admin-media-actions"
               style={{
                 position: "absolute",
                 top: 8,
@@ -187,7 +190,7 @@ export function ManagedImageField({
                   height: 30,
                   padding: "0 12px",
                   borderRadius: 999,
-                  background: "rgba(0,0,0,0.65)",
+                  background: "rgba(23, 61, 47, 0.82)",
                   color: "#fff",
                   border: "none",
                   fontSize: 12,
@@ -212,7 +215,7 @@ export function ManagedImageField({
                   width: 30,
                   height: 30,
                   borderRadius: 999,
-                  background: "rgba(0,0,0,0.65)",
+                  background: "rgba(23, 61, 47, 0.82)",
                   color: "#fff",
                   border: "none",
                   display: "inline-flex",
@@ -227,7 +230,7 @@ export function ManagedImageField({
           </>
         ) : (
           <div
-            className="grid place-items-center px-4 py-8 text-center"
+            className="gh-admin-media-empty grid place-items-center px-4 py-8 text-center"
             style={{ color: "var(--color-text-muted)", minHeight: 180 }}
           >
             <div className="flex flex-col items-center">

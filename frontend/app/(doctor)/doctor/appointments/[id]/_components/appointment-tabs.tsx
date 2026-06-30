@@ -49,11 +49,11 @@ export function AppointmentTabs({
   }, [tabs]);
 
   return (
-    <div>
+    <div className="gh-doctor-appointment-tabs">
       <div
         role="tablist"
         aria-label="Appointment sections"
-        className="gh-portal-tabs sticky top-[58px] z-10 -mx-4 mb-4 flex flex-wrap items-center gap-1 border-b border-[var(--color-border)] bg-white/80 px-4 py-2 backdrop-blur-md sm:-mx-6 sm:px-6"
+        className="gh-portal-tabs gh-doctor-appointment-tablist sticky top-[58px] z-10 -mx-4 mb-4 flex items-center gap-1 overflow-x-auto border-b border-[var(--color-border)] bg-white/80 px-4 py-2 backdrop-blur-md sm:-mx-6 sm:px-6"
       >
         {tabs.map((tab) => {
           const isActive = tab.id === active;
@@ -66,7 +66,7 @@ export function AppointmentTabs({
               aria-controls={`tabpanel-${tab.id}`}
               id={`tab-${tab.id}`}
               onClick={() => setActive(tab.id)}
-              className={`relative inline-flex items-center gap-2 rounded-md px-3 py-2 text-[13px] transition-colors ${
+              className={`relative inline-flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-[13px] transition-colors ${
                 isActive
                   ? "bg-[var(--color-brand-primary)] font-bold text-white shadow-sm"
                   : "font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"

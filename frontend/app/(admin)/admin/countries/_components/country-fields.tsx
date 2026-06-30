@@ -38,8 +38,8 @@ export function CountryFields({ currencies, initial }: Props) {
   const specialistConsultationPath = initial?.specialistConsultationPath ?? "";
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
+    <div className="gh-admin-country-fields flex flex-col gap-6">
+      <div className="gh-admin-country-pick-field flex flex-col gap-2">
         <span className="gh-field-label">Country</span>
         <CountrySelect initialIso={initial?.code} />
         <span className="text-[12px] text-[var(--color-text-muted)]">
@@ -65,7 +65,7 @@ export function CountryFields({ currencies, initial }: Props) {
         defaultValue={specialistConsultationPath}
       />
 
-      <fieldset className="flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
+      <fieldset className="gh-admin-country-fieldset flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
         <legend className="px-1 text-sm font-semibold text-[var(--color-text-primary)]">
           Locales
         </legend>
@@ -86,7 +86,7 @@ export function CountryFields({ currencies, initial }: Props) {
         </label>
         <div>
           <span className="gh-field-label">Supported locales</span>
-          <div className="mt-2 flex flex-wrap gap-4">
+          <div className="gh-admin-country-locale-grid mt-2 flex flex-wrap gap-4">
             {LOCALES.map((locale) => (
               <label
                 key={locale}
@@ -132,7 +132,7 @@ export function CountryFields({ currencies, initial }: Props) {
           reads these in /api/appointments before creating an Appointment.
           Field names use the `bookingSetting.` prefix so the form action
           parses them into a single nested object. */}
-      <fieldset className="flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
+      <fieldset className="gh-admin-country-fieldset flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
         <legend className="px-1 text-sm font-semibold text-[var(--color-text-primary)]">
           Booking settings
         </legend>
@@ -142,7 +142,7 @@ export function CountryFields({ currencies, initial }: Props) {
           field is missing.
         </p>
 
-        <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
+        <label className="gh-admin-country-check-row flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
           <input
             type="checkbox"
             name="bookingSetting.bookingEnabled"
@@ -152,7 +152,7 @@ export function CountryFields({ currencies, initial }: Props) {
           Online bookings enabled
         </label>
 
-        <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
+        <label className="gh-admin-country-check-row flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
           <input
             type="checkbox"
             name="bookingSetting.requirePhone"
@@ -162,7 +162,7 @@ export function CountryFields({ currencies, initial }: Props) {
           Require phone number at booking
         </label>
 
-        <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
+        <label className="gh-admin-country-check-row flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
           <input
             type="checkbox"
             name="bookingSetting.requireDateOfBirth"
@@ -204,7 +204,7 @@ export function CountryFields({ currencies, initial }: Props) {
         </label>
       </fieldset>
 
-      <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
+      <label className="gh-admin-country-check-row flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
         <input
           type="checkbox"
           name="isActive"

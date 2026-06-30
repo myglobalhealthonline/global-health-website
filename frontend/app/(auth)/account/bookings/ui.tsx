@@ -94,7 +94,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
 
   if (unavailableMessage) {
     return (
-      <div className="mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-panel)] px-5 py-4">
+      <div className="gh-patient-empty-state mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-panel)] px-5 py-4">
         <p className="text-sm text-[var(--color-text-muted)]">{unavailableMessage}</p>
       </div>
     );
@@ -102,7 +102,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
 
   if (items.length === 0) {
     return (
-      <div className="mt-8 flex flex-col items-center rounded-[var(--radius-card-sm)] border border-dashed border-[var(--color-border)] bg-[var(--color-background-panel)] px-6 py-12 text-center">
+      <div className="gh-patient-empty-state mt-8 flex flex-col items-center rounded-[var(--radius-card-sm)] border border-dashed border-[var(--color-border)] bg-[var(--color-background-panel)] px-6 py-12 text-center">
         <ClipboardList className="size-10 text-[var(--color-border-strong)]" aria-hidden />
         <p className="mt-4 text-base font-semibold text-[var(--color-text-primary)]">
           {i18n?.bookings.noBookings ?? "No bookings yet"}
@@ -120,13 +120,13 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
   }
 
   return (
-    <div className="mt-6 space-y-4">
+    <div className="gh-patient-bookings-list mt-6 space-y-4">
       {items.map((item) => (
         <article
           key={item.id}
-          className="gh-card p-5 transition hover:shadow-[var(--shadow-card-hover)]"
+          className="gh-patient-booking-card gh-card p-5 transition hover:shadow-[var(--shadow-card-hover)]"
         >
-          <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="gh-patient-booking-card-header flex flex-wrap items-start justify-between gap-3">
             <div className="flex items-center gap-2">
               <CalendarDays className="size-4 text-[var(--color-text-muted)]" aria-hidden />
               <span className="text-sm text-[var(--color-text-muted)]">{formatAppDateTime(item.createdAt)}</span>
@@ -158,7 +158,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
               The whole row links to the Meet link if present so patients
               can join with one click. */}
           {item.scheduledAt || item.meetingUrl ? (
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-emerald-200 bg-emerald-50 px-4 py-3">
+            <div className="gh-patient-booking-band mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-emerald-200 bg-emerald-50 px-4 py-3">
               <div className="flex items-center gap-2">
                 <Clock className="size-4 text-emerald-700" aria-hidden />
                 <div>
@@ -205,7 +205,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
           ) : null}
 
           {/* Admin chat + doctor chat toggles */}
-          <div className="mt-3 flex flex-wrap gap-3">
+          <div className="gh-patient-booking-actions mt-3 flex flex-wrap gap-3">
             <button
               type="button"
               onClick={() =>
@@ -287,7 +287,7 @@ function WhereBlock({
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
     : null;
   return (
-    <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-sky-200 bg-sky-50 px-4 py-3">
+    <div className="gh-patient-booking-band mt-3 flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-sky-200 bg-sky-50 px-4 py-3">
       <div className="flex items-start gap-2">
         <MapPin className="mt-0.5 size-4 text-sky-700" aria-hidden />
         <div>

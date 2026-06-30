@@ -27,7 +27,7 @@ export default async function DoctorNotificationsPage() {
 
   return (
     <>
-      <header className="mb-6 flex flex-wrap items-end justify-between gap-3">
+      <header className="gh-doctor-page-header mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
             Doctor

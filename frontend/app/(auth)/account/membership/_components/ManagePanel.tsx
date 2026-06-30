@@ -148,7 +148,7 @@ export function ManagePanel(props: ManagePanelProps) {
   }
 
   return (
-    <div className="grid max-w-2xl gap-5">
+    <div className="gh-patient-manage-panel grid gap-5">
       {banner ? (
         <div
           className="flex items-start gap-3 rounded-[12px] p-4 text-sm"
@@ -258,7 +258,7 @@ export function ManagePanel(props: ManagePanelProps) {
               ? interpolate(t.changeEffective, { date: props.nextBillingLabel })
               : t.changeNote}
           </p>
-          <div className="mt-4 flex flex-wrap items-center gap-3">
+          <div className="gh-patient-form-actions mt-4 flex flex-wrap items-center gap-3">
             <select
               value={selectedPlan}
               onChange={(e) => setSelectedPlan(e.target.value)}
@@ -284,7 +284,7 @@ export function ManagePanel(props: ManagePanelProps) {
         </AdminCard>
       ) : null}
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="gh-patient-form-actions flex flex-wrap items-center gap-3">
         <Btn
           variant="soft"
           onClick={openPortal}

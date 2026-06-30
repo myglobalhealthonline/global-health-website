@@ -35,11 +35,11 @@ export default async function AccountBookingsPage({ searchParams }: Props) {
   const { account: a } = loadLocaleBundle(locale);
 
   return (
-    <>
+    <div className="gh-patient-page gh-patient-bookings-page">
       <Suspense fallback={null}>
         <SyncOrderPaymentOnReturn skipIfSynced={paymentSynced} />
       </Suspense>
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+      <header className="gh-patient-page-header mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
             {a.bookings.breadcrumb}
@@ -66,6 +66,6 @@ export default async function AccountBookingsPage({ searchParams }: Props) {
         }
         i18n={{ bookings: a.bookings, payments: a.payments }}
       />
-    </>
+    </div>
   );
 }

@@ -154,9 +154,9 @@ export function ServiceLinksPanel({
   );
 
   return (
-    <form action={action} className="grid gap-3">
+    <form action={action} className="gh-admin-service-links">
       <input type="hidden" name="payload" value={payload} />
-      <p className="text-[12px] text-[var(--color-text-muted)]">
+      <p className="gh-admin-service-helper">
         Internal-link callouts for this page. Anchor text must be descriptive (the
         service name) — generic phrases like “click here” are rejected. Use{" "}
         <code>{"{{link:<slot>}}"}</code> in the body to place a box inline.
@@ -165,13 +165,13 @@ export function ServiceLinksPanel({
       {/* Locale tabs — switch which language you are editing across all rows.
           Other locales are optional; blank ones fall back to {default}. */}
       {localeCodes.length > 1 ? (
-        <div className="flex flex-wrap gap-1.5">
+        <div className="gh-admin-service-tablist">
           {localeCodes.map((code) => (
             <button
               key={code}
               type="button"
               onClick={() => setActiveLocale(code)}
-              className="gh-btn px-3 py-1 text-[12px] font-semibold"
+              className="gh-btn gh-admin-service-tab px-3 py-1 text-[12px] font-semibold"
               aria-pressed={activeLocale === code}
               style={
                 activeLocale === code
@@ -192,9 +192,9 @@ export function ServiceLinksPanel({
         return (
           <div
             key={i}
-            className="grid gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3"
+            className="gh-admin-service-link-card"
           >
-            <div className="grid gap-2 sm:grid-cols-[1fr_1fr_90px_120px]">
+            <div className="gh-admin-service-link-grid">
               <label className="flex flex-col gap-1">
                 <span className="gh-field-label">Type</span>
                 <select
@@ -303,7 +303,7 @@ export function ServiceLinksPanel({
         );
       })}
 
-      <div className="flex items-center justify-between">
+      <div className="gh-admin-service-actions gh-admin-service-actions--split">
         <button type="button" onClick={add} className="gh-btn inline-flex items-center gap-1.5">
           <Plus className="size-3.5" aria-hidden /> Add link
         </button>

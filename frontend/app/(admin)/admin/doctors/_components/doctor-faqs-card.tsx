@@ -71,7 +71,7 @@ export function DoctorFaqsCard({ doctorId, doctorSlug, countryCodes, data }: Pro
   }
 
   return (
-    <AdminCard>
+    <AdminCard className="gh-admin-doctor-faqs-card">
       <h3 className="m-0 [font-family:var(--font-display)] text-base font-extrabold text-[var(--color-text-primary)]">
         FAQs
       </h3>

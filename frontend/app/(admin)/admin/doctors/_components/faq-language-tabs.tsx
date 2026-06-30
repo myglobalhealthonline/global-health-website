@@ -67,10 +67,10 @@ export function FaqLanguageTabs({
   }
 
   return (
-    <form action={saveFaqs} className="grid gap-4">
+    <form action={saveFaqs} className="gh-admin-doctor-faq-form grid gap-4">
       <input type="hidden" name="locales" value={localeCsv} />
 
-      <div role="tablist" className="flex flex-wrap gap-1.5">
+      <div role="tablist" className="gh-admin-doctor-tabs flex flex-wrap gap-1.5">
         {localeTabs.map((locale) => {
           const selected = locale.code === activeLocale;
           return (
@@ -97,7 +97,7 @@ export function FaqLanguageTabs({
         const code = locale.code;
         const rows = faqsFor(code);
         return (
-          <div key={code} role="tabpanel" hidden={code !== activeLocale} className="grid gap-2">
+          <div key={code} role="tabpanel" hidden={code !== activeLocale} className="gh-admin-doctor-tab-panel grid gap-2">
             <p className="m-0 text-[12px] text-[var(--color-text-muted)]">
               Leave a row blank to drop it. Up to {FAQ_SLOTS} per language.
             </p>
@@ -106,7 +106,7 @@ export function FaqLanguageTabs({
               return (
                 <div
                   key={`${code}-${index}`}
-                  className="grid gap-2 rounded border border-[var(--color-border)] bg-[var(--color-background-soft)] p-2 sm:grid-cols-[1fr_1fr_120px_70px_auto]"
+                  className="gh-admin-doctor-faq-row grid gap-2 rounded border border-[var(--color-border)] bg-[var(--color-background-soft)] p-2 sm:grid-cols-[1fr_1fr_120px_70px_auto]"
                 >
                   <input
                     name={`faq_${code}_${index}_question`}
@@ -153,7 +153,7 @@ export function FaqLanguageTabs({
         );
       })}
 
-      <div className="flex justify-end">
+      <div className="gh-admin-doctor-form-actions flex justify-end">
         <button type="submit" className="gh-btn gh-btn-primary">
           Save FAQs
         </button>

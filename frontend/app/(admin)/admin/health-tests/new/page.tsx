@@ -118,7 +118,7 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
           }
         />
         <AdminCard>
-          <form method="get" className="flex flex-wrap items-end gap-3">
+          <form method="get" className="gh-admin-health-country-form">
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -170,14 +170,14 @@ export default async function AdminNewHealthTestPage({ searchParams }: PageProps
       ) : null}
 
       <AdminCard>
-        <form action={createAction} className="flex flex-col gap-8">
+        <form action={createAction} className="gh-admin-health-form">
           <HealthTestFields
             countries={countries}
             pinnedCountryId={countryId}
             locales={locales}
             defaultLocale={defaultLocale}
           />
-          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-health-actions border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Create health test
             </button>

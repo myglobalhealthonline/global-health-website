@@ -40,7 +40,7 @@ export function PatientCalendarUI({
   const dayItems = selectedDay ? itemsByDay.get(selectedDay) ?? [] : [];
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
+    <div className="gh-patient-calendar grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
       <MonthCalendar
         year={ym.year}
         month={ym.month}

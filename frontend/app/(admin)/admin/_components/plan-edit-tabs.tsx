@@ -16,10 +16,10 @@ export function PlanEditTabs({ tabs, defaultTabId }: { tabs: PlanTab[]; defaultT
   const [active, setActive] = useState(initial);
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="gh-admin-plan-tabs flex flex-col gap-5">
       <div
         role="tablist"
-        className="flex flex-wrap gap-1.5 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-1.5"
+        className="gh-admin-plan-tablist flex flex-wrap gap-1.5 rounded-[var(--radius-card)] border border-[var(--color-border)] bg-[var(--color-background-soft)] p-1.5"
       >
         {tabs.map((t) => {
           const on = t.id === active;
@@ -30,7 +30,7 @@ export function PlanEditTabs({ tabs, defaultTabId }: { tabs: PlanTab[]; defaultT
               role="tab"
               aria-selected={on}
               onClick={() => setActive(t.id)}
-              className={`rounded-[var(--radius-card-sm)] px-4 py-2 text-[13px] font-semibold transition-colors ${
+              className={`gh-admin-plan-tab rounded-[var(--radius-card-sm)] px-4 py-2 text-[13px] font-semibold transition-colors ${
                 on
                   ? "bg-[var(--color-brand-primary)] text-white shadow-sm"
                   : "text-[var(--color-text-muted)] hover:bg-[var(--color-background-page)] hover:text-[var(--color-text-primary)]"
@@ -43,7 +43,7 @@ export function PlanEditTabs({ tabs, defaultTabId }: { tabs: PlanTab[]; defaultT
       </div>
 
       {tabs.map((t) => (
-        <div key={t.id} role="tabpanel" hidden={t.id !== active}>
+        <div key={t.id} role="tabpanel" hidden={t.id !== active} className="gh-admin-plan-panel">
           {t.content}
         </div>
       ))}

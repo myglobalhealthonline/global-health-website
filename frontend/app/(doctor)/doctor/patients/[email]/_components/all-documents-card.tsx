@@ -16,7 +16,7 @@ export async function AllDocumentsCard({ email }: { email: string }) {
 
   if (!result.ok) {
     return (
-      <section className="gh-card p-6">
+      <section className="gh-card gh-doctor-all-documents-card p-6">
         <h3 className="text-base font-bold text-[var(--color-text-primary)]">
           All documents
         </h3>
@@ -29,7 +29,7 @@ export async function AllDocumentsCard({ email }: { email: string }) {
   const isEmpty = uploads.length === 0 && generated.length === 0;
 
   return (
-    <section className="gh-card p-6">
+    <section className="gh-card gh-doctor-all-documents-card p-6">
       <h3 className="text-base font-bold text-[var(--color-text-primary)]">
         All documents
       </h3>
@@ -43,7 +43,7 @@ export async function AllDocumentsCard({ email }: { email: string }) {
           No documents on file.
         </p>
       ) : (
-        <div className="mt-4 grid gap-4">
+        <div className="gh-doctor-document-section-list mt-4 grid gap-4">
           <Section
             title="Doctor uploads"
             empty="No uploaded files."
@@ -91,18 +91,18 @@ function Section({
   }>;
 }) {
   return (
-    <div>
+    <div className="gh-doctor-document-section">
       <h4 className="mb-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {title}
       </h4>
       {rows.length === 0 ? (
         <p className="text-[13px] text-[var(--color-text-muted)]">{empty}</p>
       ) : (
-        <ul className="divide-y divide-[var(--color-border)]">
+        <ul className="gh-doctor-document-list divide-y divide-[var(--color-border)]">
           {rows.map((r) => (
             <li
               key={r.key}
-              className="flex items-center justify-between gap-3 py-2"
+              className="gh-doctor-document-row flex items-center justify-between gap-3 py-2"
             >
               <div className="flex min-w-0 items-start gap-2">
                 <FileText
@@ -118,7 +118,7 @@ function Section({
                   </p>
                 </div>
               </div>
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="gh-doctor-document-actions flex shrink-0 items-center gap-2">
                 {r.badge ? (
                   <span className="rounded-full bg-[var(--color-background-soft)] px-2 py-0.5 text-[11px] font-semibold text-[var(--color-text-muted)]">
                     {r.badge}

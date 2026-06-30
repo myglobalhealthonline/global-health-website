@@ -72,7 +72,7 @@ export function DoctorTranslationTabs({
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
+    <div className="gh-admin-doctor-translation-tabs flex flex-col gap-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
       <header>
         <h3 className="m-0 text-sm font-bold text-[var(--color-text-primary)]">
           Title, bio &amp; SEO by language
@@ -84,7 +84,7 @@ export function DoctorTranslationTabs({
         </p>
       </header>
 
-      <div role="tablist" className="flex flex-wrap gap-1.5">
+      <div role="tablist" className="gh-admin-doctor-tabs flex flex-wrap gap-1.5">
         {locales.map((l) => {
           const isActive = l.code === active;
           return (
@@ -111,7 +111,7 @@ export function DoctorTranslationTabs({
         const v = valuesFor(l.code);
         const isDefault = l.code === upperDefault;
         return (
-          <div key={l.code} role="tabpanel" hidden={l.code !== active} className="flex flex-col gap-4">
+          <div key={l.code} role="tabpanel" hidden={l.code !== active} className="gh-admin-doctor-tab-panel flex flex-col gap-4">
             <label className="flex flex-col gap-2">
               <span className="gh-field-label">Professional title{isDefault ? " *" : ""}</span>
               <input

@@ -64,10 +64,10 @@ export function AdminCalendarUI({
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="gh-admin-calendar-ui grid gap-4">
       {/* Filters */}
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="flex flex-wrap items-end gap-2">
+      <div className="gh-admin-calendar-filters flex flex-wrap items-end justify-between gap-3">
+        <div className="gh-admin-calendar-filter-grid flex flex-wrap items-end gap-2">
           <label className="flex flex-col gap-1 text-sm">
             <span className="gh-field-label">Doctor</span>
             <select
@@ -117,7 +117,7 @@ export function AdminCalendarUI({
         <TimezoneSelect value={tz} options={tzList} onChange={setTz} />
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
+      <div className="gh-admin-calendar-grid grid gap-4 lg:grid-cols-[1fr_360px]">
         <MonthCalendar
           year={year}
           month={month}

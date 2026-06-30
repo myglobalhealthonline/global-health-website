@@ -43,7 +43,7 @@ export function DoctorFields({
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="gh-admin-doctor-fields flex flex-col gap-6">
       {/* Section 1 — Admin-only routing + verification fields. These
           affect public URLs + regulator copy, so the doctor never gets
           edit rights from /doctor/profile. */}
@@ -99,7 +99,7 @@ export function DoctorFields({
             `formData.getAll("specialtyIds")`. Drives the public doctor
             specialty tags + filter. Hidden on edit. */}
         {showSpecialties ? (
-        <fieldset className="flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
+        <fieldset className="gh-admin-doctor-specialty-fieldset flex flex-col gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4">
           <legend className="px-1 text-sm font-semibold text-[var(--color-text-primary)]">
             Specialties
           </legend>
@@ -113,13 +113,13 @@ export function DoctorFields({
               No specialties exist for this country yet.
             </p>
           ) : (
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="gh-admin-doctor-specialty-grid grid gap-2 sm:grid-cols-2">
               {specialties.map((s) => {
                 const checked = selectedSpecialtyIds.includes(s.id);
                 return (
                   <label
                     key={s.id}
-                    className="flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm hover:bg-[var(--color-background-soft)]"
+                    className="gh-admin-doctor-specialty-option flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-white px-3 py-2 text-sm hover:bg-[var(--color-background-soft)]"
                     style={{ opacity: s.active ? 1 : 0.55 }}
                   >
                     <input
@@ -146,7 +146,7 @@ export function DoctorFields({
         </fieldset>
         ) : null}
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="gh-admin-doctor-field-grid grid gap-4 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <span className="gh-field-label">Registration number</span>
             <p className="text-xs text-[var(--color-text-muted)] rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2">
@@ -236,7 +236,7 @@ export function DoctorFields({
 
         {/* Social media — optional. Empty value clears the link. Surfaced
             below the WhatsApp button on every public DoctorCard. */}
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="gh-admin-doctor-social-grid grid gap-4 sm:grid-cols-3">
           <label className="flex flex-col gap-2">
             <span className="gh-field-label">Instagram URL</span>
             <input
@@ -295,7 +295,7 @@ function FormSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="flex flex-col gap-5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
+    <section className="gh-admin-doctor-form-section flex flex-col gap-5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
       <header>
         <h3
           className="m-0 text-[var(--color-text-primary)]"

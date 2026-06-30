@@ -11,8 +11,8 @@ export default async function AccountNotificationsPage() {
   const unread = data?.unreadCount ?? 0;
 
   return (
-    <>
-      <header className="mb-6">
+    <div className="gh-patient-page gh-patient-notifications-page">
+      <header className="gh-patient-page-header mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "var(--color-text-muted)" }}>
           Account
         </p>
@@ -25,6 +25,6 @@ export default async function AccountNotificationsPage() {
       </header>
 
       <PatientNotificationList initial={items} />
-    </>
+    </div>
   );
 }

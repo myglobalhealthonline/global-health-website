@@ -174,7 +174,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
 
   if (grouped.length === 0) {
     return (
-      <div className="gh-card p-8 text-center">
+      <div className="gh-card gh-doctor-empty-state p-8 text-center">
         <Stethoscope
           className="mx-auto size-6 text-[var(--color-text-muted)]"
           aria-hidden
@@ -191,9 +191,9 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
   }
 
   return (
-    <div className="grid gap-5">
+    <div className="gh-doctor-service-selection grid gap-5">
       {/* How it works */}
-      <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-background-soft)] px-5 py-4">
+      <div className="gh-doctor-service-explainer rounded-[var(--radius-card-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-background-soft)] px-5 py-4">
         <p className="m-0 text-[13px] leading-relaxed text-[var(--color-text-muted)]">
           Select the services you are qualified to provide and save your
           request.{" "}
@@ -232,7 +232,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
         <div
           role="tablist"
           aria-label="Countries"
-          className="flex flex-wrap gap-2"
+          className="gh-doctor-tabs flex flex-wrap gap-2"
         >
           {countries.map((country) => {
             const countrySelected = items.filter(
@@ -275,7 +275,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
       <div
         role="tablist"
         aria-label="Service categories"
-        className="flex flex-wrap gap-2 rounded-[var(--radius-card-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-background-soft)] p-1.5"
+        className="gh-doctor-tabs gh-doctor-service-kind-tabs flex flex-wrap gap-2 rounded-[var(--radius-card-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-background-soft)] p-1.5"
       >
         {grouped.map(({ kind, services }) => {
           const meta = KIND_META[kind];
@@ -311,7 +311,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
       </div>
 
       {/* Cards */}
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="gh-doctor-service-grid grid gap-3 sm:grid-cols-2">
         {activeGroup.services.map((service) => {
           const isAdminLocked =
             service.assignment?.selectedBy === "admin" &&
@@ -326,7 +326,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
               aria-checked={checked}
               disabled={isAdminLocked || pending}
               onClick={() => toggle(service)}
-              className={`group relative flex flex-col gap-3 rounded-[var(--radius-card-sm)] border p-4 text-left transition-all ${
+              className={`gh-doctor-service-card group relative flex flex-col gap-3 rounded-[var(--radius-card-sm)] border p-4 text-left transition-all ${
                 checked
                   ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)]/[0.04] shadow-sm"
                   : "border-[var(--color-border-subtle)] hover:border-[var(--color-brand-primary)]/40 hover:shadow-sm"
@@ -389,7 +389,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
 
       {/* Next steps: contact admin + documents */}
       {approvalRequired ? (
-        <div className="flex items-start gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-background-soft)] px-5 py-4">
+        <div className="gh-doctor-service-next-step flex items-start gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border-subtle)] bg-[var(--color-background-soft)] px-5 py-4">
           <Mail
             className="mt-0.5 size-4 shrink-0 text-[var(--color-brand-primary)]"
             aria-hidden
@@ -408,7 +408,7 @@ export function DoctorServiceSelectionForm({ approvalRequired, items }: Props) {
         </div>
       ) : null}
 
-      <div className="flex items-center justify-end gap-3">
+      <div className="gh-doctor-form-actions flex items-center justify-end gap-3">
         {dirty ? (
           <span className="text-[12.5px] text-[var(--color-text-muted)]">
             Unsaved changes

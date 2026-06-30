@@ -54,12 +54,9 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
         </p>
       </header>
 
-      <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
-      >
+      <div className="gh-doctor-detail-grid gh-doctor-patient-detail-layout grid gap-4">
         <div className="grid gap-4">
-        <section className="gh-card p-6">
+        <section className="gh-card gh-doctor-patient-history-card p-6">
           <h3
             className="m-0 text-[var(--color-text-primary)]"
             style={{
@@ -79,7 +76,8 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
               No appointments.
             </p>
           ) : (
-            <table className="mt-4 w-full text-[13px]">
+            <div className="gh-doctor-table-wrap mt-4 overflow-x-auto">
+            <table className="w-full text-[13px]">
               <thead>
                 <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                   <th className="py-2 text-left">When</th>
@@ -132,10 +130,11 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </section>
 
-        <section className="gh-card p-6">
+        <section className="gh-card gh-doctor-patient-history-card p-6">
           <h3
             className="m-0 text-[var(--color-text-primary)]"
             style={{
@@ -160,9 +159,9 @@ export default async function DoctorPatientDetailPage({ params }: PageProps) {
             Admin retains the all-documents archive under /admin/users. */}
         </div>
 
-        <aside className="grid gap-4 self-start">
+        <aside className="gh-doctor-side-stack grid gap-4 self-start">
           <PatientProfilePanel email={patient.email} />
-          <section className="gh-card p-6">
+          <section className="gh-card gh-doctor-summary-card p-6">
             <h3
               className="m-0 text-[var(--color-text-primary)]"
               style={{

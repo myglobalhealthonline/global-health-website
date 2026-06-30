@@ -49,15 +49,15 @@ export function NotificationListClient({
 
   if (items.length === 0) {
     return (
-      <div className="gh-card p-10 text-center text-sm text-[var(--color-text-muted)]">
+      <div className="gh-card gh-doctor-empty-state p-10 text-center text-sm text-[var(--color-text-muted)]">
         Nothing here yet.
       </div>
     );
   }
 
   return (
-    <div className="gh-card overflow-hidden p-0">
-      <div className="flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
+    <div className="gh-card gh-doctor-notification-list overflow-hidden p-0">
+      <div className="gh-doctor-list-toolbar flex items-center justify-between border-b border-[var(--color-border)] px-4 py-3">
         <p className="text-[12px] text-[var(--color-text-muted)]">
           Newest first
         </p>
@@ -76,7 +76,7 @@ export function NotificationListClient({
           return (
             <li
               key={n.id}
-              className={`flex items-start gap-3 px-4 py-3 ${unread ? "bg-[var(--color-brand-primary)]/5" : ""}`}
+              className={`gh-doctor-notification-row flex items-start gap-3 px-4 py-3 ${unread ? "bg-[var(--color-brand-primary)]/5" : ""}`}
             >
               <span
                 className="mt-1 inline-block size-2 shrink-0 rounded-full"
@@ -88,7 +88,7 @@ export function NotificationListClient({
                 aria-hidden
               />
               <div className="min-w-0 flex-1">
-                <div className="flex items-baseline justify-between gap-2">
+                <div className="gh-doctor-notification-title flex items-baseline justify-between gap-2">
                   <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">
                     {n.label}
                     {n.byUserName ? (

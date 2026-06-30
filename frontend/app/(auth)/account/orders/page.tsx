@@ -28,7 +28,7 @@ export default async function AccountOrdersPage() {
   const items = result.ok ? result.data.items : [];
 
   return (
-    <>
+    <div className="gh-patient-page gh-patient-orders-page">
       <PageHeader
         eyebrow={a.orders.breadcrumb}
         title={a.orders.title}
@@ -64,7 +64,7 @@ export default async function AccountOrdersPage() {
               {items.map((o) => (
                 <li
                   key={o.id}
-                  className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                className="gh-patient-list-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="font-mono text-xs text-[var(--color-text-muted)]">
@@ -99,6 +99,6 @@ export default async function AccountOrdersPage() {
           )}
         </div>
       </AdminCard>
-    </>
+    </div>
   );
 }

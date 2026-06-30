@@ -11,7 +11,7 @@ export function DeleteCountryButton({ countryName }: DeleteCountryButtonProps) {
     <button
       type="submit"
       aria-label={`Delete ${countryName}`}
-      className="inline-flex items-center justify-center text-[var(--color-status-error-text)]"
+      className="gh-icon-btn gh-admin-country-delete inline-flex items-center justify-center text-[var(--color-status-error-text)]"
       onClick={(event) => {
         const ok = window.confirm(
           `Delete ${countryName}? This deactivates the country and cannot be undone from this action.`,

@@ -71,7 +71,7 @@ function FieldRow({
   full?: boolean;
 }) {
   return (
-    <div className={full ? "sm:col-span-2" : ""}>
+    <div className={full ? "gh-admin-appointment-field-row sm:col-span-2" : "gh-admin-appointment-field-row"}>
       <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
         {label}
       </p>
@@ -328,7 +328,7 @@ export default async function AdminAppointmentDetailPage({
       ) : null}
 
       {manualBooking ? (
-        <div className="mb-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border-strong)] bg-[var(--color-background-soft)] px-4 py-3 text-sm">
+        <div className="gh-admin-appointment-recovery mb-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border-strong)] bg-[var(--color-background-soft)] px-4 py-3 text-sm">
           <p className="font-bold text-[var(--color-text-primary)]">
             Manual booking created.
             {manualBooking.emailQueued === "1"
@@ -388,7 +388,7 @@ export default async function AdminAppointmentDetailPage({
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Contact info captured at booking.
             </p>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="gh-admin-appointment-detail-grid">
               <FieldRow label="Full name" value={appointment.fullName} />
               <FieldRow label="Email" value={appointment.email} />
               <FieldRow
@@ -457,7 +457,7 @@ export default async function AdminAppointmentDetailPage({
             </p>
 
             {canUpdate ? (
-              <form action={updateStatusAction} className="flex flex-col gap-3">
+              <form action={updateStatusAction} className="gh-admin-appointment-side-form">
                 <label className="flex flex-col gap-1.5">
                   <span className="gh-field-label">Move status to</span>
                   <select
@@ -516,7 +516,7 @@ export default async function AdminAppointmentDetailPage({
               link. Saving emails the patient with the link.
             </p>
 
-            <form action={scheduleCallAction} className="flex flex-col gap-3">
+            <form action={scheduleCallAction} className="gh-admin-appointment-side-form">
               {/* Browser-side TZ offset so the server can convert the
                   datetime-local string to a UTC ISO that matches the
                   admin's actual clock — independent of the Node server
@@ -569,7 +569,7 @@ export default async function AdminAppointmentDetailPage({
               </label>
 
               {isInPerson ? (
-                <fieldset className="flex flex-col gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3">
+                <fieldset className="gh-admin-appointment-venue">
                   <legend className="px-1 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                     Where (in-person)
                   </legend>

@@ -24,7 +24,7 @@ export function ScopeBanner({
   if (activeCountry) {
     return (
       <div
-        className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[12px] px-4 py-3 text-[13px]"
+        className="gh-admin-scope-banner gh-admin-scope-banner--active mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[12px] px-4 py-3 text-[13px]"
         style={{
           background: "rgba(27,77,62,0.08)",
           border: "1px solid rgba(27,77,62,0.18)",
@@ -52,7 +52,7 @@ export function ScopeBanner({
   }
   return (
     <div
-      className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[12px] px-4 py-3 text-[13px]"
+      className="gh-admin-scope-banner gh-admin-scope-banner--empty mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[12px] px-4 py-3 text-[13px]"
       style={{
         background: "var(--color-background-soft)",
         border: "1px dashed var(--color-border-strong)",

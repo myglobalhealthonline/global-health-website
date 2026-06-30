@@ -28,10 +28,10 @@ export default async function AdminOrdersPage({
         description="Multi-item product orders. Google Meet links are created automatically when consultation orders are paid."
       />
 
-      <AdminCard padding={0}>
+      <AdminCard padding={0} className="gh-admin-orders-page">
         <div className="p-5">
           <AdminOrdersTable items={items} />
-          <div className="mt-4 flex items-center justify-between text-[13px]">
+          <div className="gh-admin-order-pagination mt-4 flex items-center justify-between text-[13px]">
             {cursor ? (
               <Link href="/admin/orders" className="font-semibold underline">
                 ← First page

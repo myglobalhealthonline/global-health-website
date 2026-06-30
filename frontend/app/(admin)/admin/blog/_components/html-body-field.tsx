@@ -99,12 +99,12 @@ export function HtmlBodyField({ name, initialValue }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="gh-admin-html-editor">
+      <div className="gh-admin-html-editor-toolbar">
         <button
           type="button"
           onClick={() => htmlInputRef.current?.click()}
-          className="inline-flex items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+          className="gh-btn gh-btn-soft text-[13px]"
         >
           Upload .html file
         </button>
@@ -119,7 +119,7 @@ export function HtmlBodyField({ name, initialValue }: Props) {
           type="button"
           disabled={imgBusy}
           onClick={() => imageInputRef.current?.click()}
-          className="inline-flex items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)] disabled:opacity-60"
+          className="gh-btn gh-btn-soft text-[13px] disabled:opacity-60"
         >
           {imgBusy ? "Uploading…" : "Upload image"}
         </button>
@@ -136,7 +136,7 @@ export function HtmlBodyField({ name, initialValue }: Props) {
         <button
           type="button"
           onClick={() => setShowPreview((v) => !v)}
-          className="ml-auto inline-flex items-center gap-1.5 rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-1.5 text-[13px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]"
+          className="gh-btn gh-btn-soft gh-admin-html-editor-preview-toggle text-[13px]"
         >
           {showPreview ? "Hide preview" : "Preview"}
         </button>
@@ -150,7 +150,7 @@ export function HtmlBodyField({ name, initialValue }: Props) {
         rows={18}
         spellCheck={false}
         placeholder="Paste your article HTML here, upload a .html file, or use 'Upload image' to insert pictures. Allowed: headings, paragraphs, lists, links, images, tables, blockquotes."
-        className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 font-mono text-[13px] leading-relaxed text-[var(--color-text-primary)]"
+        className="gh-admin-html-editor-textarea w-full rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] px-3 py-2 font-mono text-[13px] leading-relaxed text-[var(--color-text-primary)]"
       />
       {msg ? (
         <p className="text-[12px] text-[var(--color-status-warning-text)]">{msg}</p>
@@ -161,7 +161,7 @@ export function HtmlBodyField({ name, initialValue }: Props) {
       </p>
 
       {showPreview ? (
-        <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] p-4">
+        <div className="gh-admin-html-editor-preview rounded-md border border-[var(--color-border)] bg-[var(--color-background-page)] p-4">
           {/* Matches how the public article will render. */}
           <div
             className="gh-article-body"

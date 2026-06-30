@@ -156,12 +156,12 @@ export default async function AdminEditCountryPage({
       ) : null}
 
       <AdminCard>
-        <form action={updateCountryAction} className="flex flex-col gap-8">
+        <form action={updateCountryAction} className="gh-admin-country-form flex flex-col gap-8">
           <CountryFields
             currencies={currenciesResult.data.currencies}
             initial={country}
           />
-          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-country-actions flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Save changes
             </button>

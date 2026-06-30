@@ -51,7 +51,7 @@ function CopyLinkButton({ url }: { url: string }) {
       type="button"
       onClick={handleCopy}
       title="Copy payment link"
-      className="inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2 py-1 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)] transition-colors"
+      className="gh-admin-order-copy-link inline-flex items-center gap-1 rounded border border-[var(--color-border)] bg-white px-2 py-1 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)] transition-colors"
     >
       {copied ? (
         <Check className="size-3 text-emerald-600" aria-hidden />
@@ -130,11 +130,11 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
     <>
       {/* Bulk action bar */}
       {someChecked ? (
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm">
+        <div className="gh-admin-order-bulkbar mb-3 flex flex-wrap items-center justify-between gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm">
           <span className="font-semibold text-emerald-900">
             {selected.size} selected
           </span>
-          <div className="flex items-center gap-2">
+          <div className="gh-admin-order-bulkbar-actions flex items-center gap-2">
             <button
               type="button"
               onClick={() => void bulkAction("FULFILLED")}
@@ -170,7 +170,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
         </div>
       ) : null}
 
-      <div className="overflow-x-auto">
+      <div className="gh-admin-order-table-wrap overflow-x-auto">
         <AdminTable>
           <Thead>
             <Th style={{ width: 36 }}>

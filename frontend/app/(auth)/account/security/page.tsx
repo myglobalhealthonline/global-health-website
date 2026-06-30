@@ -90,8 +90,8 @@ export default function AccountSecurityPage() {
   const verified = Boolean(user?.emailVerifiedAt);
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <header className="mb-6">
+    <div className="gh-patient-page gh-patient-security-page">
+      <header className="gh-patient-page-header mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
           {a.security.breadcrumb}
         </p>
@@ -105,13 +105,13 @@ export default function AccountSecurityPage() {
       </header>
 
       {loading ? (
-        <div className="gh-card p-6 text-sm text-[var(--color-text-muted)]">
+        <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">
           {a.security.loading}
         </div>
       ) : (
         <>
             {/* Email verification panel */}
-            <section className="mt-6 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
+            <section className="gh-patient-security-card mt-6 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
               <div className="flex items-start gap-3">
                 <span
                   className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full ${
@@ -163,7 +163,7 @@ export default function AccountSecurityPage() {
             </section>
 
             {/* Privacy controls — GDPR data-export + account-delete */}
-            <section className="mt-4 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
+            <section className="gh-patient-security-card mt-4 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
               <h2 className="text-base font-bold text-[var(--color-text-primary)]">
                 {a.security.yourData}
               </h2>
@@ -185,7 +185,7 @@ export default function AccountSecurityPage() {
             </section>
 
             {/* Change-password panel */}
-            <section className="mt-4 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
+            <section className="gh-patient-security-card mt-4 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
               <div className="flex items-start gap-3">
                 <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700">
                   <KeyRound className="size-5" aria-hidden />

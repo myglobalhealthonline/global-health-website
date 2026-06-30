@@ -72,24 +72,24 @@ export function AdminSubscriberLedger({ subscriptionId }: { subscriptionId: stri
   }
 
   return (
-    <div className="mt-1.5">
+    <div className="gh-admin-subscriber-ledger mt-1.5">
       <button
         type="button"
         onClick={toggle}
-        className="text-[11px] font-semibold underline underline-offset-2"
+        className="gh-admin-subscriber-ledger__toggle text-[11px] font-semibold underline underline-offset-2"
         style={{ color: "var(--color-brand-primary)" }}
         aria-expanded={open}
       >
         {open ? "Hide activity" : "View activity"}
       </button>
       {open ? (
-        <div className="mt-2 min-w-[220px]">
+        <div className="gh-admin-subscriber-ledger__panel mt-2 min-w-[220px]">
           {state.status === "loading" ? (
             <p className="text-[11px]" style={{ color: "var(--color-text-muted)" }}>Loading…</p>
           ) : state.status === "error" ? (
             <p className="text-[11px]" style={{ color: "var(--color-status-error)" }}>{state.message}</p>
           ) : state.status === "ready" && state.rows.length > 0 ? (
-            <ul className="space-y-1">
+            <ul className="gh-admin-subscriber-ledger__list space-y-1">
               {state.rows.slice(0, 12).map((entry, i) => (
                 <li key={i} className="flex items-center justify-between gap-3 text-[11px]">
                   <span style={{ color: "var(--color-text-body)" }}>

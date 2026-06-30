@@ -85,7 +85,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
           }
         />
         <AdminCard>
-          <form method="get" className="flex flex-wrap items-end gap-3">
+          <form method="get" className="gh-admin-service-country-form">
             <input type="hidden" name="kind" value={kind} />
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
@@ -260,7 +260,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
       ) : null}
 
       <AdminCard>
-        <form action={createServiceAction} className="flex flex-col gap-8">
+        <form action={createServiceAction} className="gh-admin-service-form">
           <ServiceFields
             countries={countries}
             kind={kind}
@@ -269,7 +269,7 @@ export default async function AdminNewServicePage({ searchParams }: PageProps) {
             locales={locales}
             defaultLocale={defaultLocale}
           />
-          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-service-actions border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Create {meta.singularLabel.toLowerCase()}
             </button>

@@ -30,7 +30,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
   const { account: a } = loadLocaleBundle(locale);
 
   return (
-    <>
+    <div className="gh-patient-page gh-patient-order-detail-page">
       <Link
         href="/account/orders"
         className="mb-3 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -50,7 +50,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
         description={a.orders.placedOn.replace("{date}", formatAppDateTime(order.createdAt))}
       />
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+      <div className="gh-patient-detail-grid grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <AdminCard padding={0}>
           <SectionHeader title={a.orders.itemsSection} />
           <div className="p-5">
@@ -58,7 +58,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
               {order.items.map((i) => (
                 <li
                   key={i.id}
-                  className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                  className="gh-patient-list-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                 >
                   <div className="min-w-0">
                     <p className="font-semibold text-[var(--color-text-primary)]">
@@ -131,7 +131,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
           </AdminCard>
         </aside>
       </div>
-    </>
+    </div>
   );
 }
 

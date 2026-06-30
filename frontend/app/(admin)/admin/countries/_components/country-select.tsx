@@ -90,13 +90,13 @@ export function CountrySelect({
   const slug = selected ? defaultSlugForCountry(selected.name) : "";
 
   return (
-    <div ref={wrapperRef} className="relative">
+    <div ref={wrapperRef} className="gh-admin-country-select relative">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="gh-input flex w-full items-center justify-between gap-2 text-left"
+        className="gh-admin-country-select__trigger gh-input flex w-full items-center justify-between gap-2 text-left"
       >
         <span className="flex items-center gap-2.5 min-w-0">
           {selected ? (
@@ -155,7 +155,7 @@ export function CountrySelect({
 
       {open ? (
         <div
-          className="absolute z-50 mt-1 w-full overflow-hidden rounded-md border bg-white shadow-lg"
+          className="gh-admin-country-select__menu absolute z-50 mt-1 w-full overflow-hidden rounded-md border bg-white shadow-lg"
           style={{ borderColor: "var(--color-border)" }}
         >
           <div className="border-b border-[var(--color-border)] p-2">
@@ -190,7 +190,7 @@ export function CountrySelect({
                     <button
                       type="button"
                       onClick={() => pick(c)}
-                      className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-[14px] hover:bg-[var(--color-background-soft)]"
+                      className="gh-admin-country-select__item flex w-full items-center gap-2.5 px-3 py-2 text-left text-[14px] hover:bg-[var(--color-background-soft)]"
                     >
                       <span
                         aria-hidden

@@ -52,7 +52,7 @@ export function SpecialtyTranslationTabs({
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
+    <div className="gh-admin-specialty-translations flex flex-col gap-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
       <header>
         <h3 className="m-0 text-sm font-bold text-[var(--color-text-primary)]">
           Name &amp; summary by language
@@ -63,7 +63,7 @@ export function SpecialtyTranslationTabs({
         </p>
       </header>
 
-      <div role="tablist" className="flex flex-wrap gap-1.5">
+      <div role="tablist" className="gh-admin-specialty-tablist flex flex-wrap gap-1.5">
         {locales.map((l) => {
           const isActive = l.code === active;
           return (
@@ -73,7 +73,7 @@ export function SpecialtyTranslationTabs({
               role="tab"
               aria-selected={isActive}
               onClick={() => setActive(l.code)}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
+              className={`gh-admin-specialty-tab rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
                 isActive
                   ? "bg-[var(--color-brand-primary)] text-white"
                   : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -94,7 +94,7 @@ export function SpecialtyTranslationTabs({
             key={l.code}
             role="tabpanel"
             hidden={l.code !== active}
-            className="grid gap-4"
+            className="gh-admin-specialty-panel grid gap-4"
           >
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Name{isDefault ? " *" : ""}</span>

@@ -57,7 +57,7 @@ export function ServiceFields({
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="gh-admin-service-fields">
       <input type="hidden" name="kind" value={kind} />
 
       {pinId && pinnedMeta ? (
@@ -87,11 +87,11 @@ export function ServiceFields({
         </label>
       )}
 
-      <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-sm text-[var(--color-text-muted)]">
+      <div className="gh-admin-service-note">
         This record will publish under <span className="font-semibold text-[var(--color-text-primary)]">{meta.label}</span>.
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="gh-admin-service-field-grid gh-admin-service-field-grid--two">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Slug</span>
           <input
@@ -111,7 +111,7 @@ export function ServiceFields({
         baseFallback={baseFallback}
       />
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="gh-admin-service-field-grid gh-admin-service-field-grid--three">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Sort order</span>
           <input
@@ -147,7 +147,7 @@ export function ServiceFields({
         </label>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="gh-admin-service-field-grid gh-admin-service-field-grid--two">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Currency code</span>
           <input
@@ -198,7 +198,7 @@ export function ServiceFields({
           by this set. An empty set means the service has no bookable
           doctors, which the public page surfaces as "no slots available
           yet". */}
-      <fieldset className="flex flex-col gap-2">
+      <fieldset className="gh-admin-service-doctors">
         <legend className="gh-field-label">Assigned doctors</legend>
         {doctorOptions === null ? (
           <p className="text-[12px] text-[var(--color-text-muted)]">
@@ -225,14 +225,14 @@ export function ServiceFields({
                 assignment), not undefined (which would skip the
                 update). */}
             <input type="hidden" name="doctorIds" value="" />
-            <div className="grid gap-1.5 sm:grid-cols-2">
+            <div className="gh-admin-service-doctor-grid">
               {doctorOptions
                 .slice()
                 .sort((a, b) => a.fullName.localeCompare(b.fullName))
                 .map((doc) => (
                   <label
                     key={doc.id}
-                    className="inline-flex items-start gap-2 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-3 py-2 text-sm"
+                    className="gh-admin-service-doctor-option"
                   >
                     <input
                       type="checkbox"
@@ -269,7 +269,7 @@ export function ServiceFields({
 
       <input type="hidden" name="legacyPath" defaultValue={initial?.legacyPath ?? ""} />
 
-      <label className="flex items-center gap-3 text-sm text-[var(--color-text-primary)]">
+      <label className="gh-admin-service-active-row">
         <input
           type="checkbox"
           name="isActive"

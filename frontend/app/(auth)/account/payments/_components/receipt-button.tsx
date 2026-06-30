@@ -33,7 +33,7 @@ export function ReceiptButton({ paymentId }: { paymentId: string }) {
 
   if (url === "unavailable") {
     return (
-      <span className="text-xs text-[var(--color-text-muted)]">Invoice not available</span>
+      <span className="gh-patient-receipt-unavailable text-xs text-[var(--color-text-muted)]">Invoice not available</span>
     );
   }
 
@@ -42,7 +42,7 @@ export function ReceiptButton({ paymentId }: { paymentId: string }) {
       type="button"
       onClick={onClick}
       disabled={fetching}
-      className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:underline disabled:opacity-60"
+      className="gh-patient-receipt-button inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:underline disabled:opacity-60"
     >
       {fetching ? (
         "Loading…"

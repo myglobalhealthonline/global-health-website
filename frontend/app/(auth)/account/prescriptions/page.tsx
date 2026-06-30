@@ -29,7 +29,7 @@ export default async function AccountPrescriptionsPage() {
   const unavailable = result.ok ? null : result.message;
 
   return (
-    <>
+    <div className="gh-patient-page gh-patient-prescriptions-page">
       <PageHeader
         eyebrow={a.prescriptions.breadcrumb}
         title={a.prescriptions.title}
@@ -62,7 +62,7 @@ export default async function AccountPrescriptionsPage() {
               {issued.map((p) => (
                 <li
                   key={p.id}
-                  className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
+                  className="gh-patient-prescription-card rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
@@ -145,7 +145,7 @@ export default async function AccountPrescriptionsPage() {
               {orders.map((o) => (
                 <li
                   key={o.appointmentId}
-                  className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                  className="gh-patient-list-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-[var(--color-text-primary)]">
@@ -178,6 +178,6 @@ export default async function AccountPrescriptionsPage() {
           )}
         </div>
       </AdminCard>
-    </>
+    </div>
   );
 }

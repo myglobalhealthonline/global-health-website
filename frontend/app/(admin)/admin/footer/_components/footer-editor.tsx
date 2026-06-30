@@ -182,7 +182,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-5">
+    <form onSubmit={onSubmit} className="gh-admin-footer-editor grid gap-5">
       <input type="hidden" name="payload" defaultValue="" />
 
       <AdminCard>
@@ -216,7 +216,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
           Rendered under the brand block on the public footer. All fields
           optional — leave blank to hide.
         </p>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="gh-admin-support-field-grid mt-4 grid gap-4 sm:grid-cols-2">
           <label className="block sm:col-span-2">
             <span className="text-xs font-semibold text-[var(--color-text-body)]">
               Address
@@ -277,7 +277,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
           https:// URLs only — rendered as icon row in the footer ribbon.
           Leave blank to hide an icon.
         </p>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="gh-admin-support-field-grid mt-4 grid gap-4 sm:grid-cols-2">
           {(
             [
               ["instagramUrl", "Instagram"],
@@ -329,7 +329,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
           </Btn>
         </div>
 
-        <div className="mt-4 grid gap-4">
+        <div className="gh-admin-footer-columns mt-4 grid gap-4">
           {state.customColumns.length === 0 ? (
             <p className="rounded-md border border-dashed border-[var(--color-border)] px-4 py-6 text-center text-xs text-[var(--color-text-muted)]">
               No custom columns yet.
@@ -338,7 +338,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
             state.customColumns.map((col, ci) => (
               <div
                 key={ci}
-                className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
+                className="gh-admin-footer-column rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
               >
                 <div className="flex items-end gap-3">
                   <label className="block flex-1">
@@ -367,7 +367,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
                   {col.links.map((link, li) => (
                     <div
                       key={li}
-                      className="flex flex-wrap items-end gap-2 rounded-md bg-[var(--color-background-page)] p-2"
+                    className="gh-admin-footer-link-row flex flex-wrap items-end gap-2 rounded-md bg-[var(--color-background-page)] p-2"
                     >
                       <label className="block flex-1 min-w-[120px]">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-muted)]">
@@ -473,7 +473,7 @@ export function FooterEditor({ initial, saveAction }: Props) {
         </div>
       </AdminCard>
 
-      <div className="flex justify-end">
+      <div className="gh-admin-support-actions flex justify-end">
         <Btn type="submit" variant="primary" size="md" disabled={pending}>
           {pending ? "Saving…" : "Save footer"}
         </Btn>

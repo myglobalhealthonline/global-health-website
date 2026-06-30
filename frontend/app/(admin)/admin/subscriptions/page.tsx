@@ -94,14 +94,14 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">{sp.error}</p>
       ) : null}
 
-      <div className="flex flex-col gap-6">
+      <div className="gh-admin-subscriptions flex flex-col gap-6">
         <SubscriptionHealthPanel
           health={healthResult.ok ? healthResult.data : null}
           error={healthResult.ok ? undefined : healthResult.message}
         />
 
         {/* Perk-approval queue */}
-        <AdminCard padding={0}>
+        <AdminCard padding={0} className="gh-admin-subscription-approvals">
           <SectionHeader
             title="Pending perk approvals"
             description="Per-subscriber manual-approval queue (§36.13). Approving unlocks the perk for that subscriber only."
@@ -118,7 +118,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                 {grantsResult.data.grants.map((g) => (
                   <li
                     key={g.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-2.5 text-sm"
+                    className="gh-admin-subscription-approval-row flex flex-wrap items-center justify-between gap-3 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-2.5 text-sm"
                   >
                     <div className="flex flex-wrap items-center gap-2">
                       <Pill tone="pending">{g.perkKey}</Pill>
@@ -143,12 +143,12 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
         </AdminCard>
 
         {/* Subscriptions list */}
-        <AdminCard padding={0}>
+        <AdminCard padding={0} className="gh-admin-subscription-list">
           <SectionHeader
             title="Subscriptions"
             description="Active and historical subscriptions. Adjust credits writes through the authoritative counter (audited)."
             right={
-              <form method="get" className="flex items-center gap-2">
+              <form method="get" className="gh-admin-subscription-filter flex items-center gap-2">
                 <select name="status" className="gh-select" defaultValue={sp.status ?? ""}>
                   {STATUS_FILTERS.map((s) => (
                     <option key={s || "all"} value={s}>
@@ -170,6 +170,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
             ) : subsResult.data.items.length === 0 ? (
               <p className="p-6 text-sm text-[var(--color-text-muted)]">No subscriptions match this filter.</p>
             ) : (
+              <div className="gh-admin-plan-table-wrap overflow-x-auto">
               <AdminTable>
                 <Thead>
                   <Th>Subscriber</Th>
@@ -207,6 +208,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                   ))}
                 </tbody>
               </AdminTable>
+              </div>
             )}
           </div>
         </AdminCard>
@@ -215,7 +217,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
             holds the dedicated SUPER-scope permission (§4); the backend rejects
             the action regardless, but hiding keeps it out of normal admin flow. */}
         {subsResult.ok && subsResult.data.capabilities?.canAdjustCredits ? (
-          <AdminCard padding={0}>
+          <AdminCard padding={0} className="gh-admin-subscription-override">
             <SectionHeader
               title="Support override — manual balance adjustment"
               description="Elevated SUPER-admin action. Directly edits one subscriber's earned consultation or wellness balance. Routine credits come from plan rules and renewals — use this only for verified finance/support cases. Every change is audited and requires a written reason."
@@ -226,7 +228,7 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                   No subscribers in the current view to adjust. Filter the list above first.
                 </p>
               ) : (
-                <form action={adjustCreditsAction} className="flex flex-wrap items-end gap-3">
+                <form action={adjustCreditsAction} className="gh-admin-subscription-adjust-form flex flex-wrap items-end gap-3">
                   <input type="hidden" name="requestId" value={randomUUID()} />
                   <label className="flex flex-col gap-1 text-xs text-[var(--color-text-muted)]">
                     <span>Subscriber</span>

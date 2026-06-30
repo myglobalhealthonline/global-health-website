@@ -146,9 +146,9 @@ export default async function AdminEditPagePage({ params, searchParams }: PagePr
         </AdminCard>
       ) : null}
 
-      <form action={updatePageAction} className="mt-6 flex flex-col gap-6">
+      <form action={updatePageAction} className="gh-admin-page-form mt-6 flex flex-col gap-6">
         <PageFields countries={countries} page={page} />
-        <div className="flex items-center justify-end gap-2">
+        <div className="gh-admin-support-actions flex items-center justify-end gap-2">
           <Btn href="/admin/pages" variant="ghost" size="md">
             Cancel
           </Btn>

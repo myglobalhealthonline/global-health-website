@@ -85,8 +85,8 @@ export function SubscribeForm(props: SubscribeFormProps) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid max-w-2xl gap-6">
-      <div className="gh-card p-6">
+    <form onSubmit={onSubmit} className="gh-patient-subscribe-form grid gap-6">
+      <div className="gh-patient-form-card gh-card p-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--color-text-muted)" }}>
           {props.planSummaryLabel}
         </p>

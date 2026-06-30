@@ -65,7 +65,7 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
           }
         />
         <AdminCard>
-          <form method="get" className="flex flex-wrap items-end gap-3">
+          <form method="get" className="gh-admin-asset-country-form">
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -175,9 +175,9 @@ export default async function AdminNewAssetPage({ searchParams }: PageProps) {
       ) : null}
 
       <AdminCard>
-        <form action={createAssetAction} className="flex flex-col gap-8">
+        <form action={createAssetAction} className="gh-admin-asset-form">
           <AssetFields countries={countries} doctorOptions={doctorOptions} />
-          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-asset-actions border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Create asset
             </button>

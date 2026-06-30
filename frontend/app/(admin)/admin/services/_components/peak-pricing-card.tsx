@@ -94,8 +94,8 @@ export function PeakPricingCard({
         </p>
       ) : null}
 
-      <form action={action} className="flex flex-col gap-4">
-        <label className="flex items-center gap-2 text-sm font-semibold text-[var(--color-text-body)]">
+      <form action={action} className="gh-admin-service-peak-form">
+        <label className="gh-admin-service-active-row">
           <input
             type="checkbox"
             name="enabled"
@@ -106,10 +106,10 @@ export function PeakPricingCard({
         </label>
 
         {/* Peak windows — repeater */}
-        <div className="flex flex-col gap-3">
+        <div className="gh-admin-service-peak-windows">
           <span className={labelClass}>Peak windows</span>
           {windows.map((w, i) => (
-            <div key={i} className="flex items-end gap-3">
+            <div key={i} className="gh-admin-service-peak-row">
               <div className="flex-1">
                 <label className={labelClass} htmlFor={`peakStart-${i}`}>
                   {i === 0 ? "Peak start" : `Start ${i + 1}`}
@@ -162,7 +162,7 @@ export function PeakPricingCard({
         </div>
 
         {/* Prices + currency — one set for all windows */}
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="gh-admin-service-field-grid gh-admin-service-field-grid--three">
           <div>
             <label className={labelClass} htmlFor="peakPrice">
               Peak price

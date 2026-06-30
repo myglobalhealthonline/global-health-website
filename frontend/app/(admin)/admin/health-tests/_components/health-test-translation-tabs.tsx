@@ -81,7 +81,7 @@ export function HealthTestTranslationTabs({
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-5">
+    <div className="gh-admin-health-translations">
       <header>
         <h3 className="m-0 text-sm font-bold text-[var(--color-text-primary)]">
           Content &amp; translations
@@ -93,7 +93,7 @@ export function HealthTestTranslationTabs({
         </p>
       </header>
 
-      <div role="tablist" className="flex flex-wrap gap-1.5">
+      <div role="tablist" className="gh-admin-health-tablist">
         {locales.map((l) => {
           const isActive = l.code === active;
           return (
@@ -103,7 +103,7 @@ export function HealthTestTranslationTabs({
               role="tab"
               aria-selected={isActive}
               onClick={() => setActive(l.code)}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
+              className={`gh-admin-health-tab ${
                 isActive
                   ? "bg-[var(--color-brand-primary)] text-white"
                   : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -120,7 +120,7 @@ export function HealthTestTranslationTabs({
         const v = valuesFor(l.code);
         const isDefault = l.code === upperDefault;
         return (
-          <div key={l.code} role="tabpanel" hidden={l.code !== active} className="flex flex-col gap-4">
+          <div key={l.code} role="tabpanel" hidden={l.code !== active} className="gh-admin-health-panel">
             <label className="flex flex-col gap-2">
               <span className="gh-field-label">Title{isDefault ? " *" : ""}</span>
               <input
@@ -142,7 +142,7 @@ export function HealthTestTranslationTabs({
               />
             </label>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="gh-admin-health-field-grid gh-admin-health-field-grid--two">
               <label className="flex flex-col gap-2">
                 <span className="gh-field-label">Sample type</span>
                 <input
@@ -163,7 +163,7 @@ export function HealthTestTranslationTabs({
               </label>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="gh-admin-health-field-grid gh-admin-health-field-grid--two">
               <label className="flex flex-col gap-2">
                 <span className="gh-field-label">SEO title</span>
                 <input

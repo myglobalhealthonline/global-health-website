@@ -81,10 +81,10 @@ export default async function AdminPagesListPage({
 
       <ScopeBanner activeCountry={activeCountry} clearHref="/admin/pages" />
 
-      <AdminCard padding={16}>
+      <AdminCard padding={16} className="gh-admin-pages-filters">
         <form
           action="/admin/pages"
-          className="flex flex-wrap items-end gap-3 px-2 py-1"
+          className="gh-admin-support-filter-row flex flex-wrap items-end gap-3 px-2 py-1"
           method="get"
         >
           <label className="flex flex-col text-[12px] font-semibold text-[var(--color-text-muted)]">
@@ -167,7 +167,8 @@ export default async function AdminPagesListPage({
             </p>
           </AdminCard>
         ) : (
-          <AdminCard padding={0}>
+          <AdminCard padding={0} className="gh-admin-pages-list">
+            <div className="gh-admin-support-table-wrap overflow-x-auto">
             <AdminTable>
               <Thead>
                 <Th>Country</Th>
@@ -209,6 +210,7 @@ export default async function AdminPagesListPage({
                 ))}
               </tbody>
             </AdminTable>
+            </div>
           </AdminCard>
         )}
       </div>

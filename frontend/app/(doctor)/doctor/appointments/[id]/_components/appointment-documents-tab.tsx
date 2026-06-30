@@ -174,8 +174,8 @@ export function AppointmentDocumentsTab({
   const docCount = generatedTotal + uploads.length;
 
   return (
-    <div className="mt-4 grid gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="gh-doctor-documents-tab mt-4 grid gap-4">
+      <div className="gh-doctor-documents-toolbar flex flex-wrap items-center justify-between gap-3">
         <p className="text-[13px] text-[var(--color-text-muted)]">
           Generated PDFs and uploaded files for this appointment ({docCount} total).
         </p>

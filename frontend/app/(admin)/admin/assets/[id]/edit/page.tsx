@@ -149,13 +149,13 @@ export default async function AdminEditAssetPage({
       ) : null}
 
       <AdminCard>
-        <form action={updateAssetAction} className="flex flex-col gap-8">
+        <form action={updateAssetAction} className="gh-admin-asset-form">
           <AssetFields
             countries={countries}
             doctorOptions={doctorOptions}
             initial={asset}
           />
-          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-asset-actions border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Save changes
             </button>

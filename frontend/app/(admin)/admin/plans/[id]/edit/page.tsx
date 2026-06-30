@@ -364,11 +364,12 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">{sp.error}</p>
       ) : null}
 
-      <p className="mb-4 text-sm text-[var(--color-text-muted)]">
+      <p className="gh-admin-plan-editor-note mb-4 text-sm text-[var(--color-text-muted)]">
         Set up the plan one tab at a time. Each tab saves on its own — press the button inside it.
         Existing subscribers keep their current terms until renewal.
       </p>
 
+      <div className="gh-admin-plan-editor">
       <PlanEditTabs
         defaultTabId={sp.previewLocale ? "preview" : undefined}
         tabs={[
@@ -739,6 +740,7 @@ export default async function AdminEditPlanPage({ params, searchParams }: PagePr
           },
         ]}
       />
+      </div>
     </>
   );
 }

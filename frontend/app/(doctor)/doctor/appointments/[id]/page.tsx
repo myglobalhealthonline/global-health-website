@@ -113,7 +113,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
     servicesRes && servicesRes.ok ? servicesRes.data.items : [];
 
   return (
-    <>
+    <div className="gh-doctor-appointment-workspace">
       <Link
         href="/doctor/appointments"
         className="mb-2 inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -121,7 +121,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
         <ArrowLeft className="size-3.5" /> Back to appointments
       </Link>
 
-      <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
+      <header className="gh-doctor-appointment-header mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
             Appointment
@@ -195,7 +195,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
             id: "overview",
             label: "Overview",
             panel: (
-              <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+              <div className="gh-doctor-appointment-overview grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
                 <div className="grid gap-4">
                   <section className="gh-card p-6">
                     <h3
@@ -595,9 +595,9 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
                       {submissions.map((s) => (
                         <li
                           key={s.id}
-                          className="gh-admin-card rounded-md border border-[var(--color-border)] p-3"
+                          className="gh-doctor-submission-card gh-admin-card rounded-md border border-[var(--color-border)] p-3"
                         >
-                          <div className="flex items-baseline justify-between gap-3">
+                          <div className="gh-doctor-submission-header flex items-baseline justify-between gap-3">
                             <p className="text-[13px] font-semibold text-[var(--color-text-primary)]">
                               {s.template.title}
                             </p>
@@ -720,7 +720,7 @@ export default async function DoctorAppointmentDetailPage({ params }: PageProps)
           },
         ]}
       />
-    </>
+    </div>
   );
 }
 

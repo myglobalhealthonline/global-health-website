@@ -159,7 +159,7 @@ export default async function AdminEditHealthTestPage({
       ) : null}
 
       <AdminCard>
-        <form action={updateAction} className="flex flex-col gap-8">
+        <form action={updateAction} className="gh-admin-health-form">
           <HealthTestFields
             countries={countries}
             initial={test}
@@ -167,7 +167,7 @@ export default async function AdminEditHealthTestPage({
             locales={locales}
             defaultLocale={defaultLocale}
           />
-          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-health-actions border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Save changes
             </button>

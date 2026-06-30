@@ -54,7 +54,7 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
 
   if (items.length === 0) {
     return (
-      <div className="gh-card flex flex-col items-center gap-2 p-10 text-center">
+      <div className="gh-patient-empty-state gh-card flex flex-col items-center gap-2 p-10 text-center">
         <Bell className="size-6" style={{ color: "var(--color-text-muted)" }} aria-hidden />
         <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
           You have no notifications yet.
@@ -66,7 +66,7 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
   return (
     <>
       {unread > 0 ? (
-        <div className="mb-4 flex justify-end">
+      <div className="gh-patient-notification-toolbar mb-4 flex justify-end">
           <button
             type="button"
             onClick={markAll}
@@ -80,7 +80,7 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
         </div>
       ) : null}
 
-      <ul className="gh-card divide-y overflow-hidden" style={{ borderColor: "var(--color-border)" }}>
+      <ul className="gh-patient-notification-list gh-card divide-y overflow-hidden" style={{ borderColor: "var(--color-border)" }}>
         {items.map((n) => {
           const isUnread = !n.readAt;
           const href = n.payload?.href ?? null;
@@ -115,7 +115,7 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
                 <Link
                   href={href}
                   onClick={() => void markOne(n.id)}
-                  className="block px-4 py-3.5 transition hover:bg-[var(--color-background-soft)]"
+              className="gh-patient-notification-row block px-4 py-3.5 transition hover:bg-[var(--color-background-soft)]"
                 >
                   {inner}
                 </Link>
@@ -123,7 +123,7 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
                 <button
                   type="button"
                   onClick={() => void markOne(n.id)}
-                  className="block w-full px-4 py-3.5 text-left transition hover:bg-[var(--color-background-soft)]"
+                className="gh-patient-notification-row block w-full px-4 py-3.5 text-left transition hover:bg-[var(--color-background-soft)]"
                 >
                   {inner}
                 </button>

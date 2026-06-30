@@ -45,10 +45,10 @@ function AttachmentPreview({
 
   const inner = (
     <div
-      className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm ${
+      className={`gh-chat-attachment flex items-center gap-2 rounded-lg border px-3 py-2 text-sm ${
         own
-          ? "border-emerald-500 bg-emerald-600 text-white"
-          : "border-slate-200 bg-white text-slate-700"
+          ? "gh-chat-attachment-own border-emerald-500 bg-emerald-600 text-white"
+          : "gh-chat-attachment-other border-slate-200 bg-white text-slate-700"
       }`}
     >
       {isImage ? (
@@ -199,9 +199,9 @@ export function ConsultationChat({
     !paymentRequired && (viewerRole === "DOCTOR" || !chatLocked);
 
   return (
-    <div className="flex flex-col rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="gh-chat-panel flex flex-col rounded-xl border border-slate-200 bg-white shadow-sm">
       {/* Header */}
-      <header className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+      <header className="gh-chat-header flex items-center justify-between border-b border-slate-100 px-4 py-3">
         <div>
           <h3 className="text-sm font-bold text-slate-900">
             {viewerRole === "PATIENT" ? "Chat with your doctor" : "Patient chat"}
@@ -221,7 +221,7 @@ export function ConsultationChat({
               onClick={handleToggleLock}
               disabled={togglingLock}
               title={chatLocked ? "Re-open chat for patient" : "Lock chat (patient cannot reply)"}
-              className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-60 ${
+              className={`gh-chat-lock-button inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-60 ${
                 chatLocked
                   ? "border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100"
                   : "border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100"
@@ -243,7 +243,7 @@ export function ConsultationChat({
 
       {/* Payment required banner — takes priority over lock banner */}
       {paymentRequired && (
-        <div className="flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
+        <div className="gh-chat-alert flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
           <Lock className="size-4 shrink-0" aria-hidden />
           {viewerRole === "PATIENT"
             ? "Complete payment to start chatting with your doctor."
@@ -253,22 +253,22 @@ export function ConsultationChat({
 
       {/* Lock banner for patients */}
       {!paymentRequired && chatLocked && viewerRole === "PATIENT" && (
-        <div className="flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
+        <div className="gh-chat-alert flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
           <Lock className="size-4 shrink-0" aria-hidden />
           Chat window closed. Contact your doctor to re-open.
         </div>
       )}
 
       {/* Message list */}
-      <div className="h-[400px] flex-1 overflow-y-auto px-4 py-3">
+      <div className="gh-chat-body h-[400px] flex-1 overflow-y-auto px-4 py-3">
         {error && (
-          <p className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+          <p className="gh-chat-alert mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
             {error}
           </p>
         )}
 
         {!loading && items.length === 0 && (
-          <p className="text-sm text-slate-500">
+          <p className="gh-chat-empty text-sm text-slate-500">
             No messages yet.{" "}
             {canSend
               ? "Start the conversation below or attach a document."
@@ -276,16 +276,16 @@ export function ConsultationChat({
           </p>
         )}
 
-        <ul className="space-y-2">
+        <ul className="gh-chat-list space-y-2">
           {items.map((m) => {
             const own = m.authorRole === viewerRole;
             return (
               <li key={m.id} className={`flex ${own ? "justify-end" : "justify-start"}`}>
                 <div
-                  className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
+                  className={`gh-chat-bubble max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
                     own
-                      ? "bg-emerald-700 text-white"
-                      : "border border-slate-200 bg-slate-50 text-slate-800"
+                      ? "gh-chat-bubble-own bg-emerald-700 text-white"
+                      : "gh-chat-bubble-other border border-slate-200 bg-slate-50 text-slate-800"
                   }`}
                 >
                   {m.downloadUrl || m.fileName ? (
@@ -316,7 +316,7 @@ export function ConsultationChat({
 
       {/* Pending file preview */}
       {pendingFile && (
-        <div className="flex items-center gap-3 border-t border-slate-100 bg-slate-50 px-4 py-2">
+        <div className="gh-chat-pending-file flex items-center gap-3 border-t border-slate-100 bg-slate-50 px-4 py-2">
           <FileText className="size-4 shrink-0 text-slate-500" aria-hidden />
           <span className="min-w-0 flex-1 truncate text-sm text-slate-700">
             {pendingFile.name}
@@ -333,7 +333,7 @@ export function ConsultationChat({
             type="button"
             onClick={onUpload}
             disabled={uploading}
-            className="inline-flex items-center gap-1.5 rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-800 disabled:opacity-60"
+            className="gh-chat-send inline-flex items-center gap-1.5 rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-800 disabled:opacity-60"
           >
             {uploading ? (
               <Loader2 className="size-3.5 animate-spin" aria-hidden />
@@ -347,7 +347,7 @@ export function ConsultationChat({
       {canSend ? (
         <form
           onSubmit={onSend}
-          className="flex items-center gap-2 border-t border-slate-100 p-3"
+          className="gh-chat-compose flex items-center gap-2 border-t border-slate-100 p-3"
         >
           <input
             ref={fileRef}
@@ -361,7 +361,7 @@ export function ConsultationChat({
             type="button"
             onClick={() => fileRef.current?.click()}
             title="Attach a file (PDF / image)"
-            className="shrink-0 rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+            className="gh-chat-attach shrink-0 rounded-md p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
           >
             <Paperclip className="size-4" aria-hidden />
           </button>
@@ -376,14 +376,14 @@ export function ConsultationChat({
           <button
             type="submit"
             disabled={sending || draft.trim().length === 0}
-            className="inline-flex items-center gap-1.5 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+            className="gh-chat-send inline-flex items-center gap-1.5 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
           >
             <Send className="size-4" aria-hidden />
             {sending ? "…" : "Send"}
           </button>
         </form>
       ) : (
-        <div className="border-t border-slate-100 px-4 py-3 text-center text-xs text-slate-400">
+        <div className="gh-chat-disabled border-t border-slate-100 px-4 py-3 text-center text-xs text-slate-400">
           {paymentRequired
             ? viewerRole === "PATIENT"
               ? "Complete your booking payment to unlock the chat."

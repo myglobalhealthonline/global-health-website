@@ -58,9 +58,9 @@ export default async function AdminNewBlogPage({ searchParams }: PageProps) {
         </AdminCard>
       ) : null}
 
-      <form action={createBlogAction} className="mt-6 flex flex-col gap-6">
+      <form action={createBlogAction} className="gh-admin-blog-form mt-6">
         <BlogFields isCreate doctors={doctors} />
-        <div className="flex items-center justify-end gap-2">
+        <div className="gh-admin-blog-actions gh-admin-blog-actions--end">
           <Btn href="/admin/blog" variant="ghost" size="md">
             Cancel
           </Btn>

@@ -56,7 +56,7 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
           }
         />
         <AdminCard>
-          <form method="get" className="flex flex-wrap items-end gap-3">
+          <form method="get" className="gh-admin-plan-country-form flex flex-wrap items-end gap-3">
             <label className="flex flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select name="countryId" className="gh-select min-w-[240px]" required defaultValue="">
@@ -93,7 +93,7 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
           }
         />
         <AdminCard>
-          <form method="get" className="flex flex-col gap-3">
+          <form method="get" className="gh-admin-plan-type-form flex flex-col gap-3">
             <input type="hidden" name="countryId" value={countryId} />
             {PLAN_TYPES.map((t) => (
               <button
@@ -101,7 +101,7 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
                 type="submit"
                 name="planType"
                 value={t.value}
-                className="flex flex-col items-start gap-0.5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-3 text-left transition-colors hover:border-[var(--color-brand-accent)] hover:bg-[var(--color-surface-2)]"
+                className="gh-admin-plan-type-card flex flex-col items-start gap-0.5 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] px-4 py-3 text-left transition-colors hover:border-[var(--color-brand-accent)] hover:bg-[var(--color-surface-2)]"
               >
                 <span className="font-semibold text-[var(--color-text-primary)]">{t.label}</span>
                 <span className="text-[13px] text-[var(--color-text-muted)]">{t.blurb}</span>
@@ -151,9 +151,9 @@ export default async function AdminNewPlanPage({ searchParams }: PageProps) {
         <p className="gh-status-warning mb-4 rounded-[var(--radius-card-sm)] border px-4 py-3 text-sm">{createError}</p>
       ) : null}
       <AdminCard>
-        <form action={createPlanAction} className="flex flex-col gap-8">
+        <form action={createPlanAction} className="gh-admin-plan-form flex flex-col gap-8">
           <PlanFields countries={countries} pinnedCountryId={countryId} planType={planType} />
-          <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
+          <div className="gh-admin-plan-actions flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-6">
             <button type="submit" className="gh-btn gh-btn-primary">
               Create plan
             </button>

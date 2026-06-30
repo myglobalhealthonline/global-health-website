@@ -39,9 +39,9 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
   const isPremium = effectiveType === "PREMIUM";
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="gh-admin-plan-fields flex flex-col gap-6">
       {/* Country + plan type: fixed facts shown as read-only chips. */}
-      <div className="flex flex-wrap gap-x-10 gap-y-4">
+      <div className="gh-admin-plan-fixed-facts flex flex-wrap gap-x-10 gap-y-4">
         {pinId && pinned ? (
           <div>
             <span className="gh-field-label">Country</span>
@@ -76,7 +76,7 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
         </label>
       ) : null}
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="gh-admin-plan-field-grid grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
           <span className="gh-field-label">Plan name</span>
           <input name="name" className="gh-input min-w-0" required defaultValue={initial?.name} placeholder="e.g. Essential Care" />
@@ -128,7 +128,7 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
         />
       </label>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="gh-admin-plan-field-grid gh-admin-plan-field-grid--three grid gap-4 sm:grid-cols-3">
         <label className="flex flex-col gap-1.5">
           <span className="gh-field-label">Monthly price</span>
           <input
@@ -167,7 +167,7 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
         </label>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="gh-admin-plan-field-grid grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
           <span className="gh-field-label">GP visits included / month</span>
           <input
@@ -208,7 +208,7 @@ export function PlanFields({ countries, initial, pinnedCountryId, planType }: Pr
         <Help>Small ribbon shown on the card corner.</Help>
       </label>
 
-      <div className="flex flex-wrap gap-6 border-t border-[var(--color-border)] pt-5">
+      <div className="gh-admin-plan-checks flex flex-wrap gap-6 border-t border-[var(--color-border)] pt-5">
         <label className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-primary)]">
           <input type="checkbox" name="isFeatured" className="size-4" defaultChecked={initial?.isFeatured ?? false} />
           Highlight this plan (recommended)

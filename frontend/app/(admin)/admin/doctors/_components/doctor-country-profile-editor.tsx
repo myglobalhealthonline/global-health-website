@@ -95,7 +95,7 @@ export function DoctorCountryProfileEditor({ doctorId, doctorSlug, markets }: Pr
   }
 
   return (
-    <AdminCard>
+    <AdminCard className="gh-admin-doctor-country-editor">
       <h3 className="m-0 [font-family:var(--font-display)] text-base font-extrabold text-[var(--color-text-primary)]">
         Country profile
       </h3>

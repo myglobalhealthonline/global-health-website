@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { AdminCard, PageHeader } from "@/components/portal-atoms";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
+import { FlagBadge } from "../_components/flag-badge";
 
 export const dynamic = "force-dynamic";
 
@@ -53,13 +54,6 @@ async function fetchAdminInvoices(
   }
 }
 
-const COUNTRY_FLAG: Record<string, string> = {
-  ie: "🇮🇪",
-  cz: "🇨🇿",
-  sp: "🇪🇸",
-  rm: "🇷🇴",
-};
-
 export default async function AdminInvoicesPage({
   searchParams,
 }: {
@@ -81,7 +75,7 @@ export default async function AdminInvoicesPage({
       />
 
       <AdminCard padding={0}>
-        <div className="overflow-x-auto">
+        <div className="gh-admin-ops-table-wrap overflow-x-auto">
           <table className="w-full min-w-[860px] text-[13px]">
             <thead>
               <tr className="border-b border-[var(--color-border)] text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
@@ -109,7 +103,7 @@ export default async function AdminInvoicesPage({
                 items.map((inv) => (
                   <tr
                     key={inv.id}
-                    className="border-b border-[var(--color-border)] hover:bg-[var(--color-bg-subtle)]"
+                    className="gh-admin-invoices-row border-b border-[var(--color-border)] hover:bg-[var(--color-bg-subtle)]"
                   >
                     <td className="px-4 py-3">
                       <span className="font-mono text-[13px] font-bold text-[var(--color-text-primary)]">
@@ -131,11 +125,11 @@ export default async function AdminInvoicesPage({
                       <p className="text-[11px] text-[var(--color-text-muted)]">{inv.email}</p>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="text-base">
-                        {COUNTRY_FLAG[inv.countryCode.toLowerCase()] ?? ""}
-                      </span>{" "}
-                      <span className="text-[12px] uppercase text-[var(--color-text-muted)]">
-                        {inv.countryCode.toUpperCase()}
+                      <span className="inline-flex items-center gap-2">
+                        <FlagBadge code={inv.countryCode} size={14} />
+                        <span className="text-[12px] uppercase text-[var(--color-text-muted)]">
+                          {inv.countryCode.toUpperCase()}
+                        </span>
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -148,11 +142,11 @@ export default async function AdminInvoicesPage({
                     </td>
                     <td className="px-4 py-3">
                       {inv.emailSentAt ? (
-                        <span className="inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800">
+                        <span className="gh-admin-ops-badge inline-block rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800">
                           Sent
                         </span>
                       ) : (
-                        <span className="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-800">
+                        <span className="gh-admin-ops-badge inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-800">
                           Pending
                         </span>
                       )}
@@ -162,7 +156,7 @@ export default async function AdminInvoicesPage({
                         href={`/print/order-invoices/${inv.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
+                        className="gh-admin-invoices-view-link inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-[11px] font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-bg-subtle)]"
                       >
                         <ExternalLink className="size-3" aria-hidden />
                         View
@@ -175,7 +169,7 @@ export default async function AdminInvoicesPage({
           </table>
         </div>
 
-        <div className="flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-[13px]">
+        <div className="gh-admin-ops-pagination flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-[13px]">
           {cursor ? (
             <Link href="/admin/invoices" className="font-semibold underline">
               ← First page

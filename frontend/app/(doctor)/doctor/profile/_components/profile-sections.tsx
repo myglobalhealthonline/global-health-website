@@ -26,7 +26,7 @@ export function ProfileSections({
 
   return (
     <>
-      <header className="mb-6">
+      <header className="gh-doctor-page-header mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
           Doctor
         </p>
@@ -43,7 +43,7 @@ export function ProfileSections({
           listings + categories the doctor is approved for. Surface
           these so the doctor sees at a glance what they can consult
           on, even though the values themselves stay admin-only. */}
-      <section className="gh-card mb-4 p-6">
+      <section className="gh-card gh-doctor-practice-context mb-4 p-6">
         <h3
           className="m-0 text-[var(--color-text-primary)]"
           style={{
@@ -54,7 +54,7 @@ export function ProfileSections({
         >
           Practice context
         </h3>
-        <dl className="mt-3 grid gap-3 sm:grid-cols-3">
+        <dl className="gh-doctor-context-grid mt-3 grid gap-3 sm:grid-cols-3">
           <div>
             <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
               Primary country
@@ -84,7 +84,7 @@ export function ProfileSections({
             </dd>
           </div>
         </dl>
-        <dl className="mt-4 grid gap-3 sm:grid-cols-2">
+        <dl className="gh-doctor-context-grid mt-4 grid gap-3 sm:grid-cols-2">
           <div>
             <dt className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
               Categories

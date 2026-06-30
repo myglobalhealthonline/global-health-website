@@ -245,10 +245,10 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
     } border border-[var(--color-border)]`;
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="gh-admin-rich-text flex flex-col gap-2">
       <label htmlFor={editorId} className="gh-field-label">{label}</label>
-      <div className="overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white">
-        <div className="flex flex-wrap items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2">
+      <div className="gh-admin-rich-text__frame overflow-hidden rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-white">
+        <div className="gh-admin-rich-text__toolbar flex flex-wrap items-center gap-1.5 border-b border-[var(--color-border)] bg-[var(--color-background-soft)] px-3 py-2">
           <div className="relative">
             <select
               className="h-8 appearance-none rounded border border-[var(--color-border)] bg-white pl-2.5 pr-7 text-xs text-[var(--color-text-primary)] outline-none"
@@ -351,7 +351,7 @@ export function RichTextHtmlField({ name, label, helperText, initialValue }: Pro
           contentEditable
           suppressContentEditableWarning
           suppressHydrationWarning
-          className="gh-input min-h-[14rem] min-w-0 resize-y overflow-auto rounded-none border-0 bg-white p-4 leading-7 outline-none"
+          className="gh-admin-rich-text__editor gh-input min-h-[14rem] min-w-0 resize-y overflow-auto rounded-none border-0 bg-white p-4 leading-7 outline-none"
           style={{ listStylePosition: "inside" }}
           onInput={() => {
             syncToHidden();

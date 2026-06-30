@@ -52,9 +52,9 @@ export default async function SubscribeConfirmPage({
 
   if (!plan) {
     return (
-      <>
+      <div className="gh-patient-page gh-patient-subscribe-page">
         <PageHeader title={t.title} description={t.subtitle} />
-        <div className="gh-card max-w-xl p-8 text-center">
+        <div className="gh-patient-empty-state gh-card max-w-xl p-8 text-center">
           <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
             {t.missingPlan}
           </p>
@@ -62,7 +62,7 @@ export default async function SubscribeConfirmPage({
             {t.backToPlans}
           </Link>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -91,7 +91,7 @@ export default async function SubscribeConfirmPage({
     config && langSlug ? `/${config.slug}/${langSlug}/legal/subscription-terms` : "/legal/subscription-terms";
 
   return (
-    <>
+    <div className="gh-patient-page gh-patient-subscribe-page">
       <PageHeader title={t.title} description={t.subtitle} />
       <SubscribeForm
         planId={plan.id}
@@ -112,6 +112,6 @@ export default async function SubscribeConfirmPage({
         planSummaryLabel={t.planSummary}
         returnTo={returnTo}
       />
-    </>
+    </div>
   );
 }

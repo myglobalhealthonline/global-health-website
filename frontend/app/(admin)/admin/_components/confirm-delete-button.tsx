@@ -31,7 +31,7 @@ export function ConfirmDeleteButton({
   // Default styling kicks in only when caller didn't pass className —
   // i.e. the icon-only variant used in list-row trash buttons.
   const usingDefault = className == null;
-  const finalClassName = className ?? "inline-flex items-center justify-center";
+  const finalClassName = className ?? "gh-icon-btn gh-confirm-delete-button inline-flex items-center justify-center";
   const finalStyle =
     style ?? (usingDefault ? { color: "var(--color-status-error-text)" } : undefined);
 

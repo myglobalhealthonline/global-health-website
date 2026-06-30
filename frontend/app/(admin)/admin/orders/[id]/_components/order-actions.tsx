@@ -32,8 +32,8 @@ export function AdminOrderActions({ orderId, status }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-end gap-1">
-      <div className="flex items-center gap-2">
+    <div className="gh-admin-order-actions flex flex-col items-end gap-1">
+      <div className="gh-admin-order-actions__buttons flex items-center gap-2">
         {status === "PAID" ? (
           <button
             type="button"

@@ -35,7 +35,7 @@ const PAYMENT_TONE: Record<string, string> = {
 function StatusBadge({ status }: { status: string }) {
   return (
     <span
-      className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+      className={`gh-admin-ops-badge inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
         STATUS_TONE[status] ?? "bg-slate-100 text-slate-700"
       }`}
     >
@@ -112,7 +112,7 @@ export default async function AdminAutomationPage({
             <p className="text-sm text-[var(--color-text-muted)]">No automation runs for this order.</p>
           </AdminCard>
         ) : (
-          <div className="space-y-4">
+          <div className="gh-admin-automation-groups space-y-4">
             {Array.from(groups.entries()).map(([key, groupRuns]) => {
               const catalogEntry = catalog.find(
                 (c) => key === c.key || key.startsWith(`${c.key}_`),
@@ -123,12 +123,12 @@ export default async function AdminAutomationPage({
 
               return (
                 <AdminCard key={key} padding={0}>
-                  <div className="flex items-start justify-between border-b border-[var(--color-border)] px-5 py-3">
+                  <div className="gh-admin-automation-group-head flex items-start justify-between border-b border-[var(--color-border)] px-5 py-3">
                     <div>
                       <p className="text-[13px] font-bold text-[var(--color-text-primary)]">
                         {name}
                         {hasFailed && (
-                          <span className="ml-2 inline-block rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-700">
+                          <span className="gh-admin-ops-badge ml-2 inline-block rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-700">
                             has failures
                           </span>
                         )}
@@ -145,7 +145,7 @@ export default async function AdminAutomationPage({
                     {groupRuns.map((run) => (
                       <div
                         key={run.id}
-                        className="grid grid-cols-[1fr_80px_80px_160px] items-start gap-3 px-5 py-3 text-[13px]"
+                        className="gh-admin-automation-run-row grid grid-cols-[1fr_80px_80px_160px] items-start gap-3 px-5 py-3 text-[13px]"
                       >
                         <div>
                           <p className="text-[var(--color-text-primary)]">
@@ -210,7 +210,7 @@ export default async function AdminAutomationPage({
         />
 
         <AdminCard padding={0}>
-          <div className="overflow-x-auto">
+          <div className="gh-admin-ops-table-wrap overflow-x-auto">
             <table className="w-full min-w-[860px] text-[13px]">
               <thead>
                 <tr className="border-b border-[var(--color-border)] text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
@@ -265,7 +265,7 @@ export default async function AdminAutomationPage({
               </tbody>
             </table>
           </div>
-          <div className="flex items-center justify-between px-5 py-4 text-[13px]">
+          <div className="gh-admin-ops-pagination flex items-center justify-between px-5 py-4 text-[13px]">
             {page > 1 ? (
               <Link
                 href={`/admin/automation?page=${page - 1}&automationKey=${encodeURIComponent(automationKey)}`}
@@ -328,7 +328,7 @@ export default async function AdminAutomationPage({
       ) : null}
 
       {/* Orders list */}
-      <AdminCard padding={0} className="mb-6">
+      <AdminCard padding={0} className="gh-admin-automation-orders mb-6">
         <div className="border-b border-[var(--color-border)] px-5 py-4">
           <h2 className="text-[15px] font-bold text-[var(--color-text-primary)]">Orders</h2>
           <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
@@ -346,7 +346,7 @@ export default async function AdminAutomationPage({
               <Link
                 key={order.orderId}
                 href={`/admin/automation?orderId=${encodeURIComponent(order.orderId)}`}
-                className="flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-[var(--color-bg-subtle)]"
+                className="gh-admin-automation-order-row flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-[var(--color-bg-subtle)]"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
@@ -355,7 +355,7 @@ export default async function AdminAutomationPage({
                     </span>
                     {order.paymentStatus && (
                       <span
-                        className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+                        className={`gh-admin-ops-badge rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
                           PAYMENT_TONE[order.paymentStatus] ?? "bg-slate-100 text-slate-700"
                         }`}
                       >
@@ -363,7 +363,7 @@ export default async function AdminAutomationPage({
                       </span>
                     )}
                     {order.failedRuns > 0 && (
-                      <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-700">
+                      <span className="gh-admin-ops-badge rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold uppercase text-rose-700">
                         {order.failedRuns} failed
                       </span>
                     )}
@@ -390,7 +390,7 @@ export default async function AdminAutomationPage({
           </div>
         )}
 
-        <div className="flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-[13px]">
+        <div className="gh-admin-ops-pagination flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-[13px]">
           {page > 1 ? (
             <Link href={`/admin/automation?page=${page - 1}`} className="font-semibold underline">
               ← Previous
@@ -415,13 +415,13 @@ export default async function AdminAutomationPage({
       <AdminCard className="mb-6">
         <h2 className="text-[15px] font-bold text-[var(--color-text-primary)]">Automation catalog</h2>
         <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
-          Registered flows — click "View runs" to filter the log by key prefix.
+          Registered flows — click &quot;View runs&quot; to filter the log by key prefix.
         </p>
-        <div className="mt-4 grid gap-3 lg:grid-cols-2">
+        <div className="gh-admin-automation-catalog-grid mt-4 grid gap-3 lg:grid-cols-2">
           {catalog.map((item) => (
             <div
               key={item.key}
-              className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4"
+              className="gh-admin-automation-catalog-card rounded-[var(--radius-card-sm)] border border-[var(--color-border)] p-4"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>

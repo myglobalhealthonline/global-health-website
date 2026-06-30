@@ -18,13 +18,13 @@ const labelClass = "block text-[12px] font-semibold text-[var(--color-text-muted
 
 export function BlogFields({ post, isCreate, doctors = [] }: Props) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="gh-admin-blog-fields">
       <AdminCard padding={0}>
         <SectionHeader
           title="Article"
           description="Title, URL slug and the short summary shown on cards."
         />
-        <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
+        <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two p-5">
           <label className={labelClass}>
             Title
             <input
@@ -87,7 +87,7 @@ export function BlogFields({ post, isCreate, doctors = [] }: Props) {
           title="Clinical attribution"
           description="Link a registered doctor as the named author / clinical reviewer. Drives the Article author/reviewedBy Physician schema (E-E-A-T)."
         />
-        <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
+        <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two p-5">
           <label className={labelClass}>
             Author doctor
             <select name="authorDoctorId" defaultValue={post?.authorDoctorId ?? ""} className={inputClass}>
@@ -118,7 +118,7 @@ export function BlogFields({ post, isCreate, doctors = [] }: Props) {
           title="Cover image"
           description="Shown as the thumbnail on the blog card and at the top of the article."
         />
-        <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
+        <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two p-5">
           <ManagedImageField
             name="coverImagePath"
             label="Cover image"
@@ -151,7 +151,7 @@ export function BlogFields({ post, isCreate, doctors = [] }: Props) {
 
       <AdminCard padding={0}>
         <SectionHeader title="SEO" description="Optional — falls back to title/excerpt." />
-        <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2">
+        <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two p-5">
           <label className={labelClass}>
             SEO title
             <input
@@ -175,7 +175,7 @@ export function BlogFields({ post, isCreate, doctors = [] }: Props) {
 
       <AdminCard padding={0}>
         <SectionHeader title="Publish" description="Drafts stay hidden from the public blog." />
-        <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-3">
+        <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--three p-5">
           <label className={labelClass}>
             Status
             <select name="status" defaultValue={post?.status ?? "DRAFT"} className={inputClass}>

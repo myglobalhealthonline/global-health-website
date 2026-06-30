@@ -186,17 +186,14 @@ export default async function AdminServiceDetailPage({
         </p>
       ) : null}
 
-      <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
-      >
+      <div className="gh-admin-service-layout">
         <div className="grid gap-4">
           <AdminCard>
             <h3 style={cardTitleStyle}>Basics</h3>
             <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
               Identifiers and pricing.
             </p>
-            <dl className="grid gap-4 sm:grid-cols-2">
+            <dl className="gh-admin-service-details">
               <FieldRow label="Slug" value={service.slug} mono />
               <FieldRow
                 label="Country"

@@ -91,14 +91,14 @@ export async function SubscriptionDashboard({
     (t as Record<string, string>)[`perk_${key}`] ?? key;
 
   return (
-    <section className="mt-6">
+    <section className="gh-patient-subscription-dashboard mt-6">
       {embedded ? null : (
         <h2 className="mb-3 text-[13px] font-bold uppercase tracking-[0.14em]" style={{ color: "var(--color-text-muted)" }}>
           {t.heading}
         </h2>
       )}
 
-      <div className={embedded ? "grid gap-4 sm:grid-cols-2" : "grid gap-4 lg:grid-cols-3"}>
+      <div className={embedded ? "gh-patient-subscription-grid grid gap-4 sm:grid-cols-2" : "gh-patient-subscription-grid grid gap-4 lg:grid-cols-3"}>
         {/* Plan — hidden when embedded (ManagePanel already shows it). */}
         {embedded ? null : (
         <AdminCard>

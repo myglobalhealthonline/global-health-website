@@ -64,9 +64,9 @@ export function DisclaimerTranslationTabs({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="gh-admin-disclaimer-tabs flex flex-col gap-4">
       {/* Tab strip */}
-      <div role="tablist" className="flex flex-wrap gap-1.5">
+      <div role="tablist" className="gh-admin-disclaimer-tablist flex flex-wrap gap-1.5">
         {locales.map((l) => {
           const isActive = l.code === active;
           return (
@@ -76,7 +76,7 @@ export function DisclaimerTranslationTabs({
               role="tab"
               aria-selected={isActive}
               onClick={() => setActive(l.code)}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
+              className={`gh-admin-disclaimer-tab rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors ${
                 isActive
                   ? "bg-[var(--color-brand-primary)] text-white"
                   : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]"
@@ -100,7 +100,7 @@ export function DisclaimerTranslationTabs({
             key={l.code}
             role="tabpanel"
             hidden={l.code !== active}
-            className="flex flex-col gap-4"
+            className="gh-admin-disclaimer-panel flex flex-col gap-4"
           >
             <label className="flex flex-col gap-1">
               <span className="gh-field-label">Short disclaimer</span>

@@ -431,14 +431,11 @@ export function DoctorProfileEditForm({
 
   /* ── Render ─────────────────────────────────────── */
   return (
-    <div
-      className="grid gap-4"
-      style={{ gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)" }}
-    >
+    <div className="gh-doctor-detail-grid gh-doctor-profile-edit-layout grid gap-4">
       <div className="grid gap-4">
         {/* ── Public profile form ─────────────────── */}
         <form onSubmit={onSubmitProfile}>
-          <section className="gh-card p-6">
+          <section className="gh-card gh-doctor-profile-form-card p-6">
             <h3
               className="m-0 text-[var(--color-text-primary)]"
               style={{
@@ -475,7 +472,7 @@ export function DoctorProfileEditForm({
                     non-default languages fall back to the default language.
                   </p>
                 </div>
-                <div role="tablist" className="flex flex-wrap gap-1.5">
+                <div role="tablist" className="gh-doctor-tabs flex flex-wrap gap-1.5">
                   {localeTabs.map((locale) => {
                     const selected = locale.code === activeBioLocale;
                     return (
@@ -539,7 +536,7 @@ export function DoctorProfileEditForm({
                 </span>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="gh-doctor-field-grid grid gap-4 sm:grid-cols-2">
                 <label className="flex flex-col gap-2">
                   <span className="gh-field-label">WhatsApp number</span>
                   <PhoneField
@@ -555,7 +552,7 @@ export function DoctorProfileEditForm({
               </div>
 
               {activeMarket ? (
-                <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
+                  <div className="gh-doctor-registration-card rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
                       <span className="gh-field-label">
@@ -576,7 +573,7 @@ export function DoctorProfileEditForm({
                       {activeMarket.isVerified ? "Verified" : "Needs verification"}
                     </span>
                   </div>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                    <div className="gh-doctor-field-grid mt-3 grid gap-3 sm:grid-cols-3">
                     <label className="flex flex-col gap-2">
                       <span className="gh-field-label">Registration body</span>
                       <input
@@ -613,7 +610,7 @@ export function DoctorProfileEditForm({
 
             {profileMsg ? <MessageBanner msg={profileMsg} /> : null}
 
-            <div className="mt-5 flex justify-end">
+            <div className="gh-doctor-form-actions mt-5 flex justify-end">
               <button
                 type="submit"
                 disabled={profilePending}
@@ -627,7 +624,7 @@ export function DoctorProfileEditForm({
 
         {/* ── Payout / bank details form ───────────── */}
         <form onSubmit={onSubmitPayout}>
-          <section className="gh-card p-6">
+          <section className="gh-card gh-doctor-profile-form-card p-6">
             <h3
               className="m-0 text-[var(--color-text-primary)]"
               style={{
@@ -688,7 +685,7 @@ export function DoctorProfileEditForm({
                 )}
               </label>
 
-              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="gh-doctor-field-grid grid gap-4 sm:grid-cols-2">
                 <label className="flex flex-col gap-2">
                   <span className="gh-field-label">BIC / SWIFT (optional)</span>
                   <input
@@ -712,7 +709,7 @@ export function DoctorProfileEditForm({
 
             {payoutMsg ? <MessageBanner msg={payoutMsg} /> : null}
 
-            <div className="mt-5 flex justify-end">
+            <div className="gh-doctor-form-actions mt-5 flex justify-end">
               <button
                 type="submit"
                 disabled={payoutPending}
@@ -726,8 +723,8 @@ export function DoctorProfileEditForm({
       </div>
 
       {/* ── Sidebar: photo + admin-managed ───────── */}
-      <aside className="grid gap-4 self-start">
-        <section className="gh-card p-6">
+      <aside className="gh-doctor-side-stack grid gap-4 self-start">
+        <section className="gh-card gh-doctor-profile-photo-card p-6">
           <h3
             className="m-0 text-[var(--color-text-primary)]"
             style={{
@@ -741,7 +738,7 @@ export function DoctorProfileEditForm({
           <p className="mt-1 text-[13px] text-[var(--color-text-muted)]">
             JPEG / PNG / WebP / AVIF, up to 5MB.
           </p>
-          <div className="mt-3 flex flex-col items-center gap-3">
+          <div className="gh-doctor-profile-photo mt-3 flex flex-col items-center gap-3">
             <div
               className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full"
               style={{
@@ -787,7 +784,7 @@ export function DoctorProfileEditForm({
                 e.target.value = "";
               }}
             />
-            <div className="flex w-full flex-col gap-2">
+            <div className="gh-doctor-profile-photo-actions flex w-full flex-col gap-2">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -820,7 +817,7 @@ export function DoctorProfileEditForm({
           </div>
         </section>
 
-        <section className="gh-card p-6">
+        <section className="gh-card gh-doctor-admin-note-card p-6">
           <h3
             className="m-0 text-[var(--color-text-primary)]"
             style={{

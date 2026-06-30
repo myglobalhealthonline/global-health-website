@@ -102,11 +102,11 @@ export function GdprPreferencesTab() {
   }
 
   if (!loaded) {
-    return <div className="py-8 text-sm text-[var(--color-text-muted)]">Loading…</div>;
+    return <div className="gh-patient-empty-state py-8 text-sm text-[var(--color-text-muted)]">Loading…</div>;
   }
 
   return (
-    <div className="space-y-6">
+    <div className="gh-patient-profile-tab space-y-6">
       <p className="text-sm text-[var(--color-text-muted)]">
         Control how your medical data is used. Changes are logged for compliance.
       </p>
@@ -117,8 +117,8 @@ export function GdprPreferencesTab() {
           const status = statusLabel(c.consentValue);
 
           return (
-            <div key={c.consentType} className="gh-card p-4">
-              <div className="flex items-start justify-between gap-4">
+            <div key={c.consentType} className="gh-patient-consent-card gh-card p-4">
+                <div className="gh-patient-consent-row flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-medium text-[var(--color-text-primary)]">{c.label}</p>

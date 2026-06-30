@@ -160,7 +160,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
         title={post.title || "(untitled post)"}
         description={`${post.status} · ${post.locale} · /blog/${post.slug}`}
         actions={
-          <div className="flex items-center gap-2">
+          <div className="gh-admin-blog-actions">
             {post.status === "PUBLISHED" && post.isActive ? (
               <Btn
                 href={`/blog/${post.slug}`}
@@ -197,9 +197,9 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
         </AdminCard>
       ) : null}
 
-      <form action={updateBlogAction} className="mt-6 flex flex-col gap-6">
+      <form action={updateBlogAction} className="gh-admin-blog-form mt-6">
         <BlogFields post={post} doctors={doctors} />
-        <div className="flex items-center justify-end gap-2">
+        <div className="gh-admin-blog-actions gh-admin-blog-actions--end">
           <Btn href="/admin/blog" variant="ghost" size="md">
             Cancel
           </Btn>
@@ -211,7 +211,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
 
       {/* Translations section */}
       <AdminCard className="mt-6">
-        <div className="flex items-center gap-2">
+        <div className="gh-admin-blog-section-heading">
           <Languages className="size-4 text-[var(--color-text-muted)]" aria-hidden />
           <h3
             className="m-0 text-[var(--color-text-primary)]"
@@ -228,11 +228,11 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
         </p>
 
         {translations.length > 0 ? (
-          <div className="mt-3 grid gap-2">
+          <div className="gh-admin-blog-translation-list mt-3">
             {translations.map((t) => (
               <div
                 key={t.locale}
-                className="flex items-center justify-between rounded-md bg-[var(--color-background-soft)] px-3 py-2"
+                className="gh-admin-blog-translation-row"
               >
                 <div>
                   <span className="inline-block font-mono text-[12px] font-bold text-[var(--color-text-primary)]">
@@ -240,7 +240,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
                   </span>
                   <span className="ml-2 text-[13px] text-[var(--color-text-body)]">{t.title}</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="gh-admin-blog-actions">
                   <Link
                     href={`/admin/blog/${id}/edit?editLocale=${t.locale}`}
                     className="gh-btn gh-btn-soft text-[12px]"
@@ -264,12 +264,12 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
         ) : null}
 
         {editLocale ? (
-          <form action={saveTranslationAction} className="mt-4 grid gap-4">
+          <form action={saveTranslationAction} className="gh-admin-blog-translation-form mt-4">
             <input type="hidden" name="locale" value={editLocale} />
             <h4 className="m-0 text-[14px] font-bold text-[var(--color-text-primary)]">
               {editTranslation ? "Edit" : "Add"} translation: {editLocale.toUpperCase()}
             </h4>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two">
               <label className="flex flex-col gap-1">
                 <span className="gh-field-label">Title *</span>
                 <input type="text" name="tr_title" defaultValue={editTranslation?.title ?? ""} className="gh-input" required />
@@ -287,7 +287,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
               <span className="gh-field-label">Content (HTML)</span>
               <textarea name="tr_content" rows={12} defaultValue={editTranslation?.content ?? ""} className="gh-input resize-y font-mono text-[12px]" />
             </label>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="gh-admin-blog-field-grid gh-admin-blog-field-grid--two">
               <label className="flex flex-col gap-1">
                 <span className="gh-field-label">SEO title</span>
                 <input type="text" name="tr_seoTitle" defaultValue={editTranslation?.seoTitle ?? ""} className="gh-input" />
@@ -297,7 +297,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
                 <input type="text" name="tr_seoDesc" defaultValue={editTranslation?.seoDesc ?? ""} className="gh-input" />
               </label>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="gh-admin-blog-actions">
               <button type="submit" className="gh-btn gh-btn-primary">Save translation</button>
               <Link href={`/admin/blog/${id}/edit`} className="gh-btn gh-btn-soft">Cancel</Link>
             </div>
@@ -309,7 +309,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
             </p>
             {/* Plain GET form — submitting reloads this page with ?editLocale=<value>,
                 which opens the translation editor for that locale. */}
-            <form action={`/admin/blog/${id}/edit`} method="get" className="flex flex-wrap items-center gap-2">
+            <form action={`/admin/blog/${id}/edit`} method="get" className="gh-admin-blog-actions">
               <input
                 type="text"
                 name="editLocale"
@@ -332,7 +332,7 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
       {/* Countries multi-select */}
       {allCountries.length > 0 ? (
         <AdminCard className="mt-4">
-          <div className="flex items-center gap-2">
+          <div className="gh-admin-blog-section-heading">
             <h3
               className="m-0 text-[var(--color-text-primary)]"
               style={{ fontFamily: "var(--font-display)", fontSize: 16, fontWeight: 800 }}
@@ -350,9 +350,9 @@ export default async function AdminEditBlogPage({ params, searchParams }: PagePr
             global — it shows in every country.
           </p>
           <form action={saveCountriesAction} className="mt-4">
-            <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+            <div className="gh-admin-blog-country-grid">
               {allCountries.map((c) => (
-                <label key={c.id} className="flex items-center gap-2 text-[13px]">
+                <label key={c.id} className="gh-admin-blog-country-option">
                   <input
                     type="checkbox"
                     name="countryIds"

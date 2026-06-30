@@ -176,7 +176,7 @@ export default async function AdminDoctorServicesPage({
         </p>
       ) : null}
 
-      <div className="grid gap-4">
+      <div className="gh-admin-doctor-services-layout grid gap-4">
         <AdminCard>
           <h3 className="m-0 text-base font-bold text-[var(--color-text-primary)]">
             Assigned services ({assignments.length})
@@ -190,13 +190,13 @@ export default async function AdminDoctorServicesPage({
               No services assigned yet.
             </p>
           ) : (
-            <ul className="mt-4 grid gap-3">
+            <ul className="gh-admin-doctor-service-list mt-4 grid gap-3">
               {assignments.map((row) => (
                 <li
                   key={row.id}
-                  className="rounded-[var(--radius-card-sm)] border border-[var(--color-border-subtle)] p-4"
+                  className="gh-admin-doctor-service-row rounded-[var(--radius-card-sm)] border border-[var(--color-border-subtle)] p-4"
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="gh-admin-doctor-service-row-inner flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <p className="m-0 text-[15px] font-semibold text-[var(--color-text-primary)]">
                         {row.service.name}
@@ -216,7 +216,7 @@ export default async function AdminDoctorServicesPage({
                         ) : null}
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="gh-admin-doctor-service-actions flex flex-wrap gap-2">
                       {row.status === "pending" ? (
                         <>
                           <form action={statusAction}>
@@ -300,12 +300,12 @@ export default async function AdminDoctorServicesPage({
               All country services are already assigned to this doctor.
             </p>
           ) : (
-            <form action={assignAction} className="mt-4 flex flex-wrap gap-3">
+            <form action={assignAction} className="gh-admin-doctor-assign-form mt-4 flex flex-wrap gap-3">
               <select
                 name="serviceId"
                 required
                 aria-label="Service to assign"
-                className="min-w-[240px] rounded-md border border-[var(--color-border-subtle)] bg-transparent px-3 py-2 text-sm"
+                className="gh-select min-w-[240px]"
                 defaultValue=""
               >
                 <option value="" disabled>

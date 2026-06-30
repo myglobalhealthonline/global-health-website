@@ -147,7 +147,7 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
   }
 
   return (
-    <section className="mt-6">
+    <section className="gh-patient-profile-section mt-6">
       <header className="mb-3">
         <h3 className="flex items-center gap-2 text-xl font-bold text-[var(--color-text-primary)]">
           <HeartPulse
@@ -162,11 +162,11 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
       </header>
 
       {!loaded ? (
-        <div className="gh-card p-6 text-sm text-[var(--color-text-muted)]">
+        <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">
           {i18n.loading}
         </div>
       ) : (
-        <form onSubmit={onSubmit} className="gh-card space-y-5 p-6">
+      <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-5 p-6">
           <fieldset className="grid gap-3 sm:grid-cols-3">
             <legend className="gh-field-label mb-1 sm:col-span-3">
               {i18n.identityNumbers}

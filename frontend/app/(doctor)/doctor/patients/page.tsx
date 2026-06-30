@@ -36,7 +36,7 @@ export default async function DoctorPatientsPage({
 
   return (
     <>
-      <header className="mb-6">
+      <header className="gh-doctor-page-header mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
           Doctor
         </p>
@@ -49,8 +49,8 @@ export default async function DoctorPatientsPage({
         </p>
       </header>
 
-      <div className="gh-card mb-4 p-4">
-        <form className="flex flex-wrap items-end gap-3">
+      <div className="gh-card gh-doctor-filter-card mb-4 p-4">
+        <form className="gh-doctor-filter-actions flex flex-wrap items-end gap-3">
           <label className="flex flex-col gap-1 sm:min-w-[260px]">
             <span className="gh-field-label">Search</span>
             <input
@@ -78,13 +78,14 @@ export default async function DoctorPatientsPage({
           </p>
         </div>
       ) : items.length === 0 ? (
-        <div className="gh-card p-10 text-center text-sm text-[var(--color-text-muted)]">
+        <div className="gh-card gh-doctor-empty-state p-10 text-center text-sm text-[var(--color-text-muted)]">
           {q
             ? "No patients match that search."
             : "No patients yet — your scheduled appointments will surface here."}
         </div>
       ) : (
-        <div className="gh-card p-0 overflow-hidden">
+        <div className="gh-card gh-doctor-table-card p-0 overflow-hidden">
+          <div className="gh-doctor-table-wrap overflow-x-auto">
           <table className="w-full text-sm">
             {/* Email + phone columns intentionally removed (GDPR/privacy).
                 Doctors contact patients only through the in-app chat thread
@@ -124,6 +125,7 @@ export default async function DoctorPatientsPage({
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </>

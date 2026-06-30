@@ -92,7 +92,7 @@ export function DoctorCredentialsCard({
   }
 
   return (
-    <AdminCard>
+    <AdminCard className="gh-admin-doctor-credentials-card">
       <h3 style={cardTitleStyle}>Credentials</h3>
       <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
         Confirmed professional credentials beyond the council registration (e.g.
@@ -101,16 +101,16 @@ export function DoctorCredentialsCard({
       </p>
 
       {rows.length > 0 ? (
-        <div className="mb-4 grid gap-3">
+        <div className="gh-admin-doctor-credential-list mb-4 grid gap-3">
           {rows.map((row) => (
             <form
               key={row.id}
               action={editCredential}
-              className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3"
+              className="gh-admin-doctor-credential-row rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3"
             >
               <input type="hidden" name="credentialId" value={row.id} />
               <CredentialFields row={row} associatedCountries={associatedCountries} />
-              <div className="mt-2 flex justify-end gap-2">
+              <div className="gh-admin-doctor-form-actions mt-2 flex justify-end gap-2">
                 <button
                   type="submit"
                   formAction={removeCredential}
@@ -130,13 +130,13 @@ export function DoctorCredentialsCard({
 
       <form
         action={addCredential}
-        className="rounded-md border border-dashed border-[var(--color-border)] p-3"
+        className="gh-admin-doctor-credential-row gh-admin-doctor-credential-add rounded-md border border-dashed border-[var(--color-border)] p-3"
       >
         <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
           Add credential
         </p>
         <CredentialFields row={null} associatedCountries={associatedCountries} />
-        <div className="mt-2 flex justify-end">
+        <div className="gh-admin-doctor-form-actions mt-2 flex justify-end">
           <button type="submit" className="gh-btn gh-btn-primary">
             Add
           </button>
@@ -154,7 +154,7 @@ function CredentialFields({
   associatedCountries: Array<Pick<AdminCountryDto, "id" | "code" | "name">>;
 }) {
   return (
-    <div className="grid gap-2 sm:grid-cols-2">
+    <div className="gh-admin-doctor-field-grid grid gap-2 sm:grid-cols-2">
       <label className="flex flex-col gap-1">
         <span className="gh-field-label">Credential</span>
         <input

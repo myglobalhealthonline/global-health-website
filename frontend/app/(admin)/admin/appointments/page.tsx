@@ -166,8 +166,8 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
 
       {/* Filters */}
       <AdminCard padding={0} className="mb-4 overflow-hidden">
-        <form method="get" className="px-5 py-4">
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <form method="get" className="gh-admin-appointment-filters px-5 py-4">
+          <div className="gh-admin-appointment-filter-grid">
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Status</span>
               <select
@@ -234,7 +234,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
             </label>
           </div>
           <input type="hidden" name="page" value="1" />
-          <div className="mt-4 flex flex-wrap items-center gap-3">
+          <div className="gh-admin-appointment-actions mt-4 flex flex-wrap items-center gap-3">
             <button type="submit" className="gh-btn gh-btn-primary min-h-9">
               Apply filters
             </button>
@@ -265,7 +265,7 @@ export default async function AdminAppointmentsPage({ searchParams }: PageProps)
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="gh-admin-appointment-table-wrap overflow-x-auto">
             <AdminTable>
               <Thead>
                 <Th>Patient</Th>

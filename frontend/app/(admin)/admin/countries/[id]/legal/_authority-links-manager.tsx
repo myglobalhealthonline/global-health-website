@@ -105,7 +105,7 @@ export function AuthorityLinksManager({
   }
 
   return (
-    <AdminCard>
+    <AdminCard className="gh-admin-authority-links">
       <h3 style={cardTitleStyle}>Authority links</h3>
       <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
         Official regulators / authorities for this market. “In footer” adds the
@@ -114,16 +114,16 @@ export function AuthorityLinksManager({
       </p>
 
       {rows.length > 0 ? (
-        <div className="mb-4 grid gap-3">
+        <div className="gh-admin-authority-list mb-4 grid gap-3">
           {rows.map((row) => (
             <form
               key={row.id}
               action={editLink}
-              className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3"
+              className="gh-admin-authority-row rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3"
             >
               <input type="hidden" name="linkId" value={row.id} />
               <LinkFields row={row} />
-              <div className="mt-2 flex justify-end gap-2">
+              <div className="gh-admin-country-actions mt-2 flex justify-end gap-2">
                 <button
                   type="submit"
                   formAction={removeLink}
@@ -145,12 +145,12 @@ export function AuthorityLinksManager({
         </p>
       )}
 
-      <form action={addLink} className="rounded-md border border-dashed border-[var(--color-border)] p-3">
+      <form action={addLink} className="gh-admin-authority-row gh-admin-authority-row--new rounded-md border border-dashed border-[var(--color-border)] p-3">
         <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
           Add authority link
         </p>
         <LinkFields row={null} />
-        <div className="mt-2 flex justify-end">
+        <div className="gh-admin-country-actions mt-2 flex justify-end">
           <button type="submit" className="gh-btn gh-btn-primary">
             Add
           </button>
@@ -162,7 +162,7 @@ export function AuthorityLinksManager({
 
 function LinkFields({ row }: { row: AdminAuthorityLinkDto | null }) {
   return (
-    <div className="grid gap-2 sm:grid-cols-2">
+    <div className="gh-admin-authority-fields grid gap-2 sm:grid-cols-2">
       <label className="flex flex-col gap-1">
         <span className="gh-field-label">Name</span>
         <input type="text" name="name" maxLength={200} defaultValue={row?.name ?? ""} className="gh-input" />

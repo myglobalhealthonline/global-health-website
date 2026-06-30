@@ -43,7 +43,7 @@ export default async function DoctorReportsPage({
 
   return (
     <>
-      <header className="mb-6">
+      <header className="gh-doctor-page-header mb-6">
         <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-text-muted)]">
           Doctor
         </p>
@@ -56,7 +56,7 @@ export default async function DoctorReportsPage({
         </p>
       </header>
 
-      <form className="gh-card mb-4 grid gap-3 p-4 sm:grid-cols-5" method="get">
+      <form className="gh-card gh-doctor-filter-card gh-doctor-filter-grid mb-4 grid gap-3 p-4 sm:grid-cols-5" method="get">
         <label className="flex flex-col gap-1">
           <span className="gh-field-label">From</span>
           <input
@@ -120,7 +120,7 @@ export default async function DoctorReportsPage({
             <option value="FAILED">Failed</option>
           </select>
         </label>
-        <div className="sm:col-span-5 flex flex-wrap items-center gap-2">
+        <div className="gh-doctor-filter-actions sm:col-span-5 flex flex-wrap items-center gap-2">
           <button type="submit" className="gh-btn gh-btn-primary text-sm">
             Apply
           </button>
@@ -136,7 +136,7 @@ export default async function DoctorReportsPage({
         </div>
       ) : (
         <>
-          <div className="mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="gh-doctor-report-tile-grid mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <Tile
               label="Appointments"
               value={String(result.data.appointments.total)}
@@ -165,8 +165,8 @@ export default async function DoctorReportsPage({
             />
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-2">
-            <section className="gh-card p-6">
+          <div className="gh-doctor-report-grid grid gap-4 lg:grid-cols-2">
+            <section className="gh-card gh-doctor-report-card p-6">
               <h3
                 className="m-0 text-[var(--color-text-primary)]"
                 style={{
@@ -184,7 +184,7 @@ export default async function DoctorReportsPage({
                 }))}
               />
             </section>
-            <section className="gh-card p-6">
+            <section className="gh-card gh-doctor-report-card p-6">
               <h3
                 className="m-0 text-[var(--color-text-primary)]"
                 style={{
@@ -211,7 +211,7 @@ export default async function DoctorReportsPage({
 
 function Tile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="gh-card p-5">
+    <div className="gh-card gh-doctor-report-tile p-5">
       <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
         {label}
       </p>
@@ -231,7 +231,7 @@ function BreakdownTable({ rows }: { rows: { label: string; count: number }[] }) 
     );
   }
   return (
-    <table className="mt-4 w-full text-[13px]">
+    <table className="gh-doctor-mini-table mt-4 w-full text-[13px]">
       <tbody>
         {rows.map((r) => (
           <tr key={r.label} className="border-t border-[var(--color-border)]">

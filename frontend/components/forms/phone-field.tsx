@@ -53,7 +53,7 @@ export function PhoneField({
   placeholder = "871234567",
   inputClassName = "gh-input",
   selectClassName = "gh-select",
-  className = "flex gap-2",
+  className = "gh-phone-field flex gap-2",
   id,
   "aria-invalid": ariaInvalid,
 }: Props) {
@@ -88,7 +88,7 @@ export function PhoneField({
       <input type="hidden" name={name} value={combined} />
       <select
         aria-label="Country code"
-        className={`${selectClassName} max-w-[150px]`}
+        className={`gh-phone-field__dial ${selectClassName} max-w-[150px]`}
         value={dial}
         disabled={disabled}
         onChange={(e) => update(e.target.value, national)}
@@ -104,7 +104,7 @@ export function PhoneField({
         type="tel"
         inputMode="tel"
         autoComplete="tel-national"
-        className={`${inputClassName} flex-1`}
+        className={`gh-phone-field__number ${inputClassName} flex-1`}
         placeholder={placeholder}
         required={required}
         disabled={disabled}

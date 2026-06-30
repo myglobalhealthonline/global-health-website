@@ -41,7 +41,7 @@ export async function UpdateAppointmentPanel({
 
   if (!appointmentResult.ok) {
     return (
-      <AdminCard padding={0}>
+      <AdminCard padding={0} className="gh-admin-order-appointment-panel">
         <SectionHeader title="Update appointment" />
         <p className="p-5 text-sm text-[var(--color-text-muted)]">
           Could not load appointment: {appointmentResult.message}
@@ -106,7 +106,7 @@ export async function UpdateAppointmentPanel({
   }
 
   return (
-    <AdminCard padding={0}>
+    <AdminCard padding={0} className="gh-admin-order-appointment-panel">
       <SectionHeader title="Update appointment" />
       <div className="p-5">
         {error ? (
@@ -120,7 +120,7 @@ export async function UpdateAppointmentPanel({
           </p>
         ) : null}
 
-        <form id={formId} action={updateAppointmentAction} className="grid gap-4">
+        <form id={formId} action={updateAppointmentAction} className="gh-admin-order-appointment-form grid gap-4">
           <label className="flex flex-col gap-1.5">
             <span className="gh-field-label">Consultation date & time</span>
             <input

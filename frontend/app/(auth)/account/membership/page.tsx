@@ -30,9 +30,9 @@ export default async function MembershipPage({
 
   if (!sub || !sub.plan) {
     return (
-      <>
+      <div className="gh-patient-page gh-patient-membership-page">
         <PageHeader title={t.title} description={t.subtitle} />
-        <div className="gh-card max-w-xl p-8 text-center">
+        <div className="gh-patient-empty-state gh-card max-w-xl p-8 text-center">
           <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
             {t.noSubscription}
           </p>
@@ -40,7 +40,7 @@ export default async function MembershipPage({
             {t.browsePlans}
           </Link>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -66,7 +66,7 @@ export default async function MembershipPage({
   const pricingHref = config ? `/${config.slug}/${locale}/pricing` : "/";
 
   return (
-    <>
+    <div className="gh-patient-page gh-patient-membership-page">
       <PageHeader title={t.title} description={t.subtitle} />
       <ManagePanel
         t={t}
@@ -86,6 +86,6 @@ export default async function MembershipPage({
           and their unlock conditions (Req 3). Reuses the dashboard widgets;
           `embedded` hides its plan card since ManagePanel shows that above. */}
       <SubscriptionDashboard locale={locale} embedded />
-    </>
+    </div>
   );
 }

@@ -122,7 +122,8 @@ export function ServicesUsedList({
           No services logged for this consult.
         </p>
       ) : (
-        <table className="w-full text-[13px]">
+        <div className="gh-doctor-table-wrap overflow-x-auto">
+          <table className="w-full min-w-[620px] text-[13px]">
           <thead>
             <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
               <th className="py-2 text-left">Item</th>
@@ -174,13 +175,14 @@ export function ServicesUsedList({
               </tr>
             ) : null}
           </tbody>
-        </table>
+          </table>
+        </div>
       )}
 
       {locked ? null : (
         <form
           onSubmit={add}
-          className="grid grid-cols-1 gap-2 sm:grid-cols-[2fr_60px_100px_80px_auto]"
+          className="gh-doctor-services-used-form grid grid-cols-1 gap-2 sm:grid-cols-[2fr_60px_100px_80px_auto]"
         >
           <input
             type="text"

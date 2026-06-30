@@ -19,8 +19,8 @@ const KIND_OPTIONS: { value: AdminAssetKind; label: string }[] = [
 
 export function AssetFields({ countries, doctorOptions, initial }: Props) {
   return (
-    <div className="flex flex-col gap-6">
-      <div className="rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-soft)] px-4 py-3 text-sm text-[var(--color-text-muted)]">
+    <div className="gh-admin-asset-fields">
+      <div className="gh-admin-asset-note">
         <p className="font-medium text-[var(--color-text-primary)]">Paths & uploads</p>
         <p className="mt-1">
           Asset rows store a path or URL. When the API is connected to Railway Bucket (S3), use{" "}
@@ -58,7 +58,7 @@ export function AssetFields({ countries, doctorOptions, initial }: Props) {
         </span>
       </label>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="gh-admin-asset-field-grid gh-admin-asset-field-grid--two">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Kind</span>
           <select
@@ -98,7 +98,7 @@ export function AssetFields({ countries, doctorOptions, initial }: Props) {
         />
       </label>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="gh-admin-asset-field-grid gh-admin-asset-field-grid--two">
         <label className="flex flex-col gap-2">
           <span className="gh-field-label">Image title</span>
           <input
@@ -141,7 +141,7 @@ export function AssetFields({ countries, doctorOptions, initial }: Props) {
         />
       </label>
 
-      <label className="flex cursor-pointer items-center gap-2">
+      <label className="gh-admin-asset-active-row">
         <input
           type="checkbox"
           name="isActive"

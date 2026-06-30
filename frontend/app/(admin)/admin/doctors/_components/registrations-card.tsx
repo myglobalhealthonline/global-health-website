@@ -73,7 +73,7 @@ export function DoctorRegistrationsCard({
   }
 
   return (
-    <AdminCard>
+    <AdminCard className="gh-admin-doctor-registrations-card">
       <h3 style={cardTitleStyle}>Medical registrations</h3>
       <p className="mb-4 mt-1 text-[13px] text-[var(--color-text-muted)]">
         Per-country credentials printed on prescription PDFs. One row per
@@ -87,17 +87,17 @@ export function DoctorRegistrationsCard({
           edit page to enable registrations.
         </p>
       ) : (
-        <div className="grid gap-3">
+        <div className="gh-admin-doctor-registration-list grid gap-3">
           {ordered.map((country) => {
             const row = byCountry.get(country.id) ?? null;
             return (
               <form
                 key={country.id}
                 action={saveRegistration}
-                className="rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3"
+                className="gh-admin-doctor-registration-row rounded-md border border-[var(--color-border)] bg-[var(--color-background-soft)] p-3"
               >
                 <input type="hidden" name="countryId" value={country.id} />
-                <div className="mb-2 flex items-center justify-between gap-2">
+                <div className="gh-admin-doctor-registration-header mb-2 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
                       {country.code}
@@ -123,7 +123,7 @@ export function DoctorRegistrationsCard({
                     </span>
                   )}
                 </div>
-                <div className="grid gap-2 sm:grid-cols-[100px_1fr_1fr_auto] sm:items-end">
+                <div className="gh-admin-doctor-registration-fields grid gap-2 sm:grid-cols-[100px_1fr_1fr_auto] sm:items-end">
                   <label className="flex flex-col gap-1">
                     <span className="gh-field-label">Chamber</span>
                     <input
@@ -165,7 +165,7 @@ export function DoctorRegistrationsCard({
                     Verified
                   </label>
                 </div>
-                <div className="mt-2 flex justify-end">
+                <div className="gh-admin-doctor-form-actions mt-2 flex justify-end">
                   <button type="submit" className="gh-btn gh-btn-primary">
                     Save
                   </button>

@@ -48,7 +48,7 @@ export function ScheduleSlotInput({ name, initialIso, formId }: Props) {
       ref={ref}
       type="datetime-local"
       name={name}
-      className="gh-input"
+      className="gh-input gh-admin-appointment-slot-input"
       defaultValue=""
       {...(formId ? { form: formId } : {})}
     />
