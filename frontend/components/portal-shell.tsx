@@ -156,7 +156,7 @@ export function PortalShell({
           translate; on desktop the main column gets `lg:pl-[260px]`
           so content doesn't slide under it. */}
       <aside
-        className={`gh-portal-sidebar fixed inset-y-0 left-0 z-40 flex w-[236px] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
+        className={`gh-portal-sidebar fixed inset-y-0 left-0 z-40 flex w-[272px] max-w-[86vw] flex-col transition-transform duration-200 ease-out lg:translate-x-0 ${
           navOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
         }`}
       >
@@ -212,10 +212,10 @@ export function PortalShell({
 
       {/* Main column — offset by sidebar width on desktop so content
           doesn't slide under the fixed sidebar. */}
-      <div className="flex min-h-screen min-w-0 flex-col lg:pl-[236px]">
+      <div className="flex min-h-screen min-w-0 flex-col lg:pl-[272px]">
           {/* Top header — sticky, frosted-glass over scrolling content. */}
           <header
-            className="gh-portal-topbar sticky top-0 z-20 flex h-[58px] shrink-0 items-center justify-between gap-3 border-b border-[var(--color-border)] px-4 sm:px-6"
+            className="gh-portal-topbar sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--color-border)] px-4 sm:px-6"
           >
             <div className="flex min-w-0 items-center gap-2 sm:gap-3">
               <button
@@ -359,7 +359,7 @@ export function PortalShell({
             </div>
           </header>
 
-          <main className="gh-admin-main gh-portal-main min-w-0 flex-1 px-4 py-5 sm:px-6 sm:py-6">
+          <main className="gh-admin-main gh-portal-main min-w-0 flex-1 px-3 py-4 sm:px-5 sm:py-6 xl:px-7">
             {children}
           </main>
         </div>

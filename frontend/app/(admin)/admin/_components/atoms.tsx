@@ -298,7 +298,11 @@ export function StatCard({
       </Link>
     );
   }
-  return <AdminCard padding={18}>{inner}</AdminCard>;
+  return (
+    <AdminCard padding={18} className="gh-stat-card">
+      {inner}
+    </AdminCard>
+  );
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -356,7 +360,7 @@ export function Pill({
   const t = PILL_TONES[tone];
   return (
     <span
-      className="inline-flex items-center gap-1.5 whitespace-nowrap"
+      className={`gh-pill gh-pill-${tone} inline-flex items-center gap-1.5 whitespace-nowrap`}
       style={{
         padding: "3px 10px",
         borderRadius: 999,
@@ -683,17 +687,27 @@ export function Btn(props: BtnButtonProps | BtnLinkProps) {
 
   if ("href" in props) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { variant: _v, size: _s, iconLeft: _il, iconRight: _ir, children: _c, href, style, ...rest } = props;
+    const { variant: _v, size: _s, iconLeft: _il, iconRight: _ir, children: _c, href, style, className, ...rest } = props;
     return (
-      <Link href={href} style={{ ...baseStyle, ...style }} {...rest}>
+      <Link
+        href={href}
+        className={`gh-btn gh-btn-${variant} ${className ?? ""}`}
+        style={{ ...baseStyle, ...style }}
+        {...rest}
+      >
         {inner}
       </Link>
     );
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { variant: _v, size: _s, iconLeft: _il, iconRight: _ir, children: _c, style, type, ...rest } = props;
+  const { variant: _v, size: _s, iconLeft: _il, iconRight: _ir, children: _c, style, type, className, ...rest } = props;
   return (
-    <button type={type ?? "button"} style={{ ...baseStyle, ...style }} {...rest}>
+    <button
+      type={type ?? "button"}
+      className={`gh-btn gh-btn-${variant} ${className ?? ""}`}
+      style={{ ...baseStyle, ...style }}
+      {...rest}
+    >
       {inner}
     </button>
   );

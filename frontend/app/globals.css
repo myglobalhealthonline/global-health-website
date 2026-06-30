@@ -1735,6 +1735,326 @@ img {
   }
 }
 
+/* Portal system v3: compact clinical SaaS treatment for admin, doctor, and patient. */
+.gh-portal-shell {
+  --portal-bg: #f7f8f3;
+  --portal-surface: rgba(255, 255, 255, 0.92);
+  --portal-surface-solid: #ffffff;
+  --portal-line: rgba(29, 75, 54, 0.11);
+  --portal-line-strong: rgba(29, 75, 54, 0.2);
+  --portal-muted: #66766f;
+  --portal-radius: 10px;
+  --portal-radius-sm: 8px;
+  --portal-shadow: 0 14px 38px rgba(25, 68, 51, 0.075);
+  --portal-shadow-hover: 0 18px 48px rgba(25, 68, 51, 0.11);
+  background:
+    radial-gradient(900px 540px at 88% -10%, rgba(143, 176, 33, 0.11), transparent 58%),
+    linear-gradient(180deg, #f8faf5 0%, var(--portal-bg) 100%);
+}
+
+.gh-portal-shell::before {
+  background-image: url("/images/portal/portal-ambient-texture.png");
+  opacity: 0.12;
+  mix-blend-mode: multiply;
+}
+
+.gh-portal-shell::after {
+  background:
+    linear-gradient(90deg, rgba(247, 248, 243, 0.92) 0%, rgba(247, 248, 243, 0.72) 55%, rgba(247, 248, 243, 0.88) 100%),
+    radial-gradient(760px 420px at 62% 8%, rgba(68, 148, 134, 0.08), transparent 62%);
+}
+
+.gh-portal-sidebar {
+  background:
+    linear-gradient(180deg, rgba(15, 48, 36, 0.99) 0%, rgba(9, 34, 27, 0.99) 100%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 20px 0 52px rgba(12, 40, 32, 0.16);
+}
+
+.gh-portal-sidebar::before {
+  opacity: 0.2;
+  mix-blend-mode: screen;
+}
+
+.gh-admin-sidebar-logo {
+  min-height: 94px;
+}
+
+.gh-portal-topbar {
+  background: rgba(250, 251, 248, 0.9) !important;
+  border-color: rgba(29, 75, 54, 0.1) !important;
+  box-shadow: 0 10px 30px rgba(29, 75, 54, 0.045);
+}
+
+.gh-portal-main {
+  max-width: 1500px;
+}
+
+.gh-portal-main > .mx-auto[class*="max-w-"] {
+  width: 100% !important;
+  max-width: 1180px !important;
+}
+
+.gh-portal-main > .mx-auto[class*="max-w-2xl"],
+.gh-portal-main > .mx-auto[class*="max-w-3xl"] {
+  margin-inline: 0 !important;
+}
+
+.gh-portal-page-header,
+.gh-admin-main > header:not(.gh-portal-page-header) {
+  min-height: 0 !important;
+  margin-bottom: 18px !important;
+  padding: clamp(18px, 2vw, 26px) !important;
+  border: 1px solid var(--portal-line) !important;
+  border-radius: var(--portal-radius) !important;
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.73)),
+    url("/images/portal/portal-clinical-wash.png") !important;
+  background-position: center, center 88% !important;
+  background-size: cover, cover !important;
+  box-shadow: var(--portal-shadow) !important;
+}
+
+.gh-portal-page-header h1,
+.gh-admin-main > header h1,
+.gh-admin-main > header h2 {
+  max-width: 980px;
+  color: #173d2f !important;
+  font-size: clamp(23px, 2vw, 32px) !important;
+  line-height: 1.08 !important;
+  letter-spacing: 0 !important;
+}
+
+.gh-portal-page-header p,
+.gh-admin-main > header p {
+  color: var(--portal-muted) !important;
+}
+
+.gh-admin-card,
+.gh-card,
+.gh-stat-card {
+  border: 1px solid var(--portal-line) !important;
+  border-radius: var(--portal-radius) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(253, 254, 250, 0.94) 100%) !important;
+  box-shadow: var(--portal-shadow) !important;
+}
+
+.gh-admin-card:hover,
+.gh-card:hover,
+.gh-stat-card:hover {
+  border-color: rgba(29, 75, 54, 0.18) !important;
+  box-shadow: var(--portal-shadow-hover) !important;
+}
+
+.gh-admin-card::before {
+  background-image: url("/images/portal/portal-card-tint.png");
+  opacity: 0.1;
+}
+
+.gh-stat-card {
+  min-height: 128px;
+}
+
+.gh-stat-card p[style*="font-size: 36"],
+.gh-admin-card p[style*="font-size: 36"] {
+  font-size: clamp(27px, 2.2vw, 34px) !important;
+}
+
+.gh-portal-section-header {
+  padding: 15px 18px !important;
+  background: rgba(250, 251, 248, 0.78) !important;
+}
+
+.gh-admin-main :where(.grid) {
+  min-width: 0;
+}
+
+.gh-admin-main :where(.gh-input, .gh-select, .gh-textarea, input, select, textarea) {
+  min-width: 0;
+  border-color: var(--portal-line-strong) !important;
+  border-radius: var(--portal-radius-sm) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  color: #263b34 !important;
+  font-size: 14px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.gh-admin-main :where(.gh-input, .gh-select, input, select) {
+  min-height: 40px !important;
+}
+
+.gh-admin-main :where(.gh-textarea, textarea) {
+  min-height: 110px !important;
+}
+
+.gh-field-label {
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #305547 !important;
+}
+
+.gh-btn,
+.gh-admin-main :where(button[type="submit"], a.gh-btn),
+.gh-admin-main :where(a[class*="rounded-md"], button[class*="rounded-md"]) {
+  border-radius: var(--portal-radius-sm) !important;
+  transition:
+    transform 170ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 170ms ease-out,
+    background-color 170ms ease-out,
+    border-color 170ms ease-out,
+    color 170ms ease-out !important;
+}
+
+.gh-admin-main :where(.gh-btn, button[type="submit"]) {
+  min-height: 38px;
+}
+
+.gh-btn-primary,
+.gh-admin-main button[type="submit"]:not([class*="ghost"]):not([class*="soft"]) {
+  background: #184633 !important;
+  border-color: #184633 !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 22px rgba(24, 70, 51, 0.16) !important;
+}
+
+.gh-btn-primary:hover {
+  background: #113728 !important;
+}
+
+.gh-btn-soft,
+.gh-btn-secondary,
+.gh-btn-outline {
+  background: #ffffff !important;
+  border-color: var(--portal-line-strong) !important;
+  color: #184633 !important;
+}
+
+.gh-btn-soft:hover,
+.gh-btn-secondary:hover,
+.gh-btn-outline:hover {
+  background: #f1f5eb !important;
+}
+
+.gh-badge,
+.gh-pill,
+.gh-admin-main :where([class*="rounded-full"]) {
+  border-radius: 7px !important;
+}
+
+.gh-admin-main :where(.overflow-x-auto, .gh-admin-table-wrap) {
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gh-admin-main :where(table) {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.gh-admin-main :where(.overflow-x-auto table, .gh-admin-table-wrap table) {
+  min-width: 720px;
+}
+
+.gh-admin-main :where(thead) {
+  background: rgba(242, 246, 236, 0.92) !important;
+}
+
+.gh-admin-main :where(th) {
+  color: #46675b !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.gh-admin-main :where(td) {
+  color: #2d4039;
+}
+
+.gh-admin-main :where(tbody tr) {
+  transition: background-color 150ms ease-out;
+}
+
+.gh-admin-main :where(tbody tr:hover) {
+  background: rgba(143, 176, 33, 0.055);
+}
+
+.gh-portal-tabs,
+.gh-admin-main :where([role="tablist"]) {
+  display: flex;
+  gap: 6px;
+  max-width: 100%;
+  overflow-x: auto;
+  border-radius: var(--portal-radius);
+  background: rgba(241, 245, 235, 0.9);
+  padding: 5px;
+}
+
+.gh-admin-main :where([role="tab"], .gh-portal-tabs a, .gh-portal-tabs button) {
+  min-height: 34px;
+  white-space: nowrap;
+}
+
+.gh-status-warning,
+.gh-status-error,
+.gh-status-success,
+.gh-status-info,
+.gh-admin-main :where([role="alert"]) {
+  border-radius: var(--portal-radius-sm) !important;
+  box-shadow: inset 3px 0 0 rgba(29, 75, 54, 0.18);
+}
+
+.gh-admin-main :where(.animate-spin) {
+  animation-duration: 900ms;
+}
+
+.gh-admin-main :where(.line-clamp-2, .truncate) {
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .gh-portal-topbar {
+    height: 60px !important;
+  }
+
+  .gh-portal-main {
+    padding-inline: 12px !important;
+  }
+
+  .gh-portal-page-header,
+  .gh-admin-main > header:not(.gh-portal-page-header) {
+    padding: 16px !important;
+  }
+
+  .gh-portal-page-header > div,
+  .gh-admin-main > header > div {
+    width: 100%;
+  }
+
+  .gh-portal-page-header .flex,
+  .gh-admin-main > header .flex {
+    max-width: 100%;
+  }
+
+  .gh-admin-main :where(.gh-btn) {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .gh-admin-main :where(form .gh-btn, form button[type="submit"]) {
+    width: 100%;
+  }
+
+  .gh-admin-main :where(.gh-admin-card, .gh-card) {
+    padding-inline: min(18px, 5vw);
+  }
+}
+
 /* Legacy alias — keep backward compat */
 .gh-icon-circle {
   display: inline-flex;
