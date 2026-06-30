@@ -24,6 +24,26 @@ Evidence:
 ## Remaining Requirement
 
 A true screenshot completion pass still needs valid local sessions or seeded auth cookies for admin, doctor, and patient roles.
+
+## Authenticated Screenshot Phase Started
+
+Added `scripts/portal-authenticated-screenshots.mjs` and `docs/portal-redesign/authenticated-screenshot-runbook.md` to make the visual review repeatable with role credentials and the local Chrome binary.
+
+Smoke evidence:
+
+- Chrome binary verified at `C:\Users\kingh\Downloads\chrome-win\chrome.exe`.
+- Direct backend login succeeded for the admin role.
+- Authenticated `/admin` screenshots captured at 390px and 1280px.
+- Result file: `docs/portal-redesign/authenticated-screenshots/2026-06-30T23-04-15-389Z/results.json`.
+- Screenshot files:
+  - `docs/portal-redesign/authenticated-screenshots/2026-06-30T23-04-15-389Z/images/admin/390/admin-admin-390.png`
+  - `docs/portal-redesign/authenticated-screenshots/2026-06-30T23-04-15-389Z/images/admin/1280/admin-admin-1280.png`
+
+Current phase gap:
+
+- Doctor and patient/account screenshots still need safe test credentials.
+- Dynamic routes still need concrete ID replacements through `PORTAL_SCREENSHOT_ROUTE_MAP_JSON`.
+- The complete checklist still needs all required widths, not just the smoke widths.
 ## Final Audit Status
 
 All portal page/component audit rows now have final allowed statuses:

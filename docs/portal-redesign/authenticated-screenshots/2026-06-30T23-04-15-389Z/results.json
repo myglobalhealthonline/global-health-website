@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-06-30T23:04:53.813Z",
+  "siteUrl": "http://localhost:3000",
+  "chromePath": "C:\\Users\\kingh\\Downloads\\chrome-win\\chrome.exe",
+  "checklist": "docs/portal-redesign/screenshot-checklist.md",
+  "portals": [
+    "Admin"
+  ],
+  "widths": [
+    390,
+    1280
+  ],
+  "totals": {
+    "200": 2
+  },
+  "results": [
+    {
+      "portal": "Admin",
+      "route": "/admin",
+      "width": 390,
+      "status": 200,
+      "finalPath": "/admin",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-04-15-389Z/images/admin/390/admin-admin-390.png"
+    },
+    {
+      "portal": "Admin",
+      "route": "/admin",
+      "width": 1280,
+      "status": 200,
+      "finalPath": "/admin",
+      "redirectedToLogin": false,
+      "screenshotPath": "docs/portal-redesign/authenticated-screenshots/2026-06-30T23-04-15-389Z/images/admin/1280/admin-admin-1280.png"
+    }
+  ]
+}

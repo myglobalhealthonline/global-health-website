@@ -1,0 +1,23 @@
+{
+  "checkedAt": "2026-06-30T23:02:17.836Z",
+  "siteUrl": "http://localhost:3000",
+  "chromePath": "C:\\Users\\kingh\\Downloads\\chrome-win\\chrome.exe",
+  "checklist": "docs/portal-redesign/screenshot-checklist.md",
+  "portals": [
+    "Admin"
+  ],
+  "widths": [
+    390,
+    1280
+  ],
+  "totals": {
+    "auth-skipped": 1
+  },
+  "results": [
+    {
+      "portal": "Admin",
+      "status": "auth-skipped",
+      "reason": "Login stayed on /login for Admin"
+    }
+  ]
+}
