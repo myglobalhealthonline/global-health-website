@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, Plus } from "lucide-react";
+import { Edit3, Eye, ImageIcon, Plus } from "lucide-react";
 import {
   adminAssetPreviewable,
   fetchAdminAssets,
@@ -15,6 +15,8 @@ import { FlagBadge } from "../_components/flag-badge";
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import {
   AdminCard,
+  AdminEmptyState,
+  AdminSummaryStrip,
   AdminTable,
   Btn,
   IconBtn,
@@ -118,6 +120,11 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
   const { items, pagination } = listResult.data;
   const { page, pageSize, total, totalPages } = pagination;
   const countries = countriesResult.data.countries;
+  const activeAssets = items.filter((item) => item.isActive).length;
+  const previewableAssets = items.filter((item) =>
+    adminAssetPreviewable(item.kind as AdminAssetKind, item.path),
+  ).length;
+  const scopedAssets = items.filter((item) => item.country).length;
   const statusFilter = filters.isActive ?? "";
   const successMessage = spRead(sp, "success");
   const errorMessage = spRead(sp, "error");
@@ -164,10 +171,33 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
         </p>
       ) : null}
 
+      <AdminSummaryStrip
+        items={[
+          {
+            label: "Visible assets",
+            value: activeAssets,
+            hint: `${items.length} on this page`,
+            tone: "brand",
+          },
+          {
+            label: "Preview-ready",
+            value: previewableAssets,
+            hint: "Images, logos, icons, and badges",
+            tone: "success",
+          },
+          {
+            label: "Country scoped",
+            value: scopedAssets,
+            hint: "Localized assets in this view",
+            tone: "neutral",
+          },
+        ]}
+      />
+
       {/* Filters */}
       <AdminCard padding={0} className="mb-4 overflow-hidden">
-        <form method="get" className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-filters px-5 py-4">
-          <div className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-filter-grid">
+        <form method="get" className="gh-admin-asset-filters px-5 py-4">
+          <div className="gh-admin-asset-filter-grid">
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -223,7 +253,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
             </label>
           </div>
           <input type="hidden" name="page" value="1" />
-          <div className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-actions mt-4 flex flex-wrap items-center gap-3">
+          <div className="gh-admin-asset-actions mt-4 flex flex-wrap items-center gap-3">
             <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36 }}>
               Apply filters
             </button>
@@ -244,7 +274,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
 
       {/* Table */}
       <AdminCard padding={0} className="overflow-hidden">
-        <div className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-table-wrap overflow-x-auto">
+        <div className="gh-admin-asset-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th style={{ width: 120 }}>Preview</Th>
@@ -302,7 +332,7 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
                     </Pill>
                   </Td>
                   <Td align="right">
-                    <div className="gh-admin-area-hero gh-admin-area-assets gh-admin-asset-row-actions flex justify-end gap-1.5">
+                    <div className="gh-admin-asset-row-actions flex justify-end gap-1.5">
                       <IconBtn
                         ariaLabel={`View ${a.key}`}
                         href={`/admin/assets/${a.id}`}
@@ -330,10 +360,62 @@ export default async function AdminAssetsPage({ searchParams }: PageProps) {
           </AdminTable>
         </div>
 
+        {items.length > 0 ? (
+          <div className="gh-admin-mobile-list">
+            {items.map((a) => (
+              <article key={a.id} className="gh-admin-mobile-card">
+                <div className="flex min-w-0 items-start gap-3">
+                  <PreviewCell item={a} />
+                  <div className="gh-admin-mobile-card__title">
+                    <strong>{a.key}</strong>
+                    <span>{a.path}</span>
+                  </div>
+                  <Pill tone={a.isActive ? "published" : "draft"}>
+                    {a.isActive ? "Active" : "Inactive"}
+                  </Pill>
+                </div>
+                <div className="gh-admin-mobile-meta">
+                  <span>
+                    <em>Kind</em>
+                    <strong>{a.kind}</strong>
+                  </span>
+                  <span>
+                    <em>Country</em>
+                    <strong>{a.country?.code.toUpperCase() ?? "Global"}</strong>
+                  </span>
+                  <span>
+                    <em>Alt text</em>
+                    <strong>{a.altText ?? "Not set"}</strong>
+                  </span>
+                  <span>
+                    <em>Usage</em>
+                    <strong>{a.usageNote ?? "Unassigned"}</strong>
+                  </span>
+                </div>
+                <div className="gh-admin-mobile-actions">
+                  <IconBtn ariaLabel={`View ${a.key}`} href={`/admin/assets/${a.id}`}>
+                    <Eye className="size-3.5" aria-hidden />
+                  </IconBtn>
+                  <IconBtn ariaLabel={`Edit ${a.key}`} href={`/admin/assets/${a.id}/edit`}>
+                    <Edit3 className="size-3.5" aria-hidden />
+                  </IconBtn>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : null}
+
         {items.length === 0 ? (
-          <p className="px-5 py-8 text-center text-sm text-[var(--color-text-muted)]">
-            No assets match these filters.
-          </p>
+          <AdminEmptyState
+            icon={<ImageIcon className="size-8" aria-hidden />}
+            title="No assets match these filters"
+            description="Clear the current filters or add a scoped asset for country heroes, logos, badges, and social previews."
+            action={
+              <Btn href="/admin/assets/new" variant="soft" size="sm">
+                Add asset
+              </Btn>
+            }
+          />
         ) : null}
 
         {totalPages > 1 ? (

@@ -1,7 +1,9 @@
-import { Edit3, Languages, Plus } from "lucide-react";
+import { Edit3, FileText, Languages, Plus } from "lucide-react";
 import { fetchAdminBlogPosts, fetchAdminCountries, type AdminBlogDto } from "@/lib/admin/admin-api";
 import {
   AdminCard,
+  AdminEmptyState,
+  AdminSummaryStrip,
   AdminTable,
   Btn,
   IconBtn,
@@ -50,6 +52,9 @@ export default async function AdminBlogListPage({
     fetchAdminCountries(),
   ]);
   const countries = countriesResult.ok ? countriesResult.data.countries : [];
+  const posts = result.ok ? result.data.items : [];
+  const publishedCount = posts.filter((p) => p.status === "PUBLISHED" && p.isActive).length;
+  const translatedCount = posts.filter((p) => p.translations.length > 0).length;
 
   return (
     <>
@@ -136,13 +141,44 @@ export default async function AdminBlogListPage({
           </AdminCard>
         ) : result.data.items.length === 0 ? (
           <AdminCard>
-            <p className="text-sm text-[var(--color-text-muted)]">
-              No blog posts yet. Use “New post” to upload one.
-            </p>
+            <AdminEmptyState
+              assetSrc="/images/portal/generated/admin-content-management-accent.png"
+              title="No blog posts match these filters"
+              description="Create the first article or clear the current filters to review draft and published content."
+              action={
+                <Btn href="/admin/blog/new" variant="primary" size="sm" iconLeft={<Plus className="size-3.5" />}>
+                  New post
+                </Btn>
+              }
+            />
           </AdminCard>
         ) : (
           <AdminCard padding={0}>
-            <div className="gh-admin-area-hero gh-admin-area-content gh-admin-blog-table-wrap">
+            <div className="border-b border-[var(--color-border)] px-4 pt-4">
+              <AdminSummaryStrip
+                items={[
+                  {
+                    label: "Posts shown",
+                    value: posts.length,
+                    hint: "Matching filters",
+                    tone: "brand",
+                  },
+                  {
+                    label: "Published",
+                    value: publishedCount,
+                    hint: "Live articles",
+                    tone: publishedCount > 0 ? "success" : "neutral",
+                  },
+                  {
+                    label: "Translated",
+                    value: translatedCount,
+                    hint: "Has localized rows",
+                    tone: translatedCount > 0 ? "neutral" : "warning",
+                  },
+                ]}
+              />
+            </div>
+            <div className="gh-admin-area-hero gh-admin-area-content gh-admin-blog-table-wrap gh-admin-deep-table-wrap">
             <AdminTable>
               <Thead>
                 <Th>Title</Th>
@@ -187,6 +223,34 @@ export default async function AdminBlogListPage({
                 ))}
               </tbody>
             </AdminTable>
+            </div>
+            <div className="gh-admin-mobile-list">
+              {posts.map((p: AdminBlogDto) => (
+                <article key={p.id} className="gh-admin-mobile-card">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="gh-admin-mobile-card-title">{p.title}</h3>
+                      <p className="gh-admin-mobile-card-meta font-mono">{p.slug}</p>
+                    </div>
+                    <Pill tone={p.status === "PUBLISHED" ? "published" : "draft"}>
+                      {p.isActive ? p.status : "INACTIVE"}
+                    </Pill>
+                  </div>
+                  <div className="flex flex-wrap gap-2 text-[12px] text-[var(--color-text-muted)]">
+                    <span className="inline-flex items-center gap-1">
+                      <FileText className="size-3" aria-hidden />
+                      {p.category ?? "No category"}
+                    </span>
+                    <span>{p.locale}</span>
+                    <span>{p.translations.length} translations</span>
+                  </div>
+                  <div className="gh-admin-mobile-actions">
+                    <IconBtn href={`/admin/blog/${p.id}/edit`} ariaLabel="Edit post">
+                      <Edit3 className="size-4" />
+                    </IconBtn>
+                  </div>
+                </article>
+              ))}
             </div>
           </AdminCard>
         )}

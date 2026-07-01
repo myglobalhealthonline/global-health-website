@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, Plus } from "lucide-react";
+import { Edit3, Eye, Plus, Stethoscope } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminDoctors,
@@ -14,6 +14,8 @@ import { FlagBadge } from "../_components/flag-badge";
 import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import {
   AdminCard,
+  AdminEmptyState,
+  AdminSummaryStrip,
   AdminTable,
   Btn,
   IconBtn,
@@ -123,6 +125,11 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
   const { items, pagination } = listResult.data;
   const { page, pageSize, total, totalPages } = pagination;
   const countries = countriesResult.data.countries;
+  const activeDoctors = items.filter((doctor) => doctor.active).length;
+  const accountLinked = items.filter((doctor) => doctor.loginUser).length;
+  const multiMarketDoctors = items.filter((doctor) =>
+    doctor.additionalCountries.some((link) => link.active && link.countryId !== doctor.countryId),
+  ).length;
 
   const statusFilter = filters.isActive ?? "";
   const successMessage = spRead(sp, "success");
@@ -170,10 +177,18 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
         </p>
       ) : null}
 
+      <AdminSummaryStrip
+        items={[
+          { label: "Profiles", value: total, hint: `${items.length} shown`, tone: "brand" },
+          { label: "Published", value: activeDoctors, hint: "Visible in directories", tone: "success" },
+          { label: "Accounts", value: accountLinked, hint: `${multiMarketDoctors} multi-market`, tone: "neutral" },
+        ]}
+      />
+
       {/* Filters card */}
-      <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-filters mb-4 overflow-hidden">
+      <AdminCard padding={0} className="gh-admin-doctor-filters mb-4 overflow-hidden">
         <form method="get" className="px-5 py-4">
-          <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-filter-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="gh-admin-doctor-filter-grid grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -229,7 +244,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
             </label>
           </div>
           <input type="hidden" name="page" value="1" />
-          <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-actions mt-4 flex flex-wrap items-center gap-3">
+          <div className="gh-admin-doctor-actions mt-4 flex flex-wrap items-center gap-3">
             <button type="submit" className="gh-btn gh-btn-primary gh-admin-pager-btn">
               Apply filters
             </button>
@@ -249,8 +264,8 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
       </AdminCard>
 
       {/* Table card */}
-      <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-table-card overflow-hidden">
-        <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-table-wrap overflow-x-auto">
+      <AdminCard padding={0} className="gh-admin-doctor-table-card overflow-hidden">
+        <div className="gh-admin-doctor-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Doctor</Th>
@@ -281,7 +296,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                       >
                         <span
                           aria-hidden
-                          className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-avatar inline-flex shrink-0 items-center justify-center text-white"
+                            className="gh-admin-doctor-avatar inline-flex shrink-0 items-center justify-center text-white"
                         >
                           {initials || "·"}
                         </span>
@@ -365,7 +380,7 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
                       </Pill>
                     </Td>
                     <Td align="right">
-                      <div className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-row-actions flex justify-end gap-1.5">
+                      <div className="gh-admin-doctor-row-actions flex justify-end gap-1.5">
                         <IconBtn
                           ariaLabel={`View ${d.fullName}`}
                           href={`/admin/doctors/${d.id}`}
@@ -394,14 +409,62 @@ export default async function AdminDoctorsPage({ searchParams }: PageProps) {
           </AdminTable>
         </div>
 
+        {items.length > 0 ? (
+          <div className="gh-admin-mobile-list">
+            {items.map((d) => {
+              const initials = d.fullName
+                .replace(/^Dr\.?\s+/i, "")
+                .split(/\s+/)
+                .slice(0, 2)
+                .map((s) => s[0]?.toUpperCase() ?? "")
+                .join("");
+              return (
+                <article key={d.id} className="gh-admin-mobile-card">
+                  <div className="flex min-w-0 items-start justify-between gap-3">
+                    <Link href={`/admin/doctors/${d.id}`} className="inline-flex min-w-0 items-center gap-3 no-underline">
+                      <span aria-hidden className="gh-admin-doctor-avatar inline-flex shrink-0 items-center justify-center text-white">
+                        {initials || "D"}
+                      </span>
+                      <span className="gh-admin-mobile-card__title">
+                        <strong>{d.fullName}</strong>
+                        <span>{d.title}</span>
+                      </span>
+                    </Link>
+                    <Pill tone={d.active ? "published" : "inactive"}>
+                      {d.active ? "Published" : "Suspended"}
+                    </Pill>
+                  </div>
+                  <div className="gh-admin-mobile-meta">
+                    <span><em>Market</em><strong>{d.country.code.toUpperCase()}</strong></span>
+                    <span><em>Languages</em><strong>{d.languages?.join(", ") || "Not set"}</strong></span>
+                    <span><em>Type</em><strong>{doctorConsultationTypeLabels(d.assignedServices ?? [])}</strong></span>
+                    <span><em>Account</em><strong>{d.loginUser ? (d.loginUser.emailVerifiedAt ? "Active" : "Pending") : "None"}</strong></span>
+                  </div>
+                  <div className="gh-admin-mobile-actions">
+                    <IconBtn ariaLabel={`View ${d.fullName}`} href={`/admin/doctors/${d.id}`}>
+                      <Eye className="size-3.5" aria-hidden />
+                    </IconBtn>
+                    <IconBtn ariaLabel={`Edit ${d.fullName}`} href={`/admin/doctors/${d.id}/edit`}>
+                      <Edit3 className="size-3.5" aria-hidden />
+                    </IconBtn>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : null}
+
         {items.length === 0 ? (
-          <p className="px-5 py-8 text-center text-sm text-[var(--color-text-muted)]">
-            No doctor profiles match these filters.
-          </p>
+          <AdminEmptyState
+            icon={<Stethoscope className="size-8" aria-hidden />}
+            title="No doctor profiles match these filters"
+            description="Try a wider market filter or add a clinician profile with languages, services, and country availability."
+            action={<Btn href="/admin/doctors/create" variant="soft" size="sm">Add doctor</Btn>}
+          />
         ) : null}
 
         {totalPages > 1 ? (
-          <nav className="gh-admin-area-hero gh-admin-area-doctors gh-admin-doctor-pagination flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-[13px]">
+          <nav className="gh-admin-doctor-pagination flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-soft)] px-5 py-3 text-[13px]">
             <div className="text-[var(--color-text-muted)]">
               Page {page} of {totalPages} · {pageSize} per page
             </div>

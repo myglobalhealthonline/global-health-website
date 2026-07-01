@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { ShieldCheck } from "lucide-react";
 import { fetchAdminAuditLog } from "@/lib/admin/admin-api";
-import { AdminCard, PageHeader } from "../_components/atoms";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader } from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -72,6 +73,11 @@ export default async function AdminAuditLogPage({
     entityId,
     actorUserId,
   });
+  const auditItems = result.ok ? result.data.items : [];
+  const visibleFailures = auditItems.filter((r) => r.action === "LOGIN_FAILED").length;
+  const visibleClinicalEvents = auditItems.filter((r) =>
+    ["CONSULT_SAVED", "CONSULT_SIGNED", "EXAM_LOGGED", "FORM_SUBMITTED"].includes(r.action),
+  ).length;
 
   return (
     <>
@@ -83,6 +89,30 @@ export default async function AdminAuditLogPage({
       />
 
       <AdminCard>
+        {result.ok ? (
+          <AdminSummaryStrip
+            items={[
+              {
+                label: "Events shown",
+                value: auditItems.length,
+                hint: `${result.data.pagination.total} total`,
+                tone: "brand",
+              },
+              {
+                label: "Clinical events",
+                value: visibleClinicalEvents,
+                hint: "Visible page",
+                tone: visibleClinicalEvents > 0 ? "success" : "neutral",
+              },
+              {
+                label: "Login failures",
+                value: visibleFailures,
+                hint: "Visible page",
+                tone: visibleFailures > 0 ? "warning" : "neutral",
+              },
+            ]}
+          />
+        ) : null}
         <div className="gh-admin-area-hero gh-admin-area-audit-log gh-admin-ops-quick-filters mb-3 flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
             Quick filters
@@ -163,11 +193,50 @@ export default async function AdminAuditLogPage({
             {result.message}
           </p>
         ) : result.data.items.length === 0 ? (
-          <p className="text-[13px] text-[var(--color-text-muted)]">
-            No audit events match those filters.
-          </p>
+          <AdminEmptyState
+            icon={<ShieldCheck className="size-8" aria-hidden />}
+            title="No audit events match those filters"
+            description="Clear quick filters or search by a different entity or actor to inspect the compliance trail."
+          />
         ) : (
-          <div className="gh-admin-area-hero gh-admin-area-audit-log gh-admin-ops-table-wrap overflow-hidden rounded-md border border-[var(--color-border)]">
+          <>
+          <div className="gh-admin-mobile-list">
+            {result.data.items.map((r) => (
+              <article key={r.id} className="gh-admin-mobile-card">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="gh-admin-mobile-card-title">
+                      {ACTION_LABEL[r.action] ?? r.action}
+                    </h3>
+                    <p className="gh-admin-mobile-card-meta">
+                      {new Date(r.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                  <span
+                    className={`gh-admin-ops-badge inline-flex rounded-full px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.04em] ${
+                      ACTION_TONE[r.action] ??
+                      "bg-[var(--color-background-soft)] text-[var(--color-text-muted)]"
+                    }`}
+                  >
+                    {r.action}
+                  </span>
+                </div>
+                <div className="grid gap-1 text-[12px] text-[var(--color-text-muted)]">
+                  <span>
+                    Actor: {r.actor ? `${r.actor.fullName} (${r.actor.email})` : "System"}
+                  </span>
+                  <span>
+                    Entity: <code>{r.entityType}</code>
+                  </span>
+                  <span className="break-all">
+                    ID: <code>{r.entityId}</code>
+                  </span>
+                  {r.ipAddress ? <span>IP: {r.ipAddress}</span> : null}
+                </div>
+              </article>
+            ))}
+          </div>
+          <div className="gh-admin-area-hero gh-admin-area-audit-log gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-hidden rounded-md border border-[var(--color-border)]">
             <table className="w-full text-[13px]">
               <thead className="bg-[var(--color-background-soft)] text-left text-[11px] uppercase tracking-wider text-[var(--color-text-muted)]">
                 <tr>
@@ -267,6 +336,7 @@ export default async function AdminAuditLogPage({
               })()
             ) : null}
           </div>
+          </>
         )}
       </AdminCard>
     </>

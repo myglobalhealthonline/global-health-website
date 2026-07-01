@@ -1,13 +1,15 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, Plus } from "lucide-react";
+import { Edit3, Eye, Globe2, Plus } from "lucide-react";
 import { fetchAdminCountries, purgeAdminCountry } from "@/lib/admin/admin-api";
 import { SITE_CACHE_TAGS } from "@/lib/api/site-content-api";
 import { DeleteCountryButton } from "./_components/delete-country-button";
 import { FlagBadge } from "../_components/flag-badge";
 import {
   AdminCard,
+  AdminEmptyState,
+  AdminSummaryStrip,
   AdminTable,
   Btn,
   IconBtn,
@@ -64,6 +66,8 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
 
   const rows = result.data.countries;
   const publishedCount = rows.filter((r) => r.isActive).length;
+  const configuredCurrencies = new Set(rows.map((r) => r.currency.code)).size;
+  const localizedRoutes = rows.filter((r) => r.legacyHomePath && r.teamPath).length;
 
   return (
     <>
@@ -95,16 +99,24 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
         </p>
       ) : null}
 
-      <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-list overflow-hidden">
+      <AdminSummaryStrip
+        items={[
+          { label: "Markets", value: rows.length, hint: "Country portals configured", tone: "brand" },
+          { label: "Active", value: publishedCount, hint: "Visible to visitors", tone: "success" },
+          { label: "Currencies", value: configuredCurrencies, hint: `${localizedRoutes} with key routes`, tone: "neutral" },
+        ]}
+      />
+
+      <AdminCard padding={0} className="gh-admin-country-list overflow-hidden">
         {/* Toolbar */}
-        <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-toolbar flex items-center gap-3 border-b border-[var(--color-border)] px-5 py-3.5">
+        <div className="gh-admin-country-toolbar flex items-center gap-3 border-b border-[var(--color-border)] px-5 py-3.5">
           <span className="text-[13px] text-[var(--color-text-muted)]">
             {rows.length} countries · {publishedCount} active
           </span>
         </div>
 
         {/* Table */}
-        <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-table-wrap overflow-x-auto">
+        <div className="gh-admin-country-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Country</Th>
@@ -159,7 +171,7 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
                     </div>
                   </Td>
                   <Td align="right">
-                    <div className="gh-admin-area-hero gh-admin-area-countries gh-admin-country-row-actions flex justify-end gap-1.5">
+                    <div className="gh-admin-country-row-actions flex justify-end gap-1.5">
                       <IconBtn
                         ariaLabel={`View ${c.name}`}
                         href={`/admin/countries/${c.id}`}
@@ -184,10 +196,48 @@ export default async function AdminCountriesPage({ searchParams }: PageProps) {
           </AdminTable>
         </div>
 
+        {rows.length > 0 ? (
+          <div className="gh-admin-mobile-list">
+            {rows.map((c) => (
+              <article key={c.id} className="gh-admin-mobile-card">
+                <div className="flex min-w-0 items-start justify-between gap-3">
+                  <span className="inline-flex min-w-0 items-center gap-2.5">
+                    <FlagBadge code={c.slug} size={20} />
+                    <span className="gh-admin-mobile-card__title">
+                      <strong>{c.name}</strong>
+                      <span>{c.legacyHomePath}</span>
+                    </span>
+                  </span>
+                  <Pill tone={c.isActive ? "published" : "inactive"}>
+                    {c.isActive ? "Active" : "Inactive"}
+                  </Pill>
+                </div>
+                <div className="gh-admin-mobile-meta">
+                  <span><em>Code</em><strong>{c.code.toUpperCase()}</strong></span>
+                  <span><em>Locale</em><strong>{c.defaultLocale}</strong></span>
+                  <span><em>Currency</em><strong>{c.currency.code}</strong></span>
+                  <span><em>Team route</em><strong>{c.teamPath}</strong></span>
+                </div>
+                <div className="gh-admin-mobile-actions">
+                  <IconBtn ariaLabel={`View ${c.name}`} href={`/admin/countries/${c.id}`}>
+                    <Eye className="size-3.5" aria-hidden />
+                  </IconBtn>
+                  <IconBtn ariaLabel={`Edit ${c.name}`} href={`/admin/countries/${c.id}/edit`}>
+                    <Edit3 className="size-3.5" aria-hidden />
+                  </IconBtn>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : null}
+
         {rows.length === 0 ? (
-          <p className="px-5 py-8 text-center text-sm text-[var(--color-text-muted)]">
-            No countries yet. Create one to get started.
-          </p>
+          <AdminEmptyState
+            icon={<Globe2 className="size-8" aria-hidden />}
+            title="No markets configured"
+            description="Create a country to unlock localized services, doctors, legal pages, currencies, and booking routes."
+            action={<Btn href="/admin/countries/new" variant="soft" size="sm">Add country</Btn>}
+          />
         ) : null}
       </AdminCard>
     </>

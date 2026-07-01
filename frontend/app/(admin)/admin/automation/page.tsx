@@ -5,7 +5,7 @@ import {
   fetchAdminAutomationRuns,
   fetchAdminAutomationOrders,
 } from "@/lib/admin/admin-api";
-import { AdminCard, PageHeader } from "../_components/atoms";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader } from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -66,13 +66,9 @@ export default async function AdminAutomationPage({
 
   // ── Order detail view ──────────────────────────────────────────────────────
   if (orderId) {
-    const [runsRes, catalogRes] = await Promise.all([
-      fetchAdminAutomationRuns({ orderId, pageSize: 200 }),
-      fetchAdminAutomationCatalog(),
-    ]);
+    const runsRes = await fetchAdminAutomationRuns({ orderId, pageSize: 200 });
 
     const runs = runsRes.ok ? runsRes.data.items : [];
-    const catalog = catalogRes.ok ? catalogRes.data.items : [];
 
     // Group runs by automationKey (preserving insertion order = chronological)
     const groups = new Map<string, typeof runs>();
@@ -110,14 +106,15 @@ export default async function AdminAutomationPage({
           </AdminCard>
         ) : runs.length === 0 ? (
           <AdminCard>
-            <p className="text-sm text-[var(--color-text-muted)]">No automation runs for this order.</p>
+            <AdminEmptyState
+              icon={<Zap className="size-8" aria-hidden />}
+              title="No automation runs for this order"
+              description="This order has not triggered any notification or payment automation yet."
+            />
           </AdminCard>
         ) : (
           <div className="gh-admin-area-hero gh-admin-area-automation gh-admin-automation-groups space-y-4">
             {Array.from(groups.entries()).map(([key, groupRuns]) => {
-              const catalogEntry = catalog.find(
-                (c) => key === c.key || key.startsWith(`${c.key}_`),
-              );
               const name = groupRuns[0]?.automationName ?? key;
               const flow = groupRuns[0]?.flow ?? "—";
               const hasFailed = groupRuns.some((r) => r.status === "FAILED");
@@ -212,7 +209,31 @@ export default async function AdminAutomationPage({
         />
 
         <AdminCard padding={0}>
-          <div className="gh-admin-area-hero gh-admin-area-automation gh-admin-ops-table-wrap overflow-x-auto">
+          <div className="border-b border-[var(--color-border)] px-4 pt-4">
+            <AdminSummaryStrip
+              items={[
+                {
+                  label: "Runs shown",
+                  value: runs.length,
+                  hint: `${total} total`,
+                  tone: "brand",
+                },
+                {
+                  label: "Failures",
+                  value: runs.filter((run) => run.status === "FAILED").length,
+                  hint: "Visible page",
+                  tone: runs.some((run) => run.status === "FAILED") ? "warning" : "success",
+                },
+                {
+                  label: "Channels",
+                  value: new Set(runs.map((run) => run.channel).filter(Boolean)).size,
+                  hint: "Visible page",
+                  tone: "neutral",
+                },
+              ]}
+            />
+          </div>
+          <div className="gh-admin-area-hero gh-admin-area-automation gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
             <table className="w-full min-w-[860px] text-[13px]">
               <thead>
                 <tr className="border-b border-[var(--color-border)] text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
@@ -267,6 +288,35 @@ export default async function AdminAutomationPage({
               </tbody>
             </table>
           </div>
+          {runs.length === 0 ? (
+            <AdminEmptyState
+              icon={<Zap className="size-8" aria-hidden />}
+              title="No runs yet for this automation"
+              description="Runs will appear here once orders trigger this automation key."
+            />
+          ) : (
+            <div className="gh-admin-mobile-list">
+              {runs.map((row) => (
+                <article key={row.id} className="gh-admin-mobile-card">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="gh-admin-mobile-card-title">
+                        {row.orderNumber ?? "No order"}
+                      </h3>
+                      <p className="gh-admin-mobile-card-meta">{timeAgo(row.createdAt)}</p>
+                    </div>
+                    <StatusBadge status={row.status} />
+                  </div>
+                  <div className="grid gap-1 text-[12px] text-[var(--color-text-muted)]">
+                    <span>Channel: {row.channel ?? "-"}</span>
+                    <span>{row.summary ?? "No summary"}</span>
+                    {row.recipient ? <span className="break-all">To: {row.recipient}</span> : null}
+                    {row.error ? <span className="text-rose-700">{row.error}</span> : null}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
           <div className="gh-admin-area-hero gh-admin-area-automation gh-admin-ops-pagination flex items-center justify-between px-5 py-4 text-[13px]">
             {page > 1 ? (
               <Link
@@ -308,6 +358,8 @@ export default async function AdminAutomationPage({
   const catalog = catalogRes.ok ? catalogRes.data.items : [];
   const pageSize = 25;
   const totalPages = Math.max(1, Math.ceil(ordersTotal / pageSize));
+  const failedOrderCount = orders.filter((order) => order.failedRuns > 0).length;
+  const totalRunsShown = orders.reduce((sum, order) => sum + order.totalRuns, 0);
 
   return (
     <>
@@ -332,6 +384,30 @@ export default async function AdminAutomationPage({
 
       {/* Orders list */}
       <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-automation gh-admin-automation-orders mb-6">
+        <div className="border-b border-[var(--color-border)] px-4 pt-4">
+          <AdminSummaryStrip
+            items={[
+              {
+                label: "Orders tracked",
+                value: ordersTotal,
+                hint: "With automation activity",
+                tone: "brand",
+              },
+              {
+                label: "Runs visible",
+                value: totalRunsShown,
+                hint: "Current page",
+                tone: totalRunsShown > 0 ? "success" : "neutral",
+              },
+              {
+                label: "Orders with failures",
+                value: failedOrderCount,
+                hint: "Current page",
+                tone: failedOrderCount > 0 ? "warning" : "success",
+              },
+            ]}
+          />
+        </div>
         <div className="border-b border-[var(--color-border)] px-5 py-4">
           <h2 className="text-[15px] font-bold text-[var(--color-text-primary)]">Orders</h2>
           <p className="mt-1 text-[12px] text-[var(--color-text-muted)]">
@@ -340,9 +416,11 @@ export default async function AdminAutomationPage({
         </div>
 
         {orders.length === 0 ? (
-          <div className="px-5 py-10 text-center text-[13px] text-[var(--color-text-muted)]">
-            No automation runs yet.
-          </div>
+          <AdminEmptyState
+            icon={<Zap className="size-8" aria-hidden />}
+            title="No automation runs yet"
+            description="Order notification runs will appear here after bookings, payments, or follow-up events trigger automation."
+          />
         ) : (
           <div className="divide-y divide-[var(--color-border)]">
             {orders.map((order) => (

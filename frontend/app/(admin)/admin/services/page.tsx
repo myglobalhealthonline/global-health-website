@@ -21,6 +21,7 @@ import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { ScopeBanner } from "../_components/scope-banner";
 import {
   AdminCard,
+  AdminEmptyState,
   AdminTable,
   Btn,
   IconBtn,
@@ -351,7 +352,7 @@ export default async function AdminServicesPage({
 
       {/* Table */}
       <AdminCard padding={0} className="overflow-hidden">
-        <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-table-wrap overflow-x-auto">
+        <div className="gh-admin-area-hero gh-admin-area-services gh-admin-service-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Title</Th>
@@ -555,9 +556,16 @@ export default async function AdminServicesPage({
         </div>
 
         {items.length === 0 ? (
-          <p className="px-5 py-8 text-center text-sm text-[var(--color-text-muted)]">
-            No records match these filters.
-          </p>
+          <AdminEmptyState
+            assetSrc="/images/portal/generated/admin-content-management-accent.png"
+            title="No services match these filters"
+            description="Clear search, market, or status filters to review the full service catalog."
+            action={
+              <Btn href={basePath} variant="secondary" size="sm">
+                Clear filters
+              </Btn>
+            }
+          />
         ) : null}
 
         {totalPages > 1 ? (

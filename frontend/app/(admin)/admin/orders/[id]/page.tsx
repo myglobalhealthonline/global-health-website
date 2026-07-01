@@ -5,6 +5,7 @@ import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { cookies } from "next/headers";
 import {
   AdminCard,
+  AdminSummaryStrip,
   PageHeader,
   Pill,
   SectionHeader,
@@ -138,6 +139,30 @@ export default async function AdminOrderDetailPage({ params, searchParams }: Pro
             {!isTerminal ? <AdminOrderActions orderId={order.id} status={order.status} /> : null}
           </div>
         }
+      />
+
+      <AdminSummaryStrip
+        className="gh-admin-area-hero gh-admin-area-orders"
+        items={[
+          {
+            label: "Order status",
+            value: order.status.toLowerCase(),
+            hint: isTerminal ? "Terminal state" : "Actionable",
+            tone: isTerminal ? "neutral" : "warning",
+          },
+          {
+            label: "Payment",
+            value: order.paymentStatus.toLowerCase(),
+            hint: order.paidAt ? `Paid ${formatAppDateTime(order.paidAt)}` : "Awaiting confirmation",
+            tone: order.paymentStatus === "PAID" ? "success" : "neutral",
+          },
+          {
+            label: "Items",
+            value: order.items.length,
+            hint: hasConsultation ? "Consultation order" : "Commerce order",
+            tone: hasConsultation ? "brand" : "neutral",
+          },
+        ]}
       />
 
       <div className="gh-admin-area-hero gh-admin-area-orders gh-admin-order-detail-layout grid gap-4 lg:grid-cols-[1fr_340px]">

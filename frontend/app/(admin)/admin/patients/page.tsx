@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, UserRound } from "lucide-react";
 import { fetchAdminPatients, type AdminPatientSearchItem, type VerificationStatus } from "@/lib/admin/admin-api";
-import { AdminCard, PageHeader, Pill } from "../_components/atoms";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +41,10 @@ export default async function AdminPatientsPage({
 
   const items: AdminPatientSearchItem[] = result?.ok ? result.data.items : [];
   const pagination = result?.ok ? result.data.pagination : null;
+  const idVerified = items.filter((p) => p.idVerificationStatus === "VERIFIED").length;
+  const contactVerified = items.filter(
+    (p) => p.emailVerificationStatus === "VERIFIED" || p.phoneVerificationStatus === "VERIFIED",
+  ).length;
 
   return (
     <>
@@ -52,6 +56,32 @@ export default async function AdminPatientsPage({
       />
 
       <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-patients gh-admin-patients-list">
+        {result?.ok ? (
+          <div className="border-b border-[var(--color-border)] px-4 pt-4">
+            <AdminSummaryStrip
+              items={[
+                {
+                  label: "Patients shown",
+                  value: pagination?.total ?? items.length,
+                  hint: "Current search result",
+                  tone: "brand",
+                },
+                {
+                  label: "ID verified",
+                  value: idVerified,
+                  hint: "Visible page",
+                  tone: idVerified > 0 ? "success" : "neutral",
+                },
+                {
+                  label: "Contact verified",
+                  value: contactVerified,
+                  hint: "Email or phone",
+                  tone: contactVerified > 0 ? "success" : "neutral",
+                },
+              ]}
+            />
+          </div>
+        ) : null}
         <form className="gh-admin-area-hero gh-admin-area-patients gh-admin-support-filter-row flex flex-wrap items-end gap-3 border-b border-[var(--color-border)] p-4">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Global Health Number</span>
@@ -82,12 +112,14 @@ export default async function AdminPatientsPage({
             {result.message}
           </p>
         ) : items.length === 0 ? (
-          <p className="px-6 py-10 text-center text-sm text-[var(--color-text-muted)]">
-            No patients found.
-          </p>
+          <AdminEmptyState
+            icon={<UserRound className="size-8" aria-hidden />}
+            title="No patients found"
+            description="Try a different Global Health Number or email. New patient records appear here after registration or a manual booking."
+          />
         ) : (
           <>
-            <div className="gh-admin-area-hero gh-admin-area-patients gh-admin-support-table-wrap overflow-x-auto">
+            <div className="gh-admin-area-hero gh-admin-area-patients gh-admin-support-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
               <table className="gh-table">
                 <thead>
                   <tr>
@@ -132,6 +164,42 @@ export default async function AdminPatientsPage({
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="gh-admin-mobile-list">
+              {items.map((p) => (
+                <article key={p.id} className="gh-admin-mobile-card">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="gh-admin-mobile-card-title">
+                        {p.fullName ?? p.email}
+                      </h3>
+                      <p className="gh-admin-mobile-card-meta break-all">{p.email}</p>
+                    </div>
+                    <StatusBadge status={p.idVerificationStatus} />
+                  </div>
+                  <div className="grid gap-2 text-[12px] text-[var(--color-text-muted)]">
+                    <span>
+                      GHN:{" "}
+                      <code className="text-[var(--color-text-primary)]">
+                        {p.globalHealthNumber ?? "-"}
+                      </code>
+                    </span>
+                    <span>Joined {new Date(p.createdAt).toLocaleDateString()}</span>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      <StatusBadge status={p.emailVerificationStatus} />
+                      <StatusBadge status={p.phoneVerificationStatus} />
+                    </div>
+                  </div>
+                  <div className="gh-admin-mobile-actions">
+                    <Link
+                      href={`/admin/patients/${encodeURIComponent(p.email)}`}
+                      className="gh-btn gh-btn-secondary text-sm"
+                    >
+                      View patient
+                    </Link>
+                  </div>
+                </article>
+              ))}
             </div>
 
             {pagination && pagination.totalPages > 1 ? (

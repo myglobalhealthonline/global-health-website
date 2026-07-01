@@ -23,17 +23,10 @@ export function ScopeBanner({
 }) {
   if (activeCountry) {
     return (
-      <div
-        className="gh-admin-scope-banner gh-admin-scope-banner--active mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[12px] px-4 py-3 text-[13px]"
-        style={{
-          background: "rgba(27,77,62,0.08)",
-          border: "1px solid rgba(27,77,62,0.18)",
-          color: "var(--color-text-primary)",
-        }}
-      >
-        <span className="inline-flex items-center gap-2">
+      <div className="gh-admin-scope-banner gh-admin-scope-banner--active mb-5">
+        <span className="inline-flex min-w-0 items-center gap-2">
           <FlagBadge code={activeCountry.slug} size={14} />
-          <span>
+          <span className="min-w-0">
             <span className="font-bold">Scope:</span>{" "}
             <span className="font-semibold">{activeCountry.name}</span>{" "}
             <span className="text-[var(--color-text-muted)]">
@@ -51,15 +44,8 @@ export function ScopeBanner({
     );
   }
   return (
-    <div
-      className="gh-admin-scope-banner gh-admin-scope-banner--empty mb-5 flex flex-wrap items-center justify-between gap-3 rounded-[12px] px-4 py-3 text-[13px]"
-      style={{
-        background: "var(--color-background-soft)",
-        border: "1px dashed var(--color-border-strong)",
-        color: "var(--color-text-muted)",
-      }}
-    >
-      <span>
+    <div className="gh-admin-scope-banner gh-admin-scope-banner--empty mb-5">
+      <span className="min-w-0">
         <span className="font-semibold text-[var(--color-text-primary)]">
           No country selected
         </span>{" "}

@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
-import { Plus } from "lucide-react";
+import { BadgeCent, Plus } from "lucide-react";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { fetchAdminCountries } from "@/lib/admin/admin-api";
 import { getActiveCountry } from "@/lib/admin/admin-scope";
 import { deleteAdminPlan, fetchAdminPlans } from "@/lib/admin/plans-api";
 import {
   AdminCard,
+  AdminEmptyState,
+  AdminSummaryStrip,
   AdminTable,
   Btn,
   PageHeader,
@@ -58,6 +60,10 @@ export default async function AdminPlansPage() {
   }
 
   const plansResult = await fetchAdminPlans({ countryId: active.id, includeInactive: "true" });
+  const plans = plansResult.ok ? plansResult.data.plans : [];
+  const activePlans = plans.filter((plan) => plan.isActive).length;
+  const featuredPlans = plans.filter((plan) => plan.isFeatured).length;
+  const subscriberCount = plans.reduce((sum, plan) => sum + plan._count.subscriptions, 0);
 
   return (
     <>
@@ -79,19 +85,26 @@ export default async function AdminPlansPage() {
             Could not load plans: {plansResult.message}
           </p>
         </AdminCard>
-      ) : plansResult.data.plans.length === 0 ? (
+      ) : plans.length === 0 ? (
         <AdminCard>
-          <p className="text-sm text-[var(--color-text-muted)]">
-            No plans yet for {active.name}.{" "}
-            <Link href={newHref} className="font-semibold text-[var(--color-brand-primary)]">
-              Create the first one
-            </Link>
-            .
-          </p>
+          <AdminEmptyState
+            icon={<BadgeCent className="size-8" aria-hidden />}
+            title={`No plans yet for ${active.name}`}
+            description="Create a plan to define monthly pricing, consultation credits, wellness benefits, and public subscription positioning."
+            action={<Btn href={newHref} variant="soft" size="sm">Create first plan</Btn>}
+          />
         </AdminCard>
       ) : (
-        <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-list">
-          <div className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-table-wrap overflow-x-auto">
+        <>
+        <AdminSummaryStrip
+          items={[
+            { label: "Plans", value: plans.length, hint: `${activePlans} active`, tone: "brand" },
+            { label: "Featured", value: featuredPlans, hint: "Highlighted to patients", tone: "success" },
+            { label: "Subscribers", value: subscriberCount, hint: "Across visible and inactive plans", tone: "neutral" },
+          ]}
+        />
+        <AdminCard padding={0} className="gh-admin-plan-list overflow-hidden">
+          <div className="gh-admin-plan-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Plan</Th>
@@ -103,7 +116,7 @@ export default async function AdminPlansPage() {
               <Th>Actions</Th>
             </Thead>
             <tbody>
-              {plansResult.data.plans.map((plan) => (
+              {plans.map((plan) => (
                 <Tr key={plan.id}>
                   <Td>
                     <div className="flex flex-col">
@@ -137,7 +150,7 @@ export default async function AdminPlansPage() {
                     )}
                   </Td>
                   <Td>
-                    <div className="gh-admin-area-hero gh-admin-area-plans gh-admin-plan-row-actions flex items-center gap-3">
+                    <div className="gh-admin-plan-row-actions flex items-center gap-3">
                       <Link
                         href={`/admin/plans/${plan.id}/edit`}
                         className="text-[13px] font-semibold text-[var(--color-brand-primary)] hover:underline"
@@ -162,7 +175,32 @@ export default async function AdminPlansPage() {
             </tbody>
           </AdminTable>
           </div>
+          <div className="gh-admin-mobile-list">
+            {plans.map((plan) => (
+              <article key={plan.id} className="gh-admin-mobile-card">
+                <div className="flex min-w-0 items-start justify-between gap-3">
+                  <div className="gh-admin-mobile-card__title">
+                    <strong>{plan.name}</strong>
+                    <span>{plan.slug}</span>
+                  </div>
+                  <Pill tone={plan.isActive ? "active" : "inactive"}>
+                    {plan.isActive ? "Active" : "Inactive"}
+                  </Pill>
+                </div>
+                <div className="gh-admin-mobile-meta">
+                  <span><em>Price</em><strong>{formatMoney(plan.monthlyPriceCents, plan.currencyCode)}</strong></span>
+                  <span><em>Credits</em><strong>{plan.monthlyConsultationCredits} / {plan.wellnessCreditsPerMonth}</strong></span>
+                  <span><em>Rules</em><strong>{plan._count.consultationRules + plan._count.perkRules + plan._count.healthTestRules}</strong></span>
+                  <span><em>Subscribers</em><strong>{plan._count.subscriptions}</strong></span>
+                </div>
+                <div className="gh-admin-mobile-actions">
+                  <Btn href={`/admin/plans/${plan.id}/edit`} variant="soft" size="sm">Edit plan</Btn>
+                </div>
+              </article>
+            ))}
+          </div>
         </AdminCard>
+        </>
       )}
     </>
   );

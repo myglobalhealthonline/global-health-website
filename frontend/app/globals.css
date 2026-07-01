@@ -2756,6 +2756,241 @@ img {
   padding-right: 4px;
 }
 
+/* Admin deep-pass shared content primitives */
+.gh-admin-summary-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.gh-admin-summary-item {
+  min-width: 0;
+  border: 1px solid rgba(29, 75, 54, 0.1);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 245, 0.92));
+  box-shadow: 0 12px 30px rgba(20, 55, 43, 0.055);
+  padding: 14px;
+}
+
+.gh-admin-summary-item--brand {
+  border-color: rgba(20, 98, 79, 0.18);
+  background:
+    linear-gradient(135deg, rgba(242, 249, 239, 0.98), rgba(255, 255, 255, 0.95));
+}
+
+.gh-admin-summary-item--success {
+  border-color: rgba(16, 122, 91, 0.18);
+}
+
+.gh-admin-summary-item--warning {
+  border-color: rgba(130, 106, 39, 0.22);
+}
+
+.gh-admin-summary-label,
+.gh-admin-summary-hint {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.gh-admin-summary-label {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gh-admin-summary-item strong {
+  display: block;
+  overflow: hidden;
+  margin-top: 6px;
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-admin-summary-hint {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.gh-admin-empty-state {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  padding: 28px;
+  text-align: left;
+}
+
+.gh-admin-empty-state__asset,
+.gh-admin-empty-state__icon {
+  width: 92px;
+  height: 92px;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(176, 241, 34, 0.2), transparent 42%),
+    linear-gradient(135deg, rgba(241, 248, 237, 0.96), rgba(255, 255, 255, 0.8));
+  box-shadow: 0 16px 34px rgba(20, 55, 43, 0.08);
+}
+
+.gh-admin-empty-state__asset {
+  object-fit: cover;
+  object-position: center;
+}
+
+.gh-admin-empty-state__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-brand-primary);
+}
+
+.gh-admin-empty-state h3 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.gh-admin-empty-state p {
+  max-width: 58ch;
+  margin: 6px 0 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.gh-admin-empty-state__action {
+  margin-top: 14px;
+}
+
+.gh-admin-mobile-list {
+  display: none;
+}
+
+.gh-admin-mobile-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(29, 75, 54, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 14px 30px rgba(20, 55, 43, 0.055);
+  padding: 14px;
+}
+
+.gh-admin-mobile-card__title {
+  min-width: 0;
+}
+
+.gh-admin-mobile-card__title strong,
+.gh-admin-mobile-card__title a {
+  display: block;
+  overflow: hidden;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+}
+
+.gh-admin-mobile-card__title span {
+  display: block;
+  overflow: hidden;
+  margin-top: 3px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-admin-mobile-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.gh-admin-mobile-meta span {
+  min-width: 0;
+  border: 1px solid rgba(29, 75, 54, 0.08);
+  border-radius: 8px;
+  background: rgba(247, 250, 243, 0.72);
+  padding: 8px;
+}
+
+.gh-admin-mobile-meta em {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gh-admin-mobile-meta strong {
+  display: block;
+  overflow: hidden;
+  color: var(--color-text-primary);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gh-admin-mobile-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.gh-admin-scope-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+}
+
+.gh-admin-scope-banner--active {
+  border: 1px solid rgba(27, 77, 62, 0.18);
+  background:
+    linear-gradient(135deg, rgba(27, 77, 62, 0.08), rgba(255, 255, 255, 0.82));
+  color: var(--color-text-primary);
+}
+
+.gh-admin-scope-banner--empty {
+  border: 1px dashed var(--color-border-strong);
+  background:
+    linear-gradient(135deg, var(--color-background-soft), rgba(255, 255, 255, 0.76));
+  color: var(--color-text-muted);
+}
+
+.gh-admin-country-picker {
+  max-width: min(260px, 44vw);
+  box-shadow: 0 8px 18px rgba(20, 55, 43, 0.045);
+}
+
+.gh-admin-country-picker-menu {
+  overflow: hidden;
+}
+
 @media (max-width: 760px) {
   .gh-portal-page-header.gh-admin-area-hero {
     background-position: center, center, center bottom;
@@ -2781,8 +3016,44 @@ img {
   .gh-admin-country-choice,
   .gh-admin-appointment-country-form,
   .gh-admin-service-summary-strip,
-  .gh-admin-service-edit-summary {
+  .gh-admin-service-edit-summary,
+  .gh-admin-summary-strip {
     grid-template-columns: 1fr;
+  }
+
+  .gh-admin-empty-state {
+    grid-template-columns: 1fr;
+    padding: 22px 16px;
+    text-align: center;
+  }
+
+  .gh-admin-empty-state__asset,
+  .gh-admin-empty-state__icon {
+    margin-inline: auto;
+    width: 82px;
+    height: 82px;
+  }
+
+  .gh-admin-mobile-list {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .gh-admin-deep-table-wrap {
+    display: none;
+  }
+
+  .gh-admin-mobile-actions {
+    justify-content: stretch;
+  }
+
+  .gh-admin-mobile-actions > * {
+    justify-content: center;
+  }
+
+  .gh-admin-country-picker {
+    max-width: 52vw;
   }
 
   .gh-admin-appointment-country-form :where(.gh-btn, button) {

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Receipt, ExternalLink } from "lucide-react";
 import { getBackendOrigin } from "@/lib/server/backend-origin";
 import { cookies } from "next/headers";
-import { AdminCard, PageHeader } from "@/components/portal-atoms";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "@/components/portal-atoms";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
 import { FlagBadge } from "../_components/flag-badge";
@@ -61,6 +61,9 @@ export default async function AdminInvoicesPage({
 }) {
   const { cursor } = searchParams ? await searchParams : {};
   const { items, nextCursor } = await fetchAdminInvoices(cursor);
+  const sentCount = items.filter((inv) => inv.emailSentAt).length;
+  const totalCents = items.reduce((sum, inv) => sum + inv.totalCents, 0);
+  const primaryCurrency = items[0]?.currencyCode ?? "EUR";
 
   return (
     <>
@@ -76,7 +79,39 @@ export default async function AdminInvoicesPage({
       />
 
       <AdminCard padding={0}>
-        <div className="gh-admin-area-hero gh-admin-area-orders gh-admin-ops-table-wrap overflow-x-auto">
+        <div className="border-b border-[var(--color-border)] px-4 pt-4">
+          <AdminSummaryStrip
+            items={[
+              {
+                label: "Invoices shown",
+                value: items.length,
+                hint: cursor ? "Cursor page" : "Latest batch",
+                tone: "brand",
+              },
+              {
+                label: "Email sent",
+                value: sentCount,
+                hint: `${items.length - sentCount} pending`,
+                tone: sentCount === items.length && items.length > 0 ? "success" : "neutral",
+              },
+              {
+                label: "Visible value",
+                value: formatPrice(totalCents, primaryCurrency),
+                hint: primaryCurrency,
+                tone: "neutral",
+              },
+            ]}
+          />
+        </div>
+        {items.length === 0 ? (
+          <AdminEmptyState
+            assetSrc="/images/portal/generated/admin-content-management-accent.png"
+            title="No invoices yet"
+            description="Invoices are generated automatically after orders are paid. Once created, admins can open printable invoice records from here."
+          />
+        ) : (
+          <>
+        <div className="gh-admin-area-hero gh-admin-area-orders gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
           <table className="w-full min-w-[860px] text-[13px]">
             <thead>
               <tr className="border-b border-[var(--color-border)] text-left text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">
@@ -91,17 +126,7 @@ export default async function AdminInvoicesPage({
               </tr>
             </thead>
             <tbody>
-              {items.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={8}
-                    className="px-4 py-12 text-center text-[13px] text-[var(--color-text-muted)]"
-                  >
-                    No invoices yet. They are generated automatically when orders are paid.
-                  </td>
-                </tr>
-              ) : (
-                items.map((inv) => (
+              {items.map((inv) => (
                   <tr
                     key={inv.id}
                     className="gh-admin-area-hero gh-admin-area-orders gh-admin-invoices-row border-b border-[var(--color-border)] hover:bg-[var(--color-bg-subtle)]"
@@ -164,11 +189,48 @@ export default async function AdminInvoicesPage({
                       </Link>
                     </td>
                   </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>
+        <div className="gh-admin-mobile-list">
+          {items.map((inv) => (
+            <article key={inv.id} className="gh-admin-mobile-card">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="gh-admin-mobile-card-title font-mono">{inv.invoiceNumber}</h3>
+                  <p className="gh-admin-mobile-card-meta">{inv.fullName}</p>
+                </div>
+                <Pill tone={inv.emailSentAt ? "active" : "pending"}>
+                  {inv.emailSentAt ? "Sent" : "Pending"}
+                </Pill>
+              </div>
+              <div className="grid gap-1 text-[12px] text-[var(--color-text-muted)]">
+                <span>{inv.email}</span>
+                <span>{formatPrice(inv.totalCents, inv.currencyCode)} · {formatAppDate(inv.generatedAt)}</span>
+                <span className="inline-flex items-center gap-2">
+                  <FlagBadge code={inv.countryCode} size={14} />
+                  {inv.countryCode.toUpperCase()}
+                </span>
+              </div>
+              <div className="gh-admin-mobile-actions">
+                <Link href={`/admin/orders/${inv.orderId}`} className="gh-btn gh-btn-ghost text-sm">
+                  Order
+                </Link>
+                <Link
+                  href={`/print/order-invoices/${inv.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="gh-btn gh-btn-secondary text-sm"
+                >
+                  View invoice
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+        </>
+        )}
 
         <div className="gh-admin-area-hero gh-admin-area-orders gh-admin-ops-pagination flex items-center justify-between border-t border-[var(--color-border)] px-5 py-4 text-[13px]">
           {cursor ? (

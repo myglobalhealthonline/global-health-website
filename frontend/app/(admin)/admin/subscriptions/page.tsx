@@ -12,6 +12,8 @@ import {
 } from "@/lib/admin/plans-api";
 import {
   AdminCard,
+  AdminEmptyState,
+  AdminSummaryStrip,
   AdminTable,
   PageHeader,
   Pill,
@@ -52,6 +54,11 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
     fetchAdminPerkGrants("PENDING"),
     fetchAdminSubscriptions({ status, pageSize: "50" }),
   ]);
+  const subscriptions = subsResult.ok ? subsResult.data.items : [];
+  const activeSubscriptions = subscriptions.filter((sub) => sub.status === "ACTIVE").length;
+  const pastDueSubscriptions = subscriptions.filter((sub) =>
+    ["PAST_DUE", "INCOMPLETE"].includes(sub.status),
+  ).length;
 
   async function approveGrantAction(formData: FormData) {
     "use server";
@@ -113,7 +120,11 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                 Could not load queue: {grantsResult.message}
               </p>
             ) : grantsResult.data.grants.length === 0 ? (
-              <p className="text-sm text-[var(--color-text-muted)]">No pending approvals.</p>
+              <AdminEmptyState
+                assetSrc="/images/portal/generated/admin-content-management-accent.png"
+                title="No pending perk approvals"
+                description="Manual approval perks will appear here when subscribers meet the configured rule and require admin review."
+              />
             ) : (
               <ul className="flex flex-col gap-2">
                 {grantsResult.data.grants.map((g) => (
@@ -169,9 +180,38 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                 Could not load subscriptions: {subsResult.message}
               </p>
             ) : subsResult.data.items.length === 0 ? (
-              <p className="p-6 text-sm text-[var(--color-text-muted)]">No subscriptions match this filter.</p>
+              <AdminEmptyState
+                assetSrc="/images/portal/generated/admin-content-management-accent.png"
+                title="No subscriptions match this filter"
+                description="Choose a different status filter to review active, paused, canceled, or incomplete subscriptions."
+              />
             ) : (
-              <div className="gh-admin-area-hero gh-admin-area-subscriptions gh-admin-plan-table-wrap overflow-x-auto">
+              <>
+              <div className="border-b border-[var(--color-border)] px-4 pt-4">
+                <AdminSummaryStrip
+                  items={[
+                    {
+                      label: "Subscribers shown",
+                      value: subscriptions.length,
+                      hint: status ?? "All statuses",
+                      tone: "brand",
+                    },
+                    {
+                      label: "Active",
+                      value: activeSubscriptions,
+                      hint: "Current page",
+                      tone: activeSubscriptions > 0 ? "success" : "neutral",
+                    },
+                    {
+                      label: "Needs billing attention",
+                      value: pastDueSubscriptions,
+                      hint: "Past due or incomplete",
+                      tone: pastDueSubscriptions > 0 ? "warning" : "success",
+                    },
+                  ]}
+                />
+              </div>
+              <div className="gh-admin-area-hero gh-admin-area-subscriptions gh-admin-plan-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
               <AdminTable>
                 <Thead>
                   <Th>Subscriber</Th>
@@ -210,6 +250,33 @@ export default async function AdminSubscriptionsPage({ searchParams }: PageProps
                 </tbody>
               </AdminTable>
               </div>
+              <div className="gh-admin-mobile-list">
+                {subscriptions.map((sub) => (
+                  <article key={sub.id} className="gh-admin-mobile-card">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3 className="gh-admin-mobile-card-title">
+                          {sub.user.fullName ?? sub.user.email}
+                        </h3>
+                        <p className="gh-admin-mobile-card-meta break-all">
+                          {sub.user.email} - {sub.countryCode.toUpperCase()}
+                        </p>
+                      </div>
+                      <Pill tone={statusTone(sub.status)}>{sub.status}</Pill>
+                    </div>
+                    <div className="grid gap-1 text-[12px] text-[var(--color-text-muted)]">
+                      <span>{sub.plan.name}</span>
+                      <span>
+                        GP {balanceOf(sub.balances, "CONSULTATION")} / wellness{" "}
+                        {balanceOf(sub.balances, "WELLNESS")}
+                      </span>
+                      {sub.cancelAtPeriodEnd ? <Pill tone="draft">cancels at period end</Pill> : null}
+                    </div>
+                    <AdminSubscriberLedger subscriptionId={sub.id} />
+                  </article>
+                ))}
+              </div>
+              </>
             )}
           </div>
         </AdminCard>

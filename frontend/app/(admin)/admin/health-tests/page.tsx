@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireAdminAction } from "@/lib/admin/require-admin-action";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { Edit3, Eye, Plus } from "lucide-react";
+import { Edit3, Eye, FlaskConical, Plus } from "lucide-react";
 import {
   fetchAdminCountries,
   fetchAdminHealthTests,
@@ -14,6 +14,8 @@ import { ConfirmDeleteButton } from "../_components/confirm-delete-button";
 import { ScopeBanner } from "../_components/scope-banner";
 import {
   AdminCard,
+  AdminEmptyState,
+  AdminSummaryStrip,
   AdminTable,
   Btn,
   IconBtn,
@@ -109,6 +111,9 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
 
   const { items, pagination } = listResult.data;
   const { page, pageSize, total, totalPages } = pagination;
+  const activeTests = items.filter((item) => item.isActive).length;
+  const pricedTests = items.filter((item) => item.priceCents > 0).length;
+  const timedTests = items.filter((item) => item.resultsTimeline).length;
   const successMessage = spRead(sp, "success");
   const errorMessage = spRead(sp, "error");
 
@@ -155,10 +160,18 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
         </p>
       ) : null}
 
+      <AdminSummaryStrip
+        items={[
+          { label: "Tests", value: total, hint: `${items.length} shown`, tone: "brand" },
+          { label: "Active", value: activeTests, hint: "Bookable test pages", tone: "success" },
+          { label: "Configured", value: pricedTests, hint: `${timedTests} with result timing`, tone: "neutral" },
+        ]}
+      />
+
       {/* Filters */}
       <AdminCard padding={0} className="mb-4 overflow-hidden">
-        <form method="get" className="gh-admin-area-hero gh-admin-area-services gh-admin-health-filters px-5 py-4">
-          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-filter-grid">
+        <form method="get" className="gh-admin-health-filters px-5 py-4">
+          <div className="gh-admin-health-filter-grid">
             <label className="flex min-w-0 flex-col gap-1.5">
               <span className="gh-field-label">Country</span>
               <select
@@ -198,7 +211,7 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
             </label>
           </div>
           <input type="hidden" name="page" value="1" />
-          <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-actions mt-4 flex flex-wrap items-center gap-3">
+          <div className="gh-admin-health-actions mt-4 flex flex-wrap items-center gap-3">
             <button type="submit" className="gh-btn gh-btn-primary" style={{ minHeight: 36 }}>
               Apply filters
             </button>
@@ -219,7 +232,7 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
 
       {/* Table */}
       <AdminCard padding={0} className="overflow-hidden">
-        <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-table-wrap overflow-x-auto">
+        <div className="gh-admin-health-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
           <AdminTable>
             <Thead>
               <Th>Title</Th>
@@ -271,7 +284,7 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
                     </Pill>
                   </Td>
                   <Td align="right">
-                    <div className="gh-admin-area-hero gh-admin-area-services gh-admin-health-actions gh-admin-health-actions--row flex justify-end gap-1.5">
+                    <div className="gh-admin-health-actions gh-admin-health-actions--row flex justify-end gap-1.5">
                       <IconBtn
                         ariaLabel={`View ${item.title}`}
                         href={`/admin/health-tests/${item.id}`}
@@ -299,10 +312,45 @@ export default async function AdminHealthTestsPage({ searchParams }: PageProps) 
           </AdminTable>
         </div>
 
+        {items.length > 0 ? (
+          <div className="gh-admin-mobile-list">
+            {items.map((item) => (
+              <article key={item.id} className="gh-admin-mobile-card">
+                <div className="flex min-w-0 items-start justify-between gap-3">
+                  <div className="gh-admin-mobile-card__title">
+                    <strong>{item.title}</strong>
+                    <span>{item.slug}</span>
+                  </div>
+                  <Pill tone={item.isActive ? "published" : "draft"}>
+                    {item.isActive ? "Active" : "Inactive"}
+                  </Pill>
+                </div>
+                <div className="gh-admin-mobile-meta">
+                  <span><em>Country</em><strong>{item.country.code.toUpperCase()}</strong></span>
+                  <span><em>Price</em><strong>{formatMoney(item.priceCents, item.currencyCode)}</strong></span>
+                  <span><em>Sample</em><strong>{item.sampleType || "Not set"}</strong></span>
+                  <span><em>Results</em><strong>{item.resultsTimeline || "Not set"}</strong></span>
+                </div>
+                <div className="gh-admin-mobile-actions">
+                  <IconBtn ariaLabel={`View ${item.title}`} href={`/admin/health-tests/${item.id}`}>
+                    <Eye className="size-3.5" aria-hidden />
+                  </IconBtn>
+                  <IconBtn ariaLabel={`Edit ${item.title}`} href={`/admin/health-tests/${item.id}/edit`}>
+                    <Edit3 className="size-3.5" aria-hidden />
+                  </IconBtn>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : null}
+
         {items.length === 0 ? (
-          <p className="px-5 py-8 text-center text-sm text-[var(--color-text-muted)]">
-            No health tests match these filters.
-          </p>
+          <AdminEmptyState
+            icon={<FlaskConical className="size-8" aria-hidden />}
+            title="No health tests match these filters"
+            description="Broaden the country or status filters, or add a test with pricing, sample type, and result timing."
+            action={<Btn href="/admin/health-tests/new" variant="soft" size="sm">Add health test</Btn>}
+          />
         ) : null}
 
         {totalPages > 1 ? (

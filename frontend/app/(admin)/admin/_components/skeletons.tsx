@@ -12,6 +12,33 @@ export function PageHeaderSkeleton() {
   );
 }
 
+export function SummaryStripSkeleton({ items = 3 }: { items?: number }) {
+  return (
+    <section className="gh-admin-summary-strip gh-skeleton-summary">
+      {Array.from({ length: items }).map((_, i) => (
+        <div key={i} className="gh-admin-summary-item">
+          <Bar className="h-3 w-20" />
+          <Bar className="h-6 w-16" />
+          <Bar className="h-3 w-28" />
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function FilterBarSkeleton({ fields = 4 }: { fields?: number }) {
+  return (
+    <section className="gh-card gh-skeleton-filter grid gap-3 p-5 md:grid-cols-2 xl:grid-cols-4">
+      {Array.from({ length: fields }).map((_, i) => (
+        <div key={i} className="grid gap-2">
+          <Bar className="h-3 w-16" />
+          <Bar className="h-10 w-full" />
+        </div>
+      ))}
+    </section>
+  );
+}
+
 export function TableSkeleton({
   rows = 6,
   columns = 5,
@@ -68,13 +95,17 @@ export function FormSkeleton({ sections = 3 }: { sections?: number }) {
 export function ListPageSkeleton({
   rows = 6,
   columns = 5,
+  summaryItems = 3,
 }: {
   rows?: number;
   columns?: number;
+  summaryItems?: number;
 }) {
   return (
     <div className="gh-skeleton-list space-y-6">
       <PageHeaderSkeleton />
+      <SummaryStripSkeleton items={summaryItems} />
+      <FilterBarSkeleton fields={Math.min(columns, 4)} />
       <TableSkeleton rows={rows} columns={columns} />
     </div>
   );

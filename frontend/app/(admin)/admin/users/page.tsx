@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { UsersRound } from "lucide-react";
 import { fetchAdminUsers, type AdminUserDto } from "@/lib/admin/admin-api";
-import { AdminCard, PageHeader, Pill } from "../_components/atoms";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, PageHeader, Pill } from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,10 @@ export default async function AdminUsersPage({
     ...(role ? { role } : {}),
     ...(isActive ? { isActive } : {}),
   });
+  const users = result.ok ? result.data.items : [];
+  const adminsShown = users.filter((u) => u.role === "ADMIN").length;
+  const activeShown = users.filter((u) => u.isActive).length;
+  const verifiedShown = users.filter((u) => u.emailVerifiedAt).length;
 
   return (
     <>
@@ -46,6 +51,32 @@ export default async function AdminUsersPage({
       />
 
       <AdminCard padding={0} className="gh-admin-area-hero gh-admin-area-users gh-admin-users-list">
+        {result.ok ? (
+          <div className="border-b border-[var(--color-border)] px-4 pt-4">
+            <AdminSummaryStrip
+              items={[
+                {
+                  label: "Users shown",
+                  value: result.data.pagination.total,
+                  hint: "Matching filters",
+                  tone: "brand",
+                },
+                {
+                  label: "Admins visible",
+                  value: adminsShown,
+                  hint: "Current page",
+                  tone: adminsShown > 0 ? "warning" : "neutral",
+                },
+                {
+                  label: "Active accounts",
+                  value: activeShown,
+                  hint: `${verifiedShown} email verified`,
+                  tone: activeShown > 0 ? "success" : "neutral",
+                },
+              ]}
+            />
+          </div>
+        ) : null}
         <form className="gh-admin-area-hero gh-admin-area-users gh-admin-support-filter-row flex flex-wrap items-end gap-3 border-b border-[var(--color-border)] p-4">
           <label className="flex flex-col gap-1">
             <span className="gh-field-label">Search</span>
@@ -82,11 +113,14 @@ export default async function AdminUsersPage({
             {result.message}
           </p>
         ) : result.data.items.length === 0 ? (
-          <p className="m-4 text-sm text-[var(--color-text-muted)]">
-            No users match those filters.
-          </p>
+          <AdminEmptyState
+            icon={<UsersRound className="size-8" aria-hidden />}
+            title="No users match those filters"
+            description="Clear the search, role, or status filters to broaden the account list."
+          />
         ) : (
-          <div className="gh-admin-area-hero gh-admin-area-users gh-admin-support-table-wrap overflow-x-auto">
+          <>
+          <div className="gh-admin-area-hero gh-admin-area-users gh-admin-support-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
           <table className="w-full min-w-[820px] text-sm">
             <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
               <tr>
@@ -137,6 +171,36 @@ export default async function AdminUsersPage({
             </tbody>
           </table>
           </div>
+          <div className="gh-admin-mobile-list">
+            {result.data.items.map((u: AdminUserDto) => (
+              <article key={u.id} className="gh-admin-mobile-card">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="gh-admin-mobile-card-title break-all">{u.email}</h3>
+                    <p className="gh-admin-mobile-card-meta">{u.fullName || "No name set"}</p>
+                  </div>
+                  <Pill tone={u.isActive ? "active" : "inactive"}>
+                    {u.isActive ? "Active" : "Suspended"}
+                  </Pill>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Pill tone={u.role === "ADMIN" ? "published" : "neutral"}>{u.role}</Pill>
+                  <Pill tone={u.emailVerifiedAt ? "active" : "neutral"}>
+                    {u.emailVerifiedAt ? "Email verified" : "Email unverified"}
+                  </Pill>
+                </div>
+                <p className="gh-admin-mobile-card-meta">
+                  Created {new Date(u.createdAt).toLocaleDateString()}
+                </p>
+                <div className="gh-admin-mobile-actions">
+                  <Link href={`/admin/users/${u.id}`} className="gh-btn gh-btn-secondary text-sm">
+                    Open user
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+          </>
         )}
 
         {result.ok && result.data.pagination.totalPages > 1 ? (

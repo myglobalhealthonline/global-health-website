@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Check, ExternalLink, Loader2, X, Copy, Receipt } from "lucide-react";
 import {
+  AdminEmptyState,
   AdminTable,
   IconBtn,
   Pill,
@@ -170,7 +171,15 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
         </div>
       ) : null}
 
-      <div className="gh-admin-order-table-wrap overflow-x-auto">
+      {items.length === 0 ? (
+        <AdminEmptyState
+          icon={<Receipt className="size-8" aria-hidden />}
+          title="No orders yet"
+          description="Orders will appear here after checkout starts. Use this table to reconcile payments, invoices, consultation slots, and fulfillment status."
+        />
+      ) : (
+        <>
+      <div className="gh-admin-order-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
         <AdminTable>
           <Thead>
             <Th style={{ width: 36 }}>
@@ -196,16 +205,7 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
             </Th>
           </Thead>
           <tbody>
-            {items.length === 0 ? (
-              <Tr>
-                <Td>
-                  <span className="text-sm text-[var(--color-text-muted)]">
-                    No orders yet.
-                  </span>
-                </Td>
-              </Tr>
-            ) : (
-              items.map((o) => (
+            {items.map((o) => (
                 <Tr key={o.id}>
                   <Td>
                     <input
@@ -277,11 +277,40 @@ export function AdminOrdersTable({ items }: { items: AdminOrderRow[] }) {
                     </IconBtn>
                   </Td>
                 </Tr>
-              ))
-            )}
+              ))}
           </tbody>
         </AdminTable>
       </div>
+
+      <div className="gh-admin-mobile-list">
+        {items.map((o) => (
+          <article key={o.id} className="gh-admin-mobile-card">
+            <div className="flex min-w-0 items-start justify-between gap-3">
+              <div className="gh-admin-mobile-card__title">
+                <Link href={`/admin/orders/${o.id}`} className="no-underline">
+                  #{formatOrderDisplayId(o)}
+                </Link>
+                <span>{o.fullName} · {o.email}</span>
+              </div>
+              <Pill tone={statusTone(o.status)}>{o.status.toLowerCase()}</Pill>
+            </div>
+            <div className="gh-admin-mobile-meta">
+              <span><em>Total</em><strong>{formatPrice(o.totalCents, o.currencyCode)}</strong></span>
+              <span><em>Country</em><strong>{o.countryCode.toUpperCase()}</strong></span>
+              <span><em>Items</em><strong>{o.itemCount}</strong></span>
+              <span><em>Created</em><strong>{formatAppDate(o.createdAt)}</strong></span>
+            </div>
+            <div className="gh-admin-mobile-actions">
+              {o.stripeCheckoutUrl ? <CopyLinkButton url={o.stripeCheckoutUrl} /> : null}
+              <IconBtn ariaLabel={`Open order ${o.id}`} href={`/admin/orders/${o.id}`}>
+                <ExternalLink className="size-3.5" aria-hidden />
+              </IconBtn>
+            </div>
+          </article>
+        ))}
+      </div>
+      </>
+      )}
     </>
   );
 }

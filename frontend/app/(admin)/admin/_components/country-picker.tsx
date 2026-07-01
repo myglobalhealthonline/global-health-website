@@ -46,10 +46,10 @@ export function CountryPicker({
         <button
           type="button"
           disabled={isPending}
-          className="gh-admin-country-picker inline-flex items-center gap-2.5 rounded-[10px] border border-[var(--color-border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)] disabled:opacity-60"
+          className="gh-admin-country-picker inline-flex min-w-0 items-center gap-2.5 rounded-[10px] border border-[var(--color-border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)] disabled:opacity-60"
         >
           <FlagBadge code={current?.slug ?? "all"} size={16} />
-          <span>{current?.name ?? "All countries"}</span>
+          <span className="min-w-0 truncate">{current?.name ?? "All countries"}</span>
           <ChevronDown className="size-3.5 text-[var(--color-text-muted)]" aria-hidden />
         </button>
       </DropdownMenu.Trigger>
@@ -57,8 +57,11 @@ export function CountryPicker({
         <DropdownMenu.Content
           align="end"
           sideOffset={6}
-          className="gh-admin-country-picker-menu z-50 min-w-[220px] rounded-xl border border-[var(--color-border)] bg-white p-1.5 shadow-[var(--shadow-elevated)]"
+          className="gh-admin-country-picker-menu z-50 min-w-[240px] rounded-xl border border-[var(--color-border)] bg-white p-1.5 shadow-[var(--shadow-elevated)]"
         >
+          <div className="px-2.5 pb-1.5 pt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--color-text-muted)]">
+            Admin market scope
+          </div>
           {countries.map((c) => {
             const active = c.slug === current?.slug;
             return (

@@ -1,8 +1,11 @@
 import { fetchNewsletterSubscribers } from "@/lib/admin/admin-api";
 import {
   AdminCard,
+  AdminEmptyState,
+  AdminSummaryStrip,
   Btn,
   PageHeader,
+  Pill,
 } from "../_components/atoms";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +15,8 @@ export default async function AdminNewsletterPage() {
   const result = fetched.ok
     ? { ok: true as const, items: fetched.data.items }
     : { ok: false as const, message: fetched.message };
+  const activeCount = result.ok ? result.items.filter((s) => !s.unsubscribedAt).length : 0;
+  const localizedCount = result.ok ? result.items.filter((s) => s.locale || s.countryCode).length : 0;
 
   return (
     <>
@@ -43,14 +48,39 @@ export default async function AdminNewsletterPage() {
         </AdminCard>
       ) : result.items.length === 0 ? (
         <AdminCard>
-          <p className="text-sm text-[var(--color-text-muted)]">
-            No subscribers yet. Once visitors use the footer form they&apos;ll
-            land here.
-          </p>
+          <AdminEmptyState
+            assetSrc="/images/portal/generated/admin-content-management-accent.png"
+            title="No newsletter subscribers yet"
+            description="Subscribers from the public footer form will appear here with source, country, locale, and unsubscribe status."
+          />
         </AdminCard>
       ) : (
         <AdminCard padding={0}>
-          <div className="gh-admin-area-hero gh-admin-area-content gh-admin-ops-table-wrap overflow-x-auto">
+          <div className="border-b border-[var(--color-border)] px-4 pt-4">
+            <AdminSummaryStrip
+              items={[
+                {
+                  label: "Subscribers",
+                  value: result.items.length,
+                  hint: "Total captured",
+                  tone: "brand",
+                },
+                {
+                  label: "Active",
+                  value: activeCount,
+                  hint: `${result.items.length - activeCount} unsubscribed`,
+                  tone: activeCount > 0 ? "success" : "neutral",
+                },
+                {
+                  label: "Localized",
+                  value: localizedCount,
+                  hint: "Country or locale set",
+                  tone: localizedCount > 0 ? "neutral" : "warning",
+                },
+              ]}
+            />
+          </div>
+          <div className="gh-admin-area-hero gh-admin-area-content gh-admin-ops-table-wrap gh-admin-deep-table-wrap overflow-x-auto">
           <table className="w-full min-w-[760px] text-sm">
             <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wider text-[var(--color-text-muted)]">
               <tr>
@@ -87,6 +117,33 @@ export default async function AdminNewsletterPage() {
               ))}
             </tbody>
           </table>
+          </div>
+          <div className="gh-admin-mobile-list">
+            {result.items.map((s) => (
+              <article key={s.id} className="gh-admin-mobile-card">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h3 className="gh-admin-mobile-card-title break-all">{s.email}</h3>
+                    <p className="gh-admin-mobile-card-meta">{s.source ?? "No source"}</p>
+                  </div>
+                  <Pill tone={s.unsubscribedAt ? "inactive" : "active"}>
+                    {s.unsubscribedAt ? "Unsubscribed" : "Active"}
+                  </Pill>
+                </div>
+                <div className="grid gap-1 text-[12px] text-[var(--color-text-muted)]">
+                  <span>Country: {s.countryCode ?? "-"}</span>
+                  <span>Locale: {s.locale ?? "-"}</span>
+                  <span>
+                    Signed up{" "}
+                    {new Date(s.createdAt).toLocaleDateString(undefined, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </span>
+                </div>
+              </article>
+            ))}
           </div>
         </AdminCard>
       )}

@@ -167,6 +167,76 @@ export function AdminCard({
    StatCard — dashboard 4-up grid
    ───────────────────────────────────────────────────────────── */
 
+export type AdminSummaryTone = "brand" | "success" | "warning" | "neutral";
+
+export function AdminSummaryStrip({
+  items,
+  className = "",
+}: {
+  items: Array<{
+    label: ReactNode;
+    value: ReactNode;
+    hint?: ReactNode;
+    tone?: AdminSummaryTone;
+  }>;
+  className?: string;
+}) {
+  return (
+    <section className={`gh-admin-summary-strip ${className}`}>
+      {items.map((item, index) => (
+        <div
+          key={index}
+          className={`gh-admin-summary-item gh-admin-summary-item--${item.tone ?? "neutral"}`}
+        >
+          <span className="gh-admin-summary-label">{item.label}</span>
+          <strong>{item.value}</strong>
+          {item.hint ? <span className="gh-admin-summary-hint">{item.hint}</span> : null}
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function AdminEmptyState({
+  title,
+  description,
+  action,
+  icon,
+  assetSrc,
+  className = "",
+}: {
+  title: ReactNode;
+  description?: ReactNode;
+  action?: ReactNode;
+  icon?: ReactNode;
+  assetSrc?: string;
+  className?: string;
+}) {
+  return (
+    <div className={`gh-admin-empty-state ${className}`}>
+      {assetSrc ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={assetSrc}
+          alt=""
+          aria-hidden="true"
+          className="gh-admin-empty-state__asset"
+          loading="lazy"
+        />
+      ) : icon ? (
+        <span className="gh-admin-empty-state__icon" aria-hidden>
+          {icon}
+        </span>
+      ) : null}
+      <div className="min-w-0">
+        <h3>{title}</h3>
+        {description ? <p>{description}</p> : null}
+        {action ? <div className="gh-admin-empty-state__action">{action}</div> : null}
+      </div>
+    </div>
+  );
+}
+
 export type StatTone = "brand" | "accent" | "neutral";
 
 export function StatCard({

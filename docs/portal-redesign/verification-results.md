@@ -195,3 +195,109 @@ Scope is limited to Admin portal source implementation. Screenshot capture and D
 - npm run typecheck with CI=true: Passed.
 - npm run build with CI=true: Passed.
 - npm run lint with CI=true: Frontend completed with 0 errors / 35 existing warnings; backend lint failed with 26 existing errors / 39 warnings outside this Admin visual pass.
+## Admin Deep UI Batch 2 ? 2026-07-01
+
+Scope: Admin Portal only. No Doctor/Patient work. No screenshots. No new markdown files.
+
+### Coverage Check
+
+- Admin source files discovered by file-tree scan: 134.
+- Admin audit rows currently marked Completed: 134.
+- Files changed in this batch before documentation update:
+
+
+### Source Implementation
+
+- Shared Admin atoms: added AdminSummaryStrip and AdminEmptyState for real page content hierarchy, metric summaries, empty states, and action placement.
+- Loading states: ListPageSkeleton now mirrors actual Admin pages with summary and filter skeletons.
+- Scope controls: ScopeBanner and CountryPicker now have clearer responsive behavior and semantic Admin styling.
+- Assets: added summary metrics, mobile cards, cleaner filters/table internals, and guided empty state.
+- Countries: added market summary metrics, mobile cards, cleaner table internals, and guided empty state.
+- Doctors: added profile/account/multi-market summary metrics, mobile cards, cleaner table internals, and guided empty state.
+- Health tests: added configuration summary metrics, mobile cards, cleaner table internals, and guided empty state.
+- Plans: added plan/featured/subscriber summary metrics, mobile cards, and richer first-plan empty state.
+- Orders table: added mobile cards and a composed empty state while preserving bulk actions and payment/invoice behavior.
+
+### Audit Updates
+
+- Admin audit rows updated in this batch: 10.
+- Shared component audit rows updated in this batch: 6.
+
+### Validation
+
+- npm run typecheck with CI=true: Passed after this batch.
+- npm run build: Pending for this batch.
+- Frontend lint: Pending for this batch.
+
+## Admin Deep UI Batch 2 — 2026-07-01
+
+Scope: Admin Portal only. No Doctor/Patient work. No screenshots. No new markdown files.
+
+### Coverage Check
+
+- Admin source files discovered by file-tree scan: 134.
+- Admin audit rows currently marked Completed: 134.
+- Files changed in this batch before documentation update:
+  - docs/portal-redesign/admin-portal-audit.md
+  - docs/portal-redesign/shared-components-audit.md
+  - docs/portal-redesign/verification-results.md
+  - frontend/app/(admin)/admin/_components/atoms.tsx
+  - frontend/app/(admin)/admin/_components/country-picker.tsx
+  - frontend/app/(admin)/admin/_components/scope-banner.tsx
+  - frontend/app/(admin)/admin/_components/skeletons.tsx
+  - frontend/app/(admin)/admin/assets/page.tsx
+  - frontend/app/(admin)/admin/countries/page.tsx
+  - frontend/app/(admin)/admin/doctors/page.tsx
+  - frontend/app/(admin)/admin/health-tests/page.tsx
+  - frontend/app/(admin)/admin/orders/_components/admin-orders-table.tsx
+  - frontend/app/(admin)/admin/plans/page.tsx
+  - frontend/app/globals.css
+  - frontend/components/portal-atoms.ts
+
+### Source Implementation
+
+- Shared Admin atoms: added AdminSummaryStrip and AdminEmptyState for real page content hierarchy, metric summaries, empty states, and action placement.
+- Loading states: ListPageSkeleton now mirrors actual Admin pages with summary and filter skeletons.
+- Scope controls: ScopeBanner and CountryPicker now have clearer responsive behavior and semantic Admin styling.
+- Assets: added summary metrics, mobile cards, cleaner filters/table internals, and guided empty state.
+- Countries: added market summary metrics, mobile cards, cleaner table internals, and guided empty state.
+- Doctors: added profile/account/multi-market summary metrics, mobile cards, cleaner table internals, and guided empty state.
+- Health tests: added configuration summary metrics, mobile cards, cleaner table internals, and guided empty state.
+- Plans: added plan/featured/subscriber summary metrics, mobile cards, and richer first-plan empty state.
+- Orders table: added mobile cards and a composed empty state while preserving bulk actions and payment/invoice behavior.
+
+### Audit Updates
+
+- Admin audit rows updated in this batch: 10.
+- Shared component audit rows updated in this batch: 6.
+
+### Validation
+
+- npm run typecheck with CI=true: Passed.
+- npm run build with CI=true: Passed.
+- pnpm --filter frontend lint with CI=true: Passed with 0 errors / 35 existing warnings.
+
+## Admin Deep UI Continuation — 2026-07-01
+
+Scope: Admin Portal only. No Doctor/Patient work. No screenshots. No new markdown files.
+
+### Source Implementation
+
+- Generated and added `frontend/public/images/portal/generated/admin-content-management-accent.png` for Admin content/billing/subscriber/service empty states; no text, logos, watermarks, fake UI text, or gore.
+- `/admin/audit-log`: added summary metrics, polished empty state, and mobile audit-event cards while preserving filters and pagination.
+- `/admin/automation`: added order/run summary strips, structured empty states, and mobile automation-run cards while preserving order drilldown and automation-key filtering.
+- `/admin/blog`: added post summary metrics, generated-asset empty state with action, desktop table responsive wrapper, and mobile post cards.
+- `/admin/pages`: added CMS summary metrics, generated-asset empty state with action, desktop table responsive wrapper, and mobile page cards.
+- `/admin/invoices`: added invoice summary metrics, generated-asset empty state, responsive table wrapper, and mobile invoice cards.
+- `/admin/newsletter`: added subscriber summary metrics, generated-asset empty state, responsive table wrapper, and mobile subscriber cards.
+- `/admin/orders/[id]`: added a top-level order summary strip for status, payment, and item context.
+- `/admin/patients`: added patient summary metrics, polished empty state, responsive table wrapper, and mobile patient cards.
+- `/admin/subscriptions`: added subscriber summary metrics, generated-asset empty states for approvals/subscriptions, responsive table wrapper, and mobile subscription cards.
+- `/admin/users`: added user summary metrics, polished empty state, responsive table wrapper, and mobile user cards.
+- `/admin/services`: aligned the services table with the shared responsive table wrapper and replaced the plain empty paragraph with a generated-asset empty state.
+
+### Validation
+
+- npm run typecheck with CI=true: Passed during this continuation pass.
+- npm run build with CI=true: Passed after this continuation pass.
+- pnpm --filter frontend lint with CI=true: Passed with 0 errors / 34 warnings; warnings are existing React hook and unused-variable warnings outside the Admin-only changes, plus existing admin rich-text/order-panel warnings.
