@@ -169,7 +169,7 @@ export default async function AdminPagesListPage({
         ) : pagesResult.data.items.length === 0 ? (
           <AdminCard>
             <AdminEmptyState
-              icon={<FileText className="size-8" aria-hidden />}
+              assetSrc="/images/portal/generated/admin-content-management-accent.png"
               title="No pages match these filters"
               description="Clear the country, page type, locale, or status filter, or create a new country-scoped content page."
               action={

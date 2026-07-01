@@ -95,8 +95,8 @@ Reviewed the last two `Dev-hassaan` commits and continued from the existing audi
 
 | Asset | Used by | Why |
 |---|---|---|
-| `removed generated clinical panel wash asset` | Shared portal page headers through `.gh-portal-page-header` | Adds a subtle clinical SaaS panel wash using the lower part of the generated image so headers no longer look like a plain white screen. |
-| `removed generated patient record empty-state asset` | `/account/medical-files` empty state | Adds a calm medical-record illustration for empty patient document states without text, logos, watermarks, or fake UI. |
+| `frontend/public/images/portal/generated/clinical-panel-wash.png` | Shared portal page headers through `.gh-portal-page-header` | Adds a subtle clinical SaaS panel wash using the lower part of the generated image so headers no longer look like a plain white screen. |
+| `frontend/public/images/portal/generated/patient-record-empty-state.png` | `/account/medical-files` empty state | Adds a calm medical-record illustration for empty patient document states without text, logos, watermarks, or fake UI. |
 
 ### Remaining Blockers
 
@@ -144,7 +144,7 @@ Fresh authenticated screenshots could not be captured because `PORTAL_SCREENSHOT
 
 ### Generated Asset
 
-- `removed generated admin dashboard wash asset` — used only by `/admin` dashboard hero.
+- `frontend/public/images/portal/generated/admin-dashboard-clinical-wash.png` — used only by `/admin` dashboard hero.
 
 ### Validation
 
@@ -170,7 +170,7 @@ Scope is limited to Admin portal source implementation. Screenshot capture and D
 ### Visual Issues Addressed
 
 - Added an Admin-wide area header system using gh-admin-area-hero classes on route pages so Admin pages share consistent width, padding, clinical texture, and area-specific accent treatment.
-- Added the generated raster asset removed generated admin dashboard wash asset to the /admin dashboard hero for a premium healthcare SaaS welcome panel.
+- Added the generated raster asset frontend/public/images/portal/generated/admin-dashboard-clinical-wash.png to the /admin dashboard hero for a premium healthcare SaaS welcome panel.
 - Improved /admin dashboard stat-grid rhythm so cards do not create awkward orphan layouts on common desktop widths.
 - Reworked /admin/appointments mobile presentation with card rows instead of relying on a clipped horizontal table.
 - Reworked /admin/appointments/new country-selection step as a market-scope card with clearer hierarchy and responsive form behavior.
@@ -181,7 +181,7 @@ Scope is limited to Admin portal source implementation. Screenshot capture and D
 
 | Asset | Used by | Why it improves the Admin UI |
 |---|---|---|
-| removed generated admin dashboard wash asset | /admin dashboard hero via .gh-admin-dashboard-hero | Adds a subtle, text-free clinical raster wash so the dashboard opening panel feels premium without becoming distracting. |
+| frontend/public/images/portal/generated/admin-dashboard-clinical-wash.png | /admin dashboard hero via .gh-admin-dashboard-hero | Adds a subtle, text-free clinical raster wash so the dashboard opening panel feels premium without becoming distracting. |
 
 ### Documentation Updates
 
@@ -283,7 +283,7 @@ Scope: Admin Portal only. No Doctor/Patient work. No screenshots. No new markdow
 
 ### Source Implementation
 
-- Generated and added `removed generated admin content management accent asset` for Admin content/billing/subscriber/service empty states; no text, logos, watermarks, fake UI text, or gore.
+- Generated and added `frontend/public/images/portal/generated/admin-content-management-accent.png` for Admin content/billing/subscriber/service empty states; no text, logos, watermarks, fake UI text, or gore.
 - `/admin/audit-log`: added summary metrics, polished empty state, and mobile audit-event cards while preserving filters and pagination.
 - `/admin/automation`: added order/run summary strips, structured empty states, and mobile automation-run cards while preserving order drilldown and automation-key filtering.
 - `/admin/blog`: added post summary metrics, generated-asset empty state with action, desktop table responsive wrapper, and mobile post cards.

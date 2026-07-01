@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { Download, FileText, FlaskConical, Stethoscope, Upload } from "lucide-react";
 
@@ -290,9 +291,14 @@ export default function MedicalFilesPage() {
         <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>
       ) : filteredDocs.length === 0 ? (
         <div className="gh-patient-empty-state gh-patient-medical-empty gh-card p-6">
-          <div className="gh-patient-medical-empty__image" aria-hidden>
-            <FileText className="size-12 text-[var(--color-brand-primary)]" />
-          </div>
+          <Image
+            src="/images/portal/generated/patient-record-empty-state.png"
+            alt=""
+            aria-hidden
+            width={224}
+            height={224}
+            className="gh-patient-medical-empty__image"
+          />
           <div className="min-w-0">
             <p className="font-semibold text-[var(--color-text-primary)]">
               No {currentTabConfig?.label.toLowerCase() ?? "documents"} yet

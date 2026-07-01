@@ -105,7 +105,7 @@ export default async function AdminInvoicesPage({
         </div>
         {items.length === 0 ? (
           <AdminEmptyState
-            icon={<Receipt className="size-8" aria-hidden />}
+            assetSrc="/images/portal/generated/admin-content-management-accent.png"
             title="No invoices yet"
             description="Invoices are generated automatically after orders are paid. Once created, admins can open printable invoice records from here."
           />

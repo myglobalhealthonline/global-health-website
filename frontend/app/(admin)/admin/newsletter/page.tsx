@@ -1,4 +1,3 @@
-import { Mail } from "lucide-react";
 import { fetchNewsletterSubscribers } from "@/lib/admin/admin-api";
 import {
   AdminCard,
@@ -50,7 +49,7 @@ export default async function AdminNewsletterPage() {
       ) : result.items.length === 0 ? (
         <AdminCard>
           <AdminEmptyState
-            icon={<Mail className="size-8" aria-hidden />}
+            assetSrc="/images/portal/generated/admin-content-management-accent.png"
             title="No newsletter subscribers yet"
             description="Subscribers from the public footer form will appear here with source, country, locale, and unsubscribe status."
           />
