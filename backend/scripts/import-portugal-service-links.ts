@@ -76,25 +76,30 @@ async function main() {
 
     if (!APPLY) continue;
 
-    await prisma.$transaction(async (tx) => {
-      await tx.serviceLink.deleteMany({ where: { sourceServiceId: sourceId } });
-      for (const l of resolved) {
-        await tx.serviceLink.create({
-          data: {
-            sourceServiceId: sourceId,
-            targetServiceId: idBySlug.get(l.target)!,
-            type: l.type as ServiceLinkType,
-            priority: l.priority,
-            isActive: true,
-            translations: {
-              create: [
-                { locale, heading: l.heading, body: l.body, ctaLabel: l.ctaLabel },
-              ],
+    await prisma.$transaction(
+      async (tx) => {
+        await tx.serviceLink.deleteMany({ where: { sourceServiceId: sourceId } });
+        for (const l of resolved) {
+          await tx.serviceLink.create({
+            data: {
+              sourceServiceId: sourceId,
+              targetServiceId: idBySlug.get(l.target)!,
+              type: l.type as ServiceLinkType,
+              priority: l.priority,
+              isActive: true,
+              translations: {
+                create: [
+                  { locale, heading: l.heading, body: l.body, ctaLabel: l.ctaLabel },
+                ],
+              },
             },
-          },
-        });
-      }
-    });
+          });
+        }
+      },
+      // Remote (Railway) DB latency can exceed the 5s interactive-tx default
+      // when a source has several nested translation creates.
+      { timeout: 60000, maxWait: 15000 },
+    );
   }
 
   console.log("\n────────────");
