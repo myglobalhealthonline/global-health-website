@@ -7,7 +7,7 @@ import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { formatPrice } from "@/lib/format-currency";
 import { formatAppDate } from "@/lib/format-datetime";
-import { PageHeader } from "@/components/portal-atoms";
+import { AdminEmptyState, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { ManagePanel, type PlanOption } from "./_components/ManagePanel";
 import { SubscriptionDashboard } from "../_components/SubscriptionDashboard";
 
@@ -32,13 +32,16 @@ export default async function MembershipPage({
     return (
       <div className="gh-patient-page gh-patient-membership-page">
         <PageHeader title={t.title} description={t.subtitle} />
-        <div className="gh-patient-empty-state gh-card max-w-xl p-8 text-center">
-          <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
-            {t.noSubscription}
-          </p>
-          <Link href="/" className="gh-btn gh-btn-primary mt-6 inline-flex justify-center">
-            {t.browsePlans}
-          </Link>
+        <div className="gh-patient-empty-state gh-card max-w-xl p-8">
+          <AdminEmptyState
+            title="No active membership"
+            description={t.noSubscription}
+            action={
+              <Link href="/" className="gh-btn gh-btn-primary inline-flex justify-center">
+                {t.browsePlans}
+              </Link>
+            }
+          />
         </div>
       </div>
     );
@@ -68,6 +71,15 @@ export default async function MembershipPage({
   return (
     <div className="gh-patient-page gh-patient-membership-page">
       <PageHeader title={t.title} description={t.subtitle} />
+      <AdminSummaryStrip
+        className="mb-5"
+        items={[
+          { label: "Plan", value: sub.plan.name, hint: "Current membership" },
+          { label: "Status", value: sub.status.toLowerCase(), hint: sub.cancelAtPeriodEnd ? "Cancellation scheduled" : "Membership lifecycle" },
+          { label: "Next billing", value: nextBillingLabel ?? "Not scheduled", hint: "Renewal date" },
+          { label: "Price", value: priceLabel, hint: "Monthly subscription" },
+        ]}
+      />
       <ManagePanel
         t={t}
         status={sub.status}

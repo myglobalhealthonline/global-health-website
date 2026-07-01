@@ -69,7 +69,16 @@ export function VerificationTab() {
   }
 
   if (!loaded) {
-    return <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>;
+    return (
+      <div className="gh-patient-empty-state gh-card p-6">
+        <div className="h-4 w-40 rounded bg-[var(--color-background-soft)]" />
+        <div className="mt-4 grid gap-3">
+          <div className="h-14 rounded-lg bg-[var(--color-background-soft)]" />
+          <div className="h-14 rounded-lg bg-[var(--color-background-soft)]" />
+          <div className="h-14 rounded-lg bg-[var(--color-background-soft)]" />
+        </div>
+      </div>
+    );
   }
 
   const v = data;
@@ -79,12 +88,17 @@ export function VerificationTab() {
       <div className="gh-patient-form-card gh-card p-6">
         <header className="mb-4 flex items-center gap-2">
           <BadgeCheck className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
-          <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Verification status</h3>
+          <div>
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Verification status</h3>
+            <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+              Keep identity, insurance, email, and phone checks ready before appointments.
+            </p>
+          </div>
         </header>
 
         <div className="divide-y divide-[var(--color-border)]">
           {/* Email */}
-          <div className="flex items-center justify-between py-3">
+          <div className="grid gap-2 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
             <div>
               <p className="text-sm font-medium text-[var(--color-text-primary)]">Email</p>
               {v?.emailVerifiedAt && (
@@ -97,7 +111,7 @@ export function VerificationTab() {
           </div>
 
           {/* Phone */}
-          <div className="flex items-center justify-between py-3">
+          <div className="grid gap-2 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
             <div>
               <p className="text-sm font-medium text-[var(--color-text-primary)]">Phone</p>
               {v?.phoneVerifiedAt && (
@@ -110,7 +124,7 @@ export function VerificationTab() {
           </div>
 
           {/* Insurance */}
-          <div className="flex items-center justify-between py-3">
+          <div className="grid gap-2 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
             <div>
               <p className="text-sm font-medium text-[var(--color-text-primary)]">Insurance document</p>
             </div>
@@ -119,7 +133,7 @@ export function VerificationTab() {
 
           {/* ID */}
           <div className="py-3">
-            <div className="flex items-center justify-between">
+            <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-center">
               <div>
                 <p className="text-sm font-medium text-[var(--color-text-primary)]">Government ID</p>
                 {v?.idDocumentType && (

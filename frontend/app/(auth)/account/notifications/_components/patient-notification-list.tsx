@@ -55,9 +55,14 @@ export function PatientNotificationList({ initial }: { initial: NotificationItem
   if (items.length === 0) {
     return (
       <div className="gh-patient-empty-state gh-card flex flex-col items-center gap-2 p-10 text-center">
-        <Bell className="size-6" style={{ color: "var(--color-text-muted)" }} aria-hidden />
-        <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
-          You have no notifications yet.
+        <span className="grid size-12 place-items-center rounded-full bg-[var(--color-background-soft)]">
+          <Bell className="size-6" style={{ color: "var(--color-text-muted)" }} aria-hidden />
+        </span>
+        <p className="text-base font-bold" style={{ color: "var(--color-text-primary)" }}>
+          No notifications yet
+        </p>
+        <p className="max-w-sm text-sm" style={{ color: "var(--color-text-muted)" }}>
+          Appointment updates, payment receipts, document alerts, and profile reminders will appear here.
         </p>
       </div>
     );

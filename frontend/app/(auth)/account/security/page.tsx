@@ -14,6 +14,7 @@ import { DeleteAccountButton } from "./_components/delete-account-button";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { readClientLocale } from "@/lib/i18n/get-client-locale";
 import type { LocaleCode } from "@/lib/i18n/types";
+import { AdminSummaryStrip } from "@/components/portal-atoms";
 
 export default function AccountSecurityPage() {
   const [locale] = useState<LocaleCode>(() => readClientLocale());
@@ -105,13 +106,26 @@ export default function AccountSecurityPage() {
       </header>
 
       {loading ? (
-        <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">
-          {a.security.loading}
+        <div className="gh-card grid gap-4 p-6">
+          <div className="h-4 w-40 animate-pulse rounded-full bg-[var(--color-background-soft)]" />
+          <div className="h-20 animate-pulse rounded-[14px] bg-[var(--color-background-soft)]" />
+          <div className="h-28 animate-pulse rounded-[14px] bg-[var(--color-background-soft)]" />
+          <span className="sr-only">{a.security.loading}</span>
         </div>
       ) : (
         <>
+            <AdminSummaryStrip
+              className="mb-5"
+              items={[
+                { label: "Email", value: verified ? a.security.verified : "Needs verification", hint: user?.email ?? "Account email" },
+                { label: "Data export", value: "Available", hint: "Download your account data" },
+                { label: "Password", value: "Protected", hint: "Update credentials anytime" },
+                { label: "Account", value: "Patient", hint: "Security controls" },
+              ]}
+            />
+
             {/* Email verification panel */}
-            <section className="gh-patient-security-card mt-6 gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
+            <section className="gh-patient-security-card gh-admin-card rounded-2xl border border-[var(--color-border)] p-6 shadow-[var(--shadow-soft)]">
               <div className="flex items-start gap-3">
                 <span
                   className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full ${
@@ -141,7 +155,7 @@ export default function AccountSecurityPage() {
                         type="button"
                         onClick={onResendVerification}
                         disabled={sendingVerify}
-                        className="mt-3 inline-flex items-center gap-2 rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 disabled:opacity-60"
+                        className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 disabled:opacity-60 sm:w-auto"
                       >
                         {sendingVerify ? a.security.sending : a.security.resendVerification}
                       </button>
@@ -174,7 +188,7 @@ export default function AccountSecurityPage() {
               <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <a
                   href={downloadOwnDataUrl()}
-                  className="inline-flex items-center gap-2 rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-emerald-700 px-4 py-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 sm:w-auto"
                 >
                   <Download className="size-4" aria-hidden />
                   {a.security.downloadData}
@@ -254,7 +268,7 @@ export default function AccountSecurityPage() {
                     <button
                       type="submit"
                       disabled={savingPwd}
-                      className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60 sm:w-auto"
                     >
                       {savingPwd ? a.security.updating : a.security.updatePassword}
                     </button>

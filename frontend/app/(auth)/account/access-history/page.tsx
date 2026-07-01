@@ -71,7 +71,7 @@ function LogRow({ entry }: { entry: AccessLogEntry }) {
     : null;
 
   return (
-    <div className="gh-patient-access-row flex items-start gap-4 border-b border-[var(--color-border)] py-3 last:border-0">
+    <div className="gh-patient-access-row grid gap-3 border-b border-[var(--color-border)] py-3 last:border-0 sm:grid-cols-[auto_1fr_auto] sm:items-start">
       <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-background-soft)]">
         <Shield className="size-4 text-[var(--color-text-muted)]" aria-hidden />
       </div>
@@ -100,7 +100,7 @@ function LogRow({ entry }: { entry: AccessLogEntry }) {
       </div>
       <time
         dateTime={entry.createdAt}
-        className="shrink-0 text-xs text-[var(--color-text-muted)]"
+        className="text-xs text-[var(--color-text-muted)] sm:shrink-0"
       >
         {new Date(entry.createdAt).toLocaleString()}
       </time>
@@ -150,10 +150,22 @@ export default function AccessHistoryPage() {
 
       <div className="gh-patient-access-card gh-card divide-y divide-[var(--color-border)] p-0">
         {!loaded ? (
-          <div className="p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>
+          <div className="p-6">
+            <div className="h-4 w-40 rounded bg-[var(--color-background-soft)]" />
+            <div className="mt-4 grid gap-3">
+              <div className="h-16 rounded-lg bg-[var(--color-background-soft)]" />
+              <div className="h-16 rounded-lg bg-[var(--color-background-soft)]" />
+            </div>
+          </div>
         ) : logs.length === 0 ? (
-          <div className="p-8 text-center text-sm text-[var(--color-text-muted)]">
-            No access events recorded yet.
+          <div className="p-8 text-center">
+            <Shield className="mx-auto size-7 text-[var(--color-text-muted)]" aria-hidden />
+            <p className="mt-2 text-base font-bold text-[var(--color-text-primary)]">
+              No access events recorded yet
+            </p>
+            <p className="mx-auto mt-1 max-w-sm text-sm text-[var(--color-text-muted)]">
+              When your medical information is viewed or updated, the event will appear here.
+            </p>
           </div>
         ) : (
           <div className="px-4">

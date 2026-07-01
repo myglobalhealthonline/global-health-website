@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { Download, FileText, FlaskConical, Stethoscope, Upload } from "lucide-react";
+import { AdminSummaryStrip } from "@/components/portal-atoms";
 
 type Tab = "uploaded" | "results" | "exam-requests" | "prescriptions" | "consult-summaries";
 
@@ -80,7 +81,7 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
   }
 
   return (
-    <div className="gh-patient-doc-card gh-card flex items-start justify-between gap-4 p-4">
+    <div className="gh-patient-doc-card gh-card grid gap-4 p-4 sm:grid-cols-[1fr_auto] sm:items-start">
       <div className="min-w-0 flex-1">
         <p className="truncate font-medium text-[var(--color-text-primary)]">{doc.title}</p>
         {doc.description && (
@@ -100,7 +101,7 @@ function DocCard({ doc }: { doc: MedicalDoc }) {
         type="button"
         onClick={onDownload}
         disabled={downloading}
-        className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-[var(--color-border)] px-3 py-1.5 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)] disabled:opacity-60"
+        className="inline-flex w-full shrink-0 items-center justify-center gap-1.5 rounded-md border border-[var(--color-border)] px-3 py-1.5 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)] disabled:opacity-60 sm:w-auto"
       >
         <Download aria-hidden className="size-4" />
         {downloading ? "Downloading…" : "Download"}
@@ -240,6 +241,10 @@ export default function MedicalFilesPage() {
   const filteredDocs = allDocs.filter((d) =>
     currentTabConfig?.docTypes.includes(d.documentType),
   );
+  const countFor = (tab: Tab) => {
+    const config = TABS.find((item) => item.id === tab);
+    return allDocs.filter((doc) => config?.docTypes.includes(doc.documentType)).length;
+  };
 
   function onUploaded(doc: MedicalDoc) {
     setAllDocs((prev) => [doc, ...prev]);
@@ -259,6 +264,16 @@ export default function MedicalFilesPage() {
           Your uploaded reports and documents from doctors.
         </p>
       </header>
+
+      <AdminSummaryStrip
+        className="mb-5"
+        items={[
+          { label: "Uploaded", value: String(countFor("uploaded")), hint: "Reports you added" },
+          { label: "Results", value: String(countFor("results")), hint: "Doctor result documents" },
+          { label: "Requests", value: String(countFor("exam-requests")), hint: "Exam requests from clinicians" },
+          { label: "Prescriptions", value: String(countFor("prescriptions")), hint: "Medication documents" },
+        ]}
+      />
 
       <nav
         className="gh-patient-tabs mb-6 flex gap-1 overflow-x-auto rounded-lg bg-[var(--color-background-soft)] p-1"
@@ -288,7 +303,13 @@ export default function MedicalFilesPage() {
       )}
 
       {!loaded ? (
-        <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>
+        <div className="gh-patient-empty-state gh-card p-6">
+          <div className="h-4 w-36 rounded bg-[var(--color-background-soft)]" />
+          <div className="mt-4 grid gap-3">
+            <div className="h-20 rounded-lg bg-[var(--color-background-soft)]" />
+            <div className="h-20 rounded-lg bg-[var(--color-background-soft)]" />
+          </div>
+        </div>
       ) : filteredDocs.length === 0 ? (
         <div className="gh-patient-empty-state gh-patient-medical-empty gh-card p-6">
           <Image

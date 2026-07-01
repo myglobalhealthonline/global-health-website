@@ -162,8 +162,13 @@ export function PatientProfileSection({ i18n = DEFAULT_I18N }: { i18n?: MedicalI
       </header>
 
       {!loaded ? (
-        <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">
-          {i18n.loading}
+        <div className="gh-patient-empty-state gh-card p-6">
+          <div className="h-4 w-44 rounded bg-[var(--color-background-soft)]" />
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
+            <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
+            <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
+          </div>
         </div>
       ) : (
       <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-5 p-6">

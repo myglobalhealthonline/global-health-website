@@ -70,7 +70,15 @@ export function InsuranceTab() {
   }
 
   if (!loaded) {
-    return <div className="gh-patient-empty-state gh-card p-6 text-sm text-[var(--color-text-muted)]">Loading…</div>;
+    return (
+      <div className="gh-patient-empty-state gh-card p-6">
+        <div className="h-4 w-44 rounded bg-[var(--color-background-soft)]" />
+        <div className="mt-4 grid gap-3">
+          <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
+          <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
+        </div>
+      </div>
+    );
   }
 
   const badge = STATUS_BADGE[data?.insuranceDocumentStatus ?? "NOT_VERIFIED"];
@@ -80,7 +88,12 @@ export function InsuranceTab() {
       <div className="gh-patient-form-card gh-card p-6">
         <header className="mb-4 flex items-center gap-2">
           <ShieldCheck className="size-5 text-[var(--color-brand-primary)]" aria-hidden />
-          <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Insurance details</h3>
+          <div>
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Insurance details</h3>
+            <p className="mt-1 text-sm text-[var(--color-text-muted)]">
+              Add policy details and a document so care teams can verify coverage.
+            </p>
+          </div>
         </header>
         <form onSubmit={onSave} className="space-y-4">
           <label className="block">

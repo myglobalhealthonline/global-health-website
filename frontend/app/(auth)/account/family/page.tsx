@@ -99,6 +99,20 @@ export default function AccountFamilyPage() {
         <p className="text-sm text-[var(--color-text-muted)]">{T.subtitle}</p>
       </header>
 
+      <div className="mb-5 grid gap-3 sm:grid-cols-3">
+        <FamilyMetric label="Members" value={String(items.length)} hint="People you can book for" />
+        <FamilyMetric
+          label="Plan benefits"
+          value={String(items.filter((member) => member.canUseCredits).length)}
+          hint="Allowed to use credits"
+        />
+        <FamilyMetric
+          label="Profiles"
+          value={items.length > 0 ? "Active" : "Not started"}
+          hint="Add family before booking"
+        />
+      </div>
+
       <AddMemberForm onAdded={refetch} />
 
       {error ? (
@@ -111,14 +125,20 @@ export default function AccountFamilyPage() {
       ) : null}
 
       {loading ? (
-        <div className="gh-patient-empty-state mt-6 gh-card flex items-center gap-2 p-6 text-sm text-[var(--color-text-muted)]">
-          <Loader2 className="size-4 animate-spin" aria-hidden />
-          {T.loading}
+        <div className="gh-patient-empty-state mt-6 gh-card p-6">
+          <div className="h-4 w-44 rounded bg-[var(--color-background-soft)]" />
+          <div className="mt-4 grid gap-3">
+            <div className="h-20 rounded-lg bg-[var(--color-background-soft)]" />
+            <div className="h-20 rounded-lg bg-[var(--color-background-soft)]" />
+          </div>
         </div>
       ) : items.length === 0 && !error ? (
         <div className="gh-patient-empty-state mt-6 gh-card flex flex-col items-center gap-2 p-10 text-center">
-          <Users className="size-6 text-[var(--color-text-muted)]" aria-hidden />
-          <p className="text-sm text-[var(--color-text-muted)]">{T.empty}</p>
+          <span className="grid size-12 place-items-center rounded-full bg-[var(--color-background-soft)]">
+            <Users className="size-6 text-[var(--color-text-muted)]" aria-hidden />
+          </span>
+          <p className="text-base font-bold text-[var(--color-text-primary)]">No family members yet</p>
+          <p className="max-w-sm text-sm text-[var(--color-text-muted)]">{T.empty}</p>
         </div>
       ) : (
         <ul className="gh-patient-family-list mt-6 space-y-3">
@@ -129,6 +149,24 @@ export default function AccountFamilyPage() {
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+function FamilyMetric({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: string;
+  hint: string;
+}) {
+  return (
+    <div className="rounded-lg border border-[var(--color-border)] bg-white/80 p-3">
+      <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--color-text-muted)]">{label}</p>
+      <p className="mt-1 text-lg font-extrabold text-[var(--color-text-primary)]">{value}</p>
+      <p className="mt-1 text-xs text-[var(--color-text-muted)]">{hint}</p>
     </div>
   );
 }

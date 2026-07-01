@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { Globe, Plus, Trash2, Upload, Save } from "lucide-react";
+import { Globe, Trash2, Upload, Save } from "lucide-react";
 import {
   fetchNationality,
   upsertNationality,
@@ -130,9 +130,9 @@ function SlotCard({
 
   return (
     <div className="gh-patient-form-card gh-card p-5">
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
         <h4 className="font-semibold text-[var(--color-text-primary)]">Nationality {slot}</h4>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
           {badge && (
             <span className={`rounded-full px-3 py-1 text-xs font-medium ${badge.cls}`}>
               {badge.label}
@@ -143,7 +143,7 @@ function SlotCard({
               type="button"
               onClick={onDelete}
               disabled={delPending}
-              className="inline-flex items-center gap-1 rounded text-xs text-rose-600 hover:text-rose-800 disabled:opacity-50"
+              className="inline-flex items-center gap-1 rounded border border-rose-200 px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 hover:text-rose-800 disabled:opacity-50"
             >
               <Trash2 aria-hidden className="size-3.5" />
               {delPending ? "Removing…" : "Remove"}
@@ -209,7 +209,7 @@ function SlotCard({
         <button
           type="submit"
           disabled={savePending}
-          className="inline-flex items-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800 disabled:opacity-60 sm:w-auto"
         >
           <Save aria-hidden className="size-4" />
           {savePending ? "Saving…" : "Save"}
@@ -220,8 +220,8 @@ function SlotCard({
         <div className="mt-4 border-t border-[var(--color-border)] pt-4">
           <p className="gh-field-label mb-2">Upload document photos</p>
           <p className="mb-2 text-xs text-[var(--color-text-muted)]">PDF, JPG, PNG — max 10 MB.</p>
-          <div className="flex flex-wrap gap-2">
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]">
+          <div className="grid gap-2 sm:flex sm:flex-wrap">
+            <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]">
               <Upload aria-hidden className="size-4" />
               {uploadPending ? "Uploading…" : doc.frontFileKey ? "Replace front" : "Upload front"}
               <input
@@ -232,7 +232,7 @@ function SlotCard({
                 className="sr-only"
               />
             </label>
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]">
+            <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-background-soft)]">
               <Upload aria-hidden className="size-4" />
               {uploadPending ? "Uploading…" : doc.backFileKey ? "Replace back" : "Upload back"}
               <input
@@ -283,6 +283,19 @@ export function NationalityTab() {
 
   function handleDeleted(slot: 1 | 2) {
     setDocs((prev) => prev.filter((d) => d.slotNumber !== slot));
+  }
+
+  if (!loaded) {
+    return (
+      <div className="gh-card grid gap-4 p-6">
+        <div className="h-5 w-44 animate-pulse rounded-full bg-[var(--color-background-soft)]" />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="h-28 animate-pulse rounded-[14px] bg-[var(--color-background-soft)]" />
+          <div className="h-28 animate-pulse rounded-[14px] bg-[var(--color-background-soft)]" />
+        </div>
+        <span className="sr-only">Loading nationality records</span>
+      </div>
+    );
   }
 
   if (!loaded) {

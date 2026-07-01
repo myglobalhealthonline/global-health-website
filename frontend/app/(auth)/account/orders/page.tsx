@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { ShoppingBag, ChevronRight } from "lucide-react";
+import { CheckCircle2, Clock, ShoppingBag, ChevronRight } from "lucide-react";
 import { fetchAccountOrders } from "@/lib/api/cart-server";
-import { AdminCard, Btn, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
@@ -26,6 +25,10 @@ export default async function AccountOrdersPage() {
   ]);
   const { account: a } = loadLocaleBundle(locale);
   const items = result.ok ? result.data.items : [];
+  const paid = items.filter((item) => item.status === "PAID" || item.status === "FULFILLED").length;
+  const pending = items.filter((item) => item.status === "PENDING").length;
+  const totalCents = items.reduce((sum, item) => sum + item.totalCents, 0);
+  const currency = items.find((item) => item.currencyCode)?.currencyCode ?? "EUR";
 
   return (
     <div className="gh-patient-page gh-patient-orders-page">
@@ -33,6 +36,16 @@ export default async function AccountOrdersPage() {
         eyebrow={a.orders.breadcrumb}
         title={a.orders.title}
         description={a.orders.subtitle}
+      />
+
+      <AdminSummaryStrip
+        className="mb-5"
+        items={[
+          { label: "Orders", value: String(items.length), hint: "Health tests and prescription orders" },
+          { label: "Paid", value: String(paid), hint: "Completed or fulfilled" },
+          { label: "Pending", value: String(pending), hint: "Needs processing or payment" },
+          { label: "Total", value: formatPrice(totalCents, currency), hint: "Across visible orders" },
+        ]}
       />
 
       <AdminCard padding={0}>
@@ -50,15 +63,16 @@ export default async function AccountOrdersPage() {
         />
         <div className="p-5">
           {items.length === 0 ? (
-            <p className="text-sm text-[var(--color-text-muted)]">
-              {a.orders.noOrders}{" "}
-              <Link
-                href="/"
-                className="font-semibold text-[var(--color-brand-primary)] hover:underline"
-              >
-                {a.orders.browseProducts}
-              </Link>
-            </p>
+            <AdminEmptyState
+              icon={<ShoppingBag className="size-6" aria-hidden />}
+              title={a.orders.noOrders}
+              description="Health tests, prescriptions, and checkout orders will appear here after purchase."
+              action={
+                <Btn href="/" variant="primary" size="sm">
+                  {a.orders.browseProducts}
+                </Btn>
+              }
+            />
           ) : (
             <ul className="divide-y divide-[var(--color-border)]">
               {items.map((o) => (
@@ -71,6 +85,11 @@ export default async function AccountOrdersPage() {
                       #{formatOrderDisplayId(o)}
                     </p>
                     <p className="mt-1 flex flex-wrap items-center gap-2 text-sm">
+                      {o.status === "PAID" || o.status === "FULFILLED" ? (
+                        <CheckCircle2 className="size-3.5 text-emerald-700" aria-hidden />
+                      ) : (
+                        <Clock className="size-3.5 text-amber-700" aria-hidden />
+                      )}
                       <span className="font-semibold text-[var(--color-text-primary)]">
                         {o.itemCount === 1
                           ? a.orders.items.replace("{count}", String(o.itemCount))

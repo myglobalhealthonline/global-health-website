@@ -183,7 +183,7 @@ export function ManagePanel(props: ManagePanelProps) {
       ) : null}
 
       <AdminCard>
-        <div className="flex items-start justify-between gap-4">
+        <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--color-text-muted)" }}>
               {t.currentPlan}
@@ -197,7 +197,7 @@ export function ManagePanel(props: ManagePanelProps) {
           </Pill>
         </div>
 
-        <dl className="mt-5 grid grid-cols-2 gap-4 text-sm">
+        <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
           <div>
             <dt className="text-xs" style={{ color: "var(--color-text-muted)" }}>{t.monthlyPrice}</dt>
             <dd className="mt-0.5 font-semibold" style={{ color: "var(--color-text-primary)" }}>{props.priceLabel}</dd>
@@ -258,11 +258,11 @@ export function ManagePanel(props: ManagePanelProps) {
               ? interpolate(t.changeEffective, { date: props.nextBillingLabel })
               : t.changeNote}
           </p>
-          <div className="gh-patient-form-actions mt-4 flex flex-wrap items-center gap-3">
+          <div className="gh-patient-form-actions mt-4 grid gap-3 sm:grid-cols-[minmax(0,20rem)_auto] sm:items-center">
             <select
               value={selectedPlan}
               onChange={(e) => setSelectedPlan(e.target.value)}
-              className="gh-input max-w-xs"
+              className="gh-input w-full"
               aria-label={t.change}
             >
               <option value="">{t.change}…</option>
@@ -284,7 +284,7 @@ export function ManagePanel(props: ManagePanelProps) {
         </AdminCard>
       ) : null}
 
-      <div className="gh-patient-form-actions flex flex-wrap items-center gap-3">
+      <div className="gh-patient-form-actions grid gap-3 sm:flex sm:flex-wrap sm:items-center">
         <Btn
           variant="soft"
           onClick={openPortal}
@@ -303,7 +303,7 @@ export function ManagePanel(props: ManagePanelProps) {
             {busy === "cancel" ? t.canceling : t.cancel}
           </Btn>
         ) : null}
-        <Link href={props.pricingHref} className="text-sm font-semibold underline" style={{ color: "var(--color-brand-primary)" }}>
+        <Link href={props.pricingHref} className="inline-flex justify-center text-sm font-semibold underline sm:inline" style={{ color: "var(--color-brand-primary)" }}>
           {t.change}
         </Link>
       </div>

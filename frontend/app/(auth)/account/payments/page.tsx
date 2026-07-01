@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CreditCard, ExternalLink } from "lucide-react";
+import { CreditCard, ExternalLink, ReceiptText } from "lucide-react";
 import { fetchAccountPayments, type AccountPayment } from "@/lib/api/account-payments-api";
 import { getServerInvoices } from "@/lib/api/me-subscription-server";
 import { formatAppDate } from "@/lib/format-datetime";
@@ -7,6 +7,7 @@ import { formatPrice } from "@/lib/format-currency";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { ReceiptButton } from "./_components/receipt-button";
+import { AdminSummaryStrip } from "@/components/portal-atoms";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +57,11 @@ export default async function AccountPaymentsPage() {
     CANCELED: a.payments.statusCanceled,
     UNPAID: a.payments.statusUnpaid,
   };
+  const paidCount = items.filter((item) => item.status === "PAID").length + invoices.filter((row) => (row.status ?? "").toLowerCase() === "paid").length;
+  const actionCount = items.filter((item) => item.status === "FAILED" || item.status === "REQUIRES_ACTION" || item.status === "UNPAID").length;
+  const receiptsCount = items.length + invoices.length;
+  const lastPayment = [...items]
+    .sort((aItem, bItem) => new Date(bItem.paidAt).getTime() - new Date(aItem.paidAt).getTime())[0];
 
   return (
     <div className="gh-patient-page gh-patient-payments-page">
@@ -71,6 +77,16 @@ export default async function AccountPaymentsPage() {
           {a.payments.subtitle}
         </p>
       </header>
+
+      <AdminSummaryStrip
+        className="mb-5"
+        items={[
+          { label: "Receipts", value: String(receiptsCount), hint: "Payments and membership invoices" },
+          { label: "Paid", value: String(paidCount), hint: "Completed payment records" },
+          { label: "Needs action", value: String(actionCount), hint: "Failed, unpaid, or action required" },
+          { label: "Latest", value: lastPayment ? formatAppDate(lastPayment.paidAt) : "None yet", hint: "Most recent consultation payment" },
+        ]}
+      />
 
       {unavailable ? (
         <div className="rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
@@ -100,7 +116,42 @@ export default async function AccountPaymentsPage() {
 
       {items.length > 0 ? (
         <div className="gh-card overflow-hidden p-0">
-          <div className="gh-patient-table-wrap overflow-x-auto">
+          <div className="grid gap-3 p-4 md:hidden">
+            {items.map((p) => (
+              <article
+                key={p.id}
+                className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-[var(--color-text-primary)]">
+                      {p.serviceName ?? p.consultationType}
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                      {formatAppDate(p.paidAt)} · {p.countryCode}
+                    </p>
+                    {p.doctorName ? (
+                      <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                        {/^dr\.?\s/i.test(p.doctorName) ? p.doctorName : `Dr. ${p.doctorName}`}
+                      </p>
+                    ) : null}
+                  </div>
+                  <span
+                    className={`inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_PILL[p.status]}`}
+                  >
+                    {statusLabel[p.status]}
+                  </span>
+                </div>
+                <div className="mt-3 flex items-center justify-between gap-3">
+                  <p className="text-lg font-extrabold text-[var(--color-text-primary)]">
+                    {formatPrice(p.amountCents, p.currencyCode)}
+                  </p>
+                  <ReceiptButton paymentId={p.id} />
+                </div>
+              </article>
+            ))}
+          </div>
+          <div className="gh-patient-table-wrap hidden overflow-x-auto md:block">
           <table className="w-full min-w-[760px] text-sm">
             <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wide text-[var(--color-text-muted)]">
               <tr>
@@ -157,7 +208,50 @@ export default async function AccountPaymentsPage() {
             {inv.heading}
           </h3>
           <div className="gh-card overflow-hidden p-0">
-            <div className="gh-patient-table-wrap overflow-x-auto">
+            <div className="grid gap-3 p-4 md:hidden">
+              {invoices.map((row) => {
+                const receiptUrl = row.hostedInvoiceUrl ?? row.pdfUrl;
+                return (
+                  <article
+                    key={row.id}
+                    className="rounded-lg border border-[var(--color-border)] bg-[var(--color-background-soft)] p-4"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="flex items-center gap-2 font-semibold text-[var(--color-text-primary)]">
+                          <ReceiptText className="size-4 text-[var(--color-brand-primary)]" aria-hidden />
+                          {inv.membershipPayment}
+                        </p>
+                        <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                          {formatAppDate(row.periodStart ?? row.createdAt)}
+                          {row.number ? ` · ${row.number}` : ""}
+                        </p>
+                      </div>
+                      <span className="inline-flex shrink-0 items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800">
+                        {invoiceStatusLabel(row.status)}
+                      </span>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between gap-3">
+                      <p className="text-lg font-extrabold text-[var(--color-text-primary)]">
+                        {formatPrice(row.amountPaidCents, row.currency)}
+                      </p>
+                      {receiptUrl ? (
+                        <a
+                          href={receiptUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 rounded-md border border-[var(--color-border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--color-brand-primary)]"
+                        >
+                          {inv.viewInvoice}
+                          <ExternalLink className="size-3.5" aria-hidden />
+                        </a>
+                      ) : null}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+            <div className="gh-patient-table-wrap hidden overflow-x-auto md:block">
             <table className="w-full min-w-[760px] text-sm">
               <thead className="bg-[var(--color-background-soft)] text-left text-xs uppercase tracking-wide text-[var(--color-text-muted)]">
                 <tr>

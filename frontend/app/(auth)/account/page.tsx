@@ -19,6 +19,7 @@ import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import {
   AdminCard,
+  AdminSummaryStrip,
   Btn,
   PageHeader,
   Pill,
@@ -71,6 +72,10 @@ export default async function AccountOverviewPage() {
       new Date(a.scheduledAt).getTime() <= now + sevenDaysMs,
   ).length;
   const totalBookings = appointments.length;
+  const paidPayments = payments.filter((payment) => payment.status === "PAID").length;
+  const paymentActionCount = payments.filter((payment) =>
+    ["FAILED", "REQUIRES_ACTION", "UNPAID"].includes(payment.status),
+  ).length;
 
   // ── Next scheduled call ────────────────────────────────────────────
   const nextCall = appointments
@@ -130,6 +135,32 @@ export default async function AccountOverviewPage() {
           icon={<Stethoscope className="size-5" aria-hidden />}
         />
       </div>
+
+      <AdminSummaryStrip
+        className="mt-4"
+        items={[
+          {
+            label: "Next appointment",
+            value: nextCall?.scheduledAt ? formatAppDateTime(nextCall.scheduledAt) : "Not scheduled",
+            hint: nextCall?.meetingUrl ? "Meet link ready" : "Book or wait for scheduling",
+          },
+          {
+            label: "Payments",
+            value: paymentActionCount > 0 ? `${paymentActionCount} needs action` : `${paidPayments} paid`,
+            hint: `${payments.length} receipt${payments.length === 1 ? "" : "s"} on file`,
+          },
+          {
+            label: "Records",
+            value: ghn ? "GHN active" : "Profile pending",
+            hint: "Used for prescriptions and medical documents",
+          },
+          {
+            label: "Quick path",
+            value: "Book care",
+            hint: "Start a consultation or review appointments",
+          },
+        ]}
+      />
 
       {/* ── Email verification banner ──────────────────────────────── */}
       {emailUnverified ? (

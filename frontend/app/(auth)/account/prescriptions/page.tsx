@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { Pill, ShoppingBag, ChevronRight } from "lucide-react";
+import { FileText, Pill, ShoppingBag, ChevronRight } from "lucide-react";
 import { fetchPatientPrescriptions } from "@/lib/api/prescriptions-api";
-import { AdminCard, Btn, PageHeader, Pill as PillBadge, SectionHeader } from "@/components/portal-atoms";
+import { AdminCard, AdminEmptyState, AdminSummaryStrip, Btn, PageHeader, Pill as PillBadge, SectionHeader } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDate } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
@@ -36,6 +35,24 @@ export default async function AccountPrescriptionsPage() {
         description={a.prescriptions.subtitle}
       />
 
+      <AdminSummaryStrip
+        className="mb-5"
+        items={[
+          { label: "Doctor issued", value: String(issued.length), hint: "Clinical prescriptions from consultations" },
+          { label: "Online orders", value: String(orders.length), hint: "Prescription checkout requests" },
+          {
+            label: "Paid orders",
+            value: String(orders.filter((order) => order.paymentStatus === "PAID").length),
+            hint: "Ready or already processed",
+          },
+          {
+            label: "Needs action",
+            value: String(orders.filter((order) => order.paymentStatus !== "PAID").length),
+            hint: "Payment or review pending",
+          },
+        ]}
+      />
+
       {unavailable ? (
         <div className="mb-4 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
           {unavailable}
@@ -54,9 +71,16 @@ export default async function AccountPrescriptionsPage() {
         />
         <div className="p-5">
           {issued.length === 0 ? (
-            <p className="text-sm text-[var(--color-text-muted)]">
-              {a.prescriptions.noPrescriptions}
-            </p>
+            <AdminEmptyState
+              icon={<Pill className="size-6" aria-hidden />}
+              title={a.prescriptions.noPrescriptions}
+              description="Doctor-issued medications and follow-up instructions will appear here after a signed consultation."
+              action={
+                <Btn href="/account/bookings" variant="secondary" size="sm">
+                  {a.prescriptions.viewBooking}
+                </Btn>
+              }
+            />
           ) : (
             <ul className="grid gap-3">
               {issued.map((p) => (
@@ -131,15 +155,16 @@ export default async function AccountPrescriptionsPage() {
         />
         <div className="p-5">
           {orders.length === 0 ? (
-            <p className="text-sm text-[var(--color-text-muted)]">
-              {a.prescriptions.noOnlineOrders}{" "}
-              <Link
-                href="/"
-                className="font-semibold text-[var(--color-brand-primary)] hover:underline"
-              >
-                {a.prescriptions.browseProducts}
-              </Link>
-            </p>
+            <AdminEmptyState
+              icon={<FileText className="size-6" aria-hidden />}
+              title={a.prescriptions.noOnlineOrders}
+              description="Online prescription requests and payment status will be listed here."
+              action={
+                <Btn href="/" variant="primary" size="sm">
+                  {a.prescriptions.browseProducts}
+                </Btn>
+              }
+            />
           ) : (
             <ul className="divide-y divide-[var(--color-border)]">
               {orders.map((o) => (

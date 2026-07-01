@@ -105,8 +105,8 @@ export function RewardsPanel(props: RewardsPanelProps) {
         const isOpen = openKit === kit.healthTestId;
         return (
           <AdminCard key={kit.healthTestId} className="gh-patient-reward-card">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-3">
+            <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
+              <div className="flex min-w-0 items-start gap-3">
                 <span
                   className="inline-flex size-10 items-center justify-center rounded-[12px]"
                   style={{ background: "linear-gradient(135deg, var(--color-accent) 0%, var(--color-brand-mint) 100%)", color: "#143B30" }}
@@ -146,7 +146,7 @@ export function RewardsPanel(props: RewardsPanelProps) {
             {kit.eligible ? (
               <div className="mt-4">
                 {!isOpen ? (
-                  <Btn variant="primary" iconLeft={<Gift className="size-4" aria-hidden />} onClick={() => { setOpenKit(kit.healthTestId); setError(null); }}>
+                  <Btn variant="primary" className="w-full justify-center sm:w-auto" iconLeft={<Gift className="size-4" aria-hidden />} onClick={() => { setOpenKit(kit.healthTestId); setError(null); }}>
                     {interpolate(t.redeemCta, { count: kit.requiredWellnessCredits })}
                   </Btn>
                 ) : (
@@ -163,12 +163,12 @@ export function RewardsPanel(props: RewardsPanelProps) {
                     {error ? (
                       <p className="rounded-md px-3 py-2 text-sm" style={{ background: "#FEE2E2", color: "#991B1B" }} role="alert">{error}</p>
                     ) : null}
-                    <div className="gh-patient-form-actions flex items-center gap-3">
+                    <div className="gh-patient-form-actions grid gap-2 sm:flex sm:items-center">
                       <button type="submit" disabled={submitting} className="gh-btn gh-btn-primary inline-flex justify-center disabled:opacity-60">
                         {submitting ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Gift className="size-4" aria-hidden />}
                         {submitting ? t.redeeming : interpolate(t.redeemCta, { count: kit.requiredWellnessCredits })}
                       </button>
-                      <button type="button" onClick={() => setOpenKit(null)} className="text-sm font-semibold underline" style={{ color: "var(--color-text-muted)" }}>
+                      <button type="button" onClick={() => setOpenKit(null)} aria-label="Cancel redemption" className="inline-flex justify-center rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-semibold text-[var(--color-text-muted)] hover:bg-[var(--color-background-soft)]">
                         ×
                       </button>
                     </div>

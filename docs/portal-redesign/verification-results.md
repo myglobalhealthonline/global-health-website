@@ -379,3 +379,38 @@ Scope: Doctor Portal source and Doctor-used shared components only. No Admin rou
 - `pnpm --filter frontend lint`: Passed with 0 errors and 34 existing warnings.
 
 
+
+## Patient/Account Portal Implementation Pass - 2026-07-01
+
+Scope: Patient/Account Portal source under `frontend/app/(auth)/account/**` only. No Admin route work, no Doctor route work, no screenshots, and no new markdown files.
+
+### Source Coverage
+
+- Patient/account source files discovered by final file-tree scan: 32, including the new route-level loading skeleton.
+- Patient/account page/layout/loading state files inspected: 18.
+- Patient/account route-owned components inspected: 14.
+- Account-owned shared/component audit rows updated to `Completed` based on source inspection and implementation work.
+- Generated raster assets added: 0 new assets; existing `frontend/public/images/portal/generated/patient-record-empty-state.png` remains used by `/account/medical-files`.
+
+### UI/UX Implementation
+
+- `/account`: added patient health-home summary strip for next appointment, payments, records, and quick path above the dashboard widgets.
+- `/account/bookings`: added appointment summary metrics, payment-needed panels, clearer unavailable state, and mobile-safe booking actions.
+- `/account/calendar`: added schedule metrics for upcoming visits, meet links, and countries before the patient calendar.
+- `/account/orders` and `/account/orders/[id]`: added order/payment summary strips, composed empty states, status icons, mobile-safe item rows, and a care-order context panel.
+- `/account/payments`: added payment/invoice summary metrics and mobile cards for consultation payments and membership invoices while keeping desktop tables.
+- `/account/prescriptions`: added prescription/order metrics and composed empty states for issued prescriptions and online orders.
+- `/account/medical-files`: added medical-record metrics, skeleton loading, mobile-safe document cards, and retained the generated patient-record empty-state raster asset.
+- `/account/profile`: added profile readiness summary; upgraded verification, insurance, GDPR, nationality, and medical identity loading/form/action layouts.
+- `/account/membership` and `/account/rewards`: added membership/reward summary metrics, composed empty states, mobile-safe plan/reward actions, and responsive subscription benefit rows.
+- `/account/security`: added security summary metrics, page skeleton loading, full-width mobile actions, and overflow-safe delete-account modal.
+- `/account/family`, `/account/access-history`, and `/account/notifications`: added metrics, skeleton/empty states, and mobile-safe list row/card layouts.
+- `/account/subscribe`: improved plan summary stacking and recurring-charge consent as a proper confirmation card.
+- `/account/loading.tsx`: added a route-level patient portal skeleton matching the final header, summary, cards, and detail layout.
+
+### Validation
+
+- `git diff --check`: Passed.
+- `npm run typecheck`: Passed after replacing summary item `helper` props with the shared `hint` API and fixing the family metric prop contract.
+- `npm run build`: Passed.
+- `pnpm --filter frontend lint`: Passed with 0 errors and 33 warnings.

@@ -102,7 +102,15 @@ export function GdprPreferencesTab() {
   }
 
   if (!loaded) {
-    return <div className="gh-patient-empty-state py-8 text-sm text-[var(--color-text-muted)]">Loading…</div>;
+    return (
+      <div className="gh-patient-empty-state gh-card p-6">
+        <div className="h-4 w-48 rounded bg-[var(--color-background-soft)]" />
+        <div className="mt-4 grid gap-3">
+          <div className="h-20 rounded-lg bg-[var(--color-background-soft)]" />
+          <div className="h-20 rounded-lg bg-[var(--color-background-soft)]" />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -135,11 +143,11 @@ export function GdprPreferencesTab() {
                     </p>
                   )}
                 </div>
-                <div className="flex shrink-0 gap-2">
+                <div className="flex w-full shrink-0 gap-2 sm:w-auto">
                   <button
                     type="button"
                     onClick={() => toggle(c.consentType, true)}
-                    className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                    className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:flex-none ${
                       current === true
                         ? "bg-emerald-700 text-white"
                         : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-background-soft)]"
@@ -150,7 +158,7 @@ export function GdprPreferencesTab() {
                   <button
                     type="button"
                     onClick={() => toggle(c.consentType, false)}
-                    className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                    className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors sm:flex-none ${
                       current === false
                         ? "bg-rose-600 text-white"
                         : "border border-[var(--color-border)] text-[var(--color-text-muted)] hover:bg-[var(--color-background-soft)]"

@@ -58,7 +58,7 @@ export function DeleteAccountButton({ i18n = DEFAULT_I18N }: { i18n?: DeleteI18n
           setOpen(true);
         }}
         disabled={deleting}
-        className="inline-flex items-center gap-2 rounded-md border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-rose-300 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-60 sm:w-auto"
       >
         <Trash2 className="size-4" aria-hidden />
         {deleting ? i18n.deleting : i18n.deleteMyAccount}
@@ -114,7 +114,7 @@ function DeleteAccountModal({
         aria-modal="true"
         aria-labelledby="delete-account-title"
         aria-describedby="delete-account-desc"
-          className="gh-patient-delete-modal fixed left-1/2 top-1/2 z-50 w-[min(100%-2rem,28rem)] -translate-x-1/2 -translate-y-1/2 rounded-xl border border-[var(--color-border)] bg-white p-6 shadow-xl"
+          className="gh-patient-delete-modal fixed left-1/2 top-1/2 z-50 max-h-[calc(100vh-2rem)] w-[min(calc(100%-2rem),28rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border border-[var(--color-border)] bg-white p-6 shadow-xl"
       >
         <h2 id="delete-account-title" className="text-base font-bold text-[var(--color-text-primary)]">
           {i18n.deleteAccountTitle}

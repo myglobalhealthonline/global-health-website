@@ -238,7 +238,7 @@ export async function SubscriptionDashboard({
                         { months },
                       );
               return (
-                <li key={perk.perkKey} className="flex items-start justify-between gap-3 rounded-[10px] p-3" style={{ background: "var(--color-background-soft)" }}>
+                <li key={perk.perkKey} className="grid gap-2 rounded-[10px] p-3 sm:grid-cols-[1fr_auto] sm:items-start" style={{ background: "var(--color-background-soft)" }}>
                   <div className="flex items-start gap-2.5">
                     {status === "unlocked" ? (
                       <Award className="mt-0.5 size-4 shrink-0" style={{ color: "var(--color-brand-primary)" }} aria-hidden />
@@ -247,7 +247,7 @@ export async function SubscriptionDashboard({
                     )}
                     <span className="text-sm" style={{ color: "var(--color-text-primary)" }}>{perkLabel(perk.perkKey)}</span>
                   </div>
-                  <span className="shrink-0 text-xs" style={{ color: status === "unlocked" ? "var(--color-brand-primary)" : "var(--color-text-muted)" }}>
+                  <span className="text-xs sm:shrink-0" style={{ color: status === "unlocked" ? "var(--color-brand-primary)" : "var(--color-text-muted)" }}>
                     {condition}
                   </span>
                 </li>
@@ -272,7 +272,7 @@ export async function SubscriptionDashboard({
             {credits.ledger.slice(0, 8).map((entry, i) => (
               <li
                 key={i}
-                className="flex items-center justify-between gap-3 border-t py-2.5 text-sm first:border-t-0"
+                className="grid gap-2 border-t py-2.5 text-sm first:border-t-0 sm:grid-cols-[1fr_auto] sm:items-center"
                 style={{ borderColor: "var(--color-border)" }}
               >
                 <div className="flex items-center gap-2.5">
@@ -285,7 +285,7 @@ export async function SubscriptionDashboard({
                     {creditReasonLabel(entry.reason, t as Record<string, string>)}
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 sm:justify-end">
                   <span
                     className="font-semibold tabular-nums"
                     style={{ color: entry.deltaCredits >= 0 ? "var(--color-brand-primary)" : "#b3261e" }}

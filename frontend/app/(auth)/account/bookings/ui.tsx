@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CalendarDays, ArrowRight, ClipboardList, Video, Clock, MapPin, MessageCircle } from "lucide-react";
+import { AlertCircle, CalendarDays, ArrowRight, ClipboardList, CreditCard, Video, Clock, MapPin, MessageCircle } from "lucide-react";
 import type { AccountAppointment } from "@/lib/api/account-appointments-api";
 import { ChatThread } from "@/components/chat/ChatThread";
 import { fetchPatientMessages, postPatientMessage } from "@/lib/api/chat-api";
@@ -94,16 +94,21 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
 
   if (unavailableMessage) {
     return (
-      <div className="gh-patient-empty-state mt-6 rounded-[var(--radius-card-sm)] border border-[var(--color-border)] bg-[var(--color-background-panel)] px-5 py-4">
-        <p className="text-sm text-[var(--color-text-muted)]">{unavailableMessage}</p>
+      <div className="gh-patient-empty-state mt-6 rounded-lg border border-amber-200 bg-amber-50 px-5 py-4">
+        <p className="flex items-start gap-2 text-sm font-medium text-amber-900">
+          <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden />
+          {unavailableMessage}
+        </p>
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="gh-patient-empty-state mt-8 flex flex-col items-center rounded-[var(--radius-card-sm)] border border-dashed border-[var(--color-border)] bg-[var(--color-background-panel)] px-6 py-12 text-center">
-        <ClipboardList className="size-10 text-[var(--color-border-strong)]" aria-hidden />
+      <div className="gh-patient-empty-state mt-8 flex flex-col items-center rounded-lg border border-dashed border-[var(--color-border)] bg-[var(--color-background-panel)] px-6 py-12 text-center">
+        <span className="grid size-14 place-items-center rounded-full bg-[var(--color-background-soft)] text-[var(--color-brand-primary)]">
+          <ClipboardList className="size-7" aria-hidden />
+        </span>
         <p className="mt-4 text-base font-semibold text-[var(--color-text-primary)]">
           {i18n?.bookings.noBookings ?? "No bookings yet"}
         </p>
@@ -153,6 +158,16 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
               <p className="mt-0.5 font-medium text-[var(--color-text-primary)]">{item.consultationType}</p>
             </div>
           </div>
+
+          {requiresPayment(item) ? (
+            <div className="mt-3 flex items-start gap-2 rounded-[var(--radius-card-sm)] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              <CreditCard className="mt-0.5 size-4 shrink-0" aria-hidden />
+              <div>
+                <p className="font-semibold">Payment needed</p>
+                <p className="text-xs">Complete payment to unlock doctor chat and keep the appointment moving.</p>
+              </div>
+            </div>
+          ) : null}
 
           {/* Scheduled-call band — appears only once admin sets the slot.
               The whole row links to the Meet link if present so patients
@@ -205,13 +220,13 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
           ) : null}
 
           {/* Admin chat + doctor chat toggles */}
-          <div className="gh-patient-booking-actions mt-3 flex flex-wrap gap-3">
+          <div className="gh-patient-booking-actions mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             <button
               type="button"
               onClick={() =>
                 setOpenChatId((current) => (current === item.id ? null : item.id))
               }
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--color-border)] px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-[var(--color-background-soft)] sm:w-auto"
             >
               <MessageCircle className="size-4" aria-hidden />
               {openChatId === item.id ? "Hide clinic messages" : "Message the clinic"}
@@ -219,7 +234,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
 
             {requiresPayment(item) ? (
               <span
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-700"
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-700 sm:w-auto"
                 title="Complete payment to unlock chat with your doctor"
               >
                 <MessageCircle className="size-4" aria-hidden />
@@ -231,7 +246,7 @@ export function BookingsShell({ items, unavailableMessage, i18n }: BookingsShell
                 onClick={() =>
                   setOpenConsultChatId((current) => (current === item.id ? null : item.id))
                 }
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-[var(--color-border)] px-3 py-2 text-sm font-semibold text-emerald-700 hover:bg-[var(--color-background-soft)] sm:w-auto"
               >
                 <MessageCircle className="size-4" aria-hidden />
                 {openConsultChatId === item.id ? "Hide doctor chat" : "Chat with your doctor"}

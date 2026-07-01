@@ -9,7 +9,7 @@ import {
 import { getCountryPlans } from "@/lib/content/get-country-plans";
 import { getPageLocale } from "@/lib/i18n/get-page-locale";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
-import { PageHeader } from "@/components/portal-atoms";
+import { AdminEmptyState, AdminSummaryStrip, PageHeader } from "@/components/portal-atoms";
 import { RewardsPanel } from "./_components/RewardsPanel";
 
 export const metadata: Metadata = { title: "Wellness rewards", robots: { index: false } };
@@ -34,13 +34,16 @@ export default async function RewardsPage({ searchParams }: { searchParams: Prom
     return (
       <div className="gh-patient-page gh-patient-rewards-page">
         <PageHeader title={t.title} description={t.subtitle} />
-        <div className="gh-patient-empty-state gh-card max-w-xl p-8 text-center">
-          <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
-            {subscription.dashboard.wellnessNone}
-          </p>
-          <Link href="/account" className="gh-btn gh-btn-primary mt-6 inline-flex justify-center">
-            {subscription.dashboard.manage}
-          </Link>
+        <div className="gh-patient-empty-state gh-card max-w-xl p-8">
+          <AdminEmptyState
+            title="No rewards available"
+            description={subscription.dashboard.wellnessNone}
+            action={
+              <Link href="/account" className="gh-btn gh-btn-primary inline-flex justify-center">
+                {subscription.dashboard.manage}
+              </Link>
+            }
+          />
         </div>
       </div>
     );
@@ -61,6 +64,15 @@ export default async function RewardsPage({ searchParams }: { searchParams: Prom
   return (
     <div className="gh-patient-page gh-patient-rewards-page">
       <PageHeader title={t.title} description={t.subtitle} />
+      <AdminSummaryStrip
+        className="mb-5"
+        items={[
+          { label: "Wellness balance", value: String(credits?.wellness.balance ?? 0), hint: "Credits available" },
+          { label: "Reward kits", value: String(kitsWithUnlock.length), hint: "Available to review" },
+          { label: "Eligible now", value: String(kitsWithUnlock.filter((kit) => kit.eligible).length), hint: "Ready to redeem" },
+          { label: "Membership", value: sub.status.toLowerCase(), hint: sub.plan?.name ?? "Current plan" },
+        ]}
+      />
       <RewardsPanel
         t={t}
         kits={kitsWithUnlock}

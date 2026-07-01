@@ -90,11 +90,11 @@ export function SubscribeForm(props: SubscribeFormProps) {
         <p className="text-[11px] font-bold uppercase tracking-[0.16em]" style={{ color: "var(--color-text-muted)" }}>
           {props.planSummaryLabel}
         </p>
-        <div className="mt-3 flex items-baseline justify-between gap-4">
+        <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
           <h2 className="font-extrabold tracking-[-0.02em]" style={{ fontSize: "1.5rem", color: "var(--color-text-primary)" }}>
             {props.planName}
           </h2>
-          <p className="flex items-baseline gap-1.5 whitespace-nowrap">
+          <p className="flex items-baseline gap-1.5 whitespace-nowrap sm:justify-end">
             <span className="font-extrabold" style={{ fontSize: "1.75rem", color: "var(--color-text-primary)" }}>
               {props.priceLabel}
             </span>
@@ -122,7 +122,8 @@ export function SubscribeForm(props: SubscribeFormProps) {
         </ul>
       </div>
 
-      <label className="flex items-start gap-3 text-sm" style={{ color: "var(--color-text-primary)" }}>
+      <label className="rounded-[14px] border border-[var(--color-border)] bg-[var(--color-background-panel)] p-4 text-sm shadow-[var(--shadow-soft)]" style={{ color: "var(--color-text-primary)" }}>
+        <span className="flex items-start gap-3">
         <input
           type="checkbox"
           checked={consented}
@@ -145,6 +146,7 @@ export function SubscribeForm(props: SubscribeFormProps) {
           >
             {props.termsLink}
           </Link>
+        </span>
         </span>
       </label>
 

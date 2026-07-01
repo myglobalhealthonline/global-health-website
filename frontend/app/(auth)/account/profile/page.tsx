@@ -15,6 +15,7 @@ import { GdprPreferencesTab } from "./_components/gdpr-tab";
 import { loadLocaleBundle } from "@/lib/i18n/load-locale";
 import { readClientLocale } from "@/lib/i18n/get-client-locale";
 import { PhoneField } from "@/components/forms/phone-field";
+import { AdminSummaryStrip } from "@/components/portal-atoms";
 import type { LocaleCode } from "@/lib/i18n/types";
 
 type Tab = "personal" | "insurance" | "verification" | "nationality" | "privacy";
@@ -72,6 +73,28 @@ export default function AccountProfilePage() {
   }, []);
 
   const a = loadLocaleBundle(locale).account;
+  const profileStatusItems = [
+    {
+      label: "Email",
+      value: user?.emailVerifiedAt ? "Verified" : "Needs verification",
+      hint: user?.email ?? "Account email",
+    },
+    {
+      label: "Phone",
+      value: phone ? "Added" : "Missing",
+      hint: "Used for appointment updates",
+    },
+    {
+      label: "Patient ID",
+      value: ghn ? "Active" : "Pending",
+      hint: "Global Health Number",
+    },
+    {
+      label: "Profile",
+      value: fullName ? "Started" : "Incomplete",
+      hint: "Personal and medical details",
+    },
+  ];
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -114,6 +137,8 @@ export default function AccountProfilePage() {
         <p className="text-sm text-[var(--color-text-muted)]">{a.profile.subtitle}</p>
       </header>
 
+      <AdminSummaryStrip className="mb-5" items={profileStatusItems} />
+
       {/* Tab navigation */}
       <nav
         className="gh-patient-tabs gh-portal-tabs mb-5 flex gap-1 overflow-x-auto rounded-lg bg-white/70 p-1 ring-1 ring-[var(--color-border)]"
@@ -139,8 +164,13 @@ export default function AccountProfilePage() {
       {activeTab === "personal" && (
         <>
           {loading ? (
-            <div className="gh-card p-6 text-sm text-[var(--color-text-muted)]">
-              {a.profile.loading}
+            <div className="gh-card p-6">
+              <div className="h-4 w-40 rounded bg-[var(--color-background-soft)]" />
+              <div className="mt-4 grid gap-3">
+                <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
+                <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
+                <div className="h-12 rounded-lg bg-[var(--color-background-soft)]" />
+              </div>
             </div>
           ) : (
             <form onSubmit={onSubmit} className="gh-patient-form-card gh-card space-y-4 p-6">

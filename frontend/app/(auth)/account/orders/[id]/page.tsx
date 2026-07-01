@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, PackageCheck } from "lucide-react";
 import { fetchAccountOrder } from "@/lib/api/cart-server";
-import { AdminCard, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
+import { AdminCard, AdminSummaryStrip, PageHeader, Pill, SectionHeader } from "@/components/portal-atoms";
 import type { PillTone } from "@/components/portal-atoms";
 import { formatAppDateTime } from "@/lib/format-datetime";
 import { formatPrice } from "@/lib/format-currency";
@@ -50,6 +50,16 @@ export default async function AccountOrderDetailPage({ params }: Props) {
         description={a.orders.placedOn.replace("{date}", formatAppDateTime(order.createdAt))}
       />
 
+      <AdminSummaryStrip
+        className="mb-5"
+        items={[
+          { label: "Order status", value: order.status.toLowerCase(), hint: "Fulfillment state" },
+          { label: "Payment", value: order.paymentStatus.toLowerCase(), hint: order.paidAt ? formatAppDateTime(order.paidAt) : "Awaiting confirmation" },
+          { label: "Items", value: String(order.items.length), hint: "Products in this order" },
+          { label: "Total", value: formatPrice(order.totalCents, order.currencyCode), hint: "Including shipping" },
+        ]}
+      />
+
       <div className="gh-patient-detail-grid grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <AdminCard padding={0}>
           <SectionHeader title={a.orders.itemsSection} />
@@ -58,7 +68,7 @@ export default async function AccountOrderDetailPage({ params }: Props) {
               {order.items.map((i) => (
                 <li
                   key={i.id}
-                  className="gh-patient-list-row flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                  className="gh-patient-list-row grid gap-3 py-3 first:pt-0 last:pb-0 sm:grid-cols-[1fr_auto] sm:items-center"
                 >
                   <div className="min-w-0">
                     <p className="font-semibold text-[var(--color-text-primary)]">
@@ -127,6 +137,20 @@ export default async function AccountOrderDetailPage({ params }: Props) {
                   {a.orders.paidOn.replace("{date}", formatAppDateTime(order.paidAt))}
                 </p>
               ) : null}
+            </div>
+          </AdminCard>
+
+          <AdminCard className="bg-[var(--color-background-soft)]">
+            <div className="flex items-start gap-3">
+              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-white text-[var(--color-brand-primary)]">
+                <PackageCheck className="size-5" aria-hidden />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-[var(--color-text-primary)]">Care order record</p>
+                <p className="mt-1 text-xs leading-relaxed text-[var(--color-text-muted)]">
+                  Keep this order with your prescriptions and medical files for follow-up conversations.
+                </p>
+              </div>
             </div>
           </AdminCard>
         </aside>
